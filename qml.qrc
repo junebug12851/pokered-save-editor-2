@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
-        <file>ux/AppMenu.qml</file>
         <file>ux/main.qml</file>
         <file>ux/Navigation.qml</file>
         <file alias="icon">icons/512x512.png</file>
