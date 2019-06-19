@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QQuickWidget" name="quickWidget">
+     <widget class="QQuickWidget" name="app">
       <property name="resizeMode">
        <enum>QQuickWidget::SizeRootObjectToView</enum>
       </property>
@@ -196,6 +196,9 @@
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
+   </property>
+   <property name="shortcut">
+    <string>Alt+F4</string>
    </property>
   </action>
   <action name="actionClear_Recent_Files">
