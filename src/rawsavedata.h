@@ -9,7 +9,7 @@
 class RawSaveData : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(quint8* data READ data WRITE setData RESET resetData NOTIFY wholeDataChanged)
+    Q_PROPERTY(quint8* data READ data NOTIFY wholeDataChanged)
 
 public:
     explicit RawSaveData(QObject *parent = nullptr);
