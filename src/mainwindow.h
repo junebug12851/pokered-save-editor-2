@@ -11,6 +11,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
+    static MainWindow* instance();
+
 private slots:
     void reUpdateRecentFiles(QList<QString>* files);
     void onRecentFileClick();
@@ -19,6 +21,8 @@ private slots:
 private:
     Ui::MainWindow ui;
     FileManagement file;
+
+    static MainWindow* _instance;
 };
 
 #endif // MAINWINDOW_H

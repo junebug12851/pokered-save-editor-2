@@ -4,6 +4,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     ui.setupUi(this);
+    MainWindow::_instance = this;
 
     connect(ui.actionNew, &QAction::triggered, &file, &FileManagement::newFile);
     connect(ui.actionOpen, &QAction::triggered, &file, &FileManagement::openFile);
@@ -20,6 +21,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->reUpdateRecentFiles(file.recentFiles());
     this->onPathChanged(file.path());
+}
+
+MainWindow* MainWindow::_instance = nullptr;
+
+MainWindow *MainWindow::instance()
+{
+    return MainWindow::_instance;
 }
 
 void MainWindow::reUpdateRecentFiles(QList<QString>* files)

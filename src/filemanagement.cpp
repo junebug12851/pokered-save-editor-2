@@ -3,6 +3,7 @@
 
 #include "rawsavedata.h"
 #include "filemanagement.h"
+#include "mainwindow.h"
 
 FileManagement::FileManagement(QObject *parent)
     : QObject(parent), _path("")
@@ -151,7 +152,7 @@ void FileManagement::wipeUnusedSpace()
 QString FileManagement::openFileDialog(QString title)
 {
     return QFileDialog::getOpenFileName(
-                nullptr,
+                MainWindow::instance(),
                 title,
                 this->path(),
                 "Save Files (*.sav);;All Files (*)");
@@ -160,7 +161,7 @@ QString FileManagement::openFileDialog(QString title)
 QString FileManagement::saveFileDialog(QString title)
 {
     return QFileDialog::getSaveFileName(
-                nullptr,
+                MainWindow::instance(),
                 title,
                 this->path(),
                 "Save Files (*.sav);;All Files (*)");
