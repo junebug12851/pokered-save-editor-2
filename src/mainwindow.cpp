@@ -34,9 +34,8 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
     // Remove all but first 3 menu items which are
     // clear recents, the seperator, and no files msg
     // hide no files msg
-    QList<QAction*> actions = filesMenu->actions();
-    while(actions.size() > 3) {
-        actions.removeLast();
+    while(filesMenu->actions().size() > 3) {
+        filesMenu->removeAction(filesMenu->actions().last());
     }
     filesMenu->actions()[2]->setVisible(false);
 

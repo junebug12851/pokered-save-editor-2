@@ -1,4 +1,5 @@
 #include <QFileDialog>
+#include <QList>
 
 #include "rawsavedata.h"
 #include "filemanagement.h"
@@ -65,8 +66,7 @@ void FileManagement::processRecentFileChanges()
     }
 
     // Replace current list with newly formatted list
-    this->_recentFiles.clear();
-    this->_recentFiles.append(newList);
+    this->_recentFiles = newList;
 
     // Save
     QString compacted = newList.join(';');
@@ -201,10 +201,12 @@ void FileManagement::writeSaveData(QString filePath, quint8 *data)
 void FileManagement::expandRecentFiles(QString key)
 {
     // Break apart string into paths
-    // Import into recent files clearing out old values
+    // Manually add them in, otherwise they oddly get out of order
     QStringList recentFiles = key.split(';');
-    this->_recentFiles.clear();
-    this->_recentFiles.fromStdList(recentFiles.toStdList());
+    for(int i = 0; i < recentFiles.size(); i++) {
+        this->_recentFiles.append(recentFiles[i]);
+    }
+    //this->_recentFiles = QList<QString>::fromSet(recentFiles.toSet());
 
     // Process, cleanup, and notify
     this->processRecentFileChanges();
