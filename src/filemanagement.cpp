@@ -151,19 +151,27 @@ void FileManagement::wipeUnusedSpace()
 
 QString FileManagement::openFileDialog(QString title)
 {
+    QString path = this->path();
+    if(path == "")
+        path = settings.value(KEY_LAST_FILE, QString("")).toString();
+
     return QFileDialog::getOpenFileName(
                 MainWindow::instance(),
                 title,
-                this->path(),
+                path,
                 "Save Files (*.sav);;All Files (*)");
 }
 
 QString FileManagement::saveFileDialog(QString title)
 {
+    QString path = this->path();
+    if(path == "")
+        path = settings.value(KEY_LAST_FILE, QString("")).toString();
+
     return QFileDialog::getSaveFileName(
                 MainWindow::instance(),
                 title,
-                this->path(),
+                path,
                 "Save Files (*.sav);;All Files (*)");
 }
 
