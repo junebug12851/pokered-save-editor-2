@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
+#include "filemanagement.h"
 
 class MainWindow : public QMainWindow
 {
@@ -10,8 +11,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
+private slots:
+    void reUpdateRecentFiles(QList<QString>* files);
+    void onRecentFileClick();
+
 private:
     Ui::MainWindow ui;
+    FileManagement file;
 };
 
 #endif // MAINWINDOW_H

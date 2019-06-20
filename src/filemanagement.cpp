@@ -25,15 +25,11 @@ QString FileManagement::path()
 // most recent
 void FileManagement::addRecentFile(QString path)
 {
-    QString tmp[MAX_RECENT_FILES];
+    // Add to top
+    this->_recentFiles.prepend(path);
 
-    tmp[0] = path;
-    for(int i = 1; i < MAX_RECENT_FILES - 1; i++) {
-        tmp[i] = this->_recentFiles[i];
-    }
-
-    // Inform to update
-    this->setRecentFiles(tmp);
+    // Process (This ensures everyhtign is formatted and cleaned up as expected)
+    this->processRecentFileChanges();
 }
 
 QString FileManagement::recentFile(int index)
@@ -43,41 +39,41 @@ QString FileManagement::recentFile(int index)
 
 void FileManagement::clearRecentFiles()
 {
-    for(int i = 0; i < MAX_RECENT_FILES; i++) {
-        this->_recentFiles[i] = "";
-    }
-
-    settings.setValue(KEY_RECENT_FILES, "");
-    this->recentFilesChanged(this->_recentFiles);
+    this->_recentFiles.clear();
+    this->processRecentFileChanges();
 }
 
-QString *FileManagement::recentFiles()
+QList<QString>* FileManagement::recentFiles()
 {
-    return this->_recentFiles;
+    return &this->_recentFiles;
 }
 
-void FileManagement::setRecentFiles(QString files[MAX_RECENT_FILES])
+void FileManagement::processRecentFileChanges()
 {
-    // Don't bother if they're the same
-    if(files == this->_recentFiles)
-        return;
+    // Cleanup First make sure correct length and contains no
+    // empty strings or strings with spaces or duplicate strings, etc...
+    QList<QString> newList;
+    for(int i = 0; i < this->_recentFiles.size(); i++) {
+        QString file = this->_recentFiles[i];
+        file = file.trimmed();
+        if(file == "" || newList.contains(file))
+            continue;
 
-    // Settings has a clunky array saving feature
-    // For simplicity we concat all files into a string seperated by ";"
-    // This saves it quickly as one key with the disadvantage that Linux/Unix
-    // paths and files cannot have a ";" in them which I imagine to be very rare
-    QString toSettings = "";
-
-    for(int i = 0; i < MAX_RECENT_FILES; i++) {
-        this->_recentFiles[i] = files[i];
-        toSettings += files[i] + ";";
+        newList.append(file);
+        if(newList.size() > MAX_RECENT_FILES)
+            break;
     }
 
-    // Remove last ";"
-    toSettings.resize(toSettings.size() - 1);
+    // Replace current list with newly formatted list
+    this->_recentFiles.clear();
+    this->_recentFiles.append(newList);
 
-    settings.setValue(KEY_RECENT_FILES, toSettings);
-    this->recentFilesChanged(this->_recentFiles);
+    // Save
+    QString compacted = newList.join(';');
+    settings.setValue(KEY_RECENT_FILES, compacted);
+
+    // Notify
+    this->recentFilesChanged(&this->_recentFiles);
 }
 
 void FileManagement::newFile()
@@ -204,19 +200,14 @@ void FileManagement::writeSaveData(QString filePath, quint8 *data)
 // Simply expands recent files string into memory and notifies of the update
 void FileManagement::expandRecentFiles(QString key)
 {
+    // Break apart string into paths
+    // Import into recent files clearing out old values
     QStringList recentFiles = key.split(';');
+    this->_recentFiles.clear();
+    this->_recentFiles.fromStdList(recentFiles.toStdList());
 
-    // Erase Array
-    for(int i = 0; i < MAX_RECENT_FILES; i++) {
-        this->_recentFiles[i] = "";
-    }
-
-    // Add in recent files no longer than provided string and max capacity
-    for(int i = 0; i < MAX_RECENT_FILES && i < recentFiles.size(); i++) {
-        this->_recentFiles[i] = recentFiles[i];
-    }
-
-    this->recentFilesChanged(this->_recentFiles);
+    // Process, cleanup, and notify
+    this->processRecentFileChanges();
 }
 
 void FileManagement::setPath(QString path)

@@ -18,7 +18,7 @@ class FileManagement : public QObject
     Q_OBJECT
     Q_PROPERTY(QString path READ path NOTIFY pathChanged)
     Q_PROPERTY(RawSaveData* data READ data)
-    Q_PROPERTY(QString* recentFiles READ recentFiles RESET clearRecentFiles NOTIFY recentFilesChanged)
+    Q_PROPERTY(QList<QString>* recentFiles READ recentFiles RESET clearRecentFiles NOTIFY recentFilesChanged)
     Q_PROPERTY(QString recentFile READ recentFile NOTIFY recentFilesChanged STORED false)
 
 public:
@@ -31,30 +31,30 @@ public:
 
     // Manage Recent Files
     QString recentFile(int index = 0);
-
-    void clearRecentFiles();
-    QString* recentFiles();
-
-    // Open/Save Files
-    Q_INVOKABLE void newFile();
-    Q_INVOKABLE void openFile();
-    Q_INVOKABLE void openFileRecent(int index);
-    Q_INVOKABLE void reopenFile();
-
-    Q_INVOKABLE void saveFile();
-    Q_INVOKABLE void saveFileAs();
-    Q_INVOKABLE void saveFileCopy();
-
-    Q_INVOKABLE void wipeUnusedSpace();
+    QList<QString>* recentFiles();
 
 signals:
     void pathChanged(QString path, QString oldPath);
-    void recentFilesChanged(QString files[MAX_RECENT_FILES]);
+    void recentFilesChanged(QList<QString>* files);
+
+public slots:
+    // Open/Save Files
+    void newFile();
+    void openFile();
+    void openFileRecent(int index);
+    void reopenFile();
+
+    void saveFile();
+    void saveFileAs();
+    void saveFileCopy();
+
+    void wipeUnusedSpace();
+    void clearRecentFiles();
 
 private:
     // Internal management of recent files
     void addRecentFile(QString path);
-    void setRecentFiles(QString files[MAX_RECENT_FILES]);
+    void processRecentFileChanges();
 
     // Internal File Dialog Handling
     QString openFileDialog(QString title);
@@ -65,13 +65,13 @@ private:
     void writeSaveData(QString filePath, quint8* data);
 
     // Internal paths handling
-    void expandRecentFiles(QString key);
+    void expandRecentFiles(QString files);
     void setPath(QString path);
 
     // Internal variables
     RawSaveData _data;
     QString _path;
-    QString _recentFiles[MAX_RECENT_FILES];
+    QList<QString> _recentFiles;
     QSettings settings;
 };
 
