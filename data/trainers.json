@@ -1,0 +1,190 @@
+[
+    {
+        "name": "Youngster",
+        "ind": 1
+    },
+    {
+        "name": "Bug Catcher",
+        "ind": 2
+    },
+    {
+        "name": "Lass",
+        "ind": 3
+    },
+    {
+        "name": "Sailor",
+        "ind": 4
+    },
+    {
+        "name": "Jr. Trainer<m>",
+        "ind": 5
+    },
+    {
+        "name": "Jr Trainer<f>",
+        "ind": 6
+    },
+    {
+        "name": "Pokemaniac",
+        "ind": 7
+    },
+    {
+        "name": "Super Nerd",
+        "ind": 8
+    },
+    {
+        "name": "Hiker",
+        "ind": 9
+    },
+    {
+        "name": "Biker",
+        "ind": 10
+    },
+    {
+        "name": "Burglar",
+        "ind": 11
+    },
+    {
+        "name": "Engineer",
+        "ind": 12
+    },
+    {
+        "name": "Juggler X",
+        "ind": 13
+    },
+    {
+        "name": "Fisher",
+        "ind": 14
+    },
+    {
+        "name": "Swimmer",
+        "ind": 15
+    },
+    {
+        "name": "Cue ball",
+        "ind": 16
+    },
+    {
+        "name": "Gambler",
+        "ind": 17
+    },
+    {
+        "name": "Beauty",
+        "ind": 18
+    },
+    {
+        "name": "Psychic Trainer",
+        "ind": 19
+    },
+    {
+        "name": "Rocker",
+        "ind": 20
+    },
+    {
+        "name": "Juggler",
+        "ind": 21
+    },
+    {
+        "name": "Tamer",
+        "ind": 22
+    },
+    {
+        "name": "Bird Keeper",
+        "ind": 23
+    },
+    {
+        "name": "Blackbelt",
+        "ind": 24
+    },
+    {
+        "name": "Rival 1",
+        "ind": 25
+    },
+    {
+        "name": "Prof Oak",
+        "ind": 26
+    },
+    {
+        "name": "Chief",
+        "ind": 27
+    },
+    {
+        "name": "Scientist",
+        "ind": 28
+    },
+    {
+        "name": "Giovanni",
+        "ind": 29
+    },
+    {
+        "name": "Rocket",
+        "ind": 30
+    },
+    {
+        "name": "Cooltrainer<m>",
+        "ind": 31
+    },
+    {
+        "name": "Cooltrainer<f>",
+        "ind": 32
+    },
+    {
+        "name": "Bruno",
+        "ind": 33
+    },
+    {
+        "name": "Brock",
+        "ind": 34
+    },
+    {
+        "name": "Misty",
+        "ind": 35
+    },
+    {
+        "name": "Lt Surge",
+        "ind": 36
+    },
+    {
+        "name": "Erika",
+        "ind": 37
+    },
+    {
+        "name": "Koga",
+        "ind": 38
+    },
+    {
+        "name": "Blaine",
+        "ind": 39
+    },
+    {
+        "name": "Sabrina",
+        "ind": 40
+    },
+    {
+        "name": "Gentleman",
+        "ind": 41
+    },
+    {
+        "name": "Rival 2",
+        "ind": 42
+    },
+    {
+        "name": "Rival 3",
+        "ind": 43
+    },
+    {
+        "name": "Lorelei",
+        "ind": 44
+    },
+    {
+        "name": "Channeler",
+        "ind": 45
+    },
+    {
+        "name": "Agatha",
+        "ind": 46
+    },
+    {
+        "name": "Lance",
+        "ind": 47
+    }
+]

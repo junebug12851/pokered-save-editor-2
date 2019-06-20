@@ -4,5 +4,25 @@
         <file>ux/main.qml</file>
         <file>ux/Navigation.qml</file>
         <file alias="icon">icons/512x512.png</file>
+        <file>data/eventPokemon.json</file>
+        <file>data/events.json</file>
+        <file>data/hiddenCoins.json</file>
+        <file>data/hiddenItems.json</file>
+        <file>data/items.json</file>
+        <file>data/maps.json</file>
+        <file>data/missables.json</file>
+        <file>data/moves.json</file>
+        <file>data/pokemon.json</file>
+        <file>data/randomNames.json</file>
+        <file>data/scripts.json</file>
+        <file>data/sprites.json</file>
+        <file>data/starterCandidates.json</file>
+        <file>data/starters.json</file>
+        <file>data/textCodes.json</file>
+        <file>data/towns.json</file>
+        <file>data/trades.json</file>
+        <file>data/trainers.json</file>
+        <file>data/types.json</file>
+        <file>data/worldScripts.json</file>
     </qresource>
 </RCC>

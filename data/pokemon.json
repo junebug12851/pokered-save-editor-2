@@ -1,0 +1,9869 @@
+[
+  {
+    "name": "Rhydon",
+    "ind": 1,
+    "pokedex": 112,
+    "growthRate": 5,
+    "baseHp": 105,
+    "baseAttack": 130,
+    "baseDefense": 120,
+    "baseSpeed": 40,
+    "baseSpecial": 45,
+    "baseExpYield": 204,
+    "moves": [
+      {
+        "level": 30,
+        "move": "Stomp"
+      },
+      {
+        "level": 35,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 40,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 48,
+        "move": "Horn Drill"
+      },
+      {
+        "level": 55,
+        "move": "Leer"
+      },
+      {
+        "level": 64,
+        "move": "Take Down"
+      }
+    ],
+    "initial": [
+      "Horn Attack",
+      "Stomp",
+      "Tail Whip",
+      "Fury Attack"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      38,
+      40,
+      44,
+      48,
+      50,
+      53,
+      54
+    ],
+    "type1": "Ground",
+    "type2": "Rock",
+    "catchRate": 60
+  },
+  {
+    "name": "Kangaskhan",
+    "ind": 2,
+    "pokedex": 115,
+    "growthRate": 0,
+    "baseHp": 105,
+    "baseAttack": 95,
+    "baseDefense": 80,
+    "baseSpeed": 90,
+    "baseSpecial": 40,
+    "baseExpYield": 175,
+    "moves": [
+      {
+        "level": 26,
+        "move": "Bite"
+      },
+      {
+        "level": 31,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 36,
+        "move": "Mega Punch"
+      },
+      {
+        "level": 42,
+        "move": "Leer"
+      },
+      {
+        "level": 46,
+        "move": "Dizzy Punch"
+      }
+    ],
+    "initial": [
+      "Comet Punch",
+      "Rage"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      26,
+      27,
+      31,
+      32,
+      34,
+      38,
+      40,
+      44,
+      48,
+      50,
+      53,
+      54
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 45
+  },
+  {
+    "name": "Nidoran<m>",
+    "ind": 3,
+    "pokedex": 32,
+    "growthRate": 3,
+    "baseHp": 46,
+    "baseAttack": 57,
+    "baseDefense": 40,
+    "baseSpeed": 50,
+    "baseSpecial": 40,
+    "baseExpYield": 60,
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 235,
+    "evolution": {
+      "level": 16,
+      "toName": "Nidorino"
+    },
+    "moves": [
+      {
+        "level": 8,
+        "move": "Horn Attack"
+      },
+      {
+        "level": 14,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 21,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 29,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 36,
+        "move": "Horn Drill"
+      },
+      {
+        "level": 43,
+        "move": "Double Kick"
+      }
+    ],
+    "initial": [
+      "Leer",
+      "Tackle"
+    ]
+  },
+  {
+    "name": "Clefairy",
+    "ind": 4,
+    "pokedex": 35,
+    "growthRate": 4,
+    "baseHp": 70,
+    "baseAttack": 45,
+    "baseDefense": 48,
+    "baseSpeed": 35,
+    "baseSpecial": 60,
+    "baseExpYield": 68,
+    "evolution": {
+      "item": "Moon Stone",
+      "toName": "Clefable"
+    },
+    "moves": [
+      {
+        "level": 13,
+        "move": "Sing"
+      },
+      {
+        "level": 18,
+        "move": "Doubleslap"
+      },
+      {
+        "level": 24,
+        "move": "Minimize"
+      },
+      {
+        "level": 31,
+        "move": "Metronome"
+      },
+      {
+        "level": 39,
+        "move": "Defense Curl"
+      },
+      {
+        "level": 48,
+        "move": "Light Screen"
+      }
+    ],
+    "initial": [
+      "Pound",
+      "Growl"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      17,
+      18,
+      19,
+      20,
+      22,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      38,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      54,
+      55
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 150
+  },
+  {
+    "name": "Spearow",
+    "ind": 5,
+    "pokedex": 21,
+    "growthRate": 0,
+    "baseHp": 40,
+    "baseAttack": 60,
+    "baseDefense": 30,
+    "baseSpeed": 70,
+    "baseSpecial": 31,
+    "baseExpYield": 58,
+    "evolution": {
+      "level": 20,
+      "toName": "Fearow"
+    },
+    "moves": [
+      {
+        "level": 9,
+        "move": "Leer"
+      },
+      {
+        "level": 15,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 22,
+        "move": "Mirror Move"
+      },
+      {
+        "level": 29,
+        "move": "Drill Peck"
+      },
+      {
+        "level": 36,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Peck",
+      "Growl"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      20,
+      31,
+      32,
+      34,
+      39,
+      43,
+      44,
+      50,
+      52
+    ],
+    "type1": "Normal",
+    "type2": "Flying",
+    "catchRate": 255
+  },
+  {
+    "name": "Voltorb",
+    "ind": 6,
+    "pokedex": 100,
+    "growthRate": 0,
+    "baseHp": 40,
+    "baseAttack": 30,
+    "baseDefense": 50,
+    "baseSpeed": 100,
+    "baseSpecial": 55,
+    "baseExpYield": 103,
+    "evolution": {
+      "level": 30,
+      "toName": "Electrode"
+    },
+    "moves": [
+      {
+        "level": 17,
+        "move": "Sonicboom"
+      },
+      {
+        "level": 22,
+        "move": "Selfdestruct"
+      },
+      {
+        "level": 29,
+        "move": "Light Screen"
+      },
+      {
+        "level": 36,
+        "move": "Swift"
+      },
+      {
+        "level": 43,
+        "move": "Explosion"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Screech"
+    ],
+    "tmHm": [
+      6,
+      9,
+      20,
+      24,
+      25,
+      30,
+      31,
+      32,
+      33,
+      34,
+      36,
+      39,
+      44,
+      45,
+      47,
+      50,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Electric",
+    "catchRate": 190
+  },
+  {
+    "name": "Nidoking",
+    "ind": 7,
+    "pokedex": 34,
+    "growthRate": 3,
+    "baseHp": 81,
+    "baseAttack": 92,
+    "baseDefense": 77,
+    "baseSpeed": 85,
+    "baseSpecial": 75,
+    "baseExpYield": 195,
+    "moves": [
+      {
+        "level": 8,
+        "move": "Horn Attack"
+      },
+      {
+        "level": 14,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 23,
+        "move": "Thrash"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Horn Attack",
+      "Poison Sting",
+      "Thrash"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      26,
+      27,
+      31,
+      32,
+      33,
+      34,
+      38,
+      40,
+      44,
+      48,
+      50,
+      53,
+      54
+    ],
+    "type1": "Poison",
+    "type2": "Ground",
+    "catchRate": 45
+  },
+  {
+    "name": "Slowbro",
+    "ind": 8,
+    "pokedex": 80,
+    "growthRate": 0,
+    "baseHp": 95,
+    "baseAttack": 75,
+    "baseDefense": 110,
+    "baseSpeed": 30,
+    "baseSpecial": 80,
+    "baseExpYield": 164,
+    "moves": [
+      {
+        "level": 18,
+        "move": "Disable"
+      },
+      {
+        "level": 22,
+        "move": "Headbutt"
+      },
+      {
+        "level": 27,
+        "move": "Growl"
+      },
+      {
+        "level": 33,
+        "move": "Water Gun"
+      },
+      {
+        "level": 37,
+        "move": "Withdraw"
+      },
+      {
+        "level": 44,
+        "move": "Amnesia"
+      },
+      {
+        "level": 55,
+        "move": "Psychic"
+      }
+    ],
+    "initial": [
+      "Confusion",
+      "Disable",
+      "Headbutt"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      53,
+      54,
+      55
+    ],
+    "type1": "Water",
+    "type2": "Psychic",
+    "catchRate": 75
+  },
+  {
+    "name": "Ivysaur",
+    "ind": 9,
+    "pokedex": 2,
+    "growthRate": 3,
+    "baseHp": 60,
+    "baseAttack": 62,
+    "baseDefense": 63,
+    "baseSpeed": 60,
+    "baseSpecial": 80,
+    "baseExpYield": 141,
+    "evolution": {
+      "level": 32,
+      "toName": "Venusaur"
+    },
+    "moves": [
+      {
+        "level": 7,
+        "move": "Leech Seed"
+      },
+      {
+        "level": 13,
+        "move": "Vine Whip"
+      },
+      {
+        "level": 22,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 30,
+        "move": "Razor Leaf"
+      },
+      {
+        "level": 38,
+        "move": "Growth"
+      },
+      {
+        "level": 46,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 54,
+        "move": "Solarbeam"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Growl",
+      "Leech Seed"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 45
+  },
+  {
+    "name": "Exeggutor",
+    "ind": 10,
+    "pokedex": 103,
+    "growthRate": 5,
+    "baseHp": 95,
+    "baseAttack": 95,
+    "baseDefense": 85,
+    "baseSpeed": 55,
+    "baseSpecial": 125,
+    "baseExpYield": 212,
+    "moves": [
+      {
+        "level": 28,
+        "move": "Stomp"
+      }
+    ],
+    "initial": [
+      "Barrage",
+      "Hypnosis"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      15,
+      20,
+      21,
+      22,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      36,
+      37,
+      44,
+      46,
+      47,
+      50,
+      54
+    ],
+    "type1": "Grass",
+    "type2": "Psychic",
+    "catchRate": 45
+  },
+  {
+    "name": "Lickitung",
+    "ind": 11,
+    "pokedex": 108,
+    "growthRate": 0,
+    "baseHp": 90,
+    "baseAttack": 55,
+    "baseDefense": 75,
+    "baseSpeed": 30,
+    "baseSpecial": 60,
+    "baseExpYield": 127,
+    "moves": [
+      {
+        "level": 7,
+        "move": "Stomp"
+      },
+      {
+        "level": 15,
+        "move": "Disable"
+      },
+      {
+        "level": 23,
+        "move": "Defense Curl"
+      },
+      {
+        "level": 31,
+        "move": "Slam"
+      },
+      {
+        "level": 39,
+        "move": "Screech"
+      }
+    ],
+    "initial": [
+      "Wrap",
+      "Supersonic"
+    ],
+    "tmHm": [
+      1,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      26,
+      27,
+      31,
+      32,
+      34,
+      38,
+      40,
+      44,
+      50,
+      51,
+      53,
+      54
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 45
+  },
+  {
+    "name": "Exeggcute",
+    "ind": 12,
+    "pokedex": 102,
+    "growthRate": 5,
+    "baseHp": 60,
+    "baseAttack": 40,
+    "baseDefense": 80,
+    "baseSpeed": 40,
+    "baseSpecial": 60,
+    "baseExpYield": 98,
+    "evolution": {
+      "item": "Leaf Stone",
+      "toName": "Exeggutor"
+    },
+    "moves": [
+      {
+        "level": 25,
+        "move": "Reflect"
+      },
+      {
+        "level": 28,
+        "move": "Leech Seed"
+      },
+      {
+        "level": 32,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 37,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 42,
+        "move": "Solarbeam"
+      },
+      {
+        "level": 48,
+        "move": "Sleep Powder"
+      }
+    ],
+    "initial": [
+      "Barrage",
+      "Hypnosis"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      20,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      36,
+      37,
+      44,
+      46,
+      47,
+      50
+    ],
+    "type1": "Grass",
+    "type2": "Psychic",
+    "catchRate": 90
+  },
+  {
+    "name": "Grimer",
+    "ind": 13,
+    "pokedex": 88,
+    "growthRate": 0,
+    "baseHp": 80,
+    "baseAttack": 80,
+    "baseDefense": 50,
+    "baseSpeed": 25,
+    "baseSpecial": 40,
+    "baseExpYield": 90,
+    "evolution": {
+      "level": 38,
+      "toName": "Muk"
+    },
+    "moves": [
+      {
+        "level": 30,
+        "move": "Poison Gas"
+      },
+      {
+        "level": 33,
+        "move": "Minimize"
+      },
+      {
+        "level": 37,
+        "move": "Sludge"
+      },
+      {
+        "level": 42,
+        "move": "Harden"
+      },
+      {
+        "level": 48,
+        "move": "Screech"
+      },
+      {
+        "level": 55,
+        "move": "Acid Armor"
+      }
+    ],
+    "initial": [
+      "Pound",
+      "Disable"
+    ],
+    "tmHm": [
+      6,
+      8,
+      20,
+      21,
+      24,
+      25,
+      31,
+      32,
+      34,
+      36,
+      38,
+      44,
+      47,
+      50
+    ],
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 190
+  },
+  {
+    "name": "Gengar",
+    "ind": 14,
+    "pokedex": 94,
+    "growthRate": 3,
+    "baseHp": 60,
+    "baseAttack": 65,
+    "baseDefense": 60,
+    "baseSpeed": 110,
+    "baseSpecial": 130,
+    "baseExpYield": 190,
+    "moves": [
+      {
+        "level": 29,
+        "move": "Hypnosis"
+      },
+      {
+        "level": 38,
+        "move": "Dream Eater"
+      }
+    ],
+    "initial": [
+      "Lick",
+      "Confuse Ray",
+      "Night Shade"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      18,
+      19,
+      20,
+      21,
+      24,
+      25,
+      29,
+      31,
+      32,
+      34,
+      35,
+      36,
+      40,
+      42,
+      44,
+      46,
+      47,
+      50,
+      54
+    ],
+    "type1": "Ghost",
+    "type2": "Poison",
+    "catchRate": 45
+  },
+  {
+    "name": "Nidoran<f>",
+    "ind": 15,
+    "pokedex": 29,
+    "growthRate": 3,
+    "baseHp": 55,
+    "baseAttack": 47,
+    "baseDefense": 52,
+    "baseSpeed": 41,
+    "baseSpecial": 40,
+    "baseExpYield": 59,
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 235,
+    "evolution": {
+      "level": 16,
+      "toName": "Nidorina"
+    },
+    "moves": [
+      {
+        "level": 8,
+        "move": "Scratch"
+      },
+      {
+        "level": 14,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 21,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 29,
+        "move": "Bite"
+      },
+      {
+        "level": 36,
+        "move": "Fury Swipes"
+      },
+      {
+        "level": 43,
+        "move": "Double Kick"
+      }
+    ],
+    "initial": [
+      "Growl",
+      "Tackle"
+    ]
+  },
+  {
+    "name": "Nidoqueen",
+    "ind": 16,
+    "pokedex": 31,
+    "growthRate": 3,
+    "baseHp": 90,
+    "baseAttack": 82,
+    "baseDefense": 87,
+    "baseSpeed": 76,
+    "baseSpecial": 75,
+    "baseExpYield": 194,
+    "moves": [
+      {
+        "level": 8,
+        "move": "Scratch"
+      },
+      {
+        "level": 14,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 23,
+        "move": "Body Slam"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Scratch",
+      "Tail Whip",
+      "Body Slam"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      26,
+      27,
+      31,
+      32,
+      33,
+      34,
+      38,
+      40,
+      44,
+      48,
+      50,
+      53,
+      54
+    ],
+    "type1": "Poison",
+    "type2": "Ground",
+    "catchRate": 45
+  },
+  {
+    "name": "Cubone",
+    "ind": 17,
+    "pokedex": 104,
+    "growthRate": 0,
+    "baseHp": 50,
+    "baseAttack": 50,
+    "baseDefense": 95,
+    "baseSpeed": 35,
+    "baseSpecial": 40,
+    "baseExpYield": 87,
+    "evolution": {
+      "level": 28,
+      "toName": "Marowak"
+    },
+    "moves": [
+      {
+        "level": 25,
+        "move": "Leer"
+      },
+      {
+        "level": 31,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 38,
+        "move": "Thrash"
+      },
+      {
+        "level": 43,
+        "move": "Bonemerang"
+      },
+      {
+        "level": 46,
+        "move": "Rage"
+      }
+    ],
+    "initial": [
+      "Bone Club",
+      "Growl"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      38,
+      40,
+      44,
+      50,
+      54
+    ],
+    "type1": "Ground",
+    "type2": "Ground",
+    "catchRate": 190
+  },
+  {
+    "name": "Rhyhorn",
+    "ind": 18,
+    "pokedex": 111,
+    "growthRate": 5,
+    "baseHp": 80,
+    "baseAttack": 85,
+    "baseDefense": 95,
+    "baseSpeed": 25,
+    "baseSpecial": 30,
+    "baseExpYield": 135,
+    "evolution": {
+      "level": 42,
+      "toName": "Rhydon"
+    },
+    "moves": [
+      {
+        "level": 30,
+        "move": "Stomp"
+      },
+      {
+        "level": 35,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 40,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 45,
+        "move": "Horn Drill"
+      },
+      {
+        "level": 50,
+        "move": "Leer"
+      },
+      {
+        "level": 55,
+        "move": "Take Down"
+      }
+    ],
+    "initial": [
+      "Horn Attack"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      20,
+      24,
+      25,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      38,
+      40,
+      44,
+      48,
+      50,
+      54
+    ],
+    "type1": "Ground",
+    "type2": "Rock",
+    "catchRate": 120
+  },
+  {
+    "name": "Lapras",
+    "ind": 19,
+    "pokedex": 131,
+    "growthRate": 5,
+    "baseHp": 130,
+    "baseAttack": 85,
+    "baseDefense": 80,
+    "baseSpeed": 60,
+    "baseSpecial": 95,
+    "baseExpYield": 219,
+    "moves": [
+      {
+        "level": 16,
+        "move": "Sing"
+      },
+      {
+        "level": 20,
+        "move": "Mist"
+      },
+      {
+        "level": 25,
+        "move": "Body Slam"
+      },
+      {
+        "level": 31,
+        "move": "Confuse Ray"
+      },
+      {
+        "level": 38,
+        "move": "Ice Beam"
+      },
+      {
+        "level": 46,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Water Gun",
+      "Growl"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      22,
+      23,
+      24,
+      25,
+      29,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      46,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Ice",
+    "catchRate": 45
+  },
+  {
+    "name": "Arcanine",
+    "ind": 20,
+    "pokedex": 59,
+    "growthRate": 5,
+    "baseHp": 90,
+    "baseAttack": 110,
+    "baseDefense": 80,
+    "baseSpeed": 95,
+    "baseSpecial": 80,
+    "baseExpYield": 213,
+    "initial": [
+      "Roar",
+      "Ember",
+      "Leer",
+      "Take Down"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      23,
+      28,
+      30,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 75
+  },
+  {
+    "name": "Mew",
+    "ind": 21,
+    "pokedex": 151,
+    "growthRate": 3,
+    "baseHp": 100,
+    "baseAttack": 100,
+    "baseDefense": 100,
+    "baseSpeed": 100,
+    "baseSpecial": 100,
+    "baseExpYield": 64,
+    "moves": [
+      {
+        "level": 10,
+        "move": "Transform"
+      },
+      {
+        "level": 20,
+        "move": "Mega Punch"
+      },
+      {
+        "level": 30,
+        "move": "Metronome"
+      },
+      {
+        "level": 40,
+        "move": "Psychic"
+      }
+    ],
+    "initial": [
+      "Pound"
+    ],
+    "tmHm": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55
+    ],
+    "type1": "Psychic",
+    "type2": "Psychic",
+    "catchRate": 45
+  },
+  {
+    "name": "Gyarados",
+    "ind": 22,
+    "pokedex": 130,
+    "growthRate": 5,
+    "baseHp": 95,
+    "baseAttack": 125,
+    "baseDefense": 79,
+    "baseSpeed": 81,
+    "baseSpecial": 100,
+    "baseExpYield": 214,
+    "moves": [
+      {
+        "level": 20,
+        "move": "Bite"
+      },
+      {
+        "level": 25,
+        "move": "Dragon Rage"
+      },
+      {
+        "level": 32,
+        "move": "Leer"
+      },
+      {
+        "level": 41,
+        "move": "Hydro Pump"
+      },
+      {
+        "level": 52,
+        "move": "Hyper Beam"
+      }
+    ],
+    "initial": [
+      "Bite",
+      "Dragon Rage",
+      "Leer",
+      "Hydro Pump"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      23,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      38,
+      40,
+      44,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "Shellder",
+    "ind": 23,
+    "pokedex": 90,
+    "growthRate": 5,
+    "baseHp": 30,
+    "baseAttack": 65,
+    "baseDefense": 100,
+    "baseSpeed": 40,
+    "baseSpecial": 45,
+    "baseExpYield": 97,
+    "evolution": {
+      "item": "Water Stone",
+      "toName": "Cloyster"
+    },
+    "moves": [
+      {
+        "level": 18,
+        "move": "Supersonic"
+      },
+      {
+        "level": 23,
+        "move": "Clamp"
+      },
+      {
+        "level": 30,
+        "move": "Aurora Beam"
+      },
+      {
+        "level": 39,
+        "move": "Leer"
+      },
+      {
+        "level": 50,
+        "move": "Ice Beam"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Withdraw"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      30,
+      31,
+      32,
+      33,
+      34,
+      36,
+      39,
+      44,
+      47,
+      49,
+      50,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 190
+  },
+  {
+    "name": "Tentacool",
+    "ind": 24,
+    "pokedex": 72,
+    "growthRate": 5,
+    "baseHp": 40,
+    "baseAttack": 40,
+    "baseDefense": 35,
+    "baseSpeed": 70,
+    "baseSpecial": 100,
+    "baseExpYield": 105,
+    "evolution": {
+      "level": 30,
+      "toName": "Tentacruel"
+    },
+    "moves": [
+      {
+        "level": 7,
+        "move": "Supersonic"
+      },
+      {
+        "level": 13,
+        "move": "Wrap"
+      },
+      {
+        "level": 18,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 22,
+        "move": "Water Gun"
+      },
+      {
+        "level": 27,
+        "move": "Constrict"
+      },
+      {
+        "level": 33,
+        "move": "Barrier"
+      },
+      {
+        "level": 40,
+        "move": "Screech"
+      },
+      {
+        "level": 48,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Acid"
+    ],
+    "tmHm": [
+      3,
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      21,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      51,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Poison",
+    "catchRate": 190
+  },
+  {
+    "name": "Gastly",
+    "ind": 25,
+    "pokedex": 92,
+    "growthRate": 3,
+    "baseHp": 30,
+    "baseAttack": 35,
+    "baseDefense": 30,
+    "baseSpeed": 80,
+    "baseSpecial": 100,
+    "baseExpYield": 95,
+    "evolution": {
+      "level": 25,
+      "toName": "Haunter"
+    },
+    "moves": [
+      {
+        "level": 27,
+        "move": "Hypnosis"
+      },
+      {
+        "level": 35,
+        "move": "Dream Eater"
+      }
+    ],
+    "initial": [
+      "Lick",
+      "Confuse Ray",
+      "Night Shade"
+    ],
+    "tmHm": [
+      6,
+      20,
+      21,
+      24,
+      25,
+      29,
+      31,
+      32,
+      34,
+      36,
+      42,
+      44,
+      46,
+      47,
+      50
+    ],
+    "type1": "Ghost",
+    "type2": "Poison",
+    "catchRate": 190
+  },
+  {
+    "name": "Scyther",
+    "ind": 26,
+    "pokedex": 123,
+    "growthRate": 0,
+    "baseHp": 70,
+    "baseAttack": 110,
+    "baseDefense": 80,
+    "baseSpeed": 105,
+    "baseSpecial": 55,
+    "baseExpYield": 187,
+    "moves": [
+      {
+        "level": 17,
+        "move": "Leer"
+      },
+      {
+        "level": 20,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 24,
+        "move": "Double Team"
+      },
+      {
+        "level": 29,
+        "move": "Slash"
+      },
+      {
+        "level": 35,
+        "move": "Swords Dance"
+      },
+      {
+        "level": 42,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Quick Attack"
+    ],
+    "tmHm": [
+      3,
+      6,
+      9,
+      10,
+      15,
+      20,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50,
+      51
+    ],
+    "type1": "Bug",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "Staryu",
+    "ind": 27,
+    "pokedex": 120,
+    "growthRate": 5,
+    "baseHp": 30,
+    "baseAttack": 45,
+    "baseDefense": 55,
+    "baseSpeed": 85,
+    "baseSpecial": 70,
+    "baseExpYield": 106,
+    "evolution": {
+      "item": "Water Stone",
+      "toName": "Starmie"
+    },
+    "moves": [
+      {
+        "level": 17,
+        "move": "Water Gun"
+      },
+      {
+        "level": 22,
+        "move": "Harden"
+      },
+      {
+        "level": 27,
+        "move": "Recover"
+      },
+      {
+        "level": 32,
+        "move": "Swift"
+      },
+      {
+        "level": 37,
+        "move": "Minimize"
+      },
+      {
+        "level": 42,
+        "move": "Light Screen"
+      },
+      {
+        "level": 47,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Tackle"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      53,
+      55
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 225
+  },
+  {
+    "name": "Blastoise",
+    "ind": 28,
+    "pokedex": 9,
+    "growthRate": 3,
+    "baseHp": 79,
+    "baseAttack": 83,
+    "baseDefense": 100,
+    "baseSpeed": 78,
+    "baseSpecial": 85,
+    "baseExpYield": 210,
+    "moves": [
+      {
+        "level": 8,
+        "move": "Bubble"
+      },
+      {
+        "level": 15,
+        "move": "Water Gun"
+      },
+      {
+        "level": 24,
+        "move": "Bite"
+      },
+      {
+        "level": 31,
+        "move": "Withdraw"
+      },
+      {
+        "level": 42,
+        "move": "Skull Bash"
+      },
+      {
+        "level": 52,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Tail Whip",
+      "Bubble",
+      "Water Gun"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 45
+  },
+  {
+    "name": "Pinsir",
+    "ind": 29,
+    "pokedex": 127,
+    "growthRate": 5,
+    "baseHp": 65,
+    "baseAttack": 125,
+    "baseDefense": 100,
+    "baseSpeed": 85,
+    "baseSpecial": 55,
+    "baseExpYield": 200,
+    "moves": [
+      {
+        "level": 25,
+        "move": "Seismic Toss"
+      },
+      {
+        "level": 30,
+        "move": "Guillotine"
+      },
+      {
+        "level": 36,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 43,
+        "move": "Harden"
+      },
+      {
+        "level": 49,
+        "move": "Slash"
+      },
+      {
+        "level": 54,
+        "move": "Swords Dance"
+      }
+    ],
+    "initial": [
+      "Vicegrip"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      19,
+      20,
+      31,
+      32,
+      34,
+      44,
+      50,
+      51,
+      54
+    ],
+    "type1": "Bug",
+    "type2": "Bug",
+    "catchRate": 45
+  },
+  {
+    "name": "Tangela",
+    "ind": 30,
+    "pokedex": 114,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 55,
+    "baseDefense": 115,
+    "baseSpeed": 60,
+    "baseSpecial": 100,
+    "baseExpYield": 166,
+    "moves": [
+      {
+        "level": 29,
+        "move": "Absorb"
+      },
+      {
+        "level": 32,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 36,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 39,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 45,
+        "move": "Slam"
+      },
+      {
+        "level": 49,
+        "move": "Growth"
+      }
+    ],
+    "initial": [
+      "Constrict",
+      "Bind"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      21,
+      22,
+      31,
+      32,
+      34,
+      40,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Grass",
+    "catchRate": 45
+  },
+  {
+    "name": "Missing1F",
+    "ind": 31,
+    "glitch": true
+  },
+  {
+    "name": "Missing20",
+    "ind": 32,
+    "glitch": true
+  },
+  {
+    "name": "Growlithe",
+    "ind": 33,
+    "pokedex": 58,
+    "growthRate": 5,
+    "baseHp": 55,
+    "baseAttack": 70,
+    "baseDefense": 45,
+    "baseSpeed": 60,
+    "baseSpecial": 50,
+    "baseExpYield": 91,
+    "evolution": {
+      "item": "Fire Stone",
+      "toName": "Arcanine"
+    },
+    "moves": [
+      {
+        "level": 18,
+        "move": "Ember"
+      },
+      {
+        "level": 23,
+        "move": "Leer"
+      },
+      {
+        "level": 30,
+        "move": "Take Down"
+      },
+      {
+        "level": 39,
+        "move": "Agility"
+      },
+      {
+        "level": 50,
+        "move": "Flamethrower"
+      }
+    ],
+    "initial": [
+      "Bite",
+      "Roar"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      20,
+      23,
+      28,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 190
+  },
+  {
+    "name": "Onix",
+    "ind": 34,
+    "pokedex": 95,
+    "growthRate": 0,
+    "baseHp": 35,
+    "baseAttack": 45,
+    "baseDefense": 160,
+    "baseSpeed": 70,
+    "baseSpecial": 30,
+    "baseExpYield": 108,
+    "moves": [
+      {
+        "level": 15,
+        "move": "Bind"
+      },
+      {
+        "level": 19,
+        "move": "Rock Throw"
+      },
+      {
+        "level": 25,
+        "move": "Rage"
+      },
+      {
+        "level": 33,
+        "move": "Slam"
+      },
+      {
+        "level": 43,
+        "move": "Harden"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Screech"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      36,
+      40,
+      44,
+      47,
+      48,
+      50,
+      54
+    ],
+    "type1": "Rock",
+    "type2": "Ground",
+    "catchRate": 45
+  },
+  {
+    "name": "Fearow",
+    "ind": 35,
+    "pokedex": 22,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 90,
+    "baseDefense": 65,
+    "baseSpeed": 100,
+    "baseSpecial": 61,
+    "baseExpYield": 162,
+    "moves": [
+      {
+        "level": 9,
+        "move": "Leer"
+      },
+      {
+        "level": 15,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 25,
+        "move": "Mirror Move"
+      },
+      {
+        "level": 34,
+        "move": "Drill Peck"
+      },
+      {
+        "level": 43,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Peck",
+      "Growl",
+      "Leer"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      15,
+      20,
+      31,
+      32,
+      34,
+      39,
+      43,
+      44,
+      50,
+      52
+    ],
+    "type1": "Normal",
+    "type2": "Flying",
+    "catchRate": 90
+  },
+  {
+    "name": "Pidgey",
+    "ind": 36,
+    "pokedex": 16,
+    "growthRate": 3,
+    "baseHp": 40,
+    "baseAttack": 45,
+    "baseDefense": 40,
+    "baseSpeed": 56,
+    "baseSpecial": 35,
+    "baseExpYield": 55,
+    "evolution": {
+      "level": 18,
+      "toName": "Pidgeotto"
+    },
+    "moves": [
+      {
+        "level": 5,
+        "move": "Sand Attack"
+      },
+      {
+        "level": 12,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 19,
+        "move": "Whirlwind"
+      },
+      {
+        "level": 28,
+        "move": "Wing Attack"
+      },
+      {
+        "level": 36,
+        "move": "Agility"
+      },
+      {
+        "level": 44,
+        "move": "Mirror Move"
+      }
+    ],
+    "initial": [
+      "Gust"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      20,
+      31,
+      32,
+      33,
+      34,
+      39,
+      43,
+      44,
+      50,
+      52
+    ],
+    "type1": "Normal",
+    "type2": "Flying",
+    "catchRate": 255
+  },
+  {
+    "name": "Slowpoke",
+    "ind": 37,
+    "pokedex": 79,
+    "growthRate": 0,
+    "baseHp": 90,
+    "baseAttack": 65,
+    "baseDefense": 65,
+    "baseSpeed": 15,
+    "baseSpecial": 40,
+    "baseExpYield": 99,
+    "evolution": {
+      "level": 37,
+      "toName": "Slowbro"
+    },
+    "moves": [
+      {
+        "level": 18,
+        "move": "Disable"
+      },
+      {
+        "level": 22,
+        "move": "Headbutt"
+      },
+      {
+        "level": 27,
+        "move": "Growl"
+      },
+      {
+        "level": 33,
+        "move": "Water Gun"
+      },
+      {
+        "level": 40,
+        "move": "Amnesia"
+      },
+      {
+        "level": 48,
+        "move": "Psychic"
+      }
+    ],
+    "initial": [
+      "Confusion"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      20,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      53,
+      54,
+      55
+    ],
+    "type1": "Water",
+    "type2": "Psychic",
+    "catchRate": 190
+  },
+  {
+    "name": "Kadabra",
+    "ind": 38,
+    "pokedex": 64,
+    "growthRate": 3,
+    "baseHp": 40,
+    "baseAttack": 35,
+    "baseDefense": 30,
+    "baseSpeed": 105,
+    "baseSpecial": 120,
+    "baseExpYield": 145,
+    "evolution": {
+      "trade": true,
+      "toName": "Alakazam"
+    },
+    "moves": [
+      {
+        "level": 16,
+        "move": "Confusion"
+      },
+      {
+        "level": 20,
+        "move": "Disable"
+      },
+      {
+        "level": 27,
+        "move": "Psybeam"
+      },
+      {
+        "level": 31,
+        "move": "Recover"
+      },
+      {
+        "level": 38,
+        "move": "Psychic"
+      },
+      {
+        "level": 42,
+        "move": "Reflect"
+      }
+    ],
+    "initial": [
+      "Teleport",
+      "Confusion",
+      "Disable"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      55
+    ],
+    "type1": "Psychic",
+    "type2": "Psychic",
+    "catchRate": 100
+  },
+  {
+    "name": "Graveler",
+    "ind": 39,
+    "pokedex": 75,
+    "growthRate": 3,
+    "baseHp": 55,
+    "baseAttack": 95,
+    "baseDefense": 115,
+    "baseSpeed": 35,
+    "baseSpecial": 45,
+    "baseExpYield": 134,
+    "evolution": {
+      "trade": true,
+      "toName": "Golem"
+    },
+    "moves": [
+      {
+        "level": 11,
+        "move": "Defense Curl"
+      },
+      {
+        "level": 16,
+        "move": "Rock Throw"
+      },
+      {
+        "level": 21,
+        "move": "Selfdestruct"
+      },
+      {
+        "level": 29,
+        "move": "Harden"
+      },
+      {
+        "level": 36,
+        "move": "Earthquake"
+      },
+      {
+        "level": 43,
+        "move": "Explosion"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Defense Curl"
+    ],
+    "tmHm": [
+      1,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      35,
+      36,
+      38,
+      44,
+      47,
+      48,
+      50,
+      54
+    ],
+    "type1": "Rock",
+    "type2": "Ground",
+    "catchRate": 120
+  },
+  {
+    "name": "Chansey",
+    "ind": 40,
+    "pokedex": 113,
+    "growthRate": 4,
+    "baseHp": 250,
+    "baseAttack": 5,
+    "baseDefense": 5,
+    "baseSpeed": 50,
+    "baseSpecial": 105,
+    "baseExpYield": 255,
+    "moves": [
+      {
+        "level": 24,
+        "move": "Sing"
+      },
+      {
+        "level": 30,
+        "move": "Growl"
+      },
+      {
+        "level": 38,
+        "move": "Minimize"
+      },
+      {
+        "level": 44,
+        "move": "Defense Curl"
+      },
+      {
+        "level": 48,
+        "move": "Light Screen"
+      },
+      {
+        "level": 54,
+        "move": "Double Edge"
+      }
+    ],
+    "initial": [
+      "Pound",
+      "Doubleslap"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      22,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      37,
+      38,
+      40,
+      41,
+      44,
+      45,
+      46,
+      49,
+      50,
+      54,
+      55
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 30
+  },
+  {
+    "name": "Machoke",
+    "ind": 41,
+    "pokedex": 67,
+    "growthRate": 3,
+    "baseHp": 80,
+    "baseAttack": 100,
+    "baseDefense": 70,
+    "baseSpeed": 45,
+    "baseSpecial": 50,
+    "baseExpYield": 146,
+    "evolution": {
+      "trade": true,
+      "toName": "Machamp"
+    },
+    "moves": [
+      {
+        "level": 20,
+        "move": "Low Kick"
+      },
+      {
+        "level": 25,
+        "move": "Leer"
+      },
+      {
+        "level": 36,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 44,
+        "move": "Seismic Toss"
+      },
+      {
+        "level": 52,
+        "move": "Submission"
+      }
+    ],
+    "initial": [
+      "Karate Chop",
+      "Low Kick",
+      "Leer"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      35,
+      38,
+      40,
+      44,
+      48,
+      50,
+      54
+    ],
+    "type1": "Fighting",
+    "type2": "Fighting",
+    "catchRate": 90
+  },
+  {
+    "name": "Mr.Mime",
+    "ind": 42,
+    "pokedex": 122,
+    "growthRate": 0,
+    "baseHp": 40,
+    "baseAttack": 45,
+    "baseDefense": 65,
+    "baseSpeed": 90,
+    "baseSpecial": 100,
+    "baseExpYield": 136,
+    "type1": "Psychic",
+    "type2": "Psychic",
+    "catchRate": 45,
+    "moves": [
+      {
+        "level": 15,
+        "move": "Confusion"
+      },
+      {
+        "level": 23,
+        "move": "Light Screen"
+      },
+      {
+        "level": 31,
+        "move": "Doubleslap"
+      },
+      {
+        "level": 39,
+        "move": "Meditate"
+      },
+      {
+        "level": 47,
+        "move": "Substitute"
+      }
+    ],
+    "initial": [
+      "Confusion",
+      "Barrier"
+    ]
+  },
+  {
+    "name": "Hitmonlee",
+    "ind": 43,
+    "pokedex": 106,
+    "growthRate": 0,
+    "baseHp": 50,
+    "baseAttack": 120,
+    "baseDefense": 53,
+    "baseSpeed": 87,
+    "baseSpecial": 35,
+    "baseExpYield": 139,
+    "moves": [
+      {
+        "level": 33,
+        "move": "Rolling Kick"
+      },
+      {
+        "level": 38,
+        "move": "Jump Kick"
+      },
+      {
+        "level": 43,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 48,
+        "move": "Hi Jump Kick"
+      },
+      {
+        "level": 53,
+        "move": "Mega Kick"
+      }
+    ],
+    "initial": [
+      "Double Kick",
+      "Meditate"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      31,
+      32,
+      34,
+      35,
+      39,
+      40,
+      44,
+      50,
+      54
+    ],
+    "type1": "Fighting",
+    "type2": "Fighting",
+    "catchRate": 45
+  },
+  {
+    "name": "Hitmonchan",
+    "ind": 44,
+    "pokedex": 107,
+    "growthRate": 0,
+    "baseHp": 50,
+    "baseAttack": 105,
+    "baseDefense": 79,
+    "baseSpeed": 76,
+    "baseSpecial": 35,
+    "baseExpYield": 140,
+    "moves": [
+      {
+        "level": 33,
+        "move": "Fire Punch"
+      },
+      {
+        "level": 38,
+        "move": "Ice Punch"
+      },
+      {
+        "level": 43,
+        "move": "Thunderpunch"
+      },
+      {
+        "level": 48,
+        "move": "Mega Punch"
+      },
+      {
+        "level": 53,
+        "move": "Counter"
+      }
+    ],
+    "initial": [
+      "Comet Punch",
+      "Agility"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      31,
+      32,
+      34,
+      35,
+      39,
+      40,
+      44,
+      50,
+      54
+    ],
+    "type1": "Fighting",
+    "type2": "Fighting",
+    "catchRate": 45
+  },
+  {
+    "name": "Arbok",
+    "ind": 45,
+    "pokedex": 24,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 85,
+    "baseDefense": 69,
+    "baseSpeed": 80,
+    "baseSpecial": 65,
+    "baseExpYield": 147,
+    "moves": [
+      {
+        "level": 10,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 17,
+        "move": "Bite"
+      },
+      {
+        "level": 27,
+        "move": "Glare"
+      },
+      {
+        "level": 36,
+        "move": "Screech"
+      },
+      {
+        "level": 47,
+        "move": "Acid"
+      }
+    ],
+    "initial": [
+      "Wrap",
+      "Leer",
+      "Poison Sting"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      21,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      40,
+      44,
+      48,
+      50,
+      54
+    ],
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 90
+  },
+  {
+    "name": "Parasect",
+    "ind": 46,
+    "pokedex": 47,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 95,
+    "baseDefense": 80,
+    "baseSpeed": 30,
+    "baseSpecial": 80,
+    "baseExpYield": 128,
+    "moves": [
+      {
+        "level": 13,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 20,
+        "move": "Leech Life"
+      },
+      {
+        "level": 30,
+        "move": "Spore"
+      },
+      {
+        "level": 39,
+        "move": "Slash"
+      },
+      {
+        "level": 48,
+        "move": "Growth"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Stun Spore",
+      "Leech Life"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      21,
+      22,
+      28,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      51
+    ],
+    "type1": "Bug",
+    "type2": "Grass",
+    "catchRate": 75
+  },
+  {
+    "name": "Psyduck",
+    "ind": 47,
+    "pokedex": 54,
+    "growthRate": 0,
+    "baseHp": 50,
+    "baseAttack": 52,
+    "baseDefense": 48,
+    "baseSpeed": 55,
+    "baseSpecial": 50,
+    "baseExpYield": 80,
+    "evolution": {
+      "level": 33,
+      "toName": "Golduck"
+    },
+    "moves": [
+      {
+        "level": 28,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 31,
+        "move": "Disable"
+      },
+      {
+        "level": 36,
+        "move": "Confusion"
+      },
+      {
+        "level": 43,
+        "move": "Fury Swipes"
+      },
+      {
+        "level": 52,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Scratch"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      17,
+      18,
+      19,
+      20,
+      28,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 190
+  },
+  {
+    "name": "Drowzee",
+    "ind": 48,
+    "pokedex": 96,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 48,
+    "baseDefense": 45,
+    "baseSpeed": 42,
+    "baseSpecial": 90,
+    "baseExpYield": 102,
+    "evolution": {
+      "level": 26,
+      "toName": "Hypno"
+    },
+    "moves": [
+      {
+        "level": 12,
+        "move": "Disable"
+      },
+      {
+        "level": 17,
+        "move": "Confusion"
+      },
+      {
+        "level": 24,
+        "move": "Headbutt"
+      },
+      {
+        "level": 29,
+        "move": "Poison Gas"
+      },
+      {
+        "level": 32,
+        "move": "Psychic"
+      },
+      {
+        "level": 37,
+        "move": "Meditate"
+      }
+    ],
+    "initial": [
+      "Pound",
+      "Hypnosis"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      40,
+      42,
+      44,
+      45,
+      46,
+      49,
+      50,
+      55
+    ],
+    "type1": "Psychic",
+    "type2": "Psychic",
+    "catchRate": 190
+  },
+  {
+    "name": "Golem",
+    "ind": 49,
+    "pokedex": 76,
+    "growthRate": 3,
+    "baseHp": 80,
+    "baseAttack": 110,
+    "baseDefense": 130,
+    "baseSpeed": 45,
+    "baseSpecial": 55,
+    "baseExpYield": 177,
+    "moves": [
+      {
+        "level": 11,
+        "move": "Defense Curl"
+      },
+      {
+        "level": 16,
+        "move": "Rock Throw"
+      },
+      {
+        "level": 21,
+        "move": "Selfdestruct"
+      },
+      {
+        "level": 29,
+        "move": "Harden"
+      },
+      {
+        "level": 36,
+        "move": "Earthquake"
+      },
+      {
+        "level": 43,
+        "move": "Explosion"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Defense Curl"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      35,
+      36,
+      38,
+      44,
+      47,
+      48,
+      50,
+      54
+    ],
+    "type1": "Rock",
+    "type2": "Ground",
+    "catchRate": 45
+  },
+  {
+    "name": "Missing32",
+    "ind": 50,
+    "glitch": true
+  },
+  {
+    "name": "Magmar",
+    "ind": 51,
+    "pokedex": 126,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 95,
+    "baseDefense": 57,
+    "baseSpeed": 93,
+    "baseSpecial": 85,
+    "baseExpYield": 167,
+    "moves": [
+      {
+        "level": 36,
+        "move": "Leer"
+      },
+      {
+        "level": 39,
+        "move": "Confuse Ray"
+      },
+      {
+        "level": 43,
+        "move": "Fire Punch"
+      },
+      {
+        "level": 48,
+        "move": "Smokescreen"
+      },
+      {
+        "level": 52,
+        "move": "Smog"
+      },
+      {
+        "level": 55,
+        "move": "Flamethrower"
+      }
+    ],
+    "initial": [
+      "Ember"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      18,
+      19,
+      20,
+      29,
+      30,
+      31,
+      32,
+      34,
+      35,
+      38,
+      40,
+      44,
+      46,
+      50,
+      54
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 45
+  },
+  {
+    "name": "Missing34",
+    "ind": 52,
+    "glitch": true
+  },
+  {
+    "name": "Electabuzz",
+    "ind": 53,
+    "pokedex": 125,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 83,
+    "baseDefense": 57,
+    "baseSpeed": 105,
+    "baseSpecial": 85,
+    "baseExpYield": 156,
+    "moves": [
+      {
+        "level": 34,
+        "move": "Thundershock"
+      },
+      {
+        "level": 37,
+        "move": "Screech"
+      },
+      {
+        "level": 42,
+        "move": "Thunderpunch"
+      },
+      {
+        "level": 49,
+        "move": "Light Screen"
+      },
+      {
+        "level": 54,
+        "move": "Thunder"
+      }
+    ],
+    "initial": [
+      "Quick Attack",
+      "Leer"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      39,
+      40,
+      44,
+      45,
+      46,
+      50,
+      54,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Electric",
+    "catchRate": 45
+  },
+  {
+    "name": "Magneton",
+    "ind": 54,
+    "pokedex": 82,
+    "growthRate": 0,
+    "baseHp": 50,
+    "baseAttack": 60,
+    "baseDefense": 95,
+    "baseSpeed": 70,
+    "baseSpecial": 120,
+    "baseExpYield": 161,
+    "moves": [
+      {
+        "level": 21,
+        "move": "Sonicboom"
+      },
+      {
+        "level": 25,
+        "move": "Thundershock"
+      },
+      {
+        "level": 29,
+        "move": "Supersonic"
+      },
+      {
+        "level": 38,
+        "move": "Thunder Wave"
+      },
+      {
+        "level": 46,
+        "move": "Swift"
+      },
+      {
+        "level": 54,
+        "move": "Screech"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Sonicboom",
+      "Thundershock"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      15,
+      20,
+      24,
+      25,
+      30,
+      31,
+      32,
+      33,
+      34,
+      39,
+      44,
+      45,
+      50,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Electric",
+    "catchRate": 60
+  },
+  {
+    "name": "Koffing",
+    "ind": 55,
+    "pokedex": 109,
+    "growthRate": 0,
+    "baseHp": 40,
+    "baseAttack": 65,
+    "baseDefense": 95,
+    "baseSpeed": 35,
+    "baseSpecial": 60,
+    "baseExpYield": 114,
+    "evolution": {
+      "level": 35,
+      "toName": "Weezing"
+    },
+    "moves": [
+      {
+        "level": 32,
+        "move": "Sludge"
+      },
+      {
+        "level": 37,
+        "move": "Smokescreen"
+      },
+      {
+        "level": 40,
+        "move": "Selfdestruct"
+      },
+      {
+        "level": 45,
+        "move": "Haze"
+      },
+      {
+        "level": 48,
+        "move": "Explosion"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Smog"
+    ],
+    "tmHm": [
+      6,
+      20,
+      24,
+      25,
+      31,
+      32,
+      34,
+      36,
+      38,
+      44,
+      47,
+      50
+    ],
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 190
+  },
+  {
+    "name": "Missing38",
+    "ind": 56,
+    "glitch": true
+  },
+  {
+    "name": "Mankey",
+    "ind": 57,
+    "pokedex": 56,
+    "growthRate": 0,
+    "baseHp": 40,
+    "baseAttack": 80,
+    "baseDefense": 35,
+    "baseSpeed": 70,
+    "baseSpecial": 35,
+    "baseExpYield": 74,
+    "evolution": {
+      "level": 28,
+      "toName": "Primeape"
+    },
+    "moves": [
+      {
+        "level": 15,
+        "move": "Karate Chop"
+      },
+      {
+        "level": 21,
+        "move": "Fury Swipes"
+      },
+      {
+        "level": 27,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 33,
+        "move": "Seismic Toss"
+      },
+      {
+        "level": 39,
+        "move": "Thrash"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Leer"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      28,
+      31,
+      32,
+      34,
+      35,
+      39,
+      40,
+      44,
+      48,
+      50,
+      54
+    ],
+    "type1": "Fighting",
+    "type2": "Fighting",
+    "catchRate": 190
+  },
+  {
+    "name": "Seel",
+    "ind": 58,
+    "pokedex": 86,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 45,
+    "baseDefense": 55,
+    "baseSpeed": 45,
+    "baseSpecial": 70,
+    "baseExpYield": 100,
+    "evolution": {
+      "level": 34,
+      "toName": "Dewgong"
+    },
+    "moves": [
+      {
+        "level": 30,
+        "move": "Growl"
+      },
+      {
+        "level": 35,
+        "move": "Aurora Beam"
+      },
+      {
+        "level": 40,
+        "move": "Rest"
+      },
+      {
+        "level": 45,
+        "move": "Take Down"
+      },
+      {
+        "level": 50,
+        "move": "Ice Beam"
+      }
+    ],
+    "initial": [
+      "Headbutt"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      20,
+      31,
+      32,
+      34,
+      40,
+      44,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 190
+  },
+  {
+    "name": "Diglett",
+    "ind": 59,
+    "pokedex": 50,
+    "growthRate": 0,
+    "baseHp": 10,
+    "baseAttack": 55,
+    "baseDefense": 25,
+    "baseSpeed": 95,
+    "baseSpecial": 45,
+    "baseExpYield": 81,
+    "evolution": {
+      "level": 26,
+      "toName": "Dugtrio"
+    },
+    "moves": [
+      {
+        "level": 15,
+        "move": "Growl"
+      },
+      {
+        "level": 19,
+        "move": "Dig"
+      },
+      {
+        "level": 24,
+        "move": "Sand Attack"
+      },
+      {
+        "level": 31,
+        "move": "Slash"
+      },
+      {
+        "level": 40,
+        "move": "Earthquake"
+      }
+    ],
+    "initial": [
+      "Scratch"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      44,
+      48,
+      50
+    ],
+    "type1": "Ground",
+    "type2": "Ground",
+    "catchRate": 255
+  },
+  {
+    "name": "Tauros",
+    "ind": 60,
+    "pokedex": 128,
+    "growthRate": 5,
+    "baseHp": 75,
+    "baseAttack": 100,
+    "baseDefense": 95,
+    "baseSpeed": 110,
+    "baseSpecial": 70,
+    "baseExpYield": 211,
+    "moves": [
+      {
+        "level": 21,
+        "move": "Stomp"
+      },
+      {
+        "level": 28,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 35,
+        "move": "Leer"
+      },
+      {
+        "level": 44,
+        "move": "Rage"
+      },
+      {
+        "level": 51,
+        "move": "Take Down"
+      }
+    ],
+    "initial": [
+      "Tackle"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      13,
+      14,
+      15,
+      20,
+      24,
+      25,
+      26,
+      27,
+      31,
+      32,
+      34,
+      38,
+      40,
+      44,
+      50,
+      54
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 45
+  },
+  {
+    "name": "Missing3D",
+    "ind": 61,
+    "glitch": true
+  },
+  {
+    "name": "Missing3E",
+    "ind": 62,
+    "glitch": true
+  },
+  {
+    "name": "Missing3F",
+    "ind": 63,
+    "glitch": true
+  },
+  {
+    "name": "Farfetchd",
+    "ind": 64,
+    "pokedex": 83,
+    "growthRate": 0,
+    "baseHp": 52,
+    "baseAttack": 65,
+    "baseDefense": 55,
+    "baseSpeed": 60,
+    "baseSpecial": 58,
+    "baseExpYield": 94,
+    "moves": [
+      {
+        "level": 7,
+        "move": "Leer"
+      },
+      {
+        "level": 15,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 23,
+        "move": "Swords Dance"
+      },
+      {
+        "level": 31,
+        "move": "Agility"
+      },
+      {
+        "level": 39,
+        "move": "Slash"
+      }
+    ],
+    "initial": [
+      "Peck",
+      "Sand Attack"
+    ],
+    "tmHm": [
+      2,
+      3,
+      4,
+      6,
+      8,
+      9,
+      10,
+      20,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      50,
+      51,
+      52
+    ],
+    "type1": "Normal",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "Venonat",
+    "ind": 65,
+    "pokedex": 48,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 55,
+    "baseDefense": 50,
+    "baseSpeed": 45,
+    "baseSpecial": 40,
+    "baseExpYield": 75,
+    "evolution": {
+      "level": 31,
+      "toName": "Venomoth"
+    },
+    "moves": [
+      {
+        "level": 24,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 27,
+        "move": "Leech Life"
+      },
+      {
+        "level": 30,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 35,
+        "move": "Psybeam"
+      },
+      {
+        "level": 38,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 43,
+        "move": "Psychic"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Disable"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      20,
+      21,
+      22,
+      29,
+      31,
+      32,
+      33,
+      34,
+      44,
+      46,
+      50
+    ],
+    "type1": "Bug",
+    "type2": "Poison",
+    "catchRate": 190
+  },
+  {
+    "name": "Dragonite",
+    "ind": 66,
+    "pokedex": 149,
+    "growthRate": 5,
+    "baseHp": 91,
+    "baseAttack": 134,
+    "baseDefense": 95,
+    "baseSpeed": 80,
+    "baseSpecial": 100,
+    "baseExpYield": 218,
+    "moves": [
+      {
+        "level": 10,
+        "move": "Thunder Wave"
+      },
+      {
+        "level": 20,
+        "move": "Agility"
+      },
+      {
+        "level": 35,
+        "move": "Slam"
+      },
+      {
+        "level": 45,
+        "move": "Dragon Rage"
+      },
+      {
+        "level": 60,
+        "move": "Hyper Beam"
+      }
+    ],
+    "initial": [
+      "Wrap",
+      "Leer",
+      "Thunder Wave",
+      "Agility"
+    ],
+    "tmHm": [
+      2,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      23,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      45,
+      50,
+      53,
+      54
+    ],
+    "type1": "Dragon",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "Missing43",
+    "ind": 67,
+    "glitch": true
+  },
+  {
+    "name": "Missing44",
+    "ind": 68,
+    "glitch": true
+  },
+  {
+    "name": "Missing45",
+    "ind": 69,
+    "glitch": true
+  },
+  {
+    "name": "Doduo",
+    "ind": 70,
+    "pokedex": 84,
+    "growthRate": 0,
+    "baseHp": 35,
+    "baseAttack": 85,
+    "baseDefense": 45,
+    "baseSpeed": 75,
+    "baseSpecial": 35,
+    "baseExpYield": 96,
+    "evolution": {
+      "level": 31,
+      "toName": "Dodrio"
+    },
+    "moves": [
+      {
+        "level": 20,
+        "move": "Growl"
+      },
+      {
+        "level": 24,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 30,
+        "move": "Drill Peck"
+      },
+      {
+        "level": 36,
+        "move": "Rage"
+      },
+      {
+        "level": 40,
+        "move": "Tri Attack"
+      },
+      {
+        "level": 44,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Peck"
+    ],
+    "tmHm": [
+      4,
+      6,
+      8,
+      9,
+      10,
+      20,
+      31,
+      32,
+      33,
+      34,
+      40,
+      43,
+      44,
+      49,
+      50,
+      52
+    ],
+    "type1": "Normal",
+    "type2": "Flying",
+    "catchRate": 190
+  },
+  {
+    "name": "Poliwag",
+    "ind": 71,
+    "pokedex": 60,
+    "growthRate": 3,
+    "baseHp": 40,
+    "baseAttack": 50,
+    "baseDefense": 40,
+    "baseSpeed": 90,
+    "baseSpecial": 40,
+    "baseExpYield": 77,
+    "evolution": {
+      "level": 25,
+      "toName": "Poliwhirl"
+    },
+    "moves": [
+      {
+        "level": 16,
+        "move": "Hypnosis"
+      },
+      {
+        "level": 19,
+        "move": "Water Gun"
+      },
+      {
+        "level": 25,
+        "move": "Doubleslap"
+      },
+      {
+        "level": 31,
+        "move": "Body Slam"
+      },
+      {
+        "level": 38,
+        "move": "Amnesia"
+      },
+      {
+        "level": 45,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Bubble"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      29,
+      31,
+      32,
+      34,
+      40,
+      44,
+      46,
+      50,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 255
+  },
+  {
+    "name": "Jynx",
+    "ind": 72,
+    "pokedex": 124,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 50,
+    "baseDefense": 35,
+    "baseSpeed": 95,
+    "baseSpecial": 95,
+    "baseExpYield": 137,
+    "moves": [
+      {
+        "level": 18,
+        "move": "Lick"
+      },
+      {
+        "level": 23,
+        "move": "Doubleslap"
+      },
+      {
+        "level": 31,
+        "move": "Ice Punch"
+      },
+      {
+        "level": 39,
+        "move": "Body Slam"
+      },
+      {
+        "level": 47,
+        "move": "Thrash"
+      },
+      {
+        "level": 58,
+        "move": "Blizzard"
+      }
+    ],
+    "initial": [
+      "Pound",
+      "Lovely Kiss"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      40,
+      44,
+      46,
+      50
+    ],
+    "type1": "Ice",
+    "type2": "Psychic",
+    "catchRate": 45
+  },
+  {
+    "name": "Moltres",
+    "ind": 73,
+    "pokedex": 146,
+    "growthRate": 5,
+    "baseHp": 90,
+    "baseAttack": 100,
+    "baseDefense": 90,
+    "baseSpeed": 90,
+    "baseSpecial": 125,
+    "baseExpYield": 217,
+    "moves": [
+      {
+        "level": 51,
+        "move": "Leer"
+      },
+      {
+        "level": 55,
+        "move": "Agility"
+      },
+      {
+        "level": 60,
+        "move": "Sky Attack"
+      }
+    ],
+    "initial": [
+      "Peck",
+      "Fire Spin"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      15,
+      20,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      43,
+      44,
+      50,
+      52
+    ],
+    "type1": "Fire",
+    "type2": "Flying",
+    "catchRate": 3
+  },
+  {
+    "name": "Articuno",
+    "ind": 74,
+    "pokedex": 144,
+    "growthRate": 5,
+    "baseHp": 90,
+    "baseAttack": 85,
+    "baseDefense": 100,
+    "baseSpeed": 85,
+    "baseSpecial": 125,
+    "baseExpYield": 215,
+    "moves": [
+      {
+        "level": 51,
+        "move": "Blizzard"
+      },
+      {
+        "level": 55,
+        "move": "Agility"
+      },
+      {
+        "level": 60,
+        "move": "Mist"
+      }
+    ],
+    "initial": [
+      "Peck",
+      "Ice Beam"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      31,
+      32,
+      33,
+      34,
+      39,
+      43,
+      44,
+      50,
+      52
+    ],
+    "type1": "Ice",
+    "type2": "Flying",
+    "catchRate": 3
+  },
+  {
+    "name": "Zapdos",
+    "ind": 75,
+    "pokedex": 145,
+    "growthRate": 5,
+    "baseHp": 90,
+    "baseAttack": 90,
+    "baseDefense": 85,
+    "baseSpeed": 100,
+    "baseSpecial": 125,
+    "baseExpYield": 216,
+    "moves": [
+      {
+        "level": 51,
+        "move": "Thunder"
+      },
+      {
+        "level": 55,
+        "move": "Agility"
+      },
+      {
+        "level": 60,
+        "move": "Light Screen"
+      }
+    ],
+    "initial": [
+      "Thundershock",
+      "Drill Peck"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      15,
+      20,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      39,
+      43,
+      44,
+      45,
+      50,
+      52,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Flying",
+    "catchRate": 3
+  },
+  {
+    "name": "Ditto",
+    "ind": 76,
+    "pokedex": 132,
+    "growthRate": 0,
+    "baseHp": 48,
+    "baseAttack": 48,
+    "baseDefense": 48,
+    "baseSpeed": 48,
+    "baseSpecial": 48,
+    "baseExpYield": 61,
+    "initial": [
+      "Transform"
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 35
+  },
+  {
+    "name": "Meowth",
+    "ind": 77,
+    "pokedex": 52,
+    "growthRate": 0,
+    "baseHp": 40,
+    "baseAttack": 45,
+    "baseDefense": 35,
+    "baseSpeed": 90,
+    "baseSpecial": 40,
+    "baseExpYield": 69,
+    "evolution": {
+      "level": 28,
+      "toName": "Persian"
+    },
+    "moves": [
+      {
+        "level": 12,
+        "move": "Bite"
+      },
+      {
+        "level": 17,
+        "move": "Pay Day"
+      },
+      {
+        "level": 24,
+        "move": "Screech"
+      },
+      {
+        "level": 33,
+        "move": "Fury Swipes"
+      },
+      {
+        "level": 44,
+        "move": "Slash"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Growl"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      16,
+      20,
+      24,
+      25,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 255
+  },
+  {
+    "name": "Krabby",
+    "ind": 78,
+    "pokedex": 98,
+    "growthRate": 0,
+    "baseHp": 30,
+    "baseAttack": 105,
+    "baseDefense": 90,
+    "baseSpeed": 50,
+    "baseSpecial": 25,
+    "baseExpYield": 115,
+    "evolution": {
+      "level": 28,
+      "toName": "Kingler"
+    },
+    "moves": [
+      {
+        "level": 20,
+        "move": "Vicegrip"
+      },
+      {
+        "level": 25,
+        "move": "Guillotine"
+      },
+      {
+        "level": 30,
+        "move": "Stomp"
+      },
+      {
+        "level": 35,
+        "move": "Crabhammer"
+      },
+      {
+        "level": 40,
+        "move": "Harden"
+      }
+    ],
+    "initial": [
+      "Bubble",
+      "Leer"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      31,
+      32,
+      34,
+      44,
+      50,
+      51,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 225
+  },
+  {
+    "name": "Missing4F",
+    "ind": 79,
+    "glitch": true
+  },
+  {
+    "name": "Missing50",
+    "ind": 80,
+    "glitch": true
+  },
+  {
+    "name": "Missing51",
+    "ind": 81,
+    "glitch": true
+  },
+  {
+    "name": "Vulpix",
+    "ind": 82,
+    "pokedex": 37,
+    "growthRate": 0,
+    "baseHp": 38,
+    "baseAttack": 41,
+    "baseDefense": 40,
+    "baseSpeed": 65,
+    "baseSpecial": 65,
+    "baseExpYield": 63,
+    "evolution": {
+      "item": "Fire Stone",
+      "toName": "Ninetales"
+    },
+    "moves": [
+      {
+        "level": 16,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 21,
+        "move": "Roar"
+      },
+      {
+        "level": 28,
+        "move": "Confuse Ray"
+      },
+      {
+        "level": 35,
+        "move": "Flamethrower"
+      },
+      {
+        "level": 42,
+        "move": "Fire Spin"
+      }
+    ],
+    "initial": [
+      "Ember",
+      "Tail Whip"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      20,
+      28,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 190
+  },
+  {
+    "name": "Ninetales",
+    "ind": 83,
+    "pokedex": 38,
+    "growthRate": 0,
+    "baseHp": 73,
+    "baseAttack": 76,
+    "baseDefense": 75,
+    "baseSpeed": 100,
+    "baseSpecial": 100,
+    "baseExpYield": 178,
+    "initial": [
+      "Ember",
+      "Tail Whip",
+      "Quick Attack",
+      "Roar"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      28,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 75
+  },
+  {
+    "name": "Pikachu",
+    "ind": 84,
+    "pokedex": 25,
+    "growthRate": 0,
+    "baseHp": 35,
+    "baseAttack": 55,
+    "baseDefense": 30,
+    "baseSpeed": 90,
+    "baseSpecial": 50,
+    "baseExpYield": 82,
+    "evolution": {
+      "item": "Thunder Stone",
+      "toName": "Raichu"
+    },
+    "moves": [
+      {
+        "level": 9,
+        "move": "Thunder Wave"
+      },
+      {
+        "level": 16,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 26,
+        "move": "Swift"
+      },
+      {
+        "level": 33,
+        "move": "Agility"
+      },
+      {
+        "level": 43,
+        "move": "Thunder"
+      }
+    ],
+    "initial": [
+      "Thundershock",
+      "Growl"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      16,
+      17,
+      19,
+      20,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      45,
+      50,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Electric",
+    "catchRate": 190
+  },
+  {
+    "name": "Raichu",
+    "ind": 85,
+    "pokedex": 26,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 90,
+    "baseDefense": 55,
+    "baseSpeed": 100,
+    "baseSpecial": 90,
+    "baseExpYield": 122,
+    "initial": [
+      "Thundershock",
+      "Growl",
+      "Thunder Wave"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      16,
+      17,
+      19,
+      20,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      45,
+      50,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Electric",
+    "catchRate": 75
+  },
+  {
+    "name": "Missing56",
+    "ind": 86,
+    "glitch": true
+  },
+  {
+    "name": "Missing57",
+    "ind": 87,
+    "glitch": true
+  },
+  {
+    "name": "Dratini",
+    "ind": 88,
+    "pokedex": 147,
+    "growthRate": 5,
+    "baseHp": 41,
+    "baseAttack": 64,
+    "baseDefense": 45,
+    "baseSpeed": 50,
+    "baseSpecial": 50,
+    "baseExpYield": 67,
+    "evolution": {
+      "level": 30,
+      "toName": "Dragonair"
+    },
+    "moves": [
+      {
+        "level": 10,
+        "move": "Thunder Wave"
+      },
+      {
+        "level": 20,
+        "move": "Agility"
+      },
+      {
+        "level": 30,
+        "move": "Slam"
+      },
+      {
+        "level": 40,
+        "move": "Dragon Rage"
+      },
+      {
+        "level": 50,
+        "move": "Hyper Beam"
+      }
+    ],
+    "initial": [
+      "Wrap",
+      "Leer"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      23,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      45,
+      50,
+      53
+    ],
+    "type1": "Dragon",
+    "type2": "Dragon",
+    "catchRate": 45
+  },
+  {
+    "name": "Dragonair",
+    "ind": 89,
+    "pokedex": 148,
+    "growthRate": 5,
+    "baseHp": 61,
+    "baseAttack": 84,
+    "baseDefense": 65,
+    "baseSpeed": 70,
+    "baseSpecial": 70,
+    "baseExpYield": 144,
+    "evolution": {
+      "level": 55,
+      "toName": "Dragonite"
+    },
+    "moves": [
+      {
+        "level": 10,
+        "move": "Thunder Wave"
+      },
+      {
+        "level": 20,
+        "move": "Agility"
+      },
+      {
+        "level": 35,
+        "move": "Slam"
+      },
+      {
+        "level": 45,
+        "move": "Dragon Rage"
+      },
+      {
+        "level": 55,
+        "move": "Hyper Beam"
+      }
+    ],
+    "initial": [
+      "Wrap",
+      "Leer",
+      "Thunder Wave"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      23,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      45,
+      50,
+      53
+    ],
+    "type1": "Dragon",
+    "type2": "Dragon",
+    "catchRate": 45
+  },
+  {
+    "name": "Kabuto",
+    "ind": 90,
+    "pokedex": 140,
+    "growthRate": 0,
+    "baseHp": 30,
+    "baseAttack": 80,
+    "baseDefense": 90,
+    "baseSpeed": 55,
+    "baseSpecial": 45,
+    "baseExpYield": 119,
+    "evolution": {
+      "level": 40,
+      "toName": "Kabutops"
+    },
+    "moves": [
+      {
+        "level": 34,
+        "move": "Absorb"
+      },
+      {
+        "level": 39,
+        "move": "Slash"
+      },
+      {
+        "level": 44,
+        "move": "Leer"
+      },
+      {
+        "level": 49,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Harden"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      53
+    ],
+    "type1": "Rock",
+    "type2": "Water",
+    "catchRate": 45
+  },
+  {
+    "name": "Kabutops",
+    "ind": 91,
+    "pokedex": 141,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 115,
+    "baseDefense": 105,
+    "baseSpeed": 80,
+    "baseSpecial": 70,
+    "baseExpYield": 201,
+    "moves": [
+      {
+        "level": 34,
+        "move": "Absorb"
+      },
+      {
+        "level": 39,
+        "move": "Slash"
+      },
+      {
+        "level": 46,
+        "move": "Leer"
+      },
+      {
+        "level": 53,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Harden",
+      "Absorb"
+    ],
+    "tmHm": [
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      19,
+      20,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      53
+    ],
+    "type1": "Rock",
+    "type2": "Water",
+    "catchRate": 45
+  },
+  {
+    "name": "Horsea",
+    "ind": 92,
+    "pokedex": 116,
+    "growthRate": 0,
+    "baseHp": 30,
+    "baseAttack": 40,
+    "baseDefense": 70,
+    "baseSpeed": 60,
+    "baseSpecial": 70,
+    "baseExpYield": 83,
+    "evolution": {
+      "level": 32,
+      "toName": "Seadra"
+    },
+    "moves": [
+      {
+        "level": 19,
+        "move": "Smokescreen"
+      },
+      {
+        "level": 24,
+        "move": "Leer"
+      },
+      {
+        "level": 30,
+        "move": "Water Gun"
+      },
+      {
+        "level": 37,
+        "move": "Agility"
+      },
+      {
+        "level": 45,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Bubble"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 225
+  },
+  {
+    "name": "Seadra",
+    "ind": 93,
+    "pokedex": 117,
+    "growthRate": 0,
+    "baseHp": 55,
+    "baseAttack": 65,
+    "baseDefense": 95,
+    "baseSpeed": 85,
+    "baseSpecial": 95,
+    "baseExpYield": 155,
+    "moves": [
+      {
+        "level": 19,
+        "move": "Smokescreen"
+      },
+      {
+        "level": 24,
+        "move": "Leer"
+      },
+      {
+        "level": 30,
+        "move": "Water Gun"
+      },
+      {
+        "level": 41,
+        "move": "Agility"
+      },
+      {
+        "level": 52,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Bubble",
+      "Smokescreen"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 75
+  },
+  {
+    "name": "Missing5E",
+    "ind": 94,
+    "glitch": true
+  },
+  {
+    "name": "Missing5F",
+    "ind": 95,
+    "glitch": true
+  },
+  {
+    "name": "Sandshrew",
+    "ind": 96,
+    "pokedex": 27,
+    "growthRate": 0,
+    "baseHp": 50,
+    "baseAttack": 75,
+    "baseDefense": 85,
+    "baseSpeed": 40,
+    "baseSpecial": 30,
+    "baseExpYield": 93,
+    "evolution": {
+      "level": 22,
+      "toName": "Sandslash"
+    },
+    "moves": [
+      {
+        "level": 10,
+        "move": "Sand Attack"
+      },
+      {
+        "level": 17,
+        "move": "Slash"
+      },
+      {
+        "level": 24,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 31,
+        "move": "Swift"
+      },
+      {
+        "level": 38,
+        "move": "Fury Swipes"
+      }
+    ],
+    "initial": [
+      "Scratch"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      17,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      48,
+      50,
+      51,
+      54
+    ],
+    "type1": "Ground",
+    "type2": "Ground",
+    "catchRate": 255
+  },
+  {
+    "name": "Sandslash",
+    "ind": 97,
+    "pokedex": 28,
+    "growthRate": 0,
+    "baseHp": 75,
+    "baseAttack": 100,
+    "baseDefense": 110,
+    "baseSpeed": 65,
+    "baseSpecial": 55,
+    "baseExpYield": 163,
+    "moves": [
+      {
+        "level": 10,
+        "move": "Sand Attack"
+      },
+      {
+        "level": 17,
+        "move": "Slash"
+      },
+      {
+        "level": 27,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 36,
+        "move": "Swift"
+      },
+      {
+        "level": 47,
+        "move": "Fury Swipes"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Sand Attack"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      48,
+      50,
+      51,
+      54
+    ],
+    "type1": "Ground",
+    "type2": "Ground",
+    "catchRate": 90
+  },
+  {
+    "name": "Omanyte",
+    "ind": 98,
+    "pokedex": 138,
+    "growthRate": 0,
+    "baseHp": 35,
+    "baseAttack": 40,
+    "baseDefense": 100,
+    "baseSpeed": 35,
+    "baseSpecial": 90,
+    "baseExpYield": 120,
+    "evolution": {
+      "level": 40,
+      "toName": "Omastar"
+    },
+    "moves": [
+      {
+        "level": 34,
+        "move": "Horn Attack"
+      },
+      {
+        "level": 39,
+        "move": "Leer"
+      },
+      {
+        "level": 46,
+        "move": "Spike Cannon"
+      },
+      {
+        "level": 53,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Water Gun",
+      "Withdraw"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      53
+    ],
+    "type1": "Rock",
+    "type2": "Water",
+    "catchRate": 45
+  },
+  {
+    "name": "Omastar",
+    "ind": 99,
+    "pokedex": 139,
+    "growthRate": 0,
+    "baseHp": 70,
+    "baseAttack": 60,
+    "baseDefense": 125,
+    "baseSpeed": 55,
+    "baseSpecial": 115,
+    "baseExpYield": 199,
+    "moves": [
+      {
+        "level": 34,
+        "move": "Horn Attack"
+      },
+      {
+        "level": 39,
+        "move": "Leer"
+      },
+      {
+        "level": 44,
+        "move": "Spike Cannon"
+      },
+      {
+        "level": 49,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Water Gun",
+      "Withdraw",
+      "Horn Attack"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      19,
+      20,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      53
+    ],
+    "type1": "Rock",
+    "type2": "Water",
+    "catchRate": 45
+  },
+  {
+    "name": "Jigglypuff",
+    "ind": 100,
+    "pokedex": 39,
+    "growthRate": 4,
+    "baseHp": 115,
+    "baseAttack": 45,
+    "baseDefense": 20,
+    "baseSpeed": 20,
+    "baseSpecial": 25,
+    "baseExpYield": 76,
+    "evolution": {
+      "item": "Moon Stone",
+      "toName": "Wigglytuff"
+    },
+    "moves": [
+      {
+        "level": 9,
+        "move": "Pound"
+      },
+      {
+        "level": 14,
+        "move": "Disable"
+      },
+      {
+        "level": 19,
+        "move": "Defense Curl"
+      },
+      {
+        "level": 24,
+        "move": "Doubleslap"
+      },
+      {
+        "level": 29,
+        "move": "Rest"
+      },
+      {
+        "level": 34,
+        "move": "Body Slam"
+      },
+      {
+        "level": 39,
+        "move": "Double Edge"
+      }
+    ],
+    "initial": [
+      "Sing"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      17,
+      18,
+      19,
+      20,
+      22,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      38,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      54,
+      55
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 170
+  },
+  {
+    "name": "Wigglytuff",
+    "ind": 101,
+    "pokedex": 40,
+    "growthRate": 4,
+    "baseHp": 140,
+    "baseAttack": 70,
+    "baseDefense": 45,
+    "baseSpeed": 45,
+    "baseSpecial": 50,
+    "baseExpYield": 109,
+    "initial": [
+      "Sing",
+      "Disable",
+      "Defense Curl",
+      "Doubleslap"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      22,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      38,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      54,
+      55
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 50
+  },
+  {
+    "name": "Eevee",
+    "ind": 102,
+    "pokedex": 133,
+    "growthRate": 0,
+    "baseHp": 55,
+    "baseAttack": 55,
+    "baseDefense": 50,
+    "baseSpeed": 55,
+    "baseSpecial": 65,
+    "baseExpYield": 92,
+    "evolution": [
+      {
+        "item": "Fire Stone",
+        "toName": "Flareon"
+      },
+      {
+        "item": "Thunder Stone",
+        "toName": "Jolteon"
+      },
+      {
+        "item": "Water Stone",
+        "toName": "Vaporeon"
+      }
+    ],
+    "moves": [
+      {
+        "level": 27,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 31,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 37,
+        "move": "Bite"
+      },
+      {
+        "level": 45,
+        "move": "Take Down"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Sand Attack"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      20,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 45
+  },
+  {
+    "name": "Flareon",
+    "ind": 103,
+    "pokedex": 136,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 130,
+    "baseDefense": 60,
+    "baseSpeed": 65,
+    "baseSpecial": 110,
+    "baseExpYield": 198,
+    "moves": [
+      {
+        "level": 27,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 31,
+        "move": "Ember"
+      },
+      {
+        "level": 37,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 40,
+        "move": "Bite"
+      },
+      {
+        "level": 42,
+        "move": "Leer"
+      },
+      {
+        "level": 44,
+        "move": "Fire Spin"
+      },
+      {
+        "level": 48,
+        "move": "Rage"
+      },
+      {
+        "level": 54,
+        "move": "Flamethrower"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Sand Attack",
+      "Quick Attack",
+      "Ember"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 45
+  },
+  {
+    "name": "Jolteon",
+    "ind": 104,
+    "pokedex": 135,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 65,
+    "baseDefense": 60,
+    "baseSpeed": 130,
+    "baseSpecial": 110,
+    "baseExpYield": 197,
+    "moves": [
+      {
+        "level": 27,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 31,
+        "move": "Thundershock"
+      },
+      {
+        "level": 37,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 40,
+        "move": "Thunder Wave"
+      },
+      {
+        "level": 42,
+        "move": "Double Kick"
+      },
+      {
+        "level": 44,
+        "move": "Agility"
+      },
+      {
+        "level": 48,
+        "move": "Pin Missile"
+      },
+      {
+        "level": 54,
+        "move": "Thunder"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Sand Attack",
+      "Quick Attack",
+      "Thundershock"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      45,
+      50,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Electric",
+    "catchRate": 45
+  },
+  {
+    "name": "Vaporeon",
+    "ind": 105,
+    "pokedex": 134,
+    "growthRate": 0,
+    "baseHp": 130,
+    "baseAttack": 65,
+    "baseDefense": 60,
+    "baseSpeed": 65,
+    "baseSpecial": 110,
+    "baseExpYield": 196,
+    "moves": [
+      {
+        "level": 27,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 31,
+        "move": "Water Gun"
+      },
+      {
+        "level": 37,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 40,
+        "move": "Bite"
+      },
+      {
+        "level": 42,
+        "move": "Acid Armor"
+      },
+      {
+        "level": 44,
+        "move": "Haze"
+      },
+      {
+        "level": 48,
+        "move": "Mist"
+      },
+      {
+        "level": 54,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Sand Attack",
+      "Quick Attack",
+      "Water Gun"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      50,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 45
+  },
+  {
+    "name": "Machop",
+    "ind": 106,
+    "pokedex": 66,
+    "growthRate": 3,
+    "baseHp": 70,
+    "baseAttack": 80,
+    "baseDefense": 50,
+    "baseSpeed": 35,
+    "baseSpecial": 35,
+    "baseExpYield": 88,
+    "evolution": {
+      "level": 28,
+      "toName": "Machoke"
+    },
+    "moves": [
+      {
+        "level": 20,
+        "move": "Low Kick"
+      },
+      {
+        "level": 25,
+        "move": "Leer"
+      },
+      {
+        "level": 32,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 39,
+        "move": "Seismic Toss"
+      },
+      {
+        "level": 46,
+        "move": "Submission"
+      }
+    ],
+    "initial": [
+      "Karate Chop"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      35,
+      38,
+      40,
+      44,
+      48,
+      50,
+      54
+    ],
+    "type1": "Fighting",
+    "type2": "Fighting",
+    "catchRate": 180
+  },
+  {
+    "name": "Zubat",
+    "ind": 107,
+    "pokedex": 41,
+    "growthRate": 0,
+    "baseHp": 40,
+    "baseAttack": 45,
+    "baseDefense": 35,
+    "baseSpeed": 55,
+    "baseSpecial": 40,
+    "baseExpYield": 54,
+    "evolution": {
+      "level": 22,
+      "toName": "Golbat"
+    },
+    "moves": [
+      {
+        "level": 10,
+        "move": "Supersonic"
+      },
+      {
+        "level": 15,
+        "move": "Bite"
+      },
+      {
+        "level": 21,
+        "move": "Confuse Ray"
+      },
+      {
+        "level": 28,
+        "move": "Wing Attack"
+      },
+      {
+        "level": 36,
+        "move": "Haze"
+      }
+    ],
+    "initial": [
+      "Leech Life"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      20,
+      21,
+      31,
+      32,
+      34,
+      39,
+      44,
+      50
+    ],
+    "type1": "Poison",
+    "type2": "Flying",
+    "catchRate": 255
+  },
+  {
+    "name": "Ekans",
+    "ind": 108,
+    "pokedex": 23,
+    "growthRate": 0,
+    "baseHp": 35,
+    "baseAttack": 60,
+    "baseDefense": 44,
+    "baseSpeed": 55,
+    "baseSpecial": 40,
+    "baseExpYield": 62,
+    "evolution": {
+      "level": 22,
+      "toName": "Arbok"
+    },
+    "moves": [
+      {
+        "level": 10,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 17,
+        "move": "Bite"
+      },
+      {
+        "level": 24,
+        "move": "Glare"
+      },
+      {
+        "level": 31,
+        "move": "Screech"
+      },
+      {
+        "level": 38,
+        "move": "Acid"
+      }
+    ],
+    "initial": [
+      "Wrap",
+      "Leer"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      20,
+      21,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      40,
+      44,
+      48,
+      50,
+      54
+    ],
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 255
+  },
+  {
+    "name": "Paras",
+    "ind": 109,
+    "pokedex": 46,
+    "growthRate": 0,
+    "baseHp": 35,
+    "baseAttack": 70,
+    "baseDefense": 55,
+    "baseSpeed": 25,
+    "baseSpecial": 55,
+    "baseExpYield": 70,
+    "evolution": {
+      "level": 24,
+      "toName": "Parasect"
+    },
+    "moves": [
+      {
+        "level": 13,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 20,
+        "move": "Leech Life"
+      },
+      {
+        "level": 27,
+        "move": "Spore"
+      },
+      {
+        "level": 34,
+        "move": "Slash"
+      },
+      {
+        "level": 41,
+        "move": "Growth"
+      }
+    ],
+    "initial": [
+      "Scratch"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      20,
+      21,
+      22,
+      28,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      51
+    ],
+    "type1": "Bug",
+    "type2": "Grass",
+    "catchRate": 190
+  },
+  {
+    "name": "Poliwhirl",
+    "ind": 110,
+    "pokedex": 61,
+    "growthRate": 3,
+    "baseHp": 65,
+    "baseAttack": 65,
+    "baseDefense": 65,
+    "baseSpeed": 90,
+    "baseSpecial": 50,
+    "baseExpYield": 131,
+    "evolution": {
+      "item": "Water Stone",
+      "toName": "Poliwrath"
+    },
+    "moves": [
+      {
+        "level": 16,
+        "move": "Hypnosis"
+      },
+      {
+        "level": 19,
+        "move": "Water Gun"
+      },
+      {
+        "level": 26,
+        "move": "Doubleslap"
+      },
+      {
+        "level": 33,
+        "move": "Body Slam"
+      },
+      {
+        "level": 41,
+        "move": "Amnesia"
+      },
+      {
+        "level": 49,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Bubble",
+      "Hypnosis",
+      "Water Gun"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      29,
+      31,
+      32,
+      34,
+      35,
+      40,
+      44,
+      46,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 120
+  },
+  {
+    "name": "Poliwrath",
+    "ind": 111,
+    "pokedex": 62,
+    "growthRate": 3,
+    "baseHp": 90,
+    "baseAttack": 85,
+    "baseDefense": 95,
+    "baseSpeed": 70,
+    "baseSpecial": 70,
+    "baseExpYield": 185,
+    "moves": [
+      {
+        "level": 16,
+        "move": "Hypnosis"
+      },
+      {
+        "level": 19,
+        "move": "Water Gun"
+      }
+    ],
+    "initial": [
+      "Hypnosis",
+      "Water Gun",
+      "Doubleslap",
+      "Body Slam"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      29,
+      31,
+      32,
+      34,
+      35,
+      40,
+      44,
+      46,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Fighting",
+    "catchRate": 45
+  },
+  {
+    "name": "Weedle",
+    "ind": 112,
+    "pokedex": 13,
+    "growthRate": 0,
+    "baseHp": 40,
+    "baseAttack": 35,
+    "baseDefense": 30,
+    "baseSpeed": 50,
+    "baseSpecial": 20,
+    "baseExpYield": 52,
+    "evolution": {
+      "level": 7,
+      "toName": "Kakuna"
+    },
+    "initial": [
+      "Poison Sting",
+      "String Shot"
+    ],
+    "type1": "Bug",
+    "type2": "Poison",
+    "catchRate": 255
+  },
+  {
+    "name": "Kakuna",
+    "ind": 113,
+    "pokedex": 14,
+    "growthRate": 0,
+    "baseHp": 45,
+    "baseAttack": 25,
+    "baseDefense": 50,
+    "baseSpeed": 35,
+    "baseSpecial": 25,
+    "baseExpYield": 71,
+    "evolution": {
+      "level": 10,
+      "toName": "Beedrill"
+    },
+    "initial": [
+      "Harden"
+    ],
+    "type1": "Bug",
+    "type2": "Poison",
+    "catchRate": 120
+  },
+  {
+    "name": "Beedrill",
+    "ind": 114,
+    "pokedex": 15,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 80,
+    "baseDefense": 40,
+    "baseSpeed": 75,
+    "baseSpecial": 45,
+    "baseExpYield": 159,
+    "moves": [
+      {
+        "level": 12,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 16,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 20,
+        "move": "Twineedle"
+      },
+      {
+        "level": 25,
+        "move": "Rage"
+      },
+      {
+        "level": 30,
+        "move": "Pin Missile"
+      },
+      {
+        "level": 35,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Fury Attack"
+    ],
+    "tmHm": [
+      3,
+      6,
+      9,
+      10,
+      15,
+      20,
+      21,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      50,
+      51
+    ],
+    "type1": "Bug",
+    "type2": "Poison",
+    "catchRate": 45
+  },
+  {
+    "name": "Missing73",
+    "ind": 115,
+    "glitch": true
+  },
+  {
+    "name": "Dodrio",
+    "ind": 116,
+    "pokedex": 85,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 110,
+    "baseDefense": 70,
+    "baseSpeed": 100,
+    "baseSpecial": 60,
+    "baseExpYield": 158,
+    "moves": [
+      {
+        "level": 20,
+        "move": "Growl"
+      },
+      {
+        "level": 24,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 30,
+        "move": "Drill Peck"
+      },
+      {
+        "level": 39,
+        "move": "Rage"
+      },
+      {
+        "level": 45,
+        "move": "Tri Attack"
+      },
+      {
+        "level": 51,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Peck",
+      "Growl",
+      "Fury Attack"
+    ],
+    "tmHm": [
+      4,
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      31,
+      32,
+      33,
+      34,
+      40,
+      43,
+      44,
+      49,
+      50,
+      52
+    ],
+    "type1": "Normal",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "Primeape",
+    "ind": 117,
+    "pokedex": 57,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 105,
+    "baseDefense": 60,
+    "baseSpeed": 95,
+    "baseSpecial": 60,
+    "baseExpYield": 149,
+    "moves": [
+      {
+        "level": 15,
+        "move": "Karate Chop"
+      },
+      {
+        "level": 21,
+        "move": "Fury Swipes"
+      },
+      {
+        "level": 27,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 37,
+        "move": "Seismic Toss"
+      },
+      {
+        "level": 46,
+        "move": "Thrash"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Leer",
+      "Karate Chop",
+      "Fury Swipes"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      28,
+      31,
+      32,
+      34,
+      35,
+      39,
+      40,
+      44,
+      48,
+      50,
+      54
+    ],
+    "type1": "Fighting",
+    "type2": "Fighting",
+    "catchRate": 75
+  },
+  {
+    "name": "Dugtrio",
+    "ind": 118,
+    "pokedex": 51,
+    "growthRate": 0,
+    "baseHp": 35,
+    "baseAttack": 80,
+    "baseDefense": 50,
+    "baseSpeed": 120,
+    "baseSpecial": 70,
+    "baseExpYield": 153,
+    "moves": [
+      {
+        "level": 15,
+        "move": "Growl"
+      },
+      {
+        "level": 19,
+        "move": "Dig"
+      },
+      {
+        "level": 24,
+        "move": "Sand Attack"
+      },
+      {
+        "level": 35,
+        "move": "Slash"
+      },
+      {
+        "level": 47,
+        "move": "Earthquake"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Growl",
+      "Dig"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      44,
+      48,
+      50
+    ],
+    "type1": "Ground",
+    "type2": "Ground",
+    "catchRate": 50
+  },
+  {
+    "name": "Venomoth",
+    "ind": 119,
+    "pokedex": 49,
+    "growthRate": 0,
+    "baseHp": 70,
+    "baseAttack": 65,
+    "baseDefense": 60,
+    "baseSpeed": 90,
+    "baseSpecial": 90,
+    "baseExpYield": 138,
+    "moves": [
+      {
+        "level": 24,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 27,
+        "move": "Leech Life"
+      },
+      {
+        "level": 30,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 38,
+        "move": "Psybeam"
+      },
+      {
+        "level": 43,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 50,
+        "move": "Psychic"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Disable",
+      "Poisonpowder",
+      "Leech Life"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      15,
+      20,
+      21,
+      22,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      39,
+      44,
+      46,
+      50
+    ],
+    "type1": "Bug",
+    "type2": "Poison",
+    "catchRate": 75
+  },
+  {
+    "name": "Dewgong",
+    "ind": 120,
+    "pokedex": 87,
+    "growthRate": 0,
+    "baseHp": 90,
+    "baseAttack": 70,
+    "baseDefense": 80,
+    "baseSpeed": 70,
+    "baseSpecial": 95,
+    "baseExpYield": 176,
+    "moves": [
+      {
+        "level": 30,
+        "move": "Growl"
+      },
+      {
+        "level": 35,
+        "move": "Aurora Beam"
+      },
+      {
+        "level": 44,
+        "move": "Rest"
+      },
+      {
+        "level": 50,
+        "move": "Take Down"
+      },
+      {
+        "level": 56,
+        "move": "Ice Beam"
+      }
+    ],
+    "initial": [
+      "Headbutt",
+      "Growl",
+      "Aurora Beam"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      20,
+      31,
+      32,
+      34,
+      40,
+      44,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Ice",
+    "catchRate": 75
+  },
+  {
+    "name": "Missing79",
+    "ind": 121,
+    "glitch": true
+  },
+  {
+    "name": "Missing7A",
+    "ind": 122,
+    "glitch": true
+  },
+  {
+    "name": "Caterpie",
+    "ind": 123,
+    "pokedex": 10,
+    "growthRate": 0,
+    "baseHp": 45,
+    "baseAttack": 30,
+    "baseDefense": 35,
+    "baseSpeed": 45,
+    "baseSpecial": 20,
+    "baseExpYield": 53,
+    "evolution": {
+      "level": 7,
+      "toName": "Metapod"
+    },
+    "initial": [
+      "Tackle",
+      "String Shot"
+    ],
+    "type1": "Bug",
+    "type2": "Bug",
+    "catchRate": 255
+  },
+  {
+    "name": "Metapod",
+    "ind": 124,
+    "pokedex": 11,
+    "growthRate": 0,
+    "baseHp": 50,
+    "baseAttack": 20,
+    "baseDefense": 55,
+    "baseSpeed": 30,
+    "baseSpecial": 25,
+    "baseExpYield": 72,
+    "evolution": {
+      "level": 10,
+      "toName": "Butterfree"
+    },
+    "initial": [
+      "Harden"
+    ],
+    "type1": "Bug",
+    "type2": "Bug",
+    "catchRate": 120
+  },
+  {
+    "name": "Butterfree",
+    "ind": 125,
+    "pokedex": 12,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 45,
+    "baseDefense": 50,
+    "baseSpeed": 70,
+    "baseSpecial": 80,
+    "baseExpYield": 160,
+    "moves": [
+      {
+        "level": 12,
+        "move": "Confusion"
+      },
+      {
+        "level": 15,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 16,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 17,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 21,
+        "move": "Supersonic"
+      },
+      {
+        "level": 26,
+        "move": "Whirlwind"
+      },
+      {
+        "level": 32,
+        "move": "Psybeam"
+      }
+    ],
+    "initial": [
+      "Confusion"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      15,
+      20,
+      21,
+      22,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      39,
+      44,
+      46,
+      50
+    ],
+    "type1": "Bug",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "Machamp",
+    "ind": 126,
+    "pokedex": 68,
+    "growthRate": 3,
+    "baseHp": 90,
+    "baseAttack": 130,
+    "baseDefense": 80,
+    "baseSpeed": 55,
+    "baseSpecial": 65,
+    "baseExpYield": 193,
+    "moves": [
+      {
+        "level": 20,
+        "move": "Low Kick"
+      },
+      {
+        "level": 25,
+        "move": "Leer"
+      },
+      {
+        "level": 36,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 44,
+        "move": "Seismic Toss"
+      },
+      {
+        "level": 52,
+        "move": "Submission"
+      }
+    ],
+    "initial": [
+      "Karate Chop",
+      "Low Kick",
+      "Leer"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      35,
+      38,
+      40,
+      44,
+      48,
+      50,
+      54
+    ],
+    "type1": "Fighting",
+    "type2": "Fighting",
+    "catchRate": 45
+  },
+  {
+    "name": "Missing7F",
+    "ind": 127,
+    "glitch": true
+  },
+  {
+    "name": "Golduck",
+    "ind": 128,
+    "pokedex": 55,
+    "growthRate": 0,
+    "baseHp": 80,
+    "baseAttack": 82,
+    "baseDefense": 78,
+    "baseSpeed": 85,
+    "baseSpecial": 80,
+    "baseExpYield": 174,
+    "moves": [
+      {
+        "level": 28,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 31,
+        "move": "Disable"
+      },
+      {
+        "level": 39,
+        "move": "Confusion"
+      },
+      {
+        "level": 48,
+        "move": "Fury Swipes"
+      },
+      {
+        "level": 59,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Tail Whip",
+      "Disable"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      28,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 75
+  },
+  {
+    "name": "Hypno",
+    "ind": 129,
+    "pokedex": 97,
+    "growthRate": 0,
+    "baseHp": 85,
+    "baseAttack": 73,
+    "baseDefense": 70,
+    "baseSpeed": 67,
+    "baseSpecial": 115,
+    "baseExpYield": 165,
+    "moves": [
+      {
+        "level": 12,
+        "move": "Disable"
+      },
+      {
+        "level": 17,
+        "move": "Confusion"
+      },
+      {
+        "level": 24,
+        "move": "Headbutt"
+      },
+      {
+        "level": 33,
+        "move": "Poison Gas"
+      },
+      {
+        "level": 37,
+        "move": "Psychic"
+      },
+      {
+        "level": 43,
+        "move": "Meditate"
+      }
+    ],
+    "initial": [
+      "Pound",
+      "Hypnosis",
+      "Disable",
+      "Confusion"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      18,
+      19,
+      20,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      40,
+      42,
+      44,
+      45,
+      46,
+      49,
+      50,
+      55
+    ],
+    "type1": "Psychic",
+    "type2": "Psychic",
+    "catchRate": 75
+  },
+  {
+    "name": "Golbat",
+    "ind": 130,
+    "pokedex": 42,
+    "growthRate": 0,
+    "baseHp": 75,
+    "baseAttack": 80,
+    "baseDefense": 70,
+    "baseSpeed": 90,
+    "baseSpecial": 75,
+    "baseExpYield": 171,
+    "moves": [
+      {
+        "level": 10,
+        "move": "Supersonic"
+      },
+      {
+        "level": 15,
+        "move": "Bite"
+      },
+      {
+        "level": 21,
+        "move": "Confuse Ray"
+      },
+      {
+        "level": 32,
+        "move": "Wing Attack"
+      },
+      {
+        "level": 43,
+        "move": "Haze"
+      }
+    ],
+    "initial": [
+      "Leech Life",
+      "Screech",
+      "Bite"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      15,
+      20,
+      21,
+      31,
+      32,
+      34,
+      39,
+      44,
+      50
+    ],
+    "type1": "Poison",
+    "type2": "Flying",
+    "catchRate": 90
+  },
+  {
+    "name": "Mewtwo",
+    "ind": 131,
+    "pokedex": 150,
+    "growthRate": 5,
+    "baseHp": 106,
+    "baseAttack": 110,
+    "baseDefense": 90,
+    "baseSpeed": 130,
+    "baseSpecial": 154,
+    "baseExpYield": 220,
+    "moves": [
+      {
+        "level": 63,
+        "move": "Barrier"
+      },
+      {
+        "level": 66,
+        "move": "Psychic"
+      },
+      {
+        "level": 70,
+        "move": "Recover"
+      },
+      {
+        "level": 75,
+        "move": "Mist"
+      },
+      {
+        "level": 81,
+        "move": "Amnesia"
+      }
+    ],
+    "initial": [
+      "Confusion",
+      "Disable",
+      "Swift",
+      "Psychic"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      22,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      38,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      54,
+      55
+    ],
+    "type1": "Psychic",
+    "type2": "Psychic",
+    "catchRate": 3
+  },
+  {
+    "name": "Snorlax",
+    "ind": 132,
+    "pokedex": 143,
+    "growthRate": 5,
+    "baseHp": 160,
+    "baseAttack": 110,
+    "baseDefense": 65,
+    "baseSpeed": 30,
+    "baseSpecial": 65,
+    "baseExpYield": 154,
+    "moves": [
+      {
+        "level": 35,
+        "move": "Body Slam"
+      },
+      {
+        "level": 41,
+        "move": "Harden"
+      },
+      {
+        "level": 48,
+        "move": "Double Edge"
+      },
+      {
+        "level": 56,
+        "move": "Hyper Beam"
+      }
+    ],
+    "initial": [
+      "Headbutt",
+      "Amnesia",
+      "Rest"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      22,
+      24,
+      25,
+      26,
+      27,
+      29,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      38,
+      40,
+      44,
+      46,
+      48,
+      50,
+      53,
+      54
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 25
+  },
+  {
+    "name": "Magikarp",
+    "ind": 133,
+    "pokedex": 129,
+    "growthRate": 5,
+    "baseHp": 20,
+    "baseAttack": 10,
+    "baseDefense": 55,
+    "baseSpeed": 80,
+    "baseSpecial": 20,
+    "baseExpYield": 20,
+    "evolution": {
+      "level": 20,
+      "toName": "Gyarados"
+    },
+    "moves": [
+      {
+        "level": 15,
+        "move": "Tackle"
+      }
+    ],
+    "initial": [
+      "Splash"
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 255
+  },
+  {
+    "name": "Missing86",
+    "ind": 134,
+    "glitch": true
+  },
+  {
+    "name": "Missing87",
+    "ind": 135,
+    "glitch": true
+  },
+  {
+    "name": "Muk",
+    "ind": 136,
+    "pokedex": 89,
+    "growthRate": 0,
+    "baseHp": 105,
+    "baseAttack": 105,
+    "baseDefense": 75,
+    "baseSpeed": 50,
+    "baseSpecial": 65,
+    "baseExpYield": 157,
+    "moves": [
+      {
+        "level": 30,
+        "move": "Poison Gas"
+      },
+      {
+        "level": 33,
+        "move": "Minimize"
+      },
+      {
+        "level": 37,
+        "move": "Sludge"
+      },
+      {
+        "level": 45,
+        "move": "Harden"
+      },
+      {
+        "level": 53,
+        "move": "Screech"
+      },
+      {
+        "level": 60,
+        "move": "Acid Armor"
+      }
+    ],
+    "initial": [
+      "Pound",
+      "Disable",
+      "Poison Gas"
+    ],
+    "tmHm": [
+      6,
+      8,
+      15,
+      20,
+      21,
+      24,
+      25,
+      31,
+      32,
+      34,
+      36,
+      38,
+      44,
+      47,
+      50
+    ],
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 75
+  },
+  {
+    "name": "Missing89",
+    "ind": 137,
+    "glitch": true
+  },
+  {
+    "name": "Kingler",
+    "ind": 138,
+    "pokedex": 99,
+    "growthRate": 0,
+    "baseHp": 55,
+    "baseAttack": 130,
+    "baseDefense": 115,
+    "baseSpeed": 75,
+    "baseSpecial": 50,
+    "baseExpYield": 206,
+    "moves": [
+      {
+        "level": 20,
+        "move": "Vicegrip"
+      },
+      {
+        "level": 25,
+        "move": "Guillotine"
+      },
+      {
+        "level": 34,
+        "move": "Stomp"
+      },
+      {
+        "level": 42,
+        "move": "Crabhammer"
+      },
+      {
+        "level": 49,
+        "move": "Harden"
+      }
+    ],
+    "initial": [
+      "Bubble",
+      "Leer",
+      "Vicegrip"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      31,
+      32,
+      34,
+      44,
+      50,
+      51,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 60
+  },
+  {
+    "name": "Cloyster",
+    "ind": 139,
+    "pokedex": 91,
+    "growthRate": 5,
+    "baseHp": 50,
+    "baseAttack": 95,
+    "baseDefense": 180,
+    "baseSpeed": 70,
+    "baseSpecial": 85,
+    "baseExpYield": 203,
+    "moves": [
+      {
+        "level": 50,
+        "move": "Spike Cannon"
+      }
+    ],
+    "initial": [
+      "Withdraw",
+      "Supersonic",
+      "Clamp",
+      "Aurora Beam"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      30,
+      31,
+      32,
+      33,
+      34,
+      36,
+      39,
+      44,
+      47,
+      49,
+      50,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Ice",
+    "catchRate": 60
+  },
+  {
+    "name": "Missing8C",
+    "ind": 140,
+    "glitch": true
+  },
+  {
+    "name": "Electrode",
+    "ind": 141,
+    "pokedex": 101,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 50,
+    "baseDefense": 70,
+    "baseSpeed": 140,
+    "baseSpecial": 80,
+    "baseExpYield": 150,
+    "moves": [
+      {
+        "level": 17,
+        "move": "Sonicboom"
+      },
+      {
+        "level": 22,
+        "move": "Selfdestruct"
+      },
+      {
+        "level": 29,
+        "move": "Light Screen"
+      },
+      {
+        "level": 40,
+        "move": "Swift"
+      },
+      {
+        "level": 50,
+        "move": "Explosion"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Screech",
+      "Sonicboom"
+    ],
+    "tmHm": [
+      6,
+      9,
+      15,
+      20,
+      24,
+      25,
+      30,
+      31,
+      32,
+      33,
+      34,
+      36,
+      39,
+      40,
+      44,
+      45,
+      47,
+      50,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Electric",
+    "catchRate": 60
+  },
+  {
+    "name": "Clefable",
+    "ind": 142,
+    "pokedex": 36,
+    "growthRate": 4,
+    "baseHp": 95,
+    "baseAttack": 70,
+    "baseDefense": 73,
+    "baseSpeed": 60,
+    "baseSpecial": 85,
+    "baseExpYield": 129,
+    "initial": [
+      "Sing",
+      "Doubleslap",
+      "Minimize",
+      "Metronome"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      22,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      38,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      54,
+      55
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 25
+  },
+  {
+    "name": "Weezing",
+    "ind": 143,
+    "pokedex": 110,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 90,
+    "baseDefense": 120,
+    "baseSpeed": 60,
+    "baseSpecial": 85,
+    "baseExpYield": 173,
+    "moves": [
+      {
+        "level": 32,
+        "move": "Sludge"
+      },
+      {
+        "level": 39,
+        "move": "Smokescreen"
+      },
+      {
+        "level": 43,
+        "move": "Selfdestruct"
+      },
+      {
+        "level": 49,
+        "move": "Haze"
+      },
+      {
+        "level": 53,
+        "move": "Explosion"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Smog",
+      "Sludge"
+    ],
+    "tmHm": [
+      6,
+      15,
+      20,
+      24,
+      25,
+      31,
+      32,
+      34,
+      36,
+      38,
+      44,
+      47,
+      50
+    ],
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 60
+  },
+  {
+    "name": "Persian",
+    "ind": 144,
+    "pokedex": 53,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 70,
+    "baseDefense": 60,
+    "baseSpeed": 115,
+    "baseSpecial": 65,
+    "baseExpYield": 148,
+    "moves": [
+      {
+        "level": 12,
+        "move": "Bite"
+      },
+      {
+        "level": 17,
+        "move": "Pay Day"
+      },
+      {
+        "level": 24,
+        "move": "Screech"
+      },
+      {
+        "level": 37,
+        "move": "Fury Swipes"
+      },
+      {
+        "level": 51,
+        "move": "Slash"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Growl",
+      "Bite",
+      "Screech"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      15,
+      16,
+      20,
+      24,
+      25,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 90
+  },
+  {
+    "name": "Marowak",
+    "ind": 145,
+    "pokedex": 105,
+    "growthRate": 0,
+    "baseHp": 60,
+    "baseAttack": 80,
+    "baseDefense": 110,
+    "baseSpeed": 45,
+    "baseSpecial": 50,
+    "baseExpYield": 124,
+    "moves": [
+      {
+        "level": 25,
+        "move": "Leer"
+      },
+      {
+        "level": 33,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 41,
+        "move": "Thrash"
+      },
+      {
+        "level": 48,
+        "move": "Bonemerang"
+      },
+      {
+        "level": 55,
+        "move": "Rage"
+      }
+    ],
+    "initial": [
+      "Bone Club",
+      "Growl",
+      "Leer",
+      "Focus Energy"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      38,
+      40,
+      44,
+      50,
+      54
+    ],
+    "type1": "Ground",
+    "type2": "Ground",
+    "catchRate": 75
+  },
+  {
+    "name": "Missing92",
+    "ind": 146,
+    "glitch": true
+  },
+  {
+    "name": "Haunter",
+    "ind": 147,
+    "pokedex": 93,
+    "growthRate": 3,
+    "baseHp": 45,
+    "baseAttack": 50,
+    "baseDefense": 45,
+    "baseSpeed": 95,
+    "baseSpecial": 115,
+    "baseExpYield": 126,
+    "evolution": {
+      "trade": true,
+      "toName": "Gengar"
+    },
+    "moves": [
+      {
+        "level": 29,
+        "move": "Hypnosis"
+      },
+      {
+        "level": 38,
+        "move": "Dream Eater"
+      }
+    ],
+    "initial": [
+      "Lick",
+      "Confuse Ray",
+      "Night Shade"
+    ],
+    "tmHm": [
+      6,
+      20,
+      21,
+      24,
+      25,
+      29,
+      31,
+      32,
+      34,
+      36,
+      42,
+      44,
+      46,
+      47,
+      50
+    ],
+    "type1": "Ghost",
+    "type2": "Poison",
+    "catchRate": 90
+  },
+  {
+    "name": "Abra",
+    "ind": 148,
+    "pokedex": 63,
+    "growthRate": 3,
+    "baseHp": 25,
+    "baseAttack": 20,
+    "baseDefense": 15,
+    "baseSpeed": 90,
+    "baseSpecial": 105,
+    "baseExpYield": 73,
+    "evolution": {
+      "level": 16,
+      "toName": "Kadabra"
+    },
+    "initial": [
+      "Teleport"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      55
+    ],
+    "type1": "Psychic",
+    "type2": "Psychic",
+    "catchRate": 200
+  },
+  {
+    "name": "Alakazam",
+    "ind": 149,
+    "pokedex": 65,
+    "growthRate": 3,
+    "baseHp": 55,
+    "baseAttack": 50,
+    "baseDefense": 45,
+    "baseSpeed": 120,
+    "baseSpecial": 135,
+    "baseExpYield": 186,
+    "moves": [
+      {
+        "level": 16,
+        "move": "Confusion"
+      },
+      {
+        "level": 20,
+        "move": "Disable"
+      },
+      {
+        "level": 27,
+        "move": "Psybeam"
+      },
+      {
+        "level": 31,
+        "move": "Recover"
+      },
+      {
+        "level": 38,
+        "move": "Psychic"
+      },
+      {
+        "level": 42,
+        "move": "Reflect"
+      }
+    ],
+    "initial": [
+      "Teleport",
+      "Confusion",
+      "Disable"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      18,
+      19,
+      20,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      55
+    ],
+    "type1": "Psychic",
+    "type2": "Psychic",
+    "catchRate": 50
+  },
+  {
+    "name": "Pidgeotto",
+    "ind": 150,
+    "pokedex": 17,
+    "growthRate": 3,
+    "baseHp": 63,
+    "baseAttack": 60,
+    "baseDefense": 55,
+    "baseSpeed": 71,
+    "baseSpecial": 50,
+    "baseExpYield": 113,
+    "evolution": {
+      "level": 36,
+      "toName": "Pidgeot"
+    },
+    "moves": [
+      {
+        "level": 5,
+        "move": "Sand Attack"
+      },
+      {
+        "level": 12,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 21,
+        "move": "Whirlwind"
+      },
+      {
+        "level": 31,
+        "move": "Wing Attack"
+      },
+      {
+        "level": 40,
+        "move": "Agility"
+      },
+      {
+        "level": 49,
+        "move": "Mirror Move"
+      }
+    ],
+    "initial": [
+      "Gust",
+      "Sand Attack"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      20,
+      31,
+      32,
+      33,
+      34,
+      39,
+      43,
+      44,
+      50,
+      52
+    ],
+    "type1": "Normal",
+    "type2": "Flying",
+    "catchRate": 120
+  },
+  {
+    "name": "Pidgeot",
+    "ind": 151,
+    "pokedex": 18,
+    "growthRate": 3,
+    "baseHp": 83,
+    "baseAttack": 80,
+    "baseDefense": 75,
+    "baseSpeed": 91,
+    "baseSpecial": 70,
+    "baseExpYield": 172,
+    "moves": [
+      {
+        "level": 5,
+        "move": "Sand Attack"
+      },
+      {
+        "level": 12,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 21,
+        "move": "Whirlwind"
+      },
+      {
+        "level": 31,
+        "move": "Wing Attack"
+      },
+      {
+        "level": 44,
+        "move": "Agility"
+      },
+      {
+        "level": 54,
+        "move": "Mirror Move"
+      }
+    ],
+    "initial": [
+      "Gust",
+      "Sand Attack",
+      "Quick Attack"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      15,
+      20,
+      31,
+      32,
+      33,
+      34,
+      39,
+      43,
+      44,
+      50,
+      52
+    ],
+    "type1": "Normal",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "Starmie",
+    "ind": 152,
+    "pokedex": 121,
+    "growthRate": 5,
+    "baseHp": 60,
+    "baseAttack": 75,
+    "baseDefense": 85,
+    "baseSpeed": 115,
+    "baseSpecial": 100,
+    "baseExpYield": 207,
+    "initial": [
+      "Tackle",
+      "Water Gun",
+      "Harden"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      53,
+      55
+    ],
+    "type1": "Water",
+    "type2": "Psychic",
+    "catchRate": 60
+  },
+  {
+    "name": "Bulbasaur",
+    "ind": 153,
+    "pokedex": 1,
+    "growthRate": 3,
+    "baseHp": 45,
+    "baseAttack": 49,
+    "baseDefense": 49,
+    "baseSpeed": 45,
+    "baseSpecial": 65,
+    "baseExpYield": 64,
+    "evolution": {
+      "level": 16,
+      "toName": "Ivysaur"
+    },
+    "moves": [
+      {
+        "level": 7,
+        "move": "Leech Seed"
+      },
+      {
+        "level": 13,
+        "move": "Vine Whip"
+      },
+      {
+        "level": 20,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 27,
+        "move": "Razor Leaf"
+      },
+      {
+        "level": 34,
+        "move": "Growth"
+      },
+      {
+        "level": 41,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 48,
+        "move": "Solarbeam"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Growl"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 45
+  },
+  {
+    "name": "Venusaur",
+    "ind": 154,
+    "pokedex": 3,
+    "growthRate": 3,
+    "baseHp": 80,
+    "baseAttack": 82,
+    "baseDefense": 83,
+    "baseSpeed": 80,
+    "baseSpecial": 100,
+    "baseExpYield": 208,
+    "moves": [
+      {
+        "level": 7,
+        "move": "Leech Seed"
+      },
+      {
+        "level": 13,
+        "move": "Vine Whip"
+      },
+      {
+        "level": 22,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 30,
+        "move": "Razor Leaf"
+      },
+      {
+        "level": 43,
+        "move": "Growth"
+      },
+      {
+        "level": 55,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 65,
+        "move": "Solarbeam"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Growl",
+      "Leech Seed",
+      "Vine Whip"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 45
+  },
+  {
+    "name": "Tentacruel",
+    "ind": 155,
+    "pokedex": 73,
+    "growthRate": 5,
+    "baseHp": 80,
+    "baseAttack": 70,
+    "baseDefense": 65,
+    "baseSpeed": 100,
+    "baseSpecial": 120,
+    "baseExpYield": 205,
+    "moves": [
+      {
+        "level": 7,
+        "move": "Supersonic"
+      },
+      {
+        "level": 13,
+        "move": "Wrap"
+      },
+      {
+        "level": 18,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 22,
+        "move": "Water Gun"
+      },
+      {
+        "level": 27,
+        "move": "Constrict"
+      },
+      {
+        "level": 35,
+        "move": "Barrier"
+      },
+      {
+        "level": 43,
+        "move": "Screech"
+      },
+      {
+        "level": 50,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Acid",
+      "Supersonic",
+      "Wrap"
+    ],
+    "tmHm": [
+      3,
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      21,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      51,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Poison",
+    "catchRate": 60
+  },
+  {
+    "name": "Missing9C",
+    "ind": 156,
+    "glitch": true
+  },
+  {
+    "name": "Goldeen",
+    "ind": 157,
+    "pokedex": 118,
+    "growthRate": 0,
+    "baseHp": 45,
+    "baseAttack": 67,
+    "baseDefense": 60,
+    "baseSpeed": 63,
+    "baseSpecial": 50,
+    "baseExpYield": 111,
+    "evolution": {
+      "level": 33,
+      "toName": "Seaking"
+    },
+    "moves": [
+      {
+        "level": 19,
+        "move": "Supersonic"
+      },
+      {
+        "level": 24,
+        "move": "Horn Attack"
+      },
+      {
+        "level": 30,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 37,
+        "move": "Waterfall"
+      },
+      {
+        "level": 45,
+        "move": "Horn Drill"
+      },
+      {
+        "level": 54,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Peck",
+      "Tail Whip"
+    ],
+    "tmHm": [
+      6,
+      7,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 225
+  },
+  {
+    "name": "Seaking",
+    "ind": 158,
+    "pokedex": 119,
+    "growthRate": 0,
+    "baseHp": 80,
+    "baseAttack": 92,
+    "baseDefense": 65,
+    "baseSpeed": 68,
+    "baseSpecial": 80,
+    "baseExpYield": 170,
+    "moves": [
+      {
+        "level": 19,
+        "move": "Supersonic"
+      },
+      {
+        "level": 24,
+        "move": "Horn Attack"
+      },
+      {
+        "level": 30,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 39,
+        "move": "Waterfall"
+      },
+      {
+        "level": 48,
+        "move": "Horn Drill"
+      },
+      {
+        "level": 54,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Peck",
+      "Tail Whip",
+      "Supersonic"
+    ],
+    "tmHm": [
+      6,
+      7,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50,
+      53
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 60
+  },
+  {
+    "name": "Missing9F",
+    "ind": 159,
+    "glitch": true
+  },
+  {
+    "name": "MissingA0",
+    "ind": 160,
+    "glitch": true
+  },
+  {
+    "name": "MissingA1",
+    "ind": 161,
+    "glitch": true
+  },
+  {
+    "name": "MissingA2",
+    "ind": 162,
+    "glitch": true
+  },
+  {
+    "name": "Ponyta",
+    "ind": 163,
+    "pokedex": 77,
+    "growthRate": 0,
+    "baseHp": 50,
+    "baseAttack": 85,
+    "baseDefense": 55,
+    "baseSpeed": 90,
+    "baseSpecial": 65,
+    "baseExpYield": 152,
+    "evolution": {
+      "level": 40,
+      "toName": "Rapidash"
+    },
+    "moves": [
+      {
+        "level": 30,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 32,
+        "move": "Stomp"
+      },
+      {
+        "level": 35,
+        "move": "Growl"
+      },
+      {
+        "level": 39,
+        "move": "Fire Spin"
+      },
+      {
+        "level": 43,
+        "move": "Take Down"
+      },
+      {
+        "level": 48,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Ember"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      20,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 190
+  },
+  {
+    "name": "Rapidash",
+    "ind": 164,
+    "pokedex": 78,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 100,
+    "baseDefense": 70,
+    "baseSpeed": 105,
+    "baseSpecial": 80,
+    "baseExpYield": 192,
+    "moves": [
+      {
+        "level": 30,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 32,
+        "move": "Stomp"
+      },
+      {
+        "level": 35,
+        "move": "Growl"
+      },
+      {
+        "level": 39,
+        "move": "Fire Spin"
+      },
+      {
+        "level": 47,
+        "move": "Take Down"
+      },
+      {
+        "level": 55,
+        "move": "Agility"
+      }
+    ],
+    "initial": [
+      "Ember",
+      "Tail Whip",
+      "Stomp",
+      "Growl"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      15,
+      20,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 60
+  },
+  {
+    "name": "Rattata",
+    "ind": 165,
+    "pokedex": 19,
+    "growthRate": 0,
+    "baseHp": 30,
+    "baseAttack": 56,
+    "baseDefense": 35,
+    "baseSpeed": 72,
+    "baseSpecial": 25,
+    "baseExpYield": 57,
+    "evolution": {
+      "level": 20,
+      "toName": "Raticate"
+    },
+    "moves": [
+      {
+        "level": 7,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 14,
+        "move": "Hyper Fang"
+      },
+      {
+        "level": 23,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 34,
+        "move": "Super Fang"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Tail Whip"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      20,
+      24,
+      25,
+      28,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 255
+  },
+  {
+    "name": "Raticate",
+    "ind": 166,
+    "pokedex": 20,
+    "growthRate": 0,
+    "baseHp": 55,
+    "baseAttack": 81,
+    "baseDefense": 60,
+    "baseSpeed": 97,
+    "baseSpecial": 50,
+    "baseExpYield": 116,
+    "moves": [
+      {
+        "level": 7,
+        "move": "Quick Attack"
+      },
+      {
+        "level": 14,
+        "move": "Hyper Fang"
+      },
+      {
+        "level": 27,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 41,
+        "move": "Super Fang"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Tail Whip",
+      "Quick Attack"
+    ],
+    "tmHm": [
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      20,
+      24,
+      25,
+      28,
+      31,
+      32,
+      34,
+      39,
+      40,
+      44,
+      50
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 90
+  },
+  {
+    "name": "Nidorino",
+    "ind": 167,
+    "pokedex": 33,
+    "growthRate": 3,
+    "baseHp": 61,
+    "baseAttack": 72,
+    "baseDefense": 57,
+    "baseSpeed": 65,
+    "baseSpecial": 55,
+    "baseExpYield": 118,
+    "evolution": {
+      "item": "Moon Stone",
+      "toName": "Nidoking"
+    },
+    "moves": [
+      {
+        "level": 8,
+        "move": "Horn Attack"
+      },
+      {
+        "level": 14,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 23,
+        "move": "Focus Energy"
+      },
+      {
+        "level": 32,
+        "move": "Fury Attack"
+      },
+      {
+        "level": 41,
+        "move": "Horn Drill"
+      },
+      {
+        "level": 50,
+        "move": "Double Kick"
+      }
+    ],
+    "initial": [
+      "Leer",
+      "Tackle",
+      "Horn Attack"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50
+    ],
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 120
+  },
+  {
+    "name": "Nidorina",
+    "ind": 168,
+    "pokedex": 30,
+    "growthRate": 3,
+    "baseHp": 70,
+    "baseAttack": 62,
+    "baseDefense": 67,
+    "baseSpeed": 56,
+    "baseSpecial": 55,
+    "baseExpYield": 117,
+    "evolution": {
+      "item": "Moon Stone",
+      "toName": "Nidoqueen"
+    },
+    "moves": [
+      {
+        "level": 8,
+        "move": "Scratch"
+      },
+      {
+        "level": 14,
+        "move": "Poison Sting"
+      },
+      {
+        "level": 23,
+        "move": "Tail Whip"
+      },
+      {
+        "level": 32,
+        "move": "Bite"
+      },
+      {
+        "level": 41,
+        "move": "Fury Swipes"
+      },
+      {
+        "level": 50,
+        "move": "Double Kick"
+      }
+    ],
+    "initial": [
+      "Growl",
+      "Tackle",
+      "Scratch"
+    ],
+    "tmHm": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      20,
+      24,
+      25,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50
+    ],
+    "type1": "Poison",
+    "type2": "Poison",
+    "catchRate": 120
+  },
+  {
+    "name": "Geodude",
+    "ind": 169,
+    "pokedex": 74,
+    "growthRate": 3,
+    "baseHp": 40,
+    "baseAttack": 80,
+    "baseDefense": 100,
+    "baseSpeed": 20,
+    "baseSpecial": 30,
+    "baseExpYield": 86,
+    "evolution": {
+      "level": 25,
+      "toName": "Graveler"
+    },
+    "moves": [
+      {
+        "level": 11,
+        "move": "Defense Curl"
+      },
+      {
+        "level": 16,
+        "move": "Rock Throw"
+      },
+      {
+        "level": 21,
+        "move": "Selfdestruct"
+      },
+      {
+        "level": 26,
+        "move": "Harden"
+      },
+      {
+        "level": 31,
+        "move": "Earthquake"
+      },
+      {
+        "level": 36,
+        "move": "Explosion"
+      }
+    ],
+    "initial": [
+      "Tackle"
+    ],
+    "tmHm": [
+      1,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      26,
+      27,
+      28,
+      31,
+      32,
+      34,
+      35,
+      36,
+      38,
+      44,
+      47,
+      48,
+      50,
+      54
+    ],
+    "type1": "Rock",
+    "type2": "Ground",
+    "catchRate": 255
+  },
+  {
+    "name": "Porygon",
+    "ind": 170,
+    "pokedex": 137,
+    "growthRate": 0,
+    "baseHp": 65,
+    "baseAttack": 60,
+    "baseDefense": 70,
+    "baseSpeed": 40,
+    "baseSpecial": 75,
+    "baseExpYield": 130,
+    "moves": [
+      {
+        "level": 23,
+        "move": "Psybeam"
+      },
+      {
+        "level": 28,
+        "move": "Recover"
+      },
+      {
+        "level": 35,
+        "move": "Agility"
+      },
+      {
+        "level": 42,
+        "move": "Tri Attack"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Sharpen",
+      "Conversion"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      13,
+      14,
+      15,
+      20,
+      24,
+      25,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      39,
+      40,
+      44,
+      45,
+      46,
+      49,
+      50,
+      55
+    ],
+    "type1": "Normal",
+    "type2": "Normal",
+    "catchRate": 45
+  },
+  {
+    "name": "Aerodactyl",
+    "ind": 171,
+    "pokedex": 142,
+    "growthRate": 5,
+    "baseHp": 80,
+    "baseAttack": 105,
+    "baseDefense": 65,
+    "baseSpeed": 130,
+    "baseSpecial": 60,
+    "baseExpYield": 202,
+    "moves": [
+      {
+        "level": 33,
+        "move": "Supersonic"
+      },
+      {
+        "level": 38,
+        "move": "Bite"
+      },
+      {
+        "level": 45,
+        "move": "Take Down"
+      },
+      {
+        "level": 54,
+        "move": "Hyper Beam"
+      }
+    ],
+    "initial": [
+      "Wing Attack",
+      "Agility"
+    ],
+    "tmHm": [
+      2,
+      4,
+      6,
+      9,
+      10,
+      15,
+      20,
+      23,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      43,
+      44,
+      50,
+      52
+    ],
+    "type1": "Rock",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "MissingAC",
+    "ind": 172,
+    "glitch": true
+  },
+  {
+    "name": "Magnemite",
+    "ind": 173,
+    "pokedex": 81,
+    "growthRate": 0,
+    "baseHp": 25,
+    "baseAttack": 35,
+    "baseDefense": 70,
+    "baseSpeed": 45,
+    "baseSpecial": 95,
+    "baseExpYield": 89,
+    "evolution": {
+      "level": 30,
+      "toName": "Magneton"
+    },
+    "moves": [
+      {
+        "level": 21,
+        "move": "Sonicboom"
+      },
+      {
+        "level": 25,
+        "move": "Thundershock"
+      },
+      {
+        "level": 29,
+        "move": "Supersonic"
+      },
+      {
+        "level": 35,
+        "move": "Thunder Wave"
+      },
+      {
+        "level": 41,
+        "move": "Swift"
+      },
+      {
+        "level": 47,
+        "move": "Screech"
+      }
+    ],
+    "initial": [
+      "Tackle"
+    ],
+    "tmHm": [
+      6,
+      9,
+      10,
+      20,
+      24,
+      25,
+      30,
+      31,
+      32,
+      33,
+      34,
+      39,
+      44,
+      45,
+      50,
+      55
+    ],
+    "type1": "Electric",
+    "type2": "Electric",
+    "catchRate": 190
+  },
+  {
+    "name": "MissingAE",
+    "ind": 174,
+    "glitch": true
+  },
+  {
+    "name": "MissingAF",
+    "ind": 175,
+    "glitch": true
+  },
+  {
+    "name": "Charmander",
+    "ind": 176,
+    "pokedex": 4,
+    "growthRate": 3,
+    "baseHp": 39,
+    "baseAttack": 52,
+    "baseDefense": 43,
+    "baseSpeed": 65,
+    "baseSpecial": 50,
+    "baseExpYield": 65,
+    "evolution": {
+      "level": 16,
+      "toName": "Charmeleon"
+    },
+    "moves": [
+      {
+        "level": 9,
+        "move": "Ember"
+      },
+      {
+        "level": 15,
+        "move": "Leer"
+      },
+      {
+        "level": 22,
+        "move": "Rage"
+      },
+      {
+        "level": 30,
+        "move": "Slash"
+      },
+      {
+        "level": 38,
+        "move": "Flamethrower"
+      },
+      {
+        "level": 46,
+        "move": "Fire Spin"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Growl"
+    ],
+    "tmHm": [
+      1,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      23,
+      28,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50,
+      51,
+      54
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 45
+  },
+  {
+    "name": "Squirtle",
+    "ind": 177,
+    "pokedex": 7,
+    "growthRate": 3,
+    "baseHp": 44,
+    "baseAttack": 48,
+    "baseDefense": 65,
+    "baseSpeed": 43,
+    "baseSpecial": 50,
+    "baseExpYield": 66,
+    "evolution": {
+      "level": 16,
+      "toName": "Wartortle"
+    },
+    "moves": [
+      {
+        "level": 8,
+        "move": "Bubble"
+      },
+      {
+        "level": 15,
+        "move": "Water Gun"
+      },
+      {
+        "level": 22,
+        "move": "Bite"
+      },
+      {
+        "level": 28,
+        "move": "Withdraw"
+      },
+      {
+        "level": 35,
+        "move": "Skull Bash"
+      },
+      {
+        "level": 42,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Tail Whip"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      17,
+      18,
+      19,
+      20,
+      28,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 45
+  },
+  {
+    "name": "Charmeleon",
+    "ind": 178,
+    "pokedex": 5,
+    "growthRate": 3,
+    "baseHp": 58,
+    "baseAttack": 64,
+    "baseDefense": 58,
+    "baseSpeed": 80,
+    "baseSpecial": 65,
+    "baseExpYield": 142,
+    "evolution": {
+      "level": 36,
+      "toName": "Charizard"
+    },
+    "moves": [
+      {
+        "level": 9,
+        "move": "Ember"
+      },
+      {
+        "level": 15,
+        "move": "Leer"
+      },
+      {
+        "level": 24,
+        "move": "Rage"
+      },
+      {
+        "level": 33,
+        "move": "Slash"
+      },
+      {
+        "level": 42,
+        "move": "Flamethrower"
+      },
+      {
+        "level": 56,
+        "move": "Fire Spin"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Growl",
+      "Ember"
+    ],
+    "tmHm": [
+      1,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      17,
+      18,
+      19,
+      20,
+      23,
+      28,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50,
+      51,
+      54
+    ],
+    "type1": "Fire",
+    "type2": "Fire",
+    "catchRate": 45
+  },
+  {
+    "name": "Wartortle",
+    "ind": 179,
+    "pokedex": 8,
+    "growthRate": 3,
+    "baseHp": 59,
+    "baseAttack": 63,
+    "baseDefense": 80,
+    "baseSpeed": 58,
+    "baseSpecial": 65,
+    "baseExpYield": 143,
+    "evolution": {
+      "level": 36,
+      "toName": "Blastoise"
+    },
+    "moves": [
+      {
+        "level": 8,
+        "move": "Bubble"
+      },
+      {
+        "level": 15,
+        "move": "Water Gun"
+      },
+      {
+        "level": 24,
+        "move": "Bite"
+      },
+      {
+        "level": 31,
+        "move": "Withdraw"
+      },
+      {
+        "level": 39,
+        "move": "Skull Bash"
+      },
+      {
+        "level": 47,
+        "move": "Hydro Pump"
+      }
+    ],
+    "initial": [
+      "Tackle",
+      "Tail Whip",
+      "Bubble"
+    ],
+    "tmHm": [
+      1,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      17,
+      18,
+      19,
+      20,
+      28,
+      31,
+      32,
+      33,
+      34,
+      40,
+      44,
+      50,
+      53,
+      54
+    ],
+    "type1": "Water",
+    "type2": "Water",
+    "catchRate": 45
+  },
+  {
+    "name": "Charizard",
+    "ind": 180,
+    "pokedex": 6,
+    "growthRate": 3,
+    "baseHp": 78,
+    "baseAttack": 84,
+    "baseDefense": 78,
+    "baseSpeed": 100,
+    "baseSpecial": 85,
+    "baseExpYield": 209,
+    "moves": [
+      {
+        "level": 9,
+        "move": "Ember"
+      },
+      {
+        "level": 15,
+        "move": "Leer"
+      },
+      {
+        "level": 24,
+        "move": "Rage"
+      },
+      {
+        "level": 36,
+        "move": "Slash"
+      },
+      {
+        "level": 46,
+        "move": "Flamethrower"
+      },
+      {
+        "level": 55,
+        "move": "Fire Spin"
+      }
+    ],
+    "initial": [
+      "Scratch",
+      "Growl",
+      "Ember",
+      "Leer"
+    ],
+    "tmHm": [
+      1,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      15,
+      17,
+      18,
+      19,
+      20,
+      23,
+      26,
+      27,
+      28,
+      31,
+      32,
+      33,
+      34,
+      38,
+      39,
+      40,
+      44,
+      50,
+      51,
+      54
+    ],
+    "type1": "Fire",
+    "type2": "Flying",
+    "catchRate": 45
+  },
+  {
+    "name": "MissingB5",
+    "ind": 181,
+    "glitch": true
+  },
+  {
+    "name": "_KabutopsB",
+    "ind": 182,
+    "glitch": true
+  },
+  {
+    "name": "_AerodctyB",
+    "ind": 183,
+    "glitch": true
+  },
+  {
+    "name": "Ghost",
+    "ind": 184,
+    "glitch": true
+  },
+  {
+    "name": "Oddish",
+    "ind": 185,
+    "pokedex": 43,
+    "growthRate": 3,
+    "baseHp": 45,
+    "baseAttack": 50,
+    "baseDefense": 55,
+    "baseSpeed": 30,
+    "baseSpecial": 75,
+    "baseExpYield": 78,
+    "evolution": {
+      "level": 21,
+      "toName": "Gloom"
+    },
+    "moves": [
+      {
+        "level": 15,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 17,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 19,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 24,
+        "move": "Acid"
+      },
+      {
+        "level": 33,
+        "move": "Petal Dance"
+      },
+      {
+        "level": 46,
+        "move": "Solarbeam"
+      }
+    ],
+    "initial": [
+      "Absorb"
+    ],
+    "tmHm": [
+      3,
+      6,
+      9,
+      10,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 255
+  },
+  {
+    "name": "Gloom",
+    "ind": 186,
+    "pokedex": 44,
+    "growthRate": 3,
+    "baseHp": 60,
+    "baseAttack": 65,
+    "baseDefense": 70,
+    "baseSpeed": 40,
+    "baseSpecial": 85,
+    "baseExpYield": 132,
+    "evolution": {
+      "item": "Leaf Stone",
+      "toName": "Vileplume"
+    },
+    "moves": [
+      {
+        "level": 15,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 17,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 19,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 28,
+        "move": "Acid"
+      },
+      {
+        "level": 38,
+        "move": "Petal Dance"
+      },
+      {
+        "level": 52,
+        "move": "Solarbeam"
+      }
+    ],
+    "initial": [
+      "Absorb",
+      "Poisonpowder",
+      "Stun Spore"
+    ],
+    "tmHm": [
+      3,
+      6,
+      9,
+      10,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 120
+  },
+  {
+    "name": "Vileplume",
+    "ind": 187,
+    "pokedex": 45,
+    "growthRate": 3,
+    "baseHp": 75,
+    "baseAttack": 80,
+    "baseDefense": 85,
+    "baseSpeed": 50,
+    "baseSpecial": 100,
+    "baseExpYield": 184,
+    "moves": [
+      {
+        "level": 15,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 17,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 19,
+        "move": "Sleep Powder"
+      }
+    ],
+    "initial": [
+      "Stun Spore",
+      "Sleep Powder",
+      "Acid",
+      "Petal Dance"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 45
+  },
+  {
+    "name": "Bellsprout",
+    "ind": 188,
+    "pokedex": 69,
+    "growthRate": 3,
+    "baseHp": 50,
+    "baseAttack": 75,
+    "baseDefense": 35,
+    "baseSpeed": 40,
+    "baseSpecial": 70,
+    "baseExpYield": 84,
+    "evolution": {
+      "level": 21,
+      "toName": "Weepinbell"
+    },
+    "moves": [
+      {
+        "level": 13,
+        "move": "Wrap"
+      },
+      {
+        "level": 15,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 18,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 21,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 26,
+        "move": "Acid"
+      },
+      {
+        "level": 33,
+        "move": "Razor Leaf"
+      },
+      {
+        "level": 42,
+        "move": "Slam"
+      }
+    ],
+    "initial": [
+      "Vine Whip",
+      "Growth"
+    ],
+    "tmHm": [
+      3,
+      6,
+      9,
+      10,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 255
+  },
+  {
+    "name": "Weepinbell",
+    "ind": 189,
+    "pokedex": 70,
+    "growthRate": 3,
+    "baseHp": 65,
+    "baseAttack": 90,
+    "baseDefense": 50,
+    "baseSpeed": 55,
+    "baseSpecial": 85,
+    "baseExpYield": 151,
+    "evolution": {
+      "item": "Leaf Stone",
+      "toName": "Victreebel"
+    },
+    "moves": [
+      {
+        "level": 13,
+        "move": "Wrap"
+      },
+      {
+        "level": 15,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 18,
+        "move": "Sleep Powder"
+      },
+      {
+        "level": 23,
+        "move": "Stun Spore"
+      },
+      {
+        "level": 29,
+        "move": "Acid"
+      },
+      {
+        "level": 38,
+        "move": "Razor Leaf"
+      },
+      {
+        "level": 49,
+        "move": "Slam"
+      }
+    ],
+    "initial": [
+      "Vine Whip",
+      "Growth",
+      "Wrap"
+    ],
+    "tmHm": [
+      3,
+      6,
+      9,
+      10,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 120
+  },
+  {
+    "name": "Victreebel",
+    "ind": 190,
+    "pokedex": 71,
+    "growthRate": 3,
+    "baseHp": 80,
+    "baseAttack": 105,
+    "baseDefense": 65,
+    "baseSpeed": 70,
+    "baseSpecial": 100,
+    "baseExpYield": 191,
+    "moves": [
+      {
+        "level": 13,
+        "move": "Wrap"
+      },
+      {
+        "level": 15,
+        "move": "Poisonpowder"
+      },
+      {
+        "level": 18,
+        "move": "Sleep Powder"
+      }
+    ],
+    "initial": [
+      "Sleep Powder",
+      "Stun Spore",
+      "Acid",
+      "Razor Leaf"
+    ],
+    "tmHm": [
+      3,
+      6,
+      8,
+      9,
+      10,
+      15,
+      20,
+      21,
+      22,
+      31,
+      32,
+      33,
+      34,
+      44,
+      50,
+      51
+    ],
+    "type1": "Grass",
+    "type2": "Poison",
+    "catchRate": 45
+  }
+]
