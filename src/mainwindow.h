@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QSettings>
+
 #include "ui_mainwindow.h"
 #include "filemanagement.h"
 
@@ -21,6 +23,11 @@ private slots:
 private:
     Ui::MainWindow ui;
     FileManagement file;
+    QSettings settings;
+    void closeEvent(QCloseEvent* event);
+
+    void saveState();
+    void loadState();
 
     static MainWindow* _instance;
 };

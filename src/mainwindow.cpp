@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->reUpdateRecentFiles(file.recentFiles());
     this->onPathChanged(file.path());
+    this->loadState();
 }
 
 MainWindow* MainWindow::_instance = nullptr;
@@ -85,4 +86,26 @@ void MainWindow::onPathChanged(QString path)
         this->setWindowTitle("Pokered Save Editor - New File");
     else
         this->setWindowTitle("Pokered Save Editor - " + path);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    this->saveState();
+    event->accept();
+}
+
+void MainWindow::saveState()
+{
+    settings.beginGroup("WindowState");
+    settings.setValue("size", this->size());
+    settings.setValue("pos", this->pos());
+    settings.endGroup();
+}
+
+void MainWindow::loadState()
+{
+    settings.beginGroup("WindowState");
+    this->resize(settings.value("size", QSize(640,480)).toSize());
+    this->move(settings.value("pos", QPoint(200,200)).toPoint());
+    settings.endGroup();
 }
