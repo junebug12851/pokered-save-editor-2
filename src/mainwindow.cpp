@@ -15,9 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui.actionWipe_Unused_Space, &QAction::triggered, &file, &FileManagement::wipeUnusedSpace);
     connect(ui.actionExit, &QAction::triggered, this, &MainWindow::close);
 
+    connect(&file, &FileManagement::pathChanged, this, &MainWindow::onPathChanged);
     connect(&file, &FileManagement::recentFilesChanged, this, &MainWindow::reUpdateRecentFiles);
 
-    reUpdateRecentFiles(file.recentFiles());
+    this->reUpdateRecentFiles(file.recentFiles());
+    this->onPathChanged(file.path());
 }
 
 void MainWindow::reUpdateRecentFiles(QList<QString>* files)
@@ -67,4 +69,12 @@ void MainWindow::onRecentFileClick()
     QAction* action = qobject_cast<QAction*>(sender());
     int index = action->data().toInt();
     file.openFileRecent(index);
+}
+
+void MainWindow::onPathChanged(QString path)
+{
+    if(path == "")
+        this->setWindowTitle("Pokered Save Editor - New File");
+    else
+        this->setWindowTitle("Pokered Save Editor - " + path);
 }

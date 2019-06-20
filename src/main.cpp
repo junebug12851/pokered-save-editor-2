@@ -13,7 +13,6 @@ int main(int argc, char *argv[])
     QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 
     // Set Application Info
-    QApplication::setApplicationDisplayName("Pokered Save Editor");
     QApplication::setApplicationName("Pokered Save Editor");
     QApplication::setOrganizationName("June Hanabi");
     QApplication::setApplicationVersion("v1.0.0");

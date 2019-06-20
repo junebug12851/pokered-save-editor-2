@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Pokered Save Editor</string>
+   <string/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -191,14 +191,14 @@
    <property name="toolTip">
     <string>Exit the editor</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+F4</string>
+   </property>
    <property name="menuRole">
     <enum>QAction::QuitRole</enum>
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
-   </property>
-   <property name="shortcut">
-    <string>Alt+F4</string>
    </property>
   </action>
   <action name="actionClear_Recent_Files">

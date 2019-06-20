@@ -14,6 +14,7 @@ public:
 private slots:
     void reUpdateRecentFiles(QList<QString>* files);
     void onRecentFileClick();
+    void onPathChanged(QString path);
 
 private:
     Ui::MainWindow ui;
