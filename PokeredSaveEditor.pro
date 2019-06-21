@@ -13,10 +13,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        src/mainwindow.cpp \
-        src/filemanagement.cpp \
+        src/view/mainwindow.cpp \
+        src/data/filemanagement.cpp \
         src/main.cpp \
-        src/rawsavedata.cpp
+        src/data/rawsavedata.cpp
 
 RESOURCES += qml.qrc
 
@@ -34,9 +34,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    src/mainwindow.h \
-    src/filemanagement.h \
-    src/rawsavedata.h
+    src/view/mainwindow.h \
+    src/data/filemanagement.h \
+    src/data/rawsavedata.h
 
 FORMS += \
-    src/mainwindow.ui
+    src/view/mainwindow.ui
