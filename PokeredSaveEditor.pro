@@ -13,6 +13,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        src/model/basemodel.cpp \
+        src/model/item.cpp \
+        src/model/move.cpp \
+        src/model/pokemon.cpp \
+        src/model/type.cpp \
         src/view/mainwindow.cpp \
         src/data/filemanagement.cpp \
         src/main.cpp \
@@ -35,6 +40,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/model/basemodel.h \
+    src/model/item.h \
+    src/model/move.h \
+    src/model/pokemon.h \
+    src/model/type.h \
     src/view/mainwindow.h \
     src/data/filemanagement.h \
     src/store/mondatabase.h \
