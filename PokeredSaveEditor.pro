@@ -16,7 +16,6 @@ SOURCES += \
         src/view/mainwindow.cpp \
         src/data/filemanagement.cpp \
         src/main.cpp \
-        src/store/mondatabase.cpp \
         src/data/rawsavedata.cpp
 
 RESOURCES += qml.qrc
@@ -37,7 +36,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     src/view/mainwindow.h \
     src/data/filemanagement.h \
-    src/store/mondatabase.h \
     src/data/rawsavedata.h
 
 FORMS += \
