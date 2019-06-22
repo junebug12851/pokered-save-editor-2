@@ -18,6 +18,7 @@ SOURCES += \
         src/model/move.cpp \
         src/model/pokemon.cpp \
         src/model/type.cpp \
+        src/store/pokemondatabase.cpp \
         src/view/mainwindow.cpp \
         src/data/filemanagement.cpp \
         src/main.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     src/model/move.h \
     src/model/pokemon.h \
     src/model/type.h \
+    src/store/pokemondatabase.h \
     src/view/mainwindow.h \
     src/data/filemanagement.h \
     src/data/rawsavedata.h
