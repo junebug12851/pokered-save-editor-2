@@ -3,7 +3,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
-#include <QVector>
 
 #include "basemodel.h"
 
@@ -24,8 +23,6 @@ public:
     // Is this an typical item
     // The alternative would be a specially given item
     const bool typical;
-
-    static const QVector<Item> store;
 };
 
 #endif // ITEM_H

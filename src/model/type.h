@@ -3,7 +3,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
-#include <QVector>
 
 #include "basemodel.h"
 
@@ -17,8 +16,6 @@ public:
             QObject *parent = nullptr);
 
     // Type only has name and index, BaseModel suffices
-
-    static const QVector<Type> store;
 };
 
 #endif // TYPE_H

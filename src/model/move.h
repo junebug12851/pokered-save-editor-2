@@ -4,8 +4,6 @@
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
 
-#include <QVector>
-
 #include "basemodel.h"
 
 class Move : public BaseModel
@@ -47,8 +45,6 @@ public:
     // Is this a glitch move?
     // Glitch moves are often highly incomplete meaning
     const bool glitch;
-
-    static const QVector<Move> store;
 };
 
 #endif // MOVES_H

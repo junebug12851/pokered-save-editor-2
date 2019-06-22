@@ -1,6 +1,6 @@
 #include "pokemon.h"
 
-MoveLearnset::MoveLearnset(const quint8 level,
+LevelName::LevelName(const quint8 level,
                            const QString name,
                            QObject *parent) :
     QObject(parent),
@@ -8,30 +8,14 @@ MoveLearnset::MoveLearnset(const quint8 level,
     name(name)
 {}
 
-MoveLearnset::MoveLearnset(const MoveLearnset& obj,
+LevelName::LevelName(const LevelName& obj,
                            QObject *parent) :
     QObject(parent),
     level(obj.level),
     name(obj.name)
 {}
 
-Evolution::Evolution(const quint8 level,
-                           const QString name,
-                           QObject *parent) :
-    QObject(parent),
-    level(level),
-    name(name)
-{}
-
-Evolution::Evolution(const Evolution& obj,
-                     QObject *parent) :
-    QObject(parent),
-    level(obj.level),
-    name(obj.name)
-{}
-
-Pokemon::Pokemon(
-        const QString name,
+Pokemon::Pokemon(const QString name,
         const quint8 index,
         const quint8 pokedex,
         const quint8 growthRate,
@@ -41,10 +25,10 @@ Pokemon::Pokemon(
         const quint8 baseSpeed,
         const quint8 baseSpecial,
         const quint8 baseExpYield,
-        const Evolution evolution,
-        const QVector<MoveLearnset> learnedMoves,
-        const QVector<QString> initialMoves,
-        const QVector<int> tmHm,
+        const LevelName evolution,
+        const vector<LevelName> learnedMoves,
+        const vector<QString> initialMoves,
+        const vector<int> tmHm,
         const QString type1,
         const QString type2,
         const QString catchRate,

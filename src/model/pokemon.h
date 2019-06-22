@@ -3,40 +3,24 @@
 
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
-#include <QVector>
+#include <vector>
+
+using namespace std;
 
 #include "basemodel.h"
 
-class MoveLearnset : public QObject {
+class LevelName : public QObject {
     Q_OBJECT
 
 public:
-    explicit MoveLearnset(
+    explicit LevelName(
             const quint8 level,
             const QString name,
             QObject *parent = nullptr
         );
 
-    explicit MoveLearnset(
-            const MoveLearnset& obj,
-            QObject *parent = nullptr
-        );
-
-    const quint8 level;
-    const QString name;
-};
-
-class Evolution  : public QObject {
-    Q_OBJECT
-
-public:
-    explicit Evolution(
-            const quint8 level,
-            const QString name,
-            QObject *parent = nullptr
-        );
-    explicit Evolution(
-            const Evolution& obj,
+    explicit LevelName(
+            const LevelName& obj,
             QObject *parent = nullptr
         );
 
@@ -59,10 +43,10 @@ public:
             const quint8 baseSpeed,
             const quint8 baseSpecial,
             const quint8 baseExpYield,
-            const Evolution evolution,
-            const QVector<MoveLearnset> learnedMoves,
-            const QVector<QString> initialMoves,
-            const QVector<int> tmHm,
+            const LevelName evolution,
+            const vector<LevelName> learnedMoves,
+            const vector<QString> initialMoves,
+            const vector<int> tmHm,
             const QString type1,
             const QString type2,
             const QString catchRate,
@@ -89,12 +73,12 @@ public:
     const quint8 baseExpYield;
 
     // Evolution
-    const Evolution evolution;
+    const LevelName evolution;
 
     // Learnset
-    const QVector<MoveLearnset> learnedMoves;
-    const QVector<QString> initialMoves;
-    const QVector<int> tmHm;
+    const vector<LevelName> learnedMoves;
+    const vector<QString> initialMoves;
+    const vector<int> tmHm;
 
     const QString type1;
     const QString type2;
@@ -102,8 +86,6 @@ public:
 
     // Glitch Pokemon?
     const bool glitch;
-
-    static const QVector<Pokemon> store;
 };
 
 #endif // POKEMON_H
