@@ -9,6 +9,16 @@
 class Move : public BaseModel
 {
     Q_OBJECT
+    Q_PROPERTY(QString name MEMBER name CONSTANT FINAL)
+    Q_PROPERTY(quint8 index MEMBER index CONSTANT FINAL)
+    Q_PROPERTY(quint8 power MEMBER power CONSTANT FINAL)
+    Q_PROPERTY(QString type MEMBER type CONSTANT FINAL)
+    Q_PROPERTY(quint8 accuracy MEMBER accuracy CONSTANT FINAL)
+    Q_PROPERTY(quint8 pp MEMBER pp CONSTANT FINAL)
+    Q_PROPERTY(quint8 tm MEMBER tm CONSTANT FINAL)
+    Q_PROPERTY(quint8 hm MEMBER hm CONSTANT FINAL)
+    Q_PROPERTY(bool glitch MEMBER glitch CONSTANT FINAL)
+
 public:
     explicit Move(
             const QString name,

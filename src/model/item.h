@@ -9,6 +9,11 @@
 class Item : public BaseModel
 {
     Q_OBJECT
+    Q_PROPERTY(QString name MEMBER name CONSTANT FINAL)
+    Q_PROPERTY(quint8 index MEMBER index CONSTANT FINAL)
+    Q_PROPERTY(bool normal MEMBER normal CONSTANT FINAL)
+    Q_PROPERTY(bool typical MEMBER typical CONSTANT FINAL)
+
 public:
     explicit Item(
             const QString name,
