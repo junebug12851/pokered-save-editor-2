@@ -31,6 +31,7 @@ struct Move : public BaseModel
     // Glitch moves are often highly incomplete meaning
     bool glitch;
 
+    static Move fromJson(QJsonObject obj);
 };
 
 Q_DECLARE_METATYPE(Move)

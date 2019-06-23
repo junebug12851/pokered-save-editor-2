@@ -12,6 +12,7 @@ struct Item : public BaseModel
     // The alternative would be a specially given item
     bool typical;
 
+    static Item fromJson(QJsonObject obj);
 };
 
 Q_DECLARE_METATYPE(Item)

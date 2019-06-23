@@ -17,6 +17,7 @@ struct BaseModel
     // Internal game index of data entry
     quint8 index;
 
+    static void fromJson(BaseModel& model, QJsonObject obj);
 };
 
 Q_DECLARE_METATYPE(BaseModel)
