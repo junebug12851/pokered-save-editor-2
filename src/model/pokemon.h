@@ -2,14 +2,13 @@
 #define POKEMON_H
 
 #include <QVector>
-#include <QString>
 
 #include "basemodel.h"
 
 // To make things simpler, lets keep this to have non-constant members
 // To much fighting with Qt for too long otherwise
 struct LevelName {
-    quint8 level;
+    std::uint_least8_t level;
     QString name;
 };
 
@@ -18,22 +17,22 @@ Q_DECLARE_METATYPE(LevelName)
 struct Pokemon : public BaseModel
 {
     // Pokemon Pokedex Index
-    quint8 pokedex;
+    std::uint_least8_t pokedex;
 
     // Pokemon Growth Rate
     // How big or small is the exp range to reach max level
     // The number here is the internal growth rate index, in other words the
     // amount of the number (bigger or smaller) has no correlationto the growth
     // rate
-    quint8 growthRate;
+    std::uint_least8_t growthRate;
 
     // Base Stats
-    quint8 baseHP;
-    quint8 baseAttack;
-    quint8 baseDefense;
-    quint8 baseSpeed;
-    quint8 baseSpecial;
-    quint8 baseExpYield;
+    std::uint_least8_t baseHP;
+    std::uint_least8_t baseAttack;
+    std::uint_least8_t baseDefense;
+    std::uint_least8_t baseSpeed;
+    std::uint_least8_t baseSpecial;
+    std::uint_least8_t baseExpYield;
 
     // Evolution
     LevelName evolution;
@@ -41,7 +40,7 @@ struct Pokemon : public BaseModel
     // Learnset
     QVector<LevelName> learnedMoves;
     QVector<QString> initialMoves;
-    QVector<int> tmHm;
+    QVector<std::uint_least8_t> tmHm;
 
     QString type1;
     QString type2;
