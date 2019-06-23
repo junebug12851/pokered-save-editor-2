@@ -55,7 +55,7 @@ void FileManagement::processRecentFileChanges()
     // Cleanup First make sure correct length and contains no
     // empty strings or strings with spaces or duplicate strings, etc...
     QList<QString> newList;
-    for(var8f i{0}; i < this->_recentFiles.size(); i++) {
+    for(var8f i{0}; i < this->_recentFiles.size(); ++i) {
         QString file{this->_recentFiles[i]};
         file = file.trimmed();
         if(file == "" || newList.contains(file))
@@ -212,7 +212,7 @@ void FileManagement::expandRecentFiles(QString key)
     // Break apart string into paths
     // Manually add them in, otherwise they oddly get out of order
     QStringList recentFiles{key.split(';')};
-    for(var8 i{0}; i < recentFiles.size(); i++) {
+    for(var8 i{0}; i < recentFiles.size(); ++i) {
         this->_recentFiles.append(recentFiles[i]);
     }
 
