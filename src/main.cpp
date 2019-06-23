@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QtQuickControls2>
 
-#include "mainwindow.h"
+#include "./view/mainwindow.h"
 
 int main(int argc, char *argv[])
 {
