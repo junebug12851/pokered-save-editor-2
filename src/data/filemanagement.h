@@ -9,10 +9,9 @@
 #include "rawsavedata.h"
 #include "../includes/vars.h"
 
-// Says it's unused but it actually is used
 constexpr var8f MAX_RECENT_FILES{5};
-const QString KEY_RECENT_FILES{"recentFiles"};
-const QString KEY_LAST_FILE{"lastFile"};
+extern const QString KEY_RECENT_FILES;
+extern const QString KEY_LAST_FILE;
 
 class FileManagement : public QObject
 {

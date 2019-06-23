@@ -5,6 +5,9 @@
 #include "filemanagement.h"
 #include "../view/mainwindow.h"
 
+extern const QString KEY_RECENT_FILES{"recentFiles"};
+extern const QString KEY_LAST_FILE{"lastFile"};
+
 FileManagement::FileManagement(QObject *parent)
     : QObject(parent), _path("")
 {
