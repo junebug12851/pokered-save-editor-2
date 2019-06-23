@@ -55,8 +55,8 @@ void FileManagement::processRecentFileChanges()
     // Cleanup First make sure correct length and contains no
     // empty strings or strings with spaces or duplicate strings, etc...
     QList<QString> newList;
-    for(int i = 0; i < this->_recentFiles.size(); i++) {
-        QString file = this->_recentFiles[i];
+    for(int i{0}; i < this->_recentFiles.size(); i++) {
+        QString file{this->_recentFiles[i]};
         file = file.trimmed();
         if(file == "" || newList.contains(file))
             continue;
@@ -70,7 +70,7 @@ void FileManagement::processRecentFileChanges()
     this->_recentFiles = newList;
 
     // Save
-    QString compacted = newList.join(';');
+    QString compacted{newList.join(';')};
     settings.setValue(KEY_RECENT_FILES, compacted);
 
     // Notify
@@ -85,11 +85,11 @@ void FileManagement::newFile()
 
 void FileManagement::openFile()
 {
-    QString file = this->openFileDialog("Open Save File");
+    QString file{this->openFileDialog("Open Save File")};
     if(file == "")
         return;
 
-    quint8* data = this->readSaveData(file);
+    quint8* data{this->readSaveData(file)};
     this->data()->setData(data); // Copies data out of array (Safe to delete)
     this->setPath(file);
     delete data; // Very important with readSaveData
@@ -97,8 +97,8 @@ void FileManagement::openFile()
 
 void FileManagement::openFileRecent(int index)
 {
-    QString file = this->recentFile(index);
-    quint8* data = this->readSaveData(file);
+    QString file{this->recentFile(index)};
+    quint8* data{this->readSaveData(file)};
     this->data()->setData(data);
     this->setPath(file);
 }
@@ -127,7 +127,7 @@ void FileManagement::saveFile()
 
 void FileManagement::saveFileAs()
 {
-    QString filename = this->saveFileDialog("Save File As...");
+    QString filename{this->saveFileDialog("Save File As...")};
     if(filename == "")
         return;
 
@@ -137,7 +137,7 @@ void FileManagement::saveFileAs()
 
 void FileManagement::saveFileCopy()
 {
-    QString filename = this->saveFileDialog("Save Copy As...");
+    QString filename{this->saveFileDialog("Save Copy As...")};
     if(filename == "")
         return;
 
@@ -151,7 +151,7 @@ void FileManagement::wipeUnusedSpace()
 
 QString FileManagement::openFileDialog(QString title)
 {
-    QString path = this->path();
+    QString path{this->path()};
     if(path == "")
         path = settings.value(KEY_LAST_FILE, QString("")).toString();
 
@@ -164,7 +164,7 @@ QString FileManagement::openFileDialog(QString title)
 
 QString FileManagement::saveFileDialog(QString title)
 {
-    QString path = this->path();
+    QString path{this->path()};
     if(path == "")
         path = settings.value(KEY_LAST_FILE, QString("")).toString();
 
@@ -184,7 +184,7 @@ quint8 *FileManagement::readSaveData(QString filePath)
     QDataStream in(&file);
 
     // Read in raw bytes signed
-    char* rawSaveData = new char[SAV_DATA_SIZE];
+    char* rawSaveData{new char[SAV_DATA_SIZE]};
     in.readRawData(rawSaveData, SAV_DATA_SIZE);
 
     file.close();
@@ -200,7 +200,7 @@ void FileManagement::writeSaveData(QString filePath, quint8 *data)
     QDataStream out(&file);
 
     // Convert pointer over to a type needed for QDataStream and write file
-    char* dataChar = reinterpret_cast<char*>(data);
+    char* dataChar{reinterpret_cast<char*>(data)};
     out.writeRawData(dataChar, SAV_DATA_SIZE);
 
     file.close();
@@ -211,11 +211,10 @@ void FileManagement::expandRecentFiles(QString key)
 {
     // Break apart string into paths
     // Manually add them in, otherwise they oddly get out of order
-    QStringList recentFiles = key.split(';');
-    for(int i = 0; i < recentFiles.size(); i++) {
+    QStringList recentFiles{key.split(';')};
+    for(int i{0}; i < recentFiles.size(); i++) {
         this->_recentFiles.append(recentFiles[i]);
     }
-    //this->_recentFiles = QList<QString>::fromSet(recentFiles.toSet());
 
     // Process, cleanup, and notify
     this->processRecentFileChanges();
@@ -228,7 +227,7 @@ void FileManagement::setPath(QString path)
         return;
 
     //Change paths, notify, add to recentFiles
-    QString oldPath = this->_path;
+    QString oldPath{this->_path};
     this->_path = path;
     this->pathChanged(path, oldPath);
 

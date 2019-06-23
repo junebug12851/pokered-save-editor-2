@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->loadState();
 }
 
-MainWindow* MainWindow::_instance = nullptr;
+MainWindow* MainWindow::_instance{nullptr};
 
 MainWindow *MainWindow::instance()
 {
@@ -34,11 +34,11 @@ MainWindow *MainWindow::instance()
 void MainWindow::reUpdateRecentFiles(QList<QString>* files)
 {
     // Grab Recent Files Menu
-    QMenu* filesMenu = ui.menuRecent_Files;
+    QMenu* filesMenu{ui.menuRecent_Files};
 
     // Disconnect Signal Slot connections from the 3rd onward
-    for(int i = 3; i < filesMenu->actions().size(); i++) {
-        QAction* action = filesMenu->actions()[i];
+    for(int i{3}; i < filesMenu->actions().size(); i++) {
+        QAction* action{filesMenu->actions()[i]};
         disconnect(action, &QAction::triggered, this, &MainWindow::onRecentFileClick);
     }
 
@@ -52,15 +52,15 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
 
     // Grab list of recent files and loop through them
     // Add actions for each one of them
-    for(int i = 0; i < MAX_RECENT_FILES && i < files->size(); i++) {
-        QString file = files->at(i);
+    for(int i{0}; i < MAX_RECENT_FILES && i < files->size(); i++) {
+        QString file{files->at(i)};
         if(file == "")
             continue;
 
-        QAction* recentFile = new QAction(file);
+        QAction* recentFile{new QAction(file)};
 
         // Key_0 is 0x30 - add i to 0x30 to get shortcut offset
-        int shortcutKey = 0x30 + i;
+        int shortcutKey{0x30 + i};
         recentFile->setShortcut(Qt::CTRL + Qt::SHIFT + shortcutKey);
         recentFile->setData(i);
 
@@ -75,8 +75,8 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
 
 void MainWindow::onRecentFileClick()
 {
-    QAction* action = qobject_cast<QAction*>(sender());
-    int index = action->data().toInt();
+    QAction* action{qobject_cast<QAction*>(sender())};
+    int index{action->data().toInt()};
     file.openFileRecent(index);
 }
 
