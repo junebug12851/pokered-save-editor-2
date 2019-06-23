@@ -6,7 +6,7 @@
 
 #include "../includes/vars.h"
 
-#define SAV_DATA_SIZE 0x8000
+constexpr var16f SAV_DATA_SIZE = 0x8000;
 
 class RawSaveData : public QObject
 {

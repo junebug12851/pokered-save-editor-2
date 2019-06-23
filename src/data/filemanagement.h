@@ -1,11 +1,6 @@
 #ifndef FILEMANAGEMENT_H
 #define FILEMANAGEMENT_H
 
-#define MAX_RECENT_FILES 5
-
-#define KEY_RECENT_FILES "recentFiles"
-#define KEY_LAST_FILE "lastFile"
-
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
 #include <QFile>
@@ -13,6 +8,11 @@
 
 #include "rawsavedata.h"
 #include "../includes/vars.h"
+
+// Says it's unused but it actually is used
+constexpr var8f MAX_RECENT_FILES{5};
+const QString KEY_RECENT_FILES{"recentFiles"};
+const QString KEY_LAST_FILE{"lastFile"};
 
 class FileManagement : public QObject
 {
