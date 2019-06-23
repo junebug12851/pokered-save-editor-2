@@ -4,7 +4,8 @@
 #include <QtCore/QObject>
 #include <QString>
 #include <QJsonObject>
-#include <cstdint>
+
+#include "../includes/vars.h"
 
 /**
   * Base model to all models
@@ -16,7 +17,7 @@ struct BaseModel
     QString name;
 
     // Internal game index of data entry
-    std::uint_least8_t index;
+    var8 index;
 
     static void fromJson(BaseModel& model, QJsonObject obj);
 };

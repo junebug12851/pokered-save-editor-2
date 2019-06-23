@@ -12,6 +12,7 @@
 #include <QSettings>
 
 #include "rawsavedata.h"
+#include "../includes/vars.h"
 
 class FileManagement : public QObject
 {
@@ -30,7 +31,7 @@ public:
     QString path();
 
     // Manage Recent Files
-    QString recentFile(int index = 0);
+    QString recentFile(var8f index = 0);
     QList<QString>* recentFiles();
 
 signals:
@@ -41,7 +42,7 @@ public slots:
     // Open/Save Files
     void newFile();
     void openFile();
-    void openFileRecent(int index);
+    void openFileRecent(var8f index);
     void reopenFile();
 
     void saveFile();
@@ -61,8 +62,8 @@ private:
     QString saveFileDialog(QString title);
 
     // Internal Save/Load Handling
-    quint8* readSaveData(QString filePath);
-    void writeSaveData(QString filePath, quint8* data);
+    var8e* readSaveData(QString filePath);
+    void writeSaveData(QString filePath, var8e* data);
 
     // Internal paths handling
     void expandRecentFiles(QString files);

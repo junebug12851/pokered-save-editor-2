@@ -7,7 +7,7 @@ RawSaveData::RawSaveData(QObject *parent)
     this->resetData();
 }
 
-RawSaveData::RawSaveData(quint8 data[SAV_DATA_SIZE], QObject *parent)
+RawSaveData::RawSaveData(var8e data[SAV_DATA_SIZE], QObject *parent)
     : QObject(parent)
 {
     // Init data and notify
@@ -24,7 +24,7 @@ void RawSaveData::resetData(bool silent)
         this->silentWholeDataChanged(this->_data);
 }
 
-void RawSaveData::setData(quint8 *data, bool silent)
+void RawSaveData::setData(var8e *data, bool silent)
 {
     memcpy(this->_data, data, SAV_DATA_SIZE);
 
@@ -34,7 +34,7 @@ void RawSaveData::setData(quint8 *data, bool silent)
         this->silentWholeDataChanged(this->_data);
 }
 
-quint8 *RawSaveData::data(bool syncFirst)
+var8e *RawSaveData::data(bool syncFirst)
 {
     //@TODO implement syncFirst
     return this->_data;

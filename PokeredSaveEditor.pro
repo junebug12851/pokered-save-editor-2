@@ -46,6 +46,7 @@ HEADERS += \
     src/model/pokemon.h \
     src/model/type.h \
     src/store/pokemondatabase.h \
+    src/includes/vars.h \
     src/view/mainwindow.h \
     src/data/filemanagement.h \
     src/data/rawsavedata.h
