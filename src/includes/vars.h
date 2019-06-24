@@ -13,63 +13,63 @@
  */
 
 // Smallest variables unsigned
-typedef std::uint_least8_t uvar8s;
-typedef std::uint_least16_t uvar16s;
-typedef std::uint_least32_t uvar32s;
-typedef std::uint_least64_t uvar64s;
+using uvar8s = std::uint_least8_t;
+using uvar16s = std::uint_least16_t;
+using uvar32s = std::uint_least32_t;
+using uvar64s = std::uint_least64_t;
 
 // Smallest variables signed
-typedef std::int_least8_t svar8s;
-typedef std::int_least16_t svar16s;
-typedef std::int_least32_t svar32s;
-typedef std::int_least64_t svar64s;
+using svar8s = std::int_least8_t;
+using svar16s = std::int_least16_t;
+using svar32s = std::int_least32_t;
+using svar64s = std::int_least64_t;
 
 // Fastest variables unsigned
-typedef std::uint_fast8_t uvar8f;
-typedef std::uint_fast16_t uvar16f;
-typedef std::uint_fast32_t uvar32f;
-typedef std::uint_fast64_t uvar64f;
+using uvar8f = std::uint_fast8_t;
+using uvar16f = std::uint_fast16_t;
+using uvar32f = std::uint_fast32_t;
+using uvar64f = std::uint_fast64_t;
 
 // Fastest variables signed
-typedef std::int_fast8_t svar8f;
-typedef std::int_fast16_t svar16f;
-typedef std::int_fast32_t svar32f;
-typedef std::int_fast64_t svar64f;
+using svar8f = std::int_fast8_t;
+using svar16f = std::int_fast16_t;
+using svar32f = std::int_fast32_t;
+using svar64f = std::int_fast64_t;
 
 // Exact variables unsigned
-typedef std::uint8_t uvar8e;
-typedef std::uint16_t uvar16e;
-typedef std::uint32_t uvar32e;
-typedef std::uint64_t uvar64e;
+using uvar8e = std::uint8_t;
+using uvar16e = std::uint16_t;
+using uvar32e = std::uint32_t;
+using uvar64e = std::uint64_t;
 
 // Exact variables signed
-typedef std::int8_t svar8e;
-typedef std::int16_t svar16e;
-typedef std::int32_t svar32e;
-typedef std::int64_t svar64e;
+using svar8e = std::int8_t;
+using svar16e = std::int16_t;
+using svar32e = std::int32_t;
+using svar64e = std::int64_t;
 
 // Smallest variables default signing (Unsigned)
-typedef uvar8s var8s;
-typedef uvar16s var16s;
-typedef uvar32s var32s;
-typedef uvar64s var64s;
+using var8s = uvar8s;
+using var16s = uvar16s;
+using var32s = uvar32s;
+using var64s = uvar64s;
 
 // Fastest variables default signing (Unsigned)
-typedef uvar8f var8f;
-typedef uvar16f var16f;
-typedef uvar32f var32f;
-typedef uvar64f var64f;
+using var8f = uvar8f;
+using var16f = uvar16f;
+using var32f = uvar32f;
+using var64f = uvar64f;
 
 // Exact variables default signing (Unsigned)
-typedef uvar8e var8e;
-typedef uvar16e var16e;
-typedef uvar32e var32e;
-typedef uvar64e var64e;
+using var8e = uvar8e;
+using var16e = uvar16e;
+using var32e = uvar32e;
+using var64e = uvar64e;
 
 // Default ratio (Smallest) variables default signing (Unsigned)
-typedef var8s var8;
-typedef var16s var16;
-typedef var32s var32;
-typedef var64s var64;
+using var8 = var8s;
+using var16 = var16s;
+using var32 = var32s;
+using var64 = var64s;
 
 #endif // VARS_H
