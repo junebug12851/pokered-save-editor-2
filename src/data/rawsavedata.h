@@ -27,6 +27,9 @@ signals:
 
 private:
     var8e _data[SAV_DATA_SIZE];
+    // We want this on the stack for speed, it takes up
+    // only 32KB of data or ~0.03MB. A typical stack is 1MB
+    // Therefore this takes up only ~3% of the stack space
 };
 
 #endif // RAWSAVEDATA_H
