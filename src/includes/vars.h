@@ -12,6 +12,10 @@
  *         exact meaning no more or less than minimum size and may not be supported.
  */
 
+////////////////////////////////////////////////////////////////////////////////
+/// Fully Detailed
+////////////////////////////////////////////////////////////////////////////////
+
 // Smallest variables unsigned
 using uvar8s = std::uint_least8_t;
 using uvar16s = std::uint_least16_t;
@@ -48,6 +52,10 @@ using svar16e = std::int16_t;
 using svar32e = std::int32_t;
 using svar64e = std::int64_t;
 
+////////////////////////////////////////////////////////////////////////////////
+/// Shorthand with default assumptions
+////////////////////////////////////////////////////////////////////////////////
+
 // Smallest variables default signing (Unsigned)
 using var8s = uvar8s;
 using var16s = uvar16s;
@@ -75,11 +83,15 @@ using var64e = uvar64e;
 // Exact variable default signing of default size (8-bits)
 using vare = var8e;
 
-// Default ratio (Smallest) variables default signing
-using var8 = var8s;
-using var16 = var16s;
-using var32 = var32s;
-using var64 = var64s;
+////////////////////////////////////////////////////////////////////////////////
+/// Smaller Shorthand with most default assumptions
+////////////////////////////////////////////////////////////////////////////////
+
+// Default ratio (Fastest) variables default signing
+using var8 = var8f;
+using var16 = var16f;
+using var32 = var32f;
+using var64 = var64f;
 
 // Default ratio variables default signing of default
 // size (8-bits)

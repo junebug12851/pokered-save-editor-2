@@ -8,7 +8,7 @@
 // To make things simpler, lets keep this to have non-constant members
 // To much fighting with Qt for too long otherwise
 struct LevelName {
-    var level;
+    vars level;
     QString name;
 };
 
@@ -17,22 +17,22 @@ Q_DECLARE_METATYPE(LevelName)
 struct Pokemon : public BaseModel
 {
     // Pokemon Pokedex Index
-    var pokedex;
+    vars pokedex;
 
     // Pokemon Growth Rate
     // How big or small is the exp range to reach max level
     // The number here is the internal growth rate index, in other words the
     // amount of the number (bigger or smaller) has no correlationto the growth
     // rate
-    var growthRate;
+    vars growthRate;
 
     // Base Stats
-    var baseHP;
-    var baseAttack;
-    var baseDefense;
-    var baseSpeed;
-    var baseSpecial;
-    var baseExpYield;
+    vars baseHP;
+    vars baseAttack;
+    vars baseDefense;
+    vars baseSpeed;
+    vars baseSpecial;
+    vars baseExpYield;
 
     // Evolution
     LevelName evolution;
@@ -40,7 +40,7 @@ struct Pokemon : public BaseModel
     // Learnset
     QVector<LevelName> learnedMoves;
     QVector<QString> initialMoves;
-    QVector<var> tmHm;
+    QVector<vars> tmHm;
 
     QString type1;
     QString type2;

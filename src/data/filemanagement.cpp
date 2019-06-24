@@ -37,7 +37,7 @@ void FileManagement::addRecentFile(QString path)
     this->processRecentFileChanges();
 }
 
-QString FileManagement::recentFile(varf index)
+QString FileManagement::recentFile(var index)
 {
     return this->_recentFiles[index];
 }
@@ -58,7 +58,7 @@ void FileManagement::processRecentFileChanges()
     // Cleanup First make sure correct length and contains no
     // empty strings or strings with spaces or duplicate strings, etc...
     QList<QString> newList;
-    for(varf i{0}; i < this->_recentFiles.size(); ++i) {
+    for(var i{0}; i < this->_recentFiles.size(); ++i) {
         QString file{this->_recentFiles[i]};
         file = file.trimmed();
         if(file == "" || newList.contains(file))
@@ -92,16 +92,16 @@ void FileManagement::openFile()
     if(file == "")
         return;
 
-    varf* data{this->readSaveData(file)};
+    var* data{this->readSaveData(file)};
     this->data()->setData(data); // Copies data out of array (Safe to delete)
     this->setPath(file);
     delete data; // Very important with readSaveData
 }
 
-void FileManagement::openFileRecent(varf index)
+void FileManagement::openFileRecent(var index)
 {
     QString file{this->recentFile(index)};
-    varf* data{this->readSaveData(file)};
+    var* data{this->readSaveData(file)};
     this->data()->setData(data);
     this->setPath(file);
 }

@@ -17,7 +17,7 @@ struct BaseModel
     QString name;
 
     // Internal game index of data entry
-    var index;
+    vars index;
 
     static void fromJson(BaseModel& model, QJsonObject obj);
 };
