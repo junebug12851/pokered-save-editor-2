@@ -37,7 +37,7 @@ void FileManagement::addRecentFile(QString path)
     this->processRecentFileChanges();
 }
 
-QString FileManagement::recentFile(var8f index)
+QString FileManagement::recentFile(varf index)
 {
     return this->_recentFiles[index];
 }
@@ -58,7 +58,7 @@ void FileManagement::processRecentFileChanges()
     // Cleanup First make sure correct length and contains no
     // empty strings or strings with spaces or duplicate strings, etc...
     QList<QString> newList;
-    for(var8f i{0}; i < this->_recentFiles.size(); ++i) {
+    for(varf i{0}; i < this->_recentFiles.size(); ++i) {
         QString file{this->_recentFiles[i]};
         file = file.trimmed();
         if(file == "" || newList.contains(file))
@@ -92,16 +92,16 @@ void FileManagement::openFile()
     if(file == "")
         return;
 
-    var8f* data{this->readSaveData(file)};
+    varf* data{this->readSaveData(file)};
     this->data()->setData(data); // Copies data out of array (Safe to delete)
     this->setPath(file);
     delete data; // Very important with readSaveData
 }
 
-void FileManagement::openFileRecent(var8f index)
+void FileManagement::openFileRecent(varf index)
 {
     QString file{this->recentFile(index)};
-    var8f* data{this->readSaveData(file)};
+    varf* data{this->readSaveData(file)};
     this->data()->setData(data);
     this->setPath(file);
 }
@@ -179,7 +179,7 @@ QString FileManagement::saveFileDialog(QString title)
 }
 
 // Pointer has to be deleted to prevent memory leaks
-var8e *FileManagement::readSaveData(QString filePath)
+vare *FileManagement::readSaveData(QString filePath)
 {
     // Load up file in system
     QFile file(filePath);
@@ -192,10 +192,10 @@ var8e *FileManagement::readSaveData(QString filePath)
 
     file.close();
 
-    return reinterpret_cast<var8e*>(rawSaveData);
+    return reinterpret_cast<vare*>(rawSaveData);
 }
 
-void FileManagement::writeSaveData(QString filePath, var8e *data)
+void FileManagement::writeSaveData(QString filePath, vare *data)
 {
     // Load up file in system
     QFile file(filePath);
@@ -215,7 +215,7 @@ void FileManagement::expandRecentFiles(QString key)
     // Break apart string into paths
     // Manually add them in, otherwise they oddly get out of order
     QStringList recentFiles{key.split(';')};
-    for(var8 i{0}; i < recentFiles.size(); ++i) {
+    for(var i{0}; i < recentFiles.size(); ++i) {
         this->_recentFiles.append(recentFiles[i]);
     }
 

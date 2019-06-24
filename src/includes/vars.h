@@ -54,11 +54,17 @@ using var16s = uvar16s;
 using var32s = uvar32s;
 using var64s = uvar64s;
 
+// Smallest variable default signing of default size (8-bits)
+using vars = var8s;
+
 // Fastest variables default signing (Unsigned)
 using var8f = uvar8f;
 using var16f = uvar16f;
 using var32f = uvar32f;
 using var64f = uvar64f;
+
+// Fastest variable default signing of default size (8-bits)
+using varf = var8f;
 
 // Exact variables default signing (Unsigned)
 using var8e = uvar8e;
@@ -66,10 +72,17 @@ using var16e = uvar16e;
 using var32e = uvar32e;
 using var64e = uvar64e;
 
-// Default ratio (Smallest) variables default signing (Unsigned)
+// Exact variable default signing of default size (8-bits)
+using vare = var8e;
+
+// Default ratio (Smallest) variables default signing
 using var8 = var8s;
 using var16 = var16s;
 using var32 = var32s;
 using var64 = var64s;
+
+// Default ratio variables default signing of default
+// size (8-bits)
+using var = var8;
 
 #endif // VARS_H

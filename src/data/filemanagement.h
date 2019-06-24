@@ -9,7 +9,7 @@
 #include "rawsavedata.h"
 #include "../includes/vars.h"
 
-constexpr var8f MAX_RECENT_FILES{5};
+constexpr varf MAX_RECENT_FILES{5};
 extern const QString KEY_RECENT_FILES;
 extern const QString KEY_LAST_FILE;
 
@@ -30,7 +30,7 @@ public:
     QString path();
 
     // Manage Recent Files
-    QString recentFile(var8f index = 0);
+    QString recentFile(varf index = 0);
     QList<QString>* recentFiles();
 
 signals:
@@ -41,7 +41,7 @@ public slots:
     // Open/Save Files
     void newFile();
     void openFile();
-    void openFileRecent(var8f index);
+    void openFileRecent(varf index);
     void reopenFile();
 
     void saveFile();
