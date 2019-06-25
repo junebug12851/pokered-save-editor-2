@@ -15,6 +15,10 @@ public:
     const optional<bool>& common();
 
 private:
+    /**
+     * Stage 1 Variables: Extracted from JSON Data
+     */
+
     // Is this a normal or a glitch item
     optional<bool> _normal;
 

@@ -8,6 +8,12 @@ using std::vector;
 using std::pair;
 
 #include "basemodel.h"
+#include "move.h"
+#include "type.h"
+#include "item.h"
+
+// Forward Declare for PokemonEvolution class
+class Pokemon;
 
 // Pokemon can evolve from level or item
 class PokemonEvolution {
@@ -21,10 +27,22 @@ public:
     const optional<QString>& item();
     const QString& toName();
 
+    const optional<Item*>& toItem();
+    const optional<Pokemon*>& toPokemon();
+
 private:
+    /**
+     * Stage 1 Variables: Extracted from JSON Data
+     */
     optional<vars> _level;
     optional<QString> _item;
     QString _toName;
+
+    /**
+     * Stage 2 Variables: Inter-Linking amongst data
+     */
+    optional<Item*> _toItem;
+    optional<Pokemon*> _toPokemon;
 };
 
 Q_DECLARE_METATYPE(PokemonEvolution)
@@ -54,7 +72,16 @@ public:
     const optional<vars>& catchRate();
     const optional<bool>& glitch();
 
+    const optional<vector<pair<vars, Move*>>>& toLearnedMoves();
+    const optional<vector<Move*>>& toInitialMoves();
+    const optional<vector<Move*>>& toTmHmMoves();
+    const optional<Type*>& toType1();
+    const optional<Type*>& toType2();
+
 private:
+    /**
+     * Stage 1 Variables: Extracted from JSON Data
+     */
     // Pokemon Pokedex Index
     optional<vars> _pokedex;
 
@@ -89,6 +116,15 @@ private:
 
     // Glitch Pokemon?
     optional<bool> _glitch;
+
+    /**
+     * Stage 2 Variables: Inter-Linking amongst data
+     */
+    optional<vector<pair<vars, Move*>>> _toLearnedMoves;
+    optional<vector<Move*>> _toInitialMoves;
+    optional<vector<Move*>> _toTmHmMoves;
+    optional<Type*> _toType1;
+    optional<Type*> _toType2;
 };
 
 Q_DECLARE_METATYPE(Pokemon)

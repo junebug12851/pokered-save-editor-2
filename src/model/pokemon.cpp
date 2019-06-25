@@ -12,6 +12,9 @@ PokemonEvolution::PokemonEvolution(const QJsonObject &obj)
 
 void PokemonEvolution::init(const QJsonObject &obj)
 {
+    this->_toItem.reset();
+    this->_toPokemon.reset();
+
     if(obj.contains("item"))
         this->_item = obj["item"].toString();
     else
@@ -40,6 +43,16 @@ const QString& PokemonEvolution::toName()
     return this->_toName;
 }
 
+const optional<Item*>& PokemonEvolution::toItem()
+{
+    return this->_toItem;
+}
+
+const optional<Pokemon*>& PokemonEvolution::toPokemon()
+{
+    return this->_toPokemon;
+}
+
 Pokemon::Pokemon()
 {}
 
@@ -52,6 +65,12 @@ Pokemon::Pokemon(const QJsonObject &obj) :
 void Pokemon::init(const QJsonObject &obj)
 {
     BaseModel::init(obj);
+
+    this->_toType1.reset();
+    this->_toType2.reset();
+    this->_toTmHmMoves.reset();
+    this->_toInitialMoves.reset();
+    this->_toLearnedMoves.reset();
 
     if(obj.contains("pokedex"))
         this->_pokedex = static_cast<vars>(obj["pokedex"].toInt());
@@ -276,4 +295,29 @@ const optional<vars>& Pokemon::catchRate()
 const optional<bool>& Pokemon::glitch()
 {
     return this->_glitch;
+}
+
+const optional<vector<pair<vars, Move*>>>& Pokemon::toLearnedMoves()
+{
+    return this->_toLearnedMoves;
+}
+
+const optional<vector<Move*>>& Pokemon::toInitialMoves()
+{
+    return this->_toInitialMoves;
+}
+
+const optional<vector<Move*>>& Pokemon::toTmHmMoves()
+{
+    return this->_toTmHmMoves;
+}
+
+const optional<Type*>& Pokemon::toType1()
+{
+    return this->_toType1;
+}
+
+const optional<Type*>& Pokemon::toType2()
+{
+    return this->_toType2;
 }

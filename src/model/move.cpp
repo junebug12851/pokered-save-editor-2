@@ -13,6 +13,9 @@ void Move::init(const QJsonObject &obj)
 {
     BaseModel::init(obj);
 
+    this->_toTmItem.reset();
+    this->_toHmItem.reset();
+
     if(obj.contains("power"))
         this->_power = static_cast<vars>(obj["power"].toInt());
     else
@@ -82,4 +85,14 @@ const optional<vars>& Move::hm()
 const optional<bool>& Move::glitch()
 {
     return this->_glitch;
+}
+
+const optional<Item*>& Move::toTmItem()
+{
+    return this->_toTmItem;
+}
+
+const optional<Item*>& Move::toHmItem()
+{
+    return this->_toHmItem;
 }

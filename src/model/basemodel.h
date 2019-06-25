@@ -27,6 +27,10 @@ public:
     const optional<vars>& index();
 
 private:
+    /**
+     * Stage 1 Variables: Extracted from JSON Data
+     */
+
     // Name of data entry
     optional<QString> _name;
 

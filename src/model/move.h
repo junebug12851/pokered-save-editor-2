@@ -2,6 +2,7 @@
 #define MOVES_H
 
 #include "basemodel.h"
+#include "item.h"
 
 class Move : public BaseModel
 {
@@ -19,7 +20,14 @@ public:
     const optional<vars>& hm();
     const optional<bool>& glitch();
 
+    const optional<Item*>& toTmItem();
+    const optional<Item*>& toHmItem();
+
 private:
+    /**
+     * Stage 1 Variables: Extracted from JSON Data
+     */
+
     // Move Power
     optional<vars> _power;
 
@@ -43,6 +51,13 @@ private:
     // Is this a glitch move?
     // Glitch moves are often highly incomplete meaning
     optional<bool> _glitch;
+
+    /**
+     * Stage 2 Variables: Inter-Linking amongst data
+     */
+
+    optional<Item*> _toTmItem;
+    optional<Item*> _toHmItem;
 };
 
 Q_DECLARE_METATYPE(Move)
