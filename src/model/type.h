@@ -3,8 +3,9 @@
 
 #include "basemodel.h"
 
-struct Type : public BaseModel
+class Type : public BaseModel
 {
+public:
     Type();
     Type(const QJsonObject& obj);
 

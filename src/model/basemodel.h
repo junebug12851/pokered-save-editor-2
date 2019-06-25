@@ -14,16 +14,24 @@ using std::optional;
   * Base model to all models
   * Most Every model contains these values
  */
-struct BaseModel
+class BaseModel
 {
+public:
     BaseModel();
     BaseModel(const QJsonObject& obj);
 
+    void init(const QJsonObject& obj);
+
+    // Read-Only Public Getters
+    const optional<QString>& name();
+    const optional<vars>& index();
+
+private:
     // Name of data entry
-    optional<QString> name;
+    optional<QString> _name;
 
     // Internal game index of data entry
-    optional<vars> index;
+    optional<vars> _index;
 };
 
 Q_DECLARE_METATYPE(BaseModel)
