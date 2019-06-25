@@ -2,52 +2,63 @@
 #define POKEMON_H
 
 #include <QVector>
+#include <utility>
+
+using std::pair;
 
 #include "basemodel.h"
 
-// To make things simpler, lets keep this to have non-constant members
-// To much fighting with Qt for too long otherwise
-struct LevelName {
-    vars level;
-    QString name;
+// Pokemon can evolve from level or item
+struct PokemonEvolution {
+    PokemonEvolution();
+    PokemonEvolution(const QJsonObject& obj);
+
+    optional<vars> level;
+    optional<QString> item;
+    QString toName;
 };
 
-Q_DECLARE_METATYPE(LevelName)
+Q_DECLARE_METATYPE(PokemonEvolution)
 
 struct Pokemon : public BaseModel
 {
+    Pokemon();
+    Pokemon(const QJsonObject& obj);
+
     // Pokemon Pokedex Index
-    vars pokedex;
+    optional<vars> pokedex;
 
     // Pokemon Growth Rate
     // How big or small is the exp range to reach max level
     // The number here is the internal growth rate index, in other words the
     // amount of the number (bigger or smaller) has no correlationto the growth
     // rate
-    vars growthRate;
+    optional<vars> growthRate;
 
     // Base Stats
-    vars baseHP;
-    vars baseAttack;
-    vars baseDefense;
-    vars baseSpeed;
-    vars baseSpecial;
-    vars baseExpYield;
+    optional<vars> baseHP;
+    optional<vars> baseAttack;
+    optional<vars> baseDefense;
+    optional<vars> baseSpeed;
+    optional<vars> baseSpecial;
+    optional<vars> baseExpYield;
 
     // Evolution
-    LevelName evolution;
+    // Can be an array of one or more evolutions
+    // The only time it'll be more than 1 is with eevee
+    optional<QVector<PokemonEvolution>> evolution;
 
     // Learnset
-    QVector<LevelName> learnedMoves;
-    QVector<QString> initialMoves;
-    QVector<vars> tmHm;
+    optional<QVector<pair<vars, QString>>> learnedMoves;
+    optional<QVector<QString>> initialMoves;
+    optional<QVector<vars>> tmHm;
 
-    QString type1;
-    QString type2;
-    QString catchRate;
+    optional<QString> type1;
+    optional<QString> type2;
+    optional<vars> catchRate;
 
     // Glitch Pokemon?
-    bool glitch;
+    optional<bool> glitch;
 };
 
 Q_DECLARE_METATYPE(Pokemon)

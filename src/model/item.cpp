@@ -1,13 +1,15 @@
 #include "item.h"
 
+Item::Item()
+{}
 
-Item Item::fromJson(QJsonObject obj)
+Item::Item(const QJsonObject& obj) :
+    BaseModel (obj)
 {
-    Item ret;
-    BaseModel::fromJson(ret, obj);
+    if(obj.contains("normal"))
+        this->normal = obj["normal"].toBool();
 
-    ret.normal = obj["normal"].toBool(false);
-    ret.typical = obj["typical"].toBool(false);
-
-    return ret;
+    // In the JSON we have "typical" but "common" is a far better description
+    if(obj.contains("typical"))
+        this->common = obj["typical"].toBool();
 }

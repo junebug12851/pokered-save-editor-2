@@ -1,18 +1,29 @@
 #include "move.h"
 
+Move::Move()
+{}
 
-Move Move::fromJson(QJsonObject obj)
+Move::Move(const QJsonObject& obj) :
+    BaseModel (obj)
 {
-    Move ret;
-    BaseModel::fromJson(ret, obj);
+    if(obj.contains("power"))
+        this->power = static_cast<vars>(obj["power"].toInt());
 
-    ret.power = static_cast<var>(obj["power"].toInt());
-    ret.type = obj["type"].toString();
-    ret.accuracy = static_cast<var>(obj["accuracy"].toInt());
-    ret.pp = static_cast<var>(obj["pp"].toInt());
-    ret.tm = static_cast<var>(obj["tm"].toInt());
-    ret.hm = static_cast<var>(obj["hm"].toInt());
-    ret.glitch = obj["glitch"].toBool();
+    if(obj.contains("type"))
+        this->type = obj["type"].toString();
 
-    return ret;
+    if(obj.contains("accuracy"))
+        this->accuracy = static_cast<vars>(obj["accuracy"].toInt());
+
+    if(obj.contains("pp"))
+        this->pp = static_cast<vars>(obj["pp"].toInt());
+
+    if(obj.contains("tm"))
+        this->tm = static_cast<vars>(obj["tm"].toInt());
+
+    if(obj.contains("hm"))
+        this->hm = static_cast<vars>(obj["hm"].toInt());
+
+    if(obj.contains("glitch"))
+        this->glitch = obj["glitch"].toBool();
 }

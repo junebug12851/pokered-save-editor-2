@@ -5,6 +5,9 @@
 
 struct Type : public BaseModel
 {
+    Type();
+    Type(const QJsonObject& obj);
+
     // Type only has name and index, BaseModel suffices
 };
 

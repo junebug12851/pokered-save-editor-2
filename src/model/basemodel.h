@@ -4,22 +4,26 @@
 #include <QtCore/QObject>
 #include <QString>
 #include <QJsonObject>
+#include <optional>
+
+using std::optional;
 
 #include "../includes/vars.h"
 
 /**
   * Base model to all models
-  * Every model contains these values
+  * Most Every model contains these values
  */
 struct BaseModel
 {
+    BaseModel();
+    BaseModel(const QJsonObject& obj);
+
     // Name of data entry
-    QString name;
+    optional<QString> name;
 
     // Internal game index of data entry
-    vars index;
-
-    static void fromJson(BaseModel& model, QJsonObject obj);
+    optional<vars> index;
 };
 
 Q_DECLARE_METATYPE(BaseModel)

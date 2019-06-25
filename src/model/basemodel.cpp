@@ -1,7 +1,13 @@
 #include "basemodel.h"
 
-void BaseModel::fromJson(BaseModel& model, QJsonObject obj)
+BaseModel::BaseModel()
+{}
+
+BaseModel::BaseModel(const QJsonObject& obj)
 {
-    model.name = obj["name"].toString();
-    model.index = static_cast<var>(obj["ind"].toInt());
+    if(obj.contains("name"))
+        this->name = obj["name"].toString();
+
+    if(obj.contains("ind"))
+        this->index = static_cast<vars>(obj["ind"].toInt());
 }

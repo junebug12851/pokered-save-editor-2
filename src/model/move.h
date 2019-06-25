@@ -5,31 +5,32 @@
 
 struct Move : public BaseModel
 {
+    Move();
+    Move(const QJsonObject& obj);
+
     // Move Power
-    vars power;
+    optional<vars> power;
 
     // Move Type spelled out
-    QString type;
+    optional<QString> type;
 
     // Move Accuracy as an interger percent (ex: 100 == 100%)
-    vars accuracy;
+    optional<vars> accuracy;
 
     // Move PP
-    vars pp;
+    optional<vars> pp;
 
     // Move internal TM index
     // Please note internally HM's are also TM's so this will be present on HM's
     // as well
-    vars tm;
+    optional<vars> tm;
 
     // Actual HM Number
-    vars hm;
+    optional<vars> hm;
 
     // Is this a glitch move?
     // Glitch moves are often highly incomplete meaning
-    bool glitch;
-
-    static Move fromJson(QJsonObject obj);
+    optional<bool> glitch;
 };
 
 Q_DECLARE_METATYPE(Move)

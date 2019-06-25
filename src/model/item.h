@@ -5,14 +5,17 @@
 
 struct Item : public BaseModel
 {
+    Item();
+    Item(const QJsonObject& obj);
+
     // Is this a normal or a glitch item
-    bool normal;
+    optional<bool> normal;
 
-    // Is this an typical item
+    // Is this a common item
     // The alternative would be a specially given item
-    bool typical;
-
-    static Item fromJson(QJsonObject obj);
+    // Pokeballs and Fire Stones are common items (They can be accumulated)
+    // Master Balls and Bikes are not common (Their can only be one)
+    optional<bool> common;
 };
 
 Q_DECLARE_METATYPE(Item)
