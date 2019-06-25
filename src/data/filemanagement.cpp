@@ -9,7 +9,7 @@ extern const QString KEY_RECENT_FILES{"recentFiles"};
 extern const QString KEY_LAST_FILE{"lastFile"};
 
 FileManagement::FileManagement(QObject *parent)
-    : QObject(parent), _path("")
+    : QObject(parent)
 {
     // Initially set to no open file (New File)
     this->setPath("");

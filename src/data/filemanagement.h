@@ -69,10 +69,10 @@ private:
     void setPath(QString path);
 
     // Internal variables
-    RawSaveData _data;
-    QString _path;
-    QList<QString> _recentFiles;
-    QSettings settings;
+    RawSaveData _data = RawSaveData();
+    QString _path = "";
+    QList<QString> _recentFiles = QList<QString>();
+    QSettings settings = QSettings();
 };
 
 #endif // FILEMANAGEMENT_H
