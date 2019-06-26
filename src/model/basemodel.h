@@ -117,7 +117,8 @@ void BaseModel::initIndex(unordered_map<QString, T*>& db,
             db[indStr] = el;
         }
 
-        // Index name if present in 3 different ways
+        // Index name if present in 4 different ways
+        // Duplicates will just be overwritten
         // Normal (Master Ball)
         // Lowercase (master ball)
         // Lower runon (masterball)
