@@ -8,12 +8,13 @@ using std::vector;
 using std::pair;
 
 #include "basemodel.h"
-#include "move.h"
-#include "type.h"
-#include "item.h"
 
 // Forward Declare for PokemonEvolution class
 class Pokemon;
+
+class Move;
+class Type;
+class Item;
 
 // Pokemon can evolve from level or item
 class PokemonEvolution {

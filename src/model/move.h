@@ -2,7 +2,8 @@
 #define MOVES_H
 
 #include "basemodel.h"
-#include "item.h"
+
+class Item;
 
 class Move : public BaseModel
 {
