@@ -27,8 +27,15 @@ public:
      */
     static const vector<Item*>& store();
     static const unordered_map<QString, Item*>& db();
+
+    // Creates the JSON store from a JSON file
     static void initStore(const QString& filename);
+
+    // Inits DB which indexes the store
     static void initDb();
+
+    // This deep links the store to models in other stores
+    static void initDeepLink();
 
 private:
     /**
