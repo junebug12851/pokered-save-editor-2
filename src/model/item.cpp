@@ -14,9 +14,9 @@ void Item::init(const QJsonObject& obj)
     BaseModel::init(obj);
 
     if(obj.contains("normal"))
-        this->_normal = obj["normal"].toBool();
+        this->_glitch = !obj["normal"].toBool();
     else
-        this->_normal.reset();
+        this->_glitch.reset();
 
     // In the JSON we have "typical" but "common" is a far better description
     if(obj.contains("typical"))
@@ -35,9 +35,9 @@ void Item::init(const QJsonObject& obj)
         this->_hm.reset();
 }
 
-const optional<bool>& Item::normal()
+const optional<bool>& Item::glitch()
 {
-    return this->_normal;
+    return this->_glitch;
 }
 
 const optional<bool>& Item::common()

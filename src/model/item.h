@@ -13,7 +13,7 @@ public:
 
     void init(const QJsonObject& obj);
 
-    const optional<bool>& normal();
+    const optional<bool>& glitch();
     const optional<bool>& common();
     const optional<vars>& tm();
     const optional<vars>& hm();
@@ -27,7 +27,7 @@ private:
      */
 
     // Is this a normal or a glitch item
-    optional<bool> _normal;
+    optional<bool> _glitch;
 
     // Is this a common item
     // The alternative would be a specially given item
