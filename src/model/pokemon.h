@@ -76,6 +76,7 @@ public:
     const optional<vector<pair<vars, Move*>>>& toLearnedMoves();
     const optional<vector<Move*>>& toInitialMoves();
     const optional<vector<Move*>>& toTmHmMoves();
+    const optional<vector<Move*>>& toTmHmItems();
     const optional<Type*>& toType1();
     const optional<Type*>& toType2();
 
@@ -124,6 +125,7 @@ private:
     optional<vector<pair<vars, Move*>>> _toLearnedMoves;
     optional<vector<Move*>> _toInitialMoves;
     optional<vector<Move*>> _toTmHmMoves;
+    optional<vector<Move*>> _toTmHmItems;
     optional<Type*> _toType1;
     optional<Type*> _toType2;
 };

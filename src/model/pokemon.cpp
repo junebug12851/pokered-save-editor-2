@@ -69,6 +69,7 @@ void Pokemon::init(const QJsonObject &obj)
     this->_toType1.reset();
     this->_toType2.reset();
     this->_toTmHmMoves.reset();
+    this->_toTmHmItems.reset();
     this->_toInitialMoves.reset();
     this->_toLearnedMoves.reset();
 
@@ -310,6 +311,11 @@ const optional<vector<Move*>>& Pokemon::toInitialMoves()
 const optional<vector<Move*>>& Pokemon::toTmHmMoves()
 {
     return this->_toTmHmMoves;
+}
+
+const optional<vector<Move *> > &Pokemon::toTmHmItems()
+{
+    return this->_toTmHmItems;
 }
 
 const optional<Type*>& Pokemon::toType1()
