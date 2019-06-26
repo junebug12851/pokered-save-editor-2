@@ -73,9 +73,55 @@ const vector<Item*>& Item::store()
     return Item::_store;
 }
 
+const unordered_map<QString, Item*>& Item::db()
+{
+    return Item::_db;
+}
+
 void Item::initStore(const QString& filename)
 {
     BaseModel::initStore<Item>(filename, Item::_store);
 }
 
+void Item::initDb()
+{
+    BaseModel::initIndex<Item>(Item::_db, Item::_store);
+
+    QString tmp;
+    for(auto el : Item::_store)
+    {
+        if(el->_tm)
+        {
+            vars val = *el->_tm;
+
+            tmp = "tm";
+            tmp = tmp.append(QString::number(val));
+            Item::_db[tmp] = el;
+
+            if(val < 10)
+            {
+                tmp = "tm0";
+                tmp = tmp.append(QString::number(val));
+                Item::_db[tmp] = el;
+            }
+        }
+
+        if(el->_hm)
+        {
+            vars val = *el->_hm;
+            tmp = "hm";
+            tmp = tmp.append(QString::number(val));
+            Item::_db[tmp] = el;
+
+            if(val < 10)
+            {
+                tmp = "hm0";
+                tmp = tmp.append(QString::number(val));
+                Item::_db[tmp] = el;
+            }
+        }
+    }
+}
+
 vector<Item*> Item::_store = vector<Item*>();
+unordered_map<QString, Item*> Item::_db = unordered_map<QString, Item*>();

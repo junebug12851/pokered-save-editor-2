@@ -26,7 +26,9 @@ public:
      * and maintaining the store
      */
     static const vector<Item*>& store();
+    static const unordered_map<QString, Item*>& db();
     static void initStore(const QString& filename);
+    static void initDb();
 
 private:
     /**
@@ -58,7 +60,15 @@ private:
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static vector<Item*> _store;
+    static vector<Item*> _store; // Sequential Items
+
+    // Index
+    // BaseModel does some of the initial indexing of it's own
+    // tm + # (tm7)
+    // hm + # (hm2)
+    // tm + ## (tm07)
+    // hm + ## (hm02)
+    static unordered_map<QString, Item*> _db; // Indexed for lookup
 };
 
 Q_DECLARE_METATYPE(Item)
