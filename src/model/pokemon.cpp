@@ -327,3 +327,15 @@ const optional<Type*>& Pokemon::toType2()
 {
     return this->_toType2;
 }
+
+const vector<Pokemon*>& Pokemon::store()
+{
+    return Pokemon::_store;
+}
+
+void Pokemon::initStore(const QString& filename)
+{
+    BaseModel::initStore<Pokemon>(filename, Pokemon::_store);
+}
+
+vector<Pokemon*> Pokemon::_store = vector<Pokemon*>();

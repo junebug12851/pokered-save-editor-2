@@ -2,6 +2,9 @@
 #define MOVES_H
 
 #include "basemodel.h"
+#include <vector>
+
+using std::vector;
 
 class Item;
 
@@ -23,6 +26,13 @@ public:
 
     const optional<Item*>& toTmItem();
     const optional<Item*>& toHmItem();
+
+    /**
+     * Data Store and other static properties and methods related to building
+     * and maintaining the store
+     */
+    static const vector<Move*>& store();
+    static void initStore(const QString& filename);
 
 private:
     /**
@@ -59,6 +69,12 @@ private:
 
     optional<Item*> _toTmItem;
     optional<Item*> _toHmItem;
+
+    /**
+     * Data Store and other static properties and methods related to building
+     * and maintaining the store
+     */
+    static vector<Move*> _store;
 };
 
 Q_DECLARE_METATYPE(Move)

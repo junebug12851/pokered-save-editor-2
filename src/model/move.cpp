@@ -96,3 +96,15 @@ const optional<Item*>& Move::toHmItem()
 {
     return this->_toHmItem;
 }
+
+const vector<Move*>& Move::store()
+{
+    return Move::_store;
+}
+
+void Move::initStore(const QString& filename)
+{
+    BaseModel::initStore<Move>(filename, Move::_store);
+}
+
+vector<Move*> Move::_store = vector<Move*>();

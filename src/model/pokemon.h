@@ -80,6 +80,13 @@ public:
     const optional<Type*>& toType1();
     const optional<Type*>& toType2();
 
+    /**
+     * Data Store and other static properties and methods related to building
+     * and maintaining the store
+     */
+    static const vector<Pokemon*>& store();
+    static void initStore(const QString& filename);
+
 private:
     /**
      * Stage 1 Variables: Extracted from JSON Data
@@ -128,6 +135,12 @@ private:
     optional<vector<Move*>> _toTmHmItems;
     optional<Type*> _toType1;
     optional<Type*> _toType2;
+
+    /**
+     * Data Store and other static properties and methods related to building
+     * and maintaining the store
+     */
+    static vector<Pokemon*> _store;
 };
 
 Q_DECLARE_METATYPE(Pokemon)
