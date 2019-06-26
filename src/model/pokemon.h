@@ -83,7 +83,9 @@ public:
      * and maintaining the store
      */
     static const vector<Pokemon*>& store();
+    static const unordered_map<QString, Pokemon*>& db();
     static void initStore(const QString& filename);
+    static void initDb();
 
 private:
     /**
@@ -139,6 +141,12 @@ private:
      * and maintaining the store
      */
     static vector<Pokemon*> _store;
+
+    // Index
+    // BaseModel does some of the initial indexing of it's own
+    // dex + #    (dex1)
+    // dex + ###  (dex001)
+    static unordered_map<QString, Pokemon*> _db; // Indexed for lookup
 };
 
 Q_DECLARE_METATYPE(Pokemon)

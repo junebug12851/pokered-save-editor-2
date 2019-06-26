@@ -331,9 +331,46 @@ const vector<Pokemon*>& Pokemon::store()
     return Pokemon::_store;
 }
 
+const unordered_map<QString, Pokemon*>& Pokemon::db()
+{
+    return Pokemon::_db;
+}
+
 void Pokemon::initStore(const QString& filename)
 {
     BaseModel::initStore<Pokemon>(filename, Pokemon::_store);
 }
 
+void Pokemon::initDb()
+{
+    BaseModel::initIndex<Pokemon>(Pokemon::_db, Pokemon::_store);
+
+    QString tmp;
+    for(auto el : Pokemon::_store)
+    {
+        if(el->_pokedex)
+        {
+            vars val = *el->_pokedex;
+
+            tmp = "dex";
+            tmp = tmp.append(QString::number(val));
+            Pokemon::_db[tmp] = el;
+
+            if(val < 10)
+            {
+                tmp = "tm00";
+                tmp = tmp.append(QString::number(val));
+                Pokemon::_db[tmp] = el;
+            }
+            else if(val < 100)
+            {
+                tmp = "tm0";
+                tmp = tmp.append(QString::number(val));
+                Pokemon::_db[tmp] = el;
+            }
+        }
+    }
+}
+
 vector<Pokemon*> Pokemon::_store = vector<Pokemon*>();
+unordered_map<QString, Pokemon*> Pokemon::_db = unordered_map<QString, Pokemon*>();

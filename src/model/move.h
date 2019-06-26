@@ -29,7 +29,9 @@ public:
      * and maintaining the store
      */
     static const vector<Move*>& store();
+    static const unordered_map<QString, Move*>& db();
     static void initStore(const QString& filename);
+    static void initDb();
 
 private:
     /**
@@ -72,6 +74,14 @@ private:
      * and maintaining the store
      */
     static vector<Move*> _store;
+
+    // Index
+    // BaseModel does some of the initial indexing of it's own
+    // tm + # (tm7)
+    // hm + # (hm2)
+    // tm + ## (tm07)
+    // hm + ## (hm02)
+    static unordered_map<QString, Move*> _db; // Indexed for lookup
 };
 
 Q_DECLARE_METATYPE(Move)
