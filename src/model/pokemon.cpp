@@ -1,7 +1,5 @@
 #include "pokemon.h"
 
-#include <QJsonArray>
-
 PokemonEvolution::PokemonEvolution()
 {}
 

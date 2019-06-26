@@ -1,10 +1,8 @@
 #ifndef POKEMON_H
 #define POKEMON_H
 
-#include <vector>
 #include <utility>
 
-using std::vector;
 using std::pair;
 
 #include "basemodel.h"

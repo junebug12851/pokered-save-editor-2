@@ -4,12 +4,13 @@
 #include <QtCore/QObject>
 #include <QString>
 #include <QJsonObject>
-#include <optional>
 #include <QJsonArray>
-#include <vector>
 #include <QByteArray>
 #include <QFile>
 #include <QJsonDocument>
+
+#include <optional>
+#include <vector>
 
 using std::optional;
 using std::vector;

@@ -1,10 +1,6 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-#include <vector>
-
-using std::vector;
-
 #include "basemodel.h"
 
 class Move;

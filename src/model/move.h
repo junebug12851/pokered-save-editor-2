@@ -2,9 +2,6 @@
 #define MOVES_H
 
 #include "basemodel.h"
-#include <vector>
-
-using std::vector;
 
 class Item;
 
