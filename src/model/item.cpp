@@ -13,6 +13,9 @@ void Item::init(const QJsonObject& obj)
 {
     BaseModel::init(obj);
 
+    this->_toTmMove.reset();
+    this->_toHmMove.reset();
+
     if(obj.contains("normal"))
         this->_glitch = !obj["normal"].toBool();
     else
