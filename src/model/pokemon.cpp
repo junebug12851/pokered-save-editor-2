@@ -1,5 +1,9 @@
 #include "pokemon.h"
 
+#include "move.h"
+#include "item.h"
+#include "type.h"
+
 PokemonEvolution::PokemonEvolution()
 {}
 
@@ -11,7 +15,6 @@ PokemonEvolution::PokemonEvolution(const QJsonObject &obj)
 void PokemonEvolution::init(const QJsonObject &obj)
 {
     this->_toItem.reset();
-    this->_toPokemon.reset();
 
     if(obj.contains("item"))
         this->_item = obj["item"].toString();
@@ -46,14 +49,9 @@ const optional<Item*>& PokemonEvolution::toItem()
     return this->_toItem;
 }
 
-const optional<Pokemon*>& PokemonEvolution::toPokemon()
+const Pokemon& PokemonEvolution::toPokemon()
 {
-    return this->_toPokemon;
-}
-
-const optional<Pokemon*>& PokemonEvolution::devolve()
-{
-    return this->_devolve;
+    return *this->_toPokemon;
 }
 
 Pokemon::Pokemon()
@@ -316,7 +314,7 @@ const optional<vector<Move*>>& Pokemon::toTmHmMoves()
     return this->_toTmHmMoves;
 }
 
-const optional<vector<Move *> > &Pokemon::toTmHmItems()
+const optional<vector<Item *> > &Pokemon::toTmHmItems()
 {
     return this->_toTmHmItems;
 }
@@ -329,6 +327,11 @@ const optional<Type*>& Pokemon::toType1()
 const optional<Type*>& Pokemon::toType2()
 {
     return this->_toType2;
+}
+
+const optional<Pokemon*>& Pokemon::devolve()
+{
+    return this->_devolve;
 }
 
 const vector<Pokemon*>& Pokemon::store()
@@ -372,6 +375,96 @@ void Pokemon::initDb()
                 tmp = "tm0";
                 tmp = tmp.append(QString::number(val));
                 Pokemon::_db[tmp] = el;
+            }
+        }
+    }
+}
+
+// Lots of deep linking
+void Pokemon::initDeepLink()
+{
+    // Loop through pokemon store
+    for(auto el : Pokemon::_store)
+    {
+        // If there is a list of learned moves
+        if(el->_learnedMoves)
+        {
+            // Grab that list
+            auto learnedMoves = *el->_learnedMoves;
+
+            // Initialize deep-linked array
+            el->_toLearnedMoves = vector<pair<vars, Move*>>();
+
+            // Begin deep-linking all moves in list
+            for(auto learnedMove : learnedMoves)
+                // Insert deep linked, crash otherwise which is needed
+                el->_toLearnedMoves->push_back(
+                            pair<vars, Move*>(
+                                learnedMove.first,
+                                Move::db().at(learnedMove.second)
+                            ));
+        }
+
+        // Check for initial moves
+        if(el->_initialMoves)
+        {
+            // Grab the list
+            auto initialMoves = *el->_initialMoves;
+
+            // Initialize deep-linked array
+            el->_toInitialMoves = vector<Move*>();
+
+            // Deep link all initial moves
+            // Crashes if not found which is needed
+            for(auto initialMove : initialMoves)
+                el->_toInitialMoves->push_back(Move::db().at(initialMove));
+        }
+
+        // If list of learnable TMs/HMs
+        // We actually need to link this to moves and items
+        if(el->_tmHm)
+        {
+            // Grab list
+            auto tmHmMoves = *el->_tmHm;
+
+            // Init both deep linked arrays
+            el->_toTmHmMoves = vector<Move*>();
+            el->_toTmHmItems = vector<Item*>();
+
+            // Deep link
+            for(auto tmHm : tmHmMoves)
+            {
+                auto tmHmStr = "tm" + QString::number(tmHm);
+                el->_toTmHmMoves->push_back(Move::db().at(tmHmStr));
+                el->_toTmHmItems->push_back(Item::db().at(tmHmStr));
+            }
+        }
+
+        // If type 1/2, deep link it to types
+        if(el->_type1)
+            el->_toType1 = Type::db().at(*el->_type1);
+
+        if(el->_type2)
+            el->_toType2 = Type::db().at(*el->_type2);
+
+        // Deep link evolution
+        if(el->_evolution)
+        {
+            auto evolution = *el->_evolution;
+
+            // Loop through evolutions, usually just one unless it's eevee
+            for(auto evolEntry : evolution)
+            {
+                // Deep link where exists
+                if(evolEntry._item)
+                    evolEntry._toItem = Item::db().at(*evolEntry._item);
+
+                // Link to Pokemon
+                evolEntry._toPokemon = Pokemon::_db.at(evolEntry._toName);
+
+                // Go into Evolution Pokemon and mark it's de-evolution to
+                // this one (another deep link)
+                evolEntry._toPokemon->_devolve = el;
             }
         }
     }

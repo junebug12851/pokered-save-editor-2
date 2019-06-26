@@ -17,6 +17,8 @@ class Item;
 // Pokemon can evolve from level or item
 class PokemonEvolution {
 public:
+    friend class Pokemon;
+
     PokemonEvolution();
     PokemonEvolution(const QJsonObject& obj);
 
@@ -27,8 +29,7 @@ public:
     const QString& toName();
 
     const optional<Item*>& toItem();
-    const optional<Pokemon*>& toPokemon();
-    const optional<Pokemon*>& devolve();
+    const Pokemon& toPokemon();
 
 private:
     /**
@@ -42,8 +43,7 @@ private:
      * Stage 2 Variables: Inter-Linking amongst data
      */
     optional<Item*> _toItem;
-    optional<Pokemon*> _toPokemon;
-    optional<Pokemon*> _devolve; // Pokemons de-evolution
+    Pokemon* _toPokemon;
 };
 
 Q_DECLARE_METATYPE(PokemonEvolution)
@@ -76,9 +76,10 @@ public:
     const optional<vector<pair<vars, Move*>>>& toLearnedMoves();
     const optional<vector<Move*>>& toInitialMoves();
     const optional<vector<Move*>>& toTmHmMoves();
-    const optional<vector<Move*>>& toTmHmItems();
+    const optional<vector<Item*>>& toTmHmItems();
     const optional<Type*>& toType1();
     const optional<Type*>& toType2();
+    const optional<Pokemon*>& devolve();
 
     /**
      * Data Store and other static properties and methods related to building
@@ -88,6 +89,7 @@ public:
     static const unordered_map<QString, Pokemon*>& db();
     static void initStore(const QString& filename);
     static void initDb();
+    static void initDeepLink();
 
 private:
     /**
@@ -134,9 +136,10 @@ private:
     optional<vector<pair<vars, Move*>>> _toLearnedMoves;
     optional<vector<Move*>> _toInitialMoves;
     optional<vector<Move*>> _toTmHmMoves;
-    optional<vector<Move*>> _toTmHmItems;
+    optional<vector<Item*>> _toTmHmItems;
     optional<Type*> _toType1;
     optional<Type*> _toType2;
+    optional<Pokemon*> _devolve; // Pokemons de-evolution
 
     /**
      * Data Store and other static properties and methods related to building
