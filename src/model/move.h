@@ -33,6 +33,9 @@ public:
     static void initStore(const QString& filename);
     static void initDb();
 
+    // This deep links the store to models in other stores
+    static void initDeepLink();
+
 private:
     /**
      * Stage 1 Variables: Extracted from JSON Data

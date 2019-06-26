@@ -1,4 +1,5 @@
 #include "move.h"
+#include "item.h"
 
 Move::Move()
 {}
@@ -148,6 +149,52 @@ void Move::initDb()
                 tmp = tmp.append(QString::number(val));
                 Move::_db[tmp] = el;
             }
+        }
+    }
+}
+
+void Move::initDeepLink()
+{
+    for(auto el : Move::_store)
+    {
+        // If this is a TM
+        if(el->_tm)
+        {
+            // Grab our TM
+            auto ourVal = *el->_tm;
+
+            // Grab their TM
+            Item* theirVal = nullptr;
+
+            for(auto targEl : Item::store())
+                if(targEl->tm() && *targEl->tm() == ourVal) {
+                    theirVal = targEl;
+                    break;
+                }
+
+            // Deep link if found
+            if(theirVal != nullptr)
+                el->_toTmItem = theirVal;
+        }
+
+        // If this is a HM
+        if(el->_hm)
+        {
+            // Grab our HM
+            auto ourVal = *el->_hm;
+
+            // Grab their HM
+            Item* theirVal = nullptr;
+
+            for(auto targEl : Item::store())
+                if(targEl->hm() && *targEl->hm() == ourVal) {
+                    theirVal = targEl;
+                    break;
+                }
+
+            // Deep link if found
+            if(theirVal != nullptr)
+                el->_toHmItem = theirVal;
         }
     }
 }
