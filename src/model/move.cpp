@@ -157,45 +157,15 @@ void Move::initDeepLink()
 {
     for(auto el : Move::_store)
     {
-        // If this is a TM
+        // If this is a TM, assign it
+        // Will crash if not found which is needed anyways
         if(el->_tm)
-        {
-            // Grab our TM
-            auto ourVal = *el->_tm;
+            el->_toTmItem = Item::db().at("tm" + QString::number(*el->_tm));
 
-            // Grab their TM
-            Item* theirVal = nullptr;
-
-            for(auto targEl : Item::store())
-                if(targEl->tm() && *targEl->tm() == ourVal) {
-                    theirVal = targEl;
-                    break;
-                }
-
-            // Deep link if found
-            if(theirVal != nullptr)
-                el->_toTmItem = theirVal;
-        }
-
-        // If this is a HM
+        // If this is a TM, assign it
+        // Will crash if not found which is needed anyways
         if(el->_hm)
-        {
-            // Grab our HM
-            auto ourVal = *el->_hm;
-
-            // Grab their HM
-            Item* theirVal = nullptr;
-
-            for(auto targEl : Item::store())
-                if(targEl->hm() && *targEl->hm() == ourVal) {
-                    theirVal = targEl;
-                    break;
-                }
-
-            // Deep link if found
-            if(theirVal != nullptr)
-                el->_toHmItem = theirVal;
-        }
+            el->_toHmItem = Item::db().at("hm" + QString::number(*el->_hm));
     }
 }
 
