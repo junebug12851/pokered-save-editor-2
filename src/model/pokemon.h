@@ -28,6 +28,7 @@ public:
 
     const optional<Item*>& toItem();
     const optional<Pokemon*>& toPokemon();
+    const optional<Pokemon*>& devolve();
 
 private:
     /**
@@ -42,6 +43,7 @@ private:
      */
     optional<Item*> _toItem;
     optional<Pokemon*> _toPokemon;
+    optional<Pokemon*> _devolve; // Pokemons de-evolution
 };
 
 Q_DECLARE_METATYPE(PokemonEvolution)

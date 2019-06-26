@@ -51,6 +51,11 @@ const optional<Pokemon*>& PokemonEvolution::toPokemon()
     return this->_toPokemon;
 }
 
+const optional<Pokemon*>& PokemonEvolution::devolve()
+{
+    return this->_devolve;
+}
+
 Pokemon::Pokemon()
 {}
 
