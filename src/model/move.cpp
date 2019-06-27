@@ -1,5 +1,6 @@
 #include "move.h"
 #include "item.h"
+#include "type.h"
 
 Move::Move()
 {}
@@ -98,14 +99,19 @@ const optional<Item*>& Move::toHmItem()
     return this->_toHmItem;
 }
 
-const vector<Move*>& Move::store()
+const optional<Type *> &Move::toType()
 {
-    return Move::_store;
+    return this->_toType;
 }
 
-const unordered_map<QString, Move*>& Move::db()
+MoveArr Move::store()
 {
-    return Move::_db;
+    return &Move::_store;
+}
+
+MoveDb Move::db()
+{
+    return &Move::_db;
 }
 
 void Move::initStore(const QString& filename)
@@ -160,14 +166,17 @@ void Move::initDeepLink()
         // If this is a TM, assign it
         // Will crash if not found which is needed anyways
         if(el->_tm)
-            el->_toTmItem = Item::db().at("tm" + QString::number(*el->_tm));
+            el->_toTmItem = Item::db()->at("tm" + QString::number(*el->_tm));
 
         // If this is a TM, assign it
         // Will crash if not found which is needed anyways
         if(el->_hm)
-            el->_toHmItem = Item::db().at("hm" + QString::number(*el->_hm));
+            el->_toHmItem = Item::db()->at("hm" + QString::number(*el->_hm));
+
+        if(el->_type)
+            el->_toType = Type::db()->at(*el->_type);
     }
 }
 
-vector<Move*> Move::_store = vector<Move*>();
-unordered_map<QString, Move*> Move::_db = unordered_map<QString, Move*>();
+_MoveArr Move::_store = _MoveArr();
+_MoveDb Move::_db = _MoveDb();

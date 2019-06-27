@@ -4,10 +4,25 @@
 #include "basemodel.h"
 
 class Move;
+class Item;
+
+using _ItemArr = vector<Item*>;
+using _ItemDb = unordered_map<QString, Item*>;
+
+using ItemArr = const _ItemArr*;
+using ItemDb = const _ItemDb*;
 
 class Item : public BaseModel
 {
     Q_OBJECT
+    Q_PROPERTY(const optional<bool>& glitch READ glitch CONSTANT FINAL)
+    Q_PROPERTY(const optional<bool>& common READ common CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& tm READ tm CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& hm READ hm CONSTANT FINAL)
+    Q_PROPERTY(const optional<Move*>& toTmMove READ toTmMove CONSTANT FINAL)
+    Q_PROPERTY(const optional<Move*>& toHmMove READ toHmMove CONSTANT FINAL)
+    Q_PROPERTY(ItemArr store READ store CONSTANT FINAL)
+    Q_PROPERTY(ItemDb db READ db CONSTANT FINAL)
 
 public:
     Item();
@@ -27,8 +42,8 @@ public:
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static const vector<Item*>& store();
-    static const unordered_map<QString, Item*>& db();
+    static ItemArr store();
+    static ItemDb db();
 
     // Creates the JSON store from a JSON file
     static void initStore(const QString& filename);
@@ -69,7 +84,7 @@ private:
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static vector<Item*> _store; // Sequential Items
+    static _ItemArr _store; // Sequential Items
 
     // Index
     // BaseModel does some of the initial indexing of it's own
@@ -77,7 +92,7 @@ private:
     // hm + # (hm2)
     // tm + ## (tm07)
     // hm + ## (hm02)
-    static unordered_map<QString, Item*> _db; // Indexed for lookup
+    static _ItemDb _db; // Indexed for lookup
 };
 
 #endif // ITEM_H

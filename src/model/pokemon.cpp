@@ -49,9 +49,9 @@ const optional<Item*>& PokemonEvolution::toItem()
     return this->_toItem;
 }
 
-const Pokemon& PokemonEvolution::toPokemon()
+const Pokemon* PokemonEvolution::toPokemon()
 {
-    return *this->_toPokemon;
+    return this->_toPokemon;
 }
 
 Pokemon::Pokemon()
@@ -264,7 +264,7 @@ const optional<vector<PokemonEvolution*>>& Pokemon::evolution()
     return this->_evolution;
 }
 
-const optional<vector<pair<vars, QString>>>& Pokemon::learnedMoves()
+const optional<vector<LearnedMoves> > &Pokemon::learnedMoves()
 {
     return this->_learnedMoves;
 }
@@ -299,7 +299,7 @@ const optional<bool>& Pokemon::glitch()
     return this->_glitch;
 }
 
-const optional<vector<pair<vars, Move*>>>& Pokemon::toLearnedMoves()
+const optional<vector<ToLearnedMoves> > &Pokemon::toLearnedMoves()
 {
     return this->_toLearnedMoves;
 }
@@ -334,14 +334,14 @@ const optional<Pokemon*>& Pokemon::devolve()
     return this->_devolve;
 }
 
-const vector<Pokemon*>& Pokemon::store()
+PokemonArr Pokemon::store()
 {
-    return Pokemon::_store;
+    return &Pokemon::_store;
 }
 
-const unordered_map<QString, Pokemon*>& Pokemon::db()
+PokemonDb Pokemon::db()
 {
-    return Pokemon::_db;
+    return &Pokemon::_db;
 }
 
 void Pokemon::initStore(const QString& filename)
@@ -401,7 +401,7 @@ void Pokemon::initDeepLink()
                 el->_toLearnedMoves->push_back(
                             pair<vars, Move*>(
                                 learnedMove.first,
-                                Move::db().at(learnedMove.second)
+                                Move::db()->at(learnedMove.second)
                             ));
         }
 
@@ -417,7 +417,7 @@ void Pokemon::initDeepLink()
             // Deep link all initial moves
             // Crashes if not found which is needed
             for(auto initialMove : initialMoves)
-                el->_toInitialMoves->push_back(Move::db().at(initialMove));
+                el->_toInitialMoves->push_back(Move::db()->at(initialMove));
         }
 
         // If list of learnable TMs/HMs
@@ -435,17 +435,17 @@ void Pokemon::initDeepLink()
             for(auto tmHm : tmHmMoves)
             {
                 auto tmHmStr = "tm" + QString::number(tmHm);
-                el->_toTmHmMoves->push_back(Move::db().at(tmHmStr));
-                el->_toTmHmItems->push_back(Item::db().at(tmHmStr));
+                el->_toTmHmMoves->push_back(Move::db()->at(tmHmStr));
+                el->_toTmHmItems->push_back(Item::db()->at(tmHmStr));
             }
         }
 
         // If type 1/2, deep link it to types
         if(el->_type1)
-            el->_toType1 = Type::db().at(*el->_type1);
+            el->_toType1 = Type::db()->at(*el->_type1);
 
         if(el->_type2)
-            el->_toType2 = Type::db().at(*el->_type2);
+            el->_toType2 = Type::db()->at(*el->_type2);
 
         // Deep link evolution
         if(el->_evolution)
@@ -457,7 +457,7 @@ void Pokemon::initDeepLink()
             {
                 // Deep link where exists
                 if(evolEntry->_item)
-                    evolEntry->_toItem = Item::db().at(*evolEntry->_item);
+                    evolEntry->_toItem = Item::db()->at(*evolEntry->_item);
 
                 // Link to Pokemon
                 evolEntry->_toPokemon = Pokemon::_db.at(evolEntry->_toName);
@@ -470,5 +470,5 @@ void Pokemon::initDeepLink()
     }
 }
 
-vector<Pokemon*> Pokemon::_store = vector<Pokemon*>();
-unordered_map<QString, Pokemon*> Pokemon::_db = unordered_map<QString, Pokemon*>();
+_PokemonArr Pokemon::_store = _PokemonArr();
+_PokemonDb Pokemon::_db = _PokemonDb();

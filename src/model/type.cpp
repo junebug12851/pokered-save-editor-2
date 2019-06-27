@@ -7,9 +7,9 @@ Type::Type(const QJsonObject &obj) :
     BaseModel (obj)
 {}
 
-const vector<Type*>& Type::store()
+TypeArr Type::store()
 {
-    return Type::_store;
+    return &Type::_store;
 }
 
 void Type::initStore(const QString& filename)
@@ -17,9 +17,9 @@ void Type::initStore(const QString& filename)
     BaseModel::initStore<Type>(filename, Type::_store);
 }
 
-const unordered_map<QString, Type*>& Type::db()
+TypeDb Type::db()
 {
-    return Type::_db;
+    return &Type::_db;
 }
 
 void Type::initDb()
@@ -29,5 +29,5 @@ void Type::initDb()
     // All done by BaseModel, nothing to add here
 }
 
-vector<Type*> Type::_store = vector<Type*>();
-unordered_map<QString, Type*> Type::_db = unordered_map<QString, Type*>();
+_TypeArr Type::_store = _TypeArr();
+_TypeDb Type::_db = _TypeDb();

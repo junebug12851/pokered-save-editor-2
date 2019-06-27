@@ -14,9 +14,23 @@ class Move;
 class Type;
 class Item;
 
+using _PokemonArr = vector<Pokemon*>;
+using _PokemonDb = unordered_map<QString, Pokemon*>;
+
+using PokemonArr = const _PokemonArr*;
+using PokemonDb = const _PokemonDb*;
+
+using LearnedMoves = pair<vars, QString>;
+using ToLearnedMoves = pair<vars, Move*>;
+
 // Pokemon can evolve from level or item
 class PokemonEvolution : public QObject {
     Q_OBJECT
+    Q_PROPERTY(const optional<vars>& level READ level CONSTANT FINAL)
+    Q_PROPERTY(const optional<QString>& item READ item CONSTANT FINAL)
+    Q_PROPERTY(const QString& toName READ toName CONSTANT FINAL)
+    Q_PROPERTY(const optional<Item*>& toItem READ toItem CONSTANT FINAL)
+    Q_PROPERTY(const Pokemon* toPokemon READ toPokemon CONSTANT FINAL)
 
 public:
     friend class Pokemon;
@@ -31,7 +45,7 @@ public:
     const QString& toName();
 
     const optional<Item*>& toItem();
-    const Pokemon& toPokemon();
+    const Pokemon* toPokemon();
 
 private:
     /**
@@ -51,6 +65,31 @@ private:
 class Pokemon : public BaseModel
 {
     Q_OBJECT
+    Q_PROPERTY(const optional<vars>& pokedex READ pokedex CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& growthRate READ growthRate CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& baseHP READ baseHP CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& baseAttack READ baseAttack CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& baseDefense READ baseDefense CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& baseSpeed READ baseSpeed CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& baseSpecial READ baseSpecial CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& baseExpYield READ baseExpYield CONSTANT FINAL)
+    Q_PROPERTY(const optional<vector<PokemonEvolution*>>& evolution READ evolution CONSTANT FINAL)
+    Q_PROPERTY(const optional<vector<LearnedMoves>>& learnedMoves READ learnedMoves CONSTANT FINAL)
+    Q_PROPERTY(const optional<vector<QString>>& initialMoves READ initialMoves CONSTANT FINAL)
+    Q_PROPERTY(const optional<vector<vars>>& tmHm READ tmHm CONSTANT FINAL)
+    Q_PROPERTY(const optional<QString>& type1 READ type1 CONSTANT FINAL)
+    Q_PROPERTY(const optional<QString>& type2 READ type2 CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& catchRate READ catchRate CONSTANT FINAL)
+    Q_PROPERTY(const optional<bool>& glitch READ glitch CONSTANT FINAL)
+    Q_PROPERTY(const optional<vector<ToLearnedMoves>>& toLearnedMoves READ toLearnedMoves CONSTANT FINAL)
+    Q_PROPERTY(const optional<vector<Move*>>& toInitialMoves READ toInitialMoves CONSTANT FINAL)
+    Q_PROPERTY(const optional<vector<Move*>>& toTmHmMoves READ toTmHmMoves CONSTANT FINAL)
+    Q_PROPERTY(const optional<vector<Item*>>& toTmHmItems READ toTmHmItems CONSTANT FINAL)
+    Q_PROPERTY(const optional<Type*>& toType1 READ toType1 CONSTANT FINAL)
+    Q_PROPERTY(const optional<Type*>& toType2 READ toType2 CONSTANT FINAL)
+    Q_PROPERTY(const optional<Pokemon*>& devolve READ devolve CONSTANT FINAL)
+    Q_PROPERTY(PokemonArr store READ store CONSTANT FINAL)
+    Q_PROPERTY(PokemonDb db READ db CONSTANT FINAL)
 
 public:
     Pokemon();
@@ -67,7 +106,7 @@ public:
     const optional<vars>& baseSpecial();
     const optional<vars>& baseExpYield();
     const optional<vector<PokemonEvolution*>>& evolution();
-    const optional<vector<pair<vars, QString>>>& learnedMoves();
+    const optional<vector<LearnedMoves>>& learnedMoves();
     const optional<vector<QString>>& initialMoves();
     const optional<vector<vars>>& tmHm();
     const optional<QString>& type1();
@@ -75,7 +114,7 @@ public:
     const optional<vars>& catchRate();
     const optional<bool>& glitch();
 
-    const optional<vector<pair<vars, Move*>>>& toLearnedMoves();
+    const optional<vector<ToLearnedMoves>>& toLearnedMoves();
     const optional<vector<Move*>>& toInitialMoves();
     const optional<vector<Move*>>& toTmHmMoves();
     const optional<vector<Item*>>& toTmHmItems();
@@ -87,8 +126,8 @@ public:
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static const vector<Pokemon*>& store();
-    static const unordered_map<QString, Pokemon*>& db();
+    static PokemonArr store();
+    static PokemonDb db();
     static void initStore(const QString& filename);
     static void initDb();
     static void initDeepLink();
@@ -147,13 +186,13 @@ private:
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static vector<Pokemon*> _store;
+    static _PokemonArr _store;
 
     // Index
     // BaseModel does some of the initial indexing of it's own
     // dex + #    (dex1)
     // dex + ###  (dex001)
-    static unordered_map<QString, Pokemon*> _db; // Indexed for lookup
+    static _PokemonDb _db; // Indexed for lookup
 };
 
 #endif // POKEMON_H

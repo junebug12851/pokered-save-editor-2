@@ -4,10 +4,30 @@
 #include "basemodel.h"
 
 class Item;
+class Move;
+class Type;
+
+using _MoveArr = vector<Move*>;
+using _MoveDb = unordered_map<QString, Move*>;
+
+using MoveArr = const _MoveArr*;
+using MoveDb = const _MoveDb*;
 
 class Move : public BaseModel
 {
     Q_OBJECT
+    Q_PROPERTY(const optional<vars>& power READ power CONSTANT FINAL)
+    Q_PROPERTY(const optional<QString>& type READ type CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& accuracy READ accuracy CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& pp READ pp CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& tm READ tm CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& hm READ hm CONSTANT FINAL)
+    Q_PROPERTY(const optional<bool>& glitch READ glitch CONSTANT FINAL)
+    Q_PROPERTY(const optional<Item*>& toTmItem READ toTmItem CONSTANT FINAL)
+    Q_PROPERTY(const optional<Item*>& toHmItem READ toHmItem CONSTANT FINAL)
+    Q_PROPERTY(const optional<Type*>& toType READ toType CONSTANT FINAL)
+    Q_PROPERTY(MoveArr store READ store CONSTANT FINAL)
+    Q_PROPERTY(MoveDb db READ db CONSTANT FINAL)
 
 public:
     Move();
@@ -25,13 +45,14 @@ public:
 
     const optional<Item*>& toTmItem();
     const optional<Item*>& toHmItem();
+    const optional<Type*>& toType();
 
     /**
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static const vector<Move*>& store();
-    static const unordered_map<QString, Move*>& db();
+    static MoveArr store();
+    static MoveDb db();
     static void initStore(const QString& filename);
     static void initDb();
 
@@ -73,12 +94,13 @@ private:
 
     optional<Item*> _toTmItem;
     optional<Item*> _toHmItem;
+    optional<Type*> _toType;
 
     /**
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static vector<Move*> _store;
+    static _MoveArr _store;
 
     // Index
     // BaseModel does some of the initial indexing of it's own
@@ -86,7 +108,7 @@ private:
     // hm + # (hm2)
     // tm + ## (tm07)
     // hm + ## (hm02)
-    static unordered_map<QString, Move*> _db; // Indexed for lookup
+    static _MoveDb _db; // Indexed for lookup
 };
 
 #endif // MOVES_H

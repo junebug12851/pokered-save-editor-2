@@ -69,14 +69,14 @@ const optional<Move*>& Item::toHmMove()
     return this->_toHmMove;
 }
 
-const vector<Item*>& Item::store()
+ItemArr Item::store()
 {
-    return Item::_store;
+    return &Item::_store;
 }
 
-const unordered_map<QString, Item*>& Item::db()
+ItemDb Item::db()
 {
-    return Item::_db;
+    return &Item::_db;
 }
 
 void Item::initStore(const QString& filename)
@@ -132,14 +132,14 @@ void Item::initDeepLink()
         // If this is a TM, assign it
         // Will crash if not found which is needed anyways
         if(el->_tm)
-            el->_toTmMove = Move::db().at("tm" + QString::number(*el->_tm));
+            el->_toTmMove = Move::db()->at("tm" + QString::number(*el->_tm));
 
         // If this is a TM, assign it
         // Will crash if not found which is needed anyways
         if(el->_hm)
-            el->_toHmMove = Move::db().at("hm" + QString::number(*el->_hm));
+            el->_toHmMove = Move::db()->at("hm" + QString::number(*el->_hm));
     }
 }
 
-vector<Item*> Item::_store = vector<Item*>();
-unordered_map<QString, Item*> Item::_db = unordered_map<QString, Item*>();
+_ItemArr Item::_store = _ItemArr();
+_ItemDb Item::_db = _ItemDb();

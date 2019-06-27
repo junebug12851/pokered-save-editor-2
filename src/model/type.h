@@ -3,6 +3,14 @@
 
 #include "basemodel.h"
 
+class Type;
+
+using _TypeArr = vector<Type*>;
+using _TypeDb = unordered_map<QString, Type*>;
+
+using TypeArr = const _TypeArr*;
+using TypeDb = const _TypeDb*;
+
 class Type : public BaseModel
 {
     Q_OBJECT
@@ -17,8 +25,8 @@ public:
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static const vector<Type*>& store();
-    static const unordered_map<QString, Type*>& db();
+    static TypeArr store();
+    static TypeDb db();
     static void initStore(const QString& filename);
     static void initDb();
 
@@ -27,11 +35,11 @@ private:
      * Data Store and other static properties and methods related to building
      * and maintaining the store
      */
-    static vector<Type*> _store;
+    static _TypeArr _store;
 
     // Index
     // BaseModel does some of the initial indexing of it's own
-    static unordered_map<QString, Type*> _db; // Indexed for lookup
+    static _TypeDb _db; // Indexed for lookup
 };
 
 #endif // TYPE_H
