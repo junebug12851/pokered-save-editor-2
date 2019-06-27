@@ -121,7 +121,7 @@ void Pokemon::init(const QJsonObject &obj)
     // PokemonEvolution handles the details of extracting object data
     if(obj.contains("evolution")) {
         // Assign empty evolution array
-        this->_evolution = vector<PokemonEvolution>();
+        this->_evolution = vector<PokemonEvolution*>();
 
         // get evolution object or array
         QJsonValue evolution = obj["evolution"];
@@ -129,14 +129,14 @@ void Pokemon::init(const QJsonObject &obj)
         // Determine if object or array and process accordingly
         if(evolution.isObject()) {
             QJsonObject evolutionObj = evolution.toObject();
-            PokemonEvolution pokeEvo(evolutionObj);
+            PokemonEvolution* pokeEvo = new PokemonEvolution(evolutionObj);
             this->_evolution->push_back(pokeEvo);
         }
         else if(evolution.isArray()) {
             QJsonArray evolutionArr = evolution.toArray();
             for(var i{0}; i < evolutionArr.size(); ++i) {
                 QJsonObject evolutionArrItem = evolutionArr[i].toObject();
-                PokemonEvolution pokeEvo(evolutionArrItem);
+                PokemonEvolution* pokeEvo = new PokemonEvolution(evolutionArrItem);
                 this->_evolution->push_back(pokeEvo);
             }
         }
@@ -259,7 +259,7 @@ const optional<vars>& Pokemon::baseExpYield()
     return this->_baseExpYield;
 }
 
-const optional<vector<PokemonEvolution>>& Pokemon::evolution()
+const optional<vector<PokemonEvolution*>>& Pokemon::evolution()
 {
     return this->_evolution;
 }
@@ -456,15 +456,15 @@ void Pokemon::initDeepLink()
             for(auto evolEntry : evolution)
             {
                 // Deep link where exists
-                if(evolEntry._item)
-                    evolEntry._toItem = Item::db().at(*evolEntry._item);
+                if(evolEntry->_item)
+                    evolEntry->_toItem = Item::db().at(*evolEntry->_item);
 
                 // Link to Pokemon
-                evolEntry._toPokemon = Pokemon::_db.at(evolEntry._toName);
+                evolEntry->_toPokemon = Pokemon::_db.at(evolEntry->_toName);
 
                 // Go into Evolution Pokemon and mark it's de-evolution to
                 // this one (another deep link)
-                evolEntry._toPokemon->_devolve = el;
+                evolEntry->_toPokemon->_devolve = el;
             }
         }
     }

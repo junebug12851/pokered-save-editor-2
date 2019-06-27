@@ -15,7 +15,9 @@ class Type;
 class Item;
 
 // Pokemon can evolve from level or item
-class PokemonEvolution {
+class PokemonEvolution : public QObject {
+    Q_OBJECT
+
 public:
     friend class Pokemon;
 
@@ -46,10 +48,10 @@ private:
     Pokemon* _toPokemon;
 };
 
-Q_DECLARE_METATYPE(PokemonEvolution)
-
 class Pokemon : public BaseModel
 {
+    Q_OBJECT
+
 public:
     Pokemon();
     Pokemon(const QJsonObject& obj);
@@ -64,7 +66,7 @@ public:
     const optional<vars>& baseSpeed();
     const optional<vars>& baseSpecial();
     const optional<vars>& baseExpYield();
-    const optional<vector<PokemonEvolution>>& evolution();
+    const optional<vector<PokemonEvolution*>>& evolution();
     const optional<vector<pair<vars, QString>>>& learnedMoves();
     const optional<vector<QString>>& initialMoves();
     const optional<vector<vars>>& tmHm();
@@ -116,7 +118,7 @@ private:
     // Evolution
     // Can be an array of one or more evolutions
     // The only time it'll be more than 1 is with eevee
-    optional<vector<PokemonEvolution>> _evolution;
+    optional<vector<PokemonEvolution*>> _evolution;
 
     // Learnset
     optional<vector<pair<vars, QString>>> _learnedMoves;
@@ -153,7 +155,5 @@ private:
     // dex + ###  (dex001)
     static unordered_map<QString, Pokemon*> _db; // Indexed for lookup
 };
-
-Q_DECLARE_METATYPE(Pokemon)
 
 #endif // POKEMON_H

@@ -7,6 +7,8 @@ class Item;
 
 class Move : public BaseModel
 {
+    Q_OBJECT
+
 public:
     Move();
     Move(const QJsonObject& obj);
@@ -86,7 +88,5 @@ private:
     // hm + ## (hm02)
     static unordered_map<QString, Move*> _db; // Indexed for lookup
 };
-
-Q_DECLARE_METATYPE(Move)
 
 #endif // MOVES_H

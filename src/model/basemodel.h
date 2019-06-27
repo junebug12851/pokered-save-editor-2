@@ -2,6 +2,7 @@
 #define BASEMODEL_H
 
 #include <QtCore/QObject>
+#include <QObject>
 #include <QString>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -33,8 +34,12 @@ namespace std {
   * Base model to all models
   * Most Every model contains these values
  */
-class BaseModel
+class BaseModel : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(const optional<QString>& name READ name CONSTANT FINAL)
+    Q_PROPERTY(const optional<vars>& index READ index CONSTANT FINAL)
+
 public:
     BaseModel();
     BaseModel(const QJsonObject& obj);
@@ -68,8 +73,6 @@ private:
     // Internal game index of data entry
     optional<vars> _index;
 };
-
-Q_DECLARE_METATYPE(BaseModel)
 
 template<typename T>
 void BaseModel::initStore(const QString &filename, vector<T*>& store)

@@ -5,6 +5,8 @@
 
 class Type : public BaseModel
 {
+    Q_OBJECT
+
 public:
     Type();
     Type(const QJsonObject& obj);
@@ -31,7 +33,5 @@ private:
     // BaseModel does some of the initial indexing of it's own
     static unordered_map<QString, Type*> _db; // Indexed for lookup
 };
-
-Q_DECLARE_METATYPE(Type)
 
 #endif // TYPE_H
