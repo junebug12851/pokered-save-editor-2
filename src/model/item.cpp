@@ -69,6 +69,11 @@ const optional<Move*>& Item::toHmMove()
     return this->_toHmMove;
 }
 
+const Item *Item::lookupEntry(QString name)
+{
+    return Item::_db.at(name);
+}
+
 ItemArr Item::store()
 {
     return &Item::_store;

@@ -26,6 +26,9 @@ int main(int argc, char *argv[])
     // This will take a long time
     PokemonDatabase::initStores();
 
+    // Register models and stores into qml
+    PokemonDatabase::qmlRegisterModels();
+
     // Pull the icon from resources and set as window icon
     // It's also set to properly be built-in during compile
     const QIcon icon("qrc:/icon");

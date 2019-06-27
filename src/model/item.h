@@ -21,8 +21,6 @@ class Item : public BaseModel
     Q_PROPERTY(const optional<vars>& hm READ hm CONSTANT FINAL)
     Q_PROPERTY(const optional<Move*>& toTmMove READ toTmMove CONSTANT FINAL)
     Q_PROPERTY(const optional<Move*>& toHmMove READ toHmMove CONSTANT FINAL)
-    Q_PROPERTY(ItemArr store READ store CONSTANT FINAL)
-    Q_PROPERTY(ItemDb db READ db CONSTANT FINAL)
 
 public:
     Item();
@@ -37,6 +35,9 @@ public:
 
     const optional<Move*>& toTmMove();
     const optional<Move*>& toHmMove();
+
+    // For Qt Quick, Looks up an entry in the database
+    Q_INVOKABLE static const Item* lookupEntry(QString name);
 
     /**
      * Data Store and other static properties and methods related to building

@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     ui.setupUi(this);
+
     MainWindow::_instance = this;
 
     connect(ui.actionNew, &QAction::triggered, &file, &FileManagement::newFile);
