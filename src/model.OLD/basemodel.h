@@ -28,7 +28,7 @@ namespace std {
   };
 }
 
-#include "../includes/vars.h"
+#include "../includes/types.h"
 
 /**
   * Base model to all models
