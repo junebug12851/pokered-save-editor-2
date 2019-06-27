@@ -20,7 +20,7 @@ void Item::init(const QJsonObject& obj)
     if(obj.contains("normal"))
         this->_glitch = !obj["normal"].toBool();
     else
-        this->_glitch.reset();
+        this->_glitch = true;
 
     // In the JSON we have "typical" but "common" is a far better description
     if(obj.contains("typical"))

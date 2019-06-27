@@ -1,34 +1,26 @@
 #include "pokemondatabase.h"
 
-#include <QFile>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QByteArray>
-
-PokemonDatabase::PokemonDatabase(QObject *parent) :
-    QObject(parent)
+// This will take a long time, run at program start
+void PokemonDatabase::initStores()
 {
-    // Read In Json Data to array list
-//    this->jsonItems = this->jsonToList("qrc:/data/items.json");
-//    this->jsonMoves = this->jsonToList("qrc:/data/moves.json");
-//    this->jsonPokemon = this->jsonToList("qrc:/data/pokemon.json");
-//    this->jsonTypes = this->jsonToList("qrc:/data/types.json");
+    // Create array of models from JSON file
+    // This takes a while
+    Item::initStore(":/data/items.json");
+    Move::initStore(":/data/moves.json");
+    Pokemon::initStore(":/data/pokemon.json");
+    Type::initStore(":/data/types.json");
+
+    // Index models into a seperate db for speedy lookup
+    // This takes 2-4 times longer or more
+    Item::initDb();
+    Move::initDb();
+    Pokemon::initDb();
+    Type::initDb();
+
+    // Deep link store items to one another
+    // Relatively fast but will crash if anything from any step above went wrong
+    // or didn't happen
+    Item::initDeepLink();
+    Move::initDeepLink();
+    Pokemon::initDeepLink();
 }
-
-//QVariantList PokemonDatabase::jsonToList(QString filename)
-//{
-//    // Prepare to read in data
-//    QByteArray val;
-//    QFile file;
-
-//    // Read in file
-//    file.setFileName(filename);
-//    file.open(QIODevice::ReadOnly | QIODevice::Text);
-//    val = file.readAll();
-//    file.close();
-
-//    // Return QVariant List
-//    QJsonDocument doc = QJsonDocument::fromJson(val);
-//    return doc.array()[0].toObject().
-//}

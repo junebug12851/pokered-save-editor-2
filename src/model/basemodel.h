@@ -104,8 +104,8 @@ template<typename T>
 void BaseModel::initIndex(unordered_map<QString, T*>& db,
                           vector<T*>& store)
 {
-    // Clear out store
-    store.clear();
+    // Clear out db
+    db.clear();
 
     // Loop through all store items
     for(auto el : store)

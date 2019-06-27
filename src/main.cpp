@@ -3,6 +3,7 @@
 #include <QtQuickControls2>
 
 #include "./view/mainwindow.h"
+#include "./store/pokemondatabase.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +21,10 @@ int main(int argc, char *argv[])
 
     // Create the app
     QApplication app(argc, argv);
+
+    // Initialize databases into memory
+    // This will take a long time
+    PokemonDatabase::initStores();
 
     // Pull the icon from resources and set as window icon
     // It's also set to properly be built-in during compile
