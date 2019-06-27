@@ -4,7 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
 
-#include "../includes/vars.h"
+#include "../includes/types.h"
 
 constexpr var16f SAV_DATA_SIZE{0x8000};
 

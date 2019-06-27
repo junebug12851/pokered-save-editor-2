@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-#include "../includes/vars.h"
+#include "../includes/types.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)

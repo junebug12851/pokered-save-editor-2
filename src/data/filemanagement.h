@@ -7,7 +7,7 @@
 #include <QSettings>
 
 #include "rawsavedata.h"
-#include "../includes/vars.h"
+#include "../includes/types.h"
 
 constexpr var MAX_RECENT_FILES{5};
 extern const QString KEY_RECENT_FILES;
