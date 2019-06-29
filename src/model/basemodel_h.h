@@ -1,5 +1,6 @@
 #ifndef BASEMODEL_H_H
 #define BASEMODEL_H_H
+#include <QtCore/qglobal.h>
 #include <QHash>
 #include <QJsonObject>
 #include <QVariant>

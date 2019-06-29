@@ -33,12 +33,12 @@ const optional<var> Item::hm()
 
 const optional<Move*> Item::toTmMove()
 {
-    return this->val<Move*>(key_to_tm_move);
+    return this->_toTmMove;
 }
 
 const optional<Move*> Item::toHmMove()
 {
-    return this->val<Move*>(key_to_hm_move);
+    return this->_toHmMove;
 }
 
 void Item::init(QJsonObject &obj)
@@ -47,13 +47,10 @@ void Item::init(QJsonObject &obj)
 
     if(obj.contains("glitch"))
         this->setVal(key_glitch, obj["glitch"].toBool());
-
     if(obj.contains("common"))
         this->setVal(key_common, obj["common"].toBool());
-
     if(obj.contains("tm"))
         this->setVal(key_tm, obj["tm"].toInt());
-
     if(obj.contains("hm"))
         this->setVal(key_hm, obj["hm"].toInt());
 }
@@ -82,18 +79,18 @@ void Item::initDb()
 void Item::initDeepLink()
 {
     QString tmp;
-    for(auto& el : BaseModel<Item>::_store)
+    for(auto& el : _store)
     {
         if(el.tm())
         {
             tmp = "tm" + QString::number(*el.tm());
-            el.setVal(key_to_tm_move, Move::_db.at(tmp));
+            el._toTmMove = Move::db()->value(tmp);
         }
 
         if(el.hm())
         {
             tmp = "hm" + QString::number(*el.hm());
-            el.setVal(key_to_hm_move, Move::_db.at(tmp));
+            el._toHmMove = Move::db()->value(tmp);
         }
     }
 }

@@ -1,40 +1,49 @@
-#ifndef ITEM_H
-#define ITEM_H
+#ifndef MOVE_H
+#define MOVE_H
 
-#include <QMetaType>
 #include "basemodel.h"
 
-class Move;
+class Item;
+class Type;
 
-class Item : public BaseModel<Item>
+class Move : public BaseModel<Move>
 {
 public:
     enum keys: var {
         // Continue where the parent left off
-        key_glitch = BaseModel<Item>::keystore_size,
-        key_common,
+        key_power = BaseModel<Move>::keystore_size,
+        key_type,
+        key_accuracy,
+        key_pp,
         key_tm,
         key_hm,
+        key_glitch,
         keystore_size
     };
 
-    Item();
-    Item(QJsonObject& obj);
+    Move();
+    Move(QJsonObject& obj);
 
-    const optional<bool> glitch();
-    const optional<bool> common();
+    const optional<vars> power();
+    const optional<QString> type();
+    const optional<vars> accuracy();
+    const optional<vars> pp();
     const optional<vars> tm();
     const optional<vars> hm();
-    const optional<Move*> toTmMove();
-    const optional<Move*> toHmMove();
+    const optional<bool> glitch();
+
+    const optional<Item*> toTmItem();
+    const optional<Item*> toHmItem();
+    const optional<Type*> toType();
 
 private:
     // Apparently another Qt gotcha is you need to use Q_DECLARE_METATYPE so
     // that it'll work with Qt types and after doing so can't use custom types
     // with qt because it's a custom type making me wonder what the point was
     // entirely
-    optional<Move*> _toTmMove;
-    optional<Move*> _toHmMove;
+    optional<Item*> _toTmItem;
+    optional<Item*> _toHmItem;
+    optional<Type*> _toType;
 
     // Init Model
     void init(QJsonObject& obj);
@@ -46,7 +55,7 @@ private:
     static void initDeepLink();
 };
 
-Q_DECLARE_METATYPE(Item)
-Q_DECLARE_METATYPE(Item*)
+Q_DECLARE_METATYPE(Move)
+Q_DECLARE_METATYPE(Move*)
 
-#endif // ITEM_H
+#endif // MOVE_H
