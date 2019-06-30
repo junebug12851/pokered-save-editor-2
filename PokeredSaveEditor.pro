@@ -13,11 +13,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        src/model.OLD/pokemon.cpp \
         src/model/item.cpp \
         src/model/move.cpp \
+        src/model/pokemon.cpp \
+        src/model/pokemonevolution.cpp \
         src/model/type.cpp \
-        src/store.OLD/pokemondatabase.cpp \
+        src/store/pokemondatabase.cpp \
         src/view/mainwindow.cpp \
         src/data/filemanagement.cpp \
         src/main.cpp \
@@ -40,14 +41,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     src/includes/types.h \
-    src/model.OLD/pokemon.h \
     src/model/basemodel.h \
     src/model/basemodel_c.h \
     src/model/basemodel_h.h \
     src/model/item.h \
     src/model/move.h \
+    src/model/pokemon.h \
+    src/model/pokemonevolution.h \
     src/model/type.h \
-    src/store.OLD/pokemondatabase.h \
+    src/store/pokemondatabase.h \
     src/view/mainwindow.h \
     src/data/filemanagement.h \
     src/data/rawsavedata.h

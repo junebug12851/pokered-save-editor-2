@@ -13,12 +13,11 @@ public:
     Type();
     Type(QJsonObject& obj);
 
+    // Indexes a store to a db for speedy lookup
+    static void initDb();
 private:
     // Init Model
     void init(QJsonObject& obj);
-
-    // Indexes a store to a db for speedy lookup
-    static void initDb();
 };
 
 Q_DECLARE_METATYPE(Type)

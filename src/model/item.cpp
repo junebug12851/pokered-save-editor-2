@@ -33,12 +33,12 @@ const optional<var> Item::hm()
 
 const optional<Move*> Item::toTmMove()
 {
-    return this->_toTmMove;
+    return this->valVoidPtr<Move*>(key_to_tm_move);
 }
 
 const optional<Move*> Item::toHmMove()
 {
-    return this->_toHmMove;
+    return this->valVoidPtr<Move*>(key_to_hm_move);
 }
 
 void Item::init(QJsonObject &obj)
@@ -84,13 +84,13 @@ void Item::initDeepLink()
         if(el.tm())
         {
             tmp = "tm" + QString::number(*el.tm());
-            el._toTmMove = Move::db()->value(tmp);
+            el.setValVoidPtr<Move*>(key_to_tm_move, Move::db()->value(tmp));
         }
 
         if(el.hm())
         {
             tmp = "hm" + QString::number(*el.hm());
-            el._toHmMove = Move::db()->value(tmp);
+            el.setValVoidPtr<Move*>(key_to_hm_move, Move::db()->value(tmp));
         }
     }
 }

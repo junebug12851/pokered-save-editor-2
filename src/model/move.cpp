@@ -46,19 +46,19 @@ const optional<bool> Move::glitch()
     return this->val<bool>(key_glitch);
 }
 
-const optional<Item *> Move::toTmItem()
+const optional<Item*> Move::toTmItem()
 {
-    return this->_toTmItem;
+    return this->valVoidPtr<Item*>(key_to_tm_item);
 }
 
-const optional<Item *> Move::toHmItem()
+const optional<Item*> Move::toHmItem()
 {
-    return this->_toHmItem;
+    return this->valVoidPtr<Item*>(key_to_hm_item);
 }
 
-const optional<Type *> Move::toType()
+const optional<Type*> Move::toType()
 {
-    return this->_toType;
+    return this->valVoidPtr<Type*>(key_to_type);
 }
 
 void Move::init(QJsonObject &obj)
@@ -110,16 +110,16 @@ void Move::initDeepLink()
         if(el.tm())
         {
             tmp = "tm" + QString::number(*el.tm());
-            el._toTmItem = Item::db()->value(tmp);
+            el.setValVoidPtr<Item*>(key_to_tm_item, Item::db()->value(tmp));
         }
 
         if(el.hm())
         {
             tmp = "hm" + QString::number(*el.hm());
-            el._toHmItem = Item::db()->value(tmp);
+            el.setValVoidPtr<Item*>(key_to_hm_item, Item::db()->value(tmp));
         }
 
         if(el.type())
-            el._toType = Type::db()->value(tmp);
+            el.setValVoidPtr<Type*>(key_to_type, Type::db()->value(tmp));
     }
 }

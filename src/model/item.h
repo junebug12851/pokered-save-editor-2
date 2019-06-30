@@ -15,6 +15,8 @@ public:
         key_common,
         key_tm,
         key_hm,
+        key_to_tm_move,
+        key_to_hm_move,
         keystore_size
     };
 
@@ -28,22 +30,14 @@ public:
     const optional<Move*> toTmMove();
     const optional<Move*> toHmMove();
 
-private:
-    // Apparently another Qt gotcha is you need to use Q_DECLARE_METATYPE so
-    // that it'll work with Qt types and after doing so can't use custom types
-    // with qt because it's a custom type making me wonder what the point was
-    // entirely
-    optional<Move*> _toTmMove;
-    optional<Move*> _toHmMove;
-
-    // Init Model
-    void init(QJsonObject& obj);
-
     // Indexes a store to a db for speedy lookup
     static void initDb();
 
     // Deep link items from this store with items in other stores
     static void initDeepLink();
+private:
+    // Init Model
+    void init(QJsonObject& obj);
 };
 
 Q_DECLARE_METATYPE(Item)

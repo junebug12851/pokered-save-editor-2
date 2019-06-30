@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     PokemonDatabase::initStores();
 
     // Register models and stores into qml
-    PokemonDatabase::qmlRegisterModels();
+    // PokemonDatabase::qmlRegisterModels();
 
     // Pull the icon from resources and set as window icon
     // It's also set to properly be built-in during compile
