@@ -94,3 +94,16 @@ void Item::initDeepLink()
         }
     }
 }
+
+// @TODO Remove
+//using K = var*;
+//const optional<K> Item::valVoidPtr(var key)
+//{
+//    optional<K> ret;
+//    if(this->_modelData.contains(key))
+//    {
+//        void* _tmp = this->_modelData.value(key).template value<void*>();
+//        ret = static_cast<K>(_tmp);
+//    }
+//    return ret;
+//}

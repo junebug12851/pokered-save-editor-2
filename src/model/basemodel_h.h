@@ -39,7 +39,7 @@ public:
         optional<K> ret;
         if(this->_modelData.contains(key))
         {
-            K _tmp = this->_modelData.value(key).template value<void*>();
+            void* _tmp = this->_modelData.value(key).template value<void*>();
             ret = static_cast<K>(_tmp);
         }
         return ret;
@@ -56,7 +56,7 @@ public:
 
     static const T* dbLookup(QString& name);
     static const QVector<T>* store();
-    static const QHash<QString, T*>* db();
+    static const QHash<QVariant, T*>* db();
 
     // Fills a store with items from an array
     static void initStore(const QString& filename);
