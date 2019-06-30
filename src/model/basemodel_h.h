@@ -56,7 +56,7 @@ public:
 
     static const T* dbLookup(QString& name);
     static const QVector<T>* store();
-    static const QHash<QVariant, T*>* db();
+    static const QHash<QString, T*>* db();
 
     // Fills a store with items from an array
     static void initStore(const QString& filename);
@@ -92,7 +92,7 @@ protected:
     static QVector<T> _store;
 
     // DB Index of models (Array is indexed)
-    static QHash<QVariant, T*> _db;
+    static QHash<QString, T*> _db;
 };
 
 #endif // BASEMODEL_H_H

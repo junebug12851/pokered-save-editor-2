@@ -3,8 +3,6 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 
-import pse 1.0
-
 Rectangle {
     // Because Dark Theme has quite an ugly Brighter Shade which ruins
     // The look and feel and can make things more difficult to read/see
@@ -13,9 +11,5 @@ Rectangle {
     color: Material.background
 
     Navigation {
-    }
-
-    Text {
-        text: DB.lookupPokemon("Abra").name
     }
 }

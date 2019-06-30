@@ -39,7 +39,7 @@ const QVector<T> *BaseModel<T>::store()
 }
 
 template<typename T>
-const QHash<QVariant, T*>* BaseModel<T>::db()
+const QHash<QString, T*>* BaseModel<T>::db()
 {
     return &BaseModel<T>::_db;
 }
@@ -68,7 +68,7 @@ template<typename T>
 QVector<T> BaseModel<T>::_store = QVector<T>();
 
 template<typename T>
-QHash<QVariant, T*> BaseModel<T>::_db = QHash<QVariant, T*>();
+QHash<QString, T*> BaseModel<T>::_db = QHash<QString, T*>();
 
 template<typename T>
 void BaseModel<T>::initStore(const QString &filename)
@@ -92,7 +92,10 @@ void BaseModel<T>::initStore(const QString &filename)
     // Insert JSON Array items
     for(auto arrItem : arr)
     {
-        _store.push_back(arrItem.toObject());
+        // Kind of weird it has to be seperate like this but combined together
+        // doesn't work at all
+        auto tmp = arrItem.toObject();
+        _store.push_back(T(tmp));
     }
 
     _store.squeeze();
@@ -110,7 +113,7 @@ void BaseModel<T>::initDb()
     {
         // Index index if present
         if(el.index())
-            _db.insert(*el.index(), &el);
+            _db.insert(QString::number(*el.index()), &el);
 
         // Index name if present
         if(el.name())
