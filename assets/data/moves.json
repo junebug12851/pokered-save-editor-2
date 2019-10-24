@@ -1,0 +1,1511 @@
+[
+    {
+      "name": "Pound",
+      "ind": 1,
+      "power": 40,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 35
+    },
+    {
+      "name": "Karate Chop",
+      "ind": 2,
+      "power": 50,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 25
+    },
+    {
+      "name": "Doubleslap",
+      "ind": 3,
+      "power": 15,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 10
+    },
+    {
+      "name": "Comet Punch",
+      "ind": 4,
+      "power": 18,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 15
+    },
+    {
+      "name": "Mega Punch",
+      "ind": 5,
+      "power": 80,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 20,
+      "tm": 1
+    },
+    {
+      "name": "Pay Day",
+      "ind": 6,
+      "power": 40,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 16
+    },
+    {
+      "name": "Fire Punch",
+      "ind": 7,
+      "power": 75,
+      "type": "FIRE",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Ice Punch",
+      "ind": 8,
+      "power": 75,
+      "type": "ICE",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Thunderpunch",
+      "ind": 9,
+      "power": 75,
+      "type": "ELECTRIC",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Scratch",
+      "ind": 10,
+      "power": 40,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 35
+    },
+    {
+      "name": "Vicegrip",
+      "ind": 11,
+      "power": 55,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Guillotine",
+      "ind": 12,
+      "power": 1,
+      "type": "NORMAL",
+      "accuracy": 30,
+      "pp": 5
+    },
+    {
+      "name": "Razor Wind",
+      "ind": 13,
+      "power": 80,
+      "type": "NORMAL",
+      "accuracy": 75,
+      "pp": 10,
+      "tm": 2
+    },
+    {
+      "name": "Swords Dance",
+      "ind": 14,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30,
+      "tm": 3
+    },
+    {
+      "name": "Cut",
+      "ind": 15,
+      "power": 50,
+      "type": "NORMAL",
+      "accuracy": 95,
+      "pp": 30,
+      "tm": 51,
+      "hm": 1
+    },
+    {
+      "name": "Gust",
+      "ind": 16,
+      "power": 40,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 35
+    },
+    {
+      "name": "Wing Attack",
+      "ind": 17,
+      "power": 35,
+      "type": "FLYING",
+      "accuracy": 100,
+      "pp": 35
+    },
+    {
+      "name": "Whirlwind",
+      "ind": 18,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 20,
+      "tm": 4
+    },
+    {
+      "name": "Fly",
+      "ind": 19,
+      "power": 70,
+      "type": "FLYING",
+      "accuracy": 95,
+      "pp": 15,
+      "tm": 52,
+      "hm": 2
+    },
+    {
+      "name": "Bind",
+      "ind": 20,
+      "power": 15,
+      "type": "NORMAL",
+      "accuracy": 75,
+      "pp": 20
+    },
+    {
+      "name": "Slam",
+      "ind": 21,
+      "power": 80,
+      "type": "NORMAL",
+      "accuracy": 75,
+      "pp": 20
+    },
+    {
+      "name": "Vine Whip",
+      "ind": 22,
+      "power": 35,
+      "type": "GRASS",
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "Stomp",
+      "ind": 23,
+      "power": 65,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Double Kick",
+      "ind": 24,
+      "power": 30,
+      "type": "FIGHTING",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Mega Kick",
+      "ind": 25,
+      "power": 120,
+      "type": "NORMAL",
+      "accuracy": 75,
+      "pp": 5,
+      "tm": 5
+    },
+    {
+      "name": "Jump Kick",
+      "ind": 26,
+      "power": 70,
+      "type": "FIGHTING",
+      "accuracy": 95,
+      "pp": 25
+    },
+    {
+      "name": "Rolling Kick",
+      "ind": 27,
+      "power": 60,
+      "type": "FIGHTING",
+      "accuracy": 85,
+      "pp": 15
+    },
+    {
+      "name": "Sand Attack",
+      "ind": 28,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Headbutt",
+      "ind": 29,
+      "power": 70,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Horn Attack",
+      "ind": 30,
+      "power": 65,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 25
+    },
+    {
+      "name": "Fury Attack",
+      "ind": 31,
+      "power": 15,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 20
+    },
+    {
+      "name": "Horn Drill",
+      "ind": 32,
+      "power": 1,
+      "type": "NORMAL",
+      "accuracy": 30,
+      "pp": 5,
+      "tm": 7
+    },
+    {
+      "name": "Tackle",
+      "ind": 33,
+      "power": 35,
+      "type": "NORMAL",
+      "accuracy": 95,
+      "pp": 35
+    },
+    {
+      "name": "Body Slam",
+      "ind": 34,
+      "power": 85,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 15,
+      "tm": 8
+    },
+    {
+      "name": "Wrap",
+      "ind": 35,
+      "power": 15,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 20
+    },
+    {
+      "name": "Take Down",
+      "ind": 36,
+      "power": 90,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 20,
+      "tm": 9
+    },
+    {
+      "name": "Thrash",
+      "ind": 37,
+      "power": 90,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Double Edge",
+      "ind": 38,
+      "power": 100,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 15,
+      "tm": 10
+    },
+    {
+      "name": "Tail Whip",
+      "ind": 39,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Poison Sting",
+      "ind": 40,
+      "power": 15,
+      "type": "POISON",
+      "accuracy": 100,
+      "pp": 35
+    },
+    {
+      "name": "Twineedle",
+      "ind": 41,
+      "power": 25,
+      "type": "BUG",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Pin Missile",
+      "ind": 42,
+      "power": 14,
+      "type": "BUG",
+      "accuracy": 85,
+      "pp": 20
+    },
+    {
+      "name": "Leer",
+      "ind": 43,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Bite",
+      "ind": 44,
+      "power": 60,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 25
+    },
+    {
+      "name": "Growl",
+      "ind": 45,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 40
+    },
+    {
+      "name": "Roar",
+      "ind": 46,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Sing",
+      "ind": 47,
+      "type": "NORMAL",
+      "accuracy": 55,
+      "pp": 15
+    },
+    {
+      "name": "Supersonic",
+      "ind": 48,
+      "type": "NORMAL",
+      "accuracy": 55,
+      "pp": 20
+    },
+    {
+      "name": "Sonicboom",
+      "ind": 49,
+      "power": 1,
+      "type": "NORMAL",
+      "accuracy": 90,
+      "pp": 20
+    },
+    {
+      "name": "Disable",
+      "ind": 50,
+      "type": "NORMAL",
+      "accuracy": 55,
+      "pp": 20
+    },
+    {
+      "name": "Acid",
+      "ind": 51,
+      "power": 40,
+      "type": "POISON",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Ember",
+      "ind": 52,
+      "power": 40,
+      "type": "FIRE",
+      "accuracy": 100,
+      "pp": 25
+    },
+    {
+      "name": "Flamethrower",
+      "ind": 53,
+      "power": 95,
+      "type": "FIRE",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Mist",
+      "ind": 54,
+      "type": "ICE",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Water Gun",
+      "ind": 55,
+      "power": 40,
+      "type": "WATER",
+      "accuracy": 100,
+      "pp": 25
+    },
+    {
+      "name": "Hydro Pump",
+      "ind": 56,
+      "power": 120,
+      "type": "WATER",
+      "accuracy": 80,
+      "pp": 5
+    },
+    {
+      "name": "Surf",
+      "ind": 57,
+      "power": 95,
+      "type": "WATER",
+      "accuracy": 100,
+      "pp": 15,
+      "tm": 53,
+      "hm": 3
+    },
+    {
+      "name": "Ice Beam",
+      "ind": 58,
+      "power": 95,
+      "type": "ICE",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 13
+    },
+    {
+      "name": "Blizzard",
+      "ind": 59,
+      "power": 120,
+      "type": "ICE",
+      "accuracy": 90,
+      "pp": 5,
+      "tm": 14
+    },
+    {
+      "name": "Psybeam",
+      "ind": 60,
+      "power": 65,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Bubblebeam",
+      "ind": 61,
+      "power": 65,
+      "type": "WATER",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 11
+    },
+    {
+      "name": "Aurora Beam",
+      "ind": 62,
+      "power": 65,
+      "type": "ICE",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Hyper Beam",
+      "ind": 63,
+      "power": 150,
+      "type": "NORMAL",
+      "accuracy": 90,
+      "pp": 5,
+      "tm": 15
+    },
+    {
+      "name": "Peck",
+      "ind": 64,
+      "power": 35,
+      "type": "FLYING",
+      "accuracy": 100,
+      "pp": 35
+    },
+    {
+      "name": "Drill Peck",
+      "ind": 65,
+      "power": 80,
+      "type": "FLYING",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Submission",
+      "ind": 66,
+      "power": 80,
+      "type": "FIGHTING",
+      "accuracy": 80,
+      "pp": 25,
+      "tm": 17
+    },
+    {
+      "name": "Low Kick",
+      "ind": 67,
+      "power": 50,
+      "type": "FIGHTING",
+      "accuracy": 90,
+      "pp": 20
+    },
+    {
+      "name": "Counter",
+      "ind": 68,
+      "power": 1,
+      "type": "FIGHTING",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 18
+    },
+    {
+      "name": "Seismic Toss",
+      "ind": 69,
+      "power": 1,
+      "type": "FIGHTING",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 19
+    },
+    {
+      "name": "Strength",
+      "ind": 70,
+      "power": 80,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 15,
+      "tm": 54,
+      "hm": 4
+    },
+    {
+      "name": "Absorb",
+      "ind": 71,
+      "power": 20,
+      "type": "GRASS",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Mega Drain",
+      "ind": 72,
+      "power": 40,
+      "type": "GRASS",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 21
+    },
+    {
+      "name": "Leech Seed",
+      "ind": 73,
+      "type": "GRASS",
+      "accuracy": 90,
+      "pp": 10
+    },
+    {
+      "name": "Growth",
+      "ind": 74,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 40
+    },
+    {
+      "name": "Razor Leaf",
+      "ind": 75,
+      "power": 55,
+      "type": "GRASS",
+      "accuracy": 95,
+      "pp": 25
+    },
+    {
+      "name": "Solarbeam",
+      "ind": 76,
+      "power": 120,
+      "type": "GRASS",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 22
+    },
+    {
+      "name": "Poisonpowder",
+      "ind": 77,
+      "type": "POISON",
+      "accuracy": 75,
+      "pp": 35
+    },
+    {
+      "name": "Stun Spore",
+      "ind": 78,
+      "type": "GRASS",
+      "accuracy": 75,
+      "pp": 30
+    },
+    {
+      "name": "Sleep Powder",
+      "ind": 79,
+      "type": "GRASS",
+      "accuracy": 75,
+      "pp": 15
+    },
+    {
+      "name": "Petal Dance",
+      "ind": 80,
+      "power": 70,
+      "type": "GRASS",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "String Shot",
+      "ind": 81,
+      "type": "BUG",
+      "accuracy": 95,
+      "pp": 40
+    },
+    {
+      "name": "Dragon Rage",
+      "ind": 82,
+      "power": 1,
+      "type": "DRAGON",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 23
+    },
+    {
+      "name": "Fire Spin",
+      "ind": 83,
+      "power": 15,
+      "type": "FIRE",
+      "accuracy": 70,
+      "pp": 15
+    },
+    {
+      "name": "Thundershock",
+      "ind": 84,
+      "power": 40,
+      "type": "ELECTRIC",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Thunderbolt",
+      "ind": 85,
+      "power": 95,
+      "type": "ELECTRIC",
+      "accuracy": 100,
+      "pp": 15,
+      "tm": 24
+    },
+    {
+      "name": "Thunder Wave",
+      "ind": 86,
+      "type": "ELECTRIC",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 45
+    },
+    {
+      "name": "Thunder",
+      "ind": 87,
+      "power": 120,
+      "type": "ELECTRIC",
+      "accuracy": 70,
+      "pp": 10,
+      "tm": 25
+    },
+    {
+      "name": "Rock Throw",
+      "ind": 88,
+      "power": 50,
+      "type": "ROCK",
+      "accuracy": 65,
+      "pp": 15
+    },
+    {
+      "name": "Earthquake",
+      "ind": 89,
+      "power": 100,
+      "type": "GROUND",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 26
+    },
+    {
+      "name": "Fissure",
+      "ind": 90,
+      "power": 1,
+      "type": "GROUND",
+      "accuracy": 30,
+      "pp": 5,
+      "tm": 27
+    },
+    {
+      "name": "Dig",
+      "ind": 91,
+      "power": 100,
+      "type": "GROUND",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 28
+    },
+    {
+      "name": "Toxic",
+      "ind": 92,
+      "type": "POISON",
+      "accuracy": 85,
+      "pp": 10,
+      "tm": 6
+    },
+    {
+      "name": "Confusion",
+      "ind": 93,
+      "power": 50,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 25
+    },
+    {
+      "name": "Psychic",
+      "ind": 94,
+      "power": 90,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 29
+    },
+    {
+      "name": "Hypnosis",
+      "ind": 95,
+      "type": "PSYCHIC",
+      "accuracy": 60,
+      "pp": 20
+    },
+    {
+      "name": "Meditate",
+      "ind": 96,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 40
+    },
+    {
+      "name": "Agility",
+      "ind": 97,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Quick Attack",
+      "ind": 98,
+      "power": 40,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Rage",
+      "ind": 99,
+      "power": 20,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 20
+    },
+    {
+      "name": "Teleport",
+      "ind": 100,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 30
+    },
+    {
+      "name": "Night Shade",
+      "ind": 101,
+      "type": "GHOST",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Mimic",
+      "ind": 102,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 31
+    },
+    {
+      "name": "Screech",
+      "ind": 103,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 40
+    },
+    {
+      "name": "Double Team",
+      "ind": 104,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 15,
+      "tm": 32
+    },
+    {
+      "name": "Recover",
+      "ind": 105,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Harden",
+      "ind": 106,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Minimize",
+      "ind": 107,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Smokescreen",
+      "ind": 108,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Confuse Ray",
+      "ind": 109,
+      "type": "GHOST",
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "Withdraw",
+      "ind": 110,
+      "type": "WATER",
+      "accuracy": 100,
+      "pp": 40,
+      "tm": 12
+    },
+    {
+      "name": "Defense Curl",
+      "ind": 111,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 40
+    },
+    {
+      "name": "Barrier",
+      "ind": 112,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Light Screen",
+      "ind": 113,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Haze",
+      "ind": 114,
+      "type": "ICE",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Reflect",
+      "ind": 115,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 33
+    },
+    {
+      "name": "Focus Energy",
+      "ind": 116,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Bide",
+      "ind": 117,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 34
+    },
+    {
+      "name": "Metronome",
+      "ind": 118,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 35
+    },
+    {
+      "name": "Mirror Move",
+      "ind": 119,
+      "type": "FLYING",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Selfdestruct",
+      "ind": 120,
+      "power": 130,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 5,
+      "tm": 36
+    },
+    {
+      "name": "Egg Bomb",
+      "ind": 121,
+      "power": 100,
+      "type": "NORMAL",
+      "accuracy": 75,
+      "pp": 10,
+      "tm": 37
+    },
+    {
+      "name": "Lick",
+      "ind": 122,
+      "power": 20,
+      "type": "GHOST",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Smog",
+      "ind": 123,
+      "power": 20,
+      "type": "POISON",
+      "accuracy": 70,
+      "pp": 20
+    },
+    {
+      "name": "Sludge",
+      "ind": 124,
+      "power": 65,
+      "type": "POISON",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Bone Club",
+      "ind": 125,
+      "power": 65,
+      "type": "GROUND",
+      "accuracy": 85,
+      "pp": 20
+    },
+    {
+      "name": "Fire Blast",
+      "ind": 126,
+      "power": 120,
+      "type": "FIRE",
+      "accuracy": 85,
+      "pp": 5,
+      "tm": 38
+    },
+    {
+      "name": "Waterfall",
+      "ind": 127,
+      "power": 80,
+      "type": "WATER",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Clamp",
+      "ind": 128,
+      "power": 35,
+      "type": "WATER",
+      "accuracy": 75,
+      "pp": 10
+    },
+    {
+      "name": "Swift",
+      "ind": 129,
+      "power": 60,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20,
+      "tm": 39
+    },
+    {
+      "name": "Skull Bash",
+      "ind": 130,
+      "power": 100,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 15,
+      "tm": 40
+    },
+    {
+      "name": "Spike Cannon",
+      "ind": 131,
+      "power": 20,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Constrict",
+      "ind": 132,
+      "power": 10,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 35
+    },
+    {
+      "name": "Amnesia",
+      "ind": 133,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Kinesis",
+      "ind": 134,
+      "type": "PSYCHIC",
+      "accuracy": 80,
+      "pp": 15
+    },
+    {
+      "name": "Softboiled",
+      "ind": 135,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 41
+    },
+    {
+      "name": "Hi Jump Kick",
+      "ind": 136,
+      "power": 85,
+      "type": "FIGHTING",
+      "accuracy": 90,
+      "pp": 20
+    },
+    {
+      "name": "Glare",
+      "ind": 137,
+      "type": "NORMAL",
+      "accuracy": 75,
+      "pp": 30
+    },
+    {
+      "name": "Dream Eater",
+      "ind": 138,
+      "power": 100,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 15,
+      "tm": 42
+    },
+    {
+      "name": "Poison Gas",
+      "ind": 139,
+      "type": "POISON",
+      "accuracy": 55,
+      "pp": 40
+    },
+    {
+      "name": "Barrage",
+      "ind": 140,
+      "power": 15,
+      "type": "NORMAL",
+      "accuracy": 85,
+      "pp": 20
+    },
+    {
+      "name": "Leech Life",
+      "ind": 141,
+      "power": 20,
+      "type": "BUG",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Lovely Kiss",
+      "ind": 142,
+      "type": "NORMAL",
+      "accuracy": 75,
+      "pp": 10
+    },
+    {
+      "name": "Sky Attack",
+      "ind": 143,
+      "power": 140,
+      "type": "FLYING",
+      "accuracy": 90,
+      "pp": 5,
+      "tm": 43
+    },
+    {
+      "name": "Transform",
+      "ind": 144,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "Bubble",
+      "ind": 145,
+      "power": 20,
+      "type": "WATER",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Dizzy Punch",
+      "ind": 146,
+      "power": 70,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "Spore",
+      "ind": 147,
+      "type": "GRASS",
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "Flash",
+      "ind": 148,
+      "type": "NORMAL",
+      "accuracy": 70,
+      "pp": 20,
+      "tm": 55,
+      "hm": 5
+    },
+    {
+      "name": "Psywave",
+      "ind": 149,
+      "power": 1,
+      "type": "PSYCHIC",
+      "accuracy": 80,
+      "pp": 15,
+      "tm": 46
+    },
+    {
+      "name": "Splash",
+      "ind": 150,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 40
+    },
+    {
+      "name": "Acid Armor",
+      "ind": 151,
+      "type": "POISON",
+      "accuracy": 100,
+      "pp": 40
+    },
+    {
+      "name": "Crabhammer",
+      "ind": 152,
+      "power": 90,
+      "type": "WATER",
+      "accuracy": 85,
+      "pp": 10
+    },
+    {
+      "name": "Explosion",
+      "ind": 153,
+      "power": 170,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 5,
+      "tm": 47
+    },
+    {
+      "name": "Fury Swipes",
+      "ind": 154,
+      "power": 18,
+      "type": "NORMAL",
+      "accuracy": 80,
+      "pp": 15
+    },
+    {
+      "name": "Bonemerang",
+      "ind": 155,
+      "power": 50,
+      "type": "GROUND",
+      "accuracy": 90,
+      "pp": 10
+    },
+    {
+      "name": "Rest",
+      "ind": 156,
+      "type": "PSYCHIC",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 44
+    },
+    {
+      "name": "Rock Slide",
+      "ind": 157,
+      "power": 75,
+      "type": "ROCK",
+      "accuracy": 90,
+      "pp": 10,
+      "tm": 48
+    },
+    {
+      "name": "Hyper Fang",
+      "ind": 158,
+      "power": 80,
+      "type": "NORMAL",
+      "accuracy": 90,
+      "pp": 15
+    },
+    {
+      "name": "Sharpen",
+      "ind": 159,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Conversion",
+      "ind": 160,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "Tri Attack",
+      "ind": 161,
+      "power": 80,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 49
+    },
+    {
+      "name": "Super Fang",
+      "ind": 162,
+      "power": 1,
+      "type": "NORMAL",
+      "accuracy": 90,
+      "pp": 10
+    },
+    {
+      "name": "Slash",
+      "ind": 163,
+      "power": 70,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "Substitute",
+      "ind": 164,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10,
+      "tm": 50
+    },
+    {
+      "name": "Struggle",
+      "ind": 165,
+      "glitch": true,
+      "power": 50,
+      "type": "NORMAL",
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "Showpic Anim",
+      "ind": 166,
+      "glitch": true
+    },
+    {
+      "name": "Status Affected Anim",
+      "ind": 167,
+      "glitch": true
+    },
+    {
+      "name": "Anim A 8",
+      "ind": 168,
+      "glitch": true
+    },
+    {
+      "name": "Anim A 9",
+      "ind": 169,
+      "glitch": true
+    },
+    {
+      "name": "Trade Ball Drop Anim",
+      "ind": 170,
+      "glitch": true
+    },
+    {
+      "name": "Trade Ball Shake Anim",
+      "ind": 171,
+      "glitch": true
+    },
+    {
+      "name": "Trade Ball Tilt Anim",
+      "ind": 172,
+      "glitch": true
+    },
+    {
+      "name": "Trade Ball Poof Anim",
+      "ind": 173,
+      "glitch": true
+    },
+    {
+      "name": "Xstatitem Anim",
+      "ind": 174,
+      "glitch": true
+    },
+    {
+      "name": "Anim Af",
+      "ind": 175,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 0",
+      "ind": 176,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 1",
+      "ind": 177,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 2",
+      "ind": 178,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 3",
+      "ind": 179,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 4",
+      "ind": 180,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 5",
+      "ind": 181,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 6",
+      "ind": 182,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 7",
+      "ind": 183,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 8",
+      "ind": 184,
+      "glitch": true
+    },
+    {
+      "name": "Anim B 9",
+      "ind": 185,
+      "glitch": true
+    },
+    {
+      "name": "Burn Psn Anim",
+      "ind": 186,
+      "glitch": true
+    },
+    {
+      "name": "Anim Bb",
+      "ind": 187,
+      "glitch": true
+    },
+    {
+      "name": "Anim Bc",
+      "ind": 188,
+      "glitch": true
+    },
+    {
+      "name": "Slp Anim",
+      "ind": 189,
+      "glitch": true
+    },
+    {
+      "name": "Anim Be",
+      "ind": 190,
+      "glitch": true
+    },
+    {
+      "name": "Conf Anim",
+      "ind": 191,
+      "glitch": true
+    },
+    {
+      "name": "Anim C 0",
+      "ind": 192,
+      "glitch": true
+    },
+    {
+      "name": "Toss Anim",
+      "ind": 193,
+      "glitch": true
+    },
+    {
+      "name": "Shake Anim",
+      "ind": 194,
+      "glitch": true
+    },
+    {
+      "name": "Poof Anim",
+      "ind": 195,
+      "glitch": true
+    },
+    {
+      "name": "Blockball Anim",
+      "ind": 196,
+      "glitch": true
+    },
+    {
+      "name": "Greattoss Anim",
+      "ind": 197,
+      "glitch": true
+    },
+    {
+      "name": "Ultratoss Anim",
+      "ind": 198,
+      "glitch": true
+    },
+    {
+      "name": "Anim C 7",
+      "ind": 199,
+      "glitch": true
+    },
+    {
+      "name": "Hidepic Anim",
+      "ind": 200,
+      "glitch": true
+    },
+    {
+      "name": "Rock Anim",
+      "ind": 201,
+      "glitch": true
+    },
+    {
+      "name": "Bait Anim",
+      "ind": 202,
+      "glitch": true
+    }
+  ]

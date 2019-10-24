@@ -3,24 +3,7 @@
 #include <QtQuickControls2>
 
 #include "./view/mainwindow.h"
-#include "./store/pokemondatabase.h"
-
-// Testing
-#include "./model/item.h"
-
-void test()
-{
-  PokemonDatabase tmp = PokemonDatabase();
-  Item* itm = tmp.lookupItem("Potion");
-
-  bool glitch = false;
-  if(itm->glitch())
-    glitch = true;
-
-  QString name;
-  if(itm->name())
-    name = **itm->name();
-}
+#include "./data/gamedata.h"
 
 int main(int argc, char *argv[])
 {
@@ -39,24 +22,19 @@ int main(int argc, char *argv[])
     // Create the app
     QApplication app(argc, argv);
 
-    // Initialize databases into memory
-    // This will take a long time
-    PokemonDatabase::initStores();
-
-    // Register models and stores into qml
-    // PokemonDatabase::qmlRegisterModels();
-
     // Pull the icon from resources and set as window icon
     // It's also set to properly be built-in during compile
-    QIcon icon("qrc:/icon");
+    QIcon icon("qrc:/assets/icons/512x512.png");
     app.setWindowIcon(icon);
 
-    test();
-    return 0;
+    qmlRegisterSingletonType<GameData>("com.gmail.junehanabi.pse.gamedata",
+                                       1, 0,
+                                       "GameData",
+                                       &GameData::GameData_Provider);
 
-    //MainWindow win;
-    //win.show();
+    MainWindow win;
+    win.show();
 
     // Run the app
-    //return app.exec();
+    return app.exec();
 }

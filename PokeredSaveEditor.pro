@@ -13,12 +13,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        src/model/item.cpp \
-        src/model/move.cpp \
-        src/model/pokemon.cpp \
-        src/model/pokemonevolution.cpp \
-        src/model/type.cpp \
-        src/store/pokemondatabase.cpp \
+        src/data/gamedata.cpp \
         src/view/mainwindow.cpp \
         src/data/filemanagement.cpp \
         src/main.cpp \
@@ -26,7 +21,7 @@ SOURCES += \
 
 RESOURCES += qml.qrc
 
-RC_ICONS = icons/icon.ico
+RC_ICONS = assets/icons/icon.ico
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -40,16 +35,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/data/gamedata.h \
     src/includes/types.h \
-    src/model/basemodel.h \
-    src/model/basemodel_c.h \
-    src/model/basemodel_h.h \
-    src/model/item.h \
-    src/model/move.h \
-    src/model/pokemon.h \
-    src/model/pokemonevolution.h \
-    src/model/type.h \
-    src/store/pokemondatabase.h \
     src/view/mainwindow.h \
     src/data/filemanagement.h \
     src/data/rawsavedata.h

@@ -10,8 +10,6 @@
 #include "../includes/types.h"
 
 constexpr var8 MAX_RECENT_FILES{5};
-extern QString KEY_RECENT_FILES;
-extern QString KEY_LAST_FILE;
 
 class FileManagement : public QObject
 {
@@ -32,6 +30,9 @@ public:
     // Manage Recent Files
     QString recentFile(var8 index = 0);
     QList<QString>* recentFiles();
+
+    static const QString KEY_RECENT_FILES;
+    static const QString KEY_LAST_FILE;
 
 signals:
     void pathChanged(QString path, QString oldPath);
