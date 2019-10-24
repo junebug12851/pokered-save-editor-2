@@ -20,6 +20,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 #include <QQmlEngine>
 #include <QJSEngine>
 #include <QJSValue>
+#include <QHash>
 
 class GameData : public QObject
 {
@@ -31,6 +32,11 @@ public:
 
   // Registers this as a singleton to QML
   static QObject* GameData_Provider(QQmlEngine *engine, QJSEngine *scriptEngine);
+
+  // Stores cached file contents so that it doesn't have to re-read them
+  // from disk on every access
+  // Obviosuly very large so we use the heap
+  static QHash<QString, QString>* cache;
 };
 
 #endif // GAMEDATA_H

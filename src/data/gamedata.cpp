@@ -24,6 +24,10 @@ GameData::GameData(QObject *parent) : QObject(parent)
 
 QString GameData::json(QString filename)
 {
+  // Serve cached file if present
+  if(cache->contains(filename))
+    return cache->value(filename);
+
   // Prepare variables
   QByteArray val;
   QFile file;
@@ -34,6 +38,8 @@ QString GameData::json(QString filename)
   val = file.readAll();
   file.close();
 
+  // Cache read file and then serve
+  cache->insert(filename, val);
   return val;
 }
 
@@ -44,3 +50,5 @@ QObject* GameData::GameData_Provider(QQmlEngine* engine, QJSEngine* scriptEngine
 
   return new GameData();
 }
+
+QHash<QString, QString>* GameData::cache = new QHash<QString, QString>();

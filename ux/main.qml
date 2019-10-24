@@ -15,8 +15,15 @@ Rectangle {
 
   //Navigation {}
 
+//  Text {
+//    text: JSON.parse(GameData.json("fly"))[0].name;
+//  }
+
+//  Text {
+//    text: JSON.parse(GameData.json("fly"))[0].name;
+//  }
+
   Text {
-    id: s
-    text: JSON.parse(GameData.json("fly"))[0].name;
+    text: JSON.parse(GameData.json("maps"))[0].bank;
   }
 }
