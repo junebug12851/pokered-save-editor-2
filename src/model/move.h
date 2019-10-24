@@ -9,7 +9,7 @@ class Type;
 class Move : public BaseModel<Move>
 {
 public:
-    enum keys: var {
+    enum keys: var8 {
         // Continue where the parent left off
         key_power = BaseModel<Move>::keystore_size,
         key_type,
@@ -27,17 +27,17 @@ public:
     Move();
     Move(QJsonObject& obj);
 
-    const optional<vars> power();
-    const optional<QString> type();
-    const optional<vars> accuracy();
-    const optional<vars> pp();
-    const optional<vars> tm();
-    const optional<vars> hm();
-    const optional<bool> glitch();
+    optional<var8*> power();
+    optional<QString*> type();
+    optional<var8*> accuracy();
+    optional<var8*> pp();
+    optional<var8*> tm();
+    optional<var8*> hm();
+    optional<bool*> glitch();
 
-    const optional<Item*> toTmItem();
-    const optional<Item*> toHmItem();
-    const optional<Type*> toType();
+    optional<Item*> toTmItem();
+    optional<Item*> toHmItem();
+    optional<Type*> toType();
 
     // Indexes a store to a db for speedy lookup
     static void initDb();
@@ -48,8 +48,5 @@ private:
     // Init Model
     void init(QJsonObject& obj);
 };
-
-Q_DECLARE_METATYPE(Move)
-Q_DECLARE_METATYPE(Move*)
 
 #endif // MOVE_H

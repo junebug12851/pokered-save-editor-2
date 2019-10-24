@@ -11,60 +11,60 @@ PokemonEvolution::PokemonEvolution(QJsonObject &obj, Pokemon* parent) :
     this->init(obj, parent);
 }
 
-const optional<var> PokemonEvolution::level()
+optional<var8*> PokemonEvolution::level()
 {
-    return this->val<var>(key_level);
+    return this->val<var8>(key_level);
 }
 
-const optional<QString> PokemonEvolution::item()
+optional<QString*> PokemonEvolution::item()
 {
     return this->val<QString>(key_item);
 }
 
-const optional<Item*> PokemonEvolution::toItem()
+optional<Item*> PokemonEvolution::toItem()
 {
-    return this->valVoidPtr<Item*>(key_to_item);
+    return this->val<Item>(key_to_item);
 }
 
-const Pokemon* PokemonEvolution::toPokemon()
+Pokemon* PokemonEvolution::toPokemon()
 {
-    return *this->valVoidPtr<Pokemon*>(key_to_pokemon);
+    return *this->val<Pokemon>(key_to_pokemon);
 }
 
-const Pokemon* PokemonEvolution::parent()
+Pokemon* PokemonEvolution::parent()
 {
-    return *this->valVoidPtr<Pokemon*>(key_parent);
+    return *this->val<Pokemon>(key_parent);
 }
 
 void PokemonEvolution::init(QJsonObject &obj, Pokemon* parent)
 {
     BaseModel<PokemonEvolution>::init(obj);
-    this->setValVoidPtr<Pokemon*>(key_parent, parent);
+    this->setVal(key_parent, parent);
 
     if(obj.contains("level"))
-        this->setVal(key_level, obj["level"].toInt());
+        this->setVal(key_level, new var8(static_cast<var8>(obj["level"].toInt())));
     if(obj.contains("item"))
-        this->setVal(key_item, obj["item"].toString());
+        this->setVal(key_item, new QString(obj["item"].toString()));
 }
 
 void PokemonEvolution::initDeepLink()
 {
     QString tmp;
-    for(auto& el : _store)
+    for(auto el : _store)
     {
         // Link To Pokemon
-        el.setValVoidPtr<Pokemon*>(key_to_pokemon, Pokemon::db()->value(*el.name()));
+        el->setVal(key_to_pokemon, Pokemon::db()->value(**el->name()));
 
         // Link To Item
-        if(el.item())
-            el.setValVoidPtr<Item*>(key_to_item, Item::db()->value(*el.item()));
+        if(el->item())
+            el->setVal(key_to_item, Item::db()->value(**el->item()));
 
-        // Because of const this is somewhat complicated
+        // Because of this is somewhat complicated
         // Link to de-evolution pokemon (parent) but work around const-ness
-        Pokemon* tmpPokemon = const_cast<Pokemon*>(el.toPokemon());
-        tmpPokemon->setValVoidPtr<Pokemon*>(
+        Pokemon* tmpPokemon = const_cast<Pokemon*>(el->toPokemon());
+        tmpPokemon->setVal(
                     Pokemon::key_de_evolution,
-                    const_cast<Pokemon*>(el.parent())
+                    const_cast<Pokemon*>(el->parent())
                 );
     }
 }

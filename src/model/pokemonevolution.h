@@ -12,7 +12,7 @@ public:
     // Allow Pokemon to access this class's private variables
     friend class Pokemon;
 
-    enum keys: var {
+    enum keys: var8 {
         // Continue where the parent left off
         key_level = BaseModel<PokemonEvolution>::keystore_size,
         key_item,
@@ -25,12 +25,12 @@ public:
     PokemonEvolution();
     PokemonEvolution(QJsonObject& obj, Pokemon* parent);
 
-    const optional<var> level();
-    const optional<QString> item();
+    optional<var8*> level();
+    optional<QString*> item();
 
-    const optional<Item*> toItem();
-    const Pokemon* toPokemon();
-    const Pokemon* parent();
+    optional<Item*> toItem();
+    Pokemon* toPokemon();
+    Pokemon* parent();
 
     // Deep link items from this store with items in other stores
     void initDeepLink();
@@ -38,8 +38,5 @@ private:
     // Init Model
     void init(QJsonObject& obj, Pokemon* parent);
 };
-
-Q_DECLARE_METATYPE(PokemonEvolution)
-Q_DECLARE_METATYPE(PokemonEvolution*)
 
 #endif // POKEMONEVOLUTION_H

@@ -5,6 +5,23 @@
 #include "./view/mainwindow.h"
 #include "./store/pokemondatabase.h"
 
+// Testing
+#include "./model/item.h"
+
+void test()
+{
+  PokemonDatabase tmp = PokemonDatabase();
+  Item* itm = tmp.lookupItem("Potion");
+
+  bool glitch = false;
+  if(itm->glitch())
+    glitch = true;
+
+  QString name;
+  if(itm->name())
+    name = **itm->name();
+}
+
 int main(int argc, char *argv[])
 {
     // Set Attributes
@@ -31,12 +48,15 @@ int main(int argc, char *argv[])
 
     // Pull the icon from resources and set as window icon
     // It's also set to properly be built-in during compile
-    const QIcon icon("qrc:/icon");
+    QIcon icon("qrc:/icon");
     app.setWindowIcon(icon);
 
-    MainWindow win;
-    win.show();
+    test();
+    return 0;
+
+    //MainWindow win;
+    //win.show();
 
     // Run the app
-    return app.exec();
+    //return app.exec();
 }

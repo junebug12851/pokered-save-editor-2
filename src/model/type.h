@@ -6,7 +6,7 @@
 class Type : public BaseModel<Type>
 {
 public:
-    enum keys: var {
+    enum keys: var8 {
         // Continue where the parent left off
         keystore_size = BaseModel<Type>::keystore_size
     };
@@ -19,8 +19,5 @@ private:
     // Init Model
     void init(QJsonObject& obj);
 };
-
-Q_DECLARE_METATYPE(Type)
-Q_DECLARE_METATYPE(Type*)
 
 #endif // TYPE_H

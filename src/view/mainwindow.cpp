@@ -40,7 +40,7 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
     QMenu* filesMenu{ui.menuRecent_Files};
 
     // Disconnect Signal Slot connections from the 3rd onward
-    for(var i{3}; i < filesMenu->actions().size(); i++) {
+    for(var8 i{3}; i < filesMenu->actions().size(); i++) {
         QAction* action{filesMenu->actions()[i]};
         disconnect(action, &QAction::triggered, this, &MainWindow::onRecentFileClick);
     }
@@ -55,7 +55,7 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
 
     // Grab list of recent files and loop through them
     // Add actions for each one of them
-    for(var i{0}; i < MAX_RECENT_FILES && i < files->size(); i++) {
+    for(var8 i{0}; i < MAX_RECENT_FILES && i < files->size(); i++) {
         QString file{files->at(i)};
         if(file == "")
             continue;
@@ -63,7 +63,7 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
         QAction* recentFile{new QAction(file)};
 
         // Key_0 is 0x30 - add i to 0x30 to get shortcut offset
-        var shortcutKey{static_cast<var>(0x30 + i)};
+        var8 shortcutKey{static_cast<var8>(0x30 + i)};
         recentFile->setShortcut(Qt::CTRL + Qt::SHIFT + shortcutKey);
         recentFile->setData(i);
 
@@ -79,7 +79,7 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
 void MainWindow::onRecentFileClick()
 {
     QAction* action{qobject_cast<QAction*>(sender())};
-    var index{static_cast<var>(action->data().toInt())};
+    var8 index{static_cast<var8>(action->data().toInt())};
     file.openFileRecent(index);
 }
 

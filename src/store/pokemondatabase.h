@@ -12,10 +12,10 @@
 class PokemonDatabase
 {
 public:
-    const Item* lookupItem(QString key);
-    const Move* lookupMove(QString key);
-    const Pokemon* lookupPokemon(QString key);
-    const Type* lookupType(QString key);
+    Item* lookupItem(QString key);
+    Move* lookupMove(QString key);
+    Pokemon* lookupPokemon(QString key);
+    Type* lookupType(QString key);
 
     static void initStores();
 };

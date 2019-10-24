@@ -3,22 +3,22 @@
 #include "pokemondatabase.h"
 
 // This will take a long time, run at program start
-const Item* PokemonDatabase::lookupItem(QString key)
+Item* PokemonDatabase::lookupItem(QString key)
 {
     return Item::dbLookup(key);
 }
 
-const Move* PokemonDatabase::lookupMove(QString key)
+Move* PokemonDatabase::lookupMove(QString key)
 {
     return Move::dbLookup(key);
 }
 
-const Pokemon* PokemonDatabase::lookupPokemon(QString key)
+Pokemon* PokemonDatabase::lookupPokemon(QString key)
 {
     return Pokemon::dbLookup(key);
 }
 
-const Type* PokemonDatabase::lookupType(QString key)
+Type* PokemonDatabase::lookupType(QString key)
 {
     return Type::dbLookup(key);
 }

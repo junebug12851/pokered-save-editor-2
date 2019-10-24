@@ -14,7 +14,7 @@ class Pokemon : public BaseModel<Pokemon>
 {
 public:
     friend class PokemonEvolution;
-    enum keys: var {
+    enum keys: var8 {
         // Continue where the parent left off
         key_pokedex = BaseModel<Pokemon>::keystore_size,
         key_growth_rate,
@@ -45,30 +45,30 @@ public:
     Pokemon();
     Pokemon(QJsonObject& obj);
 
-    const optional<var> pokedex();
-    const optional<var> growthRate();
-    const optional<var> baseHp();
-    const optional<var> baseAttack();
-    const optional<var> baseDefense();
-    const optional<var> baseSpeed();
-    const optional<var> baseSpecial();
-    const optional<var> baseExpYield();
-    const optional<QVector<PokemonEvolution>*> evolution();
-    const optional<QVector<QPair<var, QString>>*> learnedMoves();
-    const optional<QVector<QString>*> initialMoves();
-    const optional<QVector<var>*> tmHm();
-    const optional<QString> type1();
-    const optional<QString> type2();
-    const optional<var> catchRate();
-    const optional<bool> glitch();
+    optional<var8*> pokedex();
+    optional<var8*> growthRate();
+    optional<var8*> baseHp();
+    optional<var8*> baseAttack();
+    optional<var8*> baseDefense();
+    optional<var8*> baseSpeed();
+    optional<var8*> baseSpecial();
+    optional<var8*> baseExpYield();
+    optional<QVector<PokemonEvolution*>*> evolution();
+    optional<QVector<QPair<var8, QString*>*>*> learnedMoves();
+    optional<QVector<QString*>*> initialMoves();
+    optional<QVector<var8*>*> tmHm();
+    optional<QString*> type1();
+    optional<QString*> type2();
+    optional<var8*> catchRate();
+    optional<bool*> glitch();
 
-    const optional<QVector<QPair<var, QString>>*> toLearnedMoves();
-    const optional<QVector<Move*>*> toInitialMoves();
-    const optional<QVector<Move*>*> toTmHmMoves();
-    const optional<QVector<Item*>*> toTmHmItems();
-    const optional<Type*> toType1();
-    const optional<Type*> toType2();
-    const optional<Pokemon*> deEvolution();
+    optional<QVector<QPair<var8, QString*>*>*> toLearnedMoves();
+    optional<QVector<Move*>*> toInitialMoves();
+    optional<QVector<Move*>*> toTmHmMoves();
+    optional<QVector<Item*>*> toTmHmItems();
+    optional<Type*> toType1();
+    optional<Type*> toType2();
+    optional<Pokemon*> deEvolution();
 
     // Indexes a store to a db for speedy lookup
     static void initDb();
@@ -79,8 +79,5 @@ private:
     // Init Model
     void init(QJsonObject& obj);
 };
-
-Q_DECLARE_METATYPE(Pokemon)
-Q_DECLARE_METATYPE(Pokemon*)
 
 #endif // POKEMON_H

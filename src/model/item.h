@@ -1,7 +1,6 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-#include <QMetaType>
 #include "basemodel.h"
 
 class Move;
@@ -9,7 +8,7 @@ class Move;
 class Item : public BaseModel<Item>
 {
 public:
-    enum keys: var {
+    enum keys: var8 {
         // Continue where the parent left off
         key_glitch = BaseModel<Item>::keystore_size,
         key_common,
@@ -23,12 +22,12 @@ public:
     Item();
     Item(QJsonObject& obj);
 
-    const optional<bool> glitch();
-    const optional<bool> common();
-    const optional<vars> tm();
-    const optional<vars> hm();
-    const optional<Move*> toTmMove();
-    const optional<Move*> toHmMove();
+    optional<bool*> glitch();
+    optional<bool*> common();
+    optional<var8*> tm();
+    optional<var8*> hm();
+    optional<Move*> toTmMove();
+    optional<Move*> toHmMove();
 
     // Indexes a store to a db for speedy lookup
     static void initDb();
@@ -39,8 +38,5 @@ private:
     // Init Model
     void init(QJsonObject& obj);
 };
-
-Q_DECLARE_METATYPE(Item)
-Q_DECLARE_METATYPE(Item*)
 
 #endif // ITEM_H

@@ -1,6 +1,7 @@
 #include "item.h"
-
 #include "move.h"
+
+#include <QString>
 
 Item::Item()
 {}
@@ -11,48 +12,55 @@ Item::Item(QJsonObject &obj) :
     this->init(obj);
 }
 
-const optional<bool> Item::glitch()
+optional<bool*> Item::glitch()
 {
     return this->val<bool>(key_glitch);
 }
 
-const optional<bool> Item::common()
+optional<bool*> Item::common()
 {
     return this->val<bool>(key_common);
 }
 
-const optional<var> Item::tm()
+optional<var8*> Item::tm()
 {
-    return this->val<var>(key_tm);
+    return this->val<var8>(key_tm);
 }
 
-const optional<var> Item::hm()
+optional<var8*> Item::hm()
 {
-    return this->val<var>(key_hm);
+    return this->val<var8>(key_hm);
 }
 
-const optional<Move*> Item::toTmMove()
+optional<Move*> Item::toTmMove()
 {
-    return this->valVoidPtr<Move*>(key_to_tm_move);
+    return this->val<Move>(key_to_tm_move);
 }
 
-const optional<Move*> Item::toHmMove()
+optional<Move*> Item::toHmMove()
 {
-    return this->valVoidPtr<Move*>(key_to_hm_move);
+    return this->val<Move>(key_to_hm_move);
 }
 
 void Item::init(QJsonObject &obj)
 {
     BaseModel<Item>::init(obj);
 
-    if(obj.contains("glitch"))
-        this->setVal(key_glitch, obj["glitch"].toBool());
+    // This is a work around to an age-old problem
+    // The items.json file was formed first and before before "glitch" was thought of
+    // Instead the opposite was marked, if the item wasn't a glitch item
+    // "glitch" is far easier to understand and work with so we have to essentially
+    // invert the json data
+    this->setVal(key_glitch, new bool(!obj["notGlitch"].toBool(false)));
+    if(this->glitch() && **this->glitch() == false)
+        this->_modelData.remove(key_glitch);
+
     if(obj.contains("common"))
-        this->setVal(key_common, obj["common"].toBool());
+        this->setVal(key_common, new bool(obj["common"].toBool()));
     if(obj.contains("tm"))
-        this->setVal(key_tm, obj["tm"].toInt());
+        this->setVal(key_tm, new var8(static_cast<var8>(obj["tm"].toInt())));
     if(obj.contains("hm"))
-        this->setVal(key_hm, obj["hm"].toInt());
+        this->setVal(key_hm, new var8(static_cast<var8>(obj["hm"].toInt())));
 }
 
 void Item::initDb()
@@ -60,18 +68,18 @@ void Item::initDb()
     BaseModel<Item>::initDb();
 
     QString tmp;
-    for(auto& el : BaseModel<Item>::_store)
+    for(auto el : BaseModel<Item>::_store)
     {
-        if(el.tm())
+        if(el->tm())
         {
-            tmp = "tm" + QString::number(*el.tm());
-            _db.insert(tmp, &el);
+            tmp = "tm" + QString::number(**el->tm());
+            _db.insert(tmp, el);
         }
 
-        if(el.hm())
+        if(el->hm())
         {
-            tmp = "hm" + QString::number(*el.hm());
-            _db.insert(tmp, &el);
+            tmp = "hm" + QString::number(**el->hm());
+            _db.insert(tmp, el);
         }
     }
 }
@@ -79,31 +87,18 @@ void Item::initDb()
 void Item::initDeepLink()
 {
     QString tmp;
-    for(auto& el : _store)
+    for(auto el : _store)
     {
-        if(el.tm())
+        if(el->tm())
         {
-            tmp = "tm" + QString::number(*el.tm());
-            el.setValVoidPtr<Move*>(key_to_tm_move, Move::db()->value(tmp));
+            tmp = "tm" + QString::number(**el->tm());
+            el->setVal(key_to_tm_move, Move::db()->value(tmp));
         }
 
-        if(el.hm())
+        if(el->hm())
         {
-            tmp = "hm" + QString::number(*el.hm());
-            el.setValVoidPtr<Move*>(key_to_hm_move, Move::db()->value(tmp));
+            tmp = "hm" + QString::number(**el->hm());
+            el->setVal(key_to_hm_move, Move::db()->value(tmp));
         }
     }
 }
-
-// @TODO Remove
-//using K = var*;
-//const optional<K> Item::valVoidPtr(var key)
-//{
-//    optional<K> ret;
-//    if(this->_modelData.contains(key))
-//    {
-//        void* _tmp = this->_modelData.value(key).template value<void*>();
-//        ret = static_cast<K>(_tmp);
-//    }
-//    return ret;
-//}

@@ -62,17 +62,11 @@ using var16s = uvar16s;
 using var32s = uvar32s;
 using var64s = uvar64s;
 
-// Smallest variable default signing of default size (8-bits)
-using vars = var8s;
-
 // Fastest variables default signing (Unsigned)
 using var8f = uvar8f;
 using var16f = uvar16f;
 using var32f = uvar32f;
 using var64f = uvar64f;
-
-// Fastest variable default signing of default size (8-bits)
-using varf = var8f;
 
 // Exact variables default signing (Unsigned)
 using var8e = uvar8e;
@@ -80,21 +74,18 @@ using var16e = uvar16e;
 using var32e = uvar32e;
 using var64e = uvar64e;
 
-// Exact variable default signing of default size (8-bits)
-using vare = var8e;
-
 ////////////////////////////////////////////////////////////////////////////////
 /// Smaller Shorthand with most default assumptions
 ////////////////////////////////////////////////////////////////////////////////
 
-// Default ratio (Fastest) variables default signing
-using var8 = var8f;
-using var16 = var16f;
-using var32 = var32f;
-using var64 = var64f;
-
-// Default ratio variables default signing of default
-// size (8-bits)
-using var = var8;
+// Default ratio (Smallest) variables default signing
+// In a different project a small bug was determined with pointers
+// When using "fastest" it often may choose "32-bit" whereby
+// An 8-bit pointer becomes a 32-bit pointer mistakenly but labeled as an
+// 8-bit pointer causing many potential bugs.
+using var8 = var8s;
+using var16 = var16s;
+using var32 = var32s;
+using var64 = var64s;
 
 #endif // VARS_H
