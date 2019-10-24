@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     QIcon icon("qrc:/assets/icons/512x512.png");
     app.setWindowIcon(icon);
 
-    qmlRegisterSingletonType<GameData>("com.gmail.junehanabi.pse.gamedata",
+    qmlRegisterSingletonType<GameData>("pse.gamedata",
                                        1, 0,
                                        "GameData",
                                        &GameData::GameData_Provider);

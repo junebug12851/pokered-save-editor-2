@@ -3,8 +3,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 
-//import "../src.js/data/pokemonDB.js" as PokemonDB
-import com.gmail.junehanabi.pse.gamedata 1.0
+import "../src.js/data/pokemonDB.js" as PokemonDB
 
 Rectangle {
   // Because Dark Theme has quite an ugly Brighter Shade which ruins
@@ -13,17 +12,7 @@ Rectangle {
 
   color: Material.background
 
-  //Navigation {}
-
-//  Text {
-//    text: JSON.parse(GameData.json("fly"))[0].name;
-//  }
-
-//  Text {
-//    text: JSON.parse(GameData.json("fly"))[0].name;
-//  }
-
   Text {
-    text: JSON.parse(GameData.json("maps"))[0].bank;
+    text: PokemonDB.pokemonDB.pokemon["abra"].type1.name;
   }
 }
