@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 
 import "../src.js/data/pokemonDB.js" as PokemonDB
+import "../src.js/data/text.js" as Text
 
 Rectangle {
   // Because Dark Theme has quite an ugly Brighter Shade which ruins
@@ -12,7 +13,13 @@ Rectangle {
 
   color: Material.background
 
+  Component.onCompleted: function()
+  {
+    console.log(Text.text.convertEngToHTML("Hello"));
+  }
+
   Text {
-    text: PokemonDB.pokemonDB.pokemon["abra"].type1.name;
+    // 135, 164
+    text: JSON.stringify(Text.text.convertEngToHTML("Hello"));
   }
 }

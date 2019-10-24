@@ -72,5 +72,7 @@
         <file>src.js/data/app.js</file>
         <file>libs/lodash.js</file>
         <file>src.js/data/pokemonDB.js</file>
+        <file>src.js/data/text.js</file>
+        <file>src.js/data/textSearch.js</file>
     </qresource>
 </RCC>
