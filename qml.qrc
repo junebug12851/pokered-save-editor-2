@@ -74,5 +74,8 @@
         <file>src.js/data/pokemonDB.js</file>
         <file>src.js/data/text.js</file>
         <file>src.js/data/textSearch.js</file>
+        <file>src.js/data/savefile.js</file>
+        <file>src.js/data/savefile-expanded/savefileExpanded.js</file>
+        <file>src.js/data/savefile-expanded/saveFileIterator.js</file>
     </qresource>
 </RCC>
