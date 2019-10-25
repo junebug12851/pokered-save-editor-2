@@ -72,9 +72,9 @@ class Text
     let lastCode = 0;
 
     if ((typeof str !== 'string') && autoEnd)
-    return new Uint8Array([0x50]);
+      return new Uint8Array([0x50]);
     else if ((typeof str !== 'string') && !autoEnd)
-    return new Uint8Array();
+      return new Uint8Array();
 
     while(str.length !== 0) {
 
@@ -85,7 +85,7 @@ class Text
         // Find a starting match
         const transPair = this.rawTrans[i];
         if (!str.startsWith(transPair.eng))
-        continue;
+          continue;
 
         match = true;
 
@@ -102,18 +102,18 @@ class Text
 
       // If no match then strip unknown character and continue
       if (match === false)
-      str = str.substring(1);
+        str = str.substring(1);
 
       // Stop here if code array is at 10 bytes or a stop code was manually
       // set (0x50)
       if (code.length === maxLength ||
           lastCode === 0x50)
-      break;
+        break;
     }
 
     // Append terminator
     if (autoEnd)
-    code.push(0x50);
+      code.push(0x50);
 
     return new Uint8Array(code);
   }
@@ -129,17 +129,17 @@ class Text
       // Don't include the end terminator
       // stop here if there is one
       if (code === 0x50)
-      break;
+        break;
 
       if (this.indToEng[code] === undefined)
-      continue;
+        continue;
 
       eng += this.indToEng[code].eng;
 
       // If we're done with the 10th character assume 11th is terminator
       //and stop here
       if (i === maxLength)
-      break;
+        break;
     }
 
     return eng;
@@ -215,9 +215,9 @@ class Text
       const char = charCodes[i];
 
       if (this.indToEng[char].useTilemap)
-      fontStr.push(`<div class="pr pr-pic pr-${char.toString(16).toUpperCase().padStart(2, "0")}"></div>`);
+        fontStr.push(`<div class="pr pr-pic pr-${char.toString(16).toUpperCase().padStart(2, "0")}"></div>`);
       else
-      fontStr.push(`<div class="pr pr-${char.toString(16).toUpperCase().padStart(2, "0")}"></div>`);
+        fontStr.push(`<div class="pr pr-${char.toString(16).toUpperCase().padStart(2, "0")}"></div>`);
     }
 
     return fontStr.join('');

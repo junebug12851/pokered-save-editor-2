@@ -28,10 +28,10 @@ class TextSearch
   doFilter(prop, inclusive) {
     this.keys = _.filter(this.keys, (value) => {
                            if (inclusive && value[prop])
-                           return true;
+                             return true;
 
                            else if (!inclusive && !value[prop])
-                           return true;
+                             return true;
 
                            return false;
                          });

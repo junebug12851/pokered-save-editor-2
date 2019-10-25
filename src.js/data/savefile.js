@@ -53,7 +53,7 @@ class SaveFile
     this.fileData = data;
 
     if (!internalOnly)
-    this.fileDataExpanded = new SaveFileExpanded(this);
+      this.fileDataExpanded = new SaveFileExpanded(this);
 
     // @TODO
     // Implement this inward communication
@@ -113,9 +113,9 @@ class SaveFile
   // Copies a range of bytes to a buffer of size and returns them
   getRange(from, size, reverse = false) {
     if (reverse)
-    return this.fileData.subarray(from, from + size).reverse();
+      return this.fileData.subarray(from, from + size).reverse();
     else
-    return this.fileData.subarray(from, from + size);
+      return this.fileData.subarray(from, from + size);
   }
 
   // Copies data to the save data at a particular place going no further
@@ -127,7 +127,7 @@ class SaveFile
   // data = array of data to copy into, will stop at size or data length
   copyRange(from, size, data, reverse = false) {
     if (reverse)
-    data = data.reverse();
+      data = data.reverse();
 
     for (let i = from, j = 0; j < data.length && i < (from + size); i++ , j++) {
       this.fileData[i] = data[j];
@@ -157,7 +157,7 @@ class SaveFile
     }
     hexStr = hexStr.toUpperCase();
     if (prefix)
-    hexStr = `0x${hexStr}`;
+      hexStr = `0x${hexStr}`;
 
     return hexStr;
   }
@@ -166,7 +166,7 @@ class SaveFile
   setHex(from, size, hex, hasPrefix = false, reverse = false) {
     // Trim prefix if any
     if (hasPrefix)
-    hex = hex.substr(2);
+      hex = hex.substr(2);
 
     // Convert to number
     let hexValue = parseInt(hex, 16);
@@ -177,17 +177,17 @@ class SaveFile
     // array. This also places it big-endian style which is how the
     // save data is structured
     if (hexValue === 0)
-    hexArr.push(0);
+      hexArr.push(0);
     else
-    while (hexValue > 0) {
-      hexArr.push(hexValue & 0xFF);
-      hexValue >>= 8;
-    }
+      while (hexValue > 0) {
+        hexArr.push(hexValue & 0xFF);
+        hexValue >>= 8;
+      }
 
     // Account for bug where 16-bit value under 0xFF still needs to take up
     // 16-bits
     if (hexValueOrig <= 0xFF && size == 2)
-    hexArr.push(0x00);
+      hexArr.push(0x00);
 
     // Copy to save data
     this.copyRange(from, size, new Uint8Array(hexArr), !reverse);
@@ -210,15 +210,15 @@ class SaveFile
     let value = this.getRange(from, size);
 
     if (reverse)
-    value = value.reverse();
+      value = value.reverse();
 
     let res = value[0];
 
     if (size > 0)
-    for (let i = 1; i < size; i++) {
-      res <<= 8;
-      res |= value[i];
-    }
+      for (let i = 1; i < size; i++) {
+        res <<= 8;
+        res |= value[i];
+      }
 
     return (res & (1 << bit)) !== 0;
   }
@@ -230,15 +230,15 @@ class SaveFile
     let res = value[0];
 
     if (size > 0)
-    for (let i = 1; i < size; i++) {
-      res <<= 8;
-      res |= value[i];
-    }
+      for (let i = 1; i < size; i++) {
+        res <<= 8;
+        res |= value[i];
+      }
 
     if (val)
-    res |= (1 << bit);
+      res |= (1 << bit);
     else
-    res &= ~(1 << bit);
+      res &= ~(1 << bit);
 
     const resHex = res.toString(16);
     this.setHex(from, size, resHex, false, reverse);
@@ -289,7 +289,7 @@ class SaveFile
 
     const boxesFormatted = (this.fileData[0x284C] & 0b10000000) > 0;
     if (boxesFormatted || force)
-    this.recalcBoxesChecksums();
+      this.recalcBoxesChecksums();
   }
 
   recalcBoxesChecksums() {

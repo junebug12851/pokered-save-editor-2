@@ -52,7 +52,7 @@ class SaveFileIterator {
 
     // In case of error (too many pops), revert offset to zero
     if (val === undefined)
-    val = 0x0000;
+      val = 0x0000;
 
     this.offset = val;
     return this;
