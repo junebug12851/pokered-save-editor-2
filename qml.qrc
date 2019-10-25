@@ -81,5 +81,9 @@
         <file>src.js/data/savefile-expanded/fragments/HoFRecord.js</file>
         <file>src.js/data/savefile-expanded/fragments/MapConnData.js</file>
         <file>src.js/data/savefile-expanded/fragments/PokemonBox.js</file>
+        <file>src.js/data/savefile-expanded/fragments/PokemonParty.js</file>
+        <file>src.js/data/savefile-expanded/fragments/SignData.js</file>
+        <file>src.js/data/savefile-expanded/fragments/SpriteData.js</file>
+        <file>src.js/data/savefile-expanded/fragments/WarpData.js</file>
     </qresource>
 </RCC>
