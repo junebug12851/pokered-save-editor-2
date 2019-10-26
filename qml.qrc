@@ -76,8 +76,8 @@
         <file>src.js/data/textSearch.js</file>
         <file>src.js/data/savefile-expanded/fragments/HoFPokemon.js</file>
         <file>src.js/data/savefile.js</file>
-        <file>src.js/data/savefile-expanded/savefileExpanded.js</file>
-        <file>src.js/data/savefile-expanded/saveFileIterator.js</file>
+        <file>src.js/data/savefile-expanded/SaveFileExpanded.js</file>
+        <file>src.js/data/savefile-expanded/SaveFileIterator.js</file>
         <file>src.js/data/savefile-expanded/fragments/HoFRecord.js</file>
         <file>src.js/data/savefile-expanded/fragments/MapConnData.js</file>
         <file>src.js/data/savefile-expanded/fragments/PokemonBox.js</file>
@@ -85,5 +85,9 @@
         <file>src.js/data/savefile-expanded/fragments/SignData.js</file>
         <file>src.js/data/savefile-expanded/fragments/SpriteData.js</file>
         <file>src.js/data/savefile-expanded/fragments/WarpData.js</file>
+        <file>src.js/data/savefile-expanded/sections/Daycare.js</file>
+        <file>src.js/data/savefile-expanded/sections/HoF.js</file>
+        <file>src.js/data/savefile-expanded/sections/Rival.js</file>
+        <file>src.js/data/savefile-expanded/sections/Storage.js</file>
     </qresource>
 </RCC>

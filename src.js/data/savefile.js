@@ -22,8 +22,8 @@
  * back correctly.
  */
 
-.import "./savefile-expanded/saveFileIterator.js" as SaveFileIterator_
-.import "./savefile-expanded/savefileExpanded.js" as SaveFileExpanded_
+.import "./savefile-expanded/SaveFileIterator.js" as SaveFileIterator_
+.import "./savefile-expanded/SavefileExpanded.js" as SaveFileExpanded_
 .import "./text.js" as Text
 .import pse.gamedata 1.0 as GameData
 
