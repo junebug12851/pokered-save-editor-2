@@ -21,17 +21,17 @@
 void Fly::load()
 {
   // Grab Event Pokemon Data
-  auto eventData = GameData::json("fly");
+  auto flyData = GameData::json("fly");
 
   // Go through each event Pokemon
-  for(QJsonValue eventEntry : eventData->array())
+  for(QJsonValue flyEntry : flyData->array())
   {
     // Create a new event Pokemon entry
     auto entry = new FlyEntry();
 
     // Set simple properties
-    entry->name = eventEntry["name"].toString();
-    entry->ind = eventEntry["ind"].toDouble();
+    entry->name = flyEntry["name"].toString();
+    entry->ind = flyEntry["ind"].toDouble();
 
     // Add to array
     fly->append(entry);

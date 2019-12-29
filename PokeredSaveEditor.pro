@@ -19,6 +19,7 @@ SOURCES += \
   src/data/eventpokemon.cpp \
   src/data/events.cpp \
   src/data/fly.cpp \
+  src/data/fonts.cpp \
   src/data/gamedata.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
@@ -47,6 +48,7 @@ HEADERS += \
   src/data/eventpokemon.h \
   src/data/events.h \
   src/data/fly.h \
+  src/data/fonts.h \
   src/data/gamedata.h \
   src/data/lists/city_list.h \
   src/data/lists/font_list.h \
