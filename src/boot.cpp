@@ -105,6 +105,7 @@ void index()
   Fly::index();
   Font::index();
   Items::index();
+  Maps::index();
 }
 
 // Performs program one-time bootstrapping and setup

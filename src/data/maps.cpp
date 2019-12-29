@@ -85,4 +85,15 @@ void Maps::load()
   }
 }
 
+void Maps::index()
+{
+  for(auto entry : *maps)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
 QVector<MapEntry*>* Maps::maps = new QVector<MapEntry*>();
+QHash<QString, MapEntry*>* Maps::ind = new QHash<QString, MapEntry*>();

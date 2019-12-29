@@ -19,6 +19,7 @@
 #include "../common/types.h"
 #include "optional"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -55,7 +56,10 @@ class Maps
 {
 public:
   static void load();
+  static void index();
+
   static QVector<MapEntry*>* maps;
+  static QHash<QString, MapEntry*>* ind;
 };
 
 #endif // MAP_H
