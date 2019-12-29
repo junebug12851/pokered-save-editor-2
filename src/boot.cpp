@@ -106,6 +106,7 @@ void index()
   Font::index();
   Items::index();
   Maps::index();
+  Missables::index();
 }
 
 // Performs program one-time bootstrapping and setup

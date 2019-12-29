@@ -38,4 +38,16 @@ void Missables::load()
   }
 }
 
+void Missables::index()
+{
+  for(auto entry : *missables)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
 QVector<MissableEntry*>* Missables::missables = new QVector<MissableEntry*>();
+QHash<QString, MissableEntry*>* Missables::ind =
+    new QHash<QString, MissableEntry*>();

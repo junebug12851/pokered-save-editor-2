@@ -18,6 +18,7 @@
 
 #include "../common/types.h"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -40,7 +41,10 @@ class Missables
 {
 public:
   static void load();
+  static void index();
+
   static QVector<MissableEntry*>* missables;
+  static QHash<QString, MissableEntry*>* ind;
 };
 
 #endif // MISSABLE_H
