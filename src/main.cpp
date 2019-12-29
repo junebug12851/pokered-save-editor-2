@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QtQuickControls2>
 
-#include "./data/items.h"
+#include "./data/names.h"
 //#include "./view/mainwindow.h"
 //#include "./data/gamedata.h"
 
@@ -28,20 +28,18 @@ int main(int argc, char *argv[])
     QIcon icon("qrc:/assets/icons/512x512.png");
     app.setWindowIcon(icon);
 
+    // Seed random generator
+    qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
+
 //    QJsonDocument* tmp = GameData::json("eventPokemon");
 //    tmp = GameData::json("eventPokemon");
 //    QJsonValue tmpObj = (*tmp)[2];
 //    QString tmpName = tmpObj["title"].toString();
 
-    Items::load();
-    //auto tmp3 = EventPokemon::eventPokemon;
-    auto tmp = Items::items->last();
-    var8 tm;
-    var8 hm;
-    if(tmp->tm)
-      tm = *tmp->tm;
-    if(tmp->hm)
-      hm = *tmp->hm;
+    Names::load();
+    QString name1 = Names::randomName();
+    QString name2 = Names::randomName();
+    QString name3 = Names::randomName();
 
     //auto tmp2 = EventPokemon::eventPokemon->at(0);
 

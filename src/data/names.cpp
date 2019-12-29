@@ -16,6 +16,8 @@
 #include "names.h"
 #include <QVector>
 #include <QJsonArray>
+#include <QtMath>
+#include <QRandomGenerator>
 #include "./gamedata.h"
 
 void Names::load()
@@ -29,6 +31,12 @@ void Names::load()
     // Add to array
     names->append(nameEntry.toString());
   }
+}
+
+QString Names::randomName()
+{
+  var32 ind = QRandomGenerator::global()->bounded(0, names->size());
+  return names->at(ind);
 }
 
 QVector<QString>* Names::names = new QVector<QString>();

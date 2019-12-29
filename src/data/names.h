@@ -19,13 +19,12 @@
 #include "../common/types.h"
 #include <QString>
 
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
-
 class Names
 {
 public:
   static void load();
+  static QString randomName();
+
   static QVector<QString>* names;
 };
 
