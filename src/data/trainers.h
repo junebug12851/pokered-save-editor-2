@@ -22,6 +22,8 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// All trainer classes in the game, this includes unused or glitch ones
+
 struct TrainerEntry {
   TrainerEntry();
 

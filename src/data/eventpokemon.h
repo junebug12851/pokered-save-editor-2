@@ -25,10 +25,8 @@
 #include <QString>
 #include <QVector>
 
-// Optional
-using OtId =   std::optional<var16>;
-using DV =     QVector<var8>*;
-using Level =  std::optional<var8>;
+// These are Pokemon you get by going to or participating in real-life events
+// that were held around the world
 
 struct EventPokemonEntry {
     EventPokemonEntry();
@@ -37,11 +35,11 @@ struct EventPokemonEntry {
     QString desc; // Event Pokemon Description
     QString pokemon; // Pokemon Name
     QVector<QString>* otName; // Pokemon OT Name
-    OtId otId; // Pokemon OT ID, random if not specified
-    DV dv; // Pokemon DV List, random if not specified
+    std::optional<var16> otId; // Pokemon OT ID, random if not specified
+    QVector<var8>* dv; // Pokemon DV List, random if not specified
     QString region; // Region Code
     QVector<QString>* moves; // Move list
-    Level level; // Level, default minimum if not specified
+    std::optional<var8> level; // Level, default minimum if not specified
 };
 
 class EventPokemon

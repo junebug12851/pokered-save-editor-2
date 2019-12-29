@@ -19,6 +19,8 @@
 #include "../common/types.h"
 #include <QString>
 
+// A list of all the hidden items around the world
+
 struct HiddenItemEntry {
   QString map;
   var8 x;

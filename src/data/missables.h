@@ -22,6 +22,15 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// Missable flags set in-game, a missable is simply a script and/or sprite
+// that never loads (Is surpressed). Allows the game to hide things you
+// shouldn't see or encounter yet or show a new map "state" after you progressed
+// in the games.
+
+// The starter you and your rival pick are both missable activated and the
+// guy blocking the path in Pewter City is a missable that's hiden once you beat
+// Brock.
+
 struct MissableEntry {
   QString name;
   var8 ind;

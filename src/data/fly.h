@@ -22,9 +22,11 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// Cities you can fly to
+
 struct FlyEntry {
-  QString name;
-  var8 ind;
+  QString name; // City Name
+  var8 ind; // Index in list
 };
 
 class Fly

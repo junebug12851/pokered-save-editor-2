@@ -23,6 +23,9 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// Where are you in each map of the world? This tracks your map progression
+// for each individual map
+
 struct ScriptEntry {
   QString name;
   var8 ind;

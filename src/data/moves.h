@@ -23,6 +23,8 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// All the Pokemon moves in the game including special or glitch moves
+
 struct MoveEntry {
 
   // Optional bool values are only present when true, so we simplify things

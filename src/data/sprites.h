@@ -22,6 +22,8 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// All sprites in the game, glitch and not
+
 struct SpriteEntry {
   QString name;
   var8 ind;

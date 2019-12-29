@@ -19,6 +19,8 @@
 #include <QHash>
 #include <QJsonDocument>
 
+// This helps with getting game data from the JSON files
+
 class GameData
 {
 public:

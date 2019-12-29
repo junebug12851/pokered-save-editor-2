@@ -23,6 +23,8 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// Details on all the maps in the game
+
 struct MapEntry {
 
   // Optional bool values are only present when true, so we simplify things

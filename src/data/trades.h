@@ -22,6 +22,9 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// All in-game trades including the unused one
+// All this was extracted from in-game data, not fan sites
+
 struct TradeEntry {
   TradeEntry();
 

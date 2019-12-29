@@ -23,6 +23,8 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// All the in-game items and glitch items
+
 struct ItemEntry {
   ItemEntry();
 

@@ -22,6 +22,8 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// All types in the game
+
 struct TypeEntry {
   QString name;
   var8 ind;

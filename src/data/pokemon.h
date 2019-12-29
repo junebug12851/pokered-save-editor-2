@@ -32,6 +32,8 @@
 // so we simplify things and avoid using variant unless dealing with primitive
 // types
 
+// All the Pokemon and glitch Pokemon in the game
+
 // Forward Declare Structs
 struct EvolutionEntry;
 struct MoveEntry;

@@ -19,6 +19,12 @@
 #include "../common/types.h"
 #include <QString>
 
+// Something I made, I hand-selected a ton of other starter options I thought
+// would be good starters. This randomly selects among them.
+// 1) They must all be base evolution if there is one
+// 2) They musn't be legendary
+// 3) Just lots of judgement calls from there, they must feel "startery"
+
 class StarterPokemon
 {
 public:

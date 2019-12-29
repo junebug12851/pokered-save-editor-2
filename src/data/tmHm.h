@@ -19,6 +19,9 @@
 #include "../common/types.h"
 #include <QString>
 
+// All the TM's and HM's in the game
+// internally, HM's are specially treated TM's that start at TM 51
+
 class TmHms
 {
 public:

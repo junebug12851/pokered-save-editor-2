@@ -22,6 +22,9 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+// There are 255 font options although most of them are "invalid" and thus
+// use the tilemap.
+
 struct FontEntry {
   FontEntry();
 

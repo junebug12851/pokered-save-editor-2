@@ -19,6 +19,8 @@
 #include "../common/types.h"
 #include <QString>
 
+// A list of all the hidden coins in Casino
+
 struct HiddenCoinEntry {
   QString map;
   var8 x;

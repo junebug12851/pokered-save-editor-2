@@ -19,6 +19,9 @@
 #include "../common/types.h"
 #include <QString>
 
+// Something I made, random American names, I made it for the auto-nicknaming
+// feature given this program is for the USA English Pokemon Red.
+
 class Names
 {
 public:
