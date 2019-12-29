@@ -1,62 +1,77 @@
 [
-    {
-        "name": "Normal",
-        "ind": 0
-    },
-    {
-        "name": "Fighting",
-        "ind": 1
-    },
-    {
-        "name": "Flying",
-        "ind": 2
-    },
-    {
-        "name": "Poison",
-        "ind": 3
-    },
-    {
-        "name": "Ground",
-        "ind": 4
-    },
-    {
-        "name": "Rock",
-        "ind": 5
-    },
-    {
-        "name": "Bug",
-        "ind": 7
-    },
-    {
-        "name": "Ghost",
-        "ind": 8
-    },
-    {
-        "name": "Fire",
-        "ind": 20
-    },
-    {
-        "name": "Water",
-        "ind": 21
-    },
-    {
-        "name": "Grass",
-        "ind": 22
-    },
-    {
-        "name": "Electric",
-        "ind": 23
-    },
-    {
-        "name": "Psychic",
-        "ind": 24
-    },
-    {
-        "name": "Ice",
-        "ind": 25
-    },
-    {
-        "name": "Dragon",
-        "ind": 26
-    }
+  {
+    "name": "NORMAL",
+    "ind": 0,
+    "readable": "Normal"
+  },
+  {
+    "name": "FIGHTING",
+    "ind": 1,
+    "readable": "Fighting"
+  },
+  {
+    "name": "FLYING",
+    "ind": 2,
+    "readable": "Flying"
+  },
+  {
+    "name": "POISON",
+    "ind": 3,
+    "readable": "Poison"
+  },
+  {
+    "name": "GROUND",
+    "ind": 4,
+    "readable": "Ground"
+  },
+  {
+    "name": "ROCK",
+    "ind": 5,
+    "readable": "Rock"
+  },
+  {
+    "name": "BUG",
+    "ind": 7,
+    "readable": "Bug"
+  },
+  {
+    "name": "GHOST",
+    "ind": 8,
+    "readable": "Ghost"
+  },
+  {
+    "name": "FIRE",
+    "ind": 20,
+    "readable": "Fire"
+  },
+  {
+    "name": "WATER",
+    "ind": 21,
+    "readable": "Water"
+  },
+  {
+    "name": "GRASS",
+    "ind": 22,
+    "readable": "Grass"
+  },
+  {
+    "name": "ELECTRIC",
+    "ind": 23,
+    "readable": "Electric"
+  },
+  {
+    "name": "PSYCHIC",
+    "ind": 24,
+    "readable": "Psychic"
+  },
+  {
+    "name": "ICE",
+    "ind": 25,
+    "readable": "Ice"
+  },
+  {
+    "name": "DRAGON",
+    "ind": 26,
+    "readable": "Dragon"
+  }
 ]

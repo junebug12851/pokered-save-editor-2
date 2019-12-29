@@ -51,4 +51,20 @@ void Trainers::load()
   }
 }
 
+void Trainers::index()
+{
+  for(auto entry : *trainers)
+  {
+    // Index name and index
+    if(entry->opp)
+      ind->insert("Opp" + entry->name, entry);
+    else
+      ind->insert(entry->name, entry);
+
+    ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
 QVector<TrainerEntry*>* Trainers::trainers = new QVector<TrainerEntry*>();
+QHash<QString, TrainerEntry*>* Trainers::ind =
+    new QHash<QString, TrainerEntry*>();

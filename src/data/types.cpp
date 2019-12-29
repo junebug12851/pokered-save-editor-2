@@ -32,10 +32,23 @@ void Types::load()
     // Set simple properties
     entry->name = typesEntry["name"].toString();
     entry->ind = typesEntry["ind"].toDouble();
+    entry->readable = typesEntry["readable"].toString();
 
     // Add to array
     types->append(entry);
   }
 }
 
+void Types::index()
+{
+  for(auto entry : *types)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+    ind->insert(entry->readable, entry);
+  }
+}
+
 QVector<TypeEntry*>* Types::types = new QVector<TypeEntry*>();
+QHash<QString, TypeEntry*>* Types::ind = new QHash<QString, TypeEntry*>();

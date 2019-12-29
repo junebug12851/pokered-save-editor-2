@@ -18,6 +18,7 @@
 
 #include "../common/types.h"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -27,13 +28,17 @@
 struct TypeEntry {
   QString name;
   var8 ind;
+  QString readable;
 };
 
 class Types
 {
 public:
   static void load();
+  static void index();
+
   static QVector<TypeEntry*>* types;
+  static QHash<QString, TypeEntry*>* ind;
 };
 
 #endif // TYPES_H

@@ -18,6 +18,7 @@
 
 #include "../common/types.h"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -37,7 +38,10 @@ class Trainers
 {
 public:
   static void load();
+  static void index();
+
   static QVector<TrainerEntry*>* trainers;
+  static QHash<QString, TrainerEntry*>* ind;
 };
 
 #endif // TRAINER_H
