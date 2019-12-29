@@ -14,8 +14,30 @@
   * limitations under the License.
 */
 #include "events.h"
+#include <QVector>
+#include <QJsonArray>
+#include "./gamedata.h"
 
-Events::Events()
+void Events::load()
 {
+  // Grab Event Pokemon Data
+  auto eventData = GameData::json("events");
 
+  // Go through each event Pokemon
+  for(QJsonValue eventEntry : eventData->array())
+  {
+    // Create a new event Pokemon entry
+    auto entry = new EventEntry();
+
+    // Set simple properties
+    entry->name = eventEntry["name"].toString();
+    entry->ind = eventEntry["ind"].toDouble();
+    entry->byte = eventEntry["byte"].toDouble();
+    entry->bit = eventEntry["bit"].toDouble();
+
+    // Add to array
+    events->append(entry);
+  }
 }
+
+QVector<EventEntry*>* Events::events = new QVector<EventEntry*>();

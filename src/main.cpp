@@ -2,8 +2,7 @@
 #include <QApplication>
 #include <QtQuickControls2>
 
-#include "./data/gamedata.h"
-#include "./data/eventpokemon.h"
+#include "./data/events.h"
 //#include "./view/mainwindow.h"
 //#include "./data/gamedata.h"
 
@@ -34,10 +33,9 @@ int main(int argc, char *argv[])
 //    QJsonValue tmpObj = (*tmp)[2];
 //    QString tmpName = tmpObj["title"].toString();
 
-    EventPokemon::load();
+    Events::load();
     //auto tmp3 = EventPokemon::eventPokemon;
-    auto tmp = EventPokemon::eventPokemon->last();
-    auto tmpDV = *tmp->dv;
+    auto tmp = Events::events->first();
     //auto tmp2 = EventPokemon::eventPokemon->at(0);
 
 /*    qmlRegisterSingletonType<GameData>("pse.gamedata",

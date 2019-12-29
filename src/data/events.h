@@ -16,11 +16,24 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include "../common/types.h"
+#include <QString>
+
+// With amazing help of Quicktype!!!
+// https://app.quicktype.io
+
+struct EventEntry {
+  QString name;
+  var16 ind;
+  var16 byte;
+  var8 bit;
+};
 
 class Events
 {
 public:
-  Events();
+  static void load();
+  static QVector<EventEntry*>* events;
 };
 
 #endif // EVENTS_H

@@ -94,6 +94,7 @@ void EventPokemon::load()
       }
     }
 
+    // Add to array
     eventPokemon->append(entry);
   }
 }
