@@ -34,6 +34,7 @@ SOURCES += \
   src/data/starterPokemon.cpp \
   src/data/tmHm.cpp \
   src/data/trades.cpp \
+  src/data/trainers.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
 
@@ -87,7 +88,8 @@ HEADERS += \
   src/data/sprites.h \
   src/data/starterPokemon.h \
   src/data/tmHm.h \
-  src/data/trades.h
+  src/data/trades.h \
+  src/data/trainers.h
 
 # FORMS += \
 #    src/old/view/mainwindow.ui

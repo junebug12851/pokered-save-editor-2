@@ -101,11 +101,13 @@
     },
     {
         "name": "Prof Oak",
-        "ind": 26
+        "ind": 26,
+        "unused": true
     },
     {
         "name": "Chief",
-        "ind": 27
+        "ind": 27,
+        "unused": true
     },
     {
         "name": "Scientist",
@@ -315,12 +317,14 @@
     {
         "name": "Prof Oak",
         "ind": 226,
-        "opp": true
+        "opp": true,
+        "unused": true
     },
     {
         "name": "Chief",
         "ind": 227,
-        "opp": true
+        "opp": true,
+        "unused": true
     },
     {
         "name": "Scientist",
