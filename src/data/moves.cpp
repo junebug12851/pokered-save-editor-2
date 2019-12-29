@@ -38,6 +38,7 @@ void Moves::load()
     // Set simple properties
     entry->name = moveEntry["name"].toString();
     entry->ind = moveEntry["ind"].toDouble();
+    entry->readable = moveEntry["readable"].toString();
 
     // Set simple optional properties
     if(moveEntry["glitch"].isBool())
@@ -73,6 +74,7 @@ void Moves::index()
     // Index name and index
     ind->insert(entry->name, entry);
     ind->insert(QString::number(entry->ind), entry);
+    ind->insert(entry->readable, entry);
 
     if(entry->tm)
       ind->insert("tm" + QString::number(*entry->tm), entry);

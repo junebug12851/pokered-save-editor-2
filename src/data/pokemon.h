@@ -21,6 +21,7 @@
 #include <QString>
 #include <QVector>
 #include <QJsonValue>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // Really needed it with Pokemon as this was quite complicated
@@ -63,6 +64,7 @@ struct PokemonEntry {
 
   QString name;
   var8 ind;
+  QString readable;
   bool glitch;
   QString type1;
   QString type2;
@@ -87,7 +89,10 @@ class Pokemon
 {
 public:
   static void load();
+  static void index();
+
   static QVector<PokemonEntry*>* pokemon;
+  static QHash<QString, PokemonEntry*>* ind;
 };
 
 #endif // POKEMON_H

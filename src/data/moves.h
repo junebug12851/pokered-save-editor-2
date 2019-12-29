@@ -37,6 +37,7 @@ struct MoveEntry {
   var8 ind;
   bool glitch;
   QString type;
+  QString readable;
 
   std::optional<var8> power;
   std::optional<var8> accuracy;

@@ -73,6 +73,7 @@ void Pokemon::load()
     // Set simple properties
     entry->name = pokemonEntry["name"].toString();
     entry->ind = pokemonEntry["ind"].toDouble();
+    entry->readable = pokemonEntry["readable"].toString();
 
     // Set simple optional properties
     if(pokemonEntry["pokedex"].isDouble())
@@ -160,4 +161,21 @@ void Pokemon::load()
   }
 }
 
+void Pokemon::index()
+{
+  for(auto entry : *pokemon)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+    ind->insert(entry->readable, entry);
+
+    // If it's a valid Pokemon then index the dex number as well
+    if(entry->pokedex)
+      ind->insert("dex" + QString::number(*entry->pokedex), entry);
+  }
+}
+
 QVector<PokemonEntry*>* Pokemon::pokemon = new QVector<PokemonEntry*>();
+QHash<QString, PokemonEntry*>* Pokemon::ind =
+    new QHash<QString, PokemonEntry*>();

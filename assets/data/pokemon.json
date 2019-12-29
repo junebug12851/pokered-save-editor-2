@@ -1,6 +1,6 @@
 [
   {
-    "name": "Rhydon",
+    "name": "RHYDON",
     "ind": 1,
     "pokedex": 111,
     "growthRate": 5,
@@ -37,10 +37,10 @@
       }
     ],
     "initial": [
-      "HORN_ATTACK",
+      "HORN ATTACK",
       "STOMP",
-      "TAIL_WHIP",
-      "FURY_ATTACK"
+      "TAIL WHIP",
+      "FURY ATTACK"
     ],
     "tmHm": [
       1,
@@ -78,10 +78,11 @@
     ],
     "type1": "GROUND",
     "type2": "ROCK",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Rhydon"
   },
   {
-    "name": "Kangaskhan",
+    "name": "KANGASKHAN",
     "ind": 2,
     "pokedex": 114,
     "growthRate": 0,
@@ -114,7 +115,7 @@
       }
     ],
     "initial": [
-      "COMET_PUNCH",
+      "COMET PUNCH",
       "RAGE"
     ],
     "tmHm": [
@@ -150,10 +151,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Kangaskhan"
   },
   {
-    "name": "Nidoran<m>",
+    "name": "NIDORAN<m>",
     "ind": 3,
     "pokedex": 31,
     "growthRate": 3,
@@ -199,10 +201,11 @@
     "initial": [
       "LEER",
       "TACKLE"
-    ]
+    ],
+    "readable": "Nidoran<m>"
   },
   {
-    "name": "Clefairy",
+    "name": "CLEFAIRY",
     "ind": 4,
     "pokedex": 34,
     "growthRate": 4,
@@ -223,7 +226,7 @@
       },
       {
         "level": 18,
-        "move": "DOUBLESLAP"
+        "move": "DOUBLE SLAP"
       },
       {
         "level": 24,
@@ -283,10 +286,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 150
+    "catchRate": 150,
+    "readable": "Clefairy"
   },
   {
-    "name": "Spearow",
+    "name": "SPEAROW",
     "ind": 5,
     "pokedex": 20,
     "growthRate": 0,
@@ -344,10 +348,11 @@
     ],
     "type1": "NORMAL",
     "type2": "FLYING",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Spearow"
   },
   {
-    "name": "Voltorb",
+    "name": "VOLTORB",
     "ind": 6,
     "pokedex": 99,
     "growthRate": 0,
@@ -408,10 +413,11 @@
     ],
     "type1": "ELECTRIC",
     "type2": "ELECTRIC",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Voltorb"
   },
   {
-    "name": "Nidoking",
+    "name": "NIDOKING",
     "ind": 7,
     "pokedex": 33,
     "growthRate": 3,
@@ -437,8 +443,8 @@
     ],
     "initial": [
       "TACKLE",
-      "HORN_ATTACK",
-      "POISON_STING",
+      "HORN ATTACK",
+      "POISON STING",
       "THRASH"
     ],
     "tmHm": [
@@ -477,10 +483,11 @@
     ],
     "type1": "POISON",
     "type2": "GROUND",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Nidoking"
   },
   {
-    "name": "Slowbro",
+    "name": "SLOWBRO",
     "ind": 8,
     "pokedex": 79,
     "growthRate": 0,
@@ -565,10 +572,11 @@
     ],
     "type1": "WATER",
     "type2": "PSYCHIC",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Slowbro"
   },
   {
-    "name": "Ivysaur",
+    "name": "IVYSAUR",
     "ind": 9,
     "pokedex": 1,
     "growthRate": 3,
@@ -593,7 +601,7 @@
       },
       {
         "level": 22,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 30,
@@ -609,13 +617,13 @@
       },
       {
         "level": 54,
-        "move": "SOLARBEAM"
+        "move": "SOLAR BEAM"
       }
     ],
     "initial": [
       "TACKLE",
       "GROWL",
-      "LEECH_SEED"
+      "LEECH SEED"
     ],
     "tmHm": [
       3,
@@ -636,10 +644,11 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Ivysaur"
   },
   {
-    "name": "Exeggutor",
+    "name": "EXEGGUTOR",
     "ind": 10,
     "pokedex": 102,
     "growthRate": 5,
@@ -683,10 +692,11 @@
     ],
     "type1": "GRASS",
     "type2": "PSYCHIC",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Exeggutor"
   },
   {
-    "name": "Lickitung",
+    "name": "LICKITUNG",
     "ind": 11,
     "pokedex": 107,
     "growthRate": 0,
@@ -756,10 +766,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Lickitung"
   },
   {
-    "name": "Exeggcute",
+    "name": "EXEGGCUTE",
     "ind": 12,
     "pokedex": 101,
     "growthRate": 5,
@@ -788,11 +799,11 @@
       },
       {
         "level": 37,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 42,
-        "move": "SOLARBEAM"
+        "move": "SOLAR BEAM"
       },
       {
         "level": 48,
@@ -823,10 +834,11 @@
     ],
     "type1": "GRASS",
     "type2": "PSYCHIC",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Exeggcute"
   },
   {
-    "name": "Grimer",
+    "name": "GRIMER",
     "ind": 13,
     "pokedex": 87,
     "growthRate": 0,
@@ -888,10 +900,11 @@
     ],
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Grimer"
   },
   {
-    "name": "Gengar",
+    "name": "GENGAR",
     "ind": 14,
     "pokedex": 93,
     "growthRate": 3,
@@ -913,8 +926,8 @@
     ],
     "initial": [
       "LICK",
-      "CONFUSE_RAY",
-      "NIGHT_SHADE"
+      "CONFUSE RAY",
+      "NIGHT SHADE"
     ],
     "tmHm": [
       1,
@@ -947,10 +960,11 @@
     ],
     "type1": "GHOST",
     "type2": "POISON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Gengar"
   },
   {
-    "name": "Nidoran<f>",
+    "name": "NIDORAN<f>",
     "ind": 15,
     "pokedex": 28,
     "growthRate": 3,
@@ -996,10 +1010,11 @@
     "initial": [
       "GROWL",
       "TACKLE"
-    ]
+    ],
+    "readable": "Nidoran<f>"
   },
   {
-    "name": "Nidoqueen",
+    "name": "NIDOQUEEN",
     "ind": 16,
     "pokedex": 30,
     "growthRate": 3,
@@ -1026,8 +1041,8 @@
     "initial": [
       "TACKLE",
       "SCRATCH",
-      "TAIL_WHIP",
-      "BODY_SLAM"
+      "TAIL WHIP",
+      "BODY SLAM"
     ],
     "tmHm": [
       1,
@@ -1065,10 +1080,11 @@
     ],
     "type1": "POISON",
     "type2": "GROUND",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Nidoqueen"
   },
   {
-    "name": "Cubone",
+    "name": "CUBONE",
     "ind": 17,
     "pokedex": 103,
     "growthRate": 0,
@@ -1105,7 +1121,7 @@
       }
     ],
     "initial": [
-      "BONE_CLUB",
+      "BONE CLUB",
       "GROWL"
     ],
     "tmHm": [
@@ -1137,10 +1153,11 @@
     ],
     "type1": "GROUND",
     "type2": "GROUND",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Cubone"
   },
   {
-    "name": "Rhyhorn",
+    "name": "RHYHORN",
     "ind": 18,
     "pokedex": 110,
     "growthRate": 5,
@@ -1181,7 +1198,7 @@
       }
     ],
     "initial": [
-      "HORN_ATTACK"
+      "HORN ATTACK"
     ],
     "tmHm": [
       6,
@@ -1207,10 +1224,11 @@
     ],
     "type1": "GROUND",
     "type2": "ROCK",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Rhyhorn"
   },
   {
-    "name": "Lapras",
+    "name": "LAPRAS",
     "ind": 19,
     "pokedex": 130,
     "growthRate": 5,
@@ -1247,7 +1265,7 @@
       }
     ],
     "initial": [
-      "WATER_GUN",
+      "WATER GUN",
       "GROWL"
     ],
     "tmHm": [
@@ -1280,10 +1298,11 @@
     ],
     "type1": "WATER",
     "type2": "ICE",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Lapras"
   },
   {
-    "name": "Arcanine",
+    "name": "ARCANINE",
     "ind": 20,
     "pokedex": 58,
     "growthRate": 5,
@@ -1297,7 +1316,7 @@
       "ROAR",
       "EMBER",
       "LEER",
-      "TAKE_DOWN"
+      "TAKE DOWN"
     ],
     "tmHm": [
       6,
@@ -1321,10 +1340,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Arcanine"
   },
   {
-    "name": "Mew",
+    "name": "MEW",
     "ind": 21,
     "pokedex": 150,
     "growthRate": 3,
@@ -1414,10 +1434,11 @@
     ],
     "type1": "PSYCHIC",
     "type2": "PSYCHIC",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Mew"
   },
   {
-    "name": "Gyarados",
+    "name": "GYARADOS",
     "ind": 22,
     "pokedex": 129,
     "growthRate": 5,
@@ -1451,9 +1472,9 @@
     ],
     "initial": [
       "BITE",
-      "DRAGON_RAGE",
+      "DRAGON RAGE",
       "LEER",
-      "HYDRO_PUMP"
+      "HYDRO PUMP"
     ],
     "tmHm": [
       6,
@@ -1482,10 +1503,11 @@
     ],
     "type1": "WATER",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Gyarados"
   },
   {
-    "name": "Shellder",
+    "name": "SHELLDER",
     "ind": 23,
     "pokedex": 89,
     "growthRate": 5,
@@ -1549,10 +1571,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Shellder"
   },
   {
-    "name": "Tentacool",
+    "name": "TENTACOOL",
     "ind": 24,
     "pokedex": 71,
     "growthRate": 5,
@@ -1626,10 +1649,11 @@
     ],
     "type1": "WATER",
     "type2": "POISON",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Tentacool"
   },
   {
-    "name": "Gastly",
+    "name": "GASTLY",
     "ind": 25,
     "pokedex": 91,
     "growthRate": 3,
@@ -1655,8 +1679,8 @@
     ],
     "initial": [
       "LICK",
-      "CONFUSE_RAY",
-      "NIGHT_SHADE"
+      "CONFUSE RAY",
+      "NIGHT SHADE"
     ],
     "tmHm": [
       6,
@@ -1677,10 +1701,11 @@
     ],
     "type1": "GHOST",
     "type2": "POISON",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Gastly"
   },
   {
-    "name": "Scyther",
+    "name": "SCYTHER",
     "ind": 26,
     "pokedex": 122,
     "growthRate": 0,
@@ -1717,7 +1742,7 @@
       }
     ],
     "initial": [
-      "QUICK_ATTACK"
+      "QUICK ATTACK"
     ],
     "tmHm": [
       3,
@@ -1737,10 +1762,11 @@
     ],
     "type1": "BUG",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Scyther"
   },
   {
-    "name": "Staryu",
+    "name": "STARYU",
     "ind": 27,
     "pokedex": 119,
     "growthRate": 5,
@@ -1816,10 +1842,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 225
+    "catchRate": 225,
+    "readable": "Staryu"
   },
   {
-    "name": "Blastoise",
+    "name": "BLASTOISE",
     "ind": 28,
     "pokedex": 8,
     "growthRate": 3,
@@ -1857,9 +1884,9 @@
     ],
     "initial": [
       "TACKLE",
-      "TAIL_WHIP",
+      "TAIL WHIP",
       "BUBBLE",
-      "WATER_GUN"
+      "WATER GUN"
     ],
     "tmHm": [
       1,
@@ -1892,10 +1919,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Blastoise"
   },
   {
-    "name": "Pinsir",
+    "name": "PINSIR",
     "ind": 29,
     "pokedex": 126,
     "growthRate": 5,
@@ -1954,10 +1982,11 @@
     ],
     "type1": "BUG",
     "type2": "BUG",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Pinsir"
   },
   {
-    "name": "Tangela",
+    "name": "TANGELA",
     "ind": 30,
     "pokedex": 113,
     "growthRate": 0,
@@ -1974,7 +2003,7 @@
       },
       {
         "level": 32,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 36,
@@ -2017,20 +2046,23 @@
     ],
     "type1": "GRASS",
     "type2": "GRASS",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Tangela"
   },
   {
-    "name": "Missing1F",
+    "name": "MISSING1F",
     "ind": 31,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing1F"
   },
   {
-    "name": "Missing20",
+    "name": "MISSING20",
     "ind": 32,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing20"
   },
   {
-    "name": "Growlithe",
+    "name": "GROWLITHE",
     "ind": 33,
     "pokedex": 57,
     "growthRate": 5,
@@ -2090,10 +2122,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Growlithe"
   },
   {
-    "name": "Onix",
+    "name": "ONIX",
     "ind": 34,
     "pokedex": 94,
     "growthRate": 0,
@@ -2151,10 +2184,11 @@
     ],
     "type1": "ROCK",
     "type2": "GROUND",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Onix"
   },
   {
-    "name": "Fearow",
+    "name": "FEAROW",
     "ind": 35,
     "pokedex": 21,
     "growthRate": 0,
@@ -2210,10 +2244,11 @@
     ],
     "type1": "NORMAL",
     "type2": "FLYING",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Fearow"
   },
   {
-    "name": "Pidgey",
+    "name": "PIDGEY",
     "ind": 36,
     "pokedex": 15,
     "growthRate": 3,
@@ -2275,10 +2310,11 @@
     ],
     "type1": "NORMAL",
     "type2": "FLYING",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Pidgey"
   },
   {
-    "name": "Slowpoke",
+    "name": "SLOWPOKE",
     "ind": 37,
     "pokedex": 78,
     "growthRate": 0,
@@ -2355,10 +2391,11 @@
     ],
     "type1": "WATER",
     "type2": "PSYCHIC",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Slowpoke"
   },
   {
-    "name": "Kadabra",
+    "name": "KADABRA",
     "ind": 38,
     "pokedex": 63,
     "growthRate": 3,
@@ -2432,10 +2469,11 @@
     ],
     "type1": "PSYCHIC",
     "type2": "PSYCHIC",
-    "catchRate": 100
+    "catchRate": 100,
+    "readable": "Kadabra"
   },
   {
-    "name": "Graveler",
+    "name": "GRAVELER",
     "ind": 39,
     "pokedex": 74,
     "growthRate": 3,
@@ -2477,7 +2515,7 @@
     ],
     "initial": [
       "TACKLE",
-      "DEFENSE_CURL"
+      "DEFENSE CURL"
     ],
     "tmHm": [
       1,
@@ -2506,10 +2544,11 @@
     ],
     "type1": "ROCK",
     "type2": "GROUND",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Graveler"
   },
   {
-    "name": "Chansey",
+    "name": "CHANSEY",
     "ind": 40,
     "pokedex": 112,
     "growthRate": 4,
@@ -2547,7 +2586,7 @@
     ],
     "initial": [
       "POUND",
-      "DOUBLESLAP"
+      "DOUBLE SLAP"
     ],
     "tmHm": [
       1,
@@ -2589,10 +2628,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 30
+    "catchRate": 30,
+    "readable": "Chansey"
   },
   {
-    "name": "Machoke",
+    "name": "MACHOKE",
     "ind": 41,
     "pokedex": 66,
     "growthRate": 3,
@@ -2629,8 +2669,8 @@
       }
     ],
     "initial": [
-      "KARATE_CHOP",
-      "LOW_KICK",
+      "KARATE CHOP",
+      "LOW KICK",
       "LEER"
     ],
     "tmHm": [
@@ -2660,10 +2700,11 @@
     ],
     "type1": "FIGHTING",
     "type2": "FIGHTING",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Machoke"
   },
   {
-    "name": "Mr.Mime",
+    "name": "MR.MIME",
     "ind": 42,
     "pokedex": 121,
     "growthRate": 0,
@@ -2687,7 +2728,7 @@
       },
       {
         "level": 31,
-        "move": "DOUBLESLAP"
+        "move": "DOUBLE SLAP"
       },
       {
         "level": 39,
@@ -2701,10 +2742,11 @@
     "initial": [
       "CONFUSION",
       "BARRIER"
-    ]
+    ],
+    "readable": "Mr.Mime"
   },
   {
-    "name": "Hitmonlee",
+    "name": "HITMONLEE",
     "ind": 43,
     "pokedex": 105,
     "growthRate": 0,
@@ -2737,7 +2779,7 @@
       }
     ],
     "initial": [
-      "DOUBLE_KICK",
+      "DOUBLE KICK",
       "MEDITATE"
     ],
     "tmHm": [
@@ -2763,10 +2805,11 @@
     ],
     "type1": "FIGHTING",
     "type2": "FIGHTING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Hitmonlee"
   },
   {
-    "name": "Hitmonchan",
+    "name": "HITMONCHAN",
     "ind": 44,
     "pokedex": 106,
     "growthRate": 0,
@@ -2787,7 +2830,7 @@
       },
       {
         "level": 43,
-        "move": "THUNDERPUNCH"
+        "move": "THUNDER PUNCH"
       },
       {
         "level": 48,
@@ -2799,7 +2842,7 @@
       }
     ],
     "initial": [
-      "COMET_PUNCH",
+      "COMET PUNCH",
       "AGILITY"
     ],
     "tmHm": [
@@ -2825,10 +2868,11 @@
     ],
     "type1": "FIGHTING",
     "type2": "FIGHTING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Hitmonchan"
   },
   {
-    "name": "Arbok",
+    "name": "ARBOK",
     "ind": 45,
     "pokedex": 23,
     "growthRate": 0,
@@ -2863,7 +2907,7 @@
     "initial": [
       "WRAP",
       "LEER",
-      "POISON_STING"
+      "POISON STING"
     ],
     "tmHm": [
       6,
@@ -2887,10 +2931,11 @@
     ],
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Arbok"
   },
   {
-    "name": "Parasect",
+    "name": "PARASECT",
     "ind": 46,
     "pokedex": 46,
     "growthRate": 0,
@@ -2924,8 +2969,8 @@
     ],
     "initial": [
       "SCRATCH",
-      "STUN_SPORE",
-      "LEECH_LIFE"
+      "STUN SPORE",
+      "LEECH LIFE"
     ],
     "tmHm": [
       3,
@@ -2949,10 +2994,11 @@
     ],
     "type1": "BUG",
     "type2": "GRASS",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Parasect"
   },
   {
-    "name": "Psyduck",
+    "name": "PSYDUCK",
     "ind": 47,
     "pokedex": 53,
     "growthRate": 0,
@@ -3020,10 +3066,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Psyduck"
   },
   {
-    "name": "Drowzee",
+    "name": "DROWZEE",
     "ind": 48,
     "pokedex": 95,
     "growthRate": 0,
@@ -3096,10 +3143,11 @@
     ],
     "type1": "PSYCHIC",
     "type2": "PSYCHIC",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Drowzee"
   },
   {
-    "name": "Golem",
+    "name": "GOLEM",
     "ind": 49,
     "pokedex": 75,
     "growthRate": 3,
@@ -3137,7 +3185,7 @@
     ],
     "initial": [
       "TACKLE",
-      "DEFENSE_CURL"
+      "DEFENSE CURL"
     ],
     "tmHm": [
       1,
@@ -3168,15 +3216,17 @@
     ],
     "type1": "ROCK",
     "type2": "GROUND",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Golem"
   },
   {
-    "name": "Missing32",
+    "name": "MISSING32",
     "ind": 50,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing32"
   },
   {
-    "name": "Magmar",
+    "name": "MAGMAR",
     "ind": 51,
     "pokedex": 125,
     "growthRate": 0,
@@ -3242,15 +3292,17 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Magmar"
   },
   {
-    "name": "Missing34",
+    "name": "MISSING34",
     "ind": 52,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing34"
   },
   {
-    "name": "Electabuzz",
+    "name": "ELECTABUZZ",
     "ind": 53,
     "pokedex": 124,
     "growthRate": 0,
@@ -3271,7 +3323,7 @@
       },
       {
         "level": 42,
-        "move": "THUNDERPUNCH"
+        "move": "THUNDER PUNCH"
       },
       {
         "level": 49,
@@ -3283,7 +3335,7 @@
       }
     ],
     "initial": [
-      "QUICK_ATTACK",
+      "QUICK ATTACK",
       "LEER"
     ],
     "tmHm": [
@@ -3318,10 +3370,11 @@
     ],
     "type1": "ELECTRIC",
     "type2": "ELECTRIC",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Electabuzz"
   },
   {
-    "name": "Magneton",
+    "name": "MAGNETON",
     "ind": 54,
     "pokedex": 81,
     "growthRate": 0,
@@ -3383,10 +3436,11 @@
     ],
     "type1": "ELECTRIC",
     "type2": "ELECTRIC",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Magneton"
   },
   {
-    "name": "Koffing",
+    "name": "KOFFING",
     "ind": 55,
     "pokedex": 108,
     "growthRate": 0,
@@ -3442,15 +3496,17 @@
     ],
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Koffing"
   },
   {
-    "name": "Missing38",
+    "name": "MISSING38",
     "ind": 56,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing38"
   },
   {
-    "name": "Mankey",
+    "name": "MANKEY",
     "ind": 57,
     "pokedex": 55,
     "growthRate": 0,
@@ -3518,10 +3574,11 @@
     ],
     "type1": "FIGHTING",
     "type2": "FIGHTING",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Mankey"
   },
   {
-    "name": "Seel",
+    "name": "SEEL",
     "ind": 58,
     "pokedex": 85,
     "growthRate": 0,
@@ -3583,10 +3640,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Seel"
   },
   {
-    "name": "Diglett",
+    "name": "DIGLETT",
     "ind": 59,
     "pokedex": 49,
     "growthRate": 0,
@@ -3643,10 +3701,11 @@
     ],
     "type1": "GROUND",
     "type2": "GROUND",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Diglett"
   },
   {
-    "name": "Tauros",
+    "name": "TAUROS",
     "ind": 60,
     "pokedex": 127,
     "growthRate": 5,
@@ -3706,25 +3765,29 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Tauros"
   },
   {
-    "name": "Missing3D",
+    "name": "MISSING3D",
     "ind": 61,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing3D"
   },
   {
-    "name": "Missing3E",
+    "name": "MISSING3E",
     "ind": 62,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing3E"
   },
   {
-    "name": "Missing3F",
+    "name": "MISSING3F",
     "ind": 63,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing3F"
   },
   {
-    "name": "Farfetchd",
+    "name": "FARFETCHD",
     "ind": 64,
     "pokedex": 82,
     "growthRate": 0,
@@ -3758,7 +3821,7 @@
     ],
     "initial": [
       "PECK",
-      "SAND_ATTACK"
+      "SAND ATTACK"
     ],
     "tmHm": [
       2,
@@ -3782,10 +3845,11 @@
     ],
     "type1": "NORMAL",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Farfetchd"
   },
   {
-    "name": "Venonat",
+    "name": "VENONAT",
     "ind": 65,
     "pokedex": 47,
     "growthRate": 0,
@@ -3802,7 +3866,7 @@
     "moves": [
       {
         "level": 24,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 27,
@@ -3847,10 +3911,11 @@
     ],
     "type1": "BUG",
     "type2": "POISON",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Venonat"
   },
   {
-    "name": "Dragonite",
+    "name": "DRAGONITE",
     "ind": 66,
     "pokedex": 148,
     "growthRate": 5,
@@ -3885,7 +3950,7 @@
     "initial": [
       "WRAP",
       "LEER",
-      "THUNDER_WAVE",
+      "THUNDER WAVE",
       "AGILITY"
     ],
     "tmHm": [
@@ -3919,25 +3984,29 @@
     ],
     "type1": "DRAGON",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Dragonite"
   },
   {
-    "name": "Missing43",
+    "name": "MISSING43",
     "ind": 67,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing43"
   },
   {
-    "name": "Missing44",
+    "name": "MISSING44",
     "ind": 68,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing44"
   },
   {
-    "name": "Missing45",
+    "name": "MISSING45",
     "ind": 69,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing45"
   },
   {
-    "name": "Doduo",
+    "name": "DODUO",
     "ind": 70,
     "pokedex": 83,
     "growthRate": 0,
@@ -4000,10 +4069,11 @@
     ],
     "type1": "NORMAL",
     "type2": "FLYING",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Doduo"
   },
   {
-    "name": "Poliwag",
+    "name": "POLIWAG",
     "ind": 71,
     "pokedex": 59,
     "growthRate": 3,
@@ -4028,7 +4098,7 @@
       },
       {
         "level": 25,
-        "move": "DOUBLESLAP"
+        "move": "DOUBLE SLAP"
       },
       {
         "level": 31,
@@ -4068,10 +4138,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Poliwag"
   },
   {
-    "name": "Jynx",
+    "name": "JYNX",
     "ind": 72,
     "pokedex": 123,
     "growthRate": 0,
@@ -4088,7 +4159,7 @@
       },
       {
         "level": 23,
-        "move": "DOUBLESLAP"
+        "move": "DOUBLE SLAP"
       },
       {
         "level": 31,
@@ -4109,7 +4180,7 @@
     ],
     "initial": [
       "POUND",
-      "LOVELY_KISS"
+      "LOVELY KISS"
     ],
     "tmHm": [
       1,
@@ -4141,10 +4212,11 @@
     ],
     "type1": "ICE",
     "type2": "PSYCHIC",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Jynx"
   },
   {
-    "name": "Moltres",
+    "name": "MOLTRES",
     "ind": 73,
     "pokedex": 145,
     "growthRate": 5,
@@ -4170,7 +4242,7 @@
     ],
     "initial": [
       "PECK",
-      "FIRE_SPIN"
+      "FIRE SPIN"
     ],
     "tmHm": [
       2,
@@ -4193,10 +4265,11 @@
     ],
     "type1": "FIRE",
     "type2": "FLYING",
-    "catchRate": 3
+    "catchRate": 3,
+    "readable": "Moltres"
   },
   {
-    "name": "Articuno",
+    "name": "ARTICUNO",
     "ind": 74,
     "pokedex": 143,
     "growthRate": 5,
@@ -4222,7 +4295,7 @@
     ],
     "initial": [
       "PECK",
-      "ICE_BEAM"
+      "ICE BEAM"
     ],
     "tmHm": [
       2,
@@ -4248,10 +4321,11 @@
     ],
     "type1": "ICE",
     "type2": "FLYING",
-    "catchRate": 3
+    "catchRate": 3,
+    "readable": "Articuno"
   },
   {
-    "name": "Zapdos",
+    "name": "ZAPDOS",
     "ind": 75,
     "pokedex": 144,
     "growthRate": 5,
@@ -4277,7 +4351,7 @@
     ],
     "initial": [
       "THUNDERSHOCK",
-      "DRILL_PECK"
+      "DRILL PECK"
     ],
     "tmHm": [
       2,
@@ -4303,10 +4377,11 @@
     ],
     "type1": "ELECTRIC",
     "type2": "FLYING",
-    "catchRate": 3
+    "catchRate": 3,
+    "readable": "Zapdos"
   },
   {
-    "name": "Ditto",
+    "name": "DITTO",
     "ind": 76,
     "pokedex": 131,
     "growthRate": 0,
@@ -4321,10 +4396,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 35
+    "catchRate": 35,
+    "readable": "Ditto"
   },
   {
-    "name": "Meowth",
+    "name": "MEOWTH",
     "ind": 77,
     "pokedex": 51,
     "growthRate": 0,
@@ -4385,10 +4461,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Meowth"
   },
   {
-    "name": "Krabby",
+    "name": "KRABBY",
     "ind": 78,
     "pokedex": 97,
     "growthRate": 0,
@@ -4450,25 +4527,29 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 225
+    "catchRate": 225,
+    "readable": "Krabby"
   },
   {
-    "name": "Missing4F",
+    "name": "MISSING4F",
     "ind": 79,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing4F"
   },
   {
-    "name": "Missing50",
+    "name": "MISSING50",
     "ind": 80,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing50"
   },
   {
-    "name": "Missing51",
+    "name": "MISSING51",
     "ind": 81,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing51"
   },
   {
-    "name": "Vulpix",
+    "name": "VULPIX",
     "ind": 82,
     "pokedex": 36,
     "growthRate": 0,
@@ -4506,7 +4587,7 @@
     ],
     "initial": [
       "EMBER",
-      "TAIL_WHIP"
+      "TAIL WHIP"
     ],
     "tmHm": [
       6,
@@ -4527,10 +4608,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Vulpix"
   },
   {
-    "name": "Ninetales",
+    "name": "NINETALES",
     "ind": 83,
     "pokedex": 37,
     "growthRate": 0,
@@ -4542,8 +4624,8 @@
     "baseExpYield": 178,
     "initial": [
       "EMBER",
-      "TAIL_WHIP",
-      "QUICK_ATTACK",
+      "TAIL WHIP",
+      "QUICK ATTACK",
       "ROAR"
     ],
     "tmHm": [
@@ -4566,10 +4648,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Ninetales"
   },
   {
-    "name": "Pikachu",
+    "name": "PIKACHU",
     "ind": 84,
     "pokedex": 24,
     "growthRate": 0,
@@ -4635,10 +4718,11 @@
     ],
     "type1": "ELECTRIC",
     "type2": "ELECTRIC",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Pikachu"
   },
   {
-    "name": "Raichu",
+    "name": "RAICHU",
     "ind": 85,
     "pokedex": 25,
     "growthRate": 0,
@@ -4651,7 +4735,7 @@
     "initial": [
       "THUNDERSHOCK",
       "GROWL",
-      "THUNDER_WAVE"
+      "THUNDER WAVE"
     ],
     "tmHm": [
       1,
@@ -4680,20 +4764,23 @@
     ],
     "type1": "ELECTRIC",
     "type2": "ELECTRIC",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Raichu"
   },
   {
-    "name": "Missing56",
+    "name": "MISSING56",
     "ind": 86,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing56"
   },
   {
-    "name": "Missing57",
+    "name": "MISSING57",
     "ind": 87,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing57"
   },
   {
-    "name": "Dratini",
+    "name": "DRATINI",
     "ind": 88,
     "pokedex": 146,
     "growthRate": 5,
@@ -4760,10 +4847,11 @@
     ],
     "type1": "DRAGON",
     "type2": "DRAGON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Dratini"
   },
   {
-    "name": "Dragonair",
+    "name": "DRAGONAIR",
     "ind": 89,
     "pokedex": 147,
     "growthRate": 5,
@@ -4802,7 +4890,7 @@
     "initial": [
       "WRAP",
       "LEER",
-      "THUNDER_WAVE"
+      "THUNDER WAVE"
     ],
     "tmHm": [
       6,
@@ -4832,10 +4920,11 @@
     ],
     "type1": "DRAGON",
     "type2": "DRAGON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Dragonair"
   },
   {
-    "name": "Kabuto",
+    "name": "KABUTO",
     "ind": 90,
     "pokedex": 139,
     "growthRate": 0,
@@ -4891,10 +4980,11 @@
     ],
     "type1": "ROCK",
     "type2": "WATER",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Kabuto"
   },
   {
-    "name": "Kabutops",
+    "name": "KABUTOPS",
     "ind": 91,
     "pokedex": 140,
     "growthRate": 0,
@@ -4954,10 +5044,11 @@
     ],
     "type1": "ROCK",
     "type2": "WATER",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Kabutops"
   },
   {
-    "name": "Horsea",
+    "name": "HORSEA",
     "ind": 92,
     "pokedex": 115,
     "growthRate": 0,
@@ -5016,10 +5107,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 225
+    "catchRate": 225,
+    "readable": "Horsea"
   },
   {
-    "name": "Seadra",
+    "name": "SEADRA",
     "ind": 93,
     "pokedex": 116,
     "growthRate": 0,
@@ -5076,20 +5168,23 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Seadra"
   },
   {
-    "name": "Missing5E",
+    "name": "MISSING5E",
     "ind": 94,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing5E"
   },
   {
-    "name": "Missing5F",
+    "name": "MISSING5F",
     "ind": 95,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing5F"
   },
   {
-    "name": "Sandshrew",
+    "name": "SANDSHREW",
     "ind": 96,
     "pokedex": 26,
     "growthRate": 0,
@@ -5153,10 +5248,11 @@
     ],
     "type1": "GROUND",
     "type2": "GROUND",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Sandshrew"
   },
   {
-    "name": "Sandslash",
+    "name": "SANDSLASH",
     "ind": 97,
     "pokedex": 27,
     "growthRate": 0,
@@ -5190,7 +5286,7 @@
     ],
     "initial": [
       "SCRATCH",
-      "SAND_ATTACK"
+      "SAND ATTACK"
     ],
     "tmHm": [
       3,
@@ -5218,10 +5314,11 @@
     ],
     "type1": "GROUND",
     "type2": "GROUND",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Sandslash"
   },
   {
-    "name": "Omanyte",
+    "name": "OMANYTE",
     "ind": 98,
     "pokedex": 137,
     "growthRate": 0,
@@ -5254,7 +5351,7 @@
       }
     ],
     "initial": [
-      "WATER_GUN",
+      "WATER GUN",
       "WITHDRAW"
     ],
     "tmHm": [
@@ -5277,10 +5374,11 @@
     ],
     "type1": "ROCK",
     "type2": "WATER",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Omanyte"
   },
   {
-    "name": "Omastar",
+    "name": "OMASTAR",
     "ind": 99,
     "pokedex": 138,
     "growthRate": 0,
@@ -5309,9 +5407,9 @@
       }
     ],
     "initial": [
-      "WATER_GUN",
+      "WATER GUN",
       "WITHDRAW",
-      "HORN_ATTACK"
+      "HORN ATTACK"
     ],
     "tmHm": [
       6,
@@ -5338,10 +5436,11 @@
     ],
     "type1": "ROCK",
     "type2": "WATER",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Omastar"
   },
   {
-    "name": "Jigglypuff",
+    "name": "JIGGLYPUFF",
     "ind": 100,
     "pokedex": 38,
     "growthRate": 4,
@@ -5370,7 +5469,7 @@
       },
       {
         "level": 24,
-        "move": "DOUBLESLAP"
+        "move": "DOUBLE SLAP"
       },
       {
         "level": 29,
@@ -5424,10 +5523,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 170
+    "catchRate": 170,
+    "readable": "Jigglypuff"
   },
   {
-    "name": "Wigglytuff",
+    "name": "WIGGLYTUFF",
     "ind": 101,
     "pokedex": 39,
     "growthRate": 4,
@@ -5440,8 +5540,8 @@
     "initial": [
       "SING",
       "DISABLE",
-      "DEFENSE_CURL",
-      "DOUBLESLAP"
+      "DEFENSE CURL",
+      "DOUBLE SLAP"
     ],
     "tmHm": [
       1,
@@ -5480,10 +5580,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 50
+    "catchRate": 50,
+    "readable": "Wigglytuff"
   },
   {
-    "name": "Eevee",
+    "name": "EEVEE",
     "ind": 102,
     "pokedex": 132,
     "growthRate": 0,
@@ -5527,7 +5628,7 @@
     ],
     "initial": [
       "TACKLE",
-      "SAND_ATTACK"
+      "SAND ATTACK"
     ],
     "tmHm": [
       6,
@@ -5546,10 +5647,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Eevee"
   },
   {
-    "name": "Flareon",
+    "name": "FLAREON",
     "ind": 103,
     "pokedex": 135,
     "growthRate": 0,
@@ -5595,8 +5697,8 @@
     ],
     "initial": [
       "TACKLE",
-      "SAND_ATTACK",
-      "QUICK_ATTACK",
+      "SAND ATTACK",
+      "QUICK ATTACK",
       "EMBER"
     ],
     "tmHm": [
@@ -5618,10 +5720,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Flareon"
   },
   {
-    "name": "Jolteon",
+    "name": "JOLTEON",
     "ind": 104,
     "pokedex": 134,
     "growthRate": 0,
@@ -5667,8 +5770,8 @@
     ],
     "initial": [
       "TACKLE",
-      "SAND_ATTACK",
-      "QUICK_ATTACK",
+      "SAND ATTACK",
+      "QUICK ATTACK",
       "THUNDERSHOCK"
     ],
     "tmHm": [
@@ -5693,10 +5796,11 @@
     ],
     "type1": "ELECTRIC",
     "type2": "ELECTRIC",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Jolteon"
   },
   {
-    "name": "Vaporeon",
+    "name": "VAPOREON",
     "ind": 105,
     "pokedex": 133,
     "growthRate": 0,
@@ -5742,9 +5846,9 @@
     ],
     "initial": [
       "TACKLE",
-      "SAND_ATTACK",
-      "QUICK_ATTACK",
-      "WATER_GUN"
+      "SAND ATTACK",
+      "QUICK ATTACK",
+      "WATER GUN"
     ],
     "tmHm": [
       6,
@@ -5769,10 +5873,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Vaporeon"
   },
   {
-    "name": "Machop",
+    "name": "MACHOP",
     "ind": 106,
     "pokedex": 65,
     "growthRate": 3,
@@ -5809,7 +5914,7 @@
       }
     ],
     "initial": [
-      "KARATE_CHOP"
+      "KARATE CHOP"
     ],
     "tmHm": [
       1,
@@ -5838,10 +5943,11 @@
     ],
     "type1": "FIGHTING",
     "type2": "FIGHTING",
-    "catchRate": 180
+    "catchRate": 180,
+    "readable": "Machop"
   },
   {
-    "name": "Zubat",
+    "name": "ZUBAT",
     "ind": 107,
     "pokedex": 40,
     "growthRate": 0,
@@ -5878,7 +5984,7 @@
       }
     ],
     "initial": [
-      "LEECH_LIFE"
+      "LEECH LIFE"
     ],
     "tmHm": [
       2,
@@ -5897,10 +6003,11 @@
     ],
     "type1": "POISON",
     "type2": "FLYING",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Zubat"
   },
   {
-    "name": "Ekans",
+    "name": "EKANS",
     "ind": 108,
     "pokedex": 22,
     "growthRate": 0,
@@ -5961,10 +6068,11 @@
     ],
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Ekans"
   },
   {
-    "name": "Paras",
+    "name": "PARAS",
     "ind": 109,
     "pokedex": 45,
     "growthRate": 0,
@@ -6024,10 +6132,11 @@
     ],
     "type1": "BUG",
     "type2": "GRASS",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Paras"
   },
   {
-    "name": "Poliwhirl",
+    "name": "POLIWHIRL",
     "ind": 110,
     "pokedex": 60,
     "growthRate": 3,
@@ -6052,7 +6161,7 @@
       },
       {
         "level": 26,
-        "move": "DOUBLESLAP"
+        "move": "DOUBLE SLAP"
       },
       {
         "level": 33,
@@ -6070,7 +6179,7 @@
     "initial": [
       "BUBBLE",
       "HYPNOSIS",
-      "WATER_GUN"
+      "WATER GUN"
     ],
     "tmHm": [
       1,
@@ -6103,10 +6212,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Poliwhirl"
   },
   {
-    "name": "Poliwrath",
+    "name": "POLIWRATH",
     "ind": 111,
     "pokedex": 61,
     "growthRate": 3,
@@ -6128,9 +6238,9 @@
     ],
     "initial": [
       "HYPNOSIS",
-      "WATER_GUN",
-      "DOUBLESLAP",
-      "BODY_SLAM"
+      "WATER GUN",
+      "DOUBLE SLAP",
+      "BODY SLAM"
     ],
     "tmHm": [
       1,
@@ -6164,10 +6274,11 @@
     ],
     "type1": "WATER",
     "type2": "FIGHTING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Poliwrath"
   },
   {
-    "name": "Weedle",
+    "name": "WEEDLE",
     "ind": 112,
     "pokedex": 12,
     "growthRate": 0,
@@ -6182,15 +6293,16 @@
       "toName": "KAKUNA"
     },
     "initial": [
-      "POISON_STING",
-      "STRING_SHOT"
+      "POISON STING",
+      "STRING SHOT"
     ],
     "type1": "BUG",
     "type2": "POISON",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Weedle"
   },
   {
-    "name": "Kakuna",
+    "name": "KAKUNA",
     "ind": 113,
     "pokedex": 13,
     "growthRate": 0,
@@ -6209,10 +6321,11 @@
     ],
     "type1": "BUG",
     "type2": "POISON",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Kakuna"
   },
   {
-    "name": "Beedrill",
+    "name": "BEEDRILL",
     "ind": 114,
     "pokedex": 14,
     "growthRate": 0,
@@ -6249,7 +6362,7 @@
       }
     ],
     "initial": [
-      "FURY_ATTACK"
+      "FURY ATTACK"
     ],
     "tmHm": [
       3,
@@ -6271,15 +6384,17 @@
     ],
     "type1": "BUG",
     "type2": "POISON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Beedrill"
   },
   {
-    "name": "Missing73",
+    "name": "MISSING73",
     "ind": 115,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing73"
   },
   {
-    "name": "Dodrio",
+    "name": "DODRIO",
     "ind": 116,
     "pokedex": 84,
     "growthRate": 0,
@@ -6318,7 +6433,7 @@
     "initial": [
       "PECK",
       "GROWL",
-      "FURY_ATTACK"
+      "FURY ATTACK"
     ],
     "tmHm": [
       4,
@@ -6341,10 +6456,11 @@
     ],
     "type1": "NORMAL",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Dodrio"
   },
   {
-    "name": "Primeape",
+    "name": "PRIMEAPE",
     "ind": 117,
     "pokedex": 56,
     "growthRate": 0,
@@ -6379,8 +6495,8 @@
     "initial": [
       "SCRATCH",
       "LEER",
-      "KARATE_CHOP",
-      "FURY_SWIPES"
+      "KARATE CHOP",
+      "FURY SWIPES"
     ],
     "tmHm": [
       1,
@@ -6411,10 +6527,11 @@
     ],
     "type1": "FIGHTING",
     "type2": "FIGHTING",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Primeape"
   },
   {
-    "name": "Dugtrio",
+    "name": "DUGTRIO",
     "ind": 118,
     "pokedex": 50,
     "growthRate": 0,
@@ -6470,10 +6587,11 @@
     ],
     "type1": "GROUND",
     "type2": "GROUND",
-    "catchRate": 50
+    "catchRate": 50,
+    "readable": "Dugtrio"
   },
   {
-    "name": "Venomoth",
+    "name": "VENOMOTH",
     "ind": 119,
     "pokedex": 48,
     "growthRate": 0,
@@ -6486,7 +6604,7 @@
     "moves": [
       {
         "level": 24,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 27,
@@ -6512,8 +6630,8 @@
     "initial": [
       "TACKLE",
       "DISABLE",
-      "POISONPOWDER",
-      "LEECH_LIFE"
+      "POISON POWDER",
+      "LEECH LIFE"
     ],
     "tmHm": [
       2,
@@ -6538,10 +6656,11 @@
     ],
     "type1": "BUG",
     "type2": "POISON",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Venomoth"
   },
   {
-    "name": "Dewgong",
+    "name": "DEWGONG",
     "ind": 120,
     "pokedex": 86,
     "growthRate": 0,
@@ -6576,7 +6695,7 @@
     "initial": [
       "HEADBUTT",
       "GROWL",
-      "AURORA_BEAM"
+      "AURORA BEAM"
     ],
     "tmHm": [
       6,
@@ -6602,20 +6721,23 @@
     ],
     "type1": "WATER",
     "type2": "ICE",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Dewgong"
   },
   {
-    "name": "Missing79",
+    "name": "MISSING79",
     "ind": 121,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing79"
   },
   {
-    "name": "Missing7A",
+    "name": "MISSING7A",
     "ind": 122,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing7A"
   },
   {
-    "name": "Caterpie",
+    "name": "CATERPIE",
     "ind": 123,
     "pokedex": 9,
     "growthRate": 0,
@@ -6631,14 +6753,15 @@
     },
     "initial": [
       "TACKLE",
-      "STRING_SHOT"
+      "STRING SHOT"
     ],
     "type1": "BUG",
     "type2": "BUG",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Caterpie"
   },
   {
-    "name": "Metapod",
+    "name": "METAPOD",
     "ind": 124,
     "pokedex": 10,
     "growthRate": 0,
@@ -6657,10 +6780,11 @@
     ],
     "type1": "BUG",
     "type2": "BUG",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Metapod"
   },
   {
-    "name": "Butterfree",
+    "name": "BUTTERFREE",
     "ind": 125,
     "pokedex": 11,
     "growthRate": 0,
@@ -6677,7 +6801,7 @@
       },
       {
         "level": 15,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 16,
@@ -6726,10 +6850,11 @@
     ],
     "type1": "BUG",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Butterfree"
   },
   {
-    "name": "Machamp",
+    "name": "MACHAMP",
     "ind": 126,
     "pokedex": 67,
     "growthRate": 3,
@@ -6762,8 +6887,8 @@
       }
     ],
     "initial": [
-      "KARATE_CHOP",
-      "LOW_KICK",
+      "KARATE CHOP",
+      "LOW KICK",
       "LEER"
     ],
     "tmHm": [
@@ -6794,15 +6919,17 @@
     ],
     "type1": "FIGHTING",
     "type2": "FIGHTING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Machamp"
   },
   {
-    "name": "Missing7F",
+    "name": "MISSING7F",
     "ind": 127,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing7F"
   },
   {
-    "name": "Golduck",
+    "name": "GOLDUCK",
     "ind": 128,
     "pokedex": 54,
     "growthRate": 0,
@@ -6836,7 +6963,7 @@
     ],
     "initial": [
       "SCRATCH",
-      "TAIL_WHIP",
+      "TAIL WHIP",
       "DISABLE"
     ],
     "tmHm": [
@@ -6869,10 +6996,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Golduck"
   },
   {
-    "name": "Hypno",
+    "name": "HYPNO",
     "ind": 129,
     "pokedex": 96,
     "growthRate": 0,
@@ -6944,10 +7072,11 @@
     ],
     "type1": "PSYCHIC",
     "type2": "PSYCHIC",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Hypno"
   },
   {
-    "name": "Golbat",
+    "name": "GOLBAT",
     "ind": 130,
     "pokedex": 41,
     "growthRate": 0,
@@ -6980,7 +7109,7 @@
       }
     ],
     "initial": [
-      "LEECH_LIFE",
+      "LEECH LIFE",
       "SCREECH",
       "BITE"
     ],
@@ -7002,10 +7131,11 @@
     ],
     "type1": "POISON",
     "type2": "FLYING",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Golbat"
   },
   {
-    "name": "Mewtwo",
+    "name": "MEWTWO",
     "ind": 131,
     "pokedex": 149,
     "growthRate": 5,
@@ -7083,10 +7213,11 @@
     ],
     "type1": "PSYCHIC",
     "type2": "PSYCHIC",
-    "catchRate": 3
+    "catchRate": 3,
+    "readable": "Mewtwo"
   },
   {
-    "name": "Snorlax",
+    "name": "SNORLAX",
     "ind": 132,
     "pokedex": 142,
     "growthRate": 5,
@@ -7159,10 +7290,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 25
+    "catchRate": 25,
+    "readable": "Snorlax"
   },
   {
-    "name": "Magikarp",
+    "name": "MAGIKARP",
     "ind": 133,
     "pokedex": 128,
     "growthRate": 5,
@@ -7187,20 +7319,23 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Magikarp"
   },
   {
-    "name": "Missing86",
+    "name": "MISSING86",
     "ind": 134,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing86"
   },
   {
-    "name": "Missing87",
+    "name": "MISSING87",
     "ind": 135,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing87"
   },
   {
-    "name": "Muk",
+    "name": "MUK",
     "ind": 136,
     "pokedex": 88,
     "growthRate": 0,
@@ -7239,7 +7374,7 @@
     "initial": [
       "POUND",
       "DISABLE",
-      "POISON_GAS"
+      "POISON GAS"
     ],
     "tmHm": [
       6,
@@ -7260,15 +7395,17 @@
     ],
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Muk"
   },
   {
-    "name": "Missing89",
+    "name": "MISSING89",
     "ind": 137,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing89"
   },
   {
-    "name": "Kingler",
+    "name": "KINGLER",
     "ind": 138,
     "pokedex": 98,
     "growthRate": 0,
@@ -7328,10 +7465,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Kingler"
   },
   {
-    "name": "Cloyster",
+    "name": "CLOYSTER",
     "ind": 139,
     "pokedex": 90,
     "growthRate": 5,
@@ -7351,7 +7489,7 @@
       "WITHDRAW",
       "SUPERSONIC",
       "CLAMP",
-      "AURORA_BEAM"
+      "AURORA BEAM"
     ],
     "tmHm": [
       6,
@@ -7378,15 +7516,17 @@
     ],
     "type1": "WATER",
     "type2": "ICE",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Cloyster"
   },
   {
-    "name": "Missing8C",
+    "name": "MISSING8C",
     "ind": 140,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing8C"
   },
   {
-    "name": "Electrode",
+    "name": "ELECTRODE",
     "ind": 141,
     "pokedex": 100,
     "growthRate": 0,
@@ -7446,10 +7586,11 @@
     ],
     "type1": "ELECTRIC",
     "type2": "ELECTRIC",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Electrode"
   },
   {
-    "name": "Clefable",
+    "name": "CLEFABLE",
     "ind": 142,
     "pokedex": 35,
     "growthRate": 4,
@@ -7461,7 +7602,7 @@
     "baseExpYield": 129,
     "initial": [
       "SING",
-      "DOUBLESLAP",
+      "DOUBLE SLAP",
       "MINIMIZE",
       "METRONOME"
     ],
@@ -7503,10 +7644,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 25
+    "catchRate": 25,
+    "readable": "Clefable"
   },
   {
-    "name": "Weezing",
+    "name": "WEEZING",
     "ind": 143,
     "pokedex": 109,
     "growthRate": 0,
@@ -7560,10 +7702,11 @@
     ],
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Weezing"
   },
   {
-    "name": "Persian",
+    "name": "PERSIAN",
     "ind": 144,
     "pokedex": 52,
     "growthRate": 0,
@@ -7623,10 +7766,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Persian"
   },
   {
-    "name": "Marowak",
+    "name": "MAROWAK",
     "ind": 145,
     "pokedex": 104,
     "growthRate": 0,
@@ -7659,10 +7803,10 @@
       }
     ],
     "initial": [
-      "BONE_CLUB",
+      "BONE CLUB",
       "GROWL",
       "LEER",
-      "FOCUS_ENERGY"
+      "FOCUS ENERGY"
     ],
     "tmHm": [
       1,
@@ -7694,15 +7838,17 @@
     ],
     "type1": "GROUND",
     "type2": "GROUND",
-    "catchRate": 75
+    "catchRate": 75,
+    "readable": "Marowak"
   },
   {
-    "name": "Missing92",
+    "name": "MISSING92",
     "ind": 146,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing92"
   },
   {
-    "name": "Haunter",
+    "name": "HAUNTER",
     "ind": 147,
     "pokedex": 92,
     "growthRate": 3,
@@ -7728,8 +7874,8 @@
     ],
     "initial": [
       "LICK",
-      "CONFUSE_RAY",
-      "NIGHT_SHADE"
+      "CONFUSE RAY",
+      "NIGHT SHADE"
     ],
     "tmHm": [
       6,
@@ -7750,10 +7896,11 @@
     ],
     "type1": "GHOST",
     "type2": "POISON",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Haunter"
   },
   {
-    "name": "Abra",
+    "name": "ABRA",
     "ind": 148,
     "pokedex": 62,
     "growthRate": 3,
@@ -7798,10 +7945,11 @@
     ],
     "type1": "PSYCHIC",
     "type2": "PSYCHIC",
-    "catchRate": 200
+    "catchRate": 200,
+    "readable": "Abra"
   },
   {
-    "name": "Alakazam",
+    "name": "ALAKAZAM",
     "ind": 149,
     "pokedex": 64,
     "growthRate": 3,
@@ -7872,10 +8020,11 @@
     ],
     "type1": "PSYCHIC",
     "type2": "PSYCHIC",
-    "catchRate": 50
+    "catchRate": 50,
+    "readable": "Alakazam"
   },
   {
-    "name": "Pidgeotto",
+    "name": "PIDGEOTTO",
     "ind": 150,
     "pokedex": 16,
     "growthRate": 3,
@@ -7917,7 +8066,7 @@
     ],
     "initial": [
       "GUST",
-      "SAND_ATTACK"
+      "SAND ATTACK"
     ],
     "tmHm": [
       2,
@@ -7938,10 +8087,11 @@
     ],
     "type1": "NORMAL",
     "type2": "FLYING",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Pidgeotto"
   },
   {
-    "name": "Pidgeot",
+    "name": "PIDGEOT",
     "ind": 151,
     "pokedex": 17,
     "growthRate": 3,
@@ -7979,8 +8129,8 @@
     ],
     "initial": [
       "GUST",
-      "SAND_ATTACK",
-      "QUICK_ATTACK"
+      "SAND ATTACK",
+      "QUICK ATTACK"
     ],
     "tmHm": [
       2,
@@ -8002,10 +8152,11 @@
     ],
     "type1": "NORMAL",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Pidgeot"
   },
   {
-    "name": "Starmie",
+    "name": "STARMIE",
     "ind": 152,
     "pokedex": 120,
     "growthRate": 5,
@@ -8017,7 +8168,7 @@
     "baseExpYield": 207,
     "initial": [
       "TACKLE",
-      "WATER_GUN",
+      "WATER GUN",
       "HARDEN"
     ],
     "tmHm": [
@@ -8050,10 +8201,11 @@
     ],
     "type1": "WATER",
     "type2": "PSYCHIC",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Starmie"
   },
   {
-    "name": "Bulbasaur",
+    "name": "BULBASAUR",
     "ind": 153,
     "pokedex": 0,
     "growthRate": 3,
@@ -8078,7 +8230,7 @@
       },
       {
         "level": 20,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 27,
@@ -8094,7 +8246,7 @@
       },
       {
         "level": 48,
-        "move": "SOLARBEAM"
+        "move": "SOLAR BEAM"
       }
     ],
     "initial": [
@@ -8120,10 +8272,11 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Bulbasaur"
   },
   {
-    "name": "Venusaur",
+    "name": "VENUSAUR",
     "ind": 154,
     "pokedex": 2,
     "growthRate": 3,
@@ -8144,7 +8297,7 @@
       },
       {
         "level": 22,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 30,
@@ -8160,14 +8313,14 @@
       },
       {
         "level": 65,
-        "move": "SOLARBEAM"
+        "move": "SOLAR BEAM"
       }
     ],
     "initial": [
       "TACKLE",
       "GROWL",
-      "LEECH_SEED",
-      "VINE_WHIP"
+      "LEECH SEED",
+      "VINE WHIP"
     ],
     "tmHm": [
       3,
@@ -8189,10 +8342,11 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Venusaur"
   },
   {
-    "name": "Tentacruel",
+    "name": "TENTACRUEL",
     "ind": 155,
     "pokedex": 72,
     "growthRate": 5,
@@ -8265,15 +8419,17 @@
     ],
     "type1": "WATER",
     "type2": "POISON",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Tentacruel"
   },
   {
-    "name": "Missing9C",
+    "name": "MISSING9C",
     "ind": 156,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing9C"
   },
   {
-    "name": "Goldeen",
+    "name": "GOLDEEN",
     "ind": 157,
     "pokedex": 117,
     "growthRate": 0,
@@ -8315,7 +8471,7 @@
     ],
     "initial": [
       "PECK",
-      "TAIL_WHIP"
+      "TAIL WHIP"
     ],
     "tmHm": [
       6,
@@ -8338,10 +8494,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 225
+    "catchRate": 225,
+    "readable": "Goldeen"
   },
   {
-    "name": "Seaking",
+    "name": "SEAKING",
     "ind": 158,
     "pokedex": 118,
     "growthRate": 0,
@@ -8379,7 +8536,7 @@
     ],
     "initial": [
       "PECK",
-      "TAIL_WHIP",
+      "TAIL WHIP",
       "SUPERSONIC"
     ],
     "tmHm": [
@@ -8404,30 +8561,35 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Seaking"
   },
   {
-    "name": "Missing9F",
+    "name": "MISSING9F",
     "ind": 159,
-    "glitch": true
+    "glitch": true,
+    "readable": "Missing9F"
   },
   {
-    "name": "MissingA0",
+    "name": "MISSINGA0",
     "ind": 160,
-    "glitch": true
+    "glitch": true,
+    "readable": "MissingA0"
   },
   {
-    "name": "MissingA1",
+    "name": "MISSINGA1",
     "ind": 161,
-    "glitch": true
+    "glitch": true,
+    "readable": "MissingA1"
   },
   {
-    "name": "MissingA2",
+    "name": "MISSINGA2",
     "ind": 162,
-    "glitch": true
+    "glitch": true,
+    "readable": "MissingA2"
   },
   {
-    "name": "Ponyta",
+    "name": "PONYTA",
     "ind": 163,
     "pokedex": 76,
     "growthRate": 0,
@@ -8489,10 +8651,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Ponyta"
   },
   {
-    "name": "Rapidash",
+    "name": "RAPIDASH",
     "ind": 164,
     "pokedex": 77,
     "growthRate": 0,
@@ -8530,7 +8693,7 @@
     ],
     "initial": [
       "EMBER",
-      "TAIL_WHIP",
+      "TAIL WHIP",
       "STOMP",
       "GROWL"
     ],
@@ -8554,10 +8717,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 60
+    "catchRate": 60,
+    "readable": "Rapidash"
   },
   {
-    "name": "Rattata",
+    "name": "RATTATA",
     "ind": 165,
     "pokedex": 18,
     "growthRate": 0,
@@ -8591,7 +8755,7 @@
     ],
     "initial": [
       "TACKLE",
-      "TAIL_WHIP"
+      "TAIL WHIP"
     ],
     "tmHm": [
       6,
@@ -8615,10 +8779,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Rattata"
   },
   {
-    "name": "Raticate",
+    "name": "RATICATE",
     "ind": 166,
     "pokedex": 19,
     "growthRate": 0,
@@ -8648,8 +8813,8 @@
     ],
     "initial": [
       "TACKLE",
-      "TAIL_WHIP",
-      "QUICK_ATTACK"
+      "TAIL WHIP",
+      "QUICK ATTACK"
     ],
     "tmHm": [
       6,
@@ -8675,10 +8840,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 90
+    "catchRate": 90,
+    "readable": "Raticate"
   },
   {
-    "name": "Nidorino",
+    "name": "NIDORINO",
     "ind": 167,
     "pokedex": 32,
     "growthRate": 3,
@@ -8721,7 +8887,7 @@
     "initial": [
       "LEER",
       "TACKLE",
-      "HORN_ATTACK"
+      "HORN ATTACK"
     ],
     "tmHm": [
       6,
@@ -8746,10 +8912,11 @@
     ],
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Nidorino"
   },
   {
-    "name": "Nidorina",
+    "name": "NIDORINA",
     "ind": 168,
     "pokedex": 29,
     "growthRate": 3,
@@ -8817,10 +8984,11 @@
     ],
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Nidorina"
   },
   {
-    "name": "Geodude",
+    "name": "GEODUDE",
     "ind": 169,
     "pokedex": 73,
     "growthRate": 3,
@@ -8890,10 +9058,11 @@
     ],
     "type1": "ROCK",
     "type2": "GROUND",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Geodude"
   },
   {
-    "name": "Porygon",
+    "name": "PORYGON",
     "ind": 170,
     "pokedex": 136,
     "growthRate": 0,
@@ -8953,10 +9122,11 @@
     ],
     "type1": "NORMAL",
     "type2": "NORMAL",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Porygon"
   },
   {
-    "name": "Aerodactyl",
+    "name": "AERODACTYL",
     "ind": 171,
     "pokedex": 141,
     "growthRate": 5,
@@ -8985,7 +9155,7 @@
       }
     ],
     "initial": [
-      "WING_ATTACK",
+      "WING ATTACK",
       "AGILITY"
     ],
     "tmHm": [
@@ -9010,15 +9180,17 @@
     ],
     "type1": "ROCK",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Aerodactyl"
   },
   {
-    "name": "MissingAC",
+    "name": "MISSINGAC",
     "ind": 172,
-    "glitch": true
+    "glitch": true,
+    "readable": "MissingAC"
   },
   {
-    "name": "Magnemite",
+    "name": "MAGNEMITE",
     "ind": 173,
     "pokedex": 80,
     "growthRate": 0,
@@ -9081,20 +9253,23 @@
     ],
     "type1": "ELECTRIC",
     "type2": "ELECTRIC",
-    "catchRate": 190
+    "catchRate": 190,
+    "readable": "Magnemite"
   },
   {
-    "name": "MissingAE",
+    "name": "MISSINGAE",
     "ind": 174,
-    "glitch": true
+    "glitch": true,
+    "readable": "MissingAE"
   },
   {
-    "name": "MissingAF",
+    "name": "MISSINGAF",
     "ind": 175,
-    "glitch": true
+    "glitch": true,
+    "readable": "MissingAF"
   },
   {
-    "name": "Charmander",
+    "name": "CHARMANDER",
     "ind": 176,
     "pokedex": 3,
     "growthRate": 3,
@@ -9166,10 +9341,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Charmander"
   },
   {
-    "name": "Squirtle",
+    "name": "SQUIRTLE",
     "ind": 177,
     "pokedex": 6,
     "growthRate": 3,
@@ -9211,7 +9387,7 @@
     ],
     "initial": [
       "TACKLE",
-      "TAIL_WHIP"
+      "TAIL WHIP"
     ],
     "tmHm": [
       1,
@@ -9241,10 +9417,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Squirtle"
   },
   {
-    "name": "Charmeleon",
+    "name": "CHARMELEON",
     "ind": 178,
     "pokedex": 4,
     "growthRate": 3,
@@ -9317,10 +9494,11 @@
     ],
     "type1": "FIRE",
     "type2": "FIRE",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Charmeleon"
   },
   {
-    "name": "Wartortle",
+    "name": "WARTORTLE",
     "ind": 179,
     "pokedex": 7,
     "growthRate": 3,
@@ -9362,7 +9540,7 @@
     ],
     "initial": [
       "TACKLE",
-      "TAIL_WHIP",
+      "TAIL WHIP",
       "BUBBLE"
     ],
     "tmHm": [
@@ -9393,10 +9571,11 @@
     ],
     "type1": "WATER",
     "type2": "WATER",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Wartortle"
   },
   {
-    "name": "Charizard",
+    "name": "CHARIZARD",
     "ind": 180,
     "pokedex": 5,
     "growthRate": 3,
@@ -9469,30 +9648,35 @@
     ],
     "type1": "FIRE",
     "type2": "FLYING",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Charizard"
   },
   {
-    "name": "MissingB5",
+    "name": "MISSINGB5",
     "ind": 181,
-    "glitch": true
+    "glitch": true,
+    "readable": "MissingB5"
   },
   {
-    "name": "_Kabutops",
+    "name": "_KABUTOPS",
     "ind": 182,
-    "glitch": true
+    "glitch": true,
+    "readable": "_Kabutops"
   },
   {
-    "name": "_Aerodacty",
+    "name": "_AERODACTY",
     "ind": 183,
-    "glitch": true
+    "glitch": true,
+    "readable": "_Aerodacty"
   },
   {
-    "name": "Ghost",
+    "name": "GHOST",
     "ind": 184,
-    "glitch": true
+    "glitch": true,
+    "readable": "Ghost"
   },
   {
-    "name": "Oddish",
+    "name": "ODDISH",
     "ind": 185,
     "pokedex": 42,
     "growthRate": 3,
@@ -9509,7 +9693,7 @@
     "moves": [
       {
         "level": 15,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 17,
@@ -9529,7 +9713,7 @@
       },
       {
         "level": 46,
-        "move": "SOLARBEAM"
+        "move": "SOLAR BEAM"
       }
     ],
     "initial": [
@@ -9553,10 +9737,11 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Oddish"
   },
   {
-    "name": "Gloom",
+    "name": "GLOOM",
     "ind": 186,
     "pokedex": 43,
     "growthRate": 3,
@@ -9573,7 +9758,7 @@
     "moves": [
       {
         "level": 15,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 17,
@@ -9593,13 +9778,13 @@
       },
       {
         "level": 52,
-        "move": "SOLARBEAM"
+        "move": "SOLAR BEAM"
       }
     ],
     "initial": [
       "ABSORB",
-      "POISONPOWDER",
-      "STUN_SPORE"
+      "POISON POWDER",
+      "STUN SPORE"
     ],
     "tmHm": [
       3,
@@ -9619,10 +9804,11 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Gloom"
   },
   {
-    "name": "Vileplume",
+    "name": "VILEPLUME",
     "ind": 187,
     "pokedex": 44,
     "growthRate": 3,
@@ -9635,7 +9821,7 @@
     "moves": [
       {
         "level": 15,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 17,
@@ -9647,10 +9833,10 @@
       }
     ],
     "initial": [
-      "STUN_SPORE",
-      "SLEEP_POWDER",
+      "STUN SPORE",
+      "SLEEP POWDER",
       "ACID",
-      "PETAL_DANCE"
+      "PETAL DANCE"
     ],
     "tmHm": [
       3,
@@ -9672,10 +9858,11 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Vileplume"
   },
   {
-    "name": "Bellsprout",
+    "name": "BELLSPROUT",
     "ind": 188,
     "pokedex": 68,
     "growthRate": 3,
@@ -9696,7 +9883,7 @@
       },
       {
         "level": 15,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 18,
@@ -9720,7 +9907,7 @@
       }
     ],
     "initial": [
-      "VINE_WHIP",
+      "VINE WHIP",
       "GROWTH"
     ],
     "tmHm": [
@@ -9741,10 +9928,11 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 255
+    "catchRate": 255,
+    "readable": "Bellsprout"
   },
   {
-    "name": "Weepinbell",
+    "name": "WEEPINBELL",
     "ind": 189,
     "pokedex": 69,
     "growthRate": 3,
@@ -9765,7 +9953,7 @@
       },
       {
         "level": 15,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 18,
@@ -9789,7 +9977,7 @@
       }
     ],
     "initial": [
-      "VINE_WHIP",
+      "VINE WHIP",
       "GROWTH",
       "WRAP"
     ],
@@ -9811,10 +9999,11 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 120
+    "catchRate": 120,
+    "readable": "Weepinbell"
   },
   {
-    "name": "Victreebel",
+    "name": "VICTREEBEL",
     "ind": 190,
     "pokedex": 70,
     "growthRate": 3,
@@ -9831,7 +10020,7 @@
       },
       {
         "level": 15,
-        "move": "POISONPOWDER"
+        "move": "POISON POWDER"
       },
       {
         "level": 18,
@@ -9839,10 +10028,10 @@
       }
     ],
     "initial": [
-      "SLEEP_POWDER",
-      "STUN_SPORE",
+      "SLEEP POWDER",
+      "STUN SPORE",
       "ACID",
-      "RAZOR_LEAF"
+      "RAZOR LEAF"
     ],
     "tmHm": [
       3,
@@ -9864,6 +10053,7 @@
     ],
     "type1": "GRASS",
     "type2": "POISON",
-    "catchRate": 45
+    "catchRate": 45,
+    "readable": "Victreebel"
   }
 ]

@@ -108,6 +108,7 @@ void index()
   Maps::index();
   Missables::index();
   Moves::index();
+  Pokemon::index();
 }
 
 // Performs program one-time bootstrapping and setup
