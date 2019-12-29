@@ -28,6 +28,7 @@ SOURCES += \
   src/data/missables.cpp \
   src/data/moves.cpp \
   src/data/names.cpp \
+  src/data/pokemon.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
 
@@ -75,7 +76,8 @@ HEADERS += \
   src/data/maps.h \
   src/data/missables.h \
   src/data/moves.h \
-  src/data/names.h
+  src/data/names.h \
+  src/data/pokemon.h
 
 # FORMS += \
 #    src/old/view/mainwindow.ui

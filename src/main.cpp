@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QtQuickControls2>
 
-#include "./data/names.h"
+#include "./data/pokemon.h"
 //#include "./view/mainwindow.h"
 //#include "./data/gamedata.h"
 
@@ -36,10 +36,9 @@ int main(int argc, char *argv[])
 //    QJsonValue tmpObj = (*tmp)[2];
 //    QString tmpName = tmpObj["title"].toString();
 
-    Names::load();
-    QString name1 = Names::randomName();
-    QString name2 = Names::randomName();
-    QString name3 = Names::randomName();
+    Pokemon::load();
+    auto eevee = Pokemon::pokemon->at(101);
+    auto eeveeMove1 = Pokemon::pokemon->at(101)->moves->at(1);
 
     //auto tmp2 = EventPokemon::eventPokemon->at(0);
 

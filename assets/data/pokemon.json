@@ -165,7 +165,7 @@
     "baseExpYield": 60,
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": "235",
+    "catchRate": 235,
     "evolution": {
       "level": 16,
       "toName": "NIDORINO"
@@ -962,7 +962,7 @@
     "baseExpYield": 59,
     "type1": "POISON",
     "type2": "POISON",
-    "catchRate": "235",
+    "catchRate": 235,
     "evolution": {
       "level": 16,
       "toName": "NIDORINA"
@@ -2675,7 +2675,7 @@
     "baseExpYield": 136,
     "type1": "PSYCHIC",
     "type2": "PSYCHIC",
-    "catchRate": "45",
+    "catchRate": 45,
     "moves": [
       {
         "level": 15,

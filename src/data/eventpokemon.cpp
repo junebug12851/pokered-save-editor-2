@@ -79,18 +79,18 @@ void EventPokemon::load()
       //                   Atk, Def, Spd, Sp
       auto dvVal = eventPokemonEntry["dv"].toString();
       if(dvVal == "max") {
-        (*entry->dv)->append(15);
-        (*entry->dv)->append(15);
-        (*entry->dv)->append(15);
-        (*entry->dv)->append(15);
+        entry->dv->append(15);
+        entry->dv->append(15);
+        entry->dv->append(15);
+        entry->dv->append(15);
       }
       else
       {
         auto dvValParts = dvVal.split(":", QString::SkipEmptyParts);
-        (*entry->dv)->append(dvValParts[0].toInt(nullptr, 10));
-        (*entry->dv)->append(dvValParts[1].toInt(nullptr, 10));
-        (*entry->dv)->append(dvValParts[2].toInt(nullptr, 10));
-        (*entry->dv)->append(dvValParts[3].toInt(nullptr, 10));
+        entry->dv->append(dvValParts[0].toInt(nullptr, 10));
+        entry->dv->append(dvValParts[1].toInt(nullptr, 10));
+        entry->dv->append(dvValParts[2].toInt(nullptr, 10));
+        entry->dv->append(dvValParts[3].toInt(nullptr, 10));
       }
     }
 

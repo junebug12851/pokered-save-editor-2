@@ -21,6 +21,7 @@
 MoveEntry::MoveEntry()
 {
   glitch = false;
+  type = "";
 }
 
 void Moves::load()

@@ -27,7 +27,7 @@
 
 // Optional
 using OtId =   std::optional<var16>;
-using DV =     std::optional<QVector<var8>*>;
+using DV =     QVector<var8>*;
 using Level =  std::optional<var8>;
 
 struct EventPokemonEntry {
