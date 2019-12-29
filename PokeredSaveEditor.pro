@@ -21,6 +21,7 @@ SOURCES += \
   src/data/fly.cpp \
   src/data/fonts.cpp \
   src/data/gamedata.cpp \
+  src/data/hiddenCoins.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
 
@@ -50,6 +51,7 @@ HEADERS += \
   src/data/fly.h \
   src/data/fonts.h \
   src/data/gamedata.h \
+  src/data/hiddenCoins.h \
   src/data/lists/city_list.h \
   src/data/lists/font_list.h \
   src/data/lists/item_list.h \
