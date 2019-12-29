@@ -29,6 +29,7 @@ SOURCES += \
   src/data/moves.cpp \
   src/data/names.cpp \
   src/data/pokemon.cpp \
+  src/data/scripts.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
 
