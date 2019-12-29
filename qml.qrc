@@ -17,13 +17,12 @@
         <file>assets/data/randomPkmn.json</file>
         <file>assets/data/scripts.json</file>
         <file>assets/data/sprites.json</file>
-        <file>assets/data/text.json</file>
+        <file>assets/data/font.json</file>
         <file>assets/data/tileset-data.json</file>
         <file>assets/data/tmHm.json</file>
         <file>assets/data/trades.json</file>
         <file>assets/data/trainers.json</file>
         <file>assets/data/types.json</file>
-        <file>assets/data/world-scripts.json</file>
         <file>assets/icons/128x128.png</file>
         <file>assets/icons/16x16.png</file>
         <file>assets/icons/24x24.png</file>
@@ -69,25 +68,5 @@
         <file>assets/pokered-font/pic-tilesets/underground.png</file>
         <file>assets/splash/DMGSplash.png</file>
         <file>assets/splash/DMGSplash.xcf</file>
-        <file>src.js/data/app.js</file>
-        <file>libs/lodash.js</file>
-        <file>src.js/data/pokemonDB.js</file>
-        <file>src.js/data/text.js</file>
-        <file>src.js/data/textSearch.js</file>
-        <file>src.js/data/savefile-expanded/fragments/HoFPokemon.js</file>
-        <file>src.js/data/savefile.js</file>
-        <file>src.js/data/savefile-expanded/SaveFileExpanded.js</file>
-        <file>src.js/data/savefile-expanded/SaveFileIterator.js</file>
-        <file>src.js/data/savefile-expanded/fragments/HoFRecord.js</file>
-        <file>src.js/data/savefile-expanded/fragments/MapConnData.js</file>
-        <file>src.js/data/savefile-expanded/fragments/PokemonBox.js</file>
-        <file>src.js/data/savefile-expanded/fragments/PokemonParty.js</file>
-        <file>src.js/data/savefile-expanded/fragments/SignData.js</file>
-        <file>src.js/data/savefile-expanded/fragments/SpriteData.js</file>
-        <file>src.js/data/savefile-expanded/fragments/WarpData.js</file>
-        <file>src.js/data/savefile-expanded/sections/Daycare.js</file>
-        <file>src.js/data/savefile-expanded/sections/HoF.js</file>
-        <file>src.js/data/savefile-expanded/sections/Rival.js</file>
-        <file>src.js/data/savefile-expanded/sections/Storage.js</file>
     </qresource>
 </RCC>

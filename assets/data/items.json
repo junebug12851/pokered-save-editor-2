@@ -1,899 +1,719 @@
 [
-    {
-        "name": "Master Ball",
-        "ind": 1,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Ultra Ball",
-        "ind": 2,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Great Ball",
-        "ind": 3,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Poke Ball",
-        "ind": 4,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Town Map",
-        "ind": 5,
-        "normal": true
-    },
-    {
-        "name": "Bicycle",
-        "ind": 6,
-        "normal": true
-    },
-    {
-        "name": "Surfboard",
-        "ind": 7
-    },
-    {
-        "name": "Safari Ball",
-        "ind": 8
-    },
-    {
-        "name": "Pokedex",
-        "ind": 9
-    },
-    {
-        "name": "Moon Stone",
-        "ind": 10,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Antidote",
-        "ind": 11,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Burn Heal",
-        "ind": 12,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Ice Heal",
-        "ind": 13,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Awakening",
-        "ind": 14,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Parlyz Heal",
-        "ind": 15,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Full Restore",
-        "ind": 16,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Max Potion",
-        "ind": 17,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Hyper Potion",
-        "ind": 18,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Super Potion",
-        "ind": 19,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Potion",
-        "ind": 20,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Boulder Badge",
-        "ind": 21
-    },
-    {
-        "name": "Cascade Badge",
-        "ind": 22
-    },
-    {
-        "name": "Thunder Badge",
-        "ind": 23
-    },
-    {
-        "name": "Rainbow Badge",
-        "ind": 24
-    },
-    {
-        "name": "Soul Badge",
-        "ind": 25
-    },
-    {
-        "name": "Marsh Badge",
-        "ind": 26
-    },
-    {
-        "name": "Volcano Badge",
-        "ind": 27
-    },
-    {
-        "name": "Earth Badge",
-        "ind": 28
-    },
-    {
-        "name": "Escape Rope",
-        "ind": 29,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Repel",
-        "ind": 30,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Old Amber",
-        "ind": 31,
-        "normal": true
-    },
-    {
-        "name": "Fire Stone",
-        "ind": 32,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Thunder Stone",
-        "ind": 33,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Water Stone",
-        "ind": 34,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "HP Up",
-        "ind": 35,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Protein",
-        "ind": 36,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Iron",
-        "ind": 37,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Carbos",
-        "ind": 38,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Calcium",
-        "ind": 39,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Rare Candy",
-        "ind": 40,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Dome Fossil",
-        "ind": 41,
-        "normal": true
-    },
-    {
-        "name": "Helix Fossil",
-        "ind": 42,
-        "normal": true
-    },
-    {
-        "name": "Secret Key",
-        "ind": 43,
-        "normal": true
-    },
-    {
-        "name": "Unused Item",
-        "ind": 44
-    },
-    {
-        "name": "Bike Voucher",
-        "ind": 45,
-        "normal": true
-    },
-    {
-        "name": "X Accuracy",
-        "ind": 46,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Leaf Stone",
-        "ind": 47,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Card Key",
-        "ind": 48,
-        "normal": true
-    },
-    {
-        "name": "Nugget",
-        "ind": 49,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "PP Up 2",
-        "ind": 50,
-        "normal": true
-    },
-    {
-        "name": "Poke Doll",
-        "ind": 51,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Full Heal",
-        "ind": 52,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Revive",
-        "ind": 53,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Max Revive",
-        "ind": 54,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Guard Spec",
-        "ind": 55,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Super Repel",
-        "ind": 56,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Max Repel",
-        "ind": 57,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Dire Hit",
-        "ind": 58,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Coin",
-        "ind": 59
-    },
-    {
-        "name": "Fresh Water",
-        "ind": 60,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Soda Pop",
-        "ind": 61,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Lemonade",
-        "ind": 62,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "S.S. Ticket",
-        "ind": 63,
-        "normal": true
-    },
-    {
-        "name": "Gold Teeth",
-        "ind": 64,
-        "normal": true
-    },
-    {
-        "name": "X Attack",
-        "ind": 65,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "X Defend",
-        "ind": 66,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "X Speed",
-        "ind": 67,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "X Special",
-        "ind": 68,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Coin Case",
-        "ind": 69,
-        "normal": true
-    },
-    {
-        "name": "Oaks Parcel",
-        "ind": 70,
-        "normal": true
-    },
-    {
-        "name": "Item Finder",
-        "ind": 71,
-        "normal": true
-    },
-    {
-        "name": "Silph Scope",
-        "ind": 72,
-        "normal": true
-    },
-    {
-        "name": "Poke Flute",
-        "ind": 73,
-        "normal": true
-    },
-    {
-        "name": "Lift Key",
-        "ind": 74,
-        "normal": true
-    },
-    {
-        "name": "Exp All",
-        "ind": 75,
-        "normal": true
-    },
-    {
-        "name": "Old Rod",
-        "ind": 76,
-        "normal": true
-    },
-    {
-        "name": "Good Rod",
-        "ind": 77,
-        "normal": true
-    },
-    {
-        "name": "Super Rod",
-        "ind": 78,
-        "normal": true
-    },
-    {
-        "name": "PP Up",
-        "ind": 79,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Ether",
-        "ind": 80,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Max Ether",
-        "ind": 81,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Elixer",
-        "ind": 82,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Max Elixer",
-        "ind": 83,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "Floor B2F",
-        "ind": 84
-    },
-    {
-        "name": "Floor B1F",
-        "ind": 85
-    },
-    {
-        "name": "Floor 1F",
-        "ind": 86
-    },
-    {
-        "name": "Floor 2F",
-        "ind": 87
-    },
-    {
-        "name": "Floor 3F",
-        "ind": 88
-    },
-    {
-        "name": "Floor 4F",
-        "ind": 89
-    },
-    {
-        "name": "Floor 5F",
-        "ind": 90
-    },
-    {
-        "name": "Floor 6F",
-        "ind": 91
-    },
-    {
-        "name": "Floor 7F",
-        "ind": 92
-    },
-    {
-        "name": "Floor 8F",
-        "ind": 93
-    },
-    {
-        "name": "Floor 9F",
-        "ind": 94
-    },
-    {
-        "name": "Floor 10F",
-        "ind": 95
-    },
-    {
-        "name": "Floor 11F",
-        "ind": 96
-    },
-    {
-        "name": "Floor B4F",
-        "ind": 97
-    },
-    {
-        "name": "HM 01: Cut",
-        "ind": 196,
-        "normal": true,
-        "typical": true,
-        "tm": 51,
-        "hm": 1
-    },
-    {
-        "name": "HM 02: Fly",
-        "ind": 197,
-        "normal": true,
-        "typical": true,
-        "tm": 52,
-        "hm": 2
-    },
-    {
-        "name": "HM 03: Surf",
-        "ind": 198,
-        "normal": true,
-        "typical": true,
-        "tm": 53,
-        "hm": 3
-    },
-    {
-        "name": "HM 04: Strength",
-        "ind": 199,
-        "normal": true,
-        "typical": true,
-        "tm": 54,
-        "hm": 4
-    },
-    {
-        "name": "HM 05: Flash",
-        "ind": 200,
-        "normal": true,
-        "typical": true,
-        "tm": 55,
-        "hm": 5
-    },
-    {
-        "name": "TM 01: Mega Punch",
-        "tm": 1,
-        "ind": 201,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 02: Razor Wind",
-        "ind": 202,
-        "tm": 2,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 03: Swords Dance",
-        "ind": 203,
-        "tm": 3,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 04: Whirlwind",
-        "ind": 204,
-        "tm": 4,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 05: Mega Kick",
-        "ind": 205,
-        "tm": 5,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 06: Toxic",
-        "ind": 206,
-        "tm": 6,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 07: Horn Drill",
-        "ind": 207,
-        "tm": 7,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 08: Body Slam",
-        "ind": 208,
-        "tm": 8,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 09: Take Down",
-        "ind": 209,
-        "tm": 9,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 10: Double Edge",
-        "ind": 210,
-        "tm": 10,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 11: Bubblebeam",
-        "ind": 211,
-        "tm": 11,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 12: Water Gun",
-        "ind": 212,
-        "tm": 12,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 13: Ice Beam",
-        "ind": 213,
-        "tm": 13,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 14: Blizzard",
-        "ind": 214,
-        "tm": 14,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 15: Hyper Beam",
-        "ind": 215,
-        "tm": 15,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 16: Pay Day",
-        "ind": 216,
-        "tm": 16,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 17: Submission",
-        "ind": 217,
-        "tm": 17,
-        "normal": true,
-        "typical": true
-    },
-    {
-        "name": "TM 18: Counter",
-        "ind": 218,
-        "normal": true,
-        "typical": true,
-        "tm": 18
-    },
-    {
-        "name": "TM 19: Seismic Toss",
-        "ind": 219,
-        "normal": true,
-        "typical": true,
-        "tm": 19
-    },
-    {
-        "name": "TM 20: Rage",
-        "ind": 220,
-        "normal": true,
-        "typical": true,
-        "tm": 20
-    },
-    {
-        "name": "TM 21: Mega Drain",
-        "ind": 221,
-        "normal": true,
-        "typical": true,
-        "tm": 21
-    },
-    {
-        "name": "TM 22: Solarbeam",
-        "ind": 222,
-        "normal": true,
-        "typical": true,
-        "tm": 22
-    },
-    {
-        "name": "TM 23: Dragon Rage",
-        "ind": 223,
-        "normal": true,
-        "typical": true,
-        "tm": 23
-    },
-    {
-        "name": "TM 24: Thunderbolt",
-        "ind": 224,
-        "normal": true,
-        "typical": true,
-        "tm": 24
-    },
-    {
-        "name": "TM 25: Thunder",
-        "ind": 225,
-        "normal": true,
-        "typical": true,
-        "tm": 25
-    },
-    {
-        "name": "TM 26: Earthquake",
-        "ind": 226,
-        "normal": true,
-        "typical": true,
-        "tm": 26
-    },
-    {
-        "name": "TM 27: Fissure",
-        "ind": 227,
-        "normal": true,
-        "typical": true,
-        "tm": 27
-    },
-    {
-        "name": "TM 28: Dig",
-        "ind": 228,
-        "normal": true,
-        "typical": true,
-        "tm": 28
-    },
-    {
-        "name": "TM 29: Psychic",
-        "ind": 229,
-        "normal": true,
-        "typical": true,
-        "tm": 29
-    },
-    {
-        "name": "TM 30: Teleport",
-        "ind": 230,
-        "normal": true,
-        "typical": true,
-        "tm": 30
-    },
-    {
-        "name": "TM 31: Mimic",
-        "ind": 231,
-        "normal": true,
-        "typical": true,
-        "tm": 31
-    },
-    {
-        "name": "TM 32: Double Team",
-        "ind": 232,
-        "normal": true,
-        "typical": true,
-        "tm": 32
-    },
-    {
-        "name": "TM 33: Reflect",
-        "ind": 233,
-        "normal": true,
-        "typical": true,
-        "tm": 33
-    },
-    {
-        "name": "TM 34: Bide",
-        "ind": 234,
-        "normal": true,
-        "typical": true,
-        "tm": 34
-    },
-    {
-        "name": "TM 35: Metronome",
-        "ind": 235,
-        "normal": true,
-        "typical": true,
-        "tm": 35
-    },
-    {
-        "name": "TM 36: Selfdestruct",
-        "ind": 236,
-        "normal": true,
-        "typical": true,
-        "tm": 36
-    },
-    {
-        "name": "TM 37: Egg Bomb",
-        "ind": 237,
-        "normal": true,
-        "typical": true,
-        "tm": 37
-    },
-    {
-        "name": "TM 38: Fireblast",
-        "ind": 238,
-        "normal": true,
-        "typical": true,
-        "tm": 38
-    },
-    {
-        "name": "TM 39: Swift",
-        "ind": 239,
-        "normal": true,
-        "typical": true,
-        "tm": 39
-    },
-    {
-        "name": "TM 40: Skullbash",
-        "ind": 240,
-        "normal": true,
-        "typical": true,
-        "tm": 40
-    },
-    {
-        "name": "TM 41: Softboiled",
-        "ind": 241,
-        "normal": true,
-        "typical": true,
-        "tm": 41
-    },
-    {
-        "name": "TM 42: Dream Eater",
-        "ind": 242,
-        "normal": true,
-        "typical": true,
-        "tm": 42
-    },
-    {
-        "name": "TM 43: Sky Attack",
-        "ind": 243,
-        "normal": true,
-        "typical": true,
-        "tm": 43
-    },
-    {
-        "name": "TM 44: Rest",
-        "ind": 244,
-        "normal": true,
-        "typical": true,
-        "tm": 44
-    },
-    {
-        "name": "TM 45: Thunder Wave",
-        "ind": 245,
-        "normal": true,
-        "typical": true,
-        "tm": 45
-    },
-    {
-        "name": "TM 46: Psywave",
-        "ind": 246,
-        "normal": true,
-        "typical": true,
-        "tm": 46
-    },
-    {
-        "name": "TM 47: Explosion",
-        "ind": 247,
-        "normal": true,
-        "typical": true,
-        "tm": 47
-    },
-    {
-        "name": "TM 48: Rock Slide",
-        "ind": 248,
-        "normal": true,
-        "typical": true,
-        "tm": 48
-    },
-    {
-        "name": "TM 49: Tri Attack",
-        "ind": 249,
-        "normal": true,
-        "typical": true,
-        "tm": 49
-    },
-    {
-        "name": "TM 50: Substitute",
-        "ind": 250,
-        "normal": true,
-        "typical": true,
-        "tm": 50
-    }
+  {
+    "name": "Master Ball",
+    "ind": 1,
+    "once": true
+  },
+  {
+    "name": "Ultra Ball",
+    "ind": 2
+  },
+  {
+    "name": "Great Ball",
+    "ind": 3
+  },
+  {
+    "name": "Poke Ball",
+    "ind": 4
+  },
+  {
+    "name": "Town Map",
+    "ind": 5,
+    "once": true
+  },
+  {
+    "name": "Bicycle",
+    "ind": 6,
+    "once": true
+  },
+  {
+    "name": "Surfboard",
+    "ind": 7,
+    "glitch": true
+  },
+  {
+    "name": "Safari Ball",
+    "ind": 8,
+    "glitch": true
+  },
+  {
+    "name": "Pokedex",
+    "ind": 9,
+    "glitch": true
+  },
+  {
+    "name": "Moon Stone",
+    "ind": 10
+  },
+  {
+    "name": "Antidote",
+    "ind": 11
+  },
+  {
+    "name": "Burn Heal",
+    "ind": 12
+  },
+  {
+    "name": "Ice Heal",
+    "ind": 13
+  },
+  {
+    "name": "Awakening",
+    "ind": 14
+  },
+  {
+    "name": "Parlyz Heal",
+    "ind": 15
+  },
+  {
+    "name": "Full Restore",
+    "ind": 16
+  },
+  {
+    "name": "Max Potion",
+    "ind": 17
+  },
+  {
+    "name": "Hyper Potion",
+    "ind": 18
+  },
+  {
+    "name": "Super Potion",
+    "ind": 19
+  },
+  {
+    "name": "Potion",
+    "ind": 20
+  },
+  {
+    "name": "Boulder Badge",
+    "ind": 21,
+    "glitch": true
+  },
+  {
+    "name": "Cascade Badge",
+    "ind": 22,
+    "glitch": true
+  },
+  {
+    "name": "Thunder Badge",
+    "ind": 23,
+    "glitch": true
+  },
+  {
+    "name": "Rainbow Badge",
+    "ind": 24,
+    "glitch": true
+  },
+  {
+    "name": "Soul Badge",
+    "ind": 25,
+    "glitch": true
+  },
+  {
+    "name": "Marsh Badge",
+    "ind": 26,
+    "glitch": true
+  },
+  {
+    "name": "Volcano Badge",
+    "ind": 27,
+    "glitch": true
+  },
+  {
+    "name": "Earth Badge",
+    "ind": 28,
+    "glitch": true
+  },
+  {
+    "name": "Escape Rope",
+    "ind": 29
+  },
+  {
+    "name": "Repel",
+    "ind": 30
+  },
+  {
+    "name": "Old Amber",
+    "ind": 31,
+    "once": true
+  },
+  {
+    "name": "Fire Stone",
+    "ind": 32
+  },
+  {
+    "name": "Thunder Stone",
+    "ind": 33
+  },
+  {
+    "name": "Water Stone",
+    "ind": 34
+  },
+  {
+    "name": "HP Up",
+    "ind": 35
+  },
+  {
+    "name": "Protein",
+    "ind": 36
+  },
+  {
+    "name": "Iron",
+    "ind": 37
+  },
+  {
+    "name": "Carbos",
+    "ind": 38
+  },
+  {
+    "name": "Calcium",
+    "ind": 39
+  },
+  {
+    "name": "Rare Candy",
+    "ind": 40
+  },
+  {
+    "name": "Dome Fossil",
+    "ind": 41,
+    "once": true
+  },
+  {
+    "name": "Helix Fossil",
+    "ind": 42,
+    "once": true
+  },
+  {
+    "name": "Secret Key",
+    "ind": 43,
+    "once": true
+  },
+  {
+    "name": "Unused Item",
+    "ind": 44,
+    "glitch": true
+  },
+  {
+    "name": "Bike Voucher",
+    "ind": 45,
+    "once": true
+  },
+  {
+    "name": "X Accuracy",
+    "ind": 46
+  },
+  {
+    "name": "Leaf Stone",
+    "ind": 47
+  },
+  {
+    "name": "Card Key",
+    "ind": 48,
+    "once": true
+  },
+  {
+    "name": "Nugget",
+    "ind": 49
+  },
+  {
+    "name": "PP Up 2",
+    "ind": 50,
+    "once": true
+  },
+  {
+    "name": "Poke Doll",
+    "ind": 51
+  },
+  {
+    "name": "Full Heal",
+    "ind": 52
+  },
+  {
+    "name": "Revive",
+    "ind": 53
+  },
+  {
+    "name": "Max Revive",
+    "ind": 54
+  },
+  {
+    "name": "Guard Spec",
+    "ind": 55
+  },
+  {
+    "name": "Super Repel",
+    "ind": 56
+  },
+  {
+    "name": "Max Repel",
+    "ind": 57
+  },
+  {
+    "name": "Dire Hit",
+    "ind": 58
+  },
+  {
+    "name": "Coin",
+    "ind": 59,
+    "glitch": true
+  },
+  {
+    "name": "Fresh Water",
+    "ind": 60
+  },
+  {
+    "name": "Soda Pop",
+    "ind": 61
+  },
+  {
+    "name": "Lemonade",
+    "ind": 62
+  },
+  {
+    "name": "S.S. Ticket",
+    "ind": 63,
+    "once": true
+  },
+  {
+    "name": "Gold Teeth",
+    "ind": 64,
+    "once": true
+  },
+  {
+    "name": "X Attack",
+    "ind": 65
+  },
+  {
+    "name": "X Defend",
+    "ind": 66
+  },
+  {
+    "name": "X Speed",
+    "ind": 67
+  },
+  {
+    "name": "X Special",
+    "ind": 68
+  },
+  {
+    "name": "Coin Case",
+    "ind": 69,
+    "once": true
+  },
+  {
+    "name": "Oaks Parcel",
+    "ind": 70,
+    "once": true
+  },
+  {
+    "name": "Item Finder",
+    "ind": 71,
+    "once": true
+  },
+  {
+    "name": "Silph Scope",
+    "ind": 72,
+    "once": true
+  },
+  {
+    "name": "Poke Flute",
+    "ind": 73,
+    "once": true
+  },
+  {
+    "name": "Lift Key",
+    "ind": 74,
+    "once": true
+  },
+  {
+    "name": "Exp All",
+    "ind": 75,
+    "once": true
+  },
+  {
+    "name": "Old Rod",
+    "ind": 76,
+    "once": true
+  },
+  {
+    "name": "Good Rod",
+    "ind": 77,
+    "once": true
+  },
+  {
+    "name": "Super Rod",
+    "ind": 78,
+    "once": true
+  },
+  {
+    "name": "PP Up",
+    "ind": 79
+  },
+  {
+    "name": "Ether",
+    "ind": 80
+  },
+  {
+    "name": "Max Ether",
+    "ind": 81
+  },
+  {
+    "name": "Elixer",
+    "ind": 82
+  },
+  {
+    "name": "Max Elixer",
+    "ind": 83
+  },
+  {
+    "name": "Floor B2F",
+    "ind": 84,
+    "glitch": true
+  },
+  {
+    "name": "Floor B1F",
+    "ind": 85,
+    "glitch": true
+  },
+  {
+    "name": "Floor 1F",
+    "ind": 86,
+    "glitch": true
+  },
+  {
+    "name": "Floor 2F",
+    "ind": 87,
+    "glitch": true
+  },
+  {
+    "name": "Floor 3F",
+    "ind": 88,
+    "glitch": true
+  },
+  {
+    "name": "Floor 4F",
+    "ind": 89,
+    "glitch": true
+  },
+  {
+    "name": "Floor 5F",
+    "ind": 90,
+    "glitch": true
+  },
+  {
+    "name": "Floor 6F",
+    "ind": 91,
+    "glitch": true
+  },
+  {
+    "name": "Floor 7F",
+    "ind": 92,
+    "glitch": true
+  },
+  {
+    "name": "Floor 8F",
+    "ind": 93,
+    "glitch": true
+  },
+  {
+    "name": "Floor 9F",
+    "ind": 94,
+    "glitch": true
+  },
+  {
+    "name": "Floor 10F",
+    "ind": 95,
+    "glitch": true
+  },
+  {
+    "name": "Floor 11F",
+    "ind": 96,
+    "glitch": true
+  },
+  {
+    "name": "Floor B4F",
+    "ind": 97,
+    "glitch": true
+  },
+  {
+    "name": "HM 01: Cut",
+    "ind": 196,
+    "tm": 51,
+    "hm": 1
+  },
+  {
+    "name": "HM 02: Fly",
+    "ind": 197,
+    "tm": 52,
+    "hm": 2
+  },
+  {
+    "name": "HM 03: Surf",
+    "ind": 198,
+    "tm": 53,
+    "hm": 3
+  },
+  {
+    "name": "HM 04: Strength",
+    "ind": 199,
+    "tm": 54,
+    "hm": 4
+  },
+  {
+    "name": "HM 05: Flash",
+    "ind": 200,
+    "tm": 55,
+    "hm": 5
+  },
+  {
+    "name": "TM 01: Mega Punch",
+    "tm": 1,
+    "ind": 201
+  },
+  {
+    "name": "TM 02: Razor Wind",
+    "ind": 202,
+    "tm": 2
+  },
+  {
+    "name": "TM 03: Swords Dance",
+    "ind": 203,
+    "tm": 3
+  },
+  {
+    "name": "TM 04: Whirlwind",
+    "ind": 204,
+    "tm": 4
+  },
+  {
+    "name": "TM 05: Mega Kick",
+    "ind": 205,
+    "tm": 5
+  },
+  {
+    "name": "TM 06: Toxic",
+    "ind": 206,
+    "tm": 6
+  },
+  {
+    "name": "TM 07: Horn Drill",
+    "ind": 207,
+    "tm": 7
+  },
+  {
+    "name": "TM 08: Body Slam",
+    "ind": 208,
+    "tm": 8
+  },
+  {
+    "name": "TM 09: Take Down",
+    "ind": 209,
+    "tm": 9
+  },
+  {
+    "name": "TM 10: Double Edge",
+    "ind": 210,
+    "tm": 10
+  },
+  {
+    "name": "TM 11: Bubblebeam",
+    "ind": 211,
+    "tm": 11
+  },
+  {
+    "name": "TM 12: Water Gun",
+    "ind": 212,
+    "tm": 12
+  },
+  {
+    "name": "TM 13: Ice Beam",
+    "ind": 213,
+    "tm": 13
+  },
+  {
+    "name": "TM 14: Blizzard",
+    "ind": 214,
+    "tm": 14
+  },
+  {
+    "name": "TM 15: Hyper Beam",
+    "ind": 215,
+    "tm": 15
+  },
+  {
+    "name": "TM 16: Pay Day",
+    "ind": 216,
+    "tm": 16
+  },
+  {
+    "name": "TM 17: Submission",
+    "ind": 217,
+    "tm": 17
+  },
+  {
+    "name": "TM 18: Counter",
+    "ind": 218,
+    "tm": 18
+  },
+  {
+    "name": "TM 19: Seismic Toss",
+    "ind": 219,
+    "tm": 19
+  },
+  {
+    "name": "TM 20: Rage",
+    "ind": 220,
+    "tm": 20
+  },
+  {
+    "name": "TM 21: Mega Drain",
+    "ind": 221,
+    "tm": 21
+  },
+  {
+    "name": "TM 22: Solarbeam",
+    "ind": 222,
+    "tm": 22
+  },
+  {
+    "name": "TM 23: Dragon Rage",
+    "ind": 223,
+    "tm": 23
+  },
+  {
+    "name": "TM 24: Thunderbolt",
+    "ind": 224,
+    "tm": 24
+  },
+  {
+    "name": "TM 25: Thunder",
+    "ind": 225,
+    "tm": 25
+  },
+  {
+    "name": "TM 26: Earthquake",
+    "ind": 226,
+    "tm": 26
+  },
+  {
+    "name": "TM 27: Fissure",
+    "ind": 227,
+    "tm": 27
+  },
+  {
+    "name": "TM 28: Dig",
+    "ind": 228,
+    "tm": 28
+  },
+  {
+    "name": "TM 29: Psychic",
+    "ind": 229,
+    "tm": 29
+  },
+  {
+    "name": "TM 30: Teleport",
+    "ind": 230,
+    "tm": 30
+  },
+  {
+    "name": "TM 31: Mimic",
+    "ind": 231,
+    "tm": 31
+  },
+  {
+    "name": "TM 32: Double Team",
+    "ind": 232,
+    "tm": 32
+  },
+  {
+    "name": "TM 33: Reflect",
+    "ind": 233,
+    "tm": 33
+  },
+  {
+    "name": "TM 34: Bide",
+    "ind": 234,
+    "tm": 34
+  },
+  {
+    "name": "TM 35: Metronome",
+    "ind": 235,
+    "tm": 35
+  },
+  {
+    "name": "TM 36: Selfdestruct",
+    "ind": 236,
+    "tm": 36
+  },
+  {
+    "name": "TM 37: Egg Bomb",
+    "ind": 237,
+    "tm": 37
+  },
+  {
+    "name": "TM 38: Fireblast",
+    "ind": 238,
+    "tm": 38
+  },
+  {
+    "name": "TM 39: Swift",
+    "ind": 239,
+    "tm": 39
+  },
+  {
+    "name": "TM 40: Skullbash",
+    "ind": 240,
+    "tm": 40
+  },
+  {
+    "name": "TM 41: Softboiled",
+    "ind": 241,
+    "tm": 41
+  },
+  {
+    "name": "TM 42: Dream Eater",
+    "ind": 242,
+    "tm": 42
+  },
+  {
+    "name": "TM 43: Sky Attack",
+    "ind": 243,
+    "tm": 43
+  },
+  {
+    "name": "TM 44: Rest",
+    "ind": 244,
+    "tm": 44
+  },
+  {
+    "name": "TM 45: Thunder Wave",
+    "ind": 245,
+    "tm": 45
+  },
+  {
+    "name": "TM 46: Psywave",
+    "ind": 246,
+    "tm": 46
+  },
+  {
+    "name": "TM 47: Explosion",
+    "ind": 247,
+    "tm": 47
+  },
+  {
+    "name": "TM 48: Rock Slide",
+    "ind": 248,
+    "tm": 48
+  },
+  {
+    "name": "TM 49: Tri Attack",
+    "ind": 249,
+    "tm": 49
+  },
+  {
+    "name": "TM 50: Substitute",
+    "ind": 250,
+    "tm": 50
+  }
 ]

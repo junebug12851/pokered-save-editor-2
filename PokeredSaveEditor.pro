@@ -1,5 +1,5 @@
 QT += quick quickcontrols2 core widgets quickwidgets
-CONFIG += c++17
+CONFIG += c++1z
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -13,11 +13,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        src/data/gamedata.cpp \
-        src/view/mainwindow.cpp \
-        src/data/filemanagement.cpp \
+#        src/old/data/gamedata.cpp \
+#        src/old/view/mainwindow.cpp \
+#        src/old/data/filemanagement.cpp \
+  src/data/eventpokemon.cpp \
+  src/data/events.cpp \
+  src/data/gamedata.cpp \
         src/main.cpp \
-        src/data/rawsavedata.cpp
+#        src/old/data/rawsavedata.cpp
 
 RESOURCES += qml.qrc
 
@@ -35,11 +38,26 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    src/data/gamedata.h \
-    src/includes/types.h \
-    src/view/mainwindow.h \
-    src/data/filemanagement.h \
-    src/data/rawsavedata.h
+#    src/old/data/gamedata.h \
+    src/common/types.h \
+#    src/old/view/mainwindow.h \
+#    src/old/data/filemanagement.h \
+ \#    src/old/data/rawsavedata.h
+  src/data/eventpokemon.h \
+  src/data/events.h \
+  src/data/gamedata.h \
+  src/data/lists/city_list.h \
+  src/data/lists/font_list.h \
+  src/data/lists/item_list.h \
+  src/data/lists/map_list.h \
+  src/data/lists/move_list.h \
+  src/data/lists/pokemon_listInternal.h \
+  src/data/lists/pokemon_listPokedex.h \
+  src/data/lists/script_list.h \
+  src/data/lists/sprites_list.h \
+  src/data/lists/tmHm_list.h \
+  src/data/lists/trainers_list.h \
+  src/data/lists/types_list.h
 
-FORMS += \
-    src/view/mainwindow.ui
+# FORMS += \
+#    src/old/view/mainwindow.ui

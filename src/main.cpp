@@ -2,8 +2,10 @@
 #include <QApplication>
 #include <QtQuickControls2>
 
-#include "./view/mainwindow.h"
 #include "./data/gamedata.h"
+#include "./data/eventpokemon.h"
+//#include "./view/mainwindow.h"
+//#include "./data/gamedata.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,13 +29,24 @@ int main(int argc, char *argv[])
     QIcon icon("qrc:/assets/icons/512x512.png");
     app.setWindowIcon(icon);
 
-    qmlRegisterSingletonType<GameData>("pse.gamedata",
+//    QJsonDocument* tmp = GameData::json("eventPokemon");
+//    tmp = GameData::json("eventPokemon");
+//    QJsonValue tmpObj = (*tmp)[2];
+//    QString tmpName = tmpObj["title"].toString();
+
+    EventPokemon::load();
+    //auto tmp3 = EventPokemon::eventPokemon;
+    auto tmp = EventPokemon::eventPokemon->last();
+    auto tmpDV = *tmp->dv;
+    //auto tmp2 = EventPokemon::eventPokemon->at(0);
+
+/*    qmlRegisterSingletonType<GameData>("pse.gamedata",
                                        1, 0,
                                        "GameData",
                                        &GameData::GameData_Provider);
 
     MainWindow win;
-    win.show();
+    win.show();*/
 
     // Run the app
     return app.exec();

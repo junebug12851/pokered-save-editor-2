@@ -1,1856 +1,1856 @@
 [
     {
-        "code": 1,
-        "eng": "<pic01>",
+        "ind": 1,
+        "name": "<pic01>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 2,
-        "eng": "<pic02>",
+        "ind": 2,
+        "name": "<pic02>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 3,
-        "eng": "<pic03>",
+        "ind": 3,
+        "name": "<pic03>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 4,
-        "eng": "<pic04>",
+        "ind": 4,
+        "name": "<pic04>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 5,
-        "eng": "<pic05>",
+        "ind": 5,
+        "name": "<pic05>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 6,
-        "eng": "<pic06>",
+        "ind": 6,
+        "name": "<pic06>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 7,
-        "eng": "<pic07>",
+        "ind": 7,
+        "name": "<pic07>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 8,
-        "eng": "<pic08>",
+        "ind": 8,
+        "name": "<pic08>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 9,
-        "eng": "<pic09>",
+        "ind": 9,
+        "name": "<pic09>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 10,
-        "eng": "<pic0A>",
+        "ind": 10,
+        "name": "<pic0A>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 11,
-        "eng": "<pic0B>",
+        "ind": 11,
+        "name": "<pic0B>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 12,
-        "eng": "<pic0C>",
+        "ind": 12,
+        "name": "<pic0C>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 13,
-        "eng": "<pic0D>",
+        "ind": 13,
+        "name": "<pic0D>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 14,
-        "eng": "<pic0E>",
+        "ind": 14,
+        "name": "<pic0E>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 15,
-        "eng": "<pic0F>",
+        "ind": 15,
+        "name": "<pic0F>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 16,
-        "eng": "<pic10>",
+        "ind": 16,
+        "name": "<pic10>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 17,
-        "eng": "<pic11>",
+        "ind": 17,
+        "name": "<pic11>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 18,
-        "eng": "<pic12>",
+        "ind": 18,
+        "name": "<pic12>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 19,
-        "eng": "<pic13>",
+        "ind": 19,
+        "name": "<pic13>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 20,
-        "eng": "<pic14>",
+        "ind": 20,
+        "name": "<pic14>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 21,
-        "eng": "<pic15>",
+        "ind": 21,
+        "name": "<pic15>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 22,
-        "eng": "<pic16>",
+        "ind": 22,
+        "name": "<pic16>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 23,
-        "eng": "<pic17>",
+        "ind": 23,
+        "name": "<pic17>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 24,
-        "eng": "<pic18>",
+        "ind": 24,
+        "name": "<pic18>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 25,
-        "eng": "<pic19>",
+        "ind": 25,
+        "name": "<pic19>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 26,
-        "eng": "<pic1A>",
+        "ind": 26,
+        "name": "<pic1A>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 27,
-        "eng": "<pic1B>",
+        "ind": 27,
+        "name": "<pic1B>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 28,
-        "eng": "<pic1C>",
+        "ind": 28,
+        "name": "<pic1C>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 29,
-        "eng": "<pic1D>",
+        "ind": 29,
+        "name": "<pic1D>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 30,
-        "eng": "<pic1E>",
+        "ind": 30,
+        "name": "<pic1E>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 31,
-        "eng": "<pic1F>",
+        "ind": 31,
+        "name": "<pic1F>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 32,
-        "eng": "<pic20>",
+        "ind": 32,
+        "name": "<pic20>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 33,
-        "eng": "<pic21>",
+        "ind": 33,
+        "name": "<pic21>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 34,
-        "eng": "<pic22>",
+        "ind": 34,
+        "name": "<pic22>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 35,
-        "eng": "<pic23>",
+        "ind": 35,
+        "name": "<pic23>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 36,
-        "eng": "<pic24>",
+        "ind": 36,
+        "name": "<pic24>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 37,
-        "eng": "<pic25>",
+        "ind": 37,
+        "name": "<pic25>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 38,
-        "eng": "<pic26>",
+        "ind": 38,
+        "name": "<pic26>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 39,
-        "eng": "<pic27>",
+        "ind": 39,
+        "name": "<pic27>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 40,
-        "eng": "<pic28>",
+        "ind": 40,
+        "name": "<pic28>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 41,
-        "eng": "<pic29>",
+        "ind": 41,
+        "name": "<pic29>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 42,
-        "eng": "<pic2A>",
+        "ind": 42,
+        "name": "<pic2A>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 43,
-        "eng": "<pic2B>",
+        "ind": 43,
+        "name": "<pic2B>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 44,
-        "eng": "<pic2C>",
+        "ind": 44,
+        "name": "<pic2C>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 45,
-        "eng": "<pic2D>",
+        "ind": 45,
+        "name": "<pic2D>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 46,
-        "eng": "<pic2E>",
+        "ind": 46,
+        "name": "<pic2E>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 47,
-        "eng": "<pic2F>",
+        "ind": 47,
+        "name": "<pic2F>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 48,
-        "eng": "<pic30>",
+        "ind": 48,
+        "name": "<pic30>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 49,
-        "eng": "<pic31>",
+        "ind": 49,
+        "name": "<pic31>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 50,
-        "eng": "<pic32>",
+        "ind": 50,
+        "name": "<pic32>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 51,
-        "eng": "<pic33>",
+        "ind": 51,
+        "name": "<pic33>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 52,
-        "eng": "<pic34>",
+        "ind": 52,
+        "name": "<pic34>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 53,
-        "eng": "<pic35>",
+        "ind": 53,
+        "name": "<pic35>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 54,
-        "eng": "<pic36>",
+        "ind": 54,
+        "name": "<pic36>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 55,
-        "eng": "<pic37>",
+        "ind": 55,
+        "name": "<pic37>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 56,
-        "eng": "<pic38>",
+        "ind": 56,
+        "name": "<pic38>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 57,
-        "eng": "<pic39>",
+        "ind": 57,
+        "name": "<pic39>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 58,
-        "eng": "<pic3A>",
+        "ind": 58,
+        "name": "<pic3A>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 59,
-        "eng": "<pic3B>",
+        "ind": 59,
+        "name": "<pic3B>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 60,
-        "eng": "<pic3C>",
+        "ind": 60,
+        "name": "<pic3C>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 61,
-        "eng": "<pic3D>",
+        "ind": 61,
+        "name": "<pic3D>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 62,
-        "eng": "<pic3E>",
+        "ind": 62,
+        "name": "<pic3E>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 63,
-        "eng": "<pic3F>",
+        "ind": 63,
+        "name": "<pic3F>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 64,
-        "eng": "<pic40>",
+        "ind": 64,
+        "name": "<pic40>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 65,
-        "eng": "<pic41>",
+        "ind": 65,
+        "name": "<pic41>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 66,
-        "eng": "<pic42>",
+        "ind": 66,
+        "name": "<pic42>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 67,
-        "eng": "<pic43>",
+        "ind": 67,
+        "name": "<pic43>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 68,
-        "eng": "<pic44>",
+        "ind": 68,
+        "name": "<pic44>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 69,
-        "eng": "<pic45>",
+        "ind": 69,
+        "name": "<pic45>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 70,
-        "eng": "<pic46>",
+        "ind": 70,
+        "name": "<pic46>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 71,
-        "eng": "<pic47>",
+        "ind": 71,
+        "name": "<pic47>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 72,
-        "eng": "<pic48>",
+        "ind": 72,
+        "name": "<pic48>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 73,
-        "eng": "<page>",
+        "ind": 73,
+        "name": "<page>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 74,
-        "eng": "<pkmn>",
+        "ind": 74,
+        "name": "<pkmn>",
         "shorthand": true,
         "multiChar": true,
         "length": 2
     },
     {
-        "code": 75,
-        "eng": "<cont_>",
+        "ind": 75,
+        "name": "<cont_>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 76,
-        "eng": "<autocont>",
+        "ind": 76,
+        "name": "<autocont>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 77,
-        "eng": "<pic4D>",
+        "ind": 77,
+        "name": "<pic4D>",
         "shorthand": true,
         "picture": true,
         "useTilemap": true,
         "length": 1
     },
     {
-        "code": 78,
-        "eng": "<next>",
+        "ind": 78,
+        "name": "<next>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 79,
-        "eng": "<line>",
+        "ind": 79,
+        "name": "<line>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 80,
-        "eng": "<end>",
+        "ind": 80,
+        "name": "<end>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 81,
-        "eng": "<para>",
+        "ind": 81,
+        "name": "<para>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 82,
-        "eng": "<player>",
+        "ind": 82,
+        "name": "<player>",
         "shorthand": true,
         "multiChar": true,
         "variable": true,
         "length": 7
     },
     {
-        "code": 83,
-        "eng": "<rival>",
+        "ind": 83,
+        "name": "<rival>",
         "shorthand": true,
         "multiChar": true,
         "variable": true,
         "length": 7
     },
     {
-        "code": 84,
-        "eng": "<poke>",
+        "ind": 84,
+        "name": "<poke>",
         "shorthand": true,
         "multiChar": true,
         "length": 4
     },
     {
-        "code": 85,
-        "eng": "<cont>",
+        "ind": 85,
+        "name": "<cont>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 86,
-        "eng": "<......>",
+        "ind": 86,
+        "name": "<......>",
         "shorthand": true,
         "multiChar": true,
         "length": 2
     },
     {
-        "code": 87,
-        "eng": "<done>",
+        "ind": 87,
+        "name": "<done>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 88,
-        "eng": "<prompt>",
+        "ind": 88,
+        "name": "<prompt>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 89,
-        "eng": "<targ>",
+        "ind": 89,
+        "name": "<targ>",
         "shorthand": true,
         "multiChar": true,
         "variable": true,
         "length": 10
     },
     {
-        "code": 90,
-        "eng": "<user>",
+        "ind": 90,
+        "name": "<user>",
         "shorthand": true,
         "multiChar": true,
         "variable": true,
         "length": 15
     },
     {
-        "code": 91,
-        "eng": "<pc>",
+        "ind": 91,
+        "name": "<pc>",
         "shorthand": true,
         "multiChar": true,
         "length": 2
     },
     {
-        "code": 92,
-        "eng": "<tm>",
+        "ind": 92,
+        "name": "<tm>",
         "shorthand": true,
         "multiChar": true,
         "length": 2
     },
     {
-        "code": 93,
-        "eng": "<trainer>",
+        "ind": 93,
+        "name": "<trainer>",
         "shorthand": true,
         "multiChar": true,
         "length": 7
     },
     {
-        "code": 94,
-        "eng": "<rocket>",
+        "ind": 94,
+        "name": "<rocket>",
         "shorthand": true,
         "multiChar": true,
         "length": 6
     },
     {
-        "code": 95,
-        "eng": "<dex>",
+        "ind": 95,
+        "name": "<dex>",
         "shorthand": true,
         "control": true,
         "length": 0
     },
     {
-        "code": 96,
-        "eng": "<A>",
+        "ind": 96,
+        "name": "<A>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 97,
-        "eng": "<B>",
+        "ind": 97,
+        "name": "<B>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 98,
-        "eng": "<C>",
+        "ind": 98,
+        "name": "<C>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 99,
-        "eng": "<D>",
+        "ind": 99,
+        "name": "<D>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 100,
-        "eng": "<E>",
+        "ind": 100,
+        "name": "<E>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 101,
-        "eng": "<F>",
+        "ind": 101,
+        "name": "<F>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 102,
-        "eng": "<G>",
+        "ind": 102,
+        "name": "<G>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 103,
-        "eng": "<H>",
+        "ind": 103,
+        "name": "<H>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 104,
-        "eng": "<I>",
+        "ind": 104,
+        "name": "<I>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 105,
-        "eng": "<V>",
+        "ind": 105,
+        "name": "<V>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 106,
-        "eng": "<S>",
+        "ind": 106,
+        "name": "<S>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 107,
-        "eng": "<L>",
+        "ind": 107,
+        "name": "<L>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 108,
-        "eng": "<M>",
+        "ind": 108,
+        "name": "<M>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 109,
-        "eng": "<:>",
+        "ind": 109,
+        "name": "<:>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 110,
-        "eng": "<ji>",
+        "ind": 110,
+        "name": "<ji>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 111,
-        "eng": "<ju>",
+        "ind": 111,
+        "name": "<ju>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 112,
-        "eng": "<o'>",
+        "ind": 112,
+        "name": "<o'>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 113,
-        "eng": "<c'>",
+        "ind": 113,
+        "name": "<c'>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 114,
-        "eng": "<o\">",
+        "ind": 114,
+        "name": "<o\">",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 115,
-        "eng": "<c\">",
+        "ind": 115,
+        "name": "<c\">",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 116,
-        "eng": "<mdot>",
+        "ind": 116,
+        "name": "<mdot>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 117,
-        "eng": "<...>",
+        "ind": 117,
+        "name": "<...>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 118,
-        "eng": "<ja>",
+        "ind": 118,
+        "name": "<ja>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 119,
-        "eng": "<je>",
+        "ind": 119,
+        "name": "<je>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 120,
-        "eng": "<jo>",
+        "ind": 120,
+        "name": "<jo>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 121,
-        "eng": "<ul>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 122,
-        "eng": "<horz>",
+        "ind": 121,
+        "name": "<ul>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 123,
-        "eng": "<ur>",
+        "ind": 122,
+        "name": "<horz>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 124,
-        "eng": "<vert>",
+        "ind": 123,
+        "name": "<ur>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 125,
-        "eng": "<bl>",
+        "ind": 124,
+        "name": "<vert>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 126,
-        "eng": "<br>",
+        "ind": 125,
+        "name": "<bl>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 127,
-        "eng": " ",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 128,
-        "eng": "A",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 129,
-        "eng": "B",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 130,
-        "eng": "C",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 131,
-        "eng": "D",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 132,
-        "eng": "E",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 133,
-        "eng": "F",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 134,
-        "eng": "G",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 135,
-        "eng": "H",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 136,
-        "eng": "I",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 137,
-        "eng": "J",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 138,
-        "eng": "K",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 139,
-        "eng": "L",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 140,
-        "eng": "M",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 141,
-        "eng": "N",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 142,
-        "eng": "O",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 143,
-        "eng": "P",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 144,
-        "eng": "Q",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 145,
-        "eng": "R",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 146,
-        "eng": "S",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 147,
-        "eng": "T",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 148,
-        "eng": "U",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 149,
-        "eng": "V",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 150,
-        "eng": "W",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 151,
-        "eng": "X",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 152,
-        "eng": "Y",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 153,
-        "eng": "Z",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 154,
-        "eng": "(",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 155,
-        "eng": ")",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 156,
-        "eng": ":",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 157,
-        "eng": ";",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 158,
-        "eng": "[",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 159,
-        "eng": "]",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 160,
-        "eng": "a",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 161,
-        "eng": "b",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 162,
-        "eng": "c",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 163,
-        "eng": "d",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 164,
-        "eng": "e",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 165,
-        "eng": "f",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 166,
-        "eng": "g",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 167,
-        "eng": "h",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 168,
-        "eng": "i",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 169,
-        "eng": "j",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 170,
-        "eng": "k",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 171,
-        "eng": "l",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 172,
-        "eng": "m",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 173,
-        "eng": "n",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 174,
-        "eng": "o",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 175,
-        "eng": "p",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 176,
-        "eng": "q",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 177,
-        "eng": "r",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 178,
-        "eng": "s",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 179,
-        "eng": "t",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 180,
-        "eng": "u",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 181,
-        "eng": "v",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 182,
-        "eng": "w",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 183,
-        "eng": "x",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 184,
-        "eng": "y",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 185,
-        "eng": "z",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 186,
-        "eng": "<e>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 187,
-        "eng": "<'d>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 188,
-        "eng": "<'l>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 189,
-        "eng": "<'s>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 190,
-        "eng": "<'t>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 191,
-        "eng": "<'v>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "code": 192,
-        "eng": "<picC0>",
+        "ind": 126,
+        "name": "<br>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 193,
-        "eng": "<picC1>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 194,
-        "eng": "<picC2>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 195,
-        "eng": "<picC3>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 196,
-        "eng": "<picC4>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 197,
-        "eng": "<picC5>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 198,
-        "eng": "<picC6>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 199,
-        "eng": "<picC7>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 200,
-        "eng": "<picC8>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 201,
-        "eng": "<picC9>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 202,
-        "eng": "<picCA>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 203,
-        "eng": "<picCB>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 204,
-        "eng": "<picCC>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 205,
-        "eng": "<picCD>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 206,
-        "eng": "<picCE>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 207,
-        "eng": "<picCF>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 208,
-        "eng": "<picD0>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 209,
-        "eng": "<picD1>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 210,
-        "eng": "<picD2>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 211,
-        "eng": "<picD3>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 212,
-        "eng": "<picD4>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 213,
-        "eng": "<picD5>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 214,
-        "eng": "<picD6>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 215,
-        "eng": "<picD7>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 216,
-        "eng": "<picD8>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 217,
-        "eng": "<picD9>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 218,
-        "eng": "<picDA>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 219,
-        "eng": "<picDB>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 220,
-        "eng": "<picDC>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 221,
-        "eng": "<picDD>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 222,
-        "eng": "<picDE>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 223,
-        "eng": "<picDF>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "code": 224,
-        "eng": "'",
+        "ind": 127,
+        "name": " ",
+        "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 225,
-        "eng": "<pk>",
+        "ind": 128,
+        "name": "A",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 129,
+        "name": "B",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 130,
+        "name": "C",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 131,
+        "name": "D",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 132,
+        "name": "E",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 133,
+        "name": "F",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 134,
+        "name": "G",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 135,
+        "name": "H",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 136,
+        "name": "I",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 137,
+        "name": "J",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 138,
+        "name": "K",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 139,
+        "name": "L",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 140,
+        "name": "M",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 141,
+        "name": "N",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 142,
+        "name": "O",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 143,
+        "name": "P",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 144,
+        "name": "Q",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 145,
+        "name": "R",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 146,
+        "name": "S",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 147,
+        "name": "T",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 148,
+        "name": "U",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 149,
+        "name": "V",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 150,
+        "name": "W",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 151,
+        "name": "X",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 152,
+        "name": "Y",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 153,
+        "name": "Z",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 154,
+        "name": "(",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 155,
+        "name": ")",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 156,
+        "name": ":",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 157,
+        "name": ";",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 158,
+        "name": "[",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 159,
+        "name": "]",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 160,
+        "name": "a",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 161,
+        "name": "b",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 162,
+        "name": "c",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 163,
+        "name": "d",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 164,
+        "name": "e",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 165,
+        "name": "f",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 166,
+        "name": "g",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 167,
+        "name": "h",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 168,
+        "name": "i",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 169,
+        "name": "j",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 170,
+        "name": "k",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 171,
+        "name": "l",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 172,
+        "name": "m",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 173,
+        "name": "n",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 174,
+        "name": "o",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 175,
+        "name": "p",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 176,
+        "name": "q",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 177,
+        "name": "r",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 178,
+        "name": "s",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 179,
+        "name": "t",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 180,
+        "name": "u",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 181,
+        "name": "v",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 182,
+        "name": "w",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 183,
+        "name": "x",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 184,
+        "name": "y",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 185,
+        "name": "z",
+        "normal": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 186,
+        "name": "<e>",
+        "shorthand": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 187,
+        "name": "<'d>",
+        "shorthand": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 188,
+        "name": "<'l>",
+        "shorthand": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 189,
+        "name": "<'s>",
+        "shorthand": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 190,
+        "name": "<'t>",
+        "shorthand": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 191,
+        "name": "<'v>",
+        "shorthand": true,
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 192,
+        "name": "<picC0>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 193,
+        "name": "<picC1>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 194,
+        "name": "<picC2>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 195,
+        "name": "<picC3>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 196,
+        "name": "<picC4>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 197,
+        "name": "<picC5>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 198,
+        "name": "<picC6>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 199,
+        "name": "<picC7>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 200,
+        "name": "<picC8>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 201,
+        "name": "<picC9>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 202,
+        "name": "<picCA>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 203,
+        "name": "<picCB>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 204,
+        "name": "<picCC>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 205,
+        "name": "<picCD>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 206,
+        "name": "<picCE>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 207,
+        "name": "<picCF>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 208,
+        "name": "<picD0>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 209,
+        "name": "<picD1>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 210,
+        "name": "<picD2>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 211,
+        "name": "<picD3>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 212,
+        "name": "<picD4>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 213,
+        "name": "<picD5>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 214,
+        "name": "<picD6>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 215,
+        "name": "<picD7>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 216,
+        "name": "<picD8>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 217,
+        "name": "<picD9>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 218,
+        "name": "<picDA>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 219,
+        "name": "<picDB>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 220,
+        "name": "<picDC>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 221,
+        "name": "<picDD>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 222,
+        "name": "<picDE>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 223,
+        "name": "<picDF>",
+        "shorthand": true,
+        "picture": true,
+        "length": 1
+    },
+    {
+        "ind": 224,
+        "name": "'",
+        "singleChar": true,
+        "length": 1
+    },
+    {
+        "ind": 225,
+        "name": "<pk>",
         "shorthand": true,
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 226,
-        "eng": "<mn>",
+        "ind": 226,
+        "name": "<mn>",
         "shorthand": true,
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 227,
-        "eng": "-",
+        "ind": 227,
+        "name": "-",
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 228,
-        "eng": "<'r>",
+        "ind": 228,
+        "name": "<'r>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 229,
-        "eng": "<'m>",
+        "ind": 229,
+        "name": "<'m>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 230,
-        "eng": "?",
+        "ind": 230,
+        "name": "?",
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 231,
-        "eng": "!",
+        "ind": 231,
+        "name": "!",
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 232,
-        "eng": ".",
+        "ind": 232,
+        "name": ".",
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 233,
-        "eng": "<jka>",
+        "ind": 233,
+        "name": "<jka>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 234,
-        "eng": "<jku>",
+        "ind": 234,
+        "name": "<jku>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 235,
-        "eng": "<jke>",
+        "ind": 235,
+        "name": "<jke>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 236,
-        "eng": "<arr-r2>",
+        "ind": 236,
+        "name": "<arr-r2>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 237,
-        "eng": "<arr-r>",
+        "ind": 237,
+        "name": "<arr-r>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 238,
-        "eng": "<arr-d>",
+        "ind": 238,
+        "name": "<arr-d>",
         "shorthand": true,
         "picture": true,
         "length": 1
     },
     {
-        "code": 239,
-        "eng": "<m>",
+        "ind": 239,
+        "name": "<m>",
         "shorthand": true,
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 240,
-        "eng": "$",
+        "ind": 240,
+        "name": "$",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 241,
-        "eng": "<x>",
+        "ind": 241,
+        "name": "<x>",
         "shorthand": true,
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 242,
-        "eng": "<.>",
+        "ind": 242,
+        "name": "<.>",
         "shorthand": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 243,
-        "eng": "/",
+        "ind": 243,
+        "name": "/",
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 244,
-        "eng": ",",
+        "ind": 244,
+        "name": ",",
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 245,
-        "eng": "<f>",
+        "ind": 245,
+        "name": "<f>",
         "shorthand": true,
         "normal": true,
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 246,
-        "eng": "0",
+        "ind": 246,
+        "name": "0",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 247,
-        "eng": "1",
+        "ind": 247,
+        "name": "1",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 248,
-        "eng": "2",
+        "ind": 248,
+        "name": "2",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 249,
-        "eng": "3",
+        "ind": 249,
+        "name": "3",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 250,
-        "eng": "4",
+        "ind": 250,
+        "name": "4",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 251,
-        "eng": "5",
+        "ind": 251,
+        "name": "5",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 252,
-        "eng": "6",
+        "ind": 252,
+        "name": "6",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 253,
-        "eng": "7",
+        "ind": 253,
+        "name": "7",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 254,
-        "eng": "8",
+        "ind": 254,
+        "name": "8",
         "singleChar": true,
         "length": 1
     },
     {
-        "code": 255,
-        "eng": "9",
+        "ind": 255,
+        "name": "9",
         "singleChar": true,
         "length": 1
     }
