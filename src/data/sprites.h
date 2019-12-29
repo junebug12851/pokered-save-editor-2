@@ -18,6 +18,7 @@
 
 #include "../common/types.h"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -33,7 +34,10 @@ class Sprites
 {
 public:
   static void load();
+  static void index();
+
   static QVector<SpriteEntry*>* sprites;
+  static QHash<QString, SpriteEntry*>* ind;
 };
 
 #endif // SPRITE_H

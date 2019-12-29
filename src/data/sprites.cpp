@@ -38,4 +38,16 @@ void Sprites::load()
   }
 }
 
+void Sprites::index()
+{
+  for(auto entry : *sprites)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
 QVector<SpriteEntry*>* Sprites::sprites = new QVector<SpriteEntry*>();
+QHash<QString, SpriteEntry*>* Sprites::ind =
+    new QHash<QString, SpriteEntry*>();

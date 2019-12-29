@@ -110,6 +110,7 @@ void index()
   Moves::index();
   Pokemon::index();
   Scripts::index();
+  Sprites::index();
 }
 
 // Performs program one-time bootstrapping and setup
