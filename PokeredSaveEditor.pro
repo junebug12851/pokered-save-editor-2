@@ -26,6 +26,7 @@ SOURCES += \
   src/data/items.cpp \
   src/data/maps.cpp \
   src/data/missables.cpp \
+  src/data/moves.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
 
@@ -71,7 +72,8 @@ HEADERS += \
   src/data/lists/trainers_list.h \
   src/data/lists/types_list.h \
   src/data/maps.h \
-  src/data/missables.h
+  src/data/missables.h \
+  src/data/moves.h
 
 # FORMS += \
 #    src/old/view/mainwindow.ui
