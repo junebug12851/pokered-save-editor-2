@@ -57,4 +57,20 @@ void Items::load()
   }
 }
 
+void Items::index()
+{
+  for(auto entry : *items)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+
+    if(entry->tm)
+      ind->insert("tm" + QString::number(*entry->tm), entry);
+    if(entry->hm)
+      ind->insert("hm" + QString::number(*entry->hm), entry);
+  }
+}
+
 QVector<ItemEntry*>* Items::items = new QVector<ItemEntry*>();
+QHash<QString, ItemEntry*>* Items::ind = new QHash<QString, ItemEntry*>();

@@ -19,6 +19,7 @@
 #include "../common/types.h"
 #include "optional"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -44,7 +45,10 @@ class Items
 {
 public:
   static void load();
+  static void index();
+
   static QVector<ItemEntry*>* items;
+  static QHash<QString, ItemEntry*>* ind;
 };
 
 #endif // ITEMS_H

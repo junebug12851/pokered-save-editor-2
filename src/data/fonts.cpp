@@ -87,4 +87,4 @@ void Font::index()
 }
 
 QVector<FontEntry*>* Font::font = new QVector<FontEntry*>();
-auto Font::ind = new QHash<QString, FontEntry*>();
+QHash<QString, FontEntry*>* Font::ind = new QHash<QString, FontEntry*>();
