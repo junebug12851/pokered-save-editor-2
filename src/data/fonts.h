@@ -18,6 +18,7 @@
 
 #include "../common/types.h"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -48,7 +49,10 @@ class Font
 {
 public:
   static void load();
+  static void index();
+
   static QVector<FontEntry*>* font;
+  static QHash<QString, FontEntry*>* ind;
 };
 
 #endif // FONTS_H

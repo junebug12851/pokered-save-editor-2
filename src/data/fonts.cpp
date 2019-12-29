@@ -76,4 +76,15 @@ void Font::load()
   }
 }
 
+void Font::index()
+{
+  for(auto entry : *font)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
 QVector<FontEntry*>* Font::font = new QVector<FontEntry*>();
+auto Font::ind = new QHash<QString, FontEntry*>();
