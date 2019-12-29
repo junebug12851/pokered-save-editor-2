@@ -15,7 +15,8 @@
         "give": "Butterfree",
         "get": "Beedrill",
         "textId": 2,
-        "nickname": "CHIKUCHIKU"
+        "nickname": "CHIKUCHIKU",
+        "unused": true
     },
     {
         "give": "Ponyta",
