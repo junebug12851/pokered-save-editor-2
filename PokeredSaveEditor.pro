@@ -30,6 +30,7 @@ SOURCES += \
   src/data/names.cpp \
   src/data/pokemon.cpp \
   src/data/scripts.cpp \
+  src/data/sprites.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
 
@@ -80,6 +81,7 @@ HEADERS += \
   src/data/names.h \
   src/data/pokemon.h \
   src/data/scripts.h \
+  src/data/sprites.h \
 
 # FORMS += \
 #    src/old/view/mainwindow.ui
