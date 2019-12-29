@@ -40,4 +40,15 @@ void Events::load()
   }
 }
 
+void Events::index()
+{
+  for(auto entry : *events)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
 QVector<EventEntry*>* Events::events = new QVector<EventEntry*>();
+QHash<QString, EventEntry*>* Events::ind = new QHash<QString, EventEntry*>();

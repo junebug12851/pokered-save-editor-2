@@ -16,6 +16,7 @@ SOURCES += \
 #        src/old/data/gamedata.cpp \
 #        src/old/view/mainwindow.cpp \
 #        src/old/data/filemanagement.cpp \
+  src/boot.cpp \
   src/data/eventpokemon.cpp \
   src/data/events.cpp \
   src/data/fly.cpp \

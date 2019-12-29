@@ -50,9 +50,9 @@ struct EvolutionEntry
   std::optional<var8> level;
 };
 
-struct MoveEntry
+struct PokemonMoveEntry
 {
-  MoveEntry(QJsonValue& data);
+  PokemonMoveEntry(QJsonValue& data);
 
   var8 level;
   QString move;
@@ -67,7 +67,7 @@ struct PokemonEntry {
   QString type1;
   QString type2;
 
-  QVector<MoveEntry*>* moves;
+  QVector<PokemonMoveEntry*>* moves;
   QVector<QString>* initial;
   QVector<var8>* tmHm;
   QVector<EvolutionEntry*>* evolution;

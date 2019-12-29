@@ -38,4 +38,15 @@ void Fly::load()
   }
 }
 
+void Fly::index()
+{
+  for(auto entry : *fly)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
 QVector<FlyEntry*>* Fly::fly = new QVector<FlyEntry*>();
+QHash<QString, FlyEntry*>* Fly::ind = new QHash<QString, FlyEntry*>();

@@ -46,6 +46,7 @@ class EventPokemon
 {
 public:
   static void load();
+
   static QVector<EventPokemonEntry*>* eventPokemon;
 };
 

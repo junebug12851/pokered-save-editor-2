@@ -39,7 +39,7 @@ EvolutionEntry::EvolutionEntry(QJsonValue& data)
     item = "";
 }
 
-MoveEntry::MoveEntry(QJsonValue& data)
+PokemonMoveEntry::PokemonMoveEntry(QJsonValue& data)
 {
   // Set simple properties
   level = data["level"].toDouble();
@@ -53,7 +53,7 @@ PokemonEntry::PokemonEntry()
   type1 = "";
   type2 = "";
 
-  moves = new QVector<MoveEntry*>();
+  moves = new QVector<PokemonMoveEntry*>();
   initial = new QVector<QString>();
   tmHm = new QVector<var8>;
   evolution = new QVector<EvolutionEntry*>;
@@ -116,7 +116,7 @@ void Pokemon::load()
     {
       for(QJsonValue moveEntryz : pokemonEntry["moves"].toArray())
       {
-        entry->moves->append(new MoveEntry(moveEntryz));
+        entry->moves->append(new PokemonMoveEntry(moveEntryz));
       }
     }
 

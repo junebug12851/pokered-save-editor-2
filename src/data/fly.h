@@ -18,6 +18,7 @@
 
 #include "../common/types.h"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -33,7 +34,10 @@ class Fly
 {
 public:
   static void load();
+  static void index();
+
   static QVector<FlyEntry*>* fly;
+  static QHash<QString, FlyEntry*>* ind;
 };
 
 #endif // FLY_H

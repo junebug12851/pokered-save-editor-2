@@ -18,6 +18,7 @@
 
 #include "../common/types.h"
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -36,7 +37,10 @@ class Events
 {
 public:
   static void load();
+  static void index();
+
   static QVector<EventEntry*>* events;
+  static QHash<QString, EventEntry*>* ind;
 };
 
 #endif // EVENTS_H
