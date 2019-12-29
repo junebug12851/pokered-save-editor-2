@@ -22,6 +22,7 @@ SOURCES += \
   src/data/fonts.cpp \
   src/data/gamedata.cpp \
   src/data/hiddenCoins.cpp \
+  src/data/hiddenItems.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
 
@@ -52,6 +53,7 @@ HEADERS += \
   src/data/fonts.h \
   src/data/gamedata.h \
   src/data/hiddenCoins.h \
+  src/data/hiddenItems.h \
   src/data/lists/city_list.h \
   src/data/lists/font_list.h \
   src/data/lists/item_list.h \
