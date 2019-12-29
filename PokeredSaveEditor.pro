@@ -77,7 +77,8 @@ HEADERS += \
   src/data/missables.h \
   src/data/moves.h \
   src/data/names.h \
-  src/data/pokemon.h
+  src/data/pokemon.h \
+  src/data/scripts.h \
 
 # FORMS += \
 #    src/old/view/mainwindow.ui
