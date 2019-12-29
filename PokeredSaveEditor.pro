@@ -24,6 +24,7 @@ SOURCES += \
   src/data/hiddenCoins.cpp \
   src/data/hiddenItems.cpp \
   src/data/items.cpp \
+  src/data/maps.cpp \
         src/main.cpp \
 #        src/old/data/rawsavedata.cpp
 
@@ -67,7 +68,8 @@ HEADERS += \
   src/data/lists/sprites_list.h \
   src/data/lists/tmHm_list.h \
   src/data/lists/trainers_list.h \
-  src/data/lists/types_list.h
+  src/data/lists/types_list.h \
+  src/data/maps.h
 
 # FORMS += \
 #    src/old/view/mainwindow.ui
