@@ -19,6 +19,7 @@
 #include "../common/types.h"
 #include <optional>
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -38,7 +39,10 @@ class Scripts
 {
 public:
   static void load();
+  static void index();
+
   static QVector<ScriptEntry*>* scripts;
+  static QHash<QString, ScriptEntry*>* ind;
 };
 
 #endif // SCRIPT_H

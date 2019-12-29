@@ -42,4 +42,15 @@ void Scripts::load()
   }
 }
 
+void Scripts::index()
+{
+  for(auto entry : *scripts)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
 QVector<ScriptEntry*>* Scripts::scripts = new QVector<ScriptEntry*>();
+QHash<QString, ScriptEntry*>* Scripts::ind = new QHash<QString, ScriptEntry*>();
