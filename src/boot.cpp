@@ -107,6 +107,7 @@ void index()
   Items::index();
   Maps::index();
   Missables::index();
+  Moves::index();
 }
 
 // Performs program one-time bootstrapping and setup

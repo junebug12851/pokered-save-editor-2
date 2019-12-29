@@ -66,4 +66,20 @@ void Moves::load()
   }
 }
 
+void Moves::index()
+{
+  for(auto entry : *moves)
+  {
+    // Index name and index
+    ind->insert(entry->name, entry);
+    ind->insert(QString::number(entry->ind), entry);
+
+    if(entry->tm)
+      ind->insert("tm" + QString::number(*entry->tm), entry);
+    if(entry->hm)
+      ind->insert("hm" + QString::number(*entry->hm), entry);
+  }
+}
+
 QVector<MoveEntry*>* Moves::moves = new QVector<MoveEntry*>();
+QHash<QString, MoveEntry*>* Moves::ind = new QHash<QString, MoveEntry*>();

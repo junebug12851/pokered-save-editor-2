@@ -19,6 +19,7 @@
 #include "../common/types.h"
 #include <optional>
 #include <QString>
+#include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -48,7 +49,10 @@ class Moves
 {
 public:
   static void load();
+  static void index();
+
   static QVector<MoveEntry*>* moves;
+  static QHash<QString, MoveEntry*>* ind;
 };
 
 #endif // MOVE_H
