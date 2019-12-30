@@ -18,6 +18,10 @@
 #include <QJsonArray>
 #include "./gamedata.h"
 
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 void Fly::load()
 {
   // Grab Event Pokemon Data
@@ -45,6 +49,19 @@ void Fly::index()
     // Index name and index
     ind->insert(entry->name, entry);
     ind->insert(QString::number(entry->ind), entry);
+  }
+}
+
+void Fly::deepLink()
+{
+  for(auto entry : *fly)
+  {
+    entry->toMap = Maps::ind->value(entry->name, nullptr);
+
+#ifdef QT_DEBUG
+    if(entry->toMap == nullptr)
+      qCritical() << "Fly Destination: " << entry->name << ", could not be deep linked." ;
+#endif
   }
 }
 

@@ -122,6 +122,7 @@ void index()
 void deepLink()
 {
   EventPokemon::deepLink();
+  Fly::deepLink();
 }
 
 // Performs program one-time bootstrapping and setup

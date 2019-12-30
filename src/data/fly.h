@@ -20,6 +20,8 @@
 #include <QString>
 #include <QHash>
 
+#include "./maps.h"
+
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
@@ -28,6 +30,8 @@
 struct FlyEntry {
   QString name; // City Name
   var8 ind; // Index in list
+
+  MapEntry* toMap; // Deep link to associated map data
 };
 
 class Fly
@@ -35,6 +39,7 @@ class Fly
 public:
   static void load();
   static void index();
+  static void deepLink();
 
   static QVector<FlyEntry*>* fly;
   static QHash<QString, FlyEntry*>* ind;
