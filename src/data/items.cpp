@@ -45,6 +45,7 @@ void Items::load()
     // Set simple properties
     entry->name = itemEntry["name"].toString();
     entry->ind = itemEntry["ind"].toDouble();
+    entry->readable = itemEntry["readable"].toString();
 
     // Set simple optional properties
     if(itemEntry["once"].isBool())
@@ -70,6 +71,7 @@ void Items::index()
   {
     // Index name and index
     ind->insert(entry->name, entry);
+    ind->insert(entry->readable, entry);
     ind->insert(QString::number(entry->ind), entry);
 
     if(entry->tm)

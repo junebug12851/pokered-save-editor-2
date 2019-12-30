@@ -22,6 +22,9 @@
 #include <QHash>
 
 #include "./types.h"
+
+// Prevents includes from including each other and causing errors
+// We include them in the cpp file
 struct ItemEntry;
 
 // With amazing help of Quicktype!!!

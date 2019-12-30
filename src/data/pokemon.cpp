@@ -19,6 +19,13 @@
 #include <QJsonObject>
 #include "./gamedata.h"
 
+#include "./items.h"
+#include "./moves.h"
+
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 EvolutionEntry::EvolutionEntry(QJsonValue& data)
 {
   // Set simple properties
@@ -37,6 +44,34 @@ EvolutionEntry::EvolutionEntry(QJsonValue& data)
     item = data["item"].toString();
   else
     item = "";
+
+  toDeEvolution = nullptr;
+  toEvolution = nullptr;
+  toItem = nullptr;
+}
+
+void EvolutionEntry::deepLink(PokemonEntry* deEvolution)
+{
+  // Link toEvolution first and ensure it's correct
+  // otherwise it'll crrash and I want a clear error message why if it does
+  toEvolution = Pokemon::ind->value(toName, nullptr);
+
+  // Link to Item if present
+  if(item != "")
+    toItem = Items::ind->value(item, nullptr);
+
+#ifdef QT_DEBUG
+    if(toEvolution == nullptr)
+      qCritical() << "Evolution Entry: " << toName << ", could not be deep linked." ;
+    if(deEvolution == nullptr)
+      qCritical() << "Evolution Entry: " << toName << ", null deEvolution provided" ;
+    if((item != "") && toItem == nullptr)
+      qCritical() << "Evolution Entry: " << item << ", item could not be deep linked" ;
+#endif
+
+    // Link to deEvolution in it's evolution and here
+    toEvolution->toDeEvolution = deEvolution;
+    toDeEvolution = deEvolution;
 }
 
 PokemonMoveEntry::PokemonMoveEntry(QJsonValue& data)
@@ -44,6 +79,18 @@ PokemonMoveEntry::PokemonMoveEntry(QJsonValue& data)
   // Set simple properties
   level = data["level"].toDouble();
   move = data["move"].toString();
+
+  toMove = nullptr;
+}
+
+void PokemonMoveEntry::deepLink()
+{
+  toMove = Moves::ind->value(move, nullptr);
+
+#ifdef QT_DEBUG
+    if(toMove == nullptr)
+      qCritical() << "Pokemon Move Entry: " << move << ", could not be deep linked." ;
+#endif
 }
 
 PokemonEntry::PokemonEntry()
@@ -57,6 +104,72 @@ PokemonEntry::PokemonEntry()
   initial = new QVector<QString>();
   tmHm = new QVector<var8>;
   evolution = new QVector<EvolutionEntry*>;
+
+  toType1 = nullptr;
+  toType2 = nullptr;
+  toDeEvolution = nullptr;
+  toInitial = new QVector<MoveEntry*>();
+  toTmHmMove = new QVector<MoveEntry*>();
+  toTmHmItem = new QVector<ItemEntry*>();
+}
+
+void PokemonEntry::deepLink()
+{
+  // Set type 1 & 2 if present
+  if(type1 != "")
+    toType1 = Types::ind->value(type1, nullptr);
+  if(type2 != "")
+    toType2 = Types::ind->value(type2, nullptr);
+
+#ifdef QT_DEBUG
+    if((type1 != "") && type1 == nullptr)
+      qCritical() << "Pokemon Type 1: " << type1 << ", could not be deep linked." ;
+    if((type2 != "") && type2 == nullptr)
+      qCritical() << "Pokemon Type 2: " << type2 << ", could not be deep linked." ;
+#endif
+
+  // De-Evolution is set by evolution entry
+  for(auto evolEntry : *evolution)
+  {
+    // Initiate deep linking for all evolutions
+    evolEntry->deepLink(this);
+  }
+
+  // Level Moves is set by Pokemon moves entry
+  for(auto pokeMoveEntry : *moves)
+  {
+    // Initiate deep linking for all level moves
+    pokeMoveEntry->deepLink();
+  }
+
+  // Deep-Link initial moves
+  for(auto initMove : *initial)
+  {
+    auto link = Moves::ind->value(initMove, nullptr);
+    toInitial->append(link);
+
+#ifdef QT_DEBUG
+    if(link == nullptr)
+      qCritical() << "Pokemon Initial Move: " << initMove << ", could not be deep linked." ;
+#endif
+  }
+
+  // Deep-Link tm/hm
+  for(auto tmHmMove : *tmHm)
+  {
+    auto moveLink = Moves::ind->value("tm" + QString::number(tmHmMove), nullptr);
+    auto itemLink = Items::ind->value("tm" + QString::number(tmHmMove), nullptr);
+
+    toTmHmMove->append(moveLink);
+    toTmHmItem->append(itemLink);
+
+#ifdef QT_DEBUG
+    if(moveLink == nullptr)
+      qCritical() << "Pokemon TM/HM Move: " << tmHmMove << ", could not be deep linked." ;
+    if(itemLink == nullptr)
+      qCritical() << "Pokemon TM/HM Item: " << tmHmMove << ", could not be deep linked." ;
+#endif
+  }
 }
 
 void Pokemon::load()
@@ -173,6 +286,15 @@ void Pokemon::index()
     // If it's a valid Pokemon then index the dex number as well
     if(entry->pokedex)
       ind->insert("dex" + QString::number(*entry->pokedex), entry);
+  }
+}
+
+void Pokemon::deepLink()
+{
+  // Deep link the Pokemon data structure tree, lots of traversing and stuff
+  for(auto entry : *pokemon)
+  {
+    entry->deepLink();
   }
 }
 

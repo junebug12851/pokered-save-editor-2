@@ -21,6 +21,8 @@
 #include <QString>
 #include <QHash>
 
+// Prevents includes from including each other and causing errors
+// We include them in the cpp file
 struct MoveEntry;
 
 // With amazing help of Quicktype!!!
@@ -38,6 +40,7 @@ struct ItemEntry {
   var8 ind; // Item Code
   bool once; // Item can only be obtained once
   bool glitch; // Item is a glitch item
+  QString readable;
 
   std::optional<var8> tm; // TM Number if present
   std::optional<var8> hm; // HM Number if present

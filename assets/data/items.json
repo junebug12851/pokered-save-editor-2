@@ -1,719 +1,871 @@
 [
   {
-    "name": "Master Ball",
+    "name": "MASTER BALL",
     "ind": 1,
-    "once": true
+    "once": true,
+    "readable": "Master Ball"
   },
   {
-    "name": "Ultra Ball",
-    "ind": 2
+    "name": "ULTRA BALL",
+    "ind": 2,
+    "readable": "Ultra Ball"
   },
   {
-    "name": "Great Ball",
-    "ind": 3
+    "name": "GREAT BALL",
+    "ind": 3,
+    "readable": "Great Ball"
   },
   {
-    "name": "Poke Ball",
-    "ind": 4
+    "name": "POKE BALL",
+    "ind": 4,
+    "readable": "Poke Ball"
   },
   {
-    "name": "Town Map",
+    "name": "TOWN MAP",
     "ind": 5,
-    "once": true
+    "once": true,
+    "readable": "Town Map"
   },
   {
-    "name": "Bicycle",
+    "name": "BICYCLE",
     "ind": 6,
-    "once": true
+    "once": true,
+    "readable": "Bicycle"
   },
   {
-    "name": "Surfboard",
+    "name": "SURFBOARD",
     "ind": 7,
-    "glitch": true
+    "glitch": true,
+    "readable": "Surfboard"
   },
   {
-    "name": "Safari Ball",
+    "name": "SAFARI BALL",
     "ind": 8,
-    "glitch": true
+    "glitch": true,
+    "readable": "Safari Ball"
   },
   {
-    "name": "Pokedex",
+    "name": "POKEDEX",
     "ind": 9,
-    "glitch": true
+    "glitch": true,
+    "readable": "Pokedex"
   },
   {
-    "name": "Moon Stone",
-    "ind": 10
+    "name": "MOON STONE",
+    "ind": 10,
+    "readable": "Moon Stone"
   },
   {
-    "name": "Antidote",
-    "ind": 11
+    "name": "ANTIDOTE",
+    "ind": 11,
+    "readable": "Antidote"
   },
   {
-    "name": "Burn Heal",
-    "ind": 12
+    "name": "BURN HEAL",
+    "ind": 12,
+    "readable": "Burn Heal"
   },
   {
-    "name": "Ice Heal",
-    "ind": 13
+    "name": "ICE HEAL",
+    "ind": 13,
+    "readable": "Ice Heal"
   },
   {
-    "name": "Awakening",
-    "ind": 14
+    "name": "AWAKENING",
+    "ind": 14,
+    "readable": "Awakening"
   },
   {
-    "name": "Parlyz Heal",
-    "ind": 15
+    "name": "PARLYZ HEAL",
+    "ind": 15,
+    "readable": "Parlyz Heal"
   },
   {
-    "name": "Full Restore",
-    "ind": 16
+    "name": "FULL RESTORE",
+    "ind": 16,
+    "readable": "Full Restore"
   },
   {
-    "name": "Max Potion",
-    "ind": 17
+    "name": "MAX POTION",
+    "ind": 17,
+    "readable": "Max Potion"
   },
   {
-    "name": "Hyper Potion",
-    "ind": 18
+    "name": "HYPER POTION",
+    "ind": 18,
+    "readable": "Hyper Potion"
   },
   {
-    "name": "Super Potion",
-    "ind": 19
+    "name": "SUPER POTION",
+    "ind": 19,
+    "readable": "Super Potion"
   },
   {
-    "name": "Potion",
-    "ind": 20
+    "name": "POTION",
+    "ind": 20,
+    "readable": "Potion"
   },
   {
-    "name": "Boulder Badge",
+    "name": "BOULDER BADGE",
     "ind": 21,
-    "glitch": true
+    "glitch": true,
+    "readable": "Boulder Badge"
   },
   {
-    "name": "Cascade Badge",
+    "name": "CASCADE BADGE",
     "ind": 22,
-    "glitch": true
+    "glitch": true,
+    "readable": "Cascade Badge"
   },
   {
-    "name": "Thunder Badge",
+    "name": "THUNDER BADGE",
     "ind": 23,
-    "glitch": true
+    "glitch": true,
+    "readable": "Thunder Badge"
   },
   {
-    "name": "Rainbow Badge",
+    "name": "RAINBOW BADGE",
     "ind": 24,
-    "glitch": true
+    "glitch": true,
+    "readable": "Rainbow Badge"
   },
   {
-    "name": "Soul Badge",
+    "name": "SOUL BADGE",
     "ind": 25,
-    "glitch": true
+    "glitch": true,
+    "readable": "Soul Badge"
   },
   {
-    "name": "Marsh Badge",
+    "name": "MARSH BADGE",
     "ind": 26,
-    "glitch": true
+    "glitch": true,
+    "readable": "Marsh Badge"
   },
   {
-    "name": "Volcano Badge",
+    "name": "VOLCANO BADGE",
     "ind": 27,
-    "glitch": true
+    "glitch": true,
+    "readable": "Volcano Badge"
   },
   {
-    "name": "Earth Badge",
+    "name": "EARTH BADGE",
     "ind": 28,
-    "glitch": true
+    "glitch": true,
+    "readable": "Earth Badge"
   },
   {
-    "name": "Escape Rope",
-    "ind": 29
+    "name": "ESCAPE ROPE",
+    "ind": 29,
+    "readable": "Escape Rope"
   },
   {
-    "name": "Repel",
-    "ind": 30
+    "name": "REPEL",
+    "ind": 30,
+    "readable": "Repel"
   },
   {
-    "name": "Old Amber",
+    "name": "OLD AMBER",
     "ind": 31,
-    "once": true
+    "once": true,
+    "readable": "Old Amber"
   },
   {
-    "name": "Fire Stone",
-    "ind": 32
+    "name": "FIRE STONE",
+    "ind": 32,
+    "readable": "Fire Stone"
   },
   {
-    "name": "Thunder Stone",
-    "ind": 33
+    "name": "THUNDER STONE",
+    "ind": 33,
+    "readable": "Thunder Stone"
   },
   {
-    "name": "Water Stone",
-    "ind": 34
+    "name": "WATER STONE",
+    "ind": 34,
+    "readable": "Water Stone"
   },
   {
-    "name": "HP Up",
-    "ind": 35
+    "name": "HP UP",
+    "ind": 35,
+    "readable": "HP Up"
   },
   {
-    "name": "Protein",
-    "ind": 36
+    "name": "PROTEIN",
+    "ind": 36,
+    "readable": "Protein"
   },
   {
-    "name": "Iron",
-    "ind": 37
+    "name": "IRON",
+    "ind": 37,
+    "readable": "Iron"
   },
   {
-    "name": "Carbos",
-    "ind": 38
+    "name": "CARBOS",
+    "ind": 38,
+    "readable": "Carbos"
   },
   {
-    "name": "Calcium",
-    "ind": 39
+    "name": "CALCIUM",
+    "ind": 39,
+    "readable": "Calcium"
   },
   {
-    "name": "Rare Candy",
-    "ind": 40
+    "name": "RARE CANDY",
+    "ind": 40,
+    "readable": "Rare Candy"
   },
   {
-    "name": "Dome Fossil",
+    "name": "DOME FOSSIL",
     "ind": 41,
-    "once": true
+    "once": true,
+    "readable": "Dome Fossil"
   },
   {
-    "name": "Helix Fossil",
+    "name": "HELIX FOSSIL",
     "ind": 42,
-    "once": true
+    "once": true,
+    "readable": "Helix Fossil"
   },
   {
-    "name": "Secret Key",
+    "name": "SECRET KEY",
     "ind": 43,
-    "once": true
+    "once": true,
+    "readable": "Secret Key"
   },
   {
-    "name": "Unused Item",
+    "name": "UNUSED ITEM",
     "ind": 44,
-    "glitch": true
+    "glitch": true,
+    "readable": "Unused Item"
   },
   {
-    "name": "Bike Voucher",
+    "name": "BIKE VOUCHER",
     "ind": 45,
-    "once": true
+    "once": true,
+    "readable": "Bike Voucher"
   },
   {
-    "name": "X Accuracy",
-    "ind": 46
+    "name": "X ACCURACY",
+    "ind": 46,
+    "readable": "X Accuracy"
   },
   {
-    "name": "Leaf Stone",
-    "ind": 47
+    "name": "LEAF STONE",
+    "ind": 47,
+    "readable": "Leaf Stone"
   },
   {
-    "name": "Card Key",
+    "name": "CARD KEY",
     "ind": 48,
-    "once": true
+    "once": true,
+    "readable": "Card Key"
   },
   {
-    "name": "Nugget",
-    "ind": 49
+    "name": "NUGGET",
+    "ind": 49,
+    "readable": "Nugget"
   },
   {
-    "name": "PP Up 2",
+    "name": "PP UP 2",
     "ind": 50,
-    "once": true
+    "once": true,
+    "readable": "PP Up 2"
   },
   {
-    "name": "Poke Doll",
-    "ind": 51
+    "name": "POKE DOLL",
+    "ind": 51,
+    "readable": "Poke Doll"
   },
   {
-    "name": "Full Heal",
-    "ind": 52
+    "name": "FULL HEAL",
+    "ind": 52,
+    "readable": "Full Heal"
   },
   {
-    "name": "Revive",
-    "ind": 53
+    "name": "REVIVE",
+    "ind": 53,
+    "readable": "Revive"
   },
   {
-    "name": "Max Revive",
-    "ind": 54
+    "name": "MAX REVIVE",
+    "ind": 54,
+    "readable": "Max Revive"
   },
   {
-    "name": "Guard Spec",
-    "ind": 55
+    "name": "GUARD SPEC",
+    "ind": 55,
+    "readable": "Guard Spec"
   },
   {
-    "name": "Super Repel",
-    "ind": 56
+    "name": "SUPER REPEL",
+    "ind": 56,
+    "readable": "Super Repel"
   },
   {
-    "name": "Max Repel",
-    "ind": 57
+    "name": "MAX REPEL",
+    "ind": 57,
+    "readable": "Max Repel"
   },
   {
-    "name": "Dire Hit",
-    "ind": 58
+    "name": "DIRE HIT",
+    "ind": 58,
+    "readable": "Dire Hit"
   },
   {
-    "name": "Coin",
+    "name": "COIN",
     "ind": 59,
-    "glitch": true
+    "glitch": true,
+    "readable": "Coin"
   },
   {
-    "name": "Fresh Water",
-    "ind": 60
+    "name": "FRESH WATER",
+    "ind": 60,
+    "readable": "Fresh Water"
   },
   {
-    "name": "Soda Pop",
-    "ind": 61
+    "name": "SODA POP",
+    "ind": 61,
+    "readable": "Soda Pop"
   },
   {
-    "name": "Lemonade",
-    "ind": 62
+    "name": "LEMONADE",
+    "ind": 62,
+    "readable": "Lemonade"
   },
   {
-    "name": "S.S. Ticket",
+    "name": "S.S. TICKET",
     "ind": 63,
-    "once": true
+    "once": true,
+    "readable": "S.S. Ticket"
   },
   {
-    "name": "Gold Teeth",
+    "name": "GOLD TEETH",
     "ind": 64,
-    "once": true
+    "once": true,
+    "readable": "Gold Teeth"
   },
   {
-    "name": "X Attack",
-    "ind": 65
+    "name": "X ATTACK",
+    "ind": 65,
+    "readable": "X Attack"
   },
   {
-    "name": "X Defend",
-    "ind": 66
+    "name": "X DEFEND",
+    "ind": 66,
+    "readable": "X Defend"
   },
   {
-    "name": "X Speed",
-    "ind": 67
+    "name": "X SPEED",
+    "ind": 67,
+    "readable": "X Speed"
   },
   {
-    "name": "X Special",
-    "ind": 68
+    "name": "X SPECIAL",
+    "ind": 68,
+    "readable": "X Special"
   },
   {
-    "name": "Coin Case",
+    "name": "COIN CASE",
     "ind": 69,
-    "once": true
+    "once": true,
+    "readable": "Coin Case"
   },
   {
-    "name": "Oaks Parcel",
+    "name": "OAKS PARCEL",
     "ind": 70,
-    "once": true
+    "once": true,
+    "readable": "Oaks Parcel"
   },
   {
-    "name": "Item Finder",
+    "name": "ITEM FINDER",
     "ind": 71,
-    "once": true
+    "once": true,
+    "readable": "Item Finder"
   },
   {
-    "name": "Silph Scope",
+    "name": "SILPH SCOPE",
     "ind": 72,
-    "once": true
+    "once": true,
+    "readable": "Silph Scope"
   },
   {
-    "name": "Poke Flute",
+    "name": "POKE FLUTE",
     "ind": 73,
-    "once": true
+    "once": true,
+    "readable": "Poke Flute"
   },
   {
-    "name": "Lift Key",
+    "name": "LIFT KEY",
     "ind": 74,
-    "once": true
+    "once": true,
+    "readable": "Lift Key"
   },
   {
-    "name": "Exp All",
+    "name": "EXP ALL",
     "ind": 75,
-    "once": true
+    "once": true,
+    "readable": "Exp All"
   },
   {
-    "name": "Old Rod",
+    "name": "OLD ROD",
     "ind": 76,
-    "once": true
+    "once": true,
+    "readable": "Old Rod"
   },
   {
-    "name": "Good Rod",
+    "name": "GOOD ROD",
     "ind": 77,
-    "once": true
+    "once": true,
+    "readable": "Good Rod"
   },
   {
-    "name": "Super Rod",
+    "name": "SUPER ROD",
     "ind": 78,
-    "once": true
+    "once": true,
+    "readable": "Super Rod"
   },
   {
-    "name": "PP Up",
-    "ind": 79
+    "name": "PP UP",
+    "ind": 79,
+    "readable": "PP Up"
   },
   {
-    "name": "Ether",
-    "ind": 80
+    "name": "ETHER",
+    "ind": 80,
+    "readable": "Ether"
   },
   {
-    "name": "Max Ether",
-    "ind": 81
+    "name": "MAX ETHER",
+    "ind": 81,
+    "readable": "Max Ether"
   },
   {
-    "name": "Elixer",
-    "ind": 82
+    "name": "ELIXER",
+    "ind": 82,
+    "readable": "Elixer"
   },
   {
-    "name": "Max Elixer",
-    "ind": 83
+    "name": "MAX ELIXER",
+    "ind": 83,
+    "readable": "Max Elixer"
   },
   {
-    "name": "Floor B2F",
+    "name": "FLOOR B2F",
     "ind": 84,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor B2F"
   },
   {
-    "name": "Floor B1F",
+    "name": "FLOOR B1F",
     "ind": 85,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor B1F"
   },
   {
-    "name": "Floor 1F",
+    "name": "FLOOR 1F",
     "ind": 86,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 1F"
   },
   {
-    "name": "Floor 2F",
+    "name": "FLOOR 2F",
     "ind": 87,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 2F"
   },
   {
-    "name": "Floor 3F",
+    "name": "FLOOR 3F",
     "ind": 88,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 3F"
   },
   {
-    "name": "Floor 4F",
+    "name": "FLOOR 4F",
     "ind": 89,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 4F"
   },
   {
-    "name": "Floor 5F",
+    "name": "FLOOR 5F",
     "ind": 90,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 5F"
   },
   {
-    "name": "Floor 6F",
+    "name": "FLOOR 6F",
     "ind": 91,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 6F"
   },
   {
-    "name": "Floor 7F",
+    "name": "FLOOR 7F",
     "ind": 92,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 7F"
   },
   {
-    "name": "Floor 8F",
+    "name": "FLOOR 8F",
     "ind": 93,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 8F"
   },
   {
-    "name": "Floor 9F",
+    "name": "FLOOR 9F",
     "ind": 94,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 9F"
   },
   {
-    "name": "Floor 10F",
+    "name": "FLOOR 10F",
     "ind": 95,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 10F"
   },
   {
-    "name": "Floor 11F",
+    "name": "FLOOR 11F",
     "ind": 96,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor 11F"
   },
   {
-    "name": "Floor B4F",
+    "name": "FLOOR B4F",
     "ind": 97,
-    "glitch": true
+    "glitch": true,
+    "readable": "Floor B4F"
   },
   {
-    "name": "HM 01: Cut",
+    "name": "HM 01: CUT",
     "ind": 196,
     "tm": 51,
-    "hm": 1
+    "hm": 1,
+    "readable": "HM 01: Cut"
   },
   {
-    "name": "HM 02: Fly",
+    "name": "HM 02: FLY",
     "ind": 197,
     "tm": 52,
-    "hm": 2
+    "hm": 2,
+    "readable": "HM 02: Fly"
   },
   {
-    "name": "HM 03: Surf",
+    "name": "HM 03: SURF",
     "ind": 198,
     "tm": 53,
-    "hm": 3
+    "hm": 3,
+    "readable": "HM 03: Surf"
   },
   {
-    "name": "HM 04: Strength",
+    "name": "HM 04: STRENGTH",
     "ind": 199,
     "tm": 54,
-    "hm": 4
+    "hm": 4,
+    "readable": "HM 04: Strength"
   },
   {
-    "name": "HM 05: Flash",
+    "name": "HM 05: FLASH",
     "ind": 200,
     "tm": 55,
-    "hm": 5
+    "hm": 5,
+    "readable": "HM 05: Flash"
   },
   {
-    "name": "TM 01: Mega Punch",
+    "name": "TM 01: MEGA PUNCH",
     "tm": 1,
-    "ind": 201
+    "ind": 201,
+    "readable": "TM 01: Mega Punch"
   },
   {
-    "name": "TM 02: Razor Wind",
+    "name": "TM 02: RAZOR WIND",
     "ind": 202,
-    "tm": 2
+    "tm": 2,
+    "readable": "TM 02: Razor Wind"
   },
   {
-    "name": "TM 03: Swords Dance",
+    "name": "TM 03: SWORDS DANCE",
     "ind": 203,
-    "tm": 3
+    "tm": 3,
+    "readable": "TM 03: Swords Dance"
   },
   {
-    "name": "TM 04: Whirlwind",
+    "name": "TM 04: WHIRLWIND",
     "ind": 204,
-    "tm": 4
+    "tm": 4,
+    "readable": "TM 04: Whirlwind"
   },
   {
-    "name": "TM 05: Mega Kick",
+    "name": "TM 05: MEGA KICK",
     "ind": 205,
-    "tm": 5
+    "tm": 5,
+    "readable": "TM 05: Mega Kick"
   },
   {
-    "name": "TM 06: Toxic",
+    "name": "TM 06: TOXIC",
     "ind": 206,
-    "tm": 6
+    "tm": 6,
+    "readable": "TM 06: Toxic"
   },
   {
-    "name": "TM 07: Horn Drill",
+    "name": "TM 07: HORN DRILL",
     "ind": 207,
-    "tm": 7
+    "tm": 7,
+    "readable": "TM 07: Horn Drill"
   },
   {
-    "name": "TM 08: Body Slam",
+    "name": "TM 08: BODY SLAM",
     "ind": 208,
-    "tm": 8
+    "tm": 8,
+    "readable": "TM 08: Body Slam"
   },
   {
-    "name": "TM 09: Take Down",
+    "name": "TM 09: TAKE DOWN",
     "ind": 209,
-    "tm": 9
+    "tm": 9,
+    "readable": "TM 09: Take Down"
   },
   {
-    "name": "TM 10: Double Edge",
+    "name": "TM 10: DOUBLE EDGE",
     "ind": 210,
-    "tm": 10
+    "tm": 10,
+    "readable": "TM 10: Double Edge"
   },
   {
-    "name": "TM 11: Bubblebeam",
+    "name": "TM 11: BUBBLEBEAM",
     "ind": 211,
-    "tm": 11
+    "tm": 11,
+    "readable": "TM 11: Bubblebeam"
   },
   {
-    "name": "TM 12: Water Gun",
+    "name": "TM 12: WATER GUN",
     "ind": 212,
-    "tm": 12
+    "tm": 12,
+    "readable": "TM 12: Water Gun"
   },
   {
-    "name": "TM 13: Ice Beam",
+    "name": "TM 13: ICE BEAM",
     "ind": 213,
-    "tm": 13
+    "tm": 13,
+    "readable": "TM 13: Ice Beam"
   },
   {
-    "name": "TM 14: Blizzard",
+    "name": "TM 14: BLIZZARD",
     "ind": 214,
-    "tm": 14
+    "tm": 14,
+    "readable": "TM 14: Blizzard"
   },
   {
-    "name": "TM 15: Hyper Beam",
+    "name": "TM 15: HYPER BEAM",
     "ind": 215,
-    "tm": 15
+    "tm": 15,
+    "readable": "TM 15: Hyper Beam"
   },
   {
-    "name": "TM 16: Pay Day",
+    "name": "TM 16: PAY DAY",
     "ind": 216,
-    "tm": 16
+    "tm": 16,
+    "readable": "TM 16: Pay Day"
   },
   {
-    "name": "TM 17: Submission",
+    "name": "TM 17: SUBMISSION",
     "ind": 217,
-    "tm": 17
+    "tm": 17,
+    "readable": "TM 17: Submission"
   },
   {
-    "name": "TM 18: Counter",
+    "name": "TM 18: COUNTER",
     "ind": 218,
-    "tm": 18
+    "tm": 18,
+    "readable": "TM 18: Counter"
   },
   {
-    "name": "TM 19: Seismic Toss",
+    "name": "TM 19: SEISMIC TOSS",
     "ind": 219,
-    "tm": 19
+    "tm": 19,
+    "readable": "TM 19: Seismic Toss"
   },
   {
-    "name": "TM 20: Rage",
+    "name": "TM 20: RAGE",
     "ind": 220,
-    "tm": 20
+    "tm": 20,
+    "readable": "TM 20: Rage"
   },
   {
-    "name": "TM 21: Mega Drain",
+    "name": "TM 21: MEGA DRAIN",
     "ind": 221,
-    "tm": 21
+    "tm": 21,
+    "readable": "TM 21: Mega Drain"
   },
   {
-    "name": "TM 22: Solarbeam",
+    "name": "TM 22: SOLARBEAM",
     "ind": 222,
-    "tm": 22
+    "tm": 22,
+    "readable": "TM 22: Solarbeam"
   },
   {
-    "name": "TM 23: Dragon Rage",
+    "name": "TM 23: DRAGON RAGE",
     "ind": 223,
-    "tm": 23
+    "tm": 23,
+    "readable": "TM 23: Dragon Rage"
   },
   {
-    "name": "TM 24: Thunderbolt",
+    "name": "TM 24: THUNDERBOLT",
     "ind": 224,
-    "tm": 24
+    "tm": 24,
+    "readable": "TM 24: Thunderbolt"
   },
   {
-    "name": "TM 25: Thunder",
+    "name": "TM 25: THUNDER",
     "ind": 225,
-    "tm": 25
+    "tm": 25,
+    "readable": "TM 25: Thunder"
   },
   {
-    "name": "TM 26: Earthquake",
+    "name": "TM 26: EARTHQUAKE",
     "ind": 226,
-    "tm": 26
+    "tm": 26,
+    "readable": "TM 26: Earthquake"
   },
   {
-    "name": "TM 27: Fissure",
+    "name": "TM 27: FISSURE",
     "ind": 227,
-    "tm": 27
+    "tm": 27,
+    "readable": "TM 27: Fissure"
   },
   {
-    "name": "TM 28: Dig",
+    "name": "TM 28: DIG",
     "ind": 228,
-    "tm": 28
+    "tm": 28,
+    "readable": "TM 28: Dig"
   },
   {
-    "name": "TM 29: Psychic",
+    "name": "TM 29: PSYCHIC",
     "ind": 229,
-    "tm": 29
+    "tm": 29,
+    "readable": "TM 29: Psychic"
   },
   {
-    "name": "TM 30: Teleport",
+    "name": "TM 30: TELEPORT",
     "ind": 230,
-    "tm": 30
+    "tm": 30,
+    "readable": "TM 30: Teleport"
   },
   {
-    "name": "TM 31: Mimic",
+    "name": "TM 31: MIMIC",
     "ind": 231,
-    "tm": 31
+    "tm": 31,
+    "readable": "TM 31: Mimic"
   },
   {
-    "name": "TM 32: Double Team",
+    "name": "TM 32: DOUBLE TEAM",
     "ind": 232,
-    "tm": 32
+    "tm": 32,
+    "readable": "TM 32: Double Team"
   },
   {
-    "name": "TM 33: Reflect",
+    "name": "TM 33: REFLECT",
     "ind": 233,
-    "tm": 33
+    "tm": 33,
+    "readable": "TM 33: Reflect"
   },
   {
-    "name": "TM 34: Bide",
+    "name": "TM 34: BIDE",
     "ind": 234,
-    "tm": 34
+    "tm": 34,
+    "readable": "TM 34: Bide"
   },
   {
-    "name": "TM 35: Metronome",
+    "name": "TM 35: METRONOME",
     "ind": 235,
-    "tm": 35
+    "tm": 35,
+    "readable": "TM 35: Metronome"
   },
   {
-    "name": "TM 36: Selfdestruct",
+    "name": "TM 36: SELFDESTRUCT",
     "ind": 236,
-    "tm": 36
+    "tm": 36,
+    "readable": "TM 36: Selfdestruct"
   },
   {
-    "name": "TM 37: Egg Bomb",
+    "name": "TM 37: EGG BOMB",
     "ind": 237,
-    "tm": 37
+    "tm": 37,
+    "readable": "TM 37: Egg Bomb"
   },
   {
-    "name": "TM 38: Fireblast",
+    "name": "TM 38: FIREBLAST",
     "ind": 238,
-    "tm": 38
+    "tm": 38,
+    "readable": "TM 38: Fireblast"
   },
   {
-    "name": "TM 39: Swift",
+    "name": "TM 39: SWIFT",
     "ind": 239,
-    "tm": 39
+    "tm": 39,
+    "readable": "TM 39: Swift"
   },
   {
-    "name": "TM 40: Skullbash",
+    "name": "TM 40: SKULLBASH",
     "ind": 240,
-    "tm": 40
+    "tm": 40,
+    "readable": "TM 40: Skullbash"
   },
   {
-    "name": "TM 41: Softboiled",
+    "name": "TM 41: SOFTBOILED",
     "ind": 241,
-    "tm": 41
+    "tm": 41,
+    "readable": "TM 41: Softboiled"
   },
   {
-    "name": "TM 42: Dream Eater",
+    "name": "TM 42: DREAM EATER",
     "ind": 242,
-    "tm": 42
+    "tm": 42,
+    "readable": "TM 42: Dream Eater"
   },
   {
-    "name": "TM 43: Sky Attack",
+    "name": "TM 43: SKY ATTACK",
     "ind": 243,
-    "tm": 43
+    "tm": 43,
+    "readable": "TM 43: Sky Attack"
   },
   {
-    "name": "TM 44: Rest",
+    "name": "TM 44: REST",
     "ind": 244,
-    "tm": 44
+    "tm": 44,
+    "readable": "TM 44: Rest"
   },
   {
-    "name": "TM 45: Thunder Wave",
+    "name": "TM 45: THUNDER WAVE",
     "ind": 245,
-    "tm": 45
+    "tm": 45,
+    "readable": "TM 45: Thunder Wave"
   },
   {
-    "name": "TM 46: Psywave",
+    "name": "TM 46: PSYWAVE",
     "ind": 246,
-    "tm": 46
+    "tm": 46,
+    "readable": "TM 46: Psywave"
   },
   {
-    "name": "TM 47: Explosion",
+    "name": "TM 47: EXPLOSION",
     "ind": 247,
-    "tm": 47
+    "tm": 47,
+    "readable": "TM 47: Explosion"
   },
   {
-    "name": "TM 48: Rock Slide",
+    "name": "TM 48: ROCK SLIDE",
     "ind": 248,
-    "tm": 48
+    "tm": 48,
+    "readable": "TM 48: Rock Slide"
   },
   {
-    "name": "TM 49: Tri Attack",
+    "name": "TM 49: TRI ATTACK",
     "ind": 249,
-    "tm": 49
+    "tm": 49,
+    "readable": "TM 49: Tri Attack"
   },
   {
-    "name": "TM 50: Substitute",
+    "name": "TM 50: SUBSTITUTE",
     "ind": 250,
-    "tm": 50
+    "tm": 50,
+    "readable": "TM 50: Substitute"
   }
 ]

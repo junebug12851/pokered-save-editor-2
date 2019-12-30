@@ -128,6 +128,7 @@ void deepLink()
   HiddenItems::deepLink();
   Items::deepLink();
   Moves::deepLink();
+  Pokemon::deepLink(); // <-- Definately the most expensive operation
 }
 
 // Performs program one-time bootstrapping and setup

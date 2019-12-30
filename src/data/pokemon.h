@@ -40,27 +40,41 @@ struct EvolutionEntry;
 struct MoveEntry;
 struct PokemonEntry;
 
+// Deep link forward-declarations
+struct ItemEntry;
+struct MoveEntry;
+struct TypeEntry;
+
 struct EvolutionEntry
 {
   EvolutionEntry(QJsonValue& data);
+  void deepLink(PokemonEntry* deEvolution);
 
   QString toName;
   bool trade;
   QString item;
 
   std::optional<var8> level;
+
+  PokemonEntry* toDeEvolution;
+  PokemonEntry* toEvolution;
+  ItemEntry* toItem;
 };
 
 struct PokemonMoveEntry
 {
   PokemonMoveEntry(QJsonValue& data);
+  void deepLink();
 
   var8 level;
   QString move;
+
+  MoveEntry* toMove;
 };
 
 struct PokemonEntry {
   PokemonEntry();
+  void deepLink();
 
   QString name;
   var8 ind;
@@ -83,6 +97,14 @@ struct PokemonEntry {
   std::optional<var8> baseSpecial;
   std::optional<var8> baseExpYield;
   std::optional<var8> catchRate;
+
+  // Lots of deep linking
+  TypeEntry* toType1;
+  TypeEntry* toType2;
+  PokemonEntry* toDeEvolution;
+  QVector<MoveEntry*>* toInitial;
+  QVector<MoveEntry*>* toTmHmMove;
+  QVector<ItemEntry*>* toTmHmItem;
 };
 
 class Pokemon
@@ -90,6 +112,7 @@ class Pokemon
 public:
   static void load();
   static void index();
+  static void deepLink();
 
   static QVector<PokemonEntry*>* pokemon;
   static QHash<QString, PokemonEntry*>* ind;
