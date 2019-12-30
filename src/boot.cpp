@@ -58,6 +58,9 @@ QApplication* preBoot(int argc, char *argv[])
   // Create the app
   QApplication* app = new QApplication(argc, argv);
 
+  // Setup debug/error messages
+  qSetMessagePattern("[%{category}/%{type}]: %{message} \n %{time} %{file} %{function} %{line}");
+
   // Pull the icon from resources and set as window icon
   // It's also set to properly be built-in during compile
   QIcon icon("qrc:/assets/icons/512x512.png");
@@ -114,6 +117,13 @@ void index()
   Trainers::index();
 }
 
+// Step 3: Deep link most data to other data for rapid cross-data access
+// Not all data can be deep-linked
+void deepLink()
+{
+  EventPokemon::deepLink();
+}
+
 // Performs program one-time bootstrapping and setup
 extern QApplication* boot(int argc, char *argv[])
 {
@@ -121,6 +131,7 @@ extern QApplication* boot(int argc, char *argv[])
 
   load();
   index();
+  deepLink();
 
   return app;
 }

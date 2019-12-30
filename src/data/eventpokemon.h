@@ -25,6 +25,8 @@
 #include <QString>
 #include <QVector>
 
+#include "./pokemon.h"
+
 // These are Pokemon you get by going to or participating in real-life events
 // that were held around the world
 
@@ -40,12 +42,15 @@ struct EventPokemonEntry {
     QString region; // Region Code
     QVector<QString>* moves; // Move list
     std::optional<var8> level; // Level, default minimum if not specified
+
+    PokemonEntry* toPokemon; // Deep link to associated Pokemon
 };
 
 class EventPokemon
 {
 public:
   static void load();
+  static void deepLink();
 
   static QVector<EventPokemonEntry*>* eventPokemon;
 };
