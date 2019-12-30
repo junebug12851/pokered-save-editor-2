@@ -21,6 +21,8 @@
 #include <QString>
 #include <QHash>
 
+#include "./moves.h"
+
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
@@ -39,6 +41,8 @@ struct ItemEntry {
 
   std::optional<var8> tm; // TM Number if present
   std::optional<var8> hm; // HM Number if present
+
+  MoveEntry* toMove; // To TM or HM Move
 };
 
 class Items
@@ -46,6 +50,7 @@ class Items
 public:
   static void load();
   static void index();
+  static void deepLink();
 
   static QVector<ItemEntry*>* items;
   static QHash<QString, ItemEntry*>* ind;

@@ -18,6 +18,10 @@
 #include <QJsonArray>
 #include "./gamedata.h"
 
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 ItemEntry::ItemEntry()
 {
   once = false;
@@ -69,6 +73,22 @@ void Items::index()
       ind->insert("tm" + QString::number(*entry->tm), entry);
     if(entry->hm)
       ind->insert("hm" + QString::number(*entry->hm), entry);
+  }
+}
+
+void Items::deepLink()
+{
+  for(auto entry : *items)
+  {
+    if(entry->tm && !entry->hm)
+      entry->toMove = Moves::ind->value("tm" + QString::number(*entry->tm), nullptr);
+    else if(entry->tm && entry->hm)
+      entry->toMove = Moves::ind->value("hm" + QString::number(*entry->hm), nullptr);
+
+#ifdef QT_DEBUG
+    if((entry->tm || entry->hm) && entry->toMove == nullptr)
+      qCritical() << "Item: " << entry->name << ", could not be deep linked." ;
+#endif
   }
 }
 

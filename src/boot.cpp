@@ -125,6 +125,7 @@ void deepLink()
   Fly::deepLink();
   HiddenCoins::deepLink();
   HiddenItems::deepLink();
+  Items::deepLink();
 }
 
 // Performs program one-time bootstrapping and setup
