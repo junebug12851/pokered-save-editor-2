@@ -18,9 +18,18 @@
 #include <QJsonArray>
 #include "./gamedata.h"
 
+#include "./pokemon.h"
+
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 TradeEntry::TradeEntry()
 {
   unused = false;
+
+  toGive = nullptr;
+  toGet = nullptr;
 }
 
 void Trades::load()
@@ -46,6 +55,22 @@ void Trades::load()
 
     // Add to array
     trades->append(entry);
+  }
+}
+
+void Trades::deepLink()
+{
+  for(auto entry : *trades)
+  {
+    entry->toGive = Pokemon::ind->value(entry->give, nullptr);
+    entry->toGet = Pokemon::ind->value(entry->get, nullptr);
+
+#ifdef QT_DEBUG
+    if(entry->toGive == nullptr)
+      qCritical() << "Trade Give: " << entry->toGive << ", could not be deep linked." ;
+    if(entry->toGet == nullptr)
+      qCritical() << "Trade Get: " << entry->toGet << ", could not be deep linked." ;
+#endif
   }
 }
 

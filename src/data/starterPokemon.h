@@ -19,6 +19,8 @@
 #include "../common/types.h"
 #include <QString>
 
+struct PokemonEntry;
+
 // Something I made, I hand-selected a ton of other starter options I thought
 // would be good starters. This randomly selects among them.
 // 1) They must all be base evolution if there is one
@@ -29,10 +31,13 @@ class StarterPokemon
 {
 public:
   static void load();
-  static QString random3Starter();
-  static QString randomAnyStarter();
+  static void deepLink();
+
+  static PokemonEntry* random3Starter();
+  static PokemonEntry* randomAnyStarter();
 
   static QVector<QString>* starters;
+  static QVector<PokemonEntry*>* toPokemon;
 };
 
 #endif // STARTER_H

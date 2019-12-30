@@ -20,6 +20,13 @@
 #include <QRandomGenerator>
 #include "./gamedata.h"
 
+#include "./items.h"
+#include "./moves.h"
+
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 void TmHms::load()
 {
   // Grab Event Pokemon Data
@@ -33,4 +40,26 @@ void TmHms::load()
   }
 }
 
+void TmHms::deepLink()
+{
+  for(var8 i = 0; i < tmHms->size(); i++)
+  {
+    auto entry = tmHms->at(i); // Move Name
+    var8 ind = i + 1; // Move TM Number
+
+    // Deep link to tm number
+    toTmHmItem->append(Items::ind->value("tm" + QString::number(ind), nullptr));
+    toTmHmMove->append(Moves::ind->value("tm" + QString::number(ind), nullptr));
+
+#ifdef QT_DEBUG
+    if(toTmHmItem->at(i) == nullptr)
+      qCritical() << "TM/HM Item: " << entry << ", could not be deep linked." ;
+    if(toTmHmMove->at(i) == nullptr)
+      qCritical() << "TM/HM Move: " << entry << ", could not be deep linked." ;
+#endif
+  }
+}
+
 QVector<QString>* TmHms::tmHms = new QVector<QString>();
+QVector<ItemEntry*>* TmHms::toTmHmItem = new QVector<ItemEntry*>();
+QVector<MoveEntry*>* TmHms::toTmHmMove = new QVector<MoveEntry*>();

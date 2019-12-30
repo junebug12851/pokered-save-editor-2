@@ -59,7 +59,7 @@ QApplication* preBoot(int argc, char *argv[])
   QApplication* app = new QApplication(argc, argv);
 
   // Setup debug/error messages
-  qSetMessagePattern("[%{category}/%{type}]: %{message} ~ %{time} %{file} %{function} %{line}");
+  qSetMessagePattern("[%{type}]: %{message} ~ %{time} %{file} %{function} %{line}");
 
   // Pull the icon from resources and set as window icon
   // It's also set to properly be built-in during compile
@@ -128,7 +128,10 @@ void deepLink()
   HiddenItems::deepLink();
   Items::deepLink();
   Moves::deepLink();
-  Pokemon::deepLink(); // <-- Definately the most expensive operation
+  Pokemon::deepLink(); // <-- Definately the most expensive operation!!!
+  StarterPokemon::deepLink();
+  TmHms::deepLink();
+  Trades::deepLink();
 }
 
 // Performs program one-time bootstrapping and setup

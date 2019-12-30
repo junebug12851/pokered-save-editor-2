@@ -20,6 +20,12 @@
 #include <QRandomGenerator>
 #include "./gamedata.h"
 
+#include "./pokemon.h"
+
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 void StarterPokemon::load()
 {
   // Grab Event Pokemon Data
@@ -33,18 +39,36 @@ void StarterPokemon::load()
   }
 }
 
-QString StarterPokemon::random3Starter()
+void StarterPokemon::deepLink()
+{
+  for(var8 i = 0; i < starters->size(); i++)
+  {
+    auto entry = starters->at(i); // Move Name
+
+    // Deep link to tm number
+    toPokemon->append(Pokemon::ind->value(entry, nullptr));
+
+#ifdef QT_DEBUG
+    if(toPokemon->at(i) == nullptr)
+      qCritical() << "Starter Pokemon: " << entry << ", could not be deep linked." ;
+#endif
+  }
+}
+
+PokemonEntry* StarterPokemon::random3Starter()
 {
   // First 3 in list are in-game starters
   var32 ind = QRandomGenerator::global()->bounded(0, 3);
-  return starters->at(ind);
+  return toPokemon->at(ind);
 }
 
-QString StarterPokemon::randomAnyStarter()
+PokemonEntry* StarterPokemon::randomAnyStarter()
 {
   // List as a whole are all potential starters
   var32 ind = QRandomGenerator::global()->bounded(0, starters->size());
-  return starters->at(ind);
+  return toPokemon->at(ind);
 }
 
 QVector<QString>* StarterPokemon::starters = new QVector<QString>();
+QVector<PokemonEntry*>* StarterPokemon::toPokemon =
+    new QVector<PokemonEntry*>();

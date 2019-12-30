@@ -19,6 +19,8 @@
 #include "../common/types.h"
 #include <QString>
 
+struct PokemonEntry;
+
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
@@ -33,12 +35,17 @@ struct TradeEntry {
   var8 textId;
   QString nickname;
   bool unused;
+
+  PokemonEntry* toGive;
+  PokemonEntry* toGet;
 };
 
 class Trades
 {
 public:
   static void load();
+  static void deepLink();
+
   static QVector<TradeEntry*>* trades;
 };
 

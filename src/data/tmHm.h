@@ -19,6 +19,9 @@
 #include "../common/types.h"
 #include <QString>
 
+struct ItemEntry;
+struct MoveEntry;
+
 // All the TM's and HM's in the game
 // internally, HM's are specially treated TM's that start at TM 51
 
@@ -26,7 +29,11 @@ class TmHms
 {
 public:
   static void load();
+  static void deepLink();
+
   static QVector<QString>* tmHms;
+  static QVector<ItemEntry*>* toTmHmItem;
+  static QVector<MoveEntry*>* toTmHmMove;
 };
 
 #endif // TMHM_H
