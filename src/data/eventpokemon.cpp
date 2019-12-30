@@ -20,7 +20,10 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonValueRef>
+
+#ifdef QT_DEBUG
 #include <QtDebug>
+#endif
 
 EventPokemonEntry::EventPokemonEntry()
 {
@@ -106,8 +109,10 @@ void EventPokemon::deepLink()
   {
     entry->toPokemon = Pokemon::ind->value(entry->pokemon, nullptr);
 
+#ifdef QT_DEBUG
     if(entry->toPokemon == nullptr)
       qCritical() << "Event Pokemon: " << entry->pokemon << ", could not be deep linked." ;
+#endif
   }
 }
 
