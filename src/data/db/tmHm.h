@@ -13,31 +13,27 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef HIDDENITEMS_H
-#define HIDDENITEMS_H
+#ifndef TMHM_H
+#define TMHM_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
 
-#include "./maps.h"
+struct ItemEntry;
+struct MoveEntry;
 
-// A list of all the hidden items around the world
+// All the TM's and HM's in the game
+// internally, HM's are specially treated TM's that start at TM 51
 
-struct HiddenItemEntry {
-  QString map;
-  var8 x;
-  var8 y;
-
-  MapEntry* toMap;
-};
-
-class HiddenItems
+class TmHms
 {
 public:
   static void load();
   static void deepLink();
 
-  static QVector<HiddenItemEntry*>* hiddenItems;
+  static QVector<QString>* tmHms;
+  static QVector<ItemEntry*>* toTmHmItem;
+  static QVector<MoveEntry*>* toTmHmMove;
 };
 
-#endif // HIDDENITEMS_H
+#endif // TMHM_H

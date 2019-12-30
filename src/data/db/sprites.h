@@ -13,34 +13,31 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef EVENTS_H
-#define EVENTS_H
+#ifndef SPRITE_H
+#define SPRITE_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
 #include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-// In-Game events, there's like a million of them, not kidding lol. Every little
-// thing you do changes and moves around events
+// All sprites in the game, glitch and not
 
-struct EventEntry {
-  QString name; // Event name
-  var16 ind; // Internal index
-  var16 byte; // Byte in SAV file
-  var8 bit; // Bit in byte
+struct SpriteEntry {
+  QString name;
+  var8 ind;
 };
 
-class Events
+class Sprites
 {
 public:
   static void load();
   static void index();
 
-  static QVector<EventEntry*>* events;
-  static QHash<QString, EventEntry*>* ind;
+  static QVector<SpriteEntry*>* sprites;
+  static QHash<QString, SpriteEntry*>* ind;
 };
 
-#endif // EVENTS_H
+#endif // SPRITE_H

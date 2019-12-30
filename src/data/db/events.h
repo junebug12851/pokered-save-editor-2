@@ -13,32 +13,34 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef EVENTS_H
+#define EVENTS_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
 #include <QHash>
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-// All types in the game
+// In-Game events, there's like a million of them, not kidding lol. Every little
+// thing you do changes and moves around events
 
-struct TypeEntry {
-  QString name;
-  var8 ind;
-  QString readable;
+struct EventEntry {
+  QString name; // Event name
+  var16 ind; // Internal index
+  var16 byte; // Byte in SAV file
+  var8 bit; // Bit in byte
 };
 
-class Types
+class Events
 {
 public:
   static void load();
   static void index();
 
-  static QVector<TypeEntry*>* types;
-  static QHash<QString, TypeEntry*>* ind;
+  static QVector<EventEntry*>* events;
+  static QHash<QString, EventEntry*>* ind;
 };
 
-#endif // TYPES_H
+#endif // EVENTS_H

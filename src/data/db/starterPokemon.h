@@ -13,27 +13,31 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef TMHM_H
-#define TMHM_H
+#ifndef STARTER_H
+#define STARTER_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
 
-struct ItemEntry;
-struct MoveEntry;
+struct PokemonEntry;
 
-// All the TM's and HM's in the game
-// internally, HM's are specially treated TM's that start at TM 51
+// Something I made, I hand-selected a ton of other starter options I thought
+// would be good starters. This randomly selects among them.
+// 1) They must all be base evolution if there is one
+// 2) They musn't be legendary
+// 3) Just lots of judgement calls from there, they must feel "startery"
 
-class TmHms
+class StarterPokemon
 {
 public:
   static void load();
   static void deepLink();
 
-  static QVector<QString>* tmHms;
-  static QVector<ItemEntry*>* toTmHmItem;
-  static QVector<MoveEntry*>* toTmHmMove;
+  static PokemonEntry* random3Starter();
+  static PokemonEntry* randomAnyStarter();
+
+  static QVector<QString>* starters;
+  static QVector<PokemonEntry*>* toPokemon;
 };
 
-#endif // TMHM_H
+#endif // STARTER_H

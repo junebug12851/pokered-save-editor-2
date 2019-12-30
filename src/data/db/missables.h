@@ -13,36 +13,38 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef FLY_H
-#define FLY_H
+#ifndef MISSABLE_H
+#define MISSABLE_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
 #include <QHash>
-
-#include "./maps.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-// Cities you can fly to
+// Missable flags set in-game, a missable is simply a script and/or sprite
+// that never loads (Is surpressed). Allows the game to hide things you
+// shouldn't see or encounter yet or show a new map "state" after you progressed
+// in the games.
 
-struct FlyEntry {
-  QString name; // City Name
-  var8 ind; // Index in list
+// The starter you and your rival pick are both missable activated and the
+// guy blocking the path in Pewter City is a missable that's hiden once you beat
+// Brock.
 
-  MapEntry* toMap; // Deep link to associated map data
+struct MissableEntry {
+  QString name;
+  var8 ind;
 };
 
-class Fly
+class Missables
 {
 public:
   static void load();
   static void index();
-  static void deepLink();
 
-  static QVector<FlyEntry*>* fly;
-  static QHash<QString, FlyEntry*>* ind;
+  static QVector<MissableEntry*>* missables;
+  static QHash<QString, MissableEntry*>* ind;
 };
 
-#endif // FLY_H
+#endif // MISSABLE_H

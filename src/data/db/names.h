@@ -13,31 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef HIDDENCOINS_H
-#define HIDDENCOINS_H
+#ifndef NAME_H
+#define NAME_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
 
-#include "./maps.h"
+// Something I made, random American names, I made it for the auto-nicknaming
+// feature given this program is for the USA English Pokemon Red.
 
-// A list of all the hidden coins in Casino
-
-struct HiddenCoinEntry {
-  QString map;
-  var8 x;
-  var8 y;
-
-  MapEntry* toMap;
-};
-
-class HiddenCoins
+class Names
 {
 public:
   static void load();
-  static void deepLink();
+  static QString randomName();
 
-  static QVector<HiddenCoinEntry*>* hiddenCoins;
+  static QVector<QString>* names;
 };
 
-#endif // HIDDENCOINS_H
+#endif // NAME_H

@@ -12,33 +12,55 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+# FORMS += \
+#    src/old/view/mainwindow.ui
+
+HEADERS += \
+  src/common/types.h \
+  src/data/db/eventpokemon.h \
+  src/data/db/events.h \
+  src/data/db/fly.h \
+  src/data/db/fonts.h \
+  src/data/db/gamedata.h \
+  src/data/db/hiddenCoins.h \
+  src/data/db/hiddenItems.h \
+  src/data/db/items.h \
+  src/data/db/maps.h \
+  src/data/db/missables.h \
+  src/data/db/moves.h \
+  src/data/db/names.h \
+  src/data/db/pokemon.h \
+  src/data/db/scripts.h \
+  src/data/db/sprites.h \
+  src/data/db/starterPokemon.h \
+  src/data/db/tmHm.h \
+  src/data/db/trades.h \
+  src/data/db/trainers.h \
+  src/data/db/types.h
+
 SOURCES += \
-#        src/old/data/gamedata.cpp \
-#        src/old/view/mainwindow.cpp \
-#        src/old/data/filemanagement.cpp \
   src/boot.cpp \
-  src/data/eventpokemon.cpp \
-  src/data/events.cpp \
-  src/data/fly.cpp \
-  src/data/fonts.cpp \
-  src/data/gamedata.cpp \
-  src/data/hiddenCoins.cpp \
-  src/data/hiddenItems.cpp \
-  src/data/items.cpp \
-  src/data/maps.cpp \
-  src/data/missables.cpp \
-  src/data/moves.cpp \
-  src/data/names.cpp \
-  src/data/pokemon.cpp \
-  src/data/scripts.cpp \
-  src/data/sprites.cpp \
-  src/data/starterPokemon.cpp \
-  src/data/tmHm.cpp \
-  src/data/trades.cpp \
-  src/data/trainers.cpp \
-  src/data/types.cpp \
-        src/main.cpp \
-#        src/old/data/rawsavedata.cpp
+  src/main.cpp \
+  src/data/db/eventpokemon.cpp \
+  src/data/db/events.cpp \
+  src/data/db/fly.cpp \
+  src/data/db/fonts.cpp \
+  src/data/db/gamedata.cpp \
+  src/data/db/hiddenCoins.cpp \
+  src/data/db/hiddenItems.cpp \
+  src/data/db/items.cpp \
+  src/data/db/maps.cpp \
+  src/data/db/missables.cpp \
+  src/data/db/moves.cpp \
+  src/data/db/names.cpp \
+  src/data/db/pokemon.cpp \
+  src/data/db/scripts.cpp \
+  src/data/db/sprites.cpp \
+  src/data/db/starterPokemon.cpp \
+  src/data/db/tmHm.cpp \
+  src/data/db/trades.cpp \
+  src/data/db/trainers.cpp \
+  src/data/db/types.cpp
 
 RESOURCES += qml.qrc
 
@@ -54,45 +76,3 @@ QML_DESIGNER_IMPORT_PATH =
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-HEADERS += \
-#    src/old/data/gamedata.h \
-    src/common/types.h \
-#    src/old/view/mainwindow.h \
-#    src/old/data/filemanagement.h \
- \#    src/old/data/rawsavedata.h
-  src/data/eventpokemon.h \
-  src/data/events.h \
-  src/data/fly.h \
-  src/data/fonts.h \
-  src/data/gamedata.h \
-  src/data/hiddenCoins.h \
-  src/data/hiddenItems.h \
-  src/data/items.h \
-  src/data/lists/city_list.h \
-  src/data/lists/font_list.h \
-  src/data/lists/item_list.h \
-  src/data/lists/map_list.h \
-  src/data/lists/move_list.h \
-  src/data/lists/pokemon_listInternal.h \
-  src/data/lists/pokemon_listPokedex.h \
-  src/data/lists/script_list.h \
-  src/data/lists/sprites_list.h \
-  src/data/lists/tmHm_list.h \
-  src/data/lists/trainers_list.h \
-  src/data/lists/types_list.h \
-  src/data/maps.h \
-  src/data/missables.h \
-  src/data/moves.h \
-  src/data/names.h \
-  src/data/pokemon.h \
-  src/data/scripts.h \
-  src/data/sprites.h \
-  src/data/starterPokemon.h \
-  src/data/tmHm.h \
-  src/data/trades.h \
-  src/data/trainers.h \
-  src/data/types.h
-
-# FORMS += \
-#    src/old/view/mainwindow.ui

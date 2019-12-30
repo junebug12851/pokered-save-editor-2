@@ -13,36 +13,31 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef HIDDENCOINS_H
+#define HIDDENCOINS_H
 
-#include "../common/types.h"
-#include <optional>
+#include "../../common/types.h"
 #include <QString>
-#include <QHash>
 
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
+#include "./maps.h"
 
-// Where are you in each map of the world? This tracks your map progression
-// for each individual map
+// A list of all the hidden coins in Casino
 
-struct ScriptEntry {
-  QString name;
-  var8 ind;
-  var8 size;
+struct HiddenCoinEntry {
+  QString map;
+  var8 x;
+  var8 y;
 
-  std::optional<var8> skip;
+  MapEntry* toMap;
 };
 
-class Scripts
+class HiddenCoins
 {
 public:
   static void load();
-  static void index();
+  static void deepLink();
 
-  static QVector<ScriptEntry*>* scripts;
-  static QHash<QString, ScriptEntry*>* ind;
+  static QVector<HiddenCoinEntry*>* hiddenCoins;
 };
 
-#endif // SCRIPT_H
+#endif // HIDDENCOINS_H

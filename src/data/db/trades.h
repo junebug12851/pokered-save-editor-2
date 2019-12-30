@@ -13,38 +13,40 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MISSABLE_H
-#define MISSABLE_H
+#ifndef TRADE_H
+#define TRADE_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
-#include <QHash>
+
+struct PokemonEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-// Missable flags set in-game, a missable is simply a script and/or sprite
-// that never loads (Is surpressed). Allows the game to hide things you
-// shouldn't see or encounter yet or show a new map "state" after you progressed
-// in the games.
+// All in-game trades including the unused one
+// All this was extracted from in-game data, not fan sites
 
-// The starter you and your rival pick are both missable activated and the
-// guy blocking the path in Pewter City is a missable that's hiden once you beat
-// Brock.
+struct TradeEntry {
+  TradeEntry();
 
-struct MissableEntry {
-  QString name;
-  var8 ind;
+  QString give;
+  QString get;
+  var8 textId;
+  QString nickname;
+  bool unused;
+
+  PokemonEntry* toGive;
+  PokemonEntry* toGet;
 };
 
-class Missables
+class Trades
 {
 public:
   static void load();
-  static void index();
+  static void deepLink();
 
-  static QVector<MissableEntry*>* missables;
-  static QHash<QString, MissableEntry*>* ind;
+  static QVector<TradeEntry*>* trades;
 };
 
-#endif // MISSABLE_H
+#endif // TRADE_H

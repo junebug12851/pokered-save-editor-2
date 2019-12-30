@@ -13,35 +13,36 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef TRAINER_H
-#define TRAINER_H
+#ifndef FLY_H
+#define FLY_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
 #include <QHash>
+
+#include "./maps.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-// All trainer classes in the game, this includes unused or glitch ones
+// Cities you can fly to
 
-struct TrainerEntry {
-  TrainerEntry();
+struct FlyEntry {
+  QString name; // City Name
+  var8 ind; // Index in list
 
-  QString name;
-  var8 ind;
-  bool unused;
-  bool opp;
+  MapEntry* toMap; // Deep link to associated map data
 };
 
-class Trainers
+class Fly
 {
 public:
   static void load();
   static void index();
+  static void deepLink();
 
-  static QVector<TrainerEntry*>* trainers;
-  static QHash<QString, TrainerEntry*>* ind;
+  static QVector<FlyEntry*>* fly;
+  static QHash<QString, FlyEntry*>* ind;
 };
 
-#endif // TRAINER_H
+#endif // FLY_H

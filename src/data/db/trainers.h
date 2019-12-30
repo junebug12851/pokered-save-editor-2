@@ -13,31 +13,35 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef STARTER_H
-#define STARTER_H
+#ifndef TRAINER_H
+#define TRAINER_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
+#include <QHash>
 
-struct PokemonEntry;
+// With amazing help of Quicktype!!!
+// https://app.quicktype.io
 
-// Something I made, I hand-selected a ton of other starter options I thought
-// would be good starters. This randomly selects among them.
-// 1) They must all be base evolution if there is one
-// 2) They musn't be legendary
-// 3) Just lots of judgement calls from there, they must feel "startery"
+// All trainer classes in the game, this includes unused or glitch ones
 
-class StarterPokemon
+struct TrainerEntry {
+  TrainerEntry();
+
+  QString name;
+  var8 ind;
+  bool unused;
+  bool opp;
+};
+
+class Trainers
 {
 public:
   static void load();
-  static void deepLink();
+  static void index();
 
-  static PokemonEntry* random3Starter();
-  static PokemonEntry* randomAnyStarter();
-
-  static QVector<QString>* starters;
-  static QVector<PokemonEntry*>* toPokemon;
+  static QVector<TrainerEntry*>* trainers;
+  static QHash<QString, TrainerEntry*>* ind;
 };
 
-#endif // STARTER_H
+#endif // TRAINER_H

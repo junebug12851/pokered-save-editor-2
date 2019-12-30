@@ -13,31 +13,31 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SPRITE_H
-#define SPRITE_H
+#ifndef HIDDENITEMS_H
+#define HIDDENITEMS_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <QString>
-#include <QHash>
 
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
+#include "./maps.h"
 
-// All sprites in the game, glitch and not
+// A list of all the hidden items around the world
 
-struct SpriteEntry {
-  QString name;
-  var8 ind;
+struct HiddenItemEntry {
+  QString map;
+  var8 x;
+  var8 y;
+
+  MapEntry* toMap;
 };
 
-class Sprites
+class HiddenItems
 {
 public:
   static void load();
-  static void index();
+  static void deepLink();
 
-  static QVector<SpriteEntry*>* sprites;
-  static QHash<QString, SpriteEntry*>* ind;
+  static QVector<HiddenItemEntry*>* hiddenItems;
 };
 
-#endif // SPRITE_H
+#endif // HIDDENITEMS_H

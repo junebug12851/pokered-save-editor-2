@@ -16,7 +16,7 @@
 #ifndef POKEMON_H
 #define POKEMON_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <optional>
 #include <QString>
 #include <QVector>

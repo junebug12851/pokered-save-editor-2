@@ -13,46 +13,50 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef FONTS_H
-#define FONTS_H
+#ifndef ITEMS_H
+#define ITEMS_H
 
-#include "../common/types.h"
+#include "../../common/types.h"
+#include "optional"
 #include <QString>
 #include <QHash>
+
+// Prevents includes from including each other and causing errors
+// We include them in the cpp file
+struct MoveEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-// There are 255 font options although most of them are "invalid" and thus
-// use the tilemap.
+// All the in-game items and glitch items
 
-struct FontEntry {
-  FontEntry();
+struct ItemEntry {
+  ItemEntry();
 
   // Optional values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
 
-  var8 ind; // Font Code
-  QString name; // Font Output
-  bool shorthand; // Is Font Output shorthand for longer output?
-  bool picture; // Does this use the tilemap and not the font
-  bool useTilemap; // ?? Perhaps same as picture (Forgot >_>)
-  var8 length; // Font output length or potentially maximum length
-  bool control; // Is this a control character
-  bool multiChar; // Does this output a length greater than 1
-  bool variable; // Does this output a variable
-  bool singleChar; // Does this output a single char
-  bool normal; // Would this be an in-game accessible font char
+  QString name; // Item Output
+  var8 ind; // Item Code
+  bool once; // Item can only be obtained once
+  bool glitch; // Item is a glitch item
+  QString readable;
+
+  std::optional<var8> tm; // TM Number if present
+  std::optional<var8> hm; // HM Number if present
+
+  MoveEntry* toMove; // To TM or HM Move
 };
 
-class Font
+class Items
 {
 public:
   static void load();
   static void index();
+  static void deepLink();
 
-  static QVector<FontEntry*>* font;
-  static QHash<QString, FontEntry*>* ind;
+  static QVector<ItemEntry*>* items;
+  static QHash<QString, ItemEntry*>* ind;
 };
 
-#endif // FONTS_H
+#endif // ITEMS_H

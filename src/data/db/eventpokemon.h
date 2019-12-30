@@ -19,7 +19,7 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-#include "../common/types.h"
+#include "../../common/types.h"
 #include <variant>
 #include <optional>
 #include <QString>

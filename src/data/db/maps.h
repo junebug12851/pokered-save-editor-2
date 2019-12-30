@@ -13,57 +13,53 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MOVE_H
-#define MOVE_H
+#ifndef MAP_H
+#define MAP_H
 
-#include "../common/types.h"
-#include <optional>
+#include "../../common/types.h"
+#include "optional"
 #include <QString>
 #include <QHash>
-
-#include "./types.h"
-
-// Prevents includes from including each other and causing errors
-// We include them in the cpp file
-struct ItemEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-// All the Pokemon moves in the game including special or glitch moves
+// Details on all the maps in the game
 
-struct MoveEntry {
+struct MapEntry {
 
   // Optional bool values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
 
-  MoveEntry();
+  MapEntry();
 
   QString name;
   var8 ind;
+
   bool glitch;
-  QString type;
-  QString readable;
+  bool special;
 
-  std::optional<var8> power;
-  std::optional<var8> accuracy;
-  std::optional<var8> pp;
-  std::optional<var8> tm;
-  std::optional<var8> hm;
+  std::optional<var8> bank;
+  std::optional<var16> dataPtr;
+  std::optional<var16> scriptPtr;
+  std::optional<var16> textPtr;
+  std::optional<var8> width;
+  std::optional<var8> height;
 
-  TypeEntry* toType; // Deep link to move type
-  ItemEntry* toItem; // Deep link to tm/hm item if present
+  // These have been removed from the JSON data because they are simply
+  // dimensions times 2 and thus redundant and repetitive to inlclude in JSON
+  std::optional<var8> height2X2();
+  std::optional<var8> width2X2();
 };
 
-class Moves
+class Maps
 {
 public:
   static void load();
   static void index();
-  static void deepLink();
 
-  static QVector<MoveEntry*>* moves;
-  static QHash<QString, MoveEntry*>* ind;
+  static QVector<MapEntry*>* maps;
+  static QHash<QString, MapEntry*>* ind;
 };
 
-#endif // MOVE_H
+#endif // MAP_H

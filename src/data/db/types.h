@@ -13,28 +13,32 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef POKEMONNAMES_H
-#define POKEMONNAMES_H
+#ifndef TYPES_H
+#define TYPES_H
 
 #include "../../common/types.h"
+#include <QString>
+#include <QHash>
 
-// Types in order
-enum class TypesList : var8 {
-  NORMAL = 0,
-  FIGHTING = 1,
-  FLYING = 2,
-  POISON = 3,
-  GROUND = 4,
-  ROCK = 5,
-  BUG = 7,
-  GHOST = 8,
-  FIRE = 20,
-  WATER = 21,
-  GRASS = 22,
-  ELECTRIC = 23,
-  PSYCHIC = 24,
-  ICE = 25,
-  DRAGON = 26,
+// With amazing help of Quicktype!!!
+// https://app.quicktype.io
+
+// All types in the game
+
+struct TypeEntry {
+  QString name;
+  var8 ind;
+  QString readable;
 };
 
-#endif // POKEMONNAMES_H
+class Types
+{
+public:
+  static void load();
+  static void index();
+
+  static QVector<TypeEntry*>* types;
+  static QHash<QString, TypeEntry*>* ind;
+};
+
+#endif // TYPES_H

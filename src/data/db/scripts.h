@@ -13,24 +13,36 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef POKEMONNAMES_H
-#define POKEMONNAMES_H
+#ifndef SCRIPT_H
+#define SCRIPT_H
 
 #include "../../common/types.h"
+#include <optional>
+#include <QString>
+#include <QHash>
 
-// Cities that can be flown to and in fly order
-enum class CityList : var8 {
-  PALLET_TOWN = 0,
-  VIRIDIAN_CITY = 1,
-  PEWTER_CITY = 2,
-  CERULEAN_CITY = 3,
-  VERMILLION_CITY = 4,
-  LAVENDER_TOWN = 5,
-  CELADON_CITY = 6,
-  SAFFRON_CITY = 7,
-  FUCHSIA_CITY = 8,
-  CINNABAR_ISLAND = 9,
-  INDIGO_PLATEAU = 10,
+// With amazing help of Quicktype!!!
+// https://app.quicktype.io
+
+// Where are you in each map of the world? This tracks your map progression
+// for each individual map
+
+struct ScriptEntry {
+  QString name;
+  var8 ind;
+  var8 size;
+
+  std::optional<var8> skip;
 };
 
-#endif // POKEMONNAMES_H
+class Scripts
+{
+public:
+  static void load();
+  static void index();
+
+  static QVector<ScriptEntry*>* scripts;
+  static QHash<QString, ScriptEntry*>* ind;
+};
+
+#endif // SCRIPT_H
