@@ -21,7 +21,7 @@
 #include <QString>
 #include <QHash>
 
-#include "./moves.h"
+struct MoveEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io

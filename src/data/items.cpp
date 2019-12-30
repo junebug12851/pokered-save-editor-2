@@ -17,6 +17,7 @@
 #include <QVector>
 #include <QJsonArray>
 #include "./gamedata.h"
+#include "./moves.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -26,6 +27,8 @@ ItemEntry::ItemEntry()
 {
   once = false;
   glitch = false;
+
+  toMove = nullptr;
 }
 
 void Items::load()

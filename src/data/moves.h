@@ -21,6 +21,9 @@
 #include <QString>
 #include <QHash>
 
+#include "./types.h"
+struct ItemEntry;
+
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
@@ -44,6 +47,9 @@ struct MoveEntry {
   std::optional<var8> pp;
   std::optional<var8> tm;
   std::optional<var8> hm;
+
+  TypeEntry* toType; // Deep link to move type
+  ItemEntry* toItem; // Deep link to tm/hm item if present
 };
 
 class Moves
@@ -51,6 +57,7 @@ class Moves
 public:
   static void load();
   static void index();
+  static void deepLink();
 
   static QVector<MoveEntry*>* moves;
   static QHash<QString, MoveEntry*>* ind;

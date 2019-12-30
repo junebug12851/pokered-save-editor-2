@@ -59,7 +59,7 @@ QApplication* preBoot(int argc, char *argv[])
   QApplication* app = new QApplication(argc, argv);
 
   // Setup debug/error messages
-  qSetMessagePattern("[%{category}/%{type}]: %{message} \n %{time} %{file} %{function} %{line}");
+  qSetMessagePattern("[%{category}/%{type}]: %{message} ~ %{time} %{file} %{function} %{line}");
 
   // Pull the icon from resources and set as window icon
   // It's also set to properly be built-in during compile
@@ -115,6 +115,7 @@ void index()
   Scripts::index();
   Sprites::index();
   Trainers::index();
+  Types::index();
 }
 
 // Step 3: Deep link most data to other data for rapid cross-data access
@@ -126,6 +127,7 @@ void deepLink()
   HiddenCoins::deepLink();
   HiddenItems::deepLink();
   Items::deepLink();
+  Moves::deepLink();
 }
 
 // Performs program one-time bootstrapping and setup

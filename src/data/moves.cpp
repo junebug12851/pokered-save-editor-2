@@ -17,11 +17,19 @@
 #include <QVector>
 #include <QJsonArray>
 #include "./gamedata.h"
+#include "./items.h"
+
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
 
 MoveEntry::MoveEntry()
 {
   glitch = false;
   type = "";
+
+  toType = nullptr;
+  toItem = nullptr;
 }
 
 void Moves::load()
@@ -80,6 +88,28 @@ void Moves::index()
       ind->insert("tm" + QString::number(*entry->tm), entry);
     if(entry->hm)
       ind->insert("hm" + QString::number(*entry->hm), entry);
+  }
+}
+
+void Moves::deepLink()
+{
+  for(auto entry : *moves)
+  {
+    if(entry->type != "")
+      entry->toType = Types::ind->value(entry->type, nullptr);
+
+    if(entry->tm && !entry->hm)
+      entry->toItem = Items::ind->value("tm" + QString::number(*entry->tm), nullptr);
+    else if(entry->tm && entry->hm)
+      entry->toItem = Items::ind->value("hm" + QString::number(*entry->hm), nullptr);
+
+#ifdef QT_DEBUG
+    if(entry->type != "" && entry->toType == nullptr)
+      qCritical() << "Move Type: " << entry->type << ", could not be deep linked." ;
+
+    if((entry->tm || entry->hm) && entry->toItem == nullptr)
+      qCritical() << "Move: " << entry->name << ", could not be deep linked." ;
+#endif
   }
 }
 
