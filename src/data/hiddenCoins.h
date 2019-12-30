@@ -19,18 +19,24 @@
 #include "../common/types.h"
 #include <QString>
 
+#include "./maps.h"
+
 // A list of all the hidden coins in Casino
 
 struct HiddenCoinEntry {
   QString map;
   var8 x;
   var8 y;
+
+  MapEntry* toMap;
 };
 
 class HiddenCoins
 {
 public:
   static void load();
+  static void deepLink();
+
   static QVector<HiddenCoinEntry*>* hiddenCoins;
 };
 

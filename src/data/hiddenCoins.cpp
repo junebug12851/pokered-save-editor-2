@@ -18,6 +18,10 @@
 #include <QJsonArray>
 #include "./gamedata.h"
 
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 void HiddenCoins::load()
 {
   // Grab Event Pokemon Data
@@ -36,6 +40,19 @@ void HiddenCoins::load()
 
     // Add to array
     hiddenCoins->append(entry);
+  }
+}
+
+void HiddenCoins::deepLink()
+{
+  for(auto entry : *hiddenCoins)
+  {
+    entry->toMap = Maps::ind->value(entry->map, nullptr);
+
+#ifdef QT_DEBUG
+    if(entry->toMap == nullptr)
+      qCritical() << "Hidden Coins Map: " << entry->map << ", could not be deep linked." ;
+#endif
   }
 }
 

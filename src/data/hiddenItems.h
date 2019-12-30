@@ -19,18 +19,24 @@
 #include "../common/types.h"
 #include <QString>
 
+#include "./maps.h"
+
 // A list of all the hidden items around the world
 
 struct HiddenItemEntry {
   QString map;
   var8 x;
   var8 y;
+
+  MapEntry* toMap;
 };
 
 class HiddenItems
 {
 public:
   static void load();
+  static void deepLink();
+
   static QVector<HiddenItemEntry*>* hiddenItems;
 };
 
