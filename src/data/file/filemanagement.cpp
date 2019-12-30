@@ -3,7 +3,7 @@
 
 #include "rawsavedata.h"
 #include "filemanagement.h"
-#include "../view/mainwindow.h"
+#include "../../../ui/window/mainwindow.h"
 
 FileManagement::FileManagement(QObject *parent)
     : QObject(parent)

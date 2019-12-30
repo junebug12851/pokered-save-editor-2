@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-#include "../includes/types.h"
+#include "../../src/common/types.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)

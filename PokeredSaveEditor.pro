@@ -12,8 +12,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-# FORMS += \
-#    src/old/view/mainwindow.ui
+FORMS += \
+  ui/window/mainwindow.ui
 
 HEADERS += \
   src/common/types.h \
@@ -36,7 +36,10 @@ HEADERS += \
   src/data/db/tmHm.h \
   src/data/db/trades.h \
   src/data/db/trainers.h \
-  src/data/db/types.h
+  src/data/db/types.h \
+  src/data/file/filemanagement.h \
+  src/data/file/rawsavedata.h \
+  ui/window/mainwindow.h
 
 SOURCES += \
   src/boot.cpp \
@@ -60,7 +63,10 @@ SOURCES += \
   src/data/db/tmHm.cpp \
   src/data/db/trades.cpp \
   src/data/db/trainers.cpp \
-  src/data/db/types.cpp
+  src/data/db/types.cpp \
+  src/data/file/filemanagement.cpp \
+  src/data/file/rawsavedata.cpp \
+  ui/window/mainwindow.cpp
 
 RESOURCES += qml.qrc
 

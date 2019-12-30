@@ -4,7 +4,7 @@
 #include <QSettings>
 
 #include "ui_mainwindow.h"
-#include "../data/filemanagement.h"
+#include "../../src/data/file/filemanagement.h"
 
 class MainWindow : public QMainWindow
 {

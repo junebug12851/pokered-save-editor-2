@@ -7,7 +7,7 @@
 #include <QSettings>
 
 #include "rawsavedata.h"
-#include "../includes/types.h"
+#include "../../common/types.h"
 
 constexpr var8 MAX_RECENT_FILES{5};
 

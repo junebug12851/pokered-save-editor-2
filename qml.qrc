@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
-        <file>ux/main.qml</file>
-        <file>ux/Navigation.qml</file>
+        <file>ui/app/main.qml</file>
+        <file>ui/app/Navigation.qml</file>
         <file>assets/data/eventPokemon.json</file>
         <file>assets/data/events.json</file>
         <file>assets/data/fly.json</file>
@@ -23,16 +23,7 @@
         <file>assets/data/trades.json</file>
         <file>assets/data/trainers.json</file>
         <file>assets/data/types.json</file>
-        <file>assets/icons/128x128.png</file>
-        <file>assets/icons/16x16.png</file>
-        <file>assets/icons/24x24.png</file>
-        <file>assets/icons/256x256.png</file>
-        <file>assets/icons/32x32.png</file>
-        <file>assets/icons/48x48.png</file>
         <file>assets/icons/512x512.png</file>
-        <file>assets/icons/64x64.png</file>
-        <file>assets/icons/96x96.png</file>
-        <file>assets/icons/credits.txt</file>
         <file>assets/icons/icon.icns</file>
         <file>assets/icons/icon.ico</file>
         <file>assets/pokered-contrast/contrast0.png</file>
@@ -66,7 +57,5 @@
         <file>assets/pokered-font/pic-tilesets/ship.png</file>
         <file>assets/pokered-font/pic-tilesets/ship_port.png</file>
         <file>assets/pokered-font/pic-tilesets/underground.png</file>
-        <file>assets/splash/DMGSplash.png</file>
-        <file>assets/splash/DMGSplash.xcf</file>
     </qresource>
 </RCC>

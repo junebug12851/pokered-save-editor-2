@@ -39,6 +39,10 @@
 #include "./data/db/trainers.h"
 #include "./data/db/types.h"
 
+#include "../ui/window/mainwindow.h"
+
+MainWindow* mainWindow;
+
 // Does a pre-boot of the app setting critical options that have to be done
 // before everything else
 QApplication* preBoot(int argc, char *argv[])
@@ -70,8 +74,8 @@ QApplication* preBoot(int argc, char *argv[])
   qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
 
   // Stil being implemented
-  //MainWindow win;
-  //win.show();
+  mainWindow = new MainWindow();
+  mainWindow->show();
 
   return app;
 }
