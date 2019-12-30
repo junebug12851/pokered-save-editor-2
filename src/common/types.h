@@ -83,9 +83,9 @@ using var64e = uvar64e;
 // When using "fastest" it often may choose "32-bit" whereby
 // An 8-bit pointer becomes a 32-bit pointer mistakenly but labeled as an
 // 8-bit pointer causing many potential bugs.
-using var8 = var8s;
-using var16 = var16s;
-using var32 = var32s;
-using var64 = var64s;
+using var8 = var8e;
+using var16 = var16e;
+using var32 = var32e;
+using var64 = var64e;
 
 #endif // VARS_H

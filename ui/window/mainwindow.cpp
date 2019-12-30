@@ -40,6 +40,7 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
     QMenu* filesMenu{ui.menuRecent_Files};
 
     // Disconnect Signal Slot connections from the 3rd onward
+    // The first 3 are not the actual recent files
     for(var8 i{3}; i < filesMenu->actions().size(); i++) {
         QAction* action{filesMenu->actions()[i]};
         disconnect(action, &QAction::triggered, this, &MainWindow::onRecentFileClick);
