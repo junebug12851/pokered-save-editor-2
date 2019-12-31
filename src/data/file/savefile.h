@@ -1,40 +1,33 @@
-/*
-  * Copyright 2019 June Hanabi
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *   http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-*/
-#ifndef SAVEFILE_H
-#define SAVEFILE_H
+#ifndef RAWSAVEDATA_H
+#define RAWSAVEDATA_H
 
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
 
-#include "./savefilecommon.h"
-#include "./savefileiterator.h"
-#include "./expanded/savefileexpanded.h"
+#include "../../common/types.h"
+
+constexpr var16 SAV_DATA_SIZE{0x8000};
 
 class SaveFile : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
+    Q_PROPERTY(var8* data READ data NOTIFY wholeDataChanged)
 
 public:
-  SaveFile();
+    explicit SaveFile(QObject *parent = nullptr);
+    explicit SaveFile(var8 data[SAV_DATA_SIZE], QObject *parent = nullptr);
 
-  // Pointer to 32K Raw SAV File
-  var8* fileData;
+    void resetData(bool silent = false);
+    void setData(var8* data, bool silent = false);
+    var8* data(bool syncFirst = false);
 
-  // Pointer to Expanded File Data
-  SaveFileExpanded* fileDataExpanded;
+signals:
+    void wholeDataChanged(var8* data);
+    void silentWholeDataChanged(var8* data);
+
+private:
+    // Actual SAV Data to be written to file
+    var8* _data = new var8[SAV_DATA_SIZE];
 };
 
-#endif // SAVEFILE_H
+#endif // RAWSAVEDATA_H

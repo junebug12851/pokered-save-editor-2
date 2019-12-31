@@ -1,21 +1,41 @@
-/*
-  * Copyright 2019 June Hanabi
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *   http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-*/
 #include "savefile.h"
 
-SaveFile::SaveFile()
+SaveFile::SaveFile(QObject* parent)
+    : QObject(parent)
 {
+    // Zero out data and notify
+    resetData();
+}
 
+SaveFile::SaveFile(var8* data, QObject* parent)
+    : QObject(parent)
+{
+    // Init data and notify
+    setData(data);
+}
+
+void SaveFile::resetData(bool silent)
+{
+    memset(_data, 0, SAV_DATA_SIZE);
+
+    if(!silent)
+        wholeDataChanged(_data);
+    else
+        silentWholeDataChanged(_data);
+}
+
+void SaveFile::setData(var8* data, bool silent)
+{
+    memcpy(_data, data, SAV_DATA_SIZE);
+
+    if(!silent)
+        wholeDataChanged(_data);
+    else
+        silentWholeDataChanged(_data);
+}
+
+var8* SaveFile::data(bool syncFirst)
+{
+    //@TODO implement syncFirst
+    return _data;
 }

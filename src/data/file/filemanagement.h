@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QSettings>
 
-#include "rawsavedata.h"
+#include "savefile.h"
 #include "../../common/types.h"
 
 constexpr var8 MAX_RECENT_FILES{5};
@@ -15,7 +15,7 @@ class FileManagement : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString path READ path NOTIFY pathChanged)
-    Q_PROPERTY(RawSaveData* data READ data)
+    Q_PROPERTY(SaveFile* data READ data)
     Q_PROPERTY(QList<QString>* recentFiles READ recentFiles RESET clearRecentFiles NOTIFY recentFilesChanged)
     Q_PROPERTY(QString recentFile READ recentFile NOTIFY recentFilesChanged STORED false)
 
@@ -24,7 +24,7 @@ public:
     explicit FileManagement(QObject *parent = nullptr);
 
     // Save Data and Path
-    RawSaveData* data();
+    SaveFile* data();
     QString path();
 
     // Manage Recent Files
@@ -62,18 +62,18 @@ private:
     QString saveFileDialog(QString title);
 
     // Internal Save/Load Handling
-    var8e* readSaveData(QString filePath);
-    void writeSaveData(QString filePath, var8e* data);
+    var8* readSaveData(QString filePath);
+    void writeSaveData(QString filePath, var8* data);
 
     // Internal paths handling
     void expandRecentFiles(QString files);
     void setPath(QString path);
 
     // Internal variables
-    RawSaveData _data = RawSaveData();
+    SaveFile* _data = new SaveFile();
     QString _path = "";
-    QList<QString> _recentFiles = QList<QString>();
-    QSettings settings = QSettings();
+    QList<QString>* _recentFiles = new QList<QString>();
+    QSettings* settings = new QSettings();
 };
 
 #endif // FILEMANAGEMENT_H

@@ -25,18 +25,18 @@ class SaveFile;
 class SaveFileIterator
 {
 public:
-  SaveFileIterator();
+  SaveFileIterator(SaveFile* saveFile);
 
   // Slew of methods that wrap around SaveFile methods
   // SaveFileIterator* offsetTo(var16 val);
 
   // Current Offset in Save File
   // Can be freely changed directly
-  var16 offset;
+  var16 offset = 0x0000;
 
 protected:
   // Allows saving places in the save file and goin back to them
-  QVector<var16>* state;
+  QVector<var16>* state = new QVector<var16>();
 
   // The Save File
   SaveFile* saveFile;

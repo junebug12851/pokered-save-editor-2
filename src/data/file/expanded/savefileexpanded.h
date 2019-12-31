@@ -16,7 +16,6 @@
 #ifndef SAVEFILEEXPANDED_H
 #define SAVEFILEEXPANDED_H
 
-
 class SaveFileExpanded
 {
 public:

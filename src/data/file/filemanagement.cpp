@@ -1,7 +1,7 @@
 #include <QFileDialog>
 #include <QList>
 
-#include "rawsavedata.h"
+#include "savefile.h"
 #include "filemanagement.h"
 #include "../../../ui/window/mainwindow.h"
 
@@ -9,18 +9,18 @@ FileManagement::FileManagement(QObject *parent)
     : QObject(parent)
 {
     // Initially set to no open file (New File)
-    this->setPath("");
-    this->expandRecentFiles(settings.value(KEY_RECENT_FILES, QString("")).toString());
+    setPath("");
+    expandRecentFiles(settings->value(KEY_RECENT_FILES, QString("")).toString());
 }
 
-RawSaveData *FileManagement::data()
+SaveFile *FileManagement::data()
 {
-    return &this->_data;
+    return _data;
 }
 
 QString FileManagement::path()
 {
-    return this->_path;
+    return _path;
 }
 
 // Replace array with contents shifted down, oldest one removed, newest one
@@ -28,155 +28,156 @@ QString FileManagement::path()
 void FileManagement::addRecentFile(QString path)
 {
     // Add to top
-    this->_recentFiles.prepend(path);
+    _recentFiles->prepend(path);
 
     // Process (This ensures everyhtign is formatted and cleaned up as expected)
-    this->processRecentFileChanges();
+    processRecentFileChanges();
 }
 
 QString FileManagement::recentFile(var8 index)
 {
-    return this->_recentFiles[index];
+    return (*_recentFiles)[index];
 }
 
 void FileManagement::clearRecentFiles()
 {
-    this->_recentFiles.clear();
-    this->processRecentFileChanges();
+    _recentFiles->clear();
+    processRecentFileChanges();
 }
 
 QList<QString>* FileManagement::recentFiles()
 {
-    return &this->_recentFiles;
+    return _recentFiles;
 }
 
 void FileManagement::processRecentFileChanges()
 {
     // Cleanup First make sure correct length and contains no
     // empty strings or strings with spaces or duplicate strings, etc...
-    QList<QString> newList;
-    for(var8 i{0}; i < this->_recentFiles.size(); ++i) {
-        QString file{this->_recentFiles[i]};
+    QList<QString>* newList = new QList<QString>();
+    for(var8 i{0}; i < _recentFiles->size(); ++i) {
+        QString file{(*_recentFiles)[i]};
         file = file.trimmed();
-        if(file == "" || newList.contains(file))
+        if(file == "" || newList->contains(file))
             continue;
 
-        newList.append(file);
-        if(newList.size() > MAX_RECENT_FILES)
+        newList->append(file);
+        if(newList->size() > MAX_RECENT_FILES)
             break;
     }
 
     // Replace current list with newly formatted list
-    this->_recentFiles = newList;
+    delete _recentFiles;
+    _recentFiles = newList;
 
     // Save
-    QString compacted{newList.join(';')};
-    settings.setValue(KEY_RECENT_FILES, compacted);
+    QString compacted{newList->join(';')};
+    settings->setValue(KEY_RECENT_FILES, compacted);
 
     // Notify
-    this->recentFilesChanged(&this->_recentFiles);
+    recentFilesChanged(_recentFiles);
 }
 
 void FileManagement::newFile()
 {
-    this->setPath("");
-    this->data()->resetData();
+    setPath("");
+    data()->resetData();
 }
 
 void FileManagement::openFile()
 {
-    QString file{this->openFileDialog("Open Save File")};
+    QString file{openFileDialog("Open Save File")};
     if(file == "")
         return;
 
-    var8* data{this->readSaveData(file)};
-    this->data()->setData(data); // Copies data out of array (Safe to delete)
-    this->setPath(file);
-    delete data; // Very important with readSaveData
+    var8* newData{readSaveData(file)};
+    data()->setData(newData); // Copies data out of array (Safe to delete)
+    setPath(file);
+    delete[] newData; // Very important with readSaveData
 }
 
 void FileManagement::openFileRecent(var8 index)
 {
-    QString file{this->recentFile(index)};
-    var8* data{this->readSaveData(file)};
-    this->data()->setData(data);
-    this->setPath(file);
+    QString file{recentFile(index)};
+    var8* newData{readSaveData(file)};
+    data()->setData(newData);
+    setPath(file);
 }
 
 void FileManagement::reopenFile()
 {
     // Erase data if path is empty
-    if(this->path() == "") {
-        this->data()->resetData();
+    if(path() == "") {
+        data()->resetData();
         return;
     }
 
     // Otherwise destroy current working copy with copy from disk
-    this->readSaveData(this->path());
+    readSaveData(path());
 }
 
 void FileManagement::saveFile()
 {
-    if(this->path() == "") {
-        this->saveFileAs();
+    if(path() == "") {
+        saveFileAs();
         return;
     }
 
-    this->writeSaveData(this->path(), this->data()->data());
+    writeSaveData(path(), data()->data());
 }
 
 void FileManagement::saveFileAs()
 {
-    QString filename{this->saveFileDialog("Save File As...")};
+    QString filename{saveFileDialog("Save File As...")};
     if(filename == "")
         return;
 
-    this->writeSaveData(filename, this->data()->data());
-    this->setPath(filename);
+    writeSaveData(filename, data()->data());
+    setPath(filename);
 }
 
 void FileManagement::saveFileCopy()
 {
-    QString filename{this->saveFileDialog("Save Copy As...")};
+    QString filename{saveFileDialog("Save Copy As...")};
     if(filename == "")
         return;
 
-    this->writeSaveData(filename, this->data()->data());
+    writeSaveData(filename, data()->data());
 }
 
 void FileManagement::wipeUnusedSpace()
 {
-    this->data()->resetData(true);
+    data()->resetData(true);
 }
 
 QString FileManagement::openFileDialog(QString title)
 {
-    QString path{this->path()};
-    if(path == "")
-        path = settings.value(KEY_LAST_FILE, QString("")).toString();
+    QString curPath{path()};
+    if(curPath == "")
+        curPath = settings->value(KEY_LAST_FILE, QString("")).toString();
 
     return QFileDialog::getOpenFileName(
                 MainWindow::instance(),
                 title,
-                path,
+                curPath,
                 "Save Files (*.sav);;All Files (*)");
 }
 
 QString FileManagement::saveFileDialog(QString title)
 {
-    QString path{this->path()};
-    if(path == "")
-        path = settings.value(KEY_LAST_FILE, QString("")).toString();
+    QString curPath{path()};
+    if(curPath == "")
+        curPath = settings->value(KEY_LAST_FILE, QString("")).toString();
 
     return QFileDialog::getSaveFileName(
                 MainWindow::instance(),
                 title,
-                path,
+                curPath,
                 "Save Files (*.sav);;All Files (*)");
 }
 
 // Pointer has to be deleted to prevent memory leaks
-var8e *FileManagement::readSaveData(QString filePath)
+var8 *FileManagement::readSaveData(QString filePath)
 {
     // Load up file in system
     QFile file(filePath);
@@ -189,10 +190,10 @@ var8e *FileManagement::readSaveData(QString filePath)
 
     file.close();
 
-    return reinterpret_cast<var8e*>(rawSaveData);
+    return reinterpret_cast<var8*>(rawSaveData);
 }
 
-void FileManagement::writeSaveData(QString filePath, var8e *data)
+void FileManagement::writeSaveData(QString filePath, var8 *data)
 {
     // Load up file in system
     QFile file(filePath);
@@ -213,30 +214,30 @@ void FileManagement::expandRecentFiles(QString key)
     // Manually add them in, otherwise they oddly get out of order
     QStringList recentFiles{key.split(';')};
     for(var8 i{0}; i < recentFiles.size(); ++i) {
-        this->_recentFiles.append(recentFiles[i]);
+        _recentFiles->append(recentFiles[i]);
     }
 
     // Process, cleanup, and notify
-    this->processRecentFileChanges();
+    processRecentFileChanges();
 }
 
 void FileManagement::setPath(QString path)
 {
     // Stop here if they're the same
-    if(path == this->_path)
+    if(path == _path)
         return;
 
     //Change paths, notify, add to recentFiles
-    QString oldPath{this->_path};
-    this->_path = path;
-    this->pathChanged(path, oldPath);
+    QString oldPath{_path};
+    _path = path;
+    pathChanged(path, oldPath);
 
     // Go no further if path is empty, we don't need to save it
     if(path == "")
         return;
 
-    this->addRecentFile(path);
-    settings.setValue(KEY_LAST_FILE, path);
+    addRecentFile(path);
+    settings->setValue(KEY_LAST_FILE, path);
 }
 
 const QString FileManagement::KEY_RECENT_FILES = "recentFiles";

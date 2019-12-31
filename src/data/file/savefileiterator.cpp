@@ -15,7 +15,7 @@
 */
 #include "savefileiterator.h"
 
-SaveFileIterator::SaveFileIterator()
+SaveFileIterator::SaveFileIterator(SaveFile* saveFile)
 {
-
+  this->saveFile = saveFile;
 }

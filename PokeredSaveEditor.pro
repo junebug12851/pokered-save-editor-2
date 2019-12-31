@@ -39,9 +39,7 @@ HEADERS += \
   src/data/db/types.h \
   src/data/file/expanded/savefileexpanded.h \
   src/data/file/filemanagement.h \
-  src/data/file/rawsavedata.h \
   src/data/file/savefile.h \
-  src/data/file/savefilecommon.h \
   src/data/file/savefileiterator.h \
   ui/window/mainwindow.h
 
@@ -72,7 +70,6 @@ SOURCES += \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
   src/data/file/filemanagement.cpp \
-  src/data/file/rawsavedata.cpp \
   ui/window/mainwindow.cpp
 
 RESOURCES += qml.qrc
