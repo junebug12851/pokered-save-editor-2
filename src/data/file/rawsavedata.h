@@ -5,8 +5,7 @@
 #include <QtCore/qglobal.h>
 
 #include "../../common/types.h"
-
-constexpr var16f SAV_DATA_SIZE{0x8000};
+#include "./savefilecommon.h"
 
 class RawSaveData : public QObject
 {
@@ -29,6 +28,10 @@ private:
     // We want this on the stack for speed, it takes up
     // only 32KB of data or ~0.03MB. A typical stack is 1MB
     // Therefore this takes up only ~3% of the stack space
+
+    // Was going to move it off the stack but given how often it
+    // would change it's best to leave it on the stack so we're not dealing
+    // with delete[] and potential memory leaks
     var8e _data[SAV_DATA_SIZE];
 };
 

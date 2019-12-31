@@ -37,12 +37,19 @@ HEADERS += \
   src/data/db/trades.h \
   src/data/db/trainers.h \
   src/data/db/types.h \
+  src/data/file/expanded/savefileexpanded.h \
   src/data/file/filemanagement.h \
   src/data/file/rawsavedata.h \
+  src/data/file/savefile.h \
+  src/data/file/savefilecommon.h \
+  src/data/file/savefileiterator.h \
   ui/window/mainwindow.h
 
 SOURCES += \
   src/boot.cpp \
+  src/data/file/expanded/savefileexpanded.cpp \
+  src/data/file/savefile.cpp \
+  src/data/file/savefileiterator.cpp \
   src/main.cpp \
   src/data/db/eventpokemon.cpp \
   src/data/db/events.cpp \
