@@ -18,5 +18,153 @@
 
 FontSearch::FontSearch()
 {
+  // Copy elements over to begin search
+  for(auto entry : *Font::font)
+  {
+    results->append(entry);
+  }
+}
 
+FontSearch* FontSearch::andShorthand()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(!entry->shorthand)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::notShorthand()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(entry->shorthand)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::andNormal()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(!entry->normal)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::notNormal()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(entry->normal)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::andControl()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(!entry->control)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::notControl()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(entry->control)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::andPicture()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(!entry->picture)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::notPicture()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(entry->picture)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::andSingleChar()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(!entry->singleChar)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::notSingleChar()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(entry->singleChar)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::andMultiChar()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(!entry->multiChar)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::notMultiChar()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(entry->multiChar)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::andVariable()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(!entry->variable)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::notVariable()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(entry->variable)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::andTilemap()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(!entry->useTilemap)
+      results->removeOne(entry);
+
+  return this;
+}
+
+FontSearch* FontSearch::notTilemap()
+{
+  for(auto entry : QVector<FontEntry*>(*results))
+    if(entry->useTilemap)
+      results->removeOne(entry);
+
+  return this;
 }

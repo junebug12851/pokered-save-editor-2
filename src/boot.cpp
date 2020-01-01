@@ -41,6 +41,7 @@
 
 #include "../ui/window/mainwindow.h"
 
+#include "./data/db/fontsearch.h"
 #include "./data/file/savefiletoolset.h"
 
 #ifdef QT_DEBUG
@@ -152,6 +153,9 @@ extern QApplication* boot(int argc, char *argv[])
   load();
   index();
   deepLink();
+
+//  auto query = Font::search();
+//  auto results = query->andNormal()->notMultiChar()->notShorthand()->results;
 
 //  auto code = Font::convertToCode("<user><......><user>", 100, true);
 //  auto str = Font::convertFromCode(code, 100);

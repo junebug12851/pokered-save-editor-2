@@ -16,10 +16,34 @@
 #ifndef FONTSEARCH_H
 #define FONTSEARCH_H
 
+#include <QVector>
+#include <QString>
+class Font;
+class FontEntry;
+
 class FontSearch
 {
 public:
   FontSearch();
+
+  FontSearch* andShorthand();
+  FontSearch* notShorthand();
+  FontSearch* andNormal();
+  FontSearch* notNormal();
+  FontSearch* andControl();
+  FontSearch* notControl();
+  FontSearch* andPicture();
+  FontSearch* notPicture();
+  FontSearch* andSingleChar();
+  FontSearch* notSingleChar();
+  FontSearch* andMultiChar();
+  FontSearch* notMultiChar();
+  FontSearch* andVariable();
+  FontSearch* notVariable();
+  FontSearch* andTilemap();
+  FontSearch* notTilemap();
+
+  QVector<FontEntry*>* results = new QVector<FontEntry*>();
 };
 
 #endif // FONTSEARCH_H
