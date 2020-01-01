@@ -88,3 +88,51 @@ void SaveFileToolset::setStr(var16 addr, var16 size, var8 maxLen, QString str)
   auto strCode = Font::convertToCode(str, maxLen);
   copyRange(addr, size, strCode);
 }
+
+QString SaveFileToolset::getHex(var16 addr, var16 size, bool reverse)
+{
+  QVector<var8> rawHex = getRange(addr, size, reverse);
+
+  QString hexStr = "";
+  for (var16 i = 0; i < rawHex.length(); i++)
+    hexStr += QString::number(rawHex[i], 16);
+
+  hexStr = hexStr.toUpper();
+
+  // Fixes the issue where a 16-bit hex value of 1 should be 0x0001 not 0x1
+  // or a 16-bit val of 0xCAD should be 0x0CAD
+  // Properly sizes the end result
+  var8 endLen = size * 2; // A byte is represented by 2 hex characters
+  if(hexStr.length() < endLen)
+    hexStr = hexStr.rightJustified(endLen, '0');
+
+  return hexStr;
+}
+
+void SaveFileToolset::setHex(var16 addr, var16 size, QString hex, bool reverse)
+{
+  // Convert to number
+  var16 hexValue = hex.toInt(nullptr, 16);
+  var16 hexValueOrig = hexValue;
+  QVector<var8> hexArr;
+
+  // Break apart number into seperate bytes and store them in an
+  // array. This also places it big-endian style which is how the
+  // save data is structured
+
+  if (hexValue == 0)
+    hexArr.append(0);
+  else
+    while (hexValue > 0) {
+      hexArr.append(hexValue & 0xFF);
+      hexValue >>= 8;
+    }
+
+  // Account for bug where 16-bit value under 0xFF still needs to take up
+  // 16-bits
+  if (hexValueOrig <= 0xFF && size == 2)
+    hexArr.append(0x00);
+
+  // Copy to save data
+  copyRange(addr, size, hexArr, !reverse);
+}

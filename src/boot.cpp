@@ -155,8 +155,8 @@ extern QApplication* boot(int argc, char *argv[])
   deepLink();
 
   // Open recent file
-  //mainWindow->file.openFileRecent(0);
-  //auto toolset = mainWindow->file.data()->toolset;
+//  mainWindow->file.openFileRecent(0);
+//  auto toolset = mainWindow->file.data()->toolset;
 
   return app;
 }

@@ -64,6 +64,12 @@ public:
   // in-game font encoding
   void setStr(var16 addr, var16 size, var8 maxLen, QString str);
 
+  // Gets a value in hex from the save file
+  QString getHex(var16 addr, var16 size, bool reverse = false);
+
+  // Saves a hex value to bytes in the save file
+  void setHex(var16 addr, var16 size, QString hex, bool reverse = false);
+
 protected:
   SaveFile* saveFile;
 };
