@@ -154,6 +154,11 @@ extern QApplication* boot(int argc, char *argv[])
   index();
   deepLink();
 
+  // Open recent file
+//  mainWindow->file.openFileRecent(0);
+//  auto path = mainWindow->file.path();
+//  auto playerName = mainWindow->file.data()->toolset->getStr(0x2598, 0xB, 0xB);
+
 //  auto query = Font::search();
 //  auto results = query->andNormal()->notMultiChar()->notShorthand()->results;
 

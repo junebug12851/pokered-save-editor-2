@@ -15,6 +15,7 @@
 */
 #include "savefiletoolset.h"
 #include "savefile.h"
+#include "../db/fonts.h"
 
 SaveFileToolset::SaveFileToolset(SaveFile* newSaveFile)
 {
@@ -61,4 +62,9 @@ QVector<var8> SaveFileToolset::getRange(var16 from, var16 size, bool reverse)
       ret.append(data[i]);
 
   return ret;
+}
+
+QString SaveFileToolset::getStr(var16 addr, var16 size, var8 maxLen)
+{
+  return Font::convertFromCode(getRange(addr, size), maxLen);
 }

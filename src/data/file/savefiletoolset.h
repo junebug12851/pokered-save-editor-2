@@ -18,6 +18,7 @@
 
 #include "../../common/types.h"
 #include <QVector>
+#include <QString>
 
 class SaveFile;
 
@@ -45,6 +46,10 @@ public:
 
   // Copies a range of bytes to a buffer of size and returns them
   QVector<var8> getRange(var16 from, var16 size, bool reverse = false);
+
+  // Gets a string from the sav file, converted from in-game font encoding
+  // to UTF-8 for easy reading and manipulation
+  QString getStr(var16 addr, var16 size, var8 maxLen);
 
 protected:
   SaveFile* saveFile;
