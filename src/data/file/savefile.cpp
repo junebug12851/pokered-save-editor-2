@@ -1,41 +1,54 @@
 #include "savefile.h"
+#include "./expanded/savefileexpanded.h"
 
 SaveFile::SaveFile(QObject* parent)
-    : QObject(parent)
+  : QObject(parent)
 {
-    // Zero out data and notify
-    resetData();
+  // Zero out data and notify
+  resetData();
 }
 
 SaveFile::SaveFile(var8* data, QObject* parent)
-    : QObject(parent)
+  : QObject(parent)
 {
-    // Init data and notify
-    setData(data);
+  // Init data and notify
+  setData(data);
 }
 
 void SaveFile::resetData(bool silent)
 {
-    memset(_data, 0, SAV_DATA_SIZE);
+  memset(data, 0, SAV_DATA_SIZE);
 
-    if(!silent)
-        wholeDataChanged(_data);
-    else
-        silentWholeDataChanged(_data);
+  if(!silent) {
+    wholeDataChanged(data);
+    expandData();
+  }
+  else
+    silentWholeDataChanged(data);
 }
 
 void SaveFile::setData(var8* data, bool silent)
 {
-    memcpy(_data, data, SAV_DATA_SIZE);
+  memcpy(this->data, data, SAV_DATA_SIZE);
 
-    if(!silent)
-        wholeDataChanged(_data);
-    else
-        silentWholeDataChanged(_data);
+  if(!silent) {
+    expandData();
+    wholeDataChanged(data);
+  }
+  else
+    silentWholeDataChanged(data);
 }
 
-var8* SaveFile::data(bool syncFirst)
+void SaveFile::flattenData()
 {
-    //@TODO implement syncFirst
-    return _data;
+  if(dataExpanded != nullptr)
+    dataExpanded->save(this);
+}
+
+void SaveFile::expandData()
+{
+  if(dataExpanded == nullptr)
+    dataExpanded = new SaveFileExpanded();
+
+  dataExpanded->load(this);
 }

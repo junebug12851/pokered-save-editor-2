@@ -123,7 +123,7 @@ void FileManagement::saveFile()
         return;
     }
 
-    writeSaveData(path(), data()->data());
+    writeSaveData(path(), data()->data);
 }
 
 void FileManagement::saveFileAs()
@@ -132,7 +132,7 @@ void FileManagement::saveFileAs()
     if(filename == "")
         return;
 
-    writeSaveData(filename, data()->data());
+    writeSaveData(filename, data()->data);
     setPath(filename);
 }
 
@@ -142,7 +142,7 @@ void FileManagement::saveFileCopy()
     if(filename == "")
         return;
 
-    writeSaveData(filename, data()->data());
+    writeSaveData(filename, data()->data);
 }
 
 void FileManagement::wipeUnusedSpace()

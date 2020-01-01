@@ -16,10 +16,19 @@
 #ifndef SAVEFILEEXPANDED_H
 #define SAVEFILEEXPANDED_H
 
+class SaveFile;
+
 class SaveFileExpanded
 {
 public:
-  SaveFileExpanded();
+  // Expansion of SAV data to something much more usable and readable
+  SaveFileExpanded(SaveFile* saveFile = nullptr);
+
+  // Load new data into this expansion, replacing old one
+  void load(SaveFile* saveFile);
+
+  // Save this expansion data back to the SAV file properly
+  void save(SaveFile* saveFile);
 };
 
 #endif // SAVEFILEEXPANDED_H

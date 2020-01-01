@@ -39,7 +39,7 @@ protected:
   QVector<var16>* state = new QVector<var16>();
 
   // The Save File
-  SaveFile* saveFile;
+  SaveFile* saveFile = nullptr;
 };
 
 #endif // SAVEFILEITERATOR_H

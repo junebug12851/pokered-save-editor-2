@@ -14,8 +14,19 @@
   * limitations under the License.
 */
 #include "savefileexpanded.h"
+#include "../savefile.h"
 
-SaveFileExpanded::SaveFileExpanded()
+SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
+{
+
+}
+
+void SaveFileExpanded::load(SaveFile* saveFile)
+{
+
+}
+
+void SaveFileExpanded::save(SaveFile* saveFile)
 {
 
 }
