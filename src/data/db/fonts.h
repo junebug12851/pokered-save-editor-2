@@ -19,6 +19,9 @@
 #include "../../common/types.h"
 #include <QString>
 #include <QHash>
+#include <QVector>
+
+class FontSearch;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -51,8 +54,37 @@ public:
   static void load();
   static void index();
 
+  // Pull up a finder to narrow down fonts based on criteria
+  // You must delete this when done
+  // If you want to change parameters or startover you must obtain a new one
+  // everytime
+  static FontSearch* search();
+
+  // Converts a string to in-game font characters
+  // The string represents font characters, so special characters like
+  // <m> or <pic01> also apply allowing for all 255 font chracters to be
+  // leveraged with a simple keyboard
+  // Very complex and expensive operation
+  static QVector<var8> convertToCode(
+      QString str, var8 maxLen = 11, bool autoEnd = true);
+
+  // The opposite, converts a series of codes to a string
+  // Very simple and fast operation
+  static QString convertFromCode(QVector<var8> codes, var8 maxLen = 11);
+
+  // Font characters also include variables such as "<player>" to insert player
+  // name. The above method converts to and from "<player>" and code but
+  // this expands the string to include the players name spelled out.
+  // Use this to give a sort of "preview" as to how it would look in-game.
+  // It's complex and expensive
+  static QString expandStr(
+      QString msg, var8 maxLen, QString rival = "BLUE", QString player = "RED");
+
   static QVector<FontEntry*>* font;
   static QHash<QString, FontEntry*>* ind;
+
+private:
+  static void splice(QVector<var8>& out, QString in, var8 ind);
 };
 
 #endif // FONTS_H

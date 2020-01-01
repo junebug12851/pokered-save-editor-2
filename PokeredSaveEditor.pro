@@ -21,6 +21,7 @@ HEADERS += \
   src/data/db/events.h \
   src/data/db/fly.h \
   src/data/db/fonts.h \
+  src/data/db/fontsearch.h \
   src/data/db/gamedata.h \
   src/data/db/hiddenCoins.h \
   src/data/db/hiddenItems.h \
@@ -46,6 +47,7 @@ HEADERS += \
 
 SOURCES += \
   src/boot.cpp \
+  src/data/db/fontsearch.cpp \
   src/data/file/expanded/savefileexpanded.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \

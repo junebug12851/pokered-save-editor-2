@@ -153,6 +153,10 @@ extern QApplication* boot(int argc, char *argv[])
   index();
   deepLink();
 
+//  auto code = Font::convertToCode("<user><......><user>", 100, true);
+//  auto str = Font::convertFromCode(code, 100);
+//  auto exp = Font::expandStr(str, 100);
+
 //  mainWindow->file.data()->data[0] = 1;
 //  mainWindow->file.data()->data[1] = 2;
 //  mainWindow->file.data()->data[2] = 3;
