@@ -64,7 +64,27 @@ QVector<var8> SaveFileToolset::getRange(var16 from, var16 size, bool reverse)
   return ret;
 }
 
+void SaveFileToolset::copyRange(var16 addr, var16 size, QVector<var8> newData, bool reverse)
+{
+  var8* data = saveFile->data;
+
+  if(!reverse)
+    for (var16 i = addr, j = 0;
+         j < newData.length() && i < (addr + size); i++, j++)
+      data[i] = newData[j];
+  else
+    for (var16 i = addr + size - 1, j = 0;
+         j < newData.length() && i >= addr; i--, j++)
+      data[i] = newData[j];
+}
+
 QString SaveFileToolset::getStr(var16 addr, var16 size, var8 maxLen)
 {
   return Font::convertFromCode(getRange(addr, size), maxLen);
+}
+
+void SaveFileToolset::setStr(var16 addr, var16 size, var8 maxLen, QString str)
+{
+  auto strCode = Font::convertToCode(str, maxLen);
+  copyRange(addr, size, strCode);
 }

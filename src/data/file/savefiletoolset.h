@@ -47,9 +47,22 @@ public:
   // Copies a range of bytes to a buffer of size and returns them
   QVector<var8> getRange(var16 from, var16 size, bool reverse = false);
 
+  // Copies data to the save data at a particular place going no further
+  // than the maximum size desired to be copied and/or max array size
+  //
+  // from = index to start copying at inclusive
+  // size = maximum length to copy
+  // data = array of data to copy into, will stop at size or data length
+  // reverse = reverse copies the data into specified location
+  void copyRange(var16 addr, var16 size, QVector<var8> data, bool reverse = false);
+
   // Gets a string from the sav file, converted from in-game font encoding
   // to UTF-8 for easy reading and manipulation
   QString getStr(var16 addr, var16 size, var8 maxLen);
+
+  // Sets a string to the sav file, converted from UTF-8 front encoding to
+  // in-game font encoding
+  void setStr(var16 addr, var16 size, var8 maxLen, QString str);
 
 protected:
   SaveFile* saveFile;

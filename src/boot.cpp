@@ -155,24 +155,8 @@ extern QApplication* boot(int argc, char *argv[])
   deepLink();
 
   // Open recent file
-//  mainWindow->file.openFileRecent(0);
-//  auto path = mainWindow->file.path();
-//  auto playerName = mainWindow->file.data()->toolset->getStr(0x2598, 0xB, 0xB);
-
-//  auto query = Font::search();
-//  auto results = query->andNormal()->notMultiChar()->notShorthand()->results;
-
-//  auto code = Font::convertToCode("<user><......><user>", 100, true);
-//  auto str = Font::convertFromCode(code, 100);
-//  auto exp = Font::expandStr(str, 100);
-
-//  mainWindow->file.data()->data[0] = 1;
-//  mainWindow->file.data()->data[1] = 2;
-//  mainWindow->file.data()->data[2] = 3;
-//  mainWindow->file.data()->data[3] = 4;
-
-//  auto tmp1 = mainWindow->file.data()->toolset->getRange(1, 3);
-//  auto tmp2 = mainWindow->file.data()->toolset->getRange(1, 3, true);
+  //mainWindow->file.openFileRecent(0);
+  //auto toolset = mainWindow->file.data()->toolset;
 
   return app;
 }
