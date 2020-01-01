@@ -41,6 +41,12 @@
 
 #include "../ui/window/mainwindow.h"
 
+#include "./data/file/savefiletoolset.h"
+
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 MainWindow* mainWindow;
 
 // Does a pre-boot of the app setting critical options that have to be done
@@ -146,6 +152,14 @@ extern QApplication* boot(int argc, char *argv[])
   load();
   index();
   deepLink();
+
+//  mainWindow->file.data()->data[0] = 1;
+//  mainWindow->file.data()->data[1] = 2;
+//  mainWindow->file.data()->data[2] = 3;
+//  mainWindow->file.data()->data[3] = 4;
+
+//  auto tmp1 = mainWindow->file.data()->toolset->getRange(1, 3);
+//  auto tmp2 = mainWindow->file.data()->toolset->getRange(1, 3, true);
 
   return app;
 }

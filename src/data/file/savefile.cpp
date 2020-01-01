@@ -1,11 +1,14 @@
 #include "savefile.h"
 #include "./expanded/savefileexpanded.h"
+#include "./savefileiterator.h"
+#include "./savefiletoolset.h"
 
 SaveFile::SaveFile(QObject* parent)
   : QObject(parent)
 {
   // Zero out data and notify
   resetData();
+  toolset = new SaveFileToolset(this);
 }
 
 SaveFile::SaveFile(var8* data, QObject* parent)
@@ -13,6 +16,12 @@ SaveFile::SaveFile(var8* data, QObject* parent)
 {
   // Init data and notify
   setData(data);
+  toolset = new SaveFileToolset(this);
+}
+
+SaveFileIterator* SaveFile::iterator()
+{
+  return new SaveFileIterator(this);
 }
 
 void SaveFile::resetData(bool silent)

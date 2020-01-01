@@ -6,6 +6,8 @@
 
 #include "../../common/types.h"
 class SaveFileExpanded;
+class SaveFileIterator;
+class SaveFileToolset;
 
 constexpr var16 SAV_DATA_SIZE{0x8000};
 
@@ -20,6 +22,13 @@ public:
 
   // Load a sav file and expand it's data
   explicit SaveFile(var8 data[SAV_DATA_SIZE], QObject *parent = nullptr);
+
+  // Returns a unique iterator that's setup to iterate over the raw sav file
+  // data. Heavily used by the file expansion to iterate and expand or flatten
+  // data.
+  // The iterator has to be deleted by the receiver or it will cause a memory
+  // leak
+  SaveFileIterator* iterator();
 
   // Empty this save file to zero's
   // Re-Expand the empty save file, overwriting prior expansion, unless marked
@@ -43,6 +52,9 @@ public:
 
   // Expanded SAV data to be readable and more usable
   SaveFileExpanded* dataExpanded = nullptr;
+
+  // Tools to operate directly on the raw sav file data
+  SaveFileToolset* toolset = nullptr;
 
 signals:
   // SAV file has changed and it's expansion replaced with new SAV data

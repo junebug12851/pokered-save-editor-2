@@ -41,6 +41,7 @@ HEADERS += \
   src/data/file/filemanagement.h \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
+  src/data/file/savefiletoolset.h \
   ui/window/mainwindow.h
 
 SOURCES += \
@@ -48,6 +49,7 @@ SOURCES += \
   src/data/file/expanded/savefileexpanded.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \
+  src/data/file/savefiletoolset.cpp \
   src/main.cpp \
   src/data/db/eventpokemon.cpp \
   src/data/db/events.cpp \

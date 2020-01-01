@@ -14,6 +14,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     static MainWindow* instance();
 
+    FileManagement file;
+
 private slots:
     void reUpdateRecentFiles(QList<QString>* files);
     void onRecentFileClick();
@@ -21,7 +23,6 @@ private slots:
 
 private:
     Ui::MainWindow ui;
-    FileManagement file;
     QSettings settings;
     void closeEvent(QCloseEvent* event);
 
