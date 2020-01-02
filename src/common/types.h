@@ -78,6 +78,16 @@ using var64e = uvar64e;
 /// Smaller Shorthand with most default assumptions
 ////////////////////////////////////////////////////////////////////////////////
 
+using svar8 = svar8e;
+using svar16 = svar16e;
+using svar32 = svar32e;
+using svar64 = svar64e;
+
+using uvar8 = uvar8e;
+using uvar16 = uvar16e;
+using uvar32 = uvar32e;
+using uvar64 = uvar64e;
+
 // Default ratio (Smallest) variables default signing
 // In a different project a small bug was determined with pointers
 // When using "fastest" it often may choose "32-bit" whereby

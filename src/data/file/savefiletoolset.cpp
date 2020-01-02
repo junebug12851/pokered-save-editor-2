@@ -22,10 +22,10 @@ SaveFileToolset::SaveFileToolset(SaveFile* newSaveFile)
   saveFile = newSaveFile;
 }
 
-var16 SaveFileToolset::bcd2int(QVector<var8> bcd)
+var32 SaveFileToolset::bcd2int(QVector<var8> bcd)
 {
-  var16 n = 0;
-  var16 m = 1;
+  var32 n = 0;
+  var32 m = 1;
   for (var8 i = 0; i < bcd.size(); i += 1) {
     n += (bcd[bcd.size() - 1 - i] & 0x0F) * m;
     n += ((bcd[bcd.size() - 1 - i] >> 4) & 0x0F) * m * 10;
@@ -34,9 +34,9 @@ var16 SaveFileToolset::bcd2int(QVector<var8> bcd)
   return n;
 }
 
-QVector<var8> SaveFileToolset::number2bcd(var16 number, var8 size)
+QVector<var8> SaveFileToolset::int2bcd(var32 number, var8 size)
 {
-  var16 s = size; // Rough conversion from it's Javascript counterpart
+  var32 s = size; // Rough conversion from it's Javascript counterpart
   QVector<var8> bcd = QVector<var8>(s);
   bcd.fill(0);
   while (number != 0 && s != 0) {
@@ -135,4 +135,82 @@ void SaveFileToolset::setHex(var16 addr, var16 size, QString hex, bool reverse)
 
   // Copy to save data
   copyRange(addr, size, hexArr, !reverse);
+}
+
+var32 SaveFileToolset::getBCD(var16 addr, var8 size)
+{
+  return bcd2int(getRange(addr, size));
+}
+
+void SaveFileToolset::setBCD(var16 addr, var8 size, var32 val)
+{
+  copyRange(addr, size, int2bcd(val, size));
+}
+
+bool SaveFileToolset::getBit(var16 addr, var8 size, var8 bit, bool reverse)
+{
+  // Get bytes first
+  QVector<var8> value = getRange(addr, size, reverse);
+
+  // Merge together into a single data type
+  // This method cannot test larger than this which is 32-bits or 4-bytes
+  var32 res = value.at(0);
+
+  if (size > 0)
+    for (var8 i = 1; i < size; i++) {
+      res <<= 8;
+      res |= value[i];
+    }
+
+  // Do the test
+  return (res & (1 << bit)) != 0;
+}
+
+void SaveFileToolset::setBit(var16 addr, var8 size, var8 bit, bool value, bool reverse)
+{
+  // Get bytes first
+  QVector<var8> val = getRange(addr, size, reverse);
+
+  // Merge together into a single data type
+  // This method cannot test larger than this which is 32-bits or 4-bytes
+  var32 res = val.at(0);
+
+  if (size > 0)
+    for (var8 i = 1; i < size; i++) {
+      res <<= 8;
+      res |= val[i];
+    }
+
+  // Set
+  if(value)
+    res |= (1 << bit);
+  else
+    res &= ~(1 << bit);
+
+  // Convert to hex and do a hex insert
+  QString hex = QString::number(res, 16);
+  setHex(addr, size, hex, reverse);
+}
+
+var16 SaveFileToolset::getWord(var16 addr, bool reverse)
+{
+  auto value = getRange(addr, 2, reverse);
+
+  var16 res = value[0];
+  res <<= 8;
+  res |= value[1];
+
+  return res;
+}
+
+void SaveFileToolset::setWord(var16 addr, var16 val, bool reverse)
+{
+  var8 byteL = val & 0x00FF;
+  var8 byteH = (val & 0xFF00) >> 8;
+
+  QVector<var8> tmp;
+  tmp.append(byteH);
+  tmp.append(byteL);
+
+  copyRange(addr, 2, tmp, reverse);
 }

@@ -34,7 +34,7 @@ public:
    * output: number
    * credit: joaomaia @ https://gist.github.com/joaomaia/3892692
   */
-  var16 bcd2int(QVector<var8> val);
+  var32 bcd2int(QVector<var8> val);
 
   /*
    * number2bcd -> takes a number and returns the corresponding BCD in an array
@@ -42,7 +42,7 @@ public:
    * output: array
    * credit: joaomaia @ https://gist.github.com/joaomaia/3892692
   */
-  QVector<var8> number2bcd(var16 number, var8 size = 2);
+  QVector<var8> int2bcd(var32 number, var8 size = 2);
 
   // Copies a range of bytes to a buffer of size and returns them
   QVector<var8> getRange(var16 from, var16 size, bool reverse = false);
@@ -69,6 +69,34 @@ public:
 
   // Saves a hex value to bytes in the save file
   void setHex(var16 addr, var16 size, QString hex, bool reverse = false);
+
+  // Get a raw BCD value as a number
+  // Casino coins are 16-bit BCD meaning the maximum is 9,999
+  // Player money is 24-bit BCD meaning the maximum is 999,999
+  var32 getBCD(var16 addr, var8 size);
+
+  // Set a raw BCD val from a given number
+  // Casino coins are 16-bit BCD meaning the maximum is 9,999
+  // Player money is 24-bit BCD meaning the maximum is 999,999
+  void setBCD(var16 addr, var8 size, var32 val);
+
+  // Get a bit from a value
+  // Here for conv. but it's actually simpler just to test it yourself given
+  // this is so complicated and expensive for bit testing
+  // This method can only bit test a bit up to 4 bytes
+  bool getBit(var16 addr, var8 size, var8 bit, bool reverse = false);
+
+  // Set a bit into a value
+  // Here for conv. but it's actually simpler just to set it yourself given
+  // this is so complicated and expensive for bit setting
+  // This method can only bit set a bit up to 4 bytes
+  void setBit(var16 addr, var8 size, var8 bit, bool value, bool reverse = false);
+
+  // Get and set 16-bit values
+  // 0x12,0x34 <=> 0x1234
+  // If you want the reverse then reverse it
+  var16 getWord(var16 addr, bool reverse = false);
+  void setWord(var16 addr, var16 val, bool reverse = false);
 
 protected:
   SaveFile* saveFile;
