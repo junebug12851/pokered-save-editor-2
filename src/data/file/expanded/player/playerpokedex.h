@@ -13,30 +13,30 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef PLAYERPOKEDEX_H
+#define PLAYERPOKEDEX_H
 
+#include <QVector>
 #include "../expandedinterface.h"
-
-class PlayerBasics;
-class PlayerItems;
-class PlayerPokedex;
+#include "../../../../common/types.h"
 class SaveFile;
 
-class Player : public ExpandedInterface
+class PlayerPokedex : ExpandedInterface
 {
 public:
-  Player(SaveFile* saveFile = nullptr);
-  virtual ~Player();
+  PlayerPokedex(SaveFile* saveFile = nullptr);
+  virtual ~PlayerPokedex();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  PlayerBasics* basics = nullptr;
-  PlayerItems* items = nullptr;
-  PlayerPokedex* pokedex = nullptr;
+  void loadPokedex(SaveFile* saveFile, QVector<bool>* toArr, var16 fromOffset);
+  void savePokedex(SaveFile* saveFile, QVector<bool>* fromArr, var16 toOffset);
+
+  QVector<bool>* owned = nullptr;
+  QVector<bool>* seen = nullptr;
 };
 
-#endif // PLAYER_H
+#endif // PLAYERPOKEDEX_H

@@ -42,6 +42,7 @@ HEADERS += \
   src/data/file/expanded/player/player.h \
   src/data/file/expanded/player/playerbasics.h \
   src/data/file/expanded/player/playeritems.h \
+  src/data/file/expanded/player/playerpokedex.h \
   src/data/file/expanded/savefileexpanded.h \
   src/data/file/filemanagement.h \
   src/data/file/savefile.h \
@@ -55,6 +56,7 @@ SOURCES += \
   src/data/file/expanded/player/player.cpp \
   src/data/file/expanded/player/playerbasics.cpp \
   src/data/file/expanded/player/playeritems.cpp \
+  src/data/file/expanded/player/playerpokedex.cpp \
   src/data/file/expanded/savefileexpanded.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \

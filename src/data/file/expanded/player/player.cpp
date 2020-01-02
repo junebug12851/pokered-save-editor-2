@@ -17,11 +17,13 @@
 #include "../../savefile.h"
 #include "./playerbasics.h"
 #include "./playeritems.h"
+#include "./playerpokedex.h"
 
 Player::Player(SaveFile* saveFile)
 {
   basics = new PlayerBasics;
   items = new PlayerItems;
+  pokedex = new PlayerPokedex;
 
   load(saveFile);
 }
@@ -30,28 +32,33 @@ Player::~Player()
 {
   delete basics;
   delete items;
+  delete pokedex;
 }
 
 void Player::load(SaveFile* saveFile)
 {
   basics->load(saveFile);
   items->load(saveFile);
+  pokedex->load(saveFile);
 }
 
 void Player::save(SaveFile* saveFile)
 {
   basics->save(saveFile);
   items->save(saveFile);
+  pokedex->save(saveFile);
 }
 
 void Player::reset()
 {
   basics->reset();
   items->reset();
+  pokedex->reset();
 }
 
 void Player::randomize()
 {
   basics->randomize();
   items->randomize();
+  pokedex->randomize();
 }
