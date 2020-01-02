@@ -102,6 +102,10 @@ public:
   var8 getByte(var16 addr);
   void setByte(var16 addr, var8 val);
 
+  // Sets or Gets an entire bitfield
+  QVector<bool> getBitField(var16 addr, var16 size);
+  void setBitField(var16 addr, var16 size, QVector<bool> src);
+
   // Gets a single checksum from a given range
   // This properly calculates the checksum that Gen 1 games expect
   var8 getChecksum(var16 addr, var16 size);

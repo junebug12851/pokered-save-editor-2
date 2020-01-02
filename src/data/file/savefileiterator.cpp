@@ -169,3 +169,16 @@ void SaveFileIterator::setByte(var8 val, var16 padding)
   toolset()->setByte(offset, val);
   offsetBy(1 + padding);
 }
+
+QVector<bool> SaveFileIterator::getBitField(var16 size, var16 padding)
+{
+  auto ret = toolset()->getBitField(offset, size);
+  offsetBy(size + padding);
+  return ret;
+}
+
+void SaveFileIterator::setBitField(var16 size, QVector<bool> src, var16 padding)
+{
+  toolset()->setBitField(offset, size, src);
+  offsetBy(size + padding);
+}

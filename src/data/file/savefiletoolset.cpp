@@ -225,6 +225,47 @@ void SaveFileToolset::setByte(var16 addr, var8 val)
   saveFile->data[addr] = val;
 }
 
+QVector<bool> SaveFileToolset::getBitField(var16 addr, var16 size)
+{
+  QVector<bool> ret;
+
+  // Basically extract all the bits in a bitfield of a given size and dump them
+  // in the vector
+  for(var16 i = 0; i < size; i++) {
+    ret.append(getBit(addr, 1, 0));
+    ret.append(getBit(addr, 1, 1));
+    ret.append(getBit(addr, 1, 2));
+    ret.append(getBit(addr, 1, 3));
+    ret.append(getBit(addr, 1, 4));
+    ret.append(getBit(addr, 1, 5));
+    ret.append(getBit(addr, 1, 6));
+    ret.append(getBit(addr, 1, 7));
+
+    addr++;
+  }
+
+  // Return that
+  return ret;
+}
+
+void SaveFileToolset::setBitField(var16 addr, var16 size, QVector<bool> src)
+{
+  // The opposite
+  // Dump all the bits one-by-one from the bit field into a given area
+  for(var16 i = 0; i < size * 8 && i < src.size(); i +=8 ) {
+    setBit(addr, 1, 0, src.at(i + 0));
+    setBit(addr, 1, 1, src.at(i + 1));
+    setBit(addr, 1, 2, src.at(i + 2));
+    setBit(addr, 1, 3, src.at(i + 3));
+    setBit(addr, 1, 4, src.at(i + 4));
+    setBit(addr, 1, 5, src.at(i + 5));
+    setBit(addr, 1, 6, src.at(i + 6));
+    setBit(addr, 1, 7, src.at(i + 7));
+
+    addr++;
+  }
+}
+
 var8 SaveFileToolset::getChecksum(var16 addr, var16 size)
 {
   // Get the bytes to checksum
