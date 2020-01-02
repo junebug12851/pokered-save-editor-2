@@ -63,7 +63,7 @@ SaveFileToolset* SaveFileIterator::toolset()
 
 SaveFileIterator* SaveFileIterator::push()
 {
-  state->append(offset);
+  state->prepend(offset);
   return this;
 }
 
