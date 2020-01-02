@@ -94,16 +94,6 @@ void PlayerBasics::reset()
 
 void PlayerBasics::randomize()
 {
-  // How much randomization should we look at for money and coins
-  // This is a percent of maximum, we cap it at 10%
-  // This means for a very lucky roll, 10% = up to 99,999 money and 999 coins
-  var8 moneyPercentMax = QRandomGenerator::global()->bounded(1, 10);
-  var8 coinsPercentMax = QRandomGenerator::global()->bounded(1, 10);
-
-  // Figure out the exact maximum random amount
-  var32 moneyMax = 999999 * (moneyPercentMax * 0.01);
-  var16 coinsMax = 9999 * (coinsPercentMax * 0.01);
-
   // Random name and ID
   playerName = Names::randomName();
   playerID = QRandomGenerator::global()->bounded(0x0000, 0xFFFF);
@@ -111,8 +101,8 @@ void PlayerBasics::randomize()
   // Figure out random money and coins that are reasonable
   // We want a minimum of 100 money and 0 coins and a maximum of the chosen
   // maximum
-  money = QRandomGenerator::global()->bounded((quint32)100, (quint32)moneyMax);
-  coins = QRandomGenerator::global()->bounded(0, coinsMax);
+  money = QRandomGenerator::global()->bounded(100, 6000);
+  coins = QRandomGenerator::global()->bounded(0, 100);
 
   // Zero out all badges, it's far too complicated in gen 1 games to properly
   // progress in the game randomly and takes away from fun of a new game
@@ -120,7 +110,15 @@ void PlayerBasics::randomize()
     badges[i] = false;
 
   // Determine a random starter
-  playerStarter = QRandomGenerator::global()->bounded(0, 3);
+  var8 starter[3] = {
+    0x99, // Bulbasaur
+    0xB0, // Charmander
+    0xB1 // Squirtle
+  };
+
+  var8 pick = QRandomGenerator::global()->bounded(0, 3);
+
+  playerStarter = starter[pick];
 }
 
 void PlayerBasics::setBadges(SaveFile* saveFile, var16 offset)

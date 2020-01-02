@@ -158,7 +158,8 @@ extern QApplication* boot(int argc, char *argv[])
 
   auto data = mainWindow->file.data();
   data->expandData();
-  auto tmp = data->dataExpanded;
+  auto expanded = data->dataExpanded;
+  expanded->randomize();
 
   return app;
 }

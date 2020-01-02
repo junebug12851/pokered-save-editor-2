@@ -7,16 +7,16 @@ SaveFile::SaveFile(QObject* parent)
   : QObject(parent)
 {
   // Zero out data and notify
-  resetData();
   toolset = new SaveFileToolset(this);
+  resetData();
 }
 
 SaveFile::SaveFile(var8* data, QObject* parent)
   : QObject(parent)
 {
   // Init data and notify
-  setData(data);
   toolset = new SaveFileToolset(this);
+  setData(data);
 }
 
 SaveFileIterator* SaveFile::iterator()
