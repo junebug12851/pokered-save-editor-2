@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,26 +13,42 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SAVEFILEEXPANDED_H
-#define SAVEFILEEXPANDED_H
+#ifndef PLAYERBASICS_H
+#define PLAYERBASICS_H
 
-#include "./expandedinterface.h"
-
+#include <QString>
+#include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
-class Player;
 
-class SaveFileExpanded: public ExpandedInterface
+class PlayerBasics : ExpandedInterface
 {
 public:
-  SaveFileExpanded(SaveFile* saveFile = nullptr);
-  virtual ~SaveFileExpanded();
+  PlayerBasics(SaveFile* saveFile = nullptr);
+  virtual ~PlayerBasics();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  Player* player = nullptr;
+  void setBadges(SaveFile* saveFile, var16 offset);
+
+  QString playerName;
+  var16 playerID;
+  var32 money;
+  var16 coins;
+  bool badges[8] = {
+    false, // Boulder
+    false, // Cascade
+    false, // Thunder
+    false, // Rainbow
+    false, // Soul
+    false, // Marsh
+    false, // Volcano
+    false // Earth
+  };
+  var8 playerStarter = 0;
 };
 
-#endif // SAVEFILEEXPANDED_H
+#endif // PLAYERBASICS_H

@@ -38,6 +38,9 @@ HEADERS += \
   src/data/db/trades.h \
   src/data/db/trainers.h \
   src/data/db/types.h \
+  src/data/file/expanded/expandedinterface.h \
+  src/data/file/expanded/player/player.h \
+  src/data/file/expanded/player/playerbasics.h \
   src/data/file/expanded/savefileexpanded.h \
   src/data/file/filemanagement.h \
   src/data/file/savefile.h \
@@ -48,6 +51,8 @@ HEADERS += \
 SOURCES += \
   src/boot.cpp \
   src/data/db/fontsearch.cpp \
+  src/data/file/expanded/player/player.cpp \
+  src/data/file/expanded/player/playerbasics.cpp \
   src/data/file/expanded/savefileexpanded.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \

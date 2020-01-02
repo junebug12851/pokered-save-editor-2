@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,39 +13,26 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "savefileexpanded.h"
-#include "../savefile.h"
+#ifndef PLAYER_H
+#define PLAYER_H
 
-#include "./player/player.h"
+#include "../expandedinterface.h"
 
-SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
+class PlayerBasics;
+class SaveFile;
+
+class Player : public ExpandedInterface
 {
-  player = new Player;
+public:
+  Player(SaveFile* saveFile = nullptr);
+  virtual ~Player();
 
-  load(saveFile);
-}
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void reset();
+  void randomize();
 
-SaveFileExpanded::~SaveFileExpanded()
-{
-  delete player;
-}
+  PlayerBasics* basics = nullptr;
+};
 
-void SaveFileExpanded::load(SaveFile* saveFile)
-{
-  player->load(saveFile);
-}
-
-void SaveFileExpanded::save(SaveFile* saveFile)
-{
-  player->save(saveFile);
-}
-
-void SaveFileExpanded::reset()
-{
-  player->reset();
-}
-
-void SaveFileExpanded::randomize()
-{
-  player->randomize();
-}
+#endif // PLAYER_H

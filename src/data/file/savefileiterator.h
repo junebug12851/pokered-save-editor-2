@@ -65,7 +65,7 @@ public:
   var8 getByte(var16 padding = 0);
   void setByte(var8 val, var16 padding = 0);
   QVector<bool> getBitField(var16 size, var16 padding = 0);
-  void setBitField(var16 size, QVector<bool> src, , var16 padding = 0);
+  void setBitField(var16 size, QVector<bool> src, var16 padding = 0);
 
   // Current Offset in Save File
   // Can be freely changed directly
