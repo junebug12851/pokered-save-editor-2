@@ -13,28 +13,35 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef PLAYERITEMS_H
+#define PLAYERITEMS_H
 
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
+#include <QVector>
 
-class PlayerBasics;
-class PlayerItems;
 class SaveFile;
 
-class Player : public ExpandedInterface
+struct BagItem
+{
+  BagItem(var8 id, var8 amount);
+
+  var8 id;
+  var8 amount;
+};
+
+class PlayerItems : public ExpandedInterface
 {
 public:
-  Player(SaveFile* saveFile = nullptr);
-  virtual ~Player();
+  PlayerItems(SaveFile* saveFile = nullptr);
+  virtual ~PlayerItems();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  PlayerBasics* basics = nullptr;
-  PlayerItems* items = nullptr;
+  QVector<BagItem*>* bagItems = nullptr;
 };
 
-#endif // PLAYER_H
+#endif // PLAYERITEMS_H

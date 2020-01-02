@@ -16,10 +16,12 @@
 #include "player.h"
 #include "../../savefile.h"
 #include "./playerbasics.h"
+#include "./playeritems.h"
 
 Player::Player(SaveFile* saveFile)
 {
   basics = new PlayerBasics;
+  items = new PlayerItems;
 
   load(saveFile);
 }
@@ -27,24 +29,29 @@ Player::Player(SaveFile* saveFile)
 Player::~Player()
 {
   delete basics;
+  delete items;
 }
 
 void Player::load(SaveFile* saveFile)
 {
   basics->load(saveFile);
+  items->load(saveFile);
 }
 
 void Player::save(SaveFile* saveFile)
 {
   basics->save(saveFile);
+  items->save(saveFile);
 }
 
 void Player::reset()
 {
   basics->reset();
+  items->reset();
 }
 
 void Player::randomize()
 {
   basics->randomize();
+  items->randomize();
 }
