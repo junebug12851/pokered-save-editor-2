@@ -214,3 +214,87 @@ void SaveFileToolset::setWord(var16 addr, var16 val, bool reverse)
 
   copyRange(addr, 2, tmp, reverse);
 }
+
+var8 SaveFileToolset::getByte(var16 addr)
+{
+  return saveFile->data[addr];
+}
+
+void SaveFileToolset::setByte(var16 addr, var8 val)
+{
+  saveFile->data[addr] = val;
+}
+
+var8 SaveFileToolset::getChecksum(var16 addr, var16 size)
+{
+  // Get the bytes to checksum
+  auto toChecksum = getRange(addr, size);
+
+  // This is the checksum to return, it's always 8-bit and uses a more efficient
+  // algorithm which is to start at 255. The actual game uses a less efficient
+  // version that starts at 0 and requires some more steps.
+  var8 checksum = 0xFF;
+
+  // Gen 1 games were super simple especially with the improved algorithm
+  // Just subtract from 255 each byte in order, underflowing back around to 255
+  // and onward til you're done and then you have the checksum gen 1 games will
+  // accept
+  for (var16 i = 0; i < toChecksum.length(); i++) {
+    checksum -= toChecksum.at(i);
+  }
+
+  // Return that checksum
+  return checksum;
+}
+
+void SaveFileToolset::recalcBoxesChecksums()
+{
+  // Bank 2 individual checksums for Boxes 1-6
+  QVector<var8> bank2IndvChecksums;
+  bank2IndvChecksums.append(getChecksum(0x4000, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x4462, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x48C4, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x4D26, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x5188, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x55EA, 0x462));
+
+  // Apply the individual checksums for boxes 1-6 in bank 2
+  copyRange(0x5A4D, 0x6, bank2IndvChecksums);
+
+  // Apply the checksum that covers all of bank 2, excluding individual
+  // checksums
+  saveFile->data[0x5A4C] = getChecksum(0x4000, 0x1A4C);
+
+  // Bank 3 Checksums for Boxes 7-12
+  // Same as bank 2, apply values and such the same way
+  // Bank 2 and 3 are 100% identical in every way just duplicates for more
+  // storage
+  QVector<var8> bank3IndvChecksums;
+  bank2IndvChecksums.append(getChecksum(0x6000, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x6462, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x68C4, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x6D26, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x7188, 0x462));
+  bank2IndvChecksums.append(getChecksum(0x75EA, 0x462));
+
+  copyRange(0x7A4D, 0x6, bank3IndvChecksums);
+
+  // Bank 3 Checksum
+  saveFile->data[0x7A4C] = getChecksum(0x6000, 0x1A4C);
+}
+
+void SaveFileToolset::recalcChecksums(bool force)
+{
+  // Apply Bank 1 Checksum
+  saveFile->data[0x3523] = getChecksum(0x2598, 0xF8B);
+
+  // Has the player even switched boxes before?
+  // If not, then the game hasn't even formatted them yet and there's no need
+  // to calculate checksum as that breaks the critical rule of not changing
+  // what doesn't need to be changed
+  bool boxesFormatted = (saveFile->data[0x284C] & 0b10000000) > 0;
+
+  // Recalculate box checksums if needed or forced to
+  if (boxesFormatted || force)
+    recalcBoxesChecksums();
+}

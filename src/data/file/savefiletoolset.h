@@ -98,6 +98,26 @@ public:
   var16 getWord(var16 addr, bool reverse = false);
   void setWord(var16 addr, var16 val, bool reverse = false);
 
+  // Simply gets or sets a byte
+  var8 getByte(var16 addr);
+  void setByte(var16 addr, var8 val);
+
+  // Gets a single checksum from a given range
+  // This properly calculates the checksum that Gen 1 games expect
+  var8 getChecksum(var16 addr, var16 size);
+
+  // Recalculates the checksum for all the boxes
+  // This only needs to be called when the boxes checksums are used
+  // The game doesn't always use the box checksums or calculate them
+  // Use recalcChecksums below to have them calculated as approrpiately
+  void recalcBoxesChecksums();
+
+  // Recalculates all checksums in all banks following the very strict rule
+  // of only calculating what's needed and when. If the game will never
+  // calculate the box checksums then neither will we. There are cases when it
+  // won't. This also calculates bank 1 thus covering all checksums in the file.
+  void recalcChecksums(bool force = false);
+
 protected:
   SaveFile* saveFile;
 };
