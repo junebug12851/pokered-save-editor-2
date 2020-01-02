@@ -21,14 +21,49 @@
 
 // To prevent cross-include and thus errors
 class SaveFile;
+class SaveFileToolset;
 
 class SaveFileIterator
 {
 public:
   SaveFileIterator(SaveFile* saveFile);
 
-  // Slew of methods that wrap around SaveFile methods
-  // SaveFileIterator* offsetTo(var16 val);
+  // Adjust position via absolute or relative offset
+  SaveFileIterator* offsetTo(var16 val);
+  SaveFileIterator* offsetBy(var16 val);
+  SaveFileIterator* skipPadding(var16 val); // Alias for code cleanliness
+
+  // Increment and Decrement by individual bytes
+  SaveFileIterator* inc();
+  SaveFileIterator* dec();
+
+  // Get reference back to save file
+  SaveFile* file();
+  SaveFileToolset* toolset();
+
+  // Bookmark your place and return to bookmark, works like a FIFO stack
+  SaveFileIterator* push();
+  SaveFileIterator* pop();
+
+  // Here are all the specialized functions that auto-use the offset and
+  // auto-increment the offset making things much easier
+
+  QVector<var8> getRange(var16 size, var16 padding = 0, bool reverse = false);
+  void copyRange(
+      var16 size, QVector<var8> data, var16 padding = 0, bool reverse = false);
+  QString getStr(var16 size, var8 maxLen, var16 padding = 0);
+  void setStr(var16 size, var8 maxLen, QString str, var16 padding = 0);
+  QString getHex(var16 size, var16 padding = 0, bool reverse = false);
+  void setHex(var16 size, QString hex, var16 padding = 0, bool reverse = false);
+  var32 getBCD(var8 size, var16 padding = 0);
+  void setBCD(var8 size, var32 val, var16 padding = 0);
+  bool getBit(var8 size, var8 bit, bool reverse = false);
+  void setBit(
+      var8 size, var8 bit, bool value, bool reverse = false);
+  var16 getWord(var16 padding = 0, bool reverse = false);
+  void setWord(var16 val, var16 padding = 0, bool reverse = false);
+  var8 getByte(var16 padding = 0);
+  void setByte(var8 val, var16 padding = 0);
 
   // Current Offset in Save File
   // Can be freely changed directly
