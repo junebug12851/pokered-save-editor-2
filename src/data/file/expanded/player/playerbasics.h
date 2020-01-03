@@ -48,7 +48,7 @@ public:
     false, // Volcano
     false // Earth
   };
-  var8 playerStarter = 0;
+  var8 playerStarter;
 };
 
 #endif // PLAYERBASICS_H

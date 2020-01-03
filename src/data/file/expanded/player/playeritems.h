@@ -21,6 +21,7 @@
 #include <QVector>
 
 class SaveFile;
+struct ItemEntry;
 
 struct BagItem
 {
@@ -28,6 +29,7 @@ struct BagItem
 
   var8 id;
   var8 amount;
+  ItemEntry* toItem;
 };
 
 class PlayerItems : public ExpandedInterface

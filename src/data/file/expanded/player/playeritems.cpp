@@ -19,12 +19,14 @@
 #include "../../savefileiterator.h"
 #include "../../../db/items.h"
 
+#include <QString>
 #include <QRandomGenerator>
 
 BagItem::BagItem(var8 id, var8 amount)
 {
   this->id = id;
   this->amount = amount;
+  toItem = Items::ind->value(QString::number(id), nullptr);
 }
 
 PlayerItems::PlayerItems(SaveFile* saveFile)
