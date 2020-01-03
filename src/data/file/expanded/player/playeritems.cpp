@@ -26,7 +26,11 @@ BagItem::BagItem(var8 id, var8 amount)
 {
   this->id = id;
   this->amount = amount;
-  toItem = Items::ind->value(QString::number(id), nullptr);
+}
+
+ItemEntry* BagItem::toItem()
+{
+  return Items::ind->value(QString::number(id), nullptr);
 }
 
 PlayerItems::PlayerItems(SaveFile* saveFile)
@@ -94,6 +98,9 @@ void PlayerItems::randomize()
   reset();
 
   auto rnd = QRandomGenerator::global();
+
+  bagItems->append(new BagItem(
+                     Items::ind->value("TOWN MAP")->ind, 1));
 
   bagItems->append(new BagItem(
                      Items::ind->value("POKE BALL")->ind,

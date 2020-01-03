@@ -26,10 +26,10 @@ struct ItemEntry;
 struct BagItem
 {
   BagItem(var8 id, var8 amount);
+  ItemEntry* toItem();
 
   var8 id;
   var8 amount;
-  ItemEntry* toItem;
 };
 
 class PlayerItems : public ExpandedInterface

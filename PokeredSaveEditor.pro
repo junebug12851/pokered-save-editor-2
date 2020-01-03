@@ -39,6 +39,8 @@ HEADERS += \
   src/data/db/trainers.h \
   src/data/db/types.h \
   src/data/file/expanded/expandedinterface.h \
+  src/data/file/expanded/fragments/hofpokemon.h \
+  src/data/file/expanded/fragments/hofrecord.h \
   src/data/file/expanded/player/player.h \
   src/data/file/expanded/player/playerbasics.h \
   src/data/file/expanded/player/playeritems.h \
@@ -53,6 +55,8 @@ HEADERS += \
 SOURCES += \
   src/boot.cpp \
   src/data/db/fontsearch.cpp \
+  src/data/file/expanded/fragments/hofpokemon.cpp \
+  src/data/file/expanded/fragments/hofrecord.cpp \
   src/data/file/expanded/player/player.cpp \
   src/data/file/expanded/player/playerbasics.cpp \
   src/data/file/expanded/player/playeritems.cpp \

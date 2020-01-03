@@ -13,8 +13,8 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef PLAYERBASICS_H
-#define PLAYERBASICS_H
+#ifndef HOFPOKEMON_H
+#define HOFPOKEMON_H
 
 #include <QString>
 #include "../expandedinterface.h"
@@ -22,35 +22,27 @@
 class SaveFile;
 struct PokemonEntry;
 
-class PlayerBasics : ExpandedInterface
+class HoFPokemon : ExpandedInterface
 {
 public:
-  PlayerBasics(SaveFile* saveFile = nullptr);
-  virtual ~PlayerBasics();
+  HoFPokemon(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
+  virtual ~HoFPokemon();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
+  void save(SaveFile* saveFile, var16 recordOffset, var16 ind);
   void reset();
   void randomize();
 
-  void setBadges(SaveFile* saveFile, var16 offset);
-  PokemonEntry* toStarter();
+  PokemonEntry* toSpecies();
 
-  QString playerName;
-  var16 playerID;
-  var32 money;
-  var16 coins;
-  bool badges[8] = {
-    false, // Boulder
-    false, // Cascade
-    false, // Thunder
-    false, // Rainbow
-    false, // Soul
-    false, // Marsh
-    false, // Volcano
-    false // Earth
-  };
-  var8 playerStarter;
+  var8 species;
+  var8 level;
+  QString name;
+
+private:
+  // To surpress warnings with using the ExpandedInterface contract
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
 };
 
-#endif // PLAYERBASICS_H
+#endif // HOFPOKEMON_H

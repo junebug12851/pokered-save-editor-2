@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/names.h"
+#include "../../../db/pokemon.h"
 
 #include <QRandomGenerator>
 
@@ -135,4 +136,9 @@ void PlayerBasics::setBadges(SaveFile* saveFile, var16 offset)
   it->setBit(1, 5, badges[5]);
   it->setBit(1, 6, badges[6]);
   it->setBit(1, 7, badges[7]);
+}
+
+PokemonEntry* PlayerBasics::toStarter()
+{
+  return Pokemon::ind->value(QString::number(playerStarter));
 }
