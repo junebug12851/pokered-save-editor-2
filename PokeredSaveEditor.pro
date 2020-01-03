@@ -42,6 +42,7 @@ HEADERS += \
   src/data/file/expanded/fragments/hofpokemon.h \
   src/data/file/expanded/fragments/hofrecord.h \
   src/data/file/expanded/fragments/mapconndata.h \
+  src/data/file/expanded/fragments/pokemonbox.h \
   src/data/file/expanded/player/player.h \
   src/data/file/expanded/player/playerbasics.h \
   src/data/file/expanded/player/playeritems.h \
@@ -59,6 +60,7 @@ SOURCES += \
   src/data/file/expanded/fragments/hofpokemon.cpp \
   src/data/file/expanded/fragments/hofrecord.cpp \
   src/data/file/expanded/fragments/mapconndata.cpp \
+  src/data/file/expanded/fragments/pokemonbox.cpp \
   src/data/file/expanded/player/player.cpp \
   src/data/file/expanded/player/playerbasics.cpp \
   src/data/file/expanded/player/playeritems.cpp \
