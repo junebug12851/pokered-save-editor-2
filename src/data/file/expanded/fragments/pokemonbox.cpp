@@ -64,10 +64,31 @@ PokemonBox::~PokemonBox()
   delete moves;
 }
 
-PokemonBox* PokemonBox::newPokemon(SaveFile* saveFile)
+PokemonBox* PokemonBox::newPokemon(PokemonRandom list, SaveFile* saveFile)
+{
+  auto rnd = QRandomGenerator::global();
+  PokemonEntry* pkmnData;
+
+  if(list == PokemonRandom::Random_All) {
+    auto listSize = Pokemon::pokemon->size();
+    var8 ind = rnd->bounded(0, listSize);
+    pkmnData = Pokemon::pokemon->at(ind);
+  }
+  else if(list == PokemonRandom::Random_Pokedex) {
+    var8 dex = rnd->bounded(1, 151+1);
+    pkmnData = Pokemon::ind->value("dex" + QString::number(dex));
+  }
+  else if(list == PokemonRandom::Random_Starters)
+    pkmnData = StarterPokemon::randomAnyStarter();
+  else
+    pkmnData = StarterPokemon::random3Starter();
+
+  return newPokemon(pkmnData, saveFile);
+}
+
+PokemonBox* PokemonBox::newPokemon(PokemonEntry* pkmnData, SaveFile* saveFile)
 {
   auto pkmn = new PokemonBox();
-  auto pkmnData = StarterPokemon::randomAnyStarter();
   auto rnd = QRandomGenerator::global();
 
   pkmn->species = pkmnData->ind;
@@ -511,13 +532,72 @@ var16 PokemonBox::nonHpStat(PokemonStats stat)
     dvLocal = dv[(var8)PokemonStats::Speed];
     evLocal = spdExp;
   }
-  else if(stat == PokemonStats::HP) {
-    baseStat = *record->baseHp;
-    dvLocal = dv[(var8)PokemonStats::Defense];
-    evLocal = defExp;
-  }
 
   return qFloor((((baseStat+dvLocal)*2+qFloor(qFloor(qSqrt(evLocal))/4))*level)/100) + 5;
+}
+
+void PokemonBox::update(bool resetHp, bool resetExp)
+{
+  auto record = isValid();
+  if(record == nullptr)
+    return;
+
+  if(resetHp)
+    hp = hpStat();
+
+  if(record->toType1)
+    type1 = (*record).toType1->ind;
+
+  if(record->toType2)
+    type2 = (*record).toType2->ind;
+
+  if(type1 == type2)
+    type2 = 0xFF;
+
+  if(record->catchRate)
+    catchRate = *record->catchRate;
+
+  if(resetExp)
+    exp = levelToExp();
+}
+
+void PokemonBox::heal()
+{
+  hp = hpStat();
+
+  for(auto move : *moves) {
+    auto moveData = move->toMove();
+
+    if(moveData->pp)
+      move->pp = (*moveData->pp);
+  }
+}
+
+void PokemonBox::changeName(bool removeNickname)
+{
+  if(!removeNickname)
+    nickname = Names::randomName();
+  else if(removeNickname)
+    nickname = toData()->name;
+}
+
+void PokemonBox::changeOtData(bool removeOtData, SaveFile* saveFile)
+{
+  auto rnd = QRandomGenerator::global();
+
+  if(!removeOtData) {
+    otName = Names::randomName();
+    otID = rnd->bounded(0x0000, 0xFFFF);
+  }
+  else if(removeOtData && saveFile != nullptr) {
+    otName = saveFile->dataExpanded->player->basics->playerName;
+    otID = saveFile->dataExpanded->player->basics->playerID;
+  }
+}
+
+PokemonEntry* PokemonBox::toData()
+{
+  return Pokemon::ind->value(QString::number(species), nullptr);
 }
 
 var16 PokemonBox::atkStat()

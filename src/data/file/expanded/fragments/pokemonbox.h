@@ -35,6 +35,14 @@ enum class PokemonStats : var8
   HP
 };
 
+enum class PokemonRandom : var8
+{
+  Random_Starters3,
+  Random_Starters,
+  Random_Pokedex,
+  Random_All
+};
+
 struct PokemonMove
 {
   PokemonMove(var8 move, var8 pp, var8 ppUp);
@@ -57,13 +65,22 @@ public:
 
   virtual ~PokemonBox();
 
-  // Creates a new Pokemon of a random starter-like species without a nickname
-  // and, if a saveFile is provided, not traded. Depending on the species
-  // everything else is filled out accordingly such as the chosen species type,
-  // catch rate, and initial moves. It's level will be level 5
-  // The random species chosen is a base evolution species that's not legendary
-  // and feels "startery"
-  static PokemonBox* newPokemon(SaveFile* saveFile = nullptr);
+  // Creates a new Pokemon without a nickname and, if a saveFile is provided,
+  // not traded. Depending on the species everything else is filled out
+  // accordingly such as the chosen species type, catch rate, and initial moves.
+  // It's level will be level 5. The random species chosen depends.
+
+  // The first overloaded method allows you to get a random a species.
+  // One of the 3 starters, A pokemon that feels "startery", any Pokemon from
+  // the Pokedex, or any Pokemon at all including MissingNo's and glitch Pokemon
+
+  // A "startery" Pokemon is one that's not legendary, a base evolution and
+  // feels "startery"
+
+  // The second overloaded method allows you to give a data record which will be
+  // used.
+  static PokemonBox* newPokemon(PokemonRandom list = PokemonRandom::Random_Starters, SaveFile* saveFile = nullptr);
+  static PokemonBox* newPokemon(PokemonEntry* pkmnData, SaveFile* saveFile = nullptr);
 
   SaveFileIterator* load(SaveFile* saveFile = nullptr,
             var16 startOffset = 0,
@@ -97,6 +114,20 @@ public:
   var8 hpDV(); // Get HP DV
   var16 hpStat(); // Get HP Stat
   var16 nonHpStat(PokemonStats stat); // Get Non-HP Stat
+
+  // Re-calculate stats and resetting them to updated values
+  // HP and Exp are optional because their values will be lost if updated
+  void update(bool resetHp = false, bool resetExp = false);
+
+  // Performs Pokecenter Heal
+  void heal();
+
+  // Remove or Randomize nickname/ OT Data
+  // Removing requires saveFile
+  void changeName(bool removeNickname = false);
+  void changeOtData(bool removeOtData = false, SaveFile* saveFile = nullptr);
+
+  PokemonEntry* toData();
 
   var16 atkStat();
   var16 defStat();
