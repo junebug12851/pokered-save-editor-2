@@ -22,20 +22,24 @@
 #include "../../../../common/types.h"
 class SaveFile;
 class SaveFileIterator;
-class PokemonEntry;
+struct PokemonEntry;
 class Pokemon;
+struct MoveEntry;
 
-enum class PokemonStats
+enum class PokemonStats : var8
 {
-  HP,
-  Attack,
+  Attack = 0,
   Defense,
   Speed,
-  Special
+  Special,
+  HP
 };
 
 struct PokemonMove
 {
+  PokemonMove(var8 move, var8 pp, var8 ppUp);
+  MoveEntry* toMove();
+
   var8 moveID;
   var8 pp;
   var8 ppUp;
@@ -44,7 +48,13 @@ struct PokemonMove
 class PokemonBox : ExpandedInterface
 {
 public:
-  PokemonBox(SaveFile* saveFile = nullptr);
+  PokemonBox(SaveFile* saveFile = nullptr,
+             var16 startOffset = 0,
+             var16 nicknameStartOffset = 0,
+             var16 otNameStartOffset = 0,
+             var8 index = 0,
+             var8 recordSize = 0x21);
+
   virtual ~PokemonBox();
 
   // Creates a new Pokemon of a random starter-like species without a nickname
@@ -55,7 +65,7 @@ public:
   // and feels "startery"
   static PokemonBox* newPokemon(SaveFile* saveFile = nullptr);
 
-  void load(SaveFile* saveFile = nullptr,
+  SaveFileIterator* load(SaveFile* saveFile = nullptr,
             var16 startOffset = 0,
             var16 nicknameStartOffset = 0,
             var16 otNameStartOffset = 0,
@@ -64,7 +74,7 @@ public:
             // Unless overridden, the record size for box data is 0x21
             var8 recordSize = 0x21);
 
-  void save(SaveFile* saveFile = nullptr,
+  SaveFileIterator* save(SaveFile* saveFile = nullptr,
             var16 startOffset = 0,
             svar32 speciesStartOffset = 0, // -1 if doesn't exist
             var16 nicknameStartOffset = 0,
@@ -74,17 +84,16 @@ public:
             // Unless overridden, the record size for box data is 0x21
             var8 recordSize = 0x21);
 
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
   PokemonEntry* isValid();
-  var32 levelToExp();
+  var32 levelToExp(svar8 level = -1);
   var32 expLevelRangeStart();
   var32 expLevelRangeEnd();
   float expLevelRangePercent();
-  void updateExp();
+  void resetExp();
   var8 hpDV(); // Get HP DV
   var16 hpStat(); // Get HP Stat
   var16 nonHpStat(PokemonStats stat); // Get Non-HP Stat
@@ -110,10 +119,9 @@ public:
   var16 spExp;
   var8 dv[4];
   QString otName;
-  QString nickName;
+  QString nickname;
 
   QVector<PokemonMove*>* moves = nullptr;
-  Pokemon* pokemon = nullptr;
 
   // Sometimes type 2 is a duplicate of type 1 and
   // sometimes it's explicitly 0xFF, this is which one
