@@ -202,9 +202,6 @@ public:
   // sometimes it's explicitly 0xFF, this is which one
   bool type2Explicit;
 
-protected:
-  SaveFileIterator* it = nullptr;
-
 private:
   // To surpress warnings with using the ExpandedInterface contract
   void load(SaveFile* saveFile = nullptr);

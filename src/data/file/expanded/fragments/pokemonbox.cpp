@@ -262,7 +262,7 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
   nickname = toolset->getStr(nicknameOffset, 0xB, 10);
 
   // Save the iterator to be picked up by sub-class if present
-  return this->it = it;
+  return it;
 }
 
 SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
@@ -384,7 +384,6 @@ void PokemonBox::reset()
   clearMoves();
 
   type2Explicit = false;
-  it = nullptr;
 }
 
 void PokemonBox::randomize()
