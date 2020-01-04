@@ -45,8 +45,13 @@ enum class PokemonRandom : var8
 
 struct PokemonMove
 {
-  PokemonMove(var8 move, var8 pp, var8 ppUp);
+  PokemonMove(var8 move = 0, var8 pp = 0, var8 ppUp = 0);
   MoveEntry* toMove();
+
+  void randomize();
+  void maxPpUp();
+  bool isMaxPP();
+  bool isMaxPpUps();
 
   var8 moveID;
   var8 pp;
@@ -120,15 +125,42 @@ public:
   void update(bool resetHp = false, bool resetExp = false);
 
   // Performs Pokecenter Heal
+  bool isHealed();
+  bool isAfflicted();
+  bool isMaxHp();
   void heal();
 
   // Remove or Randomize nickname/ OT Data
   // Removing requires saveFile
+  bool hasNickname();
+  bool hasTradeStatus(SaveFile* saveFile = nullptr);
   void changeName(bool removeNickname = false);
   void changeOtData(bool removeOtData = false, SaveFile* saveFile = nullptr);
   void changeTrade(bool removeTradeStatus = false, SaveFile* saveFile = nullptr);
 
+  bool hasEvolution();
+  bool hasDeEvolution();
+  void evolve();
+  void deEvolve();
+
+  bool isMaxLevel();
+  bool isMaxPP();
+  bool isMaxPpUps();
+  bool isMaxEVs();
+  bool isMinEvs();
+  bool isMaxDVs();
+  void maxLevel();
+  void maxPpUps();
+  void maxDVs();
+  void reRollDVs();
+  void maxEVs();
+  void resetEVs();
+  void maxOut();
+
   void randomizeMoves();
+
+  bool isReset();
+  void doReset();
 
   PokemonEntry* toData();
 

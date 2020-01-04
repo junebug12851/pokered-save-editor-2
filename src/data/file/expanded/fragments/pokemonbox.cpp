@@ -34,11 +34,56 @@ PokemonMove::PokemonMove(var8 move, var8 pp, var8 ppUp)
   this->moveID = move;
   this->pp = pp;
   this->ppUp = ppUp;
+
+  if(move == 0) {
+    randomize();
+    ppUp = 0;
+  }
 }
 
 MoveEntry* PokemonMove::toMove()
 {
   return Moves::ind->value(QString::number(moveID), nullptr);
+}
+
+void PokemonMove::randomize()
+{
+  auto rnd = QRandomGenerator::global();
+  var8 moveListSize = Moves::moves->size();
+
+  for(var8 i = 0; i < 4; i++) {
+    MoveEntry* moveData;
+
+    do
+      moveData = Moves::ind->value(
+            QString::number(rnd->bounded(0, moveListSize)));
+    while(moveData != nullptr && moveData->glitch != true);
+
+    moveID = moveData->ind;
+
+    if(moveData->pp)
+      pp = *moveData->pp;
+
+    ppUp = rnd->bounded(1, 3+1);
+  }
+}
+
+void PokemonMove::maxPpUp()
+{
+  ppUp = 3;
+}
+
+bool PokemonMove::isMaxPP()
+{
+  if(toMove() == nullptr || !toMove()->pp)
+    return false;
+
+  return pp >= *toMove()->pp;
+}
+
+bool PokemonMove::isMaxPpUps()
+{
+  return ppUp >= 3;
 }
 
 PokemonBox::PokemonBox(SaveFile* saveFile,
@@ -402,7 +447,7 @@ PokemonEntry* PokemonBox::isValid()
   auto record = Pokemon::ind->value(QString::number(species), nullptr);
 
   // Check it's a valid Pokemon (not glitch)
-  if(record == nullptr || !(record->pokedex))
+  if(record == nullptr || record->glitch || !(record->pokedex))
     return nullptr;
 
   return record;
@@ -573,9 +618,28 @@ void PokemonBox::update(bool resetHp, bool resetExp)
     exp = levelToExp();
 }
 
+bool PokemonBox::isHealed()
+{
+  return isMaxHp() && !isAfflicted() && isMaxPP();
+}
+
+bool PokemonBox::isAfflicted()
+{
+  return status > 0;
+}
+
+bool PokemonBox::isMaxHp()
+{
+  if(!isValid())
+    return false;
+
+  return hp == hpStat();
+}
+
 void PokemonBox::heal()
 {
   hp = hpStat();
+  status = 0;
 
   for(auto move : *moves) {
     auto moveData = move->toMove();
@@ -583,6 +647,17 @@ void PokemonBox::heal()
     if(moveData->pp)
       move->pp = (*moveData->pp);
   }
+}
+
+bool PokemonBox::hasNickname()
+{
+  return isValid()->name == nickname;
+}
+
+bool PokemonBox::hasTradeStatus(SaveFile* saveFile)
+{
+  auto pl = saveFile->dataExpanded->player->basics;
+  return pl->playerName == otName && pl->playerID == otID;
 }
 
 void PokemonBox::changeName(bool removeNickname)
@@ -613,28 +688,255 @@ void PokemonBox::changeTrade(bool removeTradeStatus, SaveFile* saveFile)
   changeOtData(removeTradeStatus, saveFile);
 }
 
-void PokemonBox::randomizeMoves()
+bool PokemonBox::hasEvolution()
+{
+  auto record = isValid();
+
+  if(record == nullptr)
+    return false;
+
+  if(record->evolution->size() == 0)
+    return false;
+
+  return true;
+}
+
+bool PokemonBox::hasDeEvolution()
+{
+  auto record = isValid();
+
+  if(record == nullptr)
+    return false;
+
+  if(record->toDeEvolution == nullptr)
+    return false;
+
+  return true;
+}
+
+void PokemonBox::evolve()
+{
+  auto record = isValid();
+  auto rnd = QRandomGenerator::global();
+
+  if(!hasEvolution())
+    return;
+
+  // Does it have a nickname before evolution
+  bool nickStatus = hasNickname();
+
+  // For Eevee evolutions, randomly pick one
+  if(record->evolution->size() > 1) {
+    var8 ind = rnd->bounded(0, record->evolution->size());
+    species = record->evolution->at(ind)->toEvolution->ind;
+  }
+  else
+    species = record->evolution->at(0)->toEvolution->ind;
+
+  // Update name if no nickname
+  if(!nickStatus)
+    changeName(true);
+
+  // Update all stats
+  update(true, true);
+}
+
+void PokemonBox::deEvolve()
+{
+  auto record = isValid();
+
+  if(!hasDeEvolution())
+    return;
+
+  // Does it have a nickname before de-evolution
+  bool nickStatus = hasNickname();
+
+  species = record->toDeEvolution->ind;
+
+  // Update name if no nickname
+  if(!nickStatus)
+    changeName(true);
+
+  // Update all stats
+  update(true, true);
+
+  // As for moves, given this is made-up territory, I'm going with evolution
+  // rules and saying the Pokemon can keep the evolved moves because it's the
+  // same Pokemon that's reverted to a younger self and has the same memory.
+}
+
+bool PokemonBox::isMaxLevel()
+{
+  return level >= 100;
+}
+
+bool PokemonBox::isMaxPP()
+{
+  bool ret = true;
+
+  for(auto move : *moves)
+    if(!move->isMaxPP()) ret = false;
+
+  return ret;
+}
+
+bool PokemonBox::isMaxPpUps()
+{
+  bool ret = true;
+
+  for(auto move : *moves)
+    if(!move->isMaxPpUps()) ret = false;
+
+  return ret;
+}
+
+bool PokemonBox::isMaxEVs()
+{
+  return atkExp == 0xFFFF &&
+      defExp == 0xFFFF &&
+      spdExp == 0xFFFF &&
+      spExp == 0xFFFF &&
+      hpExp == 0xFFFF;
+}
+
+bool PokemonBox::isMinEvs()
+{
+  return atkExp == 0 ||
+      defExp == 0 ||
+      spdExp == 0 ||
+      spExp == 0 ||
+      hpExp == 0;
+}
+
+bool PokemonBox::isMaxDVs()
+{
+  bool ret = true;
+
+  for(var8 i = 0; i < 4; i++)
+    if(dv[i] < 15) ret = false;
+
+  return ret;
+}
+
+void PokemonBox::maxLevel()
+{
+  level = 100;
+  update(true, true);
+}
+
+void PokemonBox::maxPpUps()
+{
+  for(auto move : *moves)
+    move->maxPpUp();
+}
+
+void PokemonBox::maxDVs()
+{
+  for(var8 i = 0; i < 4; i++)
+    dv[i] = 15;
+}
+
+void PokemonBox::reRollDVs()
 {
   auto rnd = QRandomGenerator::global();
 
-  for(auto move : *moves)
+  for(var8 i = 0; i < 4; i++)
+    dv[i] = rnd->bounded(0, 15+1);
+}
+
+void PokemonBox::maxEVs()
+{
+  hpExp = 0xFFFF;
+  atkExp = 0xFFFF;
+  defExp = 0xFFFF;
+  spdExp = 0xFFFF;
+  spExp = 0xFFFF;
+  update(true);
+}
+
+void PokemonBox::resetEVs()
+{
+  hpExp = 0;
+  atkExp = 0;
+  defExp = 0;
+  spdExp = 0;
+  spExp = 0;
+
+  update(true);
+}
+
+void PokemonBox::maxOut()
+{
+  maxLevel();
+  maxPpUps();
+  maxEVs();
+  maxDVs();
+  heal();
+
+  update(true);
+}
+
+void PokemonBox::randomizeMoves()
+{
+ for(auto move : *moves)
     delete move;
 
   moves->clear();
 
-  var8 moveListSize = Moves::moves->size();
-
   for(var8 i = 0; i < 4; i++) {
-    MoveEntry* moveData;
-
-    do
-      moveData = Moves::ind->value(
-            QString::number(rnd->bounded(0, moveListSize)));
-    while(moveData != nullptr && moveData->glitch != true);
-
-    moves->append(new PokemonMove(
-                    moveData->ind, *moveData->pp, rnd->bounded(1, 3+1)));
+    moves->append(new PokemonMove);
+    moves->at(i)->randomize();
   }
+}
+
+bool PokemonBox::isReset()
+{
+  auto record = isValid();
+
+  if(record == nullptr)
+    return false;
+
+  bool movesReset = true;
+
+  for(var8 i = 0; i < moves->size(); i++) {
+    auto move = moves->at(i);
+
+    if(move->toMove() == nullptr)
+      movesReset = false;
+    if(!movesReset)
+      break;
+
+    if(move->moveID != record->toInitial->at(i)->ind)
+      movesReset = false;
+    if(!move->isMaxPP())
+      movesReset = false;
+    if(!move->isMaxPpUps())
+      movesReset = false;
+
+    if(!movesReset)
+      break;
+  }
+
+  return level == 5 && movesReset && isMinEvs() && isHealed();
+}
+
+void PokemonBox::doReset()
+{
+  level = 5;
+
+  auto record = isValid();
+  if(record == nullptr)
+    return;
+
+  for(auto move : *moves)
+    delete move;
+
+  for(auto moveData : *record->toInitial)
+    moves->append(new PokemonMove(moveData->ind, *moveData->pp, 0));
+
+  resetEVs();
+  heal();
+  update(true, true);
 }
 
 PokemonEntry* PokemonBox::toData()
