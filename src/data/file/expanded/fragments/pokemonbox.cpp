@@ -377,7 +377,19 @@ void PokemonBox::reset()
 
 void PokemonBox::randomize()
 {
-  auto pkmn = PokemonBox::newPokemon();
+  auto rnd = QRandomGenerator::global();
+
+  // Generate a random level 5 Pokemon from the pokedex
+  // Bump it's level up to a random value
+  // Give it a random name, otName, and otID
+  // Then fix all of it's types, exp, stats, etc.. to be game accurate
+  auto pkmn = PokemonBox::newPokemon(PokemonRandom::Random_Pokedex);
+  pkmn->level = rnd->bounded(1, 100+1);
+  changeTrade();
+  update(true, true);
+
+  // Delete it's moves and re-create 4 new non-glitch random moves
+  randomizeMoves();
 }
 
 // Is this a valid Pokemon? (Is it even in the Pokedex?)
@@ -592,6 +604,36 @@ void PokemonBox::changeOtData(bool removeOtData, SaveFile* saveFile)
   else if(removeOtData && saveFile != nullptr) {
     otName = saveFile->dataExpanded->player->basics->playerName;
     otID = saveFile->dataExpanded->player->basics->playerID;
+  }
+}
+
+void PokemonBox::changeTrade(bool removeTradeStatus, SaveFile* saveFile)
+{
+  changeName(removeTradeStatus);
+  changeOtData(removeTradeStatus, saveFile);
+}
+
+void PokemonBox::randomizeMoves()
+{
+  auto rnd = QRandomGenerator::global();
+
+  for(auto move : *moves)
+    delete move;
+
+  moves->clear();
+
+  var8 moveListSize = Moves::moves->size();
+
+  for(var8 i = 0; i < 4; i++) {
+    MoveEntry* moveData;
+
+    do
+      moveData = Moves::ind->value(
+            QString::number(rnd->bounded(0, moveListSize)));
+    while(moveData != nullptr && moveData->glitch != true);
+
+    moves->append(new PokemonMove(
+                    moveData->ind, *moveData->pp, rnd->bounded(1, 3+1)));
   }
 }
 

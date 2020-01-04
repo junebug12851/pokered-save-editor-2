@@ -126,6 +126,9 @@ public:
   // Removing requires saveFile
   void changeName(bool removeNickname = false);
   void changeOtData(bool removeOtData = false, SaveFile* saveFile = nullptr);
+  void changeTrade(bool removeTradeStatus = false, SaveFile* saveFile = nullptr);
+
+  void randomizeMoves();
 
   PokemonEntry* toData();
 
