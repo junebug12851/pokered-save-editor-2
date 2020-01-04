@@ -13,16 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "fly.h"
+
 #include <QVector>
 #include <QJsonArray>
-#include "./gamedata.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-void Fly::load()
+#include "./fly.h"
+#include "./gamedata.h"
+#include "./maps.h"
+
+void FlyDB::load()
 {
   // Grab Event Pokemon Data
   auto flyData = GameData::json("fly");
@@ -38,23 +41,23 @@ void Fly::load()
     entry->ind = flyEntry["ind"].toDouble();
 
     // Add to array
-    fly->append(entry);
+    store.append(entry);
   }
 }
 
-void Fly::index()
+void FlyDB::index()
 {
-  for(auto entry : *fly)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
   }
 }
 
-void Fly::deepLink()
+void FlyDB::deepLink()
 {
-  for(auto entry : *fly)
+  for(auto entry : store)
   {
     entry->toMap = Maps::ind->value(entry->name, nullptr);
 

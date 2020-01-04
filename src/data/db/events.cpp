@@ -13,12 +13,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "events.h"
 #include <QVector>
 #include <QJsonArray>
+
+#include "./events.h"
 #include "./gamedata.h"
 
-void Events::load()
+void EventsDB::load()
 {
   // Grab Event Pokemon Data
   auto eventData = GameData::json("events");
@@ -36,17 +37,17 @@ void Events::load()
     entry->bit = eventEntry["bit"].toDouble();
 
     // Add to array
-    events->append(entry);
+    store.append(entry);
   }
 }
 
-void Events::index()
+void EventsDB::index()
 {
-  for(auto entry : *events)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
   }
 }
 

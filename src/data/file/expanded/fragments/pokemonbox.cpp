@@ -57,8 +57,8 @@ void PokemonMove::randomize()
 
     do
       moveData = Moves::ind->value(
-            QString::number(rnd->bounded(0, moveListSize)));
-    while(moveData != nullptr && moveData->glitch != true);
+            QString::number(rnd->bounded(0, moveListSize)), nullptr);
+    while(moveData == nullptr || moveData->glitch == true);
 
     moveID = moveData->ind;
 

@@ -16,9 +16,10 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include "../../common/types.h"
 #include <QString>
 #include <QHash>
+
+#include "../../common/types.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -26,14 +27,14 @@
 // In-Game events, there's like a million of them, not kidding lol. Every little
 // thing you do changes and moves around events
 
-struct EventEntry {
+struct EventDBEntry {
   QString name; // Event name
   var16 ind; // Internal index
   var16 byte; // Byte in SAV file
   var8 bit; // Bit in byte
 };
 
-class Events
+class EventsDB
 {
 public:
   static void load();

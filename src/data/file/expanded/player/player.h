@@ -21,6 +21,8 @@
 class PlayerBasics;
 class PlayerItems;
 class PlayerPokedex;
+class PlayerPokemon;
+
 class SaveFile;
 
 class Player : public ExpandedInterface
@@ -37,6 +39,7 @@ public:
   PlayerBasics* basics = nullptr;
   PlayerItems* items = nullptr;
   PlayerPokedex* pokedex = nullptr;
+  PlayerPokemon* pokemon = nullptr;
 };
 
 #endif // PLAYER_H

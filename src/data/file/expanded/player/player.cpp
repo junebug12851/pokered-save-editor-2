@@ -18,12 +18,14 @@
 #include "./playerbasics.h"
 #include "./playeritems.h"
 #include "./playerpokedex.h"
+#include "./playerpokemon.h"
 
 Player::Player(SaveFile* saveFile)
 {
   basics = new PlayerBasics;
   items = new PlayerItems;
   pokedex = new PlayerPokedex;
+  pokemon = new PlayerPokemon;
 
   load(saveFile);
 }
@@ -33,6 +35,7 @@ Player::~Player()
   delete basics;
   delete items;
   delete pokedex;
+  delete pokemon;
 }
 
 void Player::load(SaveFile* saveFile)
@@ -40,6 +43,7 @@ void Player::load(SaveFile* saveFile)
   basics->load(saveFile);
   items->load(saveFile);
   pokedex->load(saveFile);
+  pokemon->load(saveFile);
 }
 
 void Player::save(SaveFile* saveFile)
@@ -47,6 +51,7 @@ void Player::save(SaveFile* saveFile)
   basics->save(saveFile);
   items->save(saveFile);
   pokedex->save(saveFile);
+  pokemon->save(saveFile);
 }
 
 void Player::reset()
@@ -54,6 +59,7 @@ void Player::reset()
   basics->reset();
   items->reset();
   pokedex->reset();
+  pokemon->reset();
 }
 
 void Player::randomize()
@@ -61,4 +67,5 @@ void Player::randomize()
   basics->randomize();
   items->randomize();
   pokedex->randomize();
+  pokemon->randomize();
 }

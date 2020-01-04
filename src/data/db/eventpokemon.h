@@ -19,34 +19,36 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-#include "../../common/types.h"
-#include <variant>
-#include <optional>
 #include <QString>
 #include <QVector>
 
-#include "./pokemon.h"
+#include <variant>
+#include <optional>
+
+#include "../../common/types.h"
+
+struct PokemonEntry;
 
 // These are Pokemon you get by going to or participating in real-life events
 // that were held around the world
 
-struct EventPokemonEntry {
-    EventPokemonEntry();
+struct EventPokemonDBEntry {
+    EventPokemonDBEntry();
 
     QString title; // Event Title
     QString desc; // Event Pokemon Description
     QString pokemon; // Pokemon Name
-    QVector<QString>* otName; // Pokemon OT Name
+    QVector<QString> otName; // Pokemon OT Name
     std::optional<var16> otId; // Pokemon OT ID, random if not specified
-    QVector<var8>* dv; // Pokemon DV List, random if not specified
+    QVector<var8> dv; // Pokemon DV List, random if not specified
     QString region; // Region Code
-    QVector<QString>* moves; // Move list
+    QVector<QString> moves; // Move list
     std::optional<var8> level; // Level, default minimum if not specified
 
     PokemonEntry* toPokemon; // Deep link to associated Pokemon
 };
 
-class EventPokemon
+class EventPokemonDB
 {
 public:
   static void load();

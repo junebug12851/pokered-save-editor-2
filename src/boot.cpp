@@ -39,8 +39,9 @@
 #include "./data/db/trainers.h"
 #include "./data/db/types.h"
 
-#include "../ui/window/mainwindow.h"
 #include "./data/file/expanded/savefileexpanded.h"
+#include "../ui/window/mainwindow.h"
+#include "./data/db/fontsearch.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -88,10 +89,10 @@ QApplication* preBoot(int argc, char *argv[])
 // Step 1: Load all JSON data into memory, properly parsed
 void load()
 {
-  EventPokemon::load();
-  Events::load();
-  Fly::load();
-  Font::load();
+  EventPokemonDB::load();
+  EventsDB::load();
+  FlyDB::load();
+  FontDB::load();
   HiddenCoins::load();
   HiddenItems::load();
   Items::load();
@@ -113,9 +114,9 @@ void load()
 // not everything can be indexed.
 void index()
 {
-  Events::index();
-  Fly::index();
-  Font::index();
+  EventsDB::index();
+  FlyDB::index();
+  FontDB::index();
   Items::index();
   Maps::index();
   Missables::index();
@@ -131,8 +132,8 @@ void index()
 // Not all data can be deep-linked
 void deepLink()
 {
-  EventPokemon::deepLink();
-  Fly::deepLink();
+  EventPokemonDB::deepLink();
+  FlyDB::deepLink();
   HiddenCoins::deepLink();
   HiddenItems::deepLink();
   Items::deepLink();
@@ -152,14 +153,16 @@ extern QApplication* boot(int argc, char *argv[])
   index();
   deepLink();
 
+  auto tmp = FontDB::search()->andNormal()->notShorthand()->notMultiChar();
+
   // Open recent file
-  mainWindow->file.openFileRecent(0);
+  //mainWindow->file.openFileRecent(0);
   //auto toolset = mainWindow->file.data()->toolset;
 
-  auto data = mainWindow->file.data();
-  data->expandData();
-  auto expanded = data->dataExpanded;
-  expanded->randomize();
+//  auto data = mainWindow->file.data();
+//  data->expandData();
+//  auto expanded = data->dataExpanded;
+//  expanded->randomize();
 
   return app;
 }

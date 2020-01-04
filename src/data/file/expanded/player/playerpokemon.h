@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,37 +13,27 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef FLY_H
-#define FLY_H
+#ifndef PLAYERPOKEMON_H
+#define PLAYERPOKEMON_H
 
-#include <QString>
-#include <QHash>
+#include <QVector>
+#include "../expandedinterface.h"
+#include "../../../../common/types.h"
+class SaveFile;
+class PokemonParty;
 
-#include "../../common/types.h"
-
-struct MapEntry;
-
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
-
-// Cities you can fly to
-
-struct FlyDBEntry {
-  QString name; // City Name
-  var8 ind; // Index in list
-
-  MapEntry* toMap; // Deep link to associated map data
-};
-
-class FlyDB
+class PlayerPokemon : ExpandedInterface
 {
 public:
-  static void load();
-  static void index();
-  static void deepLink();
+  PlayerPokemon(SaveFile* saveFile = nullptr);
+  virtual ~PlayerPokemon();
 
-  static QVector<FlyEntry*>* fly;
-  static QHash<QString, FlyEntry*>* ind;
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void reset();
+  void randomize();
+
+  QVector<PokemonParty*>* party = nullptr;
 };
 
-#endif // FLY_H
+#endif // PLAYERPOKEMON_H

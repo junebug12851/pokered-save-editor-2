@@ -16,10 +16,11 @@
 #ifndef FONTS_H
 #define FONTS_H
 
-#include "../../common/types.h"
 #include <QString>
 #include <QHash>
 #include <QVector>
+
+#include "../../common/types.h"
 
 class FontSearch;
 
@@ -29,8 +30,8 @@ class FontSearch;
 // There are 255 font options although most of them are "invalid" and thus
 // use the tilemap.
 
-struct FontEntry {
-  FontEntry();
+struct FontDBEntry {
+  FontDBEntry();
 
   // Optional values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
@@ -48,7 +49,7 @@ struct FontEntry {
   bool normal; // Would this be an in-game accessible font char
 };
 
-class Font
+class FontDB
 {
 public:
   static void load();

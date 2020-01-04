@@ -13,14 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "fonts.h"
 #include <QVector>
 #include <QJsonArray>
-#include "./gamedata.h"
 
+#include "./fonts.h"
+#include "./gamedata.h"
 #include "./fontsearch.h"
 
-FontEntry::FontEntry()
+FontDBEntry::FontDBEntry()
 {
   shorthand = false;
   picture = false;
@@ -32,7 +32,7 @@ FontEntry::FontEntry()
   normal = false;
 }
 
-void Font::load()
+void FontDB::load()
 {
   // Grab Event Pokemon Data
   auto fontData = GameData::json("font");
@@ -74,17 +74,17 @@ void Font::load()
       entry->normal = fontEntry["normal"].toBool();
 
     // Add to array
-    font->append(entry);
+    store.append(entry);
   }
 }
 
-void Font::index()
+void FontDB::index()
 {
-  for(auto entry : *font)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
   }
 }
 
@@ -98,7 +98,7 @@ FontSearch* Font::search()
 // If fed strings not in the representation list, the unknown characters will
 // be ignored thus possibly corrupting output
 // Possibly very slow
-QVector<var8> Font::convertToCode(QString str, var8 maxLen, bool autoEnd)
+QVector<var8> FontDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
 {
   // Code string to return
   QVector<var8> code;
@@ -120,7 +120,7 @@ QVector<var8> Font::convertToCode(QString str, var8 maxLen, bool autoEnd)
     // "a" maps to "a" in-game but "<m>" maps to "male symbol" in-game
     // "a<m>" maps to 2 characters in-game not 4. When we find a symbol we have
     // to remove all the characters in the string before proceeding.
-    for (var8 i = 0; i < font->length(); i++) {
+    for (var8 i = 0; i < store.length(); i++) {
 
       // Find a starting match
       // Ignore this character if none are found
@@ -163,7 +163,7 @@ QVector<var8> Font::convertToCode(QString str, var8 maxLen, bool autoEnd)
 
 // Much easier and faster, just expand the in-game code to it's english
 // representation directly
-QString Font::convertFromCode(QVector<var8> codes, var8 maxLen)
+QString FontDB::convertFromCode(QVector<var8> codes, var8 maxLen)
 {
   // Prepare empty string
   QString eng = "";
@@ -177,11 +177,11 @@ QString Font::convertFromCode(QVector<var8> codes, var8 maxLen)
       break;
 
     // If the code is invalid then also stop here
-    if(ind->value(QString::number(code), nullptr) == nullptr)
+    if(ind.value(QString::number(code), nullptr) == nullptr)
       continue;
 
     // Append to end of string the typable equivelant
-    eng += ind->value(QString::number(code))->name;
+    eng += ind.value(QString::number(code))->name;
 
     // Stop here if we've reached max length
     if (i >= maxLen)
@@ -194,7 +194,7 @@ QString Font::convertFromCode(QVector<var8> codes, var8 maxLen)
 
 // Converts an english format string to code represented as how it would be
 // in-game
-QString Font::expandStr(QString msg, var8 maxLen, QString rival, QString player)
+QString FontDB::expandStr(QString msg, var8 maxLen, QString rival, QString player)
 {
   // Convert string to char codes
   // Very expensive
@@ -258,7 +258,7 @@ QString Font::expandStr(QString msg, var8 maxLen, QString rival, QString player)
   return convertFromCode(charCodes, 255);
 }
 
-void Font::splice(QVector<var8>& out, QString in, var8 ind)
+void FontDB::splice(QVector<var8>& out, QString in, var8 ind)
 {
   QVector<var8> tmp = convertToCode(in, 100, false);
   out.remove(ind);
