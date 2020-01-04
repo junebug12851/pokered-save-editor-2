@@ -49,8 +49,10 @@ struct PokemonMove
   MoveEntry* toMove();
 
   void randomize();
-  void maxPpUp();
+
   bool isMaxPP();
+
+  void maxPpUp();
   bool isMaxPpUps();
 
   var8 moveID;
@@ -108,14 +110,17 @@ public:
 
   void reset();
   void randomize();
+  void clearMoves();
 
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
   PokemonEntry* isValid();
+
   var32 levelToExp(svar8 level = -1);
   var32 expLevelRangeStart();
   var32 expLevelRangeEnd();
   float expLevelRangePercent();
   void resetExp();
+
   var8 hpDV(); // Get HP DV
   var16 hpStat(); // Get HP Stat
   var16 nonHpStat(PokemonStats stat); // Get Non-HP Stat
@@ -125,8 +130,8 @@ public:
   void update(bool resetHp = false, bool resetExp = false);
 
   // Performs Pokecenter Heal
-  bool isHealed();
   bool isAfflicted();
+  bool isHealed();
   bool isMaxHp();
   void heal();
 
@@ -144,23 +149,27 @@ public:
   void deEvolve();
 
   bool isMaxLevel();
+  void maxLevel();
+
   bool isMaxPP();
+
   bool isMaxPpUps();
+  void maxPpUps();
+
   bool isMaxEVs();
   bool isMinEvs();
-  bool isMaxDVs();
-  void maxLevel();
-  void maxPpUps();
-  void maxDVs();
-  void reRollDVs();
   void maxEVs();
   void resetEVs();
-  void maxOut();
 
+  bool isMaxDVs();
+  void maxDVs();
+  void reRollDVs();
+
+  void maxOut();
   void randomizeMoves();
 
-  bool isReset();
-  void doReset();
+  bool isPokemonReset();
+  void resetPokemon();
 
   PokemonEntry* toData();
 

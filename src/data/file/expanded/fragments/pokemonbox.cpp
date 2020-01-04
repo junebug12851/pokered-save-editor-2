@@ -29,6 +29,8 @@
 #include <QtMath>
 #include <QRandomGenerator>
 
+QRandomGenerator* rnd = QRandomGenerator::global();
+
 PokemonMove::PokemonMove(var8 move, var8 pp, var8 ppUp)
 {
   this->moveID = move;
@@ -48,7 +50,6 @@ MoveEntry* PokemonMove::toMove()
 
 void PokemonMove::randomize()
 {
-  auto rnd = QRandomGenerator::global();
   var8 moveListSize = Moves::moves->size();
 
   for(var8 i = 0; i < 4; i++) {
@@ -111,7 +112,6 @@ PokemonBox::~PokemonBox()
 
 PokemonBox* PokemonBox::newPokemon(PokemonRandom list, SaveFile* saveFile)
 {
-  auto rnd = QRandomGenerator::global();
   PokemonEntry* pkmnData;
 
   if(list == PokemonRandom::Random_All) {
@@ -134,50 +134,19 @@ PokemonBox* PokemonBox::newPokemon(PokemonRandom list, SaveFile* saveFile)
 PokemonBox* PokemonBox::newPokemon(PokemonEntry* pkmnData, SaveFile* saveFile)
 {
   auto pkmn = new PokemonBox();
-  auto rnd = QRandomGenerator::global();
 
   pkmn->species = pkmnData->ind;
   pkmn->level = 5;
-
-  if(pkmnData->toType1)
-    pkmn->type1 = (*pkmnData).toType1->ind;
-
-  if(pkmnData->toType2)
-    pkmn->type2 = (*pkmnData).toType2->ind;
-
-  if(pkmn->type1 == pkmn->type2)
-    pkmn->type2 = 0xFF;
-
-  for(var8 i = 0; i < pkmnData->initial->size(); i++) {
-    pkmn->moves->append(new PokemonMove(
-                          pkmnData->toInitial->at(i)->ind,
-                          *pkmnData->toInitial->at(i)->pp,
-                          0
-                      ));
-  }
-
-  if(saveFile != nullptr)
-    pkmn->otID = saveFile->dataExpanded->player->basics->playerID;
-  else
-    pkmn->otID = rnd->bounded(0x0000, 0xFFFF);
-
-  if(saveFile != nullptr)
-    pkmn->otName = saveFile->dataExpanded->player->basics->playerName;
-  else
-    pkmn->otName = Names::randomName();
-
-  pkmn->dv[(var8)PokemonStats::Attack] = rnd->bounded(0, 15);
-  pkmn->dv[(var8)PokemonStats::Defense] = rnd->bounded(0, 15);
-  pkmn->dv[(var8)PokemonStats::Speed] = rnd->bounded(0, 15);
-  pkmn->dv[(var8)PokemonStats::Special] = rnd->bounded(0, 15);
-
+  pkmn->reRollDVs();
   pkmn->nickname = pkmnData->name;
 
-  if(pkmnData->catchRate)
-    pkmn->catchRate = *pkmnData->catchRate;
+  if(saveFile != nullptr)
+    pkmn->changeTrade(true, saveFile);
+  else
+    pkmn->changeTrade();
 
-  pkmn->hp = pkmn->hpStat();
-  pkmn->resetExp();
+  pkmn->resetPokemon();
+  pkmn->update(true, true);
 
   return pkmn;
 }
@@ -412,18 +381,14 @@ void PokemonBox::reset()
   dv[2] = 0;
   dv[3] = 0;
 
-  for(auto move : *moves)
-    delete move;
+  clearMoves();
 
-  moves->clear();
   type2Explicit = false;
   it = nullptr;
 }
 
 void PokemonBox::randomize()
 {
-  auto rnd = QRandomGenerator::global();
-
   // Generate a random level 5 Pokemon from the pokedex
   // Bump it's level up to a random value
   // Give it a random name, otName, and otID
@@ -435,6 +400,14 @@ void PokemonBox::randomize()
 
   // Delete it's moves and re-create 4 new non-glitch random moves
   randomizeMoves();
+}
+
+void PokemonBox::clearMoves()
+{
+  for(auto move : *moves)
+    delete move;
+
+  moves->clear();
 }
 
 // Is this a valid Pokemon? (Is it even in the Pokedex?)
@@ -889,7 +862,7 @@ void PokemonBox::randomizeMoves()
   }
 }
 
-bool PokemonBox::isReset()
+bool PokemonBox::isPokemonReset()
 {
   auto record = isValid();
 
@@ -920,7 +893,7 @@ bool PokemonBox::isReset()
   return level == 5 && movesReset && isMinEvs() && isHealed();
 }
 
-void PokemonBox::doReset()
+void PokemonBox::resetPokemon()
 {
   level = 5;
 
@@ -928,8 +901,7 @@ void PokemonBox::doReset()
   if(record == nullptr)
     return;
 
-  for(auto move : *moves)
-    delete move;
+  clearMoves();
 
   for(auto moveData : *record->toInitial)
     moves->append(new PokemonMove(moveData->ind, *moveData->pp, 0));
