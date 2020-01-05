@@ -51,9 +51,12 @@ struct PokemonMove
   void randomize();
 
   bool isMaxPP();
+  var8 getMaxPP();
 
   void maxPpUp();
   bool isMaxPpUps();
+
+  void restorePP();
 
   var8 moveID;
   var8 pp;
@@ -127,7 +130,11 @@ public:
 
   // Re-calculate stats and resetting them to updated values
   // HP and Exp are optional because their values will be lost if updated
-  void update(bool resetHp = false, bool resetExp = false);
+  // Type needs to be updated in certain cases but not always
+  void update(bool resetHp = false,
+              bool resetExp = false,
+              bool resetType = false,
+              bool resetCatchRate = false);
 
   // Performs Pokecenter Heal
   bool isAfflicted();
@@ -170,6 +177,8 @@ public:
 
   bool isPokemonReset();
   void resetPokemon();
+
+  void copyFrom(PokemonBox* pkmn);
 
   PokemonDBEntry* toData();
 

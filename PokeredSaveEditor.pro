@@ -30,6 +30,7 @@ HEADERS += \
   src/data/db/missables.h \
   src/data/db/moves.h \
   src/data/db/names.h \
+  src/data/db/namesPokemon.h \
   src/data/db/pokemon.h \
   src/data/db/scripts.h \
   src/data/db/sprites.h \
@@ -62,6 +63,7 @@ HEADERS += \
 SOURCES += \
   src/boot.cpp \
   src/data/db/fontsearch.cpp \
+  src/data/db/namesPokemon.cpp \
   src/data/file/expanded/fragments/hofpokemon.cpp \
   src/data/file/expanded/fragments/hofrecord.cpp \
   src/data/file/expanded/fragments/mapconndata.cpp \
@@ -117,3 +119,5 @@ QML_DESIGNER_IMPORT_PATH =
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES +=

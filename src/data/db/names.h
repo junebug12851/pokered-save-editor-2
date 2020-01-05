@@ -23,6 +23,12 @@
 // Something I made, random American names, I made it for the auto-nicknaming
 // feature given this program is for the USA English Pokemon Red.
 
+// Names are curtesy of
+// Pokemon Name Generator => Gym Leader Names
+// FantasyNameGenerators.com
+// https://www.fantasynamegenerators.com/pokemon-names.php
+// Generated text is released as public domain
+
 class NamesDB
 {
 public:

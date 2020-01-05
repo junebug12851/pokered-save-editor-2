@@ -57,5 +57,6 @@
         <file>assets/pokered-font/pic-tilesets/ship.png</file>
         <file>assets/pokered-font/pic-tilesets/ship_port.png</file>
         <file>assets/pokered-font/pic-tilesets/underground.png</file>
+        <file>assets/data/namesPokemon.json</file>
     </qresource>
 </RCC>

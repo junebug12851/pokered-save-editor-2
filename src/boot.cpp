@@ -30,6 +30,7 @@
 #include "./data/db/missables.h"
 #include "./data/db/moves.h"
 #include "./data/db/names.h"
+#include "./data/db/namesPokemon.h"
 #include "./data/db/pokemon.h"
 #include "./data/db/scripts.h"
 #include "./data/db/sprites.h"
@@ -103,6 +104,7 @@ void load()
   MissablesDB::load();
   MovesDB::load();
   NamesDB::load();
+  NamesPokemonDB::load();
   PokemonDB::load();
   ScriptsDB::load();
   SpritesDB::load();
@@ -157,10 +159,16 @@ extern QApplication* boot(int argc, char *argv[])
   deepLink();
 
   // Open recent file
-  mainWindow->file->openFileRecent(0);
-  auto data = mainWindow->file->data;
+  auto file = mainWindow->file;
+  //file->openFileRecent(0);
+  file->reopenFile();
+
+  auto data = file->data;
   auto expanded = data->dataExpanded;
   expanded->randomize();
+
+  data->flattenData();
+  file->saveFile();
 
   return app;
 }

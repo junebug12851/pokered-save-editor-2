@@ -23,6 +23,7 @@
 #include "../../../db/pokemon.h"
 #include "../../../db/moves.h"
 #include "../../../db/names.h"
+#include "../../../db/namesPokemon.h"
 #include "../../../db/starterPokemon.h"
 #include "../../../db/types.h"
 
@@ -62,10 +63,8 @@ void PokemonMove::randomize()
 
     moveID = moveData->ind;
 
-    if(moveData->pp)
-      pp = *moveData->pp;
-
-    ppUp = rnd->bounded(1, 3+1);
+    ppUp = rnd->bounded(0, 3+1);
+    pp = getMaxPP();
   }
 }
 
@@ -76,15 +75,38 @@ void PokemonMove::maxPpUp()
 
 bool PokemonMove::isMaxPP()
 {
-  if(toMove() == nullptr || !toMove()->pp)
+  var8 maxPP = getMaxPP();
+  if(maxPP == 0)
     return false;
 
-  return pp >= *toMove()->pp;
+  return pp >= maxPP;
+}
+
+var8 PokemonMove::getMaxPP()
+{
+  auto moveData = toMove();
+  if(moveData == nullptr || !moveData->pp)
+    return 0;
+
+  var8 basePP = *moveData->pp;
+  var8 ppUps = ppUp;
+  var8 ppUpSteps = basePP / 5;
+
+  return basePP + (ppUpSteps * ppUps);
 }
 
 bool PokemonMove::isMaxPpUps()
 {
   return ppUp >= 3;
+}
+
+void PokemonMove::restorePP()
+{
+  var8 maxPP = getMaxPP();
+  if(maxPP == 0)
+    return;
+
+  pp = maxPP;
 }
 
 PokemonBox::PokemonBox(SaveFile* saveFile,
@@ -146,7 +168,7 @@ PokemonBox* PokemonBox::newPokemon(PokemonDBEntry* pkmnData, SaveFile* saveFile)
     pkmn->changeTrade();
 
   pkmn->resetPokemon();
-  pkmn->update(true, true);
+  pkmn->update(true, true, true, true);
 
   return pkmn;
 }
@@ -230,11 +252,8 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
 
   // Next gather PP
   QVector<var8> ppList;
-  for (var8 i = 0; i < 4; i++) {
+  for (var8 i = 0; i < moveIDList.size(); i++) {
     var8 ppListEntry = it->getByte();
-    if(ppListEntry == 0)
-      break;
-
     ppList.append(ppListEntry);
   }
 
@@ -393,12 +412,40 @@ void PokemonBox::randomize()
   // Give it a random name, otName, and otID
   // Then fix all of it's types, exp, stats, etc.. to be game accurate
   auto pkmn = PokemonBox::newPokemon(PokemonRandom::Random_Pokedex);
-  pkmn->level = rnd->bounded(1, 100+1);
-  changeTrade();
-  update(true, true);
+  copyFrom(pkmn);
+  delete pkmn;
+
+  level = rnd->bounded(1, 100+1);
+
+  atkExp = rnd->bounded(0, 0xFFFF);
+  defExp = rnd->bounded(0, 0xFFFF);
+  spdExp = rnd->bounded(0, 0xFFFF);
+  spExp = rnd->bounded(0, 0xFFFF);
+  hpExp = rnd->bounded(0, 0xFFFF);
 
   // Delete it's moves and re-create 4 new non-glitch random moves
   randomizeMoves();
+
+  changeTrade();
+  update(true, true, true, true);
+  heal();
+
+  auto type1 = TypesDB::store.at(rnd->bounded(0, TypesDB::store.size()));
+  TypeDBEntry* type2 = nullptr;
+
+  bool hasType2 = rnd->bounded(0, 5+1) > 3;
+  if(hasType2)
+    type2 = TypesDB::store.at(rnd->bounded(0, TypesDB::store.size()));
+
+  if(type1 == type2)
+    type2 = nullptr;
+
+  this->type1 = type1->ind;
+
+  if(type2 != nullptr)
+    this->type2 = type2->ind;
+  else
+    this->type2 = 0xFF;
 }
 
 void PokemonBox::clearMoves()
@@ -565,7 +612,10 @@ var16 PokemonBox::nonHpStat(PokemonStats stat)
   return qFloor((((baseStat+dvLocal)*2+qFloor(qFloor(qSqrt(evLocal))/4))*level)/100) + 5;
 }
 
-void PokemonBox::update(bool resetHp, bool resetExp)
+void PokemonBox::update(bool resetHp,
+                        bool resetExp,
+                        bool resetType,
+                        bool resetCatchRate)
 {
   auto record = isValid();
   if(record == nullptr)
@@ -574,16 +624,16 @@ void PokemonBox::update(bool resetHp, bool resetExp)
   if(resetHp)
     hp = hpStat();
 
-  if(record->toType1)
+  if(resetType && record->toType1)
     type1 = (*record).toType1->ind;
 
-  if(record->toType2)
+  if(resetType && record->toType2)
     type2 = (*record).toType2->ind;
 
-  if(type1 == type2)
+  if(resetType && type1 == type2)
     type2 = 0xFF;
 
-  if(record->catchRate)
+  if(resetCatchRate && record->catchRate)
     catchRate = *record->catchRate;
 
   if(resetExp)
@@ -613,12 +663,8 @@ void PokemonBox::heal()
   hp = hpStat();
   status = 0;
 
-  for(auto move : *moves) {
-    auto moveData = move->toMove();
-
-    if(moveData->pp)
-      move->pp = (*moveData->pp);
-  }
+  for(auto move : *moves)
+    move->restorePP();
 }
 
 bool PokemonBox::hasNickname()
@@ -635,7 +681,7 @@ bool PokemonBox::hasTradeStatus(SaveFile* saveFile)
 void PokemonBox::changeName(bool removeNickname)
 {
   if(!removeNickname)
-    nickname = NamesDB::randomName();
+    nickname = NamesPokemonDB::randomName();
   else if(removeNickname)
     nickname = toData()->name;
 }
@@ -710,7 +756,7 @@ void PokemonBox::evolve()
     changeName(true);
 
   // Update all stats
-  update(true, true);
+  update(true, true, true, true);
 }
 
 void PokemonBox::deEvolve()
@@ -730,7 +776,7 @@ void PokemonBox::deEvolve()
     changeName(true);
 
   // Update all stats
-  update(true, true);
+  update(true, true, true, true);
 
   // As for moves, given this is made-up territory, I'm going with evolution
   // rules and saying the Pokemon can keep the evolved moves because it's the
@@ -747,7 +793,8 @@ bool PokemonBox::isMaxPP()
   bool ret = true;
 
   for(auto move : *moves)
-    if(!move->isMaxPP()) ret = false;
+    if(!move->isMaxPP())
+      ret = false;
 
   return ret;
 }
@@ -757,7 +804,8 @@ bool PokemonBox::isMaxPpUps()
   bool ret = true;
 
   for(auto move : *moves)
-    if(!move->isMaxPpUps()) ret = false;
+    if(!move->isMaxPpUps())
+      ret = false;
 
   return ret;
 }
@@ -845,7 +893,7 @@ void PokemonBox::maxOut()
   maxDVs();
   heal();
 
-  update(true);
+  update(true, true);
 }
 
 void PokemonBox::randomizeMoves()
@@ -907,7 +955,36 @@ void PokemonBox::resetPokemon()
 
   resetEVs();
   heal();
-  update(true, true);
+  update(true, true, true, true);
+}
+
+void PokemonBox::copyFrom(PokemonBox* pkmn)
+{
+  species = pkmn->species;
+  hp = pkmn->hp;
+  level = pkmn->level;
+  status = pkmn->status;
+  type1 = pkmn->type1;
+  type2 = pkmn->type2;
+  catchRate = pkmn->catchRate;
+  otID = pkmn->otID;
+  exp = pkmn->exp;
+  hpExp = pkmn->hpExp;
+  atkExp = pkmn->atkExp;
+  defExp = pkmn->defExp;
+  spdExp = pkmn->spExp;
+  spExp = pkmn->spExp;
+  otName = pkmn->otName;
+  nickname = pkmn->nickname;
+
+  dv[0] = pkmn->dv[0];
+  dv[1] = pkmn->dv[1];
+  dv[2] = pkmn->dv[2];
+  dv[3] = pkmn->dv[3];
+
+  clearMoves();
+
+  type2Explicit = false;
 }
 
 PokemonDBEntry* PokemonBox::toData()

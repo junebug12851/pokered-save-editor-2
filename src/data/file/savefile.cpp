@@ -7,19 +7,26 @@ SaveFile::SaveFile(QObject* parent)
   : QObject(parent)
 {
   // One-Time Init Data in order of dependencies
+  // Since the sav file is a primitive array we have to clear it first to zeroes
   data = new var8[SAV_DATA_SIZE];
+  memset(data, 0, SAV_DATA_SIZE);
+
+  // Create toolset 2nd and then dataExpanded
+  // dataExpanded will perform an initial load from sav data which is why
+  // we had to clear it first up there, dataExpanded also depends on toolset
   toolset = new SaveFileToolset(this);
   dataExpanded = new SaveFileExpanded(this);
 
-  // Perform post-init stuff
+  // Perform post-init stuff including notifying other code of data changes
   resetData();
 }
 
 SaveFile::~SaveFile()
 {
+  // Erase backwards from creation order
   delete dataExpanded;
   delete toolset;
-  delete data;
+  delete[] data;
 }
 
 SaveFileIterator* SaveFile::iterator()

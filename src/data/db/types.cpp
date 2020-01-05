@@ -37,7 +37,7 @@ void TypesDB::load()
     entry->readable = typesEntry["readable"].toString();
 
     // Add to array
-    types.append(entry);
+    store.append(entry);
   }
 
   delete typesData;
@@ -45,7 +45,7 @@ void TypesDB::load()
 
 void TypesDB::index()
 {
-  for(auto entry : types)
+  for(auto entry : store)
   {
     // Index name and index
     ind.insert(entry->name, entry);
@@ -54,5 +54,5 @@ void TypesDB::index()
   }
 }
 
-QVector<TypeDBEntry*> TypesDB::types = QVector<TypeDBEntry*>();
+QVector<TypeDBEntry*> TypesDB::store = QVector<TypeDBEntry*>();
 QHash<QString, TypeDBEntry*> TypesDB::ind = QHash<QString, TypeDBEntry*>();

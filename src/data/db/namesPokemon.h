@@ -13,33 +13,29 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef NAMESPOKEMON_H
+#define NAMESPOKEMON_H
 
 #include <QString>
-#include <QHash>
 
 #include "../../common/types.h"
 
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
+// Something I made, random American names, I made it for the auto-nicknaming
+// feature given this program is for the USA English Pokemon Red.
 
-// All types in the game
+// Names are curtesy of
+// Pokemon Name Generator => Pokemon Names
+// FantasyNameGenerators.com
+// https://www.fantasynamegenerators.com/pokemon-names.php
+// Generated text is released as public domain
 
-struct TypeDBEntry {
-  QString name;
-  var8 ind;
-  QString readable;
-};
-
-class TypesDB
+class NamesPokemonDB
 {
 public:
   static void load();
-  static void index();
+  static QString randomName();
 
-  static QVector<TypeDBEntry*> store;
-  static QHash<QString, TypeDBEntry*> ind;
+  static QVector<QString> store;
 };
 
-#endif // TYPES_H
+#endif // NAMESPOKEMON_H
