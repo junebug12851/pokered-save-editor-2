@@ -44,6 +44,8 @@ void MapConnData::load(SaveFile* saveFile, var16 offset)
   yAlign = it->getByte();
   xAlign = it->getByte();
   viewPtr = it->getWord(0, true);
+
+  delete it;
 }
 
 void MapConnData::save(SaveFile* saveFile, var16 offset)
@@ -58,6 +60,8 @@ void MapConnData::save(SaveFile* saveFile, var16 offset)
   it->setByte(yAlign);
   it->setByte(xAlign);
   it->setWord(viewPtr, 0, true);
+
+  delete it;
 }
 
 void MapConnData::reset()

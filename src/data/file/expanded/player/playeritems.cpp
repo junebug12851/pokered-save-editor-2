@@ -66,6 +66,8 @@ void PlayerItems::load(SaveFile* saveFile)
 
   for(var8 i = 0; i < amount; i++)
     bagItems->append(new BagItem(it->getByte(), it->getByte()));
+
+  delete it;
 }
 
 void PlayerItems::save(SaveFile* saveFile)
@@ -81,6 +83,8 @@ void PlayerItems::save(SaveFile* saveFile)
   }
 
   it->setByte(0xFF);
+
+  delete it;
 }
 
 void PlayerItems::reset()

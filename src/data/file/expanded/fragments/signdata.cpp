@@ -38,6 +38,8 @@ void SignData::load(SaveFile* saveFile, var8 index)
 
   it->offsetTo((1 * index) + 0x277D);
   txtId = it->getByte();
+
+  delete it;
 }
 
 void SignData::save(SaveFile* saveFile, var8 index)
@@ -48,6 +50,8 @@ void SignData::save(SaveFile* saveFile, var8 index)
 
   it->offsetTo((1 * index) + 0x277D);
   it->setByte(txtId);
+
+  delete it;
 }
 
 void SignData::reset()

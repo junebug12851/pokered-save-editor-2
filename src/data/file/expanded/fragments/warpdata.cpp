@@ -38,6 +38,8 @@ void WarpData::load(SaveFile* saveFile, var8 index)
   x = it->getByte();
   destWarp = it->getByte();
   destMap = it->getByte();
+
+  delete it;
 }
 
 void WarpData::save(SaveFile* saveFile, var8 index)
@@ -48,6 +50,8 @@ void WarpData::save(SaveFile* saveFile, var8 index)
   it->setByte(x);
   it->setByte(destWarp);
   it->setByte(destMap);
+
+  delete it;
 }
 
 void WarpData::reset()

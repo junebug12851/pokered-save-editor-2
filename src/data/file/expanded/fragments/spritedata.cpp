@@ -58,11 +58,14 @@ void SpriteData::loadSpriteData1(SaveFile* saveFile, var8 index)
   intraAnimationFrameCounter = it->getByte();
   animFrameCounter = it->getByte();
   faceDir = it->getByte();
+
+  delete it;
 }
 
 void SpriteData::loadSpriteData2(SaveFile* saveFile, var8 index)
 {
   auto it = saveFile->iterator()->offsetTo((0x10 * index) + 0x2E2C);
+
   walkAnimationCounter = it->getByte(1);
   yDisp = it->getByte();
   xDisp = it->getByte();
@@ -72,6 +75,8 @@ void SpriteData::loadSpriteData2(SaveFile* saveFile, var8 index)
   grassPriority = it->getByte();
   movementDelay = it->getByte(5);
   imageBaseOffset = it->getByte();
+
+  delete it;
 }
 
 void SpriteData::loadSpriteDataNPC(SaveFile* saveFile, var8 index)
@@ -88,6 +93,8 @@ void SpriteData::loadSpriteDataNPC(SaveFile* saveFile, var8 index)
   it->offsetTo((2 * index) + 0x27B0);
   trainerClassOrItemID = it->getByte();
   trainerSetID = it->getByte();
+
+  delete it;
 }
 
 void SpriteData::checkMissable(SaveFile* saveFile, var8 index)
@@ -139,6 +146,8 @@ void SpriteData::saveSpriteData1(SaveFile* saveFile, var8 index)
   it->setByte(intraAnimationFrameCounter);
   it->setByte(animFrameCounter);
   it->setByte(faceDir);
+
+  delete it;
 }
 
 void SpriteData::saveSpriteData2(SaveFile* saveFile, var8 index)
@@ -153,6 +162,7 @@ void SpriteData::saveSpriteData2(SaveFile* saveFile, var8 index)
   it->setByte(grassPriority);
   it->setByte(movementDelay, 5);
   it->setByte(imageBaseOffset);
+  delete it;
 }
 
 void SpriteData::saveSpriteDataNPC(SaveFile* saveFile, var8 index)
@@ -166,6 +176,7 @@ void SpriteData::saveSpriteDataNPC(SaveFile* saveFile, var8 index)
   it->offsetTo((2 * index) + 0x27B0);
   it->setByte(*trainerClassOrItemID);
   it->setByte(*trainerSetID);
+  delete it;
 }
 
 void SpriteData::saveMissables(SaveFile* saveFile, QVector<SpriteData*> spriteData)
@@ -189,6 +200,7 @@ void SpriteData::saveMissables(SaveFile* saveFile, QVector<SpriteData*> spriteDa
   }
 
   it->setByte(0xFF);
+  delete it;
 }
 
 void SpriteData::reset(bool blankNPC)

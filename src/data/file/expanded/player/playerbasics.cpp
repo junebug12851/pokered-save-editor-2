@@ -65,6 +65,8 @@ void PlayerBasics::load(SaveFile* saveFile)
     badges[i] = tmpBadges[i];
 
   playerStarter = toolset->getByte(0x29C3);
+
+  delete it;
 }
 
 void PlayerBasics::save(SaveFile* saveFile)
@@ -136,6 +138,8 @@ void PlayerBasics::setBadges(SaveFile* saveFile, var16 offset)
   it->setBit(1, 5, badges[5]);
   it->setBit(1, 6, badges[6]);
   it->setBit(1, 7, badges[7]);
+
+  delete it;
 }
 
 PokemonDBEntry* PlayerBasics::toStarter()

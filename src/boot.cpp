@@ -153,11 +153,9 @@ extern QApplication* boot(int argc, char *argv[])
   index();
   deepLink();
 
-  auto tmp = FontsDB::search()->andNormal()->notShorthand()->notMultiChar();
-
   // Open recent file
-  //mainWindow->file.openFileRecent(0);
-  //auto toolset = mainWindow->file.data()->toolset;
+  mainWindow->file.openFileRecent(0);
+  auto toolset = mainWindow->file.data()->toolset;
 
 //  auto data = mainWindow->file.data();
 //  data->expandData();
