@@ -1,79 +1,88 @@
-#ifndef FILEMANAGEMENT_H
-#define FILEMANAGEMENT_H
+/*
+  * Copyright 2020 June Hanabi
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *   http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+*/
+#ifndef FILEMANAGEMENT2_H
+#define FILEMANAGEMENT2_H
 
-#include <QtCore/QObject>
-#include <QtCore/qglobal.h>
+//#include <QtCore/qglobal.h>
 #include <QFile>
 #include <QSettings>
 
-#include "savefile.h"
 #include "../../common/types.h"
+
+class SaveFile;
 
 constexpr var8 MAX_RECENT_FILES{5};
 
 class FileManagement : public QObject
 {
-    Q_OBJECT
-    Q_PROPERTY(QString path READ path NOTIFY pathChanged)
-    Q_PROPERTY(SaveFile* data READ data)
-    Q_PROPERTY(QList<QString>* recentFiles READ recentFiles RESET clearRecentFiles NOTIFY recentFilesChanged)
-    Q_PROPERTY(QString recentFile READ recentFile NOTIFY recentFilesChanged STORED false)
+  Q_OBJECT
 
 public:
-    // Construct
-    explicit FileManagement(QObject *parent = nullptr);
+  Q_PROPERTY(QString path READ getPath WRITE setPath NOTIFY pathChanged)
+  Q_PROPERTY(QList<QString> recentFiles READ getRecentFiles RESET clearRecentFiles NOTIFY recentFilesChanged)
+  Q_PROPERTY(QString recentFile READ getRecentFile WRITE addRecentFile NOTIFY recentFilesChanged STORED false)
 
-    // Save Data and Path
-    SaveFile* data();
-    QString path();
+  FileManagement(QObject* parent = nullptr);
+  virtual ~FileManagement();
 
-    // Manage Recent Files
-    QString recentFile(var8 index = 0);
-    QList<QString>* recentFiles();
+  QString getPath();
+  QString getRecentFile(var8 index = 0);
+  QList<QString> getRecentFiles();
 
-    static const QString KEY_RECENT_FILES;
-    static const QString KEY_LAST_FILE;
+  SaveFile* data = nullptr;
+
+  static const QString KEY_RECENT_FILES;
+  static const QString KEY_LAST_FILE;
 
 signals:
-    void pathChanged(QString path, QString oldPath);
-    void recentFilesChanged(QList<QString>* files);
+  void pathChanged(QString newPath, QString oldPath);
+  void recentFilesChanged(QList<QString> files);
 
 public slots:
-    // Open/Save Files
-    void newFile();
-    void openFile();
-    void openFileRecent(var8 index);
-    void reopenFile();
+  void reset();
 
-    void saveFile();
-    void saveFileAs();
-    void saveFileCopy();
+  void newFile();
+  void openFile();
+  void openFileRecent(var8 index);
+  void reopenFile();
 
-    void wipeUnusedSpace();
-    void clearRecentFiles();
+  void addRecentFile(QString path);
+  void setPath(QString path);
+
+  void saveFile();
+  void saveFileAs();
+  void saveFileCopy();
+
+  void wipeUnusedSpace();
+  void clearRecentFiles();
 
 private:
-    // Internal management of recent files
-    void addRecentFile(QString path);
-    void processRecentFileChanges();
+  void processRecentFileChanges();
 
-    // Internal File Dialog Handling
-    QString openFileDialog(QString title);
-    QString saveFileDialog(QString title);
+  QString openFileDialog(QString title);
+  QString saveFileDialog(QString title);
 
-    // Internal Save/Load Handling
-    var8* readSaveData(QString filePath);
-    void writeSaveData(QString filePath, var8* data);
+  var8* readSaveData(QString filePath);
+  void writeSaveData(QString filePath, var8* data);
 
-    // Internal paths handling
-    void expandRecentFiles(QString files);
-    void setPath(QString path);
+  void expandRecentFiles(QString files);
 
-    // Internal variables
-    SaveFile* _data = new SaveFile();
-    QString _path = "";
-    QList<QString>* _recentFiles = new QList<QString>();
-    QSettings* settings = new QSettings();
+  QString path;
+  QList<QString> recentFiles;
+  QSettings settings;
 };
 
-#endif // FILEMANAGEMENT_H
+#endif // FILEMANAGEMENT2_H

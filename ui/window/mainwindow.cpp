@@ -1,40 +1,47 @@
 #include "mainwindow.h"
 
 #include "../../src/common/types.h"
+#include "../../src/data/file/filemanagement.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     ui.setupUi(this);
 
-    MainWindow::_instance = this;
+    MainWindow::instance = this;
+    file = new FileManagement();
 
-    connect(ui.actionNew, &QAction::triggered, &file, &FileManagement::newFile);
-    connect(ui.actionOpen, &QAction::triggered, &file, &FileManagement::openFile);
-    connect(ui.actionRe_Open, &QAction::triggered, &file, &FileManagement::reopenFile);
-    connect(ui.actionClear_Recent_Files, &QAction::triggered, &file, &FileManagement::clearRecentFiles);
-    connect(ui.actionSave, &QAction::triggered, &file, &FileManagement::saveFile);
-    connect(ui.actionSave_As, &QAction::triggered, &file, &FileManagement::saveFileAs);
-    connect(ui.actionSave_Copy_As, &QAction::triggered, &file, &FileManagement::saveFileCopy);
-    connect(ui.actionWipe_Unused_Space, &QAction::triggered, &file, &FileManagement::wipeUnusedSpace);
+    connect(ui.actionNew, &QAction::triggered, file, &FileManagement::newFile);
+    connect(ui.actionOpen, &QAction::triggered, file, &FileManagement::openFile);
+    connect(ui.actionRe_Open, &QAction::triggered, file, &FileManagement::reopenFile);
+    connect(ui.actionClear_Recent_Files, &QAction::triggered, file, &FileManagement::clearRecentFiles);
+    connect(ui.actionSave, &QAction::triggered, file, &FileManagement::saveFile);
+    connect(ui.actionSave_As, &QAction::triggered, file, &FileManagement::saveFileAs);
+    connect(ui.actionSave_Copy_As, &QAction::triggered, file, &FileManagement::saveFileCopy);
+    connect(ui.actionWipe_Unused_Space, &QAction::triggered, file, &FileManagement::wipeUnusedSpace);
     connect(ui.actionExit, &QAction::triggered, this, &MainWindow::close);
 
-    connect(&file, &FileManagement::pathChanged, this, &MainWindow::onPathChanged);
-    connect(&file, &FileManagement::recentFilesChanged, this, &MainWindow::reUpdateRecentFiles);
+    connect(file, &FileManagement::pathChanged, this, &MainWindow::onPathChanged);
+    connect(file, &FileManagement::recentFilesChanged, this, &MainWindow::reUpdateRecentFiles);
 
-    this->reUpdateRecentFiles(file.recentFiles());
-    this->onPathChanged(file.path());
+    this->reUpdateRecentFiles(file->getRecentFiles());
+    this->onPathChanged(file->getPath());
     this->loadState();
 }
 
-MainWindow* MainWindow::_instance{nullptr};
-
-MainWindow *MainWindow::instance()
+MainWindow::~MainWindow()
 {
-    return MainWindow::_instance;
+  delete file;
 }
 
-void MainWindow::reUpdateRecentFiles(QList<QString>* files)
+MainWindow* MainWindow::instance{nullptr};
+
+MainWindow *MainWindow::getInstance()
+{
+    return MainWindow::instance;
+}
+
+void MainWindow::reUpdateRecentFiles(QList<QString> files)
 {
     // Grab Recent Files Menu
     QMenu* filesMenu{ui.menuRecent_Files};
@@ -56,8 +63,8 @@ void MainWindow::reUpdateRecentFiles(QList<QString>* files)
 
     // Grab list of recent files and loop through them
     // Add actions for each one of them
-    for(var8 i{0}; i < MAX_RECENT_FILES && i < files->size(); i++) {
-        QString file{files->at(i)};
+    for(var8 i{0}; i < MAX_RECENT_FILES && i < files.size(); i++) {
+        QString file{files.at(i)};
         if(file == "")
             continue;
 
@@ -81,7 +88,7 @@ void MainWindow::onRecentFileClick()
 {
     QAction* action{qobject_cast<QAction*>(sender())};
     var8 index{static_cast<var8>(action->data().toInt())};
-    file.openFileRecent(index);
+    file->openFileRecent(index);
 }
 
 void MainWindow::onPathChanged(QString path)

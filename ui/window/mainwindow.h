@@ -4,20 +4,23 @@
 #include <QSettings>
 
 #include "ui_mainwindow.h"
-#include "../../src/data/file/filemanagement.h"
+
+class FileManagement;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    static MainWindow* instance();
+    MainWindow(QWidget* parent = nullptr);
+    virtual ~MainWindow();
 
-    FileManagement file;
+    static MainWindow* getInstance();
+
+    FileManagement* file = nullptr;
 
 private slots:
-    void reUpdateRecentFiles(QList<QString>* files);
+    void reUpdateRecentFiles(QList<QString> files);
     void onRecentFileClick();
     void onPathChanged(QString path);
 
@@ -29,7 +32,7 @@ private:
     void saveState();
     void loadState();
 
-    static MainWindow* _instance;
+    static MainWindow* instance;
 };
 
 #endif // MAINWINDOW_H

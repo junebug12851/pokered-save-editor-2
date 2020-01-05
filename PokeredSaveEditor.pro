@@ -76,6 +76,7 @@ SOURCES += \
   src/data/file/expanded/player/playerpokedex.cpp \
   src/data/file/expanded/player/playerpokemon.cpp \
   src/data/file/expanded/savefileexpanded.cpp \
+  src/data/file/filemanagement.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \
   src/data/file/savefiletoolset.cpp \
@@ -100,7 +101,6 @@ SOURCES += \
   src/data/db/trades.cpp \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
-  src/data/file/filemanagement.cpp \
   ui/window/mainwindow.cpp
 
 RESOURCES += qml.qrc

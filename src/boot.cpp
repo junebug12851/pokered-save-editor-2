@@ -39,9 +39,12 @@
 #include "./data/db/trainers.h"
 #include "./data/db/types.h"
 
-#include "./data/file/expanded/savefileexpanded.h"
 #include "../ui/window/mainwindow.h"
-#include "./data/db/fontsearch.h"
+
+//#include "./data/file/expanded/savefileexpanded.h"
+//#include "./data/file/filemanagement.h"
+//#include "./data/file/savefile.h"
+//#include "./data/db/fontsearch.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -154,8 +157,8 @@ extern QApplication* boot(int argc, char *argv[])
   deepLink();
 
   // Open recent file
-  mainWindow->file.openFileRecent(0);
-  auto toolset = mainWindow->file.data()->toolset;
+  //mainWindow->file->openFileRecent(0);
+  //auto toolset = mainWindow->file->data->toolset;
 
 //  auto data = mainWindow->file.data();
 //  data->expandData();
