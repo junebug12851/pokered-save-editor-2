@@ -6,17 +6,20 @@
 SaveFile::SaveFile(QObject* parent)
   : QObject(parent)
 {
-  // Zero out data and notify
+  // One-Time Init Data in order of dependencies
+  data = new var8[SAV_DATA_SIZE];
   toolset = new SaveFileToolset(this);
+  dataExpanded = new SaveFileExpanded(this);
+
+  // Perform post-init stuff
   resetData();
 }
 
-SaveFile::SaveFile(var8* data, QObject* parent)
-  : QObject(parent)
+SaveFile::~SaveFile()
 {
-  // Init data and notify
-  toolset = new SaveFileToolset(this);
-  setData(data);
+  delete dataExpanded;
+  delete toolset;
+  delete data;
 }
 
 SaveFileIterator* SaveFile::iterator()
@@ -50,14 +53,20 @@ void SaveFile::setData(var8* data, bool silent)
 
 void SaveFile::flattenData()
 {
-  if(dataExpanded != nullptr)
-    dataExpanded->save(this);
+  dataExpanded->save(this);
 }
 
 void SaveFile::expandData()
 {
-  if(dataExpanded == nullptr)
-    dataExpanded = new SaveFileExpanded();
-
   dataExpanded->load(this);
+}
+
+void SaveFile::eraseExpansion()
+{
+  dataExpanded->reset();
+}
+
+void SaveFile::randomizeExpansion()
+{
+  dataExpanded->randomize();
 }

@@ -41,10 +41,10 @@
 
 #include "../ui/window/mainwindow.h"
 
-//#include "./data/file/expanded/savefileexpanded.h"
-//#include "./data/file/filemanagement.h"
-//#include "./data/file/savefile.h"
-//#include "./data/db/fontsearch.h"
+#include "./data/file/expanded/savefileexpanded.h"
+#include "./data/file/filemanagement.h"
+#include "./data/file/savefile.h"
+#include "./data/file/savefiletoolset.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -157,13 +157,10 @@ extern QApplication* boot(int argc, char *argv[])
   deepLink();
 
   // Open recent file
-  //mainWindow->file->openFileRecent(0);
-  //auto toolset = mainWindow->file->data->toolset;
-
-//  auto data = mainWindow->file.data();
-//  data->expandData();
-//  auto expanded = data->dataExpanded;
-//  expanded->randomize();
+  mainWindow->file->openFileRecent(0);
+  auto data = mainWindow->file->data;
+  auto expanded = data->dataExpanded;
+  expanded->randomize();
 
   return app;
 }

@@ -18,10 +18,9 @@ class SaveFile : public QObject
 
 public:
   // Create a blank save file and a blank expanded save file
-  explicit SaveFile(QObject *parent = nullptr);
+  SaveFile(QObject *parent = nullptr);
 
-  // Load a sav file and expand it's data
-  explicit SaveFile(var8 data[SAV_DATA_SIZE], QObject *parent = nullptr);
+  virtual ~SaveFile();
 
   // Returns a unique iterator that's setup to iterate over the raw sav file
   // data. Heavily used by the file expansion to iterate and expand or flatten
@@ -47,8 +46,19 @@ public:
   // Replace expansion with new expansion of current sav file
   void expandData();
 
+  // Erase expansion data, this makes expansion data act like a new file
+  // but save file contents are preserved
+  void eraseExpansion();
+
+  // Fully randomizes the expansion data, doesn't change save file data
+  // This tries to give fun and playable randomization. Due to the complexity of
+  // Gen 1 Games there are limits on randomization. The idea is to randomize
+  // everything we can and still allow you to jump in and play right away with
+  // Your Psychic Traded Pikachu named Bob that uses Ice Beam and Splash
+  void randomizeExpansion();
+
   // Actual SAV Data, a raw internal binary copy of the file
-  var8* data = new var8[SAV_DATA_SIZE];
+  var8* data = nullptr;
 
   // Expanded SAV data to be readable and more usable
   SaveFileExpanded* dataExpanded = nullptr;

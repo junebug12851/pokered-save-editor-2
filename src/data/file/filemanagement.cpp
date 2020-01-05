@@ -19,6 +19,7 @@
 
 #include "./filemanagement.h"
 #include "./savefile.h"
+#include "./savefiletoolset.h"
 #include "../../../ui/window/mainwindow.h"
 
 FileManagement::FileManagement(QObject* parent) : QObject(parent)
@@ -236,6 +237,9 @@ var8* FileManagement::readSaveData(QString filePath)
 
 void FileManagement::writeSaveData(QString filePath, var8* data)
 {
+  // Re-issue checksums
+  this->data->toolset->recalcChecksums();
+
   // Load up file in system
   QFile file(filePath);
   file.open(QIODevice::WriteOnly);
