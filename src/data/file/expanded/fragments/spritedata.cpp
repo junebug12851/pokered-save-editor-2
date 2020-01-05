@@ -17,6 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+#include "../../../db/sprites.h"
 
 #include <QRandomGenerator>
 
@@ -244,6 +245,11 @@ void SpriteData::reset(bool blankNPC)
 // Can't really make this possible, needs more information before can randomize
 // @TODO make this happen
 void SpriteData::randomize() {}
+
+SpriteDBEntry* SpriteData::toSprite()
+{
+  return SpritesDB::ind.value(QString::number(pictureID), nullptr);
+}
 
 // Don't Use
 void SpriteData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}

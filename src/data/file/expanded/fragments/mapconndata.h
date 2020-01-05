@@ -19,6 +19,7 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
+struct MapDBEntry;
 
 class MapConnData : ExpandedInterface
 {
@@ -39,6 +40,8 @@ public:
   var8 yAlign;
   var8 xAlign;
   var16 viewPtr;
+
+  MapDBEntry* toMap();
 
 private:
   // To surpress warnings with using the ExpandedInterface contract

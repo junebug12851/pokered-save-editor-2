@@ -21,6 +21,7 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
+struct SpriteDBEntry;
 
 class SpriteData : ExpandedInterface
 {
@@ -58,6 +59,8 @@ public:
 
   void reset(bool blankNPC = false);
   void randomize();
+
+  SpriteDBEntry* toSprite();
 
   var8 pictureID;
   var8 movementStatus;

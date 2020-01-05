@@ -17,6 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+#include "../../../db/maps.h"
 
 #include <QRandomGenerator>
 
@@ -65,6 +66,11 @@ void WarpData::reset()
 // Can't really do this without more information
 // TODO Add more information
 void WarpData::randomize() {}
+
+MapDBEntry* WarpData::toMap()
+{
+  return MapsDB::ind.value(QString::number(destMap), nullptr);
+}
 
 // Unused
 void WarpData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}

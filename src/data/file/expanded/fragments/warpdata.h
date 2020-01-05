@@ -19,6 +19,7 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
+class MapDBEntry;
 
 class WarpData : ExpandedInterface
 {
@@ -30,6 +31,8 @@ public:
   void save(SaveFile* saveFile, var8 index);
   void reset();
   void randomize();
+
+  MapDBEntry* toMap();
 
   var8 y;
   var8 x;

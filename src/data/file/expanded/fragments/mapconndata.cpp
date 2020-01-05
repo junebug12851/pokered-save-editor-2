@@ -17,6 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+#include "../../../db/maps.h"
 
 #include <QRandomGenerator>
 
@@ -81,6 +82,11 @@ void MapConnData::reset()
 // random maps ^_^
 // @TODO complete this
 void MapConnData::randomize() {}
+
+MapDBEntry* MapConnData::toMap()
+{
+  return MapsDB::ind.value(QString::number(mapPtr), nullptr);
+}
 
 // Not to be used
 void MapConnData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
