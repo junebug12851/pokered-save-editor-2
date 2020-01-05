@@ -48,6 +48,9 @@ public:
   void randomize();
   void regenStats();
 
+  virtual void update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate);
+  virtual void copyFrom(PokemonBox* pkmn);
+
   // Pre-generated stats when not in box
   var16 maxHP;
   var16 attack;

@@ -114,6 +114,18 @@ void PokemonParty::regenStats()
   special = spStat();
 }
 
+void PokemonParty::update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate)
+{
+  PokemonBox::update(resetHp, resetExp, resetType, resetCatchRate);
+  regenStats();
+}
+
+void PokemonParty::copyFrom(PokemonBox* pkmn)
+{
+  PokemonBox::copyFrom(pkmn);
+  regenStats();
+}
+
 // Not to be used
 void PokemonParty::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
 void PokemonParty::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}

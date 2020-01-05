@@ -92,7 +92,7 @@ public:
   static PokemonBox* newPokemon(PokemonRandom list = PokemonRandom::Random_Starters, SaveFile* saveFile = nullptr);
   static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, SaveFile* saveFile = nullptr);
 
-  SaveFileIterator* load(SaveFile* saveFile = nullptr,
+  virtual SaveFileIterator* load(SaveFile* saveFile = nullptr,
             var16 startOffset = 0,
             var16 nicknameStartOffset = 0,
             var16 otNameStartOffset = 0,
@@ -101,7 +101,7 @@ public:
             // Unless overridden, the record size for box data is 0x21
             var8 recordSize = 0x21);
 
-  SaveFileIterator* save(SaveFile* saveFile = nullptr,
+  virtual SaveFileIterator* save(SaveFile* saveFile = nullptr,
             var16 startOffset = 0,
             svar32 speciesStartOffset = 0, // -1 if doesn't exist
             var16 nicknameStartOffset = 0,
@@ -111,8 +111,8 @@ public:
             // Unless overridden, the record size for box data is 0x21
             var8 recordSize = 0x21);
 
-  void reset();
-  void randomize();
+  virtual void reset();
+  virtual void randomize();
   void clearMoves();
 
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
@@ -131,7 +131,7 @@ public:
   // Re-calculate stats and resetting them to updated values
   // HP and Exp are optional because their values will be lost if updated
   // Type needs to be updated in certain cases but not always
-  void update(bool resetHp = false,
+  virtual void update(bool resetHp = false,
               bool resetExp = false,
               bool resetType = false,
               bool resetCatchRate = false);
@@ -178,7 +178,7 @@ public:
   bool isPokemonReset();
   void resetPokemon();
 
-  void copyFrom(PokemonBox* pkmn);
+  virtual void copyFrom(PokemonBox* pkmn);
 
   PokemonDBEntry* toData();
 
