@@ -49,7 +49,7 @@ struct FontDBEntry {
   bool normal; // Would this be an in-game accessible font char
 };
 
-class FontDB
+class FontsDB
 {
 public:
   static void load();
@@ -81,8 +81,8 @@ public:
   static QString expandStr(
       QString msg, var8 maxLen, QString rival = "BLUE", QString player = "RED");
 
-  static QVector<FontEntry*>* font;
-  static QHash<QString, FontEntry*>* ind;
+  static QVector<FontDBEntry*> store;
+  static QHash<QString, FontDBEntry*> ind;
 
 private:
   static void splice(QVector<var8>& out, QString in, var8 ind);

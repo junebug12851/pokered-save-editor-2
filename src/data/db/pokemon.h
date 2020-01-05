@@ -16,12 +16,14 @@
 #ifndef POKEMON_H
 #define POKEMON_H
 
-#include "../../common/types.h"
-#include <optional>
 #include <QString>
 #include <QVector>
 #include <QJsonValue>
 #include <QHash>
+
+#include <optional>
+
+#include "../../common/types.h"
 
 // With amazing help of Quicktype!!!
 // Really needed it with Pokemon as this was quite complicated
@@ -36,19 +38,19 @@
 // All the Pokemon and glitch Pokemon in the game
 
 // Forward Declare Structs
-struct EvolutionEntry;
-struct MoveEntry;
-struct PokemonEntry;
+struct PokemonDBEntryEvolution;
+struct MoveDBEntry;
+struct PokemonDBEntry;
 
 // Deep link forward-declarations
-struct ItemEntry;
-struct MoveEntry;
-struct TypeEntry;
+struct ItemDBEntry;
+struct MoveDBEntry;
+struct TypeDBEntry;
 
-struct EvolutionEntry
+struct PokemonDBEntryEvolution
 {
-  EvolutionEntry(QJsonValue& data);
-  void deepLink(PokemonEntry* deEvolution);
+  PokemonDBEntryEvolution(QJsonValue& data);
+  void deepLink(PokemonDBEntry* deEvolution);
 
   QString toName;
   bool trade;
@@ -56,24 +58,24 @@ struct EvolutionEntry
 
   std::optional<var8> level;
 
-  PokemonEntry* toDeEvolution;
-  PokemonEntry* toEvolution;
-  ItemEntry* toItem;
+  PokemonDBEntry* toDeEvolution;
+  PokemonDBEntry* toEvolution;
+  ItemDBEntry* toItem;
 };
 
-struct PokemonMoveEntry
+struct PokemonDBEntryMove
 {
-  PokemonMoveEntry(QJsonValue& data);
+  PokemonDBEntryMove(QJsonValue& data);
   void deepLink();
 
   var8 level;
   QString move;
 
-  MoveEntry* toMove;
+  MoveDBEntry* toMove;
 };
 
-struct PokemonEntry {
-  PokemonEntry();
+struct PokemonDBEntry {
+  PokemonDBEntry();
   void deepLink();
 
   QString name;
@@ -83,10 +85,10 @@ struct PokemonEntry {
   QString type1;
   QString type2;
 
-  QVector<PokemonMoveEntry*>* moves;
+  QVector<PokemonDBEntryMove*>* moves;
   QVector<QString>* initial;
   QVector<var8>* tmHm;
-  QVector<EvolutionEntry*>* evolution;
+  QVector<PokemonDBEntryEvolution*>* evolution;
 
   std::optional<var8> pokedex;
   std::optional<var8> growthRate;
@@ -99,23 +101,23 @@ struct PokemonEntry {
   std::optional<var8> catchRate;
 
   // Lots of deep linking
-  TypeEntry* toType1;
-  TypeEntry* toType2;
-  PokemonEntry* toDeEvolution;
-  QVector<MoveEntry*>* toInitial;
-  QVector<MoveEntry*>* toTmHmMove;
-  QVector<ItemEntry*>* toTmHmItem;
+  TypeDBEntry* toType1;
+  TypeDBEntry* toType2;
+  PokemonDBEntry* toDeEvolution;
+  QVector<MoveDBEntry*> toInitial;
+  QVector<MoveDBEntry*> toTmHmMove;
+  QVector<ItemDBEntry*> toTmHmItem;
 };
 
-class Pokemon
+class PokemonDB
 {
 public:
   static void load();
   static void index();
   static void deepLink();
 
-  static QVector<PokemonEntry*>* pokemon;
-  static QHash<QString, PokemonEntry*>* ind;
+  static QVector<PokemonDBEntry*> store;
+  static QHash<QString, PokemonDBEntry*> ind;
 };
 
 #endif // POKEMON_H

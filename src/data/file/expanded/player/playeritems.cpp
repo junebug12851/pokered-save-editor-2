@@ -28,9 +28,9 @@ BagItem::BagItem(var8 id, var8 amount)
   this->amount = amount;
 }
 
-ItemEntry* BagItem::toItem()
+ItemDBEntry* BagItem::toItem()
 {
-  return Items::ind->value(QString::number(id), nullptr);
+  return ItemsDB::ind.value(QString::number(id), nullptr);
 }
 
 PlayerItems::PlayerItems(SaveFile* saveFile)
@@ -100,35 +100,35 @@ void PlayerItems::randomize()
   auto rnd = QRandomGenerator::global();
 
   bagItems->append(new BagItem(
-                     Items::ind->value("TOWN MAP")->ind, 1));
+                     ItemsDB::ind.value("TOWN MAP")->ind, 1));
 
   bagItems->append(new BagItem(
-                     Items::ind->value("POKE BALL")->ind,
+                     ItemsDB::ind.value("POKE BALL")->ind,
                      rnd->bounded(5, 15+1)));
 
   bagItems->append(new BagItem(
-                     Items::ind->value("POTION")->ind,
+                     ItemsDB::ind.value("POTION")->ind,
                      rnd->bounded(5, 10+1)));
 
   bagItems->append(new BagItem(
-                     Items::ind->value("ANTIDOTE")->ind,
+                     ItemsDB::ind.value("ANTIDOTE")->ind,
                      rnd->bounded(1, 3+1)));
 
   bagItems->append(new BagItem(
-                     Items::ind->value("PARLYZ HEAL")->ind,
+                     ItemsDB::ind.value("PARLYZ HEAL")->ind,
                      rnd->bounded(1, 3+1)));
 
   bagItems->append(new BagItem(
-                     Items::ind->value("AWAKENING")->ind,
+                     ItemsDB::ind.value("AWAKENING")->ind,
                      rnd->bounded(1, 3+1)));
 
   bool giveSuperPotion = rnd->bounded(0, 5+1) >= 3;
   if(giveSuperPotion)
     bagItems->append(new BagItem(
-                       Items::ind->value("SUPER POTION")->ind, 1));
+                       ItemsDB::ind.value("SUPER POTION")->ind, 1));
 
   bool giveGreatBall = rnd->bounded(0, 5+1) >= 3;
   if(giveGreatBall)
     bagItems->append(new BagItem(
-                       Items::ind->value("GREAT BALL")->ind, 1));
+                       ItemsDB::ind.value("GREAT BALL")->ind, 1));
 }

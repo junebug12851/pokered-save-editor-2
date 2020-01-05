@@ -34,7 +34,7 @@ void FlyDB::load()
   for(QJsonValue flyEntry : flyData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new FlyEntry();
+    auto entry = new FlyDBEntry();
 
     // Set simple properties
     entry->name = flyEntry["name"].toString();
@@ -43,6 +43,8 @@ void FlyDB::load()
     // Add to array
     store.append(entry);
   }
+
+  delete flyData;
 }
 
 void FlyDB::index()
@@ -59,7 +61,7 @@ void FlyDB::deepLink()
 {
   for(auto entry : store)
   {
-    entry->toMap = Maps::ind->value(entry->name, nullptr);
+    entry->toMap = MapsDB::ind.value(entry->name, nullptr);
 
 #ifdef QT_DEBUG
     if(entry->toMap == nullptr)
@@ -68,5 +70,5 @@ void FlyDB::deepLink()
   }
 }
 
-QVector<FlyEntry*>* Fly::fly = new QVector<FlyEntry*>();
-QHash<QString, FlyEntry*>* Fly::ind = new QHash<QString, FlyEntry*>();
+QVector<FlyDBEntry*> FlyDB::store = QVector<FlyDBEntry*>();
+QHash<QString, FlyDBEntry*> FlyDB::ind = QHash<QString, FlyDBEntry*>();

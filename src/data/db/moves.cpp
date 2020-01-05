@@ -13,17 +13,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "moves.h"
+
 #include <QVector>
 #include <QJsonArray>
-#include "./gamedata.h"
-#include "./items.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-MoveEntry::MoveEntry()
+#include "./moves.h"
+#include "./types.h"
+#include "./gamedata.h"
+#include "./items.h"
+
+MoveDBEntry::MoveDBEntry()
 {
   glitch = false;
   type = "";
@@ -32,7 +35,7 @@ MoveEntry::MoveEntry()
   toItem = nullptr;
 }
 
-void Moves::load()
+void MovesDB::load()
 {
   // Grab Event Pokemon Data
   auto moveData = GameData::json("moves");
@@ -41,7 +44,7 @@ void Moves::load()
   for(QJsonValue moveEntry : moveData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new MoveEntry();
+    auto entry = new MoveDBEntry();
 
     // Set simple properties
     entry->name = moveEntry["name"].toString();
@@ -71,37 +74,39 @@ void Moves::load()
       entry->hm = moveEntry["hm"].toDouble();
 
     // Add to array
-    moves->append(entry);
+    store.append(entry);
   }
+
+  delete moveData;
 }
 
-void Moves::index()
+void MovesDB::index()
 {
-  for(auto entry : *moves)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
-    ind->insert(entry->readable, entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
+    ind.insert(entry->readable, entry);
 
     if(entry->tm)
-      ind->insert("tm" + QString::number(*entry->tm), entry);
+      ind.insert("tm" + QString::number(*entry->tm), entry);
     if(entry->hm)
-      ind->insert("hm" + QString::number(*entry->hm), entry);
+      ind.insert("hm" + QString::number(*entry->hm), entry);
   }
 }
 
-void Moves::deepLink()
+void MovesDB::deepLink()
 {
-  for(auto entry : *moves)
+  for(auto entry : store)
   {
     if(entry->type != "")
-      entry->toType = Types::ind->value(entry->type, nullptr);
+      entry->toType = TypesDB::ind.value(entry->type, nullptr);
 
     if(entry->tm && !entry->hm)
-      entry->toItem = Items::ind->value("tm" + QString::number(*entry->tm), nullptr);
+      entry->toItem = ItemsDB::ind.value("tm" + QString::number(*entry->tm), nullptr);
     else if(entry->tm && entry->hm)
-      entry->toItem = Items::ind->value("hm" + QString::number(*entry->hm), nullptr);
+      entry->toItem = ItemsDB::ind.value("hm" + QString::number(*entry->hm), nullptr);
 
 #ifdef QT_DEBUG
     if(entry->type != "" && entry->toType == nullptr)
@@ -113,5 +118,5 @@ void Moves::deepLink()
   }
 }
 
-QVector<MoveEntry*>* Moves::moves = new QVector<MoveEntry*>();
-QHash<QString, MoveEntry*>* Moves::ind = new QHash<QString, MoveEntry*>();
+QVector<MoveDBEntry*> MovesDB::store = QVector<MoveDBEntry*>();
+QHash<QString, MoveDBEntry*> MovesDB::ind = QHash<QString, MoveDBEntry*>();

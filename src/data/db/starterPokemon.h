@@ -16,10 +16,11 @@
 #ifndef STARTER_H
 #define STARTER_H
 
-#include "../../common/types.h"
 #include <QString>
 
-struct PokemonEntry;
+#include "../../common/types.h"
+
+struct PokemonDBEntry;
 
 // Something I made, I hand-selected a ton of other starter options I thought
 // would be good starters. This randomly selects among them.
@@ -27,17 +28,17 @@ struct PokemonEntry;
 // 2) They musn't be legendary
 // 3) Just lots of judgement calls from there, they must feel "startery"
 
-class StarterPokemon
+class StarterPokemonDB
 {
 public:
   static void load();
   static void deepLink();
 
-  static PokemonEntry* random3Starter();
-  static PokemonEntry* randomAnyStarter();
+  static PokemonDBEntry* random3Starter();
+  static PokemonDBEntry* randomAnyStarter();
 
-  static QVector<QString>* starters;
-  static QVector<PokemonEntry*>* toPokemon;
+  static QVector<QString> store;
+  static QVector<PokemonDBEntry*> toPokemon;
 };
 
 #endif // STARTER_H

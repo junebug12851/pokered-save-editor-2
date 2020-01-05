@@ -13,12 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "missables.h"
+
 #include <QVector>
 #include <QJsonArray>
+
+#include "./missables.h"
 #include "./gamedata.h"
 
-void Missables::load()
+void MissablesDB::load()
 {
   // Grab Event Pokemon Data
   auto missableData = GameData::json("missables");
@@ -27,27 +29,29 @@ void Missables::load()
   for(QJsonValue missableEntry : missableData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new MissableEntry();
+    auto entry = new MissableDBEntry();
 
     // Set simple properties
     entry->name = missableEntry["name"].toString();
     entry->ind = missableEntry["ind"].toDouble();
 
     // Add to array
-    missables->append(entry);
+    store.append(entry);
   }
+
+  delete missableData;
 }
 
-void Missables::index()
+void MissablesDB::index()
 {
-  for(auto entry : *missables)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
   }
 }
 
-QVector<MissableEntry*>* Missables::missables = new QVector<MissableEntry*>();
-QHash<QString, MissableEntry*>* Missables::ind =
-    new QHash<QString, MissableEntry*>();
+QVector<MissableDBEntry*> MissablesDB::store = QVector<MissableDBEntry*>();
+QHash<QString, MissableDBEntry*> MissablesDB::ind =
+    QHash<QString, MissableDBEntry*>();

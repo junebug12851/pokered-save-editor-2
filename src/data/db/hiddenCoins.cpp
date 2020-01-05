@@ -13,16 +13,18 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "hiddenCoins.h"
 #include <QVector>
 #include <QJsonArray>
-#include "./gamedata.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-void HiddenCoins::load()
+#include "./hiddenCoins.h"
+#include "./maps.h"
+#include "./gamedata.h"
+
+void HiddenCoinsDB::load()
 {
   // Grab Event Pokemon Data
   auto hiddenCoinData = GameData::json("hiddenCoins");
@@ -31,7 +33,7 @@ void HiddenCoins::load()
   for(QJsonValue hiddenCoinEntry : hiddenCoinData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new HiddenCoinEntry();
+    auto entry = new HiddenCoinDBEntry();
 
     // Set simple properties
     entry->map = hiddenCoinEntry["map"].toString();
@@ -39,15 +41,17 @@ void HiddenCoins::load()
     entry->y = hiddenCoinEntry["y"].toDouble();
 
     // Add to array
-    hiddenCoins->append(entry);
+    store.append(entry);
   }
+
+  delete hiddenCoinData;
 }
 
-void HiddenCoins::deepLink()
+void HiddenCoinsDB::deepLink()
 {
-  for(auto entry : *hiddenCoins)
+  for(auto entry : store)
   {
-    entry->toMap = Maps::ind->value(entry->map, nullptr);
+    entry->toMap = MapsDB::ind.value(entry->map, nullptr);
 
 #ifdef QT_DEBUG
     if(entry->toMap == nullptr)
@@ -56,5 +60,5 @@ void HiddenCoins::deepLink()
   }
 }
 
-QVector<HiddenCoinEntry*>* HiddenCoins::hiddenCoins =
-    new QVector<HiddenCoinEntry*>();
+QVector<HiddenCoinDBEntry*> HiddenCoinsDB::store =
+    QVector<HiddenCoinDBEntry*>();

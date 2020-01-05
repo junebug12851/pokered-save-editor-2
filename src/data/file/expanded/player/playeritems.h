@@ -21,12 +21,12 @@
 #include <QVector>
 
 class SaveFile;
-struct ItemEntry;
+struct ItemDBEntry;
 
 struct BagItem
 {
   BagItem(var8 id, var8 amount);
-  ItemEntry* toItem();
+  ItemDBEntry* toItem();
 
   var8 id;
   var8 amount;

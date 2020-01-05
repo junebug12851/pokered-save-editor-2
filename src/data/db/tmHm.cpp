@@ -13,21 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "tmHm.h"
+
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>
 #include <QRandomGenerator>
-#include "./gamedata.h"
-
-#include "./items.h"
-#include "./moves.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-void TmHms::load()
+#include "./tmHm.h"
+#include "./gamedata.h"
+#include "./items.h"
+#include "./moves.h"
+
+void TmHmsDB::load()
 {
   // Grab Event Pokemon Data
   auto tmHmData = GameData::json("tmHm");
@@ -36,30 +37,32 @@ void TmHms::load()
   for(QJsonValue tmhmEntry : tmHmData->array())
   {
     // Add to array
-    tmHms->append(tmhmEntry.toString());
+    store.append(tmhmEntry.toString());
   }
+
+  delete tmHmData;
 }
 
-void TmHms::deepLink()
+void TmHmsDB::deepLink()
 {
-  for(var8 i = 0; i < tmHms->size(); i++)
+  for(var8 i = 0; i < store.size(); i++)
   {
-    auto entry = tmHms->at(i); // Move Name
+    auto entry = store.at(i); // Move Name
     var8 ind = i + 1; // Move TM Number
 
     // Deep link to tm number
-    toTmHmItem->append(Items::ind->value("tm" + QString::number(ind), nullptr));
-    toTmHmMove->append(Moves::ind->value("tm" + QString::number(ind), nullptr));
+    toTmHmItem.append(ItemsDB::ind.value("tm" + QString::number(ind), nullptr));
+    toTmHmMove.append(MovesDB::ind.value("tm" + QString::number(ind), nullptr));
 
 #ifdef QT_DEBUG
-    if(toTmHmItem->at(i) == nullptr)
+    if(toTmHmItem.at(i) == nullptr)
       qCritical() << "TM/HM Item: " << entry << ", could not be deep linked." ;
-    if(toTmHmMove->at(i) == nullptr)
+    if(toTmHmMove.at(i) == nullptr)
       qCritical() << "TM/HM Move: " << entry << ", could not be deep linked." ;
 #endif
   }
 }
 
-QVector<QString>* TmHms::tmHms = new QVector<QString>();
-QVector<ItemEntry*>* TmHms::toTmHmItem = new QVector<ItemEntry*>();
-QVector<MoveEntry*>* TmHms::toTmHmMove = new QVector<MoveEntry*>();
+QVector<QString> TmHmsDB::store = QVector<QString>();
+QVector<ItemDBEntry*> TmHmsDB::toTmHmItem = QVector<ItemDBEntry*>();
+QVector<MoveDBEntry*> TmHmsDB::toTmHmMove = QVector<MoveDBEntry*>();

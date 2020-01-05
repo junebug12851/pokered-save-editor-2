@@ -80,12 +80,12 @@ void SaveFileToolset::copyRange(var16 addr, var16 size, QVector<var8> newData, b
 
 QString SaveFileToolset::getStr(var16 addr, var16 size, var8 maxLen)
 {
-  return FontDB::convertFromCode(getRange(addr, size), maxLen);
+  return FontsDB::convertFromCode(getRange(addr, size), maxLen);
 }
 
 void SaveFileToolset::setStr(var16 addr, var16 size, var8 maxLen, QString str)
 {
-  auto strCode = FontDB::convertToCode(str, maxLen);
+  auto strCode = FontsDB::convertToCode(str, maxLen);
   copyRange(addr, size, strCode);
 }
 

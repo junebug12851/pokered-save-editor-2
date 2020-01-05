@@ -16,28 +16,29 @@
 #ifndef HIDDENITEMS_H
 #define HIDDENITEMS_H
 
-#include "../../common/types.h"
 #include <QString>
 
-#include "./maps.h"
+#include "../../common/types.h"
+
+struct MapDBEntry;
 
 // A list of all the hidden items around the world
 
-struct HiddenItemEntry {
+struct HiddenItemDBEntry {
   QString map;
   var8 x;
   var8 y;
 
-  MapEntry* toMap;
+  MapDBEntry* toMap;
 };
 
-class HiddenItems
+class HiddenItemsDB
 {
 public:
   static void load();
   static void deepLink();
 
-  static QVector<HiddenItemEntry*>* hiddenItems;
+  static QVector<HiddenItemDBEntry*> store;
 };
 
 #endif // HIDDENITEMS_H

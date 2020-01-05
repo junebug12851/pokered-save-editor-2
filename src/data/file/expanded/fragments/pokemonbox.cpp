@@ -43,20 +43,20 @@ PokemonMove::PokemonMove(var8 move, var8 pp, var8 ppUp)
   }
 }
 
-MoveEntry* PokemonMove::toMove()
+MoveDBEntry* PokemonMove::toMove()
 {
-  return Moves::ind->value(QString::number(moveID), nullptr);
+  return MovesDB::ind.value(QString::number(moveID), nullptr);
 }
 
 void PokemonMove::randomize()
 {
-  var8 moveListSize = Moves::moves->size();
+  var8 moveListSize = MovesDB::store.size();
 
   for(var8 i = 0; i < 4; i++) {
-    MoveEntry* moveData;
+    MoveDBEntry* moveData;
 
     do
-      moveData = Moves::ind->value(
+      moveData = MovesDB::ind.value(
             QString::number(rnd->bounded(0, moveListSize)), nullptr);
     while(moveData == nullptr || moveData->glitch == true);
 
@@ -112,26 +112,26 @@ PokemonBox::~PokemonBox()
 
 PokemonBox* PokemonBox::newPokemon(PokemonRandom list, SaveFile* saveFile)
 {
-  PokemonEntry* pkmnData;
+  PokemonDBEntry* pkmnData;
 
   if(list == PokemonRandom::Random_All) {
-    auto listSize = Pokemon::pokemon->size();
+    auto listSize = PokemonDB::store.size();
     var8 ind = rnd->bounded(0, listSize);
-    pkmnData = Pokemon::pokemon->at(ind);
+    pkmnData = PokemonDB::store.at(ind);
   }
   else if(list == PokemonRandom::Random_Pokedex) {
     var8 dex = rnd->bounded(1, 151+1);
-    pkmnData = Pokemon::ind->value("dex" + QString::number(dex));
+    pkmnData = PokemonDB::ind.value("dex" + QString::number(dex));
   }
   else if(list == PokemonRandom::Random_Starters)
-    pkmnData = StarterPokemon::randomAnyStarter();
+    pkmnData = StarterPokemonDB::randomAnyStarter();
   else
-    pkmnData = StarterPokemon::random3Starter();
+    pkmnData = StarterPokemonDB::random3Starter();
 
   return newPokemon(pkmnData, saveFile);
 }
 
-PokemonBox* PokemonBox::newPokemon(PokemonEntry* pkmnData, SaveFile* saveFile)
+PokemonBox* PokemonBox::newPokemon(PokemonDBEntry* pkmnData, SaveFile* saveFile)
 {
   auto pkmn = new PokemonBox();
 
@@ -411,12 +411,12 @@ void PokemonBox::clearMoves()
 
 // Is this a valid Pokemon? (Is it even in the Pokedex?)
 // If not returns false, otherwise returns Pokemon Record
-PokemonEntry* PokemonBox::isValid()
+PokemonDBEntry* PokemonBox::isValid()
 {
   // Get Pokemon Record
   // The Pokemon Array is organized by species ID with 1 top entry missing
   // thus offset by 1 accordingly
-  auto record = Pokemon::ind->value(QString::number(species), nullptr);
+  auto record = PokemonDB::ind.value(QString::number(species), nullptr);
 
   // Check it's a valid Pokemon (not glitch)
   if(record == nullptr || record->glitch || !(record->pokedex))
@@ -635,7 +635,7 @@ bool PokemonBox::hasTradeStatus(SaveFile* saveFile)
 void PokemonBox::changeName(bool removeNickname)
 {
   if(!removeNickname)
-    nickname = Names::randomName();
+    nickname = NamesDB::randomName();
   else if(removeNickname)
     nickname = toData()->name;
 }
@@ -645,7 +645,7 @@ void PokemonBox::changeOtData(bool removeOtData, SaveFile* saveFile)
   auto rnd = QRandomGenerator::global();
 
   if(!removeOtData) {
-    otName = Names::randomName();
+    otName = NamesDB::randomName();
     otID = rnd->bounded(0x0000, 0xFFFF);
   }
   else if(removeOtData && saveFile != nullptr) {
@@ -878,7 +878,7 @@ bool PokemonBox::isPokemonReset()
     if(!movesReset)
       break;
 
-    if(move->moveID != record->toInitial->at(i)->ind)
+    if(move->moveID != record->toInitial.at(i)->ind)
       movesReset = false;
     if(!move->isMaxPP())
       movesReset = false;
@@ -902,7 +902,7 @@ void PokemonBox::resetPokemon()
 
   clearMoves();
 
-  for(auto moveData : *record->toInitial)
+  for(auto moveData : record->toInitial)
     moves->append(new PokemonMove(moveData->ind, *moveData->pp, 0));
 
   resetEVs();
@@ -910,9 +910,9 @@ void PokemonBox::resetPokemon()
   update(true, true);
 }
 
-PokemonEntry* PokemonBox::toData()
+PokemonDBEntry* PokemonBox::toData()
 {
-  return Pokemon::ind->value(QString::number(species), nullptr);
+  return PokemonDB::ind.value(QString::number(species), nullptr);
 }
 
 var16 PokemonBox::atkStat()

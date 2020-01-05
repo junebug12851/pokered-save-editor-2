@@ -13,18 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "trades.h"
+
 #include <QVector>
 #include <QJsonArray>
-#include "./gamedata.h"
-
-#include "./pokemon.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-TradeEntry::TradeEntry()
+#include "./trades.h"
+#include "./gamedata.h"
+#include "./pokemon.h"
+
+TradeDBEntry::TradeDBEntry()
 {
   unused = false;
 
@@ -32,7 +33,7 @@ TradeEntry::TradeEntry()
   toGet = nullptr;
 }
 
-void Trades::load()
+void TradesDB::load()
 {
   // Grab Event Pokemon Data
   auto tradeData = GameData::json("trades");
@@ -41,7 +42,7 @@ void Trades::load()
   for(QJsonValue tradeEntry : tradeData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TradeEntry();
+    auto entry = new TradeDBEntry();
 
     // Set simple properties
     entry->give = tradeEntry["give"].toString();
@@ -54,16 +55,18 @@ void Trades::load()
        entry->unused = tradeEntry["unused"].toBool();
 
     // Add to array
-    trades->append(entry);
+    store.append(entry);
   }
+
+  delete tradeData;
 }
 
-void Trades::deepLink()
+void TradesDB::deepLink()
 {
-  for(auto entry : *trades)
+  for(auto entry : store)
   {
-    entry->toGive = Pokemon::ind->value(entry->give, nullptr);
-    entry->toGet = Pokemon::ind->value(entry->get, nullptr);
+    entry->toGive = PokemonDB::ind.value(entry->give, nullptr);
+    entry->toGet = PokemonDB::ind.value(entry->get, nullptr);
 
 #ifdef QT_DEBUG
     if(entry->toGive == nullptr)
@@ -74,4 +77,4 @@ void Trades::deepLink()
   }
 }
 
-QVector<TradeEntry*>* Trades::trades = new QVector<TradeEntry*>();
+QVector<TradeDBEntry*> TradesDB::store = QVector<TradeDBEntry*>();

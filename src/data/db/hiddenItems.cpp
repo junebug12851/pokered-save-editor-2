@@ -13,16 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "hiddenItems.h"
+
 #include <QVector>
 #include <QJsonArray>
-#include "./gamedata.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-void HiddenItems::load()
+#include "./hiddenItems.h"
+#include "./maps.h"
+#include "./gamedata.h"
+
+void HiddenItemsDB::load()
 {
   // Grab Event Pokemon Data
   auto hiddenItemData = GameData::json("hiddenItems");
@@ -31,7 +34,7 @@ void HiddenItems::load()
   for(QJsonValue hiddenItemEntry : hiddenItemData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new HiddenItemEntry();
+    auto entry = new HiddenItemDBEntry();
 
     // Set simple properties
     entry->map = hiddenItemEntry["map"].toString();
@@ -39,15 +42,17 @@ void HiddenItems::load()
     entry->y = hiddenItemEntry["y"].toDouble();
 
     // Add to array
-    hiddenItems->append(entry);
+    store.append(entry);
   }
+
+  delete hiddenItemData;
 }
 
-void HiddenItems::deepLink()
+void HiddenItemsDB::deepLink()
 {
-  for(auto entry : *hiddenItems)
+  for(auto entry : store)
   {
-    entry->toMap = Maps::ind->value(entry->map, nullptr);
+    entry->toMap = MapsDB::ind.value(entry->map, nullptr);
 
 #ifdef QT_DEBUG
     if(entry->toMap == nullptr)
@@ -56,5 +61,5 @@ void HiddenItems::deepLink()
   }
 }
 
-QVector<HiddenItemEntry*>* HiddenItems::hiddenItems =
-    new QVector<HiddenItemEntry*>();
+QVector<HiddenItemDBEntry*> HiddenItemsDB::store =
+    QVector<HiddenItemDBEntry*>();

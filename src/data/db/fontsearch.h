@@ -18,8 +18,8 @@
 
 #include <QVector>
 #include <QString>
-class Font;
-class FontEntry;
+class FontsDB;
+class FontDBEntry;
 
 class FontSearch
 {
@@ -43,7 +43,7 @@ public:
   FontSearch* andTilemap();
   FontSearch* notTilemap();
 
-  QVector<FontEntry*>* results = new QVector<FontEntry*>();
+  QVector<FontDBEntry*> results = QVector<FontDBEntry*>();
 };
 
 #endif // FONTSEARCH_H

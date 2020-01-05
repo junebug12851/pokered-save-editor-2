@@ -13,18 +13,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "maps.h"
+
 #include <QVector>
 #include <QJsonArray>
+
+#include "./maps.h"
 #include "./gamedata.h"
 
-MapEntry::MapEntry()
+MapDBEntry::MapDBEntry()
 {
   special = false;
   glitch = false;
 }
 
-std::optional<var8> MapEntry::height2X2()
+std::optional<var8> MapDBEntry::height2X2()
 {
   if(height)
     return *height * 2;
@@ -32,7 +34,7 @@ std::optional<var8> MapEntry::height2X2()
   return std::optional<var8>();
 }
 
-std::optional<var8> MapEntry::width2X2()
+std::optional<var8> MapDBEntry::width2X2()
 {
   if(width)
     return *width * 2;
@@ -40,7 +42,7 @@ std::optional<var8> MapEntry::width2X2()
   return std::optional<var8>();
 }
 
-void Maps::load()
+void MapsDB::load()
 {
   // Grab Map Data
   auto mapData = GameData::json("maps");
@@ -49,7 +51,7 @@ void Maps::load()
   for(QJsonValue mapEntry : mapData->array())
   {
     // Create a new map entry
-    auto entry = new MapEntry();
+    auto entry = new MapDBEntry();
 
     // Set simple properties
     entry->name = mapEntry["name"].toString();
@@ -81,19 +83,21 @@ void Maps::load()
       entry->height = mapEntry["height"].toDouble();
 
     // Add to array
-    maps->append(entry);
+    store.append(entry);
   }
+
+  delete mapData;
 }
 
-void Maps::index()
+void MapsDB::index()
 {
-  for(auto entry : *maps)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
   }
 }
 
-QVector<MapEntry*>* Maps::maps = new QVector<MapEntry*>();
-QHash<QString, MapEntry*>* Maps::ind = new QHash<QString, MapEntry*>();
+QVector<MapDBEntry*> MapsDB::store = QVector<MapDBEntry*>();
+QHash<QString, MapDBEntry*> MapsDB::ind = QHash<QString, MapDBEntry*>();

@@ -13,14 +13,16 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "names.h"
+
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>
 #include <QRandomGenerator>
+
+#include "./names.h"
 #include "./gamedata.h"
 
-void Names::load()
+void NamesDB::load()
 {
   // Grab Event Pokemon Data
   auto nameData = GameData::json("names");
@@ -29,14 +31,16 @@ void Names::load()
   for(QJsonValue nameEntry : nameData->array())
   {
     // Add to array
-    names->append(nameEntry.toString());
+    store.append(nameEntry.toString());
   }
+
+  delete nameData;
 }
 
-QString Names::randomName()
+QString NamesDB::randomName()
 {
-  var32 ind = QRandomGenerator::global()->bounded(0, names->size());
-  return names->at(ind);
+  var32 ind = QRandomGenerator::global()->bounded(0, store.size());
+  return store.at(ind);
 }
 
-QVector<QString>* Names::names = new QVector<QString>();
+QVector<QString> NamesDB::store = QVector<QString>();

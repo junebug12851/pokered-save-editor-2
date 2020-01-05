@@ -16,10 +16,11 @@
 #ifndef TRADE_H
 #define TRADE_H
 
-#include "../../common/types.h"
 #include <QString>
 
-struct PokemonEntry;
+#include "../../common/types.h"
+
+struct PokemonDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -27,8 +28,8 @@ struct PokemonEntry;
 // All in-game trades including the unused one
 // All this was extracted from in-game data, not fan sites
 
-struct TradeEntry {
-  TradeEntry();
+struct TradeDBEntry {
+  TradeDBEntry();
 
   QString give;
   QString get;
@@ -36,17 +37,17 @@ struct TradeEntry {
   QString nickname;
   bool unused;
 
-  PokemonEntry* toGive;
-  PokemonEntry* toGet;
+  PokemonDBEntry* toGive;
+  PokemonDBEntry* toGet;
 };
 
-class Trades
+class TradesDB
 {
 public:
   static void load();
   static void deepLink();
 
-  static QVector<TradeEntry*>* trades;
+  static QVector<TradeDBEntry*> store;
 };
 
 #endif // TRADE_H

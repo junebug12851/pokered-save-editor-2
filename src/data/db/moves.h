@@ -16,28 +16,27 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-#include "../../common/types.h"
-#include <optional>
 #include <QString>
 #include <QHash>
 
-#include "./types.h"
+#include <optional>
 
-// Prevents includes from including each other and causing errors
-// We include them in the cpp file
-struct ItemEntry;
+#include "../../common/types.h"
+
+struct TypeDBEntry;
+struct ItemDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
 // All the Pokemon moves in the game including special or glitch moves
 
-struct MoveEntry {
+struct MoveDBEntry {
 
   // Optional bool values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
 
-  MoveEntry();
+  MoveDBEntry();
 
   QString name;
   var8 ind;
@@ -51,19 +50,19 @@ struct MoveEntry {
   std::optional<var8> tm;
   std::optional<var8> hm;
 
-  TypeEntry* toType; // Deep link to move type
-  ItemEntry* toItem; // Deep link to tm/hm item if present
+  TypeDBEntry* toType; // Deep link to move type
+  ItemDBEntry* toItem; // Deep link to tm/hm item if present
 };
 
-class Moves
+class MovesDB
 {
 public:
   static void load();
   static void index();
   static void deepLink();
 
-  static QVector<MoveEntry*>* moves;
-  static QHash<QString, MoveEntry*>* ind;
+  static QVector<MoveDBEntry*> store;
+  static QHash<QString, MoveDBEntry*> ind;
 };
 
 #endif // MOVE_H

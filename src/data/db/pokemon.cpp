@@ -13,20 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "pokemon.h"
+
 #include <QVector>
 #include <QJsonArray>
 #include <QJsonObject>
-#include "./gamedata.h"
-
-#include "./items.h"
-#include "./moves.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-EvolutionEntry::EvolutionEntry(QJsonValue& data)
+#include "./pokemon.h"
+#include "./gamedata.h"
+#include "./items.h"
+#include "./moves.h"
+#include "./types.h"
+
+PokemonDBEntryEvolution::PokemonDBEntryEvolution(QJsonValue& data)
 {
   // Set simple properties
   toName = data["toName"].toString();
@@ -50,15 +52,15 @@ EvolutionEntry::EvolutionEntry(QJsonValue& data)
   toItem = nullptr;
 }
 
-void EvolutionEntry::deepLink(PokemonEntry* deEvolution)
+void PokemonDBEntryEvolution::deepLink(PokemonDBEntry* deEvolution)
 {
   // Link toEvolution first and ensure it's correct
   // otherwise it'll crrash and I want a clear error message why if it does
-  toEvolution = Pokemon::ind->value(toName, nullptr);
+  toEvolution = PokemonDB::ind.value(toName, nullptr);
 
   // Link to Item if present
   if(item != "")
-    toItem = Items::ind->value(item, nullptr);
+    toItem = ItemsDB::ind.value(item, nullptr);
 
 #ifdef QT_DEBUG
     if(toEvolution == nullptr)
@@ -74,7 +76,7 @@ void EvolutionEntry::deepLink(PokemonEntry* deEvolution)
     toDeEvolution = deEvolution;
 }
 
-PokemonMoveEntry::PokemonMoveEntry(QJsonValue& data)
+PokemonDBEntryMove::PokemonDBEntryMove(QJsonValue& data)
 {
   // Set simple properties
   level = data["level"].toDouble();
@@ -83,9 +85,9 @@ PokemonMoveEntry::PokemonMoveEntry(QJsonValue& data)
   toMove = nullptr;
 }
 
-void PokemonMoveEntry::deepLink()
+void PokemonDBEntryMove::deepLink()
 {
-  toMove = Moves::ind->value(move, nullptr);
+  toMove = MovesDB::ind.value(move, nullptr);
 
 #ifdef QT_DEBUG
     if(toMove == nullptr)
@@ -93,33 +95,33 @@ void PokemonMoveEntry::deepLink()
 #endif
 }
 
-PokemonEntry::PokemonEntry()
+PokemonDBEntry::PokemonDBEntry()
 {
   name = "";
   glitch = false;
   type1 = "";
   type2 = "";
 
-  moves = new QVector<PokemonMoveEntry*>();
+  moves = new QVector<PokemonDBEntryMove*>();
   initial = new QVector<QString>();
   tmHm = new QVector<var8>;
-  evolution = new QVector<EvolutionEntry*>;
+  evolution = new QVector<PokemonDBEntryEvolution*>;
 
   toType1 = nullptr;
   toType2 = nullptr;
   toDeEvolution = nullptr;
-  toInitial = new QVector<MoveEntry*>();
-  toTmHmMove = new QVector<MoveEntry*>();
-  toTmHmItem = new QVector<ItemEntry*>();
+  toInitial = QVector<MoveDBEntry*>();
+  toTmHmMove = QVector<MoveDBEntry*>();
+  toTmHmItem = QVector<ItemDBEntry*>();
 }
 
-void PokemonEntry::deepLink()
+void PokemonDBEntry::deepLink()
 {
   // Set type 1 & 2 if present
   if(type1 != "")
-    toType1 = Types::ind->value(type1, nullptr);
+    toType1 = TypesDB::ind.value(type1, nullptr);
   if(type2 != "")
-    toType2 = Types::ind->value(type2, nullptr);
+    toType2 = TypesDB::ind.value(type2, nullptr);
 
 #ifdef QT_DEBUG
     if((type1 != "") && type1 == nullptr)
@@ -145,8 +147,8 @@ void PokemonEntry::deepLink()
   // Deep-Link initial moves
   for(auto initMove : *initial)
   {
-    auto link = Moves::ind->value(initMove, nullptr);
-    toInitial->append(link);
+    auto link = MovesDB::ind.value(initMove, nullptr);
+    toInitial.append(link);
 
 #ifdef QT_DEBUG
     if(link == nullptr)
@@ -157,11 +159,11 @@ void PokemonEntry::deepLink()
   // Deep-Link tm/hm
   for(auto tmHmMove : *tmHm)
   {
-    auto moveLink = Moves::ind->value("tm" + QString::number(tmHmMove), nullptr);
-    auto itemLink = Items::ind->value("tm" + QString::number(tmHmMove), nullptr);
+    auto moveLink = MovesDB::ind.value("tm" + QString::number(tmHmMove), nullptr);
+    auto itemLink = ItemsDB::ind.value("tm" + QString::number(tmHmMove), nullptr);
 
-    toTmHmMove->append(moveLink);
-    toTmHmItem->append(itemLink);
+    toTmHmMove.append(moveLink);
+    toTmHmItem.append(itemLink);
 
 #ifdef QT_DEBUG
     if(moveLink == nullptr)
@@ -172,7 +174,7 @@ void PokemonEntry::deepLink()
   }
 }
 
-void Pokemon::load()
+void PokemonDB::load()
 {
   // Grab Pokemon Data
   auto pokemonData = GameData::json("pokemon");
@@ -181,7 +183,7 @@ void Pokemon::load()
   for(QJsonValue pokemonEntry : pokemonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new PokemonEntry();
+    auto entry = new PokemonDBEntry();
 
     // Set simple properties
     entry->name = pokemonEntry["name"].toString();
@@ -230,7 +232,7 @@ void Pokemon::load()
     {
       for(QJsonValue moveEntryz : pokemonEntry["moves"].toArray())
       {
-        entry->moves->append(new PokemonMoveEntry(moveEntryz));
+        entry->moves->append(new PokemonDBEntryMove(moveEntryz));
       }
     }
 
@@ -259,45 +261,47 @@ void Pokemon::load()
     {
       for(QJsonValue evolutionEntry : pokemonEntry["evolution"].toArray())
       {
-        entry->evolution->append(new EvolutionEntry(evolutionEntry));
+        entry->evolution->append(new PokemonDBEntryEvolution(evolutionEntry));
       }
     }
     else if(pokemonEntry["evolution"].isObject())
     {
       // Kinda weird this has to be 2 steps
       auto tmp = pokemonEntry["evolution"];
-      entry->evolution->append(new EvolutionEntry(tmp));
+      entry->evolution->append(new PokemonDBEntryEvolution(tmp));
     }
 
     // Add to array
-    pokemon->append(entry);
+    store.append(entry);
   }
+
+  delete pokemonData;
 }
 
-void Pokemon::index()
+void PokemonDB::index()
 {
-  for(auto entry : *pokemon)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
-    ind->insert(entry->readable, entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
+    ind.insert(entry->readable, entry);
 
     // If it's a valid Pokemon then index the dex number as well
     if(entry->pokedex)
-      ind->insert("dex" + QString::number(*entry->pokedex), entry);
+      ind.insert("dex" + QString::number(*entry->pokedex), entry);
   }
 }
 
-void Pokemon::deepLink()
+void PokemonDB::deepLink()
 {
   // Deep link the Pokemon data structure tree, lots of traversing and stuff
-  for(auto entry : *pokemon)
+  for(auto entry : store)
   {
     entry->deepLink();
   }
 }
 
-QVector<PokemonEntry*>* Pokemon::pokemon = new QVector<PokemonEntry*>();
-QHash<QString, PokemonEntry*>* Pokemon::ind =
-    new QHash<QString, PokemonEntry*>();
+QVector<PokemonDBEntry*> PokemonDB::store = QVector<PokemonDBEntry*>();
+QHash<QString, PokemonDBEntry*> PokemonDB::ind =
+    QHash<QString, PokemonDBEntry*>();

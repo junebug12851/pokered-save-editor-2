@@ -28,7 +28,7 @@ void EventsDB::load()
   for(QJsonValue eventEntry : eventData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new EventEntry();
+    auto entry = new EventDBEntry();
 
     // Set simple properties
     entry->name = eventEntry["name"].toString();
@@ -39,6 +39,8 @@ void EventsDB::load()
     // Add to array
     store.append(entry);
   }
+
+  delete eventData;
 }
 
 void EventsDB::index()
@@ -51,5 +53,5 @@ void EventsDB::index()
   }
 }
 
-QVector<EventEntry*>* Events::events = new QVector<EventEntry*>();
-QHash<QString, EventEntry*>* Events::ind = new QHash<QString, EventEntry*>();
+QVector<EventDBEntry*> EventsDB::store = QVector<EventDBEntry*>();
+QHash<QString, EventDBEntry*> EventsDB::ind = QHash<QString, EventDBEntry*>();

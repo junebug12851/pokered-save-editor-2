@@ -92,22 +92,22 @@ void load()
   EventPokemonDB::load();
   EventsDB::load();
   FlyDB::load();
-  FontDB::load();
-  HiddenCoins::load();
-  HiddenItems::load();
-  Items::load();
-  Maps::load();
-  Missables::load();
-  Moves::load();
-  Names::load();
-  Pokemon::load();
-  Scripts::load();
-  Sprites::load();
-  StarterPokemon::load();
-  TmHms::load();
-  Trades::load();
-  Trainers::load();
-  Types::load();
+  FontsDB::load();
+  HiddenCoinsDB::load();
+  HiddenItemsDB::load();
+  ItemsDB::load();
+  MapsDB::load();
+  MissablesDB::load();
+  MovesDB::load();
+  NamesDB::load();
+  PokemonDB::load();
+  ScriptsDB::load();
+  SpritesDB::load();
+  StarterPokemonDB::load();
+  TmHmsDB::load();
+  TradesDB::load();
+  TrainersDB::load();
+  TypesDB::load();
 }
 
 // Step 2: Index most JSON data in memory making it rapidly accessible
@@ -116,16 +116,16 @@ void index()
 {
   EventsDB::index();
   FlyDB::index();
-  FontDB::index();
-  Items::index();
-  Maps::index();
-  Missables::index();
-  Moves::index();
-  Pokemon::index();
-  Scripts::index();
-  Sprites::index();
-  Trainers::index();
-  Types::index();
+  FontsDB::index();
+  ItemsDB::index();
+  MapsDB::index();
+  MissablesDB::index();
+  MovesDB::index();
+  PokemonDB::index();
+  ScriptsDB::index();
+  SpritesDB::index();
+  TrainersDB::index();
+  TypesDB::index();
 }
 
 // Step 3: Deep link most data to other data for rapid cross-data access
@@ -134,14 +134,14 @@ void deepLink()
 {
   EventPokemonDB::deepLink();
   FlyDB::deepLink();
-  HiddenCoins::deepLink();
-  HiddenItems::deepLink();
-  Items::deepLink();
-  Moves::deepLink();
-  Pokemon::deepLink(); // <-- Definately the most expensive operation!!!
-  StarterPokemon::deepLink();
-  TmHms::deepLink();
-  Trades::deepLink();
+  HiddenCoinsDB::deepLink();
+  HiddenItemsDB::deepLink();
+  ItemsDB::deepLink();
+  MovesDB::deepLink();
+  PokemonDB::deepLink(); // <-- Definately the most expensive operation!!!
+  StarterPokemonDB::deepLink();
+  TmHmsDB::deepLink();
+  TradesDB::deepLink();
 }
 
 // Performs program one-time bootstrapping and setup
@@ -153,7 +153,7 @@ extern QApplication* boot(int argc, char *argv[])
   index();
   deepLink();
 
-  auto tmp = FontDB::search()->andNormal()->notShorthand()->notMultiChar();
+  auto tmp = FontsDB::search()->andNormal()->notShorthand()->notMultiChar();
 
   // Open recent file
   //mainWindow->file.openFileRecent(0);

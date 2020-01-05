@@ -16,9 +16,10 @@
 #ifndef MISSABLE_H
 #define MISSABLE_H
 
-#include "../../common/types.h"
 #include <QString>
 #include <QHash>
+
+#include "../../common/types.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -32,19 +33,19 @@
 // guy blocking the path in Pewter City is a missable that's hiden once you beat
 // Brock.
 
-struct MissableEntry {
+struct MissableDBEntry {
   QString name;
   var8 ind;
 };
 
-class Missables
+class MissablesDB
 {
 public:
   static void load();
   static void index();
 
-  static QVector<MissableEntry*>* missables;
-  static QHash<QString, MissableEntry*>* ind;
+  static QVector<MissableDBEntry*> store;
+  static QHash<QString, MissableDBEntry*> ind;
 };
 
 #endif // MISSABLE_H

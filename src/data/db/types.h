@@ -16,29 +16,30 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include "../../common/types.h"
 #include <QString>
 #include <QHash>
+
+#include "../../common/types.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
 // All types in the game
 
-struct TypeEntry {
+struct TypeDBEntry {
   QString name;
   var8 ind;
   QString readable;
 };
 
-class Types
+class TypesDB
 {
 public:
   static void load();
   static void index();
 
-  static QVector<TypeEntry*>* types;
-  static QHash<QString, TypeEntry*>* ind;
+  static QVector<TypeDBEntry*> types;
+  static QHash<QString, TypeDBEntry*> ind;
 };
 
 #endif // TYPES_H

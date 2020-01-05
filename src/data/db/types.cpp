@@ -13,12 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "types.h"
+
 #include <QVector>
 #include <QJsonArray>
+
+#include "./types.h"
 #include "./gamedata.h"
 
-void Types::load()
+void TypesDB::load()
 {
   // Grab Event Pokemon Data
   auto typesData = GameData::json("types");
@@ -27,7 +29,7 @@ void Types::load()
   for(QJsonValue typesEntry : typesData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TypeEntry();
+    auto entry = new TypeDBEntry();
 
     // Set simple properties
     entry->name = typesEntry["name"].toString();
@@ -35,20 +37,22 @@ void Types::load()
     entry->readable = typesEntry["readable"].toString();
 
     // Add to array
-    types->append(entry);
+    types.append(entry);
   }
+
+  delete typesData;
 }
 
-void Types::index()
+void TypesDB::index()
 {
-  for(auto entry : *types)
+  for(auto entry : types)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
-    ind->insert(entry->readable, entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
+    ind.insert(entry->readable, entry);
   }
 }
 
-QVector<TypeEntry*>* Types::types = new QVector<TypeEntry*>();
-QHash<QString, TypeEntry*>* Types::ind = new QHash<QString, TypeEntry*>();
+QVector<TypeDBEntry*> TypesDB::types = QVector<TypeDBEntry*>();
+QHash<QString, TypeDBEntry*> TypesDB::ind = QHash<QString, TypeDBEntry*>();

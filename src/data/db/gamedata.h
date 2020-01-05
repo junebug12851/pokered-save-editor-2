@@ -24,18 +24,9 @@
 class GameData
 {
 public:
-  // Retrieves JSON document from cache and if a cache miss then from disk
-  // and perma caches it.
+  // Retrieves JSON document from disk
   // Give the name of the file in /assets/data without the .json file extension
   static QJsonDocument* json(QString filename);
-
-private:
-  // Stores cached file contents so that it doesn't have to re-read them
-  // from disk on every access
-  // The cache contents can and are modified by other code, this is just
-  // to simplify things and cut down on memory usage
-  // The last thing we want is copies of stuff everywhere in RAM
-  static QHash<QString, QJsonDocument*>* cache;
 };
 
 #endif // GAMEDATA_H

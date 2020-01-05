@@ -96,7 +96,7 @@ void PlayerBasics::reset()
 void PlayerBasics::randomize()
 {
   // Random name and ID
-  playerName = Names::randomName();
+  playerName = NamesDB::randomName();
   playerID = QRandomGenerator::global()->bounded(0x0000, 0xFFFF);
 
   // Figure out random money and coins that are reasonable
@@ -138,7 +138,7 @@ void PlayerBasics::setBadges(SaveFile* saveFile, var16 offset)
   it->setBit(1, 7, badges[7]);
 }
 
-PokemonEntry* PlayerBasics::toStarter()
+PokemonDBEntry* PlayerBasics::toStarter()
 {
-  return Pokemon::ind->value(QString::number(playerStarter));
+  return PokemonDB::ind.value(QString::number(playerStarter));
 }

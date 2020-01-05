@@ -20,7 +20,7 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
-struct PokemonEntry;
+struct PokemonDBEntry;
 
 class HoFPokemon : ExpandedInterface
 {
@@ -33,7 +33,7 @@ public:
   void reset();
   void randomize();
 
-  PokemonEntry* toSpecies();
+  PokemonDBEntry* toSpecies();
 
   var8 species;
   var8 level;

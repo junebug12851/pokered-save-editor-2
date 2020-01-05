@@ -16,28 +16,29 @@
 #ifndef HIDDENCOINS_H
 #define HIDDENCOINS_H
 
-#include "../../common/types.h"
 #include <QString>
 
-#include "./maps.h"
+#include "../../common/types.h"
+
+struct MapDBEntry;
 
 // A list of all the hidden coins in Casino
 
-struct HiddenCoinEntry {
+struct HiddenCoinDBEntry {
   QString map;
   var8 x;
   var8 y;
 
-  MapEntry* toMap;
+  MapDBEntry* toMap;
 };
 
-class HiddenCoins
+class HiddenCoinsDB
 {
 public:
   static void load();
   static void deepLink();
 
-  static QVector<HiddenCoinEntry*>* hiddenCoins;
+  static QVector<HiddenCoinDBEntry*> store;
 };
 
 #endif // HIDDENCOINS_H

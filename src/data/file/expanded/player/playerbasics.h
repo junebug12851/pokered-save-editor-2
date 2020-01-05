@@ -20,7 +20,7 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
-struct PokemonEntry;
+struct PokemonDBEntry;
 
 class PlayerBasics : ExpandedInterface
 {
@@ -34,7 +34,7 @@ public:
   void randomize();
 
   void setBadges(SaveFile* saveFile, var16 offset);
-  PokemonEntry* toStarter();
+  PokemonDBEntry* toStarter();
 
   QString playerName;
   var16 playerID;

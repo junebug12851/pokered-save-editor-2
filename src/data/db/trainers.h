@@ -16,17 +16,18 @@
 #ifndef TRAINER_H
 #define TRAINER_H
 
-#include "../../common/types.h"
 #include <QString>
 #include <QHash>
+
+#include "../../common/types.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
 // All trainer classes in the game, this includes unused or glitch ones
 
-struct TrainerEntry {
-  TrainerEntry();
+struct TrainerDBEntry {
+  TrainerDBEntry();
 
   QString name;
   var8 ind;
@@ -34,14 +35,14 @@ struct TrainerEntry {
   bool opp;
 };
 
-class Trainers
+class TrainersDB
 {
 public:
   static void load();
   static void index();
 
-  static QVector<TrainerEntry*>* trainers;
-  static QHash<QString, TrainerEntry*>* ind;
+  static QVector<TrainerDBEntry*> store;
+  static QHash<QString, TrainerDBEntry*> ind;
 };
 
 #endif // TRAINER_H

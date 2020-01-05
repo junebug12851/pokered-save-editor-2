@@ -16,10 +16,12 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#include "../../common/types.h"
-#include <optional>
 #include <QString>
 #include <QHash>
+
+#include <optional>
+
+#include "../../common/types.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -27,7 +29,7 @@
 // Where are you in each map of the world? This tracks your map progression
 // for each individual map
 
-struct ScriptEntry {
+struct ScriptDBEntry {
   QString name;
   var8 ind;
   var8 size;
@@ -35,14 +37,14 @@ struct ScriptEntry {
   std::optional<var8> skip;
 };
 
-class Scripts
+class ScriptsDB
 {
 public:
   static void load();
   static void index();
 
-  static QVector<ScriptEntry*>* scripts;
-  static QHash<QString, ScriptEntry*>* ind;
+  static QVector<ScriptDBEntry*> store;
+  static QHash<QString, ScriptDBEntry*> ind;
 };
 
 #endif // SCRIPT_H

@@ -16,19 +16,20 @@
 #ifndef NAME_H
 #define NAME_H
 
-#include "../../common/types.h"
 #include <QString>
+
+#include "../../common/types.h"
 
 // Something I made, random American names, I made it for the auto-nicknaming
 // feature given this program is for the USA English Pokemon Red.
 
-class Names
+class NamesDB
 {
 public:
   static void load();
   static QString randomName();
 
-  static QVector<QString>* names;
+  static QVector<QString> store;
 };
 
 #endif // NAME_H

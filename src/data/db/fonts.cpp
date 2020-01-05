@@ -32,7 +32,7 @@ FontDBEntry::FontDBEntry()
   normal = false;
 }
 
-void FontDB::load()
+void FontsDB::load()
 {
   // Grab Event Pokemon Data
   auto fontData = GameData::json("font");
@@ -41,7 +41,7 @@ void FontDB::load()
   for(QJsonValue fontEntry : fontData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new FontEntry();
+    auto entry = new FontDBEntry();
 
     // Set simple properties
     entry->name = fontEntry["name"].toString();
@@ -76,9 +76,11 @@ void FontDB::load()
     // Add to array
     store.append(entry);
   }
+
+  delete fontData;
 }
 
-void FontDB::index()
+void FontsDB::index()
 {
   for(auto entry : store)
   {
@@ -88,7 +90,7 @@ void FontDB::index()
   }
 }
 
-FontSearch* Font::search()
+FontSearch* FontsDB::search()
 {
   return new FontSearch();
 }
@@ -98,7 +100,7 @@ FontSearch* Font::search()
 // If fed strings not in the representation list, the unknown characters will
 // be ignored thus possibly corrupting output
 // Possibly very slow
-QVector<var8> FontDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
+QVector<var8> FontsDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
 {
   // Code string to return
   QVector<var8> code;
@@ -124,7 +126,7 @@ QVector<var8> FontDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
 
       // Find a starting match
       // Ignore this character if none are found
-      FontEntry* transPair = font->at(i);
+      FontDBEntry* transPair = store.at(i);
       if (!str.startsWith(transPair->name))
         continue;
 
@@ -163,7 +165,7 @@ QVector<var8> FontDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
 
 // Much easier and faster, just expand the in-game code to it's english
 // representation directly
-QString FontDB::convertFromCode(QVector<var8> codes, var8 maxLen)
+QString FontsDB::convertFromCode(QVector<var8> codes, var8 maxLen)
 {
   // Prepare empty string
   QString eng = "";
@@ -194,7 +196,7 @@ QString FontDB::convertFromCode(QVector<var8> codes, var8 maxLen)
 
 // Converts an english format string to code represented as how it would be
 // in-game
-QString FontDB::expandStr(QString msg, var8 maxLen, QString rival, QString player)
+QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString player)
 {
   // Convert string to char codes
   // Very expensive
@@ -258,7 +260,7 @@ QString FontDB::expandStr(QString msg, var8 maxLen, QString rival, QString playe
   return convertFromCode(charCodes, 255);
 }
 
-void FontDB::splice(QVector<var8>& out, QString in, var8 ind)
+void FontsDB::splice(QVector<var8>& out, QString in, var8 ind)
 {
   QVector<var8> tmp = convertToCode(in, 100, false);
   out.remove(ind);
@@ -266,5 +268,5 @@ void FontDB::splice(QVector<var8>& out, QString in, var8 ind)
     out.insert(ind+j, tmp.at(j));
 }
 
-QVector<FontEntry*>* Font::font = new QVector<FontEntry*>();
-QHash<QString, FontEntry*>* Font::ind = new QHash<QString, FontEntry*>();
+QVector<FontDBEntry*> FontsDB::store = QVector<FontDBEntry*>();
+QHash<QString, FontDBEntry*> FontsDB::ind = QHash<QString, FontDBEntry*>();

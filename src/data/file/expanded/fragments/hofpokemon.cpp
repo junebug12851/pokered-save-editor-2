@@ -83,7 +83,7 @@ void HoFPokemon::randomize()
   // Generate random dex entry and look it up to get species number
   auto rnd = QRandomGenerator::global();
   var8 dex = rnd->bounded(1,151+1);
-  auto toPokemon = Pokemon::ind->value("dex" + QString::number(dex), nullptr);
+  auto toPokemon = PokemonDB::ind.value("dex" + QString::number(dex), nullptr);
 
   if(toPokemon != nullptr)
     species = toPokemon->ind;
@@ -92,12 +92,12 @@ void HoFPokemon::randomize()
   level = rnd->bounded(5,100+1);
 
   // Random name
-  name = Names::randomName();
+  name = NamesDB::randomName();
 }
 
-PokemonEntry* HoFPokemon::toSpecies()
+PokemonDBEntry* HoFPokemon::toSpecies()
 {
-  return Pokemon::ind->value(QString::number(species), nullptr);
+  return PokemonDB::ind.value(QString::number(species), nullptr);
 }
 
 // Not to be used

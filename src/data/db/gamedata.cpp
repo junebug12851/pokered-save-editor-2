@@ -20,10 +20,6 @@
 
 QJsonDocument* GameData::json(QString filename)
 {
-  // Serve cached file if present
-  if(cache->contains(filename))
-    return cache->value(filename);
-
   // Prepare variables
   QByteArray val;
   QFile file;
@@ -37,10 +33,5 @@ QJsonDocument* GameData::json(QString filename)
   // Convert to JSON Document
   QJsonDocument* doc = new QJsonDocument(QJsonDocument::fromJson(val));
 
-  // Cache read file and then serve
-  cache->insert(filename, doc);
   return doc;
 }
-
-QHash<QString, QJsonDocument*>* GameData::cache =
-    new QHash<QString, QJsonDocument*>();

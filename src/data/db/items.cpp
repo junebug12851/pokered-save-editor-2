@@ -13,17 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "items.h"
+
 #include <QVector>
 #include <QJsonArray>
-#include "./gamedata.h"
-#include "./moves.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-ItemEntry::ItemEntry()
+#include "./items.h"
+#include "./gamedata.h"
+#include "./moves.h"
+
+ItemDBEntry::ItemDBEntry()
 {
   once = false;
   glitch = false;
@@ -31,7 +33,7 @@ ItemEntry::ItemEntry()
   toMove = nullptr;
 }
 
-void Items::load()
+void ItemsDB::load()
 {
   // Grab Item Data
   auto itemData = GameData::json("items");
@@ -40,7 +42,7 @@ void Items::load()
   for(QJsonValue itemEntry : itemData->array())
   {
     // Create a new item entry
-    auto entry = new ItemEntry();
+    auto entry = new ItemDBEntry();
 
     // Set simple properties
     entry->name = itemEntry["name"].toString();
@@ -61,34 +63,36 @@ void Items::load()
       entry->hm = itemEntry["hm"].toDouble();
 
     // Add to array
-    items->append(entry);
+    store.append(entry);
   }
+
+  delete itemData;
 }
 
-void Items::index()
+void ItemsDB::index()
 {
-  for(auto entry : *items)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(entry->readable, entry);
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(entry->name, entry);
+    ind.insert(entry->readable, entry);
+    ind.insert(QString::number(entry->ind), entry);
 
     if(entry->tm)
-      ind->insert("tm" + QString::number(*entry->tm), entry);
+      ind.insert("tm" + QString::number(*entry->tm), entry);
     if(entry->hm)
-      ind->insert("hm" + QString::number(*entry->hm), entry);
+      ind.insert("hm" + QString::number(*entry->hm), entry);
   }
 }
 
-void Items::deepLink()
+void ItemsDB::deepLink()
 {
-  for(auto entry : *items)
+  for(auto entry : store)
   {
     if(entry->tm && !entry->hm)
-      entry->toMove = Moves::ind->value("tm" + QString::number(*entry->tm), nullptr);
+      entry->toMove = MovesDB::ind.value("tm" + QString::number(*entry->tm), nullptr);
     else if(entry->tm && entry->hm)
-      entry->toMove = Moves::ind->value("hm" + QString::number(*entry->hm), nullptr);
+      entry->toMove = MovesDB::ind.value("hm" + QString::number(*entry->hm), nullptr);
 
 #ifdef QT_DEBUG
     if((entry->tm || entry->hm) && entry->toMove == nullptr)
@@ -97,5 +101,5 @@ void Items::deepLink()
   }
 }
 
-QVector<ItemEntry*>* Items::items = new QVector<ItemEntry*>();
-QHash<QString, ItemEntry*>* Items::ind = new QHash<QString, ItemEntry*>();
+QVector<ItemDBEntry*> ItemsDB::store = QVector<ItemDBEntry*>();
+QHash<QString, ItemDBEntry*> ItemsDB::ind = QHash<QString, ItemDBEntry*>();

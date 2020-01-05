@@ -16,22 +16,24 @@
 #ifndef ITEMS_H
 #define ITEMS_H
 
-#include "../../common/types.h"
-#include "optional"
 #include <QString>
 #include <QHash>
 
+#include "optional"
+
+#include "../../common/types.h"
+
 // Prevents includes from including each other and causing errors
 // We include them in the cpp file
-struct MoveEntry;
+struct MoveDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
 // All the in-game items and glitch items
 
-struct ItemEntry {
-  ItemEntry();
+struct ItemDBEntry {
+  ItemDBEntry();
 
   // Optional values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
@@ -45,18 +47,18 @@ struct ItemEntry {
   std::optional<var8> tm; // TM Number if present
   std::optional<var8> hm; // HM Number if present
 
-  MoveEntry* toMove; // To TM or HM Move
+  MoveDBEntry* toMove; // To TM or HM Move
 };
 
-class Items
+class ItemsDB
 {
 public:
   static void load();
   static void index();
   static void deepLink();
 
-  static QVector<ItemEntry*>* items;
-  static QHash<QString, ItemEntry*>* ind;
+  static QVector<ItemDBEntry*> store;
+  static QHash<QString, ItemDBEntry*> ind;
 };
 
 #endif // ITEMS_H

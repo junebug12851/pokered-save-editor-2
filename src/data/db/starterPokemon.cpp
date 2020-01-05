@@ -13,20 +13,21 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "starterPokemon.h"
+
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>
 #include <QRandomGenerator>
-#include "./gamedata.h"
-
-#include "./pokemon.h"
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-void StarterPokemon::load()
+#include "./starterPokemon.h"
+#include "./gamedata.h"
+#include "./pokemon.h"
+
+void StarterPokemonDB::load()
 {
   // Grab Event Pokemon Data
   auto starterData = GameData::json("starters");
@@ -35,40 +36,42 @@ void StarterPokemon::load()
   for(QJsonValue starterEntry : starterData->array())
   {
     // Add to array
-    starters->append(starterEntry.toString());
+    store.append(starterEntry.toString());
   }
+
+  delete starterData;
 }
 
-void StarterPokemon::deepLink()
+void StarterPokemonDB::deepLink()
 {
-  for(var8 i = 0; i < starters->size(); i++)
+  for(var8 i = 0; i < store.size(); i++)
   {
-    auto entry = starters->at(i); // Move Name
+    auto entry = store.at(i); // Move Name
 
     // Deep link to tm number
-    toPokemon->append(Pokemon::ind->value(entry, nullptr));
+    toPokemon.append(PokemonDB::ind.value(entry, nullptr));
 
 #ifdef QT_DEBUG
-    if(toPokemon->at(i) == nullptr)
+    if(toPokemon.at(i) == nullptr)
       qCritical() << "Starter Pokemon: " << entry << ", could not be deep linked." ;
 #endif
   }
 }
 
-PokemonEntry* StarterPokemon::random3Starter()
+PokemonDBEntry* StarterPokemonDB::random3Starter()
 {
   // First 3 in list are in-game starters
   var32 ind = QRandomGenerator::global()->bounded(0, 3);
-  return toPokemon->at(ind);
+  return toPokemon.at(ind);
 }
 
-PokemonEntry* StarterPokemon::randomAnyStarter()
+PokemonDBEntry* StarterPokemonDB::randomAnyStarter()
 {
   // List as a whole are all potential starters
-  var32 ind = QRandomGenerator::global()->bounded(0, starters->size());
-  return toPokemon->at(ind);
+  var32 ind = QRandomGenerator::global()->bounded(0, store.size());
+  return toPokemon.at(ind);
 }
 
-QVector<QString>* StarterPokemon::starters = new QVector<QString>();
-QVector<PokemonEntry*>* StarterPokemon::toPokemon =
-    new QVector<PokemonEntry*>();
+QVector<QString> StarterPokemonDB::store = QVector<QString>();
+QVector<PokemonDBEntry*> StarterPokemonDB::toPokemon =
+    QVector<PokemonDBEntry*>();

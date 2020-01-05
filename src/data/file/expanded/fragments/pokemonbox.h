@@ -22,9 +22,9 @@
 #include "../../../../common/types.h"
 class SaveFile;
 class SaveFileIterator;
-struct PokemonEntry;
-class Pokemon;
-struct MoveEntry;
+struct PokemonDBEntry;
+class PokemonDB;
+struct MoveDBEntry;
 
 enum class PokemonStats : var8
 {
@@ -46,7 +46,7 @@ enum class PokemonRandom : var8
 struct PokemonMove
 {
   PokemonMove(var8 move = 0, var8 pp = 0, var8 ppUp = 0);
-  MoveEntry* toMove();
+  MoveDBEntry* toMove();
 
   void randomize();
 
@@ -87,7 +87,7 @@ public:
   // The second overloaded method allows you to give a data record which will be
   // used.
   static PokemonBox* newPokemon(PokemonRandom list = PokemonRandom::Random_Starters, SaveFile* saveFile = nullptr);
-  static PokemonBox* newPokemon(PokemonEntry* pkmnData, SaveFile* saveFile = nullptr);
+  static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, SaveFile* saveFile = nullptr);
 
   SaveFileIterator* load(SaveFile* saveFile = nullptr,
             var16 startOffset = 0,
@@ -113,7 +113,7 @@ public:
   void clearMoves();
 
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
-  PokemonEntry* isValid();
+  PokemonDBEntry* isValid();
 
   var32 levelToExp(svar8 level = -1);
   var32 expLevelRangeStart();
@@ -171,7 +171,7 @@ public:
   bool isPokemonReset();
   void resetPokemon();
 
-  PokemonEntry* toData();
+  PokemonDBEntry* toData();
 
   var16 atkStat();
   var16 defStat();

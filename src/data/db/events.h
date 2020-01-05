@@ -40,8 +40,8 @@ public:
   static void load();
   static void index();
 
-  static QVector<EventEntry*>* events;
-  static QHash<QString, EventEntry*>* ind;
+  static QVector<EventDBEntry*> store;
+  static QHash<QString, EventDBEntry*> ind;
 };
 
 #endif // EVENTS_H

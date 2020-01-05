@@ -16,22 +16,24 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "../../common/types.h"
-#include "optional"
 #include <QString>
 #include <QHash>
+
+#include "optional"
+
+#include "../../common/types.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
 // Details on all the maps in the game
 
-struct MapEntry {
+struct MapDBEntry {
 
   // Optional bool values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
 
-  MapEntry();
+  MapDBEntry();
 
   QString name;
   var8 ind;
@@ -52,14 +54,14 @@ struct MapEntry {
   std::optional<var8> width2X2();
 };
 
-class Maps
+class MapsDB
 {
 public:
   static void load();
   static void index();
 
-  static QVector<MapEntry*>* maps;
-  static QHash<QString, MapEntry*>* ind;
+  static QVector<MapDBEntry*> store;
+  static QHash<QString, MapDBEntry*> ind;
 };
 
 #endif // MAP_H

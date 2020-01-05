@@ -16,28 +16,29 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "../../common/types.h"
 #include <QString>
 #include <QHash>
+
+#include "../../common/types.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
 // All sprites in the game, glitch and not
 
-struct SpriteEntry {
+struct SpriteDBEntry {
   QString name;
   var8 ind;
 };
 
-class Sprites
+class SpritesDB
 {
 public:
   static void load();
   static void index();
 
-  static QVector<SpriteEntry*>* sprites;
-  static QHash<QString, SpriteEntry*>* ind;
+  static QVector<SpriteDBEntry*> store;
+  static QHash<QString, SpriteDBEntry*> ind;
 };
 
 #endif // SPRITE_H

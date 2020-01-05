@@ -41,7 +41,7 @@ void EventPokemonDB::load()
   for(QJsonValue eventPokemonEntry : eventPokemonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new EventPokemonEntry();
+    auto entry = new EventPokemonDBEntry();
 
     // Set simple properties
     entry->title = eventPokemonEntry["title"].toString();
@@ -102,13 +102,15 @@ void EventPokemonDB::load()
     // Add to array
     store.append(entry);
   }
+
+  delete eventPokemonData;
 }
 
 void EventPokemonDB::deepLink()
 {
   for(auto entry : store)
   {
-    entry->toPokemon = Pokemon::ind->value(entry->pokemon, nullptr);
+    entry->toPokemon = PokemonDB::ind.value(entry->pokemon, nullptr);
 
 #ifdef QT_DEBUG
     if(entry->toPokemon == nullptr)
@@ -117,5 +119,4 @@ void EventPokemonDB::deepLink()
   }
 }
 
-QVector<EventPokemonEntry*>* EventPokemon::eventPokemon =
-    new QVector<EventPokemonEntry*>;
+QVector<EventPokemonDBEntry*> EventPokemonDB::store = QVector<EventPokemonDBEntry*>();

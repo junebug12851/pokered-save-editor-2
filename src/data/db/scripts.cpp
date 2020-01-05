@@ -13,12 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "scripts.h"
+
 #include <QVector>
 #include <QJsonArray>
+
+#include "./scripts.h"
 #include "./gamedata.h"
 
-void Scripts::load()
+void ScriptsDB::load()
 {
   // Grab Event Pokemon Data
   auto scriptData = GameData::json("scripts");
@@ -27,7 +29,7 @@ void Scripts::load()
   for(QJsonValue scriptEntry : scriptData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new ScriptEntry();
+    auto entry = new ScriptDBEntry();
 
     // Set simple properties
     entry->name = scriptEntry["name"].toString();
@@ -38,19 +40,21 @@ void Scripts::load()
       entry->skip = scriptEntry["skip"].toDouble();
 
     // Add to array
-    scripts->append(entry);
+    store.append(entry);
   }
+
+  delete scriptData;
 }
 
-void Scripts::index()
+void ScriptsDB::index()
 {
-  for(auto entry : *scripts)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
   }
 }
 
-QVector<ScriptEntry*>* Scripts::scripts = new QVector<ScriptEntry*>();
-QHash<QString, ScriptEntry*>* Scripts::ind = new QHash<QString, ScriptEntry*>();
+QVector<ScriptDBEntry*> ScriptsDB::store = QVector<ScriptDBEntry*>();
+QHash<QString, ScriptDBEntry*> ScriptsDB::ind = QHash<QString, ScriptDBEntry*>();

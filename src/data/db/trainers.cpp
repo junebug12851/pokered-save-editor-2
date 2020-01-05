@@ -13,18 +13,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "trainers.h"
+
 #include <QVector>
 #include <QJsonArray>
+
+#include "./trainers.h"
 #include "./gamedata.h"
 
-TrainerEntry::TrainerEntry()
+TrainerDBEntry::TrainerDBEntry()
 {
   unused = false;
   opp = false;
 }
 
-void Trainers::load()
+void TrainersDB::load()
 {
   // Grab Event Pokemon Data
   auto trainerData = GameData::json("trainers");
@@ -33,7 +35,7 @@ void Trainers::load()
   for(QJsonValue trainerEntry : trainerData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TrainerEntry();
+    auto entry = new TrainerDBEntry();
 
     // Set simple properties
     entry->name = trainerEntry["name"].toString();
@@ -47,24 +49,26 @@ void Trainers::load()
       entry->opp = trainerEntry["opp"].toBool();
 
     // Add to array
-    trainers->append(entry);
+    store.append(entry);
   }
+
+  delete trainerData;
 }
 
-void Trainers::index()
+void TrainersDB::index()
 {
-  for(auto entry : *trainers)
+  for(auto entry : store)
   {
     // Index name and index
     if(entry->opp)
-      ind->insert("Opp" + entry->name, entry);
+      ind.insert("Opp" + entry->name, entry);
     else
-      ind->insert(entry->name, entry);
+      ind.insert(entry->name, entry);
 
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(QString::number(entry->ind), entry);
   }
 }
 
-QVector<TrainerEntry*>* Trainers::trainers = new QVector<TrainerEntry*>();
-QHash<QString, TrainerEntry*>* Trainers::ind =
-    new QHash<QString, TrainerEntry*>();
+QVector<TrainerDBEntry*> TrainersDB::store = QVector<TrainerDBEntry*>();
+QHash<QString, TrainerDBEntry*> TrainersDB::ind =
+    QHash<QString, TrainerDBEntry*>();

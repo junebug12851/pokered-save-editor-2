@@ -27,7 +27,7 @@
 
 #include "../../common/types.h"
 
-struct PokemonEntry;
+struct PokemonDBEntry;
 
 // These are Pokemon you get by going to or participating in real-life events
 // that were held around the world
@@ -45,7 +45,7 @@ struct EventPokemonDBEntry {
     QVector<QString> moves; // Move list
     std::optional<var8> level; // Level, default minimum if not specified
 
-    PokemonEntry* toPokemon; // Deep link to associated Pokemon
+    PokemonDBEntry* toPokemon; // Deep link to associated Pokemon
 };
 
 class EventPokemonDB
@@ -54,7 +54,7 @@ public:
   static void load();
   static void deepLink();
 
-  static QVector<EventPokemonEntry*>* eventPokemon;
+  static QVector<EventPokemonDBEntry*> store;
 };
 
 #endif // EVENTPOKEMON_H

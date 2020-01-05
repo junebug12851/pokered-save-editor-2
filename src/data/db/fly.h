@@ -21,7 +21,7 @@
 
 #include "../../common/types.h"
 
-struct MapEntry;
+struct MapDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -32,7 +32,7 @@ struct FlyDBEntry {
   QString name; // City Name
   var8 ind; // Index in list
 
-  MapEntry* toMap; // Deep link to associated map data
+  MapDBEntry* toMap; // Deep link to associated map data
 };
 
 class FlyDB
@@ -42,8 +42,8 @@ public:
   static void index();
   static void deepLink();
 
-  static QVector<FlyEntry*>* fly;
-  static QHash<QString, FlyEntry*>* ind;
+  static QVector<FlyDBEntry*> store;
+  static QHash<QString, FlyDBEntry*> ind;
 };
 
 #endif // FLY_H

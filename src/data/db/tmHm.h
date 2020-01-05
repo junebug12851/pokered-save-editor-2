@@ -16,24 +16,25 @@
 #ifndef TMHM_H
 #define TMHM_H
 
-#include "../../common/types.h"
 #include <QString>
 
-struct ItemEntry;
-struct MoveEntry;
+#include "../../common/types.h"
+
+struct ItemDBEntry;
+struct MoveDBEntry;
 
 // All the TM's and HM's in the game
 // internally, HM's are specially treated TM's that start at TM 51
 
-class TmHms
+class TmHmsDB
 {
 public:
   static void load();
   static void deepLink();
 
-  static QVector<QString>* tmHms;
-  static QVector<ItemEntry*>* toTmHmItem;
-  static QVector<MoveEntry*>* toTmHmMove;
+  static QVector<QString> store;
+  static QVector<ItemDBEntry*> toTmHmItem;
+  static QVector<MoveDBEntry*> toTmHmMove;
 };
 
 #endif // TMHM_H

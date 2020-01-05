@@ -13,12 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "sprites.h"
+
 #include <QVector>
 #include <QJsonArray>
+
+#include "./sprites.h"
 #include "./gamedata.h"
 
-void Sprites::load()
+void SpritesDB::load()
 {
   // Grab Event Pokemon Data
   auto spriteData = GameData::json("sprites");
@@ -27,27 +29,29 @@ void Sprites::load()
   for(QJsonValue spriteEntry : spriteData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new SpriteEntry();
+    auto entry = new SpriteDBEntry();
 
     // Set simple properties
     entry->name = spriteEntry["name"].toString();
     entry->ind = spriteEntry["ind"].toDouble();
 
     // Add to array
-    sprites->append(entry);
+    store.append(entry);
   }
+
+  delete spriteData;
 }
 
-void Sprites::index()
+void SpritesDB::index()
 {
-  for(auto entry : *sprites)
+  for(auto entry : store)
   {
     // Index name and index
-    ind->insert(entry->name, entry);
-    ind->insert(QString::number(entry->ind), entry);
+    ind.insert(entry->name, entry);
+    ind.insert(QString::number(entry->ind), entry);
   }
 }
 
-QVector<SpriteEntry*>* Sprites::sprites = new QVector<SpriteEntry*>();
-QHash<QString, SpriteEntry*>* Sprites::ind =
-    new QHash<QString, SpriteEntry*>();
+QVector<SpriteDBEntry*> SpritesDB::store = QVector<SpriteDBEntry*>();
+QHash<QString, SpriteDBEntry*> SpritesDB::ind =
+    QHash<QString, SpriteDBEntry*>();
