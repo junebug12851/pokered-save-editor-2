@@ -29,12 +29,14 @@
 #include "./data/db/maps.h"
 #include "./data/db/missables.h"
 #include "./data/db/moves.h"
+#include "./data/db/music.h"
 #include "./data/db/names.h"
 #include "./data/db/namesPokemon.h"
 #include "./data/db/pokemon.h"
 #include "./data/db/scripts.h"
 #include "./data/db/sprites.h"
 #include "./data/db/starterPokemon.h"
+#include "./data/db/tileset.h"
 #include "./data/db/tmHm.h"
 #include "./data/db/trades.h"
 #include "./data/db/trainers.h"
@@ -103,12 +105,14 @@ void load()
   MapsDB::load();
   MissablesDB::load();
   MovesDB::load();
+  MusicDB::load();
   NamesDB::load();
   NamesPokemonDB::load();
   PokemonDB::load();
   ScriptsDB::load();
   SpritesDB::load();
   StarterPokemonDB::load();
+  TilesetDB::load();
   TmHmsDB::load();
   TradesDB::load();
   TrainersDB::load();
@@ -126,9 +130,11 @@ void index()
   MapsDB::index();
   MissablesDB::index();
   MovesDB::index();
+  MusicDB::index();
   PokemonDB::index();
   ScriptsDB::index();
   SpritesDB::index();
+  TilesetDB::index();
   TrainersDB::index();
   TypesDB::index();
 }
@@ -142,6 +148,7 @@ void deepLink()
   HiddenCoinsDB::deepLink();
   HiddenItemsDB::deepLink();
   ItemsDB::deepLink();
+  MapsDB::deepLink();
   MovesDB::deepLink();
   PokemonDB::deepLink(); // <-- Definately the most expensive operation!!!
   StarterPokemonDB::deepLink();
@@ -159,16 +166,16 @@ extern QApplication* boot(int argc, char *argv[])
   deepLink();
 
   // Open recent file
-  auto file = mainWindow->file;
+  //auto file = mainWindow->file;
   //file->openFileRecent(0);
-  file->reopenFile();
+  //file->reopenFile();
 
-  auto data = file->data;
-  auto expanded = data->dataExpanded;
-  expanded->randomize();
+  //auto data = file->data;
+  //auto expanded = data->dataExpanded;
+  //expanded->randomize();
 
-  data->flattenData();
-  file->saveFile();
+  //data->flattenData();
+  //file->saveFile();
 
   return app;
 }

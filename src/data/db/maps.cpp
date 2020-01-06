@@ -17,7 +17,13 @@
 #include <QVector>
 #include <QJsonArray>
 
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 #include "./maps.h"
+#include "./tileset.h"
+#include "./music.h"
 #include "./gamedata.h"
 
 MapDBEntry::MapDBEntry()
@@ -82,6 +88,18 @@ void MapsDB::load()
     if(mapEntry["height"].isDouble())
       entry->height = mapEntry["height"].toDouble();
 
+    if(mapEntry["music"].isString())
+      entry->music = mapEntry["music"].toString();
+
+    if(mapEntry["tileset"].isString())
+      entry->tileset = mapEntry["tileset"].toString();
+
+    if(mapEntry["modernName"].isString())
+      entry->modernName = mapEntry["modernName"].toString();
+
+    if(mapEntry["incomplete"].isString())
+      entry->incomplete = mapEntry["incomplete"].toString();
+
     // Add to array
     store.append(entry);
   }
@@ -96,6 +114,36 @@ void MapsDB::index()
     // Index name and index
     ind.insert(entry->name, entry);
     ind.insert(QString::number(entry->ind), entry);
+
+    // Also insert the modern name if present
+    if(entry->modernName != "")
+      ind.insert(entry->modernName, entry);
+  }
+}
+
+void MapsDB::deepLink()
+{
+  for(auto entry : store)
+  {
+    if(entry->music != "")
+      entry->toMusic = MusicDB::ind.value(entry->music, nullptr);
+
+    if(entry->tileset != "")
+      entry->toTileset = TilesetDB::ind.value(entry->tileset, nullptr);
+
+    if(entry->incomplete != "")
+      entry->toComplete = MapsDB::ind.value(entry->incomplete, nullptr);
+
+#ifdef QT_DEBUG
+    if(entry->music != "" && entry->toMusic == nullptr)
+      qCritical() << "Map: " << entry->name << ", could not be deep linked to music" << entry->music;
+
+    if(entry->tileset != "" && entry->toTileset == nullptr)
+      qCritical() << "Map: " << entry->name << ", could not be deep linked to tileset" << entry->tileset;
+
+    if(entry->incomplete != "" && entry->toComplete == nullptr)
+      qCritical() << "Map: " << entry->name << ", could not be deep linked to complete" << entry->incomplete;
+#endif
   }
 }
 

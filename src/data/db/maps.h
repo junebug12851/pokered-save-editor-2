@@ -23,6 +23,9 @@
 
 #include "../../common/types.h"
 
+struct MusicDBEntry;
+struct TilesetDBEntry;
+
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
@@ -48,10 +51,20 @@ struct MapDBEntry {
   std::optional<var8> width;
   std::optional<var8> height;
 
+  QString music = "";
+  QString tileset = "";
+  QString modernName = "";
+  QString incomplete = "";
+
   // These have been removed from the JSON data because they are simply
   // dimensions times 2 and thus redundant and repetitive to inlclude in JSON
   std::optional<var8> height2X2();
   std::optional<var8> width2X2();
+
+  // Deep Linking
+  MusicDBEntry* toMusic = nullptr; // To Map Music
+  TilesetDBEntry* toTileset = nullptr; // To Map Tileset
+  MapDBEntry* toComplete = nullptr; // To Complete Version of Map
 };
 
 class MapsDB
@@ -59,6 +72,7 @@ class MapsDB
 public:
   static void load();
   static void index();
+  static void deepLink();
 
   static QVector<MapDBEntry*> store;
   static QHash<QString, MapDBEntry*> ind;

@@ -1,98 +1,98 @@
 [
   {
-    "name": "Overworld",
+    "name": "OVERWORLD",
     "type": "OUTDOOR"
   },
   {
-    "name": "RedsHouse1",
+    "name": "REDS_HOUSE_1",
     "type": "INDOOR"
   },
   {
-    "name": "Mart",
+    "name": "MART",
     "type": "INDOOR"
   },
   {
-    "name": "Forest",
+    "name": "FOREST",
     "type": "CAVE"
   },
   {
-    "name": "RedsHouse2",
+    "name": "REDS_HOUSE_2",
     "type": "INDOOR"
   },
   {
-    "name": "Dojo",
+    "name": "DOJO",
     "type": "OUTDOOR"
   },
   {
-    "name": "Pokecenter",
+    "name": "POKECENTER",
     "type": "INDOOR"
   },
   {
-    "name": "Gym",
+    "name": "GYM",
     "type": "OUTDOOR"
   },
   {
-    "name": "House",
+    "name": "HOUSE",
     "type": "INDOOR"
   },
   {
-    "name": "ForestGate",
+    "name": "FOREST_GATE",
     "type": "INDOOR"
   },
   {
-    "name": "Museum",
+    "name": "MUSEUM",
     "type": "INDOOR"
   },
   {
-    "name": "Underground",
+    "name": "UNDERGROUND",
     "type": "INDOOR"
   },
   {
-    "name": "Gate",
+    "name": "GATE",
     "type": "INDOOR"
   },
   {
-    "name": "Ship",
+    "name": "SHIP",
     "type": "CAVE"
   },
   {
-    "name": "ShipPort",
+    "name": "SHIP_PORT",
     "type": "CAVE"
   },
   {
-    "name": "Cemetery",
+    "name": "CEMETERY",
     "type": "INDOOR"
   },
   {
-    "name": "Interior",
+    "name": "INTERIOR",
     "type": "INDOOR"
   },
   {
-    "name": "Cavern",
+    "name": "CAVERN",
     "type": "CAVE"
   },
   {
-    "name": "Lobby",
+    "name": "LOBBY",
     "type": "INDOOR"
   },
   {
-    "name": "Mansion",
+    "name": "MANSION",
     "type": "INDOOR"
   },
   {
-    "name": "Lab",
+    "name": "LAB",
     "type": "INDOOR"
   },
   {
-    "name": "Club",
+    "name": "CLUB",
     "type": "INDOOR"
   },
   {
-    "name": "Facility",
+    "name": "FACILITY",
     "type": "CAVE"
   },
   {
-    "name": "Plateau",
+    "name": "PLATEAU",
     "type": "CAVE"
   }
 ]

@@ -29,12 +29,14 @@ HEADERS += \
   src/data/db/maps.h \
   src/data/db/missables.h \
   src/data/db/moves.h \
+  src/data/db/music.h \
   src/data/db/names.h \
   src/data/db/namesPokemon.h \
   src/data/db/pokemon.h \
   src/data/db/scripts.h \
   src/data/db/sprites.h \
   src/data/db/starterPokemon.h \
+  src/data/db/tileset.h \
   src/data/db/tmHm.h \
   src/data/db/trades.h \
   src/data/db/trainers.h \
@@ -65,7 +67,9 @@ HEADERS += \
 SOURCES += \
   src/boot.cpp \
   src/data/db/fontsearch.cpp \
+  src/data/db/music.cpp \
   src/data/db/namesPokemon.cpp \
+  src/data/db/tileset.cpp \
   src/data/file/expanded/area/area.cpp \
   src/data/file/expanded/area/areaaudio.cpp \
   src/data/file/expanded/fragments/hofpokemon.cpp \
