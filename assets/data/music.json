@@ -1,0 +1,232 @@
+[
+  {
+    "name": "PalletTown",
+    "bank": 2,
+    "id": 186
+  },
+  {
+    "name": "Pokecenter",
+    "bank": 2,
+    "id": 189
+  },
+  {
+    "name": "Gym",
+    "bank": 2,
+    "id": 192
+  },
+  {
+    "name": "Cities1",
+    "bank": 2,
+    "id": 195
+  },
+  {
+    "name": "Cities2",
+    "bank": 2,
+    "id": 199
+  },
+  {
+    "name": "Celadon",
+    "bank": 2,
+    "id": 202
+  },
+  {
+    "name": "Cinnabar",
+    "bank": 2,
+    "id": 205
+  },
+  {
+    "name": "Vermilion",
+    "bank": 2,
+    "id": 208
+  },
+  {
+    "name": "Lavender",
+    "bank": 2,
+    "id": 212
+  },
+  {
+    "name": "SSAnne",
+    "bank": 2,
+    "id": 216
+  },
+  {
+    "name": "MeetProfOak",
+    "bank": 2,
+    "id": 219
+  },
+  {
+    "name": "MeetRival",
+    "bank": 2,
+    "id": 222
+  },
+  {
+    "name": "MuseumGuy",
+    "bank": 2,
+    "id": 225
+  },
+  {
+    "name": "SafariZone",
+    "bank": 2,
+    "id": 229
+  },
+  {
+    "name": "PkmnHealed",
+    "bank": 2,
+    "id": 232
+  },
+  {
+    "name": "Routes1",
+    "bank": 2,
+    "id": 235
+  },
+  {
+    "name": "Routes2",
+    "bank": 2,
+    "id": 239
+  },
+  {
+    "name": "Routes3",
+    "bank": 2,
+    "id": 243
+  },
+  {
+    "name": "Routes4",
+    "bank": 2,
+    "id": 247
+  },
+  {
+    "name": "IndigoPlateau",
+    "bank": 2,
+    "id": 251
+  },
+  {
+    "name": "GymLeaderBattle",
+    "bank": 8,
+    "id": 234
+  },
+  {
+    "name": "TrainerBattle",
+    "bank": 8,
+    "id": 237
+  },
+  {
+    "name": "WildBattle",
+    "bank": 8,
+    "id": 240
+  },
+  {
+    "name": "FinalBattle",
+    "bank": 8,
+    "id": 243
+  },
+  {
+    "name": "DefeatedTrainer",
+    "bank": 8,
+    "id": 246
+  },
+  {
+    "name": "DefeatedWildMon",
+    "bank": 8,
+    "id": 249
+  },
+  {
+    "name": "DefeatedGymLeader",
+    "bank": 8,
+    "id": 252
+  },
+  {
+    "name": "TitleScreen",
+    "bank": 31,
+    "id": 195
+  },
+  {
+    "name": "Credits",
+    "bank": 31,
+    "id": 199
+  },
+  {
+    "name": "HallOfFame",
+    "bank": 31,
+    "id": 202
+  },
+  {
+    "name": "OaksLab",
+    "bank": 31,
+    "id": 205
+  },
+  {
+    "name": "JigglypuffSong",
+    "bank": 31,
+    "id": 208
+  },
+  {
+    "name": "BikeRiding",
+    "bank": 31,
+    "id": 210
+  },
+  {
+    "name": "Surfing",
+    "bank": 31,
+    "id": 214
+  },
+  {
+    "name": "GameCorner",
+    "bank": 31,
+    "id": 217
+  },
+  {
+    "name": "IntroBattle",
+    "bank": 31,
+    "id": 220
+  },
+  {
+    "name": "Dungeon1",
+    "bank": 31,
+    "id": 224
+  },
+  {
+    "name": "Dungeon2",
+    "bank": 31,
+    "id": 228
+  },
+  {
+    "name": "Dungeon3",
+    "bank": 31,
+    "id": 232
+  },
+  {
+    "name": "CinnabarMansion",
+    "bank": 31,
+    "id": 236
+  },
+  {
+    "name": "PokemonTower",
+    "bank": 31,
+    "id": 240
+  },
+  {
+    "name": "SilphCo",
+    "bank": 31,
+    "id": 243
+  },
+  {
+    "name": "MeetEvilTrainer",
+    "bank": 31,
+    "id": 246
+  },
+  {
+    "name": "MeetFemaleTrainer",
+    "bank": 31,
+    "id": 249
+  },
+  {
+    "name": "MeetMaleTrainer",
+    "bank": 31,
+    "id": 252
+  },
+  {
+    "name": "None",
+    "bank": 31,
+    "id": 255
+  }
+]

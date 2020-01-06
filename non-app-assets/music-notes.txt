@@ -1,0 +1,91 @@
+Aside from a small rant I'm skipping regarding PokeRed's extreme abstraction of 
+audio to the point where it's nigh impossible to figure out any of the 
+underlying information.
+
+It's taken me more than 1 year and I still don't fully understand it but here is 
+what I know now:
+
+Music is given a bank and ID number, from the ID number an address is calculated
+in the bank.
+
+  * They're not consistently spaced apart and I still don't know how to get the ID 
+  number
+
+However we know the formula to convert the ID number to a proper address and we
+know the actual bank and address of it so, well, we can throw out guess until we
+get a match.
+
+The formula to convert the ID number over is :
+  * ID * 3 + 0x4000 = Address pointed to
+
+And if we fully compile PokeRed we can get the symbol table which shows us the
+correct destination addresses.
+
+I appreciate the PokeRed team abstracting this away but it's done so much that
+it's really impossible to figure out these IDs because of it and through much
+error (Notably in the original Version) I've finally figured it out.
+
+I tried enlisting in their help numerous times to figure this out but never got
+any help so here are all the game music, the bank, and the correct ID number.
+
+Music Symbol ID:         Bank:  ID:
+====================================
+Music_PalletTown         2      BA
+Music_Pokecenter         2      BD
+Music_Gym                2      C0
+Music_Cities1            2      C3
+Music_Cities2            2      C7
+Music_Celadon            2      CA
+Music_Cinnabar           2      CD
+Music_Vermilion          2      D0
+Music_Lavender           2      D4
+Music_SSAnne             2      D8
+Music_MeetProfOak        2      DB
+Music_MeetRival          2      DE
+Music_MuseumGuy          2      E1
+Music_SafariZone         2      E5
+Music_PkmnHealed         2      E8
+Music_Routes1            2      EB
+Music_Routes2            2      EF
+Music_Routes3            2      F3
+Music_Routes4            2      F7
+Music_IndigoPlateau      2      FB
+   
+Music_GymLeaderBattle    8      EA
+Music_TrainerBattle      8      ED
+Music_WildBattle         8      F0
+Music_FinalBattle        8      F3
+Music_DefeatedTrainer    8      F6
+Music_DefeatedWildMon    8      F9
+Music_DefeatedGymLeader  8      FC
+   
+Music_TitleScreen        1F     C3
+Music_Credits            1F     C7
+Music_HallOfFame         1F     CA
+Music_OaksLab            1F     CD
+Music_JigglypuffSong     1F     D0
+Music_BikeRiding         1F     D2
+Music_Surfing            1F     D6
+Music_GameCorner         1F     D9
+Music_IntroBattle        1F     DC
+Music_Dungeon1           1F     E0
+Music_Dungeon2           1F     E4
+Music_Dungeon3           1F     E8
+Music_CinnabarMansion    1F     EC
+Music_PokemonTower       1F     F0
+Music_SilphCo            1F     F3
+Music_MeetEvilTrainer    1F     F6
+Music_MeetFemaleTrainer  1F     F9
+Music_MeetMaleTrainer    1F     FC
+
+Thanks to the trial and error I did, I discovered you can have a slightly
+incorrect id number which points to a slightly incorrect address, and produces
+interesting music.
+
+I also discovere that really short sound effects actually come off as just
+"No Music"
+
+SFX_Snare1_1             1F     FF
+
+If used as map music appears to be completely silent and imho more eerie than
+Lavender Town
