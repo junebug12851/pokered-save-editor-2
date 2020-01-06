@@ -71,3 +71,6 @@ Thumbs.db
 *.dll
 *.exe
 
+# Sensitive Files that cannot be released
+# -------
+*.gb
