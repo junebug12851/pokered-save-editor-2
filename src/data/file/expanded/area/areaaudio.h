@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,28 +13,28 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SAVEFILEEXPANDED_H
-#define SAVEFILEEXPANDED_H
+#ifndef AREAAUDIO_H
+#define AREAAUDIO_H
 
-#include "./expandedinterface.h"
-
+#include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
-class Player;
-class Area;
 
-class SaveFileExpanded: public ExpandedInterface
+class AreaAudio : ExpandedInterface
 {
 public:
-  SaveFileExpanded(SaveFile* saveFile = nullptr);
-  virtual ~SaveFileExpanded();
+  AreaAudio(SaveFile* saveFile = nullptr);
+  virtual ~AreaAudio();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  Player* player = nullptr;
-  Area* area = nullptr;
+  var8 musicID;
+  var8 musicBank;
+  bool noAudioFadeout;
+  bool preventMusicChange;
 };
 
-#endif // SAVEFILEEXPANDED_H
+#endif // AREAAUDIO_H

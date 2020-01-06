@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,28 +13,23 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SAVEFILEEXPANDED_H
-#define SAVEFILEEXPANDED_H
+#ifndef AREA_H
+#define AREA_H
 
-#include "./expandedinterface.h"
+#include "../expandedinterface.h"
 
 class SaveFile;
-class Player;
-class Area;
 
-class SaveFileExpanded: public ExpandedInterface
+class Area : public ExpandedInterface
 {
 public:
-  SaveFileExpanded(SaveFile* saveFile = nullptr);
-  virtual ~SaveFileExpanded();
+  Area(SaveFile* saveFile = nullptr);
+  virtual ~Area();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
-
-  Player* player = nullptr;
-  Area* area = nullptr;
 };
 
-#endif // SAVEFILEEXPANDED_H
+#endif // AREA_H

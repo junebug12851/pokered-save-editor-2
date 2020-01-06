@@ -40,6 +40,9 @@ Player::~Player()
 
 void Player::load(SaveFile* saveFile)
 {
+  if(saveFile == nullptr)
+    return reset();
+
   basics->load(saveFile);
   items->load(saveFile);
   pokedex->load(saveFile);

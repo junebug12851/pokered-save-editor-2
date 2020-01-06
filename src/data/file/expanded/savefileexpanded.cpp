@@ -17,10 +17,12 @@
 #include "../savefile.h"
 
 #include "./player/player.h"
+#include "./area/area.h"
 
 SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
 {
   player = new Player;
+  area = new Area;
 
   load(saveFile);
 }
@@ -28,24 +30,32 @@ SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
 SaveFileExpanded::~SaveFileExpanded()
 {
   delete player;
+  delete area;
 }
 
 void SaveFileExpanded::load(SaveFile* saveFile)
 {
+  if(saveFile == nullptr)
+    reset();
+
   player->load(saveFile);
+  area->load(saveFile);
 }
 
 void SaveFileExpanded::save(SaveFile* saveFile)
 {
   player->save(saveFile);
+  area->save(saveFile);
 }
 
 void SaveFileExpanded::reset()
 {
   player->reset();
+  area->reset();
 }
 
 void SaveFileExpanded::randomize()
 {
   player->randomize();
+  area->randomize();
 }
