@@ -12,12 +12,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 1",
+        "map": "Route 1",
         "stripMove": 0,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Route 21",
+        "map": "Route 21",
         "stripMove": 0,
         "stripOffset": 0,
         "flag": true
@@ -37,18 +37,18 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 2",
+        "map": "Route 2",
         "stripMove": 5,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Route 1",
+        "map": "Route 1",
         "stripMove": 5,
         "stripOffset": 0,
         "flag": true
       },
       "west": {
-        "toMap": "Route 22",
+        "map": "Route 22",
         "stripMove": 4,
         "stripOffset": 0
       }
@@ -67,12 +67,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "south": {
-        "toMap": "Route 2",
+        "map": "Route 2",
         "stripMove": 5,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 3",
+        "map": "Route 3",
         "stripMove": 4,
         "stripOffset": 0
       }
@@ -91,23 +91,23 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 24",
+        "map": "Route 24",
         "stripMove": 5,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Route 5",
+        "map": "Route 5",
         "stripMove": 5,
         "stripOffset": 0,
         "flag": true
       },
       "west": {
-        "toMap": "Route 4",
+        "map": "Route 4",
         "stripMove": 4,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 9",
+        "map": "Route 9",
         "stripMove": 4,
         "stripOffset": 0
       }
@@ -126,18 +126,18 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 10",
+        "map": "Route 10",
         "stripMove": 0,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Route 12",
+        "map": "Route 12",
         "stripMove": 0,
         "stripOffset": 0,
         "flag": true
       },
       "west": {
-        "toMap": "Route 8",
+        "map": "Route 8",
         "stripMove": 0,
         "stripOffset": 0
       }
@@ -156,12 +156,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 6",
+        "map": "Route 6",
         "stripMove": 5,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 11",
+        "map": "Route 11",
         "stripMove": 4,
         "stripOffset": 0
       }
@@ -180,12 +180,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Route 16",
+        "map": "Route 16",
         "stripMove": 4,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 7",
+        "map": "Route 7",
         "stripMove": 4,
         "stripOffset": 0,
         "flag": true
@@ -205,17 +205,17 @@
     "tileset": "OVERWORLD",
     "connect": {
       "south": {
-        "toMap": "Route 19",
+        "map": "Route 19",
         "stripMove": 5,
         "stripOffset": 0
       },
       "west": {
-        "toMap": "Route 18",
+        "map": "Route 18",
         "stripMove": 4,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 15",
+        "map": "Route 15",
         "stripMove": 4,
         "stripOffset": 0
       }
@@ -234,12 +234,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 21",
+        "map": "Route 21",
         "stripMove": 0,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 20",
+        "map": "Route 20",
         "stripMove": 0,
         "stripOffset": 0
       }
@@ -258,7 +258,7 @@
     "tileset": "PLATEAU",
     "connect": {
       "south": {
-        "toMap": "Route 23",
+        "map": "Route 23",
         "stripMove": 0,
         "stripOffset": 0
       }
@@ -277,23 +277,23 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 5",
+        "map": "Route 5",
         "stripMove": 5,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Route 6",
+        "map": "Route 6",
         "stripMove": 5,
         "stripOffset": 0,
         "flag": true
       },
       "west": {
-        "toMap": "Route 7",
+        "map": "Route 7",
         "stripMove": 4,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 8",
+        "map": "Route 8",
         "stripMove": 4,
         "stripOffset": 0
       }
@@ -319,12 +319,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Viridian City",
+        "map": "Viridian City",
         "stripMove": -3,
         "stripOffset": 2
       },
       "south": {
-        "toMap": "Pallet Town",
+        "map": "Pallet Town",
         "stripMove": 0,
         "stripOffset": 0,
         "flag": true
@@ -344,12 +344,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Pewter City",
+        "map": "Pewter City",
         "stripMove": -3,
         "stripOffset": 2
       },
       "south": {
-        "toMap": "Viridian City",
+        "map": "Viridian City",
         "stripMove": -3,
         "stripOffset": 2,
         "flag": true
@@ -369,12 +369,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 4",
+        "map": "Route 4",
         "stripMove": 25,
         "stripOffset": 0
       },
       "west": {
-        "toMap": "Pewter City",
+        "map": "Pewter City",
         "stripMove": -3,
         "stripOffset": 1
       }
@@ -393,12 +393,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "south": {
-        "toMap": "Route 3",
+        "map": "Route 3",
         "stripMove": -3,
         "stripOffset": 22
       },
       "east": {
-        "toMap": "Cerulean City",
+        "map": "Cerulean City",
         "stripMove": -3,
         "stripOffset": 1,
         "flag": true
@@ -418,12 +418,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Cerulean City",
+        "map": "Cerulean City",
         "stripMove": -3,
         "stripOffset": 2
       },
       "south": {
-        "toMap": "Saffron City",
+        "map": "Saffron City",
         "stripMove": -3,
         "stripOffset": 2,
         "flag": true
@@ -443,12 +443,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Saffron City",
+        "map": "Saffron City",
         "stripMove": -3,
         "stripOffset": 2
       },
       "south": {
-        "toMap": "Vermilion City",
+        "map": "Vermilion City",
         "stripMove": -3,
         "stripOffset": 2,
         "flag": true
@@ -468,12 +468,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Celadon City",
+        "map": "Celadon City",
         "stripMove": -3,
         "stripOffset": 1
       },
       "east": {
-        "toMap": "Saffron City",
+        "map": "Saffron City",
         "stripMove": -3,
         "stripOffset": 1,
         "flag": true
@@ -493,12 +493,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Saffron City",
+        "map": "Saffron City",
         "stripMove": -3,
         "stripOffset": 1
       },
       "east": {
-        "toMap": "Lavender Town",
+        "map": "Lavender Town",
         "stripMove": 0,
         "stripOffset": 0
       }
@@ -517,12 +517,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Cerulean City",
+        "map": "Cerulean City",
         "stripMove": -3,
         "stripOffset": 1
       },
       "east": {
-        "toMap": "Route 10",
+        "map": "Route 10",
         "stripMove": 0,
         "stripOffset": 0,
         "flag": true
@@ -542,12 +542,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "south": {
-        "toMap": "Lavender Town",
+        "map": "Lavender Town",
         "stripMove": 0,
         "stripOffset": 0
       },
       "west": {
-        "toMap": "Route 9",
+        "map": "Route 9",
         "stripMove": 0,
         "stripOffset": 0
       }
@@ -566,12 +566,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Vermilion City",
+        "map": "Vermilion City",
         "stripMove": -3,
         "stripOffset": 1
       },
       "east": {
-        "toMap": "Route 12",
+        "map": "Route 12",
         "stripMove": -3,
         "stripOffset": 24,
         "flag": true
@@ -591,17 +591,17 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Lavender Town",
+        "map": "Lavender Town",
         "stripMove": 0,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Route 13",
+        "map": "Route 13",
         "stripMove": -3,
         "stripOffset": 17
       },
       "west": {
-        "toMap": "Route 11",
+        "map": "Route 11",
         "stripMove": 27,
         "stripOffset": 0
       }
@@ -620,12 +620,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 12",
+        "map": "Route 12",
         "stripMove": 20,
         "stripOffset": 0
       },
       "west": {
-        "toMap": "Route 14",
+        "map": "Route 14",
         "stripMove": 0,
         "stripOffset": 0
       }
@@ -644,12 +644,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Route 15",
+        "map": "Route 15",
         "stripMove": 18,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 13",
+        "map": "Route 13",
         "stripMove": 0,
         "stripOffset": 0
       }
@@ -668,12 +668,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Fuchsia City",
+        "map": "Fuchsia City",
         "stripMove": -3,
         "stripOffset": 1
       },
       "east": {
-        "toMap": "Route 14",
+        "map": "Route 14",
         "stripMove": -3,
         "stripOffset": 15
       }
@@ -692,12 +692,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "south": {
-        "toMap": "Route 17",
+        "map": "Route 17",
         "stripMove": 0,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Celadon City",
+        "map": "Celadon City",
         "stripMove": -3,
         "stripOffset": 1,
         "flag": true
@@ -717,12 +717,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 16",
+        "map": "Route 16",
         "stripMove": 0,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Route 18",
+        "map": "Route 18",
         "stripMove": 0,
         "stripOffset": 0,
         "flag": true
@@ -742,12 +742,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 17",
+        "map": "Route 17",
         "stripMove": 0,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Fuchsia City",
+        "map": "Fuchsia City",
         "stripMove": -3,
         "stripOffset": 1,
         "flag": true
@@ -767,12 +767,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Fuchsia City",
+        "map": "Fuchsia City",
         "stripMove": -3,
         "stripOffset": 2
       },
       "west": {
-        "toMap": "Route 20",
+        "map": "Route 20",
         "stripMove": 18,
         "stripOffset": 0
       }
@@ -791,12 +791,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Cinnabar Island",
+        "map": "Cinnabar Island",
         "stripMove": 0,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Route 19",
+        "map": "Route 19",
         "stripMove": -3,
         "stripOffset": 15
       }
@@ -815,12 +815,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Pallet Town",
+        "map": "Pallet Town",
         "stripMove": 0,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Cinnabar Island",
+        "map": "Cinnabar Island",
         "stripMove": 0,
         "stripOffset": 0,
         "flag": true
@@ -840,12 +840,12 @@
     "tileset": "OVERWORLD",
     "connect": {
       "north": {
-        "toMap": "Route 23",
+        "map": "Route 23",
         "stripMove": 0,
         "stripOffset": 0
       },
       "east": {
-        "toMap": "Viridian City",
+        "map": "Viridian City",
         "stripMove": -3,
         "stripOffset": 1,
         "flag": true
@@ -865,12 +865,12 @@
     "tileset": "PLATEAU",
     "connect": {
       "north": {
-        "toMap": "Indigo Plateau",
+        "map": "Indigo Plateau",
         "stripMove": 0,
         "stripOffset": 0
       },
       "south": {
-        "toMap": "Route 22",
+        "map": "Route 22",
         "stripMove": 0,
         "stripOffset": 0,
         "flag": true
@@ -890,13 +890,13 @@
     "tileset": "OVERWORLD",
     "connect": {
       "south": {
-        "toMap": "Cerulean City",
+        "map": "Cerulean City",
         "stripMove": -3,
         "stripOffset": 2,
         "flag": true
       },
       "east": {
-        "toMap": "Route 25",
+        "map": "Route 25",
         "stripMove": 0,
         "stripOffset": 0
       }
@@ -915,7 +915,7 @@
     "tileset": "OVERWORLD",
     "connect": {
       "west": {
-        "toMap": "Route 24",
+        "map": "Route 24",
         "stripMove": 0,
         "stripOffset": 0
       }
