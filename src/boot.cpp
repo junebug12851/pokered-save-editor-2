@@ -177,5 +177,7 @@ extern QApplication* boot(int argc, char *argv[])
   //data->flattenData();
   //file->saveFile();
 
+  //auto tmp = MapsDB::ind.value("Saffron City");
+
   return app;
 }
