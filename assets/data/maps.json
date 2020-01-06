@@ -9,7 +9,20 @@
     "width": 10,
     "height": 9,
     "music": "PalletTown",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 1",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Route 21",
+        "stripMove": 0,
+        "stripOffset": 0,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Viridian City",
@@ -21,7 +34,25 @@
     "width": 20,
     "height": 18,
     "music": "Cities1",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 2",
+        "stripMove": 5,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Route 1",
+        "stripMove": 5,
+        "stripOffset": 0,
+        "flag": true
+      },
+      "west": {
+        "toMap": "Route 22",
+        "stripMove": 4,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Pewter City",
@@ -33,7 +64,19 @@
     "width": 20,
     "height": 18,
     "music": "Cities1",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "south": {
+        "toMap": "Route 2",
+        "stripMove": 5,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 3",
+        "stripMove": 4,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Cerulean City",
@@ -45,7 +88,30 @@
     "width": 20,
     "height": 18,
     "music": "Cities2",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 24",
+        "stripMove": 5,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Route 5",
+        "stripMove": 5,
+        "stripOffset": 0,
+        "flag": true
+      },
+      "west": {
+        "toMap": "Route 4",
+        "stripMove": 4,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 9",
+        "stripMove": 4,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Lavender Town",
@@ -57,7 +123,25 @@
     "width": 10,
     "height": 9,
     "music": "Lavender",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 10",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Route 12",
+        "stripMove": 0,
+        "stripOffset": 0,
+        "flag": true
+      },
+      "west": {
+        "toMap": "Route 8",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Vermilion City",
@@ -69,7 +153,19 @@
     "width": 20,
     "height": 18,
     "music": "Vermilion",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 6",
+        "stripMove": 5,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 11",
+        "stripMove": 4,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Celadon City",
@@ -81,7 +177,20 @@
     "width": 25,
     "height": 18,
     "music": "Celadon",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Route 16",
+        "stripMove": 4,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 7",
+        "stripMove": 4,
+        "stripOffset": 0,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Fuchsia City",
@@ -93,7 +202,24 @@
     "width": 20,
     "height": 18,
     "music": "Cities2",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "south": {
+        "toMap": "Route 19",
+        "stripMove": 5,
+        "stripOffset": 0
+      },
+      "west": {
+        "toMap": "Route 18",
+        "stripMove": 4,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 15",
+        "stripMove": 4,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Cinnabar Island",
@@ -105,7 +231,19 @@
     "width": 10,
     "height": 9,
     "music": "Cinnabar",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 21",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 20",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Indigo Plateau",
@@ -117,7 +255,14 @@
     "width": 10,
     "height": 9,
     "music": "IndigoPlateau",
-    "tileset": "PLATEAU"
+    "tileset": "PLATEAU",
+    "connect": {
+      "south": {
+        "toMap": "Route 23",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Saffron City",
@@ -129,7 +274,30 @@
     "width": 20,
     "height": 18,
     "music": "Cities1",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 5",
+        "stripMove": 5,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Route 6",
+        "stripMove": 5,
+        "stripOffset": 0,
+        "flag": true
+      },
+      "west": {
+        "toMap": "Route 7",
+        "stripMove": 4,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 8",
+        "stripMove": 4,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Unused Map 0B",
@@ -148,7 +316,20 @@
     "width": 10,
     "height": 18,
     "music": "Routes1",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Viridian City",
+        "stripMove": -3,
+        "stripOffset": 2
+      },
+      "south": {
+        "toMap": "Pallet Town",
+        "stripMove": 0,
+        "stripOffset": 0,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 2",
@@ -160,7 +341,20 @@
     "width": 10,
     "height": 36,
     "music": "Routes1",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Pewter City",
+        "stripMove": -3,
+        "stripOffset": 2
+      },
+      "south": {
+        "toMap": "Viridian City",
+        "stripMove": -3,
+        "stripOffset": 2,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 3",
@@ -172,7 +366,19 @@
     "width": 35,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 4",
+        "stripMove": 25,
+        "stripOffset": 0
+      },
+      "west": {
+        "toMap": "Pewter City",
+        "stripMove": -3,
+        "stripOffset": 1
+      }
+    }
   },
   {
     "name": "Route 4",
@@ -184,7 +390,20 @@
     "width": 45,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "south": {
+        "toMap": "Route 3",
+        "stripMove": -3,
+        "stripOffset": 22
+      },
+      "east": {
+        "toMap": "Cerulean City",
+        "stripMove": -3,
+        "stripOffset": 1,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 5",
@@ -196,7 +415,20 @@
     "width": 10,
     "height": 18,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Cerulean City",
+        "stripMove": -3,
+        "stripOffset": 2
+      },
+      "south": {
+        "toMap": "Saffron City",
+        "stripMove": -3,
+        "stripOffset": 2,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 6",
@@ -208,7 +440,20 @@
     "width": 10,
     "height": 18,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Saffron City",
+        "stripMove": -3,
+        "stripOffset": 2
+      },
+      "south": {
+        "toMap": "Vermilion City",
+        "stripMove": -3,
+        "stripOffset": 2,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 7",
@@ -220,7 +465,20 @@
     "width": 10,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Celadon City",
+        "stripMove": -3,
+        "stripOffset": 1
+      },
+      "east": {
+        "toMap": "Saffron City",
+        "stripMove": -3,
+        "stripOffset": 1,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 8",
@@ -232,7 +490,19 @@
     "width": 30,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Saffron City",
+        "stripMove": -3,
+        "stripOffset": 1
+      },
+      "east": {
+        "toMap": "Lavender Town",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Route 9",
@@ -244,7 +514,20 @@
     "width": 30,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Cerulean City",
+        "stripMove": -3,
+        "stripOffset": 1
+      },
+      "east": {
+        "toMap": "Route 10",
+        "stripMove": 0,
+        "stripOffset": 0,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 10",
@@ -256,7 +539,19 @@
     "width": 10,
     "height": 36,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "south": {
+        "toMap": "Lavender Town",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "west": {
+        "toMap": "Route 9",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Route 11",
@@ -268,7 +563,20 @@
     "width": 30,
     "height": 9,
     "music": "Routes4",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Vermilion City",
+        "stripMove": -3,
+        "stripOffset": 1
+      },
+      "east": {
+        "toMap": "Route 12",
+        "stripMove": -3,
+        "stripOffset": 24,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 12",
@@ -280,7 +588,24 @@
     "width": 10,
     "height": 54,
     "music": "Routes4",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Lavender Town",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Route 13",
+        "stripMove": -3,
+        "stripOffset": 17
+      },
+      "west": {
+        "toMap": "Route 11",
+        "stripMove": 27,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Route 13",
@@ -292,7 +617,19 @@
     "width": 30,
     "height": 9,
     "music": "Routes4",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 12",
+        "stripMove": 20,
+        "stripOffset": 0
+      },
+      "west": {
+        "toMap": "Route 14",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Route 14",
@@ -304,7 +641,19 @@
     "width": 10,
     "height": 27,
     "music": "Routes4",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Route 15",
+        "stripMove": 18,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 13",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Route 15",
@@ -316,7 +665,19 @@
     "width": 30,
     "height": 9,
     "music": "Routes4",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Fuchsia City",
+        "stripMove": -3,
+        "stripOffset": 1
+      },
+      "east": {
+        "toMap": "Route 14",
+        "stripMove": -3,
+        "stripOffset": 15
+      }
+    }
   },
   {
     "name": "Route 16",
@@ -328,7 +689,20 @@
     "width": 20,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "south": {
+        "toMap": "Route 17",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Celadon City",
+        "stripMove": -3,
+        "stripOffset": 1,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 17",
@@ -340,7 +714,20 @@
     "width": 10,
     "height": 72,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 16",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Route 18",
+        "stripMove": 0,
+        "stripOffset": 0,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 18",
@@ -352,7 +739,20 @@
     "width": 25,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 17",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Fuchsia City",
+        "stripMove": -3,
+        "stripOffset": 1,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 19",
@@ -364,7 +764,19 @@
     "width": 10,
     "height": 27,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Fuchsia City",
+        "stripMove": -3,
+        "stripOffset": 2
+      },
+      "west": {
+        "toMap": "Route 20",
+        "stripMove": 18,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Route 20",
@@ -376,7 +788,19 @@
     "width": 50,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Cinnabar Island",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Route 19",
+        "stripMove": -3,
+        "stripOffset": 15
+      }
+    }
   },
   {
     "name": "Route 21",
@@ -388,7 +812,20 @@
     "width": 10,
     "height": 45,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Pallet Town",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Cinnabar Island",
+        "stripMove": 0,
+        "stripOffset": 0,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 22",
@@ -400,7 +837,20 @@
     "width": 20,
     "height": 9,
     "music": "Routes3",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "north": {
+        "toMap": "Route 23",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "east": {
+        "toMap": "Viridian City",
+        "stripMove": -3,
+        "stripOffset": 1,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 23",
@@ -412,7 +862,20 @@
     "width": 10,
     "height": 72,
     "music": "IndigoPlateau",
-    "tileset": "PLATEAU"
+    "tileset": "PLATEAU",
+    "connect": {
+      "north": {
+        "toMap": "Indigo Plateau",
+        "stripMove": 0,
+        "stripOffset": 0
+      },
+      "south": {
+        "toMap": "Route 22",
+        "stripMove": 0,
+        "stripOffset": 0,
+        "flag": true
+      }
+    }
   },
   {
     "name": "Route 24",
@@ -424,7 +887,20 @@
     "width": 10,
     "height": 18,
     "music": "Routes2",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "south": {
+        "toMap": "Cerulean City",
+        "stripMove": -3,
+        "stripOffset": 2,
+        "flag": true
+      },
+      "east": {
+        "toMap": "Route 25",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Route 25",
@@ -436,7 +912,14 @@
     "width": 30,
     "height": 9,
     "music": "Routes2",
-    "tileset": "OVERWORLD"
+    "tileset": "OVERWORLD",
+    "connect": {
+      "west": {
+        "toMap": "Route 24",
+        "stripMove": 0,
+        "stripOffset": 0
+      }
+    }
   },
   {
     "name": "Reds House 1F",
