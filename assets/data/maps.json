@@ -8,7 +8,8 @@
     "textPtr": 20360,
     "width": 10,
     "height": 9,
-    "music": "PalletTown"
+    "music": "PalletTown",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Viridian City",
@@ -19,7 +20,8 @@
     "textPtr": 20708,
     "width": 20,
     "height": 18,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Pewter City",
@@ -30,7 +32,8 @@
     "textPtr": 21387,
     "width": 20,
     "height": 18,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Cerulean City",
@@ -41,7 +44,8 @@
     "textPtr": 22061,
     "width": 20,
     "height": 18,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Lavender Town",
@@ -52,7 +56,8 @@
     "textPtr": 16654,
     "width": 10,
     "height": 9,
-    "music": "Lavender"
+    "music": "Lavender",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Vermilion City",
@@ -63,7 +68,8 @@
     "textPtr": 22639,
     "width": 20,
     "height": 18,
-    "music": "Vermilion"
+    "music": "Vermilion",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Celadon City",
@@ -74,7 +80,8 @@
     "textPtr": 22886,
     "width": 25,
     "height": 18,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Fuchsia City",
@@ -85,7 +92,8 @@
     "textPtr": 23086,
     "width": 20,
     "height": 18,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Cinnabar Island",
@@ -96,7 +104,8 @@
     "textPtr": 19073,
     "width": 10,
     "height": 9,
-    "music": "Cinnabar"
+    "music": "Cinnabar",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Indigo Plateau",
@@ -107,7 +116,8 @@
     "textPtr": 18742,
     "width": 10,
     "height": 9,
-    "music": "IndigoPlateau"
+    "music": "IndigoPlateau",
+    "tileset": "PLATEAU"
   },
   {
     "name": "Saffron City",
@@ -118,13 +128,15 @@
     "textPtr": 19459,
     "width": 20,
     "height": 18,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Unused Map 0B",
     "ind": 11,
     "glitch": true,
-    "music": "Cities1"
+    "music": "Cities1",
+    "incomplete": "Saffron City"
   },
   {
     "name": "Route 1",
@@ -135,7 +147,8 @@
     "textPtr": 19122,
     "width": 10,
     "height": 18,
-    "music": "Routes1"
+    "music": "Routes1",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 2",
@@ -146,7 +159,8 @@
     "textPtr": 21734,
     "width": 10,
     "height": 36,
-    "music": "Routes1"
+    "music": "Routes1",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 3",
@@ -157,7 +171,8 @@
     "textPtr": 21777,
     "width": 35,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 4",
@@ -168,7 +183,8 @@
     "textPtr": 22129,
     "width": 45,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 5",
@@ -179,7 +195,8 @@
     "textPtr": 22197,
     "width": 10,
     "height": 18,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 6",
@@ -190,7 +207,8 @@
     "textPtr": 20681,
     "width": 10,
     "height": 18,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 7",
@@ -201,7 +219,8 @@
     "textPtr": 16725,
     "width": 10,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 8",
@@ -212,7 +231,8 @@
     "textPtr": 20943,
     "width": 30,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 9",
@@ -223,7 +243,8 @@
     "textPtr": 22229,
     "width": 30,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 10",
@@ -234,7 +255,8 @@
     "textPtr": 21327,
     "width": 10,
     "height": 36,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 11",
@@ -245,7 +267,8 @@
     "textPtr": 21605,
     "width": 30,
     "height": 9,
-    "music": "Routes4"
+    "music": "Routes4",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 12",
@@ -256,7 +279,8 @@
     "textPtr": 22133,
     "width": 10,
     "height": 54,
-    "music": "Routes4"
+    "music": "Routes4",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 13",
@@ -267,7 +291,8 @@
     "textPtr": 22583,
     "width": 30,
     "height": 9,
-    "music": "Routes4"
+    "music": "Routes4",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 14",
@@ -278,7 +303,8 @@
     "textPtr": 23020,
     "width": 10,
     "height": 27,
-    "music": "Routes4"
+    "music": "Routes4",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 15",
@@ -289,7 +315,8 @@
     "textPtr": 22471,
     "width": 30,
     "height": 9,
-    "music": "Routes4"
+    "music": "Routes4",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 16",
@@ -300,7 +327,8 @@
     "textPtr": 22969,
     "width": 20,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 17",
@@ -311,7 +339,8 @@
     "textPtr": 23443,
     "width": 10,
     "height": 72,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 18",
@@ -322,7 +351,8 @@
     "textPtr": 23264,
     "width": 25,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 19",
@@ -333,7 +363,8 @@
     "textPtr": 23901,
     "width": 10,
     "height": 27,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 20",
@@ -344,7 +375,8 @@
     "textPtr": 19746,
     "width": 50,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 21",
@@ -355,7 +387,8 @@
     "textPtr": 24324,
     "width": 10,
     "height": 45,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 22",
@@ -366,7 +399,8 @@
     "textPtr": 20853,
     "width": 20,
     "height": 9,
-    "music": "Routes3"
+    "music": "Routes3",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 23",
@@ -377,7 +411,8 @@
     "textPtr": 21239,
     "width": 10,
     "height": 72,
-    "music": "IndigoPlateau"
+    "music": "IndigoPlateau",
+    "tileset": "PLATEAU"
   },
   {
     "name": "Route 24",
@@ -388,7 +423,8 @@
     "textPtr": 21579,
     "width": 10,
     "height": 18,
-    "music": "Routes2"
+    "music": "Routes2",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Route 25",
@@ -399,7 +435,8 @@
     "textPtr": 22056,
     "width": 30,
     "height": 9,
-    "music": "Routes2"
+    "music": "Routes2",
+    "tileset": "OVERWORLD"
   },
   {
     "name": "Reds House 1F",
@@ -410,7 +447,8 @@
     "textPtr": 16747,
     "width": 4,
     "height": 4,
-    "music": "PalletTown"
+    "music": "PalletTown",
+    "tileset": "REDS_HOUSE_1"
   },
   {
     "name": "Reds House 2F",
@@ -421,7 +459,8 @@
     "textPtr": 16591,
     "width": 4,
     "height": 4,
-    "music": "PalletTown"
+    "music": "PalletTown",
+    "tileset": "REDS_HOUSE_2"
   },
   {
     "name": "Blues House",
@@ -432,7 +471,8 @@
     "textPtr": 23383,
     "width": 4,
     "height": 4,
-    "music": "PalletTown"
+    "music": "PalletTown",
+    "tileset": "HOUSE"
   },
   {
     "name": "Oaks Lab",
@@ -443,7 +483,8 @@
     "textPtr": 20610,
     "width": 5,
     "height": 6,
-    "music": "OaksLab"
+    "music": "OaksLab",
+    "tileset": "DOJO"
   },
   {
     "name": "Viridian Pokecenter",
@@ -454,7 +495,8 @@
     "textPtr": 16995,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Viridian Mart",
@@ -465,7 +507,8 @@
     "textPtr": 21728,
     "width": 4,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "MART"
   },
   {
     "name": "Viridian School",
@@ -476,7 +519,9 @@
     "textPtr": 21839,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "HOUSE",
+    "modernName": "Viridian School House"
   },
   {
     "name": "Viridian House",
@@ -487,7 +532,9 @@
     "textPtr": 21901,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "HOUSE",
+    "modernName": "Viridian Nickname House"
   },
   {
     "name": "Viridian Gym",
@@ -498,7 +545,8 @@
     "textPtr": 18924,
     "width": 10,
     "height": 9,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "GYM"
   },
   {
     "name": "Digletts Cave Exit",
@@ -509,7 +557,9 @@
     "textPtr": 24248,
     "width": 4,
     "height": 4,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "CAVERN",
+    "modernName": "Digletts Cave Route 2"
   },
   {
     "name": "Viridian Forest Exit",
@@ -520,7 +570,9 @@
     "textPtr": 21898,
     "width": 5,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "FOREST_GATE",
+    "modernName": "Viridian Forest North Gate"
   },
   {
     "name": "Route 2 House",
@@ -531,7 +583,9 @@
     "textPtr": 24304,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "HOUSE",
+    "modernName": "Route 2 Trade House"
   },
   {
     "name": "Route 2 Gate",
@@ -542,7 +596,8 @@
     "textPtr": 21975,
     "width": 5,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Viridian Forest Entrance",
@@ -553,7 +608,9 @@
     "textPtr": 22111,
     "width": 5,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "FOREST_GATE",
+    "modernName": "Viridian Forest South Gate"
   },
   {
     "name": "Viridian Forest",
@@ -564,7 +621,8 @@
     "textPtr": 20774,
     "width": 17,
     "height": 24,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "FOREST"
   },
   {
     "name": "Museum 1F",
@@ -575,7 +633,8 @@
     "textPtr": 16683,
     "width": 10,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "MUSEUM"
   },
   {
     "name": "Museum 2F",
@@ -586,7 +645,8 @@
     "textPtr": 17178,
     "width": 7,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "MUSEUM"
   },
   {
     "name": "Pewter Gym",
@@ -597,7 +657,8 @@
     "textPtr": 17461,
     "width": 5,
     "height": 7,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "GYM"
   },
   {
     "name": "Pewter House 1",
@@ -608,7 +669,9 @@
     "textPtr": 22006,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "HOUSE",
+    "modernName": "Pewter Nidoran House"
   },
   {
     "name": "Pewter Mart",
@@ -619,7 +682,8 @@
     "textPtr": 19638,
     "width": 4,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "MART"
   },
   {
     "name": "Pewter House 2",
@@ -630,7 +694,9 @@
     "textPtr": 22091,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "HOUSE",
+    "modernName": "Pewter Speech House"
   },
   {
     "name": "Pewter Pokecenter",
@@ -641,7 +707,8 @@
     "textPtr": 17805,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Mt. Moon 1",
@@ -652,7 +719,9 @@
     "textPtr": 23009,
     "width": 20,
     "height": 18,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "tileset": "CAVERN",
+    "modernName": "Mt Moon 1F"
   },
   {
     "name": "Mt. Moon 2",
@@ -663,7 +732,9 @@
     "textPtr": 23110,
     "width": 14,
     "height": 14,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "tileset": "CAVERN",
+    "modernName": "Mt Moon B1F"
   },
   {
     "name": "Mt. Moon 3",
@@ -674,7 +745,9 @@
     "textPtr": 24116,
     "width": 20,
     "height": 18,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "tileset": "CAVERN",
+    "modernName": "Mt Moon B2F"
   },
   {
     "name": "Trashed House",
@@ -685,7 +758,9 @@
     "textPtr": 22153,
     "width": 4,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "HOUSE",
+    "modernName": "Cerulean Trashed House"
   },
   {
     "name": "Cerulean House 1",
@@ -696,7 +771,9 @@
     "textPtr": 22265,
     "width": 4,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "HOUSE",
+    "modernName": "Cerulean Trade House"
   },
   {
     "name": "Cerulean Pokecenter",
@@ -707,7 +784,8 @@
     "textPtr": 17995,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Cerulean Gym",
@@ -718,7 +796,8 @@
     "textPtr": 18250,
     "width": 5,
     "height": 7,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "GYM"
   },
   {
     "name": "Bike Shop",
@@ -729,7 +808,8 @@
     "textPtr": 22335,
     "width": 4,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "CLUB"
   },
   {
     "name": "Cerulean Mart",
@@ -740,7 +820,8 @@
     "textPtr": 18584,
     "width": 4,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "MART"
   },
   {
     "name": "Mt. Moon Pokecenter",
@@ -751,7 +832,9 @@
     "textPtr": 21205,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER",
+    "modernName": "Mt Moon Pokecenter"
   },
   {
     "name": "Trashed House Copy",
@@ -762,7 +845,9 @@
     "textPtr": 22153,
     "width": 4,
     "height": 4,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "incomplete": "Trashed House",
+    "glitch": true
   },
   {
     "name": "Route 5 Gate",
@@ -773,7 +858,8 @@
     "textPtr": 24484,
     "width": 4,
     "height": 3,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Path Entrance Route 5",
@@ -784,7 +870,9 @@
     "textPtr": 22192,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE",
+    "modernName": "Underground Path Route 5"
   },
   {
     "name": "Daycare",
@@ -795,7 +883,8 @@
     "textPtr": 25170,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "HOUSE"
   },
   {
     "name": "Route 6 Gate",
@@ -806,7 +895,8 @@
     "textPtr": 24760,
     "width": 4,
     "height": 3,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Path Entrance Route 6",
@@ -817,7 +907,9 @@
     "textPtr": 22263,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE",
+    "modernName": "Underground Path Route 6"
   },
   {
     "name": "Path Entrance Route 6 Copy",
@@ -828,7 +920,10 @@
     "textPtr": 22263,
     "width": 4,
     "height": 4,
-    "music": "Vermilion"
+    "music": "Vermilion",
+    "incomplete": "Path Entrance Route 6",
+    "modernName": "Underground Path Route 6 Copy",
+    "glitch": true
   },
   {
     "name": "Route 7 Gate",
@@ -839,7 +934,8 @@
     "textPtr": 24959,
     "width": 3,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Path Entrance Route 7",
@@ -850,7 +946,9 @@
     "textPtr": 22324,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE",
+    "modernName": "Underground Path Route 7"
   },
   {
     "name": "Path Entrance Route 7 Copy",
@@ -861,7 +959,11 @@
     "textPtr": 22383,
     "width": 4,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "GATE",
+    "incomplete": "Path Entrance Route 7",
+    "modernName": "Underground Path Route 7 Copy",
+    "glitch": true
   },
   {
     "name": "Route 8 Gate",
@@ -872,7 +974,8 @@
     "textPtr": 25153,
     "width": 3,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Path Entrance Route 8",
@@ -883,7 +986,9 @@
     "textPtr": 25233,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE",
+    "modernName": "Underground Path Route 8"
   },
   {
     "name": "Rock Tunnel Pokecenter",
@@ -894,7 +999,8 @@
     "textPtr": 21440,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Rock Tunnel 1",
@@ -905,7 +1011,9 @@
     "textPtr": 17653,
     "width": 20,
     "height": 18,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "tileset": "CAVERN",
+    "modernName": "Rock Tunnel 1F"
   },
   {
     "name": "Power Plant",
@@ -916,7 +1024,8 @@
     "textPtr": 25311,
     "width": 20,
     "height": 18,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "FACILITY"
   },
   {
     "name": "Route 11 Gate 1F",
@@ -927,7 +1036,8 @@
     "textPtr": 21519,
     "width": 4,
     "height": 5,
-    "music": "Vermilion"
+    "music": "Vermilion",
+    "tileset": "GATE"
   },
   {
     "name": "Digletts Cave Entrance",
@@ -938,7 +1048,9 @@
     "textPtr": 26051,
     "width": 4,
     "height": 4,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "CAVERN",
+    "modernName": "Digletts Cave Route 11"
   },
   {
     "name": "Route 11 Gate 2F",
@@ -949,7 +1061,9 @@
     "textPtr": 21591,
     "width": 4,
     "height": 4,
-    "music": "Vermilion"
+    "music": "Vermilion",
+    "tileset": "GATE",
+    "modernName": "Route 11 Gate 2 F"
   },
   {
     "name": "Route 12 Gate 1F",
@@ -960,7 +1074,8 @@
     "textPtr": 21767,
     "width": 5,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Bills House",
@@ -971,7 +1086,8 @@
     "textPtr": 26676,
     "width": 4,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "INTERIOR"
   },
   {
     "name": "Vermilion Pokecenter",
@@ -982,7 +1098,8 @@
     "textPtr": 18837,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Pokemon Fan Club",
@@ -993,7 +1110,8 @@
     "textPtr": 23428,
     "width": 4,
     "height": 4,
-    "music": "Vermilion"
+    "music": "Vermilion",
+    "tileset": "INTERIOR"
   },
   {
     "name": "Vermilion Mart",
@@ -1004,7 +1122,8 @@
     "textPtr": 18916,
     "width": 4,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "MART"
   },
   {
     "name": "Vermilion Gym",
@@ -1015,7 +1134,8 @@
     "textPtr": 19176,
     "width": 5,
     "height": 9,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "GYM"
   },
   {
     "name": "Vermilion House 1",
@@ -1026,7 +1146,9 @@
     "textPtr": 23296,
     "width": 4,
     "height": 4,
-    "music": "Vermilion"
+    "music": "Vermilion",
+    "tileset": "HOUSE",
+    "modernName": "Vermilion Pidgey House"
   },
   {
     "name": "Vermilion Dock",
@@ -1037,7 +1159,8 @@
     "textPtr": 23743,
     "width": 14,
     "height": 6,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP_PORT"
   },
   {
     "name": "S.S. Anne 1",
@@ -1048,7 +1171,9 @@
     "textPtr": 21097,
     "width": 20,
     "height": 9,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne 1F"
   },
   {
     "name": "S.S. Anne 2",
@@ -1059,7 +1184,9 @@
     "textPtr": 21723,
     "width": 20,
     "height": 9,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne 2F"
   },
   {
     "name": "S.S. Anne 3",
@@ -1070,7 +1197,9 @@
     "textPtr": 18741,
     "width": 10,
     "height": 3,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne 3F"
   },
   {
     "name": "S.S. Anne 4",
@@ -1081,7 +1210,9 @@
     "textPtr": 22065,
     "width": 15,
     "height": 4,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne B1F"
   },
   {
     "name": "S.S. Anne 5",
@@ -1092,7 +1223,9 @@
     "textPtr": 22215,
     "width": 10,
     "height": 7,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne Bow"
   },
   {
     "name": "S.S. Anne 6",
@@ -1103,7 +1236,9 @@
     "textPtr": 22455,
     "width": 7,
     "height": 8,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne Kitchen"
   },
   {
     "name": "S.S. Anne 7",
@@ -1114,7 +1249,9 @@
     "textPtr": 22695,
     "width": 3,
     "height": 4,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne Captains Room"
   },
   {
     "name": "S.S. Anne 8",
@@ -1125,7 +1262,9 @@
     "textPtr": 22927,
     "width": 12,
     "height": 8,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne 1F Rooms"
   },
   {
     "name": "S.S. Anne 9",
@@ -1136,7 +1275,9 @@
     "textPtr": 23402,
     "width": 12,
     "height": 8,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne 2F Rooms"
   },
   {
     "name": "S.S. Anne 10",
@@ -1147,25 +1288,30 @@
     "textPtr": 23918,
     "width": 12,
     "height": 8,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "tileset": "SHIP",
+    "modernName": "SS Anne B1F Rooms"
   },
   {
     "name": "Unused Map 69",
     "ind": 105,
     "glitch": true,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Unused Map 6A",
     "ind": 106,
     "glitch": true,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Unused Map 6B",
     "ind": 107,
     "glitch": true,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Victory Road 1",
@@ -1176,31 +1322,37 @@
     "textPtr": 23135,
     "width": 10,
     "height": 9,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "tileset": "CAVERN",
+    "modernName": "Victory Road 1F"
   },
   {
     "name": "Unused Map 6D",
     "ind": 109,
     "glitch": true,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Unused Map 6E",
     "ind": 110,
     "glitch": true,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Unused Map 6F",
     "ind": 111,
     "glitch": true,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Unused Map 70",
     "ind": 112,
     "glitch": true,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Lances Room",
@@ -1211,31 +1363,36 @@
     "textPtr": 25493,
     "width": 13,
     "height": 13,
-    "music": "IndigoPlateau"
+    "music": "IndigoPlateau",
+    "tileset": "DOJO"
   },
   {
     "name": "Unused Map 72",
     "ind": 114,
     "glitch": true,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Unused Map 73",
     "ind": 115,
     "glitch": true,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Unused Map 74",
     "ind": 116,
     "glitch": true,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Unused Map 75",
     "ind": 117,
     "glitch": true,
-    "music": "SSAnne"
+    "music": "SSAnne",
+    "incomplete": "Lances Room"
   },
   {
     "name": "Hall of Fame",
@@ -1246,7 +1403,8 @@
     "textPtr": 25962,
     "width": 5,
     "height": 4,
-    "music": "PalletTown"
+    "music": "PalletTown",
+    "tileset": "GYM"
   },
   {
     "name": "Underground Path NS",
@@ -1257,7 +1415,9 @@
     "textPtr": 24361,
     "width": 4,
     "height": 24,
-    "music": "Routes1"
+    "music": "Routes1",
+    "tileset": "UNDERGROUND",
+    "modernName": "Underground Path North South"
   },
   {
     "name": "Champions Room",
@@ -1268,7 +1428,8 @@
     "textPtr": 24790,
     "width": 4,
     "height": 4,
-    "music": "IndigoPlateau"
+    "music": "IndigoPlateau",
+    "tileset": "GYM"
   },
   {
     "name": "Underground Path WE",
@@ -1279,7 +1440,9 @@
     "textPtr": 24397,
     "width": 25,
     "height": 4,
-    "music": "Routes1"
+    "music": "Routes1",
+    "tileset": "UNDERGROUND",
+    "modernName": "Underground Path West East"
   },
   {
     "name": "Celadon Mart 1",
@@ -1290,7 +1453,9 @@
     "textPtr": 20361,
     "width": 10,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "LOBBY",
+    "modernName": "Celadon Mart 1F"
   },
   {
     "name": "Celadon Mart 2",
@@ -1301,7 +1466,9 @@
     "textPtr": 24824,
     "width": 10,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "LOBBY",
+    "modernName": "Celadon Mart 2F"
   },
   {
     "name": "Celadon Mart 3",
@@ -1312,7 +1479,9 @@
     "textPtr": 16936,
     "width": 10,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "LOBBY",
+    "modernName": "Celadon Mart 3F"
   },
   {
     "name": "Celadon Mart 4",
@@ -1323,7 +1492,9 @@
     "textPtr": 17241,
     "width": 10,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "LOBBY",
+    "modernName": "Celadon Mart 4F"
   },
   {
     "name": "Celadon Mart Roof",
@@ -1334,7 +1505,8 @@
     "textPtr": 17755,
     "width": 10,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "LOBBY"
   },
   {
     "name": "Celadon Mart Elevator",
@@ -1345,7 +1517,8 @@
     "textPtr": 18012,
     "width": 2,
     "height": 2,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "LOBBY"
   },
   {
     "name": "Celadon Mansion 1",
@@ -1356,7 +1529,9 @@
     "textPtr": 18071,
     "width": 4,
     "height": 6,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "MANSION",
+    "modernName": "Celadon Mansion 1F"
   },
   {
     "name": "Celadon Mansion 2",
@@ -1367,7 +1542,9 @@
     "textPtr": 18238,
     "width": 4,
     "height": 6,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "MANSION",
+    "modernName": "Celadon Mansion 2F"
   },
   {
     "name": "Celadon Mansion 3",
@@ -1378,7 +1555,9 @@
     "textPtr": 18323,
     "width": 4,
     "height": 6,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "MANSION",
+    "modernName": "Celadon Mansion 3F"
   },
   {
     "name": "Celadon Mansion 4",
@@ -1389,7 +1568,9 @@
     "textPtr": 18542,
     "width": 4,
     "height": 6,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "MANSION",
+    "modernName": "Celadon Mansion Roof"
   },
   {
     "name": "Celadon Mansion 5",
@@ -1400,7 +1581,9 @@
     "textPtr": 23869,
     "width": 4,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "HOUSE",
+    "modernName": "Celadon Mansion Roof House"
   },
   {
     "name": "Celadon Pokecenter",
@@ -1411,7 +1594,8 @@
     "textPtr": 18622,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Celadon Gym",
@@ -1422,7 +1606,8 @@
     "textPtr": 18854,
     "width": 5,
     "height": 9,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "GYM"
   },
   {
     "name": "Game Corner",
@@ -1433,7 +1618,8 @@
     "textPtr": 19594,
     "width": 10,
     "height": 9,
-    "music": "GameCorner"
+    "music": "GameCorner",
+    "tileset": "LOBBY"
   },
   {
     "name": "Celadon Mart 5",
@@ -1444,7 +1630,9 @@
     "textPtr": 20588,
     "width": 10,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "LOBBY",
+    "modernName": "Celadon Mart 5F"
   },
   {
     "name": "Celadon Prize Room",
@@ -1455,7 +1643,9 @@
     "textPtr": 20723,
     "width": 5,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "LOBBY",
+    "modernName": "Game Corner Prize Room"
   },
   {
     "name": "Celadon Diner",
@@ -1466,7 +1656,8 @@
     "textPtr": 20821,
     "width": 5,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "LOBBY"
   },
   {
     "name": "Celadon House",
@@ -1477,7 +1668,9 @@
     "textPtr": 21010,
     "width": 4,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "MANSION",
+    "modernName": "Celadon Chief House"
   },
   {
     "name": "Celadon Hotel",
@@ -1488,7 +1681,8 @@
     "textPtr": 21100,
     "width": 7,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Lavender Pokecenter",
@@ -1499,7 +1693,8 @@
     "textPtr": 18656,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Pokemon Tower 1",
@@ -1510,7 +1705,9 @@
     "textPtr": 17455,
     "width": 10,
     "height": 9,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "tileset": "CEMETERY",
+    "modernName": "Pokemon Tower 1F"
   },
   {
     "name": "Pokemon Tower 2",
@@ -1521,7 +1718,9 @@
     "textPtr": 17883,
     "width": 10,
     "height": 9,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "tileset": "CEMETERY",
+    "modernName": "Pokemon Tower 2F"
   },
   {
     "name": "Pokemon Tower 3",
@@ -1532,7 +1731,9 @@
     "textPtr": 18149,
     "width": 10,
     "height": 9,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "tileset": "CEMETERY",
+    "modernName": "Pokemon Tower 3F"
   },
   {
     "name": "Pokemon Tower 4",
@@ -1543,7 +1744,9 @@
     "textPtr": 18447,
     "width": 10,
     "height": 9,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "tileset": "CEMETERY",
+    "modernName": "Pokemon Tower 4F"
   },
   {
     "name": "Pokemon Tower 5",
@@ -1554,7 +1757,9 @@
     "textPtr": 18843,
     "width": 10,
     "height": 9,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "tileset": "CEMETERY",
+    "modernName": "Pokemon Tower 5F"
   },
   {
     "name": "Pokemon Tower 6",
@@ -1565,7 +1770,9 @@
     "textPtr": 19377,
     "width": 10,
     "height": 9,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "tileset": "CEMETERY",
+    "modernName": "Pokemon Tower 6F"
   },
   {
     "name": "Pokemon Tower 7",
@@ -1576,7 +1783,9 @@
     "textPtr": 20031,
     "width": 10,
     "height": 9,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "tileset": "CEMETERY",
+    "modernName": "Pokemon Tower 7F"
   },
   {
     "name": "Lavender House 1",
@@ -1587,7 +1796,9 @@
     "textPtr": 22700,
     "width": 4,
     "height": 4,
-    "music": "Lavender"
+    "music": "Lavender",
+    "tileset": "HOUSE",
+    "modernName": "Mr Fujis House"
   },
   {
     "name": "Lavender Mart",
@@ -1598,7 +1809,8 @@
     "textPtr": 18735,
     "width": 4,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "MART"
   },
   {
     "name": "Lavender House 2",
@@ -1609,7 +1821,9 @@
     "textPtr": 22962,
     "width": 4,
     "height": 4,
-    "music": "Lavender"
+    "music": "Lavender",
+    "tileset": "HOUSE",
+    "modernName": "Lavender Cubone House"
   },
   {
     "name": "Fuchsia Mart",
@@ -1620,7 +1834,8 @@
     "textPtr": 23947,
     "width": 4,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "MART"
   },
   {
     "name": "Fuchsia House 1",
@@ -1631,7 +1846,9 @@
     "textPtr": 20508,
     "width": 4,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "HOUSE",
+    "modernName": "Fuchsia Bills Grandpas House"
   },
   {
     "name": "Fuchsia Pokecenter",
@@ -1642,7 +1859,8 @@
     "textPtr": 20585,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Fuchsia House 2",
@@ -1653,7 +1871,9 @@
     "textPtr": 20664,
     "width": 5,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "LAB",
+    "modernName": "Wardens House"
   },
   {
     "name": "Safari Zone Entrance",
@@ -1664,7 +1884,9 @@
     "textPtr": 21177,
     "width": 4,
     "height": 3,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "GATE",
+    "modernName": "Safari Zone Gate"
   },
   {
     "name": "Fuchsia Gym",
@@ -1675,7 +1897,8 @@
     "textPtr": 21717,
     "width": 5,
     "height": 9,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "GYM"
   },
   {
     "name": "Fuchsia Meeting Room",
@@ -1686,7 +1909,8 @@
     "textPtr": 22247,
     "width": 7,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "LAB"
   },
   {
     "name": "Seafoam Islands 2",
@@ -1697,7 +1921,9 @@
     "textPtr": 25458,
     "width": 15,
     "height": 9,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "CAVERN",
+    "modernName": "Seafoam Islands B1F"
   },
   {
     "name": "Seafoam Islands 3",
@@ -1708,7 +1934,9 @@
     "textPtr": 25774,
     "width": 15,
     "height": 9,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "CAVERN",
+    "modernName": "Seafoam Islands B2F"
   },
   {
     "name": "Seafoam Islands 4",
@@ -1719,7 +1947,9 @@
     "textPtr": 26266,
     "width": 15,
     "height": 9,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "CAVERN",
+    "modernName": "Seafoam Islands B3F"
   },
   {
     "name": "Seafoam Islands 5",
@@ -1730,7 +1960,9 @@
     "textPtr": 26748,
     "width": 15,
     "height": 9,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "CAVERN",
+    "modernName": "Seafoam Islands B4F"
   },
   {
     "name": "Vermilion House 2",
@@ -1741,7 +1973,9 @@
     "textPtr": 24691,
     "width": 4,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "HOUSE",
+    "modernName": "Vermilion Old Rod House"
   },
   {
     "name": "Fuchsia House 3",
@@ -1752,7 +1986,9 @@
     "textPtr": 24959,
     "width": 4,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "SHIP",
+    "modernName": "Fuchsia Good Rod House"
   },
   {
     "name": "Mansion 1",
@@ -1763,7 +1999,9 @@
     "textPtr": 17196,
     "width": 15,
     "height": 14,
-    "music": "CinnabarMansion"
+    "music": "CinnabarMansion",
+    "tileset": "FACILITY",
+    "modernName": "Pokemon Mansion 1F"
   },
   {
     "name": "Cinnabar Gym",
@@ -1774,7 +2012,8 @@
     "textPtr": 22687,
     "width": 10,
     "height": 9,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "FACILITY"
   },
   {
     "name": "Cinnabar Lab 1",
@@ -1785,7 +2024,9 @@
     "textPtr": 23440,
     "width": 9,
     "height": 4,
-    "music": "Cinnabar"
+    "music": "Cinnabar",
+    "tileset": "LAB",
+    "modernName": "Cinnabar Lab"
   },
   {
     "name": "Cinnabar Lab 2",
@@ -1796,7 +2037,9 @@
     "textPtr": 23588,
     "width": 4,
     "height": 4,
-    "music": "Cinnabar"
+    "music": "Cinnabar",
+    "tileset": "LAB",
+    "modernName": "Cinnabar Lab Trade Room"
   },
   {
     "name": "Cinnabar Lab 3",
@@ -1807,7 +2050,9 @@
     "textPtr": 23690,
     "width": 4,
     "height": 4,
-    "music": "Cinnabar"
+    "music": "Cinnabar",
+    "tileset": "LAB",
+    "modernName": "Cinnabar Lab Metronome Room"
   },
   {
     "name": "Cinnabar Lab 4",
@@ -1818,7 +2063,9 @@
     "textPtr": 23860,
     "width": 4,
     "height": 4,
-    "music": "Cinnabar"
+    "music": "Cinnabar",
+    "tileset": "LAB",
+    "modernName": "Cinnabar Lab Fossil Room"
   },
   {
     "name": "Cinnabar Pokecenter",
@@ -1829,7 +2076,8 @@
     "textPtr": 24114,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Cinnabar Mart",
@@ -1840,7 +2088,8 @@
     "textPtr": 24193,
     "width": 4,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "MART"
   },
   {
     "name": "Cinnabar Mart Copy",
@@ -1851,7 +2100,9 @@
     "textPtr": 24193,
     "width": 4,
     "height": 4,
-    "music": "Cinnabar"
+    "music": "Cinnabar",
+    "incomplete": "Cinnabar Mart",
+    "glitch": true
   },
   {
     "name": "Indigo Plateau Lobby",
@@ -1862,7 +2113,8 @@
     "textPtr": 23679,
     "width": 8,
     "height": 6,
-    "music": "IndigoPlateau"
+    "music": "IndigoPlateau",
+    "tileset": "MART"
   },
   {
     "name": "Copycats House 1F",
@@ -1873,7 +2125,8 @@
     "textPtr": 24262,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "REDS_HOUSE_1"
   },
   {
     "name": "Copycats House 2F",
@@ -1884,7 +2137,8 @@
     "textPtr": 19572,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "REDS_HOUSE_2"
   },
   {
     "name": "Fighting Dojo",
@@ -1895,7 +2149,8 @@
     "textPtr": 19971,
     "width": 5,
     "height": 6,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "DOJO"
   },
   {
     "name": "Saffron Gym",
@@ -1906,7 +2161,8 @@
     "textPtr": 20651,
     "width": 10,
     "height": 9,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "FACILITY"
   },
   {
     "name": "Saffron House 1",
@@ -1917,7 +2173,9 @@
     "textPtr": 24032,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "HOUSE",
+    "modernName": "Saffron Pidgey House"
   },
   {
     "name": "Saffron Mart",
@@ -1928,7 +2186,8 @@
     "textPtr": 21516,
     "width": 4,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "MART"
   },
   {
     "name": "Silph Co 1F",
@@ -1939,7 +2198,8 @@
     "textPtr": 21609,
     "width": 15,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Saffron Pokecenter",
@@ -1950,7 +2210,8 @@
     "textPtr": 21819,
     "width": 7,
     "height": 4,
-    "music": "Pokecenter"
+    "music": "Pokecenter",
+    "tileset": "POKECENTER"
   },
   {
     "name": "Saffron House 2",
@@ -1961,7 +2222,9 @@
     "textPtr": 24127,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "HOUSE",
+    "modernName": "Mr Psychics House"
   },
   {
     "name": "Route 15 Gate 1F",
@@ -1972,7 +2235,8 @@
     "textPtr": 22021,
     "width": 4,
     "height": 5,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Route 15 Gate 2F",
@@ -1983,7 +2247,8 @@
     "textPtr": 22093,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Route 16 Gate 1F",
@@ -1994,7 +2259,8 @@
     "textPtr": 22362,
     "width": 4,
     "height": 7,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Route 16 Gate 2F",
@@ -2005,7 +2271,8 @@
     "textPtr": 22542,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Route 16 House",
@@ -2016,7 +2283,9 @@
     "textPtr": 26107,
     "width": 4,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "HOUSE",
+    "modernName": "Route 16 Fly House"
   },
   {
     "name": "Route 12 House",
@@ -2027,7 +2296,9 @@
     "textPtr": 25730,
     "width": 4,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "HOUSE",
+    "modernName": "Route 12 Super Rod House"
   },
   {
     "name": "Route 18 Gate 1F",
@@ -2038,7 +2309,8 @@
     "textPtr": 22797,
     "width": 4,
     "height": 5,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Route 18 Gate 2F",
@@ -2049,7 +2321,8 @@
     "textPtr": 22904,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Seafoam Islands 1",
@@ -2060,7 +2333,9 @@
     "textPtr": 18507,
     "width": 15,
     "height": 9,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "CAVERN",
+    "modernName": "Seafoam Islands 1F"
   },
   {
     "name": "Route 22 Gate",
@@ -2071,7 +2346,8 @@
     "textPtr": 26335,
     "width": 5,
     "height": 4,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "GATE"
   },
   {
     "name": "Victory Road 2",
@@ -2082,7 +2358,9 @@
     "textPtr": 22555,
     "width": 15,
     "height": 9,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "tileset": "CAVERN",
+    "modernName": "Victory Road 2F"
   },
   {
     "name": "Route 12 Gate 2F",
@@ -2093,7 +2371,8 @@
     "textPtr": 21859,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "GATE"
   },
   {
     "name": "Vermilion House 3",
@@ -2104,7 +2383,9 @@
     "textPtr": 23573,
     "width": 4,
     "height": 4,
-    "music": "Vermilion"
+    "music": "Vermilion",
+    "tileset": "HOUSE",
+    "modernName": "Vermilion Trade House"
   },
   {
     "name": "Digletts Cave",
@@ -2115,7 +2396,8 @@
     "textPtr": 24433,
     "width": 20,
     "height": 18,
-    "music": "Dungeon2"
+    "music": "Dungeon2",
+    "tileset": "CAVERN"
   },
   {
     "name": "Victory Road 3",
@@ -2126,7 +2408,9 @@
     "textPtr": 18980,
     "width": 15,
     "height": 9,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "tileset": "CAVERN",
+    "modernName": "Victory Road 3F"
   },
   {
     "name": "Rocket Hideout 1",
@@ -2137,7 +2421,9 @@
     "textPtr": 19476,
     "width": 15,
     "height": 14,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "FACILITY",
+    "modernName": "Rocket Hideout B1F"
   },
   {
     "name": "Rocket Hideout 2",
@@ -2148,7 +2434,9 @@
     "textPtr": 20679,
     "width": 15,
     "height": 14,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "FACILITY",
+    "modernName": "Rocket Hideout B2F"
   },
   {
     "name": "Rocket Hideout 3",
@@ -2159,7 +2447,9 @@
     "textPtr": 21242,
     "width": 15,
     "height": 14,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "FACILITY",
+    "modernName": "Rocket Hideout B3F"
   },
   {
     "name": "Rocket Hideout 4",
@@ -2170,7 +2460,9 @@
     "textPtr": 21761,
     "width": 15,
     "height": 12,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "FACILITY",
+    "modernName": "Rocket Hideout B4F"
   },
   {
     "name": "Rocket Hideout Elevator",
@@ -2181,25 +2473,29 @@
     "textPtr": 22379,
     "width": 3,
     "height": 4,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "LOBBY"
   },
   {
     "name": "Unused Map CC",
     "ind": 204,
     "glitch": true,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "incomplete": "Rocket Hideout Elevator"
   },
   {
     "name": "Unused Map CD",
     "ind": 205,
     "glitch": true,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "incomplete": "Rocket Hideout Elevator"
   },
   {
     "name": "Unused Map CE",
     "ind": 206,
     "glitch": true,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "incomplete": "Rocket Hideout Elevator"
   },
   {
     "name": "Silph Co 2F",
@@ -2210,7 +2506,8 @@
     "textPtr": 23942,
     "width": 15,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Silph Co 3F",
@@ -2221,7 +2518,8 @@
     "textPtr": 24516,
     "width": 15,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Silph Co 4F",
@@ -2232,7 +2530,8 @@
     "textPtr": 23968,
     "width": 15,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Silph Co 5F",
@@ -2243,7 +2542,8 @@
     "textPtr": 24508,
     "width": 15,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Silph Co 6F",
@@ -2254,7 +2554,8 @@
     "textPtr": 25078,
     "width": 13,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Silph Co 7F",
@@ -2265,7 +2566,8 @@
     "textPtr": 23871,
     "width": 13,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Silph Co 8F",
@@ -2276,7 +2578,8 @@
     "textPtr": 25981,
     "width": 13,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Mansion 2",
@@ -2287,7 +2590,9 @@
     "textPtr": 24653,
     "width": 15,
     "height": 14,
-    "music": "CinnabarMansion"
+    "music": "CinnabarMansion",
+    "tileset": "FACILITY",
+    "modernName": "Pokemon Mansion 2F"
   },
   {
     "name": "Mansion 3",
@@ -2298,7 +2603,9 @@
     "textPtr": 25226,
     "width": 15,
     "height": 9,
-    "music": "CinnabarMansion"
+    "music": "CinnabarMansion",
+    "tileset": "FACILITY",
+    "modernName": "Pokemon Mansion 3F"
   },
   {
     "name": "Mansion 4",
@@ -2309,7 +2616,9 @@
     "textPtr": 25654,
     "width": 15,
     "height": 14,
-    "music": "CinnabarMansion"
+    "music": "CinnabarMansion",
+    "tileset": "FACILITY",
+    "modernName": "Pokemon Mansion B1F"
   },
   {
     "name": "Safari Zone East",
@@ -2320,7 +2629,8 @@
     "textPtr": 22638,
     "width": 15,
     "height": 13,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "FOREST"
   },
   {
     "name": "Safari Zone North",
@@ -2331,7 +2641,8 @@
     "textPtr": 22958,
     "width": 20,
     "height": 18,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "FOREST"
   },
   {
     "name": "Safari Zone West",
@@ -2342,7 +2653,8 @@
     "textPtr": 25016,
     "width": 15,
     "height": 13,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "FOREST"
   },
   {
     "name": "Safari Zone Center",
@@ -2353,7 +2665,8 @@
     "textPtr": 23477,
     "width": 15,
     "height": 13,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "FOREST"
   },
   {
     "name": "Safari Zone Rest House 1",
@@ -2364,7 +2677,9 @@
     "textPtr": 23792,
     "width": 4,
     "height": 4,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "GATE",
+    "modernName": "Safari Zone Center Rest House"
   },
   {
     "name": "Safari Zone Secret House",
@@ -2375,7 +2690,8 @@
     "textPtr": 25370,
     "width": 4,
     "height": 4,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "LAB"
   },
   {
     "name": "Safari Zone Rest House 2",
@@ -2386,7 +2702,9 @@
     "textPtr": 23854,
     "width": 4,
     "height": 4,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "GATE",
+    "modernName": "Safari Zone West Rest House"
   },
   {
     "name": "Safari Zone Rest House 3",
@@ -2397,7 +2715,9 @@
     "textPtr": 23929,
     "width": 4,
     "height": 4,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "GATE",
+    "modernName": "Safari Zone East Rest House"
   },
   {
     "name": "Safari Zone Rest House 4",
@@ -2408,7 +2728,9 @@
     "textPtr": 24004,
     "width": 4,
     "height": 4,
-    "music": "SafariZone"
+    "music": "SafariZone",
+    "tileset": "GATE",
+    "modernName": "Safari Zone North Rest House"
   },
   {
     "name": "Unknown Dungeon 2",
@@ -2419,7 +2741,9 @@
     "textPtr": 24078,
     "width": 15,
     "height": 9,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "CAVERN",
+    "modernName": "Cerulean Cave 2F"
   },
   {
     "name": "Unknown Dungeon 3",
@@ -2430,7 +2754,9 @@
     "textPtr": 24329,
     "width": 15,
     "height": 9,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "CAVERN",
+    "modernName": "Cerulean Cave B1F"
   },
   {
     "name": "Unknown Dungeon 1",
@@ -2441,7 +2767,9 @@
     "textPtr": 19727,
     "width": 15,
     "height": 9,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "CAVERN",
+    "modernName": "Cerulean Cave 1F"
   },
   {
     "name": "Name Raters House",
@@ -2452,7 +2780,8 @@
     "textPtr": 23124,
     "width": 4,
     "height": 4,
-    "music": "Cities2"
+    "music": "Cities2",
+    "tileset": "HOUSE"
   },
   {
     "name": "Cerulean House 2",
@@ -2463,13 +2792,16 @@
     "textPtr": 19987,
     "width": 4,
     "height": 4,
-    "music": "Cities1"
+    "music": "Cities1",
+    "tileset": "SHIP",
+    "modernName": "Cerulean Badge House"
   },
   {
     "name": "Unused Map E7",
     "ind": 231,
     "glitch": true,
-    "music": "Cinnabar"
+    "music": "Cinnabar",
+    "incomplete": "Route 16 Gate 1F"
   },
   {
     "name": "Rock Tunnel 2",
@@ -2480,7 +2812,9 @@
     "textPtr": 24580,
     "width": 20,
     "height": 18,
-    "music": "Dungeon3"
+    "music": "Dungeon3",
+    "tileset": "CAVERN",
+    "modernName": "Rock Tunnel B1F"
   },
   {
     "name": "Silph Co 9F",
@@ -2491,7 +2825,8 @@
     "textPtr": 22667,
     "width": 13,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Silph Co 10F",
@@ -2502,7 +2837,8 @@
     "textPtr": 24966,
     "width": 8,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "FACILITY"
   },
   {
     "name": "Silph Co 11F",
@@ -2513,7 +2849,8 @@
     "textPtr": 25271,
     "width": 9,
     "height": 9,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "INTERIOR"
   },
   {
     "name": "Silph Co Elevator",
@@ -2524,19 +2861,22 @@
     "textPtr": 22579,
     "width": 2,
     "height": 2,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "tileset": "LOBBY"
   },
   {
     "name": "Unused Map ED",
     "ind": 237,
     "glitch": true,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "incomplete": "Silph Co 2F"
   },
   {
     "name": "Unused Map EE",
     "ind": 238,
     "glitch": true,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "incomplete": "Silph Co 2F"
   },
   {
     "name": "Trade Center",
@@ -2547,7 +2887,8 @@
     "textPtr": 32076,
     "width": 5,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "CLUB"
   },
   {
     "name": "Colosseum",
@@ -2558,31 +2899,36 @@
     "textPtr": 32128,
     "width": 5,
     "height": 4,
-    "music": "Celadon"
+    "music": "Celadon",
+    "tileset": "CLUB"
   },
   {
     "name": "Unused Map F1",
     "ind": 241,
     "glitch": true,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "incomplete": "Silph Co 2F"
   },
   {
     "name": "Unused Map F2",
     "ind": 242,
     "glitch": true,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "incomplete": "Silph Co 2F"
   },
   {
     "name": "Unused Map F3",
     "ind": 243,
     "glitch": true,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "incomplete": "Silph Co 2F"
   },
   {
     "name": "Unused Map F4",
     "ind": 244,
     "glitch": true,
-    "music": "SilphCo"
+    "music": "SilphCo",
+    "incomplete": "Silph Co 2F"
   },
   {
     "name": "Loreleis Room",
@@ -2593,7 +2939,8 @@
     "textPtr": 25169,
     "width": 5,
     "height": 6,
-    "music": "Gym"
+    "music": "Gym",
+    "tileset": "GYM"
   },
   {
     "name": "Brunos Room",
@@ -2604,7 +2951,8 @@
     "textPtr": 25512,
     "width": 5,
     "height": 6,
-    "music": "Dungeon1"
+    "music": "Dungeon1",
+    "tileset": "GYM"
   },
   {
     "name": "Agathas Room",
@@ -2615,7 +2963,8 @@
     "textPtr": 25861,
     "width": 5,
     "height": 6,
-    "music": "PokemonTower"
+    "music": "PokemonTower",
+    "tileset": "CEMETERY"
   },
   {
     "name": "Last Map",
