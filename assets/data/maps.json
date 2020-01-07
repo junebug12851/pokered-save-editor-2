@@ -43,6 +43,28 @@
         "toWarp": 1,
         "toMap": "Oaks Lab"
       }
+    ],
+    "signs": [
+      {
+        "x": 13,
+        "y": 13,
+        "text": 4
+      },
+      {
+        "x": 7,
+        "y": 9,
+        "text": 5
+      },
+      {
+        "x": 3,
+        "y": 5,
+        "text": 6
+      },
+      {
+        "x": 11,
+        "y": 5,
+        "text": 7
+      }
     ]
   },
   {
@@ -105,6 +127,38 @@
         "y": 7,
         "toWarp": 0,
         "toMap": "Viridian Gym"
+      }
+    ],
+    "signs": [
+      {
+        "x": 17,
+        "y": 17,
+        "text": 8
+      },
+      {
+        "x": 19,
+        "y": 1,
+        "text": 9
+      },
+      {
+        "x": 21,
+        "y": 29,
+        "text": 10
+      },
+      {
+        "x": 30,
+        "y": 19,
+        "text": 11
+      },
+      {
+        "x": 24,
+        "y": 25,
+        "text": 12
+      },
+      {
+        "x": 27,
+        "y": 7,
+        "text": 13
       }
     ]
   },
@@ -174,6 +228,43 @@
         "y": 25,
         "toWarp": 0,
         "toMap": "Pewter Pokecenter"
+      }
+    ],
+    "signs": [
+      {
+        "x": 19,
+        "y": 29,
+        "text": 6
+      },
+      {
+        "x": 33,
+        "y": 19,
+        "text": 7
+      },
+      {
+        "x": 24,
+        "y": 17,
+        "text": 8
+      },
+      {
+        "x": 14,
+        "y": 25,
+        "text": 9
+      },
+      {
+        "x": 15,
+        "y": 9,
+        "text": 10
+      },
+      {
+        "x": 11,
+        "y": 17,
+        "text": 11
+      },
+      {
+        "x": 25,
+        "y": 23,
+        "text": 12
       }
     ]
   },
@@ -273,6 +364,38 @@
         "toWarp": 0,
         "toMap": "Cerulean Badge House"
       }
+    ],
+    "signs": [
+      {
+        "x": 23,
+        "y": 19,
+        "text": 12
+      },
+      {
+        "x": 17,
+        "y": 29,
+        "text": 13
+      },
+      {
+        "x": 26,
+        "y": 25,
+        "text": 14
+      },
+      {
+        "x": 20,
+        "y": 17,
+        "text": 15
+      },
+      {
+        "x": 11,
+        "y": 25,
+        "text": 16
+      },
+      {
+        "x": 27,
+        "y": 21,
+        "text": 17
+      }
     ]
   },
   {
@@ -341,6 +464,38 @@
         "y": 13,
         "toWarp": 0,
         "toMap": "Name Raters House"
+      }
+    ],
+    "signs": [
+      {
+        "x": 11,
+        "y": 9,
+        "text": 4
+      },
+      {
+        "x": 9,
+        "y": 3,
+        "text": 5
+      },
+      {
+        "x": 16,
+        "y": 13,
+        "text": 6
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "text": 7
+      },
+      {
+        "x": 5,
+        "y": 9,
+        "text": 8
+      },
+      {
+        "x": 17,
+        "y": 7,
+        "text": 9
       }
     ]
   },
@@ -422,6 +577,43 @@
         "y": 3,
         "toWarp": 0,
         "toMap": "Vermilion Old Rod House"
+      }
+    ],
+    "signs": [
+      {
+        "x": 27,
+        "y": 3,
+        "text": 7
+      },
+      {
+        "x": 37,
+        "y": 13,
+        "text": 8
+      },
+      {
+        "x": 24,
+        "y": 13,
+        "text": 9
+      },
+      {
+        "x": 12,
+        "y": 3,
+        "text": 10
+      },
+      {
+        "x": 7,
+        "y": 13,
+        "text": 11
+      },
+      {
+        "x": 7,
+        "y": 19,
+        "text": 12
+      },
+      {
+        "x": 29,
+        "y": 15,
+        "text": 13
       }
     ]
   },
@@ -530,6 +722,53 @@
         "toWarp": 0,
         "toMap": "Celadon Hotel"
       }
+    ],
+    "signs": [
+      {
+        "x": 27,
+        "y": 15,
+        "text": 10
+      },
+      {
+        "x": 19,
+        "y": 15,
+        "text": 11
+      },
+      {
+        "x": 42,
+        "y": 9,
+        "text": 12
+      },
+      {
+        "x": 13,
+        "y": 29,
+        "text": 13
+      },
+      {
+        "x": 21,
+        "y": 9,
+        "text": 14
+      },
+      {
+        "x": 12,
+        "y": 13,
+        "text": 15
+      },
+      {
+        "x": 39,
+        "y": 21,
+        "text": 16
+      },
+      {
+        "x": 33,
+        "y": 21,
+        "text": 17
+      },
+      {
+        "x": 27,
+        "y": 21,
+        "text": 18
+      }
     ]
   },
   {
@@ -616,6 +855,78 @@
         "toWarp": 0,
         "toMap": "Fuchsia Good Rod House"
       }
+    ],
+    "signs": [
+      {
+        "x": 15,
+        "y": 23,
+        "text": 11
+      },
+      {
+        "x": 25,
+        "y": 15,
+        "text": 12
+      },
+      {
+        "x": 17,
+        "y": 5,
+        "text": 13
+      },
+      {
+        "x": 6,
+        "y": 13,
+        "text": 14
+      },
+      {
+        "x": 20,
+        "y": 27,
+        "text": 15
+      },
+      {
+        "x": 27,
+        "y": 29,
+        "text": 16
+      },
+      {
+        "x": 21,
+        "y": 15,
+        "text": 17
+      },
+      {
+        "x": 5,
+        "y": 29,
+        "text": 18
+      },
+      {
+        "x": 33,
+        "y": 7,
+        "text": 19
+      },
+      {
+        "x": 27,
+        "y": 7,
+        "text": 20
+      },
+      {
+        "x": 13,
+        "y": 7,
+        "text": 21
+      },
+      {
+        "x": 31,
+        "y": 13,
+        "text": 22
+      },
+      {
+        "x": 13,
+        "y": 15,
+        "text": 23
+      },
+      {
+        "x": 7,
+        "y": 7,
+        "text": 24
+      }
     ]
   },
   {
@@ -672,6 +983,33 @@
         "y": 11,
         "toWarp": 0,
         "toMap": "Cinnabar Mart"
+      }
+    ],
+    "signs": [
+      {
+        "x": 9,
+        "y": 5,
+        "text": 3
+      },
+      {
+        "x": 16,
+        "y": 11,
+        "text": 4
+      },
+      {
+        "x": 12,
+        "y": 11,
+        "text": 5
+      },
+      {
+        "x": 9,
+        "y": 11,
+        "text": 6
+      },
+      {
+        "x": 13,
+        "y": 3,
+        "text": 7
       }
     ]
   },
@@ -793,6 +1131,58 @@
         "toWarp": 0,
         "toMap": "Mr Psychics House"
       }
+    ],
+    "signs": [
+      {
+        "x": 17,
+        "y": 5,
+        "text": 16
+      },
+      {
+        "x": 27,
+        "y": 5,
+        "text": 17
+      },
+      {
+        "x": 35,
+        "y": 5,
+        "text": 18
+      },
+      {
+        "x": 26,
+        "y": 11,
+        "text": 19
+      },
+      {
+        "x": 39,
+        "y": 19,
+        "text": 20
+      },
+      {
+        "x": 5,
+        "y": 21,
+        "text": 21
+      },
+      {
+        "x": 15,
+        "y": 21,
+        "text": 22
+      },
+      {
+        "x": 10,
+        "y": 29,
+        "text": 23
+      },
+      {
+        "x": 27,
+        "y": 29,
+        "text": 24
+      },
+      {
+        "x": 1,
+        "y": 19,
+        "text": 25
+      }
     ]
   },
   {
@@ -826,7 +1216,14 @@
         "flag": true
       }
     },
-    "border": 11
+    "border": 11,
+    "signs": [
+      {
+        "x": 9,
+        "y": 27,
+        "text": 3
+      }
+    ]
   },
   {
     "name": "Route 2",
@@ -890,6 +1287,18 @@
         "toWarp": 2,
         "toMap": "Viridian Forest South Gate"
       }
+    ],
+    "signs": [
+      {
+        "x": 5,
+        "y": 65,
+        "text": 3
+      },
+      {
+        "x": 11,
+        "y": 11,
+        "text": 4
+      }
     ]
   },
   {
@@ -915,7 +1324,14 @@
         "stripOffset": 1
       }
     },
-    "border": 44
+    "border": 44,
+    "signs": [
+      {
+        "x": 59,
+        "y": 9,
+        "text": 10
+      }
+    ]
   },
   {
     "name": "Route 4",
@@ -960,6 +1376,23 @@
         "y": 5,
         "toWarp": 7,
         "toMap": "Mt Moon B1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 12,
+        "y": 5,
+        "text": 4
+      },
+      {
+        "x": 17,
+        "y": 7,
+        "text": 5
+      },
+      {
+        "x": 27,
+        "y": 7,
+        "text": 6
       }
     ]
   },
@@ -1019,6 +1452,13 @@
         "toWarp": 0,
         "toMap": "Daycare"
       }
+    ],
+    "signs": [
+      {
+        "x": 17,
+        "y": 29,
+        "text": 1
+      }
     ]
   },
   {
@@ -1070,6 +1510,13 @@
         "y": 13,
         "toWarp": 0,
         "toMap": "Underground Path Route 6"
+      }
+    ],
+    "signs": [
+      {
+        "x": 19,
+        "y": 15,
+        "text": 7
       }
     ]
   },
@@ -1129,6 +1576,13 @@
         "toWarp": 0,
         "toMap": "Underground Path Route 7"
       }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 13,
+        "text": 1
+      }
     ]
   },
   {
@@ -1186,6 +1640,13 @@
         "toWarp": 0,
         "toMap": "Underground Path Route 8"
       }
+    ],
+    "signs": [
+      {
+        "x": 17,
+        "y": 3,
+        "text": 10
+      }
     ]
   },
   {
@@ -1212,7 +1673,14 @@
         "flag": true
       }
     },
-    "border": 44
+    "border": 44,
+    "signs": [
+      {
+        "x": 25,
+        "y": 7,
+        "text": 11
+      }
+    ]
   },
   {
     "name": "Route 10",
@@ -1262,6 +1730,28 @@
         "y": 39,
         "toWarp": 0,
         "toMap": "Power Plant"
+      }
+    ],
+    "signs": [
+      {
+        "x": 7,
+        "y": 19,
+        "text": 7
+      },
+      {
+        "x": 12,
+        "y": 19,
+        "text": 8
+      },
+      {
+        "x": 9,
+        "y": 55,
+        "text": 9
+      },
+      {
+        "x": 5,
+        "y": 41,
+        "text": 10
       }
     ]
   },
@@ -1321,6 +1811,13 @@
         "toWarp": 0,
         "toMap": "Digletts Cave Route 11"
       }
+    ],
+    "signs": [
+      {
+        "x": 1,
+        "y": 5,
+        "text": 11
+      }
     ]
   },
   {
@@ -1377,6 +1874,18 @@
         "toWarp": 0,
         "toMap": "Route 12 Super Rod House"
       }
+    ],
+    "signs": [
+      {
+        "x": 13,
+        "y": 13,
+        "text": 11
+      },
+      {
+        "x": 11,
+        "y": 63,
+        "text": 12
+      }
     ]
   },
   {
@@ -1402,7 +1911,24 @@
         "stripOffset": 0
       }
     },
-    "border": 67
+    "border": 67,
+    "signs": [
+      {
+        "x": 15,
+        "y": 13,
+        "text": 11
+      },
+      {
+        "x": 33,
+        "y": 5,
+        "text": 12
+      },
+      {
+        "x": 31,
+        "y": 11,
+        "text": 13
+      }
+    ]
   },
   {
     "name": "Route 14",
@@ -1427,7 +1953,14 @@
         "stripOffset": 0
       }
     },
-    "border": 67
+    "border": 67,
+    "signs": [
+      {
+        "x": 17,
+        "y": 13,
+        "text": 11
+      }
+    ]
   },
   {
     "name": "Route 15",
@@ -1477,6 +2010,13 @@
         "y": 9,
         "toWarp": 3,
         "toMap": "Route 15 Gate 1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 39,
+        "y": 9,
+        "text": 12
       }
     ]
   },
@@ -1560,6 +2100,18 @@
         "toWarp": 0,
         "toMap": "Route 16 Fly House"
       }
+    ],
+    "signs": [
+      {
+        "x": 27,
+        "y": 11,
+        "text": 8
+      },
+      {
+        "x": 5,
+        "y": 17,
+        "text": 9
+      }
     ]
   },
   {
@@ -1586,7 +2138,39 @@
         "flag": true
       }
     },
-    "border": 67
+    "border": 67,
+    "signs": [
+      {
+        "x": 9,
+        "y": 51,
+        "text": 11
+      },
+      {
+        "x": 9,
+        "y": 63,
+        "text": 12
+      },
+      {
+        "x": 9,
+        "y": 75,
+        "text": 13
+      },
+      {
+        "x": 9,
+        "y": 87,
+        "text": 14
+      },
+      {
+        "x": 9,
+        "y": 111,
+        "text": 15
+      },
+      {
+        "x": 9,
+        "y": 141,
+        "text": 16
+      }
+    ]
   },
   {
     "name": "Route 18",
@@ -1638,6 +2222,18 @@
         "toWarp": 3,
         "toMap": "Route 18 Gate 1F"
       }
+    ],
+    "signs": [
+      {
+        "x": 43,
+        "y": 7,
+        "text": 4
+      },
+      {
+        "x": 33,
+        "y": 5,
+        "text": 5
+      }
     ]
   },
   {
@@ -1663,7 +2259,14 @@
         "stripOffset": 0
       }
     },
-    "border": 67
+    "border": 67,
+    "signs": [
+      {
+        "x": 11,
+        "y": 9,
+        "text": 11
+      }
+    ]
   },
   {
     "name": "Route 20",
@@ -1701,6 +2304,18 @@
         "y": 9,
         "toWarp": 2,
         "toMap": "Seafoam Islands 1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 51,
+        "y": 7,
+        "text": 11
+      },
+      {
+        "x": 57,
+        "y": 11,
+        "text": 12
       }
     ]
   },
@@ -1762,6 +2377,13 @@
         "toWarp": 0,
         "toMap": "Route 22 Gate"
       }
+    ],
+    "signs": [
+      {
+        "x": 7,
+        "y": 11,
+        "text": 3
+      }
     ]
   },
   {
@@ -1813,6 +2435,13 @@
         "y": 31,
         "toWarp": 1,
         "toMap": "Victory Road 2F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 33,
+        "text": 8
       }
     ]
   },
@@ -1868,6 +2497,13 @@
         "toWarp": 0,
         "toMap": "Bills House"
       }
+    ],
+    "signs": [
+      {
+        "x": 43,
+        "y": 3,
+        "text": 11
+      }
     ]
   },
   {
@@ -1900,6 +2536,13 @@
         "y": 1,
         "toWarp": 0,
         "toMap": "Reds House 2F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 1,
+        "text": 2
       }
     ]
   },
@@ -2345,6 +2988,38 @@
         "toWarp": 1,
         "toMap": "Viridian Forest South Gate"
       }
+    ],
+    "signs": [
+      {
+        "x": 24,
+        "y": 40,
+        "text": 9
+      },
+      {
+        "x": 16,
+        "y": 32,
+        "text": 10
+      },
+      {
+        "x": 26,
+        "y": 17,
+        "text": 11
+      },
+      {
+        "x": 4,
+        "y": 24,
+        "text": 12
+      },
+      {
+        "x": 18,
+        "y": 45,
+        "text": 13
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "text": 14
+      }
     ]
   },
   {
@@ -2410,6 +3085,18 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Museum 1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 11,
+        "y": 2,
+        "text": 6
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "text": 7
       }
     ]
   },
@@ -2594,6 +3281,13 @@
         "toWarp": 3,
         "toMap": "Mt Moon B1F"
       }
+    ],
+    "signs": [
+      {
+        "x": 15,
+        "y": 23,
+        "text": 14
+      }
     ]
   },
   {
@@ -2731,6 +3425,13 @@
         "y": 0,
         "toWarp": 7,
         "toMap": "Last Map"
+      }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 0,
+        "text": 3
       }
     ]
   },
@@ -3369,6 +4070,13 @@
         "toWarp": 3,
         "toMap": "Rock Tunnel B1F"
       }
+    ],
+    "signs": [
+      {
+        "x": 11,
+        "y": 29,
+        "text": 8
+      }
     ]
   },
   {
@@ -3503,6 +4211,18 @@
         "toWarp": 4,
         "toMap": "Route 11 Gate 1F"
       }
+    ],
+    "signs": [
+      {
+        "x": 1,
+        "y": 2,
+        "text": 3
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "text": 4
+      }
     ]
   },
   {
@@ -3628,6 +4348,18 @@
         "y": 7,
         "toWarp": 1,
         "toMap": "Last Map"
+      }
+    ],
+    "signs": [
+      {
+        "x": 1,
+        "y": 0,
+        "text": 7
+      },
+      {
+        "x": 6,
+        "y": 0,
+        "text": 8
       }
     ]
   },
@@ -4041,6 +4773,18 @@
         "y": 7,
         "toWarp": 8,
         "toMap": "SS Anne 2F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 4,
+        "y": 1,
+        "text": 2
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "text": 3
       }
     ]
   },
@@ -4576,6 +5320,18 @@
         "toWarp": 0,
         "toMap": "Celadon Mart Elevator"
       }
+    ],
+    "signs": [
+      {
+        "x": 11,
+        "y": 4,
+        "text": 2
+      },
+      {
+        "x": 14,
+        "y": 1,
+        "text": 3
+      }
     ]
   },
   {
@@ -4609,6 +5365,13 @@
         "y": 1,
         "toWarp": 0,
         "toMap": "Celadon Mart Elevator"
+      }
+    ],
+    "signs": [
+      {
+        "x": 14,
+        "y": 1,
+        "text": 5
       }
     ]
   },
@@ -4644,6 +5407,68 @@
         "toWarp": 0,
         "toMap": "Celadon Mart Elevator"
       }
+    ],
+    "signs": [
+      {
+        "x": 2,
+        "y": 4,
+        "text": 6
+      },
+      {
+        "x": 3,
+        "y": 4,
+        "text": 7
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "text": 8
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "text": 9
+      },
+      {
+        "x": 2,
+        "y": 6,
+        "text": 10
+      },
+      {
+        "x": 3,
+        "y": 6,
+        "text": 11
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "text": 12
+      },
+      {
+        "x": 6,
+        "y": 6,
+        "text": 13
+      },
+      {
+        "x": 14,
+        "y": 1,
+        "text": 14
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "text": 15
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "text": 16
+      },
+      {
+        "x": 10,
+        "y": 1,
+        "text": 17
+      }
     ]
   },
   {
@@ -4678,6 +5503,13 @@
         "toWarp": 0,
         "toMap": "Celadon Mart Elevator"
       }
+    ],
+    "signs": [
+      {
+        "x": 14,
+        "y": 1,
+        "text": 4
+      }
     ]
   },
   {
@@ -4698,6 +5530,28 @@
         "y": 2,
         "toWarp": 0,
         "toMap": "Celadon Mart 5F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 10,
+        "y": 1,
+        "text": 3
+      },
+      {
+        "x": 11,
+        "y": 1,
+        "text": 4
+      },
+      {
+        "x": 12,
+        "y": 2,
+        "text": 5
+      },
+      {
+        "x": 13,
+        "y": 2,
+        "text": 6
       }
     ]
   },
@@ -4725,6 +5579,13 @@
         "y": 3,
         "toWarp": 5,
         "toMap": "Celadon Mart 1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 0,
+        "text": 1
       }
     ]
   },
@@ -4772,6 +5633,13 @@
         "toWarp": 2,
         "toMap": "Celadon Mansion 2F"
       }
+    ],
+    "signs": [
+      {
+        "x": 4,
+        "y": 9,
+        "text": 5
+      }
     ]
   },
   {
@@ -4811,6 +5679,13 @@
         "y": 1,
         "toWarp": 3,
         "toMap": "Celadon Mansion 3F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 4,
+        "y": 9,
+        "text": 1
       }
     ]
   },
@@ -4852,6 +5727,28 @@
         "toWarp": 3,
         "toMap": "Celadon Mansion 2F"
       }
+    ],
+    "signs": [
+      {
+        "x": 1,
+        "y": 3,
+        "text": 5
+      },
+      {
+        "x": 4,
+        "y": 3,
+        "text": 6
+      },
+      {
+        "x": 1,
+        "y": 6,
+        "text": 7
+      },
+      {
+        "x": 4,
+        "y": 9,
+        "text": 8
+      }
     ]
   },
   {
@@ -4885,6 +5782,13 @@
         "y": 7,
         "toWarp": 0,
         "toMap": "Celadon Mansion Roof House"
+      }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 7,
+        "text": 1
       }
     ]
   },
@@ -5001,6 +5905,13 @@
         "toWarp": 1,
         "toMap": "Rocket Hideout B1F"
       }
+    ],
+    "signs": [
+      {
+        "x": 9,
+        "y": 4,
+        "text": 12
+      }
     ]
   },
   {
@@ -5035,6 +5946,13 @@
         "toWarp": 0,
         "toMap": "Celadon Mart Elevator"
       }
+    ],
+    "signs": [
+      {
+        "x": 14,
+        "y": 1,
+        "text": 5
+      }
     ]
   },
   {
@@ -5062,6 +5980,23 @@
         "y": 7,
         "toWarp": 9,
         "toMap": "Last Map"
+      }
+    ],
+    "signs": [
+      {
+        "x": 2,
+        "y": 2,
+        "text": 3
+      },
+      {
+        "x": 4,
+        "y": 2,
+        "text": 4
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "text": 5
       }
     ]
   },
@@ -5561,6 +6496,18 @@
         "toWarp": 3,
         "toMap": "Last Map"
       }
+    ],
+    "signs": [
+      {
+        "x": 4,
+        "y": 3,
+        "text": 4
+      },
+      {
+        "x": 5,
+        "y": 3,
+        "text": 5
+      }
     ]
   },
   {
@@ -5869,6 +6816,18 @@
         "toWarp": 2,
         "toMap": "Seafoam Islands B3F"
       }
+    ],
+    "signs": [
+      {
+        "x": 9,
+        "y": 15,
+        "text": 4
+      },
+      {
+        "x": 23,
+        "y": 1,
+        "text": 5
+      }
     ]
   },
   {
@@ -6068,6 +7027,28 @@
         "toWarp": 0,
         "toMap": "Cinnabar Lab Fossil Room"
       }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 2,
+        "text": 2
+      },
+      {
+        "x": 9,
+        "y": 4,
+        "text": 3
+      },
+      {
+        "x": 13,
+        "y": 4,
+        "text": 4
+      },
+      {
+        "x": 17,
+        "y": 4,
+        "text": 5
+      }
     ]
   },
   {
@@ -6123,6 +7104,23 @@
         "y": 7,
         "toWarp": 3,
         "toMap": "Cinnabar Lab"
+      }
+    ],
+    "signs": [
+      {
+        "x": 0,
+        "y": 4,
+        "text": 3
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "text": 4
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "text": 5
       }
     ]
   },
@@ -6305,6 +7303,18 @@
         "y": 1,
         "toWarp": 2,
         "toMap": "Copycats House 1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 5,
+        "text": 6
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "text": 7
       }
     ]
   },
@@ -6761,6 +7771,13 @@
         "toWarp": 4,
         "toMap": "Route 15 Gate 1F"
       }
+    ],
+    "signs": [
+      {
+        "x": 6,
+        "y": 2,
+        "text": 2
+      }
     ]
   },
   {
@@ -6850,6 +7867,18 @@
         "y": 7,
         "toWarp": 8,
         "toMap": "Route 16 Gate 1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 1,
+        "y": 2,
+        "text": 3
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "text": 4
       }
     ]
   },
@@ -6972,6 +8001,18 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Route 18 Gate 1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 1,
+        "y": 2,
+        "text": 2
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "text": 3
       }
     ]
   },
@@ -7148,6 +8189,18 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Route 12 Gate 1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 1,
+        "y": 2,
+        "text": 2
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "text": 3
       }
     ]
   },
@@ -7424,6 +8477,13 @@
         "y": 1,
         "toWarp": 4,
         "toMap": "Rocket Hideout B1F"
+      }
+    ],
+    "signs": [
+      {
+        "x": 1,
+        "y": 1,
+        "text": 1
       }
     ]
   },
@@ -7986,6 +9046,23 @@
         "toWarp": 0,
         "toMap": "Safari Zone East Rest House"
       }
+    ],
+    "signs": [
+      {
+        "x": 26,
+        "y": 10,
+        "text": 5
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "text": 6
+      },
+      {
+        "x": 5,
+        "y": 23,
+        "text": 7
+      }
     ]
   },
   {
@@ -8055,6 +9132,33 @@
         "toWarp": 0,
         "toMap": "Safari Zone North Rest House"
       }
+    ],
+    "signs": [
+      {
+        "x": 36,
+        "y": 4,
+        "text": 3
+      },
+      {
+        "x": 4,
+        "y": 25,
+        "text": 4
+      },
+      {
+        "x": 13,
+        "y": 31,
+        "text": 5
+      },
+      {
+        "x": 19,
+        "y": 33,
+        "text": 6
+      },
+      {
+        "x": 26,
+        "y": 28,
+        "text": 7
+      }
     ]
   },
   {
@@ -8117,6 +9221,28 @@
         "y": 11,
         "toWarp": 0,
         "toMap": "Safari Zone West Rest House"
+      }
+    ],
+    "signs": [
+      {
+        "x": 12,
+        "y": 12,
+        "text": 5
+      },
+      {
+        "x": 17,
+        "y": 3,
+        "text": 6
+      },
+      {
+        "x": 26,
+        "y": 4,
+        "text": 7
+      },
+      {
+        "x": 24,
+        "y": 22,
+        "text": 8
       }
     ]
   },
@@ -8186,6 +9312,18 @@
         "y": 19,
         "toWarp": 0,
         "toMap": "Safari Zone Center Rest House"
+      }
+    ],
+    "signs": [
+      {
+        "x": 18,
+        "y": 20,
+        "text": 2
+      },
+      {
+        "x": 14,
+        "y": 22,
+        "text": 3
       }
     ]
   },
@@ -8739,6 +9877,13 @@
         "y": 3,
         "toWarp": 0,
         "toMap": "237"
+      }
+    ],
+    "signs": [
+      {
+        "x": 3,
+        "y": 0,
+        "text": 1
       }
     ]
   },

@@ -144,6 +144,16 @@ struct MapDBEntryWarpOut
   MapDBEntry* toMap = nullptr;
 };
 
+struct MapDBEntrySign
+{
+  // X & Y location on Map
+  var8 x;
+  var8 y;
+
+  // Which text id to display when interacting with sign
+  var8 textID;
+};
+
 struct MapDBEntry {
 
   // Optional bool values are only present when true, so we simplify things
@@ -159,6 +169,9 @@ struct MapDBEntry {
 
   // Warps to other maps
   QVector<MapDBEntryWarpOut*> warpOut;
+
+  // Signs on map
+  QVector<MapDBEntrySign*> signs;
 
   // Connecting Maps
   QHash<var8,MapDBEntryConnect*> connect;

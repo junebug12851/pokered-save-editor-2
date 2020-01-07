@@ -335,6 +335,17 @@ void MapsDB::load()
       }
     }
 
+    if(mapEntry["signs"].isArray())
+    {
+      for(QJsonValue signEntry : mapEntry["signs"].toArray()) {
+        auto tmp = new MapDBEntrySign;
+        tmp->x = signEntry["x"].toDouble();
+        tmp->y = signEntry["y"].toDouble();
+        tmp->textID = signEntry["text"].toDouble();
+        entry->signs.append(tmp);
+      }
+    }
+
     if(mapEntry["connect"].isObject())
     {
       QJsonValue conVal = mapEntry["connect"].toObject();
