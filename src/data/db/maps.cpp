@@ -254,6 +254,9 @@ void MapDBEntrySprite::deepLink()
 #ifdef QT_DEBUG
   if(toSprite == nullptr)
     qCritical() << "MapDBEntrySprite: Unable to deep link " + sprite + " to sprite";
+
+  if(move == "" || text == 0 || (!range && face == ""))
+    qCritical() << "Values are not correct on sprite " + sprite;
 #endif
 }
 
@@ -279,6 +282,14 @@ SpriteType MapDBEntrySpriteItem::type()
 
 void MapDBEntrySpriteItem::deepLink()
 {
+  // There are 2 exceptions in the game where the item name will literally be
+  // "0". Daisy walking, and Town Map in Rival's house. My only guess is that
+  // they wanted to script an item rather than automate giving you an item but
+  // it's quite weird because Daisy Walking is an item. Another guess is this
+  // is an early in-development code before item automation was programmed in.
+  if(item == "0")
+    return;
+
   MapDBEntrySprite::deepLink();
   toItem = ItemsDB::ind.value(item);
 
