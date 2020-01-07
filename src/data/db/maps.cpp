@@ -308,6 +308,9 @@ void MapsDB::load()
     if(mapEntry["incomplete"].isString())
       entry->incomplete = mapEntry["incomplete"].toString();
 
+    if(mapEntry["border"].isDouble())
+      entry->border = mapEntry["border"].toDouble();
+
     if(mapEntry["connect"].isObject())
     {
       QJsonValue conVal = mapEntry["connect"].toObject();

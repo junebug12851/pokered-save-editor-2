@@ -137,6 +137,9 @@ struct MapDBEntry {
   // Connecting Maps
   QHash<var8,MapDBEntryConnect*> connect;
 
+  // Border Block #
+  std::optional<var8> border;
+
   std::optional<var8> bank;
   std::optional<var16> dataPtr;
   std::optional<var16> scriptPtr;
