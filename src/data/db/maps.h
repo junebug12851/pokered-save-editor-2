@@ -121,6 +121,26 @@ struct MapDBEntryConnect {
   var16 window();
 };
 
+// List of Warps on Map that warp out to a different map
+// They can only warp to a "warp-in" point
+struct MapDBEntryWarpOut
+{
+  void deepLink();
+
+  // X & Y location on Map
+  var8 x;
+  var8 y;
+
+  // Which pre-defined warp-in to warp to
+  var8 warp;
+
+  // Which map to warp to
+  QString map;
+
+  // Go to map
+  MapDBEntry* toMap = nullptr;
+};
+
 struct MapDBEntry {
 
   // Optional bool values are only present when true, so we simplify things
@@ -133,6 +153,9 @@ struct MapDBEntry {
 
   bool glitch;
   bool special;
+
+  // Warps to other maps
+  QVector<MapDBEntryWarpOut*> warpOut;
 
   // Connecting Maps
   QHash<var8,MapDBEntryConnect*> connect;

@@ -234,6 +234,17 @@ var16 MapDBEntryConnect::window()
   return ret;
 }
 
+void MapDBEntryWarpOut::deepLink()
+{
+  auto tmp = MapsDB::ind.value(map, nullptr);
+  toMap = tmp;
+
+#ifdef QT_DEBUG
+    if(toMap == nullptr)
+      qCritical() << "Map Warp Out entry: " << map << ", could not be deep linked to map";
+#endif
+}
+
 MapDBEntry::MapDBEntry()
 {
   special = false;
@@ -311,6 +322,18 @@ void MapsDB::load()
     if(mapEntry["border"].isDouble())
       entry->border = mapEntry["border"].toDouble();
 
+    if(mapEntry["warpOut"].isArray())
+    {
+      for(QJsonValue warpEntry : mapEntry["warpOut"].toArray()) {
+        auto tmp = new MapDBEntryWarpOut;
+        tmp->x = warpEntry["x"].toDouble();
+        tmp->y = warpEntry["y"].toDouble();
+        tmp->warp = warpEntry["toWarp"].toDouble();
+        tmp->map = warpEntry["toMap"].toString();
+        entry->warpOut.append(tmp);
+      }
+    }
+
     if(mapEntry["connect"].isObject())
     {
       QJsonValue conVal = mapEntry["connect"].toObject();
@@ -383,6 +406,10 @@ void MapsDB::deepLink()
       entry->connect.value((var8)ConnectDir::SOUTH)->deepLink();
     if(entry->connect.contains((var8)ConnectDir::WEST))
       entry->connect.value((var8)ConnectDir::WEST)->deepLink();
+
+    if(entry->warpOut.size() > 0)
+      for(auto warpEntry : entry->warpOut)
+        warpEntry->deepLink();
 
 #ifdef QT_DEBUG
     if(entry->music != "" && entry->toMusic == nullptr)
