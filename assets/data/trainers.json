@@ -20,7 +20,7 @@
         "ind": 5
     },
     {
-        "name": "Jr Trainer F",
+        "name": "Jr. Trainer F",
         "ind": 6
     },
     {
@@ -60,7 +60,7 @@
         "ind": 15
     },
     {
-        "name": "Cue_ball",
+        "name": "Cue Ball",
         "ind": 16
     },
     {
@@ -215,7 +215,7 @@
         "opp": true
     },
     {
-        "name": "Jr Trainer F",
+        "name": "Jr. Trainer F",
         "ind": 206,
         "opp": true
     },
@@ -265,7 +265,7 @@
         "opp": true
     },
     {
-        "name": "Cue_ball",
+        "name": "Cue Ball",
         "ind": 216,
         "opp": true
     },

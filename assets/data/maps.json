@@ -68,7 +68,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Oak",
+        "sprite": "Prof. Oak",
         "x": 8,
         "y": 5,
         "move": "Stay",
@@ -525,7 +525,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Blue",
+        "sprite": "Rival",
         "x": 20,
         "y": 2,
         "move": "Stay",
@@ -1925,7 +1925,7 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Hp Up"
+        "item": "HP Up"
       }
     ]
   },
@@ -2139,7 +2139,7 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Tm 04"
+        "item": "TM 04: Whirlwind"
       }
     ]
   },
@@ -2274,7 +2274,7 @@
         "move": "Stay",
         "text": 1,
         "face": "Right",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 4
       },
       {
@@ -2284,7 +2284,7 @@
         "move": "Stay",
         "text": 2,
         "face": "Left",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 2
       },
       {
@@ -2304,7 +2304,7 @@
         "move": "Stay",
         "text": 4,
         "face": "Left",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 5
       },
       {
@@ -2314,7 +2314,7 @@
         "move": "Stay",
         "text": 5,
         "face": "Left",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 3
       },
       {
@@ -2590,7 +2590,7 @@
         "move": "Stay",
         "text": 1,
         "face": "Left",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 5
       },
       {
@@ -2600,7 +2600,7 @@
         "move": "Stay",
         "text": 2,
         "face": "Left",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 7
       },
       {
@@ -2610,7 +2610,7 @@
         "move": "Stay",
         "text": 3,
         "face": "Right",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 8
       },
       {
@@ -2620,7 +2620,7 @@
         "move": "Stay",
         "text": 4,
         "face": "Right",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 6
       },
       {
@@ -2680,7 +2680,7 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Tm 30"
+        "item": "TM 30: TELEPORT"
       }
     ]
   },
@@ -2794,7 +2794,7 @@
         "move": "Stay",
         "text": 4,
         "face": "Left",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 7
       },
       {
@@ -2814,7 +2814,7 @@
         "move": "Stay",
         "text": 6,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 8
       }
     ]
@@ -3089,7 +3089,7 @@
         "move": "Stay",
         "text": 4,
         "face": "Left",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 9
       },
       {
@@ -3139,7 +3139,7 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "Tm 16"
+        "item": "TM 16: PAY DAY"
       },
       {
         "sprite": "Pokeball",
@@ -3211,7 +3211,7 @@
         "move": "Stay",
         "text": 2,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 12
       },
       {
@@ -3221,7 +3221,7 @@
         "move": "Stay",
         "text": 3,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 13
       },
       {
@@ -3231,7 +3231,7 @@
         "move": "Stay",
         "text": 4,
         "face": "Left",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 14
       },
       {
@@ -3241,7 +3241,7 @@
         "move": "Stay",
         "text": 5,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 15
       },
       {
@@ -3495,7 +3495,7 @@
         "move": "Stay",
         "text": 1,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 20
       },
       {
@@ -3505,7 +3505,7 @@
         "move": "Stay",
         "text": 2,
         "face": "Left",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 21
       },
       {
@@ -3575,7 +3575,7 @@
         "move": "Stay",
         "text": 9,
         "face": "Right",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 22
       },
       {
@@ -3585,7 +3585,7 @@
         "move": "Stay",
         "text": 10,
         "face": "Up",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 23
       },
       {
@@ -3595,7 +3595,7 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "Tm 20"
+        "item": "TM 20: RAGE"
       }
     ]
   },
@@ -4241,7 +4241,7 @@
         "move": "Stay",
         "text": 4,
         "face": "Right",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 24
       },
       {
@@ -4291,7 +4291,7 @@
         "move": "Stay",
         "text": 9,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 16
       },
       {
@@ -4466,7 +4466,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Blue",
+        "sprite": "Rival",
         "x": 25,
         "y": 5,
         "move": "Stay",
@@ -4474,7 +4474,7 @@
         "face": "None"
       },
       {
-        "sprite": "Blue",
+        "sprite": "Rival",
         "x": 25,
         "y": 5,
         "move": "Stay",
@@ -4643,7 +4643,7 @@
         "move": "Stay",
         "text": 2,
         "face": "Up",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 2
       },
       {
@@ -4653,7 +4653,7 @@
         "move": "Stay",
         "text": 3,
         "face": "Left",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 3
       },
       {
@@ -4703,7 +4703,7 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "Tm 45"
+        "item": "TM 45: THUNDER WAVE"
       }
     ]
   },
@@ -4769,7 +4769,7 @@
         "move": "Stay",
         "text": 3,
         "face": "Down",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 2
       },
       {
@@ -4839,7 +4839,7 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Tm 19"
+        "item": "TM 19: SEISMIC TOSS"
       }
     ]
   },
@@ -4997,13 +4997,13 @@
     ],
     "sprites": [
       {
-        "sprite": "Blue",
+        "sprite": "Rival",
         "x": 4,
         "y": 3,
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "class": "Sony 1",
+        "class": "Rival 1",
         "team": 1
       },
       {
@@ -5031,7 +5031,7 @@
         "face": "None"
       },
       {
-        "sprite": "Oak",
+        "sprite": "Prof. Oak",
         "x": 5,
         "y": 2,
         "move": "Stay",
@@ -5055,7 +5055,7 @@
         "face": "None"
       },
       {
-        "sprite": "Oak",
+        "sprite": "Prof. Oak",
         "x": 5,
         "y": 10,
         "move": "Stay",
@@ -6073,7 +6073,7 @@
         "move": "Stay",
         "text": 2,
         "face": "Right",
-        "class": "Jr Trainer M",
+        "class": "Jr. Trainer M",
         "team": 1
       },
       {
@@ -6475,7 +6475,7 @@
         "move": "Stay",
         "text": 13,
         "face": "None",
-        "item": "Tm 12"
+        "item": "TM 12: WATER GUN"
       }
     ]
   },
@@ -6656,7 +6656,7 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "Hp Up"
+        "item": "HP Up"
       },
       {
         "sprite": "Pokeball",
@@ -6665,7 +6665,7 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "Tm 01"
+        "item": "TM 01: MEGA PUNCH"
       }
     ]
   },
@@ -6879,7 +6879,7 @@
         "move": "Stay",
         "text": 2,
         "face": "Right",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 1
       },
       {
@@ -7755,7 +7755,7 @@
         "move": "Stay",
         "text": 5,
         "face": "Left",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 17
       },
       {
@@ -7765,7 +7765,7 @@
         "move": "Stay",
         "text": 6,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 18
       },
       {
@@ -7775,7 +7775,7 @@
         "move": "Stay",
         "text": 7,
         "face": "Right",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 19
       }
     ]
@@ -7919,7 +7919,7 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "Hp Up"
+        "item": "HP Up"
       },
       {
         "sprite": "Pokeball",
@@ -7937,7 +7937,7 @@
         "move": "Stay",
         "text": 13,
         "face": "None",
-        "item": "Tm 25"
+        "item": "TM 25: THUNDER"
       },
       {
         "sprite": "Pokeball",
@@ -7946,7 +7946,7 @@
         "move": "Stay",
         "text": 14,
         "face": "None",
-        "item": "Tm 33"
+        "item": "TM 33: REFLECT"
       }
     ]
   },
@@ -8749,13 +8749,13 @@
         "range": 1
       },
       {
-        "sprite": "Blue",
+        "sprite": "Rival",
         "x": 36,
         "y": 4,
         "move": "Stay",
         "text": 2,
         "face": "Down",
-        "class": "Sony 1",
+        "class": "Rival 1",
         "team": 1
       }
     ]
@@ -9039,7 +9039,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Ss Captain",
+        "sprite": "SS. Captain",
         "x": 4,
         "y": 2,
         "move": "Stay",
@@ -9187,7 +9187,7 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Tm 08"
+        "item": "TM 08: BODY SLAM"
       },
       {
         "sprite": "Gentleman",
@@ -9571,7 +9571,7 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Tm 44"
+        "item": "TM 44: REST"
       },
       {
         "sprite": "Pokeball",
@@ -9666,7 +9666,7 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Tm 43"
+        "item": "TM 43: SKY ATTACK"
       },
       {
         "sprite": "Pokeball",
@@ -9832,7 +9832,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Oak",
+        "sprite": "Prof. Oak",
         "x": 5,
         "y": 2,
         "move": "Stay",
@@ -9909,7 +9909,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Blue",
+        "sprite": "Rival",
         "x": 4,
         "y": 2,
         "move": "Stay",
@@ -9917,7 +9917,7 @@
         "face": "Down"
       },
       {
-        "sprite": "Oak",
+        "sprite": "Prof. Oak",
         "x": 3,
         "y": 7,
         "move": "Stay",
@@ -10845,7 +10845,7 @@
         "move": "Stay",
         "text": 4,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 11
       },
       {
@@ -11502,7 +11502,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Blue",
+        "sprite": "Rival",
         "x": 14,
         "y": 5,
         "move": "Stay",
@@ -11671,7 +11671,7 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Hp Up"
+        "item": "HP Up"
       }
     ]
   },
@@ -11893,7 +11893,7 @@
         "team": 21
       },
       {
-        "sprite": "Mr Fuji",
+        "sprite": "Mr. Fuji",
         "x": 10,
         "y": 3,
         "move": "Stay",
@@ -11963,7 +11963,7 @@
         "face": "None"
       },
       {
-        "sprite": "Mr Fuji",
+        "sprite": "Mr. Fuji",
         "x": 3,
         "y": 1,
         "move": "Stay",
@@ -14071,7 +14071,7 @@
         "move": "Stay",
         "text": 3,
         "face": "Down",
-        "class": "Psychic Tr",
+        "class": "Psychic Trainer",
         "team": 1
       },
       {
@@ -14091,7 +14091,7 @@
         "move": "Stay",
         "text": 5,
         "face": "Down",
-        "class": "Psychic Tr",
+        "class": "Psychic Trainer",
         "team": 2
       },
       {
@@ -14111,7 +14111,7 @@
         "move": "Stay",
         "text": 7,
         "face": "Down",
-        "class": "Psychic Tr",
+        "class": "Psychic Trainer",
         "team": 3
       },
       {
@@ -14121,7 +14121,7 @@
         "move": "Stay",
         "text": 8,
         "face": "Down",
-        "class": "Psychic Tr",
+        "class": "Psychic Trainer",
         "team": 4
       },
       {
@@ -15066,7 +15066,7 @@
         "move": "Stay",
         "text": 7,
         "face": "None",
-        "item": "Tm 17"
+        "item": "TM 17: SUBMISSION"
       },
       {
         "sprite": "Pokeball",
@@ -15084,7 +15084,7 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "Tm 05"
+        "item": "TM 05: MEGA KICK"
       },
       {
         "sprite": "Pokeball",
@@ -15325,7 +15325,7 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Tm 47"
+        "item": "TM 47: EXPLOSION"
       },
       {
         "sprite": "Boulder",
@@ -15558,7 +15558,7 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Tm 07"
+        "item": "TM 07: HORN DRILL"
       },
       {
         "sprite": "Pokeball",
@@ -15626,7 +15626,7 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Tm 10"
+        "item": "TM 10: DOUBLE EDGE"
       },
       {
         "sprite": "Pokeball",
@@ -15720,7 +15720,7 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "Hp Up"
+        "item": "HP Up"
       },
       {
         "sprite": "Pokeball",
@@ -15729,7 +15729,7 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Tm 02"
+        "item": "TM 02: RAZOR WIND"
       },
       {
         "sprite": "Pokeball",
@@ -16272,7 +16272,7 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Tm 09"
+        "item": "TM 09: TAKE DOWN"
       },
       {
         "sprite": "Pokeball",
@@ -16440,7 +16440,7 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "Hp Up"
+        "item": "HP Up"
       },
       {
         "sprite": "Pokeball",
@@ -16577,7 +16577,7 @@
         "team": 34
       },
       {
-        "sprite": "Blue",
+        "sprite": "Rival",
         "x": 3,
         "y": 7,
         "move": "Stay",
@@ -16600,7 +16600,7 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "Tm 03"
+        "item": "TM 03: SWORDS DANCE"
       }
     ]
   },
@@ -16927,7 +16927,7 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "Tm 14"
+        "item": "TM 14: BLIZZARD"
       },
       {
         "sprite": "Pokeball",
@@ -16936,7 +16936,7 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Tm 22"
+        "item": "TM 22: SOLARBEAM"
       },
       {
         "sprite": "Book Map Dex",
@@ -17053,7 +17053,7 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Tm 37"
+        "item": "TM 37: EGG BOMB"
       }
     ]
   },
@@ -17169,7 +17169,7 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Tm 40"
+        "item": "TM 40: SKULLBASH"
       }
     ]
   },
@@ -17274,7 +17274,7 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Tm 32"
+        "item": "TM 32: DOUBLE TEAM"
       },
       {
         "sprite": "Pokeball",
@@ -17692,7 +17692,7 @@
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "item": "Pp Up"
+        "item": "PP UP"
       },
       {
         "sprite": "Pokeball",
@@ -17893,7 +17893,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Mr Masterball",
+        "sprite": "Mr. Masterball",
         "x": 5,
         "y": 3,
         "move": "Stay",
@@ -18000,7 +18000,7 @@
         "move": "Stay",
         "text": 1,
         "face": "Down",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 9
       },
       {
@@ -18050,7 +18050,7 @@
         "move": "Stay",
         "text": 6,
         "face": "Right",
-        "class": "Jr Trainer F",
+        "class": "Jr. Trainer F",
         "team": 10
       },
       {
@@ -18246,7 +18246,7 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Tm 26"
+        "item": "TM 26: EARTHQUAKE"
       },
       {
         "sprite": "Pokeball",
@@ -18308,7 +18308,7 @@
     ],
     "sprites": [
       {
-        "sprite": "Mr Masterball",
+        "sprite": "Mr. Masterball",
         "x": 7,
         "y": 5,
         "move": "Stay",
@@ -18417,7 +18417,7 @@
     "border": 14,
     "sprites": [
       {
-        "sprite": "Red",
+        "sprite": "Player",
         "x": 2,
         "y": 2,
         "move": "Stay",
@@ -18440,7 +18440,7 @@
     "border": 14,
     "sprites": [
       {
-        "sprite": "Red",
+        "sprite": "Player",
         "x": 2,
         "y": 2,
         "move": "Stay",

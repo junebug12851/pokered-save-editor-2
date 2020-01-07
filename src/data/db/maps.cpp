@@ -26,6 +26,10 @@
 #include "./tileset.h"
 #include "./music.h"
 #include "./gamedata.h"
+#include "./sprites.h"
+#include "./items.h"
+#include "./pokemon.h"
+#include "./trainers.h"
 
 MapDBEntryConnect::MapDBEntryConnect() {}
 MapDBEntryConnect::MapDBEntryConnect(
@@ -234,6 +238,87 @@ var16 MapDBEntryConnect::window()
   return ret;
 }
 
+// Called from child classes
+SpriteType MapDBEntrySprite::type() {
+#ifdef QT_DEBUG
+    qCritical() << "MapDBEntrySprite: Parent asked what child type is";
+#endif
+
+  return SpriteType::ERROR;
+}
+
+void MapDBEntrySprite::deepLink()
+{
+  toSprite = SpritesDB::ind.value(sprite);
+
+#ifdef QT_DEBUG
+  if(toSprite == nullptr)
+    qCritical() << "MapDBEntrySprite: Unable to deep link " + sprite + " to sprite";
+#endif
+}
+
+var8 MapDBEntrySprite::adjustedX()
+{
+  return x + 4;
+}
+
+var8 MapDBEntrySprite::adjustedY()
+{
+  return y + 4;
+}
+
+SpriteType MapDBEntrySpriteNPC::type()
+{
+  return SpriteType::NPC;
+}
+
+SpriteType MapDBEntrySpriteItem::type()
+{
+  return SpriteType::ITEM;
+}
+
+void MapDBEntrySpriteItem::deepLink()
+{
+  MapDBEntrySprite::deepLink();
+  toItem = ItemsDB::ind.value(item);
+
+#ifdef QT_DEBUG
+  if(toItem == nullptr)
+    qCritical() << "MapDBEntrySpriteItem: Unable to deep link " + item + " to item";
+#endif
+}
+
+SpriteType MapDBEntrySpritePokemon::type()
+{
+  return SpriteType::POKEMON;
+}
+
+void MapDBEntrySpritePokemon::deepLink()
+{
+  toPokemon = PokemonDB::ind.value(pokemon);
+
+#ifdef QT_DEBUG
+  if(toPokemon == nullptr)
+    qCritical() << "MapDBEntrySpritePokemon: Unable to deep link " + pokemon + " to pokemon";
+#endif
+}
+
+SpriteType MapDBEntrySpriteTrainer::type()
+{
+  return SpriteType::TRAINER;
+}
+
+void MapDBEntrySpriteTrainer::deepLink()
+{
+  MapDBEntrySprite::deepLink();
+  toTrainer = TrainersDB::ind.value("Opp"+trainerClass);
+
+#ifdef QT_DEBUG
+  if(toTrainer == nullptr)
+    qCritical() << "MapDBEntrySpriteTrainer: Unable to deep link " + trainerClass + " to trainer";
+#endif
+}
+
 void MapDBEntryWarpOut::deepLink()
 {
   auto tmp = MapsDB::ind.value(map, nullptr);
@@ -346,6 +431,49 @@ void MapsDB::load()
       }
     }
 
+    if(mapEntry["sprites"].isArray())
+    {
+      for(QJsonValue spriteEntry : mapEntry["sprites"].toArray()) {
+
+        MapDBEntrySprite* ret;
+
+        if(spriteEntry["item"].isString()) {
+          auto tmp = new MapDBEntrySpriteItem;
+          tmp->item = spriteEntry["item"].toString();
+          ret = tmp;
+        }
+        else if(spriteEntry["class"].isString()) {
+          auto tmp = new MapDBEntrySpriteTrainer;
+          tmp->trainerClass = spriteEntry["class"].toString();
+          tmp->team = spriteEntry["team"].toDouble();
+          ret = tmp;
+        }
+        else if(spriteEntry["pokemon"].isString()) {
+          auto tmp = new MapDBEntrySpritePokemon;
+          tmp->pokemon = spriteEntry["pokemon"].toString();
+          tmp->level = spriteEntry["level"].toDouble();
+          ret = tmp;
+        }
+        else {
+          auto tmp = new MapDBEntrySpriteNPC;
+          ret = tmp;
+        }
+
+        ret->sprite = spriteEntry["sprite"].toString();
+        ret->x = spriteEntry["x"].toDouble();
+        ret->y = spriteEntry["y"].toDouble();
+        ret->move = spriteEntry["move"].toString();
+        ret->text = spriteEntry["text"].toDouble();
+
+        if(spriteEntry["range"].isDouble())
+          ret->range = spriteEntry["range"].toDouble();
+        else
+          ret->face = spriteEntry["face"].toString();
+
+        entry->sprites.append(ret);
+      }
+    }
+
     if(mapEntry["connect"].isObject())
     {
       QJsonValue conVal = mapEntry["connect"].toObject();
@@ -422,6 +550,10 @@ void MapsDB::deepLink()
     if(entry->warpOut.size() > 0)
       for(auto warpEntry : entry->warpOut)
         warpEntry->deepLink();
+
+    if(entry->sprites.size() > 0)
+      for(auto spriteEntry : entry->sprites)
+        spriteEntry->deepLink();
 
 #ifdef QT_DEBUG
     if(entry->music != "" && entry->toMusic == nullptr)

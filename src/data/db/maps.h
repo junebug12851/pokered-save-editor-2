@@ -27,6 +27,10 @@
 
 struct MusicDBEntry;
 struct TilesetDBEntry;
+struct SpriteDBEntry;
+struct ItemDBEntry;
+struct PokemonDBEntry;
+struct TrainerDBEntry;
 
 struct MapDBEntry;
 
@@ -45,6 +49,25 @@ enum class ConnectDir : var8
   SOUTH,
   EAST,
   WEST
+};
+
+enum class SpriteType : var8
+{
+  // The sprite is a simple NPC
+  NPC,
+
+  // The sprite is an item that can be obtained
+  ITEM,
+
+  // The sprite is a one-time Pokemon that can be battled and beaten
+  POKEMON,
+
+  // The sprite is a trainer which has a team that can be battled and beaten
+  TRAINER,
+
+  // There's no child class for some reason, your asking the parent who doesn't
+  // know
+  ERROR
 };
 
 /*
@@ -121,6 +144,88 @@ struct MapDBEntryConnect {
   var16 window();
 };
 
+// Sprites are a tad complicated only becuase there are different kinds of
+// sprites having different set of options and all rolled into one data set.
+struct MapDBEntrySprite
+{
+  virtual SpriteType type();
+  virtual void deepLink();
+
+  // Name of sprite
+  QString sprite;
+
+  // X & Y position on map
+  var8 x;
+  var8 y;
+
+  // X & Y Coordinates adjusted for the gen 1 games
+  var8 adjustedX();
+  var8 adjustedY();
+
+  // Whether the sprite is moving or remaining still
+  // Walk, Stay
+  // The game only uses those 2 options but if a 3rd value is present it will
+  // move without collision detection
+  QString move;
+
+  // Text when interacting with sprite
+  var8 text;
+
+  // Is the sprite allowed room to move?
+  // Or is it given a static facing position
+  // Only one or the other can be filled in, not both
+  std::optional<var8> range;
+  QString face;
+
+  // To Sprite
+  SpriteDBEntry* toSprite = nullptr;
+};
+
+// A regular NPC that says a few lines and may have a script that's run
+struct MapDBEntrySpriteNPC : public MapDBEntrySprite
+{
+  virtual SpriteType type();
+};
+
+// An item that's obtained
+struct MapDBEntrySpriteItem : public MapDBEntrySprite
+{
+  virtual SpriteType type();
+  virtual void deepLink();
+
+  // Which Item
+  QString item;
+
+  ItemDBEntry* toItem = nullptr;
+};
+
+// A Pokemon that can be battled
+struct MapDBEntrySpritePokemon : public MapDBEntrySprite
+{
+  virtual SpriteType type();
+  virtual void deepLink();
+
+  // Pokemon Details
+  QString pokemon;
+  var8 level;
+
+  PokemonDBEntry* toPokemon = nullptr;
+};
+
+// A trainer that can be battled
+struct MapDBEntrySpriteTrainer : public MapDBEntrySprite
+{
+  virtual SpriteType type();
+  virtual void deepLink();
+
+  // Trainer Details
+  // What kind of trainer and which team
+  QString trainerClass;
+  var8 team;
+
+  TrainerDBEntry* toTrainer = nullptr;
+};
+
 // List of Warps on Map that warp out to a different map
 // They can only warp to a "warp-in" point
 struct MapDBEntryWarpOut
@@ -172,6 +277,9 @@ struct MapDBEntry {
 
   // Signs on map
   QVector<MapDBEntrySign*> signs;
+
+  // Sprites on map
+  QVector<MapDBEntrySprite*> sprites;
 
   // Connecting Maps
   QHash<var8,MapDBEntryConnect*> connect;
