@@ -65,6 +65,32 @@
         "y": 5,
         "text": 7
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak",
+        "x": 8,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Girl",
+        "x": 3,
+        "y": 8,
+        "move": "Walk",
+        "text": 2,
+        "range": 0
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 11,
+        "y": 14,
+        "move": "Walk",
+        "text": 3,
+        "range": 0
+      }
     ]
   },
   {
@@ -159,6 +185,64 @@
         "x": 27,
         "y": 7,
         "text": 13
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 13,
+        "y": 20,
+        "move": "Walk",
+        "text": 1,
+        "range": 0
+      },
+      {
+        "sprite": "Gambler",
+        "x": 30,
+        "y": 8,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 30,
+        "y": 25,
+        "move": "Walk",
+        "text": 3,
+        "range": 0
+      },
+      {
+        "sprite": "Girl",
+        "x": 17,
+        "y": 9,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right"
+      },
+      {
+        "sprite": "Lying Old Man",
+        "x": 18,
+        "y": 9,
+        "move": "Stay",
+        "text": 5,
+        "face": "None"
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 6,
+        "y": 23,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gambler",
+        "x": 17,
+        "y": 5,
+        "move": "Walk",
+        "text": 7,
+        "range": 2
       }
     ]
   },
@@ -265,6 +349,48 @@
         "x": 25,
         "y": 23,
         "text": 12
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lass",
+        "x": 8,
+        "y": 15,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 17,
+        "y": 25,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 27,
+        "y": 17,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 26,
+        "y": 25,
+        "move": "Walk",
+        "text": 4,
+        "range": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 35,
+        "y": 16,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
       }
     ]
   },
@@ -396,6 +522,98 @@
         "y": 21,
         "text": 17
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Blue",
+        "x": 20,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 30,
+        "y": 8,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "class": "Rocket",
+        "team": 5
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 31,
+        "y": 20,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 15,
+        "y": 18,
+        "move": "Walk",
+        "text": 4,
+        "range": 1
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 9,
+        "y": 21,
+        "move": "Walk",
+        "text": 5,
+        "range": 2
+      },
+      {
+        "sprite": "Guard",
+        "x": 28,
+        "y": 12,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down"
+      },
+      {
+        "sprite": "Lass",
+        "x": 29,
+        "y": 26,
+        "move": "Stay",
+        "text": 7,
+        "face": "Left"
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 28,
+        "y": 26,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down"
+      },
+      {
+        "sprite": "Lass",
+        "x": 9,
+        "y": 27,
+        "move": "Walk",
+        "text": 9,
+        "range": 2
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 4,
+        "y": 12,
+        "move": "Stay",
+        "text": 10,
+        "face": "Down"
+      },
+      {
+        "sprite": "Guard",
+        "x": 27,
+        "y": 12,
+        "move": "Stay",
+        "text": 11,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -496,6 +714,32 @@
         "x": 17,
         "y": 7,
         "text": 9
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Little Girl",
+        "x": 15,
+        "y": 9,
+        "move": "Walk",
+        "text": 1,
+        "range": 0
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 9,
+        "y": 10,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 8,
+        "y": 7,
+        "move": "Walk",
+        "text": 3,
+        "range": 2
       }
     ]
   },
@@ -614,6 +858,56 @@
         "x": 29,
         "y": 15,
         "text": 13
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Foulard Woman",
+        "x": 19,
+        "y": 7,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "Gambler",
+        "x": 14,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Sailor",
+        "x": 19,
+        "y": 30,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up"
+      },
+      {
+        "sprite": "Gambler",
+        "x": 30,
+        "y": 7,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 29,
+        "y": 9,
+        "move": "Walk",
+        "text": 5,
+        "range": 1
+      },
+      {
+        "sprite": "Sailor",
+        "x": 25,
+        "y": 27,
+        "move": "Walk",
+        "text": 6,
+        "range": 2
       }
     ]
   },
@@ -768,6 +1062,80 @@
         "x": 27,
         "y": 21,
         "text": 18
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Little Girl",
+        "x": 8,
+        "y": 17,
+        "move": "Walk",
+        "text": 1,
+        "range": 0
+      },
+      {
+        "sprite": "Old Person",
+        "x": 11,
+        "y": 28,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up"
+      },
+      {
+        "sprite": "Girl",
+        "x": 14,
+        "y": 19,
+        "move": "Walk",
+        "text": 3,
+        "range": 1
+      },
+      {
+        "sprite": "Old Person",
+        "x": 25,
+        "y": 22,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
+      },
+      {
+        "sprite": "Old Person",
+        "x": 22,
+        "y": 16,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 32,
+        "y": 12,
+        "move": "Stay",
+        "text": 6,
+        "face": "Left"
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 30,
+        "y": 12,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 32,
+        "y": 29,
+        "move": "Walk",
+        "text": 8,
+        "range": 2
+      },
+      {
+        "sprite": "Rocket",
+        "x": 42,
+        "y": 14,
+        "move": "Walk",
+        "text": 9,
+        "range": 2
       }
     ]
   },
@@ -927,6 +1295,88 @@
         "y": 7,
         "text": 24
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 10,
+        "y": 12,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "Gambler",
+        "x": 28,
+        "y": 17,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 30,
+        "y": 14,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 24,
+        "y": 8,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up"
+      },
+      {
+        "sprite": "Clefairy",
+        "x": 31,
+        "y": 5,
+        "move": "Walk",
+        "text": 5,
+        "range": 0
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 25,
+        "y": 6,
+        "move": "Stay",
+        "text": 6,
+        "face": "None"
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 12,
+        "y": 6,
+        "move": "Walk",
+        "text": 7,
+        "range": 2
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 30,
+        "y": 12,
+        "move": "Walk",
+        "text": 8,
+        "range": 2
+      },
+      {
+        "sprite": "Seel",
+        "x": 8,
+        "y": 17,
+        "move": "Walk",
+        "text": 9,
+        "range": 0
+      },
+      {
+        "sprite": "Omanyte",
+        "x": 6,
+        "y": 5,
+        "move": "Stay",
+        "text": 10,
+        "face": "None"
+      }
     ]
   },
   {
@@ -1010,6 +1460,24 @@
         "x": 13,
         "y": 3,
         "text": 7
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Girl",
+        "x": 12,
+        "y": 5,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "Gambler",
+        "x": 14,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
       }
     ]
   },
@@ -1183,6 +1651,128 @@
         "y": 19,
         "text": 25
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Rocket",
+        "x": 7,
+        "y": 6,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 20,
+        "y": 8,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      },
+      {
+        "sprite": "Rocket",
+        "x": 34,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 13,
+        "y": 12,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 11,
+        "y": 25,
+        "move": "Walk",
+        "text": 5,
+        "range": 2
+      },
+      {
+        "sprite": "Rocket",
+        "x": 32,
+        "y": 13,
+        "move": "Walk",
+        "text": 6,
+        "range": 2
+      },
+      {
+        "sprite": "Rocket",
+        "x": 18,
+        "y": 30,
+        "move": "Walk",
+        "text": 7,
+        "range": 2
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 8,
+        "y": 14,
+        "move": "Walk",
+        "text": 8,
+        "range": 0
+      },
+      {
+        "sprite": "Lapras Giver",
+        "x": 23,
+        "y": 23,
+        "move": "Stay",
+        "text": 9,
+        "face": "None"
+      },
+      {
+        "sprite": "Erika",
+        "x": 17,
+        "y": 30,
+        "move": "Walk",
+        "text": 10,
+        "range": 2
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 30,
+        "y": 12,
+        "move": "Stay",
+        "text": 11,
+        "face": "Down"
+      },
+      {
+        "sprite": "Bird",
+        "x": 31,
+        "y": 12,
+        "move": "Stay",
+        "text": 12,
+        "face": "Down"
+      },
+      {
+        "sprite": "Rocker",
+        "x": 18,
+        "y": 8,
+        "move": "Stay",
+        "text": 13,
+        "face": "Up"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 18,
+        "y": 22,
+        "move": "Stay",
+        "text": 14,
+        "face": "Down"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 19,
+        "y": 22,
+        "move": "Stay",
+        "text": 15,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -1222,6 +1812,24 @@
         "x": 9,
         "y": 27,
         "text": 3
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 5,
+        "y": 24,
+        "move": "Walk",
+        "text": 1,
+        "range": 1
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 15,
+        "y": 13,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
       }
     ]
   },
@@ -1299,6 +1907,26 @@
         "y": 11,
         "text": 4
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Pokeball",
+        "x": 13,
+        "y": 54,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "item": "Moon Stone"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 13,
+        "y": 45,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Hp Up"
+      }
     ]
   },
   {
@@ -1330,6 +1958,96 @@
         "x": 59,
         "y": 9,
         "text": 10
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 57,
+        "y": 11,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 10,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Bug Catcher",
+        "team": 4
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 14,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Youngster",
+        "team": 1
+      },
+      {
+        "sprite": "Lass",
+        "x": 16,
+        "y": 9,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Lass",
+        "team": 1
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 19,
+        "y": 5,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Bug Catcher",
+        "team": 5
+      },
+      {
+        "sprite": "Lass",
+        "x": 23,
+        "y": 4,
+        "move": "Stay",
+        "text": 6,
+        "face": "Left",
+        "class": "Lass",
+        "team": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 22,
+        "y": 9,
+        "move": "Stay",
+        "text": 7,
+        "face": "Left",
+        "class": "Youngster",
+        "team": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 24,
+        "y": 6,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right",
+        "class": "Bug Catcher",
+        "team": 6
+      },
+      {
+        "sprite": "Lass",
+        "x": 33,
+        "y": 10,
+        "move": "Stay",
+        "text": 9,
+        "face": "Up",
+        "class": "Lass",
+        "team": 3
       }
     ]
   },
@@ -1393,6 +2111,35 @@
         "x": 27,
         "y": 7,
         "text": 6
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lass",
+        "x": 9,
+        "y": 8,
+        "move": "Walk",
+        "text": 1,
+        "range": 0
+      },
+      {
+        "sprite": "Lass",
+        "x": 63,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Lass",
+        "team": 4
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 57,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Tm 04"
       }
     ]
   },
@@ -1517,6 +2264,68 @@
         "x": 19,
         "y": 15,
         "text": 7
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 10,
+        "y": 21,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Jr Trainer M",
+        "team": 4
+      },
+      {
+        "sprite": "Lass",
+        "x": 11,
+        "y": 21,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Jr Trainer F",
+        "team": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 0,
+        "y": 15,
+        "move": "Stay",
+        "text": 3,
+        "face": "Right",
+        "class": "Bug Catcher",
+        "team": 10
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 11,
+        "y": 31,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Jr Trainer M",
+        "team": 5
+      },
+      {
+        "sprite": "Lass",
+        "x": 11,
+        "y": 30,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Jr Trainer F",
+        "team": 3
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 19,
+        "y": 26,
+        "move": "Stay",
+        "text": 6,
+        "face": "Left",
+        "class": "Bug Catcher",
+        "team": 11
       }
     ]
   },
@@ -1647,6 +2456,98 @@
         "y": 3,
         "text": 10
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 8,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Super Nerd",
+        "team": 3
+      },
+      {
+        "sprite": "Gambler",
+        "x": 13,
+        "y": 9,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up",
+        "class": "Gambler",
+        "team": 5
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 42,
+        "y": 6,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up",
+        "class": "Super Nerd",
+        "team": 4
+      },
+      {
+        "sprite": "Lass",
+        "x": 26,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Lass",
+        "team": 13
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 26,
+        "y": 4,
+        "move": "Stay",
+        "text": 5,
+        "face": "Right",
+        "class": "Super Nerd",
+        "team": 5
+      },
+      {
+        "sprite": "Lass",
+        "x": 26,
+        "y": 5,
+        "move": "Stay",
+        "text": 6,
+        "face": "Left",
+        "class": "Lass",
+        "team": 14
+      },
+      {
+        "sprite": "Lass",
+        "x": 26,
+        "y": 6,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right",
+        "class": "Lass",
+        "team": 15
+      },
+      {
+        "sprite": "Gambler",
+        "x": 46,
+        "y": 13,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down",
+        "class": "Gambler",
+        "team": 7
+      },
+      {
+        "sprite": "Lass",
+        "x": 51,
+        "y": 12,
+        "move": "Stay",
+        "text": 9,
+        "face": "Left",
+        "class": "Lass",
+        "team": 16
+      }
     ]
   },
   {
@@ -1679,6 +2580,107 @@
         "x": 25,
         "y": 7,
         "text": 11
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lass",
+        "x": 13,
+        "y": 10,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Jr Trainer F",
+        "team": 5
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 24,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Jr Trainer M",
+        "team": 7
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 31,
+        "y": 7,
+        "move": "Stay",
+        "text": 3,
+        "face": "Right",
+        "class": "Jr Trainer M",
+        "team": 8
+      },
+      {
+        "sprite": "Lass",
+        "x": 48,
+        "y": 8,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Jr Trainer F",
+        "team": 6
+      },
+      {
+        "sprite": "Hiker",
+        "x": 16,
+        "y": 15,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Hiker",
+        "team": 11
+      },
+      {
+        "sprite": "Hiker",
+        "x": 43,
+        "y": 3,
+        "move": "Stay",
+        "text": 6,
+        "face": "Left",
+        "class": "Hiker",
+        "team": 6
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 22,
+        "y": 2,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Bug Catcher",
+        "team": 13
+      },
+      {
+        "sprite": "Hiker",
+        "x": 45,
+        "y": 15,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right",
+        "class": "Hiker",
+        "team": 5
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 40,
+        "y": 8,
+        "move": "Stay",
+        "text": 9,
+        "face": "Right",
+        "class": "Bug Catcher",
+        "team": 14
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 10,
+        "y": 15,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Tm 30"
       }
     ]
   },
@@ -1753,6 +2755,68 @@
         "y": 41,
         "text": 10
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 10,
+        "y": 44,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Pokemaniac",
+        "team": 1
+      },
+      {
+        "sprite": "Hiker",
+        "x": 3,
+        "y": 57,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up",
+        "class": "Hiker",
+        "team": 7
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 14,
+        "y": 64,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Pokemaniac",
+        "team": 2
+      },
+      {
+        "sprite": "Lass",
+        "x": 7,
+        "y": 25,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Jr Trainer F",
+        "team": 7
+      },
+      {
+        "sprite": "Hiker",
+        "x": 3,
+        "y": 61,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Hiker",
+        "team": 8
+      },
+      {
+        "sprite": "Lass",
+        "x": 7,
+        "y": 54,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 8
+      }
     ]
   },
   {
@@ -1817,6 +2881,108 @@
         "x": 1,
         "y": 5,
         "text": 11
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Gambler",
+        "x": 10,
+        "y": 14,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Gambler",
+        "team": 1
+      },
+      {
+        "sprite": "Gambler",
+        "x": 26,
+        "y": 9,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Gambler",
+        "team": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 13,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Youngster",
+        "team": 9
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 36,
+        "y": 11,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Engineer",
+        "team": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 22,
+        "y": 4,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up",
+        "class": "Youngster",
+        "team": 10
+      },
+      {
+        "sprite": "Gambler",
+        "x": 45,
+        "y": 7,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Gambler",
+        "team": 3
+      },
+      {
+        "sprite": "Gambler",
+        "x": 33,
+        "y": 3,
+        "move": "Stay",
+        "text": 7,
+        "face": "Up",
+        "class": "Gambler",
+        "team": 4
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 43,
+        "y": 5,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right",
+        "class": "Youngster",
+        "team": 11
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 45,
+        "y": 16,
+        "move": "Stay",
+        "text": 9,
+        "face": "Left",
+        "class": "Engineer",
+        "team": 3
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 22,
+        "y": 12,
+        "move": "Stay",
+        "text": 10,
+        "face": "Up",
+        "class": "Youngster",
+        "team": 12
       }
     ]
   },
@@ -1886,6 +3052,104 @@
         "y": 63,
         "text": 12
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Snorlax",
+        "x": 10,
+        "y": 62,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 14,
+        "y": 31,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Fisher",
+        "team": 3
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 5,
+        "y": 39,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up",
+        "class": "Fisher",
+        "team": 4
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 11,
+        "y": 92,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Jr Trainer M",
+        "team": 9
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 14,
+        "y": 76,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up",
+        "class": "Rocker",
+        "team": 2
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 12,
+        "y": 40,
+        "move": "Stay",
+        "text": 6,
+        "face": "Left",
+        "class": "Fisher",
+        "team": 5
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 9,
+        "y": 52,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right",
+        "class": "Fisher",
+        "team": 6
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 6,
+        "y": 87,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down",
+        "class": "Fisher",
+        "team": 11
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 14,
+        "y": 35,
+        "move": "Stay",
+        "text": 9,
+        "face": "None",
+        "item": "Tm 16"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 5,
+        "y": 89,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Iron"
+      }
     ]
   },
   {
@@ -1928,6 +3192,108 @@
         "y": 11,
         "text": 13
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 49,
+        "y": 10,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Bird Keeper",
+        "team": 1
+      },
+      {
+        "sprite": "Lass",
+        "x": 48,
+        "y": 10,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 12
+      },
+      {
+        "sprite": "Lass",
+        "x": 27,
+        "y": 9,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 13
+      },
+      {
+        "sprite": "Lass",
+        "x": 23,
+        "y": 10,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Jr Trainer F",
+        "team": 14
+      },
+      {
+        "sprite": "Lass",
+        "x": 50,
+        "y": 5,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 15
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 12,
+        "y": 4,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Bird Keeper",
+        "team": 2
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 33,
+        "y": 6,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Beauty",
+        "team": 4
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 32,
+        "y": 6,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down",
+        "class": "Beauty",
+        "team": 5
+      },
+      {
+        "sprite": "Biker",
+        "x": 10,
+        "y": 7,
+        "move": "Stay",
+        "text": 9,
+        "face": "Up",
+        "class": "Biker",
+        "team": 1
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 7,
+        "y": 13,
+        "move": "Stay",
+        "text": 10,
+        "face": "Up",
+        "class": "Bird Keeper",
+        "team": 3
+      }
     ]
   },
   {
@@ -1959,6 +3325,108 @@
         "x": 17,
         "y": 13,
         "text": 11
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 4,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Bird Keeper",
+        "team": 14
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 15,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Bird Keeper",
+        "team": 15
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 12,
+        "y": 11,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Bird Keeper",
+        "team": 16
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 14,
+        "y": 15,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Bird Keeper",
+        "team": 17
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 15,
+        "y": 31,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Bird Keeper",
+        "team": 4
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 6,
+        "y": 49,
+        "move": "Stay",
+        "text": 6,
+        "face": "Up",
+        "class": "Bird Keeper",
+        "team": 5
+      },
+      {
+        "sprite": "Biker",
+        "x": 5,
+        "y": 39,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Biker",
+        "team": 13
+      },
+      {
+        "sprite": "Biker",
+        "x": 4,
+        "y": 30,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right",
+        "class": "Biker",
+        "team": 14
+      },
+      {
+        "sprite": "Biker",
+        "x": 15,
+        "y": 30,
+        "move": "Stay",
+        "text": 9,
+        "face": "Left",
+        "class": "Biker",
+        "team": 15
+      },
+      {
+        "sprite": "Biker",
+        "x": 4,
+        "y": 31,
+        "move": "Stay",
+        "text": 10,
+        "face": "Right",
+        "class": "Biker",
+        "team": 2
       }
     ]
   },
@@ -2017,6 +3485,117 @@
         "x": 39,
         "y": 9,
         "text": 12
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lass",
+        "x": 41,
+        "y": 11,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 20
+      },
+      {
+        "sprite": "Lass",
+        "x": 53,
+        "y": 10,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Jr Trainer F",
+        "team": 21
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 31,
+        "y": 13,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up",
+        "class": "Bird Keeper",
+        "team": 6
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 35,
+        "y": 13,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Bird Keeper",
+        "team": 7
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 53,
+        "y": 11,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Beauty",
+        "team": 9
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 41,
+        "y": 10,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Beauty",
+        "team": 10
+      },
+      {
+        "sprite": "Biker",
+        "x": 48,
+        "y": 10,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Biker",
+        "team": 3
+      },
+      {
+        "sprite": "Biker",
+        "x": 46,
+        "y": 10,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down",
+        "class": "Biker",
+        "team": 4
+      },
+      {
+        "sprite": "Lass",
+        "x": 37,
+        "y": 5,
+        "move": "Stay",
+        "text": 9,
+        "face": "Right",
+        "class": "Jr Trainer F",
+        "team": 22
+      },
+      {
+        "sprite": "Lass",
+        "x": 18,
+        "y": 13,
+        "move": "Stay",
+        "text": 10,
+        "face": "Up",
+        "class": "Jr Trainer F",
+        "team": 23
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 18,
+        "y": 5,
+        "move": "Stay",
+        "text": 11,
+        "face": "None",
+        "item": "Tm 20"
       }
     ]
   },
@@ -2112,6 +3691,76 @@
         "y": 17,
         "text": 9
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Biker",
+        "x": 17,
+        "y": 12,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Biker",
+        "team": 5
+      },
+      {
+        "sprite": "Biker",
+        "x": 14,
+        "y": 13,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Cue Ball",
+        "team": 1
+      },
+      {
+        "sprite": "Biker",
+        "x": 11,
+        "y": 12,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up",
+        "class": "Cue Ball",
+        "team": 2
+      },
+      {
+        "sprite": "Biker",
+        "x": 9,
+        "y": 11,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Biker",
+        "team": 6
+      },
+      {
+        "sprite": "Biker",
+        "x": 6,
+        "y": 10,
+        "move": "Stay",
+        "text": 5,
+        "face": "Right",
+        "class": "Cue Ball",
+        "team": 3
+      },
+      {
+        "sprite": "Biker",
+        "x": 3,
+        "y": 12,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Biker",
+        "team": 7
+      },
+      {
+        "sprite": "Snorlax",
+        "x": 26,
+        "y": 10,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -2169,6 +3818,108 @@
         "x": 9,
         "y": 141,
         "text": 16
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Biker",
+        "x": 12,
+        "y": 19,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Cue Ball",
+        "team": 4
+      },
+      {
+        "sprite": "Biker",
+        "x": 11,
+        "y": 16,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Cue Ball",
+        "team": 5
+      },
+      {
+        "sprite": "Biker",
+        "x": 4,
+        "y": 18,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up",
+        "class": "Biker",
+        "team": 8
+      },
+      {
+        "sprite": "Biker",
+        "x": 7,
+        "y": 32,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Biker",
+        "team": 9
+      },
+      {
+        "sprite": "Biker",
+        "x": 14,
+        "y": 34,
+        "move": "Stay",
+        "text": 5,
+        "face": "Right",
+        "class": "Biker",
+        "team": 10
+      },
+      {
+        "sprite": "Biker",
+        "x": 17,
+        "y": 58,
+        "move": "Stay",
+        "text": 6,
+        "face": "Left",
+        "class": "Cue Ball",
+        "team": 6
+      },
+      {
+        "sprite": "Biker",
+        "x": 2,
+        "y": 68,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right",
+        "class": "Cue Ball",
+        "team": 7
+      },
+      {
+        "sprite": "Biker",
+        "x": 14,
+        "y": 98,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right",
+        "class": "Cue Ball",
+        "team": 8
+      },
+      {
+        "sprite": "Biker",
+        "x": 5,
+        "y": 98,
+        "move": "Stay",
+        "text": 9,
+        "face": "Left",
+        "class": "Biker",
+        "team": 11
+      },
+      {
+        "sprite": "Biker",
+        "x": 10,
+        "y": 118,
+        "move": "Stay",
+        "text": 10,
+        "face": "Down",
+        "class": "Biker",
+        "team": 12
       }
     ]
   },
@@ -2234,6 +3985,38 @@
         "y": 5,
         "text": 5
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 36,
+        "y": 11,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Bird Keeper",
+        "team": 8
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 40,
+        "y": 15,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Bird Keeper",
+        "team": 9
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 42,
+        "y": 13,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Bird Keeper",
+        "team": 10
+      }
     ]
   },
   {
@@ -2265,6 +4048,108 @@
         "x": 11,
         "y": 9,
         "text": 11
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 8,
+        "y": 7,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Swimmer",
+        "team": 2
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 13,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Swimmer",
+        "team": 3
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 13,
+        "y": 25,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Swimmer",
+        "team": 4
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 4,
+        "y": 27,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Swimmer",
+        "team": 5
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 16,
+        "y": 31,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up",
+        "class": "Swimmer",
+        "team": 6
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 9,
+        "y": 11,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Swimmer",
+        "team": 7
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 8,
+        "y": 43,
+        "move": "Stay",
+        "text": 7,
+        "face": "Left",
+        "class": "Beauty",
+        "team": 12
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 11,
+        "y": 43,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right",
+        "class": "Beauty",
+        "team": 13
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 9,
+        "y": 42,
+        "move": "Stay",
+        "text": 9,
+        "face": "Up",
+        "class": "Swimmer",
+        "team": 8
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 10,
+        "y": 44,
+        "move": "Stay",
+        "text": 10,
+        "face": "Down",
+        "class": "Beauty",
+        "team": 14
       }
     ]
   },
@@ -2317,6 +4202,108 @@
         "y": 11,
         "text": 12
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Swimmer",
+        "x": 87,
+        "y": 8,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up",
+        "class": "Swimmer",
+        "team": 9
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 68,
+        "y": 11,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up",
+        "class": "Beauty",
+        "team": 15
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 45,
+        "y": 10,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Beauty",
+        "team": 6
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 55,
+        "y": 14,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Jr Trainer F",
+        "team": 24
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 38,
+        "y": 13,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Swimmer",
+        "team": 10
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 87,
+        "y": 13,
+        "move": "Stay",
+        "text": 6,
+        "face": "Up",
+        "class": "Swimmer",
+        "team": 11
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 34,
+        "y": 9,
+        "move": "Stay",
+        "text": 7,
+        "face": "Up",
+        "class": "Bird Keeper",
+        "team": 11
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 25,
+        "y": 7,
+        "move": "Stay",
+        "text": 8,
+        "face": "Up",
+        "class": "Beauty",
+        "team": 7
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 24,
+        "y": 12,
+        "move": "Stay",
+        "text": 9,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 16
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 15,
+        "y": 8,
+        "move": "Stay",
+        "text": 10,
+        "face": "Up",
+        "class": "Beauty",
+        "team": 8
+      }
     ]
   },
   {
@@ -2343,7 +4330,99 @@
         "flag": true
       }
     },
-    "border": 67
+    "border": 67,
+    "sprites": [
+      {
+        "sprite": "Fisher 2",
+        "x": 4,
+        "y": 24,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Fisher",
+        "team": 7
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 6,
+        "y": 25,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Fisher",
+        "team": 9
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 10,
+        "y": 31,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up",
+        "class": "Swimmer",
+        "team": 12
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 12,
+        "y": 30,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Cue Ball",
+        "team": 9
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 16,
+        "y": 63,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Swimmer",
+        "team": 13
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 5,
+        "y": 71,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Swimmer",
+        "team": 14
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 15,
+        "y": 71,
+        "move": "Stay",
+        "text": 7,
+        "face": "Left",
+        "class": "Swimmer",
+        "team": 15
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 14,
+        "y": 56,
+        "move": "Stay",
+        "text": 8,
+        "face": "Left",
+        "class": "Fisher",
+        "team": 8
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 17,
+        "y": 57,
+        "move": "Stay",
+        "text": 9,
+        "face": "Right",
+        "class": "Fisher",
+        "team": 10
+      }
+    ]
   },
   {
     "name": "Route 22",
@@ -2383,6 +4462,24 @@
         "x": 7,
         "y": 11,
         "text": 3
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Blue",
+        "x": 25,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Blue",
+        "x": 25,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
       }
     ]
   },
@@ -2443,6 +4540,64 @@
         "y": 33,
         "text": 8
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 4,
+        "y": 35,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Guard",
+        "x": 10,
+        "y": 56,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 8,
+        "y": 85,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 11,
+        "y": 96,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
+      },
+      {
+        "sprite": "Guard",
+        "x": 12,
+        "y": 105,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
+      },
+      {
+        "sprite": "Guard",
+        "x": 8,
+        "y": 119,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down"
+      },
+      {
+        "sprite": "Guard",
+        "x": 8,
+        "y": 136,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -2469,7 +4624,88 @@
         "stripOffset": 0
       }
     },
-    "border": 44
+    "border": 44,
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 11,
+        "y": 15,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 6
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 5,
+        "y": 20,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up",
+        "class": "Jr Trainer M",
+        "team": 2
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 11,
+        "y": 19,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Jr Trainer M",
+        "team": 3
+      },
+      {
+        "sprite": "Lass",
+        "x": 10,
+        "y": 22,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Lass",
+        "team": 7
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 11,
+        "y": 25,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Youngster",
+        "team": 4
+      },
+      {
+        "sprite": "Lass",
+        "x": 10,
+        "y": 28,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Lass",
+        "team": 8
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 11,
+        "y": 31,
+        "move": "Stay",
+        "text": 7,
+        "face": "Left",
+        "class": "Bug Catcher",
+        "team": 9
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 10,
+        "y": 5,
+        "move": "Stay",
+        "text": 8,
+        "face": "None",
+        "item": "Tm 45"
+      }
+    ]
   },
   {
     "name": "Route 25",
@@ -2503,6 +4739,107 @@
         "x": 43,
         "y": 3,
         "text": 11
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 14,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Youngster",
+        "team": 5
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 18,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up",
+        "class": "Youngster",
+        "team": 6
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 24,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Jr Trainer M",
+        "team": 2
+      },
+      {
+        "sprite": "Lass",
+        "x": 18,
+        "y": 8,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Lass",
+        "team": 9
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 32,
+        "y": 3,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Youngster",
+        "team": 7
+      },
+      {
+        "sprite": "Lass",
+        "x": 37,
+        "y": 4,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Lass",
+        "team": 10
+      },
+      {
+        "sprite": "Hiker",
+        "x": 8,
+        "y": 4,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right",
+        "class": "Hiker",
+        "team": 2
+      },
+      {
+        "sprite": "Hiker",
+        "x": 23,
+        "y": 9,
+        "move": "Stay",
+        "text": 8,
+        "face": "Up",
+        "class": "Hiker",
+        "team": 3
+      },
+      {
+        "sprite": "Hiker",
+        "x": 13,
+        "y": 7,
+        "move": "Stay",
+        "text": 9,
+        "face": "Right",
+        "class": "Hiker",
+        "team": 4
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 22,
+        "y": 2,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Tm 19"
       }
     ]
   },
@@ -2543,6 +4880,16 @@
         "x": 3,
         "y": 1,
         "text": 2
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mom",
+        "x": 5,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
       }
     ]
   },
@@ -2592,6 +4939,34 @@
         "toWarp": 1,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Daisy",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Daisy",
+        "x": 6,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 1,
+        "item": "0"
+      },
+      {
+        "sprite": "Book Map Dex",
+        "x": 3,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "0"
+      }
     ]
   },
   {
@@ -2618,6 +4993,98 @@
         "y": 11,
         "toWarp": 2,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Blue",
+        "x": 4,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "class": "Sony 1",
+        "team": 1
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 6,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 7,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 8,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Oak",
+        "x": 5,
+        "y": 2,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
+      },
+      {
+        "sprite": "Book Map Dex",
+        "x": 2,
+        "y": 1,
+        "move": "Stay",
+        "text": 6,
+        "face": "None"
+      },
+      {
+        "sprite": "Book Map Dex",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 7,
+        "face": "None"
+      },
+      {
+        "sprite": "Oak",
+        "x": 5,
+        "y": 10,
+        "move": "Stay",
+        "text": 8,
+        "face": "Up"
+      },
+      {
+        "sprite": "Girl",
+        "x": 1,
+        "y": 9,
+        "move": "Walk",
+        "text": 9,
+        "range": 1
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 2,
+        "y": 10,
+        "move": "Stay",
+        "text": 10,
+        "face": "None"
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 8,
+        "y": 10,
+        "move": "Stay",
+        "text": 11,
+        "face": "None"
       }
     ]
   },
@@ -2646,6 +5113,40 @@
         "toWarp": 0,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 10,
+        "y": 5,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 4,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -2672,6 +5173,32 @@
         "y": 7,
         "toWarp": 1,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 5,
+        "y": 5,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 3,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
       }
     ]
   },
@@ -2701,6 +5228,24 @@
         "toWarp": 2,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Brunette Girl",
+        "x": 3,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up"
+      },
+      {
+        "sprite": "Lass",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -2729,6 +5274,40 @@
         "toWarp": 3,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Balding Guy",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Little Girl",
+        "x": 1,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      },
+      {
+        "sprite": "Bird",
+        "x": 5,
+        "y": 5,
+        "move": "Walk",
+        "text": 3,
+        "range": 2
+      },
+      {
+        "sprite": "Clipboard",
+        "x": 4,
+        "y": 0,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      }
     ]
   },
   {
@@ -2755,6 +5334,115 @@
         "y": 17,
         "toWarp": 4,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Giovanni",
+        "x": 2,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Giovanni",
+        "team": 3
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 12,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Cooltrainer M",
+        "team": 9
+      },
+      {
+        "sprite": "Hiker",
+        "x": 11,
+        "y": 11,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up",
+        "class": "Blackbelt",
+        "team": 6
+      },
+      {
+        "sprite": "Rocker",
+        "x": 10,
+        "y": 7,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Tamer",
+        "team": 3
+      },
+      {
+        "sprite": "Hiker",
+        "x": 3,
+        "y": 7,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Blackbelt",
+        "team": 7
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 13,
+        "y": 5,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Cooltrainer M",
+        "team": 10
+      },
+      {
+        "sprite": "Hiker",
+        "x": 10,
+        "y": 1,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Blackbelt",
+        "team": 8
+      },
+      {
+        "sprite": "Rocker",
+        "x": 2,
+        "y": 16,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right",
+        "class": "Tamer",
+        "team": 4
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 6,
+        "y": 5,
+        "move": "Stay",
+        "text": 9,
+        "face": "Down",
+        "class": "Cooltrainer M",
+        "team": 1
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 16,
+        "y": 15,
+        "move": "Stay",
+        "text": 10,
+        "face": "Down"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 16,
+        "y": 9,
+        "move": "Stay",
+        "text": 11,
+        "face": "None",
+        "item": "Revive"
       }
     ]
   },
@@ -2789,6 +5477,16 @@
         "y": 4,
         "toWarp": 0,
         "toMap": "Digletts Cave"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher",
+        "x": 3,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
       }
     ]
   },
@@ -2830,6 +5528,24 @@
         "toWarp": 0,
         "toMap": "Viridian Forest"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 3,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Old Person",
+        "x": 2,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      }
     ]
   },
   {
@@ -2857,6 +5573,24 @@
         "y": 7,
         "toWarp": 2,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 2,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Gameboy Kid Copy",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
       }
     ]
   },
@@ -2897,6 +5631,24 @@
         "toWarp": 4,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 1,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 5,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      }
     ]
   },
   {
@@ -2936,6 +5688,24 @@
         "y": 7,
         "toWarp": 5,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Girl",
+        "x": 8,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "Little Girl",
+        "x": 2,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
       }
     ]
   },
@@ -3020,6 +5790,81 @@
         "y": 1,
         "text": 14
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 16,
+        "y": 43,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 30,
+        "y": 33,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Bug Catcher",
+        "team": 1
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 30,
+        "y": 19,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Bug Catcher",
+        "team": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 2,
+        "y": 18,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Bug Catcher",
+        "team": 3
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 25,
+        "y": 11,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "Antidote"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 12,
+        "y": 29,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Potion"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 1,
+        "y": 31,
+        "move": "Stay",
+        "text": 7,
+        "face": "None",
+        "item": "Poke Ball"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 27,
+        "y": 40,
+        "move": "Stay",
+        "text": 8,
+        "face": "None"
+      }
     ]
   },
   {
@@ -3065,6 +5910,48 @@
         "toWarp": 0,
         "toMap": "Museum 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 12,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "Gambler",
+        "x": 1,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 15,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 17,
+        "y": 4,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Old Amber",
+        "x": 16,
+        "y": 2,
+        "move": "Stay",
+        "text": 5,
+        "face": "None"
+      }
     ]
   },
   {
@@ -3098,6 +5985,48 @@
         "y": 5,
         "text": 7
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 1,
+        "y": 7,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "Old Person",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 7,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Brunette Girl",
+        "x": 11,
+        "y": 5,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Hiker",
+        "x": 12,
+        "y": 5,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -3124,6 +6053,36 @@
         "y": 13,
         "toWarp": 2,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Brock",
+        "team": 1
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 3,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Jr Trainer M",
+        "team": 1
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 7,
+        "y": 10,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
       }
     ]
   },
@@ -3153,6 +6112,32 @@
         "toWarp": 3,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Slowbro",
+        "x": 4,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "Young Boy",
+        "x": 3,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right"
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 1,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      }
     ]
   },
   {
@@ -3179,6 +6164,32 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 3,
+        "y": 3,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 5,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
       }
     ]
   },
@@ -3208,6 +6219,24 @@
         "toWarp": 5,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Gambler",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 4,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      }
     ]
   },
   {
@@ -3234,6 +6263,40 @@
         "y": 7,
         "toWarp": 6,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 11,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left"
+      },
+      {
+        "sprite": "Clefairy",
+        "x": 1,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -3287,6 +6350,132 @@
         "x": 15,
         "y": 23,
         "text": 14
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Hiker",
+        "x": 5,
+        "y": 6,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Hiker",
+        "team": 1
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 12,
+        "y": 16,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Youngster",
+        "team": 3
+      },
+      {
+        "sprite": "Lass",
+        "x": 30,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Lass",
+        "team": 5
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 24,
+        "y": 31,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Super Nerd",
+        "team": 1
+      },
+      {
+        "sprite": "Lass",
+        "x": 16,
+        "y": 23,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Lass",
+        "team": 6
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 7,
+        "y": 22,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Bug Catcher",
+        "team": 7
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 30,
+        "y": 27,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right",
+        "class": "Bug Catcher",
+        "team": 8
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 2,
+        "y": 20,
+        "move": "Stay",
+        "text": 8,
+        "face": "None",
+        "item": "Potion"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 2,
+        "y": 2,
+        "move": "Stay",
+        "text": 9,
+        "face": "None",
+        "item": "Moon Stone"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 35,
+        "y": 31,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Rare Candy"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 36,
+        "y": 23,
+        "move": "Stay",
+        "text": 11,
+        "face": "None",
+        "item": "Escape Rope"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 20,
+        "y": 33,
+        "move": "Stay",
+        "text": 12,
+        "face": "None",
+        "item": "Potion"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 5,
+        "y": 32,
+        "move": "Stay",
+        "text": 13,
+        "face": "None",
+        "item": "Tm 12"
       }
     ]
   },
@@ -3392,6 +6581,92 @@
         "toWarp": 6,
         "toMap": "Mt Moon B1F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 12,
+        "y": 8,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Super Nerd",
+        "team": 2
+      },
+      {
+        "sprite": "Rocket",
+        "x": 11,
+        "y": 16,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Rocket",
+        "team": 1
+      },
+      {
+        "sprite": "Rocket",
+        "x": 15,
+        "y": 22,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Rocket",
+        "team": 2
+      },
+      {
+        "sprite": "Rocket",
+        "x": 29,
+        "y": 11,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 3
+      },
+      {
+        "sprite": "Rocket",
+        "x": 29,
+        "y": 17,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 4
+      },
+      {
+        "sprite": "Omanyte",
+        "x": 12,
+        "y": 6,
+        "move": "Stay",
+        "text": 6,
+        "face": "None"
+      },
+      {
+        "sprite": "Omanyte",
+        "x": 13,
+        "y": 6,
+        "move": "Stay",
+        "text": 7,
+        "face": "None"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 25,
+        "y": 21,
+        "move": "Stay",
+        "text": 8,
+        "face": "None",
+        "item": "Hp Up"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 29,
+        "y": 5,
+        "move": "Stay",
+        "text": 9,
+        "face": "None",
+        "item": "Tm 01"
+      }
     ]
   },
   {
@@ -3433,6 +6708,24 @@
         "y": 0,
         "text": 3
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher",
+        "x": 2,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Girl",
+        "x": 5,
+        "y": 6,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      }
     ]
   },
   {
@@ -3461,6 +6754,24 @@
         "toWarp": 1,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Old Medium Woman",
+        "x": 5,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "Gambler",
+        "x": 1,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      }
     ]
   },
   {
@@ -3487,6 +6798,40 @@
         "y": 7,
         "toWarp": 2,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 10,
+        "y": 5,
+        "move": "Walk",
+        "text": 2,
+        "range": 0
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 4,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -3515,6 +6860,46 @@
         "toWarp": 3,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Brunette Girl",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Misty",
+        "team": 1
+      },
+      {
+        "sprite": "Lass",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Jr Trainer F",
+        "team": 1
+      },
+      {
+        "sprite": "Swimmer",
+        "x": 8,
+        "y": 7,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Swimmer",
+        "team": 1
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 7,
+        "y": 10,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -3541,6 +6926,32 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bike Shop Guy",
+        "x": 6,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Mom Geisha",
+        "x": 5,
+        "y": 6,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 1,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up"
       }
     ]
   },
@@ -3569,6 +6980,32 @@
         "toWarp": 5,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 3,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      },
+      {
+        "sprite": "Lass",
+        "x": 6,
+        "y": 2,
+        "move": "Walk",
+        "text": 3,
+        "range": 2
+      }
     ]
   },
   {
@@ -3596,6 +7033,56 @@
         "y": 7,
         "toWarp": 0,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 4,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 7,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up"
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 10,
+        "y": 6,
+        "move": "Walk",
+        "text": 4,
+        "range": 2
+      },
+      {
+        "sprite": "Clipboard",
+        "x": 7,
+        "y": 2,
+        "move": "Stay",
+        "text": 5,
+        "face": "None"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down"
       }
     ]
   },
@@ -3649,6 +7136,16 @@
         "toWarp": 0,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 1,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      }
     ]
   },
   {
@@ -3683,6 +7180,16 @@
         "toWarp": 0,
         "toMap": "Underground Path North South"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Little Girl",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      }
     ]
   },
   {
@@ -3709,6 +7216,16 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Gentleman",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
       }
     ]
   },
@@ -3749,6 +7266,16 @@
         "toWarp": 1,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 6,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      }
     ]
   },
   {
@@ -3782,6 +7309,16 @@
         "y": 4,
         "toWarp": 1,
         "toMap": "Underground Path North South"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Girl",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
       }
     ]
   },
@@ -3836,6 +7373,16 @@
         "toWarp": 1,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -3869,6 +7416,16 @@
         "y": 4,
         "toWarp": 0,
         "toMap": "Underground Path West East"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 2,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
       }
     ]
   },
@@ -3905,6 +7462,24 @@
         "y": 4,
         "toWarp": 0,
         "toMap": "Underground Path West East"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Girl",
+        "x": 3,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 2,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
       }
     ]
   },
@@ -3945,6 +7520,16 @@
         "toWarp": 3,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 2,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -3979,6 +7564,16 @@
         "toWarp": 1,
         "toMap": "Underground Path West East"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Girl",
+        "x": 3,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      }
     ]
   },
   {
@@ -4005,6 +7600,40 @@
         "y": 7,
         "toWarp": 0,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 7,
+        "y": 3,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 2,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -4077,6 +7706,78 @@
         "y": 29,
         "text": 8
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Hiker",
+        "x": 7,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Hiker",
+        "team": 12
+      },
+      {
+        "sprite": "Hiker",
+        "x": 5,
+        "y": 16,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Hiker",
+        "team": 13
+      },
+      {
+        "sprite": "Hiker",
+        "x": 17,
+        "y": 15,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Hiker",
+        "team": 14
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 23,
+        "y": 8,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Pokemaniac",
+        "team": 7
+      },
+      {
+        "sprite": "Lass",
+        "x": 37,
+        "y": 21,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Jr Trainer F",
+        "team": 17
+      },
+      {
+        "sprite": "Lass",
+        "x": 22,
+        "y": 24,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 18
+      },
+      {
+        "sprite": "Lass",
+        "x": 32,
+        "y": 24,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right",
+        "class": "Jr Trainer F",
+        "team": 19
+      }
     ]
   },
   {
@@ -4109,6 +7810,143 @@
         "y": 11,
         "toWarp": 3,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Pokeball",
+        "x": 9,
+        "y": 20,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "pokemon": "Voltorb",
+        "level": 40
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 32,
+        "y": 18,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "pokemon": "Voltorb",
+        "level": 40
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 21,
+        "y": 25,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "pokemon": "Voltorb",
+        "level": 40
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 25,
+        "y": 18,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "pokemon": "Electrode",
+        "level": 43
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 23,
+        "y": 34,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "pokemon": "Voltorb",
+        "level": 40
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 26,
+        "y": 28,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "pokemon": "Voltorb",
+        "level": 40
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 21,
+        "y": 14,
+        "move": "Stay",
+        "text": 7,
+        "face": "None",
+        "pokemon": "Electrode",
+        "level": 43
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 37,
+        "y": 32,
+        "move": "Stay",
+        "text": 8,
+        "face": "None",
+        "pokemon": "Voltorb",
+        "level": 40
+      },
+      {
+        "sprite": "Bird",
+        "x": 4,
+        "y": 9,
+        "move": "Stay",
+        "text": 9,
+        "face": "Up",
+        "pokemon": "Zapdos",
+        "level": 50
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 7,
+        "y": 25,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Carbos"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 28,
+        "y": 3,
+        "move": "Stay",
+        "text": 11,
+        "face": "None",
+        "item": "Hp Up"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 34,
+        "y": 3,
+        "move": "Stay",
+        "text": 12,
+        "face": "None",
+        "item": "Rare Candy"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 26,
+        "y": 32,
+        "move": "Stay",
+        "text": 13,
+        "face": "None",
+        "item": "Tm 25"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 20,
+        "y": 32,
+        "move": "Stay",
+        "text": 14,
+        "face": "None",
+        "item": "Tm 33"
       }
     ]
   },
@@ -4155,6 +7993,16 @@
         "toWarp": 0,
         "toMap": "Route 11 Gate 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      }
     ]
   },
   {
@@ -4189,6 +8037,16 @@
         "toWarp": 1,
         "toMap": "Digletts Cave"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Gambler",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      }
     ]
   },
   {
@@ -4222,6 +8080,24 @@
         "x": 6,
         "y": 2,
         "text": 4
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 4,
+        "y": 2,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 2,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
       }
     ]
   },
@@ -4268,6 +8144,16 @@
         "toWarp": 0,
         "toMap": "Route 12 Gate 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 1,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      }
     ]
   },
   {
@@ -4295,6 +8181,32 @@
         "toWarp": 0,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Slowbro",
+        "x": 6,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 4,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 6,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      }
     ]
   },
   {
@@ -4321,6 +8233,40 @@
         "y": 7,
         "toWarp": 0,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Fisher",
+        "x": 10,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Sailor",
+        "x": 5,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -4361,6 +8307,56 @@
         "y": 0,
         "text": 8
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher 2",
+        "x": 6,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "Girl",
+        "x": 1,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right"
+      },
+      {
+        "sprite": "Clefairy",
+        "x": 6,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left"
+      },
+      {
+        "sprite": "Seel",
+        "x": 1,
+        "y": 4,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 5,
+        "y": 1,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -4387,6 +8383,32 @@
         "y": 7,
         "toWarp": 2,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 5,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Lass",
+        "x": 3,
+        "y": 3,
+        "move": "Walk",
+        "text": 3,
+        "range": 2
       }
     ]
   },
@@ -4415,6 +8437,56 @@
         "toWarp": 3,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Rocker",
+        "x": 5,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Lt Surge",
+        "team": 1
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 9,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Gentleman",
+        "team": 3
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 3,
+        "y": 8,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Rocker",
+        "team": 1
+      },
+      {
+        "sprite": "Sailor",
+        "x": 0,
+        "y": 10,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Sailor",
+        "team": 8
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 4,
+        "y": 14,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -4442,6 +8514,32 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "Bird",
+        "x": 3,
+        "y": 5,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      },
+      {
+        "sprite": "Paper Sheet",
+        "x": 4,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
       }
     ]
   },
@@ -4552,6 +8650,24 @@
         "toWarp": 0,
         "toMap": "SS Anne Kitchen"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Waiter",
+        "x": 12,
+        "y": 6,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "Sailor",
+        "x": 27,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      }
     ]
   },
   {
@@ -4622,6 +8738,26 @@
         "toWarp": 0,
         "toMap": "SS Anne Captains Room"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Waiter",
+        "x": 3,
+        "y": 7,
+        "move": "Walk",
+        "text": 1,
+        "range": 1
+      },
+      {
+        "sprite": "Blue",
+        "x": 36,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Sony 1",
+        "team": 1
+      }
     ]
   },
   {
@@ -4649,6 +8785,16 @@
         "y": 3,
         "toWarp": 7,
         "toMap": "SS Anne 2F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Sailor",
+        "x": 9,
+        "y": 3,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
       }
     ]
   },
@@ -4730,6 +8876,52 @@
         "toWarp": 0,
         "toMap": "SS Anne 3F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 5,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up"
+      },
+      {
+        "sprite": "Sailor",
+        "x": 4,
+        "y": 9,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 7,
+        "y": 11,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Sailor",
+        "x": 4,
+        "y": 4,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Sailor",
+        "team": 1
+      },
+      {
+        "sprite": "Sailor",
+        "x": 10,
+        "y": 8,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up",
+        "class": "Sailor",
+        "team": 2
+      }
     ]
   },
   {
@@ -4751,6 +8943,64 @@
         "y": 0,
         "toWarp": 10,
         "toMap": "SS Anne 1F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Cook",
+        "x": 1,
+        "y": 8,
+        "move": "Walk",
+        "text": 1,
+        "range": 1
+      },
+      {
+        "sprite": "Cook",
+        "x": 5,
+        "y": 8,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      },
+      {
+        "sprite": "Cook",
+        "x": 9,
+        "y": 7,
+        "move": "Walk",
+        "text": 3,
+        "range": 1
+      },
+      {
+        "sprite": "Cook",
+        "x": 13,
+        "y": 6,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Cook",
+        "x": 13,
+        "y": 8,
+        "move": "Stay",
+        "text": 5,
+        "face": "None"
+      },
+      {
+        "sprite": "Cook",
+        "x": 13,
+        "y": 10,
+        "move": "Stay",
+        "text": 6,
+        "face": "None"
+      },
+      {
+        "sprite": "Cook",
+        "x": 11,
+        "y": 13,
+        "move": "Stay",
+        "text": 7,
+        "face": "Up"
       }
     ]
   },
@@ -4785,6 +9035,16 @@
         "x": 1,
         "y": 2,
         "text": 3
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Ss Captain",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up"
       }
     ]
   },
@@ -4837,6 +9097,105 @@
         "y": 10,
         "toWarp": 7,
         "toMap": "SS Anne 1F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Gentleman",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Gentleman",
+        "team": 1
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 11,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up",
+        "class": "Gentleman",
+        "team": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 11,
+        "y": 14,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up",
+        "class": "Youngster",
+        "team": 8
+      },
+      {
+        "sprite": "Lass",
+        "x": 13,
+        "y": 11,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Lass",
+        "team": 11
+      },
+      {
+        "sprite": "Girl",
+        "x": 22,
+        "y": 3,
+        "move": "Walk",
+        "text": 5,
+        "range": 1
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 0,
+        "y": 14,
+        "move": "Stay",
+        "text": 6,
+        "face": "None"
+      },
+      {
+        "sprite": "Little Girl",
+        "x": 2,
+        "y": 11,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down"
+      },
+      {
+        "sprite": "Clefairy",
+        "x": 3,
+        "y": 11,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down"
+      },
+      {
+        "sprite": "Girl",
+        "x": 10,
+        "y": 13,
+        "move": "Stay",
+        "text": 9,
+        "face": "Right"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 12,
+        "y": 15,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Tm 08"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 21,
+        "y": 13,
+        "move": "Walk",
+        "text": 11,
+        "range": 2
       }
     ]
   },
@@ -4926,6 +9285,122 @@
         "toWarp": 5,
         "toMap": "SS Anne 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Gentleman",
+        "x": 10,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Gentleman",
+        "team": 3
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 13,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Fisher",
+        "team": 1
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 0,
+        "y": 14,
+        "move": "Stay",
+        "text": 3,
+        "face": "Right",
+        "class": "Gentleman",
+        "team": 5
+      },
+      {
+        "sprite": "Lass",
+        "x": 2,
+        "y": 11,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Lass",
+        "team": 12
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 1,
+        "y": 2,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 12,
+        "y": 1,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Max Ether"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 21,
+        "y": 2,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down"
+      },
+      {
+        "sprite": "Old Person",
+        "x": 22,
+        "y": 1,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 0,
+        "y": 12,
+        "move": "Stay",
+        "text": 9,
+        "face": "None",
+        "item": "Rare Candy"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 12,
+        "y": 12,
+        "move": "Stay",
+        "text": 10,
+        "face": "Down"
+      },
+      {
+        "sprite": "Young Boy",
+        "x": 11,
+        "y": 14,
+        "move": "Stay",
+        "text": 11,
+        "face": "None"
+      },
+      {
+        "sprite": "Brunette Girl",
+        "x": 22,
+        "y": 12,
+        "move": "Stay",
+        "text": 12,
+        "face": "Left"
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 20,
+        "y": 12,
+        "move": "Stay",
+        "text": 13,
+        "face": "Right"
+      }
     ]
   },
   {
@@ -5002,6 +9477,111 @@
         "toWarp": 0,
         "toMap": "SS Anne B1F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Sailor",
+        "x": 0,
+        "y": 13,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Sailor",
+        "team": 3
+      },
+      {
+        "sprite": "Sailor",
+        "x": 2,
+        "y": 11,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Sailor",
+        "team": 4
+      },
+      {
+        "sprite": "Sailor",
+        "x": 12,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Sailor",
+        "team": 5
+      },
+      {
+        "sprite": "Sailor",
+        "x": 22,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Sailor",
+        "team": 6
+      },
+      {
+        "sprite": "Sailor",
+        "x": 0,
+        "y": 2,
+        "move": "Stay",
+        "text": 5,
+        "face": "Right",
+        "class": "Sailor",
+        "team": 7
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 0,
+        "y": 4,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Fisher",
+        "team": 2
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 10,
+        "y": 13,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right"
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 11,
+        "y": 12,
+        "move": "Stay",
+        "text": 8,
+        "face": "None"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 20,
+        "y": 2,
+        "move": "Stay",
+        "text": 9,
+        "face": "None",
+        "item": "Ether"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 10,
+        "y": 2,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Tm 44"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 12,
+        "y": 11,
+        "move": "Stay",
+        "text": 11,
+        "face": "None",
+        "item": "Max Potion"
+      }
     ]
   },
   {
@@ -5056,6 +9636,70 @@
         "y": 1,
         "toWarp": 0,
         "toMap": "Victory Road 2F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lass",
+        "x": 7,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Cooltrainer F",
+        "team": 5
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 3,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Cooltrainer M",
+        "team": 5
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 11,
+        "y": 0,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Tm 43"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 9,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Rare Candy"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 5,
+        "y": 15,
+        "move": "Stay",
+        "text": 5,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 14,
+        "y": 2,
+        "move": "Stay",
+        "text": 6,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 2,
+        "y": 10,
+        "move": "Stay",
+        "text": 7,
+        "face": "Boulder Movement Byte 2"
       }
     ]
   },
@@ -5118,6 +9762,18 @@
         "toWarp": 0,
         "toMap": "Champions Room"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lance",
+        "x": 6,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Lance",
+        "team": 1
+      }
     ]
   },
   {
@@ -5172,6 +9828,16 @@
         "y": 7,
         "toWarp": 3,
         "toMap": "Champions Room"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak",
+        "x": 5,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
       }
     ]
   },
@@ -5239,6 +9905,24 @@
         "y": 0,
         "toWarp": 0,
         "toMap": "Hall of Fame"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Blue",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Oak",
+        "x": 3,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up"
       }
     ]
   },
@@ -5332,6 +10016,16 @@
         "y": 1,
         "text": 3
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Cable Club Woman",
+        "x": 8,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -5372,6 +10066,40 @@
         "x": 14,
         "y": 1,
         "text": 5
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Mart Guy",
+        "x": 6,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 19,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Girl",
+        "x": 14,
+        "y": 4,
+        "move": "Walk",
+        "text": 4,
+        "range": 1
       }
     ]
   },
@@ -5469,6 +10197,48 @@
         "y": 1,
         "text": 17
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 16,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Gameboy Kid Copy",
+        "x": 11,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right"
+      },
+      {
+        "sprite": "Gameboy Kid Copy",
+        "x": 7,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gameboy Kid Copy",
+        "x": 8,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
+      },
+      {
+        "sprite": "Young Boy",
+        "x": 2,
+        "y": 5,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up"
+      }
     ]
   },
   {
@@ -5509,6 +10279,32 @@
         "x": 14,
         "y": 1,
         "text": 4
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 5,
+        "y": 7,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 15,
+        "y": 5,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 5,
+        "y": 2,
+        "move": "Walk",
+        "text": 3,
+        "range": 2
       }
     ]
   },
@@ -5552,6 +10348,24 @@
         "x": 13,
         "y": 2,
         "text": 6
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 10,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "Little Girl",
+        "x": 5,
+        "y": 5,
+        "move": "Walk",
+        "text": 2,
+        "range": 0
       }
     ]
   },
@@ -5639,6 +10453,40 @@
         "x": 4,
         "y": 9,
         "text": 5
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Slowbro",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Old Medium Woman",
+        "x": 1,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
+      },
+      {
+        "sprite": "Clefairy",
+        "x": 1,
+        "y": 8,
+        "move": "Walk",
+        "text": 3,
+        "range": 2
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 4,
+        "y": 4,
+        "move": "Walk",
+        "text": 4,
+        "range": 1
       }
     ]
   },
@@ -5749,6 +10597,40 @@
         "y": 9,
         "text": 8
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bike Shop Guy",
+        "x": 0,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up"
+      },
+      {
+        "sprite": "Mart Guy",
+        "x": 3,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 0,
+        "y": 7,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up"
+      },
+      {
+        "sprite": "Lapras Giver",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      }
     ]
   },
   {
@@ -5818,6 +10700,24 @@
         "toWarp": 2,
         "toMap": "Celadon Mansion Roof"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Hiker",
+        "x": 2,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 4,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      }
     ]
   },
   {
@@ -5845,6 +10745,40 @@
         "toWarp": 5,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 7,
+        "y": 3,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 10,
+        "y": 5,
+        "move": "Walk",
+        "text": 3,
+        "range": 0
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -5871,6 +10805,88 @@
         "y": 17,
         "toWarp": 6,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Erika",
+        "x": 4,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Erika",
+        "team": 1
+      },
+      {
+        "sprite": "Lass",
+        "x": 2,
+        "y": 11,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Lass",
+        "team": 17
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 7,
+        "y": 10,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Beauty",
+        "team": 1
+      },
+      {
+        "sprite": "Lass",
+        "x": 9,
+        "y": 5,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 11
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 1,
+        "y": 5,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Beauty",
+        "team": 2
+      },
+      {
+        "sprite": "Lass",
+        "x": 6,
+        "y": 3,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Lass",
+        "team": 18
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 3,
+        "y": 3,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Beauty",
+        "team": 3
+      },
+      {
+        "sprite": "Lass",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down",
+        "class": "Cooltrainer F",
+        "team": 1
       }
     ]
   },
@@ -5912,6 +10928,98 @@
         "y": 4,
         "text": 12
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Foulard Woman",
+        "x": 2,
+        "y": 6,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Mart Guy",
+        "x": 5,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 2,
+        "y": 10,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left"
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 2,
+        "y": 13,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left"
+      },
+      {
+        "sprite": "Fisher",
+        "x": 5,
+        "y": 11,
+        "move": "Stay",
+        "text": 5,
+        "face": "Right"
+      },
+      {
+        "sprite": "Mom Geisha",
+        "x": 8,
+        "y": 11,
+        "move": "Stay",
+        "text": 6,
+        "face": "Left"
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 8,
+        "y": 14,
+        "move": "Stay",
+        "text": 7,
+        "face": "Left"
+      },
+      {
+        "sprite": "Gambler",
+        "x": 11,
+        "y": 15,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right"
+      },
+      {
+        "sprite": "Mart Guy",
+        "x": 14,
+        "y": 11,
+        "move": "Stay",
+        "text": 9,
+        "face": "Left"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 17,
+        "y": 13,
+        "move": "Stay",
+        "text": 10,
+        "face": "Right"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 9,
+        "y": 5,
+        "move": "Stay",
+        "text": 11,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 7
+      }
     ]
   },
   {
@@ -5952,6 +11060,40 @@
         "x": 14,
         "y": 1,
         "text": 5
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Gentleman",
+        "x": 14,
+        "y": 5,
+        "move": "Walk",
+        "text": 1,
+        "range": 1
+      },
+      {
+        "sprite": "Sailor",
+        "x": 2,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Mart Guy",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Mart Guy",
+        "x": 6,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -5998,6 +11140,24 @@
         "y": 2,
         "text": 5
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Balding Guy",
+        "x": 1,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Gambler",
+        "x": 7,
+        "y": 3,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      }
     ]
   },
   {
@@ -6024,6 +11184,48 @@
         "y": 7,
         "toWarp": 10,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Cook",
+        "x": 8,
+        "y": 5,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "Mom Geisha",
+        "x": 7,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 1,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Fisher 2",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right"
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 0,
+        "y": 1,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
       }
     ]
   },
@@ -6053,6 +11255,32 @@
         "toWarp": 11,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Old Person",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 1,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 0
+      },
+      {
+        "sprite": "Sailor",
+        "x": 5,
+        "y": 6,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left"
+      }
     ]
   },
   {
@@ -6080,6 +11308,32 @@
         "toWarp": 12,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Old Medium Woman",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 2,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 8,
+        "y": 4,
+        "move": "Walk",
+        "text": 3,
+        "range": 2
+      }
     ]
   },
   {
@@ -6106,6 +11360,40 @@
         "y": 7,
         "toWarp": 0,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Little Girl",
+        "x": 2,
+        "y": 6,
+        "move": "Walk",
+        "text": 3,
+        "range": 1
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -6141,6 +11429,48 @@
         "toWarp": 1,
         "toMap": "Pokemon Tower 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Cable Club Woman",
+        "x": 15,
+        "y": 13,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up"
+      },
+      {
+        "sprite": "Mom Geisha",
+        "x": 6,
+        "y": 8,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Balding Guy",
+        "x": 8,
+        "y": 12,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Girl",
+        "x": 13,
+        "y": 7,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Medium",
+        "x": 17,
+        "y": 7,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left"
+      }
     ]
   },
   {
@@ -6168,6 +11498,24 @@
         "y": 9,
         "toWarp": 2,
         "toMap": "Pokemon Tower 1F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Blue",
+        "x": 14,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Medium",
+        "x": 3,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right"
       }
     ]
   },
@@ -6197,6 +11545,47 @@
         "toWarp": 1,
         "toMap": "Pokemon Tower 4F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Medium",
+        "x": 12,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Channeler",
+        "team": 5
+      },
+      {
+        "sprite": "Medium",
+        "x": 9,
+        "y": 8,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Channeler",
+        "team": 6
+      },
+      {
+        "sprite": "Medium",
+        "x": 10,
+        "y": 13,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Channeler",
+        "team": 8
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 12,
+        "y": 1,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Escape Rope"
+      }
     ]
   },
   {
@@ -6224,6 +11613,65 @@
         "y": 9,
         "toWarp": 1,
         "toMap": "Pokemon Tower 3F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Medium",
+        "x": 5,
+        "y": 10,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Channeler",
+        "team": 9
+      },
+      {
+        "sprite": "Medium",
+        "x": 15,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Channeler",
+        "team": 10
+      },
+      {
+        "sprite": "Medium",
+        "x": 14,
+        "y": 12,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Channeler",
+        "team": 12
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 12,
+        "y": 10,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Elixer"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 9,
+        "y": 10,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "Awakening"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 12,
+        "y": 16,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Hp Up"
       }
     ]
   },
@@ -6253,6 +11701,65 @@
         "toWarp": 0,
         "toMap": "Pokemon Tower 6F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Medium",
+        "x": 12,
+        "y": 8,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Medium",
+        "x": 17,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Channeler",
+        "team": 14
+      },
+      {
+        "sprite": "Medium",
+        "x": 14,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Channeler",
+        "team": 16
+      },
+      {
+        "sprite": "Medium",
+        "x": 6,
+        "y": 10,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Channeler",
+        "team": 17
+      },
+      {
+        "sprite": "Medium",
+        "x": 9,
+        "y": 16,
+        "move": "Stay",
+        "text": 5,
+        "face": "Right",
+        "class": "Channeler",
+        "team": 18
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 6,
+        "y": 14,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Nugget"
+      }
     ]
   },
   {
@@ -6281,6 +11788,56 @@
         "toWarp": 0,
         "toMap": "Pokemon Tower 7F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Medium",
+        "x": 12,
+        "y": 10,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Channeler",
+        "team": 19
+      },
+      {
+        "sprite": "Medium",
+        "x": 9,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Channeler",
+        "team": 20
+      },
+      {
+        "sprite": "Medium",
+        "x": 16,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Channeler",
+        "team": 21
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 6,
+        "y": 8,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Rare Candy"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 14,
+        "y": 14,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "X Accuracy"
+      }
     ]
   },
   {
@@ -6302,6 +11859,46 @@
         "y": 16,
         "toWarp": 1,
         "toMap": "Pokemon Tower 6F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Rocket",
+        "x": 9,
+        "y": 11,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 19
+      },
+      {
+        "sprite": "Rocket",
+        "x": 12,
+        "y": 9,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 20
+      },
+      {
+        "sprite": "Rocket",
+        "x": 9,
+        "y": 7,
+        "move": "Stay",
+        "text": 3,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 21
+      },
+      {
+        "sprite": "Mr Fuji",
+        "x": 10,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -6331,6 +11928,56 @@
         "toWarp": 2,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 3,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Little Girl",
+        "x": 6,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 6,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up"
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 1,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Mr Fuji",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 5,
+        "face": "None"
+      },
+      {
+        "sprite": "Book Map Dex",
+        "x": 3,
+        "y": 3,
+        "move": "Stay",
+        "text": 6,
+        "face": "None"
+      }
     ]
   },
   {
@@ -6357,6 +12004,32 @@
         "y": 7,
         "toWarp": 3,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Balding Guy",
+        "x": 3,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 7,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
       }
     ]
   },
@@ -6386,6 +12059,24 @@
         "toWarp": 4,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Slowbro",
+        "x": 3,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up"
+      },
+      {
+        "sprite": "Brunette Girl",
+        "x": 2,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right"
+      }
     ]
   },
   {
@@ -6412,6 +12103,32 @@
         "y": 7,
         "toWarp": 0,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Lass",
+        "x": 6,
+        "y": 5,
+        "move": "Walk",
+        "text": 3,
+        "range": 1
       }
     ]
   },
@@ -6441,6 +12158,32 @@
         "toWarp": 1,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mom Geisha",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Gambler",
+        "x": 7,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up"
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 5,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      }
     ]
   },
   {
@@ -6467,6 +12210,40 @@
         "y": 7,
         "toWarp": 2,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Rocker",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Lass",
+        "x": 6,
+        "y": 5,
+        "move": "Walk",
+        "text": 3,
+        "range": 2
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -6508,6 +12285,33 @@
         "y": 3,
         "text": 5
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Warden",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 8,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Rare Candy"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 8,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "Boulder Movement Byte 2"
+      }
     ]
   },
   {
@@ -6548,6 +12352,24 @@
         "toWarp": 1,
         "toMap": "Safari Zone Center"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "White Player",
+        "x": 6,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
+      },
+      {
+        "sprite": "White Player",
+        "x": 1,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right"
+      }
     ]
   },
   {
@@ -6575,6 +12397,86 @@
         "toWarp": 5,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Blackbelt",
+        "x": 4,
+        "y": 10,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Koga",
+        "team": 1
+      },
+      {
+        "sprite": "Rocker",
+        "x": 8,
+        "y": 13,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Juggler",
+        "team": 7
+      },
+      {
+        "sprite": "Rocker",
+        "x": 7,
+        "y": 8,
+        "move": "Stay",
+        "text": 3,
+        "face": "Right",
+        "class": "Juggler",
+        "team": 3
+      },
+      {
+        "sprite": "Rocker",
+        "x": 1,
+        "y": 12,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Juggler",
+        "team": 8
+      },
+      {
+        "sprite": "Rocker",
+        "x": 3,
+        "y": 5,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up",
+        "class": "Tamer",
+        "team": 1
+      },
+      {
+        "sprite": "Rocker",
+        "x": 8,
+        "y": 2,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Tamer",
+        "team": 2
+      },
+      {
+        "sprite": "Rocker",
+        "x": 2,
+        "y": 7,
+        "move": "Stay",
+        "text": 7,
+        "face": "Left",
+        "class": "Juggler",
+        "team": 4
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 7,
+        "y": 15,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -6601,6 +12503,32 @@
         "y": 7,
         "toWarp": 6,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "White Player",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "White Player",
+        "x": 0,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up"
+      },
+      {
+        "sprite": "White Player",
+        "x": 10,
+        "y": 1,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
       }
     ]
   },
@@ -6660,6 +12588,24 @@
         "toWarp": 5,
         "toMap": "Seafoam Islands 1F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Boulder",
+        "x": 17,
+        "y": 6,
+        "move": "Stay",
+        "text": 1,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 22,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Boulder Movement Byte 2"
+      }
     ]
   },
   {
@@ -6717,6 +12663,24 @@
         "y": 14,
         "toWarp": 4,
         "toMap": "Seafoam Islands B3F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Boulder",
+        "x": 18,
+        "y": 6,
+        "move": "Stay",
+        "text": 1,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 23,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Boulder Movement Byte 2"
       }
     ]
   },
@@ -6776,6 +12740,56 @@
         "toWarp": 1,
         "toMap": "Seafoam Islands B4F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Boulder",
+        "x": 5,
+        "y": 14,
+        "move": "Stay",
+        "text": 1,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 3,
+        "y": 15,
+        "move": "Stay",
+        "text": 2,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 8,
+        "y": 14,
+        "move": "Stay",
+        "text": 3,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 9,
+        "y": 14,
+        "move": "Stay",
+        "text": 4,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 18,
+        "y": 6,
+        "move": "Stay",
+        "text": 5,
+        "face": "None"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 19,
+        "y": 6,
+        "move": "Stay",
+        "text": 6,
+        "face": "None"
+      }
     ]
   },
   {
@@ -6828,6 +12842,34 @@
         "y": 1,
         "text": 5
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Boulder",
+        "x": 4,
+        "y": 15,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 5,
+        "y": 15,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Bird",
+        "x": 6,
+        "y": 1,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "pokemon": "Articuno",
+        "level": 50
+      }
     ]
   },
   {
@@ -6855,6 +12897,16 @@
         "y": 7,
         "toWarp": 8,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher",
+        "x": 2,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
       }
     ]
   },
@@ -6889,6 +12941,16 @@
         "y": 7,
         "toWarp": 7,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
       }
     ]
   },
@@ -6954,6 +13016,36 @@
         "toWarp": 0,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 17,
+        "y": 17,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Scientist",
+        "team": 4
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 14,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Escape Rope"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 18,
+        "y": 21,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Carbos"
+      }
     ]
   },
   {
@@ -6980,6 +13072,96 @@
         "y": 17,
         "toWarp": 1,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 3,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Blaine",
+        "team": 1
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 17,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Super Nerd",
+        "team": 9
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 17,
+        "y": 8,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Burglar",
+        "team": 4
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 11,
+        "y": 4,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Super Nerd",
+        "team": 10
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 11,
+        "y": 8,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Burglar",
+        "team": 5
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 11,
+        "y": 14,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Super Nerd",
+        "team": 11
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 3,
+        "y": 14,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Burglar",
+        "team": 6
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 3,
+        "y": 8,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down",
+        "class": "Super Nerd",
+        "team": 12
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 16,
+        "y": 13,
+        "move": "Stay",
+        "text": 9,
+        "face": "Down"
       }
     ]
   },
@@ -7049,6 +13231,16 @@
         "y": 4,
         "text": 5
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher",
+        "x": 1,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      }
     ]
   },
   {
@@ -7076,6 +13268,32 @@
         "y": 7,
         "toWarp": 2,
         "toMap": "Cinnabar Lab"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 3,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Old Person",
+        "x": 1,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 5,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "Up"
       }
     ]
   },
@@ -7122,6 +13340,24 @@
         "y": 1,
         "text": 5
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 7,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 2,
+        "y": 3,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      }
     ]
   },
   {
@@ -7150,6 +13386,24 @@
         "toWarp": 4,
         "toMap": "Cinnabar Lab"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 5,
+        "y": 2,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 7,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up"
+      }
     ]
   },
   {
@@ -7177,6 +13431,40 @@
         "toWarp": 3,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Lass",
+        "x": 9,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 0
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 2,
+        "y": 6,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -7203,6 +13491,32 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Erika",
+        "x": 6,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 3,
+        "y": 4,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
       }
     ]
   },
@@ -7250,6 +13564,48 @@
         "toWarp": 0,
         "toMap": "Loreleis Room"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 7,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 4,
+        "y": 9,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right"
+      },
+      {
+        "sprite": "Lass",
+        "x": 5,
+        "y": 1,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 13,
+        "y": 6,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -7282,6 +13638,32 @@
         "y": 1,
         "toWarp": 0,
         "toMap": "Copycats House 2F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mom Geisha",
+        "x": 2,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 5,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left"
+      },
+      {
+        "sprite": "Clefairy",
+        "x": 1,
+        "y": 4,
+        "move": "Walk",
+        "text": 3,
+        "range": 1
       }
     ]
   },
@@ -7316,6 +13698,48 @@
         "y": 1,
         "text": 7
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Brunette Girl",
+        "x": 4,
+        "y": 3,
+        "move": "Walk",
+        "text": 1,
+        "range": 0
+      },
+      {
+        "sprite": "Bird",
+        "x": 4,
+        "y": 6,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      },
+      {
+        "sprite": "Slowbro",
+        "x": 5,
+        "y": 1,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Bird",
+        "x": 2,
+        "y": 0,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
+      },
+      {
+        "sprite": "Clefairy",
+        "x": 1,
+        "y": 6,
+        "move": "Stay",
+        "text": 5,
+        "face": "Right"
+      }
     ]
   },
   {
@@ -7342,6 +13766,74 @@
         "y": 11,
         "toWarp": 1,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Hiker",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Blackbelt",
+        "team": 1
+      },
+      {
+        "sprite": "Hiker",
+        "x": 3,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Blackbelt",
+        "team": 2
+      },
+      {
+        "sprite": "Hiker",
+        "x": 3,
+        "y": 6,
+        "move": "Stay",
+        "text": 3,
+        "face": "Right",
+        "class": "Blackbelt",
+        "team": 3
+      },
+      {
+        "sprite": "Hiker",
+        "x": 5,
+        "y": 5,
+        "move": "Stay",
+        "text": 4,
+        "face": "Left",
+        "class": "Blackbelt",
+        "team": 4
+      },
+      {
+        "sprite": "Hiker",
+        "x": 5,
+        "y": 7,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Blackbelt",
+        "team": 5
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 6,
+        "face": "None"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 5,
+        "y": 1,
+        "move": "Stay",
+        "text": 7,
+        "face": "None"
       }
     ]
   },
@@ -7550,6 +14042,96 @@
         "toWarp": 19,
         "toMap": "Saffron Gym"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Girl",
+        "x": 9,
+        "y": 8,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Sabrina",
+        "team": 1
+      },
+      {
+        "sprite": "Medium",
+        "x": 10,
+        "y": 1,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Channeler",
+        "team": 22
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 17,
+        "y": 1,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Psychic Tr",
+        "team": 1
+      },
+      {
+        "sprite": "Medium",
+        "x": 3,
+        "y": 7,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Channeler",
+        "team": 23
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 17,
+        "y": 7,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Psychic Tr",
+        "team": 2
+      },
+      {
+        "sprite": "Medium",
+        "x": 3,
+        "y": 13,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Channeler",
+        "team": 24
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 17,
+        "y": 13,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Psychic Tr",
+        "team": 3
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down",
+        "class": "Psychic Tr",
+        "team": 4
+      },
+      {
+        "sprite": "Gym Helper",
+        "x": 10,
+        "y": 15,
+        "move": "Stay",
+        "text": 9,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -7578,6 +14160,40 @@
         "toWarp": 3,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Brunette Girl",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Bird",
+        "x": 0,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      },
+      {
+        "sprite": "Bug Catcher",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Paper Sheet",
+        "x": 3,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      }
     ]
   },
   {
@@ -7604,6 +14220,32 @@
         "y": 7,
         "toWarp": 4,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mart Guy",
+        "x": 0,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Lass",
+        "x": 6,
+        "y": 5,
+        "move": "Walk",
+        "text": 3,
+        "range": 0
       }
     ]
   },
@@ -7650,6 +14292,16 @@
         "toWarp": 6,
         "toMap": "Silph Co 3F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Cable Club Woman",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -7676,6 +14328,40 @@
         "y": 7,
         "toWarp": 6,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 5,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 8,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Cable Club Woman",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down"
       }
     ]
   },
@@ -7704,6 +14390,16 @@
         "y": 7,
         "toWarp": 7,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
       }
     ]
   },
@@ -7750,6 +14446,16 @@
         "toWarp": 0,
         "toMap": "Route 15 Gate 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      }
     ]
   },
   {
@@ -7777,6 +14483,16 @@
         "x": 6,
         "y": 2,
         "text": 2
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
       }
     ]
   },
@@ -7847,6 +14563,24 @@
         "toWarp": 0,
         "toMap": "Route 16 Gate 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 4,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Gambler",
+        "x": 4,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      }
     ]
   },
   {
@@ -7880,6 +14614,24 @@
         "y": 2,
         "text": 4
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Young Boy",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Little Girl",
+        "x": 2,
+        "y": 5,
+        "move": "Walk",
+        "text": 2,
+        "range": 2
+      }
     ]
   },
   {
@@ -7908,6 +14660,24 @@
         "toWarp": 8,
         "toMap": "Last Map"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Brunette Girl",
+        "x": 2,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
+      },
+      {
+        "sprite": "Bird",
+        "x": 6,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 0
+      }
     ]
   },
   {
@@ -7935,6 +14705,16 @@
         "y": 7,
         "toWarp": 3,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher",
+        "x": 2,
+        "y": 4,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
       }
     ]
   },
@@ -7981,6 +14761,16 @@
         "toWarp": 0,
         "toMap": "Route 18 Gate 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 4,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -8013,6 +14803,16 @@
         "x": 6,
         "y": 2,
         "text": 3
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bug Catcher",
+        "x": 4,
+        "y": 2,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
       }
     ]
   },
@@ -8072,6 +14872,24 @@
         "toWarp": 4,
         "toMap": "Seafoam Islands B1F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Boulder",
+        "x": 18,
+        "y": 10,
+        "move": "Stay",
+        "text": 1,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 26,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Boulder Movement Byte 2"
+      }
     ]
   },
   {
@@ -8110,6 +14928,16 @@
         "y": 0,
         "toWarp": 1,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Guard",
+        "x": 6,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
       }
     ]
   },
@@ -8169,6 +14997,128 @@
         "toWarp": 3,
         "toMap": "Victory Road 3F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Hiker",
+        "x": 12,
+        "y": 9,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Blackbelt",
+        "team": 9
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 21,
+        "y": 13,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Juggler",
+        "team": 2
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 19,
+        "y": 8,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Tamer",
+        "team": 5
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Pokemaniac",
+        "team": 6
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 26,
+        "y": 3,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Juggler",
+        "team": 5
+      },
+      {
+        "sprite": "Bird",
+        "x": 11,
+        "y": 5,
+        "move": "Stay",
+        "text": 6,
+        "face": "Up",
+        "pokemon": "Moltres",
+        "level": 50
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 27,
+        "y": 5,
+        "move": "Stay",
+        "text": 7,
+        "face": "None",
+        "item": "Tm 17"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 18,
+        "y": 9,
+        "move": "Stay",
+        "text": 8,
+        "face": "None",
+        "item": "Full Heal"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 9,
+        "y": 11,
+        "move": "Stay",
+        "text": 9,
+        "face": "None",
+        "item": "Tm 05"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 11,
+        "y": 0,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Guard Spec"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 4,
+        "y": 14,
+        "move": "Stay",
+        "text": 11,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 5,
+        "y": 5,
+        "move": "Stay",
+        "text": 12,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 23,
+        "y": 16,
+        "move": "Stay",
+        "text": 13,
+        "face": "Boulder Movement Byte 2"
+      }
     ]
   },
   {
@@ -8202,6 +15152,16 @@
         "y": 2,
         "text": 3
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Brunette Girl",
+        "x": 3,
+        "y": 4,
+        "move": "Walk",
+        "text": 1,
+        "range": 1
+      }
     ]
   },
   {
@@ -8229,6 +15189,16 @@
         "y": 7,
         "toWarp": 7,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Little Girl",
+        "x": 3,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up"
       }
     ]
   },
@@ -8297,6 +15267,98 @@
         "toWarp": 6,
         "toMap": "Victory Road 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 28,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Cooltrainer M",
+        "team": 2
+      },
+      {
+        "sprite": "Lass",
+        "x": 7,
+        "y": 13,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Cooltrainer F",
+        "team": 2
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 6,
+        "y": 14,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Cooltrainer M",
+        "team": 3
+      },
+      {
+        "sprite": "Lass",
+        "x": 13,
+        "y": 3,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Cooltrainer F",
+        "team": 3
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 26,
+        "y": 5,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "Max Revive"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 7,
+        "y": 7,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Tm 47"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 22,
+        "y": 3,
+        "move": "Stay",
+        "text": 7,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 13,
+        "y": 12,
+        "move": "Stay",
+        "text": 8,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 24,
+        "y": 10,
+        "move": "Stay",
+        "text": 9,
+        "face": "Boulder Movement Byte 2"
+      },
+      {
+        "sprite": "Boulder",
+        "x": 22,
+        "y": 15,
+        "move": "Stay",
+        "text": 10,
+        "face": "Boulder Movement Byte 2"
+      }
     ]
   },
   {
@@ -8342,6 +15404,76 @@
         "y": 19,
         "toWarp": 1,
         "toMap": "Rocket Hideout Elevator"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Rocket",
+        "x": 26,
+        "y": 8,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 8
+      },
+      {
+        "sprite": "Rocket",
+        "x": 12,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 9
+      },
+      {
+        "sprite": "Rocket",
+        "x": 18,
+        "y": 17,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Rocket",
+        "team": 10
+      },
+      {
+        "sprite": "Rocket",
+        "x": 15,
+        "y": 25,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 11
+      },
+      {
+        "sprite": "Rocket",
+        "x": 28,
+        "y": 18,
+        "move": "Stay",
+        "text": 5,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 12
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 11,
+        "y": 14,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Escape Rope"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 9,
+        "y": 17,
+        "move": "Stay",
+        "text": 7,
+        "face": "None",
+        "item": "Hyper Potion"
       }
     ]
   },
@@ -8389,6 +15521,54 @@
         "toWarp": 1,
         "toMap": "Rocket Hideout Elevator"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Rocket",
+        "x": 20,
+        "y": 12,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Rocket",
+        "team": 13
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 1,
+        "y": 11,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Moon Stone"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 16,
+        "y": 8,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Nugget"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 6,
+        "y": 12,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Tm 07"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 3,
+        "y": 21,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "Super Potion"
+      }
     ]
   },
   {
@@ -8416,6 +15596,46 @@
         "y": 18,
         "toWarp": 0,
         "toMap": "Rocket Hideout B4F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Rocket",
+        "x": 10,
+        "y": 22,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 14
+      },
+      {
+        "sprite": "Rocket",
+        "x": 26,
+        "y": 12,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 15
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 26,
+        "y": 17,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Tm 10"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 20,
+        "y": 14,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Rare Candy"
       }
     ]
   },
@@ -8450,6 +15670,93 @@
         "y": 15,
         "toWarp": 1,
         "toMap": "Rocket Hideout Elevator"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Giovanni",
+        "x": 25,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Giovanni",
+        "team": 1
+      },
+      {
+        "sprite": "Rocket",
+        "x": 23,
+        "y": 12,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Rocket",
+        "team": 16
+      },
+      {
+        "sprite": "Rocket",
+        "x": 26,
+        "y": 12,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Rocket",
+        "team": 17
+      },
+      {
+        "sprite": "Rocket",
+        "x": 11,
+        "y": 2,
+        "move": "Stay",
+        "text": 4,
+        "face": "Down",
+        "class": "Rocket",
+        "team": 18
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 10,
+        "y": 12,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "Hp Up"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 9,
+        "y": 4,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Tm 02"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 12,
+        "y": 20,
+        "move": "Stay",
+        "text": 7,
+        "face": "None",
+        "item": "Iron"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 25,
+        "y": 2,
+        "move": "Stay",
+        "text": 8,
+        "face": "None",
+        "item": "Silph Scope"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 10,
+        "y": 2,
+        "move": "Stay",
+        "text": 9,
+        "face": "None",
+        "item": "Lift Key"
       }
     ]
   },
@@ -8563,6 +15870,56 @@
         "toWarp": 4,
         "toMap": "Silph Co 6F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Erika",
+        "x": 10,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "Up"
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 5,
+        "y": 12,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Scientist",
+        "team": 2
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 24,
+        "y": 13,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Scientist",
+        "team": 3
+      },
+      {
+        "sprite": "Rocket",
+        "x": 16,
+        "y": 11,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 23
+      },
+      {
+        "sprite": "Rocket",
+        "x": 24,
+        "y": 7,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 24
+      }
     ]
   },
   {
@@ -8638,6 +15995,45 @@
         "toWarp": 3,
         "toMap": "Silph Co 3F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lapras Giver",
+        "x": 24,
+        "y": 8,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 20,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 25
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 7,
+        "y": 9,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Scientist",
+        "team": 4
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 8,
+        "y": 5,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Hyper Potion"
+      }
     ]
   },
   {
@@ -8694,6 +16090,73 @@
         "y": 11,
         "toWarp": 5,
         "toMap": "Silph Co 10F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lapras Giver",
+        "x": 6,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 9,
+        "y": 14,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 26
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 14,
+        "y": 6,
+        "move": "Stay",
+        "text": 3,
+        "face": "Left",
+        "class": "Scientist",
+        "team": 5
+      },
+      {
+        "sprite": "Rocket",
+        "x": 26,
+        "y": 10,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 27
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 3,
+        "y": 9,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "Full Heal"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 4,
+        "y": 7,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Max Revive"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 5,
+        "y": 8,
+        "move": "Stay",
+        "text": 7,
+        "face": "None",
+        "item": "Escape Rope"
       }
     ]
   },
@@ -8752,6 +16215,107 @@
         "toWarp": 5,
         "toMap": "Silph Co 3F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lapras Giver",
+        "x": 13,
+        "y": 9,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 8,
+        "y": 16,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 28
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 8,
+        "y": 3,
+        "move": "Stay",
+        "text": 3,
+        "face": "Right",
+        "class": "Scientist",
+        "team": 6
+      },
+      {
+        "sprite": "Rocker",
+        "x": 18,
+        "y": 10,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Juggler",
+        "team": 1
+      },
+      {
+        "sprite": "Rocket",
+        "x": 28,
+        "y": 4,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 29
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 2,
+        "y": 13,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Tm 09"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 4,
+        "y": 6,
+        "move": "Stay",
+        "text": 7,
+        "face": "None",
+        "item": "Protein"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 21,
+        "y": 16,
+        "move": "Stay",
+        "text": 8,
+        "face": "None",
+        "item": "Card Key"
+      },
+      {
+        "sprite": "Clipboard",
+        "x": 22,
+        "y": 12,
+        "move": "Stay",
+        "text": 9,
+        "face": "None"
+      },
+      {
+        "sprite": "Clipboard",
+        "x": 25,
+        "y": 10,
+        "move": "Stay",
+        "text": 10,
+        "face": "None"
+      },
+      {
+        "sprite": "Clipboard",
+        "x": 24,
+        "y": 6,
+        "move": "Stay",
+        "text": 11,
+        "face": "None"
+      }
     ]
   },
   {
@@ -8796,6 +16360,96 @@
         "y": 3,
         "toWarp": 6,
         "toMap": "Silph Co 2F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lapras Giver",
+        "x": 10,
+        "y": 6,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Lapras Giver",
+        "x": 20,
+        "y": 6,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Erika",
+        "x": 21,
+        "y": 6,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      },
+      {
+        "sprite": "Erika",
+        "x": 11,
+        "y": 10,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right"
+      },
+      {
+        "sprite": "Lapras Giver",
+        "x": 18,
+        "y": 13,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 17,
+        "y": 3,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 30
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 7,
+        "y": 8,
+        "move": "Stay",
+        "text": 7,
+        "face": "Down",
+        "class": "Scientist",
+        "team": 7
+      },
+      {
+        "sprite": "Rocket",
+        "x": 14,
+        "y": 15,
+        "move": "Stay",
+        "text": 8,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 31
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 3,
+        "y": 12,
+        "move": "Stay",
+        "text": 9,
+        "face": "None",
+        "item": "Hp Up"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 2,
+        "y": 15,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "X Accuracy"
       }
     ]
   },
@@ -8847,6 +16501,106 @@
         "y": 15,
         "toWarp": 3,
         "toMap": "Silph Co 5F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lapras Giver",
+        "x": 1,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Lapras Giver",
+        "x": 13,
+        "y": 13,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up"
+      },
+      {
+        "sprite": "Lapras Giver",
+        "x": 7,
+        "y": 10,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Erika",
+        "x": 10,
+        "y": 8,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 13,
+        "y": 1,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Rocket",
+        "team": 32
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 2,
+        "y": 13,
+        "move": "Stay",
+        "text": 6,
+        "face": "Down",
+        "class": "Scientist",
+        "team": 8
+      },
+      {
+        "sprite": "Rocket",
+        "x": 20,
+        "y": 2,
+        "move": "Stay",
+        "text": 7,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 33
+      },
+      {
+        "sprite": "Rocket",
+        "x": 19,
+        "y": 14,
+        "move": "Stay",
+        "text": 8,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 34
+      },
+      {
+        "sprite": "Blue",
+        "x": 3,
+        "y": 7,
+        "move": "Stay",
+        "text": 9,
+        "face": "Up"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 1,
+        "y": 9,
+        "move": "Stay",
+        "text": 10,
+        "face": "None",
+        "item": "Calcium"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 24,
+        "y": 11,
+        "move": "Stay",
+        "text": 11,
+        "face": "None",
+        "item": "Tm 03"
       }
     ]
   },
@@ -8905,6 +16659,46 @@
         "toWarp": 3,
         "toMap": "Silph Co 8F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lapras Giver",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "None"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 19,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Rocket",
+        "team": 35
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 10,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Scientist",
+        "team": 9
+      },
+      {
+        "sprite": "Rocket",
+        "x": 12,
+        "y": 15,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 36
+      }
     ]
   },
   {
@@ -8945,6 +16739,43 @@
         "toWarp": 1,
         "toMap": "Pokemon Mansion 3F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 3,
+        "y": 17,
+        "move": "Walk",
+        "text": 1,
+        "range": 2,
+        "class": "Burglar",
+        "team": 7
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 28,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Calcium"
+      },
+      {
+        "sprite": "Book Map Dex",
+        "x": 18,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      },
+      {
+        "sprite": "Book Map Dex",
+        "x": 3,
+        "y": 22,
+        "move": "Stay",
+        "text": 4,
+        "face": "None"
+      }
     ]
   },
   {
@@ -8979,6 +16810,54 @@
         "toWarp": 2,
         "toMap": "Pokemon Mansion 2F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 5,
+        "y": 11,
+        "move": "Walk",
+        "text": 1,
+        "range": 2,
+        "class": "Burglar",
+        "team": 8
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 20,
+        "y": 11,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Scientist",
+        "team": 12
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 1,
+        "y": 16,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Max Potion"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 25,
+        "y": 5,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Iron"
+      },
+      {
+        "sprite": "Book Map Dex",
+        "x": 6,
+        "y": 12,
+        "move": "Stay",
+        "text": 5,
+        "face": "None"
+      }
     ]
   },
   {
@@ -9000,6 +16879,81 @@
         "y": 22,
         "toWarp": 5,
         "toMap": "Pokemon Mansion 1F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 16,
+        "y": 23,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "class": "Burglar",
+        "team": 9
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 27,
+        "y": 11,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Scientist",
+        "team": 13
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 10,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Rare Candy"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 1,
+        "y": 22,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Full Restore"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 19,
+        "y": 25,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "Tm 14"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 5,
+        "y": 4,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Tm 22"
+      },
+      {
+        "sprite": "Book Map Dex",
+        "x": 16,
+        "y": 20,
+        "move": "Stay",
+        "text": 7,
+        "face": "None"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 5,
+        "y": 13,
+        "move": "Stay",
+        "text": 8,
+        "face": "None",
+        "item": "Secret Key"
       }
     ]
   },
@@ -9062,6 +17016,44 @@
         "x": 5,
         "y": 23,
         "text": 7
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Pokeball",
+        "x": 21,
+        "y": 10,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "item": "Full Restore"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 3,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Max Potion"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 20,
+        "y": 13,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Carbos"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 15,
+        "y": 12,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Tm 37"
       }
     ]
   },
@@ -9159,6 +17151,26 @@
         "y": 28,
         "text": 7
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Pokeball",
+        "x": 25,
+        "y": 1,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "item": "Protein"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 19,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Tm 40"
+      }
     ]
   },
   {
@@ -9244,6 +17256,44 @@
         "y": 22,
         "text": 8
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Pokeball",
+        "x": 8,
+        "y": 20,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "item": "Max Potion"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 9,
+        "y": 7,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Tm 32"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 18,
+        "y": 18,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Max Revive"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 19,
+        "y": 7,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Gold Teeth"
+      }
     ]
   },
   {
@@ -9325,6 +17375,17 @@
         "y": 22,
         "text": 3
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Pokeball",
+        "x": 14,
+        "y": 10,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "item": "Nugget"
+      }
     ]
   },
   {
@@ -9353,6 +17414,24 @@
         "toWarp": 8,
         "toMap": "Safari Zone Center"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Girl",
+        "x": 3,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 1,
+        "y": 4,
+        "move": "Walk",
+        "text": 2,
+        "range": 1
+      }
     ]
   },
   {
@@ -9379,6 +17458,16 @@
         "y": 7,
         "toWarp": 6,
         "toMap": "Safari Zone West"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fisher",
+        "x": 3,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
       }
     ]
   },
@@ -9408,6 +17497,32 @@
         "toWarp": 7,
         "toMap": "Safari Zone West"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 4,
+        "y": 4,
+        "move": "Walk",
+        "text": 1,
+        "range": 0
+      },
+      {
+        "sprite": "Black Hair Boy 1",
+        "x": 0,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "Right"
+      },
+      {
+        "sprite": "Erika",
+        "x": 6,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down"
+      }
     ]
   },
   {
@@ -9436,6 +17551,32 @@
         "toWarp": 4,
         "toMap": "Safari Zone East"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 1,
+        "y": 3,
+        "move": "Walk",
+        "text": 1,
+        "range": 1
+      },
+      {
+        "sprite": "Rocker",
+        "x": 4,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Lapras Giver",
+        "x": 5,
+        "y": 2,
+        "move": "Stay",
+        "text": 3,
+        "face": "None"
+      }
     ]
   },
   {
@@ -9463,6 +17604,32 @@
         "y": 7,
         "toWarp": 8,
         "toMap": "Safari Zone North"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Oak Aide",
+        "x": 6,
+        "y": 3,
+        "move": "Walk",
+        "text": 1,
+        "range": 2
+      },
+      {
+        "sprite": "White Player",
+        "x": 3,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "None"
+      },
+      {
+        "sprite": "Gentleman",
+        "x": 1,
+        "y": 5,
+        "move": "Walk",
+        "text": 3,
+        "range": 1
       }
     ]
   },
@@ -9516,6 +17683,35 @@
         "toWarp": 7,
         "toMap": "Cerulean Cave 1F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Pokeball",
+        "x": 29,
+        "y": 9,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "item": "Pp Up"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 4,
+        "y": 15,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Ultra Ball"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 13,
+        "y": 6,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Full Restore"
+      }
     ]
   },
   {
@@ -9537,6 +17733,36 @@
         "y": 6,
         "toWarp": 8,
         "toMap": "Cerulean Cave 1F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Slowbro",
+        "x": 27,
+        "y": 13,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "pokemon": "Mewtwo",
+        "level": 70
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 16,
+        "y": 9,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Ultra Ball"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 18,
+        "y": 1,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Max Revive"
       }
     ]
   },
@@ -9608,6 +17834,35 @@
         "toWarp": 0,
         "toMap": "Cerulean Cave B1F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Pokeball",
+        "x": 7,
+        "y": 13,
+        "move": "Stay",
+        "text": 1,
+        "face": "None",
+        "item": "Full Restore"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 19,
+        "y": 3,
+        "move": "Stay",
+        "text": 2,
+        "face": "None",
+        "item": "Max Elixer"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 5,
+        "y": 0,
+        "move": "Stay",
+        "text": 3,
+        "face": "None",
+        "item": "Nugget"
+      }
     ]
   },
   {
@@ -9634,6 +17889,16 @@
         "y": 7,
         "toWarp": 5,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mr Masterball",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Left"
       }
     ]
   },
@@ -9668,6 +17933,16 @@
         "y": 7,
         "toWarp": 8,
         "toMap": "Last Map"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Fat Bald Guy",
+        "x": 5,
+        "y": 3,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right"
       }
     ]
   },
@@ -9716,6 +17991,88 @@
         "toWarp": 7,
         "toMap": "Rock Tunnel 1F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lass",
+        "x": 11,
+        "y": 13,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Jr Trainer F",
+        "team": 9
+      },
+      {
+        "sprite": "Hiker",
+        "x": 6,
+        "y": 10,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down",
+        "class": "Hiker",
+        "team": 9
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 3,
+        "y": 5,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Pokemaniac",
+        "team": 3
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 20,
+        "y": 21,
+        "move": "Stay",
+        "text": 4,
+        "face": "Right",
+        "class": "Pokemaniac",
+        "team": 4
+      },
+      {
+        "sprite": "Hiker",
+        "x": 30,
+        "y": 10,
+        "move": "Stay",
+        "text": 5,
+        "face": "Down",
+        "class": "Hiker",
+        "team": 10
+      },
+      {
+        "sprite": "Lass",
+        "x": 14,
+        "y": 28,
+        "move": "Stay",
+        "text": 6,
+        "face": "Right",
+        "class": "Jr Trainer F",
+        "team": 10
+      },
+      {
+        "sprite": "Hiker",
+        "x": 33,
+        "y": 5,
+        "move": "Stay",
+        "text": 7,
+        "face": "Right",
+        "class": "Hiker",
+        "team": 11
+      },
+      {
+        "sprite": "Black Hair Boy 2",
+        "x": 26,
+        "y": 30,
+        "move": "Stay",
+        "text": 8,
+        "face": "Down",
+        "class": "Pokemaniac",
+        "team": 5
+      }
     ]
   },
   {
@@ -9760,6 +18117,46 @@
         "y": 15,
         "toWarp": 4,
         "toMap": "Silph Co 5F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Nurse",
+        "x": 3,
+        "y": 14,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Rocket",
+        "x": 2,
+        "y": 4,
+        "move": "Stay",
+        "text": 2,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 37
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 21,
+        "y": 13,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Scientist",
+        "team": 10
+      },
+      {
+        "sprite": "Rocket",
+        "x": 13,
+        "y": 16,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 38
       }
     ]
   },
@@ -9812,6 +18209,63 @@
         "toWarp": 6,
         "toMap": "Silph Co 4F"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Rocket",
+        "x": 1,
+        "y": 9,
+        "move": "Stay",
+        "text": 1,
+        "face": "Right",
+        "class": "Rocket",
+        "team": 39
+      },
+      {
+        "sprite": "Oak Aide",
+        "x": 10,
+        "y": 2,
+        "move": "Stay",
+        "text": 2,
+        "face": "Left",
+        "class": "Scientist",
+        "team": 11
+      },
+      {
+        "sprite": "Erika",
+        "x": 9,
+        "y": 15,
+        "move": "Walk",
+        "text": 3,
+        "range": 0
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 2,
+        "y": 12,
+        "move": "Stay",
+        "text": 4,
+        "face": "None",
+        "item": "Tm 26"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 4,
+        "y": 14,
+        "move": "Stay",
+        "text": 5,
+        "face": "None",
+        "item": "Rare Candy"
+      },
+      {
+        "sprite": "Pokeball",
+        "x": 5,
+        "y": 11,
+        "move": "Stay",
+        "text": 6,
+        "face": "None",
+        "item": "Carbos"
+      }
     ]
   },
   {
@@ -9850,6 +18304,54 @@
         "y": 2,
         "toWarp": 3,
         "toMap": "Silph Co 7F"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Mr Masterball",
+        "x": 7,
+        "y": 5,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down"
+      },
+      {
+        "sprite": "Foulard Woman",
+        "x": 10,
+        "y": 5,
+        "move": "Stay",
+        "text": 2,
+        "face": "Down"
+      },
+      {
+        "sprite": "Giovanni",
+        "x": 6,
+        "y": 9,
+        "move": "Stay",
+        "text": 3,
+        "face": "Down",
+        "class": "Giovanni",
+        "team": 2
+      },
+      {
+        "sprite": "Rocket",
+        "x": 3,
+        "y": 16,
+        "move": "Stay",
+        "text": 4,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 41
+      },
+      {
+        "sprite": "Rocket",
+        "x": 15,
+        "y": 9,
+        "move": "Stay",
+        "text": 5,
+        "face": "Up",
+        "class": "Rocket",
+        "team": 40
       }
     ]
   },
@@ -9912,7 +18414,17 @@
     "height": 4,
     "music": "Celadon",
     "tileset": "CLUB",
-    "border": 14
+    "border": 14,
+    "sprites": [
+      {
+        "sprite": "Red",
+        "x": 2,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "range": 0
+      }
+    ]
   },
   {
     "name": "Colosseum",
@@ -9925,7 +18437,17 @@
     "height": 4,
     "music": "Celadon",
     "tileset": "CLUB",
-    "border": 14
+    "border": 14,
+    "sprites": [
+      {
+        "sprite": "Red",
+        "x": 2,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "range": 0
+      }
+    ]
   },
   {
     "name": "Unused Map F1",
@@ -9992,6 +18514,18 @@
         "toWarp": 1,
         "toMap": "Brunos Room"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Lorelei",
+        "x": 5,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Lorelei",
+        "team": 1
+      }
     ]
   },
   {
@@ -10031,6 +18565,18 @@
         "toWarp": 1,
         "toMap": "Agathas Room"
       }
+    ],
+    "sprites": [
+      {
+        "sprite": "Bruno",
+        "x": 5,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Bruno",
+        "team": 1
+      }
     ]
   },
   {
@@ -10069,6 +18615,18 @@
         "y": 0,
         "toWarp": 0,
         "toMap": "Lances Room"
+      }
+    ],
+    "sprites": [
+      {
+        "sprite": "Agatha",
+        "x": 5,
+        "y": 2,
+        "move": "Stay",
+        "text": 1,
+        "face": "Down",
+        "class": "Agatha",
+        "team": 1
       }
     ]
   },
