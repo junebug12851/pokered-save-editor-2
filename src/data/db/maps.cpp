@@ -330,6 +330,7 @@ void MapsDB::load()
         tmp->y = warpEntry["y"].toDouble();
         tmp->warp = warpEntry["toWarp"].toDouble();
         tmp->map = warpEntry["toMap"].toString();
+        tmp->glitch = warpEntry["glitch"].toBool(false);
         entry->warpOut.append(tmp);
       }
     }

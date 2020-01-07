@@ -137,6 +137,9 @@ struct MapDBEntryWarpOut
   // Which map to warp to
   QString map;
 
+  // Is this warp-out not intended to be used
+  bool glitch = false;
+
   // Go to map
   MapDBEntry* toMap = nullptr;
 };
