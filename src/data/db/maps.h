@@ -33,6 +33,7 @@ struct PokemonDBEntry;
 struct TrainerDBEntry;
 
 struct MapDBEntry;
+struct MapDBEntryWarpIn;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -247,6 +248,16 @@ struct MapDBEntryWarpOut
 
   // Go to map
   MapDBEntry* toMap = nullptr;
+
+  // Go to warp spot on destination map
+  MapDBEntryWarpIn* toWarp = nullptr;
+};
+
+struct MapDBEntryWarpIn
+{
+  // X & Y location on Map
+  var8 x;
+  var8 y;
 };
 
 struct MapDBEntrySign
@@ -274,6 +285,9 @@ struct MapDBEntry {
 
   // Warps to other maps
   QVector<MapDBEntryWarpOut*> warpOut;
+
+  // Warps In from other maps
+  QVector<MapDBEntryWarpIn*> warpIn;
 
   // Signs on map
   QVector<MapDBEntrySign*> signs;

@@ -332,13 +332,28 @@ void MapDBEntrySpriteTrainer::deepLink()
 
 void MapDBEntryWarpOut::deepLink()
 {
-  auto tmp = MapsDB::ind.value(map, nullptr);
-  toMap = tmp;
+  toMap = MapsDB::ind.value(map, nullptr);
 
 #ifdef QT_DEBUG
-    if(toMap == nullptr)
+  // Stop here if toMap is nullptr
+    if(toMap == nullptr) {
       qCritical() << "Map Warp Out entry: " << map << ", could not be deep linked to map";
+      return;
+    }
 #endif
+
+    // Stop here if this is a special warp to simply return to the last map
+    if(map == "Last Map")
+      return;
+
+    // Also stop here if this is the silph co elevator which warps to an invalid
+    // map. Why would the elevator do this? No idea.
+    if(map == "237")
+        return;
+
+    // Deep link to the destination warp coordinates
+    // This will immidiately crash if toMap isn't set
+    toWarp = toMap->warpIn.at(warp);
 }
 
 MapDBEntry::MapDBEntry()
@@ -428,6 +443,16 @@ void MapsDB::load()
         tmp->map = warpEntry["toMap"].toString();
         tmp->glitch = warpEntry["glitch"].toBool(false);
         entry->warpOut.append(tmp);
+      }
+    }
+
+    if(mapEntry["warpIn"].isArray())
+    {
+      for(QJsonValue warpEntry : mapEntry["warpIn"].toArray()) {
+        auto tmp = new MapDBEntryWarpIn;
+        tmp->x = warpEntry["x"].toDouble();
+        tmp->y = warpEntry["y"].toDouble();
+        entry->warpIn.append(tmp);
       }
     }
 
