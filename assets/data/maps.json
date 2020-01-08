@@ -2167,7 +2167,92 @@
         "x": 2,
         "y": 7
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "PIDGEY",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 2
+      },
+      {
+        "name": "PIDGEY",
+        "level": 2
+      },
+      {
+        "name": "PIDGEY",
+        "level": 3
+      },
+      {
+        "name": "PIDGEY",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 4
+      },
+      {
+        "name": "PIDGEY",
+        "level": 4
+      },
+      {
+        "name": "PIDGEY",
+        "level": 5
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "PIDGEY",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 2
+      },
+      {
+        "name": "PIDGEY",
+        "level": 2
+      },
+      {
+        "name": "PIDGEY",
+        "level": 3
+      },
+      {
+        "name": "PIDGEY",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 4
+      },
+      {
+        "name": "PIDGEY",
+        "level": 4
+      },
+      {
+        "name": "PIDGEY",
+        "level": 5
+      }
+    ],
+    "monRate": 25
   },
   {
     "name": "Route 2",
@@ -2305,7 +2390,92 @@
         "x": 2,
         "y": 7
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "RATTATA",
+        "level": 3
+      },
+      {
+        "name": "PIDGEY",
+        "level": 3
+      },
+      {
+        "name": "PIDGEY",
+        "level": 4
+      },
+      {
+        "name": "RATTATA",
+        "level": 4
+      },
+      {
+        "name": "PIDGEY",
+        "level": 5
+      },
+      {
+        "name": "WEEDLE",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 2
+      },
+      {
+        "name": "RATTATA",
+        "level": 5
+      },
+      {
+        "name": "WEEDLE",
+        "level": 4
+      },
+      {
+        "name": "WEEDLE",
+        "level": 5
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "RATTATA",
+        "level": 3
+      },
+      {
+        "name": "PIDGEY",
+        "level": 3
+      },
+      {
+        "name": "PIDGEY",
+        "level": 4
+      },
+      {
+        "name": "RATTATA",
+        "level": 4
+      },
+      {
+        "name": "PIDGEY",
+        "level": 5
+      },
+      {
+        "name": "CATERPIE",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 2
+      },
+      {
+        "name": "RATTATA",
+        "level": 5
+      },
+      {
+        "name": "CATERPIE",
+        "level": 4
+      },
+      {
+        "name": "CATERPIE",
+        "level": 5
+      }
+    ],
+    "monRate": 25
   },
   {
     "name": "Route 3",
@@ -2427,7 +2597,92 @@
         "class": "Lass",
         "team": 3
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "PIDGEY",
+        "level": 6
+      },
+      {
+        "name": "SPEAROW",
+        "level": 5
+      },
+      {
+        "name": "PIDGEY",
+        "level": 7
+      },
+      {
+        "name": "SPEAROW",
+        "level": 6
+      },
+      {
+        "name": "SPEAROW",
+        "level": 7
+      },
+      {
+        "name": "PIDGEY",
+        "level": 8
+      },
+      {
+        "name": "SPEAROW",
+        "level": 8
+      },
+      {
+        "name": "JIGGLYPUFF",
+        "level": 3
+      },
+      {
+        "name": "JIGGLYPUFF",
+        "level": 5
+      },
+      {
+        "name": "JIGGLYPUFF",
+        "level": 7
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "PIDGEY",
+        "level": 6
+      },
+      {
+        "name": "SPEAROW",
+        "level": 5
+      },
+      {
+        "name": "PIDGEY",
+        "level": 7
+      },
+      {
+        "name": "SPEAROW",
+        "level": 6
+      },
+      {
+        "name": "SPEAROW",
+        "level": 7
+      },
+      {
+        "name": "PIDGEY",
+        "level": 8
+      },
+      {
+        "name": "SPEAROW",
+        "level": 8
+      },
+      {
+        "name": "JIGGLYPUFF",
+        "level": 3
+      },
+      {
+        "name": "JIGGLYPUFF",
+        "level": 5
+      },
+      {
+        "name": "JIGGLYPUFF",
+        "level": 7
+      }
+    ],
+    "monRate": 20
   },
   {
     "name": "Route 4",
@@ -2533,7 +2788,92 @@
         "x": 24,
         "y": 5
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "RATTATA",
+        "level": 10
+      },
+      {
+        "name": "SPEAROW",
+        "level": 10
+      },
+      {
+        "name": "RATTATA",
+        "level": 8
+      },
+      {
+        "name": "EKANS",
+        "level": 6
+      },
+      {
+        "name": "SPEAROW",
+        "level": 8
+      },
+      {
+        "name": "EKANS",
+        "level": 10
+      },
+      {
+        "name": "RATTATA",
+        "level": 12
+      },
+      {
+        "name": "SPEAROW",
+        "level": 12
+      },
+      {
+        "name": "EKANS",
+        "level": 8
+      },
+      {
+        "name": "EKANS",
+        "level": 12
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "RATTATA",
+        "level": 10
+      },
+      {
+        "name": "SPEAROW",
+        "level": 10
+      },
+      {
+        "name": "RATTATA",
+        "level": 8
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 6
+      },
+      {
+        "name": "SPEAROW",
+        "level": 8
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 10
+      },
+      {
+        "name": "RATTATA",
+        "level": 12
+      },
+      {
+        "name": "SPEAROW",
+        "level": 12
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 8
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 12
+      }
+    ],
+    "monRate": 20
   },
   {
     "name": "Route 5",
@@ -2620,7 +2960,92 @@
         "x": 10,
         "y": 21
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ODDISH",
+        "level": 13
+      },
+      {
+        "name": "PIDGEY",
+        "level": 13
+      },
+      {
+        "name": "PIDGEY",
+        "level": 15
+      },
+      {
+        "name": "MANKEY",
+        "level": 10
+      },
+      {
+        "name": "MANKEY",
+        "level": 12
+      },
+      {
+        "name": "ODDISH",
+        "level": 15
+      },
+      {
+        "name": "ODDISH",
+        "level": 16
+      },
+      {
+        "name": "PIDGEY",
+        "level": 16
+      },
+      {
+        "name": "MANKEY",
+        "level": 14
+      },
+      {
+        "name": "MANKEY",
+        "level": 16
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "BELLSPROUT",
+        "level": 13
+      },
+      {
+        "name": "PIDGEY",
+        "level": 13
+      },
+      {
+        "name": "PIDGEY",
+        "level": 15
+      },
+      {
+        "name": "MEOWTH",
+        "level": 10
+      },
+      {
+        "name": "MEOWTH",
+        "level": 12
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 15
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 16
+      },
+      {
+        "name": "PIDGEY",
+        "level": 16
+      },
+      {
+        "name": "MEOWTH",
+        "level": 14
+      },
+      {
+        "name": "MEOWTH",
+        "level": 16
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 6",
@@ -2759,7 +3184,92 @@
         "x": 17,
         "y": 13
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ODDISH",
+        "level": 13
+      },
+      {
+        "name": "PIDGEY",
+        "level": 13
+      },
+      {
+        "name": "PIDGEY",
+        "level": 15
+      },
+      {
+        "name": "MANKEY",
+        "level": 10
+      },
+      {
+        "name": "MANKEY",
+        "level": 12
+      },
+      {
+        "name": "ODDISH",
+        "level": 15
+      },
+      {
+        "name": "ODDISH",
+        "level": 16
+      },
+      {
+        "name": "PIDGEY",
+        "level": 16
+      },
+      {
+        "name": "MANKEY",
+        "level": 14
+      },
+      {
+        "name": "MANKEY",
+        "level": 16
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "BELLSPROUT",
+        "level": 13
+      },
+      {
+        "name": "PIDGEY",
+        "level": 13
+      },
+      {
+        "name": "PIDGEY",
+        "level": 15
+      },
+      {
+        "name": "MEOWTH",
+        "level": 10
+      },
+      {
+        "name": "MEOWTH",
+        "level": 12
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 15
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 16
+      },
+      {
+        "name": "PIDGEY",
+        "level": 16
+      },
+      {
+        "name": "MEOWTH",
+        "level": 14
+      },
+      {
+        "name": "MEOWTH",
+        "level": 16
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 7",
@@ -2846,7 +3356,92 @@
         "x": 5,
         "y": 13
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "PIDGEY",
+        "level": 19
+      },
+      {
+        "name": "ODDISH",
+        "level": 19
+      },
+      {
+        "name": "MANKEY",
+        "level": 17
+      },
+      {
+        "name": "ODDISH",
+        "level": 22
+      },
+      {
+        "name": "PIDGEY",
+        "level": 22
+      },
+      {
+        "name": "MANKEY",
+        "level": 18
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 18
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 20
+      },
+      {
+        "name": "MANKEY",
+        "level": 19
+      },
+      {
+        "name": "MANKEY",
+        "level": 20
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "PIDGEY",
+        "level": 19
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 19
+      },
+      {
+        "name": "MEOWTH",
+        "level": 17
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 22
+      },
+      {
+        "name": "PIDGEY",
+        "level": 22
+      },
+      {
+        "name": "MEOWTH",
+        "level": 18
+      },
+      {
+        "name": "VULPIX",
+        "level": 18
+      },
+      {
+        "name": "VULPIX",
+        "level": 20
+      },
+      {
+        "name": "MEOWTH",
+        "level": 19
+      },
+      {
+        "name": "MEOWTH",
+        "level": 20
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 8",
@@ -3024,7 +3619,92 @@
         "x": 13,
         "y": 3
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "PIDGEY",
+        "level": 18
+      },
+      {
+        "name": "MANKEY",
+        "level": 18
+      },
+      {
+        "name": "EKANS",
+        "level": 17
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 16
+      },
+      {
+        "name": "PIDGEY",
+        "level": 20
+      },
+      {
+        "name": "MANKEY",
+        "level": 20
+      },
+      {
+        "name": "EKANS",
+        "level": 19
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 17
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 15
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 18
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "PIDGEY",
+        "level": 18
+      },
+      {
+        "name": "MEOWTH",
+        "level": 18
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 17
+      },
+      {
+        "name": "VULPIX",
+        "level": 16
+      },
+      {
+        "name": "PIDGEY",
+        "level": 20
+      },
+      {
+        "name": "MEOWTH",
+        "level": 20
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 19
+      },
+      {
+        "name": "VULPIX",
+        "level": 17
+      },
+      {
+        "name": "VULPIX",
+        "level": 15
+      },
+      {
+        "name": "VULPIX",
+        "level": 18
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 9",
@@ -3158,7 +3838,92 @@
         "face": "None",
         "item": "TM 30: TELEPORT"
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "RATTATA",
+        "level": 16
+      },
+      {
+        "name": "SPEAROW",
+        "level": 16
+      },
+      {
+        "name": "RATTATA",
+        "level": 14
+      },
+      {
+        "name": "EKANS",
+        "level": 11
+      },
+      {
+        "name": "SPEAROW",
+        "level": 13
+      },
+      {
+        "name": "EKANS",
+        "level": 15
+      },
+      {
+        "name": "RATTATA",
+        "level": 17
+      },
+      {
+        "name": "SPEAROW",
+        "level": 17
+      },
+      {
+        "name": "EKANS",
+        "level": 13
+      },
+      {
+        "name": "EKANS",
+        "level": 17
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "RATTATA",
+        "level": 16
+      },
+      {
+        "name": "SPEAROW",
+        "level": 16
+      },
+      {
+        "name": "RATTATA",
+        "level": 14
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 11
+      },
+      {
+        "name": "SPEAROW",
+        "level": 13
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 15
+      },
+      {
+        "name": "RATTATA",
+        "level": 17
+      },
+      {
+        "name": "SPEAROW",
+        "level": 17
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 13
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 17
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 10",
@@ -3311,7 +4076,92 @@
         "x": 6,
         "y": 39
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "VOLTORB",
+        "level": 16
+      },
+      {
+        "name": "SPEAROW",
+        "level": 16
+      },
+      {
+        "name": "VOLTORB",
+        "level": 14
+      },
+      {
+        "name": "EKANS",
+        "level": 11
+      },
+      {
+        "name": "SPEAROW",
+        "level": 13
+      },
+      {
+        "name": "EKANS",
+        "level": 15
+      },
+      {
+        "name": "VOLTORB",
+        "level": 17
+      },
+      {
+        "name": "SPEAROW",
+        "level": 17
+      },
+      {
+        "name": "EKANS",
+        "level": 13
+      },
+      {
+        "name": "EKANS",
+        "level": 17
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "VOLTORB",
+        "level": 16
+      },
+      {
+        "name": "SPEAROW",
+        "level": 16
+      },
+      {
+        "name": "VOLTORB",
+        "level": 14
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 11
+      },
+      {
+        "name": "SPEAROW",
+        "level": 13
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 15
+      },
+      {
+        "name": "VOLTORB",
+        "level": 17
+      },
+      {
+        "name": "SPEAROW",
+        "level": 17
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 13
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 17
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 11",
@@ -3500,7 +4350,92 @@
         "x": 4,
         "y": 5
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "EKANS",
+        "level": 14
+      },
+      {
+        "name": "SPEAROW",
+        "level": 15
+      },
+      {
+        "name": "EKANS",
+        "level": 12
+      },
+      {
+        "name": "DROWZEE",
+        "level": 9
+      },
+      {
+        "name": "SPEAROW",
+        "level": 13
+      },
+      {
+        "name": "DROWZEE",
+        "level": 13
+      },
+      {
+        "name": "EKANS",
+        "level": 15
+      },
+      {
+        "name": "SPEAROW",
+        "level": 17
+      },
+      {
+        "name": "DROWZEE",
+        "level": 11
+      },
+      {
+        "name": "DROWZEE",
+        "level": 15
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "SANDSHREW",
+        "level": 14
+      },
+      {
+        "name": "SPEAROW",
+        "level": 15
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 12
+      },
+      {
+        "name": "DROWZEE",
+        "level": 9
+      },
+      {
+        "name": "SPEAROW",
+        "level": 13
+      },
+      {
+        "name": "DROWZEE",
+        "level": 13
+      },
+      {
+        "name": "SANDSHREW",
+        "level": 15
+      },
+      {
+        "name": "SPEAROW",
+        "level": 17
+      },
+      {
+        "name": "DROWZEE",
+        "level": 11
+      },
+      {
+        "name": "DROWZEE",
+        "level": 15
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 12",
@@ -3684,7 +4619,92 @@
         "x": 11,
         "y": 77
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ODDISH",
+        "level": 24
+      },
+      {
+        "name": "PIDGEY",
+        "level": 25
+      },
+      {
+        "name": "PIDGEY",
+        "level": 23
+      },
+      {
+        "name": "VENONAT",
+        "level": 24
+      },
+      {
+        "name": "ODDISH",
+        "level": 22
+      },
+      {
+        "name": "VENONAT",
+        "level": 26
+      },
+      {
+        "name": "ODDISH",
+        "level": 26
+      },
+      {
+        "name": "PIDGEY",
+        "level": 27
+      },
+      {
+        "name": "GLOOM",
+        "level": 28
+      },
+      {
+        "name": "GLOOM",
+        "level": 30
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "BELLSPROUT",
+        "level": 24
+      },
+      {
+        "name": "PIDGEY",
+        "level": 25
+      },
+      {
+        "name": "PIDGEY",
+        "level": 23
+      },
+      {
+        "name": "VENONAT",
+        "level": 24
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 22
+      },
+      {
+        "name": "VENONAT",
+        "level": 26
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 26
+      },
+      {
+        "name": "PIDGEY",
+        "level": 27
+      },
+      {
+        "name": "WEEPINBELL",
+        "level": 28
+      },
+      {
+        "name": "WEEPINBELL",
+        "level": 30
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 13",
@@ -3828,7 +4848,92 @@
         "class": "Bird Keeper",
         "team": 3
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ODDISH",
+        "level": 24
+      },
+      {
+        "name": "PIDGEY",
+        "level": 25
+      },
+      {
+        "name": "PIDGEY",
+        "level": 27
+      },
+      {
+        "name": "VENONAT",
+        "level": 24
+      },
+      {
+        "name": "ODDISH",
+        "level": 22
+      },
+      {
+        "name": "VENONAT",
+        "level": 26
+      },
+      {
+        "name": "ODDISH",
+        "level": 26
+      },
+      {
+        "name": "DITTO",
+        "level": 25
+      },
+      {
+        "name": "GLOOM",
+        "level": 28
+      },
+      {
+        "name": "GLOOM",
+        "level": 30
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "BELLSPROUT",
+        "level": 24
+      },
+      {
+        "name": "PIDGEY",
+        "level": 25
+      },
+      {
+        "name": "PIDGEY",
+        "level": 27
+      },
+      {
+        "name": "VENONAT",
+        "level": 24
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 22
+      },
+      {
+        "name": "VENONAT",
+        "level": 26
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 26
+      },
+      {
+        "name": "DITTO",
+        "level": 25
+      },
+      {
+        "name": "WEEPINBELL",
+        "level": 28
+      },
+      {
+        "name": "WEEPINBELL",
+        "level": 30
+      }
+    ],
+    "monRate": 20
   },
   {
     "name": "Route 14",
@@ -3962,7 +5067,92 @@
         "class": "Biker",
         "team": 2
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ODDISH",
+        "level": 24
+      },
+      {
+        "name": "PIDGEY",
+        "level": 26
+      },
+      {
+        "name": "DITTO",
+        "level": 23
+      },
+      {
+        "name": "VENONAT",
+        "level": 24
+      },
+      {
+        "name": "ODDISH",
+        "level": 22
+      },
+      {
+        "name": "VENONAT",
+        "level": 26
+      },
+      {
+        "name": "ODDISH",
+        "level": 26
+      },
+      {
+        "name": "GLOOM",
+        "level": 30
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 28
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 30
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "BELLSPROUT",
+        "level": 24
+      },
+      {
+        "name": "PIDGEY",
+        "level": 26
+      },
+      {
+        "name": "DITTO",
+        "level": 23
+      },
+      {
+        "name": "VENONAT",
+        "level": 24
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 22
+      },
+      {
+        "name": "VENONAT",
+        "level": 26
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 26
+      },
+      {
+        "name": "WEEPINBELL",
+        "level": 30
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 28
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 30
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 15",
@@ -4149,7 +5339,92 @@
         "x": 14,
         "y": 9
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ODDISH",
+        "level": 24
+      },
+      {
+        "name": "DITTO",
+        "level": 26
+      },
+      {
+        "name": "PIDGEY",
+        "level": 23
+      },
+      {
+        "name": "VENONAT",
+        "level": 26
+      },
+      {
+        "name": "ODDISH",
+        "level": 22
+      },
+      {
+        "name": "VENONAT",
+        "level": 28
+      },
+      {
+        "name": "ODDISH",
+        "level": 26
+      },
+      {
+        "name": "GLOOM",
+        "level": 30
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 28
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 30
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "BELLSPROUT",
+        "level": 24
+      },
+      {
+        "name": "DITTO",
+        "level": 26
+      },
+      {
+        "name": "PIDGEY",
+        "level": 23
+      },
+      {
+        "name": "VENONAT",
+        "level": 26
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 22
+      },
+      {
+        "name": "VENONAT",
+        "level": 28
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 26
+      },
+      {
+        "name": "WEEPINBELL",
+        "level": 30
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 28
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 30
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 16",
@@ -4351,7 +5626,92 @@
         "x": 7,
         "y": 5
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "SPEAROW",
+        "level": 20
+      },
+      {
+        "name": "SPEAROW",
+        "level": 22
+      },
+      {
+        "name": "RATTATA",
+        "level": 18
+      },
+      {
+        "name": "DODUO",
+        "level": 20
+      },
+      {
+        "name": "RATTATA",
+        "level": 20
+      },
+      {
+        "name": "DODUO",
+        "level": 18
+      },
+      {
+        "name": "DODUO",
+        "level": 22
+      },
+      {
+        "name": "RATTATA",
+        "level": 22
+      },
+      {
+        "name": "RATICATE",
+        "level": 23
+      },
+      {
+        "name": "RATICATE",
+        "level": 25
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "SPEAROW",
+        "level": 20
+      },
+      {
+        "name": "SPEAROW",
+        "level": 22
+      },
+      {
+        "name": "RATTATA",
+        "level": 18
+      },
+      {
+        "name": "DODUO",
+        "level": 20
+      },
+      {
+        "name": "RATTATA",
+        "level": 20
+      },
+      {
+        "name": "DODUO",
+        "level": 18
+      },
+      {
+        "name": "DODUO",
+        "level": 22
+      },
+      {
+        "name": "RATTATA",
+        "level": 22
+      },
+      {
+        "name": "RATICATE",
+        "level": 23
+      },
+      {
+        "name": "RATICATE",
+        "level": 25
+      }
+    ],
+    "monRate": 25
   },
   {
     "name": "Route 17",
@@ -4511,7 +5871,92 @@
         "class": "Biker",
         "team": 12
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "SPEAROW",
+        "level": 20
+      },
+      {
+        "name": "SPEAROW",
+        "level": 22
+      },
+      {
+        "name": "RATICATE",
+        "level": 25
+      },
+      {
+        "name": "DODUO",
+        "level": 24
+      },
+      {
+        "name": "RATICATE",
+        "level": 27
+      },
+      {
+        "name": "DODUO",
+        "level": 26
+      },
+      {
+        "name": "DODUO",
+        "level": 28
+      },
+      {
+        "name": "RATICATE",
+        "level": 29
+      },
+      {
+        "name": "FEAROW",
+        "level": 25
+      },
+      {
+        "name": "FEAROW",
+        "level": 27
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "SPEAROW",
+        "level": 20
+      },
+      {
+        "name": "SPEAROW",
+        "level": 22
+      },
+      {
+        "name": "RATICATE",
+        "level": 25
+      },
+      {
+        "name": "DODUO",
+        "level": 24
+      },
+      {
+        "name": "RATICATE",
+        "level": 27
+      },
+      {
+        "name": "DODUO",
+        "level": 26
+      },
+      {
+        "name": "DODUO",
+        "level": 28
+      },
+      {
+        "name": "RATICATE",
+        "level": 29
+      },
+      {
+        "name": "FEAROW",
+        "level": 25
+      },
+      {
+        "name": "FEAROW",
+        "level": 27
+      }
+    ],
+    "monRate": 25
   },
   {
     "name": "Route 18",
@@ -4625,7 +6070,92 @@
         "x": 40,
         "y": 9
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "SPEAROW",
+        "level": 20
+      },
+      {
+        "name": "SPEAROW",
+        "level": 22
+      },
+      {
+        "name": "RATICATE",
+        "level": 25
+      },
+      {
+        "name": "DODUO",
+        "level": 24
+      },
+      {
+        "name": "FEAROW",
+        "level": 25
+      },
+      {
+        "name": "DODUO",
+        "level": 26
+      },
+      {
+        "name": "DODUO",
+        "level": 28
+      },
+      {
+        "name": "RATICATE",
+        "level": 29
+      },
+      {
+        "name": "FEAROW",
+        "level": 27
+      },
+      {
+        "name": "FEAROW",
+        "level": 29
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "SPEAROW",
+        "level": 20
+      },
+      {
+        "name": "SPEAROW",
+        "level": 22
+      },
+      {
+        "name": "RATICATE",
+        "level": 25
+      },
+      {
+        "name": "DODUO",
+        "level": 24
+      },
+      {
+        "name": "FEAROW",
+        "level": 25
+      },
+      {
+        "name": "DODUO",
+        "level": 26
+      },
+      {
+        "name": "DODUO",
+        "level": 28
+      },
+      {
+        "name": "RATICATE",
+        "level": 29
+      },
+      {
+        "name": "FEAROW",
+        "level": 27
+      },
+      {
+        "name": "FEAROW",
+        "level": 29
+      }
+    ],
+    "monRate": 25
   },
   {
     "name": "Route 19",
@@ -4759,7 +6289,92 @@
         "class": "Beauty",
         "team": 14
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 20
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 30
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 35
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 40
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 20
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 30
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 35
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 40
+      }
+    ],
+    "monRate": 5
   },
   {
     "name": "Route 20",
@@ -4922,7 +6537,92 @@
         "x": 58,
         "y": 9
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 20
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 30
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 35
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 40
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 20
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 30
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 35
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 40
+      }
+    ],
+    "monRate": 5
   },
   {
     "name": "Route 21",
@@ -5040,7 +6740,135 @@
         "class": "Fisher",
         "team": 10
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "RATTATA",
+        "level": 21
+      },
+      {
+        "name": "PIDGEY",
+        "level": 23
+      },
+      {
+        "name": "RATICATE",
+        "level": 30
+      },
+      {
+        "name": "RATTATA",
+        "level": 23
+      },
+      {
+        "name": "PIDGEY",
+        "level": 21
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 30
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 32
+      },
+      {
+        "name": "TANGELA",
+        "level": 28
+      },
+      {
+        "name": "TANGELA",
+        "level": 30
+      },
+      {
+        "name": "TANGELA",
+        "level": 32
+      }
+    ],
+    "waterMons": [
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 5
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 10
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 15
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 20
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 30
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 35
+      },
+      {
+        "name": "TENTACOOL",
+        "level": 40
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "RATTATA",
+        "level": 21
+      },
+      {
+        "name": "PIDGEY",
+        "level": 23
+      },
+      {
+        "name": "RATICATE",
+        "level": 30
+      },
+      {
+        "name": "RATTATA",
+        "level": 23
+      },
+      {
+        "name": "PIDGEY",
+        "level": 21
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 30
+      },
+      {
+        "name": "PIDGEOTTO",
+        "level": 32
+      },
+      {
+        "name": "TANGELA",
+        "level": 28
+      },
+      {
+        "name": "TANGELA",
+        "level": 30
+      },
+      {
+        "name": "TANGELA",
+        "level": 32
+      }
+    ],
+    "monRate": 25,
+    "monRateWater": 5
   },
   {
     "name": "Route 22",
@@ -5105,7 +6933,92 @@
         "x": 8,
         "y": 5
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "RATTATA",
+        "level": 3
+      },
+      {
+        "name": "NIDORAN_M",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 4
+      },
+      {
+        "name": "NIDORAN_M",
+        "level": 4
+      },
+      {
+        "name": "RATTATA",
+        "level": 2
+      },
+      {
+        "name": "NIDORAN_M",
+        "level": 2
+      },
+      {
+        "name": "SPEAROW",
+        "level": 3
+      },
+      {
+        "name": "SPEAROW",
+        "level": 5
+      },
+      {
+        "name": "NIDORAN_F",
+        "level": 3
+      },
+      {
+        "name": "NIDORAN_F",
+        "level": 4
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "RATTATA",
+        "level": 3
+      },
+      {
+        "name": "NIDORAN_F",
+        "level": 3
+      },
+      {
+        "name": "RATTATA",
+        "level": 4
+      },
+      {
+        "name": "NIDORAN_F",
+        "level": 4
+      },
+      {
+        "name": "RATTATA",
+        "level": 2
+      },
+      {
+        "name": "NIDORAN_F",
+        "level": 2
+      },
+      {
+        "name": "SPEAROW",
+        "level": 3
+      },
+      {
+        "name": "SPEAROW",
+        "level": 5
+      },
+      {
+        "name": "NIDORAN_M",
+        "level": 3
+      },
+      {
+        "name": "NIDORAN_M",
+        "level": 4
+      }
+    ],
+    "monRate": 25
   },
   {
     "name": "Route 23",
@@ -5240,7 +7153,92 @@
         "x": 14,
         "y": 31
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "EKANS",
+        "level": 26
+      },
+      {
+        "name": "DITTO",
+        "level": 33
+      },
+      {
+        "name": "SPEAROW",
+        "level": 26
+      },
+      {
+        "name": "FEAROW",
+        "level": 38
+      },
+      {
+        "name": "DITTO",
+        "level": 38
+      },
+      {
+        "name": "FEAROW",
+        "level": 38
+      },
+      {
+        "name": "ARBOK",
+        "level": 41
+      },
+      {
+        "name": "DITTO",
+        "level": 43
+      },
+      {
+        "name": "FEAROW",
+        "level": 41
+      },
+      {
+        "name": "FEAROW",
+        "level": 43
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "SANDSHREW",
+        "level": 26
+      },
+      {
+        "name": "DITTO",
+        "level": 33
+      },
+      {
+        "name": "SPEAROW",
+        "level": 26
+      },
+      {
+        "name": "FEAROW",
+        "level": 38
+      },
+      {
+        "name": "DITTO",
+        "level": 38
+      },
+      {
+        "name": "FEAROW",
+        "level": 38
+      },
+      {
+        "name": "SANDSLASH",
+        "level": 41
+      },
+      {
+        "name": "DITTO",
+        "level": 43
+      },
+      {
+        "name": "FEAROW",
+        "level": 41
+      },
+      {
+        "name": "FEAROW",
+        "level": 43
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Route 24",
@@ -5347,7 +7345,92 @@
         "face": "None",
         "item": "TM 45: THUNDER WAVE"
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "WEEDLE",
+        "level": 7
+      },
+      {
+        "name": "KAKUNA",
+        "level": 8
+      },
+      {
+        "name": "PIDGEY",
+        "level": 12
+      },
+      {
+        "name": "ODDISH",
+        "level": 12
+      },
+      {
+        "name": "ODDISH",
+        "level": 13
+      },
+      {
+        "name": "ABRA",
+        "level": 10
+      },
+      {
+        "name": "ODDISH",
+        "level": 14
+      },
+      {
+        "name": "PIDGEY",
+        "level": 13
+      },
+      {
+        "name": "ABRA",
+        "level": 8
+      },
+      {
+        "name": "ABRA",
+        "level": 12
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "CATERPIE",
+        "level": 7
+      },
+      {
+        "name": "METAPOD",
+        "level": 8
+      },
+      {
+        "name": "PIDGEY",
+        "level": 12
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 12
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 13
+      },
+      {
+        "name": "ABRA",
+        "level": 10
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 14
+      },
+      {
+        "name": "PIDGEY",
+        "level": 13
+      },
+      {
+        "name": "ABRA",
+        "level": 8
+      },
+      {
+        "name": "ABRA",
+        "level": 12
+      }
+    ],
+    "monRate": 25
   },
   {
     "name": "Route 25",
@@ -5489,7 +7572,92 @@
         "x": 45,
         "y": 3
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "WEEDLE",
+        "level": 8
+      },
+      {
+        "name": "KAKUNA",
+        "level": 9
+      },
+      {
+        "name": "PIDGEY",
+        "level": 13
+      },
+      {
+        "name": "ODDISH",
+        "level": 12
+      },
+      {
+        "name": "ODDISH",
+        "level": 13
+      },
+      {
+        "name": "ABRA",
+        "level": 12
+      },
+      {
+        "name": "ODDISH",
+        "level": 14
+      },
+      {
+        "name": "ABRA",
+        "level": 10
+      },
+      {
+        "name": "METAPOD",
+        "level": 7
+      },
+      {
+        "name": "CATERPIE",
+        "level": 8
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "CATERPIE",
+        "level": 8
+      },
+      {
+        "name": "METAPOD",
+        "level": 9
+      },
+      {
+        "name": "PIDGEY",
+        "level": 13
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 12
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 13
+      },
+      {
+        "name": "ABRA",
+        "level": 12
+      },
+      {
+        "name": "BELLSPROUT",
+        "level": 14
+      },
+      {
+        "name": "ABRA",
+        "level": 10
+      },
+      {
+        "name": "KAKUNA",
+        "level": 7
+      },
+      {
+        "name": "WEEDLE",
+        "level": 8
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Reds House 1F",
@@ -6707,7 +8875,92 @@
         "x": 18,
         "y": 47
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "WEEDLE",
+        "level": 4
+      },
+      {
+        "name": "KAKUNA",
+        "level": 5
+      },
+      {
+        "name": "WEEDLE",
+        "level": 3
+      },
+      {
+        "name": "WEEDLE",
+        "level": 5
+      },
+      {
+        "name": "KAKUNA",
+        "level": 4
+      },
+      {
+        "name": "KAKUNA",
+        "level": 6
+      },
+      {
+        "name": "METAPOD",
+        "level": 4
+      },
+      {
+        "name": "CATERPIE",
+        "level": 3
+      },
+      {
+        "name": "PIKACHU",
+        "level": 3
+      },
+      {
+        "name": "PIKACHU",
+        "level": 5
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "CATERPIE",
+        "level": 4
+      },
+      {
+        "name": "METAPOD",
+        "level": 5
+      },
+      {
+        "name": "CATERPIE",
+        "level": 3
+      },
+      {
+        "name": "CATERPIE",
+        "level": 5
+      },
+      {
+        "name": "METAPOD",
+        "level": 4
+      },
+      {
+        "name": "METAPOD",
+        "level": 6
+      },
+      {
+        "name": "KAKUNA",
+        "level": 4
+      },
+      {
+        "name": "WEEDLE",
+        "level": 3
+      },
+      {
+        "name": "PIKACHU",
+        "level": 3
+      },
+      {
+        "name": "PIKACHU",
+        "level": 5
+      }
+    ],
+    "monRate": 8
   },
   {
     "name": "Museum 1F",
@@ -7419,7 +9672,92 @@
         "x": 25,
         "y": 15
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ZUBAT",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 7
+      },
+      {
+        "name": "ZUBAT",
+        "level": 9
+      },
+      {
+        "name": "GEODUDE",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 6
+      },
+      {
+        "name": "ZUBAT",
+        "level": 10
+      },
+      {
+        "name": "GEODUDE",
+        "level": 10
+      },
+      {
+        "name": "PARAS",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 11
+      },
+      {
+        "name": "CLEFAIRY",
+        "level": 8
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "ZUBAT",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 7
+      },
+      {
+        "name": "ZUBAT",
+        "level": 9
+      },
+      {
+        "name": "GEODUDE",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 6
+      },
+      {
+        "name": "ZUBAT",
+        "level": 10
+      },
+      {
+        "name": "GEODUDE",
+        "level": 10
+      },
+      {
+        "name": "PARAS",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 11
+      },
+      {
+        "name": "CLEFAIRY",
+        "level": 8
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Mt. Moon 2",
@@ -7517,7 +9855,92 @@
         "x": 27,
         "y": 3
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ZUBAT",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 7
+      },
+      {
+        "name": "GEODUDE",
+        "level": 7
+      },
+      {
+        "name": "GEODUDE",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 9
+      },
+      {
+        "name": "PARAS",
+        "level": 10
+      },
+      {
+        "name": "ZUBAT",
+        "level": 10
+      },
+      {
+        "name": "ZUBAT",
+        "level": 11
+      },
+      {
+        "name": "CLEFAIRY",
+        "level": 9
+      },
+      {
+        "name": "GEODUDE",
+        "level": 9
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "ZUBAT",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 7
+      },
+      {
+        "name": "GEODUDE",
+        "level": 7
+      },
+      {
+        "name": "GEODUDE",
+        "level": 8
+      },
+      {
+        "name": "ZUBAT",
+        "level": 9
+      },
+      {
+        "name": "PARAS",
+        "level": 10
+      },
+      {
+        "name": "ZUBAT",
+        "level": 10
+      },
+      {
+        "name": "ZUBAT",
+        "level": 11
+      },
+      {
+        "name": "CLEFAIRY",
+        "level": 9
+      },
+      {
+        "name": "GEODUDE",
+        "level": 9
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Mt. Moon 3",
@@ -7661,7 +10084,92 @@
         "x": 5,
         "y": 7
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ZUBAT",
+        "level": 9
+      },
+      {
+        "name": "GEODUDE",
+        "level": 9
+      },
+      {
+        "name": "ZUBAT",
+        "level": 10
+      },
+      {
+        "name": "GEODUDE",
+        "level": 10
+      },
+      {
+        "name": "ZUBAT",
+        "level": 11
+      },
+      {
+        "name": "PARAS",
+        "level": 10
+      },
+      {
+        "name": "PARAS",
+        "level": 12
+      },
+      {
+        "name": "CLEFAIRY",
+        "level": 10
+      },
+      {
+        "name": "ZUBAT",
+        "level": 12
+      },
+      {
+        "name": "CLEFAIRY",
+        "level": 12
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "ZUBAT",
+        "level": 9
+      },
+      {
+        "name": "GEODUDE",
+        "level": 9
+      },
+      {
+        "name": "ZUBAT",
+        "level": 10
+      },
+      {
+        "name": "GEODUDE",
+        "level": 10
+      },
+      {
+        "name": "ZUBAT",
+        "level": 11
+      },
+      {
+        "name": "PARAS",
+        "level": 10
+      },
+      {
+        "name": "PARAS",
+        "level": 12
+      },
+      {
+        "name": "CLEFAIRY",
+        "level": 10
+      },
+      {
+        "name": "ZUBAT",
+        "level": 12
+      },
+      {
+        "name": "CLEFAIRY",
+        "level": 12
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Trashed House",
@@ -9042,7 +11550,92 @@
         "x": 37,
         "y": 17
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ZUBAT",
+        "level": 16
+      },
+      {
+        "name": "ZUBAT",
+        "level": 17
+      },
+      {
+        "name": "GEODUDE",
+        "level": 17
+      },
+      {
+        "name": "MACHOP",
+        "level": 15
+      },
+      {
+        "name": "GEODUDE",
+        "level": 16
+      },
+      {
+        "name": "ZUBAT",
+        "level": 18
+      },
+      {
+        "name": "ZUBAT",
+        "level": 15
+      },
+      {
+        "name": "MACHOP",
+        "level": 17
+      },
+      {
+        "name": "ONIX",
+        "level": 13
+      },
+      {
+        "name": "ONIX",
+        "level": 15
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "ZUBAT",
+        "level": 16
+      },
+      {
+        "name": "ZUBAT",
+        "level": 17
+      },
+      {
+        "name": "GEODUDE",
+        "level": 17
+      },
+      {
+        "name": "MACHOP",
+        "level": 15
+      },
+      {
+        "name": "GEODUDE",
+        "level": 16
+      },
+      {
+        "name": "ZUBAT",
+        "level": 18
+      },
+      {
+        "name": "ZUBAT",
+        "level": 15
+      },
+      {
+        "name": "MACHOP",
+        "level": 17
+      },
+      {
+        "name": "ONIX",
+        "level": 13
+      },
+      {
+        "name": "ONIX",
+        "level": 15
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Power Plant",
@@ -9226,7 +11819,92 @@
         "x": 0,
         "y": 11
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "VOLTORB",
+        "level": 21
+      },
+      {
+        "name": "MAGNEMITE",
+        "level": 21
+      },
+      {
+        "name": "PIKACHU",
+        "level": 20
+      },
+      {
+        "name": "PIKACHU",
+        "level": 24
+      },
+      {
+        "name": "MAGNEMITE",
+        "level": 23
+      },
+      {
+        "name": "VOLTORB",
+        "level": 23
+      },
+      {
+        "name": "MAGNETON",
+        "level": 32
+      },
+      {
+        "name": "MAGNETON",
+        "level": 35
+      },
+      {
+        "name": "ELECTABUZZ",
+        "level": 33
+      },
+      {
+        "name": "ELECTABUZZ",
+        "level": 36
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "VOLTORB",
+        "level": 21
+      },
+      {
+        "name": "MAGNEMITE",
+        "level": 21
+      },
+      {
+        "name": "PIKACHU",
+        "level": 20
+      },
+      {
+        "name": "PIKACHU",
+        "level": 24
+      },
+      {
+        "name": "MAGNEMITE",
+        "level": 23
+      },
+      {
+        "name": "VOLTORB",
+        "level": 23
+      },
+      {
+        "name": "MAGNETON",
+        "level": 32
+      },
+      {
+        "name": "MAGNETON",
+        "level": 35
+      },
+      {
+        "name": "RAICHU",
+        "level": 33
+      },
+      {
+        "name": "RAICHU",
+        "level": 36
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Route 11 Gate 1F",
@@ -11387,7 +14065,92 @@
         "x": 1,
         "y": 1
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "MACHOP",
+        "level": 24
+      },
+      {
+        "name": "GEODUDE",
+        "level": 26
+      },
+      {
+        "name": "ZUBAT",
+        "level": 22
+      },
+      {
+        "name": "ONIX",
+        "level": 36
+      },
+      {
+        "name": "ONIX",
+        "level": 39
+      },
+      {
+        "name": "ONIX",
+        "level": 42
+      },
+      {
+        "name": "GRAVELER",
+        "level": 41
+      },
+      {
+        "name": "GOLBAT",
+        "level": 41
+      },
+      {
+        "name": "MACHOKE",
+        "level": 42
+      },
+      {
+        "name": "MAROWAK",
+        "level": 43
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "MACHOP",
+        "level": 24
+      },
+      {
+        "name": "GEODUDE",
+        "level": 26
+      },
+      {
+        "name": "ZUBAT",
+        "level": 22
+      },
+      {
+        "name": "ONIX",
+        "level": 36
+      },
+      {
+        "name": "ONIX",
+        "level": 39
+      },
+      {
+        "name": "ONIX",
+        "level": 42
+      },
+      {
+        "name": "GRAVELER",
+        "level": 41
+      },
+      {
+        "name": "GOLBAT",
+        "level": 41
+      },
+      {
+        "name": "MACHOKE",
+        "level": 42
+      },
+      {
+        "name": "MAROWAK",
+        "level": 43
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Unused Map 6D",
@@ -13632,7 +16395,92 @@
         "x": 18,
         "y": 9
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 19
+      },
+      {
+        "name": "GASTLY",
+        "level": 18
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      },
+      {
+        "name": "CUBONE",
+        "level": 20
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "HAUNTER",
+        "level": 25
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 19
+      },
+      {
+        "name": "GASTLY",
+        "level": 18
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      },
+      {
+        "name": "CUBONE",
+        "level": 20
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "HAUNTER",
+        "level": 25
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Pokemon Tower 4",
@@ -13729,7 +16577,92 @@
         "x": 18,
         "y": 9
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 19
+      },
+      {
+        "name": "GASTLY",
+        "level": 18
+      },
+      {
+        "name": "HAUNTER",
+        "level": 25
+      },
+      {
+        "name": "CUBONE",
+        "level": 20
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 19
+      },
+      {
+        "name": "GASTLY",
+        "level": 18
+      },
+      {
+        "name": "HAUNTER",
+        "level": 25
+      },
+      {
+        "name": "CUBONE",
+        "level": 20
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Pokemon Tower 5",
@@ -13826,7 +16759,92 @@
         "x": 18,
         "y": 9
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 19
+      },
+      {
+        "name": "GASTLY",
+        "level": 18
+      },
+      {
+        "name": "HAUNTER",
+        "level": 25
+      },
+      {
+        "name": "CUBONE",
+        "level": 20
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 19
+      },
+      {
+        "name": "GASTLY",
+        "level": 18
+      },
+      {
+        "name": "HAUNTER",
+        "level": 25
+      },
+      {
+        "name": "CUBONE",
+        "level": 20
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Pokemon Tower 6",
@@ -13914,7 +16932,92 @@
         "x": 9,
         "y": 16
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      },
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "GASTLY",
+        "level": 19
+      },
+      {
+        "name": "HAUNTER",
+        "level": 26
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "CUBONE",
+        "level": 24
+      },
+      {
+        "name": "HAUNTER",
+        "level": 28
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      },
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "GASTLY",
+        "level": 19
+      },
+      {
+        "name": "HAUNTER",
+        "level": 26
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "CUBONE",
+        "level": 24
+      },
+      {
+        "name": "HAUNTER",
+        "level": 28
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Pokemon Tower 7",
@@ -13982,7 +17085,92 @@
         "x": 9,
         "y": 16
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      },
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "HAUNTER",
+        "level": 28
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "CUBONE",
+        "level": 24
+      },
+      {
+        "name": "HAUNTER",
+        "level": 28
+      },
+      {
+        "name": "HAUNTER",
+        "level": 30
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GASTLY",
+        "level": 21
+      },
+      {
+        "name": "GASTLY",
+        "level": 22
+      },
+      {
+        "name": "GASTLY",
+        "level": 23
+      },
+      {
+        "name": "GASTLY",
+        "level": 24
+      },
+      {
+        "name": "GASTLY",
+        "level": 20
+      },
+      {
+        "name": "HAUNTER",
+        "level": 28
+      },
+      {
+        "name": "CUBONE",
+        "level": 22
+      },
+      {
+        "name": "CUBONE",
+        "level": 24
+      },
+      {
+        "name": "HAUNTER",
+        "level": 28
+      },
+      {
+        "name": "HAUNTER",
+        "level": 30
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Lavender House 1",
@@ -14826,7 +18014,92 @@
         "x": 25,
         "y": 3
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "STARYU",
+        "level": 30
+      },
+      {
+        "name": "HORSEA",
+        "level": 30
+      },
+      {
+        "name": "SHELLDER",
+        "level": 32
+      },
+      {
+        "name": "HORSEA",
+        "level": 32
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 28
+      },
+      {
+        "name": "SEEL",
+        "level": 30
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 30
+      },
+      {
+        "name": "SEEL",
+        "level": 28
+      },
+      {
+        "name": "DEWGONG",
+        "level": 38
+      },
+      {
+        "name": "SEADRA",
+        "level": 37
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "SHELLDER",
+        "level": 30
+      },
+      {
+        "name": "KRABBY",
+        "level": 30
+      },
+      {
+        "name": "STARYU",
+        "level": 32
+      },
+      {
+        "name": "KRABBY",
+        "level": 32
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 28
+      },
+      {
+        "name": "SEEL",
+        "level": 30
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 30
+      },
+      {
+        "name": "SEEL",
+        "level": 28
+      },
+      {
+        "name": "DEWGONG",
+        "level": 38
+      },
+      {
+        "name": "KINGLER",
+        "level": 37
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Seafoam Islands 3",
@@ -14932,7 +18205,92 @@
         "x": 25,
         "y": 14
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "SEEL",
+        "level": 30
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 30
+      },
+      {
+        "name": "SEEL",
+        "level": 32
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 32
+      },
+      {
+        "name": "HORSEA",
+        "level": 28
+      },
+      {
+        "name": "STARYU",
+        "level": 30
+      },
+      {
+        "name": "HORSEA",
+        "level": 30
+      },
+      {
+        "name": "SHELLDER",
+        "level": 28
+      },
+      {
+        "name": "GOLBAT",
+        "level": 30
+      },
+      {
+        "name": "SLOWBRO",
+        "level": 37
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "SEEL",
+        "level": 30
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 30
+      },
+      {
+        "name": "SEEL",
+        "level": 32
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 32
+      },
+      {
+        "name": "KRABBY",
+        "level": 28
+      },
+      {
+        "name": "SHELLDER",
+        "level": 30
+      },
+      {
+        "name": "KRABBY",
+        "level": 30
+      },
+      {
+        "name": "STARYU",
+        "level": 28
+      },
+      {
+        "name": "GOLBAT",
+        "level": 30
+      },
+      {
+        "name": "GOLDUCK",
+        "level": 37
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Seafoam Islands 4",
@@ -15070,7 +18428,92 @@
         "x": 21,
         "y": 17
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "SLOWPOKE",
+        "level": 31
+      },
+      {
+        "name": "SEEL",
+        "level": 31
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 33
+      },
+      {
+        "name": "SEEL",
+        "level": 33
+      },
+      {
+        "name": "HORSEA",
+        "level": 29
+      },
+      {
+        "name": "SHELLDER",
+        "level": 31
+      },
+      {
+        "name": "HORSEA",
+        "level": 31
+      },
+      {
+        "name": "SHELLDER",
+        "level": 29
+      },
+      {
+        "name": "SEADRA",
+        "level": 39
+      },
+      {
+        "name": "DEWGONG",
+        "level": 37
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "PSYDUCK",
+        "level": 31
+      },
+      {
+        "name": "SEEL",
+        "level": 31
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 33
+      },
+      {
+        "name": "SEEL",
+        "level": 33
+      },
+      {
+        "name": "KRABBY",
+        "level": 29
+      },
+      {
+        "name": "STARYU",
+        "level": 31
+      },
+      {
+        "name": "KRABBY",
+        "level": 31
+      },
+      {
+        "name": "STARYU",
+        "level": 29
+      },
+      {
+        "name": "KINGLER",
+        "level": 39
+      },
+      {
+        "name": "DEWGONG",
+        "level": 37
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Seafoam Islands 5",
@@ -15168,7 +18611,92 @@
         "x": 25,
         "y": 4
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "HORSEA",
+        "level": 31
+      },
+      {
+        "name": "SHELLDER",
+        "level": 31
+      },
+      {
+        "name": "HORSEA",
+        "level": 33
+      },
+      {
+        "name": "SHELLDER",
+        "level": 33
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 29
+      },
+      {
+        "name": "SEEL",
+        "level": 31
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 31
+      },
+      {
+        "name": "SEEL",
+        "level": 29
+      },
+      {
+        "name": "SLOWBRO",
+        "level": 39
+      },
+      {
+        "name": "GOLBAT",
+        "level": 32
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "KRABBY",
+        "level": 31
+      },
+      {
+        "name": "STARYU",
+        "level": 31
+      },
+      {
+        "name": "KRABBY",
+        "level": 33
+      },
+      {
+        "name": "STARYU",
+        "level": 33
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 29
+      },
+      {
+        "name": "SEEL",
+        "level": 31
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 31
+      },
+      {
+        "name": "SEEL",
+        "level": 29
+      },
+      {
+        "name": "GOLDUCK",
+        "level": 39
+      },
+      {
+        "name": "GOLBAT",
+        "level": 32
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Vermilion House 2",
@@ -15402,7 +18930,92 @@
         "x": 27,
         "y": 27
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "KOFFING",
+        "level": 32
+      },
+      {
+        "name": "KOFFING",
+        "level": 30
+      },
+      {
+        "name": "PONYTA",
+        "level": 34
+      },
+      {
+        "name": "PONYTA",
+        "level": 30
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 34
+      },
+      {
+        "name": "PONYTA",
+        "level": 32
+      },
+      {
+        "name": "GRIMER",
+        "level": 30
+      },
+      {
+        "name": "PONYTA",
+        "level": 28
+      },
+      {
+        "name": "WEEZING",
+        "level": 37
+      },
+      {
+        "name": "MUK",
+        "level": 39
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GRIMER",
+        "level": 32
+      },
+      {
+        "name": "GRIMER",
+        "level": 30
+      },
+      {
+        "name": "PONYTA",
+        "level": 34
+      },
+      {
+        "name": "PONYTA",
+        "level": 30
+      },
+      {
+        "name": "VULPIX",
+        "level": 34
+      },
+      {
+        "name": "PONYTA",
+        "level": 32
+      },
+      {
+        "name": "KOFFING",
+        "level": 30
+      },
+      {
+        "name": "PONYTA",
+        "level": 28
+      },
+      {
+        "name": "MUK",
+        "level": 37
+      },
+      {
+        "name": "WEEZING",
+        "level": 39
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Cinnabar Gym",
@@ -17722,7 +21335,92 @@
         "x": 24,
         "y": 6
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "SEEL",
+        "level": 30
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 30
+      },
+      {
+        "name": "SHELLDER",
+        "level": 30
+      },
+      {
+        "name": "HORSEA",
+        "level": 30
+      },
+      {
+        "name": "HORSEA",
+        "level": 28
+      },
+      {
+        "name": "ZUBAT",
+        "level": 21
+      },
+      {
+        "name": "GOLBAT",
+        "level": 29
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 28
+      },
+      {
+        "name": "SHELLDER",
+        "level": 28
+      },
+      {
+        "name": "GOLDUCK",
+        "level": 38
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "SEEL",
+        "level": 30
+      },
+      {
+        "name": "PSYDUCK",
+        "level": 30
+      },
+      {
+        "name": "STARYU",
+        "level": 30
+      },
+      {
+        "name": "KRABBY",
+        "level": 30
+      },
+      {
+        "name": "KRABBY",
+        "level": 28
+      },
+      {
+        "name": "ZUBAT",
+        "level": 21
+      },
+      {
+        "name": "GOLBAT",
+        "level": 29
+      },
+      {
+        "name": "SLOWPOKE",
+        "level": 28
+      },
+      {
+        "name": "STARYU",
+        "level": 28
+      },
+      {
+        "name": "SLOWBRO",
+        "level": 38
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Route 22 Gate",
@@ -17999,7 +21697,92 @@
         "x": 1,
         "y": 1
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "MACHOP",
+        "level": 22
+      },
+      {
+        "name": "GEODUDE",
+        "level": 24
+      },
+      {
+        "name": "ZUBAT",
+        "level": 26
+      },
+      {
+        "name": "ONIX",
+        "level": 36
+      },
+      {
+        "name": "ONIX",
+        "level": 39
+      },
+      {
+        "name": "ONIX",
+        "level": 42
+      },
+      {
+        "name": "MACHOKE",
+        "level": 41
+      },
+      {
+        "name": "GOLBAT",
+        "level": 40
+      },
+      {
+        "name": "MAROWAK",
+        "level": 40
+      },
+      {
+        "name": "GRAVELER",
+        "level": 43
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "MACHOP",
+        "level": 22
+      },
+      {
+        "name": "GEODUDE",
+        "level": 24
+      },
+      {
+        "name": "ZUBAT",
+        "level": 26
+      },
+      {
+        "name": "ONIX",
+        "level": 36
+      },
+      {
+        "name": "ONIX",
+        "level": 39
+      },
+      {
+        "name": "ONIX",
+        "level": 42
+      },
+      {
+        "name": "MACHOKE",
+        "level": 41
+      },
+      {
+        "name": "GOLBAT",
+        "level": 40
+      },
+      {
+        "name": "MAROWAK",
+        "level": 40
+      },
+      {
+        "name": "GRAVELER",
+        "level": 43
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Route 12 Gate 2F",
@@ -18133,7 +21916,92 @@
         "x": 37,
         "y": 31
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "DIGLETT",
+        "level": 18
+      },
+      {
+        "name": "DIGLETT",
+        "level": 19
+      },
+      {
+        "name": "DIGLETT",
+        "level": 17
+      },
+      {
+        "name": "DIGLETT",
+        "level": 20
+      },
+      {
+        "name": "DIGLETT",
+        "level": 16
+      },
+      {
+        "name": "DIGLETT",
+        "level": 15
+      },
+      {
+        "name": "DIGLETT",
+        "level": 21
+      },
+      {
+        "name": "DIGLETT",
+        "level": 22
+      },
+      {
+        "name": "DUGTRIO",
+        "level": 29
+      },
+      {
+        "name": "DUGTRIO",
+        "level": 31
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "DIGLETT",
+        "level": 18
+      },
+      {
+        "name": "DIGLETT",
+        "level": 19
+      },
+      {
+        "name": "DIGLETT",
+        "level": 17
+      },
+      {
+        "name": "DIGLETT",
+        "level": 20
+      },
+      {
+        "name": "DIGLETT",
+        "level": 16
+      },
+      {
+        "name": "DIGLETT",
+        "level": 15
+      },
+      {
+        "name": "DIGLETT",
+        "level": 21
+      },
+      {
+        "name": "DIGLETT",
+        "level": 22
+      },
+      {
+        "name": "DUGTRIO",
+        "level": 29
+      },
+      {
+        "name": "DUGTRIO",
+        "level": 31
+      }
+    ],
+    "monRate": 20
   },
   {
     "name": "Victory Road 3",
@@ -18283,7 +22151,92 @@
         "x": 2,
         "y": 0
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "MACHOP",
+        "level": 24
+      },
+      {
+        "name": "GEODUDE",
+        "level": 26
+      },
+      {
+        "name": "ZUBAT",
+        "level": 22
+      },
+      {
+        "name": "ONIX",
+        "level": 42
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 40
+      },
+      {
+        "name": "ONIX",
+        "level": 45
+      },
+      {
+        "name": "GRAVELER",
+        "level": 43
+      },
+      {
+        "name": "GOLBAT",
+        "level": 41
+      },
+      {
+        "name": "MACHOKE",
+        "level": 42
+      },
+      {
+        "name": "MACHOKE",
+        "level": 45
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "MACHOP",
+        "level": 24
+      },
+      {
+        "name": "GEODUDE",
+        "level": 26
+      },
+      {
+        "name": "ZUBAT",
+        "level": 22
+      },
+      {
+        "name": "ONIX",
+        "level": 42
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 40
+      },
+      {
+        "name": "ONIX",
+        "level": 45
+      },
+      {
+        "name": "GRAVELER",
+        "level": 43
+      },
+      {
+        "name": "GOLBAT",
+        "level": 41
+      },
+      {
+        "name": "MACHOKE",
+        "level": 42
+      },
+      {
+        "name": "MACHOKE",
+        "level": 45
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Rocket Hideout 1",
@@ -20006,7 +23959,92 @@
         "x": 6,
         "y": 1
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "GROWLITHE",
+        "level": 32
+      },
+      {
+        "name": "KOFFING",
+        "level": 34
+      },
+      {
+        "name": "KOFFING",
+        "level": 34
+      },
+      {
+        "name": "PONYTA",
+        "level": 30
+      },
+      {
+        "name": "KOFFING",
+        "level": 30
+      },
+      {
+        "name": "PONYTA",
+        "level": 32
+      },
+      {
+        "name": "GRIMER",
+        "level": 30
+      },
+      {
+        "name": "PONYTA",
+        "level": 28
+      },
+      {
+        "name": "WEEZING",
+        "level": 39
+      },
+      {
+        "name": "MUK",
+        "level": 37
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "VULPIX",
+        "level": 32
+      },
+      {
+        "name": "GRIMER",
+        "level": 34
+      },
+      {
+        "name": "GRIMER",
+        "level": 34
+      },
+      {
+        "name": "PONYTA",
+        "level": 30
+      },
+      {
+        "name": "GRIMER",
+        "level": 30
+      },
+      {
+        "name": "PONYTA",
+        "level": 32
+      },
+      {
+        "name": "KOFFING",
+        "level": 30
+      },
+      {
+        "name": "PONYTA",
+        "level": 28
+      },
+      {
+        "name": "MUK",
+        "level": 39
+      },
+      {
+        "name": "WEEZING",
+        "level": 37
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Mansion 3",
@@ -20102,7 +24140,92 @@
         "x": 25,
         "y": 14
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "KOFFING",
+        "level": 31
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 33
+      },
+      {
+        "name": "KOFFING",
+        "level": 35
+      },
+      {
+        "name": "PONYTA",
+        "level": 32
+      },
+      {
+        "name": "PONYTA",
+        "level": 34
+      },
+      {
+        "name": "WEEZING",
+        "level": 40
+      },
+      {
+        "name": "GRIMER",
+        "level": 34
+      },
+      {
+        "name": "WEEZING",
+        "level": 38
+      },
+      {
+        "name": "PONYTA",
+        "level": 36
+      },
+      {
+        "name": "MUK",
+        "level": 42
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GRIMER",
+        "level": 31
+      },
+      {
+        "name": "VULPIX",
+        "level": 33
+      },
+      {
+        "name": "GRIMER",
+        "level": 35
+      },
+      {
+        "name": "PONYTA",
+        "level": 32
+      },
+      {
+        "name": "MAGMAR",
+        "level": 34
+      },
+      {
+        "name": "MUK",
+        "level": 40
+      },
+      {
+        "name": "KOFFING",
+        "level": 34
+      },
+      {
+        "name": "MUK",
+        "level": 38
+      },
+      {
+        "name": "PONYTA",
+        "level": 36
+      },
+      {
+        "name": "WEEZING",
+        "level": 42
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Mansion 4",
@@ -20205,7 +24328,92 @@
         "x": 23,
         "y": 22
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "KOFFING",
+        "level": 33
+      },
+      {
+        "name": "KOFFING",
+        "level": 31
+      },
+      {
+        "name": "GROWLITHE",
+        "level": 35
+      },
+      {
+        "name": "PONYTA",
+        "level": 32
+      },
+      {
+        "name": "KOFFING",
+        "level": 31
+      },
+      {
+        "name": "WEEZING",
+        "level": 40
+      },
+      {
+        "name": "PONYTA",
+        "level": 34
+      },
+      {
+        "name": "GRIMER",
+        "level": 35
+      },
+      {
+        "name": "WEEZING",
+        "level": 42
+      },
+      {
+        "name": "MUK",
+        "level": 42
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GRIMER",
+        "level": 33
+      },
+      {
+        "name": "GRIMER",
+        "level": 31
+      },
+      {
+        "name": "VULPIX",
+        "level": 35
+      },
+      {
+        "name": "PONYTA",
+        "level": 32
+      },
+      {
+        "name": "GRIMER",
+        "level": 31
+      },
+      {
+        "name": "MUK",
+        "level": 40
+      },
+      {
+        "name": "PONYTA",
+        "level": 34
+      },
+      {
+        "name": "KOFFING",
+        "level": 35
+      },
+      {
+        "name": "MAGMAR",
+        "level": 38
+      },
+      {
+        "name": "WEEZING",
+        "level": 42
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Safari Zone East",
@@ -20327,7 +24535,92 @@
         "x": 25,
         "y": 9
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "NIDORAN_M",
+        "level": 24
+      },
+      {
+        "name": "DODUO",
+        "level": 26
+      },
+      {
+        "name": "PARAS",
+        "level": 22
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 25
+      },
+      {
+        "name": "NIDORINO",
+        "level": 33
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 23
+      },
+      {
+        "name": "NIDORAN_F",
+        "level": 24
+      },
+      {
+        "name": "PARASECT",
+        "level": 25
+      },
+      {
+        "name": "KANGASKHAN",
+        "level": 25
+      },
+      {
+        "name": "SCYTHER",
+        "level": 28
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "NIDORAN_F",
+        "level": 24
+      },
+      {
+        "name": "DODUO",
+        "level": 26
+      },
+      {
+        "name": "PARAS",
+        "level": 22
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 25
+      },
+      {
+        "name": "NIDORINA",
+        "level": 33
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 23
+      },
+      {
+        "name": "NIDORAN_M",
+        "level": 24
+      },
+      {
+        "name": "PARASECT",
+        "level": 25
+      },
+      {
+        "name": "KANGASKHAN",
+        "level": 25
+      },
+      {
+        "name": "PINSIR",
+        "level": 28
+      }
+    ],
+    "monRate": 30
   },
   {
     "name": "Safari Zone North",
@@ -20481,7 +24774,92 @@
         "x": 35,
         "y": 3
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "NIDORAN_M",
+        "level": 22
+      },
+      {
+        "name": "RHYHORN",
+        "level": 26
+      },
+      {
+        "name": "PARAS",
+        "level": 23
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 25
+      },
+      {
+        "name": "NIDORINO",
+        "level": 30
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 27
+      },
+      {
+        "name": "NIDORINA",
+        "level": 30
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 32
+      },
+      {
+        "name": "CHANSEY",
+        "level": 26
+      },
+      {
+        "name": "TAUROS",
+        "level": 28
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "NIDORAN_F",
+        "level": 22
+      },
+      {
+        "name": "RHYHORN",
+        "level": 26
+      },
+      {
+        "name": "PARAS",
+        "level": 23
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 25
+      },
+      {
+        "name": "NIDORINA",
+        "level": 30
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 27
+      },
+      {
+        "name": "NIDORINO",
+        "level": 30
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 32
+      },
+      {
+        "name": "CHANSEY",
+        "level": 26
+      },
+      {
+        "name": "TAUROS",
+        "level": 28
+      }
+    ],
+    "monRate": 30
   },
   {
     "name": "Safari Zone West",
@@ -20638,7 +25016,92 @@
         "x": 11,
         "y": 11
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "NIDORAN_M",
+        "level": 25
+      },
+      {
+        "name": "DODUO",
+        "level": 26
+      },
+      {
+        "name": "VENONAT",
+        "level": 23
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 24
+      },
+      {
+        "name": "NIDORINO",
+        "level": 33
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 26
+      },
+      {
+        "name": "NIDORAN_F",
+        "level": 25
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 31
+      },
+      {
+        "name": "TAUROS",
+        "level": 26
+      },
+      {
+        "name": "KANGASKHAN",
+        "level": 28
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "NIDORAN_F",
+        "level": 25
+      },
+      {
+        "name": "DODUO",
+        "level": 26
+      },
+      {
+        "name": "VENONAT",
+        "level": 23
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 24
+      },
+      {
+        "name": "NIDORINA",
+        "level": 33
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 26
+      },
+      {
+        "name": "NIDORAN_M",
+        "level": 25
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 31
+      },
+      {
+        "name": "TAUROS",
+        "level": 26
+      },
+      {
+        "name": "KANGASKHAN",
+        "level": 28
+      }
+    ],
+    "monRate": 30
   },
   {
     "name": "Safari Zone Center",
@@ -20768,7 +25231,92 @@
         "x": 17,
         "y": 19
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "NIDORAN_M",
+        "level": 22
+      },
+      {
+        "name": "RHYHORN",
+        "level": 25
+      },
+      {
+        "name": "VENONAT",
+        "level": 22
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 24
+      },
+      {
+        "name": "NIDORINO",
+        "level": 31
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 25
+      },
+      {
+        "name": "NIDORINA",
+        "level": 31
+      },
+      {
+        "name": "PARASECT",
+        "level": 30
+      },
+      {
+        "name": "SCYTHER",
+        "level": 23
+      },
+      {
+        "name": "CHANSEY",
+        "level": 23
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "NIDORAN_F",
+        "level": 22
+      },
+      {
+        "name": "RHYHORN",
+        "level": 25
+      },
+      {
+        "name": "VENONAT",
+        "level": 22
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 24
+      },
+      {
+        "name": "NIDORINA",
+        "level": 31
+      },
+      {
+        "name": "EXEGGCUTE",
+        "level": 25
+      },
+      {
+        "name": "NIDORINO",
+        "level": 31
+      },
+      {
+        "name": "PARASECT",
+        "level": 30
+      },
+      {
+        "name": "PINSIR",
+        "level": 23
+      },
+      {
+        "name": "CHANSEY",
+        "level": 23
+      }
+    ],
+    "monRate": 30
   },
   {
     "name": "Safari Zone Rest House 1",
@@ -21170,7 +25718,92 @@
         "x": 3,
         "y": 11
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "DODRIO",
+        "level": 51
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 51
+      },
+      {
+        "name": "KADABRA",
+        "level": 51
+      },
+      {
+        "name": "RHYDON",
+        "level": 52
+      },
+      {
+        "name": "MAROWAK",
+        "level": 52
+      },
+      {
+        "name": "ELECTRODE",
+        "level": 52
+      },
+      {
+        "name": "CHANSEY",
+        "level": 56
+      },
+      {
+        "name": "WIGGLYTUFF",
+        "level": 54
+      },
+      {
+        "name": "DITTO",
+        "level": 55
+      },
+      {
+        "name": "DITTO",
+        "level": 60
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "DODRIO",
+        "level": 51
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 51
+      },
+      {
+        "name": "KADABRA",
+        "level": 51
+      },
+      {
+        "name": "RHYDON",
+        "level": 52
+      },
+      {
+        "name": "MAROWAK",
+        "level": 52
+      },
+      {
+        "name": "ELECTRODE",
+        "level": 52
+      },
+      {
+        "name": "CHANSEY",
+        "level": 56
+      },
+      {
+        "name": "WIGGLYTUFF",
+        "level": 54
+      },
+      {
+        "name": "DITTO",
+        "level": 55
+      },
+      {
+        "name": "DITTO",
+        "level": 60
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Unknown Dungeon 3",
@@ -21228,7 +25861,92 @@
         "x": 3,
         "y": 6
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "RHYDON",
+        "level": 55
+      },
+      {
+        "name": "MAROWAK",
+        "level": 55
+      },
+      {
+        "name": "ELECTRODE",
+        "level": 55
+      },
+      {
+        "name": "CHANSEY",
+        "level": 64
+      },
+      {
+        "name": "PARASECT",
+        "level": 64
+      },
+      {
+        "name": "RAICHU",
+        "level": 64
+      },
+      {
+        "name": "ARBOK",
+        "level": 57
+      },
+      {
+        "name": "DITTO",
+        "level": 65
+      },
+      {
+        "name": "DITTO",
+        "level": 63
+      },
+      {
+        "name": "DITTO",
+        "level": 67
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "RHYDON",
+        "level": 55
+      },
+      {
+        "name": "MAROWAK",
+        "level": 55
+      },
+      {
+        "name": "ELECTRODE",
+        "level": 55
+      },
+      {
+        "name": "CHANSEY",
+        "level": 64
+      },
+      {
+        "name": "PARASECT",
+        "level": 64
+      },
+      {
+        "name": "RAICHU",
+        "level": 64
+      },
+      {
+        "name": "SANDSLASH",
+        "level": 57
+      },
+      {
+        "name": "DITTO",
+        "level": 65
+      },
+      {
+        "name": "DITTO",
+        "level": 63
+      },
+      {
+        "name": "DITTO",
+        "level": 67
+      }
+    ],
+    "monRate": 25
   },
   {
     "name": "Unknown Dungeon 1",
@@ -21365,7 +26083,92 @@
         "x": 0,
         "y": 6
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "GOLBAT",
+        "level": 46
+      },
+      {
+        "name": "HYPNO",
+        "level": 46
+      },
+      {
+        "name": "MAGNETON",
+        "level": 46
+      },
+      {
+        "name": "DODRIO",
+        "level": 49
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 49
+      },
+      {
+        "name": "ARBOK",
+        "level": 52
+      },
+      {
+        "name": "KADABRA",
+        "level": 49
+      },
+      {
+        "name": "PARASECT",
+        "level": 52
+      },
+      {
+        "name": "RAICHU",
+        "level": 53
+      },
+      {
+        "name": "DITTO",
+        "level": 53
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "GOLBAT",
+        "level": 46
+      },
+      {
+        "name": "HYPNO",
+        "level": 46
+      },
+      {
+        "name": "MAGNETON",
+        "level": 46
+      },
+      {
+        "name": "DODRIO",
+        "level": 49
+      },
+      {
+        "name": "VENOMOTH",
+        "level": 49
+      },
+      {
+        "name": "SANDSLASH",
+        "level": 52
+      },
+      {
+        "name": "KADABRA",
+        "level": 49
+      },
+      {
+        "name": "PARASECT",
+        "level": 52
+      },
+      {
+        "name": "RAICHU",
+        "level": 53
+      },
+      {
+        "name": "DITTO",
+        "level": 53
+      }
+    ],
+    "monRate": 10
   },
   {
     "name": "Name Raters House",
@@ -21617,7 +26420,92 @@
         "x": 3,
         "y": 3
       }
-    ]
+    ],
+    "redMons": [
+      {
+        "name": "ZUBAT",
+        "level": 16
+      },
+      {
+        "name": "ZUBAT",
+        "level": 17
+      },
+      {
+        "name": "GEODUDE",
+        "level": 17
+      },
+      {
+        "name": "MACHOP",
+        "level": 15
+      },
+      {
+        "name": "GEODUDE",
+        "level": 16
+      },
+      {
+        "name": "ZUBAT",
+        "level": 18
+      },
+      {
+        "name": "MACHOP",
+        "level": 17
+      },
+      {
+        "name": "ONIX",
+        "level": 17
+      },
+      {
+        "name": "ONIX",
+        "level": 13
+      },
+      {
+        "name": "GEODUDE",
+        "level": 18
+      }
+    ],
+    "blueMons": [
+      {
+        "name": "ZUBAT",
+        "level": 16
+      },
+      {
+        "name": "ZUBAT",
+        "level": 17
+      },
+      {
+        "name": "GEODUDE",
+        "level": 17
+      },
+      {
+        "name": "MACHOP",
+        "level": 15
+      },
+      {
+        "name": "GEODUDE",
+        "level": 16
+      },
+      {
+        "name": "ZUBAT",
+        "level": 18
+      },
+      {
+        "name": "MACHOP",
+        "level": 17
+      },
+      {
+        "name": "ONIX",
+        "level": 17
+      },
+      {
+        "name": "ONIX",
+        "level": 13
+      },
+      {
+        "name": "GEODUDE",
+        "level": 18
+      }
+    ],
+    "monRate": 15
   },
   {
     "name": "Silph Co 9F",
