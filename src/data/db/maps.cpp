@@ -356,6 +356,19 @@ void MapDBEntryWarpOut::deepLink()
     toWarp = toMap->warpIn.at(warp);
 }
 
+void MapDBEntryWildMon::deepLink()
+{
+  toPokemon = PokemonDB::ind.value(name, nullptr);
+
+#ifdef QT_DEBUG
+  // Stop here if toMap is nullptr
+    if(toPokemon == nullptr) {
+      qCritical() << "Wild Pokemon Entry: " << name << ", could not be deep linked";
+      return;
+    }
+#endif
+}
+
 MapDBEntry::MapDBEntry()
 {
   special = false;
@@ -466,6 +479,42 @@ void MapsDB::load()
         entry->signs.append(tmp);
       }
     }
+
+    if(mapEntry["redMons"].isArray())
+    {
+      for(QJsonValue monEntry : mapEntry["redMons"].toArray()) {
+        auto tmp = new MapDBEntryWildMon;
+        tmp->name = monEntry["name"].toString();
+        tmp->level = monEntry["level"].toDouble();
+        entry->monsRed.append(tmp);
+      }
+    }
+
+    if(mapEntry["blueMons"].isArray())
+    {
+      for(QJsonValue monEntry : mapEntry["blueMons"].toArray()) {
+        auto tmp = new MapDBEntryWildMon;
+        tmp->name = monEntry["name"].toString();
+        tmp->level = monEntry["level"].toDouble();
+        entry->monsBlue.append(tmp);
+      }
+    }
+
+    if(mapEntry["waterMons"].isArray())
+    {
+      for(QJsonValue monEntry : mapEntry["waterMons"].toArray()) {
+        auto tmp = new MapDBEntryWildMon;
+        tmp->name = monEntry["name"].toString();
+        tmp->level = monEntry["level"].toDouble();
+        entry->monsWater.append(tmp);
+      }
+    }
+
+    if(mapEntry["monRate"].isDouble())
+      entry->monRate = mapEntry["monRate"].toDouble();
+
+    if(mapEntry["monRateWater"].isDouble())
+      entry->monRateWater = mapEntry["monRateWater"].toDouble();
 
     if(mapEntry["sprites"].isArray())
     {
@@ -590,6 +639,18 @@ void MapsDB::deepLink()
     if(entry->sprites.size() > 0)
       for(auto spriteEntry : entry->sprites)
         spriteEntry->deepLink();
+
+    if(entry->monsRed.size() > 0)
+      for(auto monEntry : entry->monsRed)
+        monEntry->deepLink();
+
+    if(entry->monsBlue.size() > 0)
+      for(auto monEntry : entry->monsBlue)
+        monEntry->deepLink();
+
+    if(entry->monsWater.size() > 0)
+      for(auto monEntry : entry->monsWater)
+        monEntry->deepLink();
 
 #ifdef QT_DEBUG
     if(entry->music != "" && entry->toMusic == nullptr)

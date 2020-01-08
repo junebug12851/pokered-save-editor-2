@@ -270,6 +270,17 @@ struct MapDBEntrySign
   var8 textID;
 };
 
+// Wild Pokemon Entry
+struct MapDBEntryWildMon
+{
+  void deepLink();
+
+  QString name;
+  var8 level = 0;
+
+  PokemonDBEntry* toPokemon = nullptr;
+};
+
 struct MapDBEntry {
 
   // Optional bool values are only present when true, so we simplify things
@@ -297,6 +308,17 @@ struct MapDBEntry {
 
   // Connecting Maps
   QHash<var8,MapDBEntryConnect*> connect;
+
+  // Wild Pokemon Encounter Rate
+  // Along with mons for Red & Blue & Water Mons
+  // Although there is strangely only 1 map in the game that carries both
+  // water and land Pokemon. More strangely there's only 1 set of water Pokemon
+  // that all maps share that have water
+  std::optional<var8> monRate;
+  std::optional<var8> monRateWater;
+  QVector<MapDBEntryWildMon*> monsRed;
+  QVector<MapDBEntryWildMon*> monsBlue;
+  QVector<MapDBEntryWildMon*> monsWater;
 
   // Border Block #
   std::optional<var8> border;

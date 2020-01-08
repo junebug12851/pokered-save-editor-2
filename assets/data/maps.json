@@ -6940,7 +6940,7 @@
         "level": 3
       },
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 3
       },
       {
@@ -6948,7 +6948,7 @@
         "level": 4
       },
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 4
       },
       {
@@ -6956,7 +6956,7 @@
         "level": 2
       },
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 2
       },
       {
@@ -6968,11 +6968,11 @@
         "level": 5
       },
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 3
       },
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 4
       }
     ],
@@ -6982,7 +6982,7 @@
         "level": 3
       },
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 3
       },
       {
@@ -6990,7 +6990,7 @@
         "level": 4
       },
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 4
       },
       {
@@ -6998,7 +6998,7 @@
         "level": 2
       },
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 2
       },
       {
@@ -7010,11 +7010,11 @@
         "level": 5
       },
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 3
       },
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 4
       }
     ],
@@ -24538,7 +24538,7 @@
     ],
     "redMons": [
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 24
       },
       {
@@ -24562,7 +24562,7 @@
         "level": 23
       },
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 24
       },
       {
@@ -24580,7 +24580,7 @@
     ],
     "blueMons": [
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 24
       },
       {
@@ -24604,7 +24604,7 @@
         "level": 23
       },
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 24
       },
       {
@@ -24777,7 +24777,7 @@
     ],
     "redMons": [
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 22
       },
       {
@@ -24819,7 +24819,7 @@
     ],
     "blueMons": [
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 22
       },
       {
@@ -25019,7 +25019,7 @@
     ],
     "redMons": [
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 25
       },
       {
@@ -25043,7 +25043,7 @@
         "level": 26
       },
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 25
       },
       {
@@ -25061,7 +25061,7 @@
     ],
     "blueMons": [
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 25
       },
       {
@@ -25085,7 +25085,7 @@
         "level": 26
       },
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 25
       },
       {
@@ -25234,7 +25234,7 @@
     ],
     "redMons": [
       {
-        "name": "NIDORAN_M",
+        "name": "NIDORAN<m>",
         "level": 22
       },
       {
@@ -25276,7 +25276,7 @@
     ],
     "blueMons": [
       {
-        "name": "NIDORAN_F",
+        "name": "NIDORAN<f>",
         "level": 22
       },
       {
