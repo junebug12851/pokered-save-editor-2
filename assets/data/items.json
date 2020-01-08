@@ -8,17 +8,20 @@
   {
     "name": "ULTRA BALL",
     "ind": 2,
-    "readable": "Ultra Ball"
+    "readable": "Ultra Ball",
+    "price": 1200
   },
   {
     "name": "GREAT BALL",
     "ind": 3,
-    "readable": "Great Ball"
+    "readable": "Great Ball",
+    "price": 600
   },
   {
     "name": "POKE BALL",
     "ind": 4,
-    "readable": "Poke Ball"
+    "readable": "Poke Ball",
+    "price": 200
   },
   {
     "name": "TOWN MAP",
@@ -42,7 +45,8 @@
     "name": "SAFARI BALL",
     "ind": 8,
     "glitch": true,
-    "readable": "Safari Ball"
+    "readable": "Safari Ball",
+    "price": 1000
   },
   {
     "name": "POKEDEX",
@@ -58,52 +62,62 @@
   {
     "name": "ANTIDOTE",
     "ind": 11,
-    "readable": "Antidote"
+    "readable": "Antidote",
+    "price": 100
   },
   {
     "name": "BURN HEAL",
     "ind": 12,
-    "readable": "Burn Heal"
+    "readable": "Burn Heal",
+    "price": 250
   },
   {
     "name": "ICE HEAL",
     "ind": 13,
-    "readable": "Ice Heal"
+    "readable": "Ice Heal",
+    "price": 250
   },
   {
     "name": "AWAKENING",
     "ind": 14,
-    "readable": "Awakening"
+    "readable": "Awakening",
+    "price": 200
   },
   {
     "name": "PARLYZ HEAL",
     "ind": 15,
-    "readable": "Parlyz Heal"
+    "readable": "Parlyz Heal",
+    "price": 200
   },
   {
     "name": "FULL RESTORE",
     "ind": 16,
-    "readable": "Full Restore"
+    "readable": "Full Restore",
+    "price": 3000
   },
   {
     "name": "MAX POTION",
     "ind": 17,
-    "readable": "Max Potion"
+    "readable": "Max Potion",
+    "price": 2500
   },
   {
     "name": "HYPER POTION",
     "ind": 18,
-    "readable": "Hyper Potion"
+    "readable": "Hyper Potion",
+    "price": 1500
   },
   {
     "name": "SUPER POTION",
     "ind": 19,
-    "readable": "Super Potion"
+    "readable": "Super Potion",
+    "price": 700
   },
   {
     "name": "POTION",
     "ind": 20,
-    "readable": "Potion"
+    "readable": "Potion",
+    "price": 300
   },
   {
     "name": "BOULDER BADGE",
@@ -156,12 +170,14 @@
   {
     "name": "ESCAPE ROPE",
     "ind": 29,
-    "readable": "Escape Rope"
+    "readable": "Escape Rope",
+    "price": 550
   },
   {
     "name": "REPEL",
     "ind": 30,
-    "readable": "Repel"
+    "readable": "Repel",
+    "price": 350
   },
   {
     "name": "OLD AMBER",
@@ -172,47 +188,56 @@
   {
     "name": "FIRE STONE",
     "ind": 32,
-    "readable": "Fire Stone"
+    "readable": "Fire Stone",
+    "price": 2100
   },
   {
     "name": "THUNDER STONE",
     "ind": 33,
-    "readable": "Thunder Stone"
+    "readable": "Thunder Stone",
+    "price": 2100
   },
   {
     "name": "WATER STONE",
     "ind": 34,
-    "readable": "Water Stone"
+    "readable": "Water Stone",
+    "price": 2100
   },
   {
     "name": "HP UP",
     "ind": 35,
-    "readable": "HP Up"
+    "readable": "HP Up",
+    "price": 9800
   },
   {
     "name": "PROTEIN",
     "ind": 36,
-    "readable": "Protein"
+    "readable": "Protein",
+    "price": 9800
   },
   {
     "name": "IRON",
     "ind": 37,
-    "readable": "Iron"
+    "readable": "Iron",
+    "price": 9800
   },
   {
     "name": "CARBOS",
     "ind": 38,
-    "readable": "Carbos"
+    "readable": "Carbos",
+    "price": 9800
   },
   {
     "name": "CALCIUM",
     "ind": 39,
-    "readable": "Calcium"
+    "readable": "Calcium",
+    "price": 9800
   },
   {
     "name": "RARE CANDY",
     "ind": 40,
-    "readable": "Rare Candy"
+    "readable": "Rare Candy",
+    "price": 4800
   },
   {
     "name": "DOME FOSSIL",
@@ -247,12 +272,14 @@
   {
     "name": "X ACCURACY",
     "ind": 46,
-    "readable": "X Accuracy"
+    "readable": "X Accuracy",
+    "price": 950
   },
   {
     "name": "LEAF STONE",
     "ind": 47,
-    "readable": "Leaf Stone"
+    "readable": "Leaf Stone",
+    "price": 2100
   },
   {
     "name": "CARD KEY",
@@ -263,74 +290,88 @@
   {
     "name": "NUGGET",
     "ind": 49,
-    "readable": "Nugget"
+    "readable": "Nugget",
+    "price": 10000
   },
   {
     "name": "PP UP 2",
     "ind": 50,
     "once": true,
-    "readable": "PP Up 2"
+    "readable": "PP Up 2",
+    "price": 9800
   },
   {
     "name": "POKE DOLL",
     "ind": 51,
-    "readable": "Poke Doll"
+    "readable": "Poke Doll",
+    "price": 1000
   },
   {
     "name": "FULL HEAL",
     "ind": 52,
-    "readable": "Full Heal"
+    "readable": "Full Heal",
+    "price": 600
   },
   {
     "name": "REVIVE",
     "ind": 53,
-    "readable": "Revive"
+    "readable": "Revive",
+    "price": 1500
   },
   {
     "name": "MAX REVIVE",
     "ind": 54,
-    "readable": "Max Revive"
+    "readable": "Max Revive",
+    "price": 4000
   },
   {
     "name": "GUARD SPEC",
     "ind": 55,
-    "readable": "Guard Spec"
+    "readable": "Guard Spec",
+    "price": 700
   },
   {
     "name": "SUPER REPEL",
     "ind": 56,
-    "readable": "Super Repel"
+    "readable": "Super Repel",
+    "price": 500
   },
   {
     "name": "MAX REPEL",
     "ind": 57,
-    "readable": "Max Repel"
+    "readable": "Max Repel",
+    "price": 700
   },
   {
     "name": "DIRE HIT",
     "ind": 58,
-    "readable": "Dire Hit"
+    "readable": "Dire Hit",
+    "price": 650
   },
   {
     "name": "COIN",
     "ind": 59,
     "glitch": true,
-    "readable": "Coin"
+    "readable": "Coin",
+    "price": 10
   },
   {
     "name": "FRESH WATER",
     "ind": 60,
-    "readable": "Fresh Water"
+    "readable": "Fresh Water",
+    "price": 200
   },
   {
     "name": "SODA POP",
     "ind": 61,
-    "readable": "Soda Pop"
+    "readable": "Soda Pop",
+    "price": 300
   },
   {
     "name": "LEMONADE",
     "ind": 62,
-    "readable": "Lemonade"
+    "readable": "Lemonade",
+    "price": 350
   },
   {
     "name": "S.S. TICKET",
@@ -347,22 +388,26 @@
   {
     "name": "X ATTACK",
     "ind": 65,
-    "readable": "X Attack"
+    "readable": "X Attack",
+    "price": 500
   },
   {
     "name": "X DEFEND",
     "ind": 66,
-    "readable": "X Defend"
+    "readable": "X Defend",
+    "price": 550
   },
   {
     "name": "X SPEED",
     "ind": 67,
-    "readable": "X Speed"
+    "readable": "X Speed",
+    "price": 350
   },
   {
     "name": "X SPECIAL",
     "ind": 68,
-    "readable": "X Special"
+    "readable": "X Special",
+    "price": 350
   },
   {
     "name": "COIN CASE",
