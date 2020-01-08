@@ -15,6 +15,9 @@
 */
 #include "./areaaudio.h"
 #include "../../savefile.h"
+#include "../../savefiletoolset.h"
+#include "../../savefileiterator.h"
+#include "../../../db/music.h"
 
 #include <QRandomGenerator>
 
@@ -29,11 +32,23 @@ void AreaAudio::load(SaveFile* saveFile)
 {
   if(saveFile == nullptr)
     return reset();
+
+  auto toolset = saveFile->toolset;
+
+  musicID = toolset->getByte(0x2607);
+  musicBank = toolset->getByte(0x2608);
+  noAudioFadeout = toolset->getBit(0x29D8, 1, 1);
+  preventMusicChange = toolset->getBit(0x29DF, 1, 1);
 }
 
 void AreaAudio::save(SaveFile* saveFile)
 {
+  auto toolset = saveFile->toolset;
 
+  toolset->setByte(0x2607, musicID);
+  toolset->setByte(0x2608, musicBank);
+  toolset->setBit(0x29D8, 1, 1, noAudioFadeout);
+  toolset->setBit(0x29DF, 1, 1, preventMusicChange);
 }
 
 void AreaAudio::reset()
@@ -48,6 +63,14 @@ void AreaAudio::randomize()
 {
   auto rnd = QRandomGenerator::global();
 
-  noAudioFadeout = rnd->bounded(0, 5) > 3;
-  preventMusicChange = rnd->bounded(0, 5) > 3;
+  // Select a random song
+  auto musicEntry = MusicDB::store.at(rnd->bounded(0, MusicDB::store.size()));
+
+  // Load it into the map
+  musicID = musicEntry->id;
+  musicBank = musicEntry->bank;
+
+  // Give a 5% chance of having these options enabled
+  noAudioFadeout = rnd->bounded(0, 100+1) >= 95;
+  preventMusicChange = rnd->bounded(0, 100+1) >= 95;
 }

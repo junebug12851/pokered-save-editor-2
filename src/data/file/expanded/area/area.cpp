@@ -14,32 +14,40 @@
   * limitations under the License.
 */
 #include "./area.h"
+#include "./areaaudio.h"
 #include "../../savefile.h"
 
 Area::Area(SaveFile* saveFile)
 {
+  areaAudio = new AreaAudio;
+
   load(saveFile);
 }
 
 Area::~Area()
 {
-
+  delete areaAudio;
 }
 
 void Area::load(SaveFile* saveFile)
 {
   if(saveFile == nullptr)
     return reset();
+
+  areaAudio->load(saveFile);
 }
 
 void Area::save(SaveFile* saveFile)
 {
+  areaAudio->save(saveFile);
 }
 
 void Area::reset()
 {
+  areaAudio->reset();
 }
 
 void Area::randomize()
 {
+  areaAudio->randomize();
 }

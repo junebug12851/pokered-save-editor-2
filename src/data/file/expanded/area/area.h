@@ -19,6 +19,7 @@
 #include "../expandedinterface.h"
 
 class SaveFile;
+class AreaAudio;
 
 class Area : public ExpandedInterface
 {
@@ -30,6 +31,8 @@ public:
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
+
+  AreaAudio* areaAudio = nullptr;
 };
 
 #endif // AREA_H
