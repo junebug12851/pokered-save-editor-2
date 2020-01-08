@@ -17,6 +17,11 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+#include "../../../db/maps.h"
+#include "../../../db/spriteSet.h"
+#include "../../../db/sprites.h"
+
+#include <QRandomGenerator>
 
 AreaLoadedSprites::AreaLoadedSprites(SaveFile* saveFile)
 {
@@ -54,5 +59,21 @@ void AreaLoadedSprites::reset()
 
 void AreaLoadedSprites::randomize()
 {
+  // Pick a random sprite set and load it
+  // If it's dynamic, load one of the sets at random based on random coordinates
+  auto rnd = QRandomGenerator::global();
+  auto spriteSet = SpriteSetDB::store.at(
+        rnd->bounded(0, SpriteSetDB::store.size())
+        );
 
+  auto set = spriteSet->getSprites(
+        rnd->bounded(0, 255),
+        rnd->bounded(0, 255));
+
+  auto id = spriteSet->ind;
+
+  for(auto s : set)
+    loadedSprites.append(s->ind);
+
+  loadedSetId = id;
 }

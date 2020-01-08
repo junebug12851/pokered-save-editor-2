@@ -21,6 +21,7 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
+struct MapDBEntry;
 
 class AreaLoadedSprites : ExpandedInterface
 {

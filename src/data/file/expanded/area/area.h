@@ -20,6 +20,7 @@
 
 class SaveFile;
 class AreaAudio;
+class AreaLoadedSprites;
 
 class Area : public ExpandedInterface
 {
@@ -33,6 +34,7 @@ public:
   void randomize();
 
   AreaAudio* areaAudio = nullptr;
+  AreaLoadedSprites* areaLoadedSprites = nullptr;
 };
 
 #endif // AREA_H
