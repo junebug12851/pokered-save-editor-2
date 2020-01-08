@@ -47,6 +47,9 @@ struct ItemDBEntry {
   std::optional<var8> tm; // TM Number if present
   std::optional<var8> hm; // HM Number if present
 
+  // Item Prices if available
+  std::optional<var8> price;
+
   MoveDBEntry* toMove; // To TM or HM Move
 };
 

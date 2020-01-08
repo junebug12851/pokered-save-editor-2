@@ -62,6 +62,9 @@ void ItemsDB::load()
     if(itemEntry["hm"].isDouble())
       entry->hm = itemEntry["hm"].toDouble();
 
+    if(itemEntry["price"].isDouble())
+      entry->price = itemEntry["price"].toDouble();
+
     // Add to array
     store.append(entry);
   }
