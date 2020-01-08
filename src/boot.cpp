@@ -177,7 +177,16 @@ extern QApplication* boot(int argc, char *argv[])
   //data->flattenData();
   //file->saveFile();
 
-  //auto tmp = MapsDB::ind.value("Saffron City");
+  auto tmp = MapsDB::ind.value("Pallet Town")->connect.value((var8)ConnectDir::NORTH);
+
+  auto mapPtr = tmp->toMap->ind;
+  auto stripSrc = tmp->stripLocation();
+  auto stripDst = tmp->mapPos();
+  auto stripWidth = tmp->stripSize();
+  auto width = tmp->toMap->width;
+  auto yAlign = tmp->yAlign();
+  auto xAlign = tmp->xAlign();
+  auto viewPtr = tmp->window();
 
   return app;
 }

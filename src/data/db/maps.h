@@ -125,23 +125,28 @@ struct MapDBEntryConnect {
 
   // Location of strip
   // Pointer to start in connected map
+  // AKA Strip Source
   var16 stripLocation();
 
   // Map Position
   // Pointer to start of connection
+  // AKA Strip Dst
   var16 mapPos();
 
   // Strip Size
   // Connection size (blocks)
+  // AKA stripWidth
   var8 stripSize();
 
   // Player Pos
   // Player Y & X Offset (steps)
+  // AKA X-Align/Y-Align
   svar8 yAlign();
   svar8 xAlign();
 
   // Map VRAM Offset
   // Pointer to window
+  // AKA => viewPtr & UL Corner
   var16 window();
 };
 
