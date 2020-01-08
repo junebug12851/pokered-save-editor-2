@@ -34,6 +34,7 @@ HEADERS += \
   src/data/db/namesPokemon.h \
   src/data/db/pokemon.h \
   src/data/db/scripts.h \
+  src/data/db/spriteSet.h \
   src/data/db/sprites.h \
   src/data/db/starterPokemon.h \
   src/data/db/tileset.h \
@@ -69,6 +70,7 @@ SOURCES += \
   src/data/db/fontsearch.cpp \
   src/data/db/music.cpp \
   src/data/db/namesPokemon.cpp \
+  src/data/db/spriteSet.cpp \
   src/data/db/tileset.cpp \
   src/data/file/expanded/area/area.cpp \
   src/data/file/expanded/area/areaaudio.cpp \

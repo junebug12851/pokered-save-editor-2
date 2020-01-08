@@ -31,6 +31,7 @@ struct SpriteDBEntry;
 struct ItemDBEntry;
 struct PokemonDBEntry;
 struct TrainerDBEntry;
+struct SpriteSetDBEntry;
 
 struct MapDBEntry;
 struct MapDBEntryWarpIn;
@@ -324,6 +325,10 @@ struct MapDBEntry {
   QVector<MapDBEntryWildMon*> monsRed;
   QVector<MapDBEntryWildMon*> monsBlue;
   QVector<MapDBEntryWildMon*> monsWater;
+
+  // Sprite Set
+  std::optional<var8> spriteSet;
+  SpriteSetDBEntry* toSpriteSet = nullptr;
 
   // Border Block #
   std::optional<var8> border;

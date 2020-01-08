@@ -59,5 +59,6 @@
         <file>assets/pokered-font/pic-tilesets/underground.png</file>
         <file>assets/data/namesPokemon.json</file>
         <file>assets/data/music.json</file>
+        <file>assets/data/spriteSet.json</file>
     </qresource>
 </RCC>

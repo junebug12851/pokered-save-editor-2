@@ -30,6 +30,7 @@
 #include "./items.h"
 #include "./pokemon.h"
 #include "./trainers.h"
+#include "./spriteSet.h"
 
 MapDBEntryConnect::MapDBEntryConnect() {}
 MapDBEntryConnect::MapDBEntryConnect(
@@ -446,6 +447,9 @@ void MapsDB::load()
     if(mapEntry["border"].isDouble())
       entry->border = mapEntry["border"].toDouble();
 
+    if(mapEntry["spriteSet"].isDouble())
+      entry->spriteSet = mapEntry["spriteSet"].toDouble();
+
     if(mapEntry["warpOut"].isArray())
     {
       for(QJsonValue warpEntry : mapEntry["warpOut"].toArray()) {
@@ -652,6 +656,10 @@ void MapsDB::deepLink()
       for(auto monEntry : entry->monsWater)
         monEntry->deepLink();
 
+    if(entry->spriteSet)
+      entry->toSpriteSet =
+          SpriteSetDB::ind.value(QString::number(*entry->spriteSet), nullptr);
+
 #ifdef QT_DEBUG
     if(entry->music != "" && entry->toMusic == nullptr)
       qCritical() << "Map: " << entry->name << ", could not be deep linked to music" << entry->music;
@@ -661,6 +669,9 @@ void MapsDB::deepLink()
 
     if(entry->incomplete != "" && entry->toComplete == nullptr)
       qCritical() << "Map: " << entry->name << ", could not be deep linked to complete" << entry->incomplete;
+
+    if(entry->spriteSet && entry->toSpriteSet == nullptr)
+      qCritical() << "Map: " << entry->name << ", could not be deep linked to sprite set" << *entry->spriteSet;
 #endif
   }
 }

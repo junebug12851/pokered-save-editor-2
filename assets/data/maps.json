@@ -105,7 +105,8 @@
         "x": 12,
         "y": 11
       }
-    ]
+    ],
+    "spriteSet": 1
   },
   {
     "name": "Viridian City",
@@ -280,7 +281,8 @@
         "x": 32,
         "y": 7
       }
-    ]
+    ],
+    "spriteSet": 1
   },
   {
     "name": "Pewter City",
@@ -458,7 +460,8 @@
         "x": 13,
         "y": 25
       }
-    ]
+    ],
+    "spriteSet": 2
   },
   {
     "name": "Cerulean City",
@@ -722,7 +725,8 @@
         "x": 9,
         "y": 9
       }
-    ]
+    ],
+    "spriteSet": 2
   },
   {
     "name": "Lavender Town",
@@ -875,7 +879,8 @@
         "x": 7,
         "y": 13
       }
-    ]
+    ],
+    "spriteSet": 3
   },
   {
     "name": "Vermilion City",
@@ -1081,7 +1086,8 @@
         "x": 7,
         "y": 3
       }
-    ]
+    ],
+    "spriteSet": 4
   },
   {
     "name": "Celadon City",
@@ -1363,7 +1369,8 @@
         "x": 43,
         "y": 27
       }
-    ]
+    ],
+    "spriteSet": 5
   },
   {
     "name": "Fuchsia City",
@@ -1641,7 +1648,8 @@
         "x": 31,
         "y": 24
       }
-    ]
+    ],
+    "spriteSet": 10
   },
   {
     "name": "Cinnabar Island",
@@ -1765,7 +1773,8 @@
         "x": 15,
         "y": 11
       }
-    ]
+    ],
+    "spriteSet": 1
   },
   {
     "name": "Indigo Plateau",
@@ -1809,7 +1818,8 @@
         "x": 10,
         "y": 5
       }
-    ]
+    ],
+    "spriteSet": 6
   },
   {
     "name": "Saffron City",
@@ -2103,14 +2113,16 @@
         "x": 29,
         "y": 29
       }
-    ]
+    ],
+    "spriteSet": 7
   },
   {
     "name": "Unused Map 0B",
     "ind": 11,
     "glitch": true,
     "music": "Cities1",
-    "incomplete": "Saffron City"
+    "incomplete": "Saffron City",
+    "spriteSet": 1
   },
   {
     "name": "Route 1",
@@ -2252,7 +2264,8 @@
         "level": 5
       }
     ],
-    "monRate": 25
+    "monRate": 25,
+    "spriteSet": 1
   },
   {
     "name": "Route 2",
@@ -2475,7 +2488,8 @@
         "level": 5
       }
     ],
-    "monRate": 25
+    "monRate": 25,
+    "spriteSet": 241
   },
   {
     "name": "Route 3",
@@ -2682,7 +2696,8 @@
         "level": 7
       }
     ],
-    "monRate": 20
+    "monRate": 20,
+    "spriteSet": 2
   },
   {
     "name": "Route 4",
@@ -2873,7 +2888,8 @@
         "level": 12
       }
     ],
-    "monRate": 20
+    "monRate": 20,
+    "spriteSet": 2
   },
   {
     "name": "Route 5",
@@ -3045,7 +3061,8 @@
         "level": 16
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 249
   },
   {
     "name": "Route 6",
@@ -3269,7 +3286,8 @@
         "level": 16
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 250
   },
   {
     "name": "Route 7",
@@ -3441,7 +3459,8 @@
         "level": 20
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 251
   },
   {
     "name": "Route 8",
@@ -3704,7 +3723,8 @@
         "level": 18
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 252
   },
   {
     "name": "Route 9",
@@ -3923,7 +3943,8 @@
         "level": 17
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 2
   },
   {
     "name": "Route 10",
@@ -4161,7 +4182,8 @@
         "level": 17
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 242
   },
   {
     "name": "Route 11",
@@ -4435,7 +4457,8 @@
         "level": 15
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 243
   },
   {
     "name": "Route 12",
@@ -4704,7 +4727,8 @@
         "level": 30
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 244
   },
   {
     "name": "Route 13",
@@ -4933,7 +4957,8 @@
         "level": 30
       }
     ],
-    "monRate": 20
+    "monRate": 20,
+    "spriteSet": 8
   },
   {
     "name": "Route 14",
@@ -5152,7 +5177,8 @@
         "level": 30
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 8
   },
   {
     "name": "Route 15",
@@ -5424,7 +5450,8 @@
         "level": 30
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 245
   },
   {
     "name": "Route 16",
@@ -5711,7 +5738,8 @@
         "level": 25
       }
     ],
-    "monRate": 25
+    "monRate": 25,
+    "spriteSet": 246
   },
   {
     "name": "Route 17",
@@ -5956,7 +5984,8 @@
         "level": 27
       }
     ],
-    "monRate": 25
+    "monRate": 25,
+    "spriteSet": 9
   },
   {
     "name": "Route 18",
@@ -6155,7 +6184,8 @@
         "level": 29
       }
     ],
-    "monRate": 25
+    "monRate": 25,
+    "spriteSet": 247
   },
   {
     "name": "Route 19",
@@ -6374,7 +6404,8 @@
         "level": 40
       }
     ],
-    "monRate": 5
+    "monRate": 5,
+    "spriteSet": 10
   },
   {
     "name": "Route 20",
@@ -6622,7 +6653,8 @@
         "level": 40
       }
     ],
-    "monRate": 5
+    "monRate": 5,
+    "spriteSet": 248
   },
   {
     "name": "Route 21",
@@ -6868,7 +6900,8 @@
       }
     ],
     "monRate": 25,
-    "monRateWater": 5
+    "monRateWater": 5,
+    "spriteSet": 1
   },
   {
     "name": "Route 22",
@@ -7018,7 +7051,8 @@
         "level": 4
       }
     ],
-    "monRate": 25
+    "monRate": 25,
+    "spriteSet": 1
   },
   {
     "name": "Route 23",
@@ -7238,7 +7272,8 @@
         "level": 43
       }
     ],
-    "monRate": 10
+    "monRate": 10,
+    "spriteSet": 6
   },
   {
     "name": "Route 24",
@@ -7430,7 +7465,8 @@
         "level": 12
       }
     ],
-    "monRate": 25
+    "monRate": 25,
+    "spriteSet": 2
   },
   {
     "name": "Route 25",
@@ -7657,7 +7693,8 @@
         "level": 8
       }
     ],
-    "monRate": 15
+    "monRate": 15,
+    "spriteSet": 2
   },
   {
     "name": "Reds House 1F",

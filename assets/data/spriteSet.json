@@ -1,0 +1,246 @@
+[
+  {
+    "ind": 241,
+    "split": "horz",
+    "splitAt": 37,
+    "setWN": 2,
+    "setES": 1
+  },
+  {
+    "ind": 242,
+    "split": "horz",
+    "splitAt": 50,
+    "setWN": 2,
+    "setES": 3
+  },
+  {
+    "ind": 243,
+    "split": "vert",
+    "splitAt": 57,
+    "setWN": 4,
+    "setES": 8
+  },
+  {
+    "ind": 244,
+    "split": "horz",
+    "splitAt": 21,
+    "setWN": 3,
+    "setES": 8
+  },
+  {
+    "ind": 245,
+    "split": "vert",
+    "splitAt": 8,
+    "setWN": 10,
+    "setES": 8
+  },
+  {
+    "ind": 246,
+    "split": "vert",
+    "splitAt": 24,
+    "setWN": 9,
+    "setES": 5
+  },
+  {
+    "ind": 247,
+    "split": "vert",
+    "splitAt": 34,
+    "setWN": 9,
+    "setES": 10
+  },
+  {
+    "ind": 248,
+    "split": "vert",
+    "splitAt": 53,
+    "setWN": 1,
+    "setES": 10
+  },
+  {
+    "ind": 249,
+    "split": "horz",
+    "splitAt": 33,
+    "setWN": 2,
+    "setES": 7
+  },
+  {
+    "ind": 250,
+    "split": "horz",
+    "splitAt": 2,
+    "setWN": 7,
+    "setES": 4
+  },
+  {
+    "ind": 251,
+    "split": "vert",
+    "splitAt": 17,
+    "setWN": 5,
+    "setES": 7
+  },
+  {
+    "ind": 252,
+    "split": "vert",
+    "splitAt": 3,
+    "setWN": 7,
+    "setES": 3
+  },
+  {
+    "ind": 1,
+    "sprites": [
+      "Rival",
+      "Bug Catcher",
+      "Girl",
+      "Fisher 2",
+      "Black Hair Boy 1",
+      "Gambler",
+      "Seel",
+      "Prof. Oak",
+      "Swimmer",
+      "Pokeball",
+      "Lying Old Man"
+    ]
+  },
+  {
+    "ind": 2,
+    "sprites": [
+      "Bug Catcher",
+      "Rocket",
+      "Black Hair Boy 2",
+      "Hiker",
+      "Slowbro",
+      "Rival",
+      "Guard",
+      "Lass",
+      "Black Hair Boy 1",
+      "Pokeball",
+      "Lying Old Man Unused 2"
+    ]
+  },
+  {
+    "ind": 3,
+    "sprites": [
+      "Little Girl",
+      "Girl",
+      "Black Hair Boy 2",
+      "Hiker",
+      "Gambler",
+      "Slowbro",
+      "Lass",
+      "Black Hair Boy 1",
+      "Guard",
+      "Pokeball",
+      "Lying Old Man Unused 2"
+    ]
+  },
+  {
+    "ind": 4,
+    "sprites": [
+      "Foulard Woman",
+      "Black Hair Boy 2",
+      "Bug Catcher",
+      "Gambler",
+      "Slowbro",
+      "Guard",
+      "Sailor",
+      "Lass",
+      "Black Hair Boy 1",
+      "Pokeball",
+      "Lying Old Man Unused 2"
+    ]
+  },
+  {
+    "ind": 5,
+    "sprites": [
+      "Little Girl",
+      "Young Boy",
+      "Girl",
+      "Fisher 2",
+      "Fat Bald Guy",
+      "Old Person",
+      "Slowbro",
+      "Guard",
+      "Rocket",
+      "Pokeball",
+      "Snorlax"
+    ]
+  },
+  {
+    "ind": 6,
+    "sprites": [
+      "Bug Catcher",
+      "Gym Helper",
+      "Slowbro",
+      "Rival",
+      "Lass",
+      "Black Hair Boy 1",
+      "Swimmer",
+      "Guard",
+      "Gambler",
+      "Pokeball",
+      "Lying Old Man Unused 2"
+    ]
+  },
+  {
+    "ind": 7,
+    "sprites": [
+      "Rocket",
+      "Oak Aide",
+      "Lapras Giver",
+      "Erika",
+      "Gentleman",
+      "Bird",
+      "Rocker",
+      "Black Hair Boy 1",
+      "Slowbro",
+      "Pokeball",
+      "Lying Old Man Unused 2"
+    ]
+  },
+  {
+    "ind": 8,
+    "sprites": [
+      "Biker",
+      "Black Hair Boy 2",
+      "Fat Bald Guy",
+      "Lass",
+      "Black Hair Boy 1",
+      "Foulard Woman",
+      "Fisher 2",
+      "Rocker",
+      "Slowbro",
+      "Pokeball",
+      "Snorlax"
+    ]
+  },
+  {
+    "ind": 9,
+    "sprites": [
+      "Biker",
+      "Black Hair Boy 1",
+      "Lapras Giver",
+      "Fisher 2",
+      "Rocker",
+      "Hiker",
+      "Gambler",
+      "Fat Bald Guy",
+      "Black Hair Boy 2",
+      "Pokeball",
+      "Snorlax"
+    ]
+  },
+  {
+    "ind": 10,
+    "sprites": [
+      "Bird",
+      "Black Hair Boy 1",
+      "Clefairy",
+      "Fisher 2",
+      "Gambler",
+      "Slowbro",
+      "Seel",
+      "Swimmer",
+      "Bug Catcher",
+      "Pokeball",
+      "Omanyte"
+    ]
+  }
+]

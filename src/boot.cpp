@@ -35,6 +35,7 @@
 #include "./data/db/pokemon.h"
 #include "./data/db/scripts.h"
 #include "./data/db/sprites.h"
+#include "./data/db/spriteSet.h"
 #include "./data/db/starterPokemon.h"
 #include "./data/db/tileset.h"
 #include "./data/db/tmHm.h"
@@ -111,6 +112,7 @@ void load()
   PokemonDB::load();
   ScriptsDB::load();
   SpritesDB::load();
+  SpriteSetDB::load();
   StarterPokemonDB::load();
   TilesetDB::load();
   TmHmsDB::load();
@@ -134,6 +136,7 @@ void index()
   PokemonDB::index();
   ScriptsDB::index();
   SpritesDB::index();
+  SpriteSetDB::index();
   TilesetDB::index();
   TrainersDB::index();
   TypesDB::index();
@@ -151,6 +154,7 @@ void deepLink()
   MapsDB::deepLink();
   MovesDB::deepLink();
   PokemonDB::deepLink(); // <-- Definately the most expensive operation!!!
+  SpriteSetDB::deepLink();
   StarterPokemonDB::deepLink();
   TmHmsDB::deepLink();
   TradesDB::deepLink();
@@ -176,17 +180,6 @@ extern QApplication* boot(int argc, char *argv[])
 
   //data->flattenData();
   //file->saveFile();
-
-  auto tmp = MapsDB::ind.value("Pallet Town")->connect.value((var8)ConnectDir::NORTH);
-
-  auto mapPtr = tmp->toMap->ind;
-  auto stripSrc = tmp->stripLocation();
-  auto stripDst = tmp->mapPos();
-  auto stripWidth = tmp->stripSize();
-  auto width = tmp->toMap->width;
-  auto yAlign = tmp->yAlign();
-  auto xAlign = tmp->xAlign();
-  auto viewPtr = tmp->window();
 
   return app;
 }
