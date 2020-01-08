@@ -71,6 +71,6 @@ void AreaAudio::randomize()
   musicBank = musicEntry->bank;
 
   // Give a 5% chance of having these options enabled
-  noAudioFadeout = rnd->bounded(0, 100+1) >= 95;
-  preventMusicChange = rnd->bounded(0, 100+1) >= 95;
+  noAudioFadeout = false;
+  preventMusicChange = false;
 }
