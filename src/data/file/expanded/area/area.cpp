@@ -29,6 +29,11 @@
 // x - Player x coords in blocks (divided by 2)
 // y - Player y coords in blocks (divided by 2)
 
+// Wow so the VRAM pointer literally doesn't matter lol, no matter what it is
+// it's just reset to 9800 on game boot, that's pretty funny actually lol
+// Here I was trying to figure out the formula like I did above for Window
+// But it doesn't matter with VRAM ptr like it did for Window above
+
 Area::Area(SaveFile* saveFile)
 {
   areaAudio = new AreaAudio;
