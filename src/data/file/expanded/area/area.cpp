@@ -87,16 +87,39 @@ void Area::randomize()
   // Keep going through maps until we find:
   // * A normal non-special or glitch map
   // * A map that's complete (Not an incomplete map)
-  // * Has at least one warp in or out
+  // * Has at least one warp in and out (You have to be able to enter and leave)
   //     > We'll use this to position the player correctly on the map
   // * Is not the strange elevator that has an invalid warp
   while(map->glitch ||
         map->special ||
         map->incomplete != "" ||
-        (map->warpIn.size() == 0 &&
-        map->warpOut.size() == 0) ||
+        map->warpIn.size() == 0 ||
+        map->warpOut.size() == 0 ||
         map->name == "Silph Co Elevator")
     map = MapsDB::store.at(rnd->bounded(0, MapsDB::store.size() - 1));
+
+  // Now pick out a random warp in and use those coordinates for the player
+  // coordinates
+  auto warpIn = map->warpIn.at(rnd->bounded(0, map->warpIn.size()));
+
+  // X & Y coordinates to place player
+  var8 x = warpIn->x;
+  var8 y = warpIn->y;
+
+  // +1 Offset or not
+  // A map block is 2 steps in either direction. The first step is an even
+  // coordinate, the second is an odd corrdinate. Should we mark that "extra"
+  // step to indicate the palyer standing on edge of that map block
+  var8 xPartial = (x % 2) ? 0 : 1;
+  var8 yPartial = (y % 2) ? 0 : 1;
+
+  // Map Blocks X & Y player is standing on
+  var8 mapX = x / 2;
+  var8 mapY = y / 2;
+
+  // Calculate value to this incredibly long named variable below
+  var16 currentTileBlockMapViewPointer =
+      ((*map->width)+7)+mapX+(mapY*((*map->width)+6)) + 0xC6E8;
 
   // Do the individual area randomizations and pass along map data where needed
   areaAudio->randomize();
