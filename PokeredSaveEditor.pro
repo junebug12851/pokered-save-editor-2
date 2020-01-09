@@ -44,6 +44,7 @@ HEADERS += \
   src/data/db/types.h \
   src/data/file/expanded/area/area.h \
   src/data/file/expanded/area/areaaudio.h \
+  src/data/file/expanded/area/areageneral.h \
   src/data/file/expanded/area/arealoadedsprites.h \
   src/data/file/expanded/expandedinterface.h \
   src/data/file/expanded/fragments/hofpokemon.h \
@@ -75,6 +76,7 @@ SOURCES += \
   src/data/db/tileset.cpp \
   src/data/file/expanded/area/area.cpp \
   src/data/file/expanded/area/areaaudio.cpp \
+  src/data/file/expanded/area/areageneral.cpp \
   src/data/file/expanded/area/arealoadedsprites.cpp \
   src/data/file/expanded/fragments/hofpokemon.cpp \
   src/data/file/expanded/fragments/hofrecord.cpp \

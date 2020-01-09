@@ -16,6 +16,7 @@
 #include "./area.h"
 #include "./areaaudio.h"
 #include "./arealoadedsprites.h"
+#include "./areageneral.h"
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 
@@ -25,6 +26,7 @@ Area::Area(SaveFile* saveFile)
 {
   areaAudio = new AreaAudio;
   areaLoadedSprites = new AreaLoadedSprites;
+  areaGeneral = new AreaGeneral;
 
   load(saveFile);
 }
@@ -33,6 +35,7 @@ Area::~Area()
 {
   delete areaAudio;
   delete areaLoadedSprites;
+  delete areaGeneral;
 }
 
 void Area::load(SaveFile* saveFile)
@@ -42,18 +45,21 @@ void Area::load(SaveFile* saveFile)
 
   areaAudio->load(saveFile);
   areaLoadedSprites->load(saveFile);
+  areaGeneral->load(saveFile);
 }
 
 void Area::save(SaveFile* saveFile)
 {
   areaAudio->save(saveFile);
   areaLoadedSprites->save(saveFile);
+  areaGeneral->save(saveFile);
 }
 
 void Area::reset()
 {
   areaAudio->reset();
   areaLoadedSprites->reset();
+  areaGeneral->reset();
 }
 
 void Area::randomize()
@@ -82,5 +88,7 @@ void Area::randomize()
 
   // Do the individual area randomizations and pass along map data where needed
   areaAudio->randomize();
+  areaGeneral->randomize();
+
   areaLoadedSprites->randomize(map);
 }

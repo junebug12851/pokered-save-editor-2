@@ -13,30 +13,42 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef AREA_H
-#define AREA_H
+#ifndef AREAGENERAL_H
+#define AREAGENERAL_H
 
 #include "../expandedinterface.h"
-
+#include "../../../../common/types.h"
 class SaveFile;
-class AreaAudio;
-class AreaLoadedSprites;
-class AreaGeneral;
 
-class Area : public ExpandedInterface
+enum class ContrastIds : var8
+{
+  Normal = 0,
+  Darken1 = 3,
+  Darken2_NeedsFlash = 6,
+  Darken3_SolidBlack = 9,
+
+  Glitch_1A = 1,
+  Glitch_1B = 2,
+  Glitch_2A = 4,
+  Glitch_2B = 5,
+  Glitch_3A = 7,
+  Glitch_3B = 8
+};
+
+class AreaGeneral : ExpandedInterface
 {
 public:
-  Area(SaveFile* saveFile = nullptr);
-  virtual ~Area();
+  AreaGeneral(SaveFile* saveFile = nullptr);
+  virtual ~AreaGeneral();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  AreaAudio* areaAudio = nullptr;
-  AreaLoadedSprites* areaLoadedSprites = nullptr;
-  AreaGeneral* areaGeneral = nullptr;
+  var8 contrast;
+  bool noLetterDelay;
+  bool countPlaytime;
 };
 
-#endif // AREA_H
+#endif // AREAGENERAL_H
