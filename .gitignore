@@ -74,3 +74,4 @@ Thumbs.db
 # Sensitive Files that cannot be released
 # -------
 *.gb
+*.sym
