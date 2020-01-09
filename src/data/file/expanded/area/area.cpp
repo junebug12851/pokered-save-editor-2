@@ -63,21 +63,24 @@ void Area::randomize()
   // Pre-pick a random area here and pass to other area classes who need it
   auto rnd = QRandomGenerator::global();
 
-  // Get a random map
+  // Grab a random map
   auto map = MapsDB::store.at(rnd->bounded(0, MapsDB::store.size()));
 
-  // Keep going through maps until we find a normal map that has at least one
-  // warp in or out and is not the strange elevator that has an invalid warp
+  // Keep going through maps until we find:
+  // * A normal non-special or glitch map
+  // * A map that's complete (Not an incomplete map)
+  // * Has at least one warp in or out
+  //     > We'll use this to position the player correctly on the map
+  // * Is not the strange elevator that has an invalid warp
   while(map->glitch ||
         map->special ||
         map->incomplete != "" ||
-        map->warpIn.size() == 0 ||
-        map->warpOut.size() == 0 ||
+        (map->warpIn.size() == 0 &&
+        map->warpOut.size() == 0) ||
         map->name == "Silph Co Elevator")
     map = MapsDB::store.at(rnd->bounded(0, MapsDB::store.size() - 1));
 
-  // These don't really need the pre-chosen map
-  // Loaded Sprites kind of does but we'll see how it goes with it being random
+  // Do the individual area randomizations and pass along map data where needed
   areaAudio->randomize();
-  areaLoadedSprites->randomize();
+  areaLoadedSprites->randomize(map);
 }

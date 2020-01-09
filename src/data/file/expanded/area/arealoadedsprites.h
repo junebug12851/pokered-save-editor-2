@@ -22,6 +22,7 @@
 #include "../../../../common/types.h"
 class SaveFile;
 struct MapDBEntry;
+struct SpriteSetDBEntry;
 
 class AreaLoadedSprites : ExpandedInterface
 {
@@ -32,10 +33,14 @@ public:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
-  void randomize();
+  void randomize(MapDBEntry* map);
+  void loadSpriteSet(SpriteSetDBEntry* entry);
 
   QVector<var8> loadedSprites;
   var8 loadedSetId;
+
+private:
+  void randomize();
 };
 
 #endif // AREALOADEDSPRITES_H
