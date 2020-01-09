@@ -1,6 +1,8 @@
 # Pokered Save Editor 2
 Pokemon Red & Blue Save Editor 2 ~ Qt C++ Reboot
 
+200 Commits Ｏ(≧∇≦)Ｏ
+
 ## An early WIP
 
 Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature version 
