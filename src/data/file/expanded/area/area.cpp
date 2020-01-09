@@ -22,6 +22,13 @@
 
 #include <QRandomGenerator>
 
+// Putting this here temporarily
+// Formula for figuring out UL Corner of Window in Current Map
+// (w+7)+x+(y*(w+6))
+// w = Cur Map Width
+// x - Player x coords in blocks (divided by 2)
+// y - Player y coords in blocks (divided by 2)
+
 Area::Area(SaveFile* saveFile)
 {
   areaAudio = new AreaAudio;
