@@ -96,3 +96,4 @@ MapDBEntry* MapConnData::toMap()
 // Not to be used
 void MapConnData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
 void MapConnData::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
+void MapConnData::randomize() {}
