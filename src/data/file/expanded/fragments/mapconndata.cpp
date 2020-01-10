@@ -77,11 +77,16 @@ void MapConnData::reset()
   viewPtr = 0;
 }
 
-// To produce a valid map, we need coordination with what other map code
-// randomize is not in the business to produce corrupted maps but instead
-// random maps ^_^
-// @TODO complete this
-void MapConnData::randomize() {}
+void MapConnData::loadFromData(MapDBEntryConnect* connect) {
+  width = *connect->toMap->width;
+  mapPtr = connect->toMap->ind;
+  stripSrc = connect->stripLocation();
+  stripDst = connect->mapPos();
+  stripWidth = connect->stripSize();
+  yAlign = connect->yAlign();
+  xAlign = connect->xAlign();
+  viewPtr = connect->window();
+}
 
 MapDBEntry* MapConnData::toMap()
 {

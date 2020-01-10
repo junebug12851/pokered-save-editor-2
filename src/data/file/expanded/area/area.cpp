@@ -17,37 +17,28 @@
 #include "./areaaudio.h"
 #include "./arealoadedsprites.h"
 #include "./areageneral.h"
+#include "./areamap.h"
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 
 #include <QRandomGenerator>
 
-// Putting this here temporarily
-// Formula for figuring out UL Corner of Window in Current Map
-// (w+7)+x+(y*(w+6))
-// w = Cur Map Width
-// x - Player x coords in blocks (divided by 2)
-// y - Player y coords in blocks (divided by 2)
-
-// Wow so the VRAM pointer literally doesn't matter lol, no matter what it is
-// it's just reset to 9800 on game boot, that's pretty funny actually lol
-// Here I was trying to figure out the formula like I did above for Window
-// But it doesn't matter with VRAM ptr like it did for Window above
-
 Area::Area(SaveFile* saveFile)
 {
-  areaAudio = new AreaAudio;
-  areaLoadedSprites = new AreaLoadedSprites;
-  areaGeneral = new AreaGeneral;
+  audio = new AreaAudio;
+  preloadedSprites = new AreaLoadedSprites;
+  general = new AreaGeneral;
+  map = new AreaMap;
 
   load(saveFile);
 }
 
 Area::~Area()
 {
-  delete areaAudio;
-  delete areaLoadedSprites;
-  delete areaGeneral;
+  delete audio;
+  delete preloadedSprites;
+  delete general;
+  delete map;
 }
 
 void Area::load(SaveFile* saveFile)
@@ -55,23 +46,26 @@ void Area::load(SaveFile* saveFile)
   if(saveFile == nullptr)
     return reset();
 
-  areaAudio->load(saveFile);
-  areaLoadedSprites->load(saveFile);
-  areaGeneral->load(saveFile);
+  audio->load(saveFile);
+  preloadedSprites->load(saveFile);
+  general->load(saveFile);
+  map->load(saveFile);
 }
 
 void Area::save(SaveFile* saveFile)
 {
-  areaAudio->save(saveFile);
-  areaLoadedSprites->save(saveFile);
-  areaGeneral->save(saveFile);
+  audio->save(saveFile);
+  preloadedSprites->save(saveFile);
+  general->save(saveFile);
+  map->save(saveFile);
 }
 
 void Area::reset()
 {
-  areaAudio->reset();
-  areaLoadedSprites->reset();
-  areaGeneral->reset();
+  audio->reset();
+  preloadedSprites->reset();
+  general->reset();
+  map->reset();
 }
 
 void Area::randomize()
@@ -117,13 +111,10 @@ void Area::randomize()
   var8 mapX = x / 2;
   var8 mapY = y / 2;
 
-  // Calculate value to this incredibly long named variable below
-  var16 currentTileBlockMapViewPointer =
-      ((*map->width)+7)+mapX+(mapY*((*map->width)+6)) + 0xC6E8;
-
   // Do the individual area randomizations and pass along map data where needed
-  areaAudio->randomize();
-  areaGeneral->randomize();
+  audio->randomize();
+  general->randomize();
 
-  areaLoadedSprites->randomize(map);
+  preloadedSprites->randomize(map, x, y);
+  this->map->randomize(map, x, y);
 }

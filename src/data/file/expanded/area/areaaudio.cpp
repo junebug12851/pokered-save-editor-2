@@ -70,7 +70,6 @@ void AreaAudio::randomize()
   musicID = musicEntry->id;
   musicBank = musicEntry->bank;
 
-  // Give a 5% chance of having these options enabled
   noAudioFadeout = false;
   preventMusicChange = false;
 }

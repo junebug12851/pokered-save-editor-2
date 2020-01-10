@@ -33,8 +33,8 @@ public:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
-  void randomize(MapDBEntry* map);
-  void loadSpriteSet(SpriteSetDBEntry* entry);
+  void randomize(MapDBEntry* map, var8 x, var8 y);
+  void loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y);
 
   QVector<var8> loadedSprites;
   var8 loadedSetId;

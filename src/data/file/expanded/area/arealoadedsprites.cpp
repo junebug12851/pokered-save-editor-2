@@ -57,32 +57,31 @@ void AreaLoadedSprites::reset()
   loadedSetId = 0;
 }
 
-void AreaLoadedSprites::randomize(MapDBEntry* map)
+void AreaLoadedSprites::randomize(MapDBEntry* map, var8 x, var8 y)
 {
   // First check to see if the chosen map already has a sprite set
   if(map->toSpriteSet == nullptr) {
     // It does not
     // Pick a random sprite set and load it
-    // If it's dynamic, load one of the sets at random based on random coordinates
     auto rnd = QRandomGenerator::global();
     auto spriteSet = SpriteSetDB::store.at(
           rnd->bounded(0, SpriteSetDB::store.size())
           );
 
-    loadSpriteSet(spriteSet);
+    loadSpriteSet(spriteSet, x, y);
   }
   else
     // It does, use that sprite set
-    loadSpriteSet(map->toSpriteSet);
+    loadSpriteSet(map->toSpriteSet, x, y);
 }
 
-void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry)
+void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y)
 {
   auto rnd = QRandomGenerator::global();
 
   auto set = entry->getSprites(
-        rnd->bounded(0, 255),
-        rnd->bounded(0, 255));
+        rnd->bounded(x, y),
+        rnd->bounded(x, y));
 
   auto id = entry->ind;
 

@@ -22,6 +22,7 @@ class SaveFile;
 class AreaAudio;
 class AreaLoadedSprites;
 class AreaGeneral;
+class AreaMap;
 
 class Area : public ExpandedInterface
 {
@@ -34,9 +35,10 @@ public:
   void reset();
   void randomize();
 
-  AreaAudio* areaAudio = nullptr;
-  AreaLoadedSprites* areaLoadedSprites = nullptr;
-  AreaGeneral* areaGeneral = nullptr;
+  AreaAudio* audio = nullptr;
+  AreaLoadedSprites* preloadedSprites = nullptr;
+  AreaGeneral* general = nullptr;
+  AreaMap* map;
 };
 
 #endif // AREA_H

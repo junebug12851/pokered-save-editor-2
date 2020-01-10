@@ -20,6 +20,7 @@
 #include "../../../../common/types.h"
 class SaveFile;
 struct MapDBEntry;
+struct MapDBEntryConnect;
 
 class MapConnData : ExpandedInterface
 {
@@ -30,7 +31,7 @@ public:
   void load(SaveFile* saveFile = nullptr, var16 offset = 0);
   void save(SaveFile* saveFile, var16 offset);
   void reset();
-  void randomize();
+  void loadFromData(MapDBEntryConnect* connect);
 
   var8 mapPtr;
   var16 stripSrc;
@@ -47,6 +48,7 @@ private:
   // To surpress warnings with using the ExpandedInterface contract
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
+  void randomize();
 };
 
 #endif // MAPCONNDATA_H
