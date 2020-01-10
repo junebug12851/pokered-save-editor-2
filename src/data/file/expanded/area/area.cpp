@@ -19,6 +19,7 @@
 #include "./areageneral.h"
 #include "./areamap.h"
 #include "./areanpc.h"
+#include "./areaplayer.h"
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 
@@ -31,6 +32,7 @@ Area::Area(SaveFile* saveFile)
   general = new AreaGeneral;
   map = new AreaMap;
   npc = new AreaNPC;
+  player = new AreaPlayer;
 
   load(saveFile);
 }
@@ -42,6 +44,7 @@ Area::~Area()
   delete general;
   delete map;
   delete npc;
+  delete player;
 }
 
 void Area::load(SaveFile* saveFile)
@@ -54,6 +57,7 @@ void Area::load(SaveFile* saveFile)
   general->load(saveFile);
   map->load(saveFile);
   npc->load(saveFile);
+  player->load(saveFile);
 }
 
 void Area::save(SaveFile* saveFile)
@@ -63,6 +67,7 @@ void Area::save(SaveFile* saveFile)
   general->save(saveFile);
   map->save(saveFile);
   npc->save(saveFile);
+  player->save(saveFile);
 }
 
 void Area::reset()
@@ -72,6 +77,7 @@ void Area::reset()
   general->reset();
   map->reset();
   npc->reset();
+  player->reset();
 }
 
 void Area::randomize()
@@ -106,17 +112,6 @@ void Area::randomize()
   var8 x = warpIn->x;
   var8 y = warpIn->y;
 
-  // +1 Offset or not
-  // A map block is 2 steps in either direction. The first step is an even
-  // coordinate, the second is an odd corrdinate. Should we mark that "extra"
-  // step to indicate the palyer standing on edge of that map block
-  var8 xPartial = (x % 2) ? 0 : 1;
-  var8 yPartial = (y % 2) ? 0 : 1;
-
-  // Map Blocks X & Y player is standing on
-  var8 mapX = x / 2;
-  var8 mapY = y / 2;
-
   // Do the individual area randomizations and pass along map data where needed
   audio->randomize();
   general->randomize();
@@ -124,4 +119,5 @@ void Area::randomize()
 
   preloadedSprites->randomize(map, x, y);
   this->map->randomize(map, x, y);
+  player->randomize(x, y);
 }

@@ -48,6 +48,7 @@ HEADERS += \
   src/data/file/expanded/area/arealoadedsprites.h \
   src/data/file/expanded/area/areamap.h \
   src/data/file/expanded/area/areanpc.h \
+  src/data/file/expanded/area/areaplayer.h \
   src/data/file/expanded/expandedinterface.h \
   src/data/file/expanded/fragments/hofpokemon.h \
   src/data/file/expanded/fragments/hofrecord.h \
@@ -82,6 +83,7 @@ SOURCES += \
   src/data/file/expanded/area/arealoadedsprites.cpp \
   src/data/file/expanded/area/areamap.cpp \
   src/data/file/expanded/area/areanpc.cpp \
+  src/data/file/expanded/area/areaplayer.cpp \
   src/data/file/expanded/fragments/hofpokemon.cpp \
   src/data/file/expanded/fragments/hofrecord.cpp \
   src/data/file/expanded/fragments/mapconndata.cpp \
