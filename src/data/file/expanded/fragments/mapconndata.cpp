@@ -38,8 +38,8 @@ void MapConnData::load(SaveFile* saveFile, var16 offset)
   auto it = saveFile->iterator()->offsetTo(offset);
 
   mapPtr = it->getByte();
-  stripSrc = it->getWord();
-  stripDst = it->getWord();
+  stripSrc = it->getWord(0, true);
+  stripDst = it->getWord(0, true);
   stripWidth = it->getByte();
   width = it->getByte();
   yAlign = it->getByte();
@@ -54,8 +54,8 @@ void MapConnData::save(SaveFile* saveFile, var16 offset)
   auto it = saveFile->iterator()->offsetTo(offset);
 
   it->setByte(mapPtr);
-  it->setWord(stripSrc);
-  it->setWord(stripDst);
+  it->setWord(stripSrc, 0, true);
+  it->setWord(stripDst, 0, true);
   it->setByte(stripWidth);
   it->setByte(width);
   it->setByte(yAlign);
