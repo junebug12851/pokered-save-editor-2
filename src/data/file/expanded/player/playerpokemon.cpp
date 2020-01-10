@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../fragments/pokemonparty.h"
+#include "../../../db/moves.h"
 
 #include <QRandomGenerator>
 
@@ -90,13 +91,44 @@ void PlayerPokemon::reset()
 void PlayerPokemon::randomize()
 {
   auto rnd = QRandomGenerator::global();
-  var8 count = rnd->bounded(1, 6+1);
 
+  // Randomize up to 5 Pokemon
+  var8 count = rnd->bounded(1, 5+1);
+
+  // Clear Pokemon Party and add them in
   reset();
 
   for(var8 i = 0; i < count; i++) {
     auto tmp = new PokemonParty;
     party->append(tmp);
     tmp->randomize();
+  }
+
+  // Give an extra Pokemon that's an HM slave
+  // I have no idea where randomize will drop you so to be able to progress
+  // in the game you need to be able to get around
+  auto tmp = new PokemonParty;
+  party->append(tmp);
+  tmp->randomize();
+
+  // Clear out move pool
+  for(auto move : *tmp->moves)
+    delete move;
+
+  tmp->moves->clear();
+
+  // Add in 4 most important HM's
+  tmp->moves->append(new PokemonMove(MovesDB::ind.value("FLY")->ind));
+  tmp->moves->append(new PokemonMove(MovesDB::ind.value("SURF")->ind));
+  tmp->moves->append(new PokemonMove(MovesDB::ind.value("STRENGTH")->ind));
+  tmp->moves->append(new PokemonMove(MovesDB::ind.value("CUT")->ind));
+
+  // Generate random PP Ups and heal PP like other Pokemon
+  for(auto move : *tmp->moves) {
+    // Generate random PP Ups
+    move->ppUp = rnd->bounded(0, 3+1);
+
+    // Restore PP of move
+    move->restorePP();
   }
 }

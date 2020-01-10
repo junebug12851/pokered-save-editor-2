@@ -112,6 +112,15 @@ void PlayerBasics::randomize()
   for(var8 i = 0; i < 8; i++)
     badges[i] = false;
 
+  // An exception will be made to these badges, always enable them because it
+  // lets the player move around better with important HMs out of battle. It
+  // will still let the player battle the gym for first time - the badge just
+  // gets the player HM moves
+  badges[(var8)Badges::Thunder] = true;
+  badges[(var8)Badges::Cascade] = true;
+  badges[(var8)Badges::Soul] = true;
+  badges[(var8)Badges::Rainbow] = true;
+
   // Determine a random starter
   var8 starter[3] = {
     0x99, // Bulbasaur

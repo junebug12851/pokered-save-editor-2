@@ -126,6 +126,13 @@ void PlayerItems::randomize()
                      ItemsDB::ind.value("AWAKENING")->ind,
                      rnd->bounded(1, 3+1)));
 
+  // Again I have no idea where this will drop you so prepare for an escape
+  // If need be, also because you only get 1 HM Slave that doesn't know dig.
+  // This is your dig.
+  bagItems->append(new BagItem(
+                     ItemsDB::ind.value("ESCAPE ROPE")->ind,
+                     rnd->bounded(1, 5+1)));
+
   bool giveSuperPotion = rnd->bounded(0, 5+1) >= 3;
   if(giveSuperPotion)
     bagItems->append(new BagItem(

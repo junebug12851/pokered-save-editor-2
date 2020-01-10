@@ -1,0 +1,4 @@
+Randomize towns visited, include Pallet Town
+
+Tell player they still have to battle and beat gym leader if badges don't match event completed
+flags.

@@ -22,6 +22,7 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
+class SaveFile;
 class MapConnData;
 struct MapDBEntry;
 

@@ -23,6 +23,7 @@ class AreaAudio;
 class AreaLoadedSprites;
 class AreaGeneral;
 class AreaMap;
+class AreaNPC;
 
 class Area : public ExpandedInterface
 {
@@ -39,6 +40,7 @@ public:
   AreaLoadedSprites* preloadedSprites = nullptr;
   AreaGeneral* general = nullptr;
   AreaMap* map;
+  AreaNPC* npc;
 };
 
 #endif // AREA_H

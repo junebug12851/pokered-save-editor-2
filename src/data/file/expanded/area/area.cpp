@@ -18,6 +18,7 @@
 #include "./arealoadedsprites.h"
 #include "./areageneral.h"
 #include "./areamap.h"
+#include "./areanpc.h"
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 
@@ -29,6 +30,7 @@ Area::Area(SaveFile* saveFile)
   preloadedSprites = new AreaLoadedSprites;
   general = new AreaGeneral;
   map = new AreaMap;
+  npc = new AreaNPC;
 
   load(saveFile);
 }
@@ -39,6 +41,7 @@ Area::~Area()
   delete preloadedSprites;
   delete general;
   delete map;
+  delete npc;
 }
 
 void Area::load(SaveFile* saveFile)
@@ -50,6 +53,7 @@ void Area::load(SaveFile* saveFile)
   preloadedSprites->load(saveFile);
   general->load(saveFile);
   map->load(saveFile);
+  npc->load(saveFile);
 }
 
 void Area::save(SaveFile* saveFile)
@@ -58,6 +62,7 @@ void Area::save(SaveFile* saveFile)
   preloadedSprites->save(saveFile);
   general->save(saveFile);
   map->save(saveFile);
+  npc->save(saveFile);
 }
 
 void Area::reset()
@@ -66,6 +71,7 @@ void Area::reset()
   preloadedSprites->reset();
   general->reset();
   map->reset();
+  npc->reset();
 }
 
 void Area::randomize()
@@ -114,6 +120,7 @@ void Area::randomize()
   // Do the individual area randomizations and pass along map data where needed
   audio->randomize();
   general->randomize();
+  npc->randomize();
 
   preloadedSprites->randomize(map, x, y);
   this->map->randomize(map, x, y);

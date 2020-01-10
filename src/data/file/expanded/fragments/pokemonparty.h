@@ -20,7 +20,7 @@
 #include "../../../../common/types.h"
 class SaveFile;
 
-class PokemonParty : PokemonBox
+class PokemonParty : public PokemonBox
 {
 public:
   PokemonParty(SaveFile* saveFile = nullptr,

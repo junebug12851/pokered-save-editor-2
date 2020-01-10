@@ -13,55 +13,39 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef PLAYERBASICS_H
-#define PLAYERBASICS_H
+#ifndef AREANPC_H
+#define AREANPC_H
 
-#include <QString>
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
+
 class SaveFile;
-struct PokemonDBEntry;
 
-enum class Badges : var8 {
-  Boulder = 0,
-  Cascade,
-  Thunder,
-  Rainbow,
-  Soul,
-  Marsh,
-  Volcano,
-  Earth
-};
-
-class PlayerBasics : ExpandedInterface
+class AreaNPC : ExpandedInterface
 {
 public:
-  PlayerBasics(SaveFile* saveFile = nullptr);
-  virtual ~PlayerBasics();
+  AreaNPC(SaveFile* saveFile = nullptr);
+  virtual ~AreaNPC();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  void setBadges(SaveFile* saveFile, var16 offset);
-  PokemonDBEntry* toStarter();
+  // Sprites
+  bool npcsFaceAway;
+  bool scriptedNPCMovement;
+  bool npcSpriteMovement;
+  bool tradeCenterSpritesFaced;
 
-  QString playerName;
-  var16 playerID;
-  var32 money;
-  var16 coins;
-  bool badges[8] = {
-    false, // Boulder
-    false, // Cascade
-    false, // Thunder
-    false, // Rainbow
-    false, // Soul
-    false, // Marsh
-    false, // Volcano
-    false // Earth
-  };
-  var8 playerStarter;
+  // Controls
+  bool ignoreJoypad;
+  bool joypadSimulation;
+
+  // Battle
+  bool runningTestBattle;
+  bool trainerWantsBattle;
+  var16  trainerHeaderPtr;
 };
 
-#endif // PLAYERBASICS_H
+#endif // AREANPC_H
