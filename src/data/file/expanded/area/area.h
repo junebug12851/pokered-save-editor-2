@@ -25,6 +25,7 @@ class AreaGeneral;
 class AreaMap;
 class AreaNPC;
 class AreaPlayer;
+class AreaPokemon;
 
 class Area : public ExpandedInterface
 {
@@ -43,6 +44,7 @@ public:
   AreaMap* map = nullptr;
   AreaNPC* npc = nullptr;
   AreaPlayer* player = nullptr;
+  AreaPokemon* pokemon = nullptr;
 };
 
 #endif // AREA_H

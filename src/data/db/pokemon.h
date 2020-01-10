@@ -25,6 +25,12 @@
 
 #include "../../common/types.h"
 
+// The Pokedex data starts at pokedex #0 for Bulbasaur
+// It ends at #150 for Mew, it's size is 151 dex mons
+// These are also here for code cleanliness
+constexpr var8 pokemonDexCount = 151;
+constexpr var8 pokemonLevelMax = 100;
+
 // With amazing help of Quicktype!!!
 // Really needed it with Pokemon as this was quite complicated
 // https://app.quicktype.io

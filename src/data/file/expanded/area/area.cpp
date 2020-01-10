@@ -20,6 +20,7 @@
 #include "./areamap.h"
 #include "./areanpc.h"
 #include "./areaplayer.h"
+#include "./areapokemon.h"
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 
@@ -33,6 +34,7 @@ Area::Area(SaveFile* saveFile)
   map = new AreaMap;
   npc = new AreaNPC;
   player = new AreaPlayer;
+  pokemon = new AreaPokemon;
 
   load(saveFile);
 }
@@ -45,6 +47,7 @@ Area::~Area()
   delete map;
   delete npc;
   delete player;
+  delete pokemon;
 }
 
 void Area::load(SaveFile* saveFile)
@@ -58,6 +61,7 @@ void Area::load(SaveFile* saveFile)
   map->load(saveFile);
   npc->load(saveFile);
   player->load(saveFile);
+  pokemon->load(saveFile);
 }
 
 void Area::save(SaveFile* saveFile)
@@ -68,6 +72,7 @@ void Area::save(SaveFile* saveFile)
   map->save(saveFile);
   npc->save(saveFile);
   player->save(saveFile);
+  pokemon->save(saveFile);
 }
 
 void Area::reset()
@@ -78,6 +83,7 @@ void Area::reset()
   map->reset();
   npc->reset();
   player->reset();
+  pokemon->reset();
 }
 
 void Area::randomize()
@@ -116,6 +122,7 @@ void Area::randomize()
   audio->randomize();
   general->randomize();
   npc->randomize();
+  pokemon->randomize();
 
   preloadedSprites->randomize(map, x, y);
   this->map->randomize(map, x, y);
