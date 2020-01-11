@@ -23,6 +23,22 @@
 class SaveFile;
 struct SpriteDBEntry;
 
+enum class SpriteMovementStatus : var8
+{
+  UnInit = 0,
+  Ready,
+  Delayed,
+  Moving
+};
+
+enum class SpriteFacing : var8
+{
+  Down = 4 * 0,
+  Up = 4 * 1,
+  Left = 4 * 2,
+  Right = 4 * 3
+};
+
 class SpriteData : ExpandedInterface
 {
 public:
