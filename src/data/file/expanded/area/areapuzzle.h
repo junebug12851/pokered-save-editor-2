@@ -13,40 +13,31 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef AREA_H
-#define AREA_H
+#ifndef AREAPUZZLE_H
+#define AREAPUZZLE_H
 
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 
 class SaveFile;
-class AreaAudio;
-class AreaLoadedSprites;
-class AreaGeneral;
-class AreaMap;
-class AreaNPC;
-class AreaPlayer;
-class AreaPokemon;
-class AreaPuzzle;
 
-class Area : public ExpandedInterface
+class AreaPuzzle : ExpandedInterface
 {
 public:
-  Area(SaveFile* saveFile = nullptr);
-  virtual ~Area();
+  AreaPuzzle(SaveFile* saveFile = nullptr);
+  virtual ~AreaPuzzle();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  AreaAudio* audio = nullptr;
-  AreaLoadedSprites* preloadedSprites = nullptr;
-  AreaGeneral* general = nullptr;
-  AreaMap* map = nullptr;
-  AreaNPC* npc = nullptr;
-  AreaPlayer* player = nullptr;
-  AreaPokemon* pokemon = nullptr;
-  AreaPuzzle* puzzle = nullptr;
+  // Lt. Surge Trash Can Locks
+  var8 lock1;
+  var8 lock2;
+
+  // Cinnabar Gym Next Opp
+  var8 quizOpp;
 };
 
-#endif // AREA_H
+#endif // AREAPUZZLE_H
