@@ -19,6 +19,7 @@
 #include "../expandedinterface.h"
 
 class SaveFile;
+class Player;
 class AreaAudio;
 class AreaLoadedSprites;
 class AreaGeneral;

@@ -70,5 +70,5 @@ void Player::randomize()
   basics->randomize();
   items->randomize();
   pokedex->randomize();
-  pokemon->randomize();
+  pokemon->randomize(basics);
 }

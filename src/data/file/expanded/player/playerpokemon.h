@@ -20,6 +20,7 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
+class PlayerBasics;
 class PokemonParty;
 
 class PlayerPokemon : ExpandedInterface
@@ -31,9 +32,12 @@ public:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
-  void randomize();
+  void randomize(PlayerBasics* basics);
 
   QVector<PokemonParty*>* party = nullptr;
+
+private:
+  void randomize();
 };
 
 #endif // PLAYERPOKEMON_H

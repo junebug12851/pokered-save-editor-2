@@ -82,7 +82,7 @@ void HoFPokemon::randomize()
 
   // Generate random dex entry and look it up to get species number
   auto rnd = QRandomGenerator::global();
-  var8 dex = rnd->bounded(1,151+1);
+  var8 dex = rnd->bounded(1,pokemonDexCount);
   auto toPokemon = PokemonDB::ind.value("dex" + QString::number(dex), nullptr);
 
   if(toPokemon != nullptr)

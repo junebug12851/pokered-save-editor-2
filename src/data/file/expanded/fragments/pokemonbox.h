@@ -25,6 +25,7 @@ class SaveFileIterator;
 struct PokemonDBEntry;
 class PokemonDB;
 struct MoveDBEntry;
+class PlayerBasics;
 
 enum class PokemonStats : var8
 {
@@ -89,8 +90,8 @@ public:
 
   // The second overloaded method allows you to give a data record which will be
   // used.
-  static PokemonBox* newPokemon(PokemonRandom list = PokemonRandom::Random_Starters, SaveFile* saveFile = nullptr);
-  static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, SaveFile* saveFile = nullptr);
+  static PokemonBox* newPokemon(PokemonRandom list = PokemonRandom::Random_Starters, PlayerBasics* basics = nullptr);
+  static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basics = nullptr);
 
   virtual SaveFileIterator* load(SaveFile* saveFile = nullptr,
             var16 startOffset = 0,
@@ -112,7 +113,7 @@ public:
             var8 recordSize = 0x21);
 
   virtual void reset();
-  virtual void randomize();
+  virtual void randomize(PlayerBasics* basics = nullptr);
   void clearMoves();
 
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
@@ -145,10 +146,10 @@ public:
   // Remove or Randomize nickname/ OT Data
   // Removing requires saveFile
   bool hasNickname();
-  bool hasTradeStatus(SaveFile* saveFile = nullptr);
+  bool hasTradeStatus(PlayerBasics* basics = nullptr);
   void changeName(bool removeNickname = false);
-  void changeOtData(bool removeOtData = false, SaveFile* saveFile = nullptr);
-  void changeTrade(bool removeTradeStatus = false, SaveFile* saveFile = nullptr);
+  void changeOtData(bool removeOtData = false, PlayerBasics* basics = nullptr);
+  void changeTrade(bool removeTradeStatus = false, PlayerBasics* basics = nullptr);
 
   bool hasEvolution();
   bool hasDeEvolution();
@@ -215,6 +216,7 @@ private:
   // To surpress warnings with using the ExpandedInterface contract
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
+  void randomize();
 };
 
 #endif // POKEMONBOX_H

@@ -132,7 +132,7 @@ PokemonBox::~PokemonBox()
   delete moves;
 }
 
-PokemonBox* PokemonBox::newPokemon(PokemonRandom list, SaveFile* saveFile)
+PokemonBox* PokemonBox::newPokemon(PokemonRandom list, PlayerBasics* basics)
 {
   PokemonDBEntry* pkmnData;
 
@@ -142,7 +142,7 @@ PokemonBox* PokemonBox::newPokemon(PokemonRandom list, SaveFile* saveFile)
     pkmnData = PokemonDB::store.at(ind);
   }
   else if(list == PokemonRandom::Random_Pokedex) {
-    var8 dex = rnd->bounded(1, 151+1);
+    var8 dex = rnd->bounded(1, pokemonDexCount);
     pkmnData = PokemonDB::ind.value("dex" + QString::number(dex));
   }
   else if(list == PokemonRandom::Random_Starters)
@@ -150,10 +150,10 @@ PokemonBox* PokemonBox::newPokemon(PokemonRandom list, SaveFile* saveFile)
   else
     pkmnData = StarterPokemonDB::random3Starter();
 
-  return newPokemon(pkmnData, saveFile);
+  return newPokemon(pkmnData, basics);
 }
 
-PokemonBox* PokemonBox::newPokemon(PokemonDBEntry* pkmnData, SaveFile* saveFile)
+PokemonBox* PokemonBox::newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basics)
 {
   auto pkmn = new PokemonBox();
 
@@ -162,8 +162,8 @@ PokemonBox* PokemonBox::newPokemon(PokemonDBEntry* pkmnData, SaveFile* saveFile)
   pkmn->reRollDVs();
   pkmn->nickname = pkmnData->name;
 
-  if(saveFile != nullptr)
-    pkmn->changeTrade(true, saveFile);
+  if(basics != nullptr)
+    pkmn->changeTrade(true, basics);
   else
     pkmn->changeTrade();
 
@@ -405,13 +405,13 @@ void PokemonBox::reset()
   type2Explicit = false;
 }
 
-void PokemonBox::randomize()
+void PokemonBox::randomize(PlayerBasics* basics)
 {
   // Generate a random level 5 Pokemon from the pokedex
   // Bump it's level up to a random value
   // Give it a random name, otName, and otID
   // Then fix all of it's types, exp, stats, etc.. to be game accurate
-  auto pkmn = PokemonBox::newPokemon(PokemonRandom::Random_Pokedex);
+  auto pkmn = PokemonBox::newPokemon(PokemonRandom::Random_Pokedex, basics);
   copyFrom(pkmn);
   delete pkmn;
 
@@ -426,7 +426,12 @@ void PokemonBox::randomize()
   // Delete it's moves and re-create 4 new non-glitch random moves
   randomizeMoves();
 
-  changeTrade();
+  changeTrade(true, basics);
+
+  // 1/5 chance of not having a nickname
+  bool noNick = rnd->bounded(0, 5+1) > 4;
+
+  changeName(noNick); // Keep nickname
   update(true, true, true, true);
   heal();
 
@@ -672,10 +677,9 @@ bool PokemonBox::hasNickname()
   return isValid()->name == nickname;
 }
 
-bool PokemonBox::hasTradeStatus(SaveFile* saveFile)
+bool PokemonBox::hasTradeStatus(PlayerBasics* basics)
 {
-  auto pl = saveFile->dataExpanded->player->basics;
-  return pl->playerName == otName && pl->playerID == otID;
+  return basics->playerName == otName && basics->playerID == otID;
 }
 
 void PokemonBox::changeName(bool removeNickname)
@@ -686,7 +690,7 @@ void PokemonBox::changeName(bool removeNickname)
     nickname = toData()->name;
 }
 
-void PokemonBox::changeOtData(bool removeOtData, SaveFile* saveFile)
+void PokemonBox::changeOtData(bool removeOtData, PlayerBasics* basics)
 {
   auto rnd = QRandomGenerator::global();
 
@@ -694,16 +698,16 @@ void PokemonBox::changeOtData(bool removeOtData, SaveFile* saveFile)
     otName = NamesDB::randomName();
     otID = rnd->bounded(0x0000, 0xFFFF);
   }
-  else if(removeOtData && saveFile != nullptr) {
-    otName = saveFile->dataExpanded->player->basics->playerName;
-    otID = saveFile->dataExpanded->player->basics->playerID;
+  else if(removeOtData && basics != nullptr) {
+    otName = basics->playerName;
+    otID = basics->playerID;
   }
 }
 
-void PokemonBox::changeTrade(bool removeTradeStatus, SaveFile* saveFile)
+void PokemonBox::changeTrade(bool removeTradeStatus, PlayerBasics* basics)
 {
   changeName(removeTradeStatus);
-  changeOtData(removeTradeStatus, saveFile);
+  changeOtData(removeTradeStatus, basics);
 }
 
 bool PokemonBox::hasEvolution()
@@ -1015,3 +1019,4 @@ var16 PokemonBox::spStat()
 // Not to be used
 void PokemonBox::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
 void PokemonBox::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
+void PokemonBox::randomize() {}

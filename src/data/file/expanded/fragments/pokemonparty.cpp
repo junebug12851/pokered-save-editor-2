@@ -92,11 +92,11 @@ void PokemonParty::reset()
   special = 0;
 }
 
-void PokemonParty::randomize()
+void PokemonParty::randomize(PlayerBasics* basics)
 {
   // We can't randomize these stats, they're just cached pre-gen stats
   // Tell the base class to randomize it's data
-  PokemonBox::randomize();
+  PokemonBox::randomize(basics);
 
   // After that we need to re-gen these stats to reflect base class
   regenStats();
@@ -129,3 +129,4 @@ void PokemonParty::copyFrom(PokemonBox* pkmn)
 // Not to be used
 void PokemonParty::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
 void PokemonParty::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
+void PokemonParty::randomize() {}

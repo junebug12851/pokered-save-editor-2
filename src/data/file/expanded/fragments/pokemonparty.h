@@ -45,7 +45,7 @@ public:
             var8 index);
 
   void reset();
-  void randomize();
+  void randomize(PlayerBasics* basics = nullptr);
   void regenStats();
 
   virtual void update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate);
@@ -62,6 +62,7 @@ private:
   // To surpress warnings with using the ExpandedInterface contract
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
+  void randomize();
 };
 
 #endif // POKEMONPARTY_H

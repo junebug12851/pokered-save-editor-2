@@ -14,6 +14,7 @@
   * limitations under the License.
 */
 #include "playerpokemon.h"
+#include "./playerbasics.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
@@ -88,7 +89,7 @@ void PlayerPokemon::reset()
   party->clear();
 }
 
-void PlayerPokemon::randomize()
+void PlayerPokemon::randomize(PlayerBasics* basics)
 {
   auto rnd = QRandomGenerator::global();
 
@@ -101,7 +102,7 @@ void PlayerPokemon::randomize()
   for(var8 i = 0; i < count; i++) {
     auto tmp = new PokemonParty;
     party->append(tmp);
-    tmp->randomize();
+    tmp->randomize(basics);
   }
 
   // Give an extra Pokemon that's an HM slave
@@ -109,7 +110,7 @@ void PlayerPokemon::randomize()
   // in the game you need to be able to get around
   auto tmp = new PokemonParty;
   party->append(tmp);
-  tmp->randomize();
+  tmp->randomize(basics);
 
   // Clear out move pool
   for(auto move : *tmp->moves)
@@ -132,3 +133,6 @@ void PlayerPokemon::randomize()
     move->restorePP();
   }
 }
+
+// Not to use
+void PlayerPokemon::randomize() {}
