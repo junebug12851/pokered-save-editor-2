@@ -13,42 +13,32 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef AREA_H
-#define AREA_H
+#ifndef AREASIGN_H
+#define AREASIGN_H
 
+#include <QVector>
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 
 class SaveFile;
-class AreaAudio;
-class AreaLoadedSprites;
-class AreaGeneral;
-class AreaMap;
-class AreaNPC;
-class AreaPlayer;
-class AreaPokemon;
-class AreaPuzzle;
-class AreaSign;
+class SignData;
+class MapDBEntry;
 
-class Area : public ExpandedInterface
+class AreaSign : ExpandedInterface
 {
 public:
-  Area(SaveFile* saveFile = nullptr);
-  virtual ~Area();
+  AreaSign(SaveFile* saveFile = nullptr);
+  virtual ~AreaSign();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
-  void randomize();
+  void randomize(MapDBEntry* mapData);
 
-  AreaAudio* audio = nullptr;
-  AreaLoadedSprites* preloadedSprites = nullptr;
-  AreaGeneral* general = nullptr;
-  AreaMap* map = nullptr;
-  AreaNPC* npc = nullptr;
-  AreaPlayer* player = nullptr;
-  AreaPokemon* pokemon = nullptr;
-  AreaPuzzle* puzzle = nullptr;
-  AreaSign* signs = nullptr;
+  QVector<SignData*> signs;
+
+private:
+  void randomize();
 };
 
-#endif // AREA_H
+#endif // AREASIGN_H
