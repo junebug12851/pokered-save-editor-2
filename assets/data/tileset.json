@@ -1,98 +1,386 @@
 [
   {
-    "name": "OVERWORLD",
-    "type": "OUTDOOR"
+    "name": "Overworld",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 82,
+    "type": "Outdoor",
+    "bank": 25,
+    "blockPtr": 17888,
+    "gfxPtr": 16384,
+    "collPtr": 5941,
+    "nameAlias": "OVERWORLD",
+    "typeAlias": "OUTDOOR"
   },
   {
-    "name": "REDS_HOUSE_1",
-    "type": "INDOOR"
+    "name": "Reds House 1",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 25,
+    "blockPtr": 21104,
+    "gfxPtr": 19936,
+    "collPtr": 5961,
+    "nameAlias": "REDS_HOUSE_1",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "MART",
-    "type": "INDOOR"
+    "name": "Mart",
+    "talk": [
+      24,
+      25,
+      30
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 25,
+    "blockPtr": 21104,
+    "gfxPtr": 19936,
+    "collPtr": 5961,
+    "nameAlias": "MART",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "FOREST",
-    "type": "CAVE"
+    "name": "Forest",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 32,
+    "type": "Cave",
+    "bank": 26,
+    "blockPtr": 21439,
+    "gfxPtr": 19903,
+    "collPtr": 5971,
+    "nameAlias": "FOREST",
+    "typeAlias": "CAVE"
   },
   {
-    "name": "REDS_HOUSE_2",
-    "type": "INDOOR"
+    "name": "Reds House 2",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 26,
+    "blockPtr": 27135,
+    "gfxPtr": 25599,
+    "collPtr": 5989,
+    "nameAlias": "REDS_HOUSE_2",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "DOJO",
-    "type": "OUTDOOR"
+    "name": "Dojo",
+    "talk": [
+      58,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Outdoor",
+    "bank": 26,
+    "blockPtr": 18047,
+    "gfxPtr": 16511,
+    "collPtr": 5977,
+    "nameAlias": "DOJO",
+    "typeAlias": "OUTDOOR"
   },
   {
-    "name": "POKECENTER",
-    "type": "INDOOR"
+    "name": "Pokecenter",
+    "talk": [
+      24,
+      25,
+      30
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 26,
+    "blockPtr": 21439,
+    "gfxPtr": 19903,
+    "collPtr": 5971,
+    "nameAlias": "POKECENTER",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "GYM",
-    "type": "OUTDOOR"
+    "name": "Gym",
+    "talk": [
+      58,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Outdoor",
+    "bank": 26,
+    "blockPtr": 18047,
+    "gfxPtr": 16511,
+    "collPtr": 5977,
+    "nameAlias": "GYM",
+    "typeAlias": "OUTDOOR"
   },
   {
-    "name": "HOUSE",
-    "type": "INDOOR"
+    "name": "House",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 25,
+    "blockPtr": 22912,
+    "gfxPtr": 21408,
+    "collPtr": 6005,
+    "nameAlias": "HOUSE",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "FOREST_GATE",
-    "type": "INDOOR"
+    "name": "Forest Gate",
+    "talk": [
+      23,
+      50,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 26,
+    "blockPtr": 23551,
+    "gfxPtr": 22031,
+    "collPtr": 6015,
+    "nameAlias": "FOREST_GATE",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "MUSEUM",
-    "type": "INDOOR"
+    "name": "Museum",
+    "talk": [
+      23,
+      50,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 26,
+    "blockPtr": 23551,
+    "gfxPtr": 22031,
+    "collPtr": 6015,
+    "nameAlias": "MUSEUM",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "UNDERGROUND",
-    "type": "INDOOR"
+    "name": "Underground",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 27,
+    "blockPtr": 32496,
+    "gfxPtr": 32096,
+    "collPtr": 5935,
+    "nameAlias": "UNDERGROUND",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "GATE",
-    "type": "INDOOR"
+    "name": "Gate",
+    "talk": [
+      23,
+      50,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 26,
+    "blockPtr": 23551,
+    "gfxPtr": 22031,
+    "collPtr": 6015,
+    "nameAlias": "GATE",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "SHIP",
-    "type": "CAVE"
+    "name": "Ship",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Cave",
+    "bank": 27,
+    "blockPtr": 26928,
+    "gfxPtr": 25488,
+    "collPtr": 6026,
+    "nameAlias": "SHIP",
+    "typeAlias": "CAVE"
   },
   {
-    "name": "SHIP_PORT",
-    "type": "CAVE"
+    "name": "Ship Port",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Cave",
+    "bank": 25,
+    "blockPtr": 27632,
+    "gfxPtr": 26128,
+    "collPtr": 6037,
+    "nameAlias": "SHIP_PORT",
+    "typeAlias": "CAVE"
   },
   {
-    "name": "CEMETERY",
-    "type": "INDOOR"
+    "name": "Cemetery",
+    "talk": [
+      18,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 27,
+    "blockPtr": 17856,
+    "gfxPtr": 16384,
+    "collPtr": 6042,
+    "nameAlias": "CEMETERY",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "INTERIOR",
-    "type": "INDOOR"
+    "name": "Interior",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 25,
+    "blockPtr": 29520,
+    "gfxPtr": 28000,
+    "collPtr": 6050,
+    "nameAlias": "INTERIOR",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "CAVERN",
-    "type": "CAVE"
+    "name": "Cavern",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Cave",
+    "bank": 27,
+    "blockPtr": 20672,
+    "gfxPtr": 19616,
+    "collPtr": 6060,
+    "nameAlias": "CAVERN",
+    "typeAlias": "CAVE"
   },
   {
-    "name": "LOBBY",
-    "type": "INDOOR"
+    "name": "Lobby",
+    "talk": [
+      21,
+      54,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 27,
+    "blockPtr": 24224,
+    "gfxPtr": 22720,
+    "collPtr": 6072,
+    "nameAlias": "LOBBY",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "MANSION",
-    "type": "INDOOR"
+    "name": "Mansion",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 25,
+    "blockPtr": 24976,
+    "gfxPtr": 23472,
+    "collPtr": 6080,
+    "nameAlias": "MANSION",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "LAB",
-    "type": "INDOOR"
+    "name": "Lab",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 27,
+    "blockPtr": 29392,
+    "gfxPtr": 27920,
+    "collPtr": 6090,
+    "nameAlias": "LAB",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "CLUB",
-    "type": "INDOOR"
+    "name": "Club",
+    "talk": [
+      7,
+      23,
+      255
+    ],
+    "grass": 255,
+    "type": "Indoor",
+    "bank": 27,
+    "blockPtr": 31520,
+    "gfxPtr": 30320,
+    "collPtr": 6097,
+    "nameAlias": "CLUB",
+    "typeAlias": "INDOOR"
   },
   {
-    "name": "FACILITY",
-    "type": "CAVE"
+    "name": "Facility",
+    "talk": [
+      18,
+      255,
+      255
+    ],
+    "grass": 255,
+    "type": "Cave",
+    "bank": 26,
+    "blockPtr": 30719,
+    "gfxPtr": 29183,
+    "collPtr": 6109,
+    "nameAlias": "FACILITY",
+    "typeAlias": "CAVE"
   },
   {
-    "name": "PLATEAU",
-    "type": "CAVE"
+    "name": "Plateau",
+    "talk": [
+      255,
+      255,
+      255
+    ],
+    "grass": 69,
+    "type": "Cave",
+    "bank": 25,
+    "blockPtr": 31568,
+    "gfxPtr": 30448,
+    "collPtr": 6128,
+    "nameAlias": "PLATEAU",
+    "typeAlias": "CAVE"
   }
 ]

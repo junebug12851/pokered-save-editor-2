@@ -21,9 +21,31 @@
 
 #include "../../common/types.h"
 
+enum class TilesetType
+{
+  INDOOR,
+  OUTDOOR,
+  CAVE
+};
+
+// How many talk tiles are there in each entry
+constexpr var8 talkCount = 3;
+
 struct TilesetDBEntry {
   QString name;
   QString type;
+  QString nameAlias;
+  QString typeAlias;
+
+  TilesetType typeAsEnum();
+
+  var8 talk[3];
+  var8 grass;
+
+  var8 bank;
+  var16 blockPtr;
+  var16 gfxPtr;
+  var16 collPtr;
 };
 
 class TilesetDB

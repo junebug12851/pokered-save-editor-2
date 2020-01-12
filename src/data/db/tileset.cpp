@@ -20,6 +20,16 @@
 #include "./tileset.h"
 #include "./gamedata.h"
 
+TilesetType TilesetDBEntry::typeAsEnum()
+{
+  if(type == "Outdoor")
+    return TilesetType::OUTDOOR;
+  else if(type == "Cave")
+    return TilesetType::CAVE;
+
+  return TilesetType::INDOOR;
+}
+
 void TilesetDB::load()
 {
   // Grab Music Data
@@ -34,6 +44,21 @@ void TilesetDB::load()
     // Set simple properties
     entry->name = tilesetEntry["name"].toString();
     entry->type = tilesetEntry["type"].toString();
+    entry->nameAlias = tilesetEntry["nameAlias"].toString();
+    entry->typeAlias = tilesetEntry["typeAlias"].toString();
+
+    entry->grass = tilesetEntry["grass"].toDouble();
+
+    entry->bank = tilesetEntry["bank"].toDouble();
+    entry->blockPtr = tilesetEntry["blockPtr"].toDouble();
+    entry->gfxPtr = tilesetEntry["gfxPtr"].toDouble();
+    entry->collPtr = tilesetEntry["collPtr"].toDouble();
+
+    QJsonValue talkArr = tilesetEntry["talk"].toArray();
+    for(var8 i = 0; i < talkCount; i++)
+    {
+      entry->talk[i] = talkArr[i].toDouble();
+    }
 
     // Add to array
     store.append(entry);
@@ -48,6 +73,7 @@ void TilesetDB::index()
   {
     // Index name and index
     ind.insert(entry->name, entry);
+    ind.insert(entry->nameAlias, entry);
   }
 }
 
