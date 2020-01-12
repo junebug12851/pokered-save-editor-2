@@ -31,6 +31,7 @@
 #include "./pokemon.h"
 #include "./trainers.h"
 #include "./spriteSet.h"
+#include "./missables.h"
 
 MapDBEntryConnect::MapDBEntryConnect() {}
 MapDBEntryConnect::MapDBEntryConnect(
@@ -252,12 +253,18 @@ void MapDBEntrySprite::deepLink()
 {
   toSprite = SpritesDB::ind.value(sprite);
 
+  if(missable)
+    toMissable = MissablesDB::ind.value(QString::number(*missable), nullptr);
+
 #ifdef QT_DEBUG
   if(toSprite == nullptr)
     qCritical() << "MapDBEntrySprite: Unable to deep link " + sprite + " to sprite";
 
   if(move == "" || text == 0 || (!range && face == ""))
     qCritical() << "Values are not correct on sprite " + sprite;
+
+  if(missable && toMissable == nullptr)
+    qCritical() << "Missable cannot be deep linked to " + QString::number(*missable);
 #endif
 }
 
@@ -553,6 +560,9 @@ void MapsDB::load()
         ret->y = spriteEntry["y"].toDouble();
         ret->move = spriteEntry["move"].toString();
         ret->text = spriteEntry["text"].toDouble();
+
+        if(spriteEntry["missable"].isDouble())
+          ret->missable = spriteEntry["missable"].toDouble();
 
         if(spriteEntry["range"].isDouble())
           ret->range = spriteEntry["range"].toDouble();

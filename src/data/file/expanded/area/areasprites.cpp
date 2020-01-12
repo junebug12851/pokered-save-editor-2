@@ -76,43 +76,71 @@ void AreaSprites::reset()
 
 void AreaSprites::randomize(MapDBEntry* mapData)
 {
+  /*
+   * After soem expirementation with my old editor I learned that:
+   * X & Y pixel values don't do anything, only the X & Y map does
+   * The X & Y map values are exactly +4 off each of normal positioning
+   * Literally all the animation details can be zero and work just fine
+   *     Frame Index seems to do better at 255
+   *     X&Y Track have to be at 8 each
+   * Outdoor sprites will be glitchy, I've played around with pre-loaded sprites
+   * and many other variables but can't really find a solution as to why.
+   *
+   * Outside of that it doesn't seem to matter at all what most all of these
+   * values are set to. There is no getting around the outdoor sprites being
+   * glitchy though. I've tried everything I can think of, even changing tileset
+   * type to "indoor" but it's not the end of the world.
+   */
   reset();
 
   auto mapSprites = mapData->sprites;
   auto rnd = QRandomGenerator::global();
 
-  // Add blank player sprite
+  // Add blank player sprite, very important for it to be at pos 0
+  // Player sprite actually has a lot of data but none of it's used at all by
+  // the game
   sprites.append(new SpriteData(false));
 
-  var8 stepVector[] = {
-    0xFF, 0, 1
-  };
-
-  var8 imgInc = 2;
-
   for(auto entry : mapSprites) {
+    // New NPC Sprite
     auto tmp = new SpriteData(true);
-    tmp->pictureID = entry->toSprite->ind;
+
+    // If these are overwritten and randomized then the player cannot get items
+    // or progress in the game
+    if(entry->sprite == "Boulder" ||
+       entry->sprite == "Pokeball")
+      continue;
+
+    // Get a random sprite picture
+    auto picture =
+        SpritesDB::store.at(rnd->bounded(0, SpritesDB::store.size()));
+
+    tmp->pictureID = picture->ind;
     tmp->movementStatus = (var8)SpriteMovementStatus::Ready;
+    tmp->faceDir = SpriteFacing::random();
+
+    // Without absurdly more complex coding there's no way to tell if the sprite
+    // is in grass or not so we just give it a random value.
+    tmp->grassPriority = SpriteGrass::random();
+
+    // These values are more important
     tmp->imageIndex = 0xFF;
-    tmp->yStepVector = stepVector[rnd->bounded(0, 3)];
-    tmp->xStepVector = stepVector[rnd->bounded(0, 3)];
-    tmp->yPixels = entry->adjustedY();
-    tmp->xPixels = entry->adjustedX();
-    tmp->intraAnimationFrameCounter = 0;
-    tmp->animFrameCounter = 0;
-    tmp->faceDir = rnd->bounded(0, 3+1) * 4;
-    tmp->walkAnimationCounter = 0x10;
     tmp->yDisp = 8;
     tmp->xDisp = 8;
-    tmp->mapY = entry->adjustedY() / 2;
-    tmp->mapX = entry->adjustedX() / 2;
-    tmp->movementByte = rnd->bounded(0xFE, 0xFF+1);
-    tmp->grassPriority = (rnd->bounded(0, 1+1) == 1) ? 0x00 : 0x80;
-    tmp->movementDelay = 0;
-    tmp->imageBaseOffset = imgInc; // 2 + Cached Sprite Entry
+    tmp->mapY = entry->adjustedY(); // Important to use adjusted +4 values
+    tmp->mapX = entry->adjustedX();
+    tmp->movementByte = SpriteMobility::random();
 
-    imgInc++;
+    // Literally none of these values matter
+    tmp->walkAnimationCounter = 0x10; // Could be zero but we set it to 0x10
+    tmp->yStepVector = 0;
+    tmp->xStepVector = 0;
+    tmp->yPixels = 0;
+    tmp->xPixels = 0;
+    tmp->intraAnimationFrameCounter = 0;
+    tmp->animFrameCounter = 0;
+    tmp->movementDelay = 0;
+    tmp->imageBaseOffset = 0;
   }
 }
 

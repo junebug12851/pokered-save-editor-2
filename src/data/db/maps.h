@@ -32,6 +32,7 @@ struct ItemDBEntry;
 struct PokemonDBEntry;
 struct TrainerDBEntry;
 struct SpriteSetDBEntry;
+struct MissableDBEntry;
 
 struct MapDBEntry;
 struct MapDBEntryWarpIn;
@@ -183,6 +184,10 @@ struct MapDBEntrySprite
   // Only one or the other can be filled in, not both
   std::optional<var8> range;
   QString face;
+
+  // Is this sprite a missable, if so to which missable?
+  std::optional<var8> missable;
+  MissableDBEntry* toMissable = nullptr;
 
   // To Sprite
   SpriteDBEntry* toSprite = nullptr;

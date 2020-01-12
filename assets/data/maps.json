@@ -73,7 +73,8 @@
         "y": 5,
         "move": "Stay",
         "text": 1,
-        "face": "None"
+        "face": "None",
+        "missable": 0
       },
       {
         "sprite": "Girl",
@@ -241,7 +242,8 @@
         "y": 9,
         "move": "Stay",
         "text": 5,
-        "face": "None"
+        "face": "None",
+        "missable": 1
       },
       {
         "sprite": "Fisher 2",
@@ -257,7 +259,8 @@
         "y": 5,
         "move": "Walk",
         "text": 7,
-        "range": 2
+        "range": 2,
+        "missable": 2
       }
     ],
     "warpIn": [
@@ -412,7 +415,8 @@
         "y": 17,
         "move": "Stay",
         "text": 3,
-        "face": "None"
+        "face": "None",
+        "missable": 3
       },
       {
         "sprite": "Black Hair Boy 2",
@@ -428,7 +432,8 @@
         "y": 16,
         "move": "Stay",
         "text": 5,
-        "face": "Down"
+        "face": "Down",
+        "missable": 4
       }
     ],
     "warpIn": [
@@ -599,7 +604,8 @@
         "y": 2,
         "move": "Stay",
         "text": 1,
-        "face": "Down"
+        "face": "Down",
+        "missable": 5
       },
       {
         "sprite": "Rocket",
@@ -609,7 +615,8 @@
         "text": 2,
         "face": "None",
         "class": "Rocket",
-        "team": 5
+        "team": 5,
+        "missable": 6
       },
       {
         "sprite": "Black Hair Boy 1",
@@ -641,7 +648,8 @@
         "y": 12,
         "move": "Stay",
         "text": 6,
-        "face": "Down"
+        "face": "Down",
+        "missable": 7
       },
       {
         "sprite": "Lass",
@@ -673,7 +681,8 @@
         "y": 12,
         "move": "Stay",
         "text": 10,
-        "face": "Down"
+        "face": "Down",
+        "missable": 8
       },
       {
         "sprite": "Guard",
@@ -681,7 +690,8 @@
         "y": 12,
         "move": "Stay",
         "text": 11,
-        "face": "Down"
+        "face": "Down",
+        "missable": 9
       }
     ],
     "warpIn": [
@@ -1965,7 +1975,8 @@
         "y": 6,
         "move": "Stay",
         "text": 1,
-        "face": "None"
+        "face": "None",
+        "missable": 10
       },
       {
         "sprite": "Rocket",
@@ -1973,7 +1984,8 @@
         "y": 8,
         "move": "Walk",
         "text": 2,
-        "range": 2
+        "range": 2,
+        "missable": 11
       },
       {
         "sprite": "Rocket",
@@ -1981,7 +1993,8 @@
         "y": 4,
         "move": "Stay",
         "text": 3,
-        "face": "None"
+        "face": "None",
+        "missable": 12
       },
       {
         "sprite": "Rocket",
@@ -1989,7 +2002,8 @@
         "y": 12,
         "move": "Stay",
         "text": 4,
-        "face": "None"
+        "face": "None",
+        "missable": 13
       },
       {
         "sprite": "Rocket",
@@ -1997,7 +2011,8 @@
         "y": 25,
         "move": "Walk",
         "text": 5,
-        "range": 2
+        "range": 2,
+        "missable": 14
       },
       {
         "sprite": "Rocket",
@@ -2005,7 +2020,8 @@
         "y": 13,
         "move": "Walk",
         "text": 6,
-        "range": 2
+        "range": 2,
+        "missable": 15
       },
       {
         "sprite": "Rocket",
@@ -2013,7 +2029,8 @@
         "y": 30,
         "move": "Walk",
         "text": 7,
-        "range": 2
+        "range": 2,
+        "missable": 16
       },
       {
         "sprite": "Oak Aide",
@@ -2021,7 +2038,8 @@
         "y": 14,
         "move": "Walk",
         "text": 8,
-        "range": 0
+        "range": 0,
+        "missable": 17
       },
       {
         "sprite": "Lapras Giver",
@@ -2029,7 +2047,8 @@
         "y": 23,
         "move": "Stay",
         "text": 9,
-        "face": "None"
+        "face": "None",
+        "missable": 18
       },
       {
         "sprite": "Erika",
@@ -2037,7 +2056,8 @@
         "y": 30,
         "move": "Walk",
         "text": 10,
-        "range": 2
+        "range": 2,
+        "missable": 19
       },
       {
         "sprite": "Gentleman",
@@ -2045,7 +2065,8 @@
         "y": 12,
         "move": "Stay",
         "text": 11,
-        "face": "Down"
+        "face": "Down",
+        "missable": 20
       },
       {
         "sprite": "Bird",
@@ -2053,7 +2074,8 @@
         "y": 12,
         "move": "Stay",
         "text": 12,
-        "face": "Down"
+        "face": "Down",
+        "missable": 21
       },
       {
         "sprite": "Rocker",
@@ -2061,7 +2083,8 @@
         "y": 8,
         "move": "Stay",
         "text": 13,
-        "face": "Up"
+        "face": "Up",
+        "missable": 22
       },
       {
         "sprite": "Rocket",
@@ -2069,7 +2092,8 @@
         "y": 22,
         "move": "Stay",
         "text": 14,
-        "face": "Down"
+        "face": "Down",
+        "missable": 23
       },
       {
         "sprite": "Rocket",
@@ -2077,7 +2101,8 @@
         "y": 22,
         "move": "Stay",
         "text": 15,
-        "face": "Down"
+        "face": "Down",
+        "missable": 24
       }
     ],
     "warpIn": [
@@ -2350,7 +2375,8 @@
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "item": "Moon Stone"
+        "item": "Moon Stone",
+        "missable": 25
       },
       {
         "sprite": "Pokeball",
@@ -2359,7 +2385,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "HP Up"
+        "item": "HP Up",
+        "missable": 26
       }
     ],
     "warpIn": [
@@ -2787,7 +2814,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "TM 04: Whirlwind"
+        "item": "TM 04: Whirlwind",
+        "missable": 27
       }
     ],
     "warpIn": [
@@ -3856,7 +3884,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "TM 30: TELEPORT"
+        "item": "TM 30: TELEPORT",
+        "missable": 28
       }
     ],
     "redMons": [
@@ -4534,7 +4563,8 @@
         "y": 62,
         "move": "Stay",
         "text": 1,
-        "face": "Down"
+        "face": "Down",
+        "missable": 29
       },
       {
         "sprite": "Fisher 2",
@@ -4613,7 +4643,8 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "TM 16: PAY DAY"
+        "item": "TM 16: PAY DAY",
+        "missable": 30
       },
       {
         "sprite": "Pokeball",
@@ -4622,7 +4653,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Iron"
+        "item": "Iron",
+        "missable": 31
       }
     ],
     "warpIn": [
@@ -5345,7 +5377,8 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "TM 20: RAGE"
+        "item": "TM 20: RAGE",
+        "missable": 32
       }
     ],
     "warpIn": [
@@ -5613,7 +5646,8 @@
         "y": 10,
         "move": "Stay",
         "text": 7,
-        "face": "Down"
+        "face": "Down",
+        "missable": 33
       }
     ],
     "warpIn": [
@@ -6950,7 +6984,8 @@
         "y": 5,
         "move": "Stay",
         "text": 1,
-        "face": "None"
+        "face": "None",
+        "missable": 34
       },
       {
         "sprite": "Rival",
@@ -6958,7 +6993,8 @@
         "y": 5,
         "move": "Stay",
         "text": 2,
-        "face": "None"
+        "face": "None",
+        "missable": 35
       }
     ],
     "warpIn": [
@@ -7309,7 +7345,8 @@
         "text": 1,
         "face": "Left",
         "class": "Rocket",
-        "team": 6
+        "team": 6,
+        "missable": 36
       },
       {
         "sprite": "Black Hair Boy 1",
@@ -7378,7 +7415,8 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "TM 45: THUNDER WAVE"
+        "item": "TM 45: THUNDER WAVE",
+        "missable": 37
       }
     ],
     "redMons": [
@@ -7600,7 +7638,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "TM 19: SEISMIC TOSS"
+        "item": "TM 19: SEISMIC TOSS",
+        "missable": 38
       }
     ],
     "warpIn": [
@@ -7820,7 +7859,8 @@
         "y": 3,
         "move": "Stay",
         "text": 1,
-        "face": "Right"
+        "face": "Right",
+        "missable": 39
       },
       {
         "sprite": "Daisy",
@@ -7829,7 +7869,8 @@
         "move": "Walk",
         "text": 2,
         "range": 1,
-        "item": "0"
+        "item": "0",
+        "missable": 40
       },
       {
         "sprite": "Book Map Dex",
@@ -7838,7 +7879,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "0"
+        "item": "0",
+        "missable": 41
       }
     ],
     "warpIn": [
@@ -7887,7 +7929,8 @@
         "text": 1,
         "face": "None",
         "class": "Rival 1",
-        "team": 1
+        "team": 1,
+        "missable": 42
       },
       {
         "sprite": "Pokeball",
@@ -7895,7 +7938,8 @@
         "y": 3,
         "move": "Stay",
         "text": 2,
-        "face": "None"
+        "face": "None",
+        "missable": 43
       },
       {
         "sprite": "Pokeball",
@@ -7903,7 +7947,8 @@
         "y": 3,
         "move": "Stay",
         "text": 3,
-        "face": "None"
+        "face": "None",
+        "missable": 44
       },
       {
         "sprite": "Pokeball",
@@ -7911,7 +7956,8 @@
         "y": 3,
         "move": "Stay",
         "text": 4,
-        "face": "None"
+        "face": "None",
+        "missable": 45
       },
       {
         "sprite": "Prof. Oak",
@@ -7919,7 +7965,8 @@
         "y": 2,
         "move": "Stay",
         "text": 5,
-        "face": "Down"
+        "face": "Down",
+        "missable": 46
       },
       {
         "sprite": "Book Map Dex",
@@ -7927,7 +7974,8 @@
         "y": 1,
         "move": "Stay",
         "text": 6,
-        "face": "None"
+        "face": "None",
+        "missable": 47
       },
       {
         "sprite": "Book Map Dex",
@@ -7935,7 +7983,8 @@
         "y": 1,
         "move": "Stay",
         "text": 7,
-        "face": "None"
+        "face": "None",
+        "missable": 48
       },
       {
         "sprite": "Prof. Oak",
@@ -7943,7 +7992,8 @@
         "y": 10,
         "move": "Stay",
         "text": 8,
-        "face": "Up"
+        "face": "Up",
+        "missable": 49
       },
       {
         "sprite": "Girl",
@@ -8278,7 +8328,8 @@
         "text": 1,
         "face": "Down",
         "class": "Giovanni",
-        "team": 3
+        "team": 3,
+        "missable": 50
       },
       {
         "sprite": "Black Hair Boy 1",
@@ -8375,7 +8426,8 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "Revive"
+        "item": "Revive",
+        "missable": 51
       }
     ],
     "warpIn": [
@@ -8858,7 +8910,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "Antidote"
+        "item": "Antidote",
+        "missable": 100
       },
       {
         "sprite": "Pokeball",
@@ -8867,7 +8920,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Potion"
+        "item": "Potion",
+        "missable": 101
       },
       {
         "sprite": "Pokeball",
@@ -8876,7 +8930,8 @@
         "move": "Stay",
         "text": 7,
         "face": "None",
-        "item": "Poke Ball"
+        "item": "Poke Ball",
+        "missable": 102
       },
       {
         "sprite": "Bug Catcher",
@@ -9082,7 +9137,8 @@
         "y": 2,
         "move": "Stay",
         "text": 5,
-        "face": "None"
+        "face": "None",
+        "missable": 52
       }
     ],
     "warpIn": [
@@ -9640,7 +9696,8 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "Potion"
+        "item": "Potion",
+        "missable": 103
       },
       {
         "sprite": "Pokeball",
@@ -9649,7 +9706,8 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "Moon Stone"
+        "item": "Moon Stone",
+        "missable": 104
       },
       {
         "sprite": "Pokeball",
@@ -9658,7 +9716,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 105
       },
       {
         "sprite": "Pokeball",
@@ -9667,7 +9726,8 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "Escape Rope"
+        "item": "Escape Rope",
+        "missable": 106
       },
       {
         "sprite": "Pokeball",
@@ -9676,7 +9736,8 @@
         "move": "Stay",
         "text": 12,
         "face": "None",
-        "item": "Potion"
+        "item": "Potion",
+        "missable": 107
       },
       {
         "sprite": "Pokeball",
@@ -9685,7 +9746,8 @@
         "move": "Stay",
         "text": 13,
         "face": "None",
-        "item": "TM 12: WATER GUN"
+        "item": "TM 12: WATER GUN",
+        "missable": 108
       }
     ],
     "warpIn": [
@@ -10075,7 +10137,8 @@
         "y": 6,
         "move": "Stay",
         "text": 6,
-        "face": "None"
+        "face": "None",
+        "missable": 109
       },
       {
         "sprite": "Omanyte",
@@ -10083,7 +10146,8 @@
         "y": 6,
         "move": "Stay",
         "text": 7,
-        "face": "None"
+        "face": "None",
+        "missable": 110
       },
       {
         "sprite": "Pokeball",
@@ -10092,7 +10156,8 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "HP Up"
+        "item": "HP Up",
+        "missable": 111
       },
       {
         "sprite": "Pokeball",
@@ -10101,7 +10166,8 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "TM 01: MEGA PUNCH"
+        "item": "TM 01: MEGA PUNCH",
+        "missable": 112
       }
     ],
     "warpIn": [
@@ -11715,7 +11781,8 @@
         "text": 1,
         "face": "None",
         "pokemon": "Voltorb",
-        "level": 40
+        "level": 40,
+        "missable": 77
       },
       {
         "sprite": "Pokeball",
@@ -11725,7 +11792,8 @@
         "text": 2,
         "face": "None",
         "pokemon": "Voltorb",
-        "level": 40
+        "level": 40,
+        "missable": 78
       },
       {
         "sprite": "Pokeball",
@@ -11735,7 +11803,8 @@
         "text": 3,
         "face": "None",
         "pokemon": "Voltorb",
-        "level": 40
+        "level": 40,
+        "missable": 79
       },
       {
         "sprite": "Pokeball",
@@ -11745,7 +11814,8 @@
         "text": 4,
         "face": "None",
         "pokemon": "Electrode",
-        "level": 43
+        "level": 43,
+        "missable": 80
       },
       {
         "sprite": "Pokeball",
@@ -11755,7 +11825,8 @@
         "text": 5,
         "face": "None",
         "pokemon": "Voltorb",
-        "level": 40
+        "level": 40,
+        "missable": 81
       },
       {
         "sprite": "Pokeball",
@@ -11765,7 +11836,8 @@
         "text": 6,
         "face": "None",
         "pokemon": "Voltorb",
-        "level": 40
+        "level": 40,
+        "missable": 82
       },
       {
         "sprite": "Pokeball",
@@ -11775,7 +11847,8 @@
         "text": 7,
         "face": "None",
         "pokemon": "Electrode",
-        "level": 43
+        "level": 43,
+        "missable": 83
       },
       {
         "sprite": "Pokeball",
@@ -11785,7 +11858,8 @@
         "text": 8,
         "face": "None",
         "pokemon": "Voltorb",
-        "level": 40
+        "level": 40,
+        "missable": 84
       },
       {
         "sprite": "Bird",
@@ -11795,7 +11869,8 @@
         "text": 9,
         "face": "Up",
         "pokemon": "Zapdos",
-        "level": 50
+        "level": 50,
+        "missable": 85
       },
       {
         "sprite": "Pokeball",
@@ -11804,7 +11879,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Carbos"
+        "item": "Carbos",
+        "missable": 86
       },
       {
         "sprite": "Pokeball",
@@ -11813,7 +11889,8 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "HP Up"
+        "item": "HP Up",
+        "missable": 87
       },
       {
         "sprite": "Pokeball",
@@ -11822,7 +11899,8 @@
         "move": "Stay",
         "text": 12,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 88
       },
       {
         "sprite": "Pokeball",
@@ -11831,7 +11909,8 @@
         "move": "Stay",
         "text": 13,
         "face": "None",
-        "item": "TM 25: THUNDER"
+        "item": "TM 25: THUNDER",
+        "missable": 89
       },
       {
         "sprite": "Pokeball",
@@ -11840,7 +11919,8 @@
         "move": "Stay",
         "text": 14,
         "face": "None",
-        "item": "TM 33: REFLECT"
+        "item": "TM 33: REFLECT",
+        "missable": 90
       }
     ],
     "warpIn": [
@@ -12246,7 +12326,8 @@
         "y": 5,
         "move": "Stay",
         "text": 1,
-        "face": "None"
+        "face": "None",
+        "missable": 97
       },
       {
         "sprite": "Black Hair Boy 2",
@@ -12254,7 +12335,8 @@
         "y": 4,
         "move": "Stay",
         "text": 2,
-        "face": "None"
+        "face": "None",
+        "missable": 98
       },
       {
         "sprite": "Black Hair Boy 2",
@@ -12262,7 +12344,8 @@
         "y": 5,
         "move": "Stay",
         "text": 3,
-        "face": "None"
+        "face": "None",
+        "missable": 99
       }
     ],
     "warpIn": [
@@ -12929,7 +13012,8 @@
         "text": 2,
         "face": "Down",
         "class": "Rival 1",
-        "team": 1
+        "team": 1,
+        "missable": 113
       }
     ],
     "warpIn": [
@@ -13456,7 +13540,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "TM 08: BODY SLAM"
+        "item": "TM 08: BODY SLAM",
+        "missable": 114
       },
       {
         "sprite": "Gentleman",
@@ -13637,7 +13722,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Max Ether"
+        "item": "Max Ether",
+        "missable": 115
       },
       {
         "sprite": "Gentleman",
@@ -13662,7 +13748,8 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 116
       },
       {
         "sprite": "Gentleman",
@@ -13907,7 +13994,8 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "Ether"
+        "item": "Ether",
+        "missable": 117
       },
       {
         "sprite": "Pokeball",
@@ -13916,7 +14004,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "TM 44: REST"
+        "item": "TM 44: REST",
+        "missable": 118
       },
       {
         "sprite": "Pokeball",
@@ -13925,7 +14014,8 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "Max Potion"
+        "item": "Max Potion",
+        "missable": 119
       }
     ],
     "warpIn": [
@@ -14053,7 +14143,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "TM 43: SKY ATTACK"
+        "item": "TM 43: SKY ATTACK",
+        "missable": 212
       },
       {
         "sprite": "Pokeball",
@@ -14062,7 +14153,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 213
       },
       {
         "sprite": "Boulder",
@@ -14442,7 +14534,8 @@
         "y": 7,
         "move": "Stay",
         "text": 2,
-        "face": "Up"
+        "face": "Up",
+        "missable": 214
       }
     ],
     "warpIn": [
@@ -15420,7 +15513,8 @@
         "y": 3,
         "move": "Stay",
         "text": 2,
-        "face": "None"
+        "face": "None",
+        "missable": 69
       }
     ],
     "warpIn": [
@@ -15752,7 +15846,8 @@
         "text": 11,
         "face": "Up",
         "class": "Rocket",
-        "team": 7
+        "team": 7,
+        "missable": 70
       }
     ],
     "warpIn": [
@@ -16333,7 +16428,8 @@
         "y": 5,
         "move": "Stay",
         "text": 1,
-        "face": "None"
+        "face": "None",
+        "missable": 56
       },
       {
         "sprite": "Medium",
@@ -16420,7 +16516,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Escape Rope"
+        "item": "Escape Rope",
+        "missable": 57
       }
     ],
     "warpIn": [
@@ -16584,7 +16681,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Elixer"
+        "item": "Elixer",
+        "missable": 58
       },
       {
         "sprite": "Pokeball",
@@ -16593,7 +16691,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "Awakening"
+        "item": "Awakening",
+        "missable": 59
       },
       {
         "sprite": "Pokeball",
@@ -16602,7 +16701,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "HP Up"
+        "item": "HP Up",
+        "missable": 60
       }
     ],
     "warpIn": [
@@ -16784,7 +16884,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Nugget"
+        "item": "Nugget",
+        "missable": 61
       }
     ],
     "warpIn": [
@@ -16948,7 +17049,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 62
       },
       {
         "sprite": "Pokeball",
@@ -16957,7 +17059,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "X Accuracy"
+        "item": "X Accuracy",
+        "missable": 63
       }
     ],
     "warpIn": [
@@ -17086,7 +17189,8 @@
         "text": 1,
         "face": "Right",
         "class": "Rocket",
-        "team": 19
+        "team": 19,
+        "missable": 64
       },
       {
         "sprite": "Rocket",
@@ -17096,7 +17200,8 @@
         "text": 2,
         "face": "Left",
         "class": "Rocket",
-        "team": 20
+        "team": 20,
+        "missable": 65
       },
       {
         "sprite": "Rocket",
@@ -17106,7 +17211,8 @@
         "text": 3,
         "face": "Right",
         "class": "Rocket",
-        "team": 21
+        "team": 21,
+        "missable": 66
       },
       {
         "sprite": "Mr. Fuji",
@@ -17114,7 +17220,8 @@
         "y": 3,
         "move": "Stay",
         "text": 4,
-        "face": "Down"
+        "face": "Down",
+        "missable": 67
       }
     ],
     "warpIn": [
@@ -17275,7 +17382,8 @@
         "y": 1,
         "move": "Stay",
         "text": 5,
-        "face": "None"
+        "face": "None",
+        "missable": 68
       },
       {
         "sprite": "Book Map Dex",
@@ -17669,7 +17777,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 71
       },
       {
         "sprite": "Boulder",
@@ -18011,7 +18120,8 @@
         "y": 6,
         "move": "Stay",
         "text": 1,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 217
       },
       {
         "sprite": "Boulder",
@@ -18019,7 +18129,8 @@
         "y": 6,
         "move": "Stay",
         "text": 2,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 218
       }
     ],
     "warpIn": [
@@ -18202,7 +18313,8 @@
         "y": 6,
         "move": "Stay",
         "text": 1,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 219
       },
       {
         "sprite": "Boulder",
@@ -18210,7 +18322,8 @@
         "y": 6,
         "move": "Stay",
         "text": 2,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 220
       }
     ],
     "warpIn": [
@@ -18401,7 +18514,8 @@
         "y": 15,
         "move": "Stay",
         "text": 2,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 221
       },
       {
         "sprite": "Boulder",
@@ -18409,7 +18523,8 @@
         "y": 14,
         "move": "Stay",
         "text": 3,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 222
       },
       {
         "sprite": "Boulder",
@@ -18425,7 +18540,8 @@
         "y": 6,
         "move": "Stay",
         "text": 5,
-        "face": "None"
+        "face": "None",
+        "missable": 223
       },
       {
         "sprite": "Boulder",
@@ -18433,7 +18549,8 @@
         "y": 6,
         "move": "Stay",
         "text": 6,
-        "face": "None"
+        "face": "None",
+        "missable": 224
       }
     ],
     "warpIn": [
@@ -18610,7 +18727,8 @@
         "y": 15,
         "move": "Stay",
         "text": 1,
-        "face": "None"
+        "face": "None",
+        "missable": 225
       },
       {
         "sprite": "Boulder",
@@ -18618,7 +18736,8 @@
         "y": 15,
         "move": "Stay",
         "text": 2,
-        "face": "None"
+        "face": "None",
+        "missable": 226
       },
       {
         "sprite": "Bird",
@@ -18628,7 +18747,8 @@
         "text": 3,
         "face": "Down",
         "pokemon": "Articuno",
-        "level": 50
+        "level": 50,
+        "missable": 227
       }
     ],
     "warpIn": [
@@ -18922,7 +19042,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Escape Rope"
+        "item": "Escape Rope",
+        "missable": 72
       },
       {
         "sprite": "Pokeball",
@@ -18931,7 +19052,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Carbos"
+        "item": "Carbos",
+        "missable": 73
       }
     ],
     "warpIn": [
@@ -19947,7 +20069,8 @@
         "y": 1,
         "move": "Stay",
         "text": 6,
-        "face": "None"
+        "face": "None",
+        "missable": 74
       },
       {
         "sprite": "Pokeball",
@@ -19955,7 +20078,8 @@
         "y": 1,
         "move": "Stay",
         "text": 7,
-        "face": "None"
+        "face": "None",
+        "missable": 75
       }
     ],
     "warpIn": [
@@ -20582,7 +20706,8 @@
         "y": 2,
         "move": "Stay",
         "text": 1,
-        "face": "Down"
+        "face": "Down",
+        "missable": 76
       }
     ],
     "warpIn": [
@@ -21324,7 +21449,8 @@
         "y": 10,
         "move": "Stay",
         "text": 1,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 215
       },
       {
         "sprite": "Boulder",
@@ -21332,7 +21458,8 @@
         "y": 7,
         "move": "Stay",
         "text": 2,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 216
       }
     ],
     "warpIn": [
@@ -21642,7 +21769,8 @@
         "text": 6,
         "face": "Up",
         "pokemon": "Moltres",
-        "level": 50
+        "level": 50,
+        "missable": 91
       },
       {
         "sprite": "Pokeball",
@@ -21651,7 +21779,8 @@
         "move": "Stay",
         "text": 7,
         "face": "None",
-        "item": "TM 17: SUBMISSION"
+        "item": "TM 17: SUBMISSION",
+        "missable": 92
       },
       {
         "sprite": "Pokeball",
@@ -21660,7 +21789,8 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "Full Heal"
+        "item": "Full Heal",
+        "missable": 93
       },
       {
         "sprite": "Pokeball",
@@ -21669,7 +21799,8 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "TM 05: MEGA KICK"
+        "item": "TM 05: MEGA KICK",
+        "missable": 94
       },
       {
         "sprite": "Pokeball",
@@ -21678,7 +21809,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Guard Spec"
+        "item": "Guard Spec",
+        "missable": 95
       },
       {
         "sprite": "Boulder",
@@ -21702,7 +21834,8 @@
         "y": 16,
         "move": "Stay",
         "text": 13,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 96
       }
     ],
     "warpIn": [
@@ -22127,7 +22260,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "Max Revive"
+        "item": "Max Revive",
+        "missable": 120
       },
       {
         "sprite": "Pokeball",
@@ -22136,7 +22270,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "TM 47: EXPLOSION"
+        "item": "TM 47: EXPLOSION",
+        "missable": 121
       },
       {
         "sprite": "Boulder",
@@ -22168,7 +22303,8 @@
         "y": 15,
         "move": "Stay",
         "text": 10,
-        "face": "Boulder Movement Byte 2"
+        "face": "Boulder Movement Byte 2",
+        "missable": 122
       }
     ],
     "warpIn": [
@@ -22378,7 +22514,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Escape Rope"
+        "item": "Escape Rope",
+        "missable": 123
       },
       {
         "sprite": "Pokeball",
@@ -22387,7 +22524,8 @@
         "move": "Stay",
         "text": 7,
         "face": "None",
-        "item": "Hyper Potion"
+        "item": "Hyper Potion",
+        "missable": 124
       }
     ],
     "warpIn": [
@@ -22476,7 +22614,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Moon Stone"
+        "item": "Moon Stone",
+        "missable": 125
       },
       {
         "sprite": "Pokeball",
@@ -22485,7 +22624,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Nugget"
+        "item": "Nugget",
+        "missable": 126
       },
       {
         "sprite": "Pokeball",
@@ -22494,7 +22634,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "TM 07: HORN DRILL"
+        "item": "TM 07: HORN DRILL",
+        "missable": 127
       },
       {
         "sprite": "Pokeball",
@@ -22503,7 +22644,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "Super Potion"
+        "item": "Super Potion",
+        "missable": 128
       }
     ],
     "warpIn": [
@@ -22584,7 +22726,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "TM 10: DOUBLE EDGE"
+        "item": "TM 10: DOUBLE EDGE",
+        "missable": 129
       },
       {
         "sprite": "Pokeball",
@@ -22593,7 +22736,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 130
       }
     ],
     "warpIn": [
@@ -22649,7 +22793,8 @@
         "text": 1,
         "face": "Down",
         "class": "Giovanni",
-        "team": 1
+        "team": 1,
+        "missable": 131
       },
       {
         "sprite": "Rocket",
@@ -22688,7 +22833,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "HP Up"
+        "item": "HP Up",
+        "missable": 132
       },
       {
         "sprite": "Pokeball",
@@ -22697,7 +22843,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "TM 02: RAZOR WIND"
+        "item": "TM 02: RAZOR WIND",
+        "missable": 133
       },
       {
         "sprite": "Pokeball",
@@ -22706,7 +22853,8 @@
         "move": "Stay",
         "text": 7,
         "face": "None",
-        "item": "Iron"
+        "item": "Iron",
+        "missable": 134
       },
       {
         "sprite": "Pokeball",
@@ -22715,7 +22863,8 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "Silph Scope"
+        "item": "Silph Scope",
+        "missable": 135
       },
       {
         "sprite": "Pokeball",
@@ -22724,7 +22873,8 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "Lift Key"
+        "item": "Lift Key",
+        "missable": 136
       }
     ],
     "warpIn": [
@@ -22870,7 +23020,8 @@
         "y": 1,
         "move": "Stay",
         "text": 1,
-        "face": "Up"
+        "face": "Up",
+        "missable": 137
       },
       {
         "sprite": "Oak Aide",
@@ -22880,7 +23031,8 @@
         "text": 2,
         "face": "Down",
         "class": "Scientist",
-        "team": 2
+        "team": 2,
+        "missable": 138
       },
       {
         "sprite": "Oak Aide",
@@ -22890,7 +23042,8 @@
         "text": 3,
         "face": "Left",
         "class": "Scientist",
-        "team": 3
+        "team": 3,
+        "missable": 139
       },
       {
         "sprite": "Rocket",
@@ -22900,7 +23053,8 @@
         "text": 4,
         "face": "Up",
         "class": "Rocket",
-        "team": 23
+        "team": 23,
+        "missable": 140
       },
       {
         "sprite": "Rocket",
@@ -22910,7 +23064,8 @@
         "text": 5,
         "face": "Up",
         "class": "Rocket",
-        "team": 24
+        "team": 24,
+        "missable": 141
       }
     ],
     "warpIn": [
@@ -23035,7 +23190,8 @@
         "text": 2,
         "face": "Left",
         "class": "Rocket",
-        "team": 25
+        "team": 25,
+        "missable": 142
       },
       {
         "sprite": "Oak Aide",
@@ -23045,7 +23201,8 @@
         "text": 3,
         "face": "Down",
         "class": "Scientist",
-        "team": 4
+        "team": 4,
+        "missable": 143
       },
       {
         "sprite": "Pokeball",
@@ -23054,7 +23211,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Hyper Potion"
+        "item": "Hyper Potion",
+        "missable": 144
       }
     ],
     "warpIn": [
@@ -23173,7 +23331,8 @@
         "text": 2,
         "face": "Right",
         "class": "Rocket",
-        "team": 26
+        "team": 26,
+        "missable": 145
       },
       {
         "sprite": "Oak Aide",
@@ -23183,7 +23342,8 @@
         "text": 3,
         "face": "Left",
         "class": "Scientist",
-        "team": 5
+        "team": 5,
+        "missable": 146
       },
       {
         "sprite": "Rocket",
@@ -23193,7 +23353,8 @@
         "text": 4,
         "face": "Up",
         "class": "Rocket",
-        "team": 27
+        "team": 27,
+        "missable": 147
       },
       {
         "sprite": "Pokeball",
@@ -23202,7 +23363,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "Full Heal"
+        "item": "Full Heal",
+        "missable": 148
       },
       {
         "sprite": "Pokeball",
@@ -23211,7 +23373,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Max Revive"
+        "item": "Max Revive",
+        "missable": 149
       },
       {
         "sprite": "Pokeball",
@@ -23220,7 +23383,8 @@
         "move": "Stay",
         "text": 7,
         "face": "None",
-        "item": "Escape Rope"
+        "item": "Escape Rope",
+        "missable": 150
       }
     ],
     "warpIn": [
@@ -23327,7 +23491,8 @@
         "text": 2,
         "face": "Right",
         "class": "Rocket",
-        "team": 28
+        "team": 28,
+        "missable": 151
       },
       {
         "sprite": "Oak Aide",
@@ -23337,7 +23502,8 @@
         "text": 3,
         "face": "Right",
         "class": "Scientist",
-        "team": 6
+        "team": 6,
+        "missable": 152
       },
       {
         "sprite": "Rocker",
@@ -23347,7 +23513,8 @@
         "text": 4,
         "face": "Up",
         "class": "Juggler",
-        "team": 1
+        "team": 1,
+        "missable": 153
       },
       {
         "sprite": "Rocket",
@@ -23357,7 +23524,8 @@
         "text": 5,
         "face": "Up",
         "class": "Rocket",
-        "team": 29
+        "team": 29,
+        "missable": 154
       },
       {
         "sprite": "Pokeball",
@@ -23366,7 +23534,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "TM 09: TAKE DOWN"
+        "item": "TM 09: TAKE DOWN",
+        "missable": 155
       },
       {
         "sprite": "Pokeball",
@@ -23375,7 +23544,8 @@
         "move": "Stay",
         "text": 7,
         "face": "None",
-        "item": "Protein"
+        "item": "Protein",
+        "missable": 156
       },
       {
         "sprite": "Pokeball",
@@ -23384,7 +23554,8 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "Card Key"
+        "item": "Card Key",
+        "missable": 157
       },
       {
         "sprite": "Clipboard",
@@ -23535,7 +23706,8 @@
         "text": 6,
         "face": "Right",
         "class": "Rocket",
-        "team": 30
+        "team": 30,
+        "missable": 158
       },
       {
         "sprite": "Oak Aide",
@@ -23545,7 +23717,8 @@
         "text": 7,
         "face": "Down",
         "class": "Scientist",
-        "team": 7
+        "team": 7,
+        "missable": 159
       },
       {
         "sprite": "Rocket",
@@ -23555,7 +23728,8 @@
         "text": 8,
         "face": "Left",
         "class": "Rocket",
-        "team": 31
+        "team": 31,
+        "missable": 160
       },
       {
         "sprite": "Pokeball",
@@ -23564,7 +23738,8 @@
         "move": "Stay",
         "text": 9,
         "face": "None",
-        "item": "HP Up"
+        "item": "HP Up",
+        "missable": 161
       },
       {
         "sprite": "Pokeball",
@@ -23573,7 +23748,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "X Accuracy"
+        "item": "X Accuracy",
+        "missable": 162
       }
     ],
     "warpIn": [
@@ -23690,7 +23866,8 @@
         "text": 5,
         "face": "Down",
         "class": "Rocket",
-        "team": 32
+        "team": 32,
+        "missable": 163
       },
       {
         "sprite": "Oak Aide",
@@ -23700,7 +23877,8 @@
         "text": 6,
         "face": "Down",
         "class": "Scientist",
-        "team": 8
+        "team": 8,
+        "missable": 164
       },
       {
         "sprite": "Rocket",
@@ -23710,7 +23888,8 @@
         "text": 7,
         "face": "Left",
         "class": "Rocket",
-        "team": 33
+        "team": 33,
+        "missable": 165
       },
       {
         "sprite": "Rocket",
@@ -23720,7 +23899,8 @@
         "text": 8,
         "face": "Right",
         "class": "Rocket",
-        "team": 34
+        "team": 34,
+        "missable": 166
       },
       {
         "sprite": "Rival",
@@ -23728,7 +23908,8 @@
         "y": 7,
         "move": "Stay",
         "text": 9,
-        "face": "Up"
+        "face": "Up",
+        "missable": 167
       },
       {
         "sprite": "Pokeball",
@@ -23737,7 +23918,8 @@
         "move": "Stay",
         "text": 10,
         "face": "None",
-        "item": "Calcium"
+        "item": "Calcium",
+        "missable": 168
       },
       {
         "sprite": "Pokeball",
@@ -23746,7 +23928,8 @@
         "move": "Stay",
         "text": 11,
         "face": "None",
-        "item": "TM 03: SWORDS DANCE"
+        "item": "TM 03: SWORDS DANCE",
+        "missable": 169
       }
     ],
     "warpIn": [
@@ -23849,7 +24032,8 @@
         "text": 2,
         "face": "Left",
         "class": "Rocket",
-        "team": 35
+        "team": 35,
+        "missable": 171
       },
       {
         "sprite": "Oak Aide",
@@ -23859,7 +24043,8 @@
         "text": 3,
         "face": "Down",
         "class": "Scientist",
-        "team": 9
+        "team": 9,
+        "missable": 172
       },
       {
         "sprite": "Rocket",
@@ -23869,7 +24054,8 @@
         "text": 4,
         "face": "Right",
         "class": "Rocket",
-        "team": 36
+        "team": 36,
+        "missable": 173
       }
     ],
     "warpIn": [
@@ -23960,7 +24146,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Calcium"
+        "item": "Calcium",
+        "missable": 187
       },
       {
         "sprite": "Book Map Dex",
@@ -24144,7 +24331,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Max Potion"
+        "item": "Max Potion",
+        "missable": 188
       },
       {
         "sprite": "Pokeball",
@@ -24153,7 +24341,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Iron"
+        "item": "Iron",
+        "missable": 189
       },
       {
         "sprite": "Book Map Dex",
@@ -24313,7 +24502,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 190
       },
       {
         "sprite": "Pokeball",
@@ -24322,7 +24512,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Full Restore"
+        "item": "Full Restore",
+        "missable": 191
       },
       {
         "sprite": "Pokeball",
@@ -24331,7 +24522,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "TM 14: BLIZZARD"
+        "item": "TM 14: BLIZZARD",
+        "missable": 192
       },
       {
         "sprite": "Pokeball",
@@ -24340,7 +24532,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "TM 22: SOLARBEAM"
+        "item": "TM 22: SOLARBEAM",
+        "missable": 193
       },
       {
         "sprite": "Book Map Dex",
@@ -24357,7 +24550,8 @@
         "move": "Stay",
         "text": 8,
         "face": "None",
-        "item": "Secret Key"
+        "item": "Secret Key",
+        "missable": 194
       }
     ],
     "warpIn": [
@@ -24521,7 +24715,8 @@
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "item": "Full Restore"
+        "item": "Full Restore",
+        "missable": 195
       },
       {
         "sprite": "Pokeball",
@@ -24530,7 +24725,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Max Potion"
+        "item": "Max Potion",
+        "missable": 196
       },
       {
         "sprite": "Pokeball",
@@ -24539,7 +24735,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Carbos"
+        "item": "Carbos",
+        "missable": 197
       },
       {
         "sprite": "Pokeball",
@@ -24548,7 +24745,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "TM 37: EGG BOMB"
+        "item": "TM 37: EGG BOMB",
+        "missable": 198
       }
     ],
     "warpIn": [
@@ -24762,7 +24960,8 @@
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "item": "Protein"
+        "item": "Protein",
+        "missable": 199
       },
       {
         "sprite": "Pokeball",
@@ -24771,7 +24970,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "TM 40: SKULLBASH"
+        "item": "TM 40: SKULLBASH",
+        "missable": 200
       }
     ],
     "warpIn": [
@@ -24990,7 +25190,8 @@
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "item": "Max Potion"
+        "item": "Max Potion",
+        "missable": 201
       },
       {
         "sprite": "Pokeball",
@@ -24999,7 +25200,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "TM 32: DOUBLE TEAM"
+        "item": "TM 32: DOUBLE TEAM",
+        "missable": 202
       },
       {
         "sprite": "Pokeball",
@@ -25008,7 +25210,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Max Revive"
+        "item": "Max Revive",
+        "missable": 203
       },
       {
         "sprite": "Pokeball",
@@ -25017,7 +25220,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "Gold Teeth"
+        "item": "Gold Teeth",
+        "missable": 204
       }
     ],
     "warpIn": [
@@ -25228,7 +25432,8 @@
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "item": "Nugget"
+        "item": "Nugget",
+        "missable": 205
       }
     ],
     "warpIn": [
@@ -25709,7 +25914,8 @@
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "item": "PP UP"
+        "item": "PP UP",
+        "missable": 206
       },
       {
         "sprite": "Pokeball",
@@ -25718,7 +25924,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Ultra Ball"
+        "item": "Ultra Ball",
+        "missable": 207
       },
       {
         "sprite": "Pokeball",
@@ -25727,7 +25934,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Full Restore"
+        "item": "Full Restore",
+        "missable": 208
       }
     ],
     "warpIn": [
@@ -25872,7 +26080,8 @@
         "text": 1,
         "face": "Down",
         "pokemon": "Mewtwo",
-        "level": 70
+        "level": 70,
+        "missable": 209
       },
       {
         "sprite": "Pokeball",
@@ -25881,7 +26090,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Ultra Ball"
+        "item": "Ultra Ball",
+        "missable": 210
       },
       {
         "sprite": "Pokeball",
@@ -25890,7 +26100,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Max Revive"
+        "item": "Max Revive",
+        "missable": 211
       }
     ],
     "warpIn": [
@@ -26062,7 +26273,8 @@
         "move": "Stay",
         "text": 1,
         "face": "None",
-        "item": "Full Restore"
+        "item": "Full Restore",
+        "missable": 53
       },
       {
         "sprite": "Pokeball",
@@ -26071,7 +26283,8 @@
         "move": "Stay",
         "text": 2,
         "face": "None",
-        "item": "Max Elixer"
+        "item": "Max Elixer",
+        "missable": 54
       },
       {
         "sprite": "Pokeball",
@@ -26080,7 +26293,8 @@
         "move": "Stay",
         "text": 3,
         "face": "None",
-        "item": "Nugget"
+        "item": "Nugget",
+        "missable": 55
       }
     ],
     "warpIn": [
@@ -26605,7 +26819,8 @@
         "text": 2,
         "face": "Up",
         "class": "Rocket",
-        "team": 37
+        "team": 37,
+        "missable": 174
       },
       {
         "sprite": "Oak Aide",
@@ -26615,7 +26830,8 @@
         "text": 3,
         "face": "Down",
         "class": "Scientist",
-        "team": 10
+        "team": 10,
+        "missable": 175
       },
       {
         "sprite": "Rocket",
@@ -26625,7 +26841,8 @@
         "text": 4,
         "face": "Up",
         "class": "Rocket",
-        "team": 38
+        "team": 38,
+        "missable": 176
       }
     ],
     "warpIn": [
@@ -26710,7 +26927,8 @@
         "text": 1,
         "face": "Right",
         "class": "Rocket",
-        "team": 39
+        "team": 39,
+        "missable": 177
       },
       {
         "sprite": "Oak Aide",
@@ -26720,7 +26938,8 @@
         "text": 2,
         "face": "Left",
         "class": "Scientist",
-        "team": 11
+        "team": 11,
+        "missable": 178
       },
       {
         "sprite": "Erika",
@@ -26728,7 +26947,8 @@
         "y": 15,
         "move": "Walk",
         "text": 3,
-        "range": 0
+        "range": 0,
+        "missable": 179
       },
       {
         "sprite": "Pokeball",
@@ -26737,7 +26957,8 @@
         "move": "Stay",
         "text": 4,
         "face": "None",
-        "item": "TM 26: EARTHQUAKE"
+        "item": "TM 26: EARTHQUAKE",
+        "missable": 180
       },
       {
         "sprite": "Pokeball",
@@ -26746,7 +26967,8 @@
         "move": "Stay",
         "text": 5,
         "face": "None",
-        "item": "Rare Candy"
+        "item": "Rare Candy",
+        "missable": 181
       },
       {
         "sprite": "Pokeball",
@@ -26755,7 +26977,8 @@
         "move": "Stay",
         "text": 6,
         "face": "None",
-        "item": "Carbos"
+        "item": "Carbos",
+        "missable": 182
       }
     ],
     "warpIn": [
@@ -26848,7 +27071,8 @@
         "text": 3,
         "face": "Down",
         "class": "Giovanni",
-        "team": 2
+        "team": 2,
+        "missable": 183
       },
       {
         "sprite": "Rocket",
@@ -26858,7 +27082,8 @@
         "text": 4,
         "face": "Up",
         "class": "Rocket",
-        "team": 41
+        "team": 41,
+        "missable": 184
       },
       {
         "sprite": "Rocket",
@@ -26868,7 +27093,8 @@
         "text": 5,
         "face": "Up",
         "class": "Rocket",
-        "team": 40
+        "team": 40,
+        "missable": 185
       }
     ],
     "warpIn": [

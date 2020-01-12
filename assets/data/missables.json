@@ -1,914 +1,1598 @@
 [
-    {
-        "ind": 0,
-        "name": "Pallet Town Oak"
-    },
-    {
-        "ind": 1,
-        "name": "Lying Old Man"
-    },
-    {
-        "ind": 2,
-        "name": "Old Man"
-    },
-    {
-        "ind": 3,
-        "name": "Museum Guy"
-    },
-    {
-        "ind": 4,
-        "name": "Gym Guy"
-    },
-    {
-        "ind": 5,
-        "name": "Cerulean Rival"
-    },
-    {
-        "ind": 6,
-        "name": "Cerulean Rocket"
-    },
-    {
-        "ind": 7,
-        "name": "Cerulean Guard 1"
-    },
-    {
-        "ind": 8,
-        "name": "Unknown Dungeon Guy"
-    },
-    {
-        "ind": 9,
-        "name": "Cerulean Guard 2"
-    },
-    {
-        "ind": 10,
-        "name": "Saffron City 1"
-    },
-    {
-        "ind": 11,
-        "name": "Saffron City 2"
-    },
-    {
-        "ind": 12,
-        "name": "Saffron City 3"
-    },
-    {
-        "ind": 13,
-        "name": "Saffron City 4"
-    },
-    {
-        "ind": 14,
-        "name": "Saffron City 5"
-    },
-    {
-        "ind": 15,
-        "name": "Saffron City 6"
-    },
-    {
-        "ind": 16,
-        "name": "Saffron City 7"
-    },
-    {
-        "ind": 17,
-        "name": "Saffron City 8"
-    },
-    {
-        "ind": 18,
-        "name": "Saffron City 9"
-    },
-    {
-        "ind": 19,
-        "name": "Saffron City a"
-    },
-    {
-        "ind": 20,
-        "name": "Saffron City B"
-    },
-    {
-        "ind": 21,
-        "name": "Saffron City C"
-    },
-    {
-        "ind": 22,
-        "name": "Saffron City D"
-    },
-    {
-        "ind": 23,
-        "name": "Saffron City E"
-    },
-    {
-        "ind": 24,
-        "name": "Saffron City F"
-    },
-    {
-        "ind": 25,
-        "name": "Route 2 Item 1"
-    },
-    {
-        "ind": 26,
-        "name": "Route 2 Item 2"
-    },
-    {
-        "ind": 27,
-        "name": "Route 4 Item"
-    },
-    {
-        "ind": 28,
-        "name": "Route 9 Item"
-    },
-    {
-        "ind": 29,
-        "name": "Route 12 Snorlax"
-    },
-    {
-        "ind": 30,
-        "name": "Route 12 Item 1"
-    },
-    {
-        "ind": 31,
-        "name": "Route 12 Item 2"
-    },
-    {
-        "ind": 32,
-        "name": "Route 15 Item"
-    },
-    {
-        "ind": 33,
-        "name": "Route 16 Snorlax"
-    },
-    {
-        "ind": 34,
-        "name": "Route 22 Rival 1"
-    },
-    {
-        "ind": 35,
-        "name": "Route 22 Rival 2"
-    },
-    {
-        "ind": 36,
-        "name": "Nugget Bridge Guy"
-    },
-    {
-        "ind": 37,
-        "name": "Route 24 Item"
-    },
-    {
-        "ind": 38,
-        "name": "Route 25 Item"
-    },
-    {
-        "ind": 39,
-        "name": "Daisy Sitting"
-    },
-    {
-        "ind": 40,
-        "name": "Daisy Walking"
-    },
-    {
-        "ind": 41,
-        "name": "Town Map"
-    },
-    {
-        "ind": 42,
-        "name": "Oaks Lab Rival"
-    },
-    {
-        "ind": 43,
-        "name": "Starter Ball 1"
-    },
-    {
-        "ind": 44,
-        "name": "Starter Ball 2"
-    },
-    {
-        "ind": 45,
-        "name": "Starter Ball 3"
-    },
-    {
-        "ind": 46,
-        "name": "Oaks Lab Oak 1"
-    },
-    {
-        "ind": 47,
-        "name": "Pokedex 1"
-    },
-    {
-        "ind": 48,
-        "name": "Pokedex 2"
-    },
-    {
-        "ind": 49,
-        "name": "Oaks Lab Oak 2"
-    },
-    {
-        "ind": 50,
-        "name": "Viridian Gym Giovanni"
-    },
-    {
-        "ind": 51,
-        "name": "Viridian Gym Item"
-    },
-    {
-        "ind": 52,
-        "name": "Old Amber"
-    },
-    {
-        "ind": 53,
-        "name": "Unknown Dungeon 1 Item 1"
-    },
-    {
-        "ind": 54,
-        "name": "Unknown Dungeon 1 Item 2"
-    },
-    {
-        "ind": 55,
-        "name": "Unknown Dungeon 1 Item 3"
-    },
-    {
-        "ind": 56,
-        "name": "Pokemontower 2 Rival"
-    },
-    {
-        "ind": 57,
-        "name": "Pokemontower 3 Item"
-    },
-    {
-        "ind": 58,
-        "name": "Pokemontower 4 Item 1"
-    },
-    {
-        "ind": 59,
-        "name": "Pokemontower 4 Item 2"
-    },
-    {
-        "ind": 60,
-        "name": "Pokemontower 4 Item 3"
-    },
-    {
-        "ind": 61,
-        "name": "Pokemontower 5 Item"
-    },
-    {
-        "ind": 62,
-        "name": "Pokemontower 6 Item 1"
-    },
-    {
-        "ind": 63,
-        "name": "Pokemontower 6 Item 2"
-    },
-    {
-        "ind": 64,
-        "name": "Pokemontower 7 Rocket 1"
-    },
-    {
-        "ind": 65,
-        "name": "Pokemontower 7 Rocket 2"
-    },
-    {
-        "ind": 66,
-        "name": "Pokemontower 7 Rocket 3"
-    },
-    {
-        "ind": 67,
-        "name": "Pokemontower 7 Mr Fuji"
-    },
-    {
-        "ind": 68,
-        "name": "Lavender House 1 Mr Fuji"
-    },
-    {
-        "ind": 69,
-        "name": "Celadon Mansion 5 Gift"
-    },
-    {
-        "ind": 70,
-        "name": "Game Corner Rocket"
-    },
-    {
-        "ind": 71,
-        "name": "Fuchsia House 2 Item"
-    },
-    {
-        "ind": 72,
-        "name": "Mansion 1 Item 1"
-    },
-    {
-        "ind": 73,
-        "name": "Mansion 1 Item 2"
-    },
-    {
-        "ind": 74,
-        "name": "Fighting Dojo Gift 1"
-    },
-    {
-        "ind": 75,
-        "name": "Fighting Dojo Gift 2"
-    },
-    {
-        "ind": 76,
-        "name": "Silph Co 1f Receptionist"
-    },
-    {
-        "ind": 77,
-        "name": "Voltorb 1"
-    },
-    {
-        "ind": 78,
-        "name": "Voltorb 2"
-    },
-    {
-        "ind": 79,
-        "name": "Voltorb 3"
-    },
-    {
-        "ind": 80,
-        "name": "Electrode 1"
-    },
-    {
-        "ind": 81,
-        "name": "Voltorb 4"
-    },
-    {
-        "ind": 82,
-        "name": "Voltorb 5"
-    },
-    {
-        "ind": 83,
-        "name": "Electrode 2"
-    },
-    {
-        "ind": 84,
-        "name": "Voltorb 6"
-    },
-    {
-        "ind": 85,
-        "name": "Zapdos"
-    },
-    {
-        "ind": 86,
-        "name": "Power Plant Item 1"
-    },
-    {
-        "ind": 87,
-        "name": "Power Plant Item 2"
-    },
-    {
-        "ind": 88,
-        "name": "Power Plant Item 3"
-    },
-    {
-        "ind": 89,
-        "name": "Power Plant Item 4"
-    },
-    {
-        "ind": 90,
-        "name": "Power Plant Item 5"
-    },
-    {
-        "ind": 91,
-        "name": "Moltres"
-    },
-    {
-        "ind": 92,
-        "name": "Victory Road 2 Item 1"
-    },
-    {
-        "ind": 93,
-        "name": "Victory Road 2 Item 2"
-    },
-    {
-        "ind": 94,
-        "name": "Victory Road 2 Item 3"
-    },
-    {
-        "ind": 95,
-        "name": "Victory Road 2 Item 4"
-    },
-    {
-        "ind": 96,
-        "name": "Victory Road 2 Boulder"
-    },
-    {
-        "ind": 97,
-        "name": "Bill Pokemon"
-    },
-    {
-        "ind": 98,
-        "name": "Bill 1"
-    },
-    {
-        "ind": 99,
-        "name": "Bill 2"
-    },
-    {
-        "ind": 100,
-        "name": "Viridian Forest Item 1"
-    },
-    {
-        "ind": 101,
-        "name": "Viridian Forest Item 2"
-    },
-    {
-        "ind": 102,
-        "name": "Viridian Forest Item 3"
-    },
-    {
-        "ind": 103,
-        "name": "Mt. Moon 1 Item 1"
-    },
-    {
-        "ind": 104,
-        "name": "Mt. Moon 1 Item 2"
-    },
-    {
-        "ind": 105,
-        "name": "Mt. Moon 1 Item 3"
-    },
-    {
-        "ind": 106,
-        "name": "Mt. Moon 1 Item 4"
-    },
-    {
-        "ind": 107,
-        "name": "Mt. Moon 1 Item 5"
-    },
-    {
-        "ind": 108,
-        "name": "Mt. Moon 1 Item 6"
-    },
-    {
-        "ind": 109,
-        "name": "Mt. Moon 3 Fossil 1"
-    },
-    {
-        "ind": 110,
-        "name": "Mt. Moon 3 Fossil 2"
-    },
-    {
-        "ind": 111,
-        "name": "Mt. Moon 3 Item 1"
-    },
-    {
-        "ind": 112,
-        "name": "Mt. Moon 3 Item 2"
-    },
-    {
-        "ind": 113,
-        "name": "S.S. Anne 2 Rival"
-    },
-    {
-        "ind": 114,
-        "name": "S.S. Anne 8 Item"
-    },
-    {
-        "ind": 115,
-        "name": "S.S. Anne 9 Item 1"
-    },
-    {
-        "ind": 116,
-        "name": "S.S. Anne 9 Item 2"
-    },
-    {
-        "ind": 117,
-        "name": "S.S. Anne 10 Item 1"
-    },
-    {
-        "ind": 118,
-        "name": "S.S. Anne 10 Item 2"
-    },
-    {
-        "ind": 119,
-        "name": "S.S. Anne 10 Item 3"
-    },
-    {
-        "ind": 120,
-        "name": "Victory Road 3 Item 1"
-    },
-    {
-        "ind": 121,
-        "name": "Victory Road 3 Item 2"
-    },
-    {
-        "ind": 122,
-        "name": "Victory Road 3 Boulder"
-    },
-    {
-        "ind": 123,
-        "name": "Rocket Hideout 1 Item 1"
-    },
-    {
-        "ind": 124,
-        "name": "Rocket Hideout 1 Item 2"
-    },
-    {
-        "ind": 125,
-        "name": "Rocket Hideout 2 Item 1"
-    },
-    {
-        "ind": 126,
-        "name": "Rocket Hideout 2 Item 2"
-    },
-    {
-        "ind": 127,
-        "name": "Rocket Hideout 2 Item 3"
-    },
-    {
-        "ind": 128,
-        "name": "Rocket Hideout 2 Item 4"
-    },
-    {
-        "ind": 129,
-        "name": "Rocket Hideout 3 Item 1"
-    },
-    {
-        "ind": 130,
-        "name": "Rocket Hideout 3 Item 2"
-    },
-    {
-        "ind": 131,
-        "name": "Rocket Hideout 4 Giovanni"
-    },
-    {
-        "ind": 132,
-        "name": "Rocket Hideout 4 Item 1"
-    },
-    {
-        "ind": 133,
-        "name": "Rocket Hideout 4 Item 2"
-    },
-    {
-        "ind": 134,
-        "name": "Rocket Hideout 4 Item 3"
-    },
-    {
-        "ind": 135,
-        "name": "Rocket Hideout 4 Item 4"
-    },
-    {
-        "ind": 136,
-        "name": "Rocket Hideout 4 Item 5"
-    },
-    {
-        "ind": 137,
-        "name": "Silph Co 2f 1"
-    },
-    {
-        "ind": 138,
-        "name": "Silph Co 2f 2"
-    },
-    {
-        "ind": 139,
-        "name": "Silph Co 2f 3"
-    },
-    {
-        "ind": 140,
-        "name": "Silph Co 2f 4"
-    },
-    {
-        "ind": 141,
-        "name": "Silph Co 2f 5"
-    },
-    {
-        "ind": 142,
-        "name": "Silph Co 3f 1"
-    },
-    {
-        "ind": 143,
-        "name": "Silph Co 3f 2"
-    },
-    {
-        "ind": 144,
-        "name": "Silph Co 3f Item"
-    },
-    {
-        "ind": 145,
-        "name": "Silph Co 4f 1"
-    },
-    {
-        "ind": 146,
-        "name": "Silph Co 4f 2"
-    },
-    {
-        "ind": 147,
-        "name": "Silph Co 4f 3"
-    },
-    {
-        "ind": 148,
-        "name": "Silph Co 4f Item 1"
-    },
-    {
-        "ind": 149,
-        "name": "Silph Co 4f Item 2"
-    },
-    {
-        "ind": 150,
-        "name": "Silph Co 4f Item 3"
-    },
-    {
-        "ind": 151,
-        "name": "Silph Co 5f 1"
-    },
-    {
-        "ind": 152,
-        "name": "Silph Co 5f 2"
-    },
-    {
-        "ind": 153,
-        "name": "Silph Co 5f 3"
-    },
-    {
-        "ind": 154,
-        "name": "Silph Co 5f 4"
-    },
-    {
-        "ind": 155,
-        "name": "Silph Co 5f Item 1"
-    },
-    {
-        "ind": 156,
-        "name": "Silph Co 5f Item 2"
-    },
-    {
-        "ind": 157,
-        "name": "Silph Co 5f Item 3"
-    },
-    {
-        "ind": 158,
-        "name": "Silph Co 6f 1"
-    },
-    {
-        "ind": 159,
-        "name": "Silph Co 6f 2"
-    },
-    {
-        "ind": 160,
-        "name": "Silph Co 6f 3"
-    },
-    {
-        "ind": 161,
-        "name": "Silph Co 6f Item 1"
-    },
-    {
-        "ind": 162,
-        "name": "Silph Co 6f Item 2"
-    },
-    {
-        "ind": 163,
-        "name": "Silph Co 7f 1"
-    },
-    {
-        "ind": 164,
-        "name": "Silph Co 7f 2"
-    },
-    {
-        "ind": 165,
-        "name": "Silph Co 7f 3"
-    },
-    {
-        "ind": 166,
-        "name": "Silph Co 7f 4"
-    },
-    {
-        "ind": 167,
-        "name": "Silph Co 7f Rival"
-    },
-    {
-        "ind": 168,
-        "name": "Silph Co 7f Item 1"
-    },
-    {
-        "ind": 169,
-        "name": "Silph Co 7f Item 2"
-    },
-    {
-        "ind": 170,
-        "name": "Silph Co 7f 8"
-    },
-    {
-        "ind": 171,
-        "name": "Silph Co 8f 1"
-    },
-    {
-        "ind": 172,
-        "name": "Silph Co 8f 2"
-    },
-    {
-        "ind": 173,
-        "name": "Silph Co 8f 3"
-    },
-    {
-        "ind": 174,
-        "name": "Silph Co 9f 1"
-    },
-    {
-        "ind": 175,
-        "name": "Silph Co 9f 2"
-    },
-    {
-        "ind": 176,
-        "name": "Silph Co 9f 3"
-    },
-    {
-        "ind": 177,
-        "name": "Silph Co 10f 1"
-    },
-    {
-        "ind": 178,
-        "name": "Silph Co 10f 2"
-    },
-    {
-        "ind": 179,
-        "name": "Silph Co 10f 3"
-    },
-    {
-        "ind": 180,
-        "name": "Silph Co 10f Item 1"
-    },
-    {
-        "ind": 181,
-        "name": "Silph Co 10f Item 2"
-    },
-    {
-        "ind": 182,
-        "name": "Silph Co 10f Item 3"
-    },
-    {
-        "ind": 183,
-        "name": "Silph Co 11f 1"
-    },
-    {
-        "ind": 184,
-        "name": "Silph Co 11f 2"
-    },
-    {
-        "ind": 185,
-        "name": "Silph Co 11f 3"
-    },
-    {
-        "ind": 186,
-        "name": "Map F4 1"
-    },
-    {
-        "ind": 187,
-        "name": "Mansion 2 Item"
-    },
-    {
-        "ind": 188,
-        "name": "Mansion 3 Item 1"
-    },
-    {
-        "ind": 189,
-        "name": "Mansion 3 Item 2"
-    },
-    {
-        "ind": 190,
-        "name": "Mansion 4 Item 1"
-    },
-    {
-        "ind": 191,
-        "name": "Mansion 4 Item 2"
-    },
-    {
-        "ind": 192,
-        "name": "Mansion 4 Item 3"
-    },
-    {
-        "ind": 193,
-        "name": "Mansion 4 Item 4"
-    },
-    {
-        "ind": 194,
-        "name": "Mansion 4 Item 5"
-    },
-    {
-        "ind": 195,
-        "name": "Safari Zone East Item 1"
-    },
-    {
-        "ind": 196,
-        "name": "Safari Zone East Item 2"
-    },
-    {
-        "ind": 197,
-        "name": "Safari Zone East Item 3"
-    },
-    {
-        "ind": 198,
-        "name": "Safari Zone East Item 4"
-    },
-    {
-        "ind": 199,
-        "name": "Safari Zone North Item 1"
-    },
-    {
-        "ind": 200,
-        "name": "Safari Zone North Item 2"
-    },
-    {
-        "ind": 201,
-        "name": "Safari Zone West Item 1"
-    },
-    {
-        "ind": 202,
-        "name": "Safari Zone West Item 2"
-    },
-    {
-        "ind": 203,
-        "name": "Safari Zone West Item 3"
-    },
-    {
-        "ind": 204,
-        "name": "Safari Zone West Item 4"
-    },
-    {
-        "ind": 205,
-        "name": "Safari Zone Center Item"
-    },
-    {
-        "ind": 206,
-        "name": "Unknown Dungeon 2 Item 1"
-    },
-    {
-        "ind": 207,
-        "name": "Unknown Dungeon 2 Item 2"
-    },
-    {
-        "ind": 208,
-        "name": "Unknown Dungeon 2 Item 3"
-    },
-    {
-        "ind": 209,
-        "name": "Mewtwo"
-    },
-    {
-        "ind": 210,
-        "name": "Unknown Dungeon 3 Item 1"
-    },
-    {
-        "ind": 211,
-        "name": "Unknown Dungeon 3 Item 2"
-    },
-    {
-        "ind": 212,
-        "name": "Victory Road 1 Item 1"
-    },
-    {
-        "ind": 213,
-        "name": "Victory Road 1 Item 2"
-    },
-    {
-        "ind": 214,
-        "name": "Champions Room Oak"
-    },
-    {
-        "ind": 215,
-        "name": "Seafoam Islands 1 Boulder 1"
-    },
-    {
-        "ind": 216,
-        "name": "Seafoam Islands 1 Boulder 2"
-    },
-    {
-        "ind": 217,
-        "name": "Seafoam Islands 2 Boulder 1"
-    },
-    {
-        "ind": 218,
-        "name": "Seafoam Islands 2 Boulder 2"
-    },
-    {
-        "ind": 219,
-        "name": "Seafoam Islands 3 Boulder 1"
-    },
-    {
-        "ind": 220,
-        "name": "Seafoam Islands 3 Boulder 2"
-    },
-    {
-        "ind": 221,
-        "name": "Seafoam Islands 4 Boulder 1"
-    },
-    {
-        "ind": 222,
-        "name": "Seafoam Islands 4 Boulder 2"
-    },
-    {
-        "ind": 223,
-        "name": "Seafoam Islands 4 Boulder 3"
-    },
-    {
-        "ind": 224,
-        "name": "Seafoam Islands 4 Boulder 4"
-    },
-    {
-        "ind": 225,
-        "name": "Seafoam Islands 5 Boulder 1"
-    },
-    {
-        "ind": 226,
-        "name": "Seafoam Islands 5 Boulder 2"
-    },
-    {
-        "ind": 227,
-        "name": "Articuno"
-    }
+  {
+    "name": "Prof. Oak",
+    "ind": 0,
+    "map": "Pallet Town",
+    "sprite": 0,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Lying Old Man",
+    "ind": 1,
+    "map": "Viridian City",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Standing Old Man",
+    "ind": 2,
+    "map": "Viridian City",
+    "sprite": 6,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Museum Guy",
+    "ind": 3,
+    "map": "Pewter City",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Gym Guy",
+    "ind": 4,
+    "map": "Pewter City",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rival",
+    "ind": 5,
+    "map": "Cerulean City",
+    "sprite": 0,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Rocket",
+    "ind": 6,
+    "map": "Cerulean City",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Guard 1",
+    "ind": 7,
+    "map": "Cerulean City",
+    "sprite": 5,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Cave Guy",
+    "ind": 8,
+    "map": "Cerulean City",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Guard 2",
+    "ind": 9,
+    "map": "Cerulean City",
+    "sprite": 10,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 10,
+    "map": "Saffron City",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 11,
+    "map": "Saffron City",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 12,
+    "map": "Saffron City",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "4",
+    "ind": 13,
+    "map": "Saffron City",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "5",
+    "ind": 14,
+    "map": "Saffron City",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "6",
+    "ind": 15,
+    "map": "Saffron City",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "7",
+    "ind": 16,
+    "map": "Saffron City",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "8",
+    "ind": 17,
+    "map": "Saffron City",
+    "sprite": 7,
+    "defVal": "Hide"
+  },
+  {
+    "name": "9",
+    "ind": 18,
+    "map": "Saffron City",
+    "sprite": 8,
+    "defVal": "Hide"
+  },
+  {
+    "name": "A",
+    "ind": 19,
+    "map": "Saffron City",
+    "sprite": 9,
+    "defVal": "Hide"
+  },
+  {
+    "name": "B",
+    "ind": 20,
+    "map": "Saffron City",
+    "sprite": 10,
+    "defVal": "Hide"
+  },
+  {
+    "name": "C",
+    "ind": 21,
+    "map": "Saffron City",
+    "sprite": 11,
+    "defVal": "Hide"
+  },
+  {
+    "name": "D",
+    "ind": 22,
+    "map": "Saffron City",
+    "sprite": 12,
+    "defVal": "Hide"
+  },
+  {
+    "name": "E",
+    "ind": 23,
+    "map": "Saffron City",
+    "sprite": 13,
+    "defVal": "Show"
+  },
+  {
+    "name": "F",
+    "ind": 24,
+    "map": "Saffron City",
+    "sprite": 14,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Route 2 Item 1",
+    "ind": 25,
+    "map": "Route 2",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 26,
+    "map": "Route 2",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 27,
+    "map": "Route 4",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 28,
+    "map": "Route 9",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Snorlax",
+    "ind": 29,
+    "map": "Route 12",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 30,
+    "map": "Route 12",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 31,
+    "map": "Route 12",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 32,
+    "map": "Route 15",
+    "sprite": 10,
+    "defVal": "Show"
+  },
+  {
+    "name": "Snorlax",
+    "ind": 33,
+    "map": "Route 16",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rival 1",
+    "ind": 34,
+    "map": "Route 22",
+    "sprite": 0,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Rival 2",
+    "ind": 35,
+    "map": "Route 22",
+    "sprite": 1,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Nugget Bridge Guy",
+    "ind": 36,
+    "map": "Route 24",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 37,
+    "map": "Route 24",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 38,
+    "map": "Route 25",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Daisy Sitting",
+    "ind": 39,
+    "map": "Blues House",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Daisy Walking",
+    "ind": 40,
+    "map": "Blues House",
+    "sprite": 1,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Town Map",
+    "ind": 41,
+    "map": "Blues House",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rival",
+    "ind": 42,
+    "map": "Oaks Lab",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Pokeball 1",
+    "ind": 43,
+    "map": "Oaks Lab",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Pokeball 2",
+    "ind": 44,
+    "map": "Oaks Lab",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Pokeball 3",
+    "ind": 45,
+    "map": "Oaks Lab",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Prof. Oak 1",
+    "ind": 46,
+    "map": "Oaks Lab",
+    "sprite": 4,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Pokedex 1",
+    "ind": 47,
+    "map": "Oaks Lab",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Pokedex 2",
+    "ind": 48,
+    "map": "Oaks Lab",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Prof. Oak 2",
+    "ind": 49,
+    "map": "Oaks Lab",
+    "sprite": 7,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Giovanni",
+    "ind": 50,
+    "map": "Viridian Gym",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 51,
+    "map": "Viridian Gym",
+    "sprite": 10,
+    "defVal": "Show"
+  },
+  {
+    "name": "Old Amber",
+    "ind": 52,
+    "map": "Museum 1F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 53,
+    "map": "Cerulean Cave 1F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 54,
+    "map": "Cerulean Cave 1F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 55,
+    "map": "Cerulean Cave 1F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rival",
+    "ind": 56,
+    "map": "Pokemon Tower 2F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 57,
+    "map": "Pokemon Tower 3F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 58,
+    "map": "Pokemon Tower 4F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 59,
+    "map": "Pokemon Tower 4F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 60,
+    "map": "Pokemon Tower 4F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 61,
+    "map": "Pokemon Tower 5F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 62,
+    "map": "Pokemon Tower 6F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 63,
+    "map": "Pokemon Tower 6F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rocket 1",
+    "ind": 64,
+    "map": "Pokemon Tower 7F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rocket 2",
+    "ind": 65,
+    "map": "Pokemon Tower 7F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rocket 3",
+    "ind": 66,
+    "map": "Pokemon Tower 7F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Mr Fuji",
+    "ind": 67,
+    "map": "Pokemon Tower 7F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Mr Fuji",
+    "ind": 68,
+    "map": "Mr Fujis House",
+    "sprite": 4,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Eevee Gift",
+    "ind": 69,
+    "map": "Celadon Mansion Roof House",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rocket",
+    "ind": 70,
+    "map": "Game Corner",
+    "sprite": 10,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 71,
+    "map": "Wardens House",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 72,
+    "map": "Pokemon Mansion 1F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 73,
+    "map": "Pokemon Mansion 1F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Gift 1",
+    "ind": 74,
+    "map": "Fighting Dojo",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Gift 2",
+    "ind": 75,
+    "map": "Fighting Dojo",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Receptionist",
+    "ind": 76,
+    "map": "Silph Co 1F",
+    "sprite": 0,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Voltorb 1",
+    "ind": 77,
+    "map": "Power Plant",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Voltorb 2",
+    "ind": 78,
+    "map": "Power Plant",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Voltorb 3",
+    "ind": 79,
+    "map": "Power Plant",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Electrode 1",
+    "ind": 80,
+    "map": "Power Plant",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Voltorb 4",
+    "ind": 81,
+    "map": "Power Plant",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Voltorb 5",
+    "ind": 82,
+    "map": "Power Plant",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Electrode 2",
+    "ind": 83,
+    "map": "Power Plant",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Voltorb 6",
+    "ind": 84,
+    "map": "Power Plant",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "Zapdos",
+    "ind": 85,
+    "map": "Power Plant",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 86,
+    "map": "Power Plant",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 87,
+    "map": "Power Plant",
+    "sprite": 10,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 88,
+    "map": "Power Plant",
+    "sprite": 11,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 4",
+    "ind": 89,
+    "map": "Power Plant",
+    "sprite": 12,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 5",
+    "ind": 90,
+    "map": "Power Plant",
+    "sprite": 13,
+    "defVal": "Show"
+  },
+  {
+    "name": "Moltres",
+    "ind": 91,
+    "map": "Victory Road 2F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 92,
+    "map": "Victory Road 2F",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 93,
+    "map": "Victory Road 2F",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 94,
+    "map": "Victory Road 2F",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 4",
+    "ind": 95,
+    "map": "Victory Road 2F",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Boulder",
+    "ind": 96,
+    "map": "Victory Road 2F",
+    "sprite": 12,
+    "defVal": "Show"
+  },
+  {
+    "name": "Bill as Pokemon",
+    "ind": 97,
+    "map": "Bills House",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Bill 1",
+    "ind": 98,
+    "map": "Bills House",
+    "sprite": 1,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Bill 2",
+    "ind": 99,
+    "map": "Bills House",
+    "sprite": 2,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Item 1",
+    "ind": 100,
+    "map": "Viridian Forest",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 101,
+    "map": "Viridian Forest",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 102,
+    "map": "Viridian Forest",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 103,
+    "map": "Mt Moon 1F",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 104,
+    "map": "Mt Moon 1F",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 105,
+    "map": "Mt Moon 1F",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 4",
+    "ind": 106,
+    "map": "Mt Moon 1F",
+    "sprite": 10,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 5",
+    "ind": 107,
+    "map": "Mt Moon 1F",
+    "sprite": 11,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 6",
+    "ind": 108,
+    "map": "Mt Moon 1F",
+    "sprite": 12,
+    "defVal": "Show"
+  },
+  {
+    "name": "Fossil 1",
+    "ind": 109,
+    "map": "Mt Moon B2F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Fossil 2",
+    "ind": 110,
+    "map": "Mt Moon B2F",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 111,
+    "map": "Mt Moon B2F",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 112,
+    "map": "Mt Moon B2F",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rival",
+    "ind": 113,
+    "map": "SS Anne 2F",
+    "sprite": 1,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Rooms Item",
+    "ind": 114,
+    "map": "SS Anne 1F Rooms",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rooms Item 1",
+    "ind": 115,
+    "map": "SS Anne 2F Rooms",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rooms Item 2",
+    "ind": 116,
+    "map": "SS Anne 2F Rooms",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rooms Item 1",
+    "ind": 117,
+    "map": "SS Anne B1F Rooms",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rooms Item 2",
+    "ind": 118,
+    "map": "SS Anne B1F Rooms",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rooms Item 3",
+    "ind": 119,
+    "map": "SS Anne B1F Rooms",
+    "sprite": 10,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 120,
+    "map": "Victory Road 3F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 121,
+    "map": "Victory Road 3F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Boulder",
+    "ind": 122,
+    "map": "Victory Road 3F",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 123,
+    "map": "Rocket Hideout B1F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 124,
+    "map": "Rocket Hideout B1F",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 125,
+    "map": "Rocket Hideout B2F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 126,
+    "map": "Rocket Hideout B2F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 127,
+    "map": "Rocket Hideout B2F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 4",
+    "ind": 128,
+    "map": "Rocket Hideout B2F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 129,
+    "map": "Rocket Hideout B3F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 130,
+    "map": "Rocket Hideout B3F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Giovanni",
+    "ind": 131,
+    "map": "Rocket Hideout B4F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 132,
+    "map": "Rocket Hideout B4F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 133,
+    "map": "Rocket Hideout B4F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 134,
+    "map": "Rocket Hideout B4F",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 4",
+    "ind": 135,
+    "map": "Rocket Hideout B4F",
+    "sprite": 7,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Item 5",
+    "ind": 136,
+    "map": "Rocket Hideout B4F",
+    "sprite": 8,
+    "defVal": "Hide"
+  },
+  {
+    "name": "1",
+    "ind": 137,
+    "map": "Silph Co 2F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 138,
+    "map": "Silph Co 2F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 139,
+    "map": "Silph Co 2F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "4",
+    "ind": 140,
+    "map": "Silph Co 2F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "5",
+    "ind": 141,
+    "map": "Silph Co 2F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 142,
+    "map": "Silph Co 3F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 143,
+    "map": "Silph Co 3F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 144,
+    "map": "Silph Co 3F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 145,
+    "map": "Silph Co 4F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 146,
+    "map": "Silph Co 4F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 147,
+    "map": "Silph Co 4F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 148,
+    "map": "Silph Co 4F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 149,
+    "map": "Silph Co 4F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 150,
+    "map": "Silph Co 4F",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 151,
+    "map": "Silph Co 5F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 152,
+    "map": "Silph Co 5F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 153,
+    "map": "Silph Co 5F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "4",
+    "ind": 154,
+    "map": "Silph Co 5F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 155,
+    "map": "Silph Co 5F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 156,
+    "map": "Silph Co 5F",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 157,
+    "map": "Silph Co 5F",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 158,
+    "map": "Silph Co 6F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 159,
+    "map": "Silph Co 6F",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 160,
+    "map": "Silph Co 6F",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 161,
+    "map": "Silph Co 6F",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 162,
+    "map": "Silph Co 6F",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 163,
+    "map": "Silph Co 7F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 164,
+    "map": "Silph Co 7F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 165,
+    "map": "Silph Co 7F",
+    "sprite": 6,
+    "defVal": "Show"
+  },
+  {
+    "name": "4",
+    "ind": 166,
+    "map": "Silph Co 7F",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "Rival",
+    "ind": 167,
+    "map": "Silph Co 7F",
+    "sprite": 8,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 168,
+    "map": "Silph Co 7F",
+    "sprite": 9,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 169,
+    "map": "Silph Co 7F",
+    "sprite": 10,
+    "defVal": "Show"
+  },
+  {
+    "name": "8",
+    "ind": 170,
+    "map": "Silph Co 7F",
+    "sprite": 11,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 171,
+    "map": "Silph Co 8F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 172,
+    "map": "Silph Co 8F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 173,
+    "map": "Silph Co 8F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 174,
+    "map": "Silph Co 9F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 175,
+    "map": "Silph Co 9F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 176,
+    "map": "Silph Co 9F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 177,
+    "map": "Silph Co 10F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 178,
+    "map": "Silph Co 10F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 179,
+    "map": "Silph Co 10F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 180,
+    "map": "Silph Co 10F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 181,
+    "map": "Silph Co 10F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 182,
+    "map": "Silph Co 10F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 183,
+    "map": "Silph Co 11F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "2",
+    "ind": 184,
+    "map": "Silph Co 11F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "3",
+    "ind": 185,
+    "map": "Silph Co 11F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "1",
+    "ind": 186,
+    "map": "Unused Map F4",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 187,
+    "map": "Pokemon Mansion 2F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 188,
+    "map": "Pokemon Mansion 3F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 189,
+    "map": "Pokemon Mansion 3F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 190,
+    "map": "Pokemon Mansion B1F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 191,
+    "map": "Pokemon Mansion B1F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 192,
+    "map": "Pokemon Mansion B1F",
+    "sprite": 4,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 4",
+    "ind": 193,
+    "map": "Pokemon Mansion B1F",
+    "sprite": 5,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 5",
+    "ind": 194,
+    "map": "Pokemon Mansion B1F",
+    "sprite": 7,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 195,
+    "map": "Safari Zone East",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 196,
+    "map": "Safari Zone East",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 197,
+    "map": "Safari Zone East",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 4",
+    "ind": 198,
+    "map": "Safari Zone East",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 199,
+    "map": "Safari Zone North",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 200,
+    "map": "Safari Zone North",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 201,
+    "map": "Safari Zone West",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 202,
+    "map": "Safari Zone West",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 203,
+    "map": "Safari Zone West",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 4",
+    "ind": 204,
+    "map": "Safari Zone West",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item",
+    "ind": 205,
+    "map": "Safari Zone Center",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 206,
+    "map": "Cerulean Cave 2F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 207,
+    "map": "Cerulean Cave 2F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 3",
+    "ind": 208,
+    "map": "Cerulean Cave 2F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Mewtwo",
+    "ind": 209,
+    "map": "Cerulean Cave B1F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 210,
+    "map": "Cerulean Cave B1F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 211,
+    "map": "Cerulean Cave B1F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 1",
+    "ind": 212,
+    "map": "Victory Road 1F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Item 2",
+    "ind": 213,
+    "map": "Victory Road 1F",
+    "sprite": 3,
+    "defVal": "Show"
+  },
+  {
+    "name": "Champions Room Oak",
+    "ind": 214,
+    "map": "Champions Room",
+    "sprite": 1,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Boulder 1",
+    "ind": 215,
+    "map": "Seafoam Islands 1F",
+    "sprite": 0,
+    "defVal": "Show"
+  },
+  {
+    "name": "Boulder 2",
+    "ind": 216,
+    "map": "Seafoam Islands 1F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Boulder 1",
+    "ind": 217,
+    "map": "Seafoam Islands B1F",
+    "sprite": 0,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Boulder 2",
+    "ind": 218,
+    "map": "Seafoam Islands B1F",
+    "sprite": 1,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Boulder 1",
+    "ind": 219,
+    "map": "Seafoam Islands B2F",
+    "sprite": 0,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Boulder 2",
+    "ind": 220,
+    "map": "Seafoam Islands B2F",
+    "sprite": 1,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Boulder 1",
+    "ind": 221,
+    "map": "Seafoam Islands B3F",
+    "sprite": 1,
+    "defVal": "Show"
+  },
+  {
+    "name": "Boulder 2",
+    "ind": 222,
+    "map": "Seafoam Islands B3F",
+    "sprite": 2,
+    "defVal": "Show"
+  },
+  {
+    "name": "Boulder 3",
+    "ind": 223,
+    "map": "Seafoam Islands B3F",
+    "sprite": 4,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Boulder 4",
+    "ind": 224,
+    "map": "Seafoam Islands B3F",
+    "sprite": 5,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Boulder 1",
+    "ind": 225,
+    "map": "Seafoam Islands B4F",
+    "sprite": 0,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Boulder 2",
+    "ind": 226,
+    "map": "Seafoam Islands B4F",
+    "sprite": 1,
+    "defVal": "Hide"
+  },
+  {
+    "name": "Articuno",
+    "ind": 227,
+    "map": "Seafoam Islands B4F",
+    "sprite": 2,
+    "defVal": "Show"
+  }
 ]

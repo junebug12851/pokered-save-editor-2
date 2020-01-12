@@ -17,8 +17,13 @@
 #include <QVector>
 #include <QJsonArray>
 
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 #include "./missables.h"
 #include "./gamedata.h"
+#include "./maps.h"
 
 void MissablesDB::load()
 {
@@ -34,6 +39,9 @@ void MissablesDB::load()
     // Set simple properties
     entry->name = missableEntry["name"].toString();
     entry->ind = missableEntry["ind"].toDouble();
+    entry->map = missableEntry["map"].toString();
+    entry->sprite = missableEntry["sprite"].toDouble();
+    entry->defShow = missableEntry["defVal"].toBool(false);
 
     // Add to array
     store.append(entry);
@@ -47,8 +55,45 @@ void MissablesDB::index()
   for(auto entry : store)
   {
     // Index name and index
-    ind.insert(entry->name, entry);
+    // Name is actually map + name, the name is the local name to the map
+    // and is often duplicated across maps
+    ind.insert(entry->map + " " + entry->name, entry);
     ind.insert(QString::number(entry->ind), entry);
+  }
+}
+
+void MissablesDB::deepLink()
+{
+  for(auto entry : store)
+  {
+    entry->toMap = MapsDB::ind.value(entry->map, nullptr);
+
+    // Deep link map sprite only if toMap is valid and sprite is a valid range
+    if(entry->toMap != nullptr && entry->sprite < entry->toMap->sprites.size())
+    {
+      entry->toMapSprite = entry->toMap->sprites.at(entry->sprite);
+    }
+
+#ifdef QT_DEBUG
+    if(entry->toMap == nullptr)
+      qCritical() << "Missables: " << entry->name << ", could not be deep linked to map" << entry->map;
+
+    if(entry->toMapSprite == nullptr &&
+
+       // Don't warn about these errors as they're not my errors, they're
+       // gen 1 errors
+
+       // This is a valid map that refers to an extra sprite not on the map
+       (entry->map == "Silph Co 7F" &&
+       entry->sprite != 11) &&
+
+       // This is an invalid map with no sprites
+       (entry->map == "Unused Map F4" &&
+       entry->sprite != 1)
+
+       )
+      qCritical() << "Missables: " << entry->name << ", could not be deep linked to map " << entry->map << " sprite #" << entry->sprite;
+#endif
   }
 }
 

@@ -18,8 +18,59 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/sprites.h"
+#include "../../../db/maps.h"
+#include "../../../db/trainers.h"
+#include "../../../db/items.h"
+#include "../../../db/pokemon.h"
 
 #include <QRandomGenerator>
+
+var8 SpriteFacing::random()
+{
+  auto rnd = QRandomGenerator::global();
+  return rnd->bounded(0, 3+1) * 4;
+}
+
+var8 SpriteMobility::random()
+{
+  // Lets not randomize in the possibility of no-collision
+  auto rnd = QRandomGenerator::global();
+  return rnd->bounded(0xFE, 0xFF+1);
+}
+
+var8 SpriteMovement::random()
+{
+  auto rnd = QRandomGenerator::global();
+
+  // Lets not randomize such restricted movment
+  var8 ret = rnd->bounded(0, 10+1);
+
+  // Ensure we don't get a specialized movement value
+  // I have no idea where these sprites are or on what map so I'd hate to intend
+  // for them to move but don't or very far, randomization is about being a
+  // bit fun
+  while(ret == UpDown ||
+        ret == LeftRight ||
+        ret == Down ||
+        ret == Up ||
+        ret == Left ||
+        ret == Right)
+    ret = rnd->bounded(0, 10+1);
+
+  return ret;
+}
+
+var8 SpriteGrass::random()
+{
+  auto rnd = QRandomGenerator::global();
+
+  var8 ret[2] = {
+    0x00,
+    0x80
+  };
+
+  return ret[rnd->bounded(0, 2)];
+}
 
 SpriteData::SpriteData(bool blankNPC, SaveFile* saveFile, var8 index)
 {
@@ -42,6 +93,61 @@ void SpriteData::load(bool blankNPC, SaveFile* saveFile, var8 index)
   if (index > 0) {
     loadSpriteDataNPC(saveFile, index);
     checkMissable(saveFile, index);
+  }
+}
+
+void SpriteData::load(MapDBEntrySprite* spriteData)
+{
+  reset(true);
+
+  pictureID = spriteData->toSprite->ind;
+  mapX = spriteData->adjustedX();
+  mapY = spriteData->adjustedY();
+
+  if(spriteData->move == "Stay")
+    movementByte = SpriteMobility::NotMoving;
+  else
+    movementByte = SpriteMobility::Moving;
+
+  textID = spriteData->text;
+
+  if(spriteData->face == "Down")
+    faceDir = SpriteFacing::Down;
+  else if(spriteData->face == "Left")
+    faceDir = SpriteFacing::Left;
+  else if(spriteData->face == "None")
+    faceDir = SpriteFacing::None;
+  else if(spriteData->face == "Right")
+    faceDir = SpriteFacing::Right;
+  else if(spriteData->face == "Up")
+    faceDir = SpriteFacing::Up;
+
+  // Set Missable
+  if(spriteData->missable)
+    missableIndex = *spriteData->missable;
+
+  if(spriteData->range)
+    rangeDirByte = *spriteData->range;
+
+  // Because this is a string, it got incorrectly placed into "face"
+  // It's actually a number representing 0x10 and probably needs to go into
+  // range instead
+  else if(spriteData->face == "Boulder Movement Byte 2")
+    rangeDirByte = SpriteMovement::StrengthMovement;
+
+  if(spriteData->type() == SpriteType::TRAINER) {
+    auto spriteDataTrainer = (MapDBEntrySpriteTrainer*)spriteData;
+    trainerClassOrItemID = spriteDataTrainer->toTrainer->ind;
+    trainerSetID = spriteDataTrainer->team;
+  }
+  else if(spriteData->type() == SpriteType::ITEM) {
+    auto spriteDataItem = (MapDBEntrySpriteItem*)spriteData;
+    trainerClassOrItemID = spriteDataItem->toItem->ind;
+  }
+  else if(spriteData->type() == SpriteType::POKEMON) {
+    auto spriteDataMon = (MapDBEntrySpritePokemon*)spriteData;
+    trainerClassOrItemID = spriteDataMon->toPokemon->ind;
+    trainerSetID = spriteDataMon->level;
   }
 }
 
@@ -207,22 +313,22 @@ void SpriteData::saveMissables(SaveFile* saveFile, QVector<SpriteData*> spriteDa
 void SpriteData::reset(bool blankNPC)
 {
   pictureID = 0;
-  movementStatus = 0;
-  imageIndex = 0;
+  movementStatus = (var8)SpriteMovementStatus::Ready;
+  imageIndex = 0xFF;
+  faceDir = (var8)SpriteFacing::Down;
+  yDisp = 0x8;
+  xDisp = 0x8;
+  mapY = 4;
+  mapX = 4;
+  movementByte = (var8)SpriteMobility::NotMoving;
+  grassPriority = (var8)SpriteGrass::NotInGrass;
   yStepVector = 0;
   yPixels = 0;
   xStepVector = 0;
   xPixels = 0;
   intraAnimationFrameCounter = 0;
   animFrameCounter = 0;
-  faceDir = 0;
-  walkAnimationCounter = 0;
-  yDisp = 0;
-  xDisp = 0;
-  mapY = 0;
-  mapX = 0;
-  movementByte = 0;
-  grassPriority = 0;
+  walkAnimationCounter = 0x10; // Could also be zero, not important
   movementDelay = 0;
   imageBaseOffset = 0;
 

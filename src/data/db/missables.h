@@ -21,6 +21,9 @@
 
 #include "../../common/types.h"
 
+struct MapDBEntry;
+struct MapDBEntrySprite;
+
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
@@ -34,8 +37,26 @@
 // Brock.
 
 struct MissableDBEntry {
+  // Missable Name & Index
   QString name;
   var8 ind;
+
+  // Map & Sprite on map Missable References
+  QString map;
+  var8 sprite;
+
+  // Is this missable shown or hidden by default
+  bool defShow = false;
+
+  // Deep link to associated map and sprite on map
+  // There are 2 exceptions to this
+  // * There's one missable that references a sprite on an incomplete map with
+  //   no sprites
+  // * There's one missable that references an extra sprite which isn't there
+  //
+  // In both cases one or both of these will be nullptr
+  MapDBEntry* toMap = nullptr;
+  MapDBEntrySprite* toMapSprite = nullptr;
 };
 
 class MissablesDB
@@ -43,6 +64,7 @@ class MissablesDB
 public:
   static void load();
   static void index();
+  static void deepLink();
 
   static QVector<MissableDBEntry*> store;
   static QHash<QString, MissableDBEntry*> ind;

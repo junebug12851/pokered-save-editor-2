@@ -152,6 +152,7 @@ void deepLink()
   HiddenItemsDB::deepLink();
   ItemsDB::deepLink();
   MapsDB::deepLink();
+  MissablesDB::deepLink();
   MovesDB::deepLink();
   PokemonDB::deepLink(); // <-- Definately the most expensive operation!!!
   SpriteSetDB::deepLink();
