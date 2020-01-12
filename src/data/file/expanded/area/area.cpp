@@ -23,6 +23,7 @@
 #include "./areapokemon.h"
 #include "./areapuzzle.h"
 #include "./areasign.h"
+#include "./areasprites.h"
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 
@@ -39,6 +40,7 @@ Area::Area(SaveFile* saveFile)
   pokemon = new AreaPokemon;
   puzzle = new AreaPuzzle;
   signs = new AreaSign;
+  sprites = new AreaSprites;
 
   load(saveFile);
 }
@@ -54,6 +56,7 @@ Area::~Area()
   delete pokemon;
   delete puzzle;
   delete signs;
+  delete sprites;
 }
 
 void Area::load(SaveFile* saveFile)
@@ -70,6 +73,7 @@ void Area::load(SaveFile* saveFile)
   pokemon->load(saveFile);
   puzzle->load(saveFile);
   signs->load(saveFile);
+  sprites->load(saveFile);
 }
 
 void Area::save(SaveFile* saveFile)
@@ -83,6 +87,7 @@ void Area::save(SaveFile* saveFile)
   pokemon->save(saveFile);
   puzzle->save(saveFile);
   signs->save(saveFile);
+  sprites->save(saveFile);
 }
 
 void Area::reset()
@@ -96,6 +101,7 @@ void Area::reset()
   pokemon->reset();
   puzzle->reset();
   signs->reset();
+  sprites->reset();
 }
 
 void Area::randomize()
@@ -141,4 +147,5 @@ void Area::randomize()
   this->map->randomize(map, x, y);
   player->randomize(x, y);
   signs->randomize(map);
+  sprites->randomize(map->sprites);
 }

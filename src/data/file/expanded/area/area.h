@@ -29,6 +29,7 @@ class AreaPlayer;
 class AreaPokemon;
 class AreaPuzzle;
 class AreaSign;
+class AreaSprites;
 
 class Area : public ExpandedInterface
 {
@@ -50,6 +51,7 @@ public:
   AreaPokemon* pokemon = nullptr;
   AreaPuzzle* puzzle = nullptr;
   AreaSign* signs = nullptr;
+  AreaSprites* sprites = nullptr;
 };
 
 #endif // AREA_H

@@ -25,6 +25,12 @@
 
 #include <QRandomGenerator>
 
+struct TmpSpritePos
+{
+  var8 x;
+  var8 y;
+};
+
 var8 SpriteFacing::random()
 {
   auto rnd = QRandomGenerator::global();
@@ -75,6 +81,11 @@ var8 SpriteGrass::random()
 SpriteData::SpriteData(bool blankNPC, SaveFile* saveFile, var8 index)
 {
   load(blankNPC, saveFile, index);
+}
+
+SpriteData::SpriteData(MapDBEntrySprite* entry)
+{
+  load(entry);
 }
 
 SpriteData::~SpriteData() {}
@@ -348,9 +359,97 @@ void SpriteData::reset(bool blankNPC)
   missableIndex.reset();
 }
 
-// Can't really make this possible, needs more information before can randomize
-// @TODO make this happen
-void SpriteData::randomize() {}
+/*
+ * After soem expirementation with my old editor I learned that:
+ * X & Y pixel values don't do anything, only the X & Y map does
+ * The X & Y map values are exactly +4 off each of normal positioning
+ * Literally all the animation details can be zero and work just fine
+ *     Frame Index seems to do better at 255
+ *     X&Y Track have to be at 8 each
+ * Outdoor sprites will be glitchy, I've played around with pre-loaded sprites
+ * and many other variables but can't really find a solution as to why.
+ *
+ * Outside of that it doesn't seem to matter at all what most all of these
+ * values are set to. There is no getting around the outdoor sprites being
+ * glitchy though. I've tried everything I can think of, even changing tileset
+ * type to "indoor" but it's not the end of the world.
+ */
+QVector<SpriteData*> SpriteData::randomizeAll(QVector<MapDBEntrySprite*> mapSprites)
+{
+  // Prepare return value
+  QVector<SpriteData*> sprites;
+
+  // Add blank player sprite, very important for it to be at pos 0
+  // Player sprite actually has a lot of data but none of it's used at all by
+  // the game
+  sprites.append(new SpriteData(false));
+
+  // Make first pass and get all sprite positions on map
+  QVector<TmpSpritePos*> tmpPos;
+
+  for(auto entry : mapSprites) {
+    auto tmp = new TmpSpritePos;
+    tmp->x = entry->adjustedX();
+    tmp->y = entry->adjustedY();
+    tmpPos.append(tmp);
+  }
+
+  // Now create new sprites from data and randomize their contents
+  for(auto entry : mapSprites) {
+
+    // New Sprite from map data
+    auto tmp = new SpriteData(entry);
+    sprites.append(tmp);
+
+    // If boulders are changed at all then the player cannot progress, leave
+    // boulders the way they are. Do this only for randomizeAll, if the player
+    // wants to randomize a specific one, even if it breaks gameplay, let them
+    // do it
+    if(entry->sprite == "Boulder")
+      continue;
+
+    // Randomize newly created sprite
+    tmp->randomize(&tmpPos);
+  }
+
+  return sprites;
+}
+
+void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
+{
+  // Parepare random method alias
+  auto rnd = QRandomGenerator::global();
+
+  // Randomize coordinates if coord list is provided
+  if(tmpPos != nullptr) {
+
+    // Pull random coordinates
+    var8 rndPos = rnd->bounded(0, tmpPos->size());
+    auto rndCoords = tmpPos->at(rndPos);
+
+    // Change coords
+    mapX = rndCoords->x;
+    mapY = rndCoords->y;
+
+    // Remove chosen random coordinate
+    delete rndCoords;
+    tmpPos->removeAt(rndPos);
+  }
+
+  // Get a random sprite picture and change it
+  auto picture =
+      SpritesDB::store.at(rnd->bounded(0, SpritesDB::store.size()));
+
+  pictureID = picture->ind;
+
+  // Get a random facing direction and movement
+  faceDir = SpriteFacing::random();
+  movementByte = SpriteMobility::random();
+
+  // Without absurdly more complex coding there's no way to tell if the sprite
+  // is in grass or not so we just give it a random value.
+  grassPriority = SpriteGrass::random();
+}
 
 SpriteDBEntry* SpriteData::toSprite()
 {
@@ -361,3 +460,4 @@ SpriteDBEntry* SpriteData::toSprite()
 void SpriteData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
 void SpriteData::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
 void SpriteData::reset() {}
+void SpriteData::randomize() {}

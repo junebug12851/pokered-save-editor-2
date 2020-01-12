@@ -22,7 +22,7 @@
 
 class SaveFile;
 class SpriteData;
-class MapDBEntry;
+class MapDBEntrySprite;
 
 class AreaSprites : ExpandedInterface
 {
@@ -33,7 +33,7 @@ public:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
-  void randomize(MapDBEntry* mapData);
+  void randomize(QVector<MapDBEntrySprite*> spriteData);
 
   QVector<SpriteData*> sprites;
 

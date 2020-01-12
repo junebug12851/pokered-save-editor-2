@@ -23,6 +23,8 @@
 class SaveFile;
 struct SpriteDBEntry;
 struct MapDBEntrySprite;
+struct MapDBEntry;
+struct TmpSpritePos;
 
 enum class SpriteMovementStatus : var8
 {
@@ -92,9 +94,13 @@ struct SpriteGrass
 class SpriteData : ExpandedInterface
 {
 public:
+  // Create a blank sprite or load one from a map
   SpriteData(bool blankNPC = false,
              SaveFile* saveFile = nullptr,
              var8 index = 0);
+
+  // Create a sprite from map data
+  SpriteData(MapDBEntrySprite* entry);
 
   virtual ~SpriteData();
 
@@ -128,7 +134,8 @@ public:
                        QVector<SpriteData*> spriteData);
 
   void reset(bool blankNPC = false);
-  void randomize();
+  static QVector<SpriteData*> randomizeAll(QVector<MapDBEntrySprite*> mapSprites);
+  void randomize(QVector<TmpSpritePos*>* tmpPos = nullptr);
 
   SpriteDBEntry* toSprite();
 
@@ -242,6 +249,7 @@ private:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
+  void randomize();
 };
 
 #endif // SPRITEDATA_H
