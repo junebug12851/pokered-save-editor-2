@@ -23,9 +23,9 @@
 
 enum class TilesetType
 {
-  INDOOR,
-  OUTDOOR,
-  CAVE
+  INDOOR = 0,
+  CAVE,
+  OUTDOOR
 };
 
 // How many talk tiles are there in each entry
@@ -39,6 +39,7 @@ struct TilesetDBEntry {
 
   TilesetType typeAsEnum();
 
+  var8 ind;
   var8 talk[3];
   var8 grass;
 

@@ -47,6 +47,7 @@ void TilesetDB::load()
     entry->nameAlias = tilesetEntry["nameAlias"].toString();
     entry->typeAlias = tilesetEntry["typeAlias"].toString();
 
+    entry->ind = tilesetEntry["ind"].toDouble();
     entry->grass = tilesetEntry["grass"].toDouble();
 
     entry->bank = tilesetEntry["bank"].toDouble();
