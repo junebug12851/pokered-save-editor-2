@@ -50,6 +50,8 @@ void AreaMap::load(SaveFile* saveFile)
   height2x2 = toolset->getByte(0x27D0);
   width2x2 = toolset->getByte(0x27D1);
 
+  outOfBoundsBlock = toolset->getByte(0x2659);
+
   currentTileBlockMapViewPointer = toolset->getWord(0x260B, true);
 
   // East Connection
@@ -115,6 +117,8 @@ void AreaMap::save(SaveFile* saveFile)
   toolset->setByte(0x29EB, cardKeyDoorY);
   toolset->setByte(0x29EC, cardKeyDoorX);
   toolset->setByte(0x2CE5, curMapScript);
+
+  toolset->setByte(0x2659, outOfBoundsBlock);
 }
 
 void AreaMap::reset()
@@ -149,6 +153,8 @@ void AreaMap::reset()
   blackoutDest = 0;
   curMapNextFrame = 0;
 
+  outOfBoundsBlock = 0;
+
   for(auto conn : connections)
     delete conn;
 
@@ -176,6 +182,9 @@ void AreaMap::randomize(MapDBEntry* map, var8 x, var8 y)
   // Map extra pointers
   currentTileBlockMapViewPointer = coordsToPtr(x, y, *map->width);
   mapViewVRAMPointer = VramBGPtr;
+
+  if(map->border)
+    outOfBoundsBlock = *map->border;
 
   // Leave these off for now
 

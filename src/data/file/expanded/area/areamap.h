@@ -51,6 +51,11 @@ public:
   // Current Map ID
   var8 curMap;
 
+  // This is not a tile, it's a block. A block consists of multiple tiles
+  // Maps are made from pre-created blocks, not individual tiles
+  // Every map has a block that's invalid, this is that block
+  var8 outOfBoundsBlock;
+
   // Map Size including it's double size
   var8 height;
   var8 width;
