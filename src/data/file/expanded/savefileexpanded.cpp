@@ -18,11 +18,13 @@
 
 #include "./player/player.h"
 #include "./area/area.h"
+#include "./world/world.h"
 
 SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
 {
   player = new Player;
   area = new Area;
+  world = new World;
 
   load(saveFile);
 }
@@ -31,31 +33,36 @@ SaveFileExpanded::~SaveFileExpanded()
 {
   delete player;
   delete area;
+  delete world;
 }
 
 void SaveFileExpanded::load(SaveFile* saveFile)
 {
   if(saveFile == nullptr)
-    reset();
+    return reset();
 
   player->load(saveFile);
   area->load(saveFile);
+  world->load(saveFile);
 }
 
 void SaveFileExpanded::save(SaveFile* saveFile)
 {
   player->save(saveFile);
   area->save(saveFile);
+  world->save(saveFile);
 }
 
 void SaveFileExpanded::reset()
 {
   player->reset();
   area->reset();
+  world->reset();
 }
 
 void SaveFileExpanded::randomize()
 {
   player->randomize();
   area->randomize();
+  world->randomize();
 }
