@@ -13,26 +13,37 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef WORLDCOMPLETED_H
+#define WORLDCOMPLETED_H
 
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
 
-class WorldCompleted;
-
-class World : public ExpandedInterface
+class WorldCompleted : ExpandedInterface
 {
 public:
-  World(SaveFile* saveFile = nullptr);
-  virtual ~World();
+  WorldCompleted(SaveFile* saveFile = nullptr);
+  virtual ~WorldCompleted();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  WorldCompleted* completed = nullptr;
+  // Rods
+  bool obtainedOldRod;
+  bool obtainedGoodRod;
+  bool obtainedSuperRod;
+
+  // Pokemon
+  bool obtainedLapras;
+  bool obtainedStarterPokemon;
+  bool everHealedPokemon;
+
+  // Other
+  bool satisfiedSaffronGuards;
+  bool defeatedLorelei;
 };
 
-#endif // WORLD_H
+#endif // WORLDCOMPLETED_H

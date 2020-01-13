@@ -13,36 +13,41 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "world.h"
+#include "./world.h"
+#include "./worldcompleted.h"
 #include "../../savefile.h"
 
 World::World(SaveFile* saveFile)
 {
+  completed = new WorldCompleted;
+
   load(saveFile);
 }
 
 World::~World()
 {
-
+  delete completed;
 }
 
 void World::load(SaveFile* saveFile)
 {
   if(saveFile == nullptr)
     return reset();
+
+  completed->load(saveFile);
 }
 
 void World::save(SaveFile* saveFile)
 {
-
+  completed->save(saveFile);
 }
 
 void World::reset()
 {
-
+  completed->reset();
 }
 
 void World::randomize()
 {
-
+  completed->randomize();
 }

@@ -71,6 +71,7 @@ HEADERS += \
   src/data/file/expanded/player/playerpokemon.h \
   src/data/file/expanded/savefileexpanded.h \
   src/data/file/expanded/world/world.h \
+  src/data/file/expanded/world/worldcompleted.h \
   src/data/file/filemanagement.h \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
@@ -112,6 +113,7 @@ SOURCES += \
   src/data/file/expanded/player/playerpokemon.cpp \
   src/data/file/expanded/savefileexpanded.cpp \
   src/data/file/expanded/world/world.cpp \
+  src/data/file/expanded/world/worldcompleted.cpp \
   src/data/file/filemanagement.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \
