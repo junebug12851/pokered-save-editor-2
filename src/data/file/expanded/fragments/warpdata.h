@@ -16,18 +16,22 @@
 #ifndef WARPDATA_H
 #define WARPDATA_H
 
+#include <QVector>
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 class MapDBEntry;
+class MapDBEntryWarpOut;
 
 class WarpData : ExpandedInterface
 {
 public:
   WarpData(SaveFile* saveFile = nullptr, var8 index = 0);
+  WarpData(MapDBEntryWarpOut* warp);
   virtual ~WarpData();
 
   void load(SaveFile* saveFile = nullptr, var8 index = 0);
+  void load(MapDBEntryWarpOut* warp);
   void save(SaveFile* saveFile, var8 index);
   void reset();
   void randomize();

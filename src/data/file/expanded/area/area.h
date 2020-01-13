@@ -31,6 +31,7 @@ class AreaPuzzle;
 class AreaSign;
 class AreaSprites;
 class AreaTileset;
+class AreaWarps;
 
 class Area : public ExpandedInterface
 {
@@ -54,6 +55,7 @@ public:
   AreaSign* signs = nullptr;
   AreaSprites* sprites = nullptr;
   AreaTileset* tileset = nullptr;
+  AreaWarps* warps = nullptr;
 };
 
 #endif // AREA_H

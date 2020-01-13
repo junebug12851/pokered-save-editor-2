@@ -368,6 +368,9 @@ public:
   static void index();
   static void deepLink();
 
+  static MapDBEntry* randomGoodMap();
+  static MapDBEntry* randomGoodNotOutdoorMap();
+
   static QVector<MapDBEntry*> store;
   static QHash<QString, MapDBEntry*> ind;
 };

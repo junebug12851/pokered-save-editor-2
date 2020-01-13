@@ -26,6 +26,11 @@ WarpData::WarpData(SaveFile* saveFile, var8 index)
   load(saveFile, index);
 }
 
+WarpData::WarpData(MapDBEntryWarpOut* warp)
+{
+  load(warp);
+}
+
 WarpData::~WarpData() {}
 
 void WarpData::load(SaveFile* saveFile, var8 index)
@@ -41,6 +46,14 @@ void WarpData::load(SaveFile* saveFile, var8 index)
   destMap = it->getByte();
 
   delete it;
+}
+
+void WarpData::load(MapDBEntryWarpOut* warp)
+{
+  x = warp->x;
+  y = warp->y;
+  destMap = warp->toMap->ind;
+  destWarp = warp->warp;
 }
 
 void WarpData::save(SaveFile* saveFile, var8 index)
@@ -63,9 +76,20 @@ void WarpData::reset()
   destMap = 0;
 }
 
-// Can't really do this without more information
-// TODO Add more information
-void WarpData::randomize() {}
+void WarpData::randomize() {
+
+  auto rnd = QRandomGenerator::global();
+
+  // Grab a non-outdoor map
+  // The game can get kind of weird and crash if you warp to an outdoor map
+  // directly instead of "returning" outdoors using "Last Map"
+  auto map = MapsDB::randomGoodNotOutdoorMap();
+  auto mapWarps = map->warpIn;
+
+  // Switch out warp to a random non-outdoor warp
+  destMap = map->ind;
+  destWarp = rnd->bounded(0, mapWarps.size());
+}
 
 MapDBEntry* WarpData::toMap()
 {
@@ -75,3 +99,4 @@ MapDBEntry* WarpData::toMap()
 // Unused
 void WarpData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
 void WarpData::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
+

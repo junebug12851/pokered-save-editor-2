@@ -25,6 +25,7 @@
 #include "./areasign.h"
 #include "./areasprites.h"
 #include "./areatileset.h"
+#include "./areawarps.h"
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 
@@ -43,6 +44,7 @@ Area::Area(SaveFile* saveFile)
   signs = new AreaSign;
   sprites = new AreaSprites;
   tileset = new AreaTileset;
+  warps = new AreaWarps;
 
   load(saveFile);
 }
@@ -60,6 +62,7 @@ Area::~Area()
   delete signs;
   delete sprites;
   delete tileset;
+  delete warps;
 }
 
 void Area::load(SaveFile* saveFile)
@@ -78,6 +81,7 @@ void Area::load(SaveFile* saveFile)
   signs->load(saveFile);
   sprites->load(saveFile);
   tileset->load(saveFile);
+  warps->load(saveFile);
 }
 
 void Area::save(SaveFile* saveFile)
@@ -93,6 +97,7 @@ void Area::save(SaveFile* saveFile)
   signs->save(saveFile);
   sprites->save(saveFile);
   tileset->save(saveFile);
+  warps->save(saveFile);
 }
 
 void Area::reset()
@@ -108,6 +113,7 @@ void Area::reset()
   signs->reset();
   sprites->reset();
   tileset->reset();
+  warps->reset();
 }
 
 void Area::randomize()
@@ -117,22 +123,8 @@ void Area::randomize()
   // Pre-pick a random area here and pass to other area classes who need it
   auto rnd = QRandomGenerator::global();
 
-  // Grab a random map
-  auto map = MapsDB::store.at(rnd->bounded(0, MapsDB::store.size()));
-
-  // Keep going through maps until we find:
-  // * A normal non-special or glitch map
-  // * A map that's complete (Not an incomplete map)
-  // * Has at least one warp in and out (You have to be able to enter and leave)
-  //     > We'll use this to position the player correctly on the map
-  // * Is not the strange elevator that has an invalid warp
-  while(map->glitch ||
-        map->special ||
-        map->incomplete != "" ||
-        map->warpIn.size() == 0 ||
-        map->warpOut.size() == 0 ||
-        map->name == "Silph Co Elevator")
-    map = MapsDB::store.at(rnd->bounded(0, MapsDB::store.size() - 1));
+  // Grab a random "good" map, a good map to throw the player on
+  auto map = MapsDB::randomGoodMap();
 
   // Now pick out a random warp in and use those coordinates for the player
   // coordinates
@@ -155,4 +147,5 @@ void Area::randomize()
   signs->randomize(map);
   sprites->randomize(map->sprites);
   tileset->loadFromData(map, true);
+  warps->randomize(map);
 }
