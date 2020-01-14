@@ -13,28 +13,26 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef WORLDEVENTS_H
+#define WORLDEVENTS_H
 
+#include <QVector>
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
 
-class WorldCompleted;
-class WorldEvents;
-
-class World : public ExpandedInterface
+class WorldEvents : ExpandedInterface
 {
 public:
-  World(SaveFile* saveFile = nullptr);
-  virtual ~World();
+  WorldEvents(SaveFile* saveFile = nullptr);
+  virtual ~WorldEvents();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  WorldCompleted* completed = nullptr;
-  WorldEvents* events = nullptr;
+  QVector<bool> completedEvents;
 };
 
-#endif // WORLD_H
+#endif // WORLDEVENTS_H

@@ -13,48 +13,43 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "./world.h"
-#include "./worldcompleted.h"
+
+#include <QRandomGenerator>
+
 #include "./worldevents.h"
 #include "../../savefile.h"
+#include "../../savefiletoolset.h"
+#include "../../savefileiterator.h"
 
-World::World(SaveFile* saveFile)
+WorldEvents::WorldEvents(SaveFile* saveFile)
 {
-  completed = new WorldCompleted;
-  events = new WorldEvents;
-
   load(saveFile);
 }
 
-World::~World()
-{
-  delete completed;
-  delete events;
-}
+WorldEvents::~WorldEvents() {}
 
-void World::load(SaveFile* saveFile)
+void WorldEvents::load(SaveFile* saveFile)
 {
   if(saveFile == nullptr)
     return reset();
 
-  completed->load(saveFile);
-  events->load(saveFile);
+  auto toolset = saveFile->toolset;
+
+  completedEvents = toolset->getBitField(0x29F3, 320);
 }
 
-void World::save(SaveFile* saveFile)
+void WorldEvents::save(SaveFile* saveFile)
 {
-  completed->save(saveFile);
-  events->save(saveFile);
+  auto toolset = saveFile->toolset;
+  toolset->setBitField(0x29F3, 320, completedEvents);
 }
 
-void World::reset()
+void WorldEvents::reset()
 {
-  completed->reset();
-  events->reset();
+  completedEvents.clear();
 }
 
-void World::randomize()
-{
-  completed->randomize();
-  events->randomize();
-}
+// Competed world events is too complicated to make happen randomly right now
+// Furthermore we do want the player to still play the game fully when
+// randomized
+void WorldEvents::randomize() {}
