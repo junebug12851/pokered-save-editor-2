@@ -8,6 +8,11 @@ Pokemon Red & Blue Save Editor 2 ~ Qt C++ Reboot
 Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature version 
 until this leaves WIP status.
 
+## New page for reboot goals / features
+
+Please see NewGoals.md for the breakdown of new goals and features specific to 
+this reboot.
+
 ## Why the Reboot
 
 I didn't realize how really messy and overly complicated building a desktop app in pure Javascript
