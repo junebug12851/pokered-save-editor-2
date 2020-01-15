@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
+#include "../../../db/mapsearch.h"
 
 #include <QRandomGenerator>
 
@@ -83,7 +84,7 @@ void WarpData::randomize() {
   // Grab a non-outdoor map
   // The game can get kind of weird and crash if you warp to an outdoor map
   // directly instead of "returning" outdoors using "Last Map"
-  auto map = MapsDB::randomGoodNotOutdoorMap();
+  auto map = MapsDB::search()->isGood()->notType("Outdoor")->pickRandom();
   auto mapWarps = map->warpIn;
 
   // Switch out warp to a random non-outdoor warp
@@ -99,4 +100,3 @@ MapDBEntry* WarpData::toMap()
 // Unused
 void WarpData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
 void WarpData::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-

@@ -21,6 +21,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
+#include "../../../db/mapsearch.h"
 
 WorldGeneral::WorldGeneral(SaveFile* saveFile)
 {
@@ -78,8 +79,8 @@ void WorldGeneral::randomize()
 {
   auto rnd = QRandomGenerator::global();
 
-  lastBlackoutMap = MapsDB::randomGoodMap()->ind;
-  lastMap = MapsDB::randomGoodMap()->ind;
+  lastBlackoutMap = MapsDB::search()->isGood()->isCity()->pickRandom()->ind;
+  lastMap = MapsDB::search()->isGood()->pickRandom()->ind;
   options.textSlowness = rnd->bounded(0, 15+1);
   options.battleStyleSet = rnd->bounded(0, 10+1) > 7;
   options.battleAnimOff = rnd->bounded(0, 10+1) > 7;

@@ -27,6 +27,7 @@ HEADERS += \
   src/data/db/hiddenItems.h \
   src/data/db/items.h \
   src/data/db/maps.h \
+  src/data/db/mapsearch.h \
   src/data/db/missables.h \
   src/data/db/moves.h \
   src/data/db/music.h \
@@ -83,6 +84,7 @@ HEADERS += \
 SOURCES += \
   src/boot.cpp \
   src/data/db/fontsearch.cpp \
+  src/data/db/mapsearch.cpp \
   src/data/db/music.cpp \
   src/data/db/namesPokemon.cpp \
   src/data/db/spriteSet.cpp \

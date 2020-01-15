@@ -25,6 +25,8 @@
 
 #include "../../common/types.h"
 
+class MapSearch;
+
 struct MusicDBEntry;
 struct TilesetDBEntry;
 struct SpriteDBEntry;
@@ -368,8 +370,7 @@ public:
   static void index();
   static void deepLink();
 
-  static MapDBEntry* randomGoodMap();
-  static MapDBEntry* randomGoodNotOutdoorMap();
+  static MapSearch* search();
 
   static QVector<MapDBEntry*> store;
   static QHash<QString, MapDBEntry*> ind;

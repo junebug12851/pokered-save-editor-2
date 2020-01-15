@@ -28,6 +28,7 @@
 #include "./areawarps.h"
 #include "../../savefile.h"
 #include "../../../db/maps.h"
+#include "../../../db/mapsearch.h"
 
 #include <QRandomGenerator>
 
@@ -124,7 +125,7 @@ void Area::randomize()
   auto rnd = QRandomGenerator::global();
 
   // Grab a random "good" map, a good map to throw the player on
-  auto map = MapsDB::randomGoodMap();
+  auto map = MapsDB::search()->isGood()->pickRandom();
 
   // Now pick out a random warp in and use those coordinates for the player
   // coordinates

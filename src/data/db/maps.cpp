@@ -33,6 +33,7 @@
 #include "./trainers.h"
 #include "./spriteSet.h"
 #include "./missables.h"
+#include "./mapsearch.h"
 
 MapDBEntryConnect::MapDBEntryConnect() {}
 MapDBEntryConnect::MapDBEntryConnect(
@@ -687,40 +688,9 @@ void MapsDB::deepLink()
   }
 }
 
-MapDBEntry* MapsDB::randomGoodMap()
+MapSearch* MapsDB::search()
 {
-  auto rnd = QRandomGenerator::global();
-
-  // Grab a random map
-  auto map = MapsDB::store.at(rnd->bounded(0, MapsDB::store.size()));
-
-  // Keep going through maps until we find:
-  // * A normal non-special or glitch map
-  // * A map that's complete (Not an incomplete map)
-  // * Has at least one warp in and out (You have to be able to enter and leave)
-  // * Is not the strange elevator that has an invalid warp
-  while(map->glitch ||
-        map->special ||
-        map->incomplete != "" ||
-        map->warpIn.size() == 0 ||
-        map->warpOut.size() == 0 ||
-        map->name == "Silph Co Elevator")
-    map = MapsDB::store.at(rnd->bounded(0, MapsDB::store.size() - 1));
-
-  return map;
-}
-
-MapDBEntry* MapsDB::randomGoodNotOutdoorMap()
-{
-  // Grab a random good map
-  auto ret = MapsDB::randomGoodMap();
-
-  // Ensure it's not an outdoor map
-  while(ret->toTileset->typeAsEnum() == TilesetType::OUTDOOR)
-    ret = MapsDB::randomGoodMap();
-
-  // Return said map
-  return ret;
+  return new MapSearch();
 }
 
 QVector<MapDBEntry*> MapsDB::store = QVector<MapDBEntry*>();

@@ -22,6 +22,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
+#include "../../../db/mapsearch.h"
 
 AreaWarps::AreaWarps(SaveFile* saveFile)
 {
@@ -111,13 +112,13 @@ void AreaWarps::randomize(MapDBEntry* map)
   auto rnd = QRandomGenerator::global();
 
   // Pick random map that you came from
-  auto dungeonWarp = MapsDB::randomGoodMap();
+  auto dungeonWarp = MapsDB::search()->isGood()->isType("Cave")->pickRandom();
 
   // Assign index
   dungeonWarpDestMap = dungeonWarp->ind;
 
   // Pick another random map for special warp destination
-  specialWarpDestMap = MapsDB::randomGoodMap()->ind;
+  specialWarpDestMap = MapsDB::search()->isGood()->pickRandom()->ind;
 
   // Make up some random warps on said dungeon warp
   whichDungeonWarp = rnd->bounded(0, dungeonWarp->warpOut.size());
