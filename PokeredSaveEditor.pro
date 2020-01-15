@@ -73,6 +73,7 @@ HEADERS += \
   src/data/file/expanded/world/world.h \
   src/data/file/expanded/world/worldcompleted.h \
   src/data/file/expanded/world/worldevents.h \
+  src/data/file/expanded/world/worldgeneral.h \
   src/data/file/filemanagement.h \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
@@ -116,6 +117,7 @@ SOURCES += \
   src/data/file/expanded/world/world.cpp \
   src/data/file/expanded/world/worldcompleted.cpp \
   src/data/file/expanded/world/worldevents.cpp \
+  src/data/file/expanded/world/worldgeneral.cpp \
   src/data/file/filemanagement.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \

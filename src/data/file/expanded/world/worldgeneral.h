@@ -13,30 +13,40 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef WORLDGENERAL_H
+#define WORLDGENERAL_H
 
+#include <QVector>
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
 
-class WorldCompleted;
-class WorldEvents;
-class WorldGeneral;
+struct Options {
+  var8 textSlowness;
+  bool battleStyleSet;
+  bool battleAnimOff;
+};
 
-class World : public ExpandedInterface
+struct LetterDelay {
+  bool normalDelay;
+  bool dontDelay;
+};
+
+class WorldGeneral : ExpandedInterface
 {
 public:
-  World(SaveFile* saveFile = nullptr);
-  virtual ~World();
+  WorldGeneral(SaveFile* saveFile = nullptr);
+  virtual ~WorldGeneral();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  WorldCompleted* completed = nullptr;
-  WorldEvents* events = nullptr;
-  WorldGeneral* general = nullptr;
+  var8 lastBlackoutMap;
+  var8 lastMap;
+  Options options;
+  LetterDelay letterDelay;
 };
 
-#endif // WORLD_H
+#endif // WORLDGENERAL_H

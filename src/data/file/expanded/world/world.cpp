@@ -16,12 +16,14 @@
 #include "./world.h"
 #include "./worldcompleted.h"
 #include "./worldevents.h"
+#include "./worldgeneral.h"
 #include "../../savefile.h"
 
 World::World(SaveFile* saveFile)
 {
   completed = new WorldCompleted;
   events = new WorldEvents;
+  general = new WorldGeneral;
 
   load(saveFile);
 }
@@ -30,6 +32,7 @@ World::~World()
 {
   delete completed;
   delete events;
+  delete general;
 }
 
 void World::load(SaveFile* saveFile)
@@ -39,22 +42,26 @@ void World::load(SaveFile* saveFile)
 
   completed->load(saveFile);
   events->load(saveFile);
+  general->load(saveFile);
 }
 
 void World::save(SaveFile* saveFile)
 {
   completed->save(saveFile);
   events->save(saveFile);
+  general->save(saveFile);
 }
 
 void World::reset()
 {
   completed->reset();
   events->reset();
+  general->reset();
 }
 
 void World::randomize()
 {
   completed->randomize();
   events->randomize();
+  general->randomize();
 }
