@@ -13,38 +13,29 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef WORLDSCRIPTS_H
+#define WORLDSCRIPTS_H
 
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
 
-class WorldCompleted;
-class WorldEvents;
-class WorldGeneral;
-class WorldHidden;
-class WorldMissables;
-class WorldOther;
-class WorldScripts;
+// Can't have a total byte count given scripts are a bit more complicated to
+// read
+constexpr var8 scriptCount = 97;
 
-class World : public ExpandedInterface
+class WorldScripts : ExpandedInterface
 {
 public:
-  World(SaveFile* saveFile = nullptr);
-  virtual ~World();
+  WorldScripts(SaveFile* saveFile = nullptr);
+  virtual ~WorldScripts();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  WorldCompleted* completed = nullptr;
-  WorldEvents* events = nullptr;
-  WorldGeneral* general = nullptr;
-  WorldHidden* hidden = nullptr;
-  WorldMissables* missables = nullptr;
-  WorldOther* other = nullptr;
-  WorldScripts* scripts = nullptr;
+  var16 curScripts[scriptCount];
 };
 
-#endif // WORLD_H
+#endif // WORLDSCRIPTS_H

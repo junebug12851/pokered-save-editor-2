@@ -17,8 +17,13 @@
 #include <QVector>
 #include <QJsonArray>
 
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 #include "./scripts.h"
 #include "./gamedata.h"
+#include "./maps.h"
 
 void ScriptsDB::load()
 {
@@ -39,6 +44,14 @@ void ScriptsDB::load()
     if(scriptEntry["skip"].isDouble())
       entry->skip = scriptEntry["skip"].toDouble();
 
+    // If maps is given use that, otherwise use name
+    if(scriptEntry["maps"].isArray()) {
+      for(auto mapEntry : scriptEntry["maps"].toArray())
+        entry->maps.append(mapEntry.toString());
+    }
+    else
+      entry->maps.append(entry->name);
+
     // Add to array
     store.append(entry);
   }
@@ -53,6 +66,21 @@ void ScriptsDB::index()
     // Index name and index
     ind.insert(entry->name, entry);
     ind.insert(QString::number(entry->ind), entry);
+  }
+}
+
+void ScriptsDB::deepLink()
+{
+  for(auto entry : store) {
+    for(auto mapEntry : entry->maps) {
+      auto map = MapsDB::ind.value(mapEntry, nullptr);
+      entry->toMaps.append(map);
+
+#ifdef QT_DEBUG
+    if(map == nullptr)
+      qCritical() << "Script Entry: " << entry->name << ", could not be deep linked to map " << mapEntry;
+#endif
+    }
   }
 }
 

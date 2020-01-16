@@ -77,6 +77,8 @@ HEADERS += \
   src/data/file/expanded/world/worldgeneral.h \
   src/data/file/expanded/world/worldhidden.h \
   src/data/file/expanded/world/worldmissables.h \
+  src/data/file/expanded/world/worldother.h \
+  src/data/file/expanded/world/worldscripts.h \
   src/data/file/filemanagement.h \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
@@ -124,6 +126,8 @@ SOURCES += \
   src/data/file/expanded/world/worldgeneral.cpp \
   src/data/file/expanded/world/worldhidden.cpp \
   src/data/file/expanded/world/worldmissables.cpp \
+  src/data/file/expanded/world/worldother.cpp \
+  src/data/file/expanded/world/worldscripts.cpp \
   src/data/file/filemanagement.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \

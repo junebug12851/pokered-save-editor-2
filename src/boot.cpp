@@ -156,6 +156,7 @@ void deepLink()
   MissablesDB::deepLink();
   MovesDB::deepLink();
   PokemonDB::deepLink(); // <-- Definately the most expensive operation!!!
+  ScriptsDB::deepLink();
   SpriteSetDB::deepLink();
   StarterPokemonDB::deepLink();
   TmHmsDB::deepLink();

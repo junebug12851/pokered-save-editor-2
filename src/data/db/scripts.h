@@ -16,6 +16,7 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
+#include <QVector>
 #include <QString>
 #include <QHash>
 
@@ -29,12 +30,19 @@
 // Where are you in each map of the world? This tracks your map progression
 // for each individual map
 
+struct MapDBEntry;
+
 struct ScriptDBEntry {
   QString name;
   var8 ind;
   var8 size;
 
+  QVector<QString> maps; // Map aliases to deep link to
   std::optional<var8> skip;
+
+  // There is always one map except in one case which results in 2 maps
+  // Decided to just put a vector here
+  QVector<MapDBEntry*> toMaps;
 };
 
 class ScriptsDB
@@ -42,6 +50,7 @@ class ScriptsDB
 public:
   static void load();
   static void index();
+  static void deepLink();
 
   static QVector<ScriptDBEntry*> store;
   static QHash<QString, ScriptDBEntry*> ind;

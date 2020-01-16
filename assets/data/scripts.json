@@ -468,7 +468,11 @@
     "name": "Power Plant / Route 7 Gate",
     "size": 1,
     "skip": 1,
-    "ind": 91
+    "ind": 91,
+    "maps": [
+      "Power Plant",
+      "Route 7 Gate"
+    ]
   },
   {
     "name": "S.S. Anne 2",
