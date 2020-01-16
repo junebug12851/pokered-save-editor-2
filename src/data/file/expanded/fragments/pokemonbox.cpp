@@ -301,7 +301,7 @@ SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
   var16 nicknameOffset = (index * 0xB) + nicknameStartOffset;
 
   // Add species to species list if exists
-  if(speciesStartOffset < 0) {
+  if(speciesStartOffset > 0) {
     var16 speciesOffset = index + speciesStartOffset;
     toolset->setByte(speciesOffset, species);
   }

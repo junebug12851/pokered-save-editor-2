@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,32 +13,30 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SAVEFILEEXPANDED_H
-#define SAVEFILEEXPANDED_H
+#ifndef DAYCARE_H
+#define DAYCARE_H
 
 #include "./expandedinterface.h"
-
+#include "../../../common/types.h"
 class SaveFile;
-class Player;
-class Area;
-class World;
-class Daycare;
+class PokemonBox;
+class PlayerBasics;
 
-class SaveFileExpanded: public ExpandedInterface
+class Daycare : ExpandedInterface
 {
 public:
-  SaveFileExpanded(SaveFile* saveFile = nullptr);
-  virtual ~SaveFileExpanded();
+  Daycare(SaveFile* saveFile = nullptr);
+  virtual ~Daycare();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
-  void randomize();
+  void randomize(PlayerBasics* basics);
 
-  Player* player = nullptr;
-  Area* area = nullptr;
-  World* world = nullptr;
-  Daycare* daycare = nullptr;
+  PokemonBox* pokemon = nullptr;
+
+private:
+  void randomize();
 };
 
-#endif // SAVEFILEEXPANDED_H
+#endif // DAYCARE_H

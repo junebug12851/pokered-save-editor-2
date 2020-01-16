@@ -19,12 +19,14 @@
 #include "./player/player.h"
 #include "./area/area.h"
 #include "./world/world.h"
+#include "./daycare.h"
 
 SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
 {
   player = new Player;
   area = new Area;
   world = new World;
+  daycare = new Daycare;
 
   load(saveFile);
 }
@@ -34,6 +36,7 @@ SaveFileExpanded::~SaveFileExpanded()
   delete player;
   delete area;
   delete world;
+  delete daycare;
 }
 
 void SaveFileExpanded::load(SaveFile* saveFile)
@@ -44,6 +47,7 @@ void SaveFileExpanded::load(SaveFile* saveFile)
   player->load(saveFile);
   area->load(saveFile);
   world->load(saveFile);
+  daycare->load(saveFile);
 }
 
 void SaveFileExpanded::save(SaveFile* saveFile)
@@ -51,6 +55,7 @@ void SaveFileExpanded::save(SaveFile* saveFile)
   player->save(saveFile);
   area->save(saveFile);
   world->save(saveFile);
+  daycare->save(saveFile);
 }
 
 void SaveFileExpanded::reset()
@@ -58,6 +63,7 @@ void SaveFileExpanded::reset()
   player->reset();
   area->reset();
   world->reset();
+  daycare->reset();
 }
 
 void SaveFileExpanded::randomize()
@@ -65,4 +71,5 @@ void SaveFileExpanded::randomize()
   player->randomize();
   area->randomize();
   world->randomize();
+  daycare->randomize(player->basics);
 }
