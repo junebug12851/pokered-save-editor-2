@@ -13,32 +13,34 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef WORLDHIDDEN_H
+#define WORLDHIDDEN_H
 
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
 
-class WorldCompleted;
-class WorldEvents;
-class WorldGeneral;
-class WorldHidden;
+// There's actually significantly more hidden item bits, 112 in total forming
+// 14 bytes. But given they are all unused it makes no sense to load entire
+// unused bytes
+constexpr var8 hiddenItemCount = 54;
+constexpr var8 hiddenCoinCount = 12;
+constexpr var8 hiddenItemByteCount = 7; // 2 Bits of 56 unused
+constexpr var8 hiddenCoinByteCount = 2; // 4 Bits of 16 unused
 
-class World : public ExpandedInterface
+class WorldHidden : ExpandedInterface
 {
 public:
-  World(SaveFile* saveFile = nullptr);
-  virtual ~World();
+  WorldHidden(SaveFile* saveFile = nullptr);
+  virtual ~WorldHidden();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  WorldCompleted* completed = nullptr;
-  WorldEvents* events = nullptr;
-  WorldGeneral* general = nullptr;
-  WorldHidden* hidden = nullptr;
+  bool hiddenItems[hiddenItemCount];
+  bool hiddenCoins[hiddenCoinCount];
 };
 
-#endif // WORLD_H
+#endif // WORLDHIDDEN_H

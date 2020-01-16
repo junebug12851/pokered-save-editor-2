@@ -17,6 +17,7 @@
 #include "./worldcompleted.h"
 #include "./worldevents.h"
 #include "./worldgeneral.h"
+#include "./worldhidden.h"
 #include "../../savefile.h"
 
 World::World(SaveFile* saveFile)
@@ -24,6 +25,7 @@ World::World(SaveFile* saveFile)
   completed = new WorldCompleted;
   events = new WorldEvents;
   general = new WorldGeneral;
+  hidden = new WorldHidden;
 
   load(saveFile);
 }
@@ -33,6 +35,7 @@ World::~World()
   delete completed;
   delete events;
   delete general;
+  delete hidden;
 }
 
 void World::load(SaveFile* saveFile)
@@ -43,6 +46,7 @@ void World::load(SaveFile* saveFile)
   completed->load(saveFile);
   events->load(saveFile);
   general->load(saveFile);
+  hidden->load(saveFile);
 }
 
 void World::save(SaveFile* saveFile)
@@ -50,6 +54,7 @@ void World::save(SaveFile* saveFile)
   completed->save(saveFile);
   events->save(saveFile);
   general->save(saveFile);
+  hidden->save(saveFile);
 }
 
 void World::reset()
@@ -57,6 +62,7 @@ void World::reset()
   completed->reset();
   events->reset();
   general->reset();
+  hidden->reset();
 }
 
 void World::randomize()
@@ -64,4 +70,5 @@ void World::randomize()
   completed->randomize();
   events->randomize();
   general->randomize();
+  hidden->randomize();
 }
