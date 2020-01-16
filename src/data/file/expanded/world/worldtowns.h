@@ -13,40 +13,28 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef WORLDTOWNS_H
+#define WORLDTOWNS_H
 
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
 
-class WorldCompleted;
-class WorldEvents;
-class WorldGeneral;
-class WorldHidden;
-class WorldMissables;
-class WorldOther;
-class WorldScripts;
-class WorldTowns;
+constexpr var8 townCount = 11;
+constexpr var8 townByteCount = 2; // 5 bits of 16 unused
 
-class World : public ExpandedInterface
+class WorldTowns : ExpandedInterface
 {
 public:
-  World(SaveFile* saveFile = nullptr);
-  virtual ~World();
+  WorldTowns(SaveFile* saveFile = nullptr);
+  virtual ~WorldTowns();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  WorldCompleted* completed = nullptr;
-  WorldEvents* events = nullptr;
-  WorldGeneral* general = nullptr;
-  WorldHidden* hidden = nullptr;
-  WorldMissables* missables = nullptr;
-  WorldOther* other = nullptr;
-  WorldScripts* scripts = nullptr;
-  WorldTowns* towns = nullptr;
+  bool visitedTowns[townCount];
 };
 
-#endif // WORLD_H
+#endif // WORLDTOWNS_H

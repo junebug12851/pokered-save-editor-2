@@ -21,6 +21,7 @@
 #include "./worldmissables.h"
 #include "./worldother.h"
 #include "./worldscripts.h"
+#include "./worldtowns.h"
 #include "../../savefile.h"
 
 World::World(SaveFile* saveFile)
@@ -32,6 +33,7 @@ World::World(SaveFile* saveFile)
   missables = new WorldMissables;
   other = new WorldOther;
   scripts = new WorldScripts;
+  towns = new WorldTowns;
 
   load(saveFile);
 }
@@ -45,6 +47,7 @@ World::~World()
   delete missables;
   delete other;
   delete scripts;
+  delete towns;
 }
 
 void World::load(SaveFile* saveFile)
@@ -59,6 +62,7 @@ void World::load(SaveFile* saveFile)
   missables->load(saveFile);
   other->load(saveFile);
   scripts->load(saveFile);
+  towns->load(saveFile);
 }
 
 void World::save(SaveFile* saveFile)
@@ -70,6 +74,7 @@ void World::save(SaveFile* saveFile)
   missables->save(saveFile);
   other->save(saveFile);
   scripts->save(saveFile);
+  towns->save(saveFile);
 }
 
 void World::reset()
@@ -81,6 +86,7 @@ void World::reset()
   missables->reset();
   other->reset();
   scripts->reset();
+  towns->reset();
 }
 
 void World::randomize()
@@ -92,4 +98,5 @@ void World::randomize()
   missables->randomize();
   other->randomize();
   scripts->randomize();
+  towns->randomize();
 }
