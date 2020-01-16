@@ -75,7 +75,8 @@ void EventsDB::deepLink()
         qCritical() << "Events: " << entry->name << ", could not be deep linked to map " << map ;
 #endif
 
-      tmp->toEvents.append(entry);
+      if(tmp != nullptr)
+        tmp->toEvents.append(entry);
     }
   }
 }
