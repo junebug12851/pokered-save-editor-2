@@ -61,8 +61,9 @@ void WorldMissables::reset()
 {
   // Missables can't be zeroed out whimsically, reset back to game start
   // defaults. Missables can crash the game if mis-handled
+  // 1 = Hide, 0 = Show, ensure it's marked one if it's hidden
   for(auto missable : MissablesDB::store)
-    missables[missable->ind] = missable->defShow;
+    missables[missable->ind] = !missable->defShow;
 }
 
 // Missables is not something you can blantly randomize, the game will likely
