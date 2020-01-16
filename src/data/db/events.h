@@ -16,10 +16,13 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include <QVector>
 #include <QString>
 #include <QHash>
 
 #include "../../common/types.h"
+
+struct MapDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -32,6 +35,9 @@ struct EventDBEntry {
   var16 ind; // Internal index
   var16 byte; // Byte in SAV file
   var8 bit; // Bit in byte
+  QVector<QString> maps; // Associated Maps
+
+  QVector<MapDBEntry*> toMaps; // To Associated Maps
 };
 
 class EventsDB
@@ -39,6 +45,7 @@ class EventsDB
 public:
   static void load();
   static void index();
+  static void deepLink();
 
   static QVector<EventDBEntry*> store;
   static QHash<QString, EventDBEntry*> ind;

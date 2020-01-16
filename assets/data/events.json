@@ -4,7 +4,6 @@
     "ind": 0,
     "byte": 10739,
     "bit": 0,
-    "map": "Oaks Lab",
     "maps": [
       "Oaks Lab",
       "Pallet Town"
@@ -15,7 +14,6 @@
     "ind": 3,
     "byte": 10739,
     "bit": 3,
-    "map": "Hall of Fame",
     "maps": [
       "Hall Of Fame"
     ]
@@ -25,7 +23,6 @@
     "ind": 6,
     "byte": 10739,
     "bit": 6,
-    "map": "Oaks Lab",
     "maps": [
       "Oaks Lab",
       "Pallet Town"
@@ -64,7 +61,6 @@
     "ind": 32,
     "byte": 10743,
     "bit": 0,
-    "map": "Oaks Lab",
     "maps": [
       "Oaks Lab"
     ]
@@ -74,7 +70,6 @@
     "ind": 33,
     "byte": 10743,
     "bit": 1,
-    "map": "Oaks Lab",
     "maps": [
       "Oaks Lab"
     ]
@@ -84,7 +79,6 @@
     "ind": 34,
     "byte": 10743,
     "bit": 2,
-    "map": "Oaks Lab",
     "maps": [
       "Oaks Lab"
     ]
@@ -94,7 +88,6 @@
     "ind": 35,
     "byte": 10743,
     "bit": 3,
-    "map": "Oaks Lab",
     "maps": [
       "Oaks Lab"
     ]
@@ -114,7 +107,6 @@
     "ind": 37,
     "byte": 10743,
     "bit": 5,
-    "map": "Oaks Lab",
     "maps": [
       "Blues House",
       "Oaks Lab",
@@ -164,7 +156,6 @@
     "ind": 56,
     "byte": 10746,
     "bit": 0,
-    "map": "Oaks Lab",
     "maps": [
       "Oaks Lab",
       "Viridian Mart"

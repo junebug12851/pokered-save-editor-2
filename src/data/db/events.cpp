@@ -16,18 +16,23 @@
 #include <QVector>
 #include <QJsonArray>
 
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 #include "./events.h"
 #include "./gamedata.h"
+#include "./maps.h"
 
 void EventsDB::load()
 {
-  // Grab Event Pokemon Data
+  // Grab Events
   auto eventData = GameData::json("events");
 
-  // Go through each event Pokemon
+  // Go through each event
   for(QJsonValue eventEntry : eventData->array())
   {
-    // Create a new event Pokemon entry
+    // Create a new event
     auto entry = new EventDBEntry();
 
     // Set simple properties
@@ -35,6 +40,9 @@ void EventsDB::load()
     entry->ind = eventEntry["ind"].toDouble();
     entry->byte = eventEntry["byte"].toDouble();
     entry->bit = eventEntry["bit"].toDouble();
+
+    for(auto eventMap : eventEntry["maps"].toArray())
+      entry->maps.append(eventMap.toString());
 
     // Add to array
     store.append(entry);
@@ -50,6 +58,25 @@ void EventsDB::index()
     // Index name and index
     ind.insert(entry->name, entry);
     ind.insert(QString::number(entry->ind), entry);
+  }
+}
+
+void EventsDB::deepLink()
+{
+  for(auto entry : store)
+  {
+    for(auto map : entry->maps)
+    {
+      auto tmp = MapsDB::ind.value(map, nullptr);
+      entry->toMaps.append(tmp);
+
+#ifdef QT_DEBUG
+      if(tmp == nullptr)
+        qCritical() << "Events: " << entry->name << ", could not be deep linked to map " << map ;
+#endif
+
+      tmp->toEvents.append(entry);
+    }
   }
 }
 

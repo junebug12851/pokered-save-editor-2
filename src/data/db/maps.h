@@ -35,6 +35,7 @@ struct PokemonDBEntry;
 struct TrainerDBEntry;
 struct SpriteSetDBEntry;
 struct MissableDBEntry;
+struct EventDBEntry;
 
 struct MapDBEntry;
 struct MapDBEntryWarpIn;
@@ -361,6 +362,7 @@ struct MapDBEntry {
   MusicDBEntry* toMusic = nullptr; // To Map Music
   TilesetDBEntry* toTileset = nullptr; // To Map Tileset
   MapDBEntry* toComplete = nullptr; // To Complete Version of Map
+  QVector<EventDBEntry*> toEvents; // To Associated Events
 };
 
 class MapsDB
