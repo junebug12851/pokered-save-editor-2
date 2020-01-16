@@ -5,13 +5,13 @@
     "ind": 0
   },
   {
-    "name": "Palette Town",
+    "name": "Pallet Town",
     "size": 1,
     "skip": 1,
     "ind": 1
   },
   {
-    "name": "Rivals House",
+    "name": "Blues House",
     "size": 1,
     "ind": 2
   },
@@ -53,7 +53,7 @@
     "ind": 9
   },
   {
-    "name": "Vermillion Gym",
+    "name": "Vermilion Gym",
     "size": 1,
     "ind": 10
   },
@@ -119,12 +119,12 @@
     "ind": 22
   },
   {
-    "name": "Players House 2",
+    "name": "Reds House 2F",
     "size": 1,
     "ind": 23
   },
   {
-    "name": "Viridian Market",
+    "name": "Viridian Mart",
     "size": 1,
     "ind": 24
   },
@@ -150,7 +150,7 @@
     "ind": 28
   },
   {
-    "name": "Museum 1",
+    "name": "Museum 1F",
     "size": 1,
     "ind": 29
   },
@@ -231,7 +231,7 @@
     "ind": 44
   },
   {
-    "name": "Vermillion City",
+    "name": "Vermilion City",
     "size": 1,
     "ind": 45
   },
@@ -336,67 +336,67 @@
     "ind": 65
   },
   {
-    "name": "Silph Co 2",
+    "name": "Silph Co 2F",
     "size": 1,
     "ind": 66
   },
   {
-    "name": "Silph Co 3",
+    "name": "Silph Co 3F",
     "size": 1,
     "ind": 67
   },
   {
-    "name": "Silph Co 4",
+    "name": "Silph Co 4F",
     "size": 1,
     "ind": 68
   },
   {
-    "name": "Silph Co 5",
+    "name": "Silph Co 5F",
     "size": 1,
     "ind": 69
   },
   {
-    "name": "Silph Co 6",
+    "name": "Silph Co 6F",
     "size": 1,
     "ind": 70
   },
   {
-    "name": "Silph Co 7",
+    "name": "Silph Co 7F",
     "size": 1,
     "ind": 71
   },
   {
-    "name": "Silph Co 8",
+    "name": "Silph Co 8F",
     "size": 1,
     "ind": 72
   },
   {
-    "name": "Silph Co 9",
+    "name": "Silph Co 9F",
     "size": 1,
     "ind": 73
   },
   {
-    "name": "Hof Room",
+    "name": "Hall of Fame",
     "size": 1,
     "ind": 74
   },
   {
-    "name": "Rival",
+    "name": "Champions Room",
     "size": 1,
     "ind": 75
   },
   {
-    "name": "Lorelei",
+    "name": "Loreleis Room",
     "size": 1,
     "ind": 76
   },
   {
-    "name": "Bruno",
+    "name": "Brunos Room",
     "size": 1,
     "ind": 77
   },
   {
-    "name": "Agatha",
+    "name": "Agathas Room",
     "size": 1,
     "ind": 78
   },
@@ -412,18 +412,18 @@
     "ind": 80
   },
   {
-    "name": "Lance",
+    "name": "Lances Room",
     "size": 1,
     "skip": 4,
     "ind": 81
   },
   {
-    "name": "Silph Co 10",
+    "name": "Silph Co 10F",
     "size": 1,
     "ind": 82
   },
   {
-    "name": "Silph Co 11",
+    "name": "Silph Co 11F",
     "size": 1,
     "skip": 1,
     "ind": 83
@@ -445,14 +445,18 @@
     "ind": 86
   },
   {
-    "name": "Celadon Game Corner",
+    "name": "Game Corner",
     "size": 1,
     "ind": 87
   },
   {
     "name": "Route 16 Gate",
     "size": 1,
-    "ind": 88
+    "ind": 88,
+    "maps": [
+      "Route 16 Gate 1F",
+      "Route 16 Gate 2F"
+    ]
   },
   {
     "name": "Bills House",
@@ -497,6 +501,10 @@
   {
     "name": "Route 18 Gate",
     "size": 1,
-    "ind": 96
+    "ind": 96,
+    "maps": [
+      "Route 18 Gate 1F",
+      "Route 18 Gate 2F"
+    ]
   }
 ]
