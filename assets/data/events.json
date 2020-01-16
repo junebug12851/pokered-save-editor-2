@@ -10,12 +10,12 @@
     ]
   },
   {
-    "name": "Hall Of Fame Dex Rating",
+    "name": "Hall of Fame Dex Rating",
     "ind": 3,
     "byte": 10739,
     "bit": 3,
     "maps": [
-      "Hall Of Fame"
+      "Hall of Fame"
     ]
   },
   {
@@ -2408,7 +2408,7 @@
     "byte": 10892,
     "bit": 6,
     "maps": [
-      "Route 16Fly House"
+      "Route 16 Fly House"
     ]
   },
   {
@@ -3197,7 +3197,7 @@
     ]
   },
   {
-    "name": "Got Ss Ticket",
+    "name": "Got SS Ticket",
     "ind": 1372,
     "byte": 10910,
     "bit": 4,
@@ -3390,21 +3390,21 @@
     ]
   },
   {
-    "name": "Beat Ss Anne 5 Trainer 0",
+    "name": "Beat SS Anne 5 Trainer 0",
     "ind": 1476,
     "byte": 10923,
     "bit": 4,
     "maps": [
-      "Ss Anne Bow"
+      "SS Anne Bow"
     ]
   },
   {
-    "name": "Beat Ss Anne 5 Trainer 1",
+    "name": "Beat SS Anne 5 Trainer 1",
     "ind": 1477,
     "byte": 10923,
     "bit": 5,
     "maps": [
-      "Ss Anne Bow"
+      "SS Anne Bow"
     ]
   },
   {
@@ -3413,7 +3413,7 @@
     "byte": 10927,
     "bit": 0,
     "maps": [
-      "Ss Anne Captains Room",
+      "SS Anne Captains Room",
       "Vermilion Dock"
     ]
   },
@@ -3423,11 +3423,11 @@
     "byte": 10927,
     "bit": 1,
     "maps": [
-      "Ss Anne Captains Room"
+      "SS Anne Captains Room"
     ]
   },
   {
-    "name": "Ss Anne Left",
+    "name": "SS Anne Left",
     "ind": 1506,
     "byte": 10927,
     "bit": 2,
@@ -3437,7 +3437,7 @@
     ]
   },
   {
-    "name": "Walked Past Guard After Ss Anne Left",
+    "name": "Walked Past Guard After SS Anne Left",
     "ind": 1507,
     "byte": 10927,
     "bit": 3,
@@ -3464,129 +3464,129 @@
     ]
   },
   {
-    "name": "Beat Ss Anne 8 Trainer 0",
+    "name": "Beat SS Anne 8 Trainer 0",
     "ind": 1521,
     "byte": 10929,
     "bit": 1,
     "maps": [
-      "Ss Anne 1F Rooms"
+      "SS Anne 1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 8 Trainer 1",
+    "name": "Beat SS Anne 8 Trainer 1",
     "ind": 1522,
     "byte": 10929,
     "bit": 2,
     "maps": [
-      "Ss Anne 1F Rooms"
+      "SS Anne 1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 8 Trainer 2",
+    "name": "Beat SS Anne 8 Trainer 2",
     "ind": 1523,
     "byte": 10929,
     "bit": 3,
     "maps": [
-      "Ss Anne 1F Rooms"
+      "SS Anne 1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 8 Trainer 3",
+    "name": "Beat SS Anne 8 Trainer 3",
     "ind": 1524,
     "byte": 10929,
     "bit": 4,
     "maps": [
-      "Ss Anne 1F Rooms"
+      "SS Anne 1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 9 Trainer 0",
+    "name": "Beat SS Anne 9 Trainer 0",
     "ind": 1537,
     "byte": 10931,
     "bit": 1,
     "maps": [
-      "Ss Anne 2F Rooms"
+      "SS Anne 2F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 9 Trainer 1",
+    "name": "Beat SS Anne 9 Trainer 1",
     "ind": 1538,
     "byte": 10931,
     "bit": 2,
     "maps": [
-      "Ss Anne 2F Rooms"
+      "SS Anne 2F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 9 Trainer 2",
+    "name": "Beat SS Anne 9 Trainer 2",
     "ind": 1539,
     "byte": 10931,
     "bit": 3,
     "maps": [
-      "Ss Anne 2F Rooms"
+      "SS Anne 2F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 9 Trainer 3",
+    "name": "Beat SS Anne 9 Trainer 3",
     "ind": 1540,
     "byte": 10931,
     "bit": 4,
     "maps": [
-      "Ss Anne 2F Rooms"
+      "SS Anne 2F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 10 Trainer 0",
+    "name": "Beat SS Anne 10 Trainer 0",
     "ind": 1553,
     "byte": 10933,
     "bit": 1,
     "maps": [
-      "Ss Anne B1F Rooms"
+      "SS Anne B1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 10 Trainer 1",
+    "name": "Beat SS Anne 10 Trainer 1",
     "ind": 1554,
     "byte": 10933,
     "bit": 2,
     "maps": [
-      "Ss Anne B1F Rooms"
+      "SS Anne B1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 10 Trainer 2",
+    "name": "Beat SS Anne 10 Trainer 2",
     "ind": 1555,
     "byte": 10933,
     "bit": 3,
     "maps": [
-      "Ss Anne B1F Rooms"
+      "SS Anne B1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 10 Trainer 3",
+    "name": "Beat SS Anne 10 Trainer 3",
     "ind": 1556,
     "byte": 10933,
     "bit": 4,
     "maps": [
-      "Ss Anne B1F Rooms"
+      "SS Anne B1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 10 Trainer 4",
+    "name": "Beat SS Anne 10 Trainer 4",
     "ind": 1557,
     "byte": 10933,
     "bit": 5,
     "maps": [
-      "Ss Anne B1F Rooms"
+      "SS Anne B1F Rooms"
     ]
   },
   {
-    "name": "Beat Ss Anne 10 Trainer 5",
+    "name": "Beat SS Anne 10 Trainer 5",
     "ind": 1558,
     "byte": 10933,
     "bit": 6,
     "maps": [
-      "Ss Anne B1F Rooms"
+      "SS Anne B1F Rooms"
     ]
   },
   {
@@ -4350,7 +4350,7 @@
     "byte": 11023,
     "bit": 0,
     "maps": [
-      "Hall Of Fame",
+      "Hall of Fame",
       "Indigo Plateau Lobby"
     ]
   },
@@ -4451,7 +4451,7 @@
     "byte": 11027,
     "bit": 7,
     "maps": [
-      "Hall Of Fame"
+      "Hall of Fame"
     ]
   },
   {

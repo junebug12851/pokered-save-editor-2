@@ -15,11 +15,13 @@
 */
 
 #include <QRandomGenerator>
+#include <string.h>
 
 #include "./worldevents.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+#include "../../../db/events.h"
 
 WorldEvents::WorldEvents(SaveFile* saveFile)
 {
@@ -35,18 +37,25 @@ void WorldEvents::load(SaveFile* saveFile)
 
   auto toolset = saveFile->toolset;
 
-  completedEvents = toolset->getBitField(0x29F3, 320);
+  for(var16 i = 0; i < EventsDB::store.size(); i++) {
+    auto event = EventsDB::store.at(i);
+    completedEvents[i] = toolset->getBit(event->byte, 1, event->bit);
+  }
 }
 
 void WorldEvents::save(SaveFile* saveFile)
 {
   auto toolset = saveFile->toolset;
-  toolset->setBitField(0x29F3, 320, completedEvents);
+
+  for(var16 i = 0; i < EventsDB::store.size(); i++) {
+    auto event = EventsDB::store.at(i);
+    toolset->setBit(event->byte, 1, event->bit, completedEvents[i]);
+  }
 }
 
 void WorldEvents::reset()
 {
-  completedEvents.clear();
+  memset(completedEvents, 0, eventCount);
 }
 
 // Competed world events is too complicated to make happen randomly right now

@@ -16,10 +16,14 @@
 #ifndef WORLDEVENTS_H
 #define WORLDEVENTS_H
 
-#include <QVector>
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
+
+// Total number of known events
+// We can't break this down into a byte count because these bits
+// have to be gotten all over the place
+constexpr var16 eventCount = 508;
 
 class WorldEvents : ExpandedInterface
 {
@@ -32,7 +36,7 @@ public:
   void reset();
   void randomize();
 
-  QVector<bool> completedEvents;
+  bool completedEvents[eventCount];
 };
 
 #endif // WORLDEVENTS_H

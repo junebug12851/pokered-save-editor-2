@@ -147,6 +147,7 @@ void index()
 void deepLink()
 {
   EventPokemonDB::deepLink();
+  EventsDB::deepLink();
   FlyDB::deepLink();
   HiddenCoinsDB::deepLink();
   HiddenItemsDB::deepLink();
