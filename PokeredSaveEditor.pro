@@ -80,6 +80,7 @@ HEADERS += \
   src/data/file/expanded/world/worldother.h \
   src/data/file/expanded/world/worldscripts.h \
   src/data/file/expanded/world/worldtowns.h \
+  src/data/file/expanded/world/worldtrades.h \
   src/data/file/filemanagement.h \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
@@ -130,6 +131,7 @@ SOURCES += \
   src/data/file/expanded/world/worldother.cpp \
   src/data/file/expanded/world/worldscripts.cpp \
   src/data/file/expanded/world/worldtowns.cpp \
+  src/data/file/expanded/world/worldtrades.cpp \
   src/data/file/filemanagement.cpp \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \
