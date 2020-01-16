@@ -13,34 +13,31 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef WORLDMISSABLES_H
+#define WORLDMISSABLES_H
 
 #include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
 
-class WorldCompleted;
-class WorldEvents;
-class WorldGeneral;
-class WorldHidden;
-class WorldMissables;
+// There's actually significantly more missable bits, 256 in total forming
+// 32 bytes. But given they are all unused it makes no sense to load entire
+// unused bytes
+constexpr var8 missableCount = 228;
+constexpr var8 missableByteCount = 29; // 4 bits unused of 232
 
-class World : public ExpandedInterface
+class WorldMissables : ExpandedInterface
 {
 public:
-  World(SaveFile* saveFile = nullptr);
-  virtual ~World();
+  WorldMissables(SaveFile* saveFile = nullptr);
+  virtual ~WorldMissables();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  WorldCompleted* completed = nullptr;
-  WorldEvents* events = nullptr;
-  WorldGeneral* general = nullptr;
-  WorldHidden* hidden = nullptr;
-  WorldMissables* missables = nullptr;
+  bool missables[missableCount];
 };
 
-#endif // WORLD_H
+#endif // WORLDMISSABLES_H

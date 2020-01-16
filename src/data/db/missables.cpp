@@ -41,7 +41,7 @@ void MissablesDB::load()
     entry->ind = missableEntry["ind"].toDouble();
     entry->map = missableEntry["map"].toString();
     entry->sprite = missableEntry["sprite"].toDouble();
-    entry->defShow = missableEntry["defVal"].toBool(false);
+    entry->defShow = missableEntry["defVal"].toString() == "Show";
 
     // Add to array
     store.append(entry);

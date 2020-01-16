@@ -18,6 +18,7 @@
 #include "./worldevents.h"
 #include "./worldgeneral.h"
 #include "./worldhidden.h"
+#include "./worldmissables.h"
 #include "../../savefile.h"
 
 World::World(SaveFile* saveFile)
@@ -26,6 +27,7 @@ World::World(SaveFile* saveFile)
   events = new WorldEvents;
   general = new WorldGeneral;
   hidden = new WorldHidden;
+  missables = new WorldMissables;
 
   load(saveFile);
 }
@@ -36,6 +38,7 @@ World::~World()
   delete events;
   delete general;
   delete hidden;
+  delete missables;
 }
 
 void World::load(SaveFile* saveFile)
@@ -47,6 +50,7 @@ void World::load(SaveFile* saveFile)
   events->load(saveFile);
   general->load(saveFile);
   hidden->load(saveFile);
+  missables->load(saveFile);
 }
 
 void World::save(SaveFile* saveFile)
@@ -55,6 +59,7 @@ void World::save(SaveFile* saveFile)
   events->save(saveFile);
   general->save(saveFile);
   hidden->save(saveFile);
+  missables->save(saveFile);
 }
 
 void World::reset()
@@ -63,6 +68,7 @@ void World::reset()
   events->reset();
   general->reset();
   hidden->reset();
+  missables->reset();
 }
 
 void World::randomize()
@@ -71,4 +77,5 @@ void World::randomize()
   events->randomize();
   general->randomize();
   hidden->randomize();
+  missables->randomize();
 }
