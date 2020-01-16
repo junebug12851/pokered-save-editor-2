@@ -20,6 +20,7 @@
 #include "./area/area.h"
 #include "./world/world.h"
 #include "./daycare.h"
+#include "./halloffame.h"
 
 SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
 {
@@ -27,6 +28,7 @@ SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
   area = new Area;
   world = new World;
   daycare = new Daycare;
+  hof = new HallOfFame;
 
   load(saveFile);
 }
@@ -37,6 +39,7 @@ SaveFileExpanded::~SaveFileExpanded()
   delete area;
   delete world;
   delete daycare;
+  delete hof;
 }
 
 void SaveFileExpanded::load(SaveFile* saveFile)
@@ -48,6 +51,7 @@ void SaveFileExpanded::load(SaveFile* saveFile)
   area->load(saveFile);
   world->load(saveFile);
   daycare->load(saveFile);
+  hof->load(saveFile);
 }
 
 void SaveFileExpanded::save(SaveFile* saveFile)
@@ -56,6 +60,7 @@ void SaveFileExpanded::save(SaveFile* saveFile)
   area->save(saveFile);
   world->save(saveFile);
   daycare->save(saveFile);
+  hof->save(saveFile);
 }
 
 void SaveFileExpanded::reset()
@@ -64,6 +69,7 @@ void SaveFileExpanded::reset()
   area->reset();
   world->reset();
   daycare->reset();
+  hof->reset();
 }
 
 void SaveFileExpanded::randomize()
@@ -72,4 +78,5 @@ void SaveFileExpanded::randomize()
   area->randomize();
   world->randomize();
   daycare->randomize(player->basics);
+  hof->randomize();
 }

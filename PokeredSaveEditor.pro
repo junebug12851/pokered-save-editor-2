@@ -66,6 +66,7 @@ HEADERS += \
   src/data/file/expanded/fragments/signdata.h \
   src/data/file/expanded/fragments/spritedata.h \
   src/data/file/expanded/fragments/warpdata.h \
+  src/data/file/expanded/halloffame.h \
   src/data/file/expanded/player/player.h \
   src/data/file/expanded/player/playerbasics.h \
   src/data/file/expanded/player/playeritems.h \
@@ -118,6 +119,7 @@ SOURCES += \
   src/data/file/expanded/fragments/signdata.cpp \
   src/data/file/expanded/fragments/spritedata.cpp \
   src/data/file/expanded/fragments/warpdata.cpp \
+  src/data/file/expanded/halloffame.cpp \
   src/data/file/expanded/player/player.cpp \
   src/data/file/expanded/player/playerbasics.cpp \
   src/data/file/expanded/player/playeritems.cpp \
