@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,38 +13,38 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SAVEFILEEXPANDED_H
-#define SAVEFILEEXPANDED_H
+#ifndef STORAGE_H
+#define STORAGE_H
 
 #include "./expandedinterface.h"
-
+#include "../../../common/types.h"
 class SaveFile;
-class Player;
-class Area;
-class World;
-class Daycare;
-class HallOfFame;
-class Rival;
-class Storage;
 
-class SaveFileExpanded: public ExpandedInterface
+class ItemStorageBox;
+class PokemonStorageSet;
+class PlayerBasics;
+
+// 2 Sets of 6 Pokemon Boxes
+constexpr var8 maxPokemonStorageSets = 2;
+
+class Storage : ExpandedInterface
 {
 public:
-  SaveFileExpanded(SaveFile* saveFile = nullptr);
-  virtual ~SaveFileExpanded();
+  Storage(SaveFile* saveFile = nullptr);
+  virtual ~Storage();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
-  void randomize();
+  void randomize(PlayerBasics* basics);
 
-  Player* player = nullptr;
-  Area* area = nullptr;
-  World* world = nullptr;
-  Daycare* daycare = nullptr;
-  HallOfFame* hof = nullptr;
-  Rival* rival = nullptr;
-  Storage* storage = nullptr;
+  ItemStorageBox* items;
+  PokemonStorageSet* pokemon[maxPokemonStorageSets];
+  var8 curBox;
+  bool boxesFormatted = false;
+
+private:
+  void randomize();
 };
 
-#endif // SAVEFILEEXPANDED_H
+#endif // STORAGE_H

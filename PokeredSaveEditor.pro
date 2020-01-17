@@ -60,9 +60,12 @@ HEADERS += \
   src/data/file/expanded/expandedinterface.h \
   src/data/file/expanded/fragments/hofpokemon.h \
   src/data/file/expanded/fragments/hofrecord.h \
+  src/data/file/expanded/fragments/itemstoragebox.h \
   src/data/file/expanded/fragments/mapconndata.h \
   src/data/file/expanded/fragments/pokemonbox.h \
   src/data/file/expanded/fragments/pokemonparty.h \
+  src/data/file/expanded/fragments/pokemonstoragebox.h \
+  src/data/file/expanded/fragments/pokemonstorageset.h \
   src/data/file/expanded/fragments/signdata.h \
   src/data/file/expanded/fragments/spritedata.h \
   src/data/file/expanded/fragments/warpdata.h \
@@ -74,6 +77,7 @@ HEADERS += \
   src/data/file/expanded/player/playerpokemon.h \
   src/data/file/expanded/rival.h \
   src/data/file/expanded/savefileexpanded.h \
+  src/data/file/expanded/storage.h \
   src/data/file/expanded/world/world.h \
   src/data/file/expanded/world/worldcompleted.h \
   src/data/file/expanded/world/worldevents.h \
@@ -114,9 +118,12 @@ SOURCES += \
   src/data/file/expanded/daycare.cpp \
   src/data/file/expanded/fragments/hofpokemon.cpp \
   src/data/file/expanded/fragments/hofrecord.cpp \
+  src/data/file/expanded/fragments/itemstoragebox.cpp \
   src/data/file/expanded/fragments/mapconndata.cpp \
   src/data/file/expanded/fragments/pokemonbox.cpp \
   src/data/file/expanded/fragments/pokemonparty.cpp \
+  src/data/file/expanded/fragments/pokemonstoragebox.cpp \
+  src/data/file/expanded/fragments/pokemonstorageset.cpp \
   src/data/file/expanded/fragments/signdata.cpp \
   src/data/file/expanded/fragments/spritedata.cpp \
   src/data/file/expanded/fragments/warpdata.cpp \
@@ -128,6 +135,7 @@ SOURCES += \
   src/data/file/expanded/player/playerpokemon.cpp \
   src/data/file/expanded/rival.cpp \
   src/data/file/expanded/savefileexpanded.cpp \
+  src/data/file/expanded/storage.cpp \
   src/data/file/expanded/world/world.cpp \
   src/data/file/expanded/world/worldcompleted.cpp \
   src/data/file/expanded/world/worldevents.cpp \

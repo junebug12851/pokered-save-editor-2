@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,38 +13,39 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SAVEFILEEXPANDED_H
-#define SAVEFILEEXPANDED_H
+#ifndef ITEMSTORAGEBOX_H
+#define ITEMSTORAGEBOX_H
 
-#include "./expandedinterface.h"
-
+#include <QVector>
+#include "../expandedinterface.h"
+#include "../../../../common/types.h"
 class SaveFile;
-class Player;
-class Area;
-class World;
-class Daycare;
-class HallOfFame;
-class Rival;
-class Storage;
 
-class SaveFileExpanded: public ExpandedInterface
+constexpr var8 boxMaxItems = 50;
+
+struct ItemStorageEntry {
+  ItemStorageEntry(bool random = false);
+  ItemStorageEntry(var8 ind, var8 amount);
+
+  void randomize();
+  void reset();
+
+  var8 ind;
+  var8 amount;
+};
+
+class ItemStorageBox : ExpandedInterface
 {
 public:
-  SaveFileExpanded(SaveFile* saveFile = nullptr);
-  virtual ~SaveFileExpanded();
+  ItemStorageBox(SaveFile* saveFile = nullptr);
+  virtual ~ItemStorageBox();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  Player* player = nullptr;
-  Area* area = nullptr;
-  World* world = nullptr;
-  Daycare* daycare = nullptr;
-  HallOfFame* hof = nullptr;
-  Rival* rival = nullptr;
-  Storage* storage = nullptr;
+  QVector<ItemStorageEntry*> items;
 };
 
-#endif // SAVEFILEEXPANDED_H
+#endif // ITEMSTORAGEBOX_H

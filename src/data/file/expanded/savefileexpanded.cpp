@@ -22,6 +22,7 @@
 #include "./daycare.h"
 #include "./halloffame.h"
 #include "./rival.h"
+#include "./storage.h"
 
 SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
 {
@@ -31,6 +32,7 @@ SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
   daycare = new Daycare;
   hof = new HallOfFame;
   rival = new Rival;
+  storage = new Storage;
 
   load(saveFile);
 }
@@ -43,6 +45,7 @@ SaveFileExpanded::~SaveFileExpanded()
   delete daycare;
   delete hof;
   delete rival;
+  delete storage;
 }
 
 void SaveFileExpanded::load(SaveFile* saveFile)
@@ -56,6 +59,7 @@ void SaveFileExpanded::load(SaveFile* saveFile)
   daycare->load(saveFile);
   hof->load(saveFile);
   rival->load(saveFile);
+  storage->load(saveFile);
 }
 
 void SaveFileExpanded::save(SaveFile* saveFile)
@@ -66,6 +70,7 @@ void SaveFileExpanded::save(SaveFile* saveFile)
   daycare->save(saveFile);
   hof->save(saveFile);
   rival->save(saveFile);
+  storage->save(saveFile);
 }
 
 void SaveFileExpanded::reset()
@@ -76,6 +81,7 @@ void SaveFileExpanded::reset()
   daycare->reset();
   hof->reset();
   rival->reset();
+  storage->reset();
 }
 
 void SaveFileExpanded::randomize()
@@ -86,4 +92,5 @@ void SaveFileExpanded::randomize()
   daycare->randomize(player->basics);
   hof->randomize();
   rival->randomize();
+  storage->randomize(player->basics);
 }
