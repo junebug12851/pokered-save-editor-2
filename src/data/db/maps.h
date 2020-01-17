@@ -36,6 +36,10 @@ struct TrainerDBEntry;
 struct SpriteSetDBEntry;
 struct MissableDBEntry;
 struct EventDBEntry;
+struct FlyDBEntry;
+struct HiddenCoinDBEntry;
+struct HiddenItemDBEntry;
+struct ScriptDBEntry;
 
 struct MapDBEntry;
 struct MapDBEntryWarpIn;
@@ -272,6 +276,8 @@ struct MapDBEntryWarpIn
   // X & Y location on Map
   var8 x;
   var8 y;
+
+  QVector<MapDBEntryWarpOut*> toConnectingWarps;
 };
 
 struct MapDBEntrySign
@@ -363,6 +369,10 @@ struct MapDBEntry {
   TilesetDBEntry* toTileset = nullptr; // To Map Tileset
   MapDBEntry* toComplete = nullptr; // To Complete Version of Map
   QVector<EventDBEntry*> toEvents; // To Associated Events
+  FlyDBEntry* toFlyDestination = nullptr; // To Associated Fly Destination
+  QVector<HiddenCoinDBEntry*> toHiddenCoins; // To Associated Hidden Coins
+  QVector<HiddenItemDBEntry*> toHiddenItems; // To Associated Hidden Items
+  ScriptDBEntry* toScript;
 };
 
 class MapsDB

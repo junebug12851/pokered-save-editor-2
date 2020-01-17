@@ -57,6 +57,9 @@ void HiddenCoinsDB::deepLink()
     if(entry->toMap == nullptr)
       qCritical() << "Hidden Coins Map: " << entry->map << ", could not be deep linked." ;
 #endif
+
+    if(entry->toMap != nullptr)
+      entry->toMap->toHiddenCoins.append(entry);
   }
 }
 

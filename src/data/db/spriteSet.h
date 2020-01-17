@@ -24,6 +24,7 @@
 #include "../../common/types.h"
 
 struct SpriteDBEntry;
+struct MapDBEntry;
 
 // Outdoor sprites have to be pre-loaded into memory
 // A Sprite set is a set of 11 sprites that are kept in memory in a given
@@ -69,6 +70,8 @@ struct SpriteSetDBEntry {
 
   // Dynamic sprites: To static entry for ES Set
   SpriteSetDBEntry* toSetES;
+
+  QVector<MapDBEntry*> toMaps;
 };
 
 class SpriteSetDB

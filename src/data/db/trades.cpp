@@ -74,6 +74,12 @@ void TradesDB::deepLink()
     if(entry->toGet == nullptr)
       qCritical() << "Trade Get: " << entry->toGet << ", could not be deep linked." ;
 #endif
+
+    if(entry->toGive != nullptr)
+      entry->toGive->toTrades.append(entry);
+
+    if(entry->toGet != nullptr)
+      entry->toGet->toTrades.append(entry);
   }
 }
 

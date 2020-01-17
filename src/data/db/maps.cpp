@@ -268,6 +268,9 @@ void MapDBEntrySprite::deepLink()
   if(missable && toMissable == nullptr)
     qCritical() << "Missable cannot be deep linked to " + QString::number(*missable);
 #endif
+
+  if(toSprite != nullptr)
+    toSprite->toMaps.append(this);
 }
 
 var8 MapDBEntrySprite::adjustedX()
@@ -307,6 +310,9 @@ void MapDBEntrySpriteItem::deepLink()
   if(toItem == nullptr)
     qCritical() << "MapDBEntrySpriteItem: Unable to deep link " + item + " to item";
 #endif
+
+  if(toItem == nullptr)
+    toItem->toMapSpriteItem.append(this);
 }
 
 SpriteType MapDBEntrySpritePokemon::type()
@@ -322,6 +328,9 @@ void MapDBEntrySpritePokemon::deepLink()
   if(toPokemon == nullptr)
     qCritical() << "MapDBEntrySpritePokemon: Unable to deep link " + pokemon + " to pokemon";
 #endif
+
+  if(toPokemon != nullptr)
+    toPokemon->toMapSpritePokemon = this;
 }
 
 SpriteType MapDBEntrySpriteTrainer::type()
@@ -338,6 +347,9 @@ void MapDBEntrySpriteTrainer::deepLink()
   if(toTrainer == nullptr)
     qCritical() << "MapDBEntrySpriteTrainer: Unable to deep link " + trainerClass + " to trainer";
 #endif
+
+  if(toTrainer != nullptr)
+    toTrainer->tpMapSpriteTrainers.append(this);
 }
 
 void MapDBEntryWarpOut::deepLink()
@@ -364,6 +376,8 @@ void MapDBEntryWarpOut::deepLink()
     // Deep link to the destination warp coordinates
     // This will immidiately crash if toMap isn't set
     toWarp = toMap->warpIn.at(warp);
+
+    toWarp->toConnectingWarps.append(this);
 }
 
 void MapDBEntryWildMon::deepLink()
@@ -377,6 +391,9 @@ void MapDBEntryWildMon::deepLink()
       return;
     }
 #endif
+
+    if(toPokemon != nullptr)
+      toPokemon->toWildMonMaps.append(this);
 }
 
 MapDBEntry::MapDBEntry()
@@ -685,6 +702,15 @@ void MapsDB::deepLink()
     if(entry->spriteSet && entry->toSpriteSet == nullptr)
       qCritical() << "Map: " << entry->name << ", could not be deep linked to sprite set" << *entry->spriteSet;
 #endif
+
+    if(entry->toSpriteSet != nullptr)
+      entry->toSpriteSet->toMaps.append(entry);
+
+    if(entry->toMusic != nullptr)
+      entry->toMusic->toMaps.append(entry);
+
+    if(entry->toTileset != nullptr)
+      entry->toTileset->toMaps.append(entry);
   }
 }
 

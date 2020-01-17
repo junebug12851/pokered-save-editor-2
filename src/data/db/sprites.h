@@ -16,10 +16,13 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <QVector>
 #include <QString>
 #include <QHash>
 
 #include "../../common/types.h"
+
+struct MapDBEntrySprite;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -29,6 +32,8 @@
 struct SpriteDBEntry {
   QString name;
   var8 ind;
+
+  QVector<MapDBEntrySprite*> toMaps;
 };
 
 class SpritesDB

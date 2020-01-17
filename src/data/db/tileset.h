@@ -16,10 +16,13 @@
 #ifndef TILESET_H
 #define TILESET_H
 
+#include <QVector>
 #include <QString>
 #include <QHash>
 
 #include "../../common/types.h"
+
+struct MapDBEntry;
 
 enum class TilesetType
 {
@@ -47,6 +50,8 @@ struct TilesetDBEntry {
   var16 blockPtr;
   var16 gfxPtr;
   var16 collPtr;
+
+  QVector<MapDBEntry*> toMaps;
 };
 
 class TilesetDB

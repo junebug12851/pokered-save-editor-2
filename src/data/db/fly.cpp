@@ -67,6 +67,9 @@ void FlyDB::deepLink()
     if(entry->toMap == nullptr)
       qCritical() << "Fly Destination: " << entry->name << ", could not be deep linked." ;
 #endif
+
+    if(entry->toMap != nullptr)
+      entry->toMap->toFlyDestination = entry;
   }
 }
 

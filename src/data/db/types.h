@@ -18,8 +18,12 @@
 
 #include <QString>
 #include <QHash>
+#include <QVector>
 
 #include "../../common/types.h"
+
+struct MoveDBEntry;
+struct PokemonDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -30,6 +34,9 @@ struct TypeDBEntry {
   QString name;
   var8 ind;
   QString readable;
+
+  QVector<MoveDBEntry*> toMoves;
+  QVector<PokemonDBEntry*> toPokemon;
 };
 
 class TypesDB

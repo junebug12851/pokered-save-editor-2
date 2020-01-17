@@ -80,6 +80,9 @@ void ScriptsDB::deepLink()
     if(map == nullptr)
       qCritical() << "Script Entry: " << entry->name << ", could not be deep linked to map " << mapEntry;
 #endif
+
+    if(map != nullptr)
+      map->toScript = entry;
     }
   }
 }

@@ -16,6 +16,7 @@
 #ifndef ITEMS_H
 #define ITEMS_H
 
+#include <QVector>
 #include <QString>
 #include <QHash>
 
@@ -26,6 +27,9 @@
 // Prevents includes from including each other and causing errors
 // We include them in the cpp file
 struct MoveDBEntry;
+struct MapDBEntrySpriteItem;
+struct PokemonDBEntryEvolution;
+struct PokemonDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -51,6 +55,9 @@ struct ItemDBEntry {
   std::optional<var8> price;
 
   MoveDBEntry* toMove; // To TM or HM Move
+  QVector<MapDBEntrySpriteItem*> toMapSpriteItem;
+  QVector<PokemonDBEntryEvolution*> toEvolvePokemon;
+  QVector<PokemonDBEntry*> toTeachPokemon;
 };
 
 class ItemsDB

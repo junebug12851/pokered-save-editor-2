@@ -116,6 +116,9 @@ void EventPokemonDB::deepLink()
     if(entry->toPokemon == nullptr)
       qCritical() << "Event Pokemon: " << entry->pokemon << ", could not be deep linked." ;
 #endif
+
+    if(entry->toPokemon != nullptr)
+      entry->toPokemon->toEventMons.append(entry);
   }
 }
 

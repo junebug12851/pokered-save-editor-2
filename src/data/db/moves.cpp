@@ -115,6 +115,9 @@ void MovesDB::deepLink()
     if((entry->tm || entry->hm) && entry->toItem == nullptr)
       qCritical() << "Move: " << entry->name << ", could not be deep linked." ;
 #endif
+
+    if(entry->toType != nullptr)
+      entry->toType->toMoves.append(entry);
   }
 }
 

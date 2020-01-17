@@ -52,6 +52,10 @@ struct PokemonDBEntry;
 struct ItemDBEntry;
 struct MoveDBEntry;
 struct TypeDBEntry;
+struct EventPokemonDBEntry;
+struct MapDBEntrySpritePokemon;
+struct MapDBEntryWildMon;
+struct TradeDBEntry;
 
 struct PokemonDBEntryEvolution
 {
@@ -113,6 +117,10 @@ struct PokemonDBEntry {
   QVector<MoveDBEntry*> toInitial;
   QVector<MoveDBEntry*> toTmHmMove;
   QVector<ItemDBEntry*> toTmHmItem;
+  QVector<EventPokemonDBEntry*> toEventMons;
+  MapDBEntrySpritePokemon* toMapSpritePokemon;
+  QVector<MapDBEntryWildMon*> toWildMonMaps;
+  QVector<TradeDBEntry*> toTrades;
 };
 
 class PokemonDB

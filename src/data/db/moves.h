@@ -16,6 +16,7 @@
 #ifndef MOVE_H
 #define MOVE_H
 
+#include <QVector>
 #include <QString>
 #include <QHash>
 
@@ -25,6 +26,8 @@
 
 struct TypeDBEntry;
 struct ItemDBEntry;
+struct PokemonDBEntryMove;
+struct PokemonDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -52,6 +55,8 @@ struct MoveDBEntry {
 
   TypeDBEntry* toType; // Deep link to move type
   ItemDBEntry* toItem; // Deep link to tm/hm item if present
+  QVector<PokemonDBEntryMove*> toPokemonLearned;
+  QVector<PokemonDBEntry*> toPokemonOther;
 };
 
 class MovesDB

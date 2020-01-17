@@ -16,10 +16,13 @@
 #ifndef TRAINER_H
 #define TRAINER_H
 
+#include <QVector>
 #include <QString>
 #include <QHash>
 
 #include "../../common/types.h"
+
+struct MapDBEntrySpriteTrainer;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -33,6 +36,8 @@ struct TrainerDBEntry {
   var8 ind;
   bool unused;
   bool opp;
+
+  QVector<MapDBEntrySpriteTrainer*> tpMapSpriteTrainers;
 };
 
 class TrainersDB

@@ -74,6 +74,9 @@ void PokemonDBEntryEvolution::deepLink(PokemonDBEntry* deEvolution)
     // Link to deEvolution in it's evolution and here
     toEvolution->toDeEvolution = deEvolution;
     toDeEvolution = deEvolution;
+
+    if(toItem != nullptr)
+      toItem->toEvolvePokemon.append(this);
 }
 
 PokemonDBEntryMove::PokemonDBEntryMove(QJsonValue& data)
@@ -93,6 +96,9 @@ void PokemonDBEntryMove::deepLink()
     if(toMove == nullptr)
       qCritical() << "Pokemon Move Entry: " << move << ", could not be deep linked." ;
 #endif
+
+    if(toMove != nullptr)
+      toMove->toPokemonLearned.append(this);
 }
 
 PokemonDBEntry::PokemonDBEntry()
@@ -130,6 +136,12 @@ void PokemonDBEntry::deepLink()
       qCritical() << "Pokemon Type 2: " << type2 << ", could not be deep linked." ;
 #endif
 
+    if(toType1 != nullptr)
+      toType1->toPokemon.append(this);
+
+    if(toType2 != nullptr)
+      toType2->toPokemon.append(this);
+
   // De-Evolution is set by evolution entry
   for(auto evolEntry : *evolution)
   {
@@ -154,6 +166,9 @@ void PokemonDBEntry::deepLink()
     if(link == nullptr)
       qCritical() << "Pokemon Initial Move: " << initMove << ", could not be deep linked." ;
 #endif
+
+    if(link != nullptr)
+      link->toPokemonOther.append(this);
   }
 
   // Deep-Link tm/hm
@@ -171,6 +186,12 @@ void PokemonDBEntry::deepLink()
     if(itemLink == nullptr)
       qCritical() << "Pokemon TM/HM Item: " << tmHmMove << ", could not be deep linked." ;
 #endif
+
+    if(moveLink != nullptr)
+      moveLink->toPokemonOther.append(this);
+
+    if(itemLink != nullptr)
+      itemLink->toTeachPokemon.append(this);
   }
 }
 

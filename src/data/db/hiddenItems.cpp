@@ -58,6 +58,9 @@ void HiddenItemsDB::deepLink()
     if(entry->toMap == nullptr)
       qCritical() << "Hidden Items Map: " << entry->map << ", could not be deep linked." ;
 #endif
+
+    if(entry->toMap != nullptr)
+      entry->toMap->toHiddenItems.append(entry);
   }
 }
 

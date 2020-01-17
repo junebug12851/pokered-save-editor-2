@@ -16,15 +16,20 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
+#include <QVector>
 #include <QString>
 #include <QHash>
 
 #include "../../common/types.h"
 
+struct MapDBEntry;
+
 struct MusicDBEntry {
   QString name;
   var8 bank;
   var8 id;
+
+  QVector<MapDBEntry*> toMaps;
 };
 
 class MusicDB
