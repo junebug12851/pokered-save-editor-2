@@ -72,6 +72,7 @@ HEADERS += \
   src/data/file/expanded/player/playeritems.h \
   src/data/file/expanded/player/playerpokedex.h \
   src/data/file/expanded/player/playerpokemon.h \
+  src/data/file/expanded/rival.h \
   src/data/file/expanded/savefileexpanded.h \
   src/data/file/expanded/world/world.h \
   src/data/file/expanded/world/worldcompleted.h \
@@ -125,6 +126,7 @@ SOURCES += \
   src/data/file/expanded/player/playeritems.cpp \
   src/data/file/expanded/player/playerpokedex.cpp \
   src/data/file/expanded/player/playerpokemon.cpp \
+  src/data/file/expanded/rival.cpp \
   src/data/file/expanded/savefileexpanded.cpp \
   src/data/file/expanded/world/world.cpp \
   src/data/file/expanded/world/worldcompleted.cpp \

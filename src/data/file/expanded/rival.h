@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,36 +13,32 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SAVEFILEEXPANDED_H
-#define SAVEFILEEXPANDED_H
+#ifndef RIVAL_H
+#define RIVAL_H
 
+#include <QString>
 #include "./expandedinterface.h"
-
+#include "../../../common/types.h"
 class SaveFile;
-class Player;
-class Area;
-class World;
-class Daycare;
-class HallOfFame;
-class Rival;
 
-class SaveFileExpanded: public ExpandedInterface
+class Rival : ExpandedInterface
 {
 public:
-  SaveFileExpanded(SaveFile* saveFile = nullptr);
-  virtual ~SaveFileExpanded();
+  Rival(SaveFile* saveFile = nullptr);
+  virtual ~Rival();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  Player* player = nullptr;
-  Area* area = nullptr;
-  World* world = nullptr;
-  Daycare* daycare = nullptr;
-  HallOfFame* hof = nullptr;
-  Rival* rival = nullptr;
+  // Rival's Name and Starter Pokemon
+  // This essentially selects his team that he uses to battle you, it goes
+  // by internal Pokemon index and only 3 options are valid, Charmander,
+  // Bulbasaur, and Squirtle. I have no idea what will happen if you put a
+  // different value in here.
+  QString name;
+  var8 starter;
 };
 
-#endif // SAVEFILEEXPANDED_H
+#endif // RIVAL_H
