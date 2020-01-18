@@ -26,6 +26,7 @@ class FontSearch
 public:
   FontSearch();
 
+  FontSearch* startOver();
   FontSearch* andShorthand();
   FontSearch* notShorthand();
   FontSearch* andNormal();

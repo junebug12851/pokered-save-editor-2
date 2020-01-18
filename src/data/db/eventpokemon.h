@@ -21,6 +21,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QJsonValue>
 
 #include <variant>
 #include <optional>
@@ -33,19 +34,21 @@ struct PokemonDBEntry;
 // that were held around the world
 
 struct EventPokemonDBEntry {
-    EventPokemonDBEntry();
+  EventPokemonDBEntry();
+  EventPokemonDBEntry(QJsonValue& data);
+  void deepLink();
 
-    QString title; // Event Title
-    QString desc; // Event Pokemon Description
-    QString pokemon; // Pokemon Name
-    QVector<QString> otName; // Pokemon OT Name
-    std::optional<var16> otId; // Pokemon OT ID, random if not specified
-    QVector<var8> dv; // Pokemon DV List, random if not specified
-    QString region; // Region Code
-    QVector<QString> moves; // Move list
-    std::optional<var8> level; // Level, default minimum if not specified
+  QString title; // Event Title
+  QString desc; // Event Pokemon Description
+  QString pokemon; // Pokemon Name
+  QVector<QString> otName; // Pokemon OT Name
+  std::optional<var16> otId; // Pokemon OT ID, random if not specified
+  QVector<var8> dv; // Pokemon DV List, random if not specified
+  QString region; // Region Code
+  QVector<QString> moves; // Move list
+  std::optional<var8> level; // Level, default minimum if not specified
 
-    PokemonDBEntry* toPokemon; // Deep link to associated Pokemon
+  PokemonDBEntry* toPokemon = nullptr; // Deep link to associated Pokemon
 };
 
 class EventPokemonDB

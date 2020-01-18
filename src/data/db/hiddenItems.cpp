@@ -25,6 +25,28 @@
 #include "./maps.h"
 #include "./gamedata.h"
 
+HiddenItemDBEntry::HiddenItemDBEntry() {}
+HiddenItemDBEntry::HiddenItemDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  map = data["map"].toString();
+  x = data["x"].toDouble();
+  y = data["y"].toDouble();
+}
+
+void HiddenItemDBEntry::deepLink()
+{
+  toMap = MapsDB::ind.value(map, nullptr);
+
+#ifdef QT_DEBUG
+  if(toMap == nullptr)
+    qCritical() << "Hidden Items Map: " << map << ", could not be deep linked." ;
+#endif
+
+  if(toMap != nullptr)
+    toMap->toHiddenItems.append(this);
+}
+
 void HiddenItemsDB::load()
 {
   // Grab Event Pokemon Data
@@ -34,12 +56,7 @@ void HiddenItemsDB::load()
   for(QJsonValue hiddenItemEntry : hiddenItemData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new HiddenItemDBEntry();
-
-    // Set simple properties
-    entry->map = hiddenItemEntry["map"].toString();
-    entry->x = hiddenItemEntry["x"].toDouble();
-    entry->y = hiddenItemEntry["y"].toDouble();
+    auto entry = new HiddenItemDBEntry(hiddenItemEntry);
 
     // Add to array
     store.append(entry);
@@ -52,17 +69,6 @@ void HiddenItemsDB::deepLink()
 {
   for(auto entry : store)
   {
-    entry->toMap = MapsDB::ind.value(entry->map, nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->toMap == nullptr)
-      qCritical() << "Hidden Items Map: " << entry->map << ", could not be deep linked." ;
-#endif
-
-    if(entry->toMap != nullptr)
-      entry->toMap->toHiddenItems.append(entry);
+    entry->deepLink();
   }
 }
-
-QVector<HiddenItemDBEntry*> HiddenItemsDB::store =
-    QVector<HiddenItemDBEntry*>();

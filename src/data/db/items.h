@@ -19,6 +19,7 @@
 #include <QVector>
 #include <QString>
 #include <QHash>
+#include <QJsonValue>
 
 #include "optional"
 
@@ -38,14 +39,16 @@ struct PokemonDBEntry;
 
 struct ItemDBEntry {
   ItemDBEntry();
+  ItemDBEntry(QJsonValue& data);
+  void deepLink();
 
   // Optional values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
 
   QString name; // Item Output
-  var8 ind; // Item Code
-  bool once; // Item can only be obtained once
-  bool glitch; // Item is a glitch item
+  var8 ind = 0; // Item Code
+  bool once = false; // Item can only be obtained once
+  bool glitch = false; // Item is a glitch item
   QString readable;
 
   std::optional<var8> tm; // TM Number if present
@@ -54,7 +57,7 @@ struct ItemDBEntry {
   // Item Prices if available
   std::optional<var8> price;
 
-  MoveDBEntry* toMove; // To TM or HM Move
+  MoveDBEntry* toMove = nullptr; // To TM or HM Move
   QVector<MapDBEntrySpriteItem*> toMapSpriteItem;
   QVector<PokemonDBEntryEvolution*> toEvolvePokemon;
   QVector<PokemonDBEntry*> toTeachPokemon;

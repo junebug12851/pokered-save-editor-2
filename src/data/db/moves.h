@@ -56,7 +56,8 @@ struct MoveDBEntry {
   TypeDBEntry* toType; // Deep link to move type
   ItemDBEntry* toItem; // Deep link to tm/hm item if present
   QVector<PokemonDBEntryMove*> toPokemonLearned;
-  QVector<PokemonDBEntry*> toPokemonOther;
+  QVector<PokemonDBEntry*> toPokemonInitial;
+  QVector<PokemonDBEntry*> toPokemonTmHm;
 };
 
 class MovesDB

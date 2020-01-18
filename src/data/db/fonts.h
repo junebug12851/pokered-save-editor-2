@@ -19,6 +19,7 @@
 #include <QString>
 #include <QHash>
 #include <QVector>
+#include <QJsonValue>
 
 #include "../../common/types.h"
 
@@ -32,21 +33,22 @@ class FontSearch;
 
 struct FontDBEntry {
   FontDBEntry();
+  FontDBEntry(QJsonValue& data);
 
   // Optional values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
 
   var8 ind; // Font Code
   QString name; // Font Output
-  bool shorthand; // Is Font Output shorthand for longer output?
-  bool picture; // Does this use the tilemap and not the font
-  bool useTilemap; // ?? Perhaps same as picture (Forgot >_>)
+  bool shorthand = false; // Is Font Output shorthand for longer output?
+  bool picture = false; // Does this use the tilemap and not the font
+  bool useTilemap = false; // ?? Perhaps same as picture (Forgot >_>)
   var8 length; // Font output length or potentially maximum length
-  bool control; // Is this a control character
-  bool multiChar; // Does this output a length greater than 1
-  bool variable; // Does this output a variable
-  bool singleChar; // Does this output a single char
-  bool normal; // Would this be an in-game accessible font char
+  bool control = false; // Is this a control character
+  bool multiChar = false; // Does this output a length greater than 1
+  bool variable = false; // Does this output a variable
+  bool singleChar = false; // Does this output a single char
+  bool normal = false; // Would this be an in-game accessible font char
 };
 
 class FontsDB

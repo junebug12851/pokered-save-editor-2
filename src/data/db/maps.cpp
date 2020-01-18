@@ -46,6 +46,7 @@ MapDBEntryConnect::MapDBEntryConnect(
 
   // Save from map
   this->fromMap = fromMap;
+  parent = fromMap;
 
   // Set other values from JSON
   map = data["map"].toString();
@@ -242,13 +243,23 @@ var16 MapDBEntryConnect::window()
   return ret;
 }
 
-// Called from child classes
-SpriteType MapDBEntrySprite::type() {
-#ifdef QT_DEBUG
-    qCritical() << "MapDBEntrySprite: Parent asked what child type is";
-#endif
+MapDBEntrySprite::MapDBEntrySprite() {}
+MapDBEntrySprite::MapDBEntrySprite(QJsonValue& data, MapDBEntry* parent) :
+  parent(parent)
+{
+  sprite = data["sprite"].toString();
+  x = data["x"].toDouble();
+  y = data["y"].toDouble();
+  move = data["move"].toString();
+  text = data["text"].toDouble();
 
-  return SpriteType::ERROR;
+  if(data["missable"].isDouble())
+    missable = data["missable"].toDouble();
+
+  if(data["range"].isDouble())
+    range = data["range"].toDouble();
+  else
+    face = data["face"].toString();
 }
 
 void MapDBEntrySprite::deepLink()
@@ -273,6 +284,15 @@ void MapDBEntrySprite::deepLink()
     toSprite->toMaps.append(this);
 }
 
+// Called from child classes
+SpriteType MapDBEntrySprite::type() {
+#ifdef QT_DEBUG
+    qCritical() << "MapDBEntrySprite: Parent asked what child type is";
+#endif
+
+  return SpriteType::ERROR;
+}
+
 var8 MapDBEntrySprite::adjustedX()
 {
   return x + 4;
@@ -283,14 +303,19 @@ var8 MapDBEntrySprite::adjustedY()
   return y + 4;
 }
 
+MapDBEntrySpriteNPC::MapDBEntrySpriteNPC(QJsonValue& data, MapDBEntry* parent) :
+  MapDBEntrySprite(data, parent)
+{}
+
 SpriteType MapDBEntrySpriteNPC::type()
 {
   return SpriteType::NPC;
 }
 
-SpriteType MapDBEntrySpriteItem::type()
+MapDBEntrySpriteItem::MapDBEntrySpriteItem(QJsonValue& data, MapDBEntry* parent) :
+  MapDBEntrySprite(data, parent)
 {
-  return SpriteType::ITEM;
+  item = data["item"].toString();
 }
 
 void MapDBEntrySpriteItem::deepLink()
@@ -315,9 +340,16 @@ void MapDBEntrySpriteItem::deepLink()
     toItem->toMapSpriteItem.append(this);
 }
 
-SpriteType MapDBEntrySpritePokemon::type()
+SpriteType MapDBEntrySpriteItem::type()
 {
-  return SpriteType::POKEMON;
+  return SpriteType::ITEM;
+}
+
+MapDBEntrySpritePokemon::MapDBEntrySpritePokemon(QJsonValue& data, MapDBEntry* parent) :
+  MapDBEntrySprite(data, parent)
+{
+  pokemon = data["pokemon"].toString();
+  level = data["level"].toDouble();
 }
 
 void MapDBEntrySpritePokemon::deepLink()
@@ -333,9 +365,16 @@ void MapDBEntrySpritePokemon::deepLink()
     toPokemon->toMapSpritePokemon = this;
 }
 
-SpriteType MapDBEntrySpriteTrainer::type()
+SpriteType MapDBEntrySpritePokemon::type()
 {
-  return SpriteType::TRAINER;
+  return SpriteType::POKEMON;
+}
+
+MapDBEntrySpriteTrainer::MapDBEntrySpriteTrainer(QJsonValue& data, MapDBEntry* parent) :
+  MapDBEntrySprite(data, parent)
+{
+  trainerClass = data["class"].toString();
+  team = data["team"].toDouble();
 }
 
 void MapDBEntrySpriteTrainer::deepLink()
@@ -350,6 +389,22 @@ void MapDBEntrySpriteTrainer::deepLink()
 
   if(toTrainer != nullptr)
     toTrainer->tpMapSpriteTrainers.append(this);
+}
+
+SpriteType MapDBEntrySpriteTrainer::type()
+{
+  return SpriteType::TRAINER;
+}
+
+MapDBEntryWarpOut::MapDBEntryWarpOut() {}
+MapDBEntryWarpOut::MapDBEntryWarpOut(QJsonValue& data, MapDBEntry* parent) :
+  parent(parent)
+{
+  x = data["x"].toDouble();
+  y = data["y"].toDouble();
+  warp = data["toWarp"].toDouble();
+  map = data["toMap"].toString();
+  glitch = data["glitch"].toBool(false);
 }
 
 void MapDBEntryWarpOut::deepLink()
@@ -380,6 +435,31 @@ void MapDBEntryWarpOut::deepLink()
     toWarp->toConnectingWarps.append(this);
 }
 
+MapDBEntryWarpIn::MapDBEntryWarpIn() {}
+MapDBEntryWarpIn::MapDBEntryWarpIn(QJsonValue& data, MapDBEntry* parent) :
+  parent(parent)
+{
+  x = data["x"].toDouble();
+  y = data["y"].toDouble();
+}
+
+MapDBEntrySign::MapDBEntrySign() {}
+MapDBEntrySign::MapDBEntrySign(QJsonValue& data, MapDBEntry* parent) :
+  parent(parent)
+{
+  x = data["x"].toDouble();
+  y = data["y"].toDouble();
+  textID = data["text"].toDouble();
+}
+
+MapDBEntryWildMon::MapDBEntryWildMon() {}
+MapDBEntryWildMon::MapDBEntryWildMon(QJsonValue& value, MapDBEntry* parent) :
+  parent(parent)
+{
+  name = value["name"].toString();
+  level = value["level"].toDouble();
+}
+
 void MapDBEntryWildMon::deepLink()
 {
   toPokemon = PokemonDB::ind.value(name, nullptr);
@@ -400,6 +480,235 @@ MapDBEntry::MapDBEntry()
 {
   special = false;
   glitch = false;
+}
+
+MapDBEntry::MapDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+
+  // Set simple optional properties
+  if(data["special"].isBool())
+    special = data["special"].toBool();
+
+  if(data["glitch"].isBool())
+    glitch = data["glitch"].toBool();
+
+  if(data["bank"].isDouble())
+    bank = data["bank"].toDouble();
+
+  if(data["dataPtr"].isDouble())
+    dataPtr = data["dataPtr"].toDouble();
+
+  if(data["scriptPtr"].isDouble())
+    scriptPtr = data["scriptPtr"].toDouble();
+
+  if(data["textPtr"].isDouble())
+    textPtr = data["textPtr"].toDouble();
+
+  if(data["width"].isDouble())
+    width = data["width"].toDouble();
+
+  if(data["height"].isDouble())
+    height = data["height"].toDouble();
+
+  if(data["music"].isString())
+    music = data["music"].toString();
+
+  if(data["tileset"].isString())
+    tileset = data["tileset"].toString();
+
+  if(data["modernName"].isString())
+    modernName = data["modernName"].toString();
+
+  if(data["incomplete"].isString())
+    incomplete = data["incomplete"].toString();
+
+  if(data["border"].isDouble())
+    border = data["border"].toDouble();
+
+  if(data["spriteSet"].isDouble())
+    spriteSet = data["spriteSet"].toDouble();
+
+  if(data["warpOut"].isArray())
+  {
+    for(QJsonValue warpEntry : data["warpOut"].toArray()) {
+      auto tmp = new MapDBEntryWarpOut(warpEntry, this);
+      warpOut.append(tmp);
+    }
+  }
+
+  if(data["warpIn"].isArray())
+  {
+    for(QJsonValue warpEntry : data["warpIn"].toArray()) {
+      auto tmp = new MapDBEntryWarpIn(warpEntry, this);
+      warpIn.append(tmp);
+    }
+  }
+
+  if(data["signs"].isArray())
+  {
+    for(QJsonValue signEntry : data["signs"].toArray()) {
+      auto tmp = new MapDBEntrySign(signEntry, this);
+      signs.append(tmp);
+    }
+  }
+
+  if(data["redMons"].isArray())
+  {
+    for(QJsonValue monEntry : data["redMons"].toArray()) {
+      auto tmp = new MapDBEntryWildMon(monEntry, this);
+      monsRed.append(tmp);
+    }
+  }
+
+  if(data["blueMons"].isArray())
+  {
+    for(QJsonValue monEntry : data["blueMons"].toArray()) {
+      auto tmp = new MapDBEntryWildMon(monEntry, this);
+      monsBlue.append(tmp);
+    }
+  }
+
+  if(data["waterMons"].isArray())
+  {
+    for(QJsonValue monEntry : data["waterMons"].toArray()) {
+      auto tmp = new MapDBEntryWildMon(monEntry, this);
+      monsWater.append(tmp);
+    }
+  }
+
+  if(data["monRate"].isDouble())
+    monRate = data["monRate"].toDouble();
+
+  if(data["monRateWater"].isDouble())
+    monRateWater = data["monRateWater"].toDouble();
+
+  if(data["sprites"].isArray())
+  {
+    for(QJsonValue spriteEntry : data["sprites"].toArray()) {
+
+      MapDBEntrySprite* ret;
+
+      if(spriteEntry["item"].isString()) {
+        auto tmp = new MapDBEntrySpriteItem(spriteEntry, this);
+        ret = tmp;
+      }
+      else if(spriteEntry["class"].isString()) {
+        auto tmp = new MapDBEntrySpriteTrainer(spriteEntry, this);
+        ret = tmp;
+      }
+      else if(spriteEntry["pokemon"].isString()) {
+        auto tmp = new MapDBEntrySpritePokemon(spriteEntry, this);
+        ret = tmp;
+      }
+      else {
+        auto tmp = new MapDBEntrySpriteNPC(spriteEntry, this);
+        ret = tmp;
+      }
+
+      sprites.append(ret);
+    }
+  }
+
+  if(data["connect"].isObject())
+  {
+    QJsonValue conVal = data["connect"].toObject();
+
+    if(conVal["north"].isObject()) {
+      QJsonValue tmp = conVal["north"].toObject();
+      connect.insert(
+            (var8)ConnectDir::NORTH,
+            new MapDBEntryConnect(ConnectDir::NORTH, this, tmp));
+    }
+    if(conVal["east"].isObject()) {
+      QJsonValue tmp = conVal["east"].toObject();
+      connect.insert(
+            (var8)ConnectDir::EAST,
+            new MapDBEntryConnect(ConnectDir::EAST, this, tmp));
+    }
+    if(conVal["south"].isObject()) {
+      QJsonValue tmp = conVal["south"].toObject();
+      connect.insert(
+            (var8)ConnectDir::SOUTH,
+            new MapDBEntryConnect(ConnectDir::SOUTH, this, tmp));
+    }
+    if(conVal["west"].isObject()) {
+      QJsonValue tmp = conVal["west"].toObject();
+      connect.insert(
+            (var8)ConnectDir::WEST,
+            new MapDBEntryConnect(ConnectDir::WEST, this, tmp));
+    }
+  }
+}
+
+void MapDBEntry::deepLink()
+{
+  if(music != "")
+    toMusic = MusicDB::ind.value(music, nullptr);
+
+  if(tileset != "")
+    toTileset = TilesetDB::ind.value(tileset, nullptr);
+
+  if(incomplete != "")
+    toComplete = MapsDB::ind.value(incomplete, nullptr);
+
+  if(connect.contains((var8)ConnectDir::NORTH))
+    connect.value((var8)ConnectDir::NORTH)->deepLink();
+  if(connect.contains((var8)ConnectDir::EAST))
+    connect.value((var8)ConnectDir::EAST)->deepLink();
+  if(connect.contains((var8)ConnectDir::SOUTH))
+    connect.value((var8)ConnectDir::SOUTH)->deepLink();
+  if(connect.contains((var8)ConnectDir::WEST))
+    connect.value((var8)ConnectDir::WEST)->deepLink();
+
+  if(warpOut.size() > 0)
+    for(auto warpEntry : warpOut)
+      warpEntry->deepLink();
+
+  if(sprites.size() > 0)
+    for(auto spriteEntry : sprites)
+      spriteEntry->deepLink();
+
+  if(monsRed.size() > 0)
+    for(auto monEntry : monsRed)
+      monEntry->deepLink();
+
+  if(monsBlue.size() > 0)
+    for(auto monEntry : monsBlue)
+      monEntry->deepLink();
+
+  if(monsWater.size() > 0)
+    for(auto monEntry : monsWater)
+      monEntry->deepLink();
+
+  if(spriteSet)
+    toSpriteSet =
+        SpriteSetDB::ind.value(QString::number(*spriteSet), nullptr);
+
+#ifdef QT_DEBUG
+  if(music != "" && toMusic == nullptr)
+    qCritical() << "Map: " << name << ", could not be deep linked to music" << music;
+
+  if(tileset != "" && toTileset == nullptr)
+    qCritical() << "Map: " << name << ", could not be deep linked to tileset" << tileset;
+
+  if(incomplete != "" && toComplete == nullptr)
+    qCritical() << "Map: " << name << ", could not be deep linked to complete" << incomplete;
+
+  if(spriteSet && toSpriteSet == nullptr)
+    qCritical() << "Map: " << name << ", could not be deep linked to sprite set" << *spriteSet;
+#endif
+
+  if(toSpriteSet != nullptr)
+    toSpriteSet->toMaps.append(this);
+
+  if(toMusic != nullptr)
+    toMusic->toMaps.append(this);
+
+  if(toTileset != nullptr)
+    toTileset->toMaps.append(this);
 }
 
 std::optional<var8> MapDBEntry::height2X2()
@@ -427,200 +736,7 @@ void MapsDB::load()
   for(QJsonValue mapEntry : mapData->array())
   {
     // Create a new map entry
-    auto entry = new MapDBEntry();
-
-    // Set simple properties
-    entry->name = mapEntry["name"].toString();
-    entry->ind = mapEntry["ind"].toDouble();
-
-    // Set simple optional properties
-    if(mapEntry["special"].isBool())
-      entry->special = mapEntry["special"].toBool();
-
-    if(mapEntry["glitch"].isBool())
-      entry->glitch = mapEntry["glitch"].toBool();
-
-    if(mapEntry["bank"].isDouble())
-      entry->bank = mapEntry["bank"].toDouble();
-
-    if(mapEntry["dataPtr"].isDouble())
-      entry->dataPtr = mapEntry["dataPtr"].toDouble();
-
-    if(mapEntry["scriptPtr"].isDouble())
-      entry->scriptPtr = mapEntry["scriptPtr"].toDouble();
-
-    if(mapEntry["textPtr"].isDouble())
-      entry->textPtr = mapEntry["textPtr"].toDouble();
-
-    if(mapEntry["width"].isDouble())
-      entry->width = mapEntry["width"].toDouble();
-
-    if(mapEntry["height"].isDouble())
-      entry->height = mapEntry["height"].toDouble();
-
-    if(mapEntry["music"].isString())
-      entry->music = mapEntry["music"].toString();
-
-    if(mapEntry["tileset"].isString())
-      entry->tileset = mapEntry["tileset"].toString();
-
-    if(mapEntry["modernName"].isString())
-      entry->modernName = mapEntry["modernName"].toString();
-
-    if(mapEntry["incomplete"].isString())
-      entry->incomplete = mapEntry["incomplete"].toString();
-
-    if(mapEntry["border"].isDouble())
-      entry->border = mapEntry["border"].toDouble();
-
-    if(mapEntry["spriteSet"].isDouble())
-      entry->spriteSet = mapEntry["spriteSet"].toDouble();
-
-    if(mapEntry["warpOut"].isArray())
-    {
-      for(QJsonValue warpEntry : mapEntry["warpOut"].toArray()) {
-        auto tmp = new MapDBEntryWarpOut;
-        tmp->x = warpEntry["x"].toDouble();
-        tmp->y = warpEntry["y"].toDouble();
-        tmp->warp = warpEntry["toWarp"].toDouble();
-        tmp->map = warpEntry["toMap"].toString();
-        tmp->glitch = warpEntry["glitch"].toBool(false);
-        entry->warpOut.append(tmp);
-      }
-    }
-
-    if(mapEntry["warpIn"].isArray())
-    {
-      for(QJsonValue warpEntry : mapEntry["warpIn"].toArray()) {
-        auto tmp = new MapDBEntryWarpIn;
-        tmp->x = warpEntry["x"].toDouble();
-        tmp->y = warpEntry["y"].toDouble();
-        entry->warpIn.append(tmp);
-      }
-    }
-
-    if(mapEntry["signs"].isArray())
-    {
-      for(QJsonValue signEntry : mapEntry["signs"].toArray()) {
-        auto tmp = new MapDBEntrySign;
-        tmp->x = signEntry["x"].toDouble();
-        tmp->y = signEntry["y"].toDouble();
-        tmp->textID = signEntry["text"].toDouble();
-        entry->signs.append(tmp);
-      }
-    }
-
-    if(mapEntry["redMons"].isArray())
-    {
-      for(QJsonValue monEntry : mapEntry["redMons"].toArray()) {
-        auto tmp = new MapDBEntryWildMon;
-        tmp->name = monEntry["name"].toString();
-        tmp->level = monEntry["level"].toDouble();
-        entry->monsRed.append(tmp);
-      }
-    }
-
-    if(mapEntry["blueMons"].isArray())
-    {
-      for(QJsonValue monEntry : mapEntry["blueMons"].toArray()) {
-        auto tmp = new MapDBEntryWildMon;
-        tmp->name = monEntry["name"].toString();
-        tmp->level = monEntry["level"].toDouble();
-        entry->monsBlue.append(tmp);
-      }
-    }
-
-    if(mapEntry["waterMons"].isArray())
-    {
-      for(QJsonValue monEntry : mapEntry["waterMons"].toArray()) {
-        auto tmp = new MapDBEntryWildMon;
-        tmp->name = monEntry["name"].toString();
-        tmp->level = monEntry["level"].toDouble();
-        entry->monsWater.append(tmp);
-      }
-    }
-
-    if(mapEntry["monRate"].isDouble())
-      entry->monRate = mapEntry["monRate"].toDouble();
-
-    if(mapEntry["monRateWater"].isDouble())
-      entry->monRateWater = mapEntry["monRateWater"].toDouble();
-
-    if(mapEntry["sprites"].isArray())
-    {
-      for(QJsonValue spriteEntry : mapEntry["sprites"].toArray()) {
-
-        MapDBEntrySprite* ret;
-
-        if(spriteEntry["item"].isString()) {
-          auto tmp = new MapDBEntrySpriteItem;
-          tmp->item = spriteEntry["item"].toString();
-          ret = tmp;
-        }
-        else if(spriteEntry["class"].isString()) {
-          auto tmp = new MapDBEntrySpriteTrainer;
-          tmp->trainerClass = spriteEntry["class"].toString();
-          tmp->team = spriteEntry["team"].toDouble();
-          ret = tmp;
-        }
-        else if(spriteEntry["pokemon"].isString()) {
-          auto tmp = new MapDBEntrySpritePokemon;
-          tmp->pokemon = spriteEntry["pokemon"].toString();
-          tmp->level = spriteEntry["level"].toDouble();
-          ret = tmp;
-        }
-        else {
-          auto tmp = new MapDBEntrySpriteNPC;
-          ret = tmp;
-        }
-
-        ret->sprite = spriteEntry["sprite"].toString();
-        ret->x = spriteEntry["x"].toDouble();
-        ret->y = spriteEntry["y"].toDouble();
-        ret->move = spriteEntry["move"].toString();
-        ret->text = spriteEntry["text"].toDouble();
-
-        if(spriteEntry["missable"].isDouble())
-          ret->missable = spriteEntry["missable"].toDouble();
-
-        if(spriteEntry["range"].isDouble())
-          ret->range = spriteEntry["range"].toDouble();
-        else
-          ret->face = spriteEntry["face"].toString();
-
-        entry->sprites.append(ret);
-      }
-    }
-
-    if(mapEntry["connect"].isObject())
-    {
-      QJsonValue conVal = mapEntry["connect"].toObject();
-
-      if(conVal["north"].isObject()) {
-        QJsonValue tmp = conVal["north"].toObject();
-        entry->connect.insert(
-              (var8)ConnectDir::NORTH,
-              new MapDBEntryConnect(ConnectDir::NORTH, entry, tmp));
-      }
-      if(conVal["east"].isObject()) {
-        QJsonValue tmp = conVal["east"].toObject();
-        entry->connect.insert(
-              (var8)ConnectDir::EAST,
-              new MapDBEntryConnect(ConnectDir::EAST, entry, tmp));
-      }
-      if(conVal["south"].isObject()) {
-        QJsonValue tmp = conVal["south"].toObject();
-        entry->connect.insert(
-              (var8)ConnectDir::SOUTH,
-              new MapDBEntryConnect(ConnectDir::SOUTH, entry, tmp));
-      }
-      if(conVal["west"].isObject()) {
-        QJsonValue tmp = conVal["west"].toObject();
-        entry->connect.insert(
-              (var8)ConnectDir::WEST,
-              new MapDBEntryConnect(ConnectDir::WEST, entry, tmp));
-      }
-    }
+    auto entry = new MapDBEntry(mapEntry);
 
     // Add to array
     store.append(entry);
@@ -647,70 +763,7 @@ void MapsDB::deepLink()
 {
   for(auto entry : store)
   {
-    if(entry->music != "")
-      entry->toMusic = MusicDB::ind.value(entry->music, nullptr);
-
-    if(entry->tileset != "")
-      entry->toTileset = TilesetDB::ind.value(entry->tileset, nullptr);
-
-    if(entry->incomplete != "")
-      entry->toComplete = MapsDB::ind.value(entry->incomplete, nullptr);
-
-    if(entry->connect.contains((var8)ConnectDir::NORTH))
-      entry->connect.value((var8)ConnectDir::NORTH)->deepLink();
-    if(entry->connect.contains((var8)ConnectDir::EAST))
-      entry->connect.value((var8)ConnectDir::EAST)->deepLink();
-    if(entry->connect.contains((var8)ConnectDir::SOUTH))
-      entry->connect.value((var8)ConnectDir::SOUTH)->deepLink();
-    if(entry->connect.contains((var8)ConnectDir::WEST))
-      entry->connect.value((var8)ConnectDir::WEST)->deepLink();
-
-    if(entry->warpOut.size() > 0)
-      for(auto warpEntry : entry->warpOut)
-        warpEntry->deepLink();
-
-    if(entry->sprites.size() > 0)
-      for(auto spriteEntry : entry->sprites)
-        spriteEntry->deepLink();
-
-    if(entry->monsRed.size() > 0)
-      for(auto monEntry : entry->monsRed)
-        monEntry->deepLink();
-
-    if(entry->monsBlue.size() > 0)
-      for(auto monEntry : entry->monsBlue)
-        monEntry->deepLink();
-
-    if(entry->monsWater.size() > 0)
-      for(auto monEntry : entry->monsWater)
-        monEntry->deepLink();
-
-    if(entry->spriteSet)
-      entry->toSpriteSet =
-          SpriteSetDB::ind.value(QString::number(*entry->spriteSet), nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->music != "" && entry->toMusic == nullptr)
-      qCritical() << "Map: " << entry->name << ", could not be deep linked to music" << entry->music;
-
-    if(entry->tileset != "" && entry->toTileset == nullptr)
-      qCritical() << "Map: " << entry->name << ", could not be deep linked to tileset" << entry->tileset;
-
-    if(entry->incomplete != "" && entry->toComplete == nullptr)
-      qCritical() << "Map: " << entry->name << ", could not be deep linked to complete" << entry->incomplete;
-
-    if(entry->spriteSet && entry->toSpriteSet == nullptr)
-      qCritical() << "Map: " << entry->name << ", could not be deep linked to sprite set" << *entry->spriteSet;
-#endif
-
-    if(entry->toSpriteSet != nullptr)
-      entry->toSpriteSet->toMaps.append(entry);
-
-    if(entry->toMusic != nullptr)
-      entry->toMusic->toMaps.append(entry);
-
-    if(entry->toTileset != nullptr)
-      entry->toTileset->toMaps.append(entry);
+    entry->deepLink();
   }
 }
 
@@ -718,6 +771,3 @@ MapSearch* MapsDB::search()
 {
   return new MapSearch();
 }
-
-QVector<MapDBEntry*> MapsDB::store = QVector<MapDBEntry*>();
-QHash<QString, MapDBEntry*> MapsDB::ind = QHash<QString, MapDBEntry*>();

@@ -25,6 +25,28 @@
 #include "./gamedata.h"
 #include "./maps.h"
 
+FlyDBEntry::FlyDBEntry() {}
+
+FlyDBEntry::FlyDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+}
+
+void FlyDBEntry::deepLink()
+{
+  toMap = MapsDB::ind.value(name, nullptr);
+
+#ifdef QT_DEBUG
+  if(toMap == nullptr)
+    qCritical() << "Fly Destination: " << name << ", could not be deep linked." ;
+#endif
+
+  if(toMap != nullptr)
+    toMap->toFlyDestination = this;
+}
+
 void FlyDB::load()
 {
   // Grab Event Pokemon Data
@@ -34,11 +56,7 @@ void FlyDB::load()
   for(QJsonValue flyEntry : flyData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new FlyDBEntry();
-
-    // Set simple properties
-    entry->name = flyEntry["name"].toString();
-    entry->ind = flyEntry["ind"].toDouble();
+    auto entry = new FlyDBEntry(flyEntry);
 
     // Add to array
     store.append(entry);
@@ -61,17 +79,6 @@ void FlyDB::deepLink()
 {
   for(auto entry : store)
   {
-    entry->toMap = MapsDB::ind.value(entry->name, nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->toMap == nullptr)
-      qCritical() << "Fly Destination: " << entry->name << ", could not be deep linked." ;
-#endif
-
-    if(entry->toMap != nullptr)
-      entry->toMap->toFlyDestination = entry;
+    entry->deepLink();
   }
 }
-
-QVector<FlyDBEntry*> FlyDB::store = QVector<FlyDBEntry*>();
-QHash<QString, FlyDBEntry*> FlyDB::ind = QHash<QString, FlyDBEntry*>();

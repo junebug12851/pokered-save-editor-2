@@ -24,6 +24,29 @@
 #include "./maps.h"
 #include "./gamedata.h"
 
+HiddenCoinDBEntry::HiddenCoinDBEntry() {}
+
+HiddenCoinDBEntry::HiddenCoinDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  map = data["map"].toString();
+  x = data["x"].toDouble();
+  y = data["y"].toDouble();
+}
+
+void HiddenCoinDBEntry::deepLink()
+{
+  toMap = MapsDB::ind.value(map, nullptr);
+
+#ifdef QT_DEBUG
+  if(toMap == nullptr)
+    qCritical() << "Hidden Coins Map: " << map << ", could not be deep linked." ;
+#endif
+
+  if(toMap != nullptr)
+    toMap->toHiddenCoins.append(this);
+}
+
 void HiddenCoinsDB::load()
 {
   // Grab Event Pokemon Data
@@ -33,12 +56,7 @@ void HiddenCoinsDB::load()
   for(QJsonValue hiddenCoinEntry : hiddenCoinData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new HiddenCoinDBEntry();
-
-    // Set simple properties
-    entry->map = hiddenCoinEntry["map"].toString();
-    entry->x = hiddenCoinEntry["x"].toDouble();
-    entry->y = hiddenCoinEntry["y"].toDouble();
+    auto entry = new HiddenCoinDBEntry(hiddenCoinEntry);
 
     // Add to array
     store.append(entry);
@@ -51,17 +69,6 @@ void HiddenCoinsDB::deepLink()
 {
   for(auto entry : store)
   {
-    entry->toMap = MapsDB::ind.value(entry->map, nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->toMap == nullptr)
-      qCritical() << "Hidden Coins Map: " << entry->map << ", could not be deep linked." ;
-#endif
-
-    if(entry->toMap != nullptr)
-      entry->toMap->toHiddenCoins.append(entry);
+    entry->deepLink();
   }
 }
-
-QVector<HiddenCoinDBEntry*> HiddenCoinsDB::store =
-    QVector<HiddenCoinDBEntry*>();

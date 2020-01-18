@@ -26,10 +26,75 @@
 #include "./gamedata.h"
 #include "./pokemon.h"
 
-EventPokemonDBEntry::EventPokemonDBEntry()
+EventPokemonDBEntry::EventPokemonDBEntry() {}
+EventPokemonDBEntry::EventPokemonDBEntry(QJsonValue& data) {
+  // Set simple properties
+  title = data["title"].toString();
+  desc = data["desc"].toString();
+  pokemon = data["pokemon"].toString();
+  region = data["region"].toString();
+
+  // Set simple optional proeprties
+  if(data["otID"].isString())
+    otId = data["otID"].toString().toInt(nullptr, 16);
+
+  if(data["level"].isDouble())
+    level = data["level"].toDouble();
+
+  // Set Moves
+  auto movesArr = data["moves"].toArray();
+  for(QJsonValue moveEntry : movesArr)
+    moves.append(moveEntry.toString());
+
+  // Set OT Name
+  // Can be array or string
+  if(data["otName"].isArray())
+  {
+    auto otNameArr = data["otName"].toArray();
+
+    for(auto otNameEntry : otNameArr)
+      otName.append(otNameEntry.toString());
+  }
+  else
+    otName.append(data["otName"].toString());
+
+  // Set DV
+  if(data["dv"].isString())
+  {
+    // DV Can be
+    // "max"             All DV Values of 15
+    // ":##:##:##:##"    Specific DV Values
+    //                   Atk, Def, Spd, Sp
+    auto dvVal = data["dv"].toString();
+
+    if(dvVal == "max") {
+      dv.append(15);
+      dv.append(15);
+      dv.append(15);
+      dv.append(15);
+    }
+    else
+    {
+      auto dvValParts = dvVal.split(":", QString::SkipEmptyParts);
+      dv.append(dvValParts[0].toInt(nullptr, 10));
+      dv.append(dvValParts[1].toInt(nullptr, 10));
+      dv.append(dvValParts[2].toInt(nullptr, 10));
+      dv.append(dvValParts[3].toInt(nullptr, 10));
+    }
+  }
+}
+
+void EventPokemonDBEntry::deepLink()
 {
-  otName = QVector<QString>();
-  moves = QVector<QString>();
+  toPokemon = PokemonDB::ind.value(pokemon, nullptr);
+
+#ifdef QT_DEBUG
+    if(toPokemon == nullptr)
+      qCritical() << "Event Pokemon: " << pokemon << ", could not be deep linked." ;
+#endif
+
+    if(toPokemon != nullptr)
+      toPokemon->toEventMons.append(this);
 }
 
 void EventPokemonDB::load()
@@ -41,63 +106,7 @@ void EventPokemonDB::load()
   for(QJsonValue eventPokemonEntry : eventPokemonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new EventPokemonDBEntry();
-
-    // Set simple properties
-    entry->title = eventPokemonEntry["title"].toString();
-    entry->desc = eventPokemonEntry["desc"].toString();
-    entry->pokemon = eventPokemonEntry["pokemon"].toString();
-    entry->region = eventPokemonEntry["region"].toString();
-
-    // Set simple optional proeprties
-    if(eventPokemonEntry["otID"].isString())
-      entry->otId = eventPokemonEntry["otID"].toString().toInt(nullptr, 16);
-
-    if(eventPokemonEntry["level"].isDouble())
-      entry->level = eventPokemonEntry["level"].toDouble();
-
-    // Set Moves
-    auto movesArr = eventPokemonEntry["moves"].toArray();
-    for(QJsonValue moveEntry : movesArr)
-      entry->moves.append(moveEntry.toString());
-
-    // Set OT Name
-    // Can be array or string
-    if(eventPokemonEntry["otName"].isArray())
-    {
-      auto otNameArr = eventPokemonEntry["otName"].toArray();
-
-      for(auto otNameEntry : otNameArr)
-        entry->otName.append(otNameEntry.toString());
-    }
-    else
-      entry->otName.append(eventPokemonEntry["otName"].toString());
-
-    // Set DV
-    if(eventPokemonEntry["dv"].isString())
-    {
-      entry->dv = QVector<var8>();
-
-      // DV Can be
-      // "max"             All DV Values of 15
-      // ":##:##:##:##"    Specific DV Values
-      //                   Atk, Def, Spd, Sp
-      auto dvVal = eventPokemonEntry["dv"].toString();
-      if(dvVal == "max") {
-        entry->dv.append(15);
-        entry->dv.append(15);
-        entry->dv.append(15);
-        entry->dv.append(15);
-      }
-      else
-      {
-        auto dvValParts = dvVal.split(":", QString::SkipEmptyParts);
-        entry->dv.append(dvValParts[0].toInt(nullptr, 10));
-        entry->dv.append(dvValParts[1].toInt(nullptr, 10));
-        entry->dv.append(dvValParts[2].toInt(nullptr, 10));
-        entry->dv.append(dvValParts[3].toInt(nullptr, 10));
-      }
-    }
+    auto entry = new EventPokemonDBEntry(eventPokemonEntry);
 
     // Add to array
     store.append(entry);
@@ -110,16 +119,6 @@ void EventPokemonDB::deepLink()
 {
   for(auto entry : store)
   {
-    entry->toPokemon = PokemonDB::ind.value(entry->pokemon, nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->toPokemon == nullptr)
-      qCritical() << "Event Pokemon: " << entry->pokemon << ", could not be deep linked." ;
-#endif
-
-    if(entry->toPokemon != nullptr)
-      entry->toPokemon->toEventMons.append(entry);
+    entry->deepLink();
   }
 }
-
-QVector<EventPokemonDBEntry*> EventPokemonDB::store = QVector<EventPokemonDBEntry*>();

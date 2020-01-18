@@ -20,16 +20,37 @@
 #include "./gamedata.h"
 #include "./fontsearch.h"
 
-FontDBEntry::FontDBEntry()
-{
-  shorthand = false;
-  picture = false;
-  useTilemap = false;
-  control = false;
-  multiChar = false;
-  variable = false;
-  singleChar = false;
-  normal = false;
+FontDBEntry::FontDBEntry() {}
+FontDBEntry::FontDBEntry(QJsonValue& data) {
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+  length = data["length"].toDouble();
+
+  // Set simple optional properties
+  if(data["shorthand"].isBool())
+    shorthand = data["shorthand"].toBool();
+
+  if(data["picture"].isBool())
+    picture = data["picture"].toBool();
+
+  if(data["useTilemap"].isBool())
+    useTilemap = data["useTilemap"].toBool();
+
+  if(data["control"].isBool())
+    control = data["control"].toBool();
+
+  if(data["multiChar"].isBool())
+    multiChar = data["multiChar"].toBool();
+
+  if(data["variable"].isBool())
+    variable = data["variable"].toBool();
+
+  if(data["singleChar"].isBool())
+    singleChar = data["singleChar"].toBool();
+
+  if(data["normal"].isBool())
+    normal = data["normal"].toBool();
 }
 
 void FontsDB::load()
@@ -41,37 +62,7 @@ void FontsDB::load()
   for(QJsonValue fontEntry : fontData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new FontDBEntry();
-
-    // Set simple properties
-    entry->name = fontEntry["name"].toString();
-    entry->ind = fontEntry["ind"].toDouble();
-    entry->length = fontEntry["length"].toDouble();
-
-    // Set simple optional properties
-    if(fontEntry["shorthand"].isBool())
-      entry->shorthand = fontEntry["shorthand"].toBool();
-
-    if(fontEntry["picture"].isBool())
-      entry->picture = fontEntry["picture"].toBool();
-
-    if(fontEntry["useTilemap"].isBool())
-      entry->useTilemap = fontEntry["useTilemap"].toBool();
-
-    if(fontEntry["control"].isBool())
-      entry->control = fontEntry["control"].toBool();
-
-    if(fontEntry["multiChar"].isBool())
-      entry->multiChar = fontEntry["multiChar"].toBool();
-
-    if(fontEntry["variable"].isBool())
-      entry->variable = fontEntry["variable"].toBool();
-
-    if(fontEntry["singleChar"].isBool())
-      entry->singleChar = fontEntry["singleChar"].toBool();
-
-    if(fontEntry["normal"].isBool())
-      entry->normal = fontEntry["normal"].toBool();
+    auto entry = new FontDBEntry(fontEntry);
 
     // Add to array
     store.append(entry);
@@ -267,6 +258,3 @@ void FontsDB::splice(QVector<var8>& out, QString in, var8 ind)
   for(var8 j = 0; j < tmp.length(); j++)
     out.insert(ind+j, tmp.at(j));
 }
-
-QVector<FontDBEntry*> FontsDB::store = QVector<FontDBEntry*>();
-QHash<QString, FontDBEntry*> FontsDB::ind = QHash<QString, FontDBEntry*>();

@@ -19,6 +19,7 @@
 #include <QVector>
 #include <QString>
 #include <QHash>
+#include <QJsonValue>
 
 #include "../../common/types.h"
 
@@ -31,10 +32,14 @@ struct MapDBEntry;
 // thing you do changes and moves around events
 
 struct EventDBEntry {
+  EventDBEntry();
+  EventDBEntry(QJsonValue& data);
+  void deepLink();
+
   QString name; // Event name
-  var16 ind; // Internal index
-  var16 byte; // Byte in SAV file
-  var8 bit; // Bit in byte
+  var16 ind = 0; // Internal index
+  var16 byte = 0; // Byte in SAV file
+  var8 bit = 0; // Bit in byte
   QVector<QString> maps; // Associated Maps
 
   QVector<MapDBEntry*> toMaps; // To Associated Maps

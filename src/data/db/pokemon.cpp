@@ -168,7 +168,7 @@ void PokemonDBEntry::deepLink()
 #endif
 
     if(link != nullptr)
-      link->toPokemonOther.append(this);
+      link->toPokemonInitial.append(this);
   }
 
   // Deep-Link tm/hm
@@ -188,7 +188,7 @@ void PokemonDBEntry::deepLink()
 #endif
 
     if(moveLink != nullptr)
-      moveLink->toPokemonOther.append(this);
+      moveLink->toPokemonTmHm.append(this);
 
     if(itemLink != nullptr)
       itemLink->toTeachPokemon.append(this);

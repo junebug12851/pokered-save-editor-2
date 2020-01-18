@@ -25,12 +25,42 @@
 #include "./gamedata.h"
 #include "./moves.h"
 
-ItemDBEntry::ItemDBEntry()
+ItemDBEntry::ItemDBEntry() {}
+ItemDBEntry::ItemDBEntry(QJsonValue& data)
 {
-  once = false;
-  glitch = false;
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+  readable = data["readable"].toString();
 
-  toMove = nullptr;
+  // Set simple optional properties
+  if(data["once"].isBool())
+    once = data["once"].toBool();
+
+  if(data["glitch"].isBool())
+    glitch = data["glitch"].toBool();
+
+  if(data["tm"].isDouble())
+    tm = data["tm"].toDouble();
+
+  if(data["hm"].isDouble())
+    hm = data["hm"].toDouble();
+
+  if(data["price"].isDouble())
+    price = data["price"].toDouble();
+}
+
+void ItemDBEntry::deepLink()
+{
+  if(tm && !hm)
+    toMove = MovesDB::ind.value("tm" + QString::number(*tm), nullptr);
+  else if(tm && hm)
+    toMove = MovesDB::ind.value("hm" + QString::number(*hm), nullptr);
+
+#ifdef QT_DEBUG
+  if((tm || hm) && toMove == nullptr)
+    qCritical() << "Item: " << name << ", could not be deep linked." ;
+#endif
 }
 
 void ItemsDB::load()
@@ -42,28 +72,7 @@ void ItemsDB::load()
   for(QJsonValue itemEntry : itemData->array())
   {
     // Create a new item entry
-    auto entry = new ItemDBEntry();
-
-    // Set simple properties
-    entry->name = itemEntry["name"].toString();
-    entry->ind = itemEntry["ind"].toDouble();
-    entry->readable = itemEntry["readable"].toString();
-
-    // Set simple optional properties
-    if(itemEntry["once"].isBool())
-      entry->once = itemEntry["once"].toBool();
-
-    if(itemEntry["glitch"].isBool())
-      entry->glitch = itemEntry["glitch"].toBool();
-
-    if(itemEntry["tm"].isDouble())
-      entry->tm = itemEntry["tm"].toDouble();
-
-    if(itemEntry["hm"].isDouble())
-      entry->hm = itemEntry["hm"].toDouble();
-
-    if(itemEntry["price"].isDouble())
-      entry->price = itemEntry["price"].toDouble();
+    auto entry = new ItemDBEntry(itemEntry);
 
     // Add to array
     store.append(entry);
@@ -92,17 +101,6 @@ void ItemsDB::deepLink()
 {
   for(auto entry : store)
   {
-    if(entry->tm && !entry->hm)
-      entry->toMove = MovesDB::ind.value("tm" + QString::number(*entry->tm), nullptr);
-    else if(entry->tm && entry->hm)
-      entry->toMove = MovesDB::ind.value("hm" + QString::number(*entry->hm), nullptr);
-
-#ifdef QT_DEBUG
-    if((entry->tm || entry->hm) && entry->toMove == nullptr)
-      qCritical() << "Item: " << entry->name << ", could not be deep linked." ;
-#endif
+    entry->deepLink();
   }
 }
-
-QVector<ItemDBEntry*> ItemsDB::store = QVector<ItemDBEntry*>();
-QHash<QString, ItemDBEntry*> ItemsDB::ind = QHash<QString, ItemDBEntry*>();

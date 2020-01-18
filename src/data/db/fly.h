@@ -18,6 +18,7 @@
 
 #include <QString>
 #include <QHash>
+#include <QJsonValue>
 
 #include "../../common/types.h"
 
@@ -29,10 +30,14 @@ struct MapDBEntry;
 // Cities you can fly to
 
 struct FlyDBEntry {
-  QString name; // City Name
-  var8 ind; // Index in list
+  FlyDBEntry();
+  FlyDBEntry(QJsonValue& data);
+  void deepLink();
 
-  MapDBEntry* toMap; // Deep link to associated map data
+  QString name; // City Name
+  var8 ind = 0; // Index in list
+
+  MapDBEntry* toMap = nullptr; // Deep link to associated map data
 };
 
 class FlyDB

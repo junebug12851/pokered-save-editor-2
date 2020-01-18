@@ -28,7 +28,7 @@ public:
   MapSearch();
 
   MapDBEntry* pickRandom();
-  MapSearch* restart();
+  MapSearch* startOver();
 
   MapSearch* notNamed(QString val);
   MapSearch* indexLt(var8 val);

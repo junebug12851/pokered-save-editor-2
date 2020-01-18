@@ -107,11 +107,10 @@ struct MapDBEntryConnect {
 
   MapDBEntryConnect();
   MapDBEntryConnect(ConnectDir dir, MapDBEntry* fromMap, QJsonValue& data);
-
   void deepLink();
 
   // Direction used in calculating
-  ConnectDir dir;
+  ConnectDir dir = ConnectDir::NORTH;
 
   // Connecting Map
   QString map = "";
@@ -131,6 +130,7 @@ struct MapDBEntryConnect {
 
   // Map with connection
   MapDBEntry* fromMap = nullptr;
+  MapDBEntry* parent = nullptr; // Basically the same thing, just an alias
 
   // Location of strip
   // Pointer to start in connected map
@@ -161,17 +161,23 @@ struct MapDBEntryConnect {
 
 // Sprites are a tad complicated only becuase there are different kinds of
 // sprites having different set of options and all rolled into one data set.
+// Sprites are the 2nd most complicated data structure mainly because sprite
+// data is all over the place and in so many different forms and variables
+// it's actually a very messy system because it feels like this is one area
+// the developers were most trying to figure out through development.
 struct MapDBEntrySprite
 {
-  virtual SpriteType type();
+  MapDBEntrySprite();
+  MapDBEntrySprite(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
+  virtual SpriteType type();
 
   // Name of sprite
   QString sprite;
 
   // X & Y position on map
-  var8 x;
-  var8 y;
+  var8 x = 0;
+  var8 y = 0;
 
   // X & Y Coordinates adjusted for the gen 1 games
   var8 adjustedX();
@@ -184,7 +190,7 @@ struct MapDBEntrySprite
   QString move;
 
   // Text when interacting with sprite
-  var8 text;
+  var8 text = 0;
 
   // Is the sprite allowed room to move?
   // Or is it given a static facing position
@@ -198,19 +204,24 @@ struct MapDBEntrySprite
 
   // To Sprite
   SpriteDBEntry* toSprite = nullptr;
+
+  // Parent Map Entry
+  MapDBEntry* parent = nullptr;
 };
 
 // A regular NPC that says a few lines and may have a script that's run
 struct MapDBEntrySpriteNPC : public MapDBEntrySprite
 {
+  MapDBEntrySpriteNPC(QJsonValue& data, MapDBEntry* parent);
   virtual SpriteType type();
 };
 
 // An item that's obtained
 struct MapDBEntrySpriteItem : public MapDBEntrySprite
 {
-  virtual SpriteType type();
+  MapDBEntrySpriteItem(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
+  virtual SpriteType type();
 
   // Which Item
   QString item;
@@ -221,8 +232,9 @@ struct MapDBEntrySpriteItem : public MapDBEntrySprite
 // A Pokemon that can be battled
 struct MapDBEntrySpritePokemon : public MapDBEntrySprite
 {
-  virtual SpriteType type();
+  MapDBEntrySpritePokemon(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
+  virtual SpriteType type();
 
   // Pokemon Details
   QString pokemon;
@@ -234,8 +246,9 @@ struct MapDBEntrySpritePokemon : public MapDBEntrySprite
 // A trainer that can be battled
 struct MapDBEntrySpriteTrainer : public MapDBEntrySprite
 {
-  virtual SpriteType type();
+  MapDBEntrySpriteTrainer(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
+  virtual SpriteType type();
 
   // Trainer Details
   // What kind of trainer and which team
@@ -249,14 +262,16 @@ struct MapDBEntrySpriteTrainer : public MapDBEntrySprite
 // They can only warp to a "warp-in" point
 struct MapDBEntryWarpOut
 {
+  MapDBEntryWarpOut();
+  MapDBEntryWarpOut(QJsonValue& data, MapDBEntry* parent);
   void deepLink();
 
   // X & Y location on Map
-  var8 x;
-  var8 y;
+  var8 x = 0;
+  var8 y = 0;
 
   // Which pre-defined warp-in to warp to
-  var8 warp;
+  var8 warp = 0;
 
   // Which map to warp to
   QString map;
@@ -266,6 +281,7 @@ struct MapDBEntryWarpOut
 
   // Go to map
   MapDBEntry* toMap = nullptr;
+  MapDBEntry* parent = nullptr;
 
   // Go to warp spot on destination map
   MapDBEntryWarpIn* toWarp = nullptr;
@@ -273,32 +289,44 @@ struct MapDBEntryWarpOut
 
 struct MapDBEntryWarpIn
 {
+  MapDBEntryWarpIn();
+  MapDBEntryWarpIn(QJsonValue& data, MapDBEntry* parent);
+
   // X & Y location on Map
-  var8 x;
-  var8 y;
+  var8 x = 0;
+  var8 y = 0;
 
   QVector<MapDBEntryWarpOut*> toConnectingWarps;
+  MapDBEntry* parent = nullptr;
 };
 
 struct MapDBEntrySign
 {
+  MapDBEntrySign();
+  MapDBEntrySign(QJsonValue& data, MapDBEntry* parent);
+
   // X & Y location on Map
-  var8 x;
-  var8 y;
+  var8 x = 0;
+  var8 y = 0;
 
   // Which text id to display when interacting with sign
-  var8 textID;
+  var8 textID = 0;
+
+  MapDBEntry* parent = nullptr;
 };
 
 // Wild Pokemon Entry
 struct MapDBEntryWildMon
 {
+  MapDBEntryWildMon();
+  MapDBEntryWildMon(QJsonValue& value, MapDBEntry* parent);
   void deepLink();
 
   QString name;
   var8 level = 0;
 
   PokemonDBEntry* toPokemon = nullptr;
+  MapDBEntry* parent = nullptr;
 };
 
 struct MapDBEntry {
@@ -307,6 +335,8 @@ struct MapDBEntry {
   // and mark then false unless they're present skipping dealing with variant
 
   MapDBEntry();
+  MapDBEntry(QJsonValue& data);
+  void deepLink();
 
   QString name;
   var8 ind;

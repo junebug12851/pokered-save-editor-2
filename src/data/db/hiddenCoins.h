@@ -17,6 +17,7 @@
 #define HIDDENCOINS_H
 
 #include <QString>
+#include <QJsonValue>
 
 #include "../../common/types.h"
 
@@ -25,11 +26,15 @@ struct MapDBEntry;
 // A list of all the hidden coins in Casino
 
 struct HiddenCoinDBEntry {
-  QString map;
-  var8 x;
-  var8 y;
+  HiddenCoinDBEntry();
+  HiddenCoinDBEntry(QJsonValue& data);
+  void deepLink();
 
-  MapDBEntry* toMap;
+  QString map;
+  var8 x = 0;
+  var8 y = 0;
+
+  MapDBEntry* toMap = nullptr;
 };
 
 class HiddenCoinsDB
