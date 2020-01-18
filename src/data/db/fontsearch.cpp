@@ -18,11 +18,20 @@
 
 FontSearch::FontSearch()
 {
+  startOver();
+}
+
+FontSearch* FontSearch::startOver()
+{
+  results.clear();
+
   // Copy elements over to begin search
   for(auto entry : FontsDB::store)
   {
     results.append(entry);
   }
+
+  return this;
 }
 
 FontSearch* FontSearch::andShorthand()

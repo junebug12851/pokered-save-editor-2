@@ -23,7 +23,7 @@
 
 MapSearch::MapSearch()
 {
-  restart();
+  startOver();
 }
 
 MapDBEntry* MapSearch::pickRandom()
@@ -32,7 +32,7 @@ MapDBEntry* MapSearch::pickRandom()
   return results.at(rnd->bounded(0, results.size()));
 }
 
-MapSearch* MapSearch::restart()
+MapSearch* MapSearch::startOver()
 {
   results.clear();
 
