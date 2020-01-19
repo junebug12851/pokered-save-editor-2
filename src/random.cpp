@@ -30,12 +30,12 @@ var32 Random::rangeExclusive(var32 start, var32 end)
 
 bool Random::chanceFailure(var8 percent)
 {
-  return rnd->bounded(0, 100) > percent;
+  return rnd->bounded(0, 100) >= percent;
 }
 
 bool Random::chanceSuccess(var8 percent)
 {
-  return rnd->bounded(0, 100) < percent;
+  return rnd->bounded(0, 100) <= percent;
 }
 
 QRandomGenerator* Random::rnd = QRandomGenerator::global();

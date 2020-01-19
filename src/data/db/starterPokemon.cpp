@@ -17,7 +17,6 @@
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>
-#include <QRandomGenerator>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -26,6 +25,7 @@
 #include "./starterPokemon.h"
 #include "./gamedata.h"
 #include "./pokemon.h"
+#include "../../random.h"
 
 void StarterPokemonDB::load()
 {
@@ -61,14 +61,14 @@ void StarterPokemonDB::deepLink()
 PokemonDBEntry* StarterPokemonDB::random3Starter()
 {
   // First 3 in list are in-game starters
-  var32 ind = QRandomGenerator::global()->bounded(0, 3);
+  var32 ind = Random::rangeExclusive(0, 3);
   return toPokemon.at(ind);
 }
 
 PokemonDBEntry* StarterPokemonDB::randomAnyStarter()
 {
   // List as a whole are all potential starters
-  var32 ind = QRandomGenerator::global()->bounded(0, store.size());
+  var32 ind = Random::rangeExclusive(0, store.size());
   return toPokemon.at(ind);
 }
 

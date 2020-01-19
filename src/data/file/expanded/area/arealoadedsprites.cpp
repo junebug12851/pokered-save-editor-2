@@ -20,8 +20,7 @@
 #include "../../../db/maps.h"
 #include "../../../db/spriteSet.h"
 #include "../../../db/sprites.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 AreaLoadedSprites::AreaLoadedSprites(SaveFile* saveFile)
 {
@@ -63,9 +62,8 @@ void AreaLoadedSprites::randomize(MapDBEntry* map, var8 x, var8 y)
   if(map->toSpriteSet == nullptr) {
     // It does not
     // Pick a random sprite set and load it
-    auto rnd = QRandomGenerator::global();
     auto spriteSet = SpriteSetDB::store.at(
-          rnd->bounded(0, SpriteSetDB::store.size())
+          Random::rangeExclusive(0, SpriteSetDB::store.size())
           );
 
     loadSpriteSet(spriteSet, x, y);
@@ -77,11 +75,9 @@ void AreaLoadedSprites::randomize(MapDBEntry* map, var8 x, var8 y)
 
 void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y)
 {
-  auto rnd = QRandomGenerator::global();
-
   auto set = entry->getSprites(
-        rnd->bounded(x, y),
-        rnd->bounded(x, y));
+        Random::rangeInclusive(x, y),
+        Random::rangeInclusive(x, y));
 
   auto id = entry->ind;
 

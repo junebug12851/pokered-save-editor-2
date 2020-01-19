@@ -29,8 +29,7 @@
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 #include "../../../db/mapsearch.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 Area::Area(SaveFile* saveFile)
 {
@@ -122,14 +121,13 @@ void Area::randomize()
   // A Gameboy area is much more complicated to randomize and get right
   // so that it's playable
   // Pre-pick a random area here and pass to other area classes who need it
-  auto rnd = QRandomGenerator::global();
 
   // Grab a random "good" map, a good map to throw the player on
   auto map = MapsDB::search()->isGood()->pickRandom();
 
   // Now pick out a random warp in and use those coordinates for the player
   // coordinates
-  auto warpIn = map->warpIn.at(rnd->bounded(0, map->warpIn.size()));
+  auto warpIn = map->warpIn.at(Random::rangeExclusive(0, map->warpIn.size()));
 
   // X & Y coordinates to place player
   var8 x = warpIn->x;

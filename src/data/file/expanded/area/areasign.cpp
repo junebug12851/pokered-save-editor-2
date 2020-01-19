@@ -19,8 +19,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 AreaSign::AreaSign(SaveFile* saveFile)
 {
@@ -69,7 +68,6 @@ void AreaSign::randomize(MapDBEntry* mapData)
   // Clear all signs
   reset();
 
-  auto rnd = QRandomGenerator::global();
   auto signData = mapData->signs;
 
   // We randomize the sign text ids if there are any
@@ -87,7 +85,7 @@ void AreaSign::randomize(MapDBEntry* mapData)
   // Delete id and move onto next sign
   for(auto sign : signData) {
     auto data = new SignData();
-    auto ind = rnd->bounded(0, ids.size());
+    auto ind = Random::rangeExclusive(0, ids.size());
 
     data->x = sign->x;
     data->y = sign->y;

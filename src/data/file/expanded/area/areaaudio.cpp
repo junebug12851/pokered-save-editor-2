@@ -18,8 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/music.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 AreaAudio::AreaAudio(SaveFile* saveFile)
 {
@@ -61,10 +60,8 @@ void AreaAudio::reset()
 
 void AreaAudio::randomize()
 {
-  auto rnd = QRandomGenerator::global();
-
   // Select a random song
-  auto musicEntry = MusicDB::store.at(rnd->bounded(0, MusicDB::store.size()));
+  auto musicEntry = MusicDB::store.at(Random::rangeExclusive(0, MusicDB::store.size()));
 
   // Load it into the map
   musicID = musicEntry->id;

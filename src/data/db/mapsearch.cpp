@@ -14,7 +14,7 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
+#include "../../random.h"
 
 #include "./mapsearch.h"
 #include "./maps.h"
@@ -28,8 +28,7 @@ MapSearch::MapSearch()
 
 MapDBEntry* MapSearch::pickRandom()
 {
-  auto rnd = QRandomGenerator::global();
-  return results.at(rnd->bounded(0, results.size()));
+  return results.at(Random::rangeExclusive(0, results.size()));
 }
 
 MapSearch* MapSearch::startOver()

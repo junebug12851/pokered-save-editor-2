@@ -18,8 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/pokemon.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 AreaPokemonWild::AreaPokemonWild(var8 index, var8 level)
 {
@@ -44,12 +43,11 @@ bool AreaPokemonWild::operator>(const AreaPokemonWild& a)
 
 void AreaPokemonWild::randomize()
 {
-  auto rnd = QRandomGenerator::global();
   auto mon = PokemonDB::ind.value(
-        "dex" + QString::number(rnd->bounded(0, pokemonDexCount)));
+        "dex" + QString::number(Random::rangeExclusive(0, pokemonDexCount)));
 
   index = mon->ind;
-  level = rnd->bounded(5, pokemonLevelMax+1);
+  level = Random::rangeInclusive(5, pokemonLevelMax);
 }
 
 void AreaPokemonWild::reset()
@@ -168,11 +166,9 @@ void AreaPokemon::randomize()
 {
   reset();
 
-  auto rnd = QRandomGenerator::global();
-
   // Give a reasonable grass and water rate randomization
-  grassRate = rnd->bounded(0, 35+1);
-  waterRate = rnd->bounded(0, 35+1);
+  grassRate = Random::rangeInclusive(0, 35);
+  waterRate = Random::rangeInclusive(0, 35);
 
   if(grassRate > 0)
     for(var8 i = 0; i < wildMonsCount; i++)

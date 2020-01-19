@@ -14,14 +14,13 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
-
 #include "./daycare.h"
 #include "./fragments/pokemonbox.h"
 #include "./player/playerbasics.h"
 #include "../savefile.h"
 #include "../savefiletoolset.h"
 #include "../savefileiterator.h"
+#include "../../../random.h"
 
 Daycare::Daycare(SaveFile* saveFile)
 {
@@ -63,13 +62,10 @@ void Daycare::reset()
 
 void Daycare::randomize(PlayerBasics* basics)
 {
-  auto rnd = QRandomGenerator::global();
   reset();
 
   // Give a 50/50 chance the daycare will be in use
-  bool daycareChance = rnd->bounded(0, 100+1) >= 50;
-
-  if(!daycareChance)
+  if(!Random::chanceSuccess(50))
     return;
 
   pokemon = new PokemonBox;

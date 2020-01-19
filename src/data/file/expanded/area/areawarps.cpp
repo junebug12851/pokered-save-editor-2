@@ -14,8 +14,6 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
-
 #include "./areawarps.h"
 #include "../fragments/warpdata.h"
 #include "../../savefile.h"
@@ -23,6 +21,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
 #include "../../../db/mapsearch.h"
+#include "../../../../random.h"
 
 AreaWarps::AreaWarps(SaveFile* saveFile)
 {
@@ -109,8 +108,6 @@ void AreaWarps::randomize(MapDBEntry* map)
 {
   reset();
 
-  auto rnd = QRandomGenerator::global();
-
   // Pick random map that you came from
   auto dungeonWarp = MapsDB::search()->isGood()->isType("Cave")->pickRandom();
 
@@ -121,8 +118,8 @@ void AreaWarps::randomize(MapDBEntry* map)
   specialWarpDestMap = MapsDB::search()->isGood()->pickRandom()->ind;
 
   // Make up some random warps on said dungeon warp
-  whichDungeonWarp = rnd->bounded(0, dungeonWarp->warpOut.size());
-  warpedFromWarp = rnd->bounded(0, dungeonWarp->warpOut.size());
+  whichDungeonWarp = Random::rangeExclusive(0, dungeonWarp->warpOut.size());
+  warpedFromWarp = Random::rangeExclusive(0, dungeonWarp->warpOut.size());
 
   // Re-create all map warps out, we can't blantly make-up stuff here
   // and have to be careful

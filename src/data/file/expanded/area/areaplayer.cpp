@@ -17,8 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 AreaPlayer::AreaPlayer(SaveFile* saveFile)
 {
@@ -141,18 +140,15 @@ void AreaPlayer::randomize(var8 x, var8 y)
   // Keep most of them resetted
   reset();
 
-  // Only change certain ones
-  auto rnd = QRandomGenerator::global();
-
   // Have player be stationary
   playerMoveDir = (var8)PlayerDir::None;
 
   // Determine facing and last stop directions
-  playerLastStopDir = rnd->bounded(
+  playerLastStopDir = Random::rangeInclusive(
         (var8)PlayerDir::Right,
         (var8)PlayerDir::Up);
 
-  playerCurDir = rnd->bounded(
+  playerCurDir = Random::rangeInclusive(
         (var8)PlayerDir::Right,
         (var8)PlayerDir::Up);
 

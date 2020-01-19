@@ -17,10 +17,10 @@
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>
-#include <QRandomGenerator>
 
 #include "./names.h"
 #include "./gamedata.h"
+#include "../../random.h"
 
 void NamesDB::load()
 {
@@ -39,7 +39,7 @@ void NamesDB::load()
 
 QString NamesDB::randomName()
 {
-  var32 ind = QRandomGenerator::global()->bounded(0, store.size());
+  var32 ind = Random::rangeExclusive(0, store.size());
   return store.at(ind);
 }
 

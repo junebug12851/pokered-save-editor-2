@@ -15,7 +15,6 @@
 */
 
 #include <cstring>
-#include <QRandomGenerator>
 
 #include "./areatileset.h"
 #include "../../savefile.h"
@@ -23,6 +22,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
 #include "../../../db/tileset.h"
+#include "../../../../random.h"
 
 AreaTileset::AreaTileset(SaveFile* saveFile)
 {
@@ -96,10 +96,9 @@ void AreaTileset::reset()
 void AreaTileset::randomize()
 {
   reset();
-  auto rnd = QRandomGenerator::global();
 
   // Random between types
-  type = rnd->bounded(0, 3+1);
+  type = Random::rangeInclusive(0, 2);
 }
 
 void AreaTileset::loadFromData(MapDBEntry* map, bool randomType)

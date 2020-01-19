@@ -17,9 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-
-#include <QRandomGenerator>
-
+#include "../../../../random.h"
 
 AreaGeneral::AreaGeneral(SaveFile* saveFile)
 {
@@ -58,11 +56,9 @@ void AreaGeneral::reset()
 
 void AreaGeneral::randomize()
 {
-  auto rnd = QRandomGenerator::global();
-
   // Pick a number between 1 - 8
   // That's beacuse 9 is solid black which can be fun but not very playable lol
-  contrast = rnd->bounded(0, 9);
+  contrast = Random::rangeInclusive(0, 8);
 
   // Leaving these options off for now
   noLetterDelay = false;
