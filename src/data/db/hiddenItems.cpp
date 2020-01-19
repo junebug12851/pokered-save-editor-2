@@ -72,3 +72,6 @@ void HiddenItemsDB::deepLink()
     entry->deepLink();
   }
 }
+
+QVector<HiddenItemDBEntry*> HiddenItemsDB::store =
+    QVector<HiddenItemDBEntry*>();

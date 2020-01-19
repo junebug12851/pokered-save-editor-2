@@ -89,3 +89,6 @@ void EventsDB::deepLink()
     entry->deepLink();
   }
 }
+
+QVector<EventDBEntry*> EventsDB::store = QVector<EventDBEntry*>();
+QHash<QString, EventDBEntry*> EventsDB::ind = QHash<QString, EventDBEntry*>();

@@ -104,3 +104,6 @@ void ItemsDB::deepLink()
     entry->deepLink();
   }
 }
+
+QVector<ItemDBEntry*> ItemsDB::store = QVector<ItemDBEntry*>();
+QHash<QString, ItemDBEntry*> ItemsDB::ind = QHash<QString, ItemDBEntry*>();

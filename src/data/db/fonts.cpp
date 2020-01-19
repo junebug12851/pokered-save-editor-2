@@ -258,3 +258,6 @@ void FontsDB::splice(QVector<var8>& out, QString in, var8 ind)
   for(var8 j = 0; j < tmp.length(); j++)
     out.insert(ind+j, tmp.at(j));
 }
+
+QVector<FontDBEntry*> FontsDB::store = QVector<FontDBEntry*>();
+QHash<QString, FontDBEntry*> FontsDB::ind = QHash<QString, FontDBEntry*>();

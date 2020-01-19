@@ -72,3 +72,6 @@ void HiddenCoinsDB::deepLink()
     entry->deepLink();
   }
 }
+
+QVector<HiddenCoinDBEntry*> HiddenCoinsDB::store =
+    QVector<HiddenCoinDBEntry*>();

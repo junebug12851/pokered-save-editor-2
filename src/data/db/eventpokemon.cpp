@@ -122,3 +122,5 @@ void EventPokemonDB::deepLink()
     entry->deepLink();
   }
 }
+
+QVector<EventPokemonDBEntry*> EventPokemonDB::store = QVector<EventPokemonDBEntry*>();

@@ -82,3 +82,6 @@ void FlyDB::deepLink()
     entry->deepLink();
   }
 }
+
+QVector<FlyDBEntry*> FlyDB::store = QVector<FlyDBEntry*>();
+QHash<QString, FlyDBEntry*> FlyDB::ind = QHash<QString, FlyDBEntry*>();
