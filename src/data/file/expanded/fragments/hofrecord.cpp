@@ -18,8 +18,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 HoFRecord::HoFRecord(SaveFile* saveFile, var8 ind)
 {
@@ -94,13 +93,11 @@ void HoFRecord::reset()
 
 void HoFRecord::randomize()
 {
-  auto rnd = QRandomGenerator::global();
-
   // Reset
   reset();
 
   // Get a random amount of Pokemon between 1-6
-  var8 size = rnd->bounded(1,6+1);
+  var8 size = Random::rangeInclusive(1,6);
 
   // Create blank Pokemon entries
   for(var8 i = 0; i < size; i++)

@@ -22,8 +22,7 @@
 #include "../../../db/trainers.h"
 #include "../../../db/items.h"
 #include "../../../db/pokemon.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 struct TmpSpritePos
 {
@@ -33,23 +32,19 @@ struct TmpSpritePos
 
 var8 SpriteFacing::random()
 {
-  auto rnd = QRandomGenerator::global();
-  return rnd->bounded(0, 3+1) * 4;
+  return Random::rangeInclusive(0, 3) * 4;
 }
 
 var8 SpriteMobility::random()
 {
   // Lets not randomize in the possibility of no-collision
-  auto rnd = QRandomGenerator::global();
-  return rnd->bounded(0xFE, 0xFF+1);
+  return Random::rangeInclusive(0xFE, 0xFF);
 }
 
 var8 SpriteMovement::random()
 {
-  auto rnd = QRandomGenerator::global();
-
   // Lets not randomize such restricted movment
-  var8 ret = rnd->bounded(0, 10+1);
+  var8 ret = Random::rangeInclusive(0, 10);
 
   // Ensure we don't get a specialized movement value
   // I have no idea where these sprites are or on what map so I'd hate to intend
@@ -61,21 +56,19 @@ var8 SpriteMovement::random()
         ret == Up ||
         ret == Left ||
         ret == Right)
-    ret = rnd->bounded(0, 10+1);
+    ret = Random::rangeInclusive(0, 10);
 
   return ret;
 }
 
 var8 SpriteGrass::random()
 {
-  auto rnd = QRandomGenerator::global();
-
   var8 ret[2] = {
     0x00,
     0x80
   };
 
-  return ret[rnd->bounded(0, 2)];
+  return ret[Random::rangeExclusive(0, 2)];
 }
 
 SpriteData::SpriteData(bool blankNPC, SaveFile* saveFile, var8 index)
@@ -417,14 +410,11 @@ QVector<SpriteData*> SpriteData::randomizeAll(QVector<MapDBEntrySprite*> mapSpri
 
 void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
 {
-  // Parepare random method alias
-  auto rnd = QRandomGenerator::global();
-
   // Randomize coordinates if coord list is provided
   if(tmpPos != nullptr) {
 
     // Pull random coordinates
-    var8 rndPos = rnd->bounded(0, tmpPos->size());
+    var8 rndPos = Random::rangeExclusive(0, tmpPos->size());
     auto rndCoords = tmpPos->at(rndPos);
 
     // Change coords
@@ -438,7 +428,7 @@ void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
 
   // Get a random sprite picture and change it
   auto picture =
-      SpritesDB::store.at(rnd->bounded(0, SpritesDB::store.size()));
+      SpritesDB::store.at(Random::rangeExclusive(0, SpritesDB::store.size()));
 
   pictureID = picture->ind;
 

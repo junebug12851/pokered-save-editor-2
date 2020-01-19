@@ -65,7 +65,7 @@ void Daycare::randomize(PlayerBasics* basics)
   reset();
 
   // Give a 50/50 chance the daycare will be in use
-  if(!Random::chanceSuccess(50))
+  if(!Random::flipCoin())
     return;
 
   pokemon = new PokemonBox;

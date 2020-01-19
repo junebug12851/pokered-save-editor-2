@@ -35,6 +35,9 @@ public:
   // Chance of success, 0 - 100
   static bool chanceSuccess(var8 percent);
 
+  // Chance of success, 50%
+  static bool flipCoin();
+
   static QRandomGenerator* rnd;
 };
 

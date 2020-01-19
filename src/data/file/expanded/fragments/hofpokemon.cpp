@@ -19,8 +19,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/pokemon.h"
 #include "../../../db/names.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 HoFPokemon::HoFPokemon(SaveFile* saveFile, var16 recordOffset, var16 ind)
 {
@@ -81,15 +80,14 @@ void HoFPokemon::randomize()
   reset();
 
   // Generate random dex entry and look it up to get species number
-  auto rnd = QRandomGenerator::global();
-  var8 dex = rnd->bounded(1,pokemonDexCount);
+  var8 dex = Random::rangeExclusive(1,pokemonDexCount);
   auto toPokemon = PokemonDB::ind.value("dex" + QString::number(dex), nullptr);
 
   if(toPokemon != nullptr)
     species = toPokemon->ind;
 
   // Random level between 1 - 100
-  level = rnd->bounded(5,100+1);
+  level = Random::rangeInclusive(5,pokemonLevelMax);
 
   // Random name
   name = NamesDB::randomName();

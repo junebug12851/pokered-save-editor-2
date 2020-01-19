@@ -19,8 +19,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/names.h"
 #include "../../../db/pokemon.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 PlayerBasics::PlayerBasics(SaveFile* saveFile)
 {
@@ -99,13 +98,13 @@ void PlayerBasics::randomize()
 {
   // Random name and ID
   playerName = NamesDB::randomName();
-  playerID = QRandomGenerator::global()->bounded(0x0000, 0xFFFF);
+  playerID = Random::rangeInclusive(0x0000, 0xFFFF);
 
   // Figure out random money and coins that are reasonable
   // We want a minimum of 100 money and 0 coins and a maximum of the chosen
   // maximum
-  money = QRandomGenerator::global()->bounded(100, 6000);
-  coins = QRandomGenerator::global()->bounded(0, 100);
+  money = Random::rangeInclusive(100, 6000);
+  coins = Random::rangeInclusive(0, 100);
 
   // Zero out all badges, it's far too complicated in gen 1 games to properly
   // progress in the game randomly and takes away from fun of a new game
@@ -128,7 +127,7 @@ void PlayerBasics::randomize()
     0xB1 // Squirtle
   };
 
-  var8 pick = QRandomGenerator::global()->bounded(0, 3);
+  var8 pick = Random::rangeExclusive(0, 3);
 
   playerStarter = starter[pick];
 }

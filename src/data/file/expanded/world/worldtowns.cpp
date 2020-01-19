@@ -15,13 +15,13 @@
 */
 
 #include <string.h>
-#include <QRandomGenerator>
 
 #include "./worldtowns.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/fly.h"
+#include "../../../../random.h"
 
 WorldTowns::WorldTowns(SaveFile* saveFile)
 {
@@ -64,8 +64,6 @@ void WorldTowns::randomize()
 {
   reset();
 
-  auto rnd = QRandomGenerator::global();
-
   // Enable Pallet Town because it's home and the starting point
   visitedTowns[0] = true;
 
@@ -79,6 +77,6 @@ void WorldTowns::randomize()
       continue;
 
     // Give a 15% chance of enabling each town
-    visitedTowns[i] = rnd->bounded(0, 100+1) >= 85;
+    visitedTowns[i] = Random::chanceSuccess(15);
   }
 }

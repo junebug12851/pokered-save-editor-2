@@ -14,12 +14,11 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
-
 #include "./worldother.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+#include "../../../../random.h"
 
 WorldOther::WorldOther(SaveFile* saveFile)
 {
@@ -81,13 +80,12 @@ void WorldOther::reset()
 void WorldOther::randomize()
 {
   reset();
-  auto rnd = QRandomGenerator::global();
 
-  // 10% chance of being enabled
-  debugMode = rnd->bounded(0, 100+1) >= 90;
+  // 5% chance of being enabled
+  debugMode = Random::chanceSuccess(5);
 
-  playtime.hours = rnd->bounded(0, 255+1);
-  playtime.minutes = rnd->bounded(0, 59+1);
-  playtime.seconds = rnd->bounded(0, 59+1);
-  playtime.frames = rnd->bounded(0, 59+1);
+  playtime.hours = Random::rangeInclusive(0, 255);
+  playtime.minutes = Random::rangeInclusive(0, 59);
+  playtime.seconds = Random::rangeInclusive(0, 59);
+  playtime.frames = Random::rangeInclusive(0, 59);
 }

@@ -14,13 +14,13 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
 #include "./itemstoragebox.h"
 #include "./item.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/items.h"
+#include "../../../../random.h"
 
 ItemStorageBox::ItemStorageBox(SaveFile* saveFile)
 {
@@ -74,10 +74,9 @@ void ItemStorageBox::reset()
 void ItemStorageBox::randomize()
 {
   reset();
-  auto rnd = QRandomGenerator::global();
 
   // Between None and half of max capacity
-  var8 count = rnd->bounded(0, boxMaxItems * .5);
+  var8 count = Random::rangeInclusive(0, boxMaxItems * .5);
 
   // Load up random items to count
   for(var8 i = 0; i < count; i++)

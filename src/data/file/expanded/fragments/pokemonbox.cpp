@@ -26,11 +26,9 @@
 #include "../../../db/namesPokemon.h"
 #include "../../../db/starterPokemon.h"
 #include "../../../db/types.h"
+#include "../../../../random.h"
 
 #include <QtMath>
-#include <QRandomGenerator>
-
-QRandomGenerator* rnd = QRandomGenerator::global();
 
 PokemonMove::PokemonMove(var8 move, var8 pp, var8 ppUp)
 {
@@ -58,12 +56,12 @@ void PokemonMove::randomize()
 
     do
       moveData = MovesDB::ind.value(
-            QString::number(rnd->bounded(0, moveListSize)), nullptr);
+            QString::number(Random::rangeExclusive(0, moveListSize)), nullptr);
     while(moveData == nullptr || moveData->glitch == true);
 
     moveID = moveData->ind;
 
-    ppUp = rnd->bounded(0, 3+1);
+    ppUp = Random::rangeInclusive(0, 3);
     pp = getMaxPP();
   }
 }
@@ -135,11 +133,11 @@ PokemonBox* PokemonBox::newPokemon(PokemonRandom list, PlayerBasics* basics)
 
   if(list == PokemonRandom::Random_All) {
     auto listSize = PokemonDB::store.size();
-    var8 ind = rnd->bounded(0, listSize);
+    var8 ind = Random::rangeExclusive(0, listSize);
     pkmnData = PokemonDB::store.at(ind);
   }
   else if(list == PokemonRandom::Random_Pokedex) {
-    var8 dex = rnd->bounded(1, pokemonDexCount);
+    var8 dex = Random::rangeExclusive(1, pokemonDexCount);
     pkmnData = PokemonDB::ind.value("dex" + QString::number(dex));
   }
   else if(list == PokemonRandom::Random_Starters)
@@ -412,32 +410,33 @@ void PokemonBox::randomize(PlayerBasics* basics)
   copyFrom(pkmn);
   delete pkmn;
 
-  level = rnd->bounded(1, 100+1);
+  level = Random::rangeInclusive(1, pokemonLevelMax);
 
-  atkExp = rnd->bounded(0, 0xFFFF);
-  defExp = rnd->bounded(0, 0xFFFF);
-  spdExp = rnd->bounded(0, 0xFFFF);
-  spExp = rnd->bounded(0, 0xFFFF);
-  hpExp = rnd->bounded(0, 0xFFFF);
+  atkExp = Random::rangeInclusive(0, 0xFFFF);
+  defExp = Random::rangeInclusive(0, 0xFFFF);
+  spdExp = Random::rangeInclusive(0, 0xFFFF);
+  spExp = Random::rangeInclusive(0, 0xFFFF);
+  hpExp = Random::rangeInclusive(0, 0xFFFF);
 
   // Delete it's moves and re-create 4 new non-glitch random moves
   randomizeMoves();
 
   changeTrade(true, basics);
 
-  // 1/5 chance of not having a nickname
-  bool noNick = rnd->bounded(0, 5+1) > 4;
+  // 50/50 chance of not having a nickname
+  bool noNick = Random::flipCoin();
 
   changeName(noNick); // Keep nickname
   update(true, true, true, true);
   heal();
 
-  auto type1 = TypesDB::store.at(rnd->bounded(0, TypesDB::store.size()));
+  auto type1 = TypesDB::store.at(Random::rangeExclusive(0, TypesDB::store.size()));
   TypeDBEntry* type2 = nullptr;
 
-  bool hasType2 = rnd->bounded(0, 5+1) > 3;
+  // 25% chance of type 2
+  bool hasType2 = Random::chanceSuccess(25);
   if(hasType2)
-    type2 = TypesDB::store.at(rnd->bounded(0, TypesDB::store.size()));
+    type2 = TypesDB::store.at(Random::rangeExclusive(0, TypesDB::store.size()));
 
   if(type1 == type2)
     type2 = nullptr;
@@ -689,11 +688,9 @@ void PokemonBox::changeName(bool removeNickname)
 
 void PokemonBox::changeOtData(bool removeOtData, PlayerBasics* basics)
 {
-  auto rnd = QRandomGenerator::global();
-
   if(!removeOtData) {
     otName = NamesDB::randomName();
-    otID = rnd->bounded(0x0000, 0xFFFF);
+    otID = Random::rangeInclusive(0x0000, 0xFFFF);
   }
   else if(removeOtData && basics != nullptr) {
     otName = basics->playerName;
@@ -736,7 +733,6 @@ bool PokemonBox::hasDeEvolution()
 void PokemonBox::evolve()
 {
   auto record = isValid();
-  auto rnd = QRandomGenerator::global();
 
   if(!hasEvolution())
     return;
@@ -746,7 +742,7 @@ void PokemonBox::evolve()
 
   // For Eevee evolutions, randomly pick one
   if(record->evolution.size() > 1) {
-    var8 ind = rnd->bounded(0, record->evolution.size());
+    var8 ind = Random::rangeExclusive(0, record->evolution.size());
     species = record->evolution.at(ind)->toEvolution->ind;
   }
   else
@@ -859,10 +855,8 @@ void PokemonBox::maxDVs()
 
 void PokemonBox::reRollDVs()
 {
-  auto rnd = QRandomGenerator::global();
-
   for(var8 i = 0; i < 4; i++)
-    dv[i] = rnd->bounded(0, 15+1);
+    dv[i] = Random::rangeInclusive(0, 15);
 }
 
 void PokemonBox::maxEVs()

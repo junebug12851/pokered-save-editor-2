@@ -14,14 +14,13 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
-
 #include "./worldgeneral.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
 #include "../../../db/mapsearch.h"
+#include "../../../../random.h"
 
 WorldGeneral::WorldGeneral(SaveFile* saveFile)
 {
@@ -77,13 +76,17 @@ void WorldGeneral::reset()
 
 void WorldGeneral::randomize()
 {
-  auto rnd = QRandomGenerator::global();
-
   lastBlackoutMap = MapsDB::search()->isGood()->isCity()->pickRandom()->ind;
   lastMap = MapsDB::search()->isGood()->pickRandom()->ind;
-  options.textSlowness = rnd->bounded(0, 15+1);
-  options.battleStyleSet = rnd->bounded(0, 10+1) > 7;
-  options.battleAnimOff = rnd->bounded(0, 10+1) > 7;
-  letterDelay.normalDelay = rnd->bounded(0, 10+1) > 7;
-  letterDelay.dontDelay = rnd->bounded(0, 10+1) > 7;
+  options.textSlowness = Random::rangeInclusive(0, 15);
+
+  // 20% chance to have battle style set and animations off
+  options.battleStyleSet = Random::chanceSuccess(20);
+  options.battleAnimOff = Random::chanceSuccess(20);
+
+  // 90% chance to have normal letter delay
+  letterDelay.normalDelay = Random::chanceSuccess(90);
+
+  // 10% chance to not delay letters
+  letterDelay.dontDelay = Random::chanceSuccess(10);
 }

@@ -14,13 +14,12 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
-
 #include "./halloffame.h"
 #include "../savefile.h"
 #include "../savefiletoolset.h"
 #include "../savefileiterator.h"
 #include "./fragments/hofrecord.h"
+#include "../../../random.h"
 
 HallOfFame::HallOfFame(SaveFile* saveFile)
 {
@@ -68,10 +67,9 @@ void HallOfFame::reset()
 void HallOfFame::randomize()
 {
   reset();
-  auto rnd = QRandomGenerator::global();
 
   // Create up to 5 random records
-  var8 rndCount = rnd->bounded(0, 5+1);
+  var8 rndCount = Random::rangeInclusive(0, 5);
 
   for (var8 i = 0; i < rndCount && i < recordsMax; i++) {
     auto tmp = new HoFRecord;

@@ -18,8 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/items.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 Item::Item(SaveFileIterator* it)
 {
@@ -73,15 +72,14 @@ void Item::reset()
 
 void Item::randomize()
 {
-  auto rnd = QRandomGenerator::global();
-  auto tmp = ItemsDB::store.at(rnd->bounded(0, ItemsDB::store.size()));
+  auto tmp = ItemsDB::store.at(Random::rangeExclusive(0, ItemsDB::store.size()));
 
   // No Glitch or Items only gotten once in the game
   while(tmp->glitch || tmp->once)
-    tmp = ItemsDB::store.at(rnd->bounded(0, ItemsDB::store.size()));
+    tmp = ItemsDB::store.at(Random::rangeExclusive(0, ItemsDB::store.size()));
 
   ind = tmp->ind;
-  amount = rnd->bounded(1, 5+1); // Between 1 and 5 of them
+  amount = Random::rangeInclusive(1, 5); // Between 1 and 5 of them
 }
 
 ItemDBEntry* Item::toItem()

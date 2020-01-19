@@ -20,8 +20,7 @@
 #include "../../savefileiterator.h"
 #include "../fragments/pokemonparty.h"
 #include "../../../db/moves.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 PlayerPokemon::PlayerPokemon(SaveFile* saveFile)
 {
@@ -88,10 +87,8 @@ void PlayerPokemon::reset()
 
 void PlayerPokemon::randomize(PlayerBasics* basics)
 {
-  auto rnd = QRandomGenerator::global();
-
   // Randomize up to 5 Pokemon
-  var8 count = rnd->bounded(1, 5+1);
+  var8 count = Random::rangeInclusive(1, 5);
 
   // Clear Pokemon Party and add them in
   reset();
@@ -124,7 +121,7 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
   // Generate random PP Ups and heal PP like other Pokemon
   for(auto move : tmp->moves) {
     // Generate random PP Ups
-    move->ppUp = rnd->bounded(0, 3+1);
+    move->ppUp = Random::rangeInclusive(0, 3);
 
     // Restore PP of move
     move->restorePP();

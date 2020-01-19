@@ -18,8 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/names.h"
-
-#include <QRandomGenerator>
+#include "../../../../random.h"
 
 PlayerPokedex::PlayerPokedex(SaveFile* saveFile)
 {
@@ -58,14 +57,13 @@ void PlayerPokedex::reset()
 // seen and/or owned.
 void PlayerPokedex::randomize()
 {
-  auto rnd = QRandomGenerator::global();
-
   reset();
 
   for(var8 i = 0; i < 151; i++)
   {
-    bool markSeen = rnd->bounded(1, 5+1) > 3;
-    bool markOwned = rnd->bounded(1, 5+1) > 3;
+    // 15% chance of having them seen or owned
+    bool markSeen = Random::chanceSuccess(15);
+    bool markOwned = Random::chanceSuccess(15);
 
     owned[i] = markOwned;
     seen[i] = markSeen;

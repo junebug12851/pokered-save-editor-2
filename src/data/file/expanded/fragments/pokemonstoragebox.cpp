@@ -14,13 +14,12 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
-
 #include "./pokemonstoragebox.h"
 #include "./pokemonbox.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+#include "../../../../random.h"
 
 PokemonStorageBox::PokemonStorageBox(SaveFile* saveFile, var16 boxOffset)
 {
@@ -91,10 +90,8 @@ void PokemonStorageBox::randomize(PlayerBasics* basics)
 {
   reset();
 
-  auto rnd = QRandomGenerator::global();
-
   // Go from zero up to half box capacity
-  var8 count = rnd->bounded(0, boxMaxPokemon * .50);
+  var8 count = Random::rangeInclusive(0, boxMaxPokemon * .50);
 
   // Insert Pokemon
   for(var8 i = 0; i < count; i++) {

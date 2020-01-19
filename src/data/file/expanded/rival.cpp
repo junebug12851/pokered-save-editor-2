@@ -14,14 +14,13 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
-
 #include "./rival.h"
 #include "../savefile.h"
 #include "../savefiletoolset.h"
 #include "../savefileiterator.h"
 #include "../../db/names.h"
 #include "../../db/pokemon.h"
+#include "../../../random.h"
 
 Rival::Rival(SaveFile* saveFile)
 {
@@ -57,7 +56,6 @@ void Rival::reset()
 
 void Rival::randomize()
 {
-  auto rnd = QRandomGenerator::global();
   name = NamesDB::randomName();
 
   var8 starters[3] = {
@@ -67,5 +65,5 @@ void Rival::randomize()
   };
 
   // Get a random starter
-  starter = starters[rnd->bounded(0, 3)];
+  starter = starters[Random::rangeExclusive(0, 3)];
 }

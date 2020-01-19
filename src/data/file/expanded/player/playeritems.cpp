@@ -19,9 +19,9 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/items.h"
+#include "../../../../random.h"
 
 #include <QString>
-#include <QRandomGenerator>
 
 PlayerItems::PlayerItems(SaveFile* saveFile)
 {
@@ -83,26 +83,25 @@ void PlayerItems::randomize()
 {
   reset();
 
-  auto rnd = QRandomGenerator::global();
-
   // Essentials
   bagItems.append(new Item("TOWN MAP", 1));
-  bagItems.append(new Item("POKE BALL", rnd->bounded(5, 15+1)));
-  bagItems.append(new Item("POTION", rnd->bounded(5, 10+1)));
-  bagItems.append(new Item("ANTIDOTE", rnd->bounded(1, 3+1)));
-  bagItems.append(new Item("PARLYZ HEAL", rnd->bounded(1, 3+1)));
-  bagItems.append(new Item("AWAKENING", rnd->bounded(1, 3+1)));
+  bagItems.append(new Item("POKE BALL", Random::rangeInclusive(5, 15)));
+  bagItems.append(new Item("POTION", Random::rangeInclusive(5, 10)));
+  bagItems.append(new Item("ANTIDOTE", Random::rangeInclusive(1, 3)));
+  bagItems.append(new Item("PARLYZ HEAL", Random::rangeInclusive(1, 3)));
+  bagItems.append(new Item("AWAKENING", Random::rangeInclusive(1, 3)));
 
   // Again I have no idea where this will drop you so prepare for an escape
   // If need be, also because you only get 1 HM Slave that doesn't know dig.
   // This is your dig.
-  bagItems.append(new Item("ESCAPE ROPE", rnd->bounded(1, 5+1)));
+  bagItems.append(new Item("ESCAPE ROPE", Random::rangeInclusive(1, 5)));
 
-  bool giveSuperPotion = rnd->bounded(0, 5+1) >= 3;
+  // 25% chance of having these items
+  bool giveSuperPotion = Random::chanceSuccess(25);
   if(giveSuperPotion)
     bagItems.append(new Item("SUPER POTION", 1));
 
-  bool giveGreatBall = rnd->bounded(0, 5+1) >= 3;
+  bool giveGreatBall = Random::chanceSuccess(25);
   if(giveGreatBall)
     bagItems.append(new Item("GREAT BALL", 1));
 }
