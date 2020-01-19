@@ -771,3 +771,6 @@ MapSearch* MapsDB::search()
 {
   return new MapSearch();
 }
+
+QVector<MapDBEntry*> MapsDB::store = QVector<MapDBEntry*>();
+QHash<QString, MapDBEntry*> MapsDB::ind = QHash<QString, MapDBEntry*>();
