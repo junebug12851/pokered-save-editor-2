@@ -25,6 +25,49 @@
 #include "./gamedata.h"
 #include "./maps.h"
 
+MissableDBEntry::MissableDBEntry() {}
+MissableDBEntry::MissableDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+  map = data["map"].toString();
+  sprite = data["sprite"].toDouble();
+  defShow = data["defVal"].toString() == "Show";
+}
+
+void MissableDBEntry::deepLink()
+{
+  toMap = MapsDB::ind.value(map, nullptr);
+
+  // Deep link map sprite only if toMap is valid and sprite is a valid range
+  if(toMap != nullptr && sprite < toMap->sprites.size())
+  {
+    toMapSprite = toMap->sprites.at(sprite);
+  }
+
+#ifdef QT_DEBUG
+  if(toMap == nullptr)
+    qCritical() << "Missables: " << name << ", could not be deep linked to map" << map;
+
+  if(toMapSprite == nullptr &&
+
+     // Don't warn about these errors as they're not my errors, they're
+     // gen 1 errors
+
+     // This is a valid map that refers to an extra sprite not on the map
+     ((map == "Silph Co 7F" &&
+     sprite != 11) ||
+
+     // This is an invalid map with no sprites
+     (map == "Unused Map F4" &&
+     sprite != 1))
+
+     )
+    qCritical() << "Missables: " << name << ", could not be deep linked to map " << map << " sprite #" << sprite;
+#endif
+}
+
 void MissablesDB::load()
 {
   // Grab Event Pokemon Data
@@ -34,14 +77,7 @@ void MissablesDB::load()
   for(QJsonValue missableEntry : missableData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new MissableDBEntry();
-
-    // Set simple properties
-    entry->name = missableEntry["name"].toString();
-    entry->ind = missableEntry["ind"].toDouble();
-    entry->map = missableEntry["map"].toString();
-    entry->sprite = missableEntry["sprite"].toDouble();
-    entry->defShow = missableEntry["defVal"].toString() == "Show";
+    auto entry = new MissableDBEntry(missableEntry);
 
     // Add to array
     store.append(entry);
@@ -66,34 +102,7 @@ void MissablesDB::deepLink()
 {
   for(auto entry : store)
   {
-    entry->toMap = MapsDB::ind.value(entry->map, nullptr);
-
-    // Deep link map sprite only if toMap is valid and sprite is a valid range
-    if(entry->toMap != nullptr && entry->sprite < entry->toMap->sprites.size())
-    {
-      entry->toMapSprite = entry->toMap->sprites.at(entry->sprite);
-    }
-
-#ifdef QT_DEBUG
-    if(entry->toMap == nullptr)
-      qCritical() << "Missables: " << entry->name << ", could not be deep linked to map" << entry->map;
-
-    if(entry->toMapSprite == nullptr &&
-
-       // Don't warn about these errors as they're not my errors, they're
-       // gen 1 errors
-
-       // This is a valid map that refers to an extra sprite not on the map
-       (entry->map == "Silph Co 7F" &&
-       entry->sprite != 11) &&
-
-       // This is an invalid map with no sprites
-       (entry->map == "Unused Map F4" &&
-       entry->sprite != 1)
-
-       )
-      qCritical() << "Missables: " << entry->name << ", could not be deep linked to map " << entry->map << " sprite #" << entry->sprite;
-#endif
+    entry->deepLink();
   }
 }
 

@@ -16,6 +16,7 @@
 #ifndef MISSABLE_H
 #define MISSABLE_H
 
+#include <QJsonValue>
 #include <QString>
 #include <QHash>
 
@@ -37,13 +38,17 @@ struct MapDBEntrySprite;
 // Brock.
 
 struct MissableDBEntry {
+  MissableDBEntry();
+  MissableDBEntry(QJsonValue& data);
+  void deepLink();
+
   // Missable Name & Index
   QString name;
-  var8 ind;
+  var8 ind = 0;
 
   // Map & Sprite on map Missable References
   QString map;
-  var8 sprite;
+  var8 sprite = 0;
 
   // Is this missable shown or hidden by default
   bool defShow = false;
