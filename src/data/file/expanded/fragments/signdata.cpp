@@ -105,7 +105,7 @@ QVector<SignData*> SignData::randomizeAll(QVector<MapDBEntrySign*> mapSigns)
 void SignData::randomize(QVector<TmpSignPos*>* tmpPos)
 {
   // Randomize coordinates if coord list is provided
-  if(tmpPos->size() != 0) {
+  if(tmpPos != nullptr) {
 
     // Pull random coordinates
     var8 rndPos = Random::rangeExclusive(0, tmpPos->size());
