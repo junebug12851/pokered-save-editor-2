@@ -717,7 +717,7 @@ bool PokemonBox::hasEvolution()
   if(record == nullptr)
     return false;
 
-  if(record->evolution->size() == 0)
+  if(record->evolution.size() == 0)
     return false;
 
   return true;
@@ -748,12 +748,12 @@ void PokemonBox::evolve()
   bool nickStatus = hasNickname();
 
   // For Eevee evolutions, randomly pick one
-  if(record->evolution->size() > 1) {
-    var8 ind = rnd->bounded(0, record->evolution->size());
-    species = record->evolution->at(ind)->toEvolution->ind;
+  if(record->evolution.size() > 1) {
+    var8 ind = rnd->bounded(0, record->evolution.size());
+    species = record->evolution.at(ind)->toEvolution->ind;
   }
   else
-    species = record->evolution->at(0)->toEvolution->ind;
+    species = record->evolution.at(0)->toEvolution->ind;
 
   // Update name if no nickname
   if(!nickStatus)

@@ -101,10 +101,10 @@ struct PokemonDBEntry {
   QString type1;
   QString type2;
 
-  QVector<PokemonDBEntryMove*>* moves;
-  QVector<QString>* initial;
-  QVector<var8>* tmHm;
-  QVector<PokemonDBEntryEvolution*>* evolution;
+  QVector<PokemonDBEntryMove*> moves;
+  QVector<QString> initial;
+  QVector<var8> tmHm;
+  QVector<PokemonDBEntryEvolution*> evolution;
 
   std::optional<var8> pokedex;
   std::optional<var8> growthRate;

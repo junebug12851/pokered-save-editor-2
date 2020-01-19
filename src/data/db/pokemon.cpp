@@ -149,7 +149,7 @@ PokemonDBEntry::PokemonDBEntry(QJsonValue& data)
   {
     for(QJsonValue moveEntryz : data["moves"].toArray())
     {
-      moves->append(new PokemonDBEntryMove(moveEntryz, this));
+      moves.append(new PokemonDBEntryMove(moveEntryz, this));
     }
   }
 
@@ -158,7 +158,7 @@ PokemonDBEntry::PokemonDBEntry(QJsonValue& data)
   {
     for(QJsonValue initialEntry : data["initial"].toArray())
     {
-      initial->append(initialEntry.toString());
+      initial.append(initialEntry.toString());
     }
   }
 
@@ -167,7 +167,7 @@ PokemonDBEntry::PokemonDBEntry(QJsonValue& data)
   {
     for(QJsonValue tmHmEntry : data["tmHm"].toArray())
     {
-      tmHm->append(tmHmEntry.toDouble());
+      tmHm.append(tmHmEntry.toDouble());
     }
   }
 
@@ -178,14 +178,14 @@ PokemonDBEntry::PokemonDBEntry(QJsonValue& data)
   {
     for(QJsonValue evolutionEntry : data["evolution"].toArray())
     {
-      evolution->append(new PokemonDBEntryEvolution(evolutionEntry, this));
+      evolution.append(new PokemonDBEntryEvolution(evolutionEntry, this));
     }
   }
   else if(data["evolution"].isObject())
   {
     // Kinda weird this has to be 2 steps
     auto tmp = data["evolution"];
-    evolution->append(new PokemonDBEntryEvolution(tmp, this));
+    evolution.append(new PokemonDBEntryEvolution(tmp, this));
   }
 }
 
@@ -211,21 +211,21 @@ void PokemonDBEntry::deepLink()
       toType2->toPokemon.append(this);
 
   // De-Evolution is set by evolution entry
-  for(auto evolEntry : *evolution)
+  for(auto evolEntry : evolution)
   {
     // Initiate deep linking for all evolutions
     evolEntry->deepLink(this);
   }
 
   // Level Moves is set by Pokemon moves entry
-  for(auto pokeMoveEntry : *moves)
+  for(auto pokeMoveEntry : moves)
   {
     // Initiate deep linking for all level moves
     pokeMoveEntry->deepLink();
   }
 
   // Deep-Link initial moves
-  for(auto initMove : *initial)
+  for(auto initMove : initial)
   {
     auto link = MovesDB::ind.value(initMove, nullptr);
     toInitial.append(link);
@@ -240,7 +240,7 @@ void PokemonDBEntry::deepLink()
   }
 
   // Deep-Link tm/hm
-  for(auto tmHmMove : *tmHm)
+  for(auto tmHmMove : tmHm)
   {
     auto moveLink = MovesDB::ind.value("tm" + QString::number(tmHmMove), nullptr);
     auto itemLink = ItemsDB::ind.value("tm" + QString::number(tmHmMove), nullptr);
