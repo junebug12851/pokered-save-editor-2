@@ -68,30 +68,9 @@ void AreaSign::randomize(MapDBEntry* mapData)
   // Clear all signs
   reset();
 
+  // Grab Map Signs
   auto signData = mapData->signs;
 
-  // We randomize the sign text ids if there are any
-  if(signData.size() == 0)
-    return;
-
-  // Get a list of all the sign data
-  QVector<var8> ids;
-
-  for(auto sign : signData)
-    ids.append(sign->textID);
-
-  // Go through each sign data on map
-  // Add a new sign with correct x & y data but a random txt id from ids above
-  // Delete id and move onto next sign
-  for(auto sign : signData) {
-    auto data = new SignData();
-    auto ind = Random::rangeExclusive(0, ids.size());
-
-    data->x = sign->x;
-    data->y = sign->y;
-    data->txtId = ids.at(ind);
-
-    ids.removeAt(ind);
-    this->signs.append(data);
-  }
+  // Randomize them all if present
+  signs = SignData::randomizeAll(signData);
 }

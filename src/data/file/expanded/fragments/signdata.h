@@ -16,8 +16,11 @@
 #ifndef SIGNDATA_H
 #define SIGNDATA_H
 
+#include <QVector>
 #include "../../../../common/types.h"
 class SaveFile;
+class MapDBEntrySign;
+struct TmpSignPos;
 
 class SignData
 {
@@ -28,7 +31,9 @@ public:
   void load(SaveFile* saveFile = nullptr, var8 index = 0);
   void save(SaveFile* saveFile, var8 index);
   void reset();
-  void randomize();
+
+  static QVector<SignData*> randomizeAll(QVector<MapDBEntrySign*> mapSigns);
+  void randomize(QVector<TmpSignPos*>* tmpPos = nullptr);
 
   var8 x;
   var8 y;
