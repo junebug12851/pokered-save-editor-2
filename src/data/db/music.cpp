@@ -20,6 +20,15 @@
 #include "./music.h"
 #include "./gamedata.h"
 
+MusicDBEntry::MusicDBEntry() {}
+MusicDBEntry::MusicDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  name = data["name"].toString();
+  bank = data["bank"].toDouble();
+  id = data["id"].toDouble();
+}
+
 void MusicDB::load()
 {
   // Grab Music Data
@@ -29,12 +38,7 @@ void MusicDB::load()
   for(QJsonValue musicEntry : musicData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new MusicDBEntry();
-
-    // Set simple properties
-    entry->name = musicEntry["name"].toString();
-    entry->bank = musicEntry["bank"].toDouble();
-    entry->id = musicEntry["id"].toDouble();
+    auto entry = new MusicDBEntry(musicEntry);
 
     // Add to array
     store.append(entry);

@@ -25,6 +25,62 @@
 #include "./gamedata.h"
 #include "./sprites.h"
 
+SpriteSetDBEntry::SpriteSetDBEntry() {}
+SpriteSetDBEntry::SpriteSetDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  ind = data["ind"].toDouble();
+
+  if(data["split"].isString())
+    split = data["split"].toString();
+
+  if(data["splitAt"].isString())
+    splitAt = data["splitAt"].toDouble();
+
+  if(data["setWN"].isDouble())
+    setWN = data["setWN"].toDouble();
+
+  if(data["setES"].isDouble())
+    setES = data["setES"].toDouble();
+
+  if(data["sprites"].isArray()) {
+    for(QJsonValue spriteListEntry : data["sprites"].toArray())
+      spriteList.append(spriteListEntry.toString());
+  }
+}
+
+void SpriteSetDBEntry::deepLink()
+{
+  for(auto spriteEntry : spriteList)
+  {
+    auto tmp = SpritesDB::ind.value(spriteEntry, nullptr);
+    toSprites.append(tmp);
+
+#ifdef QT_DEBUG
+  if(tmp == nullptr)
+    qCritical() << "SpriteSetDB: " << spriteEntry << ", could not be deep linked to sprite." ;
+#endif
+  }
+
+  if(setWN) {
+    toSetWN = SpriteSetDB::ind.value(QString::number(*setWN), nullptr);
+
+#ifdef QT_DEBUG
+  if(setWN && toSetWN == nullptr)
+    qCritical() << "SpriteSetDB Set WN: " << *setWN << ", could not be deep linked to static set." ;
+#endif
+  }
+
+  if(setES) {
+    toSetES = SpriteSetDB::ind.value(QString::number(*setES), nullptr);
+
+#ifdef QT_DEBUG
+  if(setES && toSetES == nullptr)
+    qCritical() << "SpriteSetDB Set ES: " << *setES << ", could not be deep linked to static set." ;
+#endif
+  }
+}
+
 bool SpriteSetDBEntry::isDynamic()
 {
   return ind >= 0xF1;
@@ -60,27 +116,7 @@ void SpriteSetDB::load()
   for(QJsonValue spriteSetEntry : spriteSetData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new SpriteSetDBEntry();
-
-    // Set simple properties
-    entry->ind = spriteSetEntry["ind"].toDouble();
-
-    if(spriteSetEntry["split"].isString())
-      entry->split = spriteSetEntry["split"].toString();
-
-    if(spriteSetEntry["splitAt"].isString())
-      entry->splitAt = spriteSetEntry["splitAt"].toDouble();
-
-    if(spriteSetEntry["setWN"].isDouble())
-      entry->setWN = spriteSetEntry["setWN"].toDouble();
-
-    if(spriteSetEntry["setES"].isDouble())
-      entry->setES = spriteSetEntry["setES"].toDouble();
-
-    if(spriteSetEntry["sprites"].isArray()) {
-      for(QJsonValue spriteListEntry : spriteSetEntry["sprites"].toArray())
-        entry->spriteList.append(spriteListEntry.toString());
-    }
+    auto entry = new SpriteSetDBEntry(spriteSetEntry);
 
     // Add to array
     store.append(entry);
@@ -102,34 +138,7 @@ void SpriteSetDB::deepLink()
 {
   for(auto entry : store)
   {
-    for(auto spriteEntry : entry->spriteList)
-    {
-      auto tmp = SpritesDB::ind.value(spriteEntry, nullptr);
-      entry->toSprites.append(tmp);
-
-#ifdef QT_DEBUG
-    if(tmp == nullptr)
-      qCritical() << "SpriteSetDB: " << spriteEntry << ", could not be deep linked to sprite." ;
-#endif
-    }
-
-    if(entry->setWN) {
-      entry->toSetWN = SpriteSetDB::ind.value(QString::number(*entry->setWN), nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->setWN && entry->toSetWN == nullptr)
-      qCritical() << "SpriteSetDB Set WN: " << *entry->setWN << ", could not be deep linked to static set." ;
-#endif
-    }
-
-    if(entry->setES) {
-      entry->toSetES = SpriteSetDB::ind.value(QString::number(*entry->setES), nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->setES && entry->toSetES == nullptr)
-      qCritical() << "SpriteSetDB Set ES: " << *entry->setES << ", could not be deep linked to static set." ;
-#endif
-    }
+    entry->deepLink();
   }
 }
 

@@ -20,6 +20,14 @@
 #include "./sprites.h"
 #include "./gamedata.h"
 
+SpriteDBEntry::SpriteDBEntry() {}
+SpriteDBEntry::SpriteDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+}
+
 void SpritesDB::load()
 {
   // Grab Event Pokemon Data
@@ -29,11 +37,7 @@ void SpritesDB::load()
   for(QJsonValue spriteEntry : spriteData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new SpriteDBEntry();
-
-    // Set simple properties
-    entry->name = spriteEntry["name"].toString();
-    entry->ind = spriteEntry["ind"].toDouble();
+    auto entry = new SpriteDBEntry(spriteEntry);
 
     // Add to array
     store.append(entry);

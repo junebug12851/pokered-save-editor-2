@@ -16,6 +16,7 @@
 #ifndef TILESET_H
 #define TILESET_H
 
+#include <QJsonValue>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -35,6 +36,9 @@ enum class TilesetType
 constexpr var8 talkCount = 3;
 
 struct TilesetDBEntry {
+  TilesetDBEntry();
+  TilesetDBEntry(QJsonValue& data);
+
   QString name;
   QString type;
   QString nameAlias;
@@ -42,14 +46,14 @@ struct TilesetDBEntry {
 
   TilesetType typeAsEnum();
 
-  var8 ind;
-  var8 talk[3];
-  var8 grass;
+  var8 ind = 0;
+  var8 talk[3] = {0,0,0};
+  var8 grass = 0;
 
-  var8 bank;
-  var16 blockPtr;
-  var16 gfxPtr;
-  var16 collPtr;
+  var8 bank = 0;
+  var16 blockPtr = 0;
+  var16 gfxPtr = 0;
+  var16 collPtr = 0;
 
   QVector<MapDBEntry*> toMaps;
 };

@@ -16,6 +16,7 @@
 #ifndef MOVE_H
 #define MOVE_H
 
+#include <QJsonValue>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -40,10 +41,12 @@ struct MoveDBEntry {
   // and mark then false unless they're present skipping dealing with variant
 
   MoveDBEntry();
+  MoveDBEntry(QJsonValue& data);
+  void deepLink();
 
   QString name;
-  var8 ind;
-  bool glitch;
+  var8 ind = 0;
+  bool glitch = false;
   QString type;
   QString readable;
 
@@ -53,8 +56,8 @@ struct MoveDBEntry {
   std::optional<var8> tm;
   std::optional<var8> hm;
 
-  TypeDBEntry* toType; // Deep link to move type
-  ItemDBEntry* toItem; // Deep link to tm/hm item if present
+  TypeDBEntry* toType = nullptr; // Deep link to move type
+  ItemDBEntry* toItem = nullptr; // Deep link to tm/hm item if present
   QVector<PokemonDBEntryMove*> toPokemonLearned;
   QVector<PokemonDBEntry*> toPokemonInitial;
   QVector<PokemonDBEntry*> toPokemonTmHm;

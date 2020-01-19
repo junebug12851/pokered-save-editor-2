@@ -16,6 +16,7 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
+#include <QJsonValue>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -33,9 +34,13 @@
 struct MapDBEntry;
 
 struct ScriptDBEntry {
+  ScriptDBEntry();
+  ScriptDBEntry(QJsonValue& data);
+  void deepLink();
+
   QString name;
-  var8 ind;
-  var8 size;
+  var8 ind = 0;
+  var8 size = 0;
 
   QVector<QString> maps; // Map aliases to deep link to
   std::optional<var8> skip;

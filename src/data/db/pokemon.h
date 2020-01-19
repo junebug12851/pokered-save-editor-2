@@ -59,39 +59,45 @@ struct TradeDBEntry;
 
 struct PokemonDBEntryEvolution
 {
-  PokemonDBEntryEvolution(QJsonValue& data);
+  PokemonDBEntryEvolution();
+  PokemonDBEntryEvolution(QJsonValue& data, PokemonDBEntry* parent);
   void deepLink(PokemonDBEntry* deEvolution);
 
   QString toName;
-  bool trade;
+  bool trade = false;
   QString item;
 
   std::optional<var8> level;
 
-  PokemonDBEntry* toDeEvolution;
-  PokemonDBEntry* toEvolution;
-  ItemDBEntry* toItem;
+  PokemonDBEntry* toDeEvolution = nullptr;
+  PokemonDBEntry* toEvolution = nullptr;
+  ItemDBEntry* toItem = nullptr;
+
+  PokemonDBEntry* parent = nullptr;
 };
 
 struct PokemonDBEntryMove
 {
-  PokemonDBEntryMove(QJsonValue& data);
+  PokemonDBEntryMove();
+  PokemonDBEntryMove(QJsonValue& data, PokemonDBEntry* parent);
   void deepLink();
 
-  var8 level;
+  var8 level = 0;
   QString move;
 
-  MoveDBEntry* toMove;
+  MoveDBEntry* toMove = nullptr;
+  PokemonDBEntry* parent = nullptr;
 };
 
 struct PokemonDBEntry {
   PokemonDBEntry();
+  PokemonDBEntry(QJsonValue& data);
   void deepLink();
 
   QString name;
-  var8 ind;
+  var8 ind = 0;
   QString readable;
-  bool glitch;
+  bool glitch = false;
   QString type1;
   QString type2;
 
@@ -111,14 +117,14 @@ struct PokemonDBEntry {
   std::optional<var8> catchRate;
 
   // Lots of deep linking
-  TypeDBEntry* toType1;
-  TypeDBEntry* toType2;
-  PokemonDBEntry* toDeEvolution;
+  TypeDBEntry* toType1 = nullptr;
+  TypeDBEntry* toType2 = nullptr;
+  PokemonDBEntry* toDeEvolution = nullptr;
   QVector<MoveDBEntry*> toInitial;
   QVector<MoveDBEntry*> toTmHmMove;
   QVector<ItemDBEntry*> toTmHmItem;
   QVector<EventPokemonDBEntry*> toEventMons;
-  MapDBEntrySpritePokemon* toMapSpritePokemon;
+  MapDBEntrySpritePokemon* toMapSpritePokemon = nullptr;
   QVector<MapDBEntryWildMon*> toWildMonMaps;
   QVector<TradeDBEntry*> toTrades;
 };

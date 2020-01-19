@@ -16,6 +16,7 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
+#include <QJsonValue>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -25,9 +26,12 @@
 struct MapDBEntry;
 
 struct MusicDBEntry {
+  MusicDBEntry();
+  MusicDBEntry(QJsonValue& data);
+
   QString name;
-  var8 bank;
-  var8 id;
+  var8 bank = 0;
+  var8 id = 0;
 
   QVector<MapDBEntry*> toMaps;
 };

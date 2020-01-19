@@ -20,6 +20,30 @@
 #include "./tileset.h"
 #include "./gamedata.h"
 
+TilesetDBEntry::TilesetDBEntry() {}
+TilesetDBEntry::TilesetDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  name = data["name"].toString();
+  type = data["type"].toString();
+  nameAlias = data["nameAlias"].toString();
+  typeAlias = data["typeAlias"].toString();
+
+  ind = data["ind"].toDouble();
+  grass = data["grass"].toDouble();
+
+  bank = data["bank"].toDouble();
+  blockPtr = data["blockPtr"].toDouble();
+  gfxPtr = data["gfxPtr"].toDouble();
+  collPtr = data["collPtr"].toDouble();
+
+  QJsonValue talkArr = data["talk"].toArray();
+  for(var8 i = 0; i < talkCount; i++)
+  {
+    talk[i] = talkArr[i].toDouble();
+  }
+}
+
 TilesetType TilesetDBEntry::typeAsEnum()
 {
   if(type == "Outdoor")
@@ -39,27 +63,7 @@ void TilesetDB::load()
   for(QJsonValue tilesetEntry : tilesetData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TilesetDBEntry();
-
-    // Set simple properties
-    entry->name = tilesetEntry["name"].toString();
-    entry->type = tilesetEntry["type"].toString();
-    entry->nameAlias = tilesetEntry["nameAlias"].toString();
-    entry->typeAlias = tilesetEntry["typeAlias"].toString();
-
-    entry->ind = tilesetEntry["ind"].toDouble();
-    entry->grass = tilesetEntry["grass"].toDouble();
-
-    entry->bank = tilesetEntry["bank"].toDouble();
-    entry->blockPtr = tilesetEntry["blockPtr"].toDouble();
-    entry->gfxPtr = tilesetEntry["gfxPtr"].toDouble();
-    entry->collPtr = tilesetEntry["collPtr"].toDouble();
-
-    QJsonValue talkArr = tilesetEntry["talk"].toArray();
-    for(var8 i = 0; i < talkCount; i++)
-    {
-      entry->talk[i] = talkArr[i].toDouble();
-    }
+    auto entry = new TilesetDBEntry(tilesetEntry);
 
     // Add to array
     store.append(entry);

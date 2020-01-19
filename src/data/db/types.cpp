@@ -20,6 +20,15 @@
 #include "./types.h"
 #include "./gamedata.h"
 
+TypeDBEntry::TypeDBEntry() {}
+TypeDBEntry::TypeDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+  readable = data["readable"].toString();
+}
+
 void TypesDB::load()
 {
   // Grab Event Pokemon Data
@@ -29,12 +38,7 @@ void TypesDB::load()
   for(QJsonValue typesEntry : typesData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TypeDBEntry();
-
-    // Set simple properties
-    entry->name = typesEntry["name"].toString();
-    entry->ind = typesEntry["ind"].toDouble();
-    entry->readable = typesEntry["readable"].toString();
+    auto entry = new TypeDBEntry(typesEntry);
 
     // Add to array
     store.append(entry);

@@ -16,6 +16,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <QJsonValue>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -30,8 +31,11 @@ struct MapDBEntrySprite;
 // All sprites in the game, glitch and not
 
 struct SpriteDBEntry {
+  SpriteDBEntry();
+  SpriteDBEntry(QJsonValue& data);
+
   QString name;
-  var8 ind;
+  var8 ind = 0;
 
   QVector<MapDBEntrySprite*> toMaps;
 };

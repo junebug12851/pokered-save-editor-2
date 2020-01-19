@@ -26,13 +26,57 @@
 #include "./gamedata.h"
 #include "./items.h"
 
-MoveDBEntry::MoveDBEntry()
+MoveDBEntry::MoveDBEntry() {}
+MoveDBEntry::MoveDBEntry(QJsonValue& data)
 {
-  glitch = false;
-  type = "";
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+  readable = data["readable"].toString();
 
-  toType = nullptr;
-  toItem = nullptr;
+  // Set simple optional properties
+  if(data["glitch"].isBool())
+    glitch = data["glitch"].toBool();
+
+  if(data["power"].isDouble())
+    power = data["power"].toDouble();
+
+  if(data["type"].isString())
+    type = data["type"].toString();
+
+  if(data["accuracy"].isDouble())
+    accuracy = data["accuracy"].toDouble();
+
+  if(data["pp"].isDouble())
+    pp = data["pp"].toDouble();
+
+  if(data["tm"].isDouble())
+    tm = data["tm"].toDouble();
+
+  if(data["hm"].isDouble())
+    hm = data["hm"].toDouble();
+}
+
+void MoveDBEntry::deepLink()
+{
+  if(type != "")
+    toType = TypesDB::ind.value(type, nullptr);
+
+  if(tm && !hm)
+    toItem = ItemsDB::ind.value("tm" + QString::number(*tm), nullptr);
+  else if(tm && hm)
+    toItem = ItemsDB::ind.value("hm" + QString::number(*hm), nullptr);
+
+#ifdef QT_DEBUG
+  if(type != "" && toType == nullptr)
+    qCritical() << "Move Type: " << type << ", could not be deep linked." ;
+
+  if((tm || hm) && toItem == nullptr)
+    qCritical() << "Move: " << name << ", could not be deep linked." ;
+#endif
+
+  if(toType != nullptr)
+    toType->toMoves.append(this);
 }
 
 void MovesDB::load()
@@ -44,34 +88,7 @@ void MovesDB::load()
   for(QJsonValue moveEntry : moveData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new MoveDBEntry();
-
-    // Set simple properties
-    entry->name = moveEntry["name"].toString();
-    entry->ind = moveEntry["ind"].toDouble();
-    entry->readable = moveEntry["readable"].toString();
-
-    // Set simple optional properties
-    if(moveEntry["glitch"].isBool())
-      entry->glitch = moveEntry["glitch"].toBool();
-
-    if(moveEntry["power"].isDouble())
-      entry->power = moveEntry["power"].toDouble();
-
-    if(moveEntry["type"].isString())
-      entry->type = moveEntry["type"].toString();
-
-    if(moveEntry["accuracy"].isDouble())
-      entry->accuracy = moveEntry["accuracy"].toDouble();
-
-    if(moveEntry["pp"].isDouble())
-      entry->pp = moveEntry["pp"].toDouble();
-
-    if(moveEntry["tm"].isDouble())
-      entry->tm = moveEntry["tm"].toDouble();
-
-    if(moveEntry["hm"].isDouble())
-      entry->hm = moveEntry["hm"].toDouble();
+    auto entry = new MoveDBEntry(moveEntry);
 
     // Add to array
     store.append(entry);
@@ -100,24 +117,7 @@ void MovesDB::deepLink()
 {
   for(auto entry : store)
   {
-    if(entry->type != "")
-      entry->toType = TypesDB::ind.value(entry->type, nullptr);
-
-    if(entry->tm && !entry->hm)
-      entry->toItem = ItemsDB::ind.value("tm" + QString::number(*entry->tm), nullptr);
-    else if(entry->tm && entry->hm)
-      entry->toItem = ItemsDB::ind.value("hm" + QString::number(*entry->hm), nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->type != "" && entry->toType == nullptr)
-      qCritical() << "Move Type: " << entry->type << ", could not be deep linked." ;
-
-    if((entry->tm || entry->hm) && entry->toItem == nullptr)
-      qCritical() << "Move: " << entry->name << ", could not be deep linked." ;
-#endif
-
-    if(entry->toType != nullptr)
-      entry->toType->toMoves.append(entry);
+    entry->deepLink();
   }
 }
 

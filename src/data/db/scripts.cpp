@@ -25,6 +25,42 @@
 #include "./gamedata.h"
 #include "./maps.h"
 
+ScriptDBEntry::ScriptDBEntry() {}
+ScriptDBEntry::ScriptDBEntry(QJsonValue& data)
+{
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+  size = data["size"].toDouble();
+
+  if(data["skip"].isDouble())
+    skip = data["skip"].toDouble();
+
+  // If maps is given use that, otherwise use name
+  if(data["maps"].isArray()) {
+    for(auto mapEntry : data["maps"].toArray())
+      maps.append(mapEntry.toString());
+  }
+  else
+    maps.append(name);
+}
+
+void ScriptDBEntry::deepLink()
+{
+  for(auto mapEntry : maps) {
+    auto map = MapsDB::ind.value(mapEntry, nullptr);
+    toMaps.append(map);
+
+#ifdef QT_DEBUG
+  if(map == nullptr)
+    qCritical() << "Script Entry: " << name << ", could not be deep linked to map " << mapEntry;
+#endif
+
+  if(map != nullptr)
+    map->toScript = this;
+  }
+}
+
 void ScriptsDB::load()
 {
   // Grab Event Pokemon Data
@@ -34,23 +70,7 @@ void ScriptsDB::load()
   for(QJsonValue scriptEntry : scriptData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new ScriptDBEntry();
-
-    // Set simple properties
-    entry->name = scriptEntry["name"].toString();
-    entry->ind = scriptEntry["ind"].toDouble();
-    entry->size = scriptEntry["size"].toDouble();
-
-    if(scriptEntry["skip"].isDouble())
-      entry->skip = scriptEntry["skip"].toDouble();
-
-    // If maps is given use that, otherwise use name
-    if(scriptEntry["maps"].isArray()) {
-      for(auto mapEntry : scriptEntry["maps"].toArray())
-        entry->maps.append(mapEntry.toString());
-    }
-    else
-      entry->maps.append(entry->name);
+    auto entry = new ScriptDBEntry(scriptEntry);
 
     // Add to array
     store.append(entry);
@@ -72,18 +92,7 @@ void ScriptsDB::index()
 void ScriptsDB::deepLink()
 {
   for(auto entry : store) {
-    for(auto mapEntry : entry->maps) {
-      auto map = MapsDB::ind.value(mapEntry, nullptr);
-      entry->toMaps.append(map);
-
-#ifdef QT_DEBUG
-    if(map == nullptr)
-      qCritical() << "Script Entry: " << entry->name << ", could not be deep linked to map " << mapEntry;
-#endif
-
-    if(map != nullptr)
-      map->toScript = entry;
-    }
+    entry->deepLink();
   }
 }
 

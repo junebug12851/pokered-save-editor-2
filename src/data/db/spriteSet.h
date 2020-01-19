@@ -16,6 +16,7 @@
 #ifndef SPRITESET_H
 #define SPRITESET_H
 
+#include <QJsonValue>
 #include <QString>
 #include <QVector>
 #include <QHash>
@@ -34,6 +35,10 @@ struct MapDBEntry;
 
 struct SpriteSetDBEntry {
 
+  SpriteSetDBEntry();
+  SpriteSetDBEntry(QJsonValue& data);
+  void deepLink();
+
   // A sprite set is dynamic if it's index starts at 241 (0xF1)
   // Dynamic sprites are for large maps that need 2 sprite sets loaded on either
   // side
@@ -45,10 +50,10 @@ struct SpriteSetDBEntry {
   QVector<SpriteDBEntry*> getSprites(var8 x, var8 y);
 
   // Sprite Set ID
-  var8 ind;
+  var8 ind = 0;
 
   // For Dynamic Sprites, Split Horizontal or Vertical
-  QString split = "";
+  QString split;
 
   // Static sprites: Static sprite list
   QVector<QString> spriteList;

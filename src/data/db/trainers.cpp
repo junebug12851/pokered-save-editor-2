@@ -20,10 +20,19 @@
 #include "./trainers.h"
 #include "./gamedata.h"
 
-TrainerDBEntry::TrainerDBEntry()
+TrainerDBEntry::TrainerDBEntry() {}
+TrainerDBEntry::TrainerDBEntry(QJsonValue& data)
 {
-  unused = false;
-  opp = false;
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+
+  // Set simple optional properties
+  if(data["unused"].isBool())
+    unused = data["unused"].toBool();
+
+  if(data["opp"].isBool())
+    opp = data["opp"].toBool();
 }
 
 void TrainersDB::load()
@@ -35,18 +44,7 @@ void TrainersDB::load()
   for(QJsonValue trainerEntry : trainerData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TrainerDBEntry();
-
-    // Set simple properties
-    entry->name = trainerEntry["name"].toString();
-    entry->ind = trainerEntry["ind"].toDouble();
-
-    // Set simple optional properties
-    if(trainerEntry["unused"].isBool())
-      entry->unused = trainerEntry["unused"].toBool();
-
-    if(trainerEntry["opp"].isBool())
-      entry->opp = trainerEntry["opp"].toBool();
+    auto entry = new TrainerDBEntry(trainerEntry);
 
     // Add to array
     store.append(entry);

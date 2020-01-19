@@ -16,6 +16,7 @@
 #ifndef TRADE_H
 #define TRADE_H
 
+#include <QJsonValue>
 #include <QString>
 
 #include "../../common/types.h"
@@ -30,15 +31,17 @@ struct PokemonDBEntry;
 
 struct TradeDBEntry {
   TradeDBEntry();
+  TradeDBEntry(QJsonValue& data);
+  void deepLink();
 
   QString give;
   QString get;
-  var8 textId;
+  var8 textId = 0;
   QString nickname;
-  bool unused;
+  bool unused = false;
 
-  PokemonDBEntry* toGive;
-  PokemonDBEntry* toGet;
+  PokemonDBEntry* toGive = nullptr;
+  PokemonDBEntry* toGet = nullptr;
 };
 
 class TradesDB

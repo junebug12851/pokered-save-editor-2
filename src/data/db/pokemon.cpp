@@ -28,7 +28,9 @@
 #include "./moves.h"
 #include "./types.h"
 
-PokemonDBEntryEvolution::PokemonDBEntryEvolution(QJsonValue& data)
+PokemonDBEntryEvolution::PokemonDBEntryEvolution() {}
+PokemonDBEntryEvolution::PokemonDBEntryEvolution(QJsonValue& data, PokemonDBEntry* parent) :
+  parent(parent)
 {
   // Set simple properties
   toName = data["toName"].toString();
@@ -46,10 +48,6 @@ PokemonDBEntryEvolution::PokemonDBEntryEvolution(QJsonValue& data)
     item = data["item"].toString();
   else
     item = "";
-
-  toDeEvolution = nullptr;
-  toEvolution = nullptr;
-  toItem = nullptr;
 }
 
 void PokemonDBEntryEvolution::deepLink(PokemonDBEntry* deEvolution)
@@ -79,13 +77,13 @@ void PokemonDBEntryEvolution::deepLink(PokemonDBEntry* deEvolution)
       toItem->toEvolvePokemon.append(this);
 }
 
-PokemonDBEntryMove::PokemonDBEntryMove(QJsonValue& data)
+PokemonDBEntryMove::PokemonDBEntryMove() {}
+PokemonDBEntryMove::PokemonDBEntryMove(QJsonValue& data, PokemonDBEntry* parent) :
+  parent(parent)
 {
   // Set simple properties
   level = data["level"].toDouble();
   move = data["move"].toString();
-
-  toMove = nullptr;
 }
 
 void PokemonDBEntryMove::deepLink()
@@ -101,24 +99,94 @@ void PokemonDBEntryMove::deepLink()
       toMove->toPokemonLearned.append(this);
 }
 
-PokemonDBEntry::PokemonDBEntry()
+PokemonDBEntry::PokemonDBEntry() {}
+PokemonDBEntry::PokemonDBEntry(QJsonValue& data)
 {
-  name = "";
-  glitch = false;
-  type1 = "";
-  type2 = "";
+  // Set simple properties
+  name = data["name"].toString();
+  ind = data["ind"].toDouble();
+  readable = data["readable"].toString();
 
-  moves = new QVector<PokemonDBEntryMove*>();
-  initial = new QVector<QString>();
-  tmHm = new QVector<var8>;
-  evolution = new QVector<PokemonDBEntryEvolution*>;
+  // Set simple optional properties
+  if(data["pokedex"].isDouble())
+    pokedex = data["pokedex"].toDouble();
 
-  toType1 = nullptr;
-  toType2 = nullptr;
-  toDeEvolution = nullptr;
-  toInitial = QVector<MoveDBEntry*>();
-  toTmHmMove = QVector<MoveDBEntry*>();
-  toTmHmItem = QVector<ItemDBEntry*>();
+  if(data["growthRate"].isDouble())
+    growthRate = data["growthRate"].toDouble();
+
+  if(data["baseHp"].isDouble())
+    baseHp = data["baseHp"].toDouble();
+
+  if(data["baseAttack"].isDouble())
+    baseAttack = data["baseAttack"].toDouble();
+
+  if(data["baseDefense"].isDouble())
+    baseDefense = data["baseDefense"].toDouble();
+
+  if(data["baseSpeed"].isDouble())
+    baseSpeed = data["baseSpeed"].toDouble();
+
+  if(data["baseSpecial"].isDouble())
+    baseSpecial = data["baseSpecial"].toDouble();
+
+  if(data["baseExpYield"].isDouble())
+    baseExpYield = data["baseExpYield"].toDouble();
+
+  if(data["type1"].isString())
+    type1 = data["type1"].toString();
+
+  if(data["type2"].isString())
+    type2 = data["type2"].toString();
+
+  if(data["catchRate"].isDouble())
+    catchRate = data["catchRate"].toDouble();
+
+  if(data["glitch"].isDouble())
+    glitch = data["glitch"].toBool();
+
+  // Set Moves
+  if(data["moves"].isArray())
+  {
+    for(QJsonValue moveEntryz : data["moves"].toArray())
+    {
+      moves->append(new PokemonDBEntryMove(moveEntryz, this));
+    }
+  }
+
+  // Set Initial
+  if(data["initial"].isArray())
+  {
+    for(QJsonValue initialEntry : data["initial"].toArray())
+    {
+      initial->append(initialEntry.toString());
+    }
+  }
+
+  // Set TM HM
+  if(data["tmHm"].isArray())
+  {
+    for(QJsonValue tmHmEntry : data["tmHm"].toArray())
+    {
+      tmHm->append(tmHmEntry.toDouble());
+    }
+  }
+
+  // Set Evolution
+  // Is often next Pokemon up
+  // Can be an Eevee Array for Eevee's multiple evolutions
+  if(data["evolution"].isArray())
+  {
+    for(QJsonValue evolutionEntry : data["evolution"].toArray())
+    {
+      evolution->append(new PokemonDBEntryEvolution(evolutionEntry, this));
+    }
+  }
+  else if(data["evolution"].isObject())
+  {
+    // Kinda weird this has to be 2 steps
+    auto tmp = data["evolution"];
+    evolution->append(new PokemonDBEntryEvolution(tmp, this));
+  }
 }
 
 void PokemonDBEntry::deepLink()
@@ -204,93 +272,7 @@ void PokemonDB::load()
   for(QJsonValue pokemonEntry : pokemonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new PokemonDBEntry();
-
-    // Set simple properties
-    entry->name = pokemonEntry["name"].toString();
-    entry->ind = pokemonEntry["ind"].toDouble();
-    entry->readable = pokemonEntry["readable"].toString();
-
-    // Set simple optional properties
-    if(pokemonEntry["pokedex"].isDouble())
-      entry->pokedex = pokemonEntry["pokedex"].toDouble();
-
-    if(pokemonEntry["growthRate"].isDouble())
-      entry->growthRate = pokemonEntry["growthRate"].toDouble();
-
-    if(pokemonEntry["baseHp"].isDouble())
-      entry->baseHp = pokemonEntry["baseHp"].toDouble();
-
-    if(pokemonEntry["baseAttack"].isDouble())
-      entry->baseAttack = pokemonEntry["baseAttack"].toDouble();
-
-    if(pokemonEntry["baseDefense"].isDouble())
-      entry->baseDefense = pokemonEntry["baseDefense"].toDouble();
-
-    if(pokemonEntry["baseSpeed"].isDouble())
-      entry->baseSpeed = pokemonEntry["baseSpeed"].toDouble();
-
-    if(pokemonEntry["baseSpecial"].isDouble())
-      entry->baseSpecial = pokemonEntry["baseSpecial"].toDouble();
-
-    if(pokemonEntry["baseExpYield"].isDouble())
-      entry->baseExpYield = pokemonEntry["baseExpYield"].toDouble();
-
-    if(pokemonEntry["type1"].isString())
-      entry->type1 = pokemonEntry["type1"].toString();
-
-    if(pokemonEntry["type2"].isString())
-      entry->type2 = pokemonEntry["type2"].toString();
-
-    if(pokemonEntry["catchRate"].isDouble())
-      entry->catchRate = pokemonEntry["catchRate"].toDouble();
-
-    if(pokemonEntry["glitch"].isDouble())
-      entry->glitch = pokemonEntry["glitch"].toBool();
-
-    // Set Moves
-    if(pokemonEntry["moves"].isArray())
-    {
-      for(QJsonValue moveEntryz : pokemonEntry["moves"].toArray())
-      {
-        entry->moves->append(new PokemonDBEntryMove(moveEntryz));
-      }
-    }
-
-    // Set Initial
-    if(pokemonEntry["initial"].isArray())
-    {
-      for(QJsonValue initialEntry : pokemonEntry["initial"].toArray())
-      {
-        entry->initial->append(initialEntry.toString());
-      }
-    }
-
-    // Set TM HM
-    if(pokemonEntry["tmHm"].isArray())
-    {
-      for(QJsonValue tmHmEntry : pokemonEntry["tmHm"].toArray())
-      {
-        entry->tmHm->append(tmHmEntry.toDouble());
-      }
-    }
-
-    // Set Evolution
-    // Is often next Pokemon up
-    // Can be an Eevee Array for Eevee's multiple evolutions
-    if(pokemonEntry["evolution"].isArray())
-    {
-      for(QJsonValue evolutionEntry : pokemonEntry["evolution"].toArray())
-      {
-        entry->evolution->append(new PokemonDBEntryEvolution(evolutionEntry));
-      }
-    }
-    else if(pokemonEntry["evolution"].isObject())
-    {
-      // Kinda weird this has to be 2 steps
-      auto tmp = pokemonEntry["evolution"];
-      entry->evolution->append(new PokemonDBEntryEvolution(tmp));
-    }
+    auto entry = new PokemonDBEntry(pokemonEntry);
 
     // Add to array
     store.append(entry);

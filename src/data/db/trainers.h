@@ -16,6 +16,7 @@
 #ifndef TRAINER_H
 #define TRAINER_H
 
+#include <QJsonValue>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -31,11 +32,12 @@ struct MapDBEntrySpriteTrainer;
 
 struct TrainerDBEntry {
   TrainerDBEntry();
+  TrainerDBEntry(QJsonValue& data);
 
   QString name;
-  var8 ind;
-  bool unused;
-  bool opp;
+  var8 ind = 0;
+  bool unused = false;
+  bool opp = false;
 
   QVector<MapDBEntrySpriteTrainer*> tpMapSpriteTrainers;
 };

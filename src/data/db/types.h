@@ -16,6 +16,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <QJsonValue>
 #include <QString>
 #include <QHash>
 #include <QVector>
@@ -31,8 +32,11 @@ struct PokemonDBEntry;
 // All types in the game
 
 struct TypeDBEntry {
+  TypeDBEntry();
+  TypeDBEntry(QJsonValue& data);
+
   QString name;
-  var8 ind;
+  var8 ind = 0;
   QString readable;
 
   QVector<MoveDBEntry*> toMoves;

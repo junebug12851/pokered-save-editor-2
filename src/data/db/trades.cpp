@@ -25,12 +25,37 @@
 #include "./gamedata.h"
 #include "./pokemon.h"
 
-TradeDBEntry::TradeDBEntry()
+TradeDBEntry::TradeDBEntry() {}
+TradeDBEntry::TradeDBEntry(QJsonValue& data)
 {
-  unused = false;
+  // Set simple properties
+  give = data["give"].toString();
+  get = data["get"].toString();
+  textId = data["textId"].toDouble();
+  nickname = data["nickname"].toString();
 
-  toGive = nullptr;
-  toGet = nullptr;
+  // Set simple optional properties
+  if(data["unused"].isBool())
+     unused = data["unused"].toBool();
+}
+
+void TradeDBEntry::deepLink()
+{
+  toGive = PokemonDB::ind.value(give, nullptr);
+  toGet = PokemonDB::ind.value(get, nullptr);
+
+#ifdef QT_DEBUG
+  if(toGive == nullptr)
+    qCritical() << "Trade Give: " << toGive << ", could not be deep linked." ;
+  if(toGet == nullptr)
+    qCritical() << "Trade Get: " << toGet << ", could not be deep linked." ;
+#endif
+
+  if(toGive != nullptr)
+    toGive->toTrades.append(this);
+
+  if(toGet != nullptr)
+    toGet->toTrades.append(this);
 }
 
 void TradesDB::load()
@@ -42,17 +67,7 @@ void TradesDB::load()
   for(QJsonValue tradeEntry : tradeData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TradeDBEntry();
-
-    // Set simple properties
-    entry->give = tradeEntry["give"].toString();
-    entry->get = tradeEntry["get"].toString();
-    entry->textId = tradeEntry["textId"].toDouble();
-    entry->nickname = tradeEntry["nickname"].toString();
-
-    // Set simple optional properties
-    if(tradeEntry["unused"].isBool())
-       entry->unused = tradeEntry["unused"].toBool();
+    auto entry = new TradeDBEntry(tradeEntry);
 
     // Add to array
     store.append(entry);
@@ -65,21 +80,7 @@ void TradesDB::deepLink()
 {
   for(auto entry : store)
   {
-    entry->toGive = PokemonDB::ind.value(entry->give, nullptr);
-    entry->toGet = PokemonDB::ind.value(entry->get, nullptr);
-
-#ifdef QT_DEBUG
-    if(entry->toGive == nullptr)
-      qCritical() << "Trade Give: " << entry->toGive << ", could not be deep linked." ;
-    if(entry->toGet == nullptr)
-      qCritical() << "Trade Get: " << entry->toGet << ", could not be deep linked." ;
-#endif
-
-    if(entry->toGive != nullptr)
-      entry->toGive->toTrades.append(entry);
-
-    if(entry->toGet != nullptr)
-      entry->toGet->toTrades.append(entry);
+    entry->deepLink();
   }
 }
 
