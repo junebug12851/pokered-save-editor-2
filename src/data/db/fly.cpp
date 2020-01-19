@@ -50,19 +50,19 @@ void FlyDBEntry::deepLink()
 void FlyDB::load()
 {
   // Grab Event Pokemon Data
-  auto flyData = GameData::json("fly");
+  auto jsonData = GameData::json("fly");
 
   // Go through each event Pokemon
-  for(QJsonValue flyEntry : flyData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new FlyDBEntry(flyEntry);
+    auto entry = new FlyDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete flyData;
+  delete jsonData;
 }
 
 void FlyDB::index()

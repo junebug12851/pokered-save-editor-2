@@ -266,19 +266,19 @@ void PokemonDBEntry::deepLink()
 void PokemonDB::load()
 {
   // Grab Pokemon Data
-  auto pokemonData = GameData::json("pokemon");
+  auto jsonData = GameData::json("pokemon");
 
   // Go through each Pokemon
-  for(QJsonValue pokemonEntry : pokemonData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new PokemonDBEntry(pokemonEntry);
+    auto entry = new PokemonDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete pokemonData;
+  delete jsonData;
 }
 
 void PokemonDB::index()

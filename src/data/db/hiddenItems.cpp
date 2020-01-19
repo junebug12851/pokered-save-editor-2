@@ -50,19 +50,19 @@ void HiddenItemDBEntry::deepLink()
 void HiddenItemsDB::load()
 {
   // Grab Event Pokemon Data
-  auto hiddenItemData = GameData::json("hiddenItems");
+  auto jsonData = GameData::json("hiddenItems");
 
   // Go through each event Pokemon
-  for(QJsonValue hiddenItemEntry : hiddenItemData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new HiddenItemDBEntry(hiddenItemEntry);
+    auto entry = new HiddenItemDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete hiddenItemData;
+  delete jsonData;
 }
 
 void HiddenItemsDB::deepLink()

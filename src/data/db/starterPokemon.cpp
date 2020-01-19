@@ -30,16 +30,16 @@
 void StarterPokemonDB::load()
 {
   // Grab Event Pokemon Data
-  auto starterData = GameData::json("starters");
+  auto jsonData = GameData::json("starters");
 
   // Go through each event Pokemon
-  for(QJsonValue starterEntry : starterData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Add to array
-    store.append(starterEntry.toString());
+    store.append(jsonEntry.toString());
   }
 
-  delete starterData;
+  delete jsonData;
 }
 
 void StarterPokemonDB::deepLink()

@@ -38,19 +38,19 @@ TrainerDBEntry::TrainerDBEntry(QJsonValue& data)
 void TrainersDB::load()
 {
   // Grab Event Pokemon Data
-  auto trainerData = GameData::json("trainers");
+  auto jsonData = GameData::json("trainers");
 
   // Go through each event Pokemon
-  for(QJsonValue trainerEntry : trainerData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TrainerDBEntry(trainerEntry);
+    auto entry = new TrainerDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete trainerData;
+  delete jsonData;
 }
 
 void TrainersDB::index()

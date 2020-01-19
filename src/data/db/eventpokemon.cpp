@@ -100,19 +100,19 @@ void EventPokemonDBEntry::deepLink()
 void EventPokemonDB::load()
 {
   // Grab Event Pokemon Data
-  auto eventPokemonData = GameData::json("eventPokemon");
+  auto jsonData = GameData::json("eventPokemon");
 
   // Go through each event Pokemon
-  for(QJsonValue eventPokemonEntry : eventPokemonData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new EventPokemonDBEntry(eventPokemonEntry);
+    auto entry = new EventPokemonDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete eventPokemonData;
+  delete jsonData;
 }
 
 void EventPokemonDB::deepLink()

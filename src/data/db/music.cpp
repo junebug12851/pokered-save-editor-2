@@ -32,19 +32,19 @@ MusicDBEntry::MusicDBEntry(QJsonValue& data)
 void MusicDB::load()
 {
   // Grab Music Data
-  auto musicData = GameData::json("music");
+  auto jsonData = GameData::json("music");
 
   // Go through each music
-  for(QJsonValue musicEntry : musicData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new MusicDBEntry(musicEntry);
+    auto entry = new MusicDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete musicData;
+  delete jsonData;
 }
 
 void MusicDB::index()

@@ -730,19 +730,19 @@ std::optional<var8> MapDBEntry::width2X2()
 void MapsDB::load()
 {
   // Grab Map Data
-  auto mapData = GameData::json("maps");
+  auto jsonData = GameData::json("maps");
 
   // Go through each map
-  for(QJsonValue mapEntry : mapData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new map entry
-    auto entry = new MapDBEntry(mapEntry);
+    auto entry = new MapDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete mapData;
+  delete jsonData;
 }
 
 void MapsDB::index()

@@ -82,19 +82,19 @@ void MoveDBEntry::deepLink()
 void MovesDB::load()
 {
   // Grab Event Pokemon Data
-  auto moveData = GameData::json("moves");
+  auto jsonData = GameData::json("moves");
 
   // Go through each event Pokemon
-  for(QJsonValue moveEntry : moveData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new MoveDBEntry(moveEntry);
+    auto entry = new MoveDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete moveData;
+  delete jsonData;
 }
 
 void MovesDB::index()

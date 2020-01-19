@@ -61,19 +61,19 @@ void TradeDBEntry::deepLink()
 void TradesDB::load()
 {
   // Grab Event Pokemon Data
-  auto tradeData = GameData::json("trades");
+  auto jsonData = GameData::json("trades");
 
   // Go through each event Pokemon
-  for(QJsonValue tradeEntry : tradeData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TradeDBEntry(tradeEntry);
+    auto entry = new TradeDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete tradeData;
+  delete jsonData;
 }
 
 void TradesDB::deepLink()

@@ -110,19 +110,19 @@ QVector<SpriteDBEntry*> SpriteSetDBEntry::getSprites(var8 x, var8 y)
 void SpriteSetDB::load()
 {
   // Grab Music Data
-  auto spriteSetData = GameData::json("spriteSet");
+  auto jsonData = GameData::json("spriteSet");
 
   // Go through each music
-  for(QJsonValue spriteSetEntry : spriteSetData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new SpriteSetDBEntry(spriteSetEntry);
+    auto entry = new SpriteSetDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete spriteSetData;
+  delete jsonData;
 }
 
 void SpriteSetDB::index()

@@ -25,16 +25,16 @@
 void NamesPokemonDB::load()
 {
   // Grab Event Pokemon Data
-  auto nameData = GameData::json("namesPokemon");
+  auto jsonData = GameData::json("namesPokemon");
 
   // Go through each event Pokemon
-  for(QJsonValue nameEntry : nameData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Add to array
-    store.append(nameEntry.toString());
+    store.append(jsonEntry.toString());
   }
 
-  delete nameData;
+  delete jsonData;
 }
 
 QString NamesPokemonDB::randomName()

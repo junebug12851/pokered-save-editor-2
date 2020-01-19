@@ -71,19 +71,19 @@ void MissableDBEntry::deepLink()
 void MissablesDB::load()
 {
   // Grab Event Pokemon Data
-  auto missableData = GameData::json("missables");
+  auto jsonData = GameData::json("missables");
 
   // Go through each event Pokemon
-  for(QJsonValue missableEntry : missableData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new MissableDBEntry(missableEntry);
+    auto entry = new MissableDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete missableData;
+  delete jsonData;
 }
 
 void MissablesDB::index()

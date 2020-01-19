@@ -31,16 +31,16 @@
 void TmHmsDB::load()
 {
   // Grab Event Pokemon Data
-  auto tmHmData = GameData::json("tmHm");
+  auto jsonData = GameData::json("tmHm");
 
   // Go through each event Pokemon
-  for(QJsonValue tmhmEntry : tmHmData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Add to array
-    store.append(tmhmEntry.toString());
+    store.append(jsonEntry.toString());
   }
 
-  delete tmHmData;
+  delete jsonData;
 }
 
 void TmHmsDB::deepLink()

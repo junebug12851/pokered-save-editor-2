@@ -66,19 +66,19 @@ void ItemDBEntry::deepLink()
 void ItemsDB::load()
 {
   // Grab Item Data
-  auto itemData = GameData::json("items");
+  auto jsonData = GameData::json("items");
 
   // Go through each item
-  for(QJsonValue itemEntry : itemData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new item entry
-    auto entry = new ItemDBEntry(itemEntry);
+    auto entry = new ItemDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete itemData;
+  delete jsonData;
 }
 
 void ItemsDB::index()

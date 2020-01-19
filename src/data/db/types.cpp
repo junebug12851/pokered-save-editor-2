@@ -32,19 +32,19 @@ TypeDBEntry::TypeDBEntry(QJsonValue& data)
 void TypesDB::load()
 {
   // Grab Event Pokemon Data
-  auto typesData = GameData::json("types");
+  auto jsonData = GameData::json("types");
 
   // Go through each event Pokemon
-  for(QJsonValue typesEntry : typesData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TypeDBEntry(typesEntry);
+    auto entry = new TypeDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete typesData;
+  delete jsonData;
 }
 
 void TypesDB::index()

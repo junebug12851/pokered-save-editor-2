@@ -57,19 +57,19 @@ TilesetType TilesetDBEntry::typeAsEnum()
 void TilesetDB::load()
 {
   // Grab Music Data
-  auto tilesetData = GameData::json("tileset");
+  auto jsonData = GameData::json("tileset");
 
   // Go through each music
-  for(QJsonValue tilesetEntry : tilesetData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new TilesetDBEntry(tilesetEntry);
+    auto entry = new TilesetDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete tilesetData;
+  delete jsonData;
 }
 
 void TilesetDB::index()

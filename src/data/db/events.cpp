@@ -57,19 +57,19 @@ void EventDBEntry::deepLink()
 void EventsDB::load()
 {
   // Grab Events
-  auto eventData = GameData::json("events");
+  auto jsonData = GameData::json("events");
 
   // Go through each event
-  for(QJsonValue eventEntry : eventData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event
-    auto entry = new EventDBEntry(eventEntry);
+    auto entry = new EventDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete eventData;
+  delete jsonData;
 }
 
 void EventsDB::index()

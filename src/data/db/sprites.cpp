@@ -31,19 +31,19 @@ SpriteDBEntry::SpriteDBEntry(QJsonValue& data)
 void SpritesDB::load()
 {
   // Grab Event Pokemon Data
-  auto spriteData = GameData::json("sprites");
+  auto jsonData = GameData::json("sprites");
 
   // Go through each event Pokemon
-  for(QJsonValue spriteEntry : spriteData->array())
+  for(QJsonValue jsonEntry : jsonData->array())
   {
     // Create a new event Pokemon entry
-    auto entry = new SpriteDBEntry(spriteEntry);
+    auto entry = new SpriteDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
 
-  delete spriteData;
+  delete jsonData;
 }
 
 void SpritesDB::index()
