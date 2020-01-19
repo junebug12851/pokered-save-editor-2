@@ -13,7 +13,8 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "playeritems.h"
+#include "./playeritems.h"
+#include "../fragments/item.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
@@ -22,32 +23,14 @@
 #include <QString>
 #include <QRandomGenerator>
 
-BagItem::BagItem(var8 id, var8 amount)
-{
-  this->id = id;
-  this->amount = amount;
-}
-
-ItemDBEntry* BagItem::toItem()
-{
-  return ItemsDB::ind.value(QString::number(id), nullptr);
-}
-
 PlayerItems::PlayerItems(SaveFile* saveFile)
 {
-  bagItems = new QVector<BagItem*>();
-
   load(saveFile);
 }
 
 PlayerItems::~PlayerItems()
 {
-  for(auto item : *bagItems)
-  {
-    delete item;
-  }
-
-  delete bagItems;
+  reset();
 }
 
 void PlayerItems::load(SaveFile* saveFile)
@@ -65,7 +48,7 @@ void PlayerItems::load(SaveFile* saveFile)
   var8 amount = it->getByte();
 
   for(var8 i = 0; i < amount; i++)
-    bagItems->append(new BagItem(it->getByte(), it->getByte()));
+    bagItems.append(new Item(it));
 
   delete it;
 }
@@ -75,11 +58,10 @@ void PlayerItems::save(SaveFile* saveFile)
   auto it = saveFile->iterator();
   it->offsetTo(0x25C9);
 
-  it->setByte(bagItems->size());
+  it->setByte(bagItems.size());
 
-  for(var8 i = 0; i < bagItems->size(); i++) {
-    it->setByte(bagItems->at(i)->id);
-    it->setByte(bagItems->at(i)->amount);
+  for(var8 i = 0; i < bagItems.size(); i++) {
+    bagItems.at(i)->save(it);
   }
 
   it->setByte(0xFF);
@@ -89,12 +71,12 @@ void PlayerItems::save(SaveFile* saveFile)
 
 void PlayerItems::reset()
 {
-  for(auto item : *bagItems)
+  for(auto item : bagItems)
   {
     delete item;
   }
 
-  bagItems->clear();
+  bagItems.clear();
 }
 
 void PlayerItems::randomize()
@@ -103,43 +85,24 @@ void PlayerItems::randomize()
 
   auto rnd = QRandomGenerator::global();
 
-  bagItems->append(new BagItem(
-                     ItemsDB::ind.value("TOWN MAP")->ind, 1));
-
-  bagItems->append(new BagItem(
-                     ItemsDB::ind.value("POKE BALL")->ind,
-                     rnd->bounded(5, 15+1)));
-
-  bagItems->append(new BagItem(
-                     ItemsDB::ind.value("POTION")->ind,
-                     rnd->bounded(5, 10+1)));
-
-  bagItems->append(new BagItem(
-                     ItemsDB::ind.value("ANTIDOTE")->ind,
-                     rnd->bounded(1, 3+1)));
-
-  bagItems->append(new BagItem(
-                     ItemsDB::ind.value("PARLYZ HEAL")->ind,
-                     rnd->bounded(1, 3+1)));
-
-  bagItems->append(new BagItem(
-                     ItemsDB::ind.value("AWAKENING")->ind,
-                     rnd->bounded(1, 3+1)));
+  // Essentials
+  bagItems.append(new Item("TOWN MAP", 1));
+  bagItems.append(new Item("POKE BALL", rnd->bounded(5, 15+1)));
+  bagItems.append(new Item("POTION", rnd->bounded(5, 10+1)));
+  bagItems.append(new Item("ANTIDOTE", rnd->bounded(1, 3+1)));
+  bagItems.append(new Item("PARLYZ HEAL", rnd->bounded(1, 3+1)));
+  bagItems.append(new Item("AWAKENING", rnd->bounded(1, 3+1)));
 
   // Again I have no idea where this will drop you so prepare for an escape
   // If need be, also because you only get 1 HM Slave that doesn't know dig.
   // This is your dig.
-  bagItems->append(new BagItem(
-                     ItemsDB::ind.value("ESCAPE ROPE")->ind,
-                     rnd->bounded(1, 5+1)));
+  bagItems.append(new Item("ESCAPE ROPE", rnd->bounded(1, 5+1)));
 
   bool giveSuperPotion = rnd->bounded(0, 5+1) >= 3;
   if(giveSuperPotion)
-    bagItems->append(new BagItem(
-                       ItemsDB::ind.value("SUPER POTION")->ind, 1));
+    bagItems.append(new Item("SUPER POTION", 1));
 
   bool giveGreatBall = rnd->bounded(0, 5+1) >= 3;
   if(giveGreatBall)
-    bagItems->append(new BagItem(
-                       ItemsDB::ind.value("GREAT BALL")->ind, 1));
+    bagItems.append(new Item("GREAT BALL", 1));
 }

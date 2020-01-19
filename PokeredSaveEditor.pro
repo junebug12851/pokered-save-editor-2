@@ -60,6 +60,7 @@ HEADERS += \
   src/data/file/expanded/expandedinterface.h \
   src/data/file/expanded/fragments/hofpokemon.h \
   src/data/file/expanded/fragments/hofrecord.h \
+  src/data/file/expanded/fragments/item.h \
   src/data/file/expanded/fragments/itemstoragebox.h \
   src/data/file/expanded/fragments/mapconndata.h \
   src/data/file/expanded/fragments/pokemonbox.h \
@@ -118,6 +119,7 @@ SOURCES += \
   src/data/file/expanded/daycare.cpp \
   src/data/file/expanded/fragments/hofpokemon.cpp \
   src/data/file/expanded/fragments/hofrecord.cpp \
+  src/data/file/expanded/fragments/item.cpp \
   src/data/file/expanded/fragments/itemstoragebox.cpp \
   src/data/file/expanded/fragments/mapconndata.cpp \
   src/data/file/expanded/fragments/pokemonbox.cpp \

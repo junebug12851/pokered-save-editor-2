@@ -16,43 +16,11 @@
 
 #include <QRandomGenerator>
 #include "./itemstoragebox.h"
+#include "./item.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/items.h"
-
-ItemStorageEntry::ItemStorageEntry(bool random)
-{
-  if(random)
-    randomize();
-  else
-    reset();
-}
-
-ItemStorageEntry::ItemStorageEntry(var8 ind, var8 amount)
-{
-  this->ind = ind;
-  this->amount = amount;
-}
-
-void ItemStorageEntry::randomize()
-{
-  auto rnd = QRandomGenerator::global();
-  auto tmp = ItemsDB::store.at(rnd->bounded(0, ItemsDB::store.size()));
-
-  // No Glitch or Items only gotten once in the game
-  while(tmp->glitch || tmp->once)
-    tmp = ItemsDB::store.at(rnd->bounded(0, ItemsDB::store.size()));
-
-  ind = tmp->ind;
-  amount = rnd->bounded(1, 5+1); // Between 1 and 5 of them
-}
-
-void ItemStorageEntry::reset()
-{
-  ind = 0;
-  amount = 0;
-}
 
 ItemStorageBox::ItemStorageBox(SaveFile* saveFile)
 {
@@ -76,10 +44,7 @@ void ItemStorageBox::load(SaveFile* saveFile)
   auto it = saveFile->iterator()->offsetTo(0x27E7);
 
   for (var8 i = 0; i < toolset->getByte(0x27E6) && i < boxMaxItems; i++) {
-    items.append(new ItemStorageEntry(
-                         it->getByte(),
-                         it->getByte()
-                       ));
+    items.append(new Item(it));
   }
 
   delete it;
@@ -116,5 +81,5 @@ void ItemStorageBox::randomize()
 
   // Load up random items to count
   for(var8 i = 0; i < count; i++)
-    items.append(new ItemStorageEntry(true));
+    items.append(new Item(true));
 }

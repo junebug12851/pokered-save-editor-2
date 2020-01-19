@@ -20,19 +20,9 @@
 #include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
+class Item;
 
 constexpr var8 boxMaxItems = 50;
-
-struct ItemStorageEntry {
-  ItemStorageEntry(bool random = false);
-  ItemStorageEntry(var8 ind, var8 amount);
-
-  void randomize();
-  void reset();
-
-  var8 ind;
-  var8 amount;
-};
 
 class ItemStorageBox : ExpandedInterface
 {
@@ -45,7 +35,7 @@ public:
   void reset();
   void randomize();
 
-  QVector<ItemStorageEntry*> items;
+  QVector<Item*> items;
 };
 
 #endif // ITEMSTORAGEBOX_H

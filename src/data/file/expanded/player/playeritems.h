@@ -21,16 +21,7 @@
 #include <QVector>
 
 class SaveFile;
-struct ItemDBEntry;
-
-struct BagItem
-{
-  BagItem(var8 id, var8 amount);
-  ItemDBEntry* toItem();
-
-  var8 id;
-  var8 amount;
-};
+struct Item;
 
 class PlayerItems : public ExpandedInterface
 {
@@ -43,7 +34,7 @@ public:
   void reset();
   void randomize();
 
-  QVector<BagItem*>* bagItems = nullptr;
+  QVector<Item*> bagItems;
 };
 
 #endif // PLAYERITEMS_H
