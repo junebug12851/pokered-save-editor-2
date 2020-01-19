@@ -93,6 +93,7 @@ HEADERS += \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
   src/data/file/savefiletoolset.h \
+  src/random.h \
   ui/window/mainwindow.h
 
 SOURCES += \
@@ -173,6 +174,7 @@ SOURCES += \
   src/data/db/trades.cpp \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
+  src/random.cpp \
   ui/window/mainwindow.cpp
 
 RESOURCES += qml.qrc
