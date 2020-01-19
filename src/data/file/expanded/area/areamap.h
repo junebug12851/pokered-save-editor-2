@@ -19,7 +19,6 @@
 #include <QHash>
 #include <QVector>
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
@@ -30,7 +29,7 @@ struct MapDBEntry;
 // games use to store the background tilemap for the world and maps.
 constexpr var16 VramBGPtr = 0x9800;
 
-class AreaMap : ExpandedInterface
+class AreaMap
 {
 public:
   AreaMap(SaveFile* saveFile = nullptr);
@@ -85,9 +84,6 @@ public:
 
   // Map Connections
   QHash<var8, MapConnData*> connections;
-
-private:
-  void randomize();
 };
 
 #endif // AREAMAP_H

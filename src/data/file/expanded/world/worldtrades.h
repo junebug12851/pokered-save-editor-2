@@ -16,14 +16,13 @@
 #ifndef WORLDTRADES_H
 #define WORLDTRADES_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
 constexpr var8 tradeCount = 10;
 constexpr var8 tradeByteCount = 2; // 6 of 16 bits unused
 
-class WorldTrades : ExpandedInterface
+class WorldTrades
 {
 public:
   WorldTrades(SaveFile* saveFile = nullptr);

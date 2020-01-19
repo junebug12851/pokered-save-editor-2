@@ -17,11 +17,10 @@
 #define RIVAL_H
 
 #include <QString>
-#include "./expandedinterface.h"
 #include "../../../common/types.h"
 class SaveFile;
 
-class Rival : ExpandedInterface
+class Rival
 {
 public:
   Rival(SaveFile* saveFile = nullptr);

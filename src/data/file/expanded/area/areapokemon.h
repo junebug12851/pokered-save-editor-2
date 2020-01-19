@@ -17,7 +17,6 @@
 #define AREAPOKEMON_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
@@ -61,7 +60,7 @@ struct AreaPokemonWild {
      * Pokemon 8: 4.3% chance
      * Pokemon 9: 1.2% chance
      */
-class AreaPokemon : ExpandedInterface
+class AreaPokemon
 {
 public:
   AreaPokemon(SaveFile* saveFile = nullptr);

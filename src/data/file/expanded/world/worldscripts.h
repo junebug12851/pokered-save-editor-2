@@ -16,7 +16,6 @@
 #ifndef WORLDSCRIPTS_H
 #define WORLDSCRIPTS_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -24,7 +23,7 @@ class SaveFile;
 // read
 constexpr var8 scriptCount = 97;
 
-class WorldScripts : ExpandedInterface
+class WorldScripts
 {
 public:
   WorldScripts(SaveFile* saveFile = nullptr);

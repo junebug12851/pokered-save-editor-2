@@ -16,7 +16,6 @@
 #ifndef WORLDHIDDEN_H
 #define WORLDHIDDEN_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -28,7 +27,7 @@ constexpr var8 hiddenCoinCount = 12;
 constexpr var8 hiddenItemByteCount = 7; // 2 Bits of 56 unused
 constexpr var8 hiddenCoinByteCount = 2; // 4 Bits of 16 unused
 
-class WorldHidden : ExpandedInterface
+class WorldHidden
 {
 public:
   WorldHidden(SaveFile* saveFile = nullptr);

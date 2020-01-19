@@ -57,12 +57,6 @@ public:
   var16 defense;
   var16 speed;
   var16 special;
-
-private:
-  // To surpress warnings with using the ExpandedInterface contract
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
-  void randomize();
 };
 
 #endif // POKEMONPARTY_H

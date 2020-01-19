@@ -16,7 +16,6 @@
 #ifndef POKEMONSTORAGESET_H
 #define POKEMONSTORAGESET_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 class PokemonStorageBox;
@@ -27,7 +26,7 @@ constexpr var8 setMaxBoxes = 6;
 
 // Holds contents of a single box set, basically a row or array of boxes
 // each holding Pokemon
-class PokemonStorageSet : ExpandedInterface
+class PokemonStorageSet
 {
 public:
   PokemonStorageSet(SaveFile* saveFile = nullptr, var16 boxesOffset = 0, svar8 skipInd = -1);
@@ -48,11 +47,6 @@ public:
   // There are never any more or less than exactly a set amount of boxes in a
   // set, there's no need for this to be a Vector
   PokemonStorageBox* boxes[setMaxBoxes];
-
-private:
-  void load(SaveFile *saveFile = nullptr);
-  void save(SaveFile *saveFile);
-  void randomize();
 };
 
 #endif // POKEMONSTORAGESET_H

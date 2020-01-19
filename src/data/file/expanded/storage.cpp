@@ -127,6 +127,3 @@ void Storage::randomize(PlayerBasics* basics)
   for(var8 i = 0; i < maxPokemonStorageSets; i++)
     pokemon[i]->randomize(basics);
 }
-
-// Not to use
-void Storage::randomize() {}

@@ -16,8 +16,6 @@
 #ifndef SAVEFILEEXPANDED_H
 #define SAVEFILEEXPANDED_H
 
-#include "./expandedinterface.h"
-
 class SaveFile;
 class Player;
 class Area;
@@ -27,7 +25,7 @@ class HallOfFame;
 class Rival;
 class Storage;
 
-class SaveFileExpanded: public ExpandedInterface
+class SaveFileExpanded
 {
 public:
   SaveFileExpanded(SaveFile* saveFile = nullptr);

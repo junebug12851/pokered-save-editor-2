@@ -17,12 +17,11 @@
 #define HOFRECORD_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 class HoFPokemon;
 
-class HoFRecord : ExpandedInterface
+class HoFRecord
 {
 public:
   HoFRecord(SaveFile* saveFile = nullptr, var8 ind = 0);
@@ -34,11 +33,6 @@ public:
   void randomize();
 
   QVector<HoFPokemon*> pokemon;
-
-private:
-  // To surpress warnings with using the ExpandedInterface contract
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
 };
 
 #endif // HOFRECORD_H

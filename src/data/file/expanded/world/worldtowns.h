@@ -16,14 +16,13 @@
 #ifndef WORLDTOWNS_H
 #define WORLDTOWNS_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
 constexpr var8 townCount = 11;
 constexpr var8 townByteCount = 2; // 5 bits of 16 unused
 
-class WorldTowns : ExpandedInterface
+class WorldTowns
 {
 public:
   WorldTowns(SaveFile* saveFile = nullptr);

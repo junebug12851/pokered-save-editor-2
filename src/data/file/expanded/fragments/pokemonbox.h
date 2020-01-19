@@ -18,7 +18,6 @@
 
 #include <QVector>
 #include <QString>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 class SaveFileIterator;
@@ -64,7 +63,7 @@ struct PokemonMove
   var8 ppUp;
 };
 
-class PokemonBox : ExpandedInterface
+class PokemonBox
 {
 public:
   PokemonBox(SaveFile* saveFile = nullptr,
@@ -211,12 +210,6 @@ public:
   // Sometimes type 2 is a duplicate of type 1 and
   // sometimes it's explicitly 0xFF, this is which one
   bool type2Explicit;
-
-private:
-  // To surpress warnings with using the ExpandedInterface contract
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
-  void randomize();
 };
 
 #endif // POKEMONBOX_H

@@ -17,14 +17,13 @@
 #define AREASIGN_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
 class SignData;
 class MapDBEntry;
 
-class AreaSign : ExpandedInterface
+class AreaSign
 {
 public:
   AreaSign(SaveFile* saveFile = nullptr);
@@ -36,9 +35,6 @@ public:
   void randomize(MapDBEntry* mapData);
 
   QVector<SignData*> signs;
-
-private:
-  void randomize();
 };
 
 #endif // AREASIGN_H

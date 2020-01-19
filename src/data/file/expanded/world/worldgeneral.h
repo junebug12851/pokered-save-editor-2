@@ -17,7 +17,6 @@
 #define WORLDGENERAL_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -32,7 +31,7 @@ struct LetterDelay {
   bool dontDelay;
 };
 
-class WorldGeneral : ExpandedInterface
+class WorldGeneral
 {
 public:
   WorldGeneral(SaveFile* saveFile = nullptr);

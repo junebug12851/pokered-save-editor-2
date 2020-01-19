@@ -16,7 +16,6 @@
 #ifndef AREAGENERAL_H
 #define AREAGENERAL_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -35,7 +34,7 @@ enum class ContrastIds : var8
   Glitch_3B = 8
 };
 
-class AreaGeneral : ExpandedInterface
+class AreaGeneral
 {
 public:
   AreaGeneral(SaveFile* saveFile = nullptr);

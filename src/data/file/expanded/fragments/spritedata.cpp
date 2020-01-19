@@ -445,9 +445,3 @@ SpriteDBEntry* SpriteData::toSprite()
 {
   return SpritesDB::ind.value(QString::number(pictureID), nullptr);
 }
-
-// Don't Use
-void SpriteData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void SpriteData::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void SpriteData::reset() {}
-void SpriteData::randomize() {}

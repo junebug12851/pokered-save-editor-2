@@ -16,13 +16,12 @@
 #ifndef MAPCONNDATA_H
 #define MAPCONNDATA_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 struct MapDBEntry;
 struct MapDBEntryConnect;
 
-class MapConnData : ExpandedInterface
+class MapConnData
 {
 public:
   MapConnData(SaveFile* saveFile = nullptr, var16 offset = 0);
@@ -43,12 +42,6 @@ public:
   var16 viewPtr;
 
   MapDBEntry* toMap();
-
-private:
-  // To surpress warnings with using the ExpandedInterface contract
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
-  void randomize();
 };
 
 #endif // MAPCONNDATA_H

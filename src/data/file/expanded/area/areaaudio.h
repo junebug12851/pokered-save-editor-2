@@ -16,11 +16,10 @@
 #ifndef AREAAUDIO_H
 #define AREAAUDIO_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
-class AreaAudio : ExpandedInterface
+class AreaAudio
 {
 public:
   AreaAudio(SaveFile* saveFile = nullptr);

@@ -125,8 +125,3 @@ void PokemonParty::copyFrom(PokemonBox* pkmn)
   PokemonBox::copyFrom(pkmn);
   regenStats();
 }
-
-// Not to be used
-void PokemonParty::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void PokemonParty::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void PokemonParty::randomize() {}

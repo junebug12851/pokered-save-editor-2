@@ -1006,8 +1006,3 @@ var16 PokemonBox::spStat()
 {
   return nonHpStat(PokemonStats::Special);
 }
-
-// Not to be used
-void PokemonBox::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void PokemonBox::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void PokemonBox::randomize() {}

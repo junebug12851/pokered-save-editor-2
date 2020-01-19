@@ -97,7 +97,3 @@ PokemonDBEntry* HoFPokemon::toSpecies()
 {
   return PokemonDB::ind.value(QString::number(species), nullptr);
 }
-
-// Not to be used
-void HoFPokemon::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void HoFPokemon::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}

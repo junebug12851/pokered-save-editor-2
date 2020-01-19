@@ -16,7 +16,6 @@
 #ifndef WORLDMISSABLES_H
 #define WORLDMISSABLES_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -26,7 +25,7 @@ class SaveFile;
 constexpr var8 missableCount = 228;
 constexpr var8 missableByteCount = 29; // 4 bits unused of 232
 
-class WorldMissables : ExpandedInterface
+class WorldMissables
 {
 public:
   WorldMissables(SaveFile* saveFile = nullptr);

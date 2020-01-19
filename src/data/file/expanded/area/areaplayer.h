@@ -16,7 +16,6 @@
 #ifndef AREAPLAYER_H
 #define AREAPLAYER_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
@@ -29,7 +28,7 @@ enum class PlayerDir : var8 {
   Up
 };
 
-class AreaPlayer : ExpandedInterface
+class AreaPlayer
 {
 public:
   AreaPlayer(SaveFile* saveFile = nullptr);
@@ -97,9 +96,6 @@ public:
   bool spinPlayer;
   bool usedCardKey;
   bool usingLinkCable;
-
-private:
-  void randomize();
 };
 
 #endif // AREAPLAYER_H

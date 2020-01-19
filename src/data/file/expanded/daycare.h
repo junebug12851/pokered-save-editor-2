@@ -16,13 +16,12 @@
 #ifndef DAYCARE_H
 #define DAYCARE_H
 
-#include "./expandedinterface.h"
 #include "../../../common/types.h"
 class SaveFile;
 class PokemonBox;
 class PlayerBasics;
 
-class Daycare : ExpandedInterface
+class Daycare
 {
 public:
   Daycare(SaveFile* saveFile = nullptr);
@@ -34,9 +33,6 @@ public:
   void randomize(PlayerBasics* basics);
 
   PokemonBox* pokemon = nullptr;
-
-private:
-  void randomize();
 };
 
 #endif // DAYCARE_H

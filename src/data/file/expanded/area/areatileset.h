@@ -16,13 +16,12 @@
 #ifndef AREATILESET_H
 #define AREATILESET_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
 struct MapDBEntry;
 
-class AreaTileset : ExpandedInterface
+class AreaTileset
 {
 public:
   AreaTileset(SaveFile* saveFile = nullptr);

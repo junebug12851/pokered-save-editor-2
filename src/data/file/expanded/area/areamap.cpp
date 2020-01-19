@@ -226,6 +226,3 @@ var16 AreaMap::coordsToPtr(var8 x, var8 y, var8 width)
 {
   return (width+7)+x+(y*(width+6)) + worldMapPtr;
 }
-
-// Not to be used
-void AreaMap::randomize() {}

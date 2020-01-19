@@ -18,7 +18,6 @@
 
 #include <QVector>
 #include "optional"
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 struct SpriteDBEntry;
@@ -91,7 +90,7 @@ struct SpriteGrass
   static var8 random();
 };
 
-class SpriteData : ExpandedInterface
+class SpriteData
 {
 public:
   // Create a blank sprite or load one from a map
@@ -243,13 +242,6 @@ public:
   // If this is not null, then this sprite is a missable and it's appearance
   // is determined by the flag in the global missable index this points to
   std::optional<var8> missableIndex;
-
-private:
-  // To surpress warnings with using the ExpandedInterface contract
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
-  void reset();
-  void randomize();
 };
 
 #endif // SPRITEDATA_H

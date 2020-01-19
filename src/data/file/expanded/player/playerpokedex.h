@@ -17,11 +17,10 @@
 #define PLAYERPOKEDEX_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
-class PlayerPokedex : ExpandedInterface
+class PlayerPokedex
 {
 public:
   PlayerPokedex(SaveFile* saveFile = nullptr);

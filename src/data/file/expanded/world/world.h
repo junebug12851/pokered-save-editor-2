@@ -16,7 +16,6 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include "../expandedinterface.h"
 class SaveFile;
 
 class WorldCompleted;
@@ -29,7 +28,7 @@ class WorldScripts;
 class WorldTowns;
 class WorldTrades;
 
-class World : public ExpandedInterface
+class World
 {
 public:
   World(SaveFile* saveFile = nullptr);

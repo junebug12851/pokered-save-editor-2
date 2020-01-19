@@ -16,14 +16,13 @@
 #ifndef PLAYERITEMS_H
 #define PLAYERITEMS_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 #include <QVector>
 
 class SaveFile;
 struct Item;
 
-class PlayerItems : public ExpandedInterface
+class PlayerItems
 {
 public:
   PlayerItems(SaveFile* saveFile = nullptr);

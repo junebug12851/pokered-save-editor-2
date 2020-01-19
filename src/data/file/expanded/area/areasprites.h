@@ -17,14 +17,13 @@
 #define AREASPRITES_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
 class SpriteData;
 class MapDBEntrySprite;
 
-class AreaSprites : ExpandedInterface
+class AreaSprites
 {
 public:
   AreaSprites(SaveFile* saveFile = nullptr);
@@ -36,9 +35,6 @@ public:
   void randomize(QVector<MapDBEntrySprite*> spriteData);
 
   QVector<SpriteData*> sprites;
-
-private:
-  void randomize();
 };
 
 #endif // AREASPRITES_H

@@ -16,8 +16,6 @@
 #ifndef AREA_H
 #define AREA_H
 
-#include "../expandedinterface.h"
-
 class SaveFile;
 class Player;
 class AreaAudio;
@@ -33,7 +31,7 @@ class AreaSprites;
 class AreaTileset;
 class AreaWarps;
 
-class Area : public ExpandedInterface
+class Area
 {
 public:
   Area(SaveFile* saveFile = nullptr);

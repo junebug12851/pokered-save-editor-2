@@ -57,7 +57,6 @@ HEADERS += \
   src/data/file/expanded/area/areatileset.h \
   src/data/file/expanded/area/areawarps.h \
   src/data/file/expanded/daycare.h \
-  src/data/file/expanded/expandedinterface.h \
   src/data/file/expanded/fragments/hofpokemon.h \
   src/data/file/expanded/fragments/hofrecord.h \
   src/data/file/expanded/fragments/item.h \

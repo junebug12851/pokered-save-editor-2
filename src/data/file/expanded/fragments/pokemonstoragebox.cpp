@@ -100,8 +100,3 @@ void PokemonStorageBox::randomize(PlayerBasics* basics)
     pokemon.append(tmp);
   }
 }
-
-// Not to use
-void PokemonStorageBox::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void PokemonStorageBox::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void PokemonStorageBox::randomize() {}

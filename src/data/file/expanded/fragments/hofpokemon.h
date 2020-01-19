@@ -17,12 +17,11 @@
 #define HOFPOKEMON_H
 
 #include <QString>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 struct PokemonDBEntry;
 
-class HoFPokemon : ExpandedInterface
+class HoFPokemon
 {
 public:
   HoFPokemon(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
@@ -38,11 +37,6 @@ public:
   var8 species;
   var8 level;
   QString name;
-
-private:
-  // To surpress warnings with using the ExpandedInterface contract
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
 };
 
 #endif // HOFPOKEMON_H

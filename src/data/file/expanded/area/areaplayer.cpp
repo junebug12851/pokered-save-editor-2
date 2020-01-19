@@ -157,6 +157,3 @@ void AreaPlayer::randomize(var8 x, var8 y)
   yBlockCoord = (y & 2) ? 0 : 1;
   xBlockCoord = (x & 2) ? 0 : 1;
 }
-
-// Not to use
-void AreaPlayer::randomize() {}

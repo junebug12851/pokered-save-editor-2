@@ -16,11 +16,10 @@
 #ifndef SIGNDATA_H
 #define SIGNDATA_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
-class SignData : ExpandedInterface
+class SignData
 {
 public:
   SignData(SaveFile* saveFile = nullptr, var8 index = 0);
@@ -34,11 +33,6 @@ public:
   var8 x;
   var8 y;
   var8 txtId;
-
-private:
-  // To surpress warnings with using the ExpandedInterface contract
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
 };
 
 #endif // SIGNDATA_H

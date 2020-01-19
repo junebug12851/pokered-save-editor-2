@@ -16,12 +16,11 @@
 #ifndef AREAPUZZLE_H
 #define AREAPUZZLE_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
 
-class AreaPuzzle : ExpandedInterface
+class AreaPuzzle
 {
 public:
   AreaPuzzle(SaveFile* saveFile = nullptr);

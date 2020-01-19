@@ -18,13 +18,12 @@
 
 #include <QVector>
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 struct MapDBEntry;
 struct SpriteSetDBEntry;
 
-class AreaLoadedSprites : ExpandedInterface
+class AreaLoadedSprites
 {
 public:
   AreaLoadedSprites(SaveFile* saveFile = nullptr);
@@ -38,9 +37,6 @@ public:
 
   QVector<var8> loadedSprites;
   var8 loadedSetId;
-
-private:
-  void randomize();
 };
 
 #endif // AREALOADEDSPRITES_H

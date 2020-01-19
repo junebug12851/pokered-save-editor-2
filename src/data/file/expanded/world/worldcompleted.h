@@ -16,11 +16,10 @@
 #ifndef WORLDCOMPLETED_H
 #define WORLDCOMPLETED_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
-class WorldCompleted : ExpandedInterface
+class WorldCompleted
 {
 public:
   WorldCompleted(SaveFile* saveFile = nullptr);

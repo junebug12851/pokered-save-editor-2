@@ -78,6 +78,3 @@ void AreaSprites::randomize(QVector<MapDBEntrySprite*> spriteData)
   reset();
   sprites = SpriteData::randomizeAll(spriteData);
 }
-
-// Not to use
-void AreaSprites::randomize() {}

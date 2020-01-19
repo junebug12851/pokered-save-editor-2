@@ -17,13 +17,12 @@
 #define PLAYERPOKEMON_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 class PlayerBasics;
 class PokemonParty;
 
-class PlayerPokemon : ExpandedInterface
+class PlayerPokemon
 {
 public:
   PlayerPokemon(SaveFile* saveFile = nullptr);

@@ -17,14 +17,13 @@
 #define ITEMSTORAGEBOX_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 class Item;
 
 constexpr var8 boxMaxItems = 50;
 
-class ItemStorageBox : ExpandedInterface
+class ItemStorageBox
 {
 public:
   ItemStorageBox(SaveFile* saveFile = nullptr);

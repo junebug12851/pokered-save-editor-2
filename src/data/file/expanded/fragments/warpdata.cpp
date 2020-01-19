@@ -93,7 +93,3 @@ MapDBEntry* WarpData::toMap()
 {
   return MapsDB::ind.value(QString::number(destMap), nullptr);
 }
-
-// Unused
-void WarpData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void WarpData::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}

@@ -16,12 +16,11 @@
 #ifndef AREANPC_H
 #define AREANPC_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
 
-class AreaNPC : ExpandedInterface
+class AreaNPC
 {
 public:
   AreaNPC(SaveFile* saveFile = nullptr);

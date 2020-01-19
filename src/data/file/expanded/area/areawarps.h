@@ -17,14 +17,13 @@
 #define AREAWARPS_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 
 class SaveFile;
 class WarpData;
 class MapDBEntry;
 
-class AreaWarps : ExpandedInterface
+class AreaWarps
 {
 public:
   AreaWarps(SaveFile* saveFile = nullptr);
@@ -54,9 +53,6 @@ public:
   var8 warpedfromMap; // Warped from which map
 
   QVector<WarpData*> warps;
-
-private:
-  void randomize();
 };
 
 #endif // AREAWARPS_H

@@ -17,7 +17,6 @@
 #define POKEMONSTORAGEBOX_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 class PokemonBox;
@@ -27,7 +26,7 @@ class PlayerBasics;
 constexpr var8 boxMaxPokemon = 20;
 
 // Holds contents of a single Pokemon storage box
-class PokemonStorageBox : ExpandedInterface
+class PokemonStorageBox
 {
 public:
   PokemonStorageBox(SaveFile* saveFile = nullptr, var16 boxOffset = 0);

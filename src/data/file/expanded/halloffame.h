@@ -17,14 +17,13 @@
 #define HALLOFFAME_H
 
 #include <QVector>
-#include "./expandedinterface.h"
 #include "../../../common/types.h"
 class SaveFile;
 class HoFRecord;
 
 constexpr var8 recordsMax = 50;
 
-class HallOfFame : ExpandedInterface
+class HallOfFame
 {
 public:
   HallOfFame(SaveFile* saveFile = nullptr);

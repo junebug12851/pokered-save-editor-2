@@ -95,6 +95,3 @@ void AreaSign::randomize(MapDBEntry* mapData)
     this->signs.append(data);
   }
 }
-
-// Not to be used
-void AreaSign::randomize() {}

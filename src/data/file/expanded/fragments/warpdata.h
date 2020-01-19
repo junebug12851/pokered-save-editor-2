@@ -17,13 +17,12 @@
 #define WARPDATA_H
 
 #include <QVector>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 class MapDBEntry;
 class MapDBEntryWarpOut;
 
-class WarpData : ExpandedInterface
+class WarpData
 {
 public:
   WarpData(SaveFile* saveFile = nullptr, var8 index = 0);
@@ -42,11 +41,6 @@ public:
   var8 x;
   var8 destWarp;
   var8 destMap;
-
-private:
-  // To surpress warnings with using the ExpandedInterface contract
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
 };
 
 #endif // WARPDATA_H

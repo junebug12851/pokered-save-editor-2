@@ -16,7 +16,6 @@
 #ifndef WORLDEVENTS_H
 #define WORLDEVENTS_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -25,7 +24,7 @@ class SaveFile;
 // have to be gotten all over the place
 constexpr var16 eventCount = 508;
 
-class WorldEvents : ExpandedInterface
+class WorldEvents
 {
 public:
   WorldEvents(SaveFile* saveFile = nullptr);

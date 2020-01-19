@@ -17,7 +17,6 @@
 #define PLAYERBASICS_H
 
 #include <QString>
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 struct PokemonDBEntry;
@@ -33,7 +32,7 @@ enum class Badges : var8 {
   Earth
 };
 
-class PlayerBasics : ExpandedInterface
+class PlayerBasics
 {
 public:
   PlayerBasics(SaveFile* saveFile = nullptr);

@@ -135,6 +135,3 @@ void AreaWarps::randomize(MapDBEntry* map)
     warps.append(tmp);
   }
 }
-
-// Not to use
-void AreaWarps::randomize() {}

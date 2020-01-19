@@ -107,7 +107,3 @@ void HoFRecord::randomize()
   for(auto entry : pokemon)
     entry->randomize();
 }
-
-// Not to be used
-void HoFRecord::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void HoFRecord::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}

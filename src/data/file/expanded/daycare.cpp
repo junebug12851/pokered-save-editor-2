@@ -71,5 +71,3 @@ void Daycare::randomize(PlayerBasics* basics)
   pokemon = new PokemonBox;
   pokemon->randomize(basics);
 }
-
-void Daycare::randomize() {}

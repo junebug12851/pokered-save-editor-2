@@ -16,7 +16,6 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
-#include "./expandedinterface.h"
 #include "../../../common/types.h"
 class SaveFile;
 
@@ -27,7 +26,7 @@ class PlayerBasics;
 // 2 Sets of 6 Pokemon Boxes
 constexpr var8 maxPokemonStorageSets = 2;
 
-class Storage : ExpandedInterface
+class Storage
 {
 public:
   Storage(SaveFile* saveFile = nullptr);
@@ -42,9 +41,6 @@ public:
   PokemonStorageSet* pokemon[maxPokemonStorageSets];
   var8 curBox;
   bool boxesFormatted = false;
-
-private:
-  void randomize();
 };
 
 #endif // STORAGE_H

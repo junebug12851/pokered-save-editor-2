@@ -64,7 +64,3 @@ void SignData::reset()
 // Can't really randomize because we don't know all the text IDs for each map
 // @TODO Make this possible
 void SignData::randomize() {}
-
-// Not to use
-void SignData::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void SignData::save(SaveFile* saveFile) {Q_UNUSED(saveFile)}

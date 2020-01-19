@@ -16,8 +16,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "../expandedinterface.h"
-
 class PlayerBasics;
 class PlayerItems;
 class PlayerPokedex;
@@ -25,7 +23,7 @@ class PlayerPokemon;
 
 class SaveFile;
 
-class Player : public ExpandedInterface
+class Player
 {
 public:
   Player(SaveFile* saveFile = nullptr);

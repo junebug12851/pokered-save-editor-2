@@ -86,6 +86,3 @@ void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y)
 
   loadedSetId = id;
 }
-
-// Not to be used
-void AreaLoadedSprites::randomize() {}

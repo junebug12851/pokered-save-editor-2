@@ -16,7 +16,6 @@
 #ifndef WORLDOTHER_H
 #define WORLDOTHER_H
 
-#include "../expandedinterface.h"
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -32,7 +31,7 @@ struct Playtime {
   var8 clockMaxed;
 };
 
-class WorldOther : ExpandedInterface
+class WorldOther
 {
 public:
   WorldOther(SaveFile* saveFile = nullptr);

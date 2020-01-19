@@ -94,8 +94,3 @@ void PokemonStorageSet::saveSpecific(SaveFile* saveFile, var16 offset, var8 from
         saveFile,
         offset);
 }
-
-// Not to use
-void PokemonStorageSet::load(SaveFile* saveFile) {Q_UNUSED(saveFile)}
-void PokemonStorageSet::save(SaveFile* saveFile) { Q_UNUSED(saveFile) }
-void PokemonStorageSet::randomize() {}
