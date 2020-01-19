@@ -34,7 +34,7 @@ public:
   void reset();
   void randomize(PlayerBasics* basics);
 
-  QVector<PokemonParty*>* party = nullptr;
+  QVector<PokemonParty*> party;
 
 private:
   void randomize();

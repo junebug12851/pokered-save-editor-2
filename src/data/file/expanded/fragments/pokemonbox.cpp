@@ -116,8 +116,6 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
                        var8 index,
                        var8 recordSize)
 {
-  moves = new QVector<PokemonMove*>();
-
   load(saveFile,
        startOffset,
        nicknameStartOffset,
@@ -129,7 +127,6 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
 PokemonBox::~PokemonBox()
 {
   reset();
-  delete moves;
 }
 
 PokemonBox* PokemonBox::newPokemon(PokemonRandom list, PlayerBasics* basics)
@@ -258,11 +255,11 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
   }
 
   // Combine together in moves
-  moves->clear();
+  moves.clear();
   for (var8 i = 0; i < moveIDList.size(); i++) {
     var8 moveID = moveIDList.at(i);
     var8 pp = ppList[i];
-    moves->append(new PokemonMove(
+    moves.append(new PokemonMove(
                     moveID,
                     pp & 0b00111111,
                     (pp & 0b11000000) >> 6
@@ -339,8 +336,8 @@ SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
   it->setByte(catchRate);
 
   it->push();
-  for(var8 i = 0; i < moves->size(); i++) {
-    it->setByte(moves->at(i)->moveID);
+  for(var8 i = 0; i < moves.size(); i++) {
+    it->setByte(moves.at(i)->moveID);
   }
   it->pop()->offsetBy(4);
 
@@ -364,8 +361,8 @@ SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
   it->setWord(dvTmp);
 
   it->push();
-  for (var8 i = 0; i < moves->size(); i++) {
-    var8 ppCombined = (moves->at(i)->ppUp << 6) | moves->at(i)->pp;
+  for (var8 i = 0; i < moves.size(); i++) {
+    var8 ppCombined = (moves.at(i)->ppUp << 6) | moves.at(i)->pp;
     it->setByte(ppCombined);
   }
   it->pop()->offsetBy(4);
@@ -455,10 +452,10 @@ void PokemonBox::randomize(PlayerBasics* basics)
 
 void PokemonBox::clearMoves()
 {
-  for(auto move : *moves)
+  for(auto move : moves)
     delete move;
 
-  moves->clear();
+  moves.clear();
 }
 
 // Is this a valid Pokemon? (Is it even in the Pokedex?)
@@ -668,7 +665,7 @@ void PokemonBox::heal()
   hp = hpStat();
   status = 0;
 
-  for(auto move : *moves)
+  for(auto move : moves)
     move->restorePP();
 }
 
@@ -796,7 +793,7 @@ bool PokemonBox::isMaxPP()
 {
   bool ret = true;
 
-  for(auto move : *moves)
+  for(auto move : moves)
     if(!move->isMaxPP())
       ret = false;
 
@@ -807,7 +804,7 @@ bool PokemonBox::isMaxPpUps()
 {
   bool ret = true;
 
-  for(auto move : *moves)
+  for(auto move : moves)
     if(!move->isMaxPpUps())
       ret = false;
 
@@ -850,7 +847,7 @@ void PokemonBox::maxLevel()
 
 void PokemonBox::maxPpUps()
 {
-  for(auto move : *moves)
+  for(auto move : moves)
     move->maxPpUp();
 }
 
@@ -902,14 +899,14 @@ void PokemonBox::maxOut()
 
 void PokemonBox::randomizeMoves()
 {
- for(auto move : *moves)
+ for(auto move : moves)
     delete move;
 
-  moves->clear();
+  moves.clear();
 
   for(var8 i = 0; i < 4; i++) {
-    moves->append(new PokemonMove);
-    moves->at(i)->randomize();
+    moves.append(new PokemonMove);
+    moves.at(i)->randomize();
   }
 }
 
@@ -922,8 +919,8 @@ bool PokemonBox::isPokemonReset()
 
   bool movesReset = true;
 
-  for(var8 i = 0; i < moves->size(); i++) {
-    auto move = moves->at(i);
+  for(var8 i = 0; i < moves.size(); i++) {
+    auto move = moves.at(i);
 
     if(move->toMove() == nullptr)
       movesReset = false;
@@ -955,7 +952,7 @@ void PokemonBox::resetPokemon()
   clearMoves();
 
   for(auto moveData : record->toInitial)
-    moves->append(new PokemonMove(moveData->ind, *moveData->pp, 0));
+    moves.append(new PokemonMove(moveData->ind, *moveData->pp, 0));
 
   resetEVs();
   heal();

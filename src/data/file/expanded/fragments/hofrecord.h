@@ -33,7 +33,7 @@ public:
   void reset();
   void randomize();
 
-  QVector<HoFPokemon*>* pokemon = nullptr;
+  QVector<HoFPokemon*> pokemon;
 
 private:
   // To surpress warnings with using the ExpandedInterface contract

@@ -32,11 +32,11 @@ public:
   void reset();
   void randomize();
 
-  void loadPokedex(SaveFile* saveFile, QVector<bool>* toArr, var16 fromOffset);
-  void savePokedex(SaveFile* saveFile, QVector<bool>* fromArr, var16 toOffset);
+  void loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset);
+  void savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16 toOffset);
 
-  QVector<bool>* owned = nullptr;
-  QVector<bool>* seen = nullptr;
+  QVector<bool> owned;
+  QVector<bool> seen;
 };
 
 #endif // PLAYERPOKEDEX_H

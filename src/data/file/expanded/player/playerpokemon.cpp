@@ -25,15 +25,12 @@
 
 PlayerPokemon::PlayerPokemon(SaveFile* saveFile)
 {
-  party = new QVector<PokemonParty*>();
-
   load(saveFile);
 }
 
 PlayerPokemon::~PlayerPokemon()
 {
   reset();
-  delete party;
 }
 
 void PlayerPokemon::load(SaveFile* saveFile)
@@ -46,7 +43,7 @@ void PlayerPokemon::load(SaveFile* saveFile)
   reset();
 
   for (var8 i = 0; i < toolset->getByte(0x2F2C) && i < 6; i++) {
-    party->append(new PokemonParty(
+    party.append(new PokemonParty(
                             saveFile,
                             0x2F34,
                             0x307E,
@@ -60,10 +57,10 @@ void PlayerPokemon::save(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
 
   // Set party length and save current party data
-  toolset->setByte(0x2F2C, party->size());
+  toolset->setByte(0x2F2C, party.size());
 
-  for(var8 i = 0; i < party->size() && i < 6; i++) {
-    party->at(i)->save(
+  for(var8 i = 0; i < party.size() && i < 6; i++) {
+    party.at(i)->save(
           saveFile,
           0x2F34,
           0x2F2D,
@@ -74,19 +71,19 @@ void PlayerPokemon::save(SaveFile* saveFile)
   }
 
   // Mark end of species list if not full party
-  if(party->size() >= 6)
+  if(party.size() >= 6)
     return;
 
-  var16 speciesOffset = 0x2F2D + party->size();
+  var16 speciesOffset = 0x2F2D + party.size();
   toolset->setByte(speciesOffset, 0xFF);
 }
 
 void PlayerPokemon::reset()
 {
-  for(auto mon : *party)
+  for(auto mon : party)
     delete mon;
 
-  party->clear();
+  party.clear();
 }
 
 void PlayerPokemon::randomize(PlayerBasics* basics)
@@ -101,7 +98,7 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
 
   for(var8 i = 0; i < count; i++) {
     auto tmp = new PokemonParty;
-    party->append(tmp);
+    party.append(tmp);
     tmp->randomize(basics);
   }
 
@@ -109,23 +106,23 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
   // I have no idea where randomize will drop you so to be able to progress
   // in the game you need to be able to get around
   auto tmp = new PokemonParty;
-  party->append(tmp);
+  party.append(tmp);
   tmp->randomize(basics);
 
   // Clear out move pool
-  for(auto move : *tmp->moves)
+  for(auto move : tmp->moves)
     delete move;
 
-  tmp->moves->clear();
+  tmp->moves.clear();
 
   // Add in 4 most important HM's
-  tmp->moves->append(new PokemonMove(MovesDB::ind.value("FLY")->ind));
-  tmp->moves->append(new PokemonMove(MovesDB::ind.value("SURF")->ind));
-  tmp->moves->append(new PokemonMove(MovesDB::ind.value("STRENGTH")->ind));
-  tmp->moves->append(new PokemonMove(MovesDB::ind.value("CUT")->ind));
+  tmp->moves.append(new PokemonMove(MovesDB::ind.value("FLY")->ind));
+  tmp->moves.append(new PokemonMove(MovesDB::ind.value("SURF")->ind));
+  tmp->moves.append(new PokemonMove(MovesDB::ind.value("STRENGTH")->ind));
+  tmp->moves.append(new PokemonMove(MovesDB::ind.value("CUT")->ind));
 
   // Generate random PP Ups and heal PP like other Pokemon
-  for(auto move : *tmp->moves) {
+  for(auto move : tmp->moves) {
     // Generate random PP Ups
     move->ppUp = rnd->bounded(0, 3+1);
 

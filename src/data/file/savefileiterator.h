@@ -73,7 +73,7 @@ public:
 
 protected:
   // Allows saving places in the save file and goin back to them
-  QVector<var16>* state = new QVector<var16>();
+  QVector<var16> state;
 
   // The Save File
   SaveFile* saveFile = nullptr;

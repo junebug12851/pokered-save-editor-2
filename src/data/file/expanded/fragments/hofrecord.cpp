@@ -23,15 +23,12 @@
 
 HoFRecord::HoFRecord(SaveFile* saveFile, var8 ind)
 {
-  pokemon = new QVector<HoFPokemon*>();
-
   load(saveFile, ind);
 }
 
 HoFRecord::~HoFRecord()
 {
   reset();
-  delete pokemon;
 }
 
 void HoFRecord::load(SaveFile* saveFile, var8 ind)
@@ -60,7 +57,7 @@ void HoFRecord::load(SaveFile* saveFile, var8 ind)
     if (speciesByte == 0xFF)
       break;
 
-    pokemon->append(new HoFPokemon(saveFile, offset, i));
+    pokemon.append(new HoFPokemon(saveFile, offset, i));
   }
 }
 
@@ -69,13 +66,13 @@ void HoFRecord::save(SaveFile* saveFile, var8 ind)
   auto toolset = saveFile->toolset;
   var16 offset = (0x60 * ind) + 0x598;
 
-  for (var8 i = 0; i < pokemon->size(); i++) {
-    pokemon->at(i)->save(saveFile, offset, i);
+  for (var8 i = 0; i < pokemon.size(); i++) {
+    pokemon.at(i)->save(saveFile, offset, i);
   }
 
   // If the record isn't filled up with 6 Pokemon then
   // we need to insert an ending marker and not touch the rest of the bytes
-  if(pokemon->size() >= 6)
+  if(pokemon.size() >= 6)
     return;
 
   // Calculate the ending marker position which is
@@ -83,16 +80,16 @@ void HoFRecord::save(SaveFile* saveFile, var8 ind)
   // of the data
 
   // Pokemon Record Size * Pokemon Record Number + Record Start Location
-  var16 endingOffset = (0x10 * pokemon->size()) + offset;
+  var16 endingOffset = (0x10 * pokemon.size()) + offset;
   toolset->setByte(endingOffset, 0xFF);
 }
 
 void HoFRecord::reset()
 {
-  for(auto entry : *pokemon)
+  for(auto entry : pokemon)
     delete entry;
 
-  pokemon->clear();
+  pokemon.clear();
 }
 
 void HoFRecord::randomize()
@@ -107,10 +104,10 @@ void HoFRecord::randomize()
 
   // Create blank Pokemon entries
   for(var8 i = 0; i < size; i++)
-    pokemon->append(new HoFPokemon);
+    pokemon.append(new HoFPokemon);
 
   // Insert random data
-  for(auto entry : *pokemon)
+  for(auto entry : pokemon)
     entry->randomize();
 }
 

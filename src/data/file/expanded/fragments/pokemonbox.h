@@ -206,7 +206,7 @@ public:
   QString otName;
   QString nickname;
 
-  QVector<PokemonMove*>* moves = nullptr;
+  QVector<PokemonMove*> moves;
 
   // Sometimes type 2 is a duplicate of type 1 and
   // sometimes it's explicitly 0xFF, this is which one

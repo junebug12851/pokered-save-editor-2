@@ -23,17 +23,10 @@
 
 PlayerPokedex::PlayerPokedex(SaveFile* saveFile)
 {
-  owned = new QVector<bool>();
-  seen = new QVector<bool>();
-
   load(saveFile);
 }
 
-PlayerPokedex::~PlayerPokedex()
-{
-  delete owned;
-  delete seen;
-}
+PlayerPokedex::~PlayerPokedex() {}
 
 void PlayerPokedex::load(SaveFile* saveFile)
 {
@@ -54,11 +47,11 @@ void PlayerPokedex::save(SaveFile* saveFile)
 
 void PlayerPokedex::reset()
 {
-  owned->clear();
-  seen->clear();
+  owned.clear();
+  seen.clear();
 
-  owned->fill(false, 151);
-  seen->fill(false, 151);
+  owned.fill(false, 151);
+  seen.fill(false, 151);
 }
 
 // Gives all Pokedex entries a 2 out of 5 chance (40% chance) of being
@@ -74,33 +67,33 @@ void PlayerPokedex::randomize()
     bool markSeen = rnd->bounded(1, 5+1) > 3;
     bool markOwned = rnd->bounded(1, 5+1) > 3;
 
-    (*owned)[i] = markOwned;
-    (*seen)[i] = markSeen;
+    owned[i] = markOwned;
+    seen[i] = markSeen;
   }
 }
 
-void PlayerPokedex::loadPokedex(SaveFile* saveFile, QVector<bool>* toArr, var16 fromOffset)
+void PlayerPokedex::loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset)
 {
   // Get Toolset
   auto toolset = saveFile->toolset;
 
   // Erase Array
-  toArr->clear();
+  toArr.clear();
 
   // Obtain new array from sav file
   auto ret = toolset->getBitField(fromOffset, 0x13);
 
   // Merge it into main array
   for(auto entry : ret)
-    toArr->append(entry);
+    toArr.append(entry);
 
   // Trim end off to stay within 151 Pokemon
   // One of the complications of bit-fields is that retrieving a bitfield
   // retrives the whole byte
-  toArr->pop_back();
+  toArr.pop_back();
 }
 
-void PlayerPokedex::savePokedex(SaveFile* saveFile, QVector<bool>* fromArr, var16 toOffset)
+void PlayerPokedex::savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16 toOffset)
 {
   // Get Toolset
   auto toolset = saveFile->toolset;
@@ -108,5 +101,5 @@ void PlayerPokedex::savePokedex(SaveFile* saveFile, QVector<bool>* fromArr, var1
   // Apply bitfield to sav file
   // fromArr is already the correct size and doesn't need to be trimmed
   // it will be applied correctly
-  toolset->setBitField(toOffset, 0x13, *fromArr);
+  toolset->setBitField(toOffset, 0x13, fromArr);
 }

@@ -63,7 +63,7 @@ SaveFileToolset* SaveFileIterator::toolset()
 
 SaveFileIterator* SaveFileIterator::push()
 {
-  state->append(offset);
+  state.append(offset);
   return this;
 }
 
@@ -73,8 +73,8 @@ SaveFileIterator* SaveFileIterator::pop()
   var16 val = 0x0000;
 
   // If not empty then pop off the address and use that
-  if(!state->isEmpty())
-    val = state->takeLast();
+  if(!state.isEmpty())
+    val = state.takeLast();
 
   offset = val;
   return this;

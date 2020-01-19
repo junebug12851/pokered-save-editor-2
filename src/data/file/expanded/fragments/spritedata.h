@@ -135,7 +135,7 @@ public:
 
   void reset(bool blankNPC = false);
   static QVector<SpriteData*> randomizeAll(QVector<MapDBEntrySprite*> mapSprites);
-  void randomize(QVector<TmpSpritePos*>* tmpPos = nullptr);
+  void randomize(QVector<TmpSpritePos*>* tmpPos);
 
   SpriteDBEntry* toSprite();
 
