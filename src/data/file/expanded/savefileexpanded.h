@@ -16,6 +16,8 @@
 #ifndef SAVEFILEEXPANDED_H
 #define SAVEFILEEXPANDED_H
 
+#include <QObject>
+
 class SaveFile;
 class Player;
 class Area;
@@ -25,17 +27,38 @@ class HallOfFame;
 class Rival;
 class Storage;
 
-class SaveFileExpanded
+class SaveFileExpanded : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(Player* player_ MEMBER player NOTIFY playerChanged)
+  Q_PROPERTY(Area* area_ MEMBER area NOTIFY areaChanged)
+  Q_PROPERTY(World* world_ MEMBER world NOTIFY worldChanged)
+  Q_PROPERTY(Daycare* daycare_ MEMBER daycare NOTIFY daycareChanged)
+  Q_PROPERTY(HallOfFame* hof_ MEMBER hof NOTIFY hofChanged)
+  Q_PROPERTY(Rival* rival_ MEMBER rival NOTIFY rivalChanged)
+  Q_PROPERTY(Storage* storage_ MEMBER storage NOTIFY storageChanged)
+
 public:
   SaveFileExpanded(SaveFile* saveFile = nullptr);
   virtual ~SaveFileExpanded();
 
+signals:
+  void playerChanged();
+  void areaChanged();
+  void worldChanged();
+  void daycareChanged();
+  void hofChanged();
+  void rivalChanged();
+  void storageChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   Player* player = nullptr;
   Area* area = nullptr;
   World* world = nullptr;

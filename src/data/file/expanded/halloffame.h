@@ -16,24 +16,30 @@
 #ifndef HALLOFFAME_H
 #define HALLOFFAME_H
 
+#include <QObject>
 #include <QVector>
+#include <QQmlListProperty>
 #include "../../../common/types.h"
 class SaveFile;
 class HoFRecord;
 
 constexpr var8 recordsMax = 50;
 
-class HallOfFame
+class HallOfFame : public QObject
 {
+  Q_OBJECT
+
 public:
   HallOfFame(SaveFile* saveFile = nullptr);
   virtual ~HallOfFame();
 
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   // All Hall of Fame Records
   QVector<HoFRecord*> records;
 };

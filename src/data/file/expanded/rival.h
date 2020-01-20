@@ -16,21 +16,33 @@
 #ifndef RIVAL_H
 #define RIVAL_H
 
+#include <QObject>
 #include <QString>
 #include "../../../common/types.h"
 class SaveFile;
 
-class Rival
+class Rival : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QString name_ MEMBER name NOTIFY nameChanged)
+  Q_PROPERTY(var8 starter_ MEMBER starter NOTIFY starterChanged)
+
 public:
   Rival(SaveFile* saveFile = nullptr);
   virtual ~Rival();
 
+signals:
+  void nameChanged();
+  void starterChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   // Rival's Name and Starter Pokemon
   // This essentially selects his team that he uses to battle you, it goes
   // by internal Pokemon index and only 3 options are valid, Charmander,

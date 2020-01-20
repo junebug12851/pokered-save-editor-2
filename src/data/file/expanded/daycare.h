@@ -16,22 +16,33 @@
 #ifndef DAYCARE_H
 #define DAYCARE_H
 
+#include <QObject>
+
 #include "../../../common/types.h"
 class SaveFile;
 class PokemonBox;
 class PlayerBasics;
 
-class Daycare
+class Daycare : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(PokemonBox* pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
+
 public:
   Daycare(SaveFile* saveFile = nullptr);
   virtual ~Daycare();
 
+signals:
+  void pokemonChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize(PlayerBasics* basics);
 
+public:
   PokemonBox* pokemon = nullptr;
 };
 
