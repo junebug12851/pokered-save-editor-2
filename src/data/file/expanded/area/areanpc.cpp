@@ -27,20 +27,39 @@ AreaNPC::~AreaNPC() {}
 
 void AreaNPC::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
   tradeCenterSpritesFaced = toolset->getBit(0x29D9, 1, 0);
+  tradeCenterSpritesFacedChanged();
+
   npcsFaceAway = toolset->getBit(0x29D9, 1, 5);
+  npcsFaceAwayChanged();
+
   scriptedNPCMovement = toolset->getBit(0x29DA, 1, 7);
+  scriptedNPCMovementChanged();
+
   npcSpriteMovement = toolset->getBit(0x29DC, 1, 0);
+  npcSpriteMovementChanged();
+
   ignoreJoypad = toolset->getBit(0x29DC, 1, 5);
+  ignoreJoypadChanged();
+
   joypadSimulation = toolset->getBit(0x29DC, 1, 7);
+  joypadSimulationChanged();
+
   runningTestBattle = toolset->getBit(0x29DF, 1, 0);
+  runningTestBattleChanged();
+
   trainerWantsBattle = toolset->getBit(0x29DF, 1, 3);
+  trainerWantsBattleChanged();
+
   trainerHeaderPtr = toolset->getWord(0x2CDC, true);
+  trainerHeaderPtrChanged();
 }
 
 void AreaNPC::save(SaveFile* saveFile)
@@ -62,18 +81,33 @@ void AreaNPC::reset()
 {
   // Sprites
   npcsFaceAway = false;
+  npcsFaceAwayChanged();
+
   scriptedNPCMovement = false;
+  scriptedNPCMovementChanged();
+
   npcSpriteMovement = false;
+  npcSpriteMovementChanged();
+
   tradeCenterSpritesFaced = false;
+  tradeCenterSpritesFacedChanged();
 
   // Controls
   ignoreJoypad = false;
+  ignoreJoypadChanged();
+
   joypadSimulation = false;
+  joypadSimulationChanged();
 
   // Battle
   runningTestBattle = false;
+  runningTestBattleChanged();
+
   trainerWantsBattle = false;
+  trainerWantsBattleChanged();
+
   trainerHeaderPtr = 0;
+  trainerHeaderPtrChanged();
 }
 
 // Don't do any randomization, I can't think of a single benefit to checking

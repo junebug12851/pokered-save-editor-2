@@ -28,39 +28,96 @@ AreaPlayer::~AreaPlayer() {}
 
 void AreaPlayer::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
   yCoord = toolset->getByte(0x260D);
+  yCoordChanged();
+
   xCoord = toolset->getByte(0x260E);
+  xCoordChanged();
+
   yBlockCoord = toolset->getByte(0x260F);
+  yBlockCoordChanged();
+
   xBlockCoord = toolset->getByte(0x2610);
+  xBlockCoordChanged();
+
   yOffsetSinceLastSpecialWarp = toolset->getByte(0x278E);
+  yOffsetSinceLastSpecialWarpChanged();
+
   xOffsetSinceLastSpecialWarp = toolset->getByte(0x278F);
+  xOffsetSinceLastSpecialWarpChanged();
+
   playerMoveDir = toolset->getByte(0x27D4);
+  playerMoveDirChanged();
+
   playerLastStopDir = toolset->getByte(0x27D5);
+  playerLastStopDirChanged();
+
   playerCurDir = toolset->getByte(0x27D6);
+  playerCurDirChanged();
+
   walkBikeSurf = toolset->getByte(0x29AC);
+  walkBikeSurfChanged();
+
   safariSteps = toolset->getWord(0x29B9);
+  safariStepsChanged();
+
   playerJumpingYScrnCoords = toolset->getByte(0x29C0);
+  playerJumpingYScrnCoordsChanged();
+
   strengthOutsideBattle = toolset->getBit(0x29D4, 1, 0);
+  strengthOutsideBattleChanged();
+
   surfingAllowed = toolset->getBit(0x29D4, 1, 1);
+  surfingAllowedChanged();
+
   usedCardKey = toolset->getBit(0x29D4, 1, 7);
+  usedCardKeyChanged();
+
   isBattle = toolset->getBit(0x29D9, 1, 6);
+  isBattleChanged();
+
   isTrainerBattle = toolset->getBit(0x29D9, 1, 7);
+  isTrainerBattleChanged();
+
   noBattles = toolset->getBit(0x29DA, 1, 4);
+  noBattlesChanged();
+
   battleEndedOrBlackout = toolset->getBit(0x29DA, 1, 5);
+  battleEndedOrBlackoutChanged();
+
   usingLinkCable = toolset->getBit(0x29DA, 1, 6);
+  usingLinkCableChanged();
+
   flyOutofBattle = toolset->getBit(0x29DF, 1, 7);
+  flyOutofBattleChanged();
+
   standingOnDoor = toolset->getBit(0x29E2, 1, 0);
+  standingOnDoorChanged();
+
   movingThroughDoor = toolset->getBit(0x29E2, 1, 1);
+  movingThroughDoorChanged();
+
   standingOnWarp = toolset->getBit(0x29E2, 1, 2);
+  standingOnWarpChanged();
+
   finalLedgeJumping = toolset->getBit(0x29E2, 1, 6);
+  finalLedgeJumpingChanged();
+
   spinPlayer = toolset->getBit(0x29E2, 1, 7);
+  spinPlayerChanged();
+
   safariGameOver = toolset->getBit(0x2CF2, 1, 0);
+  safariGameOverChanged();
+
   safariBallCount = toolset->getByte(0x2CF3);
+  safariBallCountChanged();
 }
 
 void AreaPlayer::save(SaveFile* saveFile)
@@ -100,39 +157,88 @@ void AreaPlayer::save(SaveFile* saveFile)
 void AreaPlayer::reset()
 {
   playerMoveDir = 0;
+  playerMoveDirChanged();
+
   playerLastStopDir = 0;
+  playerLastStopDirChanged();
+
   playerCurDir = 0;
+  playerCurDirChanged();
 
   yCoord = 0;
+  yCoordChanged();
+
   xCoord = 0;
+  xCoordChanged();
+
   yBlockCoord = 0;
+  yBlockCoordChanged();
+
   xBlockCoord = 0;
+  xBlockCoordChanged();
+
   playerJumpingYScrnCoords = 0;
+  playerJumpingYScrnCoordsChanged();
 
   safariGameOver = false;
+  safariGameOverChanged();
+
   safariBallCount = 0;
+  safariBallCountChanged();
+
   safariSteps = 0;
+  safariStepsChanged();
 
   strengthOutsideBattle = false;
+  strengthOutsideBattleChanged();
+
   surfingAllowed = false;
+  surfingAllowedChanged();
+
   flyOutofBattle = false;
+  flyOutofBattleChanged();
 
   isBattle = false;
+  isBattleChanged();
+
   isTrainerBattle = false;
+  isTrainerBattleChanged();
+
   noBattles = false;
+  noBattlesChanged();
+
   battleEndedOrBlackout = false;
+  battleEndedOrBlackoutChanged();
 
   yOffsetSinceLastSpecialWarp = 0;
+  yOffsetSinceLastSpecialWarpChanged();
+
   xOffsetSinceLastSpecialWarp = 0;
+  xOffsetSinceLastSpecialWarpChanged();
+
   standingOnDoor = false;
+  standingOnDoorChanged();
+
   movingThroughDoor = false;
+  movingThroughDoorChanged();
+
   standingOnWarp = false;
+  standingOnWarpChanged();
 
   walkBikeSurf = 0;
+  walkBikeSurfChanged();
+
   finalLedgeJumping = false;
+  finalLedgeJumpingChanged();
+
   spinPlayer = false;
+  spinPlayerChanged();
+
   usedCardKey = false;
+  usedCardKeyChanged();
+
   usingLinkCable = false;
+  usingLinkCableChanged();
 }
 
 void AreaPlayer::randomize(var8 x, var8 y)
@@ -142,18 +248,28 @@ void AreaPlayer::randomize(var8 x, var8 y)
 
   // Have player be stationary
   playerMoveDir = (var8)PlayerDir::None;
+  playerMoveDirChanged();
 
   // Determine facing and last stop directions
   playerLastStopDir = Random::rangeInclusive(
         (var8)PlayerDir::Right,
         (var8)PlayerDir::Up);
+  playerLastStopDirChanged();
 
   playerCurDir = Random::rangeInclusive(
         (var8)PlayerDir::Right,
         (var8)PlayerDir::Up);
+  playerCurDirChanged();
 
   yCoord = y;
+  yCoordChanged();
+
   xCoord = x;
-  yBlockCoord = (y & 2) ? 0 : 1;
-  xBlockCoord = (x & 2) ? 0 : 1;
+  xCoordChanged();
+
+  yBlockCoord = (y % 2) ? 0 : 1;
+  yBlockCoordChanged();
+
+  xBlockCoord = (x % 2) ? 0 : 1;
+  xBlockCoordChanged();
 }

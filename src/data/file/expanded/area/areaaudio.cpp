@@ -29,8 +29,9 @@ AreaAudio::~AreaAudio() {}
 
 void AreaAudio::load(SaveFile* saveFile)
 {
+  reset();
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 

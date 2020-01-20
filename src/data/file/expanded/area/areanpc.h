@@ -16,21 +16,47 @@
 #ifndef AREANPC_H
 #define AREANPC_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 
 class SaveFile;
 
-class AreaNPC
+class AreaNPC : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(bool npcsFaceAway_ MEMBER npcsFaceAway NOTIFY npcsFaceAwayChanged)
+  Q_PROPERTY(bool scriptedNPCMovement_ MEMBER scriptedNPCMovement NOTIFY scriptedNPCMovementChanged)
+  Q_PROPERTY(bool npcSpriteMovement_ MEMBER npcSpriteMovement NOTIFY npcSpriteMovementChanged)
+  Q_PROPERTY(bool tradeCenterSpritesFaced_ MEMBER tradeCenterSpritesFaced NOTIFY tradeCenterSpritesFacedChanged)
+  Q_PROPERTY(bool ignoreJoypad_ MEMBER ignoreJoypad NOTIFY ignoreJoypadChanged)
+  Q_PROPERTY(bool joypadSimulation_ MEMBER joypadSimulation NOTIFY joypadSimulationChanged)
+  Q_PROPERTY(bool runningTestBattle_ MEMBER runningTestBattle NOTIFY runningTestBattleChanged)
+  Q_PROPERTY(bool trainerWantsBattle_ MEMBER trainerWantsBattle NOTIFY trainerWantsBattleChanged)
+  Q_PROPERTY(var16 trainerHeaderPtr_ MEMBER trainerHeaderPtr NOTIFY trainerHeaderPtrChanged)
+
 public:
   AreaNPC(SaveFile* saveFile = nullptr);
   virtual ~AreaNPC();
 
+signals:
+  void npcsFaceAwayChanged();
+  void scriptedNPCMovementChanged();
+  void npcSpriteMovementChanged();
+  void tradeCenterSpritesFacedChanged();
+  void ignoreJoypadChanged();
+  void joypadSimulationChanged();
+  void runningTestBattleChanged();
+  void trainerWantsBattleChanged();
+  void trainerHeaderPtrChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   // Sprites
   bool npcsFaceAway;
   bool scriptedNPCMovement;

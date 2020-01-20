@@ -55,7 +55,9 @@ public:
   var8 curBox;
   bool boxesFormatted = false;
 
-  // Can't create a Q_PROPERTY and there's no point in creating a change signal
+  // Because this is a C++ array, it can't be a Q_PROPERTY and since the array
+  // contents never change and have no properties of themselves there's no need
+  // for a signal either
   PokemonStorageSet* pokemon[maxPokemonStorageSets];
 };
 

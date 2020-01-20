@@ -16,6 +16,7 @@
 #ifndef AREALOADEDSPRITES_H
 #define AREALOADEDSPRITES_H
 
+#include <QObject>
 #include <QVector>
 
 #include "../../../../common/types.h"
@@ -23,18 +24,29 @@ class SaveFile;
 struct MapDBEntry;
 struct SpriteSetDBEntry;
 
-class AreaLoadedSprites
+class AreaLoadedSprites : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QVector<var8> loadedSprites_ MEMBER loadedSprites NOTIFY loadedSpritesChanged)
+  Q_PROPERTY(var8 loadedSetId_ MEMBER loadedSetId NOTIFY loadedSetIdChanged)
+
 public:
   AreaLoadedSprites(SaveFile* saveFile = nullptr);
   virtual ~AreaLoadedSprites();
 
+signals:
+  void loadedSpritesChanged();
+  void loadedSetIdChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize(MapDBEntry* map, var8 x, var8 y);
   void loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y);
 
+public:
   QVector<var8> loadedSprites;
   var8 loadedSetId;
 };

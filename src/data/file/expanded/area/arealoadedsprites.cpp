@@ -31,15 +31,20 @@ AreaLoadedSprites::~AreaLoadedSprites() {}
 
 void AreaLoadedSprites::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
   for(auto entry : toolset->getRange(0x2649, 0xB))
     loadedSprites.append(entry);
 
+  loadedSpritesChanged();
+
   loadedSetId = toolset->getByte(0x2654);
+  loadedSetIdChanged();
 }
 
 void AreaLoadedSprites::save(SaveFile* saveFile)
@@ -53,11 +58,16 @@ void AreaLoadedSprites::save(SaveFile* saveFile)
 void AreaLoadedSprites::reset()
 {
   loadedSprites.clear();
+  loadedSpritesChanged();
+
   loadedSetId = 0;
+  loadedSetIdChanged();
 }
 
 void AreaLoadedSprites::randomize(MapDBEntry* map, var8 x, var8 y)
 {
+  reset();
+
   // First check to see if the chosen map already has a sprite set
   if(map->toSpriteSet == nullptr) {
     // It does not
@@ -84,5 +94,8 @@ void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y)
   for(auto s : set)
     loadedSprites.append(s->ind);
 
+  loadedSpritesChanged();
+
   loadedSetId = id;
+  loadedSetIdChanged();
 }

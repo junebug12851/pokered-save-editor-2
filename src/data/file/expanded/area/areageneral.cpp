@@ -28,8 +28,10 @@ AreaGeneral::~AreaGeneral() {}
 
 void AreaGeneral::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset =saveFile->toolset;
 
@@ -66,6 +68,8 @@ void AreaGeneral::reset()
 
 void AreaGeneral::randomize()
 {
+  reset();
+
   // Pick a number between 1 - 8
   // That's beacuse 9 is solid black which can be fun but not very playable lol
   contrast = Random::rangeInclusive(0, 8);

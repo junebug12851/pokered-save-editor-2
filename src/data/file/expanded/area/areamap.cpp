@@ -42,42 +42,79 @@ void AreaMap::load(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
 
   curMap = toolset->getByte(0x260A);
+  curMapChanged();
+
   height = toolset->getByte(0x2614);
+  heightChanged();
+
   width = toolset->getByte(0x2615);
+  widthChanged();
+
   dataPtr = toolset->getWord(0x2616, true);
+  dataPtrChanged();
+
   txtPtr = toolset->getWord(0x2618, true);
+  txtPtrChanged();
+
   scriptPtr = toolset->getWord(0x261A, true);
+  scriptPtrChanged();
+
   height2x2 = toolset->getByte(0x27D0);
+  height2x2Changed();
+
   width2x2 = toolset->getByte(0x27D1);
+  width2x2Changed();
 
   outOfBoundsBlock = toolset->getByte(0x2659);
+  outOfBoundsBlockChanged();
 
   currentTileBlockMapViewPointer = toolset->getWord(0x260B, true);
+  currentTileBlockMapViewPointerChanged();
 
   // East Connection
-  if(toolset->getBit(0x261C, 1, 0))
+  if(toolset->getBit(0x261C, 1, 0)) {
     connections.insert((var8)ConnectDir::EAST, new MapConnData(saveFile, 0x263E));
+    connectionsChanged();
+  }
 
   // West Connection
-  if(toolset->getBit(0x261C, 1, 1))
+  if(toolset->getBit(0x261C, 1, 1)) {
     connections.insert((var8)ConnectDir::WEST, new MapConnData(saveFile, 0x2633));
+    connectionsChanged();
+  }
 
   // South Connection
-  if(toolset->getBit(0x261C, 1, 2))
+  if(toolset->getBit(0x261C, 1, 2)) {
     connections.insert((var8)ConnectDir::SOUTH, new MapConnData(saveFile, 0x2628));
+    connectionsChanged();
+  }
 
   // North Connection
-  if(toolset->getBit(0x261C, 1, 3))
+  if(toolset->getBit(0x261C, 1, 3)) {
     connections.insert((var8)ConnectDir::NORTH, new MapConnData(saveFile, 0x261D));
+    connectionsChanged();
+  }
 
   mapViewVRAMPointer = toolset->getWord(0x27D2, true);
+  mapViewVRAMPointerChanged();
 
   forceBikeRide = toolset->getBit(0x29DE, 1, 5);
+  forceBikeRideChanged();
+
   blackoutDest = toolset->getBit(0x29DE, 1, 6);
+  blackoutDestChanged();
+
   curMapNextFrame = toolset->getBit(0x29DF, 1, 4);
+  curMapNextFrameChanged();
+
   cardKeyDoorY = toolset->getByte(0x29EB);
+  cardKeyDoorYChanged();
+
   cardKeyDoorX = toolset->getByte(0x29EC);
+  cardKeyDoorXChanged();
+
   curMapScript = toolset->getByte(0x2CE5);
+  curMapScriptChanged();
 }
 
 void AreaMap::save(SaveFile* saveFile)
@@ -125,40 +162,67 @@ void AreaMap::reset()
 {
   // Current Map ID
   curMap = 0;
+  curMapChanged();
 
   // Map Size including it's double size
   height = 0;
+  heightChanged();
+
   width = 0;
+  widthChanged();
+
   height2x2 = 0;
+  height2x2Changed();
+
   width2x2 = 0;
+  width2x2Changed();
 
   // Map basic pointers
   dataPtr = 0;
+  dataPtrChanged();
+
   txtPtr = 0;
+  txtPtrChanged();
+
   scriptPtr = 0;
+  scriptPtrChanged();
 
   // Map extra pointers
   currentTileBlockMapViewPointer = 0; // <- Player coords converted to a ptr
+  currentTileBlockMapViewPointerChanged();
+
   mapViewVRAMPointer = 0; // <- Unused, reset at start of gameplay
+  mapViewVRAMPointerChanged();
 
   // Current map script index
   curMapScript = 0;
+  curMapScriptChanged();
 
   // Unknown ???
   cardKeyDoorX = 0;
+  cardKeyDoorXChanged();
+
   cardKeyDoorY = 0;
+  cardKeyDoorYChanged();
 
   // Flags that may not be used, unknown
   forceBikeRide = 0;
+  forceBikeRideChanged();
+
   blackoutDest = 0;
+  blackoutDestChanged();
+
   curMapNextFrame = 0;
+  curMapNextFrameChanged();
 
   outOfBoundsBlock = 0;
+  outOfBoundsBlockChanged();
 
   for(auto conn : connections)
     delete conn;
 
   connections.clear();
+  connectionsChanged();
 }
 
 void AreaMap::randomize(MapDBEntry* map, var8 x, var8 y)
@@ -167,58 +231,68 @@ void AreaMap::randomize(MapDBEntry* map, var8 x, var8 y)
 
   // Current Map ID
   curMap = map->ind;
+  curMapChanged();
 
   // Map Size including it's double size
   height = *map->height;
+  heightChanged();
+
   width = *map->width;
+  widthChanged();
+
   height2x2 = *map->height2X2();
+  height2x2Changed();
+
   width2x2 = *map->width2X2();
+  width2x2Changed();
 
   // Map basic pointers
   dataPtr = *map->dataPtr;
+  dataPtrChanged();
+
   txtPtr = *map->textPtr;
+  txtPtrChanged();
+
   scriptPtr = *map->scriptPtr;
+  scriptPtrChanged();
 
   // Map extra pointers
   currentTileBlockMapViewPointer = coordsToPtr(x, y, *map->width);
-  mapViewVRAMPointer = VramBGPtr;
+  currentTileBlockMapViewPointerChanged();
 
-  if(map->border)
+  mapViewVRAMPointer = VramBGPtr;
+  mapViewVRAMPointerChanged();
+
+  if(map->border) {
     outOfBoundsBlock = *map->border;
+    outOfBoundsBlockChanged();
+  }
 
   // Leave these off for now
-
-  // Current map script index
-  curMapScript = 0;
-
-  // Unknown ???
-  cardKeyDoorX = 0;
-  cardKeyDoorY = 0;
-
-  // Flags that may not be used, unknown
-  forceBikeRide = 0;
-  blackoutDest = 0;
-  curMapNextFrame = 0;
 
   if(map->connect.contains((var8)ConnectDir::NORTH)) {
     auto conn = new MapConnData;
     conn->loadFromData(map->connect.value((var8)ConnectDir::NORTH));
     connections.insert((var8)ConnectDir::NORTH, conn);
+    connectionsChanged();
   }
   if(map->connect.contains((var8)ConnectDir::EAST)) {
     auto conn = new MapConnData;
     conn->loadFromData(map->connect.value((var8)ConnectDir::EAST));
     connections.insert((var8)ConnectDir::EAST, conn);
+    connectionsChanged();
   }
   if(map->connect.contains((var8)ConnectDir::SOUTH)) {
     auto conn = new MapConnData;
     conn->loadFromData(map->connect.value((var8)ConnectDir::SOUTH));
     connections.insert((var8)ConnectDir::SOUTH, conn);
+    connectionsChanged();
   }
   if(map->connect.contains((var8)ConnectDir::WEST)) {
     auto conn = new MapConnData;
     conn->loadFromData(map->connect.value((var8)ConnectDir::WEST));
     connections.insert((var8)ConnectDir::WEST, conn);
+    connectionsChanged();
   }
 }
 

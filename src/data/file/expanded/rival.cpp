@@ -31,8 +31,10 @@ Rival::~Rival() {}
 
 void Rival::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
@@ -62,6 +64,8 @@ void Rival::reset()
 
 void Rival::randomize()
 {
+  reset();
+
   name = NamesDB::randomName();
   nameChanged();
 

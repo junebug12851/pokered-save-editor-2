@@ -45,7 +45,7 @@ class Area : public QObject
   Q_PROPERTY(AreaPlayer* player_ MEMBER player NOTIFY playerChanged)
   Q_PROPERTY(AreaPokemon* pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
   Q_PROPERTY(AreaPuzzle* puzzle_ MEMBER puzzle NOTIFY puzzleChanged)
-  Q_PROPERTY(AreaSigns* signs_ MEMBER signs NOTIFY signsChanged)
+  Q_PROPERTY(AreaSign* signs_ MEMBER signs NOTIFY signsChanged)
   Q_PROPERTY(AreaSprites* sprites_ MEMBER sprites NOTIFY spritesChanged)
   Q_PROPERTY(AreaTileset* tileset_ MEMBER tileset NOTIFY tilesetChanged)
   Q_PROPERTY(AreaWarps* warps_ MEMBER warps NOTIFY warpsChanged)
