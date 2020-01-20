@@ -16,20 +16,36 @@
 #ifndef AREAAUDIO_H
 #define AREAAUDIO_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
-class AreaAudio
+class AreaAudio : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 musicID_ MEMBER musicID NOTIFY musicIDChanged)
+  Q_PROPERTY(var8 musicBank_ MEMBER musicBank NOTIFY musicBankChanged)
+  Q_PROPERTY(bool noAudioFadeout_ MEMBER noAudioFadeout NOTIFY noAudioFadeoutChanged)
+  Q_PROPERTY(bool preventMusicChange_ MEMBER preventMusicChange NOTIFY preventMusicChangeChanged)
+
 public:
   AreaAudio(SaveFile* saveFile = nullptr);
   virtual ~AreaAudio();
 
+signals:
+  void musicIDChanged();
+  void musicBankChanged();
+  void noAudioFadeoutChanged();
+  void preventMusicChangeChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   var8 musicID;
   var8 musicBank;
   bool noAudioFadeout;

@@ -16,6 +16,8 @@
 #ifndef AREA_H
 #define AREA_H
 
+#include <QObject>
+
 class SaveFile;
 class Player;
 class AreaAudio;
@@ -31,17 +33,49 @@ class AreaSprites;
 class AreaTileset;
 class AreaWarps;
 
-class Area
+class Area : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(AreaAudio* audio_ MEMBER audio NOTIFY audioChanged)
+  Q_PROPERTY(AreaLoadedSprites* preloadedSprites_ MEMBER preloadedSprites NOTIFY preloadedSpritesChanged)
+  Q_PROPERTY(AreaGeneral* general_ MEMBER general NOTIFY generalChanged)
+  Q_PROPERTY(AreaMap* map_ MEMBER map NOTIFY mapChanged)
+  Q_PROPERTY(AreaNPC* npc_ MEMBER npc NOTIFY npcChanged)
+  Q_PROPERTY(AreaPlayer* player_ MEMBER player NOTIFY playerChanged)
+  Q_PROPERTY(AreaPokemon* pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
+  Q_PROPERTY(AreaPuzzle* puzzle_ MEMBER puzzle NOTIFY puzzleChanged)
+  Q_PROPERTY(AreaSigns* signs_ MEMBER signs NOTIFY signsChanged)
+  Q_PROPERTY(AreaSprites* sprites_ MEMBER sprites NOTIFY spritesChanged)
+  Q_PROPERTY(AreaTileset* tileset_ MEMBER tileset NOTIFY tilesetChanged)
+  Q_PROPERTY(AreaWarps* warps_ MEMBER warps NOTIFY warpsChanged)
+
 public:
   Area(SaveFile* saveFile = nullptr);
   virtual ~Area();
 
+signals:
+  // There's actually no need for these, Q_PROPERTY requires them
+  void audioChanged();
+  void preloadedSpritesChanged();
+  void generalChanged();
+  void mapChanged();
+  void npcChanged();
+  void playerChanged();
+  void pokemonChanged();
+  void puzzleChanged();
+  void signsChanged();
+  void spritesChanged();
+  void tilesetChanged();
+  void warpsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   AreaAudio* audio = nullptr;
   AreaLoadedSprites* preloadedSprites = nullptr;
   AreaGeneral* general = nullptr;

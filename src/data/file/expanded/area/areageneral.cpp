@@ -34,8 +34,13 @@ void AreaGeneral::load(SaveFile* saveFile)
   auto toolset =saveFile->toolset;
 
   contrast = toolset->getByte(0x2609);
+  contrastChanged();
+
   noLetterDelay = toolset->getBit(0x29DC, 1, 6);
+  noLetterDelayChanged();
+
   countPlaytime = toolset->getBit(0x29DE, 1, 0);
+  countPlaytimeChanged();
 }
 
 void AreaGeneral::save(SaveFile* saveFile)
@@ -50,8 +55,13 @@ void AreaGeneral::save(SaveFile* saveFile)
 void AreaGeneral::reset()
 {
   contrast = 0;
+  contrastChanged();
+
   noLetterDelay = false;
+  noLetterDelayChanged();
+
   countPlaytime = false;
+  countPlaytimeChanged();
 }
 
 void AreaGeneral::randomize()
@@ -59,8 +69,12 @@ void AreaGeneral::randomize()
   // Pick a number between 1 - 8
   // That's beacuse 9 is solid black which can be fun but not very playable lol
   contrast = Random::rangeInclusive(0, 8);
+  contrastChanged();
 
   // Leaving these options off for now
   noLetterDelay = false;
+  noLetterDelayChanged();
+
   countPlaytime = false;
+  countPlaytimeChanged();
 }

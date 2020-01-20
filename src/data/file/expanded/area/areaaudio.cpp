@@ -35,9 +35,16 @@ void AreaAudio::load(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
 
   musicID = toolset->getByte(0x2607);
+  musicIDChanged();
+
   musicBank = toolset->getByte(0x2608);
+  musicBankChanged();
+
   noAudioFadeout = toolset->getBit(0x29D8, 1, 1);
+  noAudioFadeoutChanged();
+
   preventMusicChange = toolset->getBit(0x29DF, 1, 1);
+  preventMusicChangeChanged();
 }
 
 void AreaAudio::save(SaveFile* saveFile)
@@ -53,20 +60,29 @@ void AreaAudio::save(SaveFile* saveFile)
 void AreaAudio::reset()
 {
   musicID = 0;
+  musicIDChanged();
+
   musicBank = 0;
+  musicBankChanged();
+
   noAudioFadeout = false;
+  noAudioFadeoutChanged();
+
   preventMusicChange = false;
+  preventMusicChangeChanged();
 }
 
 void AreaAudio::randomize()
 {
+  reset();
+
   // Select a random song
   auto musicEntry = MusicDB::store.at(Random::rangeExclusive(0, MusicDB::store.size()));
 
   // Load it into the map
   musicID = musicEntry->id;
-  musicBank = musicEntry->bank;
+  musicIDChanged();
 
-  noAudioFadeout = false;
-  preventMusicChange = false;
+  musicBank = musicEntry->bank;
+  musicBankChanged();
 }

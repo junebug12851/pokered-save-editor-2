@@ -16,6 +16,7 @@
 #ifndef AREAGENERAL_H
 #define AREAGENERAL_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -34,17 +35,30 @@ enum class ContrastIds : var8
   Glitch_3B = 8
 };
 
-class AreaGeneral
+class AreaGeneral : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 contrast_ MEMBER contrast NOTIFY contrastChanged)
+  Q_PROPERTY(bool noLetterDelay_ MEMBER noLetterDelay NOTIFY noLetterDelayChanged)
+  Q_PROPERTY(bool countPlaytime_ MEMBER countPlaytime NOTIFY countPlaytimeChanged)
+
 public:
   AreaGeneral(SaveFile* saveFile = nullptr);
   virtual ~AreaGeneral();
 
+signals:
+  void contrastChanged();
+  void noLetterDelayChanged();
+  void countPlaytimeChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   var8 contrast;
   bool noLetterDelay;
   bool countPlaytime;
