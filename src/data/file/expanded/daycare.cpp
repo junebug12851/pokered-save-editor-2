@@ -34,14 +34,18 @@ Daycare::~Daycare()
 
 void Daycare::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
   // Is the daycare in use, if so extract daycare Pokemon Information
-  if (toolset->getByte(0x2CF4) > 0)
+  if (toolset->getByte(0x2CF4) > 0) {
     pokemon = new PokemonBox(saveFile, 0x2D0B, 0x2CF5, 0x2D00, 0);
+    pokemonChanged();
+  }
 }
 
 void Daycare::save(SaveFile* saveFile)
@@ -58,6 +62,7 @@ void Daycare::reset()
 {
   delete pokemon;
   pokemon = nullptr;
+  pokemonChanged();
 }
 
 void Daycare::randomize(PlayerBasics* basics)
@@ -70,4 +75,6 @@ void Daycare::randomize(PlayerBasics* basics)
 
   pokemon = new PokemonBox;
   pokemon->randomize(basics);
+
+  pokemonChanged();
 }

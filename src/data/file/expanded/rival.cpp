@@ -37,7 +37,10 @@ void Rival::load(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
 
   name = toolset->getStr(0x25F6, 0xB, 7+1);
+  nameChanged();
+
   starter = toolset->getByte(0x29C1);
+  starterChanged();
 }
 
 void Rival::save(SaveFile* saveFile)
@@ -51,12 +54,16 @@ void Rival::save(SaveFile* saveFile)
 void Rival::reset()
 {
   name = "";
+  nameChanged();
+
   starter = 0;
+  starterChanged();
 }
 
 void Rival::randomize()
 {
   name = NamesDB::randomName();
+  nameChanged();
 
   var8 starters[3] = {
     PokemonDB::ind.value("Charmander")->ind,
@@ -66,4 +73,5 @@ void Rival::randomize()
 
   // Get a random starter
   starter = starters[Random::rangeExclusive(0, 3)];
+  starterChanged();
 }

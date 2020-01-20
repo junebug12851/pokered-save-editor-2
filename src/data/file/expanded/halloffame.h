@@ -29,9 +29,14 @@ class HallOfFame : public QObject
 {
   Q_OBJECT
 
+  Q_PROPERTY(QVector<HoFRecord*> records_ MEMBER records NOTIFY recordsChanged)
+
 public:
   HallOfFame(SaveFile* saveFile = nullptr);
   virtual ~HallOfFame();
+
+signals:
+  void recordsChanged();
 
 public slots:
   void load(SaveFile* saveFile = nullptr);

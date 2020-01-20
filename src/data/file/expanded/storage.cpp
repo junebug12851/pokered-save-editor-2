@@ -58,7 +58,10 @@ void Storage::load(SaveFile* saveFile)
   // not. If they aren't formatted then don't load them as they contain garbage
   // information
   curBox = (toolset->getByte(0x284C) & 0b01111111);
+  curBoxChanged();
+
   boxesFormatted = toolset->getBit(0x284C, 0x1, 7);
+  boxesFormattedChanged();
 
   // Load Items and Boxes 1-12 in 2 sets of 1-6
   items->load(saveFile);
@@ -112,7 +115,10 @@ void Storage::save(SaveFile* saveFile)
 void Storage::reset()
 {
   curBox = 0;
+  curBoxChanged();
+
   boxesFormatted = false;
+  boxesFormattedChanged();
 
   items->reset();
 
@@ -122,6 +128,7 @@ void Storage::reset()
 
 void Storage::randomize(PlayerBasics* basics)
 {
+  reset();
   items->randomize();
 
   for(var8 i = 0; i < maxPokemonStorageSets; i++)

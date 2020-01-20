@@ -41,6 +41,7 @@ public:
 
 signals:
   void itemsChanged();
+  void pokemonChanged(); // Cannot be a Q_PROPERTY
   void curBoxChanged();
   void boxesFormattedChanged();
 

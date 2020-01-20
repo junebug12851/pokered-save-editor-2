@@ -44,6 +44,8 @@ void HallOfFame::load(SaveFile* saveFile)
   for (var8 i = 0; i < hofRecordCount && i < recordsMax; i++) {
     records.append(new HoFRecord(saveFile, i));
   }
+
+  recordsChanged();
 }
 
 void HallOfFame::save(SaveFile* saveFile)
@@ -62,6 +64,7 @@ void HallOfFame::reset()
     delete record;
 
   records.clear();
+  recordsChanged();
 }
 
 void HallOfFame::randomize()
@@ -76,4 +79,6 @@ void HallOfFame::randomize()
     records.append(tmp);
     tmp->randomize();
   }
+
+  recordsChanged();
 }
