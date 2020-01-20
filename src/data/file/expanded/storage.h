@@ -41,7 +41,6 @@ public:
 
 signals:
   void itemsChanged();
-  void pokemonChanged(); // Cannot be a Q_PROPERTY
   void curBoxChanged();
   void boxesFormattedChanged();
 
@@ -53,9 +52,11 @@ public slots:
 
 public:
   ItemStorageBox* items = nullptr;
-  PokemonStorageSet* pokemon[maxPokemonStorageSets];
   var8 curBox;
   bool boxesFormatted = false;
+
+  // Can't create a Q_PROPERTY and there's no point in creating a change signal
+  PokemonStorageSet* pokemon[maxPokemonStorageSets];
 };
 
 #endif // STORAGE_H

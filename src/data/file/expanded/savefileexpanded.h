@@ -44,6 +44,7 @@ public:
   virtual ~SaveFileExpanded();
 
 signals:
+  // No point in having these change signals but Q_PROPERTY requires them
   void playerChanged();
   void areaChanged();
   void worldChanged();
