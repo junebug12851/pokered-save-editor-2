@@ -67,7 +67,10 @@ void Item::save(SaveFileIterator* it)
 void Item::reset()
 {
   ind = 0;
+  indChanged();
+
   amount = 0;
+  amountChanged();
 }
 
 void Item::randomize()
@@ -79,7 +82,10 @@ void Item::randomize()
     tmp = ItemsDB::store.at(Random::rangeExclusive(0, ItemsDB::store.size()));
 
   ind = tmp->ind;
+  indChanged();
+
   amount = Random::rangeInclusive(1, 5); // Between 1 and 5 of them
+  amountChanged();
 }
 
 ItemDBEntry* Item::toItem()

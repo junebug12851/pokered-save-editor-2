@@ -16,24 +16,38 @@
 #ifndef HOFPOKEMON_H
 #define HOFPOKEMON_H
 
+#include <QObject>
 #include <QString>
 #include "../../../../common/types.h"
 class SaveFile;
 struct PokemonDBEntry;
 
-class HoFPokemon
+class HoFPokemon : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 species_ MEMBER species NOTIFY speciesChanged)
+  Q_PROPERTY(var8 level_ MEMBER level NOTIFY levelChanged)
+  Q_PROPERTY(QString name_ MEMBER name NOTIFY nameChanged)
+
 public:
   HoFPokemon(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
   virtual ~HoFPokemon();
 
+  Q_INVOKABLE PokemonDBEntry* toSpecies();
+
+signals:
+  void speciesChanged();
+  void levelChanged();
+  void nameChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
   void save(SaveFile* saveFile, var16 recordOffset, var16 ind);
   void reset();
   void randomize();
 
-  PokemonDBEntry* toSpecies();
-
+public:
   var8 species;
   var8 level;
   QString name;

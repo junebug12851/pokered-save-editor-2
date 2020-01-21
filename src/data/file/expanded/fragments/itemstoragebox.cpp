@@ -47,6 +47,8 @@ void ItemStorageBox::load(SaveFile* saveFile)
     items.append(new Item(it));
   }
 
+  itemsChanged();
+
   delete it;
 }
 
@@ -69,6 +71,7 @@ void ItemStorageBox::reset()
     delete item;
 
   items.clear();
+  itemsChanged();
 }
 
 void ItemStorageBox::randomize()
@@ -81,4 +84,6 @@ void ItemStorageBox::randomize()
   // Load up random items to count
   for(var8 i = 0; i < count; i++)
     items.append(new Item(true));
+
+  itemsChanged();
 }

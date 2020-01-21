@@ -31,10 +31,10 @@ HoFPokemon::~HoFPokemon()
 
 void HoFPokemon::load(SaveFile* saveFile, var16 recordOffset, var16 ind)
 {
+  reset();
   auto toolset = saveFile->toolset;
 
   if(saveFile == nullptr) {
-    reset();
     return;
   }
 
@@ -50,8 +50,13 @@ void HoFPokemon::load(SaveFile* saveFile, var16 recordOffset, var16 ind)
 
   // Extract Pokemon Data
   species = toolset->getByte(pokemonOffset + 0);
+  speciesChanged();
+
   level = toolset->getByte(pokemonOffset + 1);
+  levelChanged();
+
   name = toolset->getStr(pokemonOffset + 2, 0xB, 10+1);
+  nameChanged();
 }
 
 void HoFPokemon::save(SaveFile* saveFile, var16 recordOffset, var16 ind)
@@ -70,8 +75,13 @@ void HoFPokemon::save(SaveFile* saveFile, var16 recordOffset, var16 ind)
 void HoFPokemon::reset()
 {
   species = 0;
+  speciesChanged();
+
   level = 0;
+  levelChanged();
+
   name = "";
+  nameChanged();
 }
 
 void HoFPokemon::randomize()
@@ -83,14 +93,18 @@ void HoFPokemon::randomize()
   var8 dex = Random::rangeExclusive(1,pokemonDexCount);
   auto toPokemon = PokemonDB::ind.value("dex" + QString::number(dex), nullptr);
 
-  if(toPokemon != nullptr)
+  if(toPokemon != nullptr) {
     species = toPokemon->ind;
+    speciesChanged();
+  }
 
   // Random level between 1 - 100
   level = Random::rangeInclusive(5,pokemonLevelMax);
+  levelChanged();
 
   // Random name
   name = NamesDB::randomName();
+  nameChanged();
 }
 
 PokemonDBEntry* HoFPokemon::toSpecies()

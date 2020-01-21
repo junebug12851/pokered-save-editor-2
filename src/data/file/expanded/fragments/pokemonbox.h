@@ -209,6 +209,13 @@ public:
 
   // Sometimes type 2 is a duplicate of type 1 and
   // sometimes it's explicitly 0xFF, this is which one
+
+  // Honestly this all started because I tried to load up a played through SAV
+  // file from someone else which I didn't realize was tampered with. This was
+  // one of the changes I made. After i realized it was tampered with I regret
+  // adding in this feature because the real SAV file only saves types one way
+  // never one or the other. Basically I've forgotten how the real save file
+  // saves them so I leave it in.
   bool type2Explicit;
 };
 

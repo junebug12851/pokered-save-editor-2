@@ -16,22 +16,32 @@
 #ifndef HOFRECORD_H
 #define HOFRECORD_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 class SaveFile;
 class HoFPokemon;
 
-class HoFRecord
+class HoFRecord : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QVector<HoFPokemon*> pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
+
 public:
   HoFRecord(SaveFile* saveFile = nullptr, var8 ind = 0);
   virtual ~HoFRecord();
 
+signals:
+  void pokemonChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr, var8 ind = 0);
   void save(SaveFile* saveFile, var8 ind);
   void reset();
   void randomize();
 
+public:
   QVector<HoFPokemon*> pokemon;
 };
 

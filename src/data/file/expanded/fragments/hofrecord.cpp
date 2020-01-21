@@ -32,8 +32,10 @@ HoFRecord::~HoFRecord()
 
 void HoFRecord::load(SaveFile* saveFile, var8 ind)
 {
+  // Reset to clear list as all the entries have ti be deleted first
+  reset();
+
   if(saveFile == nullptr) {
-    reset();
     return;
   }
 
@@ -45,9 +47,6 @@ void HoFRecord::load(SaveFile* saveFile, var8 ind)
   // of first record (Record 0) which is 0x598
   var16 offset = (0x60 * ind) + 0x598;
 
-  // Reset to clear list as all the entries have ti be deleted first
-  reset();
-
   for (var8 i = 0; i < 6; i++) {
     // If Pokemon doesn't exist then don't proceed any further
     // the data stop code is 0xFF
@@ -58,6 +57,8 @@ void HoFRecord::load(SaveFile* saveFile, var8 ind)
 
     pokemon.append(new HoFPokemon(saveFile, offset, i));
   }
+
+  pokemonChanged();
 }
 
 void HoFRecord::save(SaveFile* saveFile, var8 ind)
@@ -89,6 +90,7 @@ void HoFRecord::reset()
     delete entry;
 
   pokemon.clear();
+  pokemonChanged();
 }
 
 void HoFRecord::randomize()
@@ -102,6 +104,8 @@ void HoFRecord::randomize()
   // Create blank Pokemon entries
   for(var8 i = 0; i < size; i++)
     pokemon.append(new HoFPokemon);
+
+  pokemonChanged();
 
   // Insert random data
   for(auto entry : pokemon)

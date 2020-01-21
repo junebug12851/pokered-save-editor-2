@@ -16,13 +16,19 @@
 #ifndef ITEM_H
 #define ITEM_H
 
+#include <QObject>
 #include <QString>
 #include "../../../../common/types.h"
 class SaveFileIterator;
 class ItemDBEntry;
 
-class Item
+class Item : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 ind_ MEMBER ind NOTIFY indChanged)
+  Q_PROPERTY(var8 amount_ MEMBER amount NOTIFY amountChanged)
+
 public:
   // New Item from iterator or a blank item
   // If iterator provided it extracts 2 bytes for index and amount
@@ -39,12 +45,19 @@ public:
 
   virtual ~Item();
 
+  Q_INVOKABLE ItemDBEntry* toItem();
+
+signals:
+  void indChanged();
+  void amountChanged();
+
+public slots:
   // Given an iterator, saves 2 bytes. Index and Amount
   void save(SaveFileIterator* it);
   void reset();
   void randomize();
-  ItemDBEntry* toItem();
 
+public:
   // Item Index
   var8 ind;
 

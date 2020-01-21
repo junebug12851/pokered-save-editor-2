@@ -16,6 +16,7 @@
 #ifndef ITEMSTORAGEBOX_H
 #define ITEMSTORAGEBOX_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 class SaveFile;
@@ -23,17 +24,26 @@ class Item;
 
 constexpr var8 boxMaxItems = 50;
 
-class ItemStorageBox
+class ItemStorageBox : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QVector<Item*> items_ MEMBER items NOTIFY itemsChanged)
+
 public:
   ItemStorageBox(SaveFile* saveFile = nullptr);
   virtual ~ItemStorageBox();
 
+signals:
+  void itemsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   QVector<Item*> items;
 };
 
