@@ -60,15 +60,20 @@ void PokemonMove::randomize()
     while(moveData == nullptr || moveData->glitch == true);
 
     moveID = moveData->ind;
+    moveIDChanged();
 
     ppUp = Random::rangeInclusive(0, 3);
+    ppUpChanged();
+
     pp = getMaxPP();
+    ppChanged();
   }
 }
 
 void PokemonMove::maxPpUp()
 {
   ppUp = 3;
+  ppUpChanged();
 }
 
 bool PokemonMove::isMaxPP()
@@ -105,6 +110,7 @@ void PokemonMove::restorePP()
     return;
 
   pp = maxPP;
+  ppChanged();
 }
 
 PokemonBox::PokemonBox(SaveFile* saveFile,
@@ -175,8 +181,9 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
                       var8 index,
                       var8 recordSize)
 {
+  reset();
+
   if(saveFile == nullptr) {
-    reset();
     return nullptr;
   }
 
@@ -187,28 +194,41 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
   auto it = saveFile->iterator()->offsetTo(offset);
 
   species = it->getByte();
+  speciesChanged();
+
   hp = it->getWord();
+  hpChanged();
+
   level = it->getByte();
+  levelChanged();
 
   status = it->getByte();
+  statusChanged();
 
   type1 = it->getByte();
+  type1Changed();
+
   type2 = it->getByte();
+  type2Changed();
 
   // Don't duplicate type 1 to type 2, fill type 2 only if it's different
   // Also mark if it was explicitly marked no in-game
   if (type2 == 0xFF) {
     type2Explicit = true;
+    type2ExplicitChanged();
   } else if (type1 == type2) {
     type2 = 0xFF;
+    type2Changed();
   }
 
   catchRate = it->getByte();
+  catchRateChanged();
 
   // Save offset to restore later
   it->push();
 
   // Temporarily save moves for later
+  // PP data which is important to moves has to be be gotten later
   QVector<var8> moveIDList;
   for (var8 i = 0; i < 4; i++) {
     var8 moveID = it->getByte();
@@ -222,6 +242,7 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
   it->pop()->offsetBy(0x4);
 
   otID = it->getWord();
+  otIDChanged();
 
   // Exp is 3 bytes so it's a bit tricky
   auto expRaw = it->getRange(3);
@@ -230,18 +251,29 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
   exp |= expRaw[1];
   exp <<= 8;
   exp |= expRaw[2];
+  expChanged();
 
   hpExp = it->getWord();
+  hpExpChanged();
+
   atkExp = it->getWord();
+  atkExpChanged();
+
   defExp = it->getWord();
+  defExpChanged();
+
   spdExp = it->getWord();
+  spdExpChanged();
+
   spExp = it->getWord();
+  spExpChanged();
 
   var16 dvTotal = it->getWord();
   dv[(var8)PokemonStats::Attack] = (dvTotal & 0xF000) >> 12;
   dv[(var8)PokemonStats::Defense] = (dvTotal & 0x0F00) >> 8;
   dv[(var8)PokemonStats::Speed] = (dvTotal & 0x00F0) >> 4;
   dv[(var8)PokemonStats::Special] = dvTotal & 0x000F;
+  dvChanged();
 
   it->push();
 
@@ -252,7 +284,7 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
     ppList.append(ppListEntry);
   }
 
-  // Combine together in moves
+  // Combine together in moves from earlier
   moves.clear();
   for (var8 i = 0; i < moveIDList.size(); i++) {
     var8 moveID = moveIDList.at(i);
@@ -263,6 +295,7 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
                     (pp & 0b11000000) >> 6
                     ));
   }
+  movesChanged();
 
   // Restore back to before PP and move past PP
   it->pop()->offsetBy(0x4);
@@ -271,9 +304,11 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
   // implemented in sometimes arbitrary spots outside of the data sructure
   var16 otNameOffset = (index * 0xB) + otNameStartOffset;
   otName = toolset->getStr(otNameOffset, 0xB, 7+1);
+  otNameChanged();
 
   var16 nicknameOffset = (index * 0xB) + nicknameStartOffset;
   nickname = toolset->getStr(nicknameOffset, 0xB, 10);
+  nicknameChanged();
 
   // Save the iterator to be picked up by sub-class if present
   return it;
@@ -374,34 +409,69 @@ SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
 void PokemonBox::reset()
 {
   species = 0;
+  speciesChanged();
+
   hp = 0;
+  hpChanged();
+
   level = 0;
+  levelChanged();
+
   status = 0;
+  statusChanged();
+
   type1 = 0;
+  type1Changed();
+
   type2 = 0;
+  type2Changed();
+
   catchRate = 0;
+  catchRateChanged();
+
   otID = 0;
+  otIDChanged();
+
   exp = 0;
+  expChanged();
+
   hpExp = 0;
+  hpExpChanged();
+
   atkExp = 0;
+  atkExpChanged();
+
   defExp = 0;
+  defExpChanged();
+
   spdExp = 0;
+  spdExpChanged();
+
   spExp = 0;
+  spExpChanged();
+
   otName = "";
+  otNameChanged();
+
   nickname = "";
+  nicknameChanged();
 
   dv[0] = 0;
   dv[1] = 0;
   dv[2] = 0;
   dv[3] = 0;
+  dvChanged();
 
   clearMoves();
 
   type2Explicit = false;
+  type2ExplicitChanged();
 }
 
 void PokemonBox::randomize(PlayerBasics* basics)
 {
+  reset();
+
   // Generate a random level 5 Pokemon from the pokedex
   // Bump it's level up to a random value
   // Give it a random name, otName, and otID
@@ -411,25 +481,44 @@ void PokemonBox::randomize(PlayerBasics* basics)
   delete pkmn;
 
   level = Random::rangeInclusive(1, pokemonLevelMax);
+  levelChanged();
 
   atkExp = Random::rangeInclusive(0, 0xFFFF);
+  atkExpChanged();
+
   defExp = Random::rangeInclusive(0, 0xFFFF);
+  defExpChanged();
+
   spdExp = Random::rangeInclusive(0, 0xFFFF);
+  spdExpChanged();
+
   spExp = Random::rangeInclusive(0, 0xFFFF);
+  spExpChanged();
+
   hpExp = Random::rangeInclusive(0, 0xFFFF);
+  hpExpChanged();
 
   // Delete it's moves and re-create 4 new non-glitch random moves
   randomizeMoves();
 
+  // Make the pokemon a non-trade pokemon
   changeTrade(true, basics);
 
   // 50/50 chance of not having a nickname
+  // If true, removes nickname
+  // If false, assigns random nickname
   bool noNick = Random::flipCoin();
+  changeName(noNick);
 
-  changeName(noNick); // Keep nickname
+  // This is where we make the Pokemon completely game accurate
   update(true, true, true, true);
+
+  // Heal the Pokemon
   heal();
 
+  // This is where we give the Pokemon whacky types for fun
+  // We have to do this after all the code above otherwise it'll be re-corrected
+  // to be game accurate
   auto type1 = TypesDB::store.at(Random::rangeExclusive(0, TypesDB::store.size()));
   TypeDBEntry* type2 = nullptr;
 
@@ -438,15 +527,17 @@ void PokemonBox::randomize(PlayerBasics* basics)
   if(hasType2)
     type2 = TypesDB::store.at(Random::rangeExclusive(0, TypesDB::store.size()));
 
-  if(type1 == type2)
+  if(type1->ind == type2->ind)
     type2 = nullptr;
 
   this->type1 = type1->ind;
+  type1Changed();
 
   if(type2 != nullptr)
     this->type2 = type2->ind;
   else
     this->type2 = 0xFF;
+  type2Changed();
 }
 
 void PokemonBox::clearMoves()
@@ -455,6 +546,8 @@ void PokemonBox::clearMoves()
     delete move;
 
   moves.clear();
+
+  movesChanged();
 }
 
 // Is this a valid Pokemon? (Is it even in the Pokedex?)
@@ -545,6 +638,7 @@ void PokemonBox::resetExp()
     return;
 
   exp = expLevelRangeStart();
+  expChanged();
 }
 
 var8 PokemonBox::hpDV()
@@ -622,23 +716,35 @@ void PokemonBox::update(bool resetHp,
   if(record == nullptr)
     return;
 
-  if(resetHp)
+  if(resetHp) {
     hp = hpStat();
+    hpChanged();
+  }
 
-  if(resetType && record->toType1)
+  if(resetType && record->toType1) {
     type1 = (*record).toType1->ind;
+    type1Changed();
+  }
 
-  if(resetType && record->toType2)
+  if(resetType && record->toType2) {
     type2 = (*record).toType2->ind;
+    type2Changed();
+  }
 
-  if(resetType && type1 == type2)
+  if(resetType && type1 == type2) {
     type2 = 0xFF;
+    type2Changed();
+  }
 
-  if(resetCatchRate && record->catchRate)
+  if(resetCatchRate && record->catchRate) {
     catchRate = *record->catchRate;
+    catchRateChanged();
+  }
 
-  if(resetExp)
+  if(resetExp) {
     exp = levelToExp();
+    expChanged();
+  }
 }
 
 bool PokemonBox::isHealed()
@@ -662,7 +768,10 @@ bool PokemonBox::isMaxHp()
 void PokemonBox::heal()
 {
   hp = hpStat();
+  hpChanged();
+
   status = 0;
+  statusChanged();
 
   for(auto move : moves)
     move->restorePP();
@@ -684,6 +793,8 @@ void PokemonBox::changeName(bool removeNickname)
     nickname = NamesPokemonDB::randomName();
   else if(removeNickname)
     nickname = toData()->name;
+
+  nicknameChanged();
 }
 
 void PokemonBox::changeOtData(bool removeOtData, PlayerBasics* basics)
@@ -696,6 +807,9 @@ void PokemonBox::changeOtData(bool removeOtData, PlayerBasics* basics)
     otName = basics->playerName;
     otID = basics->playerID;
   }
+
+  otNameChanged();
+  otIDChanged();
 }
 
 void PokemonBox::changeTrade(bool removeTradeStatus, PlayerBasics* basics)
@@ -748,11 +862,13 @@ void PokemonBox::evolve()
   else
     species = record->evolution.at(0)->toEvolution->ind;
 
+  speciesChanged();
+
   // Update name if no nickname
   if(!nickStatus)
     changeName(true);
 
-  // Update all stats
+  // Update all stats, make everything else game accurate
   update(true, true, true, true);
 }
 
@@ -767,12 +883,13 @@ void PokemonBox::deEvolve()
   bool nickStatus = hasNickname();
 
   species = record->toDeEvolution->ind;
+  speciesChanged();
 
   // Update name if no nickname
   if(!nickStatus)
     changeName(true);
 
-  // Update all stats
+  // Update all stats, make everything game accurate
   update(true, true, true, true);
 
   // As for moves, given this is made-up territory, I'm going with evolution
@@ -838,6 +955,8 @@ bool PokemonBox::isMaxDVs()
 void PokemonBox::maxLevel()
 {
   level = 100;
+  levelChanged();
+
   update(true, true);
 }
 
@@ -851,31 +970,54 @@ void PokemonBox::maxDVs()
 {
   for(var8 i = 0; i < 4; i++)
     dv[i] = 15;
+
+  dvChanged();
 }
 
 void PokemonBox::reRollDVs()
 {
   for(var8 i = 0; i < 4; i++)
     dv[i] = Random::rangeInclusive(0, 15);
+
+  dvChanged();
 }
 
 void PokemonBox::maxEVs()
 {
   hpExp = 0xFFFF;
+  hpExpChanged();
+
   atkExp = 0xFFFF;
+  atkExpChanged();
+
   defExp = 0xFFFF;
+  defExpChanged();
+
   spdExp = 0xFFFF;
+  spdExpChanged();
+
   spExp = 0xFFFF;
+  spExpChanged();
+
   update(true);
 }
 
 void PokemonBox::resetEVs()
 {
   hpExp = 0;
+  hpExpChanged();
+
   atkExp = 0;
+  atkExpChanged();
+
   defExp = 0;
+  defExpChanged();
+
   spdExp = 0;
+  spdExpChanged();
+
   spExp = 0;
+  spExpChanged();
 
   update(true);
 }
@@ -893,15 +1035,14 @@ void PokemonBox::maxOut()
 
 void PokemonBox::randomizeMoves()
 {
- for(auto move : moves)
-    delete move;
-
-  moves.clear();
+  clearMoves();
 
   for(var8 i = 0; i < 4; i++) {
     moves.append(new PokemonMove);
     moves.at(i)->randomize();
   }
+
+  movesChanged();
 }
 
 bool PokemonBox::isPokemonReset()
@@ -938,6 +1079,7 @@ bool PokemonBox::isPokemonReset()
 void PokemonBox::resetPokemon()
 {
   level = 5;
+  levelChanged();
 
   auto record = isValid();
   if(record == nullptr)
@@ -948,6 +1090,8 @@ void PokemonBox::resetPokemon()
   for(auto moveData : record->toInitial)
     moves.append(new PokemonMove(moveData->ind, *moveData->pp, 0));
 
+  movesChanged();
+
   resetEVs();
   heal();
   update(true, true, true, true);
@@ -956,30 +1100,73 @@ void PokemonBox::resetPokemon()
 void PokemonBox::copyFrom(PokemonBox* pkmn)
 {
   species = pkmn->species;
+  speciesChanged();
+
   hp = pkmn->hp;
+  hpChanged();
+
   level = pkmn->level;
+  levelChanged();
+
   status = pkmn->status;
+  statusChanged();
+
   type1 = pkmn->type1;
+  type1Changed();
+
   type2 = pkmn->type2;
+  type2Changed();
+
   catchRate = pkmn->catchRate;
+  catchRateChanged();
+
   otID = pkmn->otID;
+  otIDChanged();
+
   exp = pkmn->exp;
+  expChanged();
+
   hpExp = pkmn->hpExp;
+  hpExpChanged();
+
   atkExp = pkmn->atkExp;
+  atkExpChanged();
+
   defExp = pkmn->defExp;
+  defExpChanged();
+
   spdExp = pkmn->spExp;
+  spdExpChanged();
+
   spExp = pkmn->spExp;
+  spExpChanged();
+
   otName = pkmn->otName;
+  otNameChanged();
+
   nickname = pkmn->nickname;
+  nicknameChanged();
 
   dv[0] = pkmn->dv[0];
   dv[1] = pkmn->dv[1];
   dv[2] = pkmn->dv[2];
   dv[3] = pkmn->dv[3];
+  dvChanged();
 
   clearMoves();
 
+  for(auto move : pkmn->moves) {
+    auto m = new PokemonMove;
+    m->pp = move->pp;
+    m->ppUp = move->ppUp;
+    m->moveID = move->moveID;
+    moves.append(m);
+  }
+
+  movesChanged();
+
   type2Explicit = false;
+  type2ExplicitChanged();
 }
 
 PokemonDBEntry* PokemonBox::toData()

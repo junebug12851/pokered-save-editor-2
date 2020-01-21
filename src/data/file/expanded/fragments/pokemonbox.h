@@ -16,6 +16,7 @@
 #ifndef POKEMONBOX_H
 #define POKEMONBOX_H
 
+#include <QObject>
 #include <QVector>
 #include <QString>
 #include "../../../../common/types.h"
@@ -43,28 +44,61 @@ enum class PokemonRandom : var8
   Random_All
 };
 
-struct PokemonMove
+class PokemonMove : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 moveID_ MEMBER moveID NOTIFY moveIDChanged)
+  Q_PROPERTY(var8 pp_ MEMBER pp NOTIFY ppChanged)
+  Q_PROPERTY(var8 ppUp_ MEMBER ppUp NOTIFY ppUpChanged)
+
+public:
   PokemonMove(var8 move = 0, var8 pp = 0, var8 ppUp = 0);
-  MoveDBEntry* toMove();
 
+  Q_INVOKABLE MoveDBEntry* toMove();
+  Q_INVOKABLE bool isMaxPP();
+  Q_INVOKABLE var8 getMaxPP();
+  Q_INVOKABLE bool isMaxPpUps();
+
+signals:
+  void moveIDChanged();
+  void ppChanged();
+  void ppUpChanged();
+
+public slots:
   void randomize();
-
-  bool isMaxPP();
-  var8 getMaxPP();
-
   void maxPpUp();
-  bool isMaxPpUps();
-
   void restorePP();
 
+public:
   var8 moveID;
   var8 pp;
   var8 ppUp;
 };
 
-class PokemonBox
+class PokemonBox : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 species_ MEMBER species NOTIFY speciesChanged)
+  Q_PROPERTY(var16 hp_ MEMBER hp NOTIFY hpChanged)
+  Q_PROPERTY(var8 level_ MEMBER level NOTIFY levelChanged)
+  Q_PROPERTY(var8 status_ MEMBER status NOTIFY statusChanged)
+  Q_PROPERTY(var8 type1_ MEMBER type1 NOTIFY type1Changed)
+  Q_PROPERTY(var8 type2_ MEMBER type2 NOTIFY type2Changed)
+  Q_PROPERTY(var8 catchRate_ MEMBER catchRate NOTIFY catchRateChanged)
+  Q_PROPERTY(var16 otID_ MEMBER otID NOTIFY otIDChanged)
+  Q_PROPERTY(var32 exp_ MEMBER exp NOTIFY expChanged)
+  Q_PROPERTY(var16 hpExp_ MEMBER hpExp NOTIFY hpExpChanged)
+  Q_PROPERTY(var16 atkExp_ MEMBER atkExp NOTIFY atkExpChanged)
+  Q_PROPERTY(var16 defExp_ MEMBER defExp NOTIFY defExpChanged)
+  Q_PROPERTY(var16 spdExp_ MEMBER spdExp NOTIFY spdExpChanged)
+  Q_PROPERTY(var16 spExp_ MEMBER spExp NOTIFY spExpChanged)
+  Q_PROPERTY(QString otName_ MEMBER otName NOTIFY otNameChanged)
+  Q_PROPERTY(QString nickname_ MEMBER nickname NOTIFY nicknameChanged)
+  Q_PROPERTY(QVector<PokemonMove*> moves_ MEMBER moves NOTIFY movesChanged)
+  Q_PROPERTY(bool type2Explicit_ MEMBER type2Explicit NOTIFY type2ExplicitChanged)
+
 public:
   PokemonBox(SaveFile* saveFile = nullptr,
              var16 startOffset = 0,
@@ -89,9 +123,68 @@ public:
 
   // The second overloaded method allows you to give a data record which will be
   // used.
-  static PokemonBox* newPokemon(PokemonRandom list = PokemonRandom::Random_Starters, PlayerBasics* basics = nullptr);
-  static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basics = nullptr);
+  Q_INVOKABLE static PokemonBox* newPokemon(PokemonRandom list = PokemonRandom::Random_Starters, PlayerBasics* basics = nullptr);
+  Q_INVOKABLE static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basics = nullptr);
 
+  // Is this a valid Pokemon? (Is it even in the Pokedex?)
+  Q_INVOKABLE PokemonDBEntry* isValid();
+
+  Q_INVOKABLE var32 levelToExp(svar8 level = -1);
+  Q_INVOKABLE var32 expLevelRangeStart();
+  Q_INVOKABLE var32 expLevelRangeEnd();
+  Q_INVOKABLE float expLevelRangePercent();
+
+  Q_INVOKABLE var8 hpDV(); // Get HP DV
+  Q_INVOKABLE var16 hpStat(); // Get HP Stat
+  Q_INVOKABLE var16 nonHpStat(PokemonStats stat); // Get Non-HP Stat
+
+  // Performs Pokecenter Heal
+  Q_INVOKABLE bool isAfflicted();
+  Q_INVOKABLE bool isHealed();
+  Q_INVOKABLE bool isMaxHp();
+  Q_INVOKABLE bool hasNickname();
+  Q_INVOKABLE bool hasTradeStatus(PlayerBasics* basics = nullptr);
+
+  Q_INVOKABLE bool hasEvolution();
+  Q_INVOKABLE bool hasDeEvolution();
+  Q_INVOKABLE bool isMaxLevel();
+  Q_INVOKABLE bool isMaxPP();
+  Q_INVOKABLE bool isMaxPpUps();
+  Q_INVOKABLE bool isMaxEVs();
+  Q_INVOKABLE bool isMinEvs();
+  Q_INVOKABLE bool isMaxDVs();
+  Q_INVOKABLE bool isPokemonReset();
+
+  Q_INVOKABLE virtual void copyFrom(PokemonBox* pkmn);
+  Q_INVOKABLE PokemonDBEntry* toData();
+
+  Q_INVOKABLE var16 atkStat();
+  Q_INVOKABLE var16 defStat();
+  Q_INVOKABLE var16 spdStat();
+  Q_INVOKABLE var16 spStat();
+
+signals:
+  void speciesChanged();
+  void hpChanged();
+  void levelChanged();
+  void statusChanged();
+  void type1Changed();
+  void type2Changed();
+  void catchRateChanged();
+  void otIDChanged();
+  void expChanged();
+  void hpExpChanged();
+  void atkExpChanged();
+  void defExpChanged();
+  void spdExpChanged();
+  void spExpChanged();
+  void dvChanged();
+  void otNameChanged();
+  void nicknameChanged();
+  void movesChanged();
+  void type2ExplicitChanged();
+
+public slots:
   virtual SaveFileIterator* load(SaveFile* saveFile = nullptr,
             var16 startOffset = 0,
             var16 nicknameStartOffset = 0,
@@ -114,19 +207,7 @@ public:
   virtual void reset();
   virtual void randomize(PlayerBasics* basics = nullptr);
   void clearMoves();
-
-  // Is this a valid Pokemon? (Is it even in the Pokedex?)
-  PokemonDBEntry* isValid();
-
-  var32 levelToExp(svar8 level = -1);
-  var32 expLevelRangeStart();
-  var32 expLevelRangeEnd();
-  float expLevelRangePercent();
   void resetExp();
-
-  var8 hpDV(); // Get HP DV
-  var16 hpStat(); // Get HP Stat
-  var16 nonHpStat(PokemonStats stat); // Get Non-HP Stat
 
   // Re-calculate stats and resetting them to updated values
   // HP and Exp are optional because their values will be lost if updated
@@ -136,57 +217,27 @@ public:
               bool resetType = false,
               bool resetCatchRate = false);
 
-  // Performs Pokecenter Heal
-  bool isAfflicted();
-  bool isHealed();
-  bool isMaxHp();
   void heal();
 
   // Remove or Randomize nickname/ OT Data
   // Removing requires saveFile
-  bool hasNickname();
-  bool hasTradeStatus(PlayerBasics* basics = nullptr);
   void changeName(bool removeNickname = false);
   void changeOtData(bool removeOtData = false, PlayerBasics* basics = nullptr);
   void changeTrade(bool removeTradeStatus = false, PlayerBasics* basics = nullptr);
 
-  bool hasEvolution();
-  bool hasDeEvolution();
   void evolve();
   void deEvolve();
-
-  bool isMaxLevel();
   void maxLevel();
-
-  bool isMaxPP();
-
-  bool isMaxPpUps();
   void maxPpUps();
-
-  bool isMaxEVs();
-  bool isMinEvs();
   void maxEVs();
   void resetEVs();
-
-  bool isMaxDVs();
   void maxDVs();
   void reRollDVs();
-
   void maxOut();
   void randomizeMoves();
-
-  bool isPokemonReset();
   void resetPokemon();
 
-  virtual void copyFrom(PokemonBox* pkmn);
-
-  PokemonDBEntry* toData();
-
-  var16 atkStat();
-  var16 defStat();
-  var16 spdStat();
-  var16 spStat();
-
+public:
   var8 species;
   var16 hp;
   var8 level;

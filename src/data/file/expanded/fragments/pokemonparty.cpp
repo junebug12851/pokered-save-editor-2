@@ -35,8 +35,9 @@ SaveFileIterator* PokemonParty::load(SaveFile* saveFile,
                         var16 otNameStartOffset,
                         var8 index)
 {
+  reset();
+
   if(saveFile == nullptr) {
-    reset();
     return nullptr;
   }
 
@@ -48,11 +49,22 @@ SaveFileIterator* PokemonParty::load(SaveFile* saveFile,
                              0x2C);
 
   level = it->getByte();
+  levelChanged();
+
   maxHP = it->getWord();
+  maxHPChanged();
+
   attack = it->getWord();
+  attackChanged();
+
   defense = it->getWord();
+  defenseChanged();
+
   speed = it->getWord();
+  speedChanged();
+
   special = it->getWord();
+  specialChanged();
 
   return it;
 }
@@ -85,11 +97,21 @@ SaveFileIterator* PokemonParty::save(SaveFile* saveFile,
 void PokemonParty::reset()
 {
   PokemonBox::reset();
+
   maxHP = 0;
+  maxHPChanged();
+
   attack = 0;
+  attackChanged();
+
   defense = 0;
+  defenseChanged();
+
   speed = 0;
+  speedChanged();
+
   special = 0;
+  specialChanged();
 }
 
 void PokemonParty::randomize(PlayerBasics* basics)
@@ -108,10 +130,19 @@ void PokemonParty::regenStats()
     return;
 
   maxHP = hpStat();
+  maxHPChanged();
+
   attack = atkStat();
+  attackChanged();
+
   defense = defStat();
+  defenseChanged();
+
   speed = spdStat();
+  speedChanged();
+
   special = spStat();
+  specialChanged();
 }
 
 void PokemonParty::update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate)

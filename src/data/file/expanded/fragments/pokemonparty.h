@@ -22,6 +22,14 @@ class SaveFile;
 
 class PokemonParty : public PokemonBox
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var16 maxHP_ MEMBER maxHP NOTIFY maxHPChanged)
+  Q_PROPERTY(var16 attack_ MEMBER attack NOTIFY attackChanged)
+  Q_PROPERTY(var16 defense_ MEMBER defense NOTIFY defenseChanged)
+  Q_PROPERTY(var16 speed_ MEMBER speed NOTIFY speedChanged)
+  Q_PROPERTY(var16 special_ MEMBER special NOTIFY specialChanged)
+
 public:
   PokemonParty(SaveFile* saveFile = nullptr,
                var16 offset = 0,
@@ -31,6 +39,16 @@ public:
 
   virtual ~PokemonParty();
 
+  Q_INVOKABLE virtual void copyFrom(PokemonBox* pkmn);
+
+signals:
+  void maxHPChanged();
+  void attackChanged();
+  void defenseChanged();
+  void speedChanged();
+  void specialChanged();
+
+public slots:
   SaveFileIterator* load(SaveFile* saveFile = nullptr,
             var16 offset = 0,
             var16 nicknameStartOffset = 0,
@@ -47,10 +65,9 @@ public:
   void reset();
   void randomize(PlayerBasics* basics = nullptr);
   void regenStats();
-
   virtual void update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate);
-  virtual void copyFrom(PokemonBox* pkmn);
 
+public:
   // Pre-generated stats when not in box
   var16 maxHP;
   var16 attack;

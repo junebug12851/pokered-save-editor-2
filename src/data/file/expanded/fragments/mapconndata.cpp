@@ -30,21 +30,37 @@ MapConnData::~MapConnData() {}
 
 void MapConnData::load(SaveFile* saveFile, var16 offset)
 {
+  reset();
+
   if(saveFile == nullptr) {
-    reset();
     return;
   }
 
   auto it = saveFile->iterator()->offsetTo(offset);
 
   mapPtr = it->getByte();
+  mapPtrChanged();
+
   stripSrc = it->getWord(0, true);
+  stripSrcChanged();
+
   stripDst = it->getWord(0, true);
+  stripDstChanged();
+
   stripWidth = it->getByte();
+  stripWidthChanged();
+
   width = it->getByte();
+  widthChanged();
+
   yAlign = it->getByte();
+  yAlignChanged();
+
   xAlign = it->getByte();
+  xAlignChanged();
+
   viewPtr = it->getWord(0, true);
+  viewPtrChanged();
 
   delete it;
 }
@@ -68,24 +84,54 @@ void MapConnData::save(SaveFile* saveFile, var16 offset)
 void MapConnData::reset()
 {
   mapPtr = 0;
+  mapPtrChanged();
+
   stripSrc = 0;
+  stripSrcChanged();
+
   stripDst = 0;
+  stripDstChanged();
+
   stripWidth = 0;
+  stripWidthChanged();
+
   width = 0;
+  widthChanged();
+
   yAlign = 0;
+  yAlignChanged();
+
   xAlign = 0;
+  xAlignChanged();
+
   viewPtr = 0;
+  viewPtrChanged();
 }
 
 void MapConnData::loadFromData(MapDBEntryConnect* connect) {
   width = *connect->toMap->width;
+  widthChanged();
+
   mapPtr = connect->toMap->ind;
+  mapPtrChanged();
+
   stripSrc = connect->stripLocation();
+  stripSrcChanged();
+
   stripDst = connect->mapPos();
+  stripDstChanged();
+
   stripWidth = connect->stripSize();
+  stripWidthChanged();
+
   yAlign = connect->yAlign();
+  yAlignChanged();
+
   xAlign = connect->xAlign();
+  xAlignChanged();
+
   viewPtr = connect->window();
+  viewPtrChanged();
 }
 
 MapDBEntry* MapConnData::toMap()
