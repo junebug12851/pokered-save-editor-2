@@ -16,6 +16,7 @@
 #ifndef AREAPOKEMON_H
 #define AREAPOKEMON_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 
@@ -24,13 +25,25 @@ class SaveFileIterator;
 
 constexpr var8 wildMonsCount = 10;
 
-struct AreaPokemonWild {
+class AreaPokemonWild : public QObject {
+
+  Q_OBJECT
+
+  Q_PROPERTY(var8 index_ MEMBER index NOTIFY indexChanged)
+  Q_PROPERTY(var8 level_ MEMBER level NOTIFY levelChanged)
+
+public:
   AreaPokemonWild(var8 index = 0, var8 level = 0);
   AreaPokemonWild(bool random);
 
   bool operator<(const AreaPokemonWild& a);
   bool operator>(const AreaPokemonWild& a);
 
+signals:
+  void indexChanged();
+  void levelChanged();
+
+public slots:
   // Generates a random Pokemon from any dex entry and level
   void randomize();
   void reset();
@@ -38,6 +51,7 @@ struct AreaPokemonWild {
   void load(SaveFileIterator* it);
   void save(SaveFileIterator* it);
 
+public:
   // Pokemon index number and level
   var8 index;
   var8 level;
@@ -60,20 +74,36 @@ struct AreaPokemonWild {
      * Pokemon 8: 4.3% chance
      * Pokemon 9: 1.2% chance
      */
-class AreaPokemon
+class AreaPokemon : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 grassRate_ MEMBER grassRate NOTIFY grassRateChanged)
+  Q_PROPERTY(var8 waterRate_ MEMBER waterRate NOTIFY waterRateChanged)
+  Q_PROPERTY(bool pauseMons3Steps_ MEMBER pauseMons3Steps NOTIFY pauseMons3StepsChanged)
+
+  // C++ Arrays can't be Q_PROPERTY and don't need a signal because they are
+  // pre-created with only their contents changing and have no properties of
+  // their own
+
 public:
   AreaPokemon(SaveFile* saveFile = nullptr);
   virtual ~AreaPokemon();
 
+signals:
+  void grassRateChanged();
+  void waterRateChanged();
+  void pauseMons3StepsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   // There are exactly 10 wild Pokemon in areas that have wild Pokemon
   // Create 10 entries each, no more or less
-
   var8 grassRate;
   AreaPokemonWild* grassMons[wildMonsCount];
 

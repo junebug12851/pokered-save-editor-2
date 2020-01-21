@@ -16,6 +16,7 @@
 #ifndef AREASIGN_H
 #define AREASIGN_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 
@@ -23,17 +24,26 @@ class SaveFile;
 class SignData;
 class MapDBEntry;
 
-class AreaSign
+class AreaSign : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QVector<SignData*> signs_ MEMBER signs NOTIFY signsChanged)
+
 public:
   AreaSign(SaveFile* saveFile = nullptr);
   virtual ~AreaSign();
 
+signals:
+  void signsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize(MapDBEntry* mapData);
 
+public:
   QVector<SignData*> signs;
 };
 

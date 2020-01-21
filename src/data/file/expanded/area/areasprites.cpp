@@ -50,6 +50,8 @@ void AreaSprites::load(SaveFile* saveFile)
   for (var8 i = 0; i < spriteCount && i < 16; i++) {
     sprites.append(new SpriteData(false, saveFile, i));
   }
+
+  spritesChanged();
 }
 
 void AreaSprites::save(SaveFile* saveFile)
@@ -71,10 +73,12 @@ void AreaSprites::reset()
     delete entry;
 
   sprites.clear();
+  spritesChanged();
 }
 
 void AreaSprites::randomize(QVector<MapDBEntrySprite*> spriteData)
 {
   reset();
   sprites = SpriteData::randomizeAll(spriteData);
+  spritesChanged();
 }

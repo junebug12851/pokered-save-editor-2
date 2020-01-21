@@ -43,29 +43,43 @@ bool AreaPokemonWild::operator>(const AreaPokemonWild& a)
 
 void AreaPokemonWild::randomize()
 {
+  reset();
+
   auto mon = PokemonDB::ind.value(
         "dex" + QString::number(Random::rangeExclusive(0, pokemonDexCount)));
 
   index = mon->ind;
+  indexChanged();
+
   level = Random::rangeInclusive(5, pokemonLevelMax);
+  levelChanged();
 }
 
 void AreaPokemonWild::reset()
 {
   index = 0;
+  indexChanged();
+
   level = 0;
+  levelChanged();
 }
 
 void AreaPokemonWild::load(var8 index, var8 level)
 {
   this->index = index;
+  indexChanged();
+
   this->level = level;
+  levelChanged();
 }
 
 void AreaPokemonWild::load(SaveFileIterator* it)
 {
   index = it->getByte();
+  indexChanged();
+
   level = it->getByte();
+  levelChanged();
 }
 
 void AreaPokemonWild::save(SaveFileIterator* it)
@@ -104,8 +118,13 @@ void AreaPokemon::load(SaveFile* saveFile)
   auto it = saveFile->iterator();
 
   pauseMons3Steps = toolset->getBit(0x29D8, 1, 0);
+  pauseMons3StepsChanged();
+
   grassRate = toolset->getByte(0x2B33);
+  grassRateChanged();
+
   waterRate = toolset->getByte(0x2B50);
+  waterRateChanged();
 
   // Only load wild land Pokemon if present. An encounter rate of zero means
   // They're not present.
@@ -153,8 +172,13 @@ void AreaPokemon::save(SaveFile* saveFile)
 void AreaPokemon::reset()
 {
   grassRate = 0;
+  grassRateChanged();
+
   waterRate = 0;
+  waterRateChanged();
+
   pauseMons3Steps = false;
+  pauseMons3StepsChanged();
 
   for(var8 i = 0; i < wildMonsCount; i++) {
     grassMons[i]->reset();
@@ -168,7 +192,10 @@ void AreaPokemon::randomize()
 
   // Give a reasonable grass and water rate randomization
   grassRate = Random::rangeInclusive(0, 35);
+  grassRateChanged();
+
   waterRate = Random::rangeInclusive(0, 35);
+  waterRateChanged();
 
   if(grassRate > 0)
     for(var8 i = 0; i < wildMonsCount; i++)

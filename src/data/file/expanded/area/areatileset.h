@@ -16,23 +16,55 @@
 #ifndef AREATILESET_H
 #define AREATILESET_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 
 class SaveFile;
 struct MapDBEntry;
 
-class AreaTileset
+class AreaTileset : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 current_ MEMBER current NOTIFY currentChanged)
+  Q_PROPERTY(var8 grassTile_ MEMBER grassTile NOTIFY grassTileChanged)
+  Q_PROPERTY(var8 boulderIndex_ MEMBER boulderIndex NOTIFY boulderIndexChanged)
+  Q_PROPERTY(var8 boulderColl_ MEMBER boulderColl NOTIFY boulderCollChanged)
+  Q_PROPERTY(var8 type_ MEMBER type NOTIFY typeChanged)
+  Q_PROPERTY(var8 bank_ MEMBER bank NOTIFY bankChanged)
+  Q_PROPERTY(var16 blockPtr_ MEMBER blockPtr NOTIFY blockPtrChanged)
+  Q_PROPERTY(var16 gfxPtr_ MEMBER gfxPtr NOTIFY gfxPtrChanged)
+  Q_PROPERTY(var16 collPtr_ MEMBER collPtr NOTIFY collPtrChanged)
+
 public:
   AreaTileset(SaveFile* saveFile = nullptr);
   virtual ~AreaTileset();
 
+  // Sort of a work around for Qt Quick and C++ Array
+  // Can't be a Q_PROPERTY because we need an index argument
+  Q_INVOKABLE var8 getTalkingOverTile(var8 ind);
+  Q_INVOKABLE void setTalkingOverTile(var8 ind, var8 val);
+
+signals:
+  void currentChanged();
+  void talkingOverTilesChanged();
+  void grassTileChanged();
+  void boulderIndexChanged();
+  void boulderCollChanged();
+  void typeChanged();
+  void bankChanged();
+  void blockPtrChanged();
+  void gfxPtrChanged();
+  void collPtrChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
   void loadFromData(MapDBEntry* map, bool randomType = false);
 
+public:
   // Which tileset to use. Changing this will make the map
   // unplayable unless you know what your doing.
   var8 current;

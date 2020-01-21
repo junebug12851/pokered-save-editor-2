@@ -16,6 +16,7 @@
 #ifndef AREAWARPS_H
 #define AREAWARPS_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 
@@ -23,17 +24,50 @@ class SaveFile;
 class WarpData;
 class MapDBEntry;
 
-class AreaWarps
+class AreaWarps : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(bool scriptedWarp_ MEMBER scriptedWarp NOTIFY scriptedWarpChanged)
+  Q_PROPERTY(bool isDungeonWarp_ MEMBER isDungeonWarp NOTIFY isDungeonWarpChanged)
+  Q_PROPERTY(bool skipJoypadCheckWarps_ MEMBER skipJoypadCheckWarps NOTIFY skipJoypadCheckWarpsChanged)
+  Q_PROPERTY(var8 warpDest_ MEMBER warpDest NOTIFY warpDestChanged)
+  Q_PROPERTY(var8 dungeonWarpDestMap_ MEMBER dungeonWarpDestMap NOTIFY dungeonWarpDestMapChanged)
+  Q_PROPERTY(var8 specialWarpDestMap_ MEMBER specialWarpDestMap NOTIFY specialWarpDestMapChanged)
+  Q_PROPERTY(bool flyOrDungeonWarp_ MEMBER flyOrDungeonWarp NOTIFY flyOrDungeonWarpChanged)
+  Q_PROPERTY(bool flyWarp_ MEMBER flyWarp NOTIFY flyWarpChanged)
+  Q_PROPERTY(bool dungeonWarp_ MEMBER dungeonWarp NOTIFY dungeonWarpChanged)
+  Q_PROPERTY(var8 whichDungeonWarp_ MEMBER whichDungeonWarp NOTIFY whichDungeonWarpChanged)
+  Q_PROPERTY(var8 warpedFromWarp_ MEMBER warpedFromWarp NOTIFY warpedFromWarpChanged)
+  Q_PROPERTY(var8 warpedfromMap_ MEMBER warpedfromMap NOTIFY warpedfromMapChanged)
+  Q_PROPERTY(QVector<WarpData*> warps_ MEMBER warps NOTIFY warpsChanged)
+
 public:
   AreaWarps(SaveFile* saveFile = nullptr);
   virtual ~AreaWarps();
 
+signals:
+  void scriptedWarpChanged();
+  void isDungeonWarpChanged();
+  void skipJoypadCheckWarpsChanged();
+  void warpDestChanged();
+  void dungeonWarpDestMapChanged();
+  void specialWarpDestMapChanged();
+  void flyOrDungeonWarpChanged();
+  void flyWarpChanged();
+  void dungeonWarpChanged();
+  void whichDungeonWarpChanged();
+  void warpedFromWarpChanged();
+  void warpedfromMapChanged();
+  void warpsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize(MapDBEntry* map);
 
+public:
   // Pre-Warp
   bool scriptedWarp; // Do a scripted warp
   bool isDungeonWarp; // On a dungeon warp

@@ -16,21 +16,35 @@
 #ifndef AREAPUZZLE_H
 #define AREAPUZZLE_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 
 class SaveFile;
 
-class AreaPuzzle
+class AreaPuzzle : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 lock1_ MEMBER lock1 NOTIFY lock1Changed)
+  Q_PROPERTY(var8 lock2_ MEMBER lock2 NOTIFY lock2Changed)
+  Q_PROPERTY(var8 quizOpp_ MEMBER quizOpp NOTIFY quizOppChanged)
+
 public:
   AreaPuzzle(SaveFile* saveFile = nullptr);
   virtual ~AreaPuzzle();
 
+signals:
+  void lock1Changed();
+  void lock2Changed();
+  void quizOppChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   // Lt. Surge Trash Can Locks
   var8 lock1;
   var8 lock2;

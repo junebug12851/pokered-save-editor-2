@@ -27,14 +27,21 @@ AreaPuzzle::~AreaPuzzle() {}
 
 void AreaPuzzle::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
   lock1 = toolset->getByte(0x29EF);
+  lock1Changed();
+
   lock2 = toolset->getByte(0x29F0);
+  lock2Changed();
+
   quizOpp = toolset->getByte(0x2CE4);
+  quizOppChanged();
 }
 
 void AreaPuzzle::save(SaveFile* saveFile)
@@ -49,9 +56,16 @@ void AreaPuzzle::save(SaveFile* saveFile)
 void AreaPuzzle::reset()
 {
   lock1 = 0;
+  lock1Changed();
+
   lock2 = 0;
+  lock2Changed();
+
   quizOpp = 0;
+  quizOppChanged();
 }
 
 // Don't know the range to randomize
-void AreaPuzzle::randomize() {}
+void AreaPuzzle::randomize() {
+  reset();
+}

@@ -43,6 +43,8 @@ void AreaSign::load(SaveFile* saveFile)
   for (var8 i = 0; i < toolset->getByte(0x275C) && i < 16; i++) {
     signs.append(new SignData(saveFile, i));
   }
+
+  signsChanged();
 }
 
 void AreaSign::save(SaveFile* saveFile)
@@ -61,6 +63,8 @@ void AreaSign::reset()
     delete sign;
 
   signs.clear();
+
+  signsChanged();
 }
 
 void AreaSign::randomize(MapDBEntry* mapData)
@@ -73,4 +77,5 @@ void AreaSign::randomize(MapDBEntry* mapData)
 
   // Randomize them all if present
   signs = SignData::randomizeAll(signData);
+  signsChanged();
 }
