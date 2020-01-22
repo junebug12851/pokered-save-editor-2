@@ -32,8 +32,10 @@ WorldMissables::~WorldMissables() {}
 
 void WorldMissables::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
@@ -42,6 +44,8 @@ void WorldMissables::load(SaveFile* saveFile)
 
   for(var8 i = 0; i < bits.size() && i < missableCount; i++)
     missables[i] = bits.at(i);
+
+  missablesChanged();
 }
 
 void WorldMissables::save(SaveFile* saveFile)
@@ -64,8 +68,12 @@ void WorldMissables::reset()
   // 1 = Hide, 0 = Show, ensure it's marked one if it's hidden
   for(auto missable : MissablesDB::store)
     missables[missable->ind] = !missable->defShow;
+
+  missablesChanged();
 }
 
 // Missables is not something you can blantly randomize, the game will likely
 // crash. Also we want the player to progress through the game normaly.
-void WorldMissables::randomize() {}
+void WorldMissables::randomize() {
+  reset();
+}

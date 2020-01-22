@@ -16,23 +16,31 @@
 #ifndef WORLDTRADES_H
 #define WORLDTRADES_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
 constexpr var8 tradeCount = 10;
 constexpr var8 tradeByteCount = 2; // 6 of 16 bits unused
 
-class WorldTrades
+class WorldTrades : public QObject
 {
+  Q_OBJECT
+
 public:
   WorldTrades(SaveFile* saveFile = nullptr);
   virtual ~WorldTrades();
 
+signals:
+  void completedTradesChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   bool completedTrades[tradeCount];
 };
 

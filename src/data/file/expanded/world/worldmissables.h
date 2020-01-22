@@ -16,6 +16,7 @@
 #ifndef WORLDMISSABLES_H
 #define WORLDMISSABLES_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -25,17 +26,24 @@ class SaveFile;
 constexpr var8 missableCount = 228;
 constexpr var8 missableByteCount = 29; // 4 bits unused of 232
 
-class WorldMissables
+class WorldMissables : public QObject
 {
+  Q_OBJECT
+
 public:
   WorldMissables(SaveFile* saveFile = nullptr);
   virtual ~WorldMissables();
 
+signals:
+  void missablesChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   bool missables[missableCount];
 };
 

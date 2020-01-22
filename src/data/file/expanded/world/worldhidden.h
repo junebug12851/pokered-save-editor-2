@@ -16,6 +16,7 @@
 #ifndef WORLDHIDDEN_H
 #define WORLDHIDDEN_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -27,17 +28,25 @@ constexpr var8 hiddenCoinCount = 12;
 constexpr var8 hiddenItemByteCount = 7; // 2 Bits of 56 unused
 constexpr var8 hiddenCoinByteCount = 2; // 4 Bits of 16 unused
 
-class WorldHidden
+class WorldHidden : public QObject
 {
+  Q_OBJECT
+
 public:
   WorldHidden(SaveFile* saveFile = nullptr);
   virtual ~WorldHidden();
 
+signals:
+  void hiddenItemsChanged();
+  void hiddenCoinsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   bool hiddenItems[hiddenItemCount];
   bool hiddenCoins[hiddenCoinCount];
 };

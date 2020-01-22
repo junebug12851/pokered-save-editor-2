@@ -16,6 +16,7 @@
 #ifndef WORLDSCRIPTS_H
 #define WORLDSCRIPTS_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -23,17 +24,24 @@ class SaveFile;
 // read
 constexpr var8 scriptCount = 97;
 
-class WorldScripts
+class WorldScripts : public QObject
 {
+  Q_OBJECT
+
 public:
   WorldScripts(SaveFile* saveFile = nullptr);
   virtual ~WorldScripts();
 
+signals:
+  void curScriptsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   var16 curScripts[scriptCount];
 };
 

@@ -16,23 +16,31 @@
 #ifndef WORLDTOWNS_H
 #define WORLDTOWNS_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
 constexpr var8 townCount = 11;
 constexpr var8 townByteCount = 2; // 5 bits of 16 unused
 
-class WorldTowns
+class WorldTowns : public QObject
 {
+  Q_OBJECT
+
 public:
   WorldTowns(SaveFile* saveFile = nullptr);
   virtual ~WorldTowns();
 
+signals:
+  void visitedTownsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   bool visitedTowns[townCount];
 };
 

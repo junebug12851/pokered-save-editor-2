@@ -60,8 +60,8 @@ class WorldGeneral : public QObject
 
   Q_PROPERTY(var8 lastBlackoutMap_ MEMBER lastBlackoutMap NOTIFY lastBlackoutMapChanged)
   Q_PROPERTY(var8 lastMap_ MEMBER lastMap NOTIFY lastMapChanged)
-  Q_PROPERTY(Options options_ MEMBER options NOTIFY optionsChanged)
-  Q_PROPERTY(LetterDelay letterDelay_ MEMBER letterDelay NOTIFY letterDelayChanged)
+  Q_PROPERTY(Options* options_ MEMBER options NOTIFY optionsChanged)
+  Q_PROPERTY(LetterDelay* letterDelay_ MEMBER letterDelay NOTIFY letterDelayChanged)
 
 public:
   WorldGeneral(SaveFile* saveFile = nullptr);
@@ -82,8 +82,8 @@ public slots:
 public:
   var8 lastBlackoutMap;
   var8 lastMap;
-  Options options;
-  LetterDelay letterDelay;
+  Options* options;
+  LetterDelay* letterDelay;
 };
 
 #endif // WORLDGENERAL_H

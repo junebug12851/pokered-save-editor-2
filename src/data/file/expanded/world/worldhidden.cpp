@@ -44,11 +44,15 @@ void WorldHidden::load(SaveFile* saveFile)
   for(var8 i = 0; i < bits.size() && i < hiddenItemCount; i++)
     hiddenItems[i] = bits.at(i);
 
+  hiddenItemsChanged();
+
   // Load hidden coins
   bits = toolset->getBitField(0x29AA, hiddenCoinByteCount);
 
   for(var8 i = 0; i < bits.size() && i < hiddenCoinCount; i++)
     hiddenCoins[i] = bits.at(i);
+
+  hiddenCoinsChanged();
 }
 
 void WorldHidden::save(SaveFile* saveFile)
@@ -74,7 +78,10 @@ void WorldHidden::save(SaveFile* saveFile)
 void WorldHidden::reset()
 {
   memset(hiddenItems, 0, hiddenItemCount);
+  hiddenItemsChanged();
+
   memset(hiddenCoins, 0, hiddenCoinCount);
+  hiddenCoinsChanged();
 }
 
 // I want the player to collect the hidden items and coins

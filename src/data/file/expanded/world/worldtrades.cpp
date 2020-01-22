@@ -30,8 +30,10 @@ WorldTrades::~WorldTrades() {}
 
 void WorldTrades::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
@@ -39,6 +41,8 @@ void WorldTrades::load(SaveFile* saveFile)
 
   for(var8 i = 0; i < bits.size() && i < tradeCount; i++)
     completedTrades[i] = bits.at(i);
+
+  completedTradesChanged();
 }
 
 void WorldTrades::save(SaveFile* saveFile)
@@ -56,6 +60,7 @@ void WorldTrades::save(SaveFile* saveFile)
 void WorldTrades::reset()
 {
   memset(completedTrades, 0, tradeCount);
+  completedTradesChanged();
 }
 
 // Don't randomize or complete any trades

@@ -24,10 +24,15 @@
 
 WorldGeneral::WorldGeneral(SaveFile* saveFile)
 {
+  options = new Options;
+  letterDelay = new LetterDelay;
   load(saveFile);
 }
 
-WorldGeneral::~WorldGeneral() {}
+WorldGeneral::~WorldGeneral() {
+  delete options;
+  delete letterDelay;
+}
 
 void WorldGeneral::load(SaveFile* saveFile)
 {
@@ -39,20 +44,20 @@ void WorldGeneral::load(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
 
   // Bits 0-3 [max 15]
-  options.textSlowness = toolset->getByte(0x2601) & 0b00001111;
-  options.textSlownessChanged();
+  options->textSlowness = toolset->getByte(0x2601) & 0b00001111;
+  options->textSlownessChanged();
 
-  options.battleStyleSet = toolset->getBit(0x2601, 1, 6);
-  options.battleStyleSetChanged();
+  options->battleStyleSet = toolset->getBit(0x2601, 1, 6);
+  options->battleStyleSetChanged();
 
-  options.battleAnimOff = toolset->getBit(0x2601, 1, 7);
-  options.battleAnimOffChanged();
+  options->battleAnimOff = toolset->getBit(0x2601, 1, 7);
+  options->battleAnimOffChanged();
 
-  letterDelay.normalDelay = toolset->getBit(0x2604, 1, 0);
-  letterDelay.normalDelayChanged();
+  letterDelay->normalDelay = toolset->getBit(0x2604, 1, 0);
+  letterDelay->normalDelayChanged();
 
-  letterDelay.dontDelay = toolset->getBit(0x2604, 1, 1);
-  letterDelay.dontDelayChanged();
+  letterDelay->dontDelay = toolset->getBit(0x2604, 1, 1);
+  letterDelay->dontDelayChanged();
 
   lastBlackoutMap = toolset->getByte(0x29C5);
   lastBlackoutMapChanged();
@@ -65,12 +70,12 @@ void WorldGeneral::save(SaveFile* saveFile)
 {
   auto toolset = saveFile->toolset;
 
-  toolset->setByte(0x2601, options.textSlowness);
-  toolset->setBit(0x2601, 1, 6, options.battleStyleSet);
-  toolset->setBit(0x2601, 1, 7, options.battleAnimOff);
+  toolset->setByte(0x2601, options->textSlowness);
+  toolset->setBit(0x2601, 1, 6, options->battleStyleSet);
+  toolset->setBit(0x2601, 1, 7, options->battleAnimOff);
 
-  toolset->setBit(0x2604, 1, 0, letterDelay.normalDelay);
-  toolset->setBit(0x2604, 1, 1, letterDelay.dontDelay);
+  toolset->setBit(0x2604, 1, 0, letterDelay->normalDelay);
+  toolset->setBit(0x2604, 1, 1, letterDelay->dontDelay);
 
   toolset->setByte(0x29C5, lastBlackoutMap);
   toolset->setByte(0x2611, lastMap);
@@ -84,20 +89,20 @@ void WorldGeneral::reset()
   lastMap = 0;
   lastMapChanged();
 
-  options.textSlowness = 0;
-  options.textSlownessChanged();
+  options->textSlowness = 0;
+  options->textSlownessChanged();
 
-  options.battleStyleSet = false;
-  options.battleStyleSetChanged();
+  options->battleStyleSet = false;
+  options->battleStyleSetChanged();
 
-  options.battleAnimOff = false;
-  options.battleAnimOffChanged();
+  options->battleAnimOff = false;
+  options->battleAnimOffChanged();
 
-  letterDelay.normalDelay = false;
-  letterDelay.normalDelayChanged();
+  letterDelay->normalDelay = false;
+  letterDelay->normalDelayChanged();
 
-  letterDelay.dontDelay = false;
-  letterDelay.dontDelayChanged();
+  letterDelay->dontDelay = false;
+  letterDelay->dontDelayChanged();
 }
 
 void WorldGeneral::randomize()
@@ -113,21 +118,21 @@ void WorldGeneral::randomize()
   lastMapChanged();
 
   // Odds are your text is going to be pretty slow lol
-  options.textSlowness = Random::rangeInclusive(0, 15);
-  options.textSlownessChanged();
+  options->textSlowness = Random::rangeInclusive(0, 15);
+  options->textSlownessChanged();
 
   // 20% chance to have battle style set and animations off
-  options.battleStyleSet = Random::chanceSuccess(20);
-  options.battleStyleSetChanged();
+  options->battleStyleSet = Random::chanceSuccess(20);
+  options->battleStyleSetChanged();
 
-  options.battleAnimOff = Random::chanceSuccess(20);
-  options.battleAnimOffChanged();
+  options->battleAnimOff = Random::chanceSuccess(20);
+  options->battleAnimOffChanged();
 
   // 90% chance to have normal letter delay
-  letterDelay.normalDelay = Random::chanceSuccess(90);
-  letterDelay.normalDelayChanged();
+  letterDelay->normalDelay = Random::chanceSuccess(90);
+  letterDelay->normalDelayChanged();
 
   // 10% chance to not delay letters
-  letterDelay.dontDelay = Random::chanceSuccess(10);
-  letterDelay.dontDelayChanged();
+  letterDelay->dontDelay = Random::chanceSuccess(10);
+  letterDelay->dontDelayChanged();
 }

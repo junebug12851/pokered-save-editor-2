@@ -32,8 +32,10 @@ WorldTowns::~WorldTowns() {}
 
 void WorldTowns::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
@@ -41,6 +43,8 @@ void WorldTowns::load(SaveFile* saveFile)
 
   for(var8 i = 0; i < bits.size() && i < townCount; i++)
     visitedTowns[i] = bits.at(i);
+
+  visitedTownsChanged();
 }
 
 void WorldTowns::save(SaveFile* saveFile)
@@ -58,6 +62,7 @@ void WorldTowns::save(SaveFile* saveFile)
 void WorldTowns::reset()
 {
   memset(visitedTowns, 0, townCount);
+  visitedTownsChanged();
 }
 
 void WorldTowns::randomize()
@@ -79,4 +84,6 @@ void WorldTowns::randomize()
     // Give a 15% chance of enabling each town
     visitedTowns[i] = Random::chanceSuccess(15);
   }
+
+  visitedTownsChanged();
 }

@@ -16,12 +16,29 @@
 #ifndef WORLDOTHER_H
 #define WORLDOTHER_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
 // Counts playtime up to
 // 10 days, 15 hours, 59 minutes, 59 seconds, and 59 frames
-struct Playtime {
+class Playtime : public QObject {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 hours_ MEMBER hours NOTIFY hoursChanged)
+  Q_PROPERTY(var8 minutes_ MEMBER minutes NOTIFY minutesChanged)
+  Q_PROPERTY(var8 seconds_ MEMBER seconds NOTIFY secondsChanged)
+  Q_PROPERTY(var8 frames_ MEMBER frames NOTIFY framesChanged)
+  Q_PROPERTY(var8 clockMaxed_ MEMBER clockMaxed NOTIFY clockMaxedChanged)
+
+signals:
+  void hoursChanged();
+  void minutesChanged();
+  void secondsChanged();
+  void framesChanged();
+  void clockMaxedChanged();
+
+public:
   var8 hours; // Max 255
   var8 minutes; // Max 59, any higher will reset to zero and increment hr by 1
   var8 seconds; // Max 59, any higher will reset to zero and increment min by 1
@@ -31,22 +48,37 @@ struct Playtime {
   var8 clockMaxed;
 };
 
-class WorldOther
+class WorldOther : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(bool debugMode_ MEMBER debugMode NOTIFY debugModeChanged)
+  Q_PROPERTY(Playtime* playtime_ MEMBER playtime NOTIFY playtimeChanged)
+  Q_PROPERTY(var8 fossilItemGiven_ MEMBER fossilItemGiven NOTIFY fossilItemGivenChanged)
+  Q_PROPERTY(var8 fossilPkmnResult_ MEMBER fossilPkmnResult NOTIFY fossilPkmnResultChanged)
+
 public:
   WorldOther(SaveFile* saveFile = nullptr);
   virtual ~WorldOther();
 
+signals:
+  void debugModeChanged();
+  void playtimeChanged();
+  void fossilItemGivenChanged();
+  void fossilPkmnResultChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   // Hold B to avoid wild battles
   bool debugMode;
 
   // Playtime
-  Playtime playtime;
+  Playtime* playtime;
 
   // Fossils
   var8 fossilItemGiven;

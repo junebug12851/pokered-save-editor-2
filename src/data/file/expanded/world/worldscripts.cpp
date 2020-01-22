@@ -49,6 +49,8 @@ void WorldScripts::load(SaveFile* saveFile)
       it->skipPadding(*scriptEntry->skip);
   }
 
+  curScriptsChanged();
+
   delete it;
 }
 
@@ -74,6 +76,7 @@ void WorldScripts::save(SaveFile* saveFile)
 void WorldScripts::reset()
 {
   memset(curScripts, 0, scriptCount * 2); // 2 * 8-bit widths
+  curScriptsChanged();
 }
 
 // We want the player to start from the beginning
