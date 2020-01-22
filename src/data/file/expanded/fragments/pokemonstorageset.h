@@ -16,6 +16,7 @@
 #ifndef POKEMONSTORAGESET_H
 #define POKEMONSTORAGESET_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 class PokemonStorageBox;
@@ -26,12 +27,20 @@ constexpr var8 setMaxBoxes = 6;
 
 // Holds contents of a single box set, basically a row or array of boxes
 // each holding Pokemon
-class PokemonStorageSet
+class PokemonStorageSet : public QObject
 {
+  Q_OBJECT
+
 public:
   PokemonStorageSet(SaveFile* saveFile = nullptr, var16 boxesOffset = 0, svar8 skipInd = -1);
   virtual ~PokemonStorageSet();
 
+  // Load or save a specific box at a specific address to a box here overwriting
+  // current box contents
+  Q_INVOKABLE void loadSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 toBox = 0);
+  Q_INVOKABLE void saveSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 fromBox = 0);
+
+public slots:
   // Auto load or save boxes 1-6 from a single address and skip a box if it's
   // the current box
   void load(SaveFile* saveFile = nullptr, var16 boxesOffset = 0, svar8 skipInd = -1);
@@ -39,11 +48,7 @@ public:
   void reset();
   void randomize(PlayerBasics* basics);
 
-  // Load or save a specific box at a specific address to a box here overwriting
-  // current box contents
-  void loadSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 toBox = 0);
-  void saveSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 fromBox = 0);
-
+public:
   // There are never any more or less than exactly a set amount of boxes in a
   // set, there's no need for this to be a Vector
   PokemonStorageBox* boxes[setMaxBoxes];

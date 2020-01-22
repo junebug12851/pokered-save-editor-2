@@ -49,6 +49,8 @@ void PokemonStorageBox::load(SaveFile* saveFile, var16 boxOffset)
                      boxOffset + 0x2AA,
                      i));
   }
+
+  pokemonChanged();
 }
 
 void PokemonStorageBox::save(SaveFile* saveFile, var16 boxOffset)
@@ -84,6 +86,8 @@ void PokemonStorageBox::reset()
     delete mon;
 
   pokemon.clear();
+
+  pokemonChanged();
 }
 
 void PokemonStorageBox::randomize(PlayerBasics* basics)
@@ -99,4 +103,6 @@ void PokemonStorageBox::randomize(PlayerBasics* basics)
     tmp->randomize(basics);
     pokemon.append(tmp);
   }
+
+  pokemonChanged();
 }

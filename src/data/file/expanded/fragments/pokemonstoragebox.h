@@ -16,6 +16,7 @@
 #ifndef POKEMONSTORAGEBOX_H
 #define POKEMONSTORAGEBOX_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 class SaveFile;
@@ -26,23 +27,27 @@ class PlayerBasics;
 constexpr var8 boxMaxPokemon = 20;
 
 // Holds contents of a single Pokemon storage box
-class PokemonStorageBox
+class PokemonStorageBox : QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QVector<PokemonBox*> pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
+
 public:
   PokemonStorageBox(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
   virtual ~PokemonStorageBox();
 
+signals:
+  void pokemonChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
   void save(SaveFile* saveFile, var16 boxOffset = 0);
   void reset();
   void randomize(PlayerBasics* basics);
 
+public:
   QVector<PokemonBox*> pokemon;
-
-private:
-  void load(SaveFile *saveFile = nullptr);
-  void save(SaveFile *saveFile);
-  void randomize();
 };
 
 #endif // POKEMONSTORAGEBOX_H

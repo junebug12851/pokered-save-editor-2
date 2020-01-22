@@ -35,15 +35,24 @@ WarpData::~WarpData() {}
 
 void WarpData::load(SaveFile* saveFile, var8 index)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto it = saveFile->iterator()->offsetTo((0x4 * index) + 0x265B);
 
   y = it->getByte();
+  yChanged();
+
   x = it->getByte();
+  xChanged();
+
   destWarp = it->getByte();
+  destWarpChanged();
+
   destMap = it->getByte();
+  destMapChanged();
 
   delete it;
 }
@@ -51,9 +60,16 @@ void WarpData::load(SaveFile* saveFile, var8 index)
 void WarpData::load(MapDBEntryWarpOut* warp)
 {
   x = warp->x;
+  xChanged();
+
   y = warp->y;
+  yChanged();
+
   destMap = warp->toMap->ind;
+  destMapChanged();
+
   destWarp = warp->warp;
+  destWarpChanged();
 }
 
 void WarpData::save(SaveFile* saveFile, var8 index)
@@ -71,12 +87,20 @@ void WarpData::save(SaveFile* saveFile, var8 index)
 void WarpData::reset()
 {
   y = 0;
+  yChanged();
+
   x = 0;
+  xChanged();
+
   destWarp = 0;
+  destWarpChanged();
+
   destMap = 0;
+  destMapChanged();
 }
 
 void WarpData::randomize() {
+  reset();
 
   // Grab a non-outdoor map
   // The game can get kind of weird and crash if you warp to an outdoor map
@@ -86,7 +110,16 @@ void WarpData::randomize() {
 
   // Switch out warp to a random non-outdoor warp
   destMap = map->ind;
+  destMapChanged();
+
   destWarp = Random::rangeExclusive(0, mapWarps.size());
+  destWarpChanged();
+
+  y = mapWarps[destWarp]->y;
+  yChanged();
+
+  x = mapWarps[destWarp]->x;
+  xChanged();
 }
 
 MapDBEntry* WarpData::toMap()

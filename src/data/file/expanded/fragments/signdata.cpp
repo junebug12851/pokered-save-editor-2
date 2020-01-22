@@ -34,15 +34,21 @@ SignData::~SignData() {}
 
 void SignData::load(SaveFile* saveFile, var8 index)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto it = saveFile->iterator()->offsetTo((2 * index) + 0x275D);
   y = it->getByte();
+  yChanged();
+
   x = it->getByte();
+  xChanged();
 
   it->offsetTo((1 * index) + 0x277D);
   txtId = it->getByte();
+  txtIdChanged();
 
   delete it;
 }
@@ -62,8 +68,13 @@ void SignData::save(SaveFile* saveFile, var8 index)
 void SignData::reset()
 {
   x = 0;
+  xChanged();
+
   y = 0;
+  yChanged();
+
   txtId = 0;
+  txtIdChanged();
 }
 
 QVector<SignData*> SignData::randomizeAll(QVector<MapDBEntrySign*> mapSigns)
@@ -113,7 +124,10 @@ void SignData::randomize(QVector<TmpSignPos*>* tmpPos)
 
     // Change coords
     x = rndCoords->x;
+    xChanged();
+
     y = rndCoords->y;
+    yChanged();
 
     // Remove chosen random coordinate
     delete rndCoords;

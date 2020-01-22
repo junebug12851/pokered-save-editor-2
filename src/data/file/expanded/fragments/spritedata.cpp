@@ -105,15 +105,22 @@ void SpriteData::load(MapDBEntrySprite* spriteData)
   reset(true);
 
   pictureID = spriteData->toSprite->ind;
+  pictureIDChanged();
+
   mapX = spriteData->adjustedX();
+  mapXChanged();
+
   mapY = spriteData->adjustedY();
+  mapYChanged();
 
   if(spriteData->move == "Stay")
     movementByte = SpriteMobility::NotMoving;
   else
     movementByte = SpriteMobility::Moving;
+  movementByteChanged();
 
   textID = spriteData->text;
+  textIDChanged();
 
   if(spriteData->face == "Down")
     faceDir = SpriteFacing::Down;
@@ -126,32 +133,47 @@ void SpriteData::load(MapDBEntrySprite* spriteData)
   else if(spriteData->face == "Up")
     faceDir = SpriteFacing::Up;
 
-  // Set Missable
-  if(spriteData->missable)
-    missableIndex = *spriteData->missable;
+  faceDirChanged();
 
-  if(spriteData->range)
+  // Set Missable
+  if(spriteData->missable) {
+    missableIndex = *spriteData->missable;
+    missableIndexChanged();
+  }
+
+  if(spriteData->range) {
     rangeDirByte = *spriteData->range;
+    rangeDirByteChanged();
+  }
 
   // Because this is a string, it got incorrectly placed into "face"
   // It's actually a number representing 0x10 and probably needs to go into
   // range instead
-  else if(spriteData->face == "Boulder Movement Byte 2")
+  else if(spriteData->face == "Boulder Movement Byte 2") {
     rangeDirByte = SpriteMovement::StrengthMovement;
+    rangeDirByteChanged();
+  }
 
   if(spriteData->type() == SpriteType::TRAINER) {
     auto spriteDataTrainer = (MapDBEntrySpriteTrainer*)spriteData;
     trainerClassOrItemID = spriteDataTrainer->toTrainer->ind;
+    trainerClassOrItemIDChanged();
+
     trainerSetID = spriteDataTrainer->team;
+    trainerSetIDChanged();
   }
   else if(spriteData->type() == SpriteType::ITEM) {
     auto spriteDataItem = (MapDBEntrySpriteItem*)spriteData;
     trainerClassOrItemID = spriteDataItem->toItem->ind;
+    trainerClassOrItemIDChanged();
   }
   else if(spriteData->type() == SpriteType::POKEMON) {
     auto spriteDataMon = (MapDBEntrySpritePokemon*)spriteData;
     trainerClassOrItemID = spriteDataMon->toPokemon->ind;
+    trainerClassOrItemIDChanged();
+
     trainerSetID = spriteDataMon->level;
+    trainerSetIDChanged();
   }
 }
 
@@ -160,15 +182,34 @@ void SpriteData::loadSpriteData1(SaveFile* saveFile, var8 index)
   auto it = saveFile->iterator()->offsetTo((0x10 * index) + 0x2D2C);
 
   pictureID = it->getByte();
+  pictureIDChanged();
+
   movementStatus = it->getByte();
+  movementStatusChanged();
+
   imageIndex = it->getByte();
+  imageIndexChanged();
+
   yStepVector = it->getByte();
+  yStepVectorChanged();
+
   yPixels = it->getByte();
+  yPixelsChanged();
+
   xStepVector = it->getByte();
+  xStepVectorChanged();
+
   xPixels = it->getByte();
+  xPixelsChanged();
+
   intraAnimationFrameCounter = it->getByte();
+  intraAnimationFrameCounterChanged();
+
   animFrameCounter = it->getByte();
+  animFrameCounterChanged();
+
   faceDir = it->getByte();
+  faceDirChanged();
 
   delete it;
 }
@@ -178,14 +219,31 @@ void SpriteData::loadSpriteData2(SaveFile* saveFile, var8 index)
   auto it = saveFile->iterator()->offsetTo((0x10 * index) + 0x2E2C);
 
   walkAnimationCounter = it->getByte(1);
+  walkAnimationCounterChanged();
+
   yDisp = it->getByte();
+  yDispChanged();
+
   xDisp = it->getByte();
+  xDispChanged();
+
   mapY = it->getByte();
+  mapYChanged();
+
   mapX = it->getByte();
+  mapXChanged();
+
   movementByte = it->getByte();
+  movementByteChanged();
+
   grassPriority = it->getByte();
+  grassPriorityChanged();
+
   movementDelay = it->getByte(5);
+  movementDelayChanged();
+
   imageBaseOffset = it->getByte();
+  imageBaseOffsetChanged();
 
   delete it;
 }
@@ -196,14 +254,21 @@ void SpriteData::loadSpriteDataNPC(SaveFile* saveFile, var8 index)
 
   // Init missable index to non-player value
   missableIndex = -1;
+  missableIndexChanged();
 
   auto it = saveFile->iterator()->offsetTo((2 * index) + 0x2790);
   rangeDirByte = it->getByte();
+  rangeDirByteChanged();
+
   textID = it->getByte();
+  textIDChanged();
 
   it->offsetTo((2 * index) + 0x27B0);
   trainerClassOrItemID = it->getByte();
+  trainerClassOrItemIDChanged();
+
   trainerSetID = it->getByte();
+  trainerSetIDChanged();
 
   delete it;
 }
@@ -228,6 +293,7 @@ void SpriteData::checkMissable(SaveFile* saveFile, var8 index)
     // Save bit index this missable refers to and add to missable
     // array for quick reference
     this->missableIndex = mIndex;
+    this->missableIndexChanged();
     break;
   }
 }
@@ -317,24 +383,61 @@ void SpriteData::saveMissables(SaveFile* saveFile, QVector<SpriteData*> spriteDa
 void SpriteData::reset(bool blankNPC)
 {
   pictureID = 0;
+  pictureIDChanged();
+
   movementStatus = (var8)SpriteMovementStatus::Ready;
+  movementStatusChanged();
+
   imageIndex = 0xFF;
+  imageIndexChanged();
+
   faceDir = (var8)SpriteFacing::Down;
+  faceDirChanged();
+
   yDisp = 0x8;
+  yDispChanged();
+
   xDisp = 0x8;
+  xDispChanged();
+
   mapY = 4;
+  mapYChanged();
+
   mapX = 4;
+  mapXChanged();
+
   movementByte = (var8)SpriteMobility::NotMoving;
+  movementByteChanged();
+
   grassPriority = (var8)SpriteGrass::NotInGrass;
+  grassPriorityChanged();
+
   yStepVector = 0;
+  yStepVectorChanged();
+
   yPixels = 0;
+  yPixelsChanged();
+
   xStepVector = 0;
+  xStepVectorChanged();
+
   xPixels = 0;
+  xPixelsChanged();
+
   intraAnimationFrameCounter = 0;
+  intraAnimationFrameCounterChanged();
+
   animFrameCounter = 0;
+  animFrameCounterChanged();
+
   walkAnimationCounter = 0x10; // Could also be zero, not important
+  walkAnimationCounterChanged();
+
   movementDelay = 0;
+  movementDelayChanged();
+
   imageBaseOffset = 0;
+  imageBaseOffsetChanged();
 
   if(!blankNPC) {
     rangeDirByte.reset();
@@ -349,7 +452,13 @@ void SpriteData::reset(bool blankNPC)
     trainerSetID = 0;
   }
 
+  rangeDirByteChanged();
+  textIDChanged();
+  trainerClassOrItemIDChanged();
+  trainerSetIDChanged();
+
   missableIndex.reset();
+  missableIndexChanged();
 }
 
 /*
@@ -381,6 +490,12 @@ QVector<SpriteData*> SpriteData::randomizeAll(QVector<MapDBEntrySprite*> mapSpri
   QVector<TmpSpritePos*> tmpPos;
 
   for(auto entry : mapSprites) {
+
+    // Don't note any positions of boulder sprites, leave them as they are
+    // with nobody placed on top of them. The map could be unplayable otherwise.
+    if(entry->sprite == "Boulder")
+      continue;
+
     auto tmp = new TmpSpritePos;
     tmp->x = entry->adjustedX();
     tmp->y = entry->adjustedY();
@@ -419,7 +534,10 @@ void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
 
     // Change coords
     mapX = rndCoords->x;
+    mapXChanged();
+
     mapY = rndCoords->y;
+    mapYChanged();
 
     // Remove chosen random coordinate
     delete rndCoords;
@@ -431,14 +549,19 @@ void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
       SpritesDB::store.at(Random::rangeExclusive(0, SpritesDB::store.size()));
 
   pictureID = picture->ind;
+  pictureIDChanged();
 
   // Get a random facing direction and movement
   faceDir = SpriteFacing::random();
+  faceDirChanged();
+
   movementByte = SpriteMobility::random();
+  movementByteChanged();
 
   // Without absurdly more complex coding there's no way to tell if the sprite
   // is in grass or not so we just give it a random value.
   grassPriority = SpriteGrass::random();
+  grassPriorityChanged();
 }
 
 SpriteDBEntry* SpriteData::toSprite()

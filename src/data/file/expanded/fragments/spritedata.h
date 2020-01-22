@@ -16,6 +16,7 @@
 #ifndef SPRITEDATA_H
 #define SPRITEDATA_H
 
+#include <QObject>
 #include <QVector>
 #include "optional"
 #include "../../../../common/types.h"
@@ -90,8 +91,35 @@ struct SpriteGrass
   static var8 random();
 };
 
-class SpriteData
+class SpriteData : QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 pictureID_ MEMBER pictureID NOTIFY pictureIDChanged)
+  Q_PROPERTY(var8 movementStatus_ MEMBER movementStatus NOTIFY movementStatusChanged)
+  Q_PROPERTY(var8 imageIndex_ MEMBER imageIndex NOTIFY imageIndexChanged)
+  Q_PROPERTY(var8 faceDir_ MEMBER faceDir NOTIFY faceDirChanged)
+  Q_PROPERTY(var8 yDisp_ MEMBER yDisp NOTIFY yDispChanged)
+  Q_PROPERTY(var8 xDisp_ MEMBER xDisp NOTIFY xDispChanged)
+  Q_PROPERTY(var8 mapY_ MEMBER mapY NOTIFY mapYChanged)
+  Q_PROPERTY(var8 mapX_ MEMBER mapX NOTIFY mapXChanged)
+  Q_PROPERTY(var8 movementByte_ MEMBER movementByte NOTIFY movementByteChanged)
+  Q_PROPERTY(var8 grassPriority_ MEMBER grassPriority NOTIFY grassPriorityChanged)
+  Q_PROPERTY(var8 yStepVector_ MEMBER yStepVector NOTIFY yStepVectorChanged)
+  Q_PROPERTY(var8 xStepVector_ MEMBER xStepVector NOTIFY xStepVectorChanged)
+  Q_PROPERTY(var8 yPixels_ MEMBER yPixels NOTIFY yPixelsChanged)
+  Q_PROPERTY(var8 xPixels_ MEMBER xPixels NOTIFY xPixelsChanged)
+  Q_PROPERTY(var8 intraAnimationFrameCounter_ MEMBER intraAnimationFrameCounter NOTIFY intraAnimationFrameCounterChanged)
+  Q_PROPERTY(var8 animFrameCounter_ MEMBER animFrameCounter NOTIFY animFrameCounterChanged)
+  Q_PROPERTY(var8 walkAnimationCounter_ MEMBER walkAnimationCounter NOTIFY walkAnimationCounterChanged)
+  Q_PROPERTY(var8 movementDelay_ MEMBER movementDelay NOTIFY movementDelayChanged)
+  Q_PROPERTY(var8 imageBaseOffset_ MEMBER imageBaseOffset NOTIFY imageBaseOffsetChanged)
+  Q_PROPERTY(std::optional<var8> rangeDirByte_ MEMBER rangeDirByte NOTIFY rangeDirByteChanged)
+  Q_PROPERTY(std::optional<var8> textID_ MEMBER textID NOTIFY textIDChanged)
+  Q_PROPERTY(std::optional<var8> trainerClassOrItemID_ MEMBER trainerClassOrItemID NOTIFY trainerClassOrItemIDChanged)
+  Q_PROPERTY(std::optional<var8> trainerSetID_ MEMBER trainerSetID NOTIFY trainerSetIDChanged)
+  Q_PROPERTY(std::optional<var8> missableIndex_ MEMBER missableIndex NOTIFY missableIndexChanged)
+
 public:
   // Create a blank sprite or load one from a map
   SpriteData(bool blankNPC = false,
@@ -103,6 +131,41 @@ public:
 
   virtual ~SpriteData();
 
+  Q_INVOKABLE static QVector<SpriteData*> randomizeAll(QVector<MapDBEntrySprite*> mapSprites);
+  Q_INVOKABLE SpriteDBEntry* toSprite();
+
+  // Can't be Q_INVOKABLE for some reason, can't be placed into the
+  // Qt Meta System
+  static void saveMissables(SaveFile* saveFile,
+                       QVector<SpriteData*> spriteData);
+
+signals:
+  void pictureIDChanged();
+  void movementStatusChanged();
+  void imageIndexChanged();
+  void faceDirChanged();
+  void yDispChanged();
+  void xDispChanged();
+  void mapYChanged();
+  void mapXChanged();
+  void movementByteChanged();
+  void grassPriorityChanged();
+  void yStepVectorChanged();
+  void xStepVectorChanged();
+  void yPixelsChanged();
+  void xPixelsChanged();
+  void intraAnimationFrameCounterChanged();
+  void animFrameCounterChanged();
+  void walkAnimationCounterChanged();
+  void movementDelayChanged();
+  void imageBaseOffsetChanged();
+  void rangeDirByteChanged();
+  void textIDChanged();
+  void trainerClassOrItemIDChanged();
+  void trainerSetIDChanged();
+  void missableIndexChanged();
+
+public slots:
   void load(bool blankNPC = false,
             SaveFile* saveFile = nullptr,
             var8 index = 0);
@@ -129,15 +192,10 @@ public:
   void saveSpriteDataNPC(SaveFile* saveFile,
             var8 index);
 
-  static void saveMissables(SaveFile* saveFile,
-                       QVector<SpriteData*> spriteData);
-
   void reset(bool blankNPC = false);
-  static QVector<SpriteData*> randomizeAll(QVector<MapDBEntrySprite*> mapSprites);
   void randomize(QVector<TmpSpritePos*>* tmpPos);
 
-  SpriteDBEntry* toSprite();
-
+public:
   /**
    * Sprite data that applies to all sprites
   */
