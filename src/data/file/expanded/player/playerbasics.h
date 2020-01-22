@@ -16,6 +16,7 @@
 #ifndef PLAYERBASICS_H
 #define PLAYERBASICS_H
 
+#include <QObject>
 #include <QString>
 #include "../../../../common/types.h"
 class SaveFile;
@@ -32,20 +33,39 @@ enum class Badges : var8 {
   Earth
 };
 
-class PlayerBasics
+class PlayerBasics : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QString playerName_ MEMBER playerName NOTIFY playerNameChanged)
+  Q_PROPERTY(var16 playerID_ MEMBER playerID NOTIFY playerIDChanged)
+  Q_PROPERTY(var32 money_ MEMBER money NOTIFY moneyChanged)
+  Q_PROPERTY(var16 coins_ MEMBER coins NOTIFY coinsChanged)
+  Q_PROPERTY(var8 playerStarter_ MEMBER playerStarter NOTIFY playerStarterChanged)
+
 public:
   PlayerBasics(SaveFile* saveFile = nullptr);
   virtual ~PlayerBasics();
 
+  Q_INVOKABLE PokemonDBEntry* toStarter();
+
+signals:
+  void playerNameChanged();
+  void playerIDChanged();
+  void moneyChanged();
+  void coinsChanged();
+  void badgesChanged();
+  void playerStarterChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
   void setBadges(SaveFile* saveFile, var16 offset);
-  PokemonDBEntry* toStarter();
 
+public:
   QString playerName;
   var16 playerID;
   var32 money;

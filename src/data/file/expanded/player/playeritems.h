@@ -16,23 +16,33 @@
 #ifndef PLAYERITEMS_H
 #define PLAYERITEMS_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 #include <QVector>
 
 class SaveFile;
 struct Item;
 
-class PlayerItems
+class PlayerItems : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QVector<Item*> bagItems_ MEMBER bagItems NOTIFY bagItemsChanged)
+
 public:
   PlayerItems(SaveFile* saveFile = nullptr);
   virtual ~PlayerItems();
 
+signals:
+  void bagItemsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   QVector<Item*> bagItems;
 };
 

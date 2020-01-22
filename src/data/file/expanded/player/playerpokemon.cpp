@@ -34,12 +34,12 @@ PlayerPokemon::~PlayerPokemon()
 
 void PlayerPokemon::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
-
-  reset();
 
   for (var8 i = 0; i < toolset->getByte(0x2F2C) && i < 6; i++) {
     party.append(new PokemonParty(
@@ -49,6 +49,8 @@ void PlayerPokemon::load(SaveFile* saveFile)
                             0x303C,
                             i));
   }
+
+  partyChanged();
 }
 
 void PlayerPokemon::save(SaveFile* saveFile)
@@ -83,6 +85,7 @@ void PlayerPokemon::reset()
     delete mon;
 
   party.clear();
+  partyChanged();
 }
 
 void PlayerPokemon::randomize(PlayerBasics* basics)
@@ -126,7 +129,6 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
     // Restore PP of move
     move->restorePP();
   }
-}
 
-// Not to use
-void PlayerPokemon::randomize() {}
+  partyChanged();
+}

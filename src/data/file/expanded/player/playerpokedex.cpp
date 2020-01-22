@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/names.h"
+#include "../../../db/pokemon.h"
 #include "../../../../random.h"
 
 PlayerPokedex::PlayerPokedex(SaveFile* saveFile)
@@ -29,13 +30,17 @@ PlayerPokedex::~PlayerPokedex() {}
 
 void PlayerPokedex::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr) {
-    reset();
     return;
   }
 
   loadPokedex(saveFile, owned, 0x25A3);
+  ownedChanged();
+
   loadPokedex(saveFile, seen, 0x25B6);
+  seenChanged();
 }
 
 void PlayerPokedex::save(SaveFile* saveFile)
@@ -49,8 +54,8 @@ void PlayerPokedex::reset()
   owned.clear();
   seen.clear();
 
-  owned.fill(false, 151);
-  seen.fill(false, 151);
+  owned.fill(false, pokemonDexCount);
+  seen.fill(false, pokemonDexCount);
 }
 
 // Gives all Pokedex entries a 2 out of 5 chance (40% chance) of being
@@ -68,6 +73,9 @@ void PlayerPokedex::randomize()
     owned[i] = markOwned;
     seen[i] = markSeen;
   }
+
+  ownedChanged();
+  seenChanged();
 }
 
 void PlayerPokedex::loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset)

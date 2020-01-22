@@ -16,27 +16,34 @@
 #ifndef PLAYERPOKEMON_H
 #define PLAYERPOKEMON_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 class SaveFile;
 class PlayerBasics;
 class PokemonParty;
 
-class PlayerPokemon
+class PlayerPokemon : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QVector<PokemonParty*> party_ MEMBER party NOTIFY partyChanged)
+
 public:
   PlayerPokemon(SaveFile* saveFile = nullptr);
   virtual ~PlayerPokemon();
 
+signals:
+  void partyChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize(PlayerBasics* basics);
 
+public:
   QVector<PokemonParty*> party;
-
-private:
-  void randomize();
 };
 
 #endif // PLAYERPOKEMON_H

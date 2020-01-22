@@ -31,8 +31,9 @@ PlayerBasics::~PlayerBasics()
 
 void PlayerBasics::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr) {
-    reset();
     return;
   }
 
@@ -40,9 +41,16 @@ void PlayerBasics::load(SaveFile* saveFile)
   auto it = saveFile->iterator();
 
   playerName = toolset->getStr(0x2598, 0xB, 7+1);
+  playerNameChanged();
+
   playerID = toolset->getWord(0x2605);
+  playerIDChanged();
+
   money = toolset->getBCD(0x25F3, 3);
+  moneyChanged();
+
   coins = toolset->getBCD(0x2850, 2);
+  coinsChanged();
 
   // We only pull from the first duplicate, there are 2 identical sets
   // of badges in the save file
@@ -63,7 +71,10 @@ void PlayerBasics::load(SaveFile* saveFile)
   for(var8 i = 0; i < 8; i++)
     badges[i] = tmpBadges[i];
 
+  badgesChanged();
+
   playerStarter = toolset->getByte(0x29C3);
+  playerStarterChanged();
 
   delete it;
 }
@@ -86,25 +97,45 @@ void PlayerBasics::save(SaveFile* saveFile)
 void PlayerBasics::reset()
 {
   playerName = "";
+  playerNameChanged();
+
   playerID = 0;
+  playerIDChanged();
+
   money = 0;
+  moneyChanged();
+
   coins = 0;
+  coinsChanged();
+
   for(var8 i = 0; i < 8; i++)
     badges[i] = false;
+
+  badgesChanged();
+
   playerStarter = 0;
+  playerStarterChanged();
 }
 
 void PlayerBasics::randomize()
 {
+  reset();
+
   // Random name and ID
   playerName = NamesDB::randomName();
+  playerNameChanged();
+
   playerID = Random::rangeInclusive(0x0000, 0xFFFF);
+  playerIDChanged();
 
   // Figure out random money and coins that are reasonable
   // We want a minimum of 100 money and 0 coins and a maximum of the chosen
   // maximum
   money = Random::rangeInclusive(100, 6000);
+  moneyChanged();
+
   coins = Random::rangeInclusive(0, 100);
+  coinsChanged();
 
   // Zero out all badges, it's far too complicated in gen 1 games to properly
   // progress in the game randomly and takes away from fun of a new game
@@ -120,16 +151,19 @@ void PlayerBasics::randomize()
   badges[(var8)Badges::Soul] = true;
   badges[(var8)Badges::Rainbow] = true;
 
+  badgesChanged();
+
   // Determine a random starter
   var8 starter[3] = {
-    0x99, // Bulbasaur
-    0xB0, // Charmander
-    0xB1 // Squirtle
+    PokemonDB::ind.value("Bulbasaur")->ind, // Bulbasaur
+    PokemonDB::ind.value("Charmander")->ind, // Charmander
+    PokemonDB::ind.value("Squirtle")->ind // Squirtle
   };
 
   var8 pick = Random::rangeExclusive(0, 3);
 
   playerStarter = starter[pick];
+  playerStarterChanged();
 }
 
 void PlayerBasics::setBadges(SaveFile* saveFile, var16 offset)

@@ -35,12 +35,11 @@ PlayerItems::~PlayerItems()
 
 void PlayerItems::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr) {
-    reset();
     return;
   }
-
-  reset();
 
   auto it = saveFile->iterator();
   it->offsetTo(0x25C9);
@@ -49,6 +48,8 @@ void PlayerItems::load(SaveFile* saveFile)
 
   for(var8 i = 0; i < amount; i++)
     bagItems.append(new Item(it));
+
+  bagItemsChanged();
 
   delete it;
 }
@@ -77,6 +78,7 @@ void PlayerItems::reset()
   }
 
   bagItems.clear();
+  bagItemsChanged();
 }
 
 void PlayerItems::randomize()
@@ -104,4 +106,6 @@ void PlayerItems::randomize()
   bool giveGreatBall = Random::chanceSuccess(25);
   if(giveGreatBall)
     bagItems.append(new Item("GREAT BALL", 1));
+
+  bagItemsChanged();
 }

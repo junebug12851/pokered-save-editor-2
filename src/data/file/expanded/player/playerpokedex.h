@@ -16,24 +16,36 @@
 #ifndef PLAYERPOKEDEX_H
 #define PLAYERPOKEDEX_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 class SaveFile;
 
-class PlayerPokedex
+class PlayerPokedex : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(QVector<bool> owned_ MEMBER owned NOTIFY ownedChanged)
+  Q_PROPERTY(QVector<bool> seen_ MEMBER seen NOTIFY seenChanged)
+
 public:
   PlayerPokedex(SaveFile* saveFile = nullptr);
   virtual ~PlayerPokedex();
 
+  Q_INVOKABLE void loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset);
+  Q_INVOKABLE void savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16 toOffset);
+
+signals:
+  void ownedChanged();
+  void seenChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  void loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset);
-  void savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16 toOffset);
-
+public:
   QVector<bool> owned;
   QVector<bool> seen;
 };

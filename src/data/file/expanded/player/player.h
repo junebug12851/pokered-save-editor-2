@@ -16,6 +16,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <QObject>
+
 class PlayerBasics;
 class PlayerItems;
 class PlayerPokedex;
@@ -23,17 +25,32 @@ class PlayerPokemon;
 
 class SaveFile;
 
-class Player
+class Player : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(PlayerBasics* basics_ MEMBER basics NOTIFY basicsChanged)
+  Q_PROPERTY(PlayerItems* items_ MEMBER items NOTIFY itemsChanged)
+  Q_PROPERTY(PlayerPokedex* pokedex_ MEMBER pokedex NOTIFY pokedexChanged)
+  Q_PROPERTY(PlayerPokemon* pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
+
 public:
   Player(SaveFile* saveFile = nullptr);
   virtual ~Player();
 
+signals:
+  void basicsChanged();
+  void itemsChanged();
+  void pokedexChanged();
+  void pokemonChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   PlayerBasics* basics = nullptr;
   PlayerItems* items = nullptr;
   PlayerPokedex* pokedex = nullptr;
