@@ -32,8 +32,10 @@ WorldEvents::~WorldEvents() {}
 
 void WorldEvents::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
@@ -41,6 +43,8 @@ void WorldEvents::load(SaveFile* saveFile)
     auto event = EventsDB::store.at(i);
     completedEvents[i] = toolset->getBit(event->byte, 1, event->bit);
   }
+
+  completedEventsChanged();
 }
 
 void WorldEvents::save(SaveFile* saveFile)
@@ -56,9 +60,12 @@ void WorldEvents::save(SaveFile* saveFile)
 void WorldEvents::reset()
 {
   memset(completedEvents, 0, eventCount);
+  completedEventsChanged();
 }
 
 // Competed world events is too complicated to make happen randomly right now
 // Furthermore we do want the player to still play the game fully when
 // randomized
-void WorldEvents::randomize() {}
+void WorldEvents::randomize() {
+  reset();
+}

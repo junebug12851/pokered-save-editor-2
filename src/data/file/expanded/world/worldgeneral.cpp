@@ -31,21 +31,34 @@ WorldGeneral::~WorldGeneral() {}
 
 void WorldGeneral::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
   // Bits 0-3 [max 15]
   options.textSlowness = toolset->getByte(0x2601) & 0b00001111;
+  options.textSlownessChanged();
+
   options.battleStyleSet = toolset->getBit(0x2601, 1, 6);
+  options.battleStyleSetChanged();
+
   options.battleAnimOff = toolset->getBit(0x2601, 1, 7);
+  options.battleAnimOffChanged();
 
   letterDelay.normalDelay = toolset->getBit(0x2604, 1, 0);
+  letterDelay.normalDelayChanged();
+
   letterDelay.dontDelay = toolset->getBit(0x2604, 1, 1);
+  letterDelay.dontDelayChanged();
 
   lastBlackoutMap = toolset->getByte(0x29C5);
+  lastBlackoutMapChanged();
+
   lastMap = toolset->getByte(0x2611);
+  lastMapChanged();
 }
 
 void WorldGeneral::save(SaveFile* saveFile)
@@ -66,27 +79,55 @@ void WorldGeneral::save(SaveFile* saveFile)
 void WorldGeneral::reset()
 {
   lastBlackoutMap = 0;
+  lastBlackoutMapChanged();
+
   lastMap = 0;
+  lastMapChanged();
+
   options.textSlowness = 0;
+  options.textSlownessChanged();
+
   options.battleStyleSet = false;
+  options.battleStyleSetChanged();
+
   options.battleAnimOff = false;
+  options.battleAnimOffChanged();
+
   letterDelay.normalDelay = false;
+  letterDelay.normalDelayChanged();
+
   letterDelay.dontDelay = false;
+  letterDelay.dontDelayChanged();
 }
 
 void WorldGeneral::randomize()
 {
+  reset();
+
+  // Blackout map needs to be one of the cities
   lastBlackoutMap = MapsDB::search()->isGood()->isCity()->pickRandom()->ind;
-  lastMap = MapsDB::search()->isGood()->pickRandom()->ind;
+  lastBlackoutMapChanged();
+
+  // Last Map needs to be some outdoor map
+  lastMap = MapsDB::search()->isGood()->isType("Outdoor")->pickRandom()->ind;
+  lastMapChanged();
+
+  // Odds are your text is going to be pretty slow lol
   options.textSlowness = Random::rangeInclusive(0, 15);
+  options.textSlownessChanged();
 
   // 20% chance to have battle style set and animations off
   options.battleStyleSet = Random::chanceSuccess(20);
+  options.battleStyleSetChanged();
+
   options.battleAnimOff = Random::chanceSuccess(20);
+  options.battleAnimOffChanged();
 
   // 90% chance to have normal letter delay
   letterDelay.normalDelay = Random::chanceSuccess(90);
+  letterDelay.normalDelayChanged();
 
   // 10% chance to not delay letters
   letterDelay.dontDelay = Random::chanceSuccess(10);
+  letterDelay.dontDelayChanged();
 }

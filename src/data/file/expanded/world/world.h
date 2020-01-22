@@ -16,6 +16,8 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <QObject>
+
 class SaveFile;
 
 class WorldCompleted;
@@ -28,17 +30,42 @@ class WorldScripts;
 class WorldTowns;
 class WorldTrades;
 
-class World
+class World : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(WorldCompleted* completed_ MEMBER completed NOTIFY completedChanged)
+  Q_PROPERTY(WorldEvents* events_ MEMBER events NOTIFY eventsChanged)
+  Q_PROPERTY(WorldGeneral* general_ MEMBER general NOTIFY generalChanged)
+  Q_PROPERTY(WorldHidden* hidden_ MEMBER hidden NOTIFY hiddenChanged)
+  Q_PROPERTY(WorldMissables* missables_ MEMBER missables NOTIFY missablesChanged)
+  Q_PROPERTY(WorldOther* other_ MEMBER other NOTIFY otherChanged)
+  Q_PROPERTY(WorldScripts* scripts_ MEMBER scripts NOTIFY scriptsChanged)
+  Q_PROPERTY(WorldTowns* towns_ MEMBER towns NOTIFY townsChanged)
+  Q_PROPERTY(WorldTrades* trades_ MEMBER trades NOTIFY tradesChanged)
+
 public:
   World(SaveFile* saveFile = nullptr);
   virtual ~World();
 
+signals:
+  void completedChanged();
+  void eventsChanged();
+  void generalChanged();
+  void hiddenChanged();
+  void missablesChanged();
+  void otherChanged();
+  void scriptsChanged();
+  void townsChanged();
+  void tradesChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   WorldCompleted* completed = nullptr;
   WorldEvents* events = nullptr;
   WorldGeneral* general = nullptr;

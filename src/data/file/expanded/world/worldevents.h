@@ -16,6 +16,7 @@
 #ifndef WORLDEVENTS_H
 #define WORLDEVENTS_H
 
+#include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
 
@@ -24,17 +25,24 @@ class SaveFile;
 // have to be gotten all over the place
 constexpr var16 eventCount = 508;
 
-class WorldEvents
+class WorldEvents : public QObject
 {
+  Q_OBJECT
+
 public:
   WorldEvents(SaveFile* saveFile = nullptr);
   virtual ~WorldEvents();
 
+signals:
+  void completedEventsChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   bool completedEvents[eventCount];
 };
 

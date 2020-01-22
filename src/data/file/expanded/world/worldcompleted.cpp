@@ -29,19 +29,36 @@ WorldCompleted::~WorldCompleted() {}
 
 void WorldCompleted::load(SaveFile* saveFile)
 {
+  reset();
+
   if(saveFile == nullptr)
-    return reset();
+    return;
 
   auto toolset = saveFile->toolset;
 
   obtainedOldRod = toolset->getBit(0x29D4, 1, 3);
+  obtainedOldRodChanged();
+
   obtainedGoodRod = toolset->getBit(0x29D4, 1, 4);
+  obtainedGoodRodChanged();
+
   obtainedSuperRod = toolset->getBit(0x29D4, 1, 5);
+  obtainedSuperRodChanged();
+
   satisfiedSaffronGuards = toolset->getBit(0x29D4, 1, 6);
+  satisfiedSaffronGuardsChanged();
+
   obtainedLapras = toolset->getBit(0x29DA, 1, 0);
+  obtainedLaprasChanged();
+
   everHealedPokemon = toolset->getBit(0x29DA, 1, 2);
+  everHealedPokemonChanged();
+
   obtainedStarterPokemon = toolset->getBit(0x29DA, 1, 3);
+  obtainedStarterPokemonChanged();
+
   defeatedLorelei = toolset->getBit(0x29E0, 1, 1);
+  defeatedLoreleiChanged();
 }
 
 void WorldCompleted::save(SaveFile* saveFile)
@@ -61,13 +78,28 @@ void WorldCompleted::save(SaveFile* saveFile)
 void WorldCompleted::reset()
 {
   obtainedOldRod = false;
+  obtainedOldRodChanged();
+
   obtainedGoodRod = false;
+  obtainedGoodRodChanged();
+
   obtainedSuperRod = false;
+  obtainedSuperRodChanged();
+
   satisfiedSaffronGuards = false;
+  satisfiedSaffronGuardsChanged();
+
   obtainedLapras = false;
+  obtainedLaprasChanged();
+
   everHealedPokemon = false;
+  everHealedPokemonChanged();
+
   obtainedStarterPokemon = false;
+  obtainedStarterPokemonChanged();
+
   defeatedLorelei = false;
+  defeatedLoreleiChanged();
 }
 
 // For now mark these as false, randomize wants you to play a random game

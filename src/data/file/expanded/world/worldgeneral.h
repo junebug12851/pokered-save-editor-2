@@ -16,32 +16,70 @@
 #ifndef WORLDGENERAL_H
 #define WORLDGENERAL_H
 
+#include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
 class SaveFile;
 
-struct Options {
+class Options : public QObject {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 textSlowness_ MEMBER textSlowness NOTIFY textSlownessChanged)
+  Q_PROPERTY(bool battleStyleSet_ MEMBER battleStyleSet NOTIFY battleStyleSetChanged)
+  Q_PROPERTY(bool battleAnimOff_ MEMBER battleAnimOff NOTIFY battleAnimOffChanged)
+
+signals:
+  void textSlownessChanged();
+  void battleStyleSetChanged();
+  void battleAnimOffChanged();
+
+public:
   var8 textSlowness;
   bool battleStyleSet;
   bool battleAnimOff;
 };
 
-struct LetterDelay {
+class LetterDelay : public QObject {
+  Q_OBJECT
+
+  Q_PROPERTY(bool normalDelay_ MEMBER normalDelay NOTIFY normalDelayChanged)
+  Q_PROPERTY(bool dontDelay_ MEMBER dontDelay NOTIFY dontDelayChanged)
+
+signals:
+  void normalDelayChanged();
+  void dontDelayChanged();
+
+public:
   bool normalDelay;
   bool dontDelay;
 };
 
-class WorldGeneral
+class WorldGeneral : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(var8 lastBlackoutMap_ MEMBER lastBlackoutMap NOTIFY lastBlackoutMapChanged)
+  Q_PROPERTY(var8 lastMap_ MEMBER lastMap NOTIFY lastMapChanged)
+  Q_PROPERTY(Options options_ MEMBER options NOTIFY optionsChanged)
+  Q_PROPERTY(LetterDelay letterDelay_ MEMBER letterDelay NOTIFY letterDelayChanged)
+
 public:
   WorldGeneral(SaveFile* saveFile = nullptr);
   virtual ~WorldGeneral();
 
+signals:
+  void lastBlackoutMapChanged();
+  void lastMapChanged();
+  void optionsChanged();
+  void letterDelayChanged();
+
+public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
+public:
   var8 lastBlackoutMap;
   var8 lastMap;
   Options options;
