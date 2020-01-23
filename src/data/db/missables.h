@@ -16,6 +16,7 @@
 #ifndef MISSABLE_H
 #define MISSABLE_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QString>
 #include <QHash>
@@ -64,6 +65,8 @@ struct MissableDBEntry {
   MapDBEntrySprite* toMapSprite = nullptr;
 };
 
+Q_DECLARE_METATYPE(MissableDBEntry)
+
 class MissablesDB
 {
 public:
@@ -74,5 +77,7 @@ public:
   static QVector<MissableDBEntry*> store;
   static QHash<QString, MissableDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(MissablesDB)
 
 #endif // MISSABLE_H

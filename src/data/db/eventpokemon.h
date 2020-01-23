@@ -19,6 +19,7 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
+#include <QMetaType>
 #include <QString>
 #include <QVector>
 #include <QJsonValue>
@@ -51,6 +52,8 @@ struct EventPokemonDBEntry {
   PokemonDBEntry* toPokemon = nullptr; // Deep link to associated Pokemon
 };
 
+Q_DECLARE_METATYPE(EventPokemonDBEntry)
+
 class EventPokemonDB
 {
 public:
@@ -59,5 +62,7 @@ public:
 
   static QVector<EventPokemonDBEntry*> store;
 };
+
+Q_DECLARE_METATYPE(EventPokemonDB)
 
 #endif // EVENTPOKEMON_H

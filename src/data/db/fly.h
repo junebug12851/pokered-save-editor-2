@@ -16,6 +16,7 @@
 #ifndef FLY_H
 #define FLY_H
 
+#include <QMetaType>
 #include <QString>
 #include <QHash>
 #include <QJsonValue>
@@ -40,6 +41,8 @@ struct FlyDBEntry {
   MapDBEntry* toMap = nullptr; // Deep link to associated map data
 };
 
+Q_DECLARE_METATYPE(FlyDBEntry)
+
 class FlyDB
 {
 public:
@@ -50,5 +53,7 @@ public:
   static QVector<FlyDBEntry*> store;
   static QHash<QString, FlyDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(FlyDB)
 
 #endif // FLY_H

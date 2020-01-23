@@ -16,6 +16,7 @@
 #ifndef NAME_H
 #define NAME_H
 
+#include <QMetaType>
 #include <QString>
 
 #include "../../common/types.h"
@@ -37,5 +38,7 @@ public:
 
   static QVector<QString> store;
 };
+
+Q_DECLARE_METATYPE(NamesDB)
 
 #endif // NAME_H

@@ -16,6 +16,7 @@
 #ifndef MOVE_H
 #define MOVE_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
@@ -63,6 +64,8 @@ struct MoveDBEntry {
   QVector<PokemonDBEntry*> toPokemonTmHm;
 };
 
+Q_DECLARE_METATYPE(MoveDBEntry)
+
 class MovesDB
 {
 public:
@@ -73,5 +76,7 @@ public:
   static QVector<MoveDBEntry*> store;
   static QHash<QString, MoveDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(MovesDB)
 
 #endif // MOVE_H

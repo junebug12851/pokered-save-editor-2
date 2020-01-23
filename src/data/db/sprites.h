@@ -16,6 +16,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
@@ -40,6 +41,8 @@ struct SpriteDBEntry {
   QVector<MapDBEntrySprite*> toMaps;
 };
 
+Q_DECLARE_METATYPE(SpriteDBEntry)
+
 class SpritesDB
 {
 public:
@@ -49,5 +52,7 @@ public:
   static QVector<SpriteDBEntry*> store;
   static QHash<QString, SpriteDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(SpritesDB)
 
 #endif // SPRITE_H

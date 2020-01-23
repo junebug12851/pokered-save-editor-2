@@ -16,6 +16,7 @@
 #ifndef TILESET_H
 #define TILESET_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
@@ -58,6 +59,8 @@ struct TilesetDBEntry {
   QVector<MapDBEntry*> toMaps;
 };
 
+Q_DECLARE_METATYPE(TilesetDBEntry)
+
 class TilesetDB
 {
 public:
@@ -67,5 +70,7 @@ public:
   static QVector<TilesetDBEntry*> store;
   static QHash<QString, TilesetDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(TilesetDB)
 
 #endif // TILESET_H

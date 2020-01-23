@@ -16,6 +16,7 @@
 #ifndef SPRITESET_H
 #define SPRITESET_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QString>
 #include <QVector>
@@ -79,6 +80,8 @@ struct SpriteSetDBEntry {
   QVector<MapDBEntry*> toMaps;
 };
 
+Q_DECLARE_METATYPE(SpriteSetDBEntry)
+
 class SpriteSetDB
 {
 public:
@@ -89,5 +92,7 @@ public:
   static QVector<SpriteSetDBEntry*> store;
   static QHash<QString, SpriteSetDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(SpriteSetDB)
 
 #endif // SPRITESET_H

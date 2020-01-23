@@ -16,6 +16,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include <QMetaType>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -45,6 +46,8 @@ struct EventDBEntry {
   QVector<MapDBEntry*> toMaps; // To Associated Maps
 };
 
+Q_DECLARE_METATYPE(EventDBEntry)
+
 class EventsDB
 {
 public:
@@ -55,5 +58,7 @@ public:
   static QVector<EventDBEntry*> store;
   static QHash<QString, EventDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(EventsDB)
 
 #endif // EVENTS_H

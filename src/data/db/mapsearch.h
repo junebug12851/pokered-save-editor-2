@@ -16,6 +16,7 @@
 #ifndef MAPSEARCH_H
 #define MAPSEARCH_H
 
+#include <QMetaType>
 #include <QString>
 #include <QVector>
 #include "../../common/types.h"
@@ -76,5 +77,7 @@ public:
 
   QVector<MapDBEntry*> results;
 };
+
+Q_DECLARE_METATYPE(MapSearch)
 
 #endif // MAPSEARCH_H

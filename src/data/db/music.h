@@ -16,6 +16,7 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
@@ -36,6 +37,8 @@ struct MusicDBEntry {
   QVector<MapDBEntry*> toMaps;
 };
 
+Q_DECLARE_METATYPE(MusicDBEntry)
+
 class MusicDB
 {
 public:
@@ -45,5 +48,7 @@ public:
   static QVector<MusicDBEntry*> store;
   static QHash<QString, MusicDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(MusicDB)
 
 #endif // MUSIC_H

@@ -16,6 +16,7 @@
 #ifndef POKEMON_H
 #define POKEMON_H
 
+#include <QMetaType>
 #include <QString>
 #include <QVector>
 #include <QJsonValue>
@@ -76,6 +77,8 @@ struct PokemonDBEntryEvolution
   PokemonDBEntry* parent = nullptr;
 };
 
+Q_DECLARE_METATYPE(PokemonDBEntryEvolution)
+
 struct PokemonDBEntryMove
 {
   PokemonDBEntryMove();
@@ -88,6 +91,8 @@ struct PokemonDBEntryMove
   MoveDBEntry* toMove = nullptr;
   PokemonDBEntry* parent = nullptr;
 };
+
+Q_DECLARE_METATYPE(PokemonDBEntryMove)
 
 struct PokemonDBEntry {
   PokemonDBEntry();
@@ -129,6 +134,8 @@ struct PokemonDBEntry {
   QVector<TradeDBEntry*> toTrades;
 };
 
+Q_DECLARE_METATYPE(PokemonDBEntry)
+
 class PokemonDB
 {
 public:
@@ -139,5 +146,7 @@ public:
   static QVector<PokemonDBEntry*> store;
   static QHash<QString, PokemonDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(PokemonDB)
 
 #endif // POKEMON_H

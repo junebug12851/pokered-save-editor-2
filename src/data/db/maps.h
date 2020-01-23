@@ -16,6 +16,7 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
@@ -159,6 +160,8 @@ struct MapDBEntryConnect {
   var16 window();
 };
 
+Q_DECLARE_METATYPE(MapDBEntryConnect)
+
 // Sprites are a tad complicated only becuase there are different kinds of
 // sprites having different set of options and all rolled into one data set.
 // Sprites are the 2nd most complicated data structure mainly because sprite
@@ -209,16 +212,22 @@ struct MapDBEntrySprite
   MapDBEntry* parent = nullptr;
 };
 
+Q_DECLARE_METATYPE(MapDBEntrySprite)
+
 // A regular NPC that says a few lines and may have a script that's run
 struct MapDBEntrySpriteNPC : public MapDBEntrySprite
 {
+  MapDBEntrySpriteNPC();
   MapDBEntrySpriteNPC(QJsonValue& data, MapDBEntry* parent);
   virtual SpriteType type();
 };
 
+Q_DECLARE_METATYPE(MapDBEntrySpriteNPC)
+
 // An item that's obtained
 struct MapDBEntrySpriteItem : public MapDBEntrySprite
 {
+  MapDBEntrySpriteItem();
   MapDBEntrySpriteItem(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
   virtual SpriteType type();
@@ -229,9 +238,12 @@ struct MapDBEntrySpriteItem : public MapDBEntrySprite
   ItemDBEntry* toItem = nullptr;
 };
 
+Q_DECLARE_METATYPE(MapDBEntrySpriteItem)
+
 // A Pokemon that can be battled
 struct MapDBEntrySpritePokemon : public MapDBEntrySprite
 {
+  MapDBEntrySpritePokemon();
   MapDBEntrySpritePokemon(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
   virtual SpriteType type();
@@ -243,9 +255,12 @@ struct MapDBEntrySpritePokemon : public MapDBEntrySprite
   PokemonDBEntry* toPokemon = nullptr;
 };
 
+Q_DECLARE_METATYPE(MapDBEntrySpritePokemon)
+
 // A trainer that can be battled
 struct MapDBEntrySpriteTrainer : public MapDBEntrySprite
 {
+  MapDBEntrySpriteTrainer();
   MapDBEntrySpriteTrainer(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
   virtual SpriteType type();
@@ -257,6 +272,8 @@ struct MapDBEntrySpriteTrainer : public MapDBEntrySprite
 
   TrainerDBEntry* toTrainer = nullptr;
 };
+
+Q_DECLARE_METATYPE(MapDBEntrySpriteTrainer)
 
 // List of Warps on Map that warp out to a different map
 // They can only warp to a "warp-in" point
@@ -287,6 +304,8 @@ struct MapDBEntryWarpOut
   MapDBEntryWarpIn* toWarp = nullptr;
 };
 
+Q_DECLARE_METATYPE(MapDBEntryWarpOut)
+
 struct MapDBEntryWarpIn
 {
   MapDBEntryWarpIn();
@@ -299,6 +318,8 @@ struct MapDBEntryWarpIn
   QVector<MapDBEntryWarpOut*> toConnectingWarps;
   MapDBEntry* parent = nullptr;
 };
+
+Q_DECLARE_METATYPE(MapDBEntryWarpIn)
 
 struct MapDBEntrySign
 {
@@ -315,6 +336,8 @@ struct MapDBEntrySign
   MapDBEntry* parent = nullptr;
 };
 
+Q_DECLARE_METATYPE(MapDBEntrySign)
+
 // Wild Pokemon Entry
 struct MapDBEntryWildMon
 {
@@ -328,6 +351,8 @@ struct MapDBEntryWildMon
   PokemonDBEntry* toPokemon = nullptr;
   MapDBEntry* parent = nullptr;
 };
+
+Q_DECLARE_METATYPE(MapDBEntryWildMon)
 
 struct MapDBEntry {
 
@@ -405,6 +430,8 @@ struct MapDBEntry {
   ScriptDBEntry* toScript;
 };
 
+Q_DECLARE_METATYPE(MapDBEntry)
+
 class MapsDB
 {
 public:
@@ -417,5 +444,7 @@ public:
   static QVector<MapDBEntry*> store;
   static QHash<QString, MapDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(MapsDB)
 
 #endif // MAP_H

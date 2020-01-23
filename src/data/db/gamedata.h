@@ -16,6 +16,7 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
 
+#include <QMetaType>
 #include <QHash>
 #include <QJsonDocument>
 
@@ -28,5 +29,7 @@ public:
   // Give the name of the file in /assets/data without the .json file extension
   static QJsonDocument* json(QString filename);
 };
+
+Q_DECLARE_METATYPE(GameData)
 
 #endif // GAMEDATA_H

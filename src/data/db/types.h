@@ -16,6 +16,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QString>
 #include <QHash>
@@ -43,6 +44,8 @@ struct TypeDBEntry {
   QVector<PokemonDBEntry*> toPokemon;
 };
 
+Q_DECLARE_METATYPE(TypeDBEntry)
+
 class TypesDB
 {
 public:
@@ -52,5 +55,7 @@ public:
   static QVector<TypeDBEntry*> store;
   static QHash<QString, TypeDBEntry*> ind;
 };
+
+Q_DECLARE_METATYPE(TypesDB)
 
 #endif // TYPES_H

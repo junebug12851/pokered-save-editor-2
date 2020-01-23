@@ -16,6 +16,7 @@
 #ifndef TRADE_H
 #define TRADE_H
 
+#include <QMetaType>
 #include <QJsonValue>
 #include <QString>
 
@@ -44,6 +45,8 @@ struct TradeDBEntry {
   PokemonDBEntry* toGet = nullptr;
 };
 
+Q_DECLARE_METATYPE(TradeDBEntry)
+
 class TradesDB
 {
 public:
@@ -52,5 +55,7 @@ public:
 
   static QVector<TradeDBEntry*> store;
 };
+
+Q_DECLARE_METATYPE(TradesDB)
 
 #endif // TRADE_H
