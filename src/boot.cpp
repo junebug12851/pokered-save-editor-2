@@ -54,7 +54,8 @@
 #include <QtDebug>
 #endif
 
-MainWindow* mainWindow;
+// Main Window, there is only ever one window
+MainWindow* mainWindow = nullptr;
 
 // Does a pre-boot of the app setting critical options that have to be done
 // before everything else
@@ -103,13 +104,13 @@ void load()
   HiddenCoinsDB::load();
   HiddenItemsDB::load();
   ItemsDB::load();
-  MapsDB::load();
+  MapsDB::load(); // <--- Fairly expensive
   MissablesDB::load();
   MovesDB::load();
   MusicDB::load();
   NamesDB::load();
   NamesPokemonDB::load();
-  PokemonDB::load();
+  PokemonDB::load(); // <--- Also fairly expensive
   ScriptsDB::load();
   SpritesDB::load();
   SpriteSetDB::load();
@@ -152,10 +153,10 @@ void deepLink()
   HiddenCoinsDB::deepLink();
   HiddenItemsDB::deepLink();
   ItemsDB::deepLink();
-  MapsDB::deepLink();
+  MapsDB::deepLink(); // <-- Also now one of the most expensive operations!!!
   MissablesDB::deepLink();
   MovesDB::deepLink();
-  PokemonDB::deepLink(); // <-- Definately the most expensive operation!!!
+  PokemonDB::deepLink(); // <-- One the most expensive operations!!!
   ScriptsDB::deepLink();
   SpriteSetDB::deepLink();
   StarterPokemonDB::deepLink();
@@ -166,8 +167,10 @@ void deepLink()
 // Performs program one-time bootstrapping and setup
 extern QApplication* boot(int argc, char *argv[])
 {
+  // Pre-boot app
   auto app = preBoot(argc, argv);
 
+  // Prepare database
   load();
   index();
   deepLink();
