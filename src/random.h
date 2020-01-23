@@ -16,6 +16,7 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
+#include <QMetaType>
 #include "./common/types.h"
 
 class QRandomGenerator;
@@ -40,5 +41,7 @@ public:
 
   static QRandomGenerator* rnd;
 };
+
+Q_DECLARE_METATYPE(Random)
 
 #endif // RANDOM_H

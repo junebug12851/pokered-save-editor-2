@@ -19,6 +19,8 @@
 #include <QIcon>
 #include <QDateTime>
 
+#include "./random.h"
+
 #include "./data/db/eventpokemon.h"
 #include "./data/db/events.h"
 #include "./data/db/fly.h"
@@ -43,6 +45,10 @@
 #include "./data/db/trainers.h"
 #include "./data/db/types.h"
 
+#include "./data/db/fontsearch.h"
+#include "./data/db/mapsearch.h"
+#include "./data/db/gamedata.h"
+
 #include "../ui/window/mainwindow.h"
 
 #include "./data/file/expanded/savefileexpanded.h"
@@ -54,7 +60,8 @@
 #include <QtDebug>
 #endif
 
-MainWindow* mainWindow;
+// Main Window, there is only ever one window
+MainWindow* mainWindow = nullptr;
 
 // Does a pre-boot of the app setting critical options that have to be done
 // before everything else
@@ -93,6 +100,71 @@ QApplication* preBoot(int argc, char *argv[])
   return app;
 }
 
+// Registers types to the meta object system that are not QObject's. None of the
+// database is a QObject as it's literally just information to reference and not
+// interact with or change
+void registerMetaTypes()
+{
+  qRegisterMetaType<EventPokemonDBEntry>();
+  qRegisterMetaType<EventPokemonDB>();
+  qRegisterMetaType<EventDBEntry>();
+  qRegisterMetaType<EventsDB>();
+  qRegisterMetaType<FlyDBEntry>();
+  qRegisterMetaType<FlyDB>();
+  qRegisterMetaType<FontDBEntry>();
+  qRegisterMetaType<FontsDB>();
+  qRegisterMetaType<FontSearch>();
+  qRegisterMetaType<GameData>();
+  qRegisterMetaType<HiddenCoinDBEntry>();
+  qRegisterMetaType<HiddenCoinsDB>();
+  qRegisterMetaType<HiddenItemDBEntry>();
+  qRegisterMetaType<HiddenItemsDB>();
+  qRegisterMetaType<ItemDBEntry>();
+  qRegisterMetaType<ItemsDB>();
+  qRegisterMetaType<MapDBEntryConnect>();
+  qRegisterMetaType<MapDBEntrySprite>();
+  qRegisterMetaType<MapDBEntrySpriteNPC>();
+  qRegisterMetaType<MapDBEntrySpriteItem>();
+  qRegisterMetaType<MapDBEntrySpritePokemon>();
+  qRegisterMetaType<MapDBEntrySpriteTrainer>();
+  qRegisterMetaType<MapDBEntryWarpOut>();
+  qRegisterMetaType<MapDBEntryWarpIn>();
+  qRegisterMetaType<MapDBEntrySign>();
+  qRegisterMetaType<MapDBEntryWildMon>();
+  qRegisterMetaType<MapDBEntry>();
+  qRegisterMetaType<MapsDB>();
+  qRegisterMetaType<MapSearch>();
+  qRegisterMetaType<MissableDBEntry>();
+  qRegisterMetaType<MissablesDB>();
+  qRegisterMetaType<MoveDBEntry>();
+  qRegisterMetaType<MovesDB>();
+  qRegisterMetaType<MusicDBEntry>();
+  qRegisterMetaType<MusicDB>();
+  qRegisterMetaType<NamesDB>();
+  qRegisterMetaType<NamesPokemonDB>();
+  qRegisterMetaType<PokemonDBEntryEvolution>();
+  qRegisterMetaType<PokemonDBEntryMove>();
+  qRegisterMetaType<PokemonDBEntry>();
+  qRegisterMetaType<PokemonDB>();
+  qRegisterMetaType<ScriptDBEntry>();
+  qRegisterMetaType<ScriptsDB>();
+  qRegisterMetaType<SpriteDBEntry>();
+  qRegisterMetaType<SpritesDB>();
+  qRegisterMetaType<SpriteSetDBEntry>();
+  qRegisterMetaType<SpriteSetDB>();
+  qRegisterMetaType<StarterPokemonDB>();
+  qRegisterMetaType<TilesetDBEntry>();
+  qRegisterMetaType<TilesetDB>();
+  qRegisterMetaType<TmHmsDB>();
+  qRegisterMetaType<TradeDBEntry>();
+  qRegisterMetaType<TradesDB>();
+  qRegisterMetaType<TrainerDBEntry>();
+  qRegisterMetaType<TrainersDB>();
+  qRegisterMetaType<TypeDBEntry>();
+  qRegisterMetaType<TypesDB>();
+  qRegisterMetaType<Random>();
+}
+
 // Step 1: Load all JSON data into memory, properly parsed
 void load()
 {
@@ -103,13 +175,13 @@ void load()
   HiddenCoinsDB::load();
   HiddenItemsDB::load();
   ItemsDB::load();
-  MapsDB::load();
+  MapsDB::load(); // <--- Fairly expensive
   MissablesDB::load();
   MovesDB::load();
   MusicDB::load();
   NamesDB::load();
   NamesPokemonDB::load();
-  PokemonDB::load();
+  PokemonDB::load(); // <--- Also fairly expensive
   ScriptsDB::load();
   SpritesDB::load();
   SpriteSetDB::load();
@@ -152,10 +224,10 @@ void deepLink()
   HiddenCoinsDB::deepLink();
   HiddenItemsDB::deepLink();
   ItemsDB::deepLink();
-  MapsDB::deepLink();
+  MapsDB::deepLink(); // <-- Also now one of the most expensive operations!!!
   MissablesDB::deepLink();
   MovesDB::deepLink();
-  PokemonDB::deepLink(); // <-- Definately the most expensive operation!!!
+  PokemonDB::deepLink(); // <-- One the most expensive operations!!!
   ScriptsDB::deepLink();
   SpriteSetDB::deepLink();
   StarterPokemonDB::deepLink();
@@ -166,8 +238,11 @@ void deepLink()
 // Performs program one-time bootstrapping and setup
 extern QApplication* boot(int argc, char *argv[])
 {
+  // Pre-boot app and register Non-QObject types to meta system
   auto app = preBoot(argc, argv);
+  registerMetaTypes();
 
+  // Prepare database
   load();
   index();
   deepLink();
