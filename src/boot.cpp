@@ -175,17 +175,5 @@ extern QApplication* boot(int argc, char *argv[])
   index();
   deepLink();
 
-  // Open recent file
-  //auto file = mainWindow->file;
-  //file->openFileRecent(0);
-  //file->reopenFile();
-
-  //auto data = file->data;
-  //auto expanded = data->dataExpanded;
-  //expanded->randomize();
-
-  //data->flattenData();
-  //file->saveFile();
-
   return app;
 }

@@ -1,6 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QString>
+#include <QHash>
+#include <QShortcut>
 #include <QSettings>
 
 #include "ui_mainwindow.h"
@@ -18,6 +21,10 @@ public:
     static MainWindow* getInstance();
 
     FileManagement* file = nullptr;
+
+    // MAX_RECENT_FILES
+    QShortcut* recentFileShortcuts[5];
+    QHash<QString, QShortcut*> otherShortcuts;
 
 private slots:
     void reUpdateRecentFiles(QList<QString> files);

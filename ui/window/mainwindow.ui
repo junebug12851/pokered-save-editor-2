@@ -44,48 +44,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>&amp;File</string>
-    </property>
-    <property name="toolTipsVisible">
-     <bool>true</bool>
-    </property>
-    <widget class="QMenu" name="menuRecent_Files">
-     <property name="title">
-      <string>Recent &amp;Files</string>
-     </property>
-     <property name="toolTipsVisible">
-      <bool>true</bool>
-     </property>
-     <addaction name="actionClear_Recent_Files"/>
-     <addaction name="separator"/>
-     <addaction name="actionNo_Recent_Files"/>
-    </widget>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
-    <addaction name="actionRe_Open"/>
-    <addaction name="menuRecent_Files"/>
-    <addaction name="separator"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSave_As"/>
-    <addaction name="actionSave_Copy_As"/>
-    <addaction name="separator"/>
-    <addaction name="actionWipe_Unused_Space"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <addaction name="menuFile"/>
-  </widget>
   <action name="actionNew">
    <property name="text">
     <string>&amp;New</string>
