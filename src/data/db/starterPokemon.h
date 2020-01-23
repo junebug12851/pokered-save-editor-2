@@ -16,7 +16,6 @@
 #ifndef STARTER_H
 #define STARTER_H
 
-#include <QMetaType>
 #include <QString>
 
 #include "../../common/types.h"
@@ -41,7 +40,5 @@ public:
   static QVector<QString> store;
   static QVector<PokemonDBEntry*> toPokemon;
 };
-
-Q_DECLARE_METATYPE(StarterPokemonDB)
 
 #endif // STARTER_H

@@ -16,7 +16,6 @@
 #ifndef TRAINER_H
 #define TRAINER_H
 
-#include <QMetaType>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
@@ -43,8 +42,6 @@ struct TrainerDBEntry {
   QVector<MapDBEntrySpriteTrainer*> tpMapSpriteTrainers;
 };
 
-Q_DECLARE_METATYPE(TrainerDBEntry)
-
 class TrainersDB
 {
 public:
@@ -54,7 +51,5 @@ public:
   static QVector<TrainerDBEntry*> store;
   static QHash<QString, TrainerDBEntry*> ind;
 };
-
-Q_DECLARE_METATYPE(TrainersDB)
 
 #endif // TRAINER_H

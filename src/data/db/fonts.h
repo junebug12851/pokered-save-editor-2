@@ -16,7 +16,6 @@
 #ifndef FONTS_H
 #define FONTS_H
 
-#include <QMetaType>
 #include <QString>
 #include <QHash>
 #include <QVector>
@@ -51,8 +50,6 @@ struct FontDBEntry {
   bool singleChar = false; // Does this output a single char
   bool normal = false; // Would this be an in-game accessible font char
 };
-
-Q_DECLARE_METATYPE(FontDBEntry)
 
 class FontsDB
 {
@@ -92,7 +89,5 @@ public:
 private:
   static void splice(QVector<var8>& out, QString in, var8 ind);
 };
-
-Q_DECLARE_METATYPE(FontsDB)
 
 #endif // FONTS_H

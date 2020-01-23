@@ -303,7 +303,6 @@ var8 MapDBEntrySprite::adjustedY()
   return y + 4;
 }
 
-MapDBEntrySpriteNPC::MapDBEntrySpriteNPC() {}
 MapDBEntrySpriteNPC::MapDBEntrySpriteNPC(QJsonValue& data, MapDBEntry* parent) :
   MapDBEntrySprite(data, parent)
 {}
@@ -313,7 +312,6 @@ SpriteType MapDBEntrySpriteNPC::type()
   return SpriteType::NPC;
 }
 
-MapDBEntrySpriteItem::MapDBEntrySpriteItem() {}
 MapDBEntrySpriteItem::MapDBEntrySpriteItem(QJsonValue& data, MapDBEntry* parent) :
   MapDBEntrySprite(data, parent)
 {
@@ -347,7 +345,6 @@ SpriteType MapDBEntrySpriteItem::type()
   return SpriteType::ITEM;
 }
 
-MapDBEntrySpritePokemon::MapDBEntrySpritePokemon() {}
 MapDBEntrySpritePokemon::MapDBEntrySpritePokemon(QJsonValue& data, MapDBEntry* parent) :
   MapDBEntrySprite(data, parent)
 {
@@ -373,7 +370,6 @@ SpriteType MapDBEntrySpritePokemon::type()
   return SpriteType::POKEMON;
 }
 
-MapDBEntrySpriteTrainer::MapDBEntrySpriteTrainer() {}
 MapDBEntrySpriteTrainer::MapDBEntrySpriteTrainer(QJsonValue& data, MapDBEntry* parent) :
   MapDBEntrySprite(data, parent)
 {

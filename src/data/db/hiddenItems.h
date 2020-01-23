@@ -16,7 +16,6 @@
 #ifndef HIDDENITEMS_H
 #define HIDDENITEMS_H
 
-#include <QMetaType>
 #include <QString>
 #include <QJsonValue>
 
@@ -38,8 +37,6 @@ struct HiddenItemDBEntry {
   MapDBEntry* toMap = nullptr;
 };
 
-Q_DECLARE_METATYPE(HiddenItemDBEntry)
-
 class HiddenItemsDB
 {
 public:
@@ -48,7 +45,5 @@ public:
 
   static QVector<HiddenItemDBEntry*> store;
 };
-
-Q_DECLARE_METATYPE(HiddenItemsDB)
 
 #endif // HIDDENITEMS_H

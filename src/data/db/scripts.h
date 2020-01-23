@@ -16,7 +16,6 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#include <QMetaType>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
@@ -51,8 +50,6 @@ struct ScriptDBEntry {
   QVector<MapDBEntry*> toMaps;
 };
 
-Q_DECLARE_METATYPE(ScriptDBEntry)
-
 class ScriptsDB
 {
 public:
@@ -63,7 +60,5 @@ public:
   static QVector<ScriptDBEntry*> store;
   static QHash<QString, ScriptDBEntry*> ind;
 };
-
-Q_DECLARE_METATYPE(ScriptsDB)
 
 #endif // SCRIPT_H

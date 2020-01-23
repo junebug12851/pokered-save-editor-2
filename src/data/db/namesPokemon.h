@@ -16,7 +16,6 @@
 #ifndef NAMESPOKEMON_H
 #define NAMESPOKEMON_H
 
-#include <QMetaType>
 #include <QString>
 
 #include "../../common/types.h"
@@ -38,7 +37,5 @@ public:
 
   static QVector<QString> store;
 };
-
-Q_DECLARE_METATYPE(NamesPokemonDB)
 
 #endif // NAMESPOKEMON_H

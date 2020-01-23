@@ -16,7 +16,6 @@
 #ifndef ITEMS_H
 #define ITEMS_H
 
-#include <QMetaType>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -64,8 +63,6 @@ struct ItemDBEntry {
   QVector<PokemonDBEntry*> toTeachPokemon;
 };
 
-Q_DECLARE_METATYPE(ItemDBEntry)
-
 class ItemsDB
 {
 public:
@@ -76,7 +73,5 @@ public:
   static QVector<ItemDBEntry*> store;
   static QHash<QString, ItemDBEntry*> ind;
 };
-
-Q_DECLARE_METATYPE(ItemsDB)
 
 #endif // ITEMS_H

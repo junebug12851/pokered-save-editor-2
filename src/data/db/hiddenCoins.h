@@ -16,7 +16,6 @@
 #ifndef HIDDENCOINS_H
 #define HIDDENCOINS_H
 
-#include <QMetaType>
 #include <QString>
 #include <QJsonValue>
 
@@ -38,8 +37,6 @@ struct HiddenCoinDBEntry {
   MapDBEntry* toMap = nullptr;
 };
 
-Q_DECLARE_METATYPE(HiddenCoinDBEntry)
-
 class HiddenCoinsDB
 {
 public:
@@ -48,7 +45,5 @@ public:
 
   static QVector<HiddenCoinDBEntry*> store;
 };
-
-Q_DECLARE_METATYPE(HiddenCoinsDB)
 
 #endif // HIDDENCOINS_H

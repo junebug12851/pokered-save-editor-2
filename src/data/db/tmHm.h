@@ -16,7 +16,6 @@
 #ifndef TMHM_H
 #define TMHM_H
 
-#include <QMetaType>
 #include <QString>
 
 #include "../../common/types.h"
@@ -37,7 +36,5 @@ public:
   static QVector<ItemDBEntry*> toTmHmItem;
   static QVector<MoveDBEntry*> toTmHmMove;
 };
-
-Q_DECLARE_METATYPE(TmHmsDB)
 
 #endif // TMHM_H

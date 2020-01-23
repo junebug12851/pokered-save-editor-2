@@ -16,7 +16,6 @@
 #ifndef FONTSEARCH_H
 #define FONTSEARCH_H
 
-#include <QMetaType>
 #include <QVector>
 #include <QString>
 class FontsDB;
@@ -47,7 +46,5 @@ public:
 
   QVector<FontDBEntry*> results = QVector<FontDBEntry*>();
 };
-
-Q_DECLARE_METATYPE(FontSearch)
 
 #endif // FONTSEARCH_H
