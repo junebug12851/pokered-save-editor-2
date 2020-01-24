@@ -97,6 +97,7 @@ HEADERS += \
 
 SOURCES += \
   src/boot.cpp \
+  src/bootDatabase.cpp \
   src/data/db/fontsearch.cpp \
   src/data/db/mapsearch.cpp \
   src/data/db/music.cpp \
