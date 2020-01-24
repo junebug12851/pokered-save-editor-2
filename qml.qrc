@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
         <file>ui/app/main.qml</file>
-        <file>ui/app/Navigation.qml</file>
         <file>assets/data/eventPokemon.json</file>
         <file>assets/data/events.json</file>
         <file>assets/data/fly.json</file>

@@ -10,5 +10,8 @@ Rectangle {
 
   color: Material.background
 
-  Navigation {}
+  Text {
+    id: tmp
+    text: ""
+  }
 }

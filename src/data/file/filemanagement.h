@@ -34,6 +34,7 @@ public:
   Q_PROPERTY(QString path READ getPath WRITE setPath NOTIFY pathChanged)
   Q_PROPERTY(QList<QString> recentFiles READ getRecentFiles RESET clearRecentFiles NOTIFY recentFilesChanged)
   Q_PROPERTY(QString recentFile READ getRecentFile WRITE addRecentFile NOTIFY recentFilesChanged STORED false)
+  Q_PROPERTY(SaveFile* data_ MEMBER data NOTIFY dataChanged)
 
   FileManagement(QObject* parent = nullptr);
   virtual ~FileManagement();
@@ -50,6 +51,7 @@ public:
 signals:
   void pathChanged(QString newPath, QString oldPath);
   void recentFilesChanged(QList<QString> files);
+  void dataChanged();
 
 public slots:
   void reset();

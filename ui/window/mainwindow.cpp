@@ -1,7 +1,12 @@
+
+#include <QQmlEngine>
+#include <QQmlContext>
 #include "mainwindow.h"
 
 #include "../../src/common/types.h"
 #include "../../src/data/file/filemanagement.h"
+
+#include "../../src/data/file/savefile.h"
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent)
@@ -10,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   MainWindow::instance = this;
   file = new FileManagement();
+
+  auto qml = ui.app->engine()->rootContext();
+  qml->setContextProperty("file", file);
 
   // Create recent files shortcut
   for(var8 i = 0; i < MAX_RECENT_FILES; i++) {
