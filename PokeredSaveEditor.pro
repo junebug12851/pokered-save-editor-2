@@ -96,6 +96,7 @@ HEADERS += \
   ui/window/mainwindow.h
 
 SOURCES += \
+  src/bootQmlLinkage.cpp \
   src/boot.cpp \
   src/bootDatabase.cpp \
   src/data/db/fontsearch.cpp \

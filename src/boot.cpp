@@ -22,6 +22,7 @@
 #include "../ui/window/mainwindow.h"
 
 extern void bootDatabase();
+extern void bootQmlLinkage();
 
 // Main Window, there is only ever one window
 MainWindow* mainWindow = nullptr;
@@ -71,6 +72,9 @@ extern QApplication* boot(int argc, char *argv[])
 
   // Prepare database
   bootDatabase();
+
+  // Register C++ classes with QML
+  bootQmlLinkage();
 
   // Return generated and prepared app for creation
   return app;
