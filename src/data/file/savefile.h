@@ -14,7 +14,8 @@ constexpr var16 SAV_DATA_SIZE{0x8000};
 class SaveFile : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(var8* data MEMBER data NOTIFY wholeDataChanged)
+  Q_PROPERTY(var8* data MEMBER data NOTIFY silentWholeDataChanged)
+  Q_PROPERTY(SaveFileExpanded* dataExpanded MEMBER dataExpanded NOTIFY wholeDataChanged)
 
 public:
   // Create a blank save file and a blank expanded save file
