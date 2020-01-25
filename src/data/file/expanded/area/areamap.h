@@ -34,20 +34,20 @@ class AreaMap : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 curMap MEMBER curMap NOTIFY curMapChanged)
-  Q_PROPERTY(var8 outOfBoundsBlock MEMBER outOfBoundsBlock NOTIFY outOfBoundsBlockChanged)
-  Q_PROPERTY(var8 height MEMBER height NOTIFY heightChanged)
-  Q_PROPERTY(var8 width MEMBER width NOTIFY widthChanged)
-  Q_PROPERTY(var8 height2x2 MEMBER height2x2 NOTIFY height2x2Changed)
-  Q_PROPERTY(var8 width2x2 MEMBER width2x2 NOTIFY width2x2Changed)
-  Q_PROPERTY(var16 dataPtr MEMBER dataPtr NOTIFY dataPtrChanged)
-  Q_PROPERTY(var16 txtPtr MEMBER txtPtr NOTIFY txtPtrChanged)
-  Q_PROPERTY(var16 scriptPtr MEMBER scriptPtr NOTIFY scriptPtrChanged)
-  Q_PROPERTY(var16 currentTileBlockMapViewPointer MEMBER currentTileBlockMapViewPointer NOTIFY currentTileBlockMapViewPointerChanged)
-  Q_PROPERTY(var16 mapViewVRAMPointer MEMBER mapViewVRAMPointer NOTIFY mapViewVRAMPointerChanged)
-  Q_PROPERTY(var8 curMapScript MEMBER curMapScript NOTIFY curMapScriptChanged)
-  Q_PROPERTY(var8 cardKeyDoorX MEMBER cardKeyDoorX NOTIFY cardKeyDoorXChanged)
-  Q_PROPERTY(var8 cardKeyDoorY MEMBER cardKeyDoorY NOTIFY cardKeyDoorYChanged)
+  Q_PROPERTY(int curMap MEMBER curMap NOTIFY curMapChanged)
+  Q_PROPERTY(int outOfBoundsBlock MEMBER outOfBoundsBlock NOTIFY outOfBoundsBlockChanged)
+  Q_PROPERTY(int height MEMBER height NOTIFY heightChanged)
+  Q_PROPERTY(int width MEMBER width NOTIFY widthChanged)
+  Q_PROPERTY(int height2x2 MEMBER height2x2 NOTIFY height2x2Changed)
+  Q_PROPERTY(int width2x2 MEMBER width2x2 NOTIFY width2x2Changed)
+  Q_PROPERTY(int dataPtr MEMBER dataPtr NOTIFY dataPtrChanged)
+  Q_PROPERTY(int txtPtr MEMBER txtPtr NOTIFY txtPtrChanged)
+  Q_PROPERTY(int scriptPtr MEMBER scriptPtr NOTIFY scriptPtrChanged)
+  Q_PROPERTY(int currentTileBlockMapViewPointer MEMBER currentTileBlockMapViewPointer NOTIFY currentTileBlockMapViewPointerChanged)
+  Q_PROPERTY(int mapViewVRAMPointer MEMBER mapViewVRAMPointer NOTIFY mapViewVRAMPointerChanged)
+  Q_PROPERTY(int curMapScript MEMBER curMapScript NOTIFY curMapScriptChanged)
+  Q_PROPERTY(int cardKeyDoorX MEMBER cardKeyDoorX NOTIFY cardKeyDoorXChanged)
+  Q_PROPERTY(int cardKeyDoorY MEMBER cardKeyDoorY NOTIFY cardKeyDoorYChanged)
   Q_PROPERTY(bool forceBikeRide MEMBER forceBikeRide NOTIFY forceBikeRideChanged)
   Q_PROPERTY(bool blackoutDest MEMBER blackoutDest NOTIFY blackoutDestChanged)
   Q_PROPERTY(bool curMapNextFrame MEMBER curMapNextFrame NOTIFY curMapNextFrameChanged)
@@ -56,10 +56,10 @@ public:
   AreaMap(SaveFile* saveFile = nullptr);
   virtual ~AreaMap();
 
-  Q_INVOKABLE var8 connCount();
-  Q_INVOKABLE MapConnData* connAt(var8 dir);
-  Q_INVOKABLE void connRemove(var8 dir);
-  Q_INVOKABLE void connNew(var8 dir);
+  Q_INVOKABLE int connCount();
+  Q_INVOKABLE MapConnData* connAt(int dir);
+  Q_INVOKABLE void connRemove(int dir);
+  Q_INVOKABLE void connNew(int dir);
 
 signals:
   void curMapChanged();
@@ -89,41 +89,41 @@ public slots:
   // You have to provide it a non-glitch map or it will crash, it expects common
   // data to be there like width, height, etc... which are often not in glitch
   // or incompelte maps
-  void randomize(MapDBEntry* map, var8 x, var8 y);
+  void randomize(MapDBEntry* map, int x, int y);
 
   // Converts X & Y values to a pointer for currentTileBlockMapViewPointer
-  var16 coordsToPtr(var8 x, var8 y, var8 width);
+  int coordsToPtr(int x, int y, int width);
 
 public:
   // Current Map ID
-  var8 curMap;
+  int curMap;
 
   // This is not a tile, it's a block. A block consists of multiple tiles
   // Maps are made from pre-created blocks, not individual tiles
   // Every map has a block that's invalid, this is that block
-  var8 outOfBoundsBlock;
+  int outOfBoundsBlock;
 
   // Map Size including it's double size
-  var8 height;
-  var8 width;
-  var8 height2x2;
-  var8 width2x2;
+  int height;
+  int width;
+  int height2x2;
+  int width2x2;
 
   // Map basic pointers
-  var16 dataPtr;
-  var16 txtPtr;
-  var16 scriptPtr;
+  int dataPtr;
+  int txtPtr;
+  int scriptPtr;
 
   // Map extra pointers
-  var16 currentTileBlockMapViewPointer; // <- Player coords converted to a ptr
-  var16 mapViewVRAMPointer; // <- Unused, reset at start of gameplay
+  int currentTileBlockMapViewPointer; // <- Player coords converted to a ptr
+  int mapViewVRAMPointer; // <- Unused, reset at start of gameplay
 
   // Current map script index
-  var8 curMapScript;
+  int curMapScript;
 
   // Unknown ???
-  var8 cardKeyDoorX;
-  var8 cardKeyDoorY;
+  int cardKeyDoorX;
+  int cardKeyDoorY;
 
   // Flags that may not be used, unknown
   bool forceBikeRide;

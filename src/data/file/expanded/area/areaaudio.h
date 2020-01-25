@@ -24,8 +24,8 @@ class AreaAudio : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 musicID MEMBER musicID NOTIFY musicIDChanged)
-  Q_PROPERTY(var8 musicBank MEMBER musicBank NOTIFY musicBankChanged)
+  Q_PROPERTY(int musicID MEMBER musicID NOTIFY musicIDChanged)
+  Q_PROPERTY(int musicBank MEMBER musicBank NOTIFY musicBankChanged)
   Q_PROPERTY(bool noAudioFadeout MEMBER noAudioFadeout NOTIFY noAudioFadeoutChanged)
   Q_PROPERTY(bool preventMusicChange MEMBER preventMusicChange NOTIFY preventMusicChangeChanged)
 
@@ -46,8 +46,8 @@ public slots:
   void randomize();
 
 public:
-  var8 musicID;
-  var8 musicBank;
+  int musicID;
+  int musicBank;
   bool noAudioFadeout;
   bool preventMusicChange;
 };

@@ -26,7 +26,7 @@ struct ContrastIds : public QObject
   Q_ENUMS(ContrastIds_)
 
 public:
-  enum ContrastIds_ : var8
+  enum ContrastIds_ : int
   {
     Normal = 0,
     Darken1 = 3,
@@ -46,7 +46,7 @@ class AreaGeneral : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 contrast MEMBER contrast NOTIFY contrastChanged)
+  Q_PROPERTY(int contrast MEMBER contrast NOTIFY contrastChanged)
   Q_PROPERTY(bool noLetterDelay MEMBER noLetterDelay NOTIFY noLetterDelayChanged)
   Q_PROPERTY(bool countPlaytime MEMBER countPlaytime NOTIFY countPlaytimeChanged)
 
@@ -66,7 +66,7 @@ public slots:
   void randomize();
 
 public:
-  var8 contrast;
+  int contrast;
   bool noLetterDelay;
   bool countPlaytime;
 };

@@ -30,7 +30,7 @@ class AreaLoadedSprites : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 loadedSetId MEMBER loadedSetId NOTIFY loadedSetIdChanged)
+  Q_PROPERTY(int loadedSetId MEMBER loadedSetId NOTIFY loadedSetIdChanged)
 
 public:
   AreaLoadedSprites(SaveFile* saveFile = nullptr);
@@ -38,9 +38,9 @@ public:
 
   // Loaded sprites are a fixed size and cannot be moved, created, modified, or destroyed
   // They can be swapped
-  Q_INVOKABLE var8 lSpriteCount();
-  Q_INVOKABLE var8 lSpriteAt(var8 ind);
-  Q_INVOKABLE void lSpriteSwap(var8 from, var8 to);
+  Q_INVOKABLE int lSpriteCount();
+  Q_INVOKABLE int lSpriteAt(int ind);
+  Q_INVOKABLE void lSpriteSwap(int from, int to);
 
 signals:
   void loadedSpritesChanged();
@@ -50,12 +50,12 @@ public slots:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void reset();
-  void randomize(MapDBEntry* map, var8 x, var8 y);
-  void loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y);
+  void randomize(MapDBEntry* map, int x, int y);
+  void loadSpriteSet(SpriteSetDBEntry* entry, int x, int y);
 
 public:
   var8 loadedSprites[maxLoadedSprites];
-  var8 loadedSetId;
+  int loadedSetId;
 };
 
 #endif // AREALOADEDSPRITES_H

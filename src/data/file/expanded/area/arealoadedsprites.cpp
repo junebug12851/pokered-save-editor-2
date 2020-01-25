@@ -30,17 +30,17 @@ AreaLoadedSprites::AreaLoadedSprites(SaveFile* saveFile)
 
 AreaLoadedSprites::~AreaLoadedSprites() {}
 
-var8 AreaLoadedSprites::lSpriteCount()
+int AreaLoadedSprites::lSpriteCount()
 {
   return maxLoadedSprites;
 }
 
-var8 AreaLoadedSprites::lSpriteAt(var8 ind)
+int AreaLoadedSprites::lSpriteAt(int ind)
 {
   return loadedSprites[ind];
 }
 
-void AreaLoadedSprites::lSpriteSwap(var8 from, var8 to)
+void AreaLoadedSprites::lSpriteSwap(int from, int to)
 {
   auto eFrom = loadedSprites[from];
   auto eTo = loadedSprites[to];
@@ -96,7 +96,7 @@ void AreaLoadedSprites::reset()
   loadedSetIdChanged();
 }
 
-void AreaLoadedSprites::randomize(MapDBEntry* map, var8 x, var8 y)
+void AreaLoadedSprites::randomize(MapDBEntry* map, int x, int y)
 {
   reset();
 
@@ -115,7 +115,7 @@ void AreaLoadedSprites::randomize(MapDBEntry* map, var8 x, var8 y)
     loadSpriteSet(map->toSpriteSet, x, y);
 }
 
-void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y)
+void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, int x, int y)
 {
   auto set = entry->getSprites(
         Random::rangeInclusive(x, y),

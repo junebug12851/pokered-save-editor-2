@@ -32,23 +32,23 @@ AreaMap::~AreaMap()
   reset();
 }
 
-var8 AreaMap::connCount()
+int AreaMap::connCount()
 {
   return connections.size();
 }
 
-MapConnData* AreaMap::connAt(var8 dir)
+MapConnData* AreaMap::connAt(int dir)
 {
   return connections.value(dir);
 }
 
-void AreaMap::connRemove(var8 dir)
+void AreaMap::connRemove(int dir)
 {
   connections.remove(dir);
   connectionsChanged();
 }
 
-void AreaMap::connNew(var8 dir)
+void AreaMap::connNew(int dir)
 {
   if(connections.contains(dir)) {
     delete connections.value(dir);
@@ -252,7 +252,7 @@ void AreaMap::reset()
   connectionsChanged();
 }
 
-void AreaMap::randomize(MapDBEntry* map, var8 x, var8 y)
+void AreaMap::randomize(MapDBEntry* map, int x, int y)
 {
   reset();
 
@@ -323,7 +323,7 @@ void AreaMap::randomize(MapDBEntry* map, var8 x, var8 y)
   }
 }
 
-var16 AreaMap::coordsToPtr(var8 x, var8 y, var8 width)
+int AreaMap::coordsToPtr(int x, int y, int width)
 {
   return (width+7)+x+(y*(width+6)) + worldMapPtr;
 }

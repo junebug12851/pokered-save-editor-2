@@ -25,15 +25,15 @@ class AreaNPC : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool npcsFaceAway_ MEMBER npcsFaceAway NOTIFY npcsFaceAwayChanged)
-  Q_PROPERTY(bool scriptedNPCMovement_ MEMBER scriptedNPCMovement NOTIFY scriptedNPCMovementChanged)
-  Q_PROPERTY(bool npcSpriteMovement_ MEMBER npcSpriteMovement NOTIFY npcSpriteMovementChanged)
-  Q_PROPERTY(bool tradeCenterSpritesFaced_ MEMBER tradeCenterSpritesFaced NOTIFY tradeCenterSpritesFacedChanged)
-  Q_PROPERTY(bool ignoreJoypad_ MEMBER ignoreJoypad NOTIFY ignoreJoypadChanged)
-  Q_PROPERTY(bool joypadSimulation_ MEMBER joypadSimulation NOTIFY joypadSimulationChanged)
-  Q_PROPERTY(bool runningTestBattle_ MEMBER runningTestBattle NOTIFY runningTestBattleChanged)
-  Q_PROPERTY(bool trainerWantsBattle_ MEMBER trainerWantsBattle NOTIFY trainerWantsBattleChanged)
-  Q_PROPERTY(var16 trainerHeaderPtr_ MEMBER trainerHeaderPtr NOTIFY trainerHeaderPtrChanged)
+  Q_PROPERTY(bool npcsFaceAway MEMBER npcsFaceAway NOTIFY npcsFaceAwayChanged)
+  Q_PROPERTY(bool scriptedNPCMovement MEMBER scriptedNPCMovement NOTIFY scriptedNPCMovementChanged)
+  Q_PROPERTY(bool npcSpriteMovement MEMBER npcSpriteMovement NOTIFY npcSpriteMovementChanged)
+  Q_PROPERTY(bool tradeCenterSpritesFaced MEMBER tradeCenterSpritesFaced NOTIFY tradeCenterSpritesFacedChanged)
+  Q_PROPERTY(bool ignoreJoypad MEMBER ignoreJoypad NOTIFY ignoreJoypadChanged)
+  Q_PROPERTY(bool joypadSimulation MEMBER joypadSimulation NOTIFY joypadSimulationChanged)
+  Q_PROPERTY(bool runningTestBattle MEMBER runningTestBattle NOTIFY runningTestBattleChanged)
+  Q_PROPERTY(bool trainerWantsBattle MEMBER trainerWantsBattle NOTIFY trainerWantsBattleChanged)
+  Q_PROPERTY(int trainerHeaderPtr MEMBER trainerHeaderPtr NOTIFY trainerHeaderPtrChanged)
 
 public:
   AreaNPC(SaveFile* saveFile = nullptr);
@@ -70,7 +70,7 @@ public:
   // Battle
   bool runningTestBattle;
   bool trainerWantsBattle;
-  var16  trainerHeaderPtr;
+  int  trainerHeaderPtr;
 };
 
 #endif // AREANPC_H
