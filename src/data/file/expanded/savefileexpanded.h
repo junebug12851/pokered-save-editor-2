@@ -31,13 +31,13 @@ class SaveFileExpanded : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(Player* player_ MEMBER player NOTIFY playerChanged)
-  Q_PROPERTY(Area* area_ MEMBER area NOTIFY areaChanged)
-  Q_PROPERTY(World* world_ MEMBER world NOTIFY worldChanged)
-  Q_PROPERTY(Daycare* daycare_ MEMBER daycare NOTIFY daycareChanged)
-  Q_PROPERTY(HallOfFame* hof_ MEMBER hof NOTIFY hofChanged)
-  Q_PROPERTY(Rival* rival_ MEMBER rival NOTIFY rivalChanged)
-  Q_PROPERTY(Storage* storage_ MEMBER storage NOTIFY storageChanged)
+  Q_PROPERTY(Player* player MEMBER player NOTIFY playerChanged)
+  Q_PROPERTY(Area* area MEMBER area NOTIFY areaChanged)
+  Q_PROPERTY(World* world MEMBER world NOTIFY worldChanged)
+  Q_PROPERTY(Daycare* daycare MEMBER daycare NOTIFY daycareChanged)
+  Q_PROPERTY(HallOfFame* hof MEMBER hof NOTIFY hofChanged)
+  Q_PROPERTY(Rival* rival MEMBER rival NOTIFY rivalChanged)
+  Q_PROPERTY(Storage* storage MEMBER storage NOTIFY storageChanged)
 
 public:
   SaveFileExpanded(SaveFile* saveFile = nullptr);

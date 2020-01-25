@@ -10,6 +10,7 @@ Rectangle {
   color: Material.background
 
   Text {
+    text: "Records: " + file.data_.dataExpanded.hof.recordMax_
     color: Material.foreground
     id: tmp
     x: 178

@@ -24,10 +24,32 @@
 
 AreaLoadedSprites::AreaLoadedSprites(SaveFile* saveFile)
 {
+  memset(loadedSprites, 0, maxLoadedSprites);
   load(saveFile);
 }
 
 AreaLoadedSprites::~AreaLoadedSprites() {}
+
+var8 AreaLoadedSprites::lSpriteCount()
+{
+  return maxLoadedSprites;
+}
+
+var8 AreaLoadedSprites::lSpriteAt(var8 ind)
+{
+  return loadedSprites[ind];
+}
+
+void AreaLoadedSprites::lSpriteSwap(var8 from, var8 to)
+{
+  auto eFrom = loadedSprites[from];
+  auto eTo = loadedSprites[to];
+
+  loadedSprites[to] = eFrom;
+  loadedSprites[from] = eTo;
+
+  loadedSetIdChanged();
+}
 
 void AreaLoadedSprites::load(SaveFile* saveFile)
 {
@@ -38,8 +60,11 @@ void AreaLoadedSprites::load(SaveFile* saveFile)
 
   auto toolset = saveFile->toolset;
 
-  for(auto entry : toolset->getRange(0x2649, 0xB))
-    loadedSprites.append(entry);
+  auto rng = toolset->getRange(0x2649, 0xB);
+  for(var8 i = 0; i < maxLoadedSprites; i++)
+  {
+    loadedSprites[i] = rng.at(i);
+  }
 
   loadedSpritesChanged();
 
@@ -51,13 +76,20 @@ void AreaLoadedSprites::save(SaveFile* saveFile)
 {
   auto toolset = saveFile->toolset;
 
-  toolset->copyRange(0x2649, 0xB, loadedSprites);
+  QVector<var8> rng;
+  for(var8 i = 0; i < maxLoadedSprites; i++)
+  {
+    rng.append(loadedSprites[i]);
+  }
+
+
+  toolset->copyRange(0x2649, 0xB, rng);
   toolset->setByte(0x2654, loadedSetId);
 }
 
 void AreaLoadedSprites::reset()
 {
-  loadedSprites.clear();
+  memset(loadedSprites, 0, maxLoadedSprites);
   loadedSpritesChanged();
 
   loadedSetId = 0;
@@ -91,8 +123,10 @@ void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y)
 
   auto id = entry->ind;
 
-  for(auto s : set)
-    loadedSprites.append(s->ind);
+  for(var8 i = 0; i < set.size(); i++)
+  {
+    loadedSprites[i] = set.at(i)->ind;
+  }
 
   loadedSpritesChanged();
 

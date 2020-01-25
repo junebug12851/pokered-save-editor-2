@@ -27,7 +27,7 @@ class Daycare : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(PokemonBox* pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
+  Q_PROPERTY(PokemonBox* pokemon MEMBER pokemon NOTIFY pokemonChanged)
 
 public:
   Daycare(SaveFile* saveFile = nullptr);

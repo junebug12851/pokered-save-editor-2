@@ -25,8 +25,8 @@ class Rival : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString name_ MEMBER name NOTIFY nameChanged)
-  Q_PROPERTY(var8 starter_ MEMBER starter NOTIFY starterChanged)
+  Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)
+  Q_PROPERTY(var8 starter MEMBER starter NOTIFY starterChanged)
 
 public:
   Rival(SaveFile* saveFile = nullptr);

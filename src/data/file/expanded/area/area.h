@@ -37,18 +37,18 @@ class Area : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(AreaAudio* audio_ MEMBER audio NOTIFY audioChanged)
-  Q_PROPERTY(AreaLoadedSprites* preloadedSprites_ MEMBER preloadedSprites NOTIFY preloadedSpritesChanged)
-  Q_PROPERTY(AreaGeneral* general_ MEMBER general NOTIFY generalChanged)
-  Q_PROPERTY(AreaMap* map_ MEMBER map NOTIFY mapChanged)
-  Q_PROPERTY(AreaNPC* npc_ MEMBER npc NOTIFY npcChanged)
-  Q_PROPERTY(AreaPlayer* player_ MEMBER player NOTIFY playerChanged)
-  Q_PROPERTY(AreaPokemon* pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
-  Q_PROPERTY(AreaPuzzle* puzzle_ MEMBER puzzle NOTIFY puzzleChanged)
-  Q_PROPERTY(AreaSign* signs_ MEMBER signs NOTIFY signsChanged)
-  Q_PROPERTY(AreaSprites* sprites_ MEMBER sprites NOTIFY spritesChanged)
-  Q_PROPERTY(AreaTileset* tileset_ MEMBER tileset NOTIFY tilesetChanged)
-  Q_PROPERTY(AreaWarps* warps_ MEMBER warps NOTIFY warpsChanged)
+  Q_PROPERTY(AreaAudio* audio MEMBER audio NOTIFY audioChanged)
+  Q_PROPERTY(AreaLoadedSprites* preloadedSprites MEMBER preloadedSprites NOTIFY preloadedSpritesChanged)
+  Q_PROPERTY(AreaGeneral* general MEMBER general NOTIFY generalChanged)
+  Q_PROPERTY(AreaMap* map MEMBER map NOTIFY mapChanged)
+  Q_PROPERTY(AreaNPC* npc MEMBER npc NOTIFY npcChanged)
+  Q_PROPERTY(AreaPlayer* player MEMBER player NOTIFY playerChanged)
+  Q_PROPERTY(AreaPokemon* pokemon MEMBER pokemon NOTIFY pokemonChanged)
+  Q_PROPERTY(AreaPuzzle* puzzle MEMBER puzzle NOTIFY puzzleChanged)
+  Q_PROPERTY(AreaSign* signs MEMBER signs NOTIFY signsChanged)
+  Q_PROPERTY(AreaSprites* sprites MEMBER sprites NOTIFY spritesChanged)
+  Q_PROPERTY(AreaTileset* tileset MEMBER tileset NOTIFY tilesetChanged)
+  Q_PROPERTY(AreaWarps* warps MEMBER warps NOTIFY warpsChanged)
 
 public:
   Area(SaveFile* saveFile = nullptr);

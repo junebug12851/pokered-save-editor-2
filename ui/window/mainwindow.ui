@@ -37,7 +37,7 @@
       </property>
       <property name="source">
        <url>
-        <string>qrc:/ui/app/main.qml</string>
+        <string/>
        </url>
       </property>
      </widget>

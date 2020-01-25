@@ -34,27 +34,32 @@ class AreaMap : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 curMap_ MEMBER curMap NOTIFY curMapChanged)
-  Q_PROPERTY(var8 outOfBoundsBlock_ MEMBER outOfBoundsBlock NOTIFY outOfBoundsBlockChanged)
-  Q_PROPERTY(var8 height_ MEMBER height NOTIFY heightChanged)
-  Q_PROPERTY(var8 width_ MEMBER width NOTIFY widthChanged)
-  Q_PROPERTY(var8 height2x2_ MEMBER height2x2 NOTIFY height2x2Changed)
-  Q_PROPERTY(var8 width2x2_ MEMBER width2x2 NOTIFY width2x2Changed)
-  Q_PROPERTY(var16 dataPtr_ MEMBER dataPtr NOTIFY dataPtrChanged)
-  Q_PROPERTY(var16 txtPtr_ MEMBER txtPtr NOTIFY txtPtrChanged)
-  Q_PROPERTY(var16 scriptPtr_ MEMBER scriptPtr NOTIFY scriptPtrChanged)
-  Q_PROPERTY(var16 currentTileBlockMapViewPointer_ MEMBER currentTileBlockMapViewPointer NOTIFY currentTileBlockMapViewPointerChanged)
-  Q_PROPERTY(var16 mapViewVRAMPointer_ MEMBER mapViewVRAMPointer NOTIFY mapViewVRAMPointerChanged)
-  Q_PROPERTY(var8 curMapScript_ MEMBER curMapScript NOTIFY curMapScriptChanged)
-  Q_PROPERTY(var8 cardKeyDoorX_ MEMBER cardKeyDoorX NOTIFY cardKeyDoorXChanged)
-  Q_PROPERTY(var8 cardKeyDoorY_ MEMBER cardKeyDoorY NOTIFY cardKeyDoorYChanged)
-  Q_PROPERTY(bool forceBikeRide_ MEMBER forceBikeRide NOTIFY forceBikeRideChanged)
-  Q_PROPERTY(bool blackoutDest_ MEMBER blackoutDest NOTIFY blackoutDestChanged)
-  Q_PROPERTY(bool curMapNextFrame_ MEMBER curMapNextFrame NOTIFY curMapNextFrameChanged)
+  Q_PROPERTY(var8 curMap MEMBER curMap NOTIFY curMapChanged)
+  Q_PROPERTY(var8 outOfBoundsBlock MEMBER outOfBoundsBlock NOTIFY outOfBoundsBlockChanged)
+  Q_PROPERTY(var8 height MEMBER height NOTIFY heightChanged)
+  Q_PROPERTY(var8 width MEMBER width NOTIFY widthChanged)
+  Q_PROPERTY(var8 height2x2 MEMBER height2x2 NOTIFY height2x2Changed)
+  Q_PROPERTY(var8 width2x2 MEMBER width2x2 NOTIFY width2x2Changed)
+  Q_PROPERTY(var16 dataPtr MEMBER dataPtr NOTIFY dataPtrChanged)
+  Q_PROPERTY(var16 txtPtr MEMBER txtPtr NOTIFY txtPtrChanged)
+  Q_PROPERTY(var16 scriptPtr MEMBER scriptPtr NOTIFY scriptPtrChanged)
+  Q_PROPERTY(var16 currentTileBlockMapViewPointer MEMBER currentTileBlockMapViewPointer NOTIFY currentTileBlockMapViewPointerChanged)
+  Q_PROPERTY(var16 mapViewVRAMPointer MEMBER mapViewVRAMPointer NOTIFY mapViewVRAMPointerChanged)
+  Q_PROPERTY(var8 curMapScript MEMBER curMapScript NOTIFY curMapScriptChanged)
+  Q_PROPERTY(var8 cardKeyDoorX MEMBER cardKeyDoorX NOTIFY cardKeyDoorXChanged)
+  Q_PROPERTY(var8 cardKeyDoorY MEMBER cardKeyDoorY NOTIFY cardKeyDoorYChanged)
+  Q_PROPERTY(bool forceBikeRide MEMBER forceBikeRide NOTIFY forceBikeRideChanged)
+  Q_PROPERTY(bool blackoutDest MEMBER blackoutDest NOTIFY blackoutDestChanged)
+  Q_PROPERTY(bool curMapNextFrame MEMBER curMapNextFrame NOTIFY curMapNextFrameChanged)
 
 public:
   AreaMap(SaveFile* saveFile = nullptr);
   virtual ~AreaMap();
+
+  Q_INVOKABLE var8 connCount();
+  Q_INVOKABLE MapConnData* connAt(var8 dir);
+  Q_INVOKABLE void connRemove(var8 dir);
+  Q_INVOKABLE void connNew(var8 dir);
 
 signals:
   void curMapChanged();

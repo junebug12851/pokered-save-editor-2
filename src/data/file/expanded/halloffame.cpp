@@ -31,6 +31,52 @@ HallOfFame::~HallOfFame()
   reset();
 }
 
+var8 HallOfFame::recordCount()
+{
+  return records.size();
+}
+
+var8 HallOfFame::recordMax()
+{
+  return recordsMax;
+}
+
+HoFRecord* HallOfFame::recordAt(var8 ind)
+{
+  return records.at(ind);
+}
+
+void HallOfFame::recordSwap(var8 from, var8 to)
+{
+  auto fRecord = records.at(from);
+  auto tRecord = records.at(to);
+
+  records.replace(from, tRecord);
+  records.replace(to, fRecord);
+
+  recordsChanged();
+}
+
+void HallOfFame::recordRemove(var8 ind)
+{
+  if(records.size() < 1)
+    return;
+
+  delete records.at(ind);
+  records.remove(ind);
+
+  recordsChanged();
+}
+
+void HallOfFame::recordNew()
+{
+  if(records.size() >= recordsMax)
+    return;
+
+  records.append(new HoFRecord);
+  recordsChanged();
+}
+
 void HallOfFame::load(SaveFile* saveFile)
 {
   reset();

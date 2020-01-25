@@ -24,16 +24,23 @@ class SaveFile;
 struct MapDBEntry;
 struct SpriteSetDBEntry;
 
+constexpr var8 maxLoadedSprites = 11;
+
 class AreaLoadedSprites : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QVector<var8> loadedSprites_ MEMBER loadedSprites NOTIFY loadedSpritesChanged)
-  Q_PROPERTY(var8 loadedSetId_ MEMBER loadedSetId NOTIFY loadedSetIdChanged)
+  Q_PROPERTY(var8 loadedSetId MEMBER loadedSetId NOTIFY loadedSetIdChanged)
 
 public:
   AreaLoadedSprites(SaveFile* saveFile = nullptr);
   virtual ~AreaLoadedSprites();
+
+  // Loaded sprites are a fixed size and cannot be moved, created, modified, or destroyed
+  // They can be swapped
+  Q_INVOKABLE var8 lSpriteCount();
+  Q_INVOKABLE var8 lSpriteAt(var8 ind);
+  Q_INVOKABLE void lSpriteSwap(var8 from, var8 to);
 
 signals:
   void loadedSpritesChanged();
@@ -47,7 +54,7 @@ public slots:
   void loadSpriteSet(SpriteSetDBEntry* entry, var8 x, var8 y);
 
 public:
-  QVector<var8> loadedSprites;
+  var8 loadedSprites[maxLoadedSprites];
   var8 loadedSetId;
 };
 

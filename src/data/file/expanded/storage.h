@@ -22,22 +22,32 @@ class SaveFile;
 
 class ItemStorageBox;
 class PokemonStorageSet;
+class PokemonStorageBox;
 class PlayerBasics;
 
 // 2 Sets of 6 Pokemon Boxes
 constexpr var8 maxPokemonStorageSets = 2;
+constexpr var8 maxPokemonBoxes = maxPokemonStorageSets * 6;
 
 class Storage : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(ItemStorageBox* items_ MEMBER items NOTIFY itemsChanged)
-  Q_PROPERTY(var8 curBox_ MEMBER curBox NOTIFY curBoxChanged)
-  Q_PROPERTY(bool boxesFormatted_ MEMBER boxesFormatted NOTIFY boxesFormattedChanged)
+  Q_PROPERTY(ItemStorageBox* items MEMBER items NOTIFY itemsChanged)
+  Q_PROPERTY(var8 curBox MEMBER curBox NOTIFY curBoxChanged)
+  Q_PROPERTY(bool boxesFormatted MEMBER boxesFormatted NOTIFY boxesFormattedChanged)
 
 public:
   Storage(SaveFile* saveFile = nullptr);
   virtual ~Storage();
+
+  // Sets are a fixed size and cannot be moved, created, modified, or destroyed
+  Q_INVOKABLE var8 setCount();
+  Q_INVOKABLE PokemonStorageSet* setAt(var8 ind);
+
+  // Ignores the sets and returns the box with given box number
+  Q_INVOKABLE var8 boxCount();
+  Q_INVOKABLE PokemonStorageBox* boxAt(var8 ind);
 
 signals:
   void itemsChanged();

@@ -46,9 +46,9 @@ class AreaGeneral : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 contrast_ MEMBER contrast NOTIFY contrastChanged)
-  Q_PROPERTY(bool noLetterDelay_ MEMBER noLetterDelay NOTIFY noLetterDelayChanged)
-  Q_PROPERTY(bool countPlaytime_ MEMBER countPlaytime NOTIFY countPlaytimeChanged)
+  Q_PROPERTY(var8 contrast MEMBER contrast NOTIFY contrastChanged)
+  Q_PROPERTY(bool noLetterDelay MEMBER noLetterDelay NOTIFY noLetterDelayChanged)
+  Q_PROPERTY(bool countPlaytime MEMBER countPlaytime NOTIFY countPlaytimeChanged)
 
 public:
   AreaGeneral(SaveFile* saveFile = nullptr);

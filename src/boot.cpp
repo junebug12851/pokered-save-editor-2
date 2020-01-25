@@ -67,14 +67,14 @@ QApplication* preBoot(int argc, char *argv[])
 // Performs program one-time bootstrapping and setup
 extern QApplication* boot(int argc, char *argv[])
 {
-  // Pre-boot app
-  auto app = preBoot(argc, argv);
-
   // Prepare database
   bootDatabase();
 
   // Register C++ classes with QML
   bootQmlLinkage();
+
+  // Pre-boot app
+  auto app = preBoot(argc, argv);
 
   // Return generated and prepared app for creation
   return app;

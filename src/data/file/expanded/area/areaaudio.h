@@ -24,10 +24,10 @@ class AreaAudio : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 musicID_ MEMBER musicID NOTIFY musicIDChanged)
-  Q_PROPERTY(var8 musicBank_ MEMBER musicBank NOTIFY musicBankChanged)
-  Q_PROPERTY(bool noAudioFadeout_ MEMBER noAudioFadeout NOTIFY noAudioFadeoutChanged)
-  Q_PROPERTY(bool preventMusicChange_ MEMBER preventMusicChange NOTIFY preventMusicChangeChanged)
+  Q_PROPERTY(var8 musicID MEMBER musicID NOTIFY musicIDChanged)
+  Q_PROPERTY(var8 musicBank MEMBER musicBank NOTIFY musicBankChanged)
+  Q_PROPERTY(bool noAudioFadeout MEMBER noAudioFadeout NOTIFY noAudioFadeoutChanged)
+  Q_PROPERTY(bool preventMusicChange MEMBER preventMusicChange NOTIFY preventMusicChangeChanged)
 
 public:
   AreaAudio(SaveFile* saveFile = nullptr);

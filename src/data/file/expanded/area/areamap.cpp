@@ -32,6 +32,33 @@ AreaMap::~AreaMap()
   reset();
 }
 
+var8 AreaMap::connCount()
+{
+  return connections.size();
+}
+
+MapConnData* AreaMap::connAt(var8 dir)
+{
+  return connections.value(dir);
+}
+
+void AreaMap::connRemove(var8 dir)
+{
+  connections.remove(dir);
+  connectionsChanged();
+}
+
+void AreaMap::connNew(var8 dir)
+{
+  if(connections.contains(dir)) {
+    delete connections.value(dir);
+    connections.remove(dir);
+  }
+
+  connections.insert(dir, new MapConnData);
+  connectionsChanged();
+}
+
 void AreaMap::load(SaveFile* saveFile)
 {
   reset();
