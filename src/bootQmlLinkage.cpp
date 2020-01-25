@@ -81,6 +81,21 @@ extern void bootQmlLinkage()
   // Can't put this into a template because there would be no QML processing
   // for hints so I have to duplicate the class name 3 times on each line
 
+  // Creatable Types
+  // Enums are allowed to be created by QML
+  qmlRegisterType<ContrastIds>(dn("ContrastIds"), 1, 0, "ContrastIds");
+  qmlRegisterType<PlayerDir>(dn("PlayerDir"), 1, 0, "PlayerDir");
+  qmlRegisterType<PokemonStats>(dn("PokemonStats"), 1, 0, "PokemonStats");
+  qmlRegisterType<PokemonRandom>(dn("PokemonRandom"), 1, 0, "PokemonRandom");
+  qmlRegisterType<SpriteMovementStatus>(dn("SpriteMovementStatus"), 1, 0, "SpriteMovementStatus");
+  qmlRegisterType<SpriteFacing>(dn("SpriteFacing"), 1, 0, "SpriteFacing");
+  qmlRegisterType<SpriteMobility>(dn("SpriteMobility"), 1, 0, "SpriteMobility");
+  qmlRegisterType<SpriteMovement>(dn("SpriteMovement"), 1, 0, "SpriteMovement");
+  qmlRegisterType<SpriteGrass>(dn("SpriteGrass"), 1, 0, "SpriteGrass");
+  qmlRegisterType<Badges>(dn("Badges"), 1, 0, "Badges");
+
+  // Uncreatable Types
+  // Expanded Data is meant to be interacted with not created by QML
   qmlRegisterUncreatableType<FileManagement>(dn("FileManagement"), 1, 0, "FileManagement", msg);
   qmlRegisterUncreatableType<SaveFile>(dn("SaveFile"), 1, 0, "SaveFile", msg);
   qmlRegisterUncreatableType<Daycare>(dn("Daycare"), 1, 0, "Daycare", msg);

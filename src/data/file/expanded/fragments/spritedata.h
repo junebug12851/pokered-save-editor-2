@@ -26,18 +26,31 @@ struct MapDBEntrySprite;
 struct MapDBEntry;
 struct TmpSpritePos;
 
-enum class SpriteMovementStatus : var8
+struct SpriteMovementStatus : public QObject
 {
-  UnInit = 0,
-  Ready,
-  Delayed,
-  Moving
+  Q_OBJECT
+  Q_ENUMS(SpriteMovementStatus_)
+
+public:
+  enum SpriteMovementStatus_ : var8
+  {
+    UnInit = 0,
+    Ready,
+    Delayed,
+    Moving
+  };
 };
 
-struct SpriteFacing
+struct SpriteFacing : public QObject
 {
+  Q_OBJECT
+  Q_ENUMS(SpriteFacing_)
+
+public:
+  Q_INVOKABLE static var8 random();
+
   // Place these in same scope
-  enum : var8
+  enum SpriteFacing_ : var8
   {
     Down = 4 * 0,
     Up = 4 * 1,
@@ -45,25 +58,33 @@ struct SpriteFacing
     Right = 4 * 3,
     None = 0xFF
   };
-
-  static var8 random();
 };
 
-struct SpriteMobility
+struct SpriteMobility : public QObject
 {
-  enum : var8
+  Q_OBJECT
+  Q_ENUMS(SpriteMobility_)
+
+public:
+  Q_INVOKABLE static var8 random();
+
+  enum SpriteMobility_ : var8
   {
     Moving = 0xFF,
     NotMoving = 0xFE,
     MovingWithoutCollision = 0x00
   };
-
-  static var8 random();
 };
 
-struct SpriteMovement
+struct SpriteMovement : public QObject
 {
-  enum : var8 {
+  Q_OBJECT
+  Q_ENUMS(SpriteMovement_)
+
+public:
+  Q_INVOKABLE static var8 random();
+
+  enum SpriteMovement_ : var8 {
     UpDown = 0x01,
     LeftRight = 0x02,
     Down = 0xD0,
@@ -76,19 +97,21 @@ struct SpriteMovement
     // For special scripted sprites???
     StrengthMovement = 0x10
   };
-
-  static var8 random();
 };
 
-struct SpriteGrass
+struct SpriteGrass : public QObject
 {
-  enum : var8
+  Q_OBJECT
+  Q_ENUMS(SpriteGrass_)
+
+public:
+  Q_INVOKABLE static var8 random();
+
+  enum SpriteGrass_ : var8
   {
     InGrass = 0x00,
     NotInGrass = 0x80
   };
-
-  static var8 random();
 };
 
 class SpriteData : public QObject

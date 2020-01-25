@@ -21,12 +21,19 @@
 
 class SaveFile;
 
-enum class PlayerDir : var8 {
-  None = 0,
-  Right,
-  Left,
-  Down,
-  Up
+struct PlayerDir : public QObject
+{
+  Q_OBJECT
+  Q_ENUMS(PlayerDir_)
+
+public:
+  enum PlayerDir_ : var8 {
+    None = 0,
+    Right,
+    Left,
+    Down,
+    Up
+  };
 };
 
 class AreaPlayer : public QObject

@@ -22,15 +22,22 @@
 class SaveFile;
 struct PokemonDBEntry;
 
-enum class Badges : var8 {
-  Boulder = 0,
-  Cascade,
-  Thunder,
-  Rainbow,
-  Soul,
-  Marsh,
-  Volcano,
-  Earth
+struct Badges : public QObject
+{
+  Q_OBJECT
+  Q_ENUMS(Badges_)
+
+public:
+  enum Badges_ : var8 {
+    Boulder = 0,
+    Cascade,
+    Thunder,
+    Rainbow,
+    Soul,
+    Marsh,
+    Volcano,
+    Earth
+  };
 };
 
 class PlayerBasics : public QObject

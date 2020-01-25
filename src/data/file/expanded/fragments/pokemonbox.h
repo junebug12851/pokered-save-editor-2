@@ -27,21 +27,35 @@ class PokemonDB;
 struct MoveDBEntry;
 class PlayerBasics;
 
-enum class PokemonStats : var8
+struct PokemonStats : public QObject
 {
-  Attack = 0,
-  Defense,
-  Speed,
-  Special,
-  HP
+  Q_OBJECT
+  Q_ENUMS(PokemonStats_)
+
+public:
+  enum PokemonStats_ : var8
+  {
+    Attack = 0,
+    Defense,
+    Speed,
+    Special,
+    HP
+  };
 };
 
-enum class PokemonRandom : var8
+struct PokemonRandom : public QObject
 {
-  Random_Starters3,
-  Random_Starters,
-  Random_Pokedex,
-  Random_All
+  Q_OBJECT
+  Q_ENUMS(PokemonRandom_)
+
+public:
+  enum PokemonRandom_ : var8
+  {
+    Random_Starters3,
+    Random_Starters,
+    Random_Pokedex,
+    Random_All
+  };
 };
 
 class PokemonMove : public QObject
@@ -123,7 +137,7 @@ public:
 
   // The second overloaded method allows you to give a data record which will be
   // used.
-  Q_INVOKABLE static PokemonBox* newPokemon(PokemonRandom list = PokemonRandom::Random_Starters, PlayerBasics* basics = nullptr);
+  Q_INVOKABLE static PokemonBox* newPokemon(PokemonRandom::PokemonRandom_ list = PokemonRandom::Random_Starters, PlayerBasics* basics = nullptr);
   Q_INVOKABLE static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basics = nullptr);
 
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
@@ -136,7 +150,7 @@ public:
 
   Q_INVOKABLE var8 hpDV(); // Get HP DV
   Q_INVOKABLE var16 hpStat(); // Get HP Stat
-  Q_INVOKABLE var16 nonHpStat(PokemonStats stat); // Get Non-HP Stat
+  Q_INVOKABLE var16 nonHpStat(PokemonStats::PokemonStats_ stat); // Get Non-HP Stat
 
   // Performs Pokecenter Heal
   Q_INVOKABLE bool isAfflicted();

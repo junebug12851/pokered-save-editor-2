@@ -133,7 +133,7 @@ PokemonBox::~PokemonBox()
   reset();
 }
 
-PokemonBox* PokemonBox::newPokemon(PokemonRandom list, PlayerBasics* basics)
+PokemonBox* PokemonBox::newPokemon(PokemonRandom::PokemonRandom_ list, PlayerBasics* basics)
 {
   PokemonDBEntry* pkmnData;
 
@@ -671,7 +671,7 @@ var16 PokemonBox::hpStat()
   return qFloor((((*record->baseHp + hpDV())*2+qFloor(qFloor(qSqrt(hpExp))/4))*level)/100) + level + 10;
 }
 
-var16 PokemonBox::nonHpStat(PokemonStats stat)
+var16 PokemonBox::nonHpStat(PokemonStats::PokemonStats_ stat)
 {
   auto record = isValid();
 

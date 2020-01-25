@@ -20,19 +20,26 @@
 #include "../../../../common/types.h"
 class SaveFile;
 
-enum class ContrastIds : var8
+struct ContrastIds : public QObject
 {
-  Normal = 0,
-  Darken1 = 3,
-  Darken2_NeedsFlash = 6,
-  Darken3_SolidBlack = 9,
+  Q_OBJECT
+  Q_ENUMS(ContrastIds_)
 
-  Glitch_1A = 1,
-  Glitch_1B = 2,
-  Glitch_2A = 4,
-  Glitch_2B = 5,
-  Glitch_3A = 7,
-  Glitch_3B = 8
+public:
+  enum ContrastIds_ : var8
+  {
+    Normal = 0,
+    Darken1 = 3,
+    Darken2_NeedsFlash = 6,
+    Darken3_SolidBlack = 9,
+
+    Glitch_1A = 1,
+    Glitch_1B = 2,
+    Glitch_2A = 4,
+    Glitch_2B = 5,
+    Glitch_3A = 7,
+    Glitch_3B = 8
+  };
 };
 
 class AreaGeneral : public QObject
