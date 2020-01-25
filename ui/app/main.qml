@@ -15,8 +15,4 @@ Rectangle {
     x: 178
     y: 233
   }
-
-  Component {
-    onCompleted: file.data_.dataExpanded.hof.recordMax()
-  }
 }
