@@ -7,11 +7,16 @@ Rectangle {
   // Because Dark Theme has quite an ugly Brighter Shade which ruins
   // The look and feel and can make things more difficult to read/see
   Material.accent: Material.color(Material.Pink, Material.Shade500)
-
   color: Material.background
 
   Text {
+    color: Material.foreground
     id: tmp
-    text: ""
+    x: 178
+    y: 233
+  }
+
+  Component {
+    onCompleted: file.data_.dataExpanded.hof.recordMax()
   }
 }
