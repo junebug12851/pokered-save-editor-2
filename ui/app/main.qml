@@ -4,16 +4,20 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 
 Rectangle {
+  id: root
+
   // Because Dark Theme has quite an ugly Brighter Shade which ruins
   // The look and feel and can make things more difficult to read/see
   Material.accent: Material.color(Material.Pink, Material.Shade500)
   color: Material.background
 
   Text {
-    text: "Records: " + file.data_.dataExpanded.hof.recordMax_
     color: Material.foreground
-    id: tmp
-    x: 178
-    y: 233
+    id: helloText
+    text: "Records: " + file.data_.dataExpanded.hof.recordMax_
+    anchors.verticalCenter: root.verticalCenter
+    anchors.horizontalCenter: root.horizontalCenter
+    font.pointSize: 24;
+    font.bold: true
   }
 }

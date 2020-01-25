@@ -31,12 +31,12 @@ HallOfFame::~HallOfFame()
   reset();
 }
 
-var8 HallOfFame::recordCount()
+int HallOfFame::recordCount()
 {
   return records.size();
 }
 
-var8 HallOfFame::recordMax()
+int HallOfFame::recordMax()
 {
   return recordsMax;
 }
