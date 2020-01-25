@@ -31,6 +31,50 @@ AreaSign::~AreaSign()
   reset();
 }
 
+int AreaSign::signCount()
+{
+  return signs.size();
+}
+
+int AreaSign::signMax()
+{
+  return maxSigns;
+}
+
+SignData* AreaSign::signAt(int ind)
+{
+  return signs.at(ind);
+}
+
+void AreaSign::signSwap(int from, int to)
+{
+  auto eFrom = signs.at(from);
+  auto eTo = signs.at(to);
+
+  signs.replace(from, eTo);
+  signs.replace(to, eFrom);
+
+  signsChanged();
+}
+
+void AreaSign::signRemove(int ind)
+{
+  if(signs.size() <= 0)
+    return;
+
+  signs.removeAt(ind);
+  signsChanged();
+}
+
+void AreaSign::signNew()
+{
+  if(signs.size() >= maxSigns)
+    return;
+
+  signs.append(new SignData);
+  signsChanged();
+}
+
 void AreaSign::load(SaveFile* saveFile)
 {
   reset();

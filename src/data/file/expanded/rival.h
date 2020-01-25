@@ -26,7 +26,7 @@ class Rival : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)
-  Q_PROPERTY(var8 starter MEMBER starter NOTIFY starterChanged)
+  Q_PROPERTY(int starter MEMBER starter NOTIFY starterChanged)
 
 public:
   Rival(SaveFile* saveFile = nullptr);
@@ -49,7 +49,7 @@ public:
   // Bulbasaur, and Squirtle. I have no idea what will happen if you put a
   // different value in here.
   QString name;
-  var8 starter;
+  int starter;
 };
 
 #endif // RIVAL_H

@@ -20,7 +20,7 @@
 #include "../../../db/pokemon.h"
 #include "../../../../random.h"
 
-AreaPokemonWild::AreaPokemonWild(var8 index, var8 level)
+AreaPokemonWild::AreaPokemonWild(int index, int level)
 {
   load(index, level);
 }
@@ -64,7 +64,7 @@ void AreaPokemonWild::reset()
   levelChanged();
 }
 
-void AreaPokemonWild::load(var8 index, var8 level)
+void AreaPokemonWild::load(int index, int level)
 {
   this->index = index;
   indexChanged();
@@ -107,6 +107,48 @@ AreaPokemon::~AreaPokemon()
   }
 }
 
+int AreaPokemon::grassMonsCount()
+{
+  return wildMonsCount;
+}
+
+AreaPokemonWild* AreaPokemon::grassMonsAt(int ind)
+{
+  return grassMons[ind];
+}
+
+void AreaPokemon::grassMonsSwap(int from, int to)
+{
+  auto eFrom = grassMons[from];
+  auto eTo = grassMons[to];
+
+  grassMons[from] = eTo;
+  grassMons[to] = eFrom;
+
+  grassMonsChanged();
+}
+
+int AreaPokemon::waterMonsCount()
+{
+  return wildMonsCount;
+}
+
+AreaPokemonWild* AreaPokemon::waterMonsAt(int ind)
+{
+  return waterMons[ind];
+}
+
+void AreaPokemon::waterMonsSwap(int from, int to)
+{
+  auto eFrom = waterMons[from];
+  auto eTo = waterMons[to];
+
+  waterMons[from] = eTo;
+  waterMons[to] = eFrom;
+
+  waterMonsChanged();
+}
+
 void AreaPokemon::load(SaveFile* saveFile)
 {
   reset();
@@ -132,12 +174,14 @@ void AreaPokemon::load(SaveFile* saveFile)
     it->offsetTo(0x2B34);
     for(var8 i = 0; i < wildMonsCount; i++)
       grassMons[i]->load(it);
+    grassMonsChanged();
   }
 
   if(waterRate > 0) {
     it->offsetTo(0x2B51);
     for(var8 i = 0; i < wildMonsCount; i++)
       waterMons[i]->load(it);
+    waterMonsChanged();
   }
 
   delete it;
@@ -182,7 +226,10 @@ void AreaPokemon::reset()
 
   for(var8 i = 0; i < wildMonsCount; i++) {
     grassMons[i]->reset();
+    grassMonsChanged();
+
     waterMons[i]->reset();
+    waterMonsChanged();
   }
 }
 
@@ -198,10 +245,14 @@ void AreaPokemon::randomize()
   waterRateChanged();
 
   if(grassRate > 0)
-    for(var8 i = 0; i < wildMonsCount; i++)
+    for(var8 i = 0; i < wildMonsCount; i++) {
       grassMons[i]->randomize();
+      grassMonsChanged();
+    }
 
   if(waterRate > 0)
-    for(var8 i = 0; i < wildMonsCount; i++)
+    for(var8 i = 0; i < wildMonsCount; i++) {
       waterMons[i]->randomize();
+      waterMonsChanged();
+    }
 }

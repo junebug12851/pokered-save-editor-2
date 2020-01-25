@@ -24,15 +24,22 @@ class SaveFile;
 class SignData;
 class MapDBEntry;
 
+constexpr var8 maxSigns = 16;
+
 class AreaSign : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QVector<SignData*> signs_ MEMBER signs NOTIFY signsChanged)
-
 public:
   AreaSign(SaveFile* saveFile = nullptr);
   virtual ~AreaSign();
+
+  Q_INVOKABLE int signCount();
+  Q_INVOKABLE int signMax();
+  Q_INVOKABLE SignData* signAt(int ind);
+  Q_INVOKABLE void signSwap(int from, int to);
+  Q_INVOKABLE void signRemove(int ind);
+  Q_INVOKABLE void signNew();
 
 signals:
   void signsChanged();

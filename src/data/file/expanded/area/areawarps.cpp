@@ -32,6 +32,48 @@ AreaWarps::~AreaWarps() {
   reset();
 }
 
+int AreaWarps::warpCount()
+{
+  return warps.size();
+}
+
+int AreaWarps::warpMax()
+{
+  return maxWarps;
+}
+
+WarpData* AreaWarps::warpAt(int ind)
+{
+  return warps.at(ind);
+}
+
+void AreaWarps::warpSwap(int from, int to)
+{
+  auto eFrom = warps.at(from);
+  auto eTo = warps.at(to);
+
+  warps.replace(from, eTo);
+  warps.replace(to, eFrom);
+
+  warpsChanged();
+}
+
+void AreaWarps::warpRemove(int ind)
+{
+  if(warps.size() <= 0)
+    return;
+
+  warps.removeAt(ind);
+}
+
+void AreaWarps::warpNew()
+{
+  if(warps.size() >= maxWarps)
+    return;
+
+  warps.append(new WarpData);
+}
+
 void AreaWarps::load(SaveFile* saveFile)
 {
   reset();

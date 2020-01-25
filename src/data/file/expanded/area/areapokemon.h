@@ -29,11 +29,11 @@ class AreaPokemonWild : public QObject {
 
   Q_OBJECT
 
-  Q_PROPERTY(var8 index_ MEMBER index NOTIFY indexChanged)
-  Q_PROPERTY(var8 level_ MEMBER level NOTIFY levelChanged)
+  Q_PROPERTY(int index MEMBER index NOTIFY indexChanged)
+  Q_PROPERTY(int level MEMBER level NOTIFY levelChanged)
 
 public:
-  AreaPokemonWild(var8 index = 0, var8 level = 0);
+  AreaPokemonWild(int index = 0, int level = 0);
   AreaPokemonWild(bool random);
 
   bool operator<(const AreaPokemonWild& a);
@@ -47,14 +47,14 @@ public slots:
   // Generates a random Pokemon from any dex entry and level
   void randomize();
   void reset();
-  void load(var8 index, var8 level);
+  void load(int index, int level);
   void load(SaveFileIterator* it);
   void save(SaveFileIterator* it);
 
 public:
   // Pokemon index number and level
-  var8 index;
-  var8 level;
+  int index;
+  int level;
 };
 
 /**
@@ -78,9 +78,9 @@ class AreaPokemon : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 grassRate_ MEMBER grassRate NOTIFY grassRateChanged)
-  Q_PROPERTY(var8 waterRate_ MEMBER waterRate NOTIFY waterRateChanged)
-  Q_PROPERTY(bool pauseMons3Steps_ MEMBER pauseMons3Steps NOTIFY pauseMons3StepsChanged)
+  Q_PROPERTY(int grassRate MEMBER grassRate NOTIFY grassRateChanged)
+  Q_PROPERTY(int waterRate MEMBER waterRate NOTIFY waterRateChanged)
+  Q_PROPERTY(bool pauseMons3Steps MEMBER pauseMons3Steps NOTIFY pauseMons3StepsChanged)
 
   // C++ Arrays can't be Q_PROPERTY and don't need a signal because they are
   // pre-created with only their contents changing and have no properties of
@@ -90,10 +90,20 @@ public:
   AreaPokemon(SaveFile* saveFile = nullptr);
   virtual ~AreaPokemon();
 
+  Q_INVOKABLE int grassMonsCount();
+  Q_INVOKABLE AreaPokemonWild* grassMonsAt(int ind);
+  Q_INVOKABLE void grassMonsSwap(int from, int to);
+
+  Q_INVOKABLE int waterMonsCount();
+  Q_INVOKABLE AreaPokemonWild* waterMonsAt(int ind);
+  Q_INVOKABLE void waterMonsSwap(int from, int to);
+
 signals:
   void grassRateChanged();
   void waterRateChanged();
   void pauseMons3StepsChanged();
+  void grassMonsChanged();
+  void waterMonsChanged();
 
 public slots:
   void load(SaveFile* saveFile = nullptr);
@@ -104,10 +114,10 @@ public slots:
 public:
   // There are exactly 10 wild Pokemon in areas that have wild Pokemon
   // Create 10 entries each, no more or less
-  var8 grassRate;
+  int grassRate;
   AreaPokemonWild* grassMons[wildMonsCount];
 
-  var8 waterRate;
+  int waterRate;
   AreaPokemonWild* waterMons[wildMonsCount];
 
   bool pauseMons3Steps;

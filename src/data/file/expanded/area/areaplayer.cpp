@@ -241,7 +241,7 @@ void AreaPlayer::reset()
   usingLinkCableChanged();
 }
 
-void AreaPlayer::randomize(var8 x, var8 y)
+void AreaPlayer::randomize(int x, int y)
 {
   // Keep most of them resetted
   reset();

@@ -31,14 +31,24 @@ AreaTileset::AreaTileset(SaveFile* saveFile)
 
 AreaTileset::~AreaTileset() {}
 
-var8 AreaTileset::getTalkingOverTile(var8 ind)
+int AreaTileset::talkingOverTilesCount()
+{
+  return maxTalkingOverTiles;
+}
+
+int AreaTileset::talkingOverTilesAt(int ind)
 {
   return talkingOverTiles[ind];
 }
 
-void AreaTileset::setTalkingOverTile(var8 ind, var8 val)
+void AreaTileset::talkingOverTilesSwap(int from, int to)
 {
-  talkingOverTiles[ind] = val;
+  auto eFrom = talkingOverTiles[from];
+  auto eTo = talkingOverTiles[to];
+
+  talkingOverTiles[to] = eFrom;
+  talkingOverTiles[from] = eTo;
+
   talkingOverTilesChanged();
 }
 

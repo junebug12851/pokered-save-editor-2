@@ -25,9 +25,9 @@ class AreaPuzzle : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 lock1_ MEMBER lock1 NOTIFY lock1Changed)
-  Q_PROPERTY(var8 lock2_ MEMBER lock2 NOTIFY lock2Changed)
-  Q_PROPERTY(var8 quizOpp_ MEMBER quizOpp NOTIFY quizOppChanged)
+  Q_PROPERTY(int lock1 MEMBER lock1 NOTIFY lock1Changed)
+  Q_PROPERTY(int lock2 MEMBER lock2 NOTIFY lock2Changed)
+  Q_PROPERTY(int quizOpp MEMBER quizOpp NOTIFY quizOppChanged)
 
 public:
   AreaPuzzle(SaveFile* saveFile = nullptr);
@@ -46,11 +46,11 @@ public slots:
 
 public:
   // Lt. Surge Trash Can Locks
-  var8 lock1;
-  var8 lock2;
+  int lock1;
+  int lock2;
 
   // Cinnabar Gym Next Opp
-  var8 quizOpp;
+  int quizOpp;
 };
 
 #endif // AREAPUZZLE_H

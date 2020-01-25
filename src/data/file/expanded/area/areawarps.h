@@ -24,27 +24,35 @@ class SaveFile;
 class WarpData;
 class MapDBEntry;
 
+constexpr var8 maxWarps = 32;
+
 class AreaWarps : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool scriptedWarp_ MEMBER scriptedWarp NOTIFY scriptedWarpChanged)
-  Q_PROPERTY(bool isDungeonWarp_ MEMBER isDungeonWarp NOTIFY isDungeonWarpChanged)
-  Q_PROPERTY(bool skipJoypadCheckWarps_ MEMBER skipJoypadCheckWarps NOTIFY skipJoypadCheckWarpsChanged)
-  Q_PROPERTY(var8 warpDest_ MEMBER warpDest NOTIFY warpDestChanged)
-  Q_PROPERTY(var8 dungeonWarpDestMap_ MEMBER dungeonWarpDestMap NOTIFY dungeonWarpDestMapChanged)
-  Q_PROPERTY(var8 specialWarpDestMap_ MEMBER specialWarpDestMap NOTIFY specialWarpDestMapChanged)
-  Q_PROPERTY(bool flyOrDungeonWarp_ MEMBER flyOrDungeonWarp NOTIFY flyOrDungeonWarpChanged)
-  Q_PROPERTY(bool flyWarp_ MEMBER flyWarp NOTIFY flyWarpChanged)
-  Q_PROPERTY(bool dungeonWarp_ MEMBER dungeonWarp NOTIFY dungeonWarpChanged)
-  Q_PROPERTY(var8 whichDungeonWarp_ MEMBER whichDungeonWarp NOTIFY whichDungeonWarpChanged)
-  Q_PROPERTY(var8 warpedFromWarp_ MEMBER warpedFromWarp NOTIFY warpedFromWarpChanged)
-  Q_PROPERTY(var8 warpedfromMap_ MEMBER warpedfromMap NOTIFY warpedfromMapChanged)
-  Q_PROPERTY(QVector<WarpData*> warps_ MEMBER warps NOTIFY warpsChanged)
+  Q_PROPERTY(bool scriptedWarp MEMBER scriptedWarp NOTIFY scriptedWarpChanged)
+  Q_PROPERTY(bool isDungeonWarp MEMBER isDungeonWarp NOTIFY isDungeonWarpChanged)
+  Q_PROPERTY(bool skipJoypadCheckWarps MEMBER skipJoypadCheckWarps NOTIFY skipJoypadCheckWarpsChanged)
+  Q_PROPERTY(int warpDest MEMBER warpDest NOTIFY warpDestChanged)
+  Q_PROPERTY(int dungeonWarpDestMap MEMBER dungeonWarpDestMap NOTIFY dungeonWarpDestMapChanged)
+  Q_PROPERTY(int specialWarpDestMap MEMBER specialWarpDestMap NOTIFY specialWarpDestMapChanged)
+  Q_PROPERTY(bool flyOrDungeonWarp MEMBER flyOrDungeonWarp NOTIFY flyOrDungeonWarpChanged)
+  Q_PROPERTY(bool flyWarp MEMBER flyWarp NOTIFY flyWarpChanged)
+  Q_PROPERTY(bool dungeonWarp MEMBER dungeonWarp NOTIFY dungeonWarpChanged)
+  Q_PROPERTY(int whichDungeonWarp MEMBER whichDungeonWarp NOTIFY whichDungeonWarpChanged)
+  Q_PROPERTY(int warpedFromWarp MEMBER warpedFromWarp NOTIFY warpedFromWarpChanged)
+  Q_PROPERTY(int warpedfromMap MEMBER warpedfromMap NOTIFY warpedfromMapChanged)
 
 public:
   AreaWarps(SaveFile* saveFile = nullptr);
   virtual ~AreaWarps();
+
+  Q_INVOKABLE int warpCount();
+  Q_INVOKABLE int warpMax();
+  Q_INVOKABLE WarpData* warpAt(int ind);
+  Q_INVOKABLE void warpSwap(int from, int to);
+  Q_INVOKABLE void warpRemove(int ind);
+  Q_INVOKABLE void warpNew();
 
 signals:
   void scriptedWarpChanged();
@@ -74,17 +82,17 @@ public:
   bool skipJoypadCheckWarps; // Skips check for warp after not collided (Forced Warp)??
 
   // Warping
-  var8 warpDest; // Warp actively warping to or 0xFF to warp to same position
-  var8 dungeonWarpDestMap; // Destination Map for dungeon warps
-  var8 specialWarpDestMap; // Destination Map for special warps
+  int warpDest; // Warp actively warping to or 0xFF to warp to same position
+  int dungeonWarpDestMap; // Destination Map for dungeon warps
+  int specialWarpDestMap; // Destination Map for special warps
   bool flyOrDungeonWarp; // Is a fly or dungeon warp
   bool flyWarp; // Is a fly warp
   bool dungeonWarp; // Is a dungeon warp
 
   // Warped
-  var8 whichDungeonWarp; // Warped from which dungeon warp
-  var8 warpedFromWarp; // Warped from which warp
-  var8 warpedfromMap; // Warped from which map
+  int whichDungeonWarp; // Warped from which dungeon warp
+  int warpedFromWarp; // Warped from which warp
+  int warpedfromMap; // Warped from which map
 
   QVector<WarpData*> warps;
 };

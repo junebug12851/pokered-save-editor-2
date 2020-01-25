@@ -35,6 +35,51 @@ AreaSprites::~AreaSprites()
   reset();
 }
 
+int AreaSprites::spriteCount()
+{
+  return sprites.size();
+}
+
+int AreaSprites::spriteMax()
+{
+  return maxSprites;
+}
+
+SpriteData* AreaSprites::spriteAt(int ind)
+{
+  return sprites.at(ind);
+}
+
+void AreaSprites::spriteSwap(int from, int to)
+{
+  auto eFrom = sprites.at(from);
+  auto eTo = sprites.at(to);
+
+  sprites.replace(from, eTo);
+  sprites.replace(to, eFrom);
+
+  spritesChanged();
+}
+
+void AreaSprites::spriteRemove(int ind)
+{
+  // A sprite has to always have a player sprite in the first position
+  if(sprites.size() <= 1)
+    return;
+
+  return sprites.removeAt(ind);
+  spritesChanged();
+}
+
+void AreaSprites::spriteNew()
+{
+  if(sprites.size() >= maxSprites)
+    return;
+
+  sprites.append(new SpriteData);
+  spritesChanged();
+}
+
 void AreaSprites::load(SaveFile* saveFile)
 {
   reset();

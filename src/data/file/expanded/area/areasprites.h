@@ -24,15 +24,22 @@ class SaveFile;
 class SpriteData;
 class MapDBEntrySprite;
 
+constexpr var8 maxSprites = 16;
+
 class AreaSprites : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QVector<SpriteData*> sprites_ MEMBER sprites NOTIFY spritesChanged)
-
 public:
   AreaSprites(SaveFile* saveFile = nullptr);
   virtual ~AreaSprites();
+
+  Q_INVOKABLE int spriteCount();
+  Q_INVOKABLE int spriteMax();
+  Q_INVOKABLE SpriteData* spriteAt(int ind);
+  Q_INVOKABLE void spriteSwap(int from, int to);
+  Q_INVOKABLE void spriteRemove(int ind);
+  Q_INVOKABLE void spriteNew();
 
 signals:
   void spritesChanged();
