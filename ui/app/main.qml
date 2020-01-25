@@ -14,7 +14,7 @@ Rectangle {
   Text {
     color: Material.foreground
     id: helloText
-    text: "Records: " + file.data_.dataExpanded.hof.recordMax_
+    text: file.getRecentFile(0)
     anchors.verticalCenter: root.verticalCenter
     anchors.horizontalCenter: root.horizontalCenter
     font.pointSize: 24;

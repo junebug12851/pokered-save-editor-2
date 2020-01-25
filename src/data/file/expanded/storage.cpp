@@ -40,22 +40,22 @@ Storage::~Storage()
     delete pokemon[i];
 }
 
-var8 Storage::setCount()
+int Storage::setCount()
 {
   return maxPokemonStorageSets;
 }
 
-PokemonStorageSet* Storage::setAt(var8 ind)
+PokemonStorageSet* Storage::setAt(int ind)
 {
   return pokemon[ind];
 }
 
-var8 Storage::boxCount()
+int Storage::boxCount()
 {
   return maxPokemonBoxes;
 }
 
-PokemonStorageBox* Storage::boxAt(var8 ind)
+PokemonStorageBox* Storage::boxAt(int ind)
 {
   bool curSetB = ind >= setMaxBoxes;
   var8 cur = ind; // Get the current box

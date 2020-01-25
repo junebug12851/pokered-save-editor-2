@@ -41,12 +41,12 @@ int HallOfFame::recordMax()
   return recordsMax;
 }
 
-HoFRecord* HallOfFame::recordAt(var8 ind)
+HoFRecord* HallOfFame::recordAt(int ind)
 {
   return records.at(ind);
 }
 
-void HallOfFame::recordSwap(var8 from, var8 to)
+void HallOfFame::recordSwap(int from, int to)
 {
   auto fRecord = records.at(from);
   auto tRecord = records.at(to);
@@ -57,7 +57,7 @@ void HallOfFame::recordSwap(var8 from, var8 to)
   recordsChanged();
 }
 
-void HallOfFame::recordRemove(var8 ind)
+void HallOfFame::recordRemove(int ind)
 {
   if(records.size() < 1)
     return;

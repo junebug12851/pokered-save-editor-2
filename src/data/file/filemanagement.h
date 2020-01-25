@@ -16,7 +16,7 @@
 #ifndef FILEMANAGEMENT2_H
 #define FILEMANAGEMENT2_H
 
-//#include <QtCore/qglobal.h>
+#include <QList>
 #include <QFile>
 #include <QSettings>
 
@@ -25,28 +25,31 @@
 class SaveFile;
 
 constexpr var8 MAX_RECENT_FILES{5};
+constexpr const char* KEY_RECENT_FILES = "recentFiles";
+constexpr const char* KEY_LAST_FILE = "lastFile";
 
 class FileManagement : public QObject
 {
   Q_OBJECT
 
-public:
   Q_PROPERTY(QString path READ getPath WRITE setPath NOTIFY pathChanged)
   Q_PROPERTY(QList<QString> recentFiles READ getRecentFiles RESET clearRecentFiles NOTIFY recentFilesChanged)
-  Q_PROPERTY(QString recentFile READ getRecentFile WRITE addRecentFile NOTIFY recentFilesChanged STORED false)
-  Q_PROPERTY(SaveFile* data_ MEMBER data NOTIFY dataChanged)
+  Q_PROPERTY(SaveFile* data MEMBER data NOTIFY dataChanged)
 
+public:
   FileManagement(QObject* parent = nullptr);
   virtual ~FileManagement();
 
   QString getPath();
-  QString getRecentFile(var8 index = 0);
+  Q_INVOKABLE QString getRecentFile(var8 index = 0);
   QList<QString> getRecentFiles();
 
   SaveFile* data = nullptr;
 
-  static const QString KEY_RECENT_FILES;
-  static const QString KEY_LAST_FILE;
+  Q_INVOKABLE int recentFilesCount();
+  Q_INVOKABLE int recentFilesMax();
+  Q_INVOKABLE void recentFilesSwap(int from, int to);
+  Q_INVOKABLE void recentFilesRemove(int ind);
 
 signals:
   void pathChanged(QString newPath, QString oldPath);
@@ -58,7 +61,7 @@ public slots:
 
   void newFile();
   void openFile();
-  void openFileRecent(var8 index);
+  void openFileRecent(int index);
   void reopenFile();
 
   void addRecentFile(QString path);

@@ -12,34 +12,39 @@ class FileManagement;
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
+
+  Q_PROPERTY(FileManagement* file MEMBER file NOTIFY fileChanged)
 
 public:
-    MainWindow(QWidget* parent = nullptr);
-    virtual ~MainWindow();
+  MainWindow(QWidget* parent = nullptr);
+  virtual ~MainWindow();
 
-    static MainWindow* getInstance();
+  static MainWindow* getInstance();
 
-    FileManagement* file = nullptr;
+  FileManagement* file = nullptr;
 
-    // MAX_RECENT_FILES
-    QShortcut* recentFileShortcuts[5];
-    QHash<QString, QShortcut*> otherShortcuts;
+  // MAX_RECENT_FILES
+  QShortcut* recentFileShortcuts[5];
+  QHash<QString, QShortcut*> otherShortcuts;
+
+signals:
+  void fileChanged();
 
 private slots:
-    void reUpdateRecentFiles(QList<QString> files);
-    void onRecentFileClick();
-    void onPathChanged(QString path);
+  void reUpdateRecentFiles(QList<QString> files);
+  void onRecentFileClick();
+  void onPathChanged(QString path);
 
 private:
-    Ui::MainWindow ui;
-    QSettings settings;
-    void closeEvent(QCloseEvent* event);
+  Ui::MainWindow ui;
+  QSettings settings;
+  void closeEvent(QCloseEvent* event);
 
-    void saveState();
-    void loadState();
+  void saveState();
+  void loadState();
 
-    static MainWindow* instance;
+  static MainWindow* instance;
 };
 
 #endif // MAINWINDOW_H

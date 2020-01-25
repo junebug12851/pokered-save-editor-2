@@ -29,9 +29,6 @@ class HallOfFame : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QVector<HoFRecord*> records MEMBER records NOTIFY recordsChanged)
-  Q_PROPERTY(int recordMax_ READ recordMax NOTIFY recordsChanged)
-
 public:
   HallOfFame(SaveFile* saveFile = nullptr);
   virtual ~HallOfFame();
@@ -42,9 +39,9 @@ public:
   // for each and every array of any kind that's not primitive
   Q_INVOKABLE int recordCount();
   Q_INVOKABLE int recordMax();
-  Q_INVOKABLE HoFRecord* recordAt(var8 ind);
-  Q_INVOKABLE void recordSwap(var8 from, var8 to);
-  Q_INVOKABLE void recordRemove(var8 ind);
+  Q_INVOKABLE HoFRecord* recordAt(int ind);
+  Q_INVOKABLE void recordSwap(int from, int to);
+  Q_INVOKABLE void recordRemove(int ind);
   Q_INVOKABLE void recordNew();
 
 signals:

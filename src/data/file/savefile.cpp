@@ -37,25 +37,33 @@ SaveFileIterator* SaveFile::iterator()
 void SaveFile::resetData(bool silent)
 {
   memset(data, 0, SAV_DATA_SIZE);
+  dataChanged(data);
 
   if(!silent) {
-    wholeDataChanged(data);
     expandData();
+    dataExpandedChanged(dataExpanded);
   }
-  else
-    silentWholeDataChanged(data);
 }
 
 void SaveFile::setData(var8* data, bool silent)
 {
   memcpy(this->data, data, SAV_DATA_SIZE);
+  dataChanged(data);
 
   if(!silent) {
     expandData();
-    wholeDataChanged(data);
+    dataExpandedChanged(dataExpanded);
   }
-  else
-    silentWholeDataChanged(data);
+}
+
+int SaveFile::dataSize()
+{
+  return SAV_DATA_SIZE;
+}
+
+int SaveFile::dataAt(int ind)
+{
+  return data[ind];
 }
 
 void SaveFile::flattenData()

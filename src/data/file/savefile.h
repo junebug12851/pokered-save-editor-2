@@ -14,13 +14,12 @@ constexpr var16 SAV_DATA_SIZE{0x8000};
 class SaveFile : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(var8* data MEMBER data NOTIFY silentWholeDataChanged)
-  Q_PROPERTY(SaveFileExpanded* dataExpanded MEMBER dataExpanded NOTIFY wholeDataChanged)
+
+  Q_PROPERTY(SaveFileExpanded* dataExpanded MEMBER dataExpanded NOTIFY dataExpandedChanged)
 
 public:
   // Create a blank save file and a blank expanded save file
   SaveFile(QObject *parent = nullptr);
-
   virtual ~SaveFile();
 
   // Returns a unique iterator that's setup to iterate over the raw sav file
@@ -30,15 +29,31 @@ public:
   // leak
   SaveFileIterator* iterator();
 
-  // Empty this save file to zero's
-  // Re-Expand the empty save file, overwriting prior expansion, unless marked
-  // silent
-  void resetData(bool silent = false);
-
   // Change-out the save file
   // Re-Expand the new save file, overwriting prior expansion, unless marked
   // silent
   void setData(var8* data, bool silent = false);
+
+  // Because QML can't work with arrays of any kind minus very certain Qt Array
+  // exceptions for very specific primitive types
+  // Sort of a work-around
+  // Prevent any editing, modifying, deleting, etc... Only allow reading
+  Q_INVOKABLE int dataSize();
+  Q_INVOKABLE int dataAt(int ind);
+
+signals:
+  // SAV file has changed and it's expansion replaced with new SAV data
+  void dataChanged(var8* data);
+
+  // SAV file has changed but the old expansion has not been replaced with
+  // exxpansion of new data
+  void dataExpandedChanged(SaveFileExpanded* expanded);
+
+public slots:
+  // Empty this save file to zero's
+  // Re-Expand the empty save file, overwriting prior expansion, unless marked
+  // silent
+  void resetData(bool silent = false);
 
   // Flatten expansion back to the save file, overwriting it's current contents
   // with only data that's strictly nesesary. A critical rule.
@@ -58,6 +73,7 @@ public:
   // Your Psychic Traded Pikachu named Bob that uses Ice Beam and Splash
   void randomizeExpansion();
 
+public:
   // Actual SAV Data, a raw internal binary copy of the file
   var8* data = nullptr;
 
@@ -66,14 +82,6 @@ public:
 
   // Tools to operate directly on the raw sav file data
   SaveFileToolset* toolset = nullptr;
-
-signals:
-  // SAV file has changed and it's expansion replaced with new SAV data
-  void wholeDataChanged(var8* data);
-
-  // SAV file has changed but the old expansion has not been replaced with
-  // exxpansion of new data
-  void silentWholeDataChanged(var8* data);
 };
 
 #endif // RAWSAVEDATA_H

@@ -15,7 +15,6 @@
 */
 
 #include <QFileDialog>
-#include <QList>
 
 #include "./filemanagement.h"
 #include "./savefile.h"
@@ -48,6 +47,33 @@ QList<QString> FileManagement::getRecentFiles()
   return QList<QString>(recentFiles);
 }
 
+int FileManagement::recentFilesCount()
+{
+  return recentFiles.size();
+}
+
+int FileManagement::recentFilesMax()
+{
+  return MAX_RECENT_FILES;
+}
+
+void FileManagement::recentFilesSwap(int from, int to)
+{
+  auto eFrom = recentFiles.at(from);
+  auto eTo = recentFiles.at(to);
+
+  recentFiles.replace(from, eTo);
+  recentFiles.replace(to, eFrom);
+
+  processRecentFileChanges();
+}
+
+void FileManagement::recentFilesRemove(int ind)
+{
+  recentFiles.removeAt(ind);
+  processRecentFileChanges();
+}
+
 void FileManagement::reset()
 {
   setPath("");
@@ -72,7 +98,7 @@ void FileManagement::openFile()
   delete[] newData; // Very important with readSaveData
 }
 
-void FileManagement::openFileRecent(var8 index)
+void FileManagement::openFileRecent(int index)
 {
   QString file{getRecentFile(index)};
   var8* newData{readSaveData(file)};
@@ -265,6 +291,3 @@ void FileManagement::expandRecentFiles(QString files)
   // Process, cleanup, and notify
   processRecentFileChanges();
 }
-
-const QString FileManagement::KEY_RECENT_FILES = "recentFiles";
-const QString FileManagement::KEY_LAST_FILE = "lastFile";
