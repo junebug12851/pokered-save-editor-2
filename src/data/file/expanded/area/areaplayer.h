@@ -29,7 +29,7 @@ enum class PlayerDir : var8 {
   Up
 };
 
-class AreaPlayer : QObject
+class AreaPlayer : public QObject
 {
   Q_OBJECT
 

@@ -91,7 +91,7 @@ struct SpriteGrass
   static var8 random();
 };
 
-class SpriteData : QObject
+class SpriteData : public QObject
 {
   Q_OBJECT
 

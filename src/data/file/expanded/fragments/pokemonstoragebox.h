@@ -27,7 +27,7 @@ class PlayerBasics;
 constexpr var8 boxMaxPokemon = 20;
 
 // Holds contents of a single Pokemon storage box
-class PokemonStorageBox : QObject
+class PokemonStorageBox : public QObject
 {
   Q_OBJECT
 
