@@ -36,13 +36,22 @@ public:
   WorldHidden(SaveFile* saveFile = nullptr);
   virtual ~WorldHidden();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+  Q_INVOKABLE int hItemsCount();
+  Q_INVOKABLE bool hItemsAt(int ind);
+  Q_INVOKABLE void hItemsSet(int ind, bool val);
+
+  Q_INVOKABLE int hCoinsCount();
+  Q_INVOKABLE bool hCoinsAt(int ind);
+  Q_INVOKABLE void hCoinsSet(int ind, bool val);
+
 signals:
   void hiddenItemsChanged();
   void hiddenCoinsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

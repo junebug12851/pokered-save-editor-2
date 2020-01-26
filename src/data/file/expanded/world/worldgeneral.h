@@ -24,9 +24,9 @@ class SaveFile;
 class Options : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(var8 textSlowness_ MEMBER textSlowness NOTIFY textSlownessChanged)
-  Q_PROPERTY(bool battleStyleSet_ MEMBER battleStyleSet NOTIFY battleStyleSetChanged)
-  Q_PROPERTY(bool battleAnimOff_ MEMBER battleAnimOff NOTIFY battleAnimOffChanged)
+  Q_PROPERTY(int textSlowness MEMBER textSlowness NOTIFY textSlownessChanged)
+  Q_PROPERTY(bool battleStyleSet MEMBER battleStyleSet NOTIFY battleStyleSetChanged)
+  Q_PROPERTY(bool battleAnimOff MEMBER battleAnimOff NOTIFY battleAnimOffChanged)
 
 signals:
   void textSlownessChanged();
@@ -34,7 +34,7 @@ signals:
   void battleAnimOffChanged();
 
 public:
-  var8 textSlowness;
+  int textSlowness;
   bool battleStyleSet;
   bool battleAnimOff;
 };
@@ -42,8 +42,8 @@ public:
 class LetterDelay : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(bool normalDelay_ MEMBER normalDelay NOTIFY normalDelayChanged)
-  Q_PROPERTY(bool dontDelay_ MEMBER dontDelay NOTIFY dontDelayChanged)
+  Q_PROPERTY(bool normalDelay MEMBER normalDelay NOTIFY normalDelayChanged)
+  Q_PROPERTY(bool dontDelay MEMBER dontDelay NOTIFY dontDelayChanged)
 
 signals:
   void normalDelayChanged();
@@ -58,14 +58,17 @@ class WorldGeneral : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 lastBlackoutMap_ MEMBER lastBlackoutMap NOTIFY lastBlackoutMapChanged)
-  Q_PROPERTY(var8 lastMap_ MEMBER lastMap NOTIFY lastMapChanged)
-  Q_PROPERTY(Options* options_ MEMBER options NOTIFY optionsChanged)
-  Q_PROPERTY(LetterDelay* letterDelay_ MEMBER letterDelay NOTIFY letterDelayChanged)
+  Q_PROPERTY(int lastBlackoutMap MEMBER lastBlackoutMap NOTIFY lastBlackoutMapChanged)
+  Q_PROPERTY(int lastMap MEMBER lastMap NOTIFY lastMapChanged)
+  Q_PROPERTY(Options* options MEMBER options NOTIFY optionsChanged)
+  Q_PROPERTY(LetterDelay* letterDelay MEMBER letterDelay NOTIFY letterDelayChanged)
 
 public:
   WorldGeneral(SaveFile* saveFile = nullptr);
   virtual ~WorldGeneral();
+
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
 
 signals:
   void lastBlackoutMapChanged();
@@ -74,14 +77,12 @@ signals:
   void letterDelayChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
 public:
-  var8 lastBlackoutMap;
-  var8 lastMap;
+  int lastBlackoutMap;
+  int lastMap;
   Options* options;
   LetterDelay* letterDelay;
 };

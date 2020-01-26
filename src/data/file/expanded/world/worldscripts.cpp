@@ -73,6 +73,22 @@ void WorldScripts::save(SaveFile* saveFile)
   delete it;
 }
 
+int WorldScripts::scriptsCount()
+{
+  return scriptCount;
+}
+
+int WorldScripts::scriptsAt(int ind)
+{
+  return curScripts[ind];
+}
+
+void WorldScripts::scriptsSet(int ind, int val)
+{
+  curScripts[ind] = val;
+  curScriptsChanged();
+}
+
 void WorldScripts::reset()
 {
   memset(curScripts, 0, scriptCount * 2); // 2 * 8-bit widths

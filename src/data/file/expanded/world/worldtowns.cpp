@@ -59,6 +59,22 @@ void WorldTowns::save(SaveFile* saveFile)
   toolset->setBitField(0x29B7, townByteCount, bits);
 }
 
+int WorldTowns::townsCount()
+{
+  return townCount;
+}
+
+bool WorldTowns::townsAt(int ind)
+{
+  return visitedTowns[ind];
+}
+
+void WorldTowns::townsSet(int ind, bool val)
+{
+  visitedTowns[ind] = val;
+  visitedTownsChanged();
+}
+
 void WorldTowns::reset()
 {
   memset(visitedTowns, 0, townCount);

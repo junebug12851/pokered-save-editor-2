@@ -75,6 +75,38 @@ void WorldHidden::save(SaveFile* saveFile)
   toolset->setBitField(0x29AA, hiddenCoinByteCount, bits);
 }
 
+int WorldHidden::hItemsCount()
+{
+  return hiddenItemCount;
+}
+
+bool WorldHidden::hItemsAt(int ind)
+{
+  return hiddenItems[ind];
+}
+
+void WorldHidden::hItemsSet(int ind, bool val)
+{
+  hiddenItems[ind] = val;
+  hiddenItemsChanged();
+}
+
+int WorldHidden::hCoinsCount()
+{
+  return hiddenCoinCount;
+}
+
+bool WorldHidden::hCoinsAt(int ind)
+{
+  return hiddenCoins[ind];
+}
+
+void WorldHidden::hCoinsSet(int ind, bool val)
+{
+  hiddenCoins[ind] = val;
+  hiddenCoinsChanged();
+}
+
 void WorldHidden::reset()
 {
   memset(hiddenItems, 0, hiddenItemCount);

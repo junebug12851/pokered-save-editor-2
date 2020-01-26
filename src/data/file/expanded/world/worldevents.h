@@ -33,6 +33,10 @@ public:
   WorldEvents(SaveFile* saveFile = nullptr);
   virtual ~WorldEvents();
 
+  Q_INVOKABLE int eventsCount();
+  Q_INVOKABLE bool eventsAt(int ind);
+  Q_INVOKABLE void eventsSet(int ind, bool val);
+
 signals:
   void completedEventsChanged();
 

@@ -61,6 +61,22 @@ void WorldMissables::save(SaveFile* saveFile)
   toolset->setBitField(0x299C, missableByteCount, bits);
 }
 
+int WorldMissables::missablesCount()
+{
+  return missableCount;
+}
+
+bool WorldMissables::missablesAt(int ind)
+{
+  return missables[ind];
+}
+
+void WorldMissables::missablesSet(int ind, bool val)
+{
+  missables[ind] = val;
+  missablesChanged();
+}
+
 void WorldMissables::reset()
 {
   // Missables can't be zeroed out whimsically, reset back to game start

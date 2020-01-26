@@ -34,19 +34,22 @@ class World : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(WorldCompleted* completed_ MEMBER completed NOTIFY completedChanged)
-  Q_PROPERTY(WorldEvents* events_ MEMBER events NOTIFY eventsChanged)
-  Q_PROPERTY(WorldGeneral* general_ MEMBER general NOTIFY generalChanged)
-  Q_PROPERTY(WorldHidden* hidden_ MEMBER hidden NOTIFY hiddenChanged)
-  Q_PROPERTY(WorldMissables* missables_ MEMBER missables NOTIFY missablesChanged)
-  Q_PROPERTY(WorldOther* other_ MEMBER other NOTIFY otherChanged)
-  Q_PROPERTY(WorldScripts* scripts_ MEMBER scripts NOTIFY scriptsChanged)
-  Q_PROPERTY(WorldTowns* towns_ MEMBER towns NOTIFY townsChanged)
-  Q_PROPERTY(WorldTrades* trades_ MEMBER trades NOTIFY tradesChanged)
+  Q_PROPERTY(WorldCompleted* completed MEMBER completed NOTIFY completedChanged)
+  Q_PROPERTY(WorldEvents* events MEMBER events NOTIFY eventsChanged)
+  Q_PROPERTY(WorldGeneral* general MEMBER general NOTIFY generalChanged)
+  Q_PROPERTY(WorldHidden* hidden MEMBER hidden NOTIFY hiddenChanged)
+  Q_PROPERTY(WorldMissables* missables MEMBER missables NOTIFY missablesChanged)
+  Q_PROPERTY(WorldOther* other MEMBER other NOTIFY otherChanged)
+  Q_PROPERTY(WorldScripts* scripts MEMBER scripts NOTIFY scriptsChanged)
+  Q_PROPERTY(WorldTowns* towns MEMBER towns NOTIFY townsChanged)
+  Q_PROPERTY(WorldTrades* trades MEMBER trades NOTIFY tradesChanged)
 
 public:
   World(SaveFile* saveFile = nullptr);
   virtual ~World();
+
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
 
 signals:
   void completedChanged();
@@ -60,8 +63,6 @@ signals:
   void tradesChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

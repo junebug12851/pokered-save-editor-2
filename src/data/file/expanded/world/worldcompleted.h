@@ -24,18 +24,21 @@ class WorldCompleted : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool obtainedOldRod_ MEMBER obtainedOldRod NOTIFY obtainedOldRodChanged)
-  Q_PROPERTY(bool obtainedGoodRod_ MEMBER obtainedGoodRod NOTIFY obtainedGoodRodChanged)
-  Q_PROPERTY(bool obtainedSuperRod_ MEMBER obtainedSuperRod NOTIFY obtainedSuperRodChanged)
-  Q_PROPERTY(bool obtainedLapras_ MEMBER obtainedLapras NOTIFY obtainedLaprasChanged)
-  Q_PROPERTY(bool obtainedStarterPokemon_ MEMBER obtainedStarterPokemon NOTIFY obtainedStarterPokemonChanged)
-  Q_PROPERTY(bool everHealedPokemon_ MEMBER everHealedPokemon NOTIFY everHealedPokemonChanged)
-  Q_PROPERTY(bool satisfiedSaffronGuards_ MEMBER satisfiedSaffronGuards NOTIFY satisfiedSaffronGuardsChanged)
-  Q_PROPERTY(bool defeatedLorelei_ MEMBER defeatedLorelei NOTIFY defeatedLoreleiChanged)
+  Q_PROPERTY(bool obtainedOldRod MEMBER obtainedOldRod NOTIFY obtainedOldRodChanged)
+  Q_PROPERTY(bool obtainedGoodRod MEMBER obtainedGoodRod NOTIFY obtainedGoodRodChanged)
+  Q_PROPERTY(bool obtainedSuperRod MEMBER obtainedSuperRod NOTIFY obtainedSuperRodChanged)
+  Q_PROPERTY(bool obtainedLapras MEMBER obtainedLapras NOTIFY obtainedLaprasChanged)
+  Q_PROPERTY(bool obtainedStarterPokemon MEMBER obtainedStarterPokemon NOTIFY obtainedStarterPokemonChanged)
+  Q_PROPERTY(bool everHealedPokemon MEMBER everHealedPokemon NOTIFY everHealedPokemonChanged)
+  Q_PROPERTY(bool satisfiedSaffronGuards MEMBER satisfiedSaffronGuards NOTIFY satisfiedSaffronGuardsChanged)
+  Q_PROPERTY(bool defeatedLorelei MEMBER defeatedLorelei NOTIFY defeatedLoreleiChanged)
 
 public:
   WorldCompleted(SaveFile* saveFile = nullptr);
   virtual ~WorldCompleted();
+
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
 
 signals:
   void obtainedOldRodChanged();
@@ -48,8 +51,6 @@ signals:
   void defeatedLoreleiChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

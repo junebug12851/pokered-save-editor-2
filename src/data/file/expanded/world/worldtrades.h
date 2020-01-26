@@ -31,12 +31,17 @@ public:
   WorldTrades(SaveFile* saveFile = nullptr);
   virtual ~WorldTrades();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+  Q_INVOKABLE int tradesCount();
+  Q_INVOKABLE bool tradesAt(int ind);
+  Q_INVOKABLE void tradesSet(int ind, bool val);
+
 signals:
   void completedTradesChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

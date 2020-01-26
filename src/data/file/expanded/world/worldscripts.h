@@ -32,12 +32,17 @@ public:
   WorldScripts(SaveFile* saveFile = nullptr);
   virtual ~WorldScripts();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+  Q_INVOKABLE int scriptsCount();
+  Q_INVOKABLE int scriptsAt(int ind);
+  Q_INVOKABLE void scriptsSet(int ind, int val);
+
 signals:
   void curScriptsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

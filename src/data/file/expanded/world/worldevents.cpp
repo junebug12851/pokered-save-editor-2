@@ -30,6 +30,22 @@ WorldEvents::WorldEvents(SaveFile* saveFile)
 
 WorldEvents::~WorldEvents() {}
 
+int WorldEvents::eventsCount()
+{
+  return eventCount;
+}
+
+bool WorldEvents::eventsAt(int ind)
+{
+  return completedEvents[ind];
+}
+
+void WorldEvents::eventsSet(int ind, bool val)
+{
+  completedEvents[ind] = val;
+  completedEventsChanged();
+}
+
 void WorldEvents::load(SaveFile* saveFile)
 {
   reset();

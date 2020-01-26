@@ -25,11 +25,20 @@ class SaveFile;
 class Playtime : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(var8 hours_ MEMBER hours NOTIFY hoursChanged)
-  Q_PROPERTY(var8 minutes_ MEMBER minutes NOTIFY minutesChanged)
-  Q_PROPERTY(var8 seconds_ MEMBER seconds NOTIFY secondsChanged)
-  Q_PROPERTY(var8 frames_ MEMBER frames NOTIFY framesChanged)
-  Q_PROPERTY(var8 clockMaxed_ MEMBER clockMaxed NOTIFY clockMaxedChanged)
+  Q_PROPERTY(int days READ getDays WRITE setDays NOTIFY hoursChanged)
+  Q_PROPERTY(int hours MEMBER hours NOTIFY hoursChanged)
+  Q_PROPERTY(int hoursAdjusted READ getHoursAdjusted NOTIFY hoursChanged)
+  Q_PROPERTY(int minutes MEMBER minutes NOTIFY minutesChanged)
+  Q_PROPERTY(int seconds MEMBER seconds NOTIFY secondsChanged)
+  Q_PROPERTY(int frames MEMBER frames NOTIFY framesChanged)
+  Q_PROPERTY(int clockMaxed MEMBER clockMaxed NOTIFY clockMaxedChanged)
+
+  // Converts hours into days and allows converting back from days
+  Q_INVOKABLE int getDays();
+  Q_INVOKABLE void setDays(int val);
+
+  // Gets hours within the day,
+  Q_INVOKABLE int getHoursAdjusted();
 
 signals:
   void hoursChanged();
@@ -39,27 +48,30 @@ signals:
   void clockMaxedChanged();
 
 public:
-  var8 hours; // Max 255
-  var8 minutes; // Max 59, any higher will reset to zero and increment hr by 1
-  var8 seconds; // Max 59, any higher will reset to zero and increment min by 1
-  var8 frames; // Max 59, any higher will reset to zero and increment sec by 1
+  int hours; // Max 255
+  int minutes; // Max 59, any higher will reset to zero and increment hr by 1
+  int seconds; // Max 59, any higher will reset to zero and increment min by 1
+  int frames; // Max 59, any higher will reset to zero and increment sec by 1
 
   // Any value, it just stops the clock completely
-  var8 clockMaxed;
+  int clockMaxed;
 };
 
 class WorldOther : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool debugMode_ MEMBER debugMode NOTIFY debugModeChanged)
-  Q_PROPERTY(Playtime* playtime_ MEMBER playtime NOTIFY playtimeChanged)
-  Q_PROPERTY(var8 fossilItemGiven_ MEMBER fossilItemGiven NOTIFY fossilItemGivenChanged)
-  Q_PROPERTY(var8 fossilPkmnResult_ MEMBER fossilPkmnResult NOTIFY fossilPkmnResultChanged)
+  Q_PROPERTY(bool debugMode MEMBER debugMode NOTIFY debugModeChanged)
+  Q_PROPERTY(Playtime* playtime MEMBER playtime NOTIFY playtimeChanged)
+  Q_PROPERTY(int fossilItemGiven MEMBER fossilItemGiven NOTIFY fossilItemGivenChanged)
+  Q_PROPERTY(int fossilPkmnResult MEMBER fossilPkmnResult NOTIFY fossilPkmnResultChanged)
 
 public:
   WorldOther(SaveFile* saveFile = nullptr);
   virtual ~WorldOther();
+
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
 
 signals:
   void debugModeChanged();
@@ -68,21 +80,22 @@ signals:
   void fossilPkmnResultChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
 public:
   // Hold B to avoid wild battles
+  // It also skips most of Prof Oaks speech and sets default names however the
+  // latter two don't apply since loading a saveFile means all that is over with
+  // anyways
   bool debugMode;
 
   // Playtime
   Playtime* playtime;
 
   // Fossils
-  var8 fossilItemGiven;
-  var8 fossilPkmnResult;
+  int fossilItemGiven;
+  int fossilPkmnResult;
 };
 
 #endif // WORLDOTHER_H

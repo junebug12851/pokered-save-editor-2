@@ -34,12 +34,17 @@ public:
   WorldMissables(SaveFile* saveFile = nullptr);
   virtual ~WorldMissables();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+  Q_INVOKABLE int missablesCount();
+  Q_INVOKABLE bool missablesAt(int ind);
+  Q_INVOKABLE void missablesSet(int ind, bool val);
+
 signals:
   void missablesChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

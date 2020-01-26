@@ -130,3 +130,22 @@ void WorldOther::randomize()
   playtime->frames = Random::rangeInclusive(0, 59);
   playtime->framesChanged();
 }
+
+int Playtime::getDays()
+{
+  return hours / 24;
+}
+
+void Playtime::setDays(int val)
+{
+  int _days = (hours / 24) + val;
+  int _hours = hours % 24;
+
+  hours = (_days * 24) + _hours;
+  hoursChanged();
+}
+
+int Playtime::getHoursAdjusted()
+{
+  return hours % 24;
+}

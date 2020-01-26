@@ -57,6 +57,22 @@ void WorldTrades::save(SaveFile* saveFile)
   toolset->setBitField(0x29E3, tradeByteCount, bits);
 }
 
+int WorldTrades::tradesCount()
+{
+  return tradeCount;
+}
+
+bool WorldTrades::tradesAt(int ind)
+{
+  return completedTrades[ind];
+}
+
+void WorldTrades::tradesSet(int ind, bool val)
+{
+  completedTrades[ind] = val;
+  completedTradesChanged();
+}
+
 void WorldTrades::reset()
 {
   memset(completedTrades, 0, tradeCount);

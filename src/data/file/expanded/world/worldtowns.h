@@ -31,12 +31,17 @@ public:
   WorldTowns(SaveFile* saveFile = nullptr);
   virtual ~WorldTowns();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+  Q_INVOKABLE int townsCount();
+  Q_INVOKABLE bool townsAt(int ind);
+  Q_INVOKABLE void townsSet(int ind, bool val);
+
 signals:
   void visitedTownsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
