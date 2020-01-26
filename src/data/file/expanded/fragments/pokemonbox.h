@@ -43,6 +43,44 @@ public:
   };
 };
 
+// Natures were not in gen 1 but Pokemon has released a formula for determining
+// gen 1 natures mainly for bank on the virtual console
+struct PokemonNatures : public QObject
+{
+  Q_OBJECT
+  Q_ENUMS(PokemonNatures_)
+
+public:
+  enum PokemonNatures_ : var8
+  {
+    Hardy = 0,
+    Lonely,
+    Brave,
+    Adamant,
+    Naughty,
+    Bold,
+    Docile,
+    Relaxed,
+    Impish,
+    Lax,
+    Timid,
+    Hasty,
+    Serious,
+    Jolly,
+    Naive,
+    Modest,
+    Mild,
+    Quiet,
+    Bashful,
+    Rash,
+    Calm,
+    Gentle,
+    Sassy,
+    Careful,
+    Quirky
+  };
+};
+
 struct PokemonRandom : public QObject
 {
   Q_OBJECT
@@ -192,8 +230,8 @@ public:
   Q_INVOKABLE bool isMaxDVs();
   Q_INVOKABLE bool isPokemonReset();
 
-  // Gen 1 does not have shinies
-  // However Pokemon has released a formula for determining shinies in gen 1
+  // Gen 1 does not have shinies or natures
+  // However Pokemon has released a formula for determining them in gen 1
   // This mainly applies to the bank for the virtual consoles
 
   // It's important to note that this program is not designed or intended
@@ -202,6 +240,8 @@ public:
   // Any issues that may come up from using it for that I'm not going to fix
   // because that's not the purpose of this program
   Q_INVOKABLE bool isShiny();
+  Q_INVOKABLE int getNature(); // Use nature enum
+  Q_INVOKABLE void setNature(int nature); // Use nature enum
 
   virtual void copyFrom(PokemonBox* pkmn);
   PokemonDBEntry* toData();

@@ -1083,18 +1083,66 @@ bool PokemonBox::isPokemonReset()
 
 bool PokemonBox::isShiny()
 {
-  bool atkChk = atkExp == 0b1010;
-  bool defChk = defExp & 2;
+  bool atkChk = atkExp & 2;
+  bool defChk = defExp == 0b1010;
   bool spdChk = spdExp == 0b1010;
   bool spChk = spExp == 0b1010;
 
   return atkChk && defChk && spdChk && spChk;
 }
 
+int PokemonBox::getNature()
+{
+  return exp % 25;
+}
+
+void PokemonBox::setNature(int nature)
+{
+  // Get current value
+  var8 cur = exp % 25;
+
+  // Get Level Ranges
+  // We want to keep Pokemon in same level range if possible
+  var32 min = expLevelRangeStart();
+  var32 max = expLevelRangeEnd();
+
+  // Stop here if this is the nature
+  if(cur == nature)
+    return;
+
+  // Get offset to apply
+  var8 offset = qAbs(nature - cur);
+
+  // Add or subtract
+  if(cur > nature)
+    exp -= offset;
+  else
+    exp += offset;
+
+  // Notify of change
+  expChanged();
+
+  // Stop here if invalid Pokemon
+  if(!isValidBool())
+    return;
+
+  // Otherwise lets ensure the Pokemon is within the correct level range
+  // If it's fallen below or risen above the max, offset by 25 to bring back
+  // within level
+  if(exp <= min) {
+    exp += 25;
+    expChanged();
+  }
+  else if(exp >= max) {
+    exp -= 25;
+    expChanged();
+  }
+}
+
 void PokemonBox::rollShiny()
 {
-  atkExp = 0b1010;
-  atkExpChanged();
+  defExp = 0b1010;
+  defExpChanged();
 
   spdExp = 0b1010;
   spdExpChanged();
@@ -1102,32 +1150,35 @@ void PokemonBox::rollShiny()
   spExp = 0b1010;
   spExpChanged();
 
-  defExp = Random::rangeInclusive(0, 15);
-  defExp |= 2;
-  defExpChanged();
+  atkExp = Random::rangeInclusive(0, 15);
+  atkExp |= 2;
+  atkExpChanged();
 }
 
 void PokemonBox::rollNonShiny()
 {
   reRollDVs();
 
-  defExp &= ~2;
-  defExpChanged();
+  atkExp &= ~2;
+  atkExpChanged();
 }
 
 void PokemonBox::makeShiny()
 {
-  var8 tmpDefExp = defExp;
+  // Since shinies have such specific DV's, it's easier just to roll a shiny
+  // and set it's attack dv to the same attack as before only or'd with 2
+  var8 tmpAtkExp = atkExp;
   rollShiny();
 
-  defExp = tmpDefExp | 2;
-  defExpChanged();
+  atkExp = tmpAtkExp | 2;
+  atkExpChanged();
 }
 
 void PokemonBox::unmakeShiny()
 {
-  defExp &= ~2;
-  defExpChanged();
+  // Just remove bit #1, the most minimum way of eliminating it as a shiny
+  atkExp &= ~2;
+  atkExpChanged();
 }
 
 void PokemonBox::resetPokemon()

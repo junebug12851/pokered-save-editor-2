@@ -86,6 +86,7 @@ extern void bootQmlLinkage()
   qmlRegisterType<ContrastIds>(dn("ContrastIds"), 1, 0, "ContrastIds");
   qmlRegisterType<PlayerDir>(dn("PlayerDir"), 1, 0, "PlayerDir");
   qmlRegisterType<PokemonStats>(dn("PokemonStats"), 1, 0, "PokemonStats");
+  qmlRegisterType<PokemonNatures>(dn("PokemonNatures"), 1, 0, "PokemonNatures");
   qmlRegisterType<PokemonRandom>(dn("PokemonRandom"), 1, 0, "PokemonRandom");
   qmlRegisterType<SpriteMovementStatus>(dn("SpriteMovementStatus"), 1, 0, "SpriteMovementStatus");
   qmlRegisterType<SpriteFacing>(dn("SpriteFacing"), 1, 0, "SpriteFacing");
