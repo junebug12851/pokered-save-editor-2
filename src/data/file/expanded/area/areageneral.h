@@ -54,14 +54,15 @@ public:
   AreaGeneral(SaveFile* saveFile = nullptr);
   virtual ~AreaGeneral();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
 signals:
   void contrastChanged();
   void noLetterDelayChanged();
   void countPlaytimeChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

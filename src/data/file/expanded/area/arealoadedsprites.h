@@ -36,6 +36,11 @@ public:
   AreaLoadedSprites(SaveFile* saveFile = nullptr);
   virtual ~AreaLoadedSprites();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void loadSpriteSet(SpriteSetDBEntry* entry, int x, int y);
+  void randomize(MapDBEntry* map, int x, int y);
+
   // Loaded sprites are a fixed size and cannot be moved, created, modified, or destroyed
   // They can be swapped
   Q_INVOKABLE int lSpriteCount();
@@ -47,11 +52,7 @@ signals:
   void loadedSetIdChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
-  void randomize(MapDBEntry* map, int x, int y);
-  void loadSpriteSet(SpriteSetDBEntry* entry, int x, int y);
 
 public:
   var8 loadedSprites[maxLoadedSprites];

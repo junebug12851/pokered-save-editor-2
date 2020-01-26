@@ -32,13 +32,14 @@ public:
   Rival(SaveFile* saveFile = nullptr);
   virtual ~Rival();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
 signals:
   void nameChanged();
   void starterChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

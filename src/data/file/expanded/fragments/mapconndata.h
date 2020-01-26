@@ -40,7 +40,11 @@ public:
   MapConnData(SaveFile* saveFile = nullptr, var16 offset = 0);
   virtual ~MapConnData();
 
-  Q_INVOKABLE MapDBEntry* toMap();
+  void load(SaveFile* saveFile = nullptr, var16 offset = 0);
+  void save(SaveFile* saveFile, var16 offset);
+  void loadFromData(MapDBEntryConnect* connect);
+
+  MapDBEntry* toMap();
 
 signals:
   void mapPtrChanged();
@@ -53,10 +57,7 @@ signals:
   void viewPtrChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr, var16 offset = 0);
-  void save(SaveFile* saveFile, var16 offset);
   void reset();
-  void loadFromData(MapDBEntryConnect* connect);
 
 public:
   int mapPtr;

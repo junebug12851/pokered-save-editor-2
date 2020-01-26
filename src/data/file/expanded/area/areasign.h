@@ -34,6 +34,10 @@ public:
   AreaSign(SaveFile* saveFile = nullptr);
   virtual ~AreaSign();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void randomize(MapDBEntry* mapData);
+
   Q_INVOKABLE int signCount();
   Q_INVOKABLE int signMax();
   Q_INVOKABLE SignData* signAt(int ind);
@@ -45,10 +49,7 @@ signals:
   void signsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
-  void randomize(MapDBEntry* mapData);
 
 public:
   QVector<SignData*> signs;

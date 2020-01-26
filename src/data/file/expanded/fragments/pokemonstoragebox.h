@@ -31,18 +31,24 @@ class PokemonStorageBox : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QVector<PokemonBox*> pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
-
 public:
   PokemonStorageBox(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
   virtual ~PokemonStorageBox();
+
+  void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
+  void save(SaveFile* saveFile, var16 boxOffset = 0);
+
+  Q_INVOKABLE int pokemonCount();
+  Q_INVOKABLE int pokemonMax();
+  Q_INVOKABLE PokemonBox* pokemonAt(int ind);
+  Q_INVOKABLE void pokemonSwap(int from, int to);
+  Q_INVOKABLE void pokemonRemove(int ind);
+  Q_INVOKABLE void pokemonNew();
 
 signals:
   void pokemonChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
-  void save(SaveFile* saveFile, var16 boxOffset = 0);
   void reset();
   void randomize(PlayerBasics* basics);
 

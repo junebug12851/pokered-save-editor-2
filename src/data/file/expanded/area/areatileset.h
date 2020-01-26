@@ -28,19 +28,23 @@ class AreaTileset : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int current_ MEMBER current NOTIFY currentChanged)
-  Q_PROPERTY(int grassTile_ MEMBER grassTile NOTIFY grassTileChanged)
-  Q_PROPERTY(int boulderIndex_ MEMBER boulderIndex NOTIFY boulderIndexChanged)
-  Q_PROPERTY(int boulderColl_ MEMBER boulderColl NOTIFY boulderCollChanged)
-  Q_PROPERTY(int type_ MEMBER type NOTIFY typeChanged)
-  Q_PROPERTY(int bank_ MEMBER bank NOTIFY bankChanged)
-  Q_PROPERTY(int blockPtr_ MEMBER blockPtr NOTIFY blockPtrChanged)
-  Q_PROPERTY(int gfxPtr_ MEMBER gfxPtr NOTIFY gfxPtrChanged)
-  Q_PROPERTY(int collPtr_ MEMBER collPtr NOTIFY collPtrChanged)
+  Q_PROPERTY(int current MEMBER current NOTIFY currentChanged)
+  Q_PROPERTY(int grassTile MEMBER grassTile NOTIFY grassTileChanged)
+  Q_PROPERTY(int boulderIndex MEMBER boulderIndex NOTIFY boulderIndexChanged)
+  Q_PROPERTY(int boulderColl MEMBER boulderColl NOTIFY boulderCollChanged)
+  Q_PROPERTY(int type MEMBER type NOTIFY typeChanged)
+  Q_PROPERTY(int bank MEMBER bank NOTIFY bankChanged)
+  Q_PROPERTY(int blockPtr MEMBER blockPtr NOTIFY blockPtrChanged)
+  Q_PROPERTY(int gfxPtr MEMBER gfxPtr NOTIFY gfxPtrChanged)
+  Q_PROPERTY(int collPtr MEMBER collPtr NOTIFY collPtrChanged)
 
 public:
   AreaTileset(SaveFile* saveFile = nullptr);
   virtual ~AreaTileset();
+
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void loadFromData(MapDBEntry* map, bool randomType = false);
 
   Q_INVOKABLE int talkingOverTilesCount();
   Q_INVOKABLE int talkingOverTilesAt(int ind);
@@ -59,11 +63,8 @@ signals:
   void collPtrChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
-  void loadFromData(MapDBEntry* map, bool randomType = false);
 
 public:
   // Which tileset to use. Changing this will make the map

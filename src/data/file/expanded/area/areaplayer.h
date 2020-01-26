@@ -73,6 +73,10 @@ public:
   AreaPlayer(SaveFile* saveFile = nullptr);
   virtual ~AreaPlayer();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void randomize(int x, int y);
+
 signals:
   void playerMoveDirChanged();
   void playerLastStopDirChanged();
@@ -104,10 +108,7 @@ signals:
   void usingLinkCableChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
-  void randomize(int x, int y);
 
 public:
   // Direction

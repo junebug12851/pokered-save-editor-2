@@ -39,16 +39,6 @@ public:
 
   virtual ~PokemonParty();
 
-  Q_INVOKABLE virtual void copyFrom(PokemonBox* pkmn);
-
-signals:
-  void maxHPChanged();
-  void attackChanged();
-  void defenseChanged();
-  void speedChanged();
-  void specialChanged();
-
-public slots:
   SaveFileIterator* load(SaveFile* saveFile = nullptr,
             var16 offset = 0,
             var16 nicknameStartOffset = 0,
@@ -62,6 +52,16 @@ public slots:
             var16 otNameStartOffset,
             var8 index);
 
+  virtual void copyFrom(PokemonBox* pkmn);
+
+signals:
+  void maxHPChanged();
+  void attackChanged();
+  void defenseChanged();
+  void speedChanged();
+  void specialChanged();
+
+public slots:
   void reset();
   void randomize(PlayerBasics* basics = nullptr);
   void regenStats();

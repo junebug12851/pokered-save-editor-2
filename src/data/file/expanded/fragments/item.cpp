@@ -33,27 +33,17 @@ Item::Item(SaveFileIterator* it)
 
 Item::Item(var8 ind, var8 amount)
 {
-  this->ind = ind;
-  this->amount = amount;
+  load(ind, amount);
 }
 
 Item::Item(bool random)
 {
-  if(!random) {
-    reset();
-    return;
-  }
-
-  randomize();
+  load(random);
 }
 
 Item::Item(QString name, var8 amount)
 {
-  auto tmp = ItemsDB::ind.value(name, nullptr);
-  if(tmp != nullptr)
-    ind = tmp->ind;
-
-  this->amount = amount;
+  load(name, amount);
 }
 
 Item::~Item() {}
@@ -92,4 +82,29 @@ ItemDBEntry* Item::toItem()
 {
   auto tmp = ItemsDB::ind.value(QString::number(ind), nullptr);
   return tmp;
+}
+
+void Item::load(int ind, int amount)
+{
+  this->ind = ind;
+  this->amount = amount;
+}
+
+void Item::load(bool random)
+{
+  if(!random) {
+    reset();
+    return;
+  }
+
+  randomize();
+}
+
+void Item::load(QString name, int amount)
+{
+  auto tmp = ItemsDB::ind.value(name, nullptr);
+  if(tmp != nullptr)
+    ind = tmp->ind;
+
+  this->amount = amount;
 }

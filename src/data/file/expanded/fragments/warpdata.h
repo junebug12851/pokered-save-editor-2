@@ -27,17 +27,21 @@ class WarpData : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 y_ MEMBER y NOTIFY yChanged)
-  Q_PROPERTY(var8 x_ MEMBER x NOTIFY xChanged)
-  Q_PROPERTY(var8 destWarp_ MEMBER destWarp NOTIFY destWarpChanged)
-  Q_PROPERTY(var8 destMap_ MEMBER destMap NOTIFY destMapChanged)
+  Q_PROPERTY(int y MEMBER y NOTIFY yChanged)
+  Q_PROPERTY(int x MEMBER x NOTIFY xChanged)
+  Q_PROPERTY(int destWarp MEMBER destWarp NOTIFY destWarpChanged)
+  Q_PROPERTY(int destMap MEMBER destMap NOTIFY destMapChanged)
 
 public:
   WarpData(SaveFile* saveFile = nullptr, var8 index = 0);
   WarpData(MapDBEntryWarpOut* warp);
   virtual ~WarpData();
 
-  Q_INVOKABLE MapDBEntry* toMap();
+  void load(SaveFile* saveFile = nullptr, var8 index = 0);
+  void load(MapDBEntryWarpOut* warp);
+  void save(SaveFile* saveFile, var8 index);
+
+  MapDBEntry* toMap();
 
 signals:
   void yChanged();
@@ -46,17 +50,14 @@ signals:
   void destMapChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr, var8 index = 0);
-  void load(MapDBEntryWarpOut* warp);
-  void save(SaveFile* saveFile, var8 index);
   void reset();
   void randomize();
 
 public:
-  var8 y;
-  var8 x;
-  var8 destWarp;
-  var8 destMap;
+  int y;
+  int x;
+  int destWarp;
+  int destMap;
 };
 
 #endif // WARPDATA_H

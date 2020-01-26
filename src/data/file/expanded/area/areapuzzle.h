@@ -33,14 +33,15 @@ public:
   AreaPuzzle(SaveFile* saveFile = nullptr);
   virtual ~AreaPuzzle();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
 signals:
   void lock1Changed();
   void lock2Changed();
   void quizOppChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

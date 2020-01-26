@@ -56,6 +56,17 @@ public:
   AreaMap(SaveFile* saveFile = nullptr);
   virtual ~AreaMap();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+  // You have to provide it a non-glitch map or it will crash, it expects common
+  // data to be there like width, height, etc... which are often not in glitch
+  // or incompelte maps
+  void randomize(MapDBEntry* map, int x, int y);
+
+  // Converts X & Y values to a pointer for currentTileBlockMapViewPointer
+  int coordsToPtr(int x, int y, int width);
+
   Q_INVOKABLE int connCount();
   Q_INVOKABLE MapConnData* connAt(int dir);
   Q_INVOKABLE void connRemove(int dir);
@@ -82,17 +93,7 @@ signals:
   void connectionsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
-
-  // You have to provide it a non-glitch map or it will crash, it expects common
-  // data to be there like width, height, etc... which are often not in glitch
-  // or incompelte maps
-  void randomize(MapDBEntry* map, int x, int y);
-
-  // Converts X & Y values to a pointer for currentTileBlockMapViewPointer
-  int coordsToPtr(int x, int y, int width);
 
 public:
   // Current Map ID

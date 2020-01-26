@@ -32,6 +32,9 @@ public:
   ItemStorageBox(SaveFile* saveFile = nullptr);
   virtual ~ItemStorageBox();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
   Q_INVOKABLE int itemCount();
   Q_INVOKABLE int itemMax();
   Q_INVOKABLE Item* itemAt(int ind);
@@ -43,8 +46,6 @@ signals:
   void itemsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

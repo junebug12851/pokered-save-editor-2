@@ -35,16 +35,26 @@ public:
   PokemonStorageSet(SaveFile* saveFile = nullptr, var16 boxesOffset = 0, svar8 skipInd = -1);
   virtual ~PokemonStorageSet();
 
-  // Load or save a specific box at a specific address to a box here overwriting
-  // current box contents
-  Q_INVOKABLE void loadSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 toBox = 0);
-  Q_INVOKABLE void saveSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 fromBox = 0);
-
-public slots:
   // Auto load or save boxes 1-6 from a single address and skip a box if it's
   // the current box
   void load(SaveFile* saveFile = nullptr, var16 boxesOffset = 0, svar8 skipInd = -1);
   void save(SaveFile* saveFile, var16 boxesOffset, svar8 skipInd = -1);
+
+  // Load or save a specific box at a specific address to a box here overwriting
+  // current box contents
+  void loadSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 toBox = 0);
+  void saveSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 fromBox = 0);
+
+  // Boxes cannot be modified, only swapped. They will never change in size.
+  // There will only ever be exactly this amount of boxes in a set.
+  Q_INVOKABLE int boxCount();
+  Q_INVOKABLE PokemonStorageBox* boxAt(int ind);
+  Q_INVOKABLE void boxSwap(int from, int to);
+
+signals:
+  void boxesChanged();
+
+public slots:
   void reset();
   void randomize(PlayerBasics* basics);
 

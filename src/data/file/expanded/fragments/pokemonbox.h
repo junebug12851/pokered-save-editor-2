@@ -62,14 +62,15 @@ class PokemonMove : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int moveID_ MEMBER moveID NOTIFY moveIDChanged)
-  Q_PROPERTY(int pp_ MEMBER pp NOTIFY ppChanged)
-  Q_PROPERTY(int ppUp_ MEMBER ppUp NOTIFY ppUpChanged)
+  Q_PROPERTY(int moveID MEMBER moveID NOTIFY moveIDChanged)
+  Q_PROPERTY(int pp MEMBER pp NOTIFY ppChanged)
+  Q_PROPERTY(int ppUp MEMBER ppUp NOTIFY ppUpChanged)
 
 public:
   PokemonMove(var8 move = 0, var8 pp = 0, var8 ppUp = 0);
 
-  Q_INVOKABLE MoveDBEntry* toMove();
+  MoveDBEntry* toMove();
+
   Q_INVOKABLE bool isMaxPP();
   Q_INVOKABLE int getMaxPP();
   Q_INVOKABLE bool isMaxPpUps();
@@ -125,6 +126,25 @@ public:
 
   virtual ~PokemonBox();
 
+  virtual SaveFileIterator* load(SaveFile* saveFile = nullptr,
+            var16 startOffset = 0,
+            var16 nicknameStartOffset = 0,
+            var16 otNameStartOffset = 0,
+            var8 index = 0,
+
+            // Unless overridden, the record size for box data is 0x21
+            var8 recordSize = 0x21);
+
+  virtual SaveFileIterator* save(SaveFile* saveFile = nullptr,
+            var16 startOffset = 0,
+            svar32 speciesStartOffset = 0, // -1 if doesn't exist
+            var16 nicknameStartOffset = 0,
+            var16 otNameStartOffset = 0,
+            var8 index = 0,
+
+            // Unless overridden, the record size for box data is 0x21
+            var8 recordSize = 0x21);
+
   // Creates a new Pokemon without a nickname and, if a saveFile is provided,
   // not traded. Depending on the species everything else is filled out
   // accordingly such as the chosen species type, catch rate, and initial moves.
@@ -139,11 +159,12 @@ public:
 
   // The second overloaded method allows you to give a data record which will be
   // used.
-  Q_INVOKABLE static PokemonBox* newPokemon(PokemonRandom::PokemonRandom_ list = PokemonRandom::Random_Starters, PlayerBasics* basics = nullptr);
-  Q_INVOKABLE static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basics = nullptr);
+  static PokemonBox* newPokemon(PokemonRandom::PokemonRandom_ list = PokemonRandom::Random_Starters, PlayerBasics* basics = nullptr);
+  static PokemonBox* newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basics = nullptr);
 
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
-  Q_INVOKABLE PokemonDBEntry* isValid();
+  PokemonDBEntry* isValid();
+  Q_INVOKABLE bool isValidBool();
 
   Q_INVOKABLE unsigned int levelToExp(int level = -1);
   Q_INVOKABLE unsigned int expLevelRangeStart();
@@ -171,8 +192,8 @@ public:
   Q_INVOKABLE bool isMaxDVs();
   Q_INVOKABLE bool isPokemonReset();
 
-  Q_INVOKABLE virtual void copyFrom(PokemonBox* pkmn);
-  Q_INVOKABLE PokemonDBEntry* toData();
+  virtual void copyFrom(PokemonBox* pkmn);
+  PokemonDBEntry* toData();
 
   Q_INVOKABLE int atkStat();
   Q_INVOKABLE int defStat();
@@ -213,25 +234,6 @@ signals:
   void type2ExplicitChanged();
 
 public slots:
-  virtual SaveFileIterator* load(SaveFile* saveFile = nullptr,
-            var16 startOffset = 0,
-            var16 nicknameStartOffset = 0,
-            var16 otNameStartOffset = 0,
-            var8 index = 0,
-
-            // Unless overridden, the record size for box data is 0x21
-            var8 recordSize = 0x21);
-
-  virtual SaveFileIterator* save(SaveFile* saveFile = nullptr,
-            var16 startOffset = 0,
-            svar32 speciesStartOffset = 0, // -1 if doesn't exist
-            var16 nicknameStartOffset = 0,
-            var16 otNameStartOffset = 0,
-            var8 index = 0,
-
-            // Unless overridden, the record size for box data is 0x21
-            var8 recordSize = 0x21);
-
   virtual void reset();
   virtual void randomize(PlayerBasics* basics = nullptr);
   void clearMoves();

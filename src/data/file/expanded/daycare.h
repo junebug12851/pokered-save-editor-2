@@ -33,12 +33,13 @@ public:
   Daycare(SaveFile* saveFile = nullptr);
   virtual ~Daycare();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
 signals:
   void pokemonChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize(PlayerBasics* basics);
 

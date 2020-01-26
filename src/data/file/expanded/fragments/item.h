@@ -45,15 +45,19 @@ public:
 
   virtual ~Item();
 
-  Q_INVOKABLE ItemDBEntry* toItem();
+  // Given an iterator, saves 2 bytes. Index and Amount
+  void save(SaveFileIterator* it);
+
+  ItemDBEntry* toItem();
 
 signals:
   void indChanged();
   void amountChanged();
 
 public slots:
-  // Given an iterator, saves 2 bytes. Index and Amount
-  void save(SaveFileIterator* it);
+  void load(int ind, int amount);
+  void load(bool random);
+  void load(QString name, int amount);
   void reset();
   void randomize();
 

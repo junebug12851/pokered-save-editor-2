@@ -34,7 +34,10 @@ public:
   HoFPokemon(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
   virtual ~HoFPokemon();
 
-  Q_INVOKABLE PokemonDBEntry* toSpecies();
+  void load(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
+  void save(SaveFile* saveFile, var16 recordOffset, var16 ind);
+
+  PokemonDBEntry* toSpecies();
 
 signals:
   void speciesChanged();
@@ -42,8 +45,6 @@ signals:
   void nameChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
-  void save(SaveFile* saveFile, var16 recordOffset, var16 ind);
   void reset();
   void randomize();
 

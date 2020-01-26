@@ -380,6 +380,128 @@ void SpriteData::saveMissables(SaveFile* saveFile, QVector<SpriteData*> spriteDa
   delete it;
 }
 
+int SpriteData::getRangeDirByte()
+{
+  if(rangeDirByte)
+    return *rangeDirByte;
+
+  return -1;
+}
+
+void SpriteData::setRangeDirByte(int val)
+{
+  rangeDirByte = val;
+  rangeDirByteChanged();
+}
+
+void SpriteData::resetRangeDirByte()
+{
+  rangeDirByte.reset();
+  rangeDirByteChanged();
+}
+
+int SpriteData::getTextID()
+{
+  if(textID)
+    return *textID;
+
+  return -1;
+}
+
+void SpriteData::setTextID(int val)
+{
+  textID = val;
+  textIDChanged();
+}
+
+void SpriteData::resetTextID()
+{
+  textID.reset();
+  textIDChanged();
+}
+
+int SpriteData::getTrainerClassOrItemID()
+{
+  if(trainerClassOrItemID)
+    return *trainerClassOrItemID;
+
+  return -1;
+}
+
+void SpriteData::setTrainerClassOrItemID(int val)
+{
+  trainerClassOrItemID = val;
+  trainerClassOrItemIDChanged();
+}
+
+void SpriteData::resetTrainerClassOrItemID()
+{
+  trainerClassOrItemID.reset();
+  trainerClassOrItemIDChanged();
+}
+
+int SpriteData::getTrainerSetID()
+{
+  if(trainerSetID)
+    return *trainerSetID;
+
+  return -1;
+}
+
+void SpriteData::setTrainerSetID(int val)
+{
+  trainerSetID = val;
+  trainerSetIDChanged();
+}
+
+void SpriteData::resetTrainerSetID()
+{
+  trainerSetID.reset();
+  trainerSetIDChanged();
+}
+
+int SpriteData::getMissableIndex()
+{
+  if(missableIndex)
+    return *missableIndex;
+
+  return -1;
+}
+
+void SpriteData::setMissableIndex(int val)
+{
+  missableIndex = val;
+  missableIndexChanged();
+}
+
+void SpriteData::resetMissableIndex()
+{
+  missableIndex.reset();
+  missableIndexChanged();
+}
+
+int SpriteData::getYStepVector()
+{
+  return yStepVector;
+}
+
+void SpriteData::setYStepVector(int val)
+{
+  yStepVector = val;
+  yStepVectorChanged();
+}
+
+int SpriteData::getXStepVector()
+{
+  return xStepVector;
+}
+
+void SpriteData::setXStepVector(int val)
+{
+  xStepVector = val;
+  xStepVectorChanged();
+}
+
 void SpriteData::reset(bool blankNPC)
 {
   pictureID = 0;

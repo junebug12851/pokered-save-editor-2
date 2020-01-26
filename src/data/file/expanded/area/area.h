@@ -54,6 +54,9 @@ public:
   Area(SaveFile* saveFile = nullptr);
   virtual ~Area();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
 signals:
   // There's actually no need for these, Q_PROPERTY requires them
   void audioChanged();
@@ -70,8 +73,6 @@ signals:
   void warpsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

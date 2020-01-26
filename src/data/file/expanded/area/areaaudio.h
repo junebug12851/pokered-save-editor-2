@@ -33,6 +33,9 @@ public:
   AreaAudio(SaveFile* saveFile = nullptr);
   virtual ~AreaAudio();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
 signals:
   void musicIDChanged();
   void musicBankChanged();
@@ -40,8 +43,6 @@ signals:
   void preventMusicChangeChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

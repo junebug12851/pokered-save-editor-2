@@ -47,6 +47,10 @@ public:
   AreaWarps(SaveFile* saveFile = nullptr);
   virtual ~AreaWarps();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void randomize(MapDBEntry* map);
+
   Q_INVOKABLE int warpCount();
   Q_INVOKABLE int warpMax();
   Q_INVOKABLE WarpData* warpAt(int ind);
@@ -70,10 +74,7 @@ signals:
   void warpsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
-  void randomize(MapDBEntry* map);
 
 public:
   // Pre-Warp

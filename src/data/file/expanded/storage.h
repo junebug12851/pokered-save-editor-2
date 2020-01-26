@@ -41,6 +41,9 @@ public:
   Storage(SaveFile* saveFile = nullptr);
   virtual ~Storage();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
   // Sets are a fixed size and cannot be moved, created, modified, or destroyed
   // Allow swapping
   Q_INVOKABLE int setCount();
@@ -61,8 +64,6 @@ signals:
   void pokemonChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize(PlayerBasics* basics);
 

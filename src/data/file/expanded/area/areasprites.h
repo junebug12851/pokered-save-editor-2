@@ -34,6 +34,10 @@ public:
   AreaSprites(SaveFile* saveFile = nullptr);
   virtual ~AreaSprites();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void randomize(QVector<MapDBEntrySprite*> spriteData);
+
   Q_INVOKABLE int spriteCount();
   Q_INVOKABLE int spriteMax();
   Q_INVOKABLE SpriteData* spriteAt(int ind);
@@ -45,10 +49,7 @@ signals:
   void spritesChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
-  void randomize(QVector<MapDBEntrySprite*> spriteData);
 
 public:
   QVector<SpriteData*> sprites;

@@ -39,6 +39,9 @@ public:
   AreaNPC(SaveFile* saveFile = nullptr);
   virtual ~AreaNPC();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
 signals:
   void npcsFaceAwayChanged();
   void scriptedNPCMovementChanged();
@@ -51,8 +54,6 @@ signals:
   void trainerHeaderPtrChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

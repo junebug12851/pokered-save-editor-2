@@ -32,6 +32,9 @@ public:
   HoFRecord(SaveFile* saveFile = nullptr, var8 ind = 0);
   virtual ~HoFRecord();
 
+  void load(SaveFile* saveFile = nullptr, var8 ind = 0);
+  void save(SaveFile* saveFile, var8 ind);
+
   Q_INVOKABLE int pokemonCount();
   Q_INVOKABLE int pokemonMax();
   Q_INVOKABLE HoFPokemon* pokemonAt(int ind);
@@ -43,8 +46,6 @@ signals:
   void pokemonChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr, var8 ind = 0);
-  void save(SaveFile* saveFile, var8 ind);
   void reset();
   void randomize();
 

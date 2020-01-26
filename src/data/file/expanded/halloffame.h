@@ -33,6 +33,9 @@ public:
   HallOfFame(SaveFile* saveFile = nullptr);
   virtual ~HallOfFame();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
   // Since Qt has tied my hands in so many ways on fixing the issue of no arrays
   // but primitive arrays being able to be sent to QML, I'm left with no other
   // options outside of a custom model to flood classes with a series of methods
@@ -48,8 +51,6 @@ signals:
   void recordsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

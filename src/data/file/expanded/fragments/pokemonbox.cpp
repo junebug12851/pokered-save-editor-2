@@ -566,6 +566,11 @@ PokemonDBEntry* PokemonBox::isValid()
   return record;
 }
 
+bool PokemonBox::isValidBool()
+{
+  return isValid() != nullptr;
+}
+
 unsigned int PokemonBox::levelToExp(int level)
 {
   auto record = isValid();

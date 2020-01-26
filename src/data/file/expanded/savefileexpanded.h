@@ -43,6 +43,9 @@ public:
   SaveFileExpanded(SaveFile* saveFile = nullptr);
   virtual ~SaveFileExpanded();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
 signals:
   // No point in having these change signals but Q_PROPERTY requires them
   void playerChanged();
@@ -54,8 +57,6 @@ signals:
   void storageChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

@@ -31,6 +31,51 @@ PokemonStorageBox::~PokemonStorageBox()
   reset();
 }
 
+int PokemonStorageBox::pokemonCount()
+{
+  return pokemon.size();
+}
+
+int PokemonStorageBox::pokemonMax()
+{
+  return boxMaxPokemon;
+}
+
+PokemonBox* PokemonStorageBox::pokemonAt(int ind)
+{
+  return pokemon.at(ind);
+}
+
+void PokemonStorageBox::pokemonSwap(int from, int to)
+{
+  auto eFrom = pokemon.at(from);
+  auto eTo = pokemon.at(to);
+
+  pokemon.replace(from, eTo);
+  pokemon.replace(to, eFrom);
+
+  pokemonChanged();
+}
+
+void PokemonStorageBox::pokemonRemove(int ind)
+{
+  if(pokemon.size() <= 0)
+    return;
+
+  delete pokemon.at(ind);
+  pokemon.removeAt(ind);
+  pokemonChanged();
+}
+
+void PokemonStorageBox::pokemonNew()
+{
+  if(pokemon.size() >= boxMaxPokemon)
+    return;
+
+  pokemon.append(new PokemonBox);
+  pokemonChanged();
+}
+
 void PokemonStorageBox::load(SaveFile* saveFile, var16 boxOffset)
 {
   reset();

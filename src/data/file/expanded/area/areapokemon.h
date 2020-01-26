@@ -36,6 +36,9 @@ public:
   AreaPokemonWild(int index = 0, int level = 0);
   AreaPokemonWild(bool random);
 
+  void load(SaveFileIterator* it);
+  void save(SaveFileIterator* it);
+
   bool operator<(const AreaPokemonWild& a);
   bool operator>(const AreaPokemonWild& a);
 
@@ -48,8 +51,6 @@ public slots:
   void randomize();
   void reset();
   void load(int index, int level);
-  void load(SaveFileIterator* it);
-  void save(SaveFileIterator* it);
 
 public:
   // Pokemon index number and level
@@ -90,6 +91,9 @@ public:
   AreaPokemon(SaveFile* saveFile = nullptr);
   virtual ~AreaPokemon();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
   Q_INVOKABLE int grassMonsCount();
   Q_INVOKABLE AreaPokemonWild* grassMonsAt(int ind);
   Q_INVOKABLE void grassMonsSwap(int from, int to);
@@ -106,8 +110,6 @@ signals:
   void waterMonsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
