@@ -192,6 +192,17 @@ public:
   Q_INVOKABLE bool isMaxDVs();
   Q_INVOKABLE bool isPokemonReset();
 
+  // Gen 1 does not have shinies
+  // However Pokemon has released a formula for determining shinies in gen 1
+  // This mainly applies to the bank for the virtual consoles
+
+  // It's important to note that this program is not designed or intended
+  // to be used to modify vc versions especially for bank. If you choose to
+  // use it for that then I take no responsibility for any reprocussions
+  // Any issues that may come up from using it for that I'm not going to fix
+  // because that's not the purpose of this program
+  Q_INVOKABLE bool isShiny();
+
   virtual void copyFrom(PokemonBox* pkmn);
   PokemonDBEntry* toData();
 
@@ -266,6 +277,10 @@ public slots:
   void maxOut();
   void randomizeMoves();
   void resetPokemon();
+  void rollShiny();
+  void rollNonShiny();
+  void makeShiny();
+  void unmakeShiny();
 
 public:
   int species;

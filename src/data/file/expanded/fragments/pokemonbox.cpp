@@ -1081,6 +1081,55 @@ bool PokemonBox::isPokemonReset()
   return level == 5 && movesReset && isMinEvs() && isHealed();
 }
 
+bool PokemonBox::isShiny()
+{
+  bool atkChk = atkExp == 0b1010;
+  bool defChk = defExp & 2;
+  bool spdChk = spdExp == 0b1010;
+  bool spChk = spExp == 0b1010;
+
+  return atkChk && defChk && spdChk && spChk;
+}
+
+void PokemonBox::rollShiny()
+{
+  atkExp = 0b1010;
+  atkExpChanged();
+
+  spdExp = 0b1010;
+  spdExpChanged();
+
+  spExp = 0b1010;
+  spExpChanged();
+
+  defExp = Random::rangeInclusive(0, 15);
+  defExp |= 2;
+  defExpChanged();
+}
+
+void PokemonBox::rollNonShiny()
+{
+  reRollDVs();
+
+  defExp &= ~2;
+  defExpChanged();
+}
+
+void PokemonBox::makeShiny()
+{
+  var8 tmpDefExp = defExp;
+  rollShiny();
+
+  defExp = tmpDefExp | 2;
+  defExpChanged();
+}
+
+void PokemonBox::unmakeShiny()
+{
+  defExp &= ~2;
+  defExpChanged();
+}
+
 void PokemonBox::resetPokemon()
 {
   level = 5;
