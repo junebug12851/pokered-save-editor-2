@@ -62,6 +62,7 @@ void AreaSign::signRemove(int ind)
   if(signs.size() <= 0)
     return;
 
+  delete signs.at(ind);
   signs.removeAt(ind);
   signsChanged();
 }

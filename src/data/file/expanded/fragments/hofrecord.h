@@ -22,15 +22,22 @@
 class SaveFile;
 class HoFPokemon;
 
+constexpr var8 maxPokemon = 6;
+
 class HoFRecord : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QVector<HoFPokemon*> pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
-
 public:
   HoFRecord(SaveFile* saveFile = nullptr, var8 ind = 0);
   virtual ~HoFRecord();
+
+  Q_INVOKABLE int pokemonCount();
+  Q_INVOKABLE int pokemonMax();
+  Q_INVOKABLE HoFPokemon* pokemonAt(int ind);
+  Q_INVOKABLE void pokemonSwap(int from, int to);
+  Q_INVOKABLE void pokemonRemove(int ind);
+  Q_INVOKABLE void pokemonNew();
 
 signals:
   void pokemonChanged();

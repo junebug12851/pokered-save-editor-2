@@ -42,17 +42,23 @@ public:
   virtual ~Storage();
 
   // Sets are a fixed size and cannot be moved, created, modified, or destroyed
+  // Allow swapping
   Q_INVOKABLE int setCount();
   Q_INVOKABLE PokemonStorageSet* setAt(int ind);
+  Q_INVOKABLE void setSwap(int from, int to);
 
   // Ignores the sets and returns the box with given box number
+  // Also allow swapping ignoring set boundraries (Appearing as one consecutive
+  // array of boxes)
   Q_INVOKABLE int boxCount();
   Q_INVOKABLE PokemonStorageBox* boxAt(int ind);
+  Q_INVOKABLE void boxSwap(int from, int to);
 
 signals:
   void itemsChanged();
   void curBoxChanged();
   void boxesFormattedChanged();
+  void pokemonChanged();
 
 public slots:
   void load(SaveFile* saveFile = nullptr);

@@ -63,6 +63,7 @@ void AreaWarps::warpRemove(int ind)
   if(warps.size() <= 0)
     return;
 
+  delete warps.at(ind);
   warps.removeAt(ind);
 }
 

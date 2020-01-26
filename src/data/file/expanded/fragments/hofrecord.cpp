@@ -30,6 +30,53 @@ HoFRecord::~HoFRecord()
   reset();
 }
 
+int HoFRecord::pokemonCount()
+{
+  return pokemon.size();
+}
+
+int HoFRecord::pokemonMax()
+{
+  return maxPokemon;
+}
+
+HoFPokemon* HoFRecord::pokemonAt(int ind)
+{
+  return pokemon.at(ind);
+}
+
+void HoFRecord::pokemonSwap(int from, int to)
+{
+  auto eFrom = pokemon.at(from);
+  auto eTo = pokemon.at(to);
+
+  pokemon.replace(from, eTo);
+  pokemon.replace(to, eFrom);
+
+  pokemonChanged();
+}
+
+void HoFRecord::pokemonRemove(int ind)
+{
+  // Can't have a team of no Pokemon
+  if(pokemon.size() <= 1)
+    return;
+
+  delete pokemon.at(ind);
+
+  pokemon.removeAt(ind);
+  pokemonChanged();
+}
+
+void HoFRecord::pokemonNew()
+{
+  if(pokemon.size() >= maxPokemon)
+    return;
+
+  pokemon.append(new HoFPokemon);
+  pokemonChanged();
+}
+
 void HoFRecord::load(SaveFile* saveFile, var8 ind)
 {
   // Reset to clear list as all the entries have ti be deleted first

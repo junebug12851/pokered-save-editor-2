@@ -50,6 +50,17 @@ PokemonStorageSet* Storage::setAt(int ind)
   return pokemon[ind];
 }
 
+void Storage::setSwap(int from, int to)
+{
+  auto eFrom = pokemon[from];
+  auto eTo = pokemon[to];
+
+  pokemon[to] = eFrom;
+  pokemon[from] = eTo;
+
+  pokemonChanged();
+}
+
 int Storage::boxCount()
 {
   return maxPokemonBoxes;
@@ -63,6 +74,32 @@ PokemonStorageBox* Storage::boxAt(int ind)
     cur -= setMaxBoxes; // Offset if it's in set b
 
   return pokemon[curSetB ? 1 : 0]->boxes[cur];
+}
+
+void Storage::boxSwap(int from, int to)
+{
+  // Get correct set, index within set, and pointer for from box
+  bool fromSetB = from >= setMaxBoxes;
+  var8 fromBox = from; // Get the current box
+  if(fromSetB)
+    fromBox -= setMaxBoxes;
+
+  auto fromBoxData = pokemon[fromSetB ? 1 : 0]->boxes[from];
+
+  // Get correct set, index within set, and pointer for to box
+  bool toSetB = to >= setMaxBoxes;
+  var8 toBox = to; // Get the current box
+  if(toSetB)
+    toBox -= setMaxBoxes;
+
+  auto toBoxData = pokemon[toSetB ? 1 : 0]->boxes[to];
+
+  // Make the swap ignoring set boundraries
+  pokemon[fromSetB ? 1 : 0]->boxes[from] = toBoxData;
+  pokemon[toSetB ? 1 : 0]->boxes[to] = fromBoxData;
+
+  // Contents within the sets have changed by the set
+  pokemonChanged();
 }
 
 void Storage::load(SaveFile* saveFile)

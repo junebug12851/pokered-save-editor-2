@@ -44,17 +44,17 @@ MapConnData* AreaMap::connAt(int dir)
 
 void AreaMap::connRemove(int dir)
 {
+  if(!connections.contains(dir))
+    return;
+
+  delete connections.value(dir);
   connections.remove(dir);
   connectionsChanged();
 }
 
 void AreaMap::connNew(int dir)
 {
-  if(connections.contains(dir)) {
-    delete connections.value(dir);
-    connections.remove(dir);
-  }
-
+  connRemove(dir);
   connections.insert(dir, new MapConnData);
   connectionsChanged();
 }

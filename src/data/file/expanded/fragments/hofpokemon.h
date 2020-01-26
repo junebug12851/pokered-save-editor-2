@@ -26,9 +26,9 @@ class HoFPokemon : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 species_ MEMBER species NOTIFY speciesChanged)
-  Q_PROPERTY(var8 level_ MEMBER level NOTIFY levelChanged)
-  Q_PROPERTY(QString name_ MEMBER name NOTIFY nameChanged)
+  Q_PROPERTY(int species MEMBER species NOTIFY speciesChanged)
+  Q_PROPERTY(int level MEMBER level NOTIFY levelChanged)
+  Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)
 
 public:
   HoFPokemon(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
@@ -48,8 +48,8 @@ public slots:
   void randomize();
 
 public:
-  var8 species;
-  var8 level;
+  int species;
+  int level;
   QString name;
 };
 

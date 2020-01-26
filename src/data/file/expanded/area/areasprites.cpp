@@ -67,7 +67,8 @@ void AreaSprites::spriteRemove(int ind)
   if(sprites.size() <= 1)
     return;
 
-  return sprites.removeAt(ind);
+  delete sprites.at(ind);
+  sprites.removeAt(ind);
   spritesChanged();
 }
 
