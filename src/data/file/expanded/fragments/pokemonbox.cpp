@@ -1252,22 +1252,22 @@ void PokemonBox::dvSwap(int from, int to)
   dvChanged();
 }
 
-var16 PokemonBox::atkStat()
+int PokemonBox::atkStat()
 {
   return nonHpStat(PokemonStats::Attack);
 }
 
-var16 PokemonBox::defStat()
+int PokemonBox::defStat()
 {
   return nonHpStat(PokemonStats::Defense);
 }
 
-var16 PokemonBox::spdStat()
+int PokemonBox::spdStat()
 {
   return nonHpStat(PokemonStats::Speed);
 }
 
-var16 PokemonBox::spStat()
+int PokemonBox::spStat()
 {
   return nonHpStat(PokemonStats::Special);
 }

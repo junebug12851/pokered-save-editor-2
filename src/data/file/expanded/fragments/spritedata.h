@@ -135,13 +135,13 @@ class SpriteData : public QObject
   Q_PROPERTY(int walkAnimationCounter MEMBER walkAnimationCounter NOTIFY walkAnimationCounterChanged)
   Q_PROPERTY(int movementDelay MEMBER movementDelay NOTIFY movementDelayChanged)
   Q_PROPERTY(int imageBaseOffset MEMBER imageBaseOffset NOTIFY imageBaseOffsetChanged)
-  Q_PROPERTY(int tangeDirByteChanged READ getRangeDirByteChanged WRITE setRangeDirByteChanged RESET resetRangeDirByteChanged NOTIFY rangeDirByteChangedChanged)
-  Q_PROPERTY(int textIDChanged READ getTextIDChanged WRITE setTextIDChanged RESET resetTextIDChanged NOTIFY textIDChangedChanged)
-  Q_PROPERTY(int trainerClassOrItemIDChanged READ getTrainerClassOrItemIDChanged WRITE setTrainerClassOrItemIDChanged RESET resetTrainerClassOrItemIDChanged NOTIFY trainerClassOrItemIDChangedChanged)
-  Q_PROPERTY(int trainerSetIDChanged READ getTrainerSetIDChanged WRITE setTrainerSetIDChanged RESET resetTrainerSetIDChanged NOTIFY trainerSetIDChangedChanged)
-  Q_PROPERTY(int missableIndexChanged READ getMissableIndexChanged WRITE setMissableIndexChanged RESET resetMissableIndexChanged NOTIFY missableIndexChangedChanged)
-  Q_PROPERTY(int yStepVector READ getYStepVector WRITE setYStepVector NOTIFY YStepVectorChanged)
-  Q_PROPERTY(int xStepVector READ getXStepVector WRITE setXStepVector NOTIFY XStepVectorChanged)
+  Q_PROPERTY(int rangeDirByte READ getRangeDirByte WRITE setRangeDirByte RESET resetRangeDirByte NOTIFY rangeDirByteChanged)
+  Q_PROPERTY(int textID READ getTextID WRITE setTextID RESET resetTextID NOTIFY textIDChanged)
+  Q_PROPERTY(int trainerClassOrItemID READ getTrainerClassOrItemID WRITE setTrainerClassOrItemID RESET resetTrainerClassOrItemID NOTIFY trainerClassOrItemIDChanged)
+  Q_PROPERTY(int trainerSetID READ getTrainerSetID WRITE setTrainerSetID RESET resetTrainerSetID NOTIFY trainerSetIDChanged)
+  Q_PROPERTY(int missableIndex READ getMissableIndex WRITE setMissableIndex RESET resetMissableIndex NOTIFY missableIndexChanged)
+  Q_PROPERTY(int yStepVector READ getYStepVector WRITE setYStepVector NOTIFY yStepVectorChanged)
+  Q_PROPERTY(int xStepVector READ getXStepVector WRITE setXStepVector NOTIFY xStepVectorChanged)
 
 public:
   // Create a blank sprite or load one from a map
