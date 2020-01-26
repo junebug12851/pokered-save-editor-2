@@ -14,7 +14,7 @@ Rectangle {
   Text {
     color: Material.foreground
     id: helloText
-    text: file.getRecentFile(0)
+    text: file.data.dataExpanded.player.basics.playerName
     anchors.verticalCenter: root.verticalCenter
     anchors.horizontalCenter: root.horizontalCenter
     font.pointSize: 24;

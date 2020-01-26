@@ -34,8 +34,8 @@ public:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
 
-  void loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset);
-  void savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16 toOffset);
+  void loadPokedex(SaveFile* saveFile, QVector<bool>* toArr, var16 fromOffset);
+  void savePokedex(SaveFile* saveFile, QVector<bool>* fromArr, var16 toOffset);
 
   Q_INVOKABLE int ownedCount();
   Q_INVOKABLE bool ownedAt(int ind);

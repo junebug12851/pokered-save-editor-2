@@ -38,18 +38,18 @@ void PlayerPokedex::load(SaveFile* saveFile)
 
   // Load Owned
   QVector<bool> tmp;
-  loadPokedex(saveFile, tmp, 0x25A3);
+  loadPokedex(saveFile, &tmp, 0x25A3);
 
-  for(var8 i = 0; i < maxPokedex; i++)
+  for(var8 i = 0; i < maxPokedex && i < tmp.size(); i++)
     owned[i] = tmp.at(i);
 
   tmp.clear();
   ownedChanged();
 
   // Load Seen
-  loadPokedex(saveFile, tmp, 0x25B6);
+  loadPokedex(saveFile, &tmp, 0x25B6);
 
-  for(var8 i = 0; i < maxPokedex; i++)
+  for(var8 i = 0; i < maxPokedex && i < tmp.size(); i++)
     seen[i] = tmp.at(i);
 
   seenChanged();
@@ -64,14 +64,14 @@ void PlayerPokedex::save(SaveFile* saveFile)
   for(var8 i = 0; i < maxPokedex; i++)
     tmp.append(owned[i]);
 
-  savePokedex(saveFile, tmp, 0x25A3);
+  savePokedex(saveFile, &tmp, 0x25A3);
   tmp.clear();
 
   // Save seen
   for(var8 i = 0; i < maxPokedex; i++)
     tmp.append(seen[i]);
 
-  savePokedex(saveFile, tmp, 0x25B6);
+  savePokedex(saveFile, &tmp, 0x25B6);
   tmp.clear();
 }
 
@@ -101,28 +101,28 @@ void PlayerPokedex::randomize()
   seenChanged();
 }
 
-void PlayerPokedex::loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset)
+void PlayerPokedex::loadPokedex(SaveFile* saveFile, QVector<bool>* toArr, var16 fromOffset)
 {
   // Get Toolset
   auto toolset = saveFile->toolset;
 
   // Erase Array
-  toArr.clear();
+  toArr->clear();
 
   // Obtain new array from sav file
   auto ret = toolset->getBitField(fromOffset, 0x13);
 
   // Merge it into main array
   for(auto entry : ret)
-    toArr.append(entry);
+    toArr->append(entry);
 
   // Trim end off to stay within 151 Pokemon
   // One of the complications of bit-fields is that retrieving a bitfield
   // retrives the whole byte
-  toArr.pop_back();
+  toArr->pop_back();
 }
 
-void PlayerPokedex::savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16 toOffset)
+void PlayerPokedex::savePokedex(SaveFile* saveFile, QVector<bool>* fromArr, var16 toOffset)
 {
   // Get Toolset
   auto toolset = saveFile->toolset;
@@ -130,7 +130,7 @@ void PlayerPokedex::savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16
   // Apply bitfield to sav file
   // fromArr is already the correct size and doesn't need to be trimmed
   // it will be applied correctly
-  toolset->setBitField(toOffset, 0x13, fromArr);
+  toolset->setBitField(toOffset, 0x13, *fromArr);
 }
 
 int PlayerPokedex::ownedCount()
