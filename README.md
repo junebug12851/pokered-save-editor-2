@@ -8,6 +8,10 @@ Pokemon Red & Blue Save Editor 2 ~ Qt C++ Reboot
 Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature version 
 until this leaves WIP status.
 
+So this is going to look like nothing to you, a simple image, however it took very close to 300 commits to get to this point. This is the result of QML communicating with the C++ back-end in conjuction with the C++ Pokered Database to extract the player name of the save file and display it.
+
+![initialImage](https://i.imgur.com/LB7LDxr.png)
+
 ## New page for reboot goals / features
 
 Please see NewGoals.md for the breakdown of new goals and features specific to 
