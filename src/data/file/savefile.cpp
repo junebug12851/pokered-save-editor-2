@@ -56,16 +56,6 @@ void SaveFile::setData(var8* data, bool silent)
   }
 }
 
-int SaveFile::dataSize()
-{
-  return SAV_DATA_SIZE;
-}
-
-int SaveFile::dataAt(int ind)
-{
-  return data[ind];
-}
-
 void SaveFile::flattenData()
 {
   dataExpanded->save(this);

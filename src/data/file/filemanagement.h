@@ -33,7 +33,6 @@ class FileManagement : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QString path READ getPath WRITE setPath NOTIFY pathChanged)
-  Q_PROPERTY(QList<QString> recentFiles READ getRecentFiles RESET clearRecentFiles NOTIFY recentFilesChanged)
   Q_PROPERTY(SaveFile* data MEMBER data NOTIFY dataChanged)
 
 public:

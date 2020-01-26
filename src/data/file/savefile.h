@@ -34,13 +34,6 @@ public:
   // silent
   void setData(var8* data, bool silent = false);
 
-  // Because QML can't work with arrays of any kind minus very certain Qt Array
-  // exceptions for very specific primitive types
-  // Sort of a work-around
-  // Prevent any editing, modifying, deleting, etc... Only allow reading
-  Q_INVOKABLE int dataSize();
-  Q_INVOKABLE int dataAt(int ind);
-
 signals:
   // SAV file has changed and it's expansion replaced with new SAV data
   void dataChanged(var8* data);
