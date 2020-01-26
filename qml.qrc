@@ -59,5 +59,18 @@
         <file>assets/data/namesPokemon.json</file>
         <file>assets/data/music.json</file>
         <file>assets/data/spriteSet.json</file>
+        <file>assets/fontawesome-icons/broom.svg</file>
+        <file>assets/fontawesome-icons/certificate.svg</file>
+        <file>assets/fontawesome-icons/copy.svg</file>
+        <file>assets/fontawesome-icons/dice.svg</file>
+        <file>assets/fontawesome-icons/file-export.svg</file>
+        <file>assets/fontawesome-icons/file-import.svg</file>
+        <file>assets/fontawesome-icons/file.svg</file>
+        <file>assets/fontawesome-icons/folder-open.svg</file>
+        <file>assets/fontawesome-icons/plus.svg</file>
+        <file>assets/fontawesome-icons/question.svg</file>
+        <file>assets/fontawesome-icons/save.svg</file>
+        <file>assets/fontawesome-icons/th.svg</file>
+        <file>assets/fontawesome-icons/undo.svg</file>
     </qresource>
 </RCC>
