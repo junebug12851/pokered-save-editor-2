@@ -188,3 +188,19 @@ PokemonDBEntry* PlayerBasics::toStarter()
 {
   return PokemonDB::ind.value(QString::number(playerStarter));
 }
+
+int PlayerBasics::badgeCount()
+{
+  return maxBadges;
+}
+
+bool PlayerBasics::badgeAt(int ind)
+{
+  return badges[ind];
+}
+
+void PlayerBasics::badgeSet(int ind, bool val)
+{
+  badges[ind] = val;
+  badgesChanged();
+}

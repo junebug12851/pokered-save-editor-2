@@ -122,7 +122,7 @@ void AreaTileset::reset()
   current = 0;
   currentChanged();
 
-  memset(talkingOverTiles, 0, 3);
+  memset(talkingOverTiles, 0, 3 * sizeof(var8));
   talkingOverTilesChanged();
 
   grassTile = 0;

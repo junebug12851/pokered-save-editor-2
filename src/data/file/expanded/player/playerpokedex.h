@@ -21,33 +21,41 @@
 #include "../../../../common/types.h"
 class SaveFile;
 
+constexpr var8 maxPokedex = 151;
+
 class PlayerPokedex : public QObject
 {
   Q_OBJECT
-
-  Q_PROPERTY(QVector<bool> owned_ MEMBER owned NOTIFY ownedChanged)
-  Q_PROPERTY(QVector<bool> seen_ MEMBER seen NOTIFY seenChanged)
 
 public:
   PlayerPokedex(SaveFile* saveFile = nullptr);
   virtual ~PlayerPokedex();
 
-  Q_INVOKABLE void loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset);
-  Q_INVOKABLE void savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16 toOffset);
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+  void loadPokedex(SaveFile* saveFile, QVector<bool> toArr, var16 fromOffset);
+  void savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16 toOffset);
+
+  Q_INVOKABLE int ownedCount();
+  Q_INVOKABLE bool ownedAt(int ind);
+  Q_INVOKABLE void ownedSet(int ind, bool val);
+
+  Q_INVOKABLE int seenCount();
+  Q_INVOKABLE bool seenAt(int ind);
+  Q_INVOKABLE void seenSet(int ind, bool val);
 
 signals:
   void ownedChanged();
   void seenChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
 public:
-  QVector<bool> owned;
-  QVector<bool> seen;
+  bool owned[maxPokedex];
+  bool seen[maxPokedex];
 };
 
 #endif // PLAYERPOKEDEX_H

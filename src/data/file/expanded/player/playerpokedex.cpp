@@ -36,26 +36,49 @@ void PlayerPokedex::load(SaveFile* saveFile)
     return;
   }
 
-  loadPokedex(saveFile, owned, 0x25A3);
+  // Load Owned
+  QVector<bool> tmp;
+  loadPokedex(saveFile, tmp, 0x25A3);
+
+  for(var8 i = 0; i < maxPokedex; i++)
+    owned[i] = tmp.at(i);
+
+  tmp.clear();
   ownedChanged();
 
-  loadPokedex(saveFile, seen, 0x25B6);
+  // Load Seen
+  loadPokedex(saveFile, tmp, 0x25B6);
+
+  for(var8 i = 0; i < maxPokedex; i++)
+    seen[i] = tmp.at(i);
+
   seenChanged();
+  tmp.clear();
 }
 
 void PlayerPokedex::save(SaveFile* saveFile)
 {
-  savePokedex(saveFile, owned, 0x25A3);
-  savePokedex(saveFile, seen, 0x25B6);
+  QVector<bool> tmp;
+
+  // Save owned
+  for(var8 i = 0; i < maxPokedex; i++)
+    tmp.append(owned[i]);
+
+  savePokedex(saveFile, tmp, 0x25A3);
+  tmp.clear();
+
+  // Save seen
+  for(var8 i = 0; i < maxPokedex; i++)
+    tmp.append(seen[i]);
+
+  savePokedex(saveFile, tmp, 0x25B6);
+  tmp.clear();
 }
 
 void PlayerPokedex::reset()
 {
-  owned.clear();
-  seen.clear();
-
-  owned.fill(false, pokemonDexCount);
-  seen.fill(false, pokemonDexCount);
+  memset(owned, pokemonDexCount, maxPokedex * sizeof(bool));
+  memset(seen, pokemonDexCount, maxPokedex * sizeof(bool));
 }
 
 // Gives all Pokedex entries a 2 out of 5 chance (40% chance) of being
@@ -108,4 +131,36 @@ void PlayerPokedex::savePokedex(SaveFile* saveFile, QVector<bool> fromArr, var16
   // fromArr is already the correct size and doesn't need to be trimmed
   // it will be applied correctly
   toolset->setBitField(toOffset, 0x13, fromArr);
+}
+
+int PlayerPokedex::ownedCount()
+{
+  return maxPokedex;
+}
+
+bool PlayerPokedex::ownedAt(int ind)
+{
+  return owned[ind];
+}
+
+void PlayerPokedex::ownedSet(int ind, bool val)
+{
+  owned[ind] = val;
+  ownedChanged();
+}
+
+int PlayerPokedex::seenCount()
+{
+  return maxPokedex;
+}
+
+bool PlayerPokedex::seenAt(int ind)
+{
+  return seen[ind];
+}
+
+void PlayerPokedex::seenSet(int ind, bool val)
+{
+  seen[ind] = val;
+  seenChanged();
 }

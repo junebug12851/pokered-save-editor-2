@@ -29,14 +29,17 @@ class Player : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(PlayerBasics* basics_ MEMBER basics NOTIFY basicsChanged)
-  Q_PROPERTY(PlayerItems* items_ MEMBER items NOTIFY itemsChanged)
-  Q_PROPERTY(PlayerPokedex* pokedex_ MEMBER pokedex NOTIFY pokedexChanged)
-  Q_PROPERTY(PlayerPokemon* pokemon_ MEMBER pokemon NOTIFY pokemonChanged)
+  Q_PROPERTY(PlayerBasics* basics MEMBER basics NOTIFY basicsChanged)
+  Q_PROPERTY(PlayerItems* items MEMBER items NOTIFY itemsChanged)
+  Q_PROPERTY(PlayerPokedex* pokedex MEMBER pokedex NOTIFY pokedexChanged)
+  Q_PROPERTY(PlayerPokemon* pokemon MEMBER pokemon NOTIFY pokemonChanged)
 
 public:
   Player(SaveFile* saveFile = nullptr);
   virtual ~Player();
+
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
 
 signals:
   void basicsChanged();
@@ -45,8 +48,6 @@ signals:
   void pokemonChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

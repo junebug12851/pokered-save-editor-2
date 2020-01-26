@@ -24,7 +24,7 @@
 
 AreaLoadedSprites::AreaLoadedSprites(SaveFile* saveFile)
 {
-  memset(loadedSprites, 0, maxLoadedSprites);
+  memset(loadedSprites, 0, maxLoadedSprites * sizeof(var8));
   load(saveFile);
 }
 
@@ -89,7 +89,7 @@ void AreaLoadedSprites::save(SaveFile* saveFile)
 
 void AreaLoadedSprites::reset()
 {
-  memset(loadedSprites, 0, maxLoadedSprites);
+  memset(loadedSprites, 0, maxLoadedSprites * sizeof(var8));
   loadedSpritesChanged();
 
   loadedSetId = 0;

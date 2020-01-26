@@ -40,21 +40,31 @@ public:
   };
 };
 
+constexpr var8 maxBadges = 8;
+
 class PlayerBasics : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString playerName_ MEMBER playerName NOTIFY playerNameChanged)
-  Q_PROPERTY(var16 playerID_ MEMBER playerID NOTIFY playerIDChanged)
-  Q_PROPERTY(var32 money_ MEMBER money NOTIFY moneyChanged)
-  Q_PROPERTY(var16 coins_ MEMBER coins NOTIFY coinsChanged)
-  Q_PROPERTY(var8 playerStarter_ MEMBER playerStarter NOTIFY playerStarterChanged)
+  Q_PROPERTY(QString playerName MEMBER playerName NOTIFY playerNameChanged)
+  Q_PROPERTY(int playerID MEMBER playerID NOTIFY playerIDChanged)
+  Q_PROPERTY(unsigned int money MEMBER money NOTIFY moneyChanged)
+  Q_PROPERTY(int coins MEMBER coins NOTIFY coinsChanged)
+  Q_PROPERTY(int playerStarter MEMBER playerStarter NOTIFY playerStarterChanged)
 
 public:
   PlayerBasics(SaveFile* saveFile = nullptr);
   virtual ~PlayerBasics();
 
-  Q_INVOKABLE PokemonDBEntry* toStarter();
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+  void setBadges(SaveFile* saveFile, var16 offset);
+
+  PokemonDBEntry* toStarter();
+
+  Q_INVOKABLE int badgeCount();
+  Q_INVOKABLE bool badgeAt(int ind);
+  Q_INVOKABLE void badgeSet(int ind, bool val);
 
 signals:
   void playerNameChanged();
@@ -65,19 +75,15 @@ signals:
   void playerStarterChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 
-  void setBadges(SaveFile* saveFile, var16 offset);
-
 public:
   QString playerName;
-  var16 playerID;
-  var32 money;
-  var16 coins;
-  bool badges[8] = {
+  int playerID;
+  unsigned int money;
+  int coins;
+  bool badges[maxBadges] = {
     false, // Boulder
     false, // Cascade
     false, // Thunder
@@ -87,7 +93,7 @@ public:
     false, // Volcano
     false // Earth
   };
-  var8 playerStarter;
+  int playerStarter;
 };
 
 #endif // PLAYERBASICS_H

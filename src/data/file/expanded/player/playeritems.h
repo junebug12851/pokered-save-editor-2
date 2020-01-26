@@ -23,22 +23,30 @@
 class SaveFile;
 struct Item;
 
+constexpr var8 maxBagItems = 20;
+
 class PlayerItems : public QObject
 {
   Q_OBJECT
-
-  Q_PROPERTY(QVector<Item*> bagItems_ MEMBER bagItems NOTIFY bagItemsChanged)
 
 public:
   PlayerItems(SaveFile* saveFile = nullptr);
   virtual ~PlayerItems();
 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+  Q_INVOKABLE int bagItemCount();
+  Q_INVOKABLE int bagItemMax();
+  Q_INVOKABLE Item* bagItemAt(int ind);
+  Q_INVOKABLE void bagItemSwap(int from, int to);
+  Q_INVOKABLE void bagItemRemove(int ind);
+  Q_INVOKABLE void bagItemNew();
+
 signals:
   void bagItemsChanged();
 
 public slots:
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
   void reset();
   void randomize();
 

@@ -70,6 +70,51 @@ void PlayerItems::save(SaveFile* saveFile)
   delete it;
 }
 
+int PlayerItems::bagItemCount()
+{
+  return bagItems.size();
+}
+
+int PlayerItems::bagItemMax()
+{
+  return maxBagItems;
+}
+
+Item* PlayerItems::bagItemAt(int ind)
+{
+  return bagItems.at(ind);
+}
+
+void PlayerItems::bagItemSwap(int from, int to)
+{
+  auto eFrom = bagItems.at(from);
+  auto eTo = bagItems.at(to);
+
+  bagItems.replace(from, eTo);
+  bagItems.replace(to, eFrom);
+
+  bagItemsChanged();
+}
+
+void PlayerItems::bagItemRemove(int ind)
+{
+  if(bagItems.size() <= 0)
+    return;
+
+  delete bagItems.at(ind);
+  bagItems.removeAt(ind);
+  bagItemsChanged();
+}
+
+void PlayerItems::bagItemNew()
+{
+  if(bagItems.size() >= maxBagItems)
+    return;
+
+  bagItems.append(new Item);
+  bagItemsChanged();
+}
+
 void PlayerItems::reset()
 {
   for(auto item : bagItems)

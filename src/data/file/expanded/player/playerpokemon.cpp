@@ -79,6 +79,52 @@ void PlayerPokemon::save(SaveFile* saveFile)
   toolset->setByte(speciesOffset, 0xFF);
 }
 
+int PlayerPokemon::partyCount()
+{
+  return party.size();
+}
+
+int PlayerPokemon::partyMax()
+{
+  return maxParty;
+}
+
+PokemonParty* PlayerPokemon::partyAt(int ind)
+{
+  return party.at(ind);
+}
+
+void PlayerPokemon::partySwap(int from, int to)
+{
+  auto eFrom = party.at(from);
+  auto eTo = party.at(to);
+
+  party.replace(from, eTo);
+  party.replace(to, eFrom);
+
+  partyChanged();
+}
+
+void PlayerPokemon::partyRemove(int ind)
+{
+  // Has to be at least one Pokemon in party
+  if(party.size() <= 1)
+    return;
+
+  delete party.at(ind);
+  party.removeAt(ind);
+  partyChanged();
+}
+
+void PlayerPokemon::partyNew()
+{
+  if(party.size() >= maxParty)
+    return;
+
+  party.append(new PokemonParty);
+  partyChanged();
+}
+
 void PlayerPokemon::reset()
 {
   for(auto mon : party)
