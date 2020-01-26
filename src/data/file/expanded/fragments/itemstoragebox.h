@@ -28,11 +28,16 @@ class ItemStorageBox : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QVector<Item*> items_ MEMBER items NOTIFY itemsChanged)
-
 public:
   ItemStorageBox(SaveFile* saveFile = nullptr);
   virtual ~ItemStorageBox();
+
+  Q_INVOKABLE int itemCount();
+  Q_INVOKABLE int itemMax();
+  Q_INVOKABLE Item* itemAt(int ind);
+  Q_INVOKABLE void itemSwap(int from, int to);
+  Q_INVOKABLE void itemRemove(int ind);
+  Q_INVOKABLE void itemNew();
 
 signals:
   void itemsChanged();

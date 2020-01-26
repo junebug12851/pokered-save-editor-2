@@ -24,11 +24,11 @@ class PokemonParty : public PokemonBox
 {
   Q_OBJECT
 
-  Q_PROPERTY(var16 maxHP_ MEMBER maxHP NOTIFY maxHPChanged)
-  Q_PROPERTY(var16 attack_ MEMBER attack NOTIFY attackChanged)
-  Q_PROPERTY(var16 defense_ MEMBER defense NOTIFY defenseChanged)
-  Q_PROPERTY(var16 speed_ MEMBER speed NOTIFY speedChanged)
-  Q_PROPERTY(var16 special_ MEMBER special NOTIFY specialChanged)
+  Q_PROPERTY(int maxHP MEMBER maxHP NOTIFY maxHPChanged)
+  Q_PROPERTY(int attack MEMBER attack NOTIFY attackChanged)
+  Q_PROPERTY(int defense MEMBER defense NOTIFY defenseChanged)
+  Q_PROPERTY(int speed MEMBER speed NOTIFY speedChanged)
+  Q_PROPERTY(int special MEMBER special NOTIFY specialChanged)
 
 public:
   PokemonParty(SaveFile* saveFile = nullptr,
@@ -69,11 +69,11 @@ public slots:
 
 public:
   // Pre-generated stats when not in box
-  var16 maxHP;
-  var16 attack;
-  var16 defense;
-  var16 speed;
-  var16 special;
+  int maxHP;
+  int attack;
+  int defense;
+  int speed;
+  int special;
 };
 
 #endif // POKEMONPARTY_H

@@ -27,14 +27,14 @@ class MapConnData : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 mapPtr_ MEMBER mapPtr NOTIFY mapPtrChanged)
-  Q_PROPERTY(var16 stripSrc_ MEMBER stripSrc NOTIFY stripSrcChanged)
-  Q_PROPERTY(var16 stripDst_ MEMBER stripDst NOTIFY stripDstChanged)
-  Q_PROPERTY(var8 stripWidth_ MEMBER stripWidth NOTIFY stripWidthChanged)
-  Q_PROPERTY(var8 width_ MEMBER width NOTIFY widthChanged)
-  Q_PROPERTY(var8 yAlign_ MEMBER yAlign NOTIFY yAlignChanged)
-  Q_PROPERTY(var8 xAlign_ MEMBER xAlign NOTIFY xAlignChanged)
-  Q_PROPERTY(var16 viewPtr_ MEMBER viewPtr NOTIFY viewPtrChanged)
+  Q_PROPERTY(int mapPtr MEMBER mapPtr NOTIFY mapPtrChanged)
+  Q_PROPERTY(int stripSrc MEMBER stripSrc NOTIFY stripSrcChanged)
+  Q_PROPERTY(int stripDst MEMBER stripDst NOTIFY stripDstChanged)
+  Q_PROPERTY(int stripWidth MEMBER stripWidth NOTIFY stripWidthChanged)
+  Q_PROPERTY(int width MEMBER width NOTIFY widthChanged)
+  Q_PROPERTY(int yAlign MEMBER yAlign NOTIFY yAlignChanged)
+  Q_PROPERTY(int xAlign MEMBER xAlign NOTIFY xAlignChanged)
+  Q_PROPERTY(int viewPtr MEMBER viewPtr NOTIFY viewPtrChanged)
 
 public:
   MapConnData(SaveFile* saveFile = nullptr, var16 offset = 0);
@@ -59,14 +59,14 @@ public slots:
   void loadFromData(MapDBEntryConnect* connect);
 
 public:
-  var8 mapPtr;
-  var16 stripSrc;
-  var16 stripDst;
-  var8 stripWidth;
-  var8 width;
-  var8 yAlign;
-  var8 xAlign;
-  var16 viewPtr;
+  int mapPtr;
+  int stripSrc;
+  int stripDst;
+  int stripWidth;
+  int width;
+  int yAlign;
+  int xAlign;
+  int viewPtr;
 };
 
 #endif // MAPCONNDATA_H

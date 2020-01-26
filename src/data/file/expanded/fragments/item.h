@@ -26,8 +26,8 @@ class Item : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 ind_ MEMBER ind NOTIFY indChanged)
-  Q_PROPERTY(var8 amount_ MEMBER amount NOTIFY amountChanged)
+  Q_PROPERTY(int ind MEMBER ind NOTIFY indChanged)
+  Q_PROPERTY(int amount MEMBER amount NOTIFY amountChanged)
 
 public:
   // New Item from iterator or a blank item
@@ -59,10 +59,10 @@ public slots:
 
 public:
   // Item Index
-  var8 ind;
+  int ind;
 
   // Item Amount, max of 99 for gen 1 games
-  var8 amount;
+  int amount;
 };
 
 #endif // ITEM_H

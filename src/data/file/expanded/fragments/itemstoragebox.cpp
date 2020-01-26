@@ -32,6 +32,51 @@ ItemStorageBox::~ItemStorageBox()
   reset();
 }
 
+int ItemStorageBox::itemCount()
+{
+  return items.size();
+}
+
+int ItemStorageBox::itemMax()
+{
+  return boxMaxItems;
+}
+
+Item* ItemStorageBox::itemAt(int ind)
+{
+  return items.at(ind);
+}
+
+void ItemStorageBox::itemSwap(int from, int to)
+{
+  auto eFrom = items.at(from);
+  auto eTo = items.at(to);
+
+  items.replace(from, eTo);
+  items.replace(to, eFrom);
+
+  itemsChanged();
+}
+
+void ItemStorageBox::itemRemove(int ind)
+{
+  if(items.size() <= 0)
+    return;
+
+  delete items.at(ind);
+  items.removeAt(ind);
+  itemsChanged();
+}
+
+void ItemStorageBox::itemNew()
+{
+  if(items.size() >= boxMaxItems)
+    return;
+
+  items.append(new Item);
+  itemsChanged();
+}
+
 void ItemStorageBox::load(SaveFile* saveFile)
 {
   reset();

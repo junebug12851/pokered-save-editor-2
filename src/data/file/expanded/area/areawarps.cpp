@@ -65,6 +65,7 @@ void AreaWarps::warpRemove(int ind)
 
   delete warps.at(ind);
   warps.removeAt(ind);
+  warpsChanged();
 }
 
 void AreaWarps::warpNew()
@@ -73,6 +74,7 @@ void AreaWarps::warpNew()
     return;
 
   warps.append(new WarpData);
+  warpsChanged();
 }
 
 void AreaWarps::load(SaveFile* saveFile)

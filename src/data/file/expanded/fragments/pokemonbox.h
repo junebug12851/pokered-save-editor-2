@@ -62,16 +62,16 @@ class PokemonMove : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 moveID_ MEMBER moveID NOTIFY moveIDChanged)
-  Q_PROPERTY(var8 pp_ MEMBER pp NOTIFY ppChanged)
-  Q_PROPERTY(var8 ppUp_ MEMBER ppUp NOTIFY ppUpChanged)
+  Q_PROPERTY(int moveID_ MEMBER moveID NOTIFY moveIDChanged)
+  Q_PROPERTY(int pp_ MEMBER pp NOTIFY ppChanged)
+  Q_PROPERTY(int ppUp_ MEMBER ppUp NOTIFY ppUpChanged)
 
 public:
   PokemonMove(var8 move = 0, var8 pp = 0, var8 ppUp = 0);
 
   Q_INVOKABLE MoveDBEntry* toMove();
   Q_INVOKABLE bool isMaxPP();
-  Q_INVOKABLE var8 getMaxPP();
+  Q_INVOKABLE int getMaxPP();
   Q_INVOKABLE bool isMaxPpUps();
 
 signals:
@@ -85,33 +85,35 @@ public slots:
   void restorePP();
 
 public:
-  var8 moveID;
-  var8 pp;
-  var8 ppUp;
+  int moveID;
+  int pp;
+  int ppUp;
 };
+
+constexpr var8 maxMoves = 4;
+constexpr var8 maxDV = 4;
 
 class PokemonBox : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(var8 species_ MEMBER species NOTIFY speciesChanged)
-  Q_PROPERTY(var16 hp_ MEMBER hp NOTIFY hpChanged)
-  Q_PROPERTY(var8 level_ MEMBER level NOTIFY levelChanged)
-  Q_PROPERTY(var8 status_ MEMBER status NOTIFY statusChanged)
-  Q_PROPERTY(var8 type1_ MEMBER type1 NOTIFY type1Changed)
-  Q_PROPERTY(var8 type2_ MEMBER type2 NOTIFY type2Changed)
-  Q_PROPERTY(var8 catchRate_ MEMBER catchRate NOTIFY catchRateChanged)
-  Q_PROPERTY(var16 otID_ MEMBER otID NOTIFY otIDChanged)
-  Q_PROPERTY(var32 exp_ MEMBER exp NOTIFY expChanged)
-  Q_PROPERTY(var16 hpExp_ MEMBER hpExp NOTIFY hpExpChanged)
-  Q_PROPERTY(var16 atkExp_ MEMBER atkExp NOTIFY atkExpChanged)
-  Q_PROPERTY(var16 defExp_ MEMBER defExp NOTIFY defExpChanged)
-  Q_PROPERTY(var16 spdExp_ MEMBER spdExp NOTIFY spdExpChanged)
-  Q_PROPERTY(var16 spExp_ MEMBER spExp NOTIFY spExpChanged)
-  Q_PROPERTY(QString otName_ MEMBER otName NOTIFY otNameChanged)
-  Q_PROPERTY(QString nickname_ MEMBER nickname NOTIFY nicknameChanged)
-  Q_PROPERTY(QVector<PokemonMove*> moves_ MEMBER moves NOTIFY movesChanged)
-  Q_PROPERTY(bool type2Explicit_ MEMBER type2Explicit NOTIFY type2ExplicitChanged)
+  Q_PROPERTY(int species MEMBER species NOTIFY speciesChanged)
+  Q_PROPERTY(int hp MEMBER hp NOTIFY hpChanged)
+  Q_PROPERTY(int level MEMBER level NOTIFY levelChanged)
+  Q_PROPERTY(int status MEMBER status NOTIFY statusChanged)
+  Q_PROPERTY(int type1 MEMBER type1 NOTIFY type1Changed)
+  Q_PROPERTY(int type2 MEMBER type2 NOTIFY type2Changed)
+  Q_PROPERTY(int catchRate MEMBER catchRate NOTIFY catchRateChanged)
+  Q_PROPERTY(int otID MEMBER otID NOTIFY otIDChanged)
+  Q_PROPERTY(unsigned int exp MEMBER exp NOTIFY expChanged)
+  Q_PROPERTY(int hpExp MEMBER hpExp NOTIFY hpExpChanged)
+  Q_PROPERTY(int atkExp MEMBER atkExp NOTIFY atkExpChanged)
+  Q_PROPERTY(int defExp MEMBER defExp NOTIFY defExpChanged)
+  Q_PROPERTY(int spdExp MEMBER spdExp NOTIFY spdExpChanged)
+  Q_PROPERTY(int spExp MEMBER spExp NOTIFY spExpChanged)
+  Q_PROPERTY(QString otName MEMBER otName NOTIFY otNameChanged)
+  Q_PROPERTY(QString nickname MEMBER nickname NOTIFY nicknameChanged)
+  Q_PROPERTY(bool type2Explicit MEMBER type2Explicit NOTIFY type2ExplicitChanged)
 
 public:
   PokemonBox(SaveFile* saveFile = nullptr,
@@ -143,14 +145,14 @@ public:
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
   Q_INVOKABLE PokemonDBEntry* isValid();
 
-  Q_INVOKABLE var32 levelToExp(svar8 level = -1);
-  Q_INVOKABLE var32 expLevelRangeStart();
-  Q_INVOKABLE var32 expLevelRangeEnd();
+  Q_INVOKABLE unsigned int levelToExp(int level = -1);
+  Q_INVOKABLE unsigned int expLevelRangeStart();
+  Q_INVOKABLE unsigned int expLevelRangeEnd();
   Q_INVOKABLE float expLevelRangePercent();
 
-  Q_INVOKABLE var8 hpDV(); // Get HP DV
-  Q_INVOKABLE var16 hpStat(); // Get HP Stat
-  Q_INVOKABLE var16 nonHpStat(PokemonStats::PokemonStats_ stat); // Get Non-HP Stat
+  Q_INVOKABLE int hpDV(); // Get HP DV
+  Q_INVOKABLE int hpStat(); // Get HP Stat
+  Q_INVOKABLE int nonHpStat(PokemonStats::PokemonStats_ stat); // Get Non-HP Stat
 
   // Performs Pokecenter Heal
   Q_INVOKABLE bool isAfflicted();
@@ -172,10 +174,22 @@ public:
   Q_INVOKABLE virtual void copyFrom(PokemonBox* pkmn);
   Q_INVOKABLE PokemonDBEntry* toData();
 
-  Q_INVOKABLE var16 atkStat();
-  Q_INVOKABLE var16 defStat();
-  Q_INVOKABLE var16 spdStat();
-  Q_INVOKABLE var16 spStat();
+  Q_INVOKABLE int atkStat();
+  Q_INVOKABLE int defStat();
+  Q_INVOKABLE int spdStat();
+  Q_INVOKABLE int spStat();
+
+  Q_INVOKABLE int movesCount();
+  Q_INVOKABLE int movesMax();
+  Q_INVOKABLE PokemonMove* movesAt(int ind);
+  Q_INVOKABLE void movesSwap(int from, int to);
+  Q_INVOKABLE void movesRemove(int ind);
+  Q_INVOKABLE void movesNew();
+
+  Q_INVOKABLE int dvCount();
+  Q_INVOKABLE int dvAt(int ind);
+  Q_INVOKABLE void dvSet(int ind, int val);
+  Q_INVOKABLE void dvSwap(int from, int to);
 
 signals:
   void speciesChanged();
@@ -252,21 +266,21 @@ public slots:
   void resetPokemon();
 
 public:
-  var8 species;
-  var16 hp;
-  var8 level;
-  var8 status;
-  var8 type1;
-  var8 type2;
-  var8 catchRate;
-  var16 otID;
-  var32 exp;
-  var16 hpExp;
-  var16 atkExp;
-  var16 defExp;
-  var16 spdExp;
-  var16 spExp;
-  var8 dv[4];
+  int species;
+  int hp;
+  int level;
+  int status;
+  int type1;
+  int type2;
+  int catchRate;
+  int otID;
+  unsigned int exp;
+  int hpExp;
+  int atkExp;
+  int defExp;
+  int spdExp;
+  int spExp;
+  var8 dv[maxDV];
   QString otName;
   QString nickname;
 

@@ -85,7 +85,7 @@ bool PokemonMove::isMaxPP()
   return pp >= maxPP;
 }
 
-var8 PokemonMove::getMaxPP()
+int PokemonMove::getMaxPP()
 {
   auto moveData = toMove();
   if(moveData == nullptr || !moveData->pp)
@@ -566,7 +566,7 @@ PokemonDBEntry* PokemonBox::isValid()
   return record;
 }
 
-var32 PokemonBox::levelToExp(svar8 level)
+unsigned int PokemonBox::levelToExp(int level)
 {
   auto record = isValid();
   double exp = 0;
@@ -641,7 +641,7 @@ void PokemonBox::resetExp()
   expChanged();
 }
 
-var8 PokemonBox::hpDV()
+int PokemonBox::hpDV()
 {
   var8 hpDv = 0;
 
@@ -660,7 +660,7 @@ var8 PokemonBox::hpDV()
   return hpDv;
 }
 
-var16 PokemonBox::hpStat()
+int PokemonBox::hpStat()
 {
   auto record = isValid();
 
@@ -671,7 +671,7 @@ var16 PokemonBox::hpStat()
   return qFloor((((*record->baseHp + hpDV())*2+qFloor(qFloor(qSqrt(hpExp))/4))*level)/100) + level + 10;
 }
 
-var16 PokemonBox::nonHpStat(PokemonStats::PokemonStats_ stat)
+int PokemonBox::nonHpStat(PokemonStats::PokemonStats_ stat)
 {
   auto record = isValid();
 
@@ -1172,6 +1172,79 @@ void PokemonBox::copyFrom(PokemonBox* pkmn)
 PokemonDBEntry* PokemonBox::toData()
 {
   return PokemonDB::ind.value(QString::number(species), nullptr);
+}
+
+int PokemonBox::movesCount()
+{
+  return moves.size();
+}
+
+int PokemonBox::movesMax()
+{
+  return maxMoves;
+}
+
+PokemonMove* PokemonBox::movesAt(int ind)
+{
+  return moves.at(ind);
+}
+
+void PokemonBox::movesSwap(int from, int to)
+{
+  auto eFrom = moves.at(from);
+  auto eTo = moves.at(to);
+
+  moves.replace(from, eTo);
+  moves.replace(to, eFrom);
+
+  movesChanged();
+}
+
+void PokemonBox::movesRemove(int ind)
+{
+  // There has to be 1 move
+  if(moves.size() <= 1)
+    return;
+
+  delete moves.at(ind);
+  moves.removeAt(ind);
+  movesChanged();
+}
+
+void PokemonBox::movesNew()
+{
+  if(moves.size() >= maxMoves)
+    return;
+
+  moves.append(new PokemonMove);
+  movesChanged();
+}
+
+int PokemonBox::dvCount()
+{
+  return maxDV;
+}
+
+int PokemonBox::dvAt(int ind)
+{
+  return dv[ind];
+}
+
+void PokemonBox::dvSet(int ind, int val)
+{
+  dv[ind] = val;
+  dvChanged();
+}
+
+void PokemonBox::dvSwap(int from, int to)
+{
+  auto eFrom = dv[from];
+  auto eTo = dv[to];
+
+  dv[from] = eTo;
+  dv[to] = eFrom;
+
+  dvChanged();
 }
 
 var16 PokemonBox::atkStat()
