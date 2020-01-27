@@ -9,7 +9,7 @@ import "./common/Style.js" as Style
 
 Rectangle {
   id: root
-  color: Style.primaryColorLight
+  color: Style.textColorAccent
 
   ColumnLayout {
     anchors.fill: parent
@@ -25,7 +25,7 @@ Rectangle {
       Layout.fillWidth: true
     }
 
-    Footer {
+    Footer1 {
       id: footer
       Layout.fillWidth: true
     }

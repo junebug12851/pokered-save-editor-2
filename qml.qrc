@@ -386,9 +386,9 @@
         <file>assets/pokemon-icons/151-mew-shiny.svg</file>
         <file>ui/app/sections/NavBar.qml</file>
         <file>ui/app/common/Style.js</file>
-        <file>ui/app/sections/Footer.qml</file>
+        <file>ui/app/sections/Footer1.qml</file>
         <file>ui/app/contents/NavBarButtons.qml</file>
-        <file>ui/app/contents/FooterButtons.qml</file>
+        <file>ui/app/contents/Footer1Randomize.qml</file>
         <file>assets/other-icons/edit-file.svg</file>
         <file>assets/other-icons/new-file.svg</file>
         <file>assets/other-icons/edit-file-2.svg</file>
