@@ -60,9 +60,36 @@ ColumnLayout {
   }
 
   Rectangle {
+    id: buttonBar
     height: 60
     color: Style.accentColor
     Layout.fillWidth: true
+
+    MouseArea {
+      id: hoverArea
+      anchors.fill: parent
+      hoverEnabled: true
+
+      onEntered: {
+        buttonBar.color = Qt.darker(Style.accentColor, 1.10)
+        shadow.color1 = Qt.darker(Style.accentColor, 1.10)
+      }
+
+      onExited: {
+        buttonBar.color = Style.accentColor
+        shadow.color1 = Style.accentColor
+      }
+
+      onPressed: {
+        buttonBar.color = Qt.darker(Style.accentColor, 1.40)
+        shadow.color1 = Qt.darker(Style.accentColor, 1.40)
+      }
+
+      onReleased: {
+        buttonBar.color = (hoverArea.containsMouse) ? Qt.darker(Style.accentColor, 1.10) : Style.accentColor
+        shadow.color1 = (hoverArea.containsMouse) ? Qt.darker(Style.accentColor, 1.10) : Style.accentColor
+      }
+    }
 
     FooterButtons {
       anchors.fill: parent

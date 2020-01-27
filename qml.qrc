@@ -393,5 +393,6 @@
         <file>assets/other-icons/new-file.svg</file>
         <file>assets/other-icons/edit-file-2.svg</file>
         <file>assets/other-icons/question.svg</file>
+        <file>ui/app/fragments/MainToolTip.qml</file>
     </qresource>
 </RCC>

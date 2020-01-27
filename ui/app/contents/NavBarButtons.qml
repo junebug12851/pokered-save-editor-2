@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
+import "../fragments"
 import "../common/Style.js" as Style
 
 RowLayout {
@@ -18,6 +19,10 @@ RowLayout {
     icon.width: iconSize
     icon.height: iconSize
     icon.color: Style.textColorAccent
+
+    MainToolTip {
+      text: "Home"
+    }
   }
 
   Text {
@@ -36,6 +41,10 @@ RowLayout {
     icon.width: iconSize
     icon.height: iconSize
     icon.color: Style.textColorAccent
+
+    MainToolTip {
+      text: "What's This?"
+    }
   }
 
   Button {
@@ -45,6 +54,10 @@ RowLayout {
     icon.width: iconSize
     icon.height: iconSize
     icon.color: Style.textColorAccent
+
+    MainToolTip {
+      text: "Actions on the current file"
+    }
   }
 
   Button {
@@ -54,5 +67,9 @@ RowLayout {
     icon.width: iconSize
     icon.height: iconSize
     icon.color: Style.textColorAccent
+
+    MainToolTip {
+      text: "Start a new file"
+    }
   }
 }
