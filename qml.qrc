@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
-        <file>ui/app/main.qml</file>
+        <file>ui/app/App.qml</file>
         <file>assets/data/eventPokemon.json</file>
         <file>assets/data/events.json</file>
         <file>assets/data/fly.json</file>
@@ -384,8 +384,8 @@
         <file>assets/pokemon-icons/149-dragonite-shiny.svg</file>
         <file>assets/pokemon-icons/150-mewtwo-shiny.svg</file>
         <file>assets/pokemon-icons/151-mew-shiny.svg</file>
-        <file>ui/app/NavBar.qml</file>
-        <file>ui/app/Style.js</file>
-        <file>ui/app/Footer.qml</file>
+        <file>ui/app/sections/NavBar.qml</file>
+        <file>ui/app/common/Style.js</file>
+        <file>ui/app/sections/Footer.qml</file>
     </qresource>
 </RCC>

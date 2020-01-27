@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
   auto qml = ui.app->engine()->rootContext();
   qml->setContextProperty("file", file);
 
-  ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/main.qml")));
+  ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
 
   // Create recent files shortcut
   for(var8 i = 0; i < MAX_RECENT_FILES; i++) {
