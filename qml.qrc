@@ -388,5 +388,10 @@
         <file>ui/app/common/Style.js</file>
         <file>ui/app/sections/Footer.qml</file>
         <file>ui/app/contents/NavBarButtons.qml</file>
+        <file>ui/app/contents/FooterButtons.qml</file>
+        <file>assets/other-icons/edit-file.svg</file>
+        <file>assets/other-icons/new-file.svg</file>
+        <file>assets/other-icons/edit-file-2.svg</file>
+        <file>assets/other-icons/question.svg</file>
     </qresource>
 </RCC>
