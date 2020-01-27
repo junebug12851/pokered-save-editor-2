@@ -12,6 +12,10 @@ So this is going to look like nothing to you, a simple image, however it took ve
 
 ![initialImage](https://i.imgur.com/LB7LDxr.png)
 
+Looking good so far, more progress!!!
+
+![More Progress in the ui/ux](https://i.imgur.com/WK0Dief.png)
+
 ## New page for reboot goals / features
 
 Please see NewGoals.md for the breakdown of new goals and features specific to 
