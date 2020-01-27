@@ -387,5 +387,6 @@
         <file>ui/app/sections/NavBar.qml</file>
         <file>ui/app/common/Style.js</file>
         <file>ui/app/sections/Footer.qml</file>
+        <file>ui/app/contents/NavBarButtons.qml</file>
     </qresource>
 </RCC>

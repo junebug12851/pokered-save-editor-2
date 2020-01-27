@@ -3,6 +3,7 @@ import QtQuick.Shapes 1.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls.Material 2.12
 
+import "../contents"
 import "../common/Style.js" as Style
 
 ColumnLayout {
@@ -13,6 +14,11 @@ ColumnLayout {
     height: 60
     color: Style.accentColor
     Layout.fillWidth: true
+
+    RowLayout {
+      spacing: 0
+      NavBarButtons {}
+    }
   }
 
   Shape {

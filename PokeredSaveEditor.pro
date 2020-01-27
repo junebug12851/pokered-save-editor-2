@@ -1,4 +1,4 @@
-QT += quick quickcontrols2 core widgets quickwidgets
+QT += quick quickcontrols2 core widgets quickwidgets svg
 CONFIG += c++1z
 
 # The following define makes your compiler emit warnings if you use
