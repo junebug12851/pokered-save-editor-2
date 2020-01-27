@@ -43,6 +43,11 @@ QApplication* preBoot(int argc, char *argv[])
   QApplication::setApplicationVersion("v1.0.0");
   QApplication::setOrganizationDomain("pokeredsaveeditor.junehanabi.gmail.com");
 
+  // Set Smoothing
+  QSurfaceFormat format;
+  format.setSamples(8);
+  QSurfaceFormat::setDefaultFormat(format);
+
   // Create the app
   QApplication* app = new QApplication(argc, argv);
 

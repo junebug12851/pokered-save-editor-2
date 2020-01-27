@@ -1,23 +1,32 @@
 import QtQuick 2.12
+import QtQuick.Layouts 1.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
+import "Style.js" as Style
 
 Rectangle {
   id: root
 
-  // Because Dark Theme has quite an ugly Brighter Shade which ruins
-  // The look and feel and can make things more difficult to read/see
-  Material.accent: Material.color(Material.Pink, Material.Shade500)
-  color: Material.background
+  color: Style.primaryColorLight
 
-  Text {
-    color: Material.foreground
-    id: helloText
-    text: file.data.dataExpanded.player.basics.playerName
-    anchors.verticalCenter: root.verticalCenter
-    anchors.horizontalCenter: root.horizontalCenter
-    font.pointSize: 24;
-    font.bold: true
+  ColumnLayout {
+    anchors.fill: parent
+    spacing: 0
+
+    NavBar{
+      Layout.fillWidth: true
+    }
+
+    Rectangle {
+      color: root.color
+      Layout.fillHeight: true
+      Layout.fillWidth: true
+    }
+
+    Footer {
+      id: footer
+      Layout.fillWidth: true
+    }
   }
 }
