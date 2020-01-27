@@ -15,9 +15,8 @@ ColumnLayout {
     color: Style.accentColor
     Layout.fillWidth: true
 
-    RowLayout {
-      spacing: 0
-      NavBarButtons {}
+    NavBarButtons {
+      anchors.fill: parent
     }
   }
 

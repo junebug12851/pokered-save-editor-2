@@ -3,6 +3,7 @@ import QtQuick.Shapes 1.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls.Material 2.14
 
+import "../contents"
 import "../common/Style.js" as Style
 
 ColumnLayout {
@@ -62,5 +63,9 @@ ColumnLayout {
     height: 60
     color: Style.accentColor
     Layout.fillWidth: true
+
+    FooterButtons {
+      anchors.fill: parent
+    }
   }
 }
