@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
+import "../fragments"
 import "../common/Style.js" as Style
 
 /*
@@ -14,7 +15,7 @@ Rectangle {
 
   property string title: "All"
   property int iconSize: 20
-  color: Style.accentColor
+  color: manualMouse.curColor
 
   RowLayout {
     anchors.centerIn: parent
@@ -45,16 +46,9 @@ Rectangle {
     }
   }
 
-  MouseArea {
-    id: hoverArea
+  ManualButton {
+    id: manualMouse
+    refColor: Style.accentColor
     anchors.fill: parent
-    hoverEnabled: true
-
-    onEntered: top.color = Qt.darker(Style.accentColor, 1.10)
-    onExited: top.color = Style.accentColor
-    onPressed: top.color = Qt.darker(Style.accentColor, 1.40)
-    onReleased: top.color = (hoverArea.containsMouse)
-                ? Qt.darker(Style.accentColor, 1.10)
-                : Style.accentColor
   }
 }

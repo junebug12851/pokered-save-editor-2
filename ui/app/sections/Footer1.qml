@@ -13,6 +13,9 @@ import "../common/Style.js" as Style
 ColumnLayout {
   spacing: 0
 
+  property alias subFooterSrc: buttons.source
+  property alias buttonsInner: buttons.item
+
   Shape {
     id: shadow
     height: 40
@@ -23,7 +26,7 @@ ColumnLayout {
     vendorExtensionsEnabled: false
     Layout.fillWidth: true
 
-    property color color1: buttons.color
+    property color color1: "white"
     property color color2: Style.accentColorDark
 
     property real ySplitPercent: .5
@@ -62,13 +65,19 @@ ColumnLayout {
   }
 
   Rectangle {
+    id: buttonsParent
     height: 60
-    color: buttons.color
+    color: "white"
     Layout.fillWidth: true
 
-    Footer1Randomize {
+    Loader {
       id: buttons
       anchors.fill: parent
+
+      onLoaded: {
+        shadow.color1 = Qt.binding(function() { return buttonsInner.color });
+        buttonsParent.color = Qt.binding(function() { return buttonsInner.color });
+      }
     }
   }
 }

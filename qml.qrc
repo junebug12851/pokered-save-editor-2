@@ -394,5 +394,14 @@
         <file>assets/other-icons/edit-file-2.svg</file>
         <file>assets/other-icons/question.svg</file>
         <file>ui/app/fragments/MainToolTip.qml</file>
+        <file>ui/app/contents/NewFile.qml</file>
+        <file>assets/wallpaper/jelly-donuts.jpg</file>
+        <file>assets/wallpaper/pokewalk.jpg</file>
+        <file>ui/app/fragments/TileButton.qml</file>
+        <file>ui/app/fragments/CreditWork.qml</file>
+        <file>ui/app/fragments/ManualButton.qml</file>
+        <file>assets/fontawesome-icons/times-circle.svg</file>
+        <file>ui/app/fragments/ModalClose.qml</file>
+        <file>ui/app/common/Pages.js</file>
     </qresource>
 </RCC>

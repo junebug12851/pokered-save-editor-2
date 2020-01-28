@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
   os.insert("clear-recentfiles", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Minus), this));
   os.insert("exit", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this));
   os.insert("exit2", new QShortcut(QKeySequence(Qt::ALT + Qt::Key_F4), this));
+  os.insert("random", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R), this));
 
   connect(os.value("new"), &QShortcut::activated, file, &FileManagement::newFile);
   connect(os.value("open"), &QShortcut::activated, file, &FileManagement::openFile);
@@ -62,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(os.value("scrub"), &QShortcut::activated, file, &FileManagement::wipeUnusedSpace);
   connect(os.value("exit"), &QShortcut::activated, this, &MainWindow::close);
   connect(os.value("exit2"), &QShortcut::activated, this, &MainWindow::close);
+  connect(os.value("random"), &QShortcut::activated, file->data, &SaveFile::randomizeExpansion);
 
   // Link up incomming file signals
   connect(file, &FileManagement::pathChanged, this, &MainWindow::onPathChanged);
