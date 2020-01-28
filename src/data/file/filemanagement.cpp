@@ -86,16 +86,17 @@ void FileManagement::newFile()
   data->resetData();
 }
 
-void FileManagement::openFile()
+bool FileManagement::openFile()
 {
   QString file{openFileDialog("Open Save File")};
   if(file == "")
-    return;
+    return false;
 
   var8* newData{readSaveData(file)};
   data->setData(newData); // Copies data out of array (Safe to delete)
   setPath(file);
   delete[] newData; // Very important with readSaveData
+  return true;
 }
 
 void FileManagement::openFileRecent(int index)

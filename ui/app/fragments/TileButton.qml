@@ -10,6 +10,8 @@ Rectangle {
   property alias imgSrc: image.source
   property alias hotKey: hotkey.text
 
+  signal clicked()
+
   property real sizeH: parent.height
   property int contW: parent.width
   property int contH: parent.height
@@ -63,5 +65,6 @@ Rectangle {
     refColor: "#7fefefef"
     refDefColor: "transparent"
     anchors.fill: parent
+    onClicked: parent.clicked()
   }
 }

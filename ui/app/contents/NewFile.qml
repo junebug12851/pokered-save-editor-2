@@ -28,6 +28,11 @@ Rectangle {
     imgSrc: "qrc:/assets/fontawesome-icons/file.svg"
     hotKey: "Ctrl + N"
     sizeH: blankHeight
+
+    onClicked: {
+      file.newFile()
+      root.changeScreen("home")
+    }
   }
 
   TileButton {
@@ -37,6 +42,11 @@ Rectangle {
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     sizeH: randomHeight
+
+    onClicked: {
+      file.data.randomizeExpansion()
+      root.changeScreen("home")
+    }
   }
 
   TileButton {
@@ -46,6 +56,14 @@ Rectangle {
     anchors.top: parent.top
     anchors.right: parent.right
     sizeH: loadHeight
+
+    onClicked: {
+      var res = file.openFile()
+
+      // Close modal only if a file was selected
+      if(res === true)
+        root.changeScreen("home")
+    }
   }
 
   TileButton {

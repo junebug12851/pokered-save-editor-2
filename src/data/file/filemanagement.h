@@ -59,7 +59,7 @@ public slots:
   void reset();
 
   void newFile();
-  void openFile();
+  bool openFile();
   void openFileRecent(int index);
   void reopenFile();
 
