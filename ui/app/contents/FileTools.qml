@@ -32,6 +32,7 @@ Rectangle {
     hotKey: "Ctrl + S"
     sizeH: saveHeight
     divider: divider
+    infoTxt: "Save your file so far"
 
     onClicked: {
       var res = file.saveFile()
@@ -50,6 +51,7 @@ Rectangle {
     anchors.left: parent.left
     sizeH: revertHeight
     divider: divider
+    infoTxt: "Destroy all unsaved changes"
 
     onClicked: {
       file.reopenFile()
@@ -65,6 +67,8 @@ Rectangle {
     anchors.left: parent.left
     sizeH: scrubHeight
     divider: divider
+    infoTxt: "Scrub and sanitize the file clean, this means that\n" +
+             "all the unused areas of the file are wiped."
 
     onClicked: {
       file.wipeUnusedSpace()
@@ -80,6 +84,8 @@ Rectangle {
     anchors.right: parent.right
     sizeH: saveAsHeight
     divider: divider
+    infoTxt: "Save the file and unsaved changes to a different\n" +
+             "file then switch to the new file."
 
     onClicked: {
       var res = file.saveFileAs()
@@ -98,6 +104,8 @@ Rectangle {
     anchors.right: parent.right
     sizeH: saveCopyAsHeight
     divider: divider
+    infoTxt: "Save the file and unsaved changes to a different\n" +
+             "file but keep working on the current file."
 
     onClicked: {
       var res = file.saveFileCopy()

@@ -7,10 +7,18 @@ import "../common/Style.js" as Style
 
 ToolTip {
   id: toolTip
-  text: "Home"
+
+  property bool followGlobalSetting: true
+
+  // If followGlobalSetting, then only when mouse is hovered and global
+  // tooltips have been enabled. If not following global setting then only
+  // when the mouse is hovered
+  visible: (followGlobalSetting)
+           ? parent.hovered && root.infoBtnPressed
+           : parent.hovered
+
   delay: 250
-  visible: parent.hovered
-  font.pixelSize: 15
+  font.pixelSize: 12
 
   contentItem: Text {
     text: toolTip.text

@@ -10,6 +10,7 @@ Rectangle {
   property alias title: title.text
   property alias imgSrc: image.source
   property alias hotKey: hotkey.text
+  property alias infoTxt: infoBtn.toolTipText
 
   signal clicked()
 
@@ -68,5 +69,9 @@ Rectangle {
     refDefColor: "transparent"
     anchors.fill: parent
     onClicked: parent.clicked()
+  }
+
+  InfoButton {
+    id: infoBtn
   }
 }

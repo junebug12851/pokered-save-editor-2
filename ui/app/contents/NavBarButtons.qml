@@ -20,6 +20,11 @@ RowLayout {
     icon.height: iconSize
     icon.color: Style.textColorAccent
 
+    MainToolTip {
+      text: "Go back to the main menu"
+      y: 50
+    }
+
     onClicked: root.changeScreen("home")
   }
 
@@ -39,6 +44,14 @@ RowLayout {
     icon.width: iconSize
     icon.height: iconSize
     icon.color: Style.textColorAccent
+    opacity: (root.infoBtnPressed === true) ? 1.00 : 0.50
+
+    MainToolTip {
+      text: "Toggle global tooltips for explanations"
+      y: 50
+    }
+
+    onClicked: root.infoBtnPressed = !root.infoBtnPressed
   }
 
   Button {
@@ -48,6 +61,11 @@ RowLayout {
     icon.width: iconSize
     icon.height: iconSize
     icon.color: Style.textColorAccent
+
+    MainToolTip {
+      text: "Actions for the current file like saving"
+      y: 50
+    }
 
     onClicked: root.changeScreen("fileTools")
   }
@@ -59,6 +77,11 @@ RowLayout {
     icon.width: iconSize
     icon.height: iconSize
     icon.color: Style.textColorAccent
+
+    MainToolTip {
+      text: "Switch to a new file"
+      y: 50
+    }
 
     onClicked: root.changeScreen("newFile")
   }

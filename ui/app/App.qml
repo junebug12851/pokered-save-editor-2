@@ -13,6 +13,8 @@ Rectangle {
   id: root
   color: Style.textColorAccent
 
+  property bool infoBtnPressed: false
+
   Loader {
     id: modal
     source: "./contents/NewFile.qml"

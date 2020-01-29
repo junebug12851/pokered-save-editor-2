@@ -405,5 +405,8 @@
         <file>ui/app/common/Pages.js</file>
         <file>ui/app/fragments/RecentFilesTile.qml</file>
         <file>ui/app/contents/FileTools.qml</file>
+        <file>ui/app/fragments/InfoButton.qml</file>
+        <file>assets/fontawesome-icons/users.svg</file>
+        <file>assets/fontawesome-icons/info-circle.svg</file>
     </qresource>
 </RCC>

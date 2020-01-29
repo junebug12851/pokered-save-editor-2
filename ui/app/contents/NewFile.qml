@@ -28,6 +28,7 @@ Rectangle {
     imgSrc: "qrc:/assets/fontawesome-icons/file.svg"
     hotKey: "Ctrl + N"
     sizeH: blankHeight
+    infoTxt: "Create a new blank file with everything empty."
 
     onClicked: {
       file.newFile()
@@ -42,6 +43,8 @@ Rectangle {
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     sizeH: randomHeight
+    infoTxt: "Create a new file with everything fully\n" +
+             "randomized ready to play."
 
     onClicked: {
       file.data.randomizeExpansion()
@@ -56,6 +59,7 @@ Rectangle {
     anchors.top: parent.top
     anchors.right: parent.right
     sizeH: loadHeight
+    infoTxt: "Switch to a different file"
 
     onClicked: {
       var res = file.openFile()
@@ -73,6 +77,7 @@ Rectangle {
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     sizeH: recentHeight
+    infoTxt: "Switch to one of your recently used files"
   }
 
   ModalClose {
