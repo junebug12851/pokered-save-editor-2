@@ -37,7 +37,7 @@ QString FileManagement::getPath()
   return path;
 }
 
-QString FileManagement::getRecentFile(var8 index)
+QString FileManagement::getRecentFile(int index)
 {
   return recentFiles.at(index);
 }

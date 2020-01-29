@@ -9,7 +9,7 @@ import "../common/Style.js" as Style
 
 Rectangle {
   property real blankHeight: 0.40
-  property real loadHeight: 0.70
+  property real loadHeight: 0.60
   property real randomHeight: 1.00 - blankHeight
   property real recentHeight: 1.00 - loadHeight
 
@@ -66,7 +66,7 @@ Rectangle {
     }
   }
 
-  TileButton {
+  RecentFilesTile {
     title: "Load a Recent File..."
     imgSrc: "qrc:/assets/fontawesome-icons/file-import.svg"
     hotKey: "Ctrl + Shift + [0-4]"

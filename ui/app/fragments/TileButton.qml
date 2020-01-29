@@ -5,6 +5,7 @@ import "../fragments"
 import "../common/Style.js" as Style
 
 Rectangle {
+  id: tile
 
   property alias title: title.text
   property alias imgSrc: image.source
@@ -18,11 +19,10 @@ Rectangle {
 
   property real divider: 0.50
   property real titleOpacity: 0.60
-  property int iconSize: 50
-  property int iconSizeTitlePadding: 25
-  property int titleSize: 25
-  property int hotKeyTitlePadding: 5
+  property int iconSize: 40
+  property int titleSize: 20
   property int hotKeySize: 15
+  property int minFullSize: 300
 
   width: contW * divider
   height: contH * sizeH
@@ -33,18 +33,18 @@ Rectangle {
   Image {
     id: image
     x: (parent.width / 2) - (width / 2)
-    y: (parent.height / 2) - (height / 2) - titleSize - iconSizeTitlePadding
+    anchors.bottom: title.top
     width: iconSize
     height: iconSize
-    source: "qrc:/assets/fontawesome-icons/file.svg"
     opacity: titleOpacity
   }
 
   Text {
     id: title
-    text: "New Blank File"
     color: Qt.darker(Style.textColorPrimary, 2)
     opacity: titleOpacity
+    topPadding: 7
+    bottomPadding: 5
     anchors.centerIn: parent
     font.pixelSize: titleSize
     font.bold: true
@@ -53,7 +53,7 @@ Rectangle {
   Text {
     id: hotkey
     x: (parent.width / 2) - (width / 2)
-    y: ((parent.height / 2) - (height / 2)) + titleSize + hotKeyTitlePadding
+    anchors.top: title.bottom
     color: Qt.darker(Style.textColorPrimary, 2)
     opacity: titleOpacity
     font.pixelSize: hotKeySize

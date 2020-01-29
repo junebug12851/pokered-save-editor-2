@@ -40,7 +40,7 @@ public:
   virtual ~FileManagement();
 
   QString getPath();
-  Q_INVOKABLE QString getRecentFile(var8 index = 0);
+  Q_INVOKABLE QString getRecentFile(int index = 0);
   QList<QString> getRecentFiles();
 
   SaveFile* data = nullptr;
