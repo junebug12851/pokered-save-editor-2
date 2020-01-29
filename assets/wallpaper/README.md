@@ -11,3 +11,9 @@ jelly-donuts
     attribution: "By Ry-Spirit"
     license: "Creative Commons Attribution, Non-Commercial, No Derivatives 3.0"
     url: https://www.deviantart.com/ry-spirit/art/Who-wants-some-Jelly-Donuts-373934999
+
+starters
+
+    attribution: "By yoshiyaki"
+    license: "Creative Commons Attribution, Non-Commercial, No Derivatives 3.0"
+    url: https://www.deviantart.com/yoshiyaki/art/Basic-Pokemons-Colors-574585879
