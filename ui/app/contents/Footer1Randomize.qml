@@ -39,7 +39,7 @@ Rectangle {
 
     Text {
       id: text
-      text: "Re-Roll " + top.title
+      text: "Re-Roll"
       color: Style.textColorAccent
       font.capitalization: Font.Capitalize
       font.pixelSize: iconSize
