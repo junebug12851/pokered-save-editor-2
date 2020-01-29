@@ -14,9 +14,9 @@ So this is going to look like nothing to you, a simple image, however it took ve
 
 Looking good so far, more progress!!!
 
-![More Progress in the ui/ux](https://i.imgur.com/RQUlr9p.png)
-![Initial New File Screen](https://i.imgur.com/IIDIzRt.png)
-![Initial File Tools Screen](https://i.imgur.com/aSVT8X3.png)
+![More Progress in the ui/ux](https://i.imgur.com/GHoR1Mg.png)
+![Initial New File Screen](https://i.imgur.com/WcdZIv7.png)
+![Initial File Tools Screen](https://i.imgur.com/Jl40AqT.png)
 
 Here's sort of a rough preview of a before and after, note that the after image below may become outdated as new updates roll in. You can clearly see how beautiful the new interface is.
 ![Before and After Image](https://i.imgur.com/LS1XPsy.png)
