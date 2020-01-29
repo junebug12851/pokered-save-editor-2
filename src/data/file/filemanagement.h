@@ -66,9 +66,9 @@ public slots:
   void addRecentFile(QString path);
   void setPath(QString path);
 
-  void saveFile();
-  void saveFileAs();
-  void saveFileCopy();
+  bool saveFile();
+  bool saveFileAs();
+  bool saveFileCopy();
 
   void wipeUnusedSpace();
   void clearRecentFiles();

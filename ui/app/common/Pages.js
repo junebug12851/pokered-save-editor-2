@@ -6,6 +6,11 @@ var screens = {
     body: "./contents/NewFile.qml"
   },
 
+  fileTools: {
+    modal: true,
+    body: "./contents/FileTools.qml"
+  },
+
   home: {
     body: "",
     footerBtns: 1,

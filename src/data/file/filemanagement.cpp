@@ -150,33 +150,35 @@ void FileManagement::setPath(QString path)
   settings.setValue(KEY_LAST_FILE, path);
 }
 
-void FileManagement::saveFile()
+bool FileManagement::saveFile()
 {
   if(path == "") {
-    saveFileAs();
-    return;
+    return saveFileAs();
   }
 
   writeSaveData(path, data->data);
+  return true;
 }
 
-void FileManagement::saveFileAs()
+bool FileManagement::saveFileAs()
 {
   QString filename{saveFileDialog("Save File As...")};
   if(filename == "")
-    return;
+    return false;
 
   writeSaveData(filename, data->data);
   setPath(filename);
+  return true;
 }
 
-void FileManagement::saveFileCopy()
+bool FileManagement::saveFileCopy()
 {
   QString filename{saveFileDialog("Save Copy As...")};
   if(filename == "")
-    return;
+    return false;
 
   writeSaveData(filename, data->data);
+  return true;
 }
 
 void FileManagement::wipeUnusedSpace()

@@ -404,5 +404,6 @@
         <file>ui/app/fragments/ModalClose.qml</file>
         <file>ui/app/common/Pages.js</file>
         <file>ui/app/fragments/RecentFilesTile.qml</file>
+        <file>ui/app/contents/FileTools.qml</file>
     </qresource>
 </RCC>

@@ -48,6 +48,8 @@ RowLayout {
     icon.width: iconSize
     icon.height: iconSize
     icon.color: Style.textColorAccent
+
+    onClicked: root.changeScreen("fileTools")
   }
 
   Button {
