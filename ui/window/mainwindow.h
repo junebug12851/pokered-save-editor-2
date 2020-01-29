@@ -9,6 +9,8 @@
 #include "ui_mainwindow.h"
 
 class FileManagement;
+class RecentFilesModel;
+class QAbstractItemModel;
 
 class MainWindow : public QMainWindow
 {
@@ -27,6 +29,7 @@ public:
   // MAX_RECENT_FILES
   QShortcut* recentFileShortcuts[5];
   QHash<QString, QShortcut*> otherShortcuts;
+  QHash<QString, QAbstractItemModel*> modelInstances;
 
 signals:
   void fileChanged();

@@ -30,6 +30,8 @@ Rectangle {
   border.color: Style.primaryColorDark
   border.width: 1
 
+  clip: true
+
   Image {
     id: image
     x: (parent.width / 2) - (width / 2)

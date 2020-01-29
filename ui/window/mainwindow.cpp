@@ -2,6 +2,7 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 #include "mainwindow.h"
+#include "../../src/mvc/recentfilesmodel.h"
 
 #include "../../src/common/types.h"
 #include "../../src/data/file/filemanagement.h"
@@ -11,14 +12,29 @@
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent)
 {
+  // First setup UI
   ui.setupUi(this);
 
+  // Save global class instance
   MainWindow::instance = this;
+
+  // Create the file management class which kickstarts all the data classes and
+  // data management, etc... Basically a whole thing here lol
   file = new FileManagement();
 
-  auto qml = ui.app->engine()->rootContext();
-  qml->setContextProperty("file", file);
+  // Create a RecentFilesModel instance and save it
+  modelInstances.insert("recentFiles", new RecentFilesModel(file));
 
+  // Now grab the QML instance from UI
+  auto qml = ui.app->engine()->rootContext();
+
+  // Inject singleton instances for:
+  // * file (All data and data management)
+  // * models (Easier interface to the data)
+  qml->setContextProperty("file", file);
+  qml->setContextProperty("recentFilesModel", modelInstances.value("recentFiles"));
+
+  // Now load the QML page, has to be done after setup and injection
   ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
 
   // Create recent files shortcut
@@ -83,6 +99,9 @@ MainWindow::~MainWindow()
     delete recentFileShortcuts[i];
 
   for(auto tmp : otherShortcuts)
+    delete tmp;
+
+  for(auto tmp : modelInstances)
     delete tmp;
 }
 
