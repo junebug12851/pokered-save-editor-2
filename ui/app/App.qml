@@ -11,9 +11,10 @@ import "./common/Style.js" as Style
 
 Rectangle {
   id: root
-  color: Style.textColorAccent
+  color: Style.primaryColorLight
 
   property bool infoBtnPressed: false
+  property string title: ""
 
   Loader {
     id: modal
@@ -61,7 +62,10 @@ Rectangle {
     // Otherwise eliminate the modal body
     modal.source = "";
 
-    // :oad the navbar and screen body
+    // Set Title
+    title = screen.title
+
+    // load the navbar and screen body
     navBar.source = "./sections/NavBar.qml";
     body.source = screen.body;
 

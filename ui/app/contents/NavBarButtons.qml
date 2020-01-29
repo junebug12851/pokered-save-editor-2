@@ -9,7 +9,6 @@ import "../common/Style.js" as Style
 RowLayout {
   spacing: 0
 
-  property string title: "Home"
   property int iconSize: 20
 
   Button {
@@ -29,7 +28,7 @@ RowLayout {
   }
 
   Text {
-    text: title
+    text: root.title
     Layout.fillWidth: true
     color: Style.textColorAccent
 

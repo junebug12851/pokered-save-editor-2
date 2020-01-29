@@ -78,7 +78,6 @@
         <file>assets/poke-go-icons/hat.svg</file>
         <file>assets/poke-go-icons/map.svg</file>
         <file>assets/poke-go-icons/mew.svg</file>
-        <file>assets/poke-go-icons/pikachu.svg</file>
         <file>assets/poke-go-icons/player.svg</file>
         <file>assets/poke-go-icons/pokedex.svg</file>
         <file>assets/poke-go-icons/smartphone.svg</file>
@@ -408,5 +407,7 @@
         <file>ui/app/fragments/InfoButton.qml</file>
         <file>assets/fontawesome-icons/users.svg</file>
         <file>assets/fontawesome-icons/info-circle.svg</file>
+        <file>ui/app/contents/HomeScreen.qml</file>
+        <file>assets/poke-go-icons/pikachu-2.svg</file>
     </qresource>
 </RCC>
