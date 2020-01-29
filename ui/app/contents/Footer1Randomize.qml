@@ -50,5 +50,7 @@ Rectangle {
     id: manualMouse
     refColor: Style.accentColor
     anchors.fill: parent
+
+    onClicked: file.data.randomizeExpansion()
   }
 }
