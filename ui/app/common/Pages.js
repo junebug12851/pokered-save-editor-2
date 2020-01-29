@@ -18,6 +18,11 @@ var screens = {
     body: "./contents/FileTools.qml"
   },
 
+  about: {
+    modal: true,
+    body: "./contents/AboutScreen.qml"
+  },
+
   home: {
     title: "Home",
     body: "./contents/HomeScreen.qml",

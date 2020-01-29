@@ -3,6 +3,7 @@
 #include <QQmlContext>
 #include "mainwindow.h"
 #include "../../src/mvc/recentfilesmodel.h"
+#include "../../src/mvc/creditsmodel.h"
 
 #include "../../src/common/types.h"
 #include "../../src/data/file/filemanagement.h"
@@ -24,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   // Create a RecentFilesModel instance and save it
   modelInstances.insert("recentFiles", new RecentFilesModel(file));
+  modelInstances.insert("credits", new CreditsModel);
 
   // Now grab the QML instance from UI
   auto qml = ui.app->engine()->rootContext();
@@ -33,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
   // * models (Easier interface to the data)
   qml->setContextProperty("file", file);
   qml->setContextProperty("recentFilesModel", modelInstances.value("recentFiles"));
+  qml->setContextProperty("creditsModel", modelInstances.value("credits"));
 
   // Now load the QML page, has to be done after setup and injection
   ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/App.qml")));

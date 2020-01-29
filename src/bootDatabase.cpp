@@ -14,6 +14,7 @@
   * limitations under the License.
 */
 
+#include "./data/db/credits.h"
 #include "./data/db/eventpokemon.h"
 #include "./data/db/events.h"
 #include "./data/db/fly.h"
@@ -41,6 +42,7 @@
 // Step 1: Load all JSON data into memory, properly parsed
 void load()
 {
+  CreditsDB::load();
   EventPokemonDB::load();
   EventsDB::load();
   FlyDB::load();

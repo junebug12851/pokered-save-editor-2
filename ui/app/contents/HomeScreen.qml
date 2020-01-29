@@ -60,13 +60,13 @@ Rectangle {
         page: ""
       }
       ListElement {
-        name: "Event Pokemon"
-        iconSrc: "qrc:/assets/poke-go-icons/mew.svg"
+        name: "Hall of Fame"
+        iconSrc: "qrc:/assets/poke-go-icons/crown.svg"
         page: ""
       }
       ListElement {
-        name: "Hall of Fame"
-        iconSrc: "qrc:/assets/poke-go-icons/crown.svg"
+        name: "Event Pokemon"
+        iconSrc: "qrc:/assets/poke-go-icons/mew.svg"
         page: ""
       }
     }

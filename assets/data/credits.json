@@ -1,0 +1,128 @@
+{
+  "Project Leaders": [
+    {
+      "name": "June Hanabi",
+      "url": "github.com/junebug12851"
+    }
+  ],
+  "Data Sources": [
+    {
+      "name": "The Pokered Team",
+      "url": "github.com/pret/pokered",
+      "note": "None of this would have been possible without them"
+    }
+  ],
+  "Framework": [
+    {
+      "name": "Qt Open Source Edition",
+      "url": "qt.io",
+      "license": "GNU Lesser General Public License (LGPL) version 3",
+      "note": "Literally powers this app"
+    }
+  ],
+  "Tools Used": [
+    {
+      "name": "JSON Editor Online",
+      "url": "jsoneditoronline.org",
+      "note": "Huge help in formatting and validating json data"
+    },
+    {
+      "name": "Regular Expressions 101",
+      "url": "regex101.com",
+      "note": "Major help in converting data from the Pokered Team to JSON"
+    },
+    {
+      "name": "Codepen",
+      "url": "codepen.io",
+      "note": "Huge help in further converting data from the Pokered Team to JSON"
+    },
+    {
+      "name": "Quicktype",
+      "url": "app.quicktype.io",
+      "note": "They helped breakdown JSON structure into C++ so much easier!!!"
+    },
+    {
+      "name": "Git",
+      "url": "git-scm.com",
+      "note": "Powers the projects VCS"
+    }
+  ],
+  "Services Used": [
+    {
+      "name": "Github",
+      "url": "github.com",
+      "note": "Gracously host so many projects free including this one."
+    }
+  ],
+  "Icons": [
+    {
+      "name": "Android Asset Studio",
+      "url": "romannurik.github.io/AndroidAssetStudio/icons-launcher.html",
+      "license": "Apache 2",
+      "note": "The program icon"
+    },
+    {
+      "name": "Google Material Icons",
+      "url": "material.io/resources/icons",
+      "license": "Apache 2",
+      "note": "The program icon"
+    },
+    {
+      "name": "Font Awesome Free",
+      "url": "fontawesome.com/icons",
+      "license": "Creative Commons Attribution 4.0",
+      "note": "Most of the non-game specific icons! Huge shoutout to them."
+    },
+    {
+      "name": "Design Revision",
+      "url": "www.iconfinder.com/DesignRevision",
+      "license": "Custom License",
+      "note": "Some of the other non-game specific icons"
+    },
+    {
+      "name": "Greepit",
+      "url": "greepit.com",
+      "license": "Custom License",
+      "note": "Some of the other non-game specific icons"
+    },
+    {
+      "name": "Roundicons Freebies",
+      "mandated": "Icon made by Roundicons Freebies from www.flaticon.com",
+      "url": "flaticon.com/packs/pokemon-go",
+      "license": "Custom License",
+      "note": "Pokemon Go Icons used on home page!!!"
+    },
+    {
+      "name": "Berkah Icon",
+      "url": "iconfinder.com/icons/1320027/go_hat_pokemon_icon",
+      "license": "Creative Commons Attribution 2.5 Generic (CC BY 2.5)",
+      "note": "Some other home screen Pokemon icons"
+    },
+    {
+      "name": "TheArtificial Pokemon Icons Team",
+      "url": "github.com/TheArtificial/pokemon-icons",
+      "license": "Creative Commons Attribution",
+      "note": "Literally all 151 Pokemon icons including shinies, Huge shoutout to the amazing team!"
+    }
+  ],
+  "Wallpapers": [
+    {
+      "name": "Poke Walk Kanto",
+      "url": "deviantart.com/ry-spirit/art/Poke-Walk-Kanto-591588328",
+      "license": "Creative Commons Attribution, Non-Commercial, No Derivatives 3.0",
+      "note": "Featured on New File Page"
+    },
+    {
+      "name": "Who wants some Jelly Donuts",
+      "url": "deviantart.com/ry-spirit/art/Who-wants-some-Jelly-Donuts-373934999",
+      "license": "Creative Commons Attribution, Non-Commercial, No Derivatives 3.0",
+      "note": "Featured on File Tools Page"
+    },
+    {
+      "name": "Basic Pokemons Colors",
+      "url": "deviantart.com/yoshiyaki/art/Basic-Pokemons-Colors-574585879",
+      "license": "Creative Commons Attribution, Non-Commercial, No Derivatives 3.0",
+      "note": "Featured here in the Credits"
+    }
+  ]
+}

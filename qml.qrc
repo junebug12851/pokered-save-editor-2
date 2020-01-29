@@ -409,5 +409,8 @@
         <file>assets/fontawesome-icons/info-circle.svg</file>
         <file>ui/app/contents/HomeScreen.qml</file>
         <file>assets/poke-go-icons/pikachu-2.svg</file>
+        <file>ui/app/contents/AboutScreen.qml</file>
+        <file>assets/data/credits.json</file>
+        <file>assets/wallpaper/starters.jpg</file>
     </qresource>
 </RCC>

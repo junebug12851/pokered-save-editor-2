@@ -46,11 +46,28 @@ RowLayout {
     opacity: (root.infoBtnPressed === true) ? 1.00 : 0.50
 
     MainToolTip {
-      text: "Toggle global tooltips for explanations"
+      text: "Toggle tooltips on or off for explanations and help"
       y: 50
+      followGlobalSetting: false // An exception
     }
 
     onClicked: root.infoBtnPressed = !root.infoBtnPressed
+  }
+
+  Button {
+    flat: true
+    display: AbstractButton.IconOnly
+    icon.source: "qrc:/assets/fontawesome-icons/users.svg"
+    icon.width: iconSize
+    icon.height: iconSize
+    icon.color: Style.textColorAccent
+
+    MainToolTip {
+      text: "Contributors and Credits"
+      y: 50
+    }
+
+    onClicked: root.changeScreen("about")
   }
 
   Button {

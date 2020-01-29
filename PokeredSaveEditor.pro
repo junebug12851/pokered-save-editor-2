@@ -17,6 +17,7 @@ FORMS += \
 
 HEADERS += \
   src/common/types.h \
+  src/data/db/credits.h \
   src/data/db/eventpokemon.h \
   src/data/db/events.h \
   src/data/db/fly.h \
@@ -92,6 +93,7 @@ HEADERS += \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
   src/data/file/savefiletoolset.h \
+  src/mvc/creditsmodel.h \
   src/random.h \
   src/mvc/recentfilesmodel.h \
   ui/window/mainwindow.h
@@ -100,6 +102,7 @@ SOURCES += \
   src/bootQmlLinkage.cpp \
   src/boot.cpp \
   src/bootDatabase.cpp \
+  src/data/db/credits.cpp \
   src/data/db/fontsearch.cpp \
   src/data/db/mapsearch.cpp \
   src/data/db/music.cpp \
@@ -176,6 +179,7 @@ SOURCES += \
   src/data/db/trades.cpp \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
+  src/mvc/creditsmodel.cpp \
   src/random.cpp \
   src/mvc/recentfilesmodel.cpp \
   ui/window/mainwindow.cpp
