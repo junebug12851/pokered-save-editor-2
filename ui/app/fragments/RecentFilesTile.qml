@@ -6,6 +6,7 @@ import "../common/Style.js" as Style
 
 TileButton {
   id: recentFilesBtn
+  signal completed()
 
   onClicked: {
     recentFilesBtn.opacity = 0;
@@ -37,7 +38,7 @@ TileButton {
       else
       {
         file.openFileRecent(fileIndex)
-        root.changeScreen("home")
+        completed()
       }
 
       close();

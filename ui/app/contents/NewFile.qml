@@ -8,6 +8,7 @@ import "../fragments"
 import "../common/Style.js" as Style
 
 Rectangle {
+  id: top
   property real blankHeight: 0.40
   property real loadHeight: 0.60
   property real randomHeight: 1.00 - blankHeight
@@ -32,7 +33,7 @@ Rectangle {
 
     onClicked: {
       file.newFile()
-      root.changeScreen("home")
+      exitAnim.start()
     }
   }
 
@@ -48,7 +49,7 @@ Rectangle {
 
     onClicked: {
       file.data.randomizeExpansion()
-      root.changeScreen("home")
+      exitAnim.start()
     }
   }
 
@@ -66,7 +67,7 @@ Rectangle {
 
       // Close modal only if a file was selected
       if(res === true)
-        root.changeScreen("home")
+        exitAnim.start()
     }
   }
 
@@ -78,14 +79,38 @@ Rectangle {
     anchors.right: parent.right
     sizeH: recentHeight
     infoTxt: "Switch to one of your recently used files"
+
+    onCompleted: exitAnim.start()
   }
 
   ModalClose {
-    onClicked: root.changeScreen("home")
+    onClicked: exitAnim.start()
   }
 
   CreditWork {
     text: "\"Poke Walk Kanto\" by Ry-Spirit (CC-BY-NC-ND 3.0)\n" +
           "https://www.deviantart.com/ry-spirit/art/Poke-Walk-Kanto-591588328"
+  }
+
+  // Entrace animation
+  NumberAnimation on x {
+    from: (root.startingUp === false) ? -1000 : 0;
+    to: 0;
+    duration: (root.startingUp === false) ? 250 : 0
+  }
+
+  NumberAnimation on opacity {
+    from: (root.startingUp === false) ? 0 : 1;
+    to: 1;
+    duration: (root.startingUp === false) ? 100 : 0
+  }
+
+  // Exit animation
+  ParallelAnimation {
+    id: exitAnim
+    NumberAnimation {target: top; property: "x"; to: -1000; duration: 250}
+    NumberAnimation {target: top; property: "opacity"; to: 0; duration: 250}
+
+    onFinished: root.changeScreen("home")
   }
 }

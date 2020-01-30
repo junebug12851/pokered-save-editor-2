@@ -9,21 +9,9 @@ import "../common/Style.js" as Style
 RowLayout {
   spacing: 0
 
-  property int iconSize: 20
-
-  Button {
-    flat: true
-    display: AbstractButton.IconOnly
+  NavBarButton {
     icon.source: "qrc:/assets/fontawesome-icons/th.svg"
-    icon.width: iconSize
-    icon.height: iconSize
-    icon.color: Style.textColorAccent
-
-    MainToolTip {
-      text: "Go back to the main menu"
-      y: 50
-    }
-
+    toolTipText: "Go back to the main menu"
     onClicked: root.changeScreen("home")
   }
 
@@ -33,72 +21,32 @@ RowLayout {
     color: Style.textColorAccent
 
     font.capitalization: Font.Capitalize
-    font.pixelSize: iconSize
+    font.pixelSize: 20
   }
 
-  Button {
-    flat: true
-    display: AbstractButton.IconOnly
+  NavBarButton {
     icon.source: "qrc:/assets/other-icons/question.svg"
-    icon.width: iconSize
-    icon.height: iconSize
-    icon.color: Style.textColorAccent
+    toolTipText: "Toggle tooltips on or off for explanations and help"
+    toolTipGlobalSetting: false // An exception
     opacity: (root.infoBtnPressed === true) ? 1.00 : 0.50
-
-    MainToolTip {
-      text: "Toggle tooltips on or off for explanations and help"
-      y: 50
-      followGlobalSetting: false // An exception
-    }
-
     onClicked: root.infoBtnPressed = !root.infoBtnPressed
   }
 
-  Button {
-    flat: true
-    display: AbstractButton.IconOnly
+  NavBarButton {
     icon.source: "qrc:/assets/fontawesome-icons/users.svg"
-    icon.width: iconSize
-    icon.height: iconSize
-    icon.color: Style.textColorAccent
-
-    MainToolTip {
-      text: "Contributors and Credits"
-      y: 50
-    }
-
+    toolTipText: "Credits"
     onClicked: root.changeScreen("about")
   }
 
-  Button {
-    flat: true
-    display: AbstractButton.IconOnly
+  NavBarButton {
     icon.source: "qrc:/assets/other-icons/edit-file-2.svg"
-    icon.width: iconSize
-    icon.height: iconSize
-    icon.color: Style.textColorAccent
-
-    MainToolTip {
-      text: "Actions for the current file like saving"
-      y: 50
-    }
-
+    toolTipText: "Actions for the current file like saving"
     onClicked: root.changeScreen("fileTools")
   }
 
-  Button {
-    flat: true
-    display: AbstractButton.IconOnly
+  NavBarButton {
     icon.source: "qrc:/assets/other-icons/new-file.svg"
-    icon.width: iconSize
-    icon.height: iconSize
-    icon.color: Style.textColorAccent
-
-    MainToolTip {
-      text: "Switch to a new file"
-      y: 50
-    }
-
+    toolTipText: "Switch to a new file"
     onClicked: root.changeScreen("newFile")
   }
 }

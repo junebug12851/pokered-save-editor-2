@@ -8,6 +8,8 @@ import "../fragments"
 import "../common/Style.js" as Style
 
 Rectangle {
+  id: top
+
   property real saveHeight: 0.40
   property real revertHeight: 0.30
   property real scrubHeight: 1.00 - saveHeight - revertHeight
@@ -39,7 +41,7 @@ Rectangle {
 
       // Close modal only if a file was selected
       if(res === true)
-        root.changeScreen("home")
+        exitAnim.start()
     }
   }
 
@@ -55,7 +57,7 @@ Rectangle {
 
     onClicked: {
       file.reopenFile()
-      root.changeScreen("home")
+      exitAnim.start()
     }
   }
 
@@ -72,7 +74,7 @@ Rectangle {
 
     onClicked: {
       file.wipeUnusedSpace()
-      root.changeScreen("home")
+      exitAnim.start()
     }
   }
 
@@ -92,7 +94,7 @@ Rectangle {
 
       // Close modal only if a file was selected
       if(res === true)
-        root.changeScreen("home")
+        exitAnim.start()
     }
   }
 
@@ -112,16 +114,38 @@ Rectangle {
 
       // Close modal only if a file was selected
       if(res === true)
-        root.changeScreen("home")
+        exitAnim.start()
     }
   }
 
   ModalClose {
-    onClicked: root.changeScreen("home")
+    onClicked: exitAnim.start()
   }
 
   CreditWork {
     text: "\"Who wants some Jelly Donuts\" by Ry-Spirit (CC-BY-NC-ND 3.0)\n" +
           "https://www.deviantart.com/ry-spirit/art/Who-wants-some-Jelly-Donuts-373934999"
+  }
+
+  // Entrace animation
+  NumberAnimation on x {
+    from: -1000
+    to: 0
+    duration: 250
+  }
+
+  NumberAnimation on opacity {
+    from: 0
+    to: 1
+    duration: 100
+  }
+
+  // Exit animation
+  ParallelAnimation {
+    id: exitAnim
+    NumberAnimation {target: top; property: "x"; to: -1000; duration: 250}
+    NumberAnimation {target: top; property: "opacity"; to: 0; duration: 250}
+
+    onFinished: root.changeScreen("home")
   }
 }

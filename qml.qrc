@@ -412,5 +412,6 @@
         <file>ui/app/contents/AboutScreen.qml</file>
         <file>assets/data/credits.json</file>
         <file>assets/wallpaper/starters.jpg</file>
+        <file>ui/app/fragments/NavBarButton.qml</file>
     </qresource>
 </RCC>

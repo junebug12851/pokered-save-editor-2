@@ -6,6 +6,7 @@ import QtQuick.Controls.Material 2.14
 import "../common/Style.js" as Style
 
 Rectangle {
+  id: top
   color: Style.primaryColorLight
   anchors.fill: parent
 

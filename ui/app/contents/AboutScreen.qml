@@ -7,8 +7,9 @@ import "../fragments"
 import "../common/Style.js" as Style
 
 Rectangle {
+  id: top
   color: Style.primaryColorLight
-  anchors.fill: parent
+  //anchors.fill: parent
 
   Image {
     asynchronous: true
@@ -100,11 +101,33 @@ Rectangle {
   }
 
   ModalClose {
-    onClicked: root.changeScreen("home")
+    onClicked: exitAnim.start()
   }
 
   CreditWork {
     text: "\"Basic Pokemons Colors\" by yoshiyaki (CC-BY-NC-ND 3.0)\n" +
           "https://www.deviantart.com/yoshiyaki/art/Basic-Pokemons-Colors-574585879"
+  }
+
+  // Entrace animation
+  NumberAnimation on x {
+    from: -1000
+    to: 0
+    duration: 250
+  }
+
+  NumberAnimation on opacity {
+    from: 0
+    to: 1
+    duration: 100
+  }
+
+  // Exit animation
+  ParallelAnimation {
+    id: exitAnim
+    NumberAnimation {target: top; property: "x"; to: -1000; duration: 250}
+    NumberAnimation {target: top; property: "opacity"; to: 0; duration: 250}
+
+    onFinished: root.changeScreen("home")
   }
 }

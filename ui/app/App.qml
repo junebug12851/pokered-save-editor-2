@@ -13,14 +13,17 @@ Rectangle {
   id: root
   color: Style.primaryColorLight
 
+  // Toggle global tooltips and help
   property bool infoBtnPressed: false
+
+  // When app is booting, this disables animations
+  property bool startingUp: true
+
+  // Title of current screen
   property string title: ""
 
-  Loader {
-    id: modal
-    source: "./contents/NewFile.qml"
-    anchors.fill: parent
-  }
+  // Name of current screen
+  property string curScrn: ""
 
   ColumnLayout {
     id: sectionLayout
@@ -44,23 +47,43 @@ Rectangle {
     }
   }
 
+  Loader {
+    id: modal
+    anchors.fill: parent
+  }
+
+  // On start, load new file screen then setup screen beneath it
+  // Afterwards mark everything has booted so that animations can play
+  Component.onCompleted: {
+    changeScreen("newFile");
+    setupScreen(Pages.screens["home"]);
+    startingUp = false;
+  }
+
   // Given a name, changes the screen
   function changeScreen(name)
   {
     // Grab screen data
+    curScrn = name;
     var screen = Pages.screens[name];
 
-    // Only load body if modal, destroying navBar and footer
+    // If modal, load that instead, it overlays the main page
     if(screen.modal) {
-      navBar.source = "";
-      footer.source = "";
-      body.source = "";
       modal.source = screen.body;
       return;
     }
 
-    // Otherwise eliminate the modal body
+    // Otherwise keep the modal open while we change the contents below it
+    // When all is done, destroy modal
+    setupScreen(screen)
+
+    // destroy modal
     modal.source = "";
+  }
+
+  // Loads a screen without touching modal, mainly useful for working the
+  // screens behind the modal while it's still open
+  function setupScreen(screen) {
 
     // Set Title
     title = screen.title
