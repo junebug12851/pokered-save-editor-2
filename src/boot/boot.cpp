@@ -19,7 +19,7 @@
 #include <QIcon>
 #include <QDateTime>
 
-#include "../ui/window/mainwindow.h"
+#include "../../ui/window/mainwindow.h"
 
 extern void bootDatabase();
 extern void bootQmlLinkage();
