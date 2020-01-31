@@ -16,33 +16,40 @@
 #ifndef FONTSEARCH_H
 #define FONTSEARCH_H
 
+#include <QObject>
 #include <QVector>
 #include <QString>
 class FontsDB;
 class FontDBEntry;
 
-class FontSearch
+class FontSearch : public QObject
 {
+  Q_OBJECT
+
 public:
   FontSearch();
 
-  FontSearch* startOver();
-  FontSearch* andShorthand();
-  FontSearch* notShorthand();
-  FontSearch* andNormal();
-  FontSearch* notNormal();
-  FontSearch* andControl();
-  FontSearch* notControl();
-  FontSearch* andPicture();
-  FontSearch* notPicture();
-  FontSearch* andSingleChar();
-  FontSearch* notSingleChar();
-  FontSearch* andMultiChar();
-  FontSearch* notMultiChar();
-  FontSearch* andVariable();
-  FontSearch* notVariable();
-  FontSearch* andTilemap();
-  FontSearch* notTilemap();
+  Q_INVOKABLE FontSearch* startOver();
+  Q_INVOKABLE FontSearch* andShorthand();
+  Q_INVOKABLE FontSearch* notShorthand();
+  Q_INVOKABLE FontSearch* andNormal();
+  Q_INVOKABLE FontSearch* notNormal();
+  Q_INVOKABLE FontSearch* andControl();
+  Q_INVOKABLE FontSearch* notControl();
+  Q_INVOKABLE FontSearch* andPicture();
+  Q_INVOKABLE FontSearch* notPicture();
+  Q_INVOKABLE FontSearch* andSingleChar();
+  Q_INVOKABLE FontSearch* notSingleChar();
+  Q_INVOKABLE FontSearch* andMultiChar();
+  Q_INVOKABLE FontSearch* notMultiChar();
+  Q_INVOKABLE FontSearch* andVariable();
+  Q_INVOKABLE FontSearch* notVariable();
+  Q_INVOKABLE FontSearch* andTilemap();
+  Q_INVOKABLE FontSearch* notTilemap();
+
+  // QML Interface
+  Q_INVOKABLE int fontCount();
+  Q_INVOKABLE QString fontStrAt(int ind);
 
   QVector<FontDBEntry*> results = QVector<FontDBEntry*>();
 };

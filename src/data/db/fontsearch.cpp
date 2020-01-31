@@ -177,3 +177,13 @@ FontSearch* FontSearch::notTilemap()
 
   return this;
 }
+
+int FontSearch::fontCount()
+{
+  return results.size();
+}
+
+QString FontSearch::fontStrAt(int ind)
+{
+  return results.at(ind)->name;
+}

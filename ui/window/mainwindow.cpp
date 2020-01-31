@@ -7,6 +7,7 @@
 
 #include "../../src/common/types.h"
 #include "../../src/data/file/filemanagement.h"
+#include "../../src/data/db/fontsearch.h"
 
 #include "../../src/data/file/savefile.h"
 
@@ -36,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
   qml->setContextProperty("file", file);
   qml->setContextProperty("recentFilesModel", modelInstances.value("recentFiles"));
   qml->setContextProperty("creditsModel", modelInstances.value("credits"));
+  qml->setContextProperty("fontSearch", new FontSearch);
 
   // Now load the QML page, has to be done after setup and injection
   ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
