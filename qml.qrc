@@ -25,37 +25,6 @@
         <file>assets/icons/512x512.png</file>
         <file>assets/icons/icon.icns</file>
         <file>assets/icons/icon.ico</file>
-        <file>assets/pokered-contrast/contrast0.png</file>
-        <file>assets/pokered-contrast/contrast1.png</file>
-        <file>assets/pokered-contrast/contrast1b.png</file>
-        <file>assets/pokered-contrast/contrast2.png</file>
-        <file>assets/pokered-contrast/contrast2a.png</file>
-        <file>assets/pokered-contrast/contrast2b.png</file>
-        <file>assets/pokered-contrast/contrast3.png</file>
-        <file>assets/pokered-font/char-tilesets/pokered-font-black.png</file>
-        <file>assets/pokered-font/char-tilesets/pokered-font-white.png</file>
-        <file>assets/pokered-font/char-tilesets/pokered-font.xcf</file>
-        <file>assets/pokered-font/in-game-context/textbox.png</file>
-        <file>assets/pokered-font/in-game-context/textbox.xcf</file>
-        <file>assets/pokered-font/pic-tilesets/cavern.png</file>
-        <file>assets/pokered-font/pic-tilesets/cemetery.png</file>
-        <file>assets/pokered-font/pic-tilesets/club.png</file>
-        <file>assets/pokered-font/pic-tilesets/facility.png</file>
-        <file>assets/pokered-font/pic-tilesets/forest.png</file>
-        <file>assets/pokered-font/pic-tilesets/gate.png</file>
-        <file>assets/pokered-font/pic-tilesets/gym.png</file>
-        <file>assets/pokered-font/pic-tilesets/house.png</file>
-        <file>assets/pokered-font/pic-tilesets/interior.png</file>
-        <file>assets/pokered-font/pic-tilesets/lab.png</file>
-        <file>assets/pokered-font/pic-tilesets/lobby.png</file>
-        <file>assets/pokered-font/pic-tilesets/mansion.png</file>
-        <file>assets/pokered-font/pic-tilesets/overworld.png</file>
-        <file>assets/pokered-font/pic-tilesets/plateau.png</file>
-        <file>assets/pokered-font/pic-tilesets/pokecenter.png</file>
-        <file>assets/pokered-font/pic-tilesets/reds_house.png</file>
-        <file>assets/pokered-font/pic-tilesets/ship.png</file>
-        <file>assets/pokered-font/pic-tilesets/ship_port.png</file>
-        <file>assets/pokered-font/pic-tilesets/underground.png</file>
         <file>assets/data/namesPokemon.json</file>
         <file>assets/data/music.json</file>
         <file>assets/data/spriteSet.json</file>
@@ -413,5 +382,38 @@
         <file>assets/data/credits.json</file>
         <file>assets/wallpaper/starters.jpg</file>
         <file>ui/app/fragments/NavBarButton.qml</file>
+        <file>assets/tilesets/_font.png</file>
+        <file>assets/tilesets/_outside1.png</file>
+        <file>assets/tilesets/_outside2.png</file>
+        <file>assets/tilesets/_outside3.png</file>
+        <file>assets/tilesets/_outside4.png</file>
+        <file>assets/tilesets/_outside5.png</file>
+        <file>assets/tilesets/_outside6.png</file>
+        <file>assets/tilesets/_outside7.png</file>
+        <file>assets/tilesets/cavern.png</file>
+        <file>assets/tilesets/cemetery.png</file>
+        <file>assets/tilesets/club.png</file>
+        <file>assets/tilesets/dojo.png</file>
+        <file>assets/tilesets/facility.png</file>
+        <file>assets/tilesets/forest.png</file>
+        <file>assets/tilesets/forest_gate.png</file>
+        <file>assets/tilesets/gate.png</file>
+        <file>assets/tilesets/gym.png</file>
+        <file>assets/tilesets/house.png</file>
+        <file>assets/tilesets/interior.png</file>
+        <file>assets/tilesets/lab.png</file>
+        <file>assets/tilesets/lobby.png</file>
+        <file>assets/tilesets/mansion.png</file>
+        <file>assets/tilesets/mart.png</file>
+        <file>assets/tilesets/museum.png</file>
+        <file>assets/tilesets/overworld.png</file>
+        <file>assets/tilesets/plateau.png</file>
+        <file>assets/tilesets/pokecenter.png</file>
+        <file>assets/tilesets/project.xcf</file>
+        <file>assets/tilesets/reds_house_1.png</file>
+        <file>assets/tilesets/reds_house_2.png</file>
+        <file>assets/tilesets/ship.png</file>
+        <file>assets/tilesets/ship_port.png</file>
+        <file>assets/tilesets/underground.png</file>
     </qresource>
 </RCC>
