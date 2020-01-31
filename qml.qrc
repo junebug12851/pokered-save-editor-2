@@ -49,13 +49,9 @@
         <file>ui/app/fragments/NavBarButton.qml</file>
         <file>ui/app/contents/TrainerCardScreen.qml</file>
         <file>assets/tilesets/_font.png</file>
-        <file>assets/tilesets/_outside1.png</file>
-        <file>assets/tilesets/_outside2.png</file>
-        <file>assets/tilesets/_outside3.png</file>
-        <file>assets/tilesets/_outside4.png</file>
-        <file>assets/tilesets/_outside5.png</file>
-        <file>assets/tilesets/_outside6.png</file>
-        <file>assets/tilesets/_outside7.png</file>
+        <file>assets/tilesets/_flower1.png</file>
+        <file>assets/tilesets/_flower2.png</file>
+        <file>assets/tilesets/_flower3.png</file>
         <file>assets/tilesets/cavern.png</file>
         <file>assets/tilesets/cemetery.png</file>
         <file>assets/tilesets/club.png</file>
