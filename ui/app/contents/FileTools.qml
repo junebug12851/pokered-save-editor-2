@@ -30,7 +30,7 @@ Rectangle {
   TileButton {
     id: saveFileBtn
     title: "Save File"
-    imgSrc: "qrc:/assets/fontawesome-icons/save.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/save.svg"
     hotKey: "Ctrl + S"
     sizeH: saveHeight
     divider: divider
@@ -47,7 +47,7 @@ Rectangle {
 
   TileButton {
     title: "Revert File"
-    imgSrc: "qrc:/assets/fontawesome-icons/undo.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/undo.svg"
     hotKey: "Ctrl + Shift + O"
     anchors.top: saveFileBtn.bottom
     anchors.left: parent.left
@@ -63,7 +63,7 @@ Rectangle {
 
   TileButton {
     title: "Scrub File"
-    imgSrc: "qrc:/assets/fontawesome-icons/broom.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/broom.svg"
     hotKey: "Ctrl + Shift + W"
     anchors.bottom: parent.bottom
     anchors.left: parent.left
@@ -80,7 +80,7 @@ Rectangle {
 
   TileButton {
     title: "Save File As..."
-    imgSrc: "qrc:/assets/fontawesome-icons/file-export.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/file-export.svg"
     hotKey: "Ctrl + Shift + S"
     anchors.top: parent.top
     anchors.right: parent.right
@@ -100,7 +100,7 @@ Rectangle {
 
   TileButton {
     title: "Save Copy As..."
-    imgSrc: "qrc:/assets/fontawesome-icons/copy.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/copy.svg"
     hotKey: "Ctrl + Alt + S"
     anchors.bottom: parent.bottom
     anchors.right: parent.right

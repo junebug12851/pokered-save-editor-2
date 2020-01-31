@@ -6,7 +6,7 @@ import "../common/Style.js" as Style
 
 RoundButton {
   display: AbstractButton.IconOnly
-  icon.source: "qrc:/assets/fontawesome-icons/times-circle.svg"
+  icon.source: "qrc:/assets/icons/fontawesome/times-circle.svg"
   icon.width: 35
   icon.height: 35
   icon.color: Style.textColorPrimary

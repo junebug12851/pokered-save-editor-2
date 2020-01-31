@@ -26,7 +26,7 @@ Rectangle {
 
   TileButton {
     title: "New Blank File"
-    imgSrc: "qrc:/assets/fontawesome-icons/file.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/file.svg"
     hotKey: "Ctrl + N"
     sizeH: blankHeight
     infoTxt: "Create a new blank file with everything empty."
@@ -39,7 +39,7 @@ Rectangle {
 
   TileButton {
     title: "New Random File"
-    imgSrc: "qrc:/assets/fontawesome-icons/dice.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/dice.svg"
     hotKey: "Ctrl + Shift + R"
     anchors.bottom: parent.bottom
     anchors.left: parent.left
@@ -55,7 +55,7 @@ Rectangle {
 
   TileButton {
     title: "Load an Existing File..."
-    imgSrc: "qrc:/assets/fontawesome-icons/folder-open.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/folder-open.svg"
     hotKey: "Ctrl + O"
     anchors.top: parent.top
     anchors.right: parent.right
@@ -73,7 +73,7 @@ Rectangle {
 
   RecentFilesTile {
     title: "Load a Recent File..."
-    imgSrc: "qrc:/assets/fontawesome-icons/file-import.svg"
+    imgSrc: "qrc:/assets/icons/fontawesome/file-import.svg"
     hotKey: "Ctrl + Shift + [0-4]"
     anchors.bottom: parent.bottom
     anchors.right: parent.right

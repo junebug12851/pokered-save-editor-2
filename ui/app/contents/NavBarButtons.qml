@@ -10,7 +10,7 @@ RowLayout {
   spacing: 0
 
   NavBarButton {
-    icon.source: "qrc:/assets/fontawesome-icons/th.svg"
+    icon.source: "qrc:/assets/icons/fontawesome/th.svg"
     toolTipText: "Go back to the main menu"
     onClicked: root.changeScreen("home")
   }
@@ -25,7 +25,7 @@ RowLayout {
   }
 
   NavBarButton {
-    icon.source: "qrc:/assets/other-icons/question.svg"
+    icon.source: "qrc:/assets/icons/other/question.svg"
     toolTipText: "Toggle tooltips on or off for explanations and help"
     toolTipGlobalSetting: false // An exception
     opacity: (root.infoBtnPressed === true) ? 1.00 : 0.50
@@ -33,19 +33,19 @@ RowLayout {
   }
 
   NavBarButton {
-    icon.source: "qrc:/assets/fontawesome-icons/users.svg"
+    icon.source: "qrc:/assets/icons/fontawesome/users.svg"
     toolTipText: "Credits"
     onClicked: root.changeScreen("about")
   }
 
   NavBarButton {
-    icon.source: "qrc:/assets/other-icons/edit-file-2.svg"
+    icon.source: "qrc:/assets/icons/other/edit-file-2.svg"
     toolTipText: "Actions for the current file like saving"
     onClicked: root.changeScreen("fileTools")
   }
 
   NavBarButton {
-    icon.source: "qrc:/assets/other-icons/new-file.svg"
+    icon.source: "qrc:/assets/icons/other/new-file.svg"
     toolTipText: "Switch to a new file"
     onClicked: root.changeScreen("newFile")
   }

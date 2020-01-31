@@ -30,7 +30,7 @@ Rectangle {
       down: false
       flat: true
       display: AbstractButton.IconOnly
-      icon.source: "qrc:/assets/fontawesome-icons/dice.svg"
+      icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
       icon.width: iconSize + 5
       icon.height: iconSize + 5
       icon.color: Style.textColorAccent

@@ -56,7 +56,7 @@ QApplication* preBoot(int argc, char *argv[])
 
   // Pull the icon from resources and set as window icon
   // It's also set to properly be built-in during compile
-  QIcon icon("qrc:/assets/icons/512x512.png");
+  QIcon icon("qrc:/assets/icons/app/512x512.png");
   app->setWindowIcon(icon);
 
   // Seed random generator
