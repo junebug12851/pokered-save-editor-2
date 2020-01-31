@@ -47,6 +47,7 @@ private:
   void loadState();
 
   void setupShortcuts();
+  void setupProviders();
   void injectIntoQML();
   void ssConnect();
 

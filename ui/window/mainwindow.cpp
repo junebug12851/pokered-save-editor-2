@@ -11,6 +11,8 @@
 
 #include "../../src/data/file/savefile.h"
 
+#include "../../src/engine/tilesetprovider.h"
+
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent)
 {
@@ -26,6 +28,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   // Inject several C++ class instances into QML
   injectIntoQML();
+
+  // Setup providers to QML
+  setupProviders();
 
   // Now load the QML page, has to be done after setup and injection
   ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
@@ -159,6 +164,12 @@ void MainWindow::setupShortcuts()
   connect(os.value("exit"), &QShortcut::activated, this, &MainWindow::close);
   connect(os.value("exit2"), &QShortcut::activated, this, &MainWindow::close);
   connect(os.value("random"), &QShortcut::activated, file->data, &SaveFile::randomizeExpansion);
+}
+
+void MainWindow::setupProviders()
+{
+  auto engine = ui.app->engine();
+  engine->addImageProvider("tileset", new TilesetProvider);
 }
 
 void MainWindow::injectIntoQML()

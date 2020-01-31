@@ -93,9 +93,11 @@ HEADERS += \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
   src/data/file/savefiletoolset.h \
+  src/engine/tilesetprovider.h \
   src/mvc/creditsmodel.h \
   src/common/random.h \
   src/mvc/recentfilesmodel.h \
+  src/engine/tilesetengine.h \
   ui/window/mainwindow.h
 
 SOURCES += \
@@ -158,6 +160,7 @@ SOURCES += \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \
   src/data/file/savefiletoolset.cpp \
+  src/engine/tilesetprovider.cpp \
   src/main.cpp \
   src/data/db/eventpokemon.cpp \
   src/data/db/events.cpp \
@@ -182,6 +185,7 @@ SOURCES += \
   src/mvc/creditsmodel.cpp \
   src/common/random.cpp \
   src/mvc/recentfilesmodel.cpp \
+  src/engine/tilesetengine.cpp \
   ui/window/mainwindow.cpp
 
 RESOURCES += qml.qrc
