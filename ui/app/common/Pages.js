@@ -28,5 +28,12 @@ var screens = {
     body: "./contents/HomeScreen.qml",
     footerBtns: 1,
     footer: "./contents/Footer1Randomize.qml"
+  },
+
+  trainerCard: {
+    title: "Trainer Card",
+    body: "./contents/TrainerCardScreen.qml",
+    footerBtns: 1,
+    footer: "./contents/Footer1Randomize.qml"
   }
 }

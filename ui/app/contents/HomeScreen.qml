@@ -6,7 +6,6 @@ import QtQuick.Controls.Material 2.14
 import "../common/Style.js" as Style
 
 Rectangle {
-  id: top
   color: Style.primaryColorLight
   anchors.fill: parent
 
@@ -23,7 +22,7 @@ Rectangle {
       ListElement {
         name: "Trainer Card"
         iconSrc: "qrc:/assets/poke-go-icons/hat.svg"
-        page: ""
+        page: "trainerCard"
       }
       ListElement {
         name: "Pokedex"
