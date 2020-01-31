@@ -7,23 +7,9 @@ import "../common/Style.js" as Style
 
 Rectangle {
 
-  //property FontSearch fs: new FontSearch
+  // image://tileset/<tileset>/<type>/<font>/<frame>/<tile>
 
-  color: Style.primaryColorLight
-  anchors.fill: parent
-
-  Text {
-    id: something
-    //text: fontSearch.
-  }
-
-  Component.onCompleted: {
-    //fontSearch.andNormal()
-    fontSearch.notMultiChar().andNormal()
-    fontSearch.notShorthand()
-
-    for(var i = 0; i < fontSearch.fontCount(); i++) {
-      something.text += fontSearch.fontStrAt(i) + ", "
-    }
+  Image {
+    source: "image://tileset/overworld/outdoor/font/0/whole"
   }
 }
