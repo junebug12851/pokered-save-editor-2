@@ -19,7 +19,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
 #include "../../../db/mapsearch.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 WarpData::WarpData(SaveFile* saveFile, var8 index)
 {

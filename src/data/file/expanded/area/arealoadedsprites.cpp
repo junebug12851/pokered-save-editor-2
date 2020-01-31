@@ -20,7 +20,7 @@
 #include "../../../db/maps.h"
 #include "../../../db/spriteSet.h"
 #include "../../../db/sprites.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 AreaLoadedSprites::AreaLoadedSprites(SaveFile* saveFile)
 {

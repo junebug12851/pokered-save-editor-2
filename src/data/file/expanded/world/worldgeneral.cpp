@@ -20,7 +20,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
 #include "../../../db/mapsearch.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 WorldGeneral::WorldGeneral(SaveFile* saveFile)
 {

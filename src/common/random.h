@@ -16,7 +16,7 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
-#include "./common/types.h"
+#include "./types.h"
 
 class QRandomGenerator;
 

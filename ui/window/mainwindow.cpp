@@ -24,71 +24,17 @@ MainWindow::MainWindow(QWidget *parent) :
   // data management, etc... Basically a whole thing here lol
   file = new FileManagement();
 
-  // Create a RecentFilesModel instance and save it
-  modelInstances.insert("recentFiles", new RecentFilesModel(file));
-  modelInstances.insert("credits", new CreditsModel);
-
-  // Now grab the QML instance from UI
-  auto qml = ui.app->engine()->rootContext();
-
-  // Inject singleton instances for:
-  // * file (All data and data management)
-  // * models (Easier interface to the data)
-  qml->setContextProperty("file", file);
-  qml->setContextProperty("recentFilesModel", modelInstances.value("recentFiles"));
-  qml->setContextProperty("creditsModel", modelInstances.value("credits"));
-  qml->setContextProperty("fontSearch", new FontSearch);
+  // Inject several C++ class instances into QML
+  injectIntoQML();
 
   // Now load the QML page, has to be done after setup and injection
   ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
 
-  // Create recent files shortcut
-  for(var8 i = 0; i < MAX_RECENT_FILES; i++) {
+  // Setup global shortcuts
+  setupShortcuts();
 
-    // Ctrl + Shift + #
-    // Opens recent file 0 to Max
-    // Key_0 is 0x30 - add i to 0x30 to get shortcut offset
-    var8 shortcutKey{static_cast<var8>(0x30 + i)};
-
-    // Create and link up a shortcut
-    // Ensure it's disabled, assign a shortcut, and assign the index to it
-    recentFileShortcuts[i] = new QShortcut(this);
-    recentFileShortcuts[i]->setEnabled(false);
-    recentFileShortcuts[i]->setKey(QKeySequence(Qt::CTRL + Qt::SHIFT + shortcutKey));
-    recentFileShortcuts[i]->setProperty("index", i);
-    connect(recentFileShortcuts[i], &QShortcut::activated, this, &MainWindow::onRecentFileClick);
-  }
-
-  // Create and link up other shortcuts
-  auto os = otherShortcuts;
-
-  os.insert("new", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this));
-  os.insert("open", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this));
-  os.insert("reopen", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_O), this));
-  os.insert("save", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this));
-  os.insert("saveas", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S), this));
-  os.insert("savecopyas", new QShortcut(QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_S), this));
-  os.insert("scrub", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W), this));
-  os.insert("clear-recentfiles", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Minus), this));
-  os.insert("exit", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this));
-  os.insert("exit2", new QShortcut(QKeySequence(Qt::ALT + Qt::Key_F4), this));
-  os.insert("random", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R), this));
-
-  connect(os.value("new"), &QShortcut::activated, file, &FileManagement::newFile);
-  connect(os.value("open"), &QShortcut::activated, file, &FileManagement::openFile);
-  connect(os.value("reopen"), &QShortcut::activated, file, &FileManagement::reopenFile);
-  connect(os.value("clear-recentfiles"), &QShortcut::activated, file, &FileManagement::clearRecentFiles);
-  connect(os.value("save"), &QShortcut::activated, file, &FileManagement::saveFile);
-  connect(os.value("saveas"), &QShortcut::activated, file, &FileManagement::saveFileAs);
-  connect(os.value("savecopyas"), &QShortcut::activated, file, &FileManagement::saveFileCopy);
-  connect(os.value("scrub"), &QShortcut::activated, file, &FileManagement::wipeUnusedSpace);
-  connect(os.value("exit"), &QShortcut::activated, this, &MainWindow::close);
-  connect(os.value("exit2"), &QShortcut::activated, this, &MainWindow::close);
-  connect(os.value("random"), &QShortcut::activated, file->data, &SaveFile::randomizeExpansion);
-
-  // Link up incomming file signals
-  connect(file, &FileManagement::pathChanged, this, &MainWindow::onPathChanged);
-  connect(file, &FileManagement::recentFilesChanged, this, &MainWindow::reUpdateRecentFiles);
+  // Link up Signal & Slots
+  ssConnect();
 
   // Initial setup
   reUpdateRecentFiles(file->getRecentFiles());
@@ -104,9 +50,6 @@ MainWindow::~MainWindow()
     delete recentFileShortcuts[i];
 
   for(auto tmp : otherShortcuts)
-    delete tmp;
-
-  for(auto tmp : modelInstances)
     delete tmp;
 }
 
@@ -169,4 +112,70 @@ void MainWindow::loadState()
   this->resize(settings.value("size", QSize(640,480)).toSize());
   this->move(settings.value("pos", QPoint(200,200)).toPoint());
   settings.endGroup();
+}
+
+void MainWindow::setupShortcuts()
+{
+  // Create recent files shortcut
+  for(var8 i = 0; i < MAX_RECENT_FILES; i++) {
+
+    // Ctrl + Shift + #
+    // Opens recent file 0 to Max
+    // Key_0 is 0x30 - add i to 0x30 to get shortcut offset
+    var8 shortcutKey{static_cast<var8>(0x30 + i)};
+
+    // Create and link up a shortcut
+    // Ensure it's disabled, assign a shortcut, and assign the index to it
+    recentFileShortcuts[i] = new QShortcut(this);
+    recentFileShortcuts[i]->setEnabled(false);
+    recentFileShortcuts[i]->setKey(QKeySequence(Qt::CTRL + Qt::SHIFT + shortcutKey));
+    recentFileShortcuts[i]->setProperty("index", i);
+    connect(recentFileShortcuts[i], &QShortcut::activated, this, &MainWindow::onRecentFileClick);
+  }
+
+  // Create and link up other shortcuts
+  auto os = otherShortcuts;
+
+  os.insert("new", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this));
+  os.insert("open", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this));
+  os.insert("reopen", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_O), this));
+  os.insert("save", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this));
+  os.insert("saveas", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S), this));
+  os.insert("savecopyas", new QShortcut(QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_S), this));
+  os.insert("scrub", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W), this));
+  os.insert("clear-recentfiles", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Minus), this));
+  os.insert("exit", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this));
+  os.insert("exit2", new QShortcut(QKeySequence(Qt::ALT + Qt::Key_F4), this));
+  os.insert("random", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R), this));
+
+  connect(os.value("new"), &QShortcut::activated, file, &FileManagement::newFile);
+  connect(os.value("open"), &QShortcut::activated, file, &FileManagement::openFile);
+  connect(os.value("reopen"), &QShortcut::activated, file, &FileManagement::reopenFile);
+  connect(os.value("clear-recentfiles"), &QShortcut::activated, file, &FileManagement::clearRecentFiles);
+  connect(os.value("save"), &QShortcut::activated, file, &FileManagement::saveFile);
+  connect(os.value("saveas"), &QShortcut::activated, file, &FileManagement::saveFileAs);
+  connect(os.value("savecopyas"), &QShortcut::activated, file, &FileManagement::saveFileCopy);
+  connect(os.value("scrub"), &QShortcut::activated, file, &FileManagement::wipeUnusedSpace);
+  connect(os.value("exit"), &QShortcut::activated, this, &MainWindow::close);
+  connect(os.value("exit2"), &QShortcut::activated, this, &MainWindow::close);
+  connect(os.value("random"), &QShortcut::activated, file->data, &SaveFile::randomizeExpansion);
+}
+
+void MainWindow::injectIntoQML()
+{
+  // Now grab the QML instance from UI
+  auto qml = ui.app->engine()->rootContext();
+
+  // Inject singleton instances needed
+  qml->setContextProperty("file", file);
+  qml->setContextProperty("recentFilesModel", new RecentFilesModel(file));
+  qml->setContextProperty("creditsModel", new CreditsModel);
+  qml->setContextProperty("fontSearch", new FontSearch);
+}
+
+void MainWindow::ssConnect()
+{
+  // Link up incomming file signals
+  connect(file, &FileManagement::pathChanged, this, &MainWindow::onPathChanged);
+  connect(file, &FileManagement::recentFilesChanged, this, &MainWindow::reUpdateRecentFiles);
 }

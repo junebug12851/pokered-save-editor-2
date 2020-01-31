@@ -21,7 +21,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/fly.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 WorldTowns::WorldTowns(SaveFile* saveFile)
 {

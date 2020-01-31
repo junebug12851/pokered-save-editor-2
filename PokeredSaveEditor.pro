@@ -94,7 +94,7 @@ HEADERS += \
   src/data/file/savefileiterator.h \
   src/data/file/savefiletoolset.h \
   src/mvc/creditsmodel.h \
-  src/random.h \
+  src/common/random.h \
   src/mvc/recentfilesmodel.h \
   ui/window/mainwindow.h
 
@@ -180,7 +180,7 @@ SOURCES += \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
   src/mvc/creditsmodel.cpp \
-  src/random.cpp \
+  src/common/random.cpp \
   src/mvc/recentfilesmodel.cpp \
   ui/window/mainwindow.cpp
 

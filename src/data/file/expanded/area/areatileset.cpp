@@ -22,7 +22,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
 #include "../../../db/tileset.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 AreaTileset::AreaTileset(SaveFile* saveFile)
 {

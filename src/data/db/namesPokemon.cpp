@@ -20,7 +20,7 @@
 
 #include "./namesPokemon.h"
 #include "./gamedata.h"
-#include "../../random.h"
+#include "../../common/random.h"
 
 void NamesPokemonDB::load()
 {

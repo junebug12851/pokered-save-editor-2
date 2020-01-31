@@ -19,7 +19,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/items.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 #include <QString>
 

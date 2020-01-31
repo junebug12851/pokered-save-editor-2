@@ -19,7 +19,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/maps.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 AreaSign::AreaSign(SaveFile* saveFile)
 {

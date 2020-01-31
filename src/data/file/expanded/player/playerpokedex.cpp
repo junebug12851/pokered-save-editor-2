@@ -19,7 +19,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/names.h"
 #include "../../../db/pokemon.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 PlayerPokedex::PlayerPokedex(SaveFile* saveFile)
 {

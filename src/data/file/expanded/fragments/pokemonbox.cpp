@@ -26,7 +26,7 @@
 #include "../../../db/namesPokemon.h"
 #include "../../../db/starterPokemon.h"
 #include "../../../db/types.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 #include <QtMath>
 

@@ -29,7 +29,6 @@ public:
   // MAX_RECENT_FILES
   QShortcut* recentFileShortcuts[5];
   QHash<QString, QShortcut*> otherShortcuts;
-  QHash<QString, QAbstractItemModel*> modelInstances;
 
 signals:
   void fileChanged();
@@ -46,6 +45,10 @@ private:
 
   void saveState();
   void loadState();
+
+  void setupShortcuts();
+  void injectIntoQML();
+  void ssConnect();
 
   static MainWindow* instance;
 };

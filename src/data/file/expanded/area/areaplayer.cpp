@@ -17,7 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 AreaPlayer::AreaPlayer(SaveFile* saveFile)
 {

@@ -20,7 +20,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/items.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 ItemStorageBox::ItemStorageBox(SaveFile* saveFile)
 {

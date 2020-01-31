@@ -20,7 +20,7 @@
 #include "../../savefileiterator.h"
 #include "../fragments/pokemonparty.h"
 #include "../../../db/moves.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 PlayerPokemon::PlayerPokemon(SaveFile* saveFile)
 {

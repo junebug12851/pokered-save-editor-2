@@ -14,7 +14,7 @@
   * limitations under the License.
 */
 
-#include "../../random.h"
+#include "../../common/random.h"
 
 #include "./mapsearch.h"
 #include "./maps.h"

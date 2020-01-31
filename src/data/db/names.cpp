@@ -20,7 +20,7 @@
 
 #include "./names.h"
 #include "./gamedata.h"
-#include "../../random.h"
+#include "../../common/random.h"
 
 void NamesDB::load()
 {

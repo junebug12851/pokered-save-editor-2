@@ -19,7 +19,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 PokemonStorageBox::PokemonStorageBox(SaveFile* saveFile, var16 boxOffset)
 {

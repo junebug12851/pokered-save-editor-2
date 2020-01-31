@@ -19,7 +19,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/pokemon.h"
 #include "../../../db/names.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 HoFPokemon::HoFPokemon(SaveFile* saveFile, var16 recordOffset, var16 ind)
 {

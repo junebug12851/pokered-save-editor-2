@@ -22,7 +22,7 @@
 #include "../../../db/trainers.h"
 #include "../../../db/items.h"
 #include "../../../db/pokemon.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 struct TmpSpritePos
 {

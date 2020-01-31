@@ -29,7 +29,7 @@
 #include "../../savefile.h"
 #include "../../../db/maps.h"
 #include "../../../db/mapsearch.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 Area::Area(SaveFile* saveFile)
 {

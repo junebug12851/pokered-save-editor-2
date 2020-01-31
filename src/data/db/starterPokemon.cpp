@@ -25,7 +25,7 @@
 #include "./starterPokemon.h"
 #include "./gamedata.h"
 #include "./pokemon.h"
-#include "../../random.h"
+#include "../../common/random.h"
 
 void StarterPokemonDB::load()
 {

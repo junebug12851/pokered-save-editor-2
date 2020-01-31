@@ -18,7 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/music.h"
-#include "../../../../random.h"
+#include "../../../../common/random.h"
 
 AreaAudio::AreaAudio(SaveFile* saveFile)
 {
