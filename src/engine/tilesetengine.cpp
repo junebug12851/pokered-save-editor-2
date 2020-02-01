@@ -137,8 +137,8 @@ QVector<QPixmap> TilesetEngine::getTiles(QImage tilemap)
   int tilesX = width / 8;
   int tilesY = height / 8;
 
-  for(int tileX = 0; tileX < tilesX; tileX++) {
-    for(int tileY = 0; tileY < tilesY; tileY++) {
+  for(int tileY = 0; tileY < tilesY; tileY++) {
+    for(int tileX = 0; tileX < tilesX; tileX++) {
       int startX = tileX * 8;
       int startY = tileY * 8;
 
@@ -163,8 +163,9 @@ QImage TilesetEngine::postProcessWaveOnce(QImage tile)
   QVector<QColor> line;
   QImage lineImg;
 
-  // Finished image
+  // Finished image, pre-fill white
   QImage ret = QImage(tileWidth, tileHeight, QImage::Format::Format_ARGB32);
+  ret.fill(QColor("white"));
 
   // Loop through each line of the tile
   for(int y = 0; y < tileHeight; y++) {

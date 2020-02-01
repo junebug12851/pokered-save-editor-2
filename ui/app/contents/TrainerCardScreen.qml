@@ -7,11 +7,13 @@ import "../common/Style.js" as Style
 
 Rectangle {
 
-  // image://tileset/<tileset>/<type>/<font>/<frame>/<tile>
+  // image://tileset/<tileset>/<type>/<font>/<frame>/<tile>/<width>/<height>
 
   Image {
-    source: "image://tileset/overworld/outdoor/nofont/0/whole"
-    width: 200
-    height: 200
+    anchors.fill: parent
+
+    source: "image://tileset/house/outdoor/font/4/whole/" + width + "/" + height
+    width: 400
+    height: 400
   }
 }

@@ -26,7 +26,7 @@ class TilesetProvider : public QQuickImageProvider
 public:
   TilesetProvider();
 
-  // <tileset>/<type>/<font>/<frame>/<tile>
+  // <tileset>/<type>/<font>/<frame>/<tile>/<width>/<height>
   //  * <tileset> is the tileset, case-insensitive and spaces converted to
   //    underscores
   //  * <type> is the type, specifically "outdoor" or not is used here

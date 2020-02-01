@@ -30,16 +30,19 @@ QPixmap TilesetProvider::requestPixmap(const QString& id, QSize* size, const QSi
   auto idParts = id.split("/", QString::SplitBehavior::SkipEmptyParts);
 
   // Has to have all 5 parts unconditionally
-  if(idParts.size() < 5)
+  if(idParts.size() < 7)
     return blankImage(size, requestedSize);
 
   // Whole tileset or a specific tile
   // Never whole tileset unless it's for debug purposes
   bool wholeTileset = idParts.at(4) == "whole";
 
+  int widthSize = idParts.at(5).toInt();
+  int heightSize = idParts.at(6).toInt();
+
   // Actual size
-  QSize actualSize = QSize(wholeTileset ? TilesetEngine::width : TilesetEngine::tileWidth,
-                           wholeTileset ? TilesetEngine::height : TilesetEngine::tileHeight);
+  QSize actualSize = QSize(wholeTileset ? TilesetEngine::width : widthSize,
+                           wholeTileset ? TilesetEngine::height : heightSize);
 
   // Set actual size if asked
   if(size != nullptr)
