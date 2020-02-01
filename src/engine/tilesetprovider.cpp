@@ -29,7 +29,7 @@ QPixmap TilesetProvider::requestPixmap(const QString& id, QSize* size, const QSi
   // Check to make sure it's a properly formed request
   auto idParts = id.split("/", QString::SplitBehavior::SkipEmptyParts);
 
-  // Has to have all 5 parts unconditionally
+  // Has to have all 7 parts unconditionally
   if(idParts.size() < 7)
     return blankImage(size, requestedSize);
 
@@ -41,8 +41,7 @@ QPixmap TilesetProvider::requestPixmap(const QString& id, QSize* size, const QSi
   int heightSize = idParts.at(6).toInt();
 
   // Actual size
-  QSize actualSize = QSize(wholeTileset ? TilesetEngine::width : widthSize,
-                           wholeTileset ? TilesetEngine::height : heightSize);
+  QSize actualSize = QSize(widthSize, heightSize);
 
   // Set actual size if asked
   if(size != nullptr)

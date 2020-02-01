@@ -25,10 +25,8 @@ Rectangle {
   }
 
   Image {
-    source: "image://tileset/overworld/outdoor/nofont/" + curFrame + "/whole/" + (width*2) + "/" + (height*2)
+    source: "image://tileset/overworld/outdoor/nofont/" + curFrame + "/whole/" + width + "/" + height
     width: 500
     height: 500
-    antialiasing: false
-    layer.enabled: false
   }
 }
