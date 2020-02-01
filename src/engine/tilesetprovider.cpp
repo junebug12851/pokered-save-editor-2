@@ -71,7 +71,7 @@ QPixmap TilesetProvider::blankImage(QSize* size, const QSize& requestedSize)
     *size = actualSize;
 
   auto img = QImage(TilesetEngine::width, TilesetEngine::height, QImage::Format::Format_ARGB32);
-  img.fill(QColor(255, 0, 0, 0)); // Fill with error "red" color
+  img.fill(QColor(255, 0, 0, 255)); // Fill with error "red" color
 
   auto ret = QPixmap::fromImage(img);
 

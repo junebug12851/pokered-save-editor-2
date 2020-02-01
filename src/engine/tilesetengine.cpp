@@ -153,7 +153,7 @@ QVector<QPixmap> TilesetEngine::getTiles(QImage tilemap)
 QImage TilesetEngine::blankImage()
 {
   auto img = QImage(width, height, QImage::Format::Format_ARGB32);
-  img.fill(QColor(0, 0, 0, 255));
+  img.fill(QColor(0, 0, 0, 0));
   return img;
 }
 
@@ -190,6 +190,8 @@ QImage TilesetEngine::postProcessWaveOnce(QImage tile)
 
       ret.setPixelColor(x, y, line.at(xOff));
     }
+
+    line.clear();
   }
 
   return ret;
