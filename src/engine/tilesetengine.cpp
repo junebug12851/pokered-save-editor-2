@@ -182,12 +182,13 @@ QImage TilesetEngine::postProcessWaveOnce(QImage tile)
     for(int x = 0; x < tileWidth; x++) {
 
       // Calculate a -1 offset
-      // We want to shift the row of pixels left by 1 and wrap around
-      // We start at pixel #1 and move forward, when we reach the end we use
-      // pixel #0 instead thus creating a left-shift wrap around
-      int xOff = x + 1;
-      if(xOff >= tileWidth)
-        xOff = 0;
+      // We want to shift the row of pixels right by 1 and wrap around
+      // We start at pixel #0 and move forward, the first pixel though
+      // is replaced with the last pixel thus creating a left-shift wrap around
+
+      int xOff = x - 1;
+      if(xOff < 0)
+        xOff = tileWidth - 1;
 
       ret.setPixelColor(x, y, line.at(xOff));
     }
