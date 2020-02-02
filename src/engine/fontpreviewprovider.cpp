@@ -17,6 +17,7 @@
 #include <QImage>
 #include <QtMath>
 #include <QPainter>
+#include <QBitmap>
 
 #include "./fontpreviewprovider.h"
 #include "./tilesetengine.h"
@@ -58,8 +59,12 @@ FontPreviewInstance::FontPreviewInstance(
   getImageWidth();
   getImageHeight();
 
-  // Create base image and copy over to boxImg and fgImage
+  // Create base image and copy over to bgImg, boxImg, and fgImage
+  // make bgImage the bgColor
   getBaseImg();
+  bgImg = baseImg;
+  bgImg.fill(bgColor);
+
   boxImg = baseImg;
   fgImg = baseImg;
   resultingImg = QPixmap::fromImage(baseImg);
@@ -201,7 +206,7 @@ void FontPreviewInstance::getImageHeight()
 void FontPreviewInstance::getBaseImg()
 {
   baseImg = QImage(imgWidth, imgHeight, QImage::Format_ARGB32);
-  baseImg.fill((bgColor));
+  baseImg.fill(QColor("transparent"));
 }
 
 void FontPreviewInstance::drawBox()
@@ -240,9 +245,15 @@ void FontPreviewInstance::drawFg()
 
   QPainter p(&fgImg);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+  p.setBrush(bgColor);
+  p.setPen(QColor("transparent"));
 
   for(auto yLine : resultingText) {
     for(auto xTile : yLine) {
+
+      if(box)
+        p.drawRect(xCounter * tileSize, yCounter * tileSize, tileSize, tileSize);
+
       p.drawPixmap(xCounter * tileSize, yCounter * tileSize, tiles.at(xTile));
       xCounter++;
     }
@@ -256,28 +267,17 @@ void FontPreviewInstance::finishImg()
 {
   QPainter p;
 
-  QPixmap mask = resultingImg;
+  // Foreground is disabled because I could never get it to work correctly
+  // The issue is I have 4-color images and it seems to want to colorize
+  // non-B&W or B&W only but not both so I give up unless someone else can
+  // help me.
 
   p.begin(&resultingImg);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+  p.drawImage(0, 0, bgImg);
   p.drawImage(0, 0, boxImg);
   p.drawImage(0, 0, fgImg);
   p.end();
-
-  if(useFg) {
-    // Thanks Chris Kawa
-    // https://forum.qt.io/topic/61684/tinting-a-qpixmap-using-qpainter-compositionmode_overlay/4
-
-    p.begin(&mask);
-    p.setCompositionMode(QPainter::CompositionMode_SourceIn);
-    p.fillRect(0, 0, resultingImg.width(), resultingImg.height(), fgColor);
-    p.end();
-
-    p.begin(&resultingImg);
-    p.setCompositionMode(QPainter::CompositionMode_Overlay);
-    p.drawPixmap(0, 0, mask);
-    p.end();
-  }
 }
 
 void FontPreviewInstance::postProcess()

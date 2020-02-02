@@ -17,11 +17,11 @@ Rectangle {
   property string tileset: "overworld"
   property string type: "outdoor"
   property string placeholder: "%%"
-  property string str: "<pic03>12345678<pic14>"
+  property string str: ""
   property string hasBox: "box"
   property string is2Line: "2-lines"
   property int maxLen: 255
-  property string bgColor: "transparent"
+  property string bgColor: "white"
   property string fgColor: "none"
 
   color: Style.primaryColorLight
@@ -38,8 +38,18 @@ Rectangle {
     }
   }
 
+  TextEdit {
+    id: textBox
+    width: 400
+    onTextChanged: str = text
+  }
+
   Image {
     id: wholeTileset
+    anchors.left: textBox.left
+    anchors.top: textBox.bottom
+    anchors.topMargin: 10
+
     source: "image://tileset/" +
             tileset + "/" +
             type +

@@ -18,6 +18,8 @@
 #include <QStringList>
 #include "./utility.h"
 
+// Thanks eyllanesc
+// https://stackoverflow.com/questions/45772951/converting-qstring-to-ascii-value-vice-versa-in-qt
 QString Utility::encodeBeforeUrl(QString beforeStr)
 {
   QStringList numberString;
@@ -28,6 +30,8 @@ QString Utility::encodeBeforeUrl(QString beforeStr)
   return numberString.join(" ");
 }
 
+// Thanks eyllanesc
+// https://stackoverflow.com/questions/45772951/converting-qstring-to-ascii-value-vice-versa-in-qt
 QString Utility::decodeAfterUrl(QString beforeStr)
 {
   return QByteArray::fromHex(beforeStr.remove(" ").toLocal8Bit());

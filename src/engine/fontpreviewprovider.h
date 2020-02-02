@@ -114,6 +114,7 @@ struct FontPreviewInstance
   // Other vars
   QStringList idParts;
   QVector<QVector<var8>> resultingText;
+  QImage bgImg;
   QImage baseImg;
   QImage boxImg;
   QImage fgImg;

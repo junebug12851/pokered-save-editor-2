@@ -218,7 +218,7 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
      // Verified: It doesn't await for you to continue and just advances
      // dialog.
      else if(code == 76) {
-       charCodes = charCodes.mid(i, -1);
+       charCodes = charCodes.mid(i+1, -1);
        i = 0;
      }
 
