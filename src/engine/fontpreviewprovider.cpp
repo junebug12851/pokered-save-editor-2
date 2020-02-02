@@ -96,8 +96,8 @@ void FontPreviewInstance::setup(QStringList idParts)
   toWidth = idParts.at(IdPartWidth).toInt();
   toHeight = idParts.at(IdPartHeight).toInt();
 
-  box = idParts.at(IdPartType) == "box";
-  lines2 = idParts.at(IdPartType) == "2-lines";
+  box = idParts.at(IdPartBox) == "box";
+  lines2 = idParts.at(IdPart2Line) == "2-lines";
   maxInputStrLen = idParts.at(IdPartMax).toInt();
   bgColor = QColor(idParts.at(IdPartBGColor));
 
@@ -106,7 +106,8 @@ void FontPreviewInstance::setup(QStringList idParts)
       ? QColor(idParts.at(IdPartFGColor))
       : QColor();
 
-  placeholder = idParts.at(IdPartPlaceHolder);
+
+  placeholder = QUrl::fromPercentEncoding(QByteArray::fromStdString(idParts.at(IdPartPlaceHolder).toStdString())); //QUrl::fromPercentEncoding(idParts.at(IdPartPlaceHolder));
   getInputStr(); // Somewhat more complicated
 }
 
@@ -114,7 +115,7 @@ void FontPreviewInstance::getInputStr()
 {
   // Get str
   // If the player inserts slashes then we want the rest of it
-  inputStr = idParts.mid(IdPartStr).join("/");
+  inputStr = QUrl::fromPercentEncoding(QByteArray::fromStdString(idParts.mid(IdPartStr).join("/").toStdString())); //idParts.mid(IdPartStr).join("/");
 }
 
 void FontPreviewInstance::getTiles()
@@ -229,11 +230,11 @@ void FontPreviewInstance::drawBox()
 void FontPreviewInstance::drawFg()
 {
   var8 startX = (box)
-      ? 1 * tileSize
+      ? 1
       : 0;
 
   var8 startY = (box)
-      ? 1 * tileSize
+      ? 2
       : 0;
 
   var8 yCounter = startY;
@@ -256,7 +257,7 @@ void FontPreviewInstance::drawFg()
     }
 
     xCounter = 0;
-    yCounter++;
+    yCounter += 2; // Keep space between lines
   }
 }
 

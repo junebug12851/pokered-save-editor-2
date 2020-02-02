@@ -13,6 +13,8 @@ Rectangle {
   property int curFrame: 0
   property int tick: 1000 / 3
 
+  property int sizeMult: 4
+
   color: "blue"
 
   Timer {
@@ -34,9 +36,9 @@ Rectangle {
 //  }
 
   Image {
-    source: "image://font/overworld/outdoor/0/500/500/no-box/no-lines/7/red/none/You are _str_/June"
-    width: 500
-    height: 100
+    source: "image://font/overworld/outdoor/0/" + width + "/" + height + "/box/1-line/7/transparent/none/You are <line> _str_/June"
+    width: (8 * 20) * sizeMult
+    height: (8 * 6) * sizeMult
     cache: false
   }
 }

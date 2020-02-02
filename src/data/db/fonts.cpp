@@ -317,7 +317,7 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
     // Verified: Moves down a line
     else if(code == 78) {
       lineCount++;
-      if(lineCount > 3) { // Allow 1 past end of line
+      if(lineCount > 2) { // Allow 1 past end of line
         splice(charCodes, "", i);
         break;
       }
@@ -327,7 +327,7 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
     // Verified: Moves down a line
     else if(code == 79) {
       lineCount++;
-      if(lineCount > 3) { // Allow 1 past end of line
+      if(lineCount > 2) { // Allow 1 past end of line
         splice(charCodes, "", i);
         break;
       }
