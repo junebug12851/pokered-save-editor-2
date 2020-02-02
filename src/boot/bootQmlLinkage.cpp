@@ -17,6 +17,8 @@
 #include <QString>
 #include <QQmlEngine>
 
+#include "../common/utility.h"
+
 #include "../data/db/fontsearch.h"
 
 #include "../data/file/filemanagement.h"
@@ -98,6 +100,8 @@ extern void bootQmlLinkage()
   qmlRegisterType<Badges>(dn("Badges"), 1, 0, "Badges");
 
   // Uncreatable Types
+  qmlRegisterUncreatableType<Utility>(dn("Utility"), 1, 0, "Utility", msg);
+
   qmlRegisterUncreatableType<FontSearch>(dn("FontSearch"), 1, 0, "FontSearch", msg);
 
   // Expanded Data is meant to be interacted with not created by QML

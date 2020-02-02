@@ -17,6 +17,7 @@ FORMS += \
 
 HEADERS += \
   src/common/types.h \
+  src/common/utility.h \
   src/data/db/credits.h \
   src/data/db/eventpokemon.h \
   src/data/db/events.h \
@@ -105,6 +106,7 @@ SOURCES += \
   src/boot/bootQmlLinkage.cpp \
   src/boot/boot.cpp \
   src/boot/bootDatabase.cpp \
+  src/common/utility.cpp \
   src/data/db/credits.cpp \
   src/data/db/fontsearch.cpp \
   src/data/db/mapsearch.cpp \

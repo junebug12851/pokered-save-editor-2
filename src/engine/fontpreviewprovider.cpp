@@ -18,13 +18,10 @@
 #include <QtMath>
 #include <QPainter>
 
-#ifdef QT_DEBUG
-#include <QtDebug>
-#endif
-
 #include "./fontpreviewprovider.h"
 #include "./tilesetengine.h"
 #include "../data/db/fonts.h"
+#include "../common/utility.h"
 
 #include "../data/file/expanded/savefileexpanded.h"
 #include "../data/file/expanded/player/player.h"
@@ -106,10 +103,7 @@ void FontPreviewInstance::setup(QStringList idParts)
       ? QColor(idParts.at(IdPartFGColor))
       : QColor();
 
-
-  // Qt quick Percent URL encodes everything
-  placeholder = QUrl::fromPercentEncoding(
-        QByteArray::fromStdString(idParts.at(IdPartPlaceHolder).toStdString()));
+  placeholder = Utility::decodeAfterUrl(idParts.at(IdPartPlaceHolder));
 
   getInputStr(); // Somewhat more complicated
 }
@@ -118,10 +112,7 @@ void FontPreviewInstance::getInputStr()
 {
   // Get str
   // If the player inserts slashes then we want the rest of it
-  // Qt quick Percent URL encodes everything
-  inputStr = QUrl::fromPercentEncoding(
-        QByteArray::fromStdString(
-          idParts.mid(IdPartStr).join("/").toStdString()));
+  inputStr = Utility::decodeAfterUrl(idParts.mid(IdPartStr).join("/"));
 }
 
 void FontPreviewInstance::getTiles()
@@ -129,8 +120,8 @@ void FontPreviewInstance::getTiles()
   // Pass though 3 of 4 arguments, we also make sure to tell to include font
   // tiles obviosuly, that's mandatory
   // <tileset>/<type>/<font>/<frame>
-  tiles = TilesetEngine::buildTileset(
-        tileset + "/" + type + "/font/" + frame);
+  QString tileUrl = tileset + "/" + type + "/font/" + QString::number(frame);
+  tiles = TilesetEngine::buildTileset(tileUrl);
 }
 
 void FontPreviewInstance::getResultingText()

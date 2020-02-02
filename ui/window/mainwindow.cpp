@@ -6,6 +6,7 @@
 #include "../../src/mvc/creditsmodel.h"
 
 #include "../../src/common/types.h"
+#include "../../src/common/utility.h"
 #include "../../src/data/file/filemanagement.h"
 #include "../../src/data/db/fontsearch.h"
 
@@ -184,6 +185,7 @@ void MainWindow::injectIntoQML()
   qml->setContextProperty("recentFilesModel", new RecentFilesModel(file));
   qml->setContextProperty("creditsModel", new CreditsModel);
   qml->setContextProperty("fontSearch", new FontSearch);
+  qml->setContextProperty("util", new Utility);
 }
 
 void MainWindow::ssConnect()

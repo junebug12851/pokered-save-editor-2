@@ -12,15 +12,15 @@ Rectangle {
 
   property int curFrame: 0
   property int tick: 1000 / 3
-  property int sizeMult: 4
+  property int sizeMult: 2 //4
 
   property string tileset: "overworld"
-  property string type: "outside"
+  property string type: "outdoor"
   property string placeholder: "%%"
-  property string str: "12345678"
-  property string hasBox: "no-box"
-  property string is2Line: "1-line"
-  property int maxLen: 7
+  property string str: "<pic03>12345678<pic14>"
+  property string hasBox: "box"
+  property string is2Line: "2-lines"
+  property int maxLen: 255
   property string bgColor: "transparent"
   property string fgColor: "none"
 
@@ -38,13 +38,26 @@ Rectangle {
     }
   }
 
-//  Image {
-//    source: "image://tileset/overworld/outdoor/font/" + curFrame + "/whole/" + width + "/" + height
-//    width: 500
-//    height: 500
-//  }
+  Image {
+    id: wholeTileset
+    source: "image://tileset/" +
+            tileset + "/" +
+            type +
+            "/font/" +
+            curFrame +
+            "/whole/" +
+            width + "/" +
+            height
+
+    width: (8 * 16) * sizeMult
+    height: (8 * 16) * sizeMult
+  }
 
   Image {
+    anchors.left: wholeTileset.left
+    anchors.top: wholeTileset.bottom
+    anchors.topMargin: 10
+
     source: "image://font/" +
             tileset + "/" +
             type + "/" +
@@ -56,8 +69,8 @@ Rectangle {
             maxLen + "/" +
             bgColor + "/" +
             fgColor + "/" +
-            placeholder +"/" +
-            str
+            util.encodeBeforeUrl(placeholder) +"/" +
+            util.encodeBeforeUrl(str)
 
     width: (8 * 20) * sizeMult
     height: (8 * 6) * sizeMult
