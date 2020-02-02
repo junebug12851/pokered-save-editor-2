@@ -191,13 +191,80 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
 {
   // Convert string to char codes
   // Very expensive
-  QVector<var8> charCodes = convertToCode(msg, maxLen, false);
+  QVector<var8> charCodes = convertToCode(msg, maxLen, true);
+
+  // First we go through and stop or react on some control codes
+   for(var8 i = 0; i < charCodes.length(); i++) {
+     // Grab a code
+     var8 code = charCodes[i];
+
+     // <page> => stop & end
+     // Verified: It awaits for you to continue by pressing any key to advance
+     // dialog
+     if(code == 73) {
+       charCodes = charCodes.mid(0, i);
+       break;
+     }
+
+     // <cont_> => stop & end
+     // Verified: It awaits for you to continue by pressing any key to advance
+     // dialog.
+     else if(code == 75) {
+       charCodes = charCodes.mid(0, i);
+       break;
+     }
+
+     // <autocont> => cut off up til now and keep rest
+     // Verified: It doesn't await for you to continue and just advances
+     // dialog.
+     else if(code == 76) {
+       charCodes = charCodes.mid(i, -1);
+       i = 0;
+     }
+
+     // <end> => stop & end
+     // Verified: Ends dialog
+     else if(code == 80) {
+       charCodes = charCodes.mid(0, i);
+       break;
+     }
+
+     // <para> => stop & end
+     // Verified: It awaits for you to continue by pressing any key to advance
+     // dialog.
+     else if(code == 81) {
+       charCodes = charCodes.mid(0, i);
+       break;
+     }
+
+     // <cont> => stop & end
+     // Verified: It awaits for you to continue by pressing any key to advance
+     // dialog.
+     else if(code == 85) {
+       charCodes = charCodes.mid(0, i);
+       break;
+     }
+
+     // <done> => cut off up til now and keep rest
+     // Verified: More or less does <autocont>
+     else if(code == 87) {
+       charCodes = charCodes.mid(i+1, -1);
+     }
+
+     // <prompt> => cut off up til now and keep rest
+     // Verified: More or less does <para>
+     else if(code == 88) {
+       charCodes = charCodes.mid(0, i);
+       break;
+     }
+   }
 
   // Now begin processing it, we have to expand the expansive char codes first
   for(var8 i = 0; i < charCodes.length(); i++) {
 
     // Grab a code
     var8 code = charCodes[i];
+    var8 lineCount = 1;
 
     // Expand if any of the codes are present
 
@@ -245,10 +312,41 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
     else if (code == 0x5E) {
       splice(charCodes, "ROCKET", i);
     }
+
+    // <next> => move to next line
+    // Verified: Moves down a line
+    else if(code == 78) {
+      lineCount++;
+      if(lineCount > 3) { // Allow 1 past end of line
+        splice(charCodes, "", i);
+        break;
+      }
+    }
+
+    // <line> => move to next line
+    // Verified: Moves down a line
+    else if(code == 79) {
+      lineCount++;
+      if(lineCount > 3) { // Allow 1 past end of line
+        splice(charCodes, "", i);
+        break;
+      }
+    }
+
+    // <dex> => Add a period
+    // Verified: Does different things, mostly just adds a period, sometimes
+    // other stuff like restarting the line
+    else if(code == 95) {
+      splice(charCodes, ".", i);
+    }
   }
 
-  // Return as a converted string
-  return convertFromCode(charCodes, 255);
+  // Return as a converted string, also create line-breaks
+  auto ret = convertFromCode(charCodes, 255);
+  ret = ret.replace("<next>", "\n");
+  ret = ret.replace("<line>", "\n");
+
+  return ret;
 }
 
 void FontsDB::splice(QVector<var8>& out, QString in, var8 ind)

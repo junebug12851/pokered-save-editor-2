@@ -85,7 +85,7 @@ QPixmap TilesetEngine::buildTilesetFullDebug(QString id)
 
   // Prepare tileset image
   QImage tileset = blankImage();
-  tileset.fill(QColor("white"));
+  //tileset.fill(QColor("white"));
 
   // Stack requested and retrieved tileset layers
   QPainter p(&tileset);
