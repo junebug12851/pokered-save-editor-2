@@ -330,7 +330,7 @@ QPixmap FontPreviewProvider::requestPixmap(
   }
 
   // Check to make sure it's a properly formed request
-  auto idParts = id.split("/", QString::SplitBehavior::SkipEmptyParts);
+  auto idParts = id.split("/", QString::SplitBehavior::KeepEmptyParts);
 
   // Has to have all 10 parts unconditionally
   if(idParts.size() < FontPreviewInstance::IdPart_END)
