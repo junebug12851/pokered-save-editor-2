@@ -93,6 +93,7 @@ HEADERS += \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
   src/data/file/savefiletoolset.h \
+  src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
   src/mvc/creditsmodel.h \
   src/common/random.h \
@@ -160,6 +161,7 @@ SOURCES += \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \
   src/data/file/savefiletoolset.cpp \
+  src/engine/fontpreviewprovider.cpp \
   src/engine/tilesetprovider.cpp \
   src/main.cpp \
   src/data/db/eventpokemon.cpp \

@@ -12,6 +12,7 @@
 #include "../../src/data/file/savefile.h"
 
 #include "../../src/engine/tilesetprovider.h"
+#include "../../src/engine/fontpreviewprovider.h"
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent)
@@ -170,6 +171,7 @@ void MainWindow::setupProviders()
 {
   auto engine = ui.app->engine();
   engine->addImageProvider("tileset", new TilesetProvider);
+  engine->addImageProvider("font", new FontPreviewProvider(file->data->dataExpanded));
 }
 
 void MainWindow::injectIntoQML()
