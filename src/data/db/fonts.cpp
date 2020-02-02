@@ -137,7 +137,7 @@ QVector<var8> FontsDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
 
     // If no match then strip unknown character and continue
     if (match == false)
-      str = str.left(1);
+      str = str.mid(1);
 
     // Stop here if code array is at max bytes or a stop code was manually
     // set (0x50)
@@ -318,7 +318,7 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
     else if(code == 78) {
       lineCount++;
       if(lineCount > 2) { // Allow 1 past end of line
-        splice(charCodes, "", i);
+        charCodes = charCodes.mid(0, i);
         break;
       }
     }
@@ -328,7 +328,7 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
     else if(code == 79) {
       lineCount++;
       if(lineCount > 2) { // Allow 1 past end of line
-        splice(charCodes, "", i);
+        charCodes = charCodes.mid(0, i);
         break;
       }
     }

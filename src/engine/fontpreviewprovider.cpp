@@ -107,7 +107,10 @@ void FontPreviewInstance::setup(QStringList idParts)
       : QColor();
 
 
-  placeholder = QUrl::fromPercentEncoding(QByteArray::fromStdString(idParts.at(IdPartPlaceHolder).toStdString())); //QUrl::fromPercentEncoding(idParts.at(IdPartPlaceHolder));
+  // Qt quick Percent URL encodes everything
+  placeholder = QUrl::fromPercentEncoding(
+        QByteArray::fromStdString(idParts.at(IdPartPlaceHolder).toStdString()));
+
   getInputStr(); // Somewhat more complicated
 }
 
@@ -115,7 +118,10 @@ void FontPreviewInstance::getInputStr()
 {
   // Get str
   // If the player inserts slashes then we want the rest of it
-  inputStr = QUrl::fromPercentEncoding(QByteArray::fromStdString(idParts.mid(IdPartStr).join("/").toStdString())); //idParts.mid(IdPartStr).join("/");
+  // Qt quick Percent URL encodes everything
+  inputStr = QUrl::fromPercentEncoding(
+        QByteArray::fromStdString(
+          idParts.mid(IdPartStr).join("/").toStdString()));
 }
 
 void FontPreviewInstance::getTiles()
@@ -133,7 +139,8 @@ void FontPreviewInstance::getResultingText()
   // converting to code and back in a way that simulates how the game would
   // display it. Then split the string lines into seperate lines. Re-encode
   // those lines into tile numbers.
-  QString resToConvert = placeholder.replace("_str_", inputStr);
+  QString resToConvert = placeholder.replace("%%", inputStr);
+
   auto res = FontsDB::expandStr(resToConvert, 255, rivalsName, playersName)
       .split("\n", QString::SkipEmptyParts);
 
@@ -149,7 +156,7 @@ void FontPreviewInstance::getResultingText()
 void FontPreviewInstance::enforceMaxSize()
 {
   // Converts to code, trimming after max chars, then converts back
-  auto strCode = FontsDB::convertToCode(inputStr, maxInputStrLen, true);
+  auto strCode = FontsDB::convertToCode(inputStr, maxInputStrLen, false);
   auto strBack = FontsDB::convertFromCode(strCode, 255);
   inputStr = strBack;
 }
@@ -173,7 +180,7 @@ void FontPreviewInstance::getImageWidth()
   // Otherwise figure out longest line
   else {
     for(auto entry : resultingText) {
-      if(entry.size() > imgWidth)
+      if((entry.size() * tileSize) > imgWidth)
         imgWidth = entry.size() * tileSize;
     }
   }
@@ -245,18 +252,11 @@ void FontPreviewInstance::drawFg()
 
   for(auto yLine : resultingText) {
     for(auto xTile : yLine) {
-
-      // Don't draw in invalid areas
-      if(((xCounter * tileSize) + tileSize) > fgImg.width())
-        continue;
-      if(((yCounter * tileSize) + tileSize) > fgImg.height())
-        continue;
-
       p.drawPixmap(xCounter * tileSize, yCounter * tileSize, tiles.at(xTile));
       xCounter++;
     }
 
-    xCounter = 0;
+    xCounter = startX;
     yCounter += 2; // Keep space between lines
   }
 }

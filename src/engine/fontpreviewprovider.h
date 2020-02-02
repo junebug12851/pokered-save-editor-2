@@ -75,7 +75,7 @@ struct FontPreviewInstance
   static constexpr var8 maxBoxFGHeight = maxBoxFGHeightTiles * tileSize;
   static constexpr var8 maxStrLenTiles = maxWidthTiles * maxBoxFGHeightTiles;
   static constexpr var8 line1HeightTiles = 1;
-  static constexpr var8 line2HeightTiles = 2;
+  static constexpr var8 line2HeightTiles = 3;
   static constexpr var8 line1Height = line1HeightTiles * tileSize;
   static constexpr var8 line2Height = line2HeightTiles * tileSize;
 
