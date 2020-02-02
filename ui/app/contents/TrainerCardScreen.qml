@@ -13,6 +13,8 @@ Rectangle {
   property int curFrame: 0
   property int tick: 1000 / 3
 
+  color: "blue"
+
   Timer {
     interval: tick;
     running: true;
@@ -26,15 +28,15 @@ Rectangle {
   }
 
 //  Image {
-//    source: "image://tileset/overworld/outdoor/nofont/" + curFrame + "/whole/" + width + "/" + height
+//    source: "image://tileset/overworld/outdoor/font/" + curFrame + "/whole/" + width + "/" + height
 //    width: 500
 //    height: 500
 //  }
 
   Image {
-    source: "image://font/overworld/outdoor/0/500/500/no-box/no-lines/7/transparent/none/You are %%/June"
+    source: "image://font/overworld/outdoor/0/500/500/no-box/no-lines/7/red/none/You are _str_/June"
     width: 500
-    height: 500
+    height: 100
     cache: false
   }
 }

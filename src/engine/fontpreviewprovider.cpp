@@ -18,6 +18,10 @@
 #include <QtMath>
 #include <QPainter>
 
+#ifdef QT_DEBUG
+#include <QtDebug>
+#endif
+
 #include "./fontpreviewprovider.h"
 #include "./tilesetengine.h"
 #include "../data/db/fonts.h"
@@ -83,6 +87,8 @@ FontPreviewInstance::FontPreviewInstance(
 void FontPreviewInstance::setup(QStringList idParts)
 {
   // Breakdown idParts into variables
+  this->idParts = idParts;
+
   tileset = idParts.at(IdPartTileset);
   type = idParts.at(IdPartType);
   frame = idParts.at(IdPartFrame).toInt();
@@ -95,7 +101,7 @@ void FontPreviewInstance::setup(QStringList idParts)
   maxInputStrLen = idParts.at(IdPartMax).toInt();
   bgColor = QColor(idParts.at(IdPartBGColor));
 
-  useFg = idParts.at(IdPartFGColor) == "none";
+  useFg = idParts.at(IdPartFGColor) != "none";
   fgColor = (useFg)
       ? QColor(idParts.at(IdPartFGColor))
       : QColor();
@@ -108,17 +114,7 @@ void FontPreviewInstance::getInputStr()
 {
   // Get str
   // If the player inserts slashes then we want the rest of it
-  QString str = "";
-
-  // Insert all the rest of the array and add slashes if not last entry
-  for(int i = IdPartStr; i < idParts.size(); i++) {
-    str += idParts[i];
-
-    if(i < (idParts.size() - 1))
-      str += "/";
-  }
-
-  inputStr = str;
+  inputStr = idParts.mid(IdPartStr).join("/");
 }
 
 void FontPreviewInstance::getTiles()
@@ -136,7 +132,7 @@ void FontPreviewInstance::getResultingText()
   // converting to code and back in a way that simulates how the game would
   // display it. Then split the string lines into seperate lines. Re-encode
   // those lines into tile numbers.
-  QString resToConvert = placeholder.replace("%%", inputStr);
+  QString resToConvert = placeholder.replace("_str_", inputStr);
   auto res = FontsDB::expandStr(resToConvert, 255, rivalsName, playersName)
       .split("\n", QString::SkipEmptyParts);
 
@@ -321,10 +317,6 @@ void FontPreviewInstance::getRivalsName()
           ? "BLUE"
           : expanded->rival->name;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 FontPreviewProvider::FontPreviewProvider(SaveFileExpanded* expanded)
   : QQuickImageProvider(QQuickImageProvider::Pixmap),

@@ -259,15 +259,15 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
      }
    }
 
+   var8 lineCount = 1;
+
   // Now begin processing it, we have to expand the expansive char codes first
   for(var8 i = 0; i < charCodes.length(); i++) {
 
     // Grab a code
     var8 code = charCodes[i];
-    var8 lineCount = 1;
 
     // Expand if any of the codes are present
-
     // <pkmn> => <pk><mn>
     if (code == 0x4A) {
       splice(charCodes, "<pk><mn>", i);
