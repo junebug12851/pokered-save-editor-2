@@ -40,6 +40,8 @@ struct FontPreviewInstance
     IdPartTileset = 0,
     IdPartType,
     IdPartFrame,
+    IdPartWidth,
+    IdPartHeight,
     IdPartBox,
     IdPart2Line,
     IdPartMax,
@@ -61,8 +63,8 @@ struct FontPreviewInstance
   static constexpr var8 tileSize = 8;
   static constexpr var8 boxWidthTiles = 20;
   static constexpr var8 boxHeightTiles = 4;
-  static constexpr var8 boxWidth = boxWidth * tileSize;
-  static constexpr var8 boxHeight = boxHeight * tileSize;
+  static constexpr var8 boxWidth = boxWidthTiles * tileSize;
+  static constexpr var8 boxHeight = boxHeightTiles * tileSize;
   static constexpr var8 maxWidthTiles = 20;
   static constexpr var8 maxWidth = 20 * tileSize;
   static constexpr var8 maxBoxFGWidthTiles = 17;
@@ -88,6 +90,7 @@ struct FontPreviewInstance
   void drawBox();
   void drawFg();
   void finishImg();
+  void postProcess();
 
   void getPlayersName();
   void getRivalsName();
@@ -96,6 +99,8 @@ struct FontPreviewInstance
   QString tileset;
   QString type;
   int frame = 0;
+  int toWidth = 0;
+  int toHeight = 0;
   bool box = false;
   bool lines2 = false;
   int maxInputStrLen = 0;
@@ -118,6 +123,7 @@ struct FontPreviewInstance
   int imgWidthTiles = 0;
   int imgHeight = 0;
   int imgHeightTiles = 0;
+
   bool useFg = false;
 
   // Provider Vars
@@ -140,7 +146,7 @@ class FontPreviewProvider : public QQuickImageProvider
 public:
   FontPreviewProvider(SaveFileExpanded* expanded);
 
-  // <tileset>/<type>/<frame>/<box>/<2-lines>/<max>/<bgColor>/<fgColor>/<placeholder>/<str>
+  // <tileset>/<type>/<frame>/<width>/<height>/<box>/<2-lines>/<max>/<bgColor>/<fgColor>/<placeholder>/<str>
   //  * <tileset> is the tileset, case-insensitive and spaces converted to
   //    underscores
   //  * <type> is the type, specifically "outdoor" or not is used here

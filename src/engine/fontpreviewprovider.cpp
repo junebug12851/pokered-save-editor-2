@@ -73,6 +73,11 @@ FontPreviewInstance::FontPreviewInstance(
   // Finish the image by merging fg and box if applicable then tinting the
   // image
   finishImg();
+
+  // Post process the image, this sort of finalizes the provider request by
+  // setting requested size and scaling to requested size which could be the
+  // providers requested size or my requested size.
+  postProcess();
 }
 
 void FontPreviewInstance::setup(QStringList idParts)
@@ -81,6 +86,10 @@ void FontPreviewInstance::setup(QStringList idParts)
   tileset = idParts.at(IdPartTileset);
   type = idParts.at(IdPartType);
   frame = idParts.at(IdPartFrame).toInt();
+
+  toWidth = idParts.at(IdPartWidth).toInt();
+  toHeight = idParts.at(IdPartHeight).toInt();
+
   box = idParts.at(IdPartType) == "box";
   lines2 = idParts.at(IdPartType) == "2-lines";
   maxInputStrLen = idParts.at(IdPartMax).toInt();
@@ -281,6 +290,22 @@ void FontPreviewInstance::finishImg()
     p.drawPixmap(0, 0, mask);
     p.end();
   }
+}
+
+void FontPreviewInstance::postProcess()
+{
+  // Requested size
+  QSize actualSize = QSize(toWidth, toHeight);
+
+  // Set requested size if asked
+  if(size != nullptr)
+    *size = actualSize;
+
+  // Scale to requested size
+  // Either Qt Quick requested size or my requested size, either way the image
+  // will be scaled to someones requested size
+  resultingImg = resultingImg.scaled((requestedSize.width() > 0) ? requestedSize.width() : actualSize.width(),
+                                     (requestedSize.height() > 0) ? requestedSize.height() : actualSize.height());
 }
 
 void FontPreviewInstance::getPlayersName()

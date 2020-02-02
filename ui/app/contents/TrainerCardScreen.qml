@@ -8,6 +8,7 @@ import "../common/Style.js" as Style
 Rectangle {
 
   // image://tileset/<tileset>/<type>/<font>/<frame>/<tile>/<width>/<height>
+  //    image://font/<tileset>/<type>/<frame>/<width>/<height>/<box>/<2-lines>/<max>/<bgColor>/<fgColor>/<placeholder>/<str>
 
   property int curFrame: 0
   property int tick: 1000 / 3
@@ -24,9 +25,16 @@ Rectangle {
     }
   }
 
+//  Image {
+//    source: "image://tileset/overworld/outdoor/nofont/" + curFrame + "/whole/" + width + "/" + height
+//    width: 500
+//    height: 500
+//  }
+
   Image {
-    source: "image://tileset/overworld/outdoor/nofont/" + curFrame + "/whole/" + width + "/" + height
+    source: "image://font/overworld/outdoor/0/500/500/no-box/no-lines/7/transparent/none/You are %%/June"
     width: 500
     height: 500
+    cache: false
   }
 }
