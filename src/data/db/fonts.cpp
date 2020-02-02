@@ -77,7 +77,7 @@ void FontsDB::index()
   {
     // Index name and index
     ind.insert(entry->name, entry);
-    ind.insert(QString::number(entry->ind), entry);
+    ind.insert("ind"+QString::number(entry->ind), entry);
   }
 }
 
@@ -170,11 +170,11 @@ QString FontsDB::convertFromCode(QVector<var8> codes, var8 maxLen)
       break;
 
     // If the code is invalid then also stop here
-    if(ind.value(QString::number(code), nullptr) == nullptr)
+    if(ind.value("ind"+QString::number(code), nullptr) == nullptr)
       continue;
 
     // Append to end of string the typable equivelant
-    eng += ind.value(QString::number(code))->name;
+    eng += ind.value("ind"+QString::number(code))->name;
 
     // Stop here if we've reached max length
     if (i >= maxLen)
