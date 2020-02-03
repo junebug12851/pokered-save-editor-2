@@ -34,8 +34,8 @@ FontDBEntry::FontDBEntry(QJsonValue& data) {
   if(data["picture"].isBool())
     picture = data["picture"].toBool();
 
-  if(data["useTilemap"].isBool())
-    useTilemap = data["useTilemap"].toBool();
+  alias = data["alias"].toString("");
+  tip = data["tip"].toString("");
 
   if(data["control"].isBool())
     control = data["control"].toBool();

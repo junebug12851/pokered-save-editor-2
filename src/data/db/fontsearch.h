@@ -44,8 +44,6 @@ public:
   Q_INVOKABLE FontSearch* notMultiChar();
   Q_INVOKABLE FontSearch* andVariable();
   Q_INVOKABLE FontSearch* notVariable();
-  Q_INVOKABLE FontSearch* andTilemap();
-  Q_INVOKABLE FontSearch* notTilemap();
 
   // QML Interface
   Q_INVOKABLE int fontCount();

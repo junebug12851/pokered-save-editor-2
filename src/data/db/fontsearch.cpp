@@ -160,24 +160,6 @@ FontSearch* FontSearch::notVariable()
   return this;
 }
 
-FontSearch* FontSearch::andTilemap()
-{
-  for(auto entry : QVector<FontDBEntry*>(results))
-    if(!entry->useTilemap)
-      results.removeOne(entry);
-
-  return this;
-}
-
-FontSearch* FontSearch::notTilemap()
-{
-  for(auto entry : QVector<FontDBEntry*>(results))
-    if(entry->useTilemap)
-      results.removeOne(entry);
-
-  return this;
-}
-
 int FontSearch::fontCount()
 {
   return results.size();

@@ -1,1857 +1,2091 @@
 [
-    {
-        "ind": 1,
-        "name": "<pic01>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 2,
-        "name": "<pic02>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 3,
-        "name": "<pic03>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 4,
-        "name": "<pic04>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 5,
-        "name": "<pic05>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 6,
-        "name": "<pic06>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 7,
-        "name": "<pic07>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 8,
-        "name": "<pic08>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 9,
-        "name": "<pic09>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 10,
-        "name": "<pic0A>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 11,
-        "name": "<pic0B>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 12,
-        "name": "<pic0C>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 13,
-        "name": "<pic0D>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 14,
-        "name": "<pic0E>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 15,
-        "name": "<pic0F>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 16,
-        "name": "<pic10>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 17,
-        "name": "<pic11>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 18,
-        "name": "<pic12>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 19,
-        "name": "<pic13>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 20,
-        "name": "<pic14>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 21,
-        "name": "<pic15>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 22,
-        "name": "<pic16>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 23,
-        "name": "<pic17>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 24,
-        "name": "<pic18>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 25,
-        "name": "<pic19>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 26,
-        "name": "<pic1A>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 27,
-        "name": "<pic1B>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 28,
-        "name": "<pic1C>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 29,
-        "name": "<pic1D>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 30,
-        "name": "<pic1E>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 31,
-        "name": "<pic1F>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 32,
-        "name": "<pic20>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 33,
-        "name": "<pic21>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 34,
-        "name": "<pic22>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 35,
-        "name": "<pic23>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 36,
-        "name": "<pic24>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 37,
-        "name": "<pic25>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 38,
-        "name": "<pic26>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 39,
-        "name": "<pic27>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 40,
-        "name": "<pic28>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 41,
-        "name": "<pic29>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 42,
-        "name": "<pic2A>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 43,
-        "name": "<pic2B>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 44,
-        "name": "<pic2C>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 45,
-        "name": "<pic2D>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 46,
-        "name": "<pic2E>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 47,
-        "name": "<pic2F>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 48,
-        "name": "<pic30>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 49,
-        "name": "<pic31>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 50,
-        "name": "<pic32>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 51,
-        "name": "<pic33>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 52,
-        "name": "<pic34>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 53,
-        "name": "<pic35>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 54,
-        "name": "<pic36>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 55,
-        "name": "<pic37>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 56,
-        "name": "<pic38>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 57,
-        "name": "<pic39>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 58,
-        "name": "<pic3A>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 59,
-        "name": "<pic3B>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 60,
-        "name": "<pic3C>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 61,
-        "name": "<pic3D>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 62,
-        "name": "<pic3E>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 63,
-        "name": "<pic3F>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 64,
-        "name": "<pic40>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 65,
-        "name": "<pic41>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 66,
-        "name": "<pic42>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 67,
-        "name": "<pic43>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 68,
-        "name": "<pic44>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 69,
-        "name": "<pic45>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 70,
-        "name": "<pic46>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 71,
-        "name": "<pic47>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 72,
-        "name": "<pic48>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 73,
-        "name": "<page>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 74,
-        "name": "<pkmn>",
-        "shorthand": true,
-        "multiChar": true,
-        "length": 2
-    },
-    {
-        "ind": 75,
-        "name": "<cont_>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 76,
-        "name": "<autocont>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 77,
-        "name": "<pic4D>",
-        "shorthand": true,
-        "picture": true,
-        "useTilemap": true,
-        "length": 1
-    },
-    {
-        "ind": 78,
-        "name": "<next>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 79,
-        "name": "<line>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 80,
-        "name": "<end>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 81,
-        "name": "<para>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 82,
-        "name": "<player>",
-        "shorthand": true,
-        "multiChar": true,
-        "variable": true,
-        "length": 7
-    },
-    {
-        "ind": 83,
-        "name": "<rival>",
-        "shorthand": true,
-        "multiChar": true,
-        "variable": true,
-        "length": 7
-    },
-    {
-        "ind": 84,
-        "name": "<poke>",
-        "shorthand": true,
-        "multiChar": true,
-        "length": 4
-    },
-    {
-        "ind": 85,
-        "name": "<cont>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 86,
-        "name": "<......>",
-        "shorthand": true,
-        "multiChar": true,
-        "length": 2
-    },
-    {
-        "ind": 87,
-        "name": "<done>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 88,
-        "name": "<prompt>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 89,
-        "name": "<targ>",
-        "shorthand": true,
-        "multiChar": true,
-        "variable": true,
-        "length": 10
-    },
-    {
-        "ind": 90,
-        "name": "<user>",
-        "shorthand": true,
-        "multiChar": true,
-        "variable": true,
-        "length": 15
-    },
-    {
-        "ind": 91,
-        "name": "<pc>",
-        "shorthand": true,
-        "multiChar": true,
-        "length": 2
-    },
-    {
-        "ind": 92,
-        "name": "<tm>",
-        "shorthand": true,
-        "multiChar": true,
-        "length": 2
-    },
-    {
-        "ind": 93,
-        "name": "<trainer>",
-        "shorthand": true,
-        "multiChar": true,
-        "length": 7
-    },
-    {
-        "ind": 94,
-        "name": "<rocket>",
-        "shorthand": true,
-        "multiChar": true,
-        "length": 6
-    },
-    {
-        "ind": 95,
-        "name": "<dex>",
-        "shorthand": true,
-        "control": true,
-        "length": 0
-    },
-    {
-        "ind": 96,
-        "name": "<A>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 97,
-        "name": "<B>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 98,
-        "name": "<C>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 99,
-        "name": "<D>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 100,
-        "name": "<E>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 101,
-        "name": "<F>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 102,
-        "name": "<G>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 103,
-        "name": "<H>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 104,
-        "name": "<I>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 105,
-        "name": "<V>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 106,
-        "name": "<S>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 107,
-        "name": "<L>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 108,
-        "name": "<M>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 109,
-        "name": "<:>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 110,
-        "name": "<ji>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 111,
-        "name": "<ju>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 112,
-        "name": "<o'>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 113,
-        "name": "<c'>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 114,
-        "name": "<o\">",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 115,
-        "name": "<c\">",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 116,
-        "name": "<mdot>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 117,
-        "name": "<...>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 118,
-        "name": "<ja>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 119,
-        "name": "<je>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 120,
-        "name": "<jo>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 121,
-        "name": "<ul>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 122,
-        "name": "<horz>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 123,
-        "name": "<ur>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 124,
-        "name": "<vert>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 125,
-        "name": "<bl>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 126,
-        "name": "<br>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 127,
-        "name": " ",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 128,
-        "name": "A",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 129,
-        "name": "B",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 130,
-        "name": "C",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 131,
-        "name": "D",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 132,
-        "name": "E",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 133,
-        "name": "F",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 134,
-        "name": "G",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 135,
-        "name": "H",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 136,
-        "name": "I",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 137,
-        "name": "J",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 138,
-        "name": "K",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 139,
-        "name": "L",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 140,
-        "name": "M",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 141,
-        "name": "N",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 142,
-        "name": "O",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 143,
-        "name": "P",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 144,
-        "name": "Q",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 145,
-        "name": "R",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 146,
-        "name": "S",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 147,
-        "name": "T",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 148,
-        "name": "U",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 149,
-        "name": "V",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 150,
-        "name": "W",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 151,
-        "name": "X",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 152,
-        "name": "Y",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 153,
-        "name": "Z",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 154,
-        "name": "(",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 155,
-        "name": ")",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 156,
-        "name": ":",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 157,
-        "name": ";",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 158,
-        "name": "[",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 159,
-        "name": "]",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 160,
-        "name": "a",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 161,
-        "name": "b",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 162,
-        "name": "c",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 163,
-        "name": "d",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 164,
-        "name": "e",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 165,
-        "name": "f",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 166,
-        "name": "g",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 167,
-        "name": "h",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 168,
-        "name": "i",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 169,
-        "name": "j",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 170,
-        "name": "k",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 171,
-        "name": "l",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 172,
-        "name": "m",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 173,
-        "name": "n",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 174,
-        "name": "o",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 175,
-        "name": "p",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 176,
-        "name": "q",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 177,
-        "name": "r",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 178,
-        "name": "s",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 179,
-        "name": "t",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 180,
-        "name": "u",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 181,
-        "name": "v",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 182,
-        "name": "w",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 183,
-        "name": "x",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 184,
-        "name": "y",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 185,
-        "name": "z",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 186,
-        "name": "<e>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 187,
-        "name": "<'d>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 188,
-        "name": "<'l>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 189,
-        "name": "<'s>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 190,
-        "name": "<'t>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 191,
-        "name": "<'v>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 192,
-        "name": "<picC0>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 193,
-        "name": "<picC1>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 194,
-        "name": "<picC2>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 195,
-        "name": "<picC3>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 196,
-        "name": "<picC4>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 197,
-        "name": "<picC5>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 198,
-        "name": "<picC6>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 199,
-        "name": "<picC7>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 200,
-        "name": "<picC8>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 201,
-        "name": "<picC9>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 202,
-        "name": "<picCA>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 203,
-        "name": "<picCB>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 204,
-        "name": "<picCC>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 205,
-        "name": "<picCD>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 206,
-        "name": "<picCE>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 207,
-        "name": "<picCF>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 208,
-        "name": "<picD0>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 209,
-        "name": "<picD1>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 210,
-        "name": "<picD2>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 211,
-        "name": "<picD3>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 212,
-        "name": "<picD4>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 213,
-        "name": "<picD5>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 214,
-        "name": "<picD6>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 215,
-        "name": "<picD7>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 216,
-        "name": "<picD8>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 217,
-        "name": "<picD9>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 218,
-        "name": "<picDA>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 219,
-        "name": "<picDB>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 220,
-        "name": "<picDC>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 221,
-        "name": "<picDD>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 222,
-        "name": "<picDE>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 223,
-        "name": "<picDF>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 224,
-        "name": "'",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 225,
-        "name": "<pk>",
-        "shorthand": true,
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 226,
-        "name": "<mn>",
-        "shorthand": true,
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 227,
-        "name": "-",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 228,
-        "name": "<'r>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 229,
-        "name": "<'m>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 230,
-        "name": "?",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 231,
-        "name": "!",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 232,
-        "name": ".",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 233,
-        "name": "<jka>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 234,
-        "name": "<jku>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 235,
-        "name": "<jke>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 236,
-        "name": "<arr-r2>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 237,
-        "name": "<arr-r>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 238,
-        "name": "<arr-d>",
-        "shorthand": true,
-        "picture": true,
-        "length": 1
-    },
-    {
-        "ind": 239,
-        "name": "<m>",
-        "shorthand": true,
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 240,
-        "name": "$",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 241,
-        "name": "<x>",
-        "shorthand": true,
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 242,
-        "name": "<.>",
-        "shorthand": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 243,
-        "name": "/",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 244,
-        "name": ",",
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 245,
-        "name": "<f>",
-        "shorthand": true,
-        "normal": true,
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 246,
-        "name": "0",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 247,
-        "name": "1",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 248,
-        "name": "2",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 249,
-        "name": "3",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 250,
-        "name": "4",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 251,
-        "name": "5",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 252,
-        "name": "6",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 253,
-        "name": "7",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 254,
-        "name": "8",
-        "singleChar": true,
-        "length": 1
-    },
-    {
-        "ind": 255,
-        "name": "9",
-        "singleChar": true,
-        "length": 1
-    }
+  {
+    "ind": 1,
+    "name": "<tile01>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 01",
+    "tip": "Use tile 01 in the currently loaded tileset."
+  },
+  {
+    "ind": 2,
+    "name": "<tile02>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 02",
+    "tip": "Use tile 02 in the currently loaded tileset."
+  },
+  {
+    "ind": 3,
+    "name": "<tile03>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 03",
+    "tip": "Use tile 03 in the currently loaded tileset."
+  },
+  {
+    "ind": 4,
+    "name": "<tile04>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 04",
+    "tip": "Use tile 04 in the currently loaded tileset."
+  },
+  {
+    "ind": 5,
+    "name": "<tile05>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 05",
+    "tip": "Use tile 05 in the currently loaded tileset."
+  },
+  {
+    "ind": 6,
+    "name": "<tile06>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 06",
+    "tip": "Use tile 06 in the currently loaded tileset."
+  },
+  {
+    "ind": 7,
+    "name": "<tile07>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 07",
+    "tip": "Use tile 07 in the currently loaded tileset."
+  },
+  {
+    "ind": 8,
+    "name": "<tile08>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 08",
+    "tip": "Use tile 08 in the currently loaded tileset."
+  },
+  {
+    "ind": 9,
+    "name": "<tile09>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 09",
+    "tip": "Use tile 09 in the currently loaded tileset."
+  },
+  {
+    "ind": 10,
+    "name": "<tile0A>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 0A",
+    "tip": "Use tile 0A in the currently loaded tileset."
+  },
+  {
+    "ind": 11,
+    "name": "<tile0B>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 0B",
+    "tip": "Use tile 0B in the currently loaded tileset."
+  },
+  {
+    "ind": 12,
+    "name": "<tile0C>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 0C",
+    "tip": "Use tile 0C in the currently loaded tileset."
+  },
+  {
+    "ind": 13,
+    "name": "<tile0D>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 0D",
+    "tip": "Use tile 0D in the currently loaded tileset."
+  },
+  {
+    "ind": 14,
+    "name": "<tile0E>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 0E",
+    "tip": "Use tile 0E in the currently loaded tileset."
+  },
+  {
+    "ind": 15,
+    "name": "<tile0F>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 0F",
+    "tip": "Use tile 0F in the currently loaded tileset."
+  },
+  {
+    "ind": 16,
+    "name": "<tile10>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 10",
+    "tip": "Use tile 10 in the currently loaded tileset."
+  },
+  {
+    "ind": 17,
+    "name": "<tile11>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 11",
+    "tip": "Use tile 11 in the currently loaded tileset."
+  },
+  {
+    "ind": 18,
+    "name": "<tile12>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 12",
+    "tip": "Use tile 12 in the currently loaded tileset."
+  },
+  {
+    "ind": 19,
+    "name": "<tile13>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 13",
+    "tip": "Use tile 13 in the currently loaded tileset."
+  },
+  {
+    "ind": 20,
+    "name": "<tile14>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 14",
+    "tip": "Use tile 14 in the currently loaded tileset."
+  },
+  {
+    "ind": 21,
+    "name": "<tile15>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 15",
+    "tip": "Use tile 15 in the currently loaded tileset."
+  },
+  {
+    "ind": 22,
+    "name": "<tile16>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 16",
+    "tip": "Use tile 16 in the currently loaded tileset."
+  },
+  {
+    "ind": 23,
+    "name": "<tile17>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 17",
+    "tip": "Use tile 17 in the currently loaded tileset."
+  },
+  {
+    "ind": 24,
+    "name": "<tile18>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 18",
+    "tip": "Use tile 18 in the currently loaded tileset."
+  },
+  {
+    "ind": 25,
+    "name": "<tile19>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 19",
+    "tip": "Use tile 19 in the currently loaded tileset."
+  },
+  {
+    "ind": 26,
+    "name": "<tile1A>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 1A",
+    "tip": "Use tile 1A in the currently loaded tileset."
+  },
+  {
+    "ind": 27,
+    "name": "<tile1B>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 1B",
+    "tip": "Use tile 1B in the currently loaded tileset."
+  },
+  {
+    "ind": 28,
+    "name": "<tile1C>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 1C",
+    "tip": "Use tile 1C in the currently loaded tileset."
+  },
+  {
+    "ind": 29,
+    "name": "<tile1D>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 1D",
+    "tip": "Use tile 1D in the currently loaded tileset."
+  },
+  {
+    "ind": 30,
+    "name": "<tile1E>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 1E",
+    "tip": "Use tile 1E in the currently loaded tileset."
+  },
+  {
+    "ind": 31,
+    "name": "<tile1F>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 1F",
+    "tip": "Use tile 1F in the currently loaded tileset."
+  },
+  {
+    "ind": 32,
+    "name": "<tile20>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 20",
+    "tip": "Use tile 20 in the currently loaded tileset."
+  },
+  {
+    "ind": 33,
+    "name": "<tile21>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 21",
+    "tip": "Use tile 21 in the currently loaded tileset."
+  },
+  {
+    "ind": 34,
+    "name": "<tile22>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 22",
+    "tip": "Use tile 22 in the currently loaded tileset."
+  },
+  {
+    "ind": 35,
+    "name": "<tile23>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 23",
+    "tip": "Use tile 23 in the currently loaded tileset."
+  },
+  {
+    "ind": 36,
+    "name": "<tile24>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 24",
+    "tip": "Use tile 24 in the currently loaded tileset."
+  },
+  {
+    "ind": 37,
+    "name": "<tile25>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 25",
+    "tip": "Use tile 25 in the currently loaded tileset."
+  },
+  {
+    "ind": 38,
+    "name": "<tile26>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 26",
+    "tip": "Use tile 26 in the currently loaded tileset."
+  },
+  {
+    "ind": 39,
+    "name": "<tile27>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 27",
+    "tip": "Use tile 27 in the currently loaded tileset."
+  },
+  {
+    "ind": 40,
+    "name": "<tile28>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 28",
+    "tip": "Use tile 28 in the currently loaded tileset."
+  },
+  {
+    "ind": 41,
+    "name": "<tile29>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 29",
+    "tip": "Use tile 29 in the currently loaded tileset."
+  },
+  {
+    "ind": 42,
+    "name": "<tile2A>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 2A",
+    "tip": "Use tile 2A in the currently loaded tileset."
+  },
+  {
+    "ind": 43,
+    "name": "<tile2B>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 2B",
+    "tip": "Use tile 2B in the currently loaded tileset."
+  },
+  {
+    "ind": 44,
+    "name": "<tile2C>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 2C",
+    "tip": "Use tile 2C in the currently loaded tileset."
+  },
+  {
+    "ind": 45,
+    "name": "<tile2D>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 2D",
+    "tip": "Use tile 2D in the currently loaded tileset."
+  },
+  {
+    "ind": 46,
+    "name": "<tile2E>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 2E",
+    "tip": "Use tile 2E in the currently loaded tileset."
+  },
+  {
+    "ind": 47,
+    "name": "<tile2F>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 2F",
+    "tip": "Use tile 2F in the currently loaded tileset."
+  },
+  {
+    "ind": 48,
+    "name": "<tile30>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 30",
+    "tip": "Use tile 30 in the currently loaded tileset."
+  },
+  {
+    "ind": 49,
+    "name": "<tile31>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 31",
+    "tip": "Use tile 31 in the currently loaded tileset."
+  },
+  {
+    "ind": 50,
+    "name": "<tile32>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 32",
+    "tip": "Use tile 32 in the currently loaded tileset."
+  },
+  {
+    "ind": 51,
+    "name": "<tile33>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 33",
+    "tip": "Use tile 33 in the currently loaded tileset."
+  },
+  {
+    "ind": 52,
+    "name": "<tile34>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 34",
+    "tip": "Use tile 34 in the currently loaded tileset."
+  },
+  {
+    "ind": 53,
+    "name": "<tile35>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 35",
+    "tip": "Use tile 35 in the currently loaded tileset."
+  },
+  {
+    "ind": 54,
+    "name": "<tile36>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 36",
+    "tip": "Use tile 36 in the currently loaded tileset."
+  },
+  {
+    "ind": 55,
+    "name": "<tile37>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 37",
+    "tip": "Use tile 37 in the currently loaded tileset."
+  },
+  {
+    "ind": 56,
+    "name": "<tile38>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 38",
+    "tip": "Use tile 38 in the currently loaded tileset."
+  },
+  {
+    "ind": 57,
+    "name": "<tile39>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 39",
+    "tip": "Use tile 39 in the currently loaded tileset."
+  },
+  {
+    "ind": 58,
+    "name": "<tile3A>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 3A",
+    "tip": "Use tile 3A in the currently loaded tileset."
+  },
+  {
+    "ind": 59,
+    "name": "<tile3B>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 3B",
+    "tip": "Use tile 3B in the currently loaded tileset."
+  },
+  {
+    "ind": 60,
+    "name": "<tile3C>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 3C",
+    "tip": "Use tile 3C in the currently loaded tileset."
+  },
+  {
+    "ind": 61,
+    "name": "<tile3D>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 3D",
+    "tip": "Use tile 3D in the currently loaded tileset."
+  },
+  {
+    "ind": 62,
+    "name": "<tile3E>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 3E",
+    "tip": "Use tile 3E in the currently loaded tileset."
+  },
+  {
+    "ind": 63,
+    "name": "<tile3F>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 3F",
+    "tip": "Use tile 3F in the currently loaded tileset."
+  },
+  {
+    "ind": 64,
+    "name": "<tile40>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 40",
+    "tip": "Use tile 40 in the currently loaded tileset."
+  },
+  {
+    "ind": 65,
+    "name": "<tile41>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 41",
+    "tip": "Use tile 41 in the currently loaded tileset."
+  },
+  {
+    "ind": 66,
+    "name": "<tile42>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 42",
+    "tip": "Use tile 42 in the currently loaded tileset."
+  },
+  {
+    "ind": 67,
+    "name": "<tile43>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 43",
+    "tip": "Use tile 43 in the currently loaded tileset."
+  },
+  {
+    "ind": 68,
+    "name": "<tile44>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 44",
+    "tip": "Use tile 44 in the currently loaded tileset."
+  },
+  {
+    "ind": 69,
+    "name": "<tile45>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 45",
+    "tip": "Use tile 45 in the currently loaded tileset."
+  },
+  {
+    "ind": 70,
+    "name": "<tile46>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 46",
+    "tip": "Use tile 46 in the currently loaded tileset."
+  },
+  {
+    "ind": 71,
+    "name": "<tile47>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 47",
+    "tip": "Use tile 47 in the currently loaded tileset."
+  },
+  {
+    "ind": 72,
+    "name": "<tile48>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 48",
+    "tip": "Use tile 48 in the currently loaded tileset."
+  },
+  {
+    "ind": 73,
+    "name": "<page>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "New Page",
+    "tip": "Stop printing text and await the user to press a button before clearing out the dialog and continuing from the top."
+  },
+  {
+    "ind": 74,
+    "name": "<pkmn>",
+    "shorthand": true,
+    "multiChar": true,
+    "length": 2,
+    "alias": "PkMn",
+    "tip": "Spell out 'Pk' and 'Mn' on screen. Taking up 2 characters on screen but only using one character in the sav data."
+  },
+  {
+    "ind": 75,
+    "name": "<cont_>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "Alt Continue",
+    "tip": "Stop printing text and await the user to press a button before scrolling the text up and printing the next line at the bottom."
+  },
+  {
+    "ind": 76,
+    "name": "<autocont>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "Auto Continue",
+    "tip": "Stop printing text and immidiately scroll the window up a line before continuing on the next line at the bottom."
+  },
+  {
+    "ind": 77,
+    "name": "<tile4D>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile 4D",
+    "tip": "Use tile 4D in the currently loaded tileset."
+  },
+  {
+    "ind": 78,
+    "name": "<next>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "Next Line",
+    "tip": "Move to the next line and continue writing text. Glitches if already at last line."
+  },
+  {
+    "ind": 79,
+    "name": "<line>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "New Line",
+    "tip": "Move to the 2nd line and continue writing text. Glitches if already at 2nd line."
+  },
+  {
+    "ind": 80,
+    "name": "<end>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "End of text",
+    "tip": "Marks the end of the text, no more text will display after this."
+  },
+  {
+    "ind": 81,
+    "name": "<para>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "New Paragraph",
+    "tip": "Stop printing text and await the user to press a button before clearing out the dialog and continuing from the top."
+  },
+  {
+    "ind": 82,
+    "name": "<player>",
+    "shorthand": true,
+    "multiChar": true,
+    "variable": true,
+    "length": 7,
+    "alias": "Player Name",
+    "tip": "Inserts the player name taking up to 7 characters on screen but only 1 in the save data. Crashes if used in player name."
+  },
+  {
+    "ind": 83,
+    "name": "<rival>",
+    "shorthand": true,
+    "multiChar": true,
+    "variable": true,
+    "length": 7,
+    "alias": "Rival Name",
+    "tip": "Inserts the rivals name taking up to 7 characters on screen but only 1 in the save data. Crashes if used in rivals name."
+  },
+  {
+    "ind": 84,
+    "name": "<poke>",
+    "shorthand": true,
+    "multiChar": true,
+    "length": 4,
+    "alias": "Poké",
+    "tip": "Spell out 'Poke' on screen. Taking up 4 characters on screen but only using one character in the sav data."
+  },
+  {
+    "ind": 85,
+    "name": "<cont>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "Continue",
+    "tip": "Stop printing text and await the user to press a button before scrolling the text up and printing the next line at the bottom."
+  },
+  {
+    "ind": 86,
+    "name": "<......>",
+    "shorthand": true,
+    "multiChar": true,
+    "length": 2,
+    "alias": "……",
+    "tip": "Print out 2 sets of 3 dots taking up 2 characters on screen while only using one in the sav data"
+  },
+  {
+    "ind": 87,
+    "name": "<done>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "Done",
+    "tip": "Stop printing text and immidiately scroll the window up a line before continuing on the next line at the bottom."
+  },
+  {
+    "ind": 88,
+    "name": "<prompt>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "Prompt",
+    "tip": "Stop printing text and await the user to press a button before clearing out the dialog and continuing from the top."
+  },
+  {
+    "ind": 89,
+    "name": "<targ>",
+    "shorthand": true,
+    "multiChar": true,
+    "variable": true,
+    "length": 10,
+    "alias": "Target",
+    "tip": "Prints out the name of the last Pokemon or Item you used"
+  },
+  {
+    "ind": 90,
+    "name": "<user>",
+    "shorthand": true,
+    "multiChar": true,
+    "variable": true,
+    "length": 15,
+    "alias": "Opposing User",
+    "tip": "Prints out the name of the last Pokemon you fought prefixed with 'Enemy '"
+  },
+  {
+    "ind": 91,
+    "name": "<pc>",
+    "shorthand": true,
+    "multiChar": true,
+    "length": 2,
+    "alias": "PC",
+    "tip": "Spell out 'PC' on screen. Taking up 2 characters on screen but only using one character in the sav data."
+  },
+  {
+    "ind": 92,
+    "name": "<tm>",
+    "shorthand": true,
+    "multiChar": true,
+    "length": 2,
+    "alias": "TM",
+    "tip": "Spell out 'TM' on screen. Taking up 2 characters on screen but only using one character in the sav data."
+  },
+  {
+    "ind": 93,
+    "name": "<trainer>",
+    "shorthand": true,
+    "multiChar": true,
+    "length": 7,
+    "alias": "TRAINER",
+    "tip": "Spell out 'TRAINER' on screen. Taking up 7 characters on screen but only using one character in the sav data."
+  },
+  {
+    "ind": 94,
+    "name": "<rocket>",
+    "shorthand": true,
+    "multiChar": true,
+    "length": 6,
+    "alias": "ROCKET",
+    "tip": "Spell out 'ROCKET' on screen. Taking up 6 characters on screen but only using one character in the sav data."
+  },
+  {
+    "ind": 95,
+    "name": "<dex>",
+    "shorthand": true,
+    "control": true,
+    "length": 0,
+    "alias": "End Dex Entry",
+    "tip": "Does different things outside of a Pokedex Entry, often either inserts a period, does a <cont>, or both."
+  },
+  {
+    "ind": 96,
+    "name": "<A>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐀"
+  },
+  {
+    "ind": 97,
+    "name": "<B>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐁"
+  },
+  {
+    "ind": 98,
+    "name": "<C>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐂"
+  },
+  {
+    "ind": 99,
+    "name": "<D>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐃"
+  },
+  {
+    "ind": 100,
+    "name": "<E>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐄"
+  },
+  {
+    "ind": 101,
+    "name": "<F>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐅"
+  },
+  {
+    "ind": 102,
+    "name": "<G>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐆"
+  },
+  {
+    "ind": 103,
+    "name": "<H>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐇"
+  },
+  {
+    "ind": 104,
+    "name": "<I>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐈"
+  },
+  {
+    "ind": 105,
+    "name": "<V>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐕"
+  },
+  {
+    "ind": 106,
+    "name": "<S>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐒"
+  },
+  {
+    "ind": 107,
+    "name": "<L>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐋"
+  },
+  {
+    "ind": 108,
+    "name": "<M>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "𝐌"
+  },
+  {
+    "ind": 109,
+    "name": "<:>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "﹕"
+  },
+  {
+    "ind": 110,
+    "name": "<ji>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "い"
+  },
+  {
+    "ind": 111,
+    "name": "<ju>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "う"
+  },
+  {
+    "ind": 112,
+    "name": "<o'>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "‘"
+  },
+  {
+    "ind": 113,
+    "name": "<c'>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "’"
+  },
+  {
+    "ind": 114,
+    "name": "<o\">",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "“"
+  },
+  {
+    "ind": 115,
+    "name": "<c\">",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "”"
+  },
+  {
+    "ind": 116,
+    "name": "<mdot>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "·"
+  },
+  {
+    "ind": 117,
+    "name": "<...>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "…"
+  },
+  {
+    "ind": 118,
+    "name": "<ja>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "あ"
+  },
+  {
+    "ind": 119,
+    "name": "<je>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "え"
+  },
+  {
+    "ind": 120,
+    "name": "<jo>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "お"
+  },
+  {
+    "ind": 121,
+    "name": "<ul>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "UL Dialog"
+  },
+  {
+    "ind": 122,
+    "name": "<horz>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Horz Bars Dialog"
+  },
+  {
+    "ind": 123,
+    "name": "<ur>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "UR Dialog"
+  },
+  {
+    "ind": 124,
+    "name": "<vert>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Vert Bars Dialog"
+  },
+  {
+    "ind": 125,
+    "name": "<bl>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "BL Dialog"
+  },
+  {
+    "ind": 126,
+    "name": "<br>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "BR Dialog"
+  },
+  {
+    "ind": 127,
+    "name": " ",
+    "normal": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "Space"
+  },
+  {
+    "ind": 128,
+    "name": "A",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 129,
+    "name": "B",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 130,
+    "name": "C",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 131,
+    "name": "D",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 132,
+    "name": "E",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 133,
+    "name": "F",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 134,
+    "name": "G",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 135,
+    "name": "H",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 136,
+    "name": "I",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 137,
+    "name": "J",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 138,
+    "name": "K",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 139,
+    "name": "L",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 140,
+    "name": "M",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 141,
+    "name": "N",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 142,
+    "name": "O",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 143,
+    "name": "P",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 144,
+    "name": "Q",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 145,
+    "name": "R",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 146,
+    "name": "S",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 147,
+    "name": "T",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 148,
+    "name": "U",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 149,
+    "name": "V",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 150,
+    "name": "W",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 151,
+    "name": "X",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 152,
+    "name": "Y",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 153,
+    "name": "Z",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 154,
+    "name": "(",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 155,
+    "name": ")",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 156,
+    "name": ":",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 157,
+    "name": ";",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 158,
+    "name": "[",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 159,
+    "name": "]",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 160,
+    "name": "a",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 161,
+    "name": "b",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 162,
+    "name": "c",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 163,
+    "name": "d",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 164,
+    "name": "e",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 165,
+    "name": "f",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 166,
+    "name": "g",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 167,
+    "name": "h",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 168,
+    "name": "i",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 169,
+    "name": "j",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 170,
+    "name": "k",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 171,
+    "name": "l",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 172,
+    "name": "m",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 173,
+    "name": "n",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 174,
+    "name": "o",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 175,
+    "name": "p",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 176,
+    "name": "q",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 177,
+    "name": "r",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 178,
+    "name": "s",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 179,
+    "name": "t",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 180,
+    "name": "u",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 181,
+    "name": "v",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 182,
+    "name": "w",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 183,
+    "name": "x",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 184,
+    "name": "y",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 185,
+    "name": "z",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 186,
+    "name": "<e>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "é"
+  },
+  {
+    "ind": 187,
+    "name": "<'d>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "'d"
+  },
+  {
+    "ind": 188,
+    "name": "<'l>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "'l"
+  },
+  {
+    "ind": 189,
+    "name": "<'s>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "'s"
+  },
+  {
+    "ind": 190,
+    "name": "<'t>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "'t"
+  },
+  {
+    "ind": 191,
+    "name": "<'v>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "'v"
+  },
+  {
+    "ind": 192,
+    "name": "<tileC0>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C0",
+    "tip": "Use tile C0 in the currently loaded tileset."
+  },
+  {
+    "ind": 193,
+    "name": "<tileC1>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C1",
+    "tip": "Use tile C1 in the currently loaded tileset."
+  },
+  {
+    "ind": 194,
+    "name": "<tileC2>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C2",
+    "tip": "Use tile C2 in the currently loaded tileset."
+  },
+  {
+    "ind": 195,
+    "name": "<tileC3>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C3",
+    "tip": "Use tile C3 in the currently loaded tileset."
+  },
+  {
+    "ind": 196,
+    "name": "<tileC4>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C4",
+    "tip": "Use tile C4 in the currently loaded tileset."
+  },
+  {
+    "ind": 197,
+    "name": "<tileC5>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C5",
+    "tip": "Use tile C5 in the currently loaded tileset."
+  },
+  {
+    "ind": 198,
+    "name": "<tileC6>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C6",
+    "tip": "Use tile C6 in the currently loaded tileset."
+  },
+  {
+    "ind": 199,
+    "name": "<tileC7>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C7",
+    "tip": "Use tile C7 in the currently loaded tileset."
+  },
+  {
+    "ind": 200,
+    "name": "<tileC8>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C8",
+    "tip": "Use tile C8 in the currently loaded tileset."
+  },
+  {
+    "ind": 201,
+    "name": "<tileC9>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile C9",
+    "tip": "Use tile C9 in the currently loaded tileset."
+  },
+  {
+    "ind": 202,
+    "name": "<tileCA>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile CA",
+    "tip": "Use tile CA in the currently loaded tileset."
+  },
+  {
+    "ind": 203,
+    "name": "<tileCB>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile CB",
+    "tip": "Use tile CB in the currently loaded tileset."
+  },
+  {
+    "ind": 204,
+    "name": "<tileCC>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile CC",
+    "tip": "Use tile CC in the currently loaded tileset."
+  },
+  {
+    "ind": 205,
+    "name": "<tileCD>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile CD",
+    "tip": "Use tile CD in the currently loaded tileset."
+  },
+  {
+    "ind": 206,
+    "name": "<tileCE>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile CE",
+    "tip": "Use tile CE in the currently loaded tileset."
+  },
+  {
+    "ind": 207,
+    "name": "<tileCF>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile CF",
+    "tip": "Use tile CF in the currently loaded tileset."
+  },
+  {
+    "ind": 208,
+    "name": "<tileD0>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D0",
+    "tip": "Use tile D0 in the currently loaded tileset."
+  },
+  {
+    "ind": 209,
+    "name": "<tileD1>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D1",
+    "tip": "Use tile D1 in the currently loaded tileset."
+  },
+  {
+    "ind": 210,
+    "name": "<tileD2>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D2",
+    "tip": "Use tile D2 in the currently loaded tileset."
+  },
+  {
+    "ind": 211,
+    "name": "<tileD3>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D3",
+    "tip": "Use tile D3 in the currently loaded tileset."
+  },
+  {
+    "ind": 212,
+    "name": "<tileD4>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D4",
+    "tip": "Use tile D4 in the currently loaded tileset."
+  },
+  {
+    "ind": 213,
+    "name": "<tileD5>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D5",
+    "tip": "Use tile D5 in the currently loaded tileset."
+  },
+  {
+    "ind": 214,
+    "name": "<tileD6>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D6",
+    "tip": "Use tile D6 in the currently loaded tileset."
+  },
+  {
+    "ind": 215,
+    "name": "<tileD7>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D7",
+    "tip": "Use tile D7 in the currently loaded tileset."
+  },
+  {
+    "ind": 216,
+    "name": "<tileD8>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D8",
+    "tip": "Use tile D8 in the currently loaded tileset."
+  },
+  {
+    "ind": 217,
+    "name": "<tileD9>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile D9",
+    "tip": "Use tile D9 in the currently loaded tileset."
+  },
+  {
+    "ind": 218,
+    "name": "<tileDA>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile DA",
+    "tip": "Use tile DA in the currently loaded tileset."
+  },
+  {
+    "ind": 219,
+    "name": "<tileDB>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile DB",
+    "tip": "Use tile DB in the currently loaded tileset."
+  },
+  {
+    "ind": 220,
+    "name": "<tileDC>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile DC",
+    "tip": "Use tile DC in the currently loaded tileset."
+  },
+  {
+    "ind": 221,
+    "name": "<tileDD>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile DD",
+    "tip": "Use tile DD in the currently loaded tileset."
+  },
+  {
+    "ind": 222,
+    "name": "<tileDE>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile DE",
+    "tip": "Use tile DE in the currently loaded tileset."
+  },
+  {
+    "ind": 223,
+    "name": "<tileDF>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "Tile DF",
+    "tip": "Use tile DF in the currently loaded tileset."
+  },
+  {
+    "ind": 224,
+    "name": "'",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 225,
+    "name": "<pk>",
+    "shorthand": true,
+    "normal": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "PK"
+  },
+  {
+    "ind": 226,
+    "name": "<mn>",
+    "shorthand": true,
+    "normal": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "MN"
+  },
+  {
+    "ind": 227,
+    "name": "-",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 228,
+    "name": "<'r>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "'r"
+  },
+  {
+    "ind": 229,
+    "name": "<'m>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "'m"
+  },
+  {
+    "ind": 230,
+    "name": "?",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 231,
+    "name": "!",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 232,
+    "name": ".",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 233,
+    "name": "<jka>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "ァ"
+  },
+  {
+    "ind": 234,
+    "name": "<jku>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "ゥ"
+  },
+  {
+    "ind": 235,
+    "name": "<jke>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "ェ"
+  },
+  {
+    "ind": 236,
+    "name": "<arr-r2>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "⮚"
+  },
+  {
+    "ind": 237,
+    "name": "<arr-r>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "⯈"
+  },
+  {
+    "ind": 238,
+    "name": "<arr-d>",
+    "shorthand": true,
+    "picture": true,
+    "length": 1,
+    "alias": "⯆"
+  },
+  {
+    "ind": 239,
+    "name": "<m>",
+    "shorthand": true,
+    "normal": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "♂"
+  },
+  {
+    "ind": 240,
+    "name": "$",
+    "singleChar": true,
+    "length": 1,
+    "alias": "Poke-Yen"
+  },
+  {
+    "ind": 241,
+    "name": "<x>",
+    "shorthand": true,
+    "normal": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "×"
+  },
+  {
+    "ind": 242,
+    "name": "<.>",
+    "shorthand": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "."
+  },
+  {
+    "ind": 243,
+    "name": "/",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 244,
+    "name": ",",
+    "normal": true,
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 245,
+    "name": "<f>",
+    "shorthand": true,
+    "normal": true,
+    "singleChar": true,
+    "length": 1,
+    "alias": "♀"
+  },
+  {
+    "ind": 246,
+    "name": "0",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 247,
+    "name": "1",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 248,
+    "name": "2",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 249,
+    "name": "3",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 250,
+    "name": "4",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 251,
+    "name": "5",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 252,
+    "name": "6",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 253,
+    "name": "7",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 254,
+    "name": "8",
+    "singleChar": true,
+    "length": 1
+  },
+  {
+    "ind": 255,
+    "name": "9",
+    "singleChar": true,
+    "length": 1
+  }
 ]

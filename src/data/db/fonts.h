@@ -42,8 +42,9 @@ struct FontDBEntry {
   QString name; // Font Output
   bool shorthand = false; // Is Font Output shorthand for longer output?
   bool picture = false; // Does this use the tilemap and not the font
-  bool useTilemap = false; // ?? Perhaps same as picture (Forgot >_>)
   var8 length; // Font output length or potentially maximum length
+  QString alias; // Alternate font display name
+  QString tip; // Font details
   bool control = false; // Is this a control character
   bool multiChar = false; // Does this output a length greater than 1
   bool variable = false; // Does this output a variable
