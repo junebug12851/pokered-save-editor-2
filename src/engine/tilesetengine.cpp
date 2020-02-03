@@ -112,19 +112,11 @@ QPixmap TilesetEngine::buildTilesetFullDebug(QString id)
 
 QVector<QPixmap> TilesetEngine::buildTileset(QString id)
 {
-  // Pull from cache if it's in cache because all of this is a very expensive
-  // operation
-  if(cache.contains(id))
-    return *cache.object(id);
-
   // Use internal debug function to manually and slowly create it
   auto tileset = buildTilesetFullDebug(id).toImage();
 
   // Convert to an array of tiles
   QVector<QPixmap> ret = getTiles(tileset);
-
-  // Cache this
-  cache.insert(id, new QVector<QPixmap>(ret), 1);
 
   // Return a newly built array of tiles
   return ret;
@@ -224,12 +216,3 @@ QImage TilesetEngine::postProcessWave(QImage tile, int frame)
 
   return ret;
 }
-
-// Cache enough for 4 full frame cycles
-// A single tileset is 128x128 (16x16 tiles)
-// Each tile is 32-bit 8x8 images, and there are 256 tiles
-// Therefore each tile array is 64K
-// There are 8 frames in a full cycle meaning 512 KB
-// 4 Full cycles means 32 frames or 2MB of RAM as cache
-QCache<QString, QVector<QPixmap>> TilesetEngine::cache =
-    QCache<QString, QVector<QPixmap>>(fullFrameCount * 4);

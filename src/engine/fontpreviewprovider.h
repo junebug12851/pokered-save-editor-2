@@ -176,7 +176,6 @@ public:
   virtual QPixmap requestPixmap(const QString& id, QSize* size, const QSize& requestedSize) override;
   QPixmap getErrorImg(QSize* size, const QSize& requestedSize);
 
-  static QCache<QString, FontPreviewCached> cache;
   SaveFileExpanded* expanded = nullptr;
 };
 

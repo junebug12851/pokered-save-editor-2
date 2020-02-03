@@ -76,9 +76,6 @@ public:
   // flower has 4 frames, water has 8 frames
   // A full frame count would be one where everything completes
   static constexpr int fullFrameCount = 8;
-
-  // Hold a cache of 2 full frame objects
-  static QCache<QString, QVector<QPixmap>> cache;
 };
 
 #endif // TILESETENGINE_H

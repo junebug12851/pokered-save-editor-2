@@ -318,17 +318,6 @@ FontPreviewProvider::FontPreviewProvider(SaveFileExpanded* expanded)
 QPixmap FontPreviewProvider::requestPixmap(
     const QString& id, QSize* size, const QSize& requestedSize)
 {
-  // Pull from the cache if it exists in the cache & the players name and rivals
-  // name match. If they don't the image needs to be regenerated.
-  // It takes a seriously long time to generate the image so if it can be
-  // pulled from the cache then go for it
-  if(cache.contains(id)) {
-    auto tmp = cache.object(id);
-    if(tmp->playersName == expanded->player->basics->playerName &&
-       tmp->rivalsName == expanded->rival->name)
-      return cache.object(id)->resultingImg;
-  }
-
   // Check to make sure it's a properly formed request
   auto idParts = id.split("/", QString::SplitBehavior::KeepEmptyParts);
 
@@ -338,16 +327,9 @@ QPixmap FontPreviewProvider::requestPixmap(
 
   // With that out of the way, create an instance of the struct that will do
   // the work.
-  auto inst = new FontPreviewInstance(idParts, expanded, size, requestedSize);
+  auto inst = FontPreviewInstance(idParts, expanded, size, requestedSize);
 
-  // Cache it
-  auto toCache = new FontPreviewCached();
-  toCache->playersName = expanded->player->basics->playerName;
-  toCache->rivalsName = expanded->rival->name;
-  toCache->resultingImg = inst->resultingImg;
-  cache.insert(id, toCache, 1);
-
-  return inst->resultingImg;
+  return inst.resultingImg;
 }
 
 QPixmap FontPreviewProvider::getErrorImg(QSize* size, const QSize& requestedSize)
@@ -373,7 +355,3 @@ QPixmap FontPreviewProvider::getErrorImg(QSize* size, const QSize& requestedSize
 
   return ret;
 }
-
-// Allow 50 cached copies to exist
-QCache<QString, FontPreviewCached> FontPreviewProvider::cache =
-    QCache<QString, FontPreviewCached>(50);

@@ -61,6 +61,8 @@ Rectangle {
 
     width: (8 * 16) * sizeMult
     height: (8 * 16) * sizeMult
+
+    cache: false
   }
 
   Image {
