@@ -128,6 +128,6 @@ Rectangle {
     NumberAnimation {target: top; property: "x"; to: -1000; duration: 250}
     NumberAnimation {target: top; property: "opacity"; to: 0; duration: 250}
 
-    onFinished: root.changeScreen("home")
+    onFinished: root.closeModal()
   }
 }

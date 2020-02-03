@@ -60,6 +60,11 @@ Rectangle {
     startingUp = false;
   }
 
+  // the modal is responsible for closing animation
+  function closeModal() {
+    modal.source = "";
+  }
+
   // Given a name, changes the screen
   function changeScreen(name)
   {
