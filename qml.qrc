@@ -410,5 +410,6 @@
         <file>assets/icons/poke-go/player.svg</file>
         <file>assets/icons/poke-go/pokedex.svg</file>
         <file>assets/icons/poke-go/smartphone.svg</file>
+        <file>ui/app/fragments/NameDisplay.qml</file>
     </qresource>
 </RCC>
