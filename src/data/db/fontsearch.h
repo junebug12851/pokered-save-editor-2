@@ -47,7 +47,7 @@ public:
 
   // QML Interface
   Q_INVOKABLE int fontCount();
-  Q_INVOKABLE QString fontStrAt(int ind);
+  Q_INVOKABLE FontDBEntry* fontAt(int ind);
 
   QVector<FontDBEntry*> results = QVector<FontDBEntry*>();
 };

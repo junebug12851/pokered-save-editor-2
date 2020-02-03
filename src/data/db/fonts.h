@@ -16,6 +16,7 @@
 #ifndef FONTS_H
 #define FONTS_H
 
+#include <QObject>
 #include <QString>
 #include <QHash>
 #include <QVector>
@@ -31,18 +32,48 @@ class FontSearch;
 // There are 255 font options although most of them are "invalid" and thus
 // use the tilemap.
 
-struct FontDBEntry {
+struct FontDBEntry : public QObject {
+  Q_OBJECT
+
+  Q_PROPERTY(int ind MEMBER ind NOTIFY indChanged)
+  Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)
+  Q_PROPERTY(bool shorthand MEMBER shorthand NOTIFY shorthandChanged)
+  Q_PROPERTY(bool picture MEMBER picture NOTIFY pictureChanged)
+  Q_PROPERTY(int length MEMBER length NOTIFY lengthChanged)
+  Q_PROPERTY(QString alias MEMBER alias NOTIFY aliasChanged)
+  Q_PROPERTY(QString tip MEMBER tip NOTIFY tipChanged)
+  Q_PROPERTY(bool control MEMBER control NOTIFY controlChanged)
+  Q_PROPERTY(bool multiChar MEMBER multiChar NOTIFY multiCharChanged)
+  Q_PROPERTY(bool variable MEMBER variable NOTIFY variableChanged)
+  Q_PROPERTY(bool singleChar MEMBER singleChar NOTIFY singleCharChanged)
+  Q_PROPERTY(bool normal MEMBER normal NOTIFY normalChanged)
+
+signals:
+  void indChanged();
+  void nameChanged();
+  void shorthandChanged();
+  void pictureChanged();
+  void lengthChanged();
+  void aliasChanged();
+  void tipChanged();
+  void controlChanged();
+  void multiCharChanged();
+  void variableChanged();
+  void singleCharChanged();
+  void normalChanged();
+
+public:
   FontDBEntry();
   FontDBEntry(QJsonValue& data);
 
   // Optional values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
 
-  var8 ind; // Font Code
+  int ind; // Font Code
   QString name; // Font Output
   bool shorthand = false; // Is Font Output shorthand for longer output?
   bool picture = false; // Does this use the tilemap and not the font
-  var8 length; // Font output length or potentially maximum length
+  int length; // Font output length or potentially maximum length
   QString alias; // Alternate font display name
   QString tip; // Font details
   bool control = false; // Is this a control character
@@ -52,8 +83,10 @@ struct FontDBEntry {
   bool normal = false; // Would this be an in-game accessible font char
 };
 
-class FontsDB
+class FontsDB : public QObject
 {
+  Q_OBJECT
+
 public:
   static void load();
   static void index();
@@ -62,7 +95,7 @@ public:
   // You must delete this when done
   // If you want to change parameters or startover you must obtain a new one
   // everytime
-  static FontSearch* search();
+  Q_INVOKABLE static FontSearch* search();
 
   // Converts a string to in-game font characters
   // The string represents font characters, so special characters like
@@ -83,6 +116,11 @@ public:
   // It's complex and expensive
   static QString expandStr(
       QString msg, var8 maxLen, QString rival = "BLUE", QString player = "RED");
+
+  // QML Interface
+  Q_INVOKABLE static int fontCount();
+  Q_INVOKABLE static FontDBEntry* fontAt(int code);
+  Q_INVOKABLE static FontDBEntry* fontLookup(QString val);
 
   static QVector<FontDBEntry*> store;
   static QHash<QString, FontDBEntry*> ind;

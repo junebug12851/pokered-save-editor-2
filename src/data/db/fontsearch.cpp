@@ -165,7 +165,7 @@ int FontSearch::fontCount()
   return results.size();
 }
 
-QString FontSearch::fontStrAt(int ind)
+FontDBEntry* FontSearch::fontAt(int ind)
 {
-  return results.at(ind)->name;
+  return results.at(ind);
 }

@@ -349,6 +349,21 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
   return ret;
 }
 
+int FontsDB::fontCount()
+{
+  return store.size();
+}
+
+FontDBEntry* FontsDB::fontAt(int code)
+{
+  return store.at(code);
+}
+
+FontDBEntry* FontsDB::fontLookup(QString val)
+{
+  return ind.value(val);
+}
+
 void FontsDB::splice(QVector<var8>& out, QString in, var8 ind)
 {
   QVector<var8> tmp = convertToCode(in, 100, false);
