@@ -17,6 +17,7 @@ Image {
   property bool hasBox: false
   property bool is2Line: false
   property int chopLen: 10
+  property bool editorVisible: false
 
   /*********************************************
    * Internal properties (Should never need to be changed)
@@ -86,6 +87,27 @@ Image {
       else
         curFrame++;
     }
+  }
+
+  EditButton {
+    visible: !editorVisible
+    anchors.bottom: parent.bottom
+    anchors.left: parent.right
+
+    onClicked: editorVisible = !editorVisible;
+  }
+
+  NameEdit {
+    text: str
+    onTextChanged: str = text;
+
+    visible: editorVisible
+    onAccepted: editorVisible = !editorVisible
+
+    width: parent.width
+    anchors.bottom: parent.top
+    anchors.left: parent.left
+    anchors.bottomMargin: 5
   }
 
   Component.onCompleted: adjustHeight()

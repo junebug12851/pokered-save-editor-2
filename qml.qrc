@@ -411,5 +411,8 @@
         <file>ui/app/sections/sub/Footer1Randomize.qml</file>
         <file>ui/app/sections/sub/NavBarButtons.qml</file>
         <file>ui/app/fragments/general/InfoButton.qml</file>
+        <file>ui/app/fragments/general/EditButton.qml</file>
+        <file>assets/icons/fontawesome/pen.svg</file>
+        <file>ui/app/fragments/general/NameEdit.qml</file>
     </qresource>
 </RCC>

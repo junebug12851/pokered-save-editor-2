@@ -10,18 +10,22 @@ Rectangle {
 
   color: Style.primaryColorLight
 
-  TextEdit {
-    id: textBox
-    width: 400
-    text: "BLASTOISE"
-  }
-
   NameDisplay {
-    anchors.left: textBox.left
-    anchors.top: textBox.bottom
-    anchors.topMargin: 10
+    id: playerNameEdit
 
-    sizeMult: 4
-    str: textBox.text
+    anchors.left: parent.left
+    anchors.top: parent.top
+    anchors.leftMargin: 15
+    anchors.topMargin: 60
+
+    sizeMult: 2
+
+    str: file.data.dataExpanded.player.basics.playerName
+    onStrChanged: file.data.dataExpanded.player.basics.playerName = str
+
+    Connections {
+      target: file.data.dataExpanded.player.basics
+      onPlayerNameChanged: playerNameEdit.str = file.data.dataExpanded.player.basics.playerName
+    }
   }
 }

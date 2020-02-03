@@ -356,7 +356,7 @@ int FontsDB::fontCount()
 
 FontDBEntry* FontsDB::fontAt(int code)
 {
-  return store.at(code);
+  return store.at(code - 1);
 }
 
 FontDBEntry* FontsDB::fontLookup(QString val)
