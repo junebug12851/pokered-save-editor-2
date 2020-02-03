@@ -5,7 +5,6 @@ import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
 import "./sections"
-import "./contents"
 import "./common/Pages.js" as Pages
 import "./common/Style.js" as Style
 
@@ -94,7 +93,7 @@ Rectangle {
     title = screen.title
 
     // load the navbar and screen body
-    navBar.source = "./sections/NavBar.qml";
+    navBar.source = "./sections/major/NavBar.qml";
     body.source = screen.body;
 
     // Load the footer. Footer is a 2-part loading process because of it's
@@ -103,6 +102,6 @@ Rectangle {
     // We refer to the upper half as "Number of Buttons" because it's designed
     // for how many buttons the lower half actually has
     if(screen.footerBtns === 1)
-      footer.setSource("./sections/Footer1.qml", {subFooterSrc: screen.footer});
+      footer.setSource("./sections/major/Footer1.qml", {subFooterSrc: screen.footer});
   }
 }

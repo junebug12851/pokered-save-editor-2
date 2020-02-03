@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import "../common/Style.js" as Style
+import "../../common/Style.js" as Style
 
 Rectangle {
   color: Style.primaryColorLight

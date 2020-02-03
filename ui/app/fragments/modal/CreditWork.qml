@@ -1,6 +1,6 @@
 import QtQuick 2.14
 
-import "../common/Style.js" as Style
+import "../../common/Style.js" as Style
 
 Text {
   padding: 15

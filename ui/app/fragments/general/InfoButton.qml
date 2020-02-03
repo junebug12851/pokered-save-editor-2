@@ -2,7 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import "../common/Style.js" as Style
+import "../../common/Style.js" as Style
 
 RoundButton {
   display: AbstractButton.IconOnly

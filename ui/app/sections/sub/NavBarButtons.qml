@@ -3,8 +3,8 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import "../fragments"
-import "../common/Style.js" as Style
+import "../../fragments/navbar"
+import "../../common/Style.js" as Style
 
 RowLayout {
   spacing: 0

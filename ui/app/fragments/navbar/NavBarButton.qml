@@ -1,8 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
-import "../fragments"
-import "../common/Style.js" as Style
+import "../general"
+import "../../common/Style.js" as Style
 
 Button {
 

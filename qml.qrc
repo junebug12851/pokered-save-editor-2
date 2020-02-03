@@ -25,29 +25,12 @@
         <file>assets/data/namesPokemon.json</file>
         <file>assets/data/music.json</file>
         <file>assets/data/spriteSet.json</file>
-        <file>ui/app/sections/NavBar.qml</file>
         <file>ui/app/common/Style.js</file>
-        <file>ui/app/sections/Footer1.qml</file>
-        <file>ui/app/contents/NavBarButtons.qml</file>
-        <file>ui/app/contents/Footer1Randomize.qml</file>
-        <file>ui/app/fragments/MainToolTip.qml</file>
-        <file>ui/app/contents/NewFile.qml</file>
         <file>assets/wallpaper/jelly-donuts.jpg</file>
         <file>assets/wallpaper/pokewalk.jpg</file>
-        <file>ui/app/fragments/TileButton.qml</file>
-        <file>ui/app/fragments/CreditWork.qml</file>
-        <file>ui/app/fragments/ManualButton.qml</file>
-        <file>ui/app/fragments/ModalClose.qml</file>
         <file>ui/app/common/Pages.js</file>
-        <file>ui/app/fragments/RecentFilesTile.qml</file>
-        <file>ui/app/contents/FileTools.qml</file>
-        <file>ui/app/fragments/InfoButton.qml</file>
-        <file>ui/app/contents/HomeScreen.qml</file>
-        <file>ui/app/contents/AboutScreen.qml</file>
         <file>assets/data/credits.json</file>
         <file>assets/wallpaper/starters.jpg</file>
-        <file>ui/app/fragments/NavBarButton.qml</file>
-        <file>ui/app/contents/TrainerCardScreen.qml</file>
         <file>assets/tilesets/_font.png</file>
         <file>assets/tilesets/_flower1.png</file>
         <file>assets/tilesets/_flower2.png</file>
@@ -410,6 +393,23 @@
         <file>assets/icons/poke-go/player.svg</file>
         <file>assets/icons/poke-go/pokedex.svg</file>
         <file>assets/icons/poke-go/smartphone.svg</file>
-        <file>ui/app/fragments/NameDisplay.qml</file>
+        <file>ui/app/fragments/general/MainToolTip.qml</file>
+        <file>ui/app/fragments/general/ManualButton.qml</file>
+        <file>ui/app/fragments/general/NameDisplay.qml</file>
+        <file>ui/app/fragments/modal/CreditWork.qml</file>
+        <file>ui/app/fragments/modal/ModalClose.qml</file>
+        <file>ui/app/fragments/modal/RecentFilesTile.qml</file>
+        <file>ui/app/fragments/modal/TileButton.qml</file>
+        <file>ui/app/fragments/navbar/NavBarButton.qml</file>
+        <file>ui/app/screens/modal/AboutScreen.qml</file>
+        <file>ui/app/screens/modal/FileTools.qml</file>
+        <file>ui/app/screens/modal/NewFile.qml</file>
+        <file>ui/app/screens/non-modal/HomeScreen.qml</file>
+        <file>ui/app/screens/non-modal/TrainerCardScreen.qml</file>
+        <file>ui/app/sections/major/Footer1.qml</file>
+        <file>ui/app/sections/major/NavBar.qml</file>
+        <file>ui/app/sections/sub/Footer1Randomize.qml</file>
+        <file>ui/app/sections/sub/NavBarButtons.qml</file>
+        <file>ui/app/fragments/general/InfoButton.qml</file>
     </qresource>
 </RCC>

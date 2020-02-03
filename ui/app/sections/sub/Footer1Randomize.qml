@@ -3,8 +3,8 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import "../fragments"
-import "../common/Style.js" as Style
+import "../../fragments/general"
+import "../../common/Style.js" as Style
 
 /*
  * 1 Randomize Button for footers that display 1 button

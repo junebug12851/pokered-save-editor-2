@@ -3,23 +3,20 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import "../common/Style.js" as Style
+import "../../common/Style.js" as Style
 
 Image {
   /*********************************************
    * Public properties with sensible defaults
    *********************************************/
-
-  property int sizeMult: 2
-
+  property real sizeMult: 2
+  property bool isOutdoor: true
   property string tileset: "overworld"
-  property string type: "outdoor"
   property string placeholder: "%%"
   property string str: ""
-  property bool hasBox: true
+  property bool hasBox: false
   property bool is2Line: false
-  property int chopLen: 0
-  property color bgColor: (hasBox) ? "white" : "transparent"
+  property int chopLen: 10
 
   /*********************************************
    * Internal properties (Should never need to be changed)
@@ -29,6 +26,8 @@ Image {
   property int tick: 1000 / 3
   property string hasBoxStr: (hasBox) ? "box" : "no-box"
   property string is2LineStr: (is2Line) ? "2-lines" : "1-line"
+  property color bgColor: (hasBox) ? "white" : "transparent"
+  property string isOutdoorStr: (isOutdoor) ? "outdoor" : "indoor"
 
   // Error checks and corrects width and height to prevent blurring and to have
   // it display correctly. These, along with the width and height, should never
@@ -36,12 +35,12 @@ Image {
 
   function adjustHeight() {
     if(hasBox)
-      height = Qt.binding(function() {return 8 * 6 * sizeMult; });
+      height = Qt.binding(function() {return Math.trunc(8 * 6 * sizeMult); });
     else
       height = Qt.binding(function() {
         return (is2Line) ?
-            8 * 3 * sizeMult :
-            8 * 1 * sizeMult;
+            Math.trunc(8 * 3 * sizeMult) :
+            Math.trunc(8 * 1 * sizeMult);
       });
   }
 
@@ -50,7 +49,7 @@ Image {
 
   source: "image://font/" +
           tileset + "/" +
-          type + "/" +
+          isOutdoorStr + "/" +
           curFrame + "/" +
           width + "/" +
           height + "/" +
@@ -68,8 +67,13 @@ Image {
 
   // Width and height should never need to be changed
   width: (chopLen > 0 && !hasBox)
-         ? 8 * chopLen * sizeMult
-         : 8 * 20 * sizeMult
+         ? Math.trunc(8 * chopLen * sizeMult)
+         : Math.trunc(8 * 20 * sizeMult)
+
+  // This is a placeholder to prevent it occasionally asking for height 0
+  // on startup. Functions above will quickly correct it to the proper value
+  // during startup
+  height: 1
 
   // Always running timer, should never need to be changed
   Timer {
