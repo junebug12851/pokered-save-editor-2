@@ -6,8 +6,10 @@ import QtQuick.Controls.Material 2.14
 import "../common/Style.js" as Style
 
 Image {
-  property int curFrame: 0
-  property int tick: 1000 / 3
+  /*********************************************
+   * Public properties with sensible defaults
+   *********************************************/
+
   property int sizeMult: 2
 
   property string tileset: "overworld"
@@ -19,10 +21,20 @@ Image {
   property int chopLen: 0
   property color bgColor: (hasBox) ? "white" : "transparent"
 
+  /*********************************************
+   * Internal properties (Should never need to be changed)
+   *********************************************/
+
+  property int curFrame: 0
+  property int tick: 1000 / 3
   property string hasBoxStr: (hasBox) ? "box" : "no-box"
   property string is2LineStr: (is2Line) ? "2-lines" : "1-line"
 
-  onHasBoxChanged: {
+  // Error checks and corrects width and height to prevent blurring and to have
+  // it display correctly. These, along with the width and height, should never
+  // need to be changed.
+
+  function adjustHeight() {
     if(hasBox)
       height = Qt.binding(function() {return 8 * 6 * sizeMult; });
     else
@@ -33,6 +45,7 @@ Image {
       });
   }
 
+  onHasBoxChanged: adjustHeight();
   onChopLenChanged: if(chopLen > 20) chopLen = 20;
 
   source: "image://font/" +
@@ -49,11 +62,16 @@ Image {
           util.encodeBeforeUrl(placeholder) +"/" +
           util.encodeBeforeUrl(str)
 
+  // To prevent a million images filling the cache, this should never have to be
+  // changed
   cache: false
-  width: (chopLen > 0)
+
+  // Width and height should never need to be changed
+  width: (chopLen > 0 && !hasBox)
          ? 8 * chopLen * sizeMult
          : 8 * 20 * sizeMult
 
+  // Always running timer, should never need to be changed
   Timer {
     interval: tick;
     running: true;
@@ -65,4 +83,6 @@ Image {
         curFrame++;
     }
   }
+
+  Component.onCompleted: adjustHeight()
 }
