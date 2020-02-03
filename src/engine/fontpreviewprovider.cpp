@@ -42,14 +42,8 @@ FontPreviewInstance::FontPreviewInstance(
   // Initial setup and unfolding of idParts
   setup(idParts);
 
-  // Error check maxInputStrLen and fix if needed
-  errorCheckSetMax();
-
   // Now retrieve the tiles from the tileset engine
   getTiles();
-
-  // Trim user supplied string to max
-  enforceMaxSize();
 
   // Now retrieve tile codes for the whole thing and the lines they need to be
   // on
@@ -100,7 +94,7 @@ void FontPreviewInstance::setup(QStringList idParts)
 
   box = idParts.at(IdPartBox) == "box";
   lines2 = idParts.at(IdPart2Line) == "2-lines";
-  maxInputStrLen = idParts.at(IdPartMax).toInt();
+  chopLen = idParts.at(IdPartChop).toInt();
   bgColor = QColor(idParts.at(IdPartBGColor));
 
   useFg = idParts.at(IdPartFGColor) != "none";
@@ -149,41 +143,15 @@ void FontPreviewInstance::getResultingText()
   resultingText = ret;
 }
 
-void FontPreviewInstance::enforceMaxSize()
-{
-  // Converts to code, trimming after max chars, then converts back
-  auto strCode = FontsDB::convertToCode(inputStr, maxInputStrLen, false);
-  auto strBack = FontsDB::convertFromCode(strCode, 255);
-  inputStr = strBack;
-}
-
-void FontPreviewInstance::errorCheckSetMax()
-{
-  if(maxInputStrLen <= 0 || maxInputStrLen > maxStrLenTiles)
-      maxInputStrLen = maxStrLenTiles;
-}
-
-// Calculate longest line size to start with
-// We have to use codes to figure that out, not string characters
 void FontPreviewInstance::getImageWidth()
 {
-  imgWidth = 0;
+  if(!box && chopLen > 0)
+    imgWidth = chopLen * tileSize;
+  else
+    imgWidth = drawWidth;
 
-  // Check to see if box is enabled, this simplifies things
-  if(box)
-    imgWidth = boxWidth;
-
-  // Otherwise figure out longest line
-  else {
-    for(auto entry : resultingText) {
-      if((entry.size() * tileSize) > imgWidth)
-        imgWidth = entry.size() * tileSize;
-    }
-  }
-
-  // Error check
-  if(imgWidth > maxWidth)
-    imgWidth = maxWidth;
+  if(imgWidth > drawWidth)
+    imgWidth = drawWidth;
 
   imgWidthTiles = imgWidth / tileSize;
 }
@@ -193,11 +161,11 @@ void FontPreviewInstance::getImageHeight()
   // Large enough for 2 lines only if 2 lines are present and 2 lines are
   // allowed or if box is enabled, use that
   if(box)
-    imgHeight = boxHeight;
+    imgHeight = drawHeightBox;
   else {
     imgHeight = ((resultingText.size() > 1) && lines2)
-        ? line2Height
-        : line1Height;
+        ? drawHeightLines2
+        : drawHeightLines1;
   }
 
   imgHeightTiles = imgHeight / tileSize;
@@ -211,18 +179,13 @@ void FontPreviewInstance::getBaseImg()
 
 void FontPreviewInstance::drawBox()
 {
-  // Error check
-  if(boxImg.width() < boxWidth ||
-     boxImg.height() < boxHeight)
-    return;
-
   QPainter p(&boxImg);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
   var8 counter = 0;
 
-  for(var8 y = 0; y < boxHeightTiles; y++) {
-    for(var8 x = 0; x < boxWidthTiles; x++) {
+  for(var8 y = 0; y < drawHeightBoxTiles; y++) {
+    for(var8 x = 0; x < drawWidthTiles; x++) {
       var8 boxTile = boxTiles[counter];
       p.drawPixmap(x * tileSize, y * tileSize, tiles.at(boxTile));
       counter++;
@@ -335,8 +298,8 @@ QPixmap FontPreviewProvider::requestPixmap(
 QPixmap FontPreviewProvider::getErrorImg(QSize* size, const QSize& requestedSize)
 {
   // Create an error "red" blank tile to indicate issue
-  QSize actualSize = QSize(FontPreviewInstance::boxWidth,
-                           FontPreviewInstance::boxHeight);
+  QSize actualSize = QSize(FontPreviewInstance::drawWidth,
+                           FontPreviewInstance::drawHeightBox);
 
   if(size != nullptr)
     *size = actualSize;

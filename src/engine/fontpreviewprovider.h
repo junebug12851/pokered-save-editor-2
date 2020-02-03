@@ -44,7 +44,7 @@ struct FontPreviewInstance
     IdPartHeight,
     IdPartBox,
     IdPart2Line,
-    IdPartMax,
+    IdPartChop,
     IdPartBGColor,
     IdPartFGColor,
     IdPartPlaceHolder,
@@ -67,30 +67,35 @@ struct FontPreviewInstance
     0x7D,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7E
   };
 
+  // Tile size
   static constexpr var8 tileSize = 8;
-  static constexpr var8 boxWidthTiles = 20;
-  static constexpr var8 boxHeightTiles = 6;
-  static constexpr var8 boxWidth = boxWidthTiles * tileSize;
-  static constexpr var8 boxHeight = boxHeightTiles * tileSize;
-  static constexpr var8 maxWidthTiles = 20;
-  static constexpr var8 maxWidth = 20 * tileSize;
-  static constexpr var8 maxBoxFGWidthTiles = 17;
-  static constexpr var8 maxBoxFGHeightTiles = 2;
-  static constexpr var8 maxBoxFGWidth = maxBoxFGWidthTiles * tileSize;
-  static constexpr var8 maxBoxFGHeight = maxBoxFGHeightTiles * tileSize;
-  static constexpr var8 maxStrLenTiles = maxWidthTiles * maxBoxFGHeightTiles;
-  static constexpr var8 line1HeightTiles = 1;
-  static constexpr var8 line2HeightTiles = 3;
-  static constexpr var8 line1Height = line1HeightTiles * tileSize;
-  static constexpr var8 line2Height = line2HeightTiles * tileSize;
+
+  // Hard-coded in FontDB and in FrontPreviewProvider
+  static constexpr var8 maxLines = 2;
+
+  // Spacing between mutliple lines
+  static constexpr var8 lineHeightTiles = 1;
+  static constexpr var8 lineHeight = lineHeightTiles * tileSize;
+
+  // Width and Heights
+  static constexpr var8 drawWidthTiles = 20;
+  static constexpr var8 drawHeightLines1Tiles = 1;
+  static constexpr var8 drawHeightLines2Tiles = 2 + lineHeightTiles;
+  static constexpr var8 drawHeightBoxTiles = 6;
+
+  static constexpr var8 drawWidth = drawWidthTiles * tileSize;
+  static constexpr var8 drawHeightLines1 = drawHeightLines1Tiles * tileSize;
+  static constexpr var8 drawHeightLines2 = drawHeightLines2Tiles * tileSize;
+  static constexpr var8 drawHeightBox = drawHeightBoxTiles * tileSize;
+
+  // Max str length
+  static constexpr var8 maxStrLenTiles = drawWidthTiles * maxLines;
 
   void setup(QStringList idParts);
 
   void getInputStr();
   void getTiles();
   void getResultingText();
-  void enforceMaxSize();
-  void errorCheckSetMax();
   void getImageWidth();
   void getImageHeight();
   void getBaseImg();
@@ -110,7 +115,7 @@ struct FontPreviewInstance
   int toHeight = 0;
   bool box = false;
   bool lines2 = false;
-  int maxInputStrLen = 0;
+  int chopLen = 0;
   QColor bgColor;
   QColor fgColor;
   QString placeholder;
