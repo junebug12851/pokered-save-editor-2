@@ -39,8 +39,12 @@ void NamesDB::load()
 
 QString NamesDB::randomName()
 {
-  var32 ind = Random::rangeExclusive(0, store.size());
-  return store.at(ind);
+  lastInd++;
+  if(lastInd >= store.size())
+    lastInd = 0;
+
+  return store.at(lastInd);
 }
 
+int NamesDB::lastInd = 0;
 QVector<QString> NamesDB::store = QVector<QString>();

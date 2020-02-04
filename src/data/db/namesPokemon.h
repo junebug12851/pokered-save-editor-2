@@ -38,6 +38,7 @@ public:
   static void load();
   Q_INVOKABLE static QString randomName();
 
+  static int lastInd;
   static QVector<QString> store;
 };
 

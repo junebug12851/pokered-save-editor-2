@@ -39,8 +39,12 @@ void NamesPokemonDB::load()
 
 QString NamesPokemonDB::randomName()
 {
-  var32 ind = Random::rangeExclusive(0, store.size());
-  return store.at(ind);
+  lastInd++;
+  if(lastInd >= store.size())
+    lastInd = 0;
+
+  return store.at(lastInd);
 }
 
+int NamesPokemonDB::lastInd = 0;
 QVector<QString> NamesPokemonDB::store = QVector<QString>();
