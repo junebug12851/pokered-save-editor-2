@@ -122,6 +122,10 @@ public:
   Q_INVOKABLE static FontDBEntry* fontAt(int code);
   Q_INVOKABLE static FontDBEntry* fontLookup(QString val);
 
+  // Because counting text size is complicated, this makes it just 1 function
+  // call and accessible from QML
+  Q_INVOKABLE static int countSizeOf(QString val);
+
   static QVector<FontDBEntry*> store;
   static QHash<QString, FontDBEntry*> ind;
 

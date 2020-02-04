@@ -364,6 +364,12 @@ FontDBEntry* FontsDB::fontLookup(QString val)
   return ind.value(val);
 }
 
+int FontsDB::countSizeOf(QString val)
+{
+  // Ignore max size and ending byte
+  return convertToCode(val, 255, false).size();
+}
+
 void FontsDB::splice(QVector<var8>& out, QString in, var8 ind)
 {
   QVector<var8> tmp = convertToCode(in, 100, false);
