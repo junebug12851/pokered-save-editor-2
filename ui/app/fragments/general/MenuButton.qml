@@ -7,7 +7,7 @@ import "../../common/Style.js" as Style
 RoundButton {
   display: AbstractButton.IconOnly
   icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
-  icon.width: 15
+  icon.width: 7
   icon.height: 15
   icon.color: Style.textColorPrimary
   flat: true

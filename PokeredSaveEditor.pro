@@ -21,6 +21,9 @@ HEADERS += \
   src/data/db/credits.h \
   src/data/db/eventpokemon.h \
   src/data/db/events.h \
+  src/data/db/examplesplayer.h \
+  src/data/db/examplespokemon.h \
+  src/data/db/examplesrival.h \
   src/data/db/fly.h \
   src/data/db/fonts.h \
   src/data/db/fontsearch.h \
@@ -108,6 +111,9 @@ SOURCES += \
   src/boot/bootDatabase.cpp \
   src/common/utility.cpp \
   src/data/db/credits.cpp \
+  src/data/db/examplesplayer.cpp \
+  src/data/db/examplespokemon.cpp \
+  src/data/db/examplesrival.cpp \
   src/data/db/fontsearch.cpp \
   src/data/db/mapsearch.cpp \
   src/data/db/music.cpp \

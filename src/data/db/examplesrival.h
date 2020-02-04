@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,32 +13,24 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef NAME_H
-#define NAME_H
+#ifndef EXAMPLESRIVAL_H
+#define EXAMPLESRIVAL_H
 
 #include <QObject>
 #include <QString>
 
 #include "../../common/types.h"
 
-// Something I made, random American names, I made it for the auto-nicknaming
-// feature given this program is for the USA English Pokemon Red.
-
-// Names are curtesy of
-// Pokemon Name Generator => Gym Leader Names
-// FantasyNameGenerators.com
-// https://www.fantasynamegenerators.com/pokemon-names.php
-// Generated text is released as public domain
-
-class NamesDB : public QObject
+class ExamplesRival : public QObject
 {
   Q_OBJECT
 
 public:
   static void load();
-  Q_INVOKABLE static QString randomName();
+  Q_INVOKABLE static QString randomExample();
 
+  static var32 lastInd;
   static QVector<QString> store;
 };
 
-#endif // NAME_H
+#endif // EXAMPLESRIVAL_H

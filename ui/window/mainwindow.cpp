@@ -8,8 +8,14 @@
 #include "../../src/common/types.h"
 #include "../../src/common/utility.h"
 #include "../../src/data/file/filemanagement.h"
+
+#include "../../src/data/db/examplesplayer.h"
+#include "../../src/data/db/examplespokemon.h"
+#include "../../src/data/db/examplesrival.h"
 #include "../../src/data/db/fontsearch.h"
 #include "../../src/data/db/fonts.h"
+#include "../../src/data/db/names.h"
+#include "../../src/data/db/namesPokemon.h"
 
 #include "../../src/data/file/savefile.h"
 
@@ -187,7 +193,12 @@ void MainWindow::injectIntoQML()
   qml->setContextProperty("creditsModel", new CreditsModel);
   qml->setContextProperty("fontSearch", new FontSearch);
   qml->setContextProperty("fonts", new FontsDB);
+  qml->setContextProperty("randomPlayerName", new NamesDB);
+  qml->setContextProperty("randomPokemonName", new NamesPokemonDB);
   qml->setContextProperty("util", new Utility);
+  qml->setContextProperty("randomExamplePlayer", new ExamplesPlayer);
+  qml->setContextProperty("randomExamplePokemon", new ExamplesPokemon);
+  qml->setContextProperty("randomExampleRival", new ExamplesRival);
 }
 
 void MainWindow::ssConnect()

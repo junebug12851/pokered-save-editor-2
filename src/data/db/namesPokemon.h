@@ -16,6 +16,7 @@
 #ifndef NAMESPOKEMON_H
 #define NAMESPOKEMON_H
 
+#include <QObject>
 #include <QString>
 
 #include "../../common/types.h"
@@ -29,11 +30,13 @@
 // https://www.fantasynamegenerators.com/pokemon-names.php
 // Generated text is released as public domain
 
-class NamesPokemonDB
+class NamesPokemonDB : public QObject
 {
+  Q_OBJECT
+
 public:
   static void load();
-  static QString randomName();
+  Q_INVOKABLE static QString randomName();
 
   static QVector<QString> store;
 };

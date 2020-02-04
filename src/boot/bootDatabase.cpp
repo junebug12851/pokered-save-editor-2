@@ -17,6 +17,9 @@
 #include "../data/db/credits.h"
 #include "../data/db/eventpokemon.h"
 #include "../data/db/events.h"
+#include "../data/db/examplesplayer.h"
+#include "../data/db/examplespokemon.h"
+#include "../data/db/examplesrival.h"
 #include "../data/db/fly.h"
 #include "../data/db/fonts.h"
 #include "../data/db/hiddenCoins.h"
@@ -45,6 +48,9 @@ void load()
   CreditsDB::load();
   EventPokemonDB::load();
   EventsDB::load();
+  ExamplesPlayer::load();
+  ExamplesPokemon::load();
+  ExamplesRival::load();
   FlyDB::load();
   FontsDB::load();
   HiddenCoinsDB::load();

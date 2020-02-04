@@ -16,10 +16,11 @@ Rectangle {
     anchors.left: parent.left
     anchors.top: parent.top
     anchors.leftMargin: 15
-    anchors.topMargin: 60
+    anchors.topMargin: 43
 
     sizeMult: 2
-    chopLen: 7
+    isPersonName: true
+    isPlayerName: true
 
     str: file.data.dataExpanded.player.basics.playerName
     onStrChanged: file.data.dataExpanded.player.basics.playerName = str

@@ -7,6 +7,10 @@ import "../general"
 import "../controls/name"
 import "../../common/Style.js" as Style
 
+/*
+ * TODO: Add in tileset change
+*/
+
 Image {
   /*********************************************
    * Public properties with sensible defaults
@@ -18,13 +22,15 @@ Image {
   property string str: ""
   property bool hasBox: false
   property bool is2Line: false
-  property int chopLen: 10
-  property bool editorVisible: false
+  property bool isPersonName: false
+  property bool isPlayerName: false
 
   /*********************************************
    * Internal properties (Should never need to be changed)
    *********************************************/
 
+  property bool editorVisible: false
+  property int chopLen: (isPersonName) ? 7 : 10
   property int curFrame: 0
   property int tick: 1000 / 3
   property string hasBoxStr: (hasBox) ? "box" : "no-box"
@@ -47,7 +53,36 @@ Image {
       });
   }
 
-  onHasBoxChanged: adjustHeight();
+  function adjustChopLen() {
+    if(fonts.countSizeOf(str) > 7)
+      chopLen = 10;
+    else
+      chopLen = Qt.binding(function() {return (isPersonName) ? 7 : 10; });
+  }
+
+  function toggleExample() {
+    hasBox = !hasBox;
+  }
+
+  function reUpdateExample() {
+    if(!hasBox) {
+      placeholder = "%%"
+      return;
+    }
+
+    if(isPersonName && isPlayerName)
+      placeholder = randomExamplePlayer.randomExample();
+    else if(isPersonName && !isPlayerName)
+      placeholder = randomExampleRival.randomExample();
+    else
+      placeholder = randomExamplePokemon.randomExample();
+  }
+
+  onStrChanged: adjustChopLen();
+  onHasBoxChanged: {
+    adjustHeight();
+    reUpdateExample();
+  }
   onChopLenChanged: if(chopLen > 20) chopLen = 20;
 
   source: "image://font/" +
@@ -93,12 +128,43 @@ Image {
 
   MenuButton {
     id: menuBtn
-
+    visible: !editorVisible
     anchors.top: parent.top
     anchors.topMargin: -14
 
     anchors.left: parent.right
     anchors.leftMargin: -7
+    onClicked: menu.open();
+
+    Menu {
+      id: menu
+
+      MenuItem {
+        text: "Randomize Name";
+        onTriggered: {
+          if(isPersonName)
+            str = randomPlayerName.randomName();
+          else
+            str = randomPokemonName.randomName();
+        }
+      }
+
+      MenuItem {
+        text: "Toggle Example"
+        onTriggered: toggleExample();
+      }
+
+      MenuItem {
+        enabled: hasBox
+        text: "Randomize Example"
+        onTriggered: reUpdateExample();
+      }
+
+      MenuItem {
+        text: "Close"
+        onTriggered: menu.close();
+      }
+    }
   }
 
   EditButton {
@@ -114,7 +180,10 @@ Image {
 
   NameEdit {
     text: str
-    onTextChanged: str = text;
+    onTextChanged: {
+      if(fonts.countSizeOf(text) <= 10)
+        str = text;
+    }
 
     visible: editorVisible
     onAccepted: editorVisible = !editorVisible
@@ -126,5 +195,8 @@ Image {
     anchors.bottomMargin: 5
   }
 
-  Component.onCompleted: adjustHeight()
+  Component.onCompleted: {
+    adjustHeight()
+    adjustChopLen()
+  }
 }

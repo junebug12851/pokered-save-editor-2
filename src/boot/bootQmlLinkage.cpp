@@ -19,8 +19,13 @@
 
 #include "../common/utility.h"
 
+#include "../data/db/examplesplayer.h"
+#include "../data/db/examplespokemon.h"
+#include "../data/db/examplesrival.h"
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
+#include "../data/db/names.h"
+#include "../data/db/namesPokemon.h"
 
 #include "../data/file/filemanagement.h"
 #include "../data/file/savefile.h"
@@ -103,9 +108,14 @@ extern void bootQmlLinkage()
   // Uncreatable Types
   qmlRegisterUncreatableType<Utility>(dn("Utility"), 1, 0, "Utility", msg);
 
+  qmlRegisterUncreatableType<ExamplesPlayer>(dn("ExamplesPlayer"), 1, 0, "ExamplesPlayer", msg);
+  qmlRegisterUncreatableType<ExamplesPokemon>(dn("ExamplesPokemon"), 1, 0, "ExamplesPokemon", msg);
+  qmlRegisterUncreatableType<ExamplesRival>(dn("ExamplesRival"), 1, 0, "ExamplesRival", msg);
   qmlRegisterUncreatableType<FontSearch>(dn("FontSearch"), 1, 0, "FontSearch", msg);
   qmlRegisterUncreatableType<FontsDB>(dn("FontsDB"), 1, 0, "FontsDB", msg);
   qmlRegisterUncreatableType<FontDBEntry>(dn("FontDBEntry"), 1, 0, "FontDBEntry", msg);
+  qmlRegisterUncreatableType<NamesDB>(dn("NamesDB"), 1, 0, "NamesDB", msg);
+  qmlRegisterUncreatableType<NamesPokemonDB>(dn("NamesPokemonDB"), 1, 0, "NamesPokemonDB", msg);
 
   // Expanded Data is meant to be interacted with not created by QML
   qmlRegisterUncreatableType<FileManagement>(dn("FileManagement"), 1, 0, "FileManagement", msg);

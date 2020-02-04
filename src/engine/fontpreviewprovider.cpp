@@ -42,6 +42,10 @@ FontPreviewInstance::FontPreviewInstance(
   // Initial setup and unfolding of idParts
   setup(idParts);
 
+  // Get Names from save file if present
+  getPlayersName();
+  getRivalsName();
+
   // Now retrieve the tiles from the tileset engine
   getTiles();
 
