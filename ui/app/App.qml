@@ -24,6 +24,10 @@ Rectangle {
   // Name of current screen
   property string curScrn: ""
 
+  // Tileset to use for font preview
+  property string previewTileset: "overworld"
+  property bool previewOutdoor: true
+
   ColumnLayout {
     id: sectionLayout
     anchors.fill: parent

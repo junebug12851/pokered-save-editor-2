@@ -19,12 +19,6 @@ Image {
   // Essentially an image scale of sorts
   property real sizeMult: 2
 
-  // Is outdoor or not, used for tilemap building and processing
-  property bool isOutdoor: true
-
-  // Tileset to reference for <tileXX> codes
-  property string tileset: "overworld"
-
   // Placeholder to contain example demonstration
   property string placeholder: "%%"
 
@@ -46,6 +40,14 @@ Image {
   /*********************************************
    * Internal properties (Should never need to be changed)
    *********************************************/
+
+  // Is outdoor or not, used for tilemap building and processing
+  // Wired up to app-wide property
+  property bool isOutdoor: root.previewOutdoor
+
+  // Tileset to reference for <tileXX> codes
+  // Wired up to app-wide property
+  property string tileset: root.previewTileset
 
   // Actual character count
   property int regCount: 0
@@ -248,6 +250,11 @@ Image {
   }
 
   // Error & Informative messages
+
+  // Notification on character count
+  // Displays the current character count so long as it's the intended count
+  // Considers regular and expanded counts
+  // Person names are intedned to be 7 characters and Pokemon 10 characters
   Text {
     // Show this when the editor is visible and the name is an acceptable length
     visible: editorVisible &&
@@ -260,31 +267,35 @@ Image {
     font.pixelSize: 11
     color: "#757575"
 
-    text: "Using " + regCount + " out of " + chopLen + " characters."
+    text: "Using " + regCount + " out of " + chopLen + " bytes."
   }
 
+  // For person names only
+  // Anyhting above 7 characters but below or equal to 10 can technically be
+  // saved but your breaking the intended length
   Text {
     // Show this when the editor is visible, it's a persons name, and we've
     // gone over 7 characters
     visible: editorVisible &&
              isPersonName &&
-             (regCount > 7) &&
-             (regCount <= 10) &&
-             (expandedCount <= 10)
+             expandedCount > 7 &&
+             expandedCount <= 10
 
     anchors.top: parent.bottom
     anchors.left: parent.left
     font.pixelSize: 11
     color: "#ef6c00"
 
-    text: "Warning: This name is meant to be a max of 7 characters."
+    text: "Warning: This name is meant to be a max of 7 characters"
   }
 
+  // Whenever the name unfolds much larger on the screen taking up significant
+  // amount of tiles
   Text {
     // Show this when the editor is visible, it's a persons name, and we've
     // gone over 7 characters
     visible: editorVisible &&
-             (expandedCount > 10)
+             expandedCount > 10
 
     anchors.top: parent.bottom
     anchors.left: parent.left
