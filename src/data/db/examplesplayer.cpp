@@ -39,11 +39,14 @@ void ExamplesPlayer::load()
 
 QString ExamplesPlayer::randomExample()
 {
-  lastInd++;
-  if(lastInd >= (var32)store.size())
-    lastInd = 0;
+  int index = Random::rangeExclusive(0, store.size());
+  QString ret = store.at(index);
+  store.removeAt(index);
 
-  return store.at(lastInd);
+  if(store.size() == 0)
+    load();
+
+  return ret;
 }
 
 var32 ExamplesPlayer::lastInd = 0;
