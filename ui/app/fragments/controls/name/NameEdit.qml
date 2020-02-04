@@ -3,9 +3,11 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import "../../common/Style.js" as Style
+import "../../../common/Style.js" as Style
 
 TextField {
+  signal close();
+
   hoverEnabled: true
   bottomInset: 8
   leftInset: 8
@@ -25,6 +27,13 @@ TextField {
 
   background: Rectangle {
     color: "transparent"
-    border.color: Style.primaryColorLight
+  }
+
+  AcceptButton {
+    anchors.left: parent.right
+    anchors.bottom: parent.bottom
+    anchors.bottomMargin: 5
+
+    onClicked: close();
   }
 }

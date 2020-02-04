@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
+import "../general"
+import "../controls/name"
 import "../../common/Style.js" as Style
 
 Image {
@@ -89,10 +91,23 @@ Image {
     }
   }
 
+  MenuButton {
+    id: menuBtn
+
+    anchors.top: parent.top
+    anchors.topMargin: -14
+
+    anchors.left: parent.right
+    anchors.leftMargin: -7
+  }
+
   EditButton {
     visible: !editorVisible
-    anchors.bottom: parent.bottom
-    anchors.left: parent.right
+    anchors.top: menuBtn.top
+    anchors.topMargin: -1
+
+    anchors.left: menuBtn.right
+    anchors.leftMargin: -11
 
     onClicked: editorVisible = !editorVisible;
   }
@@ -103,6 +118,7 @@ Image {
 
     visible: editorVisible
     onAccepted: editorVisible = !editorVisible
+    onClose: editorVisible = !editorVisible
 
     width: parent.width
     anchors.bottom: parent.top

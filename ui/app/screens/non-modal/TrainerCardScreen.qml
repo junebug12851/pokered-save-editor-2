@@ -19,6 +19,7 @@ Rectangle {
     anchors.topMargin: 60
 
     sizeMult: 2
+    chopLen: 7
 
     str: file.data.dataExpanded.player.basics.playerName
     onStrChanged: file.data.dataExpanded.player.basics.playerName = str
