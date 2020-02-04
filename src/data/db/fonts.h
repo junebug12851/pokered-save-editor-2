@@ -125,6 +125,7 @@ public:
   // Because counting text size is complicated, this makes it just 1 function
   // call and accessible from QML
   Q_INVOKABLE static int countSizeOf(QString val);
+  Q_INVOKABLE static int countSizeOfExpanded(QString val);
 
   static QVector<FontDBEntry*> store;
   static QHash<QString, FontDBEntry*> ind;

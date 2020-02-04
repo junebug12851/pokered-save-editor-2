@@ -370,6 +370,14 @@ int FontsDB::countSizeOf(QString val)
   return convertToCode(val, 255, false).size();
 }
 
+int FontsDB::countSizeOfExpanded(QString val)
+{
+  // Gives length of expanded string in tiles with maximum player and rival
+  // names
+  return convertToCode(
+        expandStr(val, 255, "1234567", "1234567"), 255, false).size();
+}
+
 void FontsDB::splice(QVector<var8>& out, QString in, var8 ind)
 {
   QVector<var8> tmp = convertToCode(in, 100, false);

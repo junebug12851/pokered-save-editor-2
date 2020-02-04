@@ -15,33 +15,67 @@ Image {
   /*********************************************
    * Public properties with sensible defaults
    *********************************************/
+
+  // Essentially an image scale of sorts
   property real sizeMult: 2
+
+  // Is outdoor or not, used for tilemap building and processing
   property bool isOutdoor: true
+
+  // Tileset to reference for <tileXX> codes
   property string tileset: "overworld"
+
+  // Placeholder to contain example demonstration
   property string placeholder: "%%"
+
+  // Actual name
   property string str: ""
+
+  // Box enabled by default
   property bool hasBox: false
+
+  // If box is disabled, render 2 lines or 1?
   property bool is2Line: false
+
+  // A persons name? Used for error checking, auto sizing, and examples
   property bool isPersonName: false
+
+  // Players name? Used for examples
   property bool isPlayerName: false
 
   /*********************************************
    * Internal properties (Should never need to be changed)
    *********************************************/
 
+  // Actual character count
+  property int regCount: 0
+
+  // Expanded character count
+  property int expandedCount: 0
+
+  // Whether the quick edit (Stage 2) is visible or not
   property bool editorVisible: false
+
+  // Max tile width of image to chop down to (Ignored if box is open)
   property int chopLen: (isPersonName) ? 7 : 10
+
+  // Current animation frame 0-7
   property int curFrame: 0
+
+  // Animation speed
   property int tick: 1000 / 3
+
+  // BG Color
+  property color bgColor: (hasBox) ? "white" : "transparent"
+
+  // Strings to send to the provider
   property string hasBoxStr: (hasBox) ? "box" : "no-box"
   property string is2LineStr: (is2Line) ? "2-lines" : "1-line"
-  property color bgColor: (hasBox) ? "white" : "transparent"
   property string isOutdoorStr: (isOutdoor) ? "outdoor" : "indoor"
 
   // Error checks and corrects width and height to prevent blurring and to have
   // it display correctly. These, along with the width and height, should never
   // need to be changed.
-
   function adjustHeight() {
     if(hasBox)
       height = Qt.binding(function() {return Math.trunc(8 * 6 * sizeMult); });
@@ -53,17 +87,20 @@ Image {
       });
   }
 
+  // Re-adjust chop-length as needed
   function adjustChopLen() {
-    if(fonts.countSizeOf(str) > 7)
+    if(expandedCount > 7)
       chopLen = 10;
     else
       chopLen = Qt.binding(function() {return (isPersonName) ? 7 : 10; });
   }
 
+  // Toggle example
   function toggleExample() {
     hasBox = !hasBox;
   }
 
+  // Clear out or re-update example
   function reUpdateExample() {
     if(!hasBox) {
       placeholder = "%%"
@@ -78,13 +115,25 @@ Image {
       placeholder = randomExamplePokemon.randomExample();
   }
 
-  onStrChanged: adjustChopLen();
+  // Re-counts the tiles used
+  function reCalc() {
+    regCount = fonts.countSizeOf(str);
+    expandedCount = fonts.countSizeOfExpanded(str);
+  }
+
+  // Signals to act accordingly
+  onStrChanged: {
+    reCalc();
+    adjustChopLen();
+  }
+
   onHasBoxChanged: {
     adjustHeight();
     reUpdateExample();
   }
   onChopLenChanged: if(chopLen > 20) chopLen = 20;
 
+  // Actual data to send to provider
   source: "image://font/" +
           tileset + "/" +
           isOutdoorStr + "/" +
@@ -126,6 +175,7 @@ Image {
     }
   }
 
+  // Allows taking extra actions
   MenuButton {
     id: menuBtn
     visible: !editorVisible
@@ -167,6 +217,7 @@ Image {
     }
   }
 
+  // Allows moving to stage-2 (Quick Edit)
   EditButton {
     visible: !editorVisible
     anchors.top: menuBtn.top
@@ -178,6 +229,7 @@ Image {
     onClicked: editorVisible = !editorVisible;
   }
 
+  // Stage 2: Quick Edit Field
   NameEdit {
     text: str
     onTextChanged: {
@@ -195,8 +247,58 @@ Image {
     anchors.bottomMargin: 5
   }
 
+  // Error & Informative messages
+  Text {
+    // Show this when the editor is visible and the name is an acceptable length
+    visible: editorVisible &&
+             (chopLen <= ((isPersonName) ? 7 : 10)) &&
+             (regCount <= ((isPersonName) ? 7 : 10)) &&
+             (expandedCount <= ((isPersonName) ? 7 : 10))
+
+    anchors.top: parent.bottom
+    anchors.left: parent.left
+    font.pixelSize: 11
+    color: "#757575"
+
+    text: "Using " + regCount + " out of " + chopLen + " characters."
+  }
+
+  Text {
+    // Show this when the editor is visible, it's a persons name, and we've
+    // gone over 7 characters
+    visible: editorVisible &&
+             isPersonName &&
+             (regCount > 7) &&
+             (regCount <= 10) &&
+             (expandedCount <= 10)
+
+    anchors.top: parent.bottom
+    anchors.left: parent.left
+    font.pixelSize: 11
+    color: "#ef6c00"
+
+    text: "Warning: This name is meant to be a max of 7 characters."
+  }
+
+  Text {
+    // Show this when the editor is visible, it's a persons name, and we've
+    // gone over 7 characters
+    visible: editorVisible &&
+             (expandedCount > 10)
+
+    anchors.top: parent.bottom
+    anchors.left: parent.left
+    font.pixelSize: 11
+    color: "#ef6c00"
+
+    text: "Warning: This name expands out to be much longer on screen."
+  }
+
+  // Initial ground-work
   Component.onCompleted: {
+    reCalc()
     adjustHeight()
     adjustChopLen()
+    reUpdateExample()
   }
 }
