@@ -25,7 +25,7 @@ Rectangle {
   property string curScrn: ""
 
   // Tileset to use for font preview
-  property string previewTileset: "overworld"
+  property string previewTileset: "Overworld"
   property bool previewOutdoor: true
 
   ColumnLayout {
