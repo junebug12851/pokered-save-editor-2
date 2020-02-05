@@ -28,28 +28,36 @@ Rectangle {
   property string previewTileset: "Overworld"
   property bool previewOutdoor: true
 
+  // Main Sections of the app showing normal screens
   ColumnLayout {
     id: sectionLayout
     anchors.fill: parent
     spacing: 0
 
+    // Navbar Section
     Loader {
       id: navBar
       Layout.fillWidth: true
     }
 
+    // Body Section showing non-modal screens
     Loader {
       id: body
       Layout.fillHeight: true
       Layout.fillWidth: true
     }
 
+    // Footer Section
     Loader {
       id: footer
       Layout.fillWidth: true
     }
   }
 
+
+  // A real modal that's entirely managed by the screen change system, animates
+  // left to right and is registered into the list of screens so it's opened
+  // by name not by url
   Loader {
     id: modal
     anchors.fill: parent
