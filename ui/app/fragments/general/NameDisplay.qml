@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
+import "../../screens/pseudo-modal"
 import "../general"
 import "../controls/name"
 import "../../common/Style.js" as Style

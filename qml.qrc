@@ -414,14 +414,15 @@
         <file>assets/icons/fontawesome/pen.svg</file>
         <file>ui/app/fragments/controls/name/EditButton.qml</file>
         <file>ui/app/fragments/controls/name/NameEdit.qml</file>
-        <file>ui/app/fragments/controls/name/AcceptButton.qml</file>
         <file>assets/icons/fontawesome/check.svg</file>
         <file>assets/icons/fontawesome/ellipsis-v.svg</file>
-        <file>ui/app/fragments/general/MenuButton.qml</file>
         <file>assets/data/playerExamples.json</file>
         <file>assets/data/rivalExamples.json</file>
         <file>assets/data/pokemonExamples.json</file>
         <file>ui/app/fragments/controls/name/TilesetMenu.qml</file>
         <file>ui/app/fragments/controls/name/NameDisplayMenu.qml</file>
+        <file>ui/app/screens/pseudo-modal/NameEditFull.qml</file>
+        <file>ui/app/fragments/general/IconBtnSquare.qml</file>
+        <file>ui/app/fragments/general/IconBtnRound.qml</file>
     </qresource>
 </RCC>

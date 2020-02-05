@@ -39,8 +39,12 @@ TextField {
   }
 
   // Allows taking extra actions
-  MenuButton {
+  IconBtnSquare {
     id: menuBtn
+
+    icon.width: 7
+    icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
+
     anchors.top: parent.top
     anchors.topMargin: -5
 
@@ -60,7 +64,9 @@ TextField {
     }
   }
 
-  AcceptButton {
+  IconBtnRound {
+    icon.source: "qrc:/assets/icons/fontawesome/check.svg"
+
     anchors.left: menuBtn.right
     anchors.leftMargin: -17
 
