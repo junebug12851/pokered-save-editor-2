@@ -97,6 +97,7 @@ HEADERS += \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
   src/data/file/savefiletoolset.h \
+  src/data/settings.h \
   src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
   src/mvc/creditsmodel.h \
@@ -169,6 +170,7 @@ SOURCES += \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \
   src/data/file/savefiletoolset.cpp \
+  src/data/settings.cpp \
   src/engine/fontpreviewprovider.cpp \
   src/engine/tilesetprovider.cpp \
   src/main.cpp \

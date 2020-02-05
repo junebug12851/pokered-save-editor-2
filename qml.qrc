@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
-        <file>ui/app/App.qml</file>
         <file>assets/data/eventPokemon.json</file>
         <file>assets/data/events.json</file>
         <file>assets/data/fly.json</file>
@@ -25,10 +24,8 @@
         <file>assets/data/namesPokemon.json</file>
         <file>assets/data/music.json</file>
         <file>assets/data/spriteSet.json</file>
-        <file>ui/app/common/Style.js</file>
         <file>assets/wallpaper/jelly-donuts.jpg</file>
         <file>assets/wallpaper/pokewalk.jpg</file>
-        <file>ui/app/common/Pages.js</file>
         <file>assets/data/credits.json</file>
         <file>assets/wallpaper/starters.jpg</file>
         <file>assets/tilesets/_font.png</file>
@@ -393,36 +390,17 @@
         <file>assets/icons/poke-go/player.svg</file>
         <file>assets/icons/poke-go/pokedex.svg</file>
         <file>assets/icons/poke-go/smartphone.svg</file>
-        <file>ui/app/fragments/general/MainToolTip.qml</file>
-        <file>ui/app/fragments/general/ManualButton.qml</file>
-        <file>ui/app/fragments/general/NameDisplay.qml</file>
-        <file>ui/app/fragments/modal/CreditWork.qml</file>
-        <file>ui/app/fragments/modal/ModalClose.qml</file>
-        <file>ui/app/fragments/modal/RecentFilesTile.qml</file>
-        <file>ui/app/fragments/modal/TileButton.qml</file>
-        <file>ui/app/fragments/navbar/NavBarButton.qml</file>
-        <file>ui/app/screens/modal/AboutScreen.qml</file>
-        <file>ui/app/screens/modal/FileTools.qml</file>
-        <file>ui/app/screens/modal/NewFile.qml</file>
-        <file>ui/app/screens/non-modal/HomeScreen.qml</file>
-        <file>ui/app/screens/non-modal/TrainerCardScreen.qml</file>
-        <file>ui/app/sections/major/Footer1.qml</file>
-        <file>ui/app/sections/major/NavBar.qml</file>
-        <file>ui/app/sections/sub/Footer1Randomize.qml</file>
-        <file>ui/app/sections/sub/NavBarButtons.qml</file>
-        <file>ui/app/fragments/general/InfoButton.qml</file>
         <file>assets/icons/fontawesome/pen.svg</file>
-        <file>ui/app/fragments/controls/name/NameEdit.qml</file>
         <file>assets/icons/fontawesome/check.svg</file>
         <file>assets/icons/fontawesome/ellipsis-v.svg</file>
         <file>assets/data/playerExamples.json</file>
         <file>assets/data/rivalExamples.json</file>
         <file>assets/data/pokemonExamples.json</file>
-        <file>ui/app/fragments/controls/name/TilesetMenu.qml</file>
-        <file>ui/app/fragments/controls/name/NameDisplayMenu.qml</file>
-        <file>ui/app/screens/pseudo-modal/NameEditFull.qml</file>
-        <file>ui/app/fragments/general/IconBtnSquare.qml</file>
-        <file>ui/app/fragments/general/IconBtnRound.qml</file>
         <file>assets/icons/fontawesome/keyboard.svg</file>
+        <file>ui/app/App.qml</file>
+        <file>ui/app/sections/AppWindow.qml</file>
+        <file>ui/app/fragments/header/AppHeader.qml</file>
+        <file>ui/app/fragments/header/HeaderButton.qml</file>
+        <file>ui/app/fragments/general/MainToolTip.qml</file>
     </qresource>
 </RCC>

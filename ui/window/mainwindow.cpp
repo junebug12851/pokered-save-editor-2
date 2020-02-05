@@ -9,6 +9,7 @@
 #include "../../src/common/utility.h"
 #include "../../src/data/file/filemanagement.h"
 
+#include "../../src/data/settings.h"
 #include "../../src/data/db/examplesplayer.h"
 #include "../../src/data/db/examplespokemon.h"
 #include "../../src/data/db/examplesrival.h"
@@ -199,6 +200,7 @@ void MainWindow::injectIntoQML()
   qml->setContextProperty("randomExamplePlayer", new ExamplesPlayer);
   qml->setContextProperty("randomExamplePokemon", new ExamplesPokemon);
   qml->setContextProperty("randomExampleRival", new ExamplesRival);
+  qml->setContextProperty("settings", new Settings);
 }
 
 void MainWindow::ssConnect()
