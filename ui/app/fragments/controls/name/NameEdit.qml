@@ -62,7 +62,7 @@ TextField {
 
   AcceptButton {
     anchors.left: menuBtn.right
-    anchors.leftMargin: -20
+    anchors.leftMargin: -17
 
     anchors.bottom: menuBtn.bottom
 
