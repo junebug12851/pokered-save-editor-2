@@ -421,5 +421,7 @@
         <file>assets/data/playerExamples.json</file>
         <file>assets/data/rivalExamples.json</file>
         <file>assets/data/pokemonExamples.json</file>
+        <file>ui/app/fragments/controls/name/TilesetMenu.qml</file>
+        <file>ui/app/fragments/controls/name/NameDisplayMenu.qml</file>
     </qresource>
 </RCC>
