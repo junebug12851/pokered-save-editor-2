@@ -87,8 +87,8 @@ Image {
     else
       height = Qt.binding(function() {
         return (is2Line) ?
-            Math.trunc(8 * 3 * sizeMult) :
-            Math.trunc(8 * 1 * sizeMult);
+              Math.trunc(8 * 3 * sizeMult) :
+              Math.trunc(8 * 1 * sizeMult);
       });
   }
 
@@ -181,7 +181,9 @@ Image {
   }
 
   // Allows moving to stage-2 (Quick Edit)
-  EditButton {
+  IconBtnRound {
+    icon.source: "qrc:/assets/icons/fontawesome/pen.svg"
+
     visible: !editorVisible
     anchors.top: parent.top
     anchors.topMargin: -16

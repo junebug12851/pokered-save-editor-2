@@ -412,7 +412,6 @@
         <file>ui/app/sections/sub/NavBarButtons.qml</file>
         <file>ui/app/fragments/general/InfoButton.qml</file>
         <file>assets/icons/fontawesome/pen.svg</file>
-        <file>ui/app/fragments/controls/name/EditButton.qml</file>
         <file>ui/app/fragments/controls/name/NameEdit.qml</file>
         <file>assets/icons/fontawesome/check.svg</file>
         <file>assets/icons/fontawesome/ellipsis-v.svg</file>

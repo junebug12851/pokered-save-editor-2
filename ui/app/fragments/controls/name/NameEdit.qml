@@ -58,7 +58,7 @@ TextField {
       isPersonName: txtField.isPersonName
       hasBox: txtField.hasBox
 
-      onChangeStr: txtField.str = val;
+      onChangeStr: txtField.text = val;
       onToggleExample: txtField.toggleExample();
       onReUpdateExample: txtField.reUpdateExample();
     }
