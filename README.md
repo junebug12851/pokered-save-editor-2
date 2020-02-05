@@ -15,6 +15,7 @@ So this is going to look like nothing to you, a simple image, however it took ve
 Looking good so far, more progress!!!
 
 ![More Progress in the ui/ux](https://i.imgur.com/GHoR1Mg.png)
+![3 Stage Name Editor](https://i.imgur.com/SLRvlRL.png)
 ![Initial New File Screen](https://i.imgur.com/WcdZIv7.png)
 ![Initial File Tools Screen](https://i.imgur.com/Jl40AqT.png)
 
