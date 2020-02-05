@@ -3,10 +3,19 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
+import "../../general"
 import "../../../common/Style.js" as Style
 
 TextField {
+  id: txtField
+
+  property bool isPersonName: false
+  property bool hasBox: false
+
   signal close();
+  signal changeStr(string val);
+  signal toggleExample();
+  signal reUpdateExample();
 
   hoverEnabled: true
   bottomInset: 8
@@ -29,10 +38,33 @@ TextField {
     color: "transparent"
   }
 
-  AcceptButton {
+  // Allows taking extra actions
+  MenuButton {
+    id: menuBtn
+    anchors.top: parent.top
+    anchors.topMargin: -5
+
     anchors.left: parent.right
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 5
+    anchors.leftMargin: -7
+    onClicked: menu.open();
+
+    NameDisplayMenu {
+      id: menu
+
+      isPersonName: txtField.isPersonName
+      hasBox: txtField.hasBox
+
+      onChangeStr: txtField.str = val;
+      onToggleExample: txtField.toggleExample();
+      onReUpdateExample: txtField.reUpdateExample();
+    }
+  }
+
+  AcceptButton {
+    anchors.left: menuBtn.right
+    anchors.leftMargin: -20
+
+    anchors.bottom: menuBtn.bottom
 
     onClicked: close();
   }

@@ -179,37 +179,14 @@ Image {
     }
   }
 
-  // Allows taking extra actions
-  MenuButton {
-    id: menuBtn
-    visible: !editorVisible
-    anchors.top: parent.top
-    anchors.topMargin: -14
-
-    anchors.left: parent.right
-    anchors.leftMargin: -7
-    onClicked: menu.open();
-
-    NameDisplayMenu {
-      id: menu
-
-      isPersonName: img.isPersonName
-      hasBox: img.hasBox
-
-      onChangeStr: img.str = val;
-      onToggleExample: img.toggleExample();
-      onReUpdateExample: img.reUpdateExample();
-    }
-  }
-
   // Allows moving to stage-2 (Quick Edit)
   EditButton {
     visible: !editorVisible
-    anchors.top: menuBtn.top
-    anchors.topMargin: -1
+    anchors.top: parent.top
+    anchors.topMargin: -16
 
-    anchors.left: menuBtn.right
-    anchors.leftMargin: -11
+    anchors.left: parent.right
+    anchors.leftMargin: -9
 
     onClicked: editorVisible = !editorVisible;
   }
@@ -230,6 +207,13 @@ Image {
     anchors.bottom: parent.top
     anchors.left: parent.left
     anchors.bottomMargin: 5
+
+    isPersonName: img.isPersonName
+    hasBox: img.hasBox
+
+    onChangeStr: img.str = val;
+    onToggleExample: img.toggleExample();
+    onReUpdateExample: img.reUpdateExample();
   }
 
   // Error & Informative messages
