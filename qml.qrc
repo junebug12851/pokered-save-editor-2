@@ -423,5 +423,6 @@
         <file>ui/app/screens/pseudo-modal/NameEditFull.qml</file>
         <file>ui/app/fragments/general/IconBtnSquare.qml</file>
         <file>ui/app/fragments/general/IconBtnRound.qml</file>
+        <file>assets/icons/fontawesome/keyboard.svg</file>
     </qresource>
 </RCC>

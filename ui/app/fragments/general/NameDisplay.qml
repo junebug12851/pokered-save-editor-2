@@ -217,6 +217,7 @@ Image {
     onChangeStr: img.str = val;
     onToggleExample: img.toggleExample();
     onReUpdateExample: img.reUpdateExample();
+    onToggleFullKeyboard: root.openPseudoModal("./screens/pseudo-modal/NameEditFull.qml")
   }
 
   // Error & Informative messages

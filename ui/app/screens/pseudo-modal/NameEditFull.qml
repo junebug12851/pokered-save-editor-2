@@ -8,13 +8,8 @@ import "../../common/Style.js" as Style
 
 Rectangle {
   id: top
-
   signal close();
-
   color: Style.primaryColorLight
-
-  width: parent.width
-  height: parent.height
 
   ModalClose {
     onClicked: exitAnim.start()
@@ -22,7 +17,7 @@ Rectangle {
 
   // Entrace animation
   NumberAnimation on y {
-    from: -1000
+    from: 1000
     to: 0
     duration: 250
   }
@@ -36,9 +31,9 @@ Rectangle {
   // Exit animation
   ParallelAnimation {
     id: exitAnim
-    NumberAnimation {target: top; property: "y"; to: -1000; duration: 250}
+    NumberAnimation {target: top; property: "y"; to: 1000; duration: 250}
     NumberAnimation {target: top; property: "opacity"; to: 0; duration: 250}
 
-    onFinished: top.close();
+    onFinished: root.closePseudoModal();
   }
 }

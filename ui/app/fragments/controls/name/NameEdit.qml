@@ -13,6 +13,7 @@ TextField {
   property bool hasBox: false
 
   signal close();
+  signal toggleFullKeyboard();
   signal changeStr(string val);
   signal toggleExample();
   signal reUpdateExample();
@@ -65,6 +66,7 @@ TextField {
   }
 
   IconBtnRound {
+    id: acceptBtn
     icon.source: "qrc:/assets/icons/fontawesome/check.svg"
 
     anchors.left: menuBtn.right
@@ -73,5 +75,17 @@ TextField {
     anchors.bottom: menuBtn.bottom
 
     onClicked: close();
+  }
+
+  IconBtnRound {
+    icon.source: "qrc:/assets/icons/fontawesome/keyboard.svg"
+    icon.width: 20
+
+    anchors.left: acceptBtn.right
+    anchors.leftMargin: -14
+
+    anchors.bottom: acceptBtn.bottom
+
+    onClicked: toggleFullKeyboard();
   }
 }
