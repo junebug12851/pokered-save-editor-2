@@ -40,9 +40,13 @@ Image {
   // Players name? Used for examples
   property bool isPlayerName: false
 
+  property bool disableEditor: false
+
   /*********************************************
    * Internal properties (Should never need to be changed)
    *********************************************/
+
+  property bool fullEditorVisible: false
 
   // Is outdoor or not, used for tilemap building and processing
   // Wired up to app-wide property
@@ -184,7 +188,7 @@ Image {
   IconBtnRound {
     icon.source: "qrc:/assets/icons/fontawesome/pen.svg"
 
-    visible: !editorVisible
+    visible: !editorVisible && !disableEditor
     anchors.top: parent.top
     anchors.topMargin: -16
 
@@ -217,7 +221,19 @@ Image {
     onChangeStr: img.str = val;
     onToggleExample: img.toggleExample();
     onReUpdateExample: img.reUpdateExample();
-    onToggleFullKeyboard: root.openPseudoModal("./screens/pseudo-modal/NameEditFull.qml")
+    onToggleFullKeyboard: fullEditorVisible = !fullEditorVisible;
+  }
+
+  NameEditFull {
+    visible: fullEditorVisible
+
+    onToggleExample: img.toggleExample();
+    onReUpdateExample: img.reUpdateExample();
+    onStrChanged: img.str = str;
+
+    str: img.str
+    isPersonName: img.isPersonName
+    hasBox: img.hasBox
   }
 
   // Error & Informative messages

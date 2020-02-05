@@ -12,6 +12,10 @@ TextField {
   property bool isPersonName: false
   property bool hasBox: false
 
+  property bool disableAcceptBtn: false
+  property bool disableKeyboardBtn: false
+  property bool disableMenu: false
+
   signal close();
   signal toggleFullKeyboard();
   signal changeStr(string val);
@@ -41,6 +45,7 @@ TextField {
 
   // Allows taking extra actions
   IconBtnSquare {
+    visible: !disableMenu
     id: menuBtn
 
     icon.width: 7
@@ -66,6 +71,7 @@ TextField {
   }
 
   IconBtnRound {
+    visible: !disableAcceptBtn
     id: acceptBtn
     icon.source: "qrc:/assets/icons/fontawesome/check.svg"
 
@@ -78,6 +84,7 @@ TextField {
   }
 
   IconBtnRound {
+    visible: !disableKeyboardBtn
     icon.source: "qrc:/assets/icons/fontawesome/keyboard.svg"
     icon.width: 20
 

@@ -14,5 +14,5 @@ RoundButton {
   opacity: 0.75
 
   x: parent.width - icon.width * 2
-  y: icon.width * 0.60
+  y: icon.height * 0.60
 }
