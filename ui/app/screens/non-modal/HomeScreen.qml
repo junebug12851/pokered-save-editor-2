@@ -4,91 +4,22 @@ import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
 import "../../fragments/header"
+import "../../fragments/general"
+import "../../fragments/screens/home"
 
 Page {
+  id: page
   anchors.fill: parent
-  property int cellSize: 150
 
-  GridView {
+  // Icons
+  IconsView {
     anchors.fill: parent
-
-    cellWidth: cellSize
-    cellHeight: cellSize
-    clip: true
-
-    model: ListModel {
-      ListElement {
-        name: "Trainer Card"
-        iconSrc: "qrc:/assets/icons/poke-go/hat.svg"
-        page: "trainerCard"
-      }
-      ListElement {
-        name: "Pokedex"
-        iconSrc: "qrc:/assets/icons/poke-go/pokedex.svg"
-        page: ""
-      }
-      ListElement {
-        name: "Bag"
-        iconSrc: "qrc:/assets/icons/poke-go/backpack.svg"
-        page: ""
-      }
-      ListElement {
-        name: "Party"
-        iconSrc: "qrc:/assets/icons/poke-go/pikachu-2.svg"
-        page: ""
-      }
-      ListElement {
-        name: "Rival"
-        iconSrc: "qrc:/assets/icons/poke-go/player.svg"
-        page: ""
-      }
-      ListElement {
-        name: "Storage"
-        iconSrc: "qrc:/assets/icons/poke-go/smartphone.svg"
-        page: ""
-      }
-      ListElement {
-        name: "Maps"
-        iconSrc: "qrc:/assets/icons/poke-go/map.svg"
-        page: ""
-      }
-      ListElement {
-        name: "Options"
-        iconSrc: "qrc:/assets/icons/poke-go/gear.svg"
-        page: ""
-      }
-      ListElement {
-        name: "Hall of Fame"
-        iconSrc: "qrc:/assets/icons/poke-go/crown.svg"
-        page: ""
-      }
-      ListElement {
-        name: "Event Pokemon"
-        iconSrc: "qrc:/assets/icons/poke-go/mew.svg"
-        page: ""
-      }
-    }
-
-    delegate: Button {
-      text: name
-      width: cellSize
-      height: cellSize
-
-      icon.source: iconSrc
-      icon.width: 75
-      icon.height: 75
-      icon.color: "transparent"
-
-      font.pixelSize: 15
-      font.capitalization: Font.Capitalize
-
-      flat: true
-      display: AbstractButton.TextUnderIcon
-      padding: 20
-
-      //onClicked: root.changeScreen(page)
-    }
+    model: HomeIconsModel {}
   }
 
-  footer: AppFooterBtn1 {}
+  // 1 Button Footer, the Randomize Button
+  footer: AppFooterBtn1 {
+    icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
+    text1: "Re-Roll"
+  }
 }

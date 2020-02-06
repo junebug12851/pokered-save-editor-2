@@ -404,5 +404,9 @@
         <file>ui/app/fragments/general/MainToolTip.qml</file>
         <file>ui/app/screens/non-modal/HomeScreen.qml</file>
         <file>ui/app/fragments/header/AppFooterBtn1.qml</file>
+        <file>ui/app/fragments/header/FooterButton.qml</file>
+        <file>ui/app/fragments/screens/home/HomeIconsModel.qml</file>
+        <file>ui/app/fragments/general/IconDelegate.qml</file>
+        <file>ui/app/fragments/general/IconsView.qml</file>
     </qresource>
 </RCC>

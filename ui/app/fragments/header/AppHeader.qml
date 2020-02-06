@@ -3,9 +3,9 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls.Material 2.14
 import QtQuick.Controls 2.14
 
+// App-Wide Header
 ToolBar {
   height: settings.headerHeight
-
   Material.foreground: settings.textColorLight
 
   ColumnLayout {

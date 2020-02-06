@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 
 import "../general"
 
+// Button that goes in the app-wide header
 ToolButton {
   property int iconSize: 20
   property alias toolTipText: toolTip.text
