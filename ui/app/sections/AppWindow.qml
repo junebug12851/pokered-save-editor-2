@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtQuick.Controls.Material 2.14
 import QtQuick.Controls 2.14
 
 import "../fragments/header"
@@ -8,11 +9,15 @@ Page {
   id: appPage
   anchors.fill: parent
 
+  Material.background: settings.textColorLight
+
   // App-wide header
   header: AppHeader {}
 
   // Body
   StackView {
+    anchors.fill: parent
     id: appBody
+    initialItem: "qrc:/ui/app/screens/non-modal/HomeScreen.qml"
   }
 }

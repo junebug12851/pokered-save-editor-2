@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtQuick.Controls.Material 2.14
 import QtQuick.Controls 2.14
 
 // Displays modals and full-screen pages

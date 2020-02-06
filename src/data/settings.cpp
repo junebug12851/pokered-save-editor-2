@@ -15,3 +15,12 @@
 */
 
 #include "./settings.h"
+
+void Settings::setColorScheme(QColor primary, QColor secondary)
+{
+  primaryColor = primary;
+  primaryColorLight = primary.lighter(133);
+  primaryColorDark = primary.darker(142);
+
+  accentColor = secondary;
+}

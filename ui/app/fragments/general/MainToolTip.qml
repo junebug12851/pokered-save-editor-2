@@ -1,8 +1,12 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Controls.Material 2.14
 
 ToolTip {
   id: toolTip
+
+  Material.background: settings.textColorDark
+  Material.foreground: settings.textColorLight
 
   property bool followGlobalSetting: true
 
@@ -15,11 +19,4 @@ ToolTip {
 
   delay: 250
   font.pixelSize: 12
-
-  contentItem: Text {
-    text: toolTip.text
-    font: toolTip.font
-  }
-
-  background: Pane {}
 }

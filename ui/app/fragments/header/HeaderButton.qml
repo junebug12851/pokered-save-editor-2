@@ -9,11 +9,10 @@ ToolButton {
   property alias toolTipGlobalSetting: toolTip.followGlobalSetting
   property alias toolTipY: toolTip.y
 
-  flat: true
+  //flat: true
   display: AbstractButton.IconOnly
   icon.width: iconSize
   icon.height: iconSize
-  //icon.color: Style.textColorAccent
 
   MainToolTip {
     id: toolTip

@@ -402,5 +402,7 @@
         <file>ui/app/fragments/header/AppHeader.qml</file>
         <file>ui/app/fragments/header/HeaderButton.qml</file>
         <file>ui/app/fragments/general/MainToolTip.qml</file>
+        <file>ui/app/screens/non-modal/HomeScreen.qml</file>
+        <file>ui/app/fragments/header/AppFooterBtn1.qml</file>
     </qresource>
 </RCC>
