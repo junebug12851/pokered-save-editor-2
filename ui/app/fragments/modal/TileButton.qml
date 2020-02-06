@@ -40,7 +40,6 @@ Rectangle {
 
     Image {
       id: image
-      asynchronous: true
       fillMode: Image.PreserveAspectFit
       Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
       width: iconSize

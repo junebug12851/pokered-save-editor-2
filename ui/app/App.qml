@@ -18,5 +18,10 @@ StackView {
     }
   }
 
-  Component.onCompleted: brg.router.changeScreen("home");
+  Component.onCompleted: {
+    brg.router.manualStackPush("home");
+    brg.router.manualStackPush("newFile");
+
+    appRoot.push("qrc:/ui/app/screens/modal/NewFile.qml", {}, StackView.Immediate);
+  }
 }

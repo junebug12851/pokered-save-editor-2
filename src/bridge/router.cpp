@@ -95,6 +95,23 @@ void Router::closeScreen()
   }
 }
 
+void Router::manualStackPush(QString name)
+{
+  // Get screen, if invalid load invalid screen
+  auto scrn = screens.value(name, nullptr);
+  if(scrn == nullptr) {
+    scrn = screens.value("");
+    name = "";
+  }
+
+  // If invalid screen, stop here
+  if(name == "")
+    return;
+
+  // Append new screen
+  stack.append(scrn);
+}
+
 void Router::loadScreens()
 {
   // Empty

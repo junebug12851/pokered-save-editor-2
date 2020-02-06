@@ -14,7 +14,6 @@ Page {
   property real recentHeight: 1.00 - loadHeight
 
   Image {
-    asynchronous: true
     fillMode: Image.PreserveAspectCrop
     anchors.fill: parent
     source: "qrc:/assets/wallpaper/pokewalk.jpg"

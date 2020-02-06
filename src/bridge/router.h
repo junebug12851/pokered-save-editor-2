@@ -69,6 +69,10 @@ public:
   Q_INVOKABLE void changeScreen(QString name);
   Q_INVOKABLE void closeScreen();
 
+  // For internal use only by StackView
+  // Silently adds a screen onto the stack
+  Q_INVOKABLE void manualStackPush(QString name);
+
   QString title = "";
 
   static void loadScreens();
