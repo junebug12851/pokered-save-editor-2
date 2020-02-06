@@ -32,8 +32,13 @@ void Router::changeScreen(QString name)
     name = "";
   }
 
-  title = scrn->title;
-  titleChanged();
+  // Only set title if non-modal screen
+  // Otherwise this causes a momentary flicker on the title where it changes
+  // to the modal title briefly before displaying modal which looks very odd
+  if(!scrn->modal) {
+    title = scrn->title;
+    titleChanged();
+  }
 
   // If invalid screen, stop here
   if(name == "")
@@ -81,8 +86,13 @@ void Router::closeScreen()
   stack.pop_back();
   scrn = stack.last();
 
-  title = scrn->title;
-  titleChanged();
+  // Only set title if non-modal screen
+  // Otherwise this causes a momentary flicker on the title where it changes
+  // to the modal title briefly before displaying modal which looks very odd
+  if(!scrn->modal) {
+    title = scrn->title;
+    titleChanged();
+  }
 }
 
 void Router::loadScreens()

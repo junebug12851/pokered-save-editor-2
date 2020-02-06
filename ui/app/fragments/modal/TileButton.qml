@@ -22,48 +22,61 @@ Rectangle {
   property real divider: 0.50
   property real titleOpacity: 0.60
   property int iconSize: 40
-  property int titleSize: 20
+  property int titleSize: 18
   property int hotKeySize: 15
-  property int minFullSize: 300
 
   width: contW * divider
   height: contH * sizeH
-  border.color: brg.settings.primaryColorDark
+  border.color: brg.settings.textColorMid
   border.width: 1
+  color: "transparent"
 
   clip: true
 
   ColumnLayout {
     anchors.centerIn: parent
+    width: parent.width
+    spacing: -3
 
     Image {
       id: image
+      asynchronous: true
+      fillMode: Image.PreserveAspectFit
+      Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
       width: iconSize
       height: iconSize
       opacity: titleOpacity
+
+      sourceSize.height: iconSize
+      sourceSize.width: iconSize
     }
 
     Text {
       id: title
+      Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
       opacity: titleOpacity
       topPadding: 7
       bottomPadding: 5
-      anchors.centerIn: parent
       font.pixelSize: titleSize
       font.bold: true
     }
 
     Text {
       id: hotkey
+      Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
       opacity: titleOpacity
       font.pixelSize: hotKeySize
       font.italic: true
     }
   }
 
-  AbstractButton {
+  Button {
     anchors.fill: parent
     onClicked: parent.clicked()
+    flat: true
+
+    topInset: -5
+    bottomInset: -5
   }
 
   InfoButton {

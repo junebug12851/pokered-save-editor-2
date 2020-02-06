@@ -25,7 +25,7 @@ TileButton {
 
     background: Rectangle {
       color: "transparent"
-      border.color: brg.settings.primaryColorDark
+      border.color: brg.settings.textColorMid
       border.width: 1
     }
 
@@ -46,35 +46,36 @@ TileButton {
     ListView {
       id: recentFilesList
       anchors.fill: parent
-      spacing: -15
+      spacing: -12
 
       x: 0
       y: 0
       width: parent.width
       height: parent.height
-      model: recentFilesModel
+      model: brg.recentFilesModel
 
       delegate: Button {
         text: path
         width: parent.width
         enabled: isEnabled
-
-//        background: Rectangle {
-//          color: manualMouse.curColor
-//        }
+        leftInset: -10
+        rightInset: -10
+        flat: true
 
         contentItem: Text {
-//          color: (parent.enabled)
-//                 ? Qt.darker(Style.textColorPrimary, 2)
-//                 : Style.textColorPrimary
-
-          opacity: recentFilesBtn.titleOpacity
+          opacity: .75
           font.pixelSize: recentFilesBtn.hotKeySize * 0.85
+
+          color: (parent.enabled)
+                 ? brg.settings.textColorDark
+                 : brg.settings.textColorMid
 
           text: parent.text
           horizontalAlignment: Text.AlignLeft
           verticalAlignment: Text.AlignVCenter
         }
+
+        onClicked: recentFilesMenu.recentFileClick(fileIndex)
       }
     }
   }
