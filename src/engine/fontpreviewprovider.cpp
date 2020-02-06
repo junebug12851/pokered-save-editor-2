@@ -18,6 +18,7 @@
 #include <QtMath>
 #include <QPainter>
 #include <QBitmap>
+#include <QDebug>
 
 #include "./fontpreviewprovider.h"
 #include "./tilesetengine.h"

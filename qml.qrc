@@ -417,6 +417,12 @@
         <file>ui/app/screens/modal/FileTools.qml</file>
         <file>ui/app/screens/modal/About.qml</file>
         <file>ui/app/screens/non-modal/TrainerCard.qml</file>
-        <file>ui/app/fragments/general/AppScrollBar.qml</file>
+        <file>ui/app/fragments/general/IconButtonRound.qml</file>
+        <file>ui/app/fragments/general/IconButtonSquare.qml</file>
+        <file>ui/app/fragments/controls/name/TilesetModel.qml</file>
+        <file>ui/app/fragments/controls/name/TilesetMenu.qml</file>
+        <file>ui/app/fragments/controls/name/NameDisplayMenu.qml</file>
+        <file>ui/app/fragments/controls/name/NameEdit.qml</file>
+        <file>ui/app/fragments/general/NameDisplay.qml</file>
     </qresource>
 </RCC>

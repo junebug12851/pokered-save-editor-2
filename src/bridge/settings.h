@@ -68,8 +68,8 @@ public:
   bool infoBtnPressed = false;
 
   // Tileset and related engine for naming previews
-  QString previewTileset = "";
-  bool previewOutdoor = false;
+  QString previewTileset = "Overworld";
+  bool previewOutdoor = true;
 
   // Color Palette
   QColor textColorLight = QColor("#fafafa");
