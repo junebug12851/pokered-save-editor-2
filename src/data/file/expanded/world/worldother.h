@@ -82,6 +82,7 @@ signals:
 public slots:
   void reset();
   void randomize();
+  void randomizePlaytime();
 
 public:
   // Hold B to avoid wild battles

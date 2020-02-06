@@ -12,6 +12,12 @@ Page {
   footer: AppFooterBtn1 {
     icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
     text1: "Re-Roll"
-    onBtn1Clicked: brg.file.data.dataExpanded.player.randomize()
+    onBtn1Clicked: {
+      // Most of the data on the screen
+      brg.file.data.dataExpanded.player.basics.randomize();
+
+      // Playtime
+      brg.file.data.dataExpanded.world.other.randomizePlaytime();
+    }
   }
 }

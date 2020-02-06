@@ -118,6 +118,11 @@ void WorldOther::randomize()
   debugMode = Random::chanceSuccess(5);
   debugModeChanged();
 
+  randomizePlaytime();
+}
+
+void WorldOther::randomizePlaytime()
+{
   playtime->hours = Random::rangeInclusive(0, 255);
   playtime->hoursChanged();
 
