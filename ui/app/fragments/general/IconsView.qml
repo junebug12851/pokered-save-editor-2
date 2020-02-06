@@ -14,4 +14,6 @@ GridView {
   delegate: IconDelegate {
     cellSize: view.cellSize
   }
+
+  ScrollBar.vertical: ScrollBar {}
 }

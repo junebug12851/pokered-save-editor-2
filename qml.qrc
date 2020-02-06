@@ -414,5 +414,9 @@
         <file>ui/app/fragments/modal/RecentFilesTile.qml</file>
         <file>ui/app/fragments/modal/TileButton.qml</file>
         <file>ui/app/fragments/general/InfoButton.qml</file>
+        <file>ui/app/screens/modal/FileTools.qml</file>
+        <file>ui/app/screens/modal/About.qml</file>
+        <file>ui/app/screens/non-modal/TrainerCard.qml</file>
+        <file>ui/app/fragments/general/AppScrollBar.qml</file>
     </qresource>
 </RCC>
