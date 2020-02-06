@@ -17,6 +17,7 @@ FORMS += \
 
 HEADERS += \
   src/bridge/bridge.h \
+  src/bridge/router.h \
   src/common/types.h \
   src/common/utility.h \
   src/data/db/credits.h \
@@ -112,6 +113,7 @@ SOURCES += \
   src/boot/boot.cpp \
   src/boot/bootDatabase.cpp \
   src/bridge/bridge.cpp \
+  src/bridge/router.cpp \
   src/common/utility.cpp \
   src/data/db/credits.cpp \
   src/data/db/examplesplayer.cpp \

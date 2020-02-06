@@ -17,11 +17,11 @@ ToolBar {
       HeaderButton {
         icon.source: "qrc:/assets/icons/fontawesome/th.svg"
         toolTipText: "Go back to the main menu"
-        //onClicked: root.changeScreen("home")
+        onClicked: brg.router.changeScreen("home")
       }
 
       Label {
-        text: brg.settings.title
+        text: brg.router.title
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
 
@@ -40,19 +40,19 @@ ToolBar {
       HeaderButton {
         icon.source: "qrc:/assets/icons/fontawesome/users.svg"
         toolTipText: "Credits"
-        //onClicked: root.changeScreen("about")
+        onClicked: brg.router.changeScreen("about")
       }
 
       HeaderButton {
         icon.source: "qrc:/assets/icons/other/edit-file-2.svg"
         toolTipText: "Actions for the current file like saving"
-        //onClicked: root.changeScreen("fileTools")
+        onClicked: brg.router.changeScreen("fileTools")
       }
 
       HeaderButton {
         icon.source: "qrc:/assets/icons/other/new-file.svg"
         toolTipText: "Switch to a new file"
-        //onClicked: root.changeScreen("newFile")
+        onClicked: brg.router.changeScreen("newFile")
       }
     }
     Rectangle {

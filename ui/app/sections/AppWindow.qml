@@ -18,6 +18,13 @@ Page {
   StackView {
     anchors.fill: parent
     id: appBody
-    initialItem: "qrc:/ui/app/screens/non-modal/HomeScreen.qml"
+    initialItem: "qrc:/ui/app/screens/non-modal/Home.qml"
+
+    Connections {
+      target: brg.router
+
+      onGoHome: appBody.pop(null);
+      onOpenNonModal: appBody.push(url);
+    }
   }
 }

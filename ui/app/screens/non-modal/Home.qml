@@ -21,5 +21,6 @@ Page {
   footer: AppFooterBtn1 {
     icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
     text1: "Re-Roll"
+    onBtn1Clicked: brg.file.data.randomizeExpansion()
   }
 }

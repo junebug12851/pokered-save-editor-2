@@ -4,7 +4,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
 Button {
-  property int cellSize: brg.settings.iconViewCellSize
+  property int cellSize: 150
 
   text: name
   width: cellSize
@@ -22,5 +22,5 @@ Button {
   display: AbstractButton.TextUnderIcon
   padding: 20
 
-  //onClicked: root.changeScreen(page)
+  onClicked: brg.router.changeScreen(page)
 }

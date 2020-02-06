@@ -19,6 +19,7 @@
 #include <QObject>
 
 #include "./settings.h"
+#include "./router.h"
 #include "../common/utility.h"
 
 #include "../data/file/filemanagement.h"
@@ -40,6 +41,7 @@ class Bridge : public QObject
 
   Q_PROPERTY(FileManagement* file MEMBER file NOTIFY fileChanged)
   Q_PROPERTY(RecentFilesModel* recentFilesModel MEMBER recentFilesModel NOTIFY recentFilesModelChanged)
+  Q_PROPERTY(Router* router MEMBER router NOTIFY routerChanged)
   Q_PROPERTY(CreditsModel* creditsModel MEMBER creditsModel NOTIFY creditsModelChanged)
   Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged)
   Q_PROPERTY(FontsDB* fonts MEMBER fonts NOTIFY fontsChanged)
@@ -54,6 +56,7 @@ class Bridge : public QObject
 signals:
   void fileChanged();
   void recentFilesModelChanged();
+  void routerChanged();
   void creditsModelChanged();
   void fontSearchChanged();
   void fontsChanged();
@@ -71,6 +74,7 @@ public:
   FileManagement* file = nullptr;
   RecentFilesModel* recentFilesModel = nullptr;
 
+  Router* router = new Router;
   CreditsModel* creditsModel = new CreditsModel;
   FontSearch* fontSearch = new FontSearch;
   FontsDB* fonts = new FontsDB;

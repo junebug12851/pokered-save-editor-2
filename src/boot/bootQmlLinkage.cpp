@@ -21,6 +21,7 @@
 
 #include "../bridge/bridge.h"
 #include "../bridge/settings.h"
+#include "../bridge/router.h"
 
 #include "../data/db/examplesplayer.h"
 #include "../data/db/examplespokemon.h"
@@ -110,9 +111,10 @@ extern void bootQmlLinkage()
 
   // Uncreatable Types
   qmlRegisterUncreatableType<Bridge>(dn("Bridge"), 1, 0, "Bridge", msg);
+  qmlRegisterUncreatableType<Router>(dn("Router"), 1, 0, "Router", msg);
+  qmlRegisterUncreatableType<Settings>(dn("Settings"), 1, 0, "Settings", msg);
 
   qmlRegisterUncreatableType<Utility>(dn("Utility"), 1, 0, "Utility", msg);
-  qmlRegisterUncreatableType<Settings>(dn("Settings"), 1, 0, "Settings", msg);
 
   qmlRegisterUncreatableType<ExamplesPlayer>(dn("ExamplesPlayer"), 1, 0, "ExamplesPlayer", msg);
   qmlRegisterUncreatableType<ExamplesPokemon>(dn("ExamplesPokemon"), 1, 0, "ExamplesPokemon", msg);

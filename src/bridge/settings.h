@@ -26,10 +26,8 @@ class Settings : public QObject
 
   Q_PROPERTY(int headerHeight MEMBER headerHeight NOTIFY headerHeightChanged)
   Q_PROPERTY(int headerShadowHeight MEMBER headerShadowHeight NOTIFY headerShadowHeightChanged)
-  Q_PROPERTY(int iconViewCellSize MEMBER iconViewCellSize NOTIFY iconViewCellSizeChanged)
 
   Q_PROPERTY(bool infoBtnPressed MEMBER infoBtnPressed NOTIFY infoBtnPressedChanged)
-  Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)
   Q_PROPERTY(QString previewTileset MEMBER previewTileset NOTIFY previewTilesetChanged)
   Q_PROPERTY(bool previewOutdoor MEMBER previewOutdoor NOTIFY previewOutdoorChanged)
 
@@ -45,10 +43,8 @@ class Settings : public QObject
 signals:
   void headerShadowHeightChanged();
   void headerHeightChanged();
-  void iconViewCellSizeChanged();
 
   void infoBtnPressedChanged();
-  void titleChanged();
   void previewTilesetChanged();
   void previewOutdoorChanged();
 
@@ -68,14 +64,8 @@ public:
   int headerHeight = 80;
   int headerShadowHeight = 20;
 
-  // Icon height for IconView (GridView)
-  int iconViewCellSize = 150;
-
   // Global Tooltips
   bool infoBtnPressed = false;
-
-  // Page Title
-  QString title = "Title";
 
   // Tileset and related engine for naming previews
   QString previewTileset = "";

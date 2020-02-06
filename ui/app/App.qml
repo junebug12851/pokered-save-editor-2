@@ -7,4 +7,13 @@ import QtQuick.Controls 2.14
 StackView {
   id: appRoot
   initialItem: "qrc:/ui/app/sections/AppWindow.qml"
+
+  Connections {
+    target: brg.router
+
+    onGoHome: appRoot.pop(null);
+    onOpenModal: appRoot.push(url);
+  }
+
+  Component.onCompleted: brg.router.changeScreen("home");
 }

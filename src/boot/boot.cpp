@@ -20,6 +20,7 @@
 #include <QDateTime>
 
 #include "../../ui/window/mainwindow.h"
+#include "../bridge/router.h"
 
 extern void bootDatabase();
 extern void bootQmlLinkage();
@@ -77,6 +78,9 @@ extern QApplication* boot(int argc, char *argv[])
 
   // Register C++ classes with QML
   bootQmlLinkage();
+
+  // Load Screens into the router
+  Router::loadScreens();
 
   // Pre-boot app
   auto app = preBoot(argc, argv);
