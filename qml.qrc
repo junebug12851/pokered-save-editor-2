@@ -408,5 +408,11 @@
         <file>ui/app/fragments/screens/home/HomeIconsModel.qml</file>
         <file>ui/app/fragments/general/IconDelegate.qml</file>
         <file>ui/app/fragments/general/IconsView.qml</file>
+        <file>ui/app/screens/modal/NewFile.qml</file>
+        <file>ui/app/fragments/modal/CreditWork.qml</file>
+        <file>ui/app/fragments/modal/ModalClose.qml</file>
+        <file>ui/app/fragments/modal/RecentFilesTile.qml</file>
+        <file>ui/app/fragments/modal/TileButton.qml</file>
+        <file>ui/app/fragments/general/InfoButton.qml</file>
     </qresource>
 </RCC>

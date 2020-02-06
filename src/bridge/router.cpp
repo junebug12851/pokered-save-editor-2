@@ -32,10 +32,6 @@ void Router::changeScreen(QString name)
     name = "";
   }
 
-  // Adjust curScrn and title
-  curScrn = name;
-  curScrnChanged();
-
   title = scrn->title;
   titleChanged();
 
@@ -52,6 +48,41 @@ void Router::changeScreen(QString name)
     openModal(scrn->url);
   else
     openNonModal(scrn->url);
+
+  // If the home screen it means clear everything first because that's what the
+  // UI did
+  if(name == "home")
+    stack.clear();
+
+  // Append new screen
+  stack.append(scrn);
+}
+
+void Router::closeScreen()
+{
+  // Do nothin if we're at root screen or no screen at all
+  if(stack.size() <= 1)
+    return;
+
+  // Get current screen
+  Screen* scrn = stack.last();
+
+  // If an error happened and we're unable to retrive screen data also return
+  if(scrn == nullptr)
+    return;
+
+  // Figure out if it's modal or not and issue close statement accordingly
+  if(scrn->modal)
+    closeModal();
+  else
+    closeNonModal();
+
+  // Pop screen and get new screen
+  stack.pop_back();
+  scrn = stack.last();
+
+  title = scrn->title;
+  titleChanged();
 }
 
 void Router::loadScreens()
@@ -70,3 +101,4 @@ void Router::loadScreens()
 }
 
 QHash<QString, Screen*> Router::screens = QHash<QString, Screen*>();
+QVector<Screen*> Router::stack = QVector<Screen*>();

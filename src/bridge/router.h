@@ -20,6 +20,7 @@
 #include <QString>
 #include <QUrl>
 #include <QHash>
+#include <QVector>
 
 // An individual screen
 struct Screen : public QObject {
@@ -54,23 +55,25 @@ class Router : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)
-  Q_PROPERTY(QString curScrn MEMBER curScrn NOTIFY curScrnChanged)
 
 signals:
   void goHome();
   void openModal(QString url);
   void openNonModal(QString url);
+  void closeModal();
+  void closeNonModal();
 
   void titleChanged();
-  void curScrnChanged();
 
 public:
   Q_INVOKABLE void changeScreen(QString name);
+  Q_INVOKABLE void closeScreen();
 
   QString title = "";
-  QString curScrn = "";
 
   static void loadScreens();
+
+  static QVector<Screen*> stack;
   static QHash<QString, Screen*> screens;
 };
 

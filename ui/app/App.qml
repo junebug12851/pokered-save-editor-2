@@ -13,6 +13,9 @@ StackView {
 
     onGoHome: appRoot.pop(null);
     onOpenModal: appRoot.push(url);
+    onCloseModal: {
+      appRoot.pop();
+    }
   }
 
   Component.onCompleted: brg.router.changeScreen("home");

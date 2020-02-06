@@ -7,7 +7,6 @@ import "../fragments/header"
 // App body is the initial modal, it allows non-modal app navigation
 Page {
   id: appPage
-  anchors.fill: parent
 
   Material.background: brg.settings.textColorLight
 
@@ -25,6 +24,7 @@ Page {
 
       onGoHome: appBody.pop(null);
       onOpenNonModal: appBody.push(url);
+      onCloseNonModal: appBody.pop();
     }
   }
 }
