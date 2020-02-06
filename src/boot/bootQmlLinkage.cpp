@@ -19,7 +19,8 @@
 
 #include "../common/utility.h"
 
-#include "../data/settings.h"
+#include "../bridge/bridge.h"
+#include "../bridge/settings.h"
 
 #include "../data/db/examplesplayer.h"
 #include "../data/db/examplespokemon.h"
@@ -108,6 +109,8 @@ extern void bootQmlLinkage()
   qmlRegisterType<Badges>(dn("Badges"), 1, 0, "Badges");
 
   // Uncreatable Types
+  qmlRegisterUncreatableType<Bridge>(dn("Bridge"), 1, 0, "Bridge", msg);
+
   qmlRegisterUncreatableType<Utility>(dn("Utility"), 1, 0, "Utility", msg);
   qmlRegisterUncreatableType<Settings>(dn("Settings"), 1, 0, "Settings", msg);
 

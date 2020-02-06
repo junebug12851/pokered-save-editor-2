@@ -5,8 +5,8 @@ import QtQuick.Controls 2.14
 
 // App-Wide Header
 ToolBar {
-  height: settings.headerHeight
-  Material.foreground: settings.textColorLight
+  height: brg.settings.headerHeight
+  Material.foreground: brg.settings.textColorLight
 
   ColumnLayout {
     anchors.fill: parent
@@ -21,7 +21,7 @@ ToolBar {
       }
 
       Label {
-        text: settings.title
+        text: brg.settings.title
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
 
@@ -33,8 +33,8 @@ ToolBar {
         icon.source: "qrc:/assets/icons/other/question.svg"
         toolTipText: "Toggle tooltips on or off for explanations and help"
         toolTipGlobalSetting: false // An exception
-        opacity: (settings.infoBtnPressed === true) ? 1.00 : 0.50
-        onClicked: settings.infoBtnPressed = !settings.infoBtnPressed
+        opacity: (brg.settings.infoBtnPressed === true) ? 1.00 : 0.50
+        onClicked: brg.settings.infoBtnPressed = !brg.settings.infoBtnPressed
       }
 
       HeaderButton {
@@ -56,9 +56,9 @@ ToolBar {
       }
     }
     Rectangle {
-      height: settings.headerShadowHeight
+      height: brg.settings.headerShadowHeight
       Layout.fillWidth: true
-      color: settings.primaryColorDark
+      color: brg.settings.primaryColorDark
     }
   }
 }

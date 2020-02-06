@@ -16,6 +16,7 @@ FORMS += \
   ui/window/mainwindow.ui
 
 HEADERS += \
+  src/bridge/bridge.h \
   src/common/types.h \
   src/common/utility.h \
   src/data/db/credits.h \
@@ -97,7 +98,7 @@ HEADERS += \
   src/data/file/savefile.h \
   src/data/file/savefileiterator.h \
   src/data/file/savefiletoolset.h \
-  src/data/settings.h \
+  src/bridge/settings.h \
   src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
   src/mvc/creditsmodel.h \
@@ -110,6 +111,7 @@ SOURCES += \
   src/boot/bootQmlLinkage.cpp \
   src/boot/boot.cpp \
   src/boot/bootDatabase.cpp \
+  src/bridge/bridge.cpp \
   src/common/utility.cpp \
   src/data/db/credits.cpp \
   src/data/db/examplesplayer.cpp \
@@ -170,7 +172,7 @@ SOURCES += \
   src/data/file/savefile.cpp \
   src/data/file/savefileiterator.cpp \
   src/data/file/savefiletoolset.cpp \
-  src/data/settings.cpp \
+  src/bridge/settings.cpp \
   src/engine/fontpreviewprovider.cpp \
   src/engine/tilesetprovider.cpp \
   src/main.cpp \

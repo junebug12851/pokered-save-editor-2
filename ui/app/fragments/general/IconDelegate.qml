@@ -4,7 +4,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
 Button {
-  property int cellSize: 150
+  property int cellSize: brg.settings.iconViewCellSize
 
   text: name
   width: cellSize

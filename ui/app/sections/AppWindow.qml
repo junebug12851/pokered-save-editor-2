@@ -9,7 +9,7 @@ Page {
   id: appPage
   anchors.fill: parent
 
-  Material.background: settings.textColorLight
+  Material.background: brg.settings.textColorLight
 
   // App-wide header
   header: AppHeader {}

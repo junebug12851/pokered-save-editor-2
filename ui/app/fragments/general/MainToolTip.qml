@@ -5,8 +5,8 @@ import QtQuick.Controls.Material 2.14
 ToolTip {
   id: toolTip
 
-  Material.background: settings.textColorDark
-  Material.foreground: settings.textColorLight
+  Material.background: brg.settings.textColorDark
+  Material.foreground: brg.settings.textColorLight
 
   property bool followGlobalSetting: true
 
@@ -14,7 +14,7 @@ ToolTip {
   // tooltips have been enabled. If not following global setting then only
   // when the mouse is hovered
   visible: (followGlobalSetting)
-           ? parent.hovered && settings.infoBtnPressed
+           ? parent.hovered && brg.settings.infoBtnPressed
            : parent.hovered
 
   delay: 250

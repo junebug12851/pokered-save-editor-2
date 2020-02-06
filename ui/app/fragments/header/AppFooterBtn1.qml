@@ -9,8 +9,8 @@ ToolBar {
   property alias text1: btn.text
   signal btn1Clicked();
 
-  height: settings.headerHeight
-  Material.foreground: settings.textColorLight
+  height: brg.settings.headerHeight
+  Material.foreground: brg.settings.textColorLight
 
   ColumnLayout {
     anchors.fill: parent
@@ -18,9 +18,9 @@ ToolBar {
 
     // Shadow
     Rectangle {
-      height: settings.headerShadowHeight
+      height: brg.settings.headerShadowHeight
       Layout.fillWidth: true
-      color: settings.primaryColorDark
+      color: brg.settings.primaryColorDark
     }
 
     // 1 Button

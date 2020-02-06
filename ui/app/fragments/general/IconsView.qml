@@ -5,7 +5,7 @@ import QtQuick.Controls.Material 2.14
 
 GridView {
   id: view
-  property int cellSize: 150
+  property int cellSize: brg.settings.iconViewCellSize
 
   cellWidth: cellSize
   cellHeight: cellSize
