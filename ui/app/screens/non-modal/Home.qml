@@ -9,7 +9,6 @@ import "../../fragments/screens/home"
 
 Page {
   id: page
-  anchors.fill: parent
 
   // Icons
   IconsView {
