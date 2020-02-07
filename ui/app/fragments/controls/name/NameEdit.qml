@@ -15,6 +15,8 @@ TextField {
   property bool disableKeyboardBtn: false
   property bool disableMenu: false
 
+  property color selectedColor: brg.settings.primaryColor
+
   signal close();
   signal toggleFullKeyboard();
   signal changeStr(string val);
@@ -23,8 +25,8 @@ TextField {
 
   hoverEnabled: true
   selectByMouse: true
-  selectedTextColor: brg.settings.accentColor
-  selectionColor: Qt.darker(brg.settings.primaryColorDark, 1.25)
+  selectedTextColor: Qt.lighter(selectedColor, 2)
+  selectionColor: selectedColor
   color: brg.settings.textColorDark
   font.letterSpacing: 2
   font.pixelSize: 14

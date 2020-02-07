@@ -16,6 +16,33 @@
 
 #include "./settings.h"
 
+QString tilesetOrder[24] = {
+  "Cavern",
+  "Cemetery",
+  "Club",
+  "Dojo",
+  "Facility",
+  "Forest",
+  "Forest Gate",
+  "Gate",
+  "Gym",
+  "House",
+  "Interior",
+  "Lab",
+  "Lobby",
+  "Mansion",
+  "Mart",
+  "Museum",
+  "Overworld",
+  "Plateau",
+  "Pokecenter",
+  "Reds House 1",
+  "Reds House 2",
+  "Ship",
+  "Ship Port",
+  "Underground"
+};
+
 void Settings::setColorScheme(QColor primary, QColor secondary)
 {
   primaryColor = primary;
@@ -23,4 +50,18 @@ void Settings::setColorScheme(QColor primary, QColor secondary)
   primaryColorDark = primary.darker(142);
 
   accentColor = secondary;
+}
+
+int Settings::getPreviewTilesetIndex()
+{
+  int ret = -1;
+
+  for(int i = 0; i < 24; i++) {
+    if(tilesetOrder[i] == previewTileset) {
+      ret = i;
+      break;
+    }
+  }
+
+  return ret;
 }

@@ -39,6 +39,7 @@ class Settings : public QObject
   Q_PROPERTY(QColor primaryColorDark MEMBER primaryColorDark NOTIFY primaryColorDarkChanged)
   Q_PROPERTY(QColor dividerColor MEMBER dividerColor NOTIFY dividerColorChanged)
   Q_PROPERTY(QColor accentColor MEMBER accentColor NOTIFY accentColorChanged)
+  Q_PROPERTY(int previewTilesetIndex READ getPreviewTilesetIndex NOTIFY previewTilesetChanged STORED false)
 
 signals:
   void headerShadowHeightChanged();
@@ -70,6 +71,7 @@ public:
   // Tileset and related engine for naming previews
   QString previewTileset = "Overworld";
   bool previewOutdoor = true;
+  int getPreviewTilesetIndex();
 
   // Color Palette
   QColor textColorLight = QColor("#efefef"); //#fafafa

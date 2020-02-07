@@ -52,6 +52,16 @@ Image {
   // own internal placeholder text.
   property bool disableAutoPlaceholder: false
 
+  // Enable Feedback messages
+  property bool enableFeedback: true
+
+  // Center Feedback
+  property bool centerFeedback: false
+
+  // Feedback Colors
+  property color feedbackColorNormal: "#757575"
+  property color feedbackColorWarning: "#ef6c00"
+
   /*********************************************
    * Internal properties (Should never need to be changed)
    *********************************************/
@@ -282,15 +292,17 @@ Image {
   // Person names are intedned to be 7 characters and Pokemon 10 characters
   Text {
     // Show this when the editor is visible and the name is an acceptable length
-    visible: editorVisible &&
+    visible: (editorVisible || disableEditor) &&
+             enableFeedback &&
              (chopLen <= ((isPersonName) ? 7 : 10)) &&
              (regCount <= ((isPersonName) ? 7 : 10)) &&
              (expandedCount <= ((isPersonName) ? 7 : 10))
 
-    anchors.top: parent.bottom
-    anchors.left: parent.left
+    anchors.top:  parent.bottom
+    anchors.left: (centerFeedback) ? undefined : parent.left
+    anchors.horizontalCenter: (centerFeedback) ? parent.horizontalCenter : undefined
     font.pixelSize: 11
-    color: "#757575"
+    color: feedbackColorNormal
 
     text: "Using " + regCount + " out of " + chopLen + " bytes."
   }
@@ -301,15 +313,17 @@ Image {
   Text {
     // Show this when the editor is visible, it's a persons name, and we've
     // gone over 7 characters
-    visible: editorVisible &&
+    visible: (editorVisible || disableEditor) &&
+             enableFeedback &&
              isPersonName &&
              expandedCount > 7 &&
              expandedCount <= 10
 
     anchors.top: parent.bottom
-    anchors.left: parent.left
+    anchors.left: (centerFeedback) ? undefined : parent.left
+    anchors.horizontalCenter: (centerFeedback) ? parent.horizontalCenter : undefined
     font.pixelSize: 11
-    color: "#ef6c00"
+    color: feedbackColorWarning
 
     text: "Warning: This name is meant to be a max of 7 characters"
   }
@@ -319,13 +333,15 @@ Image {
   Text {
     // Show this when the editor is visible, it's a persons name, and we've
     // gone over 7 characters
-    visible: editorVisible &&
+    visible: (editorVisible || disableEditor) &&
+             enableFeedback &&
              expandedCount > 10
 
     anchors.top: parent.bottom
-    anchors.left: parent.left
+    anchors.left: (centerFeedback) ? undefined : parent.left
+    anchors.horizontalCenter: (centerFeedback) ? parent.horizontalCenter : undefined
     font.pixelSize: 11
-    color: "#ef6c00"
+    color: feedbackColorWarning
 
     text: "Warning: This name expands out to be much longer on screen."
   }

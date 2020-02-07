@@ -29,24 +29,33 @@ Page {
 
   header: ToolBar {
     height: 75
-    Material.background: brg.settings.textColorLight
+    Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
 
     Row {
       anchors.centerIn: parent
+      spacing: 20
 
-      NameEdit {
-        id: nameEdit
-        text: top.str
-        onTextChanged: {
-          if(brg.fonts.countSizeOf(text) <= 10)
-            top.str = text;
+      Row {
+        spacing: -16
+
+        NameEdit {
+          id: nameEdit
+          text: top.str
+          onTextChanged: {
+            if(brg.fonts.countSizeOf(text) <= 10)
+              top.str = text;
+          }
+
+          selectedColor: brg.settings.accentColor
+
+          width: nameDisplay.chopLen * nameDisplay.sizeMult * 8
+
+          disableAcceptBtn: true
+          disableKeyboardBtn: true
+          disableMenu: true
+
+          topInset: 52
         }
-
-        width: 10 * 8 * 2
-
-        disableAcceptBtn: true
-        disableKeyboardBtn: true
-        disableMenu: true
 
         // Allows taking extra actions
         IconButtonSquare {
@@ -54,12 +63,6 @@ Page {
 
           icon.width: 7
           icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
-
-          anchors.top: parent.top
-          anchors.topMargin: -5
-
-          anchors.left: parent.right
-          anchors.leftMargin: -7
 
           onClicked: menu.open();
 
@@ -74,6 +77,53 @@ Page {
             onReUpdateExample: top.reUpdateExample();
           }
         }
+      }
+
+      Button {
+        text: "Is Outdoor"
+        opacity: (brg.settings.previewOutdoor) ? 1.00 : 0.50
+        onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
+        font.capitalization: Font.Capitalize
+        font.pixelSize: 12
+        flat: true
+      }
+
+      ComboBox {
+
+        font.capitalization: Font.Capitalize
+        font.pixelSize: 12
+        flat: true
+        width: font.pixelSize * 12
+
+        model: [
+          "Cavern",
+          "Cemetery",
+          "Club",
+          "Dojo",
+          "Facility",
+          "Forest",
+          "Forest Gate",
+          "Gate",
+          "Gym",
+          "House",
+          "Interior",
+          "Lab",
+          "Lobby",
+          "Mansion",
+          "Mart",
+          "Museum",
+          "Overworld",
+          "Plateau",
+          "Pokecenter",
+          "Reds House 1",
+          "Reds House 2",
+          "Ship",
+          "Ship Port",
+          "Underground"
+        ]
+
+        onActivated: brg.settings.previewTileset = currentValue;
+        Component.onCompleted: currentIndex = brg.settings.previewTilesetIndex;
       }
     }
 
@@ -90,15 +140,17 @@ Page {
   }
 
   footer: ToolBar {
-    height: (top.hasBox) ? nameDisplay.height + (8 * 2) : 75
-    Material.background: brg.settings.textColorLight
+    height: (top.hasBox) ? nameDisplay.height + 25 + (8 * 2) : 75
+    Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
 
-    Row {
-      anchors.centerIn: parent
+    ColumnLayout {
+      anchors.fill: parent
+      spacing: -30
 
       NameDisplay {
         id: nameDisplay
 
+        Layout.alignment: Qt.AlignHCenter
         placeholder: top.placeholder
         str: top.str
         hasBox: top.hasBox
@@ -106,8 +158,56 @@ Page {
         isPersonName: top.isPersonName
         isPlayerName: top.isPlayerName
 
+        enableFeedback: false
         disableEditor: true
         disableAutoPlaceholder: true
+      }
+
+      Text {
+        Layout.alignment: Qt.AlignHCenter
+
+        // Show this when the editor is visible and the name is an acceptable length
+        visible: (nameDisplay.chopLen <= ((isPersonName) ? 7 : 10)) &&
+                 (nameDisplay.regCount <= ((isPersonName) ? 7 : 10)) &&
+                 (nameDisplay.expandedCount <= ((isPersonName) ? 7 : 10))
+
+        font.pixelSize: 11
+        color: "#424242"
+
+        text: "Using " + nameDisplay.regCount + " out of " + nameDisplay.chopLen + " bytes."
+      }
+
+      // For person names only
+      // Anyhting above 7 characters but below or equal to 10 can technically be
+      // saved but your breaking the intended length
+      Text {
+        Layout.alignment: Qt.AlignHCenter
+
+        // Show this when the editor is visible, it's a persons name, and we've
+        // gone over 7 characters
+        visible: nameDisplay.isPersonName &&
+                 nameDisplay.expandedCount > 7 &&
+                 nameDisplay.expandedCount <= 10
+
+        font.pixelSize: 11
+        color: "#BF360C"
+
+        text: "Warning: This name is meant to be a max of 7 characters"
+      }
+
+      // Whenever the name unfolds much larger on the screen taking up significant
+      // amount of tiles
+      Text {
+        Layout.alignment: Qt.AlignHCenter
+
+        // Show this when the editor is visible, it's a persons name, and we've
+        // gone over 7 characters
+        visible: nameDisplay.expandedCount > 10
+
+        font.pixelSize: 11
+        color: "#BF360C"
+
+        text: "Warning: This name expands out to be much longer on screen."
       }
     }
   }
