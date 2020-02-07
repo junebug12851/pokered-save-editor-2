@@ -14,10 +14,10 @@ So this is going to look like nothing to you, a simple image, however it took ve
 
 Looking good so far, more progress!!!
 
-![More Progress in the ui/ux](https://i.imgur.com/GHoR1Mg.png)
-![3 Stage Name Editor](https://i.imgur.com/SLRvlRL.png)
-![Initial New File Screen](https://i.imgur.com/WcdZIv7.png)
-![Initial File Tools Screen](https://i.imgur.com/Jl40AqT.png)
+![More Progress in the ui/ux](https://i.imgur.com/zp8xCDc.png)
+![3 Stage Name Editor](https://i.imgur.com/kFLN4R2.png)
+![Initial New File Screen](https://i.imgur.com/Woakr9P.png)
+![Initial File Tools Screen](https://i.imgur.com/4oPvOE9.png)
 
 Here's sort of a rough preview of a before and after, note that the after image below may become outdated as new updates roll in. You can clearly see how beautiful the new interface is.
 ![Before and After Image](https://i.imgur.com/LS1XPsy.png)
@@ -26,6 +26,14 @@ Here's sort of a rough preview of a before and after, note that the after image 
 
 Please see NewGoals.md for the breakdown of new goals and features specific to 
 this reboot.
+
+### Large refactoring
+
+So QML is a learning expirience for me, I know Qt and C++ and I love both. While I've always wanted to make a QML project, this is my first and so it's been a pretty big challenge. I initially did a lot of stuff wrong and I could tell that more and more as I progressed, eventually QML sort of forced my hand into figuring out where I went wrong... and re-writing a lot of code leading to a big refactor. But thanks to me doing that everything is much nicer and cleaner, smoother, more expandable in the future, etc...
+
+Sadly one of the things that had to go was the angled bars for the header and footer. I didn't want to let them go but after weighing the prs and cons it would have made expandability and usability a nightmare. It's been very refreshing to use the newer setup but I will mose those really cool angled bars.
+
+There all kinds of other little changes but overall it feels more dynamic and fluid and that's kidn of how I wanted it to feel.
 
 ## Why the Reboot
 
