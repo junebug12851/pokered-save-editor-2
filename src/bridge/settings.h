@@ -72,7 +72,7 @@ public:
   bool previewOutdoor = true;
 
   // Color Palette
-  QColor textColorLight = QColor("#fafafa");
+  QColor textColorLight = QColor("#efefef"); //#fafafa
   QColor textColorMid = QColor("#757575");
   QColor textColorDark = QColor("#212121");
 

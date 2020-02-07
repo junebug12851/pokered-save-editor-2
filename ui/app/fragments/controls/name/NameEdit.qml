@@ -22,13 +22,7 @@ TextField {
   signal reUpdateExample();
 
   hoverEnabled: true
-  bottomInset: 8
-  leftInset: 8
-  rightInset: 8
-  topInset: 8
-
   selectByMouse: true
-
   selectedTextColor: brg.settings.accentColor
   selectionColor: Qt.darker(brg.settings.primaryColorDark, 1.25)
   color: brg.settings.textColorDark

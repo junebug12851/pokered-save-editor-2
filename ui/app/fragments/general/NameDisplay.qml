@@ -4,6 +4,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
 import "../controls/name"
+import "../../screens/modal"
 
 /*
  * So... yeah, this sort of become pretty complicated lol. But name editing
@@ -46,8 +47,6 @@ Image {
   /*********************************************
    * Internal properties (Should never need to be changed)
    *********************************************/
-
-  property bool fullEditorVisible: false
 
   // Is outdoor or not, used for tilemap building and processing
   // Wired up to app-wide property
@@ -129,6 +128,38 @@ Image {
   function reCalc() {
     regCount = brg.fonts.countSizeOf(str);
     expandedCount = brg.fonts.countSizeOfExpanded(str);
+  }
+
+  // Because this is somewhat complicated
+  function openFullKeyboard() {
+    // We manually open outside of the router the full keyboard beacuse
+    // we want to pass parameters to it
+    appRoot.push("qrc:/ui/app/screens/modal/FullKeyboard.qml", {
+                   str: img.str,
+                   isPersonName: img.isPersonName,
+                   hasBox: img.hasBox
+                 });
+
+    // We then tell the router of what we've done
+    brg.router.manualStackPush("fullKeyboard");
+
+    // And then we open incomming signals so that we can receive input
+    fullKeyboardListener.target = appRoot.currentItem;
+  }
+
+  // Incomming signals from full-keyboard
+  Connections {
+    id: fullKeyboardListener
+
+    // Initially set to no incomming signals
+    target: null
+    ignoreUnknownSignals: true
+
+    // Various signals to receive
+    onStrChanged: img.str = appRoot.currentItem.str;
+
+    // Notification keyboard is going to close, re-shutoff incomming signals
+    onPreClose: fullKeyboardListener.target = null
   }
 
   // Signals to act accordingly
@@ -222,7 +253,7 @@ Image {
     onChangeStr: img.str = val;
     onToggleExample: img.toggleExample();
     onReUpdateExample: img.reUpdateExample();
-    onToggleFullKeyboard: fullEditorVisible = !fullEditorVisible;
+    onToggleFullKeyboard: openFullKeyboard();
   }
 
 //  NameEditFull {
