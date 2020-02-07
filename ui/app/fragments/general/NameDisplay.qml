@@ -25,6 +25,7 @@ Image {
   property real sizeMult: 2
 
   // Placeholder to contain example demonstration
+  // If controlling this from outside, make sure to disable internal generation
   property string placeholder: "%%"
 
   // Actual name
@@ -42,7 +43,14 @@ Image {
   // Players name? Used for examples
   property bool isPlayerName: false
 
+  // Disable Editor Button
   property bool disableEditor: false
+
+  // Disable Auto Placeholder
+  // If this is true, placeholder relies entirely on the placeholder from
+  // outside. Otherwise, placeholder ignores placeholder text and generates it's
+  // own internal placeholder text.
+  property bool disableAutoPlaceholder: false
 
   /*********************************************
    * Internal properties (Should never need to be changed)
@@ -111,6 +119,11 @@ Image {
 
   // Clear out or re-update example
   function reUpdateExample() {
+    // If auto placeholder, it means the placeholder is coming in from the
+    // outside only
+    if(disableAutoPlaceholder)
+      return;
+
     if(!hasBox) {
       placeholder = "%%"
       return;
@@ -135,9 +148,12 @@ Image {
     // We manually open outside of the router the full keyboard beacuse
     // we want to pass parameters to it
     appRoot.push("qrc:/ui/app/screens/modal/FullKeyboard.qml", {
-                   str: img.str,
-                   isPersonName: img.isPersonName,
-                   hasBox: img.hasBox
+                   placeholder: Qt.binding(function() {return img.placeholder;}),
+                   str: Qt.binding(function() {return img.str;}),
+                   hasBox: Qt.binding(function() {return img.hasBox;}),
+                   is2Line: Qt.binding(function() {return img.is2Line;}),
+                   isPersonName: Qt.binding(function() {return img.isPersonName;}),
+                   isPlayerName: Qt.binding(function() {return img.isPlayerName;}),
                  });
 
     // We then tell the router of what we've done
@@ -157,6 +173,8 @@ Image {
 
     // Various signals to receive
     onStrChanged: img.str = appRoot.currentItem.str;
+    onToggleExample: img.toggleExample();
+    onReUpdateExample: img.reUpdateExample();
 
     // Notification keyboard is going to close, re-shutoff incomming signals
     onPreClose: fullKeyboardListener.target = null
@@ -255,18 +273,6 @@ Image {
     onReUpdateExample: img.reUpdateExample();
     onToggleFullKeyboard: openFullKeyboard();
   }
-
-//  NameEditFull {
-//    visible: fullEditorVisible
-
-//    onToggleExample: img.toggleExample();
-//    onReUpdateExample: img.reUpdateExample();
-//    onStrChanged: img.str = str;
-
-//    str: img.str
-//    isPersonName: img.isPersonName
-//    hasBox: img.hasBox
-//  }
 
   // Error & Informative messages
 

@@ -425,5 +425,6 @@
         <file>ui/app/fragments/controls/name/NameEdit.qml</file>
         <file>ui/app/fragments/general/NameDisplay.qml</file>
         <file>ui/app/screens/modal/FullKeyboard.qml</file>
+        <file>ui/app/fragments/controls/name/NameDisplayMenuNoTileset.qml</file>
     </qresource>
 </RCC>
