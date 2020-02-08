@@ -39,36 +39,54 @@ ColumnLayout {
     checkState: Qt.Checked
     text: "Normal"
     onReSearch: top.reSearch();
+
+    Material.foreground: brg.settings.fontColorNormal
+    Material.accent: brg.settings.fontColorNormal
   }
 
   SearchParam {
     id: controlSearch
     text: "Control"
     onReSearch: top.reSearch();
+
+    Material.foreground: brg.settings.fontColorControl
+    Material.accent: brg.settings.fontColorControl
   }
 
   SearchParam {
     id: pictureSearch
     text: "Picture"
     onReSearch: top.reSearch();
+
+    Material.foreground: brg.settings.fontColorPicture
+    Material.accent: brg.settings.fontColorPicture
   }
 
   SearchParam {
     id: singleSearch
     text: "Single-Char"
     onReSearch: top.reSearch();
+
+    Material.foreground: brg.settings.fontColorSingle
+    Material.accent: brg.settings.fontColorSingle
   }
 
   SearchParam {
     id: multiSearch
     text: "Multi-Char"
     onReSearch: top.reSearch();
+
+    Material.foreground: brg.settings.fontColorMulti
+    Material.accent: brg.settings.fontColorMulti
   }
 
   SearchParam {
     id: varSearch
     text: "Variable"
     onReSearch: top.reSearch();
+
+    Material.foreground: brg.settings.fontColorVar
+    Material.accent: brg.settings.fontColorVar
   }
 
   Component.onCompleted: top.reSearch();

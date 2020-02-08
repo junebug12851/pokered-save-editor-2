@@ -41,6 +41,13 @@ class Settings : public QObject
   Q_PROPERTY(QColor accentColor MEMBER accentColor NOTIFY accentColorChanged)
   Q_PROPERTY(int previewTilesetIndex READ getPreviewTilesetIndex NOTIFY previewTilesetChanged STORED false)
 
+  Q_PROPERTY(QColor fontColorNormal MEMBER fontColorNormal NOTIFY fontColorNormalChanged)
+  Q_PROPERTY(QColor fontColorControl MEMBER fontColorControl NOTIFY fontColorControlChanged)
+  Q_PROPERTY(QColor fontColorPicture MEMBER fontColorPicture NOTIFY fontColorPictureChanged)
+  Q_PROPERTY(QColor fontColorSingle MEMBER fontColorSingle NOTIFY fontColorSingleChanged)
+  Q_PROPERTY(QColor fontColorMulti MEMBER fontColorMulti NOTIFY fontColorMultiChanged)
+  Q_PROPERTY(QColor fontColorVar MEMBER fontColorVar NOTIFY fontColorVarChanged)
+
 signals:
   void headerShadowHeightChanged();
   void headerHeightChanged();
@@ -57,6 +64,13 @@ signals:
   void primaryColorDarkChanged();
   void dividerColorChanged();
   void accentColorChanged();
+
+  void fontColorNormalChanged();
+  void fontColorControlChanged();
+  void fontColorPictureChanged();
+  void fontColorSingleChanged();
+  void fontColorMultiChanged();
+  void fontColorVarChanged();
 
 public:
   Q_INVOKABLE void setColorScheme(QColor primary, QColor secondary);
@@ -84,6 +98,13 @@ public:
 
   QColor dividerColor = QColor("#BDBDBD");
   QColor accentColor = QColor("#607D8B");
+
+  QColor fontColorNormal = QColor("#388E3C"); // Green, Shade 700
+  QColor fontColorControl = QColor("#7B1FA2"); // Purple, Shade 700
+  QColor fontColorPicture = QColor("#303F9F"); // Blue, Shade 700
+  QColor fontColorSingle = QColor("#9E9D24"); // Lime, Shade 800
+  QColor fontColorMulti = QColor("#FF6F00"); // Amber, Shade 900
+  QColor fontColorVar = QColor("#616161"); // Grey, Shade 700
 };
 
 #endif // SETTINGS_H

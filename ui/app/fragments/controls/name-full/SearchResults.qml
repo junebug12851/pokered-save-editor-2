@@ -12,6 +12,27 @@ ListView {
   model: brg.fontSearchModel
   ScrollBar.vertical: ScrollBar {}
 
+  // There can only be one color and many fonts belong to more than one category
+  function determineColor(ind) {
+    let font = brg.fonts.fontAt(ind);
+
+    if(font.normal)
+      return brg.settings.fontColorNormal;
+    else if(font.control)
+      return brg.settings.fontColorControl;
+    else if(font.picture)
+      return brg.settings.fontColorPicture;
+    else if(font.singleChar)
+      return brg.settings.fontColorSingle;
+    else if(font.variable)
+      return brg.settings.fontColorVar;
+    else if(font.multiChar)
+      return brg.settings.fontColorMulti;
+
+    // Error
+    return Material.Red;
+  }
+
   delegate: Button {
     width: parent.width
     flat: true
@@ -19,6 +40,8 @@ ListView {
           ? brg.fonts.fontAt(fontInd).alias
           : brg.fonts.fontAt(fontInd).name
     font.capitalization: Font.MixedCase
+
+    Material.foreground: determineColor(fontInd)
 
     hoverEnabled: true
     onClicked: {
