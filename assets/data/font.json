@@ -1869,7 +1869,7 @@
     "normal": true,
     "singleChar": true,
     "length": 1,
-    "alias": "PK"
+    "alias": "Pk"
   },
   {
     "ind": 226,
@@ -1878,7 +1878,7 @@
     "normal": true,
     "singleChar": true,
     "length": 1,
-    "alias": "MN"
+    "alias": "Mn"
   },
   {
     "ind": 227,
