@@ -15,6 +15,7 @@ RoundButton {
   y: 15
 
   property alias toolTipText: toolTip.text
+  property alias toolTipEl: toolTip
   property bool followGlobalSetting: false
 
   MainToolTip {

@@ -42,6 +42,19 @@ ColumnLayout {
 
     Material.foreground: brg.settings.fontColorNormal
     Material.accent: brg.settings.fontColorNormal
+
+    InfoButton {
+      x: parent.width - icon.width
+      y: 0
+      toolTipText: "Characters your allowed to pick in-game. These are " +
+                   "guarenteed to always look the same throughout gameplay."
+      icon.width: 15
+      icon.height: 15
+
+      Material.foreground: brg.settings.textColorDark
+      Material.accent: brg.settings.accentColor
+      toolTipEl.x: 0
+    }
   }
 
   SearchParam {
@@ -51,6 +64,19 @@ ColumnLayout {
 
     Material.foreground: brg.settings.fontColorControl
     Material.accent: brg.settings.fontColorControl
+
+    InfoButton {
+      x: parent.width - icon.width
+      y: 0
+      toolTipText: "Special codes that control the text engine. Using these " +
+                   "in a name will cause glitching and trash on the screen"
+      icon.width: 15
+      icon.height: 15
+
+      Material.foreground: brg.settings.textColorDark
+      Material.accent: brg.settings.accentColor
+      toolTipEl.x: 0
+    }
   }
 
   SearchParam {
@@ -60,6 +86,19 @@ ColumnLayout {
 
     Material.foreground: brg.settings.fontColorPicture
     Material.accent: brg.settings.fontColorPicture
+
+    InfoButton {
+      x: parent.width - icon.width
+      y: 0
+      toolTipText: "Tiles you can insert into the game, majority of them will " +
+                   "change throughout gameplay We aproximate them here."
+      icon.width: 15
+      icon.height: 15
+
+      Material.foreground: brg.settings.textColorDark
+      Material.accent: brg.settings.accentColor
+      toolTipEl.x: 0
+    }
   }
 
   SearchParam {
@@ -69,6 +108,19 @@ ColumnLayout {
 
     Material.foreground: brg.settings.fontColorSingle
     Material.accent: brg.settings.fontColorSingle
+
+    InfoButton {
+      x: parent.width - icon.width
+      y: 0
+      toolTipText: "Characters that take up 1 space on screen and in the save " +
+                   "data."
+      icon.width: 15
+      icon.height: 15
+
+      Material.foreground: brg.settings.textColorDark
+      Material.accent: brg.settings.accentColor
+      toolTipEl.x: 0
+    }
   }
 
   SearchParam {
@@ -78,6 +130,19 @@ ColumnLayout {
 
     Material.foreground: brg.settings.fontColorMulti
     Material.accent: brg.settings.fontColorMulti
+
+    InfoButton {
+      x: parent.width - icon.width
+      y: 0
+      toolTipText: "Characters that take up more than 1 space on screen yet " +
+                   "only take up 1 byte in the save data."
+      icon.width: 15
+      icon.height: 15
+
+      Material.foreground: brg.settings.textColorDark
+      Material.accent: brg.settings.accentColor
+      toolTipEl.x: 0
+    }
   }
 
   SearchParam {
@@ -87,6 +152,19 @@ ColumnLayout {
 
     Material.foreground: brg.settings.fontColorVar
     Material.accent: brg.settings.fontColorVar
+
+    InfoButton {
+      x: parent.width - icon.width
+      y: 0
+      toolTipText: "Insert an existing name or other text from elsewhere in " +
+                   "memory."
+      icon.width: 15
+      icon.height: 15
+
+      Material.foreground: brg.settings.textColorDark
+      Material.accent: brg.settings.accentColor
+      toolTipEl.x: 0
+    }
   }
 
   Component.onCompleted: top.reSearch();

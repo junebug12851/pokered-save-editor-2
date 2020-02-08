@@ -30,7 +30,7 @@ ListView {
       return brg.settings.fontColorMulti;
 
     // Error
-    return Material.Red;
+    return "red";
   }
 
   delegate: Button {
