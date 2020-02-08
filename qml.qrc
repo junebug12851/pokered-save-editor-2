@@ -432,5 +432,8 @@
         <file>ui/app/fragments/controls/name-full/SearchParam.qml</file>
         <file>ui/app/fragments/controls/name-full/SearchCriteria.qml</file>
         <file>ui/app/fragments/controls/name-full/SearchContainer.qml</file>
+        <file>ui/app/fragments/controls/name-full/SearchResults.qml</file>
+        <file>ui/app/fragments/controls/name-full/SearchRoot.qml</file>
+        <file>ui/app/fragments/controls/name-full/PagedPicker.qml</file>
     </qresource>
 </RCC>

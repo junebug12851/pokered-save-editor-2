@@ -44,92 +44,21 @@ Page {
     onStrChanged: top.str = str;
   }
 
-  SwipeView {
-    id: pageView
+  Pane {
+    anchors.fill: parent
 
-    clip: true
-    currentIndex: pageIndicator.currentIndex
-    anchors.left: parent.left
-    anchors.leftMargin: 15
+    PagedPicker {
+      anchors.left: parent.left
+      anchors.leftMargin: 15
 
-    anchors.top: parent.top
-    anchors.topMargin: 15
+      anchors.top: parent.top
+      anchors.topMargin: 15
 
-    height: parent.height - 15
-    width: (parent.width * 0.60) - 15
+      height: parent.height - anchors.topMargin
+      width: (parent.width * 0.60) - anchors.leftMargin
 
-    interactive: false
-
-    Row {
-      SearchContainer {
-        id: searchContainer
-
-        height: parent.height
-        width: 11 * 12
-      }
-
-      ListView {
-        id: listView
-
-        height: parent.height
-        width: parent.width - searchContainer.width
-
-        clip: true
-        model: brg.fontSearchModel
-        ScrollBar.vertical: ScrollBar {}
-
-        property alias str: top.str
-
-        delegate: Button {
-          width: listView.width
-          flat: true
-          text: (brg.fonts.fontAt(fontInd).alias !== "")
-                ? brg.fonts.fontAt(fontInd).alias
-                : brg.fonts.fontAt(fontInd).name
-          font.capitalization: Font.MixedCase
-
-          hoverEnabled: true
-          onClicked: {
-            var fontName = brg.fonts.fontAt(fontInd).name;
-            var curStr = listView.str.toString();
-
-            listView.str = curStr + fontName;
-          }
-        }
-      }
-    }
-
-    Rectangle {
-      color: "red"
-    }
-  }
-
-  PageIndicator {
-    id: pageIndicator
-
-    interactive: true
-    count: pageView.count
-    currentIndex: pageView.currentIndex
-
-    anchors.bottom: pageView.bottom
-    anchors.horizontalCenter: pageView.horizontalCenter
-
-    delegate: Rectangle {
-      implicitWidth: 12
-      implicitHeight: 12
-
-      radius: width / 2
-      color: brg.settings.textColorDark
-
-      opacity: (index === pageIndicator.currentIndex)
-               ? 0.95
-               : 0.45
-
-      Behavior on opacity {
-        OpacityAnimator {
-          duration: 100
-        }
-      }
+      str: top.str
+      onStrChanged: top.str = str;
     }
   }
 
