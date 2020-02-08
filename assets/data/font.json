@@ -800,7 +800,7 @@
     "multiChar": true,
     "variable": true,
     "length": 10,
-    "alias": "Target",
+    "alias": "Player Usage",
     "tip": "Prints out the name of the last Pokemon or Item you used"
   },
   {
@@ -810,7 +810,7 @@
     "multiChar": true,
     "variable": true,
     "length": 15,
-    "alias": "Opposing User",
+    "alias": "Enemy Usage",
     "tip": "Prints out the name of the last Pokemon you fought prefixed with 'Enemy '"
   },
   {
@@ -864,7 +864,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐀"
+    "alias": "Bold A"
   },
   {
     "ind": 97,
@@ -872,7 +872,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐁"
+    "alias": "Bold B"
   },
   {
     "ind": 98,
@@ -880,7 +880,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐂"
+    "alias": "Bold C"
   },
   {
     "ind": 99,
@@ -888,7 +888,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐃"
+    "alias": "Bold D"
   },
   {
     "ind": 100,
@@ -896,7 +896,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐄"
+    "alias": "Bold E"
   },
   {
     "ind": 101,
@@ -904,7 +904,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐅"
+    "alias": "Bold F"
   },
   {
     "ind": 102,
@@ -912,7 +912,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐆"
+    "alias": "Bold G"
   },
   {
     "ind": 103,
@@ -920,7 +920,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐇"
+    "alias": "Bold H"
   },
   {
     "ind": 104,
@@ -928,7 +928,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐈"
+    "alias": "Bold I"
   },
   {
     "ind": 105,
@@ -936,7 +936,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐕"
+    "alias": "Bold V"
   },
   {
     "ind": 106,
@@ -944,7 +944,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐒"
+    "alias": "Bold S"
   },
   {
     "ind": 107,
@@ -952,7 +952,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐋"
+    "alias": "Bold L"
   },
   {
     "ind": 108,
@@ -960,7 +960,7 @@
     "shorthand": true,
     "singleChar": true,
     "length": 1,
-    "alias": "𝐌"
+    "alias": "Bold M"
   },
   {
     "ind": 109,

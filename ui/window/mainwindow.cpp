@@ -9,6 +9,8 @@
 #include "../../src/data/file/filemanagement.h"
 #include "../../src/data/file/savefile.h"
 
+#include "../../src/data/db/fonts.h"
+
 #include "../../src/engine/tilesetprovider.h"
 #include "../../src/engine/fontpreviewprovider.h"
 
@@ -175,10 +177,25 @@ void MainWindow::setupProviders()
 void MainWindow::injectIntoQML()
 {
   // Now grab the QML instance from UI
-  auto qml = ui.app->engine()->rootContext();
+  auto engine = ui.app->engine();
+  auto qml = engine->rootContext();
 
   // Inject singleton instances needed
-  qml->setContextProperty("brg", new Bridge(file));
+  auto bridge = new Bridge(file);
+  qml->setContextProperty("brg", bridge);
+
+  // Mark pointers MINE, NOT QML
+
+  // fontSearch returns a pointer to itself for chain linking, this causes
+  // issues as QML sees a pointer retruned from a Q_INVOKABLE and thinks it
+  // owns the pointer and thus needs to GC/Auto-Destroy it
+  engine->setObjectOwnership(bridge->fontSearch, QQmlEngine::CppOwnership);
+
+  // FontsDB allows QML to retrieve font information via a Q_INVOKABLE, like
+  // above the pointer returned can cause QML to take ownership and start
+  // deleting font data. Mark all font information is Mine, Not QML
+  for(auto font : FontsDB::store)
+    engine->setObjectOwnership(font, QQmlEngine::CppOwnership);
 }
 
 void MainWindow::ssConnect()

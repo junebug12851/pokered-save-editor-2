@@ -26,7 +26,6 @@ RecentFilesModel::RecentFilesModel(FileManagement* file) : file(file)
   connect(file, &FileManagement::recentFilesChanged, this, &RecentFilesModel::onDataChange);
 }
 
-
 int RecentFilesModel::rowCount(const QModelIndex& parent) const
 {
   // Not a tree, just a list, there's no parent

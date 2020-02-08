@@ -31,6 +31,8 @@ FontSearch* FontSearch::startOver()
     results.append(entry);
   }
 
+  fontCountChanged();
+
   return this;
 }
 
@@ -39,6 +41,8 @@ FontSearch* FontSearch::andShorthand()
   for(auto entry : QVector<FontDBEntry*>(results))
     if(!entry->shorthand)
       results.removeOne(entry);
+
+  fontCountChanged();
 
   return this;
 }
@@ -49,6 +53,8 @@ FontSearch* FontSearch::notShorthand()
     if(entry->shorthand)
       results.removeOne(entry);
 
+  fontCountChanged();
+
   return this;
 }
 
@@ -57,6 +63,8 @@ FontSearch* FontSearch::andNormal()
   for(auto entry : QVector<FontDBEntry*>(results))
     if(!entry->normal)
       results.removeOne(entry);
+
+  fontCountChanged();
 
   return this;
 }
@@ -67,6 +75,8 @@ FontSearch* FontSearch::notNormal()
     if(entry->normal)
       results.removeOne(entry);
 
+  fontCountChanged();
+
   return this;
 }
 
@@ -75,6 +85,8 @@ FontSearch* FontSearch::andControl()
   for(auto entry : QVector<FontDBEntry*>(results))
     if(!entry->control)
       results.removeOne(entry);
+
+  fontCountChanged();
 
   return this;
 }
@@ -85,6 +97,8 @@ FontSearch* FontSearch::notControl()
     if(entry->control)
       results.removeOne(entry);
 
+  fontCountChanged();
+
   return this;
 }
 
@@ -93,6 +107,8 @@ FontSearch* FontSearch::andPicture()
   for(auto entry : QVector<FontDBEntry*>(results))
     if(!entry->picture)
       results.removeOne(entry);
+
+  fontCountChanged();
 
   return this;
 }
@@ -103,6 +119,8 @@ FontSearch* FontSearch::notPicture()
     if(entry->picture)
       results.removeOne(entry);
 
+  fontCountChanged();
+
   return this;
 }
 
@@ -111,6 +129,8 @@ FontSearch* FontSearch::andSingleChar()
   for(auto entry : QVector<FontDBEntry*>(results))
     if(!entry->singleChar)
       results.removeOne(entry);
+
+  fontCountChanged();
 
   return this;
 }
@@ -121,6 +141,8 @@ FontSearch* FontSearch::notSingleChar()
     if(entry->singleChar)
       results.removeOne(entry);
 
+  fontCountChanged();
+
   return this;
 }
 
@@ -129,6 +151,8 @@ FontSearch* FontSearch::andMultiChar()
   for(auto entry : QVector<FontDBEntry*>(results))
     if(!entry->multiChar)
       results.removeOne(entry);
+
+  fontCountChanged();
 
   return this;
 }
@@ -139,6 +163,8 @@ FontSearch* FontSearch::notMultiChar()
     if(entry->multiChar)
       results.removeOne(entry);
 
+  fontCountChanged();
+
   return this;
 }
 
@@ -147,6 +173,8 @@ FontSearch* FontSearch::andVariable()
   for(auto entry : QVector<FontDBEntry*>(results))
     if(!entry->variable)
       results.removeOne(entry);
+
+  fontCountChanged();
 
   return this;
 }
@@ -157,10 +185,12 @@ FontSearch* FontSearch::notVariable()
     if(entry->variable)
       results.removeOne(entry);
 
+  fontCountChanged();
+
   return this;
 }
 
-int FontSearch::fontCount()
+int FontSearch::getFontCount()
 {
   return results.size();
 }

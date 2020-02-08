@@ -139,120 +139,249 @@ Page {
     }
   }
 
-  Flickable {
-    id: searchParent
+  SwipeView {
+    id: pageView
 
-    width: criteriaBox.implicitWidth
-    height: parent.height - anchors.topMargin
-
+    clip: true
+    currentIndex: pageIndicator.currentIndex
     anchors.left: parent.left
     anchors.leftMargin: 15
 
     anchors.top: parent.top
     anchors.topMargin: 15
 
-    contentWidth: criteriaBox.width
-    contentHeight: criteriaBox.height
+    height: parent.height - 15
+    width: (parent.width * 0.60) - 15
 
-    flickableDirection: Flickable.VerticalFlick
+    interactive: false
 
-    function reSearch() {
+    RowLayout {
+      Flickable {
+        id: searchParent
 
-      // Start over on the results
-      brg.fontSearch.startOver();
+        width: criteriaBox.implicitWidth
+        height: parent.height - anchors.topMargin
 
-      if(normalSearch.checkState == Qt.PartiallyChecked)
-        brg.fontSearch.notNormal();
-      else if(normalSearch.checkState == Qt.Checked)
-        brg.fontSearch.andNormal();
+        contentWidth: criteriaBox.width
+        contentHeight: criteriaBox.height
 
-      if(controlSearch.checkState == Qt.PartiallyChecked)
-        brg.fontSearch.notControl();
-      else if(controlSearch.checkState == Qt.Checked)
-        brg.fontSearch.andControl();
+        flickableDirection: Flickable.VerticalFlick
+        ScrollBar.vertical: ScrollBar {}
 
-      if(pictureSearch.checkState == Qt.PartiallyChecked)
-        brg.fontSearch.notPicture();
-      else if(pictureSearch.checkState == Qt.Checked)
-        brg.fontSearch.andPicture();
+        function reSearch() {
 
-      if(singleSearch.checkState == Qt.PartiallyChecked)
-        brg.fontSearch.notSingleChar();
-      else if(singleSearch.checkState == Qt.Checked)
-        brg.fontSearch.andSingleChar();
+          // Start over on the results
+          brg.fontSearch.startOver();
 
-      if(multiSearch.checkState == Qt.PartiallyChecked)
-        brg.fontSearch.notMultiChar();
-      else if(multiSearch.checkState == Qt.Checked)
-        brg.fontSearch.andMultiChar();
+          if(normalSearch.checkState == Qt.PartiallyChecked)
+            brg.fontSearch.notNormal();
+          else if(normalSearch.checkState == Qt.Checked)
+            brg.fontSearch.andNormal();
 
-      if(varSearch.checkState == Qt.PartiallyChecked)
-        brg.fontSearch.notVariable();
-      else if(varSearch.checkState == Qt.Checked)
-        brg.fontSearch.andVariable();
-    }
+          if(controlSearch.checkState == Qt.PartiallyChecked)
+            brg.fontSearch.notControl();
+          else if(controlSearch.checkState == Qt.Checked)
+            brg.fontSearch.andControl();
 
-    ColumnLayout {
-      id: criteriaBox
-      spacing: -10
+          if(pictureSearch.checkState == Qt.PartiallyChecked)
+            brg.fontSearch.notPicture();
+          else if(pictureSearch.checkState == Qt.Checked)
+            brg.fontSearch.andPicture();
 
-      Button {
-        text: "Clear"
-        onClicked: {
-          normalSearch.checkState = Qt.Unchecked;
-          controlSearch.checkState = Qt.Unchecked;
-          pictureSearch.checkState = Qt.Unchecked;
-          singleSearch.checkState = Qt.Unchecked;
-          multiSearch.checkState = Qt.Unchecked;
-          varSearch.checkState = Qt.Unchecked;
+          if(singleSearch.checkState == Qt.PartiallyChecked)
+            brg.fontSearch.notSingleChar();
+          else if(singleSearch.checkState == Qt.Checked)
+            brg.fontSearch.andSingleChar();
+
+          if(multiSearch.checkState == Qt.PartiallyChecked)
+            brg.fontSearch.notMultiChar();
+          else if(multiSearch.checkState == Qt.Checked)
+            brg.fontSearch.andMultiChar();
+
+          if(varSearch.checkState == Qt.PartiallyChecked)
+            brg.fontSearch.notVariable();
+          else if(varSearch.checkState == Qt.Checked)
+            brg.fontSearch.andVariable();
+        }
+
+        ColumnLayout {
+          id: criteriaBox
+          spacing: -10
+
+          Button {
+            text: "Clear"
+            onClicked: {
+              normalSearch.checkState = Qt.Unchecked;
+              controlSearch.checkState = Qt.Unchecked;
+              pictureSearch.checkState = Qt.Unchecked;
+              singleSearch.checkState = Qt.Unchecked;
+              multiSearch.checkState = Qt.Unchecked;
+              varSearch.checkState = Qt.Unchecked;
+            }
+          }
+
+          Rectangle {
+            width: 5
+            height: 25
+            color: "transparent"
+          }
+
+          CheckBox {
+            id: normalSearch
+            text: "Normal"
+            checkState: Qt.Checked
+            tristate: true
+            onCheckStateChanged: searchParent.reSearch();
+
+            nextCheckState: function() {
+              if (checkState === Qt.Unchecked)
+                return Qt.Checked
+              else if (checkState === Qt.Checked)
+                return Qt.PartiallyChecked
+              else
+                return Qt.Unchecked
+            }
+          }
+          CheckBox {
+            id: controlSearch
+            text: "Control"
+            tristate: true
+            onCheckStateChanged: searchParent.reSearch();
+
+            nextCheckState: function() {
+              if (checkState === Qt.Unchecked)
+                return Qt.Checked
+              else if (checkState === Qt.Checked)
+                return Qt.PartiallyChecked
+              else
+                return Qt.Unchecked
+            }
+          }
+          CheckBox {
+            id: pictureSearch
+            text: "Picture"
+            tristate: true
+            onCheckStateChanged: searchParent.reSearch();
+
+            nextCheckState: function() {
+              if (checkState === Qt.Unchecked)
+                return Qt.Checked
+              else if (checkState === Qt.Checked)
+                return Qt.PartiallyChecked
+              else
+                return Qt.Unchecked
+            }
+          }
+          CheckBox {
+            id: singleSearch
+            text: "Single-Char"
+            tristate: true
+            onCheckStateChanged: searchParent.reSearch();
+
+            nextCheckState: function() {
+              if (checkState === Qt.Unchecked)
+                return Qt.Checked
+              else if (checkState === Qt.Checked)
+                return Qt.PartiallyChecked
+              else
+                return Qt.Unchecked
+            }
+          }
+          CheckBox {
+            id: multiSearch
+            text: "Multi-Char"
+            tristate: true
+            onCheckStateChanged: searchParent.reSearch();
+
+            nextCheckState: function() {
+              if (checkState === Qt.Unchecked)
+                return Qt.Checked
+              else if (checkState === Qt.Checked)
+                return Qt.PartiallyChecked
+              else
+                return Qt.Unchecked
+            }
+          }
+          CheckBox {
+            id: varSearch
+            text: "Variable"
+            tristate: true
+            onCheckStateChanged: searchParent.reSearch();
+
+            nextCheckState: function() {
+              if (checkState === Qt.Unchecked)
+                return Qt.Checked
+              else if (checkState === Qt.Checked)
+                return Qt.PartiallyChecked
+              else
+                return Qt.Unchecked
+            }
+          }
+
+          Component.onCompleted: searchParent.reSearch();
         }
       }
 
-      Rectangle {
-        width: 5
-        height: 25
-        color: "transparent"
-      }
+      ListView {
+        id: listView
+        clip: true
+        model: brg.fontSearchModel
+        ScrollBar.vertical: ScrollBar {}
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
-      CheckBox {
-        id: normalSearch
-        text: "Normal"
-        checkState: Qt.Checked
-        tristate: true
-        onCheckStateChanged: searchParent.reSearch();
-      }
-      CheckBox {
-        id: controlSearch
-        text: "Control"
-        tristate: true
-        onCheckStateChanged: searchParent.reSearch();
-      }
-      CheckBox {
-        id: pictureSearch
-        text: "Picture"
-        tristate: true
-        onCheckStateChanged: searchParent.reSearch();
-      }
-      CheckBox {
-        id: singleSearch
-        text: "Single-Char"
-        tristate: true
-        onCheckStateChanged: searchParent.reSearch();
-      }
-      CheckBox {
-        id: multiSearch
-        text: "Multi-Char"
-        tristate: true
-        onCheckStateChanged: searchParent.reSearch();
-      }
-      CheckBox {
-        id: varSearch
-        text: "Variable"
-        tristate: true
-        onCheckStateChanged: searchParent.reSearch();
-      }
+        property alias str: top.str
 
-      Component.onCompleted: searchParent.reSearch();
+        delegate: Button {
+          width: parent.width
+          flat: true
+          text: (brg.fonts.fontAt(fontInd).alias !== "")
+                ? brg.fonts.fontAt(fontInd).alias
+                : brg.fonts.fontAt(fontInd).name
+          font.capitalization: Font.MixedCase
+
+          hoverEnabled: true
+          onClicked: {
+            var fontName = brg.fonts.fontAt(fontInd).name;
+            var curStr = listView.str.toString();
+
+            listView.str = curStr + fontName;
+          }
+        }
+      }
+    }
+
+    Rectangle {
+      color: "red"
+    }
+  }
+
+  PageIndicator {
+    id: pageIndicator
+
+    interactive: true
+    count: pageView.count
+    currentIndex: pageView.currentIndex
+
+    anchors.bottom: pageView.bottom
+    anchors.horizontalCenter: pageView.horizontalCenter
+
+    delegate: Rectangle {
+      implicitWidth: 12
+      implicitHeight: 12
+
+      radius: width / 2
+      color: brg.settings.textColorDark
+
+      opacity: (index === pageIndicator.currentIndex)
+               ? 0.95
+               : 0.45
+
+      Behavior on opacity {
+          OpacityAnimator {
+              duration: 100
+          }
+      }
     }
   }
 

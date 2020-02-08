@@ -104,6 +104,7 @@ HEADERS += \
   src/engine/tilesetprovider.h \
   src/mvc/creditsmodel.h \
   src/common/random.h \
+  src/mvc/fontsearchmodel.h \
   src/mvc/recentfilesmodel.h \
   src/engine/tilesetengine.h \
   ui/window/mainwindow.h
@@ -200,6 +201,7 @@ SOURCES += \
   src/data/db/types.cpp \
   src/mvc/creditsmodel.cpp \
   src/common/random.cpp \
+  src/mvc/fontsearchmodel.cpp \
   src/mvc/recentfilesmodel.cpp \
   src/engine/tilesetengine.cpp \
   ui/window/mainwindow.cpp

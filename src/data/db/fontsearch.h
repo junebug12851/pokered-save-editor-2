@@ -25,6 +25,10 @@ class FontDBEntry;
 class FontSearch : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(int fontCount READ getFontCount NOTIFY fontCountChanged STORED false)
+
+signals:
+  void fontCountChanged();
 
 public:
   FontSearch();
@@ -46,7 +50,7 @@ public:
   Q_INVOKABLE FontSearch* notVariable();
 
   // QML Interface
-  Q_INVOKABLE int fontCount();
+  Q_INVOKABLE int getFontCount();
   Q_INVOKABLE FontDBEntry* fontAt(int ind);
 
   QVector<FontDBEntry*> results = QVector<FontDBEntry*>();
