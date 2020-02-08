@@ -25,6 +25,7 @@ Page {
   onStrChanged: {
     header.str = top.str
     nameDisplay.str = str;
+    pagedPicker.str = str;
   }
 
   // Header toolbar
@@ -48,6 +49,8 @@ Page {
     anchors.fill: parent
 
     PagedPicker {
+      id: pagedPicker
+
       anchors.left: parent.left
       anchors.leftMargin: 15
 

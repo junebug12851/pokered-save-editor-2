@@ -7,6 +7,8 @@ Row {
   id: top
   property string str: ""
 
+  onStrChanged: searchResults.str = str;
+
   SearchContainer {
     id: searchContainer
 
@@ -15,6 +17,7 @@ Row {
   }
 
   SearchResults {
+    id: searchResults
     height: parent.height
     width: parent.width - searchContainer.width
 

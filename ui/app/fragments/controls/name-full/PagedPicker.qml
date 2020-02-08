@@ -8,6 +8,8 @@ Item {
 
   property string str: ""
 
+  onStrChanged: searchRoot.str = str;
+
   SwipeView {
     id: pageView
 
@@ -17,6 +19,7 @@ Item {
     interactive: false
 
     SearchRoot {
+      id: searchRoot
       str: top.str
       onStrChanged: top.str = str;
     }
