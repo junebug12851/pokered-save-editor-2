@@ -663,7 +663,7 @@
     "multiChar": true,
     "length": 2,
     "alias": "PkMn",
-    "tip": "Spell out 'Pk' and 'Mn' on screen. Taking up 2 characters on screen but only using one character in the sav data."
+    "tip": "Spell out 'Pk' and 'Mn' on screen. Taking up 2 characters on screen but only using 1 byte in the sav data."
   },
   {
     "ind": 75,
@@ -736,7 +736,7 @@
     "variable": true,
     "length": 7,
     "alias": "Player Name",
-    "tip": "Inserts the player name taking up to 7 characters on screen but only 1 in the save data. Crashes if used in player name."
+    "tip": "Inserts the player name taking up to 7 characters on screen but only 1 byte in the save data. Crashes if used in player name."
   },
   {
     "ind": 83,
@@ -746,7 +746,7 @@
     "variable": true,
     "length": 7,
     "alias": "Rival Name",
-    "tip": "Inserts the rivals name taking up to 7 characters on screen but only 1 in the save data. Crashes if used in rivals name."
+    "tip": "Inserts the rivals name taking up to 7 characters on screen but only 1 byte in the save data. Crashes if used in rivals name."
   },
   {
     "ind": 84,
@@ -755,7 +755,7 @@
     "multiChar": true,
     "length": 4,
     "alias": "Poké",
-    "tip": "Spell out 'Poke' on screen. Taking up 4 characters on screen but only using one character in the sav data."
+    "tip": "Spell out 'Poke' on screen. Taking up 4 characters on screen but only using 1 byte in the sav data."
   },
   {
     "ind": 85,
@@ -773,7 +773,7 @@
     "multiChar": true,
     "length": 2,
     "alias": "……",
-    "tip": "Print out 2 sets of 3 dots taking up 2 characters on screen while only using one in the sav data"
+    "tip": "Print out 2 sets of 3 dots taking up 2 characters on screen while only using 1 byte in the sav data"
   },
   {
     "ind": 87,
@@ -801,7 +801,7 @@
     "variable": true,
     "length": 10,
     "alias": "Player Usage",
-    "tip": "Prints out the name of the last Pokemon or Item you used"
+    "tip": "Prints out the name of the last Pokemon or Item you used. Can take up to 10 characters on screen while only using 1 byte in the save file."
   },
   {
     "ind": 90,
@@ -811,7 +811,7 @@
     "variable": true,
     "length": 15,
     "alias": "Enemy Usage",
-    "tip": "Prints out the name of the last Pokemon you fought prefixed with 'Enemy '"
+    "tip": "Prints out the name of the last Pokemon you fought prefixed with 'Enemy '. Can take up to 15 characters on screen while only using 1 byte in the save file."
   },
   {
     "ind": 91,
@@ -820,7 +820,7 @@
     "multiChar": true,
     "length": 2,
     "alias": "PC",
-    "tip": "Spell out 'PC' on screen. Taking up 2 characters on screen but only using one character in the sav data."
+    "tip": "Spell out 'PC' on screen. Taking up 2 characters on screen but only using 1 byte in the sav data."
   },
   {
     "ind": 92,
@@ -829,7 +829,7 @@
     "multiChar": true,
     "length": 2,
     "alias": "TM",
-    "tip": "Spell out 'TM' on screen. Taking up 2 characters on screen but only using one character in the sav data."
+    "tip": "Spell out 'TM' on screen. Taking up 2 characters on screen but only using 1 byte in the sav data."
   },
   {
     "ind": 93,
@@ -838,7 +838,7 @@
     "multiChar": true,
     "length": 7,
     "alias": "TRAINER",
-    "tip": "Spell out 'TRAINER' on screen. Taking up 7 characters on screen but only using one character in the sav data."
+    "tip": "Spell out 'TRAINER' on screen. Taking up 7 characters on screen but only using 1 byte in the sav data."
   },
   {
     "ind": 94,
@@ -847,7 +847,7 @@
     "multiChar": true,
     "length": 6,
     "alias": "ROCKET",
-    "tip": "Spell out 'ROCKET' on screen. Taking up 6 characters on screen but only using one character in the sav data."
+    "tip": "Spell out 'ROCKET' on screen. Taking up 6 characters on screen but only using 1 byte in the sav data."
   },
   {
     "ind": 95,
@@ -1986,7 +1986,7 @@
     "name": "$",
     "singleChar": true,
     "length": 1,
-    "alias": "Poke-Yen"
+    "alias": "Pokédollar"
   },
   {
     "ind": 241,

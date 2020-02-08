@@ -50,5 +50,26 @@ ListView {
 
       topz.str = curStr + fontName;
     }
+
+    onHoveredChanged: {
+      if(!hovered) {
+        detailView.colorCodeEl.color = "transparent"
+        detailView.titleEl.text = ""
+        detailView.codeEl.text = ""
+        detailView.descDividerEl.visible = false
+        detailView.descEl.text = ""
+        return;
+      }
+
+      detailView.colorCodeEl.color = determineColor(fontInd);
+      detailView.titleEl.text = (brg.fonts.fontAt(fontInd).alias !== "")
+          ? brg.fonts.fontAt(fontInd).alias
+          : brg.fonts.fontAt(fontInd).name;
+      detailView.codeEl.text = (brg.fonts.fontAt(fontInd).alias !== "")
+          ? brg.fonts.fontAt(fontInd).name
+          : "";
+      detailView.descDividerEl.visible = brg.fonts.fontAt(fontInd).tip !== ""
+      detailView.descEl.text = brg.fonts.fontAt(fontInd).tip;
+    }
   }
 }

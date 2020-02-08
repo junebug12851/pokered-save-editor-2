@@ -18,7 +18,7 @@ Row {
   property bool isPersonName: false
   property bool hasBox: false
 
-  spacing: -16
+  spacing: -13
 
   onStrChanged: {
     nameEdit.text = top.str
@@ -42,6 +42,14 @@ Row {
     disableMenu: true
 
     topInset: 52
+  }
+
+  // Allows taking extra actions
+  IconButtonSquare {
+    id: clearBtn
+
+    icon.source: "qrc:/assets/icons/fontawesome/backspace.svg"
+    onClicked: top.str = ""
   }
 
   // Allows taking extra actions

@@ -435,5 +435,7 @@
         <file>ui/app/fragments/controls/name-full/SearchResults.qml</file>
         <file>ui/app/fragments/controls/name-full/SearchRoot.qml</file>
         <file>ui/app/fragments/controls/name-full/PagedPicker.qml</file>
+        <file>assets/icons/fontawesome/backspace.svg</file>
+        <file>ui/app/fragments/controls/name-full/DetailView.qml</file>
     </qresource>
 </RCC>

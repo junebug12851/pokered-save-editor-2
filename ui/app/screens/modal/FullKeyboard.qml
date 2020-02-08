@@ -63,6 +63,15 @@ Page {
       str: top.str
       onStrChanged: top.str = str;
     }
+
+    DetailView {
+      id: detailView
+
+      anchors.left: pagedPicker.right
+      anchors.top: pagedPicker.Top
+      width: parent.width - pagedPicker.width
+      height: parent.height
+    }
   }
 
   footer: ToolBar {
