@@ -303,6 +303,7 @@ Image {
     anchors.horizontalCenter: (centerFeedback) ? parent.horizontalCenter : undefined
     font.pixelSize: 11
     color: feedbackColorNormal
+    horizontalAlignment: (centerFeedback) ? Text.AlignHCenter : undefined
 
     text: "Using " + regCount + " out of " + chopLen + " bytes."
   }
@@ -317,13 +318,15 @@ Image {
              enableFeedback &&
              isPersonName &&
              expandedCount > 7 &&
-             expandedCount <= 10
+             expandedCount <= 10 &&
+             regCount < 10
 
     anchors.top: parent.bottom
     anchors.left: (centerFeedback) ? undefined : parent.left
     anchors.horizontalCenter: (centerFeedback) ? parent.horizontalCenter : undefined
     font.pixelSize: 11
     color: feedbackColorWarning
+    horizontalAlignment: (centerFeedback) ? Text.AlignHCenter : undefined
 
     text: "Warning: This name is meant to be a max of 7 characters"
   }
@@ -335,15 +338,35 @@ Image {
     // gone over 7 characters
     visible: (editorVisible || disableEditor) &&
              enableFeedback &&
-             expandedCount > 10
+             expandedCount > 10 &&
+             regCount < 10
 
     anchors.top: parent.bottom
     anchors.left: (centerFeedback) ? undefined : parent.left
     anchors.horizontalCenter: (centerFeedback) ? parent.horizontalCenter : undefined
     font.pixelSize: 11
     color: feedbackColorWarning
+    horizontalAlignment: (centerFeedback) ? Text.AlignHCenter : undefined
 
     text: "Warning: This name expands out to be much longer on screen."
+  }
+
+  // When your out of name bytes
+  Text {
+    // Show this when the editor is visible, it's a persons name, and we've
+    // gone over 7 characters
+    visible: (editorVisible || disableEditor) &&
+             enableFeedback &&
+             regCount >= 10
+
+    anchors.top: parent.bottom
+    anchors.left: (centerFeedback) ? undefined : parent.left
+    anchors.horizontalCenter: (centerFeedback) ? parent.horizontalCenter : undefined
+    font.pixelSize: 11
+    color: feedbackColorWarning
+    horizontalAlignment: (centerFeedback) ? Text.AlignHCenter : undefined
+
+    text: "Warning: You've used all 10 out of 10 bytes available."
   }
 
   // Initial ground-work

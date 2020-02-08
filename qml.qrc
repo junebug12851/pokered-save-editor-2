@@ -425,5 +425,12 @@
         <file>ui/app/fragments/general/NameDisplay.qml</file>
         <file>ui/app/screens/modal/FullKeyboard.qml</file>
         <file>ui/app/fragments/controls/name/NameDisplayMenuNoTileset.qml</file>
+        <file>ui/app/fragments/controls/name-full/NameFullHeader.qml</file>
+        <file>ui/app/fragments/controls/name-full/NameFullEdit.qml</file>
+        <file>ui/app/fragments/controls/name-full/NameFullTileset.qml</file>
+        <file>ui/app/fragments/general/Spacer.qml</file>
+        <file>ui/app/fragments/controls/name-full/SearchParam.qml</file>
+        <file>ui/app/fragments/controls/name-full/SearchCriteria.qml</file>
+        <file>ui/app/fragments/controls/name-full/SearchContainer.qml</file>
     </qresource>
 </RCC>
