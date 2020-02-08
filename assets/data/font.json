@@ -1064,7 +1064,7 @@
     "shorthand": true,
     "picture": true,
     "length": 1,
-    "alias": "UL Dialog"
+    "alias": "╔"
   },
   {
     "ind": 122,
@@ -1072,7 +1072,7 @@
     "shorthand": true,
     "picture": true,
     "length": 1,
-    "alias": "Horz Bars Dialog"
+    "alias": "═"
   },
   {
     "ind": 123,
@@ -1080,7 +1080,7 @@
     "shorthand": true,
     "picture": true,
     "length": 1,
-    "alias": "UR Dialog"
+    "alias": "╗"
   },
   {
     "ind": 124,
@@ -1088,7 +1088,7 @@
     "shorthand": true,
     "picture": true,
     "length": 1,
-    "alias": "Vert Bars Dialog"
+    "alias": "║"
   },
   {
     "ind": 125,
@@ -1096,7 +1096,7 @@
     "shorthand": true,
     "picture": true,
     "length": 1,
-    "alias": "BL Dialog"
+    "alias": "╚"
   },
   {
     "ind": 126,
@@ -1104,7 +1104,7 @@
     "shorthand": true,
     "picture": true,
     "length": 1,
-    "alias": "BR Dialog"
+    "alias": "╝"
   },
   {
     "ind": 127,
