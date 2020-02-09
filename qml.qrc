@@ -439,5 +439,7 @@
         <file>ui/app/fragments/controls/name-full/DetailView.qml</file>
         <file>ui/app/fragments/general/TilesetDisplay.qml</file>
         <file>ui/app/fragments/controls/name-full/TilesetPicker.qml</file>
+        <file>assets/images/red.png</file>
+        <file>assets/images/red-larger.png</file>
     </qresource>
 </RCC>

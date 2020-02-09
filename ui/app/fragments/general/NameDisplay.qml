@@ -273,7 +273,7 @@ Image {
     width: parent.width
     anchors.bottom: parent.top
     anchors.left: parent.left
-    anchors.bottomMargin: 5
+    anchors.bottomMargin: -5
 
     isPersonName: img.isPersonName
     hasBox: img.hasBox
