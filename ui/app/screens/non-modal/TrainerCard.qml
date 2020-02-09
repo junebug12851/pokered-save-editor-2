@@ -13,7 +13,7 @@ Page {
     id: cardFront
     anchors.centerIn: parent
     border.color: brg.settings.textColorMid
-    radius: 25
+//    radius: 25
     color: "transparent"
 
     width: 500
