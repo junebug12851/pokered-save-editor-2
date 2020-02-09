@@ -88,7 +88,7 @@ public:
   ExamplesPlayer* randomExamplePlayer = new ExamplesPlayer;
   ExamplesPokemon* randomExamplePokemon = new ExamplesPokemon;
   ExamplesRival* randomExampleRival = new ExamplesRival;
-  Settings* settings = new Settings;
+  Settings* settings = new Settings(file->data);
 };
 
 #endif

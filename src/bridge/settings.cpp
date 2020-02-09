@@ -15,6 +15,12 @@
 */
 
 #include "./settings.h"
+#include "../data/db/maps.h"
+#include "../data/db/tileset.h"
+#include "../data/file/savefile.h"
+#include "../data/file/expanded/savefileexpanded.h"
+#include "../data/file/expanded/area/area.h"
+#include "../data/file/expanded/area/areamap.h"
 
 QString tilesetOrder[24] = {
   "Cavern",
@@ -43,6 +49,15 @@ QString tilesetOrder[24] = {
   "Underground"
 };
 
+Settings::Settings(SaveFile* file)
+  : file(file)
+{
+  // Only when all of the expanded data changes at once
+  // the preview settings are kept seperate from the rest of the file so
+  // we only want to update them when all the file data has been changed out
+  connect(file, &SaveFile::dataExpandedChanged, this, &Settings::dataChanged);
+}
+
 void Settings::setColorScheme(QColor primary, QColor secondary)
 {
   primaryColor = primary;
@@ -64,4 +79,23 @@ int Settings::getPreviewTilesetIndex()
   }
 
   return ret;
+}
+
+void Settings::dataChanged()
+{
+  // Get the current map
+  // Even if no map data is laoded yet, the curMap will be 0 which is
+  // Palette Town and works just fine as defaults
+  auto mapInd = file->dataExpanded->area->map->curMap;
+
+  // Get all the data for the current map
+  auto mapData = MapsDB::ind.value(QString::number(mapInd), nullptr);
+
+  // Really shouldn't be any kind of error but stop here if there is one
+  if(mapData == nullptr || mapData->toTileset == nullptr)
+    return;
+
+  // Load in the 2 settings
+  previewTileset = mapData->toTileset->name;
+  previewOutdoor = mapData->toTileset->type == "Outdoor";
 }

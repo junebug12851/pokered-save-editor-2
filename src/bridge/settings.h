@@ -20,6 +20,8 @@
 #include <QString>
 #include <QColor>
 
+class SaveFile;
+
 class Settings : public QObject
 {
   Q_OBJECT
@@ -73,6 +75,8 @@ signals:
   void fontColorVarChanged();
 
 public:
+  Settings(SaveFile* file);
+
   Q_INVOKABLE void setColorScheme(QColor primary, QColor secondary);
 
   // Header and Footer height
@@ -105,6 +109,12 @@ public:
   QColor fontColorSingle = QColor("#9E9D24"); // Lime, Shade 800
   QColor fontColorMulti = QColor("#FF6F00"); // Amber, Shade 900
   QColor fontColorVar = QColor("#616161"); // Grey, Shade 700
+
+protected slots:
+  void dataChanged();
+
+protected:
+  SaveFile* file;
 };
 
 #endif // SETTINGS_H
