@@ -255,21 +255,21 @@ void SaveFileToolset::setBitField(var16 addr, var16 size, QVector<bool> src)
   // We perform extra checks to make sure we're not extending past the given
   // src array which is more complicated when working with a bit-field
   for(var16 i = 0; i < size * 8 && i < src.size(); i +=8 ) {
-    if(src.size() < (i + 0))
+    if((i + 0) < src.size())
       setBit(addr, 1, 0, src.at(i + 0));
-    if(src.size() < (i + 1))
+    if((i + 1) < src.size())
       setBit(addr, 1, 1, src.at(i + 1));
-    if(src.size() < (i + 2))
+    if((i + 2) < src.size())
       setBit(addr, 1, 2, src.at(i + 2));
-    if(src.size() < (i + 3))
+    if((i + 3) < src.size())
       setBit(addr, 1, 3, src.at(i + 3));
-    if(src.size() < (i + 4))
+    if((i + 4) < src.size())
       setBit(addr, 1, 4, src.at(i + 4));
-    if(src.size() < (i + 5))
+    if((i + 5) < src.size())
       setBit(addr, 1, 5, src.at(i + 5));
-    if(src.size() < (i + 6))
+    if((i + 6) < src.size())
       setBit(addr, 1, 6, src.at(i + 6));
-    if(src.size() < (i + 7))
+    if((i + 7) < src.size())
       setBit(addr, 1, 7, src.at(i + 7));
 
     addr++;

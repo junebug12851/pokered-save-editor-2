@@ -78,6 +78,7 @@ void FileManagement::reset()
 {
   setPath("");
   expandRecentFiles(settings.value(KEY_RECENT_FILES, "").toString());
+  newFile();
 }
 
 void FileManagement::newFile()
@@ -156,6 +157,7 @@ bool FileManagement::saveFile()
     return saveFileAs();
   }
 
+  data->flattenData();
   writeSaveData(path, data->data);
   return true;
 }
@@ -166,6 +168,7 @@ bool FileManagement::saveFileAs()
   if(filename == "")
     return false;
 
+  data->flattenData();
   writeSaveData(filename, data->data);
   setPath(filename);
   return true;
@@ -177,6 +180,7 @@ bool FileManagement::saveFileCopy()
   if(filename == "")
     return false;
 
+  data->flattenData();
   writeSaveData(filename, data->data);
   return true;
 }
