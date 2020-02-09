@@ -22,16 +22,16 @@ Menu {
     }
   }
 
-  MenuItem {
-    text: "Toggle Example"
-    onTriggered: toggleExample();
-  }
+//  MenuItem {
+//    text: "Toggle Example"
+//    onTriggered: toggleExample();
+//  }
 
-  MenuItem {
-    enabled: hasBox
-    text: "Randomize Example"
-    onTriggered: reUpdateExample();
-  }
+//  MenuItem {
+//    enabled: hasBox
+//    text: "Randomize Example"
+//    onTriggered: reUpdateExample();
+//  }
 
   TilesetMenu {
     title: "Change Tileset"

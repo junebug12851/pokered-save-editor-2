@@ -441,5 +441,6 @@
         <file>ui/app/fragments/controls/name-full/TilesetPicker.qml</file>
         <file>assets/images/red.png</file>
         <file>assets/images/red-larger.png</file>
+        <file>ui/app/fragments/general/DefTextEdit.qml</file>
     </qresource>
 </RCC>
