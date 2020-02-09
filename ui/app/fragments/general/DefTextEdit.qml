@@ -23,6 +23,8 @@ TextField {
     id: label
 
     anchors.right: parent.left
+    anchors.rightMargin: 7
+
     anchors.top: parent.top
     anchors.bottom: parent.bottom
 

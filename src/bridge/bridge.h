@@ -27,6 +27,7 @@
 #include "../mvc/recentfilesmodel.h"
 #include "../mvc/creditsmodel.h"
 #include "../mvc/fontsearchmodel.h"
+#include "../mvc/pokemonstartersmodel.h"
 
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
@@ -44,6 +45,7 @@ class Bridge : public QObject
   Q_PROPERTY(RecentFilesModel* recentFilesModel MEMBER recentFilesModel NOTIFY recentFilesModelChanged)
   Q_PROPERTY(Router* router MEMBER router NOTIFY routerChanged)
   Q_PROPERTY(CreditsModel* creditsModel MEMBER creditsModel NOTIFY creditsModelChanged)
+  Q_PROPERTY(PokemonStartersModel* starterModel MEMBER starterModel NOTIFY starterModelChanged)
   Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged)
   Q_PROPERTY(FontSearchModel* fontSearchModel MEMBER fontSearchModel NOTIFY fontSearchModelChanged)
   Q_PROPERTY(FontsDB* fonts MEMBER fonts NOTIFY fontsChanged)
@@ -70,17 +72,20 @@ signals:
   void randomExamplePokemonChanged();
   void randomExampleRivalChanged();
   void settingsChanged();
+  void starterModelChanged();
 
 public:
   Bridge(FileManagement* file);
 
   FileManagement* file = nullptr;
   RecentFilesModel* recentFilesModel = nullptr;
-
-  Router* router = new Router;
   CreditsModel* creditsModel = new CreditsModel;
+  PokemonStartersModel* starterModel = new PokemonStartersModel;
+
   FontSearch* fontSearch = new FontSearch;
   FontSearchModel* fontSearchModel = new FontSearchModel(fontSearch);
+
+  Router* router = new Router;
   FontsDB* fonts = new FontsDB;
   NamesDB* randomPlayerName = new NamesDB;
   NamesPokemonDB* randomPokemonName = new NamesPokemonDB;

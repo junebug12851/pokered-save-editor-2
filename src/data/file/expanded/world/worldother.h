@@ -27,11 +27,11 @@ class Playtime : public QObject {
 
   Q_PROPERTY(int days READ getDays WRITE setDays NOTIFY hoursChanged)
   Q_PROPERTY(int hours MEMBER hours NOTIFY hoursChanged)
-  Q_PROPERTY(int hoursAdjusted READ getHoursAdjusted NOTIFY hoursChanged)
+  Q_PROPERTY(int hoursAdjusted READ getHoursAdjusted WRITE setHoursAdjusted NOTIFY hoursChanged)
   Q_PROPERTY(int minutes MEMBER minutes NOTIFY minutesChanged)
   Q_PROPERTY(int seconds MEMBER seconds NOTIFY secondsChanged)
   Q_PROPERTY(int frames MEMBER frames NOTIFY framesChanged)
-  Q_PROPERTY(int clockMaxed MEMBER clockMaxed NOTIFY clockMaxedChanged)
+  Q_PROPERTY(bool clockMaxed MEMBER clockMaxed NOTIFY clockMaxedChanged)
 
   // Converts hours into days and allows converting back from days
   Q_INVOKABLE int getDays();
@@ -39,6 +39,7 @@ class Playtime : public QObject {
 
   // Gets hours within the day,
   Q_INVOKABLE int getHoursAdjusted();
+  Q_INVOKABLE void setHoursAdjusted(int val);
 
 signals:
   void hoursChanged();
@@ -54,7 +55,7 @@ public:
   int frames; // Max 59, any higher will reset to zero and increment sec by 1
 
   // Any value, it just stops the clock completely
-  int clockMaxed;
+  bool clockMaxed;
 };
 
 class WorldOther : public QObject
@@ -83,6 +84,7 @@ public slots:
   void reset();
   void randomize();
   void randomizePlaytime();
+  void clearPlaytime();
 
 public:
   // Hold B to avoid wild battles

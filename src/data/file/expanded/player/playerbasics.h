@@ -78,6 +78,11 @@ public slots:
   void reset();
   void randomize();
 
+  void randomizeStarter();
+  void randomizeCoins();
+  void randomizeMoney();
+  void randomizeID();
+
 public:
   QString playerName;
   int playerID;

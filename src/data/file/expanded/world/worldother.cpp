@@ -52,7 +52,7 @@ void WorldOther::load(SaveFile* saveFile)
   playtime->hours = it->getByte();
   playtime->hoursChanged();
 
-  playtime->clockMaxed = it->getByte();
+  playtime->clockMaxed = (it->getByte() > 0);
   playtime->clockMaxedChanged();
 
   playtime->minutes = it->getByte();
@@ -76,7 +76,7 @@ void WorldOther::save(SaveFile* saveFile)
 
   auto it = saveFile->iterator()->offsetTo(0x2CED);
   it->setByte(playtime->hours);
-  it->setByte(playtime->clockMaxed);
+  it->setByte((playtime->clockMaxed) ? 1 : 0);
   it->setByte(playtime->minutes);
   it->setByte(playtime->seconds);
   it->setByte(playtime->frames);
@@ -100,7 +100,7 @@ void WorldOther::reset()
   playtime->frames = 0;
   playtime->framesChanged();
 
-  playtime->clockMaxed = 0;
+  playtime->clockMaxed = false;
   playtime->clockMaxedChanged();
 
   fossilItemGiven = 0;
@@ -123,6 +123,8 @@ void WorldOther::randomize()
 
 void WorldOther::randomizePlaytime()
 {
+  playtime->clockMaxed = false;
+
   playtime->hours = Random::rangeInclusive(0, 255);
   playtime->hoursChanged();
 
@@ -136,6 +138,23 @@ void WorldOther::randomizePlaytime()
   playtime->framesChanged();
 }
 
+void WorldOther::clearPlaytime()
+{
+  playtime->clockMaxed = false;
+
+  playtime->hours = 0;
+  playtime->hoursChanged();
+
+  playtime->minutes = 0;
+  playtime->minutesChanged();
+
+  playtime->seconds = 0;
+  playtime->secondsChanged();
+
+  playtime->frames = 0;
+  playtime->framesChanged();
+}
+
 int Playtime::getDays()
 {
   return hours / 24;
@@ -143,7 +162,7 @@ int Playtime::getDays()
 
 void Playtime::setDays(int val)
 {
-  int _days = (hours / 24) + val;
+  int _days = val;
   int _hours = hours % 24;
 
   hours = (_days * 24) + _hours;
@@ -153,4 +172,13 @@ void Playtime::setDays(int val)
 int Playtime::getHoursAdjusted()
 {
   return hours % 24;
+}
+
+void Playtime::setHoursAdjusted(int val)
+{
+  int _days = hours / 24;
+  int _hours = val;
+
+  hours = (_days * 24) + _hours;
+  hoursChanged();
 }

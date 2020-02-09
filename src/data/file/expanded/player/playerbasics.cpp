@@ -153,6 +153,11 @@ void PlayerBasics::randomize()
 
   badgesChanged();
 
+  randomizeStarter();
+}
+
+void PlayerBasics::randomizeStarter()
+{
   // Determine a random starter
   var8 starter[3] = {
     PokemonDB::ind.value("Bulbasaur")->ind, // Bulbasaur
@@ -164,6 +169,24 @@ void PlayerBasics::randomize()
 
   playerStarter = starter[pick];
   playerStarterChanged();
+}
+
+void PlayerBasics::randomizeCoins()
+{
+  coins = Random::rangeExclusive(0, 9999);
+  coinsChanged();
+}
+
+void PlayerBasics::randomizeMoney()
+{
+  money = Random::rangeExclusive(0, 999999);
+  moneyChanged();
+}
+
+void PlayerBasics::randomizeID()
+{
+  playerID = Random::rangeExclusive(0x0000, 0xFFFF);
+  playerIDChanged();
 }
 
 void PlayerBasics::setBadges(SaveFile* saveFile, var16 offset)
