@@ -15,7 +15,7 @@ So this is going to look like nothing to you, a simple image, however it took ve
 Looking good so far, more progress!!!
 
 ![More Progress in the ui/ux](https://i.imgur.com/zp8xCDc.png)
-![Trainer Card Screen](https://i.imgur.com/qraa77x.png)
+![Trainer Card Screen](https://i.imgur.com/iRUopfu.png)
 ![Stage 3 Name Editor A](https://i.imgur.com/oYshJk2.png)
 ![Initial New File Screen](https://i.imgur.com/Woakr9P.png)
 ![Initial File Tools Screen](https://i.imgur.com/4oPvOE9.png)
