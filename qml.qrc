@@ -442,5 +442,18 @@
         <file>assets/images/red.png</file>
         <file>assets/images/red-larger.png</file>
         <file>ui/app/fragments/general/DefTextEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/PlayerNameEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/PlayerIdEdit.qml</file>
+        <file>ui/app/fragments/controls/menu/RandomMenu.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/MoneyEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/CoinsEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/StarterEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/PlaytimeEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/DaysEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/PlaytimeDivider.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/HoursEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/MinutesEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/SecondsEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/FramesEdit.qml</file>
     </qresource>
 </RCC>
