@@ -21,7 +21,7 @@ Looking good so far, more progress!!!
 ![Initial File Tools Screen](https://i.imgur.com/4oPvOE9.png)
 
 Here's sort of a rough preview of a before and after, note that the after image below may become outdated as new updates roll in. You can clearly see how beautiful the new interface is.
-![Before and After Image](https://i.imgur.com/LS1XPsy.png)
+![Before and After Image](https://i.imgur.com/KFhx0Rd.png)
 
 ## New page for reboot goals / features
 
