@@ -23,7 +23,7 @@ int PokemonStartersModel::rowCount(const QModelIndex& parent) const
   Q_UNUSED(parent)
 
   // Return list count
-  return 3;
+  return 4;
 }
 
 QVariant PokemonStartersModel::data(const QModelIndex& index, int role) const
@@ -32,11 +32,19 @@ QVariant PokemonStartersModel::data(const QModelIndex& index, int role) const
   if (!index.isValid())
     return QVariant();
 
-  if (index.row() >= 3)
+  if (index.row() >= 4)
+    return QVariant();
+
+  // Deal with index 0 meaning No Starter
+  if(index.row() == 0 && role == IndRole)
+    return 0;
+  else if(index.row() == 0 && role == NameRole)
+    return "None";
+  else if(index.row() == 0)
     return QVariant();
 
   // Get Pokemon and ensure it's valid to prevent crashing
-  auto mon = getMon(index.row());
+  auto mon = getMon(index.row() - 1);
   if(mon == nullptr)
     return QVariant();
 
@@ -66,18 +74,22 @@ QHash<int, QByteArray> PokemonStartersModel::roleNames() const
 
 int PokemonStartersModel::valToIndex(int val)
 {
+  // Index 0 = No Starter
+  if(val == 0)
+    return 0;
+
   auto mon = PokemonDB::ind.value(QString::number(val), nullptr);
   if(mon == nullptr)
-    return 3;
+    return 4;
 
   if(mon->readable == "Bulbasaur")
-    return 0;
-  else if(mon->readable == "Charmander")
     return 1;
-  else if(mon->readable == "Squirtle")
+  else if(mon->readable == "Charmander")
     return 2;
+  else if(mon->readable == "Squirtle")
+    return 3;
 
-  return 3;
+  return 4;
 }
 
 PokemonDBEntry* PokemonStartersModel::getMon(int ind) const
