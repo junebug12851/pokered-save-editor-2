@@ -35,7 +35,7 @@ DefTextEdit {
   }
 
   MainToolTip {
-    text: "Frames played, 0-59. There are 60 frames in a second."
+    text: "Frames played, 0-59"
   }
 
   Connections {

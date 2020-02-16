@@ -456,5 +456,24 @@
         <file>ui/app/fragments/screens/trainer-card/SecondsEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/FramesEdit.qml</file>
         <file>ui/app/fragments/general/InfoButtonReg.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/CardFront.qml</file>
+        <file>assets/images/badges/boulder-off.png</file>
+        <file>assets/images/badges/boulder-on.png</file>
+        <file>assets/images/badges/cascade-off.png</file>
+        <file>assets/images/badges/cascade-on.png</file>
+        <file>assets/images/badges/earth-off.png</file>
+        <file>assets/images/badges/earth-on.png</file>
+        <file>assets/images/badges/marsh-off.png</file>
+        <file>assets/images/badges/marsh-on.png</file>
+        <file>assets/images/badges/rainbow-off.png</file>
+        <file>assets/images/badges/rainbow-on.png</file>
+        <file>assets/images/badges/soul-off.png</file>
+        <file>assets/images/badges/soul-on.png</file>
+        <file>assets/images/badges/thunder-off.png</file>
+        <file>assets/images/badges/thunder-on.png</file>
+        <file>assets/images/badges/volcano-off.png</file>
+        <file>assets/images/badges/volcano-on.png</file>
+        <file>ui/app/fragments/screens/trainer-card/BadgesModel.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/ListBadges.qml</file>
     </qresource>
 </RCC>

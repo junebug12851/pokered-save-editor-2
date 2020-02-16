@@ -36,7 +36,7 @@ MouseArea {
     }
 
     MainToolTip {
-      text: "Your casino coins"
+      text: "Casino Coins, 0 - 9,999"
     }
 
     Connections {

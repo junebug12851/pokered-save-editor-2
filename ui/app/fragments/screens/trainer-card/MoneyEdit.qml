@@ -36,7 +36,7 @@ MouseArea {
     }
 
     MainToolTip {
-      text: "Player Money, 0 - 999,999"
+      text: "Money, 0 - 999,999"
     }
 
     Connections {
