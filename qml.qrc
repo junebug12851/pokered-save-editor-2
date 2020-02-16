@@ -455,5 +455,6 @@
         <file>ui/app/fragments/screens/trainer-card/MinutesEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/SecondsEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/FramesEdit.qml</file>
+        <file>ui/app/fragments/general/InfoButtonReg.qml</file>
     </qresource>
 </RCC>

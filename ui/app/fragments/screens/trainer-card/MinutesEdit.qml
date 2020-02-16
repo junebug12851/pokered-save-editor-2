@@ -14,7 +14,6 @@ DefTextEdit {
            ? 0.50
            : 1.00
   maximumLength: 2
-  placeholderText: "00"
   width: 2 * font.pixelSize
 
   horizontalAlignment: Text.AlignRight
@@ -31,6 +30,10 @@ DefTextEdit {
       return;
 
     brg.file.data.dataExpanded.world.other.playtime.minutes = txtDec;
+  }
+
+  MainToolTip {
+    text: "Minutes played, 0-59"
   }
 
   Connections {

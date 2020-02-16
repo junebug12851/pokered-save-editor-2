@@ -14,7 +14,6 @@ DefTextEdit {
            ? 0.50
            : 1.00
   maximumLength: 2
-  placeholderText: "0"
   width: 2 * font.pixelSize
 
   horizontalAlignment: Text.AlignRight
@@ -31,6 +30,10 @@ DefTextEdit {
       return;
 
     brg.file.data.dataExpanded.world.other.playtime.days = txtDec;
+  }
+
+  MainToolTip {
+    text: "Days played, 0-10"
   }
 
   Connections {

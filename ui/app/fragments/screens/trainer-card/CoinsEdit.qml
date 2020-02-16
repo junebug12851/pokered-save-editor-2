@@ -19,7 +19,6 @@ MouseArea {
 
     labelEl.text: "Coins"
     maximumLength: 4
-    placeholderText: "0"
 
     text: brg.file.data.dataExpanded.player.basics.coins
     onTextChanged: {
@@ -34,6 +33,10 @@ MouseArea {
         return;
 
       brg.file.data.dataExpanded.player.basics.coins = txtDec;
+    }
+
+    MainToolTip {
+      text: "Your casino coins"
     }
 
     Connections {

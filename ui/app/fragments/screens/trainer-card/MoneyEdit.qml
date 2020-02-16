@@ -19,7 +19,6 @@ MouseArea {
 
     labelEl.text: "Money"
     maximumLength: 6
-    placeholderText: "0"
 
     text: brg.file.data.dataExpanded.player.basics.money
     onTextChanged: {
@@ -34,6 +33,10 @@ MouseArea {
         return;
 
       brg.file.data.dataExpanded.player.basics.money = txtDec;
+    }
+
+    MainToolTip {
+      text: "Player Money, 0 - 999,999"
     }
 
     Connections {

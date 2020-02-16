@@ -16,7 +16,6 @@ DefTextEdit {
            ? 0.50
            : 1.00
   maximumLength: 2
-  placeholderText: "00"
   width: 2 * font.pixelSize
 
   horizontalAlignment: Text.AlignRight
@@ -33,6 +32,10 @@ DefTextEdit {
       return;
 
     brg.file.data.dataExpanded.world.other.playtime.frames = txtDec;
+  }
+
+  MainToolTip {
+    text: "Frames played, 0-59. There are 60 frames in a second."
   }
 
   Connections {

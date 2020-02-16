@@ -28,6 +28,10 @@ MouseArea {
     onActivated: brg.file.data.dataExpanded.player.basics.playerStarter = currentValue;
     Component.onCompleted: currentIndex = brg.starterModel.valToIndex(brg.file.data.dataExpanded.player.basics.playerStarter);
 
+    MainToolTip {
+      text: "Set based on starter you chose, I don't think this is ever used in gameplay."
+    }
+
     Connections {
       target: brg.file.data.dataExpanded.player.basics
       onPlayerStarterChanged: child.currentIndex = brg.starterModel.valToIndex(brg.file.data.dataExpanded.player.basics.playerStarter);
