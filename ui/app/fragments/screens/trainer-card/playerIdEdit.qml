@@ -19,7 +19,6 @@ MouseArea {
     labelEl.text: "ID"
     maximumLength: 4
 
-    text: brg.file.data.dataExpanded.player.basics.playerID.toString(16).toUpperCase()
     onTextChanged: {
       if(text === "")
         return;
@@ -42,6 +41,8 @@ MouseArea {
       target: brg.file.data.dataExpanded.player.basics
       onPlayerIDChanged: child.text = brg.file.data.dataExpanded.player.basics.playerID.toString(16).toUpperCase();
     }
+
+    Component.onCompleted: child.text = brg.file.data.dataExpanded.player.basics.playerID.toString(16).toUpperCase();
 
     RandomMenu {
       id: menuBtn

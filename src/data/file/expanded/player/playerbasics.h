@@ -16,10 +16,12 @@
 #ifndef PLAYERBASICS_H
 #define PLAYERBASICS_H
 
+#include <QVector>
 #include <QObject>
 #include <QString>
 #include "../../../../common/types.h"
 class SaveFile;
+class PokemonBox;
 struct PokemonDBEntry;
 
 struct Badges : public QObject
@@ -46,8 +48,12 @@ class PlayerBasics : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString playerName MEMBER playerName NOTIFY playerNameChanged)
-  Q_PROPERTY(int playerID MEMBER playerID NOTIFY playerIDChanged)
+  // We use the full-set versions of playername and ID so that all QML changes
+  // will properly update non-trade mons and keep the non-trade status. Otherwise
+  // the user will have to manually go through and change all of the non-trade mons
+  // OT Name and OT ID after changing it here which is undesirable.
+  Q_PROPERTY(QString playerName READ getPlayerName WRITE fullSetPlayerName NOTIFY playerNameChanged)
+  Q_PROPERTY(int playerID READ getPlayerId WRITE fullSetPlayerId NOTIFY playerIDChanged)
   Q_PROPERTY(unsigned int money MEMBER money NOTIFY moneyChanged)
   Q_PROPERTY(int coins MEMBER coins NOTIFY coinsChanged)
   Q_PROPERTY(int playerStarter MEMBER playerStarter NOTIFY playerStarterChanged)
@@ -66,6 +72,12 @@ public:
   Q_INVOKABLE bool badgeAt(int ind);
   Q_INVOKABLE void badgeSet(int ind, bool val);
 
+  QString getPlayerName();
+  int getPlayerId();
+
+  QVector<PokemonBox*> getNonTradeMons();
+  void fixNonTradeMons(QVector<PokemonBox*> mons);
+
 signals:
   void playerNameChanged();
   void playerIDChanged();
@@ -77,6 +89,11 @@ signals:
 public slots:
   void reset();
   void randomize();
+
+  // Full Set also goes through the Pokemon and ensures non-traded pokemon are
+  // properly updated
+  void fullSetPlayerName(QString val);
+  void fullSetPlayerId(int id);
 
   void randomizeStarter();
   void randomizeCoins();
@@ -99,6 +116,8 @@ public:
     false // Earth
   };
   int playerStarter;
+
+  SaveFile* file = nullptr;
 };
 
 #endif // PLAYERBASICS_H

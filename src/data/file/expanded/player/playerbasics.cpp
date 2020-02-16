@@ -13,7 +13,17 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "playerbasics.h"
+
+#include "./player.h"
+#include "./playerbasics.h"
+#include "./playerpokemon.h"
+#include "../savefileexpanded.h"
+#include "../storage.h"
+#include "../fragments/pokemonstorageset.h"
+#include "../fragments/pokemonstoragebox.h"
+#include "../fragments/itemstoragebox.h"
+#include "../fragments/pokemonbox.h"
+#include "../fragments/pokemonparty.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
@@ -36,6 +46,8 @@ void PlayerBasics::load(SaveFile* saveFile)
   if(saveFile == nullptr) {
     return;
   }
+
+  file = saveFile;
 
   auto toolset = saveFile->toolset;
   auto it = saveFile->iterator();
@@ -96,6 +108,8 @@ void PlayerBasics::save(SaveFile* saveFile)
 
 void PlayerBasics::reset()
 {
+  file = nullptr;
+
   playerName = "";
   playerNameChanged();
 
@@ -226,4 +240,83 @@ void PlayerBasics::badgeSet(int ind, bool val)
 {
   badges[ind] = val;
   badgesChanged();
+}
+
+void PlayerBasics::fullSetPlayerName(QString val)
+{
+  // Get List of Non-Trade Mons
+  auto nonTradeMons = getNonTradeMons();
+
+  // Change Player Name
+  playerName = val;
+
+  // Fix non-Trade Mons to reflect new OT Name
+  fixNonTradeMons(nonTradeMons);
+
+  // Announce change
+  playerNameChanged();
+}
+
+void PlayerBasics::fullSetPlayerId(int id)
+{
+  // Get List of Non-Trade Mons
+  auto nonTradeMons = getNonTradeMons();
+
+  // Change Player Name
+  playerID = id;
+
+  // Fix non-Trade Mons to reflect new OT Name
+  fixNonTradeMons(nonTradeMons);
+
+  // Announce change
+  playerIDChanged();
+}
+
+QString PlayerBasics::getPlayerName()
+{
+  return playerName;
+}
+
+int PlayerBasics::getPlayerId()
+{
+  return playerID;
+}
+
+QVector<PokemonBox*> PlayerBasics::getNonTradeMons()
+{
+  // Do nothing if file is invalid
+  if(file == nullptr)
+    return QVector<PokemonBox*>();
+
+  // List of mons to fix
+  QVector<PokemonBox*> monsToFix;
+
+  // Add all party members to fix
+  for(auto el : file->dataExpanded->player->pokemon->party) {
+    if(!el->hasTradeStatus(this))
+      monsToFix.append(el);
+  }
+
+  // Add all box mons to fix
+  for(int i = 0; i < maxPokemonBoxes; i++) {
+
+    // Go through each box
+    auto box = file->dataExpanded->storage->boxAt(i);
+    if(box == nullptr)
+      continue;
+
+    // Go through all the Pokemon in each box
+    for(auto el : box->pokemon) {
+      if(!el->hasTradeStatus(this))
+        monsToFix.append(el);
+    }
+  }
+
+  return monsToFix;
+}
+
+void PlayerBasics::fixNonTradeMons(QVector<PokemonBox*> mons)
+{
+  for(auto el : mons)
+    el->changeTrade(true, this);
 }

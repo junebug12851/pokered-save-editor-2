@@ -12,11 +12,12 @@ NameDisplay {
   isPersonName: true
   isPlayerName: true
 
-  str: brg.file.data.dataExpanded.player.basics.playerName
   onStrChanged: brg.file.data.dataExpanded.player.basics.playerName = str;
 
   Connections {
     target: brg.file.data.dataExpanded.player.basics
     onPlayerNameChanged: top.str = brg.file.data.dataExpanded.player.basics.playerName;
   }
+
+  Component.onCompleted: top.str = brg.file.data.dataExpanded.player.basics.playerName;
 }
