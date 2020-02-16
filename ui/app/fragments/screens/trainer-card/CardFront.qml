@@ -25,10 +25,10 @@ Rectangle {
     id: playerIdEdit
     width: starterEdit.width
 
-    anchors.top: playerNameEdit.top
-    anchors.topMargin: -5
-    anchors.left: playerNameEdit.right
-    anchors.leftMargin: 150
+    anchors.bottom: spacer.top
+    anchors.bottomMargin: 13
+    anchors.right: parent.right
+    anchors.rightMargin: 65
   }
 
   Spacer {
@@ -77,9 +77,9 @@ Rectangle {
     id: playtimeEdit
 
     anchors.top: starterEdit.bottom
-    anchors.topMargin: 0
-    anchors.right: cardFront.right
-    anchors.rightMargin: 82
+    anchors.topMargin: 5
+    anchors.right: starterEdit.right
+    anchors.rightMargin: 0
   }
 
   Image {
