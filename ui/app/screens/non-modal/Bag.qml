@@ -10,50 +10,93 @@ import "../../fragments/screens/home"
 Page {
   id: page
 
-  ComboBox {
-    id: control
-    textRole: "itemName"
-    valueRole: "itemInd"
+  ListView {
+    clip: true
+    model: brg.bagItemsModel
+    ScrollBar.vertical: ScrollBar {}
+    anchors.fill: parent
 
-    font.capitalization: Font.Capitalize
-    font.pixelSize: 14
-    flat: true
-    model: brg.itemsModel
+    delegate: Rectangle {
+      width: parent.width
+      height: 50
 
-    width: font.pixelSize * 15
+      Row {
+        anchors.fill: parent
 
-    delegate: ItemDelegate {
-      width: control.width
-      enabled: itemInd >= 0;
+        TextEdit {
+          width: 50
+          onTextChanged: itemId = parseInt(text, 10)
+          Component.onCompleted: text = itemId.toString()
+        }
 
-      contentItem: Text {
-        text: itemName
-        font: control.font
-        color: (itemInd >= 0)
-               ? brg.settings.textColorDark
-               : brg.settings.textColorMid
-        verticalAlignment: Text.AlignVCenter
-      }
+        TextEdit {
+          width: 50
+          onTextChanged: itemCount = parseInt(text, 10)
+          Component.onCompleted: text = itemCount.toString()
+        }
 
-      highlighted: control.highlightedIndex === index
-    }
+        Button {
+          text: "Delete"
+          onClicked: brg.file.data.dataExpanded.player.items.bagItemRemove(index);
+        }
 
-    popup: Popup {
-      y: control.height - 1
-      width: control.width
-      implicitHeight: contentItem.implicitHeight
-      padding: 1
+        Button {
+          text: "Insert"
+          onClicked: brg.file.data.dataExpanded.player.items.bagItemNew();
+        }
 
-      contentItem: ListView {
-        clip: true
-        implicitHeight: contentHeight
-        model: control.popup.visible ? control.delegateModel : null
-        currentIndex: control.highlightedIndex
-
-        ScrollBar.vertical: ScrollBar { }
+        Button {
+          text: "Swap"
+          onClicked: brg.file.data.dataExpanded.player.items.bagItemMove(index, 0);
+        }
       }
     }
   }
+
+//  ComboBox {
+//    id: control
+//    textRole: "itemName"
+//    valueRole: "itemInd"
+
+//    font.capitalization: Font.Capitalize
+//    font.pixelSize: 14
+//    flat: true
+//    model: brg.itemsModel
+
+//    width: font.pixelSize * 15
+
+//    delegate: ItemDelegate {
+//      width: control.width
+//      enabled: itemInd >= 0;
+
+//      contentItem: Text {
+//        text: itemName
+//        font: control.font
+//        color: (itemInd >= 0)
+//               ? brg.settings.textColorDark
+//               : brg.settings.textColorMid
+//        verticalAlignment: Text.AlignVCenter
+//      }
+
+//      highlighted: control.highlightedIndex === index
+//    }
+
+//    popup: Popup {
+//      y: control.height - 1
+//      width: control.width
+//      implicitHeight: contentItem.implicitHeight
+//      padding: 1
+
+//      contentItem: ListView {
+//        clip: true
+//        implicitHeight: contentHeight
+//        model: control.popup.visible ? control.delegateModel : null
+//        currentIndex: control.highlightedIndex
+
+//        ScrollBar.vertical: ScrollBar { }
+//      }
+//    }
+//  }
 
   // 1 Button Footer, the Randomize Button
   footer: AppFooterBtn1 {

@@ -22,7 +22,7 @@
 BagItemsModel::BagItemsModel(PlayerItems* items)
   : items(items)
 {
-  connect(this->items, &PlayerItems::bagItemSwapChange, this, &BagItemsModel::onSwap);
+  connect(this->items, &PlayerItems::bagItemMoveChange, this, &BagItemsModel::onMove);
   connect(this->items, &PlayerItems::bagItemRemoveChange, this, &BagItemsModel::onRemove);
   connect(this->items, &PlayerItems::bagItemInsertChange, this, &BagItemsModel::onInsert);
   connect(this->items, &PlayerItems::bagItemResetChange, this, &BagItemsModel::onReset);
@@ -72,42 +72,54 @@ QHash<int, QByteArray> BagItemsModel::roleNames() const
   return roles;
 }
 
-Qt::ItemFlags BagItemsModel::flags(const QModelIndex& index) const
-{
-  if (!index.isValid())
-    return Qt::ItemIsEnabled;
-
-  return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
-}
-
 bool BagItemsModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-  if (index.isValid() && role == Qt::EditRole) {
+  if (!index.isValid())
+    return false;
 
-    stringList.replace(index.row(), value.toString());
-    emit dataChanged(index, index, {role});
+  if (index.row() >= items->bagItems.size())
+    return false;
+
+  auto item = items->bagItems.at(index.row());
+
+  if(item == nullptr)
+    return false;
+
+  // Now set requested information
+  if (role == IdRole) {
+    item->ind = value.toInt();
+    dataChanged(index, index);
+    return true;
+  }
+  else if (role == CountRole) {
+    item->amount = value.toInt();
+    dataChanged(index, index);
     return true;
   }
 
   return false;
 }
 
-void BagItemsModel::onSwap(int from, int to)
+void BagItemsModel::onMove(int from, int to)
 {
-
+  beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
+  endMoveRows();
 }
 
 void BagItemsModel::onRemove(int ind)
 {
-
+  beginRemoveRows(QModelIndex(), ind, ind);
+  endRemoveRows();
 }
 
 void BagItemsModel::onInsert()
 {
-
+  beginInsertRows(QModelIndex(), items->bagItems.size(), items->bagItems.size());
+  endInsertRows();
 }
 
 void BagItemsModel::onReset()
 {
-
+  beginResetModel();
+  endResetModel();
 }

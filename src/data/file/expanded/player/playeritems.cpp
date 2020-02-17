@@ -87,15 +87,19 @@ Item* PlayerItems::bagItemAt(int ind)
   return bagItems.at(ind);
 }
 
-void PlayerItems::bagItemSwap(int from, int to)
+void PlayerItems::bagItemMove(int from, int to)
 {
+  if(from == to)
+    return;
+
+  // Grab and remove item
   auto eFrom = bagItems.at(from);
-  auto eTo = bagItems.at(to);
+  bagItems.removeAt(from);
 
-  bagItems.replace(from, eTo);
-  bagItems.replace(to, eFrom);
+  // Insert it elsewhere
+  bagItems.insert(to, eFrom);
 
-  bagItemSwapChange(from, to);
+  bagItemMoveChange(from, to);
   bagItemsChanged();
 }
 

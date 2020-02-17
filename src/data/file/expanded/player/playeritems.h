@@ -39,13 +39,13 @@ public:
   Q_INVOKABLE int bagItemCount();
   Q_INVOKABLE int bagItemMax();
   Q_INVOKABLE Item* bagItemAt(int ind);
-  Q_INVOKABLE void bagItemSwap(int from, int to);
+  Q_INVOKABLE void bagItemMove(int from, int to);
   Q_INVOKABLE void bagItemRemove(int ind);
   Q_INVOKABLE void bagItemNew();
 
 signals:
   void bagItemsChanged();
-  void bagItemSwapChange(int from, int to);
+  void bagItemMoveChange(int from, int to);
   void bagItemRemoveChange(int ind);
   void bagItemInsertChange();
   void bagItemResetChange();

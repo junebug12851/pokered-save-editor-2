@@ -38,11 +38,10 @@ public:
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
   virtual QHash<int, QByteArray> roleNames() const override;
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
   bool setData(const QModelIndex &index, const QVariant &value,
-               int role = Qt::EditRole) override;
+                   int role = Qt::EditRole) override;
 
-  void onSwap(int from, int to);
+  void onMove(int from, int to);
   void onRemove(int ind);
   void onInsert();
   void onReset();
