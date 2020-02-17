@@ -21,7 +21,7 @@
 PokedexModel::PokedexModel(PlayerPokedex* pokedex)
   : pokedex(pokedex)
 {
-  connect(pokedex, &PlayerPokedex::dexChanged, this, &PokedexModel::dataChanged);
+  connect(pokedex, &PlayerPokedex::dexItemChanged, this, &PokedexModel::dataChanged);
 }
 
 int PokedexModel::rowCount(const QModelIndex& parent) const
@@ -74,8 +74,12 @@ QHash<int, QByteArray> PokedexModel::roleNames() const
   return roles;
 }
 
-void PokedexModel::dataChanged()
+void PokedexModel::dataChanged(int ind)
 {
-  beginResetModel();
-  endResetModel();
+  QAbstractListModel::dataChanged(
+        index(ind),
+        index(ind)
+        );
+  //  beginResetModel();
+  //  endResetModel();
 }

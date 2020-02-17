@@ -60,6 +60,7 @@ public:
 
 signals:
   void dexChanged();
+  void dexItemChanged(int ind);
 
 public slots:
   void reset();

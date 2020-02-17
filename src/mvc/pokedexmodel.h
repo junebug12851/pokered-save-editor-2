@@ -39,7 +39,7 @@ public:
   virtual QVariant data(const QModelIndex& index, int role) const override;
   virtual QHash<int, QByteArray> roleNames() const override;
 
-  void dataChanged();
+  void dataChanged(int ind);
 
   PlayerPokedex* pokedex = nullptr;
 };

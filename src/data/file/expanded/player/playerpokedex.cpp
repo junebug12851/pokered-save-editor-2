@@ -40,16 +40,20 @@ void PlayerPokedex::load(SaveFile* saveFile)
   QVector<bool> tmp;
   loadPokedex(saveFile, &tmp, 0x25A3);
 
-  for(var8 i = 0; i < maxPokedex && i < tmp.size(); i++)
+  for(var8 i = 0; i < maxPokedex && i < tmp.size(); i++) {
     owned[i] = tmp.at(i);
+    dexItemChanged(i);
+  }
 
   tmp.clear();
 
   // Load Seen
   loadPokedex(saveFile, &tmp, 0x25B6);
 
-  for(var8 i = 0; i < maxPokedex && i < tmp.size(); i++)
+  for(var8 i = 0; i < maxPokedex && i < tmp.size(); i++) {
     seen[i] = tmp.at(i);
+    dexItemChanged(i);
+  }
 
   tmp.clear();
 
@@ -95,6 +99,8 @@ void PlayerPokedex::randomize()
 
     owned[i] = markOwned;
     seen[i] = markSeen;
+
+    dexItemChanged(i);
   }
 
   dexChanged();
@@ -137,6 +143,7 @@ void PlayerPokedex::toggleOne(int val)
   }
 
   // Notify Changes
+  dexItemChanged(val);
   dexChanged();
 }
 
@@ -160,6 +167,7 @@ void PlayerPokedex::markAll(int val)
   for(int i = 0; i < maxPokedex; i++) {
     this->seen[i] = seen;
     this->owned[i] = owned;
+    dexItemChanged(i);
   }
 
   // Notify changes
@@ -236,6 +244,7 @@ void PlayerPokedex::ownedSet(int ind, bool val)
 {
   owned[ind] = val;
   dexChanged();
+  dexItemChanged(ind);
 }
 
 int PlayerPokedex::seenMax()
@@ -252,6 +261,7 @@ void PlayerPokedex::seenSet(int ind, bool val)
 {
   seen[ind] = val;
   dexChanged();
+  dexItemChanged(ind);
 }
 
 int PlayerPokedex::getState(int ind)
