@@ -15,8 +15,13 @@
 */
 
 #include "./bridge.h"
+#include "../data/file/savefile.h"
+#include "../data/file/expanded/savefileexpanded.h"
+#include "../data/file/expanded/player/player.h"
+#include "../data/file/expanded/player/playerpokedex.h"
 
 Bridge::Bridge(FileManagement* file)
   : file(file),
-    recentFilesModel(new RecentFilesModel(file))
+    recentFilesModel(new RecentFilesModel(file)),
+    pokedexModel(new PokedexModel(file->data->dataExpanded->player->pokedex))
 {}

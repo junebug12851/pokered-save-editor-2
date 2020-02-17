@@ -475,5 +475,9 @@
         <file>assets/images/badges/volcano-on.png</file>
         <file>ui/app/fragments/screens/trainer-card/BadgesModel.qml</file>
         <file>ui/app/fragments/screens/trainer-card/ListBadges.qml</file>
+        <file>ui/app/screens/non-modal/Pokedex.qml</file>
+        <file>ui/app/fragments/header/AppFooterBtn2.qml</file>
+        <file>assets/icons/fontawesome/check-double.svg</file>
+        <file>assets/icons/poke-go/pokeball.svg</file>
     </qresource>
 </RCC>

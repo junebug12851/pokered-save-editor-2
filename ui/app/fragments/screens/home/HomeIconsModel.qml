@@ -12,7 +12,7 @@ ListModel {
   ListElement {
     name: "Pokedex"
     iconSrc: "qrc:/assets/icons/poke-go/pokedex.svg"
-    page: ""
+    page: "pokedex"
   }
   ListElement {
     name: "Bag"

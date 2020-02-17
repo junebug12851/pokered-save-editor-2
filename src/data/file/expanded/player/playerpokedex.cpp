@@ -44,7 +44,6 @@ void PlayerPokedex::load(SaveFile* saveFile)
     owned[i] = tmp.at(i);
 
   tmp.clear();
-  ownedChanged();
 
   // Load Seen
   loadPokedex(saveFile, &tmp, 0x25B6);
@@ -52,8 +51,9 @@ void PlayerPokedex::load(SaveFile* saveFile)
   for(var8 i = 0; i < maxPokedex && i < tmp.size(); i++)
     seen[i] = tmp.at(i);
 
-  seenChanged();
   tmp.clear();
+
+  dexChanged();
 }
 
 void PlayerPokedex::save(SaveFile* saveFile)
@@ -97,8 +97,73 @@ void PlayerPokedex::randomize()
     seen[i] = markSeen;
   }
 
-  ownedChanged();
-  seenChanged();
+  dexChanged();
+}
+
+void PlayerPokedex::toggleAll()
+{
+  bool valSeen = seen[0];
+  bool valOwn = owned[0];
+
+  // Toggle between these 3 states in this order
+  // 1. None
+  // 2. Seen
+  // 3. Owned
+
+  if(valOwn) // Owned (3) -> None (1)
+    markAll(DexNone);
+  else if(valSeen) // Seen (2) -> Owned (3)
+    markAll(DexOwned);
+  else // None (1) -> Seen (2)
+    markAll(DexSeen);
+}
+
+void PlayerPokedex::toggleOne(int val)
+{
+  bool valSeen = seen[val];
+  bool valOwn = owned[val];
+
+  if(valOwn) { // Owned (3) -> None (1)
+    this->seen[val] = false;
+    this->owned[val] = false;
+  }
+  else if(valSeen) { // Seen (2) -> Owned (3)
+    this->seen[val] = true;
+    this->owned[val] = true;
+  }
+  else { // None (1) -> Seen (2)
+    this->seen[val] = true;
+    this->owned[val] = false;
+  }
+
+  // Notify Changes
+  dexChanged();
+}
+
+void PlayerPokedex::markAll(int val)
+{
+  // Start with None
+  bool owned = false;
+  bool seen = false;
+
+  // If seen only, then mark seen
+  if(val == DexSeen)
+    seen = true;
+
+  // If owned, then mark both true
+  else if(val == DexOwned) {
+    seen = true;
+    owned = true;
+  }
+
+  // Apply changes to all
+  for(int i = 0; i < maxPokedex; i++) {
+    this->seen[i] = seen;
+    this->owned[i] = owned;
+  }
+
+  // Notify changes
+  dexChanged();
 }
 
 void PlayerPokedex::loadPokedex(SaveFile* saveFile, QVector<bool>* toArr, var16 fromOffset)
@@ -135,6 +200,30 @@ void PlayerPokedex::savePokedex(SaveFile* saveFile, QVector<bool>* fromArr, var1
 
 int PlayerPokedex::ownedCount()
 {
+  int ret = 0;
+
+  for(int i = 0; i < maxPokedex; i++) {
+    if(owned[i])
+      ret++;
+  }
+
+  return ret;
+}
+
+int PlayerPokedex::seenCount()
+{
+  int ret = 0;
+
+  for(int i = 0; i < maxPokedex; i++) {
+    if(seen[i])
+      ret++;
+  }
+
+  return ret;
+}
+
+int PlayerPokedex::ownedMax()
+{
   return maxPokedex;
 }
 
@@ -146,10 +235,10 @@ bool PlayerPokedex::ownedAt(int ind)
 void PlayerPokedex::ownedSet(int ind, bool val)
 {
   owned[ind] = val;
-  ownedChanged();
+  dexChanged();
 }
 
-int PlayerPokedex::seenCount()
+int PlayerPokedex::seenMax()
 {
   return maxPokedex;
 }
@@ -162,5 +251,21 @@ bool PlayerPokedex::seenAt(int ind)
 void PlayerPokedex::seenSet(int ind, bool val)
 {
   seen[ind] = val;
-  seenChanged();
+  dexChanged();
+}
+
+int PlayerPokedex::getState(int ind)
+{
+  bool valSeen = seen[ind];
+  bool valOwn = owned[ind];
+
+  if(valOwn) { // Owned (3)
+    return DexOwned;
+  }
+  else if(valSeen) { // Seen (2)
+    return DexSeen;
+  }
+  else { // None (1)
+    return DexNone;
+  }
 }

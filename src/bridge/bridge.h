@@ -28,6 +28,7 @@
 #include "../mvc/creditsmodel.h"
 #include "../mvc/fontsearchmodel.h"
 #include "../mvc/pokemonstartersmodel.h"
+#include "../mvc/pokedexmodel.h"
 
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
@@ -43,6 +44,7 @@ class Bridge : public QObject
 
   Q_PROPERTY(FileManagement* file MEMBER file NOTIFY fileChanged)
   Q_PROPERTY(RecentFilesModel* recentFilesModel MEMBER recentFilesModel NOTIFY recentFilesModelChanged)
+  Q_PROPERTY(PokedexModel* pokedexModel MEMBER pokedexModel NOTIFY pokedexModelChanged)
   Q_PROPERTY(Router* router MEMBER router NOTIFY routerChanged)
   Q_PROPERTY(CreditsModel* creditsModel MEMBER creditsModel NOTIFY creditsModelChanged)
   Q_PROPERTY(PokemonStartersModel* starterModel MEMBER starterModel NOTIFY starterModelChanged)
@@ -60,6 +62,7 @@ class Bridge : public QObject
 signals:
   void fileChanged();
   void recentFilesModelChanged();
+  void pokedexModelChanged();
   void routerChanged();
   void creditsModelChanged();
   void fontSearchChanged();
@@ -79,6 +82,7 @@ public:
 
   FileManagement* file = nullptr;
   RecentFilesModel* recentFilesModel = nullptr;
+  PokedexModel* pokedexModel = nullptr;
   CreditsModel* creditsModel = new CreditsModel;
   PokemonStartersModel* starterModel = new PokemonStartersModel;
 

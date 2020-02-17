@@ -26,8 +26,16 @@ constexpr var8 maxPokedex = 151;
 class PlayerPokedex : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(int ownedCount READ ownedCount NOTIFY dexChanged STORED false)
+  Q_PROPERTY(int seenCount READ seenCount NOTIFY dexChanged STORED false)
 
 public:
+  enum DexEntryState {
+    DexNone = 0,
+    DexSeen = 1,
+    DexOwned = 2
+  };
+
   PlayerPokedex(SaveFile* saveFile = nullptr);
   virtual ~PlayerPokedex();
 
@@ -37,21 +45,28 @@ public:
   void loadPokedex(SaveFile* saveFile, QVector<bool>* toArr, var16 fromOffset);
   void savePokedex(SaveFile* saveFile, QVector<bool>* fromArr, var16 toOffset);
 
-  Q_INVOKABLE int ownedCount();
+  int ownedCount();
+  int seenCount();
+
+  Q_INVOKABLE int ownedMax();
   Q_INVOKABLE bool ownedAt(int ind);
   Q_INVOKABLE void ownedSet(int ind, bool val);
 
-  Q_INVOKABLE int seenCount();
+  Q_INVOKABLE int seenMax();
   Q_INVOKABLE bool seenAt(int ind);
   Q_INVOKABLE void seenSet(int ind, bool val);
 
+  Q_INVOKABLE int getState(int ind);
+
 signals:
-  void ownedChanged();
-  void seenChanged();
+  void dexChanged();
 
 public slots:
   void reset();
   void randomize();
+  void toggleAll();
+  void toggleOne(int val);
+  void markAll(int val);
 
 public:
   bool owned[maxPokedex];
