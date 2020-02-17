@@ -30,6 +30,7 @@
 #include "../mvc/pokemonstartersmodel.h"
 #include "../mvc/pokedexmodel.h"
 #include "../mvc/itemsmodel.h"
+#include "../mvc/bagitemsmodel.h"
 
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
@@ -50,6 +51,7 @@ class Bridge : public QObject
   Q_PROPERTY(CreditsModel* creditsModel MEMBER creditsModel NOTIFY creditsModelChanged)
   Q_PROPERTY(PokemonStartersModel* starterModel MEMBER starterModel NOTIFY starterModelChanged)
   Q_PROPERTY(ItemsModel* itemsModel MEMBER itemsModel NOTIFY itemsModelChanged)
+  Q_PROPERTY(BagItemsModel* bagItemsModel MEMBER bagItemsModel NOTIFY bagItemsModelChanged)
   Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged)
   Q_PROPERTY(FontSearchModel* fontSearchModel MEMBER fontSearchModel NOTIFY fontSearchModelChanged)
   Q_PROPERTY(FontsDB* fonts MEMBER fonts NOTIFY fontsChanged)
@@ -79,6 +81,7 @@ signals:
   void settingsChanged();
   void starterModelChanged();
   void itemsModelChanged();
+  void bagItemsModelChanged();
 
 public:
   Bridge(FileManagement* file);
@@ -86,6 +89,7 @@ public:
   FileManagement* file = nullptr;
   RecentFilesModel* recentFilesModel = nullptr;
   PokedexModel* pokedexModel = nullptr;
+  BagItemsModel* bagItemsModel = nullptr;
   CreditsModel* creditsModel = new CreditsModel;
   PokemonStartersModel* starterModel = new PokemonStartersModel;
   ItemsModel* itemsModel = new ItemsModel;

@@ -33,7 +33,7 @@ ItemsModel::ItemsModel()
   collator.setIgnorePunctuation(true);
 
   // Add first category
-  itemListCache.append(new ItemEntryData("Normal Items", -1));
+  itemListCache.append(new ItemEntryData("--- Normal Items ---", -1));
 
   // Gather normal repeatable items and sort by name, then add into list
   QVector<ItemDBEntry*> tmp;
@@ -48,17 +48,17 @@ ItemsModel::ItemsModel()
       tmp.end(),
       [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
       {
-          return collator.compare(item1->name, item2->name) < 0;
+          return collator.compare(item1->readable, item2->readable) < 0;
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemEntryData(el->name, el->ind));
+    itemListCache.append(new ItemEntryData(el->readable, el->ind));
   }
 
   tmp.clear();
 
   // Add 2nd category
-  itemListCache.append(new ItemEntryData("One-Time Items", -1));
+  itemListCache.append(new ItemEntryData("--- Special Items ---", -1));
 
   for(auto el : ItemsDB::store) {
     if(el->once && !el->glitch)
@@ -70,17 +70,17 @@ ItemsModel::ItemsModel()
       tmp.end(),
       [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
       {
-          return collator.compare(item1->name, item2->name) < 0;
+          return collator.compare(item1->readable, item2->readable) < 0;
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemEntryData(el->name, el->ind));
+    itemListCache.append(new ItemEntryData(el->readable, el->ind));
   }
 
   tmp.clear();
 
   // Add 3rd category
-  itemListCache.append(new ItemEntryData("Glitch Items", -1));
+  itemListCache.append(new ItemEntryData("--- Glitch Items ---", -1));
 
   for(auto el : ItemsDB::store) {
     if(el->glitch)
@@ -92,11 +92,11 @@ ItemsModel::ItemsModel()
       tmp.end(),
       [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
       {
-          return collator.compare(item1->name, item2->name) < 0;
+          return collator.compare(item1->readable, item2->readable) < 0;
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemEntryData(el->name, el->ind));
+    itemListCache.append(new ItemEntryData(el->readable, el->ind));
   }
 
   tmp.clear();

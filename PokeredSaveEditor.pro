@@ -102,6 +102,7 @@ HEADERS += \
   src/bridge/settings.h \
   src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
+  src/mvc/bagitemsmodel.h \
   src/mvc/creditsmodel.h \
   src/common/random.h \
   src/mvc/fontsearchmodel.h \
@@ -202,6 +203,7 @@ SOURCES += \
   src/data/db/trades.cpp \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
+  src/mvc/bagitemsmodel.cpp \
   src/mvc/creditsmodel.cpp \
   src/common/random.cpp \
   src/mvc/fontsearchmodel.cpp \
