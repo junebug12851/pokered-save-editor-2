@@ -17,7 +17,7 @@ ListModel {
   ListElement {
     name: "Bag"
     iconSrc: "qrc:/assets/icons/poke-go/backpack.svg"
-    page: ""
+    page: "bag"
   }
   ListElement {
     name: "Party"

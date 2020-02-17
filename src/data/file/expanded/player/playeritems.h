@@ -45,6 +45,10 @@ public:
 
 signals:
   void bagItemsChanged();
+  void bagItemSwapChange(int from, int to);
+  void bagItemRemoveChange(int ind);
+  void bagItemInsertChange();
+  void bagItemResetChange();
 
 public slots:
   void reset();

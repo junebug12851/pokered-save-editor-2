@@ -105,6 +105,7 @@ HEADERS += \
   src/mvc/creditsmodel.h \
   src/common/random.h \
   src/mvc/fontsearchmodel.h \
+  src/mvc/itemsmodel.h \
   src/mvc/pokedexmodel.h \
   src/mvc/pokemonstartersmodel.h \
   src/mvc/recentfilesmodel.h \
@@ -204,6 +205,7 @@ SOURCES += \
   src/mvc/creditsmodel.cpp \
   src/common/random.cpp \
   src/mvc/fontsearchmodel.cpp \
+  src/mvc/itemsmodel.cpp \
   src/mvc/pokedexmodel.cpp \
   src/mvc/pokemonstartersmodel.cpp \
   src/mvc/recentfilesmodel.cpp \

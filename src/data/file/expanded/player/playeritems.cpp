@@ -46,8 +46,10 @@ void PlayerItems::load(SaveFile* saveFile)
 
   var8 amount = it->getByte();
 
-  for(var8 i = 0; i < amount; i++)
+  for(var8 i = 0; i < amount; i++) {
     bagItems.append(new Item(it));
+    bagItemInsertChange();
+  }
 
   bagItemsChanged();
 
@@ -93,6 +95,7 @@ void PlayerItems::bagItemSwap(int from, int to)
   bagItems.replace(from, eTo);
   bagItems.replace(to, eFrom);
 
+  bagItemSwapChange(from, to);
   bagItemsChanged();
 }
 
@@ -103,6 +106,8 @@ void PlayerItems::bagItemRemove(int ind)
 
   delete bagItems.at(ind);
   bagItems.removeAt(ind);
+
+  bagItemRemoveChange(ind);
   bagItemsChanged();
 }
 
@@ -112,6 +117,8 @@ void PlayerItems::bagItemNew()
     return;
 
   bagItems.append(new Item);
+
+  bagItemInsertChange();
   bagItemsChanged();
 }
 
@@ -123,6 +130,8 @@ void PlayerItems::reset()
   }
 
   bagItems.clear();
+
+  bagItemResetChange();
   bagItemsChanged();
 }
 
@@ -132,25 +141,41 @@ void PlayerItems::randomize()
 
   // Essentials
   bagItems.append(new Item("TOWN MAP", 1));
+  bagItemInsertChange();
+
   bagItems.append(new Item("POKE BALL", Random::rangeInclusive(5, 15)));
+  bagItemInsertChange();
+
   bagItems.append(new Item("POTION", Random::rangeInclusive(5, 10)));
+  bagItemInsertChange();
+
   bagItems.append(new Item("ANTIDOTE", Random::rangeInclusive(1, 3)));
+  bagItemInsertChange();
+
   bagItems.append(new Item("PARLYZ HEAL", Random::rangeInclusive(1, 3)));
+  bagItemInsertChange();
+
   bagItems.append(new Item("AWAKENING", Random::rangeInclusive(1, 3)));
+  bagItemInsertChange();
 
   // Again I have no idea where this will drop you so prepare for an escape
   // If need be, also because you only get 1 HM Slave that doesn't know dig.
   // This is your dig.
   bagItems.append(new Item("ESCAPE ROPE", Random::rangeInclusive(1, 5)));
+  bagItemInsertChange();
 
   // 25% chance of having these items
   bool giveSuperPotion = Random::chanceSuccess(25);
-  if(giveSuperPotion)
+  if(giveSuperPotion) {
     bagItems.append(new Item("SUPER POTION", 1));
+    bagItemInsertChange();
+  }
 
   bool giveGreatBall = Random::chanceSuccess(25);
-  if(giveGreatBall)
+  if(giveGreatBall) {
     bagItems.append(new Item("GREAT BALL", 1));
+    bagItemInsertChange();
+  }
 
   bagItemsChanged();
 }
