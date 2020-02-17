@@ -147,14 +147,8 @@ Page {
         height: 60
 
         RoundButton {
-          flat: true
-          anchors.verticalCenter: parent.verticalCenter
-          width: parent.width
-          hoverEnabled: true
 
-          onClicked: brg.file.data.dataExpanded.player.pokedex.toggleOne(index)
-
-          onHoveredChanged: {
+          function updatePreview() {
             if(hovered)
               previewImage.source = getMonUrl();
             else
@@ -165,6 +159,18 @@ Page {
             else
               previewImage.opacity = 1.00;
           }
+
+          flat: true
+          anchors.verticalCenter: parent.verticalCenter
+          width: parent.width
+          hoverEnabled: true
+
+          onClicked: {
+            brg.file.data.dataExpanded.player.pokedex.toggleOne(index)
+            updatePreview();
+          }
+
+          onHoveredChanged: updatePreview();
 
           Image {
             id: icon
