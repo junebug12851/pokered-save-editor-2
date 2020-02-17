@@ -11,6 +11,8 @@ import "../../fragments/screens/home"
 Page {
   id: page
 
+  Material.background: brg.settings.textColorLight
+
   Rectangle {
     anchors.left: dexShadow.right
     anchors.top: parent.top
