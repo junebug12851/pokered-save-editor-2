@@ -22,9 +22,10 @@
 #include "../../../db/items.h"
 #include "../../../../common/random.h"
 
-ItemStorageBox::ItemStorageBox(SaveFile* saveFile)
+ItemStorageBox::ItemStorageBox(int maxSize, SaveFile* saveFile, int offset)
+  : maxSize(maxSize)
 {
-  load(saveFile);
+  load(saveFile, offset);
 }
 
 ItemStorageBox::~ItemStorageBox()
@@ -32,14 +33,36 @@ ItemStorageBox::~ItemStorageBox()
   reset();
 }
 
-int ItemStorageBox::itemCount()
+int ItemStorageBox::itemsCount()
 {
   return items.size();
 }
 
-int ItemStorageBox::itemMax()
+int ItemStorageBox::itemsCountBulk()
 {
-  return boxMaxItems;
+  int ret = 0;
+
+  for(auto el : items) {
+    ret += el->amount;
+  }
+
+  return ret;
+}
+
+int ItemStorageBox::itemsMax()
+{
+  return maxSize;
+}
+
+int ItemStorageBox::itemsWorth()
+{
+  int ret = 0;
+
+  for(auto el : items) {
+    ret += el->worthAll();
+  }
+
+  return ret;
 }
 
 Item* ItemStorageBox::itemAt(int ind)
@@ -47,14 +70,19 @@ Item* ItemStorageBox::itemAt(int ind)
   return items.at(ind);
 }
 
-void ItemStorageBox::itemSwap(int from, int to)
+void ItemStorageBox::itemMove(int from, int to)
 {
+  if(from == to)
+    return;
+
+  // Grab and remove item
   auto eFrom = items.at(from);
-  auto eTo = items.at(to);
+  items.removeAt(from);
 
-  items.replace(from, eTo);
-  items.replace(to, eFrom);
+  // Insert it elsewhere
+  items.insert(to, eFrom);
 
+  itemMoveChange(from, to);
   itemsChanged();
 }
 
@@ -65,19 +93,21 @@ void ItemStorageBox::itemRemove(int ind)
 
   delete items.at(ind);
   items.removeAt(ind);
+  itemRemoveChange(ind);
   itemsChanged();
 }
 
 void ItemStorageBox::itemNew()
 {
-  if(items.size() >= boxMaxItems)
+  if(items.size() >= maxSize)
     return;
 
   items.append(new Item);
+  itemInsertChange();
   itemsChanged();
 }
 
-void ItemStorageBox::load(SaveFile* saveFile)
+void ItemStorageBox::load(SaveFile* saveFile, int offset)
 {
   reset();
 
@@ -86,10 +116,14 @@ void ItemStorageBox::load(SaveFile* saveFile)
 
   auto toolset = saveFile->toolset;
 
-  auto it = saveFile->iterator()->offsetTo(0x27E7);
+  auto it = saveFile->iterator()->offsetTo(offset+1);
 
-  for (var8 i = 0; i < toolset->getByte(0x27E6) && i < boxMaxItems; i++) {
-    items.append(new Item(it));
+  for (var8 i = 0; i < toolset->getByte(offset) && i < maxSize; i++) {
+    auto item = new Item(it);
+    items.append(item);
+
+    connect(item, &Item::itemChanged, this, &ItemStorageBox::itemsChanged);
+    itemInsertChange();
   }
 
   itemsChanged();
@@ -97,12 +131,12 @@ void ItemStorageBox::load(SaveFile* saveFile)
   delete it;
 }
 
-void ItemStorageBox::save(SaveFile* saveFile)
+void ItemStorageBox::save(SaveFile* saveFile, int offset)
 {
   // Save all box items
-  auto it = saveFile->iterator()->offsetTo(0x27E6);
+  auto it = saveFile->iterator()->offsetTo(offset);
   it->setByte(items.size());
-  for (var8 i = 0; i < items.size() && i < boxMaxItems; i++) {
+  for (var8 i = 0; i < items.size() && i < maxSize; i++) {
     it->setByte(items.at(i)->ind);
     it->setByte(items.at(i)->amount);
   }
@@ -112,10 +146,13 @@ void ItemStorageBox::save(SaveFile* saveFile)
 
 void ItemStorageBox::reset()
 {
-  for(auto item : items)
+  for(auto item : items) {
+    disconnect(item, &Item::itemChanged, this, &ItemStorageBox::itemsChanged);
     delete item;
+  }
 
   items.clear();
+  itemsResetChange();
   itemsChanged();
 }
 
@@ -124,11 +161,13 @@ void ItemStorageBox::randomize()
   reset();
 
   // Between None and half of max capacity
-  var8 count = Random::rangeInclusive(0, boxMaxItems * .5);
+  var8 count = Random::rangeInclusive(0, maxSize * .5);
 
   // Load up random items to count
-  for(var8 i = 0; i < count; i++)
+  for(var8 i = 0; i < count; i++) {
     items.append(new Item(true));
+    itemInsertChange();
+  }
 
   itemsChanged();
 }

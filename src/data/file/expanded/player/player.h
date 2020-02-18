@@ -19,9 +19,9 @@
 #include <QObject>
 
 class PlayerBasics;
-class PlayerItems;
 class PlayerPokedex;
 class PlayerPokemon;
+class ItemStorageBox;
 
 class SaveFile;
 
@@ -30,7 +30,7 @@ class Player : public QObject
   Q_OBJECT
 
   Q_PROPERTY(PlayerBasics* basics MEMBER basics NOTIFY basicsChanged)
-  Q_PROPERTY(PlayerItems* items MEMBER items NOTIFY itemsChanged)
+  Q_PROPERTY(ItemStorageBox* items MEMBER items NOTIFY itemsChanged)
   Q_PROPERTY(PlayerPokedex* pokedex MEMBER pokedex NOTIFY pokedexChanged)
   Q_PROPERTY(PlayerPokemon* pokemon MEMBER pokemon NOTIFY pokemonChanged)
 
@@ -53,7 +53,7 @@ public slots:
 
 public:
   PlayerBasics* basics = nullptr;
-  PlayerItems* items = nullptr;
+  ItemStorageBox* items = nullptr;
   PlayerPokedex* pokedex = nullptr;
   PlayerPokemon* pokemon = nullptr;
 };

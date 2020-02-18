@@ -28,6 +28,8 @@ class Item : public QObject
 
   Q_PROPERTY(int ind MEMBER ind NOTIFY indChanged)
   Q_PROPERTY(int amount MEMBER amount NOTIFY amountChanged)
+  Q_PROPERTY(int worthOne READ worthOne NOTIFY itemChanged STORED false)
+  Q_PROPERTY(int worthAll READ worthAll NOTIFY itemChanged STORED false)
 
 public:
   // New Item from iterator or a blank item
@@ -43,6 +45,8 @@ public:
   // Given name and amount
   Item(QString name, var8 amount);
 
+  void makeConnect();
+
   virtual ~Item();
 
   // Given an iterator, saves 2 bytes. Index and Amount
@@ -50,9 +54,13 @@ public:
 
   ItemDBEntry* toItem();
 
+  int worthAll();
+  int worthOne();
+
 signals:
   void indChanged();
   void amountChanged();
+  void itemChanged();
 
 public slots:
   void load(int ind, int amount);

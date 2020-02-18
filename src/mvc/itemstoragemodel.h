@@ -21,9 +21,9 @@
 #include <QAbstractListModel>
 #include <QVector>
 
-class PlayerItems;
+class ItemStorageBox;
 
-class BagItemsModel : public QAbstractListModel
+class ItemStorageModel : public QAbstractListModel
 {
   Q_OBJECT
 
@@ -31,9 +31,11 @@ public:
   enum BagItemRoles {
     IdRole = Qt::UserRole + 1,
     CountRole,
+    WorthAllRole,
+    WorthEachRole
   };
 
-  BagItemsModel(PlayerItems* items);
+  ItemStorageModel(ItemStorageBox* items);
 
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
@@ -46,7 +48,7 @@ public:
   void onInsert();
   void onReset();
 
-  PlayerItems* items = nullptr;
+  ItemStorageBox* items = nullptr;
 };
 
 #endif // BAGITEMSMODEL_H

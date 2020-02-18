@@ -68,7 +68,6 @@
 
 #include "../data/file/expanded/player/player.h"
 #include "../data/file/expanded/player/playerbasics.h"
-#include "../data/file/expanded/player/playeritems.h"
 #include "../data/file/expanded/player/playerpokedex.h"
 #include "../data/file/expanded/player/playerpokemon.h"
 
@@ -165,7 +164,6 @@ extern void bootQmlLinkage()
 
   qmlRegisterUncreatableType<Player>(dn("Player"), 1, 0, "Player", msg);
   qmlRegisterUncreatableType<PlayerBasics>(dn("PlayerBasics"), 1, 0, "PlayerBasics", msg);
-  qmlRegisterUncreatableType<PlayerItems>(dn("PlayerItems"), 1, 0, "PlayerItems", msg);
   qmlRegisterUncreatableType<PlayerPokedex>(dn("PlayerPokedex"), 1, 0, "PlayerPokedex", msg);
   qmlRegisterUncreatableType<PlayerPokemon>(dn("PlayerPokemon"), 1, 0, "PlayerPokemon", msg);
 

@@ -79,7 +79,6 @@ HEADERS += \
   src/data/file/expanded/halloffame.h \
   src/data/file/expanded/player/player.h \
   src/data/file/expanded/player/playerbasics.h \
-  src/data/file/expanded/player/playeritems.h \
   src/data/file/expanded/player/playerpokedex.h \
   src/data/file/expanded/player/playerpokemon.h \
   src/data/file/expanded/rival.h \
@@ -102,11 +101,10 @@ HEADERS += \
   src/bridge/settings.h \
   src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
-  src/mvc/bagitemsmodel.h \
+  src/mvc/itemstoragemodel.h \
   src/mvc/creditsmodel.h \
   src/common/random.h \
   src/mvc/fontsearchmodel.h \
-  src/mvc/itemsmodel.h \
   src/mvc/pokedexmodel.h \
   src/mvc/pokemonstartersmodel.h \
   src/mvc/recentfilesmodel.h \
@@ -159,7 +157,6 @@ SOURCES += \
   src/data/file/expanded/halloffame.cpp \
   src/data/file/expanded/player/player.cpp \
   src/data/file/expanded/player/playerbasics.cpp \
-  src/data/file/expanded/player/playeritems.cpp \
   src/data/file/expanded/player/playerpokedex.cpp \
   src/data/file/expanded/player/playerpokemon.cpp \
   src/data/file/expanded/rival.cpp \
@@ -203,11 +200,10 @@ SOURCES += \
   src/data/db/trades.cpp \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
-  src/mvc/bagitemsmodel.cpp \
+  src/mvc/itemstoragemodel.cpp \
   src/mvc/creditsmodel.cpp \
   src/common/random.cpp \
   src/mvc/fontsearchmodel.cpp \
-  src/mvc/itemsmodel.cpp \
   src/mvc/pokedexmodel.cpp \
   src/mvc/pokemonstartersmodel.cpp \
   src/mvc/recentfilesmodel.cpp \

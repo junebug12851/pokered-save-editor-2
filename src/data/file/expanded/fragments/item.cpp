@@ -29,21 +29,31 @@ Item::Item(SaveFileIterator* it)
 
   ind = it->getByte();
   amount = it->getByte();
+  makeConnect();
 }
 
 Item::Item(var8 ind, var8 amount)
 {
   load(ind, amount);
+  makeConnect();
 }
 
 Item::Item(bool random)
 {
   load(random);
+  makeConnect();
 }
 
 Item::Item(QString name, var8 amount)
 {
   load(name, amount);
+  makeConnect();
+}
+
+void Item::makeConnect()
+{
+  connect(this, &Item::indChanged, this, &Item::itemChanged);
+  connect(this, &Item::amountChanged, this, &Item::itemChanged);
 }
 
 Item::~Item() {}
@@ -82,6 +92,23 @@ ItemDBEntry* Item::toItem()
 {
   auto tmp = ItemsDB::ind.value(QString::number(ind), nullptr);
   return tmp;
+}
+
+int Item::worthOne()
+{
+  auto data = ItemsDB::ind.value(QString::number(ind), nullptr);
+  if(data == nullptr)
+    return 0;
+
+  if(!data->price)
+    return 0;
+
+  return (*data->price) * amount;
+}
+
+int Item::worthAll()
+{
+  return worthOne() * amount;
 }
 
 void Item::load(int ind, int amount)

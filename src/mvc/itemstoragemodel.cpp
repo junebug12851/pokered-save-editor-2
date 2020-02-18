@@ -15,39 +15,39 @@
 */
 
 #include "../data/db/items.h"
-#include "./bagitemsmodel.h"
-#include "../data/file/expanded/player/playeritems.h"
+#include "./itemstoragemodel.h"
+#include "../data/file/expanded/fragments/itemstoragebox.h"
 #include "../data/file/expanded/fragments/item.h"
 
-BagItemsModel::BagItemsModel(PlayerItems* items)
+ItemStorageModel::ItemStorageModel(ItemStorageBox* items)
   : items(items)
 {
-  connect(this->items, &PlayerItems::bagItemMoveChange, this, &BagItemsModel::onMove);
-  connect(this->items, &PlayerItems::bagItemRemoveChange, this, &BagItemsModel::onRemove);
-  connect(this->items, &PlayerItems::bagItemInsertChange, this, &BagItemsModel::onInsert);
-  connect(this->items, &PlayerItems::bagItemResetChange, this, &BagItemsModel::onReset);
+  connect(this->items, &ItemStorageBox::itemMoveChange, this, &ItemStorageModel::onMove);
+  connect(this->items, &ItemStorageBox::itemRemoveChange, this, &ItemStorageModel::onRemove);
+  connect(this->items, &ItemStorageBox::itemInsertChange, this, &ItemStorageModel::onInsert);
+  connect(this->items, &ItemStorageBox::itemsResetChange, this, &ItemStorageModel::onReset);
 }
 
-int BagItemsModel::rowCount(const QModelIndex& parent) const
+int ItemStorageModel::rowCount(const QModelIndex& parent) const
 {
   // Not a tree, just a list, there's no parent
   Q_UNUSED(parent)
 
   // Return list count
-  return items->bagItems.size();
+  return items->items.size();
 }
 
-QVariant BagItemsModel::data(const QModelIndex& index, int role) const
+QVariant ItemStorageModel::data(const QModelIndex& index, int role) const
 {
   // If index is invalid in any way, return nothing
   if (!index.isValid())
     return QVariant();
 
-  if (index.row() >= items->bagItems.size())
+  if (index.row() >= items->items.size())
     return QVariant();
 
   // Get Item from Item List Cache
-  auto item = items->bagItems.at(index.row());
+  auto item = items->items.at(index.row());
 
   if(item == nullptr)
     return QVariant();
@@ -57,30 +57,36 @@ QVariant BagItemsModel::data(const QModelIndex& index, int role) const
     return item->ind;
   else if (role == CountRole)
     return item->amount;
+  else if (role == WorthAllRole)
+    return item->worthAll();
+  else if (role == WorthEachRole)
+    return item->worthOne();
 
   // All else fails, return nothing
   return QVariant();
 }
 
-QHash<int, QByteArray> BagItemsModel::roleNames() const
+QHash<int, QByteArray> ItemStorageModel::roleNames() const
 {
   QHash<int, QByteArray> roles;
 
   roles[IdRole] = "itemId";
   roles[CountRole] = "itemCount";
+  roles[WorthAllRole] = "itemWorthAll";
+  roles[WorthEachRole] = "itemWorthEach";
 
   return roles;
 }
 
-bool BagItemsModel::setData(const QModelIndex& index, const QVariant& value, int role)
+bool ItemStorageModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
   if (!index.isValid())
     return false;
 
-  if (index.row() >= items->bagItems.size())
+  if (index.row() >= items->items.size())
     return false;
 
-  auto item = items->bagItems.at(index.row());
+  auto item = items->items.at(index.row());
 
   if(item == nullptr)
     return false;
@@ -100,25 +106,25 @@ bool BagItemsModel::setData(const QModelIndex& index, const QVariant& value, int
   return false;
 }
 
-void BagItemsModel::onMove(int from, int to)
+void ItemStorageModel::onMove(int from, int to)
 {
   beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
   endMoveRows();
 }
 
-void BagItemsModel::onRemove(int ind)
+void ItemStorageModel::onRemove(int ind)
 {
   beginRemoveRows(QModelIndex(), ind, ind);
   endRemoveRows();
 }
 
-void BagItemsModel::onInsert()
+void ItemStorageModel::onInsert()
 {
-  beginInsertRows(QModelIndex(), items->bagItems.size(), items->bagItems.size());
+  beginInsertRows(QModelIndex(), items->items.size(), items->items.size());
   endInsertRows();
 }
 
-void BagItemsModel::onReset()
+void ItemStorageModel::onReset()
 {
   beginResetModel();
   endResetModel();

@@ -16,14 +16,14 @@
 #include "player.h"
 #include "../../savefile.h"
 #include "./playerbasics.h"
-#include "./playeritems.h"
 #include "./playerpokedex.h"
 #include "./playerpokemon.h"
+#include "../fragments/itemstoragebox.h"
 
 Player::Player(SaveFile* saveFile)
 {
   basics = new PlayerBasics;
-  items = new PlayerItems;
+  items = new ItemStorageBox(20); // Max 20 items
   pokedex = new PlayerPokedex;
   pokemon = new PlayerPokemon;
 
@@ -44,7 +44,7 @@ void Player::load(SaveFile* saveFile)
     return reset();
 
   basics->load(saveFile);
-  items->load(saveFile);
+  items->load(saveFile, 0x25C9);
   pokedex->load(saveFile);
   pokemon->load(saveFile);
 }
@@ -52,7 +52,7 @@ void Player::load(SaveFile* saveFile)
 void Player::save(SaveFile* saveFile)
 {
   basics->save(saveFile);
-  items->save(saveFile);
+  items->save(saveFile, 0x25C9);
   pokedex->save(saveFile);
   pokemon->save(saveFile);
 }

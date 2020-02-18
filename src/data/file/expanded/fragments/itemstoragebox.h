@@ -19,31 +19,40 @@
 #include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
+
 class SaveFile;
 class Item;
-
-constexpr var8 boxMaxItems = 50;
 
 class ItemStorageBox : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(int itemsCount READ itemsCount NOTIFY itemsChanged STORED false)
+  Q_PROPERTY(int itemsCountBulk READ itemsCountBulk NOTIFY itemsChanged STORED false)
+  Q_PROPERTY(int itemsMax READ itemsMax STORED false CONSTANT)
+  Q_PROPERTY(int itemsWorth READ itemsWorth NOTIFY itemsChanged STORED false)
 
 public:
-  ItemStorageBox(SaveFile* saveFile = nullptr);
+  ItemStorageBox(int maxSize, SaveFile* saveFile = nullptr, int offset = 0);
   virtual ~ItemStorageBox();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr, int offset = 0);
+  void save(SaveFile* saveFile, int offset);
 
-  Q_INVOKABLE int itemCount();
-  Q_INVOKABLE int itemMax();
+  int itemsCount();
+  int itemsCountBulk();
+  int itemsMax();
+  int itemsWorth();
   Q_INVOKABLE Item* itemAt(int ind);
-  Q_INVOKABLE void itemSwap(int from, int to);
+  Q_INVOKABLE void itemMove(int from, int to);
   Q_INVOKABLE void itemRemove(int ind);
   Q_INVOKABLE void itemNew();
 
 signals:
   void itemsChanged();
+  void itemMoveChange(int from, int to);
+  void itemRemoveChange(int ind);
+  void itemInsertChange();
+  void itemsResetChange();
 
 public slots:
   void reset();
@@ -51,6 +60,7 @@ public slots:
 
 public:
   QVector<Item*> items;
+  int maxSize;
 };
 
 #endif // ITEMSTORAGEBOX_H

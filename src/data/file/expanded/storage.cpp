@@ -24,7 +24,7 @@
 
 Storage::Storage(SaveFile* saveFile)
 {
-  items = new ItemStorageBox;
+  items = new ItemStorageBox(50); // Max 50 items
 
   for(var8 i = 0; i < maxPokemonStorageSets; i++)
     pokemon[i] = new PokemonStorageSet;
@@ -126,7 +126,7 @@ void Storage::load(SaveFile* saveFile)
   boxesFormattedChanged();
 
   // Load Items and Boxes 1-12 in 2 sets of 1-6
-  items->load(saveFile);
+  items->load(saveFile, 0x27E6);
 
   // Determine how to play out current box loading
   // We only want to load all but current box
@@ -155,7 +155,7 @@ void Storage::save(SaveFile* saveFile)
   toolset->setByte(0x284C, curBox);
   toolset->setBit(0x284C, 1, 7, boxesFormatted);
 
-  items->save(saveFile);
+  items->save(saveFile, 0x27E6);
 
   bool curSetB = curBox >= setMaxBoxes; // Which set is the current box in
   var8 cur = curBox; // Get the current box
