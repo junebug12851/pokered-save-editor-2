@@ -65,11 +65,6 @@ Rectangle {
               + box.itemsMax
         font.pixelSize: 14
       }
-
-      Text {
-        text: "$" + box.itemsWorth
-        font.pixelSize: 14
-      }
     }
   }
 }

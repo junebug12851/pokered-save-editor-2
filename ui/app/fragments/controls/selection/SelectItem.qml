@@ -5,24 +5,24 @@ import QtQuick.Controls.Material 2.14
 
 ComboBox {
   id: control
-  textRole: "itemName"
-  valueRole: "itemInd"
+  textRole: "itemSelectName"
+  valueRole: "itemSelectInd"
 
   font.capitalization: Font.Capitalize
   font.pixelSize: 14
   flat: true
-  model: brg.itemsModel
+  model: brg.itemSelectModel
 
   width: font.pixelSize * 15
 
   delegate: ItemDelegate {
     width: control.width
-    enabled: itemInd >= 0;
+    enabled: itemSelectInd >= 0;
 
     contentItem: Text {
-      text: itemName
+      text: itemSelectName
       font: control.font
-      color: (itemInd >= 0)
+      color: (itemSelectInd >= 0)
              ? brg.settings.textColorDark
              : brg.settings.textColorMid
       verticalAlignment: Text.AlignVCenter

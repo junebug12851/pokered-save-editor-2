@@ -18,14 +18,14 @@
 #include <QCollator>
 
 #include "../data/db/items.h"
-#include "./itemsmodel.h"
+#include "./itemselectmodel.h"
 
-ItemEntryData::ItemEntryData(QString name, int ind)
+ItemSelectEntryData::ItemSelectEntryData(QString name, int ind)
   : name(name),
     ind(ind)
 {}
 
-ItemsModel::ItemsModel()
+ItemSelectModel::ItemSelectModel()
 {
   // Setup Collator
   QCollator collator;
@@ -33,7 +33,7 @@ ItemsModel::ItemsModel()
   collator.setIgnorePunctuation(true);
 
   // Add first category
-  itemListCache.append(new ItemEntryData("--- Normal Items ---", -1));
+  itemListCache.append(new ItemSelectEntryData("--- Normal Items ---", -1));
 
   // Gather normal repeatable items and sort by name, then add into list
   QVector<ItemDBEntry*> tmp;
@@ -52,13 +52,13 @@ ItemsModel::ItemsModel()
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemEntryData(el->readable, el->ind));
+    itemListCache.append(new ItemSelectEntryData(el->readable, el->ind));
   }
 
   tmp.clear();
 
   // Add 2nd category
-  itemListCache.append(new ItemEntryData("--- Special Items ---", -1));
+  itemListCache.append(new ItemSelectEntryData("--- Special Items ---", -1));
 
   for(auto el : ItemsDB::store) {
     if(el->once && !el->glitch)
@@ -74,13 +74,13 @@ ItemsModel::ItemsModel()
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemEntryData(el->readable, el->ind));
+    itemListCache.append(new ItemSelectEntryData(el->readable, el->ind));
   }
 
   tmp.clear();
 
   // Add 3rd category
-  itemListCache.append(new ItemEntryData("--- Glitch Items ---", -1));
+  itemListCache.append(new ItemSelectEntryData("--- Glitch Items ---", -1));
 
   for(auto el : ItemsDB::store) {
     if(el->glitch)
@@ -96,13 +96,13 @@ ItemsModel::ItemsModel()
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemEntryData(el->readable, el->ind));
+    itemListCache.append(new ItemSelectEntryData(el->readable, el->ind));
   }
 
   tmp.clear();
 }
 
-int ItemsModel::rowCount(const QModelIndex& parent) const
+int ItemSelectModel::rowCount(const QModelIndex& parent) const
 {
   // Not a tree, just a list, there's no parent
   Q_UNUSED(parent)
@@ -111,7 +111,7 @@ int ItemsModel::rowCount(const QModelIndex& parent) const
   return itemListCache.size();
 }
 
-QVariant ItemsModel::data(const QModelIndex& index, int role) const
+QVariant ItemSelectModel::data(const QModelIndex& index, int role) const
 {
   // If index is invalid in any way, return nothing
   if (!index.isValid())
@@ -136,12 +136,12 @@ QVariant ItemsModel::data(const QModelIndex& index, int role) const
   return QVariant();
 }
 
-QHash<int, QByteArray> ItemsModel::roleNames() const
+QHash<int, QByteArray> ItemSelectModel::roleNames() const
 {
   QHash<int, QByteArray> roles;
 
-  roles[IndRole] = "itemInd";
-  roles[NameRole] = "itemName";
+  roles[IndRole] = "itemSelectInd";
+  roles[NameRole] = "itemSelectName";
 
   return roles;
 }

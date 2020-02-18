@@ -29,7 +29,7 @@
 #include "../mvc/fontsearchmodel.h"
 #include "../mvc/pokemonstartersmodel.h"
 #include "../mvc/pokedexmodel.h"
-#include "../mvc/itemsmodel.h"
+#include "../mvc/itemselectmodel.h"
 #include "../mvc/itemstoragemodel.h"
 
 #include "../data/db/fonts.h"
@@ -50,6 +50,7 @@ class Bridge : public QObject
   Q_PROPERTY(Router* router MEMBER router NOTIFY routerChanged)
   Q_PROPERTY(CreditsModel* creditsModel MEMBER creditsModel NOTIFY creditsModelChanged)
   Q_PROPERTY(PokemonStartersModel* starterModel MEMBER starterModel NOTIFY starterModelChanged)
+  Q_PROPERTY(ItemSelectModel* itemSelectModel MEMBER itemSelectModel NOTIFY itemSelectModelChanged)
   Q_PROPERTY(ItemStorageModel* bagItemsModel MEMBER bagItemsModel NOTIFY bagItemsModelChanged)
   Q_PROPERTY(ItemStorageModel* pcItemsModel MEMBER pcItemsModel NOTIFY pcItemsModelChanged)
   Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged)
@@ -80,6 +81,7 @@ signals:
   void randomExampleRivalChanged();
   void settingsChanged();
   void starterModelChanged();
+  void itemSelectModelChanged();
   void bagItemsModelChanged();
   void pcItemsModelChanged();
 
@@ -93,6 +95,7 @@ public:
   ItemStorageModel* pcItemsModel = nullptr;
   CreditsModel* creditsModel = new CreditsModel;
   PokemonStartersModel* starterModel = new PokemonStartersModel;
+  ItemSelectModel* itemSelectModel = new ItemSelectModel;
 
   FontSearch* fontSearch = new FontSearch;
   FontSearchModel* fontSearchModel = new FontSearchModel(fontSearch);

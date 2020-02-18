@@ -13,8 +13,8 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef ITEMSMODEL_H
-#define ITEMSMODEL_H
+#ifndef ITEMSELECTMODEL_H
+#define ITEMSELECTMODEL_H
 
 #include <QObject>
 #include <QString>
@@ -23,14 +23,14 @@
 
 class PlayerPokedex;
 
-struct ItemEntryData {
-  ItemEntryData(QString name, int ind);
+struct ItemSelectEntryData {
+  ItemSelectEntryData(QString name, int ind);
 
   QString name;
   int ind;
 };
 
-class ItemsModel : public QAbstractListModel
+class ItemSelectModel : public QAbstractListModel
 {
   Q_OBJECT
 
@@ -40,13 +40,13 @@ public:
     NameRole,
   };
 
-  ItemsModel();
+  ItemSelectModel();
 
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
   virtual QHash<int, QByteArray> roleNames() const override;
 
-  QVector<ItemEntryData*> itemListCache;
+  QVector<ItemSelectEntryData*> itemListCache;
 };
 
-#endif // ITEMSMODEL_H
+#endif // ITEMSELECTMODEL_H
