@@ -91,6 +91,10 @@ extern void bootQmlLinkage()
   // No variables, functions, templates, none of that. It's straight up copying
   // throughout
 
+  // Thanks Regex101 regex101.com
+  // Qt won't let me have any help from C++ but Regex101 allowed me to easily
+  // make all the duplicating without errors and time consuming
+
   // Creatable Types
   // Enums are allowed to be created by QML
   qmlRegisterType<ContrastIds>("App.ContrastIds", 1, 0, "ContrastIds");

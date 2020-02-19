@@ -485,5 +485,6 @@
         <file>ui/app/fragments/screens/bag/ItemBoxView.qml</file>
         <file>assets/icons/fontawesome/trash-alt.svg</file>
         <file>assets/icons/fontawesome/minus-square.svg</file>
+        <file>assets/icons/fontawesome/grip-lines.svg</file>
     </qresource>
 </RCC>
