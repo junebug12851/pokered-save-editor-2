@@ -145,3 +145,18 @@ QHash<int, QByteArray> ItemSelectModel::roleNames() const
 
   return roles;
 }
+
+int ItemSelectModel::itemToListIndex(int ind)
+{
+  int ret = -1;
+
+  for(int i = 0; i < itemListCache.size(); i++) {
+    if(ind != itemListCache.at(i)->ind)
+      continue;
+
+    ret = i;
+    break;
+  }
+
+  return ret;
+}

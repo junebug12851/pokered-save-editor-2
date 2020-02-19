@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import app.itemstoragebox 1.0
+import App.ItemStorageBox 1.0
 
 import "../../general"
 import "../../controls/selection"
@@ -15,6 +15,12 @@ ListView {
   clip: true
   ScrollBar.vertical: ScrollBar {}
 
+  // Hack because insert doesn't work as exoected
+  function hack_newAndRePositionViewEnd() {
+    box.itemNew();
+    positionViewAtEnd();
+  }
+
   delegate: ColumnLayout {
     property bool isLast: index+1 < itemBoxView.count ? false : true
 
@@ -23,11 +29,20 @@ ListView {
     Row {
       id: rowEntry
       Layout.alignment: Qt.AlignHCenter
+      visible: (!isLast && box.itemsCount > 0)
 
       SelectItem {
         onActivated: itemId = currentValue;
         Component.onCompleted: {
-          currentIndex = indexOfValue(itemId);
+
+          // WAAAAYYYY FASTER
+          // I have no idea why the native function to do this is a million times
+          // slower. It's a billion times faster to implement my own in C++
+          // and I'm not even dealing with that many rows.
+          currentIndex = brg.itemSelectModel.itemToListIndex(itemId);
+
+          // EXTREMELY SLOW
+          //currentIndex = indexOfValue(itemId);
         }
       }
 
@@ -53,7 +68,9 @@ ListView {
           itemCount = dec;
         }
 
-        Component.onCompleted: text = itemCount
+        Component.onCompleted: (itemCount !== undefined)
+                               ? text = itemCount
+                               : text = "";
       }
 
       IconButtonSquare {
@@ -79,7 +96,12 @@ ListView {
 
       icon.source: "qrc:/assets/icons/fontawesome/plus.svg"
 
-      onClicked: box.itemNew()
+      onClicked: {
+        // A hack because insert doesn't work as expected and I have no idea why
+        // after a lot of research
+        //itemBoxView.hack_rePositionViewEnd();
+        hack_newAndRePositionViewEnd();
+      }
     }
 
     Text {

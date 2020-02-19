@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import app.itemstoragebox 1.0
+import App.ItemStorageBox 1.0
 
 import "../../header"
 import "../../general"
@@ -17,11 +17,14 @@ Rectangle {
 
   Rectangle {
     id: bagHeader
-    color: brg.settings.accentColor
     anchors.left: parent.left
     anchors.top: parent.top
     anchors.right: parent.right
-    height: 30
+    height: 45
+
+    Material.foreground: brg.settings.textColorLight
+    Material.background: brg.settings.accentColor
+    color: brg.settings.accentColor
 
     RowLayout {
       anchors.centerIn: parent
@@ -30,6 +33,12 @@ Rectangle {
       Text {
         text: title
         font.pixelSize: 18
+        color: brg.settings.textColorLight
+      }
+
+      IconButtonSquare {
+        icon.source: "qrc:/assets/icons/fontawesome/broom.svg"
+        onClicked: box.reset();
       }
     }
   }
@@ -53,7 +62,7 @@ Rectangle {
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 30
+    height: 45
 
     RowLayout {
       anchors.centerIn: parent
@@ -64,6 +73,7 @@ Rectangle {
               + " / "
               + box.itemsMax
         font.pixelSize: 14
+        color: brg.settings.textColorLight
       }
     }
   }

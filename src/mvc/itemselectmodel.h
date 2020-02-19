@@ -47,6 +47,8 @@ public:
   virtual QHash<int, QByteArray> roleNames() const override;
 
   QVector<ItemSelectEntryData*> itemListCache;
+
+  Q_INVOKABLE int itemToListIndex(int ind);
 };
 
 #endif // ITEMSELECTMODEL_H

@@ -24,7 +24,14 @@ ItemStorageModel::ItemStorageModel(ItemStorageBox* items)
 {
   connect(this->items, &ItemStorageBox::itemMoveChange, this, &ItemStorageModel::onMove);
   connect(this->items, &ItemStorageBox::itemRemoveChange, this, &ItemStorageModel::onRemove);
-  connect(this->items, &ItemStorageBox::itemInsertChange, this, &ItemStorageModel::onInsert);
+
+  // Doesn't work, no idea why
+  //connect(this->items, &ItemStorageBox::itemInsertChange, this, &ItemStorageModel::onInsert);
+
+  // A hack because insert doesn't work as advertised, yet another millionth QML
+  // and Qt Gotcha I could spend hours, days, weeks, or months trying ti fix
+  connect(this->items, &ItemStorageBox::itemInsertChange, this, &ItemStorageModel::onReset);
+
   connect(this->items, &ItemStorageBox::itemsResetChange, this, &ItemStorageModel::onReset);
 }
 
@@ -34,7 +41,7 @@ int ItemStorageModel::rowCount(const QModelIndex& parent) const
   Q_UNUSED(parent)
 
   // Return list count
-  return items->items.size();
+  return items->items.size() + 1;
 }
 
 QVariant ItemStorageModel::data(const QModelIndex& index, int role) const
@@ -120,7 +127,8 @@ void ItemStorageModel::onRemove(int ind)
 
 void ItemStorageModel::onInsert()
 {
-  beginInsertRows(QModelIndex(), items->items.size(), items->items.size());
+  // Doesn't work, no idea why
+  beginInsertRows(QModelIndex(), items->items.size()+1, items->items.size()+1);
   endInsertRows();
 }
 
