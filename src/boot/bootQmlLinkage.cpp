@@ -82,102 +82,98 @@
 #include "../data/file/expanded/world/worldtowns.h"
 #include "../data/file/expanded/world/worldtrades.h"
 
-constexpr const char* msg = "Can't instantiate in QML";
-
-const char* dn(QString name)
-{
-  return ("app." + name.toLower()).toLocal8Bit().data();
-}
-
 extern void bootQmlLinkage()
 {
   // Can't put this into a template because there would be no QML processing
   // for hints so I have to duplicate the class name 3 times on each line
+  // EDIT: Apparently I literally can't have any help here, any sort of help
+  // doesn't work with Qt's Meta System. I have to verbatim spell everything out.
+  // No variables, functions, templates, none of that. It's straight up copying
+  // throughout
 
   // Creatable Types
   // Enums are allowed to be created by QML
-  qmlRegisterType<ContrastIds>(dn("ContrastIds"), 1, 0, "ContrastIds");
-  qmlRegisterType<PlayerDir>(dn("PlayerDir"), 1, 0, "PlayerDir");
-  qmlRegisterType<PokemonStats>(dn("PokemonStats"), 1, 0, "PokemonStats");
-  qmlRegisterType<PokemonNatures>(dn("PokemonNatures"), 1, 0, "PokemonNatures");
-  qmlRegisterType<PokemonRandom>(dn("PokemonRandom"), 1, 0, "PokemonRandom");
-  qmlRegisterType<SpriteMovementStatus>(dn("SpriteMovementStatus"), 1, 0, "SpriteMovementStatus");
-  qmlRegisterType<SpriteFacing>(dn("SpriteFacing"), 1, 0, "SpriteFacing");
-  qmlRegisterType<SpriteMobility>(dn("SpriteMobility"), 1, 0, "SpriteMobility");
-  qmlRegisterType<SpriteMovement>(dn("SpriteMovement"), 1, 0, "SpriteMovement");
-  qmlRegisterType<SpriteGrass>(dn("SpriteGrass"), 1, 0, "SpriteGrass");
-  qmlRegisterType<Badges>(dn("Badges"), 1, 0, "Badges");
+  qmlRegisterType<ContrastIds>("App.ContrastIds", 1, 0, "ContrastIds");
+  qmlRegisterType<PlayerDir>("App.PlayerDir", 1, 0, "PlayerDir");
+  qmlRegisterType<PokemonStats>("App.PokemonStats", 1, 0, "PokemonStats");
+  qmlRegisterType<PokemonNatures>("App.PokemonNatures", 1, 0, "PokemonNatures");
+  qmlRegisterType<PokemonRandom>("App.PokemonRandom", 1, 0, "PokemonRandom");
+  qmlRegisterType<SpriteMovementStatus>("App.SpriteMovementStatus", 1, 0, "SpriteMovementStatus");
+  qmlRegisterType<SpriteFacing>("App.SpriteFacing", 1, 0, "SpriteFacing");
+  qmlRegisterType<SpriteMobility>("App.SpriteMobility", 1, 0, "SpriteMobility");
+  qmlRegisterType<SpriteMovement>("App.SpriteMovement", 1, 0, "SpriteMovement");
+  qmlRegisterType<SpriteGrass>("App.SpriteGrass", 1, 0, "SpriteGrass");
+  qmlRegisterType<Badges>("App.Badges", 1, 0, "Badges");
 
   // Uncreatable Types
-  qmlRegisterUncreatableType<Bridge>(dn("Bridge"), 1, 0, "Bridge", msg);
-  qmlRegisterUncreatableType<Router>(dn("Router"), 1, 0, "Router", msg);
-  qmlRegisterUncreatableType<Settings>(dn("Settings"), 1, 0, "Settings", msg);
+  qmlRegisterUncreatableType<Bridge>("App.Bridge", 1, 0, "Bridge", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<Router>("App.Router", 1, 0, "Router", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<Settings>("App.Settings", 1, 0, "Settings", "Can't instantiate in QML");
 
-  qmlRegisterUncreatableType<Utility>(dn("Utility"), 1, 0, "Utility", msg);
+  qmlRegisterUncreatableType<Utility>("App.Utility", 1, 0, "Utility", "Can't instantiate in QML");
 
-  qmlRegisterUncreatableType<ExamplesPlayer>(dn("ExamplesPlayer"), 1, 0, "ExamplesPlayer", msg);
-  qmlRegisterUncreatableType<ExamplesPokemon>(dn("ExamplesPokemon"), 1, 0, "ExamplesPokemon", msg);
-  qmlRegisterUncreatableType<ExamplesRival>(dn("ExamplesRival"), 1, 0, "ExamplesRival", msg);
-  qmlRegisterUncreatableType<FontSearch>(dn("FontSearch"), 1, 0, "FontSearch", msg);
-  qmlRegisterUncreatableType<FontsDB>(dn("FontsDB"), 1, 0, "FontsDB", msg);
-  qmlRegisterUncreatableType<FontDBEntry>(dn("FontDBEntry"), 1, 0, "FontDBEntry", msg);
-  qmlRegisterUncreatableType<NamesDB>(dn("NamesDB"), 1, 0, "NamesDB", msg);
-  qmlRegisterUncreatableType<NamesPokemonDB>(dn("NamesPokemonDB"), 1, 0, "NamesPokemonDB", msg);
+  qmlRegisterUncreatableType<ExamplesPlayer>("App.ExamplesPlayer", 1, 0, "ExamplesPlayer", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<ExamplesPokemon>("App.ExamplesPokemon", 1, 0, "ExamplesPokemon", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<ExamplesRival>("App.ExamplesRival", 1, 0, "ExamplesRival", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<FontSearch>("App.FontSearch", 1, 0, "FontSearch", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<FontsDB>("App.FontsDB", 1, 0, "FontsDB", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<FontDBEntry>("App.FontDBEntry", 1, 0, "FontDBEntry", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<NamesDB>("App.NamesDB", 1, 0, "NamesDB", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<NamesPokemonDB>("App.NamesPokemonDB", 1, 0, "NamesPokemonDB", "Can't instantiate in QML");
 
-  // Expanded Data is meant to be interacted with not created by QML
-  qmlRegisterUncreatableType<FileManagement>(dn("FileManagement"), 1, 0, "FileManagement", msg);
-  qmlRegisterUncreatableType<SaveFile>(dn("SaveFile"), 1, 0, "SaveFile", msg);
-  qmlRegisterUncreatableType<Daycare>(dn("Daycare"), 1, 0, "Daycare", msg);
-  qmlRegisterUncreatableType<HallOfFame>(dn("HallOfFame"), 1, 0, "HallOfFame", msg);
-  qmlRegisterUncreatableType<Rival>(dn("Rival"), 1, 0, "Rival", msg);
-  qmlRegisterUncreatableType<SaveFileExpanded>(dn("SaveFileExpanded"), 1, 0, "SaveFileExpanded", msg);
-  qmlRegisterUncreatableType<Storage>(dn("Storage"), 1, 0, "Storage", msg);
+  qmlRegisterUncreatableType<FileManagement>("App.FileManagement", 1, 0, "FileManagement", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<SaveFile>("App.SaveFile", 1, 0, "SaveFile", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<Daycare>("App.Daycare", 1, 0, "Daycare", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<HallOfFame>("App.HallOfFame", 1, 0, "HallOfFame", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<Rival>("App.Rival", 1, 0, "Rival", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<SaveFileExpanded>("App.SaveFileExpanded", 1, 0, "SaveFileExpanded", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<Storage>("App.Storage", 1, 0, "Storage", "Can't instantiate in QML");
 
-  qmlRegisterUncreatableType<Area>(dn("Area"), 1, 0, "Area", msg);
-  qmlRegisterUncreatableType<AreaAudio>(dn("AreaAudio"), 1, 0, "AreaAudio", msg);
-  qmlRegisterUncreatableType<AreaGeneral>(dn("AreaGeneral"), 1, 0, "AreaGeneral", msg);
-  qmlRegisterUncreatableType<AreaLoadedSprites>(dn("AreaLoadedSprites"), 1, 0, "AreaLoadedSprites", msg);
-  qmlRegisterUncreatableType<AreaMap>(dn("AreaMap"), 1, 0, "AreaMap", msg);
-  qmlRegisterUncreatableType<AreaNPC>(dn("AreaNPC"), 1, 0, "AreaNPC", msg);
-  qmlRegisterUncreatableType<AreaPlayer>(dn("AreaPlayer"), 1, 0, "AreaPlayer", msg);
-  qmlRegisterUncreatableType<AreaPokemonWild>(dn("AreaPokemonWild"), 1, 0, "AreaPokemonWild", msg);
-  qmlRegisterUncreatableType<AreaPokemon>(dn("AreaPokemon"), 1, 0, "AreaPokemon", msg);
-  qmlRegisterUncreatableType<AreaPuzzle>(dn("AreaPuzzle"), 1, 0, "AreaPuzzle", msg);
-  qmlRegisterUncreatableType<AreaSign>(dn("AreaSign"), 1, 0, "AreaSign", msg);
-  qmlRegisterUncreatableType<AreaSprites>(dn("AreaSprites"), 1, 0, "AreaSprites", msg);
-  qmlRegisterUncreatableType<AreaTileset>(dn("AreaTileset"), 1, 0, "AreaTileset", msg);
-  qmlRegisterUncreatableType<AreaWarps>(dn("AreaWarps"), 1, 0, "AreaWarps", msg);
+  qmlRegisterUncreatableType<Area>("App.Area", 1, 0, "Area", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaAudio>("App.AreaAudio", 1, 0, "AreaAudio", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaGeneral>("App.AreaGeneral", 1, 0, "AreaGeneral", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaLoadedSprites>("App.AreaLoadedSprites", 1, 0, "AreaLoadedSprites", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaMap>("App.AreaMap", 1, 0, "AreaMap", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaNPC>("App.AreaNPC", 1, 0, "AreaNPC", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaPlayer>("App.AreaPlayer", 1, 0, "AreaPlayer", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaPokemonWild>("App.AreaPokemonWild", 1, 0, "AreaPokemonWild", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaPokemon>("App.AreaPokemon", 1, 0, "AreaPokemon", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaPuzzle>("App.AreaPuzzle", 1, 0, "AreaPuzzle", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaSign>("App.AreaSign", 1, 0, "AreaSign", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaSprites>("App.AreaSprites", 1, 0, "AreaSprites", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaTileset>("App.AreaTileset", 1, 0, "AreaTileset", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<AreaWarps>("App.AreaWarps", 1, 0, "AreaWarps", "Can't instantiate in QML");
 
-  qmlRegisterUncreatableType<HoFPokemon>(dn("HoFPokemon"), 1, 0, "HoFPokemon", msg);
-  qmlRegisterUncreatableType<HoFRecord>(dn("HoFRecord"), 1, 0, "HoFRecord", msg);
-  qmlRegisterUncreatableType<Item>(dn("Item"), 1, 0, "Item", msg);
-  qmlRegisterUncreatableType<ItemStorageBox>(dn("ItemStorageBox"), 1, 0, "ItemStorageBox", msg);
-  qmlRegisterUncreatableType<MapConnData>(dn("MapConnData"), 1, 0, "MapConnData", msg);
-  qmlRegisterUncreatableType<PokemonMove>(dn("PokemonMove"), 1, 0, "PokemonMove", msg);
-  qmlRegisterUncreatableType<PokemonBox>(dn("PokemonBox"), 1, 0, "PokemonBox", msg);
-  qmlRegisterUncreatableType<PokemonParty>(dn("PokemonParty"), 1, 0, "PokemonParty", msg);
-  qmlRegisterUncreatableType<PokemonStorageBox>(dn("PokemonStorageBox"), 1, 0, "PokemonStorageBox", msg);
-  qmlRegisterUncreatableType<PokemonStorageSet>(dn("PokemonStorageSet"), 1, 0, "PokemonStorageSet", msg);
-  qmlRegisterUncreatableType<SignData>(dn("SignData"), 1, 0, "SignData", msg);
-  qmlRegisterUncreatableType<SpriteData>(dn("SpriteData"), 1, 0, "SpriteData", msg);
-  qmlRegisterUncreatableType<WarpData>(dn("WarpData"), 1, 0, "WarpData", msg);
+  qmlRegisterUncreatableType<HoFPokemon>("App.HoFPokemon", 1, 0, "HoFPokemon", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<HoFRecord>("App.HoFRecord", 1, 0, "HoFRecord", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<Item>("App.Item", 1, 0, "Item", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<ItemStorageBox>("App.ItemStorageBox", 1, 0, "ItemStorageBox", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<MapConnData>("App.MapConnData", 1, 0, "MapConnData", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<PokemonMove>("App.PokemonMove", 1, 0, "PokemonMove", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<PokemonBox>("App.PokemonBox", 1, 0, "PokemonBox", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<PokemonParty>("App.PokemonParty", 1, 0, "PokemonParty", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<PokemonStorageBox>("App.PokemonStorageBox", 1, 0, "PokemonStorageBox", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<PokemonStorageSet>("App.PokemonStorageSet", 1, 0, "PokemonStorageSet", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<SignData>("App.SignData", 1, 0, "SignData", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<SpriteData>("App.SpriteData", 1, 0, "SpriteData", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WarpData>("App.WarpData", 1, 0, "WarpData", "Can't instantiate in QML");
 
-  qmlRegisterUncreatableType<Player>(dn("Player"), 1, 0, "Player", msg);
-  qmlRegisterUncreatableType<PlayerBasics>(dn("PlayerBasics"), 1, 0, "PlayerBasics", msg);
-  qmlRegisterUncreatableType<PlayerPokedex>(dn("PlayerPokedex"), 1, 0, "PlayerPokedex", msg);
-  qmlRegisterUncreatableType<PlayerPokemon>(dn("PlayerPokemon"), 1, 0, "PlayerPokemon", msg);
+  qmlRegisterUncreatableType<Player>("App.Player", 1, 0, "Player", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<PlayerBasics>("App.PlayerBasics", 1, 0, "PlayerBasics", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<PlayerPokedex>("App.PlayerPokedex", 1, 0, "PlayerPokedex", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<PlayerPokemon>("App.PlayerPokemon", 1, 0, "PlayerPokemon", "Can't instantiate in QML");
 
-  qmlRegisterUncreatableType<World>(dn("World"), 1, 0, "World", msg);
-  qmlRegisterUncreatableType<WorldCompleted>(dn("WorldCompleted"), 1, 0, "WorldCompleted", msg);
-  qmlRegisterUncreatableType<WorldEvents>(dn("WorldEvents"), 1, 0, "WorldEvents", msg);
-  qmlRegisterUncreatableType<Options>(dn("Options"), 1, 0, "Options", msg);
-  qmlRegisterUncreatableType<LetterDelay>(dn("LetterDelay"), 1, 0, "LetterDelay", msg);
-  qmlRegisterUncreatableType<WorldGeneral>(dn("WorldGeneral"), 1, 0, "WorldGeneral", msg);
-  qmlRegisterUncreatableType<WorldHidden>(dn("WorldHidden"), 1, 0, "WorldHidden", msg);
-  qmlRegisterUncreatableType<WorldMissables>(dn("WorldMissables"), 1, 0, "WorldMissables", msg);
-  qmlRegisterUncreatableType<Playtime>(dn("Playtime"), 1, 0, "Playtime", msg);
-  qmlRegisterUncreatableType<WorldOther>(dn("WorldOther"), 1, 0, "WorldOther", msg);
-  qmlRegisterUncreatableType<WorldScripts>(dn("WorldScripts"), 1, 0, "WorldScripts", msg);
-  qmlRegisterUncreatableType<WorldTowns>(dn("WorldTowns"), 1, 0, "WorldTowns", msg);
-  qmlRegisterUncreatableType<WorldTrades>(dn("WorldTrades"), 1, 0, "WorldTrades", msg);
+  qmlRegisterUncreatableType<World>("App.World", 1, 0, "World", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldCompleted>("App.WorldCompleted", 1, 0, "WorldCompleted", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldEvents>("App.WorldEvents", 1, 0, "WorldEvents", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<Options>("App.Options", 1, 0, "Options", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<LetterDelay>("App.LetterDelay", 1, 0, "LetterDelay", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldGeneral>("App.WorldGeneral", 1, 0, "WorldGeneral", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldHidden>("App.WorldHidden", 1, 0, "WorldHidden", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldMissables>("App.WorldMissables", 1, 0, "WorldMissables", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<Playtime>("App.Playtime", 1, 0, "Playtime", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldOther>("App.WorldOther", 1, 0, "WorldOther", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldScripts>("App.WorldScripts", 1, 0, "WorldScripts", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldTowns>("App.WorldTowns", 1, 0, "WorldTowns", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldTrades>("App.WorldTrades", 1, 0, "WorldTrades", "Can't instantiate in QML");
 }
