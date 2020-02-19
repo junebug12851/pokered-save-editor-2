@@ -23,7 +23,7 @@
 Player::Player(SaveFile* saveFile)
 {
   basics = new PlayerBasics;
-  items = new ItemStorageBox(20); // Max 20 items
+  items = new ItemStorageBox(true, 20); // Max 20 items, mark this is a bag
   pokedex = new PlayerPokedex;
   pokemon = new PlayerPokemon;
 

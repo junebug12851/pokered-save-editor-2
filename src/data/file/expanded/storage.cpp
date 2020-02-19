@@ -24,7 +24,7 @@
 
 Storage::Storage(SaveFile* saveFile)
 {
-  items = new ItemStorageBox(50); // Max 50 items
+  items = new ItemStorageBox(false, 50); // Max 50 items, Mark this is storage
 
   for(var8 i = 0; i < maxPokemonStorageSets; i++)
     pokemon[i] = new PokemonStorageSet;

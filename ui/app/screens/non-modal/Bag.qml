@@ -37,12 +37,19 @@ Page {
   }
 
   // 1 Button Footer, the Randomize Button
-  footer: AppFooterBtn1 {
+  footer: AppFooterBtn2 {
     icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
     text1: "Re-Roll"
     onBtn1Clicked: {
       brg.file.data.dataExpanded.player.items.randomize()
       brg.file.data.dataExpanded.storage.items.randomize()
+    }
+
+    icon2.source: "qrc:/assets/icons/fontawesome/sort-amount-up.svg"
+    text2: "Sort"
+    onBtn2Clicked: {
+      brg.file.data.dataExpanded.player.items.sort();
+      brg.file.data.dataExpanded.storage.items.sort();
     }
   }
 }

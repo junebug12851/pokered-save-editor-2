@@ -486,5 +486,10 @@
         <file>assets/icons/fontawesome/trash-alt.svg</file>
         <file>assets/icons/fontawesome/minus-square.svg</file>
         <file>assets/icons/fontawesome/grip-lines.svg</file>
+        <file>assets/icons/fontawesome/angle-double-right.svg</file>
+        <file>assets/icons/fontawesome/angle-double-left.svg</file>
+        <file>assets/icons/fontawesome/angle-left.svg</file>
+        <file>assets/icons/fontawesome/angle-right.svg</file>
+        <file>assets/icons/fontawesome/sort-amount-up.svg</file>
     </qresource>
 </RCC>

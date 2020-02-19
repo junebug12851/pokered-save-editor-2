@@ -14,16 +14,25 @@
   * limitations under the License.
 */
 
+#include <algorithm>
+#include <QCollator>
+
 #include "./itemstoragebox.h"
 #include "./item.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+
+#include "../savefileexpanded.h"
+#include "../player/player.h"
+#include "../storage.h"
+
 #include "../../../db/items.h"
 #include "../../../../common/random.h"
 
-ItemStorageBox::ItemStorageBox(int maxSize, SaveFile* saveFile, int offset)
-  : maxSize(maxSize)
+ItemStorageBox::ItemStorageBox(bool isBag, int maxSize, SaveFile* saveFile, int offset)
+  : maxSize(maxSize),
+    isBag(isBag)
 {
   load(saveFile, offset);
 }
@@ -63,6 +72,23 @@ int ItemStorageBox::itemsWorth()
   }
 
   return ret;
+}
+
+bool ItemStorageBox::getIsBag()
+{
+  return isBag;
+}
+
+bool ItemStorageBox::relocateFull()
+{
+  auto dest = (isBag)
+      ? file->dataExpanded->storage->items
+      : file->dataExpanded->player->items;
+
+  if(dest->items.size() >= dest->itemsMax())
+    return true;
+
+  return false;
 }
 
 Item* ItemStorageBox::itemAt(int ind)
@@ -107,9 +133,63 @@ void ItemStorageBox::itemNew()
   itemsChanged();
 }
 
+void ItemStorageBox::relocateAll()
+{
+  auto dest = (isBag)
+      ? file->dataExpanded->storage->items
+      : file->dataExpanded->player->items;
+
+  while(items.size() > 0 && dest->items.size() < dest->itemsMax())
+    relocateOne(0);
+}
+
+void ItemStorageBox::relocateOne(int ind)
+{
+  auto dest = (isBag)
+      ? file->dataExpanded->storage->items
+      : file->dataExpanded->player->items;
+
+  if(dest->items.size() >= dest->itemsMax())
+    return;
+
+  auto el = items.at(ind);
+
+  items.removeAt(ind);
+  itemRemoveChange(ind);
+  itemsChanged();
+
+  dest->items.append(el);
+  dest->itemInsertChange();
+  dest->itemsChanged();
+}
+
+void ItemStorageBox::sort()
+{
+  // Setup Collator
+  QCollator collator;
+  collator.setNumericMode(true);
+  collator.setIgnorePunctuation(true);
+
+  std::sort(
+        items.begin(),
+        items.end(),
+        [&collator](Item* item1, Item* item2)
+  {
+    if(item1->toItem() == nullptr || item2->toItem() == nullptr)
+      return collator.compare("", "") < 0;
+
+    return collator.compare(item1->toItem()->readable, item2->toItem()->readable) < 0;
+  });
+
+  itemsResetChange();
+  itemsChanged();
+}
+
 void ItemStorageBox::load(SaveFile* saveFile, int offset)
 {
   reset();
+
+  this->file = saveFile;
 
   if(saveFile == nullptr)
     return;

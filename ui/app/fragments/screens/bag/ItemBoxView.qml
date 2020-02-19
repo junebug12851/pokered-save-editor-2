@@ -31,6 +31,13 @@ ListView {
       Layout.alignment: Qt.AlignHCenter
       visible: (!isLast && box.itemsCount > 0)
 
+      IconButtonSquare {
+        visible: !box.isBag
+        //enabled: !box.relocateFull // Works only sometimes for some reason
+        icon.source: "qrc:/assets/icons/fontawesome/angle-left.svg"
+        onClicked: box.relocateOne(index)
+      }
+
       SelectItem {
         onActivated: itemId = currentValue;
         Component.onCompleted: {
@@ -74,11 +81,15 @@ ListView {
       }
 
       IconButtonSquare {
-        flat: true
-        icon.color: "black"
-        //Material.background: "red"
         icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
         onClicked: box.itemRemove(index);
+      }
+
+      IconButtonSquare {
+        visible: box.isBag
+        //enabled: !box.relocateFull // Works only sometimes for some reason
+        icon.source: "qrc:/assets/icons/fontawesome/angle-right.svg"
+        onClicked: box.relocateOne(index)
       }
     }
 

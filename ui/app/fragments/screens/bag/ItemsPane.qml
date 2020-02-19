@@ -30,6 +30,13 @@ Rectangle {
       anchors.centerIn: parent
       spacing: 15
 
+      IconButtonSquare {
+        visible: !box.isBag
+        //enabled: !box.relocateFull // Works only sometimes for some reason
+        icon.source: "qrc:/assets/icons/fontawesome/angle-double-left.svg"
+        onClicked: box.relocateAll();
+      }
+
       Text {
         text: title
         font.pixelSize: 18
@@ -39,6 +46,13 @@ Rectangle {
       IconButtonSquare {
         icon.source: "qrc:/assets/icons/fontawesome/broom.svg"
         onClicked: box.reset();
+      }
+
+      IconButtonSquare {
+        visible: box.isBag
+        //enabled: !box.relocateFull // Works only sometimes for some reason
+        icon.source: "qrc:/assets/icons/fontawesome/angle-double-right.svg"
+        onClicked: box.relocateAll();
       }
     }
   }

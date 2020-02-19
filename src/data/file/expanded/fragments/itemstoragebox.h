@@ -29,10 +29,12 @@ class ItemStorageBox : public QObject
   Q_PROPERTY(int itemsCount READ itemsCount NOTIFY itemsChanged STORED false)
   Q_PROPERTY(int itemsCountBulk READ itemsCountBulk NOTIFY itemsChanged STORED false)
   Q_PROPERTY(int itemsMax READ itemsMax STORED false CONSTANT)
+  Q_PROPERTY(bool isBag READ getIsBag CONSTANT)
+  Q_PROPERTY(bool relocateFull READ relocateFull NOTIFY itemsChanged STORED false)
   Q_PROPERTY(int itemsWorth READ itemsWorth NOTIFY itemsChanged STORED false)
 
 public:
-  ItemStorageBox(int maxSize, SaveFile* saveFile = nullptr, int offset = 0);
+  ItemStorageBox(bool isBag, int maxSize, SaveFile* saveFile = nullptr, int offset = 0);
   virtual ~ItemStorageBox();
 
   void load(SaveFile* saveFile = nullptr, int offset = 0);
@@ -42,10 +44,9 @@ public:
   int itemsCountBulk();
   int itemsMax();
   int itemsWorth();
+  bool getIsBag();
+  bool relocateFull();
   Q_INVOKABLE Item* itemAt(int ind);
-  Q_INVOKABLE void itemMove(int from, int to);
-  Q_INVOKABLE void itemRemove(int ind);
-  Q_INVOKABLE void itemNew();
 
 signals:
   void itemsChanged();
@@ -57,10 +58,19 @@ signals:
 public slots:
   void reset();
   void randomize();
+  void itemMove(int from, int to);
+  void itemRemove(int ind);
+  void itemNew();
+  void relocateAll();
+  void relocateOne(int ind);
+  void sort();
 
 public:
   QVector<Item*> items;
   int maxSize;
+
+  bool isBag;
+  SaveFile* file;
 };
 
 #endif // ITEMSTORAGEBOX_H
