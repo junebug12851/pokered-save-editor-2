@@ -15,7 +15,7 @@ ListModel {
     page: "pokedex"
   }
   ListElement {
-    name: "Bag"
+    name: "Items"
     iconSrc: "qrc:/assets/icons/poke-go/backpack.svg"
     page: "bag"
   }
@@ -27,11 +27,6 @@ ListModel {
   ListElement {
     name: "Rival"
     iconSrc: "qrc:/assets/icons/poke-go/player.svg"
-    page: ""
-  }
-  ListElement {
-    name: "Storage"
-    iconSrc: "qrc:/assets/icons/poke-go/smartphone.svg"
     page: ""
   }
   ListElement {
