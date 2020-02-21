@@ -7,7 +7,7 @@ We've reached 400 Commits ٩(^ᴗ^)۶ !
 
 **>> This is not complete and may contain lots of bugs, this is a work in progress and in deep construction <<**
 
-Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature and complete version 
+> Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature and complete version 
 until this leaves WIP status.
 
 So this is going to look like nothing to you, a simple image, however it took very close to 300 commits to get to this point. This is the result of QML communicating with the C++ back-end in conjuction with the C++ Pokered Database to extract the player name of the save file and display it.
