@@ -23,6 +23,8 @@
 #include "../bridge/settings.h"
 #include "../bridge/router.h"
 
+#include "../mvc/itemstoragemodel.h"
+
 #include "../data/db/examplesplayer.h"
 #include "../data/db/examplespokemon.h"
 #include "../data/db/examplesrival.h"
@@ -115,6 +117,7 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<Settings>("App.Settings", 1, 0, "Settings", "Can't instantiate in QML");
 
   qmlRegisterUncreatableType<Utility>("App.Utility", 1, 0, "Utility", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<ItemStorageModel>("App.ItemStorageModel", 1, 0, "ItemStorageModel", "Can't instantiate in QML");
 
   qmlRegisterUncreatableType<ExamplesPlayer>("App.ExamplesPlayer", 1, 0, "ExamplesPlayer", "Can't instantiate in QML");
   qmlRegisterUncreatableType<ExamplesPokemon>("App.ExamplesPokemon", 1, 0, "ExamplesPokemon", "Can't instantiate in QML");

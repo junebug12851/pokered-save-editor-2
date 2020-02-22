@@ -491,5 +491,10 @@
         <file>assets/icons/fontawesome/angle-left.svg</file>
         <file>assets/icons/fontawesome/angle-right.svg</file>
         <file>assets/icons/fontawesome/sort-amount-up.svg</file>
+        <file>assets/icons/fontawesome/exchange-alt.svg</file>
+        <file>assets/icons/fontawesome/angle-double-down.svg</file>
+        <file>assets/icons/fontawesome/angle-double-up.svg</file>
+        <file>assets/icons/fontawesome/angle-down.svg</file>
+        <file>assets/icons/fontawesome/angle-up.svg</file>
     </qresource>
 </RCC>

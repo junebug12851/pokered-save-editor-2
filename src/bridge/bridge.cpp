@@ -26,6 +26,6 @@ Bridge::Bridge(FileManagement* file)
   : file(file),
     recentFilesModel(new RecentFilesModel(file)),
     pokedexModel(new PokedexModel(file->data->dataExpanded->player->pokedex)),
-    bagItemsModel(new ItemStorageModel(file->data->dataExpanded->player->items)),
-    pcItemsModel(new ItemStorageModel(file->data->dataExpanded->storage->items))
+    bagItemsModel(new ItemStorageModel(file->data->dataExpanded->player->items, router)),
+    pcItemsModel(new ItemStorageModel(file->data->dataExpanded->storage->items, router))
 {}

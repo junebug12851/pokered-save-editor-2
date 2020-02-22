@@ -133,26 +133,33 @@ void ItemStorageBox::itemNew()
   itemsChanged();
 }
 
-void ItemStorageBox::relocateAll()
+bool ItemStorageBox::relocateAll()
 {
   auto dest = (isBag)
       ? file->dataExpanded->storage->items
       : file->dataExpanded->player->items;
 
-  while(items.size() > 0 && dest->items.size() < dest->itemsMax())
-    relocateOne(0);
+  bool ret = true;
+
+  while(items.size() > 0 && dest->items.size() < dest->itemsMax()) {
+    if(!relocateOne(0))
+      ret = false;
+  }
+
+  return ret;
 }
 
-void ItemStorageBox::relocateOne(int ind)
+bool ItemStorageBox::relocateOne(int ind)
 {
   auto dest = (isBag)
       ? file->dataExpanded->storage->items
       : file->dataExpanded->player->items;
 
   if(dest->items.size() >= dest->itemsMax())
-    return;
+    return false;
 
   auto el = items.at(ind);
+  beforeItemRelocate(el);
 
   items.removeAt(ind);
   itemRemoveChange(ind);
@@ -161,6 +168,8 @@ void ItemStorageBox::relocateOne(int ind)
   dest->items.append(el);
   dest->itemInsertChange();
   dest->itemsChanged();
+
+  return true;
 }
 
 void ItemStorageBox::sort()
@@ -183,6 +192,66 @@ void ItemStorageBox::sort()
 
   itemsResetChange();
   itemsChanged();
+}
+
+bool ItemStorageBox::itemMoveTop(int ind)
+{
+  if(ind == 0 || ind >= items.size())
+    return false;
+
+  auto el = items.at(ind);
+
+  items.removeAt(ind);
+  items.insert(0, el);
+  itemMoveChange(ind, 0);
+  itemsChanged();
+
+  return true;
+}
+
+bool ItemStorageBox::itemMoveUp(int ind)
+{
+  if(ind == 0 || ind >= items.size())
+    return false;
+
+  auto el = items.at(ind);
+
+  items.removeAt(ind);
+  items.insert(ind - 1, el);
+  itemMoveChange(ind, ind-1);
+  itemsChanged();
+
+  return true;
+}
+
+bool ItemStorageBox::itemMoveDown(int ind)
+{
+  if(ind >= (items.size() - 1))
+    return false;
+
+  auto el = items.at(ind);
+
+  items.removeAt(ind);
+  items.insert(ind + 1, el);
+  itemMoveChange(ind, ind+1);
+  itemsChanged();
+
+  return true;
+}
+
+bool ItemStorageBox::itemMoveBottom(int ind)
+{
+  if(ind >= (items.size() - 1))
+    return false;
+
+  auto el = items.at(ind);
+
+  items.removeAt(ind);
+  items.insert(items.size(), el);
+  itemMoveChange(ind, items.size());
+  itemsChanged();
+
+  return true;
 }
 
 void ItemStorageBox::load(SaveFile* saveFile, int offset)

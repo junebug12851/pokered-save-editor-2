@@ -89,13 +89,6 @@ public:
   Bridge(FileManagement* file);
 
   FileManagement* file = nullptr;
-  RecentFilesModel* recentFilesModel = nullptr;
-  PokedexModel* pokedexModel = nullptr;
-  ItemStorageModel* bagItemsModel = nullptr;
-  ItemStorageModel* pcItemsModel = nullptr;
-  CreditsModel* creditsModel = new CreditsModel;
-  PokemonStartersModel* starterModel = new PokemonStartersModel;
-  ItemSelectModel* itemSelectModel = new ItemSelectModel;
 
   FontSearch* fontSearch = new FontSearch;
   FontSearchModel* fontSearchModel = new FontSearchModel(fontSearch);
@@ -109,6 +102,14 @@ public:
   ExamplesPokemon* randomExamplePokemon = new ExamplesPokemon;
   ExamplesRival* randomExampleRival = new ExamplesRival;
   Settings* settings = new Settings(file->data);
+
+  RecentFilesModel* recentFilesModel = nullptr;
+  PokedexModel* pokedexModel = nullptr;
+  ItemStorageModel* bagItemsModel = nullptr;
+  ItemStorageModel* pcItemsModel = nullptr;
+  CreditsModel* creditsModel = new CreditsModel;
+  PokemonStartersModel* starterModel = new PokemonStartersModel;
+  ItemSelectModel* itemSelectModel = new ItemSelectModel;
 };
 
 #endif

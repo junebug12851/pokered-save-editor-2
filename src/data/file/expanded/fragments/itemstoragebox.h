@@ -49,6 +49,7 @@ public:
   Q_INVOKABLE Item* itemAt(int ind);
 
 signals:
+  void beforeItemRelocate(Item* item);
   void itemsChanged();
   void itemMoveChange(int from, int to);
   void itemRemoveChange(int ind);
@@ -61,9 +62,14 @@ public slots:
   void itemMove(int from, int to);
   void itemRemove(int ind);
   void itemNew();
-  void relocateAll();
-  void relocateOne(int ind);
+  bool relocateAll();
+  bool relocateOne(int ind);
   void sort();
+
+  bool itemMoveTop(int ind);
+  bool itemMoveUp(int ind);
+  bool itemMoveDown(int ind);
+  bool itemMoveBottom(int ind);
 
 public:
   QVector<Item*> items;

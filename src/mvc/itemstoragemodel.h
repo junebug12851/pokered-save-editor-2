@@ -21,21 +21,31 @@
 #include <QAbstractListModel>
 #include <QVector>
 
+class Item;
 class ItemStorageBox;
+class Router;
 
 class ItemStorageModel : public QAbstractListModel
 {
   Q_OBJECT
 
+  Q_PROPERTY(bool hasChecked READ hasChecked NOTIFY hasCheckedChanged STORED false)
+
+signals:
+  void hasCheckedChanged();
+
 public:
+  static constexpr const char* isCheckedKey = "isChecked";
+
   enum BagItemRoles {
     IdRole = Qt::UserRole + 1,
     CountRole,
     WorthAllRole,
-    WorthEachRole
+    WorthEachRole,
+    CheckedRole
   };
 
-  ItemStorageModel(ItemStorageBox* items);
+  ItemStorageModel(ItemStorageBox* items, Router* router);
 
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
@@ -48,7 +58,24 @@ public:
   void onInsert();
   void onReset();
 
+  bool hasChecked();
+  QVector<Item*> getChecked();
+
+public slots:
+  void clearCheckedState();
+  void clearCheckedStateGone();
+  void checkedMoveToTop();
+  void checkedMoveUp();
+  void checkedMoveDown();
+  void checkedMoveToBottom();
+  void checkedDelete();
+  void checkedTransfer();
+  void checkedToggleAll();
+  void onBeforeRelocate(Item* item);
+
+public:
   ItemStorageBox* items = nullptr;
+  Router* router;
 };
 
 #endif // BAGITEMSMODEL_H
