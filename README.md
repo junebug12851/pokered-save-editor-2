@@ -7,8 +7,12 @@ We've reached 400 Commits ٩(^ᴗ^)۶ !
 
 **>> This is not complete and may contain lots of bugs, this is a work in progress and in deep construction <<**
 
-> Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature and complete version 
-until this leaves WIP status.
+> **Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature and complete version 
+until this leaves WIP status.**
+
+**This is also not meant to be used with Pokemon Bank or Pokemon Home or the Virtual Consoles. I make no effort to support any compatibility for that process.**
+
+*Pokemon, Pokemon Bank, Pokemon Home, Virtual Consoles, and related sprites and artwork are owned by GameFreak/Nintendo/Pokemon, I make no claims to them. Majority of artwork and icons are by fans and are creddited accordingly on the credits screen or the credits file in the repo.*
 
 So this is going to look like nothing to you, a simple image, however it took very close to 300 commits to get to this point. This is the result of QML communicating with the C++ back-end in conjuction with the C++ Pokered Database to extract the player name of the save file and display it.
 
