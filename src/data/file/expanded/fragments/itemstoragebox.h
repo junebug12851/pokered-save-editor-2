@@ -26,12 +26,27 @@ class Item;
 class ItemStorageBox : public QObject
 {
   Q_OBJECT
+
+  // How many items are there
   Q_PROPERTY(int itemsCount READ itemsCount NOTIFY itemsChanged STORED false)
+
+  // How many items including item amounts are there
   Q_PROPERTY(int itemsCountBulk READ itemsCountBulk NOTIFY itemsChanged STORED false)
+
+  // Maximum number of items
   Q_PROPERTY(int itemsMax READ itemsMax STORED false CONSTANT)
+
+  // Is this the players bag or PC storage
   Q_PROPERTY(bool isBag READ getIsBag CONSTANT)
+
+  // Can we relocate? If the other box is full then we cannot
   Q_PROPERTY(bool relocateFull READ relocateFull NOTIFY itemsChanged STORED false)
+
+  // What's the worth of all the items?
   Q_PROPERTY(int itemsWorth READ itemsWorth NOTIFY itemsChanged STORED false)
+
+  // Get destination box
+  Q_PROPERTY(ItemStorageBox* destBox READ destBox STORED false CONSTANT)
 
 public:
   ItemStorageBox(bool isBag, int maxSize, SaveFile* saveFile = nullptr, int offset = 0);
@@ -40,16 +55,25 @@ public:
   void load(SaveFile* saveFile = nullptr, int offset = 0);
   void save(SaveFile* saveFile, int offset);
 
+  // These are provided as properties
   int itemsCount();
   int itemsCountBulk();
   int itemsMax();
   int itemsWorth();
   bool getIsBag();
   bool relocateFull();
+  ItemStorageBox* destBox();
+
+  // Methods that can be called from QML which cannot be properties and make no
+  // sense as slots
   Q_INVOKABLE Item* itemAt(int ind);
 
 signals:
+  // When moving an item away from the box to another box, allow the model to
+  // perform cleanup actions
   void beforeItemRelocate(Item* item);
+
+  // Alert the model on changes
   void itemsChanged();
   void itemMoveChange(int from, int to);
   void itemRemoveChange(int ind);
@@ -57,24 +81,23 @@ signals:
   void itemsResetChange();
 
 public slots:
+
+  // These alow the model or QML to interact with the box
   void reset();
   void randomize();
-  void itemMove(int from, int to);
+  bool itemMove(int from, int to);
   void itemRemove(int ind);
   void itemNew();
   bool relocateAll();
   bool relocateOne(int ind);
   void sort();
 
-  bool itemMoveTop(int ind);
-  bool itemMoveUp(int ind);
-  bool itemMoveDown(int ind);
-  bool itemMoveBottom(int ind);
-
 public:
   QVector<Item*> items;
-  int maxSize;
 
+  // These are set from the creating class indicating details of the box
+  // It's crucial they are read-only
+  int maxSize;
   bool isBag;
   SaveFile* file;
 };

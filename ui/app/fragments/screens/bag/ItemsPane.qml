@@ -48,29 +48,6 @@ Rectangle {
         color: brg.settings.textColorLight
         rightPadding: 0
       }
-
-      IconButtonSquare {
-        icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
-        onClicked: box.reset();
-
-        rightInset: 0
-        leftInset: 0
-
-        leftPadding: 0
-        rightPadding: 0
-      }
-
-      IconButtonSquare {
-        //enabled: !box.relocateFull // Works only sometimes for some reason
-        icon.source: "qrc:/assets/icons/fontawesome/exchange-alt.svg"
-        onClicked: box.relocateAll();
-
-        rightInset: 0
-        leftInset: 0
-
-        leftPadding: 0
-        rightPadding: 0
-      }
     }
   }
 

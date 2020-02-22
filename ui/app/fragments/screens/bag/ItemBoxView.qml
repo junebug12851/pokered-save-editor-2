@@ -31,7 +31,7 @@ ListView {
     Row {
       id: rowEntry
       Layout.alignment: Qt.AlignHCenter
-      visible: (!isLast && box.itemsCount > 0)
+      visible: !itemIsPlaceholder
 
       CheckBox {
         id: selectBox
@@ -93,7 +93,7 @@ ListView {
       flat: true
       implicitWidth: rowEntry.implicitWidth
 
-      visible: (isLast || box.itemsCount == 0) && (box.itemsCount < box.itemsMax)
+      visible: itemIsPlaceholder && (box.itemsCount < box.itemsMax)
 
       //Material.foreground: brg.settings.textColorLight
       Material.foreground: brg.settings.primaryColor

@@ -28,6 +28,7 @@ ItemStorageModel::ItemStorageModel(ItemStorageBox* items, Router* router)
   : items(items),
     router(router)
 {
+  // Connect signals from the box
   connect(this->items, &ItemStorageBox::itemMoveChange, this, &ItemStorageModel::onMove);
   connect(this->items, &ItemStorageBox::itemRemoveChange, this, &ItemStorageModel::onRemove);
 
@@ -41,7 +42,7 @@ ItemStorageModel::ItemStorageModel(ItemStorageBox* items, Router* router)
   connect(this->items, &ItemStorageBox::itemsResetChange, this, &ItemStorageModel::onReset);
 
   // Clear checked on non-modal screen change. The checked state is completely
-  // temporary
+  // temporary, it should not persist between non-modal screens
   connect(this->router, &Router::closeNonModal, this, &ItemStorageModel::clearCheckedState);
   connect(this->router, &Router::goHome, this, &ItemStorageModel::clearCheckedState);
 
@@ -63,8 +64,11 @@ QVariant ItemStorageModel::data(const QModelIndex& index, int role) const
   if (!index.isValid())
     return QVariant();
 
-  if (index.row() >= items->items.size())
+  if (index.row() > items->items.size())
     return QVariant();
+
+  if(index.row() == (items->items.size()))
+    return getPlaceHolderData(role);
 
   // Get Item from Item List Cache
   auto item = items->items.at(index.row());
@@ -83,6 +87,8 @@ QVariant ItemStorageModel::data(const QModelIndex& index, int role) const
     return item->worthOne();
   else if (role == CheckedRole)
     return item->property(isCheckedKey).toBool();
+  else if (role == PlaceholderRole)
+    return false;
 
   // All else fails, return nothing
   return QVariant();
@@ -97,16 +103,17 @@ QHash<int, QByteArray> ItemStorageModel::roleNames() const
   roles[WorthAllRole] = "itemWorthAll";
   roles[WorthEachRole] = "itemWorthEach";
   roles[CheckedRole] = "itemChecked";
+  roles[PlaceholderRole] = "itemIsPlaceholder";
 
   return roles;
 }
 
 bool ItemStorageModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-  if (!index.isValid())
+  if(!index.isValid())
     return false;
 
-  if (index.row() >= items->items.size())
+  if(index.row() >= items->items.size())
     return false;
 
   auto item = items->items.at(index.row());
@@ -135,9 +142,27 @@ bool ItemStorageModel::setData(const QModelIndex& index, const QVariant& value, 
   return false;
 }
 
+QVariant ItemStorageModel::getPlaceHolderData(int role) const
+{
+  if (role == IdRole)
+    return -1;
+  else if (role == CountRole)
+    return 0;
+  else if (role == WorthAllRole)
+    return 0;
+  else if (role == WorthEachRole)
+    return 0;
+  else if (role == CheckedRole)
+    return 0;
+  else if (role == PlaceholderRole)
+    return true;
+
+  return QVariant();
+}
+
 void ItemStorageModel::onMove(int from, int to)
 {
-  if(from +1 == to) {
+  if(from + 1 == to) {
     to++;
     if(to > items->items.size())
       to = items->items.size();
@@ -153,6 +178,7 @@ void ItemStorageModel::onRemove(int ind)
 {
   beginRemoveRows(QModelIndex(), ind, ind);
   endRemoveRows();
+  hasCheckedChanged();
 }
 
 void ItemStorageModel::onInsert()
@@ -166,6 +192,7 @@ void ItemStorageModel::onReset()
 {
   beginResetModel();
   endResetModel();
+  hasCheckedChanged();
 }
 
 bool ItemStorageModel::hasChecked()
@@ -216,7 +243,7 @@ void ItemStorageModel::checkedMoveToTop()
 {
   for(auto el : getChecked()) {
     int ind = items->items.indexOf(el);
-    items->itemMoveTop(ind);
+    items->itemMove(ind, 0);
   }
 }
 
@@ -224,7 +251,7 @@ void ItemStorageModel::checkedMoveUp()
 {
   for(auto el : getChecked()) {
     int ind = items->items.indexOf(el);
-    items->itemMoveUp(ind);
+    items->itemMove(ind, ind - 1);
   }
 }
 
@@ -232,7 +259,7 @@ void ItemStorageModel::checkedMoveDown()
 {
   for(auto el : getChecked()) {
     int ind = items->items.indexOf(el);
-    items->itemMoveDown(ind);
+    items->itemMove(ind, ind + 1);
   }
 }
 
@@ -240,7 +267,7 @@ void ItemStorageModel::checkedMoveToBottom()
 {
   for(auto el : getChecked()) {
     int ind = items->items.indexOf(el);
-    items->itemMoveBottom(ind);
+    items->itemMove(ind, items->itemsCount() - 1);
   }
 }
 

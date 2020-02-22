@@ -29,12 +29,14 @@ class ItemStorageModel : public QAbstractListModel
 {
   Q_OBJECT
 
+  // Checkmarks changed
   Q_PROPERTY(bool hasChecked READ hasChecked NOTIFY hasCheckedChanged STORED false)
 
 signals:
   void hasCheckedChanged();
 
 public:
+  // Name of attached properties
   static constexpr const char* isCheckedKey = "isChecked";
 
   enum BagItemRoles {
@@ -42,7 +44,8 @@ public:
     CountRole,
     WorthAllRole,
     WorthEachRole,
-    CheckedRole
+    CheckedRole,
+    PlaceholderRole,
   };
 
   ItemStorageModel(ItemStorageBox* items, Router* router);
@@ -53,17 +56,24 @@ public:
   bool setData(const QModelIndex &index, const QVariant &value,
                    int role = Qt::EditRole) override;
 
+  QVariant getPlaceHolderData(int role) const;
+
+  // Signals from the box
   void onMove(int from, int to);
   void onRemove(int ind);
   void onInsert();
   void onReset();
 
+  // Attached property management
   bool hasChecked();
   QVector<Item*> getChecked();
+  void onBeforeRelocate(Item* item);
 
 public slots:
+  // Attached property management
   void clearCheckedState();
   void clearCheckedStateGone();
+
   void checkedMoveToTop();
   void checkedMoveUp();
   void checkedMoveDown();
@@ -71,7 +81,6 @@ public slots:
   void checkedDelete();
   void checkedTransfer();
   void checkedToggleAll();
-  void onBeforeRelocate(Item* item);
 
 public:
   ItemStorageBox* items = nullptr;

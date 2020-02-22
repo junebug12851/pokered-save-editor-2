@@ -81,9 +81,7 @@ bool ItemStorageBox::getIsBag()
 
 bool ItemStorageBox::relocateFull()
 {
-  auto dest = (isBag)
-      ? file->dataExpanded->storage->items
-      : file->dataExpanded->player->items;
+  auto dest = destBox();
 
   if(dest->items.size() >= dest->itemsMax())
     return true;
@@ -93,13 +91,21 @@ bool ItemStorageBox::relocateFull()
 
 Item* ItemStorageBox::itemAt(int ind)
 {
+  if(ind >= items.size())
+    return nullptr;
+
   return items.at(ind);
 }
 
-void ItemStorageBox::itemMove(int from, int to)
+bool ItemStorageBox::itemMove(int from, int to)
 {
-  if(from == to)
-    return;
+  if(items.size() <= 0 ||
+     from == to ||
+     from >= items.size() ||
+     from < 0 ||
+     to >= items.size() ||
+     to < 0)
+    return false;
 
   // Grab and remove item
   auto eFrom = items.at(from);
@@ -110,11 +116,15 @@ void ItemStorageBox::itemMove(int from, int to)
 
   itemMoveChange(from, to);
   itemsChanged();
+
+  return true;
 }
 
 void ItemStorageBox::itemRemove(int ind)
 {
-  if(items.size() <= 0)
+  if(items.size() <= 0 ||
+     ind < 0 ||
+     ind >= items.size())
     return;
 
   delete items.at(ind);
@@ -128,16 +138,14 @@ void ItemStorageBox::itemNew()
   if(items.size() >= maxSize)
     return;
 
-  items.append(new Item);
+  items.append(new Item(true));
   itemInsertChange();
   itemsChanged();
 }
 
 bool ItemStorageBox::relocateAll()
 {
-  auto dest = (isBag)
-      ? file->dataExpanded->storage->items
-      : file->dataExpanded->player->items;
+  auto dest = destBox();
 
   bool ret = true;
 
@@ -151,11 +159,12 @@ bool ItemStorageBox::relocateAll()
 
 bool ItemStorageBox::relocateOne(int ind)
 {
-  auto dest = (isBag)
-      ? file->dataExpanded->storage->items
-      : file->dataExpanded->player->items;
+  auto dest = destBox();
 
-  if(dest->items.size() >= dest->itemsMax())
+  if(items.size() <= 0 ||
+     ind < 0 ||
+     ind >= items.size() ||
+     dest->items.size() >= dest->itemsMax())
     return false;
 
   auto el = items.at(ind);
@@ -174,6 +183,9 @@ bool ItemStorageBox::relocateOne(int ind)
 
 void ItemStorageBox::sort()
 {
+  if(items.size() <= 0)
+    return;
+
   // Setup Collator
   QCollator collator;
   collator.setNumericMode(true);
@@ -192,66 +204,6 @@ void ItemStorageBox::sort()
 
   itemsResetChange();
   itemsChanged();
-}
-
-bool ItemStorageBox::itemMoveTop(int ind)
-{
-  if(ind == 0 || ind >= items.size())
-    return false;
-
-  auto el = items.at(ind);
-
-  items.removeAt(ind);
-  items.insert(0, el);
-  itemMoveChange(ind, 0);
-  itemsChanged();
-
-  return true;
-}
-
-bool ItemStorageBox::itemMoveUp(int ind)
-{
-  if(ind == 0 || ind >= items.size())
-    return false;
-
-  auto el = items.at(ind);
-
-  items.removeAt(ind);
-  items.insert(ind - 1, el);
-  itemMoveChange(ind, ind-1);
-  itemsChanged();
-
-  return true;
-}
-
-bool ItemStorageBox::itemMoveDown(int ind)
-{
-  if(ind >= (items.size() - 1))
-    return false;
-
-  auto el = items.at(ind);
-
-  items.removeAt(ind);
-  items.insert(ind + 1, el);
-  itemMoveChange(ind, ind+1);
-  itemsChanged();
-
-  return true;
-}
-
-bool ItemStorageBox::itemMoveBottom(int ind)
-{
-  if(ind >= (items.size() - 1))
-    return false;
-
-  auto el = items.at(ind);
-
-  items.removeAt(ind);
-  items.insert(items.size(), el);
-  itemMoveChange(ind, items.size());
-  itemsChanged();
-
-  return true;
 }
 
 void ItemStorageBox::load(SaveFile* saveFile, int offset)
@@ -293,6 +245,13 @@ void ItemStorageBox::save(SaveFile* saveFile, int offset)
   delete it;
 }
 
+ItemStorageBox* ItemStorageBox::destBox()
+{
+  return (isBag)
+      ? file->dataExpanded->storage->items
+      : file->dataExpanded->player->items;
+}
+
 void ItemStorageBox::reset()
 {
   for(auto item : items) {
@@ -309,8 +268,8 @@ void ItemStorageBox::randomize()
 {
   reset();
 
-  // Between None and half of max capacity
-  var8 count = Random::rangeInclusive(0, maxSize * .5);
+  // Between None and 3/4 of max capacity
+  var8 count = Random::rangeInclusive(0, maxSize * .75);
 
   // Load up random items to count
   for(var8 i = 0; i < count; i++) {
