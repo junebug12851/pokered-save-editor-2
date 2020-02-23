@@ -160,15 +160,25 @@ QVariant ItemStorageModel::getPlaceHolderData(int role) const
   return QVariant();
 }
 
+// QML ListView is the worst I've ever used in any language, so many hours and
+// days have been lost fixing ListView issues, bugs, and gotchas
+//
+// beginMoveRows is the only way to move rows and it's terminology is different
+// than other Qt terminology.
+// "to" is 1 past the item to move to, elsewhere in Qt "to" is the index to move
+// to. This creates all kinds of havoc as the two cannot properly communicate
+// and translation is very error prone leading to all my problems.
 void ItemStorageModel::onMove(int from, int to)
 {
-  if(from + 1 == to) {
-    to++;
-    if(to > items->items.size())
-      to = items->items.size();
-  }
-  if(from == to || from + 1 == to)
+  qDebug() << "[Pre-Move] From" << from << "to" << to;
+
+  if(from == to)
     return;
+
+  if(to > from)
+    to++;
+
+  qDebug() << "[To-Move] From" << from << "to" << to;
 
   beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
   endMoveRows();
@@ -267,7 +277,7 @@ void ItemStorageModel::checkedMoveToBottom()
 {
   for(auto el : getChecked()) {
     int ind = items->items.indexOf(el);
-    items->itemMove(ind, items->itemsCount() - 1);
+    items->itemMove(ind, items->items.size() - 1);
   }
 }
 
