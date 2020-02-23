@@ -31,6 +31,7 @@ struct MoveDBEntry;
 struct MapDBEntrySpriteItem;
 struct PokemonDBEntryEvolution;
 struct PokemonDBEntry;
+struct GameCornerDBEntry;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -58,6 +59,7 @@ struct ItemDBEntry {
   std::optional<var8> price;
 
   MoveDBEntry* toMove = nullptr; // To TM or HM Move
+  GameCornerDBEntry* toGameCorner = nullptr;
   QVector<MapDBEntrySpriteItem*> toMapSpriteItem;
   QVector<PokemonDBEntryEvolution*> toEvolvePokemon;
   QVector<PokemonDBEntry*> toTeachPokemon;

@@ -23,6 +23,7 @@
 #include <QJsonValue>
 
 class PokemonDBEntry;
+class ItemDBEntry;
 
 struct GameCornerDBEntry {
   GameCornerDBEntry();
@@ -33,7 +34,9 @@ struct GameCornerDBEntry {
   QString type = "";
   int price = 0;
   std::optional<int> level;
+
   PokemonDBEntry* toPokemon = nullptr;
+  ItemDBEntry* toItem = nullptr;
 };
 
 class GameCornerDB

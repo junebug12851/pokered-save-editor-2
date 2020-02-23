@@ -23,6 +23,7 @@
 #include "./gamecorner.h"
 #include "./gamedata.h"
 #include "./pokemon.h"
+#include "./items.h"
 
 GameCornerDBEntry::GameCornerDBEntry() {}
 GameCornerDBEntry::GameCornerDBEntry(QJsonValue& data)
@@ -35,21 +36,38 @@ GameCornerDBEntry::GameCornerDBEntry(QJsonValue& data)
 }
 
 void GameCornerDBEntry::deepLink() {
-  if(type != "pokemon")
+  if(type != "pokemon" ||
+     type != "tm")
     return;
 
-  toPokemon = PokemonDB::ind.value(name, nullptr);
+  if(type == "pokemon") {
+    toPokemon = PokemonDB::ind.value(name, nullptr);
 
 #ifdef QT_DEBUG
-  if(toPokemon == nullptr)
-    qCritical() << "Game Corner: " << name << ", could not be deep linked." ;
+    if(toPokemon == nullptr)
+      qCritical() << "Game Corner: " << name << ", could not be deep linked." ;
 #endif
 
-  if(toPokemon == nullptr)
-    return;
+    if(toPokemon == nullptr)
+      return;
 
-  // Cross-Deep Link
-  toPokemon->toGameCorner.append(this);
+    // Cross-Deep Link
+    toPokemon->toGameCorner.append(this);
+  }
+  else if(type == "tm") {
+    toItem = ItemsDB::ind.value(name, nullptr);
+
+#ifdef QT_DEBUG
+    if(toItem == nullptr)
+      qCritical() << "Game Corner: " << name << ", could not be deep linked." ;
+#endif
+
+    if(toItem == nullptr)
+      return;
+
+    // Cross-Deep Link
+    toItem->toGameCorner = this;
+  }
 }
 
 void GameCornerDB::load()
