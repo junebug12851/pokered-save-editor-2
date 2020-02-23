@@ -498,5 +498,6 @@
         <file>assets/icons/fontawesome/angle-up.svg</file>
         <file>assets/icons/poke-go/pokeballs.svg</file>
         <file>ui/app/fragments/header/AppFooterBtn3.qml</file>
+        <file>assets/data/gameCorner.json</file>
     </qresource>
 </RCC>

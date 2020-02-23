@@ -1,0 +1,188 @@
+[
+  {
+    "name": "Coin",
+    "type": "money",
+    "price": 20
+  },
+  {
+    "name": "TM 23: Dragon Rage",
+    "type": "tm",
+    "price": 3300
+  },
+  {
+    "name": "TM 15: Hyper Beam",
+    "type": "tm",
+    "price": 5500
+  },
+  {
+    "name": "TM 50: Substitute",
+    "type": "tm",
+    "price": 7700
+  },
+  {
+    "name": "Abra",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 6,
+        "price": 120
+      },
+      {
+        "level": 8,
+        "price": 150
+      },
+      {
+        "level": 9,
+        "price": 180
+      },
+      {
+        "level": 15,
+        "price": 230
+      }
+    ]
+  },
+  {
+    "name": "Clefairy",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 8,
+        "price": 500
+      },
+      {
+        "level": 12,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "name": "Nidorina",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 17,
+        "price": 1200
+      }
+    ]
+  },
+  {
+    "name": "Pikachu",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 12,
+        "price": 620
+      }
+    ]
+  },
+  {
+    "name": "Horsea",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 18,
+        "price": 1000
+      }
+    ]
+  },
+  {
+    "name": "Vulpix",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 18,
+        "price": 1000
+      }
+    ]
+  },
+  {
+    "name": "Wigglytuff",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 22,
+        "price": 2680
+      }
+    ]
+  },
+  {
+    "name": "Dratini",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 18,
+        "price": 2800
+      },
+      {
+        "level": 24,
+        "price": 4600
+      }
+    ]
+  },
+  {
+    "name": "Scyther",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 25,
+        "price": 5500
+      },
+      {
+        "level": 30,
+        "price": 6500
+      }
+    ]
+  },
+  {
+    "name": "Porygon",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 18,
+        "price": 6500
+      },
+      {
+        "level": 22,
+        "price": 8300
+      },
+      {
+        "level": 26,
+        "price": 9999
+      }
+    ]
+  },
+  {
+    "name": "Pinsir",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 20,
+        "price": 2500
+      },
+      {
+        "level": 30,
+        "price": 6500
+      }
+    ]
+  },
+  {
+    "name": "Clefable",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 24,
+        "price": 2880
+      }
+    ]
+  },
+  {
+    "name": "Dragonair",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 30,
+        "price": 5400
+      }
+    ]
+  }
+]
