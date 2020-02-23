@@ -27,11 +27,36 @@ Rectangle {
     Material.background: brg.settings.accentColor
     color: brg.settings.accentColor
 
-    RowLayout {
+    Rectangle {
       anchors.centerIn: parent
-      spacing: 15
+      height: parent.height
+      width: 265
+      color: brg.settings.accentColor
+
+      Text {
+        anchors.centerIn: parent
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+
+        text: title
+        font.pixelSize: 18
+        color: brg.settings.textColorLight
+
+        Text {
+          anchors.left: parent.right
+          anchors.leftMargin: 15
+          anchors.verticalCenter: parent.verticalCenter
+
+          text: `(${box.itemsCount}/${box.itemsMax})`
+          font.pixelSize: 14
+          color: brg.settings.textColorLight
+        }
+      }
 
       IconButtonSquare {
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+
         icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
         onClicked: model.checkedToggleAll()
 
@@ -39,13 +64,6 @@ Rectangle {
         leftInset: 0
 
         leftPadding: 0
-        rightPadding: 0
-      }
-
-      Text {
-        text: title
-        font.pixelSize: 18
-        color: brg.settings.textColorLight
         rightPadding: 0
       }
     }
@@ -80,15 +98,6 @@ Rectangle {
     RowLayout {
       anchors.centerIn: parent
       spacing: 15
-
-      Text {
-        visible: !model.hasChecked
-        text: "" + box.itemsCount
-              + " / "
-              + box.itemsMax
-        font.pixelSize: 14
-        color: brg.settings.textColorLight
-      }
 
       IconButtonSquare {
         visible: model.hasChecked
