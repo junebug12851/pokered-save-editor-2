@@ -49,4 +49,9 @@ ListModel {
     iconSrc: "qrc:/assets/icons/poke-go/mew.svg"
     page: ""
   }
+  ListElement {
+    name: "Pokemart"
+    iconSrc: "qrc:/assets/icons/poke-go/pokeballs.svg"
+    page: ""
+  }
 }

@@ -496,5 +496,6 @@
         <file>assets/icons/fontawesome/angle-double-up.svg</file>
         <file>assets/icons/fontawesome/angle-down.svg</file>
         <file>assets/icons/fontawesome/angle-up.svg</file>
+        <file>assets/icons/poke-go/pokeballs.svg</file>
     </qresource>
 </RCC>
