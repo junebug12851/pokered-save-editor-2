@@ -27,9 +27,19 @@ class Item : public QObject
   Q_OBJECT
 
   Q_PROPERTY(int ind MEMBER ind NOTIFY indChanged)
-  Q_PROPERTY(int amount MEMBER amount NOTIFY amountChanged)
-  Q_PROPERTY(int worthOne READ worthOne NOTIFY itemChanged STORED false)
-  Q_PROPERTY(int worthAll READ worthAll NOTIFY itemChanged STORED false)
+  Q_PROPERTY(int amount READ getAmount WRITE setAmount NOTIFY amountChanged)
+
+  Q_PROPERTY(bool canSell READ canSell NOTIFY itemChanged STORED false)
+
+  Q_PROPERTY(int buyPriceOneMoney READ buyPriceOneMoney NOTIFY itemChanged STORED false)
+  Q_PROPERTY(int buyPriceOneCoins READ buyPriceOneCoins NOTIFY itemChanged STORED false)
+  Q_PROPERTY(int sellPriceOneMoney READ sellPriceOneMoney NOTIFY itemChanged STORED false)
+  Q_PROPERTY(int sellPriceOneCoins READ sellPriceOneCoins NOTIFY itemChanged STORED false)
+
+  Q_PROPERTY(int buyPriceAllMoney READ buyPriceAllMoney NOTIFY itemChanged STORED false)
+  Q_PROPERTY(int buyPriceAllCoins READ buyPriceAllCoins NOTIFY itemChanged STORED false)
+  Q_PROPERTY(int sellPriceAllMoney READ sellPriceAllMoney NOTIFY itemChanged STORED false)
+  Q_PROPERTY(int sellPriceAllCoins READ sellPriceAllCoins NOTIFY itemChanged STORED false)
 
 public:
   // New Item from iterator or a blank item
@@ -54,8 +64,20 @@ public:
 
   ItemDBEntry* toItem();
 
-  int worthAll();
-  int worthOne();
+  bool canSell();
+
+  int buyPriceOneMoney();
+  int buyPriceOneCoins();
+  int sellPriceOneMoney();
+  int sellPriceOneCoins();
+
+  int buyPriceAllMoney();
+  int buyPriceAllCoins();
+  int sellPriceAllMoney();
+  int sellPriceAllCoins();
+
+  int getAmount();
+  void setAmount(int val);
 
 signals:
   void indChanged();

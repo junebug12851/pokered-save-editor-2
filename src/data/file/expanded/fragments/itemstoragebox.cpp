@@ -63,17 +63,6 @@ int ItemStorageBox::itemsMax()
   return maxSize;
 }
 
-int ItemStorageBox::itemsWorth()
-{
-  int ret = 0;
-
-  for(auto el : items) {
-    ret += el->worthAll();
-  }
-
-  return ret;
-}
-
 bool ItemStorageBox::getIsBag()
 {
   return isBag;
@@ -310,6 +299,50 @@ ItemStorageBox* ItemStorageBox::destBox()
   return (isBag)
       ? file->dataExpanded->storage->items
       : file->dataExpanded->player->items;
+}
+
+int ItemStorageBox::itemsAllBuyMoney()
+{
+  int ret = 0;
+
+  for(auto el : items) {
+    ret += el->buyPriceAllMoney();
+  }
+
+  return ret;
+}
+
+int ItemStorageBox::itemsAllBuyCoins()
+{
+  int ret = 0;
+
+  for(auto el : items) {
+    ret += el->buyPriceAllCoins();
+  }
+
+  return ret;
+}
+
+int ItemStorageBox::itemsAllSellMoney()
+{
+  int ret = 0;
+
+  for(auto el : items) {
+    ret += el->sellPriceAllMoney();
+  }
+
+  return ret;
+}
+
+int ItemStorageBox::itemsAllSellCoins()
+{
+  int ret = 0;
+
+  for(auto el : items) {
+    ret += el->sellPriceAllCoins();
+  }
+
+  return ret;
 }
 
 void ItemStorageBox::reset()

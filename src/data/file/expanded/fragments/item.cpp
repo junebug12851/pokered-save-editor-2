@@ -94,21 +94,88 @@ ItemDBEntry* Item::toItem()
   return tmp;
 }
 
-int Item::worthOne()
+bool Item::canSell()
 {
-  auto data = ItemsDB::ind.value(QString::number(ind), nullptr);
-  if(data == nullptr)
-    return 0;
+  auto el = toItem();
 
-  if(!data->price)
-    return 0;
-
-  return (*data->price) * amount;
+  if(el == nullptr)
+    return false;
+  else
+    return el->canSell();
 }
 
-int Item::worthAll()
+int Item::buyPriceOneMoney()
 {
-  return worthOne() * amount;
+  auto el = toItem();
+
+  if(el == nullptr)
+    return 0;
+  else
+    return el->buyPriceMoney();
+}
+
+int Item::buyPriceOneCoins()
+{
+  auto el = toItem();
+
+  if(el == nullptr)
+    return 0;
+  else
+    return el->buyPriceCoins();
+}
+
+int Item::sellPriceOneMoney()
+{
+  auto el = toItem();
+
+  if(el == nullptr)
+    return 0;
+  else
+    return el->sellPriceMoney();
+}
+
+int Item::sellPriceOneCoins()
+{
+  auto el = toItem();
+
+  if(el == nullptr)
+    return 0;
+  else
+    return el->sellPriceCoins();
+}
+
+int Item::buyPriceAllMoney()
+{
+  return buyPriceOneMoney() * amount;
+}
+
+int Item::buyPriceAllCoins()
+{
+  return buyPriceOneCoins() * amount;
+}
+
+int Item::sellPriceAllMoney()
+{
+  return sellPriceOneMoney() * amount;
+}
+
+int Item::sellPriceAllCoins()
+{
+  return  sellPriceOneCoins() * amount;
+}
+
+int Item::getAmount()
+{
+  return amount;
+}
+
+void Item::setAmount(int val)
+{
+  amount = val;
+  if(amount < 1)
+    amount = 1;
+  else if(amount > 99)
+    amount = 99;
 }
 
 void Item::load(int ind, int amount)

@@ -33,6 +33,11 @@ GameCornerDBEntry::GameCornerDBEntry(QJsonValue& data)
 
   if(type != "pokemon")
     price = data["price"].toDouble();
+
+  if(type == "money") {
+    GameCornerDB::buyPrice = price;
+    GameCornerDB::sellPrice = price / 2;
+  }
 }
 
 void GameCornerDBEntry::deepLink() {
@@ -104,4 +109,6 @@ void GameCornerDB::deepLink()
   }
 }
 
+int GameCornerDB::buyPrice = 0;
+int GameCornerDB::sellPrice = 0;
 QVector<GameCornerDBEntry*> GameCornerDB::store = QVector<GameCornerDBEntry*>();

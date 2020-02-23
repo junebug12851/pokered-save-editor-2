@@ -83,10 +83,6 @@ QVariant ItemStorageModel::data(const QModelIndex& index, int role) const
     return item->ind;
   else if (role == CountRole)
     return item->amount;
-  else if (role == WorthAllRole)
-    return item->worthAll();
-  else if (role == WorthEachRole)
-    return item->worthOne();
   else if (role == CheckedRole)
     return item->property(isCheckedKey).toBool();
   else if (role == PlaceholderRole)
@@ -102,8 +98,6 @@ QHash<int, QByteArray> ItemStorageModel::roleNames() const
 
   roles[IdRole] = "itemId";
   roles[CountRole] = "itemCount";
-  roles[WorthAllRole] = "itemWorthAll";
-  roles[WorthEachRole] = "itemWorthEach";
   roles[CheckedRole] = "itemChecked";
   roles[PlaceholderRole] = "itemIsPlaceholder";
 
@@ -149,10 +143,6 @@ QVariant ItemStorageModel::getPlaceHolderData(int role) const
   if (role == IdRole)
     return -1;
   else if (role == CountRole)
-    return 0;
-  else if (role == WorthAllRole)
-    return 0;
-  else if (role == WorthEachRole)
     return 0;
   else if (role == CheckedRole)
     return 0;

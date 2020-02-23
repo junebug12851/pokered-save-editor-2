@@ -57,6 +57,11 @@ struct ItemDBEntry {
 
   // Item Prices if available
   std::optional<var8> price;
+  int buyPriceMoney();
+  int buyPriceCoins();
+  int sellPriceMoney();
+  int sellPriceCoins();
+  bool canSell();
 
   MoveDBEntry* toMove = nullptr; // To TM or HM Move
   GameCornerDBEntry* toGameCorner = nullptr;

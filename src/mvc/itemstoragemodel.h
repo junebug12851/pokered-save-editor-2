@@ -43,8 +43,6 @@ public:
   enum BagItemRoles {
     IdRole = Qt::UserRole + 1,
     CountRole,
-    WorthAllRole,
-    WorthEachRole,
     CheckedRole,
     PlaceholderRole,
   };

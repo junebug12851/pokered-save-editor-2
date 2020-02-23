@@ -43,7 +43,10 @@ class ItemStorageBox : public QObject
   Q_PROPERTY(bool relocateFull READ relocateFull NOTIFY itemsChanged STORED false)
 
   // What's the worth of all the items?
-  Q_PROPERTY(int itemsWorth READ itemsWorth NOTIFY itemsChanged STORED false)
+  Q_PROPERTY(int itemsAllBuyMoney READ itemsAllBuyMoney NOTIFY itemsChanged STORED false)
+  Q_PROPERTY(int itemsAllBuyCoins READ itemsAllBuyCoins NOTIFY itemsChanged STORED false)
+  Q_PROPERTY(int itemsAllSellMoney READ itemsAllSellMoney NOTIFY itemsChanged STORED false)
+  Q_PROPERTY(int itemsAllSellCoins READ itemsAllSellCoins NOTIFY itemsChanged STORED false)
 
   // Get destination box
   Q_PROPERTY(ItemStorageBox* destBox READ destBox STORED false CONSTANT)
@@ -59,10 +62,14 @@ public:
   int itemsCount();
   int itemsCountBulk();
   int itemsMax();
-  int itemsWorth();
   bool getIsBag();
   bool relocateFull();
   ItemStorageBox* destBox();
+
+  int itemsAllBuyMoney();
+  int itemsAllBuyCoins();
+  int itemsAllSellMoney();
+  int itemsAllSellCoins();
 
   // Methods that can be called from QML which cannot be properties and make no
   // sense as slots

@@ -24,6 +24,7 @@
 #include "./items.h"
 #include "./gamedata.h"
 #include "./moves.h"
+#include "./gamecorner.h"
 
 ItemDBEntry::ItemDBEntry() {}
 ItemDBEntry::ItemDBEntry(QJsonValue& data)
@@ -61,6 +62,70 @@ void ItemDBEntry::deepLink()
   if((tm || hm) && toMove == nullptr)
     qCritical() << "Item: " << name << ", could not be deep linked." ;
 #endif
+}
+
+int ItemDBEntry::buyPriceMoney()
+{
+  if(!price)
+    return 0;
+
+  return *price;
+}
+
+int ItemDBEntry::buyPriceCoins()
+{
+  // Sometimes there might be a duplicate game corner price
+  // We want to pick the game-corner price over market price anytime
+
+  int val = 0;
+
+  // If there's a game corner price attached, always use that. It will be in
+  // coins.
+  if(toGameCorner != nullptr)
+    val = toGameCorner->price;
+
+  // Otherwise if there's no market price or the market price is 0 then keep it
+  // at 0
+  else if(!price || (*price) == 0)
+    val = 0;
+
+  // In all other cases, divide market price by Game Corner exchange rate to
+  // produce the coins amount
+  else
+    val = (*price) / GameCornerDB::buyPrice;
+
+  // Return whatever value we have
+  return val;
+}
+
+// These are simpler, we did all the work above, here we just divide by 2 which
+// is the global sell-back ratio for anything
+
+int ItemDBEntry::sellPriceMoney()
+{
+  int val = buyPriceMoney();
+  if(val == 0)
+    return 0;
+
+  return val / 2;
+}
+
+int ItemDBEntry::sellPriceCoins()
+{
+  int val = buyPriceCoins();
+  if(val == 0)
+    return 0;
+
+  return val / 2;
+}
+
+// This is a bit tricky
+// We can sell an item, even if the sell price is zero. But if there's no listed
+// price then we can't sell.
+// Non-sellable items are considered key items and must be tossed
+bool ItemDBEntry::canSell()
+{
+  return price == true;
 }
 
 void ItemsDB::load()
