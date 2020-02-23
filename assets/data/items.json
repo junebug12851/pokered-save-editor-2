@@ -3,7 +3,8 @@
     "name": "MASTER BALL",
     "ind": 1,
     "once": true,
-    "readable": "Master Ball"
+    "readable": "Master Ball",
+    "price": 0
   },
   {
     "name": "ULTRA BALL",
@@ -57,7 +58,8 @@
   {
     "name": "MOON STONE",
     "ind": 10,
-    "readable": "Moon Stone"
+    "readable": "Moon Stone",
+    "price": 0
   },
   {
     "name": "ANTIDOTE",
@@ -449,7 +451,8 @@
     "name": "EXP ALL",
     "ind": 75,
     "once": true,
-    "readable": "Exp All"
+    "readable": "Exp All",
+    "price": 0
   },
   {
     "name": "OLD ROD",
@@ -472,27 +475,32 @@
   {
     "name": "PP UP",
     "ind": 79,
-    "readable": "PP Up"
+    "readable": "PP Up",
+    "price": 0
   },
   {
     "name": "ETHER",
     "ind": 80,
-    "readable": "Ether"
+    "readable": "Ether",
+    "price": 0
   },
   {
     "name": "MAX ETHER",
     "ind": 81,
-    "readable": "Max Ether"
+    "readable": "Max Ether",
+    "price": 0
   },
   {
     "name": "ELIXER",
     "ind": 82,
-    "readable": "Elixer"
+    "readable": "Elixer",
+    "price": 0
   },
   {
     "name": "MAX ELIXER",
     "ind": 83,
-    "readable": "Max Elixer"
+    "readable": "Max Elixer",
+    "price": 0
   },
   {
     "name": "FLOOR B2F",
@@ -617,300 +625,350 @@
     "name": "TM 01: MEGA PUNCH",
     "tm": 1,
     "ind": 201,
-    "readable": "TM 01: Mega Punch"
+    "readable": "TM 01: Mega Punch",
+    "price": 3000
   },
   {
     "name": "TM 02: RAZOR WIND",
     "ind": 202,
     "tm": 2,
-    "readable": "TM 02: Razor Wind"
+    "readable": "TM 02: Razor Wind",
+    "price": 2000
   },
   {
     "name": "TM 03: SWORDS DANCE",
     "ind": 203,
     "tm": 3,
-    "readable": "TM 03: Swords Dance"
+    "readable": "TM 03: Swords Dance",
+    "price": 2000
   },
   {
     "name": "TM 04: WHIRLWIND",
     "ind": 204,
     "tm": 4,
-    "readable": "TM 04: Whirlwind"
+    "readable": "TM 04: Whirlwind",
+    "price": 1000
   },
   {
     "name": "TM 05: MEGA KICK",
     "ind": 205,
     "tm": 5,
-    "readable": "TM 05: Mega Kick"
+    "readable": "TM 05: Mega Kick",
+    "price": 3000
   },
   {
     "name": "TM 06: TOXIC",
     "ind": 206,
     "tm": 6,
-    "readable": "TM 06: Toxic"
+    "readable": "TM 06: Toxic",
+    "price": 4000
   },
   {
     "name": "TM 07: HORN DRILL",
     "ind": 207,
     "tm": 7,
-    "readable": "TM 07: Horn Drill"
+    "readable": "TM 07: Horn Drill",
+    "price": 2000
   },
   {
     "name": "TM 08: BODY SLAM",
     "ind": 208,
     "tm": 8,
-    "readable": "TM 08: Body Slam"
+    "readable": "TM 08: Body Slam",
+    "price": 4000
   },
   {
     "name": "TM 09: TAKE DOWN",
     "ind": 209,
     "tm": 9,
-    "readable": "TM 09: Take Down"
+    "readable": "TM 09: Take Down",
+    "price": 3000
   },
   {
     "name": "TM 10: DOUBLE EDGE",
     "ind": 210,
     "tm": 10,
-    "readable": "TM 10: Double Edge"
+    "readable": "TM 10: Double Edge",
+    "price": 4000
   },
   {
     "name": "TM 11: BUBBLEBEAM",
     "ind": 211,
     "tm": 11,
-    "readable": "TM 11: Bubblebeam"
+    "readable": "TM 11: Bubblebeam",
+    "price": 2000
   },
   {
     "name": "TM 12: WATER GUN",
     "ind": 212,
     "tm": 12,
-    "readable": "TM 12: Water Gun"
+    "readable": "TM 12: Water Gun",
+    "price": 1000
   },
   {
     "name": "TM 13: ICE BEAM",
     "ind": 213,
     "tm": 13,
-    "readable": "TM 13: Ice Beam"
+    "readable": "TM 13: Ice Beam",
+    "price": 4000
   },
   {
     "name": "TM 14: BLIZZARD",
     "ind": 214,
     "tm": 14,
-    "readable": "TM 14: Blizzard"
+    "readable": "TM 14: Blizzard",
+    "price": 5000
   },
   {
     "name": "TM 15: HYPER BEAM",
     "ind": 215,
     "tm": 15,
-    "readable": "TM 15: Hyper Beam"
+    "readable": "TM 15: Hyper Beam",
+    "price": 5000
   },
   {
     "name": "TM 16: PAY DAY",
     "ind": 216,
     "tm": 16,
-    "readable": "TM 16: Pay Day"
+    "readable": "TM 16: Pay Day",
+    "price": 5000
   },
   {
     "name": "TM 17: SUBMISSION",
     "ind": 217,
     "tm": 17,
-    "readable": "TM 17: Submission"
+    "readable": "TM 17: Submission",
+    "price": 3000
   },
   {
     "name": "TM 18: COUNTER",
     "ind": 218,
     "tm": 18,
-    "readable": "TM 18: Counter"
+    "readable": "TM 18: Counter",
+    "price": 2000
   },
   {
     "name": "TM 19: SEISMIC TOSS",
     "ind": 219,
     "tm": 19,
-    "readable": "TM 19: Seismic Toss"
+    "readable": "TM 19: Seismic Toss",
+    "price": 3000
   },
   {
     "name": "TM 20: RAGE",
     "ind": 220,
     "tm": 20,
-    "readable": "TM 20: Rage"
+    "readable": "TM 20: Rage",
+    "price": 2000
   },
   {
     "name": "TM 21: MEGA DRAIN",
     "ind": 221,
     "tm": 21,
-    "readable": "TM 21: Mega Drain"
+    "readable": "TM 21: Mega Drain",
+    "price": 5000
   },
   {
     "name": "TM 22: SOLARBEAM",
     "ind": 222,
     "tm": 22,
-    "readable": "TM 22: Solarbeam"
+    "readable": "TM 22: Solarbeam",
+    "price": 5000
   },
   {
     "name": "TM 23: DRAGON RAGE",
     "ind": 223,
     "tm": 23,
-    "readable": "TM 23: Dragon Rage"
+    "readable": "TM 23: Dragon Rage",
+    "price": 5000
   },
   {
     "name": "TM 24: THUNDERBOLT",
     "ind": 224,
     "tm": 24,
-    "readable": "TM 24: Thunderbolt"
+    "readable": "TM 24: Thunderbolt",
+    "price": 2000
   },
   {
     "name": "TM 25: THUNDER",
     "ind": 225,
     "tm": 25,
-    "readable": "TM 25: Thunder"
+    "readable": "TM 25: Thunder",
+    "price": 5000
   },
   {
     "name": "TM 26: EARTHQUAKE",
     "ind": 226,
     "tm": 26,
-    "readable": "TM 26: Earthquake"
+    "readable": "TM 26: Earthquake",
+    "price": 4000
   },
   {
     "name": "TM 27: FISSURE",
     "ind": 227,
     "tm": 27,
-    "readable": "TM 27: Fissure"
+    "readable": "TM 27: Fissure",
+    "price": 5000
   },
   {
     "name": "TM 28: DIG",
     "ind": 228,
     "tm": 28,
-    "readable": "TM 28: Dig"
+    "readable": "TM 28: Dig",
+    "price": 2000
   },
   {
     "name": "TM 29: PSYCHIC",
     "ind": 229,
     "tm": 29,
-    "readable": "TM 29: Psychic"
+    "readable": "TM 29: Psychic",
+    "price": 4000
   },
   {
     "name": "TM 30: TELEPORT",
     "ind": 230,
     "tm": 30,
-    "readable": "TM 30: Teleport"
+    "readable": "TM 30: Teleport",
+    "price": 1000
   },
   {
     "name": "TM 31: MIMIC",
     "ind": 231,
     "tm": 31,
-    "readable": "TM 31: Mimic"
+    "readable": "TM 31: Mimic",
+    "price": 2000
   },
   {
     "name": "TM 32: DOUBLE TEAM",
     "ind": 232,
     "tm": 32,
-    "readable": "TM 32: Double Team"
+    "readable": "TM 32: Double Team",
+    "price": 1000
   },
   {
     "name": "TM 33: REFLECT",
     "ind": 233,
     "tm": 33,
-    "readable": "TM 33: Reflect"
+    "readable": "TM 33: Reflect",
+    "price": 1000
   },
   {
     "name": "TM 34: BIDE",
     "ind": 234,
     "tm": 34,
-    "readable": "TM 34: Bide"
+    "readable": "TM 34: Bide",
+    "price": 2000
   },
   {
     "name": "TM 35: METRONOME",
     "ind": 235,
     "tm": 35,
-    "readable": "TM 35: Metronome"
+    "readable": "TM 35: Metronome",
+    "price": 4000
   },
   {
     "name": "TM 36: SELFDESTRUCT",
     "ind": 236,
     "tm": 36,
-    "readable": "TM 36: Selfdestruct"
+    "readable": "TM 36: Selfdestruct",
+    "price": 2000
   },
   {
     "name": "TM 37: EGG BOMB",
     "ind": 237,
     "tm": 37,
-    "readable": "TM 37: Egg Bomb"
+    "readable": "TM 37: Egg Bomb",
+    "price": 2000
   },
   {
     "name": "TM 38: FIREBLAST",
     "ind": 238,
     "tm": 38,
-    "readable": "TM 38: Fireblast"
+    "readable": "TM 38: Fireblast",
+    "price": 5000
   },
   {
     "name": "TM 39: SWIFT",
     "ind": 239,
     "tm": 39,
-    "readable": "TM 39: Swift"
+    "readable": "TM 39: Swift",
+    "price": 2000
   },
   {
     "name": "TM 40: SKULLBASH",
     "ind": 240,
     "tm": 40,
-    "readable": "TM 40: Skullbash"
+    "readable": "TM 40: Skullbash",
+    "price": 4000
   },
   {
     "name": "TM 41: SOFTBOILED",
     "ind": 241,
     "tm": 41,
-    "readable": "TM 41: Softboiled"
+    "readable": "TM 41: Softboiled",
+    "price": 2000
   },
   {
     "name": "TM 42: DREAM EATER",
     "ind": 242,
     "tm": 42,
-    "readable": "TM 42: Dream Eater"
+    "readable": "TM 42: Dream Eater",
+    "price": 2000
   },
   {
     "name": "TM 43: SKY ATTACK",
     "ind": 243,
     "tm": 43,
-    "readable": "TM 43: Sky Attack"
+    "readable": "TM 43: Sky Attack",
+    "price": 5000
   },
   {
     "name": "TM 44: REST",
     "ind": 244,
     "tm": 44,
-    "readable": "TM 44: Rest"
+    "readable": "TM 44: Rest",
+    "price": 2000
   },
   {
     "name": "TM 45: THUNDER WAVE",
     "ind": 245,
     "tm": 45,
-    "readable": "TM 45: Thunder Wave"
+    "readable": "TM 45: Thunder Wave",
+    "price": 2000
   },
   {
     "name": "TM 46: PSYWAVE",
     "ind": 246,
     "tm": 46,
-    "readable": "TM 46: Psywave"
+    "readable": "TM 46: Psywave",
+    "price": 4000
   },
   {
     "name": "TM 47: EXPLOSION",
     "ind": 247,
     "tm": 47,
-    "readable": "TM 47: Explosion"
+    "readable": "TM 47: Explosion",
+    "price": 3000
   },
   {
     "name": "TM 48: ROCK SLIDE",
     "ind": 248,
     "tm": 48,
-    "readable": "TM 48: Rock Slide"
+    "readable": "TM 48: Rock Slide",
+    "price": 4000
   },
   {
     "name": "TM 49: TRI ATTACK",
     "ind": 249,
     "tm": 49,
-    "readable": "TM 49: Tri Attack"
+    "readable": "TM 49: Tri Attack",
+    "price": 4000
   },
   {
     "name": "TM 50: SUBSTITUTE",
     "ind": 250,
     "tm": 50,
-    "readable": "TM 50: Substitute"
+    "readable": "TM 50: Substitute",
+    "price": 2000
   }
 ]
