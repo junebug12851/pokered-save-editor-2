@@ -170,6 +170,9 @@ QVariant ItemStorageModel::getPlaceHolderData(int role) const
 // and translation is very error prone leading to all my problems.
 void ItemStorageModel::onMove(int from, int to)
 {
+  // I'm convinced I'm never going to be able to remove these for the life of
+  // the entire program because I'm convinced that seeking out ListView bugs
+  // specifically and only related to beginMoveRow bugs will never end. Ever!
   qDebug() << "[Pre-Move] From" << from << "to" << to;
 
   if(from == to)
@@ -267,7 +270,12 @@ void ItemStorageModel::checkedMoveUp()
 
 void ItemStorageModel::checkedMoveDown()
 {
-  for(auto el : getChecked()) {
+  auto checkedItems = getChecked();
+
+  // For stupid ListView, these need to be done in reverse
+  // If moving down
+  for(int i = checkedItems.size() - 1; i >= 0; i--) {
+    auto el = checkedItems.at(i);
     int ind = items->items.indexOf(el);
     items->itemMove(ind, ind + 1);
   }
@@ -275,7 +283,12 @@ void ItemStorageModel::checkedMoveDown()
 
 void ItemStorageModel::checkedMoveToBottom()
 {
-  for(auto el : getChecked()) {
+  auto checkedItems = getChecked();
+
+  // For stupid ListView, these need to be done in reverse
+  // If moving down
+  for(int i = checkedItems.size() - 1; i >= 0; i--) {
+    auto el = checkedItems.at(i);
     int ind = items->items.indexOf(el);
     items->itemMove(ind, items->items.size() - 1);
   }
