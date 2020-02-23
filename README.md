@@ -24,7 +24,7 @@ Looking good so far, more progress!!!
 ![Trainer Card Screen](https://i.imgur.com/iRUopfu.png)
 ![Pokedex Screen](https://i.imgur.com/Y2BFody.png)
 ![Stage 3 Name Editor A](https://i.imgur.com/oYshJk2.png)
-![Item Screen](https://i.imgur.com/HG7sjfl.png)
+![Item Screen](https://i.imgur.com/5DU81im.png)
 ![Initial New File Screen](https://i.imgur.com/Woakr9P.png)
 ![Initial File Tools Screen](https://i.imgur.com/4oPvOE9.png)
 
