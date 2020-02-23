@@ -68,6 +68,9 @@ public:
   // sense as slots
   Q_INVOKABLE Item* itemAt(int ind);
 
+  void randomizeStorage();
+  void randomizeBag();
+
 signals:
   // When moving an item away from the box to another box, allow the model to
   // perform cleanup actions

@@ -97,6 +97,66 @@ Item* ItemStorageBox::itemAt(int ind)
   return items.at(ind);
 }
 
+void ItemStorageBox::randomizeStorage()
+{
+  // Between None and 3/4 of max capacity
+  var8 count = Random::rangeInclusive(0, maxSize * .75);
+
+  // Create that many random items
+  for(var8 i = 0; i < count; i++) {
+    itemNew();
+  }
+}
+
+void ItemStorageBox::randomizeBag()
+{
+  // Essentials
+  items.append(new Item("TOWN MAP", 1));
+  itemInsertChange();
+
+  items.append(new Item("POKE BALL", Random::rangeInclusive(5, 15)));
+  itemInsertChange();
+
+  items.append(new Item("POTION", Random::rangeInclusive(5, 10)));
+  itemInsertChange();
+
+  items.append(new Item("ANTIDOTE", Random::rangeInclusive(1, 3)));
+  itemInsertChange();
+
+  items.append(new Item("PARLYZ HEAL", Random::rangeInclusive(1, 3)));
+  itemInsertChange();
+
+  items.append(new Item("AWAKENING", Random::rangeInclusive(1, 3)));
+  itemInsertChange();
+
+  // Again I have no idea where this will drop you so prepare for an escape
+  // If need be, also because you only get 1 HM Slave that doesn't know dig.
+  // This is your dig.
+  items.append(new Item("ESCAPE ROPE", Random::rangeInclusive(1, 5)));
+  itemInsertChange();
+
+  // 25% chance of having these items
+  bool giveSuperPotion = Random::chanceSuccess(25);
+  if(giveSuperPotion) {
+    items.append(new Item("SUPER POTION", 1));
+    itemInsertChange();
+  }
+
+  bool giveGreatBall = Random::chanceSuccess(25);
+  if(giveGreatBall) {
+    items.append(new Item("GREAT BALL", 1));
+    itemInsertChange();
+  }
+
+  // Up to 5 more completely random items
+  var8 count = Random::rangeInclusive(0, 5);
+
+  // Create that many random items
+  for(var8 i = 0; i < count; i++) {
+    itemNew();
+  }
+}
+
 bool ItemStorageBox::itemMove(int from, int to)
 {
   if(items.size() <= 0 ||
@@ -268,14 +328,10 @@ void ItemStorageBox::randomize()
 {
   reset();
 
-  // Between None and 3/4 of max capacity
-  var8 count = Random::rangeInclusive(0, maxSize * .75);
-
-  // Load up random items to count
-  for(var8 i = 0; i < count; i++) {
-    items.append(new Item(true));
-    itemInsertChange();
-  }
+  if(isBag)
+    randomizeBag();
+  else
+    randomizeStorage();
 
   itemsChanged();
 }
