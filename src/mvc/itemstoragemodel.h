@@ -30,10 +30,11 @@ class ItemStorageModel : public QAbstractListModel
   Q_OBJECT
 
   // Checkmarks changed
-  Q_PROPERTY(bool hasChecked READ hasChecked NOTIFY hasCheckedChanged STORED false)
+  Q_PROPERTY(bool hasChecked READ hasCheckedCached NOTIFY hasCheckedChangedCached STORED false)
 
 signals:
   void hasCheckedChanged();
+  void hasCheckedChangedCached();
 
 public:
   // Name of attached properties
@@ -66,8 +67,12 @@ public:
 
   // Attached property management
   bool hasChecked();
+  bool hasCheckedCached();
   QVector<Item*> getChecked();
   void onBeforeRelocate(Item* item);
+  void checkStateDirty();
+
+  void pageClosing();
 
 public slots:
   // Attached property management
@@ -85,6 +90,7 @@ public slots:
 public:
   ItemStorageBox* items = nullptr;
   Router* router;
+  bool checkedStateDirty = false;
 };
 
 #endif // BAGITEMSMODEL_H

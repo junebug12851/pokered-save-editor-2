@@ -43,10 +43,12 @@ ItemStorageModel::ItemStorageModel(ItemStorageBox* items, Router* router)
 
   // Clear checked on non-modal screen change. The checked state is completely
   // temporary, it should not persist between non-modal screens
-  connect(this->router, &Router::closeNonModal, this, &ItemStorageModel::clearCheckedState);
-  connect(this->router, &Router::goHome, this, &ItemStorageModel::clearCheckedState);
+  connect(this->router, &Router::closeNonModal, this, &ItemStorageModel::pageClosing);
+  connect(this->router, &Router::goHome, this, &ItemStorageModel::pageClosing);
 
   connect(this->items, &ItemStorageBox::beforeItemRelocate, this, &ItemStorageModel::onBeforeRelocate);
+
+  connect(this, &ItemStorageModel::hasCheckedChanged, this, &ItemStorageModel::checkStateDirty);
 }
 
 int ItemStorageModel::rowCount(const QModelIndex& parent) const
@@ -220,6 +222,11 @@ bool ItemStorageModel::hasChecked()
   return ret;
 }
 
+bool ItemStorageModel::hasCheckedCached()
+{
+  return checkedStateDirty;
+}
+
 QVector<Item*> ItemStorageModel::getChecked()
 {
   QVector<Item*> ret;
@@ -345,4 +352,21 @@ void ItemStorageModel::onBeforeRelocate(Item* item)
 {
   item->setProperty(isCheckedKey, false);
   hasCheckedChanged();
+}
+
+void ItemStorageModel::checkStateDirty()
+{
+  bool _val = hasChecked();
+
+  if(checkedStateDirty == _val)
+    return;
+
+  checkedStateDirty = hasChecked();
+  hasCheckedChangedCached();
+}
+
+void ItemStorageModel::pageClosing()
+{
+  if(checkedStateDirty)
+    clearCheckedState();
 }
