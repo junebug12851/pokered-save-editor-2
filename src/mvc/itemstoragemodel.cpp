@@ -173,7 +173,7 @@ void ItemStorageModel::onMove(int from, int to)
   // I'm convinced I'm never going to be able to remove these for the life of
   // the entire program because I'm convinced that seeking out ListView bugs
   // specifically and only related to beginMoveRow bugs will never end. Ever!
-  qDebug() << "[Pre-Move] From" << from << "to" << to;
+  //qDebug() << "[Pre-Move] From" << from << "to" << to;
 
   if(from == to)
     return;
@@ -181,7 +181,7 @@ void ItemStorageModel::onMove(int from, int to)
   if(to > from)
     to++;
 
-  qDebug() << "[To-Move] From" << from << "to" << to;
+  //qDebug() << "[To-Move] From" << from << "to" << to;
 
   beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
   endMoveRows();
