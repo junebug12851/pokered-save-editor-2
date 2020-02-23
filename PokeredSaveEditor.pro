@@ -29,6 +29,7 @@ HEADERS += \
   src/data/db/fly.h \
   src/data/db/fonts.h \
   src/data/db/fontsearch.h \
+  src/data/db/gamecorner.h \
   src/data/db/gamedata.h \
   src/data/db/hiddenCoins.h \
   src/data/db/hiddenItems.h \
@@ -124,6 +125,7 @@ SOURCES += \
   src/data/db/examplespokemon.cpp \
   src/data/db/examplesrival.cpp \
   src/data/db/fontsearch.cpp \
+  src/data/db/gamecorner.cpp \
   src/data/db/mapsearch.cpp \
   src/data/db/music.cpp \
   src/data/db/namesPokemon.cpp \

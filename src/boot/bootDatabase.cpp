@@ -22,6 +22,7 @@
 #include "../data/db/examplesrival.h"
 #include "../data/db/fly.h"
 #include "../data/db/fonts.h"
+#include "../data/db/gamecorner.h"
 #include "../data/db/hiddenCoins.h"
 #include "../data/db/hiddenItems.h"
 #include "../data/db/items.h"
@@ -53,6 +54,7 @@ void load()
   ExamplesRival::load();
   FlyDB::load();
   FontsDB::load();
+  GameCornerDB::load();
   HiddenCoinsDB::load();
   HiddenItemsDB::load();
   ItemsDB::load();
@@ -102,6 +104,7 @@ void deepLink()
   EventPokemonDB::deepLink();
   EventsDB::deepLink();
   FlyDB::deepLink();
+  GameCornerDB::deepLink();
   HiddenCoinsDB::deepLink();
   HiddenItemsDB::deepLink();
   ItemsDB::deepLink();

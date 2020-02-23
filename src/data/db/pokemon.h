@@ -56,6 +56,7 @@ struct EventPokemonDBEntry;
 struct MapDBEntrySpritePokemon;
 struct MapDBEntryWildMon;
 struct TradeDBEntry;
+struct GameCornerDBEntry;
 
 struct PokemonDBEntryEvolution
 {
@@ -127,6 +128,7 @@ struct PokemonDBEntry {
   MapDBEntrySpritePokemon* toMapSpritePokemon = nullptr;
   QVector<MapDBEntryWildMon*> toWildMonMaps;
   QVector<TradeDBEntry*> toTrades;
+  QVector<GameCornerDBEntry*> toGameCorner;
 };
 
 class PokemonDB
