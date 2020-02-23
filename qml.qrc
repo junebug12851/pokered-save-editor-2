@@ -497,5 +497,6 @@
         <file>assets/icons/fontawesome/angle-down.svg</file>
         <file>assets/icons/fontawesome/angle-up.svg</file>
         <file>assets/icons/poke-go/pokeballs.svg</file>
+        <file>ui/app/fragments/header/AppFooterBtn3.qml</file>
     </qresource>
 </RCC>

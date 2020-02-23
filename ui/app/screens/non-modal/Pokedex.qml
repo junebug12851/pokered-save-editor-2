@@ -166,7 +166,7 @@ Page {
           hoverEnabled: true
 
           onClicked: {
-            brg.file.data.dataExpanded.player.pokedex.toggleOne(index)
+            brg.file.data.dataExpanded.player.pokedex.toggleOne(dexInd)
             updatePreview();
           }
 
@@ -286,8 +286,8 @@ Page {
     sourceSize.width: width
   }
 
-  // 1 Button Footer, the Randomize Button
-  footer: AppFooterBtn2 {
+  // 3 Button Footer
+  footer: AppFooterBtn3 {
     icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
     text1: "Re-Roll"
     onBtn1Clicked: brg.file.data.dataExpanded.player.pokedex.randomize();
@@ -295,5 +295,9 @@ Page {
     icon2.source: "qrc:/assets/icons/fontawesome/check-double.svg"
     text2: "Toggle All"
     onBtn2Clicked: brg.file.data.dataExpanded.player.pokedex.toggleAll();
+
+    icon3.source: "qrc:/assets/icons/fontawesome/sort-amount-up.svg"
+    text3: "Sort"
+    onBtn3Clicked: brg.pokedexModel.dexSortCycle();
   }
 }

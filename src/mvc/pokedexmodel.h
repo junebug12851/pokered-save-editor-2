@@ -16,15 +16,31 @@
 #ifndef POKEDEXMODEL_H
 #define POKEDEXMODEL_H
 
+#include <QCollator>
 #include <QObject>
 #include <QString>
 #include <QAbstractListModel>
+#include <QVector>
 
 class PlayerPokedex;
+class Router;
+
+struct PokedexEntryData {
+  PokedexEntryData(QString name, int dex, int id);
+
+  QString name;
+  int dex;
+  int id;
+};
 
 class PokedexModel : public QAbstractListModel
 {
   Q_OBJECT
+
+  Q_PROPERTY(int dexSortSelect MEMBER dexSortSelect NOTIFY dexSortSelectChanged)
+
+signals:
+  void dexSortSelectChanged();
 
 public:
   enum PokemonStarterRoles {
@@ -33,7 +49,17 @@ public:
     StateRole, // 0 = None, 1 = Seen, 2 = Owned
   };
 
-  PokedexModel(PlayerPokedex* pokedex);
+  enum PokemonSortSelect {
+    SortBegin,
+
+    SortDex, // Pokedex Order
+    SortName, // Alphabetical Order
+    SortInternal, // Internal and Potential Creation Order
+
+    SortEnd
+  };
+
+  PokedexModel(PlayerPokedex* pokedex, Router* router);
 
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
@@ -41,7 +67,20 @@ public:
 
   void dataChanged(int ind);
 
+  Q_INVOKABLE void dexSortCycle();
+  void dexSort();
+  void dexSortName();
+  void dexSortNum();
+  void dexSortInternal();
+
+  void pageClosing();
+
+  int dexSortSelect = SortDex;
+  QVector<PokedexEntryData*> dexListCache;
   PlayerPokedex* pokedex = nullptr;
+  Router* router = nullptr;
+
+  int dexToListIndex(int ind);
 };
 
 #endif // POKEDEXMODEL_H
