@@ -62,6 +62,7 @@ struct ItemDBEntry {
   int sellPriceMoney();
   int sellPriceCoins();
   bool canSell();
+  bool isGameCornerExclusive();
 
   MoveDBEntry* toMove = nullptr; // To TM or HM Move
   GameCornerDBEntry* toGameCorner = nullptr;

@@ -128,6 +128,11 @@ bool ItemDBEntry::canSell()
   return price == true;
 }
 
+bool ItemDBEntry::isGameCornerExclusive()
+{
+  return toGameCorner != nullptr;
+}
+
 void ItemsDB::load()
 {
   // Grab Item Data
