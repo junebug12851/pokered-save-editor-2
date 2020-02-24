@@ -27,6 +27,8 @@ class Router;
 class ItemDBEntry;
 class GameCornerDBEntry;
 class PlayerBasics;
+class Storage;
+class PlayerPokemon;
 
 struct ItemMarketSelectEntryData {
   enum WhichType {
@@ -108,7 +110,12 @@ public:
     TypeRole,
   };
 
-  ItemMarketModel(ItemStorageBox* itemBag, ItemStorageBox* itemStorage, PlayerBasics* basics, Router* router);
+  ItemMarketModel(ItemStorageBox* itemBag,
+                  ItemStorageBox* itemStorage,
+                  PlayerBasics* basics,
+                  Router* router,
+                  PlayerPokemon* playerPokemon,
+                  Storage* storage);
 
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
@@ -118,6 +125,8 @@ public:
   // Value of total on cart
   // Uses -/+ to indicate buy/sell
   int cartTotal();
+  int cartCount();
+  void checkout();
 
   void clearList();
   void buildList();
@@ -143,6 +152,8 @@ public:
   ItemStorageBox* itemStorage = nullptr;
   Router* router = nullptr;
   PlayerBasics* basics = nullptr;
+  PlayerPokemon* playerPokemon = nullptr;
+  Storage* storage = nullptr;
 };
 
 #endif // ITEMMARKETMODEL_H

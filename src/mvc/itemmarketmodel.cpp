@@ -19,11 +19,17 @@
 
 #include "./itemmarketmodel.h"
 #include "../data/db/items.h"
-#include "../data/db/gamecorner.h"
-#include "../data/file/expanded/fragments/itemstoragebox.h"
-#include "../data/file/expanded/fragments/item.h"
-#include "../data/file/expanded/player/playerbasics.h"
 #include "../bridge/router.h"
+#include "../data/db/gamecorner.h"
+#include "../data/file/expanded/storage.h"
+#include "../data/file/expanded/player/playerpokemon.h"
+#include "../data/file/expanded/fragments/item.h"
+#include "../data/file/expanded/fragments/pokemonbox.h"
+#include "../data/file/expanded/fragments/pokemonparty.h"
+#include "../data/file/expanded/fragments/pokemonstorageset.h"
+#include "../data/file/expanded/fragments/pokemonstoragebox.h"
+#include "../data/file/expanded/fragments/itemstoragebox.h"
+#include "../data/file/expanded/player/playerbasics.h"
 
 ItemMarketSelectEntryData::ItemMarketSelectEntryData(ItemStorageBox* toBox, Item* toItem, int onCart)
   : onCart(onCart),
@@ -213,17 +219,24 @@ int ItemMarketSelectEntryData::whichType()
   return TypeMessage;
 }
 
-ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag, ItemStorageBox* itemStorage, PlayerBasics* basics, Router* router)
+ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
+                                 ItemStorageBox* itemStorage,
+                                 PlayerBasics* basics,
+                                 Router* router,
+                                 PlayerPokemon* playerPokemon,
+                                 Storage* storage)
   : itemBag(itemBag),
     itemStorage(itemStorage),
     router(router),
-    basics(basics)
+    basics(basics),
+    playerPokemon(playerPokemon),
+    storage(storage)
 {
   // Reset if mode changed
   connect(this, &ItemMarketModel::isBuyModeChanged, this, &ItemMarketModel::reUpdateAll);
   connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::reUpdateAll);
 
-  // Reset if items changed
+  // Reset if items changed such as file/sav data changing while page is open
   connect(itemBag, &ItemStorageBox::itemsChanged, this, &ItemMarketModel::reUpdateAll);
 
   // Cleanup on page close
@@ -339,6 +352,74 @@ int ItemMarketModel::cartTotal()
   return ret;
 }
 
+int ItemMarketModel::cartCount()
+{
+  int ret = 0;
+
+  for(auto el : itemListCache) {
+    ret += el->onCart;
+  }
+
+  return ret;
+}
+
+void ItemMarketModel::checkout()
+{
+  // Do nothing if cart is empty
+  if(cartCount() == 0)
+    return;
+
+  // Process cart items
+  for(auto el : itemListCache) {
+    int whichType = el->whichType();
+
+    if(whichType == ItemMarketSelectEntryData::TypeCurrency) {
+      // Sell Coins to Buy Money
+      if(isBuyMode && isMoneyCurrency) {
+        basics->money += el->valueAll(isMoneyCurrency, isBuyMode);
+        basics->coins -= el->valueAll(isMoneyCurrency, isBuyMode);
+      }
+
+      // Sell Money to Buy Coins
+      else if(isBuyMode && !isMoneyCurrency) {
+        basics->money -= el->valueAll(isMoneyCurrency, isBuyMode);
+        basics->coins += el->valueAll(isMoneyCurrency, isBuyMode);
+      }
+
+      // Buy Coins from selling money
+      else if(!isBuyMode && isMoneyCurrency) {
+        basics->money -= el->valueAll(isMoneyCurrency, isBuyMode);
+        basics->coins += el->valueAll(isMoneyCurrency, isBuyMode);
+      }
+
+      // Buy Money from selling coins
+      else if(!isBuyMode && !isMoneyCurrency) {
+        basics->money += el->valueAll(isMoneyCurrency, isBuyMode);
+        basics->coins -= el->valueAll(isMoneyCurrency, isBuyMode);
+      }
+    }
+    else if(whichType == ItemMarketSelectEntryData::TypeGCPokemon) {
+      // Buy Pokemon with Coins
+      if(isBuyMode && !isMoneyCurrency) {
+
+        // Space in party ?
+        if(playerPokemon->partyCount() < playerPokemon->partyMax()) {
+          auto mon = PokemonParty::newPokemon(el->toGameCorner->toPokemon, basics);
+          mon->level = *el->toGameCorner->level;
+          mon->update(true, true, true, true);
+        }
+        else if(storage->partyCount() < playerPokemon->partyMax()) {
+          auto mon = PokemonParty::newPokemon(el->toGameCorner->toPokemon, basics);
+          mon->level = *el->toGameCorner->level;
+          mon->update(true, true, true, true);
+        }
+
+        basics->coins -= el->valueAll(isMoneyCurrency, isBuyMode);
+      }
+    }
+  }
+}
+
 void ItemMarketModel::clearList()
 {
   for(auto el: itemListCache)
@@ -353,6 +434,8 @@ void ItemMarketModel::buildList()
     buildMartItemList();
   else
     buildPlayerItemList();
+
+  cartTotalChanged();
 }
 
 void ItemMarketModel::buildPlayerItemList()
@@ -402,12 +485,12 @@ void ItemMarketModel::buildMartItemList()
     }
 
     std::sort(
-        tmp.begin(),
-        tmp.end(),
-        [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
-        {
-            return collator.compare(item1->readable, item2->readable) < 0;
-        });
+          tmp.begin(),
+          tmp.end(),
+          [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
+    {
+      return collator.compare(item1->readable, item2->readable) < 0;
+    });
 
     for(auto el : tmp) {
       itemListCache.append(new ItemMarketSelectEntryData(el));
@@ -423,12 +506,12 @@ void ItemMarketModel::buildMartItemList()
     }
 
     std::sort(
-        tmpGC.begin(),
-        tmpGC.end(),
-        [&collator](const GameCornerDBEntry* item1, const GameCornerDBEntry* item2)
-        {
-            return collator.compare(item1->name, item2->name) < 0;
-        });
+          tmpGC.begin(),
+          tmpGC.end(),
+          [&collator](const GameCornerDBEntry* item1, const GameCornerDBEntry* item2)
+    {
+      return collator.compare(item1->name, item2->name) < 0;
+    });
 
     for(auto el : tmpGC) {
       itemListCache.append(new ItemMarketSelectEntryData(el));
@@ -451,12 +534,12 @@ void ItemMarketModel::buildMartItemList()
   }
 
   std::sort(
-      tmp.begin(),
-      tmp.end(),
-      [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
-      {
-          return collator.compare(item1->readable, item2->readable) < 0;
-      });
+        tmp.begin(),
+        tmp.end(),
+        [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
+  {
+    return collator.compare(item1->readable, item2->readable) < 0;
+  });
 
   for(auto el : tmp) {
     itemListCache.append(new ItemMarketSelectEntryData(el));
@@ -478,12 +561,12 @@ void ItemMarketModel::buildMartItemList()
   }
 
   std::sort(
-      tmp.begin(),
-      tmp.end(),
-      [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
-      {
-          return collator.compare(item1->readable, item2->readable) < 0;
-      });
+        tmp.begin(),
+        tmp.end(),
+        [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
+  {
+    return collator.compare(item1->readable, item2->readable) < 0;
+  });
 
   for(auto el : tmp) {
     itemListCache.append(new ItemMarketSelectEntryData(el));
@@ -505,12 +588,12 @@ void ItemMarketModel::buildMartItemList()
   }
 
   std::sort(
-      tmp.begin(),
-      tmp.end(),
-      [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
-      {
-          return collator.compare(item1->readable, item2->readable) < 0;
-      });
+        tmp.begin(),
+        tmp.end(),
+        [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
+  {
+    return collator.compare(item1->readable, item2->readable) < 0;
+  });
 
   for(auto el : tmp) {
     itemListCache.append(new ItemMarketSelectEntryData(el));
@@ -529,7 +612,9 @@ void ItemMarketModel::reUpdateAll()
 
 void ItemMarketModel::pageClosing()
 {
-  clearList();
-  isBuyMode = false;
-  isMoneyCurrency = true;
+  if(isBuyMode != false || isMoneyCurrency != true) {
+    isBuyMode = false;
+    isMoneyCurrency = true;
+    buildList();
+  }
 }
