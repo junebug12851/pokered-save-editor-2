@@ -101,6 +101,14 @@ int ItemMarketSelectEntryData::cartAmount()
   return onCart;
 }
 
+void ItemMarketSelectEntryData::setCartAmount(int val)
+{
+  if(val < 0)
+    val = 0;
+
+  this->onCart = val;
+}
+
 bool ItemMarketSelectEntryData::canSell()
 {
   // An item the player has
@@ -179,13 +187,48 @@ int ItemMarketSelectEntryData::valueAll(bool isMoneyCurrency, bool isBuyMode)
   return valueOne(isMoneyCurrency, isBuyMode) * cartAmount();
 }
 
+int ItemMarketSelectEntryData::whichType()
+{
+  // An item the player has
+  if(toItem != nullptr) {
+    return TypePlayerItem;
+  }
+
+  // An item the player can buy
+  else if(toData != nullptr) {
+    return TypeStoreItem;
+  }
+
+  // A pokemon the player can buy
+  else if(toGameCorner != nullptr) {
+    return TypeGCPokemon;
+  }
+
+  // Player Money
+  else if(basics != nullptr) {
+    return TypeCurrency;
+  }
+
+  // A Text Message or some kind of error in whcih case this will suffice
+  return TypeMessage;
+}
+
 ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag, ItemStorageBox* itemStorage, PlayerBasics* basics, Router* router)
   : itemBag(itemBag),
     itemStorage(itemStorage),
     router(router),
     basics(basics)
 {
+  // Reset if mode changed
+  connect(this, &ItemMarketModel::isBuyModeChanged, this, &ItemMarketModel::reUpdateAll);
+  connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::reUpdateAll);
 
+  // Reset if items changed
+  connect(itemBag, &ItemStorageBox::itemsChanged, this, &ItemMarketModel::reUpdateAll);
+
+  // Cleanup on page close
+  connect(this->router, &Router::closeNonModal, this, &ItemMarketModel::pageClosing);
+  connect(this->router, &Router::goHome, this, &ItemMarketModel::pageClosing);
 }
 
 int ItemMarketModel::rowCount(const QModelIndex& parent) const
@@ -223,7 +266,7 @@ QVariant ItemMarketModel::data(const QModelIndex& index, int role) const
     return item->name(isMoneyCurrency);
   else if (role == AmountRole)
     return item->amount(isMoneyCurrency);
-  else if (role == CartAmountRole)
+  else if (role == CartAmountRole) // Editable
     return item->cartAmount();
   else if (role == CanSellRole)
     return item->canSell();
@@ -235,6 +278,8 @@ QVariant ItemMarketModel::data(const QModelIndex& index, int role) const
     return isBuyMode;
   else if (role == MoneyCurrencyRole)
     return isMoneyCurrency;
+  else if (role == TypeRole)
+    return item->whichType();
 
   return QVariant();
 }
@@ -251,8 +296,33 @@ QHash<int, QByteArray> ItemMarketModel::roleNames() const
   roles[ValueAllRole] = "dataValueAll";
   roles[BuyModeRole] = "dataBuyMode";
   roles[MoneyCurrencyRole] = "dataMoneyCurrencyRole";
+  roles[TypeRole] = "dataType";
 
   return roles;
+}
+
+bool ItemMarketModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+  if(!index.isValid())
+    return false;
+
+  if(index.row() >= itemListCache.size())
+    return false;
+
+  auto item = itemListCache.at(index.row());
+
+  if(item == nullptr)
+    return false;
+
+  // Now set requested information
+  if (role == CartAmountRole) {
+    item->setCartAmount(value.toInt());
+    dataChanged(index, index);
+    cartTotalChanged();
+    return true;
+  }
+
+  return false;
 }
 
 int ItemMarketModel::cartTotal()
@@ -292,9 +362,13 @@ void ItemMarketModel::buildPlayerItemList()
   itemListCache.append(new ItemMarketSelectEntryData("Wallet"));
   itemListCache.append(new ItemMarketSelectEntryData(basics));
 
+  itemListCache.append(new ItemMarketSelectEntryData("Bag"));
+
   for(auto el: itemBag->items) {
     itemListCache.append(new ItemMarketSelectEntryData(itemBag, el));
   }
+
+  itemListCache.append(new ItemMarketSelectEntryData("Storage"));
 
   for(auto el: itemStorage->items) {
     itemListCache.append(new ItemMarketSelectEntryData(itemStorage, el));
@@ -443,4 +517,19 @@ void ItemMarketModel::buildMartItemList()
   }
 
   tmp.clear();
+}
+
+void ItemMarketModel::reUpdateAll()
+{
+  beginResetModel();
+  buildList();
+  endResetModel();
+  cartTotalChanged();
+}
+
+void ItemMarketModel::pageClosing()
+{
+  clearList();
+  isBuyMode = false;
+  isMoneyCurrency = true;
 }

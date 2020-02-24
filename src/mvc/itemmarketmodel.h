@@ -29,6 +29,14 @@ class GameCornerDBEntry;
 class PlayerBasics;
 
 struct ItemMarketSelectEntryData {
+  enum WhichType {
+    TypePlayerItem = 0,
+    TypeStoreItem,
+    TypeGCPokemon,
+    TypeCurrency,
+    TypeMessage
+  };
+
   ItemMarketSelectEntryData(ItemStorageBox* toBox, Item* toItem, int onCart = 0);
   ItemMarketSelectEntryData(ItemDBEntry* data);
   ItemMarketSelectEntryData(GameCornerDBEntry* data);
@@ -38,9 +46,11 @@ struct ItemMarketSelectEntryData {
   QString name(bool isMoneyCurrency);
   int amount(bool isMoneyCurrency);
   int cartAmount();
+  void setCartAmount(int val);
   bool canSell();
   int valueOne(bool isMoneyCurrency, bool isBuyMode);
   int valueAll(bool isMoneyCurrency, bool isBuyMode);
+  int whichType();
 
   int onCart = 0;
   QString msg = "";
@@ -55,6 +65,15 @@ struct ItemMarketSelectEntryData {
 class ItemMarketModel : public QAbstractListModel
 {
   Q_OBJECT
+
+  Q_PROPERTY(bool isBuyMode MEMBER isBuyMode NOTIFY isBuyModeChanged)
+  Q_PROPERTY(bool isMoneyCurrency MEMBER isMoneyCurrency NOTIFY isMoneyCurrencyChanged)
+  Q_PROPERTY(int cartTotal READ cartTotal NOTIFY cartTotalChanged)
+
+signals:
+  void isBuyModeChanged();
+  void isMoneyCurrencyChanged();
+  void cartTotalChanged();
 
 public:
   enum ItemRoles {
@@ -76,8 +95,17 @@ public:
     // Value of item total on cart to buy or sell
     ValueAllRole, // Calculated here
 
+    // Which modes we're in
     BuyModeRole,
     MoneyCurrencyRole,
+
+    // Item Type, There are 5 types
+    // * An item the player has which may or may not be sellable
+    // * An item the player can buy
+    // * A Game Corner Pokemon
+    // * Player Money / Coins
+    // * A Message
+    TypeRole,
   };
 
   ItemMarketModel(ItemStorageBox* itemBag, ItemStorageBox* itemStorage, PlayerBasics* basics, Router* router);
@@ -85,6 +113,7 @@ public:
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
   virtual QHash<int, QByteArray> roleNames() const override;
+  bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
   // Value of total on cart
   // Uses -/+ to indicate buy/sell
@@ -94,6 +123,9 @@ public:
   void buildList();
   void buildPlayerItemList();
   void buildMartItemList();
+
+  void reUpdateAll();
+  void pageClosing();
 
   QVector<ItemMarketSelectEntryData*> itemListCache;
 
