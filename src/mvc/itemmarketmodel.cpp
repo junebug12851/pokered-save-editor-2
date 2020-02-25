@@ -27,45 +27,36 @@
 #include "../data/db/items.h"
 #include "../bridge/router.h"
 #include "../data/db/gamecorner.h"
-#include "../data/file/expanded/storage.h"
-#include "../data/file/expanded/player/playerpokemon.h"
-#include "../data/file/expanded/fragments/item.h"
-#include "../data/file/expanded/fragments/pokemonbox.h"
-#include "../data/file/expanded/fragments/pokemonparty.h"
-#include "../data/file/expanded/fragments/pokemonstorageset.h"
-#include "../data/file/expanded/fragments/pokemonstoragebox.h"
+#include "../data/file/savefile.h"
 #include "../data/file/expanded/fragments/itemstoragebox.h"
-#include "../data/file/expanded/player/playerbasics.h"
 
 ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
                                  ItemStorageBox* itemStorage,
                                  PlayerBasics* basics,
                                  Router* router,
                                  PlayerPokemon* playerPokemon,
-                                 Storage* storage)
+                                 Storage* storage,
+                                 SaveFile* file)
   : itemBag(itemBag),
     itemStorage(itemStorage),
     router(router),
     basics(basics),
     playerPokemon(playerPokemon),
-    storage(storage)
+    storage(storage),
+    file(file)
 {
   // Setup Item Market Entry globals
   ItemMarketEntry::isMoneyCurrency = &isMoneyCurrency;
   ItemMarketEntry::isBuyMode = &isBuyMode;
   ItemMarketEntry::player = basics;
 
-  // Reset if mode changed or checked out
+  // Reset if mode changed or expanded data has been reset or changed in any way
   connect(this, &ItemMarketModel::isBuyModeChanged, this, &ItemMarketModel::reUpdateAll);
   connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::reUpdateAll);
-  connect(this, &ItemMarketModel::checkedOut, this, &ItemMarketModel::reUpdateAll);
+  connect(file, &SaveFile::dataExpandedChanged, this, &ItemMarketModel::reUpdateAll);
 
-  // Reset if items changed such as file/sav data changing while page is open
-  connect(itemBag, &ItemStorageBox::itemsChanged, this, &ItemMarketModel::reUpdateAll);
-
-  // Cleanup on page close
-  connect(this->router, &Router::closeNonModal, this, &ItemMarketModel::pageClosing);
-  connect(this->router, &Router::goHome, this, &ItemMarketModel::pageClosing);
+  // Cleanup and reset on page open
+  connect(this->router, &Router::openNonModal, this, &ItemMarketModel::pageOpening);
 }
 
 int ItemMarketModel::rowCount(const QModelIndex& parent) const
@@ -173,7 +164,7 @@ bool ItemMarketModel::setData(const QModelIndex& index, const QVariant& value, i
   if (role == CartCountRole) {
     item->setCartCount(value.toInt());
     dataChanged(index, index);
-    cartTotalChanged();
+    reUpdateValues();
     return true;
   }
 
@@ -205,9 +196,17 @@ int ItemMarketModel::totalCartCount()
 
 void ItemMarketModel::checkout()
 {
+  // Perform checkout
   for(auto el : itemListCache) {
     el->checkout();
   }
+
+  // Ask all items to re-update their cached values
+  for(auto el : itemListCache) {
+    el->reUpdateConstants();
+  }
+
+  reUpdateValues();
 }
 
 void ItemMarketModel::clearList()
@@ -225,7 +224,7 @@ void ItemMarketModel::buildList()
   else
     buildPlayerItemList();
 
-  cartTotalChanged();
+  reUpdateValues();
 }
 
 void ItemMarketModel::buildPlayerItemList()
@@ -397,14 +396,16 @@ void ItemMarketModel::reUpdateAll()
   beginResetModel();
   buildList();
   endResetModel();
-  cartTotalChanged();
 }
 
-void ItemMarketModel::pageClosing()
+void ItemMarketModel::pageOpening(QString path)
 {
-  if(isBuyMode != false || isMoneyCurrency != true) {
-    isBuyMode = false;
-    isMoneyCurrency = true;
-    reUpdateAll();
-  }
+  // Do nothing unless Trainer Mart Screen
+  if(path != "qrc:/ui/app/screens/non-modal/TrainerMart.qml")
+    return;
+
+  // Re-Build List to account for changes
+  isBuyMode = false;
+  isMoneyCurrency = true;
+  reUpdateAll();
 }

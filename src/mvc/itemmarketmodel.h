@@ -21,15 +21,13 @@
 #include <QAbstractListModel>
 #include <QVector>
 
-class Item;
 class ItemStorageBox;
 class Router;
-class ItemDBEntry;
-class GameCornerDBEntry;
 class PlayerBasics;
 class Storage;
 class PlayerPokemon;
 class ItemMarketEntry;
+class SaveFile;
 
 class ItemMarketModel : public QAbstractListModel
 {
@@ -37,13 +35,13 @@ class ItemMarketModel : public QAbstractListModel
 
   Q_PROPERTY(bool isBuyMode MEMBER isBuyMode NOTIFY isBuyModeChanged)
   Q_PROPERTY(bool isMoneyCurrency MEMBER isMoneyCurrency NOTIFY isMoneyCurrencyChanged)
-  Q_PROPERTY(int cartTotal READ cartTotal NOTIFY cartTotalChanged)
+  Q_PROPERTY(int totalCartWorth READ totalCartWorth NOTIFY reUpdateValues)
+  Q_PROPERTY(int totalCartCount READ totalCartCount NOTIFY reUpdateValues)
 
 signals:
   void isBuyModeChanged();
   void isMoneyCurrencyChanged();
-  void cartTotalChanged();
-  void checkedOut();
+  void reUpdateValues();
 
 public:
   enum ItemRoles {
@@ -99,7 +97,8 @@ public:
                   PlayerBasics* basics,
                   Router* router,
                   PlayerPokemon* playerPokemon,
-                  Storage* storage);
+                  Storage* storage,
+                  SaveFile* file);
 
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
@@ -110,7 +109,6 @@ public:
   // Uses -/+ to indicate buy/sell
   int totalCartWorth();
   int totalCartCount();
-  void checkout();
 
   // Re-create list cache methods
   void clearList();
@@ -119,9 +117,13 @@ public:
   void buildMartItemList();
 
   // Respodning to events and signals
-  void reUpdateAll();
-  void pageClosing();
+  void pageOpening(QString path);
 
+public slots:
+  void checkout();
+  void reUpdateAll();
+
+public:
   QVector<ItemMarketEntry*> itemListCache;
 
   // Buy or Sell, do we view your items or their items?
@@ -140,6 +142,7 @@ public:
   PlayerBasics* basics = nullptr;
   PlayerPokemon* playerPokemon = nullptr;
   Storage* storage = nullptr;
+  SaveFile* file = nullptr;
 };
 
 #endif // ITEMMARKETMODEL_H
