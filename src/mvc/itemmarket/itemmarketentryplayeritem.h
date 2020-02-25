@@ -29,16 +29,16 @@ class ItemMarketEntryPlayerItem : public ItemMarketEntry
   Q_OBJECT
 
 public:
-  ItemMarketEntryPlayerItem(ItemStorageBox* toBox, Item* toItem, PlayerBasics* player);
+  ItemMarketEntryPlayerItem(ItemStorageBox* toBox, Item* toItem);
+  virtual ~ItemMarketEntryPlayerItem();
 
   virtual QString _name() override;
   virtual int _inStockCount() override;
   virtual bool _canSell() override;
   virtual int _itemWorth() override;
   virtual QString _whichType() override;
-  virtual int _onCartMax() override;
-  virtual int cartWorth() override;
-  virtual QString canCheckout() override;
+  virtual int onCartMax() override;
+  virtual int stackCount() override;
 
 public slots:
   virtual void checkout() override;
@@ -46,7 +46,6 @@ public slots:
 public:
   ItemStorageBox* toBox = nullptr;
   Item* toItem = nullptr;
-  PlayerBasics* player = nullptr;
   static constexpr const char* type = "playerItem";
 };
 

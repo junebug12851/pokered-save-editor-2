@@ -21,13 +21,18 @@
 #include "../../data/file/expanded/player/playerbasics.h"
 
 ItemMarketEntryPlayerItem::ItemMarketEntryPlayerItem(ItemStorageBox* toBox,
-                                                     Item* toItem,
-                                                     PlayerBasics* player)
+                                                     Item* toItem)
   : ItemMarketEntry(CompatEither, CompatNo), // Any currency, only selling
     toBox(toBox),
-    toItem(toItem),
-    player(player)
-{}
+    toItem(toItem)
+{
+
+}
+
+ItemMarketEntryPlayerItem::~ItemMarketEntryPlayerItem()
+{
+
+}
 
 QString ItemMarketEntryPlayerItem::_name()
 {
@@ -67,11 +72,11 @@ int ItemMarketEntryPlayerItem::_itemWorth()
     return 0;
 
   // Sell item to money
-  if(*isMoneyCurrency && !(*isBuyMode))
+  if(*isMoneyCurrency)
     return toItem->sellPriceOneMoney();
 
   // Sell item to coins
-  else if(!(*isMoneyCurrency) && !(*isBuyMode))
+  else if(!(*isMoneyCurrency))
     return toItem->sellPriceOneCoins();
 
   return 0;
@@ -82,7 +87,7 @@ QString ItemMarketEntryPlayerItem::_whichType()
   return type;
 }
 
-int ItemMarketEntryPlayerItem::_onCartMax()
+int ItemMarketEntryPlayerItem::onCartMax()
 {
   if(!requestFilter())
     return 0;
@@ -90,45 +95,39 @@ int ItemMarketEntryPlayerItem::_onCartMax()
   return toItem->amount;
 }
 
-int ItemMarketEntryPlayerItem::cartWorth()
+int ItemMarketEntryPlayerItem::stackCount()
 {
-  if(!requestFilter())
-    return 0;
-
-  return itemWorth() * onCart;
-}
-
-QString ItemMarketEntryPlayerItem::canCheckout()
-{
-  if(!requestFilter())
-    return "Incompatible with current mode";
-
-  return (onCart < onCartMax())
-      ? ""
-      : "Exceeds the items you have to sell";
+  // Applies only to buying items
+  return 0;
 }
 
 void ItemMarketEntryPlayerItem::checkout()
 {
   if(!requestFilter() ||
-     canCheckout() != "" ||
+     !canCheckout() ||
      onCart == 0)
     return;
 
+  // Subtract amount owed
   toItem->amount -= onCart;
+  toItem->amountChanged();
 
+  // Remove if empty
   if(toItem->amount <= 0)
     toBox->itemRemove(toBox->items.indexOf(toItem));
 
   // Sell item to money
-  if(*isMoneyCurrency && !(*isBuyMode)) {
+  if(*isMoneyCurrency) {
     player->money += cartWorth();
     player->moneyChanged();
   }
 
   // Sell item to coins
-  else if(!(*isMoneyCurrency) && !(*isBuyMode)) {
+  else {
     player->coins += cartWorth();
     player->coinsChanged();
   }
+
+  onCart = 0;
+  onCartChanged();
 }

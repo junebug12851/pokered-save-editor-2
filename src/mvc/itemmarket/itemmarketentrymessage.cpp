@@ -21,6 +21,8 @@ ItemMarketEntryMessage::ItemMarketEntryMessage(QString msg)
   : msg(msg)
 {}
 
+ItemMarketEntryMessage::~ItemMarketEntryMessage() {}
+
 QString ItemMarketEntryMessage::_name()
 {
   return msg;
@@ -43,22 +45,17 @@ int ItemMarketEntryMessage::_itemWorth()
 
 QString ItemMarketEntryMessage::_whichType()
 {
-  return msg;
+  return type;
 }
 
-int ItemMarketEntryMessage::_onCartMax()
+int ItemMarketEntryMessage::onCartMax()
 {
   return 0;
 }
 
-int ItemMarketEntryMessage::cartWorth()
+int ItemMarketEntryMessage::stackCount()
 {
   return 0;
-}
-
-QString ItemMarketEntryMessage::canCheckout()
-{
-  return "";
 }
 
 void ItemMarketEntryMessage::checkout() {}

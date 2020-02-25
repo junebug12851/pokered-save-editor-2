@@ -31,10 +31,6 @@
 #include "../data/file/expanded/fragments/itemstoragebox.h"
 #include "../data/file/expanded/player/playerbasics.h"
 
-ItemMarketSelectEntryData::ItemMarketSelectEntryData(ItemDBEntry* data)
-  : toData(data)
-{}
-
 ItemMarketSelectEntryData::ItemMarketSelectEntryData(GameCornerDBEntry* data)
   : toGameCorner(data)
 {}
@@ -45,11 +41,6 @@ ItemMarketSelectEntryData::ItemMarketSelectEntryData(PlayerBasics* data)
 
 QString ItemMarketSelectEntryData::name(bool isMoneyCurrency)
 {
-  // An item the player can buy
-  if(toData != nullptr) {
-    return toData->readable;
-  }
-
   // A pokemon the player can buy
   else if(toGameCorner != nullptr) {
     return toGameCorner->name;
@@ -79,11 +70,6 @@ int ItemMarketSelectEntryData::amount(bool isMoneyCurrency)
 
 bool ItemMarketSelectEntryData::canSell()
 {
-  // An item the player can buy
-  if(toData != nullptr) {
-    return toData->canSell();
-  }
-
   // Player Money
   else if(basics != nullptr) {
     return true;
@@ -94,18 +80,6 @@ bool ItemMarketSelectEntryData::canSell()
 
 int ItemMarketSelectEntryData::valueOne(bool isMoneyCurrency, bool isBuyMode)
 {
-  // An item the player can buy
-  if(toData != nullptr) {
-    if(isMoneyCurrency && isBuyMode)
-      return toData->buyPriceMoney();
-    else if(isMoneyCurrency && !isBuyMode)
-      return toData->sellPriceMoney();
-    else if(!isMoneyCurrency && isBuyMode)
-      return toData->buyPriceCoins();
-    else if(!isMoneyCurrency && !isBuyMode)
-      return toData->sellPriceCoins();
-  }
-
   // A pokemon the player can buy
   else if(toGameCorner != nullptr) {
     if(!isMoneyCurrency && isBuyMode)
@@ -131,11 +105,6 @@ int ItemMarketSelectEntryData::valueOne(bool isMoneyCurrency, bool isBuyMode)
 
 int ItemMarketSelectEntryData::whichType()
 {
-  // An item the player can buy
-  if(toData != nullptr) {
-    return TypeStoreItem;
-  }
-
   // A pokemon the player can buy
   else if(toGameCorner != nullptr) {
     return TypeGCPokemon;
@@ -364,13 +333,6 @@ void ItemMarketModel::checkout()
       // for ethical reasons nor can they be bought in money, again, ethical
       // reasons. I don't want a PR nightmare and have this whole thing get
       // shutdown by GameFreak because of a PR nightmare.
-    }
-
-    // Buy store items
-    else if(whichType == ItemMarketSelectEntryData::TypeStoreItem) {
-      auto data = el->toData;
-      if(itemBag->itemsCount() < itemBag->itemsMax())
-        itemBag->items.append(new Item(data->name, el->onCart));
     }
   }
 }

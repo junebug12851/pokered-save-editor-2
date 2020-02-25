@@ -21,11 +21,18 @@ ItemMarketEntry::ItemMarketEntry(int compatMoneyCurrency, int compatBuyMode)
   : compatMoneyCurrency(compatMoneyCurrency),
     compatBuyMode(compatBuyMode)
 {
+  if(!instances.contains(whichType()))
+    instances.insert(whichType(), QVector<ItemMarketEntry*>());
 
+  auto instArr = instances.value(whichType());
+  instArr.append(this);
 }
 
 ItemMarketEntry::~ItemMarketEntry()
-{}
+{
+  auto instArr = instances.value(whichType());
+  instArr.removeAll(this);
+}
 
 QString ItemMarketEntry::name()
 {
@@ -67,14 +74,6 @@ QString ItemMarketEntry::whichType()
   return cache.value(HashKeyWhichType).toString();
 }
 
-int ItemMarketEntry::onCartMax()
-{
-  if(!cache.contains(HashKeyOnCartMax))
-    cache.insert(HashKeyOnCartMax, _onCartMax());
-
-  return cache.value(HashKeyOnCartMax).toInt();
-}
-
 bool ItemMarketEntry::requestFilter()
 {
   // If compatibility is both either then it's auto true
@@ -105,6 +104,33 @@ int ItemMarketEntry::getCartCount()
   return onCart;
 }
 
+int ItemMarketEntry::cartWorth()
+{
+  if(!requestFilter())
+    return 0;
+
+  return itemWorth() * onCart;
+}
+
+int ItemMarketEntry::totalStackCount()
+{
+  int ret = 0;
+  auto instArr = instances.value(whichType());
+
+  for(auto el : instArr)
+    ret += el->stackCount();
+
+  return ret;
+}
+
+bool ItemMarketEntry::canCheckout()
+{
+  if(!requestFilter())
+    return false;
+
+  return onCart < onCartMax();
+}
+
 void ItemMarketEntry::setCartCount(int val)
 {
   onCart = val;
@@ -122,7 +148,6 @@ void ItemMarketEntry::reUpdateConstants()
   cache.insert(HashKeyCanSell, _canSell());
   cache.insert(HashKeyItemWorth, _itemWorth());
   cache.insert(HashKeyWhichType, _whichType());
-  cache.insert(HashKeyOnCartMax, _onCartMax());
 
   doReUpdateConstants();
 }
@@ -130,3 +155,6 @@ void ItemMarketEntry::reUpdateConstants()
 bool* ItemMarketEntry::isBuyMode = nullptr;
 bool* ItemMarketEntry::isMoneyCurrency = nullptr;
 ItemMarketModel* ItemMarketEntry::modelClass = nullptr;
+PlayerBasics* ItemMarketEntry::player = nullptr;
+QHash<QString, QVector<ItemMarketEntry*>> ItemMarketEntry::instances =
+    QHash<QString, QVector<ItemMarketEntry*>>();

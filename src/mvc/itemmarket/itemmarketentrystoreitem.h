@@ -13,22 +13,34 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef ITEMMARKETENTRYMESSAGE_H
-#define ITEMMARKETENTRYMESSAGE_H
-
-#include <QString>
+#ifndef ITEMMARKETENTRYSTOREITEM_H
+#define ITEMMARKETENTRYSTOREITEM_H
 
 #include "./itemmarketentry.h"
 
-// The simplest type, just prints out a message
+class Item;
+class ItemDBEntry;
+class ItemStorageBox;
 
-class ItemMarketEntryMessage : public ItemMarketEntry
+struct StackReturn {
+  int full = 0;
+
+  int partialBag = 0;
+  int partialBox = 0;
+
+  Item* partialElBag = nullptr;
+  Item* partialElBox = nullptr;
+};
+
+class ItemMarketEntryStoreItem : public ItemMarketEntry
 {
   Q_OBJECT
 
 public:
-  ItemMarketEntryMessage(QString msg);
-  virtual ~ItemMarketEntryMessage();
+  ItemMarketEntryStoreItem(ItemDBEntry* data, ItemStorageBox* toBag, ItemStorageBox* toBox);
+  virtual ~ItemMarketEntryStoreItem();
+
+  StackReturn calculateStacks();
 
   virtual QString _name() override;
   virtual int _inStockCount() override;
@@ -42,8 +54,10 @@ public slots:
   virtual void checkout() override;
 
 public:
-  QString msg;
-  static constexpr const char* type = "msg";
+  static constexpr const char* type = "storeItem";
+  ItemDBEntry* data = nullptr;
+  ItemStorageBox* toBag = nullptr;
+  ItemStorageBox* toBox = nullptr;
 };
 
-#endif // ITEMMARKETENTRYMESSAGE_H
+#endif // ITEMMARKETENTRYSTOREITEM_H

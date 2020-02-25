@@ -18,9 +18,11 @@
 
 #include <QObject>
 #include <QHash>
+#include <QVector>
 #include <QVariant>
 
 class ItemMarketModel;
+class PlayerBasics;
 
 class ItemMarketEntry : public QObject
 {
@@ -28,8 +30,11 @@ class ItemMarketEntry : public QObject
 
   // These change
   Q_PROPERTY(int onCart READ getCartCount WRITE setCartCount NOTIFY onCartChanged)
-  Q_PROPERTY(QString canCheckout READ canCheckout NOTIFY onCartChanged)
+  Q_PROPERTY(bool canCheckout READ canCheckout NOTIFY onCartChanged)
   Q_PROPERTY(int cartWorth READ cartWorth NOTIFY onCartChanged)
+  Q_PROPERTY(int stackCount READ stackCount NOTIFY onCartChanged)
+  Q_PROPERTY(int onCartMax READ onCartMax NOTIFY onCartChanged)
+  Q_PROPERTY(int totalStackCount READ totalStackCount NOTIFY onCartChanged)
 
   // These do not change, they depend on the mode but if the mode changes they
   // will be re-created anyways. during the lifetime of the class, they will not
@@ -40,7 +45,6 @@ class ItemMarketEntry : public QObject
   Q_PROPERTY(bool canSell READ canSell NOTIFY doReUpdateConstants)
   Q_PROPERTY(int itemWorth READ itemWorth NOTIFY doReUpdateConstants)
   Q_PROPERTY(QString whichType READ whichType NOTIFY doReUpdateConstants)
-  Q_PROPERTY(int onCartMax READ onCartMax NOTIFY doReUpdateConstants)
 
 signals:
   // Notified when cart is changed
@@ -63,7 +67,6 @@ public:
     HashKeyCanSell,
     HashKeyItemWorth,
     HashKeyWhichType,
-    HashKeyOnCartMax,
   };
 
   ItemMarketEntry(int compatMoneyCurrency = CompatEither,
@@ -95,25 +98,33 @@ public:
   QString whichType();
   virtual QString _whichType() = 0;
 
+  // Stack count of this item
+  // This goes for all types, anything that takes up more than one stack
+  // Pokemon are a stack of 1, Items are a stack of 99, Money and others don't
+  // take up any stack (they are a stack of infinity)
+  // This number is for counting new stack space that will be filled, not
+  // consuming existing stack space.
+  virtual int stackCount() = 0;
+
   // Maximum that can be placed on the cart
-  int onCartMax();
-  virtual int _onCartMax() = 0;
-
-  // Can change
-
-  // Value of item total on cart to buy or sell
-  virtual int cartWorth() = 0;
-
-  // Do a checkout, can checkout notifies if the checkout can be completed.
-  // If it cannot it returns a message why. Calling checkout won't work if the
-  // item cannot be checked out.
-  virtual QString canCheckout() = 0;
+  // -------- This is wrong, it needs to be renamed to onCartLeft. It counts
+  // down and when reaches zero no more items can be placed
+  virtual int onCartMax() = 0;
 
   // Tools for the child class to leverage
   bool requestFilter();
 
   // Members that wrap around properties
   int getCartCount();
+
+  // Value of item total on cart to buy or sell
+  int cartWorth();
+
+  // Returns total stack count for all instances in this type
+  int totalStackCount();
+
+  // Can checkout notifies if the checkout can be completed.
+  bool canCheckout();
 
 public slots:
   virtual void checkout() = 0;
@@ -133,6 +144,10 @@ public:
   static bool* isMoneyCurrency;
   static bool* isBuyMode;
   static ItemMarketModel* modelClass;
+  static PlayerBasics* player;
+
+  // Holds global instances categorized by type
+  static QHash<QString, QVector<ItemMarketEntry*>> instances;
 
   // Cached data
   // Many data are very expensive to re-create, we cache them here and re-create

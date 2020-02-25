@@ -105,6 +105,7 @@ HEADERS += \
   src/mvc/itemmarket/itemmarketentry.h \
   src/mvc/itemmarket/itemmarketentrymessage.h \
   src/mvc/itemmarket/itemmarketentryplayeritem.h \
+  src/mvc/itemmarket/itemmarketentrystoreitem.h \
   src/mvc/itemmarketmodel.h \
   src/mvc/itemselectmodel.h \
   src/mvc/itemstoragemodel.h \
@@ -210,6 +211,7 @@ SOURCES += \
   src/mvc/itemmarket/itemmarketentry.cpp \
   src/mvc/itemmarket/itemmarketentrymessage.cpp \
   src/mvc/itemmarket/itemmarketentryplayeritem.cpp \
+  src/mvc/itemmarket/itemmarketentrystoreitem.cpp \
   src/mvc/itemmarketmodel.cpp \
   src/mvc/itemselectmodel.cpp \
   src/mvc/itemstoragemodel.cpp \
