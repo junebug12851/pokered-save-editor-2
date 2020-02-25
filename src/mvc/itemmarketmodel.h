@@ -38,10 +38,12 @@ class ItemMarketModel : public QAbstractListModel
   Q_PROPERTY(bool isMoneyCurrency MEMBER isMoneyCurrency NOTIFY isMoneyCurrencyChanged)
   Q_PROPERTY(int totalCartWorth READ totalCartWorth NOTIFY reUpdateValues)
   Q_PROPERTY(int totalCartCount READ totalCartCount NOTIFY reUpdateValues)
+  Q_PROPERTY(int whichMode READ whichMode NOTIFY isAnyChanged)
 
 signals:
   void isBuyModeChanged();
   void isMoneyCurrencyChanged();
+  void isAnyChanged();
   void reUpdateValues();
 
 public:
@@ -93,6 +95,13 @@ public:
     MoneyCurrencyRole,
   };
 
+  enum {
+    SelBuyMoney = 0,
+    SelBuyCoins,
+    SelSellMoney,
+    SelSellCoins
+  };
+
   ItemMarketModel(ItemStorageBox* itemBag,
                   ItemStorageBox* itemStorage,
                   PlayerBasics* basics,
@@ -110,6 +119,7 @@ public:
   // Uses -/+ to indicate buy/sell
   int totalCartWorth();
   int totalCartCount();
+  int whichMode();
 
   // Re-create list cache methods
   void clearList();

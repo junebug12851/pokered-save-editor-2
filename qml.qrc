@@ -499,5 +499,8 @@
         <file>assets/icons/poke-go/pokeballs.svg</file>
         <file>ui/app/fragments/header/AppFooterBtn3.qml</file>
         <file>assets/data/gameCorner.json</file>
+        <file>ui/app/screens/non-modal/Pokemart.qml</file>
+        <file>assets/icons/fontawesome/shopping-cart.svg</file>
+        <file>assets/icons/fontawesome/coins.svg</file>
     </qresource>
 </RCC>

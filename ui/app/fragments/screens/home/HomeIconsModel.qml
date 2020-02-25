@@ -52,6 +52,6 @@ ListModel {
   ListElement {
     name: "Pokemart"
     iconSrc: "qrc:/assets/icons/poke-go/pokeballs.svg"
-    page: ""
+    page: "pokemart"
   }
 }

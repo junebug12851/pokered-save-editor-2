@@ -58,6 +58,10 @@ ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
 
   // Cleanup and reset on page open
   connect(this->router, &Router::openNonModal, this, &ItemMarketModel::pageOpening);
+
+  // Any mode change
+  connect(this, &ItemMarketModel::isBuyModeChanged, this, &ItemMarketModel::isAnyChanged);
+  connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::isAnyChanged);
 }
 
 int ItemMarketModel::rowCount(const QModelIndex& parent) const
@@ -193,6 +197,20 @@ int ItemMarketModel::totalCartCount()
   }
 
   return ret;
+}
+
+int ItemMarketModel::whichMode()
+{
+  if(isBuyMode && isMoneyCurrency)
+    return SelBuyMoney;
+  else if(isBuyMode && !isMoneyCurrency)
+    return SelBuyCoins;
+  else if(!isBuyMode && isMoneyCurrency)
+    return SelSellMoney;
+  else if(!isBuyMode && !isMoneyCurrency)
+    return SelSellCoins;
+
+  return 0;
 }
 
 void ItemMarketModel::checkout()
@@ -402,7 +420,7 @@ void ItemMarketModel::reUpdateAll()
 void ItemMarketModel::pageOpening(QString path)
 {
   // Do nothing unless Trainer Mart Screen
-  if(path != "qrc:/ui/app/screens/non-modal/TrainerMart.qml")
+  if(path != "qrc:/ui/app/screens/non-modal/Pokemart.qml")
     return;
 
   // Re-Build List to account for changes
