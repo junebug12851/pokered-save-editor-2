@@ -29,16 +29,7 @@ class GameCornerDBEntry;
 class PlayerBasics;
 class Storage;
 class PlayerPokemon;
-
-struct ItemMarketSelectEntryData {
-  enum WhichType {
-    TypeCurrency,
-  };
-
-  ItemMarketSelectEntryData(PlayerBasics* data);
-
-  PlayerBasics* basics = nullptr;
-};
+class ItemMarketEntry;
 
 class ItemMarketModel : public QAbstractListModel
 {
@@ -52,6 +43,7 @@ signals:
   void isBuyModeChanged();
   void isMoneyCurrencyChanged();
   void cartTotalChanged();
+  void checkedOut();
 
 public:
   enum ItemRoles {
@@ -59,23 +51,13 @@ public:
     NameRole = Qt::UserRole + 1,
 
     // Amount of item to sell (When in sell mode)
-    AmountRole,
-
-    // Amount of item buying or selling
-    CartAmountRole, // Kept here in cache
+    InStockCountRole,
 
     // If the item can be sold (When in sell mode)
     CanSellRole,
 
     // Value of item individually to buy or sell
-    ValueOneRole,
-
-    // Value of item total on cart to buy or sell
-    ValueAllRole, // Calculated here
-
-    // Which modes we're in
-    BuyModeRole,
-    MoneyCurrencyRole,
+    ItemWorthRole,
 
     // Item Type, There are 5 types
     // * An item the player has which may or may not be sellable
@@ -83,7 +65,33 @@ public:
     // * A Game Corner Pokemon
     // * Player Money / Coins
     // * A Message
-    TypeRole,
+    WhichTypeRole,
+
+    // Stack count of this item
+    StackCountRole,
+
+    // Items left that can be placed on the cart
+    OnCartLeftRole,
+
+    // Amount of items on cart
+    CartCountRole,
+
+    // Value of item total on cart to buy or sell
+    CartWorthRole,
+
+    // Stack count of this item
+    TotalStackCountRole,
+    TotalWorthRole,
+
+    // Can a checkout be done?
+    CanCheckoutRole,
+
+    // For this setup, is the item valid?
+    ValidItemRole,
+
+    // Which modes we're in
+    BuyModeRole,
+    MoneyCurrencyRole,
   };
 
   ItemMarketModel(ItemStorageBox* itemBag,
@@ -100,19 +108,21 @@ public:
 
   // Value of total on cart
   // Uses -/+ to indicate buy/sell
-  int cartTotal();
-  int cartCount();
+  int totalCartWorth();
+  int totalCartCount();
   void checkout();
 
+  // Re-create list cache methods
   void clearList();
   void buildList();
   void buildPlayerItemList();
   void buildMartItemList();
 
+  // Respodning to events and signals
   void reUpdateAll();
   void pageClosing();
 
-  QVector<ItemMarketSelectEntryData*> itemListCache;
+  QVector<ItemMarketEntry*> itemListCache;
 
   // Buy or Sell, do we view your items or their items?
   // Default to viewing your items

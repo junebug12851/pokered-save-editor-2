@@ -105,6 +105,7 @@ HEADERS += \
   src/mvc/itemmarket/itemmarketentry.h \
   src/mvc/itemmarket/itemmarketentrygcpokemon.h \
   src/mvc/itemmarket/itemmarketentrymessage.h \
+  src/mvc/itemmarket/itemmarketentrymoney.h \
   src/mvc/itemmarket/itemmarketentryplayeritem.h \
   src/mvc/itemmarket/itemmarketentrystoreitem.h \
   src/mvc/itemmarketmodel.h \
@@ -212,6 +213,7 @@ SOURCES += \
   src/mvc/itemmarket/itemmarketentry.cpp \
   src/mvc/itemmarket/itemmarketentrygcpokemon.cpp \
   src/mvc/itemmarket/itemmarketentrymessage.cpp \
+  src/mvc/itemmarket/itemmarketentrymoney.cpp \
   src/mvc/itemmarket/itemmarketentryplayeritem.cpp \
   src/mvc/itemmarket/itemmarketentrystoreitem.cpp \
   src/mvc/itemmarketmodel.cpp \

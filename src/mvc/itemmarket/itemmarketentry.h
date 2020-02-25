@@ -21,7 +21,6 @@
 #include <QVector>
 #include <QVariant>
 
-class ItemMarketModel;
 class PlayerBasics;
 
 class ItemMarketEntry : public QObject
@@ -73,6 +72,9 @@ public:
                   int compatBuyMode = CompatEither);
 
   virtual ~ItemMarketEntry();
+
+  // Called only for the first instance
+  virtual void initOnce();
 
   // Virtual Table for child classes
 
@@ -142,7 +144,6 @@ public:
   // is a singleton
   static bool* isMoneyCurrency;
   static bool* isBuyMode;
-  static ItemMarketModel* modelClass;
   static PlayerBasics* player;
 
   // Holds global instances categorized by type
