@@ -16,6 +16,7 @@
 
 #include "./itemmarketentry.h"
 #include "../itemmarketmodel.h"
+#include "../../data/file/expanded/player/playerbasics.h"
 
 ItemMarketEntry::ItemMarketEntry(int compatMoneyCurrency, int compatBuyMode)
   : compatMoneyCurrency(compatMoneyCurrency),
@@ -26,12 +27,16 @@ ItemMarketEntry::ItemMarketEntry(int compatMoneyCurrency, int compatBuyMode)
 
   auto instArr = instances.value(whichType());
   instArr.append(this);
+
+  instancesCombined.append(this);
 }
 
 ItemMarketEntry::~ItemMarketEntry()
 {
   auto instArr = instances.value(whichType());
   instArr.removeAll(this);
+
+  instancesCombined.removeAll(this);
 }
 
 QString ItemMarketEntry::name()
@@ -123,12 +128,27 @@ int ItemMarketEntry::totalStackCount()
   return ret;
 }
 
+unsigned int ItemMarketEntry::totalWorth()
+{
+  unsigned int ret = 0;
+
+  for(auto el : instancesCombined)
+    ret += el->cartWorth();
+
+  return ret;
+}
+
 bool ItemMarketEntry::canCheckout()
 {
   if(!requestFilter())
     return false;
 
-  return onCartLeft() >= 0;
+  // Allow only if there is space left and the total worth doesn't go above
+  // the players money/coins
+  if(*isMoneyCurrency)
+    return (onCart > 0) && (onCartLeft() >= 0) && (totalWorth() <= player->money);
+  else
+    return (onCart > 0) && (onCartLeft() >= 0) && (totalWorth() <= (unsigned int)player->coins);
 }
 
 void ItemMarketEntry::setCartCount(int val)
@@ -156,5 +176,9 @@ bool* ItemMarketEntry::isBuyMode = nullptr;
 bool* ItemMarketEntry::isMoneyCurrency = nullptr;
 ItemMarketModel* ItemMarketEntry::modelClass = nullptr;
 PlayerBasics* ItemMarketEntry::player = nullptr;
+
 QHash<QString, QVector<ItemMarketEntry*>> ItemMarketEntry::instances =
     QHash<QString, QVector<ItemMarketEntry*>>();
+
+QVector<ItemMarketEntry*> ItemMarketEntry::instancesCombined =
+    QVector<ItemMarketEntry*>();

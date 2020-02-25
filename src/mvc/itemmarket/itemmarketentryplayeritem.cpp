@@ -104,8 +104,7 @@ int ItemMarketEntryPlayerItem::stackCount()
 void ItemMarketEntryPlayerItem::checkout()
 {
   if(!requestFilter() ||
-     !canCheckout() ||
-     onCart == 0)
+     !canCheckout())
     return;
 
   // Subtract amount owed

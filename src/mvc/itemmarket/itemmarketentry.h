@@ -120,6 +120,7 @@ public:
 
   // Returns total stack count for all instances in this type
   int totalStackCount();
+  unsigned int totalWorth();
 
   // Can checkout notifies if the checkout can be completed.
   bool canCheckout();
@@ -146,6 +147,9 @@ public:
 
   // Holds global instances categorized by type
   static QHash<QString, QVector<ItemMarketEntry*>> instances;
+
+  // Holds all instances combined regardless of type
+  static QVector<ItemMarketEntry*> instancesCombined;
 
   // Cached data
   // Many data are very expensive to re-create, we cache them here and re-create

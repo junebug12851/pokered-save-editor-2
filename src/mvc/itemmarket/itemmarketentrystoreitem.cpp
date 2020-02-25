@@ -207,8 +207,7 @@ int ItemMarketEntryStoreItem::stackCount()
 void ItemMarketEntryStoreItem::checkout()
 {
   if(!requestFilter() ||
-     !canCheckout() ||
-     onCart == 0)
+     !canCheckout())
     return;
 
   // Copy checkout money to take or give as we're going to be modifying onCart

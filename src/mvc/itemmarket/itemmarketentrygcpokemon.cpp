@@ -109,8 +109,7 @@ int ItemMarketEntryGCPokemon::stackCount()
 
 void ItemMarketEntryGCPokemon::checkout() {
   if(!requestFilter() ||
-     !canCheckout() ||
-     onCart == 0)
+     !canCheckout())
     return;
 
   // Add in requested Pokemon
@@ -136,6 +135,7 @@ void ItemMarketEntryGCPokemon::checkout() {
       qDebug() << "Mon was not able to be added?";
   }
 
+  onCart = 0;
   player->coins -= cartWorth();
   onCartChanged();
 }
