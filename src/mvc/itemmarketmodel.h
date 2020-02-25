@@ -20,6 +20,7 @@
 #include <QString>
 #include <QAbstractListModel>
 #include <QVector>
+#include <QVariant>
 
 class ItemStorageBox;
 class Router;

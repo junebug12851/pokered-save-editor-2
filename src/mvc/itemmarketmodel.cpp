@@ -28,6 +28,7 @@
 #include "../bridge/router.h"
 #include "../data/db/gamecorner.h"
 #include "../data/file/savefile.h"
+#include "../data/file/expanded/savefileexpanded.h"
 #include "../data/file/expanded/fragments/itemstoragebox.h"
 
 ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
