@@ -26,7 +26,7 @@ ItemMarketEntryPlayerItem::ItemMarketEntryPlayerItem(ItemStorageBox* toBox,
     toBox(toBox),
     toItem(toItem)
 {
-
+  finishConstruction();
 }
 
 ItemMarketEntryPlayerItem::~ItemMarketEntryPlayerItem()

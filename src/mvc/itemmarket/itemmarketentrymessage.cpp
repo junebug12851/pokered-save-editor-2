@@ -19,7 +19,9 @@
 
 ItemMarketEntryMessage::ItemMarketEntryMessage(QString msg)
   : msg(msg)
-{}
+{
+  finishConstruction();
+}
 
 ItemMarketEntryMessage::~ItemMarketEntryMessage() {}
 

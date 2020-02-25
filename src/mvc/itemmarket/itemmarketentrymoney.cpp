@@ -20,7 +20,7 @@
 
 ItemMarketEntryMoney::ItemMarketEntryMoney()
 {
-
+  finishConstruction();
 }
 
 ItemMarketEntryMoney::~ItemMarketEntryMoney() {}

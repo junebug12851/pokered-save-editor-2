@@ -37,7 +37,9 @@ ItemMarketEntryGCPokemon::ItemMarketEntryGCPokemon(GameCornerDBEntry* toGameCorn
     toGameCorner(toGameCorner),
     party(party),
     storage(storage)
-{}
+{
+  finishConstruction();
+}
 
 ItemMarketEntryGCPokemon::~ItemMarketEntryGCPokemon() {}
 

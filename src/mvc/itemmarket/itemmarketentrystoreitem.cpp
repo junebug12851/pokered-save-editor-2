@@ -29,7 +29,7 @@ ItemMarketEntryStoreItem::ItemMarketEntryStoreItem(
     toBag(toBag),
     toBox(toBox)
 {
-
+  finishConstruction();
 }
 
 ItemMarketEntryStoreItem::~ItemMarketEntryStoreItem()

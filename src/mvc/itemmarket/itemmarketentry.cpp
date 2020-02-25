@@ -22,15 +22,7 @@ ItemMarketEntry::ItemMarketEntry(int compatMoneyCurrency, int compatBuyMode)
   : compatMoneyCurrency(compatMoneyCurrency),
     compatBuyMode(compatBuyMode)
 {
-  if(!instances.contains(whichType())) {
-    instances.insert(whichType(), QVector<ItemMarketEntry*>());
-    initOnce();
-  }
 
-  auto instArr = instances.value(whichType());
-  instArr.append(this);
-
-  instancesCombined.append(this);
 }
 
 ItemMarketEntry::~ItemMarketEntry()
@@ -44,6 +36,19 @@ ItemMarketEntry::~ItemMarketEntry()
 void ItemMarketEntry::initOnce()
 {
   //
+}
+
+void ItemMarketEntry::finishConstruction()
+{
+  if(!instances.contains(whichType())) {
+    instances.insert(whichType(), QVector<ItemMarketEntry*>());
+    initOnce();
+  }
+
+  auto instArr = instances.value(whichType());
+  instArr.append(this);
+
+  instancesCombined.append(this);
 }
 
 QString ItemMarketEntry::name()

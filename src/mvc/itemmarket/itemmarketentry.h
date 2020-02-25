@@ -76,6 +76,8 @@ public:
   // Called only for the first instance
   virtual void initOnce();
 
+  void finishConstruction();
+
   // Virtual Table for child classes
 
   // Usually never change
