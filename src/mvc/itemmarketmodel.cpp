@@ -31,12 +31,6 @@
 #include "../data/file/expanded/fragments/itemstoragebox.h"
 #include "../data/file/expanded/player/playerbasics.h"
 
-ItemMarketSelectEntryData::ItemMarketSelectEntryData(ItemStorageBox* toBox, Item* toItem, int onCart)
-  : onCart(onCart),
-    toBox(toBox),
-    toItem(toItem)
-{}
-
 ItemMarketSelectEntryData::ItemMarketSelectEntryData(ItemDBEntry* data)
   : toData(data)
 {}
@@ -49,23 +43,10 @@ ItemMarketSelectEntryData::ItemMarketSelectEntryData(PlayerBasics* data)
   : basics(data)
 {}
 
-ItemMarketSelectEntryData::ItemMarketSelectEntryData(QString msg)
-  : msg(msg)
-{}
-
 QString ItemMarketSelectEntryData::name(bool isMoneyCurrency)
 {
-  // An item the player has
-  if(toItem != nullptr) {
-    auto itemData = toItem->toItem();
-    if(itemData == nullptr)
-      return "";
-
-    return itemData->readable;
-  }
-
   // An item the player can buy
-  else if(toData != nullptr) {
+  if(toData != nullptr) {
     return toData->readable;
   }
 
@@ -81,19 +62,13 @@ QString ItemMarketSelectEntryData::name(bool isMoneyCurrency)
         : "Money";
   }
 
-  // A Text Message or some kind of error in whcih case this will suffice
-  return msg;
+  return "";
 }
 
 int ItemMarketSelectEntryData::amount(bool isMoneyCurrency)
 {
-  // An item the player has
-  if(toItem != nullptr) {
-    return toItem->amount;
-  }
-
   // Player Money
-  else if(basics != nullptr) {
+  if(basics != nullptr) {
     return (isMoneyCurrency)
         ? basics->money
         : basics->coins;
@@ -102,32 +77,10 @@ int ItemMarketSelectEntryData::amount(bool isMoneyCurrency)
   return 0;
 }
 
-int ItemMarketSelectEntryData::cartAmount()
-{
-  return onCart;
-}
-
-void ItemMarketSelectEntryData::setCartAmount(int val)
-{
-  if(val < 0)
-    val = 0;
-
-  this->onCart = val;
-}
-
 bool ItemMarketSelectEntryData::canSell()
 {
-  // An item the player has
-  if(toItem != nullptr) {
-    auto itemData = toItem->toItem();
-    if(itemData == nullptr)
-      return false;
-
-    return itemData->canSell();
-  }
-
   // An item the player can buy
-  else if(toData != nullptr) {
+  if(toData != nullptr) {
     return toData->canSell();
   }
 
@@ -141,20 +94,8 @@ bool ItemMarketSelectEntryData::canSell()
 
 int ItemMarketSelectEntryData::valueOne(bool isMoneyCurrency, bool isBuyMode)
 {
-  // An item the player has
-  if(toItem != nullptr) {
-    if(isMoneyCurrency && isBuyMode)
-      return toItem->buyPriceOneMoney();
-    else if(isMoneyCurrency && !isBuyMode)
-      return toItem->sellPriceOneMoney();
-    else if(!isMoneyCurrency && isBuyMode)
-      return toItem->buyPriceOneCoins();
-    else if(!isMoneyCurrency && !isBuyMode)
-      return toItem->sellPriceOneCoins();
-  }
-
   // An item the player can buy
-  else if(toData != nullptr) {
+  if(toData != nullptr) {
     if(isMoneyCurrency && isBuyMode)
       return toData->buyPriceMoney();
     else if(isMoneyCurrency && !isBuyMode)
@@ -188,20 +129,10 @@ int ItemMarketSelectEntryData::valueOne(bool isMoneyCurrency, bool isBuyMode)
   return 0;
 }
 
-int ItemMarketSelectEntryData::valueAll(bool isMoneyCurrency, bool isBuyMode)
-{
-  return valueOne(isMoneyCurrency, isBuyMode) * cartAmount();
-}
-
 int ItemMarketSelectEntryData::whichType()
 {
-  // An item the player has
-  if(toItem != nullptr) {
-    return TypePlayerItem;
-  }
-
   // An item the player can buy
-  else if(toData != nullptr) {
+  if(toData != nullptr) {
     return TypeStoreItem;
   }
 
@@ -371,10 +302,6 @@ void ItemMarketModel::checkout()
 
   // Process cart items
   for(auto el : itemListCache) {
-
-    // If there's none of this item on the cart then skip it
-    if(el->onCart == 0)
-      continue;
 
     int whichType = el->whichType();
 

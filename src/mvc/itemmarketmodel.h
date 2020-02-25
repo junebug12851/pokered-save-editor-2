@@ -32,33 +32,15 @@ class PlayerPokemon;
 
 struct ItemMarketSelectEntryData {
   enum WhichType {
-    TypePlayerItem = 0,
     TypeStoreItem,
     TypeGCPokemon,
     TypeCurrency,
-    TypeMessage
   };
 
-  ItemMarketSelectEntryData(ItemStorageBox* toBox, Item* toItem, int onCart = 0);
   ItemMarketSelectEntryData(ItemDBEntry* data);
   ItemMarketSelectEntryData(GameCornerDBEntry* data);
   ItemMarketSelectEntryData(PlayerBasics* data);
-  ItemMarketSelectEntryData(QString msg);
 
-  QString name(bool isMoneyCurrency);
-  int amount(bool isMoneyCurrency);
-  int cartAmount();
-  void setCartAmount(int val);
-  bool canSell();
-  int valueOne(bool isMoneyCurrency, bool isBuyMode);
-  int valueAll(bool isMoneyCurrency, bool isBuyMode);
-  int whichType();
-
-  int onCart = 0;
-  QString msg = "";
-
-  ItemStorageBox* toBox = nullptr;
-  Item* toItem = nullptr;
   ItemDBEntry* toData = nullptr;
   GameCornerDBEntry* toGameCorner = nullptr;
   PlayerBasics* basics = nullptr;
