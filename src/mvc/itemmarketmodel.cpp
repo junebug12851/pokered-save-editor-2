@@ -31,21 +31,12 @@
 #include "../data/file/expanded/fragments/itemstoragebox.h"
 #include "../data/file/expanded/player/playerbasics.h"
 
-ItemMarketSelectEntryData::ItemMarketSelectEntryData(GameCornerDBEntry* data)
-  : toGameCorner(data)
-{}
-
 ItemMarketSelectEntryData::ItemMarketSelectEntryData(PlayerBasics* data)
   : basics(data)
 {}
 
 QString ItemMarketSelectEntryData::name(bool isMoneyCurrency)
 {
-  // A pokemon the player can buy
-  else if(toGameCorner != nullptr) {
-    return toGameCorner->name;
-  }
-
   // Player Money
   else if(basics != nullptr) {
     return (isMoneyCurrency)
@@ -80,14 +71,6 @@ bool ItemMarketSelectEntryData::canSell()
 
 int ItemMarketSelectEntryData::valueOne(bool isMoneyCurrency, bool isBuyMode)
 {
-  // A pokemon the player can buy
-  else if(toGameCorner != nullptr) {
-    if(!isMoneyCurrency && isBuyMode)
-      return toGameCorner->price;
-    else if(!isMoneyCurrency && !isBuyMode)
-      return toGameCorner->price / 2;
-  }
-
   // Player Money
   else if(basics != nullptr) {
     if(isMoneyCurrency && isBuyMode)
@@ -105,18 +88,10 @@ int ItemMarketSelectEntryData::valueOne(bool isMoneyCurrency, bool isBuyMode)
 
 int ItemMarketSelectEntryData::whichType()
 {
-  // A pokemon the player can buy
-  else if(toGameCorner != nullptr) {
-    return TypeGCPokemon;
-  }
-
   // Player Money
   else if(basics != nullptr) {
     return TypeCurrency;
   }
-
-  // A Text Message or some kind of error in whcih case this will suffice
-  return TypeMessage;
 }
 
 ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
@@ -299,40 +274,6 @@ void ItemMarketModel::checkout()
         basics->money += el->valueAll(isMoneyCurrency, isBuyMode);
         basics->coins -= el->valueAll(isMoneyCurrency, isBuyMode);
       }
-    }
-
-    // Buying Pokemon with coins from the Game Corner mimicking the gen1 games
-    else if(whichType == ItemMarketSelectEntryData::TypeGCPokemon) {
-      // Buy Pokemon with Coins
-      if(isBuyMode && !isMoneyCurrency) {
-
-        bool success = false;
-
-        auto mon = PokemonBox::newPokemon(el->toGameCorner->toPokemon, basics);
-        mon->level = *el->toGameCorner->level;
-        mon->update(true, true, true, true);
-
-        // Space in party ?
-        if(playerPokemon->partyCount() < playerPokemon->partyMax()) {
-          playerPokemon->party.append(PokemonParty::convertToParty(mon));
-          delete mon;
-          success = true;
-        }
-
-        // Space in box
-        else if(storage->freeSpace() != nullptr) {
-          storage->freeSpace()->pokemon.append(mon);
-          success = true;
-        }
-
-        if(success)
-          basics->coins -= el->valueAll(isMoneyCurrency, isBuyMode);
-      }
-      // Pokemon cannot be bought with anything other than coins to keep
-      // to keep compatibility with the games. They also cannot be sold back
-      // for ethical reasons nor can they be bought in money, again, ethical
-      // reasons. I don't want a PR nightmare and have this whole thing get
-      // shutdown by GameFreak because of a PR nightmare.
     }
   }
 }

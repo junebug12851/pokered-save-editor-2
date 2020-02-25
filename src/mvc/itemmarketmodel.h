@@ -32,14 +32,11 @@ class PlayerPokemon;
 
 struct ItemMarketSelectEntryData {
   enum WhichType {
-    TypeGCPokemon,
     TypeCurrency,
   };
 
-  ItemMarketSelectEntryData(GameCornerDBEntry* data);
   ItemMarketSelectEntryData(PlayerBasics* data);
 
-  GameCornerDBEntry* toGameCorner = nullptr;
   PlayerBasics* basics = nullptr;
 };
 

@@ -103,6 +103,7 @@ HEADERS += \
   src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
   src/mvc/itemmarket/itemmarketentry.h \
+  src/mvc/itemmarket/itemmarketentrygcpokemon.h \
   src/mvc/itemmarket/itemmarketentrymessage.h \
   src/mvc/itemmarket/itemmarketentryplayeritem.h \
   src/mvc/itemmarket/itemmarketentrystoreitem.h \
@@ -209,6 +210,7 @@ SOURCES += \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
   src/mvc/itemmarket/itemmarketentry.cpp \
+  src/mvc/itemmarket/itemmarketentrygcpokemon.cpp \
   src/mvc/itemmarket/itemmarketentrymessage.cpp \
   src/mvc/itemmarket/itemmarketentryplayeritem.cpp \
   src/mvc/itemmarket/itemmarketentrystoreitem.cpp \
