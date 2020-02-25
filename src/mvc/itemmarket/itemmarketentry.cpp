@@ -14,6 +14,8 @@
   * limitations under the License.
 */
 
+#include <QDebug>
+
 #include "./itemmarketentry.h"
 #include "../itemmarketmodel.h"
 #include "../../data/file/expanded/player/playerbasics.h"
@@ -53,6 +55,9 @@ void ItemMarketEntry::finishConstruction()
 
 QString ItemMarketEntry::name()
 {
+  if(whichType() == "storeItem")
+    qDebug() << "At a store Item";
+
   if(!cache.contains(HashKeyName))
     cache.insert(HashKeyName, _name());
 
@@ -100,8 +105,8 @@ bool ItemMarketEntry::requestFilter()
   // Here we do a hack, compat values line up with bool values.
   // CompatNo = 0 or false and CompatYes = 1 or true
   // Compare those bool values and check they match the target
-  bool _isMoneyCurrency = ((bool)compatMoneyCurrency) == *isMoneyCurrency;
-  bool _isBuyMode = ((bool)compatBuyMode) == *isBuyMode;
+  bool _isMoneyCurrency = ((bool)compatMoneyCurrency) == (*isMoneyCurrency);
+  bool _isBuyMode = ((bool)compatBuyMode) == (*isBuyMode);
 
   // Now if either one was CompatEither, they would have yielded incorrect
   // results. We auto true any that is compat either.

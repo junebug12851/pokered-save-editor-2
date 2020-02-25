@@ -59,7 +59,7 @@ Page {
       }
 
       Text {
-        // Sell with Money
+        // Sell with Coins
         visible: brg.marketModel.whichMode == 3
         anchors.centerIn: parent
         verticalAlignment: Text.AlignVCenter
@@ -92,7 +92,7 @@ Page {
         width: parent.width
 
         Text {
-          visible: dataValidItem && dataWhichType === "msg"
+          visible: dataWhichType === "msg"
           text: dataName
           font.pixelSize: 16
           font.bold: true
@@ -105,20 +105,19 @@ Page {
           Layout.alignment: Qt.AlignHCenter
 
           Text {
-            visible: dataValidItem
             text: dataName
             font.pixelSize: 14
           }
 
           Text {
             // Only when selling
-            visible: !brg.marketModel.isBuyMode && dataValidItem
+            visible: !brg.marketModel.isBuyMode
             text: dataInStockCount
             font.pixelSize: 14
           }
 
           SpinBox {
-            visible: (dataCanSell || brg.marketModel.isBuyMode) && dataValidItem
+            visible: dataCanSell || brg.marketModel.isBuyMode
             onValueChanged: dataCartCount = value;
             Component.onCompleted: value = dataCartCount;
             editable: true
@@ -127,7 +126,6 @@ Page {
           }
 
           Text {
-            visible: dataValidItem
             text: dataCartWorth
             font.pixelSize: 14
           }

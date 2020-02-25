@@ -125,7 +125,7 @@ int ItemDBEntry::sellPriceCoins()
 // Non-sellable items are considered key items and must be tossed
 bool ItemDBEntry::canSell()
 {
-  return price == true;
+  return price.has_value();
 }
 
 bool ItemDBEntry::isGameCornerExclusive()
