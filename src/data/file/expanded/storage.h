@@ -24,6 +24,7 @@ class ItemStorageBox;
 class PokemonStorageSet;
 class PokemonStorageBox;
 class PlayerBasics;
+class PokemonBox;
 
 // 2 Sets of 6 Pokemon Boxes
 constexpr var8 maxPokemonStorageSets = 2;
@@ -56,6 +57,9 @@ public:
   Q_INVOKABLE int boxCount();
   Q_INVOKABLE PokemonStorageBox* boxAt(int ind);
   Q_INVOKABLE void boxSwap(int from, int to);
+
+  PokemonStorageBox* freeSpace();
+  bool depositPokemon(PokemonBox* pokemon);
 
 signals:
   void itemsChanged();

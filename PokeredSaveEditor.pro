@@ -102,6 +102,8 @@ HEADERS += \
   src/bridge/settings.h \
   src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
+  src/mvc/itemmarket/itemmarketentry.h \
+  src/mvc/itemmarket/itemmarketentrymessage.h \
   src/mvc/itemmarketmodel.h \
   src/mvc/itemselectmodel.h \
   src/mvc/itemstoragemodel.h \
@@ -204,6 +206,8 @@ SOURCES += \
   src/data/db/trades.cpp \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
+  src/mvc/itemmarket/itemmarketentry.cpp \
+  src/mvc/itemmarket/itemmarketentrymessage.cpp \
   src/mvc/itemmarketmodel.cpp \
   src/mvc/itemselectmodel.cpp \
   src/mvc/itemstoragemodel.cpp \

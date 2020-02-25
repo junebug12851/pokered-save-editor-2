@@ -156,3 +156,28 @@ void PokemonParty::copyFrom(PokemonBox* pkmn)
   PokemonBox::copyFrom(pkmn);
   regenStats();
 }
+
+PokemonBox* PokemonParty::convertToBox(PokemonParty* data)
+{
+  auto ret = new PokemonBox;
+  ret->copyFrom(data);
+  delete data;
+
+  return ret;
+}
+
+PokemonParty* PokemonParty::convertToParty(PokemonBox* data)
+{
+  auto ret = new PokemonParty;
+  ret->copyFrom(data);
+  delete data;
+
+  return ret;
+}
+
+PokemonBox* PokemonParty::toBoxData()
+{
+  auto ret = new PokemonBox;
+  ret->copyFrom(this);
+  return ret;
+}

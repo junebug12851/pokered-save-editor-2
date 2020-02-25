@@ -54,6 +54,10 @@ public:
 
   virtual void copyFrom(PokemonBox* pkmn);
 
+  static PokemonBox* convertToBox(PokemonParty* data);
+  static PokemonParty* convertToParty(PokemonBox* data);
+  PokemonBox* toBoxData();
+
 signals:
   void maxHPChanged();
   void attackChanged();

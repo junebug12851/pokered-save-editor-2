@@ -102,6 +102,34 @@ void Storage::boxSwap(int from, int to)
   pokemonChanged();
 }
 
+PokemonStorageBox* Storage::freeSpace()
+{
+  if(!boxesFormatted) {
+    if(boxAt(curBox)->pokemonCount() < boxAt(curBox)->pokemonMax())
+      return boxAt(curBox);
+    else
+      return nullptr;
+  }
+
+  for(int i = 0; i < boxCount(); i++) {
+    if(boxAt(i)->pokemonCount() < boxAt(i)->pokemonMax())
+      return boxAt(curBox);;
+  }
+
+  return nullptr;
+}
+
+bool Storage::depositPokemon(PokemonBox* pokemon)
+{
+  auto storage = freeSpace();
+  if(storage == nullptr)
+    return false;
+
+  storage->pokemon.append(pokemon);
+  storage->pokemonChanged();
+  return true;
+}
+
 void Storage::load(SaveFile* saveFile)
 {
   reset();
