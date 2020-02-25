@@ -48,7 +48,7 @@ QString ItemMarketEntryMessage::_whichType()
   return type;
 }
 
-int ItemMarketEntryMessage::onCartMax()
+int ItemMarketEntryMessage::onCartLeft()
 {
   return 0;
 }

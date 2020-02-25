@@ -161,7 +161,7 @@ QString ItemMarketEntryStoreItem::_whichType()
 // This is a bit tricky because we have to see how many the player can buy if
 // they already have the item and, regardless, how many stacks they can
 // accumulate
-int ItemMarketEntryStoreItem::onCartMax()
+int ItemMarketEntryStoreItem::onCartLeft()
 {
   if(!requestFilter())
     return 0;
@@ -172,23 +172,28 @@ int ItemMarketEntryStoreItem::onCartMax()
   // Calculate stacks others take up
   int totalStackFromOthers = totalStackCount() - stk.full;
 
+  // Calculate partial stacks left
+  int partialStackBagLeft = stk.partialBag;
+  if(stk.partialElBag != nullptr)
+    partialStackBagLeft += stk.partialElBag->amount;
+
+  partialStackBagLeft = 99 - partialStackBagLeft;
+
+  int partialStackBoxLeft = stk.partialBox;
+  if(stk.partialElBag != nullptr)
+    partialStackBoxLeft += stk.partialElBox->amount;
+
+  partialStackBoxLeft = 99 - partialStackBoxLeft;
+
+  // Calculate stack spaces used and free
   int combinedBoxSpace = toBox->itemsMax() + toBag->itemsMax();
   int combinedBoxUsed = toBox->itemsCount() + toBag->itemsCount();
 
   // Stack space left
   int stackSpaceLeft = combinedBoxSpace - combinedBoxUsed - totalStackFromOthers;
 
-  // If there's no more stack space, allow whatever partial stack may be there
-  // to fill up
-  if(stackSpaceLeft <= 0)
-    return (99 - stk.partialBag) + (99 - stk.partialBox);
-
-  // If asking for too many stacks, allow only to fill what's left
-  else if(stk.full > stackSpaceLeft)
-    return (stackSpaceLeft * 99) + (99 - stk.partialBag) + (99 - stk.partialBox);
-
-  // Otherwise allow as requested
-  return (stk.full * 99) + (99 - stk.partialBag) + (99 - stk.partialBox);
+  // Calculate items remaining and return that
+  return ((stackSpaceLeft - stk.full) * 99) + (99 - partialStackBagLeft) + (99 - partialStackBoxLeft);
 }
 
 int ItemMarketEntryStoreItem::stackCount()
@@ -206,7 +211,10 @@ void ItemMarketEntryStoreItem::checkout()
      onCart == 0)
     return;
 
+  // Copy checkout money to take or give as we're going to be modifying onCart
   int origCartWorth = cartWorth();
+
+  // Calculate stack information
   auto stk = calculateStacks();
 
   // Add what we can to the current stack if there is one
@@ -223,9 +231,12 @@ void ItemMarketEntryStoreItem::checkout()
   onCart -= stk.partialBag;
   onCart -= stk.partialBox;
 
+  // Stack item's we've completed used as an offset for box if needed
   int stkFullUsed = 0;
 
   // Create stacks for the rest. Start with the bag
+  // Stop when we've processed all the stack items or when the cart is empty
+  // or when the bag fills up
   for(int i = 0; i < stk.full && onCart > 0 && (toBag->itemsCount() < toBag->itemsMax()); i++) {
     if(onCart > 99) {
       toBag->items.append(new Item(data->ind, 99));
@@ -246,6 +257,8 @@ void ItemMarketEntryStoreItem::checkout()
   stk.full -= stkFullUsed;
 
   // Create stacks for the rest. Continue with box
+  // Stop when we've processed all the stack items or when the cart is empty
+  // or when the box fills up
   for(int i = 0; i < stk.full && onCart > 0 && (toBox->itemsCount() < toBox->itemsMax()); i++) {
     if(onCart > 99) {
       toBox->items.append(new Item(data->ind, 99));

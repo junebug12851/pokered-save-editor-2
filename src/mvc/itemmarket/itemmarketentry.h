@@ -33,7 +33,7 @@ class ItemMarketEntry : public QObject
   Q_PROPERTY(bool canCheckout READ canCheckout NOTIFY onCartChanged)
   Q_PROPERTY(int cartWorth READ cartWorth NOTIFY onCartChanged)
   Q_PROPERTY(int stackCount READ stackCount NOTIFY onCartChanged)
-  Q_PROPERTY(int onCartMax READ onCartMax NOTIFY onCartChanged)
+  Q_PROPERTY(int onCartLeft READ onCartLeft NOTIFY onCartChanged)
   Q_PROPERTY(int totalStackCount READ totalStackCount NOTIFY onCartChanged)
 
   // These do not change, they depend on the mode but if the mode changes they
@@ -106,10 +106,8 @@ public:
   // consuming existing stack space.
   virtual int stackCount() = 0;
 
-  // Maximum that can be placed on the cart
-  // -------- This is wrong, it needs to be renamed to onCartLeft. It counts
-  // down and when reaches zero no more items can be placed
-  virtual int onCartMax() = 0;
+  // Left that can be placed on the cart
+  virtual int onCartLeft() = 0;
 
   // Tools for the child class to leverage
   bool requestFilter();

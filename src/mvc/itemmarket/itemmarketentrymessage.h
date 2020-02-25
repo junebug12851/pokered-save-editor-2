@@ -35,7 +35,7 @@ public:
   virtual bool _canSell() override;
   virtual int _itemWorth() override;
   virtual QString _whichType() override;
-  virtual int onCartMax() override;
+  virtual int onCartLeft() override;
   virtual int stackCount() override;
 
 public slots:

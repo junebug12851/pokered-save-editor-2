@@ -87,12 +87,12 @@ QString ItemMarketEntryPlayerItem::_whichType()
   return type;
 }
 
-int ItemMarketEntryPlayerItem::onCartMax()
+int ItemMarketEntryPlayerItem::onCartLeft()
 {
   if(!requestFilter())
     return 0;
 
-  return toItem->amount;
+  return toItem->amount - onCart;
 }
 
 int ItemMarketEntryPlayerItem::stackCount()

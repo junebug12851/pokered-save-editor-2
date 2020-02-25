@@ -128,7 +128,7 @@ bool ItemMarketEntry::canCheckout()
   if(!requestFilter())
     return false;
 
-  return onCart < onCartMax();
+  return onCartLeft() >= 0;
 }
 
 void ItemMarketEntry::setCartCount(int val)
