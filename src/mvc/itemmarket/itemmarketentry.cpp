@@ -146,8 +146,13 @@ unsigned int ItemMarketEntry::totalWorth()
 {
   unsigned int ret = 0;
 
-  for(auto el : instancesCombined)
+  for(auto el : instancesCombined) {
+    // Again, skip if we're selling coins to money
+    if(!(*isBuyMode) && !(*isMoneyCurrency) && el->whichType() == "money")
+      continue;
+
     ret += el->cartWorth();
+  }
 
   return ret;
 }

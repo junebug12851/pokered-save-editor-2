@@ -194,6 +194,13 @@ int ItemMarketModel::totalCartCount()
   int ret = 0;
 
   for(auto el : itemListCache) {
+
+    // If your selling coins back to get money, this kind of throws everything
+    // off a bit as 2 different currencies are being mixed in. We act like
+    // it's not on the cart in the total for simplicity.
+    if(!isBuyMode && !isMoneyCurrency && el->whichType() == "money")
+      continue;
+
     ret += el->onCart;
   }
 
@@ -389,6 +396,10 @@ void ItemMarketModel::pageOpening(QString path)
 
   // Re-Build List to account for changes
   isBuyMode = false;
+  isBuyModeChanged();
+
   isMoneyCurrency = true;
-  reUpdateAll();
+  isMoneyCurrencyChanged();
+
+  //reUpdateAll();
 }

@@ -104,6 +104,15 @@ Page {
           return "?"
         }
 
+        function getTo() {
+          if(dataWhichType === "playerItem")
+            return dataInStockCount;
+          else if(dataWhichType === "money")
+            return 9999;
+
+          return 99;
+        }
+
         Text {
           visible: dataWhichType === "msg"
           Layout.alignment: Qt.AlignHCenter
@@ -175,6 +184,7 @@ Page {
             Component.onCompleted: value = dataCartCount;
             editable: true
             from: 0
+            to: getTo()
             inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
             //width: font.pixelSize * 5
             implicitWidth: font.pixelSize * 10
