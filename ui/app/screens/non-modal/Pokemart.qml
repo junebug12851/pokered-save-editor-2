@@ -103,72 +103,85 @@ Page {
         }
 
         Rectangle {
+          id: rowContainer
           visible: dataWhichType !== "msg"
           Layout.alignment: Qt.AlignHCenter
-          width: 300
+          width: 1
           height: 50
 
-          RowLayout {
-            anchors.fill: parent
-            spacing: 15
+          Text {
+            anchors.top: (inventoryAmount.visible)
+                         ? inventoryAmount.top
+                         : cartAmount.top
+            anchors.right: (inventoryAmount.visible)
+                           ? inventoryAmount.left
+                           : cartAmount.left
+            anchors.rightMargin: (inventoryAmount.visible)
+                                 ? font.pixelSize / 1
+                                 : font.pixelSize / 4
+            anchors.bottom: (inventoryAmount.visible)
+                            ? inventoryAmount.bottom
+                            : cartAmount.bottom
 
-            Text {
-              text: dataName
-              font.pixelSize: 14
-              Layout.fillWidth: true
-              Layout.fillHeight: true
-              Layout.alignment: Qt.AlignHCenter
-              horizontalAlignment: Text.AlignRight
-              verticalAlignment: Text.AlignVCenter
+            text: dataName
+            font.pixelSize: 14
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignRight
+            verticalAlignment: Text.AlignVCenter
 
-              //topPadding: 15
-            }
-
-            Text {
-              // Only when selling
-              visible: !brg.marketModel.isBuyMode
-              text: dataInStockCount
-              font.pixelSize: 14
-              Layout.fillHeight: true
-              Layout.alignment: Qt.AlignHCenter
-              width: font.pixelSize * 2
-              horizontalAlignment: Text.AlignRight
-              verticalAlignment: Text.AlignVCenter
-
-              //topPadding: 15
-            }
-
-            SpinBox {
-              enabled: dataCanSell || brg.marketModel.isBuyMode
-              onValueChanged: dataCartCount = value;
-              Component.onCompleted: value = dataCartCount;
-              editable: true
-              from: 0
-              inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
-              //width: font.pixelSize * 5
-              implicitWidth: font.pixelSize * 10
-              //Layout.fillHeight: true
-              Layout.alignment: Qt.AlignCenter | Qt.AlignVCenter
-            }
-
-            Text {
-              text: (dataCartWorth <= 0)
-                    ? " "
-                    : dataCartWorth
-              font.pixelSize: 14
-              Layout.fillHeight: true
-              Layout.fillWidth: true
-              Layout.alignment: Qt.AlignVCenter
-              horizontalAlignment: Text.AlignLeft
-              verticalAlignment: Text.AlignVCenter
-
-              //topPadding: 15
-            }
+            //topPadding: 15
           }
-        }
 
-        RowLayout {
-          visible: false
+          Text {
+            id: inventoryAmount
+
+            anchors.top: cartAmount.top
+            anchors.right: cartAmount.left
+            anchors.rightMargin: font.pixelSize / 4
+            anchors.bottom: cartAmount.bottom
+
+            // Only when selling
+            visible: !brg.marketModel.isBuyMode
+            text: dataInStockCount.toString().padStart(2, " ")
+            font.pixelSize: 14
+            width: (dataWhichType === "money")
+                   ? font.pixelSize * 3.5
+                   : font.pixelSize * 1
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+
+            //topPadding: 15
+          }
+
+          SpinBox {
+            id: cartAmount
+            anchors.centerIn: parent
+
+            enabled: dataCanSell || brg.marketModel.isBuyMode
+            onValueChanged: dataCartCount = value;
+            Component.onCompleted: value = dataCartCount;
+            editable: true
+            from: 0
+            inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
+            //width: font.pixelSize * 5
+            implicitWidth: font.pixelSize * 10
+          }
+
+          Text {
+            anchors.top: cartAmount.top
+            anchors.left: cartAmount.right
+            anchors.leftMargin: font.pixelSize / 4
+            anchors.bottom: cartAmount.bottom
+
+            text: (dataCartWorth <= 0)
+                  ? " "
+                  : dataCartWorth
+            font.pixelSize: 14
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+
+            //topPadding: 15
+          }
         }
 
         Text {

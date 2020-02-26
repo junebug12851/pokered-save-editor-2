@@ -55,9 +55,6 @@ void ItemMarketEntry::finishConstruction()
 
 QString ItemMarketEntry::name()
 {
-  if(whichType() == "storeItem")
-    qDebug() << "At a store Item";
-
   if(!cache.contains(HashKeyName))
     cache.insert(HashKeyName, _name());
 
