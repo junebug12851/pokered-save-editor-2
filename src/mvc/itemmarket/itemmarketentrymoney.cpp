@@ -31,10 +31,7 @@ QString ItemMarketEntryMoney::_name()
   if(!requestFilter())
     return "";
 
-  if(*isBuyMode)
-    return "Coins";
-
-  return   "Money";
+  return   "Coins";
 }
 
 int ItemMarketEntryMoney::_inStockCount()
@@ -42,10 +39,7 @@ int ItemMarketEntryMoney::_inStockCount()
   if(!requestFilter())
     return 0;
 
-  if(*isBuyMode)
-    return player->coins;
-
-  return player->money;
+  return player->coins;
 }
 
 bool ItemMarketEntryMoney::_canSell()
@@ -59,9 +53,9 @@ int ItemMarketEntryMoney::_itemWorth()
     return 0;
 
   if(*isBuyMode)
-    return GameCornerDB::sellPrice;
+    return GameCornerDB::buyPrice;
 
-  return GameCornerDB::buyPrice;
+  return GameCornerDB::sellPrice;
 }
 
 QString ItemMarketEntryMoney::_whichType()
@@ -75,7 +69,7 @@ int ItemMarketEntryMoney::onCartLeft()
     return 0;
 
   if(*isBuyMode)
-    return player->money - onCart;
+    return 9999 - onCart;
 
   return player->coins - onCart;
 }

@@ -29,6 +29,7 @@
 #include "../data/db/gamecorner.h"
 #include "../data/file/savefile.h"
 #include "../data/file/expanded/savefileexpanded.h"
+#include "../data/file/expanded/player/playerbasics.h"
 #include "../data/file/expanded/fragments/itemstoragebox.h"
 
 ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
@@ -250,7 +251,7 @@ void ItemMarketModel::buildPlayerItemList()
 {
   clearList();
 
-  if(!isMoneyCurrency) {
+  if(!isMoneyCurrency && (basics->coins > 0)) {
     itemListCache.append(new ItemMarketEntryMessage("Money Exchange"));
     itemListCache.append(new ItemMarketEntryMoney);
   }

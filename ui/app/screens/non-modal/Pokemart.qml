@@ -91,6 +91,19 @@ Page {
         property bool isLast: index+1 < marketView.count ? false : true
         width: parent.width
 
+        function curSym() {
+          if(dataMoneyCurrency)
+            return "₽"
+          else if(!dataMoneyCurrency && dataWhichType !== "money")
+            return "⭘"
+          else if(!dataMoneyCurrency && dataWhichType === "money" && dataBuyMode)
+            return "⭘"
+          else if(!dataMoneyCurrency && dataWhichType === "money" && !dataBuyMode)
+            return "₽"
+
+          return "?"
+        }
+
         Text {
           visible: dataWhichType === "msg"
           Layout.alignment: Qt.AlignHCenter
@@ -142,7 +155,7 @@ Page {
 
             // Only when selling
             visible: !brg.marketModel.isBuyMode
-            text: dataInStockCount.toString().padStart(2, " ")
+            text: "x" + dataInStockCount.toString().padStart(2, " ")
             font.pixelSize: 14
             width: (dataWhichType === "money")
                    ? font.pixelSize * 3.5
@@ -175,7 +188,7 @@ Page {
 
             text: (dataCartWorth <= 0)
                   ? " "
-                  : dataCartWorth
+                  : curSym() + dataCartWorth
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
@@ -202,14 +215,20 @@ Page {
       Material.foreground: brg.settings.textColorLight
       Material.background: brg.settings.accentColor
 
+      function curSym() {
+        if(brg.marketModel.isMoneyCurrency === true)
+          return "₽"
+        else
+          return "⭘"
+      }
+
       Text {
         // Sell with Money
-        visible: brg.marketModel.whichMode == 3
         anchors.centerIn: parent
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "On Cart: " + brg.marketModel.totalCartCount + " (" + brg.marketModel.totalCartWorth + ")";
+        text: "On Cart: x" + brg.marketModel.totalCartCount + " ( " + footer.curSym() + brg.marketModel.totalCartWorth + " )";
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }
