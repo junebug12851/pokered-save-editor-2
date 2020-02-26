@@ -56,7 +56,7 @@ struct ItemDBEntry {
   std::optional<var8> hm; // HM Number if present
 
   // Item Prices if available
-  std::optional<var8> price;
+  std::optional<var16> price;
   int buyPriceMoney();
   int buyPriceCoins();
   int sellPriceMoney();
