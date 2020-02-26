@@ -214,6 +214,14 @@ int ItemMarketModel::whichMode()
   return 0;
 }
 
+bool ItemMarketModel::vendorListItem(ItemDBEntry* el)
+{
+  if(isMoneyCurrency)
+    return el->canSell() && (el->buyPriceMoney() > 0) && !el->isGameCornerExclusive();
+
+  return el->canSell() && (el->buyPriceCoins() > 0) && !el->isGameCornerExclusive();
+}
+
 void ItemMarketModel::checkout()
 {
   // Perform checkout
@@ -315,22 +323,8 @@ void ItemMarketModel::buildMartItemList()
 
     for(auto el : GameCornerDB::store) {
       if(el->type == "pokemon")
-        tmpGC.append(el);
+        itemListCache.append(new ItemMarketEntryGCPokemon(el, playerPokemon, storage));
     }
-
-    std::sort(
-          tmpGC.begin(),
-          tmpGC.end(),
-          [&collator](const GameCornerDBEntry* item1, const GameCornerDBEntry* item2)
-    {
-      return collator.compare(item1->name, item2->name) < 0;
-    });
-
-    for(auto el : tmpGC) {
-      itemListCache.append(new ItemMarketEntryGCPokemon(el, playerPokemon, storage));
-    }
-
-    tmpGC.clear();
   }
 
   /////////////////////////////////////////////////
@@ -338,38 +332,7 @@ void ItemMarketModel::buildMartItemList()
   itemListCache.append(new ItemMarketEntryMessage("Normal Items"));
 
   for(auto el : ItemsDB::store) {
-    if(!isMoneyCurrency) {
-      if(!el->once && !el->glitch && el->canSell() && !el->isGameCornerExclusive())
-        tmp.append(el);
-    }
-    else if(!el->once && !el->glitch && el->canSell())
-      tmp.append(el);
-  }
-
-  std::sort(
-        tmp.begin(),
-        tmp.end(),
-        [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
-  {
-    return collator.compare(item1->readable, item2->readable) < 0;
-  });
-
-  for(auto el : tmp) {
-    itemListCache.append(new ItemMarketEntryStoreItem(el, itemBag, itemStorage));
-  }
-
-  tmp.clear();
-
-  ////////////////////////////////////////////////////
-
-  itemListCache.append(new ItemMarketEntryMessage("Special Items"));
-
-  for(auto el : ItemsDB::store) {
-    if(!isMoneyCurrency) {
-      if(el->once && !el->glitch && el->canSell() && !el->isGameCornerExclusive())
-        tmp.append(el);
-    }
-    else if(el->once && !el->glitch && el->canSell())
+    if(!el->once && !el->glitch && vendorListItem(el))
       tmp.append(el);
   }
 
@@ -392,11 +355,7 @@ void ItemMarketModel::buildMartItemList()
   itemListCache.append(new ItemMarketEntryMessage("Glitch Items"));
 
   for(auto el : ItemsDB::store) {
-    if(!isMoneyCurrency) {
-      if(el->glitch && el->canSell() && !el->isGameCornerExclusive())
-        tmp.append(el);
-    }
-    else if(el->glitch && el->canSell())
+    if(el->glitch && vendorListItem(el))
       tmp.append(el);
   }
 

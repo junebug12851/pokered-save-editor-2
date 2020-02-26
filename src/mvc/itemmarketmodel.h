@@ -29,6 +29,7 @@ class Storage;
 class PlayerPokemon;
 class ItemMarketEntry;
 class SaveFile;
+class ItemDBEntry;
 
 class ItemMarketModel : public QAbstractListModel
 {
@@ -122,6 +123,7 @@ public:
   int whichMode();
 
   // Re-create list cache methods
+  bool vendorListItem(ItemDBEntry* el);
   void clearList();
   void buildList();
   void buildPlayerItemList();

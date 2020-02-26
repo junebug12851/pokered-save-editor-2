@@ -56,6 +56,16 @@
     ]
   },
   {
+    "name": "Clefable",
+    "type": "pokemon",
+    "options": [
+      {
+        "level": 24,
+        "price": 2880
+      }
+    ]
+  },
+  {
     "name": "Nidorina",
     "type": "pokemon",
     "options": [
@@ -162,16 +172,6 @@
       {
         "level": 30,
         "price": 6500
-      }
-    ]
-  },
-  {
-    "name": "Clefable",
-    "type": "pokemon",
-    "options": [
-      {
-        "level": 24,
-        "price": 2880
       }
     ]
   },

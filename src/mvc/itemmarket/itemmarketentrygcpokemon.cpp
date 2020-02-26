@@ -48,7 +48,7 @@ QString ItemMarketEntryGCPokemon::_name()
   if(!requestFilter())
     return "";
 
-  return toGameCorner->name;
+  return toGameCorner->name + " Lv." + QString::number(*toGameCorner->level);
 }
 
 int ItemMarketEntryGCPokemon::_inStockCount()

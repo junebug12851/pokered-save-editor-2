@@ -41,7 +41,7 @@ GameCornerDBEntry::GameCornerDBEntry(QJsonValue& data)
 }
 
 void GameCornerDBEntry::deepLink() {
-  if(type != "pokemon" ||
+  if(type != "pokemon" &&
      type != "tm")
     return;
 
@@ -83,19 +83,24 @@ void GameCornerDB::load()
   // Go through each item
   for(QJsonValue jsonEntry : jsonData->array())
   {
-    // Create a new item entry
-    auto entry = new GameCornerDBEntry(jsonEntry);
+    if(jsonEntry["options"].isArray()) {
+      for(QJsonValue option : jsonEntry["options"].toArray()) {
 
-    if(entry->type == "pokemon") {
-      for(QJsonValue option : jsonEntry["options"].toArray())
-      {
+        // Create a new item entry
+        auto entry = new GameCornerDBEntry(jsonEntry);
         entry->level = option["level"].toDouble();
         entry->price = option["price"].toDouble();
+
+        // Add to array
+        store.append(entry);
       }
     }
+    else {
+      auto entry = new GameCornerDBEntry(jsonEntry);
 
-    // Add to array
-    store.append(entry);
+      // Add to array
+      store.append(entry);
+    }
   }
 
   delete jsonData;

@@ -298,7 +298,7 @@
   {
     "name": "PP UP 2",
     "ind": 50,
-    "once": true,
+    "glitch": true,
     "readable": "PP Up 2",
     "price": 9800
   },
