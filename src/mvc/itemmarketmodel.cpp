@@ -266,7 +266,7 @@ void ItemMarketModel::buildPlayerItemList()
 {
   clearList();
 
-  if(!isMoneyCurrency && (basics->coins > 0)) {
+  if(!isMoneyCurrency) {
     itemListCache.append(new ItemMarketEntryMessage("Money Exchange"));
     itemListCache.append(new ItemMarketEntryMoney);
   }

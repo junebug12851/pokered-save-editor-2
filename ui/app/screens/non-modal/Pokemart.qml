@@ -107,8 +107,10 @@ Page {
         function getTo() {
           if(dataWhichType === "playerItem")
             return dataInStockCount;
-          else if(dataWhichType === "money")
+          else if(dataWhichType === "money" && dataBuyMode)
             return 9999;
+          else if(dataWhichType === "money" && !dataBuyMode)
+            return dataInStockCount;
 
           return 99;
         }
@@ -238,7 +240,9 @@ Page {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "On Cart: x" + brg.marketModel.totalCartCount + " ( " + footer.curSym() + brg.marketModel.totalCartWorth + " )";
+        text: (brg.marketModel.totalCartCount <= 0)
+              ? ""
+              : "On Cart: x" + brg.marketModel.totalCartCount + " ( " + footer.curSym() + brg.marketModel.totalCartWorth + " )";
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }
