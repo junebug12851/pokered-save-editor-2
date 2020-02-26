@@ -144,11 +144,11 @@ int ItemMarketEntryStoreItem::_itemWorth()
 
   // Buy item for money
   if(*isMoneyCurrency && *isBuyMode)
-    return data->sellPriceMoney();
+    return data->buyPriceMoney();
 
   // Buy item for coins
   else if(!(*isMoneyCurrency) && *isBuyMode)
-    return data->sellPriceCoins();
+    return data->buyPriceCoins();
 
   return 0;
 }

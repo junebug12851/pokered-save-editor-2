@@ -19,44 +19,30 @@
 #include "../../data/file/expanded/player/playerbasics.h"
 
 ItemMarketEntryMoney::ItemMarketEntryMoney()
+  : ItemMarketEntry(CompatNo, CompatEither) // Only Coins, either buy/sell
 {
   finishConstruction();
 }
 
 ItemMarketEntryMoney::~ItemMarketEntryMoney() {}
 
-bool ItemMarketEntryMoney::moneyToCoins()
-{
-  // Selling Coins for Money
-  if(*isMoneyCurrency && *isBuyMode)
-    return false;
-
-  // Selling Money for Coins
-  else if(*isMoneyCurrency && !(*isBuyMode))
-    return true;
-
-  // Selling Money for Coins
-  else if(!(*isMoneyCurrency) && *isBuyMode)
-    return true;
-
-  // Selling Coins for Money
-  else if(!(*isMoneyCurrency) && !(*isBuyMode))
-    return false;
-
-  return false;
-}
-
 QString ItemMarketEntryMoney::_name()
 {
-  if(*isMoneyCurrency)
+  if(!requestFilter())
+    return "";
+
+  if(*isBuyMode)
     return "Coins";
 
-  return "Money";
+  return   "Money";
 }
 
 int ItemMarketEntryMoney::_inStockCount()
 {
-  if(*isMoneyCurrency)
+  if(!requestFilter())
+    return 0;
+
+  if(*isBuyMode)
     return player->coins;
 
   return player->money;
@@ -69,10 +55,13 @@ bool ItemMarketEntryMoney::_canSell()
 
 int ItemMarketEntryMoney::_itemWorth()
 {
-  if(moneyToCoins())
-    return GameCornerDB::buyPrice;
+  if(!requestFilter())
+    return 0;
 
-  return GameCornerDB::sellPrice;
+  if(*isBuyMode)
+    return GameCornerDB::sellPrice;
+
+  return GameCornerDB::buyPrice;
 }
 
 QString ItemMarketEntryMoney::_whichType()
@@ -82,10 +71,13 @@ QString ItemMarketEntryMoney::_whichType()
 
 int ItemMarketEntryMoney::onCartLeft()
 {
-  if(*isMoneyCurrency)
-    return player->coins - onCart;
+  if(!requestFilter())
+    return 0;
 
-  return player->money - onCart;
+  if(*isBuyMode)
+    return player->money - onCart;
+
+  return player->coins - onCart;
 }
 
 int ItemMarketEntryMoney::stackCount()
@@ -96,10 +88,11 @@ int ItemMarketEntryMoney::stackCount()
 
 void ItemMarketEntryMoney::checkout()
 {
-  if(!canCheckout())
+  if(!canCheckout() ||
+     !requestFilter())
     return;
 
-  if(moneyToCoins()) {
+  if(*isBuyMode) {
     player->money -= onCart;
     player->coins += cartWorth();
   }

@@ -26,8 +26,6 @@ public:
   ItemMarketEntryMoney();
   virtual ~ItemMarketEntryMoney();
 
-  bool moneyToCoins();
-
   virtual QString _name() override;
   virtual int _inStockCount() override;
   virtual bool _canSell() override;

@@ -250,8 +250,10 @@ void ItemMarketModel::buildPlayerItemList()
 {
   clearList();
 
-  itemListCache.append(new ItemMarketEntryMessage("Wallet"));
-  itemListCache.append(new ItemMarketEntryMoney);
+  if(!isMoneyCurrency) {
+    itemListCache.append(new ItemMarketEntryMessage("Money Exchange"));
+    itemListCache.append(new ItemMarketEntryMoney);
+  }
 
   itemListCache.append(new ItemMarketEntryMessage("Bag"));
 
@@ -270,6 +272,11 @@ void ItemMarketModel::buildMartItemList()
 {
   clearList();
 
+  if(!isMoneyCurrency) {
+    itemListCache.append(new ItemMarketEntryMessage("Money Exchange"));
+    itemListCache.append(new ItemMarketEntryMoney);
+  }
+
   // Setup Collator
   QCollator collator;
   collator.setNumericMode(true);
@@ -278,9 +285,6 @@ void ItemMarketModel::buildMartItemList()
   // Gather normal repeatable items and sort by name, then add into list
   QVector<ItemDBEntry*> tmp;
   QVector<GameCornerDBEntry*> tmpGC;
-
-  itemListCache.append(new ItemMarketEntryMessage("Wallet"));
-  itemListCache.append(new ItemMarketEntryMoney);
 
   /////////////////////////////////////////////////
 

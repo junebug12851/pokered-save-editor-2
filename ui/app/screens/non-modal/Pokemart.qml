@@ -93,42 +93,82 @@ Page {
 
         Text {
           visible: dataWhichType === "msg"
+          Layout.alignment: Qt.AlignHCenter
           text: dataName
           font.pixelSize: 16
           font.bold: true
-          bottomPadding: font.pixelSize
+
+          topPadding: font.pixelSize
+          bottomPadding: font.pixelSize * 1.5
         }
 
-        Row {
+        Rectangle {
           visible: dataWhichType !== "msg"
-          id: rowEntry
           Layout.alignment: Qt.AlignHCenter
+          width: 300
+          height: 50
 
-          Text {
-            text: dataName
-            font.pixelSize: 14
-          }
+          RowLayout {
+            anchors.fill: parent
+            spacing: 15
 
-          Text {
-            // Only when selling
-            visible: !brg.marketModel.isBuyMode
-            text: dataInStockCount
-            font.pixelSize: 14
-          }
+            Text {
+              text: dataName
+              font.pixelSize: 14
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+              Layout.alignment: Qt.AlignHCenter
+              horizontalAlignment: Text.AlignRight
+              verticalAlignment: Text.AlignVCenter
 
-          SpinBox {
-            visible: dataCanSell || brg.marketModel.isBuyMode
-            onValueChanged: dataCartCount = value;
-            Component.onCompleted: value = dataCartCount;
-            editable: true
-            from: 0
-            inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
-          }
+              //topPadding: 15
+            }
 
-          Text {
-            text: dataCartWorth
-            font.pixelSize: 14
+            Text {
+              // Only when selling
+              visible: !brg.marketModel.isBuyMode
+              text: dataInStockCount
+              font.pixelSize: 14
+              Layout.fillHeight: true
+              Layout.alignment: Qt.AlignHCenter
+              width: font.pixelSize * 2
+              horizontalAlignment: Text.AlignRight
+              verticalAlignment: Text.AlignVCenter
+
+              //topPadding: 15
+            }
+
+            SpinBox {
+              enabled: dataCanSell || brg.marketModel.isBuyMode
+              onValueChanged: dataCartCount = value;
+              Component.onCompleted: value = dataCartCount;
+              editable: true
+              from: 0
+              inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
+              //width: font.pixelSize * 5
+              implicitWidth: font.pixelSize * 10
+              //Layout.fillHeight: true
+              Layout.alignment: Qt.AlignCenter | Qt.AlignVCenter
+            }
+
+            Text {
+              text: (dataCartWorth <= 0)
+                    ? " "
+                    : dataCartWorth
+              font.pixelSize: 14
+              Layout.fillHeight: true
+              Layout.fillWidth: true
+              Layout.alignment: Qt.AlignVCenter
+              horizontalAlignment: Text.AlignLeft
+              verticalAlignment: Text.AlignVCenter
+
+              //topPadding: 15
+            }
           }
+        }
+
+        RowLayout {
+          visible: false
         }
 
         Text {
