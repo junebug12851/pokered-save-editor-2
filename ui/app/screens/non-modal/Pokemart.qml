@@ -112,7 +112,18 @@ Page {
           else if(dataWhichType === "money" && !dataBuyMode)
             return dataInStockCount;
 
-          return 99;
+          return 999999;
+        }
+
+        function signing() {
+          if(dataBuyMode && dataWhichType !== "money")
+            return "-"
+          else if(!dataBuyMode && dataWhichType !== "money")
+            return "+"
+          else if(dataWhichType === "money")
+            return "+"
+
+          return "?"
         }
 
         Text {
@@ -161,7 +172,7 @@ Page {
 
             anchors.top: cartAmount.top
             anchors.right: cartAmount.left
-            anchors.rightMargin: font.pixelSize / 4
+            anchors.rightMargin: font.pixelSize / 3
             anchors.bottom: cartAmount.bottom
 
             // Only when selling
@@ -169,8 +180,8 @@ Page {
             text: "x" + dataInStockCount.toString().padStart(2, " ")
             font.pixelSize: 14
             width: (dataWhichType === "money")
-                   ? font.pixelSize * 3.5
-                   : font.pixelSize * 1
+                   ? implicitWidth //font.pixelSize * 3.5
+                   : font.pixelSize * 1.75
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
 
@@ -200,7 +211,7 @@ Page {
 
             text: (dataCartWorth <= 0)
                   ? " "
-                  : curSym() + dataCartWorth
+                  : signing() + " " + curSym() + dataCartWorth
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
@@ -234,6 +245,13 @@ Page {
           return "⭘"
       }
 
+      function signing() {
+        if(brg.marketModel.isBuyMode)
+          return "-"
+
+        return "+"
+      }
+
       Text {
         // Sell with Money
         anchors.centerIn: parent
@@ -242,7 +260,7 @@ Page {
 
         text: (brg.marketModel.totalCartCount <= 0)
               ? ""
-              : "On Cart: x" + brg.marketModel.totalCartCount + " ( " + footer.curSym() + brg.marketModel.totalCartWorth + " )";
+              : "On Cart: x" + brg.marketModel.totalCartCount + " ( " + footer.signing() + " " + footer.curSym() + brg.marketModel.totalCartWorth + " )";
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }

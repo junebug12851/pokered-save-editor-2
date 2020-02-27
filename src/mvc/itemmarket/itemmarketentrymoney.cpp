@@ -31,7 +31,10 @@ QString ItemMarketEntryMoney::_name()
   if(!requestFilter())
     return "";
 
-  return   "Coins";
+  if(*isBuyMode)
+    return "Money => Coins";
+
+  return   "Coins => Money";
 }
 
 int ItemMarketEntryMoney::_inStockCount()

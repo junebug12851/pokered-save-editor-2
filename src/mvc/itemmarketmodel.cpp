@@ -179,14 +179,7 @@ bool ItemMarketModel::setData(const QModelIndex& index, const QVariant& value, i
 
 int ItemMarketModel::totalCartWorth()
 {
-  int ret = 0;
-
-  if(isBuyMode)
-    ret -= itemListCache.at(0)->totalWorth();
-  else
-    ret += itemListCache.at(0)->totalWorth();
-
-  return ret;
+  return itemListCache.at(0)->totalWorth();
 }
 
 int ItemMarketModel::totalCartCount()
@@ -195,10 +188,11 @@ int ItemMarketModel::totalCartCount()
 
   for(auto el : itemListCache) {
 
-    // If your selling coins back to get money, this kind of throws everything
-    // off a bit as 2 different currencies are being mixed in. We act like
-    // it's not on the cart in the total for simplicity.
-    if(!isBuyMode && !isMoneyCurrency && el->whichType() == "money")
+    // Money exchanging is something else entirely, it can't be mixed in with
+    // everything else because they're 2 very different things. They're properly
+    // part of one transaction and all in one cart, but they're added
+    // differently.
+    if(el->whichType() == "money")
       continue;
 
     ret += el->onCart;
