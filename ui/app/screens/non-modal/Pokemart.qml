@@ -175,6 +175,10 @@ Page {
             anchors.rightMargin: font.pixelSize / 3
             anchors.bottom: cartAmount.bottom
 
+            color: (cartAmount.enabled)
+                   ? brg.settings.textColorDark
+                   : brg.settings.textColorMid
+
             // Only when selling
             visible: !brg.marketModel.isBuyMode
             text: "x" + dataInStockCount.toString().padStart(2, " ")
@@ -212,6 +216,23 @@ Page {
             text: (dataCartWorth <= 0)
                   ? " "
                   : signing() + " " + curSym() + dataCartWorth
+            font.pixelSize: 14
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+
+            //topPadding: 15
+          }
+
+          Text {
+            visible: !cartAmount.enabled
+
+            anchors.top: cartAmount.top
+            anchors.left: cartAmount.right
+            anchors.leftMargin: font.pixelSize / 4
+            anchors.bottom: cartAmount.bottom
+
+            color: brg.settings.textColorMid
+            text: "Item cannot be sold"
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
