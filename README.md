@@ -1,7 +1,7 @@
 # Pokered Save Editor 2
 Pokemon Red & Blue Save Editor 2 ~ Qt C++ Reboot
 
-We've reached 400 Commits ٩(^ᴗ^)۶ !
+We've reached 500 Commits ♡〜٩( ˃́▿˂̀ )۶〜♡!
 
 ## An early WIP (This is by far not finished)
 
