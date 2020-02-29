@@ -180,7 +180,7 @@ int ItemMarketEntryStoreItem::onCartLeft()
   partialStackBagLeft = 99 - partialStackBagLeft;
 
   int partialStackBoxLeft = stk.partialBox;
-  if(stk.partialElBag != nullptr)
+  if(stk.partialElBox != nullptr)
     partialStackBoxLeft += stk.partialElBox->amount;
 
   partialStackBoxLeft = 99 - partialStackBoxLeft;

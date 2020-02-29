@@ -131,7 +131,7 @@ public:
 
   // Can checkout notifies if the checkout can be completed.
   virtual bool canCheckout();
-  bool canAllCheckout();
+  bool canAnyCheckout();
 
 public slots:
   virtual void checkout() = 0;

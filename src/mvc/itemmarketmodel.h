@@ -44,7 +44,7 @@ class ItemMarketModel : public QAbstractListModel
   Q_PROPERTY(int moneyStart READ moneyStart NOTIFY reUpdateValues)
   Q_PROPERTY(int moneyLeftover READ moneyLeftover NOTIFY reUpdateValues)
   Q_PROPERTY(bool anyNotEnoughSpace READ anyNotEnoughSpace NOTIFY reUpdateValues)
-  Q_PROPERTY(bool canAllCheckout READ canAllCheckout NOTIFY reUpdateValues)
+  Q_PROPERTY(bool canAnyCheckout READ canAnyCheckout NOTIFY reUpdateValues)
 
 signals:
   void isBuyModeChanged();
@@ -136,7 +136,7 @@ public:
   int moneyStart();
   int moneyLeftover();
   bool anyNotEnoughSpace();
-  bool canAllCheckout();
+  bool canAnyCheckout();
 
   // Re-create list cache methods
   bool vendorListItem(ItemDBEntry* el);

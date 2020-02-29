@@ -7,10 +7,12 @@ import QtQuick.Controls 2.14
 ToolBar {
   property alias icon1: btn1.icon
   property alias text1: btn1.text
+  property alias btn1: btn1
   signal btn1Clicked();
 
   property alias icon2: btn2.icon
   property alias text2: btn2.text
+  property alias btn2: btn2
   signal btn2Clicked();
 
   height: brg.settings.headerHeight

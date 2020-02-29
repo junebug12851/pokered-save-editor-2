@@ -9,6 +9,41 @@ import "../../fragments/header"
 Page {
   id: topz
 
+  // Maximum money depending on the currency
+  function maxMoney() {
+    if(brg.marketModel.isMoneyCurrency)
+      return 999999;
+    else
+      return 9999;
+  }
+
+  // Negative version of max money
+  function maxMoneyNeg() {
+    return -maxMoney();
+  }
+
+  // If the money is above or below the maximum range
+  function moneyOutOfRange(val) {
+    if(Math.abs(val) > maxMoney())
+      return true;
+    else
+      return false;
+  }
+
+  // Returns red if outside of range and if below zero if enabled
+  function moneyColor(val, zeroRed) {
+    var ret = moneyOutOfRange(val)
+          ? "red"
+          : brg.settings.textColorDark;
+
+    if(zeroRed === true && val < 0)
+      ret = "red";
+
+    return ret;
+  }
+
+  // Returns currency symbol including the exchange exception which follows
+  // different rules
   function curSym(dataWhichType) {
     if(brg.marketModel.isMoneyCurrency)
       return "₽"
@@ -22,6 +57,7 @@ Page {
     return "?"
   }
 
+  // Buy/Sell signing including exchange exception which follows different rules
   function signing(dataWhichType) {
     if(brg.marketModel.isBuyMode && dataWhichType !== "money")
       return "-"
@@ -33,11 +69,49 @@ Page {
     return "?"
   }
 
+  // Name of currency
   function curName() {
     if(brg.marketModel.isMoneyCurrency)
       return "Money"
     else
       return "Coins"
+  }
+
+  // This converts money to a properly formatted string and adaptable to
+  // different scenarios.
+  function moneyStr(val, abs, useSigning, dataWhichType) {
+    var _val = val;
+
+    if(_val > maxMoney())
+      _val = maxMoney();
+    else if(_val < maxMoneyNeg())
+      _val = -maxMoney();
+
+    if(abs === true)
+      _val = Math.abs(_val);
+
+    _val = _val.toLocaleString();
+    _val = curSym(dataWhichType) + _val;
+
+    var curSigning = "";
+    if(useSigning === true)
+      curSigning = signing(dataWhichType);
+
+    if(abs !== true && useSigning === true)
+      _val = curSigning + " " + _val;
+
+    if(useSigning === true && curSigning === "-" && moneyOutOfRange(val))
+      _val = "< " + _val;
+    else if(useSigning === true && curSigning === "+" && moneyOutOfRange(val))
+      _val = "> " + _val;
+    else if(useSigning === true && moneyOutOfRange(val))
+      _val = "? " + _val;
+    else if(useSigning !== true && val < maxMoneyNeg())
+      _val = "< " + _val;
+    else if(useSigning !== true && val > maxMoney() && useSigning !== true)
+      _val = "> " + _val;
+
+    return _val;
   }
 
   Rectangle {
@@ -190,7 +264,7 @@ Page {
                    : brg.settings.textColorMid
             width: (dataWhichType === "money")
                    ? implicitWidth
-                   : font.pixelSize * 2.75
+                   : font.pixelSize * 3
 
             text: topz.curSym(dataWhichType) + dataItemWorth.toLocaleString()
             font.pixelSize: 14
@@ -249,7 +323,12 @@ Page {
 
             text: (dataCartWorth <= 0)
                   ? " "
-                  : topz.signing(dataWhichType) + " " + topz.curSym(dataWhichType) + dataCartWorth.toLocaleString()
+                  : topz.moneyStr(dataCartWorth, false, true, dataWhichType)
+
+            color: (dataCartWorth === "phony" || topz.moneyOutOfRange(dataCartWorth))
+                   ? topz.moneyColor(dataCartWorth)
+                   : topz.moneyColor(dataCartWorth)
+
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
@@ -285,10 +364,10 @@ Page {
     Rectangle {
       id: summaryScreen
 
-      x: parent.width - width - 5
+      x: parent.width - width - 40
       y: 0 - height - 5
 
-      width: 250
+      width: 150
       height: 100
 
       color: "white"
@@ -317,6 +396,11 @@ Page {
 
           Text {
             text: topz.signing()
+
+            color: topz.moneyOutOfRange(brg.marketModel.totalCartWorth)
+                   ? "red"
+                   : brg.settings.textColorDark
+
             font.pixelSize: 14
             width: font.pixelSize + 4
           }
@@ -324,7 +408,14 @@ Page {
           Text {
             Layout.fillWidth: true
 
-            text: topz.curSym() + brg.marketModel.totalCartWorth.toLocaleString()
+            text: (brg.marketModel.totalCartWorth === "phony")
+                  ? topz.moneyStr(brg.marketModel.totalCartWorth, true, true)
+                  : topz.moneyStr(brg.marketModel.totalCartWorth, true, true)
+
+            color: (brg.marketModel.totalCartWorth === "phony" || topz.moneyOutOfRange(brg.marketModel.totalCartWorth))
+                   ? topz.moneyColor(brg.marketModel.totalCartWorth)
+                   : topz.moneyColor(brg.marketModel.totalCartWorth)
+
             font.pixelSize: 14
           }
         }
@@ -346,30 +437,15 @@ Page {
           Text {
             Layout.fillWidth: true
 
-            text: (brg.marketModel.moneyLeftover < 0)
-                  ? topz.curSym() + (brg.marketModel.moneyLeftover * (-1)).toLocaleString()
-                  : gtTxt()
+            text: (brg.marketModel.moneyLeftover === "phony")
+                  ? topz.moneyStr(brg.marketModel.moneyLeftover, true)
+                  : topz.moneyStr(brg.marketModel.moneyLeftover, true)
 
-            color: (brg.marketModel.moneyLeftover < 0 || brg.marketModel.moneyLeftover > moneyMax())
-                   ? "red"
-                   : brg.settings.textColorDark
+            color: (brg.marketModel.moneyLeftover === "phony" || topz.moneyOutOfRange(brg.marketModel.moneyLeftover))
+                   ? topz.moneyColor(brg.marketModel.moneyLeftover, true)
+                   : topz.moneyColor(brg.marketModel.moneyLeftover, true)
 
             font.pixelSize: 14
-
-            function moneyMax() {
-              return (brg.marketModel.isMoneyCurrency)
-                  ? 999999
-                  : 9999;
-            }
-
-            function gtTxt() {
-              if(brg.marketModel.isMoneyCurrency && brg.marketModel.moneyLeftover > 999999)
-                return "> " + topz.curSym() + "999,999"
-              else if(!brg.marketModel.isMoneyCurrency && brg.marketModel.moneyLeftover > 9999)
-                return "> " + topz.curSym() + "9,999"
-
-              return topz.curSym() + brg.marketModel.moneyLeftover.toLocaleString();
-            }
           }
         }
       }
@@ -423,6 +499,7 @@ Page {
     onBtn1Clicked: brg.marketModel.isBuyMode = !brg.marketModel.isBuyMode;
 
     // Checks out shopping cart
+    btn2.enabled: brg.marketModel.canAnyCheckout
     icon2.source: "qrc:/assets/icons/fontawesome/shopping-cart.svg"
     text2: "Checkout"
     onBtn2Clicked: brg.marketModel.checkout();

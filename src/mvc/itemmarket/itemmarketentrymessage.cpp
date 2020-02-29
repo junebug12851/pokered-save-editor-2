@@ -21,6 +21,7 @@ ItemMarketEntryMessage::ItemMarketEntryMessage(QString msg)
   : msg(msg)
 {
   finishConstruction();
+  exclude = true;
 }
 
 ItemMarketEntryMessage::~ItemMarketEntryMessage() {}

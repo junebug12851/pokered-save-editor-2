@@ -183,13 +183,13 @@ bool ItemMarketEntry::canCheckout()
   return (onCart > 0) && (onCartLeft() >= 0) && (moneyLeftover() >= 0);
 }
 
-bool ItemMarketEntry::canAllCheckout()
+bool ItemMarketEntry::canAnyCheckout()
 {
-  bool ret = true;
+  bool ret = false;
 
   for(auto el : instancesCombined) {
-    if(!el->canCheckout()) {
-      ret = false;
+    if(el->canCheckout()) {
+      ret = true;
       break;
     }
   }

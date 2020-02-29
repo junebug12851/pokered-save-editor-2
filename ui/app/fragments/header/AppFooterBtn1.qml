@@ -7,6 +7,7 @@ import QtQuick.Controls 2.14
 ToolBar {
   property alias icon1: btn.icon
   property alias text1: btn.text
+  property alias btn1: btn
   signal btn1Clicked();
 
   height: brg.settings.headerHeight

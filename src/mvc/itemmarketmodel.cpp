@@ -252,9 +252,9 @@ bool ItemMarketModel::anyNotEnoughSpace()
   return ret;
 }
 
-bool ItemMarketModel::canAllCheckout()
+bool ItemMarketModel::canAnyCheckout()
 {
-  return itemListCache.at(0)->canAllCheckout();
+  return itemListCache.at(0)->canAnyCheckout();
 }
 
 bool ItemMarketModel::vendorListItem(ItemDBEntry* el)
