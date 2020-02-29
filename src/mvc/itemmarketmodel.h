@@ -37,9 +37,14 @@ class ItemMarketModel : public QAbstractListModel
 
   Q_PROPERTY(bool isBuyMode MEMBER isBuyMode NOTIFY isBuyModeChanged)
   Q_PROPERTY(bool isMoneyCurrency MEMBER isMoneyCurrency NOTIFY isMoneyCurrencyChanged)
+  Q_PROPERTY(int whichMode READ whichMode NOTIFY isAnyChanged)
+
   Q_PROPERTY(int totalCartWorth READ totalCartWorth NOTIFY reUpdateValues)
   Q_PROPERTY(int totalCartCount READ totalCartCount NOTIFY reUpdateValues)
-  Q_PROPERTY(int whichMode READ whichMode NOTIFY isAnyChanged)
+  Q_PROPERTY(int moneyStart READ moneyStart NOTIFY reUpdateValues)
+  Q_PROPERTY(int moneyLeftover READ moneyLeftover NOTIFY reUpdateValues)
+  Q_PROPERTY(bool anyNotEnoughSpace READ anyNotEnoughSpace NOTIFY reUpdateValues)
+  Q_PROPERTY(bool canAllCheckout READ canAllCheckout NOTIFY reUpdateValues)
 
 signals:
   void isBuyModeChanged();
@@ -91,6 +96,13 @@ public:
     // For this setup, is the item valid?
     ValidItemRole,
 
+    // Exclude this item from most totals, it's not to be mixed in with other
+    // items
+    ExcludeItemRole,
+
+    // How much money is left after all is said and done
+    MoneyLeftRole,
+
     // Which modes we're in
     BuyModeRole,
     MoneyCurrencyRole,
@@ -121,6 +133,10 @@ public:
   int totalCartWorth();
   int totalCartCount();
   int whichMode();
+  int moneyStart();
+  int moneyLeftover();
+  bool anyNotEnoughSpace();
+  bool canAllCheckout();
 
   // Re-create list cache methods
   bool vendorListItem(ItemDBEntry* el);

@@ -134,10 +134,12 @@ int ItemMarketEntry::cartWorth()
 int ItemMarketEntry::totalStackCount()
 {
   int ret = 0;
+
   auto instArr = instances.value(whichType());
 
-  for(auto el : instArr)
+  for(auto el : instArr) {
     ret += el->stackCount();
+  }
 
   return ret;
 }
@@ -148,13 +150,27 @@ unsigned int ItemMarketEntry::totalWorth()
 
   for(auto el : instancesCombined) {
     // Again, skip if we're dealing with money exchange
-    if(el->whichType() == "money")
+    if(el->exclude)
       continue;
 
     ret += el->cartWorth();
   }
 
   return ret;
+}
+
+int ItemMarketEntry::moneyLeftover()
+{
+  if(*isMoneyCurrency && *isBuyMode)
+    return player->money - totalWorth();
+  else if(!(*isMoneyCurrency) && *isBuyMode)
+    return player->coins - totalWorth();
+  else if(*isMoneyCurrency && !(*isBuyMode))
+    return player->money + totalWorth();
+  else if(!(*isMoneyCurrency) && !(*isBuyMode))
+    return player->coins + totalWorth();
+
+  return -1;
 }
 
 bool ItemMarketEntry::canCheckout()
@@ -164,10 +180,21 @@ bool ItemMarketEntry::canCheckout()
 
   // Allow only if there is space left and the total worth doesn't go above
   // the players money/coins
-  if(*isMoneyCurrency)
-    return (onCart > 0) && (onCartLeft() >= 0) && (totalWorth() <= player->money);
-  else
-    return (onCart > 0) && (onCartLeft() >= 0) && (totalWorth() <= (unsigned int)player->coins);
+  return (onCart > 0) && (onCartLeft() >= 0) && (moneyLeftover() >= 0);
+}
+
+bool ItemMarketEntry::canAllCheckout()
+{
+  bool ret = true;
+
+  for(auto el : instancesCombined) {
+    if(!el->canCheckout()) {
+      ret = false;
+      break;
+    }
+  }
+
+  return ret;
 }
 
 void ItemMarketEntry::setCartCount(int val)

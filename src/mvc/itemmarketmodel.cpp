@@ -122,6 +122,10 @@ QVariant ItemMarketModel::data(const QModelIndex& index, int role) const
     return item->canCheckout();
   else if(role == ValidItemRole)
     return item->requestFilter();
+  else if(role == ExcludeItemRole)
+    return item->exclude;
+  else if(role == ExcludeItemRole)
+    return item->moneyLeftover();
   else if(role == BuyModeRole)
     return isBuyMode;
   else if(role == MoneyCurrencyRole)
@@ -147,6 +151,8 @@ QHash<int, QByteArray> ItemMarketModel::roleNames() const
   roles[TotalWorthRole] = "dataTotalWorth";
   roles[CanCheckoutRole] = "dataCanCheckout";
   roles[ValidItemRole] = "dataValidItem";
+  roles[ExcludeItemRole] = "dataExcludeItem";
+  roles[MoneyLeftRole] = "dataMoneyLeft";
   roles[BuyModeRole] = "dataBuyMode";
   roles[MoneyCurrencyRole] = "dataMoneyCurrency";
 
@@ -192,7 +198,7 @@ int ItemMarketModel::totalCartCount()
     // everything else because they're 2 very different things. They're properly
     // part of one transaction and all in one cart, but they're added
     // differently.
-    if(el->whichType() == "money")
+    if(el->exclude)
       continue;
 
     ret += el->onCart;
@@ -213,6 +219,42 @@ int ItemMarketModel::whichMode()
     return SelSellCoins;
 
   return 0;
+}
+
+int ItemMarketModel::moneyStart()
+{
+  if(isMoneyCurrency)
+    return basics->money;
+  else
+    return basics->coins;
+}
+
+int ItemMarketModel::moneyLeftover()
+{
+  return itemListCache.at(0)->moneyLeftover();
+}
+
+bool ItemMarketModel::anyNotEnoughSpace()
+{
+  int ret = false;
+
+  for(auto el : itemListCache) {
+
+    if(el->exclude)
+      continue;
+
+    if(el->onCartLeft() < 0) {
+      ret = true;
+      continue;
+    }
+  }
+
+  return ret;
+}
+
+bool ItemMarketModel::canAllCheckout()
+{
+  return itemListCache.at(0)->canAllCheckout();
 }
 
 bool ItemMarketModel::vendorListItem(ItemDBEntry* el)

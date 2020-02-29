@@ -7,6 +7,38 @@ import "../../fragments/general"
 import "../../fragments/header"
 
 Page {
+  id: topz
+
+  function curSym(dataWhichType) {
+    if(brg.marketModel.isMoneyCurrency)
+      return "₽"
+    else if(!brg.marketModel.isMoneyCurrency && dataWhichType !== "money")
+      return "⭘"
+    else if(!brg.marketModel.isMoneyCurrency && dataWhichType === "money" && brg.marketModel.isBuyMode)
+      return "⭘"
+    else if(!brg.marketModel.isMoneyCurrency && dataWhichType === "money" && !brg.marketModel.isBuyMode)
+      return "₽"
+
+    return "?"
+  }
+
+  function signing(dataWhichType) {
+    if(brg.marketModel.isBuyMode && dataWhichType !== "money")
+      return "-"
+    else if(!brg.marketModel.isBuyMode && dataWhichType !== "money")
+      return "+"
+    else if(dataWhichType === "money")
+      return "+"
+
+    return "?"
+  }
+
+  function curName() {
+    if(brg.marketModel.isMoneyCurrency)
+      return "Money"
+    else
+      return "Coins"
+  }
 
   Rectangle {
     anchors.fill: parent
@@ -88,42 +120,20 @@ Page {
 
       delegate: ColumnLayout {
         id: delegate
+
         property bool isLast: index+1 < marketView.count ? false : true
+
         width: parent.width
 
-        function curSym() {
-          if(dataMoneyCurrency)
-            return "₽"
-          else if(!dataMoneyCurrency && dataWhichType !== "money")
-            return "⭘"
-          else if(!dataMoneyCurrency && dataWhichType === "money" && dataBuyMode)
-            return "⭘"
-          else if(!dataMoneyCurrency && dataWhichType === "money" && !dataBuyMode)
-            return "₽"
-
-          return "?"
-        }
-
         function getTo() {
-          if(dataWhichType === "playerItem")
-            return dataInStockCount;
-          else if(dataWhichType === "money" && dataBuyMode)
-            return 9999;
-          else if(dataWhichType === "money" && !dataBuyMode)
+          if(dataWhichType === "playerItem" || dataWhichType === "money")
             return dataInStockCount;
 
           return 999999;
         }
 
-        function signing() {
-          if(dataBuyMode && dataWhichType !== "money")
-            return "-"
-          else if(!dataBuyMode && dataWhichType !== "money")
-            return "+"
-          else if(dataWhichType === "money")
-            return "+"
-
-          return "?"
+        function getRightMargin() {
+          //
         }
 
         Text {
@@ -145,6 +155,23 @@ Page {
           height: 50
 
           Text {
+            anchors.top: eachPrice.top
+            anchors.right: eachPrice.left
+            anchors.rightMargin: font.pixelSize / 1
+            anchors.bottom: eachPrice.bottom
+
+            text: dataName
+            font.pixelSize: 14
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignRight
+            verticalAlignment: Text.AlignVCenter
+
+            //topPadding: 15
+          }
+
+          Text {
+            id: eachPrice
+
             anchors.top: (inventoryAmount.visible)
                          ? inventoryAmount.top
                          : cartAmount.top
@@ -158,7 +185,14 @@ Page {
                             ? inventoryAmount.bottom
                             : cartAmount.bottom
 
-            text: dataName
+            color: (cartAmount.enabled)
+                   ? brg.settings.textColorDark
+                   : brg.settings.textColorMid
+            width: (dataWhichType === "money")
+                   ? implicitWidth
+                   : font.pixelSize * 2.75
+
+            text: topz.curSym(dataWhichType) + dataItemWorth.toLocaleString()
             font.pixelSize: 14
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignRight
@@ -215,7 +249,7 @@ Page {
 
             text: (dataCartWorth <= 0)
                   ? " "
-                  : signing() + " " + curSym() + dataCartWorth
+                  : topz.signing(dataWhichType) + " " + topz.curSym(dataWhichType) + dataCartWorth.toLocaleString()
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
@@ -249,6 +283,114 @@ Page {
     }
 
     Rectangle {
+      id: summaryScreen
+
+      x: parent.width - width - 5
+      y: 0 - height - 5
+
+      width: 250
+      height: 100
+
+      color: "white"
+      border.color: brg.settings.accentColor
+      border.width: 3
+      radius: 15
+
+      state: (brg.marketModel.totalCartCount > 0)
+             ? "displayed"
+             : ""
+
+      ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 10
+
+        Text {
+          Layout.fillWidth: true
+          leftPadding: font.pixelSize + 4
+
+          text: topz.curSym() + brg.marketModel.moneyStart.toLocaleString()
+          font.pixelSize: 14
+        }
+
+        Row {
+          Layout.fillWidth: true
+
+          Text {
+            text: topz.signing()
+            font.pixelSize: 14
+            width: font.pixelSize + 4
+          }
+
+          Text {
+            Layout.fillWidth: true
+
+            text: topz.curSym() + brg.marketModel.totalCartWorth.toLocaleString()
+            font.pixelSize: 14
+          }
+        }
+
+        Row {
+          Layout.fillWidth: true
+
+          Text {
+            text: (brg.marketModel.moneyLeftover < 0)
+                  ? "-"
+                  : ""
+            color: (brg.marketModel.moneyLeftover < 0)
+                   ? "red"
+                   : brg.settings.textColorDark
+            font.pixelSize: 14
+            width: font.pixelSize + 4
+          }
+
+          Text {
+            Layout.fillWidth: true
+
+            text: (brg.marketModel.moneyLeftover < 0)
+                  ? topz.curSym() + (brg.marketModel.moneyLeftover * (-1)).toLocaleString()
+                  : gtTxt()
+
+            color: (brg.marketModel.moneyLeftover < 0 || brg.marketModel.moneyLeftover > moneyMax())
+                   ? "red"
+                   : brg.settings.textColorDark
+
+            font.pixelSize: 14
+
+            function moneyMax() {
+              return (brg.marketModel.isMoneyCurrency)
+                  ? 999999
+                  : 9999;
+            }
+
+            function gtTxt() {
+              if(brg.marketModel.isMoneyCurrency && brg.marketModel.moneyLeftover > 999999)
+                return "> " + topz.curSym() + "999,999"
+              else if(!brg.marketModel.isMoneyCurrency && brg.marketModel.moneyLeftover > 9999)
+                return "> " + topz.curSym() + "9,999"
+
+              return topz.curSym() + brg.marketModel.moneyLeftover.toLocaleString();
+            }
+          }
+        }
+      }
+
+      Behavior on y {
+        NumberAnimation {
+          easing {
+            type: Easing.InOutQuad
+          }
+        }
+      }
+
+      states: [
+        State {
+          name: "displayed"
+          PropertyChanges { target: summaryScreen; y: 5 }
+        }
+      ]
+    }
+
+    Rectangle {
       id: footer
       color: brg.settings.accentColor
       anchors.bottom: parent.bottom
@@ -259,20 +401,6 @@ Page {
       Material.foreground: brg.settings.textColorLight
       Material.background: brg.settings.accentColor
 
-      function curSym() {
-        if(brg.marketModel.isMoneyCurrency === true)
-          return "₽"
-        else
-          return "⭘"
-      }
-
-      function signing() {
-        if(brg.marketModel.isBuyMode)
-          return "-"
-
-        return "+"
-      }
-
       Text {
         // Sell with Money
         anchors.centerIn: parent
@@ -281,7 +409,7 @@ Page {
 
         text: (brg.marketModel.totalCartCount <= 0)
               ? ""
-              : "On Cart: x" + brg.marketModel.totalCartCount + " ( " + footer.signing() + " " + footer.curSym() + brg.marketModel.totalCartWorth + " )";
+              : "On Cart: x" + brg.marketModel.totalCartCount.toLocaleString()
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }

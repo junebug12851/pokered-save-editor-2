@@ -22,6 +22,7 @@ ItemMarketEntryMoney::ItemMarketEntryMoney()
   : ItemMarketEntry(CompatNo, CompatEither) // Only Coins, either buy/sell
 {
   finishConstruction();
+  exclude = true;
 }
 
 ItemMarketEntryMoney::~ItemMarketEntryMoney() {}
@@ -37,10 +38,15 @@ QString ItemMarketEntryMoney::_name()
   return   "Coins => Money";
 }
 
+// An exception, Money is strictly a money exchange as in your always selling
+// something and therefore always have an in-stock value which has a limit.
 int ItemMarketEntryMoney::_inStockCount()
 {
   if(!requestFilter())
     return 0;
+
+  if(*isBuyMode)
+    return player->money;
 
   return player->coins;
 }

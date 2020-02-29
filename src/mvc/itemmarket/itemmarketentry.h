@@ -126,8 +126,12 @@ public:
   int totalStackCount();
   unsigned int totalWorth();
 
+  // Calculate how much money is leftover
+  int moneyLeftover();
+
   // Can checkout notifies if the checkout can be completed.
-  bool canCheckout();
+  virtual bool canCheckout();
+  bool canAllCheckout();
 
 public slots:
   virtual void checkout() = 0;
@@ -141,6 +145,11 @@ public:
 
   // Properties
   int onCart = 0;
+
+  // Excude from total calculations
+  // Will not be included in most. if not all, calculations such as total items
+  // on cart and total worth amongst others.
+  bool exclude = false;
 
   // References to the model class, these are static because the model class
   // is a singleton
