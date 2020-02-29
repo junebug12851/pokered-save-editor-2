@@ -77,10 +77,23 @@ int ItemMarketEntryMoney::onCartLeft()
   if(!requestFilter())
     return 0;
 
-  if(*isBuyMode)
-    return 9999 - onCart;
+  int ret = 0;
 
-  return player->coins - onCart;
+  // Selling money to buy coins
+  if(*isBuyMode) {
+    //int coinsLeft = 9999 - onCart;
+    int coinsLeft = 9999 - player->coins;
+    //ret = coinsLeft / itemWorth();
+    ret = qMin(coinsLeft / itemWorth(), (int)player->money - onCart);
+  }
+
+  // Selling coins to buy money
+  else {
+    int moneyLeft = 999999 - player->money;
+    ret = qMin(moneyLeft / itemWorth(), player->coins - onCart);
+  }
+
+  return ret;
 }
 
 int ItemMarketEntryMoney::stackCount()

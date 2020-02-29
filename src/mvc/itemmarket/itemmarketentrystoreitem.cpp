@@ -238,8 +238,13 @@ int ItemMarketEntryStoreItem::onCartLeft()
       qDebug() << "Negative Amount" << (99 - stk.partialBox - stk.partialElBox->amount);
   }
 
-  // Return the calculations
-  return ret;
+  // Ret Now contains the maximum items possible left but it doesn't take
+  // into consideration how much money is left. We do a quick calculation for
+  // that
+  int maxAmountFromMoney = moneyLeftover() / itemWorth();
+
+  // Return the smallest of the calculations
+  return qMin(ret, maxAmountFromMoney);
 }
 
 int ItemMarketEntryStoreItem::stackCount()

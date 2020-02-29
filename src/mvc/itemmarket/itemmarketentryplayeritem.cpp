@@ -92,7 +92,22 @@ int ItemMarketEntryPlayerItem::onCartLeft()
   if(!requestFilter())
     return 0;
 
-  return toItem->amount - onCart;
+  // Maximum items left that can be sold
+  int maxItems = toItem->amount - onCart;
+
+  // Maximum money left that can be obtained from a sell
+  int maxMoney = (*isMoneyCurrency)
+      ? 999999
+      : 9999;
+
+  maxMoney -= moneyLeftover();
+
+  int maxMoneyItems = (itemWorth() == 0)
+      ? INT_MAX
+      : maxMoney / itemWorth();
+
+  // Return smallest of the numbers
+  return qMin(maxItems, maxMoneyItems);
 }
 
 int ItemMarketEntryPlayerItem::stackCount()

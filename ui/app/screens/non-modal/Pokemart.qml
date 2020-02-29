@@ -199,12 +199,12 @@ Page {
 
         width: parent.width
 
-        function getTo() {
-          if(dataWhichType === "playerItem" || dataWhichType === "money")
-            return dataInStockCount;
+//        function getTo() {
+//          if(dataWhichType === "playerItem" || dataWhichType === "money")
+//            return dataInStockCount;
 
-          return 2147483647;
-        }
+//          return 2147483647;
+//        }
 
         Text {
           visible: dataWhichType === "msg"
@@ -306,9 +306,7 @@ Page {
               icon.source: "qrc:/assets/icons/fontawesome/minus.svg"
               enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
               onClicked: {
-                if(amountEdit.getValInt() === 0 && delegate.getTo() < 2147483647)
-                  amountEdit.setValInt(delegate.getTo());
-                else if(amountEdit.getValInt() === 0 && delegate.getTo() === 2147483647 && dataOnCartLeft > 0)
+                if(amountEdit.getValInt() === 0 && dataOnCartLeft > 0)
                   amountEdit.setValInt(dataOnCartLeft);
                 else if(amountEdit.getValInt() > 0)
                   amountEdit.setValInt(amountEdit.getValInt() - 1);
@@ -331,7 +329,7 @@ Page {
 
               validator: IntValidator {
                 bottom: 0;
-                top: delegate.getTo();
+                top: 2147483647;
               }
 
               onTextChanged: {
@@ -353,9 +351,7 @@ Page {
 
               enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
               onClicked: {
-                if(amountEdit.getValInt() === delegate.getTo() && delegate.getTo() < 2147483647)
-                  amountEdit.setValInt(0);
-                else if(amountEdit.getValInt() > 0 && dataOnCartLeft === 0)
+                if(amountEdit.getValInt() > 0 && dataOnCartLeft === 0)
                   amountEdit.setValInt(0);
                 else if(dataOnCartLeft > 0)
                   amountEdit.setValInt(amountEdit.getValInt() + 1);

@@ -80,27 +80,46 @@ int ItemMarketEntryGCPokemon::onCartLeft()
   if(!requestFilter())
     return 0;
 
-  // Calculate stacks others take up
-  // Pokemon have a stack size of 1
-  int totalStackFromOthers = totalStackCount() - stackCount();
+  // Calculate stacks this item takes up
+  auto stk = stackCount();
 
-  int combinedMax = party->partyMax() + (maxPokemonBoxes * boxMaxPokemon);
-  int combinedUsed = party->partyCount();
+  // Final value to return, a representation of items left that can go onto the
+  // cart
+  int ret = 0;
+
+  // Calculate stacks others take up
+  int totalStackFromOthers = totalStackCount() - stk;
+
+  // Calculate inventory space used and free combined from both bag and box
+  int combinedBoxSpace = party->partyMax() + (maxPokemonBoxes * boxMaxPokemon);
+  int combinedBoxUsed = party->partyCount();
 
   if(storage->boxesFormatted) {
     for(int i = 0; i < maxPokemonBoxes; i++) {
-      combinedUsed += storage->boxAt(i)->pokemonCount();
+      combinedBoxUsed += storage->boxAt(i)->pokemonCount();
     }
   }
   else {
-    combinedUsed += storage->boxAt(storage->curBox)->pokemonCount();
+    combinedBoxUsed += storage->boxAt(storage->curBox)->pokemonCount();
   }
 
-  // Stack space left
-  int stackSpaceLeft = combinedMax - combinedUsed - totalStackFromOthers;
+  // Stack space left before requested transaction
+  int stackSpaceBefore = combinedBoxSpace - combinedBoxUsed;
 
-  // Calculate pokemon remaining and return that
-  return stackSpaceLeft - stackCount();
+  // Stack space after requested transactions
+  int stackSpaceLeftAfter = stackSpaceBefore - totalStackFromOthers - stk;
+
+  // Calculate whole stack remaining. There is 1 pokemon max per stack
+  // This is the whole new stacks converted to pokemon count.
+  ret = stackSpaceLeftAfter * 1;
+
+  // Ret Now contains the maximum pokemon possible left but it doesn't take
+  // into consideration how much money is left. We do a quick calculation for
+  // that
+  int maxAmountFromMoney = moneyLeftover() / itemWorth();
+
+  // Return the smallest of the calculations
+  return qMin(ret, maxAmountFromMoney);
 }
 
 int ItemMarketEntryGCPokemon::stackCount()
