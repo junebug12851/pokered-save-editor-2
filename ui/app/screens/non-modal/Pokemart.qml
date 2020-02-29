@@ -478,7 +478,7 @@ Page {
       Material.background: brg.settings.accentColor
 
       Text {
-        // Sell with Money
+        visible: !errSpaceLeft.visible && !errMoneyLeft.visible && !errMoneyTooMuch.visible
         anchors.centerIn: parent
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
@@ -486,6 +486,42 @@ Page {
         text: (brg.marketModel.totalCartCount <= 0)
               ? ""
               : "On Cart: x" + brg.marketModel.totalCartCount.toLocaleString()
+        font.pixelSize: 14
+        color: brg.settings.textColorLight
+      }
+
+      Text {
+        id: errSpaceLeft
+        visible: brg.marketModel.anyNotEnoughSpace && !errMoneyLeft.visible && !errMoneyTooMuch.visible
+        anchors.centerIn: parent
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+
+        text: "There's not enough space for one or more items on the shopping cart."
+        font.pixelSize: 14
+        color: brg.settings.textColorLight
+      }
+
+      Text {
+        id: errMoneyTooMuch
+        visible: topz.moneyOutOfRange(brg.marketModel.moneyLeftover) &&  !errMoneyLeft.visible
+        anchors.centerIn: parent
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+
+        text: "You don't have enough space for the money your getting back."
+        font.pixelSize: 14
+        color: brg.settings.textColorLight
+      }
+
+      Text {
+        id: errMoneyLeft
+        visible: brg.marketModel.moneyLeftover < 0
+        anchors.centerIn: parent
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+
+        text: "There's not enough money for all items on the cart."
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }

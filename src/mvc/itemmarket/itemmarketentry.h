@@ -158,7 +158,7 @@ public:
   static PlayerBasics* player;
 
   // Holds global instances categorized by type
-  static QHash<QString, QVector<ItemMarketEntry*>> instances;
+  static QHash<QString, QVector<ItemMarketEntry*>*> instances;
 
   // Holds all instances combined regardless of type
   static QVector<ItemMarketEntry*> instancesCombined;

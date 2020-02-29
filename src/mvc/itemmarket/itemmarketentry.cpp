@@ -29,9 +29,19 @@ ItemMarketEntry::ItemMarketEntry(int compatMoneyCurrency, int compatBuyMode)
 
 ItemMarketEntry::~ItemMarketEntry()
 {
+  // Remove all pointers in array, don't delete them as they are not owned by
+  // this class
   auto instArr = instances.value(whichType());
-  instArr.removeAll(this);
+  instArr->removeAll(this);
 
+  // Delete whole instances array if it's empty of that type
+  if(instArr->empty()) {
+    delete instances.value(whichType());
+    instances.remove(whichType());
+  }
+
+  // Remove all instances combined, again not deleting them because they are not
+  // owned by this class
   instancesCombined.removeAll(this);
 }
 
@@ -43,12 +53,12 @@ void ItemMarketEntry::initOnce()
 void ItemMarketEntry::finishConstruction()
 {
   if(!instances.contains(whichType())) {
-    instances.insert(whichType(), QVector<ItemMarketEntry*>());
+    instances.insert(whichType(), new QVector<ItemMarketEntry*>());
     initOnce();
   }
 
   auto instArr = instances.value(whichType());
-  instArr.append(this);
+  instArr->append(this);
 
   instancesCombined.append(this);
 }
@@ -137,7 +147,7 @@ int ItemMarketEntry::totalStackCount()
 
   auto instArr = instances.value(whichType());
 
-  for(auto el : instArr) {
+  for(auto el : *instArr) {
     ret += el->stackCount();
   }
 
@@ -222,8 +232,8 @@ bool* ItemMarketEntry::isBuyMode = nullptr;
 bool* ItemMarketEntry::isMoneyCurrency = nullptr;
 PlayerBasics* ItemMarketEntry::player = nullptr;
 
-QHash<QString, QVector<ItemMarketEntry*>> ItemMarketEntry::instances =
-    QHash<QString, QVector<ItemMarketEntry*>>();
+QHash<QString, QVector<ItemMarketEntry*>*> ItemMarketEntry::instances =
+    QHash<QString, QVector<ItemMarketEntry*>*>();
 
 QVector<ItemMarketEntry*> ItemMarketEntry::instancesCombined =
     QVector<ItemMarketEntry*>();

@@ -245,7 +245,7 @@ bool ItemMarketModel::anyNotEnoughSpace()
 
     if(el->onCartLeft() < 0) {
       ret = true;
-      continue;
+      break;
     }
   }
 

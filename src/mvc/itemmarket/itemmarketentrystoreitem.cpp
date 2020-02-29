@@ -14,6 +14,8 @@
   * limitations under the License.
 */
 
+#include <QDebug>
+
 #include "./itemmarketentrystoreitem.h"
 #include "../../data/db/items.h"
 #include "../../data/file/expanded/fragments/item.h"
@@ -42,11 +44,18 @@ StackReturn ItemMarketEntryStoreItem::calculateStacks()
   if(!requestFilter())
     return StackReturn();
 
-  // Temp copy of on cart
+  // Temp copy of on cart, we don't want to change the actual onCart
   int _onCart = onCart;
 
+  // Start off with no counted stacks. This represents the number of full new
+  // stacks required by the cart items.
   int stacks = 0;
 
+  // and no counted partial stacks. This represents the space left on the stack
+  // as required by the cart items.
+  // If there are 25 stack items left, all 25, or maybe 20, 15, or 5 may be
+  // required. This is the required amount that can be given to a partial
+  // stack before moving to new full stacks if need be.
   int stackPartialBag = 0;
   int stackPartialBox = 0;
 
@@ -54,37 +63,48 @@ StackReturn ItemMarketEntryStoreItem::calculateStacks()
   Item* currentStackBag = nullptr;
   Item* currentStackBox = nullptr;
 
+  // Basically look for first occurence in both the bag and box that have a
+  // stack of less than 99 (Indeed a true partial stack)
   for(auto el : toBag->items) {
-    if(el->ind == data->ind) {
+    if(el->ind == data->ind && el->amount < 99) {
       currentStackBag = el;
       break;
     }
   }
 
   for(auto el : toBox->items) {
-    if(el->ind == data->ind) {
+    if(el->ind == data->ind && el->amount < 99) {
       currentStackBox = el;
       break;
     }
   }
 
   // Add what we can to the current stack if there is one
-  // Start with bag
+  // Start with bag. This proceeds only if there is actually a partial stack
   if(currentStackBag != nullptr) {
+    // We get the space leftover in the partial stack
     int totalStackLeft = 99 - currentStackBag->amount;
+
+    // If the cart amount is bigger than the partial stack free space, just
+    // assign the rest of the free space.
+    // (A partial stack of 99 or a full partial stack)
     if(_onCart > totalStackLeft) {
       stackPartialBag = totalStackLeft;
       _onCart -= totalStackLeft;
     }
+
+    // If the entire cart can be placed onto the partial stack then things are
+    // simple, place the whole cart and empty the cart out.
     else {
       stackPartialBag = _onCart;
       _onCart = 0;
     }
   }
 
-  // Add what we can to the current stack if there is one
-  // End with box
-  if(currentStackBox != nullptr) {
+  // Partial stacks are always the highest priority and the bag comes first.
+  // Here, we do the same thing but for the box next, filling up the partial
+  // stack there, if any.
+  if(currentStackBox != nullptr && _onCart > 0) {
     int totalStackLeft = 99 - currentStackBox->amount;
     if(_onCart > totalStackLeft) {
       stackPartialBox = totalStackLeft;
@@ -96,9 +116,16 @@ StackReturn ItemMarketEntryStoreItem::calculateStacks()
     }
   }
 
-  // Finish the rest off in seperate stacks
+  // Finish the rest off in seperate stacks. We must now calculate how many
+  // more stacks we require. We do this only if there are items left in the
+  // cart.
   while(_onCart > 0) {
+    // We immidiately increase the full stack count
     stacks++;
+
+    // If there is more than 99 items on the cart still, we subtract 99 and
+    // continue on. Otherwise we count the cart as empty and in need of no more
+    // stacks.
     if(_onCart > 99) {
       _onCart -= 99;
     }
@@ -107,6 +134,7 @@ StackReturn ItemMarketEntryStoreItem::calculateStacks()
     }
   }
 
+  // We return the results which is largely helpful to a number of methods
   StackReturn stk;
   stk.full = stacks;
   stk.partialBag = stackPartialBag;
@@ -169,31 +197,49 @@ int ItemMarketEntryStoreItem::onCartLeft()
   // Calculate stacks this item takes up
   auto stk = calculateStacks();
 
+  // Final value to return, a representation of items left that can go onto the
+  // cart
+  int ret = 0;
+
   // Calculate stacks others take up
   int totalStackFromOthers = totalStackCount() - stk.full;
 
-  // Calculate partial stacks left
-  int partialStackBagLeft = stk.partialBag;
-  if(stk.partialElBag != nullptr)
-    partialStackBagLeft += stk.partialElBag->amount;
-
-  partialStackBagLeft = 99 - partialStackBagLeft;
-
-  int partialStackBoxLeft = stk.partialBox;
-  if(stk.partialElBox != nullptr)
-    partialStackBoxLeft += stk.partialElBox->amount;
-
-  partialStackBoxLeft = 99 - partialStackBoxLeft;
-
-  // Calculate stack spaces used and free
+  // Calculate inventory space used and free combined from both bag and box
   int combinedBoxSpace = toBox->itemsMax() + toBag->itemsMax();
   int combinedBoxUsed = toBox->itemsCount() + toBag->itemsCount();
 
-  // Stack space left
-  int stackSpaceLeft = combinedBoxSpace - combinedBoxUsed - totalStackFromOthers;
+  // Stack space left before requested transaction
+  int stackSpaceBefore = combinedBoxSpace - combinedBoxUsed;
 
-  // Calculate items remaining and return that
-  return ((stackSpaceLeft - stk.full) * 99) + (99 - partialStackBagLeft) + (99 - partialStackBoxLeft);
+  // Stack space after requested transactions
+  int stackSpaceLeftAfter = stackSpaceBefore - totalStackFromOthers - stk.full;
+
+  // Calculate whole stack items remaining. There are 99 items max per stack
+  // This is the whole new stacks converted to item count.
+  ret = stackSpaceLeftAfter * 99;
+
+  // Now figure out partial stacks which we calculate only if there is a partial
+  // stack. The stack represents number of additional used space. We determine
+  // the rest available.
+  // 99 (Max) - 20 (On Cart) - 50 (Already there) = 29 items left in partial
+  // or
+  // 99 (Max) - 5 (On Cart) - 94 (Already there) = 0 Items Left in partial
+  if(stk.partialElBag != nullptr) {
+    ret += 99 - stk.partialBag - stk.partialElBag->amount;
+
+    if((99 - stk.partialBag - stk.partialElBag->amount) < 0)
+      qDebug() << "Negative Amount" << (99 - stk.partialBag - stk.partialElBag->amount);
+  }
+
+  if(stk.partialElBox != nullptr) {
+    ret += 99 - stk.partialBox - stk.partialElBox->amount;
+
+    if((99 - stk.partialBox - stk.partialElBox->amount) < 0)
+      qDebug() << "Negative Amount" << (99 - stk.partialBox - stk.partialElBox->amount);
+  }
+
+  // Return the calculations
+  return ret;
 }
 
 int ItemMarketEntryStoreItem::stackCount()
