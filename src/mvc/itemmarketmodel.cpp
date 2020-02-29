@@ -63,6 +63,8 @@ ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
   // Any mode change
   connect(this, &ItemMarketModel::isBuyModeChanged, this, &ItemMarketModel::isAnyChanged);
   connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::isAnyChanged);
+
+  connect(this, &ItemMarketModel::reUpdateValues, this, &ItemMarketModel::onReUpdateValues);
 }
 
 int ItemMarketModel::rowCount(const QModelIndex& parent) const
@@ -255,6 +257,11 @@ bool ItemMarketModel::anyNotEnoughSpace()
 bool ItemMarketModel::canAnyCheckout()
 {
   return itemListCache.at(0)->canAnyCheckout();
+}
+
+void ItemMarketModel::onReUpdateValues()
+{
+  dataChanged(index(0), index(itemListCache.size() - 1));
 }
 
 bool ItemMarketModel::vendorListItem(ItemDBEntry* el)

@@ -203,11 +203,7 @@ Page {
           if(dataWhichType === "playerItem" || dataWhichType === "money")
             return dataInStockCount;
 
-          return 999999;
-        }
-
-        function getRightMargin() {
-          //
+          return 2147483647;
         }
 
         Text {
@@ -300,19 +296,71 @@ Page {
             //topPadding: 15
           }
 
-          SpinBox {
+          Row {
             id: cartAmount
             anchors.centerIn: parent
-
             enabled: dataCanSell || brg.marketModel.isBuyMode
-            onValueChanged: dataCartCount = value;
-            Component.onCompleted: value = dataCartCount;
-            editable: true
-            from: 0
-            to: getTo()
-            inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
-            //width: font.pixelSize * 5
-            implicitWidth: font.pixelSize * 10
+
+            IconButtonSquare {
+              id: negBtn
+              icon.source: "qrc:/assets/icons/fontawesome/minus.svg"
+              enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
+              onClicked: {
+                if(amountEdit.getValInt() === 0 && delegate.getTo() < 2147483647)
+                  amountEdit.setValInt(delegate.getTo());
+                else if(amountEdit.getValInt() === 0 && delegate.getTo() === 2147483647 && dataOnCartLeft > 0)
+                  amountEdit.setValInt(dataOnCartLeft);
+                else if(amountEdit.getValInt() > 0)
+                  amountEdit.setValInt(amountEdit.getValInt() - 1);
+              }
+            }
+
+            DefTextEdit {
+              id: amountEdit
+              anchors.top: negBtn.top
+              anchors.bottom: negBtn.bottom
+              horizontalAlignment: TextInput.AlignHCenter
+
+              function getValInt() {
+                return parseInt(text, 10);
+              }
+
+              function setValInt(val) {
+                text = val.toString();
+              }
+
+              validator: IntValidator {
+                bottom: 0;
+                top: delegate.getTo();
+              }
+
+              onTextChanged: {
+                if(acceptableInput)
+                  dataCartCount = getValInt();
+              }
+
+              Component.onCompleted: setValInt(dataCartCount);
+
+              width: 3 * font.pixelSize
+              labelEl.visible: false
+
+              inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
+            }
+
+            IconButtonSquare {
+              id: posBtn
+              icon.source: "qrc:/assets/icons/fontawesome/plus.svg"
+
+              enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
+              onClicked: {
+                if(amountEdit.getValInt() === delegate.getTo() && delegate.getTo() < 2147483647)
+                  amountEdit.setValInt(0);
+                else if(amountEdit.getValInt() > 0 && dataOnCartLeft === 0)
+                  amountEdit.setValInt(0);
+                else if(dataOnCartLeft > 0)
+                  amountEdit.setValInt(amountEdit.getValInt() + 1);
+              }
+            }
           }
 
           Text {

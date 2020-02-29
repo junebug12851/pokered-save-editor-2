@@ -138,6 +138,8 @@ public:
   bool anyNotEnoughSpace();
   bool canAnyCheckout();
 
+  void onReUpdateValues();
+
   // Re-create list cache methods
   bool vendorListItem(ItemDBEntry* el);
   void clearList();
