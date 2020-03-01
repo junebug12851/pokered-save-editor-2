@@ -10,29 +10,29 @@ Page {
   id: topz
 
   // Maximum money depending on the currency
-  function maxMoney() {
-    if(brg.marketModel.isMoneyCurrency)
+  function maxMoney(sym) {
+    if(sym === "₽" || brg.marketModel.isMoneyCurrency)
       return 999999;
     else
       return 9999;
   }
 
   // Negative version of max money
-  function maxMoneyNeg() {
-    return -maxMoney();
+  function maxMoneyNeg(sym) {
+    return -maxMoney(sym);
   }
 
   // If the money is above or below the maximum range
-  function moneyOutOfRange(val) {
-    if(Math.abs(val) > maxMoney())
+  function moneyOutOfRange(val, sym) {
+    if(Math.abs(val) > maxMoney(sym))
       return true;
     else
       return false;
   }
 
   // Returns red if outside of range and if below zero if enabled
-  function moneyColor(val, zeroRed) {
-    var ret = moneyOutOfRange(val)
+  function moneyColor(val, zeroRed, sym) {
+    var ret = moneyOutOfRange(val, sym)
           ? "red"
           : brg.settings.textColorDark;
 
@@ -81,17 +81,18 @@ Page {
   // different scenarios.
   function moneyStr(val, abs, useSigning, dataWhichType) {
     var _val = val;
+    var sym = curSym(dataWhichType);
 
-    if(_val > maxMoney())
-      _val = maxMoney();
-    else if(_val < maxMoneyNeg())
-      _val = -maxMoney();
+    if(_val > maxMoney(sym))
+      _val = maxMoney(sym);
+    else if(_val < maxMoneyNeg(sym))
+      _val = -maxMoney(sym);
 
     if(abs === true)
       _val = Math.abs(_val);
 
     _val = _val.toLocaleString();
-    _val = curSym(dataWhichType) + _val;
+    _val = sym + _val;
 
     var curSigning = "";
     if(useSigning === true)
@@ -100,15 +101,15 @@ Page {
     if(abs !== true && useSigning === true)
       _val = curSigning + " " + _val;
 
-    if(useSigning === true && curSigning === "-" && moneyOutOfRange(val))
+    if(useSigning === true && curSigning === "-" && moneyOutOfRange(val, sym))
       _val = "< " + _val;
-    else if(useSigning === true && curSigning === "+" && moneyOutOfRange(val))
+    else if(useSigning === true && curSigning === "+" && moneyOutOfRange(val, sym))
       _val = "> " + _val;
-    else if(useSigning === true && moneyOutOfRange(val))
+    else if(useSigning === true && moneyOutOfRange(val, sym))
       _val = "? " + _val;
-    else if(useSigning !== true && val < maxMoneyNeg())
+    else if(useSigning !== true && val < maxMoneyNeg(sym))
       _val = "< " + _val;
-    else if(useSigning !== true && val > maxMoney() && useSigning !== true)
+    else if(useSigning !== true && val > maxMoney(sym) && useSigning !== true)
       _val = "> " + _val;
 
     return _val;
@@ -373,9 +374,9 @@ Page {
                   ? " "
                   : topz.moneyStr(dataCartWorth, false, true, dataWhichType)
 
-            color: (dataCartWorth === "phony" || topz.moneyOutOfRange(dataCartWorth))
-                   ? topz.moneyColor(dataCartWorth)
-                   : topz.moneyColor(dataCartWorth)
+            color: (dataCartWorth === "phony" || topz.moneyOutOfRange(dataCartWorth, topz.curSym(dataWhichType)))
+                   ? topz.moneyColor(dataCartWorth, false, topz.curSym(dataWhichType))
+                   : topz.moneyColor(dataCartWorth, false, topz.curSym(dataWhichType))
 
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
