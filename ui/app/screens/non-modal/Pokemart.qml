@@ -319,6 +319,10 @@ Page {
               anchors.bottom: negBtn.bottom
               horizontalAlignment: TextInput.AlignHCenter
 
+              color: (!dataCanCheckout && dataCartCount > 0)
+                     ? "red"
+                     : brg.settings.textColorDark
+
               function getValInt() {
                 return parseInt(text, 10);
               }
