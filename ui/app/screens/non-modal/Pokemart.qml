@@ -577,12 +577,20 @@ Page {
   }
 
   footer: AppFooterBtn3 {
+    id: theFooter
+
     // Converts between Buying and Selling
     icon1.source: "qrc:/assets/icons/fontawesome/exchange-alt.svg"
     text1: "Buy/Sell"
     onBtn1Clicked: brg.marketModel.isBuyMode = !brg.marketModel.isBuyMode;
 
     // Checks out shopping cart
+    // There's a glitch where it becomes disabled when hovered and then stuck
+    // in the hovered state now disabled. Unfortunately I'm not able to find
+    // any way around this even going as far as creating a Connection function
+    // to programatically disable "down" before disabling the button but same
+    // result. "pressed" and "hovered" are read-only and I'm out of options so
+    // I'm going to have to stick with this glitch that's a bit of an eyesore.
     btn2.enabled: brg.marketModel.canAnyCheckout
     icon2.source: "qrc:/assets/icons/fontawesome/shopping-cart.svg"
     text2: "Checkout"

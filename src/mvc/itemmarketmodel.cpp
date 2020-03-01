@@ -279,11 +279,10 @@ void ItemMarketModel::checkout()
     el->checkout();
   }
 
-  // Ask all items to re-update their cached values
-  for(auto el : itemListCache) {
-    el->reUpdateConstants();
-  }
+  // Refresh/Reset the list
+  reUpdateAll();
 
+  // Annouce changes and update other values
   reUpdateValues();
 }
 
