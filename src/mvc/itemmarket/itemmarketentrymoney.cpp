@@ -14,6 +14,8 @@
   * limitations under the License.
 */
 
+#include <QDebug>
+
 #include "./itemmarketentrymoney.h"
 #include "../../data/db/gamecorner.h"
 #include "../../data/file/expanded/player/playerbasics.h"
@@ -81,16 +83,27 @@ int ItemMarketEntryMoney::onCartLeft()
 
   // Selling money to buy coins
   if(*isBuyMode) {
-    //int coinsLeft = 9999 - onCart;
-    int coinsLeft = 9999 - player->coins;
-    //ret = coinsLeft / itemWorth();
-    ret = qMin(coinsLeft / itemWorth(), (int)player->money - onCart);
+
+    //How much coins can we get
+    int coinsLeft = (9999 - player->coins) / itemWorth();
+
+    // How much coins can the player buy
+    int coinsBuyable = player->money - onCart; /// itemWorth();
+
+    // Return the smaller of the two
+    ret = qMin(coinsLeft - onCart, coinsBuyable);
   }
 
   // Selling coins to buy money
   else {
-    int moneyLeft = 999999 - player->money;
-    ret = qMin(moneyLeft / itemWorth(), player->coins - onCart);
+    //How much money can we get
+    int moneyLeft = (999999 - player->money)  / itemWorth();
+
+    // How much money can the player buy
+    int moneyBuyable = player->coins - onCart; /// itemWorth();
+
+    // Return the smaller of the two
+    ret = qMin(moneyLeft - onCart, moneyBuyable);
   }
 
   return ret;
