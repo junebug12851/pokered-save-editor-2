@@ -17,11 +17,15 @@
 #include "./pokemonstoragebox.h"
 #include "./pokemonbox.h"
 #include "../../savefile.h"
+#include "../savefileexpanded.h"
+#include "../player/player.h"
+#include "../player/playerbasics.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../../common/random.h"
 
-PokemonStorageBox::PokemonStorageBox(SaveFile* saveFile, var16 boxOffset)
+PokemonStorageBox::PokemonStorageBox(int maxSize, SaveFile* saveFile, var16 boxOffset)
+  : maxSize(maxSize)
 {
   load(saveFile, boxOffset);
 }
@@ -38,7 +42,12 @@ int PokemonStorageBox::pokemonCount()
 
 int PokemonStorageBox::pokemonMax()
 {
-  return boxMaxPokemon;
+  return maxSize;
+}
+
+bool PokemonStorageBox::isFull()
+{
+  return pokemon.size() >= maxSize;
 }
 
 PokemonBox* PokemonStorageBox::pokemonAt(int ind)
@@ -46,39 +55,93 @@ PokemonBox* PokemonStorageBox::pokemonAt(int ind)
   return pokemon.at(ind);
 }
 
-void PokemonStorageBox::pokemonSwap(int from, int to)
+bool PokemonStorageBox::pokemonMove(int from, int to)
 {
+  if(pokemon.size() <= 0 ||
+     from == to ||
+     from >= pokemon.size() ||
+     from < 0 ||
+     to >= pokemon.size() ||
+     to < 0)
+    return false;
+
+  // Grab and remove item
   auto eFrom = pokemon.at(from);
-  auto eTo = pokemon.at(to);
+  pokemon.removeAt(from);
 
-  pokemon.replace(from, eTo);
-  pokemon.replace(to, eFrom);
+  // Insert it elsewhere
+  pokemon.insert(to, eFrom);
 
+  pokemonMoveChange(from, to);
   pokemonChanged();
+
+  return true;
 }
 
 void PokemonStorageBox::pokemonRemove(int ind)
 {
-  if(pokemon.size() <= 0)
+  if(pokemon.size() <= 0 ||
+     ind < 0 ||
+     ind >= pokemon.size())
     return;
 
   delete pokemon.at(ind);
   pokemon.removeAt(ind);
+  pokemonRemoveChange(ind);
   pokemonChanged();
 }
 
 void PokemonStorageBox::pokemonNew()
 {
-  if(pokemon.size() >= boxMaxPokemon)
+  if(pokemon.size() >= maxSize)
     return;
 
-  pokemon.append(new PokemonBox);
+  auto mon = new PokemonBox;
+  mon->randomize(file->dataExpanded->player->basics);
+  pokemon.append(mon);
+  pokemonInsertChange();
   pokemonChanged();
+}
+
+bool PokemonStorageBox::relocateAll(PokemonStorageBox* dst)
+{
+  bool ret = true;
+
+  while(pokemon.size() > 0 && dst->pokemon.size() < dst->pokemonMax()) {
+    if(!relocateOne(dst, 0))
+      ret = false;
+  }
+
+  return ret;
+}
+
+bool PokemonStorageBox::relocateOne(PokemonStorageBox* dst, int ind)
+{
+  if(pokemon.size() <= 0 ||
+     ind < 0 ||
+     ind >= pokemon.size() ||
+     dst->pokemon.size() >= dst->pokemonMax())
+    return false;
+
+  auto el = pokemon.at(ind);
+  beforePokemonRelocate(el);
+
+  pokemon.removeAt(ind);
+  pokemonRemoveChange(ind);
+  pokemonChanged();
+
+  dst->pokemon.append(el);
+  dst->pokemonInsertChange();
+  dst->pokemonChanged();
+
+  return true;
 }
 
 void PokemonStorageBox::load(SaveFile* saveFile, var16 boxOffset)
 {
   reset();
+
+  this->file = saveFile;
 
   if(saveFile == nullptr)
     return;
@@ -86,13 +149,15 @@ void PokemonStorageBox::load(SaveFile* saveFile, var16 boxOffset)
   auto toolset = saveFile->toolset;
 
   // Simply read-in and append new Pokemon in box
-  for (var8 i = 0; i < toolset->getByte(boxOffset) && i < boxMaxPokemon; i++) {
+  for (var8 i = 0; i < toolset->getByte(boxOffset) && i < maxSize; i++) {
     pokemon.append(new PokemonBox(
                      saveFile,
                      boxOffset + 0x16,
                      boxOffset + 0x386,
                      boxOffset + 0x2AA,
                      i));
+
+    pokemonInsertChange();
   }
 
   pokemonChanged();
@@ -106,7 +171,7 @@ void PokemonStorageBox::save(SaveFile* saveFile, var16 boxOffset)
   toolset->setByte(boxOffset, pokemon.size());
 
   // Save each Pokemon
-  for (var8 i = 0; i < pokemon.size() && i < boxMaxPokemon; i++) {
+  for (var8 i = 0; i < pokemon.size() && i < maxSize; i++) {
     pokemon.at(i)->save(
           saveFile,
           boxOffset + 0x16,
@@ -118,7 +183,7 @@ void PokemonStorageBox::save(SaveFile* saveFile, var16 boxOffset)
   }
 
   // Mark end of species list if not full box
-  if(pokemon.size() >= boxMaxPokemon)
+  if(pokemon.size() >= maxSize)
     return;
 
   var16 speciesOffset = boxOffset + 1 + pokemon.size();
@@ -132,6 +197,7 @@ void PokemonStorageBox::reset()
 
   pokemon.clear();
 
+  pokemonResetChange();
   pokemonChanged();
 }
 
@@ -140,13 +206,14 @@ void PokemonStorageBox::randomize(PlayerBasics* basics)
   reset();
 
   // Go from zero up to half box capacity
-  var8 count = Random::rangeInclusive(0, boxMaxPokemon * .50);
+  var8 count = Random::rangeInclusive(0, maxSize * .50);
 
   // Insert Pokemon
   for(var8 i = 0; i < count; i++) {
     auto tmp = new PokemonBox;
     tmp->randomize(basics);
     pokemon.append(tmp);
+    pokemonInsertChange();
   }
 
   pokemonChanged();

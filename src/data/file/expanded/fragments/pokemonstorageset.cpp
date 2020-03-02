@@ -95,23 +95,7 @@ void PokemonStorageSet::saveSpecific(SaveFile* saveFile, var16 offset, var8 from
         offset);
 }
 
-int PokemonStorageSet::boxCount()
-{
-  return setMaxBoxes;
-}
-
 PokemonStorageBox* PokemonStorageSet::boxAt(int ind)
 {
   return boxes[ind];
-}
-
-void PokemonStorageSet::boxSwap(int from, int to)
-{
-  auto eFrom = boxes[from];
-  auto eTo = boxes[to];
-
-  boxes[from] = eTo;
-  boxes[to] = eFrom;
-
-  boxesChanged();
 }

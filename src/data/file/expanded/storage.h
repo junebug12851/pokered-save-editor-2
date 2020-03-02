@@ -37,6 +37,7 @@ class Storage : public QObject
   Q_PROPERTY(ItemStorageBox* items MEMBER items NOTIFY itemsChanged)
   Q_PROPERTY(int curBox MEMBER curBox NOTIFY curBoxChanged)
   Q_PROPERTY(bool boxesFormatted MEMBER boxesFormatted NOTIFY boxesFormattedChanged)
+  Q_PROPERTY(int boxCount READ boxCount CONSTANT)
 
 public:
   Storage(SaveFile* saveFile = nullptr);
@@ -45,20 +46,16 @@ public:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
 
-  // Sets are a fixed size and cannot be moved, created, modified, or destroyed
-  // Allow swapping
-  Q_INVOKABLE int setCount();
-  Q_INVOKABLE PokemonStorageSet* setAt(int ind);
-  Q_INVOKABLE void setSwap(int from, int to);
-
   // Ignores the sets and returns the box with given box number
   // Also allow swapping ignoring set boundraries (Appearing as one consecutive
   // array of boxes)
-  Q_INVOKABLE int boxCount();
+  int boxCount();
   Q_INVOKABLE PokemonStorageBox* boxAt(int ind);
-  Q_INVOKABLE void boxSwap(int from, int to);
 
+  // Returns a box pointer that has free space
   PokemonStorageBox* freeSpace();
+
+  // Deposits a pokemon into a box
   bool depositPokemon(PokemonBox* pokemon);
 
 signals:

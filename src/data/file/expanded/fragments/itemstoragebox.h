@@ -75,6 +75,7 @@ public:
   // sense as slots
   Q_INVOKABLE Item* itemAt(int ind);
 
+  // Auto-called from randomize function depending on box type
   void randomizeStorage();
   void randomizeBag();
 

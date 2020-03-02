@@ -31,29 +31,52 @@ class PokemonStorageBox : public QObject
 {
   Q_OBJECT
 
+  Q_PROPERTY(int pokemonCount READ pokemonCount NOTIFY pokemonChanged)
+  Q_PROPERTY(int isFull READ isFull NOTIFY pokemonChanged)
+  Q_PROPERTY(int pokemonMax READ pokemonMax CONSTANT)
+
+  // Get destination box
+  Q_PROPERTY(PokemonStorageBox* destBox READ destBox STORED false CONSTANT)
+
 public:
-  PokemonStorageBox(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
+  PokemonStorageBox(int maxSize = boxMaxPokemon, SaveFile* saveFile = nullptr, var16 boxOffset = 0);
   virtual ~PokemonStorageBox();
 
-  void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
-  void save(SaveFile* saveFile, var16 boxOffset = 0);
+  virtual void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
+  virtual void save(SaveFile* saveFile, var16 boxOffset = 0);
 
-  Q_INVOKABLE int pokemonCount();
-  Q_INVOKABLE int pokemonMax();
+  int pokemonCount();
+  int pokemonMax();
+  bool isFull();
+
   Q_INVOKABLE PokemonBox* pokemonAt(int ind);
-  Q_INVOKABLE void pokemonSwap(int from, int to);
-  Q_INVOKABLE void pokemonRemove(int ind);
-  Q_INVOKABLE void pokemonNew();
 
 signals:
+  // When moving an item away from the box to another box, allow the model to
+  // perform cleanup actions
+  void beforePokemonRelocate(PokemonBox* item);
+
   void pokemonChanged();
+  void pokemonMoveChange(int from, int to);
+  void pokemonRemoveChange(int ind);
+  void pokemonInsertChange();
+  void pokemonResetChange();
 
 public slots:
   void reset();
-  void randomize(PlayerBasics* basics);
+  virtual void randomize(PlayerBasics* basics);
+
+  bool pokemonMove(int from, int to);
+  void pokemonRemove(int ind);
+  void pokemonNew();
+
+  bool relocateAll(PokemonStorageBox* dst);
+  bool relocateOne(PokemonStorageBox* dst, int ind);
 
 public:
   QVector<PokemonBox*> pokemon;
+  int maxSize;
+  SaveFile* file;
 };
 
 #endif // POKEMONSTORAGEBOX_H

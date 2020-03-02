@@ -23,6 +23,7 @@
 #include "../../../../common/random.h"
 
 PlayerPokemon::PlayerPokemon(SaveFile* saveFile)
+  : PokemonStorageBox(boxMaxPokemon)
 {
   load(saveFile);
 }
@@ -32,9 +33,13 @@ PlayerPokemon::~PlayerPokemon()
   reset();
 }
 
-void PlayerPokemon::load(SaveFile* saveFile)
+void PlayerPokemon::load(SaveFile* saveFile, var16 boxOffset)
 {
+  Q_UNUSED(boxOffset)
+
   reset();
+
+  this->file = saveFile;
 
   if(saveFile == nullptr)
     return;
@@ -42,26 +47,30 @@ void PlayerPokemon::load(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
 
   for (var8 i = 0; i < toolset->getByte(0x2F2C) && i < 6; i++) {
-    party.append(new PokemonParty(
+    pokemon.append(new PokemonParty(
                             saveFile,
                             0x2F34,
                             0x307E,
                             0x303C,
                             i));
+
+    pokemonInsertChange();
   }
 
-  partyChanged();
+  pokemonChanged();
 }
 
-void PlayerPokemon::save(SaveFile* saveFile)
+void PlayerPokemon::save(SaveFile* saveFile, var16 boxOffset)
 {
+  Q_UNUSED(boxOffset)
+
   auto toolset = saveFile->toolset;
 
   // Set party length and save current party data
-  toolset->setByte(0x2F2C, party.size());
+  toolset->setByte(0x2F2C, pokemon.size());
 
-  for(var8 i = 0; i < party.size() && i < 6; i++) {
-    party.at(i)->save(
+  for(var8 i = 0; i < pokemon.size() && i < 6; i++) {
+    pokemon.at(i)->save(
           saveFile,
           0x2F34,
           0x2F2D,
@@ -72,66 +81,16 @@ void PlayerPokemon::save(SaveFile* saveFile)
   }
 
   // Mark end of species list if not full party
-  if(party.size() >= 6)
+  if(pokemon.size() >= 6)
     return;
 
-  var16 speciesOffset = 0x2F2D + party.size();
+  var16 speciesOffset = 0x2F2D + pokemon.size();
   toolset->setByte(speciesOffset, 0xFF);
-}
-
-int PlayerPokemon::partyCount()
-{
-  return party.size();
-}
-
-int PlayerPokemon::partyMax()
-{
-  return maxParty;
 }
 
 PokemonParty* PlayerPokemon::partyAt(int ind)
 {
-  return party.at(ind);
-}
-
-void PlayerPokemon::partySwap(int from, int to)
-{
-  auto eFrom = party.at(from);
-  auto eTo = party.at(to);
-
-  party.replace(from, eTo);
-  party.replace(to, eFrom);
-
-  partyChanged();
-}
-
-void PlayerPokemon::partyRemove(int ind)
-{
-  // Has to be at least one Pokemon in party
-  if(party.size() <= 1)
-    return;
-
-  delete party.at(ind);
-  party.removeAt(ind);
-  partyChanged();
-}
-
-void PlayerPokemon::partyNew()
-{
-  if(party.size() >= maxParty)
-    return;
-
-  party.append(new PokemonParty);
-  partyChanged();
-}
-
-void PlayerPokemon::reset()
-{
-  for(auto mon : party)
-    delete mon;
-
-  party.clear();
-  partyChanged();
+  return (PokemonParty*)pokemon.at(ind);
 }
 
 void PlayerPokemon::randomize(PlayerBasics* basics)
@@ -144,15 +103,16 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
 
   for(var8 i = 0; i < count; i++) {
     auto tmp = new PokemonParty;
-    party.append(tmp);
+    pokemon.append(tmp);
     tmp->randomize(basics);
+    pokemonInsertChange();
   }
 
   // Give an extra Pokemon that's an HM slave
   // I have no idea where randomize will drop you so to be able to progress
   // in the game you need to be able to get around
   auto tmp = new PokemonParty;
-  party.append(tmp);
+  pokemon.append(tmp);
   tmp->randomize(basics);
 
   // Clear out move pool
@@ -176,5 +136,6 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
     move->restorePP();
   }
 
-  partyChanged();
+  pokemonInsertChange();
+  pokemonChanged();
 }

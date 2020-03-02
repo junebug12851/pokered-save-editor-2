@@ -19,13 +19,14 @@
 #include <QObject>
 #include <QVector>
 #include "../../../../common/types.h"
+#include "../fragments/pokemonstoragebox.h"
 class SaveFile;
 class PlayerBasics;
 class PokemonParty;
 
 constexpr var8 maxParty = 6;
 
-class PlayerPokemon : public QObject
+class PlayerPokemon : public PokemonStorageBox
 {
   Q_OBJECT
 
@@ -33,25 +34,13 @@ public:
   PlayerPokemon(SaveFile* saveFile = nullptr);
   virtual ~PlayerPokemon();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  virtual void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
+  virtual void save(SaveFile* saveFile, var16 boxOffset = 0);
 
-  Q_INVOKABLE int partyCount();
-  Q_INVOKABLE int partyMax();
   Q_INVOKABLE PokemonParty* partyAt(int ind);
-  Q_INVOKABLE void partySwap(int from, int to);
-  Q_INVOKABLE void partyRemove(int ind);
-  Q_INVOKABLE void partyNew();
-
-signals:
-  void partyChanged();
 
 public slots:
-  void reset();
-  void randomize(PlayerBasics* basics);
-
-public:
-  QVector<PokemonParty*> party;
+  virtual void randomize(PlayerBasics* basics);
 };
 
 #endif // PLAYERPOKEMON_H

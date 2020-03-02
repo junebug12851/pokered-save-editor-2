@@ -45,11 +45,7 @@ public:
   void loadSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 toBox = 0);
   void saveSpecific(SaveFile* saveFile = nullptr, var16 offset = 0, var8 fromBox = 0);
 
-  // Boxes cannot be modified, only swapped. They will never change in size.
-  // There will only ever be exactly this amount of boxes in a set.
-  Q_INVOKABLE int boxCount();
-  Q_INVOKABLE PokemonStorageBox* boxAt(int ind);
-  Q_INVOKABLE void boxSwap(int from, int to);
+  PokemonStorageBox* boxAt(int ind);
 
 signals:
   void boxesChanged();
