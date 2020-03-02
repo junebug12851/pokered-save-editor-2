@@ -91,8 +91,8 @@ int ItemMarketEntryGCPokemon::onCartLeft()
   int totalStackFromOthers = totalStackCount() - stk;
 
   // Calculate inventory space used and free combined from both bag and box
-  int combinedBoxSpace = party->partyMax() + (maxPokemonBoxes * boxMaxPokemon);
-  int combinedBoxUsed = party->partyCount();
+  int combinedBoxSpace = party->pokemonMax() + (maxPokemonBoxes * boxMaxPokemon);
+  int combinedBoxUsed = party->pokemonCount();
 
   if(storage->boxesFormatted) {
     for(int i = 0; i < maxPokemonBoxes; i++) {
@@ -144,9 +144,9 @@ void ItemMarketEntryGCPokemon::checkout() {
     auto box = storage->freeSpace();
 
     // Space in party ?
-    if(party->partyCount() < party->partyMax()) {
-      party->party.append(PokemonParty::convertToParty(mon));
-      party->partyChanged();
+    if(party->pokemonCount() < party->pokemonMax()) {
+      party->pokemon.append(PokemonParty::convertToParty(mon));
+      party->pokemonChanged();
     }
     else if(box != nullptr) {
       box->pokemon.append(mon);

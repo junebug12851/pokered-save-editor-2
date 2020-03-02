@@ -292,7 +292,7 @@ QVector<PokemonBox*> PlayerBasics::getNonTradeMons()
   QVector<PokemonBox*> monsToFix;
 
   // Add all party members to fix
-  for(auto el : file->dataExpanded->player->pokemon->party) {
+  for(auto el : file->dataExpanded->player->pokemon->pokemon) {
     if(!el->hasTradeStatus(this))
       monsToFix.append(el);
   }

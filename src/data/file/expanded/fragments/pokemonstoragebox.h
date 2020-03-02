@@ -35,9 +35,6 @@ class PokemonStorageBox : public QObject
   Q_PROPERTY(int isFull READ isFull NOTIFY pokemonChanged)
   Q_PROPERTY(int pokemonMax READ pokemonMax CONSTANT)
 
-  // Get destination box
-  Q_PROPERTY(PokemonStorageBox* destBox READ destBox STORED false CONSTANT)
-
 public:
   PokemonStorageBox(int maxSize = boxMaxPokemon, SaveFile* saveFile = nullptr, var16 boxOffset = 0);
   virtual ~PokemonStorageBox();
