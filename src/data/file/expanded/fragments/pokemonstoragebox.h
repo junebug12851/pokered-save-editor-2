@@ -71,6 +71,7 @@ public slots:
   bool relocateOne(PokemonStorageBox* dst, int ind);
 
 public:
+  bool isParty = false;
   QVector<PokemonBox*> pokemon;
   int maxSize;
   SaveFile* file;

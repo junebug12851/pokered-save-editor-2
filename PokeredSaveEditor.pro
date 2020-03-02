@@ -111,6 +111,7 @@ HEADERS += \
   src/mvc/itemmarketmodel.h \
   src/mvc/itemselectmodel.h \
   src/mvc/itemstoragemodel.h \
+  src/mvc/pokemonstoragemodel.h \
   src/mvc/creditsmodel.h \
   src/common/random.h \
   src/mvc/fontsearchmodel.h \
@@ -219,6 +220,7 @@ SOURCES += \
   src/mvc/itemmarketmodel.cpp \
   src/mvc/itemselectmodel.cpp \
   src/mvc/itemstoragemodel.cpp \
+  src/mvc/pokemonstoragemodel.cpp \
   src/mvc/creditsmodel.cpp \
   src/common/random.cpp \
   src/mvc/fontsearchmodel.cpp \
