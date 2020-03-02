@@ -20,7 +20,7 @@ ListModel {
     page: "bag"
   }
   ListElement {
-    name: "Party"
+    name: "Pokemon"
     iconSrc: "qrc:/assets/icons/poke-go/pikachu-2.svg"
     page: ""
   }
