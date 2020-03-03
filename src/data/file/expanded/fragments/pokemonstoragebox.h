@@ -65,10 +65,10 @@ public slots:
 
   bool pokemonMove(int from, int to);
   void pokemonRemove(int ind);
-  void pokemonNew();
+  virtual void pokemonNew();
 
   bool relocateAll(PokemonStorageBox* dst);
-  bool relocateOne(PokemonStorageBox* dst, int ind);
+  virtual bool relocateOne(PokemonStorageBox* dst, int ind);
 
 public:
   bool isParty = false;

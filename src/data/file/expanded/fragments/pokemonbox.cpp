@@ -159,11 +159,17 @@ PokemonBox* PokemonBox::newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basic
   auto pkmn = new PokemonBox();
 
   pkmn->species = pkmnData->ind;
-  pkmn->level = 5;
+  pkmn->level = Random::rangeInclusive(5, 8);
   pkmn->reRollDVs();
-  pkmn->nickname = pkmnData->name;
 
-  if(basics != nullptr)
+  // Randomly give a nickanme or not
+  bool noNick = Random::flipCoin();
+  pkmn->changeName(noNick);
+
+  // 10% chance of it being a traded pokemon
+  bool isTrade = Random::chanceSuccess(10);
+
+  if(basics != nullptr && !isTrade)
     pkmn->changeTrade(true, basics);
   else
     pkmn->changeTrade();
@@ -480,7 +486,7 @@ void PokemonBox::randomize(PlayerBasics* basics)
   copyFrom(pkmn);
   delete pkmn;
 
-  level = Random::rangeInclusive(1, pokemonLevelMax);
+  level = Random::rangeInclusive(5, pokemonLevelMax);
   levelChanged();
 
   atkExp = Random::rangeInclusive(0, 0xFFFF);

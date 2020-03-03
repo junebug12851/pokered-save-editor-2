@@ -41,6 +41,7 @@ public:
 
 public slots:
   virtual void randomize(PlayerBasics* basics);
+  virtual void pokemonNew();
 };
 
 #endif // PLAYERPOKEMON_H

@@ -14,6 +14,7 @@
   * limitations under the License.
 */
 #include "playerpokemon.h"
+#include "./player.h"
 #include "./playerbasics.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
@@ -21,6 +22,7 @@
 #include "../fragments/pokemonparty.h"
 #include "../../../db/moves.h"
 #include "../../../../common/random.h"
+#include "../savefileexpanded.h"
 
 PlayerPokemon::PlayerPokemon(SaveFile* saveFile)
   : PokemonStorageBox(boxMaxPokemon)
@@ -138,6 +140,17 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
     move->restorePP();
   }
 
+  pokemonInsertChange();
+  pokemonChanged();
+}
+
+void PlayerPokemon::pokemonNew()
+{
+  if(pokemon.size() >= maxSize)
+    return;
+
+  auto mon = PokemonParty::convertToParty(PokemonParty::newPokemon(PokemonRandom::Random_Starters, file->dataExpanded->player->basics));
+  pokemon.append(mon);
   pokemonInsertChange();
   pokemonChanged();
 }

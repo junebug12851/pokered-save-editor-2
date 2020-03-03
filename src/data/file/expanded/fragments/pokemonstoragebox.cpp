@@ -96,8 +96,7 @@ void PokemonStorageBox::pokemonNew()
   if(pokemon.size() >= maxSize)
     return;
 
-  auto mon = new PokemonBox;
-  mon->randomize(file->dataExpanded->player->basics);
+  auto mon = PokemonBox::newPokemon(PokemonRandom::Random_Starters, file->dataExpanded->player->basics);
   pokemon.append(mon);
   pokemonInsertChange();
   pokemonChanged();
@@ -205,8 +204,33 @@ void PokemonStorageBox::randomize(PlayerBasics* basics)
 {
   reset();
 
-  // Go from zero up to half box capacity
-  var8 count = Random::rangeInclusive(0, maxSize * .50);
+  // Determine fill amount
+
+  // 65% chance the box will remain empty
+  if(Random::flipCoin())
+    return;
+
+  // If the box is to be filled, how much so?
+  int maxRange[] = {
+    (int)(maxSize * 0.25),
+    (int)(maxSize * 0.50),
+    (int)(maxSize * 0.75),
+    (int)(maxSize * 1.00)
+  };
+
+  // Start with default of index 1
+  int maxRangeSel = 0;
+
+  // Make it incresingly difficult to proceed to higher indexes
+  if(Random::chanceSuccess(65))
+    maxRangeSel = 1;
+  else if(Random::chanceSuccess(65))
+    maxRangeSel = 2;
+  else if(Random::chanceSuccess(65))
+    maxRangeSel = 3;
+
+  // Get end capacity
+  var8 count = Random::rangeInclusive(0, maxRange[maxRangeSel]);
 
   // Insert Pokemon
   for(var8 i = 0; i < count; i++) {

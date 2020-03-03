@@ -345,6 +345,11 @@ void PokemonStorageModel::checkedMoveToBottom()
 void PokemonStorageModel::checkedDelete()
 {
   for(auto el : getChecked()) {
+
+    // Stop if the party is down to one Pokemon
+    if(getCurBox() == party && party->pokemonCount() <= 1)
+      break;
+
     int ind = getCurBox()->pokemon.indexOf(el);
     getCurBox()->pokemonRemove(ind);
   }
@@ -357,6 +362,17 @@ void PokemonStorageModel::checkedTransfer()
     return;
 
   for(auto el : getChecked()) {
+
+    // We don't want to convert to and from data structures if we can't move
+    // the pokemon. Perform checks to make sure it's possible.
+
+    // Stop if the party is down to one Pokemon
+    if(getCurBox() == party && party->pokemonCount() <= 1)
+      break;
+
+    // Stop here if the other side is full
+    if(otherModel->getCurBox()->isFull())
+      break;
 
     // Get index
     int ind = getCurBox()->pokemon.indexOf(el);
