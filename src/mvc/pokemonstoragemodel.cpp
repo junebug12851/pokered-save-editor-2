@@ -40,6 +40,7 @@ PokemonStorageModel::PokemonStorageModel(
   connect(this->router, &Router::closeNonModal, this, &PokemonStorageModel::pageClosing);
   connect(this->router, &Router::goHome, this, &PokemonStorageModel::pageClosing);
   connect(this, &PokemonStorageModel::hasCheckedChanged, this, &PokemonStorageModel::checkStateDirty);
+  disconnect(this, &PokemonStorageModel::curBoxChanged, this, &PokemonStorageModel::onReset);
 
   // Do an initial setup
   switchBox(curBox);
@@ -47,22 +48,33 @@ PokemonStorageModel::PokemonStorageModel(
 
 void PokemonStorageModel::switchBox(int newBox)
 {
+  // Do nothing if it's the same box
+  if(curBox == newBox)
+    return;
+
+  // Get old current box
   auto box = getCurBox();
 
+  // Disconnect from it
   disconnect(box, &PokemonStorageBox::pokemonMoveChange, this, &PokemonStorageModel::onMove);
   disconnect(box, &PokemonStorageBox::pokemonRemoveChange, this, &PokemonStorageModel::onRemove);
   disconnect(box, &PokemonStorageBox::pokemonInsertChange, this, &PokemonStorageModel::onReset);
   disconnect(box, &PokemonStorageBox::pokemonResetChange, this, &PokemonStorageModel::onReset);
   disconnect(box, &PokemonStorageBox::beforePokemonRelocate, this, &PokemonStorageModel::onBeforeRelocate);
 
+  // Change boxes and retrieve new box
   curBox = newBox;
   box = getCurBox();
 
+  // Connect to it
   connect(box, &PokemonStorageBox::pokemonMoveChange, this, &PokemonStorageModel::onMove);
   connect(box, &PokemonStorageBox::pokemonRemoveChange, this, &PokemonStorageModel::onRemove);
   connect(box, &PokemonStorageBox::pokemonInsertChange, this, &PokemonStorageModel::onReset);
   connect(box, &PokemonStorageBox::pokemonResetChange, this, &PokemonStorageModel::onReset);
   connect(box, &PokemonStorageBox::beforePokemonRelocate, this, &PokemonStorageModel::onBeforeRelocate);
+
+  // Announce change
+  curBoxChanged();
 }
 
 PokemonStorageBox* PokemonStorageModel::getCurBox() const
@@ -103,6 +115,7 @@ QVariant PokemonStorageModel::data(const QModelIndex& index, int role) const
   auto mon = getCurBox()->pokemon.at(index.row());
   auto monData = mon->toData();
 
+  // Even for glitch Pokemon, there should still be a data entry
   if(mon == nullptr || monData == nullptr)
     return QVariant();
 

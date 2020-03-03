@@ -36,5 +36,19 @@ Bridge::Bridge(FileManagement* file)
                   file->data->dataExpanded->player->pokemon,
                   file->data->dataExpanded->storage,
                   file->data
-                  ))
-{}
+                  )),
+    pokemonStorageModel1(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon)),
+    pokemonStorageModel2(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon))
+{
+  // Link the two
+  pokemonStorageModel1->otherModel = pokemonStorageModel2;
+  pokemonStorageModel2->otherModel = pokemonStorageModel1;
+
+  // Switch the second half to box 0, the two halves don't need to show the same
+  // box
+  pokemonStorageModel2->switchBox(0);
+
+  // Setup paired select boxes after storage models are created and init
+  pokemonBoxSelectModel1 = new PokemonBoxSelectModel(pokemonStorageModel1);
+  pokemonBoxSelectModel2 = new PokemonBoxSelectModel(pokemonStorageModel2);
+}

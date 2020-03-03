@@ -503,5 +503,10 @@
         <file>assets/icons/fontawesome/shopping-cart.svg</file>
         <file>assets/icons/fontawesome/coins.svg</file>
         <file>assets/icons/fontawesome/minus.svg</file>
+        <file>ui/app/screens/non-modal/Pokemon.qml</file>
+        <file>assets/icons/fontawesome/check-circle.svg</file>
+        <file>ui/app/fragments/screens/pokemon/PokemonBoxView.qml</file>
+        <file>ui/app/fragments/screens/pokemon/PokemonPane.qml</file>
+        <file>ui/app/fragments/controls/selection/SelectPokemonBox.qml</file>
     </qresource>
 </RCC>

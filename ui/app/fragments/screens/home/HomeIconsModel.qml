@@ -22,7 +22,7 @@ ListModel {
   ListElement {
     name: "Pokemon"
     iconSrc: "qrc:/assets/icons/poke-go/pikachu-2.svg"
-    page: ""
+    page: "pokemon"
   }
   ListElement {
     name: "Rival"

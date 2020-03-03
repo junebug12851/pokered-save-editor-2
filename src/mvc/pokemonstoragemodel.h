@@ -35,9 +35,12 @@ class PokemonStorageModel : public QAbstractListModel
   // Checkmarks changed
   Q_PROPERTY(bool hasChecked READ hasCheckedCached NOTIFY hasCheckedChangedCached STORED false)
 
+  Q_PROPERTY(int curBox MEMBER curBox NOTIFY curBoxChanged)
+
 signals:
   void hasCheckedChanged();
   void hasCheckedChangedCached();
+  void curBoxChanged();
 
 public:
   // Name of attached properties

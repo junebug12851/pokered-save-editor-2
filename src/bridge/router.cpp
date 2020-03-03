@@ -129,6 +129,7 @@ void Router::loadScreens()
   screens.insert("pokedex", new Screen(false, "Pokedex", "qrc:/ui/app/screens/non-modal/Pokedex.qml"));
   screens.insert("bag", new Screen(false, "Items", "qrc:/ui/app/screens/non-modal/Bag.qml"));
   screens.insert("pokemart", new Screen(false, "Pokemart", "qrc:/ui/app/screens/non-modal/Pokemart.qml"));
+  screens.insert("pokemon", new Screen(false, "Pokemon", "qrc:/ui/app/screens/non-modal/Pokemon.qml"));
 }
 
 QHash<QString, Screen*> Router::screens = QHash<QString, Screen*>();

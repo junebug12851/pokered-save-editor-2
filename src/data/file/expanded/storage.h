@@ -67,6 +67,8 @@ signals:
 public slots:
   void reset();
   void randomize(PlayerBasics* basics);
+  void randomizePokemon(PlayerBasics* basics);
+  void randomizeItems();
 
 public:
   ItemStorageBox* items = nullptr;

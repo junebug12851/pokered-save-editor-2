@@ -32,6 +32,8 @@
 #include "../mvc/itemselectmodel.h"
 #include "../mvc/itemstoragemodel.h"
 #include "../mvc/itemmarketmodel.h"
+#include "../mvc/pokemonstoragemodel.h"
+#include "../mvc/pokemonboxselectmodel.h"
 
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
@@ -65,6 +67,10 @@ class Bridge : public QObject
   Q_PROPERTY(ExamplesRival* randomExampleRival MEMBER randomExampleRival NOTIFY randomExampleRivalChanged)
   Q_PROPERTY(Settings* settings MEMBER settings NOTIFY settingsChanged)
   Q_PROPERTY(ItemMarketModel* marketModel MEMBER marketModel NOTIFY marketModelChanged)
+  Q_PROPERTY(PokemonStorageModel* pokemonStorageModel1 MEMBER pokemonStorageModel1 NOTIFY pokemonStorageModel1Changed)
+  Q_PROPERTY(PokemonStorageModel* pokemonStorageModel2 MEMBER pokemonStorageModel2 NOTIFY pokemonStorageModel2Changed)
+  Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel1 MEMBER pokemonBoxSelectModel1 NOTIFY pokemonBoxSelectModel1Changed)
+  Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel2 MEMBER pokemonBoxSelectModel2 NOTIFY pokemonBoxSelectModel2Changed)
 
 signals:
   void fileChanged();
@@ -87,6 +93,10 @@ signals:
   void bagItemsModelChanged();
   void pcItemsModelChanged();
   void marketModelChanged();
+  void pokemonStorageModel1Changed();
+  void pokemonStorageModel2Changed();
+  void pokemonBoxSelectModel1Changed();
+  void pokemonBoxSelectModel2Changed();
 
 public:
   Bridge(FileManagement* file);
@@ -111,6 +121,10 @@ public:
   ItemStorageModel* bagItemsModel = nullptr;
   ItemStorageModel* pcItemsModel = nullptr;
   ItemMarketModel* marketModel = nullptr;
+  PokemonStorageModel* pokemonStorageModel1 = nullptr;
+  PokemonStorageModel* pokemonStorageModel2 = nullptr;
+  PokemonBoxSelectModel* pokemonBoxSelectModel1 = nullptr;
+  PokemonBoxSelectModel* pokemonBoxSelectModel2 = nullptr;
   CreditsModel* creditsModel = new CreditsModel;
   PokemonStartersModel* starterModel = new PokemonStartersModel;
   ItemSelectModel* itemSelectModel = new ItemSelectModel;

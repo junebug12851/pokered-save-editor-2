@@ -172,8 +172,17 @@ void Storage::reset()
 void Storage::randomize(PlayerBasics* basics)
 {
   reset();
-  items->randomize();
+  randomizeItems();
+  randomizePokemon(basics);
+}
 
+void Storage::randomizePokemon(PlayerBasics* basics)
+{
   for(var8 i = 0; i < maxPokemonStorageSets; i++)
     pokemon[i]->randomize(basics);
+}
+
+void Storage::randomizeItems()
+{
+  items->randomize();
 }
