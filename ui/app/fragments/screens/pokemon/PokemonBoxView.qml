@@ -170,7 +170,7 @@ GridView {
       Material.background: brg.settings.primaryColor
       Material.foreground: brg.settings.textColorLight
 
-      onClicked: theModel.getCurBox().pokemonNew();
+      onClicked: hack_newAndRePositionViewEnd()
     }
 
     color: "transparent"

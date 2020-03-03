@@ -344,6 +344,8 @@ void PokemonStorageModel::checkedMoveToBottom()
 
 void PokemonStorageModel::checkedDelete()
 {
+  bool annPlaceholder = getCurBox()->pokemonCount() == getCurBox()->pokemonMax();
+
   for(auto el : getChecked()) {
 
     // Stop if the party is down to one Pokemon
@@ -352,6 +354,12 @@ void PokemonStorageModel::checkedDelete()
 
     int ind = getCurBox()->pokemon.indexOf(el);
     getCurBox()->pokemonRemove(ind);
+  }
+
+  // Announce the opening of the placeholder
+  if(annPlaceholder) {
+    beginInsertRows(QModelIndex(), getCurBox()->pokemonCount(), getCurBox()->pokemonCount());
+    endInsertRows();
   }
 }
 
