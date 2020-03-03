@@ -32,12 +32,6 @@ Rectangle {
       height: parent.height
       width: 265
 
-      SelectPokemonBox {
-        model: selectModel
-        onActivated: top.model.switchBox(currentValue - 1);
-        Component.onCompleted: currentIndex = top.model.curBox + 1;
-      }
-
       IconButtonSquare {
         icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
         onClicked: model.checkedToggleAll()
@@ -48,9 +42,15 @@ Rectangle {
         rightPadding: 0
       }
 
+      SelectPokemonBox {
+        model: selectModel
+        onActivated: top.model.switchBox(currentValue - 1);
+        Component.onCompleted: currentIndex = top.model.curBox + 1;
+      }
+
       IconButtonSquare {
-        enabled: (brg.file.data.dataExpanded.storage.curBox != model.curBox) &&
-                 (brg.file.data.dataExpanded.storage.curBox >= 0)
+        visible: (brg.file.data.dataExpanded.storage.curBox != model.curBox) &&
+                 (model.curBox >= 0)
 
         icon.source: "qrc:/assets/icons/fontawesome/dot-circle.svg"
         onClicked: brg.file.data.dataExpanded.storage.curBox = model.curBox;

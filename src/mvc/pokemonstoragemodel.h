@@ -52,6 +52,9 @@ public:
     NameRole,
     CheckedRole,
     PlaceholderRole,
+    NicknameRole,
+    LevelRole,
+    IsShinyRole,
   };
 
   enum BoxSelect {

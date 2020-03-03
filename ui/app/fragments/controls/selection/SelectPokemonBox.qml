@@ -9,7 +9,7 @@ ComboBox {
   valueRole: "boxValue"
 
   font.capitalization: Font.Capitalize
-  font.pixelSize: 14
+  font.pixelSize: 16
   flat: true
 
   width: font.pixelSize * 15
@@ -20,7 +20,8 @@ ComboBox {
 
     contentItem: Text {
       text: boxName
-      font: control.font
+      //font: control.font
+      font.pixelSize: 14
       color: (!boxDisabled)
              ? brg.settings.textColorDark
              : brg.settings.textColorMid

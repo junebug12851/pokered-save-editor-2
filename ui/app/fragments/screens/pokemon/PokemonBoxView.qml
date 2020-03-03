@@ -11,7 +11,7 @@ import "../../controls/selection"
 
 GridView {
   id: view
-  property int cellSize: 75
+  property int cellSize: 100
   property PokemonStorageModel theModel: null
 
   cellWidth: cellSize
@@ -41,7 +41,21 @@ GridView {
       else if(name === "mr.mime")
         name = "mrmime";
 
-      return "qrc:/assets/icons/mon-icons/" + num + "-" + name + ".svg";
+      var shiny = (itemIsShiny)
+          ? "-shiny"
+          : ""
+
+      return "qrc:/assets/icons/mon-icons/" + num + "-" + name + shiny + ".svg";
+    }
+
+    function getMonNickname() {
+      if(itemNickname === undefined || itemNickname === null)
+        return "";
+
+      if(itemNickname.length > 10)
+        return itemNickname.substring(0, 7) + "..."
+      else
+        return itemNickname;
     }
 
     CheckBox {
@@ -70,8 +84,8 @@ GridView {
       visible: !itemIsPlaceholder && (mouse.containsMouse || hovered || selectBox.hovered)
       hoverEnabled: true
 
-      text: "Edit"
-      font.capitalization: Font.Capitalize
+      text: getMonNickname()
+      font.capitalization: Font.MixedCase
 
       height: 20
       padding: 0
@@ -114,6 +128,27 @@ GridView {
 
       source: getMonUrl()
       fillMode: Image.PreserveAspectFit
+    }
+
+    Rectangle {
+      visible: !itemIsPlaceholder
+
+      anchors.top: parent.top
+      anchors.topMargin: 15
+      anchors.right: parent.right
+
+      radius: 20
+      color: brg.settings.accentColor
+      width: 12 * 3
+      height: 15
+
+      Text {
+        anchors.centerIn: parent
+
+        color: brg.settings.textColorLight
+        font.pixelSize: 12
+        text: "L" + itemLevel
+      }
     }
 
     RoundButton {

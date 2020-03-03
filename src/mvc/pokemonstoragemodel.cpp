@@ -130,6 +130,12 @@ QVariant PokemonStorageModel::data(const QModelIndex& index, int role) const
     return mon->property(isCheckedKey).toBool();
   else if (role == PlaceholderRole)
     return false;
+  else if (role == NicknameRole)
+    return mon->nickname;
+  else if (role == LevelRole)
+    return mon->level;
+  else if (role == IsShinyRole)
+    return mon->isShiny();
 
   // All else fails, return nothing
   return QVariant();
@@ -144,6 +150,9 @@ QHash<int, QByteArray> PokemonStorageModel::roleNames() const
   roles[NameRole] = "itemName";
   roles[CheckedRole] = "itemChecked";
   roles[PlaceholderRole] = "itemIsPlaceholder";
+  roles[NicknameRole] = "itemNickname";
+  roles[LevelRole] = "itemLevel";
+  roles[IsShinyRole] = "itemIsShiny";
 
   return roles;
 }
