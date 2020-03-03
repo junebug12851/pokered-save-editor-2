@@ -73,7 +73,7 @@ public slots:
 public:
   bool isParty = false;
   QVector<PokemonBox*> pokemon;
-  int maxSize;
+  int maxSize = 0;
   SaveFile* file;
 };
 

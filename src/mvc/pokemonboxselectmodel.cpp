@@ -135,12 +135,15 @@ void PokemonBoxSelectModel::onBoxChange()
 
 QString PokemonBoxSelectModel::getDecoratedName(int box) const
 {
+  // First get box in question
   PokemonStorageBox* selBox = (box == 0)
       ? party
       : storage->boxAt(box - 1);
 
+  // Get name of box
   QString name = boxSelect[box];
 
+  // Prepend symbol for empty, not-full, or full
   if(selBox->isFull())
     name = boxFullSym + " " + name;
   else if(selBox->pokemon.size() > 0)
@@ -148,10 +151,19 @@ QString PokemonBoxSelectModel::getDecoratedName(int box) const
   else
     name = "  " + name;
 
+  // Append symbol for current box if so
   if(box > 0 && storage->curBox == (box - 1))
     name += " " + curBoxSym;
   else
     name += "  ";
 
+  // Next append box count
+  name += " (" +
+      QString::number(selBox->pokemonCount()) +
+      "/" +
+      QString::number(selBox->pokemonMax()) +
+      ")";
+
+  // Return
   return name;
 }

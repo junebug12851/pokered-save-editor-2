@@ -103,7 +103,7 @@ public slots:
   void checkedTransfer();
   void checkedToggleAll();
 
-  void switchBox(int newBox);
+  void switchBox(int newBox, bool force = false);
   PokemonStorageBox* getCurBox() const;
   PokemonStorageBox* getBox(int box) const;
 

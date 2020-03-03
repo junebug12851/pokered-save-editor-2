@@ -26,6 +26,7 @@ PlayerPokemon::PlayerPokemon(SaveFile* saveFile)
   : PokemonStorageBox(boxMaxPokemon)
 {
   isParty = true;
+  maxSize = 6;
   load(saveFile);
 }
 

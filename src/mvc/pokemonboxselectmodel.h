@@ -64,7 +64,7 @@ public:
   virtual QHash<int, QByteArray> roleNames() const override;
   virtual bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
-  void onBoxChange();
+  Q_INVOKABLE void onBoxChange();
   void onPairedBoxChange();
   QString getDecoratedName(int box) const;
 

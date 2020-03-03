@@ -43,14 +43,18 @@ PokemonStorageModel::PokemonStorageModel(
   connect(this, &PokemonStorageModel::curBoxChanged, this, &PokemonStorageModel::onReset);
 
   // Do an initial setup
-  switchBox(curBox);
+  switchBox(curBox, true);
 }
 
-void PokemonStorageModel::switchBox(int newBox)
+void PokemonStorageModel::switchBox(int newBox, bool force)
 {
   // Do nothing if it's the same box
-  if(curBox == newBox)
+  if(!force && curBox == newBox)
     return;
+
+  // Remove all checks
+  if(checkedStateDirty)
+    clearCheckedState();
 
   // Get old current box
   auto box = getCurBox();
@@ -96,7 +100,9 @@ int PokemonStorageModel::rowCount(const QModelIndex& parent) const
   Q_UNUSED(parent)
 
   // Return list count
-  return getCurBox()->pokemon.size() + 1;
+  return (getCurBox()->isFull())
+      ? getCurBox()->pokemon.size()
+      : getCurBox()->pokemon.size() + 1;
 }
 
 QVariant PokemonStorageModel::data(const QModelIndex& index, int role) const

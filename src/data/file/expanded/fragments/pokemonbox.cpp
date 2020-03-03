@@ -175,11 +175,11 @@ PokemonBox* PokemonBox::newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basic
 }
 
 SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
-                      var16 startOffset,
-                      var16 nicknameStartOffset,
-                      var16 otNameStartOffset,
-                      var8 index,
-                      var8 recordSize)
+                                   var16 startOffset,
+                                   var16 nicknameStartOffset,
+                                   var16 otNameStartOffset,
+                                   var8 index,
+                                   var8 recordSize)
 {
   reset();
 
@@ -290,10 +290,10 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
     var8 moveID = moveIDList.at(i);
     var8 pp = ppList[i];
     moves.append(new PokemonMove(
-                    moveID,
-                    pp & 0b00111111,
-                    (pp & 0b11000000) >> 6
-                    ));
+                   moveID,
+                   pp & 0b00111111,
+                   (pp & 0b11000000) >> 6
+                   ));
   }
   movesChanged();
 
@@ -315,12 +315,12 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
 }
 
 SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
-                      var16 startOffset,
-                      svar32 speciesStartOffset,
-                      var16 nicknameStartOffset,
-                      var16 otNameStartOffset,
-                      var8 index,
-                      var8 recordSize)
+                                   var16 startOffset,
+                                   svar32 speciesStartOffset,
+                                   var16 nicknameStartOffset,
+                                   var16 otNameStartOffset,
+                                   var8 index,
+                                   var8 recordSize)
 {
   auto toolset = saveFile->toolset;
 
@@ -524,11 +524,12 @@ void PokemonBox::randomize(PlayerBasics* basics)
 
   // 25% chance of type 2
   bool hasType2 = Random::chanceSuccess(25);
-  if(hasType2)
+  if(hasType2) {
     type2 = TypesDB::store.at(Random::rangeExclusive(0, TypesDB::store.size()));
 
-  if(type1->ind == type2->ind)
-    type2 = nullptr;
+    if(type1->ind == type2->ind)
+      type2 = nullptr;
+  }
 
   this->type1 = type1->ind;
   type1Changed();
