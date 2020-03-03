@@ -8,6 +8,12 @@
 #include "../../src/common/types.h"
 #include "../../src/data/file/filemanagement.h"
 #include "../../src/data/file/savefile.h"
+#include "../../src/data/file/expanded/savefileexpanded.h"
+#include "../../src/data/file/expanded/storage.h"
+#include "../../src/data/file/expanded/fragments/pokemonstorageset.h"
+#include "../../src/data/file/expanded/fragments/pokemonstoragebox.h"
+#include "../../src/data/file/expanded/player/player.h"
+#include "../../src/data/file/expanded/player/playerpokemon.h"
 
 #include "../../src/data/db/fonts.h"
 
@@ -196,6 +202,18 @@ void MainWindow::injectIntoQML()
   // deleting font data. Mark all font information is Mine, Not QML
   for(auto font : FontsDB::store)
     engine->setObjectOwnership(font, QQmlEngine::CppOwnership);
+
+  // Force QML to see all Pokemon boxes including party box as strictly owned by
+  // CPP
+  for(auto elSet : bridge->file->data->dataExpanded->storage->pokemon) {
+    engine->setObjectOwnership(elSet, QQmlEngine::CppOwnership);
+
+    for(auto elBox : elSet->boxes) {
+      engine->setObjectOwnership(elBox, QQmlEngine::CppOwnership);
+    }
+  }
+
+  engine->setObjectOwnership(bridge->file->data->dataExpanded->player->pokemon, QQmlEngine::CppOwnership);
 }
 
 void MainWindow::ssConnect()

@@ -3,114 +3,146 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import App.ItemStorageBox 1.0
+import App.PokemonStorageModel 1.0
+import App.PokemonBoxSelectModel 1.0
 
 import "../../general"
 import "../../controls/selection"
 
-ListView {
-  id: itemBoxView
+GridView {
+  id: view
+  property int cellSize: 75
+  property PokemonStorageModel theModel: null
 
-  property ItemStorageBox box: null
-
+  cellWidth: cellSize
+  cellHeight: cellSize
   clip: true
-  ScrollBar.vertical: ScrollBar {}
 
-  // Hack because insert doesn't work as exoected
   function hack_newAndRePositionViewEnd() {
-    box.itemNew();
+    theModel.getCurBox().pokemonNew();
     positionViewAtEnd();
   }
 
-  delegate: ColumnLayout {
-    id: delegate
-    property bool isLast: index+1 < itemBoxView.count ? false : true
+  delegate: Rectangle {
+    property bool isLast: index+1 < view.count ? false : true
 
-    width: parent.width
+    function getMonUrl() {
 
-    Row {
-      id: rowEntry
-      Layout.alignment: Qt.AlignHCenter
-      visible: !itemIsPlaceholder
+      if(itemDex === -1 || itemDex === undefined || itemDex === null)
+        return "qrc:/assets/icons/fontawesome/question.svg";
 
-      CheckBox {
-        id: selectBox
+      var num = (itemDex+1).toString().padStart(3, "0");
 
-        Component.onCompleted: (itemChecked !== undefined)
-                               ? checked = itemChecked
-                               : checked = false;
+      var name = itemName.toLowerCase();
+      if(name === "nidoran<f>")
+        name = "nidoran-f";
+      else if(name === "nidoran<m>")
+        name = "nidoran-m";
+      else if(name === "mr.mime")
+        name = "mrmime";
 
-        onCheckedChanged: itemChecked = checked;
-      }
+      return "qrc:/assets/icons/mon-icons/" + num + "-" + name + ".svg";
+    }
 
-      SelectItem {
-        onActivated: itemId = currentValue;
-        Component.onCompleted: {
+    CheckBox {
+      id: selectBox
+      hoverEnabled: true
 
-          // WAAAAYYYY FASTER
-          // I have no idea why the native function to do this is a million times
-          // slower. It's a billion times faster to implement my own in C++
-          // and I'm not even dealing with that many rows.
-          currentIndex = brg.itemSelectModel.itemToListIndex(itemId);
+      visible: !itemIsPlaceholder && (mouse.containsMouse || checked || hovered || editBtn.hovered)
 
-          // EXTREMELY SLOW
-          //currentIndex = indexOfValue(itemId);
-        }
-      }
+      anchors.top: parent.top
+      anchors.left: parent.left
 
-      DefTextEdit {
-        id: countEdit
+      Component.onCompleted: (itemChecked !== undefined)
+                             ? checked = itemChecked
+                             : checked = false;
 
-        topPadding: 13
+      onCheckedChanged: itemChecked = checked;
 
-        maximumLength: 2
-        width: font.pixelSize * 2
+      z: 100
 
-        onTextChanged: {
-          if(text === "")
-            return;
-
-          var dec = parseInt(text, 10);
-          if(dec === NaN)
-            return;
-
-          if(dec < 0 || dec > 99)
-            return;
-
-          itemCount = dec;
-        }
-
-        Component.onCompleted: (itemCount !== undefined)
-                               ? text = itemCount
-                               : text = "";
-      }
+      Material.background: brg.settings.accentColor
+      Material.foreground: brg.settings.textColorLight
     }
 
     Button {
-      Layout.alignment: Qt.AlignHCenter
+      id: editBtn
+      visible: !itemIsPlaceholder && (mouse.containsMouse || hovered || selectBox.hovered)
+      hoverEnabled: true
 
-      display: AbstractButton.IconOnly
+      text: "Edit"
+      font.capitalization: Font.Capitalize
+
+      height: 20
+      padding: 0
+      topInset: 0
+      rightInset: 0
+      bottomInset: 0
+      leftInset: 0
+      display: AbstractButton.TextBesideIcon
       flat: true
-      implicitWidth: rowEntry.implicitWidth
+      z: 100
 
-      visible: itemIsPlaceholder && (box.itemsCount < box.itemsMax)
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
 
-      //Material.foreground: brg.settings.textColorLight
-      Material.foreground: brg.settings.primaryColor
+      icon.source: "qrc:/assets/icons/fontawesome/pen.svg"
+      icon.width: 10
+      icon.height: 10
+
+      Material.background: brg.settings.accentColor
+      Material.foreground: brg.settings.textColorLight
+    }
+
+    MouseArea {
+      id: mouse
+
+      anchors.fill: parent
+      hoverEnabled: true
+    }
+
+    Image {
+      visible: !itemIsPlaceholder
+
+      anchors.centerIn: parent
+      width: parent.width - 15
+      height: parent.height - 15
+
+      sourceSize.height: height
+      sourceSize.width: width
+
+      source: getMonUrl()
+      fillMode: Image.PreserveAspectFit
+    }
+
+    RoundButton {
+      anchors.centerIn: parent
+      visible: itemIsPlaceholder
+      width: parent.width * 0.60
+      height: parent.height * 0.60
+      radius: 100
+      display: AbstractButton.IconOnly
+      padding: 0
+      topInset: 0
+      rightInset: 0
+      bottomInset: 0
+      leftInset: 0
+      flat: true
 
       icon.source: "qrc:/assets/icons/fontawesome/plus.svg"
 
-      onClicked: {
-        // A hack because insert doesn't work as expected and I have no idea why
-        // after a lot of research
-        //itemBoxView.hack_rePositionViewEnd();
-        hack_newAndRePositionViewEnd();
-      }
+      Material.background: brg.settings.primaryColor
+      Material.foreground: brg.settings.textColorLight
+
+      onClicked: theModel.getCurBox().pokemonNew();
     }
 
-    Text {
-      visible: isLast
-      bottomPadding: 25
-    }
+    color: "transparent"
+
+    width: view.cellSize
+    height: view.cellSize
   }
+
+  ScrollBar.vertical: ScrollBar {}
 }

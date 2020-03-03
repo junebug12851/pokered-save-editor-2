@@ -45,18 +45,18 @@ public:
 
   QString boxSelect[13] = {
     "Party",
-    "Box 1",
-    "Box 2",
-    "Box 3",
-    "Box 4",
-    "Box 5",
-    "Box 6",
-    "Box 7",
-    "Box 8",
-    "Box 9",
-    "Box 10",
-    "Box 11",
-    "Box 12",
+    "Storage Box 1",
+    "Storage Box 2",
+    "Storage Box 3",
+    "Storage Box 4",
+    "Storage Box 5",
+    "Storage Box 6",
+    "Storage Box 7",
+    "Storage Box 8",
+    "Storage Box 9",
+    "Storage Box 10",
+    "Storage Box 11",
+    "Storage Box 12",
   };
 
   virtual int rowCount(const QModelIndex& parent) const override;

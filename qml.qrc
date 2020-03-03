@@ -508,5 +508,7 @@
         <file>ui/app/fragments/screens/pokemon/PokemonBoxView.qml</file>
         <file>ui/app/fragments/screens/pokemon/PokemonPane.qml</file>
         <file>ui/app/fragments/controls/selection/SelectPokemonBox.qml</file>
+        <file>assets/icons/fontawesome/dot-circle.svg</file>
+        <file>assets/icons/fontawesome/times.svg</file>
     </qresource>
 </RCC>

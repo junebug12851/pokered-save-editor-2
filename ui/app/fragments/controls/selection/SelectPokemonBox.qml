@@ -19,7 +19,7 @@ ComboBox {
     enabled: !boxDisabled
 
     contentItem: Text {
-      text: itemSelectName
+      text: boxName
       font: control.font
       color: (!boxDisabled)
              ? brg.settings.textColorDark

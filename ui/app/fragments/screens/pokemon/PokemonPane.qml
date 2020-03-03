@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtQuick.Controls.Material 2.14
 
-import App.PokemonStorageBox 1.0
 import App.PokemonStorageModel 1.0
 import App.PokemonBoxSelectModel 1.0
 
@@ -14,9 +13,7 @@ import "../../screens/home"
 
 Rectangle {
   id: top
-  property string title: ""
   property PokemonStorageModel model: null
-  property PokemonStorageBox box: null
   property PokemonBoxSelectModel selectModel: null
 
   Rectangle {
@@ -30,59 +27,60 @@ Rectangle {
     Material.background: brg.settings.accentColor
     color: brg.settings.accentColor
 
-    Rectangle {
+    Row {
       anchors.centerIn: parent
       height: parent.height
       width: 265
-      color: brg.settings.accentColor
 
-      Row {
-        anchors.centerIn: parent
+      SelectPokemonBox {
+        model: selectModel
+        onActivated: top.model.switchBox(currentValue - 1);
+        Component.onCompleted: currentIndex = top.model.curBox + 1;
+      }
 
-        SelectPokemonBox {
-          anchors.left: parent.right
-          anchors.leftMargin: 15
-          anchors.verticalCenter: parent.verticalCenter
+      IconButtonSquare {
+        icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
+        onClicked: model.checkedToggleAll()
 
-          model: selectModel
-          onActivated: boxInd = currentValue;
-          Component.onCompleted: currentIndex = top.model.curBox;
-        }
+        rightInset: 0
+        leftInset: 0
+        leftPadding: 0
+        rightPadding: 0
+      }
 
-        IconButtonSquare {
-          anchors.left: parent.left
-          anchors.verticalCenter: parent.verticalCenter
+      IconButtonSquare {
+        enabled: (brg.file.data.dataExpanded.storage.curBox != model.curBox) &&
+                 (brg.file.data.dataExpanded.storage.curBox >= 0)
 
-          icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
-          onClicked: model.checkedToggleAll()
+        icon.source: "qrc:/assets/icons/fontawesome/dot-circle.svg"
+        onClicked: brg.file.data.dataExpanded.storage.curBox = model.curBox;
 
-          rightInset: 0
-          leftInset: 0
+        rightInset: 0
+        leftInset: 0
 
-          leftPadding: 0
-          rightPadding: 0
-        }
+        leftPadding: 0
+        rightPadding: 0
       }
     }
   }
 
-//  PokemonBoxView {
-//    id: bagView
+  PokemonBoxView {
+    id: pokemonView
 
-//    model: top.model
+    model: top.model
 
-//    anchors.top: boxHeader.bottom
-//    anchors.left: parent.left
-//    anchors.leftMargin: 15
-//    anchors.right: parent.right
-//    anchors.rightMargin: 15
-//    anchors.bottom: bagFooter.top
+    anchors.top: boxHeader.bottom
+    anchors.left: parent.left
+    anchors.leftMargin: 15
+    anchors.right: parent.right
+    anchors.rightMargin: 15
+    anchors.bottom: pokemonFooter.top
 
-//    box: top.box
-//  }
+    theModel: top.model
+  }
 
   Rectangle {
-    id: bagFooter
+    id: pokemonFooter
     color: brg.settings.accentColor
     anchors.bottom: parent.bottom
     anchors.left: parent.left
@@ -120,9 +118,14 @@ Rectangle {
         leftInset: 0
       }
 
+      // Releasing a pokemon probably shouldn't be represented with a trashcan
+      // icon. just saying... The trash can icon shows clearest that we want to
+      // remove the data.... but probably shouldn't forget that a living breathing
+      // animal is represented with that icon and the implications it gives by
+      // clicking the "Trash Can" to delete the Pokemon data.
       IconButtonSquare {
         visible: model.hasChecked
-        icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
+        icon.source: "qrc:/assets/icons/fontawesome/times.svg"
         onClicked: model.checkedDelete();
 
         leftPadding: 0

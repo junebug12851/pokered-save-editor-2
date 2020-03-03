@@ -40,7 +40,7 @@ PokemonStorageModel::PokemonStorageModel(
   connect(this->router, &Router::closeNonModal, this, &PokemonStorageModel::pageClosing);
   connect(this->router, &Router::goHome, this, &PokemonStorageModel::pageClosing);
   connect(this, &PokemonStorageModel::hasCheckedChanged, this, &PokemonStorageModel::checkStateDirty);
-  disconnect(this, &PokemonStorageModel::curBoxChanged, this, &PokemonStorageModel::onReset);
+  connect(this, &PokemonStorageModel::curBoxChanged, this, &PokemonStorageModel::onReset);
 
   // Do an initial setup
   switchBox(curBox);
