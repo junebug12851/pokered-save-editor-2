@@ -70,6 +70,7 @@ public slots:
   void randomize(PlayerBasics* basics = nullptr);
   void regenStats();
   virtual void update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate);
+  virtual bool isBoxMon();
 
 public:
   // Pre-generated stats when not in box

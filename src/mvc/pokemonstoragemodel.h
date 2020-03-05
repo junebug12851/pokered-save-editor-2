@@ -55,6 +55,7 @@ public:
     NicknameRole,
     LevelRole,
     IsShinyRole,
+    IsPartyRole,
   };
 
   enum BoxSelect {
@@ -89,6 +90,9 @@ public:
   void checkStateDirty();
 
   void pageClosing();
+
+  Q_INVOKABLE PokemonBox* getBoxMon(int index);
+  Q_INVOKABLE PokemonParty* getPartyMon(int index);
 
 public slots:
   // Attached property management

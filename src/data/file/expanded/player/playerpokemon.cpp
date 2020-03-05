@@ -123,13 +123,13 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
   for(auto move : tmp->moves)
     delete move;
 
-  tmp->moves.clear();
+  tmp->clearMoves();
 
   // Add in 4 most important HM's
-  tmp->moves.append(new PokemonMove(MovesDB::ind.value("FLY")->ind));
-  tmp->moves.append(new PokemonMove(MovesDB::ind.value("SURF")->ind));
-  tmp->moves.append(new PokemonMove(MovesDB::ind.value("STRENGTH")->ind));
-  tmp->moves.append(new PokemonMove(MovesDB::ind.value("CUT")->ind));
+  tmp->changeMove(0, MovesDB::ind.value("FLY")->ind);
+  tmp->changeMove(1, MovesDB::ind.value("SURF")->ind);
+  tmp->changeMove(2, MovesDB::ind.value("STRENGTH")->ind);
+  tmp->changeMove(3, MovesDB::ind.value("CUT")->ind);
 
   // Generate random PP Ups and heal PP like other Pokemon
   for(auto move : tmp->moves) {

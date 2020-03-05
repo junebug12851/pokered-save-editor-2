@@ -29,15 +29,17 @@ struct Screen : public QObject {
   Q_PROPERTY(bool modal MEMBER modal NOTIFY modalChanged)
   Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)
   Q_PROPERTY(QString url MEMBER url NOTIFY urlChanged)
+  Q_PROPERTY(bool homeBtn MEMBER homeBtn NOTIFY homeBtnChanged)
 
 signals:
   void modalChanged();
   void titleChanged();
   void urlChanged();
+  void homeBtnChanged();
 
 public:
   Screen();
-  Screen(bool modal, QString title, QString url);
+  Screen(bool modal, QString title, QString url, bool homeBtn = true);
 
   // Open this screen as a modal, taking up the entire window
   bool modal = false;
@@ -47,6 +49,8 @@ public:
 
   // URL of the screen to the QML file
   QString url = "";
+
+  bool homeBtn = true;
 };
 
 // Router for screens
@@ -55,6 +59,7 @@ class Router : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)
+  Q_PROPERTY(bool homeBtnShown MEMBER homeBtnShown NOTIFY homeBtnShownChanged)
 
 signals:
   void goHome();
@@ -64,6 +69,7 @@ signals:
   void closeNonModal();
 
   void titleChanged();
+  void homeBtnShownChanged();
 
 public:
   Q_INVOKABLE void changeScreen(QString name);
@@ -74,6 +80,7 @@ public:
   Q_INVOKABLE void manualStackPush(QString name);
 
   QString title = "";
+  bool homeBtnShown = true;
 
   static void loadScreens();
 

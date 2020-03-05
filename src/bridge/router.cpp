@@ -17,10 +17,11 @@
 #include "./router.h"
 
 Screen::Screen() {}
-Screen::Screen(bool modal, QString title, QString url)
+Screen::Screen(bool modal, QString title, QString url, bool homeBtn)
   : modal(modal),
     title(title),
-    url(url)
+    url(url),
+    homeBtn(homeBtn)
 {}
 
 void Router::changeScreen(QString name)
@@ -59,8 +60,11 @@ void Router::changeScreen(QString name)
   if(name == "home")
     stack.clear();
 
+  homeBtnShown = scrn->homeBtn;
+
   // Append new screen
   stack.append(scrn);
+  homeBtnShownChanged();
 }
 
 void Router::closeScreen()
@@ -93,6 +97,10 @@ void Router::closeScreen()
     title = scrn->title;
     titleChanged();
   }
+
+  homeBtnShown = scrn->homeBtn;
+
+  homeBtnShownChanged();
 }
 
 void Router::manualStackPush(QString name)
@@ -108,8 +116,16 @@ void Router::manualStackPush(QString name)
   if(name == "")
     return;
 
+  if(!scrn->modal) {
+    title = scrn->title;
+    titleChanged();
+  }
+
+  homeBtnShown = scrn->homeBtn;
+
   // Append new screen
   stack.append(scrn);
+  homeBtnShownChanged();
 }
 
 void Router::loadScreens()
@@ -130,6 +146,7 @@ void Router::loadScreens()
   screens.insert("bag", new Screen(false, "Items", "qrc:/ui/app/screens/non-modal/Bag.qml"));
   screens.insert("pokemart", new Screen(false, "Pokemart", "qrc:/ui/app/screens/non-modal/Pokemart.qml"));
   screens.insert("pokemon", new Screen(false, "Pokemon", "qrc:/ui/app/screens/non-modal/Pokemon.qml"));
+  screens.insert("pokemonDetails", new Screen(false, "Pokemon Details", "qrc:/ui/app/screens/non-modal/PokemonDetails.qml", false));
 }
 
 QHash<QString, Screen*> Router::screens = QHash<QString, Screen*>();

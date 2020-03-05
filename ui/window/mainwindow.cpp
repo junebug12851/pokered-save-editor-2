@@ -66,6 +66,8 @@ MainWindow::~MainWindow()
 }
 
 MainWindow* MainWindow::instance{nullptr};
+Bridge* MainWindow::bridge = nullptr;
+QQmlEngine* MainWindow::engine = nullptr;
 
 MainWindow *MainWindow::getInstance()
 {
@@ -184,10 +186,13 @@ void MainWindow::injectIntoQML()
 {
   // Now grab the QML instance from UI
   auto engine = ui.app->engine();
+  this->engine = engine;
+
   auto qml = engine->rootContext();
 
-  // Inject singleton instances needed
+  // Inject singleton instances needed and save as static property
   auto bridge = new Bridge(file);
+  this->bridge = bridge;
   qml->setContextProperty("brg", bridge);
 
   // Mark pointers MINE, NOT QML

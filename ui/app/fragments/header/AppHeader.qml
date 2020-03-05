@@ -15,9 +15,20 @@ ToolBar {
       Layout.fillWidth: true
 
       HeaderButton {
+        visible: brg.router.homeBtnShown
         icon.source: "qrc:/assets/icons/fontawesome/th.svg"
         toolTipText: "Go back to the main menu"
         onClicked: brg.router.changeScreen("home")
+      }
+
+      HeaderButton {
+        visible: !brg.router.homeBtnShown
+        icon.source: "qrc:/assets/icons/fontawesome/angle-left.svg"
+        toolTipText: "Go back to the previous screen"
+        onClicked: brg.router.closeScreen();
+
+        icon.width: 10
+        icon.height: 20
       }
 
       Label {

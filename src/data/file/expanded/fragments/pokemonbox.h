@@ -104,24 +104,34 @@ class PokemonMove : public QObject
   Q_PROPERTY(int pp MEMBER pp NOTIFY ppChanged)
   Q_PROPERTY(int ppUp MEMBER ppUp NOTIFY ppUpChanged)
 
+  Q_PROPERTY(bool isMaxPP READ isMaxPP NOTIFY ppCapChanged)
+  Q_PROPERTY(int getMaxPP READ getMaxPP NOTIFY ppCapChanged)
+  Q_PROPERTY(bool isMaxPpUps READ isMaxPpUps NOTIFY ppUpChanged)
+
+  Q_PROPERTY(bool isInvalid READ isInvalid NOTIFY moveIDChanged)
+
 public:
   PokemonMove(var8 move = 0, var8 pp = 0, var8 ppUp = 0);
 
   MoveDBEntry* toMove();
 
-  Q_INVOKABLE bool isMaxPP();
-  Q_INVOKABLE int getMaxPP();
-  Q_INVOKABLE bool isMaxPpUps();
+  bool isMaxPP();
+  int getMaxPP();
+  bool isMaxPpUps();
+  bool isInvalid();
 
 signals:
   void moveIDChanged();
   void ppChanged();
   void ppUpChanged();
+  void ppCapChanged();
+  void invalidChanged();
 
 public slots:
   void randomize();
   void maxPpUp();
   void restorePP();
+  void changeMove(int move = 0, int pp = 0, int ppUp = 0);
 
 public:
   int moveID;
@@ -153,6 +163,37 @@ class PokemonBox : public QObject
   Q_PROPERTY(QString otName MEMBER otName NOTIFY otNameChanged)
   Q_PROPERTY(QString nickname MEMBER nickname NOTIFY nicknameChanged)
   Q_PROPERTY(bool type2Explicit MEMBER type2Explicit NOTIFY type2ExplicitChanged)
+
+  Q_PROPERTY(bool isValidBool READ isValidBool NOTIFY speciesChanged)
+  Q_PROPERTY(unsigned int expLevelRangeStart READ expLevelRangeStart NOTIFY expRangeChanged)
+  Q_PROPERTY(unsigned int expLevelRangeEnd READ expLevelRangeEnd NOTIFY expRangeChanged)
+  Q_PROPERTY(float expLevelRangePercent READ expLevelRangePercent NOTIFY expRangeChanged)
+
+  Q_PROPERTY(int hpDV READ hpDV NOTIFY dvChanged)
+  Q_PROPERTY(int hpStat READ hpStat NOTIFY statChanged)
+
+  Q_PROPERTY(bool isAfflicted READ isAfflicted NOTIFY statusChanged)
+  Q_PROPERTY(bool isHealed READ isHealed NOTIFY healedChanged)
+  Q_PROPERTY(bool isMaxHp READ isMaxHp NOTIFY statChanged)
+  Q_PROPERTY(bool hasNickname READ hasNickname NOTIFY hasNicknameChanged)
+
+  Q_PROPERTY(bool hasEvolution READ hasEvolution NOTIFY speciesChanged)
+  Q_PROPERTY(bool hasDeEvolution READ hasDeEvolution NOTIFY speciesChanged)
+  Q_PROPERTY(bool isMaxLevel READ isMaxLevel NOTIFY levelChanged)
+  Q_PROPERTY(bool isMaxPP READ isMaxPP NOTIFY movesChanged)
+  Q_PROPERTY(bool isMaxPpUps READ isMaxPpUps NOTIFY movesChanged)
+  Q_PROPERTY(bool isMaxEVs READ isMaxEVs NOTIFY evChanged)
+  Q_PROPERTY(bool isMinEvs READ isMinEvs NOTIFY evChanged)
+  Q_PROPERTY(bool isMaxDVs READ isMaxDVs NOTIFY dvChanged)
+  Q_PROPERTY(bool isPokemonReset READ isPokemonReset NOTIFY pokemonResetChanged)
+
+  Q_PROPERTY(bool isShiny READ isShiny NOTIFY dvChanged)
+  Q_PROPERTY(int getNature READ getNature NOTIFY expChanged)
+
+  Q_PROPERTY(int atkStat READ atkStat NOTIFY statChanged)
+  Q_PROPERTY(int defStat READ defStat NOTIFY statChanged)
+  Q_PROPERTY(int spdStat READ spdStat NOTIFY statChanged)
+  Q_PROPERTY(int spStat READ spStat NOTIFY statChanged)
 
 public:
   PokemonBox(SaveFile* saveFile = nullptr,
@@ -202,33 +243,33 @@ public:
 
   // Is this a valid Pokemon? (Is it even in the Pokedex?)
   PokemonDBEntry* isValid();
-  Q_INVOKABLE bool isValidBool();
+  bool isValidBool();
 
   Q_INVOKABLE unsigned int levelToExp(int level = -1);
-  Q_INVOKABLE unsigned int expLevelRangeStart();
-  Q_INVOKABLE unsigned int expLevelRangeEnd();
-  Q_INVOKABLE float expLevelRangePercent();
+  unsigned int expLevelRangeStart();
+  unsigned int expLevelRangeEnd();
+  float expLevelRangePercent();
 
-  Q_INVOKABLE int hpDV(); // Get HP DV
-  Q_INVOKABLE int hpStat(); // Get HP Stat
+  int hpDV(); // Get HP DV
+  int hpStat(); // Get HP Stat
   Q_INVOKABLE int nonHpStat(PokemonStats::PokemonStats_ stat); // Get Non-HP Stat
 
   // Performs Pokecenter Heal
-  Q_INVOKABLE bool isAfflicted();
-  Q_INVOKABLE bool isHealed();
-  Q_INVOKABLE bool isMaxHp();
-  Q_INVOKABLE bool hasNickname();
+  bool isAfflicted();
+  bool isHealed();
+  bool isMaxHp();
+  bool hasNickname();
   Q_INVOKABLE bool hasTradeStatus(PlayerBasics* basics = nullptr);
 
-  Q_INVOKABLE bool hasEvolution();
-  Q_INVOKABLE bool hasDeEvolution();
-  Q_INVOKABLE bool isMaxLevel();
-  Q_INVOKABLE bool isMaxPP();
-  Q_INVOKABLE bool isMaxPpUps();
-  Q_INVOKABLE bool isMaxEVs();
-  Q_INVOKABLE bool isMinEvs();
-  Q_INVOKABLE bool isMaxDVs();
-  Q_INVOKABLE bool isPokemonReset();
+  bool hasEvolution();
+  bool hasDeEvolution();
+  bool isMaxLevel();
+  bool isMaxPP();
+  bool isMaxPpUps();
+  bool isMaxEVs();
+  bool isMinEvs();
+  bool isMaxDVs();
+  bool isPokemonReset();
 
   // Gen 1 does not have shinies or natures
   // However Pokemon has released a formula for determining them in gen 1
@@ -239,29 +280,23 @@ public:
   // use it for that then I take no responsibility for any reprocussions
   // Any issues that may come up from using it for that I'm not going to fix
   // because that's not the purpose of this program
-  Q_INVOKABLE bool isShiny();
-  Q_INVOKABLE int getNature(); // Use nature enum
-  Q_INVOKABLE void setNature(int nature); // Use nature enum
+  bool isShiny();
+  int getNature(); // Use nature enum
 
   virtual void copyFrom(PokemonBox* pkmn);
   PokemonDBEntry* toData();
 
-  Q_INVOKABLE int atkStat();
-  Q_INVOKABLE int defStat();
-  Q_INVOKABLE int spdStat();
-  Q_INVOKABLE int spStat();
+  int atkStat();
+  int defStat();
+  int spdStat();
+  int spStat();
 
-  Q_INVOKABLE int movesCount();
-  Q_INVOKABLE int movesMax();
+  int movesCount();
   Q_INVOKABLE PokemonMove* movesAt(int ind);
-  Q_INVOKABLE void movesSwap(int from, int to);
-  Q_INVOKABLE void movesRemove(int ind);
-  Q_INVOKABLE void movesNew();
 
-  Q_INVOKABLE int dvCount();
+  int dvCount();
   Q_INVOKABLE int dvAt(int ind);
   Q_INVOKABLE void dvSet(int ind, int val);
-  Q_INVOKABLE void dvSwap(int from, int to);
 
 signals:
   void speciesChanged();
@@ -283,6 +318,14 @@ signals:
   void nicknameChanged();
   void movesChanged();
   void type2ExplicitChanged();
+
+  void expRangeChanged();
+  void statChanged();
+  void healedChanged();
+  void hasNicknameChanged();
+  void evChanged();
+
+  void pokemonResetChanged();
 
 public slots:
   virtual void reset();
@@ -321,6 +364,15 @@ public slots:
   void rollNonShiny();
   void makeShiny();
   void unmakeShiny();
+  void setNature(int nature); // Use nature enum
+
+  // It's critical that party mon are not added into box mon and vice-versa
+  // This directly says if the class is actually has the extra party mon data
+  // and methods or if it's a pure box mon
+  // Box mon have to be in box data and party mon have to be in party data
+  virtual bool isBoxMon();
+
+  void changeMove(int ind, int moveID = 0, int pp = 0, int ppUp = 0);
 
 public:
   int species;
@@ -341,7 +393,7 @@ public:
   QString otName;
   QString nickname;
 
-  QVector<PokemonMove*> moves;
+  PokemonMove* moves[4];
 
   // Sometimes type 2 is a duplicate of type 1 and
   // sometimes it's explicitly 0xFF, this is which one

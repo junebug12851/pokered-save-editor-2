@@ -5,12 +5,14 @@
 #include <QHash>
 #include <QShortcut>
 #include <QSettings>
+#include <QQmlEngine>
 
 #include "ui_mainwindow.h"
 
 class FileManagement;
 class RecentFilesModel;
 class QAbstractItemModel;
+class Bridge;
 
 class MainWindow : public QMainWindow
 {
@@ -23,6 +25,8 @@ public:
   virtual ~MainWindow();
 
   static MainWindow* getInstance();
+  static Bridge* bridge;
+  static QQmlEngine* engine;
 
   FileManagement* file = nullptr;
 

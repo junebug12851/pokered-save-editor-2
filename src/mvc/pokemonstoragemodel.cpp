@@ -142,6 +142,8 @@ QVariant PokemonStorageModel::data(const QModelIndex& index, int role) const
     return mon->level;
   else if (role == IsShinyRole)
     return mon->isShiny();
+  else if (role == IsPartyRole)
+    return !mon->isBoxMon();
 
   // All else fails, return nothing
   return QVariant();
@@ -159,6 +161,7 @@ QHash<int, QByteArray> PokemonStorageModel::roleNames() const
   roles[NicknameRole] = "itemNickname";
   roles[LevelRole] = "itemLevel";
   roles[IsShinyRole] = "itemIsShiny";
+  roles[IsPartyRole] = "itemIsParty";
 
   return roles;
 }
@@ -459,4 +462,18 @@ void PokemonStorageModel::pageClosing()
 {
   if(checkedStateDirty)
     clearCheckedState();
+}
+
+PokemonBox* PokemonStorageModel::getBoxMon(int index)
+{
+  return getCurBox()->pokemon.at(index);
+}
+
+PokemonParty* PokemonStorageModel::getPartyMon(int index)
+{
+  auto mon = getCurBox()->pokemon.at(index);
+  if(mon->isBoxMon())
+    return nullptr;
+
+  return (PokemonParty*)mon;
 }

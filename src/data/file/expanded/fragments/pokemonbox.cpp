@@ -27,11 +27,19 @@
 #include "../../../db/starterPokemon.h"
 #include "../../../db/types.h"
 #include "../../../../common/random.h"
+#include "../../../../../ui/window/mainwindow.h"
 
 #include <QtMath>
+#include <QQmlEngine>
 
 PokemonMove::PokemonMove(var8 move, var8 pp, var8 ppUp)
 {
+  // Set this class as owned by CPP so that QML doesn't delete it
+  MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+
+  connect(this, &PokemonMove::ppChanged, this, &PokemonMove::ppCapChanged);
+  connect(this, &PokemonMove::ppUpChanged, this, &PokemonMove::ppCapChanged);
+
   this->moveID = move;
   this->pp = pp;
   this->ppUp = ppUp;
@@ -103,6 +111,11 @@ bool PokemonMove::isMaxPpUps()
   return ppUp >= 3;
 }
 
+bool PokemonMove::isInvalid()
+{
+  return moveID == 0;
+}
+
 void PokemonMove::restorePP()
 {
   var8 maxPP = getMaxPP();
@@ -113,6 +126,18 @@ void PokemonMove::restorePP()
   ppChanged();
 }
 
+void PokemonMove::changeMove(int move, int pp, int ppUp)
+{
+  this->moveID = move;
+  moveIDChanged();
+
+  this->pp = pp;
+  ppChanged();
+
+  this->ppUp = ppUp;
+  ppUpChanged();
+}
+
 PokemonBox::PokemonBox(SaveFile* saveFile,
                        var16 startOffset,
                        var16 nicknameStartOffset,
@@ -120,6 +145,43 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
                        var8 index,
                        var8 recordSize)
 {
+  // Set this class as owned by CPP so that QML doesn't delete it
+  MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+
+  for(int i = 0; i < 4; i++) {
+    moves[i] = new PokemonMove;
+
+    connect(moves[i], &PokemonMove::moveIDChanged, this, &PokemonBox::movesChanged);
+    connect(moves[i], &PokemonMove::ppCapChanged, this, &PokemonBox::movesChanged);
+  }
+
+  connect(this, &PokemonBox::speciesChanged, this, &PokemonBox::expRangeChanged);
+  connect(this, &PokemonBox::levelChanged, this, &PokemonBox::expRangeChanged);
+
+  connect(this, &PokemonBox::speciesChanged, this, &PokemonBox::statChanged);
+  connect(this, &PokemonBox::hpChanged, this, &PokemonBox::statChanged);
+  connect(this, &PokemonBox::levelChanged, this, &PokemonBox::statChanged);
+  connect(this, &PokemonBox::hpExpChanged, this, &PokemonBox::statChanged);
+  connect(this, &PokemonBox::atkExpChanged, this, &PokemonBox::statChanged);
+  connect(this, &PokemonBox::defExpChanged, this, &PokemonBox::statChanged);
+  connect(this, &PokemonBox::spdExpChanged, this, &PokemonBox::statChanged);
+  connect(this, &PokemonBox::spExpChanged, this, &PokemonBox::statChanged);
+  connect(this, &PokemonBox::dvChanged, this, &PokemonBox::statChanged);
+
+  connect(this, &PokemonBox::statChanged, this, &PokemonBox::healedChanged);
+  connect(this, &PokemonBox::movesChanged, this, &PokemonBox::healedChanged);
+
+  connect(this, &PokemonBox::nicknameChanged, this, &PokemonBox::hasNicknameChanged);
+  connect(this, &PokemonBox::speciesChanged, this, &PokemonBox::hasNicknameChanged);
+
+  connect(this, &PokemonBox::hpExpChanged, this, &PokemonBox::evChanged);
+  connect(this, &PokemonBox::atkExpChanged, this, &PokemonBox::evChanged);
+  connect(this, &PokemonBox::defExpChanged, this, &PokemonBox::evChanged);
+  connect(this, &PokemonBox::spdExpChanged, this, &PokemonBox::evChanged);
+  connect(this, &PokemonBox::spExpChanged, this, &PokemonBox::evChanged);
+
+  connect(this, &PokemonBox::healedChanged, this, &PokemonBox::pokemonResetChanged);
+
   load(saveFile,
        startOffset,
        nicknameStartOffset,
@@ -291,15 +353,17 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
   }
 
   // Combine together in moves from earlier
-  moves.clear();
   for (var8 i = 0; i < moveIDList.size(); i++) {
     var8 moveID = moveIDList.at(i);
     var8 pp = ppList[i];
-    moves.append(new PokemonMove(
-                   moveID,
-                   pp & 0b00111111,
-                   (pp & 0b11000000) >> 6
-                   ));
+    moves[i]->moveID = moveID;
+    moves[i]->moveIDChanged();
+
+    moves[i]->pp = pp & 0b00111111;
+    moves[i]->ppChanged();
+
+    moves[i]->ppUp = (pp & 0b11000000) >> 6;
+    moves[i]->ppUpChanged();
   }
   movesChanged();
 
@@ -375,8 +439,8 @@ SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
   it->setByte(catchRate);
 
   it->push();
-  for(var8 i = 0; i < moves.size(); i++) {
-    it->setByte(moves.at(i)->moveID);
+  for(var8 i = 0; i < 4; i++) {
+    it->setByte(moves[i]->moveID);
   }
   it->pop()->offsetBy(4);
 
@@ -400,8 +464,8 @@ SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
   it->setWord(dvTmp);
 
   it->push();
-  for (var8 i = 0; i < moves.size(); i++) {
-    var8 ppCombined = (moves.at(i)->ppUp << 6) | moves.at(i)->pp;
+  for (var8 i = 0; i < 4; i++) {
+    var8 ppCombined = (moves[i]->ppUp << 6) | moves[i]->pp;
     it->setByte(ppCombined);
   }
   it->pop()->offsetBy(4);
@@ -549,10 +613,16 @@ void PokemonBox::randomize(PlayerBasics* basics)
 
 void PokemonBox::clearMoves()
 {
-  for(auto move : moves)
-    delete move;
+  for(int i = 0; i < 4; i++) {
+    moves[i]->moveID = 0;
+    moves[i]->moveIDChanged();
 
-  moves.clear();
+    moves[i]->pp = 0;
+    moves[i]->ppChanged();
+
+    moves[i]->ppUp = 0;
+    moves[i]->ppUpChanged();
+  }
 
   movesChanged();
 }
@@ -785,8 +855,8 @@ void PokemonBox::heal()
   status = 0;
   statusChanged();
 
-  for(auto move : moves)
-    move->restorePP();
+  for(int i = 0; i < 4; i++)
+    moves[i]->restorePP();
 }
 
 bool PokemonBox::hasNickname()
@@ -918,8 +988,8 @@ bool PokemonBox::isMaxPP()
 {
   bool ret = true;
 
-  for(auto move : moves)
-    if(!move->isMaxPP())
+  for(int i = 0; i < 4; i++)
+    if(!moves[i]->isMaxPP())
       ret = false;
 
   return ret;
@@ -929,8 +999,8 @@ bool PokemonBox::isMaxPpUps()
 {
   bool ret = true;
 
-  for(auto move : moves)
-    if(!move->isMaxPpUps())
+  for(int i = 0; i < 4; i++)
+    if(!moves[i]->isMaxPpUps())
       ret = false;
 
   return ret;
@@ -974,8 +1044,8 @@ void PokemonBox::maxLevel()
 
 void PokemonBox::maxPpUps()
 {
-  for(auto move : moves)
-    move->maxPpUp();
+  for(int i = 0; i < 4; i++)
+    moves[i]->maxPpUp();
 }
 
 void PokemonBox::maxDVs()
@@ -1050,8 +1120,7 @@ void PokemonBox::randomizeMoves()
   clearMoves();
 
   for(var8 i = 0; i < 4; i++) {
-    moves.append(new PokemonMove);
-    moves.at(i)->randomize();
+    moves[i]->randomize();
   }
 
   movesChanged();
@@ -1066,8 +1135,8 @@ bool PokemonBox::isPokemonReset()
 
   bool movesReset = true;
 
-  for(var8 i = 0; i < moves.size(); i++) {
-    auto move = moves.at(i);
+  for(var8 i = 0; i < 4; i++) {
+    auto move = moves[i];
 
     if(move->toMove() == nullptr)
       movesReset = false;
@@ -1188,6 +1257,16 @@ void PokemonBox::unmakeShiny()
   atkExpChanged();
 }
 
+bool PokemonBox::isBoxMon()
+{
+  return true;
+}
+
+void PokemonBox::changeMove(int ind, int moveID, int pp, int ppUp)
+{
+  moves[ind]->changeMove(moveID, pp, ppUp);
+}
+
 void PokemonBox::resetPokemon()
 {
   level = 5;
@@ -1199,8 +1278,17 @@ void PokemonBox::resetPokemon()
 
   clearMoves();
 
-  for(auto moveData : record->toInitial)
-    moves.append(new PokemonMove(moveData->ind, *moveData->pp, 0));
+  for(int i = 0; i < 4 && i < record->toInitial.size(); i++) {
+    auto moveData = record->toInitial.at(i);
+    moves[i]->moveID = moveData->ind;
+    moves[i]->moveIDChanged();
+
+    moves[i]->pp = *moveData->pp;
+    moves[i]->ppChanged();
+
+    moves[i]->ppUp = 0;
+    moves[i]->ppUpChanged();
+  }
 
   movesChanged();
 
@@ -1267,12 +1355,15 @@ void PokemonBox::copyFrom(PokemonBox* pkmn)
 
   clearMoves();
 
-  for(auto move : pkmn->moves) {
-    auto m = new PokemonMove;
-    m->pp = move->pp;
-    m->ppUp = move->ppUp;
-    m->moveID = move->moveID;
-    moves.append(m);
+  for(int i = 0; i < 4; i++) {
+    moves[i]->moveID = pkmn->moves[i]->moveID;
+    moves[i]->moveIDChanged();
+
+    moves[i]->pp = pkmn->moves[i]->pp;
+    moves[i]->ppChanged();
+
+    moves[i]->ppUp = pkmn->moves[i]->ppUp;
+    moves[i]->ppUpChanged();
   }
 
   movesChanged();
@@ -1288,48 +1379,12 @@ PokemonDBEntry* PokemonBox::toData()
 
 int PokemonBox::movesCount()
 {
-  return moves.size();
-}
-
-int PokemonBox::movesMax()
-{
   return maxMoves;
 }
 
 PokemonMove* PokemonBox::movesAt(int ind)
 {
-  return moves.at(ind);
-}
-
-void PokemonBox::movesSwap(int from, int to)
-{
-  auto eFrom = moves.at(from);
-  auto eTo = moves.at(to);
-
-  moves.replace(from, eTo);
-  moves.replace(to, eFrom);
-
-  movesChanged();
-}
-
-void PokemonBox::movesRemove(int ind)
-{
-  // There has to be 1 move
-  if(moves.size() <= 1)
-    return;
-
-  delete moves.at(ind);
-  moves.removeAt(ind);
-  movesChanged();
-}
-
-void PokemonBox::movesNew()
-{
-  if(moves.size() >= maxMoves)
-    return;
-
-  moves.append(new PokemonMove);
-  movesChanged();
+  return moves[ind];
 }
 
 int PokemonBox::dvCount()
@@ -1345,17 +1400,6 @@ int PokemonBox::dvAt(int ind)
 void PokemonBox::dvSet(int ind, int val)
 {
   dv[ind] = val;
-  dvChanged();
-}
-
-void PokemonBox::dvSwap(int from, int to)
-{
-  auto eFrom = dv[from];
-  auto eTo = dv[to];
-
-  dv[from] = eTo;
-  dv[to] = eFrom;
-
   dvChanged();
 }
 

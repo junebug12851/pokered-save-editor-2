@@ -157,6 +157,11 @@ void PokemonParty::copyFrom(PokemonBox* pkmn)
   regenStats();
 }
 
+bool PokemonParty::isBoxMon()
+{
+  return false;
+}
+
 PokemonBox* PokemonParty::convertToBox(PokemonParty* data)
 {
   auto ret = new PokemonBox;

@@ -23,6 +23,54 @@ GridView {
     positionViewAtEnd();
   }
 
+  // We manually open outside of the router the pokemon details page beacuse
+  // we want to pass parameters to it
+  function openMonEditor(isParty, monData) {
+
+    // Will fix this in a minute
+    if(isParty)
+      appBody.push("qrc:/ui/app/screens/non-modal/PokemonDetails.qml", {
+                     boxData: monData,
+                     partyData: monData
+                   });
+    else
+      appBody.push("qrc:/ui/app/screens/non-modal/PokemonDetails.qml", {
+                     boxData: monData
+                   });
+
+    // We then tell the router of what we've done
+    brg.router.manualStackPush("pokemonDetails");
+
+    // And then we open incomming signals so that we can receive input
+    // This is tricky, we first enable listening for a page close event from the
+    // router and then we enable listening from the details page. When the
+    // details page closes we want both to shut off. This is how it's done
+    pokemonDetailsListenerShutOff.target = brg.router;
+    pokemonDetailsListener.target = appRoot.currentItem;
+  }
+
+  // Incomming signals from full-keyboard
+  Connections {
+    id: pokemonDetailsListener
+
+    // Initially set to no incomming signals
+    target: null
+    ignoreUnknownSignals: true
+  }
+
+  // Here we shut-off connections
+  Connections {
+    id: pokemonDetailsListenerShutOff
+
+    target: null
+    ignoreUnknownSignals: true
+
+    onCloseNonModal: {
+      pokemonDetailsListener.target = null
+      pokemonDetailsListenerShutOff.target = null;
+    }
+  }
+
   delegate: Rectangle {
     property bool isLast: index+1 < view.count ? false : true
 
@@ -107,6 +155,13 @@ GridView {
 
       Material.background: brg.settings.accentColor
       Material.foreground: brg.settings.textColorLight
+
+      onClicked: {
+        if(itemIsParty)
+          openMonEditor(itemIsParty, view.theModel.getPartyMon(index));
+        else
+          openMonEditor(itemIsParty, view.theModel.getBoxMon(index));
+      }
     }
 
     MouseArea {
