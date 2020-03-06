@@ -34,6 +34,8 @@ Rectangle {
       anchors.bottom: parent.bottom
       anchors.bottomMargin: 2
 
+      width: font.pixelSize * 14
+
       onActivated: {
         if(currentValue === boxData.species)
           return;
@@ -186,5 +188,108 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
     height: 45
+
+    Text {
+      id: hpTxt
+
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.leftMargin: 5
+      anchors.bottom: parent.bottom
+
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignRight
+      color: brg.settings.textColorLight
+
+      font.pixelSize: 14
+
+      text: "HP"
+    }
+
+    Slider {
+      id: hpEdit
+
+      anchors.top: parent.top
+      anchors.topMargin: 8
+      anchors.left: hpTxt.right
+      anchors.leftMargin: 10
+      anchors.right: parent.right
+      anchors.rightMargin: 10
+
+      from: 0
+      to: (boxData.isValidBool)
+          ? boxData.hpStat
+          : 0xFFFF
+
+      Material.foreground: brg.settings.textColorDark
+      Material.background: brg.settings.textColorLight
+
+      function getColor() {
+        var pos = hpEdit.position;
+
+        // Green
+        if(pos > 0.5)
+          return "#4CAF50";
+
+        // Amber
+        else if(pos > 0.2)
+          return "#FFA000";
+
+        // Red
+        else
+          return "#D32F2F";
+      }
+
+      background: Rectangle {
+        x: hpEdit.leftPadding
+        y: hpEdit.topPadding + hpEdit.availableHeight / 2 - height / 2
+        implicitWidth: 200
+        implicitHeight: 4
+        width: hpEdit.availableWidth
+        height: implicitHeight
+        radius: 2
+        color: hpEdit.value === "phony"
+               ? hpEdit.getColor()
+               : hpEdit.getColor()
+
+        Rectangle {
+          width: hpEdit.visualPosition * parent.width
+          height: parent.height
+          color: brg.settings.textColorLight
+          radius: 2
+        }
+      }
+
+      handle: Rectangle {
+        x: hpEdit.leftPadding + hpEdit.visualPosition * (hpEdit.availableWidth - width)
+        y: hpEdit.topPadding + hpEdit.availableHeight / 2 - height / 2
+        implicitWidth: 20
+        implicitHeight: 20
+        radius: 13
+        color: hpEdit.pressed
+               ? Qt.darker(brg.settings.textColorLight, 1.25)
+               : brg.settings.textColorLight
+        border.color: brg.settings.textColorMid
+      }
+
+      ToolTip {
+        parent: hpEdit.handle
+        visible: hpEdit.pressed
+        text: hpEdit.value.toFixed(0)
+
+        Material.background: brg.settings.textColorLight
+        Material.foreground: brg.settings.textColorDark
+
+        font.pixelSize: 14
+      }
+
+      onMoved: boxData.hp = value;
+      Component.onCompleted: value = boxData.hp;
+
+      Connections {
+        target: boxData
+        onHpChanged: hpEdit.value = boxData.hp;
+      }
+    }
   }
 }

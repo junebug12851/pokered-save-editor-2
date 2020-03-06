@@ -279,13 +279,15 @@ Rectangle {
         id: nextExp
 
         HeaderText {
-          text: "Exp to Next Lvl"
+          text: (boxData.isValidBool)
+                ? "Exp to Next Lvl"
+                : "Exp"
         }
 
         Slider {
           id: nextExpEdit
 
-          enabled: boxData.level < 100
+          enabled: boxData.level < 100 || !boxData.isValidBool
 
           anchors.top: nextExp.top
           anchors.topMargin: -5
@@ -294,8 +296,12 @@ Rectangle {
 
           width: top.width - nextExp.width - (25 * 2)
 
-          from: boxData.expLevelRangeStart
-          to: boxData.expLevelRangeEnd
+          from: (boxData.isValidBool)
+                ? boxData.expLevelRangeStart
+                : 1
+          to: (boxData.isValidBool)
+              ? boxData.expLevelRangeEnd
+              : 0xFFFFFF
 
           onMoved: boxData.exp = value;
           Component.onCompleted: value = boxData.exp;
