@@ -120,6 +120,7 @@ HEADERS += \
   src/mvc/pokemonboxselectmodel.h \
   src/mvc/recentfilesmodel.h \
   src/mvc/typesmodel.h \
+  src/mvc/speciesselectmodel.h \
   src/engine/tilesetengine.h \
   ui/window/mainwindow.h
 
@@ -231,6 +232,7 @@ SOURCES += \
   src/mvc/pokemonboxselectmodel.cpp \
   src/mvc/recentfilesmodel.cpp \
   src/mvc/typesmodel.cpp \
+  src/mvc/speciesselectmodel.cpp \
   src/engine/tilesetengine.cpp \
   ui/window/mainwindow.cpp
 

@@ -182,6 +182,8 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
 
   connect(this, &PokemonBox::healedChanged, this, &PokemonBox::pokemonResetChanged);
 
+  connect(this, &PokemonBox::speciesChanged, this, &PokemonBox::onSpeciesChanged);
+
   load(saveFile,
        startOffset,
        nicknameStartOffset,
@@ -1427,6 +1429,11 @@ void PokemonBox::dvSet(int ind, int val)
 {
   dv[ind] = val;
   dvChanged();
+}
+
+void PokemonBox::onSpeciesChanged()
+{
+  update(true, true, true, true);
 }
 
 int PokemonBox::atkStat()

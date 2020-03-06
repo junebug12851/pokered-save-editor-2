@@ -35,6 +35,7 @@
 #include "../mvc/pokemonstoragemodel.h"
 #include "../mvc/pokemonboxselectmodel.h"
 #include "../mvc/typesmodel.h"
+#include "../mvc/speciesselectmodel.h"
 
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
@@ -73,6 +74,7 @@ class Bridge : public QObject
   Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel1 MEMBER pokemonBoxSelectModel1 NOTIFY pokemonBoxSelectModel1Changed)
   Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel2 MEMBER pokemonBoxSelectModel2 NOTIFY pokemonBoxSelectModel2Changed)
   Q_PROPERTY(TypesModel* typesModel MEMBER typesModel NOTIFY typesModelChanged)
+  Q_PROPERTY(SpeciesSelectModel* speciesSelectModel MEMBER speciesSelectModel NOTIFY speciesSelectModelChanged)
 
 signals:
   void fileChanged();
@@ -100,6 +102,7 @@ signals:
   void pokemonBoxSelectModel1Changed();
   void pokemonBoxSelectModel2Changed();
   void typesModelChanged();
+  void speciesSelectModelChanged();
 
 public:
   Bridge(FileManagement* file);
@@ -132,6 +135,7 @@ public:
   PokemonStartersModel* starterModel = new PokemonStartersModel;
   ItemSelectModel* itemSelectModel = new ItemSelectModel;
   TypesModel* typesModel = new TypesModel;
+  SpeciesSelectModel* speciesSelectModel = new SpeciesSelectModel;
 };
 
 #endif

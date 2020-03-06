@@ -342,7 +342,7 @@ Rectangle {
 
           Connections {
             target: boxData
-            onOtIDChanged: catchRateEdit.text = boxData.catchRate.toString(10);
+            onCatchRateChanged: catchRateEdit.text = boxData.catchRate.toString(10);
           }
         }
       }
@@ -376,6 +376,44 @@ Rectangle {
           Connections {
             target: boxData
             onDvChanged: futureShinyEdit.checked = boxData.isShiny;
+          }
+        }
+
+        IconButtonSquare {
+          anchors.left: futureShinyEdit.right
+          anchors.leftMargin: -15
+          anchors.top: futureShiny.top
+          anchors.topMargin: -3
+          icon.width: 7
+
+          icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
+          icon.color: brg.settings.textColorDark
+
+          onClicked: futureShinyMenu.open();
+
+          Menu {
+            id: futureShinyMenu
+            MenuItem {
+              text: "Re-Roll Shiny";
+              onTriggered: boxData.rollShiny();
+            }
+            MenuItem {
+              text: "Re-Roll Non-Shiny";
+              onTriggered: boxData.rollNonShiny();
+            }
+            MenuSeparator { }
+            MenuItem {
+              text: "Convert to Shiny"
+              enabled: !boxData.isShiny
+              onTriggered: boxData.makeShiny();
+            }
+            MenuItem {
+              text: "Convert to Non-Shiny"
+              enabled: boxData.isShiny
+              onTriggered: boxData.unmakeShiny();
+            }
+            MenuSeparator { }
+            MenuItem { text: "Close" }
           }
         }
       }

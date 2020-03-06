@@ -304,6 +304,8 @@ public:
   Q_INVOKABLE int dvAt(int ind);
   Q_INVOKABLE void dvSet(int ind, int val);
 
+  void onSpeciesChanged();
+
 signals:
   void speciesChanged();
   void hpChanged();

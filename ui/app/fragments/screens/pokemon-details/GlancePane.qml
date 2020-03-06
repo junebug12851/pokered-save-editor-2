@@ -8,6 +8,7 @@ import App.PokemonParty 1.0
 
 import "../../general"
 import "../../header"
+import "../../controls/selection"
 
 Rectangle {
   id: top
@@ -25,6 +26,80 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
     height: 45
+
+    SelectSpecies {
+      id: speciesSelect
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.bottom: parent.bottom
+      anchors.bottomMargin: 2
+
+      onActivated: {
+        var hasNickname = boxData.hasNickname;
+        boxData.species = currentValue;
+        if(!hasNickname)
+          boxData.changeName(true);
+      }
+      Component.onCompleted: currentIndex = brg.speciesSelectModel.speciesToListIndex(boxData.species);
+
+      Connections {
+        target: boxData
+        onSpeciesChanged: speciesSelect.currentIndex = brg.speciesSelectModel.speciesToListIndex(boxData.species);
+      }
+    }
+
+    Text {
+      id: levelTxt
+
+      anchors.top: parent.top
+      anchors.left: speciesSelect.right
+      anchors.leftMargin: 15
+      anchors.bottom: parent.bottom
+
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignRight
+      color: brg.settings.textColorLight
+
+      font.pixelSize: 14
+
+      text: "Lv."
+    }
+
+    DefTextEdit {
+      id: levelEdit
+
+      anchors.top: parent.top
+      anchors.topMargin: 15
+      anchors.left: levelTxt.right
+      anchors.leftMargin: 15
+
+      width: font.pixelSize * 3
+      color: brg.settings.textColorLight
+      maximumLength: 3
+
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignLeft
+
+      onTextChanged: {
+        if(text === "")
+          return;
+
+        var idDec = parseInt(text, 10);
+        if(idDec === NaN)
+          return;
+
+        if(idDec < 0 || idDec > 100)
+          return;
+
+        boxData.level = idDec;
+      }
+      Component.onCompleted: text = boxData.level.toString(10);
+
+      Connections {
+        target: boxData
+        onLevelChanged: levelEdit.text = boxData.level.toString(10);
+      }
+    }
   }
 
   Image {
