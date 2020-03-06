@@ -304,9 +304,6 @@ public:
   Q_INVOKABLE int dvAt(int ind);
   Q_INVOKABLE void dvSet(int ind, int val);
 
-  void onSpeciesChanged();
-  void onLevelChanged();
-
 signals:
   void speciesChanged();
   void hpChanged();
@@ -382,6 +379,9 @@ public slots:
   virtual bool isBoxMon();
 
   void changeMove(int ind, int moveID = 0, int pp = 0, int ppUp = 0);
+
+  void manualSpeciesChanged();
+  void manualLevelChanged();
 
 public:
   int species;

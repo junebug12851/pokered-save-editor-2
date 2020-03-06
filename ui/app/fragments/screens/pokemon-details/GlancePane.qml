@@ -35,8 +35,12 @@ Rectangle {
       anchors.bottomMargin: 2
 
       onActivated: {
+        if(currentValue === boxData.species)
+          return;
+
         var hasNickname = boxData.hasNickname;
         boxData.species = currentValue;
+        boxData.manualSpeciesChanged();
         if(!hasNickname)
           boxData.changeName(true);
       }
@@ -94,7 +98,11 @@ Rectangle {
         if(idDec < 0 || idDec > 100)
           return;
 
+        if(idDec === boxData.level)
+          return;
+
         boxData.level = idDec;
+        boxData.manualLevelChanged();
       }
       Component.onCompleted: text = boxData.level.toString(10);
 
