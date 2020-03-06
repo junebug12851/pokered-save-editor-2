@@ -305,6 +305,7 @@ public:
   Q_INVOKABLE void dvSet(int ind, int val);
 
   void onSpeciesChanged();
+  void onLevelChanged();
 
 signals:
   void speciesChanged();
