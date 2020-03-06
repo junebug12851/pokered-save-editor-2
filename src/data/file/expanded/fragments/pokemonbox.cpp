@@ -861,12 +861,17 @@ void PokemonBox::heal()
 
 bool PokemonBox::hasNickname()
 {
-  return isValid()->name == nickname;
+  auto record = isValid();
+
+  if(record == nullptr)
+    return false;
+
+  return record->name != nickname;
 }
 
 bool PokemonBox::hasTradeStatus(PlayerBasics* basics)
 {
-  return basics->playerName == otName && basics->playerID == otID;
+  return basics->playerName != otName || basics->playerID != otID;
 }
 
 void PokemonBox::changeName(bool removeNickname)
@@ -1157,12 +1162,33 @@ bool PokemonBox::isPokemonReset()
   return level == 5 && movesReset && isMinEvs() && isHealed();
 }
 
+int PokemonBox::dexNum()
+{
+  auto record = isValid();
+  if(record == nullptr)
+    return -1;
+
+  return *record->pokedex;
+}
+
+QString PokemonBox::speciesName()
+{
+  auto record = isValid();
+  if(record == nullptr)
+    return "";
+
+  if(record->readable == "")
+    return record->name;
+  else
+    return record->readable;
+}
+
 bool PokemonBox::isShiny()
 {
-  bool atkChk = atkExp & 2;
-  bool defChk = defExp == 0b1010;
-  bool spdChk = spdExp == 0b1010;
-  bool spChk = spExp == 0b1010;
+  bool atkChk = dv[PokemonStats::Attack] & 2;
+  bool defChk = dv[PokemonStats::Defense] == 0b1010;
+  bool spdChk = dv[PokemonStats::Speed] == 0b1010;
+  bool spChk = dv[PokemonStats::Special] == 0b1010;
 
   return atkChk && defChk && spdChk && spChk;
 }
@@ -1217,44 +1243,44 @@ void PokemonBox::setNature(int nature)
 
 void PokemonBox::rollShiny()
 {
-  defExp = 0b1010;
-  defExpChanged();
+  dv[PokemonStats::Defense] = 0b1010;
+  dvChanged();
 
-  spdExp = 0b1010;
-  spdExpChanged();
+  dv[PokemonStats::Speed] = 0b1010;
+  dvChanged();
 
-  spExp = 0b1010;
-  spExpChanged();
+  dv[PokemonStats::Special] = 0b1010;
+  dvChanged();
 
-  atkExp = Random::rangeInclusive(0, 15);
-  atkExp |= 2;
-  atkExpChanged();
+  dv[PokemonStats::Attack] = Random::rangeInclusive(0, 15);
+  dv[PokemonStats::Attack] |= 2;
+  dvChanged();
 }
 
 void PokemonBox::rollNonShiny()
 {
   reRollDVs();
 
-  atkExp &= ~2;
-  atkExpChanged();
+  dv[PokemonStats::Attack] &= ~2;
+  dvChanged();
 }
 
 void PokemonBox::makeShiny()
 {
   // Since shinies have such specific DV's, it's easier just to roll a shiny
   // and set it's attack dv to the same attack as before only or'd with 2
-  var8 tmpAtkExp = atkExp;
+  var8 tmpAtkDV = dv[PokemonStats::Attack];
   rollShiny();
 
-  atkExp = tmpAtkExp | 2;
-  atkExpChanged();
+  dv[PokemonStats::Attack] = tmpAtkDV | 2;
+  dvChanged();
 }
 
 void PokemonBox::unmakeShiny()
 {
   // Just remove bit #1, the most minimum way of eliminating it as a shiny
-  atkExp &= ~2;
-  atkExpChanged();
+  dv[PokemonStats::Attack] &= ~2;
+  dvChanged();
 }
 
 bool PokemonBox::isBoxMon()

@@ -66,6 +66,7 @@ GridView {
     ignoreUnknownSignals: true
 
     onCloseNonModal: {
+      theModel.onReset();
       pokemonDetailsListener.target = null
       pokemonDetailsListenerShutOff.target = null;
     }

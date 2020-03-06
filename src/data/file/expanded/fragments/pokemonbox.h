@@ -195,6 +195,9 @@ class PokemonBox : public QObject
   Q_PROPERTY(int spdStat READ spdStat NOTIFY statChanged)
   Q_PROPERTY(int spStat READ spStat NOTIFY statChanged)
 
+  Q_PROPERTY(int dexNum READ dexNum NOTIFY speciesChanged)
+  Q_PROPERTY(QString speciesName READ speciesName NOTIFY speciesChanged)
+
 public:
   PokemonBox(SaveFile* saveFile = nullptr,
              var16 startOffset = 0,
@@ -270,6 +273,9 @@ public:
   bool isMinEvs();
   bool isMaxDVs();
   bool isPokemonReset();
+
+  int dexNum();
+  QString speciesName();
 
   // Gen 1 does not have shinies or natures
   // However Pokemon has released a formula for determining them in gen 1

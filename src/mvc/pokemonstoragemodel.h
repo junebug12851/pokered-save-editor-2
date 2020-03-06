@@ -80,7 +80,6 @@ public:
   void onMove(int from, int to);
   void onRemove(int ind);
   void onInsert();
-  void onReset();
 
   // Attached property management
   bool hasChecked();
@@ -98,6 +97,7 @@ public slots:
   // Attached property management
   void clearCheckedState();
   void clearCheckedStateGone();
+  void onReset();
 
   void checkedMoveToTop();
   void checkedMoveUp();
