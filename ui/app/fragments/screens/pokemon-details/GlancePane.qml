@@ -53,7 +53,7 @@ Rectangle {
 
       anchors.top: parent.top
       anchors.left: speciesSelect.right
-      anchors.leftMargin: 15
+      anchors.leftMargin: 5
       anchors.bottom: parent.bottom
 
       verticalAlignment: Text.AlignVCenter
@@ -68,10 +68,13 @@ Rectangle {
     DefTextEdit {
       id: levelEdit
 
+      Material.background: brg.settings.accentColor
+      Material.foreground: brg.settings.textColorLight
+
       anchors.top: parent.top
-      anchors.topMargin: 15
+      anchors.topMargin: 14
       anchors.left: levelTxt.right
-      anchors.leftMargin: 15
+      anchors.leftMargin: 5
 
       width: font.pixelSize * 3
       color: brg.settings.textColorLight
@@ -98,6 +101,23 @@ Rectangle {
       Connections {
         target: boxData
         onLevelChanged: levelEdit.text = boxData.level.toString(10);
+      }
+    }
+
+    SelectStatus {
+      id: statusSelect
+      anchors.top: parent.top
+      anchors.left: levelEdit.right
+      anchors.leftMargin: 5
+      anchors.bottom: parent.bottom
+      anchors.bottomMargin: 2
+
+      onActivated: boxData.status = currentValue;
+      Component.onCompleted: currentIndex = brg.statusSelectModel.statusToListIndex(boxData.status);
+
+      Connections {
+        target: boxData
+        onStatusChanged: statusSelect.currentIndex = brg.statusSelectModel.statusToListIndex(boxData.status);
       }
     }
   }

@@ -522,5 +522,6 @@
         <file>ui/app/fragments/screens/pokemon-details/HeaderText.qml</file>
         <file>ui/app/fragments/controls/selection/SelectType.qml</file>
         <file>ui/app/fragments/controls/selection/SelectSpecies.qml</file>
+        <file>ui/app/fragments/controls/selection/SelectStatus.qml</file>
     </qresource>
 </RCC>

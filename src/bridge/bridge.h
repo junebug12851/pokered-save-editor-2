@@ -36,6 +36,7 @@
 #include "../mvc/pokemonboxselectmodel.h"
 #include "../mvc/typesmodel.h"
 #include "../mvc/speciesselectmodel.h"
+#include "../mvc/statusselectmodel.h"
 
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
@@ -75,6 +76,7 @@ class Bridge : public QObject
   Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel2 MEMBER pokemonBoxSelectModel2 NOTIFY pokemonBoxSelectModel2Changed)
   Q_PROPERTY(TypesModel* typesModel MEMBER typesModel NOTIFY typesModelChanged)
   Q_PROPERTY(SpeciesSelectModel* speciesSelectModel MEMBER speciesSelectModel NOTIFY speciesSelectModelChanged)
+  Q_PROPERTY(StatusSelectModel* statusSelectModel MEMBER statusSelectModel NOTIFY statusSelectModelChanged)
 
 signals:
   void fileChanged();
@@ -103,6 +105,7 @@ signals:
   void pokemonBoxSelectModel2Changed();
   void typesModelChanged();
   void speciesSelectModelChanged();
+  void statusSelectModelChanged();
 
 public:
   Bridge(FileManagement* file);
@@ -136,6 +139,7 @@ public:
   ItemSelectModel* itemSelectModel = new ItemSelectModel;
   TypesModel* typesModel = new TypesModel;
   SpeciesSelectModel* speciesSelectModel = new SpeciesSelectModel;
+  StatusSelectModel* statusSelectModel = new StatusSelectModel;
 };
 
 #endif

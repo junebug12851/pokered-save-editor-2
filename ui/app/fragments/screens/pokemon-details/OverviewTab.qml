@@ -285,6 +285,8 @@ Rectangle {
         Slider {
           id: nextExpEdit
 
+          enabled: boxData.level < 100
+
           anchors.top: nextExp.top
           anchors.topMargin: -5
           anchors.left: nextExp.right
@@ -297,6 +299,17 @@ Rectangle {
 
           onMoved: boxData.exp = value;
           Component.onCompleted: value = boxData.exp;
+
+          ToolTip {
+            parent: nextExpEdit.handle
+            visible: nextExpEdit.pressed
+            text: nextExpEdit.value.toFixed(0)
+
+            Material.background: brg.settings.accentColor
+            Material.foreground: brg.settings.textColorLight
+
+            font.pixelSize: 14
+          }
 
           Connections {
             target: boxData
