@@ -53,9 +53,9 @@ Rectangle {
     Menu {
       id: statsTglBtnMenuDV
 
-      MenuItem { text: "Max DVs"; onTriggered: boxData.maxDVs() }
+      MenuItem { text: "Max DVs";  onTriggered: boxData.maxDVs(); enabled: !boxData.isMaxDVs }
       MenuItem { text: "Re-Roll DVs"; onTriggered: boxData.reRollDVs() }
-      MenuItem { text: "Reset DVs"; onTriggered: boxData.resetDVs() }
+      MenuItem { text: "Reset DVs"; onTriggered: boxData.resetDVs(); enabled: !boxData.isMinDVs }
 
       MenuSeparator {}
       MenuItem { text: "Close" }
@@ -64,9 +64,9 @@ Rectangle {
     Menu {
       id: statsTglBtnMenuEV
 
-      MenuItem { text: "Max EVs"; onTriggered: boxData.maxEVs() }
+      MenuItem { text: "Max EVs"; onTriggered: boxData.maxEVs(); enabled: !boxData.isMaxEVs }
       MenuItem { text: "Re-Roll EVs"; onTriggered: boxData.reRollEVs() }
-      MenuItem { text: "Reset EVs"; onTriggered: boxData.resetEVs() }
+      MenuItem { text: "Reset EVs"; onTriggered: boxData.resetEVs(); enabled: !boxData.isMinEvs }
 
       MenuSeparator {}
       MenuItem { text: "Close" }

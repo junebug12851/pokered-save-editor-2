@@ -1039,6 +1039,16 @@ bool PokemonBox::isMaxDVs()
   return ret;
 }
 
+bool PokemonBox::isMinDVs()
+{
+  bool ret = true;
+
+  for(var8 i = 0; i < 4; i++)
+    if(dv[i] > 0) ret = false;
+
+  return ret;
+}
+
 void PokemonBox::maxLevel()
 {
   level = 100;
