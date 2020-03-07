@@ -1069,6 +1069,14 @@ void PokemonBox::reRollDVs()
   dvChanged();
 }
 
+void PokemonBox::resetDVs()
+{
+  for(var8 i = 0; i < 4; i++)
+    dv[i] = 0;
+
+  dvChanged();
+}
+
 void PokemonBox::maxEVs()
 {
   hpExp = 0xFFFF;
@@ -1104,6 +1112,26 @@ void PokemonBox::resetEVs()
   spdExpChanged();
 
   spExp = 0;
+  spExpChanged();
+
+  update(true);
+}
+
+void PokemonBox::reRollEVs()
+{
+  hpExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  hpExpChanged();
+
+  atkExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  atkExpChanged();
+
+  defExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  defExpChanged();
+
+  spdExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  spdExpChanged();
+
+  spExp = Random::rangeInclusive(0x0000, 0xFFFF);
   spExpChanged();
 
   update(true);

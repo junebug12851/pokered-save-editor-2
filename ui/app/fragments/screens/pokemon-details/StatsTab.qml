@@ -46,10 +46,29 @@ Rectangle {
     icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
     icon.color: brg.settings.textColorDark
 
-    onClicked: statsTglBtnMenu.open();
+    onClicked: (statsTglBtn.text === "DV")
+               ? statsTglBtnMenuDV.open()
+               : statsTglBtnMenuEV.open()
 
     Menu {
-      id: statsTglBtnMenu
+      id: statsTglBtnMenuDV
+
+      MenuItem { text: "Max DVs"; onTriggered: boxData.maxDVs() }
+      MenuItem { text: "Re-Roll DVs"; onTriggered: boxData.reRollDVs() }
+      MenuItem { text: "Reset DVs"; onTriggered: boxData.resetDVs() }
+
+      MenuSeparator {}
+      MenuItem { text: "Close" }
+    }
+
+    Menu {
+      id: statsTglBtnMenuEV
+
+      MenuItem { text: "Max EVs"; onTriggered: boxData.maxEVs() }
+      MenuItem { text: "Re-Roll EVs"; onTriggered: boxData.reRollEVs() }
+      MenuItem { text: "Reset EVs"; onTriggered: boxData.resetEVs() }
+
+      MenuSeparator {}
       MenuItem { text: "Close" }
     }
   }

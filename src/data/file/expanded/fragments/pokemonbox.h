@@ -361,8 +361,10 @@ public slots:
   void maxPpUps();
   void maxEVs();
   void resetEVs();
+  void reRollEVs();
   void maxDVs();
   void reRollDVs();
+  void resetDVs();
   void maxOut();
   void randomizeMoves();
   void resetPokemon();
