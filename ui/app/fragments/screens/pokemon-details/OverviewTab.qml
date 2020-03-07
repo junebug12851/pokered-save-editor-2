@@ -87,7 +87,7 @@ Rectangle {
 
           Menu {
             id: nickNameMenu
-            MenuItem { text: (boxData.hasNickname)
+            MenuItem { text: (boxData.hasNickname || !boxData.isValidBool)
                              ? "Re-Roll Nickname"
                              : "Give Nickname"; onTriggered: boxData.changeName(false); }
             MenuItem { text: "Remove Nickname"; enabled: boxData.hasNickname;  onTriggered: boxData.changeName(true); }
