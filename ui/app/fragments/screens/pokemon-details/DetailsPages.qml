@@ -28,11 +28,13 @@ Rectangle {
     anchors.right: parent.right
     height: 45
 
+    font.capitalization: Font.Capitalize
+
     TabButton {
-      text: "Overview"
+      text: "General"
     }
     TabButton {
-      text: "Stats"
+      text: "DV/EV"
     }
     TabButton {
       text: "Moves"

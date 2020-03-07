@@ -6,6 +6,7 @@ import QtQuick.Controls.Material 2.14
 import App.PokemonBox 1.0
 import App.PokemonParty 1.0
 
+import "./stats"
 import "../../general"
 import "../../header"
 import "../../controls/selection"
@@ -15,6 +16,7 @@ Rectangle {
   color: "transparent"
 
   property PokemonBox boxData: null
+  property PokemonParty partyData: null
 
   Rectangle {
     id: topBar
@@ -132,10 +134,39 @@ Rectangle {
     }
   }
 
+  Rectangle {
+    id: statsData
+//    width: (statsDataValid.visible)
+//           ? statsDataValid.implicitWidth
+//           : statsDataInvalid.implicitWidth
+
+    anchors.top: topBar.bottom
+    anchors.topMargin: 15
+    anchors.left: parent.left
+    anchors.leftMargin: 0
+    anchors.bottom: bottomBar.top
+    anchors.bottomMargin: 5
+
+    StatsGroup {
+      id: statsDataValid
+      visible: boxData.isValidBool ||
+               (!boxData.isValidBool && partyData === null)
+      anchors.fill: parent
+    }
+
+    StatsGroupInvalid {
+      id: statsDataInvalid
+      partyData: top.partyData
+
+      visible: !boxData.isValidBool && partyData !== null
+      anchors.fill: parent
+    }
+  }
+
   Image {
     id: monImg
     anchors.top: topBar.bottom
-    anchors.left: parent.left
+    anchors.left: statsData.right
     anchors.right: parent.right
     anchors.bottom: bottomBar.top
     anchors.margins: 15
@@ -209,6 +240,15 @@ Rectangle {
     Slider {
       id: hpEdit
 
+      function getTo() {
+        if(boxData.isValidBool)
+          return boxData.hpStat
+        else if(!boxData.isValidBool && partyData !== null)
+          return partyData.maxHP;
+
+        return 0xFFFF;
+      }
+
       anchors.top: parent.top
       anchors.topMargin: 8
       anchors.left: hpTxt.right
@@ -217,9 +257,9 @@ Rectangle {
       anchors.rightMargin: 10
 
       from: 0
-      to: (boxData.isValidBool)
-          ? boxData.hpStat
-          : 0xFFFF
+      to: (boxData.isValidBool || boxData.hpStat === "phony")
+          ? getTo()
+          : getTo()
 
       Material.foreground: brg.settings.textColorDark
       Material.background: brg.settings.textColorLight

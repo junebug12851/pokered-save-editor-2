@@ -525,5 +525,7 @@
         <file>ui/app/fragments/controls/selection/SelectStatus.qml</file>
         <file>ui/app/fragments/screens/pokemon-details/stats/DvStatGroup.qml</file>
         <file>ui/app/fragments/screens/pokemon-details/stats/EvStatGroup.qml</file>
+        <file>ui/app/fragments/screens/pokemon-details/stats/StatsGroup.qml</file>
+        <file>ui/app/fragments/screens/pokemon-details/stats/StatsGroupInvalid.qml</file>
     </qresource>
 </RCC>

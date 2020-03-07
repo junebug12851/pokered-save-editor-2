@@ -30,6 +30,7 @@ Page {
 
   GlancePane {
     boxData: top.boxData
+    partyData: top.partyData
 
     anchors.top: parent.top
     anchors.left: detailsPages.right
