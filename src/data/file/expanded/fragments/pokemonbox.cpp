@@ -761,29 +761,29 @@ int PokemonBox::nonHpStat(PokemonStats::PokemonStats_ stat)
   if(record == nullptr)
     return 0;
 
-  var8 baseStat = 0;
-  var8 dvLocal = 0;
-  var8 evLocal = 0;
+  int baseStat = 0;
+  int dvLocal = 0;
+  int evLocal = 0;
 
   if(stat == PokemonStats::Attack) {
     baseStat = *record->baseAttack;
-    dvLocal = dv[(var8)PokemonStats::Attack];
+    dvLocal = dv[PokemonStats::Attack];
     evLocal = atkExp;
   }
   else if(stat == PokemonStats::Defense) {
     baseStat = *record->baseDefense;
-    dvLocal = dv[(var8)PokemonStats::Defense];
+    dvLocal = dv[PokemonStats::Defense];
     evLocal = defExp;
   }
   else if(stat == PokemonStats::Speed) {
     baseStat = *record->baseSpeed;
-    dvLocal = dv[(var8)PokemonStats::Speed];
+    dvLocal = dv[PokemonStats::Speed];
     evLocal = spdExp;
   }
   else if(stat == PokemonStats::Special) {
     baseStat = *record->baseSpecial;
-    dvLocal = dv[(var8)PokemonStats::Speed];
-    evLocal = spdExp;
+    dvLocal = dv[PokemonStats::Special];
+    evLocal = spExp;
   }
 
   return qFloor((((baseStat+dvLocal)*2+qFloor(qFloor(qSqrt(evLocal))/4))*level)/100) + 5;
