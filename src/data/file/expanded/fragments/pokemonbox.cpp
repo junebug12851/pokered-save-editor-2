@@ -812,6 +812,7 @@ void PokemonBox::update(bool resetHp,
     type2 = (*record).toType2->ind;
     type2Changed();
   }
+  else type2 = (*record).toType1->ind;
 
   if(resetType && type1 == type2) {
     type2 = 0xFF;
@@ -1198,6 +1199,69 @@ bool PokemonBox::isPokemonReset()
   }
 
   return level == 5 && movesReset && isMinEvs() && isHealed();
+}
+
+bool PokemonBox::isMaxedOut()
+{
+  if(level < 100)
+    return false;
+
+  for(int i = 0; i < 4; i++) {
+    if(moves[i]->moveID > 0 && !moves[i]->isInvalid() && (!moves[i]->isMaxPP() || !moves[i]->isMaxPpUps()))
+      return false;
+  }
+
+  if(atkExp < 0xFFFF || defExp < 0xFFFF || spdExp < 0xFFFF || spExp < 0xFFFF || hpExp < 0xFFFF)
+    return false;
+
+  for(int i = 0; i < 4; i++) {
+    if(dv[i] < 15)
+      return false;
+  }
+
+  // Stop here if pokemon is invalid and we got this far
+  if(!isValidBool())
+    return true;
+
+  if(hp < hpStat())
+    return false;
+
+  if(exp < expLevelRangeEnd())
+    return false;
+
+  return true;
+}
+
+bool PokemonBox::isCorrected()
+{
+  auto record = isValid();
+  if(record == nullptr)
+    return true;
+
+  if(hpStat() != hp)
+    return false;
+
+  if(record->toType1 != nullptr) {
+    if(record->toType1->ind != type1)
+      return false;
+  }
+
+  if(record->toType2 != nullptr) {
+    if(record->toType2->ind != type2)
+      return false;
+  }
+  else if(type2 != 0xFF && type2 != type1)
+    return false;
+
+  if(record->catchRate) {
+    if(*record->catchRate != catchRate)
+      return false;
+  }
+
+  if(levelToExp() != exp)
+    return false;
+
+  return true;
 }
 
 int PokemonBox::dexNum()

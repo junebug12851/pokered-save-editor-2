@@ -187,6 +187,8 @@ class PokemonBox : public QObject
   Q_PROPERTY(bool isMaxDVs READ isMaxDVs NOTIFY dvChanged)
   Q_PROPERTY(bool isMinDVs READ isMinDVs NOTIFY dvChanged)
   Q_PROPERTY(bool isPokemonReset READ isPokemonReset NOTIFY pokemonResetChanged)
+  Q_PROPERTY(bool isMaxedOut READ isMaxedOut NOTIFY pokemonResetChanged)
+  Q_PROPERTY(bool isCorrected READ isCorrected NOTIFY pokemonResetChanged)
 
   Q_PROPERTY(bool isShiny READ isShiny NOTIFY dvChanged)
   Q_PROPERTY(int getNature READ getNature NOTIFY expChanged)
@@ -275,6 +277,9 @@ public:
   bool isMaxDVs();
   bool isMinDVs();
   bool isPokemonReset();
+
+  bool isMaxedOut();
+  bool isCorrected();
 
   int dexNum();
   QString speciesName();

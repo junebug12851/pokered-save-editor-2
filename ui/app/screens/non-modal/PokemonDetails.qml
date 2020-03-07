@@ -66,8 +66,8 @@ Page {
       id: toolkitMenu
       parent: footer.btn3
       MenuItem { text: "Max Out"; onTriggered: boxData.maxOut(); }
-      MenuItem { text: "Fix"; onTriggered: boxData.update(true, true, true, true);}
-      MenuItem { text: "Reset"; onTriggered: boxData.resetPokemon(); enabled: boxData.isPokemonReset }
+      MenuItem { text: "Correct Data"; onTriggered: boxData.update(true, true, true, true);}
+      MenuItem { text: "Reset"; onTriggered: boxData.resetPokemon(); }
       MenuItem { text: "Evolve"; onTriggered: boxData.evolve(); enabled: boxData.hasEvolution }
       MenuItem { text: "De-Evolve"; onTriggered: boxData.deEvolve(); enabled: boxData.hasDeEvolution }
       MenuSeparator { }
