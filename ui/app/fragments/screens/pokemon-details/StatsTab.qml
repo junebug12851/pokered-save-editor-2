@@ -79,4 +79,78 @@ Rectangle {
     anchors.bottom: parent.bottom
     anchors.bottomMargin: 5
   }
+
+  Row {
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+
+    ShadedBG {
+      id: futureShiny
+
+      HeaderText {
+        text: "Future Shiny"
+      }
+
+      CheckBox {
+        id: futureShinyEdit
+
+        anchors.top: futureShiny.top
+        anchors.topMargin: -5
+        anchors.left: futureShiny.right
+        anchors.leftMargin: 0
+
+        onCheckedChanged: {
+          if(checked)
+            boxData.makeShiny();
+          else
+            boxData.unmakeShiny();
+        }
+
+        Component.onCompleted: checked = boxData.isShiny;
+
+        Connections {
+          target: boxData
+          onDvChanged: futureShinyEdit.checked = boxData.isShiny;
+        }
+      }
+
+      IconButtonSquare {
+        anchors.left: futureShinyEdit.right
+        anchors.leftMargin: -15
+        anchors.top: futureShiny.top
+        anchors.topMargin: -3
+        icon.width: 7
+
+        icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
+        icon.color: brg.settings.textColorDark
+
+        onClicked: futureShinyMenu.open();
+
+        Menu {
+          id: futureShinyMenu
+          MenuItem {
+            text: "Re-Roll Shiny";
+            onTriggered: boxData.rollShiny();
+          }
+          MenuItem {
+            text: "Re-Roll Non-Shiny";
+            onTriggered: boxData.rollNonShiny();
+          }
+          MenuSeparator { }
+          MenuItem {
+            text: "Convert to Shiny"
+            enabled: !boxData.isShiny
+            onTriggered: boxData.makeShiny();
+          }
+          MenuItem {
+            text: "Convert to Non-Shiny"
+            enabled: boxData.isShiny
+            onTriggered: boxData.unmakeShiny();
+          }
+          MenuSeparator { }
+          MenuItem { text: "Close" }
+        }
+      }
+    }
+  }
 }

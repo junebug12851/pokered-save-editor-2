@@ -37,6 +37,7 @@
 #include "../mvc/typesmodel.h"
 #include "../mvc/speciesselectmodel.h"
 #include "../mvc/statusselectmodel.h"
+#include "../mvc/natureselectmodel.h"
 
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
@@ -77,6 +78,7 @@ class Bridge : public QObject
   Q_PROPERTY(TypesModel* typesModel MEMBER typesModel NOTIFY typesModelChanged)
   Q_PROPERTY(SpeciesSelectModel* speciesSelectModel MEMBER speciesSelectModel NOTIFY speciesSelectModelChanged)
   Q_PROPERTY(StatusSelectModel* statusSelectModel MEMBER statusSelectModel NOTIFY statusSelectModelChanged)
+  Q_PROPERTY(NatureSelectModel* natureSelectModel MEMBER natureSelectModel NOTIFY natureSelectModelChanged)
 
 signals:
   void fileChanged();
@@ -106,6 +108,7 @@ signals:
   void typesModelChanged();
   void speciesSelectModelChanged();
   void statusSelectModelChanged();
+  void natureSelectModelChanged();
 
 public:
   Bridge(FileManagement* file);
@@ -140,6 +143,7 @@ public:
   TypesModel* typesModel = new TypesModel;
   SpeciesSelectModel* speciesSelectModel = new SpeciesSelectModel;
   StatusSelectModel* statusSelectModel = new StatusSelectModel;
+  NatureSelectModel* natureSelectModel = new NatureSelectModel;
 };
 
 #endif

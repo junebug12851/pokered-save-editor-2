@@ -31,6 +31,7 @@
 #include "../mvc/typesmodel.h"
 #include "../mvc/speciesselectmodel.h"
 #include "../mvc/statusselectmodel.h"
+#include "../mvc/natureselectmodel.h"
 
 #include "../data/db/examplesplayer.h"
 #include "../data/db/examplespokemon.h"
@@ -132,6 +133,7 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<TypesModel>("App.TypesModel", 1, 0, "TypesModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<SpeciesSelectModel>("App.SpeciesSelectModel", 1, 0, "SpeciesSelectModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<StatusSelectModel>("App.StatusSelectModel", 1, 0, "StatusSelectModel", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<NatureSelectModel>("App.NatureSelectModel", 1, 0, "NatureSelectModel", "Can't instantiate in QML");
 
   qmlRegisterUncreatableType<ExamplesPlayer>("App.ExamplesPlayer", 1, 0, "ExamplesPlayer", "Can't instantiate in QML");
   qmlRegisterUncreatableType<ExamplesPokemon>("App.ExamplesPokemon", 1, 0, "ExamplesPokemon", "Can't instantiate in QML");

@@ -369,70 +369,27 @@ Rectangle {
 
     Row {
       ShadedBG {
-        id: futureShiny
+        id: futureNature
 
         HeaderText {
-          text: "Future Shiny"
+          text: "Future Nature"
         }
 
-        CheckBox {
-          id: futureShinyEdit
-
-          anchors.top: futureShiny.top
+        SelectNature {
+          id: futureNatureEdit
+          anchors.top: futureNature.top
           anchors.topMargin: -5
-          anchors.left: futureShiny.right
-          anchors.leftMargin: 6
+          anchors.left: futureNature.right
+          anchors.leftMargin: 5
 
-          onCheckedChanged: {
-            if(checked)
-              boxData.makeShiny();
-            else
-              boxData.unmakeShiny();
-          }
+          width: type1.width
 
-          Component.onCompleted: checked = boxData.isShiny;
+          onActivated: boxData.setNature(currentValue);
+          Component.onCompleted: currentIndex = brg.natureSelectModel.natureToListIndex(boxData.getNature);
 
           Connections {
             target: boxData
-            onDvChanged: futureShinyEdit.checked = boxData.isShiny;
-          }
-        }
-
-        IconButtonSquare {
-          anchors.left: futureShinyEdit.right
-          anchors.leftMargin: -15
-          anchors.top: futureShiny.top
-          anchors.topMargin: -3
-          icon.width: 7
-
-          icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
-          icon.color: brg.settings.textColorDark
-
-          onClicked: futureShinyMenu.open();
-
-          Menu {
-            id: futureShinyMenu
-            MenuItem {
-              text: "Re-Roll Shiny";
-              onTriggered: boxData.rollShiny();
-            }
-            MenuItem {
-              text: "Re-Roll Non-Shiny";
-              onTriggered: boxData.rollNonShiny();
-            }
-            MenuSeparator { }
-            MenuItem {
-              text: "Convert to Shiny"
-              enabled: !boxData.isShiny
-              onTriggered: boxData.makeShiny();
-            }
-            MenuItem {
-              text: "Convert to Non-Shiny"
-              enabled: boxData.isShiny
-              onTriggered: boxData.unmakeShiny();
-            }
-            MenuSeparator { }
-            MenuItem { text: "Close" }
+            onExpChanged: futureNatureEdit.currentIndex = brg.natureSelectModel.natureToListIndex(boxData.getNature);
           }
         }
       }
