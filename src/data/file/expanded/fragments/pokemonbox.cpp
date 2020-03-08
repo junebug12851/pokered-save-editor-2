@@ -251,7 +251,7 @@ void PokemonMove::correctMove()
   }
 
   // Stop here if this move is zero and there are other moves which aren't
-  if(rowCount > 1 && moveID <= 0)
+  if(rowCount >= 1 && moveID <= 0)
     return;
 
   auto validMoves = allValidMoves();
