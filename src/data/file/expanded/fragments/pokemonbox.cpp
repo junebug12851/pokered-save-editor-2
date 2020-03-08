@@ -31,6 +31,7 @@
 
 #include <QtMath>
 #include <QQmlEngine>
+#include <QDebug>
 
 PokemonMove::PokemonMove(PokemonBox* parentMon, var8 move, var8 pp, var8 ppUp)
 {

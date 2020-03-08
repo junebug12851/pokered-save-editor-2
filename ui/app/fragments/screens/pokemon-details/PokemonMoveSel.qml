@@ -68,8 +68,6 @@ Rectangle {
     SelectMove {
       id: moveSelect
 
-      property int tmpSave: -1
-
       onActivated: monMove.moveID = currentValue;
       Component.onCompleted: currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
 
@@ -80,16 +78,16 @@ Rectangle {
 
       Connections {
         target: brg.moveSelectModel
-        onBeforeChange: moveSelect.tmpSave = monMove.moveID;
         onMonChanged: {
-          if(moveSelect.tmpSave >= 0) {
-            monMove.moveID = moveSelect.tmpSave;
-            moveSelect.tmpSave = -1;
-          }
-
           moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
         }
+      }
 
+      Connections {
+        target: boxData
+        onSpeciesChanged: {
+          moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
+        }
       }
     }
 
