@@ -13,6 +13,9 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+#include <QDebug>
+
 #include "spritedata.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
@@ -365,7 +368,7 @@ void SpriteData::saveMissables(SaveFile* saveFile, QVector<SpriteData*> spriteDa
     auto val = spriteData[i];
 
     // Skip all sprites that aren't missables
-    if(val->missableIndex || !(val->missableIndex >= 0))
+    if(!val->missableIndex || *val->missableIndex < 0)
       continue;
 
     // Save sprite index that's missable
