@@ -115,6 +115,8 @@ void MoveSelectModel::rebuildListGeneral()
   collator.setNumericMode(true);
   collator.setIgnorePunctuation(true);
 
+  moveListCache.append(new MoveSelectEntry("", 0));
+
   /////////////////////////
   ///////// Normal Moves
   /////////////////////////
@@ -203,6 +205,8 @@ void MoveSelectModel::rebuildListSpecific()
 {
   if(mon == nullptr)
     rebuildListGeneral();
+
+  moveListCache.append(new MoveSelectEntry("", 0));
 
   // Setup Collator
   QCollator collator;

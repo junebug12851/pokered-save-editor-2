@@ -68,7 +68,15 @@ Page {
       id: toolkitMenu
       parent: footer.btn3
       MenuItem { text: "Max Out"; onTriggered: boxData.maxOut(); }
-      MenuItem { text: "Correct Data"; onTriggered: boxData.update(true, true, true, true);}
+      MenuItem { text: "Correct Data"; onTriggered: {
+          // Another QML glitch, I expanded update() to 5 bools but despite
+          // calling it with 5 it only calls it with 4. I've tried everything
+          // so I'm giving up and calling the 2nd function explicitly
+          boxData.update(true, true, true, true);
+          boxData.correctMoves();
+          boxData.cleanupMoves();
+        }
+      }
       MenuItem { text: "Reset"; onTriggered: boxData.resetPokemon(); }
       MenuItem { text: "Evolve"; onTriggered: boxData.evolve(); enabled: boxData.hasEvolution }
       MenuItem { text: "De-Evolve"; onTriggered: boxData.deEvolve(); enabled: boxData.hasDeEvolution }

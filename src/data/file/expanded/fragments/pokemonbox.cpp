@@ -32,13 +32,18 @@
 #include <QtMath>
 #include <QQmlEngine>
 
-PokemonMove::PokemonMove(var8 move, var8 pp, var8 ppUp)
+PokemonMove::PokemonMove(PokemonBox* parentMon, var8 move, var8 pp, var8 ppUp)
 {
   // Set this class as owned by CPP so that QML doesn't delete it
   MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
 
+  this->parentMon = parentMon;
+
+  connect(this, &PokemonMove::moveIDChanged, this, &PokemonMove::ppCapChanged);
   connect(this, &PokemonMove::ppChanged, this, &PokemonMove::ppCapChanged);
   connect(this, &PokemonMove::ppUpChanged, this, &PokemonMove::ppCapChanged);
+  connect(this, &PokemonMove::moveIDChanged, this, &PokemonMove::onMoveIdChanged);
+  connect(this, &PokemonMove::ppUpChanged, this, &PokemonMove::onMoveIdChanged);
 
   this->moveID = move;
   this->pp = pp;
@@ -84,6 +89,26 @@ void PokemonMove::maxPpUp()
   ppUpChanged();
 }
 
+void PokemonMove::raisePpUp()
+{
+  if(ppUp < 3)
+    ppUp++;
+  ppUpChanged();
+}
+
+void PokemonMove::lowerPpUp()
+{
+  if(ppUp > 0)
+    ppUp--;
+  ppUpChanged();
+}
+
+void PokemonMove::resetPpUp()
+{
+  ppUp = 0;
+  ppUpChanged();
+}
+
 bool PokemonMove::isMaxPP()
 {
   var8 maxPP = getMaxPP();
@@ -113,7 +138,79 @@ bool PokemonMove::isMaxPpUps()
 
 bool PokemonMove::isInvalid()
 {
-  return moveID == 0;
+  return moveID == 0 || toMove() == nullptr || toMove()->glitch;
+}
+
+QString PokemonMove::moveType()
+{
+  if(moveID == 0)
+    return "";
+  else if(isInvalid() || toMove()->type == "")
+    return "Glitch";
+  else
+    return toMove()->toType->readable;
+}
+
+void PokemonMove::onMoveIdChanged()
+{
+  if(!isInvalid() && pp > getMaxPP()) {
+    pp = getMaxPP();
+    ppChanged();
+  }
+}
+
+QVector<int> PokemonMove::allValidMoves()
+{
+  QVector<int> ret;
+
+  if(!parentMon->isValidBool())
+    return ret;
+
+  auto monData = parentMon->toData();
+
+  for(auto el : monData->toInitial) {
+    if(!ret.contains(el->ind))
+      ret.append(el->ind);
+  }
+
+  for(auto el : monData->moves) {
+    if(el->toMove != nullptr && !ret.contains(el->toMove->ind))
+      ret.append(el->toMove->ind);
+  }
+
+  for(auto el : monData->toTmHmMove) {
+    if(!ret.contains(el->ind))
+      ret.append(el->ind);
+  }
+
+  return ret;
+}
+
+QVector<int> PokemonMove::validMovesLeft()
+{
+  QVector<int> ret = allValidMoves();
+
+  if(!parentMon->isValidBool())
+    return ret;
+
+  for(int i = 0 ; i < 4; i++) {
+    if(parentMon->moves[i]->moveID > 0)
+      ret.removeAll(parentMon->moves[i]->moveID);
+  }
+
+  return ret;
+}
+
+bool PokemonMove::isDuplicateMove()
+{
+  int count = 0;
+
+  for(int i = 0 ; i < 4; i++) {
+    if(parentMon->moves[i]->moveID == this->moveID)
+      count++;
+  }
+
+  return count > 1;
 }
 
 void PokemonMove::restorePP()
@@ -138,6 +235,39 @@ void PokemonMove::changeMove(int move, int pp, int ppUp)
   ppUpChanged();
 }
 
+void PokemonMove::correctMove()
+{
+  // Skip if pokemon is a glitch mon
+  if(!parentMon->isValidBool())
+    return;
+
+  // Count number of non-zero move rows
+  int rowCount = 0;
+
+  for(int i = 0; i < 4; i++) {
+    if(parentMon->moves[i]->moveID > 0)
+      rowCount++;
+  }
+
+  // Stop here if this move is zero and there are other moves which aren't
+  if(rowCount > 1 && moveID <= 0)
+    return;
+
+  auto validMoves = allValidMoves();
+
+  if(!validMoves.contains(moveID) || isDuplicateMove()) {
+    if(rowCount <= 1) {
+      auto validMovesLeftList = validMovesLeft();
+      moveID = validMovesLeftList.at(0);
+      moveIDChanged();
+      return;
+    }
+
+    moveID = 0;
+    moveIDChanged();
+  }
+}
+
 PokemonBox::PokemonBox(SaveFile* saveFile,
                        var16 startOffset,
                        var16 nicknameStartOffset,
@@ -149,7 +279,7 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
   MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
 
   for(int i = 0; i < 4; i++) {
-    moves[i] = new PokemonMove;
+    moves[i] = new PokemonMove(this);
 
     connect(moves[i], &PokemonMove::moveIDChanged, this, &PokemonBox::movesChanged);
     connect(moves[i], &PokemonMove::ppCapChanged, this, &PokemonBox::movesChanged);
@@ -792,7 +922,8 @@ int PokemonBox::nonHpStat(PokemonStats::PokemonStats_ stat)
 void PokemonBox::update(bool resetHp,
                         bool resetExp,
                         bool resetType,
-                        bool resetCatchRate)
+                        bool resetCatchRate,
+                        bool correctMoves)
 {
   auto record = isValid();
   if(record == nullptr)
@@ -827,6 +958,11 @@ void PokemonBox::update(bool resetHp,
   if(resetExp) {
     exp = levelToExp();
     expChanged();
+  }
+
+  if(correctMoves) {
+    this->correctMoves();
+    cleanupMoves();
   }
 }
 
@@ -1343,6 +1479,53 @@ void PokemonBox::setNature(int nature)
   }
 }
 
+void PokemonBox::cleanupMoves()
+{
+  QVector<PokemonMove*> movesNew;
+
+  // First gather actual moves
+  for(int i = 0; i < 4; i++) {
+    if(moves[i]->moveID <= 0)
+      continue;
+
+    auto newMoveEl = new PokemonMove(
+          this,
+          moves[i]->moveID,
+          moves[i]->pp,
+          moves[i]->ppUp
+          );
+
+    movesNew.append(newMoveEl);
+  }
+
+  // Then clear out moves
+  for(int i = 0; i < 4; i++) {
+    moves[i]->moveID = 0;
+    moves[i]->pp = 0;
+    moves[i]->ppUp = 0;
+  }
+
+  // Then re-insert moves
+  for(int i = 0; i < movesNew.size(); i++) {
+    moves[i]->moveID = movesNew.at(i)->moveID;
+    moves[i]->pp = movesNew.at(i)->pp;
+    moves[i]->ppUp = movesNew.at(i)->ppUp;
+  }
+
+  // Then aknowledge changes
+  for(int i = 0; i < 4; i++) {
+    moves[i]->moveIDChanged();
+    moves[i]->ppChanged();
+    moves[i]->ppUpChanged();
+  }
+}
+
+void PokemonBox::correctMoves()
+{
+  for(int i = 0; i < 4; i++)
+    moves[i]->correctMove();
+}
+
 void PokemonBox::rollShiny()
 {
   dv[PokemonStats::Defense] = 0b1010;
@@ -1506,6 +1689,22 @@ PokemonDBEntry* PokemonBox::toData()
 }
 
 int PokemonBox::movesCount()
+{
+  int ret = 0;
+
+  // Follows game logic
+  // The first move with 0 ends move lookup
+  for(int i = 0; i < 4; i++) {
+    if(moves[i]->moveID <= 0)
+      break;
+
+    ret++;
+  }
+
+  return ret;
+}
+
+int PokemonBox::movesMax()
 {
   return maxMoves;
 }

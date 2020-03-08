@@ -14,6 +14,7 @@ ComboBox {
   model: brg.moveSelectModel
 
   width: font.pixelSize * 15
+  implicitWidth: font.pixelSize * 15
 
   delegate: ItemDelegate {
     width: control.width

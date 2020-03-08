@@ -96,6 +96,8 @@ public:
   };
 };
 
+class PokemonBox;
+
 class PokemonMove : public QObject
 {
   Q_OBJECT
@@ -106,12 +108,14 @@ class PokemonMove : public QObject
 
   Q_PROPERTY(bool isMaxPP READ isMaxPP NOTIFY ppCapChanged)
   Q_PROPERTY(int getMaxPP READ getMaxPP NOTIFY ppCapChanged)
-  Q_PROPERTY(bool isMaxPpUps READ isMaxPpUps NOTIFY ppUpChanged)
+  Q_PROPERTY(bool isMaxPpUps READ isMaxPpUps NOTIFY ppCapChanged)
 
   Q_PROPERTY(bool isInvalid READ isInvalid NOTIFY moveIDChanged)
+  Q_PROPERTY(bool isDuplicateMove READ isDuplicateMove NOTIFY moveIDChanged)
+  Q_PROPERTY(QString moveType READ moveType NOTIFY moveIDChanged)
 
 public:
-  PokemonMove(var8 move = 0, var8 pp = 0, var8 ppUp = 0);
+  PokemonMove(PokemonBox* parentMon, var8 move = 0, var8 pp = 0, var8 ppUp = 0);
 
   MoveDBEntry* toMove();
 
@@ -119,6 +123,14 @@ public:
   int getMaxPP();
   bool isMaxPpUps();
   bool isInvalid();
+
+  QString moveType();
+
+  void onMoveIdChanged();
+
+  QVector<int> allValidMoves();
+  QVector<int> validMovesLeft();
+  bool isDuplicateMove();
 
 signals:
   void moveIDChanged();
@@ -130,13 +142,18 @@ signals:
 public slots:
   void randomize();
   void maxPpUp();
+  void raisePpUp();
+  void lowerPpUp();
+  void resetPpUp();
   void restorePP();
   void changeMove(int move = 0, int pp = 0, int ppUp = 0);
+  void correctMove();
 
 public:
   int moveID;
   int pp;
   int ppUp;
+  PokemonBox* parentMon = nullptr;
 };
 
 constexpr var8 maxMoves = 4;
@@ -212,23 +229,23 @@ public:
   virtual ~PokemonBox();
 
   virtual SaveFileIterator* load(SaveFile* saveFile = nullptr,
-            var16 startOffset = 0,
-            var16 nicknameStartOffset = 0,
-            var16 otNameStartOffset = 0,
-            var8 index = 0,
+                                 var16 startOffset = 0,
+                                 var16 nicknameStartOffset = 0,
+                                 var16 otNameStartOffset = 0,
+                                 var8 index = 0,
 
-            // Unless overridden, the record size for box data is 0x21
-            var8 recordSize = 0x21);
+                                 // Unless overridden, the record size for box data is 0x21
+                                 var8 recordSize = 0x21);
 
   virtual SaveFileIterator* save(SaveFile* saveFile = nullptr,
-            var16 startOffset = 0,
-            svar32 speciesStartOffset = 0, // -1 if doesn't exist
-            var16 nicknameStartOffset = 0,
-            var16 otNameStartOffset = 0,
-            var8 index = 0,
+                                 var16 startOffset = 0,
+                                 svar32 speciesStartOffset = 0, // -1 if doesn't exist
+                                 var16 nicknameStartOffset = 0,
+                                 var16 otNameStartOffset = 0,
+                                 var8 index = 0,
 
-            // Unless overridden, the record size for box data is 0x21
-            var8 recordSize = 0x21);
+                                 // Unless overridden, the record size for box data is 0x21
+                                 var8 recordSize = 0x21);
 
   // Creates a new Pokemon without a nickname and, if a saveFile is provided,
   // not traded. Depending on the species everything else is filled out
@@ -305,6 +322,7 @@ public:
   int spStat();
 
   int movesCount();
+  int movesMax();
   Q_INVOKABLE PokemonMove* movesAt(int ind);
 
   int dvCount();
@@ -350,9 +368,10 @@ public slots:
   // HP and Exp are optional because their values will be lost if updated
   // Type needs to be updated in certain cases but not always
   virtual void update(bool resetHp = false,
-              bool resetExp = false,
-              bool resetType = false,
-              bool resetCatchRate = false);
+                      bool resetExp = false,
+                      bool resetType = false,
+                      bool resetCatchRate = false,
+                      bool correctMoves = false);
 
   void heal();
 
@@ -380,6 +399,8 @@ public slots:
   void makeShiny();
   void unmakeShiny();
   void setNature(int nature); // Use nature enum
+  void cleanupMoves();
+  void correctMoves();
 
   // It's critical that party mon are not added into box mon and vice-versa
   // This directly says if the class is actually has the extra party mon data
