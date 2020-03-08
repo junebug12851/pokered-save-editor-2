@@ -8,9 +8,14 @@ import App.PokemonParty 1.0
 
 import "../../general"
 import "../../header"
+import "../../controls/selection"
 
 Rectangle {
   property PokemonBox boxData: null
 
   color: "transparent"
+
+  SelectMove {
+    //width: par
+  }
 }

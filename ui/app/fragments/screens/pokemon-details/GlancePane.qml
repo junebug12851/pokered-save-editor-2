@@ -52,7 +52,10 @@ Rectangle {
 
       Connections {
         target: boxData
-        onSpeciesChanged: speciesSelect.currentIndex = brg.speciesSelectModel.speciesToListIndex(boxData.species);
+        onSpeciesChanged: {
+          brg.moveSelectModel.monFromBox(boxData);
+          speciesSelect.currentIndex = brg.speciesSelectModel.speciesToListIndex(boxData.species);
+        }
       }
     }
 

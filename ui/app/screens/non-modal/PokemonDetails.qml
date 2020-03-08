@@ -16,6 +16,8 @@ Page {
   property PokemonBox boxData: null
   property PokemonBox partyData: null
 
+  Component.onCompleted: brg.moveSelectModel.monFromBox(boxData);
+
   DetailsPages {
     id: detailsPages
 
