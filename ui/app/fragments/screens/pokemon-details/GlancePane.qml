@@ -57,6 +57,10 @@ Rectangle {
           speciesSelect.currentIndex = brg.speciesSelectModel.speciesToListIndex(boxData.species);
         }
       }
+
+      MainToolTip {
+        text: "The Pokemon's species, glitch Pokemon are available."
+      }
     }
 
     Text {
@@ -117,6 +121,10 @@ Rectangle {
         target: boxData
         onLevelChanged: levelEdit.text = boxData.level.toString(10);
       }
+
+      MainToolTip {
+        text: "Pokemon level from 1 to 100, pokemon below level 5 could cause underflow bugs as per gen 1 game issues."
+      }
     }
 
     SelectStatus {
@@ -133,6 +141,10 @@ Rectangle {
       Connections {
         target: boxData
         onStatusChanged: statusSelect.currentIndex = brg.statusSelectModel.statusToListIndex(boxData.status);
+      }
+
+      MainToolTip {
+        text: "The Pokemon's status, sleep also has number of turns left."
       }
     }
   }
@@ -332,6 +344,10 @@ Rectangle {
       Connections {
         target: boxData
         onHpChanged: hpEdit.value = boxData.hp;
+      }
+
+      MainToolTip {
+        text: "HP Left from the Pokemon's maximum"
       }
     }
   }

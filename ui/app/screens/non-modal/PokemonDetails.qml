@@ -67,7 +67,11 @@ Page {
     Menu {
       id: toolkitMenu
       parent: footer.btn3
-      MenuItem { text: "Max Out"; onTriggered: boxData.maxOut(); }
+      MenuItem { text: "Max Out"; onTriggered: boxData.maxOut();
+        MainToolTip {
+          text: "Max out all stats, health, move pp & pp-up, etc..."
+        }
+      }
       MenuItem { text: "Correct Data"; onTriggered: {
           // Another QML glitch, I expanded update() to 5 bools but despite
           // calling it with 5 it only calls it with 4. I've tried everything
@@ -76,10 +80,26 @@ Page {
           boxData.correctMoves();
           boxData.cleanupMoves();
         }
+
+        MainToolTip {
+          text: "Make all all stats, health, moves, types etc... Game Accurate"
+        }
       }
-      MenuItem { text: "Reset"; onTriggered: boxData.resetPokemon(); }
-      MenuItem { text: "Evolve"; onTriggered: boxData.evolve(); enabled: boxData.hasEvolution }
-      MenuItem { text: "De-Evolve"; onTriggered: boxData.deEvolve(); enabled: boxData.hasDeEvolution }
+      MenuItem { text: "Reset"; onTriggered: boxData.resetPokemon();
+        MainToolTip {
+          text: "Reset this Pokemon back to a level 5 Pokemon including all moves and other data."
+        }
+      }
+      MenuItem { text: "Evolve"; onTriggered: boxData.evolve(); enabled: boxData.hasEvolution
+        MainToolTip {
+          text: "Evolve this Pokemon"
+        }
+      }
+      MenuItem { text: "De-Evolve"; onTriggered: boxData.deEvolve(); enabled: boxData.hasDeEvolution
+        MainToolTip {
+          text: "De-Evolve this Pokemon"
+        }
+      }
       MenuSeparator { }
       MenuItem { text: "Close" }
     }

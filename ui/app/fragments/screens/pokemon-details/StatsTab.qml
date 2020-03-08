@@ -34,6 +34,12 @@ Rectangle {
       else
         text = "DV";
     }
+
+    MainToolTip {
+      text: (statsTglBtn.text == "DV")
+            ? "These are set on capture and never change in-game, they help affect the stats making each Pokemon unique. HP is a 5th DV that's calculated from the other DV."
+            : "These are zero on capture and increase after every battle until maxed out. They slowly increase based on each opponent defeated and help make each Pokemon unique."
+    }
   }
 
   IconButtonSquare {
@@ -130,6 +136,10 @@ Rectangle {
         Connections {
           target: boxData
           onDvChanged: futureShinyEdit.checked = boxData.isShiny;
+        }
+
+        MainToolTip {
+          text: "Shiny didn't exist in Gen 1, but Gen 2 provided a way to determine a shiny from Gen 1 data. This way has been kept up with ever since."
         }
       }
 

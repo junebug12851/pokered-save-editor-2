@@ -94,6 +94,10 @@ Rectangle {
             MenuSeparator { }
             MenuItem { text: "Close" }
           }
+
+          MainToolTip {
+            text: "Pokemon's display name, it's considered to be a Nickname if it isn't the species name in all caps. Nickname's are difficult to change and are unaffected by evolution."
+          }
         }
       }
     }
@@ -124,6 +128,10 @@ Rectangle {
             target: boxData
             onType1Changed: type1.currentIndex = brg.typesModel.valToIndex(boxData.type1);
           }
+
+          MainToolTip {
+            text: "The Pokemon's first type used for damage from incomming moves."
+          }
         }
 
         SelectType {
@@ -140,6 +148,10 @@ Rectangle {
           Connections {
             target: boxData
             onType2Changed: theType2.currentIndex = brg.typesModel.valToIndex(boxData.type2);
+          }
+
+          MainToolTip {
+            text: "The Pokemon's second type used for damage from incomming moves."
           }
         }
       }
@@ -168,6 +180,10 @@ Rectangle {
           Connections {
             target: boxData
             onOtNameChanged: otNameEdit.text = boxData.otName;
+          }
+
+          MainToolTip {
+            text: "This determines if the Pokemon is a traded Pokemon. If this doesn't match your character's Name and ID then it's considered not yours."
           }
         }
 
@@ -239,6 +255,10 @@ Rectangle {
           Connections {
             target: boxData
             onOtIDChanged: otIDEdit.text = boxData.otID.toString(16).toUpperCase();
+          }
+
+          MainToolTip {
+            text: "This determines if the Pokemon is a traded Pokemon. If this doesn't match your character's Name and ID then it's considered not yours."
           }
         }
 
@@ -321,6 +341,10 @@ Rectangle {
             target: boxData
             onExpChanged: nextExpEdit.value = boxData.exp;
           }
+
+          MainToolTip {
+            text: "Fine-tune your Pokemon's exp between levels, for whole level changes change thel evel directly."
+          }
         }
       }
     }
@@ -363,6 +387,10 @@ Rectangle {
             target: boxData
             onCatchRateChanged: catchRateEdit.text = boxData.catchRate.toString(10);
           }
+
+          MainToolTip {
+            text: "This isn't used at all, it's leftover garbage from when you were battling the Pokemon. Nonetheless it does exist and you can edit it here."
+          }
         }
       }
     }
@@ -390,6 +418,10 @@ Rectangle {
           Connections {
             target: boxData
             onExpChanged: futureNatureEdit.currentIndex = brg.natureSelectModel.natureToListIndex(boxData.getNature);
+          }
+
+          MainToolTip {
+            text: "Nature's weren't created until gen 3, in the past few years Game Freak has released a formula for determining Gen 1 natures which is based on your exp. This follows that formula."
           }
         }
       }

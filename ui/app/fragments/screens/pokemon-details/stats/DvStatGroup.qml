@@ -44,6 +44,8 @@ Rectangle {
     snapMode: Slider.SnapAlways
     stepSize: 1
 
+    Material.accent: brg.settings.textColorDark
+
     Behavior on value {
       NumberAnimation { duration: 250 }
     }
@@ -105,7 +107,6 @@ Rectangle {
     snapMode: Slider.SnapAlways
     stepSize: 1
 
-
     onMoved: boxData.dvSet(0, value);
     Component.onCompleted: value = boxData.dvAt(0);
 
@@ -164,7 +165,6 @@ Rectangle {
     to: 15
     snapMode: Slider.SnapAlways
     stepSize: 1
-
 
     onMoved: boxData.dvSet(1, value);
     Component.onCompleted: value = boxData.dvAt(1);
@@ -225,7 +225,6 @@ Rectangle {
     snapMode: Slider.SnapAlways
     stepSize: 1
 
-
     onMoved: boxData.dvSet(2, value);
     Component.onCompleted: value = boxData.dvAt(2);
 
@@ -284,7 +283,6 @@ Rectangle {
     to: 15
     snapMode: Slider.SnapAlways
     stepSize: 1
-
 
     onMoved: boxData.dvSet(3, value);
     Component.onCompleted: value = boxData.dvAt(3);

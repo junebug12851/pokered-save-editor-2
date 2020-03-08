@@ -89,6 +89,10 @@ Rectangle {
           moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
         }
       }
+
+      MainToolTip {
+        text: "Pokemon Move"
+      }
     }
 
     Text {
@@ -138,6 +142,10 @@ Rectangle {
       Connections {
         target: monMove
         onPpChanged: movePPEdit.text = monMove.pp.toString(10);
+      }
+
+      MainToolTip {
+        text: "Pokemon PP"
       }
     }
 
