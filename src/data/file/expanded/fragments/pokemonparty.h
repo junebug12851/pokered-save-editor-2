@@ -39,20 +39,22 @@ public:
 
   virtual ~PokemonParty();
 
-  SaveFileIterator* load(SaveFile* saveFile = nullptr,
-            var16 offset = 0,
-            var16 nicknameStartOffset = 0,
-            var16 otNameStartOffset = 0,
-            var8 index = 0);
+  virtual SaveFileIterator* load(SaveFile* saveFile = nullptr,
+                         var16 offset = 0,
+                         var16 nicknameStartOffset = 0,
+                         var16 otNameStartOffset = 0,
+                         var8 index = 0,
+                         var8 recordSize = 0x2C) override;
 
-  SaveFileIterator* save(SaveFile* saveFile,
-            var16 offset,
-            svar32 speciesStartOffset,
-            var16 nicknameStartOffset,
-            var16 otNameStartOffset,
-            var8 index);
+  virtual SaveFileIterator* save(SaveFile* saveFile,
+                         var16 offset,
+                         svar32 speciesStartOffset,
+                         var16 nicknameStartOffset,
+                         var16 otNameStartOffset,
+                         var8 index,
+                         var8 recordSize = 0x2C) override;
 
-  virtual void copyFrom(PokemonBox* pkmn);
+  virtual void copyFrom(PokemonBox* pkmn) override;
 
   static PokemonBox* convertToBox(PokemonParty* data);
   static PokemonParty* convertToParty(PokemonBox* data);
@@ -66,11 +68,16 @@ signals:
   void specialChanged();
 
 public slots:
-  void reset();
-  void randomize(PlayerBasics* basics = nullptr);
+  virtual void reset() override;
+  virtual void randomize(PlayerBasics* basics = nullptr) override;
+  virtual void update(bool resetHp = false,
+                      bool resetExp = false,
+                      bool resetType = false,
+                      bool resetCatchRate = false,
+                      bool correctMoves = false) override;
+  virtual bool isBoxMon() override;
+
   void regenStats();
-  virtual void update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate);
-  virtual bool isBoxMon();
 
 public:
   // Pre-generated stats when not in box

@@ -25,16 +25,20 @@ PokemonParty::PokemonParty(SaveFile* saveFile,
                            var8 index)
 {
   load(saveFile, offset, nicknameStartOffset, otNameStartOffset, index);
+  connect(this, &PokemonParty::statChanged, this, &PokemonParty::regenStats);
 }
 
 PokemonParty::~PokemonParty() {}
 
 SaveFileIterator* PokemonParty::load(SaveFile* saveFile,
-                        var16 offset,
-                        var16 nicknameStartOffset,
-                        var16 otNameStartOffset,
-                        var8 index)
+                                     var16 offset,
+                                     var16 nicknameStartOffset,
+                                     var16 otNameStartOffset,
+                                     var8 index,
+                                     var8 recordSize)
 {
+  Q_UNUSED(recordSize)
+
   reset();
 
   if(saveFile == nullptr) {
@@ -66,16 +70,20 @@ SaveFileIterator* PokemonParty::load(SaveFile* saveFile,
   special = it->getWord();
   specialChanged();
 
-  return it;
+  delete it;
+  return nullptr;
 }
 
 SaveFileIterator* PokemonParty::save(SaveFile* saveFile,
-                        var16 offset,
-                        svar32 speciesStartOffset,
-                        var16 nicknameStartOffset,
-                        var16 otNameStartOffset,
-                        var8 index)
+                                     var16 offset,
+                                     svar32 speciesStartOffset,
+                                     var16 nicknameStartOffset,
+                                     var16 otNameStartOffset,
+                                     var8 index,
+                                     var8 recordSize)
 {
+  Q_UNUSED(recordSize)
+
   auto it = PokemonBox::save(saveFile,
                              offset,
                              speciesStartOffset,
@@ -91,7 +99,10 @@ SaveFileIterator* PokemonParty::save(SaveFile* saveFile,
   it->setWord(speed);
   it->setWord(special);
 
-  return it;
+  // There's nothing after this, delete it to prevent memory leak and returl a
+  // nullptr
+  delete it;
+  return nullptr;
 }
 
 void PokemonParty::reset()
@@ -126,7 +137,7 @@ void PokemonParty::randomize(PlayerBasics* basics)
 
 void PokemonParty::regenStats()
 {
-  if(!isValid())
+  if(!isValidBool())
     return;
 
   maxHP = hpStat();
@@ -145,9 +156,9 @@ void PokemonParty::regenStats()
   specialChanged();
 }
 
-void PokemonParty::update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate)
+void PokemonParty::update(bool resetHp, bool resetExp, bool resetType, bool resetCatchRate, bool correctMoves)
 {
-  PokemonBox::update(resetHp, resetExp, resetType, resetCatchRate);
+  PokemonBox::update(resetHp, resetExp, resetType, resetCatchRate, correctMoves);
   regenStats();
 }
 
