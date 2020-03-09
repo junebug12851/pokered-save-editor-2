@@ -318,5 +318,5 @@ QVector<PokemonBox*> PlayerBasics::getNonTradeMons()
 void PlayerBasics::fixNonTradeMons(QVector<PokemonBox*> mons)
 {
   for(auto el : mons)
-    el->changeTrade(true, this);
+    el->changeOtData(true, this);
 }
