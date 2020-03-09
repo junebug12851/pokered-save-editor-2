@@ -28,7 +28,8 @@ HallOfFame::HallOfFame(SaveFile* saveFile)
 
 HallOfFame::~HallOfFame()
 {
-  reset();
+  for(auto record : records)
+    record->deleteLater();
 }
 
 int HallOfFame::recordCount()
@@ -62,7 +63,7 @@ void HallOfFame::recordRemove(int ind)
   if(records.size() < 1)
     return;
 
-  delete records.at(ind);
+  records.at(ind)->deleteLater();
   records.remove(ind);
 
   recordsChanged();
@@ -107,7 +108,7 @@ void HallOfFame::save(SaveFile* saveFile)
 void HallOfFame::reset()
 {
   for(auto record : records)
-    delete record;
+    record->deleteLater();
 
   records.clear();
   recordsChanged();

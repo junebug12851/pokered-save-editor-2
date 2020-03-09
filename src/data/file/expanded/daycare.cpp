@@ -29,7 +29,7 @@ Daycare::Daycare(SaveFile* saveFile)
 
 Daycare::~Daycare()
 {
-  reset();
+  pokemon->deleteLater();
 }
 
 void Daycare::load(SaveFile* saveFile)
@@ -60,7 +60,7 @@ void Daycare::save(SaveFile* saveFile)
 
 void Daycare::reset()
 {
-  delete pokemon;
+  pokemon->deleteLater();
   pokemon = nullptr;
   pokemonChanged();
 }

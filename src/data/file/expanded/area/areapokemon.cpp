@@ -102,8 +102,8 @@ AreaPokemon::AreaPokemon(SaveFile* saveFile)
 AreaPokemon::~AreaPokemon()
 {
   for(var8 i = 0; i < wildMonsCount; i++) {
-    delete grassMons[i];
-    delete waterMons[i];
+    grassMons[i]->deleteLater();
+    waterMons[i]->deleteLater();
   }
 }
 

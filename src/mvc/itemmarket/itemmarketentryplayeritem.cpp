@@ -29,10 +29,7 @@ ItemMarketEntryPlayerItem::ItemMarketEntryPlayerItem(ItemStorageBox* toBox,
   finishConstruction();
 }
 
-ItemMarketEntryPlayerItem::~ItemMarketEntryPlayerItem()
-{
-
-}
+ItemMarketEntryPlayerItem::~ItemMarketEntryPlayerItem() {}
 
 QString ItemMarketEntryPlayerItem::_name()
 {

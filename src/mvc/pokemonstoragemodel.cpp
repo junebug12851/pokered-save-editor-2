@@ -401,7 +401,7 @@ void PokemonStorageModel::checkedTransfer()
     else if(!otherModel->getCurBox()->isParty && getCurBox()->isParty) {
       auto partyEl = (PokemonParty*)el;
       el = partyEl->toBoxData();
-      delete partyEl;
+      partyEl->deleteLater();
       getCurBox()->pokemon.replace(ind, el);
     }
 

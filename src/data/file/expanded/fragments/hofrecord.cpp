@@ -27,7 +27,8 @@ HoFRecord::HoFRecord(SaveFile* saveFile, var8 ind)
 
 HoFRecord::~HoFRecord()
 {
-  reset();
+  for(auto entry : pokemon)
+    entry->deleteLater();
 }
 
 int HoFRecord::pokemonCount()
@@ -62,7 +63,7 @@ void HoFRecord::pokemonRemove(int ind)
   if(pokemon.size() <= 1)
     return;
 
-  delete pokemon.at(ind);
+  pokemon.at(ind)->deleteLater();
 
   pokemon.removeAt(ind);
   pokemonChanged();
@@ -134,7 +135,7 @@ void HoFRecord::save(SaveFile* saveFile, var8 ind)
 void HoFRecord::reset()
 {
   for(auto entry : pokemon)
-    delete entry;
+    entry->deleteLater();
 
   pokemon.clear();
   pokemonChanged();

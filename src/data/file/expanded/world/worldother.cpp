@@ -27,7 +27,7 @@ WorldOther::WorldOther(SaveFile* saveFile)
 }
 
 WorldOther::~WorldOther() {
-  delete playtime;
+  playtime->deleteLater();
 }
 
 void WorldOther::load(SaveFile* saveFile)

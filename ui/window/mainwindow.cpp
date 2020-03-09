@@ -56,13 +56,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-  delete file;
+  file->deleteLater();
 
   for(var8 i = 0; i < MAX_RECENT_FILES; i++)
-    delete recentFileShortcuts[i];
+    recentFileShortcuts[i]->deleteLater();
 
   for(auto tmp : otherShortcuts)
-    delete tmp;
+    tmp->deleteLater();
 }
 
 MainWindow* MainWindow::instance{nullptr};

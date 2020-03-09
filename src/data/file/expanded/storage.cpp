@@ -34,10 +34,10 @@ Storage::Storage(SaveFile* saveFile)
 
 Storage::~Storage()
 {
-  delete items;
+  items->deleteLater();
 
   for(var8 i = 0; i < maxPokemonStorageSets; i++)
-    delete pokemon[i];
+    pokemon[i]->deleteLater();
 }
 
 int Storage::boxCount()

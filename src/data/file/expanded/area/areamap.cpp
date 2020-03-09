@@ -29,7 +29,8 @@ AreaMap::AreaMap(SaveFile* saveFile)
 
 AreaMap::~AreaMap()
 {
-  reset();
+  for(auto conn : connections)
+    conn->deleteLater();
 }
 
 int AreaMap::connCount()
@@ -47,7 +48,7 @@ void AreaMap::connRemove(int dir)
   if(!connections.contains(dir))
     return;
 
-  delete connections.value(dir);
+  connections.value(dir)->deleteLater();
   connections.remove(dir);
   connectionsChanged();
 }
@@ -246,7 +247,7 @@ void AreaMap::reset()
   outOfBoundsBlockChanged();
 
   for(auto conn : connections)
-    delete conn;
+    conn->deleteLater();
 
   connections.clear();
   connectionsChanged();

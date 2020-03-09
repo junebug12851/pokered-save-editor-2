@@ -32,7 +32,8 @@ PokemonStorageBox::PokemonStorageBox(int maxSize, SaveFile* saveFile, var16 boxO
 
 PokemonStorageBox::~PokemonStorageBox()
 {
-  reset();
+  for(auto mon : pokemon)
+    mon->deleteLater();
 }
 
 int PokemonStorageBox::pokemonCount()
@@ -85,7 +86,7 @@ void PokemonStorageBox::pokemonRemove(int ind)
      ind >= pokemon.size())
     return;
 
-  delete pokemon.at(ind);
+  pokemon.at(ind)->deleteLater();
   pokemon.removeAt(ind);
   pokemonRemoveChange(ind);
   pokemonChanged();
@@ -192,7 +193,7 @@ void PokemonStorageBox::save(SaveFile* saveFile, var16 boxOffset)
 void PokemonStorageBox::reset()
 {
   for(auto mon : pokemon)
-    delete mon;
+    mon->deleteLater();
 
   pokemon.clear();
 

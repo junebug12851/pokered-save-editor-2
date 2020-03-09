@@ -29,7 +29,8 @@ AreaWarps::AreaWarps(SaveFile* saveFile)
 }
 
 AreaWarps::~AreaWarps() {
-  reset();
+  for(auto warp : warps)
+    warp->deleteLater();
 }
 
 int AreaWarps::warpCount()
@@ -63,7 +64,7 @@ void AreaWarps::warpRemove(int ind)
   if(warps.size() <= 0)
     return;
 
-  delete warps.at(ind);
+  warps.at(ind)->deleteLater();
   warps.removeAt(ind);
   warpsChanged();
 }
@@ -192,7 +193,7 @@ void AreaWarps::reset()
   warpedfromMapChanged();
 
   for(auto warp : warps)
-    delete warp;
+    warp->deleteLater();
 
   warps.clear();
   warpsChanged();

@@ -32,7 +32,8 @@ AreaSprites::AreaSprites(SaveFile* saveFile)
 
 AreaSprites::~AreaSprites()
 {
-  reset();
+  for(auto entry : sprites)
+    entry->deleteLater();
 }
 
 int AreaSprites::spriteCount()
@@ -67,7 +68,7 @@ void AreaSprites::spriteRemove(int ind)
   if(sprites.size() <= 1)
     return;
 
-  delete sprites.at(ind);
+  sprites.at(ind)->deleteLater();
   sprites.removeAt(ind);
   spritesChanged();
 }
@@ -116,7 +117,7 @@ void AreaSprites::save(SaveFile* saveFile)
 void AreaSprites::reset()
 {
   for(auto entry : sprites)
-    delete entry;
+    entry->deleteLater();
 
   sprites.clear();
   spritesChanged();

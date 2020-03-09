@@ -282,7 +282,7 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
   for(int i = 0; i < 4; i++) {
     moves[i] = new PokemonMove(this);
 
-    connect(moves[i], &PokemonMove::moveIDChanged, this, &PokemonBox::movesChanged);
+    //connect(moves[i], &PokemonMove::moveIDChanged, this, &PokemonBox::movesChanged);
     connect(moves[i], &PokemonMove::ppCapChanged, this, &PokemonBox::movesChanged);
   }
 
@@ -321,9 +321,10 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
        recordSize);
 }
 
-PokemonBox::~PokemonBox()
-{
-  reset();
+PokemonBox::~PokemonBox() {
+  for(int i = 0; i < 4; i++) {
+    moves[i]->deleteLater();
+  }
 }
 
 PokemonBox* PokemonBox::newPokemon(PokemonRandom::PokemonRandom_ list, PlayerBasics* basics)
@@ -679,7 +680,7 @@ void PokemonBox::randomize(PlayerBasics* basics)
   // Then fix all of it's types, exp, stats, etc.. to be game accurate
   auto pkmn = PokemonBox::newPokemon(PokemonRandom::Random_Pokedex, basics);
   copyFrom(pkmn);
-  delete pkmn;
+  pkmn->deleteLater();
 
   level = Random::rangeInclusive(5, pokemonLevelMax);
   levelChanged();

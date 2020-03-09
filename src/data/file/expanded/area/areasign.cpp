@@ -28,7 +28,8 @@ AreaSign::AreaSign(SaveFile* saveFile)
 
 AreaSign::~AreaSign()
 {
-  reset();
+  for(auto sign : signs)
+    sign->deleteLater();
 }
 
 int AreaSign::signCount()
@@ -62,7 +63,7 @@ void AreaSign::signRemove(int ind)
   if(signs.size() <= 0)
     return;
 
-  delete signs.at(ind);
+  signs.at(ind)->deleteLater();
   signs.removeAt(ind);
   signsChanged();
 }
@@ -105,7 +106,7 @@ void AreaSign::save(SaveFile* saveFile)
 void AreaSign::reset()
 {
   for(auto sign : signs)
-    delete sign;
+    sign->deleteLater();
 
   signs.clear();
 

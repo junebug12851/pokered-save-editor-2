@@ -26,8 +26,7 @@ HoFPokemon::HoFPokemon(SaveFile* saveFile, var16 recordOffset, var16 ind)
   load(saveFile, recordOffset, ind);
 }
 
-HoFPokemon::~HoFPokemon()
-{}
+HoFPokemon::~HoFPokemon() {}
 
 void HoFPokemon::load(SaveFile* saveFile, var16 recordOffset, var16 ind)
 {

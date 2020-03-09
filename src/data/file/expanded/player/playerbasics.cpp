@@ -36,8 +36,7 @@ PlayerBasics::PlayerBasics(SaveFile* saveFile)
   load(saveFile);
 }
 
-PlayerBasics::~PlayerBasics()
-{}
+PlayerBasics::~PlayerBasics() {}
 
 void PlayerBasics::load(SaveFile* saveFile)
 {

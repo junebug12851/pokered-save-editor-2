@@ -42,15 +42,15 @@ World::World(SaveFile* saveFile)
 
 World::~World()
 {
-  delete completed;
-  delete events;
-  delete general;
-  delete hidden;
-  delete missables;
-  delete other;
-  delete scripts;
-  delete towns;
-  delete trades;
+  completed->deleteLater();
+  events->deleteLater();
+  general->deleteLater();
+  hidden->deleteLater();
+  missables->deleteLater();
+  other->deleteLater();
+  scripts->deleteLater();
+  towns->deleteLater();
+  trades->deleteLater();
 }
 
 void World::load(SaveFile* saveFile)

@@ -289,7 +289,7 @@ void ItemMarketModel::checkout()
 void ItemMarketModel::clearList()
 {
   for(auto el: itemListCache)
-    delete el;
+    el->deleteLater();
 
   itemListCache.clear();
 }

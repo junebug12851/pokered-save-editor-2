@@ -39,7 +39,8 @@ ItemStorageBox::ItemStorageBox(bool isBag, int maxSize, SaveFile* saveFile, int 
 
 ItemStorageBox::~ItemStorageBox()
 {
-  reset();
+  for(auto item : items)
+    item->deleteLater();
 }
 
 int ItemStorageBox::itemsCount()
@@ -176,7 +177,7 @@ void ItemStorageBox::itemRemove(int ind)
      ind >= items.size())
     return;
 
-  delete items.at(ind);
+  items.at(ind)->deleteLater();
   items.removeAt(ind);
   itemRemoveChange(ind);
   itemsChanged();
@@ -349,7 +350,7 @@ void ItemStorageBox::reset()
 {
   for(auto item : items) {
     disconnect(item, &Item::itemChanged, this, &ItemStorageBox::itemsChanged);
-    delete item;
+    item->deleteLater();
   }
 
   items.clear();

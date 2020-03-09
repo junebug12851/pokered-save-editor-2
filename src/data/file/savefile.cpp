@@ -24,7 +24,7 @@ SaveFile::SaveFile(QObject* parent)
 SaveFile::~SaveFile()
 {
   // Erase backwards from creation order
-  delete dataExpanded;
+  dataExpanded->deleteLater();
   delete toolset;
   delete[] data;
 }

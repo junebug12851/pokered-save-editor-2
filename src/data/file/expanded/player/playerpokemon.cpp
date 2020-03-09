@@ -32,10 +32,7 @@ PlayerPokemon::PlayerPokemon(SaveFile* saveFile)
   load(saveFile);
 }
 
-PlayerPokemon::~PlayerPokemon()
-{
-  reset();
-}
+PlayerPokemon::~PlayerPokemon() {}
 
 void PlayerPokemon::load(SaveFile* saveFile, var16 boxOffset)
 {
@@ -118,10 +115,6 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
   auto tmp = new PokemonParty;
   pokemon.append(tmp);
   tmp->randomize(basics);
-
-  // Clear out move pool
-  for(auto move : tmp->moves)
-    delete move;
 
   tmp->clearMoves();
 

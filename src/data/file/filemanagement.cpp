@@ -29,7 +29,7 @@ FileManagement::FileManagement(QObject* parent) : QObject(parent)
 
 FileManagement::~FileManagement()
 {
-  delete data;
+  data->deleteLater();
 }
 
 QString FileManagement::getPath()

@@ -177,7 +177,7 @@ PokemonBox* PokemonParty::convertToBox(PokemonParty* data)
 {
   auto ret = new PokemonBox;
   ret->copyFrom(data);
-  delete data;
+  data->deleteLater();
 
   return ret;
 }
@@ -186,7 +186,7 @@ PokemonParty* PokemonParty::convertToParty(PokemonBox* data)
 {
   auto ret = new PokemonParty;
   ret->copyFrom(data);
-  delete data;
+  data->deleteLater();
 
   return ret;
 }

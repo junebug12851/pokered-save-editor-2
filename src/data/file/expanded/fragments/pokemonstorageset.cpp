@@ -33,7 +33,7 @@ PokemonStorageSet::PokemonStorageSet(SaveFile* saveFile, var16 boxesOffset, svar
 PokemonStorageSet::~PokemonStorageSet()
 {
   for(var8 i = 0; i < setMaxBoxes; i++)
-    delete boxes[i];
+    boxes[i]->deleteLater();
 }
 
 void PokemonStorageSet::load(SaveFile* saveFile, var16 boxesOffset, svar8 skipInd)

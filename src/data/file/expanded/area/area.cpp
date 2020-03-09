@@ -51,18 +51,18 @@ Area::Area(SaveFile* saveFile)
 
 Area::~Area()
 {
-  delete audio;
-  delete preloadedSprites;
-  delete general;
-  delete map;
-  delete npc;
-  delete player;
-  delete pokemon;
-  delete puzzle;
-  delete signs;
-  delete sprites;
-  delete tileset;
-  delete warps;
+  audio->deleteLater();
+  preloadedSprites->deleteLater();
+  general->deleteLater();
+  map->deleteLater();
+  npc->deleteLater();
+  player->deleteLater();
+  pokemon->deleteLater();
+  puzzle->deleteLater();
+  signs->deleteLater();
+  sprites->deleteLater();
+  tileset->deleteLater();
+  warps->deleteLater();
 }
 
 void Area::load(SaveFile* saveFile)

@@ -30,8 +30,8 @@ WorldGeneral::WorldGeneral(SaveFile* saveFile)
 }
 
 WorldGeneral::~WorldGeneral() {
-  delete options;
-  delete letterDelay;
+  options->deleteLater();
+  letterDelay->deleteLater();
 }
 
 void WorldGeneral::load(SaveFile* saveFile)

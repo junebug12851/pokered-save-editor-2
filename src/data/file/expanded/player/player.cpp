@@ -32,10 +32,10 @@ Player::Player(SaveFile* saveFile)
 
 Player::~Player()
 {
-  delete basics;
-  delete items;
-  delete pokedex;
-  delete pokemon;
+  basics->deleteLater();
+  items->deleteLater();
+  pokedex->deleteLater();
+  pokemon->deleteLater();
 }
 
 void Player::load(SaveFile* saveFile)

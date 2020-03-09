@@ -39,13 +39,13 @@ SaveFileExpanded::SaveFileExpanded(SaveFile* saveFile)
 
 SaveFileExpanded::~SaveFileExpanded()
 {
-  delete player;
-  delete area;
-  delete world;
-  delete daycare;
-  delete hof;
-  delete rival;
-  delete storage;
+  player->deleteLater();
+  area->deleteLater();
+  world->deleteLater();
+  daycare->deleteLater();
+  hof->deleteLater();
+  rival->deleteLater();
+  storage->deleteLater();
 }
 
 void SaveFileExpanded::load(SaveFile* saveFile)

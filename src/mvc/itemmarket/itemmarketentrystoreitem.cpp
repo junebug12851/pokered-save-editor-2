@@ -34,10 +34,7 @@ ItemMarketEntryStoreItem::ItemMarketEntryStoreItem(
   finishConstruction();
 }
 
-ItemMarketEntryStoreItem::~ItemMarketEntryStoreItem()
-{
-
-}
+ItemMarketEntryStoreItem::~ItemMarketEntryStoreItem() {}
 
 StackReturn ItemMarketEntryStoreItem::calculateStacks()
 {
