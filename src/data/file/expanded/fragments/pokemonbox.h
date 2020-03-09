@@ -116,7 +116,6 @@ class PokemonMove : public QObject
 
 public:
   PokemonMove(PokemonBox* parentMon, var8 move = 0, var8 pp = 0, var8 ppUp = 0);
-  ~PokemonMove();
 
   MoveDBEntry* toMove();
 
