@@ -530,5 +530,8 @@
         <file>ui/app/fragments/controls/selection/SelectNature.qml</file>
         <file>ui/app/fragments/controls/selection/SelectMove.qml</file>
         <file>ui/app/fragments/screens/pokemon-details/PokemonMoveSel.qml</file>
+        <file>ui/app/screens/non-modal/Rival.qml</file>
+        <file>assets/images/rival.png</file>
+        <file>assets/images/rival-larger.png</file>
     </qresource>
 </RCC>

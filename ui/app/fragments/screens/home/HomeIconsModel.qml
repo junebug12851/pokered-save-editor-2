@@ -27,7 +27,7 @@ ListModel {
   ListElement {
     name: "Rival"
     iconSrc: "qrc:/assets/icons/poke-go/player.svg"
-    page: ""
+    page: "rival"
   }
   ListElement {
     name: "Maps"
