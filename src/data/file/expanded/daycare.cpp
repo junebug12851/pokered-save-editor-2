@@ -60,7 +60,10 @@ void Daycare::save(SaveFile* saveFile)
 
 void Daycare::reset()
 {
-  pokemon->deleteLater();
+  if(pokemon != nullptr) {
+    pokemon->deleteLater();
+  }
+
   pokemon = nullptr;
   pokemonChanged();
 }

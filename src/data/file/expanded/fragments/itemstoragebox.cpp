@@ -349,7 +349,6 @@ int ItemStorageBox::itemsAllSellCoins()
 void ItemStorageBox::reset()
 {
   for(auto item : items) {
-    disconnect(item, &Item::itemChanged, this, &ItemStorageBox::itemsChanged);
     item->deleteLater();
   }
 
