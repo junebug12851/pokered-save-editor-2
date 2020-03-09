@@ -21,6 +21,7 @@ So this is going to look like nothing to you, a simple image, however it took ve
 Looking good so far, more progress!!!
 
 ![More Progress in the ui/ux](https://i.imgur.com/ULhYfEN.png)
+![Pokemon Details Screen](https://i.imgur.com/jnOZoyG.png)
 ![Trainer Card Screen](https://i.imgur.com/iRUopfu.png)
 ![Pokedex Screen](https://i.imgur.com/Ks6KzaT.png)
 ![Stage 3 Name Editor A](https://i.imgur.com/oYshJk2.png)
