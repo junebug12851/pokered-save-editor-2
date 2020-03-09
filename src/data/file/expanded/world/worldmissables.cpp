@@ -58,7 +58,7 @@ void WorldMissables::save(SaveFile* saveFile)
   for(var8 i = 0; i < missableCount; i++)
     bits.append(missables[i]);
 
-  toolset->setBitField(0x299C, missableByteCount, bits);
+  toolset->setBitField(0x2852, missableByteCount, bits);
 }
 
 int WorldMissables::missablesCount()
