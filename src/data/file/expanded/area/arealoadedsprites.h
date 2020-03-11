@@ -39,7 +39,6 @@ public:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
   void loadSpriteSet(SpriteSetDBEntry* entry, int x, int y);
-  void randomize(MapDBEntry* map, int x, int y);
 
   // Loaded sprites are a fixed size and cannot be moved, created, modified, or destroyed
   // They can be swapped
@@ -53,6 +52,8 @@ signals:
 
 public slots:
   void reset();
+  void randomize(MapDBEntry* map, int x, int y);
+  void setTo(MapDBEntry* map, int x, int y);
 
 public:
   var8 loadedSprites[maxLoadedSprites];

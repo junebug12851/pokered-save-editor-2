@@ -115,12 +115,19 @@ void AreaLoadedSprites::randomize(MapDBEntry* map, int x, int y)
     loadSpriteSet(map->toSpriteSet, x, y);
 }
 
+void AreaLoadedSprites::setTo(MapDBEntry* map, int x, int y)
+{
+  reset();
+
+  if(map == nullptr || map->toSpriteSet == nullptr)
+    return;
+
+  loadSpriteSet(map->toSpriteSet, x, y);
+}
+
 void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, int x, int y)
 {
-  auto set = entry->getSprites(
-        Random::rangeInclusive(x, y),
-        Random::rangeInclusive(x, y));
-
+  auto set = entry->getSprites(x, y);
   auto id = entry->ind;
 
   for(var8 i = 0; i < set.size(); i++)
