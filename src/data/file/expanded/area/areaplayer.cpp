@@ -65,9 +65,6 @@ void AreaPlayer::load(SaveFile* saveFile)
   walkBikeSurf = toolset->getByte(0x29AC);
   walkBikeSurfChanged();
 
-  safariSteps = toolset->getWord(0x29B9);
-  safariStepsChanged();
-
   playerJumpingYScrnCoords = toolset->getByte(0x29C0);
   playerJumpingYScrnCoordsChanged();
 
@@ -112,12 +109,6 @@ void AreaPlayer::load(SaveFile* saveFile)
 
   spinPlayer = toolset->getBit(0x29E2, 1, 7);
   spinPlayerChanged();
-
-  safariGameOver = toolset->getBit(0x2CF2, 1, 0);
-  safariGameOverChanged();
-
-  safariBallCount = toolset->getByte(0x2CF3);
-  safariBallCountChanged();
 }
 
 void AreaPlayer::save(SaveFile* saveFile)
@@ -134,7 +125,6 @@ void AreaPlayer::save(SaveFile* saveFile)
   toolset->setByte(0x27D5, playerLastStopDir);
   toolset->setByte(0x27D6, playerCurDir);
   toolset->setByte(0x29AC, walkBikeSurf);
-  toolset->setWord(0x29B9, safariSteps);
   toolset->setByte(0x29C0, playerJumpingYScrnCoords);
   toolset->setBit(0x29D4, 1, 0, strengthOutsideBattle);
   toolset->setBit(0x29D4, 1, 1, surfingAllowed);
@@ -150,8 +140,6 @@ void AreaPlayer::save(SaveFile* saveFile)
   toolset->setBit(0x29E2, 1, 2, standingOnWarp);
   toolset->setBit(0x29E2, 1, 6, finalLedgeJumping);
   toolset->setBit(0x29E2, 1, 7, spinPlayer);
-  toolset->setBit(0x2CF2, 1, 0, safariGameOver);
-  toolset->setByte(0x2CF3, safariBallCount);
 }
 
 void AreaPlayer::reset()
@@ -179,15 +167,6 @@ void AreaPlayer::reset()
 
   playerJumpingYScrnCoords = 0;
   playerJumpingYScrnCoordsChanged();
-
-  safariGameOver = false;
-  safariGameOverChanged();
-
-  safariBallCount = 0;
-  safariBallCountChanged();
-
-  safariSteps = 0;
-  safariStepsChanged();
 
   strengthOutsideBattle = false;
   strengthOutsideBattleChanged();

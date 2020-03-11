@@ -14,19 +14,19 @@
   * limitations under the License.
 */
 
-#include "./worldpuzzle.h"
+#include "./worldlocal.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 
-WorldPuzzle::WorldPuzzle(SaveFile* saveFile)
+WorldLocal::WorldLocal(SaveFile* saveFile)
 {
   load(saveFile);
 }
 
-WorldPuzzle::~WorldPuzzle() {}
+WorldLocal::~WorldLocal() {}
 
-void WorldPuzzle::load(SaveFile* saveFile)
+void WorldLocal::load(SaveFile* saveFile)
 {
   reset();
 
@@ -43,18 +43,30 @@ void WorldPuzzle::load(SaveFile* saveFile)
 
   quizOpp = toolset->getByte(0x2CE4);
   quizOppChanged();
+
+  safariSteps = toolset->getWord(0x29B9);
+  safariStepsChanged();
+
+  safariGameOver = toolset->getBit(0x2CF2, 1, 0);
+  safariGameOverChanged();
+
+  safariBallCount = toolset->getByte(0x2CF3);
+  safariBallCountChanged();
 }
 
-void WorldPuzzle::save(SaveFile* saveFile)
+void WorldLocal::save(SaveFile* saveFile)
 {
   auto toolset = saveFile->toolset;
 
   toolset->setByte(0x29EF, lock1);
   toolset->setByte(0x29F0, lock2);
   toolset->setByte(0x2CE4, quizOpp);
+  toolset->setWord(0x29B9, safariSteps);
+  toolset->setBit(0x2CF2, 1, 0, safariGameOver);
+  toolset->setByte(0x2CF3, safariBallCount);
 }
 
-void WorldPuzzle::reset()
+void WorldLocal::reset()
 {
   lock1 = 0;
   lock1Changed();
@@ -64,9 +76,18 @@ void WorldPuzzle::reset()
 
   quizOpp = 0;
   quizOppChanged();
+
+  safariGameOver = false;
+  safariGameOverChanged();
+
+  safariBallCount = 0;
+  safariBallCountChanged();
+
+  safariSteps = 0;
+  safariStepsChanged();
 }
 
 // Don't know the range to randomize
-void WorldPuzzle::randomize() {
+void WorldLocal::randomize() {
   reset();
 }

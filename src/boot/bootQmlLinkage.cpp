@@ -59,7 +59,7 @@
 #include "../data/file/expanded/area/areanpc.h"
 #include "../data/file/expanded/area/areaplayer.h"
 #include "../data/file/expanded/area/areapokemon.h"
-#include "../data/file/expanded/world/worldpuzzle.h"
+#include "../data/file/expanded/world/worldlocal.h"
 #include "../data/file/expanded/area/areasign.h"
 #include "../data/file/expanded/area/areasprites.h"
 #include "../data/file/expanded/area/areatileset.h"
@@ -202,5 +202,5 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<WorldScripts>("App.WorldScripts", 1, 0, "WorldScripts", "Can't instantiate in QML");
   qmlRegisterUncreatableType<WorldTowns>("App.WorldTowns", 1, 0, "WorldTowns", "Can't instantiate in QML");
   qmlRegisterUncreatableType<WorldTrades>("App.WorldTrades", 1, 0, "WorldTrades", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldPuzzle>("App.WorldPuzzle", 1, 0, "WorldPuzzle", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldLocal>("App.WorldLocal", 1, 0, "WorldLocal", "Can't instantiate in QML");
 }

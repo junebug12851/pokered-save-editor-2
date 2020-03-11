@@ -21,17 +21,20 @@
 
 class SaveFile;
 
-class WorldPuzzle : public QObject
+class WorldLocal : public QObject
 {
   Q_OBJECT
 
   Q_PROPERTY(int lock1 MEMBER lock1 NOTIFY lock1Changed)
   Q_PROPERTY(int lock2 MEMBER lock2 NOTIFY lock2Changed)
   Q_PROPERTY(int quizOpp MEMBER quizOpp NOTIFY quizOppChanged)
+  Q_PROPERTY(bool safariGameOver MEMBER safariGameOver NOTIFY safariGameOverChanged)
+  Q_PROPERTY(int safariBallCount MEMBER safariBallCount NOTIFY safariBallCountChanged)
+  Q_PROPERTY(int safariSteps MEMBER safariSteps NOTIFY safariStepsChanged)
 
 public:
-  WorldPuzzle(SaveFile* saveFile = nullptr);
-  virtual ~WorldPuzzle();
+  WorldLocal(SaveFile* saveFile = nullptr);
+  virtual ~WorldLocal();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
@@ -40,6 +43,9 @@ signals:
   void lock1Changed();
   void lock2Changed();
   void quizOppChanged();
+  void safariGameOverChanged();
+  void safariBallCountChanged();
+  void safariStepsChanged();
 
 public slots:
   void reset();
@@ -52,6 +58,11 @@ public:
 
   // Cinnabar Gym Next Opp
   int quizOpp;
+
+  // Safari
+  bool safariGameOver;
+  int safariBallCount;
+  int safariSteps;
 };
 
 #endif // WORLDPUZZLE_H

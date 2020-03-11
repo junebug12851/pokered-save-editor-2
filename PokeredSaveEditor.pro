@@ -89,9 +89,9 @@ HEADERS += \
   src/data/file/expanded/world/worldevents.h \
   src/data/file/expanded/world/worldgeneral.h \
   src/data/file/expanded/world/worldhidden.h \
+  src/data/file/expanded/world/worldlocal.h \
   src/data/file/expanded/world/worldmissables.h \
   src/data/file/expanded/world/worldother.h \
-  src/data/file/expanded/world/worldpuzzle.h \
   src/data/file/expanded/world/worldscripts.h \
   src/data/file/expanded/world/worldtowns.h \
   src/data/file/expanded/world/worldtrades.h \
@@ -184,9 +184,9 @@ SOURCES += \
   src/data/file/expanded/world/worldevents.cpp \
   src/data/file/expanded/world/worldgeneral.cpp \
   src/data/file/expanded/world/worldhidden.cpp \
+  src/data/file/expanded/world/worldlocal.cpp \
   src/data/file/expanded/world/worldmissables.cpp \
   src/data/file/expanded/world/worldother.cpp \
-  src/data/file/expanded/world/worldpuzzle.cpp \
   src/data/file/expanded/world/worldscripts.cpp \
   src/data/file/expanded/world/worldtowns.cpp \
   src/data/file/expanded/world/worldtrades.cpp \

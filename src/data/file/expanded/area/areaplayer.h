@@ -48,9 +48,6 @@ class AreaPlayer : public QObject
   Q_PROPERTY(int yBlockCoord MEMBER yBlockCoord NOTIFY yBlockCoordChanged)
   Q_PROPERTY(int xBlockCoord MEMBER xBlockCoord NOTIFY xBlockCoordChanged)
   Q_PROPERTY(int playerJumpingYScrnCoords MEMBER playerJumpingYScrnCoords NOTIFY playerJumpingYScrnCoordsChanged)
-  Q_PROPERTY(bool safariGameOver MEMBER safariGameOver NOTIFY safariGameOverChanged)
-  Q_PROPERTY(int safariBallCount MEMBER safariBallCount NOTIFY safariBallCountChanged)
-  Q_PROPERTY(int safariSteps MEMBER safariSteps NOTIFY safariStepsChanged)
   Q_PROPERTY(bool strengthOutsideBattle MEMBER strengthOutsideBattle NOTIFY strengthOutsideBattleChanged)
   Q_PROPERTY(bool surfingAllowed MEMBER surfingAllowed NOTIFY surfingAllowedChanged)
   Q_PROPERTY(bool flyOutofBattle MEMBER flyOutofBattle NOTIFY flyOutofBattleChanged)
@@ -86,9 +83,6 @@ signals:
   void yBlockCoordChanged();
   void xBlockCoordChanged();
   void playerJumpingYScrnCoordsChanged();
-  void safariGameOverChanged();
-  void safariBallCountChanged();
-  void safariStepsChanged();
   void strengthOutsideBattleChanged();
   void surfingAllowedChanged();
   void flyOutofBattleChanged();
@@ -134,11 +128,6 @@ public:
   int yBlockCoord;
   int xBlockCoord;
   int playerJumpingYScrnCoords;
-
-  // Safari
-  bool safariGameOver;
-  int safariBallCount;
-  int safariSteps;
 
   // HMs
   bool strengthOutsideBattle;
