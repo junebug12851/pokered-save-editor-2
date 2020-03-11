@@ -291,6 +291,7 @@ Image {
   // Considers regular and expanded counts
   // Person names are intedned to be 7 characters and Pokemon 10 characters
   Text {
+    id: regFeedback
     // Show this when the editor is visible and the name is an acceptable length
     visible: (editorVisible || disableEditor) &&
              enableFeedback &&
@@ -357,7 +358,8 @@ Image {
     // gone over 7 characters
     visible: (editorVisible || disableEditor) &&
              enableFeedback &&
-             regCount >= 10
+             regCount >= 10 &&
+             !regFeedback.visible
 
     anchors.top: parent.bottom
     anchors.left: (centerFeedback) ? undefined : parent.left
