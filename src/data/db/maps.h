@@ -341,10 +341,10 @@ struct MapDBEntry {
   QString bestName();
 
   QString name;
-  var8 ind;
+  var8 ind = 0;
 
-  bool glitch;
-  bool special;
+  bool glitch = false;
+  bool special = false;
 
   // Warps to other maps
   QVector<MapDBEntryWarpOut*> warpOut;
@@ -404,7 +404,7 @@ struct MapDBEntry {
   FlyDBEntry* toFlyDestination = nullptr; // To Associated Fly Destination
   QVector<HiddenCoinDBEntry*> toHiddenCoins; // To Associated Hidden Coins
   QVector<HiddenItemDBEntry*> toHiddenItems; // To Associated Hidden Items
-  ScriptDBEntry* toScript;
+  ScriptDBEntry* toScript = nullptr;
 };
 
 class MapsDB

@@ -20,11 +20,17 @@
 
 var32 Random::rangeInclusive(var32 start, var32 end)
 {
+  if(start == end || start > end)
+    return start;
+
   return rnd->bounded(start, end+1);
 }
 
 var32 Random::rangeExclusive(var32 start, var32 end)
 {
+  if(start == end || start > end)
+    return start;
+
   return rnd->bounded(start, end);
 }
 

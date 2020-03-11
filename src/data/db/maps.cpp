@@ -325,10 +325,11 @@ void MapDBEntrySpriteItem::deepLink()
   // they wanted to script an item rather than automate giving you an item but
   // it's quite weird because Daisy Walking is an item. Another guess is this
   // is an early in-development code before item automation was programmed in.
+  MapDBEntrySprite::deepLink();
+
   if(item == "0")
     return;
 
-  MapDBEntrySprite::deepLink();
   toItem = ItemsDB::ind.value(item);
 
 #ifdef QT_DEBUG
@@ -354,6 +355,7 @@ MapDBEntrySpritePokemon::MapDBEntrySpritePokemon(QJsonValue& data, MapDBEntry* p
 
 void MapDBEntrySpritePokemon::deepLink()
 {
+  MapDBEntrySprite::deepLink();
   toPokemon = PokemonDB::ind.value(pokemon);
 
 #ifdef QT_DEBUG

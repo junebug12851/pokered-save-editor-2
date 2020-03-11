@@ -166,7 +166,18 @@ void SpriteData::load(MapDBEntrySprite* spriteData)
     trainerSetIDChanged();
   }
   else if(spriteData->type() == SpriteType::ITEM) {
+    // There's two weird sprite data entries in gen1, both are named "0"
+    // Not the number 0, an actual string consisting of a zero. The sprite
+    // reference is also invalid. If we spot it we can't load any data from the
+    // sprite
     auto spriteDataItem = (MapDBEntrySpriteItem*)spriteData;
+
+    // As stated above, stop here if the item is named "0"
+    if(spriteDataItem->item == "0") {
+      qDebug() << "Sprite 0 Exception Caught";
+      return;
+    }
+
     trainerClassOrItemID = spriteDataItem->toItem->ind;
     trainerClassOrItemIDChanged();
   }

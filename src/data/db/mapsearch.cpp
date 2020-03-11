@@ -14,6 +14,8 @@
   * limitations under the License.
 */
 
+#include <QDebug>
+
 #include "../../common/random.h"
 
 #include "./mapsearch.h"
@@ -28,6 +30,9 @@ MapSearch::MapSearch()
 
 MapDBEntry* MapSearch::pickRandom()
 {
+  if(results.size() == 0)
+    return nullptr;
+
   return results.at(Random::rangeExclusive(0, results.size()));
 }
 
@@ -152,22 +157,26 @@ MapSearch* MapSearch::notTileset(QString val)
 
 MapSearch* MapSearch::isType(QString val)
 {
-  for(auto entry : QVector<MapDBEntry*>(results))
-    if(entry->toTileset == nullptr ||
-       (!(entry->toTileset->type == val) ||
-       !(entry->toTileset->typeAlias == val)))
+  for(auto entry : QVector<MapDBEntry*>(results)) {
+    if(entry->toTileset == nullptr)
       results.removeOne(entry);
+
+    if(entry->toTileset->type != val && entry->toTileset->typeAlias != val)
+      results.removeOne(entry);
+  }
 
   return this;
 }
 
 MapSearch* MapSearch::notType(QString val)
 {
-  for(auto entry : QVector<MapDBEntry*>(results))
-    if(entry->toTileset == nullptr ||
-       (!(entry->toTileset->type != val) &&
-       !(entry->toTileset->typeAlias != val)))
+  for(auto entry : QVector<MapDBEntry*>(results)) {
+    if(entry->toTileset == nullptr)
+      continue;
+
+    if(entry->toTileset->type == val || entry->toTileset->typeAlias == val)
       results.removeOne(entry);
+  }
 
   return this;
 }
@@ -345,9 +354,10 @@ MapSearch* MapSearch::isGlitch()
 
 MapSearch* MapSearch::notGlitch()
 {
-  for(auto entry : QVector<MapDBEntry*>(results))
+  for(auto entry : QVector<MapDBEntry*>(results)) {
     if(entry->glitch)
       results.removeOne(entry);
+  }
 
   return this;
 }
