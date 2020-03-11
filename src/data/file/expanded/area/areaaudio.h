@@ -19,6 +19,7 @@
 #include <QObject>
 #include "../../../../common/types.h"
 class SaveFile;
+class MapDBEntry;
 
 class AreaAudio : public QObject
 {
@@ -45,6 +46,7 @@ signals:
 public slots:
   void reset();
   void randomize();
+  void setTo(MapDBEntry* map);
 
 public:
   int musicID;

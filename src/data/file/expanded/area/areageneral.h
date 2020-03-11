@@ -42,6 +42,8 @@ public:
   };
 };
 
+class MapDBEntry;
+
 class AreaGeneral : public QObject
 {
   Q_OBJECT
@@ -65,6 +67,7 @@ signals:
 public slots:
   void reset();
   void randomize();
+  void setTo(MapDBEntry* map);
 
 public:
   int contrast;

@@ -22,6 +22,7 @@
 
 class SaveFile;
 class SaveFileIterator;
+class MapDBEntry;
 
 constexpr var8 wildMonsCount = 10;
 
@@ -112,6 +113,7 @@ signals:
 public slots:
   void reset();
   void randomize();
+  void setTo(MapDBEntry* map);
 
 public:
   // There are exactly 10 wild Pokemon in areas that have wild Pokemon

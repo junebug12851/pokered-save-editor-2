@@ -130,8 +130,8 @@ void Area::randomize()
   auto warpIn = map->warpIn.at(Random::rangeExclusive(0, map->warpIn.size()));
 
   // X & Y coordinates to place player
-  var8 x = warpIn->x;
-  var8 y = warpIn->y;
+  int x = warpIn->x;
+  int y = warpIn->y;
 
   // Do the individual area randomizations and pass along map data where needed
   audio->randomize();
@@ -147,4 +147,28 @@ void Area::randomize()
   sprites->randomize(map->sprites);
   tileset->loadFromData(map, true);
   warps->randomize(map);
+}
+
+void Area::setTo(MapDBEntry* map)
+{
+  // Now pick out a random warp in and use those coordinates for the player
+  // coordinates
+  auto warpIn = (map == nullptr || map->warpIn.size() == 0)
+      ? nullptr
+      : map->warpIn.at(Random::rangeExclusive(0, map->warpIn.size()));
+
+  // X & Y coordinates to place player
+  int x = (warpIn == nullptr)
+      ? 0
+      : warpIn->x;
+
+  int y = (warpIn == nullptr)
+      ? 0
+      : warpIn->y;
+
+  // Do the individual area randomizations and pass along map data where needed
+  audio->setTo(map);
+  general->setTo(map);
+  npc->setTo(map);
+  pokemon->setTo(map);
 }

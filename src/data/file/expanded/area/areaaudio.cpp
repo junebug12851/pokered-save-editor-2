@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../db/music.h"
+#include "../../../db/maps.h"
 #include "../../../../common/random.h"
 
 AreaAudio::AreaAudio(SaveFile* saveFile)
@@ -85,5 +86,24 @@ void AreaAudio::randomize()
   musicIDChanged();
 
   musicBank = musicEntry->bank;
+  musicBankChanged();
+}
+
+void AreaAudio::setTo(MapDBEntry* map)
+{
+  reset();
+
+  // Select a random song
+  MusicDBEntry* musicEntry = map->toMusic;
+
+  // Load it into the map
+  musicID = (musicEntry == nullptr)
+      ? 0
+      : musicEntry->id;
+  musicIDChanged();
+
+  musicBank = musicID = (musicEntry == nullptr)
+      ? 0
+      : musicEntry->bank;
   musicBankChanged();
 }

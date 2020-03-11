@@ -19,6 +19,7 @@
 #include "../../savefileiterator.h"
 #include "../../../db/pokemon.h"
 #include "../../../../common/random.h"
+#include "../../../db/maps.h"
 
 AreaPokemonWild::AreaPokemonWild(int index, int level)
 {
@@ -255,4 +256,48 @@ void AreaPokemon::randomize()
       waterMons[i]->randomize();
       waterMonsChanged();
     }
+}
+
+void AreaPokemon::setTo(MapDBEntry* map)
+{
+  reset();
+
+  // Give a reasonable grass and water rate randomization
+  grassRate = (map == nullptr || !map->monRate)
+      ? 0
+      : *map->monRate;
+  grassRateChanged();
+
+  waterRate = (map == nullptr || !map->monRateWater)
+      ? 0
+      : *map->monRateWater;
+  waterRateChanged();
+
+  if(map == nullptr)
+    return;
+
+  bool redOrBlue = Random::flipCoin();
+  auto monData = (redOrBlue) ? map->monsRed : map->monsBlue;
+
+  for(int i = 0; i < monData.size(); i++) {
+    grassMons[i]->index = monData.at(i)->toPokemon->ind;
+    grassMons[i]->indexChanged();
+    grassMonsChanged();
+
+    grassMons[i]->level = monData.at(i)->level;
+    grassMons[i]->levelChanged();
+    grassMonsChanged();
+  }
+
+  auto monDataWater = map->monsWater;
+
+  for(int i = 0; i < monDataWater.size(); i++) {
+    waterMons[i]->index = monDataWater.at(i)->toPokemon->ind;
+    waterMons[i]->indexChanged();
+    waterMonsChanged();
+
+    waterMons[i]->level = monDataWater.at(i)->level;
+    waterMons[i]->levelChanged();
+    waterMonsChanged();
+  }
 }

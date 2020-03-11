@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../../common/random.h"
+#include "../../../db/maps.h"
 
 AreaGeneral::AreaGeneral(SaveFile* saveFile)
 {
@@ -73,6 +74,29 @@ void AreaGeneral::randomize()
   // Pick a number between 1 - 8
   // That's beacuse 9 is solid black which can be fun but not very playable lol
   contrast = Random::rangeInclusive(0, 8);
+  contrastChanged();
+
+  // Leaving these options off for now
+  noLetterDelay = false;
+  noLetterDelayChanged();
+
+  countPlaytime = false;
+  countPlaytimeChanged();
+}
+
+void AreaGeneral::setTo(MapDBEntry* map)
+{
+  reset();
+
+  int mapInd = (map == nullptr)
+      ? 0
+      : map->ind;
+
+  // Set "Needs Flash" contrast level for Rock Tunnel 1 and 2, otherwise normal
+  // no flash needed
+  contrast = (mapInd == 82 || mapInd == 232)
+      ? 6
+      : 0;
   contrastChanged();
 
   // Leaving these options off for now

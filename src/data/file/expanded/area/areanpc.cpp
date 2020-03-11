@@ -17,6 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
+#include "../../../db/maps.h"
 
 AreaNPC::AreaNPC(SaveFile* saveFile)
 {
@@ -117,5 +118,11 @@ void AreaNPC::reset()
 // then it wouldn't be used very much
 void AreaNPC::randomize()
 {
+  reset();
+}
+
+void AreaNPC::setTo(MapDBEntry* map)
+{
+  Q_UNUSED(map)
   reset();
 }

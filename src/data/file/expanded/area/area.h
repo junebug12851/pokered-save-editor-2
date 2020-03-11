@@ -33,6 +33,8 @@ class AreaSprites;
 class AreaTileset;
 class AreaWarps;
 
+class MapDBEntry;
+
 class Area : public QObject
 {
   Q_OBJECT
@@ -75,6 +77,7 @@ signals:
 public slots:
   void reset();
   void randomize();
+  void setTo(MapDBEntry* map);
 
 public:
   AreaAudio* audio = nullptr;
