@@ -124,6 +124,7 @@ HEADERS += \
   src/mvc/statusselectmodel.h \
   src/mvc/natureselectmodel.h \
   src/mvc/moveselectmodel.h \
+  src/mvc/mapselectmodel.h \
   src/engine/tilesetengine.h \
   ui/window/mainwindow.h
 
@@ -239,6 +240,7 @@ SOURCES += \
   src/mvc/statusselectmodel.cpp \
   src/mvc/natureselectmodel.cpp \
   src/mvc/moveselectmodel.cpp \
+  src/mvc/mapselectmodel.cpp \
   src/engine/tilesetengine.cpp \
   ui/window/mainwindow.cpp
 

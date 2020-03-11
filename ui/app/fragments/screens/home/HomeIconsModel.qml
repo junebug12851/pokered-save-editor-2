@@ -32,7 +32,7 @@ ListModel {
   ListElement {
     name: "Maps"
     iconSrc: "qrc:/assets/icons/poke-go/map.svg"
-    page: ""
+    page: "maps"
   }
   ListElement {
     name: "Options"

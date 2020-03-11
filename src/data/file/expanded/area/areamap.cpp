@@ -60,6 +60,11 @@ void AreaMap::connNew(int dir)
   connectionsChanged();
 }
 
+MapDBEntry* AreaMap::toCurMap()
+{
+  return MapsDB::ind.value(QString::number(curMap), nullptr);
+}
+
 void AreaMap::load(SaveFile* saveFile)
 {
   reset();

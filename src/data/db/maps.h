@@ -338,6 +338,8 @@ struct MapDBEntry {
   MapDBEntry(QJsonValue& data);
   void deepLink();
 
+  QString bestName();
+
   QString name;
   var8 ind;
 

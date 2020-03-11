@@ -72,6 +72,8 @@ public:
   Q_INVOKABLE void connRemove(int dir);
   Q_INVOKABLE void connNew(int dir);
 
+  MapDBEntry* toCurMap();
+
 signals:
   void curMapChanged();
   void outOfBoundsBlockChanged();

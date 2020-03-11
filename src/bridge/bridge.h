@@ -39,6 +39,7 @@
 #include "../mvc/statusselectmodel.h"
 #include "../mvc/natureselectmodel.h"
 #include "../mvc/moveselectmodel.h"
+#include "../mvc/mapselectmodel.h"
 
 #include "../data/db/fonts.h"
 #include "../data/db/fontsearch.h"
@@ -81,6 +82,7 @@ class Bridge : public QObject
   Q_PROPERTY(StatusSelectModel* statusSelectModel MEMBER statusSelectModel NOTIFY statusSelectModelChanged)
   Q_PROPERTY(NatureSelectModel* natureSelectModel MEMBER natureSelectModel NOTIFY natureSelectModelChanged)
   Q_PROPERTY(MoveSelectModel* moveSelectModel MEMBER moveSelectModel NOTIFY moveSelectModelChanged)
+  Q_PROPERTY(MapSelectModel* mapSelectModel MEMBER mapSelectModel NOTIFY mapSelectModelChanged)
 
 signals:
   void fileChanged();
@@ -112,6 +114,7 @@ signals:
   void statusSelectModelChanged();
   void natureSelectModelChanged();
   void moveSelectModelChanged();
+  void mapSelectModelChanged();
 
 public:
   Bridge(FileManagement* file);
@@ -148,6 +151,7 @@ public:
   StatusSelectModel* statusSelectModel = new StatusSelectModel;
   NatureSelectModel* natureSelectModel = new NatureSelectModel;
   MoveSelectModel* moveSelectModel = new MoveSelectModel;
+  MapSelectModel* mapSelectModel = nullptr;
 };
 
 #endif

@@ -533,5 +533,6 @@
         <file>ui/app/screens/non-modal/Rival.qml</file>
         <file>assets/images/rival.png</file>
         <file>assets/images/rival-larger.png</file>
+        <file>ui/app/screens/non-modal/Maps.qml</file>
     </qresource>
 </RCC>

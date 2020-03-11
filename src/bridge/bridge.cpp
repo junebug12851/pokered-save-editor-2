@@ -17,6 +17,8 @@
 #include "./bridge.h"
 #include "../data/file/savefile.h"
 #include "../data/file/expanded/savefileexpanded.h"
+#include "../data/file/expanded/area/area.h"
+#include "../data/file/expanded/area/areamap.h"
 #include "../data/file/expanded/player/player.h"
 #include "../data/file/expanded/player/playerpokedex.h"
 #include "../data/file/expanded/storage.h"
@@ -38,7 +40,8 @@ Bridge::Bridge(FileManagement* file)
                   file->data
                   )),
     pokemonStorageModel1(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon)),
-    pokemonStorageModel2(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon))
+    pokemonStorageModel2(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon)),
+    mapSelectModel(new MapSelectModel(file->data->dataExpanded->area->map))
 {
   // Link the two
   pokemonStorageModel1->otherModel = pokemonStorageModel2;

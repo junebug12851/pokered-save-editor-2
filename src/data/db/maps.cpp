@@ -711,6 +711,14 @@ void MapDBEntry::deepLink()
     toTileset->toMaps.append(this);
 }
 
+QString MapDBEntry::bestName()
+{
+  if(modernName != "")
+    return modernName;
+  else
+    return name;
+}
+
 std::optional<var8> MapDBEntry::height2X2()
 {
   if(height)
