@@ -56,8 +56,8 @@ Page {
 
       ListElement {
         name: "Events"
-        iconSrc: "qrc:/assets/icons/fontawesome/bicycle.svg"
         page: ""
+        iconSrc: "qrc:/assets/icons/fontawesome/globe-americas.svg"
       }
 
       ListElement {

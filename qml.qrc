@@ -540,5 +540,6 @@
         <file>assets/icons/fontawesome/bicycle.svg</file>
         <file>assets/icons/fontawesome/hand-holding-heart.svg</file>
         <file>assets/icons/fontawesome/eye-slash.svg</file>
+        <file>assets/icons/fontawesome/globe-americas.svg</file>
     </qresource>
 </RCC>
