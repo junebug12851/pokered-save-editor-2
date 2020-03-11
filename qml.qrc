@@ -541,5 +541,9 @@
         <file>assets/icons/fontawesome/hand-holding-heart.svg</file>
         <file>assets/icons/fontawesome/eye-slash.svg</file>
         <file>assets/icons/fontawesome/globe-americas.svg</file>
+        <file>assets/icons/fontawesome/baby-carriage.svg</file>
+        <file>assets/icons/fontawesome/gamepad.svg</file>
+        <file>assets/icons/fontawesome/trash-restore.svg</file>
+        <file>assets/icons/fontawesome/kiwi-bird.svg</file>
     </qresource>
 </RCC>

@@ -42,38 +42,75 @@ Page {
     }
 
     model: ListModel {
+      id: iconsModel
+
       ListElement {
         name: "Loaded"
         iconSrc: "qrc:/assets/icons/fontawesome/map.svg"
-        page: ""
       }
 
       ListElement {
         name: "General"
         iconSrc: "qrc:/assets/icons/fontawesome/cog.svg"
-        page: ""
       }
 
       ListElement {
         name: "Events"
-        page: ""
         iconSrc: "qrc:/assets/icons/fontawesome/globe-americas.svg"
       }
 
       ListElement {
         name: "Trades"
         iconSrc: "qrc:/assets/icons/fontawesome/hand-holding-heart.svg"
-        page: ""
       }
 
       ListElement {
         name: "Missables"
         iconSrc: "qrc:/assets/icons/fontawesome/eye-slash.svg"
-        page: ""
       }
     }
 
     ScrollBar.vertical: ScrollBar {}
+  }
+
+  Component.onCompleted: {
+    // Daycare (Pokemon in Daycare)
+    if(mapInd === 72)
+      iconsModel.append({
+                          name: "Pokemon",
+                          iconSrc: "qrc:/assets/icons/fontawesome/baby-carriage.svg"
+                        });
+
+    // Vermilion Gym (Lt. Surge Switches)
+    else if(mapInd === 92)
+      iconsModel.append({
+                          name: "Switches",
+                          iconSrc: "qrc:/assets/icons/fontawesome/trash-restore.svg"
+                        });
+
+    // Cinnabar Gym (Quiz Answers Next Opp)
+    else if(mapInd === 166)
+      iconsModel.append({
+                          name: "Quiz",
+                          iconSrc: "qrc:/assets/icons/fontawesome/gamepad.svg"
+                        });
+
+    // Safari Zone Related Maps (Various Safari Zone Variables)
+    else if(mapInd === 156 || // Entrance
+            mapInd === 217 || // East
+            mapInd === 218 || // North
+            mapInd === 219 || // West
+            mapInd === 220 || // Center
+            mapInd === 221 || // Center Rest house
+            mapInd === 222 || // Secret House
+            mapInd === 223 || // West Rest house
+            mapInd === 224 || // East Rest house
+            mapInd === 225    // North Rest house
+            )
+      iconsModel.append({
+                          name: "Park",
+                          iconSrc: "qrc:/assets/icons/fontawesome/kiwi-bird.svg"
+                        });
   }
 
   // 1 Button Footer, the Randomize Button
