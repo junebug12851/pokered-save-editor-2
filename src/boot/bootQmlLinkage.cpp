@@ -59,7 +59,7 @@
 #include "../data/file/expanded/area/areanpc.h"
 #include "../data/file/expanded/area/areaplayer.h"
 #include "../data/file/expanded/area/areapokemon.h"
-#include "../data/file/expanded/area/areapuzzle.h"
+#include "../data/file/expanded/world/worldpuzzle.h"
 #include "../data/file/expanded/area/areasign.h"
 #include "../data/file/expanded/area/areasprites.h"
 #include "../data/file/expanded/area/areatileset.h"
@@ -165,7 +165,6 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<AreaPlayer>("App.AreaPlayer", 1, 0, "AreaPlayer", "Can't instantiate in QML");
   qmlRegisterUncreatableType<AreaPokemonWild>("App.AreaPokemonWild", 1, 0, "AreaPokemonWild", "Can't instantiate in QML");
   qmlRegisterUncreatableType<AreaPokemon>("App.AreaPokemon", 1, 0, "AreaPokemon", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<AreaPuzzle>("App.AreaPuzzle", 1, 0, "AreaPuzzle", "Can't instantiate in QML");
   qmlRegisterUncreatableType<AreaSign>("App.AreaSign", 1, 0, "AreaSign", "Can't instantiate in QML");
   qmlRegisterUncreatableType<AreaSprites>("App.AreaSprites", 1, 0, "AreaSprites", "Can't instantiate in QML");
   qmlRegisterUncreatableType<AreaTileset>("App.AreaTileset", 1, 0, "AreaTileset", "Can't instantiate in QML");
@@ -203,4 +202,5 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<WorldScripts>("App.WorldScripts", 1, 0, "WorldScripts", "Can't instantiate in QML");
   qmlRegisterUncreatableType<WorldTowns>("App.WorldTowns", 1, 0, "WorldTowns", "Can't instantiate in QML");
   qmlRegisterUncreatableType<WorldTrades>("App.WorldTrades", 1, 0, "WorldTrades", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<WorldPuzzle>("App.WorldPuzzle", 1, 0, "WorldPuzzle", "Can't instantiate in QML");
 }

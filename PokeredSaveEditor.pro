@@ -59,7 +59,6 @@ HEADERS += \
   src/data/file/expanded/area/areanpc.h \
   src/data/file/expanded/area/areaplayer.h \
   src/data/file/expanded/area/areapokemon.h \
-  src/data/file/expanded/area/areapuzzle.h \
   src/data/file/expanded/area/areasign.h \
   src/data/file/expanded/area/areasprites.h \
   src/data/file/expanded/area/areatileset.h \
@@ -92,6 +91,7 @@ HEADERS += \
   src/data/file/expanded/world/worldhidden.h \
   src/data/file/expanded/world/worldmissables.h \
   src/data/file/expanded/world/worldother.h \
+  src/data/file/expanded/world/worldpuzzle.h \
   src/data/file/expanded/world/worldscripts.h \
   src/data/file/expanded/world/worldtowns.h \
   src/data/file/expanded/world/worldtrades.h \
@@ -154,7 +154,6 @@ SOURCES += \
   src/data/file/expanded/area/areanpc.cpp \
   src/data/file/expanded/area/areaplayer.cpp \
   src/data/file/expanded/area/areapokemon.cpp \
-  src/data/file/expanded/area/areapuzzle.cpp \
   src/data/file/expanded/area/areasign.cpp \
   src/data/file/expanded/area/areasprites.cpp \
   src/data/file/expanded/area/areatileset.cpp \
@@ -187,6 +186,7 @@ SOURCES += \
   src/data/file/expanded/world/worldhidden.cpp \
   src/data/file/expanded/world/worldmissables.cpp \
   src/data/file/expanded/world/worldother.cpp \
+  src/data/file/expanded/world/worldpuzzle.cpp \
   src/data/file/expanded/world/worldscripts.cpp \
   src/data/file/expanded/world/worldtowns.cpp \
   src/data/file/expanded/world/worldtrades.cpp \

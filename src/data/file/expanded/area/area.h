@@ -27,7 +27,6 @@ class AreaMap;
 class AreaNPC;
 class AreaPlayer;
 class AreaPokemon;
-class AreaPuzzle;
 class AreaSign;
 class AreaSprites;
 class AreaTileset;
@@ -46,7 +45,6 @@ class Area : public QObject
   Q_PROPERTY(AreaNPC* npc MEMBER npc NOTIFY npcChanged)
   Q_PROPERTY(AreaPlayer* player MEMBER player NOTIFY playerChanged)
   Q_PROPERTY(AreaPokemon* pokemon MEMBER pokemon NOTIFY pokemonChanged)
-  Q_PROPERTY(AreaPuzzle* puzzle MEMBER puzzle NOTIFY puzzleChanged)
   Q_PROPERTY(AreaSign* signs MEMBER signs NOTIFY signsChanged)
   Q_PROPERTY(AreaSprites* sprites MEMBER sprites NOTIFY spritesChanged)
   Q_PROPERTY(AreaTileset* tileset MEMBER tileset NOTIFY tilesetChanged)
@@ -68,7 +66,6 @@ signals:
   void npcChanged();
   void playerChanged();
   void pokemonChanged();
-  void puzzleChanged();
   void signsChanged();
   void spritesChanged();
   void tilesetChanged();
@@ -87,7 +84,6 @@ public:
   AreaNPC* npc = nullptr;
   AreaPlayer* player = nullptr;
   AreaPokemon* pokemon = nullptr;
-  AreaPuzzle* puzzle = nullptr;
   AreaSign* signs = nullptr;
   AreaSprites* sprites = nullptr;
   AreaTileset* tileset = nullptr;

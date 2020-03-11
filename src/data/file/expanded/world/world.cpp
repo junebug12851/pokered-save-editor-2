@@ -23,6 +23,7 @@
 #include "./worldscripts.h"
 #include "./worldtowns.h"
 #include "./worldtrades.h"
+#include "./worldpuzzle.h"
 #include "../../savefile.h"
 
 World::World(SaveFile* saveFile)
@@ -36,6 +37,7 @@ World::World(SaveFile* saveFile)
   scripts = new WorldScripts;
   towns = new WorldTowns;
   trades = new WorldTrades;
+  puzzle = new WorldPuzzle;
 
   load(saveFile);
 }
@@ -51,6 +53,7 @@ World::~World()
   scripts->deleteLater();
   towns->deleteLater();
   trades->deleteLater();
+  puzzle->deleteLater();
 }
 
 void World::load(SaveFile* saveFile)
@@ -67,6 +70,7 @@ void World::load(SaveFile* saveFile)
   scripts->load(saveFile);
   towns->load(saveFile);
   trades->load(saveFile);
+  puzzle->load(saveFile);
 }
 
 void World::save(SaveFile* saveFile)
@@ -80,6 +84,7 @@ void World::save(SaveFile* saveFile)
   scripts->save(saveFile);
   towns->save(saveFile);
   trades->save(saveFile);
+  puzzle->save(saveFile);
 }
 
 void World::reset()
@@ -93,6 +98,7 @@ void World::reset()
   scripts->reset();
   towns->reset();
   trades->reset();
+  puzzle->reset();
 }
 
 void World::randomize()
@@ -106,4 +112,5 @@ void World::randomize()
   scripts->randomize();
   towns->randomize();
   trades->randomize();
+  puzzle->randomize();
 }

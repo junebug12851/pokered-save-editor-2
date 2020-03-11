@@ -13,19 +13,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "./areapuzzle.h"
+
+#include "./worldpuzzle.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 
-AreaPuzzle::AreaPuzzle(SaveFile* saveFile)
+WorldPuzzle::WorldPuzzle(SaveFile* saveFile)
 {
   load(saveFile);
 }
 
-AreaPuzzle::~AreaPuzzle() {}
+WorldPuzzle::~WorldPuzzle() {}
 
-void AreaPuzzle::load(SaveFile* saveFile)
+void WorldPuzzle::load(SaveFile* saveFile)
 {
   reset();
 
@@ -44,7 +45,7 @@ void AreaPuzzle::load(SaveFile* saveFile)
   quizOppChanged();
 }
 
-void AreaPuzzle::save(SaveFile* saveFile)
+void WorldPuzzle::save(SaveFile* saveFile)
 {
   auto toolset = saveFile->toolset;
 
@@ -53,7 +54,7 @@ void AreaPuzzle::save(SaveFile* saveFile)
   toolset->setByte(0x2CE4, quizOpp);
 }
 
-void AreaPuzzle::reset()
+void WorldPuzzle::reset()
 {
   lock1 = 0;
   lock1Changed();
@@ -66,6 +67,6 @@ void AreaPuzzle::reset()
 }
 
 // Don't know the range to randomize
-void AreaPuzzle::randomize() {
+void WorldPuzzle::randomize() {
   reset();
 }

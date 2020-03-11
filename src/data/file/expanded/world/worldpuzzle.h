@@ -13,15 +13,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef AREAPUZZLE_H
-#define AREAPUZZLE_H
+#ifndef WORLDPUZZLE_H
+#define WORLDPUZZLE_H
 
 #include <QObject>
 #include "../../../../common/types.h"
 
 class SaveFile;
 
-class AreaPuzzle : public QObject
+class WorldPuzzle : public QObject
 {
   Q_OBJECT
 
@@ -30,8 +30,8 @@ class AreaPuzzle : public QObject
   Q_PROPERTY(int quizOpp MEMBER quizOpp NOTIFY quizOppChanged)
 
 public:
-  AreaPuzzle(SaveFile* saveFile = nullptr);
-  virtual ~AreaPuzzle();
+  WorldPuzzle(SaveFile* saveFile = nullptr);
+  virtual ~WorldPuzzle();
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
@@ -54,4 +54,4 @@ public:
   int quizOpp;
 };
 
-#endif // AREAPUZZLE_H
+#endif // WORLDPUZZLE_H

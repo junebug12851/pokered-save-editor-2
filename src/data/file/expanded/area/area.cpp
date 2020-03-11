@@ -21,7 +21,6 @@
 #include "./areanpc.h"
 #include "./areaplayer.h"
 #include "./areapokemon.h"
-#include "./areapuzzle.h"
 #include "./areasign.h"
 #include "./areasprites.h"
 #include "./areatileset.h"
@@ -40,7 +39,6 @@ Area::Area(SaveFile* saveFile)
   npc = new AreaNPC;
   player = new AreaPlayer;
   pokemon = new AreaPokemon;
-  puzzle = new AreaPuzzle;
   signs = new AreaSign;
   sprites = new AreaSprites;
   tileset = new AreaTileset;
@@ -58,7 +56,6 @@ Area::~Area()
   npc->deleteLater();
   player->deleteLater();
   pokemon->deleteLater();
-  puzzle->deleteLater();
   signs->deleteLater();
   sprites->deleteLater();
   tileset->deleteLater();
@@ -77,7 +74,6 @@ void Area::load(SaveFile* saveFile)
   npc->load(saveFile);
   player->load(saveFile);
   pokemon->load(saveFile);
-  puzzle->load(saveFile);
   signs->load(saveFile);
   sprites->load(saveFile);
   tileset->load(saveFile);
@@ -93,7 +89,6 @@ void Area::save(SaveFile* saveFile)
   npc->save(saveFile);
   player->save(saveFile);
   pokemon->save(saveFile);
-  puzzle->save(saveFile);
   signs->save(saveFile);
   sprites->save(saveFile);
   tileset->save(saveFile);
@@ -109,7 +104,6 @@ void Area::reset()
   npc->reset();
   player->reset();
   pokemon->reset();
-  puzzle->reset();
   signs->reset();
   sprites->reset();
   tileset->reset();
@@ -138,7 +132,6 @@ void Area::randomize()
   general->randomize();
   npc->randomize();
   pokemon->randomize();
-  puzzle->randomize();
 
   preloadedSprites->randomize(map, x, y);
   this->map->randomize(map, x, y);

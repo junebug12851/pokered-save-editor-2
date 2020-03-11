@@ -29,6 +29,7 @@ class WorldOther;
 class WorldScripts;
 class WorldTowns;
 class WorldTrades;
+class WorldPuzzle;
 
 class World : public QObject
 {
@@ -43,6 +44,7 @@ class World : public QObject
   Q_PROPERTY(WorldScripts* scripts MEMBER scripts NOTIFY scriptsChanged)
   Q_PROPERTY(WorldTowns* towns MEMBER towns NOTIFY townsChanged)
   Q_PROPERTY(WorldTrades* trades MEMBER trades NOTIFY tradesChanged)
+  Q_PROPERTY(WorldPuzzle* puzzle MEMBER puzzle NOTIFY puzzleChanged)
 
 public:
   World(SaveFile* saveFile = nullptr);
@@ -61,6 +63,7 @@ signals:
   void scriptsChanged();
   void townsChanged();
   void tradesChanged();
+  void puzzleChanged();
 
 public slots:
   void reset();
@@ -76,6 +79,7 @@ public:
   WorldScripts* scripts = nullptr;
   WorldTowns* towns = nullptr;
   WorldTrades* trades = nullptr;
+  WorldPuzzle* puzzle = nullptr;
 };
 
 #endif // WORLD_H
