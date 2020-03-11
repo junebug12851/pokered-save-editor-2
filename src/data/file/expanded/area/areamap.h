@@ -59,11 +59,6 @@ public:
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
 
-  // You have to provide it a non-glitch map or it will crash, it expects common
-  // data to be there like width, height, etc... which are often not in glitch
-  // or incompelte maps
-  void randomize(MapDBEntry* map, int x, int y);
-
   // Converts X & Y values to a pointer for currentTileBlockMapViewPointer
   int coordsToPtr(int x, int y, int width);
 
@@ -96,6 +91,8 @@ signals:
 
 public slots:
   void reset();
+  void randomize(MapDBEntry* map, int x, int y);
+  void setTo(MapDBEntry* map, int x, int y);
 
 public:
   // Current Map ID

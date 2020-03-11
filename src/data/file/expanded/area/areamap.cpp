@@ -262,35 +262,55 @@ void AreaMap::randomize(MapDBEntry* map, int x, int y)
 {
   reset();
 
+  // Stop here if map is not present
+  if(map == nullptr)
+    return;
+
   // Current Map ID
   curMap = map->ind;
   curMapChanged();
 
   // Map Size including it's double size
-  height = *map->height;
+  height = (map->height)
+      ? *map->height
+      : 0;
   heightChanged();
 
-  width = *map->width;
+  width = (map->width)
+      ? *map->width
+      : 0;
   widthChanged();
 
-  height2x2 = *map->height2X2();
+  height2x2 = (map->height2X2())
+      ? *map->height2X2()
+      : 0;
   height2x2Changed();
 
-  width2x2 = *map->width2X2();
+  width2x2 = (map->width2X2())
+      ? *map->width2X2()
+      : 0;
   width2x2Changed();
 
   // Map basic pointers
-  dataPtr = *map->dataPtr;
+  dataPtr = (map->dataPtr)
+      ? *map->dataPtr
+      : 0;
   dataPtrChanged();
 
-  txtPtr = *map->textPtr;
+  txtPtr = (map->textPtr)
+      ? *map->textPtr
+      : 0;
   txtPtrChanged();
 
-  scriptPtr = *map->scriptPtr;
+  scriptPtr = (map->scriptPtr)
+      ? *map->scriptPtr
+      : 0;
   scriptPtrChanged();
 
   // Map extra pointers
-  currentTileBlockMapViewPointer = coordsToPtr(x, y, *map->width);
+  (map->width)
+      ? currentTileBlockMapViewPointer = coordsToPtr(x, y, *map->width)
+      : 0;
   currentTileBlockMapViewPointerChanged();
 
   mapViewVRAMPointer = VramBGPtr;
@@ -327,6 +347,13 @@ void AreaMap::randomize(MapDBEntry* map, int x, int y)
     connections.insert((var8)ConnectDir::WEST, conn);
     connectionsChanged();
   }
+}
+
+void AreaMap::setTo(MapDBEntry* map, int x, int y)
+{
+  // Right now randomize doesn't really randomize and instead just loads the map
+  // and coords given which is what this does. no use in copying it.
+  randomize(map, x, y);
 }
 
 int AreaMap::coordsToPtr(int x, int y, int width)

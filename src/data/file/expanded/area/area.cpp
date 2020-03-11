@@ -165,4 +165,5 @@ void Area::setTo(MapDBEntry* map)
   npc->setTo(map);
   pokemon->setTo(map);
   preloadedSprites->setTo(map, x, y);
+  this->map->setTo(map, x, y);
 }
