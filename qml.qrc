@@ -535,5 +535,10 @@
         <file>assets/images/rival-larger.png</file>
         <file>ui/app/screens/non-modal/Maps.qml</file>
         <file>ui/app/screens/non-modal/MapDetails.qml</file>
+        <file>assets/icons/fontawesome/map.svg</file>
+        <file>assets/icons/fontawesome/cog.svg</file>
+        <file>assets/icons/fontawesome/bicycle.svg</file>
+        <file>assets/icons/fontawesome/hand-holding-heart.svg</file>
+        <file>assets/icons/fontawesome/eye-slash.svg</file>
     </qresource>
 </RCC>
