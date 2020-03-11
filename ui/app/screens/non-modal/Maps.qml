@@ -46,6 +46,17 @@ Page {
         Layout.alignment: Qt.AlignHCenter
         text: mapName
         font.capitalization: Font.Capitalize
+
+        onClicked: {
+          // We manually open outside of the router the pokemon details page beacuse
+          // we want to pass parameters to it
+          appBody.push("qrc:/ui/app/screens/non-modal/MapDetails.qml", {
+                         mapInd: mapInd
+                       });
+
+          // We then tell the router of what we've done
+          brg.router.manualStackPush("mapDetails");
+        }
       }
 
       Text {

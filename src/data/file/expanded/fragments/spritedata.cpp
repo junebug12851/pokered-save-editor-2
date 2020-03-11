@@ -174,7 +174,6 @@ void SpriteData::load(MapDBEntrySprite* spriteData)
 
     // As stated above, stop here if the item is named "0"
     if(spriteDataItem->item == "0") {
-      qDebug() << "Sprite 0 Exception Caught";
       return;
     }
 
