@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../../../../common/random.h"
+#include "../../../db/maps.h"
 
 AreaPlayer::AreaPlayer(SaveFile* saveFile)
 {
@@ -251,4 +252,10 @@ void AreaPlayer::randomize(int x, int y)
 
   xBlockCoord = (x % 2) ? 0 : 1;
   xBlockCoordChanged();
+}
+
+void AreaPlayer::setTo(MapDBEntry* map, int x, int y)
+{
+  Q_UNUSED(map)
+  randomize(x, y);
 }

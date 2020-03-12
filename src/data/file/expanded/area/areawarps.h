@@ -49,7 +49,6 @@ public:
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
-  void randomize(MapDBEntry* map);
 
   Q_INVOKABLE int warpCount();
   Q_INVOKABLE int warpMax();
@@ -75,6 +74,8 @@ signals:
 
 public slots:
   void reset();
+  void randomize(MapDBEntry* map);
+  void setTo(MapDBEntry* map);
 
 public:
   // Pre-Warp

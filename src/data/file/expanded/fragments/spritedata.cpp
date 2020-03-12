@@ -699,6 +699,32 @@ void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
   grassPriorityChanged();
 }
 
+void SpriteData::setTo(MapDBEntrySprite* spriteData)
+{
+  reset();
+
+  if(spriteData == nullptr)
+    return;
+
+  load(spriteData);
+}
+
+QVector<SpriteData*> SpriteData::setToAll(QVector<MapDBEntrySprite*> spriteSigns)
+{
+  // Prepare return value
+  QVector<SpriteData*> sprites;
+
+  for(auto entry : spriteSigns) {
+
+    // New Sprite from map data
+    auto tmp = new SpriteData;
+    sprites.append(tmp);
+    tmp->setTo(entry);
+  }
+
+  return sprites;
+}
+
 SpriteDBEntry* SpriteData::toSprite()
 {
   return SpritesDB::ind.value(QString::number(pictureID), nullptr);

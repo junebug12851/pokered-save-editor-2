@@ -237,3 +237,35 @@ void AreaWarps::randomize(MapDBEntry* map)
 
   warpsChanged();
 }
+
+void AreaWarps::setTo(MapDBEntry* map)
+{
+  reset();
+
+  // Pick random map that you came from
+  auto dungeonWarp = MapsDB::search()->isGood()->isType("Cave")->pickRandom();
+
+  // Assign index
+  dungeonWarpDestMap = dungeonWarp->ind;
+  dungeonWarpDestMapChanged();
+
+  // Pick another random map for special warp destination
+  specialWarpDestMap = MapsDB::search()->isGood()->pickRandom()->ind;
+  specialWarpDestMapChanged();
+
+  // Make up some random warps on said dungeon warp
+  whichDungeonWarp = Random::rangeExclusive(0, dungeonWarp->warpOut.size());
+  whichDungeonWarpChanged();
+
+  warpedFromWarp = Random::rangeExclusive(0, dungeonWarp->warpOut.size());
+  warpedFromWarpChanged();
+
+  // Re-create all map warps out, we can't blantly make-up stuff here
+  // and have to be careful
+  for(auto warpDataEntry : map->warpOut) {
+    auto tmp = new WarpData(warpDataEntry);
+    warps.append(tmp);
+  }
+
+  warpsChanged();
+}

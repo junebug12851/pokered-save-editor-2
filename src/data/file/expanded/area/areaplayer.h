@@ -20,6 +20,7 @@
 #include "../../../../common/types.h"
 
 class SaveFile;
+class MapDBEntry;
 
 struct PlayerDir : public QObject
 {
@@ -72,7 +73,6 @@ public:
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
-  void randomize(int x, int y);
 
 signals:
   void playerMoveDirChanged();
@@ -103,6 +103,8 @@ signals:
 
 public slots:
   void reset();
+  void randomize(int x, int y);
+  void setTo(MapDBEntry* map, int x, int y);
 
 public:
   // Direction

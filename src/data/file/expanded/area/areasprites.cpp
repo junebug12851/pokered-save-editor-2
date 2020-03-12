@@ -129,3 +129,14 @@ void AreaSprites::randomize(QVector<MapDBEntrySprite*> spriteData)
   sprites = SpriteData::randomizeAll(spriteData);
   spritesChanged();
 }
+
+void AreaSprites::setTo(MapDBEntry* map)
+{
+  reset();
+
+  if(map == nullptr)
+    return;
+
+  sprites = SpriteData::setToAll(map->sprites);
+  spritesChanged();
+}

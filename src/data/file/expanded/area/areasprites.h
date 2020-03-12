@@ -22,6 +22,7 @@
 
 class SaveFile;
 class SpriteData;
+class MapDBEntry;
 class MapDBEntrySprite;
 
 constexpr var8 maxSprites = 16;
@@ -36,7 +37,6 @@ public:
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
-  void randomize(QVector<MapDBEntrySprite*> spriteData);
 
   Q_INVOKABLE int spriteCount();
   Q_INVOKABLE int spriteMax();
@@ -50,6 +50,8 @@ signals:
 
 public slots:
   void reset();
+  void randomize(QVector<MapDBEntrySprite*> spriteData);
+  void setTo(MapDBEntry* map);
 
 public:
   QVector<SpriteData*> sprites;

@@ -37,9 +37,6 @@ public:
 
   void load(SaveFile* saveFile = nullptr, var8 index = 0);
   void save(SaveFile* saveFile, var8 index);
-  void randomize(QVector<TmpSignPos*>* tmpPos = nullptr);
-
-  static QVector<SignData*> randomizeAll(QVector<MapDBEntrySign*> mapSigns);
 
 signals:
   void xChanged();
@@ -48,6 +45,11 @@ signals:
 
 public slots:
   void reset();
+  void randomize(QVector<TmpSignPos*>* tmpPos = nullptr);
+  static QVector<SignData*> randomizeAll(QVector<MapDBEntrySign*> mapSigns);
+
+  void setTo(MapDBEntrySign* signData);
+  static QVector<SignData*> setToAll(QVector<MapDBEntrySign*> mapSigns);
 
 public:
   int x;

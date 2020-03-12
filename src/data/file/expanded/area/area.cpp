@@ -166,4 +166,9 @@ void Area::setTo(MapDBEntry* map)
   pokemon->setTo(map);
   preloadedSprites->setTo(map, x, y);
   this->map->setTo(map, x, y);
+  player->setTo(map, x, y);
+  signs->setTo(map);
+  sprites->setTo(map);
+  tileset->loadFromData(map, false);
+  warps->setTo(map);
 }

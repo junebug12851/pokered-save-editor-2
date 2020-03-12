@@ -44,7 +44,6 @@ public:
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
-  void loadFromData(MapDBEntry* map, bool randomType = false);
 
   Q_INVOKABLE int talkingOverTilesCount();
   Q_INVOKABLE int talkingOverTilesAt(int ind);
@@ -65,6 +64,7 @@ signals:
 public slots:
   void reset();
   void randomize();
+  void loadFromData(MapDBEntry* map, bool randomType = false);
 
 public:
   // Which tileset to use. Changing this will make the map

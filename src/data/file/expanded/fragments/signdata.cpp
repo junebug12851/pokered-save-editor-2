@@ -82,11 +82,6 @@ QVector<SignData*> SignData::randomizeAll(QVector<MapDBEntrySign*> mapSigns)
   // Prepare return value
   QVector<SignData*> signs;
 
-  // Add blank player sprite, very important for it to be at pos 0
-  // Player sprite actually has a lot of data but none of it's used at all by
-  // the game
-  signs.append(new SignData);
-
   // Make first pass and get all sprite positions on map
   QVector<TmpSignPos*> tmpPos;
 
@@ -108,6 +103,39 @@ QVector<SignData*> SignData::randomizeAll(QVector<MapDBEntrySign*> mapSigns)
 
     // Randomize newly created sprite
     tmp->randomize(&tmpPos);
+  }
+
+  return signs;
+}
+
+void SignData::setTo(MapDBEntrySign* signData)
+{
+  reset();
+
+  if(signData == nullptr)
+    return;
+
+  x = signData->x;
+  xChanged();
+
+  y = signData->y;
+  yChanged();
+
+  txtId = signData->textID;
+  txtIdChanged();
+}
+
+QVector<SignData*> SignData::setToAll(QVector<MapDBEntrySign*> mapSigns)
+{
+  // Prepare return value
+  QVector<SignData*> signs;
+
+  for(auto entry : mapSigns) {
+
+    // New Sprite from map data
+    auto tmp = new SignData;
+    signs.append(tmp);
+    tmp->setTo(entry);
   }
 
   return signs;

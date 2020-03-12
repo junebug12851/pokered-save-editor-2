@@ -180,9 +180,6 @@ public:
   void saveSpriteDataNPC(SaveFile* saveFile,
             var8 index);
 
-  void randomize(QVector<TmpSpritePos*>* tmpPos);
-
-  static QVector<SpriteData*> randomizeAll(QVector<MapDBEntrySprite*> mapSprites);
   SpriteDBEntry* toSprite();
 
   // Can't be Q_INVOKABLE for some reason, can't be placed into the
@@ -244,6 +241,11 @@ signals:
 
 public slots:
   void reset(bool blankNPC = false);
+  static QVector<SpriteData*> randomizeAll(QVector<MapDBEntrySprite*> mapSprites);
+  void randomize(QVector<TmpSpritePos*>* tmpPos);
+
+  void setTo(MapDBEntrySprite* spriteData);
+  static QVector<SpriteData*> setToAll(QVector<MapDBEntrySprite*> spriteSigns);
 
 public:
   /**

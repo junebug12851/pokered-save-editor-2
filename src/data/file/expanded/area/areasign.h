@@ -36,7 +36,6 @@ public:
 
   void load(SaveFile* saveFile = nullptr);
   void save(SaveFile* saveFile);
-  void randomize(MapDBEntry* mapData);
 
   Q_INVOKABLE int signCount();
   Q_INVOKABLE int signMax();
@@ -50,6 +49,8 @@ signals:
 
 public slots:
   void reset();
+  void randomize(MapDBEntry* mapData);
+  void setTo(MapDBEntry* mapData);
 
 public:
   QVector<SignData*> signs;

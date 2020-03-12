@@ -125,3 +125,20 @@ void AreaSign::randomize(MapDBEntry* mapData)
   signs = SignData::randomizeAll(signData);
   signsChanged();
 }
+
+void AreaSign::setTo(MapDBEntry* mapData)
+{
+  // Clear all signs
+  reset();
+
+  // Stop here if map is null
+  if(mapData == nullptr)
+    return;
+
+  // Grab Map Signs
+  auto signData = mapData->signs;
+
+  // Set them all if present
+  signs = SignData::setToAll(signData);
+  signsChanged();
+}

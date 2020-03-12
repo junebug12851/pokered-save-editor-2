@@ -161,38 +161,60 @@ void AreaTileset::randomize()
 
 void AreaTileset::loadFromData(MapDBEntry* map, bool randomType)
 {
-  auto tileset = map->toTileset;
+  reset();
+
+  auto tileset = (map == nullptr)
+      ? map->toTileset
+      : nullptr;
 
   // If random, have it clear everything and randomize type
   // Otherwise load usual type
-  if(randomType)
-    randomize();
+  if(randomType) {
+    type = Random::rangeInclusive(0, 2);
+    typeChanged();
+  }
   else {
-    type = (var8)tileset->typeAsEnum();
+    type = (tileset == nullptr)
+        ? 0
+        : (var8)tileset->typeAsEnum();
     typeChanged();
   }
 
   // Load other usual data based on map
-  current = tileset->ind;
+  current = (tileset == nullptr)
+      ? 0
+      : tileset->ind;
   currentChanged();
 
-  grassTile = tileset->grass;
+  grassTile = (tileset == nullptr)
+      ? 0
+      : tileset->grass;
   grassTileChanged();
 
-  bank = tileset->bank;
+  bank = (tileset == nullptr)
+      ? 0
+      : tileset->bank;
   bankChanged();
 
-  blockPtr = tileset->blockPtr;
+  blockPtr = (tileset == nullptr)
+      ? 0
+      : tileset->blockPtr;
   blockPtrChanged();
 
-  gfxPtr = tileset->gfxPtr;
+  gfxPtr = (tileset == nullptr)
+      ? 0
+      : tileset->gfxPtr;
   gfxPtrChanged();
 
-  collPtr = tileset->collPtr;
+  collPtr = (tileset == nullptr)
+      ? 0
+      : tileset->collPtr;
   collPtrChanged();
 
   for(var8 i = 0; i < talkCount; i++) {
-    talkingOverTiles[i] = tileset->talk[i];
+    talkingOverTiles[i] = (tileset == nullptr)
+        ? 0
+        : tileset->talk[i];
   }
   talkingOverTilesChanged();
 }
