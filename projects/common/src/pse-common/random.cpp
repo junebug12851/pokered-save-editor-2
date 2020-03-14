@@ -18,7 +18,7 @@
 
 #include "./random.h"
 
-var32 Random::rangeInclusive(var32 start, var32 end)
+int Random::rangeInclusive(int start, int end)
 {
   if(start == end || start > end)
     return start;
@@ -26,7 +26,7 @@ var32 Random::rangeInclusive(var32 start, var32 end)
   return rnd->bounded(start, end+1);
 }
 
-var32 Random::rangeExclusive(var32 start, var32 end)
+int Random::rangeExclusive(int start, int end)
 {
   if(start == end || start > end)
     return start;
@@ -34,12 +34,12 @@ var32 Random::rangeExclusive(var32 start, var32 end)
   return rnd->bounded(start, end);
 }
 
-bool Random::chanceFailure(var8 percent)
+bool Random::chanceFailure(int percent)
 {
   return rangeInclusive(0, 100) >= percent;
 }
 
-bool Random::chanceSuccess(var8 percent)
+bool Random::chanceSuccess(int percent)
 {
   return rangeInclusive(0, 100) <= percent;
 }

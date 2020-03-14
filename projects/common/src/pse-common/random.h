@@ -17,7 +17,6 @@
 #define RANDOM_H
 
 #include "./common_autoport.h"
-#include "./types.h"
 
 class QRandomGenerator;
 
@@ -25,16 +24,16 @@ class COMMON_AUTOPORT Random
 {
 public:
   // [from,to]
-  static var32 rangeInclusive(var32 start, var32 end);
+  static int rangeInclusive(int start, int end);
 
   // [from,to)
-  static var32 rangeExclusive(var32 start, var32 end);
+  static int rangeExclusive(int start, int end);
 
   // Chance of failure, 0 - 100
-  static bool chanceFailure(var8 percent);
+  static bool chanceFailure(int percent);
 
   // Chance of success, 0 - 100
-  static bool chanceSuccess(var8 percent);
+  static bool chanceSuccess(int percent);
 
   // Chance of success, 50%
   static bool flipCoin();
