@@ -76,3 +76,6 @@ Thumbs.db
 *.gb
 *.sym
 no-git/
+
+# Build Artifacts
+/build-*/

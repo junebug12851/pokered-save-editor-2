@@ -102,6 +102,7 @@ HEADERS += \
   src/bridge/settings.h \
   src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
+  src/mvc/individualmap.h \
   src/mvc/itemmarket/itemmarketentry.h \
   src/mvc/itemmarket/itemmarketentrygcpokemon.h \
   src/mvc/itemmarket/itemmarketentrymessage.h \
@@ -218,6 +219,7 @@ SOURCES += \
   src/data/db/trades.cpp \
   src/data/db/trainers.cpp \
   src/data/db/types.cpp \
+  src/mvc/individualmap.cpp \
   src/mvc/itemmarket/itemmarketentry.cpp \
   src/mvc/itemmarket/itemmarketentrygcpokemon.cpp \
   src/mvc/itemmarket/itemmarketentrymessage.cpp \
