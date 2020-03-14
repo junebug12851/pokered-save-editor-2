@@ -22,6 +22,7 @@
 #include <QVector>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct MoveDBEntry;
 struct PokemonDBEntry;
@@ -31,7 +32,7 @@ struct PokemonDBEntry;
 
 // All types in the game
 
-struct TypeDBEntry {
+struct DB_AUTOPORT TypeDBEntry {
   TypeDBEntry();
   TypeDBEntry(QJsonValue& data);
 
@@ -43,7 +44,7 @@ struct TypeDBEntry {
   QVector<PokemonDBEntry*> toPokemon;
 };
 
-class TypesDB
+class DB_AUTOPORT TypesDB
 {
 public:
   static void load();

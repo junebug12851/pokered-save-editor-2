@@ -18,11 +18,12 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class MapDBEntry;
 
-struct PlayerDir : public QObject
+struct SAVEFILE_AUTOPORT PlayerDir : public QObject
 {
   Q_OBJECT
   Q_ENUMS(PlayerDir_)
@@ -37,7 +38,7 @@ public:
   };
 };
 
-class AreaPlayer : public QObject
+class SAVEFILE_AUTOPORT AreaPlayer : public QObject
 {
   Q_OBJECT
 

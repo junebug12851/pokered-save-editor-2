@@ -1,7 +1,7 @@
 QT -= gui
 
 TEMPLATE = lib
-CONFIG += staticlib
+DEFINES += COMMON_LIBRARY
 
 CONFIG += c++1z
 
@@ -16,12 +16,13 @@ SOURCES += \
     src/pse-common/utility.cpp
 
 HEADERS += \
+    src/pse-common/common_autoport.h \
     src/pse-common/random.h \
     src/pse-common/types.h \
     src/pse-common/utility.h
 
 # Default rules for deployment.
 unix {
-    target.path = $$[QT_INSTALL_PLUGINS]/generic
+    target.path = /usr/lib
 }
 !isEmpty(target.path): INSTALLS += target

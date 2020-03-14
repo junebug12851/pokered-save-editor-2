@@ -22,6 +22,8 @@
 #include <QJsonValue>
 #include <pse-common/types.h>
 
+#include "./db_autoport.h"
+
 struct MapDBEntry;
 
 // With amazing help of Quicktype!!!
@@ -30,7 +32,7 @@ struct MapDBEntry;
 // In-Game events, there's like a million of them, not kidding lol. Every little
 // thing you do changes and moves around events
 
-struct EventDBEntry {
+struct DB_AUTOPORT EventDBEntry {
   EventDBEntry();
   EventDBEntry(QJsonValue& data);
   void deepLink();
@@ -44,7 +46,7 @@ struct EventDBEntry {
   QVector<MapDBEntry*> toMaps; // To Associated Maps
 };
 
-class EventsDB
+class DB_AUTOPORT EventsDB
 {
 public:
   static void load();

@@ -24,6 +24,7 @@
 #include "optional"
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 // Prevents includes from including each other and causing errors
 // We include them in the cpp file
@@ -38,7 +39,7 @@ struct GameCornerDBEntry;
 
 // All the in-game items and glitch items
 
-struct ItemDBEntry {
+struct DB_AUTOPORT ItemDBEntry {
   ItemDBEntry();
   ItemDBEntry(QJsonValue& data);
   void deepLink();
@@ -71,7 +72,7 @@ struct ItemDBEntry {
   QVector<PokemonDBEntry*> toTeachPokemon;
 };
 
-class ItemsDB
+class DB_AUTOPORT ItemsDB
 {
 public:
   static void load();

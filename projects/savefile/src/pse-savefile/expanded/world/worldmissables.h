@@ -18,6 +18,8 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
 // There's actually significantly more missable bits, 256 in total forming
@@ -26,7 +28,7 @@ class SaveFile;
 constexpr var8 missableCount = 228;
 constexpr var8 missableByteCount = 29; // 4 bits unused of 232
 
-class WorldMissables : public QObject
+class SAVEFILE_AUTOPORT WorldMissables : public QObject
 {
   Q_OBJECT
 

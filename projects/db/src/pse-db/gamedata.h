@@ -19,9 +19,11 @@
 #include <QHash>
 #include <QJsonDocument>
 
+#include "./db_autoport.h"
+
 // This helps with getting game data from the JSON files
 
-class GameData
+class DB_AUTOPORT GameData
 {
 public:
   // Retrieves JSON document from disk

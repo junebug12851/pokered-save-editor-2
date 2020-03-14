@@ -17,6 +17,7 @@
 #define PLAYER_H
 
 #include <QObject>
+#include "../../savefile_autoport.h"
 
 class PlayerBasics;
 class PlayerPokedex;
@@ -25,7 +26,7 @@ class ItemStorageBox;
 
 class SaveFile;
 
-class Player : public QObject
+class SAVEFILE_AUTOPORT Player : public QObject
 {
   Q_OBJECT
 

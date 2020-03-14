@@ -22,6 +22,7 @@
 #include <QHash>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct MapDBEntrySprite;
 
@@ -30,7 +31,7 @@ struct MapDBEntrySprite;
 
 // All sprites in the game, glitch and not
 
-struct SpriteDBEntry {
+struct DB_AUTOPORT SpriteDBEntry {
   SpriteDBEntry();
   SpriteDBEntry(QJsonValue& data);
 
@@ -40,7 +41,7 @@ struct SpriteDBEntry {
   QVector<MapDBEntrySprite*> toMaps;
 };
 
-class SpritesDB
+class DB_AUTOPORT SpritesDB
 {
 public:
   static void load();

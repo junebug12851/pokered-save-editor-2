@@ -22,6 +22,7 @@
 #include <QHash>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct MapDBEntry;
 
@@ -35,7 +36,7 @@ enum class TilesetType
 // How many talk tiles are there in each entry
 constexpr var8 talkCount = 3;
 
-struct TilesetDBEntry {
+struct DB_AUTOPORT TilesetDBEntry {
   TilesetDBEntry();
   TilesetDBEntry(QJsonValue& data);
 
@@ -58,7 +59,7 @@ struct TilesetDBEntry {
   QVector<MapDBEntry*> toMaps;
 };
 
-class TilesetDB
+class DB_AUTOPORT TilesetDB
 {
 public:
   static void load();

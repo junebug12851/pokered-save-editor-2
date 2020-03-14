@@ -19,11 +19,13 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 class MapDBEntry;
 class MapDBEntryWarpOut;
 
-class WarpData : public QObject
+class SAVEFILE_AUTOPORT WarpData : public QObject
 {
   Q_OBJECT
 

@@ -19,11 +19,13 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
 constexpr var8 maxPokedex = 151;
 
-class PlayerPokedex : public QObject
+class SAVEFILE_AUTOPORT PlayerPokedex : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int ownedCount READ ownedCount NOTIFY dexChanged STORED false)

@@ -17,6 +17,7 @@
 #define SAVEFILEEXPANDED_H
 
 #include <QObject>
+#include "../savefile_autoport.h"
 
 class SaveFile;
 class Player;
@@ -27,7 +28,7 @@ class HallOfFame;
 class Rival;
 class Storage;
 
-class SaveFileExpanded : public QObject
+class SAVEFILE_AUTOPORT SaveFileExpanded : public QObject
 {
   Q_OBJECT
 

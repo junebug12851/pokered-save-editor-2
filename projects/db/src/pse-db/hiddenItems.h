@@ -20,12 +20,13 @@
 #include <QJsonValue>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct MapDBEntry;
 
 // A list of all the hidden items around the world
 
-struct HiddenItemDBEntry {
+struct DB_AUTOPORT HiddenItemDBEntry {
   HiddenItemDBEntry();
   HiddenItemDBEntry(QJsonValue& data);
   void deepLink();
@@ -37,7 +38,7 @@ struct HiddenItemDBEntry {
   MapDBEntry* toMap = nullptr;
 };
 
-class HiddenItemsDB
+class DB_AUTOPORT HiddenItemsDB
 {
 public:
   static void load();

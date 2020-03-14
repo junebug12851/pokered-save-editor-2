@@ -21,6 +21,7 @@
 #include <QHash>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct MapDBEntry;
 struct MapDBEntrySprite;
@@ -37,7 +38,7 @@ struct MapDBEntrySprite;
 // guy blocking the path in Pewter City is a missable that's hiden once you beat
 // Brock.
 
-struct MissableDBEntry {
+struct DB_AUTOPORT MissableDBEntry {
   MissableDBEntry();
   MissableDBEntry(QJsonValue& data);
   void deepLink();
@@ -64,7 +65,7 @@ struct MissableDBEntry {
   MapDBEntrySprite* toMapSprite = nullptr;
 };
 
-class MissablesDB
+class DB_AUTOPORT MissablesDB
 {
 public:
   static void load();

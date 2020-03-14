@@ -18,12 +18,13 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 struct MapDBEntry;
 struct MapDBEntryConnect;
 
-class MapConnData : public QObject
+class SAVEFILE_AUTOPORT MapConnData : public QObject
 {
   Q_OBJECT
 

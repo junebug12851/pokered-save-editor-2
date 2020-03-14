@@ -16,7 +16,9 @@
 #ifndef DB_H
 #define DB_H
 
-class DB
+#include "./db_autoport.h"
+
+class DB_AUTOPORT DB
 {
 public:
   static void initRes();

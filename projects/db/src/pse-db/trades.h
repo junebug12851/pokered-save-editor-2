@@ -20,6 +20,7 @@
 #include <QString>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct PokemonDBEntry;
 
@@ -29,7 +30,7 @@ struct PokemonDBEntry;
 // All in-game trades including the unused one
 // All this was extracted from in-game data, not fan sites
 
-struct TradeDBEntry {
+struct DB_AUTOPORT TradeDBEntry {
   TradeDBEntry();
   TradeDBEntry(QJsonValue& data);
   void deepLink();
@@ -44,7 +45,7 @@ struct TradeDBEntry {
   PokemonDBEntry* toGet = nullptr;
 };
 
-class TradesDB
+class DB_AUTOPORT TradesDB
 {
 public:
   static void load();

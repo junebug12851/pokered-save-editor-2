@@ -20,6 +20,7 @@
 #include <QString>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 // Something I made, random American names, I made it for the auto-nicknaming
 // feature given this program is for the USA English Pokemon Red.
@@ -30,7 +31,7 @@
 // https://www.fantasynamegenerators.com/pokemon-names.php
 // Generated text is released as public domain
 
-class NamesDB : public QObject
+class DB_AUTOPORT NamesDB : public QObject
 {
   Q_OBJECT
 

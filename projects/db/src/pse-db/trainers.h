@@ -22,6 +22,7 @@
 #include <QHash>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct MapDBEntrySpriteTrainer;
 
@@ -30,7 +31,7 @@ struct MapDBEntrySpriteTrainer;
 
 // All trainer classes in the game, this includes unused or glitch ones
 
-struct TrainerDBEntry {
+struct DB_AUTOPORT TrainerDBEntry {
   TrainerDBEntry();
   TrainerDBEntry(QJsonValue& data);
 
@@ -42,7 +43,7 @@ struct TrainerDBEntry {
   QVector<MapDBEntrySpriteTrainer*> tpMapSpriteTrainers;
 };
 
-class TrainersDB
+class DB_AUTOPORT TrainersDB
 {
 public:
   static void load();

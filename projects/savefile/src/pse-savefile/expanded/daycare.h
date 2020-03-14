@@ -19,11 +19,13 @@
 #include <QObject>
 
 #include <pse-common/types.h>
+#include "../savefile_autoport.h"
+
 class SaveFile;
 class PokemonBox;
 class PlayerBasics;
 
-class Daycare : public QObject
+class SAVEFILE_AUTOPORT Daycare : public QObject
 {
   Q_OBJECT
 

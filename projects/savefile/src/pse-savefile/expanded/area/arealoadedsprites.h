@@ -20,13 +20,15 @@
 #include <QVector>
 
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 struct MapDBEntry;
 struct SpriteSetDBEntry;
 
 constexpr var8 maxLoadedSprites = 11;
 
-class AreaLoadedSprites : public QObject
+class SAVEFILE_AUTOPORT AreaLoadedSprites : public QObject
 {
   Q_OBJECT
 

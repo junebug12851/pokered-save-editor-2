@@ -20,12 +20,14 @@
 #include <QVector>
 #include <QQmlListProperty>
 #include <pse-common/types.h>
+#include "../savefile_autoport.h"
+
 class SaveFile;
 class HoFRecord;
 
 constexpr var8 recordsMax = 50;
 
-class HallOfFame : public QObject
+class SAVEFILE_AUTOPORT HallOfFame : public QObject
 {
   Q_OBJECT
 

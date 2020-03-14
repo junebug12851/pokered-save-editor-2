@@ -19,12 +19,14 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 class HoFPokemon;
 
 constexpr var8 maxPokemon = 6;
 
-class HoFRecord : public QObject
+class SAVEFILE_AUTOPORT HoFRecord : public QObject
 {
   Q_OBJECT
 

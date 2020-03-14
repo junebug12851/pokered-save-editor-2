@@ -18,6 +18,8 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
 // Total number of known events
@@ -25,7 +27,7 @@ class SaveFile;
 // have to be gotten all over the place
 constexpr var16 eventCount = 508;
 
-class WorldEvents : public QObject
+class SAVEFILE_AUTOPORT WorldEvents : public QObject
 {
   Q_OBJECT
 

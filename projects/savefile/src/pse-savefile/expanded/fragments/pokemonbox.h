@@ -20,6 +20,8 @@
 #include <QVector>
 #include <QString>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 class SaveFileIterator;
 struct PokemonDBEntry;
@@ -27,7 +29,7 @@ class PokemonDB;
 struct MoveDBEntry;
 class PlayerBasics;
 
-struct PokemonStats : public QObject
+struct SAVEFILE_AUTOPORT PokemonStats : public QObject
 {
   Q_OBJECT
   Q_ENUMS(PokemonStats_)
@@ -45,7 +47,7 @@ public:
 
 // Natures were not in gen 1 but Pokemon has released a formula for determining
 // gen 1 natures mainly for bank on the virtual console
-struct PokemonNatures : public QObject
+struct SAVEFILE_AUTOPORT PokemonNatures : public QObject
 {
   Q_OBJECT
   Q_ENUMS(PokemonNatures_)
@@ -81,7 +83,7 @@ public:
   };
 };
 
-struct PokemonRandom : public QObject
+struct SAVEFILE_AUTOPORT PokemonRandom : public QObject
 {
   Q_OBJECT
   Q_ENUMS(PokemonRandom_)
@@ -98,7 +100,7 @@ public:
 
 class PokemonBox;
 
-class PokemonMove : public QObject
+class SAVEFILE_AUTOPORT PokemonMove : public QObject
 {
   Q_OBJECT
 
@@ -159,7 +161,7 @@ public:
 constexpr var8 maxMoves = 4;
 constexpr var8 maxDV = 4;
 
-class PokemonBox : public QObject
+class SAVEFILE_AUTOPORT PokemonBox : public QObject
 {
   Q_OBJECT
 
@@ -403,7 +405,7 @@ public slots:
   void correctMoves();
 
   // It's critical that party mon are not added into box mon and vice-versa
-  // This directly says if the class is actually has the extra party mon data
+  // This directly says if the class SAVEFILE_AUTOPORT is actually has the extra party mon data
   // and methods or if it's a pure box mon
   // Box mon have to be in box data and party mon have to be in party data
   virtual bool isBoxMon();

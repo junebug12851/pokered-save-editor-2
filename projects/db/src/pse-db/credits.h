@@ -25,7 +25,9 @@
 
 #include <optional>
 
-struct CreditDBEntry {
+#include "./db_autoport.h"
+
+struct DB_AUTOPORT CreditDBEntry {
   CreditDBEntry();
   CreditDBEntry(QJsonValue& data);
   CreditDBEntry(QString section);
@@ -40,7 +42,7 @@ struct CreditDBEntry {
   QString mandated = "";
 };
 
-class CreditsDB
+class DB_AUTOPORT CreditsDB
 {
 public:
   static void load();

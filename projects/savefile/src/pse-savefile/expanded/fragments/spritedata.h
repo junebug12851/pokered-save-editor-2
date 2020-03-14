@@ -20,13 +20,15 @@
 #include <QVector>
 #include "optional"
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 struct SpriteDBEntry;
 struct MapDBEntrySprite;
 struct MapDBEntry;
 struct TmpSpritePos;
 
-struct SpriteMovementStatus : public QObject
+struct SAVEFILE_AUTOPORT SpriteMovementStatus : public QObject
 {
   Q_OBJECT
   Q_ENUMS(SpriteMovementStatus_)
@@ -41,7 +43,7 @@ public:
   };
 };
 
-struct SpriteFacing : public QObject
+struct SAVEFILE_AUTOPORT SpriteFacing : public QObject
 {
   Q_OBJECT
   Q_ENUMS(SpriteFacing_)
@@ -60,7 +62,7 @@ public:
   };
 };
 
-struct SpriteMobility : public QObject
+struct SAVEFILE_AUTOPORT SpriteMobility : public QObject
 {
   Q_OBJECT
   Q_ENUMS(SpriteMobility_)
@@ -76,7 +78,7 @@ public:
   };
 };
 
-struct SpriteMovement : public QObject
+struct SAVEFILE_AUTOPORT SpriteMovement : public QObject
 {
   Q_OBJECT
   Q_ENUMS(SpriteMovement_)
@@ -99,7 +101,7 @@ public:
   };
 };
 
-struct SpriteGrass : public QObject
+struct SAVEFILE_AUTOPORT SpriteGrass : public QObject
 {
   Q_OBJECT
   Q_ENUMS(SpriteGrass_)
@@ -114,7 +116,7 @@ public:
   };
 };
 
-class SpriteData : public QObject
+class SAVEFILE_AUTOPORT SpriteData : public QObject
 {
   Q_OBJECT
 

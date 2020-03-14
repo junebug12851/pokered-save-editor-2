@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class SaveFileIterator;
@@ -26,7 +27,7 @@ class MapDBEntry;
 
 constexpr var8 wildMonsCount = 10;
 
-class AreaPokemonWild : public QObject {
+class SAVEFILE_AUTOPORT AreaPokemonWild : public QObject {
 
   Q_OBJECT
 
@@ -76,7 +77,7 @@ public:
      * Pokemon 8: 4.3% chance
      * Pokemon 9: 1.2% chance
      */
-class AreaPokemon : public QObject
+class SAVEFILE_AUTOPORT AreaPokemon : public QObject
 {
   Q_OBJECT
 

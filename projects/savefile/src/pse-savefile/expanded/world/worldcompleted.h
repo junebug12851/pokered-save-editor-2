@@ -18,9 +18,11 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
-class WorldCompleted : public QObject
+class SAVEFILE_AUTOPORT WorldCompleted : public QObject
 {
   Q_OBJECT
 

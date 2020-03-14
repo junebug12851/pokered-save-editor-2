@@ -18,13 +18,14 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 struct MapDBEntry;
 
 constexpr var8 maxTalkingOverTiles = 3;
 
-class AreaTileset : public QObject
+class SAVEFILE_AUTOPORT AreaTileset : public QObject
 {
   Q_OBJECT
 

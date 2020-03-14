@@ -19,9 +19,11 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
-class Options : public QObject {
+class SAVEFILE_AUTOPORT Options : public QObject {
   Q_OBJECT
 
   Q_PROPERTY(int textSlowness MEMBER textSlowness NOTIFY textSlownessChanged)
@@ -39,7 +41,7 @@ public:
   bool battleAnimOff;
 };
 
-class LetterDelay : public QObject {
+class SAVEFILE_AUTOPORT LetterDelay : public QObject {
   Q_OBJECT
 
   Q_PROPERTY(bool normalDelay MEMBER normalDelay NOTIFY normalDelayChanged)
@@ -54,7 +56,7 @@ public:
   bool dontDelay;
 };
 
-class WorldGeneral : public QObject
+class SAVEFILE_AUTOPORT WorldGeneral : public QObject
 {
   Q_OBJECT
 

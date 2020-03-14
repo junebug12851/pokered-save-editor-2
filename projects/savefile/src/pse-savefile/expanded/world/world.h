@@ -17,6 +17,7 @@
 #define WORLD_H
 
 #include <QObject>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 
@@ -31,7 +32,7 @@ class WorldTowns;
 class WorldTrades;
 class WorldLocal;
 
-class World : public QObject
+class SAVEFILE_AUTOPORT World : public QObject
 {
   Q_OBJECT
 

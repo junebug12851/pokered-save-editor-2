@@ -20,12 +20,13 @@
 #include <QJsonValue>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct MapDBEntry;
 
 // A list of all the hidden coins in Casino
 
-struct HiddenCoinDBEntry {
+struct DB_AUTOPORT HiddenCoinDBEntry {
   HiddenCoinDBEntry();
   HiddenCoinDBEntry(QJsonValue& data);
   void deepLink();
@@ -37,7 +38,7 @@ struct HiddenCoinDBEntry {
   MapDBEntry* toMap = nullptr;
 };
 
-class HiddenCoinsDB
+class DB_AUTOPORT HiddenCoinsDB
 {
 public:
   static void load();

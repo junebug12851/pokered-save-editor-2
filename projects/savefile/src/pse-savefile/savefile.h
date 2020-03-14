@@ -5,13 +5,15 @@
 #include <QtCore/qglobal.h>
 
 #include <pse-common/types.h>
+#include "savefile_autoport.h"
+
 class SaveFileExpanded;
 class SaveFileIterator;
 class SaveFileToolset;
 
 constexpr var16 SAV_DATA_SIZE{0x8000};
 
-class SaveFile : public QObject
+class SAVEFILE_AUTOPORT SaveFile : public QObject
 {
   Q_OBJECT
 

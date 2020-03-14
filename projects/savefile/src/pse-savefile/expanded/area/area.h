@@ -17,6 +17,7 @@
 #define AREA_H
 
 #include <QObject>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class Player;
@@ -34,7 +35,7 @@ class AreaWarps;
 
 class MapDBEntry;
 
-class Area : public QObject
+class SAVEFILE_AUTOPORT Area : public QObject
 {
   Q_OBJECT
 

@@ -23,6 +23,7 @@
 #include <optional>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct SpriteDBEntry;
 struct MapDBEntry;
@@ -33,7 +34,7 @@ struct MapDBEntry;
 // For very large maps you can divide the map into two parts and switch between
 // two sprite sets on either side of the map.
 
-struct SpriteSetDBEntry {
+struct DB_AUTOPORT SpriteSetDBEntry {
 
   SpriteSetDBEntry();
   SpriteSetDBEntry(QJsonValue& data);
@@ -79,7 +80,7 @@ struct SpriteSetDBEntry {
   QVector<MapDBEntry*> toMaps;
 };
 
-class SpriteSetDB
+class DB_AUTOPORT SpriteSetDB
 {
 public:
   static void load();

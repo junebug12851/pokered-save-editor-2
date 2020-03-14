@@ -21,6 +21,7 @@
 #include <QVector>
 
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class MapConnData;
@@ -30,7 +31,7 @@ struct MapDBEntry;
 // games use to store the background tilemap for the world and maps.
 constexpr var16 VramBGPtr = 0x9800;
 
-class AreaMap : public QObject
+class SAVEFILE_AUTOPORT AreaMap : public QObject
 {
   Q_OBJECT
 

@@ -19,7 +19,9 @@
 #include <QObject>
 #include <QString>
 
-class Utility : public QObject
+#include "./common_autoport.h"
+
+class COMMON_AUTOPORT Utility : public QObject
 {
   Q_OBJECT
 

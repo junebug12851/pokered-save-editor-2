@@ -1,7 +1,7 @@
 QT += quick quickcontrols2 core widgets quickwidgets svg
 
 TEMPLATE = lib
-CONFIG += staticlib
+DEFINES += DB_LIBRARY
 
 CONFIG += c++1z
 
@@ -48,6 +48,7 @@ SOURCES += \
 HEADERS += \
     src/pse-db/credits.h \
     src/pse-db/db.h \
+    src/pse-db/db_autoport.h \
     src/pse-db/eventpokemon.h \
     src/pse-db/events.h \
     src/pse-db/examplesplayer.h \
@@ -83,7 +84,7 @@ RESOURCES += db.qrc
 
 # Default rules for deployment.
 unix {
-    target.path = $$[QT_INSTALL_PLUGINS]/generic
+    target.path = /usr/lib
 }
 !isEmpty(target.path): INSTALLS += target
 

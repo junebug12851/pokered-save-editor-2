@@ -19,11 +19,12 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class Item;
 
-class ItemStorageBox : public QObject
+class SAVEFILE_AUTOPORT ItemStorageBox : public QObject
 {
   Q_OBJECT
 
@@ -106,7 +107,7 @@ public slots:
 public:
   QVector<Item*> items;
 
-  // These are set from the creating class indicating details of the box
+  // These are set from the creating class SAVEFILE_AUTOPORT indicating details of the box
   // It's crucial they are read-only
   int maxSize;
   bool isBag;

@@ -18,9 +18,11 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
-struct ContrastIds : public QObject
+struct SAVEFILE_AUTOPORT ContrastIds : public QObject
 {
   Q_OBJECT
   Q_ENUMS(ContrastIds_)
@@ -42,9 +44,9 @@ public:
   };
 };
 
-class MapDBEntry;
+class SAVEFILE_AUTOPORT MapDBEntry;
 
-class AreaGeneral : public QObject
+class SAVEFILE_AUTOPORT AreaGeneral : public QObject
 {
   Q_OBJECT
 

@@ -23,6 +23,7 @@
 
 #include <optional>
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 // The Pokedex data starts at pokedex #0 for Bulbasaur
 // It ends at #150 for Mew, it's size is 151 dex mons
@@ -57,7 +58,7 @@ struct MapDBEntryWildMon;
 struct TradeDBEntry;
 struct GameCornerDBEntry;
 
-struct PokemonDBEntryEvolution
+struct DB_AUTOPORT PokemonDBEntryEvolution
 {
   PokemonDBEntryEvolution();
   PokemonDBEntryEvolution(QJsonValue& data, PokemonDBEntry* parent);
@@ -76,7 +77,7 @@ struct PokemonDBEntryEvolution
   PokemonDBEntry* parent = nullptr;
 };
 
-struct PokemonDBEntryMove
+struct DB_AUTOPORT PokemonDBEntryMove
 {
   PokemonDBEntryMove();
   PokemonDBEntryMove(QJsonValue& data, PokemonDBEntry* parent);
@@ -89,7 +90,7 @@ struct PokemonDBEntryMove
   PokemonDBEntry* parent = nullptr;
 };
 
-struct PokemonDBEntry {
+struct DB_AUTOPORT PokemonDBEntry {
   PokemonDBEntry();
   PokemonDBEntry(QJsonValue& data);
   void deepLink();
@@ -130,7 +131,7 @@ struct PokemonDBEntry {
   QVector<GameCornerDBEntry*> toGameCorner;
 };
 
-class PokemonDB
+class DB_AUTOPORT PokemonDB
 {
 public:
   static void load();

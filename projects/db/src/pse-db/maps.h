@@ -23,6 +23,7 @@
 #include <pse-common/types.h>
 
 #include "optional"
+#include "./db_autoport.h"
 
 class MapSearch;
 
@@ -74,7 +75,7 @@ enum class SpriteType : var8
   // The sprite is a trainer which has a team that can be battled and beaten
   TRAINER,
 
-  // There's no child class for some reason, your asking the parent who doesn't
+  // There's no child class DB_AUTOPORT for some reason, your asking the parent who doesn't
   // know
   ERROR
 };
@@ -102,7 +103,7 @@ enum class SpriteType : var8
  * Bulbapedia User Tiddlywinks
  * https://bulbapedia.bulbagarden.net/wiki/User:Tiddlywinks/Map_header_data_structure_in_Generation_I
 */
-struct MapDBEntryConnect {
+struct DB_AUTOPORT MapDBEntryConnect {
 
   MapDBEntryConnect();
   MapDBEntryConnect(ConnectDir dir, MapDBEntry* fromMap, QJsonValue& data);
@@ -164,7 +165,7 @@ struct MapDBEntryConnect {
 // data is all over the place and in so many different forms and variables
 // it's actually a very messy system because it feels like this is one area
 // the developers were most trying to figure out through development.
-struct MapDBEntrySprite
+struct DB_AUTOPORT MapDBEntrySprite
 {
   MapDBEntrySprite();
   MapDBEntrySprite(QJsonValue& data, MapDBEntry* parent);
@@ -209,14 +210,14 @@ struct MapDBEntrySprite
 };
 
 // A regular NPC that says a few lines and may have a script that's run
-struct MapDBEntrySpriteNPC : public MapDBEntrySprite
+struct DB_AUTOPORT MapDBEntrySpriteNPC : public MapDBEntrySprite
 {
   MapDBEntrySpriteNPC(QJsonValue& data, MapDBEntry* parent);
   virtual SpriteType type();
 };
 
 // An item that's obtained
-struct MapDBEntrySpriteItem : public MapDBEntrySprite
+struct DB_AUTOPORT MapDBEntrySpriteItem : public MapDBEntrySprite
 {
   MapDBEntrySpriteItem(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
@@ -229,7 +230,7 @@ struct MapDBEntrySpriteItem : public MapDBEntrySprite
 };
 
 // A Pokemon that can be battled
-struct MapDBEntrySpritePokemon : public MapDBEntrySprite
+struct DB_AUTOPORT MapDBEntrySpritePokemon : public MapDBEntrySprite
 {
   MapDBEntrySpritePokemon(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
@@ -243,7 +244,7 @@ struct MapDBEntrySpritePokemon : public MapDBEntrySprite
 };
 
 // A trainer that can be battled
-struct MapDBEntrySpriteTrainer : public MapDBEntrySprite
+struct DB_AUTOPORT MapDBEntrySpriteTrainer : public MapDBEntrySprite
 {
   MapDBEntrySpriteTrainer(QJsonValue& data, MapDBEntry* parent);
   virtual void deepLink();
@@ -259,7 +260,7 @@ struct MapDBEntrySpriteTrainer : public MapDBEntrySprite
 
 // List of Warps on Map that warp out to a different map
 // They can only warp to a "warp-in" point
-struct MapDBEntryWarpOut
+struct DB_AUTOPORT MapDBEntryWarpOut
 {
   MapDBEntryWarpOut();
   MapDBEntryWarpOut(QJsonValue& data, MapDBEntry* parent);
@@ -286,7 +287,7 @@ struct MapDBEntryWarpOut
   MapDBEntryWarpIn* toWarp = nullptr;
 };
 
-struct MapDBEntryWarpIn
+struct DB_AUTOPORT MapDBEntryWarpIn
 {
   MapDBEntryWarpIn();
   MapDBEntryWarpIn(QJsonValue& data, MapDBEntry* parent);
@@ -299,7 +300,7 @@ struct MapDBEntryWarpIn
   MapDBEntry* parent = nullptr;
 };
 
-struct MapDBEntrySign
+struct DB_AUTOPORT MapDBEntrySign
 {
   MapDBEntrySign();
   MapDBEntrySign(QJsonValue& data, MapDBEntry* parent);
@@ -315,7 +316,7 @@ struct MapDBEntrySign
 };
 
 // Wild Pokemon Entry
-struct MapDBEntryWildMon
+struct DB_AUTOPORT MapDBEntryWildMon
 {
   MapDBEntryWildMon();
   MapDBEntryWildMon(QJsonValue& value, MapDBEntry* parent);
@@ -328,7 +329,7 @@ struct MapDBEntryWildMon
   MapDBEntry* parent = nullptr;
 };
 
-struct MapDBEntry {
+struct DB_AUTOPORT MapDBEntry {
 
   // Optional bool values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
@@ -406,7 +407,7 @@ struct MapDBEntry {
   ScriptDBEntry* toScript = nullptr;
 };
 
-class MapsDB
+class DB_AUTOPORT MapsDB
 {
 public:
   static void load();

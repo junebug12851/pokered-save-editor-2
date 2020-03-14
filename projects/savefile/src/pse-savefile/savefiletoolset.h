@@ -19,11 +19,12 @@
 #include <pse-common/types.h>
 #include <QVector>
 #include <QString>
+#include "savefile_autoport.h"
 
 class SaveFile;
 
 // Tools to operate on raw save file data
-class SaveFileToolset
+class SAVEFILE_AUTOPORT SaveFileToolset
 {
 public:
   SaveFileToolset(SaveFile* newSaveFile);

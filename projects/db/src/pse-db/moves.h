@@ -24,6 +24,7 @@
 #include <optional>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct TypeDBEntry;
 struct ItemDBEntry;
@@ -35,7 +36,7 @@ struct PokemonDBEntry;
 
 // All the Pokemon moves in the game including special or glitch moves
 
-struct MoveDBEntry {
+struct DB_AUTOPORT MoveDBEntry {
 
   // Optional bool values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
@@ -63,7 +64,7 @@ struct MoveDBEntry {
   QVector<PokemonDBEntry*> toPokemonTmHm;
 };
 
-class MovesDB
+class DB_AUTOPORT MovesDB
 {
 public:
   static void load();

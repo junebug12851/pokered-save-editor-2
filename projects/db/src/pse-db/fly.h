@@ -21,6 +21,8 @@
 #include <QJsonValue>
 #include <pse-common/types.h>
 
+#include "./db_autoport.h"
+
 struct MapDBEntry;
 
 // With amazing help of Quicktype!!!
@@ -28,7 +30,7 @@ struct MapDBEntry;
 
 // Cities you can fly to
 
-struct FlyDBEntry {
+struct DB_AUTOPORT FlyDBEntry {
   FlyDBEntry();
   FlyDBEntry(QJsonValue& data);
   void deepLink();
@@ -39,7 +41,7 @@ struct FlyDBEntry {
   MapDBEntry* toMap = nullptr; // Deep link to associated map data
 };
 
-class FlyDB
+class DB_AUTOPORT FlyDB
 {
 public:
   static void load();

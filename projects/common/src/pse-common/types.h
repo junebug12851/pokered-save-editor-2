@@ -2,6 +2,7 @@
 #define VARS_H
 
 #include <cstdint>
+#include "./common_autoport.h"
 
 /**
  * Variable sizing type

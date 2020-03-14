@@ -27,12 +27,14 @@
 #include <optional>
 #include <pse-common/types.h>
 
+#include "./db_autoport.h"
+
 struct PokemonDBEntry;
 
 // These are Pokemon you get by going to or participating in real-life events
 // that were held around the world
 
-struct EventPokemonDBEntry {
+struct DB_AUTOPORT EventPokemonDBEntry {
   EventPokemonDBEntry();
   EventPokemonDBEntry(QJsonValue& data);
   void deepLink();
@@ -50,7 +52,7 @@ struct EventPokemonDBEntry {
   PokemonDBEntry* toPokemon = nullptr; // Deep link to associated Pokemon
 };
 
-class EventPokemonDB
+class DB_AUTOPORT EventPokemonDB
 {
 public:
   static void load();

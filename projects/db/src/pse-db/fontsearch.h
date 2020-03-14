@@ -19,10 +19,13 @@
 #include <QObject>
 #include <QVector>
 #include <QString>
+
+#include "./db_autoport.h"
+
 class FontsDB;
 class FontDBEntry;
 
-class FontSearch : public QObject
+class DB_AUTOPORT FontSearch : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int fontCount READ getFontCount NOTIFY fontCountChanged STORED false)

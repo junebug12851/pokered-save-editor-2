@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class SignData;
@@ -26,7 +27,7 @@ class MapDBEntry;
 
 constexpr var8 maxSigns = 16;
 
-class AreaSign : public QObject
+class SAVEFILE_AUTOPORT AreaSign : public QObject
 {
   Q_OBJECT
 

@@ -20,7 +20,9 @@
 #include <QString>
 #include <pse-common/types.h>
 
-class ExamplesRival : public QObject
+#include "./db_autoport.h"
+
+class DB_AUTOPORT ExamplesRival : public QObject
 {
   Q_OBJECT
 

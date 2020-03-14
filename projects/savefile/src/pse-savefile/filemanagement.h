@@ -21,6 +21,7 @@
 #include <QSettings>
 
 #include <pse-common/types.h>
+#include "savefile_autoport.h"
 
 class SaveFile;
 
@@ -28,7 +29,7 @@ constexpr var8 MAX_RECENT_FILES{5};
 constexpr const char* KEY_RECENT_FILES = "recentFiles";
 constexpr const char* KEY_LAST_FILE = "lastFile";
 
-class FileManagement : public QObject
+class SAVEFILE_AUTOPORT FileManagement : public QObject
 {
   Q_OBJECT
 

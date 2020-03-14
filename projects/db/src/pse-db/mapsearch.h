@@ -20,9 +20,11 @@
 #include <QVector>
 #include <pse-common/types.h>
 
+#include "./db_autoport.h"
+
 class MapDBEntry;
 
-class MapSearch
+class DB_AUTOPORT MapSearch
 {
 public:
   MapSearch();

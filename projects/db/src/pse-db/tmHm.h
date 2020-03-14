@@ -19,6 +19,7 @@
 #include <QString>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct ItemDBEntry;
 struct MoveDBEntry;
@@ -26,7 +27,7 @@ struct MoveDBEntry;
 // All the TM's and HM's in the game
 // internally, HM's are specially treated TM's that start at TM 51
 
-class TmHmsDB
+class DB_AUTOPORT TmHmsDB
 {
 public:
   static void load();

@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class SpriteData;
@@ -27,7 +28,7 @@ class MapDBEntrySprite;
 
 constexpr var8 maxSprites = 16;
 
-class AreaSprites : public QObject
+class SAVEFILE_AUTOPORT AreaSprites : public QObject
 {
   Q_OBJECT
 

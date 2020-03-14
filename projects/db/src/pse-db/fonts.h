@@ -23,6 +23,8 @@
 #include <QJsonValue>
 #include <pse-common/types.h>
 
+#include "./db_autoport.h"
+
 class FontSearch;
 
 // With amazing help of Quicktype!!!
@@ -31,7 +33,7 @@ class FontSearch;
 // There are 255 font options although most of them are "invalid" and thus
 // use the tilemap.
 
-struct FontDBEntry : public QObject {
+struct DB_AUTOPORT FontDBEntry : public QObject {
   Q_OBJECT
 
   Q_PROPERTY(int ind MEMBER ind NOTIFY indChanged)
@@ -82,7 +84,7 @@ public:
   bool normal = false; // Would this be an in-game accessible font char
 };
 
-class FontsDB : public QObject
+class DB_AUTOPORT FontsDB : public QObject
 {
   Q_OBJECT
 

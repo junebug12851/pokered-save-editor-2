@@ -19,6 +19,8 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 class PokemonBox;
 class PlayerBasics;
@@ -27,7 +29,7 @@ class PlayerBasics;
 constexpr var8 boxMaxPokemon = 20;
 
 // Holds contents of a single Pokemon storage box
-class PokemonStorageBox : public QObject
+class SAVEFILE_AUTOPORT PokemonStorageBox : public QObject
 {
   Q_OBJECT
 

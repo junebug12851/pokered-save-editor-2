@@ -19,9 +19,11 @@
 #include <QObject>
 #include <QString>
 #include <pse-common/types.h>
+#include "../savefile_autoport.h"
+
 class SaveFile;
 
-class Rival : public QObject
+class SAVEFILE_AUTOPORT Rival : public QObject
 {
   Q_OBJECT
 

@@ -18,12 +18,14 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
 constexpr var8 townCount = 11;
 constexpr var8 townByteCount = 2; // 5 bits of 16 unused
 
-class WorldTowns : public QObject
+class SAVEFILE_AUTOPORT WorldTowns : public QObject
 {
   Q_OBJECT
 

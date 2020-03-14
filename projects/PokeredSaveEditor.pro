@@ -1,19 +1,11 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    app \
     common \
     db \
-    savefile
+    savefile \
+    app
 
-app.depends += \
-    common \
-    db \
-    savefile
-
-db.depends += \
-    common
-
-savefile.depends += \
-    common \
-    db
+db.depends = common
+savefile.depends = common db
+app.depends = common db savefile

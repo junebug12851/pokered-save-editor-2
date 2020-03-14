@@ -18,12 +18,13 @@
 
 #include <pse-common/types.h>
 #include <QVector>
+#include "savefile_autoport.h"
 
 // To prevent cross-include and thus errors
 class SaveFile;
 class SaveFileToolset;
 
-class SaveFileIterator
+class SAVEFILE_AUTOPORT SaveFileIterator
 {
 public:
   SaveFileIterator(SaveFile* saveFile);

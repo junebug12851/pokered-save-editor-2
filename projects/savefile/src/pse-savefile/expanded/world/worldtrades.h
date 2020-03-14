@@ -18,12 +18,14 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
 constexpr var8 tradeCount = 10;
 constexpr var8 tradeByteCount = 2; // 6 of 16 bits unused
 
-class WorldTrades : public QObject
+class SAVEFILE_AUTOPORT WorldTrades : public QObject
 {
   Q_OBJECT
 

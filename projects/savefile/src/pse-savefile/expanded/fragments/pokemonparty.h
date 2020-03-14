@@ -18,9 +18,11 @@
 
 #include "./pokemonbox.h"
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
-class PokemonParty : public PokemonBox
+class SAVEFILE_AUTOPORT PokemonParty : public PokemonBox
 {
   Q_OBJECT
 

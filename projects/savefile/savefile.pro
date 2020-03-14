@@ -1,7 +1,7 @@
 QT += quick quickcontrols2 core widgets quickwidgets svg
 
 TEMPLATE = lib
-CONFIG += staticlib
+DEFINES += SAVEFILE_LIBRARY
 
 CONFIG += c++1z
 
@@ -108,12 +108,13 @@ HEADERS += \
     src/pse-savefile/expanded/world/worldtrades.h \
     src/pse-savefile/filemanagement.h \
     src/pse-savefile/savefile.h \
+    src/pse-savefile/savefile_autoport.h \
     src/pse-savefile/savefileiterator.h \
     src/pse-savefile/savefiletoolset.h
 
 # Default rules for deployment.
 unix {
-    target.path = $$[QT_INSTALL_PLUGINS]/generic
+    target.path = /usr/lib
 }
 !isEmpty(target.path): INSTALLS += target
 

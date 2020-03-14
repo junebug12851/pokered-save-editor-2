@@ -18,6 +18,8 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
 // There's actually significantly more hidden item bits, 112 in total forming
@@ -28,7 +30,7 @@ constexpr var8 hiddenCoinCount = 12;
 constexpr var8 hiddenItemByteCount = 7; // 2 Bits of 56 unused
 constexpr var8 hiddenCoinByteCount = 2; // 4 Bits of 16 unused
 
-class WorldHidden : public QObject
+class SAVEFILE_AUTOPORT WorldHidden : public QObject
 {
   Q_OBJECT
 

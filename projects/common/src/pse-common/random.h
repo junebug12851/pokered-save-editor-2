@@ -16,11 +16,12 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
+#include "./common_autoport.h"
 #include "./types.h"
 
 class QRandomGenerator;
 
-class Random
+class COMMON_AUTOPORT Random
 {
 public:
   // [from,to]

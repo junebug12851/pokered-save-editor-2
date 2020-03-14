@@ -19,10 +19,12 @@
 #include <QObject>
 #include <QString>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 struct PokemonDBEntry;
 
-class HoFPokemon : public QObject
+class SAVEFILE_AUTOPORT HoFPokemon : public QObject
 {
   Q_OBJECT
 

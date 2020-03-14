@@ -22,10 +22,12 @@
 #include <QString>
 #include <QJsonValue>
 
+#include "./db_autoport.h"
+
 class PokemonDBEntry;
 class ItemDBEntry;
 
-struct GameCornerDBEntry {
+struct DB_AUTOPORT GameCornerDBEntry {
   GameCornerDBEntry();
   GameCornerDBEntry(QJsonValue& data);
   void deepLink();
@@ -39,7 +41,7 @@ struct GameCornerDBEntry {
   ItemDBEntry* toItem = nullptr;
 };
 
-class GameCornerDB
+class DB_AUTOPORT GameCornerDB
 {
 public:
   static void load();

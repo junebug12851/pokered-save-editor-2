@@ -19,6 +19,7 @@
 #include <QString>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct PokemonDBEntry;
 
@@ -28,7 +29,7 @@ struct PokemonDBEntry;
 // 2) They musn't be legendary
 // 3) Just lots of judgement calls from there, they must feel "startery"
 
-class StarterPokemonDB
+class DB_AUTOPORT StarterPokemonDB
 {
 public:
   static void load();

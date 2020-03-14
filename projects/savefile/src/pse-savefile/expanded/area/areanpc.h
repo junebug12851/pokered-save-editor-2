@@ -18,11 +18,12 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class MapDBEntry;
 
-class AreaNPC : public QObject
+class SAVEFILE_AUTOPORT AreaNPC : public QObject
 {
   Q_OBJECT
 

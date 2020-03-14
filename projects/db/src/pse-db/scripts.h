@@ -24,6 +24,7 @@
 #include <optional>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -33,7 +34,7 @@
 
 struct MapDBEntry;
 
-struct ScriptDBEntry {
+struct DB_AUTOPORT ScriptDBEntry {
   ScriptDBEntry();
   ScriptDBEntry(QJsonValue& data);
   void deepLink();
@@ -50,7 +51,7 @@ struct ScriptDBEntry {
   QVector<MapDBEntry*> toMaps;
 };
 
-class ScriptsDB
+class DB_AUTOPORT ScriptsDB
 {
 public:
   static void load();

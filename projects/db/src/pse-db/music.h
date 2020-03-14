@@ -22,10 +22,11 @@
 #include <QHash>
 
 #include <pse-common/types.h>
+#include "./db_autoport.h"
 
 struct MapDBEntry;
 
-struct MusicDBEntry {
+struct DB_AUTOPORT MusicDBEntry {
   MusicDBEntry();
   MusicDBEntry(QJsonValue& data);
 
@@ -36,7 +37,7 @@ struct MusicDBEntry {
   QVector<MapDBEntry*> toMaps;
 };
 
-class MusicDB
+class DB_AUTOPORT MusicDB
 {
 public:
   static void load();

@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class WarpData;
@@ -26,7 +27,7 @@ class MapDBEntry;
 
 constexpr var8 maxWarps = 32;
 
-class AreaWarps : public QObject
+class SAVEFILE_AUTOPORT AreaWarps : public QObject
 {
   Q_OBJECT
 

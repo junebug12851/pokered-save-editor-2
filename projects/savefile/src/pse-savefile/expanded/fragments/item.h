@@ -19,10 +19,12 @@
 #include <QObject>
 #include <QString>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFileIterator;
 class ItemDBEntry;
 
-class Item : public QObject
+class SAVEFILE_AUTOPORT Item : public QObject
 {
   Q_OBJECT
 

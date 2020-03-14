@@ -18,6 +18,8 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../savefile_autoport.h"
+
 class SaveFile;
 
 class ItemStorageBox;
@@ -30,7 +32,7 @@ class PokemonBox;
 constexpr var8 maxPokemonStorageSets = 2;
 constexpr var8 maxPokemonBoxes = maxPokemonStorageSets * 6;
 
-class Storage : public QObject
+class SAVEFILE_AUTOPORT Storage : public QObject
 {
   Q_OBJECT
 

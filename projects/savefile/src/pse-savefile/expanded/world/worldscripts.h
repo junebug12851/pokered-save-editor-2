@@ -18,13 +18,15 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
 // Can't have a total byte count given scripts are a bit more complicated to
 // read
 constexpr var8 scriptCount = 97;
 
-class WorldScripts : public QObject
+class SAVEFILE_AUTOPORT WorldScripts : public QObject
 {
   Q_OBJECT
 

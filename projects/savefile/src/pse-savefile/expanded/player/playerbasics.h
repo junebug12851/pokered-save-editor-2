@@ -20,11 +20,13 @@
 #include <QObject>
 #include <QString>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 class PokemonBox;
 struct PokemonDBEntry;
 
-struct Badges : public QObject
+struct SAVEFILE_AUTOPORT Badges : public QObject
 {
   Q_OBJECT
   Q_ENUMS(Badges_)
@@ -44,7 +46,7 @@ public:
 
 constexpr var8 maxBadges = 8;
 
-class PlayerBasics : public QObject
+class SAVEFILE_AUTOPORT PlayerBasics : public QObject
 {
   Q_OBJECT
 

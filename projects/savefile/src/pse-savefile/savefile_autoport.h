@@ -13,25 +13,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef EXAMPLESPOKEMON_H
-#define EXAMPLESPOKEMON_H
+#ifndef SAVEFILE_AUTOPORT_H
+#define SAVEFILE_AUTOPORT_H
 
-#include <QObject>
-#include <QString>
-#include <pse-common/types.h>
+#include <QtCore/qglobal.h>
 
-#include "./db_autoport.h"
+#if defined(SAVEFILE_LIBRARY)
+#  define SAVEFILE_AUTOPORT Q_DECL_EXPORT
+#else
+#  define SAVEFILE_AUTOPORT Q_DECL_IMPORT
+#endif
 
-class DB_AUTOPORT ExamplesPokemon : public QObject
-{
-  Q_OBJECT
-
-public:
-  static void load();
-  Q_INVOKABLE static QString randomExample();
-
-  static var32 lastInd;
-  static QVector<QString> store;
-};
-
-#endif // EXAMPLESPOKEMON_H
+#endif // SAVEFILE_AUTOPORT_H

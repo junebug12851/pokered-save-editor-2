@@ -18,11 +18,13 @@
 
 #include <QObject>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 
 // Counts playtime up to
 // 10 days, 15 hours, 59 minutes, 59 seconds, and 59 frames
-class Playtime : public QObject {
+class SAVEFILE_AUTOPORT Playtime : public QObject {
   Q_OBJECT
 
   Q_PROPERTY(int days READ getDays WRITE setDays NOTIFY hoursChanged)
@@ -58,7 +60,7 @@ public:
   bool clockMaxed;
 };
 
-class WorldOther : public QObject
+class SAVEFILE_AUTOPORT WorldOther : public QObject
 {
   Q_OBJECT
 

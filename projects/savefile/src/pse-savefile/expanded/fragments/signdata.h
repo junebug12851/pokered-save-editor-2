@@ -19,11 +19,13 @@
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 class MapDBEntrySign;
 struct TmpSignPos;
 
-class SignData : public QObject
+class SAVEFILE_AUTOPORT SignData : public QObject
 {
   Q_OBJECT
 

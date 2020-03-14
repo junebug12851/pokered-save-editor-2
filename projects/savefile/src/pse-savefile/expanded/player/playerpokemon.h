@@ -20,13 +20,15 @@
 #include <QVector>
 #include <pse-common/types.h>
 #include "../fragments/pokemonstoragebox.h"
+#include "../../savefile_autoport.h"
+
 class SaveFile;
 class PlayerBasics;
 class PokemonParty;
 
 constexpr var8 maxParty = 6;
 
-class PlayerPokemon : public PokemonStorageBox
+class SAVEFILE_AUTOPORT PlayerPokemon : public PokemonStorageBox
 {
   Q_OBJECT
 
