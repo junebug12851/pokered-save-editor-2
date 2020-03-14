@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    app
-    db
+    app \
+    db \
     savefile
