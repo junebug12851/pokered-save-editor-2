@@ -1,4 +1,4 @@
-QT += quick quickcontrols2 core widgets quickwidgets svg
+QT = core
 
 TEMPLATE = lib
 DEFINES += DB_LIBRARY

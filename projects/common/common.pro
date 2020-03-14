@@ -1,4 +1,4 @@
-QT -= gui
+QT = core
 
 TEMPLATE = lib
 DEFINES += COMMON_LIBRARY

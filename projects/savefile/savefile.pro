@@ -1,4 +1,4 @@
-QT += quick quickcontrols2 core widgets quickwidgets svg
+QT = core qml widgets
 
 TEMPLATE = lib
 DEFINES += SAVEFILE_LIBRARY
