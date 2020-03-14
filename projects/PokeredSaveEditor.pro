@@ -4,8 +4,10 @@ SUBDIRS = \
     common \
     db \
     savefile \
+    core \
     app
 
 db.depends = common
 savefile.depends = common db
-app.depends = common db savefile
+core.depends = common db savefile
+app.depends = common db savefile core
