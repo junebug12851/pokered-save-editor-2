@@ -19,7 +19,7 @@
 #include "../savefiletoolset.h"
 #include "../savefileiterator.h"
 #include "./fragments/hofrecord.h"
-#include "../../../common/random.h"
+#include <pse-common/random.h>
 
 HallOfFame::HallOfFame(SaveFile* saveFile)
 {

@@ -17,7 +17,7 @@
 #include <QDebug>
 
 #include "./itemmarketentrystoreitem.h"
-#include "../../data/db/items.h"
+#include <pse-db/items.h>
 #include "../../data/file/expanded/fragments/item.h"
 #include "../../data/file/expanded/fragments/itemstoragebox.h"
 #include "../../data/file/expanded/player/playerbasics.h"

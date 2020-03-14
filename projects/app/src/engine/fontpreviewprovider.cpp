@@ -22,8 +22,8 @@
 
 #include "./fontpreviewprovider.h"
 #include "./tilesetengine.h"
-#include "../data/db/fonts.h"
-#include "../common/utility.h"
+#include <pse-db/fonts.h>
+#include <pse-common/utility.h>
 
 #include "../data/file/expanded/savefileexpanded.h"
 #include "../data/file/expanded/player/player.h"
@@ -187,11 +187,11 @@ void FontPreviewInstance::drawBox()
   QPainter p(&boxImg);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
-  var8 counter = 0;
+  int counter = 0;
 
-  for(var8 y = 0; y < drawHeightBoxTiles; y++) {
-    for(var8 x = 0; x < drawWidthTiles; x++) {
-      var8 boxTile = boxTiles[counter];
+  for(int y = 0; y < drawHeightBoxTiles; y++) {
+    for(int x = 0; x < drawWidthTiles; x++) {
+      int boxTile = boxTiles[counter];
       p.drawPixmap(x * tileSize, y * tileSize, tiles.at(boxTile));
       counter++;
     }
@@ -200,16 +200,16 @@ void FontPreviewInstance::drawBox()
 
 void FontPreviewInstance::drawFg()
 {
-  var8 startX = (box)
+  int startX = (box)
       ? 1
       : 0;
 
-  var8 startY = (box)
+  int startY = (box)
       ? 2
       : 0;
 
-  var8 yCounter = startY;
-  var8 xCounter = startX;
+  int yCounter = startY;
+  int xCounter = startX;
 
   QPainter p(&fgImg);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);

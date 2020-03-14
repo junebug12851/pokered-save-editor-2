@@ -20,7 +20,7 @@
 
 #include "./pokemonstoragemodel.h"
 #include "../bridge/router.h"
-#include "../data/db/pokemon.h"
+#include <pse-db/pokemon.h>
 #include "../data/file/expanded/storage.h"
 #include "../data/file/expanded/player/playerpokemon.h"
 #include "../data/file/expanded/fragments/item.h"

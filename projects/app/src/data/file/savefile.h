@@ -4,7 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
 
-#include "../../common/types.h"
+#include <pse-common/types.h>
 class SaveFileExpanded;
 class SaveFileIterator;
 class SaveFileToolset;

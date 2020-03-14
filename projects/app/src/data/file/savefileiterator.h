@@ -16,7 +16,7 @@
 #ifndef SAVEFILEITERATOR_H
 #define SAVEFILEITERATOR_H
 
-#include "../../common/types.h"
+#include <pse-common/types.h>
 #include <QVector>
 
 // To prevent cross-include and thus errors

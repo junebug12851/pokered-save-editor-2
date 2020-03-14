@@ -17,7 +17,7 @@
 #define WORLDTOWNS_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 constexpr var8 townCount = 11;

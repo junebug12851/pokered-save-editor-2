@@ -18,7 +18,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../../common/random.h"
+#include <pse-common/random.h>
 
 HoFRecord::HoFRecord(SaveFile* saveFile, var8 ind)
 {

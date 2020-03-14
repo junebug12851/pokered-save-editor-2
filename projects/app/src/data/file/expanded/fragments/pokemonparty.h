@@ -17,7 +17,7 @@
 #define POKEMONPARTY_H
 
 #include "./pokemonbox.h"
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 class PokemonParty : public PokemonBox

@@ -17,7 +17,7 @@
 #define POKEMONSTORAGESET_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 class PokemonStorageBox;
 class PlayerBasics;

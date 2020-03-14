@@ -18,7 +18,7 @@
 
 #include <QObject>
 #include <QVector>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 #include "../fragments/pokemonstoragebox.h"
 class SaveFile;
 class PlayerBasics;

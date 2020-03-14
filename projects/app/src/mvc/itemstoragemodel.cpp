@@ -18,7 +18,7 @@
 #include <QCollator>
 #include <QDebug>
 
-#include "../data/db/items.h"
+#include <pse-db/items.h>
 #include "./itemstoragemodel.h"
 #include "../data/file/expanded/fragments/itemstoragebox.h"
 #include "../data/file/expanded/fragments/item.h"

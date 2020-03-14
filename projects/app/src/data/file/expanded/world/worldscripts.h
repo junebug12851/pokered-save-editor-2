@@ -17,7 +17,7 @@
 #define WORLDSCRIPTS_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 // Can't have a total byte count given scripts are a bit more complicated to

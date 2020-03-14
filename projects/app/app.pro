@@ -18,39 +18,6 @@ FORMS += \
 HEADERS += \
   src/bridge/bridge.h \
   src/bridge/router.h \
-  src/common/types.h \
-  src/common/utility.h \
-  src/data/db/credits.h \
-  src/data/db/eventpokemon.h \
-  src/data/db/events.h \
-  src/data/db/examplesplayer.h \
-  src/data/db/examplespokemon.h \
-  src/data/db/examplesrival.h \
-  src/data/db/fly.h \
-  src/data/db/fonts.h \
-  src/data/db/fontsearch.h \
-  src/data/db/gamecorner.h \
-  src/data/db/gamedata.h \
-  src/data/db/hiddenCoins.h \
-  src/data/db/hiddenItems.h \
-  src/data/db/items.h \
-  src/data/db/maps.h \
-  src/data/db/mapsearch.h \
-  src/data/db/missables.h \
-  src/data/db/moves.h \
-  src/data/db/music.h \
-  src/data/db/names.h \
-  src/data/db/namesPokemon.h \
-  src/data/db/pokemon.h \
-  src/data/db/scripts.h \
-  src/data/db/spriteSet.h \
-  src/data/db/sprites.h \
-  src/data/db/starterPokemon.h \
-  src/data/db/tileset.h \
-  src/data/db/tmHm.h \
-  src/data/db/trades.h \
-  src/data/db/trainers.h \
-  src/data/db/types.h \
   src/data/file/expanded/area/area.h \
   src/data/file/expanded/area/areaaudio.h \
   src/data/file/expanded/area/areageneral.h \
@@ -114,7 +81,6 @@ HEADERS += \
   src/mvc/itemstoragemodel.h \
   src/mvc/pokemonstoragemodel.h \
   src/mvc/creditsmodel.h \
-  src/common/random.h \
   src/mvc/fontsearchmodel.h \
   src/mvc/pokedexmodel.h \
   src/mvc/pokemonstartersmodel.h \
@@ -135,18 +101,6 @@ SOURCES += \
   src/boot/bootDatabase.cpp \
   src/bridge/bridge.cpp \
   src/bridge/router.cpp \
-  src/common/utility.cpp \
-  src/data/db/credits.cpp \
-  src/data/db/examplesplayer.cpp \
-  src/data/db/examplespokemon.cpp \
-  src/data/db/examplesrival.cpp \
-  src/data/db/fontsearch.cpp \
-  src/data/db/gamecorner.cpp \
-  src/data/db/mapsearch.cpp \
-  src/data/db/music.cpp \
-  src/data/db/namesPokemon.cpp \
-  src/data/db/spriteSet.cpp \
-  src/data/db/tileset.cpp \
   src/data/file/expanded/area/area.cpp \
   src/data/file/expanded/area/areaaudio.cpp \
   src/data/file/expanded/area/areageneral.cpp \
@@ -199,26 +153,6 @@ SOURCES += \
   src/engine/fontpreviewprovider.cpp \
   src/engine/tilesetprovider.cpp \
   src/main.cpp \
-  src/data/db/eventpokemon.cpp \
-  src/data/db/events.cpp \
-  src/data/db/fly.cpp \
-  src/data/db/fonts.cpp \
-  src/data/db/gamedata.cpp \
-  src/data/db/hiddenCoins.cpp \
-  src/data/db/hiddenItems.cpp \
-  src/data/db/items.cpp \
-  src/data/db/maps.cpp \
-  src/data/db/missables.cpp \
-  src/data/db/moves.cpp \
-  src/data/db/names.cpp \
-  src/data/db/pokemon.cpp \
-  src/data/db/scripts.cpp \
-  src/data/db/sprites.cpp \
-  src/data/db/starterPokemon.cpp \
-  src/data/db/tmHm.cpp \
-  src/data/db/trades.cpp \
-  src/data/db/trainers.cpp \
-  src/data/db/types.cpp \
   src/mvc/individualmap.cpp \
   src/mvc/itemmarket/itemmarketentry.cpp \
   src/mvc/itemmarket/itemmarketentrygcpokemon.cpp \
@@ -231,7 +165,6 @@ SOURCES += \
   src/mvc/itemstoragemodel.cpp \
   src/mvc/pokemonstoragemodel.cpp \
   src/mvc/creditsmodel.cpp \
-  src/common/random.cpp \
   src/mvc/fontsearchmodel.cpp \
   src/mvc/pokedexmodel.cpp \
   src/mvc/pokemonstartersmodel.cpp \
@@ -246,7 +179,7 @@ SOURCES += \
   src/engine/tilesetengine.cpp \
   ui/window/mainwindow.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += app.qrc
 
 RC_ICONS = assets/icons/app/icon.ico
 
@@ -262,3 +195,20 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
+
+#PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
+
+LIBS += \
+    -L$$OUT_PWD/../common/ -lcommon \
+    -L$$OUT_PWD/../db/ -ldb \
+    -L$$OUT_PWD/../savefile/ -lsavefile
+
+INCLUDEPATH += \
+    $$PWD/../common/src \
+    $$PWD/../db/src \
+    $$PWD/../savefile/src
+
+DEPENDPATH += \
+    $$PWD/../common/src \
+    $$PWD/../db/src \
+    $$PWD/../savefile/src

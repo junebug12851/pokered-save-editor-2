@@ -16,7 +16,7 @@
 #ifndef SAVEFILETOOLSET_H
 #define SAVEFILETOOLSET_H
 
-#include "../../common/types.h"
+#include <pse-common/types.h>
 #include <QVector>
 #include <QString>
 

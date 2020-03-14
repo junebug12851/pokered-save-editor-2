@@ -15,8 +15,8 @@
 */
 
 #include "./settings.h"
-#include "../data/db/maps.h"
-#include "../data/db/tileset.h"
+#include <pse-db/maps.h>
+#include <pse-db/tileset.h>
 #include "../data/file/savefile.h"
 #include "../data/file/expanded/savefileexpanded.h"
 #include "../data/file/expanded/area/area.h"

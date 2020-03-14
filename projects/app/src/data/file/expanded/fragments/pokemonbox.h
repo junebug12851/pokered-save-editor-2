@@ -19,7 +19,7 @@
 #include <QObject>
 #include <QVector>
 #include <QString>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 class SaveFileIterator;
 struct PokemonDBEntry;

@@ -20,7 +20,9 @@
 
 #include "./settings.h"
 #include "./router.h"
-#include "../common/utility.h"
+
+#include <pse-common/common.h>
+#include <pse-common/utility.h>
 
 #include "../data/file/filemanagement.h"
 
@@ -41,13 +43,13 @@
 #include "../mvc/moveselectmodel.h"
 #include "../mvc/mapselectmodel.h"
 
-#include "../data/db/fonts.h"
-#include "../data/db/fontsearch.h"
-#include "../data/db/names.h"
-#include "../data/db/namesPokemon.h"
-#include "../data/db/examplesplayer.h"
-#include "../data/db/examplespokemon.h"
-#include "../data/db/examplesrival.h"
+#include <pse-db/fonts.h>
+#include <pse-db/fontsearch.h>
+#include <pse-db/names.h>
+#include <pse-db/namesPokemon.h>
+#include <pse-db/examplesplayer.h>
+#include <pse-db/examplespokemon.h>
+#include <pse-db/examplesrival.h>
 
 class Bridge : public QObject
 {

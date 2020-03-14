@@ -17,9 +17,9 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/pokemon.h"
-#include "../../../../common/random.h"
-#include "../../../db/maps.h"
+#include <pse-db/pokemon.h>
+#include <pse-common/random.h>
+#include <pse-db/maps.h>
 
 AreaPokemonWild::AreaPokemonWild(int index, int level)
 {

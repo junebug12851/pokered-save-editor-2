@@ -14,34 +14,35 @@
   * limitations under the License.
 */
 
-#include "../data/db/credits.h"
-#include "../data/db/eventpokemon.h"
-#include "../data/db/events.h"
-#include "../data/db/examplesplayer.h"
-#include "../data/db/examplespokemon.h"
-#include "../data/db/examplesrival.h"
-#include "../data/db/fly.h"
-#include "../data/db/fonts.h"
-#include "../data/db/gamecorner.h"
-#include "../data/db/hiddenCoins.h"
-#include "../data/db/hiddenItems.h"
-#include "../data/db/items.h"
-#include "../data/db/maps.h"
-#include "../data/db/missables.h"
-#include "../data/db/moves.h"
-#include "../data/db/music.h"
-#include "../data/db/names.h"
-#include "../data/db/namesPokemon.h"
-#include "../data/db/pokemon.h"
-#include "../data/db/scripts.h"
-#include "../data/db/sprites.h"
-#include "../data/db/spriteSet.h"
-#include "../data/db/starterPokemon.h"
-#include "../data/db/tileset.h"
-#include "../data/db/tmHm.h"
-#include "../data/db/trades.h"
-#include "../data/db/trainers.h"
-#include "../data/db/types.h"
+#include <pse-db/db.h>
+#include <pse-db/credits.h>
+#include <pse-db/eventpokemon.h>
+#include <pse-db/events.h>
+#include <pse-db/examplesplayer.h>
+#include <pse-db/examplespokemon.h>
+#include <pse-db/examplesrival.h>
+#include <pse-db/fly.h>
+#include <pse-db/fonts.h>
+#include <pse-db/gamecorner.h>
+#include <pse-db/hiddenCoins.h>
+#include <pse-db/hiddenItems.h>
+#include <pse-db/items.h>
+#include <pse-db/maps.h>
+#include <pse-db/missables.h>
+#include <pse-db/moves.h>
+#include <pse-db/music.h>
+#include <pse-db/names.h>
+#include <pse-db/namesPokemon.h>
+#include <pse-db/pokemon.h>
+#include <pse-db/scripts.h>
+#include <pse-db/sprites.h>
+#include <pse-db/spriteSet.h>
+#include <pse-db/starterPokemon.h>
+#include <pse-db/tileset.h>
+#include <pse-db/tmHm.h>
+#include <pse-db/trades.h>
+#include <pse-db/trainers.h>
+#include <pse-db/types.h>
 
 // Step 1: Load all JSON data into memory, properly parsed
 void load()
@@ -121,6 +122,8 @@ void deepLink()
 
 extern void bootDatabase()
 {
+  DB::initRes();
+
   load();
   index();
   deepLink();

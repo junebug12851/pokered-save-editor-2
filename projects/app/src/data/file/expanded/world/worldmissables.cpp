@@ -21,7 +21,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/missables.h"
+#include <pse-db/missables.h>
 
 WorldMissables::WorldMissables(SaveFile* saveFile)
 {

@@ -14,7 +14,7 @@
   * limitations under the License.
 */
 
-#include "../data/db/pokemon.h"
+#include <pse-db/pokemon.h>
 #include "./pokemonstartersmodel.h"
 
 int PokemonStartersModel::rowCount(const QModelIndex& parent) const

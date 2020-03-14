@@ -19,7 +19,7 @@
 #include <QObject>
 #include <QVector>
 #include "optional"
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 struct SpriteDBEntry;
 struct MapDBEntrySprite;

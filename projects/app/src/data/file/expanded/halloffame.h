@@ -19,7 +19,7 @@
 #include <QObject>
 #include <QVector>
 #include <QQmlListProperty>
-#include "../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 class HoFRecord;
 

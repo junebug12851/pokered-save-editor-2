@@ -16,7 +16,7 @@
 
 #include <algorithm>
 
-#include "../data/db/pokemon.h"
+#include <pse-db/pokemon.h>
 #include "./pokedexmodel.h"
 #include "../data/file/expanded/player/playerpokedex.h"
 #include "../bridge/router.h"

@@ -14,7 +14,7 @@
   * limitations under the License.
 */
 
-#include "../data/db/types.h"
+#include <pse-db/types.h>
 #include "./typesmodel.h"
 
 int TypesModel::rowCount(const QModelIndex& parent) const

@@ -20,8 +20,8 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include "../fragments/pokemonparty.h"
-#include "../../../db/moves.h"
-#include "../../../../common/random.h"
+#include <pse-db/moves.h>
+#include <pse-common/random.h>
 #include "../savefileexpanded.h"
 
 PlayerPokemon::PlayerPokemon(SaveFile* saveFile)

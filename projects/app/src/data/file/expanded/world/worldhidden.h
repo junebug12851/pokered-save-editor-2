@@ -17,7 +17,7 @@
 #define WORLDHIDDEN_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 // There's actually significantly more hidden item bits, 112 in total forming

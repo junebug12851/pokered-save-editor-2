@@ -20,9 +20,9 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/maps.h"
-#include "../../../db/tileset.h"
-#include "../../../../common/random.h"
+#include <pse-db/maps.h>
+#include <pse-db/tileset.h>
+#include <pse-common/random.h>
 
 AreaTileset::AreaTileset(SaveFile* saveFile)
 {

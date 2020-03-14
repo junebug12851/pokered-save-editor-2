@@ -24,9 +24,9 @@
 #include "./itemmarket/itemmarketentrymoney.h"
 #include "./itemmarket/itemmarketentryplayeritem.h"
 #include "./itemmarket/itemmarketentrystoreitem.h"
-#include "../data/db/items.h"
+#include <pse-db/items.h>
 #include "../bridge/router.h"
-#include "../data/db/gamecorner.h"
+#include <pse-db/gamecorner.h>
 #include "../data/file/savefile.h"
 #include "../data/file/expanded/savefileexpanded.h"
 #include "../data/file/expanded/player/playerbasics.h"

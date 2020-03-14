@@ -17,8 +17,8 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../../common/random.h"
-#include "../../../db/maps.h"
+#include <pse-common/random.h>
+#include <pse-db/maps.h>
 
 AreaGeneral::AreaGeneral(SaveFile* saveFile)
 {

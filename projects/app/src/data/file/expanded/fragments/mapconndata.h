@@ -17,7 +17,7 @@
 #define MAPCONNDATA_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 
 class SaveFile;
 struct MapDBEntry;

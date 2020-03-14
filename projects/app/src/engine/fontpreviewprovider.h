@@ -25,7 +25,8 @@
 #include <QColor>
 #include <QCache>
 
-#include "../common/types.h"
+#include <pse-common/common.h>
+#include <pse-common/types.h>
 
 class SaveFileExpanded;
 
@@ -36,7 +37,7 @@ struct FontPreviewInstance
                       QSize* size,
                       const QSize& requestedSize);
 
-  enum : var8 {
+  enum : int {
     IdPartTileset = 0,
     IdPartType,
     IdPartFrame,
@@ -58,7 +59,7 @@ struct FontPreviewInstance
   // it has no left margin but a right margin of 1 tile. This is because the
   // text sits right in the box but keeps it from overlapping the right bottom
   // arrow.
-  static constexpr var8 boxTiles[] = {
+  static constexpr int boxTiles[] = {
     0x79,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7A,0x7B,
     0x7C,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7C,
     0x7C,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7C,
@@ -68,28 +69,28 @@ struct FontPreviewInstance
   };
 
   // Tile size
-  static constexpr var8 tileSize = 8;
+  static constexpr int tileSize = 8;
 
   // Hard-coded in FontDB and in FrontPreviewProvider
-  static constexpr var8 maxLines = 2;
+  static constexpr int maxLines = 2;
 
   // Spacing between mutliple lines
-  static constexpr var8 lineHeightTiles = 1;
-  static constexpr var8 lineHeight = lineHeightTiles * tileSize;
+  static constexpr int lineHeightTiles = 1;
+  static constexpr int lineHeight = lineHeightTiles * tileSize;
 
   // Width and Heights
-  static constexpr var8 drawWidthTiles = 20;
-  static constexpr var8 drawHeightLines1Tiles = 1;
-  static constexpr var8 drawHeightLines2Tiles = 2 + lineHeightTiles;
-  static constexpr var8 drawHeightBoxTiles = 6;
+  static constexpr int drawWidthTiles = 20;
+  static constexpr int drawHeightLines1Tiles = 1;
+  static constexpr int drawHeightLines2Tiles = 2 + lineHeightTiles;
+  static constexpr int drawHeightBoxTiles = 6;
 
-  static constexpr var8 drawWidth = drawWidthTiles * tileSize;
-  static constexpr var8 drawHeightLines1 = drawHeightLines1Tiles * tileSize;
-  static constexpr var8 drawHeightLines2 = drawHeightLines2Tiles * tileSize;
-  static constexpr var8 drawHeightBox = drawHeightBoxTiles * tileSize;
+  static constexpr int drawWidth = drawWidthTiles * tileSize;
+  static constexpr int drawHeightLines1 = drawHeightLines1Tiles * tileSize;
+  static constexpr int drawHeightLines2 = drawHeightLines2Tiles * tileSize;
+  static constexpr int drawHeightBox = drawHeightBoxTiles * tileSize;
 
   // Max str length
-  static constexpr var8 maxStrLenTiles = drawWidthTiles * maxLines;
+  static constexpr int maxStrLenTiles = drawWidthTiles * maxLines;
 
   void setup(QStringList idParts);
 

@@ -19,7 +19,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/scripts.h"
+#include <pse-db/scripts.h>
 
 WorldScripts::WorldScripts(SaveFile* saveFile)
 {

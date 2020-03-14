@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/data/eventPokemon.json</file>
+        <file>assets/data/events.json</file>
+        <file>assets/data/fly.json</file>
+        <file>assets/data/hiddenCoins.json</file>
+        <file>assets/data/hiddenItems.json</file>
+        <file>assets/data/items.json</file>
+        <file>assets/data/maps.json</file>
+        <file>assets/data/missables.json</file>
+        <file>assets/data/moves.json</file>
+        <file>assets/data/names.json</file>
+        <file>assets/data/pokemon.json</file>
+        <file>assets/data/starters.json</file>
+        <file>assets/data/scripts.json</file>
+        <file>assets/data/sprites.json</file>
+        <file>assets/data/font.json</file>
+        <file>assets/data/tileset.json</file>
+        <file>assets/data/tmHm.json</file>
+        <file>assets/data/trades.json</file>
+        <file>assets/data/trainers.json</file>
+        <file>assets/data/types.json</file>
+        <file>assets/data/namesPokemon.json</file>
+        <file>assets/data/music.json</file>
+        <file>assets/data/spriteSet.json</file>
+        <file>assets/data/credits.json</file>
+        <file>assets/data/playerExamples.json</file>
+        <file>assets/data/rivalExamples.json</file>
+        <file>assets/data/pokemonExamples.json</file>
+        <file>assets/data/gameCorner.json</file>
+    </qresource>
+</RCC>

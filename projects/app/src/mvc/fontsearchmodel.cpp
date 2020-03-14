@@ -14,8 +14,8 @@
   * limitations under the License.
 */
 
-#include "../data/db/fonts.h"
-#include "../data/db/fontsearch.h"
+#include <pse-db/fonts.h>
+#include <pse-db/fontsearch.h>
 #include "./fontsearchmodel.h"
 
 FontSearchModel::FontSearchModel(FontSearch* search)

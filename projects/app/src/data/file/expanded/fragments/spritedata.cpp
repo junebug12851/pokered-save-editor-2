@@ -20,12 +20,12 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/sprites.h"
-#include "../../../db/maps.h"
-#include "../../../db/trainers.h"
-#include "../../../db/items.h"
-#include "../../../db/pokemon.h"
-#include "../../../../common/random.h"
+#include <pse-db/sprites.h>
+#include <pse-db/maps.h>
+#include <pse-db/trainers.h>
+#include <pse-db/items.h>
+#include <pse-db/pokemon.h>
+#include <pse-common/random.h>
 
 struct TmpSpritePos
 {

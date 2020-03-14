@@ -18,9 +18,9 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/maps.h"
-#include "../../../db/mapsearch.h"
-#include "../../../../common/random.h"
+#include <pse-db/maps.h>
+#include <pse-db/mapsearch.h>
+#include <pse-common/random.h>
 
 WorldGeneral::WorldGeneral(SaveFile* saveFile)
 {

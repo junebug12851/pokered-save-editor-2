@@ -18,8 +18,8 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/maps.h"
-#include "../../../../common/random.h"
+#include <pse-db/maps.h>
+#include <pse-common/random.h>
 
 AreaSign::AreaSign(SaveFile* saveFile)
 {

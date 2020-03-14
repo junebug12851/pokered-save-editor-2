@@ -17,9 +17,9 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/names.h"
-#include "../../../db/pokemon.h"
-#include "../../../../common/random.h"
+#include <pse-db/names.h>
+#include <pse-db/pokemon.h>
+#include <pse-common/random.h>
 
 PlayerPokedex::PlayerPokedex(SaveFile* saveFile)
 {

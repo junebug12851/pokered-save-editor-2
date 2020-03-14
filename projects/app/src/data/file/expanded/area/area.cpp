@@ -26,9 +26,9 @@
 #include "./areatileset.h"
 #include "./areawarps.h"
 #include "../../savefile.h"
-#include "../../../db/maps.h"
-#include "../../../db/mapsearch.h"
-#include "../../../../common/random.h"
+#include <pse-db/maps.h>
+#include <pse-db/mapsearch.h>
+#include <pse-common/random.h>
 
 Area::Area(SaveFile* saveFile)
 {

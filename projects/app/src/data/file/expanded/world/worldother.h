@@ -17,7 +17,7 @@
 #define WORLDOTHER_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 // Counts playtime up to

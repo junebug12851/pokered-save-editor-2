@@ -17,7 +17,7 @@
 #define AREAGENERAL_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 struct ContrastIds : public QObject

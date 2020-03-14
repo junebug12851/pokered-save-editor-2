@@ -18,7 +18,7 @@
 
 #include <QObject>
 #include <QVector>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 constexpr var8 maxPokedex = 151;

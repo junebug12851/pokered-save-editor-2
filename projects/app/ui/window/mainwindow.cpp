@@ -5,7 +5,7 @@
 
 #include "../../src/bridge/bridge.h"
 
-#include "../../src/common/types.h"
+#include <pse-common/types.h>
 #include "../../src/data/file/filemanagement.h"
 #include "../../src/data/file/savefile.h"
 #include "../../src/data/file/expanded/savefileexpanded.h"
@@ -15,7 +15,7 @@
 #include "../../src/data/file/expanded/player/player.h"
 #include "../../src/data/file/expanded/player/playerpokemon.h"
 
-#include "../../src/data/db/fonts.h"
+#include <pse-db/fonts.h>
 
 #include "../../src/engine/tilesetprovider.h"
 #include "../../src/engine/fontpreviewprovider.h"

@@ -17,7 +17,7 @@
 #define AREAPLAYER_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 
 class SaveFile;
 class MapDBEntry;

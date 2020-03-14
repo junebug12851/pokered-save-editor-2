@@ -17,10 +17,10 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/maps.h"
-#include "../../../db/spriteSet.h"
-#include "../../../db/sprites.h"
-#include "../../../../common/random.h"
+#include <pse-db/maps.h>
+#include <pse-db/spriteSet.h>
+#include <pse-db/sprites.h>
+#include <pse-common/random.h>
 
 AreaLoadedSprites::AreaLoadedSprites(SaveFile* saveFile)
 {

@@ -15,7 +15,7 @@
 */
 
 #include "./creditsmodel.h"
-#include "../data/db/credits.h"
+#include <pse-db/credits.h>
 
 int CreditsModel::rowCount(const QModelIndex& parent) const
 {

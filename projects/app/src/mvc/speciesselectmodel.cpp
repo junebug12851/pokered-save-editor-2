@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <QCollator>
 
-#include "../data/db/pokemon.h"
+#include <pse-db/pokemon.h>
 #include "./speciesselectmodel.h"
 
 SpeciesSelectEntry::SpeciesSelectEntry(QString name, int ind)

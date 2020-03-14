@@ -17,7 +17,7 @@
 #define WORLDEVENTS_H
 
 #include <QObject>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 // Total number of known events

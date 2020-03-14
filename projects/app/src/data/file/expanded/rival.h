@@ -18,7 +18,7 @@
 
 #include <QObject>
 #include <QString>
-#include "../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFile;
 
 class Rival : public QObject

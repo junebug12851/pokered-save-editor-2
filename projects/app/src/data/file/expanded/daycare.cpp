@@ -20,7 +20,7 @@
 #include "../savefile.h"
 #include "../savefiletoolset.h"
 #include "../savefileiterator.h"
-#include "../../../common/random.h"
+#include <pse-common/random.h>
 
 Daycare::Daycare(SaveFile* saveFile)
 {

@@ -22,7 +22,7 @@
 #include "../player/playerbasics.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../../common/random.h"
+#include <pse-common/random.h>
 
 PokemonStorageBox::PokemonStorageBox(int maxSize, SaveFile* saveFile, var16 boxOffset)
   : maxSize(maxSize)

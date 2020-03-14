@@ -17,8 +17,8 @@
 #include <algorithm>
 #include <QCollator>
 
-#include "../data/db/moves.h"
-#include "../data/db/pokemon.h"
+#include <pse-db/moves.h>
+#include <pse-db/pokemon.h>
 #include "../data/file/expanded/fragments/pokemonbox.h"
 #include "./moveselectmodel.h"
 

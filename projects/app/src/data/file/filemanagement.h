@@ -20,7 +20,7 @@
 #include <QFile>
 #include <QSettings>
 
-#include "../../common/types.h"
+#include <pse-common/types.h>
 
 class SaveFile;
 

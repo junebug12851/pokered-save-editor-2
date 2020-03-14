@@ -20,13 +20,13 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include "../../../db/pokemon.h"
-#include "../../../db/moves.h"
-#include "../../../db/names.h"
-#include "../../../db/namesPokemon.h"
-#include "../../../db/starterPokemon.h"
-#include "../../../db/types.h"
-#include "../../../../common/random.h"
+#include <pse-db/pokemon.h>
+#include <pse-db/moves.h>
+#include <pse-db/names.h>
+#include <pse-db/namesPokemon.h>
+#include <pse-db/starterPokemon.h>
+#include <pse-db/types.h>
+#include <pse-common/random.h>
 #include "../../../../../ui/window/mainwindow.h"
 
 #include <QtMath>

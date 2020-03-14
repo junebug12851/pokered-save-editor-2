@@ -18,7 +18,7 @@
 
 #include <QObject>
 #include <QString>
-#include "../../../../common/types.h"
+#include <pse-common/types.h>
 class SaveFileIterator;
 class ItemDBEntry;
 

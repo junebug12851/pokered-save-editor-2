@@ -17,7 +17,7 @@
 #include <QtDebug>
 
 #include "./itemmarketentrygcpokemon.h"
-#include "../../data/db/gamecorner.h"
+#include <pse-db/gamecorner.h>
 #include "../../data/file/expanded/storage.h"
 #include "../../data/file/expanded/player/playerbasics.h"
 #include "../../data/file/expanded/player/playerpokemon.h"
