@@ -18,7 +18,7 @@
 
 #include "./itemmarketentry.h"
 #include "../itemmarketmodel.h"
-#include "../../data/file/expanded/player/playerbasics.h"
+#include <pse-savefile/expanded/player/playerbasics.h>
 
 ItemMarketEntry::ItemMarketEntry(int compatMoneyCurrency, int compatBuyMode)
   : compatMoneyCurrency(compatMoneyCurrency),

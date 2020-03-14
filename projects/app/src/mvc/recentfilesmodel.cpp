@@ -19,7 +19,7 @@
 #include <QStringList>
 
 #include "./recentfilesmodel.h"
-#include "../data/file/filemanagement.h"
+#include <pse-savefile/filemanagement.h>
 
 RecentFilesModel::RecentFilesModel(FileManagement* file) : file(file)
 {

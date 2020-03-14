@@ -18,54 +18,6 @@ FORMS += \
 HEADERS += \
   src/bridge/bridge.h \
   src/bridge/router.h \
-  src/data/file/expanded/area/area.h \
-  src/data/file/expanded/area/areaaudio.h \
-  src/data/file/expanded/area/areageneral.h \
-  src/data/file/expanded/area/arealoadedsprites.h \
-  src/data/file/expanded/area/areamap.h \
-  src/data/file/expanded/area/areanpc.h \
-  src/data/file/expanded/area/areaplayer.h \
-  src/data/file/expanded/area/areapokemon.h \
-  src/data/file/expanded/area/areasign.h \
-  src/data/file/expanded/area/areasprites.h \
-  src/data/file/expanded/area/areatileset.h \
-  src/data/file/expanded/area/areawarps.h \
-  src/data/file/expanded/daycare.h \
-  src/data/file/expanded/fragments/hofpokemon.h \
-  src/data/file/expanded/fragments/hofrecord.h \
-  src/data/file/expanded/fragments/item.h \
-  src/data/file/expanded/fragments/itemstoragebox.h \
-  src/data/file/expanded/fragments/mapconndata.h \
-  src/data/file/expanded/fragments/pokemonbox.h \
-  src/data/file/expanded/fragments/pokemonparty.h \
-  src/data/file/expanded/fragments/pokemonstoragebox.h \
-  src/data/file/expanded/fragments/pokemonstorageset.h \
-  src/data/file/expanded/fragments/signdata.h \
-  src/data/file/expanded/fragments/spritedata.h \
-  src/data/file/expanded/fragments/warpdata.h \
-  src/data/file/expanded/halloffame.h \
-  src/data/file/expanded/player/player.h \
-  src/data/file/expanded/player/playerbasics.h \
-  src/data/file/expanded/player/playerpokedex.h \
-  src/data/file/expanded/player/playerpokemon.h \
-  src/data/file/expanded/rival.h \
-  src/data/file/expanded/savefileexpanded.h \
-  src/data/file/expanded/storage.h \
-  src/data/file/expanded/world/world.h \
-  src/data/file/expanded/world/worldcompleted.h \
-  src/data/file/expanded/world/worldevents.h \
-  src/data/file/expanded/world/worldgeneral.h \
-  src/data/file/expanded/world/worldhidden.h \
-  src/data/file/expanded/world/worldlocal.h \
-  src/data/file/expanded/world/worldmissables.h \
-  src/data/file/expanded/world/worldother.h \
-  src/data/file/expanded/world/worldscripts.h \
-  src/data/file/expanded/world/worldtowns.h \
-  src/data/file/expanded/world/worldtrades.h \
-  src/data/file/filemanagement.h \
-  src/data/file/savefile.h \
-  src/data/file/savefileiterator.h \
-  src/data/file/savefiletoolset.h \
   src/bridge/settings.h \
   src/engine/fontpreviewprovider.h \
   src/engine/tilesetprovider.h \
@@ -101,54 +53,6 @@ SOURCES += \
   src/boot/bootDatabase.cpp \
   src/bridge/bridge.cpp \
   src/bridge/router.cpp \
-  src/data/file/expanded/area/area.cpp \
-  src/data/file/expanded/area/areaaudio.cpp \
-  src/data/file/expanded/area/areageneral.cpp \
-  src/data/file/expanded/area/arealoadedsprites.cpp \
-  src/data/file/expanded/area/areamap.cpp \
-  src/data/file/expanded/area/areanpc.cpp \
-  src/data/file/expanded/area/areaplayer.cpp \
-  src/data/file/expanded/area/areapokemon.cpp \
-  src/data/file/expanded/area/areasign.cpp \
-  src/data/file/expanded/area/areasprites.cpp \
-  src/data/file/expanded/area/areatileset.cpp \
-  src/data/file/expanded/area/areawarps.cpp \
-  src/data/file/expanded/daycare.cpp \
-  src/data/file/expanded/fragments/hofpokemon.cpp \
-  src/data/file/expanded/fragments/hofrecord.cpp \
-  src/data/file/expanded/fragments/item.cpp \
-  src/data/file/expanded/fragments/itemstoragebox.cpp \
-  src/data/file/expanded/fragments/mapconndata.cpp \
-  src/data/file/expanded/fragments/pokemonbox.cpp \
-  src/data/file/expanded/fragments/pokemonparty.cpp \
-  src/data/file/expanded/fragments/pokemonstoragebox.cpp \
-  src/data/file/expanded/fragments/pokemonstorageset.cpp \
-  src/data/file/expanded/fragments/signdata.cpp \
-  src/data/file/expanded/fragments/spritedata.cpp \
-  src/data/file/expanded/fragments/warpdata.cpp \
-  src/data/file/expanded/halloffame.cpp \
-  src/data/file/expanded/player/player.cpp \
-  src/data/file/expanded/player/playerbasics.cpp \
-  src/data/file/expanded/player/playerpokedex.cpp \
-  src/data/file/expanded/player/playerpokemon.cpp \
-  src/data/file/expanded/rival.cpp \
-  src/data/file/expanded/savefileexpanded.cpp \
-  src/data/file/expanded/storage.cpp \
-  src/data/file/expanded/world/world.cpp \
-  src/data/file/expanded/world/worldcompleted.cpp \
-  src/data/file/expanded/world/worldevents.cpp \
-  src/data/file/expanded/world/worldgeneral.cpp \
-  src/data/file/expanded/world/worldhidden.cpp \
-  src/data/file/expanded/world/worldlocal.cpp \
-  src/data/file/expanded/world/worldmissables.cpp \
-  src/data/file/expanded/world/worldother.cpp \
-  src/data/file/expanded/world/worldscripts.cpp \
-  src/data/file/expanded/world/worldtowns.cpp \
-  src/data/file/expanded/world/worldtrades.cpp \
-  src/data/file/filemanagement.cpp \
-  src/data/file/savefile.cpp \
-  src/data/file/savefileiterator.cpp \
-  src/data/file/savefiletoolset.cpp \
   src/bridge/settings.cpp \
   src/engine/fontpreviewprovider.cpp \
   src/engine/tilesetprovider.cpp \
@@ -195,8 +99,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
-
-#PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
 
 LIBS += \
     -L$$OUT_PWD/../common/ -lcommon \

@@ -25,10 +25,10 @@
 #include <pse-db/fonts.h>
 #include <pse-common/utility.h>
 
-#include "../data/file/expanded/savefileexpanded.h"
-#include "../data/file/expanded/player/player.h"
-#include "../data/file/expanded/player/playerbasics.h"
-#include "../data/file/expanded/rival.h"
+#include <pse-savefile/expanded/savefileexpanded.h>
+#include <pse-savefile/expanded/player/player.h>
+#include <pse-savefile/expanded/player/playerbasics.h>
+#include <pse-savefile/expanded/rival.h>
 
 FontPreviewInstance::FontPreviewInstance(
     QStringList idParts,

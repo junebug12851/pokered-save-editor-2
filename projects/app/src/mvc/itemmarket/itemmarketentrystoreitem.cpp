@@ -18,9 +18,9 @@
 
 #include "./itemmarketentrystoreitem.h"
 #include <pse-db/items.h>
-#include "../../data/file/expanded/fragments/item.h"
-#include "../../data/file/expanded/fragments/itemstoragebox.h"
-#include "../../data/file/expanded/player/playerbasics.h"
+#include <pse-savefile/expanded/fragments/item.h>
+#include <pse-savefile/expanded/fragments/itemstoragebox.h>
+#include <pse-savefile/expanded/player/playerbasics.h>
 
 ItemMarketEntryStoreItem::ItemMarketEntryStoreItem(
     ItemDBEntry* data,

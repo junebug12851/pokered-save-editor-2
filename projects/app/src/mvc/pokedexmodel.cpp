@@ -18,7 +18,7 @@
 
 #include <pse-db/pokemon.h>
 #include "./pokedexmodel.h"
-#include "../data/file/expanded/player/playerpokedex.h"
+#include <pse-savefile/expanded/player/playerpokedex.h>
 #include "../bridge/router.h"
 
 PokedexEntryData::PokedexEntryData(QString name, int dex, int id)

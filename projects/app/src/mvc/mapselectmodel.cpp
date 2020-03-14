@@ -18,7 +18,7 @@
 #include <QCollator>
 
 #include <pse-db/maps.h>
-#include "../data/file/expanded/area/areamap.h"
+#include <pse-savefile/expanded/area/areamap.h>
 #include "./mapselectmodel.h"
 
 MapSelectEntry::MapSelectEntry(QString name, int ind)

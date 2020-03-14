@@ -20,8 +20,8 @@
 
 #include <pse-db/items.h>
 #include "./itemstoragemodel.h"
-#include "../data/file/expanded/fragments/itemstoragebox.h"
-#include "../data/file/expanded/fragments/item.h"
+#include <pse-savefile/expanded/fragments/itemstoragebox.h>
+#include <pse-savefile/expanded/fragments/item.h>
 #include "../bridge/router.h"
 
 ItemStorageModel::ItemStorageModel(ItemStorageBox* items, Router* router)

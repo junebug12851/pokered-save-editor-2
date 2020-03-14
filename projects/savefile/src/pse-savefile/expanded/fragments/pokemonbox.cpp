@@ -27,7 +27,7 @@
 #include <pse-db/starterPokemon.h>
 #include <pse-db/types.h>
 #include <pse-common/random.h>
-#include "../../../../../ui/window/mainwindow.h"
+//#include "../../../../../ui/window/mainwindow.h"
 
 #include <QtMath>
 #include <QQmlEngine>
@@ -36,7 +36,8 @@
 PokemonMove::PokemonMove(PokemonBox* parentMon, var8 move, var8 pp, var8 ppUp)
 {
   // Set this class as owned by CPP so that QML doesn't delete it
-  MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+  //MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+  // @TODO
 
   this->parentMon = parentMon;
 
@@ -277,7 +278,8 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
                        var8 recordSize)
 {
   // Set this class as owned by CPP so that QML doesn't delete it
-  MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+  //MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+  // @TODO
 
   for(int i = 0; i < 4; i++) {
     moves[i] = new PokemonMove(this);

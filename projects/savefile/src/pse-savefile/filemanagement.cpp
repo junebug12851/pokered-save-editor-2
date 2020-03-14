@@ -19,7 +19,7 @@
 #include "./filemanagement.h"
 #include "./savefile.h"
 #include "./savefiletoolset.h"
-#include "../../../ui/window/mainwindow.h"
+//#include "../../../ui/window/mainwindow.h"
 
 FileManagement::FileManagement(QObject* parent) : QObject(parent)
 {
@@ -232,7 +232,8 @@ QString FileManagement::openFileDialog(QString title)
     curPath = settings.value(KEY_LAST_FILE, "").toString();
 
   return QFileDialog::getOpenFileName(
-        (QWidget*)MainWindow::getInstance(),
+        nullptr,
+        //(QWidget*)MainWindow::getInstance(), @TODO
         title,
         curPath,
         "Save Files (*.sav);;All Files (*)");
@@ -246,7 +247,8 @@ QString FileManagement::saveFileDialog(QString title)
     curPath = settings.value(KEY_LAST_FILE, "").toString();
 
   return QFileDialog::getSaveFileName(
-        (QWidget*)MainWindow::getInstance(),
+        nullptr,
+        //(QWidget*)MainWindow::getInstance(), @TODO
         title,
         curPath,
         "Save Files (*.sav);;All Files (*)");

@@ -16,11 +16,11 @@
 
 #include "./pokemonboxselectmodel.h"
 #include "./pokemonstoragemodel.h"
-#include "../data/file/expanded/storage.h"
-#include "../data/file/expanded/player/playerpokemon.h"
-#include "../data/file/expanded/fragments/pokemonbox.h"
-#include "../data/file/expanded/fragments/pokemonparty.h"
-#include "../data/file/expanded/fragments/pokemonstoragebox.h"
+#include <pse-savefile/expanded/storage.h>
+#include <pse-savefile/expanded/player/playerpokemon.h>
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
+#include <pse-savefile/expanded/fragments/pokemonparty.h>
+#include <pse-savefile/expanded/fragments/pokemonstoragebox.h>
 
 PokemonBoxSelectModel::PokemonBoxSelectModel(PokemonStorageModel* pairedModel)
   : pairedModel(pairedModel)

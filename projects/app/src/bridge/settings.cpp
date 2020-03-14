@@ -17,10 +17,10 @@
 #include "./settings.h"
 #include <pse-db/maps.h>
 #include <pse-db/tileset.h>
-#include "../data/file/savefile.h"
-#include "../data/file/expanded/savefileexpanded.h"
-#include "../data/file/expanded/area/area.h"
-#include "../data/file/expanded/area/areamap.h"
+#include <pse-savefile/savefile.h>
+#include <pse-savefile/expanded/savefileexpanded.h>
+#include <pse-savefile/expanded/area/area.h>
+#include <pse-savefile/expanded/area/areamap.h>
 
 QString tilesetOrder[24] = {
   "Cavern",

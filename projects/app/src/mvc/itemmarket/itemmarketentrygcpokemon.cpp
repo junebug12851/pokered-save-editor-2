@@ -18,13 +18,13 @@
 
 #include "./itemmarketentrygcpokemon.h"
 #include <pse-db/gamecorner.h>
-#include "../../data/file/expanded/storage.h"
-#include "../../data/file/expanded/player/playerbasics.h"
-#include "../../data/file/expanded/player/playerpokemon.h"
-#include "../../data/file/expanded/fragments/pokemonbox.h"
-#include "../../data/file/expanded/fragments/pokemonparty.h"
-#include "../../data/file/expanded/fragments/pokemonstorageset.h"
-#include "../../data/file/expanded/fragments/pokemonstoragebox.h"
+#include <pse-savefile/expanded/storage.h>
+#include <pse-savefile/expanded/player/playerbasics.h>
+#include <pse-savefile/expanded/player/playerpokemon.h>
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
+#include <pse-savefile/expanded/fragments/pokemonparty.h>
+#include <pse-savefile/expanded/fragments/pokemonstorageset.h>
+#include <pse-savefile/expanded/fragments/pokemonstoragebox.h>
 
 // Pokemon cannot be bought with anything other than coins to keep
 // to keep compatibility with the games. They also cannot be sold back

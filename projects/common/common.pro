@@ -12,12 +12,10 @@ CONFIG += c++1z
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
-    src/pse-common/common.cpp \
     src/pse-common/random.cpp \
     src/pse-common/utility.cpp
 
 HEADERS += \
-    src/pse-common/common.h \
     src/pse-common/random.h \
     src/pse-common/types.h \
     src/pse-common/utility.h

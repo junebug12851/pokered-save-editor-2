@@ -6,14 +6,14 @@
 #include "../../src/bridge/bridge.h"
 
 #include <pse-common/types.h>
-#include "../../src/data/file/filemanagement.h"
-#include "../../src/data/file/savefile.h"
-#include "../../src/data/file/expanded/savefileexpanded.h"
-#include "../../src/data/file/expanded/storage.h"
-#include "../../src/data/file/expanded/fragments/pokemonstorageset.h"
-#include "../../src/data/file/expanded/fragments/pokemonstoragebox.h"
-#include "../../src/data/file/expanded/player/player.h"
-#include "../../src/data/file/expanded/player/playerpokemon.h"
+#include <pse-savefile/filemanagement.h>
+#include <pse-savefile/savefile.h>
+#include <pse-savefile/expanded/savefileexpanded.h>
+#include <pse-savefile/expanded/storage.h>
+#include <pse-savefile/expanded/fragments/pokemonstorageset.h>
+#include <pse-savefile/expanded/fragments/pokemonstoragebox.h>
+#include <pse-savefile/expanded/player/player.h>
+#include <pse-savefile/expanded/player/playerpokemon.h>
 
 #include <pse-db/fonts.h>
 

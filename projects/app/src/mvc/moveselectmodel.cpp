@@ -19,7 +19,7 @@
 
 #include <pse-db/moves.h>
 #include <pse-db/pokemon.h>
-#include "../data/file/expanded/fragments/pokemonbox.h"
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
 #include "./moveselectmodel.h"
 
 MoveSelectEntry::MoveSelectEntry(QString name, int ind)

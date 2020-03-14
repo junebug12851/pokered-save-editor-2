@@ -1,4 +1,4 @@
-QT -= gui
+QT += quick quickcontrols2 core widgets quickwidgets svg
 
 TEMPLATE = lib
 CONFIG += staticlib
@@ -86,8 +86,6 @@ unix {
     target.path = $$[QT_INSTALL_PLUGINS]/generic
 }
 !isEmpty(target.path): INSTALLS += target
-
-#PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
 
 LIBS += \
     -L$$OUT_PWD/../common/ -lcommon

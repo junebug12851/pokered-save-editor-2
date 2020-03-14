@@ -27,10 +27,10 @@
 #include <pse-db/items.h>
 #include "../bridge/router.h"
 #include <pse-db/gamecorner.h>
-#include "../data/file/savefile.h"
-#include "../data/file/expanded/savefileexpanded.h"
-#include "../data/file/expanded/player/playerbasics.h"
-#include "../data/file/expanded/fragments/itemstoragebox.h"
+#include <pse-savefile/savefile.h>
+#include <pse-savefile/expanded/savefileexpanded.h>
+#include <pse-savefile/expanded/player/playerbasics.h>
+#include <pse-savefile/expanded/fragments/itemstoragebox.h>
 
 ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
                                  ItemStorageBox* itemStorage,

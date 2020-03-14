@@ -25,7 +25,6 @@
 #include <QColor>
 #include <QCache>
 
-#include <pse-common/common.h>
 #include <pse-common/types.h>
 
 class SaveFileExpanded;

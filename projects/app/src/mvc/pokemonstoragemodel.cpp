@@ -21,13 +21,13 @@
 #include "./pokemonstoragemodel.h"
 #include "../bridge/router.h"
 #include <pse-db/pokemon.h>
-#include "../data/file/expanded/storage.h"
-#include "../data/file/expanded/player/playerpokemon.h"
-#include "../data/file/expanded/fragments/item.h"
-#include "../data/file/expanded/fragments/pokemonbox.h"
-#include "../data/file/expanded/fragments/pokemonparty.h"
-#include "../data/file/expanded/fragments/itemstoragebox.h"
-#include "../data/file/expanded/fragments/pokemonstoragebox.h"
+#include <pse-savefile/expanded/storage.h>
+#include <pse-savefile/expanded/player/playerpokemon.h>
+#include <pse-savefile/expanded/fragments/item.h>
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
+#include <pse-savefile/expanded/fragments/pokemonparty.h>
+#include <pse-savefile/expanded/fragments/itemstoragebox.h>
+#include <pse-savefile/expanded/fragments/pokemonstoragebox.h>
 
 PokemonStorageModel::PokemonStorageModel(
     Router* router,

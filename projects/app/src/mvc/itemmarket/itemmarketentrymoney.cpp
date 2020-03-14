@@ -18,7 +18,7 @@
 
 #include "./itemmarketentrymoney.h"
 #include <pse-db/gamecorner.h>
-#include "../../data/file/expanded/player/playerbasics.h"
+#include <pse-savefile/expanded/player/playerbasics.h>
 
 ItemMarketEntryMoney::ItemMarketEntryMoney()
   : ItemMarketEntry(CompatNo, CompatEither) // Only Coins, either buy/sell
