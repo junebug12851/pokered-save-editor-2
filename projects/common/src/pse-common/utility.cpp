@@ -17,11 +17,11 @@
 #include <QByteArray>
 #include <QStringList>
 #include <QQmlContext>
+#include <QQmlEngine>
+
 #include "./utility.h"
 #include "./random.h"
 
-// Thanks eyllanesc
-// https://stackoverflow.com/questions/45772951/converting-qstring-to-ascii-value-vice-versa-in-qt
 Utility* Utility::inst()
 {
   static Utility* _inst = new Utility;
@@ -33,6 +33,8 @@ Random* Utility::random()
   return Random::inst();
 }
 
+// Thanks eyllanesc
+// https://stackoverflow.com/questions/45772951/converting-qstring-to-ascii-value-vice-versa-in-qt
 const QString Utility::encodeBeforeUrl(const QString beforeStr) const
 {
   QStringList numberString;

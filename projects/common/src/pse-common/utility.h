@@ -18,7 +18,9 @@
 
 #include <QObject>
 #include <QString>
-#include <QQmlEngine>
+
+class QQmlContext;
+class QQmlEngine;
 
 #include "./common_autoport.h"
 

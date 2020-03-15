@@ -18,6 +18,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonValueRef>
+#include <pse-common/utility.h>
 
 #include "./creditsdb.h"
 #include "./entries/creditdbentry.h"
@@ -68,10 +69,10 @@ void CreditsDB::load()
 
 void CreditsDB::engineProtect(const QQmlEngine* const engine) const
 {
-  DB::engineProtectUtil(this, engine);
+  Utility::engineProtectUtil(this, engine);
 
   for(auto el : store)
-    DB::engineProtectUtil(el, engine);
+    Utility::engineProtectUtil(el, engine);
 }
 
 void CreditsDB::engineRegister() const

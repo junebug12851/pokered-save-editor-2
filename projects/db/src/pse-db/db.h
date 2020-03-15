@@ -17,13 +17,13 @@
 #define DB_H
 
 #include <QObject>
-#include <QQmlEngine>
 #include <QQmlContext>
 #include "./db_autoport.h"
 
 // An instance of DB must be retrieved at the start of the program or none of
 // this may work.
 
+class QQmlEngine;
 class GameData;
 class CreditsDB;
 

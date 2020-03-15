@@ -15,6 +15,9 @@
 */
 
 #include <QObject>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
+
 #include "db.h"
 
 #include "./util/gamedata.h"
@@ -83,7 +86,7 @@ void DB::deepLinkAll() const
 
 void DB::engineProtect(const QQmlEngine* const engine) const
 {
-  engineProtectUtil(this, engine);
+  Utility::engineProtectUtil(this, engine);
   GameData::inst()->engineProtect(engine);
   CreditsDB::inst()->engineProtect(engine);
 }

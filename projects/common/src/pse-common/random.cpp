@@ -15,6 +15,7 @@
 */
 
 #include "./random.h"
+#include "utility.h"
 #include <QQmlEngine>
 
 Random* Random::inst()
@@ -72,6 +73,11 @@ bool Random::flipCoin() const
 bool Random::flipCoinF() const
 {
   return chanceSuccess(0.5f);
+}
+
+void Random::engineProtect(const QQmlEngine* const engine) const
+{
+  Utility::engineProtectUtil(this, engine);
 }
 
 void Random::engineRegister() const

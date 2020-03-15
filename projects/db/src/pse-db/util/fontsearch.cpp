@@ -13,11 +13,16 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+#include <QQmlEngine>
+#include <pse-common/utility.h>
+
 #include "fontsearch.h"
 #include "../fonts.h"
 
 FontSearch::FontSearch()
 {
+  engineRegister();
   startOver();
 }
 
@@ -190,12 +195,32 @@ FontSearch* FontSearch::notVariable()
   return this;
 }
 
-int FontSearch::getFontCount()
+const QVector<FontDBEntry*> FontSearch::getFonts() const
+{
+  return results;
+}
+
+int FontSearch::getFontCount() const
 {
   return results.size();
 }
 
-FontDBEntry* FontSearch::fontAt(int ind)
+const FontDBEntry* FontSearch::fontAt(const int ind) const
 {
   return results.at(ind);
+}
+
+void FontSearch::engineProtect(const QQmlEngine* const engine) const
+{
+  Utility::engineProtectUtil(this, engine);
+}
+
+void FontSearch::engineRegister() const
+{
+  static bool registered = false;
+  if(registered)
+    return;
+
+  qmlRegisterUncreatableType<FontSearch>("PSE.DB.FontSearch", 1, 0, "FontSearch", "Can't instantiate in QML");
+  registered = true;
 }

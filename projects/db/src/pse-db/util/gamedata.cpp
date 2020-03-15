@@ -18,6 +18,8 @@
 
 #include <QFile>
 #include <QByteArray>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
 const QByteArray GameData::jsonRaw(const QString filename) const
 {
@@ -47,7 +49,7 @@ const QString GameData::jsonStr(const QString filename) const
 
 void GameData::engineProtect(const QQmlEngine* const engine) const
 {
-  DB::engineProtectUtil(this, engine);
+  Utility::engineProtectUtil(this, engine);
 }
 
 GameData::GameData()

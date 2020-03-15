@@ -24,11 +24,27 @@
 
 class FontsDB;
 class FontDBEntry;
+class QQmlEngine;
 
 class DB_AUTOPORT FontSearch : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int fontCount READ getFontCount NOTIFY fontCountChanged STORED false)
+  Q_PROPERTY(FontSearch* startOver READ startOver)
+  Q_PROPERTY(FontSearch* andShorthand READ andShorthand)
+  Q_PROPERTY(FontSearch* notShorthand READ notShorthand)
+  Q_PROPERTY(FontSearch* andNormal READ andNormal)
+  Q_PROPERTY(FontSearch* notNormal READ notNormal)
+  Q_PROPERTY(FontSearch* andControl READ andControl)
+  Q_PROPERTY(FontSearch* notControl READ notControl)
+  Q_PROPERTY(FontSearch* andPicture READ andPicture)
+  Q_PROPERTY(FontSearch* notPicture READ notPicture)
+  Q_PROPERTY(FontSearch* andSingleChar READ andSingleChar)
+  Q_PROPERTY(FontSearch* notSingleChar READ notSingleChar)
+  Q_PROPERTY(FontSearch* andMultiChar READ andMultiChar)
+  Q_PROPERTY(FontSearch* notMultiChar READ notMultiChar)
+  Q_PROPERTY(FontSearch* andVariable READ andVariable)
+  Q_PROPERTY(FontSearch* notVariable READ notVariable)
 
 signals:
   void fontCountChanged();
@@ -36,27 +52,35 @@ signals:
 public:
   FontSearch();
 
-  Q_INVOKABLE FontSearch* startOver();
-  Q_INVOKABLE FontSearch* andShorthand();
-  Q_INVOKABLE FontSearch* notShorthand();
-  Q_INVOKABLE FontSearch* andNormal();
-  Q_INVOKABLE FontSearch* notNormal();
-  Q_INVOKABLE FontSearch* andControl();
-  Q_INVOKABLE FontSearch* notControl();
-  Q_INVOKABLE FontSearch* andPicture();
-  Q_INVOKABLE FontSearch* notPicture();
-  Q_INVOKABLE FontSearch* andSingleChar();
-  Q_INVOKABLE FontSearch* notSingleChar();
-  Q_INVOKABLE FontSearch* andMultiChar();
-  Q_INVOKABLE FontSearch* notMultiChar();
-  Q_INVOKABLE FontSearch* andVariable();
-  Q_INVOKABLE FontSearch* notVariable();
+  FontSearch* startOver();
+  FontSearch* andShorthand();
+  FontSearch* notShorthand();
+  FontSearch* andNormal();
+  FontSearch* notNormal();
+  FontSearch* andControl();
+  FontSearch* notControl();
+  FontSearch* andPicture();
+  FontSearch* notPicture();
+  FontSearch* andSingleChar();
+  FontSearch* notSingleChar();
+  FontSearch* andMultiChar();
+  FontSearch* notMultiChar();
+  FontSearch* andVariable();
+  FontSearch* notVariable();
 
   // QML Interface
-  Q_INVOKABLE int getFontCount();
-  Q_INVOKABLE FontDBEntry* fontAt(int ind);
+  const QVector<FontDBEntry*> getFonts() const;
+  int getFontCount() const;
+  Q_INVOKABLE const FontDBEntry* fontAt(const int ind) const;
 
-  QVector<FontDBEntry*> results = QVector<FontDBEntry*>();
+public slots:
+  void engineProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void engineRegister() const;
+
+private:
+  QVector<FontDBEntry*> results;
 };
 
 #endif // FONTSEARCH_H

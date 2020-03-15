@@ -17,13 +17,12 @@
 #define GAMEDATA_H
 
 #include <QObject>
-#include <QHash>
 #include <QJsonDocument>
-#include <QScopedPointer>
-#include <QQmlEngine>
 #include <QByteArray>
 
 #include "../db_autoport.h"
+
+class QQmlEngine;
 
 // This helps with getting game data from the JSON files
 

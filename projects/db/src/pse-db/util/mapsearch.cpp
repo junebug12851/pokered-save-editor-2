@@ -15,8 +15,10 @@
 */
 
 #include <QDebug>
+#include <QQmlEngine>
 
 #include <pse-common/random.h>
+#include <pse-common/utility.h>
 
 #include "./mapsearch.h"
 #include "../maps.h"
@@ -25,6 +27,7 @@
 
 MapSearch::MapSearch()
 {
+  engineRegister();
   startOver();
 }
 
@@ -33,7 +36,7 @@ MapDBEntry* MapSearch::pickRandom()
   if(results.size() == 0)
     return nullptr;
 
-  return results.at(Random::rangeExclusive(0, results.size()));
+  return results.at(Random::inst()->rangeExclusive(0, results.size()));
 }
 
 MapSearch* MapSearch::startOver()
@@ -59,7 +62,7 @@ MapSearch* MapSearch::notNamed(QString val)
   return this;
 }
 
-MapSearch* MapSearch::indexLt(var8 val)
+MapSearch* MapSearch::indexLt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
     if(!(entry->ind < val))
@@ -68,7 +71,7 @@ MapSearch* MapSearch::indexLt(var8 val)
   return this;
 }
 
-MapSearch* MapSearch::indexGt(var8 val)
+MapSearch* MapSearch::indexGt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
     if(!(entry->ind > val))
@@ -77,7 +80,7 @@ MapSearch* MapSearch::indexGt(var8 val)
   return this;
 }
 
-MapSearch* MapSearch::widthGt(var8 val)
+MapSearch* MapSearch::widthGt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
     if(!entry->width || !(*entry->width > val))
@@ -86,7 +89,7 @@ MapSearch* MapSearch::widthGt(var8 val)
   return this;
 }
 
-MapSearch* MapSearch::widthLt(var8 val)
+MapSearch* MapSearch::widthLt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
     if(!entry->height || !(*entry->height < val))
@@ -95,7 +98,7 @@ MapSearch* MapSearch::widthLt(var8 val)
   return this;
 }
 
-MapSearch* MapSearch::heightGt(var8 val)
+MapSearch* MapSearch::heightGt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
     if(!entry->width || !(*entry->width > val))
@@ -104,7 +107,7 @@ MapSearch* MapSearch::heightGt(var8 val)
   return this;
 }
 
-MapSearch* MapSearch::heightLt(var8 val)
+MapSearch* MapSearch::heightLt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
     if(!entry->width || !(*entry->width < val))
@@ -113,7 +116,7 @@ MapSearch* MapSearch::heightLt(var8 val)
   return this;
 }
 
-MapSearch* MapSearch::areaGt(var8 val)
+MapSearch* MapSearch::areaGt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
     if(!entry->width || !entry->height ||
@@ -123,7 +126,7 @@ MapSearch* MapSearch::areaGt(var8 val)
   return this;
 }
 
-MapSearch* MapSearch::areaLt(var8 val)
+MapSearch* MapSearch::areaLt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
     if(!entry->width || !entry->height ||
@@ -394,4 +397,37 @@ MapSearch* MapSearch::isCity()
 MapSearch* MapSearch::notCity()
 {
   return indexGt(10);
+}
+
+const QVector<MapDBEntry*> MapSearch::getMaps() const
+{
+  return results;
+}
+
+int MapSearch::getMapCount() const
+{
+  return results.size();
+}
+
+const MapDBEntry* MapSearch::mapAt(const int ind) const
+{
+  if(ind >= results.size())
+    return nullptr;
+
+  return results.at(ind);
+}
+
+void MapSearch::engineProtect(const QQmlEngine* const engine) const
+{
+  Utility::engineProtectUtil(this, engine);
+}
+
+void MapSearch::engineRegister() const
+{
+  static bool registered = false;
+  if(registered)
+    return;
+
+  qmlRegisterUncreatableType<MapSearch>("PSE.DB.MapSearch", 1, 0, "MapSearch", "Can't instantiate in QML");
+  registered = true;
 }

@@ -20,11 +20,11 @@
 // https://app.quicktype.io
 
 #include <QObject>
-#include <QQmlEngine>
 #include <QVector>
 
 #include "./db_autoport.h"
 
+class QQmlEngine;
 struct CreditDBEntry;
 
 // Singleton accessible, registered to, and protected from QML

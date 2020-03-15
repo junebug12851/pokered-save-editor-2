@@ -18,6 +18,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonValueRef>
+#include <pse-common/utility.h>
 
 #include "creditdbentry.h"
 #include "../creditsdb.h"
@@ -52,7 +53,7 @@ QString CreditDBEntry::getMandated() const
 
 void CreditDBEntry::engineProtect(const QQmlEngine* const engine) const
 {
-  DB::engineProtectUtil(this, engine);
+  Utility::engineProtectUtil(this, engine);
 }
 
 QString CreditDBEntry::getLicense() const
