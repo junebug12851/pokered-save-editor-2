@@ -36,12 +36,6 @@ CreditsDB* DB::credits()
   return CreditsDB::inst();
 }
 
-void DB::engineProtectUtil(const QObject* const obj, const QQmlEngine* const engine)
-{
-  // For some reason this demands it not be const
-  engine->setObjectOwnership(const_cast<QObject*>(obj), QQmlEngine::CppOwnership);
-}
-
 DB::DB()
 {
   // Init Resources

@@ -1,4 +1,4 @@
-QT = core
+QT = core qml
 
 TEMPLATE = lib
 DEFINES += COMMON_LIBRARY

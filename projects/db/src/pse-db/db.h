@@ -52,9 +52,6 @@ public slots:
   // Hooks into a QML Context
   void engineHook(QQmlContext* const context);
 
-  // Generic utility for any of the databases to use
-  static void engineProtectUtil(const QObject* const obj, const QQmlEngine* const engine);
-
 private slots:
   // Init the DLL resources, very important before any DB loading happens
   void initRes() const;

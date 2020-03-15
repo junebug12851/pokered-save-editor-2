@@ -16,29 +16,58 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
+#include <QObject>
+#include <QRandomGenerator>
+
 #include "./common_autoport.h"
 
 class QRandomGenerator;
+class QQmlEngine;
+class QQmlContext;
 
-class COMMON_AUTOPORT Random
+class COMMON_AUTOPORT Random : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(bool flipCoin READ flipCoin STORED false)
+  Q_PROPERTY(bool flipCoinF READ flipCoinF STORED false)
+
 public:
+  static Random* inst();
+
+  // Often the int versions can yield bad randomization, the float versions are
+  // provided in case they yield better results.
+
+  // [0.00,to)
+  Q_INVOKABLE float range(const float end) const;
+
   // [from,to]
-  static int rangeInclusive(int start, int end);
+  Q_INVOKABLE int rangeInclusive(const int start, const int end) const;
 
   // [from,to)
-  static int rangeExclusive(int start, int end);
+  Q_INVOKABLE int rangeExclusive(const int start, const int end) const;
 
-  // Chance of failure, 0 - 100
-  static bool chanceFailure(int percent);
+  // Chance of failure, 0 - 100 or 0.00 - 1.00
+  Q_INVOKABLE bool chanceFailure(const int percent) const;
+  Q_INVOKABLE bool chanceFailure(const float percent) const;
 
-  // Chance of success, 0 - 100
-  static bool chanceSuccess(int percent);
+  // Chance of success, 0 - 100 or 0.00 - 1.00
+  Q_INVOKABLE bool chanceSuccess(const int percent) const;
+  Q_INVOKABLE bool chanceSuccess(const float percent) const;
 
   // Chance of success, 50%
-  static bool flipCoin();
+  bool flipCoin() const;
+  bool flipCoinF() const;
 
-  static QRandomGenerator* rnd;
+public slots:
+  void engineProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void engineRegister() const;
+
+private:
+  Random();
+
+  QRandomGenerator* rnd = QRandomGenerator::global();
 };
 
 #endif // RANDOM_H

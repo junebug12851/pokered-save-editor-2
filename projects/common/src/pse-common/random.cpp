@@ -14,11 +14,21 @@
   * limitations under the License.
 */
 
-#include <QRandomGenerator>
-
 #include "./random.h"
+#include <QQmlEngine>
 
-int Random::rangeInclusive(int start, int end)
+Random* Random::inst()
+{
+  static Random* _inst = new Random;
+  return _inst;
+}
+
+float Random::range(const float end) const
+{
+  return rnd->bounded(end);
+}
+
+int Random::rangeInclusive(const int start, const int end) const
 {
   if(start == end || start > end)
     return start;
@@ -26,7 +36,7 @@ int Random::rangeInclusive(int start, int end)
   return rnd->bounded(start, end+1);
 }
 
-int Random::rangeExclusive(int start, int end)
+int Random::rangeExclusive(const int start, const int end) const
 {
   if(start == end || start > end)
     return start;
@@ -34,19 +44,47 @@ int Random::rangeExclusive(int start, int end)
   return rnd->bounded(start, end);
 }
 
-bool Random::chanceFailure(int percent)
+bool Random::chanceFailure(const int percent) const
 {
   return rangeInclusive(0, 100) >= percent;
 }
 
-bool Random::chanceSuccess(int percent)
+bool Random::chanceFailure(const float percent) const
+{
+  return range(1.0f) >= percent;
+}
+
+bool Random::chanceSuccess(const int percent) const
 {
   return rangeInclusive(0, 100) <= percent;
 }
 
-bool Random::flipCoin()
+bool Random::chanceSuccess(const float percent) const
+{
+  return range(1.0f) <= percent;
+}
+
+bool Random::flipCoin() const
 {
   return chanceSuccess(50);
 }
 
-QRandomGenerator* Random::rnd = QRandomGenerator::global();
+bool Random::flipCoinF() const
+{
+  return chanceSuccess(0.5f);
+}
+
+void Random::engineRegister() const
+{
+  static bool registered = false;
+  if(registered)
+    return;
+
+  qmlRegisterUncreatableType<Random>("PSE.Common.Random", 1, 0, "Random", "Can't instantiate in QML");
+  registered = true;
+}
+
+Random::Random()
+{
+  engineRegister();
+}

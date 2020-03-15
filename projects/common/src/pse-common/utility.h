@@ -18,16 +18,37 @@
 
 #include <QObject>
 #include <QString>
+#include <QQmlEngine>
 
 #include "./common_autoport.h"
+
+class Random;
 
 class COMMON_AUTOPORT Utility : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(Random* random READ random CONSTANT)
 
 public:
-  Q_INVOKABLE static QString encodeBeforeUrl(QString beforeStr);
-  Q_INVOKABLE static QString decodeAfterUrl(QString beforeStr);
+  static Utility* inst();
+
+  Random* random();
+
+  Q_INVOKABLE const QString encodeBeforeUrl(const QString beforeStr) const;
+  Q_INVOKABLE const QString decodeAfterUrl(QString beforeStr) const;
+
+  // Generic utility for any of the databases to use
+  static void engineProtectUtil(const QObject* const obj, const QQmlEngine* const engine);
+
+public slots:
+  void engineProtect(const QQmlEngine* const engine) const;
+  void engineHook(QQmlContext* const context);
+
+private slots:
+  void engineRegister() const;
+
+private:
+  Utility();
 };
 
 #endif // UTILITY_H
