@@ -75,12 +75,12 @@ bool Random::flipCoinF() const
   return chanceSuccess(0.5f);
 }
 
-void Random::engineProtect(const QQmlEngine* const engine) const
+void Random::qmlProtect(const QQmlEngine* const engine) const
 {
-  Utility::engineProtectUtil(this, engine);
+  Utility::qmlProtectUtil(this, engine);
 }
 
-void Random::engineRegister() const
+void Random::qmlRegister() const
 {
   static bool registered = false;
   if(registered)
@@ -92,5 +92,5 @@ void Random::engineRegister() const
 
 Random::Random()
 {
-  engineRegister();
+  qmlRegister();
 }

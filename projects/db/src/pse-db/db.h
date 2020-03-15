@@ -26,6 +26,7 @@
 class QQmlEngine;
 class GameData;
 class CreditsDB;
+class EventPokemonDB;
 
 // Provides a common interface for the databases to use and a common interface
 // to the databases.
@@ -35,6 +36,7 @@ class DB_AUTOPORT DB : public QObject
 
   Q_PROPERTY(GameData* json READ json CONSTANT)
   Q_PROPERTY(CreditsDB* credits READ credits CONSTANT)
+  Q_PROPERTY(EventPokemonDB* eventPokemon READ eventPokemon CONSTANT)
 
 public:
   static const DB* inst();
@@ -43,21 +45,22 @@ public:
   // and without polluting the global namespace
   GameData* json();
   CreditsDB* credits();
+  EventPokemonDB* eventPokemon();
 
 public slots:
   // It's very important to protect the engine from QML, in some cases QML may
   // think it has rights to delete the data which can be catastrophic.
-  void engineProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const;
 
   // Hooks into a QML Context
-  void engineHook(QQmlContext* const context);
+  void qmlHook(QQmlContext* const context);
 
 private slots:
   // Init the DLL resources, very important before any DB loading happens
   void initRes() const;
 
   // Register this to QML
-  void engineRegister() const;
+  void qmlRegister() const;
 
   // Load, Index, and Deep Link all the DB
   void loadAll() const;

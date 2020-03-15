@@ -47,10 +47,10 @@ public:
 public slots:
   // QML accessible methods
   void load();
-  void engineProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const;
 
 private slots:
-  void engineRegister() const;
+  void qmlRegister() const;
 
 private:
   // Singleton Constructor

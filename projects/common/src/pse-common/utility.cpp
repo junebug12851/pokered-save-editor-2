@@ -52,24 +52,24 @@ const QString Utility::decodeAfterUrl(QString beforeStr) const
   return QByteArray::fromHex(beforeStr.remove(" ").toLocal8Bit());
 }
 
-void Utility::engineProtectUtil(const QObject* const obj, const QQmlEngine* const engine)
+void Utility::qmlProtectUtil(const QObject* const obj, const QQmlEngine* const engine)
 {
   // For some reason this demands it not be const
   engine->setObjectOwnership(const_cast<QObject*>(obj), QQmlEngine::CppOwnership);
 }
 
-void Utility::engineProtect(const QQmlEngine* const engine) const
+void Utility::qmlProtect(const QQmlEngine* const engine) const
 {
-  engineProtectUtil(this, engine);
-  Random::inst()->engineProtect(engine);
+  qmlProtectUtil(this, engine);
+  Random::inst()->qmlProtect(engine);
 }
 
-void Utility::engineHook(QQmlContext* const context)
+void Utility::qmlHook(QQmlContext* const context)
 {
   context->setContextProperty("pseCommon", this);
 }
 
-void Utility::engineRegister() const
+void Utility::qmlRegister() const
 {
   static bool registered = false;
   if(registered)
@@ -81,6 +81,6 @@ void Utility::engineRegister() const
 
 Utility::Utility()
 {
-  engineRegister();
+  qmlRegister();
   Random::inst();
 }

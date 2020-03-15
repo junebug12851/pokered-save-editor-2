@@ -41,7 +41,7 @@ public:
   QString getMandated() const;
 
 public slots:
-  void engineProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const;
 
 protected:
   CreditDBEntry();
@@ -49,7 +49,7 @@ protected:
   CreditDBEntry(QString section);
 
   static void process(QJsonObject& data);
-  void engineRegister() const;
+  void qmlRegister() const;
 
   QString section = "";
   QString name = "";

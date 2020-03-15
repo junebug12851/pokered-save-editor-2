@@ -47,17 +47,17 @@ const QString GameData::jsonStr(const QString filename) const
   return jsonRaw(filename);
 }
 
-void GameData::engineProtect(const QQmlEngine* const engine) const
+void GameData::qmlProtect(const QQmlEngine* const engine) const
 {
-  Utility::engineProtectUtil(this, engine);
+  Utility::qmlProtectUtil(this, engine);
 }
 
 GameData::GameData()
 {
-  engineRegister();
+  qmlRegister();
 }
 
-void GameData::engineRegister() const
+void GameData::qmlRegister() const
 {
   qmlRegisterUncreatableType<GameData>("PSE.DB.GameData", 1, 0, "GameData", "Can't instantiate in QML");
 }

@@ -19,46 +19,48 @@
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-#include <QString>
+#include <QObject>
 #include <QVector>
-#include <QJsonValue>
-
-#include <variant>
-#include <optional>
-#include <pse-common/types.h>
 
 #include "./db_autoport.h"
-
-struct PokemonDBEntry;
 
 // These are Pokemon you get by going to or participating in real-life events
 // that were held around the world
 
-struct DB_AUTOPORT EventPokemonDBEntry {
-  EventPokemonDBEntry();
-  EventPokemonDBEntry(QJsonValue& data);
-  void deepLink();
+struct EventPokemonDBEntry;
+class QQmlEngine;
 
-  QString title; // Event Title
-  QString desc; // Event Pokemon Description
-  QString pokemon; // Pokemon Name
-  QVector<QString> otName; // Pokemon OT Name
-  std::optional<var16> otId; // Pokemon OT ID, random if not specified
-  QVector<var8> dv; // Pokemon DV List, random if not specified
-  QString region; // Region Code
-  QVector<QString> moves; // Move list
-  std::optional<var8> level; // Level, default minimum if not specified
-
-  PokemonDBEntry* toPokemon = nullptr; // Deep link to associated Pokemon
-};
-
-class DB_AUTOPORT EventPokemonDB
+class DB_AUTOPORT EventPokemonDB : public QObject
 {
-public:
-  static void load();
-  static void deepLink();
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
 
-  static QVector<EventPokemonDBEntry*> store;
+public:
+  // Get Instance
+  static EventPokemonDB* inst();
+
+  // Get Properties, includes QML array helpers
+  const QVector<EventPokemonDBEntry*> getStore() const;
+  int getStoreSize() const;
+
+  // QML Methods that can't be a property or slot because they take an argument
+  Q_INVOKABLE const EventPokemonDBEntry* getStoreAt(const int ind) const;
+
+public slots:
+  // QML accessible methods
+  void load();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  // Singleton Constructor
+  EventPokemonDB();
+
+  // Store
+  QVector<EventPokemonDBEntry*> store;
 };
 
 #endif // EVENTPOKEMON_H

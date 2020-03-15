@@ -40,14 +40,14 @@ public:
   Q_INVOKABLE const QString decodeAfterUrl(QString beforeStr) const;
 
   // Generic utility for any of the databases to use
-  static void engineProtectUtil(const QObject* const obj, const QQmlEngine* const engine);
+  static void qmlProtectUtil(const QObject* const obj, const QQmlEngine* const engine);
 
 public slots:
-  void engineProtect(const QQmlEngine* const engine) const;
-  void engineHook(QQmlContext* const context);
+  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlHook(QQmlContext* const context);
 
 private slots:
-  void engineRegister() const;
+  void qmlRegister() const;
 
 private:
   Utility();

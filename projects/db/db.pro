@@ -13,9 +13,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     src/pse-db/creditsdb.cpp \
+    src/pse-db/entries/eventpokemondbentry.cpp \
     src/pse-db/entries\creditdbentry.cpp \
     src/pse-db/db.cpp \
-    src/pse-db/eventpokemon.cpp \
+    src/pse-db/eventpokemondb.cpp \
     src/pse-db/events.cpp \
     src/pse-db/examplesplayer.cpp \
     src/pse-db/examplespokemon.cpp \
@@ -48,10 +49,11 @@ SOURCES += \
 
 HEADERS += \
     src/pse-db/creditsdb.h \
+    src/pse-db/entries/eventpokemondbentry.h \
     src/pse-db/entries\creditdbentry.h \
     src/pse-db/db.h \
     src/pse-db/db_autoport.h \
-    src/pse-db/eventpokemon.h \
+    src/pse-db/eventpokemondb.h \
     src/pse-db/events.h \
     src/pse-db/examplesplayer.h \
     src/pse-db/examplespokemon.h \

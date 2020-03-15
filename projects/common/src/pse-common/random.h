@@ -59,10 +59,10 @@ public:
   bool flipCoinF() const;
 
 public slots:
-  void engineProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const;
 
 private slots:
-  void engineRegister() const;
+  void qmlRegister() const;
 
 private:
   Random();

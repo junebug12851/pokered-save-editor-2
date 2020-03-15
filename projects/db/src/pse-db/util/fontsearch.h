@@ -74,10 +74,10 @@ public:
   Q_INVOKABLE const FontDBEntry* fontAt(const int ind) const;
 
 public slots:
-  void engineProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const;
 
 private slots:
-  void engineRegister() const;
+  void qmlRegister() const;
 
 private:
   QVector<FontDBEntry*> results;

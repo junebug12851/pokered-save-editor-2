@@ -22,7 +22,7 @@
 
 FontSearch::FontSearch()
 {
-  engineRegister();
+  qmlRegister();
   startOver();
 }
 
@@ -210,12 +210,12 @@ const FontDBEntry* FontSearch::fontAt(const int ind) const
   return results.at(ind);
 }
 
-void FontSearch::engineProtect(const QQmlEngine* const engine) const
+void FontSearch::qmlProtect(const QQmlEngine* const engine) const
 {
-  Utility::engineProtectUtil(this, engine);
+  Utility::qmlProtectUtil(this, engine);
 }
 
-void FontSearch::engineRegister() const
+void FontSearch::qmlRegister() const
 {
   static bool registered = false;
   if(registered)

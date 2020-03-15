@@ -42,12 +42,12 @@ public:
   Q_INVOKABLE const QString jsonStr(const QString filename) const;
 
 public slots:
-  void engineProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const;
 
 private:
   GameData();
 
-  void engineRegister() const;
+  void qmlRegister() const;
 };
 
 #endif // GAMEDATA_H

@@ -22,6 +22,7 @@
 
 #include "./util/gamedata.h"
 #include "creditsdb.h"
+#include "./eventpokemondb.h"
 
 const DB* DB::inst()
 {
@@ -39,13 +40,18 @@ CreditsDB* DB::credits()
   return CreditsDB::inst();
 }
 
+EventPokemonDB* DB::eventPokemon()
+{
+  return EventPokemonDB::inst();
+}
+
 DB::DB()
 {
   // Init Resources
   initRes();
 
   // Register to QML
-  engineRegister();
+  qmlRegister();
 
   // Load, Index, and Deep Link All
   loadAll();
@@ -58,7 +64,7 @@ void DB::initRes() const
   Q_INIT_RESOURCE(db);
 }
 
-void DB::engineRegister() const
+void DB::qmlRegister() const
 {
   static bool registered = false;
   if(registered)
@@ -72,6 +78,7 @@ void DB::engineRegister() const
 void DB::loadAll() const
 {
   CreditsDB::inst()->load();
+  EventPokemonDB::inst()->load();
 }
 
 void DB::indexAll() const
@@ -81,17 +88,18 @@ void DB::indexAll() const
 
 void DB::deepLinkAll() const
 {
-  //
+  EventPokemonDB::inst()->deepLink();
 }
 
-void DB::engineProtect(const QQmlEngine* const engine) const
+void DB::qmlProtect(const QQmlEngine* const engine) const
 {
-  Utility::engineProtectUtil(this, engine);
-  GameData::inst()->engineProtect(engine);
-  CreditsDB::inst()->engineProtect(engine);
+  Utility::qmlProtectUtil(this, engine);
+  GameData::inst()->qmlProtect(engine);
+  CreditsDB::inst()->qmlProtect(engine);
+  EventPokemonDB::inst()->qmlProtect(engine);
 }
 
-void DB::engineHook(QQmlContext* const context)
+void DB::qmlHook(QQmlContext* const context)
 {
   context->setContextProperty("pseDB", this);
 }

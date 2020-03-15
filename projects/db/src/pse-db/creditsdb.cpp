@@ -67,15 +67,15 @@ void CreditsDB::load()
   loaded = true;
 }
 
-void CreditsDB::engineProtect(const QQmlEngine* const engine) const
+void CreditsDB::qmlProtect(const QQmlEngine* const engine) const
 {
-  Utility::engineProtectUtil(this, engine);
+  Utility::qmlProtectUtil(this, engine);
 
   for(auto el : store)
-    Utility::engineProtectUtil(el, engine);
+    Utility::qmlProtectUtil(el, engine);
 }
 
-void CreditsDB::engineRegister() const
+void CreditsDB::qmlRegister() const
 {
   static bool registered = false;
   if(registered)
@@ -86,6 +86,6 @@ void CreditsDB::engineRegister() const
 }
 
 CreditsDB::CreditsDB() {
-  engineRegister();
+  qmlRegister();
   load();
 }

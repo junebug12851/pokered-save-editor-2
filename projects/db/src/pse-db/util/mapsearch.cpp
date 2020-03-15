@@ -27,7 +27,7 @@
 
 MapSearch::MapSearch()
 {
-  engineRegister();
+  qmlRegister();
   startOver();
 }
 
@@ -417,12 +417,12 @@ const MapDBEntry* MapSearch::mapAt(const int ind) const
   return results.at(ind);
 }
 
-void MapSearch::engineProtect(const QQmlEngine* const engine) const
+void MapSearch::qmlProtect(const QQmlEngine* const engine) const
 {
-  Utility::engineProtectUtil(this, engine);
+  Utility::qmlProtectUtil(this, engine);
 }
 
-void MapSearch::engineRegister() const
+void MapSearch::qmlRegister() const
 {
   static bool registered = false;
   if(registered)

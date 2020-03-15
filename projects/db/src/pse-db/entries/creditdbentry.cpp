@@ -22,15 +22,14 @@
 
 #include "creditdbentry.h"
 #include "../creditsdb.h"
-#include "../db.h"
 
 CreditDBEntry::CreditDBEntry() {
-  engineRegister();
+  qmlRegister();
 }
 
 CreditDBEntry::CreditDBEntry(QJsonValue& data)
 {
-  engineRegister();
+  qmlRegister();
 
   name = data["name"].toString("");
   url = data["url"].toString("");
@@ -41,7 +40,7 @@ CreditDBEntry::CreditDBEntry(QJsonValue& data)
 
 CreditDBEntry::CreditDBEntry(QString section)
 {
-  engineRegister();
+  qmlRegister();
 
   this->section = section;
 }
@@ -51,9 +50,9 @@ QString CreditDBEntry::getMandated() const
   return mandated;
 }
 
-void CreditDBEntry::engineProtect(const QQmlEngine* const engine) const
+void CreditDBEntry::qmlProtect(const QQmlEngine* const engine) const
 {
-  Utility::engineProtectUtil(this, engine);
+  Utility::qmlProtectUtil(this, engine);
 }
 
 QString CreditDBEntry::getLicense() const
@@ -119,7 +118,7 @@ void CreditDBEntry::process(QJsonObject& data)
     CreditsDB::inst()->store.append(new CreditDBEntry(entry));
 }
 
-void CreditDBEntry::engineRegister() const
+void CreditDBEntry::qmlRegister() const
 {
   static bool registered = false;
   if(registered)

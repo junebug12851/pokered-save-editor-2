@@ -116,10 +116,10 @@ public:
   Q_INVOKABLE const MapDBEntry* mapAt(const int ind) const;
 
 public slots:
-  void engineProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const;
 
 private slots:
-  void engineRegister() const;
+  void qmlRegister() const;
 
 private:
   QVector<MapDBEntry*> results;
