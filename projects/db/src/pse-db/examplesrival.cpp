@@ -19,22 +19,20 @@
 #include <QtMath>
 
 #include "./examplesrival.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include <pse-common/random.h>
 
 void ExamplesRival::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("rivalExamples");
+  auto jsonData = GameData::inst()->json("rivalExamples");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Add to array
     store.append(jsonEntry.toString());
   }
-
-  delete jsonData;
 }
 
 QString ExamplesRival::randomExample()

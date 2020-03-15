@@ -16,12 +16,59 @@
 #ifndef DB_H
 #define DB_H
 
+#include <QObject>
+#include <QQmlEngine>
+#include <QQmlContext>
 #include "./db_autoport.h"
 
-class DB_AUTOPORT DB
+// An instance of DB must be retrieved at the start of the program or none of
+// this may work.
+
+class GameData;
+class CreditsDB;
+
+// Provides a common interface for the databases to use and a common interface
+// to the databases.
+class DB_AUTOPORT DB : public QObject
 {
+  Q_OBJECT
+
+  Q_PROPERTY(GameData* json READ json CONSTANT)
+  Q_PROPERTY(CreditsDB* credits READ credits CONSTANT)
+
 public:
-  static void initRes();
+  static const DB* inst();
+
+  // While they can be accessed directly, this allows QML to access them easier
+  // and without polluting the global namespace
+  GameData* json();
+  CreditsDB* credits();
+
+public slots:
+  // It's very important to protect the engine from QML, in some cases QML may
+  // think it has rights to delete the data which can be catastrophic.
+  void engineProtect(const QQmlEngine* const engine) const;
+
+  // Hooks into a QML Context
+  void engineHook(QQmlContext* const context);
+
+  // Generic utility for any of the databases to use
+  static void engineProtectUtil(const QObject* const obj, const QQmlEngine* const engine);
+
+private slots:
+  // Init the DLL resources, very important before any DB loading happens
+  void initRes() const;
+
+  // Register this to QML
+  void engineRegister() const;
+
+  // Load, Index, and Deep Link all the DB
+  void loadAll() const;
+  void indexAll() const;
+  void deepLinkAll() const;
+
+private:
+  DB();
 };
 
 #endif // DB_H

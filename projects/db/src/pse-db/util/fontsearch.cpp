@@ -14,7 +14,7 @@
   * limitations under the License.
 */
 #include "fontsearch.h"
-#include "./fonts.h"
+#include "../fonts.h"
 
 FontSearch::FontSearch()
 {

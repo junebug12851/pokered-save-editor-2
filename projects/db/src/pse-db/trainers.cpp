@@ -18,7 +18,7 @@
 #include <QJsonArray>
 
 #include "./trainers.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 
 TrainerDBEntry::TrainerDBEntry() {}
 TrainerDBEntry::TrainerDBEntry(QJsonValue& data)
@@ -38,10 +38,10 @@ TrainerDBEntry::TrainerDBEntry(QJsonValue& data)
 void TrainersDB::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("trainers");
+  auto jsonData = GameData::inst()->json("trainers");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new TrainerDBEntry(jsonEntry);
@@ -49,8 +49,6 @@ void TrainersDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void TrainersDB::index()

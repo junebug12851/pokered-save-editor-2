@@ -22,7 +22,7 @@
 #endif
 
 #include "./missables.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./maps.h"
 
 MissableDBEntry::MissableDBEntry() {}
@@ -71,10 +71,10 @@ void MissableDBEntry::deepLink()
 void MissablesDB::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("missables");
+  auto jsonData = GameData::inst()->json("missables");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new MissableDBEntry(jsonEntry);
@@ -82,8 +82,6 @@ void MissablesDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void MissablesDB::index()

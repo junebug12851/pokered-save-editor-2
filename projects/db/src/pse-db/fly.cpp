@@ -22,7 +22,7 @@
 #endif
 
 #include "./fly.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./maps.h"
 
 FlyDBEntry::FlyDBEntry() {}
@@ -50,10 +50,10 @@ void FlyDBEntry::deepLink()
 void FlyDB::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("fly");
+  auto jsonData = GameData::inst()->json("fly");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new FlyDBEntry(jsonEntry);
@@ -61,8 +61,6 @@ void FlyDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void FlyDB::index()

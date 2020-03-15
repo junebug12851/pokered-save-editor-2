@@ -21,7 +21,7 @@
 #endif
 
 #include "./gamecorner.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./pokemon.h"
 #include "./items.h"
 
@@ -78,10 +78,10 @@ void GameCornerDBEntry::deepLink() {
 void GameCornerDB::load()
 {
   // Grab Item Data
-  auto jsonData = GameData::json("gameCorner");
+  auto jsonData = GameData::inst()->json("gameCorner");
 
   // Go through each item
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     if(jsonEntry["options"].isArray()) {
       for(QJsonValue option : jsonEntry["options"].toArray()) {
@@ -102,8 +102,6 @@ void GameCornerDB::load()
       store.append(entry);
     }
   }
-
-  delete jsonData;
 }
 
 void GameCornerDB::deepLink()

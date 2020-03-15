@@ -20,7 +20,7 @@
 #include <QVector>
 #include <QString>
 
-#include "./db_autoport.h"
+#include "../db_autoport.h"
 
 class FontsDB;
 class FontDBEntry;

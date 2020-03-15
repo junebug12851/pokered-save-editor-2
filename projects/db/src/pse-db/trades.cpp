@@ -22,7 +22,7 @@
 #endif
 
 #include "./trades.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./pokemon.h"
 
 TradeDBEntry::TradeDBEntry() {}
@@ -61,10 +61,10 @@ void TradeDBEntry::deepLink()
 void TradesDB::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("trades");
+  auto jsonData = GameData::inst()->json("trades");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new TradeDBEntry(jsonEntry);
@@ -72,8 +72,6 @@ void TradesDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void TradesDB::deepLink()

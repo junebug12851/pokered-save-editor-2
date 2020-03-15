@@ -14,11 +14,12 @@
   * limitations under the License.
 */
 #include "gamedata.h"
+#include "../db.h"
 
 #include <QFile>
 #include <QByteArray>
 
-QJsonDocument* GameData::json(QString filename)
+const QByteArray GameData::jsonRaw(const QString filename) const
 {
   // Prepare variables
   QByteArray val;
@@ -30,8 +31,37 @@ QJsonDocument* GameData::json(QString filename)
   val = file.readAll();
   file.close();
 
-  // Convert to JSON Document
-  QJsonDocument* doc = new QJsonDocument(QJsonDocument::fromJson(val));
+  return val;
+}
 
-  return doc;
+const QJsonDocument GameData::json(const QString filename) const
+{
+  // Convert to JSON Document
+  return QJsonDocument(QJsonDocument::fromJson(jsonRaw(filename)));
+}
+
+const QString GameData::jsonStr(const QString filename) const
+{
+  return jsonRaw(filename);
+}
+
+void GameData::engineProtect(const QQmlEngine* const engine) const
+{
+  DB::engineProtectUtil(this, engine);
+}
+
+GameData::GameData()
+{
+  engineRegister();
+}
+
+void GameData::engineRegister() const
+{
+  qmlRegisterUncreatableType<GameData>("PSE.DB.GameData", 1, 0, "GameData", "Can't instantiate in QML");
+}
+
+GameData* GameData::inst()
+{
+  static GameData* _inst = new GameData;
+  return _inst;
 }

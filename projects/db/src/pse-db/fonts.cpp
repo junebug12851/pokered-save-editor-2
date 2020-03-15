@@ -17,8 +17,8 @@
 #include <QJsonArray>
 
 #include "./fonts.h"
-#include "./gamedata.h"
-#include "./fontsearch.h"
+#include "./util/gamedata.h"
+#include "./util/fontsearch.h"
 
 FontDBEntry::FontDBEntry() {}
 FontDBEntry::FontDBEntry(QJsonValue& data) {
@@ -56,10 +56,10 @@ FontDBEntry::FontDBEntry(QJsonValue& data) {
 void FontsDB::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("font");
+  auto jsonData = GameData::inst()->json("font");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new FontDBEntry(jsonEntry);
@@ -67,8 +67,6 @@ void FontsDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void FontsDB::index()

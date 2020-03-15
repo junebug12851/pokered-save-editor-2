@@ -26,14 +26,14 @@
 #include "./maps.h"
 #include "./tileset.h"
 #include "./music.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./sprites.h"
 #include "./items.h"
 #include "./pokemon.h"
 #include "./trainers.h"
 #include "./spriteSet.h"
 #include "./missables.h"
-#include "./mapsearch.h"
+#include "./util/mapsearch.h"
 
 MapDBEntryConnect::MapDBEntryConnect() {}
 MapDBEntryConnect::MapDBEntryConnect(
@@ -740,10 +740,10 @@ std::optional<var8> MapDBEntry::width2X2()
 void MapsDB::load()
 {
   // Grab Map Data
-  auto jsonData = GameData::json("maps");
+  auto jsonData = GameData::inst()->json("maps");
 
   // Go through each map
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new map entry
     auto entry = new MapDBEntry(jsonEntry);
@@ -751,8 +751,6 @@ void MapsDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void MapsDB::index()

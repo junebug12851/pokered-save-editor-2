@@ -13,26 +13,43 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef CREDITS_H
-#define CREDITS_H
+#ifndef CREDITDBENTRY_H
+#define CREDITDBENTRY_H
 
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
-
+#include <QObject>
+#include <QQmlEngine>
 #include <QString>
-#include <QVector>
 #include <QJsonValue>
 
-#include <optional>
+#include "../db_autoport.h"
 
-#include "./db_autoport.h"
+struct DB_AUTOPORT CreditDBEntry : public QObject {
+  Q_OBJECT
+  Q_PROPERTY(QString getSection READ getSection CONSTANT)
+  Q_PROPERTY(QString getName READ getName CONSTANT)
+  Q_PROPERTY(QString getUrl READ getUrl CONSTANT)
+  Q_PROPERTY(QString getNote READ getNote CONSTANT)
+  Q_PROPERTY(QString getLicense READ getLicense CONSTANT)
+  Q_PROPERTY(QString getMandated READ getMandated CONSTANT)
 
-struct DB_AUTOPORT CreditDBEntry {
+public:
+  QString getSection() const;
+  QString getName() const;
+  QString getUrl() const;
+  QString getNote() const;
+  QString getLicense() const;
+  QString getMandated() const;
+
+public slots:
+  void engineProtect(const QQmlEngine* const engine) const;
+
+protected:
   CreditDBEntry();
   CreditDBEntry(QJsonValue& data);
   CreditDBEntry(QString section);
 
   static void process(QJsonObject& data);
+  void engineRegister() const;
 
   QString section = "";
   QString name = "";
@@ -40,13 +57,8 @@ struct DB_AUTOPORT CreditDBEntry {
   QString note = "";
   QString license = "";
   QString mandated = "";
+
+  friend class CreditsDB;
 };
 
-class DB_AUTOPORT CreditsDB
-{
-public:
-  static void load();
-  static QVector<CreditDBEntry*> store;
-};
-
-#endif // CREDITS_H
+#endif // CREDITDBENTRY_H

@@ -23,7 +23,7 @@
 #endif
 
 #include "./pokemon.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./items.h"
 #include "./moves.h"
 #include "./types.h"
@@ -266,10 +266,10 @@ void PokemonDBEntry::deepLink()
 void PokemonDB::load()
 {
   // Grab Pokemon Data
-  auto jsonData = GameData::json("pokemon");
+  auto jsonData = GameData::inst()->json("pokemon");
 
   // Go through each Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new PokemonDBEntry(jsonEntry);
@@ -277,8 +277,6 @@ void PokemonDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void PokemonDB::index()

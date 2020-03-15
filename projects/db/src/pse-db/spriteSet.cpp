@@ -22,7 +22,7 @@
 #endif
 
 #include "./spriteSet.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./sprites.h"
 
 SpriteSetDBEntry::SpriteSetDBEntry() {}
@@ -110,10 +110,10 @@ QVector<SpriteDBEntry*> SpriteSetDBEntry::getSprites(var8 x, var8 y)
 void SpriteSetDB::load()
 {
   // Grab Music Data
-  auto jsonData = GameData::json("spriteSet");
+  auto jsonData = GameData::inst()->json("spriteSet");
 
   // Go through each music
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new SpriteSetDBEntry(jsonEntry);
@@ -121,8 +121,6 @@ void SpriteSetDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void SpriteSetDB::index()

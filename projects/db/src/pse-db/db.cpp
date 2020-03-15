@@ -17,7 +17,84 @@
 #include <QObject>
 #include "db.h"
 
-void DB::initRes()
+#include "./util/gamedata.h"
+#include "creditsdb.h"
+
+const DB* DB::inst()
+{
+  static DB* _inst = new DB;
+  return _inst;
+}
+
+GameData* DB::json()
+{
+  return GameData::inst();
+}
+
+CreditsDB* DB::credits()
+{
+  return CreditsDB::inst();
+}
+
+void DB::engineProtectUtil(const QObject* const obj, const QQmlEngine* const engine)
+{
+  // For some reason this demands it not be const
+  engine->setObjectOwnership(const_cast<QObject*>(obj), QQmlEngine::CppOwnership);
+}
+
+DB::DB()
+{
+  // Init Resources
+  initRes();
+
+  // Register to QML
+  engineRegister();
+
+  // Load, Index, and Deep Link All
+  loadAll();
+  indexAll();
+  deepLinkAll();
+}
+
+void DB::initRes() const
 {
   Q_INIT_RESOURCE(db);
+}
+
+void DB::engineRegister() const
+{
+  static bool registered = false;
+  if(registered)
+    return;
+
+  qmlRegisterUncreatableType<DB>("PSE.DB", 1, 0, "DB", "Can't instantiate in QML");
+
+  registered = true;
+}
+
+void DB::loadAll() const
+{
+  CreditsDB::inst()->load();
+}
+
+void DB::indexAll() const
+{
+  //
+}
+
+void DB::deepLinkAll() const
+{
+  //
+}
+
+void DB::engineProtect(const QQmlEngine* const engine) const
+{
+  engineProtectUtil(this, engine);
+  GameData::inst()->engineProtect(engine);
+  CreditsDB::inst()->engineProtect(engine);
+}
+
+void DB::engineHook(QQmlContext* const context)
+{
+  context->setContextProperty("pseDB", this);
 }

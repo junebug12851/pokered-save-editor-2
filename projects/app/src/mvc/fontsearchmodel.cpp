@@ -15,7 +15,7 @@
 */
 
 #include <pse-db/fonts.h>
-#include <pse-db/fontsearch.h>
+#include <pse-db/util/fontsearch.h>
 #include "./fontsearchmodel.h"
 
 FontSearchModel::FontSearchModel(FontSearch* search)

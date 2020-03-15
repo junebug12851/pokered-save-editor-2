@@ -18,7 +18,7 @@
 #include <QJsonArray>
 
 #include "./types.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 
 TypeDBEntry::TypeDBEntry() {}
 TypeDBEntry::TypeDBEntry(QJsonValue& data)
@@ -32,10 +32,10 @@ TypeDBEntry::TypeDBEntry(QJsonValue& data)
 void TypesDB::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("types");
+  auto jsonData = GameData::inst()->json("types");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new TypeDBEntry(jsonEntry);
@@ -43,8 +43,6 @@ void TypesDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void TypesDB::index()

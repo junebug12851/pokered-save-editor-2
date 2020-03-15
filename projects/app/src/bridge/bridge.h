@@ -43,7 +43,7 @@
 #include "../mvc/mapselectmodel.h"
 
 #include <pse-db/fonts.h>
-#include <pse-db/fontsearch.h>
+#include <pse-db/util/fontsearch.h>
 #include <pse-db/names.h>
 #include <pse-db/namesPokemon.h>
 #include <pse-db/examplesplayer.h>

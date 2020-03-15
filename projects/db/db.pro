@@ -1,4 +1,4 @@
-QT = core
+QT = core qml
 
 TEMPLATE = lib
 DEFINES += DB_LIBRARY
@@ -12,7 +12,8 @@ CONFIG += c++1z
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
-    src/pse-db/credits.cpp \
+    src/pse-db/creditsdb.cpp \
+    src/pse-db/entries\creditdbentry.cpp \
     src/pse-db/db.cpp \
     src/pse-db/eventpokemon.cpp \
     src/pse-db/events.cpp \
@@ -21,14 +22,14 @@ SOURCES += \
     src/pse-db/examplesrival.cpp \
     src/pse-db/fly.cpp \
     src/pse-db/fonts.cpp \
-    src/pse-db/fontsearch.cpp \
+    src/pse-db/util/fontsearch.cpp \
     src/pse-db/gamecorner.cpp \
-    src/pse-db/gamedata.cpp \
+    src/pse-db/util/gamedata.cpp \
     src/pse-db/hiddenCoins.cpp \
     src/pse-db/hiddenItems.cpp \
     src/pse-db/items.cpp \
     src/pse-db/maps.cpp \
-    src/pse-db/mapsearch.cpp \
+    src/pse-db/util/mapsearch.cpp \
     src/pse-db/missables.cpp \
     src/pse-db/moves.cpp \
     src/pse-db/music.cpp \
@@ -46,7 +47,8 @@ SOURCES += \
     src/pse-db/types.cpp
 
 HEADERS += \
-    src/pse-db/credits.h \
+    src/pse-db/creditsdb.h \
+    src/pse-db/entries\creditdbentry.h \
     src/pse-db/db.h \
     src/pse-db/db_autoport.h \
     src/pse-db/eventpokemon.h \
@@ -56,14 +58,14 @@ HEADERS += \
     src/pse-db/examplesrival.h \
     src/pse-db/fly.h \
     src/pse-db/fonts.h \
-    src/pse-db/fontsearch.h \
+    src/pse-db/util/fontsearch.h \
     src/pse-db/gamecorner.h \
-    src/pse-db/gamedata.h \
+    src/pse-db/util/gamedata.h \
     src/pse-db/hiddenCoins.h \
     src/pse-db/hiddenItems.h \
     src/pse-db/items.h \
     src/pse-db/maps.h \
-    src/pse-db/mapsearch.h \
+    src/pse-db/util/mapsearch.h \
     src/pse-db/missables.h \
     src/pse-db/moves.h \
     src/pse-db/music.h \

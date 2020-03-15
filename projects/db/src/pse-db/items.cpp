@@ -22,7 +22,7 @@
 #endif
 
 #include "./items.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./moves.h"
 #include "./gamecorner.h"
 
@@ -136,10 +136,10 @@ bool ItemDBEntry::isGameCornerExclusive()
 void ItemsDB::load()
 {
   // Grab Item Data
-  auto jsonData = GameData::json("items");
+  auto jsonData = GameData::inst()->json("items");
 
   // Go through each item
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new item entry
     auto entry = new ItemDBEntry(jsonEntry);
@@ -147,8 +147,6 @@ void ItemsDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void ItemsDB::index()

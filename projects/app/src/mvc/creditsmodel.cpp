@@ -15,13 +15,14 @@
 */
 
 #include "./creditsmodel.h"
-#include <pse-db/credits.h>
+#include <pse-db/creditsdb.h>
+#include <pse-db/entries/creditdbentry.h>
 
 int CreditsModel::rowCount(const QModelIndex& parent) const
 {
   Q_UNUSED(parent)
 
-  return CreditsDB::store.size();
+  return CreditsDB::inst()->getStore().size();
 }
 
 QVariant CreditsModel::data(const QModelIndex& index, int role) const
@@ -30,28 +31,28 @@ QVariant CreditsModel::data(const QModelIndex& index, int role) const
   if (!index.isValid())
     return QVariant();
 
-  if (index.row() >= CreditsDB::store.size())
+  if (index.row() >= CreditsDB::inst()->getStore().size())
     return QVariant();
 
-  auto entry = CreditsDB::store.at(index.row());
+  auto entry = CreditsDB::inst()->getStore().at(index.row());
 
   if (role == SectionRole)
-    return entry->section;
+    return entry->getSection();
 
   if (role == NameRole)
-    return entry->name;
+    return entry->getName();
 
   if (role == UrlRole)
-    return entry->url;
+    return entry->getUrl();
 
   if (role == NoteRole)
-    return entry->note;
+    return entry->getNote();
 
   if (role == LicenseRole)
-    return entry->license;
+    return entry->getLicense();
 
   if (role == MandatedRole)
-    return entry->mandated;
+    return entry->getMandated();
 
   // All else fails, return nothing
   return QVariant();

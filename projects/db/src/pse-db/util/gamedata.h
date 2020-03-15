@@ -16,19 +16,39 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
 
+#include <QObject>
 #include <QHash>
 #include <QJsonDocument>
+#include <QScopedPointer>
+#include <QQmlEngine>
+#include <QByteArray>
 
-#include "./db_autoport.h"
+#include "../db_autoport.h"
 
 // This helps with getting game data from the JSON files
 
-class DB_AUTOPORT GameData
+class DB_AUTOPORT GameData : public QObject
 {
+  Q_OBJECT
+
 public:
+  // Get Instance
+  static GameData* inst();
+
   // Retrieves JSON document from disk
+  // Passed by value because of Qt's COW principle ensures no speed loss
   // Give the name of the file in /assets/data without the .json file extension
-  static QJsonDocument* json(QString filename);
+  const QByteArray jsonRaw(const QString filename) const;
+  const QJsonDocument json(const QString filename) const;
+  Q_INVOKABLE const QString jsonStr(const QString filename) const;
+
+public slots:
+  void engineProtect(const QQmlEngine* const engine) const;
+
+private:
+  GameData();
+
+  void engineRegister() const;
 };
 
 #endif // GAMEDATA_H

@@ -21,7 +21,7 @@
 #endif
 
 #include "./events.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include "./maps.h"
 
 EventDBEntry::EventDBEntry() {}
@@ -57,10 +57,10 @@ void EventDBEntry::deepLink()
 void EventsDB::load()
 {
   // Grab Events
-  auto jsonData = GameData::json("events");
+  auto jsonData = GameData::inst()->json("events");
 
   // Go through each event
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event
     auto entry = new EventDBEntry(jsonEntry);
@@ -68,8 +68,6 @@ void EventsDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void EventsDB::index()

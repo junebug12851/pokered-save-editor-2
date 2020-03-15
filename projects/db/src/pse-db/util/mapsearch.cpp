@@ -19,9 +19,9 @@
 #include <pse-common/random.h>
 
 #include "./mapsearch.h"
-#include "./maps.h"
-#include "./tileset.h"
-#include "./spriteSet.h"
+#include "../maps.h"
+#include "../tileset.h"
+#include "../spriteSet.h"
 
 MapSearch::MapSearch()
 {

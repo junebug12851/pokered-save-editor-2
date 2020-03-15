@@ -18,7 +18,7 @@
 #include <QJsonArray>
 
 #include "./sprites.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 
 SpriteDBEntry::SpriteDBEntry() {}
 SpriteDBEntry::SpriteDBEntry(QJsonValue& data)
@@ -31,10 +31,10 @@ SpriteDBEntry::SpriteDBEntry(QJsonValue& data)
 void SpritesDB::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("sprites");
+  auto jsonData = GameData::inst()->json("sprites");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new SpriteDBEntry(jsonEntry);
@@ -42,8 +42,6 @@ void SpritesDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void SpritesDB::index()

@@ -15,7 +15,6 @@
 */
 
 #include <pse-db/db.h>
-#include <pse-db/credits.h>
 #include <pse-db/eventpokemon.h>
 #include <pse-db/events.h>
 #include <pse-db/examplesplayer.h>
@@ -47,7 +46,6 @@
 // Step 1: Load all JSON data into memory, properly parsed
 void load()
 {
-  CreditsDB::load();
   EventPokemonDB::load();
   EventsDB::load();
   ExamplesPlayer::load();
@@ -122,7 +120,8 @@ void deepLink()
 
 extern void bootDatabase()
 {
-  DB::initRes();
+  // The replacement for this function and all the code here
+  DB::inst();
 
   load();
   index();

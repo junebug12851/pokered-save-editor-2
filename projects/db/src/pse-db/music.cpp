@@ -18,7 +18,7 @@
 #include <QJsonArray>
 
 #include "./music.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 
 MusicDBEntry::MusicDBEntry() {}
 MusicDBEntry::MusicDBEntry(QJsonValue& data)
@@ -32,10 +32,10 @@ MusicDBEntry::MusicDBEntry(QJsonValue& data)
 void MusicDB::load()
 {
   // Grab Music Data
-  auto jsonData = GameData::json("music");
+  auto jsonData = GameData::inst()->json("music");
 
   // Go through each music
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new MusicDBEntry(jsonEntry);
@@ -43,8 +43,6 @@ void MusicDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void MusicDB::index()

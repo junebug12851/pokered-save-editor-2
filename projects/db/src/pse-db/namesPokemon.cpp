@@ -19,22 +19,20 @@
 #include <QtMath>
 
 #include "./namesPokemon.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 #include <pse-common/random.h>
 
 void NamesPokemonDB::load()
 {
   // Grab Event Pokemon Data
-  auto jsonData = GameData::json("namesPokemon");
+  auto jsonData = GameData::inst()->json("namesPokemon");
 
   // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Add to array
     store.append(jsonEntry.toString());
   }
-
-  delete jsonData;
 }
 
 QString NamesPokemonDB::randomName()

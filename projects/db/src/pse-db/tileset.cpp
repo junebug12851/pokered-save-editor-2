@@ -18,7 +18,7 @@
 #include <QJsonArray>
 
 #include "./tileset.h"
-#include "./gamedata.h"
+#include "./util/gamedata.h"
 
 TilesetDBEntry::TilesetDBEntry() {}
 TilesetDBEntry::TilesetDBEntry(QJsonValue& data)
@@ -57,10 +57,10 @@ TilesetType TilesetDBEntry::typeAsEnum()
 void TilesetDB::load()
 {
   // Grab Music Data
-  auto jsonData = GameData::json("tileset");
+  auto jsonData = GameData::inst()->json("tileset");
 
   // Go through each music
-  for(QJsonValue jsonEntry : jsonData->array())
+  for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
     auto entry = new TilesetDBEntry(jsonEntry);
@@ -68,8 +68,6 @@ void TilesetDB::load()
     // Add to array
     store.append(entry);
   }
-
-  delete jsonData;
 }
 
 void TilesetDB::index()
