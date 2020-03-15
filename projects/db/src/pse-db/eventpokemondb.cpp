@@ -92,6 +92,8 @@ void EventPokemonDB::deepLink()
 void EventPokemonDB::qmlProtect(const QQmlEngine* const engine) const
 {
   Utility::qmlProtectUtil(this, engine);
+  for(auto el : store)
+    el->qmlProtect(engine);
 }
 
 void EventPokemonDB::qmlRegister() const

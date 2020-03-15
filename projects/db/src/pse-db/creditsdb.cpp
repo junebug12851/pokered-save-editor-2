@@ -72,7 +72,7 @@ void CreditsDB::qmlProtect(const QQmlEngine* const engine) const
   Utility::qmlProtectUtil(this, engine);
 
   for(auto el : store)
-    Utility::qmlProtectUtil(el, engine);
+    el->qmlProtect(engine);
 }
 
 void CreditsDB::qmlRegister() const

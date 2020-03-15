@@ -23,26 +23,32 @@
 #include "./util/gamedata.h"
 #include "creditsdb.h"
 #include "./eventpokemondb.h"
+#include "./eventsdb.h"
 
-const DB* DB::inst()
+DB* DB::inst()
 {
   static DB* _inst = new DB;
   return _inst;
 }
 
-GameData* DB::json()
+GameData* DB::json() const
 {
   return GameData::inst();
 }
 
-CreditsDB* DB::credits()
+CreditsDB* DB::credits() const
 {
   return CreditsDB::inst();
 }
 
-EventPokemonDB* DB::eventPokemon()
+EventPokemonDB* DB::eventPokemon() const
 {
   return EventPokemonDB::inst();
+}
+
+EventsDB* DB::events() const
+{
+  return EventsDB::inst();
 }
 
 DB::DB()
@@ -79,16 +85,18 @@ void DB::loadAll() const
 {
   CreditsDB::inst()->load();
   EventPokemonDB::inst()->load();
+  EventsDB::inst()->load();
 }
 
 void DB::indexAll() const
 {
-  //
+  EventsDB::inst()->index();
 }
 
 void DB::deepLinkAll() const
 {
   EventPokemonDB::inst()->deepLink();
+  EventsDB::inst()->deepLink();
 }
 
 void DB::qmlProtect(const QQmlEngine* const engine) const
@@ -97,6 +105,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   GameData::inst()->qmlProtect(engine);
   CreditsDB::inst()->qmlProtect(engine);
   EventPokemonDB::inst()->qmlProtect(engine);
+  EventsDB::inst()->qmlProtect(engine);
 }
 
 void DB::qmlHook(QQmlContext* const context)

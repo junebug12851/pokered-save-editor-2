@@ -16,6 +16,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include <QObject>
 #include <QVector>
 #include <QString>
 #include <QHash>
@@ -24,37 +25,45 @@
 
 #include "./db_autoport.h"
 
-struct MapDBEntry;
-
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
-// In-Game events, there's like a million of them, not kidding lol. Every little
-// thing you do changes and moves around events
+class EventDBEntry;
+class QQmlEngine;
 
-struct DB_AUTOPORT EventDBEntry {
-  EventDBEntry();
-  EventDBEntry(QJsonValue& data);
-  void deepLink();
-
-  QString name; // Event name
-  var16 ind = 0; // Internal index
-  var16 byte = 0; // Byte in SAV file
-  var8 bit = 0; // Bit in byte
-  QVector<QString> maps; // Associated Maps
-
-  QVector<MapDBEntry*> toMaps; // To Associated Maps
-};
-
-class DB_AUTOPORT EventsDB
+class DB_AUTOPORT EventsDB : public QObject
 {
-public:
-  static void load();
-  static void index();
-  static void deepLink();
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
 
-  static QVector<EventDBEntry*> store;
-  static QHash<QString, EventDBEntry*> ind;
+public:
+  // Get Instance
+  static EventsDB* inst();
+
+  // Get Properties, includes QML array helpers
+  const QVector<EventDBEntry*> getStore() const;
+  const QHash<QString, EventDBEntry*> getInd() const;
+  int getStoreSize() const;
+
+  // QML Methods that can't be a property or slot because they take an argument
+  Q_INVOKABLE const EventDBEntry* getStoreAt(const int ind) const;
+  Q_INVOKABLE const EventDBEntry* getIndAt(const QString val) const;
+
+public slots:
+  void load();
+  void index();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  // Singleton Constructor
+  EventsDB();
+
+  QVector<EventDBEntry*> store;
+  QHash<QString, EventDBEntry*> ind;
 };
 
 #endif // EVENTS_H

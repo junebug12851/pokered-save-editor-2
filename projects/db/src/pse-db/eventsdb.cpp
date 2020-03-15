@@ -15,47 +15,58 @@
 */
 #include <QVector>
 #include <QJsonArray>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-#include "./events.h"
+#include "./eventsdb.h"
+#include "./entries/eventdbentry.h"
 #include "./util/gamedata.h"
 #include "./maps.h"
 
-EventDBEntry::EventDBEntry() {}
-EventDBEntry::EventDBEntry(QJsonValue& data)
+EventsDB* EventsDB::inst()
 {
-  // Set simple properties
-  name = data["name"].toString();
-  ind = data["ind"].toDouble();
-  byte = data["byte"].toDouble();
-  bit = data["bit"].toDouble();
-
-  for(auto eventMap : data["maps"].toArray())
-    maps.append(eventMap.toString());
+  static EventsDB* _inst = new EventsDB;
+  return _inst;
 }
 
-void EventDBEntry::deepLink()
+const QVector<EventDBEntry*> EventsDB::getStore() const
 {
-  for(auto map : maps)
-  {
-    auto tmp = MapsDB::ind.value(map, nullptr);
-    toMaps.append(tmp);
+  return store;
+}
 
-#ifdef QT_DEBUG
-    if(tmp == nullptr)
-      qCritical() << "Events: " << name << ", could not be deep linked to map " << map ;
-#endif
+const QHash<QString, EventDBEntry*> EventsDB::getInd() const
+{
+  return ind;
+}
 
-    if(tmp != nullptr)
-      tmp->toEvents.append(this);
-  }
+int EventsDB::getStoreSize() const
+{
+  return store.size();
+}
+
+const EventDBEntry* EventsDB::getStoreAt(const int ind) const
+{
+  if(ind >= store.size())
+    return nullptr;
+
+  return store.at(ind);
+}
+
+const EventDBEntry* EventsDB::getIndAt(const QString val) const
+{
+  return ind.value(val, nullptr);
 }
 
 void EventsDB::load()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   // Grab Events
   auto jsonData = GameData::inst()->json("events");
 
@@ -68,25 +79,59 @@ void EventsDB::load()
     // Add to array
     store.append(entry);
   }
+
+  once = true;
 }
 
 void EventsDB::index()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   for(auto entry : store)
   {
     // Index name and index
     ind.insert(entry->name, entry);
     ind.insert(QString::number(entry->ind), entry);
   }
+
+  once = true;
 }
 
 void EventsDB::deepLink()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   for(auto entry : store)
   {
     entry->deepLink();
   }
+
+  once = true;
 }
 
-QVector<EventDBEntry*> EventsDB::store = QVector<EventDBEntry*>();
-QHash<QString, EventDBEntry*> EventsDB::ind = QHash<QString, EventDBEntry*>();
+void EventsDB::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+  for(auto el : store)
+    el->qmlProtect(engine);
+}
+
+void EventsDB::qmlRegister() const
+{
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<EventsDB>("PSE.DB.EventsDB", 1, 0, "EventsDB", "Can't instantiate in QML");
+  once = true;
+}
+
+EventsDB::EventsDB()
+{
+  qmlRegister();
+  load();
+}

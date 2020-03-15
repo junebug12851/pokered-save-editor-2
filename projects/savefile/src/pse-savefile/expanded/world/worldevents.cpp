@@ -21,7 +21,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include <pse-db/events.h>
+#include <pse-db/eventsdb.h>
 
 WorldEvents::WorldEvents(SaveFile* saveFile)
 {

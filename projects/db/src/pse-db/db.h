@@ -27,6 +27,7 @@ class QQmlEngine;
 class GameData;
 class CreditsDB;
 class EventPokemonDB;
+class EventsDB;
 
 // Provides a common interface for the databases to use and a common interface
 // to the databases.
@@ -37,15 +38,17 @@ class DB_AUTOPORT DB : public QObject
   Q_PROPERTY(GameData* json READ json CONSTANT)
   Q_PROPERTY(CreditsDB* credits READ credits CONSTANT)
   Q_PROPERTY(EventPokemonDB* eventPokemon READ eventPokemon CONSTANT)
+  Q_PROPERTY(EventsDB* events READ events CONSTANT)
 
 public:
-  static const DB* inst();
+  static DB* inst();
 
   // While they can be accessed directly, this allows QML to access them easier
   // and without polluting the global namespace
-  GameData* json();
-  CreditsDB* credits();
-  EventPokemonDB* eventPokemon();
+  GameData* json() const;
+  CreditsDB* credits() const;
+  EventPokemonDB* eventPokemon() const;
+  EventsDB* events() const;
 
 public slots:
   // It's very important to protect the engine from QML, in some cases QML may

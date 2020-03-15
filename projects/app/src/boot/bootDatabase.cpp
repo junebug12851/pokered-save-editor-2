@@ -16,7 +16,7 @@
 
 #include <pse-db/db.h>
 #include <pse-db/eventpokemondb.h>
-#include <pse-db/events.h>
+#include <pse-db/eventsdb.h>
 #include <pse-db/examplesplayer.h>
 #include <pse-db/examplespokemon.h>
 #include <pse-db/examplesrival.h>
