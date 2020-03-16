@@ -21,7 +21,6 @@
 #include <QString>
 #include <QHash>
 #include <QJsonValue>
-#include <pse-common/types.h>
 
 #include "./db_autoport.h"
 

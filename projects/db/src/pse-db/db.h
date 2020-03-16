@@ -36,6 +36,7 @@ class EventsDB;
 class Examples;
 class Names;
 class FlyDB;
+class FontsDB;
 
 // Provides a common interface for the databases to use and a common interface
 // to the databases.
@@ -50,6 +51,7 @@ class DB_AUTOPORT DB : public QObject
   Q_PROPERTY(Examples* examples READ examples CONSTANT)
   Q_PROPERTY(Names* names READ names CONSTANT)
   Q_PROPERTY(FlyDB* fly READ fly CONSTANT)
+  Q_PROPERTY(FontsDB* fonts READ fonts CONSTANT)
 
 public:
   static DB* inst();
@@ -63,6 +65,7 @@ public:
   Examples* examples() const;
   Names* names() const;
   FlyDB* fly() const;
+  FontsDB* fonts() const;
 
 public slots:
   // It's very important to protect the engine from QML, in some cases QML may

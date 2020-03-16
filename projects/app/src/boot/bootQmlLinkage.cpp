@@ -38,7 +38,7 @@
 #include <pse-db/examplesplayer.h>
 #include <pse-db/examplespokemon.h>
 #include <pse-db/examplesrival.h>
-#include <pse-db/fonts.h>
+#include <pse-db/fontsdb.h>
 #include <pse-db/util/fontsearch.h>
 #include <pse-db/names.h>
 #include <pse-db/namesPokemon.h>

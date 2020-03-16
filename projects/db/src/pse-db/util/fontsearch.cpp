@@ -18,7 +18,7 @@
 #include <pse-common/utility.h>
 
 #include "fontsearch.h"
-#include "../fonts.h"
+#include "../fontsdb.h"
 
 FontSearch::FontSearch()
 {

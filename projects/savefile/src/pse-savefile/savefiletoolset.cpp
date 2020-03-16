@@ -15,7 +15,7 @@
 */
 #include "savefiletoolset.h"
 #include "savefile.h"
-#include <pse-db/fonts.h>
+#include <pse-db/fontsdb.h>
 
 SaveFileToolset::SaveFileToolset(SaveFile* newSaveFile)
 {

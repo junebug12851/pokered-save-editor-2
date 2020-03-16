@@ -14,7 +14,7 @@
   * limitations under the License.
 */
 
-#include <pse-db/fonts.h>
+#include <pse-db/fontsdb.h>
 #include <pse-db/util/fontsearch.h>
 #include "./fontsearchmodel.h"
 

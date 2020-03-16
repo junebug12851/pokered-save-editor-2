@@ -22,7 +22,7 @@
 
 #include "./fontpreviewprovider.h"
 #include "./tilesetengine.h"
-#include <pse-db/fonts.h>
+#include <pse-db/fontsdb.h>
 #include <pse-common/utility.h>
 
 #include <pse-savefile/expanded/savefileexpanded.h>

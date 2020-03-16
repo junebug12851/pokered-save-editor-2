@@ -15,46 +15,20 @@
 */
 #include <QVector>
 #include <QJsonArray>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
-#include "./fonts.h"
+#include "./fontsdb.h"
 #include "./util/gamedata.h"
 #include "./util/fontsearch.h"
-
-FontDBEntry::FontDBEntry() {}
-FontDBEntry::FontDBEntry(QJsonValue& data) {
-  // Set simple properties
-  name = data["name"].toString();
-  ind = data["ind"].toDouble();
-  length = data["length"].toDouble();
-
-  // Set simple optional properties
-  if(data["shorthand"].isBool())
-    shorthand = data["shorthand"].toBool();
-
-  if(data["picture"].isBool())
-    picture = data["picture"].toBool();
-
-  alias = data["alias"].toString("");
-  tip = data["tip"].toString("");
-
-  if(data["control"].isBool())
-    control = data["control"].toBool();
-
-  if(data["multiChar"].isBool())
-    multiChar = data["multiChar"].toBool();
-
-  if(data["variable"].isBool())
-    variable = data["variable"].toBool();
-
-  if(data["singleChar"].isBool())
-    singleChar = data["singleChar"].toBool();
-
-  if(data["normal"].isBool())
-    normal = data["normal"].toBool();
-}
+#include "./entries/fontdbentry.h"
 
 void FontsDB::load()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   // Grab Event Pokemon Data
   auto jsonData = GameData::inst()->json("font");
 
@@ -67,21 +41,58 @@ void FontsDB::load()
     // Add to array
     store.append(entry);
   }
+
+  once = true;
 }
 
 void FontsDB::index()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   for(auto entry : store)
   {
     // Index name and index
     ind.insert(entry->name, entry);
     ind.insert("ind"+QString::number(entry->ind), entry);
   }
+
+  once = true;
 }
 
-FontSearch* FontsDB::search()
+void FontsDB::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+  for(auto el : store)
+    el->qmlProtect(engine);
+}
+
+void FontsDB::qmlRegister() const
+{
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<FontsDB>("PSE.DB.FontsDB", 1, 0, "FontsDB", "Can't instantiate in QML");
+  once = true;
+}
+
+FontsDB::FontsDB()
+{
+  qmlRegister();
+  load();
+}
+
+FontSearch* FontsDB::searchRaw() const
 {
   return new FontSearch();
+}
+
+const QScopedPointer<const FontSearch, QScopedPointerDeleteLater> FontsDB::search() const
+{
+  return QScopedPointer<const FontSearch, QScopedPointerDeleteLater>(
+        new FontSearch());
 }
 
 // Converts a string filled with english typable in-game text code
@@ -89,13 +100,13 @@ FontSearch* FontsDB::search()
 // If fed strings not in the representation list, the unknown characters will
 // be ignored thus possibly corrupting output
 // Possibly very slow
-QVector<var8> FontsDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
+const QVector<int> FontsDB::convertToCode(QString str, int maxLen, const bool autoEnd) const
 {
   // Code string to return
-  QVector<var8> code;
+  QVector<int> code;
 
   // Last code
-  var8 lastCode = 0;
+  int lastCode = 0;
 
   // Auto Ending takes up a character, remove 1 from max length if we auto-end
   if(autoEnd)
@@ -111,7 +122,7 @@ QVector<var8> FontsDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
     // "a" maps to "a" in-game but "<m>" maps to "male symbol" in-game
     // "a<m>" maps to 2 characters in-game not 4. When we find a symbol we have
     // to remove all the characters in the string before proceeding.
-    for (var8 i = 0; i < store.length(); i++) {
+    for (int i = 0; i < store.length(); i++) {
 
       // Find a starting match
       // Ignore this character if none are found
@@ -154,13 +165,13 @@ QVector<var8> FontsDB::convertToCode(QString str, var8 maxLen, bool autoEnd)
 
 // Much easier and faster, just expand the in-game code to it's english
 // representation directly
-QString FontsDB::convertFromCode(QVector<var8> codes, var8 maxLen)
+const QString FontsDB::convertFromCode(const QVector<int> codes, const int maxLen) const
 {
   // Prepare empty string
   QString eng = "";
 
-  for (var8 i = 0; i < codes.length(); i++) {
-    var8 code = codes[i];
+  for (int i = 0; i < codes.length(); i++) {
+    int code = codes[i];
 
     // Don't include the end terminator
     // stop here if there is one
@@ -185,16 +196,16 @@ QString FontsDB::convertFromCode(QVector<var8> codes, var8 maxLen)
 
 // Converts an english format string to code represented as how it would be
 // in-game
-QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString player)
+const QString FontsDB::expandStr(const QString msg, const int maxLen, const QString rival, const QString player) const
 {
   // Convert string to char codes
   // Very expensive
-  QVector<var8> charCodes = convertToCode(msg, maxLen, true);
+  QVector<int> charCodes = convertToCode(msg, maxLen, true);
 
   // First we go through and stop or react on some control codes
-   for(var8 i = 0; i < charCodes.length(); i++) {
+   for(int i = 0; i < charCodes.length(); i++) {
      // Grab a code
-     var8 code = charCodes[i];
+     int code = charCodes[i];
 
      // <page> => stop & end
      // Verified: It awaits for you to continue by pressing any key to advance
@@ -257,13 +268,13 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
      }
    }
 
-   var8 lineCount = 1;
+   int lineCount = 1;
 
   // Now begin processing it, we have to expand the expansive char codes first
-  for(var8 i = 0; i < charCodes.length(); i++) {
+  for(int i = 0; i < charCodes.length(); i++) {
 
     // Grab a code
-    var8 code = charCodes[i];
+    int code = charCodes[i];
 
     // Expand if any of the codes are present
     // <pkmn> => <pk><mn>
@@ -347,28 +358,59 @@ QString FontsDB::expandStr(QString msg, var8 maxLen, QString rival, QString play
   return ret;
 }
 
-int FontsDB::fontCount()
+FontsDB* FontsDB::inst()
+{
+  static FontsDB* _inst = new FontsDB();
+  return _inst;
+}
+
+const QVector<FontDBEntry*> FontsDB::getStore() const
+{
+  return store;
+}
+
+const QHash<QString, FontDBEntry*> FontsDB::getInd() const
+{
+  return ind;
+}
+
+int FontsDB::getStoreSize() const
 {
   return store.size();
 }
 
-FontDBEntry* FontsDB::fontAt(int code)
+const FontDBEntry* FontsDB::getStoreAt(const int ind) const
 {
-  return store.at(code - 1);
+  if(ind >= store.size())
+    return nullptr;
+
+  return store.at(ind);
 }
 
-FontDBEntry* FontsDB::fontLookup(QString val)
+const FontDBEntry* FontsDB::getIndAt(const QString val) const
 {
-  return ind.value(val);
+  return ind.value(val, nullptr);
 }
 
-int FontsDB::countSizeOf(QString val)
+const FontDBEntry* FontsDB::getStoreByVal(int ind) const
+{
+  // Font values start at 1, to get requested value, offset by 1
+  // Check for negatives as well
+  ind--;
+  if(ind >= store.size() ||
+     ind < 0)
+    return nullptr;
+
+  return store.at(ind);
+}
+
+int FontsDB::countSizeOf(const QString val) const
 {
   // Ignore max size and ending byte
   return convertToCode(val, 255, false).size();
 }
 
-int FontsDB::countSizeOfExpanded(QString val)
+int FontsDB::countSizeOfExpanded(const QString val) const
 {
   // Gives length of expanded string in tiles with maximum player and rival
   // names
@@ -376,13 +418,10 @@ int FontsDB::countSizeOfExpanded(QString val)
         expandStr(val, 255, "1234567", "1234567"), 255, false).size();
 }
 
-void FontsDB::splice(QVector<var8>& out, QString in, var8 ind)
+void FontsDB::splice(QVector<int>& out, const QString in, const int ind) const
 {
-  QVector<var8> tmp = convertToCode(in, 100, false);
+  QVector<int> tmp = convertToCode(in, 100, false);
   out.remove(ind);
-  for(var8 j = 0; j < tmp.length(); j++)
+  for(int j = 0; j < tmp.length(); j++)
     out.insert(ind+j, tmp.at(j));
 }
-
-QVector<FontDBEntry*> FontsDB::store = QVector<FontDBEntry*>();
-QHash<QString, FontDBEntry*> FontsDB::ind = QHash<QString, FontDBEntry*>();

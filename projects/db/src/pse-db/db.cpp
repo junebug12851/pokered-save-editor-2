@@ -27,6 +27,7 @@
 #include "./examples.h"
 #include "./names.h"
 #include "./flydb.h"
+#include "./fontsdb.h"
 
 DB* DB::inst()
 {
@@ -69,6 +70,11 @@ FlyDB* DB::fly() const
   return FlyDB::inst();
 }
 
+FontsDB* DB::fonts() const
+{
+  return FontsDB::inst();
+}
+
 DB::DB()
 {
   // Init Resources
@@ -101,6 +107,10 @@ void DB::qmlRegister() const
 
 void DB::loadAll() const
 {
+  static bool once = false;
+  if(once)
+    return;
+
   Examples::inst();
   Names::inst();
 
@@ -108,19 +118,35 @@ void DB::loadAll() const
   EventPokemonDB::inst()->load();
   EventsDB::inst()->load();
   FlyDB::inst()->load();
+  FontsDB::inst()->load();
+
+  once = true;
 }
 
 void DB::indexAll() const
 {
+  static bool once = false;
+  if(once)
+    return;
+
   EventsDB::inst()->index();
   FlyDB::inst()->index();
+  FontsDB::inst()->index();
+
+  once = true;
 }
 
 void DB::deepLinkAll() const
 {
+  static bool once = false;
+  if(once)
+    return;
+
   EventPokemonDB::inst()->deepLink();
   EventsDB::inst()->deepLink();
   FlyDB::inst()->deepLink();
+
+  once = true;
 }
 
 void DB::qmlProtect(const QQmlEngine* const engine) const
@@ -132,6 +158,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   EventsDB::inst()->qmlProtect(engine);
   Examples::inst()->qmlProtect(engine);
   FlyDB::inst()->qmlProtect(engine);
+  FontsDB::inst()->qmlProtect(engine);
 }
 
 void DB::qmlHook(QQmlContext* const context) const

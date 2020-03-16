@@ -15,7 +15,7 @@
 #include <pse-savefile/expanded/player/player.h>
 #include <pse-savefile/expanded/player/playerpokemon.h>
 
-#include <pse-db/fonts.h>
+#include <pse-db/fontsdb.h>
 
 #include "../../src/engine/tilesetprovider.h"
 #include "../../src/engine/fontpreviewprovider.h"
