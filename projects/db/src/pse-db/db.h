@@ -35,6 +35,7 @@ class EventPokemonDB;
 class EventsDB;
 class Examples;
 class Names;
+class FlyDB;
 
 // Provides a common interface for the databases to use and a common interface
 // to the databases.
@@ -48,6 +49,7 @@ class DB_AUTOPORT DB : public QObject
   Q_PROPERTY(EventsDB* events READ events CONSTANT)
   Q_PROPERTY(Examples* examples READ examples CONSTANT)
   Q_PROPERTY(Names* names READ names CONSTANT)
+  Q_PROPERTY(FlyDB* fly READ fly CONSTANT)
 
 public:
   static DB* inst();
@@ -60,6 +62,7 @@ public:
   EventsDB* events() const;
   Examples* examples() const;
   Names* names() const;
+  FlyDB* fly() const;
 
 public slots:
   // It's very important to protect the engine from QML, in some cases QML may

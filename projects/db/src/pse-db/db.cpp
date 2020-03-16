@@ -26,6 +26,7 @@
 #include "./eventsdb.h"
 #include "./examples.h"
 #include "./names.h"
+#include "./flydb.h"
 
 DB* DB::inst()
 {
@@ -61,6 +62,11 @@ Examples* DB::examples() const
 Names* DB::names() const
 {
   return Names::inst();
+}
+
+FlyDB* DB::fly() const
+{
+  return FlyDB::inst();
 }
 
 DB::DB()
@@ -101,17 +107,20 @@ void DB::loadAll() const
   CreditsDB::inst()->load();
   EventPokemonDB::inst()->load();
   EventsDB::inst()->load();
+  FlyDB::inst()->load();
 }
 
 void DB::indexAll() const
 {
   EventsDB::inst()->index();
+  FlyDB::inst()->index();
 }
 
 void DB::deepLinkAll() const
 {
   EventPokemonDB::inst()->deepLink();
   EventsDB::inst()->deepLink();
+  FlyDB::inst()->deepLink();
 }
 
 void DB::qmlProtect(const QQmlEngine* const engine) const
@@ -122,6 +131,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   EventPokemonDB::inst()->qmlProtect(engine);
   EventsDB::inst()->qmlProtect(engine);
   Examples::inst()->qmlProtect(engine);
+  FlyDB::inst()->qmlProtect(engine);
 }
 
 void DB::qmlHook(QQmlContext* const context) const

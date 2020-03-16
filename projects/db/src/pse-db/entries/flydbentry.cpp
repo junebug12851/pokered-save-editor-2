@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,21 +14,20 @@
   * limitations under the License.
 */
 
-#include <QVector>
-#include <QJsonArray>
-
-#ifdef QT_DEBUG
 #include <QtDebug>
-#endif
+#include <pse-common/utility.h>
 
-#include "./fly.h"
-#include "./util/gamedata.h"
-#include "./maps.h"
+#include "flydbentry.h"
+#include "../maps.h"
 
-FlyDBEntry::FlyDBEntry() {}
+FlyDBEntry::FlyDBEntry() {
+  qmlRegister();
+}
 
 FlyDBEntry::FlyDBEntry(QJsonValue& data)
 {
+  qmlRegister();
+
   // Set simple properties
   name = data["name"].toString();
   ind = data["ind"].toDouble();
@@ -36,6 +35,10 @@ FlyDBEntry::FlyDBEntry(QJsonValue& data)
 
 void FlyDBEntry::deepLink()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   toMap = MapsDB::ind.value(name, nullptr);
 
 #ifdef QT_DEBUG
@@ -45,41 +48,26 @@ void FlyDBEntry::deepLink()
 
   if(toMap != nullptr)
     toMap->toFlyDestination = this;
+
+  once = true;
 }
 
-void FlyDB::load()
+const MapDBEntry* FlyDBEntry::getToMap() const
 {
-  // Grab Event Pokemon Data
-  auto jsonData = GameData::inst()->json("fly");
-
-  // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Create a new event Pokemon entry
-    auto entry = new FlyDBEntry(jsonEntry);
-
-    // Add to array
-    store.append(entry);
-  }
+  return toMap;
 }
 
-void FlyDB::index()
+void FlyDBEntry::qmlProtect(const QQmlEngine* const engine) const
 {
-  for(auto entry : store)
-  {
-    // Index name and index
-    ind.insert(entry->name, entry);
-    ind.insert(QString::number(entry->ind), entry);
-  }
+  Utility::qmlProtectUtil(this, engine);
 }
 
-void FlyDB::deepLink()
+int FlyDBEntry::getInd() const
 {
-  for(auto entry : store)
-  {
-    entry->deepLink();
-  }
+    return ind;
 }
 
-QVector<FlyDBEntry*> FlyDB::store = QVector<FlyDBEntry*>();
-QHash<QString, FlyDBEntry*> FlyDB::ind = QHash<QString, FlyDBEntry*>();
+const QString FlyDBEntry::getName() const
+{
+    return name;
+}

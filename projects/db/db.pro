@@ -16,6 +16,7 @@ SOURCES += \
     src/pse-db/entries/abstractrandomstring.cpp \
     src/pse-db/entries/eventdbentry.cpp \
     src/pse-db/entries/eventpokemondbentry.cpp \
+    src/pse-db/entries/flydbentry.cpp \
     src/pse-db/entries\creditdbentry.cpp \
     src/pse-db/db.cpp \
     src/pse-db/eventpokemondb.cpp \
@@ -24,7 +25,7 @@ SOURCES += \
     src/pse-db/entries/examplespokemon.cpp \
     src/pse-db/entries/examplesrival.cpp \
     src/pse-db/examples.cpp \
-    src/pse-db/fly.cpp \
+    src/pse-db/flydb.cpp \
     src/pse-db/fonts.cpp \
     src/pse-db/names.cpp \
     src/pse-db/util/fontsearch.cpp \
@@ -56,6 +57,7 @@ HEADERS += \
     src/pse-db/entries/abstractrandomstring.h \
     src/pse-db/entries/eventdbentry.h \
     src/pse-db/entries/eventpokemondbentry.h \
+    src/pse-db/entries/flydbentry.h \
     src/pse-db/entries\creditdbentry.h \
     src/pse-db/db.h \
     src/pse-db/db_autoport.h \
@@ -65,7 +67,7 @@ HEADERS += \
     src/pse-db/entries/examplespokemon.h \
     src/pse-db/entries/examplesrival.h \
     src/pse-db/examples.h \
-    src/pse-db/fly.h \
+    src/pse-db/flydb.h \
     src/pse-db/fonts.h \
     src/pse-db/names.h \
     src/pse-db/util/fontsearch.h \

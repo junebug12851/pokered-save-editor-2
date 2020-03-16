@@ -20,7 +20,7 @@
 #include <pse-db/examplesplayer.h>
 #include <pse-db/examplespokemon.h>
 #include <pse-db/examplesrival.h>
-#include <pse-db/fly.h>
+#include <pse-db/flydb.h>
 #include <pse-db/fonts.h>
 #include <pse-db/gamecorner.h>
 #include <pse-db/hiddenCoins.h>

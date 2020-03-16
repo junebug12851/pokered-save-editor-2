@@ -20,7 +20,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include <pse-db/fly.h>
+#include <pse-db/flydb.h>
 #include <pse-common/random.h>
 
 WorldTowns::WorldTowns(SaveFile* saveFile)
