@@ -13,44 +13,41 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef UTILITY_H
-#define UTILITY_H
+#ifndef ABSTRACTEXAMPLE_H
+#define ABSTRACTEXAMPLE_H
 
 #include <QObject>
 #include <QString>
 
-class QQmlContext;
+#include "../db_autoport.h"
+
 class QQmlEngine;
 
-#include "./common_autoport.h"
-
-class Random;
-
-class COMMON_AUTOPORT Utility : public QObject
+class DB_AUTOPORT AbstractExample : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(Random* random READ random CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(QString randomExample READ randomExample STORED false)
 
 public:
-  static Utility* inst();
+  const QVector<QString> getStore() const;
+  int getStoreSize() const;
+  Q_INVOKABLE const QString getStoreAt(const int ind) const;
 
-  Random* random();
-
-  Q_INVOKABLE const QString encodeBeforeUrl(const QString beforeStr) const;
-  Q_INVOKABLE const QString decodeAfterUrl(QString beforeStr) const;
-
-  // Generic utility for any of the databases to use
-  static void qmlProtectUtil(const QObject* const obj, const QQmlEngine* const engine);
+  QString randomExample();
 
 public slots:
+  // QML accessible methods
+  void load();
   void qmlProtect(const QQmlEngine* const engine) const;
-  void qmlHook(QQmlContext* const context) const;
 
-private slots:
-  void qmlRegister() const;
+protected slots:
+  virtual void qmlRegister() const = 0;
 
-private:
-  Utility();
+protected:
+  AbstractExample(const QString fileName);
+  QVector<QString> store;
+  const QString fileName;
 };
 
-#endif // UTILITY_H
+#endif // ABSTRACTEXAMPLE_H

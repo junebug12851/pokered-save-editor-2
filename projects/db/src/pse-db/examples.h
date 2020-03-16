@@ -13,25 +13,38 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef EXAMPLESPLAYER_H
-#define EXAMPLESPLAYER_H
+#ifndef EXAMPLES_H
+#define EXAMPLES_H
 
 #include <QObject>
-#include <QString>
-#include <pse-common/types.h>
 
-#include "./db_autoport.h"
+class QQmlEngine;
+class ExamplesPlayer;
+class ExamplesRival;
+class ExamplesPokemon;
 
-class DB_AUTOPORT ExamplesPlayer : public QObject
+class Examples : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(ExamplesPlayer* player READ player CONSTANT)
+  Q_PROPERTY(ExamplesRival* rival READ rival CONSTANT)
+  Q_PROPERTY(ExamplesPokemon* pokemon READ pokemon CONSTANT)
 
 public:
-  static void load();
-  Q_INVOKABLE static QString randomExample();
+  static Examples* inst();
 
-  static var32 lastInd;
-  static QVector<QString> store;
+  const ExamplesPlayer* player() const;
+  const ExamplesRival* rival() const;
+  const ExamplesPokemon* pokemon() const;
+
+public slots:
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  Examples();
 };
 
-#endif // EXAMPLESPLAYER_H
+#endif // EXAMPLES_H

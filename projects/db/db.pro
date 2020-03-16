@@ -13,15 +13,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     src/pse-db/creditsdb.cpp \
+    src/pse-db/entries/abstractexample.cpp \
     src/pse-db/entries/eventdbentry.cpp \
     src/pse-db/entries/eventpokemondbentry.cpp \
     src/pse-db/entries\creditdbentry.cpp \
     src/pse-db/db.cpp \
     src/pse-db/eventpokemondb.cpp \
     src/pse-db/eventsdb.cpp \
-    src/pse-db/examplesplayer.cpp \
-    src/pse-db/examplespokemon.cpp \
-    src/pse-db/examplesrival.cpp \
+    src/pse-db/entries/examplesplayer.cpp \
+    src/pse-db/entries/examplespokemon.cpp \
+    src/pse-db/entries/examplesrival.cpp \
+    src/pse-db/examples.cpp \
     src/pse-db/fly.cpp \
     src/pse-db/fonts.cpp \
     src/pse-db/util/fontsearch.cpp \
@@ -50,6 +52,7 @@ SOURCES += \
 
 HEADERS += \
     src/pse-db/creditsdb.h \
+    src/pse-db/entries/abstractexample.h \
     src/pse-db/entries/eventdbentry.h \
     src/pse-db/entries/eventpokemondbentry.h \
     src/pse-db/entries\creditdbentry.h \
@@ -57,9 +60,10 @@ HEADERS += \
     src/pse-db/db_autoport.h \
     src/pse-db/eventpokemondb.h \
     src/pse-db/eventsdb.h \
-    src/pse-db/examplesplayer.h \
-    src/pse-db/examplespokemon.h \
-    src/pse-db/examplesrival.h \
+    src/pse-db/entries/examplesplayer.h \
+    src/pse-db/entries/examplespokemon.h \
+    src/pse-db/entries/examplesrival.h \
+    src/pse-db/examples.h \
     src/pse-db/fly.h \
     src/pse-db/fonts.h \
     src/pse-db/util/fontsearch.h \

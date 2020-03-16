@@ -64,9 +64,10 @@ void Utility::qmlProtect(const QQmlEngine* const engine) const
   Random::inst()->qmlProtect(engine);
 }
 
-void Utility::qmlHook(QQmlContext* const context)
+void Utility::qmlHook(QQmlContext* const context) const
 {
-  context->setContextProperty("pseCommon", this);
+  // For some reason this demands it not be const
+  context->setContextProperty("pseCommon", const_cast<Utility*>(this));
 }
 
 void Utility::qmlRegister() const

@@ -17,35 +17,31 @@
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>
+#include <QQmlEngine>
 
-#include "./examplespokemon.h"
-#include "./util/gamedata.h"
+#include "./examplesrival.h"
+#include "../util/gamedata.h"
 #include <pse-common/random.h>
+#include <pse-common/utility.h>
 
-void ExamplesPokemon::load()
+void ExamplesRival::qmlRegister() const
 {
-  // Grab Event Pokemon Data
-  auto jsonData = GameData::inst()->json("pokemonExamples");
+  static bool once = false;
+  if(once)
+    return;
 
-  // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Add to array
-    store.append(jsonEntry.toString());
-  }
+  qmlRegisterUncreatableType<ExamplesRival>("PSE.DB.ExamplesRival", 1, 0, "ExamplesRival", "Can't instantiate in QML");
+  once = true;
 }
 
-QString ExamplesPokemon::randomExample()
+ExamplesRival::ExamplesRival()
+  : AbstractExample("rivalExamples")
 {
-  int index = Random::rangeExclusive(0, store.size());
-  QString ret = store.at(index);
-  store.removeAt(index);
-
-  if(store.size() == 0)
-    load();
-
-  return ret;
+  qmlRegister();
 }
 
-var32 ExamplesPokemon::lastInd = 0;
-QVector<QString> ExamplesPokemon::store = QVector<QString>();
+ExamplesRival* ExamplesRival::inst()
+{
+  static ExamplesRival* _inst = new ExamplesRival;
+  return _inst;
+}

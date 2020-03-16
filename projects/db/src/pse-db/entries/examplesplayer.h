@@ -13,25 +13,28 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef EXAMPLESRIVAL_H
-#define EXAMPLESRIVAL_H
+#ifndef EXAMPLESPLAYER_H
+#define EXAMPLESPLAYER_H
 
 #include <QObject>
 #include <QString>
-#include <pse-common/types.h>
 
-#include "./db_autoport.h"
+#include "./abstractexample.h"
+#include "../db_autoport.h"
 
-class DB_AUTOPORT ExamplesRival : public QObject
+class QQmlEngine;
+
+class DB_AUTOPORT ExamplesPlayer : public AbstractExample
 {
   Q_OBJECT
 
 public:
-  static void load();
-  Q_INVOKABLE static QString randomExample();
+  // Get Instance
+  static ExamplesPlayer* inst();
 
-  static var32 lastInd;
-  static QVector<QString> store;
+protected slots:
+  ExamplesPlayer();
+  virtual void qmlRegister() const;
 };
 
-#endif // EXAMPLESRIVAL_H
+#endif // EXAMPLESPLAYER_H

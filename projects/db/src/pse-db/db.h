@@ -21,13 +21,19 @@
 #include "./db_autoport.h"
 
 // An instance of DB must be retrieved at the start of the program or none of
-// this may work.
+// this will work. No class or method in this module should even be accessed
+// without first accessing a DB instance
+
+// First access to the DB sets up the module, creates the DB and all instances,
+// and loads, indexes, and deep links all data. It essentially constructs the
+// entire module.
 
 class QQmlEngine;
 class GameData;
 class CreditsDB;
 class EventPokemonDB;
 class EventsDB;
+class Examples;
 
 // Provides a common interface for the databases to use and a common interface
 // to the databases.
@@ -39,6 +45,7 @@ class DB_AUTOPORT DB : public QObject
   Q_PROPERTY(CreditsDB* credits READ credits CONSTANT)
   Q_PROPERTY(EventPokemonDB* eventPokemon READ eventPokemon CONSTANT)
   Q_PROPERTY(EventsDB* events READ events CONSTANT)
+  Q_PROPERTY(Examples* examples READ examples CONSTANT)
 
 public:
   static DB* inst();
@@ -49,6 +56,7 @@ public:
   CreditsDB* credits() const;
   EventPokemonDB* eventPokemon() const;
   EventsDB* events() const;
+  Examples* examples() const;
 
 public slots:
   // It's very important to protect the engine from QML, in some cases QML may
@@ -56,7 +64,7 @@ public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
 
   // Hooks into a QML Context
-  void qmlHook(QQmlContext* const context);
+  void qmlHook(QQmlContext* const context) const;
 
 private slots:
   // Init the DLL resources, very important before any DB loading happens

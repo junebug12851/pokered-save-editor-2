@@ -24,6 +24,7 @@
 #include "creditsdb.h"
 #include "./eventpokemondb.h"
 #include "./eventsdb.h"
+#include "./examples.h"
 
 DB* DB::inst()
 {
@@ -49,6 +50,11 @@ EventPokemonDB* DB::eventPokemon() const
 EventsDB* DB::events() const
 {
   return EventsDB::inst();
+}
+
+Examples* DB::examples() const
+{
+  return Examples::inst();
 }
 
 DB::DB()
@@ -83,6 +89,8 @@ void DB::qmlRegister() const
 
 void DB::loadAll() const
 {
+  Examples::inst();
+
   CreditsDB::inst()->load();
   EventPokemonDB::inst()->load();
   EventsDB::inst()->load();
@@ -106,9 +114,10 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   CreditsDB::inst()->qmlProtect(engine);
   EventPokemonDB::inst()->qmlProtect(engine);
   EventsDB::inst()->qmlProtect(engine);
+  Examples::inst()->qmlProtect(engine);
 }
 
-void DB::qmlHook(QQmlContext* const context)
+void DB::qmlHook(QQmlContext* const context) const
 {
-  context->setContextProperty("pseDB", this);
+  context->setContextProperty("pseDB", const_cast<DB*>(this));
 }

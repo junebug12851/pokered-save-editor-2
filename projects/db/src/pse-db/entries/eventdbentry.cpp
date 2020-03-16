@@ -47,6 +47,10 @@ EventDBEntry::EventDBEntry(QJsonValue& data)
 
 void EventDBEntry::deepLink()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   for(auto map : maps)
   {
     auto tmp = MapsDB::ind.value(map, nullptr);
@@ -60,6 +64,8 @@ void EventDBEntry::deepLink()
     if(tmp != nullptr)
       tmp->toEvents.append(this);
   }
+
+  once = true;
 }
 
 void EventDBEntry::qmlRegister() const

@@ -13,19 +13,23 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+#include "abstractexample.h"
 
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>
+#include <QQmlEngine>
 
-#include "./examplesplayer.h"
-#include "./util/gamedata.h"
+#include "../util/gamedata.h"
 #include <pse-common/random.h>
+#include <pse-common/utility.h>
 
-void ExamplesPlayer::load()
+void AbstractExample::load()
 {
+  store.clear();
+
   // Grab Event Pokemon Data
-  auto jsonData = GameData::inst()->json("playerExamples");
+  auto jsonData = GameData::inst()->json(fileName);
 
   // Go through each event Pokemon
   for(QJsonValue jsonEntry : jsonData.array())
@@ -35,9 +39,38 @@ void ExamplesPlayer::load()
   }
 }
 
-QString ExamplesPlayer::randomExample()
+void AbstractExample::qmlProtect(const QQmlEngine* const engine) const
 {
-  int index = Random::rangeExclusive(0, store.size());
+  Utility::qmlProtectUtil(this, engine);
+}
+
+AbstractExample::AbstractExample(QString fileName)
+  : fileName(fileName)
+{
+  load();
+}
+
+const QVector<QString> AbstractExample::getStore() const
+{
+  return store;
+}
+
+int AbstractExample::getStoreSize() const
+{
+  return store.size();
+}
+
+const QString AbstractExample::getStoreAt(const int ind) const
+{
+  if(ind >= store.size())
+    return nullptr;
+
+  return store.at(ind);
+}
+
+QString AbstractExample::randomExample()
+{
+  int index = Random::inst()->rangeExclusive(0, store.size());
   QString ret = store.at(index);
   store.removeAt(index);
 
@@ -46,6 +79,3 @@ QString ExamplesPlayer::randomExample()
 
   return ret;
 }
-
-var32 ExamplesPlayer::lastInd = 0;
-QVector<QString> ExamplesPlayer::store = QVector<QString>();
