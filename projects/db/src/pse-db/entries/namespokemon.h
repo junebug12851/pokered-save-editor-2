@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2019 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,41 +13,28 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef ABSTRACTEXAMPLE_H
-#define ABSTRACTEXAMPLE_H
+#ifndef NAMESPOKEMON_H
+#define NAMESPOKEMON_H
 
 #include <QObject>
 #include <QString>
 
+#include "./abstractrandomstring.h"
 #include "../db_autoport.h"
 
 class QQmlEngine;
 
-class DB_AUTOPORT AbstractExample : public QObject
+class DB_AUTOPORT NamesPokemon : public AbstractRandomString
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
-  Q_PROPERTY(QString randomExample READ randomExample STORED false)
 
 public:
-  const QVector<QString> getStore() const;
-  int getStoreSize() const;
-  Q_INVOKABLE const QString getStoreAt(const int ind) const;
-
-  QString randomExample();
-
-public slots:
-  // QML accessible methods
-  void load();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  // Get Instance
+  static NamesPokemon* inst();
 
 protected slots:
-  virtual void qmlRegister() const = 0;
-
-protected:
-  AbstractExample(const QString fileName);
-  QVector<QString> store;
-  const QString fileName;
+  NamesPokemon();
+  virtual void qmlRegister() const;
 };
 
-#endif // ABSTRACTEXAMPLE_H
+#endif // NAMESPOKEMON_H

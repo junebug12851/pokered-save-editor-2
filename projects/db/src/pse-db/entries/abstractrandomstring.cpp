@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "abstractexample.h"
+#include "abstractrandomstring.h"
 
 #include <QVector>
 #include <QJsonArray>
@@ -24,7 +24,7 @@
 #include <pse-common/random.h>
 #include <pse-common/utility.h>
 
-void AbstractExample::load()
+void AbstractRandomString::load()
 {
   store.clear();
 
@@ -39,28 +39,28 @@ void AbstractExample::load()
   }
 }
 
-void AbstractExample::qmlProtect(const QQmlEngine* const engine) const
+void AbstractRandomString::qmlProtect(const QQmlEngine* const engine) const
 {
   Utility::qmlProtectUtil(this, engine);
 }
 
-AbstractExample::AbstractExample(QString fileName)
+AbstractRandomString::AbstractRandomString(QString fileName)
   : fileName(fileName)
 {
   load();
 }
 
-const QVector<QString> AbstractExample::getStore() const
+const QVector<QString> AbstractRandomString::getStore() const
 {
   return store;
 }
 
-int AbstractExample::getStoreSize() const
+int AbstractRandomString::getStoreSize() const
 {
   return store.size();
 }
 
-const QString AbstractExample::getStoreAt(const int ind) const
+const QString AbstractRandomString::getStoreAt(const int ind) const
 {
   if(ind >= store.size())
     return nullptr;
@@ -68,7 +68,7 @@ const QString AbstractExample::getStoreAt(const int ind) const
   return store.at(ind);
 }
 
-QString AbstractExample::randomExample()
+QString AbstractRandomString::randomExample()
 {
   int index = Random::inst()->rangeExclusive(0, store.size());
   QString ret = store.at(index);

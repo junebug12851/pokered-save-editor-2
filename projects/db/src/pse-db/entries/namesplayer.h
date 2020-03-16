@@ -13,34 +13,28 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef NAMESPOKEMON_H
-#define NAMESPOKEMON_H
+#ifndef NAMESPLAYER_H
+#define NAMESPLAYER_H
 
 #include <QObject>
 #include <QString>
 
-#include <pse-common/types.h>
-#include "./db_autoport.h"
+#include "./abstractrandomstring.h"
+#include "../db_autoport.h"
 
-// Something I made, random American names, I made it for the auto-nicknaming
-// feature given this program is for the USA English Pokemon Red.
+class QQmlEngine;
 
-// Names are curtesy of
-// Pokemon Name Generator => Pokemon Names
-// FantasyNameGenerators.com
-// https://www.fantasynamegenerators.com/pokemon-names.php
-// Generated text is released as public domain
-
-class DB_AUTOPORT NamesPokemonDB : public QObject
+class DB_AUTOPORT NamesPlayer : public AbstractRandomString
 {
   Q_OBJECT
 
 public:
-  static void load();
-  Q_INVOKABLE static QString randomName();
+  // Get Instance
+  static NamesPlayer* inst();
 
-  static int lastInd;
-  static QVector<QString> store;
+protected slots:
+  NamesPlayer();
+  virtual void qmlRegister() const;
 };
 
-#endif // NAMESPOKEMON_H
+#endif // NAMESPLAYER_H

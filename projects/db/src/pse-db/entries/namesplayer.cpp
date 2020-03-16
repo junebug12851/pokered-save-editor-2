@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2019 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -19,29 +19,29 @@
 #include <QtMath>
 #include <QQmlEngine>
 
-#include "./examplespokemon.h"
+#include "./namesplayer.h"
 #include "../util/gamedata.h"
 #include <pse-common/random.h>
 #include <pse-common/utility.h>
 
-void ExamplesPokemon::qmlRegister() const
+void NamesPlayer::qmlRegister() const
 {
   static bool once = false;
   if(once)
     return;
 
-  qmlRegisterUncreatableType<ExamplesPokemon>("PSE.DB.ExamplesPokemon", 1, 0, "ExamplesPokemon", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<NamesPlayer>("PSE.DB.NamesPlayer", 1, 0, "NamesPlayer", "Can't instantiate in QML");
   once = true;
 }
 
-ExamplesPokemon::ExamplesPokemon()
-  : AbstractRandomString("pokemonExamples")
+NamesPlayer::NamesPlayer()
+  : AbstractRandomString("names")
 {
   qmlRegister();
 }
 
-ExamplesPokemon* ExamplesPokemon::inst()
+NamesPlayer* NamesPlayer::inst()
 {
-  static ExamplesPokemon* _inst = new ExamplesPokemon;
+  static NamesPlayer* _inst = new NamesPlayer;
   return _inst;
 }

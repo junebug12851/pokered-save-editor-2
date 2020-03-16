@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,34 +13,35 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef NAME_H
-#define NAME_H
+#ifndef NAMES_H
+#define NAMES_H
 
 #include <QObject>
-#include <QString>
 
-#include <pse-common/types.h>
-#include "./db_autoport.h"
+class QQmlEngine;
+class NamesPlayer;
+class NamesPokemon;
 
-// Something I made, random American names, I made it for the auto-nicknaming
-// feature given this program is for the USA English Pokemon Red.
-
-// Names are curtesy of
-// Pokemon Name Generator => Gym Leader Names
-// FantasyNameGenerators.com
-// https://www.fantasynamegenerators.com/pokemon-names.php
-// Generated text is released as public domain
-
-class DB_AUTOPORT NamesDB : public QObject
+class Names : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(NamesPlayer* player READ player CONSTANT)
+  Q_PROPERTY(NamesPokemon* pokemon READ pokemon CONSTANT)
 
 public:
-  static void load();
-  Q_INVOKABLE static QString randomName();
+  static Names* inst();
 
-  static int lastInd;
-  static QVector<QString> store;
+  const NamesPlayer* player() const;
+  const NamesPokemon* pokemon() const;
+
+public slots:
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  Names();
 };
 
-#endif // NAME_H
+#endif // NAMES_H

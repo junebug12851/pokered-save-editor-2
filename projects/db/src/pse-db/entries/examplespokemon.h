@@ -19,12 +19,12 @@
 #include <QObject>
 #include <QString>
 
-#include "./abstractexample.h"
+#include "./abstractrandomstring.h"
 #include "../db_autoport.h"
 
 class QQmlEngine;
 
-class DB_AUTOPORT ExamplesPokemon : public AbstractExample
+class DB_AUTOPORT ExamplesPokemon : public AbstractRandomString
 {
   Q_OBJECT
 

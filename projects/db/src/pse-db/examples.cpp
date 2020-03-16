@@ -65,4 +65,8 @@ void Examples::qmlRegister() const
 Examples::Examples()
 {
   qmlRegister();
+
+  ExamplesPlayer::inst();
+  ExamplesRival::inst();
+  ExamplesPokemon::inst();
 }

@@ -35,7 +35,7 @@ void ExamplesPlayer::qmlRegister() const
 }
 
 ExamplesPlayer::ExamplesPlayer()
-  : AbstractExample("playerExamples")
+  : AbstractRandomString("playerExamples")
 {
   qmlRegister();
 }

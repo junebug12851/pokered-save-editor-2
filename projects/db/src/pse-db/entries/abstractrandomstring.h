@@ -13,28 +13,41 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef EXAMPLESRIVAL_H
-#define EXAMPLESRIVAL_H
+#ifndef ABSTRACTEXAMPLE_H
+#define ABSTRACTEXAMPLE_H
 
 #include <QObject>
 #include <QString>
 
-#include "./abstractrandomstring.h"
 #include "../db_autoport.h"
 
 class QQmlEngine;
 
-class DB_AUTOPORT ExamplesRival : public AbstractRandomString
+class DB_AUTOPORT AbstractRandomString : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(QString randomExample READ randomExample STORED false)
 
 public:
-  // Get Instance
-  static ExamplesRival* inst();
+  const QVector<QString> getStore() const;
+  int getStoreSize() const;
+  Q_INVOKABLE const QString getStoreAt(const int ind) const;
+
+  QString randomExample();
+
+public slots:
+  // QML accessible methods
+  void load();
+  void qmlProtect(const QQmlEngine* const engine) const;
 
 protected slots:
-  ExamplesRival();
-  virtual void qmlRegister() const;
+  virtual void qmlRegister() const = 0;
+
+protected:
+  AbstractRandomString(const QString fileName);
+  QVector<QString> store;
+  const QString fileName;
 };
 
-#endif // EXAMPLESRIVAL_H
+#endif // ABSTRACTEXAMPLE_H

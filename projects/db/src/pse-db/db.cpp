@@ -25,6 +25,7 @@
 #include "./eventpokemondb.h"
 #include "./eventsdb.h"
 #include "./examples.h"
+#include "./names.h"
 
 DB* DB::inst()
 {
@@ -55,6 +56,11 @@ EventsDB* DB::events() const
 Examples* DB::examples() const
 {
   return Examples::inst();
+}
+
+Names* DB::names() const
+{
+  return Names::inst();
 }
 
 DB::DB()
@@ -90,6 +96,7 @@ void DB::qmlRegister() const
 void DB::loadAll() const
 {
   Examples::inst();
+  Names::inst();
 
   CreditsDB::inst()->load();
   EventPokemonDB::inst()->load();

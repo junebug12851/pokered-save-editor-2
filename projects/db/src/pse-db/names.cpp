@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,38 +14,51 @@
   * limitations under the License.
 */
 
-#include <QVector>
-#include <QJsonArray>
-#include <QtMath>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
+#include "names.h"
 
-#include "./names.h"
-#include "./util/gamedata.h"
-#include <pse-common/random.h>
+#include "./entries/namesplayer.h"
+#include "./entries/namespokemon.h"
 
-void NamesDB::load()
+Names* Names::inst()
 {
-  // Grab Event Pokemon Data
-  auto jsonData = GameData::inst()->json("names");
-
-  // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Add to array
-    store.append(jsonEntry.toString());
-  }
+  static Names* _inst = new Names;
+  return _inst;
 }
 
-QString NamesDB::randomName()
+const NamesPlayer* Names::player() const
 {
-  int index = Random::rangeExclusive(0, store.size());
-  QString ret = store.at(index);
-  store.removeAt(index);
-
-  if(store.size() == 0)
-    load();
-
-  return ret;
+  return NamesPlayer::inst();
 }
 
-int NamesDB::lastInd = 0;
-QVector<QString> NamesDB::store = QVector<QString>();
+const NamesPokemon* Names::pokemon() const
+{
+  return NamesPokemon::inst();
+}
+
+void Names::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+
+  NamesPlayer::inst()->qmlProtect(engine);
+  NamesPokemon::inst()->qmlProtect(engine);
+}
+
+void Names::qmlRegister() const
+{
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<Names>("PSE.DB.Names", 1, 0, "Names", "Can't instantiate in QML");
+  once = true;
+}
+
+Names::Names()
+{
+  qmlRegister();
+
+  NamesPlayer::inst();
+  NamesPokemon::inst();
+}

@@ -35,7 +35,7 @@ void ExamplesRival::qmlRegister() const
 }
 
 ExamplesRival::ExamplesRival()
-  : AbstractExample("rivalExamples")
+  : AbstractRandomString("rivalExamples")
 {
   qmlRegister();
 }

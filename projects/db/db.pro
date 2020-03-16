@@ -13,7 +13,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     src/pse-db/creditsdb.cpp \
-    src/pse-db/entries/abstractexample.cpp \
+    src/pse-db/entries/abstractrandomstring.cpp \
     src/pse-db/entries/eventdbentry.cpp \
     src/pse-db/entries/eventpokemondbentry.cpp \
     src/pse-db/entries\creditdbentry.cpp \
@@ -26,6 +26,7 @@ SOURCES += \
     src/pse-db/examples.cpp \
     src/pse-db/fly.cpp \
     src/pse-db/fonts.cpp \
+    src/pse-db/names.cpp \
     src/pse-db/util/fontsearch.cpp \
     src/pse-db/gamecorner.cpp \
     src/pse-db/util/gamedata.cpp \
@@ -37,8 +38,8 @@ SOURCES += \
     src/pse-db/missables.cpp \
     src/pse-db/moves.cpp \
     src/pse-db/music.cpp \
-    src/pse-db/names.cpp \
-    src/pse-db/namesPokemon.cpp \
+    src/pse-db/entries/namesplayer.cpp \
+    src/pse-db/entries/namespokemon.cpp \
     src/pse-db/pokemon.cpp \
     src/pse-db/scripts.cpp \
     src/pse-db/spriteSet.cpp \
@@ -52,7 +53,7 @@ SOURCES += \
 
 HEADERS += \
     src/pse-db/creditsdb.h \
-    src/pse-db/entries/abstractexample.h \
+    src/pse-db/entries/abstractrandomstring.h \
     src/pse-db/entries/eventdbentry.h \
     src/pse-db/entries/eventpokemondbentry.h \
     src/pse-db/entries\creditdbentry.h \
@@ -66,6 +67,7 @@ HEADERS += \
     src/pse-db/examples.h \
     src/pse-db/fly.h \
     src/pse-db/fonts.h \
+    src/pse-db/names.h \
     src/pse-db/util/fontsearch.h \
     src/pse-db/gamecorner.h \
     src/pse-db/util/gamedata.h \
@@ -77,8 +79,8 @@ HEADERS += \
     src/pse-db/missables.h \
     src/pse-db/moves.h \
     src/pse-db/music.h \
-    src/pse-db/names.h \
-    src/pse-db/namesPokemon.h \
+    src/pse-db/entries/namesplayer.h \
+    src/pse-db/entries/namespokemon.h \
     src/pse-db/pokemon.h \
     src/pse-db/scripts.h \
     src/pse-db/spriteSet.h \

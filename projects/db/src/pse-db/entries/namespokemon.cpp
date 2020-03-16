@@ -17,35 +17,31 @@
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>
+#include <QQmlEngine>
 
-#include "./namesPokemon.h"
-#include "./util/gamedata.h"
+#include "./namespokemon.h"
+#include "../util/gamedata.h"
 #include <pse-common/random.h>
+#include <pse-common/utility.h>
 
-void NamesPokemonDB::load()
+void NamesPokemon::qmlRegister() const
 {
-  // Grab Event Pokemon Data
-  auto jsonData = GameData::inst()->json("namesPokemon");
+  static bool once = false;
+  if(once)
+    return;
 
-  // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Add to array
-    store.append(jsonEntry.toString());
-  }
+  qmlRegisterUncreatableType<NamesPokemon>("PSE.DB.NamesPokemon", 1, 0, "NamesPokemon", "Can't instantiate in QML");
+  once = true;
 }
 
-QString NamesPokemonDB::randomName()
+NamesPokemon::NamesPokemon()
+  : AbstractRandomString("namesPokemon")
 {
-  int index = Random::rangeExclusive(0, store.size());
-  QString ret = store.at(index);
-  store.removeAt(index);
-
-  if(store.size() == 0)
-    load();
-
-  return ret;
+  qmlRegister();
 }
 
-int NamesPokemonDB::lastInd = 0;
-QVector<QString> NamesPokemonDB::store = QVector<QString>();
+NamesPokemon* NamesPokemon::inst()
+{
+  static NamesPokemon* _inst = new NamesPokemon;
+  return _inst;
+}
