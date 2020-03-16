@@ -15,68 +15,25 @@
 */
 
 #include <QJsonArray>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-#include "./gamecorner.h"
+#include "./gamecornerdb.h"
 #include "./util/gamedata.h"
 #include "./pokemon.h"
 #include "./items.h"
-
-GameCornerDBEntry::GameCornerDBEntry() {}
-GameCornerDBEntry::GameCornerDBEntry(QJsonValue& data)
-{
-  name = data["name"].toString();
-  type = data["type"].toString();
-
-  if(type != "pokemon")
-    price = data["price"].toDouble();
-
-  if(type == "money") {
-    GameCornerDB::buyPrice = price;
-    GameCornerDB::sellPrice = price / 2;
-  }
-}
-
-void GameCornerDBEntry::deepLink() {
-  if(type != "pokemon" &&
-     type != "tm")
-    return;
-
-  if(type == "pokemon") {
-    toPokemon = PokemonDB::ind.value(name, nullptr);
-
-#ifdef QT_DEBUG
-    if(toPokemon == nullptr)
-      qCritical() << "Game Corner: " << name << ", could not be deep linked." ;
-#endif
-
-    if(toPokemon == nullptr)
-      return;
-
-    // Cross-Deep Link
-    toPokemon->toGameCorner.append(this);
-  }
-  else if(type == "tm") {
-    toItem = ItemsDB::ind.value(name, nullptr);
-
-#ifdef QT_DEBUG
-    if(toItem == nullptr)
-      qCritical() << "Game Corner: " << name << ", could not be deep linked." ;
-#endif
-
-    if(toItem == nullptr)
-      return;
-
-    // Cross-Deep Link
-    toItem->toGameCorner = this;
-  }
-}
+#include "./entries/gamecornerdbentry.h"
 
 void GameCornerDB::load()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   // Grab Item Data
   auto jsonData = GameData::inst()->json("gameCorner");
 
@@ -102,16 +59,73 @@ void GameCornerDB::load()
       store.append(entry);
     }
   }
+
+  once = true;
 }
 
 void GameCornerDB::deepLink()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   for(auto entry : store)
   {
     entry->deepLink();
   }
+
+  once = true;
 }
 
-int GameCornerDB::buyPrice = 0;
-int GameCornerDB::sellPrice = 0;
-QVector<GameCornerDBEntry*> GameCornerDB::store = QVector<GameCornerDBEntry*>();
+void GameCornerDB::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+  for(auto el : store)
+    el->qmlProtect(engine);
+}
+
+void GameCornerDB::qmlRegister() const
+{
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<GameCornerDB>(
+        "PSE.DB.GameCornerDB", 1, 0, "GameCornerDB", "Can't instantiate in QML");
+  once = true;
+}
+
+GameCornerDB::GameCornerDB()
+{
+  qmlRegister();
+  load();
+}
+
+GameCornerDB* GameCornerDB::inst()
+{
+  static GameCornerDB* _inst = new GameCornerDB;
+  return _inst;
+}
+
+const QVector<GameCornerDBEntry*> GameCornerDB::getStore() const
+{
+  return store;
+}
+
+int GameCornerDB::getStoreSize() const
+{
+  return store.size();
+}
+
+const GameCornerDBEntry* GameCornerDB::getStoreAt(const int ind) const
+{
+  if(ind >= store.size())
+    return nullptr;
+
+  return store.at(ind);
+}
+
+int GameCornerDB::getBuyPrice() const
+{
+    return buyPrice;
+}

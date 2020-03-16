@@ -28,6 +28,7 @@
 #include "./names.h"
 #include "./flydb.h"
 #include "./fontsdb.h"
+#include "./gamecornerdb.h"
 
 DB* DB::inst()
 {
@@ -75,6 +76,11 @@ FontsDB* DB::fonts() const
   return FontsDB::inst();
 }
 
+GameCornerDB* DB::gameCorner() const
+{
+  return GameCornerDB::inst();
+}
+
 DB::DB()
 {
   // Init Resources
@@ -119,6 +125,7 @@ void DB::loadAll() const
   EventsDB::inst()->load();
   FlyDB::inst()->load();
   FontsDB::inst()->load();
+  GameCornerDB::inst()->load();
 
   once = true;
 }
@@ -145,6 +152,7 @@ void DB::deepLinkAll() const
   EventPokemonDB::inst()->deepLink();
   EventsDB::inst()->deepLink();
   FlyDB::inst()->deepLink();
+  GameCornerDB::inst()->deepLink();
 
   once = true;
 }
@@ -159,6 +167,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   Examples::inst()->qmlProtect(engine);
   FlyDB::inst()->qmlProtect(engine);
   FontsDB::inst()->qmlProtect(engine);
+  GameCornerDB::inst()->qmlProtect(engine);
 }
 
 void DB::qmlHook(QQmlContext* const context) const

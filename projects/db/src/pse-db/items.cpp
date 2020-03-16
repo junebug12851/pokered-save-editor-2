@@ -24,7 +24,7 @@
 #include "./items.h"
 #include "./util/gamedata.h"
 #include "./moves.h"
-#include "./gamecorner.h"
+#include "./gamecornerdb.h"
 
 ItemDBEntry::ItemDBEntry() {}
 ItemDBEntry::ItemDBEntry(QJsonValue& data)

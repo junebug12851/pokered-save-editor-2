@@ -17,7 +17,7 @@
 #include <QDebug>
 
 #include "./itemmarketentrymoney.h"
-#include <pse-db/gamecorner.h>
+#include <pse-db/gamecornerdb.h>
 #include <pse-savefile/expanded/player/playerbasics.h>
 
 ItemMarketEntryMoney::ItemMarketEntryMoney()

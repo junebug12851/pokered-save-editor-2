@@ -93,10 +93,6 @@ EventPokemonDBEntry::EventPokemonDBEntry(const QJsonValue& data) {
 
 void EventPokemonDBEntry::deepLink()
 {
-  static bool once = false;
-  if(once)
-    return;
-
   toPokemon = PokemonDB::ind.value(pokemon, nullptr);
 
 #ifdef QT_DEBUG
@@ -106,8 +102,6 @@ void EventPokemonDBEntry::deepLink()
 
   if(toPokemon != nullptr)
     toPokemon->toEventMons.append(this);
-
-  once = true;
 }
 
 int EventPokemonDBEntry::getDvSp() const

@@ -35,10 +35,6 @@ FlyDBEntry::FlyDBEntry(QJsonValue& data)
 
 void FlyDBEntry::deepLink()
 {
-  static bool once = false;
-  if(once)
-    return;
-
   toMap = MapsDB::ind.value(name, nullptr);
 
 #ifdef QT_DEBUG
@@ -48,8 +44,6 @@ void FlyDBEntry::deepLink()
 
   if(toMap != nullptr)
     toMap->toFlyDestination = this;
-
-  once = true;
 }
 
 const MapDBEntry* FlyDBEntry::getToMap() const

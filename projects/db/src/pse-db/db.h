@@ -37,6 +37,7 @@ class Examples;
 class Names;
 class FlyDB;
 class FontsDB;
+class GameCornerDB;
 
 // Provides a common interface for the databases to use and a common interface
 // to the databases.
@@ -52,6 +53,7 @@ class DB_AUTOPORT DB : public QObject
   Q_PROPERTY(Names* names READ names CONSTANT)
   Q_PROPERTY(FlyDB* fly READ fly CONSTANT)
   Q_PROPERTY(FontsDB* fonts READ fonts CONSTANT)
+  Q_PROPERTY(GameCornerDB* gameCorner READ gameCorner CONSTANT)
 
 public:
   static DB* inst();
@@ -66,6 +68,7 @@ public:
   Names* names() const;
   FlyDB* fly() const;
   FontsDB* fonts() const;
+  GameCornerDB* gameCorner() const;
 
 public slots:
   // It's very important to protect the engine from QML, in some cases QML may

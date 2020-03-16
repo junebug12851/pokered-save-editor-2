@@ -16,46 +16,52 @@
 #ifndef GAMECORNERDB_H
 #define GAMECORNERDB_H
 
-#include <optional>
-
+#include <QObject>
 #include <QVector>
-#include <QString>
-#include <QJsonValue>
-
 #include "./db_autoport.h"
 
-class PokemonDBEntry;
-class ItemDBEntry;
+class GameCornerDBEntry;
+class QQmlEngine;
 
-struct DB_AUTOPORT GameCornerDBEntry {
-  GameCornerDBEntry();
-  GameCornerDBEntry(QJsonValue& data);
-  void deepLink();
-
-  QString name = "";
-  QString type = "";
-  int price = 0;
-  std::optional<int> level;
-
-  PokemonDBEntry* toPokemon = nullptr;
-  ItemDBEntry* toItem = nullptr;
-};
-
-class DB_AUTOPORT GameCornerDB
+class DB_AUTOPORT GameCornerDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getBuyPrice READ getBuyPrice CONSTANT)
+
 public:
-  static void load();
-  static void deepLink();
+  // Get Instance
+  static GameCornerDB* inst();
+
+  // Get Properties, includes QML array helpers
+  const QVector<GameCornerDBEntry*> getStore() const;
+  int getStoreSize() const;
+
+  // QML Methods that can't be a property or slot because they take an argument
+  Q_INVOKABLE const GameCornerDBEntry* getStoreAt(const int ind) const;
+  int getBuyPrice() const;
+
+public slots:
+  void load();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  GameCornerDB();
 
   // Buy and Sell Price
   // Pokedollars <=> Game Coins
   // Regular Casinos give you an even exchange, you get the exact amount back
   // But in the Poke-World I want to follow the global sell-back mechanics
   // whereby you get half back
-  static int buyPrice;
-  static int sellPrice;
+  int buyPrice = 0;
 
-  static QVector<GameCornerDBEntry*> store;
+  QVector<GameCornerDBEntry*> store;
+
+  friend class GameCornerDBEntry;
 };
 
 #endif // GAMECORNERDB_H

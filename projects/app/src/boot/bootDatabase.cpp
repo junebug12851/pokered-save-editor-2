@@ -22,7 +22,7 @@
 #include <pse-db/examplesrival.h>
 #include <pse-db/flydb.h>
 #include <pse-db/fontsdb.h>
-#include <pse-db/gamecorner.h>
+#include <pse-db/gamecornerdb.h>
 #include <pse-db/hiddenCoins.h>
 #include <pse-db/hiddenItems.h>
 #include <pse-db/items.h>

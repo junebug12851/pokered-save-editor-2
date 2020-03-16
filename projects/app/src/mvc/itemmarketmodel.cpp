@@ -26,7 +26,7 @@
 #include "./itemmarket/itemmarketentrystoreitem.h"
 #include <pse-db/items.h>
 #include "../bridge/router.h"
-#include <pse-db/gamecorner.h>
+#include <pse-db/gamecornerdb.h>
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/expanded/savefileexpanded.h>
 #include <pse-savefile/expanded/player/playerbasics.h>
