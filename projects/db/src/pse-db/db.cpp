@@ -29,6 +29,8 @@
 #include "./flydb.h"
 #include "./fontsdb.h"
 #include "./gamecornerdb.h"
+#include "./hiddencoinsdb.h"
+#include "./hiddenItemsdb.h"
 
 DB* DB::inst()
 {
@@ -81,6 +83,16 @@ GameCornerDB* DB::gameCorner() const
   return GameCornerDB::inst();
 }
 
+HiddenCoinsDB* DB::hiddenCoins() const
+{
+  return HiddenCoinsDB::inst();
+}
+
+HiddenItemsDB* DB::hiddenItems() const
+{
+  return HiddenItemsDB::inst();
+}
+
 DB::DB()
 {
   // Init Resources
@@ -126,6 +138,8 @@ void DB::loadAll() const
   FlyDB::inst()->load();
   FontsDB::inst()->load();
   GameCornerDB::inst()->load();
+  HiddenCoinsDB::inst()->load();
+  HiddenItemsDB::inst()->load();
 
   once = true;
 }
@@ -153,6 +167,8 @@ void DB::deepLinkAll() const
   EventsDB::inst()->deepLink();
   FlyDB::inst()->deepLink();
   GameCornerDB::inst()->deepLink();
+  HiddenCoinsDB::inst()->deepLink();
+  HiddenItemsDB::inst()->deepLink();
 
   once = true;
 }
@@ -168,6 +184,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   FlyDB::inst()->qmlProtect(engine);
   FontsDB::inst()->qmlProtect(engine);
   GameCornerDB::inst()->qmlProtect(engine);
+  HiddenItemsDB::inst()->qmlProtect(engine);
 }
 
 void DB::qmlHook(QQmlContext* const context) const

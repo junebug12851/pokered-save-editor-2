@@ -23,8 +23,8 @@
 #include <pse-db/flydb.h>
 #include <pse-db/fontsdb.h>
 #include <pse-db/gamecornerdb.h>
-#include <pse-db/hiddenCoins.h>
-#include <pse-db/hiddenItems.h>
+#include <pse-db/abstracthiddenitemdb.h>
+#include <pse-db/hiddenItemsdb.h>
 #include <pse-db/items.h>
 #include <pse-db/maps.h>
 #include <pse-db/missables.h>
@@ -54,7 +54,7 @@ void load()
   FlyDB::load();
   FontsDB::load();
   GameCornerDB::load();
-  HiddenCoinsDB::load();
+  AbstractHiddenItemDB::load();
   HiddenItemsDB::load();
   ItemsDB::load();
   MapsDB::load(); // <--- Fairly expensive
@@ -104,7 +104,7 @@ void deepLink()
   EventsDB::deepLink();
   FlyDB::deepLink();
   GameCornerDB::deepLink();
-  HiddenCoinsDB::deepLink();
+  AbstractHiddenItemDB::deepLink();
   HiddenItemsDB::deepLink();
   ItemsDB::deepLink();
   MapsDB::deepLink(); // <-- Also now one of the most expensive operations!!!

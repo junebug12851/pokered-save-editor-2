@@ -16,35 +16,37 @@
 #ifndef HIDDENCOINS_H
 #define HIDDENCOINS_H
 
-#include <QString>
-#include <QJsonValue>
-
-#include <pse-common/types.h>
+#include <QObject>
 #include "./db_autoport.h"
 
-struct MapDBEntry;
+class HiddenItemDBEntry;
+class QQmlEngine;
 
-// A list of all the hidden coins in Casino
-
-struct DB_AUTOPORT HiddenCoinDBEntry {
-  HiddenCoinDBEntry();
-  HiddenCoinDBEntry(QJsonValue& data);
-  void deepLink();
-
-  QString map;
-  var8 x = 0;
-  var8 y = 0;
-
-  MapDBEntry* toMap = nullptr;
-};
-
-class DB_AUTOPORT HiddenCoinsDB
+class DB_AUTOPORT AbstractHiddenItemDB : public QObject
 {
-public:
-  static void load();
-  static void deepLink();
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
 
-  static QVector<HiddenCoinDBEntry*> store;
+public:
+  // Get Properties, includes QML array helpers
+  const QVector<HiddenItemDBEntry*> getStore() const;
+  int getStoreSize() const;
+
+   Q_INVOKABLE const HiddenItemDBEntry* getStoreAt(const int ind) const;
+
+public slots:
+  void load();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+protected slots:
+  virtual void qmlRegister() const = 0;
+
+protected:
+  AbstractHiddenItemDB(const QString loadFile);
+
+  QVector<HiddenItemDBEntry*> store;
+  const QString loadFile;
 };
 
 #endif // HIDDENCOINS_H

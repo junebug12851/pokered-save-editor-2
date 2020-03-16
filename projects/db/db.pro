@@ -12,6 +12,7 @@ CONFIG += c++1z
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
+    src/pse-db/abstracthiddenitemdb.cpp \
     src/pse-db/creditsdb.cpp \
     src/pse-db/entries/abstractrandomstring.cpp \
     src/pse-db/entries/eventdbentry.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     src/pse-db/entries/flydbentry.cpp \
     src/pse-db/entries/fontdbentry.cpp \
     src/pse-db/entries/gamecornerdbentry.cpp \
+    src/pse-db/entries/hiddenitemdbentry.cpp \
     src/pse-db/entries\creditdbentry.cpp \
     src/pse-db/db.cpp \
     src/pse-db/eventpokemondb.cpp \
@@ -30,13 +32,14 @@ SOURCES += \
     src/pse-db/flydb.cpp \
     src/pse-db/fontsdb.cpp \
     src/pse-db/gamecornerdb.cpp \
+    src/pse-db/hiddenItemsdb.cpp \
+    src/pse-db/hiddencoinsdb.cpp \
     src/pse-db/names.cpp \
     src/pse-db/util/fontsearch.cpp \
     src/pse-db/util/gamedata.cpp \
-    src/pse-db/hiddenCoins.cpp \
-    src/pse-db/hiddenItems.cpp \
     src/pse-db/items.cpp \
     src/pse-db/maps.cpp \
+    src/pse-db/util/hiddencoinsdb.cpp \
     src/pse-db/util/mapsearch.cpp \
     src/pse-db/missables.cpp \
     src/pse-db/moves.cpp \
@@ -55,6 +58,7 @@ SOURCES += \
     src/pse-db/types.cpp
 
 HEADERS += \
+    src/pse-db/abstracthiddenitemdb.h \
     src/pse-db/creditsdb.h \
     src/pse-db/entries/abstractrandomstring.h \
     src/pse-db/entries/eventdbentry.h \
@@ -62,6 +66,7 @@ HEADERS += \
     src/pse-db/entries/flydbentry.h \
     src/pse-db/entries/fontdbentry.h \
     src/pse-db/entries/gamecornerdbentry.h \
+    src/pse-db/entries/hiddenitemdbentry.h \
     src/pse-db/entries\creditdbentry.h \
     src/pse-db/db.h \
     src/pse-db/db_autoport.h \
@@ -74,13 +79,14 @@ HEADERS += \
     src/pse-db/flydb.h \
     src/pse-db/fontsdb.h \
     src/pse-db/gamecornerdb.h \
+    src/pse-db/hiddenItemsdb.h \
+    src/pse-db/hiddencoinsdb.h \
     src/pse-db/names.h \
     src/pse-db/util/fontsearch.h \
     src/pse-db/util/gamedata.h \
-    src/pse-db/hiddenCoins.h \
-    src/pse-db/hiddenItems.h \
     src/pse-db/items.h \
     src/pse-db/maps.h \
+    src/pse-db/util/hiddencoinsdb.h \
     src/pse-db/util/mapsearch.h \
     src/pse-db/missables.h \
     src/pse-db/moves.h \

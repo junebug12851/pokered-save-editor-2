@@ -13,6 +13,8 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+#include <pse-common/utility.h>
 #include <QVector>
 #include <QJsonArray>
 
@@ -20,56 +22,75 @@
 #include <QtDebug>
 #endif
 
-#include "./hiddenCoins.h"
+#include "./abstracthiddenitemdb.h"
 #include "./maps.h"
 #include "./util/gamedata.h"
+#include "./entries/hiddenitemdbentry.h"
 
-HiddenCoinDBEntry::HiddenCoinDBEntry() {}
-
-HiddenCoinDBEntry::HiddenCoinDBEntry(QJsonValue& data)
+const QVector<HiddenItemDBEntry*> AbstractHiddenItemDB::getStore() const
 {
-  // Set simple properties
-  map = data["map"].toString();
-  x = data["x"].toDouble();
-  y = data["y"].toDouble();
+  return store;
 }
 
-void HiddenCoinDBEntry::deepLink()
+int AbstractHiddenItemDB::getStoreSize() const
 {
-  toMap = MapsDB::ind.value(map, nullptr);
-
-#ifdef QT_DEBUG
-  if(toMap == nullptr)
-    qCritical() << "Hidden Coins Map: " << map << ", could not be deep linked." ;
-#endif
-
-  if(toMap != nullptr)
-    toMap->toHiddenCoins.append(this);
+  return store.size();
 }
 
-void HiddenCoinsDB::load()
+const HiddenItemDBEntry* AbstractHiddenItemDB::getStoreAt(const int ind) const
 {
+  if(ind >= store.size())
+    return nullptr;
+
+  return store.at(ind);
+}
+
+void AbstractHiddenItemDB::load()
+{
+  static bool once = false;
+  if(once)
+    return;
+
   // Grab Event Pokemon Data
-  auto jsonData = GameData::inst()->json("hiddenCoins");
+  auto jsonData = GameData::inst()->json(loadFile);
 
   // Go through each event Pokemon
   for(QJsonValue jsonEntry : jsonData.array())
   {
     // Create a new event Pokemon entry
-    auto entry = new HiddenCoinDBEntry(jsonEntry);
+    auto entry = new HiddenItemDBEntry(jsonEntry);
 
     // Add to array
     store.append(entry);
   }
+
+  once = true;
 }
 
-void HiddenCoinsDB::deepLink()
+void AbstractHiddenItemDB::deepLink()
 {
+  static bool once = false;
+  if(once)
+    return;
+
   for(auto entry : store)
   {
     entry->deepLink();
   }
+
+  once = true;
 }
 
-QVector<HiddenCoinDBEntry*> HiddenCoinsDB::store =
-    QVector<HiddenCoinDBEntry*>();
+void AbstractHiddenItemDB::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+
+  for(auto el : store)
+    el->qmlProtect(engine);
+}
+
+AbstractHiddenItemDB::AbstractHiddenItemDB(const QString loadFile)
+  : loadFile(loadFile)
+{
+  load();
+}

@@ -16,35 +16,20 @@
 #ifndef HIDDENITEMS_H
 #define HIDDENITEMS_H
 
-#include <QString>
-#include <QJsonValue>
+#include "./abstracthiddenitemdb.h"
 
-#include <pse-common/types.h>
-#include "./db_autoport.h"
-
-struct MapDBEntry;
-
-// A list of all the hidden items around the world
-
-struct DB_AUTOPORT HiddenItemDBEntry {
-  HiddenItemDBEntry();
-  HiddenItemDBEntry(QJsonValue& data);
-  void deepLink();
-
-  QString map;
-  var8 x = 0;
-  var8 y = 0;
-
-  MapDBEntry* toMap = nullptr;
-};
-
-class DB_AUTOPORT HiddenItemsDB
+class DB_AUTOPORT HiddenItemsDB : public AbstractHiddenItemDB
 {
-public:
-  static void load();
-  static void deepLink();
+  Q_OBJECT
 
-  static QVector<HiddenItemDBEntry*> store;
+public:
+  static HiddenItemsDB* inst();
+
+protected slots:
+  virtual void qmlRegister() const;
+
+protected:
+  HiddenItemsDB();
 };
 
 #endif // HIDDENITEMS_H
