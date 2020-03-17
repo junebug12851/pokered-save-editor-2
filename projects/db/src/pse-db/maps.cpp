@@ -28,7 +28,7 @@
 #include "./music.h"
 #include "./util/gamedata.h"
 #include "./sprites.h"
-#include "./items.h"
+#include "./itemsdb.h"
 #include "./pokemon.h"
 #include "./trainers.h"
 #include "./spriteSet.h"

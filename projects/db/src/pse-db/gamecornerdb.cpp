@@ -25,7 +25,7 @@
 #include "./gamecornerdb.h"
 #include "./util/gamedata.h"
 #include "./pokemon.h"
-#include "./items.h"
+#include "./itemsdb.h"
 #include "./entries/gamecornerdbentry.h"
 
 void GameCornerDB::load()

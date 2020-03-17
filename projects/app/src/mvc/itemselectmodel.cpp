@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <QCollator>
 
-#include <pse-db/items.h>
+#include <pse-db/itemsdb.h>
 #include "./itemselectmodel.h"
 
 ItemSelectEntryData::ItemSelectEntryData(QString name, int ind)

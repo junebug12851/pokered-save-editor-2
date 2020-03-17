@@ -15,7 +15,7 @@
 */
 
 #include "./itemmarketentryplayeritem.h"
-#include <pse-db/items.h>
+#include <pse-db/itemsdb.h>
 #include <pse-savefile/expanded/fragments/item.h>
 #include <pse-savefile/expanded/fragments/itemstoragebox.h>
 #include <pse-savefile/expanded/player/playerbasics.h>

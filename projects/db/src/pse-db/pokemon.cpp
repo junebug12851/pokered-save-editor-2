@@ -24,7 +24,7 @@
 
 #include "./pokemon.h"
 #include "./util/gamedata.h"
-#include "./items.h"
+#include "./itemsdb.h"
 #include "./moves.h"
 #include "./types.h"
 

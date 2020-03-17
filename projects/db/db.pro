@@ -21,6 +21,7 @@ SOURCES += \
     src/pse-db/entries/fontdbentry.cpp \
     src/pse-db/entries/gamecornerdbentry.cpp \
     src/pse-db/entries/hiddenitemdbentry.cpp \
+    src/pse-db/entries/itemdbentry.cpp \
     src/pse-db/entries\creditdbentry.cpp \
     src/pse-db/db.cpp \
     src/pse-db/eventpokemondb.cpp \
@@ -34,10 +35,10 @@ SOURCES += \
     src/pse-db/gamecornerdb.cpp \
     src/pse-db/hiddenItemsdb.cpp \
     src/pse-db/hiddencoinsdb.cpp \
+    src/pse-db/itemsdb.cpp \
     src/pse-db/names.cpp \
     src/pse-db/util/fontsearch.cpp \
     src/pse-db/util/gamedata.cpp \
-    src/pse-db/items.cpp \
     src/pse-db/maps.cpp \
     src/pse-db/util/hiddencoinsdb.cpp \
     src/pse-db/util/mapsearch.cpp \
@@ -67,6 +68,7 @@ HEADERS += \
     src/pse-db/entries/fontdbentry.h \
     src/pse-db/entries/gamecornerdbentry.h \
     src/pse-db/entries/hiddenitemdbentry.h \
+    src/pse-db/entries/itemdbentry.h \
     src/pse-db/entries\creditdbentry.h \
     src/pse-db/db.h \
     src/pse-db/db_autoport.h \
@@ -81,10 +83,10 @@ HEADERS += \
     src/pse-db/gamecornerdb.h \
     src/pse-db/hiddenItemsdb.h \
     src/pse-db/hiddencoinsdb.h \
+    src/pse-db/itemsdb.h \
     src/pse-db/names.h \
     src/pse-db/util/fontsearch.h \
     src/pse-db/util/gamedata.h \
-    src/pse-db/items.h \
     src/pse-db/maps.h \
     src/pse-db/util/hiddencoinsdb.h \
     src/pse-db/util/mapsearch.h \

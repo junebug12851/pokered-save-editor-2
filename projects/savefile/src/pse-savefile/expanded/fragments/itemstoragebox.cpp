@@ -27,7 +27,7 @@
 #include "../player/player.h"
 #include "../storage.h"
 
-#include <pse-db/items.h>
+#include <pse-db/itemsdb.h>
 #include <pse-common/random.h>
 
 ItemStorageBox::ItemStorageBox(bool isBag, int maxSize, SaveFile* saveFile, int offset)

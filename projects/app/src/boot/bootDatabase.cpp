@@ -25,7 +25,7 @@
 #include <pse-db/gamecornerdb.h>
 #include <pse-db/abstracthiddenitemdb.h>
 #include <pse-db/hiddenItemsdb.h>
-#include <pse-db/items.h>
+#include <pse-db/itemsdb.h>
 #include <pse-db/maps.h>
 #include <pse-db/missables.h>
 #include <pse-db/moves.h>

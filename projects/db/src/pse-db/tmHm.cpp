@@ -25,7 +25,7 @@
 
 #include "./tmHm.h"
 #include "./util/gamedata.h"
-#include "./items.h"
+#include "./itemsdb.h"
 #include "./moves.h"
 
 void TmHmsDB::load()

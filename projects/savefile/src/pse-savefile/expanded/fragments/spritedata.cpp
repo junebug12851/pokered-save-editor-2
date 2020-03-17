@@ -23,7 +23,7 @@
 #include <pse-db/sprites.h>
 #include <pse-db/maps.h>
 #include <pse-db/trainers.h>
-#include <pse-db/items.h>
+#include <pse-db/itemsdb.h>
 #include <pse-db/pokemon.h>
 #include <pse-common/random.h>
 

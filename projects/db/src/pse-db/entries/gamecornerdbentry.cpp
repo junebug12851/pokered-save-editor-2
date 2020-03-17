@@ -19,7 +19,7 @@
 #include <pse-common/utility.h>
 
 #include "../pokemon.h"
-#include "../items.h"
+#include "../itemsdb.h"
 #include "../gamecornerdb.h"
 #include "gamecornerdbentry.h"
 

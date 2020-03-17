@@ -24,7 +24,7 @@
 #include "./moves.h"
 #include "./types.h"
 #include "./util/gamedata.h"
-#include "./items.h"
+#include "./itemsdb.h"
 
 MoveDBEntry::MoveDBEntry() {}
 MoveDBEntry::MoveDBEntry(QJsonValue& data)

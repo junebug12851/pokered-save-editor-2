@@ -17,7 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include <pse-db/items.h>
+#include <pse-db/itemsdb.h>
 #include <pse-common/random.h>
 
 Item::Item(SaveFileIterator* it)
