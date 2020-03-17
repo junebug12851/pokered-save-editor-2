@@ -26,8 +26,13 @@ class QQmlEngine;
 class DB_AUTOPORT AbstractRandomString : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize STORED false NOTIFY listChanged)
   Q_PROPERTY(QString randomExample READ randomExample STORED false)
+
+signals:
+  // Sort of an exception, the DB is almost entirely read-only but this is an
+  // exception of some moving parts in the DB
+  void listChanged();
 
 public:
   const QVector<QString> getStore() const;

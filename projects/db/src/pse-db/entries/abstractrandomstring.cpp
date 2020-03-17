@@ -37,6 +37,8 @@ void AbstractRandomString::load()
     // Add to array
     store.append(jsonEntry.toString());
   }
+
+  listChanged();
 }
 
 void AbstractRandomString::qmlProtect(const QQmlEngine* const engine) const
@@ -76,6 +78,8 @@ QString AbstractRandomString::randomExample()
 
   if(store.size() == 0)
     load();
+  else
+    listChanged();
 
   return ret;
 }
