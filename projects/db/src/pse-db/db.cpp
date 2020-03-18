@@ -33,6 +33,7 @@
 #include "./hiddenItemsdb.h"
 #include "./itemsdb.h"
 #include "./mapsdb.h"
+#include "./missablesdb.h"
 
 DB* DB::inst()
 {
@@ -105,6 +106,11 @@ MapsDB* DB::maps() const
   return MapsDB::inst();
 }
 
+MissablesDB* DB::missables() const
+{
+  return MissablesDB::inst();
+}
+
 DB::DB()
 {
   // Init Resources
@@ -154,6 +160,7 @@ void DB::loadAll() const
   HiddenItemsDB::inst()->load();
   ItemsDB::inst()->load();
   MapsDB::inst()->load();
+  MissablesDB::inst()->load();
 
   once = true;
 }
@@ -169,6 +176,7 @@ void DB::indexAll() const
   FontsDB::inst()->index();
   ItemsDB::inst()->index();
   MapsDB::inst()->index();
+  MissablesDB::inst()->index();
 
   once = true;
 }
@@ -187,6 +195,7 @@ void DB::deepLinkAll() const
   HiddenItemsDB::inst()->deepLink();
   ItemsDB::inst()->deepLink();
   MapsDB::inst()->deepLink();
+  MissablesDB::inst()->deepLink();
 
   once = true;
 }
@@ -205,6 +214,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   HiddenItemsDB::inst()->qmlProtect(engine);
   ItemsDB::inst()->qmlProtect(engine);
   MapsDB::inst()->qmlProtect(engine);
+  MissablesDB::inst()->qmlProtect(engine);
 }
 
 void DB::qmlHook(QQmlContext* const context) const

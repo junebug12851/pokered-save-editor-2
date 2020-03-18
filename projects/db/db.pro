@@ -33,6 +33,7 @@ SOURCES += \
     src/pse-db/entries/mapdbentrywarpin.cpp \
     src/pse-db/entries/mapdbentrywarpout.cpp \
     src/pse-db/entries/mapdbentrywildmon.cpp \
+    src/pse-db/entries/missabledbentry.cpp \
     src/pse-db/entries\creditdbentry.cpp \
     src/pse-db/db.cpp \
     src/pse-db/eventpokemondb.cpp \
@@ -48,12 +49,12 @@ SOURCES += \
     src/pse-db/hiddencoinsdb.cpp \
     src/pse-db/itemsdb.cpp \
     src/pse-db/mapsdb.cpp \
+    src/pse-db/missablesdb.cpp \
     src/pse-db/names.cpp \
     src/pse-db/util/fontsearch.cpp \
     src/pse-db/util/gamedata.cpp \
     src/pse-db/util/hiddencoinsdb.cpp \
     src/pse-db/util/mapsearch.cpp \
-    src/pse-db/missables.cpp \
     src/pse-db/moves.cpp \
     src/pse-db/music.cpp \
     src/pse-db/entries/namesplayer.cpp \
@@ -91,6 +92,7 @@ HEADERS += \
     src/pse-db/entries/mapdbentrywarpin.h \
     src/pse-db/entries/mapdbentrywarpout.h \
     src/pse-db/entries/mapdbentrywildmon.h \
+    src/pse-db/entries/missabledbentry.h \
     src/pse-db/entries\creditdbentry.h \
     src/pse-db/db.h \
     src/pse-db/db_autoport.h \
@@ -107,12 +109,12 @@ HEADERS += \
     src/pse-db/hiddencoinsdb.h \
     src/pse-db/itemsdb.h \
     src/pse-db/mapsdb.h \
+    src/pse-db/missablesdb.h \
     src/pse-db/names.h \
     src/pse-db/util/fontsearch.h \
     src/pse-db/util/gamedata.h \
     src/pse-db/util/hiddencoinsdb.h \
     src/pse-db/util/mapsearch.h \
-    src/pse-db/missables.h \
     src/pse-db/moves.h \
     src/pse-db/music.h \
     src/pse-db/entries/namesplayer.h \

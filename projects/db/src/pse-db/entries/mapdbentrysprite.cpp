@@ -21,7 +21,7 @@
 
 #include "./mapdbentrysprite.h"
 #include "../sprites.h"
-#include "../missables.h"
+#include "../missablesdb.h"
 
 MapDBEntrySprite::MapDBEntrySprite() {
   qmlRegister();

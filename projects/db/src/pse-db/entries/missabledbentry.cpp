@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,21 +13,27 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+#include "missabledbentry.h"
 
 #include <QVector>
 #include <QJsonArray>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
 #endif
 
-#include "./missables.h"
-#include "./util/gamedata.h"
-#include "./mapsdb.h"
+#include "../mapsdb.h"
+#include "./mapdbentry.h"
 
-MissableDBEntry::MissableDBEntry() {}
+MissableDBEntry::MissableDBEntry() {
+  qmlRegister();
+}
 MissableDBEntry::MissableDBEntry(QJsonValue& data)
 {
+  qmlRegister();
+
   // Set simple properties
   name = data["name"].toString();
   ind = data["ind"].toDouble();
@@ -38,12 +44,12 @@ MissableDBEntry::MissableDBEntry(QJsonValue& data)
 
 void MissableDBEntry::deepLink()
 {
-  toMap = MapsDB::ind.value(map, nullptr);
+  toMap = MapsDB::inst()->getInd().value(map, nullptr);
 
   // Deep link map sprite only if toMap is valid and sprite is a valid range
-  if(toMap != nullptr && sprite < toMap->sprites.size())
+  if(toMap != nullptr && sprite < toMap->getSprites().size())
   {
-    toMapSprite = toMap->sprites.at(sprite);
+    toMapSprite = toMap->getSprites().at(sprite);
   }
 
 #ifdef QT_DEBUG
@@ -68,42 +74,53 @@ void MissableDBEntry::deepLink()
 #endif
 }
 
-void MissablesDB::load()
+void MissableDBEntry::qmlRegister() const
 {
-  // Grab Event Pokemon Data
-  auto jsonData = GameData::inst()->json("missables");
+  static bool once = false;
+  if(once)
+    return;
 
-  // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Create a new event Pokemon entry
-    auto entry = new MissableDBEntry(jsonEntry);
-
-    // Add to array
-    store.append(entry);
-  }
+  qmlRegisterUncreatableType<MissableDBEntry>(
+        "PSE.DB.MissableDBEntry", 1, 0, "MissableDBEntry", "Can't instantiate in QML");
+  once = true;
 }
 
-void MissablesDB::index()
+const MapDBEntrySprite* MissableDBEntry::getToMapSprite() const
 {
-  for(auto entry : store)
-  {
-    // Index name and index
-    // Name is actually map + name, the name is the local name to the map
-    // and is often duplicated across maps
-    ind.insert(entry->map + " " + entry->name, entry);
-    ind.insert(QString::number(entry->ind), entry);
-  }
+  return toMapSprite;
 }
 
-void MissablesDB::deepLink()
+void MissableDBEntry::qmlProtect(const QQmlEngine* const engine) const
 {
-  for(auto entry : store)
-  {
-    entry->deepLink();
-  }
+  Utility::qmlProtectUtil(this, engine);
 }
 
-QVector<MissableDBEntry*> MissablesDB::store = QVector<MissableDBEntry*>();
-QHash<QString, MissableDBEntry*> MissablesDB::ind =
-    QHash<QString, MissableDBEntry*>();
+const MapDBEntry* MissableDBEntry::getToMap() const
+{
+    return toMap;
+}
+
+bool MissableDBEntry::getDefShow() const
+{
+    return defShow;
+}
+
+int MissableDBEntry::getSprite() const
+{
+    return sprite;
+}
+
+const QString MissableDBEntry::getMap() const
+{
+    return map;
+}
+
+int MissableDBEntry::getInd() const
+{
+    return ind;
+}
+
+const QString MissableDBEntry::getName() const
+{
+    return name;
+}

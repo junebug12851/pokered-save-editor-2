@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2020 June Hanabi
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,18 +13,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MISSABLE_H
-#define MISSABLE_H
+#ifndef MISSABLEDBENTRY_H
+#define MISSABLEDBENTRY_H
 
+#include <QObject>
 #include <QJsonValue>
 #include <QString>
 #include <QHash>
 
-#include <pse-common/types.h>
-#include "./db_autoport.h"
+#include "../db_autoport.h"
 
 struct MapDBEntry;
 struct MapDBEntrySprite;
+class QQmlEngine;
+class MissablesDB;
 
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
@@ -38,18 +40,41 @@ struct MapDBEntrySprite;
 // guy blocking the path in Pewter City is a missable that's hiden once you beat
 // Brock.
 
-struct DB_AUTOPORT MissableDBEntry {
+struct DB_AUTOPORT MissableDBEntry : public QObject {
+  Q_OBJECT
+  Q_PROPERTY(QString getName READ getName CONSTANT)
+  Q_PROPERTY(int getInd READ getInd CONSTANT)
+  Q_PROPERTY(QString getMap READ getMap CONSTANT)
+  Q_PROPERTY(int getSprite READ getSprite CONSTANT)
+  Q_PROPERTY(bool getDefShow READ getDefShow CONSTANT)
+  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT)
+  Q_PROPERTY(MapDBEntrySprite* getToMapSprite READ getToMapSprite CONSTANT)
+
+public:
+  const QString getName() const;
+  int getInd() const;
+  const QString getMap() const;
+  int getSprite() const;
+  bool getDefShow() const;
+  const MapDBEntry* getToMap() const;
+  const MapDBEntrySprite* getToMapSprite() const;
+
+public slots:
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+protected:
   MissableDBEntry();
   MissableDBEntry(QJsonValue& data);
   void deepLink();
+  void qmlRegister() const;
 
   // Missable Name & Index
-  QString name;
-  var8 ind = 0;
+  QString name = "";
+  int ind = 0;
 
   // Map & Sprite on map Missable References
-  QString map;
-  var8 sprite = 0;
+  QString map = "";
+  int sprite = 0;
 
   // Is this missable shown or hidden by default
   bool defShow = false;
@@ -63,17 +88,8 @@ struct DB_AUTOPORT MissableDBEntry {
   // In both cases one or both of these will be nullptr
   MapDBEntry* toMap = nullptr;
   MapDBEntrySprite* toMapSprite = nullptr;
+
+  friend class MissablesDB;
 };
 
-class DB_AUTOPORT MissablesDB
-{
-public:
-  static void load();
-  static void index();
-  static void deepLink();
-
-  static QVector<MissableDBEntry*> store;
-  static QHash<QString, MissableDBEntry*> ind;
-};
-
-#endif // MISSABLE_H
+#endif // MISSABLEDBENTRY_H

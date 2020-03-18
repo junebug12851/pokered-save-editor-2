@@ -27,7 +27,7 @@
 #include <pse-db/hiddenItemsdb.h>
 #include <pse-db/itemsdb.h>
 #include <pse-db/mapsdb.h>
-#include <pse-db/missables.h>
+#include <pse-db/missablesdb.h>
 #include <pse-db/moves.h>
 #include <pse-db/music.h>
 #include <pse-db/names.h>

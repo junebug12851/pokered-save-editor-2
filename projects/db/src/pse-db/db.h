@@ -42,6 +42,7 @@ class HiddenCoinsDB;
 class HiddenItemsDB;
 class ItemsDB;
 class MapsDB;
+class MissablesDB;
 
 // Provides a common interface for the databases to use and a common interface
 // to the databases.
@@ -62,6 +63,7 @@ class DB_AUTOPORT DB : public QObject
   Q_PROPERTY(HiddenItemsDB* hiddenItems READ hiddenItems CONSTANT)
   Q_PROPERTY(ItemsDB* items READ items CONSTANT)
   Q_PROPERTY(MapsDB* maps READ maps CONSTANT)
+  Q_PROPERTY(MissablesDB* missables READ missables CONSTANT)
 
 public:
   static DB* inst();
@@ -81,6 +83,7 @@ public:
   HiddenItemsDB* hiddenItems() const;
   ItemsDB* items() const;
   MapsDB* maps() const;
+  MissablesDB* missables() const;
 
 public slots:
   // It's very important to protect the engine from QML, in some cases QML may
