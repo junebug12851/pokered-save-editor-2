@@ -13,12 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "mapdbentrywarpout.h"
 
-MapDBEntryWarpOut::MapDBEntryWarpOut() {}
-MapDBEntryWarpOut::MapDBEntryWarpOut(QJsonValue& data, MapDBEntry* parent) :
+#include <QDebug>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
+#include "mapdbentrywarpout.h"
+#include "./mapdbentry.h"
+#include "./mapdbentrywarpin.h"
+#include "../mapsdb.h"
+
+MapDBEntryWarpOut::MapDBEntryWarpOut() {
+  qmlRegister();
+}
+MapDBEntryWarpOut::MapDBEntryWarpOut(const QJsonValue& data, MapDBEntry* const parent) :
   parent(parent)
 {
+  qmlRegister();
   x = data["x"].toDouble();
   y = data["y"].toDouble();
   warp = data["toWarp"].toDouble();
@@ -28,7 +38,7 @@ MapDBEntryWarpOut::MapDBEntryWarpOut(QJsonValue& data, MapDBEntry* parent) :
 
 void MapDBEntryWarpOut::deepLink()
 {
-  toMap = MapsDB::ind.value(map, nullptr);
+  toMap = MapsDB::inst()->getInd().value(map, nullptr);
 
 #ifdef QT_DEBUG
   // Stop here if toMap is nullptr
@@ -49,7 +59,63 @@ void MapDBEntryWarpOut::deepLink()
 
     // Deep link to the destination warp coordinates
     // This will immidiately crash if toMap isn't set
-    toWarp = toMap->warpIn.at(warp);
+    toWarp = const_cast<MapDBEntryWarpIn*>(toMap->getWarpInAt(warp));
 
     toWarp->toConnectingWarps.append(this);
+}
+
+void MapDBEntryWarpOut::qmlRegister() const
+{
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<MapDBEntryWarpOut>(
+        "PSE.DB.MapDBEntryWarpOut", 1, 0, "MapDBEntryWarpOut", "Can't instantiate in QML");
+  once = true;
+}
+
+const MapDBEntryWarpIn* MapDBEntryWarpOut::getToWarp() const
+{
+  return toWarp;
+}
+
+void MapDBEntryWarpOut::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+}
+
+const MapDBEntry* MapDBEntryWarpOut::getParent() const
+{
+    return parent;
+}
+
+const MapDBEntry* MapDBEntryWarpOut::getToMap() const
+{
+    return toMap;
+}
+
+bool MapDBEntryWarpOut::getGlitch() const
+{
+    return glitch;
+}
+
+const QString MapDBEntryWarpOut::getMap() const
+{
+    return map;
+}
+
+int MapDBEntryWarpOut::getWarp() const
+{
+    return warp;
+}
+
+int MapDBEntryWarpOut::getY() const
+{
+    return y;
+}
+
+int MapDBEntryWarpOut::getX() const
+{
+    return x;
 }

@@ -19,20 +19,36 @@
 #include "./mapdbentrysprite.h"
 
 class TrainerDBEntry;
+class MapsDB;
 
 // A trainer that can be battled
 struct DB_AUTOPORT MapDBEntrySpriteTrainer : public MapDBEntrySprite
 {
-  MapDBEntrySpriteTrainer(QJsonValue& data, MapDBEntry* parent);
+  Q_OBJECT
+  Q_PROPERTY(QString getTrainerClass READ getTrainerClass CONSTANT)
+  Q_PROPERTY(int getTeam READ getTeam CONSTANT)
+  Q_PROPERTY(TrainerDBEntry* getToTrainer READ getToTrainer CONSTANT)
+
+public:
+  virtual SpriteType type() const;
+  const QString getTrainerClass() const;
+  int getTeam() const;
+  const TrainerDBEntry* getToTrainer() const;
+
+protected:
+  MapDBEntrySpriteTrainer(const QJsonValue& data, MapDBEntry* const parent);
   virtual void deepLink();
-  virtual SpriteType type();
+  virtual void qmlRegister() const;
 
   // Trainer Details
   // What kind of trainer and which team
-  QString trainerClass;
-  int team;
+  QString trainerClass = "";
+  int team = -1;
 
   TrainerDBEntry* toTrainer = nullptr;
+
+  friend class MapsDB;
+  friend class MapDBEntry;
 };
 
 #endif // MAPDBENTRYSPRITETRAINER_H

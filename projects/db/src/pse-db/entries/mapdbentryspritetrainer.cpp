@@ -13,11 +13,21 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+#include <QDebug>
+#include <QJsonValue>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 #include "mapdbentryspritetrainer.h"
 
-MapDBEntrySpriteTrainer::MapDBEntrySpriteTrainer(QJsonValue& data, MapDBEntry* parent) :
+#include "../trainers.h"
+
+MapDBEntrySpriteTrainer::MapDBEntrySpriteTrainer(const QJsonValue& data,
+                                                 MapDBEntry* const parent) :
   MapDBEntrySprite(data, parent)
 {
+  qmlRegister();
+
   trainerClass = data["class"].toString();
   team = data["team"].toDouble();
 }
@@ -36,7 +46,33 @@ void MapDBEntrySpriteTrainer::deepLink()
     toTrainer->tpMapSpriteTrainers.append(this);
 }
 
-SpriteType MapDBEntrySpriteTrainer::type()
+void MapDBEntrySpriteTrainer::qmlRegister() const
 {
-  return SpriteType::TRAINER;
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<MapDBEntrySpriteTrainer>(
+        "PSE.DB.MapDBEntrySpriteTrainer", 1, 0, "MapDBEntrySpriteTrainer", "Can't instantiate in QML");
+  once = true;
+}
+
+const TrainerDBEntry* MapDBEntrySpriteTrainer::getToTrainer() const
+{
+    return toTrainer;
+}
+
+int MapDBEntrySpriteTrainer::getTeam() const
+{
+    return team;
+}
+
+const QString MapDBEntrySpriteTrainer::getTrainerClass() const
+{
+    return trainerClass;
+}
+
+MapDBEntrySpriteTrainer::SpriteType MapDBEntrySpriteTrainer::type() const
+{
+    return SpriteType::TRAINER;
 }

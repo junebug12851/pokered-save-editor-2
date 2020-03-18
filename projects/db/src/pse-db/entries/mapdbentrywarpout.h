@@ -16,24 +16,56 @@
 #ifndef MAPDBENTRYWARPOUT_H
 #define MAPDBENTRYWARPOUT_H
 
+#include <QObject>
+#include <QJsonValue>
+#include "../db_autoport.h"
+
+class QQmlEngine;
+class MapDBEntry;
+class MapsDB;
+class MapDBEntryWarpIn;
 
 // List of Warps on Map that warp out to a different map
 // They can only warp to a "warp-in" point
-struct DB_AUTOPORT MapDBEntryWarpOut
-{
+struct DB_AUTOPORT MapDBEntryWarpOut : public QObject {
+  Q_OBJECT
+  Q_PROPERTY(int getX READ getX CONSTANT)
+  Q_PROPERTY(int getY READ getY CONSTANT)
+  Q_PROPERTY(int getWarp READ getWarp CONSTANT)
+  Q_PROPERTY(QString getMap READ getMap CONSTANT)
+  Q_PROPERTY(bool getGlitch READ getGlitch CONSTANT)
+  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT)
+  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT)
+  Q_PROPERTY(MapDBEntryWarpIn* getToWarp READ getToWarp CONSTANT)
+
+public:
+  int getX() const;
+  int getY() const;
+  int getWarp() const;
+  const QString getMap() const;
+  bool getGlitch() const;
+  const MapDBEntry* getToMap() const;
+  const MapDBEntry* getParent() const;
+  const MapDBEntryWarpIn* getToWarp() const;
+
+public slots:
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+protected:
   MapDBEntryWarpOut();
-  MapDBEntryWarpOut(QJsonValue& data, MapDBEntry* parent);
+  MapDBEntryWarpOut(const QJsonValue& data, MapDBEntry* const parent);
   void deepLink();
+  void qmlRegister() const;
 
   // X & Y location on Map
-  var8 x = 0;
-  var8 y = 0;
+  int x = 0;
+  int y = 0;
 
   // Which pre-defined warp-in to warp to
-  var8 warp = 0;
+  int warp = 0;
 
   // Which map to warp to
-  QString map;
+  QString map = "";
 
   // Is this warp-out not intended to be used
   bool glitch = false;
@@ -44,6 +76,10 @@ struct DB_AUTOPORT MapDBEntryWarpOut
 
   // Go to warp spot on destination map
   MapDBEntryWarpIn* toWarp = nullptr;
+
+  friend class MapDBEntry;
+  friend class MapsDB;
+  friend class MapDBEntryWarpIn;
 };
 
 #endif // MAPDBENTRYWARPOUT_H
