@@ -13,12 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "mapdbentrywildmon.h"
 
-MapDBEntryWildMon::MapDBEntryWildMon() {}
-MapDBEntryWildMon::MapDBEntryWildMon(QJsonValue& value, MapDBEntry* parent) :
+#include <QDebug>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
+#include "mapdbentrywildmon.h"
+#include "../pokemon.h"
+
+MapDBEntryWildMon::MapDBEntryWildMon() {
+  qmlRegister();
+}
+
+MapDBEntryWildMon::MapDBEntryWildMon(const QJsonValue& value, MapDBEntry* const parent) :
   parent(parent)
 {
+  qmlRegister();
+
   name = value["name"].toString();
   level = value["level"].toDouble();
 }
@@ -37,4 +47,40 @@ void MapDBEntryWildMon::deepLink()
 
     if(toPokemon != nullptr)
       toPokemon->toWildMonMaps.append(this);
+}
+
+void MapDBEntryWildMon::qmlRegister() const
+{
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<MapDBEntryWildMon>(
+        "PSE.DB.MapDBEntryWildMon", 1, 0, "MapDBEntryWildMon", "Can't instantiate in QML");
+  once = true;
+}
+
+const MapDBEntry* MapDBEntryWildMon::getParent() const
+{
+  return parent;
+}
+
+void MapDBEntryWildMon::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+}
+
+const PokemonDBEntry* MapDBEntryWildMon::getToPokemon() const
+{
+    return toPokemon;
+}
+
+int MapDBEntryWildMon::getLevel() const
+{
+    return level;
+}
+
+const QString MapDBEntryWildMon::getName() const
+{
+    return name;
 }

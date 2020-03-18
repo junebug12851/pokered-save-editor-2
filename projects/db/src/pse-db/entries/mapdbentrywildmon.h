@@ -16,19 +16,46 @@
 #ifndef MAPDBENTRYWILDMON_H
 #define MAPDBENTRYWILDMON_H
 
+#include <QObject>
+#include <QJsonValue>
+#include "../db_autoport.h"
+
+class QQmlEngine;
+class MapsDB;
+class MapDBEntry;
+class PokemonDBEntry;
 
 // Wild Pokemon Entry
-struct DB_AUTOPORT MapDBEntryWildMon
-{
-  MapDBEntryWildMon();
-  MapDBEntryWildMon(QJsonValue& value, MapDBEntry* parent);
-  void deepLink();
+struct DB_AUTOPORT MapDBEntryWildMon : public QObject {
+  Q_OBJECT
+  Q_PROPERTY(QString getName READ getName CONSTANT)
+  Q_PROPERTY(int getLevel READ getLevel CONSTANT)
+  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon CONSTANT)
+  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT)
 
-  QString name;
-  var8 level = 0;
+public:
+  const QString getName() const;
+  int getLevel() const;
+  const PokemonDBEntry* getToPokemon() const;
+  const MapDBEntry* getParent() const;
+
+public slots:
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+protected:
+  MapDBEntryWildMon();
+  MapDBEntryWildMon(const QJsonValue& value, MapDBEntry* const parent);
+  void deepLink();
+  void qmlRegister() const;
+
+  QString name = "";
+  int level = 0;
 
   PokemonDBEntry* toPokemon = nullptr;
   MapDBEntry* parent = nullptr;
+
+  friend class MapsDB;
+  friend class MapDBEntry;
 };
 
 #endif // MAPDBENTRYWILDMON_H

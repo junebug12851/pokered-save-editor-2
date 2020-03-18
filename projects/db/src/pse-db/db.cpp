@@ -32,6 +32,7 @@
 #include "./hiddencoinsdb.h"
 #include "./hiddenItemsdb.h"
 #include "./itemsdb.h"
+#include "./mapsdb.h"
 
 DB* DB::inst()
 {
@@ -99,6 +100,11 @@ ItemsDB* DB::items() const
   return ItemsDB::inst();
 }
 
+MapsDB* DB::maps() const
+{
+  return MapsDB::inst();
+}
+
 DB::DB()
 {
   // Init Resources
@@ -147,6 +153,7 @@ void DB::loadAll() const
   HiddenCoinsDB::inst()->load();
   HiddenItemsDB::inst()->load();
   ItemsDB::inst()->load();
+  MapsDB::inst()->load();
 
   once = true;
 }
@@ -161,6 +168,7 @@ void DB::indexAll() const
   FlyDB::inst()->index();
   FontsDB::inst()->index();
   ItemsDB::inst()->index();
+  MapsDB::inst()->index();
 
   once = true;
 }
@@ -178,6 +186,7 @@ void DB::deepLinkAll() const
   HiddenCoinsDB::inst()->deepLink();
   HiddenItemsDB::inst()->deepLink();
   ItemsDB::inst()->deepLink();
+  MapsDB::inst()->deepLink();
 
   once = true;
 }
@@ -195,6 +204,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   GameCornerDB::inst()->qmlProtect(engine);
   HiddenItemsDB::inst()->qmlProtect(engine);
   ItemsDB::inst()->qmlProtect(engine);
+  MapsDB::inst()->qmlProtect(engine);
 }
 
 void DB::qmlHook(QQmlContext* const context) const
