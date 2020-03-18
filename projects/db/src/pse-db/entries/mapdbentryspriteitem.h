@@ -20,18 +20,31 @@
 #include "../db_autoport.h"
 
 class ItemDBEntry;
+class MapsDB;
 
 // An item that's obtained
 struct DB_AUTOPORT MapDBEntrySpriteItem : public MapDBEntrySprite
 {
-  MapDBEntrySpriteItem(QJsonValue& data, MapDBEntry* parent);
+  Q_OBJECT
+  Q_PROPERTY(QString getItem READ getItem CONSTANT)
+  Q_PROPERTY(ItemDBEntry* getToItem READ getToItem CONSTANT)
+
+public:
+  virtual SpriteType type() const;
+
+  const QString getItem() const;
+  const ItemDBEntry* getToItem() const;
+
+protected:
+  MapDBEntrySpriteItem(const QJsonValue& data, MapDBEntry* const parent);
   virtual void deepLink();
-  virtual SpriteType type();
+  void qmlRegister() const;
 
   // Which Item
-  QString item;
+  QString item = "";
 
   ItemDBEntry* toItem = nullptr;
+  friend class MapsDB;
 };
 
 #endif // MAPDBENTRYSPRITEITEM_H

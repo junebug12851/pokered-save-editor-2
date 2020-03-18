@@ -13,9 +13,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "mapdbentryspriteitem.h"
 
-MapDBEntrySpriteItem::MapDBEntrySpriteItem(QJsonValue& data, MapDBEntry* parent) :
+#include <QDebug>
+#include <QJsonValue>
+#include "mapdbentryspriteitem.h"
+#include "../itemsdb.h"
+#include "./itemdbentry.h"
+
+MapDBEntrySpriteItem::MapDBEntrySpriteItem(const QJsonValue& data,
+                                           MapDBEntry* const parent) :
   MapDBEntrySprite(data, parent)
 {
   item = data["item"].toString();
@@ -33,18 +39,28 @@ void MapDBEntrySpriteItem::deepLink()
   if(item == "0")
     return;
 
-  toItem = ItemsDB::ind.value(item);
+  toItem = ItemsDB::inst()->getInd().value(item);
 
 #ifdef QT_DEBUG
   if(toItem == nullptr)
     qCritical() << "MapDBEntrySpriteItem: Unable to deep link " + item + " to item";
 #endif
 
-  if(toItem == nullptr)
+  if(toItem != nullptr)
     toItem->toMapSpriteItem.append(this);
 }
 
-SpriteType MapDBEntrySpriteItem::type()
+const ItemDBEntry* MapDBEntrySpriteItem::getToItem() const
 {
-  return SpriteType::ITEM;
+    return toItem;
+}
+
+const QString MapDBEntrySpriteItem::getItem() const
+{
+    return item;
+}
+
+MapDBEntrySpriteItem::SpriteType MapDBEntrySpriteItem::type() const
+{
+    return SpriteType::ITEM;
 }

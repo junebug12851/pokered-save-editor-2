@@ -122,6 +122,7 @@ protected:
   QVector<PokemonDBEntry*> toTeachPokemon;
 
   friend class ItemsDB;
+  friend struct MapDBEntrySpriteItem;
 };
 
 #endif // ITEMDBENTRY_H
