@@ -13,9 +13,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "mapdbentryspritepokemon.h"
 
-MapDBEntrySpritePokemon::MapDBEntrySpritePokemon(QJsonValue& data, MapDBEntry* parent) :
+#include <QDebug>
+#include <QJsonValue>
+#include <QQmlEngine>
+#include "mapdbentryspritepokemon.h"
+#include "../pokemon.h"
+
+MapDBEntrySpritePokemon::MapDBEntrySpritePokemon(const QJsonValue& data,
+                                                 MapDBEntry* const parent) :
   MapDBEntrySprite(data, parent)
 {
   pokemon = data["pokemon"].toString();
@@ -36,7 +42,33 @@ void MapDBEntrySpritePokemon::deepLink()
     toPokemon->toMapSpritePokemon = this;
 }
 
-SpriteType MapDBEntrySpritePokemon::type()
+void MapDBEntrySpritePokemon::qmlRegister() const
 {
-  return SpriteType::POKEMON;
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<MapDBEntrySpritePokemon>(
+        "PSE.DB.MapDBEntrySpritePokemon", 1, 0, "MapDBEntrySpritePokemon", "Can't instantiate in QML");
+  once = true;
+}
+
+const PokemonDBEntry* MapDBEntrySpritePokemon::getToPokemon() const
+{
+    return toPokemon;
+}
+
+int MapDBEntrySpritePokemon::getLevel() const
+{
+    return level;
+}
+
+const QString MapDBEntrySpritePokemon::getPokemon() const
+{
+    return pokemon;
+}
+
+MapDBEntrySpritePokemon::SpriteType MapDBEntrySpritePokemon::type() const
+{
+    return SpriteType::POKEMON;
 }

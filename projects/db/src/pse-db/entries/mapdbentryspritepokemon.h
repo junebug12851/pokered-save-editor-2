@@ -17,21 +17,37 @@
 #define MAPDBENTRYSPRITEPOKEMON_H
 
 #include "./mapdbentrysprite.h"
+#include "../db_autoport.h"
 
 class PokemonDBEntry;
+class MapsDB;
 
 // A Pokemon that can be battled
 struct DB_AUTOPORT MapDBEntrySpritePokemon : public MapDBEntrySprite
 {
-  MapDBEntrySpritePokemon(QJsonValue& data, MapDBEntry* parent);
+  Q_OBJECT
+  Q_PROPERTY(QString getPokemon READ getPokemon CONSTANT)
+  Q_PROPERTY(int getLevel READ getLevel CONSTANT)
+  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon CONSTANT)
+
+public:
+  virtual SpriteType type() const;
+  const QString getPokemon() const;
+  int getLevel() const;
+  const PokemonDBEntry* getToPokemon() const;
+
+protected:
+  MapDBEntrySpritePokemon(const QJsonValue& data, MapDBEntry* const parent);
   virtual void deepLink();
-  virtual SpriteType type();
+  virtual void qmlRegister() const;
 
   // Pokemon Details
-  QString pokemon;
-  int level;
+  QString pokemon = "";
+  int level = -1;
 
   PokemonDBEntry* toPokemon = nullptr;
+
+  friend class MapDBEntry;
 };
 
 #endif // MAPDBENTRYSPRITEPOKEMON_H

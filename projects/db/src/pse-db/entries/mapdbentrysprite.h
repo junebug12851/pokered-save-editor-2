@@ -95,7 +95,7 @@ protected:
   MapDBEntrySprite();
   MapDBEntrySprite(const QJsonValue& data, MapDBEntry* const parent);
   virtual void deepLink();
-  void qmlRegister() const;
+  virtual void qmlRegister() const;
 
   // Name of sprite
   QString sprite;
@@ -130,6 +130,7 @@ protected:
   MapDBEntry* parent = nullptr;
 
   friend class MapsDB;
+  friend class MapDBEntry;
 };
 
 #endif // MAPDBENTRYSPRITE_H

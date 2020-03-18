@@ -24,6 +24,7 @@ MapDBEntrySpriteItem::MapDBEntrySpriteItem(const QJsonValue& data,
                                            MapDBEntry* const parent) :
   MapDBEntrySprite(data, parent)
 {
+  qmlRegister();
   item = data["item"].toString();
 }
 

@@ -13,13 +13,29 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+#include <QQmlEngine>
 #include "mapdbentryspritenpc.h"
 
-MapDBEntrySpriteNPC::MapDBEntrySpriteNPC(QJsonValue& data, MapDBEntry* parent) :
+MapDBEntrySpriteNPC::MapDBEntrySpriteNPC(const QJsonValue& data,
+                                         MapDBEntry* const parent) :
   MapDBEntrySprite(data, parent)
-{}
+{
+  qmlRegister();
+}
 
-SpriteType MapDBEntrySpriteNPC::type()
+void MapDBEntrySpriteNPC::qmlRegister() const
+{
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<MapDBEntrySpriteNPC>(
+        "PSE.DB.MapDBEntrySpriteNPC", 1, 0, "MapDBEntrySpriteNPC", "Can't instantiate in QML");
+  once = true;
+}
+
+MapDBEntrySpriteNPC::SpriteType MapDBEntrySpriteNPC::type() const
 {
   return SpriteType::NPC;
 }

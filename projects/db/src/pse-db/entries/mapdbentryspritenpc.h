@@ -17,12 +17,23 @@
 #define MAPDBENTRYSPRITENPC_H
 
 #include "./mapdbentrysprite.h"
+#include "../db_autoport.h"
+
+class MapsDB;
 
 // A regular NPC that says a few lines and may have a script that's run
 struct DB_AUTOPORT MapDBEntrySpriteNPC : public MapDBEntrySprite
 {
-  MapDBEntrySpriteNPC(QJsonValue& data, MapDBEntry* parent);
-  virtual SpriteType type();
+  Q_OBJECT
+
+public:
+  virtual SpriteType type() const;
+
+protected:
+  MapDBEntrySpriteNPC(const QJsonValue& data, MapDBEntry* const parent);
+  virtual void qmlRegister() const;
+
+  friend class MapDBEntry;
 };
 
 #endif // MAPDBENTRYSPRITENPC_H

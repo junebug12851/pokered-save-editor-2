@@ -38,13 +38,14 @@ public:
 protected:
   MapDBEntrySpriteItem(const QJsonValue& data, MapDBEntry* const parent);
   virtual void deepLink();
-  void qmlRegister() const;
+  virtual void qmlRegister() const;
 
   // Which Item
   QString item = "";
 
   ItemDBEntry* toItem = nullptr;
   friend class MapsDB;
+  friend class MapDBEntry;
 };
 
 #endif // MAPDBENTRYSPRITEITEM_H
