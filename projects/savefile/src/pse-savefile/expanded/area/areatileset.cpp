@@ -20,7 +20,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include <pse-db/maps.h>
+#include <pse-db/mapsdb.h>
 #include <pse-db/tileset.h>
 #include <pse-common/random.h>
 

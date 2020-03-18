@@ -26,7 +26,7 @@
 #include "./areatileset.h"
 #include "./areawarps.h"
 #include "../../savefile.h"
-#include <pse-db/maps.h>
+#include <pse-db/mapsdb.h>
 #include <pse-db/util/mapsearch.h>
 #include <pse-common/random.h>
 

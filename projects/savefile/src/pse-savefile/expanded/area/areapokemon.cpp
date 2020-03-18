@@ -19,7 +19,7 @@
 #include "../../savefileiterator.h"
 #include <pse-db/pokemon.h>
 #include <pse-common/random.h>
-#include <pse-db/maps.h>
+#include <pse-db/mapsdb.h>
 
 AreaPokemonWild::AreaPokemonWild(int index, int level)
 {

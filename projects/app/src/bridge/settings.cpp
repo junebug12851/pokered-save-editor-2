@@ -15,7 +15,7 @@
 */
 
 #include "./settings.h"
-#include <pse-db/maps.h>
+#include <pse-db/mapsdb.h>
 #include <pse-db/tileset.h>
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/expanded/savefileexpanded.h>

@@ -21,7 +21,7 @@
 #include <pse-common/utility.h>
 
 #include "./mapsearch.h"
-#include "../maps.h"
+#include "../mapsdb.h"
 #include "../tileset.h"
 #include "../spriteSet.h"
 

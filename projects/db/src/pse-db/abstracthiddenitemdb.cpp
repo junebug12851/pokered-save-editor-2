@@ -23,7 +23,7 @@
 #endif
 
 #include "./abstracthiddenitemdb.h"
-#include "./maps.h"
+#include "./mapsdb.h"
 #include "./util/gamedata.h"
 #include "./entries/hiddenitemdbentry.h"
 

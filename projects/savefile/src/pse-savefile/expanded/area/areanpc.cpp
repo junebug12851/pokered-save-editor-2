@@ -17,7 +17,7 @@
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
-#include <pse-db/maps.h>
+#include <pse-db/mapsdb.h>
 
 AreaNPC::AreaNPC(SaveFile* saveFile)
 {

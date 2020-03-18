@@ -23,7 +23,7 @@
 
 #include "./missables.h"
 #include "./util/gamedata.h"
-#include "./maps.h"
+#include "./mapsdb.h"
 
 MissableDBEntry::MissableDBEntry() {}
 MissableDBEntry::MissableDBEntry(QJsonValue& data)

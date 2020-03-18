@@ -18,7 +18,7 @@
 #include <QDebug>
 #include <pse-common/utility.h>
 
-#include "../maps.h"
+#include "../mapsdb.h"
 #include "hiddenitemdbentry.h"
 
 HiddenItemDBEntry::HiddenItemDBEntry() {

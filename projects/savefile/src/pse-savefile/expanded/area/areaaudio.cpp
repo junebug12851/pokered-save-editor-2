@@ -18,7 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/music.h>
-#include <pse-db/maps.h>
+#include <pse-db/mapsdb.h>
 #include <pse-common/random.h>
 
 AreaAudio::AreaAudio(SaveFile* saveFile)

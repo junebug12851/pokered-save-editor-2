@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <QCollator>
 
-#include <pse-db/maps.h>
+#include <pse-db/mapsdb.h>
 #include <pse-savefile/expanded/area/areamap.h>
 #include "./mapselectmodel.h"
 

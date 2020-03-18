@@ -25,7 +25,7 @@
 
 #include "../eventsdb.h"
 #include "../util/gamedata.h"
-#include "../maps.h"
+#include "../mapsdb.h"
 
 #include "eventdbentry.h"
 

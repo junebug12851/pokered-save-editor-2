@@ -21,7 +21,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/sprites.h>
-#include <pse-db/maps.h>
+#include <pse-db/mapsdb.h>
 #include <pse-db/trainers.h>
 #include <pse-db/itemsdb.h>
 #include <pse-db/pokemon.h>

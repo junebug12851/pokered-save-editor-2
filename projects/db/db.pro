@@ -22,6 +22,17 @@ SOURCES += \
     src/pse-db/entries/gamecornerdbentry.cpp \
     src/pse-db/entries/hiddenitemdbentry.cpp \
     src/pse-db/entries/itemdbentry.cpp \
+    src/pse-db/entries/mapdbentry.cpp \
+    src/pse-db/entries/mapdbentryconnect.cpp \
+    src/pse-db/entries/mapdbentrysign.cpp \
+    src/pse-db/entries/mapdbentrysprite.cpp \
+    src/pse-db/entries/mapdbentryspriteitem.cpp \
+    src/pse-db/entries/mapdbentryspritenpc.cpp \
+    src/pse-db/entries/mapdbentryspritepokemon.cpp \
+    src/pse-db/entries/mapdbentryspritetrainer.cpp \
+    src/pse-db/entries/mapdbentrywarpin.cpp \
+    src/pse-db/entries/mapdbentrywarpout.cpp \
+    src/pse-db/entries/mapdbentrywildmon.cpp \
     src/pse-db/entries\creditdbentry.cpp \
     src/pse-db/db.cpp \
     src/pse-db/eventpokemondb.cpp \
@@ -36,10 +47,10 @@ SOURCES += \
     src/pse-db/hiddenItemsdb.cpp \
     src/pse-db/hiddencoinsdb.cpp \
     src/pse-db/itemsdb.cpp \
+    src/pse-db/mapsdb.cpp \
     src/pse-db/names.cpp \
     src/pse-db/util/fontsearch.cpp \
     src/pse-db/util/gamedata.cpp \
-    src/pse-db/maps.cpp \
     src/pse-db/util/hiddencoinsdb.cpp \
     src/pse-db/util/mapsearch.cpp \
     src/pse-db/missables.cpp \
@@ -69,6 +80,17 @@ HEADERS += \
     src/pse-db/entries/gamecornerdbentry.h \
     src/pse-db/entries/hiddenitemdbentry.h \
     src/pse-db/entries/itemdbentry.h \
+    src/pse-db/entries/mapdbentry.h \
+    src/pse-db/entries/mapdbentryconnect.h \
+    src/pse-db/entries/mapdbentrysign.h \
+    src/pse-db/entries/mapdbentrysprite.h \
+    src/pse-db/entries/mapdbentryspriteitem.h \
+    src/pse-db/entries/mapdbentryspritenpc.h \
+    src/pse-db/entries/mapdbentryspritepokemon.h \
+    src/pse-db/entries/mapdbentryspritetrainer.h \
+    src/pse-db/entries/mapdbentrywarpin.h \
+    src/pse-db/entries/mapdbentrywarpout.h \
+    src/pse-db/entries/mapdbentrywildmon.h \
     src/pse-db/entries\creditdbentry.h \
     src/pse-db/db.h \
     src/pse-db/db_autoport.h \
@@ -84,10 +106,10 @@ HEADERS += \
     src/pse-db/hiddenItemsdb.h \
     src/pse-db/hiddencoinsdb.h \
     src/pse-db/itemsdb.h \
+    src/pse-db/mapsdb.h \
     src/pse-db/names.h \
     src/pse-db/util/fontsearch.h \
     src/pse-db/util/gamedata.h \
-    src/pse-db/maps.h \
     src/pse-db/util/hiddencoinsdb.h \
     src/pse-db/util/mapsearch.h \
     src/pse-db/missables.h \

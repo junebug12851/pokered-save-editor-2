@@ -18,7 +18,7 @@
 #include <pse-common/utility.h>
 
 #include "flydbentry.h"
-#include "../maps.h"
+#include "../mapsdb.h"
 
 FlyDBEntry::FlyDBEntry() {
   qmlRegister();
