@@ -13,13 +13,55 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 #include "mapdbentrysign.h"
 
-MapDBEntrySign::MapDBEntrySign() {}
-MapDBEntrySign::MapDBEntrySign(QJsonValue& data, MapDBEntry* parent) :
+MapDBEntrySign::MapDBEntrySign() {
+  qmlRegister();
+}
+
+const MapDBEntry* MapDBEntrySign::getParent() const
+{
+  return parent;
+}
+
+void MapDBEntrySign::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+}
+
+int MapDBEntrySign::getTextID() const
+{
+    return textID;
+}
+
+int MapDBEntrySign::getY() const
+{
+    return y;
+}
+
+int MapDBEntrySign::getX() const
+{
+    return x;
+}
+MapDBEntrySign::MapDBEntrySign(const QJsonValue& data, MapDBEntry* const parent) :
   parent(parent)
 {
+  qmlRegister();
   x = data["x"].toDouble();
   y = data["y"].toDouble();
   textID = data["text"].toDouble();
+}
+
+void MapDBEntrySign::qmlRegister() const
+{
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<MapDBEntrySign>(
+        "PSE.DB.MapDBEntrySign", 1, 0, "MapDBEntrySign", "Can't instantiate in QML");
+  once = true;
 }

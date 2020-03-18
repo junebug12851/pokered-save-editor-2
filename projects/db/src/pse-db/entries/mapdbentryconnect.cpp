@@ -13,14 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#include "mapdbentryconnect.h"
 
-MapDBEntryConnect::MapDBEntryConnect() {}
-MapDBEntryConnect::MapDBEntryConnect(
-    ConnectDir dir,
-    MapDBEntry* fromMap,
-    QJsonValue& data)
+#include <QDebug>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
+#include "./mapdbentryconnect.h"
+#include "../mapsdb.h"
+#include "./mapdbentry.h"
+
+MapDBEntryConnect::MapDBEntryConnect() {
+  qmlRegister();
+}
+MapDBEntryConnect::MapDBEntryConnect(const ConnectDir dir,
+    MapDBEntry* const fromMap,
+    const QJsonValue& data)
 {
+  qmlRegister();
   // Set Direction
   this->dir = dir;
 
@@ -37,7 +45,7 @@ MapDBEntryConnect::MapDBEntryConnect(
 
 void MapDBEntryConnect::deepLink()
 {
-  toMap = MapsDB::ind.value(map, nullptr);
+  toMap = MapsDB::inst()->getInd().value(map, nullptr);
 
 #ifdef QT_DEBUG
     if(toMap == nullptr)
@@ -45,18 +53,77 @@ void MapDBEntryConnect::deepLink()
 #endif
 }
 
-var16 MapDBEntryConnect::stripLocation()
+void MapDBEntryConnect::qmlRegister() const
 {
-  // Stop if toMap is not accessible or it doesn't have a data pointer
+  static bool once = false;
+  if(once)
+    return;
+
+  qmlRegisterUncreatableType<MapDBEntryConnect>(
+        "PSE.DB.MapDBEntryConnect", 1, 0, "MapDBEntryConnect", "Can't instantiate in QML");
+  once = true;
+}
+
+const MapDBEntry* MapDBEntryConnect::getParent() const
+{
+  return parent;
+}
+
+void MapDBEntryConnect::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+}
+
+const MapDBEntry* MapDBEntryConnect::getFromMap() const
+{
+    return fromMap;
+}
+
+const MapDBEntry* MapDBEntryConnect::getToMap() const
+{
+    return toMap;
+}
+
+bool MapDBEntryConnect::getFlag() const
+{
+    return flag;
+}
+
+int MapDBEntryConnect::getStripOffset() const
+{
+    return stripOffset;
+}
+
+int MapDBEntryConnect::getStripMove() const
+{
+    return stripMove;
+}
+
+MapDBEntryConnect::ConnectDir MapDBEntryConnect::getDir() const
+{
+  return dir;
+}
+
+const QString MapDBEntryConnect::getMap() const
+{
+    return map;
+}
+
+int MapDBEntryConnect::stripLocation() const
+{
+    // Stop if toMap is not accessible or it doesn't have a data pointer
   // A valid toMap is required
-  if(toMap == nullptr || !toMap->dataPtr || !toMap->width || !toMap->height)
+  if(toMap == nullptr ||
+     toMap->getDataPtr() <= 0 ||
+     toMap->getWidth() <= 0 ||
+     toMap->getHeight() <= 0)
     return 0;
 
-  var16 ret = 0;
+  int ret = 0;
 
-  var16 dataPtr = *toMap->dataPtr;
-  var16 toWidth = *toMap->width;
-  var16 toHeight = *toMap->height;
+  int dataPtr = toMap->getDataPtr();
+  int toWidth = toMap->getWidth();
+  int toHeight = toMap->getHeight();
 
   // These can vary based on direction
   if(dir == ConnectDir::NORTH) {
@@ -75,14 +142,16 @@ var16 MapDBEntryConnect::stripLocation()
   return ret;
 }
 
-var16 MapDBEntryConnect::mapPos()
+int MapDBEntryConnect::mapPos() const
 {
-  if(fromMap == nullptr || !fromMap->height || !fromMap->width)
+  if(fromMap == nullptr ||
+     fromMap->getHeight() <= 0 ||
+     fromMap->getWidth() <= 0)
     return 0;
 
-  var16 ret = 0;
-  var16 fromHeight = *fromMap->height;
-  var16 fromWidth = *fromMap->width;
+  int ret = 0;
+  int fromHeight = fromMap->getHeight();
+  int fromWidth = fromMap->getWidth();
 
   if(dir == ConnectDir::NORTH) {
     ret = worldMapPtr + 3 + stripMove;
@@ -100,17 +169,21 @@ var16 MapDBEntryConnect::mapPos()
   return ret;
 }
 
-var8 MapDBEntryConnect::stripSize()
+int MapDBEntryConnect::stripSize() const
 {
-  if(fromMap == nullptr || toMap == nullptr || !fromMap->width || !toMap->width
-     || !fromMap->height || !toMap->height)
+  if(fromMap == nullptr ||
+     toMap == nullptr ||
+     fromMap->getWidth() <= 0 ||
+     toMap->getWidth() <= 0 ||
+     fromMap->getHeight() <= 0 ||
+     toMap->getHeight() <= 0)
     return 0;
 
-  var8 ret = 0;
-  var8 fromWidth = *fromMap->width;
-  var8 toWidth = *toMap->width;
-  var8 fromHeight = *fromMap->height;
-  var8 toHeight = *toMap->height;
+  int ret = 0;
+  int fromWidth = fromMap->getWidth();
+  int toWidth = toMap->getWidth();
+  int fromHeight = fromMap->getHeight();
+  int toHeight = toMap->getHeight();
 
   if(dir == ConnectDir::NORTH) {
     if(fromWidth < toWidth)
@@ -150,13 +223,14 @@ var8 MapDBEntryConnect::stripSize()
   return ret;
 }
 
-svar8 MapDBEntryConnect::yAlign()
+int MapDBEntryConnect::yAlign() const
 {
-  if(toMap == nullptr || !toMap->height)
+  if(toMap == nullptr ||
+     toMap->getHeight() <= 0)
     return 0;
 
-  svar8 ret;
-  var8 toHeight = *toMap->height;
+  int ret;
+  int toHeight = toMap->getHeight();
 
   if(dir == ConnectDir::NORTH) {
     ret = (toHeight * 2) - 1;
@@ -174,13 +248,14 @@ svar8 MapDBEntryConnect::yAlign()
   return ret;
 }
 
-svar8 MapDBEntryConnect::xAlign()
+int MapDBEntryConnect::xAlign() const
 {
-  if(toMap == nullptr || !toMap->width)
+  if(toMap == nullptr ||
+     toMap->getWidth())
     return 0;
 
-  svar8 ret;
-  var8 toWidth = *toMap->width;
+  int ret;
+  int toWidth = toMap->getWidth();
 
   if(dir == ConnectDir::NORTH) {
     ret = (stripMove - stripOffset) * -2;
@@ -198,14 +273,16 @@ svar8 MapDBEntryConnect::xAlign()
   return ret;
 }
 
-var16 MapDBEntryConnect::window()
+int MapDBEntryConnect::window() const
 {
-  if(toMap == nullptr || !toMap->height || !toMap->width)
+  if(toMap == nullptr ||
+     toMap->getHeight() <= 0 ||
+     toMap->getWidth() <= 0)
     return 0;
 
-  var16 ret;
-  var8 toHeight = *toMap->height;
-  var8 toWidth = *toMap->width;
+  int ret;
+  int toHeight = toMap->getHeight();
+  int toWidth = toMap->getWidth();
 
   if(dir == ConnectDir::NORTH) {
     ret = worldMapPtr + 1 + (toHeight * (toWidth + 6));

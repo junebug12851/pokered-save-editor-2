@@ -17,8 +17,12 @@
 #define MAPDBENTRYCONNECT_H
 
 #include <QObject>
+#include <QString>
+#include <QJsonValue>
 #include "../db_autoport.h"
 
+class MapDBEntry;
+class QQmlEngine;
 class MapDBEntry;
 
 /*
@@ -44,23 +48,82 @@ class MapDBEntry;
  * Bulbapedia User Tiddlywinks
  * https://bulbapedia.bulbagarden.net/wiki/User:Tiddlywinks/Map_header_data_structure_in_Generation_I
 */
-struct DB_AUTOPORT MapDBEntryConnect {
+struct DB_AUTOPORT MapDBEntryConnect : public QObject {
+  Q_OBJECT
+  Q_PROPERTY(int stripLocation READ stripLocation CONSTANT)
+  Q_PROPERTY(int mapPos READ mapPos CONSTANT)
+  Q_PROPERTY(int stripSize READ stripSize CONSTANT)
+  Q_PROPERTY(int yAlign READ yAlign CONSTANT)
+  Q_PROPERTY(int xAlign READ xAlign CONSTANT)
+  Q_PROPERTY(int window READ window CONSTANT)
+  Q_PROPERTY(ConnectDir getDir READ getDir CONSTANT)
+  Q_PROPERTY(QString getMap READ getMap CONSTANT)
+  Q_PROPERTY(int getStripMove READ getStripMove CONSTANT)
+  Q_PROPERTY(int getStripOffset READ getStripOffset CONSTANT)
+  Q_PROPERTY(bool getFlag READ getFlag CONSTANT)
+  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT)
+  Q_PROPERTY(MapDBEntry* getFromMap READ getFromMap CONSTANT)
+  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT)
 
+public:
   // Hard-Coded value, this is the value that the gen 1 games use, it refers
   // to a ram address that never changes related to the overworld map
   static const constexpr int worldMapPtr = 0xC6E8;
 
-  enum ConnectDir : int
+  enum ConnectDir
   {
     NORTH,
     SOUTH,
     EAST,
     WEST
   };
+  Q_ENUM(ConnectDir)
 
+  // Location of strip
+  // Pointer to start in connected map
+  // AKA Strip Source
+  int stripLocation() const;
+
+  // Map Position
+  // Pointer to start of connection
+  // AKA Strip Dst
+  int mapPos() const;
+
+  // Strip Size
+  // Connection size (blocks)
+  // AKA stripWidth
+  int stripSize() const;
+
+  // Player Pos
+  // Player Y & X Offset (steps)
+  // AKA X-Align/Y-Align
+  int yAlign() const;
+  int xAlign() const;
+
+  // Map VRAM Offset
+  // Pointer to window
+  // AKA => viewPtr & UL Corner
+  int window() const;
+
+  ConnectDir getDir() const;
+  const QString getMap() const;
+  int getStripMove() const;
+  int getStripOffset() const;
+  bool getFlag() const;
+  const MapDBEntry* getToMap() const;
+  const MapDBEntry* getFromMap() const;
+  const MapDBEntry* getParent() const;
+
+public slots:
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+protected:
   MapDBEntryConnect();
-  MapDBEntryConnect(ConnectDir dir, MapDBEntry* fromMap, QJsonValue& data);
+  MapDBEntryConnect(const ConnectDir dir,
+                    MapDBEntry* const fromMap,
+                    const QJsonValue& data);
   void deepLink();
+  void qmlRegister() const;
 
   // Direction used in calculating
   ConnectDir dir = ConnectDir::NORTH;
@@ -85,31 +148,7 @@ struct DB_AUTOPORT MapDBEntryConnect {
   MapDBEntry* fromMap = nullptr;
   MapDBEntry* parent = nullptr; // Basically the same thing, just an alias
 
-  // Location of strip
-  // Pointer to start in connected map
-  // AKA Strip Source
-  int stripLocation();
-
-  // Map Position
-  // Pointer to start of connection
-  // AKA Strip Dst
-  int mapPos();
-
-  // Strip Size
-  // Connection size (blocks)
-  // AKA stripWidth
-  int stripSize();
-
-  // Player Pos
-  // Player Y & X Offset (steps)
-  // AKA X-Align/Y-Align
-  int yAlign();
-  int xAlign();
-
-  // Map VRAM Offset
-  // Pointer to window
-  // AKA => viewPtr & UL Corner
-  int window();
+  friend class MapDBEntry;
 };
 
 #endif // MAPDBENTRYCONNECT_H

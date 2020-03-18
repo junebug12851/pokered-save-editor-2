@@ -16,20 +16,47 @@
 #ifndef MAPDBENTRYSIGN_H
 #define MAPDBENTRYSIGN_H
 
+#include <QObject>
+#include <QJsonValue>
+#include "../db_autoport.h"
 
-struct DB_AUTOPORT MapDBEntrySign
+class MapDBEntry;
+class QQmlEngine;
+class MapDBEntry;
+
+struct DB_AUTOPORT MapDBEntrySign : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getX READ getX CONSTANT)
+  Q_PROPERTY(int getY READ getY CONSTANT)
+  Q_PROPERTY(int getTextID READ getTextID CONSTANT)
+  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT)
+
+public:
+  int getX() const;
+  int getY() const;
+  int getTextID() const;
+  const MapDBEntry* getParent() const;
+
+public slots:
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+protected:
   MapDBEntrySign();
-  MapDBEntrySign(QJsonValue& data, MapDBEntry* parent);
+  MapDBEntrySign(const QJsonValue& data,
+                 MapDBEntry* const parent);
+  void qmlRegister() const;
 
   // X & Y location on Map
-  var8 x = 0;
-  var8 y = 0;
+  int x = 0;
+  int y = 0;
 
   // Which text id to display when interacting with sign
-  var8 textID = 0;
+  int textID = 0;
 
   MapDBEntry* parent = nullptr;
+
+  friend class MapDBEntry;
 };
 
 #endif // MAPDBENTRYSIGN_H
