@@ -467,8 +467,14 @@ void PokemonStorageModel::pageClosing()
 
 PokemonBox* PokemonStorageModel::getBoxMon(int index)
 {
-  auto mon = getCurBox()->pokemon.at(index);
+  return getCurBox()->pokemon.at(index);
+}
 
-  // These are Q_INVOKABLE returns of a parentless QObject, which QML otherwise
-  // treats as JavaScriptOwnership and GARBAGE-COLLECTS after the QML reference
- 
+PokemonParty* PokemonStorageModel::getPartyMon(int index)
+{
+  auto mon = getCurBox()->pokemon.at(index);
+  if(mon->isBoxMon())
+    return nullptr;
+
+  return (PokemonParty*)mon;
+}

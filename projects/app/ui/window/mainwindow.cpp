@@ -13,7 +13,6 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-
 #include <QQmlEngine>
 #include <QQmlContext>
 #include <QGuiApplication>
@@ -248,7 +247,11 @@ void MainWindow::injectIntoQML()
   bridge = new Bridge(file);
   context->setContextProperty("brg", bridge);
   MainWindow::engine = ui.app->engine();
+}
 
-  // CRITICAL: hand the QML engine CppOwnership of every DB entry (FontDBEntry,
-  // move/species/item entries, etc.). These C++ objects live in DB QVectors with
-  // no QObject parent, so Q
+void MainWindow::ssConnect()
+{
+  connect(file, &FileManagement::pathChanged, this, &MainWindow::onPathChanged);
+  connect(file, &FileManagement::recentFilesChanged, this, &MainWindow::reUpdateRecentFiles);
+}
+

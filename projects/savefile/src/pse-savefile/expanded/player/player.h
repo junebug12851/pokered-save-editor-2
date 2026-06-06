@@ -17,8 +17,6 @@
 #include <QObject>
 #include "../../savefile_autoport.h"
 
-// Full includes so QML can traverse player.basics/pokedex/pokemon/items.
-// See notes/reference/qt6-patterns.md.
 #include "./playerbasics.h"
 #include "./playerpokedex.h"
 #include "./playerpokemon.h"
@@ -50,4 +48,18 @@ public:
 signals:
   void basicsChanged();
   void itemsChanged();
-  void pokede
+  void pokedexChanged();
+  void pokemonChanged();
+
+public slots:
+  void reset();
+  void randomize();
+
+public:
+  PlayerBasics* basics = nullptr;
+  ItemStorageBox* items = nullptr;
+  PlayerPokedex* pokedex = nullptr;
+  PlayerPokemon* pokemon = nullptr;
+};
+
+

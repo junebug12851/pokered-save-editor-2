@@ -14,6 +14,7 @@
   * limitations under the License.
 */
 #pragma once
+
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
@@ -71,4 +72,13 @@ public slots:
   void pokemonRemove(int ind);
   virtual void pokemonNew();
 
-  bool relocateAll(PokemonStora
+  bool relocateAll(PokemonStorageBox* dst);
+  virtual bool relocateOne(PokemonStorageBox* dst, int ind);
+
+public:
+  bool isParty = false;
+  QVector<PokemonBox*> pokemon;
+  int maxSize = 0;
+  SaveFile* file;
+};
+

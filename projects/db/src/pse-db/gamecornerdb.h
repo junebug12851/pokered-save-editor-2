@@ -59,4 +59,7 @@ private:
   // Regular Casinos give you an even exchange, you get the exact amount back
   // But in the Poke-World I want to follow the global sell-back mechanics
   // whereby you get half back
-  int buyPrice = 
+  int buyPrice = 0;
+
+  friend class GameCornerDBEntry;
+};

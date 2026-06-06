@@ -186,5 +186,7 @@ void MapSelectModel::rebuild()
     if(el->getIncomplete() != "")
       name += " (" + el->getIncomplete() + ")";
 
-    mapListCache.append(new MapSelectEntry(el->bestName(), el->getInd()));
+    mapListCache.append(new MapSelectEntry(el->bestName(), el->ind));
   }
+}
+

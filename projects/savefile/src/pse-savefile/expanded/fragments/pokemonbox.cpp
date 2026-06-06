@@ -64,14 +64,14 @@ MoveDBEntry* PokemonMove::toMove()
 
 void PokemonMove::randomize()
 {
-  const var8 moveListSize = static_cast<var8>(MovesDB::inst()->getStoreSize());
+  var8 moveListSize = MovesDB::inst()->getStoreSize();
 
   for(var8 i = 0; i < 4; i++) {
     MoveDBEntry* moveData;
 
     do
-      moveData = MovesDB::inst()->getIndAt(
-            QString::number(Random::inst()->rangeExclusive(0, moveListSize)));
+      moveData = const_cast<MoveDBEntry*>(MovesDB::inst()->getIndAt(
+            QString::number(Random::inst()->rangeExclusive(0, moveListSize))));
     while(moveData == nullptr || moveData->glitch == true);
 
     moveID = moveData->ind;
@@ -723,13 +723,13 @@ void PokemonBox::randomize(PlayerBasics* basics)
   // This is where we give the Pokemon whacky types for fun
   // We have to do this after all the code above otherwise it'll be re-corrected
   // to be game accurate
-  auto type1 = TypesDB::inst()->getStore().at(Random::inst()->rangeExclusive(0, TypesDB::inst()->getStoreSize()));
+  auto type1 = TypesDB::inst()->getStoreAt(Random::inst()->rangeExclusive(0, TypesDB::inst()->getStoreSize()));
   TypeDBEntry* type2 = nullptr;
 
   // 25% chance of type 2
   bool hasType2 = Random::inst()->chanceSuccess(25);
   if(hasType2) {
-    type2 = TypesDB::inst()->getStore().at(Random::inst()->rangeExclusive(0, TypesDB::inst()->getStoreSize()));
+    type2 = TypesDB::inst()->getStoreAt(Random::inst()->rangeExclusive(0, TypesDB::inst()->getStoreSize()));
 
     if(type1->ind == type2->ind)
       type2 = nullptr;
@@ -1737,4 +1737,43 @@ int PokemonBox::dvCount()
   return maxDV;
 }
 
-int PokemonBox::dvAt(int
+int PokemonBox::dvAt(int ind)
+{
+  return dv[ind];
+}
+
+void PokemonBox::dvSet(int ind, int val)
+{
+  dv[ind] = val;
+  dvChanged();
+}
+
+void PokemonBox::manualSpeciesChanged()
+{
+  update(true, true, true, true);
+}
+
+void PokemonBox::manualLevelChanged()
+{
+  update(true, true);
+}
+
+int PokemonBox::atkStat()
+{
+  return nonHpStat(PokemonStats::Attack);
+}
+
+int PokemonBox::defStat()
+{
+  return nonHpStat(PokemonStats::Defense);
+}
+
+int PokemonBox::spdStat()
+{
+  return nonHpStat(PokemonStats::Speed);
+}
+
+int PokemonBox::spStat()
+{
+  return nonHpStat(PokemonStats::Special);
+}

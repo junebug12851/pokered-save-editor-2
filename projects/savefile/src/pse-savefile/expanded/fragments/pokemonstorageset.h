@@ -56,4 +56,10 @@ signals:
 
 public slots:
   void reset();
-  void randomize(PlayerBasics*
+  void randomize(PlayerBasics* basics);
+
+public:
+  // There are never any more or less than exactly a set amount of boxes in a
+  // set, there's no need for this to be a Vector
+  PokemonStorageBox* boxes[setMaxBoxes];
+};

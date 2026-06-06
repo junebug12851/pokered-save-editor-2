@@ -13,6 +13,13 @@ ListView {
 
   property ItemStorageBox box: null
 
+  // Per-control height knobs (Qt 6 Material controls each have a different
+  // implicit height; pin them so the checkbox / combo / count field share one
+  // consistent, vcentered row — see notes/reference/ui-patterns.md).
+  property int rowH: 38     // the row's height (the combo sets the tallest)
+  property int comboH: 38   // SelectItem dropdown
+  property int textH: 30    // count text box (a touch shorter)
+
   clip: true
   ScrollBar.vertical: ScrollBar {}
 
@@ -28,13 +35,21 @@ ListView {
 
     width: parent ? parent.width : 0
 
-    Row {
+    RowLayout {
       id: rowEntry
       Layout.alignment: Qt.AlignHCenter
+      spacing: 8
       visible: !itemIsPlaceholder
 
       CheckBox {
         id: selectBox
+
+        // VCenter + minimumHeight:0 so the Material checkbox's ~40px touch
+        // target doesn't floor the row or ride high (ui-patterns.md →
+        // "Material controls fight small heights").
+        Layout.alignment: Qt.AlignVCenter
+        Layout.preferredHeight: itemBoxView.rowH
+        Layout.minimumHeight: 0
 
         Component.onCompleted: (itemChecked !== undefined)
                                ? checked = itemChecked
@@ -44,6 +59,10 @@ ListView {
       }
 
       SelectItem {
+        Layout.alignment: Qt.AlignVCenter
+        Layout.preferredHeight: itemBoxView.comboH
+        Layout.preferredWidth: font.pixelSize * 15
+
         onActivated: itemId = currentValue;
         Component.onCompleted: {
 
@@ -61,14 +80,14 @@ ListView {
       DefTextEdit {
         id: countEdit
 
-        // Center the count text vertically (the old fixed top-padding nudge no
-        // longer lines up with Qt 6 field heights). Items in a Row top-align, and
-        // this field's height matches the SelectItem dropdown, so centering the
-        // text lines it up with the dropdown's text.
+        // VCenter text + pin the field height so it lines up with the combo.
+        // DefTextEdit already centers its text at any height (topPadding:0).
+        Layout.alignment: Qt.AlignVCenter
+        Layout.preferredHeight: itemBoxView.textH
+        Layout.preferredWidth: 2 * font.pixelSize + leftPadding + rightPadding
         verticalAlignment: TextInput.AlignVCenter
 
         maximumLength: 2
-        width: 2 * font.pixelSize + leftPadding + rightPadding
 
         onTextChanged: {
           if(text === "")

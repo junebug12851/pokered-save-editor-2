@@ -366,4 +366,7 @@ void ItemStorageBox::randomize()
   if(isBag)
     randomizeBag();
   else
-  
+    randomizeStorage();
+
+  itemsChanged();
+}

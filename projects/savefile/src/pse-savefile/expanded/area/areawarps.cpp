@@ -266,4 +266,8 @@ void AreaWarps::setTo(MapDBEntry* map)
   // and have to be careful
   for(auto warpDataEntry : map->getWarpOut()) {
     auto tmp = new WarpData(warpDataEntry);
-    wa
+    warps.append(tmp);
+  }
+
+  warpsChanged();
+}

@@ -33,4 +33,22 @@ class SAVEFILE_AUTOPORT Daycare : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(PokemonBox* pokemon MEMBER pokemon NOTIFY pokemonChange
+  Q_PROPERTY(PokemonBox* pokemon MEMBER pokemon NOTIFY pokemonChanged)
+
+public:
+  Daycare(SaveFile* saveFile = nullptr);
+  virtual ~Daycare();
+
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+signals:
+  void pokemonChanged();
+
+public slots:
+  void reset();
+  void randomize(PlayerBasics* basics);
+
+public:
+  PokemonBox* pokemon = nullptr;
+};

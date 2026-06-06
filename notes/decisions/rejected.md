@@ -103,3 +103,22 @@ All reverted. Original code is correct.
 
 **Do NOT** change dexInd arithmetic. `(dexInd+1)` for filenames/display, `toggleOne(dexInd)` 
 for direct array access — all correct as originally written.
+
+---
+
+## Bulk `sed -i` over the Cowork mount (2026-06-06 - catastrophic data loss)
+
+**What was tried**: a project-wide rename via `sed -i` (and shell `>` redirection / heredocs) run
+over the Cowork **mounted** filesystem (`/sessions/.../mnt/...`).
+
+**What went wrong**: the mount does **partial/truncated writes under load** - a single `sed -i` sweep
+across ~276 files silently truncated **55 source files + 8 notes** on the real disk (the Windows
+compiler confirmed the truncation; it was NOT a stale-read artifact). git HEAD had been committed after
+the damage, so it was useless for restore. Recovery took the entire session, via chat transcripts.
+
+**Rule**: NEVER bulk-edit project files with `sed -i`, `perl -i`, or shell redirection over the
+mount. Edit with the Read/Edit/Write tools or PowerShell (`[System.IO.File]::WriteAllText`,
+UTF8-no-BOM), and **verify every write** (re-read + brace balance + no NUL bytes). The bash mount is
+also unreliable for *reads* (false truncation) - verify with the Read tool / PowerShell, not
+`cat`/`wc`. Recovery how-to: `reference/diagnostic-methods.md` -> "Recovering files from Cowork
+chat transcripts".

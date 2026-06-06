@@ -17,11 +17,6 @@
 #include <QObject>
 #include "../../savefile_autoport.h"
 
-// Only `world.other` is traversed in QML (the Playtime editors), so include
-// ONLY that child here. The rest stay forward-declared + Q_DECLARE_OPAQUE_POINTER
-// (in savefile_autoport.h) — including all of them dragged the whole world/area
-// subtree into every translation unit and ballooned build time.
-// See notes/reference/qt6-patterns.md.
 #include "./worldother.h"
 
 class SaveFile;
@@ -72,4 +67,20 @@ signals:
   void localChanged();
 
 public slots:
-  void reset()
+  void reset();
+  void randomize();
+
+public:
+  WorldCompleted* completed = nullptr;
+  WorldEvents* events = nullptr;
+  WorldGeneral* general = nullptr;
+  WorldHidden* hidden = nullptr;
+  WorldMissables* missables = nullptr;
+  WorldOther* other = nullptr;
+  WorldScripts* scripts = nullptr;
+  WorldTowns* towns = nullptr;
+  WorldTrades* trades = nullptr;
+  WorldLocal* local = nullptr;
+};
+
+

@@ -17,12 +17,6 @@
 #include <QObject>
 #include "../savefile_autoport.h"
 
-// Include the full type ONLY for the branches QML actually traverses
-// (player / area / world / storage). dataExpanded.daycare / .hof / .rival are
-// never read in QML, so they stay forward-declared + Q_DECLARE_OPAQUE_POINTER
-// (in savefile_autoport.h) to keep this widely-included header lightweight.
-// A forward-declared QObject pointer in a Q_PROPERTY reads as `undefined` in QML,
-// which is fine for branches nothing traverses. See notes/reference/qt6-patterns.md.
 #include "./player/player.h"
 #include "./area/area.h"
 #include "./world/world.h"
@@ -53,4 +47,31 @@ public:
   SaveFileExpanded(SaveFile* saveFile = nullptr);
   virtual ~SaveFileExpanded();
 
- 
+  void load(SaveFile* saveFile = nullptr);
+  void save(SaveFile* saveFile);
+
+signals:
+  // No point in having these change signals but Q_PROPERTY requires them
+  void playerChanged();
+  void areaChanged();
+  void worldChanged();
+  void daycareChanged();
+  void hofChanged();
+  void rivalChanged();
+  void storageChanged();
+
+public slots:
+  void reset();
+  void randomize();
+
+public:
+  Player* player = nullptr;
+  Area* area = nullptr;
+  World* world = nullptr;
+  Daycare* daycare = nullptr;
+  HallOfFame* hof = nullptr;
+  Rival* rival = nullptr;
+  Storage* storage = nullptr;
+};
+
+

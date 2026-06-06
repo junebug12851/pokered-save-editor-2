@@ -157,4 +157,6 @@ void HoFRecord::randomize()
   pokemonChanged();
 
   // Insert random data
-  for(auto 
+  for(auto entry : pokemon)
+    entry->randomize();
+}

@@ -21,10 +21,6 @@
 #include <pse-common/types.h>
 #include "savefile_autoport.h"
 
-// Full include (not just a forward declaration) so QML can traverse
-// brg.file.data.* . A forward-declared QObject pointer in a Q_PROPERTY is seen
-// by QML as a plain opaque value and reads as `undefined`, even though the C++
-// object is valid. See notes/reference/qt6-patterns.md.
 #include "savefile.h"
 
 class SaveFile;
@@ -79,4 +75,19 @@ public slots:
   void clearRecentFiles();
 
 private:
-  void processRec
+  void processRecentFileChanges();
+
+  QString openFileDialog(QString title);
+  QString saveFileDialog(QString title);
+
+  var8* readSaveData(QString filePath);
+  void writeSaveData(QString filePath, var8* data);
+
+  void expandRecentFiles(QString files);
+
+  QString path;
+  QList<QString> recentFiles;
+  QSettings settings;
+};
+
+

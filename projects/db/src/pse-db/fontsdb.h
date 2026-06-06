@@ -102,4 +102,6 @@ private:
   QHash<QString, FontDBEntry*> ind;
 
   // Something like splice, Kind of miss splice in Javascript
-  void splice(QVecto
+  void splice(QVector<int>& out, const QString in, const int position) const;
+};
+

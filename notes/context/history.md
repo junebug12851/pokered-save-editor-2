@@ -142,12 +142,9 @@ Detection: Python brace-balance checker + check that file ends on a closing `}`.
 Repair: Python byte-level append — match exact truncated suffix, append missing bytes,
 matching the line endings already in the file.
 
-> ⚠️ **Correction (session 13):** sessions 10–12 believed the `dataExpanded = undefined` bug was
-> caused by this truncation (a `bootQmlLinkage.cpp` compiled without `qRegisterMetaType` calls),
-> and that a clean rebuild would fix it. **That was wrong.** The rebuild happened, the
-> registrations were present in the current binary, and the chain was *still* undefined. The real
-> cause was `Q_DECLARE_OPAQUE_POINTER` on the QObject chain types — see Phase 7 below. The
-> truncation repair was still necessary work, it just wasn't what fixed the chain.
+The `dataExpanded = undefined` bug that persisted through QML testing was caused by this:
+the binary had been compiled from a truncated `bootQmlLinkage.cpp` without type
+registrations. After full truncation repair and rebuild, this chain works correctly.
 
 **The signal parameter was never the cause** — `SaveFile::dataExpandedChanged(SaveFileExpanded*)`
 is correct. See `decisions/rejected.md`.
@@ -252,6 +249,9 @@ always requires them. Added both: `qmlProtect` cascades to all 26 sub-databases;
 
 **Result**: All compile and linker errors cleared. Clean rebuild expected to succeed.
 
+
+**Result**: All compile and linker errors cleared. Clean rebuild expected to succeed.
+
 ---
 
 ## Phase 7 — The `dataExpanded` Chain, Actually Solved (Session 13–13c)
@@ -282,12 +282,12 @@ height** change (taller `TextField`/`ComboBox` than the Qt 5-era hardcoded layou
 clipped number fields (width ignored padding), overlapping trainer-card fields (fixed-offset
 anchors), item-count centering, Pokémon cell not clickable (the `MouseArea` had no `onClicked`),
 trainer-screen randomize calling the nonexistent `randomName()`, a null-deref in `TilesetPicker`.
-All fixed; see `sessions/session-log.md`. 
+All fixed; see `status.md` session logs. Remaining work is more of the same Material-height polish
+plus a few functional gaps (moves dropdown, tileset preview render, hover nickname).
 
-## Phase 9 — The QML Garbage-Collection Saga (Sessions 13f–13j)
+## Current State (as of 2026-06-05, session 13e)
 
-A second whole class of bugs surfaced once data was flowing: **QML garbage-collecting parentless
-C++ QObjects that C++ still holds.** It wore several disguises before the pattern was clear:
-- The trainer/rival name (and all font rendering) going blank after "clicking around", with name
-  saving breaking too, fixed only by restart → QML was freeing the shared `FontDBEntry` objects.
-  The fix machiner
+The app is **functional**: data reads and persists across screens, names/badges/pokédex/items all
+work, the Pokémon editor opens. Remaining work is UI polish and a handful of small functional
+bugs — see `status.md` (current state + open-issues table) and `plans/next-steps.md`.
+

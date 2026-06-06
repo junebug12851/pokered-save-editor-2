@@ -299,4 +299,6 @@ void FileManagement::expandRecentFiles(QString files)
       this->recentFiles.append(recentFiles[i]);
   }
 
-  // Process, cleanup, and 
+  // Process, cleanup, and notify
+  processRecentFileChanges();
+}

@@ -20,8 +20,8 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
-#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/sprites.h>
+#include <pse-db/entries/mapdbentry.h>
 
 #include <QRandomGenerator>
 
@@ -139,4 +139,6 @@ void AreaSprites::setTo(MapDBEntry* map)
   if(map == nullptr)
     return;
 
-  sprites = SpriteData::setToAl
+  sprites = SpriteData::setToAll(map->getSprites());
+  spritesChanged();
+}

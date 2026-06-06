@@ -23,11 +23,6 @@ Rectangle {
 
   property PokemonBox boxData: null
 
-  // Field heights: text boxes are shorter, combos a touch taller (Twilight's tuning).
-  // One knob per type keeps every row consistent.
-  property int textH: 30
-  property int comboH: 38
-
   // Close details screen if the file data changes
   Connections {
     target: brg.file.data
@@ -52,9 +47,7 @@ Rectangle {
     contentWidth: availableWidth
 
     ColumnLayout {
-      // Reserve room on the right for the (overlay) scrollbar so the right-
-      // aligned ⋮ menu buttons sit clear of it and stay clickable.
-      width: scroller.availableWidth - 16
+      width: scroller.availableWidth
       spacing: 4
 
       // ---- Nickname ----
@@ -118,7 +111,6 @@ Rectangle {
           id: type1
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: font.pixelSize * 8
-          Layout.preferredHeight: top.comboH
 
           onActivated: boxData.type1 = currentValue;
           Component.onCompleted: currentIndex = brg.typesModel.valToIndex(boxData.type1);
@@ -136,7 +128,6 @@ Rectangle {
           type2: true
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: font.pixelSize * 8
-          Layout.preferredHeight: top.comboH
 
           onActivated: boxData.type2 = currentValue;
           Component.onCompleted: currentIndex = brg.typesModel.valToIndex(boxData.type2);
@@ -163,7 +154,6 @@ Rectangle {
           id: otNameEdit
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: font.pixelSize * 10
-          Layout.preferredHeight: top.textH
 
           onTextChanged: boxData.otName = text;
           Component.onCompleted: text = boxData.otName;
@@ -216,7 +206,6 @@ Rectangle {
           id: otIDEdit
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: 4 * font.pixelSize + leftPadding + rightPadding
-          Layout.preferredHeight: top.textH
           maximumLength: 4
 
           onTextChanged: {
@@ -284,7 +273,6 @@ Rectangle {
           id: nextExpEdit
           Layout.fillWidth: true
           Layout.rightMargin: 25
-          Layout.preferredHeight: top.textH
           Layout.alignment: Qt.AlignVCenter
 
           enabled: boxData.level < 100 || !boxData.isValidBool
@@ -325,7 +313,6 @@ Rectangle {
           id: catchRateEdit
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: 4 * font.pixelSize + leftPadding + rightPadding
-          Layout.preferredHeight: top.textH
           maximumLength: 3
 
           onTextChanged: {
@@ -366,7 +353,20 @@ Rectangle {
           id: futureNatureEdit
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: font.pixelSize * 10
-          Layout.preferredHeight: top.comboH
 
           onActivated: boxData.setNature(currentValue);
-          Component.onCompleted: currentIndex = brg.natureSelectModel.natureToListIndex(boxData.getNature)
+          Component.onCompleted: currentIndex = brg.natureSelectModel.natureToListIndex(boxData.getNature);
+          Connections {
+            target: boxData
+            function onExpChanged() { futureNatureEdit.currentIndex = brg.natureSelectModel.natureToListIndex(boxData.getNature); }
+          }
+          MainToolTip {
+            text: "Nature's weren't created until gen 3, in the past few years Game Freak has released a formula for determining natures retroactively for Gen 1 games using IVs."
+          }
+        }
+
+        Item { Layout.fillWidth: true }
+      }
+    }
+  }
+}

@@ -417,7 +417,7 @@ Image {
         onToggleFullKeyboard: { suppressNextCommit = true; editorVisible = false; openFullKeyboard(); }
       }
 
-      // ---- Byte-count feedback / warnings (June's original messages) ----
+      // ---- Byte-count feedback / warnings (Twilight's original messages) ----
       Label {
         Layout.fillWidth: true
         visible: enableFeedback &&

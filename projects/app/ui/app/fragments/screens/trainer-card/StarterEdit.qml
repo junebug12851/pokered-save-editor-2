@@ -25,9 +25,6 @@ MouseArea {
     flat: true
     model: brg.starterModel
 
-    // Borderless: clean look, no frame around the combo (Twilight's call s13n).
-    background: Rectangle { color: "transparent"; border.width: 0 }
-
     onActivated: brg.file.data.dataExpanded.player.basics.playerStarter = currentValue;
     Component.onCompleted: currentIndex = brg.starterModel.valToIndex(brg.file.data.dataExpanded.player.basics.playerStarter);
 
@@ -58,4 +55,10 @@ MouseArea {
       id: menuBtn
       anchors.top: parent.top
       anchors.left: parent.right
-      anchors
+      anchors.bottom: parent.bottom
+      anchors.topMargin: 0
+
+      onRandomize: brg.file.data.dataExpanded.player.basics.randomizeStarter();
+     }
+  }
+}

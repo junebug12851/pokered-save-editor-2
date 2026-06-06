@@ -26,7 +26,7 @@
 #include "../eventsdb.h"
 #include "../util/gamedata.h"
 #include "../mapsdb.h"
-#include "./mapdbentry.h"
+#include "mapdbentry.h"
 
 #include "eventdbentry.h"
 
@@ -129,4 +129,8 @@ int EventDBEntry::getInd() const
     return ind;
 }
 
-const QString EventDBEntry::getName() cons
+const QString EventDBEntry::getName() const
+{
+    return name;
+}
+

@@ -12,175 +12,172 @@ QObjects" for the full rule.
 
 ---
 
-## Session 13z12 — Identity rename + Apache 2.0 tidy (no logic change)
+## Session — sed/mount corruption + full transcript recovery (2026-06-06)
 
-Owner now goes by **Twilight** (not June / June Hanabi), and the personal gmail was removed.
+**What happened:** a bulk `sed -i` rename (prior name -> Twilight) run over the Cowork **mounted**
+filesystem silently **truncated 55 source files + 8 notes** on the real disk. The mount does
+partial/truncated writes under load (and also gives false-truncated *reads*). The damage was real
+(the Windows compiler saw the truncation), and git HEAD had been committed *after* the damage, so it
+was not a usable restore point.
 
-- **Source headers (274 `.cpp`/`.h`/`.qml`):** `Copyright 2019/2020 June Hanabi` → `Copyright … Twilight`.
-- **Bare "June" in QML/notes** (e.g. "June's call", "June confirmed") → "Twilight".
-- **`boot.cpp`:** `organizationName` "June Hanabi" → "Twilight"; `organizationDomain`
-  `pokeredsaveeditor.junehanabi.gmail.com` → `pokeredsaveeditor.twilight.app` (drops the gmail string).
-  ⚠️ Changing org name/domain changes the **QSettings storage path** — existing local settings become
-  orphaned. Acceptable for a WIP; revert both strings if you want old settings back.
-- **6 files that lacked an Apache header** (`main.cpp`, `mainwindow.cpp/.h`, `types.h`,
-  `savefile.cpp/.h`) now have the standard boilerplate (comment-only, no behavior change).
-- **`credits.json`** project-leader name → "Twilight" (GitHub handle `junebug12851` kept).
-- **`README.md`:** added a **License** section (Apache 2.0). **`savefile-structure.bt`** author → Twilight.
-- **Kept as-is:** the `github.com/junebug12851` URLs/handle (still Twilight's account — links must work).
-- **NOT touched:** git commit history still shows `June Hanabi <junehanabi@gmail.com>` as author, and no
-  local `git config user.name/email` is set. Rewriting history / setting git identity is a separate,
-  destructive step left for Twilight to decide.
+**Recovery method (worked):** reconstructed every file from prior-session **Cowork chat transcripts**
+(`%APPDATA%\Claude\local-agent-mode-sessions\...\.claude\projects\*.jsonl`). Each transcript
+records every tool call — `Read` results (full file dumps with line numbers), `Write`/`Edit` inputs,
+and `bash` commands. Techniques, by fidelity: (1) a full `Write` or full `Read` capture = exact; (2)
+line-number stitching of multiple partial `Read`s; (3) **replaying the captured `Edit` history onto the
+`af883fd` clone base** for files only ever edited incrementally; (4) grafting intact disk-head +
+`af883fd` tail. Every result was **validated against the most recent transcript reads** and written/
+verified with Windows-side PowerShell (the bash mount is unreliable). Full how-to:
+`reference/diagnostic-methods.md` -> "Recovering files from Cowork chat transcripts".
 
-LICENSE file itself was already correct, unmodified Apache 2.0 (201 lines).
+**Final outcome — fully recovered, project intact:**
+- ~45 source files + all notes: exact recovery.
+- `pokemonbox.cpp` (1781 ln) / `pokemonbox.h` (455 ln): reconstructed by replaying the captured Edit
+  history + the `::ind.value(` -> `::inst()->getIndAt(` DB refactor onto af883fd; validated line-for-
+  line vs recent reads (h 12/12 exact, cpp 120/122 — the 2 diffs are pre-edit older reads). These are
+  ~1765-line files lightly edited from af883fd, NOT rewrites.
+- The 7 "clone-based" files (settings.cpp, fontsdb.cpp, area.h, areasign.cpp, areasprites.cpp,
+  pokemonstoragebox.h, storage.cpp): af883fd + replayed Edits + refactor, then read-corrected. The
+  earlier residuals are now **FIXED**: fontsdb `splice()`/`search()`/`getStoreAt`/`getIndAt` restored
+  from reads; area.h s13c include-trim restored; settings `previewOutdoor` accessor + areasign/
+  areasprites `mapdbentry.h` include restored.
+- Notes comprehensively restored to their fullest recent versions (history.md 294, CLAUDE.md 74,
+  next-steps.md 81, qt6-patterns.md 496, etc.).
+- The prior-name -> Twilight / Apache-2.0 header / gmail-removal work was re-applied consistently.
 
----
+**Verified final state:** 380 source files, 0 truncated, 0 missing Apache headers, 0 stray name/gmail,
+0 INCOMPLETE banners. Recommend a clean build to confirm linkage, then commit to lock it in.
 
-## Session 13z11 — Trainer Card: compact field heights (QML-only, no rebuild)
+**HARD RULE:** NEVER bulk-edit project files with `sed -i` / `perl -i` / shell redirection over the
+Cowork mount — it silently corrupts files. Use the Read/Edit/Write tools or PowerShell
+(`[System.IO.File]::WriteAllText`, UTF8-no-BOM) and verify every write (re-read + brace balance).
+See `decisions/rejected.md`.
 
-- **Symptom (Twilight):** the trainer-card text boxes were too big/tall with too much padding and
-  margin; rows didn't line up cleanly with their label text.
-- **Cause:** the same Qt 6 Material control-height issue — `TextField`/`ComboBox` carry a tall
-  implicit height, and each card field sized itself to that implicit height, so rows were tall and
-  inconsistent.
-- **Fix (documented "explicit height knob" pattern):** added `property int fieldH: 28` to
-  `CardFront.qml` and applied it as an explicit `height` to PlayerIdEdit/MoneyEdit/CoinsEdit/
-  StarterEdit, and as a new `fieldH` property on `PlaytimeEdit` (which forwards it to its
-  Days/Hours/Minutes/Seconds/Frames sub-edits — all `DefTextEdit` roots, so `height:` applies
-  directly). The wrappers' internal `height: child.implicitHeight` binding is overridden at the use
-  site; inner controls `anchors.fill: parent` so they shrink. Labels are top/bottom-anchored +
-  vcentered, so they track the shorter field and line up with the text. Also tightened the vertical
-  rhythm (spacer→money 25→18; inter-row gaps 5→4).
-- **Tuning:** single knob `CardFront.fieldH` (28) drives every field's height. Horizontal text
-  padding inside the fields was left at `DefTextEdit`'s default (shared component) — can be trimmed
-  per-instance on the card if Twilight wants the numbers tighter to their labels.
-- **Follow-up (Twilight review of the clock):** two fixes in `PlaytimeEdit.qml`.
-  (1) **Row was too tall / contents rode above center:** the `MouseArea` sized to
-  `childRow.implicitHeight` (the Material ~48px implicit), so the 28px sub-fields sat top-aligned in
-  a taller row → digits and the ":" looked high. Pinned the row to `top.fieldH` and vertically
-  centered each `PlaytimeDivider` (`anchors.verticalCenter`). (Money/Coins were already fine — their
-  wrappers got an explicit 28 height in the first pass, so they had no implicit-height row.)
-  (2) **Fields too wide:** each digit field only needs ~2 chars, but Material's default horizontal
-  padding bloated them (their `width = 2*font.pixelSize + leftPadding + rightPadding`). Added a
-  `digitPad: 2` knob applied as `leftPadding`/`rightPadding` to every sub-edit, which both narrows
-  the fields and shrinks the whole clock. All clock tuning now lives in `PlaytimeEdit.qml`
-  (`fieldH`, `digitPad`).
-- **Follow-up (ID/Money/Coins labels rode high):** the built-in label in `DefTextEdit.qml` is
-  anchored `top`→`bottom` of the field but had only `horizontalAlignment` (no `verticalAlignment`),
-  so its text defaulted to top-aligned and sat above center once the fields got shorter. Added
-  `verticalAlignment: Text.AlignVCenter` to that Label. Shared component, but universally correct (a
-  fill-height label should vcenter); Starter's own inline Label already had it.
+## Session 13j — Pokémon box hover name finally renders (+ pen icon restored)
 
-## Session 13z10 — Restore Trainer Card centered box size (QML-only, no rebuild)
+Hover name on the Pokémon box grid was still blank for **all** mons (nicknamed or not), even after
+the accent pill painted. Data was fine (the edit screen shows the name). Root cause: the Material
+`Button`'s built-in icon+text label was **not rendering its text** at the button's small fixed
+size (`height: 20`, `padding: 0`, `display: TextBesideIcon`). A plain `Text` in the same delegate
+(the `L##` level badge) renders fine, so:
 
-- **Symptom (Twilight):** the Trainer Card used to sit in a centered grey box (~middle of the window);
-  after the large refactor it had grown to fill the whole window.
-- **Cause:** in `screens/non-modal/TrainerCard.qml` the `SwipeView` (which holds `CardFront`, a
-  bordered Rectangle that fills the view) was changed from a fixed centered size to
-  `anchors.fill: parent` during the refactor. `CardFront` itself has no intrinsic size, so it tracks
-  the SwipeView.
-- **Fix:** restored the original `anchors.centerIn: parent` + `width: 500` + `height: 250` (values
-  recovered from `git show HEAD:…/TrainerCard.qml`). Reverts back to the centered grey box.
+- Replaced the Button's built-in label with an explicit `contentItem` — a centered `Row` of the
+  pen icon + a `Text` bound to `editBtn.text`. Renders reliably.
+- Pen SVG tinted to `textColorLight` via `MultiEffect { colorization: 1.0 }` (added
+  `import QtQuick.Effects`).
 
-## Session 13z9 — Filter order + "Normal Only" + notes sweep (QML-only, no rebuild)
+File: `PokemonBoxView.qml`. Pure QML (no rebuild).
 
-- **Filter order** (`SearchCriteria.qml`): now All, Normal Only, Single-Char, Multi-Char, Variable,
-  then a gap, then Picture, Control (the "special/dangerous" ones grouped at the bottom).
-- **"Normal" → "Normal Only"**: Twilight's lightweight UX nudge — the word "Only" hints that leaving Normal
-  (for Single-Char etc.) means leaving the always-safe set, reinforced by its ⓘ tooltip. No room/clutter
-  cost; a one-word fix instead of a paragraph.
-- **Notes comprehensively refreshed**: `status.md` (current state / open issues / runtime health rewritten
-  to 13z9), `plans/next-steps.md` (full-keyboard target marked done, real next steps), `ui-patterns.md`
-  (full-keyboard/quick-edit section rewritten to final state + new tuning knobs), `CLAUDE.md` (added the
-  "new .qml → app.qrc" critical rule).
+## Session 13i — Hover name attempt 1: accent pill + species fallback
 
-## Session 13z8 — Editor breakout bug-fixes (QML-only, no rebuild)
+First pass at the blank hover name. The label is a `flat` Material button; flat buttons don't
+paint `Material.background`, so there was no accent fill and (we thought) no contrast for the light
+text. Removed `flat: true` and added `Material.elevation: 0` (keep the accent fill, no drop
+shadow). Result: the accent pill painted but the name STILL didn't show → **ruled out contrast**
+(the real fix was the contentItem in 13j). Also added a species-name fallback to
+`getMonNickname()` so un-nicknamed mons show their species (matches the in-game display). Pure QML.
 
-- **Dice icon squished**: AbstractButton scales the icon to `icon.width × icon.height` (no aspect
-  preserve), and width≠height (14×15) stretched it. Set 16×16 on both dice buttons.
-- **Full-editor preview stayed box-shaped after Example→Name**: the footer `ColumnLayout` was
-  overriding the `NameDisplay`'s own `width`/`height` bindings, so it couldn't shrink. Re-anchored the
-  footer (toggle row `anchors.top`, preview below it) so the NameDisplay sizes itself again. Same change
-  fixed the **too-much-margin above the Name button** (toggle row now `topMargin: 6`).
-- **Quick edit showed the OLD name in the field (preview was correct) after editing in the full
-  keyboard**: a `TextField`'s `text:` binding breaks on first keystroke, so it went stale. Dropped
-  `text: str` and seed `popupEdit.text = img.str` in `onEditorVisibleChanged` (before open); the field
-  still pushes up via `onTextChanged`.
+## Session 13h — Systemic Q_INVOKABLE-GC fix (`qmlCppOwned` across all `…At()`)
 
-## Session 13z7 — Quick-edit broken out of the ⋮ menu (REBUILD: 2 new qrc files)
+Did the full systemic fix for the Q_INVOKABLE-GC bug (Twilight chose `setObjectOwnership` over
+parenting — parenting would have fought the existing manual `deleteLater`/cross-box-relocate
+lifecycle and risked double-frees; `setObjectOwnership` leaves the C++ lifecycle untouched).
 
-Twilight: menus were clean UI but bad UX (too much clicking). Broke the editors' overflow menus into
-explicit controls.
+- Added `savefile/src/pse-savefile/qmlownership.h` with `template<typename T> T* qmlCppOwned(T*)`
+  → `QQmlEngine::setObjectOwnership(o, CppOwnership)`. (`Qt6::Qml` was already linked into savefile.)
+- Wrapped **all 13** `Q_INVOKABLE` `…At()` returns across 12 files: `connAt`, `grassMonsAt`,
+  `waterMonsAt`, `signAt`, `spriteAt`, `warpAt`, HoF `pokemonAt`, `itemAt`, `movesAt`, storage-box
+  `pokemonAt`, `recordAt`, `boxAt`, `partyAt`. Verified none left unwrapped.
+- (The two app-model wrappers `getBoxMon`/`getPartyMon` were already done in 13g.)
 
-- **New `general/FlatToggle.qml`** — extracted the flat square toggle from `NameFullHeader` (was an
-  inline component) so it's reusable. **New `general/SimulatedTilesetCombo.qml`** — moved the tileset
-  combo out of `name-full/NameFullTileset` into `general` (reusable + avoids a general→name-full import
-  cycle). **Both added to `app.qrc` → a rebuild is required** (new files don't hot-reload).
-- **⋮ menus gone.** `NameEdit` and `NameFullEdit` dropped the ellipsis menu; in its place a **dice
-  Randomize-Name button**. `NameEdit` lost its `changeStr/toggleExample/reUpdateExample` signals and
-  `hasBox`; `disableMenu` → `disableRandomize`. (`NameDisplayMenu`/`NameDisplayMenuNoTileset`/
-  `TilesetMenu` are now unused — left in place, not instantiated.)
-- **Name/Example toggle** (FlatToggle, "Name" default) + a **next `>>` button** to re-roll the example:
-  quick-edit popup upper-right, full editor above the footer preview. Drives the local example state
-  (popup → `img.toggleExample`/`reUpdateExample`; keyboard → `FullKeyboard.toggleExample`/…).
-- **Simulated bar at top of the popup** — "Simulated" label + Outdoor toggle + tileset combo, replacing
-  the old "Simulated Tileset" submenu. Popup widened to 430; the "Edit Name" title was dropped.
-- Example still **defaults off** (popup resets on close; keyboard `hasBox` defaults false).
+Removes the whole class of "QML frees a savefile object I still hold" crashes/decay. Needs a
+rebuild. Standing rule added (CLAUDE.md + qt6-patterns): wrap any new Q_INVOKABLE QObject return in
+`qmlCppOwned()`.
 
-`NameEdit`/`NameDisplay` are shared (player/rival/nickname + keyboard footer) — verify all on the rebuild.
+## Session 13g — Clicking-Pokémon crash root-caused (Q_INVOKABLE ownership)
 
-## Session 13z6 — Example demo decoupled from the row (QML-only, no rebuild)
+Project-debugger stack trace: crash at `pokemonstoragemodel.cpp:146` `return !mon->isBoxMon();`,
+read access violation at `0xffff…ffff` (freed `mon`). Cause: `getBoxMon`/`getPartyMon` are
+`Q_INVOKABLE` and return a **parentless** `PokemonBox`; QML gives Q_INVOKABLE returns
+`JavaScriptOwnership`, so after the details editor closes QML's GC frees the mon, leaving a
+dangling pointer in the box's vector → next role read crashes. Fixed those two with
+`QQmlEngine::setObjectOwnership(mon, CppOwnership)`; identified the systemic ~13-method version
+(fixed in 13h). The earlier "random terminated abnormally with no output" crashes were this same
+use-after-free.
 
-The "example" (textbox demo) used to be the row image's `hasBox`, shared via `img` and propagated to
-the full keyboard by binding + a toggle callback — so toggling an example in an editor flipped the
-**regular** name display (trainer card / rival / Pokémon) into a box. Twilight: the regular page must only
-ever show the name; examples belong only inside the editors, and the two editors shouldn't share a
-global.
+## Session 13f — Name-disappearing glitch = QML GC of `FontDBEntry`; `DB::qmlProtect` wired in
 
-- **`NameDisplay`**: added local `popupExample` + `popupPlaceholder`. `toggleExample()` /
-  `reUpdateExample()` now drive those (not the row's `hasBox`). The quick-edit popup preview renders
-  its OWN box source when `popupExample` is on; the row image is unaffected (always name-only).
-  `popupEdit.hasBox` → `img.popupExample`; popup resets `popupExample` on close. Removed the
-  keyboard→row example callbacks and stopped passing `hasBox`/`placeholder` into the keyboard.
-- **`FullKeyboard`**: owns its example locally — `toggleExample()`/`reUpdateExample()` are now
-  functions on the keyboard (were signals that round-tripped to the row); footer preview uses the
-  keyboard's own `hasBox`/`placeholder`. `preClose` stays a signal (commit hook).
-- **`NameDisplayMenu`** (quick-edit popup): un-commented **Toggle Example** / **Randomize Example**
-  (the keyboard menu already had them).
+Repro clues: all font rendering (trainer name, full keyboard, hover tooltips) goes blank at once
+after "clicking around", name **stops saving** at the same moment, and only an app reboot fixes
+it. Root cause: QML was garbage-collecting the shared `FontDBEntry` objects (parentless, in
+`FontsDB`'s vector) → dangling pointers → all font rendering AND name saving break (saving runs
+the name through the same font store via `FontsDB::convertToCode`); reboot reloads the DB. The fix
+machinery `DB::qmlProtect(engine)` existed (cascades `CppOwnership` to every entry in all 26
+sub-DBs) but **was never called** — wired it into `MainWindow::injectIntoQML()` (+`#include
+<pse-db/db.h>`). Needs a rebuild.
 
-`NameDisplay` is shared by player / rival / nickname (and is the keyboard footer) — verify all on a run.
+## Session 13e — Trainer-card randomize, TilesetPicker null, overlap, item centering, PP width
 
-## Session 13z5 — Image-only pill tooltips; combo widen; Normal tooltip trim (QML-only)
+Pokémon click works (the earlier "crash" was interference). Fixes:
+- **Randomize name on Trainer screen** — `NameDisplayMenu.qml` (tileset version) still called the
+  nonexistent `randomName()`; → `randomExample()`. (No-tileset version was fixed in s10.)
+- **`TilesetPicker.qml:111` `Cannot read property 'name' of null`** — guarded the `fontAt()` result.
+- **Coins/Starter/Money overlap (`CardFront.qml`)** — fields anchored with fixed offsets from the
+  previous field's *top* (40/25px) < the Qt 6 Material field height → overlap. Switched to anchor
+  below the previous field's *bottom* (auto-adapts).
+- **Item count not vertically centered** — replaced fixed `topPadding: 13` with
+  `verticalAlignment: TextInput.AlignVCenter`.
+- **Moves PP field too narrow** (`PokemonMoveSel.qml`) — width now includes field padding.
 
-- **Pill hover tooltips are now image-only** — removed the description `Label` entirely (Variable /
-  Multi-Char / Picture characters were still showing `tip` text). Just the rendered tile. (The side
-  `DetailView` still shows text on hover; only the popup tooltip changed.)
-- **Tileset combo** widened ~4 chars (`preferredWidth` 104 → 132).
-- **Normal filter ⓘ tooltip** trimmed back to just its own description (dropped the non-normal caveat) —
-  Twilight's call, cleaner; she'll find another home for that note later.
+## Session 13d — Pokémon cell click; vertical-overlap diagnosis; é note
 
-## Session 13z4 — "All" filter radio (QML-only, no rebuild)
+- **Pokémon click did nothing** — the cell `MouseArea` had no `onClicked` (only the hover button
+  did). Added `onClicked` to the cell (guards placeholder "+" slots). `PokemonBoxView.qml`.
+- Diagnosed the trainer-card/playtime vertical overlap as the **Qt 6 Material control-height**
+  issue (hardcoded offsets assume the shorter Qt 5 field). Not caused by the width fixes.
+- `é` in "Pokémon" only ever appeared in one code comment; the app's tooltips already use plain
+  "Pokemon" (Twilight's original spelling). No displayed string altered. Preserve `é` going forward.
+- `val is not declared` warning is harmless (the `changeStr(string val)` signal declares `val`;
+  Qt 6 just deprecates injected handler params).
 
-Added an **"All"** radio at the top of the filter list (in the same `ButtonGroup`). When selected,
-`SearchContainer.reSearch` calls `startOver()` (whole store) instead of `keepAnyOf`, so it shows
-everything — including any entry with no category flag. Default selection stays **Normal**.
+## Session 13c — Build slowdown + `dllimport` spam: trim over-includes
 
-## Session 13z3 — Filters → radios; Simulated group narrowed (QML-only, no rebuild)
+Session 13 had included the *entire* expanded tree into `savefileexpanded.h` (included almost
+everywhere), dragging the heavy `area` sub-tree (whose `.cpp`s pull `mapdbentry.h`/db) into nearly
+every TU → ballooned compile time; full rebuilds surfaced every pre-existing `dllimport` warning
+at once. Fix: include only the branches QML traverses — `area.h` → just `areageneral.h`, `world.h`
+→ just `worldother.h`, dropped `daycare`/`hof`/`rival` from `savefileexpanded.h`; untraversed types
+back to forward-decl + `Q_DECLARE_OPAQUE_POINTER`. Added `-Wno-ignored-attributes` to root CMake to
+silence the harmless `dllimport` warning. Chain still works (verified no traversed type is opaque).
 
-- **Filters are now single-select radio buttons** (`SearchParam` CheckBox → RadioButton) in a shared
-  `ButtonGroup` (needed because the radios live in separate rows, so auto-exclusive wouldn't group
-  them). One category is always active → **Clear button removed**. `keepAnyOf` is unchanged (union of
-  the one selected = that category), so the backend still works and multi-select could return.
-- **Simulated group narrowed again**: `FlatToggle` horizontal padding 9 → 5, group spacing 6 → 3,
-  tileset combo `preferredWidth` 124 → 104 (vertical padding kept at 9 — Twilight wanted it taller).
+> Tooling note: the bash sandbox mount lags behind the editor's writes and shows false truncation /
+> stale content. The Read/Edit/Write file tools are the source of truth. (Persisted to Claude's
+> cross-session memory, not a project fact.)
 
-## Session 13z2 — Full keyboard nits (QML-only, no rebuild)
+## Session 13b — Chain works; pokemon types de-opaqued; number-box widths; About guard
 
-- **Simulated group condensed**: cut horizontal padding/margins ~50% (`FlatToggle` left/right 18 → 9,
-  group spacing 12 → 6, combo `preferredWidth` 150 → 124) and bumped vertical padding (7 → 9). The whole
-  group was far too wide.
-- **Normal tooltip trimmed**: dropped the "this simple simulation…" tail — implied, and it cluttered.
-- **Tileset last tile (bold "9") now clickable/hoverable**: off-by-one — `fontAt` is 1-based so valid
-  indices are `1..fontCount()` inclusive; `TilesetPicker`'s `>= fontCount()` dropped the last tile.
-  Changed to `> fontCount()`. See `reference/fix-patterns.md`.
+Rebuild confirmed the chain fix — data flows into the UI. Then:
+- **Pokémon box click didn't open details** — `getBoxMon()/getPartyMon()` (Q_INVOKABLE returning
+  `PokemonBox*`/`PokemonParty*`) feed `PokemonDetails.qml`'s typed `property PokemonBox boxData`,
+  which only works with real QObject pointers. Those pokemon-storage types were still opaque
+  (s13 kept them opaque) → de-opaqued them + included their headers at the return/property sites.
+  **Nothing is opaque anymore** in the savefile chain.
+- **Number boxes too narrow** (playtime, item counts) — `width: 2 * font.pixelSize` ignored the
+  TextField padding → `2 * font.pixelSize + leftPadding + rightPadding`.
+- **`About.qml:31` `width of null`** — added `parent ? parent.width : 0` guard.
 
-## Session 13z — Full keyboar
+## Session 13 — REAL root cause of `dataExpanded = undefined`: `Q_DECLARE_OPAQUE_POINTER`
+
+After the s12 rebuild the whole `brg.file.data.dataExpanded.*` chain was **still** `undefined`,
+disproving the s10–12 truncation/`qRegisterMetaType` theory (binary was current and registered).
+
+**Root cause:** `Q_DECLARE_OPAQUE_POINTER(T*)` forces
+`QtPrivate::IsPointerToTypeDerivedFromQObject<T*> = false`, so Qt stores those QObject pointers as
+opaque non-QObject values and QML reads their sub-properties as `undefined` — and neither
+`qRegisterMetaType` nor `qmlRegisterUncreatableType` overrides it. Proof (natural experiment):
+`brg.file` worked (FileManagement fully `#include`d in `bridge.h`, never opaque) while everything
+opaque-declared beneath it failed. This also produced the "Connections: no signal matches" flood
+(the targets were just `undefined`).
+
+Fix: removed the opaque decls for the traversed QObject chain types and added full `#include`s down
+the chain so Qt d

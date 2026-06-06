@@ -14,6 +14,7 @@
   * limitations under the License.
 */
 #pragma once
+
 #include <QObject>
 #include <QVector>
 #include <QString>
@@ -445,4 +446,9 @@ public:
   // Honestly this all started because I tried to load up a played through SAV
   // file from someone else which I didn't realize was tampered with. This was
   // one of the changes I made. After i realized it was tampered with I regret
-  // addi
+  // adding in this feature because the real SAV file only saves types one way
+  // never one or the other. Basically I've forgotten how the real save file
+  // saves them so I leave it in.
+  bool type2Explicit;
+};
+

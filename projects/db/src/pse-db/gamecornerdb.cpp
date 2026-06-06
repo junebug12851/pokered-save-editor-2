@@ -129,4 +129,9 @@ int GameCornerDB::getBuyPrice() const
     return buyPrice;
 }
 
-int GameC
+int GameCornerDB::getSellPrice() const
+{
+    // Follow the global Poke-World sell-back mechanic: half the buy price back.
+    return buyPrice / 2;
+}
+

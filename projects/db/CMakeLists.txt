@@ -54,7 +54,6 @@ qt_add_library(db SHARED
     src/pse-db/types.cpp
     src/pse-db/util/fontsearch.cpp
     src/pse-db/util/gamedata.cpp
-    src/pse-db/util/hiddencoinsdb.cpp
     src/pse-db/util/mapsearch.cpp
     db.qrc
 )

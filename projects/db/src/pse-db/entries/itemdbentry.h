@@ -110,4 +110,7 @@ protected:
 
   friend class ItemsDB;
   friend struct MapDBEntrySpriteItem;
-  friend 
+  friend struct GameCornerDBEntry; // writes toGameCorner in GameCornerDBEntry::deepLink
+  friend struct PokemonDBEntry;          // writes toTeachPokemon in PokemonDBEntry::deepLink
+  friend struct PokemonDBEntryEvolution; // writes toEvolvePokemon in PokemonDBEntryEvolution::deepLink
+};

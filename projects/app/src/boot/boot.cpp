@@ -66,4 +66,28 @@ static void preBootAttributes()
   return app;
 }
 
-// Performs full program bootstrapping and returns a re
+// Performs full program bootstrapping and returns a ready-to-exec QApplication.
+extern QApplication* boot(int argc, char* argv[])
+{
+  QElapsedTimer t;
+  t.start();
+
+  qDebug() << "[boot] bootDatabase() start";
+  bootDatabase();
+  qDebug() << "[boot] bootDatabase() done —" << t.elapsed() << "ms";
+
+  qDebug() << "[boot] bootQmlLinkage() start";
+  bootQmlLinkage();
+  qDebug() << "[boot] bootQmlLinkage() done —" << t.elapsed() << "ms";
+
+  qDebug() << "[boot] loadScreens() start";
+  Router::loadScreens();
+  qDebug() << "[boot] loadScreens() done —" << t.elapsed() << "ms";
+
+  qDebug() << "[boot] createApp() start";
+  auto* app = createApp(argc, argv);
+  qDebug() << "[boot] createApp() done (window visible) —" << t.elapsed() << "ms";
+
+  return app;
+}
+

@@ -155,6 +155,34 @@ void DB::indexAll() const
   once = true;
 }
 
+void DB::deepLinkAll() const
+{
+  static bool once = false;
+  if (once) return;
+
+  QElapsedTimer t;
+  t.start();
+  auto lap = [&](const char* name) {
+    qDebug() << "[DB::deepLinkAll]" << name << "—" << t.elapsed() << "ms";
+    t.restart();
+  };
+
+  MovesDB::inst()->deepLink();          lap("MovesDB");
+  PokemonDB::inst()->deepLink();        lap("PokemonDB");
+  TmHmsDB::inst()->deepLink();          lap("TmHmsDB");
+  TradesDB::inst()->deepLink();         lap("TradesDB");
+  StarterPokemonDB::inst()->deepLink(); lap("StarterPokemonDB");
+  SpriteSetDB::inst()->deepLink();        lap("SpriteSetDB");
+  ScriptsDB::inst()->deepLink();        lap("ScriptsDB");
+  EventsDB::inst()->deepLink();         lap("EventsDB");
+  FlyDB::inst()->deepLink();            lap("FlyDB");
+  GameCornerDB::inst()->deepLink();     lap("GameCornerDB");
+  HiddenCoinsDB::inst()->deepLink();    lap("HiddenCoinsDB");
+  HiddenItemsDB::inst()->deepLink();    lap("HiddenItemsDB");
+}
+
+// ── QML ownership / context ──────────────────────────────────────────────────
+
 void DB::qmlProtect(const QQmlEngine* const engine) const
 {
   Utility::qmlProtectUtil(this, engine);
@@ -179,4 +207,17 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   ScriptsDB::inst()->qmlProtect(engine);
   SpriteSetDB::inst()->qmlProtect(engine);
   SpritesDB::inst()->qmlProtect(engine);
-  StarterPokemonDB::inst()->qmlProtect(
+  StarterPokemonDB::inst()->qmlProtect(engine);
+  TilesetDB::inst()->qmlProtect(engine);
+  TmHmsDB::inst()->qmlProtect(engine);
+  TradesDB::inst()->qmlProtect(engine);
+  TrainersDB::inst()->qmlProtect(engine);
+  TypesDB::inst()->qmlProtect(engine);
+}
+
+void DB::qmlHook(QQmlContext* const context) const
+{
+  // For some reason this demands it not be const
+  context->setContextProperty("pseDB", const_cast<DB*>(this));
+}
+

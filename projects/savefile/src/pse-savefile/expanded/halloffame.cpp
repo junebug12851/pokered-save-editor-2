@@ -125,4 +125,8 @@ void HallOfFame::randomize()
   for (var8 i = 0; i < rndCount && i < recordsMax; i++) {
     auto tmp = new HoFRecord;
     records.append(tmp);
-    tmp->ra
+    tmp->randomize();
+  }
+
+  recordsChanged();
+}

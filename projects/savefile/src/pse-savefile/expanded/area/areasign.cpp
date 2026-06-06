@@ -20,8 +20,8 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
-#include <pse-db/entries/mapdbentry.h>
 #include <pse-common/random.h>
+#include <pse-db/entries/mapdbentry.h>
 
 AreaSign::AreaSign(SaveFile* saveFile)
 {
@@ -141,4 +141,6 @@ void AreaSign::setTo(MapDBEntry* mapData)
   auto signData = mapData->getSigns();
 
   // Set them all if present
-  signs = SignDa
+  signs = SignData::setToAll(signData);
+  signsChanged();
+}

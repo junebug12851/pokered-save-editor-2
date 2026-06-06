@@ -88,6 +88,36 @@ void MainWindow::ssConnect() {
 
 ---
 
+## Recovering files from Cowork chat transcripts
+
+When files are corrupted/truncated and git is no help (e.g. HEAD was committed *after* the damage, or
+the work was never committed), the Cowork **chat transcripts** are a near-complete backup. Every tool
+call from every prior session is logged as JSONL.
+
+**Where:** `%APPDATA%\Claude\local-agent-mode-sessions\<...>\<...>\local_<id>\.claude\projects\<enc>\*.jsonl`
+(also `audit.jsonl`). Copy them somewhere readable (PowerShell, reliable) before parsing. Each line is
+a JSON event; `message.content[]` holds `tool_use` (with `input.file_path` + `input.content` for
+`Write`, `input.old_string`/`new_string` for `Edit`, `input.command` for `bash`) and `tool_result`
+(the `Read` output as `"<lineno>\t<text>"` lines — strip the `^\d+\t` prefix to rebuild). Each event
+has a `timestamp` for ordering. **Exclude the corrupting session's own ops** when replaying.
+
+Recovery techniques, in descending fidelity:
+1. **Exact** — a full `Write` capture, or a `Read` whose first shown line is `1` and that ends cleanly.
+2. **Stitch** — merge multiple partial `Read`s by line number (latest timestamp wins per line); if the
+   union covers `1..N` contiguously, it's exact.
+3. **Replay** — for files only ever changed by `Edit`/`sed` (no full `Write`), start from the
+   `af883fd` clone base and apply the captured `Edit`s in timestamp order, plus the project-wide
+   refactors (e.g. `::ind.value(` -> `::inst()->getIndAt(`). This rebuilt `pokemonbox.cpp` (1766 ln)
+   exactly. Use `difflib` (not naive find) when merging reads over the replay so duplicate lines don't
+   misalign and drop functions — always re-check that no function from the base went missing.
+4. **Graft** — keep the intact disk-head, append the `af883fd` tail aligned on the last common lines.
+
+**Always validate** the result against the *most recent* reads (line-for-line), confirm brace balance,
+and that every base function survived. **Always write with PowerShell** (`[System.IO.File]::WriteAllText`,
+UTF8-no-BOM) and re-read to verify — never trust a bash-mount write here (it caused the corruption).
+
+---
+
 ## Boot Hang Diagnosis
 
 App compiles clean but hangs 40+ seconds on startup, window never appears.

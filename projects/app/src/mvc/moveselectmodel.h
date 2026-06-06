@@ -56,4 +56,14 @@ public:
 
   Q_INVOKABLE int moveToListIndex(int ind);
 
-  vo
+  void onMonChange();
+  void rebuildListGeneral();
+  void rebuildListSpecific();
+
+public slots:
+  void monFromBox(PokemonBox* box);
+
+public:
+  QVector<MoveSelectEntry*> moveListCache;
+  PokemonDBEntry* mon = nullptr;
+};

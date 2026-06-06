@@ -300,4 +300,7 @@ void AreaPokemon::setTo(MapDBEntry* map)
     waterMonsChanged();
 
     waterMons[i]->level = monDataWater.at(i)->getLevel();
-    wa
+    waterMons[i]->levelChanged();
+    waterMonsChanged();
+  }
+}

@@ -30,7 +30,7 @@ const QByteArray GameData::jsonRaw(const QString filename) const
   // Read in file
   file.setFileName(":/assets/data/" + filename + ".json");
   if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    return val;
+    return val; // empty on failure
   val = file.readAll();
   file.close();
 
@@ -65,4 +65,7 @@ void GameData::qmlRegister() const
 
 GameData* GameData::inst()
 {
-  static GameData* _inst = new GameData;
+  static GameData* _inst = new GameData;
+  return _inst;
+}
+

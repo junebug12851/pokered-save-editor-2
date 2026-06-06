@@ -257,6 +257,7 @@ internal `onStrChanged` recalc while a consumer adds its own handler.
 | Want to change | Knob |
 |---|---|
 | General-tab field heights | `OverviewTab.qml` `textH` / `comboH` |
+| Items/bag row heights (checkbox/combo/count) | `ItemBoxView.qml` `rowH` / `comboH` / `textH` |
 | Row gaps (General tab) | `OverviewTab.qml` ColumnLayout `spacing` / RowLayout `spacing` |
 | Move pill height | `PokemonMoveSel.qml` `rowH` |
 | DV/EV slider height & row gaps | `DvStatGroup`/`EvStatGroup` slider `Layout.preferredHeight`, grid `rowSpacing` |

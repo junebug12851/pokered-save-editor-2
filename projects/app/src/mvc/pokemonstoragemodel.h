@@ -109,4 +109,18 @@ public slots:
   void checkedMoveDown();
   void checkedMoveToBottom();
   void checkedDelete();
-  void checkedTra
+  void checkedTransfer();
+  void checkedToggleAll();
+
+  void switchBox(int newBox, bool force = false);
+  PokemonStorageBox* getCurBox() const;
+  PokemonStorageBox* getBox(int box) const;
+
+public:
+  int curBox = PartyBox;
+  Router* router = nullptr;
+  Storage* storage = nullptr;
+  PlayerPokemon* party = nullptr;
+  PokemonStorageModel* otherModel = nullptr;
+  bool checkedStateDirty = false;
+};

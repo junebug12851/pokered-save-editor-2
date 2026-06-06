@@ -29,14 +29,35 @@ tileset, etc. Goal is to let users:
 
 ## Full Screen Coverage
 
-Snapshot as of session 13t (see `status.md` for the live, authoritative list):
+Snapshot as of session 13j (see `status.md` for the live, authoritative list):
 
 Working / data flows + persists:
 - Font keyboard (filters, search, str propagation, DetailView)
 - Trainer Card (name + rival render/persist, ID, money, coins, starter, badges, playtime)
 - Pokémon box screen (sprites/levels, hover name+pen, click → details, no crash)
-- **Pokémon details editor — responsive + polished + Twilight-confirmed (s13k–t):** General / DV-EV /
-  Moves tabs + Glance pane; proper layouts, borderless combos, popup nickname editor. See
-  `reference/ui-patterns.md`.
 - Pokédex (toggle/click)
-- Bag / Items (read +
+- Bag / Items (read + edit + count)
+- Pokémart (looked correct)
+- File open/save
+
+Working but needs polish (mostly Qt 6 Material-height layout — see `status.md` open issues):
+- Pokémon details editor (opens + data persists; **re-test moves/DV/EV after the s13h GC fix**;
+  level box + box heights still need layout work)
+- Full name editor (right-side tileset preview blank; description not showing; empty rows when
+  items unchecked)
+
+Not yet exercised/verified end-to-end:
+- Rival data (name shows; verify starter saves)
+- Maps / Map Details (verify `appBody.push` navigation)
+- Pokémon storage PC boxes beyond party
+- Hall of Fame
+
+## Technical Ambitions
+
+The owner wanted this rewrite specifically because the JS/Electron version couldn't be extended
+further without becoming unmanageable. Qt gives:
+- Fast builds (compared to 45-minute Electron builds)
+- Native performance
+- Full access to game data through the C++ DB layer
+- A path to features impossible in the browser sandbox
+

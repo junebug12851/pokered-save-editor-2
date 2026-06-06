@@ -346,4 +346,5 @@ void AreaMap::setTo(MapDBEntry* map, int x, int y)
 
 int AreaMap::coordsToPtr(int x, int y, int width)
 {
-  ret
+  return (width+7)+x+(y*(width+6)) + MapDBEntryConnect::worldMapPtr;
+}

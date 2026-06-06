@@ -18,10 +18,8 @@
 #include <QVector>
 #include <pse-common/types.h>
 #include "../fragments/pokemonstoragebox.h"
-#include "../../savefile_autoport.h"
-// PokemonParty is returned by the Q_INVOKABLE partyAt() below — full include so
-// QML receives a real (traversable) PokemonParty, not an opaque value.
 #include "../fragments/pokemonparty.h"
+#include "../../savefile_autoport.h"
 
 class SaveFile;
 class PlayerBasics;
@@ -38,4 +36,13 @@ public:
   virtual ~PlayerPokemon();
 
   virtual void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
-  virtual v
+  virtual void save(SaveFile* saveFile, var16 boxOffset = 0);
+
+  Q_INVOKABLE PokemonParty* partyAt(int ind);
+
+public slots:
+  virtual void randomize(PlayerBasics* basics);
+  virtual void pokemonNew();
+};
+
+

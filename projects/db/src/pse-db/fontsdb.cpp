@@ -430,5 +430,7 @@ int FontsDB::countSizeOfExpanded(const QString val) const
 
 void FontsDB::splice(QVector<int>& out, const QString in, const int position) const
 {
-  // REPLACE the code at `position` with its expansion — remove the original
-  // first. Without this it was only an insert, so the 
+  auto codes = convertToCode(in, 255, false);
+  for(int i = 0; i < codes.size(); i++)
+    out.insert(position + i, codes.at(i));
+}

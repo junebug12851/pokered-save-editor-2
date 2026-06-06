@@ -12,17 +12,13 @@
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-*/
-#pragma once
+*/#pragma once
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
 
 #include <pse-common/types.h>
 #include "savefile_autoport.h"
 
-// Full include so QML can traverse brg.file.data.dataExpanded.* . A forward
-// -declared QObject pointer in a Q_PROPERTY reads as `undefined` in QML.
-// See notes/reference/qt6-patterns.md.
 #include "expanded/savefileexpanded.h"
 
 class SaveFileExpanded;
@@ -87,4 +83,14 @@ public slots:
   void randomizeExpansion();
 
 public:
-  // Actual SAV Data, a raw internal binary copy of 
+  // Actual SAV Data, a raw internal binary copy of the file
+  var8* data = nullptr;
+
+  // Expanded SAV data to be readable and more usable
+  SaveFileExpanded* dataExpanded = nullptr;
+
+  // Tools to operate directly on the raw sav file data
+  SaveFileToolset* toolset = nullptr;
+};
+
+

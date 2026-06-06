@@ -98,4 +98,5 @@ void Settings::dataChanged()
 
   // Load in the 2 settings
   previewTileset = mapData->getToTileset()->name;
-  previewOutdoor = (mapData->getToTileset()->
+  previewOutdoor = (mapData->getToTileset()->typeAsEnum() == TilesetType::OUTDOOR);
+}

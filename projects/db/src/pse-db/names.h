@@ -40,4 +40,7 @@ public slots:
 private slots:
   void qmlRegister() const;
 
-priv
+private:
+  Names();
+};
+

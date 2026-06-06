@@ -38,3 +38,9 @@ ComboBox {
     "Ship",
     "Ship Port",
     "Underground"
+  ]
+
+  onActivated: brg.settings.previewTileset = currentValue;
+  Component.onCompleted: currentIndex = brg.settings.previewTilesetIndex;
+}
+

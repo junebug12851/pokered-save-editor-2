@@ -7,62 +7,95 @@ and the constraints that matter. These should inform every decision.
 
 ## What This Is To the Owner
 
-This is **Twilight's most prized coding project of her career** — built solo, meticulously, line by
-line. It matters deeply and personally: Twilight is autistic and has a lifelong obsession with this
-game, and the project is an expression of that. It was abandoned not from lack of care but from the
-complexity growing past what one person could sustain alone. The revival in 2026 is a genuine
-second chance to finish something important. Treat it that way — the standards here are higher than
-a normal app, on purpose.
-
-**The defining ambition:** a beautiful, modern, capable editor that exposes **every byte** of the
-save file in a pretty GUI — not a hex table, an actual designed interface for all of it. Twilight has
-never seen another editor do this, and that completeness-with-polish is the point of the project.
+This is one of Twilight's proudest projects. It was built solo, meticulously, line by line.
+It was abandoned not from lack of care but from the complexity growing past what one person
+could sustain alone. The revival in 2026 is a genuine second chance to finish something
+important. Treat it that way.
 
 ---
 
-## UX Is the Prime Directive
+## Core Philosophy: Graceful Degradation
 
-**UX is the single most important thing in this project — explicitly #1, above cost and effort.**
-Twilight (s13k): _"its so absolutely #1 that i will go the long route on something just because the ux
-wouldn't allow a cheaper way... the ux absolutely needs to flow and work very well and smoothly."_
+**Inspired by The Sims 2.** The app must never:
+- Crash or freeze unexpectedly
+- Show blocking error dialogs in production (release builds)
+- Leave the user stuck with no way forward
 
-What this means in practice:
-- A cheaper implementation that compromises the *feel* is the wrong answer here, even if it's
-  "good enough" functionally. Do not propose the cheap path as the recommendation when it leaves a
-  UX seam — name the seam and propose the path that flows.
-- Twilight is **not** attached to most specific UX *decisions* (she'll weigh options), but she is
-  absolutely attached to the *outcome*: smooth, coherent, never clunky or confusing.
-- "Solves the UI but leaves UX out" is a failure mode to watch for — e.g. a fix that works
-  mechanically but introduces a janky interaction, a moving/clickable artifact, or a mode the user
-  has to think about. Reject those.
-- When two approaches differ mainly in build cost, lead with the one that gives the better
-  interaction and be honest that it's the longer route.
+When something fails, it should fail silently and gracefully. Log it, degrade the feature,
+but keep the app alive and usable. Debug builds show error dialogs (visible to the developer).
+Release builds catch and log quietly.
 
-## Save File Integrity Is Sacred (top-tier priority)
+This isn't about hiding bugs — it's about treating the user with respect.
 
-**Not corrupting save files is among the highest priorities in the project — avoid it at all costs,
-always, if at all humanly possible.** The app's signature property: it changes **only the exact
-bytes it was instructed to change and leaves every other byte of the save completely and totally
-untouched** — something hardly any editor does. Twilight verified this by hand over dozens of hours of
-micro- and macro-level testing, and is proud enough of it to brag about it in the README.
+---
 
-Hard rules that follow from this (also in top-level `CLAUDE.md`):
-- Never rewrite, normalize, reorder, or repack the whole save. Touch only the targeted bytes.
-- Never alter checksums, padding, or regions you weren't explicitly asked to change.
-- When in doubt about whether a write is in-scope, **don't** — confirm first. A corrupted save is
-  one of the worst outcomes this project can produce.
-- Any change to save read/write paths deserves extra scrutiny and verification against this rule.
+## What the App Should Feel Like
 
-## The Quality Bar (No Hacks)
+**Polished desktop software, not a hacker tool.**
 
-Twilight's standard, stated plainly: **no garbage hacks, no temporary fixes, no low-quality stuff, no
-bad fallbacks, no interrupting the UX — not even a tiny bit of room for it.** Outside of UX flow she
-expects very high quality and essentially no runtime errors.
+The user should be able to open a save file and immediately have fun. The app should:
+- Present data in a way that's intuitive without needing documentation
+- Make the fun stuff easy to find (randomize, edit name, see your team)
+- Guide the user rather than dump raw data at them
+- Feel like something that belongs in their desktop application folder
 
-Working implications:
-- Prefer the correct, clean, durable solution even when it's the longer route (see "UX Is the Prime
-  Directive"). The cheap-but-seamful option is the wrong answer here.
-- If the only path you can see is a hack/temporary patch, **surface it and ask** rather than commit
-  it. Don't quietly leave a TODO-grade fix in this codebase.
-- "Works mechanically" is not the bar; "works and feels right and won't bite later" is.
-- Accessibility
+---
+
+## The Randomization Feature — What It Must Be
+
+This is the most ambitious feature and must be done right. Constraints:
+
+**Non-negotiable goals:**
+- The randomized save must be **playable** — the game should not crash after loading it
+- The player should be able to take their first step and navigate
+- Must include an HM-capable Pokemon somewhere in the team (escape slave)
+- Wild Pokemon encounters must be balanced (no instant-kill level 100s)
+
+**Intentional constraints (not arbitrary):**
+- No glitch items, no glitch Pokemon
+- No beaten trainers, no completed events — clean start
+- Money, items, and team should feel like "starting conditions" not cheats
+- Maps must have valid warps — player must be able to leave
+
+**The spirit of it:** You should laugh when you see what you got. Curious, surprising,
+but never immediately broken. The fun is discovery within a playable sandbox.
+
+---
+
+## Things to Avoid
+
+- **Random for the sake of random** — randomization without playability is a waste
+- **Data dumps** — screens that just list raw values without context or guidance
+- **Crashes as a feature** — "it's a dev tool, crashes are fine" is not acceptable here
+- **Blocking dialogs in production** — the user should never see an unexpected popup
+- **Over-engineering** — the original JS/Electron version collapsed under its own weight;
+  keep things as simple as they can be while still being powerful
+- **Feature creep without finish** — the editor needs to work fully before adding more screens
+
+---
+
+## Screens Priority (What Matters Most)
+
+The editor is most useful when these core screens work well:
+1. Trainer Card — name, money, badges, starter, time
+2. Pokemon — team editing with moves, stats, DVs, nickname
+3. Pokédex — seen/caught states
+4. Items — bag and PC storage
+5. Randomization — the flagship feature
+
+Maps, Hall of Fame, and Rival are secondary. The font keyboard (name editing) should feel
+native and in-game, not like a table of hex values.
+
+---
+
+## The Owner's Voice on This Project
+
+From the original chat:
+
+> "It was in the days before AI, i was meticulously coding everything line by line... Eventually
+> a great many commits never got pushed and then the project was trashed. All I have is whatever
+> is online now, its in a broken buggy state. I've wondered for a long time if it could be
+> salvaged... i didn't realize AI had come as far as you."
+
+This is a project that matters personally. The technical work serves something real.
+

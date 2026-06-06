@@ -239,4 +239,8 @@ void PokemonStorageBox::randomize(PlayerBasics* basics)
     auto tmp = new PokemonBox;
     tmp->randomize(basics);
     pokemon.append(tmp);
-    pokemonIn
+    pokemonInsertChange();
+  }
+
+  pokemonChanged();
+}

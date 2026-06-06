@@ -26,18 +26,15 @@ Page {
       isPersonName: true
       isPlayerName: false
 
-      // Persist on edit-finish (atomic), not per keystroke — consistent with the
-      // player name. Rival's name is a cheap MEMBER, but committing once keeps
-      // the two-way bind from churning and matches the player-name pattern.
-      onCommitted: (finalStr) => {
-        let r = brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null;
-        if(r && r.name !== finalStr) r.name = finalStr;
+      onStrChanged: {
+        let r = brg.file.data.dataExpanded.rival;
+        if(r) r.name = str;
       }
 
       Connections {
         target: brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null
         function onNameChanged() {
-          let r = brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null;
+          let r = brg.file.data.dataExpanded.rival;
           if(r) rivalNameEdit.str = r.name;
         }
       }
@@ -107,4 +104,24 @@ Page {
 
       Label {
         anchors.right: parent.left
-        anchors.right
+        anchors.rightMargin: 7
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        font.pixelSize: 14
+        horizontalAlignment: Text.AlignRight
+        verticalAlignment: Text.AlignVCenter
+        text: "Starter"
+      }
+    }
+  }
+
+  footer: AppFooterBtn1 {
+    icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
+    text1: "Re-Roll"
+    onBtn1Clicked: {
+      let r = brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null;
+      if(r) r.randomize();
+    }
+  }
+}
+

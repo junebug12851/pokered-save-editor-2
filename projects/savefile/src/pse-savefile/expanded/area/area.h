@@ -93,4 +93,28 @@ signals:
   void mapChanged();
   void npcChanged();
   void playerChanged();
-  void po
+  void pokemonChanged();
+  void signsChanged();
+  void spritesChanged();
+  void tilesetChanged();
+  void warpsChanged();
+
+public slots:
+  void reset();
+  void randomize();
+  void setTo(MapDBEntry* map);
+
+public:
+  AreaAudio* audio = nullptr;
+  AreaLoadedSprites* preloadedSprites = nullptr;
+  AreaGeneral* general = nullptr;
+  AreaMap* map = nullptr;
+  AreaNPC* npc = nullptr;
+  AreaPlayer* player = nullptr;
+  AreaPokemon* pokemon = nullptr;
+  AreaSign* signs = nullptr;
+  AreaSprites* sprites = nullptr;
+  AreaTileset* tileset = nullptr;
+  AreaWarps* warps = nullptr;
+};
+

@@ -108,4 +108,19 @@ public:
   MapSearch* isNotBad();
   MapSearch* isCity();
   MapSearch* notCity();
-  int getMapCount() cons
+
+  // QML Interface
+  const QVector<MapDBEntry*> getMaps() const;
+  int getMapCount() const;
+  Q_INVOKABLE const MapDBEntry* mapAt(const int ind) const;
+
+public slots:
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  QVector<MapDBEntry*> results;
+};
+

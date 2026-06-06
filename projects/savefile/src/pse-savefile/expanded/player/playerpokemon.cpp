@@ -145,4 +145,6 @@ void PlayerPokemon::pokemonNew()
 
   auto mon = PokemonParty::convertToParty(PokemonParty::newPokemon(PokemonRandom::Random_Starters, file->dataExpanded->player->basics));
   pokemon.append(mon);
-  po
+  pokemonInsertChange();
+  pokemonChanged();
+}

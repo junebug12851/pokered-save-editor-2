@@ -183,4 +183,7 @@ void Storage::randomizePokemon(PlayerBasics* basics)
     pokemon[i]->randomize(basics);
 }
 
-void Storage::rand
+void Storage::randomizeItems()
+{
+  items->randomize();
+}
