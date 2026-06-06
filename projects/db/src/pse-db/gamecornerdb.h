@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef GAMECORNERDB_H
-#define GAMECORNERDB_H
-
+#pragma once
 #include <QObject>
 #include <QVector>
 #include "./db_autoport.h"
@@ -28,6 +26,7 @@ class DB_AUTOPORT GameCornerDB : public QObject
   Q_OBJECT
   Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
   Q_PROPERTY(int getBuyPrice READ getBuyPrice CONSTANT)
+  Q_PROPERTY(int getSellPrice READ getSellPrice CONSTANT)
 
 public:
   // Get Instance
@@ -38,8 +37,9 @@ public:
   int getStoreSize() const;
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE const GameCornerDBEntry* getStoreAt(const int ind) const;
+  Q_INVOKABLE GameCornerDBEntry* getStoreAt(const int ind) const;
   int getBuyPrice() const;
+  int getSellPrice() const;
 
 public slots:
   void load();
@@ -52,16 +52,11 @@ private slots:
 private:
   GameCornerDB();
 
+  QVector<GameCornerDBEntry*> store;
+
   // Buy and Sell Price
   // Pokedollars <=> Game Coins
   // Regular Casinos give you an even exchange, you get the exact amount back
   // But in the Poke-World I want to follow the global sell-back mechanics
   // whereby you get half back
-  int buyPrice = 0;
-
-  QVector<GameCornerDBEntry*> store;
-
-  friend class GameCornerDBEntry;
-};
-
-#endif // GAMECORNERDB_H
+  int buyPrice = 

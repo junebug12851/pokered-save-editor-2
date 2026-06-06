@@ -1,6 +1,26 @@
+/*
+  * Copyright 2020 Twilight
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *   http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+*/
 
 #include <QQmlEngine>
 #include <QQmlContext>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QElapsedTimer>
+#include <QDebug>
+#include <QMessageBox>
 #include "mainwindow.h"
 
 #include "../../src/bridge/bridge.h"
@@ -15,7 +35,9 @@
 #include <pse-savefile/expanded/player/player.h>
 #include <pse-savefile/expanded/player/playerpokemon.h>
 
+#include <pse-db/db.h>
 #include <pse-db/fontsdb.h>
+#include <pse-db/entries/fontdbentry.h>
 
 #include "../../src/engine/tilesetprovider.h"
 #include "../../src/engine/fontpreviewprovider.h"
@@ -23,8 +45,12 @@
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent)
 {
+  QElapsedTimer t;
+  t.start();
+
   // First setup UI
   ui.setupUi(this);
+  qDebug() << "[MainWindow] setupUi —" << t.elapsed() << "ms";
 
   // Save global class instance
   MainWindow::instance = this;
@@ -32,15 +58,34 @@ MainWindow::MainWindow(QWidget *parent) :
   // Create the file management class which kickstarts all the data classes and
   // data management, etc... Basically a whole thing here lol
   file = new FileManagement();
+  qDebug() << "[MainWindow] FileManagement —" << t.elapsed() << "ms";
 
   // Inject several C++ class instances into QML
   injectIntoQML();
+  qDebug() << "[MainWindow] injectIntoQML —" << t.elapsed() << "ms";
 
   // Setup providers to QML
   setupProviders();
+  qDebug() << "[MainWindow] setupProviders —" << t.elapsed() << "ms";
+
+  // Report QML load errors. In debug builds this shows a message box so
+  // problems are immediately visible during development; release builds stay
+  // silent (the app continues running as gracefully as it can).
+  connect(ui.app, &QQuickWidget::statusChanged, this, [this](QQuickWidget::Status status) {
+    if (status == QQuickWidget::Error) {
+      QString msg;
+      for (const auto& err : ui.app->errors())
+        msg += err.toString() + "\n";
+      qCritical() << "[QML]" << msg;
+#ifdef QT_DEBUG
+      QMessageBox::critical(this, "QML Error", msg);
+#endif
+    }
+  });
 
   // Now load the QML page, has to be done after setup and injection
   ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
+  qDebug() << "[MainWindow] setSource —" << t.elapsed() << "ms";
 
   // Setup global shortcuts
   setupShortcuts();
@@ -52,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
   reUpdateRecentFiles(file->getRecentFiles());
   onPathChanged(file->getPath());
   loadState();
+  qDebug() << "[MainWindow] constructor done —" << t.elapsed() << "ms";
 }
 
 MainWindow::~MainWindow()
@@ -123,9 +169,23 @@ void MainWindow::saveState()
 void MainWindow::loadState()
 {
   settings.beginGroup("WindowState");
-  this->resize(settings.value("size", QSize(640,480)).toSize());
-  this->move(settings.value("pos", QPoint(200,200)).toPoint());
+  QSize  savedSize = settings.value("size", QSize(640, 480)).toSize();
+  QPoint savedPos  = settings.value("pos",  QPoint(200, 200)).toPoint();
   settings.endGroup();
+
+  this->resize(savedSize);
+
+  // Guard against off-screen positions (e.g. disconnected monitor).
+  // Accept the saved position only if the title bar area is on some screen.
+  bool onScreen = false;
+  const QPoint titleBarPt = savedPos + QPoint(savedSize.width() / 2, 10);
+  for (const QScreen* screen : QGuiApplication::screens()) {
+    if (screen->availableGeometry().contains(titleBarPt)) {
+      onScreen = true;
+      break;
+    }
+  }
+  this->move(onScreen ? savedPos : QPoint(200, 200));
 }
 
 void MainWindow::setupShortcuts()
@@ -142,7 +202,7 @@ void MainWindow::setupShortcuts()
     // Ensure it's disabled, assign a shortcut, and assign the index to it
     recentFileShortcuts[i] = new QShortcut(this);
     recentFileShortcuts[i]->setEnabled(false);
-    recentFileShortcuts[i]->setKey(QKeySequence(Qt::CTRL + Qt::SHIFT + shortcutKey));
+    recentFileShortcuts[i]->setKey(QKeySequence(Qt::CTRL | Qt::SHIFT | shortcutKey));
     recentFileShortcuts[i]->setProperty("index", i);
     connect(recentFileShortcuts[i], &QShortcut::activated, this, &MainWindow::onRecentFileClick);
   }
@@ -150,17 +210,17 @@ void MainWindow::setupShortcuts()
   // Create and link up other shortcuts
   auto os = otherShortcuts;
 
-  os.insert("new", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this));
-  os.insert("open", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this));
-  os.insert("reopen", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_O), this));
-  os.insert("save", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this));
-  os.insert("saveas", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S), this));
-  os.insert("savecopyas", new QShortcut(QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_S), this));
-  os.insert("scrub", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W), this));
-  os.insert("clear-recentfiles", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Minus), this));
-  os.insert("exit", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this));
-  os.insert("exit2", new QShortcut(QKeySequence(Qt::ALT + Qt::Key_F4), this));
-  os.insert("random", new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R), this));
+  os.insert("new", new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_N), this));
+  os.insert("open", new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_O), this));
+  os.insert("reopen", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_O), this));
+  os.insert("save", new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S), this));
+  os.insert("saveas", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S), this));
+  os.insert("savecopyas", new QShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_S), this));
+  os.insert("scrub", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_W), this));
+  os.insert("clear-recentfiles", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Minus), this));
+  os.insert("exit", new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q), this));
+  os.insert("exit2", new QShortcut(QKeySequence(Qt::ALT | Qt::Key_F4), this));
+  os.insert("random", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_R), this));
 
   connect(os.value("new"), &QShortcut::activated, file, &FileManagement::newFile);
   connect(os.value("open"), &QShortcut::activated, file, &FileManagement::openFile);
@@ -184,46 +244,11 @@ void MainWindow::setupProviders()
 
 void MainWindow::injectIntoQML()
 {
-  // Now grab the QML instance from UI
-  auto engine = ui.app->engine();
-  this->engine = engine;
+  auto* context = ui.app->rootContext();
+  bridge = new Bridge(file);
+  context->setContextProperty("brg", bridge);
+  MainWindow::engine = ui.app->engine();
 
-  auto qml = engine->rootContext();
-
-  // Inject singleton instances needed and save as static property
-  auto bridge = new Bridge(file);
-  this->bridge = bridge;
-  qml->setContextProperty("brg", bridge);
-
-  // Mark pointers MINE, NOT QML
-
-  // fontSearch returns a pointer to itself for chain linking, this causes
-  // issues as QML sees a pointer retruned from a Q_INVOKABLE and thinks it
-  // owns the pointer and thus needs to GC/Auto-Destroy it
-  engine->setObjectOwnership(bridge->fontSearch, QQmlEngine::CppOwnership);
-
-  // FontsDB allows QML to retrieve font information via a Q_INVOKABLE, like
-  // above the pointer returned can cause QML to take ownership and start
-  // deleting font data. Mark all font information is Mine, Not QML
-  for(auto font : FontsDB::store)
-    engine->setObjectOwnership(font, QQmlEngine::CppOwnership);
-
-  // Force QML to see all Pokemon boxes including party box as strictly owned by
-  // CPP
-  for(auto elSet : bridge->file->data->dataExpanded->storage->pokemon) {
-    engine->setObjectOwnership(elSet, QQmlEngine::CppOwnership);
-
-    for(auto elBox : elSet->boxes) {
-      engine->setObjectOwnership(elBox, QQmlEngine::CppOwnership);
-    }
-  }
-
-  engine->setObjectOwnership(bridge->file->data->dataExpanded->player->pokemon, QQmlEngine::CppOwnership);
-}
-
-void MainWindow::ssConnect()
-{
-  // Link up incomming file signals
-  connect(file, &FileManagement::pathChanged, this, &MainWindow::onPathChanged);
-  connect(file, &FileManagement::recentFilesChanged, this, &MainWindow::reUpdateRecentFiles);
-}
+  // CRITICAL: hand the QML engine CppOwnership of every DB entry (FontDBEntry,
+  // move/species/item entries, etc.). These C++ objects live in DB QVectors with
+  // no QObject parent, so Q

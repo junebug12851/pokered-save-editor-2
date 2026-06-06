@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef BRIDGE_H
-#define BRIDGE_H
-
+#pragma once
 #include <QObject>
 
 #include "./settings.h"
@@ -45,10 +43,10 @@
 #include <pse-db/fontsdb.h>
 #include <pse-db/util/fontsearch.h>
 #include <pse-db/names.h>
-#include <pse-db/namesPokemon.h>
-#include <pse-db/examplesplayer.h>
-#include <pse-db/examplespokemon.h>
-#include <pse-db/examplesrival.h>
+#include <pse-db/entries/namespokemon.h>
+#include <pse-db/entries/examplesplayer.h>
+#include <pse-db/entries/examplespokemon.h>
+#include <pse-db/entries/examplesrival.h>
 
 class Bridge : public QObject
 {
@@ -66,8 +64,8 @@ class Bridge : public QObject
   Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged)
   Q_PROPERTY(FontSearchModel* fontSearchModel MEMBER fontSearchModel NOTIFY fontSearchModelChanged)
   Q_PROPERTY(FontsDB* fonts MEMBER fonts NOTIFY fontsChanged)
-  Q_PROPERTY(NamesDB* randomPlayerName MEMBER randomPlayerName NOTIFY randomPlayerNameChanged)
-  Q_PROPERTY(NamesPokemonDB* randomPokemonName MEMBER randomPokemonName NOTIFY randomPokemonNameChanged)
+  Q_PROPERTY(NamesPlayer* randomPlayerName MEMBER randomPlayerName NOTIFY randomPlayerNameChanged)
+  Q_PROPERTY(NamesPokemon* randomPokemonName MEMBER randomPokemonName NOTIFY randomPokemonNameChanged)
   Q_PROPERTY(Utility* util MEMBER util NOTIFY utilChanged)
   Q_PROPERTY(ExamplesPlayer* randomExamplePlayer MEMBER randomExamplePlayer NOTIFY randomExamplePlayerChanged)
   Q_PROPERTY(ExamplesPokemon* randomExamplePokemon MEMBER randomExamplePokemon NOTIFY randomExamplePokemonChanged)
@@ -126,13 +124,13 @@ public:
   FontSearchModel* fontSearchModel = new FontSearchModel(fontSearch);
 
   Router* router = new Router;
-  FontsDB* fonts = new FontsDB;
-  NamesDB* randomPlayerName = new NamesDB;
-  NamesPokemonDB* randomPokemonName = new NamesPokemonDB;
-  Utility* util = new Utility;
-  ExamplesPlayer* randomExamplePlayer = new ExamplesPlayer;
-  ExamplesPokemon* randomExamplePokemon = new ExamplesPokemon;
-  ExamplesRival* randomExampleRival = new ExamplesRival;
+  FontsDB* fonts = FontsDB::inst();
+  NamesPlayer* randomPlayerName = NamesPlayer::inst();
+  NamesPokemon* randomPokemonName = NamesPokemon::inst();
+  Utility* util = Utility::inst();
+  ExamplesPlayer* randomExamplePlayer = ExamplesPlayer::inst();
+  ExamplesPokemon* randomExamplePokemon = ExamplesPokemon::inst();
+  ExamplesRival* randomExampleRival = ExamplesRival::inst();
   Settings* settings = new Settings(file->data);
 
   RecentFilesModel* recentFilesModel = nullptr;
@@ -154,5 +152,3 @@ public:
   MoveSelectModel* moveSelectModel = new MoveSelectModel;
   MapSelectModel* mapSelectModel = nullptr;
 };
-
-#endif

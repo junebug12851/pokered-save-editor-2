@@ -1,11 +1,12 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 Row {
   id: top
   property string str: ""
+  property var detailView: null
 
   onStrChanged: searchResults.str = str;
 
@@ -13,7 +14,9 @@ Row {
     id: searchContainer
 
     height: parent.height
-    width: 11 * 12
+    // Wide enough for the longest labels ("Single-Char"/"Multi-Char") plus the
+    // ⓘ dot and the reserved scrollbar room.
+    width: 168
   }
 
   SearchResults {
@@ -21,6 +24,7 @@ Row {
     height: parent.height
     width: parent.width - searchContainer.width
 
+    detailView: top.detailView
     str: top.str
     onStrChanged: top.str = str;
   }

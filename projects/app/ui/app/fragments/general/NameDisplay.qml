@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../controls/name"
 import "../../screens/modal"
@@ -16,6 +16,13 @@ import "../../screens/modal"
 
 Image {
   id: img
+
+  // Fired when an editing session FINISHES (the quick-edit popup closes, or the
+  // full keyboard closes) with the final string. Consumers that drive an
+  // expensive/byte-touching model write (player name → OT cascade, rival name)
+  // should persist on THIS, not on every keystroke, so the write is atomic.
+  // Cheap consumers (Pokémon nickname) can keep writing on str changes.
+  signal committed(string val)
 
   /*********************************************
    * Public properties with sensible defaults
@@ -83,6 +90,18 @@ Image {
   // Whether the quick edit (Stage 2) is visible or not
   property bool editorVisible: false
 
+  // When the popup closes only to hand off to the full keyboard, skip its commit
+  // so the value is committed exactly once (when the keyboard closes), keeping
+  // the model write atomic.
+  property bool suppressNextCommit: false
+
+  // Example ("box") demo state — LOCAL to the quick-edit popup, never the row.
+  // The regular name display (trainer card / rival / Pokémon) must only ever
+  // show the name; the example lives only inside the editor. (The full keyboard
+  // keeps its own separate example state — see FullKeyboard.qml.)
+  property bool popupExample: false
+  property string popupPlaceholder: "%%"
+
   // Max tile width of image to chop down to (Ignored if box is open)
   property int chopLen: (isPersonName) ? 7 : 10
 
@@ -122,29 +141,28 @@ Image {
       chopLen = Qt.binding(function() {return (isPersonName) ? 7 : 10; });
   }
 
-  // Toggle example
+  // Toggle the popup's example demo (does NOT touch the row's hasBox).
   function toggleExample() {
-    hasBox = !hasBox;
+    popupExample = !popupExample;
+    reUpdateExample();
   }
 
-  // Clear out or re-update example
+  // Generate (or clear) the popup's example placeholder.
   function reUpdateExample() {
-    // If auto placeholder, it means the placeholder is coming in from the
-    // outside only
     if(disableAutoPlaceholder)
       return;
 
-    if(!hasBox) {
-      placeholder = "%%"
+    if(!popupExample) {
+      popupPlaceholder = "%%";
       return;
     }
 
     if(isPersonName && isPlayerName)
-      placeholder = brg.randomExamplePlayer.randomExample();
+      popupPlaceholder = brg.randomExamplePlayer.randomExample();
     else if(isPersonName && !isPlayerName)
-      placeholder = brg.randomExampleRival.randomExample();
+      popupPlaceholder = brg.randomExampleRival.randomExample();
     else
-      placeholder = brg.randomExamplePokemon.randomExample();
+      popupPlaceholder = brg.randomExamplePokemon.randomExample();
   }
 
   // Re-counts the tiles used
@@ -157,10 +175,10 @@ Image {
   function openFullKeyboard() {
     // We manually open outside of the router the full keyboard beacuse
     // we want to pass parameters to it
+    // Note: we intentionally do NOT pass placeholder/hasBox — the keyboard owns
+    // its own example state so toggling an example there never affects the row.
     appRoot.push("qrc:/ui/app/screens/modal/FullKeyboard.qml", {
-                   placeholder: Qt.binding(function() {return img.placeholder;}),
                    str: Qt.binding(function() {return img.str;}),
-                   hasBox: Qt.binding(function() {return img.hasBox;}),
                    is2Line: Qt.binding(function() {return img.is2Line;}),
                    isPersonName: Qt.binding(function() {return img.isPersonName;}),
                    isPlayerName: Qt.binding(function() {return img.isPlayerName;}),
@@ -181,13 +199,15 @@ Image {
     target: null
     ignoreUnknownSignals: true
 
-    // Various signals to receive
-    onStrChanged: img.str = appRoot.currentItem.str;
-    onToggleExample: img.toggleExample();
-    onReUpdateExample: img.reUpdateExample();
+    // Receive the edited string. (Example toggles stay inside the keyboard now,
+    // so there's nothing example-related to receive here.)
+    function onStrChanged() { img.str = appRoot.currentItem.str; }
 
-    // Notification keyboard is going to close, re-shutoff incomming signals
-    onPreClose: fullKeyboardListener.target = null
+    // Keyboard is closing: commit the final value (atomic) then shut off signals.
+    function onPreClose() {
+      img.committed(img.str);
+      fullKeyboardListener.target = null;
+    }
   }
 
   // Signals to act accordingly
@@ -196,11 +216,20 @@ Image {
     adjustChopLen();
   }
 
-  onHasBoxChanged: {
-    adjustHeight();
-    reUpdateExample();
-  }
+  onHasBoxChanged: adjustHeight();
   onChopLenChanged: if(chopLen > 20) chopLen = 20;
+
+  // Open/close the centered editor popup when editorVisible flips. Seed the
+  // field from the current name on open (a TextField's text: binding breaks once
+  // the user types, so it can go stale after an edit elsewhere e.g. the keyboard).
+  onEditorVisibleChanged: {
+    if(editorVisible) {
+      popupEdit.text = img.str;
+      editorPopup.open();
+    } else {
+      editorPopup.close();
+    }
+  }
 
   // Actual data to send to provider
   source: "image://font/" +
@@ -258,42 +287,189 @@ Image {
     onClicked: editorVisible = !editorVisible;
   }
 
-  // Stage 2: Quick Edit Field
-  NameEdit {
-    text: str
-    onTextChanged: {
-      if(brg.fonts.countSizeOf(text) <= 10)
-        str = text;
+  // Stage 2: Quick Edit — a centered, dismissible popup rendered in the window
+  // overlay so it's NEVER clipped by surrounding tabs/headers (it used to open
+  // inline above the name and got cut off at the top of a pane). Shared by the
+  // player name, rival, and Pokémon nickname editors.
+  Popup {
+    id: editorPopup
+
+    parent: Overlay.overlay
+    anchors.centerIn: Overlay.overlay
+
+    width: 450
+    modal: true
+    dim: true
+    focus: true
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    padding: 20
+
+    onClosed: {
+      editorVisible = false;
+      popupExample = false;   // start each edit session name-only
+      // Commit the finished edit — unless we're closing only to open the full
+      // keyboard, which will commit the final value itself.
+      if(suppressNextCommit)
+        suppressNextCommit = false;
+      else
+        img.committed(img.str);
     }
 
-    visible: editorVisible
-    onAccepted: editorVisible = !editorVisible
-    onClose: editorVisible = !editorVisible
+    background: Rectangle {
+      color: brg.settings.textColorLight
+      radius: 10
+      border.width: 1
+      border.color: Qt.darker(brg.settings.textColorLight, 1.15)
+    }
 
-    width: parent.width
-    anchors.bottom: parent.top
-    anchors.left: parent.left
-    anchors.bottomMargin: -5
+    contentItem: ColumnLayout {
+      spacing: 12
 
-    isPersonName: img.isPersonName
-    hasBox: img.hasBox
+      // ---- Top bar: Simulated controls (left) + Name/Example toggle (right) ----
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: 4
 
-    onChangeStr: img.str = val;
-    onToggleExample: img.toggleExample();
-    onReUpdateExample: img.reUpdateExample();
-    onToggleFullKeyboard: openFullKeyboard();
+        Label {
+          text: "Simulated"
+          font.bold: true
+          font.pixelSize: 13
+          color: brg.settings.textColorDark
+          Layout.alignment: Qt.AlignVCenter
+        }
+
+        ToolSeparator {
+          Layout.fillHeight: false
+          Layout.preferredHeight: 24
+          Layout.alignment: Qt.AlignVCenter
+        }
+
+        FlatToggle {
+          text: "Outdoor"
+          active: brg.settings.previewOutdoor
+          onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
+          MainToolTip { text: "Render tiles as they'd look outdoors vs. indoors." }
+        }
+
+        SimulatedTilesetCombo {
+          Layout.alignment: Qt.AlignVCenter
+          Layout.preferredWidth: 120
+        }
+
+        Item { Layout.fillWidth: true }   // push the Name/Example toggle right
+
+        FlatToggle {
+          text: popupExample ? "Example" : "Name"
+          active: popupExample
+          onClicked: img.toggleExample();
+          MainToolTip { text: "Preview just the name, or inside an example sentence." }
+        }
+
+        IconButtonSquare {
+          visible: popupExample
+          Layout.alignment: Qt.AlignVCenter
+          icon.width: 16
+          icon.source: "qrc:/assets/icons/fontawesome/angle-double-right.svg"
+          onClicked: img.reUpdateExample();
+          MainToolTip { text: "Show a different random example" }
+        }
+      }
+
+      // Live in-game preview. Normally it mirrors the row's source (just the
+      // name); when the popup's example demo is on it renders its OWN box source
+      // (str inside a random example sentence) — independent of the row.
+      Image {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.preferredWidth: popupExample ? 320 : Math.min(img.width, 300)
+        Layout.preferredHeight: popupExample ? 96 : img.height
+        Layout.topMargin: 4
+        Layout.bottomMargin: 4
+        fillMode: Image.PreserveAspectFit
+        cache: false
+        source: popupExample
+                ? ("image://font/" + tileset + "/" + isOutdoorStr + "/" + curFrame +
+                   "/320/96/box/" + is2LineStr + "/" + chopLen + "/white/none/" +
+                   brg.util.encodeBeforeUrl(popupPlaceholder) + "/" +
+                   brg.util.encodeBeforeUrl(str))
+                : img.source
+      }
+
+      NameEdit {
+        id: popupEdit
+        Layout.fillWidth: true
+
+        // text is seeded on popup open (editorPopup.onOpened) and pushes UP from
+        // here; we don't bind text:str (that binding breaks on first keystroke).
+        onTextChanged: {
+          if(brg.fonts.countSizeOf(text) <= 10)
+            str = text;
+        }
+
+        isPersonName: img.isPersonName
+
+        onAccepted: editorVisible = false
+        onClose: editorVisible = false
+
+        // Close this (modal) popup first, otherwise it blocks the full keyboard
+        // that openFullKeyboard() pushes onto the app stack. Suppress the popup's
+        // own commit — the keyboard commits the final value on close, so the
+        // model is written exactly once.
+        onToggleFullKeyboard: { suppressNextCommit = true; editorVisible = false; openFullKeyboard(); }
+      }
+
+      // ---- Byte-count feedback / warnings (June's original messages) ----
+      Label {
+        Layout.fillWidth: true
+        visible: enableFeedback &&
+                 (chopLen <= ((isPersonName) ? 7 : 10)) &&
+                 (regCount <= ((isPersonName) ? 7 : 10)) &&
+                 (expandedCount <= ((isPersonName) ? 7 : 10))
+        font.pixelSize: 11
+        color: feedbackColorNormal
+        wrapMode: Text.WordWrap
+        text: "Using " + regCount + " out of " + chopLen + " bytes."
+      }
+
+      Label {
+        Layout.fillWidth: true
+        visible: enableFeedback &&
+                 isPersonName &&
+                 expandedCount > 7 &&
+                 expandedCount <= 10 &&
+                 regCount < 10
+        font.pixelSize: 11
+        color: feedbackColorWarning
+        wrapMode: Text.WordWrap
+        text: "Warning: This name is meant to be a max of 7 characters"
+      }
+
+      Label {
+        Layout.fillWidth: true
+        visible: enableFeedback &&
+                 expandedCount > 10 &&
+                 regCount < 10
+        font.pixelSize: 11
+        color: feedbackColorWarning
+        wrapMode: Text.WordWrap
+        text: "Warning: This name expands out to be much longer on screen."
+      }
+
+      Label {
+        Layout.fillWidth: true
+        visible: enableFeedback &&
+                 regCount >= 10
+        font.pixelSize: 11
+        color: feedbackColorWarning
+        wrapMode: Text.WordWrap
+        text: "Warning: You've used all 10 out of 10 bytes available."
+      }
+    }
   }
 
-  // Error & Informative messages
-
-  // Notification on character count
-  // Displays the current character count so long as it's the intended count
-  // Considers regular and expanded counts
-  // Person names are intedned to be 7 characters and Pokemon 10 characters
+  // Inline feedback for read-only / embedded use (disableEditor — e.g. the full
+  // keyboard preview). The interactive editor shows its feedback in the popup.
   Text {
-    id: regFeedback
-    // Show this when the editor is visible and the name is an acceptable length
-    visible: (editorVisible || disableEditor) &&
+    visible: disableEditor &&
              enableFeedback &&
              (chopLen <= ((isPersonName) ? 7 : 10)) &&
              (regCount <= ((isPersonName) ? 7 : 10)) &&
@@ -309,13 +485,8 @@ Image {
     text: "Using " + regCount + " out of " + chopLen + " bytes."
   }
 
-  // For person names only
-  // Anyhting above 7 characters but below or equal to 10 can technically be
-  // saved but your breaking the intended length
   Text {
-    // Show this when the editor is visible, it's a persons name, and we've
-    // gone over 7 characters
-    visible: (editorVisible || disableEditor) &&
+    visible: disableEditor &&
              enableFeedback &&
              isPersonName &&
              expandedCount > 7 &&
@@ -332,12 +503,8 @@ Image {
     text: "Warning: This name is meant to be a max of 7 characters"
   }
 
-  // Whenever the name unfolds much larger on the screen taking up significant
-  // amount of tiles
   Text {
-    // Show this when the editor is visible, it's a persons name, and we've
-    // gone over 7 characters
-    visible: (editorVisible || disableEditor) &&
+    visible: disableEditor &&
              enableFeedback &&
              expandedCount > 10 &&
              regCount < 10
@@ -352,14 +519,10 @@ Image {
     text: "Warning: This name expands out to be much longer on screen."
   }
 
-  // When your out of name bytes
   Text {
-    // Show this when the editor is visible, it's a persons name, and we've
-    // gone over 7 characters
-    visible: (editorVisible || disableEditor) &&
+    visible: disableEditor &&
              enableFeedback &&
-             regCount >= 10 &&
-             !regFeedback.visible
+             regCount >= 10
 
     anchors.top: parent.bottom
     anchors.left: (centerFeedback) ? undefined : parent.left
@@ -375,7 +538,5 @@ Image {
   Component.onCompleted: {
     reCalc()
     adjustHeight()
-    adjustChopLen()
-    reUpdateExample()
   }
 }

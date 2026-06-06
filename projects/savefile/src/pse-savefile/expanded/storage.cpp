@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 #include "./storage.h"
+#include "../qmlownership.h"
 #include "./fragments/pokemonstorageset.h"
 #include "./fragments/pokemonstoragebox.h"
 #include "./fragments/itemstoragebox.h"
@@ -52,7 +53,7 @@ PokemonStorageBox* Storage::boxAt(int ind)
   if(curSetB)
     cur -= setMaxBoxes; // Offset if it's in set b
 
-  return pokemon[curSetB ? 1 : 0]->boxes[cur];
+  return qmlCppOwned(pokemon[curSetB ? 1 : 0]->boxes[cur]);
 }
 
 PokemonStorageBox* Storage::freeSpace()
@@ -182,7 +183,4 @@ void Storage::randomizePokemon(PlayerBasics* basics)
     pokemon[i]->randomize(basics);
 }
 
-void Storage::randomizeItems()
-{
-  items->randomize();
-}
+void Storage::rand

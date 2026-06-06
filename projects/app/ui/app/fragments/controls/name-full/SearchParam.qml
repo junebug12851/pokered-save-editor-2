@@ -1,22 +1,20 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
-CheckBox {
+// Single-select filter (radio). Mutual exclusivity is enforced by the shared
+// ButtonGroup set up in SearchCriteria, so one category is always active and no
+// Clear button is needed. Compacted: Material controls floor at ~40px (touch
+// target) which spread the filters far apart — trim padding and let it shrink.
+RadioButton {
   id: top
 
   signal reSearch();
 
-  tristate: true
-  onCheckStateChanged: top.reSearch();
+  topPadding: 4
+  bottomPadding: 4
+  Layout.minimumHeight: 0
 
-  nextCheckState: function() {
-    if (checkState === Qt.Unchecked)
-      return Qt.Checked
-    else if (checkState === Qt.Checked)
-      return Qt.PartiallyChecked
-    else
-      return Qt.Unchecked
-  }
+  onCheckedChanged: top.reSearch();
 }

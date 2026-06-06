@@ -83,3 +83,11 @@ Furthermore while the build size will still be large, it'll build SUPER QUICK, l
 like not 45 minutes lol and so so much simpler.
 
 Right now all a WIP but I'm really holding out hope I can make the reboot happen and completed.
+
+## License
+
+Copyright 2020 Twilight
+
+This project's source code is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for the full text, or http://www.apache.org/licenses/LICENSE-2.0.
+
+Pokemon and related artwork are owned by GameFreak/Nintendo/The Pokemon Company; see the credits screen and `non-app-assets` / asset license files for third-party assets, which retain their own licenses (e.g. Qt under LGPL v3, icon sets under their respective licenses).

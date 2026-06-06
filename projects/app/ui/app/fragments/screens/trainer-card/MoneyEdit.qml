@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
@@ -20,13 +20,12 @@ MouseArea {
     labelEl.text: "Money"
     maximumLength: 6
 
-    text: brg.file.data.dataExpanded.player.basics.money
     onTextChanged: {
       if(text === "")
         return;
 
       var txtDec = parseInt(text, 10);
-      if(txtDec === NaN)
+      if(isNaN(txtDec))
         return;
 
       if(txtDec < 0 || txtDec > 999999)
@@ -35,13 +34,15 @@ MouseArea {
       brg.file.data.dataExpanded.player.basics.money = txtDec;
     }
 
+    Component.onCompleted: child.text = brg.file.data.dataExpanded.player.basics.money.toString()
+
     MainToolTip {
       text: "Money, 0 - 999,999"
     }
 
     Connections {
       target: brg.file.data.dataExpanded.player.basics
-      onMoneyChanged: child.text = brg.file.data.dataExpanded.player.basics.money
+      function onMoneyChanged() { child.text = brg.file.data.dataExpanded.player.basics.money.toString(); }
     }
 
     RandomMenu {

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
+#include <pse-db/entries/mapdbentrywarpout.h>
+#include <pse-db/entries/mapdbentrywarpin.h>
 #include <pse-db/util/mapsearch.h>
 #include <pse-common/random.h>
 
@@ -59,16 +62,16 @@ void WarpData::load(SaveFile* saveFile, var8 index)
 
 void WarpData::load(MapDBEntryWarpOut* warp)
 {
-  x = warp->x;
+  x = warp->getX();
   xChanged();
 
-  y = warp->y;
+  y = warp->getY();
   yChanged();
 
-  destMap = warp->toMap->ind;
+  destMap = warp->getToMap()->getInd();
   destMapChanged();
 
-  destWarp = warp->warp;
+  destWarp = warp->getWarp();
   destWarpChanged();
 }
 
@@ -105,24 +108,24 @@ void WarpData::randomize() {
   // Grab a non-outdoor map
   // The game can get kind of weird and crash if you warp to an outdoor map
   // directly instead of "returning" outdoors using "Last Map"
-  auto map = MapsDB::search()->isGood()->notType("Outdoor")->pickRandom();
-  auto mapWarps = map->warpIn;
+  auto map = MapsDB::inst()->search()->isGood()->notType("Outdoor")->pickRandom();
+  auto mapWarps = map->getWarpIn();
 
   // Switch out warp to a random non-outdoor warp
-  destMap = map->ind;
+  destMap = map->getInd();
   destMapChanged();
 
-  destWarp = Random::rangeExclusive(0, mapWarps.size());
+  destWarp = Random::inst()->rangeExclusive(0, mapWarps.size());
   destWarpChanged();
 
-  y = mapWarps[destWarp]->y;
+  y = mapWarps[destWarp]->getY();
   yChanged();
 
-  x = mapWarps[destWarp]->x;
+  x = mapWarps[destWarp]->getX();
   xChanged();
 }
 
 MapDBEntry* WarpData::toMap()
 {
-  return MapsDB::ind.value(QString::number(destMap), nullptr);
+  return MapsDB::inst()->getIndAt(QString::number(destMap));
 }

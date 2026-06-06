@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 #include <QDebug>
+#include <QQmlEngine>
 #include <QJsonValue>
 #include "mapdbentryspriteitem.h"
 #include "../itemsdb.h"
@@ -51,7 +52,7 @@ void MapDBEntrySpriteItem::deepLink()
     toItem->toMapSpriteItem.append(this);
 }
 
-const ItemDBEntry* MapDBEntrySpriteItem::getToItem() const
+ItemDBEntry* MapDBEntrySpriteItem::getToItem() const
 {
     return toItem;
 }
@@ -64,4 +65,12 @@ const QString MapDBEntrySpriteItem::getItem() const
 MapDBEntrySpriteItem::SpriteType MapDBEntrySpriteItem::type() const
 {
     return SpriteType::ITEM;
+}
+
+void MapDBEntrySpriteItem::qmlRegister() const
+{
+  static bool once = false;
+  if (once) return;
+  qmlRegisterUncreatableType<MapDBEntrySpriteItem>("PSE.DB.MapDBEntrySpriteItem", 1, 0, "MapDBEntrySpriteItem", "Can't instantiate in QML");
+  once = true;
 }

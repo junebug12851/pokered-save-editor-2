@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -89,9 +89,9 @@ FontSearch* FontsDB::searchRaw() const
   return new FontSearch();
 }
 
-const QScopedPointer<const FontSearch, QScopedPointerDeleteLater> FontsDB::search() const
+QScopedPointer<FontSearch, QScopedPointerDeleteLater> FontsDB::search() const
 {
-  return QScopedPointer<const FontSearch, QScopedPointerDeleteLater>(
+  return QScopedPointer<FontSearch, QScopedPointerDeleteLater>(
         new FontSearch());
 }
 
@@ -379,7 +379,7 @@ int FontsDB::getStoreSize() const
   return store.size();
 }
 
-const FontDBEntry* FontsDB::getStoreAt(const int ind) const
+FontDBEntry* FontsDB::getStoreAt(const int ind) const
 {
   if(ind >= store.size())
     return nullptr;
@@ -387,7 +387,7 @@ const FontDBEntry* FontsDB::getStoreAt(const int ind) const
   return store.at(ind);
 }
 
-const FontDBEntry* FontsDB::getIndAt(const QString val) const
+FontDBEntry* FontsDB::getIndAt(const QString val) const
 {
   return ind.value(val, nullptr);
 }
@@ -404,6 +404,16 @@ const FontDBEntry* FontsDB::getStoreByVal(int ind) const
   return store.at(ind);
 }
 
+FontDBEntry* FontsDB::fontAt(int ind) const
+{
+  return const_cast<FontDBEntry*>(getStoreByVal(ind));
+}
+
+int FontsDB::fontCount() const
+{
+  return getStoreSize();
+}
+
 int FontsDB::countSizeOf(const QString val) const
 {
   // Ignore max size and ending byte
@@ -418,10 +428,7 @@ int FontsDB::countSizeOfExpanded(const QString val) const
         expandStr(val, 255, "1234567", "1234567"), 255, false).size();
 }
 
-void FontsDB::splice(QVector<int>& out, const QString in, const int ind) const
+void FontsDB::splice(QVector<int>& out, const QString in, const int position) const
 {
-  QVector<int> tmp = convertToCode(in, 100, false);
-  out.remove(ind);
-  for(int j = 0; j < tmp.length(); j++)
-    out.insert(ind+j, tmp.at(j));
-}
+  // REPLACE the code at `position` with its expansion — remove the original
+  // first. Without this it was only an insert, so the 

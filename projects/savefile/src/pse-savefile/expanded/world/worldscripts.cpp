@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ void WorldScripts::load(SaveFile* saveFile)
 
   auto it = saveFile->iterator()->offsetTo(0x289C);
 
-  for(auto scriptEntry : ScriptsDB::store) {
+  for(auto scriptEntry : ScriptsDB::inst()->getStore()) {
     var16 val;
 
     if(scriptEntry->size == 1)
@@ -58,7 +58,7 @@ void WorldScripts::save(SaveFile* saveFile)
 {
   auto it = saveFile->iterator()->offsetTo(0x289C);
 
-  for(auto scriptEntry : ScriptsDB::store) {
+  for(auto scriptEntry : ScriptsDB::inst()->getStore()) {
     var16 val = curScripts[scriptEntry->ind];
 
     if(scriptEntry->size == 1)

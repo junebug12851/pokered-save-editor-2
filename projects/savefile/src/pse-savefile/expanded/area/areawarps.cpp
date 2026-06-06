@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
 */
 
 #include "./areawarps.h"
+#include "../../qmlownership.h"
 #include "../fragments/warpdata.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/util/mapsearch.h>
 #include <pse-common/random.h>
 
@@ -45,7 +47,7 @@ int AreaWarps::warpMax()
 
 WarpData* AreaWarps::warpAt(int ind)
 {
-  return warps.at(ind);
+  return qmlCppOwned(warps.at(ind));
 }
 
 void AreaWarps::warpSwap(int from, int to)
@@ -204,26 +206,26 @@ void AreaWarps::randomize(MapDBEntry* map)
   reset();
 
   // Pick random map that you came from
-  auto dungeonWarp = MapsDB::search()->isGood()->isType("Cave")->pickRandom();
+  auto dungeonWarp = MapsDB::inst()->search()->isGood()->isType("Cave")->pickRandom();
 
   // Assign index
-  dungeonWarpDestMap = dungeonWarp->ind;
+  dungeonWarpDestMap = dungeonWarp->getInd();
   dungeonWarpDestMapChanged();
 
   // Pick another random map for special warp destination
-  specialWarpDestMap = MapsDB::search()->isGood()->pickRandom()->ind;
+  specialWarpDestMap = MapsDB::inst()->search()->isGood()->pickRandom()->getInd();
   specialWarpDestMapChanged();
 
   // Make up some random warps on said dungeon warp
-  whichDungeonWarp = Random::rangeExclusive(0, dungeonWarp->warpOut.size());
+  whichDungeonWarp = Random::inst()->rangeExclusive(0, dungeonWarp->getWarpOut().size());
   whichDungeonWarpChanged();
 
-  warpedFromWarp = Random::rangeExclusive(0, dungeonWarp->warpOut.size());
+  warpedFromWarp = Random::inst()->rangeExclusive(0, dungeonWarp->getWarpOut().size());
   warpedFromWarpChanged();
 
   // Re-create all map warps out, we can't blantly make-up stuff here
   // and have to be careful
-  for(auto warpDataEntry : map->warpOut) {
+  for(auto warpDataEntry : map->getWarpOut()) {
     auto tmp = new WarpData(warpDataEntry);
 
     // Randomize it so long as it's not a return warp
@@ -243,29 +245,25 @@ void AreaWarps::setTo(MapDBEntry* map)
   reset();
 
   // Pick random map that you came from
-  auto dungeonWarp = MapsDB::search()->isGood()->isType("Cave")->pickRandom();
+  auto dungeonWarp = MapsDB::inst()->search()->isGood()->isType("Cave")->pickRandom();
 
   // Assign index
-  dungeonWarpDestMap = dungeonWarp->ind;
+  dungeonWarpDestMap = dungeonWarp->getInd();
   dungeonWarpDestMapChanged();
 
   // Pick another random map for special warp destination
-  specialWarpDestMap = MapsDB::search()->isGood()->pickRandom()->ind;
+  specialWarpDestMap = MapsDB::inst()->search()->isGood()->pickRandom()->getInd();
   specialWarpDestMapChanged();
 
   // Make up some random warps on said dungeon warp
-  whichDungeonWarp = Random::rangeExclusive(0, dungeonWarp->warpOut.size());
+  whichDungeonWarp = Random::inst()->rangeExclusive(0, dungeonWarp->getWarpOut().size());
   whichDungeonWarpChanged();
 
-  warpedFromWarp = Random::rangeExclusive(0, dungeonWarp->warpOut.size());
+  warpedFromWarp = Random::inst()->rangeExclusive(0, dungeonWarp->getWarpOut().size());
   warpedFromWarpChanged();
 
   // Re-create all map warps out, we can't blantly make-up stuff here
   // and have to be careful
-  for(auto warpDataEntry : map->warpOut) {
+  for(auto warpDataEntry : map->getWarpOut()) {
     auto tmp = new WarpData(warpDataEntry);
-    warps.append(tmp);
-  }
-
-  warpsChanged();
-}
+    wa

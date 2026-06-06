@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,14 +13,17 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef POKEMONBOX_H
-#define POKEMONBOX_H
-
+#pragma once
 #include <QObject>
 #include <QVector>
 #include <QString>
 #include <pse-common/types.h>
 #include "../../savefile_autoport.h"
+
+// PlayerBasics is used as a slot/Q_INVOKABLE parameter below; include the full
+// type so its QMetaType resolves now that it is no longer
+// Q_DECLARE_OPAQUE_POINTER'd.
+#include "../player/playerbasics.h"
 
 class SaveFile;
 class SaveFileIterator;
@@ -442,10 +445,4 @@ public:
   // Honestly this all started because I tried to load up a played through SAV
   // file from someone else which I didn't realize was tampered with. This was
   // one of the changes I made. After i realized it was tampered with I regret
-  // adding in this feature because the real SAV file only saves types one way
-  // never one or the other. Basically I've forgotten how the real save file
-  // saves them so I leave it in.
-  bool type2Explicit;
-};
-
-#endif // POKEMONBOX_H
+  // addi

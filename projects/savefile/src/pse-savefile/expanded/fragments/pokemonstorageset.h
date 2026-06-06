@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,12 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef POKEMONSTORAGESET_H
-#define POKEMONSTORAGESET_H
-
+#pragma once
 #include <QObject>
 #include <pse-common/types.h>
 #include "../../savefile_autoport.h"
+
+// PlayerBasics is used as a slot parameter below; include the full type so its
+// QMetaType resolves now that it is no longer Q_DECLARE_OPAQUE_POINTER'd.
+#include "../player/playerbasics.h"
 
 class SaveFile;
 class PokemonStorageBox;
@@ -54,12 +56,4 @@ signals:
 
 public slots:
   void reset();
-  void randomize(PlayerBasics* basics);
-
-public:
-  // There are never any more or less than exactly a set amount of boxes in a
-  // set, there's no need for this to be a Vector
-  PokemonStorageBox* boxes[setMaxBoxes];
-};
-
-#endif // POKEMONSTORAGESET_H
+  void randomize(PlayerBasics*

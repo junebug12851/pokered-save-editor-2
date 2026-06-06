@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ MapDBEntryWildMon::MapDBEntryWildMon(const QJsonValue& value, MapDBEntry* const 
 
 void MapDBEntryWildMon::deepLink()
 {
-  toPokemon = PokemonDB::ind.value(name, nullptr);
+  toPokemon = PokemonDB::inst()->getIndAt(name);
 
 #ifdef QT_DEBUG
   // Stop here if toMap is nullptr
@@ -60,7 +60,7 @@ void MapDBEntryWildMon::qmlRegister() const
   once = true;
 }
 
-const MapDBEntry* MapDBEntryWildMon::getParent() const
+MapDBEntry* MapDBEntryWildMon::getParent() const
 {
   return parent;
 }
@@ -70,7 +70,7 @@ void MapDBEntryWildMon::qmlProtect(const QQmlEngine* const engine) const
   Utility::qmlProtectUtil(this, engine);
 }
 
-const PokemonDBEntry* MapDBEntryWildMon::getToPokemon() const
+PokemonDBEntry* MapDBEntryWildMon::getToPokemon() const
 {
     return toPokemon;
 }

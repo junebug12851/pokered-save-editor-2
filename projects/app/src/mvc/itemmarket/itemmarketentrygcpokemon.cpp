@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 #include "./itemmarketentrygcpokemon.h"
 #include <pse-db/gamecornerdb.h>
+#include <pse-db/entries/gamecornerdbentry.h>
 #include <pse-savefile/expanded/storage.h>
 #include <pse-savefile/expanded/player/playerbasics.h>
 #include <pse-savefile/expanded/player/playerpokemon.h>
@@ -48,7 +49,7 @@ QString ItemMarketEntryGCPokemon::_name()
   if(!requestFilter())
     return "";
 
-  return toGameCorner->name + " Lv." + QString::number(*toGameCorner->level);
+  return toGameCorner->getName() + " Lv." + QString::number(toGameCorner->getLevel());
 }
 
 int ItemMarketEntryGCPokemon::_inStockCount()
@@ -67,7 +68,7 @@ int ItemMarketEntryGCPokemon::_itemWorth()
     return 0;
 
   // We are only dealing with one currency and one mode
-  return toGameCorner->price;
+  return toGameCorner->getPrice();
 }
 
 QString ItemMarketEntryGCPokemon::_whichType()
@@ -136,8 +137,8 @@ void ItemMarketEntryGCPokemon::checkout() {
   // Add in requested Pokemon
   for(int i = 0; i < onCart; i++) {
     // Prepare Pokemon
-    auto mon = PokemonBox::newPokemon(toGameCorner->toPokemon, player);
-    mon->level = *toGameCorner->level;
+    auto mon = PokemonBox::newPokemon(toGameCorner->getToPokemon(), player);
+    mon->level = toGameCorner->getLevel();
     mon->update(true, true, true, true);
 
     // Find Free Storage in case needed
@@ -156,7 +157,4 @@ void ItemMarketEntryGCPokemon::checkout() {
       qDebug() << "Mon was not able to be added?";
   }
 
-  onCart = 0;
-  player->coins -= cartWorth();
-  onCartChanged();
-}
+ }

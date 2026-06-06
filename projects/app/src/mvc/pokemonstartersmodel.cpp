@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ int PokemonStartersModel::valToIndex(int val)
   if(val == 0)
     return 0;
 
-  auto mon = PokemonDB::ind.value(QString::number(val), nullptr);
+  auto mon = PokemonDB::inst()->getIndAt(QString::number(val));
   if(mon == nullptr)
     return 4;
 
@@ -94,5 +94,5 @@ int PokemonStartersModel::valToIndex(int val)
 
 PokemonDBEntry* PokemonStartersModel::getMon(int ind) const
 {
-  return PokemonDB::ind.value(starters[ind], nullptr);
+  return PokemonDB::inst()->getIndAt(starters[ind]);
 }

@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef FONTSEARCH_H
-#define FONTSEARCH_H
-
+#pragma once
 #include <QObject>
 #include <QVector>
 #include <QString>
@@ -30,21 +28,6 @@ class DB_AUTOPORT FontSearch : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int fontCount READ getFontCount NOTIFY fontCountChanged STORED false)
-  Q_PROPERTY(FontSearch* startOver READ startOver)
-  Q_PROPERTY(FontSearch* andShorthand READ andShorthand)
-  Q_PROPERTY(FontSearch* notShorthand READ notShorthand)
-  Q_PROPERTY(FontSearch* andNormal READ andNormal)
-  Q_PROPERTY(FontSearch* notNormal READ notNormal)
-  Q_PROPERTY(FontSearch* andControl READ andControl)
-  Q_PROPERTY(FontSearch* notControl READ notControl)
-  Q_PROPERTY(FontSearch* andPicture READ andPicture)
-  Q_PROPERTY(FontSearch* notPicture READ notPicture)
-  Q_PROPERTY(FontSearch* andSingleChar READ andSingleChar)
-  Q_PROPERTY(FontSearch* notSingleChar READ notSingleChar)
-  Q_PROPERTY(FontSearch* andMultiChar READ andMultiChar)
-  Q_PROPERTY(FontSearch* notMultiChar READ notMultiChar)
-  Q_PROPERTY(FontSearch* andVariable READ andVariable)
-  Q_PROPERTY(FontSearch* notVariable READ notVariable)
 
 signals:
   void fontCountChanged();
@@ -52,21 +35,27 @@ signals:
 public:
   FontSearch();
 
-  FontSearch* startOver();
-  FontSearch* andShorthand();
-  FontSearch* notShorthand();
-  FontSearch* andNormal();
-  FontSearch* notNormal();
-  FontSearch* andControl();
-  FontSearch* notControl();
-  FontSearch* andPicture();
-  FontSearch* notPicture();
-  FontSearch* andSingleChar();
-  FontSearch* notSingleChar();
-  FontSearch* andMultiChar();
-  FontSearch* notMultiChar();
-  FontSearch* andVariable();
-  FontSearch* notVariable();
+  Q_INVOKABLE FontSearch* startOver();
+  Q_INVOKABLE FontSearch* clear();
+
+  // Sets results to the UNION of the selected categories — an entry is kept if
+  // it matches ANY enabled trait (OR, not AND). Nothing enabled → empty.
+  Q_INVOKABLE FontSearch* keepAnyOf(bool normal, bool control, bool picture,
+                                    bool singleChar, bool multiChar, bool variable);
+  Q_INVOKABLE FontSearch* andShorthand();
+  Q_INVOKABLE FontSearch* notShorthand();
+  Q_INVOKABLE FontSearch* andNormal();
+  Q_INVOKABLE FontSearch* notNormal();
+  Q_INVOKABLE FontSearch* andControl();
+  Q_INVOKABLE FontSearch* notControl();
+  Q_INVOKABLE FontSearch* andPicture();
+  Q_INVOKABLE FontSearch* notPicture();
+  Q_INVOKABLE FontSearch* andSingleChar();
+  Q_INVOKABLE FontSearch* notSingleChar();
+  Q_INVOKABLE FontSearch* andMultiChar();
+  Q_INVOKABLE FontSearch* notMultiChar();
+  Q_INVOKABLE FontSearch* andVariable();
+  Q_INVOKABLE FontSearch* notVariable();
 
   // QML Interface
   const QVector<FontDBEntry*> getFonts() const;
@@ -83,4 +72,3 @@ private:
   QVector<FontDBEntry*> results;
 };
 
-#endif // FONTSEARCH_H

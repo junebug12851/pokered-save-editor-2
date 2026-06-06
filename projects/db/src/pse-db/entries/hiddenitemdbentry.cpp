@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 #include <pse-common/utility.h>
 
 #include "../mapsdb.h"
+#include "./mapdbentry.h"
 #include "hiddenitemdbentry.h"
 
 HiddenItemDBEntry::HiddenItemDBEntry() {
@@ -37,7 +38,7 @@ HiddenItemDBEntry::HiddenItemDBEntry(const QJsonValue& data)
 
 void HiddenItemDBEntry::deepLink()
 {
-  toMap = MapsDB::ind.value(map, nullptr);
+  toMap = MapsDB::inst()->getIndAt(map);
 
 #ifdef QT_DEBUG
   if(toMap == nullptr)
@@ -59,7 +60,7 @@ void HiddenItemDBEntry::qmlRegister() const
   once = true;
 }
 
-const QString HiddenItemDBEntry::getMap() const
+QString HiddenItemDBEntry::getMap() const
 {
     return map;
 }
@@ -74,7 +75,7 @@ int HiddenItemDBEntry::getY() const
     return y;
 }
 
-const MapDBEntry* HiddenItemDBEntry::getToMap() const
+MapDBEntry* HiddenItemDBEntry::getToMap() const
 {
   return toMap;
 }

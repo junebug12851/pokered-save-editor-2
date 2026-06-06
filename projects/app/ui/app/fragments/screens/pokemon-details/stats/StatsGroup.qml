@@ -1,186 +1,93 @@
-import QtQuick 2.14
-import QtCharts 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
-import App.PokemonBox 1.0
-import App.PokemonParty 1.0
+import App.PokemonBox
+import App.PokemonParty
 
 import "../../../general"
 import "../../../header"
 
+// Read-only computed stats (HP/Atk/Def/Spd/Sp) shown as a clean label | value
+// grid. Two columns align on their own — no per-row anchor offsets.
 Rectangle {
-  Text {
-    id: hpStatTxt
+  GridLayout {
     anchors.top: parent.top
     anchors.left: parent.left
 
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
+    columns: 2
+    columnSpacing: 5
+    rowSpacing: 3
 
-    font.pixelSize: 14
-    width: font.pixelSize * 3
+    Text {
+      text: "HP"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+    }
+    Text {
+      text: (boxData.isValidBool) ? boxData.hpStat : "???"
+      font.pixelSize: 14
+      Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+    }
 
-    font.bold: true
+    Text {
+      text: "Atk"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+    }
+    Text {
+      text: (boxData.isValidBool) ? boxData.atkStat : "???"
+      font.pixelSize: 14
+      Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+    }
 
-    text: "HP"
-  }
+    Text {
+      text: "Def"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+    }
+    Text {
+      text: (boxData.isValidBool) ? boxData.defStat : "???"
+      font.pixelSize: 14
+      Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+    }
 
-  Text {
-    id: hpStatNum
-    anchors.top: hpStatTxt.top
-    anchors.left: hpStatTxt.right
-    anchors.leftMargin: 5
-    anchors.bottom: hpStatTxt.bottom
+    Text {
+      text: "Spd"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+    }
+    Text {
+      text: (boxData.isValidBool) ? boxData.spdStat : "???"
+      font.pixelSize: 14
+      Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+    }
 
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-
-    text: (boxData.isValidBool)
-          ? boxData.hpStat
-          : "???"
-  }
-
-  Text {
-    id: atkStatTxt
-    anchors.top: hpStatTxt.bottom
-    anchors.topMargin: 5
-    anchors.left: parent.left
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "Atk"
-  }
-
-  Text {
-    id: atkStatNum
-    anchors.top: atkStatTxt.top
-    anchors.left: atkStatTxt.right
-    anchors.leftMargin: 5
-    anchors.bottom: atkStatTxt.bottom
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    text: (boxData.isValidBool)
-          ? boxData.atkStat
-          : "???"
-  }
-
-  Text {
-    id: defStatTxt
-    anchors.top: atkStatTxt.bottom
-    anchors.topMargin: 5
-    anchors.left: parent.left
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "Def"
-  }
-
-  Text {
-    id: defStatNum
-    anchors.top: defStatTxt.top
-    anchors.left: defStatTxt.right
-    anchors.leftMargin: 5
-    anchors.bottom: defStatTxt.bottom
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    text: (boxData.isValidBool)
-          ? boxData.defStat
-          : "???"
-  }
-
-  Text {
-    id: spdStatTxt
-    anchors.top: defStatTxt.bottom
-    anchors.topMargin: 5
-    anchors.left: parent.left
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "Spd"
-  }
-
-  Text {
-    id: spdStatNum
-    anchors.top: spdStatTxt.top
-    anchors.left: spdStatTxt.right
-    anchors.leftMargin: 5
-    anchors.bottom: spdStatTxt.bottom
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    text: (boxData.isValidBool)
-          ? boxData.spdStat
-          : "???"
-  }
-
-  Text {
-    id: spStatTxt
-    anchors.top: spdStatTxt.bottom
-    anchors.topMargin: 5
-    anchors.left: parent.left
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "Sp"
-  }
-
-  Text {
-    id: spStatNum
-    anchors.top: spStatTxt.top
-    anchors.left: spStatTxt.right
-    anchors.leftMargin: 5
-    anchors.bottom: spStatTxt.bottom
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    text: (boxData.isValidBool)
-          ? boxData.spStat
-          : "???"
+    Text {
+      text: "Sp"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+    }
+    Text {
+      text: (boxData.isValidBool) ? boxData.spStat : "???"
+      font.pixelSize: 14
+      Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+    }
   }
 }

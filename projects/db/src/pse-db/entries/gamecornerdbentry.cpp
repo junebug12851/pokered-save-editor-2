@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 
 #include "../pokemon.h"
 #include "../itemsdb.h"
+#include "./itemdbentry.h"
 #include "../gamecornerdb.h"
 #include "gamecornerdbentry.h"
 
@@ -47,7 +48,7 @@ void GameCornerDBEntry::deepLink() {
     return;
 
   if(type == "pokemon") {
-    toPokemon = PokemonDB::ind.value(name, nullptr);
+    toPokemon = PokemonDB::inst()->getIndAt(name);
 
 #ifdef QT_DEBUG
     if(toPokemon == nullptr)
@@ -61,7 +62,7 @@ void GameCornerDBEntry::deepLink() {
     toPokemon->toGameCorner.append(this);
   }
   else if(type == "tm") {
-    toItem = ItemsDB::ind.value(name, nullptr);
+    toItem = ItemsDB::inst()->getIndAt(name);
 
 #ifdef QT_DEBUG
     if(toItem == nullptr)
@@ -87,7 +88,7 @@ void GameCornerDBEntry::qmlRegister() const
   once = true;
 }
 
-const ItemDBEntry* GameCornerDBEntry::getToItem() const
+ItemDBEntry* GameCornerDBEntry::getToItem() const
 {
   return toItem;
 }
@@ -97,7 +98,7 @@ void GameCornerDBEntry::qmlProtect(const QQmlEngine* const engine) const
   Utility::qmlProtectUtil(this, engine);
 }
 
-const PokemonDBEntry* GameCornerDBEntry::getToPokemon() const
+PokemonDBEntry* GameCornerDBEntry::getToPokemon() const
 {
     return toPokemon;
 }
@@ -112,12 +113,12 @@ int GameCornerDBEntry::getPrice() const
     return price;
 }
 
-const QString GameCornerDBEntry::getType() const
+QString GameCornerDBEntry::getType() const
 {
     return type;
 }
 
-const QString GameCornerDBEntry::getName() const
+QString GameCornerDBEntry::getName() const
 {
     return name;
 }

@@ -1,130 +1,126 @@
-import QtQuick 2.14
-import QtCharts 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
-import App.PokemonBox 1.0
-import App.PokemonParty 1.0
+import App.PokemonBox
+import App.PokemonParty
 
 import "../../general"
 import "../../header"
 import "./stats"
 
+// DV/EV tab. Laid out top-down in a ColumnLayout: toggle row, the (content-
+// sized) stat group, then the Future-Shiny row — with a flexible spacer at the
+// bottom so all slack collects there instead of as odd gaps between sections.
 Rectangle {
   property PokemonBox boxData: null
   property PokemonBox partyData: null
 
   color: "transparent"
 
-  Button {
-    id: statsTglBtn;
-
-    anchors.top: parent.top
-    anchors.topMargin: 15
-    anchors.horizontalCenter: parent.horizontalCenter
-
-    text: "DV"
-    width: font.pixelSize * 5
-    flat: true
-
-    onClicked: {
-      if(text == "DV")
-        text = "EV";
-      else
-        text = "DV";
-    }
-
-    MainToolTip {
-      text: (statsTglBtn.text == "DV")
-            ? "These are set on capture and never change in-game, they help affect the stats making each Pokemon unique. HP is a 5th DV that's calculated from the other DV."
-            : "These are zero on capture and increase after every battle until maxed out. They slowly increase based on each opponent defeated and help make each Pokemon unique."
-    }
-  }
-
-  IconButtonSquare {
-    anchors.left: statsTglBtn.right
-    anchors.leftMargin: -5
-    anchors.top: statsTglBtn.top
-    anchors.topMargin: 0
-
-    icon.width: 7
-    icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
-    icon.color: brg.settings.textColorDark
-
-    onClicked: (statsTglBtn.text === "DV")
-               ? statsTglBtnMenuDV.open()
-               : statsTglBtnMenuEV.open()
-
-    Menu {
-      id: statsTglBtnMenuDV
-
-      MenuItem { text: "Max DVs";  onTriggered: boxData.maxDVs(); enabled: !boxData.isMaxDVs }
-      MenuItem { text: "Re-Roll DVs"; onTriggered: boxData.reRollDVs() }
-      MenuItem { text: "Reset DVs"; onTriggered: boxData.resetDVs(); enabled: !boxData.isMinDVs }
-
-      MenuSeparator {}
-      MenuItem { text: "Close" }
-    }
-
-    Menu {
-      id: statsTglBtnMenuEV
-
-      MenuItem { text: "Max EVs"; onTriggered: boxData.maxEVs(); enabled: !boxData.isMaxEVs }
-      MenuItem { text: "Re-Roll EVs"; onTriggered: boxData.reRollEVs() }
-      MenuItem { text: "Reset EVs"; onTriggered: boxData.resetEVs(); enabled: !boxData.isMinEvs }
-
-      MenuSeparator {}
-      MenuItem { text: "Close" }
-    }
-  }
-
-  DvStatGroup {
-    visible: statsTglBtn.text == "DV"
-
-    anchors.top: statsTglBtn.bottom
-    anchors.topMargin: 15
-    anchors.left: parent.left
+  ColumnLayout {
+    anchors.fill: parent
     anchors.leftMargin: 5
-    anchors.right: parent.right
     anchors.rightMargin: 5
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 5
-  }
+    spacing: 4
 
-  EvStatGroup {
-    visible: statsTglBtn.text == "EV"
+    // ---- DV/EV toggle (centered) + its options ⋮ (beside it, doesn't shift
+    //      the toggle's centering) ----
+    Item {
+      Layout.fillWidth: true
+      Layout.topMargin: 12
+      Layout.preferredHeight: statsTglBtn.height
 
-    anchors.top: statsTglBtn.bottom
-    anchors.topMargin: 15
-    anchors.left: parent.left
-    anchors.leftMargin: 5
-    anchors.right: parent.right
-    anchors.rightMargin: 5
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 5
-  }
+      Button {
+        id: statsTglBtn
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: "DV"
+        width: font.pixelSize * 5
+        flat: true
 
-  Row {
-    anchors.bottom: parent.bottom
-    anchors.left: parent.left
+        onClicked: {
+          if(text == "DV")
+            text = "EV";
+          else
+            text = "DV";
+        }
 
-    ShadedBG {
-      id: futureShiny
+        MainToolTip {
+          text: (statsTglBtn.text == "DV")
+                ? "These are set on capture and never change in-game, they help affect the stats making each Pokemon unique. HP is a 5th DV that's calculated from the other DV."
+                : "These are zero on capture and increase after every battle until maxed out. They slowly increase based on each opponent defeated and help make each Pokemon unique."
+        }
+      }
 
-      HeaderText {
-        text: "Future Shiny"
+      IconButtonSquare {
+        anchors.left: statsTglBtn.right
+        anchors.verticalCenter: statsTglBtn.verticalCenter
+        icon.width: 7
+        icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
+        icon.color: brg.settings.textColorDark
+
+        onClicked: (statsTglBtn.text === "DV")
+                   ? statsTglBtnMenuDV.open()
+                   : statsTglBtnMenuEV.open()
+
+        Menu {
+          id: statsTglBtnMenuDV
+          MenuItem { text: "Max DVs";  onTriggered: { boxData.maxDVs(); } enabled: !boxData.isMaxDVs }
+          MenuItem { text: "Re-Roll DVs"; onTriggered: boxData.reRollDVs() }
+          MenuItem { text: "Reset DVs"; onTriggered: { boxData.resetDVs(); } enabled: !boxData.isMinDVs }
+          MenuSeparator {}
+          MenuItem { text: "Close" }
+        }
+
+        Menu {
+          id: statsTglBtnMenuEV
+          MenuItem { text: "Max EVs"; onTriggered: { boxData.maxEVs(); } enabled: !boxData.isMaxEVs }
+          MenuItem { text: "Re-Roll EVs"; onTriggered: boxData.reRollEVs() }
+          MenuItem { text: "Reset EVs"; onTriggered: { boxData.resetEVs(); } enabled: !boxData.isMinEvs }
+          MenuSeparator {}
+          MenuItem { text: "Close" }
+        }
+      }
+    }
+
+    // ---- The stat sliders (content-sized; only the visible one takes space) ----
+    DvStatGroup {
+      visible: statsTglBtn.text == "DV"
+      Layout.fillWidth: true
+    }
+
+    EvStatGroup {
+      visible: statsTglBtn.text == "EV"
+      Layout.fillWidth: true
+    }
+
+    // ---- Future Shiny (clean row: shaded label | checkbox | … | ⋮) ----
+    RowLayout {
+      id: futureShinyRow
+      Layout.fillWidth: true
+      Layout.preferredHeight: 30
+      Layout.maximumHeight: 30
+      spacing: 8
+
+      Rectangle {
+        Layout.preferredWidth: 110
+        Layout.fillHeight: true
+        color: Qt.lighter(brg.settings.textColorMid, 1.75)
+        HeaderText { text: "Future Shiny" }
       }
 
       CheckBox {
         id: futureShinyEdit
+        Layout.alignment: Qt.AlignVCenter
+        padding: 0
+        Layout.preferredHeight: 26
+        Layout.minimumHeight: 0
 
-        anchors.top: futureShiny.top
-        anchors.topMargin: -5
-        anchors.left: futureShiny.right
-        anchors.leftMargin: 0
-
-        onCheckedChanged: {
+        // onToggled (not onCheckedChanged) so this fires ONLY on a real user
+        // click — never on the programmatic `checked = boxData.isShiny` sync.
+        // makeShiny() rewrites DV bytes; we must not trigger it from just opening.
+        onToggled: {
           if(checked)
             boxData.makeShiny();
           else
@@ -135,7 +131,7 @@ Rectangle {
 
         Connections {
           target: boxData
-          onDvChanged: futureShinyEdit.checked = boxData.isShiny;
+          function onDvChanged() { futureShinyEdit.checked = boxData.isShiny; }
         }
 
         MainToolTip {
@@ -143,13 +139,11 @@ Rectangle {
         }
       }
 
-      IconButtonSquare {
-        anchors.left: futureShinyEdit.right
-        anchors.leftMargin: -15
-        anchors.top: futureShiny.top
-        anchors.topMargin: -3
-        icon.width: 7
+      Item { Layout.fillWidth: true }
 
+      IconButtonSquare {
+        Layout.alignment: Qt.AlignVCenter
+        icon.width: 7
         icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
         icon.color: brg.settings.textColorDark
 
@@ -159,27 +153,30 @@ Rectangle {
           id: futureShinyMenu
           MenuItem {
             text: "Re-Roll Shiny";
-            onTriggered: boxData.rollShiny();
+            onTriggered: { boxData.rollShiny(); }
           }
           MenuItem {
             text: "Re-Roll Non-Shiny";
-            onTriggered: boxData.rollNonShiny();
+            onTriggered: { boxData.rollNonShiny(); }
           }
           MenuSeparator { }
           MenuItem {
             text: "Convert to Shiny"
             enabled: !boxData.isShiny
-            onTriggered: boxData.makeShiny();
+            onTriggered: { boxData.makeShiny(); }
           }
           MenuItem {
             text: "Convert to Non-Shiny"
             enabled: boxData.isShiny
-            onTriggered: boxData.unmakeShiny();
+            onTriggered: { boxData.unmakeShiny(); }
           }
           MenuSeparator { }
           MenuItem { text: "Close" }
         }
       }
     }
+
+    // Absorb leftover height so the form stays top-aligned (no odd mid gaps).
+    Item { Layout.fillWidth: true; Layout.fillHeight: true }
   }
 }

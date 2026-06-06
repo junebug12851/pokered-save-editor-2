@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ EventPokemonDBEntry::EventPokemonDBEntry(const QJsonValue& data) {
     }
     else
     {
-      auto dvValParts = dvVal.split(":", QString::SkipEmptyParts);
+      auto dvValParts = dvVal.split(":", Qt::SkipEmptyParts);
       dvAtk = dvValParts[0].toInt(nullptr, 10);
       dvDef = dvValParts[1].toInt(nullptr, 10);
       dvSpd = dvValParts[2].toInt(nullptr, 10);
@@ -93,7 +93,7 @@ EventPokemonDBEntry::EventPokemonDBEntry(const QJsonValue& data) {
 
 void EventPokemonDBEntry::deepLink()
 {
-  toPokemon = PokemonDB::ind.value(pokemon, nullptr);
+  toPokemon = PokemonDB::inst()->getIndAt(pokemon);
 
 #ifdef QT_DEBUG
   if(toPokemon == nullptr)
@@ -139,7 +139,7 @@ int EventPokemonDBEntry::getDvAtk() const
   return dvAtk;
 }
 
-const PokemonDBEntry* EventPokemonDBEntry::getToPokemon() const
+PokemonDBEntry* EventPokemonDBEntry::getToPokemon() const
 {
   return toPokemon;
 }
@@ -149,12 +149,12 @@ int EventPokemonDBEntry::getLevel() const
   return level;
 }
 
-const QVector<QString> EventPokemonDBEntry::getMoves() const
+QVector<QString> EventPokemonDBEntry::getMoves() const
 {
   return moves;
 }
 
-const QString EventPokemonDBEntry::getRegion() const
+QString EventPokemonDBEntry::getRegion() const
 {
   return region;
 }
@@ -164,22 +164,22 @@ int EventPokemonDBEntry::getOtId() const
   return otId;
 }
 
-const QVector<QString> EventPokemonDBEntry::getOtName() const
+QVector<QString> EventPokemonDBEntry::getOtName() const
 {
   return otName;
 }
 
-const QString EventPokemonDBEntry::getPokemon() const
+QString EventPokemonDBEntry::getPokemon() const
 {
   return pokemon;
 }
 
-const QString EventPokemonDBEntry::getDesc() const
+QString EventPokemonDBEntry::getDesc() const
 {
   return desc;
 }
 
-const QString EventPokemonDBEntry::getTitle() const
+QString EventPokemonDBEntry::getTitle() const
 {
   return title;
 }

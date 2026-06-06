@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 #include "./settings.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/tileset.h>
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/expanded/savefileexpanded.h>
@@ -89,13 +90,12 @@ void Settings::dataChanged()
   auto mapInd = file->dataExpanded->area->map->curMap;
 
   // Get all the data for the current map
-  auto mapData = MapsDB::ind.value(QString::number(mapInd), nullptr);
+  auto mapData = MapsDB::inst()->getIndAt(QString::number(mapInd));
 
   // Really shouldn't be any kind of error but stop here if there is one
-  if(mapData == nullptr || mapData->toTileset == nullptr)
+  if(mapData == nullptr || mapData->getToTileset() == nullptr)
     return;
 
   // Load in the 2 settings
-  previewTileset = mapData->toTileset->name;
-  previewOutdoor = mapData->toTileset->type == "Outdoor";
-}
+  previewTileset = mapData->getToTileset()->name;
+  previewOutdoor = (mapData->getToTileset()->

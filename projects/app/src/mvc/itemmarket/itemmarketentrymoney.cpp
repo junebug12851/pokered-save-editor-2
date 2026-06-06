@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -64,9 +64,9 @@ int ItemMarketEntryMoney::_itemWorth()
     return 0;
 
   if(*isBuyMode)
-    return GameCornerDB::buyPrice;
+    return GameCornerDB::inst()->getBuyPrice();
 
-  return GameCornerDB::sellPrice;
+  return GameCornerDB::inst()->getSellPrice();
 }
 
 QString ItemMarketEntryMoney::_whichType()
@@ -134,5 +134,4 @@ void ItemMarketEntryMoney::checkout()
   player->coinsChanged();
 
   onCart = 0;
-  onCartChanged();
 }

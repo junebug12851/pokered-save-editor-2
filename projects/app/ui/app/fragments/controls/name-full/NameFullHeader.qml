@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../name"
 import "../../general"
@@ -10,8 +10,6 @@ import "../../modal"
 ToolBar {
   id: top
 
-  signal toggleExample();
-  signal reUpdateExample();
   signal preClose();
 
   property string str: ""
@@ -20,52 +18,42 @@ ToolBar {
   property bool isPersonName: false
   property bool hasBox: false
 
-  height: 75
+  // Drives which page the left pane shows: false = character list, true = the
+  // simulated tileset grid. Toggled by the "View" button below. FullKeyboard
+  // binds its picker to this.
+  property bool showTileset: false
+
+  height: 124
   Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
 
-  onStrChanged: {
-    editor.str = top.str
-  }
+  onStrChanged: editor.str = top.str
 
-  Row {
+  ColumnLayout {
     anchors.centerIn: parent
-    spacing: 20
+    spacing: 6
 
-    NameFullEdit {
-      id: editor
+    // ---- "Simulated" control group: a plain text label, then two toggle
+    //      buttons and the tileset combo. ----
+    RowLayout {
+      Layout.alignment: Qt.AlignHCenter
+      spacing: 3
 
-      onToggleExample: top.toggleExample();
-      onReUpdateExample: top.reUpdateExample();
+      // Plain caption — NOT a button.
+      Label {
+        text: "Simulated"
+        font.bold: true
+        font.pixelSize: 13
+        color: brg.settings.textColorDark
+        Layout.alignment: Qt.AlignVCenter
+      }
 
-      chopLen: top.chopLen
-      sizeMult: top.sizeMult
-      isPersonName: top.isPersonName
-      hasBox: top.hasBox
+      // Bold vertical pipe between the label and the controls (Twilight likes it).
+      ToolSeparator {
+        Layout.fillHeight: false
+        Layout.preferredHeight: 24
+        Layout.alignment: Qt.AlignVCenter
+      }
 
-      str: top.str
-      onStrChanged: top.str = str;
-    }
-
-    Button {
-      text: "Is Outdoor"
-      opacity: (brg.settings.previewOutdoor) ? 1.00 : 0.50
-      onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
-      font.capitalization: Font.Capitalize
-      font.pixelSize: 12
-      flat: true
-    }
-
-    NameFullTileset {}
-  }
-
-  ModalClose {
-    onClicked: {
-      top.preClose();
-      brg.router.closeScreen();
-    }
-    anchors.topMargin: 3
-    anchors.rightMargin: 3
-    icon.width: 28
-    icon.height: 28
-  }
-}
+      FlatToggle {
+        text: "Outdoor"
+        a

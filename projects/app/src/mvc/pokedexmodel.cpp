@@ -32,7 +32,7 @@ PokedexModel::PokedexModel(PlayerPokedex* pokedex, Router* router)
     router(router)
 {
   // Populate cache containing dex entries
-  for(auto el : PokemonDB::store) {
+  for(auto el : PokemonDB::inst()->getStore()) {
     if(!el->pokedex)
       continue;
 
@@ -74,8 +74,8 @@ QVariant PokedexModel::data(const QModelIndex& index, int role) const
     return QVariant();
 
   // Get Pokemon and return if invalid
-  //auto mon = PokemonDB::ind.value("dex" + QString::number(index.row()), nullptr);
-  auto mon = PokemonDB::ind.value("dex" + QString::number(dexListCache.at(index.row())->dex), nullptr);
+  //auto mon = PokemonDB::inst()->getIndAt("dex" + QString::number(index.row()), nullptr);
+  auto mon = PokemonDB::inst()->getIndAt("dex" + QString::number(dexListCache.at(index.row())->dex));
   if(mon == nullptr)
     return QVariant();
 

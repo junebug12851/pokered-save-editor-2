@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,14 +13,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MOVE_H
-#define MOVE_H
+#pragma once
 
+#include <QObject>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
 #include <QHash>
-
 #include <optional>
 
 #include <pse-common/types.h>
@@ -30,17 +29,9 @@ struct TypeDBEntry;
 struct ItemDBEntry;
 struct PokemonDBEntryMove;
 struct PokemonDBEntry;
-
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
-
-// All the Pokemon moves in the game including special or glitch moves
+class QQmlEngine;
 
 struct DB_AUTOPORT MoveDBEntry {
-
-  // Optional bool values are only present when true, so we simplify things
-  // and mark then false unless they're present skipping dealing with variant
-
   MoveDBEntry();
   MoveDBEntry(QJsonValue& data);
   void deepLink();
@@ -57,22 +48,42 @@ struct DB_AUTOPORT MoveDBEntry {
   std::optional<var8> tm;
   std::optional<var8> hm;
 
-  TypeDBEntry* toType = nullptr; // Deep link to move type
-  ItemDBEntry* toItem = nullptr; // Deep link to tm/hm item if present
-  QVector<PokemonDBEntryMove*> toPokemonLearned;
-  QVector<PokemonDBEntry*> toPokemonInitial;
-  QVector<PokemonDBEntry*> toPokemonTmHm;
+  TypeDBEntry* toType  = nullptr;
+  ItemDBEntry* toItem  = nullptr;
+
+  // Back-references populated during PokemonDB deep-link
+  QVector<struct PokemonDBEntryMove*> toPokemonLearned;
+  QVector<struct PokemonDBEntry*>     toPokemonInitial;
+  QVector<struct PokemonDBEntry*>     toPokemonTmHm;
 };
 
-class DB_AUTOPORT MovesDB
+class DB_AUTOPORT MovesDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+
 public:
-  static void load();
-  static void index();
-  static void deepLink();
+  static MovesDB* inst();
 
-  static QVector<MoveDBEntry*> store;
-  static QHash<QString, MoveDBEntry*> ind;
+  [[nodiscard]] const QVector<MoveDBEntry*> getStore() const;
+  [[nodiscard]] const QHash<QString, MoveDBEntry*> getInd() const;
+  [[nodiscard]] int getStoreSize() const;
+
+  Q_INVOKABLE MoveDBEntry* getStoreAt(int idx) const;
+  Q_INVOKABLE MoveDBEntry* getIndAt(const QString& key) const;
+
+public slots:
+  void load();
+  void index();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  MovesDB();
+
+  QVector<MoveDBEntry*> store;
+  QHash<QString, MoveDBEntry*> ind;
 };
-
-#endif // MOVE_H

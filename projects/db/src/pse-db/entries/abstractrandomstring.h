@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef ABSTRACTEXAMPLE_H
-#define ABSTRACTEXAMPLE_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 
@@ -27,7 +25,6 @@ class DB_AUTOPORT AbstractRandomString : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int getStoreSize READ getStoreSize STORED false NOTIFY listChanged)
-  Q_PROPERTY(QString randomExample READ randomExample STORED false)
 
 signals:
   // Sort of an exception, the DB is almost entirely read-only but this is an
@@ -39,7 +36,7 @@ public:
   int getStoreSize() const;
   Q_INVOKABLE const QString getStoreAt(const int ind) const;
 
-  QString randomExample();
+  Q_INVOKABLE QString randomExample();
 
 public slots:
   // QML accessible methods
@@ -55,4 +52,3 @@ protected:
   const QString fileName;
 };
 
-#endif // ABSTRACTEXAMPLE_H

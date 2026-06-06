@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef AREA_H
-#define AREA_H
-
+#pragma once
 #include <QObject>
 #include "../../savefile_autoport.h"
 
@@ -32,6 +30,35 @@ class AreaSign;
 class AreaSprites;
 class AreaTileset;
 class AreaWarps;
+
+// Only `area.general` is traversed in QML (the playtime "countPlaytime" helper),
+// so include ONLY that child as a full type. The other 10 area children stay
+// forward-declared + Q_DECLARE_OPAQUE_POINTER below. Pulling all 11 in dragged
+// the heavy area subtree (whose .cpp's include db headers) into the global
+// include path and ballooned build time. See notes/reference/qt6-patterns.md.
+#include "./areageneral.h"
+
+class AreaAudio;
+class AreaLoadedSprites;
+class AreaMap;
+class AreaNPC;
+class AreaPlayer;
+class AreaPokemon;
+class AreaSign;
+class AreaSprites;
+class AreaTileset;
+class AreaWarps;
+
+Q_DECLARE_OPAQUE_POINTER(AreaAudio*)
+Q_DECLARE_OPAQUE_POINTER(AreaLoadedSprites*)
+Q_DECLARE_OPAQUE_POINTER(AreaMap*)
+Q_DECLARE_OPAQUE_POINTER(AreaNPC*)
+Q_DECLARE_OPAQUE_POINTER(AreaPlayer*)
+Q_DECLARE_OPAQUE_POINTER(AreaPokemon*)
+Q_DECLARE_OPAQUE_POINTER(AreaSign*)
+Q_DECLARE_OPAQUE_POINTER(AreaSprites*)
+Q_DECLARE_OPAQUE_POINTER(AreaTileset*)
+Q_DECLARE_OPAQUE_POINTER(AreaWarps*)
 
 class MapDBEntry;
 
@@ -66,29 +93,4 @@ signals:
   void mapChanged();
   void npcChanged();
   void playerChanged();
-  void pokemonChanged();
-  void signsChanged();
-  void spritesChanged();
-  void tilesetChanged();
-  void warpsChanged();
-
-public slots:
-  void reset();
-  void randomize();
-  void setTo(MapDBEntry* map);
-
-public:
-  AreaAudio* audio = nullptr;
-  AreaLoadedSprites* preloadedSprites = nullptr;
-  AreaGeneral* general = nullptr;
-  AreaMap* map = nullptr;
-  AreaNPC* npc = nullptr;
-  AreaPlayer* player = nullptr;
-  AreaPokemon* pokemon = nullptr;
-  AreaSign* signs = nullptr;
-  AreaSprites* sprites = nullptr;
-  AreaTileset* tileset = nullptr;
-  AreaWarps* warps = nullptr;
-};
-
-#endif // AREA_H
+  void po

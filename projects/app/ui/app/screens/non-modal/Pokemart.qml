@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../fragments/general"
 import "../../fragments/header"
@@ -198,7 +198,7 @@ Page {
 
         property bool isLast: index+1 < marketView.count ? false : true
 
-        width: parent.width
+        width: parent ? parent.width : 0
 
 //        function getTo() {
 //          if(dataWhichType === "playerItem" || dataWhichType === "money")

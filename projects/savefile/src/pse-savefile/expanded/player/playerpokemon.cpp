@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
   * limitations under the License.
 */
 #include "playerpokemon.h"
+#include "../../qmlownership.h"
 #include "./player.h"
 #include "./playerbasics.h"
 #include "../../savefile.h"
@@ -91,13 +92,13 @@ void PlayerPokemon::save(SaveFile* saveFile, var16 boxOffset)
 
 PokemonParty* PlayerPokemon::partyAt(int ind)
 {
-  return (PokemonParty*)pokemon.at(ind);
+  return qmlCppOwned((PokemonParty*)pokemon.at(ind));
 }
 
 void PlayerPokemon::randomize(PlayerBasics* basics)
 {
   // Randomize up to 5 Pokemon
-  var8 count = Random::rangeInclusive(1, 5);
+  var8 count = Random::inst()->rangeInclusive(1, 5);
 
   // Clear Pokemon Party and add them in
   reset();
@@ -119,15 +120,15 @@ void PlayerPokemon::randomize(PlayerBasics* basics)
   tmp->clearMoves();
 
   // Add in 4 most important HM's
-  tmp->changeMove(0, MovesDB::ind.value("FLY")->ind);
-  tmp->changeMove(1, MovesDB::ind.value("SURF")->ind);
-  tmp->changeMove(2, MovesDB::ind.value("STRENGTH")->ind);
-  tmp->changeMove(3, MovesDB::ind.value("CUT")->ind);
+  tmp->changeMove(0, MovesDB::inst()->getIndAt("FLY")->ind);
+  tmp->changeMove(1, MovesDB::inst()->getIndAt("SURF")->ind);
+  tmp->changeMove(2, MovesDB::inst()->getIndAt("STRENGTH")->ind);
+  tmp->changeMove(3, MovesDB::inst()->getIndAt("CUT")->ind);
 
   // Generate random PP Ups and heal PP like other Pokemon
   for(auto move : tmp->moves) {
     // Generate random PP Ups
-    move->ppUp = Random::rangeInclusive(0, 3);
+    move->ppUp = Random::inst()->rangeInclusive(0, 3);
 
     // Restore PP of move
     move->restorePP();
@@ -144,6 +145,4 @@ void PlayerPokemon::pokemonNew()
 
   auto mon = PokemonParty::convertToParty(PokemonParty::newPokemon(PokemonRandom::Random_Starters, file->dataExpanded->player->basics));
   pokemon.append(mon);
-  pokemonInsertChange();
-  pokemonChanged();
-}
+  po

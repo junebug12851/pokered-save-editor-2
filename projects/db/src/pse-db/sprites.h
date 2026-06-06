@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SPRITE_H
-#define SPRITE_H
+#pragma once
 
+#include <QObject>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
@@ -25,11 +25,7 @@
 #include "./db_autoport.h"
 
 struct MapDBEntrySprite;
-
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
-
-// All sprites in the game, glitch and not
+class QQmlEngine;
 
 struct DB_AUTOPORT SpriteDBEntry {
   SpriteDBEntry();
@@ -41,14 +37,32 @@ struct DB_AUTOPORT SpriteDBEntry {
   QVector<MapDBEntrySprite*> toMaps;
 };
 
-class DB_AUTOPORT SpritesDB
+class DB_AUTOPORT SpritesDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+
 public:
-  static void load();
-  static void index();
+  static SpritesDB* inst();
 
-  static QVector<SpriteDBEntry*> store;
-  static QHash<QString, SpriteDBEntry*> ind;
+  [[nodiscard]] const QVector<SpriteDBEntry*> getStore() const;
+  [[nodiscard]] const QHash<QString, SpriteDBEntry*> getInd() const;
+  [[nodiscard]] int getStoreSize() const;
+
+  Q_INVOKABLE SpriteDBEntry* getStoreAt(int idx) const;
+  Q_INVOKABLE SpriteDBEntry* getIndAt(const QString& key) const;
+
+public slots:
+  void load();
+  void index();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  SpritesDB();
+
+  QVector<SpriteDBEntry*> store;
+  QHash<QString, SpriteDBEntry*> ind;
 };
-
-#endif // SPRITE_H

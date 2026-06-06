@@ -1,11 +1,29 @@
-#ifndef RAWSAVEDATA_H
-#define RAWSAVEDATA_H
-
+/*
+  * Copyright 2020 Twilight
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *   http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+*/
+#pragma once
 #include <QtCore/QObject>
 #include <QtCore/qglobal.h>
 
 #include <pse-common/types.h>
 #include "savefile_autoport.h"
+
+// Full include so QML can traverse brg.file.data.dataExpanded.* . A forward
+// -declared QObject pointer in a Q_PROPERTY reads as `undefined` in QML.
+// See notes/reference/qt6-patterns.md.
+#include "expanded/savefileexpanded.h"
 
 class SaveFileExpanded;
 class SaveFileIterator;
@@ -69,14 +87,4 @@ public slots:
   void randomizeExpansion();
 
 public:
-  // Actual SAV Data, a raw internal binary copy of the file
-  var8* data = nullptr;
-
-  // Expanded SAV data to be readable and more usable
-  SaveFileExpanded* dataExpanded = nullptr;
-
-  // Tools to operate directly on the raw sav file data
-  SaveFileToolset* toolset = nullptr;
-};
-
-#endif // RAWSAVEDATA_H
+  // Actual SAV Data, a raw internal binary copy of 

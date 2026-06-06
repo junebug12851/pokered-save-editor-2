@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 #include <algorithm>
 #include <QCollator>
+#include "../../qmlownership.h"
 
 #include "./itemstoragebox.h"
 #include "./item.h"
+#include <pse-db/entries/itemdbentry.h>
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
@@ -84,13 +86,13 @@ Item* ItemStorageBox::itemAt(int ind)
   if(ind >= items.size())
     return nullptr;
 
-  return items.at(ind);
+  return qmlCppOwned(items.at(ind));
 }
 
 void ItemStorageBox::randomizeStorage()
 {
   // Between None and 3/4 of max capacity
-  var8 count = Random::rangeInclusive(0, maxSize * .75);
+  var8 count = Random::inst()->rangeInclusive(0, maxSize * .75);
 
   // Create that many random items
   for(var8 i = 0; i < count; i++) {
@@ -104,42 +106,42 @@ void ItemStorageBox::randomizeBag()
   items.append(new Item("TOWN MAP", 1));
   itemInsertChange();
 
-  items.append(new Item("POKE BALL", Random::rangeInclusive(5, 15)));
+  items.append(new Item("POKE BALL", Random::inst()->rangeInclusive(5, 15)));
   itemInsertChange();
 
-  items.append(new Item("POTION", Random::rangeInclusive(5, 10)));
+  items.append(new Item("POTION", Random::inst()->rangeInclusive(5, 10)));
   itemInsertChange();
 
-  items.append(new Item("ANTIDOTE", Random::rangeInclusive(1, 3)));
+  items.append(new Item("ANTIDOTE", Random::inst()->rangeInclusive(1, 3)));
   itemInsertChange();
 
-  items.append(new Item("PARLYZ HEAL", Random::rangeInclusive(1, 3)));
+  items.append(new Item("PARLYZ HEAL", Random::inst()->rangeInclusive(1, 3)));
   itemInsertChange();
 
-  items.append(new Item("AWAKENING", Random::rangeInclusive(1, 3)));
+  items.append(new Item("AWAKENING", Random::inst()->rangeInclusive(1, 3)));
   itemInsertChange();
 
   // Again I have no idea where this will drop you so prepare for an escape
   // If need be, also because you only get 1 HM Slave that doesn't know dig.
   // This is your dig.
-  items.append(new Item("ESCAPE ROPE", Random::rangeInclusive(1, 5)));
+  items.append(new Item("ESCAPE ROPE", Random::inst()->rangeInclusive(1, 5)));
   itemInsertChange();
 
   // 25% chance of having these items
-  bool giveSuperPotion = Random::chanceSuccess(25);
+  bool giveSuperPotion = Random::inst()->chanceSuccess(25);
   if(giveSuperPotion) {
     items.append(new Item("SUPER POTION", 1));
     itemInsertChange();
   }
 
-  bool giveGreatBall = Random::chanceSuccess(25);
+  bool giveGreatBall = Random::inst()->chanceSuccess(25);
   if(giveGreatBall) {
     items.append(new Item("GREAT BALL", 1));
     itemInsertChange();
   }
 
   // Up to 5 more completely random items
-  var8 count = Random::rangeInclusive(0, 5);
+  var8 count = Random::inst()->rangeInclusive(0, 5);
 
   // Create that many random items
   for(var8 i = 0; i < count; i++) {
@@ -249,7 +251,7 @@ void ItemStorageBox::sort()
     if(item1->toItem() == nullptr || item2->toItem() == nullptr)
       return collator.compare("", "") < 0;
 
-    return collator.compare(item1->toItem()->readable, item2->toItem()->readable) < 0;
+    return collator.compare(item1->toItem()->getReadable(), item2->toItem()->getReadable()) < 0;
   });
 
   itemsResetChange();
@@ -364,7 +366,4 @@ void ItemStorageBox::randomize()
   if(isBag)
     randomizeBag();
   else
-    randomizeStorage();
-
-  itemsChanged();
-}
+  

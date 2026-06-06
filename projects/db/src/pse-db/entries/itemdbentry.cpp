@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -54,9 +54,9 @@ ItemDBEntry::ItemDBEntry(const QJsonValue& data)
 void ItemDBEntry::deepLink()
 {
   if(tm > 0 && hm <= 0)
-    toMove = MovesDB::ind.value("tm" + QString::number(tm), nullptr);
+    toMove = MovesDB::inst()->getIndAt("tm" + QString::number(tm));
   else if(tm > 0 && hm > 0)
-    toMove = MovesDB::ind.value("hm" + QString::number(hm), nullptr);
+    toMove = MovesDB::inst()->getIndAt("hm" + QString::number(hm));
 
 #ifdef QT_DEBUG
   if((tm || hm) && toMove == nullptr)
@@ -85,7 +85,7 @@ int ItemDBEntry::getToTeachPokemonSize() const
   return toTeachPokemon.size();
 }
 
-const PokemonDBEntry* ItemDBEntry::getToTeachPokemonAt(const int ind) const
+PokemonDBEntry* ItemDBEntry::getToTeachPokemonAt(const int ind) const
 {
   if(ind >= toTeachPokemon.size())
     return nullptr;
@@ -108,7 +108,7 @@ int ItemDBEntry::getToEvolvePokemonSize() const
   return toEvolvePokemon.size();
 }
 
-const PokemonDBEntryEvolution* ItemDBEntry::getToEvolvePokemonAt(const int ind) const
+PokemonDBEntryEvolution* ItemDBEntry::getToEvolvePokemonAt(const int ind) const
 {
   if(ind >= toEvolvePokemon.size())
     return nullptr;
@@ -126,7 +126,7 @@ int ItemDBEntry::getToMapSpriteItemSize() const
   return toMapSpriteItem.size();
 }
 
-const MapDBEntrySpriteItem* ItemDBEntry::getToMapSpriteItemAt(const int ind) const
+MapDBEntrySpriteItem* ItemDBEntry::getToMapSpriteItemAt(const int ind) const
 {
   if(ind >= toMapSpriteItem.size())
     return nullptr;
@@ -134,12 +134,12 @@ const MapDBEntrySpriteItem* ItemDBEntry::getToMapSpriteItemAt(const int ind) con
   return toMapSpriteItem.at(ind);
 }
 
-const GameCornerDBEntry* ItemDBEntry::getToGameCorner() const
+GameCornerDBEntry* ItemDBEntry::getToGameCorner() const
 {
     return toGameCorner;
 }
 
-const MoveDBEntry* ItemDBEntry::getToMove() const
+MoveDBEntry* ItemDBEntry::getToMove() const
 {
     return toMove;
 }
@@ -159,7 +159,7 @@ int ItemDBEntry::getTm() const
     return tm;
 }
 
-const QString ItemDBEntry::getReadable() const
+QString ItemDBEntry::getReadable() const
 {
     return readable;
 }
@@ -179,7 +179,7 @@ int ItemDBEntry::getInd() const
     return ind;
 }
 
-const QString ItemDBEntry::getName() const
+QString ItemDBEntry::getName() const
 {
     return name;
 }

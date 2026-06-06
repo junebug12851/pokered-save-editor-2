@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef FONTS_H
-#define FONTS_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 #include <QHash>
@@ -45,9 +43,13 @@ public:
   int getStoreSize() const;
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE const FontDBEntry* getStoreAt(const int ind) const;
-  Q_INVOKABLE const FontDBEntry* getIndAt(const QString val) const;
+  Q_INVOKABLE FontDBEntry* getStoreAt(const int ind) const;
+  Q_INVOKABLE FontDBEntry* getIndAt(const QString val) const;
   Q_INVOKABLE const FontDBEntry* getStoreByVal(int ind) const;
+
+  // QML-friendly aliases used throughout the UI
+  Q_INVOKABLE FontDBEntry* fontAt(int ind) const;
+  Q_INVOKABLE int fontCount() const;
 
   // Pull up a finder to narrow down fonts based on criteria
   // You must delete this when done
@@ -58,7 +60,7 @@ public:
   // must be manually deleted which works for QML. search is incompatible with
   // qml but is handled through a smart pointer and is explcitly owned by C++
   FontSearch* searchRaw() const;
-  const QScopedPointer<const FontSearch, QScopedPointerDeleteLater> search() const;
+  QScopedPointer<FontSearch, QScopedPointerDeleteLater> search() const;
 
   // Converts a string to in-game font characters
   // The string represents font characters, so special characters like
@@ -96,11 +98,8 @@ private:
   // Singleton Constructor
   FontsDB();
 
-  // Something like splice, Kind of miss splice in Javascript
-  void splice(QVector<int>& out, const QString in, const int ind) const;
-
   QVector<FontDBEntry*> store;
   QHash<QString, FontDBEntry*> ind;
-};
 
-#endif // FONTS_H
+  // Something like splice, Kind of miss splice in Javascript
+  void splice(QVecto

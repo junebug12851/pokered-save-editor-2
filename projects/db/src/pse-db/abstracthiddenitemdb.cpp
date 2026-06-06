@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ int AbstractHiddenItemDB::getStoreSize() const
   return store.size();
 }
 
-const HiddenItemDBEntry* AbstractHiddenItemDB::getStoreAt(const int ind) const
+HiddenItemDBEntry* AbstractHiddenItemDB::getStoreAt(const int ind) const
 {
   if(ind >= store.size())
     return nullptr;

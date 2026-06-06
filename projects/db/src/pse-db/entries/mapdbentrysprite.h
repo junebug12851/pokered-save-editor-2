@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MAPDBENTRYSPRITE_H
-#define MAPDBENTRYSPRITE_H
-
+#pragma once
 #include <QObject>
 #include "../db_autoport.h"
 
@@ -84,9 +82,9 @@ public:
   int getRange() const;
   const QString getFace() const;
   int getMissable() const;
-  const MissableDBEntry* getToMissable() const;
-  const SpriteDBEntry* getToSprite() const;
-  const MapDBEntry* getParent() const;
+  MissableDBEntry* getToMissable() const;
+  SpriteDBEntry* getToSprite() const;
+  MapDBEntry* getParent() const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
@@ -133,4 +131,3 @@ protected:
   friend class MapDBEntry;
 };
 
-#endif // MAPDBENTRYSPRITE_H

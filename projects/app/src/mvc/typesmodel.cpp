@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ int TypesModel::rowCount(const QModelIndex& parent) const
   Q_UNUSED(parent)
 
   // Return list count
-  return TypesDB::store.size() + 1;
+  return TypesDB::inst()->getStore().size() + 1;
 }
 
 QVariant TypesModel::data(const QModelIndex& index, int role) const
@@ -32,7 +32,7 @@ QVariant TypesModel::data(const QModelIndex& index, int role) const
   if (!index.isValid())
     return QVariant();
 
-  if (index.row() >= TypesDB::store.size() + 1)
+  if (index.row() >= TypesDB::inst()->getStore().size() + 1)
     return QVariant();
 
   // Placeholder for no type
@@ -45,7 +45,7 @@ QVariant TypesModel::data(const QModelIndex& index, int role) const
   }
 
   // Get Pokemon and ensure it's valid to prevent crashing
-  auto type = TypesDB::store.at(index.row() - 1);
+  auto type = TypesDB::inst()->getStore().at(index.row() - 1);
   if(type == nullptr)
     return QVariant();
 
@@ -80,9 +80,9 @@ int TypesModel::valToIndex(int val)
 
   int ret = 0;
 
-  for(int i = 0; i < TypesDB::store.size(); i++) {
-    if(TypesDB::store.at(i)->ind == val) {
-      ret = i+1;
+  for(int i = 0; i < TypesDB::inst()->getStore().size(); i++) {
+    if(TypesDB::inst()->getStore().at(i)->ind == val) {
+      ret = i;
       break;
     }
   }

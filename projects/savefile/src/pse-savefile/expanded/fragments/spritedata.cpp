@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -21,6 +21,11 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/sprites.h>
+#include <pse-db/entries/mapdbentrysprite.h>
+#include <pse-db/entries/mapdbentryspritetrainer.h>
+#include <pse-db/entries/mapdbentryspriteitem.h>
+#include <pse-db/entries/mapdbentryspritepokemon.h>
+#include <pse-db/entries/itemdbentry.h>
 #include <pse-db/mapsdb.h>
 #include <pse-db/trainers.h>
 #include <pse-db/itemsdb.h>
@@ -35,19 +40,19 @@ struct TmpSpritePos
 
 var8 SpriteFacing::random()
 {
-  return Random::rangeInclusive(0, 3) * 4;
+  return Random::inst()->rangeInclusive(0, 3) * 4;
 }
 
 var8 SpriteMobility::random()
 {
   // Lets not randomize in the possibility of no-collision
-  return Random::rangeInclusive(0xFE, 0xFF);
+  return Random::inst()->rangeInclusive(0xFE, 0xFF);
 }
 
 var8 SpriteMovement::random()
 {
   // Lets not randomize such restricted movment
-  var8 ret = Random::rangeInclusive(0, 10);
+  var8 ret = Random::inst()->rangeInclusive(0, 10);
 
   // Ensure we don't get a specialized movement value
   // I have no idea where these sprites are or on what map so I'd hate to intend
@@ -59,7 +64,7 @@ var8 SpriteMovement::random()
         ret == Up ||
         ret == Left ||
         ret == Right)
-    ret = Random::rangeInclusive(0, 10);
+    ret = Random::inst()->rangeInclusive(0, 10);
 
   return ret;
 }
@@ -71,7 +76,7 @@ var8 SpriteGrass::random()
     0x80
   };
 
-  return ret[Random::rangeExclusive(0, 2)];
+  return ret[Random::inst()->rangeExclusive(0, 2)];
 }
 
 SpriteData::SpriteData(bool blankNPC, SaveFile* saveFile, var8 index)
@@ -107,7 +112,7 @@ void SpriteData::load(MapDBEntrySprite* spriteData)
 {
   reset(true);
 
-  pictureID = spriteData->toSprite->ind;
+  pictureID = spriteData->getToSprite()->ind;
   pictureIDChanged();
 
   mapX = spriteData->adjustedX();
@@ -116,56 +121,56 @@ void SpriteData::load(MapDBEntrySprite* spriteData)
   mapY = spriteData->adjustedY();
   mapYChanged();
 
-  if(spriteData->move == "Stay")
+  if(spriteData->getMove() == "Stay")
     movementByte = SpriteMobility::NotMoving;
   else
     movementByte = SpriteMobility::Moving;
   movementByteChanged();
 
-  textID = spriteData->text;
+  textID = spriteData->getText();
   textIDChanged();
 
-  if(spriteData->face == "Down")
+  if(spriteData->getFace() == "Down")
     faceDir = SpriteFacing::Down;
-  else if(spriteData->face == "Left")
+  else if(spriteData->getFace() == "Left")
     faceDir = SpriteFacing::Left;
-  else if(spriteData->face == "None")
+  else if(spriteData->getFace() == "None")
     faceDir = SpriteFacing::None;
-  else if(spriteData->face == "Right")
+  else if(spriteData->getFace() == "Right")
     faceDir = SpriteFacing::Right;
-  else if(spriteData->face == "Up")
+  else if(spriteData->getFace() == "Up")
     faceDir = SpriteFacing::Up;
 
   faceDirChanged();
 
   // Set Missable
-  if(spriteData->missable) {
-    missableIndex = *spriteData->missable;
+  if(spriteData->getMissable() >= 0) {
+    missableIndex = spriteData->getMissable();
     missableIndexChanged();
   }
 
-  if(spriteData->range) {
-    rangeDirByte = *spriteData->range;
+  if(spriteData->getRange() >= 0) {
+    rangeDirByte = spriteData->getRange();
     rangeDirByteChanged();
   }
 
   // Because this is a string, it got incorrectly placed into "face"
   // It's actually a number representing 0x10 and probably needs to go into
   // range instead
-  else if(spriteData->face == "Boulder Movement Byte 2") {
+  else if(spriteData->getFace() == "Boulder Movement Byte 2") {
     rangeDirByte = SpriteMovement::StrengthMovement;
     rangeDirByteChanged();
   }
 
-  if(spriteData->type() == SpriteType::TRAINER) {
+  if(spriteData->type() == MapDBEntrySprite::SpriteType::TRAINER) {
     auto spriteDataTrainer = (MapDBEntrySpriteTrainer*)spriteData;
-    trainerClassOrItemID = spriteDataTrainer->toTrainer->ind;
+    trainerClassOrItemID = spriteDataTrainer->getToTrainer()->ind;
     trainerClassOrItemIDChanged();
 
-    trainerSetID = spriteDataTrainer->team;
+    trainerSetID = spriteDataTrainer->getTeam();
     trainerSetIDChanged();
   }
-  else if(spriteData->type() == SpriteType::ITEM) {
+  else if(spriteData->type() == MapDBEntrySprite::SpriteType::ITEM) {
     // There's two weird sprite data entries in gen1, both are named "0"
     // Not the number 0, an actual string consisting of a zero. The sprite
     // reference is also invalid. If we spot it we can't load any data from the
@@ -173,19 +178,19 @@ void SpriteData::load(MapDBEntrySprite* spriteData)
     auto spriteDataItem = (MapDBEntrySpriteItem*)spriteData;
 
     // As stated above, stop here if the item is named "0"
-    if(spriteDataItem->item == "0") {
+    if(spriteDataItem->getItem() == "0") {
       return;
     }
 
-    trainerClassOrItemID = spriteDataItem->toItem->ind;
+    trainerClassOrItemID = spriteDataItem->getToItem()->getInd();
     trainerClassOrItemIDChanged();
   }
-  else if(spriteData->type() == SpriteType::POKEMON) {
+  else if(spriteData->type() == MapDBEntrySprite::SpriteType::POKEMON) {
     auto spriteDataMon = (MapDBEntrySpritePokemon*)spriteData;
-    trainerClassOrItemID = spriteDataMon->toPokemon->ind;
+    trainerClassOrItemID = spriteDataMon->getToPokemon()->ind;
     trainerClassOrItemIDChanged();
 
-    trainerSetID = spriteDataMon->level;
+    trainerSetID = spriteDataMon->getLevel();
     trainerSetIDChanged();
   }
 }
@@ -628,7 +633,7 @@ QVector<SpriteData*> SpriteData::randomizeAll(QVector<MapDBEntrySprite*> mapSpri
 
     // Don't note any positions of boulder sprites, leave them as they are
     // with nobody placed on top of them. The map could be unplayable otherwise.
-    if(entry->sprite == "Boulder")
+    if(entry->getSprite() == "Boulder")
       continue;
 
     auto tmp = new TmpSpritePos;
@@ -648,7 +653,7 @@ QVector<SpriteData*> SpriteData::randomizeAll(QVector<MapDBEntrySprite*> mapSpri
     // boulders the way they are. Do this only for randomizeAll, if the player
     // wants to randomize a specific one, even if it breaks gameplay, let them
     // do it
-    if(entry->sprite == "Boulder")
+    if(entry->getSprite() == "Boulder")
       continue;
 
     // Randomize newly created sprite
@@ -664,7 +669,7 @@ void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
   if(tmpPos != nullptr) {
 
     // Pull random coordinates
-    var8 rndPos = Random::rangeExclusive(0, tmpPos->size());
+    var8 rndPos = Random::inst()->rangeExclusive(0, tmpPos->size());
     auto rndCoords = tmpPos->at(rndPos);
 
     // Change coords
@@ -681,7 +686,7 @@ void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
 
   // Get a random sprite picture and change it
   auto picture =
-      SpritesDB::store.at(Random::rangeExclusive(0, SpritesDB::store.size()));
+      SpritesDB::inst()->getStore().at(Random::inst()->rangeExclusive(0, SpritesDB::inst()->getStoreSize()));
 
   pictureID = picture->ind;
   pictureIDChanged();
@@ -727,5 +732,5 @@ QVector<SpriteData*> SpriteData::setToAll(QVector<MapDBEntrySprite*> spriteSigns
 
 SpriteDBEntry* SpriteData::toSprite()
 {
-  return SpritesDB::ind.value(QString::number(pictureID), nullptr);
+  return SpritesDB::inst()->getIndAt(QString::number(pictureID));
 }

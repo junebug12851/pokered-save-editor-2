@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef NAMESPLAYER_H
-#define NAMESPLAYER_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 
@@ -32,9 +30,10 @@ public:
   // Get Instance
   static NamesPlayer* inst();
 
-protected slots:
+protected:
   NamesPlayer();
+
+protected slots:
   virtual void qmlRegister() const;
 };
 
-#endif // NAMESPLAYER_H

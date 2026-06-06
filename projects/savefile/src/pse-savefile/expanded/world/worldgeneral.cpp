@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/util/mapsearch.h>
 #include <pse-common/random.h>
 
@@ -110,29 +111,29 @@ void WorldGeneral::randomize()
   reset();
 
   // Blackout map needs to be one of the cities
-  lastBlackoutMap = MapsDB::search()->isGood()->isCity()->pickRandom()->ind;
+  lastBlackoutMap = MapsDB::inst()->search()->isGood()->isCity()->pickRandom()->getInd();
   lastBlackoutMapChanged();
 
   // Last Map needs to be some outdoor map
-  lastMap = MapsDB::search()->isGood()->isType("Outdoor")->pickRandom()->ind;
+  lastMap = MapsDB::inst()->search()->isGood()->isType("Outdoor")->pickRandom()->getInd();
   lastMapChanged();
 
   // Odds are your text is going to be pretty slow lol
-  options->textSlowness = Random::rangeInclusive(0, 15);
+  options->textSlowness = Random::inst()->rangeInclusive(0, 15);
   options->textSlownessChanged();
 
   // 20% chance to have battle style set and animations off
-  options->battleStyleSet = Random::chanceSuccess(20);
+  options->battleStyleSet = Random::inst()->chanceSuccess(20);
   options->battleStyleSetChanged();
 
-  options->battleAnimOff = Random::chanceSuccess(20);
+  options->battleAnimOff = Random::inst()->chanceSuccess(20);
   options->battleAnimOffChanged();
 
   // 90% chance to have normal letter delay
-  letterDelay->normalDelay = Random::chanceSuccess(90);
+  letterDelay->normalDelay = Random::inst()->chanceSuccess(90);
   letterDelay->normalDelayChanged();
 
   // 10% chance to not delay letters
-  letterDelay->dontDelay = Random::chanceSuccess(10);
+  letterDelay->dontDelay = Random::inst()->chanceSuccess(10);
   letterDelay->dontDelayChanged();
 }

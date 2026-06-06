@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 #include "./pokemonstoragebox.h"
+#include "../../qmlownership.h"
 #include "./pokemonbox.h"
 #include "../../savefile.h"
 #include "../savefileexpanded.h"
@@ -53,7 +54,7 @@ bool PokemonStorageBox::isFull()
 
 PokemonBox* PokemonStorageBox::pokemonAt(int ind)
 {
-  return pokemon.at(ind);
+  return qmlCppOwned(pokemon.at(ind));
 }
 
 bool PokemonStorageBox::pokemonMove(int from, int to)
@@ -208,7 +209,7 @@ void PokemonStorageBox::randomize(PlayerBasics* basics)
   // Determine fill amount
 
   // 65% chance the box will remain empty
-  if(Random::flipCoin())
+  if(Random::inst()->flipCoin())
     return;
 
   // If the box is to be filled, how much so?
@@ -223,23 +224,19 @@ void PokemonStorageBox::randomize(PlayerBasics* basics)
   int maxRangeSel = 0;
 
   // Make it incresingly difficult to proceed to higher indexes
-  if(Random::chanceSuccess(65))
+  if(Random::inst()->chanceSuccess(65))
     maxRangeSel = 1;
-  else if(Random::chanceSuccess(65))
+  else if(Random::inst()->chanceSuccess(65))
     maxRangeSel = 2;
-  else if(Random::chanceSuccess(65))
+  else if(Random::inst()->chanceSuccess(65))
     maxRangeSel = 3;
 
   // Get end capacity
-  var8 count = Random::rangeInclusive(0, maxRange[maxRangeSel]);
+  var8 count = Random::inst()->rangeInclusive(0, maxRange[maxRangeSel]);
 
   // Insert Pokemon
   for(var8 i = 0; i < count; i++) {
     auto tmp = new PokemonBox;
     tmp->randomize(basics);
     pokemon.append(tmp);
-    pokemonInsertChange();
-  }
-
-  pokemonChanged();
-}
+    pokemonIn

@@ -27,7 +27,7 @@ TilesetProvider::TilesetProvider()
 QPixmap TilesetProvider::requestPixmap(const QString& id, QSize* size, const QSize& requestedSize)
 {
   // Check to make sure it's a properly formed request
-  auto idParts = id.split("/", QString::SplitBehavior::SkipEmptyParts);
+  auto idParts = id.split("/", Qt::SkipEmptyParts);
 
   // Has to have all 7 parts unconditionally
   if(idParts.size() < 7)

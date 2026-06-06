@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MAPDBENTRYWILDMON_H
-#define MAPDBENTRYWILDMON_H
-
+#pragma once
 #include <QObject>
 #include <QJsonValue>
 #include "../db_autoport.h"
@@ -36,8 +34,8 @@ struct DB_AUTOPORT MapDBEntryWildMon : public QObject {
 public:
   const QString getName() const;
   int getLevel() const;
-  const PokemonDBEntry* getToPokemon() const;
-  const MapDBEntry* getParent() const;
+  PokemonDBEntry* getToPokemon() const;
+  MapDBEntry* getParent() const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
@@ -58,4 +56,3 @@ protected:
   friend class MapDBEntry;
 };
 
-#endif // MAPDBENTRYWILDMON_H

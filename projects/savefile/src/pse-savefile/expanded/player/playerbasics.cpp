@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -135,19 +135,19 @@ void PlayerBasics::randomize()
   reset();
 
   // Random name and ID
-  playerName = NamesDB::randomName();
+  playerName = Names::inst()->player()->randomExample();
   playerNameChanged();
 
-  playerID = Random::rangeInclusive(0x0000, 0xFFFF);
+  playerID = Random::inst()->rangeInclusive(0x0000, 0xFFFF);
   playerIDChanged();
 
   // Figure out random money and coins that are reasonable
   // We want a minimum of 100 money and 0 coins and a maximum of the chosen
   // maximum
-  money = Random::rangeInclusive(100, 6000);
+  money = Random::inst()->rangeInclusive(100, 6000);
   moneyChanged();
 
-  coins = Random::rangeInclusive(0, 100);
+  coins = Random::inst()->rangeInclusive(0, 100);
   coinsChanged();
 
   // Zero out all badges, it's far too complicated in gen 1 games to properly
@@ -173,12 +173,12 @@ void PlayerBasics::randomizeStarter()
 {
   // Determine a random starter
   var8 starter[3] = {
-    PokemonDB::ind.value("Bulbasaur")->ind, // Bulbasaur
-    PokemonDB::ind.value("Charmander")->ind, // Charmander
-    PokemonDB::ind.value("Squirtle")->ind // Squirtle
+    PokemonDB::inst()->getIndAt("Bulbasaur")->ind, // Bulbasaur
+    PokemonDB::inst()->getIndAt("Charmander")->ind, // Charmander
+    PokemonDB::inst()->getIndAt("Squirtle")->ind // Squirtle
   };
 
-  var8 pick = Random::rangeExclusive(0, 3);
+  var8 pick = Random::inst()->rangeExclusive(0, 3);
 
   playerStarter = starter[pick];
   playerStarterChanged();
@@ -186,19 +186,19 @@ void PlayerBasics::randomizeStarter()
 
 void PlayerBasics::randomizeCoins()
 {
-  coins = Random::rangeExclusive(0, 9999);
+  coins = Random::inst()->rangeExclusive(0, 9999);
   coinsChanged();
 }
 
 void PlayerBasics::randomizeMoney()
 {
-  money = Random::rangeExclusive(0, 999999);
+  money = Random::inst()->rangeExclusive(0, 999999);
   moneyChanged();
 }
 
 void PlayerBasics::randomizeID()
 {
-  playerID = Random::rangeExclusive(0x0000, 0xFFFF);
+  playerID = Random::inst()->rangeExclusive(0x0000, 0xFFFF);
   playerIDChanged();
 }
 
@@ -222,7 +222,7 @@ void PlayerBasics::setBadges(SaveFile* saveFile, var16 offset)
 
 PokemonDBEntry* PlayerBasics::toStarter()
 {
-  return PokemonDB::ind.value(QString::number(playerStarter));
+  return PokemonDB::inst()->getIndAt(QString::number(playerStarter));
 }
 
 int PlayerBasics::badgeCount()
@@ -243,13 +243,26 @@ void PlayerBasics::badgeSet(int ind, bool val)
 
 void PlayerBasics::fullSetPlayerName(QString val)
 {
-  // Get List of Non-Trade Mons
+  // No-op when nothing actually changed. This is important on three counts:
+  //  1. Fidelity — we must NOT rewrite any Pokémon's OT bytes unless the name
+  //     truly changed (only-touch-what-you-were-told-to).
+  //  2. Performance — getNonTradeMons() scans the whole party + every storage
+  //     box; doing that on a redundant set (e.g. the editor's value round-trip)
+  //     is what made name editing hang.
+  //  3. It breaks the QML two-way bind's feedback loop cleanly.
+  if(val == playerName)
+    return;
+
+  // Capture which mons are "owned" (OT == the OLD name) BEFORE we change it, so
+  // traded mons (different OT) are left untouched. Callers must set the name in
+  // one atomic step — never character-by-character — or an intermediate value
+  // could momentarily match a traded mon's OT and sweep it into this set.
   auto nonTradeMons = getNonTradeMons();
 
   // Change Player Name
   playerName = val;
 
-  // Fix non-Trade Mons to reflect new OT Name
+  // Fix owned mons to reflect the new OT Name
   fixNonTradeMons(nonTradeMons);
 
   // Announce change
@@ -258,13 +271,17 @@ void PlayerBasics::fullSetPlayerName(QString val)
 
 void PlayerBasics::fullSetPlayerId(int id)
 {
-  // Get List of Non-Trade Mons
+  // See fullSetPlayerName — same guard, same reasoning (OT ID instead of name).
+  if(id == playerID)
+    return;
+
+  // Get List of Non-Trade Mons (owned == OT ID matches the OLD id)
   auto nonTradeMons = getNonTradeMons();
 
-  // Change Player Name
+  // Change Player ID
   playerID = id;
 
-  // Fix non-Trade Mons to reflect new OT Name
+  // Fix owned mons to reflect new OT ID
   fixNonTradeMons(nonTradeMons);
 
   // Announce change
@@ -274,48 +291,4 @@ void PlayerBasics::fullSetPlayerId(int id)
 QString PlayerBasics::getPlayerName()
 {
   return playerName;
-}
-
-int PlayerBasics::getPlayerId()
-{
-  return playerID;
-}
-
-QVector<PokemonBox*> PlayerBasics::getNonTradeMons()
-{
-  // Do nothing if file is invalid
-  if(file == nullptr)
-    return QVector<PokemonBox*>();
-
-  // List of mons to fix
-  QVector<PokemonBox*> monsToFix;
-
-  // Add all party members to fix
-  for(auto el : file->dataExpanded->player->pokemon->pokemon) {
-    if(!el->hasTradeStatus(this))
-      monsToFix.append(el);
-  }
-
-  // Add all box mons to fix
-  for(int i = 0; i < maxPokemonBoxes; i++) {
-
-    // Go through each box
-    auto box = file->dataExpanded->storage->boxAt(i);
-    if(box == nullptr)
-      continue;
-
-    // Go through all the Pokemon in each box
-    for(auto el : box->pokemon) {
-      if(!el->hasTradeStatus(this))
-        monsToFix.append(el);
-    }
-  }
-
-  return monsToFix;
-}
-
-void PlayerBasics::fixNonTradeMons(QVector<PokemonBox*> mons)
-{
-  for(auto el : mons)
-    el->changeOtData(true, this);
-}
+}

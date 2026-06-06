@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ MapDBEntrySpritePokemon::MapDBEntrySpritePokemon(const QJsonValue& data,
 void MapDBEntrySpritePokemon::deepLink()
 {
   MapDBEntrySprite::deepLink();
-  toPokemon = PokemonDB::ind.value(pokemon);
+  toPokemon = PokemonDB::inst()->getIndAt(pokemon);
 
 #ifdef QT_DEBUG
   if(toPokemon == nullptr)
@@ -53,7 +53,7 @@ void MapDBEntrySpritePokemon::qmlRegister() const
   once = true;
 }
 
-const PokemonDBEntry* MapDBEntrySpritePokemon::getToPokemon() const
+PokemonDBEntry* MapDBEntrySpritePokemon::getToPokemon() const
 {
     return toPokemon;
 }

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,26 +13,26 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef NAMES_H
-#define NAMES_H
-
+#pragma once
 #include <QObject>
 
-class QQmlEngine;
-class NamesPlayer;
-class NamesPokemon;
+#include "./db_autoport.h"
+#include "./entries/namesplayer.h"
+#include "./entries/namespokemon.h"
 
-class Names : public QObject
+class QQmlEngine;
+
+class DB_AUTOPORT Names : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(NamesPlayer* player READ player CONSTANT)
+  Q_PROPERTY(NamesPlayer*  player  READ player  CONSTANT)
   Q_PROPERTY(NamesPokemon* pokemon READ pokemon CONSTANT)
 
 public:
   static Names* inst();
 
-  const NamesPlayer* player() const;
-  const NamesPokemon* pokemon() const;
+  NamesPlayer*  player()  const;
+  NamesPokemon* pokemon() const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
@@ -40,8 +40,4 @@ public slots:
 private slots:
   void qmlRegister() const;
 
-private:
-  Names();
-};
-
-#endif // NAMES_H
+priv

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,13 +13,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MOVESELECTMODEL_H
-#define MOVESELECTMODEL_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 #include <QAbstractListModel>
 #include <QVector>
+
+// monFromBox() takes a PokemonBox from QML (PokemonDetails passes its boxData).
+// Full include so the parameter is a real, matchable PokemonBox QObject type.
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
 
 class PokemonDBEntry;
 class PokemonBox;
@@ -54,16 +56,4 @@ public:
 
   Q_INVOKABLE int moveToListIndex(int ind);
 
-  void onMonChange();
-  void rebuildListGeneral();
-  void rebuildListSpecific();
-
-public slots:
-  void monFromBox(PokemonBox* box);
-
-public:
-  QVector<MoveSelectEntry*> moveListCache;
-  PokemonDBEntry* mon = nullptr;
-};
-
-#endif // MOVESELECTMODEL_H
+  vo

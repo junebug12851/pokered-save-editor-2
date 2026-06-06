@@ -1,8 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
-import QtGraphicalEffects 1.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Effects
 
 import "../../fragments/header"
 import "../../fragments/general"
@@ -49,6 +49,7 @@ Page {
       RowLayout {
         spacing: 8
 
+        // "Seen" pokeball icon — desaturated and slightly darkened
         Image {
           id: totalSeenIcon
           width: 20
@@ -59,14 +60,10 @@ Page {
           sourceSize.height: height
           sourceSize.width: width
 
-          Colorize {
-            opacity: 0.55
-
-            anchors.fill: totalSeenIcon
-            source: totalSeenIcon
-            hue: 0.0
+          layer.enabled: true
+          layer.effect: MultiEffect {
             saturation: -1.0
-            lightness: -0.30
+            brightness: -0.30
           }
         }
 
@@ -143,7 +140,8 @@ Page {
         }
 
         color: "transparent"
-        width: parent.width
+        // parent can be briefly null during model reset in Qt 6 (see qt6-patterns.md)
+        width: parent ? parent.width : 0
         height: 60
 
         RoundButton {
@@ -172,6 +170,7 @@ Page {
 
           onHoveredChanged: updatePreview();
 
+          // Mon icon — desaturated/darkened when not owned (dexState !== 2)
           Image {
             id: icon
             anchors.left: parent.left
@@ -185,18 +184,12 @@ Page {
             opacity: getIconOpacity()
             source: getMonUrl()
             fillMode: Image.PreserveAspectFit
-          }
 
-          Colorize {
-            visible: (dexState === 2)
-                     ? false
-                     : true
-            opacity: getIconOpacity()
-            anchors.fill: icon
-            source: icon
-            hue: 0.0
-            saturation: -0.6
-            lightness: -0.85
+            layer.enabled: true
+            layer.effect: MultiEffect {
+              saturation: (dexState === 2) ? 0.0 : -0.6
+              brightness: (dexState === 2) ? 0.0 : -0.85
+            }
           }
 
           Text {
@@ -212,7 +205,6 @@ Page {
             anchors.centerIn: parent
 
             horizontalAlignment: Text.AlignLeft
-            //width: font.pixelSize * 10
 
             text: (dexState === 0)
                   ? "??????"
@@ -220,10 +212,9 @@ Page {
             font.pixelSize: 16
           }
 
+          // Owned pokeball — greyed out when seen-but-not-owned (dexState === 1)
           Image {
-            visible: (dexState === 0)
-                     ? false
-                     : true
+            visible: (dexState !== 0)
 
             id: ownedIcon
             anchors.right: parent.right
@@ -232,28 +223,16 @@ Page {
 
             width: 20
             height: 20
-            opacity: (dexState === 2)
-                     ? 1.00
-                     : 0.25
+            opacity: (dexState === 2) ? 1.00 : 0.25
 
             source: "qrc:/assets/icons/poke-go/pokeball.svg"
             fillMode: Image.PreserveAspectFit
-          }
 
-          Colorize {
-            visible: (dexState === 1)
-                     ? true
-                     : false
-
-            opacity: (dexState === 2)
-                     ? 1.00
-                     : 0.25
-
-            anchors.fill: ownedIcon
-            source: ownedIcon
-            hue: 0.0
-            saturation: -1.0
-            lightness: -0.50
+            layer.enabled: true
+            layer.effect: MultiEffect {
+              saturation: (dexState === 1) ? -1.0 : 0.0
+              brightness: (dexState === 1) ? -0.50 : 0.0
+            }
           }
         }
       }

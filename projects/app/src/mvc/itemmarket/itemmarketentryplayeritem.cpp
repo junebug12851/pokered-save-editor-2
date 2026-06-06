@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 #include "./itemmarketentryplayeritem.h"
 #include <pse-db/itemsdb.h>
+#include <pse-db/entries/itemdbentry.h>
 #include <pse-savefile/expanded/fragments/item.h>
 #include <pse-savefile/expanded/fragments/itemstoragebox.h>
 #include <pse-savefile/expanded/player/playerbasics.h>
@@ -40,7 +41,7 @@ QString ItemMarketEntryPlayerItem::_name()
   if(itemData == nullptr)
     return "";
 
-  return itemData->readable;
+  return itemData->getReadable();
 }
 
 int ItemMarketEntryPlayerItem::_inStockCount()
@@ -138,7 +139,4 @@ void ItemMarketEntryPlayerItem::checkout()
     player->coins += cartWorth();
     player->coinsChanged();
   }
-
-  onCart = 0;
-  onCartChanged();
 }

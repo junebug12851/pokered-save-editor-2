@@ -1,31 +1,34 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../name"
 import "../../general"
 
-Row {
+// The name input row for the full keyboard: a wide, centered text field with
+// Clear and Randomize-Name buttons beside it. (The old ⋮ overflow menu and the
+// example actions moved out — example is a toggle above the preview now.)
+RowLayout {
   id: top
 
-  signal toggleExample();
-  signal reUpdateExample();
-
   property string str: ""
+  // Kept for backwards compatibility with NameFullHeader's wiring; the field is
+  // a fixed comfortable width rather than sized off the tile count.
   property int chopLen: 0
   property int sizeMult: 0
   property bool isPersonName: false
   property bool hasBox: false
 
-  spacing: -13
+  spacing: 4
 
-  onStrChanged: {
-    nameEdit.text = top.str
-  }
+  onStrChanged: nameEdit.text = top.str
 
   NameEdit {
     id: nameEdit
+
+    Layout.preferredWidth: 260
+    Layout.alignment: Qt.AlignVCenter
 
     text: top.str
     onTextChanged: {
@@ -33,43 +36,35 @@ Row {
         top.str = text;
     }
 
+    isPersonName: top.isPersonName
     selectedColor: brg.settings.accentColor
-
-    width: top.chopLen * top.sizeMult * 8
 
     disableAcceptBtn: true
     disableKeyboardBtn: true
-    disableMenu: true
-
-    topInset: 52
+    disableRandomize: true
   }
 
-  // Allows taking extra actions
+  // Clear the whole field.
   IconButtonSquare {
     id: clearBtn
-
+    Layout.alignment: Qt.AlignVCenter
     icon.source: "qrc:/assets/icons/fontawesome/backspace.svg"
     onClicked: top.str = ""
+
+    MainToolTip { text: "Clear the name" }
   }
 
-  // Allows taking extra actions
+  // Randomize the name (replaces the old ⋮ menu).
   IconButtonSquare {
-    id: menuBtn
+    id: randomizeBtn
+    Layout.alignment: Qt.AlignVCenter
+    icon.width: 16
+    icon.height: 16
+    icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
+    onClicked: top.str = top.isPersonName
+               ? brg.randomPlayerName.randomExample()
+               : brg.randomPokemonName.randomExample();
 
-    icon.width: 7
-    icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
-
-    onClicked: menu.open();
-
-    NameDisplayMenuNoTileset {
-      id: menu
-
-      isPersonName: top.isPersonName
-      hasBox: top.hasBox
-
-      onChangeStr: top.str = val;
-      onToggleExample: top.toggleExample();
-      onReUpdateExample: top.reUpdateExample();
-    }
+    MainToolTip { text: "Randomize the name" }
   }
 }

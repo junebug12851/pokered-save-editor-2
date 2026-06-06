@@ -1,13 +1,13 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 Menu {
-  title: "Change Tileset"
+  title: "Simulated Tileset"
 
   MenuItem {
-    text: "Treat as Outdoor?"
+    text: "Simulate Outdoors"
     checkable: true
     checked: brg.settings.previewOutdoor
     onTriggered: brg.settings.previewOutdoor = !brg.settings.previewOutdoor

@@ -1,0 +1,75 @@
+qt_add_library(db SHARED
+    src/pse-db/abstracthiddenitemdb.cpp
+    src/pse-db/creditsdb.cpp
+    src/pse-db/db.cpp
+    src/pse-db/entries/abstractrandomstring.cpp
+    src/pse-db/entries/creditdbentry.cpp
+    src/pse-db/entries/eventdbentry.cpp
+    src/pse-db/entries/eventpokemondbentry.cpp
+    src/pse-db/entries/examplesplayer.cpp
+    src/pse-db/entries/examplespokemon.cpp
+    src/pse-db/entries/examplesrival.cpp
+    src/pse-db/entries/flydbentry.cpp
+    src/pse-db/entries/fontdbentry.cpp
+    src/pse-db/entries/gamecornerdbentry.cpp
+    src/pse-db/entries/hiddenitemdbentry.cpp
+    src/pse-db/entries/itemdbentry.cpp
+    src/pse-db/entries/mapdbentry.cpp
+    src/pse-db/entries/mapdbentryconnect.cpp
+    src/pse-db/entries/mapdbentrysign.cpp
+    src/pse-db/entries/mapdbentrysprite.cpp
+    src/pse-db/entries/mapdbentryspriteitem.cpp
+    src/pse-db/entries/mapdbentryspritenpc.cpp
+    src/pse-db/entries/mapdbentryspritepokemon.cpp
+    src/pse-db/entries/mapdbentryspritetrainer.cpp
+    src/pse-db/entries/mapdbentrywarpin.cpp
+    src/pse-db/entries/mapdbentrywarpout.cpp
+    src/pse-db/entries/mapdbentrywildmon.cpp
+    src/pse-db/entries/missabledbentry.cpp
+    src/pse-db/entries/namesplayer.cpp
+    src/pse-db/entries/namespokemon.cpp
+    src/pse-db/eventpokemondb.cpp
+    src/pse-db/eventsdb.cpp
+    src/pse-db/examples.cpp
+    src/pse-db/flydb.cpp
+    src/pse-db/fontsdb.cpp
+    src/pse-db/gamecornerdb.cpp
+    src/pse-db/hiddenItemsdb.cpp
+    src/pse-db/hiddencoinsdb.cpp
+    src/pse-db/itemsdb.cpp
+    src/pse-db/mapsdb.cpp
+    src/pse-db/missablesdb.cpp
+    src/pse-db/moves.cpp
+    src/pse-db/music.cpp
+    src/pse-db/names.cpp
+    src/pse-db/pokemon.cpp
+    src/pse-db/scripts.cpp
+    src/pse-db/spriteSet.cpp
+    src/pse-db/sprites.cpp
+    src/pse-db/starterPokemon.cpp
+    src/pse-db/tileset.cpp
+    src/pse-db/tmHm.cpp
+    src/pse-db/trades.cpp
+    src/pse-db/trainers.cpp
+    src/pse-db/types.cpp
+    src/pse-db/util/fontsearch.cpp
+    src/pse-db/util/gamedata.cpp
+    src/pse-db/util/hiddencoinsdb.cpp
+    src/pse-db/util/mapsearch.cpp
+    db.qrc
+)
+
+target_compile_definitions(db PRIVATE DB_LIBRARY)
+
+target_include_directories(db
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(db
+    PUBLIC
+        common
+        Qt6::Core
+        Qt6::Qml
+)

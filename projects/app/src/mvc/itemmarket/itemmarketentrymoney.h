@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef ITEMMARKETENTRYMONEY_H
-#define ITEMMARKETENTRYMONEY_H
-
+#pragma once
 #include "./itemmarketentry.h"
 
 class ItemMarketEntryMoney : public ItemMarketEntry
@@ -41,4 +39,3 @@ public:
   static constexpr const char* type = "money";
 };
 
-#endif // ITEMMARKETENTRYMONEY_H

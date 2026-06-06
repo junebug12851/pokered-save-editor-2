@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ void WorldOther::randomize()
   reset();
 
   // 5% chance of being enabled
-  debugMode = Random::chanceSuccess(5);
+  debugMode = Random::inst()->chanceSuccess(5);
   debugModeChanged();
 
   randomizePlaytime();
@@ -125,16 +125,16 @@ void WorldOther::randomizePlaytime()
 {
   playtime->clockMaxed = false;
 
-  playtime->hours = Random::rangeInclusive(0, 255);
+  playtime->hours = Random::inst()->rangeInclusive(0, 255);
   playtime->hoursChanged();
 
-  playtime->minutes = Random::rangeInclusive(0, 59);
+  playtime->minutes = Random::inst()->rangeInclusive(0, 59);
   playtime->minutesChanged();
 
-  playtime->seconds = Random::rangeInclusive(0, 59);
+  playtime->seconds = Random::inst()->rangeInclusive(0, 59);
   playtime->secondsChanged();
 
-  playtime->frames = Random::rangeInclusive(0, 59);
+  playtime->frames = Random::inst()->rangeInclusive(0, 59);
   playtime->framesChanged();
 }
 

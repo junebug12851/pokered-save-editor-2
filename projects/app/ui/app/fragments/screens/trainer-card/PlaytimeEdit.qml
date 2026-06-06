@@ -1,37 +1,56 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
 import "../../controls/menu"
 
 MouseArea {
+  id: top
+
+  // Shared compact field height (the sub-edits are DefTextEdits, so each one
+  // takes this as its explicit height — keeps the playtime row the same height
+  // as the rest of the card's fields). Defaults to the card's knob via CardFront.
+  property int fieldH: 28
+
   hoverEnabled: true
   onContainsMouseChanged: framesEdit.menuBtnVisible = containsMouse
   width: childRow.implicitWidth
-  height: childRow.implicitHeight
+  // Pin the row to the shared field height. (Sizing to childRow.implicitHeight
+  // used the Material implicit height (~48), so the 28px fields sat top-aligned
+  // in a taller row and the digits + ":" rode above center.)
+  height: top.fieldH
+
+  // Each digit field only needs room for 2 characters; the Material default
+  // horizontal padding made them far too wide. Trim it right down (the sub-edits'
+  // width = 2*font.pixelSize + leftPadding + rightPadding, so this also narrows
+  // the whole clock).
+  property int digitPad: 2
 
   Row {
     id: childRow
     anchors.fill: parent
     spacing: 5
 
-    DaysEdit {}
-    PlaytimeDivider {}
+    DaysEdit { height: top.fieldH; leftPadding: top.digitPad; rightPadding: top.digitPad }
+    PlaytimeDivider { anchors.verticalCenter: parent.verticalCenter }
 
-    HoursEdit {}
-    PlaytimeDivider {}
+    HoursEdit { height: top.fieldH; leftPadding: top.digitPad; rightPadding: top.digitPad }
+    PlaytimeDivider { anchors.verticalCenter: parent.verticalCenter }
 
-    MinutesEdit {}
-    PlaytimeDivider {}
+    MinutesEdit { height: top.fieldH; leftPadding: top.digitPad; rightPadding: top.digitPad }
+    PlaytimeDivider { anchors.verticalCenter: parent.verticalCenter }
 
-    SecondsEdit {}
-    PlaytimeDivider {}
+    SecondsEdit { height: top.fieldH; leftPadding: top.digitPad; rightPadding: top.digitPad }
+    PlaytimeDivider { anchors.verticalCenter: parent.verticalCenter }
 
     FramesEdit {
       id: framesEdit
+      height: top.fieldH
+      leftPadding: top.digitPad
+      rightPadding: top.digitPad
     }
   }
 }

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef HIDDENCOINS_H
-#define HIDDENCOINS_H
-
+#pragma once
 #include <QObject>
 #include "./db_autoport.h"
 
@@ -32,7 +30,7 @@ public:
   const QVector<HiddenItemDBEntry*> getStore() const;
   int getStoreSize() const;
 
-   Q_INVOKABLE const HiddenItemDBEntry* getStoreAt(const int ind) const;
+   Q_INVOKABLE HiddenItemDBEntry* getStoreAt(const int ind) const;
 
 public slots:
   void load();
@@ -49,4 +47,3 @@ protected:
   const QString loadFile;
 };
 
-#endif // HIDDENCOINS_H

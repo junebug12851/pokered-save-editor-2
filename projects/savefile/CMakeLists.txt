@@ -1,0 +1,68 @@
+qt_add_library(savefile SHARED
+    src/pse-savefile/expanded/area/area.cpp
+    src/pse-savefile/expanded/area/areaaudio.cpp
+    src/pse-savefile/expanded/area/areageneral.cpp
+    src/pse-savefile/expanded/area/arealoadedsprites.cpp
+    src/pse-savefile/expanded/area/areamap.cpp
+    src/pse-savefile/expanded/area/areanpc.cpp
+    src/pse-savefile/expanded/area/areaplayer.cpp
+    src/pse-savefile/expanded/area/areapokemon.cpp
+    src/pse-savefile/expanded/area/areasign.cpp
+    src/pse-savefile/expanded/area/areasprites.cpp
+    src/pse-savefile/expanded/area/areatileset.cpp
+    src/pse-savefile/expanded/area/areawarps.cpp
+    src/pse-savefile/expanded/daycare.cpp
+    src/pse-savefile/expanded/fragments/hofpokemon.cpp
+    src/pse-savefile/expanded/fragments/hofrecord.cpp
+    src/pse-savefile/expanded/fragments/item.cpp
+    src/pse-savefile/expanded/fragments/itemstoragebox.cpp
+    src/pse-savefile/expanded/fragments/mapconndata.cpp
+    src/pse-savefile/expanded/fragments/pokemonbox.cpp
+    src/pse-savefile/expanded/fragments/pokemonparty.cpp
+    src/pse-savefile/expanded/fragments/pokemonstoragebox.cpp
+    src/pse-savefile/expanded/fragments/pokemonstorageset.cpp
+    src/pse-savefile/expanded/fragments/signdata.cpp
+    src/pse-savefile/expanded/fragments/spritedata.cpp
+    src/pse-savefile/expanded/fragments/warpdata.cpp
+    src/pse-savefile/expanded/halloffame.cpp
+    src/pse-savefile/expanded/player/player.cpp
+    src/pse-savefile/expanded/player/playerbasics.cpp
+    src/pse-savefile/expanded/player/playerpokedex.cpp
+    src/pse-savefile/expanded/player/playerpokemon.cpp
+    src/pse-savefile/expanded/rival.cpp
+    src/pse-savefile/expanded/savefileexpanded.cpp
+    src/pse-savefile/expanded/storage.cpp
+    src/pse-savefile/expanded/world/world.cpp
+    src/pse-savefile/expanded/world/worldcompleted.cpp
+    src/pse-savefile/expanded/world/worldevents.cpp
+    src/pse-savefile/expanded/world/worldgeneral.cpp
+    src/pse-savefile/expanded/world/worldhidden.cpp
+    src/pse-savefile/expanded/world/worldlocal.cpp
+    src/pse-savefile/expanded/world/worldmissables.cpp
+    src/pse-savefile/expanded/world/worldother.cpp
+    src/pse-savefile/expanded/world/worldscripts.cpp
+    src/pse-savefile/expanded/world/worldtowns.cpp
+    src/pse-savefile/expanded/world/worldtrades.cpp
+    src/pse-savefile/filemanagement.cpp
+    src/pse-savefile/savefile.cpp
+    src/pse-savefile/savefileiterator.cpp
+    src/pse-savefile/savefiletoolset.cpp
+)
+
+target_compile_definitions(savefile PRIVATE SAVEFILE_LIBRARY)
+
+target_include_directories(savefile
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(savefile
+    PUBLIC
+        common
+        db
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Gui
+        Qt6::Qml
+)

@@ -1,55 +1,42 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 Flickable {
   id: topz
 
-  contentWidth: criteria.width
+  clip: true
+  contentWidth: width
   contentHeight: criteria.height
 
   flickableDirection: Flickable.VerticalFlick
-  ScrollBar.vertical: ScrollBar {}
+  ScrollBar.vertical: ScrollBar { id: vbar; width: 12 }
 
+  // Filters are single-select radios now, so exactly one of these is true.
+  // "All" shows the whole store; otherwise keepAnyOf narrows to the one selected
+  // category. (keepAnyOf still does the general union, so multi-select could
+  // return; "All" uses startOver so entries with no category flag still show.)
   function reSearch() {
+    if(criteria.allChecked) {
+      brg.fontSearch.startOver();
+      return;
+    }
 
-    // Start over on the results
-    brg.fontSearch.startOver();
-
-    if(criteria.normalSearchState === Qt.PartiallyChecked)
-      brg.fontSearch.notNormal();
-    else if(criteria.normalSearchState === Qt.Checked)
-      brg.fontSearch.andNormal();
-
-    if(criteria.controlSearchState === Qt.PartiallyChecked)
-      brg.fontSearch.notControl();
-    else if(criteria.controlSearchState === Qt.Checked)
-      brg.fontSearch.andControl();
-
-    if(criteria.pictureSearchState === Qt.PartiallyChecked)
-      brg.fontSearch.notPicture();
-    else if(criteria.pictureSearchState === Qt.Checked)
-      brg.fontSearch.andPicture();
-
-    if(criteria.singleSearchStateState === Qt.PartiallyChecked)
-      brg.fontSearch.notSingleChar();
-    else if(criteria.singleSearchState === Qt.Checked)
-      brg.fontSearch.andSingleChar();
-
-    if(criteria.multiSearchState === Qt.PartiallyChecked)
-      brg.fontSearch.notMultiChar();
-    else if(criteria.multiSearchState === Qt.Checked)
-      brg.fontSearch.andMultiChar();
-
-    if(criteria.varSearchState === Qt.PartiallyChecked)
-      brg.fontSearch.notVariable();
-    else if(criteria.varSearchState === Qt.Checked)
-      brg.fontSearch.andVariable();
+    brg.fontSearch.keepAnyOf(
+      criteria.normalChecked,
+      criteria.controlChecked,
+      criteria.pictureChecked,
+      criteria.singleChecked,
+      criteria.multiChecked,
+      criteria.varChecked);
   }
 
   SearchCriteria {
     id: criteria
+    // Reserve room for the scrollbar so the ⓘ help dots (right-aligned in each
+    // row) sit clear of it instead of underneath.
+    width: topz.width - 16
     onReSearch: topz.reSearch();
   }
 }

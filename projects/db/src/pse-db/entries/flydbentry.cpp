@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
 */
 
 #include <QtDebug>
+#include <QQmlEngine>
 #include <pse-common/utility.h>
 
 #include "flydbentry.h"
 #include "../mapsdb.h"
+#include "./mapdbentry.h"
 
 FlyDBEntry::FlyDBEntry() {
   qmlRegister();
@@ -35,7 +37,7 @@ FlyDBEntry::FlyDBEntry(QJsonValue& data)
 
 void FlyDBEntry::deepLink()
 {
-  toMap = MapsDB::ind.value(name, nullptr);
+  toMap = MapsDB::inst()->getIndAt(name);
 
 #ifdef QT_DEBUG
   if(toMap == nullptr)
@@ -46,7 +48,7 @@ void FlyDBEntry::deepLink()
     toMap->toFlyDestination = this;
 }
 
-const MapDBEntry* FlyDBEntry::getToMap() const
+MapDBEntry* FlyDBEntry::getToMap() const
 {
   return toMap;
 }
@@ -61,7 +63,15 @@ int FlyDBEntry::getInd() const
     return ind;
 }
 
-const QString FlyDBEntry::getName() const
+QString FlyDBEntry::getName() const
 {
     return name;
+}
+
+void FlyDBEntry::qmlRegister() const
+{
+  static bool once = false;
+  if (once) return;
+  qmlRegisterUncreatableType<FlyDBEntry>("PSE.DB.FlyDBEntry", 1, 0, "FlyDBEntry", "Can't instantiate in QML");
+  once = true;
 }

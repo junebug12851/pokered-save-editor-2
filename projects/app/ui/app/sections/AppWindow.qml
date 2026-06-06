@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls.Material 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import "../fragments/header"
 
@@ -22,9 +22,9 @@ Page {
     Connections {
       target: brg.router
 
-      onGoHome: appBody.pop(null);
-      onOpenNonModal: appBody.push(url);
-      onCloseNonModal: appBody.pop();
+      function onGoHome() { appBody.pop(null); }
+      function onOpenNonModal(url) { appBody.push(url); }
+      function onCloseNonModal(url) { appBody.pop(url); }
     }
   }
 }

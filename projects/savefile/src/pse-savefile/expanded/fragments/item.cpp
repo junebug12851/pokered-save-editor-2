@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/itemsdb.h>
+#include <pse-db/entries/itemdbentry.h>
 #include <pse-common/random.h>
 
 Item::Item(SaveFileIterator* it)
@@ -75,22 +76,22 @@ void Item::reset()
 
 void Item::randomize()
 {
-  auto tmp = ItemsDB::store.at(Random::rangeExclusive(0, ItemsDB::store.size()));
+  auto tmp = ItemsDB::inst()->getStore().at(Random::inst()->rangeExclusive(0, ItemsDB::inst()->getStoreSize()));
 
   // No Glitch or Items only gotten once in the game
-  while(tmp->glitch || tmp->once)
-    tmp = ItemsDB::store.at(Random::rangeExclusive(0, ItemsDB::store.size()));
+  while(tmp->getGlitch() || tmp->getOnce())
+    tmp = ItemsDB::inst()->getStore().at(Random::inst()->rangeExclusive(0, ItemsDB::inst()->getStoreSize()));
 
-  ind = tmp->ind;
+  ind = tmp->getInd();
   indChanged();
 
-  amount = Random::rangeInclusive(1, 5); // Between 1 and 5 of them
+  amount = Random::inst()->rangeInclusive(1, 5); // Between 1 and 5 of them
   amountChanged();
 }
 
 ItemDBEntry* Item::toItem()
 {
-  auto tmp = ItemsDB::ind.value(QString::number(ind), nullptr);
+  auto tmp = ItemsDB::inst()->getIndAt(QString::number(ind));
   return tmp;
 }
 
@@ -196,9 +197,9 @@ void Item::load(bool random)
 
 void Item::load(QString name, int amount)
 {
-  auto tmp = ItemsDB::ind.value(name, nullptr);
+  auto tmp = ItemsDB::inst()->getIndAt(name);
   if(tmp != nullptr)
-    ind = tmp->ind;
+    ind = tmp->getInd();
 
   this->amount = amount;
 }

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@
 #include "./itemmarket/itemmarketentryplayeritem.h"
 #include "./itemmarket/itemmarketentrystoreitem.h"
 #include <pse-db/itemsdb.h>
+#include <pse-db/entries/itemdbentry.h>
+#include <pse-db/entries/gamecornerdbentry.h>
 #include "../bridge/router.h"
 #include <pse-db/gamecornerdb.h>
 #include <pse-savefile/savefile.h>
@@ -349,7 +351,7 @@ void ItemMarketModel::buildMartItemList()
   if(!isMoneyCurrency) {
     itemListCache.append(new ItemMarketEntryMessage("In-House Exclusives"));
 
-    for(auto el : ItemsDB::store) {
+    for(auto el : ItemsDB::inst()->getStore()) {
       if(el->isGameCornerExclusive())
         tmp.append(el);
     }
@@ -359,7 +361,7 @@ void ItemMarketModel::buildMartItemList()
           tmp.end(),
           [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
     {
-      return collator.compare(item1->readable, item2->readable) < 0;
+      return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
     });
 
     for(auto el : tmp) {
@@ -370,8 +372,8 @@ void ItemMarketModel::buildMartItemList()
 
     //////////////////////////////////////////////
 
-    for(auto el : GameCornerDB::store) {
-      if(el->type == "pokemon")
+    for(auto el : GameCornerDB::inst()->getStore()) {
+      if(el->getType() == "pokemon")
         itemListCache.append(new ItemMarketEntryGCPokemon(el, playerPokemon, storage));
     }
   }
@@ -380,8 +382,8 @@ void ItemMarketModel::buildMartItemList()
 
   itemListCache.append(new ItemMarketEntryMessage("Normal Items"));
 
-  for(auto el : ItemsDB::store) {
-    if(!el->once && !el->glitch && vendorListItem(el))
+  for(auto el : ItemsDB::inst()->getStore()) {
+    if(!el->getOnce() && !el->getGlitch() && vendorListItem(el))
       tmp.append(el);
   }
 
@@ -390,7 +392,7 @@ void ItemMarketModel::buildMartItemList()
         tmp.end(),
         [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
   {
-    return collator.compare(item1->readable, item2->readable) < 0;
+    return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
   });
 
   for(auto el : tmp) {
@@ -403,8 +405,8 @@ void ItemMarketModel::buildMartItemList()
 
   itemListCache.append(new ItemMarketEntryMessage("Glitch Items"));
 
-  for(auto el : ItemsDB::store) {
-    if(el->glitch && vendorListItem(el))
+  for(auto el : ItemsDB::inst()->getStore()) {
+    if(el->getGlitch() && vendorListItem(el))
       tmp.append(el);
   }
 
@@ -413,7 +415,7 @@ void ItemMarketModel::buildMartItemList()
         tmp.end(),
         [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
   {
-    return collator.compare(item1->readable, item2->readable) < 0;
+    return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
   });
 
   for(auto el : tmp) {
@@ -436,12 +438,5 @@ void ItemMarketModel::pageOpening(QString path)
   if(path != "qrc:/ui/app/screens/non-modal/Pokemart.qml")
     return;
 
-  // Re-Build List to account for changes
-  isBuyMode = false;
-  isBuyModeChanged();
-
-  isMoneyCurrency = true;
-  isMoneyCurrencyChanged();
-
-  //reUpdateAll();
+  buildList();
 }

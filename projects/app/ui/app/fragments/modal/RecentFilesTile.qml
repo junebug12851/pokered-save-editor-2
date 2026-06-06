@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 TileButton {
   id: recentFilesBtn
@@ -16,7 +16,7 @@ TileButton {
     id: recentFilesMenu
     x: 0
     y: 0
-    width: parent.width
+    width: parent ? parent.width : 0
     height: parent.height
     modal: false
     focus: true
@@ -50,13 +50,13 @@ TileButton {
 
       x: 0
       y: 0
-      width: parent.width
+      width: parent ? parent.width : 0
       height: parent.height
       model: brg.recentFilesModel
 
       delegate: Button {
         text: path
-        width: parent.width
+        width: parent ? parent.width : 0
         enabled: isEnabled
         leftInset: -10
         rightInset: -10

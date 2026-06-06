@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/missablesdb.h>
+#include <pse-db/entries/missabledbentry.h>
 
 WorldMissables::WorldMissables(SaveFile* saveFile)
 {
@@ -82,8 +83,8 @@ void WorldMissables::reset()
   // Missables can't be zeroed out whimsically, reset back to game start
   // defaults. Missables can crash the game if mis-handled
   // 1 = Hide, 0 = Show, ensure it's marked one if it's hidden
-  for(auto missable : MissablesDB::store)
-    missables[missable->ind] = !missable->defShow;
+  for(auto missable : MissablesDB::inst()->getStore())
+    missables[missable->getInd()] = !missable->getDefShow();
 
   missablesChanged();
 }

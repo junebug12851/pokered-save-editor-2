@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,50 +13,33 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef POKEMON_H
-#define POKEMON_H
+#pragma once
 
+#include <QObject>
+#include <QJsonValue>
 #include <QString>
 #include <QVector>
-#include <QJsonValue>
 #include <QHash>
-
 #include <optional>
+
 #include <pse-common/types.h>
 #include "./db_autoport.h"
 
-// The Pokedex data starts at pokedex #0 for Bulbasaur
-// It ends at #150 for Mew, it's size is 151 dex mons
-// These are also here for code cleanliness
 constexpr var8 pokemonDexCount = 151;
 constexpr var8 pokemonLevelMax = 100;
 
-// With amazing help of Quicktype!!!
-// Really needed it with Pokemon as this was quite complicated
-// https://app.quicktype.io
-
-// Optional bool values are only present when true,
-// Optional arrays are empty when not present,
-// Strings are empty when not present
-// so we simplify things and avoid using variant unless dealing with primitive
-// types
-
-// All the Pokemon and glitch Pokemon in the game
-
-// Forward Declare Structs
+// Forward declarations
 struct PokemonDBEntryEvolution;
 struct MoveDBEntry;
 struct PokemonDBEntry;
-
-// Deep link forward-declarations
 struct ItemDBEntry;
-struct MoveDBEntry;
 struct TypeDBEntry;
 struct EventPokemonDBEntry;
 struct MapDBEntrySpritePokemon;
 struct MapDBEntryWildMon;
 struct TradeDBEntry;
 struct GameCornerDBEntry;
+class QQmlEngine;
 
 struct DB_AUTOPORT PokemonDBEntryEvolution
 {
@@ -67,14 +50,12 @@ struct DB_AUTOPORT PokemonDBEntryEvolution
   QString toName;
   bool trade = false;
   QString item;
-
   std::optional<var8> level;
 
   PokemonDBEntry* toDeEvolution = nullptr;
-  PokemonDBEntry* toEvolution = nullptr;
-  ItemDBEntry* toItem = nullptr;
-
-  PokemonDBEntry* parent = nullptr;
+  PokemonDBEntry* toEvolution   = nullptr;
+  ItemDBEntry*    toItem        = nullptr;
+  PokemonDBEntry* parent        = nullptr;
 };
 
 struct DB_AUTOPORT PokemonDBEntryMove
@@ -86,8 +67,8 @@ struct DB_AUTOPORT PokemonDBEntryMove
   var8 level = 0;
   QString move;
 
-  MoveDBEntry* toMove = nullptr;
-  PokemonDBEntry* parent = nullptr;
+  MoveDBEntry*    toMove  = nullptr;
+  PokemonDBEntry* parent  = nullptr;
 };
 
 struct DB_AUTOPORT PokemonDBEntry {
@@ -96,15 +77,15 @@ struct DB_AUTOPORT PokemonDBEntry {
   void deepLink();
 
   QString name;
-  var8 ind = 0;
+  var8    ind = 0;
   QString readable;
-  bool glitch = false;
+  bool    glitch = false;
   QString type1;
   QString type2;
 
-  QVector<PokemonDBEntryMove*> moves;
-  QVector<QString> initial;
-  QVector<var8> tmHm;
+  QVector<PokemonDBEntryMove*>      moves;
+  QVector<QString>                  initial;
+  QVector<var8>                     tmHm;
   QVector<PokemonDBEntryEvolution*> evolution;
 
   std::optional<var8> pokedex;
@@ -117,29 +98,46 @@ struct DB_AUTOPORT PokemonDBEntry {
   std::optional<var8> baseExpYield;
   std::optional<var8> catchRate;
 
-  // Lots of deep linking
-  TypeDBEntry* toType1 = nullptr;
-  TypeDBEntry* toType2 = nullptr;
-  PokemonDBEntry* toDeEvolution = nullptr;
+  TypeDBEntry*          toType1             = nullptr;
+  TypeDBEntry*          toType2             = nullptr;
+  PokemonDBEntry*       toDeEvolution       = nullptr;
   QVector<MoveDBEntry*> toInitial;
   QVector<MoveDBEntry*> toTmHmMove;
   QVector<ItemDBEntry*> toTmHmItem;
-  QVector<EventPokemonDBEntry*> toEventMons;
-  MapDBEntrySpritePokemon* toMapSpritePokemon = nullptr;
-  QVector<MapDBEntryWildMon*> toWildMonMaps;
-  QVector<TradeDBEntry*> toTrades;
-  QVector<GameCornerDBEntry*> toGameCorner;
+  QVector<EventPokemonDBEntry*>     toEventMons;
+  MapDBEntrySpritePokemon*          toMapSpritePokemon = nullptr;
+  QVector<MapDBEntryWildMon*>       toWildMonMaps;
+  QVector<TradeDBEntry*>            toTrades;
+  QVector<GameCornerDBEntry*>       toGameCorner;
 };
 
-class DB_AUTOPORT PokemonDB
+class DB_AUTOPORT PokemonDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+
 public:
-  static void load();
-  static void index();
-  static void deepLink();
+  static PokemonDB* inst();
 
-  static QVector<PokemonDBEntry*> store;
-  static QHash<QString, PokemonDBEntry*> ind;
+  [[nodiscard]] const QVector<PokemonDBEntry*> getStore() const;
+  [[nodiscard]] const QHash<QString, PokemonDBEntry*> getInd() const;
+  [[nodiscard]] int getStoreSize() const;
+
+  Q_INVOKABLE PokemonDBEntry* getStoreAt(int idx) const;
+  Q_INVOKABLE PokemonDBEntry* getIndAt(const QString& key) const;
+
+public slots:
+  void load();
+  void index();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  PokemonDB();
+
+  QVector<PokemonDBEntry*>      store;
+  QHash<QString, PokemonDBEntry*> ind;
 };
-
-#endif // POKEMON_H

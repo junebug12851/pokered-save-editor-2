@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ MapDBEntrySign::MapDBEntrySign() {
   qmlRegister();
 }
 
-const MapDBEntry* MapDBEntrySign::getParent() const
+MapDBEntry* MapDBEntrySign::getParent() const
 {
   return parent;
 }

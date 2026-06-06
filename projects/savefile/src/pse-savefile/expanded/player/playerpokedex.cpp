@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -94,8 +94,8 @@ void PlayerPokedex::randomize()
   for(var8 i = 0; i < 151; i++)
   {
     // 15% chance of having them seen or owned
-    bool markSeen = Random::chanceSuccess(15);
-    bool markOwned = Random::chanceSuccess(15);
+    bool markSeen = Random::inst()->chanceSuccess(15);
+    bool markOwned = Random::inst()->chanceSuccess(15);
 
     owned[i] = markOwned;
     seen[i] = markSeen;

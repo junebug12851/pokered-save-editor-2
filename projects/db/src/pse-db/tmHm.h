@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,29 +13,45 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef TMHM_H
-#define TMHM_H
+#pragma once
 
+#include <QObject>
 #include <QString>
+#include <QVector>
 
 #include <pse-common/types.h>
 #include "./db_autoport.h"
 
 struct ItemDBEntry;
 struct MoveDBEntry;
+class QQmlEngine;
 
-// All the TM's and HM's in the game
-// internally, HM's are specially treated TM's that start at TM 51
-
-class DB_AUTOPORT TmHmsDB
+// All TMs and HMs. Internally HMs are TMs starting at TM 51.
+class DB_AUTOPORT TmHmsDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+
 public:
-  static void load();
-  static void deepLink();
+  static TmHmsDB* inst();
 
-  static QVector<QString> store;
-  static QVector<ItemDBEntry*> toTmHmItem;
-  static QVector<MoveDBEntry*> toTmHmMove;
+  [[nodiscard]] const QVector<QString> getStore() const;
+  [[nodiscard]] int getStoreSize() const;
+  [[nodiscard]] const QVector<ItemDBEntry*>& getTmHmItems() const;
+  [[nodiscard]] const QVector<MoveDBEntry*>& getTmHmMoves() const;
+
+public slots:
+  void load();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  TmHmsDB();
+
+  QVector<QString>    store;
+  QVector<ItemDBEntry*> toTmHmItem;
+  QVector<MoveDBEntry*> toTmHmMove;
 };
-
-#endif // TMHM_H

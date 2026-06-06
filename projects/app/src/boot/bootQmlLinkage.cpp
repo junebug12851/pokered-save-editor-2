@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -35,13 +35,14 @@
 #include "../mvc/moveselectmodel.h"
 #include "../mvc/mapselectmodel.h"
 
-#include <pse-db/examplesplayer.h>
-#include <pse-db/examplespokemon.h>
-#include <pse-db/examplesrival.h>
+#include <pse-db/entries/examplesplayer.h>
+#include <pse-db/entries/examplespokemon.h>
+#include <pse-db/entries/examplesrival.h>
 #include <pse-db/fontsdb.h>
+#include <pse-db/entries/fontdbentry.h>
 #include <pse-db/util/fontsearch.h>
 #include <pse-db/names.h>
-#include <pse-db/namesPokemon.h>
+#include <pse-db/entries/namespokemon.h>
 
 #include <pse-savefile/filemanagement.h>
 #include <pse-savefile/savefile.h>
@@ -96,6 +97,27 @@
 
 extern void bootQmlLinkage()
 {
+  // Explicitly register all pointer types used in Q_PROPERTY chains.
+  // In Qt6, qmlRegisterUncreatableType alone may not register T* with
+  // the meta-type system, causing QML property bindings to return undefined.
+  qRegisterMetaType<FileManagement*>("FileManagement*");
+  qRegisterMetaType<SaveFile*>("SaveFile*");
+  qRegisterMetaType<SaveFileExpanded*>("SaveFileExpanded*");
+  qRegisterMetaType<Player*>("Player*");
+  qRegisterMetaType<PlayerBasics*>("PlayerBasics*");
+  qRegisterMetaType<PlayerPokedex*>("PlayerPokedex*");
+  qRegisterMetaType<PlayerPokemon*>("PlayerPokemon*");
+  qRegisterMetaType<ItemStorageBox*>("ItemStorageBox*");
+  qRegisterMetaType<Rival*>("Rival*");
+  qRegisterMetaType<Storage*>("Storage*");
+  qRegisterMetaType<Area*>("Area*");
+  qRegisterMetaType<World*>("World*");
+  qRegisterMetaType<WorldOther*>("WorldOther*");
+  qRegisterMetaType<Daycare*>("Daycare*");
+  qRegisterMetaType<HallOfFame*>("HallOfFame*");
+  qRegisterMetaType<AreaMap*>("AreaMap*");
+  qRegisterMetaType<AreaGeneral*>("AreaGeneral*");
+
   // Can't put this into a template because there would be no QML processing
   // for hints so I have to duplicate the class name 3 times on each line
   // EDIT: Apparently I literally can't have any help here, any sort of help
@@ -145,8 +167,8 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<FontSearch>("App.FontSearch", 1, 0, "FontSearch", "Can't instantiate in QML");
   qmlRegisterUncreatableType<FontsDB>("App.FontsDB", 1, 0, "FontsDB", "Can't instantiate in QML");
   qmlRegisterUncreatableType<FontDBEntry>("App.FontDBEntry", 1, 0, "FontDBEntry", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<NamesDB>("App.NamesDB", 1, 0, "NamesDB", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<NamesPokemonDB>("App.NamesPokemonDB", 1, 0, "NamesPokemonDB", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<NamesPlayer>("App.NamesDB", 1, 0, "NamesDB", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<NamesPokemon>("App.NamesPokemonDB", 1, 0, "NamesPokemonDB", "Can't instantiate in QML");
 
   qmlRegisterUncreatableType<FileManagement>("App.FileManagement", 1, 0, "FileManagement", "Can't instantiate in QML");
   qmlRegisterUncreatableType<SaveFile>("App.SaveFile", 1, 0, "SaveFile", "Can't instantiate in QML");
@@ -193,14 +215,4 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<WorldCompleted>("App.WorldCompleted", 1, 0, "WorldCompleted", "Can't instantiate in QML");
   qmlRegisterUncreatableType<WorldEvents>("App.WorldEvents", 1, 0, "WorldEvents", "Can't instantiate in QML");
   qmlRegisterUncreatableType<Options>("App.Options", 1, 0, "Options", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<LetterDelay>("App.LetterDelay", 1, 0, "LetterDelay", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldGeneral>("App.WorldGeneral", 1, 0, "WorldGeneral", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldHidden>("App.WorldHidden", 1, 0, "WorldHidden", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldMissables>("App.WorldMissables", 1, 0, "WorldMissables", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<Playtime>("App.Playtime", 1, 0, "Playtime", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldOther>("App.WorldOther", 1, 0, "WorldOther", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldScripts>("App.WorldScripts", 1, 0, "WorldScripts", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldTowns>("App.WorldTowns", 1, 0, "WorldTowns", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldTrades>("App.WorldTrades", 1, 0, "WorldTrades", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<WorldLocal>("App.WorldLocal", 1, 0, "WorldLocal", "Can't instantiate in QML");
 }

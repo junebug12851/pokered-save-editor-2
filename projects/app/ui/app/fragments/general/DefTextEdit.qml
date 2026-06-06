@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 TextField {
   property alias labelEl: label
@@ -15,7 +15,10 @@ TextField {
   font.letterSpacing: 2
   font.pixelSize: 14
 
+  // Center the text vertically so it stays put when the field height changes.
+  verticalAlignment: TextInput.AlignVCenter
   topPadding: 0
+  bottomPadding: 0
 
   placeholderTextColor: Qt.lighter(brg.settings.textColorDark, 1.25)
 
@@ -31,5 +34,6 @@ TextField {
     font.pixelSize: 14
 
     horizontalAlignment: Text.AlignRight
+    verticalAlignment: Text.AlignVCenter
   }
 }

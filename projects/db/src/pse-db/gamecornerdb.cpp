@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -98,7 +98,6 @@ void GameCornerDB::qmlRegister() const
 GameCornerDB::GameCornerDB()
 {
   qmlRegister();
-  load();
 }
 
 GameCornerDB* GameCornerDB::inst()
@@ -117,7 +116,7 @@ int GameCornerDB::getStoreSize() const
   return store.size();
 }
 
-const GameCornerDBEntry* GameCornerDB::getStoreAt(const int ind) const
+GameCornerDBEntry* GameCornerDB::getStoreAt(const int ind) const
 {
   if(ind >= store.size())
     return nullptr;
@@ -129,3 +128,5 @@ int GameCornerDB::getBuyPrice() const
 {
     return buyPrice;
 }
+
+int GameC

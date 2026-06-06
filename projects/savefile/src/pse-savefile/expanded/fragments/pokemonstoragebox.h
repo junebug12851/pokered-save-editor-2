@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,13 +13,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef POKEMONSTORAGEBOX_H
-#define POKEMONSTORAGEBOX_H
-
+#pragma once
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
 #include "../../savefile_autoport.h"
+
+// PokemonBox is returned by the Q_INVOKABLE pokemonAt() below — full include so
+// QML receives a real (traversable) PokemonBox, not an opaque value.
+#include "./pokemonbox.h"
 
 class SaveFile;
 class PokemonBox;
@@ -69,14 +71,4 @@ public slots:
   void pokemonRemove(int ind);
   virtual void pokemonNew();
 
-  bool relocateAll(PokemonStorageBox* dst);
-  virtual bool relocateOne(PokemonStorageBox* dst, int ind);
-
-public:
-  bool isParty = false;
-  QVector<PokemonBox*> pokemon;
-  int maxSize = 0;
-  SaveFile* file;
-};
-
-#endif // POKEMONSTORAGEBOX_H
+  bool relocateAll(PokemonStora

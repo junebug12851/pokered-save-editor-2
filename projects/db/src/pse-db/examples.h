@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,29 +13,28 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef EXAMPLES_H
-#define EXAMPLES_H
-
+#pragma once
 #include <QObject>
 
+#include "./entries/examplesplayer.h"
+#include "./entries/examplespokemon.h"
+#include "./entries/examplesrival.h"
+
 class QQmlEngine;
-class ExamplesPlayer;
-class ExamplesRival;
-class ExamplesPokemon;
 
 class Examples : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(ExamplesPlayer* player READ player CONSTANT)
-  Q_PROPERTY(ExamplesRival* rival READ rival CONSTANT)
+  Q_PROPERTY(ExamplesPlayer*  player  READ player  CONSTANT)
+  Q_PROPERTY(ExamplesRival*   rival   READ rival   CONSTANT)
   Q_PROPERTY(ExamplesPokemon* pokemon READ pokemon CONSTANT)
 
 public:
   static Examples* inst();
 
-  const ExamplesPlayer* player() const;
-  const ExamplesRival* rival() const;
-  const ExamplesPokemon* pokemon() const;
+  ExamplesPlayer*  player()  const;
+  ExamplesRival*   rival()   const;
+  ExamplesPokemon* pokemon() const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
@@ -46,5 +45,3 @@ private slots:
 private:
   Examples();
 };
-
-#endif // EXAMPLES_H

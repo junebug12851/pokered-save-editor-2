@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -66,16 +66,16 @@ void Rival::randomize()
 {
   reset();
 
-  name = NamesDB::randomName();
+  name = Names::inst()->player()->randomExample();
   nameChanged();
 
   var8 starters[3] = {
-    PokemonDB::ind.value("Charmander")->ind,
-    PokemonDB::ind.value("Squirtle")->ind,
-    PokemonDB::ind.value("Bulbasaur")->ind
+    PokemonDB::inst()->getIndAt("Charmander")->ind,
+    PokemonDB::inst()->getIndAt("Squirtle")->ind,
+    PokemonDB::inst()->getIndAt("Bulbasaur")->ind
   };
 
   // Get a random starter
-  starter = starters[Random::rangeExclusive(0, 3)];
+  starter = starters[Random::inst()->rangeExclusive(0, 3)];
   starterChanged();
 }

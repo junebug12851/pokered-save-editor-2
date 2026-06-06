@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/music.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/mapsdb.h>
 #include <pse-common/random.h>
 
@@ -79,7 +80,7 @@ void AreaAudio::randomize()
   reset();
 
   // Select a random song
-  auto musicEntry = MusicDB::store.at(Random::rangeExclusive(0, MusicDB::store.size()));
+  auto musicEntry = MusicDB::inst()->getStore().at(Random::inst()->rangeExclusive(0, MusicDB::inst()->getStoreSize()));
 
   // Load it into the map
   musicID = musicEntry->id;
@@ -94,7 +95,7 @@ void AreaAudio::setTo(MapDBEntry* map)
   reset();
 
   // Select a random song
-  MusicDBEntry* musicEntry = map->toMusic;
+  MusicDBEntry* musicEntry = map->getToMusic();
 
   // Load it into the map
   musicID = (musicEntry == nullptr)

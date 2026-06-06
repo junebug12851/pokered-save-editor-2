@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 #include "../../savefileiterator.h"
 #include <pse-common/random.h>
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 
 AreaGeneral::AreaGeneral(SaveFile* saveFile)
 {
@@ -73,7 +74,7 @@ void AreaGeneral::randomize()
 
   // Pick a number between 1 - 8
   // That's beacuse 9 is solid black which can be fun but not very playable lol
-  contrast = Random::rangeInclusive(0, 8);
+  contrast = Random::inst()->rangeInclusive(0, 8);
   contrastChanged();
 
   // Leaving these options off for now
@@ -90,7 +91,7 @@ void AreaGeneral::setTo(MapDBEntry* map)
 
   int mapInd = (map == nullptr)
       ? 0
-      : map->ind;
+      : map->getInd();
 
   // Set "Needs Flash" contrast level for Rock Tunnel 1 and 2, otherwise normal
   // no flash needed

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 #include "./halloffame.h"
+#include "../qmlownership.h"
 #include "../savefile.h"
 #include "../savefiletoolset.h"
 #include "../savefileiterator.h"
@@ -44,7 +45,7 @@ int HallOfFame::recordMax()
 
 HoFRecord* HallOfFame::recordAt(int ind)
 {
-  return records.at(ind);
+  return qmlCppOwned(records.at(ind));
 }
 
 void HallOfFame::recordSwap(int from, int to)
@@ -119,13 +120,9 @@ void HallOfFame::randomize()
   reset();
 
   // Create up to 5 random records
-  var8 rndCount = Random::rangeInclusive(0, 5);
+  var8 rndCount = Random::inst()->rangeInclusive(0, 5);
 
   for (var8 i = 0; i < rndCount && i < recordsMax; i++) {
     auto tmp = new HoFRecord;
     records.append(tmp);
-    tmp->randomize();
-  }
-
-  recordsChanged();
-}
+    tmp->ra

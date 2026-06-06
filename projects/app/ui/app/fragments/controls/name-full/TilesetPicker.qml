@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../general"
 
@@ -9,6 +9,7 @@ Item {
   id: top
 
   property string str: ""
+  property var detailView: null
 
   TilesetDisplay {
     id: tilesetImg
@@ -55,27 +56,29 @@ Item {
         lastTileID = tileId;
 
         // We never want a crash!!! Stop here if tileID is invalid
-        if(lastTileID <= 0 || lastTileID >= brg.fonts.fontCount())
+        if(lastTileID <= 0 || lastTileID > brg.fonts.fontCount())
           return noMouse();
 
-        detailView.colorCodeEl.color = determineColor(lastTileID);
-        detailView.titleEl.text = (brg.fonts.fontAt(lastTileID).alias !== "")
-            ? brg.fonts.fontAt(lastTileID).alias
-            : brg.fonts.fontAt(lastTileID).name;
-        detailView.codeEl.text = (brg.fonts.fontAt(lastTileID).alias !== "")
-            ? brg.fonts.fontAt(lastTileID).name
-            : "";
-        detailView.descDividerEl.visible = brg.fonts.fontAt(lastTileID).tip !== ""
-        detailView.descEl.text = brg.fonts.fontAt(lastTileID).tip;
+        let dv = top.detailView;
+        if(!dv) return;
+        let f = brg.fonts.fontAt(lastTileID);
+        if(!f) return;
+        dv.colorCodeEl.color = determineColor(lastTileID);
+        dv.titleEl.text = (f.alias !== "") ? f.alias : f.name;
+        dv.codeEl.text = (f.alias !== "") ? f.name : "";
+        dv.descDividerEl.visible = f.tip !== "";
+        dv.descEl.text = f.tip;
       }
 
       // No mouse
       function noMouse() {
-        detailView.colorCodeEl.color = "transparent"
-        detailView.titleEl.text = ""
-        detailView.codeEl.text = ""
-        detailView.descDividerEl.visible = false
-        detailView.descEl.text = ""
+        let dv = top.detailView;
+        if(!dv) return;
+        dv.colorCodeEl.color = "transparent";
+        dv.titleEl.text = "";
+        dv.codeEl.text = "";
+        dv.descDividerEl.visible = false;
+        dv.descEl.text = "";
       }
 
       onHoveredChanged: {
@@ -102,10 +105,14 @@ Item {
         // by far the quickest way to destroy a programs reputation in only
         // one single time. If it comes down to not pulling anything up on
         // a click versus crashing, I'll choose the former.
-        if(lastTileID <= 0 || lastTileID >= brg.fonts.fontCount())
+        if(lastTileID <= 0 || lastTileID > brg.fonts.fontCount())
           return;
 
-        top.str = top.str + brg.fonts.fontAt(lastTileID).name
+        var f = brg.fonts.fontAt(lastTileID);
+        if(f === null || f === undefined)
+          return;
+
+        top.str = top.str + f.name
       }
     }
   }

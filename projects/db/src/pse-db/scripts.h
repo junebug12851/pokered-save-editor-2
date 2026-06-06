@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,26 +13,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#pragma once
 
+#include <QObject>
 #include <QJsonValue>
 #include <QVector>
 #include <QString>
 #include <QHash>
-
 #include <optional>
 
 #include <pse-common/types.h>
 #include "./db_autoport.h"
 
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
-
-// Where are you in each map of the world? This tracks your map progression
-// for each individual map
-
 struct MapDBEntry;
+class QQmlEngine;
 
 struct DB_AUTOPORT ScriptDBEntry {
   ScriptDBEntry();
@@ -40,26 +34,42 @@ struct DB_AUTOPORT ScriptDBEntry {
   void deepLink();
 
   QString name;
-  var8 ind = 0;
+  var8 ind  = 0;
   var8 size = 0;
 
-  QVector<QString> maps; // Map aliases to deep link to
+  QVector<QString> maps;
   std::optional<var8> skip;
 
-  // There is always one map except in one case which results in 2 maps
-  // Decided to just put a vector here
   QVector<MapDBEntry*> toMaps;
 };
 
-class DB_AUTOPORT ScriptsDB
+class DB_AUTOPORT ScriptsDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+
 public:
-  static void load();
-  static void index();
-  static void deepLink();
+  static ScriptsDB* inst();
 
-  static QVector<ScriptDBEntry*> store;
-  static QHash<QString, ScriptDBEntry*> ind;
+  [[nodiscard]] const QVector<ScriptDBEntry*> getStore() const;
+  [[nodiscard]] const QHash<QString, ScriptDBEntry*> getInd() const;
+  [[nodiscard]] int getStoreSize() const;
+
+  Q_INVOKABLE ScriptDBEntry* getStoreAt(int idx) const;
+  Q_INVOKABLE ScriptDBEntry* getIndAt(const QString& key) const;
+
+public slots:
+  void load();
+  void index();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  ScriptsDB();
+
+  QVector<ScriptDBEntry*> store;
+  QHash<QString, ScriptDBEntry*> ind;
 };
-
-#endif // SCRIPT_H

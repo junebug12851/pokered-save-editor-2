@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include <QCollator>
 
 #include <pse-db/itemsdb.h>
+#include <pse-db/entries/itemdbentry.h>
 #include "./itemselectmodel.h"
 
 ItemSelectEntryData::ItemSelectEntryData(QString name, int ind)
@@ -38,8 +39,8 @@ ItemSelectModel::ItemSelectModel()
   // Gather normal repeatable items and sort by name, then add into list
   QVector<ItemDBEntry*> tmp;
 
-  for(auto el : ItemsDB::store) {
-    if(!el->once && !el->glitch)
+  for(auto el : ItemsDB::inst()->getStore()) {
+    if(!el->getOnce() && !el->getGlitch())
       tmp.append(el);
   }
 
@@ -48,11 +49,11 @@ ItemSelectModel::ItemSelectModel()
       tmp.end(),
       [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
       {
-          return collator.compare(item1->readable, item2->readable) < 0;
+          return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemSelectEntryData(el->readable, el->ind));
+    itemListCache.append(new ItemSelectEntryData(el->getReadable(), el->getInd()));
   }
 
   tmp.clear();
@@ -60,8 +61,8 @@ ItemSelectModel::ItemSelectModel()
   // Add 2nd category
   itemListCache.append(new ItemSelectEntryData("--- Special Items ---", -1));
 
-  for(auto el : ItemsDB::store) {
-    if(el->once && !el->glitch)
+  for(auto el : ItemsDB::inst()->getStore()) {
+    if(el->getOnce() && !el->getGlitch())
       tmp.append(el);
   }
 
@@ -70,11 +71,11 @@ ItemSelectModel::ItemSelectModel()
       tmp.end(),
       [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
       {
-          return collator.compare(item1->readable, item2->readable) < 0;
+          return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemSelectEntryData(el->readable, el->ind));
+    itemListCache.append(new ItemSelectEntryData(el->getReadable(), el->getInd()));
   }
 
   tmp.clear();
@@ -82,8 +83,8 @@ ItemSelectModel::ItemSelectModel()
   // Add 3rd category
   itemListCache.append(new ItemSelectEntryData("--- Glitch Items ---", -1));
 
-  for(auto el : ItemsDB::store) {
-    if(el->glitch)
+  for(auto el : ItemsDB::inst()->getStore()) {
+    if(el->getGlitch())
       tmp.append(el);
   }
 
@@ -92,11 +93,11 @@ ItemSelectModel::ItemSelectModel()
       tmp.end(),
       [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
       {
-          return collator.compare(item1->readable, item2->readable) < 0;
+          return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
       });
 
   for(auto el : tmp) {
-    itemListCache.append(new ItemSelectEntryData(el->readable, el->ind));
+    itemListCache.append(new ItemSelectEntryData(el->getReadable(), el->getInd()));
   }
 
   tmp.clear();
@@ -151,11 +152,10 @@ int ItemSelectModel::itemToListIndex(int ind)
   int ret = -1;
 
   for(int i = 0; i < itemListCache.size(); i++) {
-    if(ind != itemListCache.at(i)->ind)
-      continue;
-
-    ret = i;
-    break;
+    if(itemListCache.at(i)->ind == ind) {
+      ret = i;
+      break;
+    }
   }
 
   return ret;

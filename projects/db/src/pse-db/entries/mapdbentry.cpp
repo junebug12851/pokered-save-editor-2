@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -210,10 +210,10 @@ MapDBEntry::MapDBEntry(const QJsonValue& data)
 void MapDBEntry::deepLink()
 {
   if(music != "")
-    toMusic = MusicDB::ind.value(music, nullptr);
+    toMusic = MusicDB::inst()->getIndAt(music);
 
   if(tileset != "")
-    toTileset = TilesetDB::ind.value(tileset, nullptr);
+    toTileset = TilesetDB::inst()->getIndAt(tileset);
 
   if(incomplete != "")
     toComplete = MapsDB::inst()->getInd().value(incomplete, nullptr);
@@ -249,7 +249,7 @@ void MapDBEntry::deepLink()
 
   if(spriteSet >= 0)
     toSpriteSet =
-        SpriteSetDB::ind.value(QString::number(spriteSet), nullptr);
+        SpriteSetDB::inst()->getIndAt(QString::number(spriteSet));
 
 #ifdef QT_DEBUG
   if(music != "" && toMusic == nullptr)
@@ -286,7 +286,7 @@ void MapDBEntry::qmlRegister() const
   once = true;
 }
 
-const ScriptDBEntry* MapDBEntry::getToScript() const
+ScriptDBEntry* MapDBEntry::getToScript() const
 {
   return toScript;
 }
@@ -314,7 +314,7 @@ const HiddenItemDBEntry* MapDBEntry::getToHiddenItemsAt(const int ind) const
   return toHiddenItems.at(ind);
 }
 
-const FlyDBEntry* MapDBEntry::getToFlyDestination() const
+FlyDBEntry* MapDBEntry::getToFlyDestination() const
 {
     return toFlyDestination;
 }
@@ -337,17 +337,17 @@ const EventDBEntry* MapDBEntry::getToEventsAt(const int ind) const
   return toEvents.at(ind);
 }
 
-const MapDBEntry* MapDBEntry::getToComplete() const
+MapDBEntry* MapDBEntry::getToComplete() const
 {
     return toComplete;
 }
 
-const TilesetDBEntry* MapDBEntry::getToTileset() const
+TilesetDBEntry* MapDBEntry::getToTileset() const
 {
     return toTileset;
 }
 
-const MusicDBEntry* MapDBEntry::getToMusic() const
+MusicDBEntry* MapDBEntry::getToMusic() const
 {
     return toMusic;
 }
@@ -407,7 +407,7 @@ int MapDBEntry::getBorder() const
     return border;
 }
 
-const SpriteSetDBEntry* MapDBEntry::getToSpriteSet() const
+SpriteSetDBEntry* MapDBEntry::getToSpriteSet() const
 {
     return toSpriteSet;
 }

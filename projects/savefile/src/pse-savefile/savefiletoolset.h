@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SAVEFILETOOLSET_H
-#define SAVEFILETOOLSET_H
-
+#pragma once
 #include <pse-common/types.h>
 #include <QVector>
 #include <QString>
@@ -127,4 +125,3 @@ protected:
   SaveFile* saveFile;
 };
 
-#endif // SAVEFILETOOLSET_H

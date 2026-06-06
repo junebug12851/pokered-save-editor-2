@@ -1,0 +1,91 @@
+qt_add_executable(PokeredSaveEditor
+    src/main.cpp
+    src/boot/boot.cpp
+    src/boot/bootDatabase.cpp
+    src/boot/bootQmlLinkage.cpp
+    src/bridge/bridge.cpp
+    src/bridge/bridge.h
+    src/bridge/router.cpp
+    src/bridge/router.h
+    src/bridge/settings.cpp
+    src/bridge/settings.h
+    src/engine/fontpreviewprovider.cpp
+    src/engine/fontpreviewprovider.h
+    src/engine/tilesetengine.cpp
+    src/engine/tilesetengine.h
+    src/engine/tilesetprovider.cpp
+    src/engine/tilesetprovider.h
+    src/mvc/creditsmodel.cpp
+    src/mvc/creditsmodel.h
+    src/mvc/fontsearchmodel.cpp
+    src/mvc/fontsearchmodel.h
+    src/mvc/individualmap.cpp
+    src/mvc/individualmap.h
+    src/mvc/itemmarketmodel.cpp
+    src/mvc/itemmarketmodel.h
+    src/mvc/itemmarket/itemmarketentry.cpp
+    src/mvc/itemmarket/itemmarketentry.h
+    src/mvc/itemmarket/itemmarketentrygcpokemon.cpp
+    src/mvc/itemmarket/itemmarketentrygcpokemon.h
+    src/mvc/itemmarket/itemmarketentrymessage.cpp
+    src/mvc/itemmarket/itemmarketentrymessage.h
+    src/mvc/itemmarket/itemmarketentrymoney.cpp
+    src/mvc/itemmarket/itemmarketentrymoney.h
+    src/mvc/itemmarket/itemmarketentryplayeritem.cpp
+    src/mvc/itemmarket/itemmarketentryplayeritem.h
+    src/mvc/itemmarket/itemmarketentrystoreitem.cpp
+    src/mvc/itemmarket/itemmarketentrystoreitem.h
+    src/mvc/itemselectmodel.cpp
+    src/mvc/itemselectmodel.h
+    src/mvc/itemstoragemodel.cpp
+    src/mvc/itemstoragemodel.h
+    src/mvc/mapselectmodel.cpp
+    src/mvc/mapselectmodel.h
+    src/mvc/moveselectmodel.cpp
+    src/mvc/moveselectmodel.h
+    src/mvc/natureselectmodel.cpp
+    src/mvc/natureselectmodel.h
+    src/mvc/pokedexmodel.cpp
+    src/mvc/pokedexmodel.h
+    src/mvc/pokemonboxselectmodel.cpp
+    src/mvc/pokemonboxselectmodel.h
+    src/mvc/pokemonstartersmodel.cpp
+    src/mvc/pokemonstartersmodel.h
+    src/mvc/pokemonstoragemodel.cpp
+    src/mvc/pokemonstoragemodel.h
+    src/mvc/recentfilesmodel.cpp
+    src/mvc/recentfilesmodel.h
+    src/mvc/speciesselectmodel.cpp
+    src/mvc/speciesselectmodel.h
+    src/mvc/statusselectmodel.cpp
+    src/mvc/statusselectmodel.h
+    src/mvc/typesmodel.cpp
+    src/mvc/typesmodel.h
+    ui/window/mainwindow.cpp
+    ui/window/mainwindow.h
+    ui/window/mainwindow.ui
+    app.qrc
+)
+
+
+target_include_directories(PokeredSaveEditor
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/ui
+)
+
+target_link_libraries(PokeredSaveEditor
+    PRIVATE
+        common
+        db
+        savefile
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::Quick
+        Qt6::QuickControls2
+        Qt6::QuickWidgets
+        Qt6::Svg
+        Qt6::Qml
+        Qt6::Charts
+)

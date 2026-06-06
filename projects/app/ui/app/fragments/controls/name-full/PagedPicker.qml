@@ -1,12 +1,18 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 Item {
   id: top
 
   property string str: ""
+  property var detailView: null
+
+  // false = character list, true = simulated tileset grid. Driven by the
+  // header's "View" toggle (no more swipe gesture / page dots, which clipped
+  // over the content and were unintuitive).
+  property bool showTileset: false
 
   onStrChanged: {
     searchRoot.str = str;
@@ -17,7 +23,7 @@ Item {
     id: pageView
 
     clip: true
-    currentIndex: pageIndicator.currentIndex
+    currentIndex: top.showTileset ? 1 : 0
     anchors.fill: parent
     interactive: false
 
@@ -25,41 +31,14 @@ Item {
       id: searchRoot
       str: top.str
       onStrChanged: top.str = str;
+      detailView: top.detailView
     }
 
     TilesetPicker {
       id: tilesetPicker
       str: top.str
       onStrChanged: top.str = str;
-    }
-  }
-
-  PageIndicator {
-    id: pageIndicator
-
-    interactive: true
-    count: pageView.count
-    currentIndex: pageView.currentIndex
-
-    anchors.bottom: pageView.bottom
-    anchors.horizontalCenter: pageView.horizontalCenter
-
-    delegate: Rectangle {
-      implicitWidth: 12
-      implicitHeight: 12
-
-      radius: width / 2
-      color: brg.settings.textColorDark
-
-      opacity: (index === pageIndicator.currentIndex)
-               ? 0.95
-               : 0.45
-
-      Behavior on opacity {
-        OpacityAnimator {
-          duration: 100
-        }
-      }
+      detailView: top.detailView
     }
   }
 }

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ void MissableDBEntry::qmlRegister() const
   once = true;
 }
 
-const MapDBEntrySprite* MissableDBEntry::getToMapSprite() const
+MapDBEntrySprite* MissableDBEntry::getToMapSprite() const
 {
   return toMapSprite;
 }
@@ -95,7 +95,7 @@ void MissableDBEntry::qmlProtect(const QQmlEngine* const engine) const
   Utility::qmlProtectUtil(this, engine);
 }
 
-const MapDBEntry* MissableDBEntry::getToMap() const
+MapDBEntry* MissableDBEntry::getToMap() const
 {
     return toMap;
 }

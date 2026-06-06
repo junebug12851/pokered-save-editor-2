@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/tileset.h>
 #include <pse-common/random.h>
 
@@ -155,7 +156,7 @@ void AreaTileset::randomize()
   reset();
 
   // Random between types
-  type = Random::rangeInclusive(0, 2);
+  type = Random::inst()->rangeInclusive(0, 2);
   typeChanged();
 }
 
@@ -164,13 +165,13 @@ void AreaTileset::loadFromData(MapDBEntry* map, bool randomType)
   reset();
 
   auto tileset = (map == nullptr)
-      ? map->toTileset
+      ? map->getToTileset()
       : nullptr;
 
   // If random, have it clear everything and randomize type
   // Otherwise load usual type
   if(randomType) {
-    type = Random::rangeInclusive(0, 2);
+    type = Random::inst()->rangeInclusive(0, 2);
     typeChanged();
   }
   else {

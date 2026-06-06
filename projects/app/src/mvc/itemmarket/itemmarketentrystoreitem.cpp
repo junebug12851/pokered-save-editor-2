@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 #include "./itemmarketentrystoreitem.h"
 #include <pse-db/itemsdb.h>
+#include <pse-db/entries/itemdbentry.h>
 #include <pse-savefile/expanded/fragments/item.h>
 #include <pse-savefile/expanded/fragments/itemstoragebox.h>
 #include <pse-savefile/expanded/player/playerbasics.h>
@@ -63,14 +64,14 @@ StackReturn ItemMarketEntryStoreItem::calculateStacks()
   // Basically look for first occurence in both the bag and box that have a
   // stack of less than 99 (Indeed a true partial stack)
   for(auto el : toBag->items) {
-    if(el->ind == data->ind && el->amount < 99) {
+    if(el->ind == data->getInd() && el->amount < 99) {
       currentStackBag = el;
       break;
     }
   }
 
   for(auto el : toBox->items) {
-    if(el->ind == data->ind && el->amount < 99) {
+    if(el->ind == data->getInd() && el->amount < 99) {
       currentStackBox = el;
       break;
     }
@@ -147,7 +148,7 @@ QString ItemMarketEntryStoreItem::_name()
   if(!requestFilter())
     return "";
 
-  return data->readable;
+  return data->getReadable();
 }
 
 int ItemMarketEntryStoreItem::_inStockCount()
@@ -286,13 +287,13 @@ void ItemMarketEntryStoreItem::checkout()
   // or when the bag fills up
   for(int i = 0; i < stk.full && onCart > 0 && (toBag->itemsCount() < toBag->itemsMax()); i++) {
     if(onCart > 99) {
-      toBag->items.append(new Item(data->ind, 99));
+      toBag->items.append(new Item(data->getInd(), 99));
       toBag->itemInsertChange();
       toBag->itemsChanged();
       onCart -= 99;
     }
     else {
-      toBag->items.append(new Item(data->ind, onCart));
+      toBag->items.append(new Item(data->getInd(), onCart));
       toBag->itemInsertChange();
       toBag->itemsChanged();
       onCart = 0;
@@ -308,13 +309,13 @@ void ItemMarketEntryStoreItem::checkout()
   // or when the box fills up
   for(int i = 0; i < stk.full && onCart > 0 && (toBox->itemsCount() < toBox->itemsMax()); i++) {
     if(onCart > 99) {
-      toBox->items.append(new Item(data->ind, 99));
+      toBox->items.append(new Item(data->getInd(), 99));
       toBox->itemInsertChange();
       toBox->itemsChanged();
       onCart -= 99;
     }
     else {
-      toBox->items.append(new Item(data->ind, onCart));
+      toBox->items.append(new Item(data->getInd(), onCart));
       toBox->itemInsertChange();
       toBox->itemsChanged();
       onCart = 0;
@@ -332,6 +333,4 @@ void ItemMarketEntryStoreItem::checkout()
     player->coins -= origCartWorth;
     player->coinsChanged();
   }
-
-  onCartChanged();
 }

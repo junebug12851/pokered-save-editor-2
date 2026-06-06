@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SPRITESET_H
-#define SPRITESET_H
+#pragma once
 
+#include <QObject>
 #include <QJsonValue>
 #include <QString>
 #include <QVector>
@@ -27,68 +27,63 @@
 
 struct SpriteDBEntry;
 struct MapDBEntry;
+class QQmlEngine;
 
-// Outdoor sprites have to be pre-loaded into memory
-// A Sprite set is a set of 11 sprites that are kept in memory in a given
-// outdoor area. Only they can be used.
-// For very large maps you can divide the map into two parts and switch between
-// two sprite sets on either side of the map.
+// Outdoor sprites have to be pre-loaded into memory.
+// A SpriteSet is a group of up to 11 sprites kept in memory for a given
+// outdoor area. Large maps may use two sets split by coordinate.
 
 struct DB_AUTOPORT SpriteSetDBEntry {
-
   SpriteSetDBEntry();
   SpriteSetDBEntry(QJsonValue& data);
   void deepLink();
 
-  // A sprite set is dynamic if it's index starts at 241 (0xF1)
-  // Dynamic sprites are for large maps that need 2 sprite sets loaded on either
-  // side
-  bool isDynamic();
+  [[nodiscard]] bool isDynamic() const;
+  [[nodiscard]] QVector<SpriteDBEntry*> getSprites(var8 x, var8 y) const;
 
-  // Get sprite list
-  // Returns static list if static
-  // Returns correct dynamic list if dynamic
-  QVector<SpriteDBEntry*> getSprites(var8 x, var8 y);
-
-  // Sprite Set ID
   var8 ind = 0;
-
-  // For Dynamic Sprites, Split Horizontal or Vertical
   QString split;
 
-  // Static sprites: Static sprite list
-  QVector<QString> spriteList;
-
-  // Static sprites: Static sprite list to sprite data
+  QVector<QString>      spriteList;
   QVector<SpriteDBEntry*> toSprites;
 
-  // For dynamic sprites, what's the sprite set splitting point on a map
   std::optional<var8> splitAt;
-
-  // Dynamic sprites: Set to load at West or North Division
   std::optional<var8> setWN;
-
-  // Dynamic sprites: To static entry for WN Set
-  SpriteSetDBEntry* toSetWN;
-
-  // Dynamic sprites: Set to load at East or South Division
   std::optional<var8> setES;
 
-  // Dynamic sprites: To static entry for ES Set
-  SpriteSetDBEntry* toSetES;
+  SpriteSetDBEntry* toSetWN = nullptr;
+  SpriteSetDBEntry* toSetES = nullptr;
 
   QVector<MapDBEntry*> toMaps;
 };
 
-class DB_AUTOPORT SpriteSetDB
+class DB_AUTOPORT SpriteSetDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+
 public:
-  static void load();
-  static void index();
-  static void deepLink();
+  static SpriteSetDB* inst();
 
-  static QVector<SpriteSetDBEntry*> store;
-  static QHash<QString, SpriteSetDBEntry*> ind;
+  [[nodiscard]] const QVector<SpriteSetDBEntry*> getStore() const;
+  [[nodiscard]] const QHash<QString, SpriteSetDBEntry*> getInd() const;
+  [[nodiscard]] int getStoreSize() const;
+
+  Q_INVOKABLE SpriteSetDBEntry* getStoreAt(int idx) const;
+  Q_INVOKABLE SpriteSetDBEntry* getIndAt(const QString& key) const;
+
+public slots:
+  void load();
+  void index();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  SpriteSetDB();
+
+  QVector<SpriteSetDBEntry*> store;
+  QHash<QString, SpriteSetDBEntry*> ind;
 };
-
-#endif // SPRITESET_H

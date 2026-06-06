@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ void MoveSelectModel::rebuildListGeneral()
   // Gather normal repeatable items and sort by name, then add into list
   QVector<MoveDBEntry*> tmp;
 
-  for(auto el : MovesDB::store) {
+  for(auto el : MovesDB::inst()->getStore()) {
     if(!el->glitch && !el->hm)
       tmp.append(el);
   }
@@ -151,7 +151,7 @@ void MoveSelectModel::rebuildListGeneral()
 
   moveListCache.append(new MoveSelectEntry("--- HM Moves ---", -1));
 
-  for(auto el : MovesDB::store) {
+  for(auto el : MovesDB::inst()->getStore()) {
     if(!el->glitch && el->hm)
       tmp.append(el);
   }
@@ -181,7 +181,7 @@ void MoveSelectModel::rebuildListGeneral()
   // Add first category
   moveListCache.append(new MoveSelectEntry("--- Glitch Moves ---", -1));
 
-  for(auto el : MovesDB::store) {
+  for(auto el : MovesDB::inst()->getStore()) {
     if(el->glitch)
       tmp.append(el);
   }
@@ -354,7 +354,7 @@ void MoveSelectModel::rebuildListSpecific()
 
   moveListCache.append(new MoveSelectEntry("--- Incompatible Moves ---", -1));
 
-  for(auto monMove : MovesDB::store) {
+  for(auto monMove : MovesDB::inst()->getStore()) {
     if(usedMoves.contains(monMove) || monMove->glitch || monMove->hm)
       continue;
 
@@ -381,7 +381,7 @@ void MoveSelectModel::rebuildListSpecific()
 
   tmp.clear();
 
-  for(auto monMove : MovesDB::store) {
+  for(auto monMove : MovesDB::inst()->getStore()) {
     if(usedMoves.contains(monMove) || monMove->glitch || !monMove->hm)
       continue;
 
@@ -417,7 +417,7 @@ void MoveSelectModel::rebuildListSpecific()
 
   moveListCache.append(new MoveSelectEntry("--- Glitch Moves ---", -1));
 
-  for(auto monMove : MovesDB::store) {
+  for(auto monMove : MovesDB::inst()->getStore()) {
     if(usedMoves.contains(monMove) || !monMove->glitch)
       continue;
 

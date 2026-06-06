@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,11 +14,13 @@
   * limitations under the License.
 */
 #include "areasign.h"
+#include "../../qmlownership.h"
 #include "../fragments/signdata.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-common/random.h>
 
 AreaSign::AreaSign(SaveFile* saveFile)
@@ -44,7 +46,7 @@ int AreaSign::signMax()
 
 SignData* AreaSign::signAt(int ind)
 {
-  return signs.at(ind);
+  return qmlCppOwned(signs.at(ind));
 }
 
 void AreaSign::signSwap(int from, int to)
@@ -119,7 +121,7 @@ void AreaSign::randomize(MapDBEntry* mapData)
   reset();
 
   // Grab Map Signs
-  auto signData = mapData->signs;
+  auto signData = mapData->getSigns();
 
   // Randomize them all if present
   signs = SignData::randomizeAll(signData);
@@ -136,9 +138,7 @@ void AreaSign::setTo(MapDBEntry* mapData)
     return;
 
   // Grab Map Signs
-  auto signData = mapData->signs;
+  auto signData = mapData->getSigns();
 
   // Set them all if present
-  signs = SignData::setToAll(signData);
-  signsChanged();
-}
+  signs = SignDa

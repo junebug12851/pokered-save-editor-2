@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MAPDBENTRYSPRITETRAINER_H
-#define MAPDBENTRYSPRITETRAINER_H
-
+#pragma once
 #include "./mapdbentrysprite.h"
 
 class TrainerDBEntry;
@@ -33,7 +31,7 @@ public:
   virtual SpriteType type() const;
   const QString getTrainerClass() const;
   int getTeam() const;
-  const TrainerDBEntry* getToTrainer() const;
+  TrainerDBEntry* getToTrainer() const;
 
 protected:
   MapDBEntrySpriteTrainer(const QJsonValue& data, MapDBEntry* const parent);
@@ -51,4 +49,3 @@ protected:
   friend class MapDBEntry;
 };
 
-#endif // MAPDBENTRYSPRITETRAINER_H

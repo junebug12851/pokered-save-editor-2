@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef CREDITSDB_H
-#define CREDITSDB_H
-
+#pragma once
 // With amazing help of Quicktype!!!
 // https://app.quicktype.io
 
@@ -42,7 +40,7 @@ public:
   int getStoreSize() const;
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE const CreditDBEntry* getStoreAt(const int ind) const;
+  Q_INVOKABLE CreditDBEntry* getStoreAt(const int ind) const;
 
 public slots:
   // QML accessible methods
@@ -63,4 +61,3 @@ private:
   friend struct CreditDBEntry;
 };
 
-#endif // CREDITSDB_H

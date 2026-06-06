@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <QCollator>
 #include <QDebug>
+#include <QQmlEngine>
 
 #include "./pokemonstoragemodel.h"
 #include "../bridge/router.h"
@@ -466,14 +467,8 @@ void PokemonStorageModel::pageClosing()
 
 PokemonBox* PokemonStorageModel::getBoxMon(int index)
 {
-  return getCurBox()->pokemon.at(index);
-}
-
-PokemonParty* PokemonStorageModel::getPartyMon(int index)
-{
   auto mon = getCurBox()->pokemon.at(index);
-  if(mon->isBoxMon())
-    return nullptr;
 
-  return (PokemonParty*)mon;
-}
+  // These are Q_INVOKABLE returns of a parentless QObject, which QML otherwise
+  // treats as JavaScriptOwnership and GARBAGE-COLLECTS after the QML reference
+ 

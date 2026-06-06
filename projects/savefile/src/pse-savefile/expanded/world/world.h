@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,11 +13,16 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef WORLD_H
-#define WORLD_H
-
+#pragma once
 #include <QObject>
 #include "../../savefile_autoport.h"
+
+// Only `world.other` is traversed in QML (the Playtime editors), so include
+// ONLY that child here. The rest stay forward-declared + Q_DECLARE_OPAQUE_POINTER
+// (in savefile_autoport.h) — including all of them dragged the whole world/area
+// subtree into every translation unit and ballooned build time.
+// See notes/reference/qt6-patterns.md.
+#include "./worldother.h"
 
 class SaveFile;
 
@@ -67,20 +72,4 @@ signals:
   void localChanged();
 
 public slots:
-  void reset();
-  void randomize();
-
-public:
-  WorldCompleted* completed = nullptr;
-  WorldEvents* events = nullptr;
-  WorldGeneral* general = nullptr;
-  WorldHidden* hidden = nullptr;
-  WorldMissables* missables = nullptr;
-  WorldOther* other = nullptr;
-  WorldScripts* scripts = nullptr;
-  WorldTowns* towns = nullptr;
-  WorldTrades* trades = nullptr;
-  WorldLocal* local = nullptr;
-};
-
-#endif // WORLD_H
+  void reset()

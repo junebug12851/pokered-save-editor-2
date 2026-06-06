@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ void MapDBEntryConnect::qmlRegister() const
   once = true;
 }
 
-const MapDBEntry* MapDBEntryConnect::getParent() const
+MapDBEntry* MapDBEntryConnect::getParent() const
 {
   return parent;
 }
@@ -74,12 +74,12 @@ void MapDBEntryConnect::qmlProtect(const QQmlEngine* const engine) const
   Utility::qmlProtectUtil(this, engine);
 }
 
-const MapDBEntry* MapDBEntryConnect::getFromMap() const
+MapDBEntry* MapDBEntryConnect::getFromMap() const
 {
     return fromMap;
 }
 
-const MapDBEntry* MapDBEntryConnect::getToMap() const
+MapDBEntry* MapDBEntryConnect::getToMap() const
 {
     return toMap;
 }

@@ -79,3 +79,6 @@ no-git/
 
 # Build Artifacts
 /build-*/
+# Build output directories (any depth) — Qt Creator / CMake
+build/
+projects/build/

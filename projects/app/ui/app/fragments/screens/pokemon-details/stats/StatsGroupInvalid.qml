@@ -1,310 +1,219 @@
-import QtQuick 2.14
-import QtCharts 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
-import App.PokemonBox 1.0
-import App.PokemonParty 1.0
+import App.PokemonBox
+import App.PokemonParty
 
 import "../../../general"
 import "../../../header"
 
+// Editable raw stats for an "invalid" box mon that has live party data
+// (max HP / Atk / Def / Spd / Sp). Clean label | field grid — no per-row
+// anchor offsets.
 Rectangle {
   property PokemonParty partyData: null
 
   Material.foreground: brg.settings.textColorDark
   Material.background: brg.settings.textColorLight
 
-  Text {
-    id: hpStatTxt
+  GridLayout {
     anchors.top: parent.top
     anchors.left: parent.left
 
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
+    columns: 2
+    columnSpacing: 5
+    rowSpacing: 3
 
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "HP"
-  }
-
-  DefTextEdit {
-    id: hpStatNum
-    anchors.top: hpStatTxt.top
-    anchors.left: hpStatTxt.right
-    anchors.leftMargin: 5
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    maximumLength: 5
-    width: font.pixelSize * 5
-
-    onTextChanged: {
-      if(text === "")
-        return;
-
-      var idDec = parseInt(text, 10);
-      if(idDec === NaN)
-        return;
-
-      if(idDec < 0 || idDec > 0xFFFF)
-        return;
-
-      partyData.maxHP = idDec;
+    // ---- HP ----
+    Text {
+      text: "HP"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
     }
-    Component.onCompleted: {
-      if(partyData === null)
-        return;
+    DefTextEdit {
+      id: hpStatNum
+      maximumLength: 5
+      Layout.preferredWidth: font.pixelSize * 5
+      Layout.alignment: Qt.AlignVCenter
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignLeft
 
-      text = partyData.maxHP.toString(10);
+      onTextChanged: {
+        if(text === "")
+          return;
+        var idDec = parseInt(text, 10);
+        if(isNaN(idDec))
+          return;
+        if(idDec < 0 || idDec > 0xFFFF)
+          return;
+        partyData.maxHP = idDec;
+      }
+      Component.onCompleted: {
+        if(partyData === null)
+          return;
+        text = partyData.maxHP.toString(10);
+      }
+      Connections {
+        target: (partyData === null) ? null : partyData
+        function onMaxHPChanged() { hpStatNum.text = partyData.maxHP.toString(10); }
+      }
     }
 
-    Connections {
-      target: (partyData === null)
-              ? null
-              : partyData
-      onMaxHPChanged: hpStatNum.text = partyData.maxHP.toString(10);
+    // ---- Atk ----
+    Text {
+      text: "Atk"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
     }
-  }
+    DefTextEdit {
+      id: atkStatNum
+      maximumLength: 5
+      Layout.preferredWidth: font.pixelSize * 5
+      Layout.alignment: Qt.AlignVCenter
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignLeft
 
-  Text {
-    id: atkStatTxt
-    anchors.top: hpStatTxt.bottom
-    anchors.topMargin: 15
-    anchors.left: parent.left
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "Atk"
-  }
-
-  DefTextEdit {
-    id: atkStatNum
-    anchors.top: atkStatTxt.top
-    anchors.left: atkStatTxt.right
-    anchors.leftMargin: 5
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    maximumLength: 5
-    width: font.pixelSize * 5
-
-    onTextChanged: {
-      if(text === "")
-        return;
-
-      var idDec = parseInt(text, 10);
-      if(idDec === NaN)
-        return;
-
-      if(idDec < 0 || idDec > 0xFFFF)
-        return;
-
-      partyData.attack = idDec;
-    }
-    Component.onCompleted: {
-      if(partyData === null)
-        return;
-
-      text = partyData.attack.toString(10);
+      onTextChanged: {
+        if(text === "")
+          return;
+        var idDec = parseInt(text, 10);
+        if(isNaN(idDec))
+          return;
+        if(idDec < 0 || idDec > 0xFFFF)
+          return;
+        partyData.attack = idDec;
+      }
+      Component.onCompleted: {
+        if(partyData === null)
+          return;
+        text = partyData.attack.toString(10);
+      }
+      Connections {
+        target: (partyData === null) ? null : partyData
+        function onAttackChanged() { atkStatNum.text = partyData.attack.toString(10); }
+      }
     }
 
-    Connections {
-      target: (partyData === null)
-              ? null
-              : partyData
-
-      onAttackChanged: atkStatNum.text = partyData.attack.toString(10);
+    // ---- Def ----
+    Text {
+      text: "Def"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
     }
-  }
+    DefTextEdit {
+      id: defStatNum
+      maximumLength: 5
+      Layout.preferredWidth: font.pixelSize * 5
+      Layout.alignment: Qt.AlignVCenter
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignLeft
 
-  Text {
-    id: defStatTxt
-    anchors.top: atkStatTxt.bottom
-    anchors.topMargin: 15
-    anchors.left: parent.left
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "Def"
-  }
-
-  DefTextEdit {
-    id: defStatNum
-    anchors.top: defStatTxt.top
-    anchors.left: defStatTxt.right
-    anchors.leftMargin: 5
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    maximumLength: 5
-    width: font.pixelSize * 5
-
-    onTextChanged: {
-      if(text === "")
-        return;
-
-      var idDec = parseInt(text, 10);
-      if(idDec === NaN)
-        return;
-
-      if(idDec < 0 || idDec > 0xFFFF)
-        return;
-
-      partyData.defense = idDec;
-    }
-    Component.onCompleted: {
-      if(partyData === null)
-        return;
-
-      text = partyData.defense.toString(10);
+      onTextChanged: {
+        if(text === "")
+          return;
+        var idDec = parseInt(text, 10);
+        if(isNaN(idDec))
+          return;
+        if(idDec < 0 || idDec > 0xFFFF)
+          return;
+        partyData.defense = idDec;
+      }
+      Component.onCompleted: {
+        if(partyData === null)
+          return;
+        text = partyData.defense.toString(10);
+      }
+      Connections {
+        target: (partyData === null) ? null : partyData
+        function onDefenseChanged() { defStatNum.text = partyData.defense.toString(10); }
+      }
     }
 
-    Connections {
-      target: (partyData === null)
-              ? null
-              : partyData
-      onDefenseChanged: defStatNum.text = partyData.defense.toString(10);
+    // ---- Spd ----
+    Text {
+      text: "Spd"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
     }
-  }
+    DefTextEdit {
+      id: spdStatNum
+      maximumLength: 5
+      Layout.preferredWidth: font.pixelSize * 5
+      Layout.alignment: Qt.AlignVCenter
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignLeft
 
-  Text {
-    id: spdStatTxt
-    anchors.top: defStatTxt.bottom
-    anchors.topMargin: 15
-    anchors.left: parent.left
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "Spd"
-  }
-
-  DefTextEdit {
-    id: spdStatNum
-    anchors.top: spdStatTxt.top
-    anchors.left: spdStatTxt.right
-    anchors.leftMargin: 5
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    maximumLength: 5
-    width: font.pixelSize * 5
-
-    onTextChanged: {
-      if(text === "")
-        return;
-
-      var idDec = parseInt(text, 10);
-      if(idDec === NaN)
-        return;
-
-      if(idDec < 0 || idDec > 0xFFFF)
-        return;
-
-      partyData.speed = idDec;
-    }
-    Component.onCompleted: {
-      if(partyData === null)
-        return;
-
-      text = partyData.speed.toString(10);
+      onTextChanged: {
+        if(text === "")
+          return;
+        var idDec = parseInt(text, 10);
+        if(isNaN(idDec))
+          return;
+        if(idDec < 0 || idDec > 0xFFFF)
+          return;
+        partyData.speed = idDec;
+      }
+      Component.onCompleted: {
+        if(partyData === null)
+          return;
+        text = partyData.speed.toString(10);
+      }
+      Connections {
+        target: (partyData === null) ? null : partyData
+        function onSpeedChanged() { spdStatNum.text = partyData.speed.toString(10); }
+      }
     }
 
-    Connections {
-      target: (partyData === null)
-              ? null
-              : partyData
-
-      onSpeedChanged: spdStatNum.text = partyData.speed.toString(10);
+    // ---- Sp ----
+    Text {
+      text: "Sp"
+      font.pixelSize: 14
+      font.bold: true
+      horizontalAlignment: Text.AlignRight
+      Layout.preferredWidth: font.pixelSize * 3
+      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
     }
-  }
+    DefTextEdit {
+      id: spStatNum
+      maximumLength: 5
+      Layout.preferredWidth: font.pixelSize * 5
+      Layout.alignment: Qt.AlignVCenter
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignLeft
 
-  Text {
-    id: spStatTxt
-    anchors.top: spdStatTxt.bottom
-    anchors.topMargin: 15
-    anchors.left: parent.left
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignRight
-
-    font.pixelSize: 14
-    width: font.pixelSize * 3
-
-    font.bold: true
-
-    text: "Sp"
-  }
-
-  DefTextEdit {
-    id: spStatNum
-    anchors.top: spStatTxt.top
-    anchors.left: spStatTxt.right
-    anchors.leftMargin: 5
-
-    verticalAlignment: Text.AlignVCenter
-    horizontalAlignment: Text.AlignLeft
-
-    font.pixelSize: 14
-    maximumLength: 5
-    width: font.pixelSize * 5
-
-    onTextChanged: {
-      if(text === "")
-        return;
-
-      var idDec = parseInt(text, 10);
-      if(idDec === NaN)
-        return;
-
-      if(idDec < 0 || idDec > 0xFFFF)
-        return;
-
-      partyData.special = idDec;
-    }
-    Component.onCompleted: {
-      if(partyData === null)
-        return;
-
-      text = partyData.special.toString(10);
-    }
-
-    Connections {
-      target: (partyData === null)
-              ? null
-              : partyData
-
-      onSpecialChanged: spStatNum.text = partyData.special.toString(10);
+      onTextChanged: {
+        if(text === "")
+          return;
+        var idDec = parseInt(text, 10);
+        if(isNaN(idDec))
+          return;
+        if(idDec < 0 || idDec > 0xFFFF)
+          return;
+        partyData.special = idDec;
+      }
+      Component.onCompleted: {
+        if(partyData === null)
+          return;
+        text = partyData.special.toString(10);
+      }
+      Connections {
+        target: (partyData === null) ? null : partyData
+        function onSpecialChanged() { spStatNum.text = partyData.special.toString(10); }
+      }
     }
   }
 }

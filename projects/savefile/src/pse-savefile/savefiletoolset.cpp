@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -80,13 +80,20 @@ void SaveFileToolset::copyRange(var16 addr, var16 size, QVector<var8> newData, b
 
 QString SaveFileToolset::getStr(var16 addr, var16 size, var8 maxLen)
 {
-  return FontsDB::convertFromCode(getRange(addr, size), maxLen);
+  QVector<var8> raw = getRange(addr, size);
+  QVector<int> codes;
+  codes.reserve(raw.size());
+  for (var8 b : raw) codes.append(static_cast<int>(b));
+  return FontsDB::inst()->convertFromCode(codes, maxLen);
 }
 
 void SaveFileToolset::setStr(var16 addr, var16 size, var8 maxLen, QString str)
 {
-  auto strCode = FontsDB::convertToCode(str, maxLen);
-  copyRange(addr, size, strCode);
+  QVector<int> strCode = FontsDB::inst()->convertToCode(str, maxLen);
+  QVector<var8> bytes;
+  bytes.reserve(strCode.size());
+  for (int v : strCode) bytes.append(static_cast<var8>(v));
+  copyRange(addr, size, bytes);
 }
 
 QString SaveFileToolset::getHex(var16 addr, var16 size, bool reverse)
@@ -341,11 +348,10 @@ void SaveFileToolset::recalcChecksums(bool force)
 
   // Has the player even switched boxes before?
   // If not, then the game hasn't even formatted them yet and there's no need
-  // to calculate checksum as that breaks the critical rule of not changing
-  // what doesn't need to be changed
-  bool boxesFormatted = (saveFile->data[0x284C] & 0b10000000) > 0;
+  // to calculate checksums for them.
+  if(saveFile->data[0x284C] == 0)
+    return;
 
-  // Recalculate box checksums if needed or forced to
-  if (boxesFormatted || force)
-    recalcBoxesChecksums();
+  // Apply Bank 2 Checksum
+  saveFile->data[0x5A4B] = getChecksum(0x4000, 0x1A4B);
 }

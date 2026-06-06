@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
 
 #include "./mapsearch.h"
 #include "../mapsdb.h"
+#include "../entries/mapdbentry.h"
 #include "../tileset.h"
 #include "../spriteSet.h"
 
@@ -44,7 +45,7 @@ MapSearch* MapSearch::startOver()
   results.clear();
 
   // Copy elements over to begin search
-  for(auto entry : MapsDB::store)
+  for(auto entry : MapsDB::inst()->getStore())
   {
     results.append(entry);
   }
@@ -83,7 +84,7 @@ MapSearch* MapSearch::indexGt(int val)
 MapSearch* MapSearch::widthGt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->width || !(*entry->width > val))
+    if(entry->width < 0 || !(entry->width > val))
       results.removeOne(entry);
 
   return this;
@@ -92,7 +93,7 @@ MapSearch* MapSearch::widthGt(int val)
 MapSearch* MapSearch::widthLt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->height || !(*entry->height < val))
+    if(entry->height < 0 || !(entry->height < val))
       results.removeOne(entry);
 
   return this;
@@ -101,7 +102,7 @@ MapSearch* MapSearch::widthLt(int val)
 MapSearch* MapSearch::heightGt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->width || !(*entry->width > val))
+    if(entry->width < 0 || !(entry->width > val))
       results.removeOne(entry);
 
   return this;
@@ -110,7 +111,7 @@ MapSearch* MapSearch::heightGt(int val)
 MapSearch* MapSearch::heightLt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->width || !(*entry->width < val))
+    if(entry->width < 0 || !(entry->width < val))
       results.removeOne(entry);
 
   return this;
@@ -119,8 +120,8 @@ MapSearch* MapSearch::heightLt(int val)
 MapSearch* MapSearch::areaGt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->width || !entry->height ||
-       !((*entry->width * *entry->height) > val))
+    if(entry->width < 0 || entry->height < 0 ||
+       !((entry->width * entry->height) > val))
       results.removeOne(entry);
 
   return this;
@@ -129,8 +130,8 @@ MapSearch* MapSearch::areaGt(int val)
 MapSearch* MapSearch::areaLt(int val)
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->width || !entry->height ||
-       !((*entry->width * *entry->height) < val))
+    if(entry->width < 0 || entry->height < 0 ||
+       !((entry->width * entry->height) < val))
       results.removeOne(entry);
 
   return this;
@@ -313,7 +314,7 @@ MapSearch* MapSearch::noDynamicSpriteSet()
 MapSearch* MapSearch::hasMons()
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->monRate || *entry->monRate == 0)
+    if(entry->monRate < 0 || entry->monRate == 0)
       results.removeOne(entry);
 
   return this;
@@ -322,7 +323,7 @@ MapSearch* MapSearch::hasMons()
 MapSearch* MapSearch::noMons()
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->monRate || *entry->monRate > 0)
+    if(entry->monRate < 0 || entry->monRate > 0)
       results.removeOne(entry);
 
   return this;

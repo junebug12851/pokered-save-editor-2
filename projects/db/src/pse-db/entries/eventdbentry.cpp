@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 #include "../eventsdb.h"
 #include "../util/gamedata.h"
 #include "../mapsdb.h"
+#include "./mapdbentry.h"
 
 #include "eventdbentry.h"
 
@@ -49,7 +50,7 @@ void EventDBEntry::deepLink()
 {
   for(auto map : maps)
   {
-    auto tmp = MapsDB::ind.value(map, nullptr);
+    auto tmp = MapsDB::inst()->getIndAt(map);
     toMaps.append(tmp);
 
 #ifdef QT_DEBUG
@@ -128,7 +129,4 @@ int EventDBEntry::getInd() const
     return ind;
 }
 
-const QString EventDBEntry::getName() const
-{
-    return name;
-}
+const QString EventDBEntry::getName() cons

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,11 +13,16 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef PLAYER_H
-#define PLAYER_H
-
+#pragma once
 #include <QObject>
 #include "../../savefile_autoport.h"
+
+// Full includes so QML can traverse player.basics/pokedex/pokemon/items.
+// See notes/reference/qt6-patterns.md.
+#include "./playerbasics.h"
+#include "./playerpokedex.h"
+#include "./playerpokemon.h"
+#include "../fragments/itemstoragebox.h"
 
 class PlayerBasics;
 class PlayerPokedex;
@@ -45,18 +50,4 @@ public:
 signals:
   void basicsChanged();
   void itemsChanged();
-  void pokedexChanged();
-  void pokemonChanged();
-
-public slots:
-  void reset();
-  void randomize();
-
-public:
-  PlayerBasics* basics = nullptr;
-  ItemStorageBox* items = nullptr;
-  PlayerPokedex* pokedex = nullptr;
-  PlayerPokemon* pokemon = nullptr;
-};
-
-#endif // PLAYER_H
+  void pokede

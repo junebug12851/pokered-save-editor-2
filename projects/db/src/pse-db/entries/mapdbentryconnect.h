@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MAPDBENTRYCONNECT_H
-#define MAPDBENTRYCONNECT_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 #include <QJsonValue>
@@ -110,9 +108,9 @@ public:
   int getStripMove() const;
   int getStripOffset() const;
   bool getFlag() const;
-  const MapDBEntry* getToMap() const;
-  const MapDBEntry* getFromMap() const;
-  const MapDBEntry* getParent() const;
+  MapDBEntry* getToMap() const;
+  MapDBEntry* getFromMap() const;
+  MapDBEntry* getParent() const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
@@ -151,4 +149,3 @@ protected:
   friend class MapDBEntry;
 };
 
-#endif // MAPDBENTRYCONNECT_H

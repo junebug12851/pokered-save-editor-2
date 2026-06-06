@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -258,7 +258,8 @@ var8* FileManagement::readSaveData(QString filePath)
 {
   // Load up file in system
   QFile file(filePath);
-  file.open(QIODevice::ReadOnly);
+  if(!file.open(QIODevice::ReadOnly))
+    return nullptr;
   QDataStream in(&file);
 
   // Read in raw bytes signed
@@ -277,7 +278,8 @@ void FileManagement::writeSaveData(QString filePath, var8* data)
 
   // Load up file in system
   QFile file(filePath);
-  file.open(QIODevice::WriteOnly);
+  if(!file.open(QIODevice::WriteOnly))
+    return;
   QDataStream out(&file);
 
   // Convert pointer over to a type needed for QDataStream and write file
@@ -297,6 +299,4 @@ void FileManagement::expandRecentFiles(QString files)
       this->recentFiles.append(recentFiles[i]);
   }
 
-  // Process, cleanup, and notify
-  processRecentFileChanges();
-}
+  // Process, cleanup, and 

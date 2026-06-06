@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentrysign.h>
 #include <pse-common/random.h>
 
 struct TmpSignPos {
@@ -87,8 +88,8 @@ QVector<SignData*> SignData::randomizeAll(QVector<MapDBEntrySign*> mapSigns)
 
   for(auto entry : mapSigns) {
     auto tmp = new TmpSignPos;
-    tmp->x = entry->x;
-    tmp->y = entry->y;
+    tmp->x = entry->getX();
+    tmp->y = entry->getY();
     tmpPos.append(tmp);
   }
 
@@ -115,13 +116,13 @@ void SignData::setTo(MapDBEntrySign* signData)
   if(signData == nullptr)
     return;
 
-  x = signData->x;
+  x = signData->getX();
   xChanged();
 
-  y = signData->y;
+  y = signData->getY();
   yChanged();
 
-  txtId = signData->textID;
+  txtId = signData->getTextID();
   txtIdChanged();
 }
 
@@ -147,7 +148,7 @@ void SignData::randomize(QVector<TmpSignPos*>* tmpPos)
   if(tmpPos != nullptr) {
 
     // Pull random coordinates
-    var8 rndPos = Random::rangeExclusive(0, tmpPos->size());
+    var8 rndPos = Random::inst()->rangeExclusive(0, tmpPos->size());
     auto rndCoords = tmpPos->at(rndPos);
 
     // Change coords

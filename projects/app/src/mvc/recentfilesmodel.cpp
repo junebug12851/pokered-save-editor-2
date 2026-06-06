@@ -79,7 +79,7 @@ QHash<int, QByteArray> RecentFilesModel::roleNames() const
 
 QString RecentFilesModel::getDisplayPath(int index, QString path) const
 {
-  auto parts = path.split("/", QString::SkipEmptyParts);
+  auto parts = path.split("/", Qt::SkipEmptyParts);
   QString display = "[" + QString::number(index) + "] ";
 
   if(parts.size() >= 3)

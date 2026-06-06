@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MAPDBENTRYSPRITEPOKEMON_H
-#define MAPDBENTRYSPRITEPOKEMON_H
-
+#pragma once
 #include "./mapdbentrysprite.h"
 #include "../db_autoport.h"
 
@@ -34,7 +32,7 @@ public:
   virtual SpriteType type() const;
   const QString getPokemon() const;
   int getLevel() const;
-  const PokemonDBEntry* getToPokemon() const;
+  PokemonDBEntry* getToPokemon() const;
 
 protected:
   MapDBEntrySpritePokemon(const QJsonValue& data, MapDBEntry* const parent);
@@ -50,4 +48,3 @@ protected:
   friend class MapDBEntry;
 };
 
-#endif // MAPDBENTRYSPRITEPOKEMON_H

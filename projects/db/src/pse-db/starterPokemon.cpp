@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
   * limitations under the License.
 */
 
-#include <QVector>
 #include <QJsonArray>
-#include <QtMath>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
+#include <pse-common/random.h>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -25,51 +26,65 @@
 #include "./starterPokemon.h"
 #include "./util/gamedata.h"
 #include "./pokemon.h"
-#include <pse-common/random.h>
+
+StarterPokemonDB* StarterPokemonDB::inst()
+{
+  static StarterPokemonDB* _inst = new StarterPokemonDB;
+  return _inst;
+}
+
+int StarterPokemonDB::getStoreSize() const { return store.size(); }
+
+PokemonDBEntry* StarterPokemonDB::random3Starter() const
+{
+  var32 idx = Random::inst()->rangeExclusive(0, 3);
+  return toPokemon.at(idx);
+}
+
+PokemonDBEntry* StarterPokemonDB::randomAnyStarter() const
+{
+  var32 idx = Random::inst()->rangeExclusive(0, store.size());
+  return toPokemon.at(idx);
+}
 
 void StarterPokemonDB::load()
 {
-  // Grab Event Pokemon Data
+  static bool once = false;
+  if (once) return;
   auto jsonData = GameData::inst()->json("starters");
-
-  // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Add to array
-    store.append(jsonEntry.toString());
-  }
+  for (QJsonValue entry : jsonData.array())
+    store.append(entry.toString());
+  once = true;
 }
 
 void StarterPokemonDB::deepLink()
 {
-  for(var8 i = 0; i < store.size(); i++)
-  {
-    auto entry = store.at(i); // Move Name
-
-    // Deep link to tm number
-    toPokemon.append(PokemonDB::ind.value(entry, nullptr));
-
+  static bool once = false;
+  if (once) return;
+  for (int i = 0; i < store.size(); ++i) {
+    auto* mon = PokemonDB::inst()->getIndAt(store.at(i));
+    toPokemon.append(mon);
 #ifdef QT_DEBUG
-    if(toPokemon.at(i) == nullptr)
-      qCritical() << "Starter Pokemon: " << entry << ", could not be deep linked." ;
+    if (!mon) qCritical() << "Starter Pokemon:" << store.at(i) << "could not be deep linked.";
 #endif
   }
+  once = true;
 }
 
-PokemonDBEntry* StarterPokemonDB::random3Starter()
+void StarterPokemonDB::qmlProtect(const QQmlEngine* const engine) const
 {
-  // First 3 in list are in-game starters
-  var32 ind = Random::rangeExclusive(0, 3);
-  return toPokemon.at(ind);
+  Utility::qmlProtectUtil(this, engine);
 }
 
-PokemonDBEntry* StarterPokemonDB::randomAnyStarter()
+void StarterPokemonDB::qmlRegister() const
 {
-  // List as a whole are all potential starters
-  var32 ind = Random::rangeExclusive(0, store.size());
-  return toPokemon.at(ind);
+  static bool once = false;
+  if (once) return;
+  qmlRegisterUncreatableType<StarterPokemonDB>("PSE.DB.StarterPokemonDB", 1, 0, "StarterPokemonDB", "Can't instantiate in QML");
+  once = true;
 }
 
-QVector<QString> StarterPokemonDB::store = QVector<QString>();
-QVector<PokemonDBEntry*> StarterPokemonDB::toPokemon =
-    QVector<PokemonDBEntry*>();
+StarterPokemonDB::StarterPokemonDB()
+{
+  qmlRegister();
+}

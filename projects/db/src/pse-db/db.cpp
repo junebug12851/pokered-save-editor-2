@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,26 +14,15 @@
   * limitations under the License.
 */
 
-#include <QObject>
 #include <QQmlEngine>
+#include <QElapsedTimer>
+#include <QDebug>
 #include <pse-common/utility.h>
 
+// db.h already includes all sub-database headers.
 #include "db.h"
 
-#include "./util/gamedata.h"
-#include "creditsdb.h"
-#include "./eventpokemondb.h"
-#include "./eventsdb.h"
-#include "./examples.h"
-#include "./names.h"
-#include "./flydb.h"
-#include "./fontsdb.h"
-#include "./gamecornerdb.h"
-#include "./hiddencoinsdb.h"
-#include "./hiddenItemsdb.h"
-#include "./itemsdb.h"
-#include "./mapsdb.h"
-#include "./missablesdb.h"
+// ── Singleton ────────────────────────────────────────────────────────────────
 
 DB* DB::inst()
 {
@@ -41,85 +30,41 @@ DB* DB::inst()
   return _inst;
 }
 
-GameData* DB::json() const
-{
-  return GameData::inst();
-}
+// ── Accessors ────────────────────────────────────────────────────────────────
 
-CreditsDB* DB::credits() const
-{
-  return CreditsDB::inst();
-}
+GameData*        DB::json()         const { return GameData::inst(); }
+CreditsDB*       DB::credits()      const { return CreditsDB::inst(); }
+EventPokemonDB*  DB::eventPokemon() const { return EventPokemonDB::inst(); }
+EventsDB*        DB::events()       const { return EventsDB::inst(); }
+Examples*        DB::examples()     const { return Examples::inst(); }
+Names*           DB::names()        const { return Names::inst(); }
+FlyDB*           DB::fly()          const { return FlyDB::inst(); }
+FontsDB*         DB::fonts()        const { return FontsDB::inst(); }
+GameCornerDB*    DB::gameCorner()   const { return GameCornerDB::inst(); }
+HiddenCoinsDB*   DB::hiddenCoins()  const { return HiddenCoinsDB::inst(); }
+HiddenItemsDB*   DB::hiddenItems()  const { return HiddenItemsDB::inst(); }
+ItemsDB*         DB::items()        const { return ItemsDB::inst(); }
+MapsDB*          DB::maps()         const { return MapsDB::inst(); }
+MissablesDB*     DB::missables()    const { return MissablesDB::inst(); }
+MovesDB*         DB::moves()        const { return MovesDB::inst(); }
+MusicDB*         DB::music()        const { return MusicDB::inst(); }
+PokemonDB*       DB::pokemon()      const { return PokemonDB::inst(); }
+ScriptsDB*       DB::scripts()      const { return ScriptsDB::inst(); }
+SpriteSetDB*     DB::spriteSets()   const { return SpriteSetDB::inst(); }
+SpritesDB*       DB::sprites()      const { return SpritesDB::inst(); }
+StarterPokemonDB* DB::starters()    const { return StarterPokemonDB::inst(); }
+TilesetDB*       DB::tilesets()     const { return TilesetDB::inst(); }
+TmHmsDB*         DB::tmHms()        const { return TmHmsDB::inst(); }
+TradesDB*        DB::trades()       const { return TradesDB::inst(); }
+TrainersDB*      DB::trainers()     const { return TrainersDB::inst(); }
+TypesDB*         DB::types()        const { return TypesDB::inst(); }
 
-EventPokemonDB* DB::eventPokemon() const
-{
-  return EventPokemonDB::inst();
-}
-
-EventsDB* DB::events() const
-{
-  return EventsDB::inst();
-}
-
-Examples* DB::examples() const
-{
-  return Examples::inst();
-}
-
-Names* DB::names() const
-{
-  return Names::inst();
-}
-
-FlyDB* DB::fly() const
-{
-  return FlyDB::inst();
-}
-
-FontsDB* DB::fonts() const
-{
-  return FontsDB::inst();
-}
-
-GameCornerDB* DB::gameCorner() const
-{
-  return GameCornerDB::inst();
-}
-
-HiddenCoinsDB* DB::hiddenCoins() const
-{
-  return HiddenCoinsDB::inst();
-}
-
-HiddenItemsDB* DB::hiddenItems() const
-{
-  return HiddenItemsDB::inst();
-}
-
-ItemsDB* DB::items() const
-{
-  return ItemsDB::inst();
-}
-
-MapsDB* DB::maps() const
-{
-  return MapsDB::inst();
-}
-
-MissablesDB* DB::missables() const
-{
-  return MissablesDB::inst();
-}
+// ── Bootstrap ────────────────────────────────────────────────────────────────
 
 DB::DB()
 {
-  // Init Resources
   initRes();
-
-  // Register to QML
   qmlRegister();
-
-  // Load, Index, and Deep Link All
   loadAll();
   indexAll();
   deepLinkAll();
@@ -133,34 +78,48 @@ void DB::initRes() const
 void DB::qmlRegister() const
 {
   static bool registered = false;
-  if(registered)
-    return;
-
+  if (registered) return;
   qmlRegisterUncreatableType<DB>("PSE.DB", 1, 0, "DB", "Can't instantiate in QML");
-
   registered = true;
 }
 
 void DB::loadAll() const
 {
   static bool once = false;
-  if(once)
-    return;
+  if (once) return;
 
-  Examples::inst();
-  Names::inst();
+  QElapsedTimer t;
+  t.start();
+  auto lap = [&](const char* name) {
+    qDebug() << "[DB::loadAll]" << name << "—" << t.elapsed() << "ms";
+    t.restart();
+  };
 
-  CreditsDB::inst()->load();
-  EventPokemonDB::inst()->load();
-  EventsDB::inst()->load();
-  FlyDB::inst()->load();
-  FontsDB::inst()->load();
-  GameCornerDB::inst()->load();
-  HiddenCoinsDB::inst()->load();
-  HiddenItemsDB::inst()->load();
-  ItemsDB::inst()->load();
-  MapsDB::inst()->load();
-  MissablesDB::inst()->load();
+  TypesDB::inst()->load();        lap("TypesDB");
+  SpritesDB::inst()->load();      lap("SpritesDB");
+  MusicDB::inst()->load();        lap("MusicDB");
+  TilesetDB::inst()->load();      lap("TilesetDB");
+  TrainersDB::inst()->load();     lap("TrainersDB");
+  ItemsDB::inst()->load();        lap("ItemsDB");
+  MovesDB::inst()->load();        lap("MovesDB");
+  PokemonDB::inst()->load();      lap("PokemonDB");
+  TmHmsDB::inst()->load();        lap("TmHmsDB");
+  TradesDB::inst()->load();       lap("TradesDB");
+  StarterPokemonDB::inst()->load(); lap("StarterPokemonDB");
+  SpriteSetDB::inst()->load();    lap("SpriteSetDB");
+  ScriptsDB::inst()->load();      lap("ScriptsDB");
+  Examples::inst();               lap("Examples");
+  Names::inst();                  lap("Names");
+  CreditsDB::inst()->load();      lap("CreditsDB");
+  EventPokemonDB::inst()->load(); lap("EventPokemonDB");
+  EventsDB::inst()->load();       lap("EventsDB");
+  FlyDB::inst()->load();          lap("FlyDB");
+  FontsDB::inst()->load();        lap("FontsDB");
+  GameCornerDB::inst()->load();   lap("GameCornerDB");
+  HiddenCoinsDB::inst()->load();  lap("HiddenCoinsDB");
+  HiddenItemsDB::inst()->load();  lap("HiddenItemsDB");
+  MapsDB::inst()->load();         lap("MapsDB");
+  MissablesDB::inst()->load();    lap("MissablesDB");
 
   once = true;
 }
@@ -168,34 +127,30 @@ void DB::loadAll() const
 void DB::indexAll() const
 {
   static bool once = false;
-  if(once)
-    return;
+  if (once) return;
 
-  EventsDB::inst()->index();
-  FlyDB::inst()->index();
-  FontsDB::inst()->index();
-  ItemsDB::inst()->index();
-  MapsDB::inst()->index();
-  MissablesDB::inst()->index();
+  QElapsedTimer t;
+  t.start();
+  auto lap = [&](const char* name) {
+    qDebug() << "[DB::indexAll]" << name << "—" << t.elapsed() << "ms";
+    t.restart();
+  };
 
-  once = true;
-}
-
-void DB::deepLinkAll() const
-{
-  static bool once = false;
-  if(once)
-    return;
-
-  EventPokemonDB::inst()->deepLink();
-  EventsDB::inst()->deepLink();
-  FlyDB::inst()->deepLink();
-  GameCornerDB::inst()->deepLink();
-  HiddenCoinsDB::inst()->deepLink();
-  HiddenItemsDB::inst()->deepLink();
-  ItemsDB::inst()->deepLink();
-  MapsDB::inst()->deepLink();
-  MissablesDB::inst()->deepLink();
+  TypesDB::inst()->index();    lap("TypesDB");
+  SpritesDB::inst()->index();  lap("SpritesDB");
+  MusicDB::inst()->index();    lap("MusicDB");
+  TilesetDB::inst()->index();  lap("TilesetDB");
+  TrainersDB::inst()->index(); lap("TrainersDB");
+  ItemsDB::inst()->index();    lap("ItemsDB");
+  MovesDB::inst()->index();    lap("MovesDB");
+  PokemonDB::inst()->index();  lap("PokemonDB");
+  SpriteSetDB::inst()->index(); lap("SpriteSetDB");
+  ScriptsDB::inst()->index();  lap("ScriptsDB");
+  EventsDB::inst()->index();   lap("EventsDB");
+  FlyDB::inst()->index();      lap("FlyDB");
+  FontsDB::inst()->index();    lap("FontsDB");
+  MapsDB::inst()->index();     lap("MapsDB");
+  MissablesDB::inst()->index(); lap("MissablesDB");
 
   once = true;
 }
@@ -203,21 +158,25 @@ void DB::deepLinkAll() const
 void DB::qmlProtect(const QQmlEngine* const engine) const
 {
   Utility::qmlProtectUtil(this, engine);
+
   GameData::inst()->qmlProtect(engine);
   CreditsDB::inst()->qmlProtect(engine);
   EventPokemonDB::inst()->qmlProtect(engine);
   EventsDB::inst()->qmlProtect(engine);
   Examples::inst()->qmlProtect(engine);
+  Names::inst()->qmlProtect(engine);
   FlyDB::inst()->qmlProtect(engine);
   FontsDB::inst()->qmlProtect(engine);
   GameCornerDB::inst()->qmlProtect(engine);
+  HiddenCoinsDB::inst()->qmlProtect(engine);
   HiddenItemsDB::inst()->qmlProtect(engine);
   ItemsDB::inst()->qmlProtect(engine);
   MapsDB::inst()->qmlProtect(engine);
   MissablesDB::inst()->qmlProtect(engine);
-}
-
-void DB::qmlHook(QQmlContext* const context) const
-{
-  context->setContextProperty("pseDB", const_cast<DB*>(this));
-}
+  MovesDB::inst()->qmlProtect(engine);
+  MusicDB::inst()->qmlProtect(engine);
+  PokemonDB::inst()->qmlProtect(engine);
+  ScriptsDB::inst()->qmlProtect(engine);
+  SpriteSetDB::inst()->qmlProtect(engine);
+  SpritesDB::inst()->qmlProtect(engine);
+  StarterPokemonDB::inst()->qmlProtect(

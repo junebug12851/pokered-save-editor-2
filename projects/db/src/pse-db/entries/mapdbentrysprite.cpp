@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -49,10 +49,10 @@ MapDBEntrySprite::MapDBEntrySprite(const QJsonValue& data, MapDBEntry* const par
 
 void MapDBEntrySprite::deepLink()
 {
-  toSprite = SpritesDB::ind.value(sprite);
+  toSprite = SpritesDB::inst()->getIndAt(sprite);
 
   if(missable >= 0)
-    toMissable = MissablesDB::ind.value(QString::number(missable), nullptr);
+    toMissable = MissablesDB::inst()->getIndAt(QString::number(missable));
 
 #ifdef QT_DEBUG
   if(toSprite == nullptr)
@@ -80,7 +80,7 @@ void MapDBEntrySprite::qmlRegister() const
   once = true;
 }
 
-const MapDBEntry* MapDBEntrySprite::getParent() const
+MapDBEntry* MapDBEntrySprite::getParent() const
 {
   return parent;
 }
@@ -90,12 +90,12 @@ void MapDBEntrySprite::qmlProtect(const QQmlEngine* const engine) const
   Utility::qmlProtectUtil(this, engine);
 }
 
-const SpriteDBEntry* MapDBEntrySprite::getToSprite() const
+SpriteDBEntry* MapDBEntrySprite::getToSprite() const
 {
     return toSprite;
 }
 
-const MissableDBEntry* MapDBEntrySprite::getToMissable() const
+MissableDBEntry* MapDBEntrySprite::getToMissable() const
 {
     return toMissable;
 }

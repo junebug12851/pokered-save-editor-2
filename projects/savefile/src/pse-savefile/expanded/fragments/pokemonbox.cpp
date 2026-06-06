@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
   * limitations under the License.
 */
 #include "pokemonbox.h"
+#include "../../qmlownership.h"
 #include "../savefileexpanded.h"
 #include "../player/player.h"
 #include "../player/playerbasics.h"
@@ -23,7 +24,6 @@
 #include <pse-db/pokemon.h>
 #include <pse-db/moves.h>
 #include <pse-db/names.h>
-#include <pse-db/namesPokemon.h>
 #include <pse-db/starterPokemon.h>
 #include <pse-db/types.h>
 #include <pse-common/random.h>
@@ -59,25 +59,25 @@ PokemonMove::PokemonMove(PokemonBox* parentMon, var8 move, var8 pp, var8 ppUp)
 
 MoveDBEntry* PokemonMove::toMove()
 {
-  return MovesDB::ind.value(QString::number(moveID), nullptr);
+  return MovesDB::inst()->getIndAt(QString::number(moveID));
 }
 
 void PokemonMove::randomize()
 {
-  var8 moveListSize = MovesDB::store.size();
+  const var8 moveListSize = static_cast<var8>(MovesDB::inst()->getStoreSize());
 
   for(var8 i = 0; i < 4; i++) {
     MoveDBEntry* moveData;
 
     do
-      moveData = MovesDB::ind.value(
-            QString::number(Random::rangeExclusive(0, moveListSize)), nullptr);
+      moveData = MovesDB::inst()->getIndAt(
+            QString::number(Random::inst()->rangeExclusive(0, moveListSize)));
     while(moveData == nullptr || moveData->glitch == true);
 
     moveID = moveData->ind;
     moveIDChanged();
 
-    ppUp = Random::rangeInclusive(0, 3);
+    ppUp = Random::inst()->rangeInclusive(0, 3);
     ppUpChanged();
 
     pp = getMaxPP();
@@ -334,18 +334,18 @@ PokemonBox* PokemonBox::newPokemon(PokemonRandom::PokemonRandom_ list, PlayerBas
   PokemonDBEntry* pkmnData;
 
   if(list == PokemonRandom::Random_All) {
-    auto listSize = PokemonDB::store.size();
-    var8 ind = Random::rangeExclusive(0, listSize);
-    pkmnData = PokemonDB::store.at(ind);
+    auto listSize = PokemonDB::inst()->getStoreSize();
+    var8 ind = Random::inst()->rangeExclusive(0, listSize);
+    pkmnData = PokemonDB::inst()->getStoreAt(ind);
   }
   else if(list == PokemonRandom::Random_Pokedex) {
-    var8 dex = Random::rangeExclusive(1, pokemonDexCount);
-    pkmnData = PokemonDB::ind.value("dex" + QString::number(dex));
+    var8 dex = Random::inst()->rangeExclusive(1, pokemonDexCount);
+    pkmnData = PokemonDB::inst()->getIndAt("dex" + QString::number(dex));
   }
   else if(list == PokemonRandom::Random_Starters)
-    pkmnData = StarterPokemonDB::randomAnyStarter();
+    pkmnData = StarterPokemonDB::inst()->randomAnyStarter();
   else
-    pkmnData = StarterPokemonDB::random3Starter();
+    pkmnData = StarterPokemonDB::inst()->random3Starter();
 
   return newPokemon(pkmnData, basics);
 }
@@ -355,15 +355,15 @@ PokemonBox* PokemonBox::newPokemon(PokemonDBEntry* pkmnData, PlayerBasics* basic
   auto pkmn = new PokemonBox();
 
   pkmn->species = pkmnData->ind;
-  pkmn->level = Random::rangeInclusive(5, 8);
+  pkmn->level = Random::inst()->rangeInclusive(5, 8);
   pkmn->reRollDVs();
 
   // Randomly give a nickanme or not
-  bool noNick = Random::flipCoin();
+  bool noNick = Random::inst()->flipCoin();
   pkmn->changeName(noNick);
 
   // 10% chance of it being a traded pokemon
-  bool isTrade = Random::chanceSuccess(10);
+  bool isTrade = Random::inst()->chanceSuccess(10);
 
   if(basics != nullptr && !isTrade)
     pkmn->changeTrade(true, basics);
@@ -684,22 +684,22 @@ void PokemonBox::randomize(PlayerBasics* basics)
   copyFrom(pkmn);
   pkmn->deleteLater();
 
-  level = Random::rangeInclusive(5, pokemonLevelMax);
+  level = Random::inst()->rangeInclusive(5, pokemonLevelMax);
   levelChanged();
 
-  atkExp = Random::rangeInclusive(0, 0xFFFF);
+  atkExp = Random::inst()->rangeInclusive(0, 0xFFFF);
   atkExpChanged();
 
-  defExp = Random::rangeInclusive(0, 0xFFFF);
+  defExp = Random::inst()->rangeInclusive(0, 0xFFFF);
   defExpChanged();
 
-  spdExp = Random::rangeInclusive(0, 0xFFFF);
+  spdExp = Random::inst()->rangeInclusive(0, 0xFFFF);
   spdExpChanged();
 
-  spExp = Random::rangeInclusive(0, 0xFFFF);
+  spExp = Random::inst()->rangeInclusive(0, 0xFFFF);
   spExpChanged();
 
-  hpExp = Random::rangeInclusive(0, 0xFFFF);
+  hpExp = Random::inst()->rangeInclusive(0, 0xFFFF);
   hpExpChanged();
 
   // Delete it's moves and re-create 4 new non-glitch random moves
@@ -711,7 +711,7 @@ void PokemonBox::randomize(PlayerBasics* basics)
   // 50/50 chance of not having a nickname
   // If true, removes nickname
   // If false, assigns random nickname
-  bool noNick = Random::flipCoin();
+  bool noNick = Random::inst()->flipCoin();
   changeName(noNick);
 
   // This is where we make the Pokemon completely game accurate
@@ -723,13 +723,13 @@ void PokemonBox::randomize(PlayerBasics* basics)
   // This is where we give the Pokemon whacky types for fun
   // We have to do this after all the code above otherwise it'll be re-corrected
   // to be game accurate
-  auto type1 = TypesDB::store.at(Random::rangeExclusive(0, TypesDB::store.size()));
+  auto type1 = TypesDB::inst()->getStore().at(Random::inst()->rangeExclusive(0, TypesDB::inst()->getStoreSize()));
   TypeDBEntry* type2 = nullptr;
 
   // 25% chance of type 2
-  bool hasType2 = Random::chanceSuccess(25);
+  bool hasType2 = Random::inst()->chanceSuccess(25);
   if(hasType2) {
-    type2 = TypesDB::store.at(Random::rangeExclusive(0, TypesDB::store.size()));
+    type2 = TypesDB::inst()->getStore().at(Random::inst()->rangeExclusive(0, TypesDB::inst()->getStoreSize()));
 
     if(type1->ind == type2->ind)
       type2 = nullptr;
@@ -768,7 +768,7 @@ PokemonDBEntry* PokemonBox::isValid()
   // Get Pokemon Record
   // The Pokemon Array is organized by species ID with 1 top entry missing
   // thus offset by 1 accordingly
-  auto record = PokemonDB::ind.value(QString::number(species), nullptr);
+  auto record = PokemonDB::inst()->getIndAt(QString::number(species));
 
   // Check it's a valid Pokemon (not glitch)
   if(record == nullptr || record->glitch || !(record->pokedex))
@@ -1018,7 +1018,7 @@ bool PokemonBox::hasTradeStatus(PlayerBasics* basics)
 void PokemonBox::changeName(bool removeNickname)
 {
   if(!removeNickname)
-    nickname = NamesPokemonDB::randomName();
+    nickname = Names::inst()->pokemon()->randomExample();
   else if(removeNickname)
     nickname = toData()->name;
 
@@ -1027,17 +1027,31 @@ void PokemonBox::changeName(bool removeNickname)
 
 void PokemonBox::changeOtData(bool removeOtData, PlayerBasics* basics)
 {
+  // Randomize OT (give it "traded" status): always a real change, always emit.
   if(!removeOtData) {
-    otName = NamesDB::randomName();
-    otID = Random::rangeInclusive(0x0000, 0xFFFF);
-  }
-  else if(removeOtData && basics != nullptr) {
-    otName = basics->playerName;
-    otID = basics->playerID;
+    otName = Names::inst()->player()->randomExample();
+    otID = Random::inst()->rangeInclusive(0x0000, 0xFFFF);
+    otNameChanged();
+    otIDChanged();
+    return;
   }
 
-  otNameChanged();
-  otIDChanged();
+  // Adopt the player's OT (remove "traded" status). Need the player's data.
+  if(basics == nullptr)
+    return;
+
+  // Idempotent: only touch a field (and emit) if it actually differs. Keeps the
+  // owned-mon OT sync from firing a storm of no-op change signals, and keeps us
+  // from rewriting OT bytes that didn't need to change.
+  if(otName != basics->playerName) {
+    otName = basics->playerName;
+    otNameChanged();
+  }
+
+  if(otID != basics->playerID) {
+    otID = basics->playerID;
+    otIDChanged();
+  }
 }
 
 void PokemonBox::changeTrade(bool removeTradeStatus, PlayerBasics* basics)
@@ -1084,7 +1098,7 @@ void PokemonBox::evolve()
 
   // For Eevee evolutions, randomly pick one
   if(record->evolution.size() > 1) {
-    var8 ind = Random::rangeExclusive(0, record->evolution.size());
+    var8 ind = Random::inst()->rangeExclusive(0, record->evolution.size());
     species = record->evolution.at(ind)->toEvolution->ind;
   }
   else
@@ -1215,7 +1229,7 @@ void PokemonBox::maxDVs()
 void PokemonBox::reRollDVs()
 {
   for(var8 i = 0; i < 4; i++)
-    dv[i] = Random::rangeInclusive(0, 15);
+    dv[i] = Random::inst()->rangeInclusive(0, 15);
 
   dvChanged();
 }
@@ -1270,19 +1284,19 @@ void PokemonBox::resetEVs()
 
 void PokemonBox::reRollEVs()
 {
-  hpExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  hpExp = Random::inst()->rangeInclusive(0x0000, 0xFFFF);
   hpExpChanged();
 
-  atkExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  atkExp = Random::inst()->rangeInclusive(0x0000, 0xFFFF);
   atkExpChanged();
 
-  defExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  defExp = Random::inst()->rangeInclusive(0x0000, 0xFFFF);
   defExpChanged();
 
-  spdExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  spdExp = Random::inst()->rangeInclusive(0x0000, 0xFFFF);
   spdExpChanged();
 
-  spExp = Random::rangeInclusive(0x0000, 0xFFFF);
+  spExp = Random::inst()->rangeInclusive(0x0000, 0xFFFF);
   spExpChanged();
 
   update(true);
@@ -1541,7 +1555,7 @@ void PokemonBox::rollShiny()
   dv[PokemonStats::Special] = 0b1010;
   dvChanged();
 
-  dv[PokemonStats::Attack] = Random::rangeInclusive(0, 15);
+  dv[PokemonStats::Attack] = Random::inst()->rangeInclusive(0, 15);
   dv[PokemonStats::Attack] |= 2;
   dvChanged();
 }
@@ -1689,7 +1703,7 @@ void PokemonBox::copyFrom(PokemonBox* pkmn)
 
 PokemonDBEntry* PokemonBox::toData()
 {
-  return PokemonDB::ind.value(QString::number(species), nullptr);
+  return PokemonDB::inst()->getIndAt(QString::number(species));
 }
 
 int PokemonBox::movesCount()
@@ -1715,7 +1729,7 @@ int PokemonBox::movesMax()
 
 PokemonMove* PokemonBox::movesAt(int ind)
 {
-  return moves[ind];
+  return qmlCppOwned(moves[ind]);
 }
 
 int PokemonBox::dvCount()
@@ -1723,43 +1737,4 @@ int PokemonBox::dvCount()
   return maxDV;
 }
 
-int PokemonBox::dvAt(int ind)
-{
-  return dv[ind];
-}
-
-void PokemonBox::dvSet(int ind, int val)
-{
-  dv[ind] = val;
-  dvChanged();
-}
-
-void PokemonBox::manualSpeciesChanged()
-{
-  update(true, true, true, true);
-}
-
-void PokemonBox::manualLevelChanged()
-{
-  update(true, true);
-}
-
-int PokemonBox::atkStat()
-{
-  return nonHpStat(PokemonStats::Attack);
-}
-
-int PokemonBox::defStat()
-{
-  return nonHpStat(PokemonStats::Defense);
-}
-
-int PokemonBox::spdStat()
-{
-  return nonHpStat(PokemonStats::Speed);
-}
-
-int PokemonBox::spStat()
-{
-  return nonHpStat(PokemonStats::Special);
-}
+int PokemonBox::dvAt(int

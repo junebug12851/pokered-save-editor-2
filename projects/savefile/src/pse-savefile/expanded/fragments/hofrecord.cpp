@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
   * limitations under the License.
 */
 #include "hofrecord.h"
+#include "../../qmlownership.h"
 #include "./hofpokemon.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
@@ -43,7 +44,7 @@ int HoFRecord::pokemonMax()
 
 HoFPokemon* HoFRecord::pokemonAt(int ind)
 {
-  return pokemon.at(ind);
+  return qmlCppOwned(pokemon.at(ind));
 }
 
 void HoFRecord::pokemonSwap(int from, int to)
@@ -147,7 +148,7 @@ void HoFRecord::randomize()
   reset();
 
   // Get a random amount of Pokemon between 1-6
-  var8 size = Random::rangeInclusive(1,6);
+  var8 size = Random::inst()->rangeInclusive(1,6);
 
   // Create blank Pokemon entries
   for(var8 i = 0; i < size; i++)
@@ -156,6 +157,4 @@ void HoFRecord::randomize()
   pokemonChanged();
 
   // Insert random data
-  for(auto entry : pokemon)
-    entry->randomize();
-}
+  for(auto 

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
+#include <QObject>
 #include <QJsonValue>
 #include <QString>
 #include <QHash>
@@ -26,11 +26,7 @@
 
 struct MoveDBEntry;
 struct PokemonDBEntry;
-
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
-
-// All types in the game
+class QQmlEngine;
 
 struct DB_AUTOPORT TypeDBEntry {
   TypeDBEntry();
@@ -44,14 +40,32 @@ struct DB_AUTOPORT TypeDBEntry {
   QVector<PokemonDBEntry*> toPokemon;
 };
 
-class DB_AUTOPORT TypesDB
+class DB_AUTOPORT TypesDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+
 public:
-  static void load();
-  static void index();
+  static TypesDB* inst();
 
-  static QVector<TypeDBEntry*> store;
-  static QHash<QString, TypeDBEntry*> ind;
+  [[nodiscard]] const QVector<TypeDBEntry*> getStore() const;
+  [[nodiscard]] const QHash<QString, TypeDBEntry*> getInd() const;
+  [[nodiscard]] int getStoreSize() const;
+
+  Q_INVOKABLE TypeDBEntry* getStoreAt(int idx) const;
+  Q_INVOKABLE TypeDBEntry* getIndAt(const QString& key) const;
+
+public slots:
+  void load();
+  void index();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  TypesDB();
+
+  QVector<TypeDBEntry*> store;
+  QHash<QString, TypeDBEntry*> ind;
 };
-
-#endif // TYPES_H

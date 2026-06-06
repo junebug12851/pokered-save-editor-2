@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,12 +14,15 @@
   * limitations under the License.
 */
 #include "./areapokemon.h"
+#include "../../qmlownership.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/pokemon.h>
 #include <pse-common/random.h>
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
+#include <pse-db/entries/mapdbentrywildmon.h>
 
 AreaPokemonWild::AreaPokemonWild(int index, int level)
 {
@@ -46,13 +49,13 @@ void AreaPokemonWild::randomize()
 {
   reset();
 
-  auto mon = PokemonDB::ind.value(
-        "dex" + QString::number(Random::rangeExclusive(0, pokemonDexCount)));
+  auto mon = PokemonDB::inst()->getIndAt(
+        "dex" + QString::number(Random::inst()->rangeExclusive(0, pokemonDexCount)));
 
   index = mon->ind;
   indexChanged();
 
-  level = Random::rangeInclusive(5, pokemonLevelMax);
+  level = Random::inst()->rangeInclusive(5, pokemonLevelMax);
   levelChanged();
 }
 
@@ -115,7 +118,7 @@ int AreaPokemon::grassMonsCount()
 
 AreaPokemonWild* AreaPokemon::grassMonsAt(int ind)
 {
-  return grassMons[ind];
+  return qmlCppOwned(grassMons[ind]);
 }
 
 void AreaPokemon::grassMonsSwap(int from, int to)
@@ -136,7 +139,7 @@ int AreaPokemon::waterMonsCount()
 
 AreaPokemonWild* AreaPokemon::waterMonsAt(int ind)
 {
-  return waterMons[ind];
+  return qmlCppOwned(waterMons[ind]);
 }
 
 void AreaPokemon::waterMonsSwap(int from, int to)
@@ -239,10 +242,10 @@ void AreaPokemon::randomize()
   reset();
 
   // Give a reasonable grass and water rate randomization
-  grassRate = Random::rangeInclusive(0, 35);
+  grassRate = Random::inst()->rangeInclusive(0, 35);
   grassRateChanged();
 
-  waterRate = Random::rangeInclusive(0, 35);
+  waterRate = Random::inst()->rangeInclusive(0, 35);
   waterRateChanged();
 
   if(grassRate > 0)
@@ -263,41 +266,38 @@ void AreaPokemon::setTo(MapDBEntry* map)
   reset();
 
   // Give a reasonable grass and water rate randomization
-  grassRate = (map == nullptr || !map->monRate)
+  grassRate = (map == nullptr || map->getMonRate() < 0)
       ? 0
-      : *map->monRate;
+      : map->getMonRate();
   grassRateChanged();
 
-  waterRate = (map == nullptr || !map->monRateWater)
+  waterRate = (map == nullptr || map->getMonRateWater() < 0)
       ? 0
-      : *map->monRateWater;
+      : map->getMonRateWater();
   waterRateChanged();
 
   if(map == nullptr)
     return;
 
-  bool redOrBlue = Random::flipCoin();
-  auto monData = (redOrBlue) ? map->monsRed : map->monsBlue;
+  bool redOrBlue = Random::inst()->flipCoin();
+  auto monData = (redOrBlue) ? map->getMonsRed() : map->getMonsBlue();
 
   for(int i = 0; i < monData.size(); i++) {
-    grassMons[i]->index = monData.at(i)->toPokemon->ind;
+    grassMons[i]->index = monData.at(i)->getToPokemon()->ind;
     grassMons[i]->indexChanged();
     grassMonsChanged();
 
-    grassMons[i]->level = monData.at(i)->level;
+    grassMons[i]->level = monData.at(i)->getLevel();
     grassMons[i]->levelChanged();
     grassMonsChanged();
   }
 
-  auto monDataWater = map->monsWater;
+  auto monDataWater = map->getMonsWater();
 
   for(int i = 0; i < monDataWater.size(); i++) {
-    waterMons[i]->index = monDataWater.at(i)->toPokemon->ind;
+    waterMons[i]->index = monDataWater.at(i)->getToPokemon()->ind;
     waterMons[i]->indexChanged();
     waterMonsChanged();
 
-    waterMons[i]->level = monDataWater.at(i)->level;
-    waterMons[i]->levelChanged();
-    waterMonsChanged();
-  }
-}
+    waterMons[i]->level = monDataWater.at(i)->getLevel();
+    wa

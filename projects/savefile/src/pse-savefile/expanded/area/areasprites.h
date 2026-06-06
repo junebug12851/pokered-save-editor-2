@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef AREASPRITES_H
-#define AREASPRITES_H
-
+#pragma once
 #include <QObject>
 #include <QVector>
 #include <pse-common/types.h>
@@ -58,4 +56,3 @@ public:
   QVector<SpriteData*> sprites;
 };
 
-#endif // AREASPRITES_H

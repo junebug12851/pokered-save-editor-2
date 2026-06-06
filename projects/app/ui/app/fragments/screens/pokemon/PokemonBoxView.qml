@@ -1,10 +1,11 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Effects
 
-import App.PokemonStorageModel 1.0
-import App.PokemonBoxSelectModel 1.0
+import App.PokemonStorageModel
+import App.PokemonBoxSelectModel
 
 import "../../general"
 import "../../controls/selection"
@@ -65,9 +66,9 @@ GridView {
     target: null
     ignoreUnknownSignals: true
 
-    onCloseNonModal: {
+    function onCloseNonModal() {
       theModel.onReset();
-      pokemonDetailsListener.target = null
+      pokemonDetailsListener.target = null;
       pokemonDetailsListenerShutOff.target = null;
     }
   }
@@ -98,13 +99,17 @@ GridView {
     }
 
     function getMonNickname() {
-      if(itemNickname === undefined || itemNickname === null)
-        return "";
+      // Show the nickname; for an un-nicknamed mon (empty nickname) fall back to
+      // the species name, matching the in-game display. (Most mons in a save have
+      // no custom nickname, so without this the label is just blank.)
+      var nick = (itemNickname === undefined || itemNickname === null) ? "" : itemNickname;
+      if(nick === "")
+        nick = (itemName === undefined || itemName === null) ? "" : itemName;
 
-      if(itemNickname.length > 10)
-        return itemNickname.substring(0, 7) + "..."
+      if(nick.length > 10)
+        return nick.substring(0, 7) + "...";
       else
-        return itemNickname;
+        return nick;
     }
 
     CheckBox {
@@ -142,20 +147,55 @@ GridView {
       rightInset: 0
       bottomInset: 0
       leftInset: 0
-      display: AbstractButton.TextBesideIcon
-      flat: true
+      Material.elevation: 0
       z: 100
 
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       anchors.right: parent.right
 
-      icon.source: "qrc:/assets/icons/fontawesome/pen.svg"
-      icon.width: 10
-      icon.height: 10
-
       Material.background: brg.settings.accentColor
       Material.foreground: brg.settings.textColorLight
+
+      // The Material Button's built-in icon+text label would NOT render the text
+      // at this small fixed height (the accent pill showed but the name never
+      // did). Draw the name with an explicit Text — same approach as the level
+      // badge, which renders fine. The cell-wide MouseArea handles the click.
+      contentItem: Item {
+        Row {
+          anchors.centerIn: parent
+          spacing: 4
+
+          Image {
+            anchors.verticalCenter: parent.verticalCenter
+            width: 10
+            height: 10
+            sourceSize.width: 10
+            sourceSize.height: 10
+            source: "qrc:/assets/icons/fontawesome/pen.svg"
+            fillMode: Image.PreserveAspectFit
+
+            // Tint the monochrome SVG to match the light text. pen.svg is a
+            // solid BLACK path; MultiEffect.colorization scales the tint by the
+            // source's luminance, so a black source stays black. brightness:1.0
+            // pushes it to white first, then colorization recolors it to
+            // textColorLight. (Without brightness the pen renders dark.)
+            layer.enabled: true
+            layer.effect: MultiEffect {
+              brightness: 1.0
+              colorization: 1.0
+              colorizationColor: brg.settings.textColorLight
+            }
+          }
+
+          Text {
+            anchors.verticalCenter: parent.verticalCenter
+            text: editBtn.text
+            color: brg.settings.textColorLight
+            font: editBtn.font
+          }
+        }
+      }
 
       onClicked: {
         if(itemIsParty)
@@ -170,6 +210,17 @@ GridView {
 
       anchors.fill: parent
       hoverEnabled: true
+
+      // Clicking anywhere on a (non-empty) slot opens the editor, not just the
+      // little hover button. Placeholder "+" slots keep their own add handler.
+      onClicked: {
+        if(itemIsPlaceholder)
+          return;
+        if(itemIsParty)
+          openMonEditor(itemIsParty, view.theModel.getPartyMon(index));
+        else
+          openMonEditor(itemIsParty, view.theModel.getBoxMon(index));
+      }
     }
 
     Image {

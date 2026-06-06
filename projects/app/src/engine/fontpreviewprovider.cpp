@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ void FontPreviewInstance::setup(QStringList idParts)
       ? QColor(idParts.at(IdPartFGColor))
       : QColor();
 
-  placeholder = Utility::decodeAfterUrl(idParts.at(IdPartPlaceHolder));
+  placeholder = Utility::inst()->decodeAfterUrl(idParts.at(IdPartPlaceHolder));
 
   getInputStr(); // Somewhat more complicated
 }
@@ -116,7 +116,7 @@ void FontPreviewInstance::getInputStr()
 {
   // Get str
   // If the player inserts slashes then we want the rest of it
-  inputStr = Utility::decodeAfterUrl(idParts.mid(IdPartStr).join("/"));
+  inputStr = Utility::inst()->decodeAfterUrl(idParts.mid(IdPartStr).join("/"));
 }
 
 void FontPreviewInstance::getTiles()
@@ -136,13 +136,16 @@ void FontPreviewInstance::getResultingText()
   // those lines into tile numbers.
   QString resToConvert = placeholder.replace("%%", inputStr);
 
-  auto res = FontsDB::expandStr(resToConvert, 255, rivalsName, playersName)
-      .split("\n", QString::SkipEmptyParts);
+  auto res = FontsDB::inst()->expandStr(resToConvert, 255, rivalsName, playersName)
+      .split("\n", Qt::SkipEmptyParts);
 
   QVector<QVector<var8>> ret;
   for(auto entry : res) {
-    QVector<var8> tmp = FontsDB::convertToCode(entry, 255, false);
-    ret.append(tmp);
+    QVector<int> tmp = FontsDB::inst()->convertToCode(entry, 255, false);
+    QVector<var8> tmpBytes;
+    tmpBytes.reserve(tmp.size());
+    for (int v : tmp) tmpBytes.append(static_cast<var8>(v));
+    ret.append(tmpBytes);
   }
 
   resultingText = ret;
@@ -287,7 +290,7 @@ QPixmap FontPreviewProvider::requestPixmap(
     const QString& id, QSize* size, const QSize& requestedSize)
 {
   // Check to make sure it's a properly formed request
-  auto idParts = id.split("/", QString::SplitBehavior::KeepEmptyParts);
+  auto idParts = id.split("/", Qt::KeepEmptyParts);
 
   // Has to have all 10 parts unconditionally
   if(idParts.size() < FontPreviewInstance::IdPart_END)
@@ -318,8 +321,8 @@ QPixmap FontPreviewProvider::getErrorImg(QSize* size, const QSize& requestedSize
   auto ret = QPixmap::fromImage(img);
 
   ret = ret.scaled(
-        (requestedSize.width() > 0) ? requestedSize.width() : actualSize.width(),
-        (requestedSize.height() > 0) ? requestedSize.height() : actualSize.height());
+        (requestedSize.width() > 0) ? requestedSize.width() : img.width(),
+        (requestedSize.height() > 0) ? requestedSize.height() : img.height());
 
   return ret;
 }

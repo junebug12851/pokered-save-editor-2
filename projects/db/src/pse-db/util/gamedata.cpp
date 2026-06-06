@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ const QByteArray GameData::jsonRaw(const QString filename) const
 
   // Read in file
   file.setFileName(":/assets/data/" + filename + ".json");
-  file.open(QIODevice::ReadOnly | QIODevice::Text);
+  if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    return val;
   val = file.readAll();
   file.close();
 
@@ -64,6 +65,4 @@ void GameData::qmlRegister() const
 
 GameData* GameData::inst()
 {
-  static GameData* _inst = new GameData;
-  return _inst;
-}
+  static GameData* _inst = new GameData;

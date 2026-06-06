@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,13 +13,18 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef POKEMONSTORAGEMODEL_H
-#define POKEMONSTORAGEMODEL_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 #include <QAbstractListModel>
 #include <QVector>
+
+// getBoxMon()/getPartyMon() are Q_INVOKABLE and return these to QML (the Pokémon
+// details screen binds them to typed PokemonBox/PokemonParty properties). Full
+// includes so QML receives real QObjects, not opaque values.
+// See notes/reference/qt6-patterns.md.
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
+#include <pse-savefile/expanded/fragments/pokemonparty.h>
 
 class PokemonBox;
 class PokemonParty;
@@ -104,20 +109,4 @@ public slots:
   void checkedMoveDown();
   void checkedMoveToBottom();
   void checkedDelete();
-  void checkedTransfer();
-  void checkedToggleAll();
-
-  void switchBox(int newBox, bool force = false);
-  PokemonStorageBox* getCurBox() const;
-  PokemonStorageBox* getBox(int box) const;
-
-public:
-  int curBox = PartyBox;
-  Router* router = nullptr;
-  Storage* storage = nullptr;
-  PlayerPokemon* party = nullptr;
-  PokemonStorageModel* otherModel = nullptr;
-  bool checkedStateDirty = false;
-};
-
-#endif // POKEMONSTORAGEMODEL_H
+  void checkedTra

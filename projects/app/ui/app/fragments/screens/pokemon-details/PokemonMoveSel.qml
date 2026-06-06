@@ -1,25 +1,28 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
-import App.PokemonBox 1.0
-import App.PokemonParty 1.0
-import App.PokemonMove 1.0
+import App.PokemonBox
+import App.PokemonParty
+import App.PokemonMove
 
 import "../../general"
 import "../../header"
 import "../../controls/selection"
 
+// One move row: a colored (by type) pill containing the move selector, its
+// type, PP / max-PP, and a ⋮ menu. Compact height; the move combo fills the
+// leftover width so the row always fits the pane and the trailing items (incl.
+// the ⋮ menu) stay inside it instead of overflowing onto the stats pane.
 Rectangle {
   id: top
   property PokemonMove monMove: null
-  radius: 15
-  implicitHeight: topContents.implicitHeight
-  implicitWidth: topContents.implicitWidth
-  color: (monMove.moveID === "phony")
-         ? getColor()
-         : getColor()
+  property int rowH: 34
+
+  radius: 0
+  implicitHeight: rowH
+  color: getColor()
 
   // Thanks to Bulbapedia
   // bulbapedia.bulbagarden.net/wiki/Category:Type_color_templates
@@ -61,31 +64,36 @@ Rectangle {
   }
 
   RowLayout {
-    id: topContents
-    width: parent.width
-    spacing: 5
+    anchors.fill: parent
+    anchors.leftMargin: 10
+    anchors.rightMargin: 6
+    spacing: 4
 
     SelectMove {
       id: moveSelect
+      // Fill the leftover width so the row fits the pane (keeps the ⋮ inside).
+      Layout.fillWidth: true
+      Layout.minimumWidth: 60
+      Layout.preferredHeight: top.rowH
 
-      onActivated: monMove.moveID = currentValue;
+      onActivated: { monMove.moveID = currentValue; }
       Component.onCompleted: currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
 
       Connections {
         target: monMove
-        onMoveIDChanged: moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
+        function onMoveIDChanged() { moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID); }
       }
 
       Connections {
         target: brg.moveSelectModel
-        onMonChanged: {
+        function onMonChanged() {
           moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
         }
       }
 
       Connections {
         target: boxData
-        onSpeciesChanged: {
+        function onSpeciesChanged() {
           moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
         }
       }
@@ -98,11 +106,9 @@ Rectangle {
     Text {
       visible: monMove.moveID !== 0
 
-      Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+      Layout.alignment: Qt.AlignVCenter
       horizontalAlignment: Text.AlignHCenter
-      Layout.leftMargin: -15
-
-      Layout.preferredWidth: font.pixelSize * 5
+      Layout.preferredWidth: font.pixelSize * 4
       color: brg.settings.textColorDark
 
       text: monMove.moveType
@@ -115,21 +121,22 @@ Rectangle {
       visible: monMove.moveID !== 0
 
       Layout.alignment: Qt.AlignVCenter
+      Layout.preferredHeight: top.rowH
       horizontalAlignment: Text.AlignHCenter
 
-      width: font.pixelSize * 2
-      implicitWidth: font.pixelSize * 2
-      maximumLength: 3
+      // PP is at most 2 digits; size for 2 chars + a little padding (trimmed).
+      leftPadding: 8
+      rightPadding: 8
+      Layout.preferredWidth: 2 * font.pixelSize + leftPadding + rightPadding
+      maximumLength: 2
       color: brg.settings.textColorDark
-
-      Layout.topMargin: 16
 
       onTextChanged: {
         if(text === "")
           return;
 
         var idDec = parseInt(text, 10);
-        if(idDec === NaN)
+        if(isNaN(idDec))
           return;
 
         if(idDec < 0 || idDec > 0xFF)
@@ -141,7 +148,7 @@ Rectangle {
 
       Connections {
         target: monMove
-        onPpChanged: movePPEdit.text = monMove.pp.toString(10);
+        function onPpChanged() { movePPEdit.text = monMove.pp.toString(10); }
       }
 
       MainToolTip {
@@ -151,11 +158,9 @@ Rectangle {
 
     Text {
       visible: monMove.moveID !== 0
-
       Layout.alignment: Qt.AlignVCenter
       horizontalAlignment: Text.AlignHCenter
       color: brg.settings.textColorDark
-
       text: "/"
       font.pixelSize: 13
       font.capitalization: Font.Capitalize
@@ -163,11 +168,9 @@ Rectangle {
 
     Text {
       visible: monMove.moveID !== 0
-
       Layout.alignment: Qt.AlignVCenter
       horizontalAlignment: Text.AlignHCenter
       color: brg.settings.textColorDark
-
       text: monMove.getMaxPP
       font.pixelSize: 13
       font.capitalization: Font.Capitalize
@@ -175,13 +178,14 @@ Rectangle {
 
     IconButtonSquare {
       visible: monMove.moveID !== 0
+      Layout.alignment: Qt.AlignVCenter
+      Layout.leftMargin: 8
 
       icon.width: 7
-
       icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
       icon.color: brg.settings.textColorDark
 
-      onClicked: moveSelMenu.open();
+      onClicked: { moveSelMenu.open(); }
 
       Menu {
         id: moveSelMenu
@@ -191,19 +195,19 @@ Rectangle {
 
           MenuItem { text: "Currently: " + monMove.ppUp + "/3"}
           MenuSeparator { }
-          MenuItem { text: "Max Out"; onTriggered: monMove.maxPpUp(); enabled: monMove.ppUp < 3 }
-          MenuItem { text: "Raise"; onTriggered: monMove.raisePpUp(); enabled: monMove.ppUp < 3 }
-          MenuItem { text: "Lower"; onTriggered: monMove.lowerPpUp(); enabled: monMove.ppUp > 0 }
-          MenuItem { text: "Reset"; onTriggered: monMove.resetPpUp(); enabled: monMove.ppUp > 0 }
+          MenuItem { text: "Max Out"; onTriggered: { monMove.maxPpUp(); } enabled: monMove.ppUp < 3 }
+          MenuItem { text: "Raise"; onTriggered: { monMove.raisePpUp(); } enabled: monMove.ppUp < 3 }
+          MenuItem { text: "Lower"; onTriggered: { monMove.lowerPpUp(); } enabled: monMove.ppUp > 0 }
+          MenuItem { text: "Reset"; onTriggered: { monMove.resetPpUp(); } enabled: monMove.ppUp > 0 }
         }
 
         Menu {
           title: "All Moves"
 
-          MenuItem { text: "Clear All"; onTriggered: boxData.clearMoves(); }
-          MenuItem { text: "Re-Roll All"; onTriggered: boxData.randomizeMoves(); }
-          MenuItem { text: "Correct All"; onTriggered: boxData.correctMoves(); }
-          MenuItem { text: "Move Empty"; onTriggered: boxData.cleanupMoves(); }
+          MenuItem { text: "Clear All"; onTriggered: { boxData.clearMoves(); } }
+          MenuItem { text: "Re-Roll All"; onTriggered: { boxData.randomizeMoves(); } }
+          MenuItem { text: "Correct All"; onTriggered: { boxData.correctMoves(); } }
+          MenuItem { text: "Move Empty"; onTriggered: { boxData.cleanupMoves(); } }
           MenuItem { text: "Correct / Move"; onTriggered: {
               boxData.correctMoves();
               boxData.cleanupMoves();
@@ -211,9 +215,9 @@ Rectangle {
           }
         }
 
-        MenuItem { text: "Restore PP"; onTriggered: monMove.restorePP(); enabled: !monMove.isMaxPP }
-        MenuItem { text: "Re-Roll"; onTriggered: monMove.randomize(); }
-        MenuItem { text: "Corect Move"; onTriggered: monMove.correctMove(); }
+        MenuItem { text: "Restore PP"; onTriggered: { monMove.restorePP(); } enabled: !monMove.isMaxPP }
+        MenuItem { text: "Re-Roll"; onTriggered: { monMove.randomize(); } }
+        MenuItem { text: "Corect Move"; onTriggered: { monMove.correctMove(); } }
 
         MenuSeparator { }
         MenuItem { text: "Close" }

@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../fragments/modal"
 
@@ -28,7 +28,8 @@ Page {
         property bool isLast: index+1 < creditsView.count ? false : true
 
         spacing: 0
-        width: parent.width
+        // parent can be briefly null during model reset in Qt 6 (see qt6-patterns.md)
+        width: parent ? parent.width : 0
 
         Text {
           visible: section !== ""

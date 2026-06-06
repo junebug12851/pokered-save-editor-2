@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 #include <pse-db/fontsdb.h>
+#include <pse-db/entries/fontdbentry.h>
 #include <pse-db/util/fontsearch.h>
 #include "./fontsearchmodel.h"
 
@@ -30,7 +31,7 @@ int FontSearchModel::rowCount(const QModelIndex& parent) const
   Q_UNUSED(parent)
 
   // Return list count
-  return search->results.size();
+  return search->getFontCount();
 }
 
 QVariant FontSearchModel::data(const QModelIndex& index, int role) const
@@ -39,12 +40,12 @@ QVariant FontSearchModel::data(const QModelIndex& index, int role) const
   if (!index.isValid())
     return QVariant();
 
-  if (index.row() >= search->results.size())
+  if (index.row() >= search->getFontCount())
     return QVariant();
 
   // Return array index to lookup font data
   if (role == IndRole)
-    return search->results.at(index.row())->ind;
+    return search->fontAt(index.row())->getInd();
 
   // All else fails, return nothing
   return QVariant();

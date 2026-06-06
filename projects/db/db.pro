@@ -34,7 +34,7 @@ SOURCES += \
     src/pse-db/entries/mapdbentrywarpout.cpp \
     src/pse-db/entries/mapdbentrywildmon.cpp \
     src/pse-db/entries/missabledbentry.cpp \
-    src/pse-db/entries\creditdbentry.cpp \
+    src/pse-db/entries/creditdbentry.cpp \
     src/pse-db/db.cpp \
     src/pse-db/eventpokemondb.cpp \
     src/pse-db/eventsdb.cpp \
@@ -93,7 +93,7 @@ HEADERS += \
     src/pse-db/entries/mapdbentrywarpout.h \
     src/pse-db/entries/mapdbentrywildmon.h \
     src/pse-db/entries/missabledbentry.h \
-    src/pse-db/entries\creditdbentry.h \
+    src/pse-db/entries/creditdbentry.h \
     src/pse-db/db.h \
     src/pse-db/db_autoport.h \
     src/pse-db/eventpokemondb.h \

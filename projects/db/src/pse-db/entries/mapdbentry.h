@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MAPDBENTRY_H
-#define MAPDBENTRY_H
-
+#pragma once
 #include <QObject>
 #include <QHash>
 #include <QVector>
@@ -126,7 +124,7 @@ public:
   Q_INVOKABLE const MapDBEntryWildMon* getMonsWaterAt(const int ind) const;
 
   int getSpriteSet() const;
-  const SpriteSetDBEntry* getToSpriteSet() const;
+  SpriteSetDBEntry* getToSpriteSet() const;
   int getBorder() const;
   int getBank() const;
   int getDataPtr() const;
@@ -138,21 +136,21 @@ public:
   const QString getTileset() const;
   const QString getModernName() const;
   const QString getIncomplete() const;
-  const MusicDBEntry* getToMusic() const;
-  const TilesetDBEntry* getToTileset() const;
-  const MapDBEntry* getToComplete() const;
+  MusicDBEntry* getToMusic() const;
+  TilesetDBEntry* getToTileset() const;
+  MapDBEntry* getToComplete() const;
 
   const QVector<EventDBEntry*> getToEvents() const;
   int getToEventsSize() const;
   Q_INVOKABLE const EventDBEntry* getToEventsAt(const int ind) const;
 
-  const FlyDBEntry* getToFlyDestination() const;
+  FlyDBEntry* getToFlyDestination() const;
 
   const QVector<HiddenItemDBEntry*> getToHiddenItems() const;
   int getToHiddenItemsSize() const;
   Q_INVOKABLE const HiddenItemDBEntry* getToHiddenItemsAt(const int ind) const;
 
-  const ScriptDBEntry* getToScript() const;
+  ScriptDBEntry* getToScript() const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
@@ -227,6 +225,9 @@ protected:
   ScriptDBEntry* toScript = nullptr;
 
   friend class MapsDB;
+  friend class MapSearch;      // reads filter fields in filter methods
+  friend struct EventDBEntry;  // writes toEvents in deepLink
+  friend struct FlyDBEntry;    // writes toFlyDestination in deepLink
+  friend struct HiddenItemDBEntry; // writes toHiddenItems in deepLink
+  friend struct ScriptDBEntry; // writes toScript in deepLink
 };
-
-#endif // MAPDBENTRY_H

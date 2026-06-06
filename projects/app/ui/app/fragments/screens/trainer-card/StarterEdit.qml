@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
@@ -25,6 +25,9 @@ MouseArea {
     flat: true
     model: brg.starterModel
 
+    // Borderless: clean look, no frame around the combo (Twilight's call s13n).
+    background: Rectangle { color: "transparent"; border.width: 0 }
+
     onActivated: brg.file.data.dataExpanded.player.basics.playerStarter = currentValue;
     Component.onCompleted: currentIndex = brg.starterModel.valToIndex(brg.file.data.dataExpanded.player.basics.playerStarter);
 
@@ -34,7 +37,7 @@ MouseArea {
 
     Connections {
       target: brg.file.data.dataExpanded.player.basics
-      onPlayerStarterChanged: child.currentIndex = brg.starterModel.valToIndex(brg.file.data.dataExpanded.player.basics.playerStarter);
+      function onPlayerStarterChanged() { child.currentIndex = brg.starterModel.valToIndex(brg.file.data.dataExpanded.player.basics.playerStarter); }
     }
 
     Label {
@@ -55,10 +58,4 @@ MouseArea {
       id: menuBtn
       anchors.top: parent.top
       anchors.left: parent.right
-      anchors.bottom: parent.bottom
-      anchors.topMargin: 0
-
-      onRandomize: brg.file.data.dataExpanded.player.basics.randomizeStarter();
-    }
-  }
-}
+      anchors

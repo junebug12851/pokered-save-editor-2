@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 ComboBox {
   id: control
@@ -13,6 +13,22 @@ ComboBox {
   flat: true
 
   width: font.pixelSize * 15
+
+  // Hover underline; defaults blue-ish (accent). Header-bar instances override
+  // hoverColor to a light color to match white-text header bars.
+  property color hoverColor: brg.settings.accentColor
+
+  // Borderless at rest; a short underline on hover signals interactivity.
+  background: Rectangle {
+    color: "transparent"
+    Rectangle {
+      anchors.bottom: parent.bottom
+      width: parent.width
+      height: 2
+      visible: control.hovered
+      color: control.hoverColor
+    }
+  }
 
   delegate: ItemDelegate {
     width: control.width
@@ -34,7 +50,10 @@ ComboBox {
   popup: Popup {
     y: control.height - 1
     width: control.width
-    implicitHeight: contentItem.implicitHeight
+    // Cap the popup so long lists scroll instead of growing to full content
+    // height (at full height there is nothing to flick and it clips off-screen).
+    // +2 covers the 1px padding each side. Mirrors Qt's default ComboBox popup.
+    height: Math.min(contentItem.implicitHeight + 2, 280)
     padding: 1
 
     contentItem: ListView {

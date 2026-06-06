@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -89,8 +89,8 @@ void HoFPokemon::randomize()
   reset();
 
   // Generate random dex entry and look it up to get species number
-  var8 dex = Random::rangeExclusive(1,pokemonDexCount);
-  auto toPokemon = PokemonDB::ind.value("dex" + QString::number(dex), nullptr);
+  var8 dex = Random::inst()->rangeExclusive(1,pokemonDexCount);
+  auto toPokemon = PokemonDB::inst()->getIndAt("dex" + QString::number(dex));
 
   if(toPokemon != nullptr) {
     species = toPokemon->ind;
@@ -98,15 +98,15 @@ void HoFPokemon::randomize()
   }
 
   // Random level between 1 - 100
-  level = Random::rangeInclusive(5,pokemonLevelMax);
+  level = Random::inst()->rangeInclusive(5,pokemonLevelMax);
   levelChanged();
 
   // Random name
-  name = NamesDB::randomName();
+  name = Names::inst()->player()->randomExample();
   nameChanged();
 }
 
 PokemonDBEntry* HoFPokemon::toSpecies()
 {
-  return PokemonDB::ind.value(QString::number(species), nullptr);
+  return PokemonDB::inst()->getIndAt(QString::number(species));
 }

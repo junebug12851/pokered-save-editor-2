@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef MAPDBENTRYWARPIN_H
-#define MAPDBENTRYWARPIN_H
-
+#pragma once
 #include <QObject>
 #include <QJsonValue>
 #include "../db_autoport.h"
@@ -40,7 +38,7 @@ public:
   int getToConnectingWarpsSize() const;
   Q_INVOKABLE MapDBEntryWarpOut* getToConnectingWarpsAt(const int ind) const;
 
-  const MapDBEntry* getParent() const;
+  MapDBEntry* getParent() const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
@@ -62,4 +60,3 @@ protected:
   friend class MapDBEntryWarpOut;
 };
 
-#endif // MAPDBENTRYWARPIN_H

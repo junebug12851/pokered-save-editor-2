@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
   * limitations under the License.
 */
 
-#include <QJsonValue>
 #include <QJsonArray>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -28,118 +29,120 @@
 SpriteSetDBEntry::SpriteSetDBEntry() {}
 SpriteSetDBEntry::SpriteSetDBEntry(QJsonValue& data)
 {
-  // Set simple properties
-  ind = data["ind"].toDouble();
+  ind = static_cast<var8>(data["ind"].toDouble());
 
-  if(data["split"].isString())
+  if (data["split"].isString())
     split = data["split"].toString();
+  if (data["splitAt"].isDouble())
+    splitAt = static_cast<var8>(data["splitAt"].toDouble());
+  if (data["setWN"].isDouble())
+    setWN = static_cast<var8>(data["setWN"].toDouble());
+  if (data["setES"].isDouble())
+    setES = static_cast<var8>(data["setES"].toDouble());
 
-  if(data["splitAt"].isString())
-    splitAt = data["splitAt"].toDouble();
-
-  if(data["setWN"].isDouble())
-    setWN = data["setWN"].toDouble();
-
-  if(data["setES"].isDouble())
-    setES = data["setES"].toDouble();
-
-  if(data["sprites"].isArray()) {
-    for(QJsonValue spriteListEntry : data["sprites"].toArray())
-      spriteList.append(spriteListEntry.toString());
-  }
+  if (data["sprites"].isArray())
+    for (const QJsonValue& s : data["sprites"].toArray())
+      spriteList.append(s.toString());
 }
 
 void SpriteSetDBEntry::deepLink()
 {
-  for(auto spriteEntry : spriteList)
-  {
-    auto tmp = SpritesDB::ind.value(spriteEntry, nullptr);
-    toSprites.append(tmp);
-
+  for (const auto& name : spriteList) {
+    auto* s = SpritesDB::inst()->getIndAt(name);
+    toSprites.append(s);
 #ifdef QT_DEBUG
-  if(tmp == nullptr)
-    qCritical() << "SpriteSetDB: " << spriteEntry << ", could not be deep linked to sprite." ;
+    if (!s) qCritical() << "SpriteSetDB: sprite" << name << "could not be deep linked.";
 #endif
   }
-
-  if(setWN) {
-    toSetWN = SpriteSetDB::ind.value(QString::number(*setWN), nullptr);
-
+  if (setWN) {
+    toSetWN = const_cast<SpriteSetDBEntry*>(
+      SpriteSetDB::inst()->getIndAt(QString::number(*setWN)));
 #ifdef QT_DEBUG
-  if(setWN && toSetWN == nullptr)
-    qCritical() << "SpriteSetDB Set WN: " << *setWN << ", could not be deep linked to static set." ;
+    if (!toSetWN) qCritical() << "SpriteSetDB: setWN" << *setWN << "could not be deep linked.";
 #endif
   }
-
-  if(setES) {
-    toSetES = SpriteSetDB::ind.value(QString::number(*setES), nullptr);
-
+  if (setES) {
+    toSetES = const_cast<SpriteSetDBEntry*>(
+      SpriteSetDB::inst()->getIndAt(QString::number(*setES)));
 #ifdef QT_DEBUG
-  if(setES && toSetES == nullptr)
-    qCritical() << "SpriteSetDB Set ES: " << *setES << ", could not be deep linked to static set." ;
+    if (!toSetES) qCritical() << "SpriteSetDB: setES" << *setES << "could not be deep linked.";
 #endif
   }
 }
 
-bool SpriteSetDBEntry::isDynamic()
+bool SpriteSetDBEntry::isDynamic() const { return ind >= 0xF1; }
+
+QVector<SpriteDBEntry*> SpriteSetDBEntry::getSprites(var8 x, var8 y) const
 {
-  return ind >= 0xF1;
+  if (!isDynamic()) return toSprites;
+  if (split == "horz")
+    return (y < splitAt) ? toSetWN->toSprites : toSetES->toSprites;
+  return (x < splitAt) ? toSetWN->toSprites : toSetES->toSprites;
 }
 
-QVector<SpriteDBEntry*> SpriteSetDBEntry::getSprites(var8 x, var8 y)
+SpriteSetDB* SpriteSetDB::inst()
 {
-  // If static then simply return the sprite list
-  if(!isDynamic())
-    return toSprites;
+  static SpriteSetDB* _inst = new SpriteSetDB;
+  return _inst;
+}
 
-  // Otherwise figure out which sprite list to return
-  if(split == "horz") {
-    if(y < splitAt)
-      return toSetWN->toSprites;
-    else
-      return toSetES->toSprites;
-  }
-  else {
-    if(x < splitAt)
-      return toSetWN->toSprites;
-    else
-      return toSetES->toSprites;
-  }
+const QVector<SpriteSetDBEntry*> SpriteSetDB::getStore() const { return store; }
+const QHash<QString, SpriteSetDBEntry*> SpriteSetDB::getInd() const { return ind; }
+int SpriteSetDB::getStoreSize() const { return store.size(); }
+
+SpriteSetDBEntry* SpriteSetDB::getStoreAt(int idx) const
+{
+  if (idx < 0 || idx >= store.size()) return nullptr;
+  return store.at(idx);
+}
+
+SpriteSetDBEntry* SpriteSetDB::getIndAt(const QString& key) const
+{
+  return ind.value(key, nullptr);
 }
 
 void SpriteSetDB::load()
 {
-  // Grab Music Data
+  static bool once = false;
+  if (once) return;
   auto jsonData = GameData::inst()->json("spriteSet");
-
-  // Go through each music
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Create a new event Pokemon entry
-    auto entry = new SpriteSetDBEntry(jsonEntry);
-
-    // Add to array
-    store.append(entry);
-  }
+  for (QJsonValue entry : jsonData.array())
+    store.append(new SpriteSetDBEntry(entry));
+  once = true;
 }
 
 void SpriteSetDB::index()
 {
-  for(auto entry : store)
-  {
-    // Index name and index
+  static bool once = false;
+  if (once) return;
+  for (auto* entry : store)
     ind.insert(QString::number(entry->ind), entry);
-  }
+  once = true;
 }
 
 void SpriteSetDB::deepLink()
 {
-  for(auto entry : store)
-  {
+  static bool once = false;
+  if (once) return;
+  for (auto* entry : store)
     entry->deepLink();
-  }
+  once = true;
 }
 
-QVector<SpriteSetDBEntry*> SpriteSetDB::store = QVector<SpriteSetDBEntry*>();
-QHash<QString, SpriteSetDBEntry*> SpriteSetDB::ind =
-    QHash<QString, SpriteSetDBEntry*>();
+void SpriteSetDB::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+}
+
+void SpriteSetDB::qmlRegister() const
+{
+  static bool once = false;
+  if (once) return;
+  qmlRegisterUncreatableType<SpriteSetDB>("PSE.DB.SpriteSetDB", 1, 0, "SpriteSetDB", "Can't instantiate in QML");
+  once = true;
+}
+
+SpriteSetDB::SpriteSetDB()
+{
+  qmlRegister();
+}

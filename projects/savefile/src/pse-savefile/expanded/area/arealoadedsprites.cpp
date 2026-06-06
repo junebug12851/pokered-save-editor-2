@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/spriteSet.h>
 #include <pse-db/sprites.h>
 #include <pse-common/random.h>
@@ -101,28 +102,28 @@ void AreaLoadedSprites::randomize(MapDBEntry* map, int x, int y)
   reset();
 
   // First check to see if the chosen map already has a sprite set
-  if(map->toSpriteSet == nullptr) {
+  if(map->getToSpriteSet() == nullptr) {
     // It does not
     // Pick a random sprite set and load it
-    auto spriteSet = SpriteSetDB::store.at(
-          Random::rangeExclusive(0, SpriteSetDB::store.size())
+    auto spriteSet = SpriteSetDB::inst()->getStore().at(
+          Random::inst()->rangeExclusive(0, SpriteSetDB::inst()->getStoreSize())
           );
 
     loadSpriteSet(spriteSet, x, y);
   }
   else
     // It does, use that sprite set
-    loadSpriteSet(map->toSpriteSet, x, y);
+    loadSpriteSet(map->getToSpriteSet(), x, y);
 }
 
 void AreaLoadedSprites::setTo(MapDBEntry* map, int x, int y)
 {
   reset();
 
-  if(map == nullptr || map->toSpriteSet == nullptr)
+  if(map == nullptr || map->getToSpriteSet() == nullptr)
     return;
 
-  loadSpriteSet(map->toSpriteSet, x, y);
+  loadSpriteSet(map->getToSpriteSet(), x, y);
 }
 
 void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, int x, int y)

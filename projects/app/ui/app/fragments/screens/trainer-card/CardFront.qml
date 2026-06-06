@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
@@ -11,6 +11,12 @@ Rectangle {
   id: cardFront
   border.color: brg.settings.textColorMid
   color: "transparent"
+
+  // One height knob for every editable field on the card. Qt 6 Material gives
+  // TextField/ComboBox a tall implicit height; setting an explicit, shared height
+  // (the documented "explicit height knob" pattern — see ui-patterns.md) shrinks
+  // the boxes and keeps every row the same height so labels line up with text.
+  property int fieldH: 28
 
   PlayerNameEdit {
     id: playerNameEdit
@@ -24,6 +30,7 @@ Rectangle {
   PlayerIdEdit {
     id: playerIdEdit
     width: starterEdit.width
+    height: cardFront.fieldH
 
     anchors.bottom: spacer.top
     anchors.bottomMargin: 13
@@ -47,37 +54,43 @@ Rectangle {
     id: moneyEdit
 
     anchors.top: spacer.top
-    anchors.topMargin: 25
+    anchors.topMargin: 18
     anchors.left: playerIdEdit.left
 
     width: starterEdit.width
+    height: cardFront.fieldH
   }
 
   CoinsEdit {
     id: coinsEdit
 
-    anchors.top: moneyEdit.top
-    anchors.topMargin: 40
+    // Anchor BELOW the previous field (not a fixed offset from its top) so the
+    // rows never overlap regardless of the Material TextField's height.
+    anchors.top: moneyEdit.bottom
+    anchors.topMargin: 4
     anchors.left: moneyEdit.left
 
     width: starterEdit.width
+    height: cardFront.fieldH
   }
 
   StarterEdit {
     id: starterEdit
 
-    anchors.top: coinsEdit.top
-    anchors.topMargin: 25
+    anchors.top: coinsEdit.bottom
+    anchors.topMargin: 4
 
     anchors.left: coinsEdit.left
     width: font.pixelSize * 10 // Starter name is max of 10 chars
+    height: cardFront.fieldH
   }
 
   PlaytimeEdit {
     id: playtimeEdit
+    fieldH: cardFront.fieldH
 
     anchors.top: starterEdit.bottom
-    anchors.topMargin: 5
+    anchors.topMargin: 4
     anchors.right: starterEdit.right
     anchors.rightMargin: 0
   }

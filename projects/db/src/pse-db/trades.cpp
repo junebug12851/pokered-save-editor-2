@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
   * limitations under the License.
 */
 
-#include <QVector>
 #include <QJsonArray>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -28,58 +29,73 @@
 TradeDBEntry::TradeDBEntry() {}
 TradeDBEntry::TradeDBEntry(QJsonValue& data)
 {
-  // Set simple properties
-  give = data["give"].toString();
-  get = data["get"].toString();
-  textId = data["textId"].toDouble();
+  give     = data["give"].toString();
+  get      = data["get"].toString();
+  textId   = static_cast<var8>(data["textId"].toDouble());
   nickname = data["nickname"].toString();
-
-  // Set simple optional properties
-  if(data["unused"].isBool())
-     unused = data["unused"].toBool();
+  if (data["unused"].isBool()) unused = data["unused"].toBool();
 }
 
 void TradeDBEntry::deepLink()
 {
-  toGive = PokemonDB::ind.value(give, nullptr);
-  toGet = PokemonDB::ind.value(get, nullptr);
-
+  toGive = PokemonDB::inst()->getIndAt(give);
+  toGet  = PokemonDB::inst()->getIndAt(get);
 #ifdef QT_DEBUG
-  if(toGive == nullptr)
-    qCritical() << "Trade Give: " << toGive << ", could not be deep linked." ;
-  if(toGet == nullptr)
-    qCritical() << "Trade Get: " << toGet << ", could not be deep linked." ;
+  if (!toGive) qCritical() << "Trade give:" << give << "could not be deep linked.";
+  if (!toGet)  qCritical() << "Trade get:"  << get  << "could not be deep linked.";
 #endif
+  if (toGive) toGive->toTrades.append(this);
+  if (toGet)  toGet->toTrades.append(this);
+}
 
-  if(toGive != nullptr)
-    toGive->toTrades.append(this);
+TradesDB* TradesDB::inst()
+{
+  static TradesDB* _inst = new TradesDB;
+  return _inst;
+}
 
-  if(toGet != nullptr)
-    toGet->toTrades.append(this);
+const QVector<TradeDBEntry*> TradesDB::getStore() const { return store; }
+int TradesDB::getStoreSize() const { return store.size(); }
+
+TradeDBEntry* TradesDB::getStoreAt(int idx) const
+{
+  if (idx < 0 || idx >= store.size()) return nullptr;
+  return store.at(idx);
 }
 
 void TradesDB::load()
 {
-  // Grab Event Pokemon Data
+  static bool once = false;
+  if (once) return;
   auto jsonData = GameData::inst()->json("trades");
-
-  // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Create a new event Pokemon entry
-    auto entry = new TradeDBEntry(jsonEntry);
-
-    // Add to array
-    store.append(entry);
-  }
+  for (QJsonValue entry : jsonData.array())
+    store.append(new TradeDBEntry(entry));
+  once = true;
 }
 
 void TradesDB::deepLink()
 {
-  for(auto entry : store)
-  {
+  static bool once = false;
+  if (once) return;
+  for (auto* entry : store)
     entry->deepLink();
-  }
+  once = true;
 }
 
-QVector<TradeDBEntry*> TradesDB::store = QVector<TradeDBEntry*>();
+void TradesDB::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+}
+
+void TradesDB::qmlRegister() const
+{
+  static bool once = false;
+  if (once) return;
+  qmlRegisterUncreatableType<TradesDB>("PSE.DB.TradesDB", 1, 0, "TradesDB", "Can't instantiate in QML");
+  once = true;
+}
+
+TradesDB::TradesDB()
+{
+  qmlRegister();
+}

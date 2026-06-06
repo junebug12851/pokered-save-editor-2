@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef SETTINGS_H
-#define SETTINGS_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 #include <QColor>
@@ -103,18 +101,12 @@ public:
   QColor dividerColor = QColor("#BDBDBD");
   QColor accentColor = QColor("#607D8B");
 
-  QColor fontColorNormal = QColor("#388E3C"); // Green, Shade 700
+  QColor fontColorNormal = QColor("#616161"); // Grey, Shade 700 (swapped w/ Variable s13y)
   QColor fontColorControl = QColor("#7B1FA2"); // Purple, Shade 700
   QColor fontColorPicture = QColor("#303F9F"); // Blue, Shade 700
   QColor fontColorSingle = QColor("#9E9D24"); // Lime, Shade 800
   QColor fontColorMulti = QColor("#FF6F00"); // Amber, Shade 900
-  QColor fontColorVar = QColor("#616161"); // Grey, Shade 700
+  QColor fontColorVar = QColor("#388E3C"); // Green, Shade 700 (swapped w/ Normal s13y)
 
 protected slots:
-  void dataChanged();
-
-protected:
-  SaveFile* file;
-};
-
-#endif // SETTINGS_H
+  vo

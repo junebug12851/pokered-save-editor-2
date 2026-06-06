@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,12 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef STORAGE_H
-#define STORAGE_H
-
+#pragma once
 #include <QObject>
 #include <pse-common/types.h>
 #include "../savefile_autoport.h"
+
+// Full includes so QML can traverse storage.items, and so PlayerBasics (used as
+// a slot parameter below) resolves now that these types are no longer
+// Q_DECLARE_OPAQUE_POINTER'd. See notes/reference/qt6-patterns.md.
+#include "./fragments/itemstoragebox.h"
+#include "./player/playerbasics.h"
+// PokemonStorageBox is returned by the Q_INVOKABLE boxAt() below — full include
+// so QML receives a real (traversable) box, not an opaque value.
+#include "./fragments/pokemonstoragebox.h"
 
 class SaveFile;
 
@@ -64,23 +71,4 @@ signals:
   void itemsChanged();
   void curBoxChanged();
   void boxesFormattedChanged();
-  void pokemonChanged();
-
-public slots:
-  void reset();
-  void randomize(PlayerBasics* basics);
-  void randomizePokemon(PlayerBasics* basics);
-  void randomizeItems();
-
-public:
-  ItemStorageBox* items = nullptr;
-  int curBox;
-  bool boxesFormatted = false;
-
-  // Because this is a C++ array, it can't be a Q_PROPERTY and since the array
-  // contents never change and have no properties of themselves there's no need
-  // for a signal either
-  PokemonStorageSet* pokemon[maxPokemonStorageSets];
-};
-
-#endif // STORAGE_H
+  void poke

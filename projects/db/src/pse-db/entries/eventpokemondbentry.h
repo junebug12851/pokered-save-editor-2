@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,49 +13,46 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef EVENTPOKEMONDBENTRY_H
-#define EVENTPOKEMONDBENTRY_H
-
+#pragma once
 #include <QObject>
 #include <QString>
+#include <QVector>
 #include <optional>
-
 #include "../db_autoport.h"
 
 struct PokemonDBEntry;
 class QQmlEngine;
 class EventPokemonDB;
 
+
 struct DB_AUTOPORT EventPokemonDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString getTitle READ getTitle)
-  Q_PROPERTY(QString getDesc READ getDesc)
-  Q_PROPERTY(QString getPokemon READ getPokemon)
-  Q_PROPERTY(QVector<QString> getOtName READ getOtName)
-  Q_PROPERTY(QString getRegion READ getRegion)
-  Q_PROPERTY(QVector<QString> getMoves READ getMoves)
-  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon)
-  Q_PROPERTY(int getOtId READ getOtId)
-  Q_PROPERTY(int getDvAtk READ getDvAtk)
-  Q_PROPERTY(int getDvDef READ getDvDef)
-  Q_PROPERTY(int getDvSpd READ getDvSpd)
-  Q_PROPERTY(int getDvSp READ getDvSp)
-  Q_PROPERTY(int getLevel READ getLevel)
+  Q_PROPERTY(QString          getTitle     READ getTitle     CONSTANT)
+  Q_PROPERTY(QString          getDesc      READ getDesc      CONSTANT)
+  Q_PROPERTY(QString          getPokemon   READ getPokemon   CONSTANT)
+  Q_PROPERTY(QString          getRegion    READ getRegion    CONSTANT)
+  Q_PROPERTY(PokemonDBEntry*  getToPokemon READ getToPokemon CONSTANT)
+  Q_PROPERTY(int getOtId  READ getOtId  CONSTANT)
+  Q_PROPERTY(int getDvAtk READ getDvAtk CONSTANT)
+  Q_PROPERTY(int getDvDef READ getDvDef CONSTANT)
+  Q_PROPERTY(int getDvSpd READ getDvSpd CONSTANT)
+  Q_PROPERTY(int getDvSp  READ getDvSp  CONSTANT)
+  Q_PROPERTY(int getLevel READ getLevel CONSTANT)
 
 public:
-  const QString getTitle() const;
-  const QString getDesc() const;
-  const QString getPokemon() const;
-  const QVector<QString> getOtName() const;
-  const QString getRegion() const;
-  const QVector<QString> getMoves() const;
-  const PokemonDBEntry* getToPokemon() const;
-  int getLevel() const;
-  int getOtId() const;
-  int getDvAtk() const;
-  int getDvDef() const;
-  int getDvSpd() const;
-  int getDvSp() const;
+  QString getTitle()     const;
+  QString getDesc()      const;
+  QString getPokemon()   const;
+  QVector<QString> getOtName()  const;
+  QString getRegion()    const;
+  QVector<QString> getMoves()   const;
+  PokemonDBEntry* getToPokemon() const;
+  int getLevel()  const;
+  int getOtId()   const;
+  int getDvAtk()  const;
+  int getDvDef()  const;
+  int getDvSpd()  const;
+  int getDvSp()   const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const;
@@ -68,22 +65,19 @@ protected:
   EventPokemonDBEntry(const QJsonValue& data);
   void deepLink();
 
-  QString title = ""; // Event Title
-  QString desc = ""; // Event Pokemon Description
-  QString pokemon = ""; // Pokemon Name
-  QVector<QString> otName; // Pokemon OT Name, if more than 1 it's random
-  QString region = ""; // Region Code
-  QVector<QString> moves; // Move list
-  int level = -1; // Level, default minimum if not specified
-  int otId = -1; // Pokemon OT ID, random if not specified
-  int dvAtk = -1; // Pokemon DV List, random if not specified
-  int dvDef = -1; // Pokemon DV List, random if not specified
-  int dvSpd = -1; // Pokemon DV List, random if not specified
-  int dvSp = -1; // Pokemon DV List, random if not specified
-
-  PokemonDBEntry* toPokemon = nullptr; // Deep link to associated Pokemon
+  QString title = "";
+  QString desc = "";
+  QString pokemon = "";
+  QVector<QString> otName;
+  QString region = "";
+  QVector<QString> moves;
+  int level = -1;
+  int otId = -1;
+  int dvAtk = -1;
+  int dvDef = -1;
+  int dvSpd = -1;
+  int dvSp = -1;
+  PokemonDBEntry* toPokemon = nullptr;
 
   friend class EventPokemonDB;
 };
-
-#endif // EVENTPOKEMONDBENTRY_H

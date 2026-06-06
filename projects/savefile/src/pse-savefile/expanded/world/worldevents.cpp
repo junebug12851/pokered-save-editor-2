@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/eventsdb.h>
+#include <pse-db/entries/eventdbentry.h>
 
 WorldEvents::WorldEvents(SaveFile* saveFile)
 {
@@ -55,9 +56,9 @@ void WorldEvents::load(SaveFile* saveFile)
 
   auto toolset = saveFile->toolset;
 
-  for(var16 i = 0; i < EventsDB::store.size(); i++) {
-    auto event = EventsDB::store.at(i);
-    completedEvents[i] = toolset->getBit(event->byte, 1, event->bit);
+  for(var16 i = 0; i < EventsDB::inst()->getStoreSize(); i++) {
+    auto event = EventsDB::inst()->getStore().at(i);
+    completedEvents[i] = toolset->getBit(event->getByte(), 1, event->getBit());
   }
 
   completedEventsChanged();
@@ -67,9 +68,9 @@ void WorldEvents::save(SaveFile* saveFile)
 {
   auto toolset = saveFile->toolset;
 
-  for(var16 i = 0; i < EventsDB::store.size(); i++) {
-    auto event = EventsDB::store.at(i);
-    toolset->setBit(event->byte, 1, event->bit, completedEvents[i]);
+  for(var16 i = 0; i < EventsDB::inst()->getStoreSize(); i++) {
+    auto event = EventsDB::inst()->getStore().at(i);
+    toolset->setBit(event->getByte(), 1, event->getBit(), completedEvents[i]);
   }
 }
 

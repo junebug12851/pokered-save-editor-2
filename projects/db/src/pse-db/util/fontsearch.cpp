@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 
 #include "fontsearch.h"
 #include "../fontsdb.h"
+#include "../entries/fontdbentry.h"
+#include "../fontsdb.h"
 
 FontSearch::FontSearch()
 {
@@ -31,9 +33,45 @@ FontSearch* FontSearch::startOver()
   results.clear();
 
   // Copy elements over to begin search
-  for(auto entry : FontsDB::store)
+  for(auto entry : FontsDB::inst()->getStore())
   {
     results.append(entry);
+  }
+
+  fontCountChanged();
+
+  return this;
+}
+
+// Empties the result set. Used by the keyboard's filter panel for the
+// "no categories checked = nothing shown" state, so we don't have to abuse an
+// impossible AND combination to clear the list.
+FontSearch* FontSearch::clear()
+{
+  results.clear();
+  fontCountChanged();
+
+  return this;
+}
+
+FontSearch* FontSearch::keepAnyOf(bool normal, bool control, bool picture,
+                                  bool singleChar, bool multiChar, bool variable)
+{
+  // Rebuild from the full store, keeping any entry that matches at least one
+  // enabled trait. This gives the keyboard's filters OR/union semantics ("show
+  // Normal AND Control" = show both), and naturally yields an empty list when
+  // nothing is enabled.
+  results.clear();
+
+  for(auto entry : FontsDB::inst()->getStore())
+  {
+    if((normal     && entry->normal)     ||
+       (control    && entry->control)    ||
+       (picture    && entry->picture)    ||
+       (singleChar && entry->singleChar) ||
+       (multiChar  && entry->multiChar)  ||
+       (variable   && entry->variable))
+      results.append(entry);
   }
 
   fontCountChanged();
@@ -164,63 +202,4 @@ FontSearch* FontSearch::andMultiChar()
 
 FontSearch* FontSearch::notMultiChar()
 {
-  for(auto entry : QVector<FontDBEntry*>(results))
-    if(entry->multiChar)
-      results.removeOne(entry);
-
-  fontCountChanged();
-
-  return this;
-}
-
-FontSearch* FontSearch::andVariable()
-{
-  for(auto entry : QVector<FontDBEntry*>(results))
-    if(!entry->variable)
-      results.removeOne(entry);
-
-  fontCountChanged();
-
-  return this;
-}
-
-FontSearch* FontSearch::notVariable()
-{
-  for(auto entry : QVector<FontDBEntry*>(results))
-    if(entry->variable)
-      results.removeOne(entry);
-
-  fontCountChanged();
-
-  return this;
-}
-
-const QVector<FontDBEntry*> FontSearch::getFonts() const
-{
-  return results;
-}
-
-int FontSearch::getFontCount() const
-{
-  return results.size();
-}
-
-const FontDBEntry* FontSearch::fontAt(const int ind) const
-{
-  return results.at(ind);
-}
-
-void FontSearch::qmlProtect(const QQmlEngine* const engine) const
-{
-  Utility::qmlProtectUtil(this, engine);
-}
-
-void FontSearch::qmlRegister() const
-{
-  static bool registered = false;
-  if(registered)
-    return;
-
-  qmlRegisterUncreatableType<FontSearch>("PSE.DB.FontSearch", 1, 0, "FontSearch", "Can't instantiate in QML");
-  registered = true;
-}
+  for(auto entry

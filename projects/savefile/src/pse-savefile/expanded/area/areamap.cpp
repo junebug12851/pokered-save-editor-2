@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,11 +14,14 @@
   * limitations under the License.
 */
 #include "./areamap.h"
+#include "../../qmlownership.h"
 #include "../fragments/mapconndata.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
+#include <pse-db/entries/mapdbentryconnect.h>
 
 #include <QRandomGenerator>
 
@@ -40,7 +43,7 @@ int AreaMap::connCount()
 
 MapConnData* AreaMap::connAt(int dir)
 {
-  return connections.value(dir);
+  return qmlCppOwned(connections.value(dir));
 }
 
 void AreaMap::connRemove(int dir)
@@ -62,7 +65,7 @@ void AreaMap::connNew(int dir)
 
 MapDBEntry* AreaMap::toCurMap()
 {
-  return MapsDB::ind.value(QString::number(curMap), nullptr);
+  return MapsDB::inst()->getIndAt(QString::number(curMap));
 }
 
 void AreaMap::load(SaveFile* saveFile)
@@ -106,25 +109,25 @@ void AreaMap::load(SaveFile* saveFile)
 
   // East Connection
   if(toolset->getBit(0x261C, 1, 0)) {
-    connections.insert((var8)ConnectDir::EAST, new MapConnData(saveFile, 0x263E));
+    connections.insert((var8)MapDBEntryConnect::ConnectDir::EAST, new MapConnData(saveFile, 0x263E));
     connectionsChanged();
   }
 
   // West Connection
   if(toolset->getBit(0x261C, 1, 1)) {
-    connections.insert((var8)ConnectDir::WEST, new MapConnData(saveFile, 0x2633));
+    connections.insert((var8)MapDBEntryConnect::ConnectDir::WEST, new MapConnData(saveFile, 0x2633));
     connectionsChanged();
   }
 
   // South Connection
   if(toolset->getBit(0x261C, 1, 2)) {
-    connections.insert((var8)ConnectDir::SOUTH, new MapConnData(saveFile, 0x2628));
+    connections.insert((var8)MapDBEntryConnect::ConnectDir::SOUTH, new MapConnData(saveFile, 0x2628));
     connectionsChanged();
   }
 
   // North Connection
   if(toolset->getBit(0x261C, 1, 3)) {
-    connections.insert((var8)ConnectDir::NORTH, new MapConnData(saveFile, 0x261D));
+    connections.insert((var8)MapDBEntryConnect::ConnectDir::NORTH, new MapConnData(saveFile, 0x261D));
     connectionsChanged();
   }
 
@@ -165,19 +168,19 @@ void AreaMap::save(SaveFile* saveFile)
 
   toolset->setWord(0x260B, currentTileBlockMapViewPointer, true);
 
-  toolset->setBit(0x261C, 1, 0, connections.contains((var8)ConnectDir::EAST));
-  toolset->setBit(0x261C, 1, 1, connections.contains((var8)ConnectDir::WEST));
-  toolset->setBit(0x261C, 1, 2, connections.contains((var8)ConnectDir::SOUTH));
-  toolset->setBit(0x261C, 1, 3, connections.contains((var8)ConnectDir::NORTH));
+  toolset->setBit(0x261C, 1, 0, connections.contains((var8)MapDBEntryConnect::ConnectDir::EAST));
+  toolset->setBit(0x261C, 1, 1, connections.contains((var8)MapDBEntryConnect::ConnectDir::WEST));
+  toolset->setBit(0x261C, 1, 2, connections.contains((var8)MapDBEntryConnect::ConnectDir::SOUTH));
+  toolset->setBit(0x261C, 1, 3, connections.contains((var8)MapDBEntryConnect::ConnectDir::NORTH));
 
-  if(connections.contains((var8)ConnectDir::EAST))
-    connections.value((var8)ConnectDir::EAST)->save(saveFile, 0x263E);
-  if(connections.contains((var8)ConnectDir::WEST))
-    connections.value((var8)ConnectDir::WEST)->save(saveFile, 0x2633);
-  if(connections.contains((var8)ConnectDir::SOUTH))
-    connections.value((var8)ConnectDir::SOUTH)->save(saveFile, 0x2628);
-  if(connections.contains((var8)ConnectDir::NORTH))
-    connections.value((var8)ConnectDir::NORTH)->save(saveFile, 0x261D);
+  if(connections.contains((var8)MapDBEntryConnect::ConnectDir::EAST))
+    connections.value((var8)MapDBEntryConnect::ConnectDir::EAST)->save(saveFile, 0x263E);
+  if(connections.contains((var8)MapDBEntryConnect::ConnectDir::WEST))
+    connections.value((var8)MapDBEntryConnect::ConnectDir::WEST)->save(saveFile, 0x2633);
+  if(connections.contains((var8)MapDBEntryConnect::ConnectDir::SOUTH))
+    connections.value((var8)MapDBEntryConnect::ConnectDir::SOUTH)->save(saveFile, 0x2628);
+  if(connections.contains((var8)MapDBEntryConnect::ConnectDir::NORTH))
+    connections.value((var8)MapDBEntryConnect::ConnectDir::NORTH)->save(saveFile, 0x261D);
 
   toolset->setWord(0x27D2, mapViewVRAMPointer, true);
 
@@ -267,84 +270,69 @@ void AreaMap::randomize(MapDBEntry* map, int x, int y)
     return;
 
   // Current Map ID
-  curMap = map->ind;
+  curMap = map->getInd();
   curMapChanged();
 
   // Map Size including it's double size
-  height = (map->height)
-      ? *map->height
-      : 0;
+  height = (map->getHeight() >= 0) ? map->getHeight() : 0;
   heightChanged();
 
-  width = (map->width)
-      ? *map->width
-      : 0;
+  width = (map->getWidth() >= 0) ? map->getWidth() : 0;
   widthChanged();
 
-  height2x2 = (map->height2X2())
-      ? *map->height2X2()
-      : 0;
+  height2x2 = (map->getHeight() >= 0) ? map->height2X2() : 0;
   height2x2Changed();
 
-  width2x2 = (map->width2X2())
-      ? *map->width2X2()
-      : 0;
+  width2x2 = (map->getWidth() >= 0) ? map->width2X2() : 0;
   width2x2Changed();
 
   // Map basic pointers
-  dataPtr = (map->dataPtr)
-      ? *map->dataPtr
-      : 0;
+  dataPtr = (map->getDataPtr() >= 0) ? map->getDataPtr() : 0;
   dataPtrChanged();
 
-  txtPtr = (map->textPtr)
-      ? *map->textPtr
-      : 0;
+  txtPtr = (map->getTextPtr() >= 0) ? map->getTextPtr() : 0;
   txtPtrChanged();
 
-  scriptPtr = (map->scriptPtr)
-      ? *map->scriptPtr
-      : 0;
+  scriptPtr = (map->getScriptPtr() >= 0) ? map->getScriptPtr() : 0;
   scriptPtrChanged();
 
   // Map extra pointers
-  (map->width)
-      ? currentTileBlockMapViewPointer = coordsToPtr(x, y, *map->width)
-      : 0;
+  if(map->getWidth() >= 0)
+    currentTileBlockMapViewPointer = coordsToPtr(x, y, map->getWidth());
   currentTileBlockMapViewPointerChanged();
 
   mapViewVRAMPointer = VramBGPtr;
   mapViewVRAMPointerChanged();
 
-  if(map->border) {
-    outOfBoundsBlock = *map->border;
+  if(map->getBorder() >= 0) {
+    outOfBoundsBlock = map->getBorder();
     outOfBoundsBlockChanged();
   }
 
   // Leave these off for now
 
-  if(map->connect.contains((var8)ConnectDir::NORTH)) {
+  if(map->getConnect().contains((var8)MapDBEntryConnect::ConnectDir::NORTH)) {
     auto conn = new MapConnData;
-    conn->loadFromData(map->connect.value((var8)ConnectDir::NORTH));
-    connections.insert((var8)ConnectDir::NORTH, conn);
+    conn->loadFromData(map->getConnect().value((var8)MapDBEntryConnect::ConnectDir::NORTH));
+    connections.insert((var8)MapDBEntryConnect::ConnectDir::NORTH, conn);
     connectionsChanged();
   }
-  if(map->connect.contains((var8)ConnectDir::EAST)) {
+  if(map->getConnect().contains((var8)MapDBEntryConnect::ConnectDir::EAST)) {
     auto conn = new MapConnData;
-    conn->loadFromData(map->connect.value((var8)ConnectDir::EAST));
-    connections.insert((var8)ConnectDir::EAST, conn);
+    conn->loadFromData(map->getConnect().value((var8)MapDBEntryConnect::ConnectDir::EAST));
+    connections.insert((var8)MapDBEntryConnect::ConnectDir::EAST, conn);
     connectionsChanged();
   }
-  if(map->connect.contains((var8)ConnectDir::SOUTH)) {
+  if(map->getConnect().contains((var8)MapDBEntryConnect::ConnectDir::SOUTH)) {
     auto conn = new MapConnData;
-    conn->loadFromData(map->connect.value((var8)ConnectDir::SOUTH));
-    connections.insert((var8)ConnectDir::SOUTH, conn);
+    conn->loadFromData(map->getConnect().value((var8)MapDBEntryConnect::ConnectDir::SOUTH));
+    connections.insert((var8)MapDBEntryConnect::ConnectDir::SOUTH, conn);
     connectionsChanged();
   }
-  if(map->connect.contains((var8)ConnectDir::WEST)) {
+  if(map->getConnect().contains((var8)MapDBEntryConnect::ConnectDir::WEST)) {
     auto conn = new MapConnData;
-    conn->loadFromData(map->connect.value((var8)ConnectDir::WEST));
-    connections.insert((var8)ConnectDir::WEST, conn);
+    conn->loadFromData(map->getConnect().value((var8)MapDBEntryConnect::ConnectDir::WEST));
+    connections.insert((var8)MapDBEntryConnect::ConnectDir::WEST, conn);
     connectionsChanged();
   }
 }
@@ -358,5 +346,4 @@ void AreaMap::setTo(MapDBEntry* map, int x, int y)
 
 int AreaMap::coordsToPtr(int x, int y, int width)
 {
-  return (width+7)+x+(y*(width+6)) + worldMapPtr;
-}
+  ret

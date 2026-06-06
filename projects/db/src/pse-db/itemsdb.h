@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef ITEMS_H
-#define ITEMS_H
-
+#pragma once
 #include <QObject>
 #include <QVector>
 #include <QHash>
@@ -40,8 +38,8 @@ public:
   int getStoreSize() const;
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE const ItemDBEntry* getStoreAt(const int ind) const;
-  Q_INVOKABLE const ItemDBEntry* getIndAt(const QString val) const;
+  Q_INVOKABLE ItemDBEntry* getStoreAt(const int ind) const;
+  Q_INVOKABLE ItemDBEntry* getIndAt(const QString val) const;
 
 public slots:
   void load();
@@ -59,4 +57,3 @@ private:
   QHash<QString, ItemDBEntry*> ind;
 };
 
-#endif // ITEMS_H

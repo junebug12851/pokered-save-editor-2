@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include <QCollator>
 
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-savefile/expanded/area/areamap.h>
 #include "./mapselectmodel.h"
 
@@ -114,7 +115,7 @@ void MapSelectModel::rebuild()
 
   if(curMapData != nullptr) {
     mapListCache.append(new MapSelectEntry("--- Current Map ---", -1));
-    mapListCache.append(new MapSelectEntry(curMapData->bestName(), curMapData->ind));
+    mapListCache.append(new MapSelectEntry(curMapData->bestName(), curMapData->getInd()));
     usedMaps.append(curMapData);
   }
 
@@ -122,13 +123,13 @@ void MapSelectModel::rebuild()
 
   // Add Daycare first given it's not the current map
   // Daycare is a potential frequently used map
-  auto dayCareMap = MapsDB::ind.value("Daycare", nullptr);
+  auto dayCareMap = MapsDB::inst()->getIndAt("Daycare");
 
   // Last map needs to go at the end, it's a special map
-  auto lastMap = MapsDB::ind.value("Last Map", nullptr);
+  auto lastMap = MapsDB::inst()->getIndAt("Last Map");
 
   if(curMapData != dayCareMap) {
-    mapListCache.append(new MapSelectEntry(dayCareMap->bestName(), dayCareMap->ind));
+    mapListCache.append(new MapSelectEntry(dayCareMap->bestName(), dayCareMap->getInd()));
     usedMaps.append(dayCareMap);
   }
 
@@ -137,8 +138,8 @@ void MapSelectModel::rebuild()
   // Gather normal repeatable items and sort by name, then add into list
   QVector<MapDBEntry*> tmp;
 
-  for(auto el : MapsDB::store) {
-    if(!el->glitch && !el->special && el->incomplete == "" && !usedMaps.contains(el) && el != lastMap) {
+  for(auto el : MapsDB::inst()->getStore()) {
+    if(!el->getGlitch() && !el->getSpecial() && el->getIncomplete() == "" && !usedMaps.contains(el) && el != lastMap) {
       tmp.append(el);
       usedMaps.append(el);
     }
@@ -153,19 +154,19 @@ void MapSelectModel::rebuild()
       });
 
   for(auto el : tmp) {
-    mapListCache.append(new MapSelectEntry(el->bestName(), el->ind));
+    mapListCache.append(new MapSelectEntry(el->bestName(), el->getInd()));
   }
 
   tmp.clear();
 
   // Add in Last Map right before glitch maps
-  mapListCache.append(new MapSelectEntry(lastMap->bestName(), lastMap->ind));
+  mapListCache.append(new MapSelectEntry(lastMap->bestName(), lastMap->getInd()));
   usedMaps.append(lastMap);
 
   // Add in all other maps
   mapListCache.append(new MapSelectEntry("--- Glitch Maps ---", -1));
 
-  for(auto el : MapsDB::store) {
+  for(auto el : MapsDB::inst()->getStore()) {
     if(!usedMaps.contains(el))
       tmp.append(el);
   }
@@ -182,15 +183,8 @@ void MapSelectModel::rebuild()
 
     // Get best name and append the incomplete map of name if there is one
     QString name = el->bestName();
-    if(el->incomplete != "")
-      name += " (" + el->incomplete + ")";
+    if(el->getIncomplete() != "")
+      name += " (" + el->getIncomplete() + ")";
 
-    mapListCache.append(new MapSelectEntry(el->bestName(), el->ind));
+    mapListCache.append(new MapSelectEntry(el->bestName(), el->getInd()));
   }
-
-  tmp.clear();
-  usedMaps.clear();
-
-  beginResetModel();
-  endResetModel();
-}

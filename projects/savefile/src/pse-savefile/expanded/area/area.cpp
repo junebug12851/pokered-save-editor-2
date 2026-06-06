@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@
 #include "./areawarps.h"
 #include "../../savefile.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
+#include <pse-db/entries/mapdbentrywarpin.h>
+#include <pse-db/entries/mapdbentrysprite.h>
 #include <pse-db/util/mapsearch.h>
 #include <pse-common/random.h>
 
@@ -117,15 +120,15 @@ void Area::randomize()
   // Pre-pick a random area here and pass to other area classes who need it
 
   // Grab a random "good" map, a good map to throw the player on
-  auto map = MapsDB::search()->isGood()->pickRandom();
+  auto map = MapsDB::inst()->search()->isGood()->pickRandom();
 
   // Now pick out a random warp in and use those coordinates for the player
   // coordinates
-  auto warpIn = map->warpIn.at(Random::rangeExclusive(0, map->warpIn.size()));
+  auto warpIn = map->getWarpIn().at(Random::inst()->rangeExclusive(0, map->getWarpIn().size()));
 
   // X & Y coordinates to place player
-  int x = warpIn->x;
-  int y = warpIn->y;
+  int x = warpIn->getX();
+  int y = warpIn->getY();
 
   // Do the individual area randomizations and pass along map data where needed
   audio->randomize();
@@ -137,7 +140,7 @@ void Area::randomize()
   this->map->randomize(map, x, y);
   player->randomize(x, y);
   signs->randomize(map);
-  sprites->randomize(map->sprites);
+  sprites->randomize(map->getSprites());
   tileset->loadFromData(map, true);
   warps->randomize(map);
 }
@@ -146,18 +149,18 @@ void Area::setTo(MapDBEntry* map)
 {
   // Now pick out a random warp in and use those coordinates for the player
   // coordinates
-  auto warpIn = (map == nullptr || map->warpIn.size() == 0)
+  auto warpIn = (map == nullptr || map->getWarpIn().size() == 0)
       ? nullptr
-      : map->warpIn.at(Random::rangeExclusive(0, map->warpIn.size()));
+      : map->getWarpIn().at(Random::inst()->rangeExclusive(0, map->getWarpIn().size()));
 
   // X & Y coordinates to place player
   int x = (warpIn == nullptr)
       ? 0
-      : warpIn->x;
+      : warpIn->getX();
 
   int y = (warpIn == nullptr)
       ? 0
-      : warpIn->y;
+      : warpIn->getY();
 
   // Do the individual area randomizations and pass along map data where needed
   audio->setTo(map);

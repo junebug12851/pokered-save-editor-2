@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef FONTDBENTRY_H
-#define FONTDBENTRY_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 #include <QJsonValue>
@@ -33,18 +31,18 @@ class FontsDB;
 
 struct DB_AUTOPORT FontDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(int getInd READ getInd CONSTANT)
-  Q_PROPERTY(QString getName READ getName CONSTANT)
-  Q_PROPERTY(bool getShorthand READ getShorthand CONSTANT)
-  Q_PROPERTY(bool getPicture READ getPicture CONSTANT)
-  Q_PROPERTY(int getLength READ getLength CONSTANT)
-  Q_PROPERTY(QString getAlias READ getAlias CONSTANT)
-  Q_PROPERTY(QString getTip READ getTip CONSTANT)
-  Q_PROPERTY(bool getControl READ getControl CONSTANT)
-  Q_PROPERTY(bool getMultiChar READ getMultiChar CONSTANT)
-  Q_PROPERTY(bool getVariable READ getVariable CONSTANT)
-  Q_PROPERTY(bool getSingleChar READ getSingleChar CONSTANT)
-  Q_PROPERTY(bool getNormal READ getNormal CONSTANT)
+  Q_PROPERTY(int ind READ getInd CONSTANT)
+  Q_PROPERTY(QString name READ getName CONSTANT)
+  Q_PROPERTY(bool shorthand READ getShorthand CONSTANT)
+  Q_PROPERTY(bool picture READ getPicture CONSTANT)
+  Q_PROPERTY(int length READ getLength CONSTANT)
+  Q_PROPERTY(QString alias READ getAlias CONSTANT)
+  Q_PROPERTY(QString tip READ getTip CONSTANT)
+  Q_PROPERTY(bool control READ getControl CONSTANT)
+  Q_PROPERTY(bool multiChar READ getMultiChar CONSTANT)
+  Q_PROPERTY(bool variable READ getVariable CONSTANT)
+  Q_PROPERTY(bool singleChar READ getSingleChar CONSTANT)
+  Q_PROPERTY(bool normal READ getNormal CONSTANT)
 
 public:
   int getInd() const;
@@ -85,6 +83,6 @@ protected:
   bool normal = false; // Would this be an in-game accessible font char
 
   friend class FontsDB;
+  friend class FontSearch; // reads filter fields in deepLink
 };
 
-#endif // FONTDBENTRY_H

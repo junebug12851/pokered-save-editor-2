@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ int ItemsDB::getStoreSize() const
   return store.size();
 }
 
-const ItemDBEntry* ItemsDB::getStoreAt(const int ind) const
+ItemDBEntry* ItemsDB::getStoreAt(const int ind) const
 {
   if(ind >= store.size())
     return nullptr;
@@ -58,7 +58,7 @@ const ItemDBEntry* ItemsDB::getStoreAt(const int ind) const
   return store.at(ind);
 }
 
-const ItemDBEntry* ItemsDB::getIndAt(const QString val) const
+ItemDBEntry* ItemsDB::getIndAt(const QString val) const
 {
   return ind.value(val, nullptr);
 }

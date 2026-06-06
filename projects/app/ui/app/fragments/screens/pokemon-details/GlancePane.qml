@@ -1,10 +1,10 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
-import App.PokemonBox 1.0
-import App.PokemonParty 1.0
+import App.PokemonBox
+import App.PokemonParty
 
 import "./stats"
 import "../../general"
@@ -31,6 +31,7 @@ Rectangle {
 
     SelectSpecies {
       id: speciesSelect
+      hoverColor: brg.settings.textColorLight  // on the accent header bar
       anchors.top: parent.top
       anchors.left: parent.left
       anchors.bottom: parent.bottom
@@ -52,7 +53,7 @@ Rectangle {
 
       Connections {
         target: boxData
-        onSpeciesChanged: {
+        function onSpeciesChanged() {
           brg.moveSelectModel.monFromBox(boxData);
           speciesSelect.currentIndex = brg.speciesSelectModel.speciesToListIndex(boxData.species);
         }
@@ -86,8 +87,7 @@ Rectangle {
       Material.background: brg.settings.accentColor
       Material.foreground: brg.settings.textColorLight
 
-      anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.verticalCenter: parent.verticalCenter
       anchors.left: levelTxt.right
       anchors.leftMargin: 5
 
@@ -103,7 +103,7 @@ Rectangle {
           return;
 
         var idDec = parseInt(text, 10);
-        if(idDec === NaN)
+        if(isNaN(idDec))
           return;
 
         if(idDec < 0 || idDec > 100)
@@ -119,7 +119,7 @@ Rectangle {
 
       Connections {
         target: boxData
-        onLevelChanged: levelEdit.text = boxData.level.toString(10);
+        function onLevelChanged() { levelEdit.text = boxData.level.toString(10); }
       }
 
       MainToolTip {
@@ -129,18 +129,19 @@ Rectangle {
 
     SelectStatus {
       id: statusSelect
+      hoverColor: brg.settings.textColorLight  // on the accent header bar
       anchors.top: parent.top
       anchors.left: levelEdit.right
       anchors.leftMargin: 5
       anchors.bottom: parent.bottom
       anchors.bottomMargin: 2
 
-      onActivated: boxData.status = currentValue;
+      onActivated: { boxData.status = currentValue; }
       Component.onCompleted: currentIndex = brg.statusSelectModel.statusToListIndex(boxData.status);
 
       Connections {
         target: boxData
-        onStatusChanged: statusSelect.currentIndex = brg.statusSelectModel.statusToListIndex(boxData.status);
+        function onStatusChanged() { statusSelect.currentIndex = brg.statusSelectModel.statusToListIndex(boxData.status); }
       }
 
       MainToolTip {
@@ -194,9 +195,9 @@ Rectangle {
     Connections {
       target: boxData
 
-      onDvChanged: monImg.source = monImg.getMonUrl();
-      onIsShinyChanged: monImg.source = monImg.getMonUrl();
-      onSpeciesChanged: monImg.source = monImg.getMonUrl();
+      function onDvChanged() { monImg.source = monImg.getMonUrl(); }
+      function onIsShinyChanged() { monImg.source = monImg.getMonUrl(); }
+      function onSpeciesChanged() { monImg.source = monImg.getMonUrl(); }
     }
 
     fillMode: Image.PreserveAspectFit
@@ -264,8 +265,7 @@ Rectangle {
         return 0xFFFF;
       }
 
-      anchors.top: parent.top
-      anchors.topMargin: 8
+      anchors.verticalCenter: parent.verticalCenter
       anchors.left: hpTxt.right
       anchors.leftMargin: 10
       anchors.right: parent.right
@@ -329,21 +329,23 @@ Rectangle {
 
       ToolTip {
         parent: hpEdit.handle
-        visible: hpEdit.pressed
+        visible: hpEdit.pressed || hpEdit.hovered
         text: hpEdit.value.toFixed(0)
 
         Material.background: brg.settings.textColorLight
         Material.foreground: brg.settings.textColorDark
 
         font.pixelSize: 14
+        enter: Transition { NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 70 } }
+        exit: Transition { NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 70 } }
       }
 
-      onMoved: boxData.hp = value;
+      onMoved: { boxData.hp = value; }
       Component.onCompleted: value = boxData.hp;
 
       Connections {
         target: boxData
-        onHpChanged: hpEdit.value = boxData.hp;
+        function onHpChanged() { hpEdit.value = boxData.hp; }
       }
 
       MainToolTip {

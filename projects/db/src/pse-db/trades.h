@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,22 +13,18 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef TRADE_H
-#define TRADE_H
+#pragma once
 
+#include <QObject>
 #include <QJsonValue>
 #include <QString>
+#include <QVector>
 
 #include <pse-common/types.h>
 #include "./db_autoport.h"
 
 struct PokemonDBEntry;
-
-// With amazing help of Quicktype!!!
-// https://app.quicktype.io
-
-// All in-game trades including the unused one
-// All this was extracted from in-game data, not fan sites
+class QQmlEngine;
 
 struct DB_AUTOPORT TradeDBEntry {
   TradeDBEntry();
@@ -37,21 +33,37 @@ struct DB_AUTOPORT TradeDBEntry {
 
   QString give;
   QString get;
-  var8 textId = 0;
+  var8    textId   = 0;
   QString nickname;
-  bool unused = false;
+  bool    unused   = false;
 
   PokemonDBEntry* toGive = nullptr;
-  PokemonDBEntry* toGet = nullptr;
+  PokemonDBEntry* toGet  = nullptr;
 };
 
-class DB_AUTOPORT TradesDB
+class DB_AUTOPORT TradesDB : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+
 public:
-  static void load();
-  static void deepLink();
+  static TradesDB* inst();
 
-  static QVector<TradeDBEntry*> store;
+  [[nodiscard]] const QVector<TradeDBEntry*> getStore() const;
+  [[nodiscard]] int getStoreSize() const;
+
+  Q_INVOKABLE TradeDBEntry* getStoreAt(int idx) const;
+
+public slots:
+  void load();
+  void deepLink();
+  void qmlProtect(const QQmlEngine* const engine) const;
+
+private slots:
+  void qmlRegister() const;
+
+private:
+  TradesDB();
+
+  QVector<TradeDBEntry*> store;
 };
-
-#endif // TRADE_H

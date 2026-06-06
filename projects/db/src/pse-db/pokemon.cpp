@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
   * limitations under the License.
 */
 
-#include <QVector>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -25,165 +26,101 @@
 #include "./pokemon.h"
 #include "./util/gamedata.h"
 #include "./itemsdb.h"
+#include "./entries/itemdbentry.h"
 #include "./moves.h"
 #include "./types.h"
 
+// ── PokemonDBEntryEvolution ──────────────────────────────────────────────────
+
 PokemonDBEntryEvolution::PokemonDBEntryEvolution() {}
-PokemonDBEntryEvolution::PokemonDBEntryEvolution(QJsonValue& data, PokemonDBEntry* parent) :
-  parent(parent)
+PokemonDBEntryEvolution::PokemonDBEntryEvolution(QJsonValue& data,
+                                                  PokemonDBEntry* parent)
+  : parent(parent)
 {
-  // Set simple properties
   toName = data["toName"].toString();
-
-  // Set simple optional properties
-  if(data["level"].isDouble())
-    level = data["level"].toDouble();
-
-  if(data["trade"].isBool())
-    trade = data["trade"].toBool();
-  else
-    trade = false;
-
-  if(data["item"].isString())
-    item = data["item"].toString();
-  else
-    item = "";
+  if (data["level"].isDouble()) level = static_cast<var8>(data["level"].toDouble());
+  if (data["trade"].isBool())   trade = data["trade"].toBool();
+  if (data["item"].isString())  item  = data["item"].toString();
 }
 
 void PokemonDBEntryEvolution::deepLink(PokemonDBEntry* deEvolution)
 {
-  // Link toEvolution first and ensure it's correct
-  // otherwise it'll crrash and I want a clear error message why if it does
-  toEvolution = PokemonDB::ind.value(toName, nullptr);
-
-  // Link to Item if present
-  if(item != "")
-    toItem = ItemsDB::ind.value(item, nullptr);
+  toEvolution = PokemonDB::inst()->getIndAt(toName);
+  if (!item.isEmpty())
+    toItem = ItemsDB::inst()->getIndAt(item);
 
 #ifdef QT_DEBUG
-    if(toEvolution == nullptr)
-      qCritical() << "Evolution Entry: " << toName << ", could not be deep linked." ;
-    if(deEvolution == nullptr)
-      qCritical() << "Evolution Entry: " << toName << ", null deEvolution provided" ;
-    if((item != "") && toItem == nullptr)
-      qCritical() << "Evolution Entry: " << item << ", item could not be deep linked" ;
+  if (!toEvolution) qCritical() << "Evolution:" << toName << "could not be deep linked.";
+  if (!deEvolution) qCritical() << "Evolution:" << toName << "null deEvolution provided.";
+  if (!item.isEmpty() && !toItem) qCritical() << "Evolution item:" << item << "could not be deep linked.";
 #endif
 
-    // Link to deEvolution in it's evolution and here
+  if (toEvolution) {
     toEvolution->toDeEvolution = deEvolution;
     toDeEvolution = deEvolution;
-
-    if(toItem != nullptr)
-      toItem->toEvolvePokemon.append(this);
+  }
+  if (toItem)
+    toItem->toEvolvePokemon.append(this);
 }
 
+// ── PokemonDBEntryMove ───────────────────────────────────────────────────────
+
 PokemonDBEntryMove::PokemonDBEntryMove() {}
-PokemonDBEntryMove::PokemonDBEntryMove(QJsonValue& data, PokemonDBEntry* parent) :
-  parent(parent)
+PokemonDBEntryMove::PokemonDBEntryMove(QJsonValue& data, PokemonDBEntry* parent)
+  : parent(parent)
 {
-  // Set simple properties
-  level = data["level"].toDouble();
-  move = data["move"].toString();
+  level = static_cast<var8>(data["level"].toDouble());
+  move  = data["move"].toString();
 }
 
 void PokemonDBEntryMove::deepLink()
 {
-  toMove = MovesDB::ind.value(move, nullptr);
-
+  toMove = MovesDB::inst()->getIndAt(move);
 #ifdef QT_DEBUG
-    if(toMove == nullptr)
-      qCritical() << "Pokemon Move Entry: " << move << ", could not be deep linked." ;
+  if (!toMove) qCritical() << "Pokemon move:" << move << "could not be deep linked.";
 #endif
-
-    if(toMove != nullptr)
-      toMove->toPokemonLearned.append(this);
+  if (toMove)
+    toMove->toPokemonLearned.append(this);
 }
+
+// ── PokemonDBEntry ───────────────────────────────────────────────────────────
 
 PokemonDBEntry::PokemonDBEntry() {}
 PokemonDBEntry::PokemonDBEntry(QJsonValue& data)
 {
-  // Set simple properties
-  name = data["name"].toString();
-  ind = data["ind"].toDouble();
+  name     = data["name"].toString();
+  ind      = static_cast<var8>(data["ind"].toDouble());
   readable = data["readable"].toString();
 
-  // Set simple optional properties
-  if(data["pokedex"].isDouble())
-    pokedex = data["pokedex"].toDouble();
+  if (data["pokedex"].isDouble())    pokedex    = static_cast<var8>(data["pokedex"].toDouble());
+  if (data["growthRate"].isDouble()) growthRate = static_cast<var8>(data["growthRate"].toDouble());
+  if (data["baseHp"].isDouble())     baseHp     = static_cast<var8>(data["baseHp"].toDouble());
+  if (data["baseAttack"].isDouble()) baseAttack = static_cast<var8>(data["baseAttack"].toDouble());
+  if (data["baseDefense"].isDouble()) baseDefense = static_cast<var8>(data["baseDefense"].toDouble());
+  if (data["baseSpeed"].isDouble())  baseSpeed  = static_cast<var8>(data["baseSpeed"].toDouble());
+  if (data["baseSpecial"].isDouble()) baseSpecial = static_cast<var8>(data["baseSpecial"].toDouble());
+  if (data["baseExpYield"].isDouble()) baseExpYield = static_cast<var8>(data["baseExpYield"].toDouble());
+  if (data["catchRate"].isDouble())  catchRate  = static_cast<var8>(data["catchRate"].toDouble());
+  if (data["type1"].isString())      type1      = data["type1"].toString();
+  if (data["type2"].isString())      type2      = data["type2"].toString();
+  if (data["glitch"].isBool())       glitch     = data["glitch"].toBool();
 
-  if(data["growthRate"].isDouble())
-    growthRate = data["growthRate"].toDouble();
+  if (data["moves"].isArray())
+    for (QJsonValue e : data["moves"].toArray())
+      moves.append(new PokemonDBEntryMove(e, this));
 
-  if(data["baseHp"].isDouble())
-    baseHp = data["baseHp"].toDouble();
+  if (data["initial"].isArray())
+    for (QJsonValue e : data["initial"].toArray())
+      initial.append(e.toString());
 
-  if(data["baseAttack"].isDouble())
-    baseAttack = data["baseAttack"].toDouble();
+  if (data["tmHm"].isArray())
+    for (QJsonValue e : data["tmHm"].toArray())
+      tmHm.append(static_cast<var8>(e.toDouble()));
 
-  if(data["baseDefense"].isDouble())
-    baseDefense = data["baseDefense"].toDouble();
-
-  if(data["baseSpeed"].isDouble())
-    baseSpeed = data["baseSpeed"].toDouble();
-
-  if(data["baseSpecial"].isDouble())
-    baseSpecial = data["baseSpecial"].toDouble();
-
-  if(data["baseExpYield"].isDouble())
-    baseExpYield = data["baseExpYield"].toDouble();
-
-  if(data["type1"].isString())
-    type1 = data["type1"].toString();
-
-  if(data["type2"].isString())
-    type2 = data["type2"].toString();
-
-  if(data["catchRate"].isDouble())
-    catchRate = data["catchRate"].toDouble();
-
-  if(data["glitch"].isDouble())
-    glitch = data["glitch"].toBool();
-
-  // Set Moves
-  if(data["moves"].isArray())
-  {
-    for(QJsonValue moveEntryz : data["moves"].toArray())
-    {
-      moves.append(new PokemonDBEntryMove(moveEntryz, this));
-    }
-  }
-
-  // Set Initial
-  if(data["initial"].isArray())
-  {
-    for(QJsonValue initialEntry : data["initial"].toArray())
-    {
-      initial.append(initialEntry.toString());
-    }
-  }
-
-  // Set TM HM
-  if(data["tmHm"].isArray())
-  {
-    for(QJsonValue tmHmEntry : data["tmHm"].toArray())
-    {
-      tmHm.append(tmHmEntry.toDouble());
-    }
-  }
-
-  // Set Evolution
-  // Is often next Pokemon up
-  // Can be an Eevee Array for Eevee's multiple evolutions
-  if(data["evolution"].isArray())
-  {
-    for(QJsonValue evolutionEntry : data["evolution"].toArray())
-    {
-      evolution.append(new PokemonDBEntryEvolution(evolutionEntry, this));
-    }
-  }
-  else if(data["evolution"].isObject())
-  {
-    // Kinda weird this has to be 2 steps
+  if (data["evolution"].isArray()) {
+    for (QJsonValue e : data["evolution"].toArray())
+      evolution.append(new PokemonDBEntryEvolution(e, this));
+  } else if (data["evolution"].isObject()) {
     auto tmp = data["evolution"];
     evolution.append(new PokemonDBEntryEvolution(tmp, this));
   }
@@ -191,118 +128,120 @@ PokemonDBEntry::PokemonDBEntry(QJsonValue& data)
 
 void PokemonDBEntry::deepLink()
 {
-  // Set type 1 & 2 if present
-  if(type1 != "")
-    toType1 = TypesDB::ind.value(type1, nullptr);
-  if(type2 != "")
-    toType2 = TypesDB::ind.value(type2, nullptr);
-
+  if (!type1.isEmpty()) {
+    toType1 = TypesDB::inst()->getIndAt(type1);
+    if (toType1) toType1->toPokemon.append(this);
 #ifdef QT_DEBUG
-    if((type1 != "") && type1 == nullptr)
-      qCritical() << "Pokemon Type 1: " << type1 << ", could not be deep linked." ;
-    if((type2 != "") && type2 == nullptr)
-      qCritical() << "Pokemon Type 2: " << type2 << ", could not be deep linked." ;
+    if (!toType1) qCritical() << "Pokemon type1:" << type1 << "could not be deep linked.";
 #endif
+  }
+  if (!type2.isEmpty()) {
+    toType2 = TypesDB::inst()->getIndAt(type2);
+    if (toType2) toType2->toPokemon.append(this);
+#ifdef QT_DEBUG
+    if (!toType2) qCritical() << "Pokemon type2:" << type2 << "could not be deep linked.";
+#endif
+  }
 
-    if(toType1 != nullptr)
-      toType1->toPokemon.append(this);
-
-    if(toType2 != nullptr)
-      toType2->toPokemon.append(this);
-
-  // De-Evolution is set by evolution entry
-  for(auto evolEntry : evolution)
-  {
-    // Initiate deep linking for all evolutions
+  for (auto* evolEntry : evolution)
     evolEntry->deepLink(this);
-  }
 
-  // Level Moves is set by Pokemon moves entry
-  for(auto pokeMoveEntry : moves)
-  {
-    // Initiate deep linking for all level moves
+  for (auto* pokeMoveEntry : moves)
     pokeMoveEntry->deepLink();
-  }
 
-  // Deep-Link initial moves
-  for(auto initMove : initial)
-  {
-    auto link = MovesDB::ind.value(initMove, nullptr);
+  for (const auto& initMove : initial) {
+    auto* link = MovesDB::inst()->getIndAt(initMove);
     toInitial.append(link);
-
 #ifdef QT_DEBUG
-    if(link == nullptr)
-      qCritical() << "Pokemon Initial Move: " << initMove << ", could not be deep linked." ;
+    if (!link) qCritical() << "Pokemon initial move:" << initMove << "could not be deep linked.";
 #endif
-
-    if(link != nullptr)
-      link->toPokemonInitial.append(this);
+    if (link) link->toPokemonInitial.append(this);
   }
 
-  // Deep-Link tm/hm
-  for(auto tmHmMove : tmHm)
-  {
-    auto moveLink = MovesDB::ind.value("tm" + QString::number(tmHmMove), nullptr);
-    auto itemLink = ItemsDB::ind.value("tm" + QString::number(tmHmMove), nullptr);
-
+  for (auto tmHmMove : tmHm) {
+    auto* moveLink = MovesDB::inst()->getIndAt("tm" + QString::number(tmHmMove));
+    auto* itemLink = ItemsDB::inst()->getIndAt("tm" + QString::number(tmHmMove));
     toTmHmMove.append(moveLink);
     toTmHmItem.append(itemLink);
-
 #ifdef QT_DEBUG
-    if(moveLink == nullptr)
-      qCritical() << "Pokemon TM/HM Move: " << tmHmMove << ", could not be deep linked." ;
-    if(itemLink == nullptr)
-      qCritical() << "Pokemon TM/HM Item: " << tmHmMove << ", could not be deep linked." ;
+    if (!moveLink) qCritical() << "Pokemon TM/HM move:" << tmHmMove << "could not be deep linked.";
+    if (!itemLink) qCritical() << "Pokemon TM/HM item:" << tmHmMove << "could not be deep linked.";
 #endif
-
-    if(moveLink != nullptr)
-      moveLink->toPokemonTmHm.append(this);
-
-    if(itemLink != nullptr)
-      itemLink->toTeachPokemon.append(this);
+    if (moveLink) moveLink->toPokemonTmHm.append(this);
+    if (itemLink) itemLink->toTeachPokemon.append(this);
   }
+}
+
+// ── PokemonDB ────────────────────────────────────────────────────────────────
+
+PokemonDB* PokemonDB::inst()
+{
+  static PokemonDB* _inst = new PokemonDB;
+  return _inst;
+}
+
+const QVector<PokemonDBEntry*> PokemonDB::getStore() const { return store; }
+const QHash<QString, PokemonDBEntry*> PokemonDB::getInd() const { return ind; }
+int PokemonDB::getStoreSize() const { return store.size(); }
+
+PokemonDBEntry* PokemonDB::getStoreAt(int idx) const
+{
+  if (idx < 0 || idx >= store.size()) return nullptr;
+  return store.at(idx);
+}
+
+PokemonDBEntry* PokemonDB::getIndAt(const QString& key) const
+{
+  return ind.value(key, nullptr);
 }
 
 void PokemonDB::load()
 {
-  // Grab Pokemon Data
+  static bool once = false;
+  if (once) return;
   auto jsonData = GameData::inst()->json("pokemon");
-
-  // Go through each Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Create a new event Pokemon entry
-    auto entry = new PokemonDBEntry(jsonEntry);
-
-    // Add to array
-    store.append(entry);
-  }
+  for (QJsonValue entry : jsonData.array())
+    store.append(new PokemonDBEntry(entry));
+  once = true;
 }
 
 void PokemonDB::index()
 {
-  for(auto entry : store)
-  {
-    // Index name and index
+  static bool once = false;
+  if (once) return;
+  for (auto* entry : store) {
     ind.insert(entry->name, entry);
     ind.insert(QString::number(entry->ind), entry);
     ind.insert(entry->readable, entry);
-
-    // If it's a valid Pokemon then index the dex number as well
-    if(entry->pokedex)
+    if (entry->pokedex)
       ind.insert("dex" + QString::number(*entry->pokedex), entry);
   }
+  once = true;
 }
 
 void PokemonDB::deepLink()
 {
-  // Deep link the Pokemon data structure tree, lots of traversing and stuff
-  for(auto entry : store)
-  {
+  static bool once = false;
+  if (once) return;
+  for (auto* entry : store)
     entry->deepLink();
-  }
+  once = true;
 }
 
-QVector<PokemonDBEntry*> PokemonDB::store = QVector<PokemonDBEntry*>();
-QHash<QString, PokemonDBEntry*> PokemonDB::ind =
-    QHash<QString, PokemonDBEntry*>();
+void PokemonDB::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+}
+
+void PokemonDB::qmlRegister() const
+{
+  static bool once = false;
+  if (once) return;
+  qmlRegisterUncreatableType<PokemonDB>("PSE.DB.PokemonDB", 1, 0, "PokemonDB", "Can't instantiate in QML");
+  once = true;
+}
+
+PokemonDB::PokemonDB()
+{
+  qmlRegister();
+}

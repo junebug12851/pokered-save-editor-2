@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
   * limitations under the License.
 */
 
-#include <QVector>
 #include <QJsonArray>
-#include <QtMath>
-#include <QRandomGenerator>
+#include <QQmlEngine>
+#include <pse-common/utility.h>
 
 #ifdef QT_DEBUG
 #include <QtDebug>
@@ -28,39 +27,60 @@
 #include "./itemsdb.h"
 #include "./moves.h"
 
+TmHmsDB* TmHmsDB::inst()
+{
+  static TmHmsDB* _inst = new TmHmsDB;
+  return _inst;
+}
+
+const QVector<QString> TmHmsDB::getStore() const { return store; }
+int TmHmsDB::getStoreSize() const { return store.size(); }
+const QVector<ItemDBEntry*>& TmHmsDB::getTmHmItems() const { return toTmHmItem; }
+const QVector<MoveDBEntry*>& TmHmsDB::getTmHmMoves() const { return toTmHmMove; }
+
 void TmHmsDB::load()
 {
-  // Grab Event Pokemon Data
+  static bool once = false;
+  if (once) return;
   auto jsonData = GameData::inst()->json("tmHm");
-
-  // Go through each event Pokemon
-  for(QJsonValue jsonEntry : jsonData.array())
-  {
-    // Add to array
-    store.append(jsonEntry.toString());
-  }
+  for (QJsonValue entry : jsonData.array())
+    store.append(entry.toString());
+  once = true;
 }
 
 void TmHmsDB::deepLink()
 {
-  for(var8 i = 0; i < store.size(); i++)
-  {
-    auto entry = store.at(i); // Move Name
-    var8 ind = i + 1; // Move TM Number
-
-    // Deep link to tm number
-    toTmHmItem.append(ItemsDB::ind.value("tm" + QString::number(ind), nullptr));
-    toTmHmMove.append(MovesDB::ind.value("tm" + QString::number(ind), nullptr));
-
+  static bool once = false;
+  if (once) return;
+  for (var8 i = 0; i < static_cast<var8>(store.size()); ++i) {
+    const auto& entry = store.at(i);
+    var8 tmNum = i + 1;
+    auto* item = ItemsDB::inst()->getIndAt("tm" + QString::number(tmNum));
+    auto* move = MovesDB::inst()->getIndAt("tm" + QString::number(tmNum));
+    toTmHmItem.append(item);
+    toTmHmMove.append(move);
 #ifdef QT_DEBUG
-    if(toTmHmItem.at(i) == nullptr)
-      qCritical() << "TM/HM Item: " << entry << ", could not be deep linked." ;
-    if(toTmHmMove.at(i) == nullptr)
-      qCritical() << "TM/HM Move: " << entry << ", could not be deep linked." ;
+    if (!item) qCritical() << "TM/HM item:" << entry << "could not be deep linked.";
+    if (!move) qCritical() << "TM/HM move:" << entry << "could not be deep linked.";
 #endif
   }
+  once = true;
 }
 
-QVector<QString> TmHmsDB::store = QVector<QString>();
-QVector<ItemDBEntry*> TmHmsDB::toTmHmItem = QVector<ItemDBEntry*>();
-QVector<MoveDBEntry*> TmHmsDB::toTmHmMove = QVector<MoveDBEntry*>();
+void TmHmsDB::qmlProtect(const QQmlEngine* const engine) const
+{
+  Utility::qmlProtectUtil(this, engine);
+}
+
+void TmHmsDB::qmlRegister() const
+{
+  static bool once = false;
+  if (once) return;
+  qmlRegisterUncreatableType<TmHmsDB>("PSE.DB.TmHmsDB", 1, 0, "TmHmsDB", "Can't instantiate in QML");
+  once = true;
+}
+
+TmHmsDB::TmHmsDB()
+{
+  qmlRegister();
+}

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,11 +14,13 @@
   * limitations under the License.
 */
 #include "./areasprites.h"
+#include "../../qmlownership.h"
 #include "../fragments/spritedata.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"
 #include "../../savefileiterator.h"
 #include <pse-db/mapsdb.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/sprites.h>
 
 #include <QRandomGenerator>
@@ -48,7 +50,7 @@ int AreaSprites::spriteMax()
 
 SpriteData* AreaSprites::spriteAt(int ind)
 {
-  return sprites.at(ind);
+  return qmlCppOwned(sprites.at(ind));
 }
 
 void AreaSprites::spriteSwap(int from, int to)
@@ -137,6 +139,4 @@ void AreaSprites::setTo(MapDBEntry* map)
   if(map == nullptr)
     return;
 
-  sprites = SpriteData::setToAll(map->sprites);
-  spritesChanged();
-}
+  sprites = SpriteData::setToAl

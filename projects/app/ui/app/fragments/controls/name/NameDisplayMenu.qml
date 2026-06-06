@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 Menu {
   id: menu
@@ -16,25 +16,25 @@ Menu {
     text: "Randomize Name";
     onTriggered: {
       if(isPersonName)
-        changeStr(brg.randomPlayerName.randomName());
+        changeStr(brg.randomPlayerName.randomExample());
       else
-        changeStr(brg.randomPokemonName.randomName());
+        changeStr(brg.randomPokemonName.randomExample());
     }
   }
 
-//  MenuItem {
-//    text: "Toggle Example"
-//    onTriggered: toggleExample();
-//  }
+  MenuItem {
+    text: "Toggle Example"
+    onTriggered: toggleExample();
+  }
 
-//  MenuItem {
-//    enabled: hasBox
-//    text: "Randomize Example"
-//    onTriggered: reUpdateExample();
-//  }
+  MenuItem {
+    enabled: hasBox
+    text: "Randomize Example"
+    onTriggered: reUpdateExample();
+  }
 
   TilesetMenu {
-    title: "Change Tileset"
+    title: "Simulated Tileset"
   }
 
   MenuItem {

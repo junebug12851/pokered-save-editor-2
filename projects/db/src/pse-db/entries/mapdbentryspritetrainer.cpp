@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ MapDBEntrySpriteTrainer::MapDBEntrySpriteTrainer(const QJsonValue& data,
 void MapDBEntrySpriteTrainer::deepLink()
 {
   MapDBEntrySprite::deepLink();
-  toTrainer = TrainersDB::ind.value("Opp"+trainerClass);
+  toTrainer = TrainersDB::inst()->getIndAt("Opp"+trainerClass);
 
 #ifdef QT_DEBUG
   if(toTrainer == nullptr)
@@ -57,7 +57,7 @@ void MapDBEntrySpriteTrainer::qmlRegister() const
   once = true;
 }
 
-const TrainerDBEntry* MapDBEntrySpriteTrainer::getToTrainer() const
+TrainerDBEntry* MapDBEntrySpriteTrainer::getToTrainer() const
 {
     return toTrainer;
 }

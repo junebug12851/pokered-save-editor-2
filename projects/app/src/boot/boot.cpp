@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 June Hanabi
+  * Copyright 2019 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
   * limitations under the License.
 */
 
-#include <QtCore/qglobal.h>
 #include <QApplication>
 #include <QIcon>
-#include <QDateTime>
+#include <QElapsedTimer>
+#include <QDebug>
 
 #include "../../ui/window/mainwindow.h"
 #include "../bridge/router.h"
@@ -25,66 +25,45 @@
 extern void bootDatabase();
 extern void bootQmlLinkage();
 
-// Main Window, there is only ever one window
+// There is only ever one main window.
 MainWindow* mainWindow = nullptr;
 
-// Does a pre-boot of the app setting critical options that have to be done
-// before everything else
-QApplication* preBoot(int argc, char *argv[])
+// Sets critical Qt options that must be configured before QApplication is created.
+static void preBootAttributes()
 {
-  // Set Attributes
-  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-  QApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents);
-  QApplication::setAttribute(Qt::AA_CompressTabletEvents);
-  QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+  // Qt 6: High-DPI scaling is enabled automatically — no setAttribute needed.
+  // Qt 6: AA_CompressHighFrequencyEvents and AA_CompressTabletEvents are on by default.
+  // Qt 6: AA_DisableWindowContextHelpButton is the default on all platforms.
+  // Nothing to set here — kept as a hook for future platform-specific tweaks.
+}
 
-  // Set Application Info
+// Creates and configures the QApplication instance.
+[[nodiscard]] static QApplication* createApp(int argc, char* argv[])
+{
+  preBootAttributes();
+
   QApplication::setApplicationName("Pokered Save Editor");
-  QApplication::setOrganizationName("June Hanabi");
+  QApplication::setOrganizationName("Twilight");
   QApplication::setApplicationVersion("v1.0.0");
-  QApplication::setOrganizationDomain("pokeredsaveeditor.junehanabi.gmail.com");
+  QApplication::setOrganizationDomain("pokeredsaveeditor.twilight.app");
 
-  // Set Smoothing
-  QSurfaceFormat format;
-  format.setSamples(8);
-  QSurfaceFormat::setDefaultFormat(format);
+  // Note: Do NOT set a custom QSurfaceFormat with MSAA here.
+  // QQuickWidget renders into an offscreen FBO; requesting MSAA via
+  // setDefaultFormat() causes the scene graph to hang on context creation
+  // on many Windows drivers. Qt Quick handles its own antialiasing internally.
 
-  // Create the app
-  QApplication* app = new QApplication(argc, argv);
+  auto* app = new QApplication(argc, argv);
 
-  // Setup debug/error messages
   qSetMessagePattern("[%{type}]: %{message} ~ %{time} %{file} %{function} %{line}");
 
-  // Pull the icon from resources and set as window icon
-  // It's also set to properly be built-in during compile
-  QIcon icon("qrc:/assets/icons/app/512x512.png");
-  app->setWindowIcon(icon);
+  app->setWindowIcon(QIcon("qrc:/assets/icons/app/512x512.png"));
 
-  // Seed random generator
-  qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
+  // Qt 6 uses QRandomGenerator internally; no manual seeding required.
 
-  // Stil being implemented
   mainWindow = new MainWindow();
   mainWindow->show();
 
   return app;
 }
 
-// Performs program one-time bootstrapping and setup
-extern QApplication* boot(int argc, char *argv[])
-{
-  // Prepare database
-  bootDatabase();
-
-  // Register C++ classes with QML
-  bootQmlLinkage();
-
-  // Load Screens into the router
-  Router::loadScreens();
-
-  // Pre-boot app
-  auto app = preBoot(argc, argv);
-
-  // Return generated and prepared app for creation
-  return app;
-}
+// Performs full program bootstrapping and returns a re

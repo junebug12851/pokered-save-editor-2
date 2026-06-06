@@ -58,7 +58,7 @@ QImage TilesetEngine::getFont()
 
 QPixmap TilesetEngine::buildTilesetFullDebug(QString id)
 {
-  auto idParts = id.split("/", QString::SplitBehavior::SkipEmptyParts);
+  auto idParts = id.split("/", Qt::SkipEmptyParts);
 
   // Has to have all 4 parts unconditionally
   if(idParts.size() < 4) {

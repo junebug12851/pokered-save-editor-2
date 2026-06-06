@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ SpeciesSelectModel::SpeciesSelectModel()
   // Gather normal repeatable items and sort by name, then add into list
   QVector<PokemonDBEntry*> tmp;
 
-  for(auto el : PokemonDB::store) {
+  for(auto el : PokemonDB::inst()->getStore()) {
     if(el->pokedex)
       tmp.append(el);
   }
@@ -60,7 +60,7 @@ SpeciesSelectModel::SpeciesSelectModel()
   // Add 2nd category
   speciesListCache.append(new SpeciesSelectEntry("--- Glitch Pokemon ---", -1));
 
-  for(auto el : PokemonDB::store) {
+  for(auto el : PokemonDB::inst()->getStore()) {
     if(!el->pokedex)
       tmp.append(el);
   }

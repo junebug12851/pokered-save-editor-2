@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
@@ -16,7 +16,7 @@ DefTextEdit {
            ? 0.50
            : 1.00
   maximumLength: 2
-  width: 2 * font.pixelSize
+  width: 2 * font.pixelSize + leftPadding + rightPadding
 
   horizontalAlignment: Text.AlignRight
 
@@ -25,7 +25,7 @@ DefTextEdit {
       return;
 
     var txtDec = parseInt(text, 10);
-    if(txtDec === NaN)
+    if(isNaN(txtDec))
       return;
 
     if(txtDec < 0 || txtDec > 59)
@@ -40,10 +40,10 @@ DefTextEdit {
 
   Connections {
     target: brg.file.data.dataExpanded.world.other.playtime
-    onFramesChanged: framesEdit.text = brg.file.data.dataExpanded.world.other.playtime.frames
+    function onFramesChanged() { framesEdit.text = brg.file.data.dataExpanded.world.other.playtime.frames.toString(); }
   }
 
-  Component.onCompleted: framesEdit.text = brg.file.data.dataExpanded.world.other.playtime.frames;
+  Component.onCompleted: framesEdit.text = brg.file.data.dataExpanded.world.other.playtime.frames.toString();
 
   IconButtonSquare {
     id: menuBtn

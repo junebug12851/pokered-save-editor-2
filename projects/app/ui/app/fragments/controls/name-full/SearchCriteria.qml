@@ -1,169 +1,176 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.14
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "../../general"
 
 ColumnLayout {
   id: top
-  spacing: -10
+  spacing: 3
 
   signal reSearch();
 
-  property alias normalSearchState: normalSearch.checkState
-  property alias controlSearchState: controlSearch.checkState
-  property alias pictureSearchState: pictureSearch.checkState
-  property alias singleSearchState: singleSearch.checkState
-  property alias multiSearchState: multiSearch.checkState
-  property alias varSearchState: varSearch.checkState
+  // Single-select filters. Exposed as booleans (exactly one is true).
+  property alias allChecked: allSearch.checked
+  property alias normalChecked: normalSearch.checked
+  property alias controlChecked: controlSearch.checked
+  property alias pictureChecked: pictureSearch.checked
+  property alias singleChecked: singleSearch.checked
+  property alias multiChecked: multiSearch.checked
+  property alias varChecked: varSearch.checked
 
-  Button {
-    text: "Clear"
-    onClicked: {
-      normalSearch.checkState = Qt.Unchecked;
-      controlSearch.checkState = Qt.Unchecked;
-      pictureSearch.checkState = Qt.Unchecked;
-      singleSearch.checkState = Qt.Unchecked;
-      multiSearch.checkState = Qt.Unchecked;
-      varSearch.checkState = Qt.Unchecked;
+  // Makes the radios mutually exclusive even though they live in separate rows
+  // (auto-exclusive only works among siblings of one parent). One stays active,
+  // so there's no Clear button.
+  ButtonGroup { id: filterGroup }
+
+  // The ⓘ help affordance: shows its help ONLY while the icon itself is hovered.
+  // Default ToolTip placement keeps it clear of the panel's scrollbar.
+  component HelpDot: Label {
+    id: dot
+    property string help: ""
+
+    text: "ⓘ"
+    font.pixelSize: 15
+    color: brg.settings.textColorDark
+    opacity: hh.hovered ? 1.0 : 0.5
+    Layout.alignment: Qt.AlignVCenter
+
+    HoverHandler { id: hh }
+
+    MainToolTip {
+      followGlobalSetting: false
+      visible: hh.hovered
+      text: dot.help
     }
   }
 
-  Spacer {
-    height: 25
-  }
+  Spacer { Layout.preferredHeight: 4 }
 
-  SearchParam {
-    id: normalSearch
-    checkState: Qt.Checked
-    text: "Normal"
-    onReSearch: top.reSearch();
-
-    Material.foreground: brg.settings.fontColorNormal
-    Material.accent: brg.settings.fontColorNormal
-
-    InfoButton {
-      x: parent.width - icon.width
-      y: 0
-      toolTipText: "Characters your allowed to pick in-game. These are " +
-                   "guarenteed to always look the same throughout gameplay."
-      icon.width: 15
-      icon.height: 15
-
+  // ---- All ----
+  RowLayout {
+    Layout.fillWidth: true
+    SearchParam {
+      id: allSearch
+      Layout.fillWidth: true
+      text: "All"
+      ButtonGroup.group: filterGroup
+      onReSearch: top.reSearch();
       Material.foreground: brg.settings.textColorDark
       Material.accent: brg.settings.accentColor
-      toolTipEl.x: 0
+    }
+    HelpDot {
+      help: "Show every character across all categories."
     }
   }
 
-  SearchParam {
-    id: controlSearch
-    text: "Control"
-    onReSearch: top.reSearch();
+  Spacer { Layout.preferredHeight: 8 }
 
-    Material.foreground: brg.settings.fontColorControl
-    Material.accent: brg.settings.fontColorControl
-
-    InfoButton {
-      x: parent.width - icon.width
-      y: 0
-      toolTipText: "Special codes that control the text engine. Using these " +
-                   "in a name will cause glitching and trash on the screen"
-      icon.width: 15
-      icon.height: 15
-
-      Material.foreground: brg.settings.textColorDark
-      Material.accent: brg.settings.accentColor
-      toolTipEl.x: 0
+  // ---- Normal + sizes ----
+  RowLayout {
+    Layout.fillWidth: true
+    SearchParam {
+      id: normalSearch
+      Layout.fillWidth: true
+      // "Only" subtly signals that leaving Normal (for Single-Char, etc.) means
+      // leaving the always-safe set — reinforced by its ⓘ tooltip.
+      text: "Normal Only"
+      checked: true
+      ButtonGroup.group: filterGroup
+      onReSearch: top.reSearch();
+      Material.foreground: brg.settings.fontColorNormal
+      Material.accent: brg.settings.fontColorNormal
+    }
+    HelpDot {
+      help: "Characters you're allowed to pick in-game. These are guaranteed " +
+            "to always look the same throughout gameplay."
     }
   }
 
-  SearchParam {
-    id: pictureSearch
-    text: "Picture"
-    onReSearch: top.reSearch();
-
-    Material.foreground: brg.settings.fontColorPicture
-    Material.accent: brg.settings.fontColorPicture
-
-    InfoButton {
-      x: parent.width - icon.width
-      y: 0
-      toolTipText: "Tiles you can insert into the game, majority of them will " +
-                   "change throughout gameplay We aproximate them here."
-      icon.width: 15
-      icon.height: 15
-
-      Material.foreground: brg.settings.textColorDark
-      Material.accent: brg.settings.accentColor
-      toolTipEl.x: 0
+  RowLayout {
+    Layout.fillWidth: true
+    SearchParam {
+      id: singleSearch
+      Layout.fillWidth: true
+      text: "Single-Char"
+      ButtonGroup.group: filterGroup
+      onReSearch: top.reSearch();
+      Material.foreground: brg.settings.fontColorSingle
+      Material.accent: brg.settings.fontColorSingle
+    }
+    HelpDot {
+      help: "Characters that take up 1 space on screen and in the save data."
     }
   }
 
-  SearchParam {
-    id: singleSearch
-    text: "Single-Char"
-    onReSearch: top.reSearch();
-
-    Material.foreground: brg.settings.fontColorSingle
-    Material.accent: brg.settings.fontColorSingle
-
-    InfoButton {
-      x: parent.width - icon.width
-      y: 0
-      toolTipText: "Characters that take up 1 space on screen and in the save " +
-                   "data."
-      icon.width: 15
-      icon.height: 15
-
-      Material.foreground: brg.settings.textColorDark
-      Material.accent: brg.settings.accentColor
-      toolTipEl.x: 0
+  RowLayout {
+    Layout.fillWidth: true
+    SearchParam {
+      id: multiSearch
+      Layout.fillWidth: true
+      text: "Multi-Char"
+      ButtonGroup.group: filterGroup
+      onReSearch: top.reSearch();
+      Material.foreground: brg.settings.fontColorMulti
+      Material.accent: brg.settings.fontColorMulti
+    }
+    HelpDot {
+      help: "Characters that take up more than 1 space on screen yet only " +
+            "take up 1 byte in the save data."
     }
   }
 
-  SearchParam {
-    id: multiSearch
-    text: "Multi-Char"
-    onReSearch: top.reSearch();
-
-    Material.foreground: brg.settings.fontColorMulti
-    Material.accent: brg.settings.fontColorMulti
-
-    InfoButton {
-      x: parent.width - icon.width
-      y: 0
-      toolTipText: "Characters that take up more than 1 space on screen yet " +
-                   "only take up 1 byte in the save data."
-      icon.width: 15
-      icon.height: 15
-
-      Material.foreground: brg.settings.textColorDark
-      Material.accent: brg.settings.accentColor
-      toolTipEl.x: 0
+  RowLayout {
+    Layout.fillWidth: true
+    SearchParam {
+      id: varSearch
+      Layout.fillWidth: true
+      text: "Variable"
+      ButtonGroup.group: filterGroup
+      onReSearch: top.reSearch();
+      Material.foreground: brg.settings.fontColorVar
+      Material.accent: brg.settings.fontColorVar
+    }
+    HelpDot {
+      help: "Insert an existing name or other text from elsewhere in memory."
     }
   }
 
-  SearchParam {
-    id: varSearch
-    text: "Variable"
-    onReSearch: top.reSearch();
+  Spacer { Layout.preferredHeight: 5 }
 
-    Material.foreground: brg.settings.fontColorVar
-    Material.accent: brg.settings.fontColorVar
+  // ---- Special (Picture / Control) ----
+  RowLayout {
+    Layout.fillWidth: true
+    SearchParam {
+      id: pictureSearch
+      Layout.fillWidth: true
+      text: "Picture"
+      ButtonGroup.group: filterGroup
+      onReSearch: top.reSearch();
+      Material.foreground: brg.settings.fontColorPicture
+      Material.accent: brg.settings.fontColorPicture
+    }
+    HelpDot {
+      help: "Tiles you can insert into the game; the majority of them will " +
+            "change throughout gameplay. We approximate them here."
+    }
+  }
 
-    InfoButton {
-      x: parent.width - icon.width
-      y: 0
-      toolTipText: "Insert an existing name or other text from elsewhere in " +
-                   "memory."
-      icon.width: 15
-      icon.height: 15
-
-      Material.foreground: brg.settings.textColorDark
-      Material.accent: brg.settings.accentColor
-      toolTipEl.x: 0
+  RowLayout {
+    Layout.fillWidth: true
+    SearchParam {
+      id: controlSearch
+      Layout.fillWidth: true
+      text: "Control"
+      ButtonGroup.group: filterGroup
+      onReSearch: top.reSearch();
+      Material.foreground: brg.settings.fontColorControl
+      Material.accent: brg.settings.fontColorControl
+    }
+    HelpDot {
+      help: "Special codes that control the text engine. Using these in a " +
+            "name will cause glitching and trash on the screen."
     }
   }
 

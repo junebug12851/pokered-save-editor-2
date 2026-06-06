@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 June Hanabi
+  * Copyright 2020 Twilight
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
-#ifndef COMMON_AUTOPORT_H
-#define COMMON_AUTOPORT_H
-
+#pragma once
 #include <QtCore/qglobal.h>
 
 #if defined(COMMON_LIBRARY)
@@ -24,4 +22,3 @@
 #  define COMMON_AUTOPORT Q_DECL_IMPORT
 #endif
 
-#endif // COMMON_AUTOPORT_H
