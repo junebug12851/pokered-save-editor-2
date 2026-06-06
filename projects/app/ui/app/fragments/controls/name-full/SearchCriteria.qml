@@ -7,7 +7,7 @@ import "../../general"
 
 ColumnLayout {
   id: top
-  spacing: 3
+  spacing: 1
 
   signal reSearch();
 
@@ -46,7 +46,7 @@ ColumnLayout {
     }
   }
 
-  Spacer { Layout.preferredHeight: 4 }
+  Spacer { Layout.preferredHeight: 2 }
 
   // ---- All ----
   RowLayout {
@@ -65,7 +65,7 @@ ColumnLayout {
     }
   }
 
-  Spacer { Layout.preferredHeight: 8 }
+  Spacer { Layout.preferredHeight: 4 }
 
   // ---- Normal + sizes ----
   RowLayout {
@@ -137,7 +137,7 @@ ColumnLayout {
     }
   }
 
-  Spacer { Layout.preferredHeight: 5 }
+  Spacer { Layout.preferredHeight: 3 }
 
   // ---- Special (Picture / Control) ----
   RowLayout {

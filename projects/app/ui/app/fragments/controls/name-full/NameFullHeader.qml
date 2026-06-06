@@ -10,8 +10,6 @@ import "../../modal"
 ToolBar {
   id: top
 
-  signal toggleExample();
-  signal reUpdateExample();
   signal preClose();
 
   property string str: ""
@@ -124,9 +122,6 @@ ToolBar {
     NameFullEdit {
       id: editor
       Layout.alignment: Qt.AlignHCenter
-
-      onToggleExample: top.toggleExample();
-      onReUpdateExample: top.reUpdateExample();
 
       chopLen: top.chopLen
       sizeMult: top.sizeMult

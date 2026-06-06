@@ -56,9 +56,9 @@ Flickable {
   Flow {
     id: flow
     x: 4
-    y: 8
+    y: 6
     width: topz.width - 16
-    spacing: 6
+    spacing: 2
 
     Repeater {
       model: brg.fontSearchModel
@@ -70,8 +70,8 @@ Flickable {
         property var f: brg.fonts.fontAt(fontInd)
         property color cat: topz.determineColor(fontInd)
 
-        height: 28
-        width: Math.max(34, label.implicitWidth + 22)
+        height: 22
+        width: Math.max(28, label.implicitWidth + 14)
         radius: height / 2
 
         color: mouse.containsMouse ? Qt.lighter(cat, 1.55) : Qt.lighter(cat, 1.88)
@@ -85,7 +85,7 @@ Flickable {
           anchors.centerIn: parent
           text: pill.f ? ((pill.f.alias !== "") ? pill.f.alias : pill.f.name) : ""
           color: Qt.darker(pill.cat, 1.25)
-          font.pixelSize: 13
+          font.pixelSize: 12
         }
 
         MouseArea {
@@ -106,7 +106,9 @@ Flickable {
 
         ToolTip {
           id: tip
-          visible: mouse.containsMouse && pill.f
+          // Image-only tooltip. Control codes have no preview image, so they get
+          // no tooltip at all.
+          visible: mouse.containsMouse && pill.f && !pill.f.control
           delay: 250
 
           background: Rectangle {
@@ -116,57 +118,21 @@ Flickable {
             border.color: Qt.darker(brg.settings.textColorLight, 1.2)
           }
 
-          contentItem: ColumnLayout {
-            spacing: 6
+          // Live in-game tile render on a white "screen" so the dark GB glyph
+          // pixels read clearly. tileName is only fed while the tooltip is up so
+          // off-screen pills don't churn images.
+          contentItem: Rectangle {
+            color: "#ffffff"
+            radius: 4
+            border.width: 1
+            border.color: Qt.darker(brg.settings.textColorLight, 1.25)
+            implicitWidth: preview.width + 14
+            implicitHeight: preview.height + 14
 
-            // Live in-game tile render on a light "screen" background so the
-            // dark glyph pixels read clearly. tileName is only fed (and the
-            // animation timer only runs) while the tooltip is actually up, so
-            // the off-screen pills don't churn images.
-            Rectangle {
-              Layout.alignment: Qt.AlignHCenter
-              color: "#ffffff"
-              radius: 4
-              border.width: 1
-              border.color: Qt.darker(brg.settings.textColorLight, 1.25)
-              Layout.preferredWidth: preview.width + 14
-              Layout.preferredHeight: preview.height + 14
-
-              TilePreview {
-                id: preview
-                anchors.centerIn: parent
-                tileName: (tip.visible && pill.f) ? pill.f.name : ""
-              }
-            }
-
-            Label {
-              Layout.fillWidth: true
-              horizontalAlignment: Text.AlignHCenter
-              text: pill.f ? ((pill.f.alias !== "") ? pill.f.alias : pill.f.name) : ""
-              color: brg.settings.textColorDark
-              font.pixelSize: 14
-              font.bold: true
-            }
-
-            Label {
-              Layout.fillWidth: true
-              horizontalAlignment: Text.AlignHCenter
-              visible: pill.f && pill.f.alias !== ""
-              text: pill.f ? pill.f.name : ""
-              color: brg.settings.textColorMid
-              font.pixelSize: 12
-              font.italic: true
-              textFormat: Text.PlainText
-            }
-
-            Label {
-              Layout.fillWidth: true
-              Layout.maximumWidth: 220
-              visible: pill.f && pill.f.tip !== ""
-              text: pill.f ? pill.f.tip : ""
-              color: brg.settings.textColorDark
-              font.pixelSize: 11
-              wrapMode: Text.WordWrap
+            TilePreview {
+              id: preview
+              anchors.centerIn: parent
+              tileName: (tip.visible && pill.f) ? pill.f.name : ""
             }
           }
         }

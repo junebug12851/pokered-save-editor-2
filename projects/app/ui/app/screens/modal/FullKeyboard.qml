@@ -75,7 +75,7 @@ Page {
       anchors.topMargin: 15
 
       height: parent.height - anchors.topMargin
-      width: (parent.width * 0.60) - anchors.leftMargin
+      width: (parent.width * 0.70) - anchors.leftMargin
 
       str: top.str
       onStrChanged: top.str = str;

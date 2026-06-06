@@ -101,12 +101,12 @@ public:
   QColor dividerColor = QColor("#BDBDBD");
   QColor accentColor = QColor("#607D8B");
 
-  QColor fontColorNormal = QColor("#388E3C"); // Green, Shade 700
+  QColor fontColorNormal = QColor("#616161"); // Grey, Shade 700
   QColor fontColorControl = QColor("#7B1FA2"); // Purple, Shade 700
   QColor fontColorPicture = QColor("#303F9F"); // Blue, Shade 700
   QColor fontColorSingle = QColor("#9E9D24"); // Lime, Shade 800
   QColor fontColorMulti = QColor("#FF6F00"); // Amber, Shade 900
-  QColor fontColorVar = QColor("#616161"); // Grey, Shade 700
+  QColor fontColorVar = QColor("#388E3C"); // Green, Shade 700
 
 protected slots:
   void dataChanged();

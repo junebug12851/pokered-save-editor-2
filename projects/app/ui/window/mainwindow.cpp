@@ -247,6 +247,12 @@ void MainWindow::injectIntoQML()
   bridge = new Bridge(file);
   context->setContextProperty("brg", bridge);
   MainWindow::engine = ui.app->engine();
+
+  // Protect every DB entry from QML's garbage collector (s13f). DB::qmlProtect
+  // cascades CppOwnership to all sub-DB entries; without it QML GCs the shared,
+  // parentless FontDBEntry (and other) objects mid-session — fonts blank out,
+  // picker pills go red/empty, and names stop saving until an app reboot.
+  DB::inst()->qmlProtect(engine);
 }
 
 void MainWindow::ssConnect()

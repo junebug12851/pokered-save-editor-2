@@ -12,8 +12,8 @@ RadioButton {
 
   signal reSearch();
 
-  topPadding: 4
-  bottomPadding: 4
+  topPadding: 2
+  bottomPadding: 2
   Layout.minimumHeight: 0
 
   onCheckedChanged: top.reSearch();

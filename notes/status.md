@@ -11,7 +11,10 @@ _Last updated: 2026-06-06 (post sed/mount corruption recovery; the pre-corruptio
 >
 > **POST-RECOVERY BUILD-UP (2026-06-06):** The recovered tree did NOT build clean — the recovery left
 > many residual defects that surfaced only on compile/link/run. Worked through them error-by-error;
-> **the project now compiles, links, AND runs.** Key lesson (Twilight): **diagnose against git history,
+> **the project now compiles, links, runs, AND Twilight confirmed runtime parity with the
+> pre-corruption build.** Recovery is effectively complete. ⚠️ **COMMIT/BACK UP THIS STATE** — the only
+> committed point (HEAD `2c2d6e5`) is the corrupted one, so until this is committed the working build
+> exists only on disk. Key lesson (Twilight): **diagnose against git history,
 > not HEAD** — HEAD (`2c2d6e5`) is the corrupted commit (many files truncated in it); the only clean
 > reference is the 2020 tree (`af883fd`). Defect classes fixed (all in `reference/fix-patterns.md`):
 > stray duplicate `util/hiddencoinsdb` in CMake; dropped `#include`s (mapdbentry, Qt6 metatype-complete
