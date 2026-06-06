@@ -431,6 +431,11 @@ int FontsDB::countSizeOfExpanded(const QString val) const
 void FontsDB::splice(QVector<int>& out, const QString in, const int position) const
 {
   auto codes = convertToCode(in, 255, false);
+
+  // Replace the tile at `position` with its expansion. The original code MUST be
+  // removed first — leaving it in place makes expandStr re-expand the same
+  // variable tile forever (infinite-loop hang, e.g. on "next random example").
+  out.remove(position);
   for(int i = 0; i < codes.size(); i++)
     out.insert(position + i, codes.at(i));
 }

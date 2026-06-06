@@ -7,9 +7,23 @@ _Last updated: 2026-06-06 (post sed/mount corruption recovery; the pre-corruptio
 > → "Recovering files from Cowork chat transcripts"). `pokemonbox.cpp`/`.h` were rebuilt by replaying
 > the captured edit history onto the `af883fd` clone base and validated against transcript reads; the 7
 > clone-based files (`settings.cpp`, `fontsdb.cpp`, `area.h`, `areasign.cpp`, `areasprites.cpp`,
-> `pokemonstoragebox.h`, `storage.cpp`) had every residual fixed. Verified: 380 source files, 0
-> truncated, 0 missing Apache headers, 0 stray name/gmail, 0 INCOMPLETE banners. **Next: a clean build
-> to confirm linkage, then commit to lock it in.** Full account: `sessions/session-log.md`.
+> `pokemonstoragebox.h`, `storage.cpp`) had every residual fixed.
+>
+> **POST-RECOVERY BUILD-UP (2026-06-06):** The recovered tree did NOT build clean — the recovery left
+> many residual defects that surfaced only on compile/link/run. Worked through them error-by-error;
+> **the project now compiles, links, AND runs.** Key lesson (Twilight): **diagnose against git history,
+> not HEAD** — HEAD (`2c2d6e5`) is the corrupted commit (many files truncated in it); the only clean
+> reference is the 2020 tree (`af883fd`). Defect classes fixed (all in `reference/fix-patterns.md`):
+> stray duplicate `util/hiddencoinsdb` in CMake; dropped `#include`s (mapdbentry, Qt6 metatype-complete
+> property headers across savefile, pse-db/db.h); dropped private members (gamecornerdb/fontsdb
+> `store`/`ind`/`buyPrice`, mapsearch tail); dropped friends (ItemDBEntry); dropped method bodies
+> (DB::qmlProtect/qmlHook, FontSearch::clear/keepAnyOf, PlayerBasics::getPlayerId/getNonTradeMons/
+> fixNonTradeMons); truncated/eaten declarations (area.h class line, filemanagement expandRecentFiles);
+> old-API reversions (pokemonbox.cpp Random::/store/getIndAt); protected-field direct access
+> (areasign/areasprites/mapselectmodel → getters); and a **runtime hang** — `FontsDB::splice` lost its
+> `out.remove()` (reverted s13y replace-not-insert) → infinite loop expanding a variable tile.
+> **Next: Twilight must COMMIT/BACK UP now (builds+runs; the prior backup was the corrupted one), then
+> continue runtime testing.** Full account: `sessions/session-log.md`.
 
 This file is the **current state** only. For the chronological history of what changed each
 session and why, see `sessions/session-log.md`. For root-cause mechanics, see

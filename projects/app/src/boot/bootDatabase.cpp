@@ -21,6 +21,6 @@
 // and deep-linking internally in the correct dependency order.
 extern void bootDatabase()
 {
-  DB::inst();
+  (void)DB::inst();
 }
 
