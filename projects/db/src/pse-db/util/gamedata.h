@@ -27,7 +27,7 @@ class QQmlEngine;
 /**
  * @brief The JSON asset loader -- the raw data source behind every database.
  *
- * A singleton that reads the bundled `/assets/data/*.json` files from disk. Each
+ * A singleton that reads the bundled `/assets/data/.json` files from disk. Each
  * DB's load() calls into this to get its document. Exposed to QML as `db.json`.
  *
  * @see DB (the aggregate), and every `*DB::load()`.

@@ -27,7 +27,7 @@ class SaveFile;
  * Every byte the editor touches goes through here. The toolset speaks the Game
  * Boy save's actual encodings -- BCD numbers, in-game font strings, packed
  * bit-fields, big/little-endian words, and the Gen 1 checksum -- so higher layers
- * (the `expanded/*` objects) can ask for "the money at this address" instead of
+ * (the `expanded/` objects) can ask for "the money at this address" instead of
  * doing byte math. Addresses are absolute offsets into the raw save.
  *
  * It holds a back-pointer to its owning SaveFile and reads/writes that file's
