@@ -22,18 +22,25 @@
 
 class QQmlEngine;
 
+/**
+ * @brief Example Pokemon-value source (an AbstractRandomString of presets).
+ *
+ * All behaviour inherited; provides the singleton + QML registration. Reached via
+ * `db.examples.pokemon`.
+ *
+ * @see AbstractRandomString, Examples.
+ */
 class DB_AUTOPORT ExamplesPokemon : public AbstractRandomString
 {
   Q_OBJECT
 
 public:
   // Get Instance
-  static ExamplesPokemon* inst();
+  static ExamplesPokemon* inst(); ///< The process-wide ExamplesPokemon singleton.
 
 protected:
-  ExamplesPokemon();
+  ExamplesPokemon(); ///< Private -- use inst(); loads the example-pokemon asset.
 
 protected slots:
-  virtual void qmlRegister() const;
+  virtual void qmlRegister() const; ///< Register ExamplesPokemon with QML.
 };
-

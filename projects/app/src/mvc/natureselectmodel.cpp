@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file natureselectmodel.cpp
+ * @brief Implementation of NatureSelectModel. See natureselectmodel.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 

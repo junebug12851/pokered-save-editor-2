@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+// IconButtonSquare.qml --
 // Flat icon button with a TIGHT, rectangular hover/press highlight (just around
 // the icon) instead of Material's wide rounded button background. Used for all
 // the ⋮ menu buttons so they read consistently and don't look like big pills.

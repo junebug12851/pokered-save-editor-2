@@ -1,3 +1,8 @@
+// BadgesModel.qml -- the eight Kanto gym badges, in order.
+//
+// A ListModel of {iconOffSrc, iconOnSrc, tooltipText} for the badge grid
+// (ListBadges), ordered Boulder -> Cascade -> Thunder -> Rainbow -> Soul -> Marsh
+// -> Volcano -> Earth (matching the badge bitfield's bit order).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

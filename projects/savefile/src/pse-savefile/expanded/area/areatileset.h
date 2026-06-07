@@ -21,32 +21,43 @@
 class SaveFile;
 struct MapDBEntry;
 
-constexpr var8 maxTalkingOverTiles = 3;
+constexpr var8 maxTalkingOverTiles = 3; ///< Number of "talk-over" tile slots.
 
+/**
+ * @brief The current map's tileset: which set, its behaviour type, and pointers.
+ *
+ * Selects the active tileset and carries its associated data (grass tile, boulder
+ * indices, the gameplay @ref type, and the bank/pointer locations of its graphics,
+ * blocks, and collision). Several fields are "change at your own risk" -- altering
+ * them can make the map unplayable, as the field comments warn. Standard
+ * expanded-node convention (see SaveFileExpanded).
+ *
+ * @see Area, MapDBEntry.
+ */
 class SAVEFILE_AUTOPORT AreaTileset : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int current MEMBER current NOTIFY currentChanged)
-  Q_PROPERTY(int grassTile MEMBER grassTile NOTIFY grassTileChanged)
-  Q_PROPERTY(int boulderIndex MEMBER boulderIndex NOTIFY boulderIndexChanged)
-  Q_PROPERTY(int boulderColl MEMBER boulderColl NOTIFY boulderCollChanged)
-  Q_PROPERTY(int type MEMBER type NOTIFY typeChanged)
-  Q_PROPERTY(int bank MEMBER bank NOTIFY bankChanged)
-  Q_PROPERTY(int blockPtr MEMBER blockPtr NOTIFY blockPtrChanged)
-  Q_PROPERTY(int gfxPtr MEMBER gfxPtr NOTIFY gfxPtrChanged)
-  Q_PROPERTY(int collPtr MEMBER collPtr NOTIFY collPtrChanged)
+  Q_PROPERTY(int current MEMBER current NOTIFY currentChanged)             ///< Active tileset id (risky to change).
+  Q_PROPERTY(int grassTile MEMBER grassTile NOTIFY grassTileChanged)       ///< Which tile is grass.
+  Q_PROPERTY(int boulderIndex MEMBER boulderIndex NOTIFY boulderIndexChanged) ///< Boulder tile index.
+  Q_PROPERTY(int boulderColl MEMBER boulderColl NOTIFY boulderCollChanged) ///< Boulder collision value.
+  Q_PROPERTY(int type MEMBER type NOTIFY typeChanged)                      ///< Tileset behaviour type (Outside/etc).
+  Q_PROPERTY(int bank MEMBER bank NOTIFY bankChanged)                      ///< Bank holding GFX + blocks.
+  Q_PROPERTY(int blockPtr MEMBER blockPtr NOTIFY blockPtrChanged)          ///< Blocks pointer.
+  Q_PROPERTY(int gfxPtr MEMBER gfxPtr NOTIFY gfxPtrChanged)                ///< Graphics pointer.
+  Q_PROPERTY(int collPtr MEMBER collPtr NOTIFY collPtrChanged)             ///< Collision pointer (always bank 0).
 
 public:
   AreaTileset(SaveFile* saveFile = nullptr);
   virtual ~AreaTileset();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the tileset block from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the tileset block to the save.
 
-  Q_INVOKABLE int talkingOverTilesCount();
-  Q_INVOKABLE int talkingOverTilesAt(int ind);
-  Q_INVOKABLE void talkingOverTilesSwap(int from, int to);
+  Q_INVOKABLE int talkingOverTilesCount();          ///< Number of talk-over tile slots.
+  Q_INVOKABLE int talkingOverTilesAt(int ind);      ///< Talk-over tile at @p ind.
+  Q_INVOKABLE void talkingOverTilesSwap(int from, int to); ///< Reorder talk-over tiles.
 
 signals:
   void currentChanged();
@@ -61,9 +72,9 @@ signals:
   void collPtrChanged();
 
 public slots:
-  void reset();
-  void randomize();
-  void loadFromData(MapDBEntry* map, bool randomType = false);
+  void reset();              ///< Blank the tileset block.
+  void randomize();          ///< Randomize the tileset.
+  void loadFromData(MapDBEntry* map, bool randomType = false); ///< Set from @p map (optionally random type).
 
 public:
   // Which tileset to use. Changing this will make the map
@@ -74,7 +85,7 @@ public:
   // Mainly used for Pokemon Centers
   var8 talkingOverTiles[maxTalkingOverTiles];
 
-  // Which tile is a grass tile? In testing I got odd results changing this
+  /// Which tile is a grass tile? In testing I got odd results changing this
   int grassTile;
 
   // These are somewhat abstract, they're used when your adjancent to boulders
@@ -100,4 +111,3 @@ public:
   int gfxPtr;
   int collPtr;
 };
-

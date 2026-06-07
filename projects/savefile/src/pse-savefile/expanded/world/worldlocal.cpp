@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file worldlocal.cpp
+ * @brief Implementation of WorldLocal -- map-specific puzzle/minigame state
+ *        (Lt. Surge locks, Cinnabar quiz, Safari). See worldlocal.h.
+ */
+
 #include "./worldlocal.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

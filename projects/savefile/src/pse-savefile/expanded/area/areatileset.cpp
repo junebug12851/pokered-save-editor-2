@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file areatileset.cpp
+ * @brief Implementation of AreaTileset -- the map's tileset, behaviour type,
+ *        and graphics/block/collision pointers. See areatileset.h.
+ */
+
 #include <cstring>
 
 #include "./areatileset.h"

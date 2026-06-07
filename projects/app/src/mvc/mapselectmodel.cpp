@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapselectmodel.cpp
+ * @brief Implementation of MapSelectModel. See mapselectmodel.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 

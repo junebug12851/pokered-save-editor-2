@@ -1,3 +1,11 @@
+// PokemonPane.qml -- one PC storage half (used twice on the Pokemon screen).
+//
+// Wraps a PokemonBoxView between a header bar (check-all toggle, a
+// SelectPokemonBox box-switcher, and a "set as current box" dot button) and a
+// footer of bulk actions shown when mons are checked: move to top/up, release,
+// transfer, move down/bottom. Bound to a PokemonStorageModel (model) and its
+// PokemonBoxSelectModel (selectModel). Note Twilight's inline remark on the
+// release ("times" not trash) icon choice -- leave it.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

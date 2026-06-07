@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file tileset.cpp
+ * @brief Implementation of TilesetDB and TilesetDBEntry. See tileset.h.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

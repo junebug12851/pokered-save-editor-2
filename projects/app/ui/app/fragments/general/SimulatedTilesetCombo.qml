@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+// SimulatedTilesetCombo.qml --
 // The app-wide "simulated tileset" picker (drives brg.settings.previewTileset).
 // Lives in general so both the full keyboard header and the quick-edit popup can
 // reuse it. (Was name-full/NameFullTileset; moved here to avoid a general ->

@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file pokemonboxselectmodel.cpp
+ * @brief Implementation of PokemonBoxSelectModel. See pokemonboxselectmodel.h.
+ */
+
 #include "./pokemonboxselectmodel.h"
 #include "./pokemonstoragemodel.h"
 #include <pse-savefile/expanded/storage.h>

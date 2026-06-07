@@ -1,3 +1,8 @@
+// DetailsPages.qml -- the tabbed editor (left half of PokemonDetails).
+//
+// A TabBar (General / DV-EV / Moves) over a StackLayout of OverviewTab, StatsTab,
+// and MovesTab, all bound to the mon being edited (boxData; partyData for the
+// party view). This is the deep per-Pokemon editor; the right half is GlancePane.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

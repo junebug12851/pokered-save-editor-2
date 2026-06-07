@@ -1,3 +1,9 @@
+// ListBadges.qml -- the clickable gym-badge grid on the trainer card.
+//
+// A non-interactive GridView over BadgesModel; each cell shows the on/off badge
+// image (dimmed when unearned) and toggles player.basics.badgeAt(index) on click.
+// reCalc() refreshes from the badge bitfield and re-runs whenever badgesChanged
+// fires (e.g. randomize).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

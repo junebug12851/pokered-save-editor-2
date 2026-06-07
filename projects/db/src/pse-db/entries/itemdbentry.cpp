@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemdbentry.cpp
+ * @brief Implementation of ItemDBEntry (pricing + cross-refs). See itemdbentry.h.
+ */
+
 #include <QDebug>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

@@ -1,3 +1,9 @@
+// DefTextEdit.qml -- the app's default single-line text field.
+//
+// A styled TextField with an optional left-side Label (labelEl alias), mouse
+// selection, accent-colored selection highlight, and vertically centered text.
+// The base input control reused across the editors (e.g. the Pokemart cart
+// amount fields).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

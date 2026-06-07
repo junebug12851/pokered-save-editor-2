@@ -1,5 +1,6 @@
 import QtQuick
 
+// TilePreview.qml --
 // A tight, animated in-game render of a SINGLE font tile / character. Used by
 // the character list's hover tooltip so you can see what a code actually looks
 // like in-game (e.g. a Variable like <RIVAL> expands to the rival's name in

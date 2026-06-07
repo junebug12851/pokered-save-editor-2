@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file warpdata.cpp
+ * @brief Implementation of WarpData -- one warp point (tile + destination).
+ *        See warpdata.h for the documented API.
+ */
 #include "warpdata.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

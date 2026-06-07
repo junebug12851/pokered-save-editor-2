@@ -21,21 +21,31 @@
 class SaveFile;
 class MapDBEntry;
 
+/**
+ * @brief The current map's audio: which track plays, and a couple of music flags.
+ *
+ * Holds the @ref musicID / @ref musicBank that select the playing track, plus
+ * @ref noAudioFadeout and @ref preventMusicChange behaviour flags. Standard
+ * expanded-node convention (see SaveFileExpanded); setTo() pulls the right music
+ * for a chosen map.
+ *
+ * @see Area (container), MapDBEntry.
+ */
 class SAVEFILE_AUTOPORT AreaAudio : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int musicID MEMBER musicID NOTIFY musicIDChanged)
-  Q_PROPERTY(int musicBank MEMBER musicBank NOTIFY musicBankChanged)
-  Q_PROPERTY(bool noAudioFadeout MEMBER noAudioFadeout NOTIFY noAudioFadeoutChanged)
-  Q_PROPERTY(bool preventMusicChange MEMBER preventMusicChange NOTIFY preventMusicChangeChanged)
+  Q_PROPERTY(int musicID MEMBER musicID NOTIFY musicIDChanged)                       ///< Playing track id.
+  Q_PROPERTY(int musicBank MEMBER musicBank NOTIFY musicBankChanged)                 ///< Bank the track lives in.
+  Q_PROPERTY(bool noAudioFadeout MEMBER noAudioFadeout NOTIFY noAudioFadeoutChanged) ///< Skip the audio fade-out.
+  Q_PROPERTY(bool preventMusicChange MEMBER preventMusicChange NOTIFY preventMusicChangeChanged) ///< Lock the current music.
 
 public:
   AreaAudio(SaveFile* saveFile = nullptr);
   virtual ~AreaAudio();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand audio settings from the save.
+  void save(SaveFile* saveFile);           ///< Flatten audio settings to the save.
 
 signals:
   void musicIDChanged();
@@ -44,14 +54,13 @@ signals:
   void preventMusicChangeChanged();
 
 public slots:
-  void reset();
-  void randomize();
-  void setTo(MapDBEntry* map);
+  void reset();              ///< Blank audio settings.
+  void randomize();          ///< Randomize the track.
+  void setTo(MapDBEntry* map); ///< Set music to @p map's default.
 
 public:
-  int musicID;
-  int musicBank;
-  bool noAudioFadeout;
-  bool preventMusicChange;
+  int musicID;             ///< @see musicID property.
+  int musicBank;           ///< @see musicBank property.
+  bool noAudioFadeout;     ///< @see noAudioFadeout property.
+  bool preventMusicChange; ///< @see preventMusicChange property.
 };
-

@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file scripts.cpp
+ * @brief Implementation of ScriptsDB and ScriptDBEntry. See scripts.h.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

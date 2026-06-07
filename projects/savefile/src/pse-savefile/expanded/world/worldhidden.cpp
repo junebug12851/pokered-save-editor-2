@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file worldhidden.cpp
+ * @brief Implementation of WorldHidden -- hidden-item and hidden-coin
+ *        collected flags. See worldhidden.h for the documented API.
+ */
+
 #include <string.h>
 
 #include <QVector>

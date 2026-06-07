@@ -1,3 +1,8 @@
+// TrainerCard.qml -- the trainer-card editor screen.
+//
+// A SwipeView (non-interactive, single page for now) hosting CardFront, the
+// trainer-card front face editor. Footer Re-Roll randomizes the player's basics
+// (name, ID, money, badges, etc.) and the world playtime.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -1,3 +1,13 @@
+// Pokedex.qml -- the Pokedex (seen/owned) editor screen.
+//
+// A header with live owned/seen counts, a scrolling ListView of all 151 species
+// (brg.pokedexModel) where clicking a row cycles its seen/owned state
+// (pokedex.toggleOne) and hovering shows a large preview image, and a 3-button
+// footer: Re-Roll, Toggle All, and Sort (cycles the model's sort order). Mon
+// icons/labels are desaturated by dex state (0 none / 1 seen / 2 owned).
+//
+// NOTE: the `(dexInd+1)` arithmetic is the correct 0-indexed -> 1-indexed dex
+// number conversion -- do NOT "simplify" it (see notes/decisions/rejected.md).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

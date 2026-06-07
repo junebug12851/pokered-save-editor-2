@@ -19,20 +19,26 @@
 #include <QString>
 #include <QAbstractListModel>
 
+/**
+ * @brief Type list model -- the elemental types for type pickers.
+ *
+ * Plain list model (see CreditsModel) over the types DB; valToIndex() maps a type
+ * value to its row. Exposed as `brg.typesModel`.
+ */
 class TypesModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Columns (mapped in roleNames()).
   enum PokemonStarterRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
   };
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
-  Q_INVOKABLE int valToIndex(int val);
+  Q_INVOKABLE int valToIndex(int val); ///< Row index for type value @p val.
 };
-

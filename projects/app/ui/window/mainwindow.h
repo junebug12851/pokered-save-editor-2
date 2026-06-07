@@ -27,47 +27,60 @@ class RecentFilesModel;
 class QAbstractItemModel;
 class Bridge;
 
+/**
+ * @brief The top-level window -- a QMainWindow hosting the QML UI in a QQuickWidget.
+ *
+ * Created last in the boot sequence (`createApp()`), it is where C++ meets QML at
+ * runtime: it constructs the @ref bridge, registers the image providers, and
+ * injects `brg` into the QML engine (injectIntoQML()). It also owns the live
+ * @ref file (FileManagement), wires global keyboard @ref otherShortcuts and the
+ * recent-file shortcuts, and persists window state across runs.
+ *
+ * @note This is the one C++ class living under `app/ui` (with the QML) rather than
+ *       `app/src`; it's included in the docs via a dedicated Doxyfile INPUT entry.
+ * @see Bridge (the `brg` aggregate it creates), the boot sequence in
+ *      [the system map](../../../../notes/systems/app.md).
+ */
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
-  Q_PROPERTY(FileManagement* file MEMBER file NOTIFY fileChanged)
+  Q_PROPERTY(FileManagement* file MEMBER file NOTIFY fileChanged) ///< The live save controller.
 
 public:
   MainWindow(QWidget* parent = nullptr);
   virtual ~MainWindow();
 
-  static MainWindow* getInstance();
-  static Bridge* bridge;
-  static QQmlEngine* engine;
+  static MainWindow* getInstance(); ///< The single MainWindow instance.
+  static Bridge* bridge;            ///< The `brg` aggregate (created here, injected into QML).
+  static QQmlEngine* engine;        ///< The QML engine behind the hosted QQuickWidget.
 
-  FileManagement* file = nullptr;
+  FileManagement* file = nullptr;   ///< @see file property.
 
   // MAX_RECENT_FILES
-  QShortcut* recentFileShortcuts[5];
-  QHash<QString, QShortcut*> otherShortcuts;
+  QShortcut* recentFileShortcuts[5];          ///< Ctrl+1..5 open-recent shortcuts.
+  QHash<QString, QShortcut*> otherShortcuts;  ///< Other global keyboard shortcuts by name.
 
 signals:
-  void fileChanged();
+  void fileChanged(); ///< The live save was replaced.
 
 private slots:
-  void reUpdateRecentFiles(QList<QString> files);
-  void onRecentFileClick();
-  void onPathChanged(QString path);
+  void reUpdateRecentFiles(QList<QString> files); ///< Refresh recent-file shortcuts/menu.
+  void onRecentFileClick();  ///< A recent-file shortcut/menu item was triggered.
+  void onPathChanged(QString path); ///< The active save path changed (update title, etc.).
 
 private:
-  Ui::MainWindow ui;
-  QSettings settings;
-  void closeEvent(QCloseEvent* event);
+  Ui::MainWindow ui;     ///< The generated .ui form (hosts the QQuickWidget).
+  QSettings settings;    ///< Persistent window state.
+  void closeEvent(QCloseEvent* event); ///< Save state on close.
 
-  void saveState();
-  void loadState();
+  void saveState();  ///< Persist window geometry/state.
+  void loadState();  ///< Restore window geometry/state.
 
-  void setupShortcuts();
-  void setupProviders();
-  void injectIntoQML();
-  void ssConnect();
+  void setupShortcuts(); ///< Wire the global keyboard shortcuts.
+  void setupProviders(); ///< Register the QML image providers (font/tileset).
+  void injectIntoQML();  ///< Create the Bridge and expose it to QML as `brg`.
+  void ssConnect();      ///< Connect FileManagement signals to the window.
 
-  static MainWindow* instance;
+  static MainWindow* instance; ///< Backing singleton pointer.
 };
-

@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file areamap.cpp
+ * @brief Implementation of AreaMap -- map id/size/pointers and edge connections.
+ *        See areamap.h for the documented API.
+ */
 #include "./areamap.h"
 #include "../../qmlownership.h"
 #include "../fragments/mapconndata.h"

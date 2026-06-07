@@ -19,18 +19,26 @@
 #include <QAbstractListModel>
 #include <QVector>
 
+/// One status-condition picker row: display name + status index.
 struct StatusSelectEntry {
   StatusSelectEntry(QString name, int ind);
 
-  QString name;
-  int ind;
+  QString name; ///< Display name.
+  int ind;      ///< Status index.
 };
 
+/**
+ * @brief Status-condition picker model (select-model variant; see SpeciesSelectModel).
+ *
+ * Standard picker: cached rows + statusToListIndex() for combo highlighting.
+ * Exposed as `brg.statusSelectModel`.
+ */
 class StatusSelectModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Picker columns (mapped in roleNames()).
   enum ItemRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
@@ -38,12 +46,11 @@ public:
 
   StatusSelectModel();
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
-  QVector<StatusSelectEntry*> statusListCache;
+  QVector<StatusSelectEntry*> statusListCache; ///< Cached picker rows.
 
-  Q_INVOKABLE int statusToListIndex(int ind);
+  Q_INVOKABLE int statusToListIndex(int ind); ///< Row index for status @p ind.
 };
-

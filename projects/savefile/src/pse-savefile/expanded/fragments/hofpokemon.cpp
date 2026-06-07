@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file hofpokemon.cpp
+ * @brief Implementation of HoFPokemon -- one Hall of Fame entry (species/level/
+ *        name). See hofpokemon.h for the documented API.
+ */
 #include "hofpokemon.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

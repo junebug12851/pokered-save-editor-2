@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemmarketentry.cpp
+ * @brief Implementation of ItemMarketEntry (the market-row base). See itemmarketentry.h.
+ */
+
 #include <QDebug>
 
 #include "./itemmarketentry.h"

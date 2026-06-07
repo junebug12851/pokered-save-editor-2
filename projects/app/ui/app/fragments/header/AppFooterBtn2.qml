@@ -3,7 +3,10 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Controls
 
-// A Footer with 2 Buttons
+// AppFooterBtn2.qml -- a screen footer holding two side-by-side FooterButtons.
+//
+// Exposes iconN/textN/btnN aliases and btnNClicked() signals for N = 1,2. Draws
+// the footer shadow on top, then the two equal-width buttons in a row.
 ToolBar {
   property alias icon1: btn1.icon
   property alias text1: btn1.text

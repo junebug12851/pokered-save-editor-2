@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file creditdbentry.cpp
+ * @brief Implementation of CreditDBEntry. See creditdbentry.h.
+ */
+
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>

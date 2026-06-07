@@ -1,3 +1,14 @@
+// PokemonBoxView.qml -- the grid of Pokemon slots inside a PokemonPane.
+//
+// A GridView of mon cells over a PokemonStorageModel (theModel). Each filled cell
+// shows the species/shiny icon, a level badge, a hover checkbox, and an edit
+// button (mon nickname, or species name as fallback); clicking anywhere on the
+// cell opens PokemonDetails.qml for that mon. Empty cells show a "+" add button.
+// openMonEditor pushes the details page manually (to pass the mon as a parameter)
+// and wires router/page close listeners so the model resets when the editor
+// closes. The (itemDex+1) padding mirrors Pokedex.qml's correct 0->1 dex
+// conversion; the inline notes on the custom text label and SVG tinting are real
+// workarounds -- leave them. See notes/reference/ui-patterns.md.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

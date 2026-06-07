@@ -27,42 +27,57 @@
 struct MapDBEntrySprite;
 class QQmlEngine;
 
+/**
+ * @brief One sprite definition: its name/picture-id and the maps that use it.
+ *
+ * Plain-struct DB entry. @ref toMaps is a back-reference of every map-sprite that
+ * uses this picture. See db.md.
+ *
+ * @see SpritesDB, SpriteData (the save-side sprite), SpriteSetDB.
+ */
 struct DB_AUTOPORT SpriteDBEntry {
-  SpriteDBEntry();
-  SpriteDBEntry(QJsonValue& data);
+  SpriteDBEntry();                ///< Empty entry.
+  SpriteDBEntry(QJsonValue& data); ///< Build from a JSON value.
 
-  QString name;
-  var8 ind = 0;
+  QString name;  ///< Sprite name (key).
+  var8 ind = 0;  ///< Picture id.
 
-  QVector<MapDBEntrySprite*> toMaps;
+  QVector<MapDBEntrySprite*> toMaps; ///< Map-sprites using this picture (back-ref).
 };
 
+/**
+ * @brief The sprites database, keyed by name.
+ *
+ * Standard DB-singleton with a name index (see CreditsDB / db.md).
+ *
+ * @see SpriteDBEntry, DB.
+ */
 class DB_AUTOPORT SpritesDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of sprites.
 
 public:
-  static SpritesDB* inst();
+  static SpritesDB* inst(); ///< The process-wide SpritesDB singleton.
 
-  [[nodiscard]] const QVector<SpriteDBEntry*> getStore() const;
-  [[nodiscard]] const QHash<QString, SpriteDBEntry*> getInd() const;
-  [[nodiscard]] int getStoreSize() const;
+  [[nodiscard]] const QVector<SpriteDBEntry*> getStore() const;       ///< All sprites.
+  [[nodiscard]] const QHash<QString, SpriteDBEntry*> getInd() const;  ///< Name->entry index.
+  [[nodiscard]] int getStoreSize() const;                            ///< Sprite count.
 
-  Q_INVOKABLE SpriteDBEntry* getStoreAt(int idx) const;
-  Q_INVOKABLE SpriteDBEntry* getIndAt(const QString& key) const;
+  Q_INVOKABLE SpriteDBEntry* getStoreAt(int idx) const;              ///< Sprite by store index (for QML).
+  Q_INVOKABLE SpriteDBEntry* getIndAt(const QString& key) const;     ///< Sprite by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();   ///< Load sprites from JSON.
+  void index();  ///< Build the name->entry index.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  SpritesDB();
+  SpritesDB(); ///< Private -- use inst().
 
-  QVector<SpriteDBEntry*> store;
-  QHash<QString, SpriteDBEntry*> ind;
+  QVector<SpriteDBEntry*> store;       ///< The loaded sprites.
+  QHash<QString, SpriteDBEntry*> ind;  ///< Name->entry lookup.
 };

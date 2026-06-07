@@ -14,6 +14,13 @@
   * limitations under the License.
 */
 
+/**
+ * @file playerbasics.cpp
+ * @brief Implementation of PlayerBasics -- name/ID/money/coins/badges/starter,
+ *        including the full-set name/ID that also rewrites non-trade mons' OT.
+ *        See playerbasics.h for the documented API.
+ */
+
 #include "./player.h"
 #include "./playerbasics.h"
 #include "./playerpokemon.h"

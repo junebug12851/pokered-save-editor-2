@@ -1,3 +1,8 @@
+// StarterEdit.qml -- the player's-starter field on the trainer card.
+//
+// A flat ComboBox over brg.starterModel bound to player.basics.playerStarter, with
+// a hover RandomMenu (randomizeStarter). This records which starter the player
+// chose (per the tooltip, likely cosmetic in-game).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

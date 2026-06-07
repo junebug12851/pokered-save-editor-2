@@ -19,23 +19,32 @@
 
 class FontSearch;
 
+/**
+ * @brief Exposes a FontSearch's current results as a list model for the keyboard.
+ *
+ * Wraps a FontSearch (see CreditsModel for the convention); as the search is
+ * filtered, the model refreshes so the on-screen keyboard's grid updates. Exposed
+ * as `brg.fontSearchModel`.
+ *
+ * @see FontSearch.
+ */
 class FontSearchModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Columns (mapped in roleNames()).
   enum FontSearchRoles {
     IndRole = Qt::UserRole + 1,
   };
 
-  FontSearchModel(FontSearch* search);
+  FontSearchModel(FontSearch* search); ///< @param search the finder to mirror.
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
 private:
-  void onDataChange();
-  FontSearch* search = nullptr;
+  void onDataChange();          ///< React to the search results changing.
+  FontSearch* search = nullptr; ///< The mirrored finder.
 };
-

@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file fontsearch.cpp
+ * @brief Implementation of FontSearch (the chainable glyph finder).
+ *        See fontsearch.h for the documented API.
+ */
+
 #include <QQmlEngine>
 #include <pse-common/utility.h>
 

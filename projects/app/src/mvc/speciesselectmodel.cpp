@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file speciesselectmodel.cpp
+ * @brief Implementation of SpeciesSelectModel. See speciesselectmodel.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 

@@ -70,6 +70,11 @@ labels rode high). All Twilight-driven, live-iterated.
 **Next:** continued Twilight review of the name editors; an end-to-end save/reopen verification pass. See
 `plans/next-steps.md`.
 
+**Documentation pass (started 2026-06-06):** A project-wide doc-comment effort is underway alongside the
+Doxygen setup. The **common** layer is fully documented + verified (the style reference). Remaining layers
+(savefile, db, app, qml) are queued and tracked in `reference/documentation-progress.md`; conventions in
+`reference/doc-comment-style.md`. This is a deliberate multi-session effort (~374 files).
+
 **Build/run notes:** C++ changed earlier in this arc (`FontSearch` 13v/13y, `PlayerBasics` +
 `PokemonBox` 13w, `settings.h` colors + `fontsdb.cpp` splice 13y) and **two new QML files were added to
 `app.qrc`** (`FlatToggle.qml`, `SimulatedTilesetCombo.qml`, 13z7) — all of those need a **Rebuild**.

@@ -1,3 +1,13 @@
+// Pokemart.qml -- the buy/sell shop screen (Pokemart and Game Corner).
+//
+// A shopping-cart UI over brg.marketModel. Four modes (whichMode 0-3) combine
+// buy/sell with money/coins currency; the header text and currency symbols adapt
+// per mode. The big block of JS helpers up top (maxMoney/curSym/signing/moneyStr/
+// etc.) handle currency formatting, signing, and out-of-range clamping for the two
+// currencies (money caps at 999,999; coins at 9,999). Each row is an item with a
+// -/amount/+ cart stepper; a floating summary box shows money start / cart cost /
+// leftover, and the bottom bar shows cart count or an error (no space / not enough
+// money). Footer: Buy/Sell toggle, Checkout (commits the cart), Currency toggle.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

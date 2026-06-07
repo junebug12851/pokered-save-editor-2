@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file missablesdb.cpp
+ * @brief Implementation of MissablesDB. See missablesdb.h for the API.
+ */
+
 #include <QJsonValue>
 #include <QJsonArray>
 #include <QQmlEngine>

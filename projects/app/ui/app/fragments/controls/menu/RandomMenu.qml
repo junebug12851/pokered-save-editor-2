@@ -1,3 +1,8 @@
+// RandomMenu.qml -- a small hidden "..." overflow button exposing a Randomize
+// action.
+//
+// A normally-invisible IconButtonSquare (vertical ellipsis) anchored to the right
+// of its parent; opening its Menu offers Randomize (emits randomize()) and Close.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

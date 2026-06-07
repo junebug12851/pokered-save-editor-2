@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+// SearchResults.qml --
 // The character picker, redesigned as a wrapping grid of same-height,
 // variable-width "pills" (Twilight's call) instead of a single-column list. Each
 // pill is tinted by its category color, and hovering one pops a tooltip with a

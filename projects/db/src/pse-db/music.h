@@ -27,43 +27,58 @@
 struct MapDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief One music track: its name and bank/id, plus the maps that use it.
+ *
+ * Plain-struct DB entry (public fields). @ref toMaps is a back-reference filled in
+ * when MapsDB deep-links. See db.md for the entry convention.
+ *
+ * @see MusicDB.
+ */
 struct DB_AUTOPORT MusicDBEntry {
-  MusicDBEntry();
-  MusicDBEntry(QJsonValue& data);
+  MusicDBEntry();                ///< Empty entry.
+  MusicDBEntry(QJsonValue& data); ///< Build from a JSON value.
 
-  QString name;
-  var8 bank = 0;
-  var8 id   = 0;
+  QString name;     ///< Track name (key).
+  var8 bank = 0;    ///< Audio bank.
+  var8 id   = 0;    ///< Track id within the bank.
 
-  QVector<MapDBEntry*> toMaps;
+  QVector<MapDBEntry*> toMaps; ///< Maps that play this track (back-ref, set by MapsDB).
 };
 
+/**
+ * @brief The music database -- every track, keyed by name.
+ *
+ * Standard DB-singleton with a name index (see CreditsDB / db.md).
+ *
+ * @see MusicDBEntry, DB.
+ */
 class DB_AUTOPORT MusicDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of tracks.
 
 public:
-  static MusicDB* inst();
+  static MusicDB* inst(); ///< The process-wide MusicDB singleton.
 
-  [[nodiscard]] const QVector<MusicDBEntry*> getStore() const;
-  [[nodiscard]] const QHash<QString, MusicDBEntry*> getInd() const;
-  [[nodiscard]] int getStoreSize() const;
+  [[nodiscard]] const QVector<MusicDBEntry*> getStore() const;       ///< All tracks.
+  [[nodiscard]] const QHash<QString, MusicDBEntry*> getInd() const;  ///< Name->entry index.
+  [[nodiscard]] int getStoreSize() const;                           ///< Track count.
 
-  Q_INVOKABLE MusicDBEntry* getStoreAt(int idx) const;
-  Q_INVOKABLE MusicDBEntry* getIndAt(const QString& key) const;
+  Q_INVOKABLE MusicDBEntry* getStoreAt(int idx) const;              ///< Track by store index (for QML).
+  Q_INVOKABLE MusicDBEntry* getIndAt(const QString& key) const;     ///< Track by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();   ///< Load tracks from JSON.
+  void index();  ///< Build the name->entry index.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  MusicDB();
+  MusicDB(); ///< Private -- use inst().
 
-  QVector<MusicDBEntry*> store;
-  QHash<QString, MusicDBEntry*> ind;
+  QVector<MusicDBEntry*> store;       ///< The loaded tracks.
+  QHash<QString, MusicDBEntry*> ind;  ///< Name->entry lookup.
 };

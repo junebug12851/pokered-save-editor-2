@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemmarketentrystoreitem.cpp
+ * @brief Implementation of ItemMarketEntryStoreItem. See itemmarketentrystoreitem.h.
+ */
+
 #include <QDebug>
 
 #include "./itemmarketentrystoreitem.h"

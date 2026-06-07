@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file flydb.cpp
+ * @brief Implementation of FlyDB. See flydb.h for the documented API.
+ */
+
 #include <QVector>
 #include <QJsonArray>
 #include <QQmlEngine>

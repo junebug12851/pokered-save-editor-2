@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file starterPokemon.cpp
+ * @brief Implementation of StarterPokemonDB. See starterPokemon.h for the API.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

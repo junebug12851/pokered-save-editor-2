@@ -2,6 +2,70 @@
 
 Things that were tried, failed, and should NOT be tried again.
 
+The first batch below comes from the 2019–2020 development history (reconstructed from the
+commit log; see `version.md` and `context/origins.md`). The rest are from the 2026 revival.
+
+---
+
+## Historical dead ends (2019–2020)
+
+These were each tried for real and abandoned. Hashes point at the commit in `version.md`.
+
+### The whole JavaScript implementation
+**Tried** (`7c59d67`, Oct 2019): rewrite the app in QML/QtQuick + JavaScript instead of C++,
+to make porting easier and the databases cleaner. A full JS save model was built (iterator,
+expanded data, fragments, sections, a PokemonDB, a text-search class).
+**Abandoned** (`df68676` / `03c5739`, Dec 2019): deleted entirely and rebuilt in C++, because
+**Qt's JS engine had degraded since being retargeted at QML/Quick** — it wasn't a good enough
+foundation for the back-end. **Lesson:** the data/back-end logic belongs in C++; QML is for the
+view only. Don't move model logic back into JS.
+
+### QML `Loader` + the object-chain navigation
+**Tried**: the first UI drove navigation with QML `Loader` plus `Pages.js`/`Style.js` and an
+object chain. **Abandoned** (`aba290a` — "Loader is a disaster and Object chain is a disaster";
+torn out in `cb36cbc`, ~2,000 lines deleted). **Replaced by** the C++ `Router` driven through
+the `Bridge` (`d0b4f41`) — the navigation system still in use. Don't reintroduce a
+Loader/Pages.js scheme.
+
+### QML drag-and-drop
+**Tried** (`53d69ea`, Feb 2020): drag-and-drop reordering in the item/bag lists. After 4–5
+hours it produced *nothing* working — Qt's QML drag-and-drop was judged disproportionately hard
+(little working documentation, much of it C++-only). **Abandoned**; reordering is done with
+explicit move up/down/top/bottom buttons instead (see `ItemBoxView`/`ItemsPane`). Don't sink
+time into QML drag-and-drop unless the Qt story has genuinely improved.
+
+### A separate "Core" library/DLL
+**Tried** (`e682f2e`): scaffold a standalone `core` library to split out shared bits as its own
+DLL. **Abandoned a few commits later** (`01f51d1`): a plugin-style core split wasn't needed and
+only added time on top of the refactor already underway. The shared helpers live in `common`
+instead. Don't re-split a `core` out of `common`.
+
+### Static libraries for the sub-projects
+**Tried**: building common/db/savefile as **static** libraries. **Abandoned** (`5cbd7ff`):
+something linked them out-of-order despite instructions not to, breaking the build. Switched to
+**shared** libraries (which is why each carries a `*_autoport.h` export header). Don't flip them
+back to static.
+
+### `QVariant` as a `QHash` value
+**Tried** (during the Era-1 C++ models): storing model data in `QHash<…, QVariant>`.
+**Failed** (`476ba72`): `QVariant` can't be used as a `QHash` value type. Moved toward
+`QString`-keyed/typed storage. (Filed here as a Qt limitation to remember — see
+`reference/qt-gotchas.md`.)
+
+### `Q_PROPERTY` on the plain data-model classes
+**Tried**: putting `Q_PROPERTY` directly on the early C++ data models. **Failed**
+(`bceb15e`/`99188ed`): it couldn't work the way it was wanted — QML/C++ interop forces
+Qt-ecosystem object shapes, and the ecosystem rejects modern-C++ object designs that compile
+fine outside it. **Resolved** by reshaping the models into plain structs registered with the Qt
+Meta Object System (`9fb2775`, `42da8d7`). This is the deep reason the data types are shaped the
+way they are.
+
+### Repeating random-name selection
+**Tried**: picking random names by pure random index. **Abandoned** (`12eb978` — "it just kept
+re-picking the same names"): switched to stepping through an incremental list, then to a
+no-repeat pool that auto-reloads when depleted (`7eff6bb`). Don't go back to naive random index
+selection for the name generators.
+
 ---
 
 ## Wrong theory: dataExpandedChanged signal parameter (session 4 theory, session 10 confirmed)

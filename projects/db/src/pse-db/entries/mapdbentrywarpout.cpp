@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentrywarpout.cpp
+ * @brief Implementation of MapDBEntryWarpOut. See mapdbentrywarpout.h.
+ */
+
 #include <QDebug>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file daycare.cpp
+ * @brief Implementation of Daycare -- the single deposited Pokemon.
+ *        See daycare.h for the documented API.
+ */
+
 #include "./daycare.h"
 #include "./fragments/pokemonbox.h"
 #include "./player/playerbasics.h"

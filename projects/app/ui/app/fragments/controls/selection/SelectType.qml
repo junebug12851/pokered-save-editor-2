@@ -1,3 +1,10 @@
+// SelectType.qml -- the elemental-type picker combo (a borderless Select* combo).
+//
+// A flat, borderless ComboBox over brg.typesModel (typeName/typeInd) with a hover
+// underline and a height-capped, scrollable popup. The type2 flag marks this as
+// the second (optional) type slot, which keeps the 0xFF "none" entry selectable;
+// for the first slot 0xFF is disabled. Shares the common Select* pattern (see
+// SelectItem.qml).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

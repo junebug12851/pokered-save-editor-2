@@ -13,6 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file gamedata.cpp
+ * @brief Implementation of GameData (the JSON asset loader). See gamedata.h.
+ */
 #include "gamedata.h"
 #include "../db.h"
 

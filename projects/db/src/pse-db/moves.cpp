@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file moves.cpp
+ * @brief Implementation of MovesDB and MoveDBEntry. See moves.h for the API.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

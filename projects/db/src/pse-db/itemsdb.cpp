@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemsdb.cpp
+ * @brief Implementation of ItemsDB. See itemsdb.h for the documented API.
+ */
+
 #include <QVector>
 #include <QJsonArray>
 #include <QQmlEngine>

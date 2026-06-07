@@ -1,3 +1,10 @@
+// NewFile.qml -- the "New / Open File" modal (the app's startup screen).
+//
+// Four TileButtons laid out as a 2x2-ish grid (sized by the *Height props): New
+// Blank File (brg.file.newFile), New Random File (randomizeExpansion), Load an
+// Existing File (openFile -- closes only if a file was actually chosen), and a
+// RecentFilesTile (recent-files list). ModalClose dismisses via the router;
+// CreditWork attributes the wallpaper art.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

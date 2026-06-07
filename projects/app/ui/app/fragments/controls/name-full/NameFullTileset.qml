@@ -1,3 +1,9 @@
+// NameFullTileset.qml -- the full keyboard's borderless tileset picker combo.
+//
+// A flat, borderless ComboBox of named tilesets that sets
+// brg.settings.previewTileset. This is the full-keyboard copy of
+// SimulatedTilesetCombo -- keep its tileset list in sync with that one and
+// TilesetMenu.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

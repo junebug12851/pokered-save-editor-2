@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file filemanagement.cpp
+ * @brief Implementation of FileManagement -- file new/open/save/reopen and the
+ *        recent-files list (disk I/O around SaveFile). See filemanagement.h.
+ */
+
 #include <QFileDialog>
 
 #include "./filemanagement.h"

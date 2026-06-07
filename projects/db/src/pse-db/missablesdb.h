@@ -23,38 +23,46 @@
 class MissableDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief The missables database -- metadata for the missable-sprite flags, keyed by name.
+ *
+ * The DB-side companion to the save's WorldMissables bitfield: names/describes each
+ * missable sprite. Standard DB-singleton with a name index and deepLink(). See
+ * CreditsDB / db.md; the entry type is in `entries/missabledbentry.h`.
+ *
+ * @see MissableDBEntry, WorldMissables (the save-side flags), DB.
+ */
 class DB_AUTOPORT MissablesDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of missable definitions.
 
 public:
   // Get Instance
-  static MissablesDB* inst();
+  static MissablesDB* inst(); ///< The process-wide MissablesDB singleton.
 
   // Get Properties, includes QML array helpers
-  const QVector<MissableDBEntry*> getStore() const;
-  const QHash<QString, MissableDBEntry*> getInd() const;
-  int getStoreSize() const;
+  const QVector<MissableDBEntry*> getStore() const;       ///< All missable definitions.
+  const QHash<QString, MissableDBEntry*> getInd() const;  ///< Name->entry index.
+  int getStoreSize() const;                               ///< Missable count.
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE MissableDBEntry* getStoreAt(const int ind) const;
-  Q_INVOKABLE MissableDBEntry* getIndAt(const QString val) const;
+  Q_INVOKABLE MissableDBEntry* getStoreAt(const int ind) const;   ///< Missable by store index (for QML).
+  Q_INVOKABLE MissableDBEntry* getIndAt(const QString val) const; ///< Missable by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load missables from JSON.
+  void index();    ///< Build the name->entry index.
+  void deepLink(); ///< Resolve each missable's cross-DB links.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
   // Singleton Constructor
-  MissablesDB();
+  MissablesDB(); ///< Private -- use inst().
 
-  QVector<MissableDBEntry*> store;
-  QHash<QString, MissableDBEntry*> ind;
+  QVector<MissableDBEntry*> store;       ///< The loaded missables.
+  QHash<QString, MissableDBEntry*> ind;  ///< Name->entry lookup.
 };
-

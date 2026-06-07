@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapsearch.cpp
+ * @brief Implementation of MapSearch (the chainable map finder behind map
+ *        randomization). See mapsearch.h for the documented API.
+ */
+
 #include <QDebug>
 #include <QQmlEngine>
 

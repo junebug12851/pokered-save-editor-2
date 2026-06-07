@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file world.cpp
+ * @brief Implementation of World -- the global, map-independent state container.
+ *        See world.h for the documented API.
+ */
 #include "./world.h"
 #include "./worldcompleted.h"
 #include "./worldevents.h"

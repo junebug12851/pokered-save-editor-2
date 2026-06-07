@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file settings.cpp
+ * @brief Implementation of Settings -- UI theme/layout state. See settings.h.
+ */
+
 #include "./settings.h"
 #include <pse-db/mapsdb.h>
 #include <pse-db/entries/mapdbentry.h>

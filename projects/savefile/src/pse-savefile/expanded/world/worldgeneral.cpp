@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file worldgeneral.cpp
+ * @brief Implementation of WorldGeneral (and the Options / LetterDelay
+ *        sub-objects). See worldgeneral.h for the documented API.
+ */
+
 #include "./worldgeneral.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

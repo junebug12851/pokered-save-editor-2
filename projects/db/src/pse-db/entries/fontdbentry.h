@@ -29,42 +29,53 @@ class FontsDB;
 // There are 255 font options although most of them are "invalid" and thus
 // use the tilemap.
 
+/**
+ * @brief One in-game font character: its code, output text, and classification flags.
+ *
+ * QObject-getter style DB entry. Beyond the code/name it carries a set of boolean
+ * classification flags (control/picture/variable/single-/multi-char/normal) that
+ * the on-screen keyboard and FontSearch use to filter and categorise glyphs. The
+ * field comments below define each flag. FontSearch is a friend so it can read the
+ * filter fields.
+ *
+ * @see FontsDB, FontSearch, the name editors / keyboard.
+ */
 struct DB_AUTOPORT FontDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(int ind READ getInd CONSTANT)
-  Q_PROPERTY(QString name READ getName CONSTANT)
-  Q_PROPERTY(bool shorthand READ getShorthand CONSTANT)
-  Q_PROPERTY(bool picture READ getPicture CONSTANT)
-  Q_PROPERTY(int length READ getLength CONSTANT)
-  Q_PROPERTY(QString alias READ getAlias CONSTANT)
-  Q_PROPERTY(QString tip READ getTip CONSTANT)
-  Q_PROPERTY(bool control READ getControl CONSTANT)
-  Q_PROPERTY(bool multiChar READ getMultiChar CONSTANT)
-  Q_PROPERTY(bool variable READ getVariable CONSTANT)
-  Q_PROPERTY(bool singleChar READ getSingleChar CONSTANT)
-  Q_PROPERTY(bool normal READ getNormal CONSTANT)
+  Q_PROPERTY(int ind READ getInd CONSTANT)              ///< Font code.
+  Q_PROPERTY(QString name READ getName CONSTANT)        ///< Output text.
+  Q_PROPERTY(bool shorthand READ getShorthand CONSTANT) ///< Output is shorthand for longer text.
+  Q_PROPERTY(bool picture READ getPicture CONSTANT)     ///< Uses the tilemap, not the font.
+  Q_PROPERTY(int length READ getLength CONSTANT)        ///< Output length (or max length).
+  Q_PROPERTY(QString alias READ getAlias CONSTANT)      ///< Alternate display name.
+  Q_PROPERTY(QString tip READ getTip CONSTANT)          ///< Glyph details/tooltip.
+  Q_PROPERTY(bool control READ getControl CONSTANT)     ///< Control character.
+  Q_PROPERTY(bool multiChar READ getMultiChar CONSTANT) ///< Outputs more than one char.
+  Q_PROPERTY(bool variable READ getVariable CONSTANT)   ///< Outputs a variable.
+  Q_PROPERTY(bool singleChar READ getSingleChar CONSTANT) ///< Outputs a single char.
+  Q_PROPERTY(bool normal READ getNormal CONSTANT)       ///< In-game accessible normal char.
 
 public:
-  int getInd() const;
-  const QString getName() const;
-  bool getShorthand() const;
-  bool getPicture() const;
-  int getLength() const;
-  const QString getAlias() const;
-  const QString getTip() const;
-  bool getControl() const;
-  bool getMultiChar() const;
-  bool getVariable() const;
-  bool getSingleChar() const;
-  bool getNormal() const;
+  int getInd() const;            ///< @see ind property.
+  const QString getName() const; ///< @see name property.
+  bool getShorthand() const;     ///< @see shorthand property.
+  bool getPicture() const;       ///< @see picture property.
+  int getLength() const;         ///< @see length property.
+  const QString getAlias() const; ///< @see alias property.
+  const QString getTip() const;  ///< @see tip property.
+  bool getControl() const;       ///< @see control property.
+  bool getMultiChar() const;     ///< @see multiChar property.
+  bool getVariable() const;      ///< @see variable property.
+  bool getSingleChar() const;    ///< @see singleChar property.
+  bool getNormal() const;        ///< @see normal property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  FontDBEntry();
-  FontDBEntry(const QJsonValue& data);
-  void qmlRegister() const;
+  FontDBEntry();                    ///< Empty entry (built by FontsDB).
+  FontDBEntry(const QJsonValue& data); ///< Build from a JSON value.
+  void qmlRegister() const;         ///< Register with QML.
 
   // Optional values are only present when true, so we simplify things
   // and mark then false unless they're present skipping dealing with variant
@@ -85,4 +96,3 @@ protected:
   friend class FontsDB;
   friend class FontSearch; // reads filter fields in deepLink
 };
-

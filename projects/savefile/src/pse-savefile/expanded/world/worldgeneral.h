@@ -21,12 +21,17 @@
 
 class SaveFile;
 
+/**
+ * @brief In-game Options menu settings (text speed, battle style, animations).
+ *
+ * A small sub-object of WorldGeneral mirroring the player's chosen options.
+ */
 class SAVEFILE_AUTOPORT Options : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(int textSlowness MEMBER textSlowness NOTIFY textSlownessChanged)
-  Q_PROPERTY(bool battleStyleSet MEMBER battleStyleSet NOTIFY battleStyleSetChanged)
-  Q_PROPERTY(bool battleAnimOff MEMBER battleAnimOff NOTIFY battleAnimOffChanged)
+  Q_PROPERTY(int textSlowness MEMBER textSlowness NOTIFY textSlownessChanged)       ///< Text speed setting.
+  Q_PROPERTY(bool battleStyleSet MEMBER battleStyleSet NOTIFY battleStyleSetChanged) ///< Battle style "Set" (vs "Shift").
+  Q_PROPERTY(bool battleAnimOff MEMBER battleAnimOff NOTIFY battleAnimOffChanged)   ///< Battle animations off.
 
 signals:
   void textSlownessChanged();
@@ -34,41 +39,53 @@ signals:
   void battleAnimOffChanged();
 
 public:
-  int textSlowness;
-  bool battleStyleSet;
-  bool battleAnimOff;
+  int textSlowness;    ///< @see textSlowness property.
+  bool battleStyleSet; ///< @see battleStyleSet property.
+  bool battleAnimOff;  ///< @see battleAnimOff property.
 };
 
+/**
+ * @brief The text letter-printing delay flags (paired with the Options text speed).
+ */
 class SAVEFILE_AUTOPORT LetterDelay : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(bool normalDelay MEMBER normalDelay NOTIFY normalDelayChanged)
-  Q_PROPERTY(bool dontDelay MEMBER dontDelay NOTIFY dontDelayChanged)
+  Q_PROPERTY(bool normalDelay MEMBER normalDelay NOTIFY normalDelayChanged) ///< Normal per-letter delay.
+  Q_PROPERTY(bool dontDelay MEMBER dontDelay NOTIFY dontDelayChanged)       ///< Skip the per-letter delay.
 
 signals:
   void normalDelayChanged();
   void dontDelayChanged();
 
 public:
-  bool normalDelay;
-  bool dontDelay;
+  bool normalDelay; ///< @see normalDelay property.
+  bool dontDelay;   ///< @see dontDelay property.
 };
 
+/**
+ * @brief General world settings: last maps plus the Options / LetterDelay objects.
+ *
+ * Holds @ref lastBlackoutMap (where a blackout sends you) and @ref lastMap, and
+ * nests the @ref options and @ref letterDelay sub-objects. Standard expanded-node
+ * convention (see SaveFileExpanded).
+ *
+ * @see World, Options, LetterDelay.
+ */
 class SAVEFILE_AUTOPORT WorldGeneral : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int lastBlackoutMap MEMBER lastBlackoutMap NOTIFY lastBlackoutMapChanged)
-  Q_PROPERTY(int lastMap MEMBER lastMap NOTIFY lastMapChanged)
-  Q_PROPERTY(Options* options MEMBER options NOTIFY optionsChanged)
-  Q_PROPERTY(LetterDelay* letterDelay MEMBER letterDelay NOTIFY letterDelayChanged)
+  Q_PROPERTY(int lastBlackoutMap MEMBER lastBlackoutMap NOTIFY lastBlackoutMapChanged) ///< Map a blackout returns you to.
+  Q_PROPERTY(int lastMap MEMBER lastMap NOTIFY lastMapChanged)                          ///< Last map visited.
+  Q_PROPERTY(Options* options MEMBER options NOTIFY optionsChanged)                     ///< In-game options.
+  Q_PROPERTY(LetterDelay* letterDelay MEMBER letterDelay NOTIFY letterDelayChanged)     ///< Letter-delay flags.
 
 public:
   WorldGeneral(SaveFile* saveFile = nullptr);
   virtual ~WorldGeneral();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand general world settings from the save.
+  void save(SaveFile* saveFile);           ///< Flatten general world settings to the save.
 
 signals:
   void lastBlackoutMapChanged();
@@ -77,13 +94,12 @@ signals:
   void letterDelayChanged();
 
 public slots:
-  void reset();
-  void randomize();
+  void reset();     ///< Blank these settings.
+  void randomize(); ///< Randomize these settings.
 
 public:
-  int lastBlackoutMap;
-  int lastMap;
-  Options* options;
-  LetterDelay* letterDelay;
+  int lastBlackoutMap;       ///< @see lastBlackoutMap property.
+  int lastMap;               ///< @see lastMap property.
+  Options* options;          ///< @see options property.
+  LetterDelay* letterDelay;  ///< @see letterDelay property.
 };
-

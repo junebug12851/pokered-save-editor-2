@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file hiddenitemdbentry.cpp
+ * @brief Implementation of HiddenItemDBEntry. See hiddenitemdbentry.h.
+ */
+
 #include <QQmlEngine>
 #include <QDebug>
 #include <pse-common/utility.h>

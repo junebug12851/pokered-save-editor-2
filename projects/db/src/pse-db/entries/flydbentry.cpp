@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file flydbentry.cpp
+ * @brief Implementation of FlyDBEntry. See flydbentry.h.
+ */
+
 #include <QtDebug>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

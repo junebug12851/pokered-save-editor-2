@@ -1,3 +1,10 @@
+// NameDisplayMenu.qml -- the right-click/overflow menu for a name display (with
+// tileset submenu).
+//
+// A Menu offering Randomize Name (emits changeStr with a random player/Pokemon
+// name), Toggle Example, Randomize Example (only when hasBox), the Simulated
+// Tileset submenu (TilesetMenu), and Close. Compare NameDisplayMenuNoTileset,
+// which drops the tileset submenu.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

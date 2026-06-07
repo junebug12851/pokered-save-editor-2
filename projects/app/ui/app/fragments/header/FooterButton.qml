@@ -3,7 +3,10 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Controls
 
-// Button that goes in different footers
+// FooterButton.qml -- a single flat text+icon button used inside the app footers.
+//
+// The shared button building-block for AppFooterBtn1/2/3. Zero insets so the
+// buttons tile edge-to-edge across the footer; capitalized label beside the icon.
 Button {
   topInset: 0
   bottomInset: 0

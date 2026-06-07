@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemstoragemodel.cpp
+ * @brief Implementation of ItemStorageModel. See itemstoragemodel.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 #include <QDebug>

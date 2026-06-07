@@ -21,30 +21,38 @@ class PokemonDBEntry;
 class MapsDB;
 
 // A Pokemon that can be battled
+/**
+ * @brief A map sprite that is a static, battleable Pokemon (type POKEMON).
+ *
+ * Adds the @ref pokemon species and @ref level (species resolved to
+ * @ref toPokemon in deepLink) to MapDBEntrySprite. type() returns POKEMON.
+ * See db.md.
+ *
+ * @see MapDBEntrySprite (base), PokemonDBEntry.
+ */
 struct DB_AUTOPORT MapDBEntrySpritePokemon : public MapDBEntrySprite
 {
   Q_OBJECT
-  Q_PROPERTY(QString getPokemon READ getPokemon CONSTANT)
-  Q_PROPERTY(int getLevel READ getLevel CONSTANT)
-  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon CONSTANT)
+  Q_PROPERTY(QString getPokemon READ getPokemon CONSTANT)  ///< Species name.
+  Q_PROPERTY(int getLevel READ getLevel CONSTANT)          ///< Encounter level.
+  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon CONSTANT) ///< Resolved species.
 
 public:
-  virtual SpriteType type() const;
-  const QString getPokemon() const;
-  int getLevel() const;
-  PokemonDBEntry* getToPokemon() const;
+  virtual SpriteType type() const;       ///< Returns POKEMON.
+  const QString getPokemon() const;      ///< @see getPokemon property.
+  int getLevel() const;                  ///< @see getLevel property.
+  PokemonDBEntry* getToPokemon() const;  ///< @see getToPokemon property.
 
 protected:
-  MapDBEntrySpritePokemon(const QJsonValue& data, MapDBEntry* const parent);
-  virtual void deepLink();
-  virtual void qmlRegister() const;
+  MapDBEntrySpritePokemon(const QJsonValue& data, MapDBEntry* const parent); ///< Build from JSON under @p parent.
+  virtual void deepLink();          ///< Resolve the species link.
+  virtual void qmlRegister() const; ///< Register with QML.
 
   // Pokemon Details
-  QString pokemon = "";
-  int level = -1;
+  QString pokemon = ""; ///< Species name (read via getPokemon()).
+  int level = -1;       ///< Encounter level.
 
-  PokemonDBEntry* toPokemon = nullptr;
+  PokemonDBEntry* toPokemon = nullptr; ///< Resolved species (deepLink).
 
   friend class MapDBEntry;
 };
-

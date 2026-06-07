@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file types.cpp
+ * @brief Implementation of TypesDB and TypeDBEntry. See types.h.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

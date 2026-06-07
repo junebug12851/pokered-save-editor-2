@@ -1,3 +1,7 @@
+// MovesTab.qml -- the "Moves" tab of the Pokemon details editor.
+//
+// Bound to boxData. A column of four PokemonMoveSel rows, one per move slot
+// (boxData.movesAt(0..3)).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file utility.cpp
+ * @brief Implementation of Utility. See utility.h for the documented API.
+ */
+
 #include <QByteArray>
 #include <QStringList>
 #include <QQmlContext>
@@ -22,6 +27,7 @@
 #include "./utility.h"
 #include "./random.h"
 
+// Meyers singleton: the static local is initialised once, on first call.
 Utility* Utility::inst()
 {
   static Utility* _inst = new Utility;
@@ -37,6 +43,7 @@ Random* Utility::random()
 // https://stackoverflow.com/questions/45772951/converting-qstring-to-ascii-value-vice-versa-in-qt
 const QString Utility::encodeBeforeUrl(const QString beforeStr) const
 {
+  // Emit each character's Unicode code point as base-16, space separated.
   QStringList numberString;
   for(const auto character: beforeStr){
       numberString << QString::number(character.unicode(), 16);
@@ -49,6 +56,7 @@ const QString Utility::encodeBeforeUrl(const QString beforeStr) const
 // https://stackoverflow.com/questions/45772951/converting-qstring-to-ascii-value-vice-versa-in-qt
 const QString Utility::decodeAfterUrl(QString beforeStr) const
 {
+  // Inverse of encodeBeforeUrl(): drop the spaces, read the hex back to bytes.
   return QByteArray::fromHex(beforeStr.remove(" ").toLocal8Bit());
 }
 
@@ -60,6 +68,7 @@ void Utility::qmlProtectUtil(const QObject* const obj, const QQmlEngine* const e
 
 void Utility::qmlProtect(const QQmlEngine* const engine) const
 {
+  // Protect ourselves, then cascade to the Random we expose so neither is GC'd.
   qmlProtectUtil(this, engine);
   Random::inst()->qmlProtect(engine);
 }
@@ -72,6 +81,7 @@ void Utility::qmlHook(QQmlContext* const context) const
 
 void Utility::qmlRegister() const
 {
+  // Idempotent: register the QML type at most once per process.
   static bool registered = false;
   if(registered)
     return;
@@ -82,6 +92,7 @@ void Utility::qmlRegister() const
 
 Utility::Utility()
 {
+  // Register our own QML type, then ensure Random exists (we expose it).
   qmlRegister();
   Random::inst();
 }

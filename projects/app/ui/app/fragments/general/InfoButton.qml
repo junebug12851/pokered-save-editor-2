@@ -1,3 +1,8 @@
+// InfoButton.qml -- a small round "i" help button with an attached MainToolTip.
+//
+// Pinned near the top-left of its parent; set toolTipText for the help text. This
+// variant is always visible (followGlobalSetting defaults false) -- compare
+// InfoButtonReg, which only appears while global tooltips are enabled.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

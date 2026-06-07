@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file db.cpp
+ * @brief Implementation of DB -- the aggregate and the load/index/deep-link
+ *        bootstrap sequence. See db.h for the documented API.
+ */
+
 #include <QQmlEngine>
 #include <QElapsedTimer>
 #include <QDebug>

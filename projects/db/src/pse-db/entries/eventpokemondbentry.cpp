@@ -13,6 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file eventpokemondbentry.cpp
+ * @brief Implementation of EventPokemonDBEntry. See eventpokemondbentry.h.
+ */
 #include "eventpokemondbentry.h"
 
 #include <QJsonDocument>

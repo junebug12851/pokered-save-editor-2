@@ -17,6 +17,21 @@
 #include <QtCore/qglobal.h>
 #include <QMetaType>
 
+/**
+ * @file savefile_autoport.h
+ * @brief Import/export macro for the @c savefile library, plus the central list
+ *        of QObject types kept deliberately opaque to QML.
+ *
+ * Two jobs: define @ref SAVEFILE_AUTOPORT (dllexport/dllimport, like every
+ * layer's autoport header), and declare the save-tree QObject pointers that QML
+ * never traverses as opaque -- a build-time optimisation explained in detail
+ * below.
+ */
+
+/**
+ * @def SAVEFILE_AUTOPORT
+ * @brief Expands to the correct dllexport/dllimport decoration for this library.
+ */
 #if defined(SAVEFILE_LIBRARY)
 #  define SAVEFILE_AUTOPORT Q_DECL_EXPORT
 #else

@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file abstracthiddenitemdb.cpp
+ * @brief Implementation of AbstractHiddenItemDB (base for hidden items/coins).
+ *        See abstracthiddenitemdb.h for the documented API.
+ */
+
 #include <pse-common/utility.h>
 #include <QVector>
 #include <QJsonArray>

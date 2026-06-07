@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file areageneral.cpp
+ * @brief Implementation of AreaGeneral -- contrast, letter delay, playtime
+ *        toggle. See areageneral.h for the documented API.
+ */
 #include "areageneral.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

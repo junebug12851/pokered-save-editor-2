@@ -26,44 +26,60 @@
 struct PokemonDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief One in-game (NPC) trade definition: what you give and get.
+ *
+ * Plain-struct DB entry. @ref toGive / @ref toGet resolve the species in
+ * deepLink(). See db.md for the entry convention.
+ *
+ * @see TradesDB.
+ */
 struct DB_AUTOPORT TradeDBEntry {
-  TradeDBEntry();
-  TradeDBEntry(QJsonValue& data);
-  void deepLink();
+  TradeDBEntry();                ///< Empty entry.
+  TradeDBEntry(QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();              ///< Resolve the give/get species links.
 
-  QString give;
-  QString get;
-  var8    textId   = 0;
-  QString nickname;
-  bool    unused   = false;
+  QString give;        ///< Species name you give (resolved to @ref toGive).
+  QString get;         ///< Species name you get (resolved to @ref toGet).
+  var8    textId   = 0; ///< Trade dialogue text id.
+  QString nickname;    ///< Nickname the received mon comes with.
+  bool    unused   = false; ///< Whether this trade slot is unused.
 
-  PokemonDBEntry* toGive = nullptr;
-  PokemonDBEntry* toGet  = nullptr;
+  PokemonDBEntry* toGive = nullptr; ///< Resolved species you give (deepLink).
+  PokemonDBEntry* toGet  = nullptr; ///< Resolved species you get (deepLink).
 };
 
+/**
+ * @brief The in-game trades database.
+ *
+ * Standard DB-singleton (no key index; trades are accessed by store index). See
+ * db.md.
+ *
+ * @see TradeDBEntry, DB.
+ */
 class DB_AUTOPORT TradesDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of trades.
 
 public:
-  static TradesDB* inst();
+  static TradesDB* inst(); ///< The process-wide TradesDB singleton.
 
-  [[nodiscard]] const QVector<TradeDBEntry*> getStore() const;
-  [[nodiscard]] int getStoreSize() const;
+  [[nodiscard]] const QVector<TradeDBEntry*> getStore() const; ///< All trades.
+  [[nodiscard]] int getStoreSize() const;                      ///< Trade count.
 
-  Q_INVOKABLE TradeDBEntry* getStoreAt(int idx) const;
+  Q_INVOKABLE TradeDBEntry* getStoreAt(int idx) const;         ///< Trade by store index (for QML).
 
 public slots:
-  void load();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load trades from JSON.
+  void deepLink(); ///< Resolve each trade's species links.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  TradesDB();
+  TradesDB(); ///< Private -- use inst().
 
-  QVector<TradeDBEntry*> store;
+  QVector<TradeDBEntry*> store; ///< The loaded trades.
 };

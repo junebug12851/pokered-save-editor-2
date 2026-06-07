@@ -1,3 +1,8 @@
+// PagedPicker.qml -- the left pane of the full keyboard (character picker).
+//
+// A non-interactive SwipeView over two pages selected by showTileset (driven by
+// the header's View toggle): the SearchRoot character list (page 0) and the
+// TilesetPicker grid (page 1). Both edit the shared str and feed a DetailView.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

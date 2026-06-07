@@ -1,3 +1,9 @@
+// RecentFilesTile.qml -- the "recent files" tile on the NewFile modal.
+//
+// A TileButton that, when clicked, hides itself and opens an in-place Popup
+// listing brg.recentFilesModel. Picking an entry calls brg.file.openFileRecent()
+// and emits completed() (the modal closes); the special -1 index clears the recent
+// list. Closing the popup restores the tile's opacity.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

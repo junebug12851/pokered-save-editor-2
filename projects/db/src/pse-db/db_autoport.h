@@ -16,6 +16,21 @@
 #pragma once
 #include <QtCore/qglobal.h>
 
+/**
+ * @file db_autoport.h
+ * @brief Import/export macro for the @c db library, plus the central list of DB
+ *        entry pointer types declared opaque to Qt's metatype system.
+ *
+ * The db counterpart to savefile_autoport.h. Unlike the savefile tree (whose
+ * objects QML traverses, so they must be complete types), DB entry pointers are
+ * declared opaque here once and shared library-wide -- QML reaches DB entries
+ * through invokable accessors, not by traversing a deep property chain.
+ */
+
+/**
+ * @def DB_AUTOPORT
+ * @brief Expands to the correct dllexport/dllimport decoration for this library.
+ */
 #if defined(DB_LIBRARY)
 #  define DB_AUTOPORT Q_DECL_EXPORT
 #else

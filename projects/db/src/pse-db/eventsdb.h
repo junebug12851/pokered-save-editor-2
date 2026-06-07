@@ -28,38 +28,46 @@
 class EventDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief The story-events database -- metadata for the 508 event flags, keyed by name.
+ *
+ * The DB-side companion to the save's WorldEvents bitfield: it names and describes
+ * each known event flag. Standard DB-singleton with a name index and deepLink().
+ * See CreditsDB / db.md; the entry type is in `entries/eventdbentry.h`.
+ *
+ * @see EventDBEntry, WorldEvents (the save-side flags), DB.
+ */
 class DB_AUTOPORT EventsDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of event definitions.
 
 public:
   // Get Instance
-  static EventsDB* inst();
+  static EventsDB* inst(); ///< The process-wide EventsDB singleton.
 
   // Get Properties, includes QML array helpers
-  const QVector<EventDBEntry*> getStore() const;
-  const QHash<QString, EventDBEntry*> getInd() const;
-  int getStoreSize() const;
+  const QVector<EventDBEntry*> getStore() const;       ///< All event definitions.
+  const QHash<QString, EventDBEntry*> getInd() const;  ///< Name->entry index.
+  int getStoreSize() const;                            ///< Event count.
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE EventDBEntry* getStoreAt(const int ind) const;
-  Q_INVOKABLE EventDBEntry* getIndAt(const QString val) const;
+  Q_INVOKABLE EventDBEntry* getStoreAt(const int ind) const;   ///< Event by store index (for QML).
+  Q_INVOKABLE EventDBEntry* getIndAt(const QString val) const; ///< Event by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load events from JSON.
+  void index();    ///< Build the name->entry index.
+  void deepLink(); ///< Resolve each event's cross-DB links.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
   // Singleton Constructor
-  EventsDB();
+  EventsDB(); ///< Private -- use inst().
 
-  QVector<EventDBEntry*> store;
-  QHash<QString, EventDBEntry*> ind;
+  QVector<EventDBEntry*> store;       ///< The loaded events.
+  QHash<QString, EventDBEntry*> ind;  ///< Name->entry lookup.
 };
-

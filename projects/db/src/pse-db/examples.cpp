@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file examples.cpp
+ * @brief Implementation of Examples (the example/preset aggregate).
+ *        See examples.h for the documented API.
+ */
+
 #include <QQmlEngine>
 #include <pse-common/utility.h>
 #include "examples.h"

@@ -1,3 +1,18 @@
+// NameDisplay.qml -- the in-game-accurate name renderer + inline name editor.
+//
+// Renders `str` as a live Game Boy font image via the "image://font/..." provider
+// (animated 8-frame, optional dialog box, 1/2 line, indoor/outdoor tileset), and
+// hosts the whole name-editing flow: a pen button opens Stage-2 (a centered
+// quick-edit Popup with a Simulated tileset/Outdoor preview, a Name/Example
+// toggle, a NameEdit field, and byte-count feedback), which can hand off to the
+// full keyboard (FullKeyboard.qml). Emits committed(val) once per edit session
+// (atomic), so expensive/byte-touching writes (player-name OT cascade, rival)
+// persist on commit rather than per keystroke. Many subtle invariants are
+// documented inline by Twilight -- the example demo being LOCAL to the editor (so
+// the row only ever shows the name), the single-commit suppression when handing
+// off to the keyboard, and seeding the field on open because a text: binding
+// breaks after first keystroke. Leave those comments; they encode hard-won
+// behavior. See notes/reference/ui-patterns.md.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

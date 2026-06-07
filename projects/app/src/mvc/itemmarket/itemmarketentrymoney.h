@@ -16,6 +16,12 @@
 #pragma once
 #include "./itemmarketentry.h"
 
+/**
+ * @brief Market row representing the player's money/coins balance.
+ *
+ * An ItemMarketEntry subtype; the overrides implement the base's virtual table for
+ * a money/coins row. checkout() applies the balance change. See ItemMarketEntry.
+ */
 class ItemMarketEntryMoney : public ItemMarketEntry
 {
   Q_OBJECT
@@ -24,18 +30,17 @@ public:
   ItemMarketEntryMoney();
   virtual ~ItemMarketEntryMoney();
 
-  virtual QString _name() override;
-  virtual int _inStockCount() override;
-  virtual bool _canSell() override;
-  virtual int _itemWorth() override;
-  virtual QString _whichType() override;
-  virtual int onCartLeft() override;
-  virtual int stackCount() override;
+  virtual QString _name() override;       ///< @copydoc ItemMarketEntry::_name
+  virtual int _inStockCount() override;   ///< @copydoc ItemMarketEntry::_inStockCount
+  virtual bool _canSell() override;       ///< @copydoc ItemMarketEntry::_canSell
+  virtual int _itemWorth() override;      ///< @copydoc ItemMarketEntry::_itemWorth
+  virtual QString _whichType() override;  ///< @copydoc ItemMarketEntry::_whichType
+  virtual int onCartLeft() override;      ///< @copydoc ItemMarketEntry::onCartLeft
+  virtual int stackCount() override;      ///< @copydoc ItemMarketEntry::stackCount
 
 public slots:
-  virtual void checkout() override;
+  virtual void checkout() override; ///< Apply the money/coins change.
 
 public:
-  static constexpr const char* type = "money";
+  static constexpr const char* type = "money"; ///< This row's type key.
 };
-

@@ -14,10 +14,20 @@
   * limitations under the License.
 */
 
+/**
+ * @file random.cpp
+ * @brief Implementation of Random. See random.h for the documented API.
+ *
+ * Everything here is a thin layer over QRandomGenerator::bounded(). The only
+ * real logic is the degenerate-range guard in the range helpers and the
+ * once-only QML registration latch.
+ */
+
 #include "./random.h"
 #include "utility.h"
 #include <QQmlEngine>
 
+// Meyers singleton: the static local is initialised once, on first call.
 Random* Random::inst()
 {
   static Random* _inst = new Random;
@@ -31,14 +41,18 @@ float Random::range(const float end) const
 
 int Random::rangeInclusive(const int start, const int end) const
 {
+  // Guard degenerate/inverted ranges: treat them as the fixed value `start`
+  // rather than letting bounded() receive a non-positive span.
   if(start == end || start > end)
     return start;
 
+  // bounded(lo, hi) is half-open, so +1 makes the upper bound inclusive.
   return rnd->bounded(start, end+1);
 }
 
 int Random::rangeExclusive(const int start, const int end) const
 {
+  // Same degenerate-range guard as rangeInclusive().
   if(start == end || start > end)
     return start;
 
@@ -47,6 +61,7 @@ int Random::rangeExclusive(const int start, const int end) const
 
 bool Random::chanceFailure(const int percent) const
 {
+  // Roll 0..100; failure when the roll exceeds the success threshold.
   return rangeInclusive(0, 100) >= percent;
 }
 
@@ -57,6 +72,7 @@ bool Random::chanceFailure(const float percent) const
 
 bool Random::chanceSuccess(const int percent) const
 {
+  // Roll 0..100; success when the roll is within the threshold.
   return rangeInclusive(0, 100) <= percent;
 }
 
@@ -82,6 +98,7 @@ void Random::qmlProtect(const QQmlEngine* const engine) const
 
 void Random::qmlRegister() const
 {
+  // Idempotent: register the QML type at most once per process.
   static bool registered = false;
   if(registered)
     return;

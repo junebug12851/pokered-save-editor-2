@@ -1,3 +1,8 @@
+// SelectNature.qml -- the nature picker combo (a borderless Select* combo).
+//
+// A flat, borderless ComboBox over brg.natureSelectModel (natureName/natureInd)
+// with a hover underline and a height-capped, scrollable popup. Shares the common
+// Select* pattern (see SelectItem.qml).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

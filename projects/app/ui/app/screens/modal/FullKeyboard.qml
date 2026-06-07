@@ -1,3 +1,14 @@
+// FullKeyboard.qml -- the full-screen name-entry modal (the "big keyboard").
+//
+// The large name editor opened from a NameDisplay row. Left side is a PagedPicker
+// (the on-screen character grid / tileset); right side is a DetailView (per-char
+// detail). The header (NameFullHeader) carries the editable str and the tileset
+// View toggle; the footer previews the name -- either bare or inside a random
+// example sentence (toggleExample / reUpdateExample pull samples from
+// brg.randomExamplePlayer / randomExampleRival / randomExamplePokemon). The `str`
+// property is the single source of truth, fanned out to header, picker, and
+// preview on change. The two longer // comments explain why the example demo is
+// locally owned and why the preview uses anchors (not a layout) -- keep them.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

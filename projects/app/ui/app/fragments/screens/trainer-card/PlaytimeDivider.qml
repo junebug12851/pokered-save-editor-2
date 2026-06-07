@@ -1,3 +1,7 @@
+// PlaytimeDivider.qml -- the ":" separator between playtime fields.
+//
+// A simple colon Text, dimmed when the clock is maxed out
+// (playtime.clockMaxed), matching the sub-fields' disabled look.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

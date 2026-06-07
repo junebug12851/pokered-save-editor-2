@@ -1,0 +1,179 @@
+# Doxyfile for Pokered Save Editor 2
+# ----------------------------------------------------------------------------
+# Generates HTML API documentation for the C++ source only. QML (projects/app/ui)
+# is intentionally NOT documented by Doxygen — see notes/reference/documentation.md
+# and notes/decisions/architecture.md for why (qdoc's comment syntax was rejected
+# on UX grounds; QML is documented with plain human comments instead).
+#
+# Run from the repository root:
+#     doxygen Doxyfile
+# Output is written to docs/html/index.html (git-ignored).
+#
+# This is a curated Doxyfile: any option not listed here takes Doxygen's default.
+# To migrate it forward after a Doxygen upgrade:  doxygen -u Doxyfile
+# ----------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------
+# Project
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "Pokered Save Editor 2"
+PROJECT_BRIEF          = "Pokemon Red & Blue save file editor - Qt 6 C++/QML"
+PROJECT_NUMBER         =
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRS         = NO
+OUTPUT_LANGUAGE        = English
+
+#---------------------------------------------------------------------------
+# Input
+#---------------------------------------------------------------------------
+# The four C++ source roots. app/ui (QML) is deliberately excluded EXCEPT
+# app/ui/window, which holds the C++ MainWindow (the QQuickWidget host) -- the QML
+# itself (app/ui/app) stays out (and isn't matched by FILE_PATTERNS anyway).
+# `notes` is included so the living project notes build as cross-linked doc pages
+# alongside the API reference (their relative Markdown links resolve page-to-page).
+INPUT                  = README.md \
+                         version.md \
+                         version \
+                         notes \
+                         projects/common/src \
+                         projects/db/src \
+                         projects/savefile/src \
+                         projects/app/src \
+                         projects/app/ui/window
+
+INPUT_ENCODING         = UTF-8
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.hpp *.cpp *.cc *.cxx *.md
+
+# Never scan build trees or Qt-generated files.
+EXCLUDE                = projects/build
+EXCLUDE_PATTERNS       = */build/* \
+                         moc_* \
+                         qrc_* \
+                         ui_* \
+                         */*_autogen/*
+
+# Use the existing README as the documentation landing page (no extra file).
+USE_MDFILE_AS_MAINPAGE = README.md
+
+#---------------------------------------------------------------------------
+# What to extract
+#---------------------------------------------------------------------------
+# EXTRACT_ALL = YES so the full API appears from day one even where comments are
+# still sparse. Flip to NO later if you want the docs to reflect only what you've
+# explicitly documented.
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_PRIV_VIRTUAL   = NO
+EXTRACT_PACKAGE        = NO
+EXTRACT_ANON_NSPACES   = NO
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+INTERNAL_DOCS          = NO
+
+#---------------------------------------------------------------------------
+# Comment-style behaviour (keeps comments human + Markdown-friendly)
+#---------------------------------------------------------------------------
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+# Treat the first sentence of a Qt-/Javadoc-style block as the brief — lets you
+# write plain prose comments without an explicit \brief command.
+QT_AUTOBRIEF           = YES
+JAVADOC_AUTOBRIEF      = YES
+TAB_SIZE               = 4
+BUILTIN_STL_SUPPORT    = YES
+DISTRIBUTE_GROUP_DOC   = YES
+TOC_INCLUDE_HEADINGS   = 5
+
+#---------------------------------------------------------------------------
+# Preprocessor — taught about Qt's macros so they don't break parsing.
+# Without these, Doxygen mis-reads Q_OBJECT / Q_PROPERTY / signals / slots etc.
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+SEARCH_INCLUDES        = YES
+PREDEFINED             = Q_OBJECT= \
+                         Q_GADGET= \
+                         Q_PROPERTY(x)= \
+                         Q_INVOKABLE= \
+                         Q_ENUM(x)= \
+                         Q_FLAG(x)= \
+                         Q_DECLARE_METATYPE(x)= \
+                         Q_DECLARE_OPAQUE_POINTER(x)= \
+                         Q_DISABLE_COPY(x)= \
+                         Q_SIGNALS:=protected: \
+                         signals:=protected: \
+                         Q_SLOTS= \
+                         slots= \
+                         QT_BEGIN_NAMESPACE= \
+                         QT_END_NAMESPACE= \
+                         Q_DECL_OVERRIDE=override \
+                         Q_NULLPTR=nullptr \
+                         "Q_CLASSINFO(x,y)="
+
+#---------------------------------------------------------------------------
+# Warnings — informative but never fatal (don't fail a build over a doc gap).
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+WARN_AS_ERROR          = NO
+
+#---------------------------------------------------------------------------
+# HTML output + doxygen-awesome theme (vendored under docs/doxygen-awesome/)
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_COLORSTYLE        = LIGHT
+HTML_DYNAMIC_SECTIONS  = YES
+HTML_EXTRA_STYLESHEET  = docs/doxygen-awesome/doxygen-awesome.css
+
+# Other output formats off — HTML is the deliverable.
+GENERATE_LATEX         = NO
+GENERATE_XML           = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_DOCBOOK       = NO
+
+#---------------------------------------------------------------------------
+# Diagrams (Graphviz / dot)
+#---------------------------------------------------------------------------
+HAVE_DOT               = YES
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = YES
+DOT_MULTI_TARGETS      = YES
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = YES
+GROUP_GRAPHS           = YES
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+GRAPHICAL_HIERARCHY    = YES
+DIRECTORY_GRAPH        = YES
+DOT_GRAPH_MAX_NODES    = 60
+MAX_DOT_GRAPH_DEPTH    = 0
+
+#---------------------------------------------------------------------------
+# Source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+STRIP_CODE_COMMENTS    = YES
+VERBATIM_HEADERS       = YES
+
+#---------------------------------------------------------------------------
+# Alphabetical index
+#---------------------------------------------------------------------------
+ALPHABETICAL_INDEX     = YES

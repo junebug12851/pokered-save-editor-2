@@ -13,6 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file missabledbentry.cpp
+ * @brief Implementation of MissableDBEntry. See missabledbentry.h.
+ */
 #include "missabledbentry.h"
 
 #include <QVector>

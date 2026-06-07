@@ -29,56 +29,69 @@ class PokemonBox;
 class PlayerBasics;
 
 // Maximum pokemon that can fit into a box
-constexpr var8 boxMaxPokemon = 20;
+constexpr var8 boxMaxPokemon = 20; ///< Capacity of a single PC box.
 
-// Holds contents of a single Pokemon storage box
+/// Holds contents of a single Pokemon storage box.
+/**
+ * @brief A container of PokemonBox records -- one PC box (or, when subclassed by
+ *        PlayerPokemon, the party).
+ *
+ * Owns a vector of @ref pokemon up to @ref maxSize and provides QML-facing
+ * count/full state plus slot access, reordering, removal, insertion, and
+ * box-to-box relocation. The @ref isParty flag distinguishes a party from a box,
+ * which matters because party and box records are NOT interchangeable on disk
+ * (PokemonBox::isBoxMon()).
+ *
+ * @see PokemonBox (the slot type), PlayerPokemon (the party subclass),
+ *      PokemonStorageSet (the collection of all boxes).
+ */
 class SAVEFILE_AUTOPORT PokemonStorageBox : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int pokemonCount READ pokemonCount NOTIFY pokemonChanged)
-  Q_PROPERTY(int isFull READ isFull NOTIFY pokemonChanged)
-  Q_PROPERTY(int pokemonMax READ pokemonMax CONSTANT)
+  Q_PROPERTY(int pokemonCount READ pokemonCount NOTIFY pokemonChanged) ///< How many mons are in the box.
+  Q_PROPERTY(int isFull READ isFull NOTIFY pokemonChanged)             ///< Is the box at capacity?
+  Q_PROPERTY(int pokemonMax READ pokemonMax CONSTANT)                  ///< Box capacity.
 
 public:
+  /// @param maxSize Capacity. @param saveFile Source save. @param boxOffset Box location in the save.
   PokemonStorageBox(int maxSize = boxMaxPokemon, SaveFile* saveFile = nullptr, var16 boxOffset = 0);
   virtual ~PokemonStorageBox();
 
-  virtual void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0);
-  virtual void save(SaveFile* saveFile, var16 boxOffset = 0);
+  virtual void load(SaveFile* saveFile = nullptr, var16 boxOffset = 0); ///< Expand the box from the save.
+  virtual void save(SaveFile* saveFile, var16 boxOffset = 0);           ///< Flatten the box to the save.
 
-  int pokemonCount();
-  int pokemonMax();
-  bool isFull();
+  int pokemonCount(); ///< Number of mons present.
+  int pokemonMax();   ///< Capacity (maxSize).
+  bool isFull();      ///< At capacity.
 
-  Q_INVOKABLE PokemonBox* pokemonAt(int ind);
+  Q_INVOKABLE PokemonBox* pokemonAt(int ind); ///< Mon at @p ind (GC-protected return).
 
 signals:
   // When moving an item away from the box to another box, allow the model to
   // perform cleanup actions
-  void beforePokemonRelocate(PokemonBox* item);
+  void beforePokemonRelocate(PokemonBox* item); ///< Emitted before a relocate so models can clean up.
 
-  void pokemonChanged();
-  void pokemonMoveChange(int from, int to);
-  void pokemonRemoveChange(int ind);
-  void pokemonInsertChange();
-  void pokemonResetChange();
+  void pokemonChanged();          ///< Box contents changed.
+  void pokemonMoveChange(int from, int to); ///< A mon moved slot.
+  void pokemonRemoveChange(int ind);        ///< A mon was removed.
+  void pokemonInsertChange();               ///< A mon was inserted.
+  void pokemonResetChange();                ///< The box was reset.
 
 public slots:
-  void reset();
-  virtual void randomize(PlayerBasics* basics);
+  void reset();                          ///< Empty the box.
+  virtual void randomize(PlayerBasics* basics); ///< Fill with constrained random mons.
 
-  bool pokemonMove(int from, int to);
-  void pokemonRemove(int ind);
-  virtual void pokemonNew();
+  bool pokemonMove(int from, int to); ///< Reorder a mon within the box.
+  void pokemonRemove(int ind);        ///< Remove the mon at @p ind.
+  virtual void pokemonNew();          ///< Add a fresh mon.
 
-  bool relocateAll(PokemonStorageBox* dst);
-  virtual bool relocateOne(PokemonStorageBox* dst, int ind);
+  bool relocateAll(PokemonStorageBox* dst);              ///< Move every mon into @p dst.
+  virtual bool relocateOne(PokemonStorageBox* dst, int ind); ///< Move one mon into @p dst.
 
 public:
-  bool isParty = false;
-  QVector<PokemonBox*> pokemon;
-  int maxSize = 0;
-  SaveFile* file;
+  bool isParty = false;          ///< True if this box is actually the party (affects record format).
+  QVector<PokemonBox*> pokemon;  ///< The stored mons.
+  int maxSize = 0;               ///< Capacity.
+  SaveFile* file;                ///< Owning save.
 };
-

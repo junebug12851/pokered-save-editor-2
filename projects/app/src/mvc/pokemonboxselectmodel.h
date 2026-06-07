@@ -22,11 +22,23 @@ class PokemonStorageModel;
 class Storage;
 class PlayerPokemon;
 
+/**
+ * @brief The "which PC box" selector model (Party + 12 boxes).
+ *
+ * A combo-box model listing the party and the twelve storage boxes, each decorated
+ * with a fill-status symbol (empty/partly/full + a current-box marker). It is
+ * @e paired to a PokemonStorageModel: selecting a box here drives that model's
+ * current box, and vice versa (see the note at @ref pairedModel). setData() handles
+ * the selection write-back. Exposed as `brg.pokemonBoxSelectModel1/2`.
+ *
+ * @see PokemonStorageModel (the paired model), Storage, PlayerPokemon.
+ */
 class PokemonBoxSelectModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Columns (mapped in roleNames()).
   enum PokemonBoxSelectModelRoles {
     NameRole = Qt::UserRole + 1,
     ValueRole,
@@ -34,12 +46,12 @@ public:
     IndRole,
   };
 
-  PokemonBoxSelectModel(PokemonStorageModel* pairedModel);
+  PokemonBoxSelectModel(PokemonStorageModel* pairedModel); ///< @param pairedModel the storage model to drive.
 
-  QString boxEmptySym = " ";
-  QString boxNotEmptySym = "○";
-  QString boxFullSym = "●";
-  QString curBoxSym = "◁";
+  QString boxEmptySym = " ";    ///< Decoration: empty box.
+  QString boxNotEmptySym = "○"; ///< Decoration: partly-filled box.
+  QString boxFullSym = "●";     ///< Decoration: full box.
+  QString curBoxSym = "◁";      ///< Decoration: current box marker.
 
   QString boxSelect[13] = {
     "Party",
@@ -55,22 +67,21 @@ public:
     "Storage Box 10",
     "Storage Box 11",
     "Storage Box 12",
-  };
+  }; ///< Row labels: Party plus the 12 boxes.
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
-  virtual bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count (13).
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
+  virtual bool setData(const QModelIndex& index, const QVariant& value, int role) override; ///< Selection write-back.
 
-  Q_INVOKABLE void onBoxChange();
-  void onPairedBoxChange();
-  QString getDecoratedName(int box) const;
+  Q_INVOKABLE void onBoxChange(); ///< React to this selector changing.
+  void onPairedBoxChange();       ///< React to the paired model's box changing.
+  QString getDecoratedName(int box) const; ///< Row label with its fill-status symbol.
 
   // This needs to be paired to a PokemonStorageModel, it interacts with the
   // model and controls it's current box. If the model updates its own box
   // this updates as well
-  PokemonStorageModel* pairedModel = nullptr;
-  Storage* storage = nullptr;
-  PlayerPokemon* party = nullptr;
+  PokemonStorageModel* pairedModel = nullptr; ///< The storage model this selector drives (see note).
+  Storage* storage = nullptr;                 ///< The PC storage (for fill status).
+  PlayerPokemon* party = nullptr;             ///< The party (box 0).
 };
-

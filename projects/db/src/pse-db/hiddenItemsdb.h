@@ -16,17 +16,24 @@
 #pragma once
 #include "./abstracthiddenitemdb.h"
 
+/**
+ * @brief The hidden-items database -- AbstractHiddenItemDB loaded from the items file.
+ *
+ * All behaviour is inherited; this subclass just provides the singleton and the
+ * concrete QML registration. See AbstractHiddenItemDB.
+ *
+ * @see AbstractHiddenItemDB, WorldHidden (the save-side hidden-item flags).
+ */
 class DB_AUTOPORT HiddenItemsDB : public AbstractHiddenItemDB
 {
   Q_OBJECT
 
 public:
-  static HiddenItemsDB* inst();
+  static HiddenItemsDB* inst(); ///< The process-wide HiddenItemsDB singleton.
 
 protected slots:
-  virtual void qmlRegister() const;
+  virtual void qmlRegister() const; ///< Register HiddenItemsDB with QML.
 
 protected:
-  HiddenItemsDB();
+  HiddenItemsDB(); ///< Private -- use inst(); passes the items JSON to the base.
 };
-

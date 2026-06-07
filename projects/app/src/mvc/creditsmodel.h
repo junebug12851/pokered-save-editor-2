@@ -17,11 +17,28 @@
 #include <QObject>
 #include <QAbstractListModel>
 
+/**
+ * @brief Exposes the credits database to QML as a list model -- and the canonical
+ *        example of the `mvc/` model pattern.
+ *
+ * @par The mvc-model convention (shared by every model here)
+ * Each is a `QAbstractListModel` that adapts a C++ collection (a DB store or a save
+ * object) for a QML `ListView`/`Repeater`. The standard trio is overridden:
+ * - **rowCount()** -- how many rows;
+ * - **data(index, role)** -- the value for a row + role;
+ * - **roleNames()** -- maps the @c *Role enum to the names QML binds to
+ *   (`model.name`, `model.url`, ...).
+ * Models that wrap a filterable/derived set add a small cache and helper invokables;
+ * see SpeciesSelectModel for that variant.
+ *
+ * @see CreditsDB (the source), Bridge (exposes this as `brg.creditsModel`).
+ */
 class CreditsModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// The columns QML can bind to (mapped to names in roleNames()).
   enum RecentFileRoles {
     SectionRole = Qt::UserRole + 1,
     NameRole,
@@ -31,8 +48,7 @@ public:
     MandatedRole
   };
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Number of credit rows.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Value for a row + role.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name map.
 };
-

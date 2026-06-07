@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file namespokemon.cpp
+ * @brief Implementation of NamesPokemon. See namespokemon.h.
+ */
+
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>

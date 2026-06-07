@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file sprites.cpp
+ * @brief Implementation of SpritesDB and SpriteDBEntry. See sprites.h.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

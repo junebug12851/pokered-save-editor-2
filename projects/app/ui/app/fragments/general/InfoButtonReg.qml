@@ -1,3 +1,8 @@
+// InfoButtonReg.qml -- a round "i" help button that only shows when global
+// tooltips are on.
+//
+// Same as InfoButton but its visibility is gated on brg.settings.infoBtnPressed
+// (the header "?" toggle), so it appears only in "help mode".
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -21,26 +21,36 @@
 class SaveFile;
 class MapDBEntry;
 
+/**
+ * @brief Transient NPC/control/battle flags for the current map.
+ *
+ * A bag of runtime flags grouped (in the fields below) into sprites, controls, and
+ * battle state -- e.g. whether NPCs face away, the joypad is ignored/simulated, or
+ * a trainer wants to battle, plus the trainer-header pointer. Mostly mid-gameplay
+ * state. Standard expanded-node convention (see SaveFileExpanded).
+ *
+ * @see Area.
+ */
 class SAVEFILE_AUTOPORT AreaNPC : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool npcsFaceAway MEMBER npcsFaceAway NOTIFY npcsFaceAwayChanged)
-  Q_PROPERTY(bool scriptedNPCMovement MEMBER scriptedNPCMovement NOTIFY scriptedNPCMovementChanged)
-  Q_PROPERTY(bool npcSpriteMovement MEMBER npcSpriteMovement NOTIFY npcSpriteMovementChanged)
-  Q_PROPERTY(bool tradeCenterSpritesFaced MEMBER tradeCenterSpritesFaced NOTIFY tradeCenterSpritesFacedChanged)
-  Q_PROPERTY(bool ignoreJoypad MEMBER ignoreJoypad NOTIFY ignoreJoypadChanged)
-  Q_PROPERTY(bool joypadSimulation MEMBER joypadSimulation NOTIFY joypadSimulationChanged)
-  Q_PROPERTY(bool runningTestBattle MEMBER runningTestBattle NOTIFY runningTestBattleChanged)
-  Q_PROPERTY(bool trainerWantsBattle MEMBER trainerWantsBattle NOTIFY trainerWantsBattleChanged)
-  Q_PROPERTY(int trainerHeaderPtr MEMBER trainerHeaderPtr NOTIFY trainerHeaderPtrChanged)
+  Q_PROPERTY(bool npcsFaceAway MEMBER npcsFaceAway NOTIFY npcsFaceAwayChanged)                  ///< NPCs face away from the player.
+  Q_PROPERTY(bool scriptedNPCMovement MEMBER scriptedNPCMovement NOTIFY scriptedNPCMovementChanged) ///< NPC movement is script-driven.
+  Q_PROPERTY(bool npcSpriteMovement MEMBER npcSpriteMovement NOTIFY npcSpriteMovementChanged)   ///< NPC sprites are moving.
+  Q_PROPERTY(bool tradeCenterSpritesFaced MEMBER tradeCenterSpritesFaced NOTIFY tradeCenterSpritesFacedChanged) ///< Trade-center sprites have faced.
+  Q_PROPERTY(bool ignoreJoypad MEMBER ignoreJoypad NOTIFY ignoreJoypadChanged)                 ///< Joypad input is ignored.
+  Q_PROPERTY(bool joypadSimulation MEMBER joypadSimulation NOTIFY joypadSimulationChanged)     ///< Joypad input is being simulated.
+  Q_PROPERTY(bool runningTestBattle MEMBER runningTestBattle NOTIFY runningTestBattleChanged)  ///< A test battle is running.
+  Q_PROPERTY(bool trainerWantsBattle MEMBER trainerWantsBattle NOTIFY trainerWantsBattleChanged) ///< A trainer is initiating battle.
+  Q_PROPERTY(int trainerHeaderPtr MEMBER trainerHeaderPtr NOTIFY trainerHeaderPtrChanged)      ///< Pointer to the active trainer header.
 
 public:
   AreaNPC(SaveFile* saveFile = nullptr);
   virtual ~AreaNPC();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand these flags from the save.
+  void save(SaveFile* saveFile);           ///< Flatten these flags to the save.
 
 signals:
   void npcsFaceAwayChanged();
@@ -54,24 +64,23 @@ signals:
   void trainerHeaderPtrChanged();
 
 public slots:
-  void reset();
-  void randomize();
-  void setTo(MapDBEntry* map);
+  void reset();              ///< Blank the flags.
+  void randomize();          ///< Randomize the flags.
+  void setTo(MapDBEntry* map); ///< Set from a chosen map's defaults.
 
 public:
   // Sprites
-  bool npcsFaceAway;
-  bool scriptedNPCMovement;
-  bool npcSpriteMovement;
-  bool tradeCenterSpritesFaced;
+  bool npcsFaceAway;            ///< @see npcsFaceAway property.
+  bool scriptedNPCMovement;     ///< @see scriptedNPCMovement property.
+  bool npcSpriteMovement;       ///< @see npcSpriteMovement property.
+  bool tradeCenterSpritesFaced; ///< @see tradeCenterSpritesFaced property.
 
   // Controls
-  bool ignoreJoypad;
-  bool joypadSimulation;
+  bool ignoreJoypad;            ///< @see ignoreJoypad property.
+  bool joypadSimulation;        ///< @see joypadSimulation property.
 
   // Battle
-  bool runningTestBattle;
-  bool trainerWantsBattle;
-  int  trainerHeaderPtr;
+  bool runningTestBattle;       ///< @see runningTestBattle property.
+  bool trainerWantsBattle;      ///< @see trainerWantsBattle property.
+  int  trainerHeaderPtr;        ///< @see trainerHeaderPtr property.
 };
-

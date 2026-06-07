@@ -17,17 +17,24 @@
 #include <QObject>
 #include "./abstracthiddenitemdb.h"
 
+/**
+ * @brief The hidden-coins database -- AbstractHiddenItemDB loaded from the coins file.
+ *
+ * All behaviour is inherited; this subclass just provides the singleton and the
+ * concrete QML registration. See AbstractHiddenItemDB.
+ *
+ * @see AbstractHiddenItemDB, WorldHidden (the save-side hidden-coin flags).
+ */
 class HiddenCoinsDB : public AbstractHiddenItemDB
 {
   Q_OBJECT
 
 public:
-  static HiddenCoinsDB* inst();
+  static HiddenCoinsDB* inst(); ///< The process-wide HiddenCoinsDB singleton.
 
 protected slots:
-  virtual void qmlRegister() const;
+  virtual void qmlRegister() const; ///< Register HiddenCoinsDB with QML.
 
 protected:
-  HiddenCoinsDB();
+  HiddenCoinsDB(); ///< Private -- use inst(); passes the coins JSON to the base.
 };
-

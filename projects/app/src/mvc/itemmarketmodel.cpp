@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemmarketmodel.cpp
+ * @brief Implementation of ItemMarketModel -- the buy/sell market + cart logic.
+ *        See itemmarketmodel.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 

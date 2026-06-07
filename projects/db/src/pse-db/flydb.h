@@ -25,37 +25,45 @@
 class FlyDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief The fly-destinations database -- where Fly can take you, keyed by name.
+ *
+ * Standard DB-singleton with a name index and a deepLink() pass (resolving each
+ * destination to its map). See CreditsDB / db.md for the shared pattern; the entry
+ * type lives in `entries/flydbentry.h`.
+ *
+ * @see FlyDBEntry, DB.
+ */
 class DB_AUTOPORT FlyDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of fly destinations.
 
 public:
   // Get Instance
-  static FlyDB* inst();
+  static FlyDB* inst(); ///< The process-wide FlyDB singleton.
 
   // Get Properties, includes QML array helpers
-  const QVector<FlyDBEntry*> getStore() const;
-  const QHash<QString, FlyDBEntry*> getInd() const;
-  int getStoreSize() const;
+  const QVector<FlyDBEntry*> getStore() const;       ///< All fly destinations.
+  const QHash<QString, FlyDBEntry*> getInd() const;  ///< Name->entry index.
+  int getStoreSize() const;                          ///< Destination count.
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE FlyDBEntry* getStoreAt(const int ind) const;
-  Q_INVOKABLE FlyDBEntry* getIndAt(const QString val) const;
+  Q_INVOKABLE FlyDBEntry* getStoreAt(const int ind) const;   ///< Destination by store index (for QML).
+  Q_INVOKABLE FlyDBEntry* getIndAt(const QString val) const; ///< Destination by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load destinations from JSON.
+  void index();    ///< Build the name->entry index.
+  void deepLink(); ///< Resolve each destination's map link.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 public:
-  FlyDB();
+  FlyDB(); ///< (Public here, but obtain the singleton via inst().)
 
-  QVector<FlyDBEntry*> store;
-  QHash<QString, FlyDBEntry*> ind;
+  QVector<FlyDBEntry*> store;       ///< The loaded destinations.
+  QHash<QString, FlyDBEntry*> ind;  ///< Name->entry lookup.
 };
-

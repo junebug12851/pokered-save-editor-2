@@ -1,3 +1,8 @@
+// DaysEdit.qml -- the "days" field of the playtime clock.
+//
+// A 2-digit DefTextEdit bound to playtime.days (clamped 0-10), dimmed when the
+// clock is maxed. One of the PlaytimeEdit sub-fields; they all share this pattern
+// (live write on valid input + a Connections sync-back).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

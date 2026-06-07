@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file areaaudio.cpp
+ * @brief Implementation of AreaAudio -- the map's music track and audio flags.
+ *        See areaaudio.h for the documented API.
+ */
 #include "./areaaudio.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

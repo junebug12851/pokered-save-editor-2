@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemmarketentrymoney.cpp
+ * @brief Implementation of ItemMarketEntryMoney. See itemmarketentrymoney.h.
+ */
+
 #include <QDebug>
 
 #include "./itemmarketentrymoney.h"

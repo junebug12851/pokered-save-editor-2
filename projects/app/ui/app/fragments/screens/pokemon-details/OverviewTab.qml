@@ -10,6 +10,14 @@ import "../../general"
 import "../../header"
 import "../../controls/selection"
 
+// OverviewTab.qml -- the "General" tab of the Pokemon details editor.
+//
+// Bound to boxData (a PokemonBox). Rows for nickname, type 1/2, OT name, OT ID,
+// exp (slider), catch rate, and future nature; nickname/OT rows carry overflow
+// menus (give/re-roll/remove nickname; make/re-roll/remove trade). Closes the
+// screen if the underlying file data changes (a new file was loaded). The shared
+// FieldLabel component is the left shaded label cell.
+//
 // General tab. Each row is a RowLayout of [shaded label box | control(s) | …]:
 //  - the label box (Layout.fillHeight) grows to the row's field height so the
 //    shaded strip and field read as one aligned row (Twilight's option #2),

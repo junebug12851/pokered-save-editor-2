@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file recentfilesmodel.cpp
+ * @brief Implementation of RecentFilesModel. See recentfilesmodel.h.
+ */
+
 #include <QDir>
 #include <QString>
 #include <QStringList>

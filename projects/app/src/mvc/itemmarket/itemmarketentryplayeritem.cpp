@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemmarketentryplayeritem.cpp
+ * @brief Implementation of ItemMarketEntryPlayerItem. See itemmarketentryplayeritem.h.
+ */
+
 #include "./itemmarketentryplayeritem.h"
 #include <pse-db/itemsdb.h>
 #include <pse-db/entries/itemdbentry.h>

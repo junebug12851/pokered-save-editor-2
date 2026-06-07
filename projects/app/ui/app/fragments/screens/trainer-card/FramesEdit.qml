@@ -1,3 +1,9 @@
+// FramesEdit.qml -- the "frames" field of the playtime clock (+ the clock's menu).
+//
+// A 2-digit DefTextEdit bound to playtime.frames (clamped 0-59), dimmed when the
+// clock is maxed. The last PlaytimeEdit sub-field; it also hosts the playtime
+// overflow menu (exposed via menuBtnVisible): Enabled (clockMaxed toggle), Paused
+// (area.general.countPlaytime), Randomize, Clear, Close.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -11,6 +11,14 @@ import "../../general"
 import "../../header"
 import "../../controls/selection"
 
+// PokemonMoveSel.qml -- one of the four move rows in the Moves tab.
+//
+// Bound to a PokemonMove (monMove). A type-colored pill holding the move combo
+// (SelectMove), the move's type, an editable PP field, "/ maxPP", and an overflow
+// menu (PP-Up sub-menu, All-Moves bulk ops, restore PP, re-roll, correct). The
+// getColor() type palette is from Bulbapedia (CC-BY-NC-SA) -- keep the
+// attribution comment.
+//
 // One move row: a colored (by type) pill containing the move selector, its
 // type, PP / max-PP, and a ⋮ menu. Compact height; the move combo fills the
 // leftover width so the row always fits the pane and the trailing items (incl.

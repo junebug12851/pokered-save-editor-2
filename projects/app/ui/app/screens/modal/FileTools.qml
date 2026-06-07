@@ -1,3 +1,11 @@
+// FileTools.qml -- the "File Tools" modal (save / revert / scrub / save-as).
+//
+// Five TileButtons sized by the *Height props: Save File, Revert File (reopen,
+// discarding unsaved changes), Scrub File (wipeUnusedSpace -- zeroes unused
+// regions), Save File As (saves + switches to the new file), and Save Copy As
+// (saves a copy but keeps working on the current file). The save/saveAs/copy
+// buttons close the modal only if a file was actually chosen. ModalClose dismisses
+// via the router; CreditWork attributes the wallpaper art.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

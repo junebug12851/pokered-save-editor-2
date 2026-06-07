@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file moveselectmodel.cpp
+ * @brief Implementation of MoveSelectModel. See moveselectmodel.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 

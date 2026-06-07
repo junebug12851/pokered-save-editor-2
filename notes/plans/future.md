@@ -19,13 +19,27 @@ The most exciting feature even in its early buggy state. Goals:
 Quote from session 1: _"even with this incredibly early feature it was so fun to play I found
 myself re-rolling new save files even throughout the bugs."_
 
+The spirit, in the owner's own early-playtest words (from `NewGoals.md`): being _"dropped into
+Pokemon Tower as Paddles with a ghost Pikachu named Wolvoom that knows the wildest of moves,"_
+navigating out to start the adventure, _"only to encounter a level 5 Zapdos along the way and the
+whole map being darker than normal."_ Curious, surprising, a little broken-feeling — but the kind
+of thing that makes you laugh and re-roll. **That feeling is the design target.**
+
 ## Map Editor (Medium Priority)
 
-Maps in Gen 1 carry hundreds of variables — warps, sprites, connections, music, wild Pokemon,
-tileset, etc. Goal is to let users:
-- Pick any map, click "load player here"
-- Edit connections, warps, sprites visually
-- Have the app handle pointer calculations automatically
+This is one of the reboot's headline ambitions (from the original `NewGoals.md`). A Gen 1 map
+carries hundreds of variables — connecting maps, warps, sprites, positions, music, wild Pokémon,
+tileset, and more — and the goal is to expose all of it **without complicating anything**: let
+users do far more with "the area you're in" than was ever possible before.
+
+Imagined UX:
+- Pick **any** map in the game and click **"load player here"** to drop your character onto it.
+- Edit connections, warps, sprites, positions, music, and wild Pokémon — "editing options you
+  probably didn't even know about."
+- The app does the grunt work in the background — sensible **default** warps/sprites/connecting
+  data and all the **pointer calculations** — so it just works...
+- ...while **still exposing full power** to anyone who wants to go all the way. Smart defaults,
+  not locked doors. The intent is to *encourage* the user to go out and have fun with the map.
 
 ## Full Screen Coverage
 

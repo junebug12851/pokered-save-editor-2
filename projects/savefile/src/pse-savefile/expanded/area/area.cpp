@@ -13,6 +13,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file area.cpp
+ * @brief Implementation of Area -- the current-map state container (load/save/
+ *        reset/randomize, and setTo() for the "place on any map" feature).
+ *        See area.h for the documented API.
+ */
 #include "./area.h"
 #include "./areaaudio.h"
 #include "./arealoadedsprites.h"

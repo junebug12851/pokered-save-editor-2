@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentrywarpin.cpp
+ * @brief Implementation of MapDBEntryWarpIn. See mapdbentrywarpin.h.
+ */
+
 #include <QJsonValue>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

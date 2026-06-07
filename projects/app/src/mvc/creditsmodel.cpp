@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file creditsmodel.cpp
+ * @brief Implementation of CreditsModel. See creditsmodel.h.
+ */
+
 #include "./creditsmodel.h"
 #include <pse-db/creditsdb.h>
 #include <pse-db/entries/creditdbentry.h>

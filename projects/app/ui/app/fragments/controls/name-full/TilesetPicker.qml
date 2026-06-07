@@ -1,3 +1,9 @@
+// TilesetPicker.qml -- the full-tileset character picker (page 1 of PagedPicker).
+//
+// Shows the whole simulated tileset (TilesetDisplay) and maps mouse position to a
+// tile index; hovering fills the shared DetailView with that tile's color/name/
+// description and clicking appends its code to str. The inline notes stress
+// crash-avoidance (bounds-check the tile id before every lookup) -- keep them.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

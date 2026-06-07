@@ -31,59 +31,80 @@ struct PokemonDBEntryMove;
 struct PokemonDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief One move's static data (type, power, accuracy, PP, TM/HM), with links.
+ *
+ * A "plain struct" DB entry (the other entry style -- contrast the
+ * QObject-getter style of CreditDBEntry): fields are public and read directly.
+ * The `std::optional` fields are absent for moves that don't have them. The `to*`
+ * pointers are resolved in deepLink() once all DBs are loaded -- @ref toType /
+ * @ref toItem forward, and the `toPokemon*` vectors are back-references filled in
+ * during PokemonDB's deep-link.
+ *
+ * @see MovesDB (its database), db.md for the entry/deepLink convention.
+ */
 struct DB_AUTOPORT MoveDBEntry {
-  MoveDBEntry();
-  MoveDBEntry(QJsonValue& data);
-  void deepLink();
+  MoveDBEntry();                ///< Empty entry.
+  MoveDBEntry(QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();              ///< Resolve cross-DB links (type, item) after load.
 
-  QString name;
-  var8 ind = 0;
-  bool glitch = false;
-  QString type;
-  QString readable;
+  QString name;          ///< Internal move name (key).
+  var8 ind = 0;          ///< Move index/id.
+  bool glitch = false;   ///< Whether this is a glitch move.
+  QString type;          ///< Type name (resolved to @ref toType).
+  QString readable;      ///< Human-readable display name.
 
-  std::optional<var8> power;
-  std::optional<var8> accuracy;
-  std::optional<var8> pp;
-  std::optional<var8> tm;
-  std::optional<var8> hm;
+  std::optional<var8> power;    ///< Base power, if any.
+  std::optional<var8> accuracy; ///< Accuracy, if any.
+  std::optional<var8> pp;       ///< Base PP, if any.
+  std::optional<var8> tm;       ///< TM number teaching this move, if any.
+  std::optional<var8> hm;       ///< HM number teaching this move, if any.
 
-  TypeDBEntry* toType  = nullptr;
-  ItemDBEntry* toItem  = nullptr;
+  TypeDBEntry* toType  = nullptr; ///< Resolved type entry (deepLink).
+  ItemDBEntry* toItem  = nullptr; ///< Resolved TM/HM item entry (deepLink).
 
   // Back-references populated during PokemonDB deep-link
-  QVector<struct PokemonDBEntryMove*> toPokemonLearned;
-  QVector<struct PokemonDBEntry*>     toPokemonInitial;
-  QVector<struct PokemonDBEntry*>     toPokemonTmHm;
+  QVector<struct PokemonDBEntryMove*> toPokemonLearned;  ///< Mons that learn this by level-up.
+  QVector<struct PokemonDBEntry*>     toPokemonInitial;  ///< Mons that start with this move.
+  QVector<struct PokemonDBEntry*>     toPokemonTmHm;      ///< Mons that can learn it via TM/HM.
 };
 
+/**
+ * @brief The moves database -- every move, keyed by name.
+ *
+ * Standard DB-singleton (see CreditsDB) plus a key index: @ref index() builds a
+ * name->entry hash so `getIndAt("tackle")` works, and @ref deepLink() resolves
+ * each move's cross-references. See db.md.
+ *
+ * @see MoveDBEntry, DB.
+ */
 class DB_AUTOPORT MovesDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of moves.
 
 public:
-  static MovesDB* inst();
+  static MovesDB* inst(); ///< The process-wide MovesDB singleton.
 
-  [[nodiscard]] const QVector<MoveDBEntry*> getStore() const;
-  [[nodiscard]] const QHash<QString, MoveDBEntry*> getInd() const;
-  [[nodiscard]] int getStoreSize() const;
+  [[nodiscard]] const QVector<MoveDBEntry*> getStore() const;       ///< All moves, in load order.
+  [[nodiscard]] const QHash<QString, MoveDBEntry*> getInd() const;  ///< Name->entry index.
+  [[nodiscard]] int getStoreSize() const;                          ///< Move count.
 
-  Q_INVOKABLE MoveDBEntry* getStoreAt(int idx) const;
-  Q_INVOKABLE MoveDBEntry* getIndAt(const QString& key) const;
+  Q_INVOKABLE MoveDBEntry* getStoreAt(int idx) const;              ///< Move by store index (for QML).
+  Q_INVOKABLE MoveDBEntry* getIndAt(const QString& key) const;     ///< Move by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();       ///< Load moves from JSON.
+  void index();      ///< Build the name->entry index.
+  void deepLink();   ///< Resolve every move's cross-DB links.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  MovesDB();
+  MovesDB(); ///< Private -- use inst().
 
-  QVector<MoveDBEntry*> store;
-  QHash<QString, MoveDBEntry*> ind;
+  QVector<MoveDBEntry*> store;       ///< The loaded moves.
+  QHash<QString, MoveDBEntry*> ind;  ///< Name->entry lookup.
 };

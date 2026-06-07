@@ -1,3 +1,11 @@
+// ItemBoxView.qml -- the scrolling list of item rows inside an ItemsPane.
+//
+// A ListView over an ItemStorageBox. Each real row is a checkbox + SelectItem
+// combo + a 2-digit count field (0-99); the trailing placeholder row shows a "+"
+// add button while there's room. The rowH/comboH/textH knobs pin the differing
+// Material control heights so the row aligns (see ui-patterns.md). Twilight's
+// inline notes flag the custom itemToListIndex lookup (far faster than Qt's
+// indexOfValue) and the insert "hack" -- leave them.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -1,3 +1,8 @@
+// About.qml -- the "About / Credits" modal.
+//
+// A ListView over brg.creditsModel rendering each credit entry's fields when
+// present (section header, creditTo, mandated attribution, urlTo, license, note).
+// ModalClose dismisses via the router; CreditWork attributes the wallpaper art.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

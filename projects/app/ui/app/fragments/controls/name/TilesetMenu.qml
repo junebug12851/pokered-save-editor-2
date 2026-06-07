@@ -1,3 +1,8 @@
+// TilesetMenu.qml -- the "Simulated Tileset" submenu of named tilesets.
+//
+// A Menu with an outdoor/indoor toggle plus one checkable item per tileset; each
+// sets brg.settings.previewTileset (the current one is disabled). This is the menu
+// form of SimulatedTilesetCombo -- keep the two tileset lists in sync.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

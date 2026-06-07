@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file pokedexmodel.cpp
+ * @brief Implementation of PokedexModel (incl. the sort orders). See pokedexmodel.h.
+ */
+
 #include <algorithm>
 
 #include <pse-db/pokemon.h>

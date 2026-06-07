@@ -22,26 +22,36 @@
 
 class QQmlEngine;
 
+/**
+ * @brief Aggregate of the example/preset sources (player, rival, Pokemon).
+ *
+ * Groups @ref player (ExamplesPlayer), @ref rival (ExamplesRival), and
+ * @ref pokemon (ExamplesPokemon) under one singleton, reached via `db.examples`.
+ * These supply ready-made example values (e.g. a random example player) used by
+ * the editors. See db.md.
+ *
+ * @see ExamplesPlayer, ExamplesRival, ExamplesPokemon.
+ */
 class Examples : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(ExamplesPlayer*  player  READ player  CONSTANT)
-  Q_PROPERTY(ExamplesRival*   rival   READ rival   CONSTANT)
-  Q_PROPERTY(ExamplesPokemon* pokemon READ pokemon CONSTANT)
+  Q_PROPERTY(ExamplesPlayer*  player  READ player  CONSTANT) ///< Example player source.
+  Q_PROPERTY(ExamplesRival*   rival   READ rival   CONSTANT) ///< Example rival source.
+  Q_PROPERTY(ExamplesPokemon* pokemon READ pokemon CONSTANT) ///< Example Pokemon source.
 
 public:
-  static Examples* inst();
+  static Examples* inst(); ///< The process-wide Examples singleton.
 
-  ExamplesPlayer*  player()  const;
-  ExamplesRival*   rival()   const;
-  ExamplesPokemon* pokemon() const;
+  ExamplesPlayer*  player()  const; ///< The example-player source (backs @c player).
+  ExamplesRival*   rival()   const; ///< The example-rival source (backs @c rival).
+  ExamplesPokemon* pokemon() const; ///< The example-Pokemon source (backs @c pokemon).
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  Examples();
+  Examples(); ///< Private -- use inst().
 };

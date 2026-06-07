@@ -1,3 +1,11 @@
+// Rival.qml -- the rival editor screen.
+//
+// Edits the rival's name (NameDisplay, two-way bound to
+// brg.file.data.dataExpanded.rival.name) and chosen starter (a borderless
+// ComboBox over brg.starterModel that sets rival.starter -- which determines the
+// rival's team). Layout centers a name box, the rival image, and the starter
+// combo; the footer "Re-Roll" randomizes the rival. Bindings guard against a null
+// rival (no save loaded yet).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -16,19 +16,29 @@
 #pragma once
 #include <QQmlEngine>
 
-// Hand QML CppOwnership of a C++-owned QObject returned from a Q_INVOKABLE.
-//
-// Q_INVOKABLE (and slot) returns of a *parentless* QObject default to
-// JavaScriptOwnership, so QML's garbage collector frees them once the QML-side
-// reference is dropped (e.g. a details editor closes). That leaves a dangling
-// pointer in the owning C++ container -> use-after-free crash on the next access.
-// These savefile objects are owned by their container in C++ for its lifetime,
-// so QML must never delete them. (Q_PROPERTY returns do NOT need this — QML
-// already assumes CppOwnership for those.)
-//
-// Wrap any "…At()"-style Q_INVOKABLE return:  return qmlCppOwned(vec.at(ind));
-// See notes/reference/qt6-patterns.md ("Q_PROPERTY returns are safe; Q_INVOKABLE
-// returns are NOT").
+/**
+ * @file qmlownership.h
+ * @brief qmlCppOwned() -- protect Q_INVOKABLE QObject returns from QML's GC.
+ */
+
+/**
+ * @brief Hand QML CppOwnership of a C++-owned QObject returned from a Q_INVOKABLE.
+ *
+ * Q_INVOKABLE (and slot) returns of a *parentless* QObject default to
+ * JavaScriptOwnership, so QML's garbage collector frees them once the QML-side
+ * reference is dropped (e.g. a details editor closes). That leaves a dangling
+ * pointer in the owning C++ container -> use-after-free crash on the next access.
+ * These savefile objects are owned by their container in C++ for its lifetime,
+ * so QML must never delete them. (Q_PROPERTY returns do NOT need this -- QML
+ * already assumes CppOwnership for those.)
+ *
+ * Wrap any "...At()"-style Q_INVOKABLE return:  `return qmlCppOwned(vec.at(ind));`
+ *
+ * @param obj The C++-owned object being returned to QML (may be nullptr).
+ * @return @p obj unchanged, now pinned to C++ ownership.
+ * @see [qt6-patterns.md](../../../../notes/reference/qt6-patterns.md)
+ *      ("Q_PROPERTY returns are safe; Q_INVOKABLE returns are NOT").
+ */
 template<typename T>
 static inline T* qmlCppOwned(T* obj)
 {

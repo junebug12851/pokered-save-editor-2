@@ -82,3 +82,7 @@ no-git/
 # Build output directories (any depth) — Qt Creator / CMake
 build/
 projects/build/
+
+# Generated documentation (Doxygen). The Doxyfile and the vendored theme under
+# docs/doxygen-awesome/ ARE tracked; only the generated HTML is ignored.
+/docs/html/

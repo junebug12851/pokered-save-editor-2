@@ -21,18 +21,26 @@
 
 class PlayerPokedex;
 
+/// One item picker row: display name + item index.
 struct ItemSelectEntryData {
   ItemSelectEntryData(QString name, int ind);
 
-  QString name;
-  int ind;
+  QString name; ///< Display name.
+  int ind;      ///< Item index.
 };
 
+/**
+ * @brief Item picker model (select-model variant; see SpeciesSelectModel).
+ *
+ * Standard picker: cached rows + itemToListIndex() for combo highlighting.
+ * Exposed as `brg.itemSelectModel`.
+ */
 class ItemSelectModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Picker columns (mapped in roleNames()).
   enum ItemRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
@@ -40,12 +48,11 @@ public:
 
   ItemSelectModel();
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
-  QVector<ItemSelectEntryData*> itemListCache;
+  QVector<ItemSelectEntryData*> itemListCache; ///< Cached picker rows.
 
-  Q_INVOKABLE int itemToListIndex(int ind);
+  Q_INVOKABLE int itemToListIndex(int ind); ///< Row index for item @p ind.
 };
-

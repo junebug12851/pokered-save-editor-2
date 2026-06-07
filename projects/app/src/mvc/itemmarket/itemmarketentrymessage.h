@@ -20,27 +20,32 @@
 
 // The simplest type, just prints out a message
 
+/**
+ * @brief Market row that just shows a message (e.g. an empty/placeholder notice).
+ *
+ * The simplest ItemMarketEntry subtype: it carries a @ref msg and is non-purchasable
+ * (its overrides return the no-op values). See ItemMarketEntry.
+ */
 class ItemMarketEntryMessage : public ItemMarketEntry
 {
   Q_OBJECT
 
 public:
-  ItemMarketEntryMessage(QString msg);
+  ItemMarketEntryMessage(QString msg); ///< @param msg the message to display.
   virtual ~ItemMarketEntryMessage();
 
-  virtual QString _name() override;
-  virtual int _inStockCount() override;
-  virtual bool _canSell() override;
-  virtual int _itemWorth() override;
-  virtual QString _whichType() override;
-  virtual int onCartLeft() override;
-  virtual int stackCount() override;
+  virtual QString _name() override;       ///< Returns @ref msg.
+  virtual int _inStockCount() override;   ///< @copydoc ItemMarketEntry::_inStockCount
+  virtual bool _canSell() override;       ///< @copydoc ItemMarketEntry::_canSell
+  virtual int _itemWorth() override;      ///< @copydoc ItemMarketEntry::_itemWorth
+  virtual QString _whichType() override;  ///< @copydoc ItemMarketEntry::_whichType
+  virtual int onCartLeft() override;      ///< @copydoc ItemMarketEntry::onCartLeft
+  virtual int stackCount() override;      ///< @copydoc ItemMarketEntry::stackCount
 
 public slots:
-  virtual void checkout() override;
+  virtual void checkout() override; ///< No-op (messages don't transact).
 
 public:
-  QString msg;
-  static constexpr const char* type = "msg";
+  QString msg;                                 ///< The displayed message.
+  static constexpr const char* type = "msg";   ///< This row's type key.
 };
-

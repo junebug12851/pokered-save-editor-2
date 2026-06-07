@@ -6,6 +6,7 @@ import QtQuick.Controls.Material
 import "../name"
 import "../../general"
 
+// NameFullEdit.qml --
 // The name input row for the full keyboard: a wide, centered text field with
 // Clear and Randomize-Name buttons beside it. (The old ⋮ overflow menu and the
 // example actions moved out — example is a toggle above the preview now.)

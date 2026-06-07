@@ -20,14 +20,22 @@
 #include <QHash>
 #include <QVector>
 
+/**
+ * @brief One registered screen: its QML url, title, and modal/home-button flags.
+ *
+ * A small record in the Router's screen registry. @ref modal screens take over
+ * the whole window; @ref homeBtn controls whether the header shows a home button.
+ *
+ * @see Router.
+ */
 // An individual screen
 struct Screen : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(bool modal MEMBER modal NOTIFY modalChanged)
-  Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)
-  Q_PROPERTY(QString url MEMBER url NOTIFY urlChanged)
-  Q_PROPERTY(bool homeBtn MEMBER homeBtn NOTIFY homeBtnChanged)
+  Q_PROPERTY(bool modal MEMBER modal NOTIFY modalChanged)       ///< Opens as a full-window modal.
+  Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)    ///< Header title for the screen.
+  Q_PROPERTY(QString url MEMBER url NOTIFY urlChanged)          ///< QML file url for the screen.
+  Q_PROPERTY(bool homeBtn MEMBER homeBtn NOTIFY homeBtnChanged) ///< Whether the home button shows.
 
 signals:
   void modalChanged();
@@ -36,53 +44,62 @@ signals:
   void homeBtnChanged();
 
 public:
-  Screen();
-  Screen(bool modal, QString title, QString url, bool homeBtn = true);
+  Screen(); ///< Empty screen.
+  Screen(bool modal, QString title, QString url, bool homeBtn = true); ///< Fully-specified screen.
 
   // Open this screen as a modal, taking up the entire window
-  bool modal = false;
+  bool modal = false; ///< @see modal property.
 
   // Name of this screen
-  QString title = "";
+  QString title = ""; ///< @see title property.
 
   // URL of the screen to the QML file
-  QString url = "";
+  QString url = ""; ///< @see url property.
 
-  bool homeBtn = true;
+  bool homeBtn = true; ///< @see homeBtn property.
 };
 
+/**
+ * @brief Screen navigation for the UI -- the QML StackView's controller.
+ *
+ * Holds the registry of named @ref screens and the current navigation @ref stack.
+ * QML drives navigation through changeScreen()/closeScreen(); the Router emits
+ * signals (goHome, openModal, closeModal, ...) that the QML shell acts on. Exposed
+ * to QML as `brg.router`. loadScreens() registers the app's screen set at boot.
+ *
+ * @see Screen, Bridge.
+ */
 // Router for screens
 class Router : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)
-  Q_PROPERTY(bool homeBtnShown MEMBER homeBtnShown NOTIFY homeBtnShownChanged)
+  Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)                    ///< Current screen title.
+  Q_PROPERTY(bool homeBtnShown MEMBER homeBtnShown NOTIFY homeBtnShownChanged)  ///< Whether the home button is shown now.
 
 signals:
-  void goHome();
-  void openModal(QString url);
-  void openNonModal(QString url);
-  void closeModal();
-  void closeNonModal();
+  void goHome();                 ///< Request: return to the home screen.
+  void openModal(QString url);   ///< Request: open @p url as a modal.
+  void openNonModal(QString url); ///< Request: open @p url as a normal screen.
+  void closeModal();             ///< Request: close the current modal.
+  void closeNonModal();          ///< Request: close the current non-modal.
 
   void titleChanged();
   void homeBtnShownChanged();
 
 public:
-  Q_INVOKABLE void changeScreen(QString name);
-  Q_INVOKABLE void closeScreen();
+  Q_INVOKABLE void changeScreen(QString name); ///< Navigate to the registered screen @p name.
+  Q_INVOKABLE void closeScreen();              ///< Close the top screen.
 
   // For internal use only by StackView
   // Silently adds a screen onto the stack
-  Q_INVOKABLE void manualStackPush(QString name);
+  Q_INVOKABLE void manualStackPush(QString name); ///< StackView-internal: push @p name without side effects.
 
-  QString title = "";
-  bool homeBtnShown = true;
+  QString title = "";       ///< @see title property.
+  bool homeBtnShown = true; ///< @see homeBtnShown property.
 
-  static void loadScreens();
+  static void loadScreens(); ///< Register the app's screen set (called at boot).
 
-  static QVector<Screen*> stack;
-  static QHash<QString, Screen*> screens;
+  static QVector<Screen*> stack;          ///< The live navigation stack.
+  static QHash<QString, Screen*> screens; ///< The registry of named screens.
 };
-

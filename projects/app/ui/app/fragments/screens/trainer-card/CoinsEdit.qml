@@ -1,3 +1,8 @@
+// CoinsEdit.qml -- the casino coins field on the trainer card.
+//
+// A 4-digit DefTextEdit bound to player.basics.coins (clamped 0-9,999) with a
+// hover RandomMenu (randomizeCoins). Persists on every valid keystroke. Mirrors
+// MoneyEdit.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

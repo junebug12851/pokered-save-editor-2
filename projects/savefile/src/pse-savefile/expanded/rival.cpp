@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file rival.cpp
+ * @brief Implementation of Rival -- name + starter. See rival.h for the API.
+ */
+
 #include "./rival.h"
 #include "../savefile.h"
 #include "../savefiletoolset.h"

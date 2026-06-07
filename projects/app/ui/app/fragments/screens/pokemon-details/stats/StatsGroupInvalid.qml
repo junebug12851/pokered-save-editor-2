@@ -9,6 +9,9 @@ import App.PokemonParty
 import "../../../general"
 import "../../../header"
 
+// StatsGroupInvalid.qml -- the editable raw-stats grid for glitch/invalid party
+// mons.
+//
 // Editable raw stats for an "invalid" box mon that has live party data
 // (max HP / Atk / Def / Spd / Sp). Clean label | field grid — no per-row
 // anchor offsets.

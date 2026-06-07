@@ -1,3 +1,9 @@
+// Bag.qml -- the items editor screen.
+//
+// Two ItemsPane side by side: the player's Bag (bound to
+// player.items / brg.bagItemsModel) and the PC Storage box
+// (storage.items / brg.pcItemsModel). Footer buttons: Re-Roll (randomize both
+// boxes) and Sort (sort both).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

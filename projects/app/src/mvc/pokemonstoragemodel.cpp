@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file pokemonstoragemodel.cpp
+ * @brief Implementation of PokemonStorageModel. See pokemonstoragemodel.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 #include <QDebug>

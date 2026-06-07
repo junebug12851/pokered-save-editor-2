@@ -1,3 +1,9 @@
+// SelectSpecies.qml -- the species picker combo (a borderless Select* combo).
+//
+// A flat, borderless ComboBox over brg.speciesSelectModel (speciesName/speciesInd)
+// with a hover underline and a height-capped, scrollable popup (sized for the full
+// 151-species list); negative-index rows are disabled. Shares the common Select*
+// pattern (see SelectItem.qml).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

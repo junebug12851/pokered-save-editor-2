@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file namesplayer.cpp
+ * @brief Implementation of NamesPlayer. See namesplayer.h.
+ */
+
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>

@@ -159,6 +159,46 @@ Full mechanism + the "include only traversed branches" corollary live in
 
 ---
 
+## Documentation: Doxygen for C++, no generator for QML (Session 2026-06-06)
+
+**Decision**: Generate C++ API docs with **Doxygen** (+ Graphviz, doxygen-awesome theme).
+Do **not** run any documentation generator over the QML — document QML with plain
+human-readable comments only.
+
+**Why not qdoc** (the obvious Qt choice, and the only first-party tool that documents QML):
+qdoc doesn't associate a comment with the declaration beneath it the way Doxygen does — it makes
+you restate what you're documenting with topic commands (`\fn bool SaveFile::load(...)`,
+`\qmltype Pokedex`, `\qmlproperty ...`). That turns in-code comments verbose and machine-like.
+Twilight's UX-first bar applies to the *source itself*: comments must read cleanly for a developer.
+qdoc fails that test.
+
+**Why Doxygen**: it reads the next line of code, so comments stay human and Markdown-friendly
+(`QT_AUTOBRIEF` on → first sentence is the brief, no commands needed). It's the long-standing,
+rock-stable C++ standard.
+
+**The trade accepted**: Doxygen can't document `.qml`. So there is **no generated doc site for
+QML** — by choice. For a solo project, a clickable QML doc site adds little; readable inline QML
+comments give the real value. Revisit qdoc only if contributors ever need a browsable QML reference.
+
+**Footprint**: one root `Doxyfile`, a vendored theme under `docs/doxygen-awesome/`, generated
+`docs/html/` (git-ignored). Build: `doxygen Doxyfile`. Details + comment-style examples in
+`reference/documentation.md`.
+
+**Reaffirmed same session**: Twilight reconsidered switching to qdoc for full-project (QML)
+coverage, then chose to **stay on Doxygen**. Deciding factors: qdoc has **no Markdown** — its
+prose pages use qdoc's own markup (`\page`/`\section1`/`\c`/`\l`), so it can't ingest the
+`notes/*.md` and would force any custom pages out of Markdown; it also reintroduces the verbose
+`\fn`/`\qmltype` comment style. Doxygen keeps comments human AND ingests Markdown pages natively
+(curated `.md` pages can be added to `INPUT` later). Accepted cost: no generated QML doc site.
+**Update (same session)**: Twilight then asked for the `notes/` to be **built into the Doxygen
+output and cross-linked**. So `notes` is now in the Doxyfile `INPUT`: the Markdown notes render as
+doc-site pages and their relative links resolve page-to-page. The notes remain plain, readable
+Markdown (no Doxygen markup added) — they are still the living dev notes, just now also published
+and threaded together. The new `notes/systems/` set is the architecture deep-dive hub. (This
+supersedes the earlier "notes stay out of the generator" decision.)
+
+---
+
 ## Error Handling Philosophy (Owner's Decision)
 
 **Decision**: Debug builds show blocking `QMessageBox` for QML errors. Release builds degrade
@@ -215,3 +255,95 @@ indices and the method is private, replaced with `int position` directly.
 from the original, the moc will reference methods that are missing from the current header.
 Check each `Q_PROPERTY(T name READ funcName)` and verify `funcName` is declared. In this case
 `getMapCount()`, `isCity()`, `notCity()` were missing and needed to be added.
+
+---
+
+# Original Architecture Rationale (2019–2020)
+
+The decisions above are from the 2026 revival. The ones below are the *founding* choices that
+shaped the codebase in the first place — reconstructed from the commit history (`version.md`,
+`context/origins.md`). They explain **why the structure exists at all**, so revival work
+extends the original intent instead of accidentally undoing it.
+
+## The four-library split (common / db / savefile / app)
+
+**Decision** (`7d5199b`, the "large-scale refactor"): break the monolithic app into separate
+libraries — `common` (shared helpers: random, utility, types), `db` (the reference game
+databases), `savefile` (save parsing + the expanded object model), and `app` (the executable +
+QML UI + bridge/router/models/engines).
+
+**Why**: separation of concerns and reuse — the databases and the save model have no business
+depending on the UI, and isolating them keeps each layer testable and comprehensible. The build
+order (common → db → savefile → app) reflects the dependency direction.
+
+**Made shared, not static** (`5cbd7ff`): static linking hit an out-of-order link bug; switching
+to shared libraries fixed it, at the cost of needing an export macro per library — hence the
+`common_autoport.h` / `db_autoport.h` / `savefile_autoport.h` headers. A separate `core`
+library was tried (`e682f2e`) and dropped as unnecessary (`01f51d1`); shared helpers live in
+`common`. See `decisions/rejected.md`.
+
+## DB-plus-entry + deep-linking + in-memory index
+
+**Decision** (the long 2019 "Completed/Index X Data" runs, then the 2020 `XxxDB`/`XxxDBEntry`
+refactor starting with Credits in `198effb`): each reference database is a `XxxDB` singleton
+holding a list of `XxxDBEntry` rows loaded from a JSON asset, with an in-memory index for fast
+lookup and **deep links** cross-referencing related entries (a Pokemon → its moves/TMs, a map →
+its connections/warps/wild encounters, etc.).
+
+**Why**: the game's data is densely interrelated; resolving those relationships once at load
+time (deep-linking) lets the rest of the code — and QML — traverse them cheaply by pointer
+instead of repeatedly searching by id. The first link was proven in `98660a1`; the pattern then
+covered every database. The `entries/` subdirectory and the central `DB` aggregate that
+bootstraps `loadAll`/`indexAll`/`deepLinkAll` both come from this design. See `systems/db.md`.
+
+## The expanded-data object model + byte-exact flatten
+
+**Decision** (the Dec 2019–Jan 2020 "Completed Expanded Data / X" run): a loaded save is parsed
+into a tree of editable C++ objects — area, world, player, storage, daycare, Hall of Fame,
+rival, and the shared fragments (Pokemon box/party, item/sprite/sign/warp/map-connection data).
+The *shape* of this tree was first worked out in the JavaScript era (`context/origins.md`,
+Era 2) and recreated in C++.
+
+**Why**: editing raw save bytes directly is error-prone and un-QML-able. The expanded model
+gives every save field a typed, bindable object the UI can read and write. Crucially, writing
+back **flattens only the bytes that changed** — byte-exact fidelity was a value from the start
+(the early corruption bugs, e.g. `e20c167` and the party-save fix `cb6fc99`, were chased down
+precisely because a stray byte is unacceptable). This is the origin of the `flattenData`
+contract the revival treats as sacred. See `systems/savefile.md` and
+`context/principles.md` → "Save File Integrity".
+
+## Bridge + Router (QML ↔ C++)
+
+**Decision** (`d0b4f41`): a single `Bridge` object exposed to QML as the `brg` context property,
+with a C++ `Router` driving all screen navigation. This replaced the failed QML
+`Loader`/`Pages.js` approach (`decisions/rejected.md`).
+
+**Why**: navigation logic and the data graph belong in C++ where they can be reasoned about and
+tested; QML just renders and calls into `brg`. The router emits navigation signals that the QML
+`StackView` turns into push/pop — keeping the view dumb and the logic central. See
+`systems/app.md`.
+
+## Font/tileset image providers + the `encodeBeforeUrl` hex trick
+
+**Decision** (`22baf52` TilesetEngine/Provider, `49e47c3` FontPreviewProvider): render names and
+tiles in the real Game Boy font through Qt `QQuickImageProvider`s, fed by `image://font/...` and
+`image://tileset/...` URLs from QML.
+
+**Why**: the name editor and previews must look *in-game*, not like hex. A C++ image provider
+can composite the font/tileset bitmaps faithfully and hand QML a finished image.
+
+**The hex-encoding workaround** (`8fe8447`): Qt Quick URL-encodes the image-source string but
+**can't decode its own encoding**, so the name string is hex-encoded in QML, passed through the
+URL, and decoded from hex in C++ — the `Utility::encodeBeforeUrl` helper. This is an accepted,
+documented workaround for a genuine framework defect, not a hack of convenience (see
+`context/principles.md` → "No hacks — but accept necessary workarounds"). Also note the provider
+must report the correct "whole" image size or Qt Quick rescales and blurs it (`0fb0106`). See
+`systems/app.md` and `reference/qt-gotchas.md`.
+
+## The `Random` helper
+
+**Decision** (`70f9207`): wrap `QRandomGenerator` behind a small `Random` interface in `common`,
+and route all randomization through it (`e1543c3`).
+
+**Why**: a single seam for randomness keeps call sites clean and makes the randomization
+feature's behavior consistent and tunable in one place.

@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file storage.cpp
+ * @brief Implementation of Storage -- the PC: the item box plus 12 Pokemon
+ *        boxes (2 sets), flattened to one 0..11 box space. See storage.h.
+ */
+
 #include "./storage.h"
 #include "../qmlownership.h"
 #include "./fragments/pokemonstorageset.h"

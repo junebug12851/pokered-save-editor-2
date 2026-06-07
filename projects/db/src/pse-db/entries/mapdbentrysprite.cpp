@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentrysprite.cpp
+ * @brief Implementation of MapDBEntrySprite (the sprite base). See mapdbentrysprite.h.
+ */
+
 #include <QJsonValue>
 #include <QDebug>
 #include <QQmlEngine>

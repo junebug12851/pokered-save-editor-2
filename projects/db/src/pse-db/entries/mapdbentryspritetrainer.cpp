@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentryspritetrainer.cpp
+ * @brief Implementation of MapDBEntrySpriteTrainer. See mapdbentryspritetrainer.h.
+ */
+
 #include <QDebug>
 #include <QJsonValue>
 #include <QQmlEngine>

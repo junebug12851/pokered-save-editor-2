@@ -1,3 +1,8 @@
+// NameDisplayMenuNoTileset.qml -- a name-display menu without the tileset submenu.
+//
+// Same as NameDisplayMenu (Randomize Name / Toggle Example / Randomize Example /
+// Close) but omits the Simulated Tileset submenu, for contexts where tileset
+// selection doesn't apply.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

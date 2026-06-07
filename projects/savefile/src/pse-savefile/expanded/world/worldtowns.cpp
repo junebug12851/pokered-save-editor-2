@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file worldtowns.cpp
+ * @brief Implementation of WorldTowns -- visited-town (Fly destination) flags.
+ *        See worldtowns.h for the documented API.
+ */
+
 #include <string.h>
 
 #include "./worldtowns.h"

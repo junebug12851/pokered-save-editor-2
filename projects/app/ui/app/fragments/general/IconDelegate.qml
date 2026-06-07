@@ -1,3 +1,8 @@
+// IconDelegate.qml -- one icon-over-label tile in an IconsView grid.
+//
+// A flat square Button (cellSize) showing the model's icon above its capitalized
+// name; clicking navigates via brg.router.changeScreen(page). Used for the Home
+// menu grid.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

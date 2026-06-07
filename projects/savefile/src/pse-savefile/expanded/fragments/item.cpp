@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file item.cpp
+ * @brief Implementation of Item -- an inventory slot (index + amount) and its
+ *        derived buy/sell pricing. See item.h for the documented API.
+ */
 #include "./item.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

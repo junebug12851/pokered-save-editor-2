@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file trainers.cpp
+ * @brief Implementation of TrainersDB and TrainerDBEntry. See trainers.h.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

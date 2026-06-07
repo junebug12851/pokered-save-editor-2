@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentrysign.cpp
+ * @brief Implementation of MapDBEntrySign. See mapdbentrysign.h.
+ */
+
 #include <QQmlEngine>
 #include <pse-common/utility.h>
 #include "mapdbentrysign.h"

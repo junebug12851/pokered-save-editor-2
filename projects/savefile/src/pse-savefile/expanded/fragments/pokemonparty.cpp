@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file pokemonparty.cpp
+ * @brief Implementation of PokemonParty -- a party mon (PokemonBox + stored
+ *        stats), incl. box<->party conversion. See pokemonparty.h.
+ */
 #include "pokemonparty.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

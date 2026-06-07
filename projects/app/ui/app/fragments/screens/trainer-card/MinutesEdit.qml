@@ -1,3 +1,8 @@
+// MinutesEdit.qml -- the "minutes" field of the playtime clock.
+//
+// A 2-digit DefTextEdit bound to playtime.minutes (clamped 0-59), dimmed when the
+// clock is maxed. A PlaytimeEdit sub-field (see DaysEdit.qml for the shared
+// pattern).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -1,3 +1,8 @@
+// CreditWork.qml -- the faint art-attribution text pinned to a modal's
+// bottom-right.
+//
+// A low-opacity Text the modal sets to credit its wallpaper artist (per the
+// CC-BY-NC-ND license terms).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

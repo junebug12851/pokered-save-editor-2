@@ -1,3 +1,9 @@
+// HomeIconsModel.qml -- the Home screen's menu grid model.
+//
+// A ListModel of {name, iconSrc, page} entries for the Home IconsView. `page` is
+// the router screen key (e.g. "trainerCard", "pokedex", "bag"); entries with an
+// empty page ("Options", "Hall of Fame", "Event Pokemon") are placeholders for
+// not-yet-implemented screens.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

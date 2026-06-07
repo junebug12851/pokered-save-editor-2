@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file areasprites.cpp
+ * @brief Implementation of AreaSprites -- the map's list of sprites/NPCs.
+ *        See areasprites.h for the documented API.
+ */
 #include "./areasprites.h"
 #include "../../qmlownership.h"
 #include "../fragments/spritedata.h"

@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file worldother.cpp
+ * @brief Implementation of WorldOther (and the Playtime clock) -- playtime,
+ *        fossils, and debug mode. See worldother.h for the documented API.
+ */
+
 #include "./worldother.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

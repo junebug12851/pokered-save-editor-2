@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file examplespokemon.cpp
+ * @brief Implementation of ExamplesPokemon. See examplespokemon.h.
+ */
+
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>

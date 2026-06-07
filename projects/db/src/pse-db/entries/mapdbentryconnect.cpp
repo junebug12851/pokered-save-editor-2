@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentryconnect.cpp
+ * @brief Implementation of MapDBEntryConnect (the map-connection math).
+ *        See mapdbentryconnect.h for the documented API.
+ */
+
 #include <QDebug>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

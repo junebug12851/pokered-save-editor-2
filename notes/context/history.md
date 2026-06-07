@@ -3,6 +3,11 @@
 The story of how this project was revived. Useful context for understanding why certain
 decisions were made and why the codebase looks the way it does.
 
+> **Before this file:** the 2019–2020 origin story — three from-scratch rewrites, the
+> JavaScript detour, and the library/DB refactor that shaped today's architecture — lives in
+> [`origins.md`](origins.md). This file picks up where that one ends (the abandoned March-2020
+> state). Read `origins.md` first for the full arc.
+
 ---
 
 ## State When Work Resumed (2026)

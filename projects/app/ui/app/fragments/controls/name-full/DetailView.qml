@@ -1,3 +1,8 @@
+// DetailView.qml -- the right-side detail panel of the full keyboard.
+//
+// A Pane showing the selected character/code's color swatch, title, raw code, an
+// optional divider, and a wrapped description. Fields are exposed via aliases
+// (titleEl/codeEl/descEl/...) so the picker can fill them in as you browse.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

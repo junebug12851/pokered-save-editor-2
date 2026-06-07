@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file mapconndata.cpp
+ * @brief Implementation of MapConnData -- one map edge-connection block.
+ *        See mapconndata.h for the documented API.
+ */
 #include "mapconndata.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

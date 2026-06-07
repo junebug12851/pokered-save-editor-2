@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+// FlatToggle.qml --
 // Flat, square toggle button: no Material elevation/shadow, no rounded corners.
 // Filled with the accent when `active`, outlined otherwise. Used for the
 // keyboard's Outdoor / Grid-Tileset toggles and the quick-edit Name/Example

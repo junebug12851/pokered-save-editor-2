@@ -3,7 +3,10 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Controls
 
-// A Footer with 1 Button
+// AppFooterBtn1.qml -- a screen footer holding a single FooterButton.
+//
+// Exposes icon1/text1/btn1 aliases and a btn1Clicked() signal. Draws the footer
+// shadow on top, then one full-width button below.
 ToolBar {
   property alias icon1: btn.icon
   property alias text1: btn.text

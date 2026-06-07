@@ -1,3 +1,8 @@
+// Home.qml -- the home screen (the app's main menu).
+//
+// A Page showing the grid of navigation icons (IconsView driven by
+// HomeIconsModel) that lead to the editor screens, with a one-button footer:
+// "Re-Roll", which fully randomizes the save (brg.file.data.randomizeExpansion()).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

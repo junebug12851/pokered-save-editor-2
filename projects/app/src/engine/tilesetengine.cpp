@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file tilesetengine.cpp
+ * @brief Implementation of TilesetEngine -- tileset building + wave/flower
+ *        post-processing. See tilesetengine.h.
+ */
+
 #include "./tilesetengine.h"
 #include <QStringList>
 #include <QColor>

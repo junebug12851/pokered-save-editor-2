@@ -16,9 +16,24 @@
 #pragma once
 #include <QtCore/qglobal.h>
 
+/**
+ * @file common_autoport.h
+ * @brief Shared-library import/export macro for the @c common library.
+ *
+ * Each sub-library (common, db, savefile) carries one of these "autoport"
+ * headers. When the library is being @e built, @c COMMON_LIBRARY is defined and
+ * its public symbols are marked @c Q_DECL_EXPORT; when another target @e consumes
+ * the library, the same symbols resolve to @c Q_DECL_IMPORT. Classes opt in by
+ * tagging their declaration with the @ref COMMON_AUTOPORT macro
+ * (e.g. `class COMMON_AUTOPORT Utility ...`).
+ */
+
+/**
+ * @def COMMON_AUTOPORT
+ * @brief Expands to the correct dllexport/dllimport decoration for this library.
+ */
 #if defined(COMMON_LIBRARY)
 #  define COMMON_AUTOPORT Q_DECL_EXPORT
 #else
 #  define COMMON_AUTOPORT Q_DECL_IMPORT
 #endif
-

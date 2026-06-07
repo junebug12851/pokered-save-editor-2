@@ -21,27 +21,36 @@
 
 class SaveFile;
 
+/**
+ * @brief The rival: their name and chosen starter.
+ *
+ * A tiny top-level region. @ref starter selects which team the rival battles you
+ * with (see the field note -- only the three real starters are valid). Standard
+ * expanded-node convention (see SaveFileExpanded).
+ *
+ * @see SaveFileExpanded, PlayerBasics (the player's mirror).
+ */
 class SAVEFILE_AUTOPORT Rival : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)
-  Q_PROPERTY(int starter MEMBER starter NOTIFY starterChanged)
+  Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)       ///< Rival's name.
+  Q_PROPERTY(int starter MEMBER starter NOTIFY starterChanged)  ///< Rival's starter (drives his team; see field note).
 
 public:
   Rival(SaveFile* saveFile = nullptr);
   virtual ~Rival();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the rival data from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the rival data to the save.
 
 signals:
   void nameChanged();
   void starterChanged();
 
 public slots:
-  void reset();
-  void randomize();
+  void reset();     ///< Blank the rival.
+  void randomize(); ///< Randomize the rival's name/starter.
 
 public:
   // Rival's Name and Starter Pokemon
@@ -49,7 +58,6 @@ public:
   // by internal Pokemon index and only 3 options are valid, Charmander,
   // Bulbasaur, and Squirtle. I have no idea what will happen if you put a
   // different value in here.
-  QString name;
-  int starter;
+  QString name;  ///< @see name property.
+  int starter;   ///< @see starter property (valid: Charmander/Bulbasaur/Squirtle index).
 };
-

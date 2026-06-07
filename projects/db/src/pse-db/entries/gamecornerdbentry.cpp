@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file gamecornerdbentry.cpp
+ * @brief Implementation of GameCornerDBEntry. See gamecornerdbentry.h.
+ */
+
 #include <QDebug>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

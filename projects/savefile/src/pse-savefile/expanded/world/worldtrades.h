@@ -20,9 +20,18 @@
 
 class SaveFile;
 
-constexpr var8 tradeCount = 10;
-constexpr var8 tradeByteCount = 2; // 6 of 16 bits unused
+constexpr var8 tradeCount = 10;    ///< In-game NPC trades tracked.
+constexpr var8 tradeByteCount = 2; ///< 6 of 16 bits unused
 
+/**
+ * @brief "Done" flags for the game's in-game (NPC) trades.
+ *
+ * A @ref completedTrades bool array of @ref tradeCount flags marking which of the
+ * one-time NPC trades have already been completed. QML count/at/set access.
+ * Standard expanded-node convention (see SaveFileExpanded).
+ *
+ * @see World.
+ */
 class SAVEFILE_AUTOPORT WorldTrades : public QObject
 {
   Q_OBJECT
@@ -31,21 +40,20 @@ public:
   WorldTrades(SaveFile* saveFile = nullptr);
   virtual ~WorldTrades();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the trade flags from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the trade flags to the save.
 
-  Q_INVOKABLE int tradesCount();
-  Q_INVOKABLE bool tradesAt(int ind);
-  Q_INVOKABLE void tradesSet(int ind, bool val);
+  Q_INVOKABLE int tradesCount();              ///< Number of trade flags (tradeCount).
+  Q_INVOKABLE bool tradesAt(int ind);         ///< Is trade @p ind completed?
+  Q_INVOKABLE void tradesSet(int ind, bool val); ///< Set/clear completed for trade @p ind.
 
 signals:
   void completedTradesChanged();
 
 public slots:
-  void reset();
-  void randomize();
+  void reset();     ///< Clear all trade flags.
+  void randomize(); ///< Randomize the trade flags.
 
 public:
-  bool completedTrades[tradeCount];
+  bool completedTrades[tradeCount]; ///< Per-trade completed flags.
 };
-

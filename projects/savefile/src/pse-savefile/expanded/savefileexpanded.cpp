@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file savefileexpanded.cpp
+ * @brief Implementation of SaveFileExpanded -- the expanded-tree root that
+ *        loads/saves every region. See savefileexpanded.h for the documented API.
+ */
 #include "savefileexpanded.h"
 #include "../savefile.h"
 

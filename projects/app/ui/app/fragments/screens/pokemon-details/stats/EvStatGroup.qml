@@ -9,6 +9,8 @@ import App.PokemonParty
 import "../../../general"
 import "../../../header"
 
+// EvStatGroup.qml -- the EV (stat experience) slider group for the StatsTab.
+//
 // EV (Stat Experience) editor: five 0–65535 sliders. Laid out with a 2-column
 // GridLayout (label | slider) so rows align and space evenly without hand-tuned
 // or negative margins. Each slider shows its exact value in a tooltip while

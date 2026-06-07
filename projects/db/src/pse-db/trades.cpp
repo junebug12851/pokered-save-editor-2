@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file trades.cpp
+ * @brief Implementation of TradesDB and TradeDBEntry. See trades.h.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

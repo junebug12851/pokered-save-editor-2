@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapsdb.cpp
+ * @brief Implementation of MapsDB (incl. the MapSearch finder). See mapsdb.h.
+ */
+
 #include <QJsonArray>
 #include <pse-common/utility.h>
 #include <QQmlEngine>

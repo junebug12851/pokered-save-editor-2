@@ -13,6 +13,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file pokemonbox.cpp
+ * @brief Implementation of PokemonBox and PokemonMove -- the central Pokemon
+ *        record: load/save, stat computation, validity, evolution, shininess,
+ *        nature, and constrained randomization. See pokemonbox.h for the API.
+ */
 #include "pokemonbox.h"
 #include "../../qmlownership.h"
 #include "../savefileexpanded.h"

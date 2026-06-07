@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file savefile.cpp
+ * @brief Implementation of SaveFile -- the raw<->expanded lifecycle
+ *        (expand/flatten/reset/randomize). See savefile.h for the documented API.
+ */
 #include "savefile.h"
 #include "./expanded/savefileexpanded.h"
 #include "./savefileiterator.h"

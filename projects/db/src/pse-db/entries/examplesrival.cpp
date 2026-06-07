@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file examplesrival.cpp
+ * @brief Implementation of ExamplesRival. See examplesrival.h.
+ */
+
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>

@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file names.cpp
+ * @brief Implementation of Names (the random-name aggregate). See names.h.
+ */
+
 #include <QQmlEngine>
 #include <pse-common/utility.h>
 #include "names.h"

@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file playerpokemon.cpp
+ * @brief Implementation of PlayerPokemon -- the party as a specialized
+ *        PokemonStorageBox. See playerpokemon.h for the documented API.
+ */
 #include "playerpokemon.h"
 #include "../../qmlownership.h"
 #include "./player.h"

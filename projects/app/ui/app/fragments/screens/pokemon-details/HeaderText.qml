@@ -1,3 +1,7 @@
+// HeaderText.qml -- a right-aligned row label for the stats tables.
+//
+// A small Text filling its parent cell, right-aligned and vertically centered,
+// used as the leading label in the StatsGroup / DV-EV layouts.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

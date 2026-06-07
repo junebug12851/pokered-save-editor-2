@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file router.cpp
+ * @brief Implementation of Router/Screen -- screen registry + navigation.
+ *        See router.h for the documented API.
+ */
+
 #include "./router.h"
 
 Screen::Screen() {}

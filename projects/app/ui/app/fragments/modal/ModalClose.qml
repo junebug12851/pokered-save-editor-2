@@ -1,3 +1,7 @@
+// ModalClose.qml -- the round "X" close button pinned to a modal's top-right.
+//
+// A transparent icon-only RoundButton; the caller wires onClicked (typically to
+// brg.router.closeScreen()).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

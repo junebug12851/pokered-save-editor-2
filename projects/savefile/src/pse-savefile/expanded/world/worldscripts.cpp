@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file worldscripts.cpp
+ * @brief Implementation of WorldScripts -- per-map script-progress values.
+ *        See worldscripts.h for the documented API.
+ */
 #include <string.h>
 
 #include "./worldscripts.h"

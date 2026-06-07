@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file tilesetprovider.cpp
+ * @brief Implementation of TilesetProvider -- the per-tile QML image provider.
+ *        See tilesetprovider.h.
+ */
+
 #include <QImage>
 
 #include "./tilesetprovider.h"

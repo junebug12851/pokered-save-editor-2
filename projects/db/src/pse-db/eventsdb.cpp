@@ -13,6 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file eventsdb.cpp
+ * @brief Implementation of EventsDB. See eventsdb.h for the documented API.
+ */
 #include <QVector>
 #include <QJsonArray>
 #include <QQmlEngine>

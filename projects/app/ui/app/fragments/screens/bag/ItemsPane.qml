@@ -1,3 +1,9 @@
+// ItemsPane.qml -- one titled item box (used twice on the Bag screen).
+//
+// Wraps an ItemBoxView between a colored header bar (title + live count/max + a
+// check-all toggle) and a footer bar of bulk actions that appear only when items
+// are checked: move to top/up, delete, transfer to the other box, move
+// down/bottom. Bound to an ItemStorageBox (box) and its ItemStorageModel (model).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

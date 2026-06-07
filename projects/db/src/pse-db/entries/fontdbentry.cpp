@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file fontdbentry.cpp
+ * @brief Implementation of FontDBEntry. See fontdbentry.h.
+ */
+
 #include <QQmlEngine>
 #include <pse-common/utility.h>
 #include "fontdbentry.h"

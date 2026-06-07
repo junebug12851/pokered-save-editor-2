@@ -9,6 +9,8 @@ import App.PokemonParty
 import "../../../general"
 import "../../../header"
 
+// DvStatGroup.qml -- the DV (IV) slider group for the StatsTab.
+//
 // DV (Determinant Value) editor: HP is read-only (Gen 1 computes it from the
 // other four DVs); Atk/Def/Spd/Spc are user-editable 0–15 sliders.
 //

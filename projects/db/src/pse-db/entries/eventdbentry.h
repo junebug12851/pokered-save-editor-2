@@ -29,38 +29,48 @@ class EventsDB;
 // In-Game events, there's like a million of them, not kidding lol. Every little
 // thing you do changes and moves around events
 
+/**
+ * @brief One story-event definition: its name and where its flag lives in the save.
+ *
+ * QObject-getter style DB entry. Pinpoints the event flag (@ref byte / @ref bit)
+ * the save's WorldEvents bitfield stores, and lists the maps it relates to
+ * (@ref maps -> @ref toMaps in deepLink). Surfaced lists use the size + invokable
+ * `...At()` accessor workaround. See db.md.
+ *
+ * @see EventsDB, WorldEvents (the save-side flags).
+ */
 struct DB_AUTOPORT EventDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString getName READ getName CONSTANT)
-  Q_PROPERTY(int getInd READ getInd CONSTANT)
-  Q_PROPERTY(int getByte READ getByte CONSTANT)
-  Q_PROPERTY(int getBit READ getBit CONSTANT)
-  Q_PROPERTY(int getMapsSize READ getMapsSize CONSTANT)
-  Q_PROPERTY(int getToMapsSize READ getToMapsSize CONSTANT)
+  Q_PROPERTY(QString getName READ getName CONSTANT)         ///< Event name.
+  Q_PROPERTY(int getInd READ getInd CONSTANT)               ///< Internal event index.
+  Q_PROPERTY(int getByte READ getByte CONSTANT)             ///< Byte in the SAV holding the flag.
+  Q_PROPERTY(int getBit READ getBit CONSTANT)               ///< Bit within that byte.
+  Q_PROPERTY(int getMapsSize READ getMapsSize CONSTANT)     ///< Count of associated map names.
+  Q_PROPERTY(int getToMapsSize READ getToMapsSize CONSTANT) ///< Count of resolved maps.
 
 public:
-  const QString getName() const;
-  int getInd() const;
-  int getByte() const;
-  int getBit() const;
+  const QString getName() const; ///< @see getName property.
+  int getInd() const;            ///< @see getInd property.
+  int getByte() const;           ///< @see getByte property.
+  int getBit() const;            ///< @see getBit property.
 
-  const QVector<QString> getMaps() const;
-  int getMapsSize() const;
-  Q_INVOKABLE const QString getMapAt(int ind) const;
+  const QVector<QString> getMaps() const;        ///< Associated map names.
+  int getMapsSize() const;                       ///< @see getMapsSize property.
+  Q_INVOKABLE const QString getMapAt(int ind) const; ///< Associated map name @p ind (for QML).
 
-  const QVector<MapDBEntry*> getToMaps() const;
-  int getToMapsSize() const;
-  Q_INVOKABLE const MapDBEntry* getToMapAt(int ind) const;
+  const QVector<MapDBEntry*> getToMaps() const;  ///< Resolved associated maps.
+  int getToMapsSize() const;                     ///< @see getToMapsSize property.
+  Q_INVOKABLE const MapDBEntry* getToMapAt(int ind) const; ///< Resolved map @p ind (for QML).
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  EventDBEntry();
-  EventDBEntry(QJsonValue& data);
+  EventDBEntry();                ///< Empty entry (built by EventsDB).
+  EventDBEntry(QJsonValue& data); ///< Build from a JSON value.
 
-  void deepLink();
-  void qmlRegister() const;
+  void deepLink();          ///< Resolve the associated maps.
+  void qmlRegister() const; ///< Register with QML.
 
   QString name = ""; // Event name
   int ind = 0; // Internal index
@@ -69,6 +79,5 @@ protected:
   QVector<QString> maps; // Associated Maps
   QVector<MapDBEntry*> toMaps; // To Associated Maps
 
-  friend class EventsDB;
+  friend class EventsDB; ///< Owning DB constructs/populates entries.
 };
-

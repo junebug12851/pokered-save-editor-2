@@ -22,18 +22,25 @@
 
 class QQmlEngine;
 
+/**
+ * @brief Random player-name source (an AbstractRandomString of player names).
+ *
+ * All behaviour is inherited; this just provides the singleton + QML registration.
+ * Backs `db.names.player` and the player-name randomizer.
+ *
+ * @see AbstractRandomString, Names.
+ */
 class DB_AUTOPORT NamesPlayer : public AbstractRandomString
 {
   Q_OBJECT
 
 public:
   // Get Instance
-  static NamesPlayer* inst();
+  static NamesPlayer* inst(); ///< The process-wide NamesPlayer singleton.
 
 protected:
-  NamesPlayer();
+  NamesPlayer(); ///< Private -- use inst(); loads the player-names asset.
 
 protected slots:
-  virtual void qmlRegister() const;
+  virtual void qmlRegister() const; ///< Register NamesPlayer with QML.
 };
-

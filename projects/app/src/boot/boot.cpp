@@ -14,6 +14,13 @@
   * limitations under the License.
 */
 
+/**
+ * @file boot.cpp
+ * @brief The bootstrap sequence: bootDatabase() -> bootQmlLinkage() ->
+ *        Router::loadScreens() -> createApp() (QApplication + MainWindow).
+ *        Returns a ready-to-exec QApplication to main().
+ */
+
 #include <QApplication>
 #include <QIcon>
 #include <QElapsedTimer>

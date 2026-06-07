@@ -30,6 +30,15 @@
  * the bulk of the work for the view but the view is in charge.
 */
 
+/**
+ * @brief A view-driven helper for working with one map's worth of data.
+ *
+ * Not a Qt model -- a "the view is in charge, this assists" helper (see the note
+ * above). The save's expanded data is stored @e data-oriented (all events across
+ * all maps, all hidden items across all maps, ...); this class re-frames it
+ * @e map-oriented so the map screen can ask questions about a single map. The
+ * commented list below enumerates the facets it surfaces per map.
+ */
 class IndividualMap : public QObject
 {
   Q_OBJECT
@@ -69,4 +78,3 @@ public:
    *  * Daycare
 */
 };
-

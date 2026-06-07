@@ -20,9 +20,18 @@
 
 class SaveFile;
 
-constexpr var8 townCount = 11;
-constexpr var8 townByteCount = 2; // 5 bits of 16 unused
+constexpr var8 townCount = 11;     ///< Towns tracked as fly destinations.
+constexpr var8 townByteCount = 2;  ///< 5 bits of 16 unused
 
+/**
+ * @brief "Visited" flags for towns -- which fly destinations are unlocked.
+ *
+ * A @ref visitedTowns bool array of @ref townCount flags; setting one unlocks that
+ * town as a Fly destination. QML count/at/set access. Standard expanded-node
+ * convention (see SaveFileExpanded).
+ *
+ * @see World.
+ */
 class SAVEFILE_AUTOPORT WorldTowns : public QObject
 {
   Q_OBJECT
@@ -31,21 +40,20 @@ public:
   WorldTowns(SaveFile* saveFile = nullptr);
   virtual ~WorldTowns();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the visited-town flags from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the visited-town flags to the save.
 
-  Q_INVOKABLE int townsCount();
-  Q_INVOKABLE bool townsAt(int ind);
-  Q_INVOKABLE void townsSet(int ind, bool val);
+  Q_INVOKABLE int townsCount();              ///< Number of town flags (townCount).
+  Q_INVOKABLE bool townsAt(int ind);         ///< Is town @p ind visited (fly-unlocked)?
+  Q_INVOKABLE void townsSet(int ind, bool val); ///< Set/clear visited for town @p ind.
 
 signals:
   void visitedTownsChanged();
 
 public slots:
-  void reset();
-  void randomize();
+  void reset();     ///< Clear all visited flags.
+  void randomize(); ///< Randomize the visited flags.
 
 public:
-  bool visitedTowns[townCount];
+  bool visitedTowns[townCount]; ///< Per-town visited (fly-unlocked) flags.
 };
-

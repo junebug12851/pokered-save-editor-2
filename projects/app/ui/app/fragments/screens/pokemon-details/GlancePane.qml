@@ -1,3 +1,13 @@
+// GlancePane.qml -- the live at-a-glance summary (right half of PokemonDetails).
+//
+// A header bar with the species picker (SelectSpecies), an editable level field,
+// and the status picker (SelectStatus); the mon's sprite (getMonUrl, refreshed on
+// dv/shiny/species change); a StatsGroup (or StatsGroupInvalid for glitch mons
+// with a party fallback); and a bottom HP slider with color-coded fill. Edits
+// write straight to boxData (species/level/status/hp) and call the matching
+// manual*Changed() so dependent data recomputes. The header combos override
+// hoverColor because they sit on the accent bar. The (dexNum+1) padding is the
+// correct 0->1 dex conversion -- do not change it.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

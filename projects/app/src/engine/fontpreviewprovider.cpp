@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file fontpreviewprovider.cpp
+ * @brief Implementation of FontPreviewProvider/FontPreviewInstance -- the
+ *        name-preview render pipeline. See fontpreviewprovider.h.
+ */
+
 #include <QImage>
 #include <QtMath>
 #include <QPainter>

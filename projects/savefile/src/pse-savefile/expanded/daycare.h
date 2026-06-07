@@ -29,26 +29,35 @@ class SaveFile;
 class PokemonBox;
 class PlayerBasics;
 
+/**
+ * @brief The Day Care: at most one deposited Pokemon.
+ *
+ * The simplest top-level region -- a single @ref pokemon slot (a PokemonBox) for
+ * the mon left at the Day Care. Standard expanded-node convention (see
+ * SaveFileExpanded); randomize() needs @ref PlayerBasics for OT/trade context.
+ *
+ * @see SaveFileExpanded, PokemonBox, PlayerBasics.
+ */
 class SAVEFILE_AUTOPORT Daycare : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(PokemonBox* pokemon MEMBER pokemon NOTIFY pokemonChanged)
+  Q_PROPERTY(PokemonBox* pokemon MEMBER pokemon NOTIFY pokemonChanged) ///< The Pokemon left at the Day Care (may be empty).
 
 public:
   Daycare(SaveFile* saveFile = nullptr);
   virtual ~Daycare();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the day-care mon from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the day-care mon to the save.
 
 signals:
   void pokemonChanged();
 
 public slots:
-  void reset();
-  void randomize(PlayerBasics* basics);
+  void reset();                         ///< Empty the Day Care.
+  void randomize(PlayerBasics* basics); ///< Put a random mon in the Day Care.
 
 public:
-  PokemonBox* pokemon = nullptr;
+  PokemonBox* pokemon = nullptr; ///< @see pokemon property.
 };

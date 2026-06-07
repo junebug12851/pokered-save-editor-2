@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file hofrecord.cpp
+ * @brief Implementation of HoFRecord -- a Hall of Fame record (up to 6 mons).
+ *        See hofrecord.h for the documented API.
+ */
 #include "hofrecord.h"
 #include "../../qmlownership.h"
 #include "./hofpokemon.h"

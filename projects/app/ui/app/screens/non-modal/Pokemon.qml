@@ -1,3 +1,11 @@
+// Pokemon.qml -- the Pokemon storage-box editor screen.
+//
+// Two PokemonPane side by side, each over one of the two PC storage halves
+// (brg.pokemonStorageModel1/2 with the matching pokemonBoxSelectModel1/2). The
+// footer has Re-Roll (randomizes both the storage boxes and the party, seeded by
+// player.basics) and a "Boxes Setup" toggle that flips storage.boxesFormatted
+// (its icon reflects the current formatted state). Detailed per-mon editing
+// happens on PokemonDetails.qml, navigated to from a pane.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

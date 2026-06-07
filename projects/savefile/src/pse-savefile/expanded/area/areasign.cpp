@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file areasign.cpp
+ * @brief Implementation of AreaSign -- the map's list of signs.
+ *        See areasign.h for the documented API.
+ */
 #include "areasign.h"
 #include "../../qmlownership.h"
 #include "../fragments/signdata.h"

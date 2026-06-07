@@ -1,3 +1,10 @@
+// SelectItem.qml -- the item picker combo (one of the borderless Select* combos).
+//
+// A flat, borderless ComboBox over brg.itemSelectModel (itemSelectName/
+// itemSelectInd) with a hover underline and a height-capped, scrollable popup.
+// Entries with a negative index are section/disabled rows (greyed out). All the
+// Select* combos in this folder share this exact pattern -- only the model, roles,
+// and width differ.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

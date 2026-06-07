@@ -10,6 +10,14 @@ import "../../general"
 import "../../header"
 import "./stats"
 
+// StatsTab.qml -- the "DV/EV" tab of the Pokemon details editor.
+//
+// Bound to boxData. A DV/EV toggle switches between DvStatGroup and EvStatGroup;
+// the toggle's overflow menu offers max/re-roll/reset for the active stat kind.
+// Below is the Future Shiny row -- note the checkbox uses onToggled (not
+// onCheckedChanged) so the shiny DV rewrite fires only on a real click, never on
+// the programmatic sync. Leave that inline note.
+//
 // DV/EV tab. Laid out top-down in a ColumnLayout: toggle row, the (content-
 // sized) stat group, then the Future-Shiny row — with a flexible spacer at the
 // bottom so all slack collects there instead of as odd gaps between sections.

@@ -62,6 +62,61 @@ but never immediately broken. The fun is discovery within a playable sandbox.
 
 ---
 
+## Save File Integrity Is Sacred
+
+**Byte-exact fidelity has been a core value since day one.** The editor flips *only* the exact
+bytes for an edit and leaves every other byte of the save totally untouched — no rewriting or
+"normalizing" the whole file, no reordering/repacking, no touching checksums or regions you
+weren't told to change. Corrupting a save is among the worst possible outcomes.
+
+This isn't a revival-era rule bolted on; it's why the **expanded-data object model flattens
+only changed bytes** (`decisions/architecture.md`). The early corruption bugs were hunted down
+precisely because a single stray byte is unacceptable — a save-location typo that overwrote
+hidden items (`e20c167`), party data being mangled on write (`cb6fc99`), missables saved back
+wrong (`ff76662`). Each got a dedicated fix. Treat the save bytes with that same care.
+
+## No Hacks — But Accept Necessary Workarounds
+
+The quality bar is high: **no hacks, no temporary fixes, no bad fallbacks.** Prefer the correct,
+clean solution even when it's the longer route. If you can only see a hacky path, surface it and
+ask rather than commit it.
+
+**But** the history draws an important line. When the *framework itself* leaves no clean path, a
+well-understood, documented workaround is not a hack — it's engineering. Qt forced several of
+these and they were accepted deliberately: the `encodeBeforeUrl` hex trick around Qt Quick's
+broken URL decoding (`8fe8447`), reporting a specific image size so Quick won't rescale/blur
+(`0fb0106`), a small compromise to get the models working at all (`8fa9dca`). The distinction:
+reject hacks of *convenience*; accept and **document** workarounds for genuine framework defects
+(see the inline comments and `reference/qt-gotchas.md`). A few QML quirks were even left
+deliberately unfixed when the cost outweighed the benefit (a rare ListView glitch in `3e9e367`)
+— a conscious trade, not neglect.
+
+## Native Desktop, Not a Web App
+
+Very early on (`49594d7`), the app moved off a pure Qt Quick `Window` into a real `MainWindow`
+with a **native menu bar**, specifically to escape the "web page"-like feel of a QML menu. The
+conviction holds: this should feel like polished desktop software that belongs in the
+applications folder — a `QQuickWidget` hosted in a native window, native menus, native behavior.
+Not a browser pretending to be an app.
+
+## Don't Over-Engineer — A Lesson Learned the Hard Way
+
+"Keep it simple" here isn't a platitude; it's scar tissue. The project was rewritten from
+scratch **three times** (`context/origins.md`): a pure-C++ attempt, a JavaScript/QML version,
+and the final C++ design. The JavaScript version in particular was torn out wholesale
+(`df68676`) once it proved the wrong foundation. The takeaway Twilight carries: build the
+simplest thing that's genuinely powerful, and finish it before adding more — complexity is what
+overwhelmed the project the first time and shelved it for six years.
+
+## Persistence Is Part of the Project's Character
+
+The commit history is, in places, a record of someone refusing to quit a difficult framework:
+days lost to Qt gotchas, multiple rewrites, blunt frustration in the commit messages — and then
+the work continuing anyway. That temperament is context worth respecting. This is the one
+project Twilight most wanted to finish; the bar is high because the project means something.
+
+---
+
 ## Things to Avoid
 
 - **Random for the sake of random** — randomization without playability is a waste

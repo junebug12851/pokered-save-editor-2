@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentrywildmon.cpp
+ * @brief Implementation of MapDBEntryWildMon. See mapdbentrywildmon.h.
+ */
+
 #include <QDebug>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

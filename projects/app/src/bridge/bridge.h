@@ -48,40 +48,55 @@
 #include <pse-db/entries/examplespokemon.h>
 #include <pse-db/entries/examplesrival.h>
 
+/**
+ * @brief The single QML<->C++ doorway -- everything the UI touches hangs off here.
+ *
+ * Injected into the QML context as `brg`, this object aggregates, as Q_PROPERTYs:
+ * the live save (@ref file -> the `data.dataExpanded.*` chain QML edits), the
+ * @ref router and @ref settings, the shared databases/randomizers QML uses
+ * directly (fonts, names, examples, util), and the fleet of Qt item-models
+ * (@ref mvc) that adapt C++ data into list/table form for QML views.
+ *
+ * It is created in MainWindow and given the FileManagement; the DB-backed members
+ * are singletons (`*::inst()`), the models are owned here. Registered uncreatable
+ * with QML. This is the hub of the app's [bridge pattern](../../../../notes/systems/app.md).
+ *
+ * @see FileManagement (the save), Router, Settings, and the `mvc/` models.
+ */
 class Bridge : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(FileManagement* file MEMBER file NOTIFY fileChanged)
-  Q_PROPERTY(RecentFilesModel* recentFilesModel MEMBER recentFilesModel NOTIFY recentFilesModelChanged)
-  Q_PROPERTY(PokedexModel* pokedexModel MEMBER pokedexModel NOTIFY pokedexModelChanged)
-  Q_PROPERTY(Router* router MEMBER router NOTIFY routerChanged)
-  Q_PROPERTY(CreditsModel* creditsModel MEMBER creditsModel NOTIFY creditsModelChanged)
-  Q_PROPERTY(PokemonStartersModel* starterModel MEMBER starterModel NOTIFY starterModelChanged)
-  Q_PROPERTY(ItemSelectModel* itemSelectModel MEMBER itemSelectModel NOTIFY itemSelectModelChanged)
-  Q_PROPERTY(ItemStorageModel* bagItemsModel MEMBER bagItemsModel NOTIFY bagItemsModelChanged)
-  Q_PROPERTY(ItemStorageModel* pcItemsModel MEMBER pcItemsModel NOTIFY pcItemsModelChanged)
-  Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged)
-  Q_PROPERTY(FontSearchModel* fontSearchModel MEMBER fontSearchModel NOTIFY fontSearchModelChanged)
-  Q_PROPERTY(FontsDB* fonts MEMBER fonts NOTIFY fontsChanged)
-  Q_PROPERTY(NamesPlayer* randomPlayerName MEMBER randomPlayerName NOTIFY randomPlayerNameChanged)
-  Q_PROPERTY(NamesPokemon* randomPokemonName MEMBER randomPokemonName NOTIFY randomPokemonNameChanged)
-  Q_PROPERTY(Utility* util MEMBER util NOTIFY utilChanged)
-  Q_PROPERTY(ExamplesPlayer* randomExamplePlayer MEMBER randomExamplePlayer NOTIFY randomExamplePlayerChanged)
-  Q_PROPERTY(ExamplesPokemon* randomExamplePokemon MEMBER randomExamplePokemon NOTIFY randomExamplePokemonChanged)
-  Q_PROPERTY(ExamplesRival* randomExampleRival MEMBER randomExampleRival NOTIFY randomExampleRivalChanged)
-  Q_PROPERTY(Settings* settings MEMBER settings NOTIFY settingsChanged)
-  Q_PROPERTY(ItemMarketModel* marketModel MEMBER marketModel NOTIFY marketModelChanged)
-  Q_PROPERTY(PokemonStorageModel* pokemonStorageModel1 MEMBER pokemonStorageModel1 NOTIFY pokemonStorageModel1Changed)
-  Q_PROPERTY(PokemonStorageModel* pokemonStorageModel2 MEMBER pokemonStorageModel2 NOTIFY pokemonStorageModel2Changed)
-  Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel1 MEMBER pokemonBoxSelectModel1 NOTIFY pokemonBoxSelectModel1Changed)
-  Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel2 MEMBER pokemonBoxSelectModel2 NOTIFY pokemonBoxSelectModel2Changed)
-  Q_PROPERTY(TypesModel* typesModel MEMBER typesModel NOTIFY typesModelChanged)
-  Q_PROPERTY(SpeciesSelectModel* speciesSelectModel MEMBER speciesSelectModel NOTIFY speciesSelectModelChanged)
-  Q_PROPERTY(StatusSelectModel* statusSelectModel MEMBER statusSelectModel NOTIFY statusSelectModelChanged)
-  Q_PROPERTY(NatureSelectModel* natureSelectModel MEMBER natureSelectModel NOTIFY natureSelectModelChanged)
-  Q_PROPERTY(MoveSelectModel* moveSelectModel MEMBER moveSelectModel NOTIFY moveSelectModelChanged)
-  Q_PROPERTY(MapSelectModel* mapSelectModel MEMBER mapSelectModel NOTIFY mapSelectModelChanged)
+  Q_PROPERTY(FileManagement* file MEMBER file NOTIFY fileChanged) ///< The live save (open/save + the editable tree).
+  Q_PROPERTY(RecentFilesModel* recentFilesModel MEMBER recentFilesModel NOTIFY recentFilesModelChanged) ///< Recent-files list model.
+  Q_PROPERTY(PokedexModel* pokedexModel MEMBER pokedexModel NOTIFY pokedexModelChanged) ///< Pokedex grid model.
+  Q_PROPERTY(Router* router MEMBER router NOTIFY routerChanged) ///< Screen navigation.
+  Q_PROPERTY(CreditsModel* creditsModel MEMBER creditsModel NOTIFY creditsModelChanged) ///< Credits list model.
+  Q_PROPERTY(PokemonStartersModel* starterModel MEMBER starterModel NOTIFY starterModelChanged) ///< Starter picker model.
+  Q_PROPERTY(ItemSelectModel* itemSelectModel MEMBER itemSelectModel NOTIFY itemSelectModelChanged) ///< Item picker model.
+  Q_PROPERTY(ItemStorageModel* bagItemsModel MEMBER bagItemsModel NOTIFY bagItemsModelChanged) ///< Bag items model.
+  Q_PROPERTY(ItemStorageModel* pcItemsModel MEMBER pcItemsModel NOTIFY pcItemsModelChanged) ///< PC items model.
+  Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged) ///< Live font finder.
+  Q_PROPERTY(FontSearchModel* fontSearchModel MEMBER fontSearchModel NOTIFY fontSearchModelChanged) ///< Font finder as a list model.
+  Q_PROPERTY(FontsDB* fonts MEMBER fonts NOTIFY fontsChanged) ///< The font database (codec + glyphs).
+  Q_PROPERTY(NamesPlayer* randomPlayerName MEMBER randomPlayerName NOTIFY randomPlayerNameChanged) ///< Random player-name source.
+  Q_PROPERTY(NamesPokemon* randomPokemonName MEMBER randomPokemonName NOTIFY randomPokemonNameChanged) ///< Random nickname source.
+  Q_PROPERTY(Utility* util MEMBER util NOTIFY utilChanged) ///< Common utility helpers.
+  Q_PROPERTY(ExamplesPlayer* randomExamplePlayer MEMBER randomExamplePlayer NOTIFY randomExamplePlayerChanged) ///< Example-player source.
+  Q_PROPERTY(ExamplesPokemon* randomExamplePokemon MEMBER randomExamplePokemon NOTIFY randomExamplePokemonChanged) ///< Example-pokemon source.
+  Q_PROPERTY(ExamplesRival* randomExampleRival MEMBER randomExampleRival NOTIFY randomExampleRivalChanged) ///< Example-rival source.
+  Q_PROPERTY(Settings* settings MEMBER settings NOTIFY settingsChanged) ///< UI theme/layout settings.
+  Q_PROPERTY(ItemMarketModel* marketModel MEMBER marketModel NOTIFY marketModelChanged) ///< Poke-mart market model.
+  Q_PROPERTY(PokemonStorageModel* pokemonStorageModel1 MEMBER pokemonStorageModel1 NOTIFY pokemonStorageModel1Changed) ///< PC box-set 1 model.
+  Q_PROPERTY(PokemonStorageModel* pokemonStorageModel2 MEMBER pokemonStorageModel2 NOTIFY pokemonStorageModel2Changed) ///< PC box-set 2 model.
+  Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel1 MEMBER pokemonBoxSelectModel1 NOTIFY pokemonBoxSelectModel1Changed) ///< Box selector 1 model.
+  Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel2 MEMBER pokemonBoxSelectModel2 NOTIFY pokemonBoxSelectModel2Changed) ///< Box selector 2 model.
+  Q_PROPERTY(TypesModel* typesModel MEMBER typesModel NOTIFY typesModelChanged) ///< Types list model.
+  Q_PROPERTY(SpeciesSelectModel* speciesSelectModel MEMBER speciesSelectModel NOTIFY speciesSelectModelChanged) ///< Species picker model.
+  Q_PROPERTY(StatusSelectModel* statusSelectModel MEMBER statusSelectModel NOTIFY statusSelectModelChanged) ///< Status picker model.
+  Q_PROPERTY(NatureSelectModel* natureSelectModel MEMBER natureSelectModel NOTIFY natureSelectModelChanged) ///< Nature picker model.
+  Q_PROPERTY(MoveSelectModel* moveSelectModel MEMBER moveSelectModel NOTIFY moveSelectModelChanged) ///< Move picker model.
+  Q_PROPERTY(MapSelectModel* mapSelectModel MEMBER mapSelectModel NOTIFY mapSelectModelChanged) ///< Map picker model.
 
 signals:
   void fileChanged();
@@ -116,39 +131,40 @@ signals:
   void mapSelectModelChanged();
 
 public:
+  /// @param file the live FileManagement to expose as `brg.file`.
   Bridge(FileManagement* file);
 
-  FileManagement* file = nullptr;
+  FileManagement* file = nullptr; ///< @see file property.
 
-  FontSearch* fontSearch = new FontSearch;
-  FontSearchModel* fontSearchModel = new FontSearchModel(fontSearch);
+  FontSearch* fontSearch = new FontSearch;                       ///< @see fontSearch property.
+  FontSearchModel* fontSearchModel = new FontSearchModel(fontSearch); ///< @see fontSearchModel property.
 
-  Router* router = new Router;
-  FontsDB* fonts = FontsDB::inst();
-  NamesPlayer* randomPlayerName = NamesPlayer::inst();
-  NamesPokemon* randomPokemonName = NamesPokemon::inst();
-  Utility* util = Utility::inst();
-  ExamplesPlayer* randomExamplePlayer = ExamplesPlayer::inst();
-  ExamplesPokemon* randomExamplePokemon = ExamplesPokemon::inst();
-  ExamplesRival* randomExampleRival = ExamplesRival::inst();
-  Settings* settings = new Settings(file->data);
+  Router* router = new Router;                                   ///< @see router property.
+  FontsDB* fonts = FontsDB::inst();                              ///< @see fonts property.
+  NamesPlayer* randomPlayerName = NamesPlayer::inst();           ///< @see randomPlayerName property.
+  NamesPokemon* randomPokemonName = NamesPokemon::inst();        ///< @see randomPokemonName property.
+  Utility* util = Utility::inst();                               ///< @see util property.
+  ExamplesPlayer* randomExamplePlayer = ExamplesPlayer::inst();  ///< @see randomExamplePlayer property.
+  ExamplesPokemon* randomExamplePokemon = ExamplesPokemon::inst(); ///< @see randomExamplePokemon property.
+  ExamplesRival* randomExampleRival = ExamplesRival::inst();     ///< @see randomExampleRival property.
+  Settings* settings = new Settings(file->data);                ///< @see settings property.
 
-  RecentFilesModel* recentFilesModel = nullptr;
-  PokedexModel* pokedexModel = nullptr;
-  ItemStorageModel* bagItemsModel = nullptr;
-  ItemStorageModel* pcItemsModel = nullptr;
-  ItemMarketModel* marketModel = nullptr;
-  PokemonStorageModel* pokemonStorageModel1 = nullptr;
-  PokemonStorageModel* pokemonStorageModel2 = nullptr;
-  PokemonBoxSelectModel* pokemonBoxSelectModel1 = nullptr;
-  PokemonBoxSelectModel* pokemonBoxSelectModel2 = nullptr;
-  CreditsModel* creditsModel = new CreditsModel;
-  PokemonStartersModel* starterModel = new PokemonStartersModel;
-  ItemSelectModel* itemSelectModel = new ItemSelectModel;
-  TypesModel* typesModel = new TypesModel;
-  SpeciesSelectModel* speciesSelectModel = new SpeciesSelectModel;
-  StatusSelectModel* statusSelectModel = new StatusSelectModel;
-  NatureSelectModel* natureSelectModel = new NatureSelectModel;
-  MoveSelectModel* moveSelectModel = new MoveSelectModel;
-  MapSelectModel* mapSelectModel = nullptr;
+  RecentFilesModel* recentFilesModel = nullptr;       ///< @see recentFilesModel property.
+  PokedexModel* pokedexModel = nullptr;               ///< @see pokedexModel property.
+  ItemStorageModel* bagItemsModel = nullptr;          ///< @see bagItemsModel property.
+  ItemStorageModel* pcItemsModel = nullptr;           ///< @see pcItemsModel property.
+  ItemMarketModel* marketModel = nullptr;             ///< @see marketModel property.
+  PokemonStorageModel* pokemonStorageModel1 = nullptr; ///< @see pokemonStorageModel1 property.
+  PokemonStorageModel* pokemonStorageModel2 = nullptr; ///< @see pokemonStorageModel2 property.
+  PokemonBoxSelectModel* pokemonBoxSelectModel1 = nullptr; ///< @see pokemonBoxSelectModel1 property.
+  PokemonBoxSelectModel* pokemonBoxSelectModel2 = nullptr; ///< @see pokemonBoxSelectModel2 property.
+  CreditsModel* creditsModel = new CreditsModel;      ///< @see creditsModel property.
+  PokemonStartersModel* starterModel = new PokemonStartersModel; ///< @see starterModel property.
+  ItemSelectModel* itemSelectModel = new ItemSelectModel; ///< @see itemSelectModel property.
+  TypesModel* typesModel = new TypesModel;            ///< @see typesModel property.
+  SpeciesSelectModel* speciesSelectModel = new SpeciesSelectModel; ///< @see speciesSelectModel property.
+  StatusSelectModel* statusSelectModel = new StatusSelectModel; ///< @see statusSelectModel property.
+  NatureSelectModel* natureSelectModel = new NatureSelectModel; ///< @see natureSelectModel property.
+  MoveSelectModel* moveSelectModel = new MoveSelectModel; ///< @see moveSelectModel property.
+  MapSelectModel* mapSelectModel = nullptr;           ///< @see mapSelectModel property.
 };

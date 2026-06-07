@@ -21,37 +21,45 @@
 
 class AreaMap;
 
+/// One map picker row: display name + map index.
 struct MapSelectEntry {
   MapSelectEntry(QString name, int ind);
 
-  QString name;
-  int ind;
+  QString name; ///< Display name.
+  int ind;      ///< Map index.
 };
 
+/**
+ * @brief Map picker model, tied to the current AreaMap.
+ *
+ * Select-model variant (see SpeciesSelectModel) holding the live @ref map so
+ * rebuild() can refresh against it; mapToListIndex() highlights the current map.
+ * Backs the "place player on a map" picker. Exposed as `brg.mapSelectModel`.
+ */
 class MapSelectModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Picker columns (mapped in roleNames()).
   enum ItemRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
   };
 
-  MapSelectModel(AreaMap* map);
+  MapSelectModel(AreaMap* map); ///< @param map the live area map.
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
-  QVector<MapSelectEntry*> mapListCache;
+  QVector<MapSelectEntry*> mapListCache; ///< Cached picker rows.
 
-  Q_INVOKABLE int mapToListIndex(int ind);
+  Q_INVOKABLE int mapToListIndex(int ind); ///< Row index for map @p ind.
 
 public slots:
-  void rebuild();
+  void rebuild(); ///< Rebuild the cached list.
 
 public:
-  AreaMap* map;
+  AreaMap* map; ///< The live area map this picker targets.
 };
-

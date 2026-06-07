@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file fontsdb.cpp
+ * @brief Implementation of FontsDB -- the glyph store plus the string<->font-code
+ *        codec (convertToCode/expandStr/etc.). See fontsdb.h for the API.
+ */
 #include <QVector>
 #include <QJsonArray>
 #include <QQmlEngine>

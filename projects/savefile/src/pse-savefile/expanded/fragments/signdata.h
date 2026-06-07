@@ -23,20 +23,30 @@ class SaveFile;
 class MapDBEntrySign;
 struct TmpSignPos;
 
+/**
+ * @brief One sign on the current map: its tile position and text id.
+ *
+ * A small leaf in the area's sign list. Holds the sign's @ref x / @ref y tile
+ * coordinates and the @ref txtId that selects which message it shows. Can be
+ * populated from map DB data (setTo / setToAll) or randomized, with `...All`
+ * static helpers that operate over a whole map's worth of signs at once.
+ *
+ * @see AreaSign (the container), MapDBEntrySign (map-defined sign data).
+ */
 class SAVEFILE_AUTOPORT SignData : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int x MEMBER x NOTIFY xChanged)
-  Q_PROPERTY(int y MEMBER y NOTIFY yChanged)
-  Q_PROPERTY(int txtId MEMBER txtId NOTIFY txtIdChanged)
+  Q_PROPERTY(int x MEMBER x NOTIFY xChanged)          ///< Sign tile X.
+  Q_PROPERTY(int y MEMBER y NOTIFY yChanged)          ///< Sign tile Y.
+  Q_PROPERTY(int txtId MEMBER txtId NOTIFY txtIdChanged) ///< Text id shown when read.
 
 public:
   SignData(SaveFile* saveFile = nullptr, var8 index = 0);
   virtual ~SignData();
 
-  void load(SaveFile* saveFile = nullptr, var8 index = 0);
-  void save(SaveFile* saveFile, var8 index);
+  void load(SaveFile* saveFile = nullptr, var8 index = 0); ///< Expand sign @p index from the save.
+  void save(SaveFile* saveFile, var8 index);               ///< Flatten sign @p index to the save.
 
 signals:
   void xChanged();
@@ -44,16 +54,15 @@ signals:
   void txtIdChanged();
 
 public slots:
-  void reset();
-  void randomize(QVector<TmpSignPos*>* tmpPos = nullptr);
-  static QVector<SignData*> randomizeAll(QVector<MapDBEntrySign*> mapSigns);
+  void reset();                                       ///< Blank this sign.
+  void randomize(QVector<TmpSignPos*>* tmpPos = nullptr); ///< Randomize position (avoiding @p tmpPos clashes).
+  static QVector<SignData*> randomizeAll(QVector<MapDBEntrySign*> mapSigns); ///< Randomize a whole map's signs.
 
-  void setTo(MapDBEntrySign* signData);
-  static QVector<SignData*> setToAll(QVector<MapDBEntrySign*> mapSigns);
+  void setTo(MapDBEntrySign* signData);               ///< Copy values from a map-defined sign.
+  static QVector<SignData*> setToAll(QVector<MapDBEntrySign*> mapSigns); ///< Build signs from a map's sign list.
 
 public:
-  int x;
-  int y;
-  int txtId;
+  int x;     ///< @see x property.
+  int y;     ///< @see y property.
+  int txtId; ///< @see txtId property.
 };
-

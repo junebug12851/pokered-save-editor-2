@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file pokemonstorageset.cpp
+ * @brief Implementation of PokemonStorageSet -- a bank of six boxes (with the
+ *        "skip the current box" load/save logic). See pokemonstorageset.h.
+ */
+
 #include <QRandomGenerator>
 
 #include "./pokemonstorageset.h"

@@ -1,3 +1,10 @@
+// SearchCriteria.qml -- the font-category filter radios for the character picker.
+//
+// A ColumnLayout of single-select SearchParam radios (All, Normal Only,
+// Single-Char, Multi-Char, Variable, Picture, Control), each color-coded to its
+// category and paired with a HelpDot tooltip explaining it. A shared ButtonGroup
+// keeps exactly one active (so no Clear is needed); changing the selection emits
+// reSearch().
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

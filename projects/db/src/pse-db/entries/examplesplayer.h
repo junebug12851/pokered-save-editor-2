@@ -22,18 +22,25 @@
 
 class QQmlEngine;
 
+/**
+ * @brief Example player-value source (an AbstractRandomString of presets).
+ *
+ * All behaviour inherited; provides the singleton + QML registration. Reached via
+ * `db.examples.player`.
+ *
+ * @see AbstractRandomString, Examples.
+ */
 class DB_AUTOPORT ExamplesPlayer : public AbstractRandomString
 {
   Q_OBJECT
 
 public:
   // Get Instance
-  static ExamplesPlayer* inst();
+  static ExamplesPlayer* inst(); ///< The process-wide ExamplesPlayer singleton.
 
 protected:
-  ExamplesPlayer();
+  ExamplesPlayer(); ///< Private -- use inst(); loads the example-player asset.
 
 protected slots:
-  virtual void qmlRegister() const;
+  virtual void qmlRegister() const; ///< Register ExamplesPlayer with QML.
 };
-

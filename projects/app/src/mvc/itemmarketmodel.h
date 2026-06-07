@@ -29,20 +29,32 @@ class ItemMarketEntry;
 class SaveFile;
 class ItemDBEntry;
 
+/**
+ * @brief The Poke-mart / Game Corner "market" model -- buy and sell with a cart.
+ *
+ * The most complex model in the app. It presents a unified buy/sell market with a
+ * cart, switching between four modes (buy/sell x money/coins) and between viewing
+ * the player's items and the store's stock. Rows are @ref ItemMarketEntry objects
+ * (a small class hierarchy -- player item, store item, money, message, Game Corner
+ * Pokemon). It computes cart totals, leftover money, and space checks, and applies
+ * the transaction in checkout(). Exposed as `brg.marketModel`.
+ *
+ * @see ItemMarketEntry (the row base + its subtypes), Storage, PlayerBasics.
+ */
 class ItemMarketModel : public QAbstractListModel
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool isBuyMode MEMBER isBuyMode NOTIFY isBuyModeChanged)
-  Q_PROPERTY(bool isMoneyCurrency MEMBER isMoneyCurrency NOTIFY isMoneyCurrencyChanged)
-  Q_PROPERTY(int whichMode READ whichMode NOTIFY isAnyChanged)
+  Q_PROPERTY(bool isBuyMode MEMBER isBuyMode NOTIFY isBuyModeChanged)             ///< Buy (store) vs sell (player) view.
+  Q_PROPERTY(bool isMoneyCurrency MEMBER isMoneyCurrency NOTIFY isMoneyCurrencyChanged) ///< Money vs coins currency.
+  Q_PROPERTY(int whichMode READ whichMode NOTIFY isAnyChanged)                    ///< Combined mode (see SelBuy* enum).
 
-  Q_PROPERTY(int totalCartWorth READ totalCartWorth NOTIFY reUpdateValues)
-  Q_PROPERTY(int totalCartCount READ totalCartCount NOTIFY reUpdateValues)
-  Q_PROPERTY(int moneyStart READ moneyStart NOTIFY reUpdateValues)
-  Q_PROPERTY(int moneyLeftover READ moneyLeftover NOTIFY reUpdateValues)
-  Q_PROPERTY(bool anyNotEnoughSpace READ anyNotEnoughSpace NOTIFY reUpdateValues)
-  Q_PROPERTY(bool canAnyCheckout READ canAnyCheckout NOTIFY reUpdateValues)
+  Q_PROPERTY(int totalCartWorth READ totalCartWorth NOTIFY reUpdateValues)        ///< Total cart value (-/+ = buy/sell).
+  Q_PROPERTY(int totalCartCount READ totalCartCount NOTIFY reUpdateValues)        ///< Total items in the cart.
+  Q_PROPERTY(int moneyStart READ moneyStart NOTIFY reUpdateValues)                ///< Money before checkout.
+  Q_PROPERTY(int moneyLeftover READ moneyLeftover NOTIFY reUpdateValues)          ///< Money after checkout.
+  Q_PROPERTY(bool anyNotEnoughSpace READ anyNotEnoughSpace NOTIFY reUpdateValues) ///< Any item lacks bag/box space.
+  Q_PROPERTY(bool canAnyCheckout READ canAnyCheckout NOTIFY reUpdateValues)       ///< Can the transaction complete?
 
 signals:
   void isBuyModeChanged();
@@ -51,6 +63,7 @@ signals:
   void reUpdateValues();
 
 public:
+  /// Columns (mapped in roleNames()); comments describe each.
   enum ItemRoles {
     // Name of item
     NameRole = Qt::UserRole + 1,
@@ -106,6 +119,7 @@ public:
     MoneyCurrencyRole,
   };
 
+  /// The four combined modes (returned by whichMode()).
   enum {
     SelBuyMoney = 0,
     SelBuyCoins,
@@ -121,56 +135,55 @@ public:
                   Storage* storage,
                   SaveFile* file);
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
-  bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
+  bool setData(const QModelIndex& index, const QVariant& value, int role) override; ///< Edit a row (cart count).
 
   // Value of total on cart
   // Uses -/+ to indicate buy/sell
-  int totalCartWorth();
-  int totalCartCount();
-  int whichMode();
-  int moneyStart();
-  int moneyLeftover();
-  bool anyNotEnoughSpace();
-  bool canAnyCheckout();
+  int totalCartWorth();   ///< @see totalCartWorth property.
+  int totalCartCount();   ///< @see totalCartCount property.
+  int whichMode();        ///< @see whichMode property.
+  int moneyStart();       ///< @see moneyStart property.
+  int moneyLeftover();    ///< @see moneyLeftover property.
+  bool anyNotEnoughSpace(); ///< @see anyNotEnoughSpace property.
+  bool canAnyCheckout();  ///< @see canAnyCheckout property.
 
-  void onReUpdateValues();
+  void onReUpdateValues(); ///< Recompute the derived totals.
 
   // Re-create list cache methods
-  bool vendorListItem(ItemDBEntry* el);
-  void clearList();
-  void buildList();
-  void buildPlayerItemList();
-  void buildMartItemList();
+  bool vendorListItem(ItemDBEntry* el); ///< Should @p el appear in the store list?
+  void clearList();           ///< Empty the row cache.
+  void buildList();           ///< Build the rows for the current mode.
+  void buildPlayerItemList(); ///< Build rows from the player's items.
+  void buildMartItemList();   ///< Build rows from the store stock.
 
   // Respodning to events and signals
-  void pageOpening(QString path);
+  void pageOpening(QString path); ///< Hook when the market page opens.
 
 public slots:
-  void checkout();
-  void reUpdateAll();
+  void checkout();   ///< Apply the cart transaction to the save.
+  void reUpdateAll(); ///< Rebuild + recompute everything.
 
 public:
-  QVector<ItemMarketEntry*> itemListCache;
+  QVector<ItemMarketEntry*> itemListCache; ///< The current market rows.
 
   // Buy or Sell, do we view your items or their items?
   // Default to viewing your items
-  bool isBuyMode = false;
+  bool isBuyMode = false; ///< @see isBuyMode property.
 
   // Money or Coins, do we sell your items to money/coins or do we look at the
   // Pokemart or Game Corner Mart to buy with money and coins
   // Default to dealing with money
-  bool isMoneyCurrency = true;
+  bool isMoneyCurrency = true; ///< @see isMoneyCurrency property.
 
   // Connections to the Sav Data
-  ItemStorageBox* itemBag = nullptr;
-  ItemStorageBox* itemStorage = nullptr;
-  Router* router = nullptr;
-  PlayerBasics* basics = nullptr;
-  PlayerPokemon* playerPokemon = nullptr;
-  Storage* storage = nullptr;
-  SaveFile* file = nullptr;
+  ItemStorageBox* itemBag = nullptr;     ///< The player's bag.
+  ItemStorageBox* itemStorage = nullptr; ///< The PC item box.
+  Router* router = nullptr;              ///< For page hooks.
+  PlayerBasics* basics = nullptr;        ///< Player money/coins.
+  PlayerPokemon* playerPokemon = nullptr; ///< Party (for received Pokemon).
+  Storage* storage = nullptr;            ///< PC storage (for received Pokemon).
+  SaveFile* file = nullptr;              ///< The live save.
 };
-

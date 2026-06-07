@@ -9,6 +9,8 @@ import App.PokemonParty
 import "../../../general"
 import "../../../header"
 
+// StatsGroup.qml -- the read-only computed-stats grid (GlancePane, valid mons).
+//
 // Read-only computed stats (HP/Atk/Def/Spd/Sp) shown as a clean label | value
 // grid. Two columns align on their own — no per-row anchor offsets.
 Rectangle {

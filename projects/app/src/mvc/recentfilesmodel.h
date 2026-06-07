@@ -19,26 +19,33 @@
 
 class FileManagement;
 
+/**
+ * @brief Recent-files list model for the start screen.
+ *
+ * Wraps FileManagement's recent-files list (see CreditsModel for the convention),
+ * shortening each path for display and tracking enabled/index per row. Exposed as
+ * `brg.recentFilesModel`.
+ */
 class RecentFilesModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Columns (mapped in roleNames()).
   enum RecentFileRoles {
     PathRole = Qt::UserRole + 1,
     EnabledRole,
     FileIndexRole,
   };
 
-  RecentFilesModel(FileManagement* file);
+  RecentFilesModel(FileManagement* file); ///< @param file the file controller.
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
 private:
-  QString getDisplayPath(int index, QString path) const;
-  void onDataChange();
-  FileManagement* file = nullptr;
+  QString getDisplayPath(int index, QString path) const; ///< Shorten a path for display.
+  void onDataChange();             ///< React to the recent-files list changing.
+  FileManagement* file = nullptr;  ///< The file controller.
 };
-

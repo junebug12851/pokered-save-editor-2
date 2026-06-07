@@ -22,18 +22,25 @@
 
 class QQmlEngine;
 
+/**
+ * @brief Example rival-value source (an AbstractRandomString of presets).
+ *
+ * All behaviour inherited; provides the singleton + QML registration. Reached via
+ * `db.examples.rival`.
+ *
+ * @see AbstractRandomString, Examples.
+ */
 class DB_AUTOPORT ExamplesRival : public AbstractRandomString
 {
   Q_OBJECT
 
 public:
   // Get Instance
-  static ExamplesRival* inst();
+  static ExamplesRival* inst(); ///< The process-wide ExamplesRival singleton.
 
 protected:
-  ExamplesRival();
+  ExamplesRival(); ///< Private -- use inst(); loads the example-rival asset.
 
 protected slots:
-  virtual void qmlRegister() const;
+  virtual void qmlRegister() const; ///< Register ExamplesRival with QML.
 };
-

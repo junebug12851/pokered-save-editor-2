@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemmarketentrygcpokemon.cpp
+ * @brief Implementation of ItemMarketEntryGCPokemon. See itemmarketentrygcpokemon.h.
+ */
+
 #include <QtDebug>
 
 #include "./itemmarketentrygcpokemon.h"

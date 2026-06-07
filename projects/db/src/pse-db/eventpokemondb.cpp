@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file eventpokemondb.cpp
+ * @brief Implementation of EventPokemonDB. See eventpokemondb.h for the API.
+ */
+
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonValueRef>

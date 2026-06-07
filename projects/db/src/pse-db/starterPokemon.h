@@ -25,33 +25,43 @@
 struct PokemonDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief The curated list of "good starter" species, for the randomizer.
+ *
+ * A name list (@ref store) resolved to species (@ref toPokemon) in deepLink(). The
+ * first three entries are the canonical in-game starters; the rest are extra
+ * "startery"-feeling choices. Powers the randomizer's starter picks
+ * (PokemonRandom::Random_Starters3 vs Random_Starters). See db.md.
+ *
+ * @see PokemonDB, PokemonBox::newPokemon().
+ */
 // Hand-curated list of good starter choices.
 // Rules: base evolution (if one exists), non-legendary, feels "startery".
 class DB_AUTOPORT StarterPokemonDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of starter choices.
 
 public:
-  static StarterPokemonDB* inst();
+  static StarterPokemonDB* inst(); ///< The process-wide StarterPokemonDB singleton.
 
-  [[nodiscard]] int getStoreSize() const;
+  [[nodiscard]] int getStoreSize() const; ///< Starter-choice count.
 
   // First 3 entries are the canonical in-game starters.
-  Q_INVOKABLE PokemonDBEntry* random3Starter() const;
-  Q_INVOKABLE PokemonDBEntry* randomAnyStarter() const;
+  Q_INVOKABLE PokemonDBEntry* random3Starter() const;   ///< A random one of the 3 canonical starters.
+  Q_INVOKABLE PokemonDBEntry* randomAnyStarter() const; ///< A random "startery" species.
 
 public slots:
-  void load();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load the starter list from JSON.
+  void deepLink(); ///< Resolve the names to species entries.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  StarterPokemonDB();
+  StarterPokemonDB(); ///< Private -- use inst().
 
-  QVector<QString>        store;
-  QVector<PokemonDBEntry*> toPokemon;
+  QVector<QString>        store;     ///< Starter species names (first 3 = canonical).
+  QVector<PokemonDBEntry*> toPokemon; ///< Resolved species entries (deepLink).
 };

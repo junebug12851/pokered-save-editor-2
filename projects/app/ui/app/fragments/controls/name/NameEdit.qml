@@ -5,6 +5,7 @@ import QtQuick.Controls.Material
 
 import "../../general"
 
+// NameEdit.qml --
 // Quick-edit row: the name field plus its trailing actions. The old ⋮ overflow
 // menu is gone (poor UX — too much clicking); its actions are now explicit
 // buttons. This row keeps Randomize-Name / Accept / Keyboard; example controls

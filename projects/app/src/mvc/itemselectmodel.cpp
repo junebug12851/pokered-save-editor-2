@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemselectmodel.cpp
+ * @brief Implementation of ItemSelectModel. See itemselectmodel.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 

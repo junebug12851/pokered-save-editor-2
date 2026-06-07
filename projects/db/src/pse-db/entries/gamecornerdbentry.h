@@ -25,38 +25,47 @@ class QQmlEngine;
 class GameCornerDB;
 
 
+/**
+ * @brief One Game Corner prize: a Pokemon or item, its coin price, and level.
+ *
+ * QObject-getter style DB entry. @ref type distinguishes a Pokemon prize from an
+ * item prize; deepLink() resolves whichever applies (@ref toPokemon / @ref toItem).
+ * See db.md.
+ *
+ * @see GameCornerDB, ItemDBEntry, PokemonDBEntry.
+ */
 struct DB_AUTOPORT GameCornerDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString        getName      READ getName      CONSTANT)
-  Q_PROPERTY(QString        getType      READ getType      CONSTANT)
-  Q_PROPERTY(int            getPrice     READ getPrice     CONSTANT)
-  Q_PROPERTY(int            getLevel     READ getLevel     CONSTANT)
-  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon CONSTANT)
-  Q_PROPERTY(ItemDBEntry*   getToItem    READ getToItem    CONSTANT)
+  Q_PROPERTY(QString        getName      READ getName      CONSTANT) ///< Prize name.
+  Q_PROPERTY(QString        getType      READ getType      CONSTANT) ///< Prize type (pokemon/item).
+  Q_PROPERTY(int            getPrice     READ getPrice     CONSTANT) ///< Coin price.
+  Q_PROPERTY(int            getLevel     READ getLevel     CONSTANT) ///< Level (for Pokemon prizes).
+  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon CONSTANT) ///< Resolved Pokemon prize.
+  Q_PROPERTY(ItemDBEntry*   getToItem    READ getToItem    CONSTANT) ///< Resolved item prize.
 
 public:
-  QString getName()       const;
-  QString getType()       const;
-  int getPrice()          const;
-  int getLevel()          const;
-  PokemonDBEntry* getToPokemon() const;
-  ItemDBEntry*    getToItem()    const;
+  QString getName()       const; ///< @see getName property.
+  QString getType()       const; ///< @see getType property.
+  int getPrice()          const; ///< @see getPrice property.
+  int getLevel()          const; ///< @see getLevel property.
+  PokemonDBEntry* getToPokemon() const; ///< @see getToPokemon property.
+  ItemDBEntry*    getToItem()    const; ///< @see getToItem property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  GameCornerDBEntry();
-  GameCornerDBEntry(const QJsonValue& data);
-  void deepLink();
-  void qmlRegister() const;
+  GameCornerDBEntry();                    ///< Empty entry (built by GameCornerDB).
+  GameCornerDBEntry(const QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();                        ///< Resolve the Pokemon/item link.
+  void qmlRegister() const;               ///< Register with QML.
 
-  QString name = "";
-  QString type = "";
-  int price = 0;
-  int level = 0;
-  PokemonDBEntry* toPokemon = nullptr;
-  ItemDBEntry*    toItem    = nullptr;
+  QString name = "";  ///< Backing field (read via getName()).
+  QString type = "";  ///< Backing field (read via getType()).
+  int price = 0;      ///< Backing field (read via getPrice()).
+  int level = 0;      ///< Backing field (read via getLevel()).
+  PokemonDBEntry* toPokemon = nullptr; ///< Resolved Pokemon prize (deepLink).
+  ItemDBEntry*    toItem    = nullptr; ///< Resolved item prize (deepLink).
 
-  friend class GameCornerDB;
+  friend class GameCornerDB; ///< Owning DB constructs/populates entries.
 };

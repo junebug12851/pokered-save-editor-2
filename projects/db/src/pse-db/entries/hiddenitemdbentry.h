@@ -24,32 +24,40 @@ class AbstractHiddenItemDB;
 class QQmlEngine;
 
 
+/**
+ * @brief One hidden pickup's location: its map and tile coordinates.
+ *
+ * QObject-getter style DB entry shared by both hidden databases (items and coins,
+ * via AbstractHiddenItemDB). @ref toMap is resolved in deepLink(). See db.md.
+ *
+ * @see AbstractHiddenItemDB, HiddenItemsDB, HiddenCoinsDB, WorldHidden.
+ */
 struct DB_AUTOPORT HiddenItemDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString     getMap   READ getMap   CONSTANT)
-  Q_PROPERTY(int         getX     READ getX     CONSTANT)
-  Q_PROPERTY(int         getY     READ getY     CONSTANT)
-  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT)
+  Q_PROPERTY(QString     getMap   READ getMap   CONSTANT) ///< Map name the pickup is on.
+  Q_PROPERTY(int         getX     READ getX     CONSTANT) ///< Tile X.
+  Q_PROPERTY(int         getY     READ getY     CONSTANT) ///< Tile Y.
+  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT) ///< Resolved map.
 
 public:
-  QString    getMap()   const;
-  int        getX()     const;
-  int        getY()     const;
-  MapDBEntry* getToMap() const;
+  QString    getMap()   const; ///< @see getMap property.
+  int        getX()     const; ///< @see getX property.
+  int        getY()     const; ///< @see getY property.
+  MapDBEntry* getToMap() const; ///< @see getToMap property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  HiddenItemDBEntry();
-  HiddenItemDBEntry(const QJsonValue& data);
-  void deepLink();
-  void qmlRegister() const;
+  HiddenItemDBEntry();                    ///< Empty entry (built by the DB).
+  HiddenItemDBEntry(const QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();                        ///< Resolve the map link.
+  void qmlRegister() const;               ///< Register with QML.
 
-  QString map = "";
-  int x = 0;
-  int y = 0;
-  MapDBEntry* toMap = nullptr;
+  QString map = "";        ///< Backing field (read via getMap()).
+  int x = 0;               ///< Backing field (read via getX()).
+  int y = 0;               ///< Backing field (read via getY()).
+  MapDBEntry* toMap = nullptr; ///< Resolved map (deepLink).
 
-  friend class AbstractHiddenItemDB;
+  friend class AbstractHiddenItemDB; ///< Owning DB constructs/populates entries.
 };

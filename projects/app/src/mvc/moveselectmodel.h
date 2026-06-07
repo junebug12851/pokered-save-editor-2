@@ -26,23 +26,33 @@
 class PokemonDBEntry;
 class PokemonBox;
 
+/// One move picker row: display name + move index.
 struct MoveSelectEntry {
   MoveSelectEntry(QString name, int ind);
 
-  QString name;
-  int ind;
+  QString name; ///< Display name.
+  int ind;      ///< Move index.
 };
 
+/**
+ * @brief Move picker model -- context-aware on a chosen Pokemon.
+ *
+ * Select-model variant (see SpeciesSelectModel) with a twist: when @ref mon is set
+ * (via monFromBox() from the details editor) the list rebuilds to that species'
+ * legal moves (rebuildListSpecific); otherwise it shows the general move list.
+ * Exposed as `brg.moveSelectModel`.
+ */
 class MoveSelectModel : public QAbstractListModel
 {
   Q_OBJECT
 
-  Q_PROPERTY(PokemonDBEntry* mon MEMBER mon NOTIFY monChanged)
+  Q_PROPERTY(PokemonDBEntry* mon MEMBER mon NOTIFY monChanged) ///< Current species context (filters the list).
 
 signals:
   void monChanged();
 
 public:
+  /// Picker columns (mapped in roleNames()).
   enum ItemRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
@@ -50,20 +60,20 @@ public:
 
   MoveSelectModel();
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
-  Q_INVOKABLE int moveToListIndex(int ind);
+  Q_INVOKABLE int moveToListIndex(int ind); ///< Row index for move @p ind.
 
-  void onMonChange();
-  void rebuildListGeneral();
-  void rebuildListSpecific();
+  void onMonChange();          ///< React to @ref mon changing.
+  void rebuildListGeneral();   ///< Rebuild with all moves.
+  void rebuildListSpecific();  ///< Rebuild with @ref mon's legal moves only.
 
 public slots:
-  void monFromBox(PokemonBox* box);
+  void monFromBox(PokemonBox* box); ///< Set @ref mon from a QML-passed PokemonBox.
 
 public:
-  QVector<MoveSelectEntry*> moveListCache;
-  PokemonDBEntry* mon = nullptr;
+  QVector<MoveSelectEntry*> moveListCache; ///< Cached picker rows.
+  PokemonDBEntry* mon = nullptr;           ///< @see mon property.
 };

@@ -1,3 +1,12 @@
+// PokemonDetails.qml -- the single-Pokemon deep editor screen.
+//
+// Edits one Pokemon (boxData, a PokemonBox passed in by the caller; partyData is
+// the party-only sibling view). Left half is DetailsPages (the tabbed editors:
+// species, moves, stats, etc.); right half is GlancePane (a live summary). On load
+// it points brg.moveSelectModel at this mon's box. Footer: Re-Roll (randomize this
+// mon), Heal, and a Toolkit menu (Max Out / Correct Data / Reset / Evolve /
+// De-Evolve). The two // comments on btn2.enabled and update() document known QML
+// quirks -- leave them; they are real workarounds, not dead code.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

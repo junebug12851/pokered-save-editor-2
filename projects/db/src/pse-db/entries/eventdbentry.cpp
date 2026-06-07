@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file eventdbentry.cpp
+ * @brief Implementation of EventDBEntry. See eventdbentry.h.
+ */
+
 #include <QVector>
 #include <QJsonArray>
 #include <QQmlEngine>

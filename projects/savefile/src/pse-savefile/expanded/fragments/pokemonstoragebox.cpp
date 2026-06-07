@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file pokemonstoragebox.cpp
+ * @brief Implementation of PokemonStorageBox -- a box of Pokemon (the party's
+ *        base class), incl. move/remove/relocate. See pokemonstoragebox.h.
+ */
+
 #include "./pokemonstoragebox.h"
 #include "../../qmlownership.h"
 #include "./pokemonbox.h"

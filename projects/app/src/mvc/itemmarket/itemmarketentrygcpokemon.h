@@ -21,6 +21,13 @@ class Storage;
 class PlayerPokemon;
 class PlayerBasics;
 
+/**
+ * @brief Market row for a Game Corner Pokemon prize (bought with coins).
+ *
+ * An ItemMarketEntry subtype representing a Game Corner Pokemon (@ref toGameCorner)
+ * purchasable with coins; checkout() adds the received mon to the party
+ * (@ref party) or, if full, PC @ref storage. See ItemMarketEntry.
+ */
 class ItemMarketEntryGCPokemon : public ItemMarketEntry
 {
   Q_OBJECT
@@ -29,21 +36,20 @@ public:
   ItemMarketEntryGCPokemon(GameCornerDBEntry* toGameCorner, PlayerPokemon* party, Storage* storage);
   virtual ~ItemMarketEntryGCPokemon();
 
-  virtual QString _name() override;
-  virtual int _inStockCount() override;
-  virtual bool _canSell() override;
-  virtual int _itemWorth() override;
-  virtual QString _whichType() override;
-  virtual int onCartLeft() override;
-  virtual int stackCount() override;
+  virtual QString _name() override;       ///< @copydoc ItemMarketEntry::_name
+  virtual int _inStockCount() override;   ///< @copydoc ItemMarketEntry::_inStockCount
+  virtual bool _canSell() override;       ///< @copydoc ItemMarketEntry::_canSell
+  virtual int _itemWorth() override;      ///< @copydoc ItemMarketEntry::_itemWorth
+  virtual QString _whichType() override;  ///< @copydoc ItemMarketEntry::_whichType
+  virtual int onCartLeft() override;      ///< @copydoc ItemMarketEntry::onCartLeft
+  virtual int stackCount() override;      ///< @copydoc ItemMarketEntry::stackCount
 
 public slots:
-  virtual void checkout() override;
+  virtual void checkout() override; ///< Buy the prize mon (into party/storage).
 
 public:
-  static constexpr const char* type = "gcPokemon";
-  GameCornerDBEntry* toGameCorner = nullptr;
-  PlayerPokemon* party = nullptr;
-  Storage* storage = nullptr;
+  static constexpr const char* type = "gcPokemon"; ///< This row's type key.
+  GameCornerDBEntry* toGameCorner = nullptr; ///< The prize definition.
+  PlayerPokemon* party = nullptr;            ///< Destination party.
+  Storage* storage = nullptr;                ///< Overflow PC storage.
 };
-

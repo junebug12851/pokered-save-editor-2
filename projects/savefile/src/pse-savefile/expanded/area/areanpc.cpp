@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file areanpc.cpp
+ * @brief Implementation of AreaNPC -- transient NPC/control/battle flags.
+ *        See areanpc.h for the documented API.
+ */
 #include "./areanpc.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

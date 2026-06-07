@@ -20,11 +20,19 @@
 
 class PokemonDBEntry;
 
+/**
+ * @brief The three canonical starters as a picker model.
+ *
+ * A tiny fixed list model (see CreditsModel) over @ref starters. valToIndex() maps
+ * a species value to its row; getMon() resolves a row to its DB entry. Exposed as
+ * `brg.starterModel`.
+ */
 class PokemonStartersModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Columns (mapped in roleNames()).
   enum PokemonStarterRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
@@ -35,13 +43,12 @@ public:
     "Bulbasaur",
     "Charmander",
     "Squirtle"
-  };
+  }; ///< The three canonical starter species.
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count (3).
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
-  Q_INVOKABLE int valToIndex(int val);
-  PokemonDBEntry* getMon(int ind) const;
+  Q_INVOKABLE int valToIndex(int val);    ///< Row index for species value @p val.
+  PokemonDBEntry* getMon(int ind) const;  ///< DB entry for row @p ind.
 };
-

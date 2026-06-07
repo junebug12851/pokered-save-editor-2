@@ -25,59 +25,68 @@ class QQmlEngine;
 class EventPokemonDB;
 
 
+/**
+ * @brief One real-world event-distribution Pokemon preset.
+ *
+ * QObject-getter style DB entry. Describes a distribution (@ref title / @ref desc /
+ * @ref region) and the exact mon it gives -- species, level, OT id, the four DVs,
+ * OT name options, and moves. deepLink() resolves @ref toPokemon. See db.md.
+ *
+ * @see EventPokemonDB, PokemonBox::newPokemon().
+ */
 struct DB_AUTOPORT EventPokemonDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString          getTitle     READ getTitle     CONSTANT)
-  Q_PROPERTY(QString          getDesc      READ getDesc      CONSTANT)
-  Q_PROPERTY(QString          getPokemon   READ getPokemon   CONSTANT)
-  Q_PROPERTY(QString          getRegion    READ getRegion    CONSTANT)
-  Q_PROPERTY(PokemonDBEntry*  getToPokemon READ getToPokemon CONSTANT)
-  Q_PROPERTY(int getOtId  READ getOtId  CONSTANT)
-  Q_PROPERTY(int getDvAtk READ getDvAtk CONSTANT)
-  Q_PROPERTY(int getDvDef READ getDvDef CONSTANT)
-  Q_PROPERTY(int getDvSpd READ getDvSpd CONSTANT)
-  Q_PROPERTY(int getDvSp  READ getDvSp  CONSTANT)
-  Q_PROPERTY(int getLevel READ getLevel CONSTANT)
+  Q_PROPERTY(QString          getTitle     READ getTitle     CONSTANT) ///< Distribution title.
+  Q_PROPERTY(QString          getDesc      READ getDesc      CONSTANT) ///< Distribution description.
+  Q_PROPERTY(QString          getPokemon   READ getPokemon   CONSTANT) ///< Species name.
+  Q_PROPERTY(QString          getRegion    READ getRegion    CONSTANT) ///< Region it was distributed in.
+  Q_PROPERTY(PokemonDBEntry*  getToPokemon READ getToPokemon CONSTANT) ///< Resolved species.
+  Q_PROPERTY(int getOtId  READ getOtId  CONSTANT) ///< Original-trainer id.
+  Q_PROPERTY(int getDvAtk READ getDvAtk CONSTANT) ///< Attack DV.
+  Q_PROPERTY(int getDvDef READ getDvDef CONSTANT) ///< Defense DV.
+  Q_PROPERTY(int getDvSpd READ getDvSpd CONSTANT) ///< Speed DV.
+  Q_PROPERTY(int getDvSp  READ getDvSp  CONSTANT) ///< Special DV.
+  Q_PROPERTY(int getLevel READ getLevel CONSTANT) ///< Level.
 
 public:
-  QString getTitle()     const;
-  QString getDesc()      const;
-  QString getPokemon()   const;
-  QVector<QString> getOtName()  const;
-  QString getRegion()    const;
-  QVector<QString> getMoves()   const;
-  PokemonDBEntry* getToPokemon() const;
-  int getLevel()  const;
-  int getOtId()   const;
-  int getDvAtk()  const;
-  int getDvDef()  const;
-  int getDvSpd()  const;
-  int getDvSp()   const;
+  QString getTitle()     const; ///< @see getTitle property.
+  QString getDesc()      const; ///< @see getDesc property.
+  QString getPokemon()   const; ///< @see getPokemon property.
+  QVector<QString> getOtName()  const; ///< OT-name options.
+  QString getRegion()    const; ///< @see getRegion property.
+  QVector<QString> getMoves()   const; ///< Move names the mon comes with.
+  PokemonDBEntry* getToPokemon() const; ///< @see getToPokemon property.
+  int getLevel()  const; ///< @see getLevel property.
+  int getOtId()   const; ///< @see getOtId property.
+  int getDvAtk()  const; ///< @see getDvAtk property.
+  int getDvDef()  const; ///< @see getDvDef property.
+  int getDvSpd()  const; ///< @see getDvSpd property.
+  int getDvSp()   const; ///< @see getDvSp property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with QML.
 
 protected:
-  EventPokemonDBEntry();
-  EventPokemonDBEntry(const QJsonValue& data);
-  void deepLink();
+  EventPokemonDBEntry();                    ///< Empty entry (built by EventPokemonDB).
+  EventPokemonDBEntry(const QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();                          ///< Resolve the species link.
 
-  QString title = "";
-  QString desc = "";
-  QString pokemon = "";
-  QVector<QString> otName;
-  QString region = "";
-  QVector<QString> moves;
-  int level = -1;
-  int otId = -1;
-  int dvAtk = -1;
-  int dvDef = -1;
-  int dvSpd = -1;
-  int dvSp = -1;
-  PokemonDBEntry* toPokemon = nullptr;
+  QString title = "";   ///< Backing field (read via getTitle()).
+  QString desc = "";    ///< Backing field (read via getDesc()).
+  QString pokemon = ""; ///< Backing field (read via getPokemon()).
+  QVector<QString> otName; ///< OT-name options (read via getOtName()).
+  QString region = "";  ///< Backing field (read via getRegion()).
+  QVector<QString> moves; ///< Move names (read via getMoves()).
+  int level = -1;       ///< Backing field (read via getLevel()).
+  int otId = -1;        ///< Backing field (read via getOtId()).
+  int dvAtk = -1;       ///< Backing field (read via getDvAtk()).
+  int dvDef = -1;       ///< Backing field (read via getDvDef()).
+  int dvSpd = -1;       ///< Backing field (read via getDvSpd()).
+  int dvSp = -1;        ///< Backing field (read via getDvSp()).
+  PokemonDBEntry* toPokemon = nullptr; ///< Resolved species (deepLink).
 
-  friend class EventPokemonDB;
+  friend class EventPokemonDB; ///< Owning DB constructs/populates entries.
 };

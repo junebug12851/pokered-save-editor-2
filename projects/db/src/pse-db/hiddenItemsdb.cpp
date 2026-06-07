@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file hiddenItemsdb.cpp
+ * @brief Implementation of HiddenItemsDB. See hiddenItemsdb.h for the API.
+ */
+
 #include <QQmlEngine>
 #include "./hiddenItemsdb.h"
 

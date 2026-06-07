@@ -22,38 +22,44 @@ class MapDBEntry;
 class QQmlEngine;
 class MapDBEntry;
 
+/**
+ * @brief One sign defined on a map: its position and text id.
+ *
+ * The DB counterpart to the save's SignData. A leaf of MapDBEntry. See db.md.
+ *
+ * @see MapDBEntry (parent), SignData (the save-side sign).
+ */
 struct DB_AUTOPORT MapDBEntrySign : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getX READ getX CONSTANT)
-  Q_PROPERTY(int getY READ getY CONSTANT)
-  Q_PROPERTY(int getTextID READ getTextID CONSTANT)
-  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT)
+  Q_PROPERTY(int getX READ getX CONSTANT)               ///< Sign tile X.
+  Q_PROPERTY(int getY READ getY CONSTANT)               ///< Sign tile Y.
+  Q_PROPERTY(int getTextID READ getTextID CONSTANT)     ///< Text id shown when read.
+  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT) ///< Owning map.
 
 public:
-  int getX() const;
-  int getY() const;
-  int getTextID() const;
-  MapDBEntry* getParent() const;
+  int getX() const;              ///< @see getX property.
+  int getY() const;              ///< @see getY property.
+  int getTextID() const;         ///< @see getTextID property.
+  MapDBEntry* getParent() const; ///< @see getParent property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  MapDBEntrySign();
+  MapDBEntrySign(); ///< Empty entry.
   MapDBEntrySign(const QJsonValue& data,
-                 MapDBEntry* const parent);
-  void qmlRegister() const;
+                 MapDBEntry* const parent); ///< Build from JSON under @p parent.
+  void qmlRegister() const; ///< Register with QML.
 
   // X & Y location on Map
-  int x = 0;
-  int y = 0;
+  int x = 0; ///< Sign tile X.
+  int y = 0; ///< Sign tile Y.
 
   // Which text id to display when interacting with sign
-  int textID = 0;
+  int textID = 0; ///< Text id shown when read.
 
-  MapDBEntry* parent = nullptr;
+  MapDBEntry* parent = nullptr; ///< Owning map.
 
   friend class MapDBEntry;
 };
-

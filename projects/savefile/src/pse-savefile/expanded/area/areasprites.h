@@ -24,8 +24,17 @@ class SpriteData;
 class MapDBEntry;
 class MapDBEntrySprite;
 
-constexpr var8 maxSprites = 16;
+constexpr var8 maxSprites = 16; ///< Maximum sprites/NPCs on a map.
 
+/**
+ * @brief The current map's list of sprites/NPCs.
+ *
+ * A variable-length list of SpriteData (up to @ref maxSprites) with QML add/remove/
+ * swap/access. setTo()/randomize() rebuild it from a chosen map's sprite set.
+ * Standard expanded-node convention (see SaveFileExpanded).
+ *
+ * @see SpriteData (a sprite), Area, MapDBEntrySprite.
+ */
 class SAVEFILE_AUTOPORT AreaSprites : public QObject
 {
   Q_OBJECT
@@ -34,25 +43,24 @@ public:
   AreaSprites(SaveFile* saveFile = nullptr);
   virtual ~AreaSprites();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the sprite list from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the sprite list to the save.
 
-  Q_INVOKABLE int spriteCount();
-  Q_INVOKABLE int spriteMax();
-  Q_INVOKABLE SpriteData* spriteAt(int ind);
-  Q_INVOKABLE void spriteSwap(int from, int to);
-  Q_INVOKABLE void spriteRemove(int ind);
-  Q_INVOKABLE void spriteNew();
+  Q_INVOKABLE int spriteCount();             ///< Number of sprites.
+  Q_INVOKABLE int spriteMax();               ///< Capacity (maxSprites).
+  Q_INVOKABLE SpriteData* spriteAt(int ind); ///< Sprite @p ind (GC-protected return).
+  Q_INVOKABLE void spriteSwap(int from, int to); ///< Reorder sprites.
+  Q_INVOKABLE void spriteRemove(int ind);    ///< Remove sprite @p ind.
+  Q_INVOKABLE void spriteNew();              ///< Add a fresh sprite.
 
 signals:
   void spritesChanged();
 
 public slots:
-  void reset();
-  void randomize(QVector<MapDBEntrySprite*> spriteData);
-  void setTo(MapDBEntry* map);
+  void reset();                                        ///< Empty the sprite list.
+  void randomize(QVector<MapDBEntrySprite*> spriteData); ///< Randomize sprites from @p spriteData.
+  void setTo(MapDBEntry* map);                         ///< Rebuild the list from @p map's sprites.
 
 public:
-  QVector<SpriteData*> sprites;
+  QVector<SpriteData*> sprites; ///< The map's sprites/NPCs.
 };
-

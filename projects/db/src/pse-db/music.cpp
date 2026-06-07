@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file music.cpp
+ * @brief Implementation of MusicDB and MusicDBEntry. See music.h for the API.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file arealoadedsprites.cpp
+ * @brief Implementation of AreaLoadedSprites -- the fixed loaded-sprite slots.
+ *        See arealoadedsprites.h for the documented API.
+ */
 #include "arealoadedsprites.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

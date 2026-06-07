@@ -23,12 +23,24 @@ class Item;
 class ItemStorageBox;
 class Router;
 
+/**
+ * @brief Editable list model for an item box (the bag or a PC item box).
+ *
+ * Wraps an ItemStorageBox (see CreditsModel for the base convention) as an editable
+ * model: rows can be reordered/removed/inserted, and each row carries a checkbox
+ * state (a QML attached property, @ref isCheckedKey). The `checked*` slots act on
+ * the checked rows in bulk -- move up/down/top/bottom, delete, transfer (to the
+ * paired box), toggle-all. @ref hasChecked drives "any selected" UI. Exposed as
+ * `brg.bagItemsModel` / `brg.pcItemsModel`.
+ *
+ * @see ItemStorageBox, Item.
+ */
 class ItemStorageModel : public QAbstractListModel
 {
   Q_OBJECT
 
   // Checkmarks changed
-  Q_PROPERTY(bool hasChecked READ hasCheckedCached NOTIFY hasCheckedChangedCached STORED false)
+  Q_PROPERTY(bool hasChecked READ hasCheckedCached NOTIFY hasCheckedChangedCached STORED false) ///< Are any rows checked?
 
 signals:
   void hasCheckedChanged();
@@ -36,8 +48,9 @@ signals:
 
 public:
   // Name of attached properties
-  static constexpr const char* isCheckedKey = "isChecked";
+  static constexpr const char* isCheckedKey = "isChecked"; ///< QML attached-property name for the per-row checkbox.
 
+  /// Columns (mapped in roleNames()).
   enum BagItemRoles {
     IdRole = Qt::UserRole + 1,
     CountRole,
@@ -45,47 +58,46 @@ public:
     PlaceholderRole,
   };
 
-  ItemStorageModel(ItemStorageBox* items, Router* router);
+  ItemStorageModel(ItemStorageBox* items, Router* router); ///< @param items the box; @param router for page hooks.
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
   bool setData(const QModelIndex &index, const QVariant &value,
-                   int role = Qt::EditRole) override;
+                   int role = Qt::EditRole) override;                       ///< Edit a row (e.g. checkbox).
 
-  QVariant getPlaceHolderData(int role) const;
+  QVariant getPlaceHolderData(int role) const; ///< The "empty slot" placeholder row's data.
 
   // Signals from the box
-  void onMove(int from, int to);
-  void onRemove(int ind);
-  void onInsert();
-  void onReset();
+  void onMove(int from, int to); ///< React to a box move.
+  void onRemove(int ind);        ///< React to a box removal.
+  void onInsert();               ///< React to a box insert.
+  void onReset();                ///< React to a box reset.
 
   // Attached property management
-  bool hasChecked();
-  bool hasCheckedCached();
-  QVector<Item*> getChecked();
-  void onBeforeRelocate(Item* item);
-  void checkStateDirty();
+  bool hasChecked();              ///< Are any rows checked (live)?
+  bool hasCheckedCached();        ///< Cached form (backs the property).
+  QVector<Item*> getChecked();    ///< The currently-checked items.
+  void onBeforeRelocate(Item* item); ///< Cleanup hook before an item relocates away.
+  void checkStateDirty();         ///< Mark the checked-state cache stale.
 
-  void pageClosing();
+  void pageClosing(); ///< Hook for when the page closes.
 
 public slots:
   // Attached property management
-  void clearCheckedState();
-  void clearCheckedStateGone();
+  void clearCheckedState();     ///< Uncheck everything.
+  void clearCheckedStateGone(); ///< Clear checked state for removed rows.
 
-  void checkedMoveToTop();
-  void checkedMoveUp();
-  void checkedMoveDown();
-  void checkedMoveToBottom();
-  void checkedDelete();
-  void checkedTransfer();
-  void checkedToggleAll();
+  void checkedMoveToTop();    ///< Move checked rows to the top.
+  void checkedMoveUp();       ///< Move checked rows up one.
+  void checkedMoveDown();     ///< Move checked rows down one.
+  void checkedMoveToBottom(); ///< Move checked rows to the bottom.
+  void checkedDelete();       ///< Delete checked rows.
+  void checkedTransfer();     ///< Transfer checked rows to the paired box.
+  void checkedToggleAll();    ///< Toggle all checkboxes.
 
 public:
-  ItemStorageBox* items = nullptr;
-  Router* router;
-  bool checkedStateDirty = false;
+  ItemStorageBox* items = nullptr; ///< The wrapped item box.
+  Router* router;                  ///< For page hooks.
+  bool checkedStateDirty = false;  ///< Whether the checked-state cache needs refresh.
 };
-

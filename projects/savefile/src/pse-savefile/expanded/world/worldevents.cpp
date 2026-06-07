@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file worldevents.cpp
+ * @brief Implementation of WorldEvents -- the 508-flag story-event bitfield.
+ *        See worldevents.h for the documented API.
+ */
+
 #include <QRandomGenerator>
 #include <string.h>
 

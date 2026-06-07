@@ -33,57 +33,75 @@ class QQmlEngine;
 // A SpriteSet is a group of up to 11 sprites kept in memory for a given
 // outdoor area. Large maps may use two sets split by coordinate.
 
+/**
+ * @brief One sprite-set: the pre-loaded sprite group for an outdoor area.
+ *
+ * Plain-struct DB entry. A set lists up to 11 sprites (@ref spriteList resolved to
+ * @ref toSprites). Large maps split into two sets by coordinate -- @ref splitAt
+ * plus the @ref toSetWN / @ref toSetES neighbours; @ref isDynamic() reports the
+ * split case and getSprites(x,y) returns the right set's sprites for a position.
+ * @ref toMaps is a back-ref. See db.md.
+ *
+ * @see SpriteSetDB, AreaLoadedSprites (the save-side loaded sprites).
+ */
 struct DB_AUTOPORT SpriteSetDBEntry {
-  SpriteSetDBEntry();
-  SpriteSetDBEntry(QJsonValue& data);
-  void deepLink();
+  SpriteSetDBEntry();                ///< Empty entry.
+  SpriteSetDBEntry(QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();                  ///< Resolve sprite list + split neighbours + maps.
 
-  [[nodiscard]] bool isDynamic() const;
-  [[nodiscard]] QVector<SpriteDBEntry*> getSprites(var8 x, var8 y) const;
+  [[nodiscard]] bool isDynamic() const; ///< True if this set is split by coordinate.
+  [[nodiscard]] QVector<SpriteDBEntry*> getSprites(var8 x, var8 y) const; ///< Sprites active at (x,y).
 
-  var8 ind = 0;
-  QString split;
+  var8 ind = 0;   ///< Set index.
+  QString split;  ///< Split descriptor.
 
-  QVector<QString>      spriteList;
-  QVector<SpriteDBEntry*> toSprites;
+  QVector<QString>      spriteList; ///< Sprite names in this set.
+  QVector<SpriteDBEntry*> toSprites; ///< Resolved sprites (deepLink).
 
-  std::optional<var8> splitAt;
-  std::optional<var8> setWN;
-  std::optional<var8> setES;
+  std::optional<var8> splitAt; ///< Coordinate the set splits at, if dynamic.
+  std::optional<var8> setWN;   ///< West/North sub-set index, if split.
+  std::optional<var8> setES;   ///< East/South sub-set index, if split.
 
-  SpriteSetDBEntry* toSetWN = nullptr;
-  SpriteSetDBEntry* toSetES = nullptr;
+  SpriteSetDBEntry* toSetWN = nullptr; ///< Resolved West/North set (deepLink).
+  SpriteSetDBEntry* toSetES = nullptr; ///< Resolved East/South set (deepLink).
 
-  QVector<MapDBEntry*> toMaps;
+  QVector<MapDBEntry*> toMaps; ///< Maps using this set (back-ref).
 };
 
+/**
+ * @brief The sprite-sets database, keyed by name.
+ *
+ * Standard DB-singleton with a name index and a deepLink() pass. See db.md.
+ *
+ * @see SpriteSetDBEntry, DB.
+ */
 class DB_AUTOPORT SpriteSetDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of sprite-sets.
 
 public:
-  static SpriteSetDB* inst();
+  static SpriteSetDB* inst(); ///< The process-wide SpriteSetDB singleton.
 
-  [[nodiscard]] const QVector<SpriteSetDBEntry*> getStore() const;
-  [[nodiscard]] const QHash<QString, SpriteSetDBEntry*> getInd() const;
-  [[nodiscard]] int getStoreSize() const;
+  [[nodiscard]] const QVector<SpriteSetDBEntry*> getStore() const;       ///< All sprite-sets.
+  [[nodiscard]] const QHash<QString, SpriteSetDBEntry*> getInd() const;  ///< Name->entry index.
+  [[nodiscard]] int getStoreSize() const;                              ///< Set count.
 
-  Q_INVOKABLE SpriteSetDBEntry* getStoreAt(int idx) const;
-  Q_INVOKABLE SpriteSetDBEntry* getIndAt(const QString& key) const;
+  Q_INVOKABLE SpriteSetDBEntry* getStoreAt(int idx) const;            ///< Set by store index (for QML).
+  Q_INVOKABLE SpriteSetDBEntry* getIndAt(const QString& key) const;   ///< Set by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load sprite-sets from JSON.
+  void index();    ///< Build the name->entry index.
+  void deepLink(); ///< Resolve sprites, split neighbours, and maps.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  SpriteSetDB();
+  SpriteSetDB(); ///< Private -- use inst().
 
-  QVector<SpriteSetDBEntry*> store;
-  QHash<QString, SpriteSetDBEntry*> ind;
+  QVector<SpriteSetDBEntry*> store;       ///< The loaded sprite-sets.
+  QHash<QString, SpriteSetDBEntry*> ind;  ///< Name->entry lookup.
 };

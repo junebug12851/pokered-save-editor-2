@@ -22,25 +22,33 @@
 
 class QQmlEngine;
 
+/**
+ * @brief Small aggregate of the two random-name sources (player and Pokemon).
+ *
+ * Just groups @ref player (NamesPlayer) and @ref pokemon (NamesPokemon) under one
+ * singleton so QML and the name randomizers reach them via `db.names`. Each source
+ * supplies a random in-character name. See db.md.
+ *
+ * @see NamesPlayer, NamesPokemon.
+ */
 class DB_AUTOPORT Names : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(NamesPlayer*  player  READ player  CONSTANT)
-  Q_PROPERTY(NamesPokemon* pokemon READ pokemon CONSTANT)
+  Q_PROPERTY(NamesPlayer*  player  READ player  CONSTANT) ///< Random player-name source.
+  Q_PROPERTY(NamesPokemon* pokemon READ pokemon CONSTANT) ///< Random Pokemon-name source.
 
 public:
-  static Names* inst();
+  static Names* inst(); ///< The process-wide Names singleton.
 
-  NamesPlayer*  player()  const;
-  NamesPokemon* pokemon() const;
+  NamesPlayer*  player()  const; ///< The player-name source (backs @c player).
+  NamesPokemon* pokemon() const; ///< The Pokemon-name source (backs @c pokemon).
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  Names();
+  Names(); ///< Private -- use inst().
 };
-

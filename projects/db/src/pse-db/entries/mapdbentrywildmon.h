@@ -24,35 +24,42 @@ class MapDBEntry;
 class PokemonDBEntry;
 
 // Wild Pokemon Entry
+/**
+ * @brief One wild-encounter slot in a map's encounter table: species + level.
+ *
+ * The DB counterpart to the save's AreaPokemonWild. deepLink() resolves
+ * @ref toPokemon. A leaf of MapDBEntry (in its red/blue/water tables). See db.md.
+ *
+ * @see MapDBEntry (parent), AreaPokemonWild (the save-side wild slot).
+ */
 struct DB_AUTOPORT MapDBEntryWildMon : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString getName READ getName CONSTANT)
-  Q_PROPERTY(int getLevel READ getLevel CONSTANT)
-  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon CONSTANT)
-  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT)
+  Q_PROPERTY(QString getName READ getName CONSTANT)         ///< Species name.
+  Q_PROPERTY(int getLevel READ getLevel CONSTANT)           ///< Encounter level.
+  Q_PROPERTY(PokemonDBEntry* getToPokemon READ getToPokemon CONSTANT) ///< Resolved species.
+  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT) ///< Owning map.
 
 public:
-  const QString getName() const;
-  int getLevel() const;
-  PokemonDBEntry* getToPokemon() const;
-  MapDBEntry* getParent() const;
+  const QString getName() const;   ///< @see getName property.
+  int getLevel() const;            ///< @see getLevel property.
+  PokemonDBEntry* getToPokemon() const; ///< @see getToPokemon property.
+  MapDBEntry* getParent() const;   ///< @see getParent property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  MapDBEntryWildMon();
-  MapDBEntryWildMon(const QJsonValue& value, MapDBEntry* const parent);
-  void deepLink();
-  void qmlRegister() const;
+  MapDBEntryWildMon(); ///< Empty entry.
+  MapDBEntryWildMon(const QJsonValue& value, MapDBEntry* const parent); ///< Build from JSON under @p parent.
+  void deepLink();          ///< Resolve the species link.
+  void qmlRegister() const; ///< Register with QML.
 
-  QString name = "";
-  int level = 0;
+  QString name = ""; ///< Species name.
+  int level = 0;     ///< Encounter level.
 
-  PokemonDBEntry* toPokemon = nullptr;
-  MapDBEntry* parent = nullptr;
+  PokemonDBEntry* toPokemon = nullptr; ///< Resolved species (deepLink).
+  MapDBEntry* parent = nullptr;        ///< Owning map.
 
   friend class MapsDB;
   friend class MapDBEntry;
 };
-

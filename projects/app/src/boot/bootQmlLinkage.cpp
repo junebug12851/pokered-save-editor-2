@@ -14,6 +14,15 @@
   * limitations under the License.
 */
 
+/**
+ * @file bootQmlLinkage.cpp
+ * @brief Registers every C++ type with the QML meta-system: qRegisterMetaType
+ *        for each pointer used in a Q_PROPERTY chain, and qmlRegisterType /
+ *        qmlRegisterUncreatableType for each enum (creatable) and object
+ *        (uncreatable). Deliberately repetitive -- Qt's meta-system rejects
+ *        helpers/templates here (see the in-code notes).
+ */
+
 #include <QString>
 #include <QQmlEngine>
 

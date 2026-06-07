@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentry.cpp
+ * @brief Implementation of MapDBEntry (the map definition + its deep-link web).
+ *        See mapdbentry.h for the documented API.
+ */
+
 #include <QJsonValue>
 #include <QJsonArray>
 #include <QJsonObject>

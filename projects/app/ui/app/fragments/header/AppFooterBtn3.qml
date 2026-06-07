@@ -3,7 +3,10 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Controls
 
-// A Footer with 3 Buttons
+// AppFooterBtn3.qml -- a screen footer holding three side-by-side FooterButtons.
+//
+// Exposes iconN/textN/btnN aliases and btnNClicked() signals for N = 1,2,3. Draws
+// the footer shadow on top, then the three equal-width buttons in a row.
 ToolBar {
   property alias icon1: btn1.icon
   property alias text1: btn1.text

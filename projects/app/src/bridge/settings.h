@@ -20,33 +20,44 @@
 
 class SaveFile;
 
+/**
+ * @brief App-wide UI settings: layout metrics, the colour palette, and font colours.
+ *
+ * The single source of truth the QML reads for theming and layout -- header
+ * sizing, the Material-style colour palette (text/primary/divider/accent), the
+ * per-font-category colours used by the keyboard, and the name-preview tileset
+ * choice. Exposed to QML as `brg.settings`. setColorScheme() recolours the palette
+ * at runtime; it holds the SaveFile so a few settings can react to data changes.
+ *
+ * @see Bridge.
+ */
 class Settings : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int headerHeight MEMBER headerHeight NOTIFY headerHeightChanged)
-  Q_PROPERTY(int headerShadowHeight MEMBER headerShadowHeight NOTIFY headerShadowHeightChanged)
+  Q_PROPERTY(int headerHeight MEMBER headerHeight NOTIFY headerHeightChanged)             ///< Header bar height.
+  Q_PROPERTY(int headerShadowHeight MEMBER headerShadowHeight NOTIFY headerShadowHeightChanged) ///< Header drop-shadow height.
 
-  Q_PROPERTY(bool infoBtnPressed MEMBER infoBtnPressed NOTIFY infoBtnPressedChanged)
-  Q_PROPERTY(QString previewTileset MEMBER previewTileset NOTIFY previewTilesetChanged)
-  Q_PROPERTY(bool previewOutdoor MEMBER previewOutdoor NOTIFY previewOutdoorChanged)
+  Q_PROPERTY(bool infoBtnPressed MEMBER infoBtnPressed NOTIFY infoBtnPressedChanged)      ///< Global tooltip (info button) toggle.
+  Q_PROPERTY(QString previewTileset MEMBER previewTileset NOTIFY previewTilesetChanged)   ///< Tileset used for name previews.
+  Q_PROPERTY(bool previewOutdoor MEMBER previewOutdoor NOTIFY previewOutdoorChanged)      ///< Outdoor vs indoor preview.
 
-  Q_PROPERTY(QColor textColorLight MEMBER textColorLight NOTIFY textColorLightChanged)
-  Q_PROPERTY(QColor textColorMid MEMBER textColorMid NOTIFY textColorMidChanged)
-  Q_PROPERTY(QColor textColorDark MEMBER textColorDark NOTIFY textColorDarkChanged)
-  Q_PROPERTY(QColor primaryColor MEMBER primaryColor NOTIFY primaryColorChanged)
-  Q_PROPERTY(QColor primaryColorLight MEMBER primaryColorLight NOTIFY primaryColorLightChanged)
-  Q_PROPERTY(QColor primaryColorDark MEMBER primaryColorDark NOTIFY primaryColorDarkChanged)
-  Q_PROPERTY(QColor dividerColor MEMBER dividerColor NOTIFY dividerColorChanged)
-  Q_PROPERTY(QColor accentColor MEMBER accentColor NOTIFY accentColorChanged)
-  Q_PROPERTY(int previewTilesetIndex READ getPreviewTilesetIndex NOTIFY previewTilesetChanged STORED false)
+  Q_PROPERTY(QColor textColorLight MEMBER textColorLight NOTIFY textColorLightChanged)    ///< Light text colour.
+  Q_PROPERTY(QColor textColorMid MEMBER textColorMid NOTIFY textColorMidChanged)          ///< Mid text colour.
+  Q_PROPERTY(QColor textColorDark MEMBER textColorDark NOTIFY textColorDarkChanged)       ///< Dark text colour.
+  Q_PROPERTY(QColor primaryColor MEMBER primaryColor NOTIFY primaryColorChanged)          ///< Primary accent colour.
+  Q_PROPERTY(QColor primaryColorLight MEMBER primaryColorLight NOTIFY primaryColorLightChanged) ///< Lighter primary.
+  Q_PROPERTY(QColor primaryColorDark MEMBER primaryColorDark NOTIFY primaryColorDarkChanged)    ///< Darker primary.
+  Q_PROPERTY(QColor dividerColor MEMBER dividerColor NOTIFY dividerColorChanged)           ///< Divider/line colour.
+  Q_PROPERTY(QColor accentColor MEMBER accentColor NOTIFY accentColorChanged)              ///< Secondary accent colour.
+  Q_PROPERTY(int previewTilesetIndex READ getPreviewTilesetIndex NOTIFY previewTilesetChanged STORED false) ///< Index of the preview tileset.
 
-  Q_PROPERTY(QColor fontColorNormal MEMBER fontColorNormal NOTIFY fontColorNormalChanged)
-  Q_PROPERTY(QColor fontColorControl MEMBER fontColorControl NOTIFY fontColorControlChanged)
-  Q_PROPERTY(QColor fontColorPicture MEMBER fontColorPicture NOTIFY fontColorPictureChanged)
-  Q_PROPERTY(QColor fontColorSingle MEMBER fontColorSingle NOTIFY fontColorSingleChanged)
-  Q_PROPERTY(QColor fontColorMulti MEMBER fontColorMulti NOTIFY fontColorMultiChanged)
-  Q_PROPERTY(QColor fontColorVar MEMBER fontColorVar NOTIFY fontColorVarChanged)
+  Q_PROPERTY(QColor fontColorNormal MEMBER fontColorNormal NOTIFY fontColorNormalChanged)   ///< Keyboard colour: normal glyphs.
+  Q_PROPERTY(QColor fontColorControl MEMBER fontColorControl NOTIFY fontColorControlChanged) ///< Keyboard colour: control glyphs.
+  Q_PROPERTY(QColor fontColorPicture MEMBER fontColorPicture NOTIFY fontColorPictureChanged) ///< Keyboard colour: picture glyphs.
+  Q_PROPERTY(QColor fontColorSingle MEMBER fontColorSingle NOTIFY fontColorSingleChanged)   ///< Keyboard colour: single-char glyphs.
+  Q_PROPERTY(QColor fontColorMulti MEMBER fontColorMulti NOTIFY fontColorMultiChanged)      ///< Keyboard colour: multi-char glyphs.
+  Q_PROPERTY(QColor fontColorVar MEMBER fontColorVar NOTIFY fontColorVarChanged)            ///< Keyboard colour: variable glyphs.
 
 signals:
   void headerShadowHeightChanged();
@@ -73,21 +84,21 @@ signals:
   void fontColorVarChanged();
 
 public:
-  Settings(SaveFile* file);
+  Settings(SaveFile* file); ///< @param file the live save (a few settings react to it).
 
-  Q_INVOKABLE void setColorScheme(QColor primary, QColor secondary);
+  Q_INVOKABLE void setColorScheme(QColor primary, QColor secondary); ///< Recolour the palette at runtime.
 
   // Header and Footer height
-  int headerHeight = 80;
-  int headerShadowHeight = 20;
+  int headerHeight = 80;        ///< @see headerHeight property.
+  int headerShadowHeight = 20;  ///< @see headerShadowHeight property.
 
   // Global Tooltips
-  bool infoBtnPressed = false;
+  bool infoBtnPressed = false;  ///< @see infoBtnPressed property.
 
   // Tileset and related engine for naming previews
-  QString previewTileset = "Overworld";
-  bool previewOutdoor = true;
-  int getPreviewTilesetIndex();
+  QString previewTileset = "Overworld"; ///< @see previewTileset property.
+  bool previewOutdoor = true;           ///< @see previewOutdoor property.
+  int getPreviewTilesetIndex();         ///< Index of @ref previewTileset (backs the property).
 
   // Color Palette
   QColor textColorLight = QColor("#efefef"); //#fafafa
@@ -109,10 +120,8 @@ public:
   QColor fontColorVar = QColor("#388E3C"); // Green, Shade 700
 
 protected slots:
-  void dataChanged();
+  void dataChanged(); ///< React to the save's data changing.
 
 protected:
-  SaveFile* file;
+  SaveFile* file; ///< The live save (held for data-reactive settings).
 };
-
-

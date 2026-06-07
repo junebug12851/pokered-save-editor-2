@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file areapokemon.cpp
+ * @brief Implementation of AreaPokemon / AreaPokemonWild -- the grass/water
+ *        wild-encounter tables. See areapokemon.h for the documented API.
+ */
 #include "./areapokemon.h"
 #include "../../qmlownership.h"
 #include "../../savefile.h"

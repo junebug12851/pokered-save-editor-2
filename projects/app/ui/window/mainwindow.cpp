@@ -13,6 +13,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file mainwindow.cpp
+ * @brief Implementation of MainWindow -- builds the Bridge, registers QML image
+ *        providers, injects `brg`, wires shortcuts, and persists window state.
+ *        See mainwindow.h for the documented API.
+ */
 #include <QQmlEngine>
 #include <QQmlContext>
 #include <QGuiApplication>

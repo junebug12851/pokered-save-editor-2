@@ -19,18 +19,26 @@
 #include <QAbstractListModel>
 #include <QVector>
 
+/// One nature picker row: display name + nature index.
 struct NatureSelectEntry {
   NatureSelectEntry(QString name, int ind);
 
-  QString name;
-  int ind;
+  QString name; ///< Display name.
+  int ind;      ///< Nature index.
 };
 
+/**
+ * @brief Nature picker model (select-model variant; see SpeciesSelectModel).
+ *
+ * Standard picker: cached rows + natureToListIndex() for combo highlighting.
+ * Exposed as `brg.natureSelectModel`.
+ */
 class NatureSelectModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
+  /// Picker columns (mapped in roleNames()).
   enum ItemRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
@@ -38,12 +46,11 @@ public:
 
   NatureSelectModel();
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
-  QVector<NatureSelectEntry*> natureListCache;
+  QVector<NatureSelectEntry*> natureListCache; ///< Cached picker rows.
 
-  Q_INVOKABLE int natureToListIndex(int ind);
+  Q_INVOKABLE int natureToListIndex(int ind); ///< Row index for nature @p ind.
 };
-

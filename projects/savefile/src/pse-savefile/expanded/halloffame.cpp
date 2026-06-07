@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file halloffame.cpp
+ * @brief Implementation of HallOfFame -- the rolling list of HoF records.
+ *        See halloffame.h for the documented API.
+ */
+
 #include "./halloffame.h"
 #include "../qmlownership.h"
 #include "../savefile.h"

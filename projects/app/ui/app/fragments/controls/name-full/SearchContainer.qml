@@ -1,3 +1,9 @@
+// SearchContainer.qml -- the scrollable filter sidebar of the character picker.
+//
+// A Flickable wrapping SearchCriteria; reSearch() drives brg.fontSearch -- "All"
+// calls startOver() (whole store, including uncategorized entries) while any other
+// single category calls keepAnyOf() with the selected flag. Leave the inline notes
+// on the single-select behavior.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file tmHm.cpp
+ * @brief Implementation of TmHmsDB. See tmHm.h for the documented API.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

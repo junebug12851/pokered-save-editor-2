@@ -22,22 +22,31 @@
 class SaveFile;
 struct PokemonDBEntry;
 
+/**
+ * @brief One Pokemon entry within a Hall of Fame record: species, level, name.
+ *
+ * A minimal snapshot (the HoF only stores these three things per mon). One slot of
+ * an HoFRecord.
+ *
+ * @see HoFRecord (the container of up to six of these), HallOfFame.
+ */
 class SAVEFILE_AUTOPORT HoFPokemon : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int species MEMBER species NOTIFY speciesChanged)
-  Q_PROPERTY(int level MEMBER level NOTIFY levelChanged)
-  Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)
+  Q_PROPERTY(int species MEMBER species NOTIFY speciesChanged) ///< Species id.
+  Q_PROPERTY(int level MEMBER level NOTIFY levelChanged)       ///< Level at the time.
+  Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)      ///< Nickname recorded.
 
 public:
+  /// @param recordOffset HoF record base; @param ind slot within the record.
   HoFPokemon(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
   virtual ~HoFPokemon();
 
-  void load(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0);
-  void save(SaveFile* saveFile, var16 recordOffset, var16 ind);
+  void load(SaveFile* saveFile = nullptr, var16 recordOffset = 0, var16 ind = 0); ///< Expand from the save.
+  void save(SaveFile* saveFile, var16 recordOffset, var16 ind);                   ///< Flatten to the save.
 
-  PokemonDBEntry* toSpecies();
+  PokemonDBEntry* toSpecies(); ///< Resolve @ref species to its DB entry.
 
 signals:
   void speciesChanged();
@@ -45,12 +54,11 @@ signals:
   void nameChanged();
 
 public slots:
-  void reset();
-  void randomize();
+  void reset();     ///< Blank this entry.
+  void randomize(); ///< Randomize this entry.
 
 public:
-  int species;
-  int level;
-  QString name;
+  int species;   ///< @see species property.
+  int level;     ///< @see level property.
+  QString name;  ///< @see name property.
 };
-

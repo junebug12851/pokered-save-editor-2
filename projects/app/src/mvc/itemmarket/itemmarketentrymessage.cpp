@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemmarketentrymessage.cpp
+ * @brief Implementation of ItemMarketEntryMessage. See itemmarketentrymessage.h.
+ */
+
 #include "./itemmarketentrymessage.h"
 
 

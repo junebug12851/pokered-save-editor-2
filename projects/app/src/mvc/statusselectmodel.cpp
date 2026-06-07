@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file statusselectmodel.cpp
+ * @brief Implementation of StatusSelectModel. See statusselectmodel.h.
+ */
+
 #include "./statusselectmodel.h"
 
 StatusSelectEntry::StatusSelectEntry(QString name, int ind)

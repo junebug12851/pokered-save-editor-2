@@ -38,44 +38,54 @@ class MissablesDB;
 // guy blocking the path in Pewter City is a missable that's hiden once you beat
 // Brock.
 
+/**
+ * @brief One missable definition: a script/sprite that can be hidden or shown.
+ *
+ * QObject-getter style DB entry. A "missable" is the game's mechanism for
+ * hiding/showing things based on progress (see the explanation above). Each entry
+ * names the missable and links to the @ref toMap / @ref toMapSprite it controls
+ * (resolved in deepLink). @ref defShow is its default visibility.
+ *
+ * @see MissablesDB, WorldMissables (the save-side flags), SpriteData::missableIndex.
+ */
 struct DB_AUTOPORT MissableDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString getName READ getName CONSTANT)
-  Q_PROPERTY(int getInd READ getInd CONSTANT)
-  Q_PROPERTY(QString getMap READ getMap CONSTANT)
-  Q_PROPERTY(int getSprite READ getSprite CONSTANT)
-  Q_PROPERTY(bool getDefShow READ getDefShow CONSTANT)
-  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT)
-  Q_PROPERTY(MapDBEntrySprite* getToMapSprite READ getToMapSprite CONSTANT)
+  Q_PROPERTY(QString getName READ getName CONSTANT)         ///< Missable name.
+  Q_PROPERTY(int getInd READ getInd CONSTANT)               ///< Missable index (the bit it controls).
+  Q_PROPERTY(QString getMap READ getMap CONSTANT)           ///< Name of the map it's on.
+  Q_PROPERTY(int getSprite READ getSprite CONSTANT)         ///< Sprite index on that map.
+  Q_PROPERTY(bool getDefShow READ getDefShow CONSTANT)      ///< Default visibility.
+  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT)   ///< Resolved map.
+  Q_PROPERTY(MapDBEntrySprite* getToMapSprite READ getToMapSprite CONSTANT) ///< Resolved map sprite.
 
 public:
-  const QString getName() const;
-  int getInd() const;
-  const QString getMap() const;
-  int getSprite() const;
-  bool getDefShow() const;
-  MapDBEntry* getToMap() const;
-  MapDBEntrySprite* getToMapSprite() const;
+  const QString getName() const;       ///< @see getName property.
+  int getInd() const;                  ///< @see getInd property.
+  const QString getMap() const;        ///< @see getMap property.
+  int getSprite() const;               ///< @see getSprite property.
+  bool getDefShow() const;             ///< @see getDefShow property.
+  MapDBEntry* getToMap() const;        ///< @see getToMap property.
+  MapDBEntrySprite* getToMapSprite() const; ///< @see getToMapSprite property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  MissableDBEntry();
-  MissableDBEntry(QJsonValue& data);
-  void deepLink();
-  void qmlRegister() const;
+  MissableDBEntry();                ///< Empty entry (built by MissablesDB).
+  MissableDBEntry(QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();                  ///< Resolve the map + map-sprite links.
+  void qmlRegister() const;         ///< Register with QML.
 
   // Missable Name & Index
-  QString name = "";
-  int ind = 0;
+  QString name = ""; ///< Backing field (read via getName()).
+  int ind = 0;       ///< Backing field (read via getInd()).
 
   // Map & Sprite on map Missable References
-  QString map = "";
-  int sprite = 0;
+  QString map = ""; ///< Backing field (read via getMap()).
+  int sprite = 0;    ///< Backing field (read via getSprite()).
 
   // Is this missable shown or hidden by default
-  bool defShow = false;
+  bool defShow = false; ///< Backing field (read via getDefShow()).
 
   // Deep link to associated map and sprite on map
   // There are 2 exceptions to this
@@ -84,9 +94,8 @@ protected:
   // * There's one missable that references an extra sprite which isn't there
   //
   // In both cases one or both of these will be nullptr
-  MapDBEntry* toMap = nullptr;
-  MapDBEntrySprite* toMapSprite = nullptr;
+  MapDBEntry* toMap = nullptr;            ///< Resolved map (may be null; see note above).
+  MapDBEntrySprite* toMapSprite = nullptr; ///< Resolved map sprite (may be null; see note above).
 
-  friend class MissablesDB;
+  friend class MissablesDB; ///< Owning DB constructs/populates entries.
 };
-

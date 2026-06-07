@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file areawarps.cpp
+ * @brief Implementation of AreaWarps -- the map's warp points plus the live
+ *        warp-transition state. See areawarps.h for the documented API.
+ */
+
 #include "./areawarps.h"
 #include "../../qmlownership.h"
 #include "../fragments/warpdata.h"

@@ -23,25 +23,34 @@ class SaveFile;
 class MapDBEntry;
 class MapDBEntryWarpOut;
 
+/**
+ * @brief One warp point on the current map: its tile and where it leads.
+ *
+ * Holds the warp's @ref x / @ref y tile position and its destination
+ * (@ref destMap + @ref destWarp index on that map). Can be built from the save or
+ * from a map DB warp definition. toMap() resolves the destination to its map entry.
+ *
+ * @see AreaWarps (the container), MapDBEntryWarpOut (map-defined warp).
+ */
 class SAVEFILE_AUTOPORT WarpData : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int y MEMBER y NOTIFY yChanged)
-  Q_PROPERTY(int x MEMBER x NOTIFY xChanged)
-  Q_PROPERTY(int destWarp MEMBER destWarp NOTIFY destWarpChanged)
-  Q_PROPERTY(int destMap MEMBER destMap NOTIFY destMapChanged)
+  Q_PROPERTY(int y MEMBER y NOTIFY yChanged)                 ///< Warp tile Y.
+  Q_PROPERTY(int x MEMBER x NOTIFY xChanged)                 ///< Warp tile X.
+  Q_PROPERTY(int destWarp MEMBER destWarp NOTIFY destWarpChanged) ///< Destination warp index on the target map.
+  Q_PROPERTY(int destMap MEMBER destMap NOTIFY destMapChanged)    ///< Destination map id.
 
 public:
-  WarpData(SaveFile* saveFile = nullptr, var8 index = 0);
-  WarpData(MapDBEntryWarpOut* warp);
+  WarpData(SaveFile* saveFile = nullptr, var8 index = 0); ///< From the save at warp @p index.
+  WarpData(MapDBEntryWarpOut* warp);                      ///< From a map-defined warp.
   virtual ~WarpData();
 
-  void load(SaveFile* saveFile = nullptr, var8 index = 0);
-  void load(MapDBEntryWarpOut* warp);
-  void save(SaveFile* saveFile, var8 index);
+  void load(SaveFile* saveFile = nullptr, var8 index = 0); ///< Expand warp @p index from the save.
+  void load(MapDBEntryWarpOut* warp);                      ///< Populate from a map-defined warp.
+  void save(SaveFile* saveFile, var8 index);               ///< Flatten warp @p index to the save.
 
-  MapDBEntry* toMap();
+  MapDBEntry* toMap(); ///< The destination map's DB entry.
 
 signals:
   void yChanged();
@@ -50,13 +59,12 @@ signals:
   void destMapChanged();
 
 public slots:
-  void reset();
-  void randomize();
+  void reset();     ///< Blank this warp.
+  void randomize(); ///< Randomize this warp.
 
 public:
-  int y;
-  int x;
-  int destWarp;
-  int destMap;
+  int y;        ///< @see y property.
+  int x;        ///< @see x property.
+  int destWarp; ///< @see destWarp property.
+  int destMap;  ///< @see destMap property.
 };
-

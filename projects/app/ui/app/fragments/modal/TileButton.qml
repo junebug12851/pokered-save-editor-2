@@ -1,3 +1,10 @@
+// TileButton.qml -- a large bordered "tile" button used on the modal menus
+// (NewFile, FileTools).
+//
+// Shows a centered icon, bold title, and an italic hotkey hint, with a full-tile
+// flat Button capturing clicks (re-emitted as clicked()) and an InfoButton tooltip
+// (infoTxt). Width/height are fractions of the parent (divider x sizeH) so several
+// tiles pack into the modal grid.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

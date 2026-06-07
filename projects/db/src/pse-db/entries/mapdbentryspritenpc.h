@@ -20,17 +20,24 @@
 class MapsDB;
 
 // A regular NPC that says a few lines and may have a script that's run
+/**
+ * @brief A map sprite that is a plain NPC (type NPC).
+ *
+ * Adds nothing beyond MapDBEntrySprite's common fields -- a talking NPC is fully
+ * described by the base data. type() returns NPC. See db.md.
+ *
+ * @see MapDBEntrySprite (base).
+ */
 struct DB_AUTOPORT MapDBEntrySpriteNPC : public MapDBEntrySprite
 {
   Q_OBJECT
 
 public:
-  virtual SpriteType type() const;
+  virtual SpriteType type() const; ///< Returns NPC.
 
 protected:
-  MapDBEntrySpriteNPC(const QJsonValue& data, MapDBEntry* const parent);
-  virtual void qmlRegister() const;
+  MapDBEntrySpriteNPC(const QJsonValue& data, MapDBEntry* const parent); ///< Build from JSON under @p parent.
+  virtual void qmlRegister() const; ///< Register with QML.
 
   friend class MapDBEntry;
 };
-

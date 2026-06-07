@@ -28,48 +28,64 @@
 struct MapDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief One map-script definition: its id/size and which maps use it.
+ *
+ * Plain-struct DB entry. @ref maps is the list of map names that share this
+ * script; @ref toMaps resolves them in deepLink(). @ref skip is an optional
+ * skip-value. See db.md for the entry convention.
+ *
+ * @see ScriptsDB, WorldScripts (the save-side per-map script progress).
+ */
 struct DB_AUTOPORT ScriptDBEntry {
-  ScriptDBEntry();
-  ScriptDBEntry(QJsonValue& data);
-  void deepLink();
+  ScriptDBEntry();                ///< Empty entry.
+  ScriptDBEntry(QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();              ///< Resolve the @ref maps names to entries.
 
-  QString name;
-  var8 ind  = 0;
-  var8 size = 0;
+  QString name;  ///< Script name (key).
+  var8 ind  = 0; ///< Script index.
+  var8 size = 0; ///< Script size.
 
-  QVector<QString> maps;
-  std::optional<var8> skip;
+  QVector<QString> maps;     ///< Map names using this script.
+  std::optional<var8> skip;  ///< Optional skip value.
 
-  QVector<MapDBEntry*> toMaps;
+  QVector<MapDBEntry*> toMaps; ///< Resolved map entries (deepLink).
 };
 
+/**
+ * @brief The map-scripts database, keyed by name.
+ *
+ * Standard DB-singleton with a name index and a deepLink() pass. See db.md.
+ *
+ * @see ScriptDBEntry, DB.
+ */
 class DB_AUTOPORT ScriptsDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of scripts.
 
 public:
-  static ScriptsDB* inst();
+  static ScriptsDB* inst(); ///< The process-wide ScriptsDB singleton.
 
-  [[nodiscard]] const QVector<ScriptDBEntry*> getStore() const;
-  [[nodiscard]] const QHash<QString, ScriptDBEntry*> getInd() const;
-  [[nodiscard]] int getStoreSize() const;
+  [[nodiscard]] const QVector<ScriptDBEntry*> getStore() const;       ///< All scripts.
+  [[nodiscard]] const QHash<QString, ScriptDBEntry*> getInd() const;  ///< Name->entry index.
+  [[nodiscard]] int getStoreSize() const;                            ///< Script count.
 
-  Q_INVOKABLE ScriptDBEntry* getStoreAt(int idx) const;
-  Q_INVOKABLE ScriptDBEntry* getIndAt(const QString& key) const;
+  Q_INVOKABLE ScriptDBEntry* getStoreAt(int idx) const;              ///< Script by store index (for QML).
+  Q_INVOKABLE ScriptDBEntry* getIndAt(const QString& key) const;     ///< Script by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load scripts from JSON.
+  void index();    ///< Build the name->entry index.
+  void deepLink(); ///< Resolve each script's map links.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  ScriptsDB();
+  ScriptsDB(); ///< Private -- use inst().
 
-  QVector<ScriptDBEntry*> store;
-  QHash<QString, ScriptDBEntry*> ind;
+  QVector<ScriptDBEntry*> store;       ///< The loaded scripts.
+  QHash<QString, ScriptDBEntry*> ind;  ///< Name->entry lookup.
 };

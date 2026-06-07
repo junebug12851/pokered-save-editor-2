@@ -19,6 +19,15 @@
 #include <QString>
 #include <QSize>
 
+/**
+ * @brief QML image provider for individual tileset tiles ("image://...").
+ *
+ * QML requests `image://<provider>/<id>` and this returns a single tile (or, in
+ * debug, the whole tileset) rendered by TilesetEngine. The slash-separated id
+ * format is documented in-code below.
+ *
+ * @see TilesetEngine (does the rendering), FontPreviewProvider (the sibling provider).
+ */
 class TilesetProvider : public QQuickImageProvider
 {
 public:
@@ -36,8 +45,8 @@ public:
   //  * <tile> can either be a tile number between 0-255 or "whole" which invokes
   //    a debug operation and returns the whole image. "whole" is never suggested
   //    because whole is not cached and can take a long time to build.
+  /// Render the tile for @p id (format documented above). @return the pixmap.
   virtual QPixmap requestPixmap(const QString& id, QSize* size, const QSize& requestedSize) override;
 
-  QPixmap blankImage(QSize* size, const QSize& requestedSize);
+  QPixmap blankImage(QSize* size, const QSize& requestedSize); ///< Fallback blank tile.
 };
-

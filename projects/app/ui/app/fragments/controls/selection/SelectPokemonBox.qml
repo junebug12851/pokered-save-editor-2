@@ -1,3 +1,8 @@
+// SelectPokemonBox.qml -- the PC-box picker combo (a borderless Select* combo).
+//
+// A flat, borderless ComboBox (boxName/boxValue; model supplied by the caller)
+// with a hover underline and a height-capped, scrollable popup; boxDisabled rows
+// are greyed out. Shares the common Select* pattern (see SelectItem.qml).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

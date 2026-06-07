@@ -22,8 +22,18 @@ class SaveFile;
 
 // Can't have a total byte count given scripts are a bit more complicated to
 // read
-constexpr var8 scriptCount = 97;
+constexpr var8 scriptCount = 97; ///< Number of per-map script-progress values.
 
+/**
+ * @brief Per-map script progress values (the in-progress state of each map's script).
+ *
+ * Each map has a script "step" counter tracking how far its events have advanced;
+ * this holds all @ref scriptCount of them as a @ref curScripts array. Unlike the
+ * boolean event/missable flags these are small integers, so the QML accessors take
+ * and return @c int. Standard expanded-node convention (see SaveFileExpanded).
+ *
+ * @see World, AreaMap::curMapScript (the current map's live script index).
+ */
 class SAVEFILE_AUTOPORT WorldScripts : public QObject
 {
   Q_OBJECT
@@ -32,21 +42,20 @@ public:
   WorldScripts(SaveFile* saveFile = nullptr);
   virtual ~WorldScripts();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the script values from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the script values to the save.
 
-  Q_INVOKABLE int scriptsCount();
-  Q_INVOKABLE int scriptsAt(int ind);
-  Q_INVOKABLE void scriptsSet(int ind, int val);
+  Q_INVOKABLE int scriptsCount();              ///< Number of script values (scriptCount).
+  Q_INVOKABLE int scriptsAt(int ind);          ///< Script value for map index @p ind.
+  Q_INVOKABLE void scriptsSet(int ind, int val); ///< Set the script value for @p ind.
 
 signals:
   void curScriptsChanged();
 
 public slots:
-  void reset();
-  void randomize();
+  void reset();     ///< Zero all script values.
+  void randomize(); ///< Randomize the script values.
 
 public:
-  var16 curScripts[scriptCount];
+  var16 curScripts[scriptCount]; ///< Per-map script-progress values.
 };
-

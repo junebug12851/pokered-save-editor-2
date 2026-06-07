@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file player.cpp
+ * @brief Implementation of Player -- groups the trainer's basics/items/pokedex/
+ *        party. See player.h for the documented API.
+ */
 #include "player.h"
 #include "../../savefile.h"
 #include "./playerbasics.h"

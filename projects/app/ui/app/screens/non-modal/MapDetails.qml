@@ -1,3 +1,10 @@
+// MapDetails.qml -- the per-map detail screen (reached from Maps.qml).
+//
+// Receives a mapInd and shows a GridView of category buttons (Loaded, General,
+// Events, Trades, Missables). Component.onCompleted appends extra map-specific
+// categories for special maps -- Daycare Pokemon (72), Vermilion Gym switches
+// (92), Cinnabar Gym quiz (166), and the Safari Zone maps (156/217-225). The
+// category buttons' onClicked navigation is not wired up yet (commented out).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

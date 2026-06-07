@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file worldtrades.cpp
+ * @brief Implementation of WorldTrades -- completed in-game (NPC) trade flags.
+ *        See worldtrades.h for the documented API.
+ */
+
 #include <string.h>
 
 #include "./worldtrades.h"

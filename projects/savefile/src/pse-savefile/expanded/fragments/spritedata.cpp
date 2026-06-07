@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file spritedata.cpp
+ * @brief Implementation of SpriteData -- one on-map sprite/NPC, including the
+ *        split sprite-data tables and the optional-field accessors. See spritedata.h.
+ */
+
 #include <QDebug>
 
 #include "spritedata.h"

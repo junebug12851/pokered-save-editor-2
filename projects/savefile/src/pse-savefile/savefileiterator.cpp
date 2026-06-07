@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file savefileiterator.cpp
+ * @brief Implementation of SaveFileIterator -- the auto-advancing cursor that
+ *        wraps SaveFileToolset. See savefileiterator.h for the documented API.
+ */
 #include "savefileiterator.h"
 #include "savefile.h"
 #include "savefiletoolset.h"

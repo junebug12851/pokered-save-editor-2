@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file spriteSet.cpp
+ * @brief Implementation of SpriteSetDB and SpriteSetDBEntry (incl. split sets).
+ *        See spriteSet.h for the documented API.
+ */
+
 #include <QJsonArray>
 #include <QQmlEngine>
 #include <pse-common/utility.h>

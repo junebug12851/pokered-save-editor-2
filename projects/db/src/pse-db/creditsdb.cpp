@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file creditsdb.cpp
+ * @brief Implementation of CreditsDB. See creditsdb.h for the documented API.
+ */
+
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>

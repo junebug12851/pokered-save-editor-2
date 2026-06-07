@@ -1,3 +1,8 @@
+// MoneyEdit.qml -- the money field on the trainer card.
+//
+// A 6-digit DefTextEdit bound to player.basics.money (clamped 0-999,999) with a
+// hover RandomMenu (randomizeMoney). Writes are cheap, so it persists on every
+// valid keystroke. Mirrors CoinsEdit.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

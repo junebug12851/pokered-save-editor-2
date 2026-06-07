@@ -1,3 +1,10 @@
+// SelectStatus.qml -- the status-condition picker combo (a borderless Select*
+// combo).
+//
+// A flat, borderless ComboBox over brg.statusSelectModel (statusName/statusInd)
+// with a hover underline and a height-capped, scrollable popup. Often placed on
+// the accent header bar, so callers override hoverColor (see GlancePane). Shares
+// the common Select* pattern (see SelectItem.qml).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

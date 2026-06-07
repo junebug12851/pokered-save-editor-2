@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file areaplayer.cpp
+ * @brief Implementation of AreaPlayer -- player position and movement/HM/battle/
+ *        warp state on the map. See areaplayer.h for the documented API.
+ */
 #include "areaplayer.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file signdata.cpp
+ * @brief Implementation of SignData -- one map sign (position + text id).
+ *        See signdata.h for the documented API.
+ */
 #include "signdata.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file typesmodel.cpp
+ * @brief Implementation of TypesModel. See typesmodel.h.
+ */
+
 #include <pse-db/types.h>
 #include "./typesmodel.h"
 

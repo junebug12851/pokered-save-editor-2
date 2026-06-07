@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file worldmissables.cpp
+ * @brief Implementation of WorldMissables -- the missable-sprite visibility
+ *        flags. See worldmissables.h for the documented API.
+ */
+
 #include <string.h>
 #include <QVector>
 

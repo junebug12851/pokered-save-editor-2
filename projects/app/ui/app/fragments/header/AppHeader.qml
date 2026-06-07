@@ -3,7 +3,15 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Controls
 
-// App-Wide Header
+// AppHeader.qml -- the app-wide top toolbar (shown above every non-modal screen).
+//
+// Left side: a home/back button that swaps based on brg.router.homeBtnShown
+// (grid icon -> "home"; back arrow -> closeScreen), then the current screen title
+// (brg.router.title). Right side: the tooltips on/off toggle (this one button
+// intentionally does NOT follow the global tooltip setting -- see the inline
+// note), Credits, File Tools, and New File -- each just calls
+// brg.router.changeScreen(). A thin Rectangle at the bottom draws the header
+// shadow.
 ToolBar {
   height: brg.settings.headerHeight
   Material.foreground: brg.settings.textColorLight

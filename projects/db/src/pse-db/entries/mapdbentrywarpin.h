@@ -23,40 +23,48 @@ class MapDBEntry;
 class MapsDB;
 class MapDBEntryWarpOut;
 
+/**
+ * @brief A warp-in point: a destination spot other maps' warp-outs land on.
+ *
+ * Counterpart to MapDBEntryWarpOut -- a warp-out targets a warp-in by index. The
+ * @ref toConnectingWarps list (surfaced via size + invokable accessor) is the set
+ * of warp-outs that arrive here. A leaf of MapDBEntry. See db.md.
+ *
+ * @see MapDBEntry (parent), MapDBEntryWarpOut, WarpData (the save-side warp).
+ */
 struct DB_AUTOPORT MapDBEntryWarpIn : public QObject {
   Q_OBJECT
-  Q_PROPERTY(int getX READ getX CONSTANT)
-  Q_PROPERTY(int getY READ getY CONSTANT)
-  Q_PROPERTY(int getToConnectingWarpsSize READ getToConnectingWarpsSize CONSTANT)
-  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT)
+  Q_PROPERTY(int getX READ getX CONSTANT) ///< Warp-in tile X.
+  Q_PROPERTY(int getY READ getY CONSTANT) ///< Warp-in tile Y.
+  Q_PROPERTY(int getToConnectingWarpsSize READ getToConnectingWarpsSize CONSTANT) ///< Count of warp-outs arriving here.
+  Q_PROPERTY(MapDBEntry* getParent READ getParent CONSTANT) ///< Owning map.
 
 public:
-  int getX() const;
-  int getY() const;
+  int getX() const; ///< @see getX property.
+  int getY() const; ///< @see getY property.
 
-  const QVector<MapDBEntryWarpOut*> getToConnectingWarps() const;
-  int getToConnectingWarpsSize() const;
-  Q_INVOKABLE MapDBEntryWarpOut* getToConnectingWarpsAt(const int ind) const;
+  const QVector<MapDBEntryWarpOut*> getToConnectingWarps() const; ///< Warp-outs that land here.
+  int getToConnectingWarpsSize() const;                           ///< @see getToConnectingWarpsSize property.
+  Q_INVOKABLE MapDBEntryWarpOut* getToConnectingWarpsAt(const int ind) const; ///< Connecting warp @p ind (for QML).
 
-  MapDBEntry* getParent() const;
+  MapDBEntry* getParent() const; ///< @see getParent property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  MapDBEntryWarpIn();
-  MapDBEntryWarpIn(const QJsonValue& data, MapDBEntry* const parent);
-  void qmlRegister() const;
+  MapDBEntryWarpIn(); ///< Empty entry.
+  MapDBEntryWarpIn(const QJsonValue& data, MapDBEntry* const parent); ///< Build from JSON under @p parent.
+  void qmlRegister() const; ///< Register with QML.
 
   // X & Y location on Map
-  int x = 0;
-  int y = 0;
+  int x = 0; ///< Warp-in tile X.
+  int y = 0; ///< Warp-in tile Y.
 
-  QVector<MapDBEntryWarpOut*> toConnectingWarps;
-  MapDBEntry* parent = nullptr;
+  QVector<MapDBEntryWarpOut*> toConnectingWarps; ///< Warp-outs arriving here (filled by warp-out deepLink).
+  MapDBEntry* parent = nullptr;                  ///< Owning map.
 
   friend class MapDBEntry;
   friend class MapsDB;
   friend class MapDBEntryWarpOut;
 };
-

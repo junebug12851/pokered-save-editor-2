@@ -1,5 +1,8 @@
 # Architecture
 
+> For the in-depth, code-grounded version of everything below, see the system map:
+> [`../systems/overview.md`](../systems/overview.md).
+
 ## Sub-libraries (build order)
 
 ```

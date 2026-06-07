@@ -22,6 +22,13 @@ class PlayerBasics;
 
 // Selling player inventory for money or coins
 
+/**
+ * @brief Market row for one of the player's own items being sold.
+ *
+ * An ItemMarketEntry subtype for selling a player-owned @ref toItem (from
+ * @ref toBox) for money or coins. checkout() removes the sold quantity and credits
+ * the balance. See ItemMarketEntry.
+ */
 class ItemMarketEntryPlayerItem : public ItemMarketEntry
 {
   Q_OBJECT
@@ -30,20 +37,19 @@ public:
   ItemMarketEntryPlayerItem(ItemStorageBox* toBox, Item* toItem);
   virtual ~ItemMarketEntryPlayerItem();
 
-  virtual QString _name() override;
-  virtual int _inStockCount() override;
-  virtual bool _canSell() override;
-  virtual int _itemWorth() override;
-  virtual QString _whichType() override;
-  virtual int onCartLeft() override;
-  virtual int stackCount() override;
+  virtual QString _name() override;       ///< @copydoc ItemMarketEntry::_name
+  virtual int _inStockCount() override;   ///< @copydoc ItemMarketEntry::_inStockCount
+  virtual bool _canSell() override;       ///< @copydoc ItemMarketEntry::_canSell
+  virtual int _itemWorth() override;      ///< @copydoc ItemMarketEntry::_itemWorth
+  virtual QString _whichType() override;  ///< @copydoc ItemMarketEntry::_whichType
+  virtual int onCartLeft() override;      ///< @copydoc ItemMarketEntry::onCartLeft
+  virtual int stackCount() override;      ///< @copydoc ItemMarketEntry::stackCount
 
 public slots:
-  virtual void checkout() override;
+  virtual void checkout() override; ///< Sell the item (remove qty, credit balance).
 
 public:
-  ItemStorageBox* toBox = nullptr;
-  Item* toItem = nullptr;
-  static constexpr const char* type = "playerItem";
+  ItemStorageBox* toBox = nullptr; ///< The box the item is sold from.
+  Item* toItem = nullptr;          ///< The item being sold.
+  static constexpr const char* type = "playerItem"; ///< This row's type key.
 };
-

@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file fontsearchmodel.cpp
+ * @brief Implementation of FontSearchModel. See fontsearchmodel.h.
+ */
+
 #include <pse-db/fontsdb.h>
 #include <pse-db/entries/fontdbentry.h>
 #include <pse-db/util/fontsearch.h>

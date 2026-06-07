@@ -1,3 +1,7 @@
+// IconButtonRound.qml -- a minimal flat, icon-only round button.
+//
+// A small reusable round icon button (15x15 icon); callers set icon.source and
+// onClicked.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

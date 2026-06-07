@@ -13,6 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file main.cpp
+ * @brief Program entry point. Delegates everything to boot() and execs the app.
+ */
 #include <QApplication>
 
 extern QApplication* boot(int argc, char *argv[]);

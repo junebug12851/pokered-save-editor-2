@@ -13,6 +13,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file savefiletoolset.cpp
+ * @brief Implementation of SaveFileToolset -- the raw-byte primitives (BCD,
+ *        font-encoded strings, bit-fields, words, and the Gen 1 checksum).
+ *        See savefiletoolset.h for the documented API.
+ */
 #include "savefiletoolset.h"
 #include "savefile.h"
 #include <pse-db/fontsdb.h>

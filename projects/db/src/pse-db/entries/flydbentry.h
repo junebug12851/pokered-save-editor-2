@@ -26,29 +26,37 @@ class FlyDB;
 
 // Qt 6 requires complete types for Q_PROPERTY pointers, OR this macro:
 
+/**
+ * @brief One fly destination: its name/index and the map it flies to.
+ *
+ * QObject-getter style DB entry (protected fields + getters). @ref toMap is
+ * resolved in deepLink(). See db.md for the entry convention.
+ *
+ * @see FlyDB.
+ */
 struct DB_AUTOPORT FlyDBEntry : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString getName READ getName CONSTANT)
-  Q_PROPERTY(int     getInd  READ getInd  CONSTANT)
-  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT)
+  Q_PROPERTY(QString getName READ getName CONSTANT)       ///< Destination name.
+  Q_PROPERTY(int     getInd  READ getInd  CONSTANT)       ///< Destination index.
+  Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT) ///< Resolved destination map.
 
 public:
-  QString getName() const;
-  int getInd() const;
-  MapDBEntry* getToMap() const;
+  QString getName() const;     ///< @see getName property.
+  int getInd() const;          ///< @see getInd property.
+  MapDBEntry* getToMap() const; ///< @see getToMap property.
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 protected:
-  FlyDBEntry();
-  FlyDBEntry(QJsonValue& data);
-  void deepLink();
-  void qmlRegister() const;
+  FlyDBEntry();                ///< Empty entry (built by FlyDB).
+  FlyDBEntry(QJsonValue& data); ///< Build from a JSON value.
+  void deepLink();             ///< Resolve the destination map.
+  void qmlRegister() const;    ///< Register with QML.
 
-  QString name = "";
-  int ind = 0;
-  MapDBEntry* toMap = nullptr;
+  QString name = "";        ///< Backing field (read via getName()).
+  int ind = 0;              ///< Backing field (read via getInd()).
+  MapDBEntry* toMap = nullptr; ///< Backing field (read via getToMap()).
 
-  friend class FlyDB;
+  friend class FlyDB; ///< The owning DB constructs/populates these entries.
 };

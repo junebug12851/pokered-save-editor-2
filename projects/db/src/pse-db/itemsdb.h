@@ -23,37 +23,45 @@
 class ItemDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief The items database -- every item (with prices), keyed by name.
+ *
+ * Standard DB-singleton with a name index and a deepLink() pass. See CreditsDB /
+ * db.md for the shared pattern; the entry type (with its buy/sell pricing) lives
+ * in `entries/itemdbentry.h`.
+ *
+ * @see ItemDBEntry, DB.
+ */
 class DB_AUTOPORT ItemsDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of items.
 
 public:
   // Get Instance
-  static ItemsDB* inst();
+  static ItemsDB* inst(); ///< The process-wide ItemsDB singleton.
 
   // Get Properties, includes QML array helpers
-  const QVector<ItemDBEntry*> getStore() const;
-  const QHash<QString, ItemDBEntry*> getInd() const;
-  int getStoreSize() const;
+  const QVector<ItemDBEntry*> getStore() const;       ///< All items.
+  const QHash<QString, ItemDBEntry*> getInd() const;  ///< Name->entry index.
+  int getStoreSize() const;                           ///< Item count.
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE ItemDBEntry* getStoreAt(const int ind) const;
-  Q_INVOKABLE ItemDBEntry* getIndAt(const QString val) const;
+  Q_INVOKABLE ItemDBEntry* getStoreAt(const int ind) const;   ///< Item by store index (for QML).
+  Q_INVOKABLE ItemDBEntry* getIndAt(const QString val) const; ///< Item by name key (for QML).
 
 public slots:
-  void load();
-  void index();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load items from JSON.
+  void index();    ///< Build the name->entry index.
+  void deepLink(); ///< Resolve each item's cross-DB links.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
-  ItemsDB();
+  ItemsDB(); ///< Private -- use inst().
 
-  QVector<ItemDBEntry*> store;
-  QHash<QString, ItemDBEntry*> ind;
+  QVector<ItemDBEntry*> store;       ///< The loaded items.
+  QHash<QString, ItemDBEntry*> ind;  ///< Name->entry lookup.
 };
-

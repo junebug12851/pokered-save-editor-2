@@ -1,3 +1,9 @@
+// TilesetDisplay.qml -- a live preview of the whole current tileset image.
+//
+// Renders the full 128x128 tileset (scaled by sizeMult) via the
+// "image://tileset/..." provider, animated across 8 frames, following the
+// app-wide preview tileset / outdoor settings. Read-only display used by the name
+// tools so you can see the character/tile sheet.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -1,3 +1,8 @@
+// SearchRoot.qml -- the character-list page of the full keyboard (page 0 of
+// PagedPicker).
+//
+// A Row pairing the filter sidebar (SearchContainer) with the results grid
+// (SearchResults); the latter edits the shared str and feeds the DetailView.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

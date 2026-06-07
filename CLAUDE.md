@@ -15,12 +15,17 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/context/project.md` | What the project is and its goals |
 | `notes/context/architecture.md` | Codebase structure, build system, key patterns |
 | `notes/context/principles.md` | Owner's philosophy — what the app must/must not do |
+| `notes/context/origins.md` | The 2019–2020 pre-revival story — three rewrites, the JS detour, the library/DB refactor |
 | `notes/context/history.md` | How the project was revived — what was broken, what was fixed |
+| `notes/systems/overview.md` | **System map** — in-depth macro/micro architecture: layers, boot, data flow, byte-fidelity. Start here to understand the machine |
 | `notes/reference/fix-patterns.md` | Compiler/runtime error → fix lookup table |
 | `notes/reference/qt6-patterns.md` | Qt 5 → Qt 6 migration gotchas |
+| `notes/reference/qt-gotchas.md` | Project-lifetime catalog of Qt/QML landmines (2019→2026), cross-linked to detail files |
+| `notes/reference/gen1-knowledge.md` | Gen 1 Red/Blue **save-format + gameplay** domain knowledge (offsets, checksum, badges, trade status, retroactive natures/shininess, randomizer rules) |
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems |
 | `notes/reference/ui-patterns.md` | **UI/QML conventions** — layouts, borderless combos, ⋮ buttons, editor popups, sliders. Read before UI work |
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems |
+| `notes/reference/documentation.md` | **Doc generation** — build C++ API docs (Doxygen), comment style, why QML is excluded |
 | `notes/decisions/architecture.md` | Key structural choices and why |
 | `notes/decisions/rejected.md` | Things tried that failed — do not repeat |
 | `notes/plans/next-steps.md` | Ordered task list |

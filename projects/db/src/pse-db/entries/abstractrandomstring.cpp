@@ -13,6 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file abstractrandomstring.cpp
+ * @brief Implementation of AbstractRandomString. See abstractrandomstring.h.
+ */
 #include "abstractrandomstring.h"
 
 #include <QVector>

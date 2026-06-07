@@ -1,3 +1,10 @@
+// PlaytimeEdit.qml -- the playtime "clock" row on the trainer card.
+//
+// Lays out the playtime sub-fields in a row -- Days : Hours : Minutes : Seconds :
+// Frames -- separated by PlaytimeDividers. The fieldH and digitPad knobs keep each
+// DefTextEdit compact and aligned with the rest of the card (see ui-patterns.md).
+// The Frames field carries the shared overflow menu (enable/pause/randomize/clear)
+// whose button shows on row hover.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

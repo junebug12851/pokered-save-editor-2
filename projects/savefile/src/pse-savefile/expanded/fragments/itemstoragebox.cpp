@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file itemstoragebox.cpp
+ * @brief Implementation of ItemStorageBox -- the bag or a PC item box
+ *        (add/remove/move/sort/relocate). See itemstoragebox.h.
+ */
+
 #include <algorithm>
 #include <QCollator>
 #include "../../qmlownership.h"

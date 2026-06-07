@@ -28,36 +28,44 @@
 struct EventPokemonDBEntry;
 class QQmlEngine;
 
+/**
+ * @brief Database of real-world event/distribution Pokemon presets.
+ *
+ * As the note above says: Pokemon handed out at real-life events around the world.
+ * Standard DB-singleton (no key index; accessed by store index) with a deepLink()
+ * pass. See CreditsDB / db.md; the entry type is in `entries/eventpokemondbentry.h`.
+ *
+ * @see EventPokemonDBEntry, DB.
+ */
 class DB_AUTOPORT EventPokemonDB : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT)
+  Q_PROPERTY(int getStoreSize READ getStoreSize CONSTANT) ///< Number of event Pokemon.
 
 public:
   // Get Instance
-  static EventPokemonDB* inst();
+  static EventPokemonDB* inst(); ///< The process-wide EventPokemonDB singleton.
 
   // Get Properties, includes QML array helpers
-  const QVector<EventPokemonDBEntry*> getStore() const;
-  int getStoreSize() const;
+  const QVector<EventPokemonDBEntry*> getStore() const; ///< All event Pokemon.
+  int getStoreSize() const;                             ///< Event-Pokemon count.
 
   // QML Methods that can't be a property or slot because they take an argument
-  Q_INVOKABLE EventPokemonDBEntry* getStoreAt(const int ind) const;
+  Q_INVOKABLE EventPokemonDBEntry* getStoreAt(const int ind) const; ///< Event Pokemon by store index (for QML).
 
 public slots:
   // QML accessible methods
-  void load();
-  void deepLink();
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void load();     ///< Load event Pokemon from JSON.
+  void deepLink(); ///< Resolve each entry's species/move links.
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private slots:
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 
 private:
   // Singleton Constructor
-  EventPokemonDB();
+  EventPokemonDB(); ///< Private -- use inst().
 
   // Store
-  QVector<EventPokemonDBEntry*> store;
+  QVector<EventPokemonDBEntry*> store; ///< The loaded event Pokemon.
 };
-

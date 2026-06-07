@@ -23,8 +23,17 @@
 class SaveFile;
 class HoFRecord;
 
-constexpr var8 recordsMax = 50;
+constexpr var8 recordsMax = 50; ///< Maximum Hall of Fame records the save keeps.
 
+/**
+ * @brief The Hall of Fame: a rolling list of up to 50 winning-team records.
+ *
+ * Holds the @ref records list of HoFRecord entries (each a team that beat the
+ * Elite Four). Provides QML-callable add/remove/swap/access. Standard
+ * expanded-node convention (see SaveFileExpanded).
+ *
+ * @see SaveFileExpanded, HoFRecord, HoFPokemon.
+ */
 class SAVEFILE_AUTOPORT HallOfFame : public QObject
 {
   Q_OBJECT
@@ -33,29 +42,28 @@ public:
   HallOfFame(SaveFile* saveFile = nullptr);
   virtual ~HallOfFame();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the Hall of Fame records from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the Hall of Fame records to the save.
 
   // Since Qt has tied my hands in so many ways on fixing the issue of no arrays
   // but primitive arrays being able to be sent to QML, I'm left with no other
   // options outside of a custom model to flood classes with a series of methods
   // for each and every array of any kind that's not primitive
-  Q_INVOKABLE int recordCount();
-  Q_INVOKABLE int recordMax();
-  Q_INVOKABLE HoFRecord* recordAt(int ind);
-  Q_INVOKABLE void recordSwap(int from, int to);
-  Q_INVOKABLE void recordRemove(int ind);
-  Q_INVOKABLE void recordNew();
+  Q_INVOKABLE int recordCount();             ///< Number of records.
+  Q_INVOKABLE int recordMax();               ///< Capacity (recordsMax).
+  Q_INVOKABLE HoFRecord* recordAt(int ind);  ///< Record @p ind (GC-protected return).
+  Q_INVOKABLE void recordSwap(int from, int to); ///< Reorder records.
+  Q_INVOKABLE void recordRemove(int ind);    ///< Remove record @p ind.
+  Q_INVOKABLE void recordNew();              ///< Add a fresh record.
 
 signals:
   void recordsChanged();
 
 public slots:
-  void reset();
-  void randomize();
+  void reset();     ///< Clear all records.
+  void randomize(); ///< Fill with random records.
 
 public:
   // All Hall of Fame Records
-  QVector<HoFRecord*> records;
+  QVector<HoFRecord*> records; ///< Every Hall of Fame record.
 };
-

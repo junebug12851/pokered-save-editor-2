@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file examplesplayer.cpp
+ * @brief Implementation of ExamplesPlayer. See examplesplayer.h.
+ */
+
 #include <QVector>
 #include <QJsonArray>
 #include <QtMath>

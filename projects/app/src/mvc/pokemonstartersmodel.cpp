@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file pokemonstartersmodel.cpp
+ * @brief Implementation of PokemonStartersModel. See pokemonstartersmodel.h.
+ */
+
 #include <pse-db/pokemon.h>
 #include "./pokemonstartersmodel.h"
 

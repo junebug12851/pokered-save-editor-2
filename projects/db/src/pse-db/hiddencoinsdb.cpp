@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file hiddencoinsdb.cpp
+ * @brief Implementation of HiddenCoinsDB. See hiddencoinsdb.h for the API.
+ */
+
 #include <QQmlEngine>
 #include "hiddencoinsdb.h"
 

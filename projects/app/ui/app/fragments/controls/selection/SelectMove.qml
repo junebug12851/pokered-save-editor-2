@@ -1,3 +1,8 @@
+// SelectMove.qml -- the move picker combo (a borderless Select* combo).
+//
+// A flat, borderless ComboBox over brg.moveSelectModel (moveName/moveInd) with a
+// hover underline and a height-capped, scrollable popup; negative-index rows are
+// disabled. Shares the common Select* pattern (see SelectItem.qml).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

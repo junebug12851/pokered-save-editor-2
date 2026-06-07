@@ -33,14 +33,26 @@ class PlayerPokemon;
 class Storage;
 class Router;
 
+/**
+ * @brief Editable list model for a PC box (or the party), with checkbox selection.
+ *
+ * The Pokemon analogue of ItemStorageModel: shows the mons in the @ref curBox box
+ * (or the party when curBox == @ref PartyBox), with per-row checkbox state and the
+ * same bulk `checked*` operations (move/delete/transfer/toggle). switchBox() changes
+ * which box is shown; getBoxMon()/getPartyMon() hand a typed mon to the details
+ * screen. Pairs with a sibling model (@ref otherModel) and a box selector. Exposed
+ * as `brg.pokemonStorageModel1/2`.
+ *
+ * @see Storage, PlayerPokemon, PokemonBoxSelectModel.
+ */
 class PokemonStorageModel : public QAbstractListModel
 {
   Q_OBJECT
 
   // Checkmarks changed
-  Q_PROPERTY(bool hasChecked READ hasCheckedCached NOTIFY hasCheckedChangedCached STORED false)
+  Q_PROPERTY(bool hasChecked READ hasCheckedCached NOTIFY hasCheckedChangedCached STORED false) ///< Are any rows checked?
 
-  Q_PROPERTY(int curBox MEMBER curBox NOTIFY curBoxChanged)
+  Q_PROPERTY(int curBox MEMBER curBox NOTIFY curBoxChanged) ///< Currently-shown box (PartyBox = the party).
 
 signals:
   void hasCheckedChanged();
@@ -49,8 +61,9 @@ signals:
 
 public:
   // Name of attached properties
-  static constexpr const char* isCheckedKey = "isChecked";
+  static constexpr const char* isCheckedKey = "isChecked"; ///< QML attached-property name for the per-row checkbox.
 
+  /// Columns (mapped in roleNames()).
   enum BagItemRoles {
     IndRole = Qt::UserRole + 1,
     DexRole,
@@ -63,6 +76,7 @@ public:
     IsPartyRole,
   };
 
+  /// Sentinel box index for the party.
   enum BoxSelect {
     PartyBox = -1
   };
@@ -73,54 +87,54 @@ public:
       PlayerPokemon* party
       );
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count of the current box.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
   bool setData(const QModelIndex &index, const QVariant &value,
-                   int role = Qt::EditRole) override;
+                   int role = Qt::EditRole) override;                       ///< Edit a row (e.g. checkbox).
 
-  QVariant getPlaceHolderData(int role) const;
+  QVariant getPlaceHolderData(int role) const; ///< The empty-slot placeholder row data.
 
   // Signals from the box
-  void onMove(int from, int to);
-  void onRemove(int ind);
-  void onInsert();
+  void onMove(int from, int to); ///< React to a move.
+  void onRemove(int ind);        ///< React to a removal.
+  void onInsert();               ///< React to an insert.
 
   // Attached property management
-  bool hasChecked();
-  bool hasCheckedCached();
-  QVector<PokemonBox*> getChecked();
-  void onBeforeRelocate(PokemonBox* item);
-  void checkStateDirty();
+  bool hasChecked();              ///< Are any rows checked (live)?
+  bool hasCheckedCached();        ///< Cached form (backs the property).
+  QVector<PokemonBox*> getChecked(); ///< The currently-checked mons.
+  void onBeforeRelocate(PokemonBox* item); ///< Cleanup hook before a mon relocates away.
+  void checkStateDirty();         ///< Mark the checked-state cache stale.
 
-  void pageClosing();
+  void pageClosing(); ///< Hook for when the page closes.
 
-  Q_INVOKABLE PokemonBox* getBoxMon(int index);
-  Q_INVOKABLE PokemonParty* getPartyMon(int index);
+  Q_INVOKABLE PokemonBox* getBoxMon(int index);    ///< Typed box mon at @p index (for the details screen).
+  Q_INVOKABLE PokemonParty* getPartyMon(int index); ///< Typed party mon at @p index (for the details screen).
 
 public slots:
   // Attached property management
-  void clearCheckedState();
-  void clearCheckedStateGone();
-  void onReset();
+  void clearCheckedState();     ///< Uncheck everything.
+  void clearCheckedStateGone(); ///< Clear checked state for removed rows.
+  void onReset();               ///< React to a reset.
 
-  void checkedMoveToTop();
-  void checkedMoveUp();
-  void checkedMoveDown();
-  void checkedMoveToBottom();
-  void checkedDelete();
-  void checkedTransfer();
-  void checkedToggleAll();
+  void checkedMoveToTop();    ///< Move checked mons to the top.
+  void checkedMoveUp();       ///< Move checked mons up one.
+  void checkedMoveDown();     ///< Move checked mons down one.
+  void checkedMoveToBottom(); ///< Move checked mons to the bottom.
+  void checkedDelete();       ///< Delete checked mons.
+  void checkedTransfer();     ///< Transfer checked mons to the paired box.
+  void checkedToggleAll();    ///< Toggle all checkboxes.
 
-  void switchBox(int newBox, bool force = false);
-  PokemonStorageBox* getCurBox() const;
-  PokemonStorageBox* getBox(int box) const;
+  void switchBox(int newBox, bool force = false); ///< Show box @p newBox.
+  PokemonStorageBox* getCurBox() const;           ///< The currently-shown box object.
+  PokemonStorageBox* getBox(int box) const;       ///< The box object for index @p box.
 
 public:
-  int curBox = PartyBox;
-  Router* router = nullptr;
-  Storage* storage = nullptr;
-  PlayerPokemon* party = nullptr;
-  PokemonStorageModel* otherModel = nullptr;
-  bool checkedStateDirty = false;
+  int curBox = PartyBox;                ///< @see curBox property.
+  Router* router = nullptr;             ///< For page hooks.
+  Storage* storage = nullptr;           ///< The PC storage.
+  PlayerPokemon* party = nullptr;       ///< The party.
+  PokemonStorageModel* otherModel = nullptr; ///< The paired sibling model (for transfers).
+  bool checkedStateDirty = false;       ///< Whether the checked-state cache needs refresh.
 };

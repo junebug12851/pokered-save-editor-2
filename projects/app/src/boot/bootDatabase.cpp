@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file bootDatabase.cpp
+ * @brief Brings up the entire game database -- just `(void)DB::inst();`, which
+ *        constructs, loads, indexes, and deep-links every DB in order.
+ */
+
 #include <pse-db/db.h>
 
 // Bootstrap the entire game database.

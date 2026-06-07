@@ -24,27 +24,34 @@ class QQmlEngine;
 
 // This helps with getting game data from the JSON files
 
+/**
+ * @brief The JSON asset loader -- the raw data source behind every database.
+ *
+ * A singleton that reads the bundled `/assets/data/*.json` files from disk. Each
+ * DB's load() calls into this to get its document. Exposed to QML as `db.json`.
+ *
+ * @see DB (the aggregate), and every `*DB::load()`.
+ */
 class DB_AUTOPORT GameData : public QObject
 {
   Q_OBJECT
 
 public:
   // Get Instance
-  static GameData* inst();
+  static GameData* inst(); ///< The process-wide GameData singleton.
 
   // Retrieves JSON document from disk
   // Passed by value because of Qt's COW principle ensures no speed loss
   // Give the name of the file in /assets/data without the .json file extension
-  const QByteArray jsonRaw(const QString filename) const;
-  const QJsonDocument json(const QString filename) const;
-  Q_INVOKABLE const QString jsonStr(const QString filename) const;
+  const QByteArray jsonRaw(const QString filename) const;   ///< Raw bytes of @p filename (no .json extension).
+  const QJsonDocument json(const QString filename) const;   ///< Parsed document for @p filename.
+  Q_INVOKABLE const QString jsonStr(const QString filename) const; ///< @p filename as a string (for QML).
 
 public slots:
-  void qmlProtect(const QQmlEngine* const engine) const;
+  void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
 
 private:
-  GameData();
+  GameData(); ///< Private -- use inst().
 
-  void qmlRegister() const;
+  void qmlRegister() const; ///< Register with the QML type system.
 };
-

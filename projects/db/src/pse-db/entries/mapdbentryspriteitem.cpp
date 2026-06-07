@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentryspriteitem.cpp
+ * @brief Implementation of MapDBEntrySpriteItem. See mapdbentryspriteitem.h.
+ */
+
 #include <QDebug>
 #include <QQmlEngine>
 #include <QJsonValue>

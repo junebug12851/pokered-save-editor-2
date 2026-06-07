@@ -13,6 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file individualmap.cpp
+ * @brief Implementation of IndividualMap. See individualmap.h.
+ */
 #include "individualmap.h"
 
 IndividualMap::IndividualMap()

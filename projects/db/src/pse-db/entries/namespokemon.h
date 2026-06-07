@@ -22,18 +22,25 @@
 
 class QQmlEngine;
 
+/**
+ * @brief Random Pokemon-nickname source (an AbstractRandomString of names).
+ *
+ * All behaviour is inherited; this just provides the singleton + QML registration.
+ * Backs `db.names.pokemon` and the nickname randomizer.
+ *
+ * @see AbstractRandomString, Names.
+ */
 class DB_AUTOPORT NamesPokemon : public AbstractRandomString
 {
   Q_OBJECT
 
 public:
   // Get Instance
-  static NamesPokemon* inst();
+  static NamesPokemon* inst(); ///< The process-wide NamesPokemon singleton.
 
 protected:
-  NamesPokemon();
+  NamesPokemon(); ///< Private -- use inst(); loads the pokemon-names asset.
 
 protected slots:
-  virtual void qmlRegister() const;
+  virtual void qmlRegister() const; ///< Register NamesPokemon with QML.
 };
-

@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentryspritepokemon.cpp
+ * @brief Implementation of MapDBEntrySpritePokemon. See mapdbentryspritepokemon.h.
+ */
+
 #include <QDebug>
 #include <QJsonValue>
 #include <QQmlEngine>

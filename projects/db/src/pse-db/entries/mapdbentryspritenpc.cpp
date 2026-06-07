@@ -14,6 +14,11 @@
   * limitations under the License.
 */
 
+/**
+ * @file mapdbentryspritenpc.cpp
+ * @brief Implementation of MapDBEntrySpriteNPC. See mapdbentryspritenpc.h.
+ */
+
 #include <QQmlEngine>
 #include "mapdbentryspritenpc.h"
 

@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file pokemon.cpp
+ * @brief Implementation of PokemonDB and the PokemonDBEntry family (species,
+ *        moves, evolutions, and the heavy deep-link). See pokemon.h.
+ */
+
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QQmlEngine>

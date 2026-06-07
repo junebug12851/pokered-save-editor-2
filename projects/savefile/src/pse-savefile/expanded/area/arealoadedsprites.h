@@ -24,39 +24,48 @@ class SaveFile;
 struct MapDBEntry;
 struct SpriteSetDBEntry;
 
-constexpr var8 maxLoadedSprites = 11;
+constexpr var8 maxLoadedSprites = 11; ///< Fixed number of sprite slots the game keeps loaded.
 
+/**
+ * @brief The fixed set of sprite picture-ids currently loaded into the map's VRAM.
+ *
+ * The game keeps exactly @ref maxLoadedSprites loaded sprite entries plus the
+ * @ref loadedSetId of the chosen sprite set. These slots are fixed -- they can be
+ * swapped but not created/removed -- so the QML helpers only count, read, and swap.
+ * Standard expanded-node convention (see SaveFileExpanded).
+ *
+ * @see Area, SpriteSetDBEntry.
+ */
 class SAVEFILE_AUTOPORT AreaLoadedSprites : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int loadedSetId MEMBER loadedSetId NOTIFY loadedSetIdChanged)
+  Q_PROPERTY(int loadedSetId MEMBER loadedSetId NOTIFY loadedSetIdChanged) ///< Which sprite set is loaded.
 
 public:
   AreaLoadedSprites(SaveFile* saveFile = nullptr);
   virtual ~AreaLoadedSprites();
 
-  void load(SaveFile* saveFile = nullptr);
-  void save(SaveFile* saveFile);
-  void loadSpriteSet(SpriteSetDBEntry* entry, int x, int y);
+  void load(SaveFile* saveFile = nullptr); ///< Expand the loaded-sprite slots from the save.
+  void save(SaveFile* saveFile);           ///< Flatten the loaded-sprite slots to the save.
+  void loadSpriteSet(SpriteSetDBEntry* entry, int x, int y); ///< Populate from a sprite-set definition.
 
   // Loaded sprites are a fixed size and cannot be moved, created, modified, or destroyed
   // They can be swapped
-  Q_INVOKABLE int lSpriteCount();
-  Q_INVOKABLE int lSpriteAt(int ind);
-  Q_INVOKABLE void lSpriteSwap(int from, int to);
+  Q_INVOKABLE int lSpriteCount();              ///< Number of loaded-sprite slots (fixed).
+  Q_INVOKABLE int lSpriteAt(int ind);          ///< Picture-id in slot @p ind.
+  Q_INVOKABLE void lSpriteSwap(int from, int to); ///< Swap two loaded-sprite slots.
 
 signals:
   void loadedSpritesChanged();
   void loadedSetIdChanged();
 
 public slots:
-  void reset();
-  void randomize(MapDBEntry* map, int x, int y);
-  void setTo(MapDBEntry* map, int x, int y);
+  void reset();                                  ///< Blank the loaded-sprite slots.
+  void randomize(MapDBEntry* map, int x, int y); ///< Randomize for @p map at (x,y).
+  void setTo(MapDBEntry* map, int x, int y);     ///< Set to @p map's sprite set at (x,y).
 
 public:
-  var8 loadedSprites[maxLoadedSprites];
-  int loadedSetId;
+  var8 loadedSprites[maxLoadedSprites]; ///< The fixed loaded-sprite picture-ids.
+  int loadedSetId;                      ///< @see loadedSetId property.
 };
-

@@ -1,3 +1,10 @@
+// Maps.qml -- the map/location browser screen.
+//
+// A ListView over brg.mapSelectModel: section headers (mapInd < 0) render as
+// plain text and real maps (0 <= mapInd < 0xFF) render as buttons. Tapping a map
+// pushes MapDetails.qml with that mapInd and tells the router about it
+// (manualStackPush) -- it is pushed manually, outside the router, so parameters
+// can be passed. Footer Re-Roll randomizes the area data and the world playtime.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

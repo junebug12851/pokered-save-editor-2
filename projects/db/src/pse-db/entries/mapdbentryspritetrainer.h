@@ -20,32 +20,39 @@ class TrainerDBEntry;
 class MapsDB;
 
 // A trainer that can be battled
+/**
+ * @brief A map sprite that is a battleable trainer (type TRAINER).
+ *
+ * Adds the @ref trainerClass and which @ref team (class resolved to @ref toTrainer
+ * in deepLink) to MapDBEntrySprite. type() returns TRAINER. See db.md.
+ *
+ * @see MapDBEntrySprite (base), TrainerDBEntry.
+ */
 struct DB_AUTOPORT MapDBEntrySpriteTrainer : public MapDBEntrySprite
 {
   Q_OBJECT
-  Q_PROPERTY(QString getTrainerClass READ getTrainerClass CONSTANT)
-  Q_PROPERTY(int getTeam READ getTeam CONSTANT)
-  Q_PROPERTY(TrainerDBEntry* getToTrainer READ getToTrainer CONSTANT)
+  Q_PROPERTY(QString getTrainerClass READ getTrainerClass CONSTANT) ///< Trainer class name.
+  Q_PROPERTY(int getTeam READ getTeam CONSTANT)                     ///< Which roster/team.
+  Q_PROPERTY(TrainerDBEntry* getToTrainer READ getToTrainer CONSTANT) ///< Resolved trainer class.
 
 public:
-  virtual SpriteType type() const;
-  const QString getTrainerClass() const;
-  int getTeam() const;
-  TrainerDBEntry* getToTrainer() const;
+  virtual SpriteType type() const;        ///< Returns TRAINER.
+  const QString getTrainerClass() const;  ///< @see getTrainerClass property.
+  int getTeam() const;                    ///< @see getTeam property.
+  TrainerDBEntry* getToTrainer() const;   ///< @see getToTrainer property.
 
 protected:
-  MapDBEntrySpriteTrainer(const QJsonValue& data, MapDBEntry* const parent);
-  virtual void deepLink();
-  virtual void qmlRegister() const;
+  MapDBEntrySpriteTrainer(const QJsonValue& data, MapDBEntry* const parent); ///< Build from JSON under @p parent.
+  virtual void deepLink();          ///< Resolve the trainer-class link.
+  virtual void qmlRegister() const; ///< Register with QML.
 
   // Trainer Details
   // What kind of trainer and which team
-  QString trainerClass = "";
-  int team = -1;
+  QString trainerClass = ""; ///< Trainer class name (read via getTrainerClass()).
+  int team = -1;             ///< Roster/team index.
 
-  TrainerDBEntry* toTrainer = nullptr;
+  TrainerDBEntry* toTrainer = nullptr; ///< Resolved trainer class (deepLink).
 
   friend class MapsDB;
   friend class MapDBEntry;
 };
-

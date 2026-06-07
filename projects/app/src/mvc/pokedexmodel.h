@@ -23,30 +23,41 @@
 class PlayerPokedex;
 class Router;
 
+/// One Pokedex grid row: name, dex number, internal id.
 struct PokedexEntryData {
   PokedexEntryData(QString name, int dex, int id);
 
-  QString name;
-  int dex;
-  int id;
+  QString name; ///< Species name.
+  int dex;      ///< Pokedex number.
+  int id;       ///< Internal id.
 };
 
+/**
+ * @brief The Pokedex grid model -- seen/owned state, with cycling sort orders.
+ *
+ * Wraps the save's PlayerPokedex for the dex screen. Each row carries a tri-state
+ * @ref StateRole (none/seen/owned). @ref dexSortSelect cycles through dex/name/
+ * internal order via dexSortCycle(). Holds the @ref router to react to page open/
+ * close. Exposed as `brg.pokedexModel`.
+ */
 class PokedexModel : public QAbstractListModel
 {
   Q_OBJECT
 
-  Q_PROPERTY(int dexSortSelect MEMBER dexSortSelect NOTIFY dexSortSelectChanged)
+  Q_PROPERTY(int dexSortSelect MEMBER dexSortSelect NOTIFY dexSortSelectChanged) ///< Current sort order.
 
 signals:
   void dexSortSelectChanged();
 
 public:
+  /// Columns (mapped in roleNames()).
   enum PokemonStarterRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
     StateRole, // 0 = None, 1 = Seen, 2 = Owned
   };
 
+  /// The available sort orders (cycled by dexSortCycle()).
   enum PokemonSortSelect {
     SortBegin,
 
@@ -59,25 +70,24 @@ public:
 
   PokedexModel(PlayerPokedex* pokedex, Router* router);
 
-  virtual int rowCount(const QModelIndex& parent) const override;
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-  virtual QHash<int, QByteArray> roleNames() const override;
+  virtual int rowCount(const QModelIndex& parent) const override;          ///< Row count.
+  virtual QVariant data(const QModelIndex& index, int role) const override; ///< Row+role value.
+  virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
-  void dataChanged(int ind);
+  void dataChanged(int ind); ///< Notify that dex entry @p ind changed.
 
-  Q_INVOKABLE void dexSortCycle();
-  void dexSort();
-  void dexSortName();
-  void dexSortNum();
-  void dexSortInternal();
+  Q_INVOKABLE void dexSortCycle(); ///< Advance to the next sort order.
+  void dexSort();         ///< Apply the current sort.
+  void dexSortName();     ///< Sort alphabetically.
+  void dexSortNum();      ///< Sort by dex number.
+  void dexSortInternal(); ///< Sort by internal id.
 
-  void pageClosing();
+  void pageClosing(); ///< Hook for when the dex page closes.
 
-  int dexSortSelect = SortDex;
-  QVector<PokedexEntryData*> dexListCache;
-  PlayerPokedex* pokedex = nullptr;
-  Router* router = nullptr;
+  int dexSortSelect = SortDex;             ///< @see dexSortSelect property.
+  QVector<PokedexEntryData*> dexListCache; ///< Cached, currently-sorted rows.
+  PlayerPokedex* pokedex = nullptr;        ///< The save's dex.
+  Router* router = nullptr;                ///< For page open/close hooks.
 
-  int dexToListIndex(int ind);
+  int dexToListIndex(int ind); ///< Row index for species @p ind under the current sort.
 };
-

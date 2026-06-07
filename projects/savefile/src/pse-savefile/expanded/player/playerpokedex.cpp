@@ -13,6 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 */
+
+/**
+ * @file playerpokedex.cpp
+ * @brief Implementation of PlayerPokedex -- the seen/owned dex bit-fields and
+ *        their counts/toggles. See playerpokedex.h for the documented API.
+ */
 #include "playerpokedex.h"
 #include "../../savefile.h"
 #include "../../savefiletoolset.h"

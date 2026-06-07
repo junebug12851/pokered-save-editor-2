@@ -1,3 +1,10 @@
+// NameFullHeader.qml -- the full keyboard's top toolbar.
+//
+// Hosts the "Simulated" controls (Outdoor toggle + NameFullTileset combo), a
+// Grid/Tileset view toggle (drives showTileset, which PagedPicker follows), the
+// NameFullEdit name field, and a ModalClose that emits preClose() before closing
+// (so the value commits exactly once). Carries the shared str/chopLen/sizeMult/
+// isPersonName/hasBox state down to the editor.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

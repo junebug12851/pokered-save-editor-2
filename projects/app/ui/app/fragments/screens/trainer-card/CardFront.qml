@@ -1,3 +1,11 @@
+// CardFront.qml -- the front face of the trainer card (the TrainerCard screen
+// body).
+//
+// Lays out all the trainer-card editors: player name, ID, money, coins, starter,
+// playtime, the Red artwork, and the gym-badge grid (ListBadges). The shared
+// fieldH knob pins every Material field to one height so labels line up (see
+// ui-patterns.md). Fields are anchored below one another (not at fixed offsets) so
+// rows never overlap regardless of control height.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

@@ -14,6 +14,12 @@
   * limitations under the License.
 */
 
+/**
+ * @file bridge.cpp
+ * @brief Implementation of Bridge -- constructs the models and wires up the
+ *        `brg` aggregate. See bridge.h for the documented API.
+ */
+
 #include "./bridge.h"
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/expanded/savefileexpanded.h>
