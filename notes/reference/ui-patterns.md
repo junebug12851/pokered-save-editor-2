@@ -154,6 +154,21 @@ ToolTip {
 }
 ```
 
+## Disabled / "coming soon" Home tiles
+
+The Home grid (`HomeIconsModel.qml` → `IconsView` → `IconDelegate.qml`) can grey out a tile for a
+screen that isn't available yet. The model carries a `disabled` bool role per element; the delegate
+does two things with it:
+
+- `enabled: !model.disabled` — proper non-clickability (no hover, no press ripple, no navigation).
+- a `MultiEffect` layer (`saturation: -0.6`, `brightness: -0.15`) when `model.disabled` — a *slight*
+  desaturate + darken so the tile reads as muted/unavailable rather than fully faded. Same
+  `QtQuick.Effects` / `layer.effect` pattern the Pokédex seen/owned indicators use. Tune the two
+  values to taste; they're the only dials.
+
+Currently disabled: **Maps, Options, Hall of Fame, Event Pokemon** (the latter three have no `page`
+yet; Maps has a `page` but is held back). Flip a tile back on by setting its `disabled: false`.
+
 ## Material controls fight small heights
 
 `CheckBox` / `Button` have a ~40px implicit/min height (touch target) that floors a layout row even
