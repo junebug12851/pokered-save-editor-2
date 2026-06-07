@@ -82,10 +82,17 @@ Pure edits to existing QML hot-reload in debug. **New QML files MUST be added to
 fail at runtime with "Type X is not a type" (this project resolves QML types via the qrc, not directory
 scanning).
 
+**Pending Rebuild (s14 — file-load crash fix):** C++ changed (`savefile.cpp`, `filemanagement.cpp/.h`,
+`router.cpp`) **and** a new QML file was added (`screens/modal/FileError.qml`, already in `app.qrc`) — so a
+full **Rebuild** is required. After building: test (1) clicking a recent file whose path no longer exists →
+should silently be gone from the list on next launch, never crash; (2) opening a present-but-truncated/locked
+`.sav` → should show the `FileError` modal, and the underlying save stays untouched.
+
 ## Open Issues
 
 | Issue | Where | Status / notes |
 |-------|-------|----------------|
+| ~~Crash on load: opening a missing/unreadable recent file crashed in `setData` (`memcpy` from null)~~ | `savefile.cpp`, `filemanagement.*`, `App.qml`, `FileError.qml`, `router.cpp` | **Fixed (s14, needs Rebuild — C++ + new QML in qrc).** `setData` guards null; `readSaveData` rejects files smaller than 32 KB (at-least, not exact — larger files load their first 32 KB) and captures the real OS/Qt error detail; loads route through `loadData()` (never mutates the save on failure). Startup `pruneRecentFiles()` silently drops unopenable recents (**"prune" not "scrub"** — scrub == `wipeUnusedSpace`). Present-but-unreadable/truncated files raise the new **`FileError`** full-window modal: plain-English reason centred, real technical detail small/muted below (**no fake codes**); closing returns to the prior screen. Twilight-specified UX. ⚠️ Not yet build-verified on her machine. |
 | ~~Pokémon editor: values not reacting / DV-EV / moves / shiny menus dead~~ | `pokemon-details/*` | **Fixed + Twilight-confirmed (s13l).** `function onX()` dead handlers → `onX:`. |
 | ~~Pokémon editor: boxes too tall / overlapping / misalignment~~ | `pokemon-details/*` | **Fixed + Twilight-confirmed (s13m–s13t).** |
 | ~~Full keyboard rebuild (name box / Simulated group / filters / pill grid / view toggle)~~ | `name-full/*`, `FullKeyboard.qml` | **Done + Twilight-iterated (s13v–s13z8).** |

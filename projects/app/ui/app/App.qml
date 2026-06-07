@@ -24,6 +24,16 @@ StackView {
     function onCloseModal() { appRoot.pop(); }        // pop the top modal
   }
 
+  // A file failed to load (exists but unreadable / truncated). Raise the file-error
+  // screen as a full-window modal on top of wherever the user is; closing it (via
+  // the router) returns them to the previous screen. The screen reads the details
+  // from brg.file.lastErrorMessage / lastErrorCode.
+  Connections {
+    target: brg.file
+
+    function onLoadError() { brg.router.changeScreen("fileError"); }
+  }
+
   // Startup: seat the initial router stack, then open the New File modal
   Component.onCompleted: {
     brg.router.manualStackPush("home");

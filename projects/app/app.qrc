@@ -389,6 +389,7 @@
         <file>ui/app/fragments/general/InfoButton.qml</file>
         <file>ui/app/screens/modal/FileTools.qml</file>
         <file>ui/app/screens/modal/About.qml</file>
+        <file>ui/app/screens/modal/FileError.qml</file>
         <file>ui/app/screens/non-modal/TrainerCard.qml</file>
         <file>ui/app/fragments/general/IconButtonRound.qml</file>
         <file>ui/app/fragments/general/IconButtonSquare.qml</file>

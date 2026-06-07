@@ -84,6 +84,7 @@ void FileManagement::reset()
 {
   setPath("");
   expandRecentFiles(settings.value(KEY_RECENT_FILES, "").toString());
+  pruneRecentFiles(); // silently drop entries that no longer exist / can't be read
   newFile();
 }
 
@@ -99,20 +100,26 @@ bool FileManagement::openFile()
   if(file == "")
     return false;
 
-  var8* newData{readSaveData(file)};
-  data->setData(newData); // Copies data out of array (Safe to delete)
+  // Read + adopt. On failure loadData() surfaces the error and leaves the current
+  // save untouched; don't setPath (so a bad file isn't recorded as recent/current).
+  if(!loadData(file))
+    return false;
+
   setPath(file);
-  delete[] newData; // Very important with readSaveData
   return true;
 }
 
-void FileManagement::openFileRecent(int index)
+bool FileManagement::openFileRecent(int index)
 {
   QString file{getRecentFile(index)};
-  var8* newData{readSaveData(file)};
-  data->setData(newData);
+
+  // On failure, leave everything as-is; the error screen is raised by loadData().
+  // Returning false lets the caller (e.g. the New File modal) keep itself open.
+  if(!loadData(file))
+    return false;
+
   setPath(file);
-  delete[] newData;
+  return true;
 }
 
 void FileManagement::reopenFile()
@@ -123,10 +130,59 @@ void FileManagement::reopenFile()
     return;
   }
 
-  // Otherwise destroy current working copy with copy from disk
-  var8* newData{readSaveData(path)};
-  data->setData(newData);
-  delete[] newData;
+  // Otherwise destroy current working copy with copy from disk. On failure the
+  // current working copy is preserved (loadData() leaves the save untouched).
+  loadData(path);
+}
+
+bool FileManagement::loadData(const QString& filePath)
+{
+  var8* newData{readSaveData(filePath)}; // sets lastError; nullptr on failure
+  if(newData == nullptr) {
+    reportLoadError();
+    return false;
+  }
+
+  data->setData(newData); // Copies data out of array (Safe to delete)
+  delete[] newData;        // Very important with readSaveData
+  return true;
+}
+
+void FileManagement::reportLoadError()
+{
+  // Plain-English primary message only -- the real technical detail is carried
+  // separately in lastErrorDetail (set by readSaveData) and shown as a secondary line.
+  switch(lastError) {
+    case LoadErrorCannotOpen:
+      lastErrorMessage =
+        "This save file couldn't be opened.\n\n"
+        "It may be open in another program, or you may not have permission to "
+        "read it. Check that the file still exists and try again.";
+      break;
+
+    case LoadErrorTooShort:
+      lastErrorMessage =
+        "This save file looks truncated or corrupted.\n\n"
+        "It's too small to be a valid save, so nothing was loaded and the "
+        "current file was left untouched.";
+      break;
+
+    default:
+      lastErrorMessage = "This save file couldn't be loaded.";
+      break;
+  }
+
+  loadError();
+}
+
+QString FileManagement::getLastErrorMessage()
+{
+  return lastErrorMessage;
+}
+
+QString FileManagement::getLastErrorDetail()
+{
+  return lastErrorDetail;
 }
 
 void FileManagement::addRecentFile(QString path)
@@ -230,6 +286,29 @@ void FileManagement::processRecentFileChanges()
   recentFilesChanged(recentFiles);
 }
 
+void FileManagement::pruneRecentFiles()
+{
+  // Startup cleanup: silently drop any recent entry we can't even open for
+  // reading (moved/deleted/renamed/permission). Intentional UX -- a gone file
+  // just disappears from the list; if the user goes looking for it they'll have
+  // to re-open it deliberately. Truncated-but-openable files are NOT removed
+  // here; those surface a clear error only when actually opened.
+  // (Named "prune", not "scrub" -- "scrub" already means wiping a save's unused
+  // bytes in this app; see wipeUnusedSpace.)
+  QList<QString> kept;
+
+  for(const QString& file : recentFiles) {
+    QFile probe(file);
+    if(probe.open(QIODevice::ReadOnly)) {
+      probe.close();
+      kept.append(file);
+    }
+  }
+
+  recentFiles = kept;
+  processRecentFileChanges(); // re-format, persist, and notify
+}
+
 QString FileManagement::openFileDialog(QString title)
 {
   QString curPath{path};
@@ -262,14 +341,38 @@ QString FileManagement::saveFileDialog(QString title)
 
 var8* FileManagement::readSaveData(QString filePath)
 {
+  lastError = LoadErrorNone;
+  lastErrorDetail.clear();
+
   // Load up file in system
   QFile file(filePath);
-  if(!file.open(QIODevice::ReadOnly))
+  if(!file.open(QIODevice::ReadOnly)) {
+    lastError = LoadErrorCannotOpen;
+    lastErrorDetail = file.errorString(); // real, one-line OS/Qt reason
     return nullptr;
+  }
+
+  // Must be AT LEAST a full save's worth of bytes -- not exactly. Larger files
+  // are fine (only the first SAV_DATA_SIZE bytes are the Gen 1 save); anything
+  // shorter is truncated / corrupted and is rejected before we read it.
+  const qint64 fileSize{file.size()};
+  if(fileSize < static_cast<qint64>(SAV_DATA_SIZE)) {
+    lastError = LoadErrorTooShort;
+    lastErrorDetail = QStringLiteral("File is %1 bytes; a save must be at least %2 bytes (32 KB).")
+                        .arg(fileSize)
+                        .arg(static_cast<qint64>(SAV_DATA_SIZE));
+    file.close();
+    return nullptr;
+  }
+
   QDataStream in(&file);
 
-  // Read in raw bytes signed
+  // Allocate and zero-fill first: defensive, so the buffer is never uninitialized
+  // heap garbage even if a read somehow comes up short (a byte-fidelity hazard).
   char* rawSaveData{new char[SAV_DATA_SIZE]};
+  memset(rawSaveData, 0, SAV_DATA_SIZE);
+
+  // Read the first SAV_DATA_SIZE bytes (the save); ignore any trailing bytes.
   in.readRawData(rawSaveData, SAV_DATA_SIZE);
 
   file.close();

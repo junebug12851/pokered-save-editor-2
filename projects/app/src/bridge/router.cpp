@@ -144,6 +144,7 @@ void Router::loadScreens()
   screens.insert("fileTools", new Screen(true, "File Tools", "qrc:/ui/app/screens/modal/FileTools.qml"));
   screens.insert("about", new Screen(true, "About", "qrc:/ui/app/screens/modal/About.qml"));
   screens.insert("fullKeyboard", new Screen(true, "Full Keyboard", "qrc:/ui/app/screens/modal/FullKeyboard.qml"));
+  screens.insert("fileError", new Screen(true, "File Error", "qrc:/ui/app/screens/modal/FileError.qml"));
 
   // Non-Modal
   screens.insert("home", new Screen(false, "Home", "qrc:/ui/app/screens/non-modal/Home.qml"));

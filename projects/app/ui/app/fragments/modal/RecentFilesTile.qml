@@ -42,8 +42,11 @@ TileButton {
         brg.file.clearRecentFiles()
       else
       {
-        brg.file.openFileRecent(fileIndex)
-        completed()
+        // Only dismiss the New File modal if the file actually loaded. On failure
+        // openFileRecent() returns false and raises the file-error screen on top;
+        // leaving this modal in place means closing the error returns the user here.
+        if(brg.file.openFileRecent(fileIndex))
+          completed()
       }
 
       close();
