@@ -391,6 +391,13 @@ void TestPokemonBox::box_reRollEvsAndMaxPpUps()
   p->maxPpUps();
   QVERIFY(p->isMaxPpUps());
 
+  // isMinEvs() means ALL stat-exp zero (not "any one is zero"). Regression guard
+  // for the ||->&& fix: one EV non-zero with the rest at 0 must read as NOT min.
+  p->resetEVs();
+  QVERIFY(p->isMinEvs());
+  p->atkExp = 1; p->atkExpChanged();
+  QVERIFY2(!p->isMinEvs(), "isMinEvs() must require ALL stat-exp to be zero");
+
   delete p;
 }
 

@@ -474,17 +474,19 @@ Each phase is independently valuable; the suite is useful from phase 1.
    slots (mirroring `isMaxedOut()`'s existing guard), so `isHealed()` is correct for any move count;
    `isPokemonReset()` then simplifies to iterate the real initial moves (empty after), check `ppUp==0`, and
    reuse `isHealed()`. Regression-guarded by `box_healedWithFewerThanFourMoves` (a <4-move mon at full
-   HP/PP now reads isMaxPP + isHealed). **Also flagged for Twilight (NOT fixed, tracked in
-   next-steps.md):** `isMinEvs()` uses `||`, so it returns true if ANY single EV is 0 (reads like it
-   should be `&&` / all-zero); and the type2 single-WRITE truth (0xFF vs duplicate) is an open decision —
-   the load-side tolerance is official, the save-side canonical form is a tracked temporary exception._
+   HP/PP now reads isMaxPP + isHealed). **Also Twilight-confirmed and fixed:**
+   `isMinEvs()` used `||` (true if ANY single EV is 0) → changed to `&&` (all-zero), matching its
+   "All stat-exp zero?" contract and `isMaxEVs()`; it had a real UX impact (StatsTab disables "Reset EVs"
+   on `isMinEvs`, so the action was greyed out whenever one stat-exp was 0). **Still open (tracked,
+   next-steps.md):** the type2 single-WRITE truth (0xFF vs duplicate) — load-side tolerance is official,
+   the save-side canonical form is a deliberate temporary exception._
 
    **Cumulative savefile progress this pass: 72.9% → 82.5% across signdata(100%), warpdata(98.5%),
    mapconndata(100%), savefileiterator(100%), item(96.7%), playerbasics(98.9%), filemanagement(77%,
-   headless ceiling), storage(98%), pokemonbox(94.4%) — plus the recent-files cap off-by-one and four
-   pokemonbox type/reset/heal bugs fixed (Twilight-approved: type2-clobber, isCorrected dual-type,
-   isMaxPP/isMaxPpUps/isHealed empty-slot, isPokemonReset), with the isMinEvs `||` and type2 single-write
-   truth tracked for decision.** Next gap
+   headless ceiling), storage(98%), pokemonbox(94.4%) — plus the recent-files cap off-by-one and five
+   pokemonbox bugs fixed (Twilight-approved: type2-clobber, isCorrected dual-type,
+   isMaxPP/isMaxPpUps/isHealed empty-slot, isPokemonReset, isMinEvs ||→&&), with only the type2
+   single-write truth tracked for a later decision.** Next gap
    targets (worst remaining by missed lines): `spritedata.cpp` 46% (234 — note
    the disabled-randomizer sprite-link crash, test the safe paths), `areamap.cpp` 62% (83 — partly the
    disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75), `areatileset.cpp` 62% (51),

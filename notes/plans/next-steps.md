@@ -55,9 +55,9 @@ Twilight makes a real call. Each is a single-truth question with (likely) one co
    generated single type collapses to `type2=0xFF` internally and `save()` writes the duplicate (`type1`)
    when `type2Explicit` is false. Pick the real truth, then tighten `isCorrected()`/`save()` to it.
    Refs: `pokemonbox.cpp` `isCorrected()`/`update()`/`save()`, `reference/fix-patterns.md`.
-2. **`isMinEvs()` uses `||`** (returns true if ANY one stat-exp is 0; reads like it should be `&&` /
-   all-zero, symmetric with `isMaxEVs()`'s `&&`). Flagged 2026-06-08, awaiting Twilight's confirm before
-   changing — `isPokemonReset()` is unaffected either way (a true reset has all EVs zero).
+
+_(Resolved 2026-06-08: `isMinEvs()` `||`→`&&` — confirmed a bug by Twilight and fixed, not a pending
+decision.)_
 
 ## Optional cleanup
 

@@ -1196,10 +1196,14 @@ bool PokemonBox::isMaxEVs()
 
 bool PokemonBox::isMinEvs()
 {
-  return atkExp == 0 ||
-      defExp == 0 ||
-      spdExp == 0 ||
-      spExp == 0 ||
+  // "Minimum EVs" means ALL five stat-exp are zero (symmetric with isMaxEVs()'s
+  // all-0xFFFF). Was `||` (true if ANY one was 0), which wrongly disabled the
+  // "Reset EVs" UI action whenever a single stat-exp happened to be 0. (Fixed
+  // 2026-06-08, Twilight-confirmed.)
+  return atkExp == 0 &&
+      defExp == 0 &&
+      spdExp == 0 &&
+      spExp == 0 &&
       hpExp == 0;
 }
 
