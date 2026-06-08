@@ -48,10 +48,9 @@ jobs:
           -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined"
 
       - name: Build test targets
-        run: >
-          cmake --build build -j --target
-          tst_roundtrip tst_fields tst_pokemon tst_items tst_world tst_verbs
-          tst_toolset tst_errors tst_e2e tst_randomizer tst_common tst_db_integrity
+        # tests_all is a CMake aggregate that depends on every registered test exe,
+        # so new suites are picked up automatically (no drift-prone explicit list).
+        run: cmake --build build -j --target tests_all
 
       - name: Run ctest (headless, sanitized)
         env:
@@ -84,10 +83,8 @@ jobs:
           -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build test targets
-        run: >
-          cmake --build build -j --target
-          tst_roundtrip tst_fields tst_pokemon tst_items tst_world tst_verbs
-          tst_toolset tst_errors tst_e2e tst_randomizer tst_common tst_db_integrity
+        # tests_all aggregate -- see linux-asan note.
+        run: cmake --build build -j --target tests_all
 
       - name: Run ctest
         run: ctest --test-dir build --output-on-failure

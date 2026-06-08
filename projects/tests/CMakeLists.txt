@@ -25,6 +25,10 @@ function(pse_add_test name lib)
     target_link_libraries(${name} PRIVATE ${lib} Qt6::Test)
     target_compile_definitions(${name} PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
     add_test(NAME ${name} COMMAND ${name})
+    # Record the target so the `tests_all` aggregate (below) always covers every
+    # suite -- CI builds `tests_all`, so a new test can never be left unbuilt
+    # (which would make ctest report it "Not Run" and fail the run).
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS ${name})
 endfunction()
 
 pse_add_test(tst_roundtrip    savefile savefile/tst_roundtrip.cpp)
@@ -59,5 +63,15 @@ if(TARGET Qt6::QuickTest)
         QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qml/cases")
     add_test(NAME tst_qml COMMAND tst_qml)
     set_tests_properties(tst_qml PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_qml)
+endif()
+
+# Aggregate target: builds every registered test exe in one shot. CI builds this
+# (`cmake --build build --target tests_all`) instead of an explicit, drift-prone
+# list -- whatever ctest knows about, this guarantees is built.
+get_property(_pse_test_targets GLOBAL PROPERTY PSE_TEST_TARGETS)
+add_custom_target(tests_all)
+if(_pse_test_targets)
+    add_dependencies(tests_all ${_pse_test_targets})
 endif()
 
