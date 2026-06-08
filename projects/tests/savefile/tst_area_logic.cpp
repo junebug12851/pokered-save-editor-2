@@ -44,7 +44,9 @@
 #include <pse-savefile/expanded/area/areatileset.h>
 #include <pse-savefile/expanded/area/areamap.h>
 #include <pse-savefile/expanded/area/areapokemon.h>
+#include <pse-savefile/expanded/area/areawarps.h>
 #include <pse-savefile/expanded/fragments/mapconndata.h>
+#include <pse-savefile/expanded/fragments/warpdata.h>
 
 class TestAreaLogic : public QObject
 {
@@ -85,6 +87,11 @@ private slots:
   void areaPokemon_randomize();
   void areaPokemon_setToFromMap();
   void areaPokemon_setToNullIsSafe();
+
+  // AreaWarps
+  void warps_listAccessors();
+  void warps_setToFromMap();
+  void warps_randomizeFromMap();
 };
 
 void TestAreaLogic::initTestCase()
@@ -289,6 +296,57 @@ void TestAreaLogic::areaPokemon_setToNullIsSafe()
   ap.setTo(nullptr);               // rates -> 0, early return, no crash
   QCOMPARE(ap.grassRate, 0);
   QCOMPARE(ap.waterRate, 0);
+}
+
+// ----- AreaWarps ----------------------------------------------------------
+
+void TestAreaLogic::warps_listAccessors()
+{
+  AreaWarps w;                     // load(nullptr) -> reset -> empty list
+  QCOMPARE(w.warpCount(), 0);
+  QVERIFY(w.warpMax() > 0);
+
+  w.warpNew();
+  w.warpNew();
+  QCOMPARE(w.warpCount(), 2);
+  QVERIFY(w.warpAt(0) != nullptr);
+
+  w.warpAt(0)->destMap = 5;
+  w.warpAt(1)->destMap = 9;
+  w.warpSwap(0, 1);
+  QCOMPARE(w.warpAt(0)->destMap, 9);
+  QCOMPARE(w.warpAt(1)->destMap, 5);
+
+  w.warpRemove(0);
+  QCOMPARE(w.warpCount(), 1);
+  QCOMPARE(w.warpAt(0)->destMap, 5);
+}
+
+void TestAreaLogic::warps_setToFromMap()
+{
+  // setTo rebuilds the warp list from a map's warps-out and picks dungeon/special
+  // destinations via isType("Cave")->pickRandom() -- which resolves under deepLink
+  // (60 Cave maps), so this does NOT crash (the old "isType Cave == 0" note was the
+  // deepLink-not-called landmine, not a wrong type string).
+  MapDBEntry* map = firstMap([](MapDBEntry* m){ return m->getWarpOut().size() > 0; });
+  QVERIFY2(map != nullptr, "no map with warps-out found");
+
+  AreaWarps w;
+  w.setTo(map);
+  QCOMPARE(w.warpCount(), map->getWarpOut().size());
+  // Dungeon/special destinations are real map ids (a Cave map and any good map).
+  QVERIFY(MapsDB::inst()->getIndAt(QString::number(w.dungeonWarpDestMap)) != nullptr);
+  QVERIFY(MapsDB::inst()->getIndAt(QString::number(w.specialWarpDestMap)) != nullptr);
+}
+
+void TestAreaLogic::warps_randomizeFromMap()
+{
+  MapDBEntry* map = firstMap([](MapDBEntry* m){ return m->getWarpOut().size() > 0; });
+  QVERIFY(map != nullptr);
+
+  AreaWarps w;
+  w.randomize(map);                // randomizes non-return warps; runs clean
+  QCOMPARE(w.warpCount(), map->getWarpOut().size());
 }
 
 QTEST_GUILESS_MAIN(TestAreaLogic)

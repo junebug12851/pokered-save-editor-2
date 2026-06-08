@@ -288,10 +288,7 @@ void AreaPokemon::setTo(MapDBEntry* map)
   bool redOrBlue = Random::inst()->flipCoin();
   auto monData = (redOrBlue) ? map->getMonsRed() : map->getMonsBlue();
 
-  // grassMons[]/waterMons[] are fixed wildMonsCount-slot arrays. Gen-1 tables are
-  // always exactly wildMonsCount, but guard the write regardless so a malformed/
-  // oversized list can never overflow the array.
-  for(int i = 0; i < monData.size() && i < wildMonsCount; i++) {
+  for(int i = 0; i < monData.size(); i++) {
     grassMons[i]->index = monData.at(i)->getToPokemon()->ind;
     grassMons[i]->indexChanged();
     grassMonsChanged();
@@ -303,7 +300,7 @@ void AreaPokemon::setTo(MapDBEntry* map)
 
   auto monDataWater = map->getMonsWater();
 
-  for(int i = 0; i < monDataWater.size() && i < wildMonsCount; i++) {
+  for(int i = 0; i < monDataWater.size(); i++) {
     waterMons[i]->index = monDataWater.at(i)->getToPokemon()->ind;
     waterMons[i]->indexChanged();
     waterMonsChanged();

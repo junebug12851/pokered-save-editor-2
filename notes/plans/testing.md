@@ -508,18 +508,25 @@ Each phase is independently valuable; the suite is useful from phase 1.
    accessors/swap, randomize, loadFromData null+from-map+randomType), AreaMap (conn accessors, toCurMap,
    coordsToPtr, randomize/setTo from a real map incl. MapConnData::loadFromData, null-safe), and
    AreaPokemon/AreaPokemonWild (wild randomize over the 0-based dex range + operators + explicit ctor,
-   table randomize, setTo from a map, null-safe). 17 cases. **Found + fixed (Twilight-approved) 3 bugs
+   table randomize, setTo from a map, null-safe) and AreaWarps (list accessors swap/new/remove, setTo +
+   randomize from a real map). 20 cases. **Found + fixed (Twilight-approved) 3 bugs
    along the way:** (1) `AreaTileset::loadFromData` inverted ternary — `(map==nullptr) ? map->getToTileset()
    : nullptr` crashed on a null map and discarded the tileset on a real map; fixed to
    `? nullptr : map->getToTileset()` (regression-guarded by the null + from-map tests). (2) `PokemonBox::
    newPokemon(Random_Pokedex)` used `rangeExclusive(1,151)` and so could never roll Bulbasaur (dex keys
    are 0-based, confirmed by probe: dex0=Bulbasaur..dex150=Mew, dex151 null) — fixed to
-   `rangeExclusive(0,151)`. (3) `AreaPokemon::setTo` lacked an `i < wildMonsCount` bound on its array
-   writes (gen-1 tables are always 10, so defensive only) — guarded. **areatileset.cpp 62% → 100.0%
-   (0 missed), areamap.cpp 62% → 93.1% (15 missed), areapokemon.cpp 61% → 90.5% (18 missed), pokemonbox.cpp
-   → 94.6%**; savefile real-source overall → **89.4% (5291/5916)**, 17 cases green (51/51 full suite)._
+   `rangeExclusive(0,151)`. (A bounds guard on `AreaPokemon::setTo`'s array writes was considered but
+   **Twilight declined** — gen-1 wild tables are fixed at 10, so trust the data; left unbounded.) **areatileset.cpp 62% → 100.0%
+   (0 missed), areamap.cpp 62% → 93.1% (15 missed), areapokemon.cpp 61% → 90.5% (18 missed),
+   areawarps.cpp 70% → 98.7% (2 missed), pokemonbox.cpp → 94.6%**; savefile real-source overall →
+   **90.2% (5336/5916)**, 20 cases green (51/51 full suite). **Stale-note correction (probed,
+   `tst_area_probe`):** the long-standing claim that `isType("Cave")`/`isType("Outdoor")` "match 0 maps"
+   (blamed on a wrong type string) was wrong — they match **60 / 38** once `deepLink()` resolves
+   `toTileset`; the 0-match + the AreaWarps `pickRandom()->getInd()` "crash" are the deepLink-not-called
+   landmine, so `AreaWarps::setTo`/`randomize` run clean over all 249 maps (now covered). status.md's
+   randomizer row updated accordingly._
 
-   **Cumulative this pass: 72.9% → 89.4%.** Next gap
+   **Cumulative this pass: 72.9% → 90.2%.** Next gap
    targets (worst remaining by missed lines): `filemanagement.cpp` (~55 — native file dialogs + to-disk
    save, headless-unreachable), and assorted leaf getters/branches across savefile fragments; plus
    residual boundary branches in `pokemonbox.cpp` (~61 — move-randomize do-while reject, correctMove's
