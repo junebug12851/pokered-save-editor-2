@@ -437,12 +437,18 @@ Each phase is independently valuable; the suite is useful from phase 1.
    → exactly 5. `tst_filemanagement::recents_capBoundsTheList` is now the regression guard (asserts ==5).
    See `reference/fix-patterns.md`._
 
-   **Cumulative savefile progress this pass: 72.9% → 77.9% (+294 covered lines) across signdata(100%),
-   warpdata(98.5%), mapconndata(100%), savefileiterator(100%), item(96.7%), playerbasics(98.9%),
-   filemanagement(77%, headless ceiling).** Next gap targets (worst remaining by missed lines):
-   `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234 — note the disabled-randomizer sprite-link crash,
-   test the safe paths), `areamap.cpp` 62% (83 — partly the disabled Maps `loadFromData`/`setTo`),
-   `areapokemon.cpp` 61% (75), `areatileset.cpp` 62% (51).
+   _Eighth file: **`tst_storage.cpp`** — the PC (Storage) beyond load/save round-trips: the flattened
+   0..11 box space (boxCount/boxAt across both 6-box sets), freeSpace()'s room invariant, depositPokemon()
+   success + the all-full→false path, and the randomize verbs (randomize/randomizeItems/randomizePokemon)
+   running clean. **storage.cpp 78.6% → 98.0% (96/98)**; savefile real-source overall → **78.0%**, 7 cases
+   green (48/48 full suite)._
+
+   **Cumulative savefile progress this pass: 72.9% → 78.0% across signdata(100%), warpdata(98.5%),
+   mapconndata(100%), savefileiterator(100%), item(96.7%), playerbasics(98.9%), filemanagement(77%,
+   headless ceiling), storage(98%) — plus one real bug fixed (recent-files cap off-by-one).** Next gap
+   targets (worst remaining by missed lines): `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234 — note
+   the disabled-randomizer sprite-link crash, test the safe paths), `areamap.cpp` 62% (83 — partly the
+   disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75), `areatileset.cpp` 62% (51).
 
    **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
    does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
