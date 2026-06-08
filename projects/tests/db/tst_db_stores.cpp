@@ -38,7 +38,7 @@
 #include <pse-db/pokemon.h>
 #include <pse-db/scripts.h>
 #include <pse-db/sprites.h>
-#include <pse-db/spriteset.h>
+#include <pse-db/spriteSet.h>
 #include <pse-db/tileset.h>
 #include <pse-db/trades.h>
 #include <pse-db/trainers.h>
