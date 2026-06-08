@@ -78,6 +78,7 @@ private slots:
   void sellMode_hasItemsAndMoneyStart();
   void cart_setCountUpdatesTotals();
   void sellCheckout_raisesMoney();
+  void buyCheckout_lowersMoney();
 };
 
 void TestMarketModel::initTestCase()
@@ -145,6 +146,29 @@ void TestMarketModel::sellCheckout_raisesMoney()
 
   QVERIFY2(m_file->data->dataExpanded->player->basics->money > before,
            "selling an item did not raise the player's money");
+}
+
+void TestMarketModel::buyCheckout_lowersMoney()
+{
+  setMode(/*buy*/true, /*money*/true);
+  if(m_mkt->rowCount(QModelIndex()) == 0) QSKIP("buy/money store list is empty");
+
+  const int money = m_mkt->moneyStart();
+  // Find a store row we can both cart and afford one of.
+  int row = -1;
+  for(int i = 0; i < m_mkt->rowCount(QModelIndex()); i++) {
+    const int worth = roleInt(i, ItemMarketModel::ItemWorthRole);
+    if(roleInt(i, ItemMarketModel::OnCartLeftRole) > 0 && worth > 0 && worth <= money) { row = i; break; }
+  }
+  if(row < 0) QSKIP("no affordable, cartable store item");
+
+  const unsigned int before = m_file->data->dataExpanded->player->basics->money;
+  QVERIFY(m_mkt->setData(m_mkt->index(row), QVariant(1), ItemMarketModel::CartCountRole));
+  QVERIFY(m_mkt->canAnyCheckout());
+  m_mkt->checkout();
+
+  QVERIFY2(m_file->data->dataExpanded->player->basics->money < before,
+           "buying an item did not lower the player's money");
 }
 
 QTEST_GUILESS_MAIN(TestMarketModel)

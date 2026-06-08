@@ -40,8 +40,11 @@
 #include <pse-savefile/expanded/fragments/pokemonparty.h>
 #include <pse-savefile/expanded/fragments/pokemonstoragebox.h>
 
+#include <QColor>
+
 #include <bridge/bridge.h>
 #include <bridge/router.h>
+#include <bridge/settings.h>
 #include <mvc/pokemonstoragemodel.h>
 #include <mvc/pokemonboxselectmodel.h>
 
@@ -91,6 +94,7 @@ private slots:
   void pokemonStorage_boxOperations();
   void boxSelect_rowsAndChange();
   void router_navigateAndClose();
+  void settings_colorSchemeAndPreviewIndex();
 };
 
 void TestBridge::initTestCase()
@@ -218,6 +222,25 @@ void TestBridge::router_navigateAndClose()
   r->closeScreen();
   // Extra close at/under root must be a no-op (no crash).
   r->closeScreen();
+}
+
+void TestBridge::settings_colorSchemeAndPreviewIndex()
+{
+  Settings* s = m_brg->settings;
+  QVERIFY(s != nullptr);
+
+  // setColorScheme assigns the primary + derives lighter/darker shades, and sets accent.
+  s->setColorScheme(QColor(10, 20, 30), QColor(40, 50, 60));
+  QCOMPARE(s->primaryColor, QColor(10, 20, 30));
+  QCOMPARE(s->accentColor, QColor(40, 50, 60));
+  QVERIFY(s->primaryColorLight != s->primaryColor); // derived shade
+  QVERIFY(s->primaryColorDark  != s->primaryColor);
+
+  // The default preview tileset resolves to a valid order index; an unknown one -> -1.
+  const int idx = s->getPreviewTilesetIndex();
+  QVERIFY(idx >= 0 && idx < 24);
+  s->previewTileset = QStringLiteral("___not-a-tileset___");
+  QCOMPARE(s->getPreviewTilesetIndex(), -1);
 }
 
 QTEST_GUILESS_MAIN(TestBridge)
