@@ -47,6 +47,10 @@ QVariant TypesModel::data(const QModelIndex& index, int role) const
     else if (role == NameRole) {
       return "-----";
     }
+    // Any other (undeclared) role on the placeholder row: nothing. Without this the
+    // code below would run at(index.row()-1) == at(-1) and crash. (Matches the
+    // PokemonStartersModel placeholder guard.)
+    return QVariant();
   }
 
   // Get Pokemon and ensure it's valid to prevent crashing

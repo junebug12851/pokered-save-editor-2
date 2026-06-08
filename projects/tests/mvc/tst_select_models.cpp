@@ -60,15 +60,12 @@ static void driveModel(QAbstractItemModel* m)
     QVERIFY(idx.isValid());
     for(auto role = roles.keyBegin(); role != roles.keyEnd(); ++role)
       (void)m->data(idx, *role);
+    // An undeclared role on EVERY row (incl. the placeholder row 0) drives data()'s
+    // default return. The placeholder rows now guard this safely (see TypesModel /
+    // PokemonStartersModel) rather than falling through to at(-1).
+    (void)m->data(idx, Qt::DisplayRole);
     (void)m->flags(idx);
   }
-
-  // An undeclared role on a non-placeholder row exercises data()'s default return.
-  // (Row 0 + an undeclared role is intentionally avoided: the placeholder-row branch
-  // only handles its declared roles and otherwise falls through to at(row-1)==at(-1);
-  // QML never queries undeclared roles, so this is a gated latent edge, not a UI bug.)
-  if(rows > 1)
-    (void)m->data(m->index(1, 0, QModelIndex()), Qt::DisplayRole);
 
   (void)m->data(QModelIndex(), *roles.keyBegin());        // invalid index -> empty
   (void)m->index(rows + 5, 0, QModelIndex());             // out-of-range index
