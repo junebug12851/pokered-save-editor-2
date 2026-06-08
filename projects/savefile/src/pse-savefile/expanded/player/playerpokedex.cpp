@@ -87,8 +87,13 @@ void PlayerPokedex::save(SaveFile* saveFile)
 
 void PlayerPokedex::reset()
 {
-  memset(owned, pokemonDexCount, maxPokedex * sizeof(bool));
-  memset(seen, pokemonDexCount, maxPokedex * sizeof(bool));
+  // memset's 2nd arg is the fill VALUE, 3rd is the byte COUNT. This must blank
+  // the dex, so the fill value is 0 (every seen/owned bool -> false). (It used to
+  // pass pokemonDexCount as the value, filling each byte with 151 -> every bool
+  // read as true, i.e. reset() marked the WHOLE dex seen+owned. Caught by
+  // tst_pokedex's markAll_and_reset.)
+  memset(owned, 0, maxPokedex * sizeof(bool));
+  memset(seen, 0, maxPokedex * sizeof(bool));
 }
 
 // Gives all Pokedex entries a 2 out of 5 chance (40% chance) of being

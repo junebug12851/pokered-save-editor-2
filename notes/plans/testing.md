@@ -308,7 +308,10 @@ Each phase is independently valuable; the suite is useful from phase 1.
 
    **Bugs found by phase-2 tests so far (all real): Daycare empty-destructor crash (fixed), bank-2
    checksum off-by-one (fixed), `MapSearch::isType()` null-deref (fixed), randomizer sprite-path crash
-   (open, phase 7).**
+   (open, phase 7), `PlayerPokedex::reset()` memset value/count swap (fixed 2026-06-08) — it passed
+   `pokemonDexCount` as the fill VALUE, so reset() filled every seen/owned byte with 151 (= true),
+   marking the whole dex seen+owned instead of blanking it; randomize() masked it by assigning every
+   entry. Caught by `tst_pokedex` markAll_and_reset.**
 3. **common to 100%; db integrity + getters + search + fonts.**
    _Done 2026-06-07: `tst_common.cpp` (type widths/sign, Random bounds + degenerate ranges + coin
    variation, Utility URL encode/decode round-trip) and `tst_toolset.cpp` (the byte primitives:
