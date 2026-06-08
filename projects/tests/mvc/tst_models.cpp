@@ -34,10 +34,20 @@
 #include <mvc/statusselectmodel.h>
 #include <mvc/pokemonstartersmodel.h>
 #include <mvc/creditsmodel.h>
+#include <mvc/itemselectmodel.h>
+#include <mvc/mapselectmodel.h>
+
+#include <pse-savefile/savefile.h>
+#include <pse-savefile/expanded/savefileexpanded.h>
+#include <pse-savefile/expanded/area/area.h>
+#include <pse-savefile/expanded/area/areamap.h>
 
 class TestModels : public QObject
 {
   Q_OBJECT
+
+private:
+  SaveFile m_sf; // blank save -> supplies a live AreaMap for MapSelectModel
 
 private slots:
   void initTestCase();
@@ -48,6 +58,8 @@ private slots:
   void statusModel_hasRowsAndData();
   void startersModel_hasThreeStartersAndResolves();
   void creditsModel_loads();
+  void itemSelectModel_listsItems();
+  void mapSelectModel_listsMaps();
 };
 
 void TestModels::initTestCase()
@@ -135,6 +147,33 @@ void TestModels::creditsModel_loads()
   QVERIFY2(rows >= 0, "credits model returned a negative row count");
   if(rows > 0)
     QVERIFY(m.data(m.index(0, 0), CreditsModel::NameRole).isValid());
+}
+
+void TestModels::itemSelectModel_listsItems()
+{
+  ItemSelectModel m;
+  const int rows = m.rowCount(QModelIndex());
+  QVERIFY2(rows > 0, "item picker is empty");
+  bool anyName = false;
+  for(int i = 0; i < rows && !anyName; i++)
+    if(!m.data(m.index(i, 0), ItemSelectModel::NameRole).toString().isEmpty())
+      anyName = true;
+  QVERIFY2(anyName, "no item row had a non-empty name");
+  QVERIFY(m.itemToListIndex(1) >= 0);
+}
+
+void TestModels::mapSelectModel_listsMaps()
+{
+  // Construct against the blank save's live AreaMap (used for current-map highlight).
+  MapSelectModel m(m_sf.dataExpanded->area->map);
+  const int rows = m.rowCount(QModelIndex());
+  QVERIFY2(rows > 0, "map picker is empty");
+  bool anyName = false;
+  for(int i = 0; i < rows && !anyName; i++)
+    if(!m.data(m.index(i, 0), MapSelectModel::NameRole).toString().isEmpty())
+      anyName = true;
+  QVERIFY2(anyName, "no map row had a non-empty name");
+  QVERIFY(m.mapToListIndex(0) >= 0);
 }
 
 QTEST_GUILESS_MAIN(TestModels)
