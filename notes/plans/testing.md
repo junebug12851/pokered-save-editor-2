@@ -371,6 +371,13 @@ Each phase is independently valuable; the suite is useful from phase 1.
    the best line coverage any test achieved and sum — that yields the honest **43.6%**. So the app
    layer is the real laggard and the current focus. (For a one-shot accurate number in future, build
    appcore SHARED in the coverage config.)_
+   _**Confirmed attribution artifact (2026-06-08):** `tst_market_model` runs all 7 cases with 0 skips
+   and its buy/sell checkout demonstrably change the player's money — yet llvm-cov reports the
+   `mvc/itemmarket/itemmarketentry*.cpp` files (283-line `storeitem` etc.) at **0%**. The code is
+   provably executed; llvm-cov on this llvm-mingw kit simply fails to attribute coverage for some
+   statically-linked appcore translation units. So 43.6% is an under-count and the app % can't be
+   trusted on this toolchain — judge app coverage by the passing functional suites, not the number.
+   Making appcore a shared lib (at least for the coverage build) would fix the measurement._
 
    Trend across the effort (line): common 65 → **79** (Random chance helpers), savefile 63 → 67 → 68 →
    **72** (area, area-fragments, pokedex, items-logic, misc-regions), db 51 → 53 → **56** (db-entries +
