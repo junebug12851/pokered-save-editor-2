@@ -390,7 +390,26 @@ Each phase is independently valuable; the suite is useful from phase 1.
    `WarpData::load(MapDBEntryWarpOut*)` + ctor + `randomize()` + `toMap()`, and
    `MapConnData::loadFromData(MapDBEntryConnect*)` + `toMap()` + load-null. **warpdata.cpp 54.5% →
    98.5%, mapconndata.cpp 71% → 100%**; savefile real-source overall → **74.6% (4408/5905)**, 6 cases
-   green (43/43 full suite). **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
+   green (43/43 full suite).
+
+   _Third file: **`tst_iterator.cpp`** — exhaustive coverage of `SaveFileIterator`, the auto-advancing
+   byte cursor (every fragment uses it). Each accessor checked for BOTH value round-trip (through the
+   toolset) AND cursor side-effect: byte/word/BCD/hex/str/range/bitfield advance by size+padding; getBit/
+   setBit do **not** advance; navigation (offsetTo/By, inc/dec, skipPadding) and the push/pop offset stack
+   (incl. empty-pop → 0x0000) asserted directly against the public `offset` field. **savefileiterator.cpp
+   57.3% → 100.0% (110/110)**; savefile real-source overall → **75.6% (4467/5905)**, 9 cases green
+   (44/44 full suite). Notes for future iterator-style tests: `offset` is public (assert it directly) but
+   `state` is protected (verify push/pop via `offset` only); and the hex get/set byte convention is the
+   toolset's contract (asserted in tst_toolset) — at the iterator layer assert idempotency, not a
+   canonical hex string._
+
+   **Cumulative savefile progress this pass: 72.9% → 75.6% (+159 covered lines) across signdata(100%),
+   warpdata(98.5%), mapconndata(100%), savefileiterator(100%).** Next gap targets (worst remaining by
+   missed lines): `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234 — note the disabled-randomizer
+   sprite-link crash, test the safe paths), `filemanagement.cpp` 64% (87), `areamap.cpp` 62% (83),
+   `areapokemon.cpp` 61% (75), `playerbasics.cpp` 67% (57), `areatileset.cpp` 62% (51), `item.cpp` 62% (47).
+
+   **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
    does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
    (it's only needed by the disabled map randomizer), so `getToMap()` is null everywhere until a test
    calls `MapsDB::inst()->deepLink()` itself. That call is stable headless (no crash; the warp deeplink's
