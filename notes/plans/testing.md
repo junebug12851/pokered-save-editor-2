@@ -373,6 +373,19 @@ Each phase is independently valuable; the suite is useful from phase 1.
    | savefile     | 72.9% | 73.6% | 65.2%  |
    | app/appcore  | ~50-58% | ~50-65% | -- |  ← noisy; see below
 
+   _**Coverage-gap-fill pass started 2026-06-08 (session: new chat, build/test/coverage loop
+   re-verified end-to-end on the real Qt 6.11 llvm-mingw kit — clean rebuild + 41/41 ctest green
+   independently reproduced).** Authoritative savefile real-source line gap list (worst first, by
+   missed lines): `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234), `filemanagement.cpp` 64%
+   (87), `areamap.cpp` 62% (83), `areapokemon.cpp` 61% (75), `playerbasics.cpp` 67% (57),
+   `areatileset.cpp` 62% (51), `signdata.cpp` 40% (50), `savefileiterator.cpp` 57% (47), `item.cpp`
+   62% (47), `areawarps.cpp` 70% (46)… First file done: **`tst_sign_data.cpp`** drives the
+   DB-population + randomize paths (setTo/setToAll/randomize/randomizeAll/load-null) that the
+   area-fragment list-ops test never reached — **signdata.cpp 39.8% → 100.0% (83/83)**, 7 cases green;
+   savefile real-source overall 72.9% → **73.8%**. Method note: `MapDBEntrySign` has a protected ctor,
+   so DB-defined signs are sourced from the first `MapsDB` map with ≥2 signs; `randomizeAll` is asserted
+   as a position permutation (RNG-independent), which also covers the non-null branch of `randomize()`._
+
    _**How the app/appcore number is measured (and why the earlier 56% was wrong):** unlike
    common/db/savefile (each a shared `.dll`, so per-test coverage merges cleanly), `appcore` is a
    **static** lib embedded into every app-test exe. Merging all `.profraw` and exporting against a

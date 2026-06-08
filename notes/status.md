@@ -117,8 +117,11 @@ commits on Enter/focus-out (not per keystroke) — Twilight can revert if she wa
 
 ## Testing (added 2026-06-07)
 
-A comprehensive automated test suite now exists under `projects/tests/` (QtTest + CTest, 15
-executables, ~150 cases, all green). The app logic was extracted into a static `appcore` library
+A comprehensive automated test suite now exists under `projects/tests/` (QtTest + CTest, **42
+executables, ~310 cases, all green** — last full run re-verified 2026-06-08 on the real Qt 6.11
+llvm-mingw kit: clean rebuild, `ctest` 41/41 + the new `tst_sign_data`). A **coverage-gap-fill pass
+toward the 100% target is underway** — see `plans/testing.md` for the live savefile gap list and
+per-file progress. The app logic was extracted into a static `appcore` library
 (see `context/architecture.md`) so the **app layer is now unit-testable** (`tests/mvc/tst_models.cpp`
 is the first; ~23 models + Bridge/Router remain). It found + drove fixes for **4 real bugs** (Daycare empty-dtor
 crash, bank-2 checksum off-by-one save corruption, `MapSearch::isType` null-deref, `HoFPokemon::load`
