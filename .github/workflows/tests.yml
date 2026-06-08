@@ -1,0 +1,88 @@
+name: tests
+
+# Runs the QtTest/CTest suite on every push and PR.
+#
+# Two jobs:
+#   * linux-asan  - the primary gate. Builds with AddressSanitizer + UBSan (which
+#                   work properly on Linux, unlike the Windows llvm-mingw kit where
+#                   ASan crashes in interception_win) and runs ctest headless.
+#   * windows     - builds with the project's real kit (Qt 6 llvm-mingw) and runs
+#                   ctest, matching Twilight's local environment.
+#
+# NOTE (first-run shakeout): the exact Qt module/arch names below may need a small
+# tweak on the very first CI run. The CMake root is `projects/`. Tests don't need
+# the `app` target, but the root find_package pulls in Quick/Charts/etc., so those
+# Qt modules are installed here.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  linux-asan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt (Linux gcc_64)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.*"
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtdeclarative qtcharts qtsvg
+
+      - name: Configure (ASan + UBSan)
+        run: >
+          cmake -S projects -B build
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g"
+          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+          -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined"
+
+      - name: Build test targets
+        run: >
+          cmake --build build -j --target
+          tst_roundtrip tst_fields tst_pokemon tst_items tst_world tst_verbs
+          tst_toolset tst_errors tst_e2e tst_randomizer tst_common tst_db_integrity
+
+      - name: Run ctest (headless, sanitized)
+        env:
+          QT_QPA_PLATFORM: offscreen
+          ASAN_OPTIONS: detect_leaks=0:halt_on_error=1
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+        run: ctest --test-dir build --output-on-failure
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt (Windows llvm-mingw)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.*"
+          host: windows
+          target: desktop
+          arch: win64_llvm_mingw
+          modules: qtdeclarative qtcharts qtsvg
+          tools: "tools_llvm_mingw1706"
+
+      - name: Configure
+        shell: bash
+        run: >
+          cmake -S projects -B build
+          -G "MinGW Makefiles"
+          -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build test targets
+        run: >
+          cmake --build build -j --target
+          tst_roundtrip tst_fields tst_pokemon tst_items tst_world tst_verbs
+          tst_toolset tst_errors tst_e2e tst_randomizer tst_common tst_db_integrity
+
+      - name: Run ctest
+        run: ctest --test-dir build --output-on-failure

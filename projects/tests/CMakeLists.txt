@@ -30,6 +30,7 @@ endfunction()
 pse_add_test(tst_roundtrip    savefile savefile/tst_roundtrip.cpp)
 pse_add_test(tst_fields       savefile savefile/tst_fields.cpp)
 pse_add_test(tst_pokemon      savefile savefile/tst_pokemon.cpp)
+pse_add_test(tst_pokemon_logic savefile savefile/tst_pokemon_logic.cpp)
 pse_add_test(tst_items        savefile savefile/tst_items.cpp)
 pse_add_test(tst_world        savefile savefile/tst_world.cpp)
 pse_add_test(tst_verbs        savefile savefile/tst_verbs.cpp)
@@ -39,3 +40,18 @@ pse_add_test(tst_e2e          savefile savefile/tst_e2e.cpp)
 pse_add_test(tst_randomizer   savefile savefile/tst_randomizer.cpp)
 pse_add_test(tst_common       common   common/tst_common.cpp)
 pse_add_test(tst_db_integrity db       db/tst_db_integrity.cpp)
+
+# --- QML smoke test (Qt Quick Test, headless via offscreen) ---
+# Establishes the QML test harness. Screen-level tests that use `brg.*` need the
+# Bridge/DB booted into the engine (future work). Guarded so a kit without the
+# QuickTest module still configures.
+find_package(Qt6 QUIET OPTIONAL_COMPONENTS QuickTest Quick)
+if(TARGET Qt6::QuickTest)
+    qt_add_executable(tst_qml qml/main.cpp)
+    target_link_libraries(tst_qml PRIVATE Qt6::QuickTest Qt6::Qml Qt6::Quick)
+    target_compile_definitions(tst_qml PRIVATE
+        QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qml/cases")
+    add_test(NAME tst_qml COMMAND tst_qml)
+    set_tests_properties(tst_qml PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+endif()
+

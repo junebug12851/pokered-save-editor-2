@@ -226,6 +226,14 @@ common/savefile. Coverage gaps become the to-do list for filling tests.
 - **No `load()` in constructors** assumption holds — tests rely on explicit boot order.
 - **Never write a save byte not under test.** Round-trip tests operate on *copies* of fixtures and
   assert the on-disk fixture is never mutated.
+- **Windows JIT-debugger popup on crashes (operational).** `AeDebug\Auto=1` registers Qt Creator's
+  `qtcdebugger.exe`, so a crashing test exe (access violation) pops a "open a debugger?" dialog and
+  **hangs** until dismissed — running a batch of crash-prone exes (e.g. an ASan build, or a
+  newly-found crash) spams these and blocks. When running tests from a script, first set the process
+  error mode so crashes fail fast instead: in PowerShell `Add-Type` a `SetErrorMode` P/Invoke and call
+  `SetErrorMode(0x0003)` (`SEM_FAILCRITICALERRORS|SEM_NOGPFAULTERRORBOX`) before launching exes
+  (session-scoped, inherited by children, no registry change). Run unknown/crash-prone exes one at a
+  time and kill on a non-zero crash code.
 
 ---
 
@@ -331,9 +339,32 @@ Each phase is independently valuable; the suite is useful from phase 1.
    null-deref was fixed. Re-enabling map randomize is future map-feature work (see status.md). Random-edit
    fuzz + Red/Blue compatibility fixtures still to do._
 7. **Sanitizer build + coverage reporting**, then coverage-gap fill to targets.
+   _Coverage measured 2026-06-07 via a separate instrumented build (`projects/build/coverage`,
+   `-fprofile-instr-generate -fcoverage-mapping`; merge with `llvm-profdata`, summarise with
+   `llvm-cov export -summary-only`). **Baseline (line / function):** common 65% / 59%; savefile
+   63% / 57%; db 50% / 37%; **app + QML 0%** (not linked into the tests — needs the app-logic
+   refactor-to-lib, or QML tests). Whole-project ≈ 50%. Biggest climbs available: db entry getters /
+   the untested sub-DBs, and savefile getters / computed Q_PROPERTYs._
+   _**AddressSanitizer: not viable on this Windows/llvm-mingw kit.** The ASan build compiles
+   (`projects/build/asan`, `-fsanitize=address`), but every instrumented exe crashes at startup with
+   `interception_win: unhandled instruction` (0xC0000005) before any test runs — a known ASan-on-Windows
+   limitation in its API-interception engine, NOT a bug in our code (the same tests pass under the normal
+   + coverage builds). Real memory-sanitizer coverage (ASan/UBSan/Valgrind) should run in a **Linux CI
+   job** (phase 9), where ASan is mature. The use-after-free risk is meanwhile addressed by the
+   qmlProtect/qmlCppOwned fixes and the null-deref bugs this suite already found + fixed._
 8. **CI** (ctest + sanitizer + coverage on push).
+   _Workflow written 2026-06-07: `.github/workflows/tests.yml` — a **linux-asan** job (installs Qt via
+   aqt, builds with ASan+UBSan which work on Linux, runs `ctest` headless/offscreen) and a **windows**
+   job (Qt llvm-mingw, matches Twilight's kit). Not yet exercised on GitHub — the Qt module/arch names
+   may need a first-run tweak (noted in the file). This is the right home for ASan, which can't run on
+   the local Windows kit._
 9. **app C++** (Bridge, models, FileManagement) headless.
-10. **QML/UI** — only if/when Twilight greenlights (see below).
+10. **QML/UI** — Twilight opted in. _Harness established 2026-06-07: `tests/qml/` (Qt Quick Test,
+    `QUICK_TEST_MAIN`) builds and runs headless via the `offscreen` platform; `cases/tst_smoke.qml`
+    is green (6 cases). This proves the QML test path works. **Screen-level tests still to do** — the
+    app's screens bind to `brg.*`, so testing them needs the Bridge + DB + registered types booted
+    into the test engine (a larger harness); behavioural smoke tests (name commit-on-blur, editor
+    reactivity, popup dismiss) come after that._
 
 ---
 
