@@ -71,6 +71,19 @@ if(TARGET appcore)
     pse_add_test(tst_market_model appcore mvc/tst_market_model.cpp)
     pse_add_test(tst_item_storage_model appcore mvc/tst_item_storage_model.cpp)
     pse_add_test(tst_move_select_model appcore mvc/tst_move_select_model.cpp)
+
+    # The graphics engine + QML image providers need a GUI app (QPixmap/QPainter)
+    # and the app's qrc (the tileset/font PNGs live in app.qrc, not appcore), and
+    # must run on the offscreen platform. So it's built specially (qrc compiled in,
+    # QTEST_MAIN, offscreen env) rather than via pse_add_test.
+    qt_add_executable(tst_engine_providers
+        mvc/tst_engine_providers.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_engine_providers PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_engine_providers PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_engine_providers COMMAND tst_engine_providers)
+    set_tests_properties(tst_engine_providers PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_engine_providers)
 endif()
 
 # --- QML smoke test (Qt Quick Test, headless via offscreen) ---
