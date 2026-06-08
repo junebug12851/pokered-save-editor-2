@@ -361,7 +361,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    | common       | 79.1% | 77.3% | 82.1%  |
    | db           | 62.0% | 58.2% | 55.3%  |
    | savefile     | 72.9% | 73.6% | 65.2%  |
-   | app/appcore  | 58.2% | 64.7% | 57.8%  |  ← measured via shared-appcore (see below)
+   | app/appcore  | ~50-58% | ~50-65% | -- |  ← noisy; see below
 
    _**How the app/appcore number is measured (and why the earlier 56% was wrong):** unlike
    common/db/savefile (each a shared `.dll`, so per-test coverage merges cleanly), `appcore` is a
@@ -384,6 +384,15 @@ Each phase is independently valuable; the suite is useful from phase 1.
    instrumented appcore, so coverage merges cleanly: **app/appcore is actually 58.2% line / 64.7%
    func** (the 0%/43.6% figures were the static-lib artifact; the itemmarket entries now correctly
    show 50-55%). The default build is unchanged (option OFF → STATIC, as shipped)._
+   _**BUT the app number is still noisy** even with shared appcore: repeated full-suite measurements
+   of the SAME code have read 50%, 56%, 58% (and the static build gave 44/47%). llvm-cov on this
+   llvm-mingw kit doesn't merge appcore coverage deterministically across the ~14 app-test exes. The
+   three library layers (common/db/savefile) are stable to the decimal across every run, so trust
+   those; treat the app % as a rough ~50-58% band and judge app coverage by the passing functional
+   suites (every model, both list modes, all four market modes, bulk ops, bridge, settings, engine
+   math). The only genuinely untested app code is the `engine/` QQuickImageProvider classes
+   (fontpreviewprovider/tilesetprovider) — they need a GUI app + qrc resources to drive, the same
+   low-ROI/high-setup territory as the deferred QML/UI tests._
 
    Trend across the effort (line): common 65 → **79** (Random chance helpers), savefile 63 → 67 → 68 →
    **72** (area, area-fragments, pokedex, items-logic, misc-regions), db 51 → 53 → **56** (db-entries +
