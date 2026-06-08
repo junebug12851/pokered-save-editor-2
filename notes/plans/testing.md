@@ -354,14 +354,22 @@ Each phase is independently valuable; the suite is useful from phase 1.
    _Coverage measured 2026-06-07 via a separate instrumented build (`projects/build/coverage`,
    `-fprofile-instr-generate -fcoverage-mapping`; merge with `llvm-profdata`, summarise with
    `llvm-cov export -summary-only`; per-module totals parsed from the JSON). **Re-measured 2026-06-08
-   over the full 32-suite run (`build-cov`), line / function / region:**
+   over the full 34-suite run (`build-cov`), line / function / region:**
 
    | module       | line  | func  | region |
    |--------------|-------|-------|--------|
    | common       | 79.1% | 77.3% | 82.1%  |
-   | db           | 62.7% | 59.0% | 55.9%  |
-   | savefile     | 72.2% | 72.3% | 64.5%  |
-   | app/appcore  | 55.9% | 63.5% | 55.1%  |
+   | db           | 62.0% | 58.2% | 55.3%  |
+   | savefile     | 72.9% | 73.6% | 65.2%  |
+   | app/appcore  | ~47%  | ~49%  | ~44%   |
+
+   _**Caveat on the app/appcore number:** unlike common/db/savefile (each a shared `.dll`, so per-test
+   coverage merges cleanly), `appcore` is a **static** lib embedded into every app-test exe. Merging
+   `.profraw` across many binaries that each statically link identical functions is unreliable
+   (llvm-profdata drops hash-conflicting records), so the app % is a **noisy under-estimate** — the
+   real figure is higher. Each dedicated app suite (`tst_models`, `tst_bridge`, `tst_storage_model`,
+   `tst_market_model`, `tst_item_storage_model`, `tst_tileset_engine`) exercises its target models
+   thoroughly. For a precise app number, build appcore as SHARED in the coverage config (future)._
 
    Trend across the effort (line): common 65 → **79** (Random chance helpers), savefile 63 → 67 → 68 →
    **72** (area, area-fragments, pokedex, items-logic, misc-regions), db 51 → 53 → **56** (db-entries +
