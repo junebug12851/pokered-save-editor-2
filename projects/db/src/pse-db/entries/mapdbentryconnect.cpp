@@ -256,8 +256,14 @@ int MapDBEntryConnect::yAlign() const
 
 int MapDBEntryConnect::xAlign() const
 {
+  // Same "valid toMap required" guard as yAlign()/window()/stripSize(): a missing
+  // map or a non-positive width yields 0. The `<= 0` was missing here (a copy-paste
+  // typo), so the bare `toMap->getWidth()` inverted the test -- it returned 0 for
+  // every real map and only computed when width was 0. Confirmed against the
+  // connection-data formulas in notes/reference/gen1-knowledge.md (xAlign mirrors
+  // yAlign, which matches the documented North Y-align = (height*2)-1).
   if(toMap == nullptr ||
-     toMap->getWidth())
+     toMap->getWidth() <= 0)
     return 0;
 
   int ret;

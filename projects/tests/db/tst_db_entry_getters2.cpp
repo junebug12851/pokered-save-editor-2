@@ -25,6 +25,8 @@
  */
 
 #include <QtTest>
+#include <QQmlEngine>
+#include <QQmlContext>
 
 #include <pse-db/db.h>
 #include <pse-db/fontsdb.h>
@@ -32,6 +34,18 @@
 #include <pse-db/missablesdb.h>
 #include <pse-db/eventpokemondb.h>
 #include <pse-db/mapsdb.h>
+#include <pse-db/flydb.h>
+#include <pse-db/gamecornerdb.h>
+#include <pse-db/hiddenitemsdb.h>
+#include <pse-db/entries/flydbentry.h>
+#include <pse-db/entries/gamecornerdbentry.h>
+#include <pse-db/entries/hiddenitemdbentry.h>
+#include <pse-db/entries/mapdbentrywarpin.h>
+#include <pse-db/itemsdb.h>
+#include <pse-db/entries/itemdbentry.h>
+#include <pse-db/entries/mapdbentryspritepokemon.h>
+#include <pse-db/entries/mapdbentryspritetrainer.h>
+#include <pse-db/entries/mapdbentryspriteitem.h>
 #include <pse-db/entries/fontdbentry.h>
 #include <pse-db/entries/eventdbentry.h>
 #include <pse-db/entries/missabledbentry.h>
@@ -51,6 +65,8 @@ private slots:
   void missableEntry_getters();
   void eventPokemonEntry_getters();
   void mapEntry_resolvedLinksAndConnects();
+  void smallEntry_getters();
+  void dbBase_accessorsAndQml();
 };
 
 void TestDbEntryGetters2::initTestCase()
@@ -140,15 +156,111 @@ void TestDbEntryGetters2::mapEntry_resolvedLinksAndConnects()
       (void)c->getDir(); (void)c->getMap(); (void)c->getStripMove();
       (void)c->getStripOffset(); (void)c->getFlag(); (void)c->getToMap();
       (void)c->getFromMap(); (void)c->getParent();
+      // Connection-rendering math (each direction's branch is hit across the maps).
+      (void)c->stripLocation(); (void)c->mapPos(); (void)c->stripSize();
+      (void)c->yAlign(); (void)c->xAlign(); (void)c->window();
     }
 
-    // Sprite placement helpers.
+    // Sprite sub-entry getters.
     for(int i = 0; i < e->getSpritesSize(); i++) {
       const MapDBEntrySprite* s = e->getSpritesAt(i);
       if(s == nullptr) continue;
-      (void)s->adjustedX(); (void)s->adjustedY();
+      (void)s->adjustedX(); (void)s->adjustedY(); (void)s->getSprite();
+      (void)s->getX(); (void)s->getY(); (void)s->getMove(); (void)s->getText();
+      (void)s->getRange(); (void)s->getFace(); (void)s->getMissable();
+      (void)s->getToMissable(); (void)s->getToSprite(); (void)s->getParent();
+
+      // Subtype getters, reached by casting on type().
+      if(s->type() == MapDBEntrySprite::SpriteType::POKEMON) {
+        auto* sp = static_cast<const MapDBEntrySpritePokemon*>(s);
+        (void)sp->getPokemon(); (void)sp->getLevel(); (void)sp->getToPokemon();
+      } else if(s->type() == MapDBEntrySprite::SpriteType::TRAINER) {
+        auto* st = static_cast<const MapDBEntrySpriteTrainer*>(s);
+        (void)st->getTrainerClass(); (void)st->getTeam(); (void)st->getToTrainer();
+      } else if(s->type() == MapDBEntrySprite::SpriteType::ITEM) {
+        auto* si = static_cast<const MapDBEntrySpriteItem*>(s);
+        (void)si->getItem(); (void)si->getToItem();
+      }
+    }
+
+    // Warp-in sub-entry getters.
+    for(int i = 0; i < e->getWarpInSize(); i++) {
+      const MapDBEntryWarpIn* w = e->getWarpInAt(i);
+      if(w == nullptr) continue;
+      (void)w->getX(); (void)w->getY(); (void)w->getParent();
+      const int n = w->getToConnectingWarpsSize();
+      for(int k = 0; k < n; k++) (void)w->getToConnectingWarpsAt(k);
+      (void)w->getToConnectingWarps();
     }
   }
+}
+
+void TestDbEntryGetters2::smallEntry_getters()
+{
+  for(FlyDBEntry* e : FlyDB::inst()->getStore()) {
+    if(e == nullptr) continue;
+    (void)e->getName(); (void)e->getInd(); (void)e->getToMap();
+  }
+  for(GameCornerDBEntry* e : GameCornerDB::inst()->getStore()) {
+    if(e == nullptr) continue;
+    (void)e->getName(); (void)e->getType(); (void)e->getPrice();
+    (void)e->getLevel(); (void)e->getToPokemon(); (void)e->getToItem();
+  }
+  for(HiddenItemDBEntry* e : HiddenItemsDB::inst()->getStore()) {
+    if(e == nullptr) continue;
+    (void)e->getMap(); (void)e->getX(); (void)e->getY(); (void)e->getToMap();
+  }
+  // ItemDBEntry getters past the ones tst_db_entry_getters already drives.
+  for(ItemDBEntry* e : ItemsDB::inst()->getStore()) {
+    if(e == nullptr) continue;
+    (void)e->isGameCornerExclusive(); (void)e->getToGameCorner();
+    (void)e->getToEvolvePokemon(); (void)e->getToTeachPokemon();
+    for(int i = 0; i < e->getToEvolvePokemonSize(); i++) (void)e->getToEvolvePokemonAt(i);
+    for(int i = 0; i < e->getToTeachPokemonSize(); i++)  (void)e->getToTeachPokemonAt(i);
+  }
+}
+
+void TestDbEntryGetters2::dbBase_accessorsAndQml()
+{
+  DB* db = DB::inst();
+
+  // The 26 sub-DB accessor one-liners (each returns its singleton).
+  QVERIFY(db->json()         != nullptr);
+  QVERIFY(db->credits()      != nullptr);
+  QVERIFY(db->eventPokemon() != nullptr);
+  QVERIFY(db->events()       != nullptr);
+  QVERIFY(db->examples()     != nullptr);
+  QVERIFY(db->names()        != nullptr);
+  QVERIFY(db->fly()          != nullptr);
+  QVERIFY(db->fonts()        != nullptr);
+  QVERIFY(db->gameCorner()   != nullptr);
+  QVERIFY(db->hiddenCoins()  != nullptr);
+  QVERIFY(db->hiddenItems()  != nullptr);
+  QVERIFY(db->items()        != nullptr);
+  QVERIFY(db->maps()         != nullptr);
+  QVERIFY(db->missables()    != nullptr);
+  QVERIFY(db->moves()        != nullptr);
+  QVERIFY(db->music()        != nullptr);
+  QVERIFY(db->pokemon()      != nullptr);
+  QVERIFY(db->scripts()      != nullptr);
+  QVERIFY(db->spriteSets()   != nullptr);
+  QVERIFY(db->sprites()      != nullptr);
+  QVERIFY(db->starters()     != nullptr);
+  QVERIFY(db->tilesets()     != nullptr);
+  QVERIFY(db->tmHms()        != nullptr);
+  QVERIFY(db->trades()       != nullptr);
+  QVERIFY(db->trainers()     != nullptr);
+  QVERIFY(db->types()        != nullptr);
+
+  // qmlProtect cascades to every sub-DB (and thence every entry), and qmlHook
+  // exposes DB as a context property. One call covers the qmlProtect path across
+  // the whole db layer.
+  QQmlEngine engine;
+  db->qmlProtect(&engine);
+  QCOMPARE(QQmlEngine::objectOwnership(db), QQmlEngine::CppOwnership);
+  db->qmlHook(engine.rootContext());
+  QCOMPARE(engine.rootContext()->contextProperty("pseDB").value<QObject*>(),
+           static_cast<QObject*>(db));
 }
 
 QTEST_GUILESS_MAIN(TestDbEntryGetters2)

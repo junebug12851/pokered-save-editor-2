@@ -533,6 +533,23 @@ Each phase is independently valuable; the suite is useful from phase 1.
    single-row replacement, isMaxedOut's invalid-mon branch, setNature's ±25 paths), `areamap.cpp` (15),
    `areapokemon.cpp` (18 — the byte save-NPC paths reached only through the full Area flatten).
 
+   _**common + db raised to ≥90% (2026-06-08, "get the other layers to 90%"):**_
+   - _**common 79% → 100%** — `tst_common_qml` covers the Utility/Random QML helpers (random(),
+     qmlProtect/qmlHook/qmlProtectUtil via a headless QQmlEngine, qmlRegister latch via meta-object)._
+   - _**db 71.6% → 90.2%** across: `tst_mapsearch_predicates` (every MapSearch filter, mapsearch.cpp
+     47%→100%), `tst_fontsearch` (all FontSearch and/not filters + keepAnyOf), `tst_fontsdb` (convertToCode
+     edge cases + every expandStr control/variable-code branch driven from each glyph's real name),
+     `tst_db_entry_getters2` (Font/Event/Missable/EventPokemon/Fly/GameCorner/HiddenItem getters, the
+     resolved Map links + MapDBEntryConnect math + sprite subtypes + item evolve/teach lists, and the
+     DB base accessors + qmlProtect cascade)._
+   - _**Two real bugs found + fixed (Twilight-approved):** MapSearch spriteSet `-1`-sentinel crash
+     (hasDynamicSpriteSet/noDynamicSpriteSet derefed null toSpriteSet; hasSpriteSet/noSpriteSet wrong
+     results), and `MapDBEntryConnect::xAlign()` missing `<= 0` guard (its math was dead code). Both gated
+     behind the disabled Maps feature. See `reference/fix-patterns.md`._
+   - _Remaining db gap is load/JSON-parse branches + disabled-subtype entry code (diminishing value).
+     **App layer (~50-58%) is the last laggard** — noisy llvm-cov measurement, judged by passing
+     functional suites; see the app-coverage notes above._
+
    **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
    does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
    (it's only needed by the disabled map randomizer), so `getToMap()` is null everywhere until a test
