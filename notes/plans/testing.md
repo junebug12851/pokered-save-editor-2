@@ -361,7 +361,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    | common       | 79.1% | 77.3% | 82.1%  |
    | db           | 62.0% | 58.2% | 55.3%  |
    | savefile     | 72.9% | 73.6% | 65.2%  |
-   | app/appcore  | 43.6% |  --   |  --    |
+   | app/appcore  | 58.2% | 64.7% | 57.8%  |  ← measured via shared-appcore (see below)
 
    _**How the app/appcore number is measured (and why the earlier 56% was wrong):** unlike
    common/db/savefile (each a shared `.dll`, so per-test coverage merges cleanly), `appcore` is a
@@ -378,6 +378,12 @@ Each phase is independently valuable; the suite is useful from phase 1.
    statically-linked appcore translation units. So 43.6% is an under-count and the app % can't be
    trusted on this toolchain — judge app coverage by the passing functional suites, not the number.
    Making appcore a shared lib (at least for the coverage build) would fix the measurement._
+   _**RESOLVED 2026-06-08:** added `option(PSE_SHARED_APPCORE)` to `app/CMakeLists.txt` — pass
+   `-DPSE_SHARED_APPCORE=ON` for the coverage build and appcore builds as a single shared `.dll`
+   (WINDOWS_EXPORT_ALL_SYMBOLS auto-exports, no per-class macros). All test exes then share one
+   instrumented appcore, so coverage merges cleanly: **app/appcore is actually 58.2% line / 64.7%
+   func** (the 0%/43.6% figures were the static-lib artifact; the itemmarket entries now correctly
+   show 50-55%). The default build is unchanged (option OFF → STATIC, as shipped)._
 
    Trend across the effort (line): common 65 → **79** (Random chance helpers), savefile 63 → 67 → 68 →
    **72** (area, area-fragments, pokedex, items-logic, misc-regions), db 51 → 53 → **56** (db-entries +

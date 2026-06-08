@@ -1,9 +1,22 @@
-# The app's testable logic (bridge, MVC models, engine) lives in a STATIC library
+# The app's testable logic (bridge, MVC models, engine) lives in a library
 # `appcore` so it can be linked by BOTH the executable and the test suite. The
 # executable itself is just main/boot/mainwindow/QML-resources on top of appcore.
-# (Static avoids needing dllexport macros on every class.)
+#
+# Default: STATIC (avoids needing dllexport macros on every class; matches the
+# shipped build). For the COVERAGE build, pass -DPSE_SHARED_APPCORE=ON: a STATIC
+# appcore is embedded into every test exe, which defeats llvm-cov (it can't merge
+# coverage across many binaries that each statically link identical TUs -- it
+# reports executed files as 0%). A SHARED appcore is instrumented once and all
+# test exes share it, so coverage merges cleanly. WINDOWS_EXPORT_ALL_SYMBOLS lets
+# the shared build work without adding export macros to every class.
+option(PSE_SHARED_APPCORE "Build appcore as a shared lib (for clean coverage measurement)" OFF)
+if(PSE_SHARED_APPCORE)
+    set(PSE_APPCORE_TYPE SHARED)
+else()
+    set(PSE_APPCORE_TYPE STATIC)
+endif()
 
-qt_add_library(appcore STATIC
+qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/bridge/bridge.cpp
     src/bridge/bridge.h
     src/bridge/router.cpp
@@ -68,6 +81,12 @@ target_include_directories(appcore
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+# When shared, auto-export all symbols so test exes link without per-class export
+# macros (no-op for the default static build).
+if(PSE_SHARED_APPCORE)
+    set_target_properties(appcore PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
 
 target_link_libraries(appcore
     PUBLIC
