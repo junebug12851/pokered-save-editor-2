@@ -42,6 +42,23 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
   `testing.md`). Remaining open questions there: coverage-gate strictness, CI host, characterizing
   `BaseSAV.sav`.
 
+## Pending decisions — tracked temporary exceptions (resolve, don't let linger)
+
+These are deliberate "dirty patches" the test pass put in to keep things working until
+Twilight makes a real call. Each is a single-truth question with (likely) one correct answer.
+
+1. **type2 single truth (single-type Pokémon).** Real saves store a single type inconsistently —
+   sometimes `0xFF`, sometimes a duplicate of type1 — so the **load/expanded side officially tolerates
+   both** (byte fidelity: read it back exactly as loaded, change only when asked; `isCorrected()` was
+   patched 2026-06-08 to accept either form). **Undecided:** the single canonical form the editor should
+   **write** when it itself generates/corrects a single type (`0xFF` vs duplicate-of-type1). Today a
+   generated single type collapses to `type2=0xFF` internally and `save()` writes the duplicate (`type1`)
+   when `type2Explicit` is false. Pick the real truth, then tighten `isCorrected()`/`save()` to it.
+   Refs: `pokemonbox.cpp` `isCorrected()`/`update()`/`save()`, `reference/fix-patterns.md`.
+2. **`isMinEvs()` uses `||`** (returns true if ANY one stat-exp is 0; reads like it should be `&&` /
+   all-zero, symmetric with `isMaxEVs()`'s `&&`). Flagged 2026-06-08, awaiting Twilight's confirm before
+   changing — `isPokemonReset()` is unaffected either way (a true reset has all EVs zero).
+
 ## Optional cleanup
 
 5. Delete the now-unused menu files (`name/NameDisplayMenu.qml`, `NameDisplayMenuNoTileset.qml`,

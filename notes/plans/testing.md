@@ -454,8 +454,8 @@ Each phase is independently valuable; the suite is useful from phase 1.
    correctMoves/update(correctMoves), changeMove(ind,…), the manual* UI hooks, reRollEVs/maxPpUps, dexNum/
    speciesName, isPokemonReset/isCorrected, isBoxMon, and a dedicated invalid-mon (species 0) safe-default
    sweep (dexNum=-1, hpStat=1 floor, levelToExp=0, expLevelRange* fall back to raw exp, resetExp no-op).
-   **pokemonbox.cpp 72% → 93.6% (1063/1136, 73 missed)**; savefile real-source overall → **82.3%
-   (4871/5918)**, 18 cases green (49/49 full suite). Three latent bugs were brought to Twilight and,
+   **pokemonbox.cpp 72% → 94.4% (1071/1134, 63 missed)**; savefile real-source overall → **82.5%
+   (4879/5916)**, 19 cases green (49/49 full suite). Three latent bugs were brought to Twilight and,
    with her approval, **FIXED in pokemonbox.cpp this pass** (the tests now assert the corrected behaviour
    and stand as regression guards): (1) `update()` with `resetType=false` ran its bare `else type2 =
    toType1->ind` on every call, overwriting a **dual-type** mon's type2 with type1 (silently dropping the
@@ -465,18 +465,26 @@ Each phase is independently valuable; the suite is useful from phase 1.
    `toType2`==`toType1` (update collapses to type2=0xFF; isCorrected demanded type2==toType2->ind). Fixed:
    isCorrected now treats a record as dual-type only when toType2 genuinely differs from toType1, and
    accepts either 0xFF or type1 for a single type (faithful to the DB's mixed 0xFF-vs-duplicate storage).
-   (3) `isPokemonReset()` could only ever be true for a species with 4 initial moves (empty slots resolve
-   `toMove()==null`) AND wrongly required `isMaxPpUps()` when a reset mon has 0 PP-Ups. Fixed: it now
-   iterates only the species' real initial moves (requiring empty slots after), checks `ppUp==0`, and
-   verifies "healed" via `isMaxHp() && !isAfflicted()` per-move rather than the global `isMaxPP()`/
-   `isHealed()` (which treat empty slots as not-max-PP) — so `isMaxPP`/`isHealed`/`heal` are left untouched.
-   **Also flagged for Twilight (NOT fixed):** `isMinEvs()` uses `||`, so it returns true if ANY single EV
-   is 0 (reads like it should be `&&` / all-zero) — left as-is pending her call._
+   (3) `isPokemonReset()` could only ever be true for a species with 4 initial moves AND wrongly required
+   `isMaxPpUps()` when a reset mon has 0 PP-Ups. **Root cause traced (Twilight asked it not be squashed
+   aside): the empty-slot bug lived in `PokemonBox::isMaxPP()`/`isMaxPpUps()`** — they looped all four
+   slots and counted an EMPTY slot (moveID 0) as "not maxed", which propagates into **`isHealed()`** so any
+   mon with fewer than four moves could never read as healed (a user-facing wrong result on the heal
+   indicator, not just isPokemonReset). Fixed at the source: `isMaxPP()`/`isMaxPpUps()` now skip empty
+   slots (mirroring `isMaxedOut()`'s existing guard), so `isHealed()` is correct for any move count;
+   `isPokemonReset()` then simplifies to iterate the real initial moves (empty after), check `ppUp==0`, and
+   reuse `isHealed()`. Regression-guarded by `box_healedWithFewerThanFourMoves` (a <4-move mon at full
+   HP/PP now reads isMaxPP + isHealed). **Also flagged for Twilight (NOT fixed, tracked in
+   next-steps.md):** `isMinEvs()` uses `||`, so it returns true if ANY single EV is 0 (reads like it
+   should be `&&` / all-zero); and the type2 single-WRITE truth (0xFF vs duplicate) is an open decision —
+   the load-side tolerance is official, the save-side canonical form is a tracked temporary exception._
 
-   **Cumulative savefile progress this pass: 72.9% → 82.3% across signdata(100%), warpdata(98.5%),
+   **Cumulative savefile progress this pass: 72.9% → 82.5% across signdata(100%), warpdata(98.5%),
    mapconndata(100%), savefileiterator(100%), item(96.7%), playerbasics(98.9%), filemanagement(77%,
-   headless ceiling), storage(98%), pokemonbox(93.6%) — plus the recent-files cap off-by-one and three
-   pokemonbox type/reset bugs fixed (Twilight-approved), and the isMinEvs `||` flagged.** Next gap
+   headless ceiling), storage(98%), pokemonbox(94.4%) — plus the recent-files cap off-by-one and four
+   pokemonbox type/reset/heal bugs fixed (Twilight-approved: type2-clobber, isCorrected dual-type,
+   isMaxPP/isMaxPpUps/isHealed empty-slot, isPokemonReset), with the isMinEvs `||` and type2 single-write
+   truth tracked for decision.** Next gap
    targets (worst remaining by missed lines): `spritedata.cpp` 46% (234 — note
    the disabled-randomizer sprite-link crash, test the safe paths), `areamap.cpp` 62% (83 — partly the
    disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75), `areatileset.cpp` 62% (51),

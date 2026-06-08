@@ -1162,8 +1162,12 @@ bool PokemonBox::isMaxPP()
 {
   bool ret = true;
 
+  // Empty slots (moveID 0) hold no move and have no PP, so they must NOT count as
+  // "not max PP" -- otherwise any mon with fewer than 4 moves can never read as
+  // max-PP, and therefore never as isHealed() (a user-facing wrong result on the
+  // heal indicator). Mirrors isMaxedOut()'s existing moveID>0 guard. (2026-06-08.)
   for(int i = 0; i < 4; i++)
-    if(!moves[i]->isMaxPP())
+    if(moves[i]->moveID > 0 && !moves[i]->isMaxPP())
       ret = false;
 
   return ret;
@@ -1173,8 +1177,9 @@ bool PokemonBox::isMaxPpUps()
 {
   bool ret = true;
 
+  // Same empty-slot guard as isMaxPP(): an empty slot has no PP-Ups to max.
   for(int i = 0; i < 4; i++)
-    if(!moves[i]->isMaxPpUps())
+    if(moves[i]->moveID > 0 && !moves[i]->isMaxPpUps())
       ret = false;
 
   return ret;
@@ -1376,8 +1381,6 @@ bool PokemonBox::isPokemonReset()
 
     if(move->moveID != record->toInitial.at(i)->ind)
       movesReset = false;
-    if(!move->isMaxPP())      // PP at the (0-PP-Up) base cap
-      movesReset = false;
     if(move->ppUp != 0)       // resetPokemon leaves PP-Ups at 0
       movesReset = false;
 
@@ -1385,11 +1388,10 @@ bool PokemonBox::isPokemonReset()
       break;
   }
 
-  // "Healed" here means full HP and no status. We check PP per actual move above
-  // rather than calling isHealed()/isMaxPP(), which treat empty slots as not-max-PP
-  // and would make any <4-move mon never read as reset (without disturbing those
-  // functions, which the heal/UI paths rely on).
-  return level == 5 && movesReset && isMinEvs() && isMaxHp() && !isAfflicted();
+  // isHealed() (full HP + no status + max PP) is now correct for any move count
+  // because isMaxPP() skips empty slots; PP/HP/status are covered there, so here
+  // we only need the level, the initial-move match, and zeroed EVs.
+  return level == 5 && movesReset && isMinEvs() && isHealed();
 }
 
 bool PokemonBox::isMaxedOut()
@@ -1441,6 +1443,16 @@ bool PokemonBox::isCorrected()
   // differs from its first. The DB inconsistently stores single-type mons with
   // toType2 either null OR a duplicate of toType1; update() collapses a single
   // type to 0xFF, so for the single-type case accept either 0xFF or type1 here.
+  //
+  // TRACKED TEMPORARY EXCEPTION (see notes/plans/next-steps.md "type2 single
+  // truth"): accepting BOTH 0xFF and the duplicate form is the OFFICIAL, intended
+  // behaviour on the load/expanded side -- real saves disagree on how a single
+  // type is stored, and the editor must read back exactly what it loaded (byte
+  // fidelity: the type it reads is the type it writes, changed only when asked).
+  // What is NOT decided is the single canonical form the editor should WRITE when
+  // IT generates/corrects a single type (0xFF vs duplicate). Until Twilight makes
+  // that call this tolerant check is a deliberate dirty patch -- do not leave it
+  // indefinitely.
   bool dualType = record->toType2 != nullptr &&
                   record->toType1 != nullptr &&
                   record->toType2->ind != record->toType1->ind;

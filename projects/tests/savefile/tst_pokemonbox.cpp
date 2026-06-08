@@ -84,6 +84,7 @@ private slots:
   void box_reRollEvsAndMaxPpUps();
   void box_dexNumAndSpeciesName();
   void box_resetMakesItPokemonResetAndCorrected();
+  void box_healedWithFewerThanFourMoves();
   void box_isBoxMon();
 
   // The big constrained randomizer + the static newPokemon scopes
@@ -424,6 +425,25 @@ void TestPokemonBox::box_resetMakesItPokemonResetAndCorrected()
   QVERIFY(p->isMinEvs());
   QVERIFY(p->isCorrected());
   QVERIFY2(p->isPokemonReset(), "resetPokemon() output should read as a reset baseline (#3 fix)");
+
+  delete p;
+}
+
+void TestPokemonBox::box_healedWithFewerThanFourMoves()
+{
+  // Regression guard: a real species with fewer than four moves (Bulbasaur), at
+  // full HP/PP with no status, must read as max-PP and healed. Before the fix,
+  // empty move slots counted as "not max PP", so such a mon was never isHealed()
+  // -- a user-facing wrong result on the heal indicator.
+  PokemonBox* p = makeMon(QStringLiteral("Bulbasaur"));
+  QVERIFY(p != nullptr);
+  QVERIFY(p->movesCount() < 4);     // Bulbasaur starts with fewer than 4 moves
+
+  p->heal();                         // full HP + clear status + refill PP
+  QVERIFY2(p->isMaxPP(), "empty move slots must not count against isMaxPP()");
+  QVERIFY(p->isMaxHp());
+  QVERIFY(!p->isAfflicted());
+  QVERIFY2(p->isHealed(), "a <4-move mon at full HP/PP must read as healed");
 
   delete p;
 }
