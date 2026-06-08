@@ -486,9 +486,25 @@ Each phase is independently valuable; the suite is useful from phase 1.
    headless ceiling), storage(98%), pokemonbox(94.4%) — plus the recent-files cap off-by-one and five
    pokemonbox bugs fixed (Twilight-approved: type2-clobber, isCorrected dual-type,
    isMaxPP/isMaxPpUps/isHealed empty-slot, isPokemonReset, isMinEvs ||→&&), with only the type2
-   single-write truth tracked for a later decision.** Next gap
-   targets (worst remaining by missed lines): `spritedata.cpp` 46% (234 — note
-   the disabled-randomizer sprite-link crash, test the safe paths), `areamap.cpp` 62% (83 — partly the
+   single-write truth tracked for a later decision._
+
+   _Tenth file: **`tst_sprite_data.cpp`** — SpriteData (one on-map sprite/NPC). **Crash investigation
+   first (Twilight asked me to identify, not route around, problems):** a probe with
+   `MapsDB::inst()->deepLink()` called showed **all 918 map sprites across 249 maps resolve
+   `getToSprite()` (0 nulls)**, and `setToAll` (918) + `randomizeAll` (1167) run **clean over every map**.
+   **Verdict: there is no SpriteData defect** — the documented "sprite-link crash" is entirely the
+   already-tracked deepLink-not-called landmine (live `DB::deepLinkAll()` omits `MapsDB::deepLink()`;
+   scoped to enabling the disabled Maps feature). So no "safe paths only" was needed: the whole file is
+   covered by calling `deepLink()` in `initTestCase` (the `tst_map_fragments` precedent). 13 cases:
+   reset/blank-NPC defaults, the std::optional QML accessors (set/get/reset → −1), step vectors, the four
+   enum `random()` helpers, `toSprite()` valid/invalid, a full split-table save→load round-trip (data1/2 +
+   NPC), missable save→check, and the DB-population paths (load(MapDBEntrySprite\*) all face/move/type
+   branches incl. the "0"-item guard, setTo/setToAll, randomize/randomizeAll incl. boulder-skip) driven
+   over EVERY map. **spritedata.cpp 46% → 100.0% (434/434, 0 missed)**; savefile real-source overall →
+   **86.5% (5115/5916)**, 13 cases green (50/50 full suite)._
+
+   **Cumulative this pass: 72.9% → 86.5%.** Next gap
+   targets (worst remaining by missed lines): `areamap.cpp` 62% (83 — partly the
    disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75), `areatileset.cpp` 62% (51),
    `pokemonbox.cpp` (68 — residual glitch/boundary branches: the move-randomize do-while reject, correctMove's
    single-row replacement, isMaxedOut's invalid-mon branch, setNature's boundary ±25 paths).
