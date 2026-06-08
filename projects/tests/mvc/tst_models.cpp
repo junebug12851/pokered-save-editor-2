@@ -26,8 +26,14 @@
 #include <QModelIndex>
 
 #include <pse-db/db.h>
+#include <pse-db/pokemon.h>
 #include <mvc/typesmodel.h>
 #include <mvc/natureselectmodel.h>
+#include <mvc/speciesselectmodel.h>
+#include <mvc/moveselectmodel.h>
+#include <mvc/statusselectmodel.h>
+#include <mvc/pokemonstartersmodel.h>
+#include <mvc/creditsmodel.h>
 
 class TestModels : public QObject
 {
@@ -37,6 +43,11 @@ private slots:
   void initTestCase();
   void typesModel_hasRowsRolesAndData();
   void natureModel_has25NaturesAndRoundTrips();
+  void speciesModel_listsAllSpeciesAndMaps();
+  void moveModel_hasMovesAndMaps();
+  void statusModel_hasRowsAndData();
+  void startersModel_hasThreeStartersAndResolves();
+  void creditsModel_loads();
 };
 
 void TestModels::initTestCase()
@@ -69,6 +80,61 @@ void TestModels::natureModel_has25NaturesAndRoundTrips()
   // natureToListIndex maps a nature value back to a valid row.
   const int row = m.natureToListIndex(0);
   QVERIFY(row >= 0 && row < 25);
+}
+
+void TestModels::speciesModel_listsAllSpeciesAndMaps()
+{
+  SpeciesSelectModel m;
+  QVERIFY2(m.rowCount(QModelIndex()) > 100, "species picker too small");
+  QVERIFY(!m.data(m.index(0, 0), SpeciesSelectModel::NameRole).toString().isEmpty());
+
+  const int bulba = PokemonDB::inst()->getIndAt(QStringLiteral("Bulbasaur"))->ind;
+  QVERIFY(m.speciesToListIndex(bulba) >= 0);
+}
+
+void TestModels::moveModel_hasMovesAndMaps()
+{
+  MoveSelectModel m;
+  const int rows = m.rowCount(QModelIndex());
+  QVERIFY2(rows > 0, "move picker is empty");
+  // Row 0 may be a blank "None" entry; just require some row to have a real name.
+  bool anyName = false;
+  for(int i = 0; i < rows && !anyName; i++)
+    if(!m.data(m.index(i, 0), MoveSelectModel::NameRole).toString().isEmpty())
+      anyName = true;
+  QVERIFY2(anyName, "no move row had a non-empty name");
+  QVERIFY(m.moveToListIndex(1) >= 0);
+}
+
+void TestModels::statusModel_hasRowsAndData()
+{
+  StatusSelectModel m;
+  QVERIFY2(m.rowCount(QModelIndex()) > 0, "status picker is empty");
+  QVERIFY(!m.data(m.index(0, 0), StatusSelectModel::NameRole).toString().isEmpty());
+  QVERIFY(m.statusToListIndex(0) >= 0);
+}
+
+void TestModels::startersModel_hasThreeStartersAndResolves()
+{
+  PokemonStartersModel m;
+  // 4 rows: a leading "None" entry + the 3 canonical starters.
+  QCOMPARE(m.rowCount(QModelIndex()), 4);
+  QCOMPARE(m.data(m.index(0, 0), PokemonStartersModel::NameRole).toString(), QStringLiteral("None"));
+  for(int row = 1; row < 4; row++) // rows 1..3 are the real starters
+    QVERIFY(!m.data(m.index(row, 0), PokemonStartersModel::NameRole).toString().isEmpty());
+  // getMon indexes the 3-element starters[] (row-1); 0..2 are valid.
+  for(int i = 0; i < 3; i++)
+    QVERIFY2(m.getMon(i) != nullptr, qPrintable(QStringLiteral("starter %1 did not resolve").arg(i)));
+  QCOMPARE(m.valToIndex(0), 0); // value 0 maps to the "None" row
+}
+
+void TestModels::creditsModel_loads()
+{
+  CreditsModel m;
+  const int rows = m.rowCount(QModelIndex());
+  QVERIFY2(rows >= 0, "credits model returned a negative row count");
+  if(rows > 0)
+    QVERIFY(m.data(m.index(0, 0), CreditsModel::NameRole).isValid());
 }
 
 QTEST_GUILESS_MAIN(TestModels)
