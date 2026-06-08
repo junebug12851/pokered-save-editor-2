@@ -345,18 +345,24 @@ void TestPokemonBox::box_changeMoveByIndexAndManualHooks()
   QCOMPARE(p->moves[2]->moveID, validId);
   QCOMPARE(p->moves[2]->ppUp, 1);
 
-  // manualLevelChanged() re-runs update(resetHp, resetExp): HP and EXP are
-  // recomputed for the new level. (It does NOT pass resetType -- see the note in
-  // the test summary about update()'s type2 handling.)
+  // Bulbasaur is dual-type (Grass/Poison); capture its real second type.
+  const int dualType2 = p->type2;
+  QVERIFY(dualType2 != 0xFF);
+  QVERIFY(dualType2 != p->type1);
+
+  // manualLevelChanged() re-runs update(resetHp, resetExp) WITHOUT resetType.
+  // Regression guard for the type2-clobber fix: the second type must SURVIVE
+  // (it used to be overwritten with type1), HP/EXP are recomputed for the new
+  // level, and the mon still reads as internally corrected.
   p->level = 25;
   p->levelChanged();
   p->manualLevelChanged();
+  QCOMPARE(p->type2, dualType2);                        // second type preserved (#1 fix)
   QCOMPARE(p->hp, p->hpStat());
   QCOMPARE(p->exp, p->levelToExp());
+  QVERIFY(p->isCorrected());
 
-  // Swap species and re-derive everything via the species hook, which runs
-  // update(resetHp, resetExp, resetType, resetCatchRate). Assert its concrete
-  // effects: dex/type/catch-rate/hp/exp all follow the new species' DB record.
+  // Swap species and re-derive everything via the species hook (resetType too).
   PokemonDBEntry* charmander = PokemonDB::inst()->getIndAt(QStringLiteral("Charmander"));
   QVERIFY(charmander != nullptr);
   p->species = charmander->ind;
@@ -367,6 +373,7 @@ void TestPokemonBox::box_changeMoveByIndexAndManualHooks()
   QCOMPARE(p->catchRate, (int)*charmander->catchRate);  // catch rate reset
   QCOMPARE(p->hp, p->hpStat());                         // HP recomputed
   QCOMPARE(p->exp, p->levelToExp());                    // EXP pinned to the level
+  QVERIFY(p->isCorrected());                            // single-type mon reads corrected (#2 fix)
 
   delete p;
 }
@@ -409,16 +416,14 @@ void TestPokemonBox::box_resetMakesItPokemonResetAndCorrected()
   p->maxEVs();
   p->resetPokemon();
 
-  // resetPokemon() restores level 5, initial moves, zeroed EVs, full heal, and
-  // re-derives all stats/types (update with resetType) -> internally consistent.
+  // resetPokemon() restores level 5, initial moves (base PP, 0 PP-Ups), zeroed
+  // EVs, full heal, and re-derives all stats/types -> internally consistent and,
+  // after the isPokemonReset() fix, correctly recognised as a reset baseline even
+  // for a species with fewer than four initial moves.
   QCOMPARE(p->level, 5);
   QVERIFY(p->isMinEvs());
   QVERIFY(p->isCorrected());
-
-  // isPokemonReset() is exercised here; note it only returns true for a species
-  // whose initial move set fills all four slots (empty slots resolve toMove()==null
-  // and fail its check), so for Bulbasaur (fewer initial moves) it reads false.
-  QVERIFY(!p->isPokemonReset());
+  QVERIFY2(p->isPokemonReset(), "resetPokemon() output should read as a reset baseline (#3 fix)");
 
   delete p;
 }

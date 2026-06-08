@@ -173,3 +173,11 @@ When you get "incomplete type" or "member access into incomplete type":
 | Error | Fix |
 |-------|-----|
 
+## Logic / Behavioral Bugs (found by tests)
+
+| Symptom | Fix |
+|---------|-----|
+| Dual-type Pokemon silently loses its 2nd type on level/EV edits | `PokemonBox::update()` had a bare `else type2 = (*record).toType1->ind;` after `if(resetType && record->toType2)`, so **any** `update()` with `resetType=false` (maxLevel/maxEVs/resetEVs/reRollEVs/manualLevelChanged) overwrote type2 with type1. Wrap the whole type2 (re)derivation in `if(resetType){ … }` so a non-reset update leaves type2 alone. (2026-06-08, `tst_pokemonbox`.) |
+| `PokemonBox::isCorrected()` always false for some single-type species | The DB stores some single types with `toType2 == toType1` (not null); `update()` collapses that to `type2=0xFF`, but isCorrected demanded `type2 == toType2->ind`. Treat a record as dual-type only when `toType2->ind != toType1->ind`; for single types accept `0xFF` **or** `type1`. (2026-06-08.) |
+| `PokemonBox::isPokemonReset()` never true for a real reset mon | It looped all 4 move slots vs `toInitial.at(i)` (empty slots → `toMove()==null` → "not reset"; also OOB for <4-move species) and required `isMaxPpUps()` though a reset mon has 0 PP-Ups. Iterate only `min(4, toInitial.size())` real moves (empty after), check `ppUp==0`, and judge "healed" via `isMaxHp() && !isAfflicted()` per-move instead of the global `isMaxPP()`/`isHealed()` (which treat empty slots as not-max-PP). Leaves `isMaxPP`/`isHealed`/`heal` untouched. (2026-06-08.) |
+

@@ -950,14 +950,21 @@ void PokemonBox::update(bool resetHp,
     type1Changed();
   }
 
-  if(resetType && record->toType2) {
-    type2 = (*record).toType2->ind;
-    type2Changed();
-  }
-  else type2 = (*record).toType1->ind;
+  // Only (re)derive type2 when explicitly asked. The previous code's bare `else`
+  // ran on EVERY update() called with resetType=false and overwrote type2 with
+  // type1 -- silently dropping a dual-type mon's second type (reachable via
+  // maxLevel()/maxEVs()/resetEVs()/reRollEVs()/manualLevelChanged()). Now type2
+  // is left untouched unless resetType is set.
+  if(resetType) {
+    if(record->toType2)
+      type2 = (*record).toType2->ind;
+    else
+      type2 = (*record).toType1->ind;
 
-  if(resetType && type1 == type2) {
-    type2 = 0xFF;
+    // A single type (no distinct second type) is stored internally as 0xFF.
+    if(type1 == type2)
+      type2 = 0xFF;
+
     type2Changed();
   }
 
@@ -1340,8 +1347,27 @@ bool PokemonBox::isPokemonReset()
 
   bool movesReset = true;
 
-  for(var8 i = 0; i < 4; i++) {
+  // A reset mon (see resetPokemon()) carries exactly the species' initial moves,
+  // each at base PP with 0 PP-Ups, and empty slots beyond them. The old loop
+  // checked all four slots against toInitial.at(i) (out-of-range for species with
+  // <4 initial moves -- saved only by the toMove()==null early-out, which also
+  // forced "not reset"), and required isMaxPpUps() (3) when a reset mon actually
+  // has 0 PP-Ups. Iterate only the real initial moves; require empty slots after.
+  int initialCount = record->toInitial.size();
+  if(initialCount > 4)
+    initialCount = 4;
+
+  for(int i = 0; i < 4; i++) {
     auto move = moves[i];
+
+    // Slots past the species' initial-move list must be empty.
+    if(i >= initialCount) {
+      if(move->moveID != 0)
+        movesReset = false;
+      if(!movesReset)
+        break;
+      continue;
+    }
 
     if(move->toMove() == nullptr)
       movesReset = false;
@@ -1350,16 +1376,20 @@ bool PokemonBox::isPokemonReset()
 
     if(move->moveID != record->toInitial.at(i)->ind)
       movesReset = false;
-    if(!move->isMaxPP())
+    if(!move->isMaxPP())      // PP at the (0-PP-Up) base cap
       movesReset = false;
-    if(!move->isMaxPpUps())
+    if(move->ppUp != 0)       // resetPokemon leaves PP-Ups at 0
       movesReset = false;
 
     if(!movesReset)
       break;
   }
 
-  return level == 5 && movesReset && isMinEvs() && isHealed();
+  // "Healed" here means full HP and no status. We check PP per actual move above
+  // rather than calling isHealed()/isMaxPP(), which treat empty slots as not-max-PP
+  // and would make any <4-move mon never read as reset (without disturbing those
+  // functions, which the heal/UI paths rely on).
+  return level == 5 && movesReset && isMinEvs() && isMaxHp() && !isAfflicted();
 }
 
 bool PokemonBox::isMaxedOut()
@@ -1407,7 +1437,15 @@ bool PokemonBox::isCorrected()
       return false;
   }
 
-  if(record->toType2 != nullptr) {
+  // A mon is genuinely dual-type only when the record's second type really
+  // differs from its first. The DB inconsistently stores single-type mons with
+  // toType2 either null OR a duplicate of toType1; update() collapses a single
+  // type to 0xFF, so for the single-type case accept either 0xFF or type1 here.
+  bool dualType = record->toType2 != nullptr &&
+                  record->toType1 != nullptr &&
+                  record->toType2->ind != record->toType1->ind;
+
+  if(dualType) {
     if(record->toType2->ind != type2)
       return false;
   }
