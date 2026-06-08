@@ -67,6 +67,7 @@ if(TARGET appcore)
     pse_add_test(tst_storage_model appcore mvc/tst_storage_model.cpp)
     pse_add_test(tst_market_model appcore mvc/tst_market_model.cpp)
     pse_add_test(tst_item_storage_model appcore mvc/tst_item_storage_model.cpp)
+    pse_add_test(tst_move_select_model appcore mvc/tst_move_select_model.cpp)
 endif()
 
 # --- QML smoke test (Qt Quick Test, headless via offscreen) ---
