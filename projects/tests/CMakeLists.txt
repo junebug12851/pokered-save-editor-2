@@ -56,6 +56,7 @@ pse_add_test(tst_db_entry_getters db   db/tst_db_entry_getters.cpp)
 pse_add_test(tst_fonts        db       db/tst_fonts.cpp)
 pse_add_test(tst_mapsearch    db       db/tst_mapsearch.cpp)
 pse_add_test(tst_db_map_subentries db  db/tst_db_map_subentries.cpp)
+pse_add_test(tst_db_random_strings db  db/tst_db_random_strings.cpp)
 
 # App-layer tests link the appcore static library (extracted from the app exe).
 if(TARGET appcore)

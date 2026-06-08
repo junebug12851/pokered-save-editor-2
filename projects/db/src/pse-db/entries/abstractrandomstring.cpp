@@ -69,8 +69,10 @@ int AbstractRandomString::getStoreSize() const
 
 const QString AbstractRandomString::getStoreAt(const int ind) const
 {
-  if(ind >= store.size())
-    return nullptr;
+  // Guard both ends -- a negative ind (e.g. QML's -1 "no selection") must not
+  // reach store.at(). Matches the canonical guard used by the DB store accessors.
+  if(ind < 0 || ind >= store.size())
+    return QString();
 
   return store.at(ind);
 }

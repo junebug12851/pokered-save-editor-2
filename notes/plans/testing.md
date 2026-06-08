@@ -318,7 +318,9 @@ Each phase is independently valuable; the suite is useful from phase 1.
    `store.at(ind)` for out-of-range indices (crash). Eight more DBs (Events, Fly, Fonts, GameCorner,
    Items, Maps, Missables, EventPokemon) guarded positive overflow but **not negative** indices, so
    `getStoreAt(-1)` (which QML passes for "nothing selected") did `store.at(-1)` → crash. All now use
-   the canonical `if(ind < 0 || ind >= store.size()) return nullptr;` the other ten DBs already had.**
+   the canonical `if(ind < 0 || ind >= store.size()) return nullptr;` the other ten DBs already had.
+   `AbstractRandomString::getStoreAt()` (the base for the random name/example sources) had the same
+   missing negative guard — also fixed (found 2026-06-08 by `tst_db_random_strings`).**
 3. **common to 100%; db integrity + getters + search + fonts.**
    _Done 2026-06-07: `tst_common.cpp` (type widths/sign, Random bounds + degenerate ranges + coin
    variation, Utility URL encode/decode round-trip) and `tst_toolset.cpp` (the byte primitives:
