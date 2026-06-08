@@ -352,23 +352,24 @@ Each phase is independently valuable; the suite is useful from phase 1.
    _Coverage measured 2026-06-07 via a separate instrumented build (`projects/build/coverage`,
    `-fprofile-instr-generate -fcoverage-mapping`; merge with `llvm-profdata`, summarise with
    `llvm-cov export -summary-only`; per-module totals parsed from the JSON). **Re-measured 2026-06-08
-   over the full 20-suite run (`build-cov`), line / function / region:**
+   over the full 27-suite run (`build-cov`), line / function / region:**
 
    | module       | line  | func  | region |
    |--------------|-------|-------|--------|
-   | common       | 65.1% | 59.1% | 71.8%  |
-   | db           | 52.9% | 44.5% | 45.2%  |
-   | savefile     | 68.1% | 66.9% | 59.7%  |
-   | app/appcore  | 39.4% | 41.4% | 36.9%  |
+   | common       | 79.1% | 77.3% | 82.1%  |
+   | db           | 55.6% | 48.0% | 50.1%  |
+   | savefile     | 72.2% | 72.3% | 64.5%  |
+   | app/appcore  | 55.9% | 63.5% | 55.1%  |
 
-   Trend across the effort (line): savefile 63 → 67 → **68**, db 51 → **53**, **app 0 → 3.5 → 20 → 39**
-   (the `tst_bridge` integration suite nearly doubled the app layer; `tst_area`/`tst_pokedex`/
-   `tst_misc_regions` lifted savefile; `tst_db_entries` lifted db). Method: instrument all libs +
-   appcore, run every test exe with a unique `LLVM_PROFILE_FILE`, `llvm-profdata merge`, then
-   `llvm-cov export -instr-profile merged.profdata -summary-only <lib.dll|tst_bridge.exe> <src-dir>`
-   per module (app measured against `tst_bridge.exe`, which statically links all of appcore).
-   Biggest remaining climbs: the app layer (engine/tileset providers, Router edge paths, model
-   mutation ops), db sub-DB store iteration + entry getters, and the remaining savefile getters._
+   Trend across the effort (line): common 65 → **79** (Random chance helpers), savefile 63 → 67 → 68 →
+   **72** (area, area-fragments, pokedex, items-logic, misc-regions), db 51 → 53 → **56** (db-entries +
+   db-stores), **app 0 → 3.5 → 20 → 39 → 56** (bridge, then storage/market models + tileset engine).
+   Method: instrument all libs + appcore, run every test exe with a unique `LLVM_PROFILE_FILE`,
+   `llvm-profdata merge`, then `llvm-cov export -instr-profile merged.profdata -summary-only
+   <lib.dll|tst_bridge.exe> <src-dir>` per module (app measured against `tst_bridge.exe`, which
+   statically links all of appcore). Biggest remaining climbs: db (the many entry types' getters +
+   deep-link code, sub-DB store iteration), savefile leaf getters, and the app `engine/` providers +
+   Router edge paths. db is now the lowest layer and the next focus._
    _**AddressSanitizer: not viable on this Windows/llvm-mingw kit.** The ASan build compiles
    (`projects/build/asan`, `-fsanitize=address`), but every instrumented exe crashes at startup with
    `interception_win: unhandled instruction` (0xC0000005) before any test runs — a known ASan-on-Windows
