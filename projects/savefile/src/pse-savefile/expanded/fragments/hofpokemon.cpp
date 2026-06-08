@@ -37,11 +37,14 @@ HoFPokemon::~HoFPokemon() {}
 void HoFPokemon::load(SaveFile* saveFile, var16 recordOffset, var16 ind)
 {
   reset();
-  auto toolset = saveFile->toolset;
 
-  if(saveFile == nullptr) {
+  // Null check MUST come before dereferencing saveFile. The default-constructed
+  // HoFPokemon (HoFRecord::randomize / pokemonNew use `new HoFPokemon`) passes a
+  // null saveFile; the old order read saveFile->toolset first and crashed.
+  if(saveFile == nullptr)
     return;
-  }
+
+  auto toolset = saveFile->toolset;
 
   // Calculate Pokemon Offset in the record
   // Records are 0x10 in size

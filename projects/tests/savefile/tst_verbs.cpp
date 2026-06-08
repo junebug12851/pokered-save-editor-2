@@ -93,13 +93,20 @@ void TestVerbs::eraseExpansion_leavesBytesUntouched()
 
 void TestVerbs::randomizeExpansion_leavesBytesUntouched()
 {
-  // DEFERRED to phase 7 (randomizer). randomizeExpansion() currently crashes on a
-  // progressed save: a null-deref in MapSearch::isType() was found+fixed here
-  // (2026-06-07), but the path still crashes further along in SpriteData::load()
-  // via AreaSprites::randomize(). The randomizer is a work-in-progress feature; its
-  // crash cascade AND this "must not touch a save byte" fidelity assertion are owned
-  // by phase 7, where the randomizer gets dedicated attention. Tracked in status.md.
-  QSKIP("randomizeExpansion() crashes on a progressed save (WIP randomizer) - tracked for phase 7");
+  SaveFile sf; loadInto(sf, m_orig);
+  const QByteArray before = snapshot(sf);
+
+  // Map/area randomization is disabled (maps WIP), so the full tree randomizes
+  // without crashing. Fidelity: randomizing the model changes the model only; the
+  // raw save is not written until an explicit flatten/save. Not a single byte moves.
+  sf.randomizeExpansion();
+
+  const QByteArray after = snapshot(sf);
+  const QVector<int> diffs = diffOffsets(before, after);
+  QVERIFY2(diffs.isEmpty(),
+           qPrintable(QStringLiteral("randomizeExpansion() touched %1 save byte(s); first 0x%2")
+                        .arg(diffs.size())
+                        .arg(diffs.isEmpty() ? 0 : diffs.first(), 0, 16)));
 }
 
 QTEST_GUILESS_MAIN(TestVerbs)

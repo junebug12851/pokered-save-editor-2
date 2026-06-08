@@ -93,10 +93,24 @@ void SaveFileExpanded::reset()
 void SaveFileExpanded::randomize()
 {
   player->randomize();
-  area->randomize();
+
+  // Map/area randomization is intentionally disabled until the map randomizer is
+  // finished. Area::randomize() relocates the player to a random "good" map (its
+  // warps, sprites, tileset, ...), which depends on map data that isn't fully wired
+  // yet and currently crashes in the sprite path (SpriteData::load() on an
+  // unresolved getToSprite() link). Skipping it leaves the area as-loaded, so the
+  // player stays on their real current map -- valid and playable. Re-enable this
+  // once maps are set up. (Twilight-authorised, 2026-06-07.)
+  // area->randomize();
+
   world->randomize();
   daycare->randomize(player->basics);
-  hof->randomize();
+
+  // Hall of Fame isn't a set-up screen yet, so don't randomize it -- leave it as
+  // loaded. Re-enable when the HoF screen is implemented. (Twilight-authorised,
+  // 2026-06-07.)
+  // hof->randomize();
+
   rival->randomize();
   storage->randomize(player->basics);
 }

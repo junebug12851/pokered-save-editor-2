@@ -116,30 +116,30 @@ void WorldGeneral::randomize()
 {
   reset();
 
-  // Blackout map needs to be one of the cities
-  lastBlackoutMap = MapsDB::inst()->search()->isGood()->isCity()->pickRandom()->getInd();
-  lastBlackoutMapChanged();
+  // Map-dependent randomization disabled until the map randomizer is set up. These
+  // pick random maps via MapsDB search, but the type/city searches can come back
+  // empty (e.g. isType("Outdoor") matches 0 maps), so pickRandom() returns null and
+  // getInd() crashes. Left at the reset() default (0) so the rest of the world
+  // randomizes cleanly. Re-enable alongside the map randomizer. (Twilight-authorised,
+  // 2026-06-07.)
+  // lastBlackoutMap = MapsDB::inst()->search()->isGood()->isCity()->pickRandom()->getInd();
+  // lastBlackoutMapChanged();
+  // lastMap = MapsDB::inst()->search()->isGood()->isType("Outdoor")->pickRandom()->getInd();
+  // lastMapChanged();
 
-  // Last Map needs to be some outdoor map
-  lastMap = MapsDB::inst()->search()->isGood()->isType("Outdoor")->pickRandom()->getInd();
-  lastMapChanged();
-
-  // Odds are your text is going to be pretty slow lol
-  options->textSlowness = Random::inst()->rangeInclusive(0, 15);
-  options->textSlownessChanged();
-
-  // 20% chance to have battle style set and animations off
-  options->battleStyleSet = Random::inst()->chanceSuccess(20);
-  options->battleStyleSetChanged();
-
-  options->battleAnimOff = Random::inst()->chanceSuccess(20);
-  options->battleAnimOffChanged();
-
-  // 90% chance to have normal letter delay
-  letterDelay->normalDelay = Random::inst()->chanceSuccess(90);
-  letterDelay->normalDelayChanged();
-
-  // 10% chance to not delay letters
-  letterDelay->dontDelay = Random::inst()->chanceSuccess(10);
-  letterDelay->dontDelayChanged();
+  // Options (text speed / battle style / battle animations / letter delay) and the
+  // last/blackout maps above are part of the Options and Maps screens, which aren't
+  // set up yet, so we don't randomize them until those screens exist. After reset()
+  // they're left at defaults. Re-enable with the Options/Maps screens.
+  // (Twilight-authorised, 2026-06-07.)
+  // options->textSlowness = Random::inst()->rangeInclusive(0, 15);
+  // options->textSlownessChanged();
+  // options->battleStyleSet = Random::inst()->chanceSuccess(20);
+  // options->battleStyleSetChanged();
+  // options->battleAnimOff = Random::inst()->chanceSuccess(20);
+  // options->battleAnimOffChanged();
+  // letterDelay->normalDelay = Random::inst()->chanceSuccess(90);
+  // letterDelay->normalDelayChanged();
+  // letterDelay->dontDelay = Random::inst()->chanceSuccess(10);
+  // letterDelay->dontDelayChanged();
 }

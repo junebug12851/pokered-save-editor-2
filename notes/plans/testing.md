@@ -317,7 +317,19 @@ Each phase is independently valuable; the suite is useful from phase 1.
    untouched**); an oversized (>32KB) file loads its first 32 KB; `SaveFile::setData(nullptr)` is a safe
    no-op (the s14 crash fix). 7 cases green. (QSettings isolated under a test org/app name.)_
 5. **Integration + E2E** (db↔savefile, FileManagement cycle, open→edit→save→reopen).
+   _Done 2026-06-07 (`tst_e2e.cpp`): open fixture → edit money/coins/ID/name/badges/playtime → `saveFile()`
+   to a new temp file → reopen in a fresh FileManagement → all edits persisted; the written file is
+   exactly 32 KB with a valid main checksum. A second case round-trips a party mon (species/level/DV/
+   move/nickname) through actual disk I/O. 4 cases green._
 6. **Randomizer invariants + fuzz**; compatibility fixture matrix (Red/Blue, game states).
+   _Partly done 2026-06-07 (`tst_randomizer.cpp`): the working randomizer COMPONENTS are invariant-tested
+   — trainer basics (money 100-6000, coins 0-100, 4 HM badges on / other 4 off, valid 1-of-3 starter,
+   non-empty name; 50 iterations), pokedex (counts stay 0..151), and `newPokemon(Random_Starters3)`
+   (valid starter species, sane level). **Full `randomizeExpansion()` now runs end-to-end and is tested**
+   (`tst_randomizer` 10-iteration invariants + `tst_verbs` byte-fidelity, both green) after the
+   map/area randomizers were disabled (Twilight-authorised; maps WIP) and the `HoFPokemon::load()`
+   null-deref was fixed. Re-enabling map randomize is future map-feature work (see status.md). Random-edit
+   fuzz + Red/Blue compatibility fixtures still to do._
 7. **Sanitizer build + coverage reporting**, then coverage-gap fill to targets.
 8. **CI** (ctest + sanitizer + coverage on push).
 9. **app C++** (Bridge, models, FileManagement) headless.
