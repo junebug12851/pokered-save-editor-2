@@ -30,6 +30,10 @@
 #include <pse-savefile/expanded/savefileexpanded.h>
 #include <pse-savefile/expanded/world/world.h>
 #include <pse-savefile/expanded/world/worldother.h>
+#include <pse-savefile/expanded/world/worldevents.h>
+#include <pse-savefile/expanded/world/worldtowns.h>
+#include <pse-savefile/expanded/world/worldtrades.h>
+#include <pse-savefile/expanded/world/worldcompleted.h>
 
 using namespace pse_test;
 
@@ -46,6 +50,10 @@ private slots:
   void playtime_roundTrip_data();
   void playtime_roundTrip();
   void worldOther_roundTrip();
+  void events_roundTrip();
+  void towns_roundTrip();
+  void trades_roundTrip();
+  void completed_roundTrip();
 };
 
 void TestWorld::initTestCase()
@@ -103,6 +111,73 @@ void TestWorld::worldOther_roundTrip()
   QCOMPARE(wo2->debugMode, true);
   QCOMPARE(wo2->fossilItemGiven, 0x29);
   QCOMPARE(wo2->fossilPkmnResult, 100);
+}
+
+void TestWorld::events_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* e = sf.dataExpanded->world->events;
+  const int n = e->eventsCount();
+  for(int i = 0; i < n; i++) e->eventsSet(i, (i % 3) == 0);
+
+  sf.flattenData(); sf.expandData();
+
+  auto* e2 = sf.dataExpanded->world->events;
+  QCOMPARE(e2->eventsCount(), n);
+  for(int i = 0; i < n; i++)
+    QVERIFY2(e2->eventsAt(i) == ((i % 3) == 0),
+             qPrintable(QStringLiteral("event %1 did not round-trip").arg(i)));
+}
+
+void TestWorld::towns_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* t = sf.dataExpanded->world->towns;
+  const int n = t->townsCount();
+  for(int i = 0; i < n; i++) t->townsSet(i, (i % 2) == 0);
+
+  sf.flattenData(); sf.expandData();
+
+  auto* t2 = sf.dataExpanded->world->towns;
+  for(int i = 0; i < n; i++)
+    QVERIFY2(t2->townsAt(i) == ((i % 2) == 0),
+             qPrintable(QStringLiteral("town %1 did not round-trip").arg(i)));
+}
+
+void TestWorld::trades_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* t = sf.dataExpanded->world->trades;
+  const int n = t->tradesCount();
+  for(int i = 0; i < n; i++) t->tradesSet(i, (i % 2) == 1);
+
+  sf.flattenData(); sf.expandData();
+
+  auto* t2 = sf.dataExpanded->world->trades;
+  for(int i = 0; i < n; i++)
+    QVERIFY2(t2->tradesAt(i) == ((i % 2) == 1),
+             qPrintable(QStringLiteral("trade %1 did not round-trip").arg(i)));
+}
+
+void TestWorld::completed_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* c = sf.dataExpanded->world->completed;
+  c->obtainedOldRod = true;  c->obtainedGoodRod = false; c->obtainedSuperRod = true;
+  c->obtainedLapras = true;  c->obtainedStarterPokemon = false;
+  c->everHealedPokemon = true; c->satisfiedSaffronGuards = false; c->defeatedLorelei = true;
+
+  sf.flattenData(); sf.expandData();
+
+  auto* c2 = sf.dataExpanded->world->completed;
+  QCOMPARE(c2->obtainedOldRod, true);
+  QCOMPARE(c2->obtainedGoodRod, false);
+  QCOMPARE(c2->obtainedSuperRod, true);
+  QCOMPARE(c2->obtainedLapras, true);
+  QCOMPARE(c2->obtainedStarterPokemon, false);
+  QCOMPARE(c2->everHealedPokemon, true);
+  QCOMPARE(c2->satisfiedSaffronGuards, false);
+  QCOMPARE(c2->defeatedLorelei, true);
 }
 
 QTEST_GUILESS_MAIN(TestWorld)
