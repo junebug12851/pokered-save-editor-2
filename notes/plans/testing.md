@@ -361,15 +361,16 @@ Each phase is independently valuable; the suite is useful from phase 1.
    | common       | 79.1% | 77.3% | 82.1%  |
    | db           | 62.0% | 58.2% | 55.3%  |
    | savefile     | 72.9% | 73.6% | 65.2%  |
-   | app/appcore  | ~47%  | ~49%  | ~44%   |
+   | app/appcore  | 43.6% |  --   |  --    |
 
-   _**Caveat on the app/appcore number:** unlike common/db/savefile (each a shared `.dll`, so per-test
-   coverage merges cleanly), `appcore` is a **static** lib embedded into every app-test exe. Merging
-   `.profraw` across many binaries that each statically link identical functions is unreliable
-   (llvm-profdata drops hash-conflicting records), so the app % is a **noisy under-estimate** — the
-   real figure is higher. Each dedicated app suite (`tst_models`, `tst_bridge`, `tst_storage_model`,
-   `tst_market_model`, `tst_item_storage_model`, `tst_tileset_engine`) exercises its target models
-   thoroughly. For a precise app number, build appcore as SHARED in the coverage config (future)._
+   _**How the app/appcore number is measured (and why the earlier 56% was wrong):** unlike
+   common/db/savefile (each a shared `.dll`, so per-test coverage merges cleanly), `appcore` is a
+   **static** lib embedded into every app-test exe. Merging all `.profraw` and exporting against a
+   single exe double-counts/garbles and gave an inflated ~56%. The reliable method is a **per-file
+   max union**: measure each app-test exe against ITS OWN profile, then for each app source file take
+   the best line coverage any test achieved and sum — that yields the honest **43.6%**. So the app
+   layer is the real laggard and the current focus. (For a one-shot accurate number in future, build
+   appcore SHARED in the coverage config.)_
 
    Trend across the effort (line): common 65 → **79** (Random chance helpers), savefile 63 → 67 → 68 →
    **72** (area, area-fragments, pokedex, items-logic, misc-regions), db 51 → 53 → **56** (db-entries +
