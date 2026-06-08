@@ -28,6 +28,26 @@ This gives a clean *linear* history **and** keeps every original commit/message 
 Fine at this stage; if pristine release history is wanted later, tag releases or switch to
 squash-merges then — not now.)
 
+## Pushing — push every commit (added 2026-06-08, Twilight)
+
+**Push on every commit**, same as commits themselves: early and often. All chat tabs/sessions are
+expected to keep the remote current, just like they keep the living notes current — don't leave green
+work sitting only on the local machine.
+
+- **`dev`**: `git push origin dev` after each commit. (This environment appears to push `dev` on commit
+  automatically — `origin/dev` was already current after local commits — but push explicitly anyway;
+  it's a harmless no-op when already in sync.)
+- **`main`** (Twilight sometimes calls it "master" out of habit — the branch was renamed master→main on
+  2026-06-08; the stable branch is **`main`**): after a green checkpoint, fast-forward it to the latest
+  green `dev` and push:
+  ```
+  git checkout main && git merge --ff-only dev && git push origin main && git checkout dev
+  ```
+  `main` = "the latest `dev` that compiles and tests green," so only FF it to a commit you've actually
+  built + run `ctest` on (all green). Never commit on `main` directly; FF-only (see Merging above).
+- Safety unchanged: only ever `git push` / `git push origin main` (FF). **Never** `push --force` /
+  force-with-lease / rewrite pushed history.
+
 ## No history rewriting
 
 Do **not** rebase/squash/reorder/amend already-pushed commits to "tidy up." It's both the #1 corruption
