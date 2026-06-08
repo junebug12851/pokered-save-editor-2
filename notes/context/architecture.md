@@ -14,7 +14,8 @@ common  →  db  →  savefile  →  app
 | `common` | `pse-common/` | Shared types (`var8`, `var16`), `Random` (wraps `QRandomGenerator`), `Utility` |
 | `db` | `pse-db/` | Game data — all 151 Pokemon, maps, items, moves, etc. Loaded from JSON assets |
 | `savefile` | `pse-savefile/` | Save file parsing, expansion into C++ objects, and flattening back |
-| `app` | (executable) | Qt/QML UI. Bridge pattern: C++ singletons exposed to QML via `Bridge` object |
+| `appcore` | `bridge/`, `mvc/`, `engine/` | **Static library** with the app's testable logic: the `Bridge`, the ~25 MVC list models, the image/tileset engine, `Router`, `Settings`. Extracted from the executable (2026-06-07, for unit-testability). |
+| `app` | (executable) | Thin Qt/QML shell — `main`, boot, `MainWindow`, `app.qrc` — linking `appcore`. Bridge pattern: `brg` exposed to QML. |
 
 ## DB Layer — Singleton Pattern
 

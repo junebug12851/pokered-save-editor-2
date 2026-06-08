@@ -22,7 +22,13 @@
 
 #include "ui_mainwindow.h"
 
-class FileManagement;
+// The Q_PROPERTY(FileManagement* file) below makes MOC require the COMPLETE type
+// (not a forward decl), and FileManagement is traversed in QML via brg.file so it
+// must NOT be Q_DECLARE_OPAQUE_POINTER'd. This was previously satisfied only as a
+// side effect of the single-target unity MOC; now that the app logic is a library
+// (appcore), include it explicitly. See notes/reference/qt6-patterns.md.
+#include <pse-savefile/filemanagement.h>
+
 class RecentFilesModel;
 class QAbstractItemModel;
 class Bridge;

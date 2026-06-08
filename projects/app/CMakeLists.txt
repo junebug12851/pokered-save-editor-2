@@ -1,8 +1,9 @@
-qt_add_executable(PokeredSaveEditor
-    src/main.cpp
-    src/boot/boot.cpp
-    src/boot/bootDatabase.cpp
-    src/boot/bootQmlLinkage.cpp
+# The app's testable logic (bridge, MVC models, engine) lives in a STATIC library
+# `appcore` so it can be linked by BOTH the executable and the test suite. The
+# executable itself is just main/boot/mainwindow/QML-resources on top of appcore.
+# (Static avoids needing dllexport macros on every class.)
+
+qt_add_library(appcore STATIC
     src/bridge/bridge.cpp
     src/bridge/bridge.h
     src/bridge/router.cpp
@@ -61,21 +62,15 @@ qt_add_executable(PokeredSaveEditor
     src/mvc/statusselectmodel.h
     src/mvc/typesmodel.cpp
     src/mvc/typesmodel.h
-    ui/window/mainwindow.cpp
-    ui/window/mainwindow.h
-    ui/window/mainwindow.ui
-    app.qrc
 )
 
-
-target_include_directories(PokeredSaveEditor
-    PRIVATE
+target_include_directories(appcore
+    PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/ui
 )
 
-target_link_libraries(PokeredSaveEditor
-    PRIVATE
+target_link_libraries(appcore
+    PUBLIC
         common
         db
         savefile
@@ -88,4 +83,26 @@ target_link_libraries(PokeredSaveEditor
         Qt6::Svg
         Qt6::Qml
         Qt6::Charts
+)
+
+qt_add_executable(PokeredSaveEditor
+    src/main.cpp
+    src/boot/boot.cpp
+    src/boot/bootDatabase.cpp
+    src/boot/bootQmlLinkage.cpp
+    ui/window/mainwindow.cpp
+    ui/window/mainwindow.h
+    ui/window/mainwindow.ui
+    app.qrc
+)
+
+target_include_directories(PokeredSaveEditor
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/ui
+)
+
+target_link_libraries(PokeredSaveEditor
+    PRIVATE
+        appcore
 )

@@ -117,8 +117,10 @@ commits on Enter/focus-out (not per keystroke) — Twilight can revert if she wa
 
 ## Testing (added 2026-06-07)
 
-A comprehensive automated test suite now exists under `projects/tests/` (QtTest + CTest, 13
-executables, ~140 cases, all green). It found + drove fixes for **4 real bugs** (Daycare empty-dtor
+A comprehensive automated test suite now exists under `projects/tests/` (QtTest + CTest, 15
+executables, ~150 cases, all green). The app logic was extracted into a static `appcore` library
+(see `context/architecture.md`) so the **app layer is now unit-testable** (`tests/mvc/tst_models.cpp`
+is the first; ~23 models + Bridge/Router remain). It found + drove fixes for **4 real bugs** (Daycare empty-dtor
 crash, bank-2 checksum off-by-one save corruption, `MapSearch::isType` null-deref, `HoFPokemon::load`
 null-deref). Covers the savefile engine (fields/verbs/Pokémon/items/world/toolset/errors/E2E),
 common, db integrity, and the randomizer (within its current scope). Build/run any time with the real

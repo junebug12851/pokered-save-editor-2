@@ -41,6 +41,11 @@ pse_add_test(tst_randomizer   savefile savefile/tst_randomizer.cpp)
 pse_add_test(tst_common       common   common/tst_common.cpp)
 pse_add_test(tst_db_integrity db       db/tst_db_integrity.cpp)
 
+# App-layer tests link the appcore static library (extracted from the app exe).
+if(TARGET appcore)
+    pse_add_test(tst_models   appcore  mvc/tst_models.cpp)
+endif()
+
 # --- QML smoke test (Qt Quick Test, headless via offscreen) ---
 # Establishes the QML test harness. Screen-level tests that use `brg.*` need the
 # Bridge/DB booted into the engine (future work). Guarded so a kit without the

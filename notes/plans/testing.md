@@ -359,6 +359,14 @@ Each phase is independently valuable; the suite is useful from phase 1.
    may need a first-run tweak (noted in the file). This is the right home for ASan, which can't run on
    the local Windows kit._
 9. **app C++** (Bridge, models, FileManagement) headless.
+   _Unblocked 2026-06-07 (Twilight-approved refactor): the app's logic — `bridge/`, all `mvc/` models,
+   `engine/` — was extracted from the executable into a **static library `appcore`** (`app/CMakeLists.txt`);
+   the exe is now just main/boot/mainwindow/QML-resources linking `appcore`. Tests can now link the app
+   layer. First app-layer tests: `tests/mvc/tst_models.cpp` (TypesModel, NatureSelectModel — rows/roles/
+   data/round-trip), green. The app exe still builds. **Gotcha fixed:** splitting into a lib broke the
+   single-target "unity MOC" that had been making `FileManagement` complete for `mainwindow.h`'s
+   `Q_PROPERTY(FileManagement*)` — added the explicit `#include` (NOT an opaque pointer; brg.file is
+   QML-traversed). **Still to do: the remaining ~23 models + Bridge/Router.**_
 10. **QML/UI** — Twilight opted in. _Harness established 2026-06-07: `tests/qml/` (Qt Quick Test,
     `QUICK_TEST_MAIN`) builds and runs headless via the `offscreen` platform; `cases/tst_smoke.qml`
     is green (6 cases). This proves the QML test path works. **Screen-level tests still to do** — the
