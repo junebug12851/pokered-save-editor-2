@@ -1,9 +1,19 @@
 # Testing Strategy — Comprehensive Plan
 
-_Created 2026-06-07. Status: **Phase 1 built, run & ALL GREEN on the real Qt 6.11 kit — 2 real bugs
-found and fixed** (Daycare empty-destructor crash; bank-2 checksum off-by-one). The harness and first
-tests live under `projects/tests/`; everything else here is still the design to build against. QML/UI
-testing is **deferred pending Twilight's decision** — see "QML / UI testing" below._
+_Created 2026-06-07. Status: **Phases 1–2 built, run & ALL GREEN on the real Qt 6.11 kit (3/3 suites,
+31 field assertions) — 2 real bugs found and fixed** (Daycare empty-destructor crash; bank-2 checksum
+off-by-one). Tests live under `projects/tests/`; later phases here are still the design to build
+against. QML/UI testing is **deferred pending Twilight's decision** — see "QML / UI testing" below._
+
+> **Phase 2 added (2026-06-07): `tests/savefile/tst_fields.cpp` — per-field expand/flatten coverage,
+> all green.** Two styles per field: VALUE round-trip (set on the model → flatten → re-expand → assert
+> the value survived, incl. boundary values) and BYTE isolation (edit one field → only that field's
+> bytes + main checksum `0x3523` change). Covered: money (0/1/typical/999999), coins (0/1/9999),
+> player ID (0/1/0x1234/0xFFFF), starter (0/1/153/255), player name (empty/1/typical/7-char), badges
+> (pattern/all-on/all-off, both the primary `0x2602` and duplicate `0x29D6`), pokédex (independent
+> owned/seen patterns across all 151), rival (name+starter), and a bag item (index+amount). Offsets
+> taken from `playerbasics.cpp` (second oracle) cross-checked with the `.bt`. Name/ID round-trips set
+> the member directly to avoid the intentional OT-rewrite side effect of `fullSet*`.
 
 > **Implemented so far (2026-06-07, phase 1 — needs a build + run on Twilight's Qt kit):**
 > - `projects/tests/` wired into CMake via `add_subdirectory(tests)` + `enable_testing()` (root
@@ -275,7 +285,27 @@ Each phase is independently valuable; the suite is useful from phase 1.
 1. **Harness + first guardrail.** `tests/` tree, CTest wiring, one fixture; the round-trip *identity*
    + *single-edit isolation* tests building and green. Proves the whole loop.
 2. **savefile to target coverage.** Per-field expand/flatten, encodings, checksum, all verbs.
+   _Started 2026-06-07. `tst_fields.cpp`: trainer basics (money/coins/ID/starter/name), badges,
+   pokédex, rival, one bag item — value round-trips + byte isolation, all green. `tst_pokemon.cpp`:
+   party AND PC-box Pokémon records (BOX_MON/PARTY_MON) — every stored field round-trips: species,
+   level, status, hp, catch rate, OT id/name, exp, the 5 stat-exp ("EVs"), the 4 DVs, all 4 move
+   slots (id/pp/ppUp), nickname, and the party-only battle stats. (Surfaced that the engine clamps PP
+   to each move's max, faithfully to the game.) Still to do: full item LISTS (add/remove/move/sort,
+   terminator), world/area/world-event fields, playtime, and the verbs reset()/eraseExpansion()/
+   randomize()._
+   _Verbs (`tst_verbs.cpp`): `resetData()` (zeros the buffer + blanks the model) and `eraseExpansion()`
+   (blanks the model, touches **zero** save bytes) — both green. `randomizeExpansion()` is `QSKIP`'d:
+   it crashes on a progressed save (found+fixed a `MapSearch::isType()` null-deref; still crashes in
+   `SpriteData::load()` via `AreaSprites::randomize()`) — deferred to phase 7 (randomizer is WIP)._
+
+   **Bugs found by phase-2 tests so far (all real): Daycare empty-destructor crash (fixed), bank-2
+   checksum off-by-one (fixed), `MapSearch::isType()` null-deref (fixed), randomizer sprite-path crash
+   (open, phase 7).**
 3. **common to 100%; db integrity + getters + search + fonts.**
+   _Done 2026-06-07: `tst_common.cpp` (type widths/sign, Random bounds + degenerate ranges + coin
+   variation, Utility URL encode/decode round-trip) and `tst_toolset.cpp` (the byte primitives:
+   BCD<->int, 16-bit word + byte order, byte, per-bit set/clear + isolation, Gen 1 checksum vs a
+   hand-computed value). Both green (13 + 17)._
 4. **Negative / error-path** across savefile + db asset load (graceful degradation proven).
 5. **Integration + E2E** (db↔savefile, FileManagement cycle, open→edit→save→reopen).
 6. **Randomizer invariants + fuzz**; compatibility fixture matrix (Red/Blue, game states).

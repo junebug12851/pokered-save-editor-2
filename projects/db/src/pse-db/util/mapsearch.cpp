@@ -168,8 +168,13 @@ MapSearch* MapSearch::notTileset(QString val)
 MapSearch* MapSearch::isType(QString val)
 {
   for(auto entry : QVector<MapDBEntry*>(results)) {
-    if(entry->toTileset == nullptr)
+    // A map with no tileset can't match a type; drop it and move on. Without the
+    // `continue` the next line dereferenced the null toTileset -> crash (hit by
+    // AreaWarps::randomize -> isType("Cave")). notType() already guards this way.
+    if(entry->toTileset == nullptr) {
       results.removeOne(entry);
+      continue;
+    }
 
     if(entry->toTileset->type != val && entry->toTileset->typeAlias != val)
       results.removeOne(entry);
