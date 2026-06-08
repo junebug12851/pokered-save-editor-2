@@ -34,6 +34,10 @@
 #include <pse-savefile/expanded/world/worldtowns.h>
 #include <pse-savefile/expanded/world/worldtrades.h>
 #include <pse-savefile/expanded/world/worldcompleted.h>
+#include <pse-savefile/expanded/world/worldhidden.h>
+#include <pse-savefile/expanded/world/worldmissables.h>
+#include <pse-savefile/expanded/world/worldgeneral.h>
+#include <pse-savefile/expanded/world/worldscripts.h>
 
 using namespace pse_test;
 
@@ -54,6 +58,10 @@ private slots:
   void towns_roundTrip();
   void trades_roundTrip();
   void completed_roundTrip();
+  void hidden_roundTrip();
+  void missables_roundTrip();
+  void general_roundTrip();
+  void scripts_roundTrip();
 };
 
 void TestWorld::initTestCase()
@@ -178,6 +186,74 @@ void TestWorld::completed_roundTrip()
   QCOMPARE(c2->everHealedPokemon, true);
   QCOMPARE(c2->satisfiedSaffronGuards, false);
   QCOMPARE(c2->defeatedLorelei, true);
+}
+
+void TestWorld::hidden_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* h = sf.dataExpanded->world->hidden;
+  for(int i = 0; i < h->hItemsCount(); i++) h->hItemsSet(i, (i % 3) == 0);
+  for(int i = 0; i < h->hCoinsCount(); i++) h->hCoinsSet(i, (i % 2) == 0);
+
+  sf.flattenData(); sf.expandData();
+
+  auto* h2 = sf.dataExpanded->world->hidden;
+  for(int i = 0; i < h2->hItemsCount(); i++)
+    QVERIFY2(h2->hItemsAt(i) == ((i % 3) == 0), qPrintable(QStringLiteral("hidden item %1").arg(i)));
+  for(int i = 0; i < h2->hCoinsCount(); i++)
+    QVERIFY2(h2->hCoinsAt(i) == ((i % 2) == 0), qPrintable(QStringLiteral("hidden coin %1").arg(i)));
+}
+
+void TestWorld::missables_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* m = sf.dataExpanded->world->missables;
+  const int n = m->missablesCount();
+  for(int i = 0; i < n; i++) m->missablesSet(i, (i % 2) == 0);
+
+  sf.flattenData(); sf.expandData();
+
+  auto* m2 = sf.dataExpanded->world->missables;
+  for(int i = 0; i < n; i++)
+    QVERIFY2(m2->missablesAt(i) == ((i % 2) == 0), qPrintable(QStringLiteral("missable %1").arg(i)));
+}
+
+void TestWorld::general_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* g = sf.dataExpanded->world->general;
+  g->lastMap = 40;
+  g->lastBlackoutMap = 1;
+  g->options->textSlowness = 5;     // 4-bit field
+  g->options->battleStyleSet = true;
+  g->options->battleAnimOff = true;
+  g->letterDelay->normalDelay = true;
+  g->letterDelay->dontDelay = false;
+
+  sf.flattenData(); sf.expandData();
+
+  auto* g2 = sf.dataExpanded->world->general;
+  QCOMPARE(g2->lastMap, 40);
+  QCOMPARE(g2->lastBlackoutMap, 1);
+  QCOMPARE(g2->options->textSlowness, 5);
+  QCOMPARE(g2->options->battleStyleSet, true);
+  QCOMPARE(g2->options->battleAnimOff, true);
+  QCOMPARE(g2->letterDelay->normalDelay, true);
+  QCOMPARE(g2->letterDelay->dontDelay, false);
+}
+
+void TestWorld::scripts_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* s = sf.dataExpanded->world->scripts;
+  const int n = s->scriptsCount();
+  for(int i = 0; i < n; i++) s->scriptsSet(i, i % 100); // keep within a byte
+
+  sf.flattenData(); sf.expandData();
+
+  auto* s2 = sf.dataExpanded->world->scripts;
+  for(int i = 0; i < n; i++)
+    QVERIFY2(s2->scriptsAt(i) == (i % 100), qPrintable(QStringLiteral("script %1").arg(i)));
 }
 
 QTEST_GUILESS_MAIN(TestWorld)
