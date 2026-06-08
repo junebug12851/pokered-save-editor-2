@@ -29,6 +29,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/decisions/architecture.md` | Key structural choices and why |
 | `notes/decisions/rejected.md` | Things tried that failed — do not repeat |
 | `notes/plans/next-steps.md` | Ordered task list |
+| `notes/plans/testing.md` | **Testing strategy** — comprehensive plan: every test type mapped to the layers, tooling (QtTest/CTest/sanitizers/coverage), phased rollout, regression seed list. Blueprint; not yet implemented |
 | `notes/plans/future.md` | Longer-term ambitions |
 
 ## Critical Things Not to Get Wrong

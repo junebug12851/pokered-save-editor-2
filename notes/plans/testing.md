@@ -1,0 +1,331 @@
+# Testing Strategy — Comprehensive Plan
+
+_Created 2026-06-07. Status: **Phase 1 built, run & ALL GREEN on the real Qt 6.11 kit — 2 real bugs
+found and fixed** (Daycare empty-destructor crash; bank-2 checksum off-by-one). The harness and first
+tests live under `projects/tests/`; everything else here is still the design to build against. QML/UI
+testing is **deferred pending Twilight's decision** — see "QML / UI testing" below._
+
+> **Implemented so far (2026-06-07, phase 1 — needs a build + run on Twilight's Qt kit):**
+> - `projects/tests/` wired into CMake via `add_subdirectory(tests)` + `enable_testing()` (root
+>   `CMakeLists.txt`, guarded by `option(PSE_BUILD_TESTS ON)`; `Test` added to the Qt6 components).
+>   Each test is a `qt_add_executable` registered with `add_test` (run via `ctest`). Fixtures are
+>   located through a `PSE_ASSETS_DIR` compile def → `<repo>/assets` (read-only; tests copy in memory).
+> - `tests/helpers/savefilefixture.h` — read a fixture, load into `SaveFile`, snapshot raw bytes, diff.
+> - `tests/savefile/tst_roundtrip.cpp` — (a) **load→flatten→recalc identity** on both fixtures
+>   (open-then-save changes zero bytes), (b) **money single-edit isolation** (only the money bytes +
+>   main checksum change; value round-trips). Offsets (`money 0x25F3`, `main checksum 0x3523`) taken
+>   from the `.bt` oracle; tests print the actual changed offsets on failure so a wrong constant is
+>   self-correcting on first run.
+> - `tests/db/tst_db_integrity.cpp` — DB boots, ≥151 species, every non-glitch species deep-links its
+>   primary type.
+>
+> **Key pipeline fact baked into the tests:** `SaveFileExpanded::save()` (i.e. `flattenData()`) does
+> **not** recompute checksums; `recalcChecksums()` runs in `FileManagement::writeSaveData()` at file-write
+> time. So a faithful "open→save" test must call `flattenData()` **then** `toolset->recalcChecksums()`.
+>
+> **Built & run on the real Qt 6.11 / llvm-mingw kit (2026-06-07, via PowerShell on Twilight's PC):**
+> configure + build clean; `ctest` results:
+> - `tst_db_integrity` — **PASS** (DB boots, ≥151 species, every non-glitch species deep-links its type).
+> - `loadFlatten_isIdentity(new game)` — **PASS** (a fresh save round-trips byte-perfectly, 0 changes).
+> - `moneyEdit_touchesOnlyMoneyAndChecksum` — **PASS** (confirms `money 0x25F3` / `checksum 0x3523`;
+>   only those bytes change; value round-trips).
+> - `loadFlatten_isIdentity(progressed)` — **PASS after fix.** Originally failed: `flatten` changed
+>   **0 bytes** (engine byte-perfect), but `recalcChecksums()` wrote `0x5A4B 00→C5` — the **bank-2
+>   box-checksum off-by-one**. After correcting it to `0x5A4C`/`0x1A4C`, `BaseSAV.sav` round-trips
+>   byte-perfect. **All tests now green (100%).**
+>
+> **Two real bugs found on day one and fixed** (the whole point): (1) `Daycare::~Daycare()` null-deref
+> crash on an empty Day Care (`daycare.cpp`); (2) bank-2 box-checksum off-by-one in `recalcChecksums()`
+> (`savefiletoolset.cpp`) — corrected to `0x5A4C`/`0x1A4C`, verified by `tst_roundtrip`. Both in
+> `reference/fix-patterns.md`; checksum detail in `status.md`.
+>
+> Reproduce: configure with `C:/Qt/Tools/CMake_64/bin/cmake.exe -S projects -B <build>`, build targets
+> `tst_roundtrip tst_db_integrity`, run `ctest --output-on-failure` (PATH needs the Qt + lib-output dirs
+> for DLLs). Tests use `QTEST_GUILESS_MAIN` and ran fine headless (no GUI dependency in DB load).
+
+This is the master plan for full, professional test coverage of the project. The goal is not
+"some tests" — it is **comprehensive** coverage: every function exercised across normal, boundary,
+and invalid inputs, with both return values and side effects asserted; every error path verified
+to degrade gracefully; saving/loading proven correct in every context; randomization proven to
+hold its invariants; and every historical bug locked out by a permanent regression test. Coverage
+tooling makes "comprehensive" a **measured fact**, not a hope.
+
+---
+
+## Why testing matters specifically here
+
+Two project values make automated testing unusually high-value:
+
+1. **Save File Integrity Is Sacred** (`../context/principles.md`). The byte-fidelity contract —
+   flatten changes *only* the bytes an edit requires, every other byte untouched — was verified by
+   hand over dozens of hours. Tests turn that manual verification into something that runs in a
+   second on every build, forever. Corrupting a save is the worst outcome the app can produce;
+   round-trip tests are the guardrail.
+2. **Graceful Degradation** (the Sims-2 philosophy). "Never crash, never block, never strand the
+   user" is only true if it's *tested*. Negative/error-path tests assert the degradation actually
+   happens on every failure mode.
+
+The whole class of bug that consumed sessions 13f–13h — QML garbage-collecting parentless C++
+QObjects → use-after-free — is exactly what a **sanitizer build** catches automatically. That
+alone may justify the harness.
+
+---
+
+## What makes this project testable
+
+The layered architecture (`common → db → savefile → app`, see `../systems/overview.md`) is a gift
+for testing: `common`, `db`, and `savefile` are libraries with **zero UI dependency**. A headless
+test executable links them directly and exercises the entire byte engine, the game databases, and
+all save logic without ever creating a window. ~90% of the project's risk lives in those three
+layers, and 100% of it is reachable headless.
+
+Only `app` (the Bridge, models, QML) needs the Qt GUI/Quick stack to test — and even that can run
+on the `offscreen` platform plugin with no display.
+
+---
+
+## Test taxonomy — every type, mapped to the layers
+
+| Type | What it proves | Primary layers | Tooling |
+|------|----------------|----------------|---------|
+| **Unit** | Each function correct across normal/boundary/invalid inputs; return values AND side effects | common, db, savefile, app(C++) | QtTest |
+| **Boundary / edge case** | 0, max, empty, full, first/last index, -1 "unset" sentinels | all | QtTest (data-driven) |
+| **Negative / error path** | Graceful degradation: bad input → defined error, no crash, save untouched | savefile, app, db(asset load) | QtTest |
+| **Round-trip / golden** | load→flatten == identity; single edit changes ONLY intended bytes | savefile | QtTest + committed fixtures |
+| **Integration** | Layers cooperate (db↔savefile expansion, FileManagement↔SaveFile cycle) | db+savefile, app | QtTest |
+| **End-to-end / system** | Full journey: open → edit sequence → save → reopen → assert persisted + valid | savefile (+app) | QtTest |
+| **Randomization** | Every playability invariant holds across many seeds | savefile, db | QtTest + seeded Random |
+| **Property-based / fuzz** | Invariants survive random edits + random/garbage blobs | savefile | QtTest (generative helpers) |
+| **Regression** | Each historical bug stays fixed forever | wherever the bug lived | QtTest (named per bug) |
+| **Compatibility** | Red vs Blue; fresh / mid-game / post-E4 saves | savefile | QtTest + fixture matrix |
+| **Performance / benchmark** | load/expand/flatten/randomize stay fast; no hangs | savefile | QtTest `QBENCHMARK` |
+| **Memory / sanitizer** | No use-after-free / leak / UB (the QML-GC bug class) | all (whole suite) | ASan + UBSan build, Valgrind |
+| **Coverage** | Proves comprehensiveness; finds untested lines/branches | all | llvm-cov (llvm-mingw) |
+| **GUI / QML** | UI flows behave (commit-on-blur, tab reactivity, popup dismiss) | app/ui | Qt Quick Test (offscreen) — **deferred** |
+
+### Concrete examples per layer
+
+**common** — `var8`/`var16` width and overflow behavior; `Random` distribution + determinism under
+a fixed seed; every `Utility` helper; the QML-ownership guards return what they're handed.
+
+**db** — asset integrity: 151 Pokémon load, every deep-link resolves (no dangling refs), no required
+field empty/null; every getter returns expected values vs the JSON; `-1` "unset" handled
+(`getWidth() >= 0`, not truthiness); search APIs (`MapSearch`, `FontSearch`) across hits, misses,
+multi-match, empty; `FontsDB::convertToCode` / `splice` / `expandStr` on normal, empty, and the
+variable-tile / lone-variable-tile cases (the s13y infinite-loop bug).
+
+**savefile** — the heart of the suite:
+- *Identity*: load fixture → `expandData()` → `flattenData()` → `memcmp` == 0.
+- *Single-edit isolation*: change one field → flatten → diff blobs → assert changed-offset set ==
+  exactly {field bytes} ∪ {checksum}. Repeat per field (money, name, party species/level/DVs/EVs/
+  moves/PP, items, badges, pokédex seen/caught, playtime, OT/ID).
+- *Per-field expand/flatten*: known raw bytes ↔ known expanded value, both directions, table-driven.
+- *Encodings*: BCD money, the custom text charset (incl. the simulated-tileset paths), party layout.
+- *Checksum*: after an edit the Gen-1 checksum is recomputed correctly (the one region that *should*
+  change). See `../reference/gen1-knowledge.md`.
+- *Negative*: `setData(null)`; files < 32 KB rejected; larger files load first 32 KB; locked/missing
+  files; truncated/garbage blobs → defined error, never a crash, never a mutated source.
+- *Reset / erase / randomize* verbs each tested.
+
+**app (C++)** — Bridge exposes the expected object graph; list models (`pokedexModel`,
+`mapSelectModel`, …) map C++ → item-model rows correctly (rowCount, roles, data at index, empty
+state); `FileManagement` open/save/recent-prune logic; `Router` screen set.
+
+---
+
+## Randomization testing (flagship feature)
+
+Run the randomizer across a large seed sweep and assert **every** promise from
+`../context/principles.md` → "The Randomization Feature" holds on **every** run:
+
+- Save is structurally valid and would load (checksum ok, sizes intact).
+- At least one **HM-capable** Pokémon in the team (escape slave).
+- **No glitch** Pokémon, **no glitch** items.
+- Levels within a balanced range (no instant-kill lv100 walls).
+- Maps have **valid warps** — player can leave the start.
+- No beaten trainers / completed events — clean start.
+- Money/items/team read as "starting conditions," not cheats.
+
+Because `Random` wraps `QRandomGenerator`, tests seed it deterministically so any failure is
+reproducible from the logged seed. This doubles as fuzz coverage of the flatten path.
+
+---
+
+## Coverage — how we prove "comprehensive"
+
+llvm-mingw ships `llvm-cov` + `llvm-profdata`. The test build compiles with
+`-fprofile-instr-generate -fcoverage-mapping`; after `ctest`, generate a line+branch report.
+
+Targets (initial, tunable):
+
+| Layer | Line target | Branch target |
+|-------|-------------|---------------|
+| common | 100% | ≥ 95% |
+| db | ≥ 95% | ≥ 90% |
+| savefile | 100% | ≥ 95% |
+| app (C++) | ≥ 80% | ≥ 70% |
+
+"Comprehensive" = the report shows no untested function and no untested error branch in
+common/savefile. Coverage gaps become the to-do list for filling tests.
+
+---
+
+## Infrastructure & tooling
+
+- **QtTest** (`Qt6::Test`) — bundled, no third-party dep. One `QObject` per suite; each `private
+  slot` is a case; `_data()` slots + `QFETCH` give table-driven cases; `QCOMPARE`/`QVERIFY`
+  assertions; `QBENCHMARK` for perf.
+- **Qt Quick Test** (`qmltest`) — for QML, runs on `QT_QPA_PLATFORM=offscreen`. **Deferred.**
+- **CTest** — `enable_testing()` in root CMake; each test exe registered via `add_test`; whole suite
+  runs with one `ctest` command. Honors the existing CMake/Qt 6.11/llvm-mingw setup.
+- **Fixtures (these exist — see `assets/`):**
+  - `assets/BaseSAV.sav` — **the default/primary fixture.** A regular save progressed to a point;
+    this is what most tests load (round-trip, per-field, E2E) because it has populated
+    party/items/dex/flags — realistic, representative data. Exact progress not recorded; characterize
+    it once and pin the values in a test so the fixture is self-documenting.
+  - `assets/BaseSAV.new.sav` — **secondary, used sparingly.** A save at the very start of the game
+    (hence "new"). Useful for the specific cases that want a clean/minimal baseline (e.g. proving an
+    edit on near-empty data, or empty-party/empty-box edge cases) — not the everyday fixture.
+  - Both are exactly `0x8000` bytes. The negative-test corpus (truncated / oversized / locked /
+    garbage) still needs to be **generated** (trivially, by slicing/padding a copy).
+  - Plan: copy these into `tests/fixtures/` (don't have tests mutate the originals in `assets/`), or
+    reference them read-only and always operate on an in-memory/temp copy.
+- **The byte-map oracle — `assets/savefile-structure.bt`.** A 010 Editor binary template authored by
+  Twilight, independent of the app's C++, mapping every field/offset/bit-field of the save. This is
+  the **independent oracle** that breaks test circularity: per-field offset tests and golden
+  assertions validate expand/flatten against *the .bt's* offsets, not against the same code being
+  tested. A small parser (or a hand-transcribed offset table derived from it) feeds the data-driven
+  field tests. Banks are `0x2000` each (bank0 `0x0000`, bank1/main `0x2000`, bank2/boxes1-6 `0x4000`,
+  bank3/boxes7-12 `0x6000`); the .bt confirms e.g. player name at bank1+`0x598`, the main-data
+  checksum and the per-box checksum layout — cross-check these against
+  `../reference/gen1-knowledge.md`.
+- **Sanitizers** — a dedicated CMake config building the suite with ASan + UBSan; (Valgrind optional
+  on Linux). The QML-GC use-after-free class is caught here automatically.
+- **Coverage build** — separate config, llvm-cov reporting.
+- **CI (later)** — GitHub Actions running `ctest` + sanitizer + coverage on every push. Directly
+  addresses the "is the working state actually safe to rely on?" anxiety from `status.md`: green
+  suite == provably good state. (Aligns with the standing "COMMIT/BACK UP" lesson.)
+
+### ⚠️ Project rules the harness must respect
+
+- **Do NOT use `qt_add_qml_module()`** (conflicts with `app.qrc`, hangs). QML tests load qrc-listed
+  types the existing way.
+- **Singletons via `inst()`** — tests must never `new` a DB; use `DB::inst()`. Note `DB::inst()`
+  bootstraps load/index/deeplink, so db/savefile tests that need game data call it once in
+  `initTestCase()`.
+- **No `load()` in constructors** assumption holds — tests rely on explicit boot order.
+- **Never write a save byte not under test.** Round-trip tests operate on *copies* of fixtures and
+  assert the on-disk fixture is never mutated.
+
+---
+
+## Repository layout (proposed)
+
+```
+projects/
+  tests/
+    CMakeLists.txt              ← enable_testing + add_subdirectory per suite
+    fixtures/                   ← committed .sav files (good + corrupt) + golden blobs
+    common/    tst_random.cpp, tst_utility.cpp, tst_types.cpp
+    db/        tst_pokemondb.cpp, tst_fontsdb.cpp, tst_search.cpp, tst_db_integrity.cpp
+    savefile/  tst_roundtrip.cpp, tst_expand_flatten.cpp, tst_fields.cpp,
+               tst_negative.cpp, tst_randomizer.cpp, tst_e2e.cpp, tst_regressions.cpp,
+               bench_savefile.cpp
+    app/       tst_bridge.cpp, tst_models.cpp, tst_filemanagement.cpp
+    qml/       (deferred) tst_*.qml + a quicktest runner
+```
+
+Mirrors the source tree so "is function X tested?" maps to an obvious file.
+
+---
+
+## Conventions
+
+- One suite per source unit; test fn named for the behavior (`money_roundtrips`,
+  `loadingTruncatedFile_raisesError_leavesSourceUntouched`).
+- Prefer **data-driven** (`_data()`) over copy-pasted cases — byte-offset tables are the natural fit.
+- Tests are **deterministic**: seed `Random`; never depend on wall-clock/filesystem state beyond
+  fixtures; copy fixtures to a temp dir before any write.
+- Every fixed bug gets a regression test named `regression_<shortdesc>` with a comment linking the
+  commit/session.
+- New test files are added to `tests/CMakeLists.txt` (the qrc rule is QML-only; C++ tests are plain
+  CMake targets).
+
+---
+
+## Regression suite — seed list (from known history)
+
+Each becomes a permanent named test:
+
+- Hidden-items overwrite from a save-location typo (`e20c167`).
+- Party data mangled on write (`cb6fc99`).
+- Missables saved back wrong (`ff76662`).
+- `FontsDB::splice` lost `out.remove()` → infinite loop on a variable tile (s13y).
+- Tileset last tile not clickable — off-by-one, `fontAt` is 1-based (s13y2).
+- File-load crash: `setData` memcpy from null on missing/unreadable recent (s14).
+- QML-GC use-after-free on parentless QObjects (s13f–h) — covered structurally by the sanitizer build.
+- Player/rival/ID edit hang + OT corruption (s13w).
+
+---
+
+## Phased rollout
+
+Each phase is independently valuable; the suite is useful from phase 1.
+
+1. **Harness + first guardrail.** `tests/` tree, CTest wiring, one fixture; the round-trip *identity*
+   + *single-edit isolation* tests building and green. Proves the whole loop.
+2. **savefile to target coverage.** Per-field expand/flatten, encodings, checksum, all verbs.
+3. **common to 100%; db integrity + getters + search + fonts.**
+4. **Negative / error-path** across savefile + db asset load (graceful degradation proven).
+5. **Integration + E2E** (db↔savefile, FileManagement cycle, open→edit→save→reopen).
+6. **Randomizer invariants + fuzz**; compatibility fixture matrix (Red/Blue, game states).
+7. **Sanitizer build + coverage reporting**, then coverage-gap fill to targets.
+8. **CI** (ctest + sanitizer + coverage on push).
+9. **app C++** (Bridge, models, FileManagement) headless.
+10. **QML/UI** — only if/when Twilight greenlights (see below).
+
+---
+
+## QML / UI testing — DEFERRED (Twilight to decide)
+
+**It is technically doable.** Qt Quick Test drives QML components, simulates clicks/keystrokes, and
+asserts on properties, running headless via the `offscreen` platform plugin (so it works in CI).
+
+**Why it's deferred — honest cost/benefit:**
+
+- **Lower ROI here.** The bugs that actually threaten this project are byte-level (save corruption)
+  and lifetime-level (use-after-free) — both fully covered by C++ tests + sanitizers. UI bugs are
+  mostly cosmetic/layout, which Twilight already catches fast in live hot-reload iteration.
+- **Highest maintenance burden.** UI tests are the most brittle kind: every layout tweak (and this
+  project is in a heavy, ongoing UI-iteration phase — see `status.md`) risks breaking them, creating
+  churn that competes with the actual design work.
+- **Pixel/layout assertions are a trap.** Only *behavioral* flows are worth testing
+  (commit-on-blur actually commits; popup actually dismisses; editor tab actually reacts), never
+  positions/sizes — those are Twilight's live-owned design decisions.
+
+**If greenlit, scope would be narrow:** a handful of behavioral smoke tests on the highest-value
+flows (name commit-on-finish, Pokémon editor reactivity, popup open/dismiss), run offscreen, kept
+deliberately small. Decision pending; revisit once the UI-polish phase settles.
+
+---
+
+## Open questions / decisions needed
+
+- **QML/UI scope** — deferred above; Twilight to decide later.
+- ~~**Fixtures**~~ — RESOLVED 2026-06-07: `assets/BaseSAV.new.sav` (fresh) + `assets/BaseSAV.sav`
+  (progressed) exist, plus `assets/savefile-structure.bt` as the independent offset oracle. Still TODO:
+  generate the negative-test corpus, and add Red-vs-Blue / additional game-state fixtures if we want a
+  fuller compatibility matrix.
+- **Characterize `BaseSAV.sav`** — its exact progress (party, badges, money, dex) isn't recorded; do
+  one characterization pass and lock the values into a test so the fixture is self-documenting.
+- **`.bt` consumption** — for phase 1, offsets are **transcribed as named constants** in the test
+  (citing the `.bt`), e.g. `kMoneyOffset 0x25F3`, `kMainChecksum 0x3523`. Revisit if the offset set
+  grows large: a small `.bt` parser or a shared generated offset table would track edits to the `.bt`
+  automatically (constants can drift).
+- **Minor .bt discrepancy to confirm (don't silently fix):** the `PLAY_TIME` struct lists all five
+  members as `char hours` (the display `<name=...>` tags say Hours/Maxed/Minutes/Seconds/Frames). Looks
+  like a copy-paste in the template, not a save-format claim — flag for Twilight, leave the .bt as-is.
+- **Coverage gate strictness** — are the initial targets acceptable, and should CI *fail* below them
+  or just report?
+- **CI host** — GitHub Actions assumed; confirm the llvm-mingw/Qt 6.11 toolchain is reproducible
+  there (or run CI on a self-hosted runner matching the dev box).

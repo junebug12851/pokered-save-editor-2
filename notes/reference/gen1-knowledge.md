@@ -10,6 +10,15 @@ Everything here is asserted by the code (and verified against it); inline source
 the primary record, and `version.md` shows where several facts were figured out (e.g. the
 tile-block map-view VRAM pointer in `14a73be`).
 
+**Authoritative external byte map:** `assets/savefile-structure.bt` (a 010 Editor binary
+template, authored by Twilight) is the full field-by-field layout of the 32 KB save — banks,
+structs, bit-fields, offsets. Because it was written **independently of the app's C++**, it is the
+*oracle* for testing: per-field offset and golden tests can validate against it rather than against
+the code under test (which would be circular). Two real saves live beside it as test fixtures:
+`assets/BaseSAV.new.sav` (a fresh file saved right after the new-game screen) and
+`assets/BaseSAV.sav` (a progressed save; exact progress not recorded — characterize as needed).
+Both are exactly `0x8000` bytes. See `plans/testing.md`.
+
 ---
 
 ## Save file structure (the bytes)

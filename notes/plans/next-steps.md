@@ -29,6 +29,19 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
 4. **Trainer-card number-field spacing** — apply the `FieldLabel` + RowLayout pattern to retire the
    last fixed-offset layouts (`CardFront.qml`, `DefTextEdit.qml`). Twilight owns the exact look.
 
+## Testing (new track — planned 2026-06-07)
+
+- **Comprehensive automated test suite** — full strategy in `plans/testing.md`. **Phase 1 is now
+  implemented** under `projects/tests/` (CMake/CTest harness + fixture helper; round-trip identity &
+  money-isolation tests on the real saves; DB integrity test). ⚠️ **Not yet built/run on Twilight's
+  machine** — next action: build in Qt Creator (or `cmake --build` then `ctest --output-on-failure`)
+  and triage results. The first run may legitimately surface a round-trip imperfection or an offset to
+  nudge. Then continue the phased rollout (savefile/common/db coverage → negative/integration/E2E →
+  randomizer/fuzz → sanitizers/coverage → CI → app C++ → QML last). **QML/UI testing deferred** —
+  Twilight to decide (low ROI, high maintenance during the UI-iteration phase; rationale in
+  `testing.md`). Remaining open questions there: coverage-gate strictness, CI host, characterizing
+  `BaseSAV.sav`.
+
 ## Optional cleanup
 
 5. Delete the now-unused menu files (`name/NameDisplayMenu.qml`, `NameDisplayMenuNoTileset.qml`,

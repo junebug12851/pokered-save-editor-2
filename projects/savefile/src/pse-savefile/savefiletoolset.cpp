@@ -359,6 +359,11 @@ void SaveFileToolset::recalcChecksums(bool force)
   if(saveFile->data[0x284C] == 0)
     return;
 
-  // Apply Bank 2 Checksum
-  saveFile->data[0x5A4B] = getChecksum(0x4000, 0x1A4B);
+  // Apply Bank 2 Checksum.
+  // The bank-2 all-boxes checksum lives at 0x5A4C and covers 0x4000..0x5A4B
+  // (size 0x1A4C = 6 boxes x 0x462). This matches recalcBoxesChecksums() above,
+  // the savefile-structure.bt map, and real RBY (sBank2AllBoxesChecksum).
+  // (Was 0x5A4B / 0x1A4B -- off by one, which clobbered Box 6's last data byte
+  // and stored the checksum one byte early; found by tst_roundtrip 2026-06-07.)
+  saveFile->data[0x5A4C] = getChecksum(0x4000, 0x1A4C);
 }

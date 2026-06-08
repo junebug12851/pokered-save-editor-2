@@ -35,7 +35,13 @@ Daycare::Daycare(SaveFile* saveFile)
 
 Daycare::~Daycare()
 {
-  pokemon->deleteLater();
+  // Guard the empty Day Care: `pokemon` is nullptr when no mon is deposited
+  // (load() only allocates it when 0x2CF4 > 0; reset() leaves it null). The old
+  // unconditional pokemon->deleteLater() dereferenced a null `this` and crashed
+  // whenever an empty Daycare was destroyed -- masked in the running app because a
+  // SaveFile is only torn down at process exit. reset() already guards the same way.
+  if(pokemon != nullptr)
+    pokemon->deleteLater();
 }
 
 void Daycare::load(SaveFile* saveFile)
