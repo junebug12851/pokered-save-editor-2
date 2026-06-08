@@ -43,6 +43,7 @@ private slots:
   void typesLoadedWithNames();
   void itemsLoaded();
   void mapsSearchChainWorks();
+  void allSubDbsLoadAndCount();
 };
 
 void TestDbIntegrity::boots()
@@ -129,6 +130,55 @@ void TestDbIntegrity::mapsSearchChainWorks()
   // phase 7 (randomizer), since pickRandom() on an empty result returns nullptr.
   const int caves = MapsDB::inst()->search()->isGood()->isType("Cave")->getMapCount();
   QVERIFY2(caves >= 0 && caves <= good, "isType() produced an out-of-range count");
+}
+
+void TestDbIntegrity::allSubDbsLoadAndCount()
+{
+  DB* db = DB::inst();
+  QVERIFY(db != nullptr);
+
+  // Call getStoreSize() on every store-style sub-DB: proves each constructed +
+  // loaded without crashing, and exercises their count paths.
+  struct Sub { const char* name; int size; };
+  const QVector<Sub> subs = {
+    {"pokemon",      db->pokemon()->getStoreSize()},
+    {"moves",        db->moves()->getStoreSize()},
+    {"items",        db->items()->getStoreSize()},
+    {"types",        db->types()->getStoreSize()},
+    {"maps",         db->maps()->getStoreSize()},
+    {"trainers",     db->trainers()->getStoreSize()},
+    {"tilesets",     db->tilesets()->getStoreSize()},
+    {"sprites",      db->sprites()->getStoreSize()},
+    {"spriteSets",   db->spriteSets()->getStoreSize()},
+    {"music",        db->music()->getStoreSize()},
+    {"fly",          db->fly()->getStoreSize()},
+    {"tmHms",        db->tmHms()->getStoreSize()},
+    {"trades",       db->trades()->getStoreSize()},
+    {"scripts",      db->scripts()->getStoreSize()},
+    {"missables",    db->missables()->getStoreSize()},
+    {"hiddenItems",  db->hiddenItems()->getStoreSize()},
+    {"hiddenCoins",  db->hiddenCoins()->getStoreSize()},
+    {"gameCorner",   db->gameCorner()->getStoreSize()},
+    {"eventPokemon", db->eventPokemon()->getStoreSize()},
+    {"starters",     db->starters()->getStoreSize()},
+    {"fonts",        db->fonts()->getStoreSize()},
+    {"credits",      db->credits()->getStoreSize()},
+  };
+  for(const Sub& s : subs)
+    QVERIFY2(s.size >= 0, qPrintable(QStringLiteral("%1 returned a negative count").arg(s.name)));
+
+  // The DBs that must carry real Gen 1 data.
+  QVERIFY(db->pokemon()->getStoreSize()  >= 151);
+  QVERIFY(db->moves()->getStoreSize()    > 0);
+  QVERIFY(db->items()->getStoreSize()    > 0);
+  QVERIFY(db->types()->getStoreSize()    > 0);
+  QVERIFY(db->maps()->getStoreSize()     > 0);
+  QVERIFY(db->trainers()->getStoreSize() > 0);
+  QVERIFY(db->tilesets()->getStoreSize() > 0);
+  QVERIFY(db->sprites()->getStoreSize()  > 0);
+  QVERIFY(db->tmHms()->getStoreSize()    > 0);
+  QVERIFY(db->fonts()->getStoreSize()    > 0);
+  QVERIFY(db->starters()->getStoreSize() > 0);
 }
 
 QTEST_GUILESS_MAIN(TestDbIntegrity)

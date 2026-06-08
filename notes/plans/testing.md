@@ -341,10 +341,11 @@ Each phase is independently valuable; the suite is useful from phase 1.
 7. **Sanitizer build + coverage reporting**, then coverage-gap fill to targets.
    _Coverage measured 2026-06-07 via a separate instrumented build (`projects/build/coverage`,
    `-fprofile-instr-generate -fcoverage-mapping`; merge with `llvm-profdata`, summarise with
-   `llvm-cov export -summary-only`). **Baseline (line / function):** common 65% / 59%; savefile
-   63% / 57%; db 50% / 37%; **app + QML 0%** (not linked into the tests — needs the app-logic
-   refactor-to-lib, or QML tests). Whole-project ≈ 50%. Biggest climbs available: db entry getters /
-   the untested sub-DBs, and savefile getters / computed Q_PROPERTYs._
+   `llvm-cov export -summary-only`). **Baseline, updated 2026-06-07 (line / function):** common 65% / 59%;
+   savefile **66% / 62%**; db **51% / 42%**; **app/appcore 3.5% / 3.4%** (now measurable after the appcore
+   refactor — only 2 of ~25 models tested so far). Trend since first measure: savefile 63→66, db func
+   37→42, app 0→3.5 (on the board). Biggest remaining climbs: the ~23 untested app models + Bridge/Router,
+   db entry getters / sub-DB stores, and savefile getters / computed Q_PROPERTYs (many now covered)._
    _**AddressSanitizer: not viable on this Windows/llvm-mingw kit.** The ASan build compiles
    (`projects/build/asan`, `-fsanitize=address`), but every instrumented exe crashes at startup with
    `interception_win: unhandled instruction` (0xC0000005) before any test runs — a known ASan-on-Windows
