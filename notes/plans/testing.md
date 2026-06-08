@@ -386,6 +386,17 @@ Each phase is independently valuable; the suite is useful from phase 1.
    so DB-defined signs are sourced from the first `MapsDB` map with ≥2 signs; `randomizeAll` is asserted
    as a position permutation (RNG-independent), which also covers the non-null branch of `randomize()`._
 
+   _Second file(s): **`tst_map_fragments.cpp`** — the map-edge fragments' DB-population/resolve paths:
+   `WarpData::load(MapDBEntryWarpOut*)` + ctor + `randomize()` + `toMap()`, and
+   `MapConnData::loadFromData(MapDBEntryConnect*)` + `toMap()` + load-null. **warpdata.cpp 54.5% →
+   98.5%, mapconndata.cpp 71% → 100%**; savefile real-source overall → **74.6% (4408/5905)**, 6 cases
+   green (43/43 full suite). **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
+   does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
+   (it's only needed by the disabled map randomizer), so `getToMap()` is null everywhere until a test
+   calls `MapsDB::inst()->deepLink()` itself. That call is stable headless (no crash; the warp deeplink's
+   null-`toMap` crash is guarded by `#ifdef QT_DEBUG`, which is active in the Debug test build). The one
+   warpdata line still missed is a minor branch, not chased._
+
    _**How the app/appcore number is measured (and why the earlier 56% was wrong):** unlike
    common/db/savefile (each a shared `.dll`, so per-test coverage merges cleanly), `appcore` is a
    **static** lib embedded into every app-test exe. Merging all `.profraw` and exporting against a
