@@ -122,7 +122,7 @@ commits on Enter/focus-out (not per keystroke) — Twilight can revert if she wa
 
 ## Testing (added 2026-06-07)
 
-A comprehensive automated test suite now exists under `projects/tests/` (QtTest + CTest, **56
+A comprehensive automated test suite now exists under `projects/tests/` (QtTest + CTest, **57
 executables, all green** — last full run re-verified 2026-06-08 on the real Qt 6.11 llvm-mingw kit). A
 **coverage-gap-fill pass** has brought **all three library layers to/above 90% line coverage:
 common 100%, db 90.2%, savefile 90.2%** (this pass also: `pokemonbox.cpp` 72%→94.6%, `spritedata.cpp`

@@ -546,9 +546,30 @@ Each phase is independently valuable; the suite is useful from phase 1.
      (hasDynamicSpriteSet/noDynamicSpriteSet derefed null toSpriteSet; hasSpriteSet/noSpriteSet wrong
      results), and `MapDBEntryConnect::xAlign()` missing `<= 0` guard (its math was dead code). Both gated
      behind the disabled Maps feature. See `reference/fix-patterns.md`._
-   - _Remaining db gap is load/JSON-parse branches + disabled-subtype entry code (diminishing value).
-     **App layer (~50-58%) is the last laggard** — noisy llvm-cov measurement, judged by passing
-     functional suites; see the app-coverage notes above._
+   - _Remaining db gap is load/JSON-parse branches + disabled-subtype entry code (diminishing value)._
+
+   _**App-layer push toward 100% started 2026-06-08 (Twilight: "go for 100%, all tiers incl. GUI").**
+   Measured with the SHARED appcore (`PSE_SHARED_APPCORE=ON`) so the number is real: **appcore was
+   80.2%**, raised by: `tst_select_models` (every select model driven exhaustively — all rows × all
+   roles incl. the placeholder-row default branch, + each model's value↔row helper across edge values),
+   and `tst_bridge` extended for PokedexModel (all 3 sort comparators via dexSortCycle, pageClosing
+   reset/early-return, dex lookup hit/miss, dataChanged). **Bug fixed (Twilight-approved polish):**
+   `TypesModel::data()` crashed on the placeholder row 0 with an undeclared role (fell through to
+   `at(-1)`) — now guarded (matches PokemonStartersModel). Gated (QML only queries declared roles).
+   Market/storage models were already well-covered (`tst_market_model` sweeps all 4 modes + checkout;
+   `tst_storage_model`/`tst_item_storage_model`/`tst_bridge`). Remaining app gaps: fine-grained per-entry
+   item-market branches, `fontpreviewprovider`, `router` edge paths — diminishing-value._
+
+   _**The full comprehensive-testing program (Twilight wants ALL tiers; tracked):**
+   (1) finish app C++ leaf coverage; (2) **GUI/QML behavioural** (Qt Quick Test offscreen — the
+   `tst_qml_brg` Bridge-as-`brg` harness already exists; remaining = screen-flow tests: name
+   commit-on-blur, editor tab reactivity, popup dismiss — needs the app screens loaded from app.qrc into
+   the test engine, a larger harness); (3) cross-module integration + whole-system E2E + a
+   compatibility fixture matrix (Red/Blue, fresh/mid/post-E4) + fuzz/property expansion + `QBENCHMARK`
+   perf pins; (4) **CI already builds + runs ctest on Linux on push (Twilight confirmed)** — remaining is
+   to ADD the **ASan/UBSan** Linux job (sanitizers don't run on the Windows llvm-mingw kit; Linux is
+   where the QML-GC use-after-free class gets caught automatically) + optional coverage gate. This is a
+   multi-session program; pick up from the task list / this block._
 
    **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
    does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
