@@ -410,12 +410,21 @@ Each phase is independently valuable; the suite is useful from phase 1.
    null-item → 0 / canSell=false guards, and setAmount() clamping (1..99). **item.cpp 61.8% → 96.7%
    (119/123)**; savefile real-source overall → **76.4% (4510/5905)**, 8 cases green (45/45 full suite)._
 
-   **Cumulative savefile progress this pass: 72.9% → 76.4% (+209 covered lines) across signdata(100%),
-   warpdata(98.5%), mapconndata(100%), savefileiterator(100%), item(96.7%).** Next gap targets (worst
-   remaining by missed lines): `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234 — note the
-   disabled-randomizer sprite-link crash, test the safe paths), `filemanagement.cpp` 64% (87),
+   _Sixth file: **`tst_player_basics.cpp`** — the PlayerBasics methods past the field round-trips:
+   badge accessors (count/at/set), toStarter() resolution, the individual randomizers
+   (coins/money/id/starter, 40-iter range checks), and the **OT-rewrite machinery** —
+   `getNonTradeMons()` (incl. the null-file guard), `fixNonTradeMons()`, and `fullSetPlayerName`/
+   `fullSetPlayerId`: verified that the value-unchanged path is a true no-op (no owned-mon OT touched —
+   the fidelity + anti-hang guard) AND that an actual change rewrites an owned mon's OT name/id (used
+   `getNonTradeMons()` itself to grab an owned mon). **playerbasics.cpp 67.4% → 98.9% (173/175)**;
+   savefile real-source overall → **77.4% (4568/5905)**, 9 cases green (46/46 full suite)._
+
+   **Cumulative savefile progress this pass: 72.9% → 77.4% (+262 covered lines) across signdata(100%),
+   warpdata(98.5%), mapconndata(100%), savefileiterator(100%), item(96.7%), playerbasics(98.9%).** Next
+   gap targets (worst remaining by missed lines): `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234 —
+   note the disabled-randomizer sprite-link crash, test the safe paths), `filemanagement.cpp` 64% (87),
    `areamap.cpp` 62% (83 — partly the disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75),
-   `playerbasics.cpp` 67% (57), `areatileset.cpp` 62% (51).
+   `areatileset.cpp` 62% (51).
 
    **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
    does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
