@@ -79,6 +79,7 @@ private slots:
   void cart_setCountUpdatesTotals();
   void sellCheckout_raisesMoney();
   void buyCheckout_lowersMoney();
+  void coinsMode_rowsAndRolesExercised();
 };
 
 void TestMarketModel::initTestCase()
@@ -169,6 +170,35 @@ void TestMarketModel::buyCheckout_lowersMoney()
 
   QVERIFY2(m_file->data->dataExpanded->player->basics->money < before,
            "buying an item did not lower the player's money");
+}
+
+void TestMarketModel::coinsMode_rowsAndRolesExercised()
+{
+  // Coins currency = the Game Corner. buildList prepends a Money-Exchange message +
+  // money entry, and (buy) lists GC-pokemon entries. Sweep data() across every role
+  // for every row in both buy and sell coins modes to drive each entry subtype's
+  // virtual accessors (_name/_inStockCount/_itemWorth/onCartLeft/...).
+  const QHash<int, QByteArray> roles = m_mkt->roleNames();
+  QVERIFY(!roles.isEmpty());
+
+  for(int buy = 0; buy <= 1; buy++) {
+    setMode(buy == 1, /*money*/false);
+    const int n = m_mkt->rowCount(QModelIndex());
+    QVERIFY2(n > 0, "coins-mode list is empty (expected at least the money-exchange rows)");
+    for(int r = 0; r < n; r++) {
+      const QModelIndex idx = m_mkt->index(r);
+      for(auto it = roles.constBegin(); it != roles.constEnd(); ++it)
+        m_mkt->data(idx, it.key()); // drive every entry accessor; values vary by subtype
+    }
+  }
+
+  // Cart a row in coins mode if one is available, to drive the cart-count path too.
+  // (GC entries handle the cart differently from plain items, so we just drive the
+  // path rather than assert a specific total.)
+  setMode(/*buy*/true, /*money*/false);
+  const int row = findCartableRow(/*needWorth*/false);
+  if(row >= 0)
+    m_mkt->setData(m_mkt->index(row), QVariant(1), ItemMarketModel::CartCountRole);
 }
 
 QTEST_GUILESS_MAIN(TestMarketModel)
