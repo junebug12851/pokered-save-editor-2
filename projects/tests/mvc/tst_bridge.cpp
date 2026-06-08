@@ -93,6 +93,7 @@ private slots:
   void listModels_sweepRowsAndRoles();
   void pokemonStorage_boxOperations();
   void boxSelect_rowsAndChange();
+  void pokedexModel_sortsAndLookups();
   void router_navigateAndClose();
   void settings_colorSchemeAndPreviewIndex();
 };
@@ -206,6 +207,27 @@ void TestBridge::boxSelect_rowsAndChange()
   auto* bs = m_brg->pokemonBoxSelectModel1;
   QVERIFY2(bs->rowCount(QModelIndex()) > 0, "box selector is empty");
   bs->onBoxChange(); // reaction hook must be safe to call directly
+}
+
+void TestBridge::pokedexModel_sortsAndLookups()
+{
+  auto* pm = m_brg->pokedexModel;
+
+  // Cycle through every sort mode (Dex -> Name -> Internal -> wrap); each cycle
+  // re-runs dexSort() and so drives all three sort comparators.
+  for(int i = 0; i < 5; i++)
+    pm->dexSortCycle();
+
+  // pageClosing() forces dex order back when it isn't already (the reset path),
+  // then a second call hits the already-in-dex-order early return.
+  pm->pageClosing();
+  pm->pageClosing();
+
+  // dexToListIndex: a real dex number resolves to a row; an absent one -> -1.
+  QVERIFY(pm->dexToListIndex(0) >= 0);     // Bulbasaur (0-indexed dex)
+  QCOMPARE(pm->dexToListIndex(99999), -1);
+
+  pm->dataChanged(0);                       // per-entry change-signal path
 }
 
 void TestBridge::router_navigateAndClose()
