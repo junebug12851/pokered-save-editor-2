@@ -99,6 +99,20 @@ if(TARGET Qt6::QuickTest)
     add_test(NAME tst_qml COMMAND tst_qml)
     set_tests_properties(tst_qml PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_qml)
+
+    # Behavioural QML test: boots a real Bridge over BaseSAV and exposes it as `brg`,
+    # then drives the C++<->QML property chain from QML (the "undefined chain" guard).
+    # Needs appcore (the Bridge), so it's nested in the appcore guard too.
+    if(TARGET appcore)
+        qt_add_executable(tst_qml_brg qml/main_brg.cpp)
+        target_link_libraries(tst_qml_brg PRIVATE appcore Qt6::QuickTest Qt6::Qml Qt6::Quick Qt6::Test)
+        target_compile_definitions(tst_qml_brg PRIVATE
+            QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qml/brg_cases"
+            PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+        add_test(NAME tst_qml_brg COMMAND tst_qml_brg)
+        set_tests_properties(tst_qml_brg PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+        set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_qml_brg)
+    endif()
 endif()
 
 # Aggregate target: builds every registered test exe in one shot. CI builds this
