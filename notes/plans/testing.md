@@ -443,12 +443,36 @@ Each phase is independently valuable; the suite is useful from phase 1.
    running clean. **storage.cpp 78.6% → 98.0% (96/98)**; savefile real-source overall → **78.0%**, 7 cases
    green (48/48 full suite)._
 
-   **Cumulative savefile progress this pass: 72.9% → 78.0% across signdata(100%), warpdata(98.5%),
+   _Ninth file: **`tst_pokemonbox.cpp`** — the biggest single gap: the PokemonBox/PokemonMove logic the
+   two existing pokemon suites don't reach (tst_pokemon = field round-trips, tst_pokemon_logic =
+   DV/EV/level/heal/evolve/shiny/stats/nature). Covers PokemonMove PP-Up controls (max/raise/lower/reset
+   + clamping), restorePP, changeMove, moveType (valid/glitch/empty), isInvalid, allValidMoves/
+   validMovesLeft/isDuplicateMove, correctMove; and PokemonBox's constrained **randomize()** (the big
+   ~70-line method, 8-seed invariant sweep), **newPokemon** across all four PokemonRandom_ scopes, resetExp,
+   expLevelRangePercent, **setNature** (incl. the level-range clamp + same-nature no-op), hasTradeStatus,
+   changeOtData/changeTrade (both directions + idempotent no-op + null-basics guard), cleanupMoves/
+   correctMoves/update(correctMoves), changeMove(ind,…), the manual* UI hooks, reRollEVs/maxPpUps, dexNum/
+   speciesName, isPokemonReset/isCorrected, isBoxMon, and a dedicated invalid-mon (species 0) safe-default
+   sweep (dexNum=-1, hpStat=1 floor, levelToExp=0, expLevelRange* fall back to raw exp, resetExp no-op).
+   **pokemonbox.cpp 72% → 93.9% (1055/1123, 68 missed)**; savefile real-source overall → **82.4%
+   (4863/5905)**, 18 cases green (49/49 full suite). Three latent code quirks surfaced (NOT fixed —
+   flagged for Twilight, see status.md Open Issues): (1) `update()` with `resetType=false` runs its
+   `else type2 = toType1->ind` branch, overwriting a **dual-type** mon's type2 to equal type1 (and emits
+   no `type2Changed()`) — reachable via maxLevel()/maxEVs()/manualLevelChanged(); (2) `isCorrected()`
+   disagrees with `update()` for a species whose DB `toType2`==`toType1` (update sets type2=0xFF, isCorrected
+   wants type2==toType2->ind); (3) `isPokemonReset()` can only return true for a species with 4 initial
+   moves (empty slots resolve `toMove()==null` and fail its check). Tests assert the documented/correct
+   behaviour and avoid locking in (1)–(3)._
+
+   **Cumulative savefile progress this pass: 72.9% → 82.4% across signdata(100%), warpdata(98.5%),
    mapconndata(100%), savefileiterator(100%), item(96.7%), playerbasics(98.9%), filemanagement(77%,
-   headless ceiling), storage(98%) — plus one real bug fixed (recent-files cap off-by-one).** Next gap
-   targets (worst remaining by missed lines): `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234 — note
+   headless ceiling), storage(98%), pokemonbox(93.9%) — plus one real bug fixed (recent-files cap
+   off-by-one) and three latent pokemonbox quirks flagged.** Next gap
+   targets (worst remaining by missed lines): `spritedata.cpp` 46% (234 — note
    the disabled-randomizer sprite-link crash, test the safe paths), `areamap.cpp` 62% (83 — partly the
-   disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75), `areatileset.cpp` 62% (51).
+   disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75), `areatileset.cpp` 62% (51),
+   `pokemonbox.cpp` (68 — residual glitch/boundary branches: the move-randomize do-while reject, correctMove's
+   single-row replacement, isMaxedOut's invalid-mon branch, setNature's boundary ±25 paths).
 
    **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
    does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
