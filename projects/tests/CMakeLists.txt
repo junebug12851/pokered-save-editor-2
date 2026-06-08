@@ -44,6 +44,7 @@ pse_add_test(tst_db_integrity db       db/tst_db_integrity.cpp)
 # App-layer tests link the appcore static library (extracted from the app exe).
 if(TARGET appcore)
     pse_add_test(tst_models   appcore  mvc/tst_models.cpp)
+    pse_add_test(tst_bridge   appcore  mvc/tst_bridge.cpp)
 endif()
 
 # --- QML smoke test (Qt Quick Test, headless via offscreen) ---
