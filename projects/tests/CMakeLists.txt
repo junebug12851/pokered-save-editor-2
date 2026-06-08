@@ -45,6 +45,7 @@ pse_add_test(tst_e2e          savefile savefile/tst_e2e.cpp)
 pse_add_test(tst_randomizer   savefile savefile/tst_randomizer.cpp)
 pse_add_test(tst_common       common   common/tst_common.cpp)
 pse_add_test(tst_db_integrity db       db/tst_db_integrity.cpp)
+pse_add_test(tst_db_entries   db       db/tst_db_entries.cpp)
 
 # App-layer tests link the appcore static library (extracted from the app exe).
 if(TARGET appcore)
