@@ -354,12 +354,12 @@ Each phase is independently valuable; the suite is useful from phase 1.
    _Coverage measured 2026-06-07 via a separate instrumented build (`projects/build/coverage`,
    `-fprofile-instr-generate -fcoverage-mapping`; merge with `llvm-profdata`, summarise with
    `llvm-cov export -summary-only`; per-module totals parsed from the JSON). **Re-measured 2026-06-08
-   over the full 27-suite run (`build-cov`), line / function / region:**
+   over the full 32-suite run (`build-cov`), line / function / region:**
 
    | module       | line  | func  | region |
    |--------------|-------|-------|--------|
    | common       | 79.1% | 77.3% | 82.1%  |
-   | db           | 55.6% | 48.0% | 50.1%  |
+   | db           | 62.7% | 59.0% | 55.9%  |
    | savefile     | 72.2% | 72.3% | 64.5%  |
    | app/appcore  | 55.9% | 63.5% | 55.1%  |
 
@@ -369,9 +369,10 @@ Each phase is independently valuable; the suite is useful from phase 1.
    Method: instrument all libs + appcore, run every test exe with a unique `LLVM_PROFILE_FILE`,
    `llvm-profdata merge`, then `llvm-cov export -instr-profile merged.profdata -summary-only
    <lib.dll|tst_bridge.exe> <src-dir>` per module (app measured against `tst_bridge.exe`, which
-   statically links all of appcore). Biggest remaining climbs: db (the many entry types' getters +
-   deep-link code, sub-DB store iteration), savefile leaf getters, and the app `engine/` providers +
-   Router edge paths. db is now the lowest layer and the next focus._
+   statically links all of appcore). db then climbed 56 → **63** (db-entry-getters, db-stores, fonts,
+   mapsearch, map-subentries, random-strings). Biggest remaining climbs: app `engine/` providers +
+   Router edge paths (app is now the lowest line layer), savefile leaf getters, and the remaining
+   per-entry getters in db._
    _**AddressSanitizer: not viable on this Windows/llvm-mingw kit.** The ASan build compiles
    (`projects/build/asan`, `-fsanitize=address`), but every instrumented exe crashes at startup with
    `interception_win: unhandled instruction` (0xC0000005) before any test runs — a known ASan-on-Windows
