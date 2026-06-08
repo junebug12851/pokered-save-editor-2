@@ -403,11 +403,19 @@ Each phase is independently valuable; the suite is useful from phase 1.
    toolset's contract (asserted in tst_toolset) — at the iterator layer assert idempotency, not a
    canonical hex string._
 
-   **Cumulative savefile progress this pass: 72.9% → 75.6% (+159 covered lines) across signdata(100%),
-   warpdata(98.5%), mapconndata(100%), savefileiterator(100%).** Next gap targets (worst remaining by
-   missed lines): `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234 — note the disabled-randomizer
-   sprite-link crash, test the safe paths), `filemanagement.cpp` 64% (87), `areamap.cpp` 62% (83),
-   `areapokemon.cpp` 61% (75), `playerbasics.cpp` 67% (57), `areatileset.cpp` 62% (51), `item.cpp` 62% (47).
+   _Fifth file: **`tst_item.cpp`** — the Item inventory-slot fragment: all 4 ctors (null-iterator/
+   index+amount/name+amount/random), the load() overloads (incl. invalid-name guard), randomize()
+   (50-iter legality sweep: non-glitch, non-once, amount 1-5), toItem() resolution, the full buy/sell
+   pricing surface (one + all × money + coins) validated against the resolved ItemsDB entry, the
+   null-item → 0 / canSell=false guards, and setAmount() clamping (1..99). **item.cpp 61.8% → 96.7%
+   (119/123)**; savefile real-source overall → **76.4% (4510/5905)**, 8 cases green (45/45 full suite)._
+
+   **Cumulative savefile progress this pass: 72.9% → 76.4% (+209 covered lines) across signdata(100%),
+   warpdata(98.5%), mapconndata(100%), savefileiterator(100%), item(96.7%).** Next gap targets (worst
+   remaining by missed lines): `pokemonbox.cpp` 72% (314), `spritedata.cpp` 46% (234 — note the
+   disabled-randomizer sprite-link crash, test the safe paths), `filemanagement.cpp` 64% (87),
+   `areamap.cpp` 62% (83 — partly the disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75),
+   `playerbasics.cpp` 67% (57), `areatileset.cpp` 62% (51).
 
    **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
    does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
