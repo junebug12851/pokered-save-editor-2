@@ -52,10 +52,9 @@ after-the-fact surgery.
   `build/`, `projects/build/`, `*.dll`, `*.exe`, `*.o`, `*.moc`).
 - Inspect `git status` before, verify clean/expected after — every time.
 
-## Remote setup state (2026-06-07)
+## Remote setup state (complete 2026-06-08)
 
-Local `master` was renamed to `main`; `dev` created. **Remote not yet reconciled** — `origin` still has
-`master` as default. To finish (do with care, Twilight to approve each push):
-1. `git push -u origin main` and `git push -u origin dev` (additive — safe).
-2. On the Git host's web UI, set the **default branch to `main`**.
-3. Then `git push origin --delete master` (only works once it's no longer the default).
+Done: `master` renamed to `main` locally; `dev` created; both pushed to `origin`; GitHub default branch
+set to `main`; stale `origin/master` deleted (verified **0** unique commits on it first, with a guard).
+Remote now has exactly **`main`** (stable) + **`dev`**; `origin/HEAD → origin/main`. Repo:
+`github.com/junebug12851/pokered-save-editor-2`. No commits were lost in the rename.
