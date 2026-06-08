@@ -32,7 +32,11 @@ jobs:
           host: linux
           target: desktop
           arch: linux_gcc_64
-          modules: qtdeclarative qtcharts qtsvg
+          # qtdeclarative (Qt Quick) and qtsvg are essential components shipped
+          # with the Qt 6 base package, NOT aqtinstall add-on modules -- listing
+          # them here makes aqt fail ("packages ... not found while parsing XML").
+          # Only genuine add-ons (qtcharts) belong in `modules`.
+          modules: qtcharts
 
       - name: Configure (ASan + UBSan)
         run: >
@@ -68,7 +72,8 @@ jobs:
           host: windows
           target: desktop
           arch: win64_llvm_mingw
-          modules: qtdeclarative qtcharts qtsvg
+          # See linux-asan note: qtdeclarative/qtsvg are base components, not modules.
+          modules: qtcharts
           tools: "tools_llvm_mingw1706"
 
       - name: Configure
