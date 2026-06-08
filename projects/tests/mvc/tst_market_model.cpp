@@ -71,8 +71,7 @@ private:
 
 private slots:
   void initTestCase();
-  void init();
-  void cleanup();
+  void cleanupTestCase();
 
   void allFourModes_buildWithoutCrash();
   void sellMode_hasItemsAndMoneyStart();
@@ -82,21 +81,23 @@ private slots:
   void coinsMode_rowsAndRolesExercised();
 };
 
+// One Bridge for the whole case (built once, like the real app -- which never
+// creates/destroys Bridges repeatedly). Per-test new/delete of a Bridge churns its
+// many signal connections + the static ItemMarketEntry pointers and intermittently
+// crashed via a queued slot firing on a torn-down object. All assertions below are
+// relative (money up/down vs. each test's own baseline), so a shared fixture is
+// order-independent.
 void TestMarketModel::initTestCase()
 {
   QVERIFY(DB::inst() != nullptr);
   Router::loadScreens();
-}
-
-void TestMarketModel::init()
-{
   m_file = new FileManagement;
   loadInto(*m_file->data, readSaveBytes(QStringLiteral("BaseSAV.sav")));
   m_brg = new Bridge(m_file);
   m_mkt = m_brg->marketModel;
 }
 
-void TestMarketModel::cleanup()
+void TestMarketModel::cleanupTestCase()
 {
   delete m_brg; m_brg = nullptr;
   delete m_file; m_file = nullptr;

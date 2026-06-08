@@ -306,6 +306,16 @@ Each phase is independently valuable; the suite is useful from phase 1.
    it crashes on a progressed save (found+fixed a `MapSearch::isType()` null-deref; still crashes in
    `SpriteData::load()` via `AreaSprites::randomize()`) — deferred to phase 7 (randomizer is WIP)._
 
+   **Flaky-test note (2026-06-08):** `tst_market_model` intermittently segfaulted (~1/3 runs, exit
+   0xC0000005) via a queued slot invocation (`QMetaMethod::invokeImpl`) on a torn-down object. Cause:
+   the test created+destroyed a `Bridge` PER test method; the Bridge has many cross-object signal
+   connections + the static `ItemMarketEntry` pointers, and the churn left a queued call targeting a
+   freed object. The real app never churns Bridges (one lives for the app's lifetime), so this was
+   test-induced, not a shippable bug. Fix: market test uses ONE Bridge (initTestCase/cleanupTestCase);
+   its assertions are all relative (money up/down vs each test's own baseline) so a shared fixture is
+   order-independent. The other bridge-based model tests (storage/item-storage/bridge) don't churn
+   into a crash (verified 0/20 each), but prefer a single shared Bridge for new app-model tests.
+
    **Bugs found by phase-2 tests so far (all real): Daycare empty-destructor crash (fixed), bank-2
    checksum off-by-one (fixed), `MapSearch::isType()` null-deref (fixed), randomizer sprite-path crash
    (open, phase 7), `PlayerPokedex::reset()` memset value/count swap (fixed 2026-06-08) — it passed
