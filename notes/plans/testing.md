@@ -341,11 +341,15 @@ Each phase is independently valuable; the suite is useful from phase 1.
 7. **Sanitizer build + coverage reporting**, then coverage-gap fill to targets.
    _Coverage measured 2026-06-07 via a separate instrumented build (`projects/build/coverage`,
    `-fprofile-instr-generate -fcoverage-mapping`; merge with `llvm-profdata`, summarise with
-   `llvm-cov export -summary-only`). **Baseline, updated 2026-06-08 (line / function):** common 65% / 59%;
-   savefile **67% / 65%**; db **52% / 43%**; **app/appcore 20% / 20%** (9 of ~25 models tested). Trend
-   across the effort: savefile 63→67, db func 37→43, **app 0 → 3.5 → 20**. Biggest remaining climbs: the
-   ~14 untested app models + Bridge/Router, PC storage & area sub-objects, db entry getters / sub-DB
-   stores, and the remaining savefile getters._
+   `llvm-cov export -summary-only`). **Baseline, measured 2026-06-08 (line / function):** common 65% / 59%;
+   savefile **67% / 65%**; db **52% / 43%**; **app/appcore 20% / 20%** (measured when 9 of ~25 models were
+   tested). Trend across the effort: savefile 63→67, db func 37→43, **app 0 → 3.5 → 20**.
+   _**2026-06-08, after baseline:** `tst_bridge.cpp` added — constructs a real `Bridge` over the BaseSAV
+   fixture (the way the app boots) and exercises the previously-untested models (Pokedex, both
+   `ItemStorageModel`s, `ItemMarketModel`, both `PokemonStorageModel` halves + box selectors,
+   `RecentFilesModel`, `FontSearchModel`) plus `Router` navigation. The app-layer coverage % is due a
+   re-measure; the model count covered is now ~all of them._ Biggest remaining climbs: PC storage & area
+   sub-object byte round-trips, db entry getters / sub-DB stores, and the remaining savefile getters._
    _**AddressSanitizer: not viable on this Windows/llvm-mingw kit.** The ASan build compiles
    (`projects/build/asan`, `-fsanitize=address`), but every instrumented exe crashes at startup with
    `interception_win: unhandled instruction` (0xC0000005) before any test runs — a known ASan-on-Windows
@@ -367,7 +371,18 @@ Each phase is independently valuable; the suite is useful from phase 1.
    data/round-trip), green. The app exe still builds. **Gotcha fixed:** splitting into a lib broke the
    single-target "unity MOC" that had been making `FileManagement` complete for `mainwindow.h`'s
    `Q_PROPERTY(FileManagement*)` — added the explicit `#include` (NOT an opaque pointer; brg.file is
-   QML-traversed). **Still to do: the remaining ~23 models + Bridge/Router.**_
+   QML-traversed)._
+   _Extended 2026-06-08 (`tst_models.cpp` now 9 models) and **`tst_bridge.cpp`** — an integration suite
+   that constructs the real `Bridge` over the BaseSAV fixture and covers the rest: Pokedex, both
+   `ItemStorageModel`s, `ItemMarketModel`, both `PokemonStorageModel` halves + box selectors,
+   `RecentFilesModel`, `FontSearchModel`, and `Router` navigation. 16/16 ctest green._
+   _**Two app-layer test landmines (NOT bugs — call conventions to respect in tests):**_
+   _1. `Router::screens`/`stack` are **static**, populated by `Router::loadScreens()` at app boot
+      (`boot.cpp`), not by the constructor. A test that navigates must call `Router::loadScreens()` first,
+      or `changeScreen()` dereferences a null `Screen*` and crashes._
+   _2. `PokemonStorageModel::getBoxMon()/getPartyMon()` do an **unchecked `.at(index)`** — their contract
+      is that QML only calls them for already-rendered rows. In a test, only call them with an index `<`
+      the box's actual `pokemon.size()` (load a non-blank fixture if you want a non-empty box/party)._
 10. **QML/UI** — Twilight opted in. _Harness established 2026-06-07: `tests/qml/` (Qt Quick Test,
     `QUICK_TEST_MAIN`) builds and runs headless via the `offscreen` platform; `cases/tst_smoke.qml`
     is green (6 cases). This proves the QML test path works. **Screen-level tests still to do** — the
