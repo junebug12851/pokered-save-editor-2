@@ -26,6 +26,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/ui-patterns.md` | **UI/QML conventions** — layouts, borderless combos, ⋮ buttons, editor popups, sliders. Read before UI work |
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems |
 | `notes/reference/documentation.md` | **Doc generation** — build C++ API docs (Doxygen), comment style, why QML is excluded |
+| `notes/reference/git-workflow.md` | **Git standards** — branch model (`main` FF-only/stable, `dev` frequent), no history rewriting, commit-message style, hard safety rules. Read before any git op |
 | `notes/decisions/architecture.md` | Key structural choices and why |
 | `notes/decisions/rejected.md` | Things tried that failed — do not repeat |
 | `notes/plans/next-steps.md` | Ordered task list |
