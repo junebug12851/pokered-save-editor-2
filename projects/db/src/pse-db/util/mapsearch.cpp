@@ -288,8 +288,11 @@ MapSearch* MapSearch::noSprites()
 
 MapSearch* MapSearch::hasSpriteSet()
 {
+  // spriteSet is an index where -1 means "none" (NOT 0). The old `!entry->spriteSet`
+  // test only caught index 0, so it mis-classified -1 ("none") as "has". Use the
+  // sentinel directly.
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->spriteSet)
+    if(entry->spriteSet < 0)
       results.removeOne(entry);
 
   return this;
@@ -298,7 +301,7 @@ MapSearch* MapSearch::hasSpriteSet()
 MapSearch* MapSearch::noSpriteSet()
 {
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(entry->spriteSet)
+    if(entry->spriteSet >= 0)
       results.removeOne(entry);
 
   return this;
@@ -306,8 +309,12 @@ MapSearch* MapSearch::noSpriteSet()
 
 MapSearch* MapSearch::hasDynamicSpriteSet()
 {
+  // Keep maps whose (resolved) sprite set is dynamic. Guard both the -1 sentinel
+  // and a null toSpriteSet -- the old code dereferenced toSpriteSet whenever
+  // spriteSet != 0, crashing on every map with no sprite set (spriteSet == -1).
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->spriteSet || !(*entry->toSpriteSet).isDynamic())
+    if(entry->spriteSet < 0 || entry->toSpriteSet == nullptr ||
+       !entry->toSpriteSet->isDynamic())
       results.removeOne(entry);
 
   return this;
@@ -315,8 +322,12 @@ MapSearch* MapSearch::hasDynamicSpriteSet()
 
 MapSearch* MapSearch::noDynamicSpriteSet()
 {
+  // Keep maps that carry a (resolved) NON-dynamic sprite set -- the complement of
+  // hasDynamicSpriteSet() among maps that actually have a sprite set. Same -1 +
+  // null guard as above (preserves the original "must have a sprite set" intent).
   for(auto entry : QVector<MapDBEntry*>(results))
-    if(!entry->spriteSet || (*entry->toSpriteSet).isDynamic())
+    if(entry->spriteSet < 0 || entry->toSpriteSet == nullptr ||
+       entry->toSpriteSet->isDynamic())
       results.removeOne(entry);
 
   return this;
