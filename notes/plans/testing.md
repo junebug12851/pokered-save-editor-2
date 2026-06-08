@@ -427,12 +427,15 @@ Each phase is independently valuable; the suite is useful from phase 1.
    ~55 lines are the native open/save **file dialogs** + the to-disk save path, which can't run headless
    (the save→reopen cycle is covered by tst_e2e). savefile real-source overall → **77.9% (4600/5905)**, 9
    cases green (47/47 full suite)._
-   _**Possible off-by-one found (flagged for Twilight, NOT changed):** `processRecentFileChanges()` caps
-   with `newList.append(file); if(newList.size() > MAX_RECENT_FILES) break;` — appending *then* breaking
-   retains **MAX+1** entries (6, not 5). `recentFilesMax()` reports 5. Likely wants `>=` or a
-   break-before-append. Minor (one extra remembered path), but it's a real cap/UX discrepancy — Twilight's
-   call. The test asserts the bound tolerantly (`count <= max+1`) so it stays green whichever way it's
-   resolved._
+   _**Off-by-one found AND fixed 2026-06-08 (Twilight-approved after confirming intent):**
+   `processRecentFileChanges()` capped with `append(file); if(size > MAX_RECENT_FILES) break;` —
+   appending *then* breaking retained **MAX+1** (6, not 5). Twilight asked to verify the extra slot
+   wasn't an intentional sentinel first; it wasn't — `mainwindow` bounds its menu loop at
+   `MAX_RECENT_FILES` (and its shortcut array is sized MAX, so a 6th is never read), and
+   `RecentFilesModel` uses `recentFilesCount()` directly (its `+1` is just the row-0 "Clear Recent Files"
+   header). So the 6th slot only leaked one extra path into the QML list. Fixed to `>= MAX_RECENT_FILES`
+   → exactly 5. `tst_filemanagement::recents_capBoundsTheList` is now the regression guard (asserts ==5).
+   See `reference/fix-patterns.md`._
 
    **Cumulative savefile progress this pass: 72.9% → 77.9% (+294 covered lines) across signdata(100%),
    warpdata(98.5%), mapconndata(100%), savefileiterator(100%), item(96.7%), playerbasics(98.9%),

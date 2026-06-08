@@ -271,7 +271,11 @@ void FileManagement::processRecentFileChanges()
       continue;
 
     newList.append(file);
-    if(newList.size() > MAX_RECENT_FILES)
+    // Cap at exactly MAX_RECENT_FILES. `>=` (not `>`) so we stop after the Nth
+    // entry is appended; `>` kept MAX+1, which leaked one extra path into the
+    // QML recent list (mainwindow's menu already bounded itself at MAX). The
+    // extra slot was NOT a sentinel/terminator -- nothing reads recentFiles[MAX].
+    if(newList.size() >= MAX_RECENT_FILES)
       break;
   }
 

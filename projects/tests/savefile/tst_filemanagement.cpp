@@ -107,11 +107,11 @@ void TestFileManagement::recents_addDeDupeTrimClear()
   QVERIFY(fm.getRecentFiles().isEmpty());
 }
 
-// Adding more than the cap keeps only the most-recent entries.
-// NOTE: the cap loop is `append; if(size > MAX) break;`, so it actually retains
-// MAX+1 entries -- a likely off-by-one (would be MAX with `>=` or break-before-
-// append). Asserted tolerantly here (<= MAX+1) so this test documents the bound
-// without locking the bug in; flagged for Twilight to confirm the intended cap.
+// Adding more than the cap keeps exactly MAX_RECENT_FILES, most-recent first.
+// (Regression guard for the off-by-one fixed 2026-06-08: the cap loop appended
+// then broke on `> MAX`, retaining MAX+1; corrected to `>= MAX`. Confirmed the
+// extra slot was not a sentinel -- mainwindow bounds its menu at MAX and the
+// RecentFilesModel reads recentFilesCount() directly, so nothing relied on it.)
 void TestFileManagement::recents_capBoundsTheList()
 {
   FileManagement fm;
@@ -123,10 +123,7 @@ void TestFileManagement::recents_capBoundsTheList()
   for(int i = 0; i < max + 3; i++)
     fm.addRecentFile(QStringLiteral("file%1.sav").arg(i));
 
-  const int count = fm.recentFilesCount();
-  QVERIFY2(count >= max && count <= max + 1,
-           qPrintable(QStringLiteral("recent count %1 out of expected band [%2,%3]")
-                        .arg(count).arg(max).arg(max + 1)));
+  QCOMPARE(fm.recentFilesCount(), max); // exactly the cap -- no extra slot
 
   // The most-recently-added entry is always retained at the top.
   QCOMPARE(fm.getRecentFile(0), QStringLiteral("file%1.sav").arg(max + 2));
