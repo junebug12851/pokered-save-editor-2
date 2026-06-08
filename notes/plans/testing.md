@@ -306,7 +306,16 @@ Each phase is independently valuable; the suite is useful from phase 1.
    variation, Utility URL encode/decode round-trip) and `tst_toolset.cpp` (the byte primitives:
    BCD<->int, 16-bit word + byte order, byte, per-bit set/clear + isolation, Gen 1 checksum vs a
    hand-computed value). Both green (13 + 17)._
+   _Db deep integrity (`tst_db_integrity.cpp`, extended): moves load + every non-glitch move deep-links
+   its type; types load with names; items load; and the `MapsDB` search chain runs (`isGood()`, and
+   `isType()` as a live regression guard for the null-deref fix). 9 cases green. **Finding:**
+   `isType("Cave")` matches 0 maps (the cave tileset type string isn't literally "Cave") — the
+   randomizer relies on `isType("Cave")->pickRandom()`, so this is tracked for phase 7._
 4. **Negative / error-path** across savefile + db asset load (graceful degradation proven).
+   _Done 2026-06-07 (`tst_errors.cpp`): missing-file and truncated (<32KB) loads via `FileManagement`
+   fail cleanly (return false, surface `lastErrorMessage`, and leave the live save **byte-for-byte
+   untouched**); an oversized (>32KB) file loads its first 32 KB; `SaveFile::setData(nullptr)` is a safe
+   no-op (the s14 crash fix). 7 cases green. (QSettings isolated under a test org/app name.)_
 5. **Integration + E2E** (db↔savefile, FileManagement cycle, open→edit→save→reopen).
 6. **Randomizer invariants + fuzz**; compatibility fixture matrix (Red/Blue, game states).
 7. **Sanitizer build + coverage reporting**, then coverage-gap fill to targets.

@@ -25,6 +25,11 @@
 
 #include <pse-db/db.h>
 #include <pse-db/pokemon.h>
+#include <pse-db/moves.h>
+#include <pse-db/itemsdb.h>
+#include <pse-db/types.h>
+#include <pse-db/mapsdb.h>
+#include <pse-db/util/mapsearch.h>
 
 class TestDbIntegrity : public QObject
 {
@@ -34,6 +39,10 @@ private slots:
   void boots();
   void pokemonStoreIsComplete();
   void everyNonGlitchSpeciesDeepLinksType();
+  void movesLoadedAndDeepLinkType();
+  void typesLoadedWithNames();
+  void itemsLoaded();
+  void mapsSearchChainWorks();
 };
 
 void TestDbIntegrity::boots()
@@ -68,6 +77,58 @@ void TestDbIntegrity::everyNonGlitchSpeciesDeepLinksType()
              qPrintable(QStringLiteral("species '%1' did not deep-link its primary type")
                           .arg(e->name)));
   }
+}
+
+void TestDbIntegrity::movesLoadedAndDeepLinkType()
+{
+  (void)DB::inst();
+  const QVector<MoveDBEntry*> store = MovesDB::inst()->getStore();
+  QVERIFY(!store.isEmpty());
+  for(MoveDBEntry* e : store) {
+    QVERIFY(e != nullptr);
+    if(e->glitch)
+      continue;
+    QVERIFY2(!e->name.isEmpty(), "a non-glitch move has an empty name");
+    QVERIFY2(e->toType != nullptr,
+             qPrintable(QStringLiteral("move '%1' did not deep-link its type").arg(e->name)));
+  }
+}
+
+void TestDbIntegrity::typesLoadedWithNames()
+{
+  (void)DB::inst();
+  const QVector<TypeDBEntry*> store = TypesDB::inst()->getStore();
+  QVERIFY(!store.isEmpty());
+  for(TypeDBEntry* e : store) {
+    QVERIFY(e != nullptr);
+    QVERIFY2(!e->name.isEmpty(), "a type entry has an empty name");
+  }
+}
+
+void TestDbIntegrity::itemsLoaded()
+{
+  (void)DB::inst();
+  QVERIFY(ItemsDB::inst()->getStoreSize() > 0);
+  QVERIFY(ItemsDB::inst()->getStoreAt(0) != nullptr);
+}
+
+void TestDbIntegrity::mapsSearchChainWorks()
+{
+  (void)DB::inst();
+  QVERIFY(MapsDB::inst()->getStoreSize() > 0);
+
+  // The chainable finder returns results (exercises the whole isGood() chain).
+  const int good = MapsDB::inst()->search()->isGood()->getMapCount();
+  QVERIFY(good > 0);
+
+  // isType(...) must run WITHOUT crashing and return a sane subset -- this is the
+  // live regression guard for the MapSearch::isType() null-deref fixed 2026-06-07
+  // (the crash in the map-randomizer path). We don't assert a specific type exists:
+  // note isType("Cave") currently matches 0 maps (the cave tileset type string is
+  // apparently not literally "Cave"), which the randomizer relies on -- tracked for
+  // phase 7 (randomizer), since pickRandom() on an empty result returns nullptr.
+  const int caves = MapsDB::inst()->search()->isGood()->isType("Cave")->getMapCount();
+  QVERIFY2(caves >= 0 && caves <= good, "isType() produced an out-of-range count");
 }
 
 QTEST_GUILESS_MAIN(TestDbIntegrity)
