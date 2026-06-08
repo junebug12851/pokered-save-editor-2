@@ -346,7 +346,10 @@ PokemonBox* PokemonBox::newPokemon(PokemonRandom::PokemonRandom_ list, PlayerBas
     pkmnData = PokemonDB::inst()->getStoreAt(ind);
   }
   else if(list == PokemonRandom::Random_Pokedex) {
-    var8 dex = Random::inst()->rangeExclusive(1, pokemonDexCount);
+    // The "dexN" keys are 0-based (dex0 = Bulbasaur .. dex150 = Mew; there is no
+    // dex151). rangeExclusive(0, 151) -> [0,150] covers all 151 species. Was
+    // rangeExclusive(1, ...), which silently made Bulbasaur (dex0) unreachable.
+    var8 dex = Random::inst()->rangeExclusive(0, pokemonDexCount);
     pkmnData = PokemonDB::inst()->getIndAt("dex" + QString::number(dex));
   }
   else if(list == PokemonRandom::Random_Starters)

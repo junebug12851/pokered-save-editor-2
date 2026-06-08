@@ -170,9 +170,12 @@ void AreaTileset::loadFromData(MapDBEntry* map, bool randomType)
 {
   reset();
 
+  // The ternary was inverted: when map==nullptr it dereferenced the null map
+  // (crash), and when map!=nullptr it discarded the real tileset (loaded zeros).
+  // Correct order: null map -> null tileset; real map -> its resolved tileset.
   auto tileset = (map == nullptr)
-      ? map->getToTileset()
-      : nullptr;
+      ? nullptr
+      : map->getToTileset();
 
   // If random, have it clear everything and randomize type
   // Otherwise load usual type

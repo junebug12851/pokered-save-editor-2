@@ -503,11 +503,28 @@ Each phase is independently valuable; the suite is useful from phase 1.
    over EVERY map. **spritedata.cpp 46% → 100.0% (434/434, 0 missed)**; savefile real-source overall →
    **86.5% (5115/5916)**, 13 cases green (50/50 full suite)._
 
-   **Cumulative this pass: 72.9% → 86.5%.** Next gap
-   targets (worst remaining by missed lines): `areamap.cpp` 62% (83 — partly the
-   disabled Maps `loadFromData`/`setTo`), `areapokemon.cpp` 61% (75), `areatileset.cpp` 62% (51),
-   `pokemonbox.cpp` (68 — residual glitch/boundary branches: the move-randomize do-while reject, correctMove's
-   single-row replacement, isMaxedOut's invalid-mon branch, setNature's boundary ±25 paths).
+   _Eleventh file: **`tst_area_logic.cpp`** — the area sub-trees' DB-population/randomize logic that
+   tst_area.cpp's byte round-trips don't reach (deepLink in initTestCase): AreaTileset (talk-tile
+   accessors/swap, randomize, loadFromData null+from-map+randomType), AreaMap (conn accessors, toCurMap,
+   coordsToPtr, randomize/setTo from a real map incl. MapConnData::loadFromData, null-safe), and
+   AreaPokemon/AreaPokemonWild (wild randomize over the 0-based dex range + operators + explicit ctor,
+   table randomize, setTo from a map, null-safe). 17 cases. **Found + fixed (Twilight-approved) 3 bugs
+   along the way:** (1) `AreaTileset::loadFromData` inverted ternary — `(map==nullptr) ? map->getToTileset()
+   : nullptr` crashed on a null map and discarded the tileset on a real map; fixed to
+   `? nullptr : map->getToTileset()` (regression-guarded by the null + from-map tests). (2) `PokemonBox::
+   newPokemon(Random_Pokedex)` used `rangeExclusive(1,151)` and so could never roll Bulbasaur (dex keys
+   are 0-based, confirmed by probe: dex0=Bulbasaur..dex150=Mew, dex151 null) — fixed to
+   `rangeExclusive(0,151)`. (3) `AreaPokemon::setTo` lacked an `i < wildMonsCount` bound on its array
+   writes (gen-1 tables are always 10, so defensive only) — guarded. **areatileset.cpp 62% → 100.0%
+   (0 missed), areamap.cpp 62% → 93.1% (15 missed), areapokemon.cpp 61% → 90.5% (18 missed), pokemonbox.cpp
+   → 94.6%**; savefile real-source overall → **89.4% (5291/5916)**, 17 cases green (51/51 full suite)._
+
+   **Cumulative this pass: 72.9% → 89.4%.** Next gap
+   targets (worst remaining by missed lines): `filemanagement.cpp` (~55 — native file dialogs + to-disk
+   save, headless-unreachable), and assorted leaf getters/branches across savefile fragments; plus
+   residual boundary branches in `pokemonbox.cpp` (~61 — move-randomize do-while reject, correctMove's
+   single-row replacement, isMaxedOut's invalid-mon branch, setNature's ±25 paths), `areamap.cpp` (15),
+   `areapokemon.cpp` (18 — the byte save-NPC paths reached only through the full Area flatten).
 
    **Key discovery (worth knowing for all map-DB tests):** `DB::deepLinkAll()`
    does **not** call `MapsDB::deepLink()` — map warps/sprites/connections are left unresolved at boot
