@@ -386,6 +386,12 @@ Each phase is independently valuable; the suite is useful from phase 1.
    job (Qt llvm-mingw, matches Twilight's kit). Not yet exercised on GitHub — the Qt module/arch names
    may need a first-run tweak (noted in the file). This is the right home for ASan, which can't run on
    the local Windows kit._
+   _**Cross-platform gotcha (CI first-run shakeout, 2026-06-08):** the local kit is Windows
+   (case-INsensitive filesystem); the linux-asan CI is case-SENSITIVE. A few db headers are
+   mixed-case — `spriteSet.h`, `starterPokemon.h`, `tmHm.h`, `hiddenItemsdb.h` — so an `#include
+   <pse-db/spriteset.h>` compiles locally but fails on Linux with "No such file or directory". Match
+   header case exactly in includes. (Also surfaced: the Qt module fix, qtdeclarative/qtsvg are base
+   not add-ons; and `tests_all` aggregate so new suites are always built.)_
 9. **app C++** (Bridge, models, FileManagement) headless.
    _Unblocked 2026-06-07 (Twilight-approved refactor): the app's logic — `bridge/`, all `mvc/` models,
    `engine/` — was extracted from the executable into a **static library `appcore`** (`app/CMakeLists.txt`);
