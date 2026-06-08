@@ -400,9 +400,14 @@ Each phase is independently valuable; the suite is useful from phase 1.
    three library layers (common/db/savefile) are stable to the decimal across every run, so trust
    those; treat the app % as a rough ~50-58% band and judge app coverage by the passing functional
    suites (every model, both list modes, all four market modes, bulk ops, bridge, settings, engine
-   math). The only genuinely untested app code is the `engine/` QQuickImageProvider classes
-   (fontpreviewprovider/tilesetprovider) — they need a GUI app + qrc resources to drive, the same
-   low-ROI/high-setup territory as the deferred QML/UI tests._
+   math)._
+   _**Engine providers + QML behavioural now covered too (2026-06-08):** `tst_engine_providers` is a
+   GUI test (QTEST_MAIN, offscreen) that compiles the app qrc and drives TilesetEngine's
+   resource-backed builders, TilesetProvider, and FontPreviewProvider (incl. malformed-id fallbacks);
+   `tst_qml_brg` boots a real Bridge as the QML `brg` context property and drives the C++<->QML
+   property chain from QML (the undefined-chain guard). So no app tier is wholly untested now — the
+   only remaining QML work is full screen-flow tests (commit-on-blur etc.), which stay optional /
+   low-ROI per Twilight's call._
 
    Trend across the effort (line): common 65 → **79** (Random chance helpers), savefile 63 → 67 → 68 →
    **72** (area, area-fragments, pokedex, items-logic, misc-regions), db 51 → 53 → **56** (db-entries +
