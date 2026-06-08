@@ -146,7 +146,7 @@ QScopedPointer<MapSearch, QScopedPointerDeleteLater> MapsDB::search() const
 
 MapDBEntry* MapsDB::getStoreAt(const int ind) const
 {
-  if(ind >= store.size())
+  if(ind < 0 || ind >= store.size())
     return nullptr;
 
   return store.at(ind);

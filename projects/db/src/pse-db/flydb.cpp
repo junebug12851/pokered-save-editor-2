@@ -56,7 +56,7 @@ int FlyDB::getStoreSize() const
 
 FlyDBEntry* FlyDB::getStoreAt(const int ind) const
 {
-  if(ind >= store.size())
+  if(ind < 0 || ind >= store.size())
     return nullptr;
 
   return store.at(ind);

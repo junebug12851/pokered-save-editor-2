@@ -312,6 +312,13 @@ Each phase is independently valuable; the suite is useful from phase 1.
    `pokemonDexCount` as the fill VALUE, so reset() filled every seen/owned byte with 151 (= true),
    marking the whole dex seen+owned instead of blanking it; randomize() masked it by assigning every
    entry. Caught by `tst_pokedex` markAll_and_reset.**
+   **DB store-accessor bounds (found 2026-06-08 by the `tst_db_stores` sweep, all fixed):
+   `CreditsDB::getStoreAt()` had a fully **inverted** guard (`store.size() >= ind`) — it returned
+   nullptr for every valid index (so the credits list could never resolve a row) and ran
+   `store.at(ind)` for out-of-range indices (crash). Eight more DBs (Events, Fly, Fonts, GameCorner,
+   Items, Maps, Missables, EventPokemon) guarded positive overflow but **not negative** indices, so
+   `getStoreAt(-1)` (which QML passes for "nothing selected") did `store.at(-1)` → crash. All now use
+   the canonical `if(ind < 0 || ind >= store.size()) return nullptr;` the other ten DBs already had.**
 3. **common to 100%; db integrity + getters + search + fonts.**
    _Done 2026-06-07: `tst_common.cpp` (type widths/sign, Random bounds + degenerate ranges + coin
    variation, Utility URL encode/decode round-trip) and `tst_toolset.cpp` (the byte primitives:

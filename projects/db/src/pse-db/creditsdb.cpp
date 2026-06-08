@@ -48,7 +48,10 @@ int CreditsDB::getStoreSize() const
 
 CreditDBEntry* CreditsDB::getStoreAt(const int ind) const
 {
-  if(store.size() >= ind)
+  // Bounds guard. The old check was inverted (`store.size() >= ind`), which
+  // returned nullptr for every valid small index (e.g. 0) and fell through to
+  // store.at(ind) for out-of-range indices -> a crash. Correct form below.
+  if(ind < 0 || ind >= store.size())
     return nullptr;
 
   return store.at(ind);
