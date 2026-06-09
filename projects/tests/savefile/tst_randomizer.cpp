@@ -92,16 +92,23 @@ void TestRandomizer::basicsRandomize_holdsInvariants()
              qPrintable(QStringLiteral("coins out of range: %1").arg(b->coins)));
     QVERIFY2(!b->getPlayerName().isEmpty(), "random name is empty");
 
-    // The 4 HM-relevant badges are always granted (so the player can move around);
-    // the other 4 are always off (clean start).
-    QVERIFY(b->badgeAt(1)); // Cascade
-    QVERIFY(b->badgeAt(2)); // Thunder
-    QVERIFY(b->badgeAt(3)); // Rainbow
-    QVERIFY(b->badgeAt(4)); // Soul
-    QVERIFY(!b->badgeAt(0)); // Boulder
-    QVERIFY(!b->badgeAt(5)); // Marsh
-    QVERIFY(!b->badgeAt(6)); // Volcano
-    QVERIFY(!b->badgeAt(7)); // Earth
+    // Badges are earned linearly in gym order: always at least the first badge
+    // (Boulder), and the earned badges are contiguous from badge 1 -- once a
+    // badge is missing, every later badge is missing too (no random gaps).
+    QVERIFY(b->badgeAt(0)); // Boulder always granted (at least one badge)
+    {
+      bool seenMissing = false;
+      int earned = 0;
+      for(int i = 0; i < int(maxBadges); i++) {
+        if(b->badgeAt(i)) {
+          QVERIFY2(!seenMissing, "badges are not contiguous from badge 1");
+          earned++;
+        } else {
+          seenMissing = true;
+        }
+      }
+      QVERIFY(earned >= 1 && earned <= int(maxBadges));
+    }
 
     QVERIFY2(isStarter(b->playerStarter),
              qPrintable(QStringLiteral("starter %1 is not one of the 3 starters").arg(b->playerStarter)));
@@ -150,8 +157,10 @@ void TestRandomizer::fullRandomizeExpansion_runsAndHoldsInvariants()
     QVERIFY2(b->money >= 100 && b->money <= 6000,
              qPrintable(QStringLiteral("money out of range: %1").arg(b->money)));
     QVERIFY(b->coins >= 0 && b->coins <= 100);
-    QVERIFY(b->badgeAt(1) && b->badgeAt(2) && b->badgeAt(3) && b->badgeAt(4));
-    QVERIFY(!b->badgeAt(0) && !b->badgeAt(5) && !b->badgeAt(6) && !b->badgeAt(7));
+    // Linear badge progression: always at least the first badge, contiguous from badge 1.
+    QVERIFY(b->badgeAt(0));
+    for(int i = 1; i < int(maxBadges); i++)
+      QVERIFY2(!b->badgeAt(i) || b->badgeAt(i - 1), "badges not contiguous from badge 1");
     QVERIFY(isStarter(b->playerStarter));
     QVERIFY(!b->getPlayerName().isEmpty());
   }

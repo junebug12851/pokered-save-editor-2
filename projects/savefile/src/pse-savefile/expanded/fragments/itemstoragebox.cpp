@@ -191,12 +191,52 @@ void ItemStorageBox::itemRemove(int ind)
   itemsChanged();
 }
 
+bool ItemStorageBox::hasItemInd(int ind)
+{
+  for(auto el : items) {
+    if(el->ind == ind)
+      return true;
+  }
+
+  return false;
+}
+
+int ItemStorageBox::randomUniqueInd()
+{
+  // Build the candidate pool: every real (non-glitch, non-once) item that this
+  // box doesn't already hold. Uniqueness is per-list, so we only check our own
+  // items -- the paired box is irrelevant.
+  QVector<int> pool;
+  for(auto entry : ItemsDB::inst()->getStore()) {
+    if(entry->getGlitch() || entry->getOnce())
+      continue;
+
+    if(hasItemInd(entry->getInd()))
+      continue;
+
+    pool.append(entry->getInd());
+  }
+
+  // The box already holds one of every available item -- nothing unique is left.
+  if(pool.isEmpty())
+    return -1;
+
+  return pool.at(Random::inst()->rangeExclusive(0, pool.size()));
+}
+
 void ItemStorageBox::itemNew()
 {
   if(items.size() >= maxSize)
     return;
 
-  items.append(new Item(true));
+  int ind = randomUniqueInd();
+
+  // Don't add a duplicate: if every available item is already here, do nothing.
+  if(ind < 0)
+    return;
+
+  // Amount range matches Item::randomize() (1-5).
+  items.append(new Item(static_cast<var8>(ind), Random::inst()->rangeInclusive(1, 5)));
   itemInsertChange();
   itemsChanged();
 }
@@ -373,6 +413,9 @@ void ItemStorageBox::randomize()
     randomizeBag();
   else
     randomizeStorage();
+
+  // Re-roll sorts by default (itemNew already guarantees no duplicates).
+  sort();
 
   itemsChanged();
 }

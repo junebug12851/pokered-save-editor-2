@@ -157,19 +157,17 @@ void PlayerBasics::randomize()
   coins = Random::inst()->rangeInclusive(0, 100);
   coinsChanged();
 
-  // Zero out all badges, it's far too complicated in gen 1 games to properly
-  // progress in the game randomly and takes away from fun of a new game
+  // Zero out all badges first
   for(var8 i = 0; i < 8; i++)
     badges[i] = false;
 
-  // An exception will be made to these badges, always enable them because it
-  // lets the player move around better with important HMs out of battle. It
-  // will still let the player battle the gym for first time - the badge just
-  // gets the player HM moves
-  badges[(var8)Badges::Thunder] = true;
-  badges[(var8)Badges::Cascade] = true;
-  badges[(var8)Badges::Soul] = true;
-  badges[(var8)Badges::Rainbow] = true;
+  // Gen 1 progression is strictly linear - you earn the badges in gym order.
+  // So rather than a random bitmask (which could grant a later badge without
+  // the earlier ones), award a random *count* of badges earned linearly from
+  // the first badge (Boulder). Always at least the first badge.
+  var8 badgesEarned = Random::inst()->rangeInclusive(1, 8);
+  for(var8 i = 0; i < badgesEarned; i++)
+    badges[i] = true;
 
   badgesChanged();
 

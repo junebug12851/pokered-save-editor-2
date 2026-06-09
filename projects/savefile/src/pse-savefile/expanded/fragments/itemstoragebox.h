@@ -89,6 +89,11 @@ public:
   void randomizeStorage(); ///< Randomizer path for a PC item box.
   void randomizeBag();     ///< Randomizer path for the bag.
 
+  // Item RNG never duplicates within a single box (uniqueness is per-list: the
+  // bag and the PC box are independent).
+  bool hasItemInd(int ind);  ///< Does this box already contain an item with index @p ind?
+  int randomUniqueInd();     ///< A random non-glitch/non-once item index absent from this box, or -1 if none remain.
+
 signals:
   // When moving an item away from the box to another box, allow the model to
   // perform cleanup actions
@@ -105,10 +110,10 @@ public slots:
 
   // These alow the model or QML to interact with the box
   void reset();                 ///< Empty the box.
-  void randomize();             ///< Randomize (dispatches to bag/storage path).
+  void randomize();             ///< Randomize (dispatches to bag/storage path); sorts afterward.
   bool itemMove(int from, int to); ///< Reorder an item.
   void itemRemove(int ind);     ///< Remove item @p ind.
-  void itemNew();               ///< Add a fresh item.
+  void itemNew();               ///< Add a fresh random item (never a duplicate of one already here).
   bool relocateAll();           ///< Move every item to the paired box.
   bool relocateOne(int ind);    ///< Move one item to the paired box.
   void sort();                  ///< Sort the box contents.

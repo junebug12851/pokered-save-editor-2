@@ -19,6 +19,9 @@ Button {
   rightInset: 0
   padding: 6
 
+  // NOTE: use as-is — do NOT re-add leftPadding/rightPadding/leftInset/
+  // rightInset:0 per instance (those were the "dirty" Bag-screen overrides; the
+  // tight square highlight is already baked in here). See ui-patterns.md.
   background: Rectangle {
     radius: 2
     color: control.down

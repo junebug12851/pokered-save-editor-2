@@ -1,0 +1,434 @@
+-- The CXX compiler identification is Clang 17.0.6
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Qt/Tools/llvm-mingw1706_64/bin/clang++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Check if compiler accepts -pthread
+-- Check if compiler accepts -pthread - yes
+-- Found Threads: TRUE
+-- Performing Test HAVE_STDATOMIC
+-- Performing Test HAVE_STDATOMIC - Success
+-- Found WrapAtomic: TRUE
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find Qt6TaskTree (missing: Qt6TaskTree_DIR)
+CMake Warning at C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake:76 (find_package):
+  Found package configuration file:
+
+    C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6QmlAssetDownloaderPrivate/Qt6QmlAssetDownloaderPrivateConfig.cmake
+
+  but it set Qt6QmlAssetDownloaderPrivate_FOUND to FALSE so package
+  "Qt6QmlAssetDownloaderPrivate" is considered to be NOT FOUND.  Reason given
+  by package:
+
+  Qt6QmlAssetDownloaderPrivate could not be found because dependency
+  Qt6TaskTree could not be found.
+
+  Configuring with --debug-find-pkg=Qt6TaskTree might reveal details why the
+  package was not found.
+
+  Configuring with -DQT_DEBUG_FIND_PACKAGE=ON will print the values of some
+  of the path variables that find_package uses to try and find the package.
+
+Call Stack (most recent call first):
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:142 (find_dependency)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6Qml/QmlPlugins/Qt6QmlAssetDownloaderPrivatepluginDependencies.cmake:22 (_qt_internal_find_qt_dependencies)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6Qml/QmlPlugins/Qt6QmlAssetDownloaderPrivatepluginConfig.cmake:40 (include)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6/QtPublicPluginHelpers.cmake:638 (include)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6Qml/Qt6QmlPlugins.cmake:6 (__qt_internal_include_qml_plugin_packages)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6Qml/Qt6QmlConfig.cmake:199 (include)
+  C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:142 (find_dependency)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6Quick/Qt6QuickDependencies.cmake:50 (_qt_internal_find_qt_dependencies)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6Quick/Qt6QuickConfig.cmake:40 (include)
+  C:/Qt/6.11.0/llvm-mingw_64/lib/cmake/Qt6/Qt6Config.cmake:246 (find_package)
+  CMakeLists.txt:21 (find_package)
+
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (5.7s)
+-- Generating done (1.0s)
+-- Build files have been written to: C:/Users/juneh/Documents/QtProjects/pokered-save-editor-2/build
+CONFIGURE_DONE_0 
+[1/375] Running qmlimportscanner for tst_engine_providers
+[2/375] Running qmlimportscanner for tst_roundtrip
+[3/375] Running qmlimportscanner for tst_fields
+[4/375] Running qmlimportscanner for tst_pokemon
+[5/375] Running qmlimportscanner for tst_pokemon_logic
+[6/375] Running qmlimportscanner for tst_items
+[7/375] Running qmlimportscanner for tst_items_logic
+[8/375] Running qmlimportscanner for tst_world
+[9/375] Running qmlimportscanner for tst_area
+[10/375] Running qmlimportscanner for tst_area_pokemon
+[11/375] Running qmlimportscanner for tst_fuzz
+[12/375] Running qmlimportscanner for PokeredSaveEditor
+[13/375] Running qmlimportscanner for tst_regression
+[14/375] Running qmlimportscanner for tst_area_fragments
+[15/375] Running qmlimportscanner for tst_misc_regions
+[16/375] Running qmlimportscanner for tst_bench
+[17/375] Running qmlimportscanner for tst_pokedex
+[18/375] Running qmlimportscanner for tst_errors
+[19/375] Running qmlimportscanner for tst_verbs
+[20/375] Running qmlimportscanner for tst_toolset
+[21/375] Running qmlimportscanner for tst_e2e
+[22/375] Running qmlimportscanner for tst_randomizer
+[23/375] Running qmlimportscanner for tst_common
+[24/375] Running qmlimportscanner for tst_common_random
+[25/375] Running qmlimportscanner for tst_db_entries
+[26/375] Running qmlimportscanner for tst_db_integrity
+[27/375] Running qmlimportscanner for tst_db_entry_getters
+[28/375] Running qmlimportscanner for tst_db_stores
+[29/375] Running qmlimportscanner for tst_db_map_subentries
+[30/375] Running qmlimportscanner for tst_db_random_strings
+[31/375] Running qmlimportscanner for tst_fonts
+[32/375] Running qmlimportscanner for tst_mapsearch
+[33/375] Running qmlimportscanner for tst_models
+[34/375] Running qmlimportscanner for tst_bridge
+[35/375] Running qmlimportscanner for tst_tileset_engine
+[36/375] Running qmlimportscanner for tst_storage_model
+[37/375] Running qmlimportscanner for tst_market_model
+[38/375] Running qmlimportscanner for tst_app_e2e
+[39/375] Running qmlimportscanner for tst_move_select_model
+[40/375] Running qmlimportscanner for tst_qml
+[41/375] Running qmlimportscanner for tst_item_storage_model
+[42/375] Running qmlimportscanner for tst_qml_brg
+[43/375] Automatic MOC and UIC for target tst_qml
+[44/375] Building CXX object tests/CMakeFiles/tst_qml.dir/tst_qml_autogen/mocs_compilation.cpp.obj
+[45/375] Automatic MOC and UIC for target common
+[46/375] Running AUTOMOC file extraction for target common
+[47/375] Running moc --collect-json for target common
+[48/375] Building CXX object common/CMakeFiles/common.dir/common_autogen/mocs_compilation.cpp.obj
+[49/375] Building CXX object common/CMakeFiles/common.dir/src/pse-common/random.cpp.obj
+[50/375] Building CXX object tests/CMakeFiles/tst_qml.dir/qml/main.cpp.obj
+[51/375] Building CXX object common/CMakeFiles/common.dir/src/pse-common/utility.cpp.obj
+[52/375] Linking CXX executable tst_qml.exe
+[53/375] Linking CXX shared library common.dll
+[54/375] Automatic MOC and UIC for target tst_common
+[55/375] Automatic MOC and UIC for target tst_common_random
+[56/375] Building CXX object tests/CMakeFiles/tst_common.dir/tst_common_autogen/mocs_compilation.cpp.obj
+[57/375] Building CXX object tests/CMakeFiles/tst_common_random.dir/tst_common_random_autogen/mocs_compilation.cpp.obj
+[58/375] Building CXX object tests/CMakeFiles/tst_common_random.dir/common/tst_common_random.cpp.obj
+[59/375] Building CXX object tests/CMakeFiles/tst_common.dir/common/tst_common.cpp.obj
+[60/375] Linking CXX executable tst_common_random.exe
+[61/375] Linking CXX executable tst_common.exe
+[62/375] Automatic MOC and UIC for target db
+[63/375] Running AUTOMOC file extraction for target db
+[64/375] Automatic RCC for db.qrc
+[65/375] Running moc --collect-json for target db
+[66/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/abstracthiddenitemdb.cpp.obj
+[67/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/eventdbentry.cpp.obj
+[68/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/fontdbentry.cpp.obj
+[69/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/creditdbentry.cpp.obj
+[70/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/gamecornerdbentry.cpp.obj
+[71/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/examplesplayer.cpp.obj
+[72/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/abstractrandomstring.cpp.obj
+[73/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentryconnect.cpp.obj
+[74/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/creditsdb.cpp.obj
+[75/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/eventpokemondbentry.cpp.obj
+[76/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/flydbentry.cpp.obj
+[77/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/hiddenitemdbentry.cpp.obj
+[78/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/examplesrival.cpp.obj
+[79/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/examplespokemon.cpp.obj
+[80/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/db.cpp.obj
+[81/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/itemdbentry.cpp.obj
+[82/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentry.cpp.obj
+[83/375] Building CXX object db/CMakeFiles/db.dir/db_autogen/mocs_compilation.cpp.obj
+[84/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentryspritepokemon.cpp.obj
+[85/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentrysign.cpp.obj
+[86/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/examples.cpp.obj
+[87/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/namespokemon.cpp.obj
+[88/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentrywarpout.cpp.obj
+[89/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentryspritenpc.cpp.obj
+[90/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/missabledbentry.cpp.obj
+[91/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentryspriteitem.cpp.obj
+[92/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentryspritetrainer.cpp.obj
+[93/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentrysprite.cpp.obj
+[94/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentrywarpin.cpp.obj
+[95/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/mapdbentrywildmon.cpp.obj
+[96/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/eventsdb.cpp.obj
+[97/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/eventpokemondb.cpp.obj
+[98/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/entries/namesplayer.cpp.obj
+[99/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/flydb.cpp.obj
+[100/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/fontsdb.cpp.obj
+[101/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/gamecornerdb.cpp.obj
+[102/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/hiddencoinsdb.cpp.obj
+[103/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/hiddenItemsdb.cpp.obj
+[104/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/itemsdb.cpp.obj
+[105/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/missablesdb.cpp.obj
+[106/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/moves.cpp.obj
+[107/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/names.cpp.obj
+[108/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/mapsdb.cpp.obj
+[109/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/music.cpp.obj
+[110/375] Building CXX object db/CMakeFiles/db.dir/db_autogen/EWIEGA46WW/qrc_db.cpp.obj
+[111/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/sprites.cpp.obj
+[112/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/scripts.cpp.obj
+[113/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/spriteSet.cpp.obj
+[114/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/pokemon.cpp.obj
+[115/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/starterPokemon.cpp.obj
+[116/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/tmHm.cpp.obj
+[117/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/trades.cpp.obj
+[118/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/tileset.cpp.obj
+[119/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/trainers.cpp.obj
+[120/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/util/fontsearch.cpp.obj
+[121/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/types.cpp.obj
+[122/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/util/gamedata.cpp.obj
+[123/375] Building CXX object db/CMakeFiles/db.dir/src/pse-db/util/mapsearch.cpp.obj
+[124/375] Linking CXX shared library db.dll
+[125/375] Automatic MOC and UIC for target tst_db_integrity
+[126/375] Automatic MOC and UIC for target tst_db_stores
+[127/375] Automatic MOC and UIC for target tst_db_entry_getters
+[128/375] Building CXX object tests/CMakeFiles/tst_db_integrity.dir/tst_db_integrity_autogen/mocs_compilation.cpp.obj
+[129/375] Automatic MOC and UIC for target tst_mapsearch
+[130/375] Automatic MOC and UIC for target tst_db_entries
+[131/375] Building CXX object tests/CMakeFiles/tst_db_stores.dir/tst_db_stores_autogen/mocs_compilation.cpp.obj
+[132/375] Automatic MOC and UIC for target tst_fonts
+[133/375] Building CXX object tests/CMakeFiles/tst_db_entry_getters.dir/tst_db_entry_getters_autogen/mocs_compilation.cpp.obj
+[134/375] Building CXX object tests/CMakeFiles/tst_mapsearch.dir/tst_mapsearch_autogen/mocs_compilation.cpp.obj
+[135/375] Automatic MOC and UIC for target tst_db_map_subentries
+[136/375] Automatic MOC and UIC for target tst_db_random_strings
+[137/375] Building CXX object tests/CMakeFiles/tst_fonts.dir/tst_fonts_autogen/mocs_compilation.cpp.obj
+[138/375] Building CXX object tests/CMakeFiles/tst_db_entries.dir/tst_db_entries_autogen/mocs_compilation.cpp.obj
+[139/375] Building CXX object tests/CMakeFiles/tst_db_map_subentries.dir/tst_db_map_subentries_autogen/mocs_compilation.cpp.obj
+[140/375] Building CXX object tests/CMakeFiles/tst_db_random_strings.dir/tst_db_random_strings_autogen/mocs_compilation.cpp.obj
+[141/375] Building CXX object tests/CMakeFiles/tst_db_entry_getters.dir/db/tst_db_entry_getters.cpp.obj
+[142/375] Building CXX object tests/CMakeFiles/tst_db_stores.dir/db/tst_db_stores.cpp.obj
+[143/375] Building CXX object tests/CMakeFiles/tst_db_integrity.dir/db/tst_db_integrity.cpp.obj
+[144/375] Building CXX object tests/CMakeFiles/tst_mapsearch.dir/db/tst_mapsearch.cpp.obj
+[145/375] Building CXX object tests/CMakeFiles/tst_db_entries.dir/db/tst_db_entries.cpp.obj
+[146/375] Building CXX object tests/CMakeFiles/tst_fonts.dir/db/tst_fonts.cpp.obj
+[147/375] Building CXX object tests/CMakeFiles/tst_db_map_subentries.dir/db/tst_db_map_subentries.cpp.obj
+[148/375] Building CXX object tests/CMakeFiles/tst_db_random_strings.dir/db/tst_db_random_strings.cpp.obj
+[149/375] Linking CXX executable tst_db_entry_getters.exe
+[150/375] Linking CXX executable tst_db_integrity.exe
+[151/375] Linking CXX executable tst_mapsearch.exe
+[152/375] Linking CXX executable tst_db_entries.exe
+[153/375] Linking CXX executable tst_db_stores.exe
+[154/375] Linking CXX executable tst_fonts.exe
+[155/375] Linking CXX executable tst_db_map_subentries.exe
+[156/375] Linking CXX executable tst_db_random_strings.exe
+[157/375] Automatic MOC and UIC for target savefile
+[158/375] Running AUTOMOC file extraction for target savefile
+[159/375] Running moc --collect-json for target savefile
+[160/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areageneral.cpp.obj
+[161/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areaplayer.cpp.obj
+[162/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areanpc.cpp.obj
+[163/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areaaudio.cpp.obj
+[164/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/daycare.cpp.obj
+[165/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/arealoadedsprites.cpp.obj
+[166/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areasign.cpp.obj
+[167/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/hofpokemon.cpp.obj
+[168/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areatileset.cpp.obj
+[169/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/item.cpp.obj
+[170/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areapokemon.cpp.obj
+[171/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/area.cpp.obj
+[172/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/hofrecord.cpp.obj
+[173/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/itemstoragebox.cpp.obj
+[174/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areamap.cpp.obj
+[175/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areawarps.cpp.obj
+[176/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/area/areasprites.cpp.obj
+[177/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/pokemonparty.cpp.obj
+[178/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/mapconndata.cpp.obj
+[179/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/pokemonstorageset.cpp.obj
+[180/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/player/player.cpp.obj
+[181/375] Building CXX object savefile/CMakeFiles/savefile.dir/savefile_autogen/mocs_compilation.cpp.obj
+[182/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/pokemonbox.cpp.obj
+[183/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/pokemonstoragebox.cpp.obj
+[184/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/warpdata.cpp.obj
+[185/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/signdata.cpp.obj
+[186/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/savefileexpanded.cpp.obj
+[187/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/player/playerbasics.cpp.obj
+[188/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/player/playerpokedex.cpp.obj
+[189/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/world.cpp.obj
+[190/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/halloffame.cpp.obj
+[191/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/rival.cpp.obj
+[192/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/fragments/spritedata.cpp.obj
+[193/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/player/playerpokemon.cpp.obj
+[194/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/storage.cpp.obj
+[195/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldcompleted.cpp.obj
+[196/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldevents.cpp.obj
+[197/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldgeneral.cpp.obj
+[198/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldhidden.cpp.obj
+[199/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldlocal.cpp.obj
+[200/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldother.cpp.obj
+[201/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldtrades.cpp.obj
+[202/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/savefileiterator.cpp.obj
+[203/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/savefile.cpp.obj
+[204/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldmissables.cpp.obj
+[205/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldscripts.cpp.obj
+[206/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/expanded/world/worldtowns.cpp.obj
+[207/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/savefiletoolset.cpp.obj
+[208/375] Building CXX object savefile/CMakeFiles/savefile.dir/src/pse-savefile/filemanagement.cpp.obj
+[209/375] Linking CXX shared library savefile.dll
+[210/375] Automatic MOC and UIC for target tst_roundtrip
+[211/375] Automatic MOC and UIC for target tst_items_logic
+[212/375] Automatic MOC and UIC for target tst_area
+[213/375] Automatic MOC and UIC for target tst_toolset
+[214/375] Automatic MOC and UIC for target tst_items
+[215/375] Automatic MOC and UIC for target tst_regression
+[216/375] Automatic MOC and UIC for target tst_area_pokemon
+[217/375] Automatic MOC and UIC for target tst_fields
+[218/375] Automatic MOC and UIC for target tst_pokedex
+[219/375] Automatic MOC and UIC for target tst_area_fragments
+[220/375] Automatic MOC and UIC for target tst_world
+[221/375] Automatic MOC and UIC for target tst_pokemon_logic
+[222/375] Automatic MOC and UIC for target tst_fuzz
+[223/375] Automatic MOC and UIC for target tst_misc_regions
+[224/375] Building CXX object tests/CMakeFiles/tst_roundtrip.dir/tst_roundtrip_autogen/mocs_compilation.cpp.obj
+[225/375] Building CXX object tests/CMakeFiles/tst_items.dir/tst_items_autogen/mocs_compilation.cpp.obj
+[226/375] Automatic MOC and UIC for target tst_pokemon
+[227/375] Building CXX object tests/CMakeFiles/tst_pokemon_logic.dir/tst_pokemon_logic_autogen/mocs_compilation.cpp.obj
+[228/375] Automatic MOC and UIC for target tst_bench
+[229/375] Building CXX object tests/CMakeFiles/tst_world.dir/tst_world_autogen/mocs_compilation.cpp.obj
+[230/375] Building CXX object tests/CMakeFiles/tst_area.dir/tst_area_autogen/mocs_compilation.cpp.obj
+[231/375] Building CXX object tests/CMakeFiles/tst_pokemon.dir/tst_pokemon_autogen/mocs_compilation.cpp.obj
+[232/375] Automatic MOC and UIC for target tst_verbs
+[233/375] Building CXX object tests/CMakeFiles/tst_area_fragments.dir/tst_area_fragments_autogen/mocs_compilation.cpp.obj
+[234/375] Building CXX object tests/CMakeFiles/tst_fields.dir/tst_fields_autogen/mocs_compilation.cpp.obj
+[235/375] Building CXX object tests/CMakeFiles/tst_items_logic.dir/tst_items_logic_autogen/mocs_compilation.cpp.obj
+[236/375] Building CXX object tests/CMakeFiles/tst_area_pokemon.dir/tst_area_pokemon_autogen/mocs_compilation.cpp.obj
+[237/375] Building CXX object tests/CMakeFiles/tst_bench.dir/tst_bench_autogen/mocs_compilation.cpp.obj
+[238/375] Building CXX object tests/CMakeFiles/tst_fuzz.dir/tst_fuzz_autogen/mocs_compilation.cpp.obj
+[239/375] Building CXX object tests/CMakeFiles/tst_regression.dir/tst_regression_autogen/mocs_compilation.cpp.obj
+[240/375] Building CXX object tests/CMakeFiles/tst_pokedex.dir/tst_pokedex_autogen/mocs_compilation.cpp.obj
+[241/375] Automatic MOC and UIC for target tst_errors
+[242/375] Building CXX object tests/CMakeFiles/tst_misc_regions.dir/tst_misc_regions_autogen/mocs_compilation.cpp.obj
+[243/375] Automatic MOC and UIC for target tst_randomizer
+[244/375] Automatic MOC and UIC for target tst_e2e
+[245/375] Building CXX object tests/CMakeFiles/tst_verbs.dir/tst_verbs_autogen/mocs_compilation.cpp.obj
+[246/375] Building CXX object tests/CMakeFiles/tst_pokemon_logic.dir/savefile/tst_pokemon_logic.cpp.obj
+[247/375] Building CXX object tests/CMakeFiles/tst_toolset.dir/tst_toolset_autogen/mocs_compilation.cpp.obj
+[248/375] Building CXX object tests/CMakeFiles/tst_items_logic.dir/savefile/tst_items_logic.cpp.obj
+[249/375] Building CXX object tests/CMakeFiles/tst_items.dir/savefile/tst_items.cpp.obj
+[250/375] Building CXX object tests/CMakeFiles/tst_fields.dir/savefile/tst_fields.cpp.obj
+[251/375] Building CXX object tests/CMakeFiles/tst_roundtrip.dir/savefile/tst_roundtrip.cpp.obj
+[252/375] Building CXX object tests/CMakeFiles/tst_errors.dir/tst_errors_autogen/mocs_compilation.cpp.obj
+[253/375] Building CXX object tests/CMakeFiles/tst_area_fragments.dir/savefile/tst_area_fragments.cpp.obj
+[254/375] Building CXX object tests/CMakeFiles/tst_e2e.dir/tst_e2e_autogen/mocs_compilation.cpp.obj
+[255/375] Building CXX object tests/CMakeFiles/tst_pokemon.dir/savefile/tst_pokemon.cpp.obj
+[256/375] Building CXX object tests/CMakeFiles/tst_world.dir/savefile/tst_world.cpp.obj
+[257/375] Building CXX object tests/CMakeFiles/tst_randomizer.dir/tst_randomizer_autogen/mocs_compilation.cpp.obj
+[258/375] Building CXX object tests/CMakeFiles/tst_area_pokemon.dir/savefile/tst_area_pokemon.cpp.obj
+[259/375] Building CXX object tests/CMakeFiles/tst_area.dir/savefile/tst_area.cpp.obj
+[260/375] Linking CXX executable tst_roundtrip.exe
+[261/375] Linking CXX executable tst_pokemon_logic.exe
+[262/375] Linking CXX executable tst_fields.exe
+[263/375] Linking CXX executable tst_items.exe
+[264/375] Linking CXX executable tst_pokemon.exe
+[265/375] Linking CXX executable tst_items_logic.exe
+[266/375] Building CXX object tests/CMakeFiles/tst_fuzz.dir/savefile/tst_fuzz.cpp.obj
+[267/375] Building CXX object tests/CMakeFiles/tst_bench.dir/savefile/tst_bench.cpp.obj
+[268/375] Linking CXX executable tst_world.exe
+[269/375] Linking CXX executable tst_area.exe
+[270/375] Linking CXX executable tst_area_fragments.exe
+[271/375] Linking CXX executable tst_area_pokemon.exe
+[272/375] Building CXX object tests/CMakeFiles/tst_regression.dir/savefile/tst_regression.cpp.obj
+[273/375] Linking CXX executable tst_fuzz.exe
+[274/375] Building CXX object tests/CMakeFiles/tst_pokedex.dir/savefile/tst_pokedex.cpp.obj
+[275/375] Linking CXX executable tst_bench.exe
+[276/375] Linking CXX executable tst_regression.exe
+[277/375] Linking CXX executable tst_pokedex.exe
+[278/375] Automatic MOC and UIC for target appcore
+[279/375] Running AUTOMOC file extraction for target appcore
+[280/375] Running moc --collect-json for target appcore
+[281/375] Building CXX object tests/CMakeFiles/tst_misc_regions.dir/savefile/tst_misc_regions.cpp.obj
+[282/375] Building CXX object tests/CMakeFiles/tst_toolset.dir/savefile/tst_toolset.cpp.obj
+[283/375] Building CXX object tests/CMakeFiles/tst_e2e.dir/savefile/tst_e2e.cpp.obj
+[284/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/individualmap.cpp.obj
+[285/375] Building CXX object app/CMakeFiles/appcore.dir/src/bridge/settings.cpp.obj
+[286/375] Building CXX object tests/CMakeFiles/tst_verbs.dir/savefile/tst_verbs.cpp.obj
+[287/375] Building CXX object tests/CMakeFiles/tst_randomizer.dir/savefile/tst_randomizer.cpp.obj
+[288/375] Building CXX object tests/CMakeFiles/tst_errors.dir/savefile/tst_errors.cpp.obj
+[289/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemmarket/itemmarketentry.cpp.obj
+[290/375] Building CXX object app/CMakeFiles/appcore.dir/src/bridge/router.cpp.obj
+[291/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/fontsearchmodel.cpp.obj
+[292/375] Building CXX object app/CMakeFiles/appcore.dir/src/engine/tilesetengine.cpp.obj
+[293/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/creditsmodel.cpp.obj
+[294/375] Building CXX object app/CMakeFiles/appcore.dir/src/bridge/bridge.cpp.obj
+[295/375] Building CXX object app/CMakeFiles/appcore.dir/src/engine/tilesetprovider.cpp.obj
+[296/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemmarketmodel.cpp.obj
+[297/375] Building CXX object app/CMakeFiles/appcore.dir/src/engine/fontpreviewprovider.cpp.obj
+[298/375] Building CXX object app/CMakeFiles/appcore.dir/appcore_autogen/mocs_compilation.cpp.obj
+[299/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemmarket/itemmarketentrygcpokemon.cpp.obj
+[300/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemmarket/itemmarketentrymessage.cpp.obj
+[301/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemmarket/itemmarketentrymoney.cpp.obj
+[302/375] Linking CXX executable tst_misc_regions.exe
+[303/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemmarket/itemmarketentryplayeritem.cpp.obj
+[304/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/natureselectmodel.cpp.obj
+[305/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemmarket/itemmarketentrystoreitem.cpp.obj
+[306/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemstoragemodel.cpp.obj
+[307/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/pokemonboxselectmodel.cpp.obj
+[308/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/itemselectmodel.cpp.obj
+[309/375] Linking CXX executable tst_verbs.exe
+[310/375] Linking CXX executable tst_errors.exe
+[311/375] Linking CXX executable tst_toolset.exe
+[312/375] Linking CXX executable tst_e2e.exe
+[313/375] Linking CXX executable tst_randomizer.exe
+[314/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/mapselectmodel.cpp.obj
+[315/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/pokedexmodel.cpp.obj
+[316/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/moveselectmodel.cpp.obj
+[317/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/pokemonstartersmodel.cpp.obj
+[318/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/recentfilesmodel.cpp.obj
+[319/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/statusselectmodel.cpp.obj
+[320/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/speciesselectmodel.cpp.obj
+[321/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/pokemonstoragemodel.cpp.obj
+[322/375] Building CXX object app/CMakeFiles/appcore.dir/src/mvc/typesmodel.cpp.obj
+[323/375] Linking CXX static library app\libappcore.a
+[324/375] Automatic MOC and UIC for target PokeredSaveEditor
+[325/375] Automatic RCC for app.qrc
+[326/375] Automatic MOC and UIC for target tst_tileset_engine
+[327/375] Automatic MOC and UIC for target tst_engine_providers
+[328/375] Automatic MOC and UIC for target tst_models
+[329/375] Automatic MOC and UIC for target tst_bridge
+[330/375] Automatic MOC and UIC for target tst_storage_model
+[331/375] Building CXX object tests/CMakeFiles/tst_tileset_engine.dir/tst_tileset_engine_autogen/mocs_compilation.cpp.obj
+[332/375] Automatic MOC and UIC for target tst_move_select_model
+[333/375] Automatic MOC and UIC for target tst_market_model
+[334/375] Building CXX object tests/CMakeFiles/tst_models.dir/tst_models_autogen/mocs_compilation.cpp.obj
+[335/375] Building CXX object tests/CMakeFiles/tst_bridge.dir/tst_bridge_autogen/mocs_compilation.cpp.obj
+[336/375] Automatic MOC and UIC for target tst_qml_brg
+[337/375] Building CXX object tests/CMakeFiles/tst_storage_model.dir/tst_storage_model_autogen/mocs_compilation.cpp.obj
+[338/375] Automatic MOC and UIC for target tst_item_storage_model
+[339/375] Building CXX object tests/CMakeFiles/tst_market_model.dir/tst_market_model_autogen/mocs_compilation.cpp.obj
+[340/375] Automatic MOC and UIC for target tst_app_e2e
+[341/375] Building CXX object tests/CMakeFiles/tst_move_select_model.dir/tst_move_select_model_autogen/mocs_compilation.cpp.obj
+[342/375] Building CXX object tests/CMakeFiles/tst_app_e2e.dir/tst_app_e2e_autogen/mocs_compilation.cpp.obj
+[343/375] Building CXX object tests/CMakeFiles/tst_item_storage_model.dir/tst_item_storage_model_autogen/mocs_compilation.cpp.obj
+[344/375] Automatic RCC for ../app/app.qrc
+[345/375] Building CXX object tests/CMakeFiles/tst_qml_brg.dir/tst_qml_brg_autogen/mocs_compilation.cpp.obj
+[346/375] Building CXX object tests/CMakeFiles/tst_engine_providers.dir/tst_engine_providers_autogen/mocs_compilation.cpp.obj
+[347/375] Building CXX object app/CMakeFiles/PokeredSaveEditor.dir/src/boot/bootDatabase.cpp.obj
+[348/375] Building CXX object app/CMakeFiles/PokeredSaveEditor.dir/src/main.cpp.obj
+[349/375] Building CXX object app/CMakeFiles/PokeredSaveEditor.dir/PokeredSaveEditor_autogen/EWIEGA46WW/qrc_app.cpp.obj
+[350/375] Building CXX object app/CMakeFiles/PokeredSaveEditor.dir/PokeredSaveEditor_autogen/mocs_compilation.cpp.obj
+[351/375] Building CXX object tests/CMakeFiles/tst_engine_providers.dir/tst_engine_providers_autogen/T5X4XMRGPI/qrc_app.cpp.obj
+[352/375] Building CXX object app/CMakeFiles/PokeredSaveEditor.dir/src/boot/boot.cpp.obj
+[353/375] Building CXX object app/CMakeFiles/PokeredSaveEditor.dir/ui/window/mainwindow.cpp.obj
+[354/375] Building CXX object tests/CMakeFiles/tst_tileset_engine.dir/mvc/tst_tileset_engine.cpp.obj
+[355/375] Building CXX object app/CMakeFiles/PokeredSaveEditor.dir/src/boot/bootQmlLinkage.cpp.obj
+[356/375] Building CXX object tests/CMakeFiles/tst_bridge.dir/mvc/tst_bridge.cpp.obj
+[357/375] Linking CXX executable tst_tileset_engine.exe
+[358/375] Building CXX object tests/CMakeFiles/tst_item_storage_model.dir/mvc/tst_item_storage_model.cpp.obj
+[359/375] Linking CXX executable PokeredSaveEditor.exe
+[360/375] Building CXX object tests/CMakeFiles/tst_models.dir/mvc/tst_models.cpp.obj
+[361/375] Building CXX object tests/CMakeFiles/tst_storage_model.dir/mvc/tst_storage_model.cpp.obj
+[362/375] Linking CXX executable tst_bridge.exe
+[363/375] Building CXX object tests/CMakeFiles/tst_move_select_model.dir/mvc/tst_move_select_model.cpp.obj
+[364/375] Building CXX object tests/CMakeFiles/tst_app_e2e.dir/mvc/tst_app_e2e.cpp.obj
+[365/375] Building CXX object tests/CMakeFiles/tst_market_model.dir/mvc/tst_market_model.cpp.obj
+[366/375] Linking CXX executable tst_item_storage_model.exe
+[367/375] Linking CXX executable tst_models.exe
+[368/375] Linking CXX executable tst_storage_model.exe
+[369/375] Building CXX object tests/CMakeFiles/tst_qml_brg.dir/qml/main_brg.cpp.obj
+C:/Users/juneh/Documents/QtProjects/pokered-save-editor-2/projects/tests/qml/main_brg.cpp:57:5: warning: ignoring return value of function declared with 'nodiscard' attribute [-Wunused-result]
+   57 |     DB::inst();             // boot the game databases
+      |     ^~~~~~~~
+1 warning generated.
+[370/375] Linking CXX executable tst_move_select_model.exe
+[371/375] Linking CXX executable tst_market_model.exe
+[372/375] Linking CXX executable tst_app_e2e.exe
+[373/375] Linking CXX executable tst_qml_brg.exe
+[374/375] Building CXX object tests/CMakeFiles/tst_engine_providers.dir/mvc/tst_engine_providers.cpp.obj
+[375/375] Linking CXX executable tst_engine_providers.exe
+BUILD_DONE_0 

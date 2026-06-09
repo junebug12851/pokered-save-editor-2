@@ -31,6 +31,9 @@ ListView {
   clip: true
   ScrollBar.vertical: ScrollBar {}
 
+  // Breathing room below the last row (replaces an old empty-Text spacer).
+  footer: Item { width: 1; height: 25 }
+
   // Hack because insert doesn't work as exoected
   function hack_newAndRePositionViewEnd() {
     box.itemNew();
@@ -39,13 +42,14 @@ ListView {
 
   delegate: ColumnLayout {
     id: delegate
-    property bool isLast: index+1 < itemBoxView.count ? false : true
 
     width: parent ? parent.width : 0
 
     RowLayout {
       id: rowEntry
-      Layout.alignment: Qt.AlignHCenter
+      // Left-aligned so each row's checkbox forms a column directly under the
+      // header's check-all button (both share the list's 15px left inset).
+      Layout.alignment: Qt.AlignLeft
       spacing: 8
       visible: !itemIsPlaceholder
 
@@ -88,12 +92,11 @@ ListView {
       DefTextEdit {
         id: countEdit
 
-        // VCenter text + pin the field height so it lines up with the combo.
+        // VCenter + pin the field height so it lines up with the combo.
         // DefTextEdit already centers its text at any height (topPadding:0).
         Layout.alignment: Qt.AlignVCenter
         Layout.preferredHeight: itemBoxView.textH
         Layout.preferredWidth: 2 * font.pixelSize + leftPadding + rightPadding
-        verticalAlignment: TextInput.AlignVCenter
 
         maximumLength: 2
 
@@ -137,11 +140,6 @@ ListView {
         //itemBoxView.hack_rePositionViewEnd();
         hack_newAndRePositionViewEnd();
       }
-    }
-
-    Text {
-      visible: isLast
-      bottomPadding: 25
     }
   }
 }

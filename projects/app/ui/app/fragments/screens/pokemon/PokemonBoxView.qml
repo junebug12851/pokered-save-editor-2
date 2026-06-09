@@ -1,9 +1,10 @@
 // PokemonBoxView.qml -- the grid of Pokemon slots inside a PokemonPane.
 //
 // A GridView of mon cells over a PokemonStorageModel (theModel). Each filled cell
-// shows the species/shiny icon, a level badge, a hover checkbox, and an edit
-// button (mon nickname, or species name as fallback); clicking anywhere on the
-// cell opens PokemonDetails.qml for that mon. Empty cells show a "+" add button.
+// shows the species/shiny icon, a level badge, a hover checkbox, and an
+// always-visible name label below the icon (mon nickname, or species name as
+// fallback) in dark text on no background; clicking anywhere on the cell opens
+// PokemonDetails.qml for that mon. Empty cells show a "+" add button.
 // openMonEditor pushes the details page manually (to pass the mon as a parameter)
 // and wires router/page close listeners so the model resets when the editor
 // closes. The (itemDex+1) padding mirrors Pokedex.qml's correct 0->1 dex
@@ -13,7 +14,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Controls.Material
-import QtQuick.Effects
 
 import App.PokemonStorageModel
 import App.PokemonBoxSelectModel
@@ -127,7 +127,7 @@ GridView {
       id: selectBox
       hoverEnabled: true
 
-      visible: !itemIsPlaceholder && (mouse.containsMouse || checked || hovered || editBtn.hovered)
+      visible: !itemIsPlaceholder && (mouse.containsMouse || checked || hovered)
 
       anchors.top: parent.top
       anchors.left: parent.left
@@ -144,76 +144,24 @@ GridView {
       Material.foreground: brg.settings.textColorLight
     }
 
-    Button {
-      id: editBtn
-      visible: !itemIsPlaceholder && (mouse.containsMouse || hovered || selectBox.hovered)
-      hoverEnabled: true
-
-      text: getMonNickname()
-      font.capitalization: Font.MixedCase
-
-      height: 20
-      padding: 0
-      topInset: 0
-      rightInset: 0
-      bottomInset: 0
-      leftInset: 0
-      Material.elevation: 0
-      z: 100
+    // Always-visible name label below the icon: nickname (or species name as
+    // fallback), dark text on no background. The cell-wide MouseArea handles the
+    // click that opens the editor, so this is purely a label.
+    Text {
+      id: nameLabel
+      visible: !itemIsPlaceholder
 
       anchors.bottom: parent.bottom
+      anchors.bottomMargin: 6
       anchors.left: parent.left
       anchors.right: parent.right
 
-      Material.background: brg.settings.accentColor
-      Material.foreground: brg.settings.textColorLight
-
-      // The Material Button's built-in icon+text label would NOT render the text
-      // at this small fixed height (the accent pill showed but the name never
-      // did). Draw the name with an explicit Text — same approach as the level
-      // badge, which renders fine. The cell-wide MouseArea handles the click.
-      contentItem: Item {
-        Row {
-          anchors.centerIn: parent
-          spacing: 4
-
-          Image {
-            anchors.verticalCenter: parent.verticalCenter
-            width: 10
-            height: 10
-            sourceSize.width: 10
-            sourceSize.height: 10
-            source: "qrc:/assets/icons/fontawesome/pen.svg"
-            fillMode: Image.PreserveAspectFit
-
-            // Tint the monochrome SVG to match the light text. pen.svg is a
-            // solid BLACK path; MultiEffect.colorization scales the tint by the
-            // source's luminance, so a black source stays black. brightness:1.0
-            // pushes it to white first, then colorization recolors it to
-            // textColorLight. (Without brightness the pen renders dark.)
-            layer.enabled: true
-            layer.effect: MultiEffect {
-              brightness: 1.0
-              colorization: 1.0
-              colorizationColor: brg.settings.textColorLight
-            }
-          }
-
-          Text {
-            anchors.verticalCenter: parent.verticalCenter
-            text: editBtn.text
-            color: brg.settings.textColorLight
-            font: editBtn.font
-          }
-        }
-      }
-
-      onClicked: {
-        if(itemIsParty)
-          openMonEditor(itemIsParty, view.theModel.getPartyMon(index));
-        else
-          openMonEditor(itemIsParty, view.theModel.getBoxMon(index));
-      }
+      text: getMonNickname()
+      color: brg.settings.textColorDark
+      font.capitalization: Font.MixedCase
+      font.pixelSize: 12
+      horizontalAlignment: Text.AlignHCenter
+      elide: Text.ElideRight
     }
 
     MouseArea {
@@ -237,9 +185,13 @@ GridView {
     Image {
       visible: !itemIsPlaceholder
 
-      anchors.centerIn: parent
-      width: parent.width - 15
-      height: parent.height - 15
+      // Fills the cell above the name label, so the icon and its name read as one
+      // stacked unit.
+      anchors.top: parent.top
+      anchors.bottom: nameLabel.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: 8
 
       sourceSize.height: height
       sourceSize.width: width

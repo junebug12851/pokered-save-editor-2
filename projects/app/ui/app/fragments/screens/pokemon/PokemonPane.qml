@@ -24,6 +24,7 @@ Rectangle {
   property PokemonStorageModel model: null
   property PokemonBoxSelectModel selectModel: null
 
+  // ---- Header bar: [check-all]  box-switcher (set-current), centered group ----
   Rectangle {
     id: boxHeader
     anchors.left: parent.left
@@ -35,40 +36,37 @@ Rectangle {
     Material.background: brg.settings.accentColor
     color: brg.settings.accentColor
 
-    Row {
+    // Check-all parked at the left, nudged right so its icon centers over the
+    // row checkboxes below (matches ItemsPane's header).
+    IconButtonSquare {
+      anchors.left: parent.left
+      anchors.leftMargin: 24
+      anchors.verticalCenter: parent.verticalCenter
+      icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
+      onClicked: model.checkedToggleAll()
+    }
+
+    // Box switcher centered in the bar.
+    SelectPokemonBox {
+      id: boxSwitcher
       anchors.centerIn: parent
-      height: parent.height
-      width: 265
+      model: selectModel
+      onActivated: top.model.switchBox(currentValue - 1);
+      Component.onCompleted: currentIndex = top.model.curBox + 1;
+    }
 
-      IconButtonSquare {
-        icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
-        onClicked: model.checkedToggleAll()
+    // "Set as current box" dot, just to the right of the switcher (shown only
+    // when this pane isn't already the current box).
+    IconButtonSquare {
+      anchors.left: boxSwitcher.right
+      anchors.leftMargin: 4
+      anchors.verticalCenter: boxSwitcher.verticalCenter
 
-        rightInset: 0
-        leftInset: 0
-        leftPadding: 0
-        rightPadding: 0
-      }
+      visible: (brg.file.data.dataExpanded.storage.curBox != top.model.curBox) &&
+               (top.model.curBox >= 0)
 
-      SelectPokemonBox {
-        model: selectModel
-        onActivated: top.model.switchBox(currentValue - 1);
-        Component.onCompleted: currentIndex = top.model.curBox + 1;
-      }
-
-      IconButtonSquare {
-        visible: (brg.file.data.dataExpanded.storage.curBox != model.curBox) &&
-                 (model.curBox >= 0)
-
-        icon.source: "qrc:/assets/icons/fontawesome/dot-circle.svg"
-        onClicked: brg.file.data.dataExpanded.storage.curBox = model.curBox;
-
-        rightInset: 0
-        leftInset: 0
-
-        leftPadding: 0
-        rightPadding: 0
-      }
+      icon.source: "qrc:/assets/icons/fontawesome/dot-circle.svg"
+      onClicked: brg.file.data.dataExpanded.storage.curBox = top.model.curBox;
     }
   }
 
@@ -106,24 +104,12 @@ Rectangle {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/angle-double-up.svg"
         onClicked: model.checkedMoveToTop();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/angle-up.svg"
         onClicked: model.checkedMoveUp();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       // Releasing a pokemon probably shouldn't be represented with a trashcan
@@ -135,48 +121,24 @@ Rectangle {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/times.svg"
         onClicked: model.checkedDelete();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/exchange-alt.svg"
         onClicked: model.checkedTransfer();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/angle-down.svg"
         onClicked: model.checkedMoveDown();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/angle-double-down.svg"
         onClicked: model.checkedMoveToBottom();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
     }
   }

@@ -42,9 +42,12 @@
 
 PokemonMove::PokemonMove(PokemonBox* parentMon, var8 move, var8 pp, var8 ppUp)
 {
-  // Set this class as owned by CPP so that QML doesn't delete it
-  //MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
-  // @TODO
+  // Own this move slot in C++ so QML's GC can never free it. (Realises the old
+  // @TODO; QQmlEngine::setObjectOwnership is static and needs no engine.)
+  // parentMon is stored as a plain member, NOT a QObject parent, so this object
+  // is parentless and would otherwise default to JavaScriptOwnership the moment
+  // it's handed to QML (e.g. via movesAt()). See qmlownership.h / qt6-patterns.md.
+  QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 
   this->parentMon = parentMon;
 
@@ -284,9 +287,19 @@ PokemonBox::PokemonBox(SaveFile* saveFile,
                        var8 index,
                        var8 recordSize)
 {
-  // Set this class as owned by CPP so that QML doesn't delete it
-  //MainWindow::engine->setObjectOwnership(this, QQmlEngine::CppOwnership);
-  // @TODO
+  // Own this mon in C++ for its container's lifetime so QML's GC can never free
+  // it. (Realises the old @TODO: it wanted MainWindow::engine, but
+  // QQmlEngine::setObjectOwnership is static and needs no engine.) Every mon --
+  // loaded from a save OR created fresh via this same default-arg ctor
+  // (new PokemonBox() in newPokemon()) -- is now self-protecting from birth.
+  // This closes the QML-GC use-after-free at the source instead of relying only
+  // on qmlCppOwned() at each accessor, which protects a mon only once it's been
+  // handed out and misses any other exposure path (symptom: open a stored or
+  // freshly-created mon's editor, back out, re-open -> intermittent crash in
+  // PokemonStorageModel::hasChecked()/data() reading a GC'd mon). The container
+  // still owns lifetime and frees mons via deleteLater(), so CppOwnership here
+  // introduces no leak/double-free. See qmlownership.h / qt6-patterns.md.
+  QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 
   for(int i = 0; i < 4; i++) {
     moves[i] = new PokemonMove(this);

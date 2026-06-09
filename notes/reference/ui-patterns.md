@@ -95,6 +95,53 @@ caused the inconsistent / too-wide / stretched ⋮ we cleaned up). Per-instance 
   `icon.width` shrinks it to a sliver. The whole app uses `icon.width: 7` (with the default
   `icon.height: 15`); keep that for consistency. Don't "widen the button" to enlarge the dots — it
   doesn't, and over-sizing the icon stretches/oversizes them. (See `fix-patterns.md`.)
+- The Bag screen's header/footer icon buttons used to repeat `leftPadding:0; rightPadding:0;
+  leftInset:0; rightInset:0` on every instance — exactly the anti-pattern above. Cleaned up: they're
+  now bare `IconButtonSquare`s in a centered `RowLayout` (header spacing 12, footer spacing 15). A
+  reminder comment lives in `IconButtonSquare.qml` itself.
+
+## Bag / Items screen layout (the standard for this screen)
+
+`screens/non-modal/Bag.qml` → two `ItemsPane` in a **`RowLayout`**, each `Layout.fillWidth` +
+`Layout.fillHeight` (50/50 split, no `Math.trunc(width*0.5)` math). Each `ItemsPane`
+(`fragments/screens/bag/`) is a `Rectangle` with an anchored 45px **header bar** (check-all
+`IconButtonSquare` parked at the bar's left edge, title `Text` centered in the bar with the
+`(count/max)` `Text` anchored to its right) at top, an anchored 45px
+**footer bar** (centered `RowLayout` of the bulk-action `IconButtonSquare`s, each `visible:
+model.hasChecked`) at bottom, and an `ItemBoxView` filling between them (15px left/right inset). No
+magic-width wrapper boxes. `ItemBoxView` is a `ListView`; rows are a **left-aligned** `RowLayout` [CheckBox |
+SelectItem | DefTextEdit count] (`Layout.alignment: Qt.AlignLeft`) so each row's checkbox forms a
+column directly under the header's check-all button — both share the list's 15px left inset. Pinned to
+the `rowH`/`comboH`/`textH` knobs so the three differently-sized Material controls vcenter and line up. The "+" add row is the placeholder delegate; bottom
+breathing room is a `footer: Item { height: 25 }` (not an empty trailing `Text`).
+
+## Pokémon storage screen layout (the standard for this screen)
+
+`screens/non-modal/Pokemon.qml` mirrors Bag: two `PokemonPane` in a **`RowLayout`**
+(`spacing: 0`), each `Layout.fillWidth` + `Layout.fillHeight` for a 50/50 split (was
+`width: Math.trunc(parent.width * 0.50)` + chained anchors). Each `PokemonPane`
+(`fragments/screens/pokemon/`) is a `Rectangle` with an anchored 45px **header bar**
+(check-all `IconButtonSquare` parked at the bar's left edge `leftMargin: 24`; a
+`SelectPokemonBox` switcher `anchors.centerIn`; the "set as current box" dot
+`IconButtonSquare` anchored to the switcher's right, `visible` only when this pane
+isn't the current box) at top, an anchored 45px **footer bar** (centered `RowLayout`,
+`spacing: 15`, of bulk-move/release/transfer `IconButtonSquare`s, each `visible:
+model.hasChecked`) at bottom, and a `PokemonBoxView` filling between them (15px
+left/right inset). Removed the old `width: 265` magic-width wrapper `Row` and every
+repeated `leftPadding/rightPadding/leftInset/rightInset: 0` override on the
+`IconButtonSquare`s (use them bare per "⋮ icon menu buttons" above). Note: when the dot
+button was briefly nested *inside* the combo, `model` rebound to the combo's model — it
+must reference `top.model.curBox`; as a sibling it's clearer.
+
+`PokemonBoxView` cell (`GridView` delegate, `cellSize: 100`): species/shiny `Image`
+anchored top→`nameLabel.top` (margins 8) so the icon and name stack as one unit; a level
+badge pill top-right; a hover `CheckBox` top-left; and an **always-visible name label**
+(`Text`, `getMonNickname()` → nickname or species fallback) anchored across the bottom,
+**`textColorDark` on no background**, `pixelSize 12`, `AlignHCenter`, `elide: ElideRight`.
+The old hover-only accent **edit pill + pen icon was removed** (the cell-wide `MouseArea`
+already opens the editor on click, so the pen/button was redundant); with it went the
+`QtQuick.Effects` import and the pen `MultiEffect` tint. Names show **always** here now —
+contrast the trainer/rival/Pokémon *name-row* convention where names show on hover.
 
 ## Centered overlay editor popups (escape clipping)
 

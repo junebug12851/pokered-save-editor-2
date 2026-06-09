@@ -34,6 +34,19 @@
 PokemonStorageBox::PokemonStorageBox(int maxSize, SaveFile* saveFile, var16 boxOffset)
   : maxSize(maxSize)
 {
+  // Own this box (and, via inheritance, the party PlayerPokemon) in C++ so QML's
+  // GC can never free it. The model exposes boxes to QML through public SLOTS
+  // (getCurBox()/getBox(), callable from QML exactly like Q_INVOKABLE) and via
+  // Storage::boxAt(); a parentless QObject returned that way defaults to
+  // JavaScriptOwnership. If QML GC'd a box, its dtor deleteLater()s EVERY mon it
+  // holds -- so the whole box's mons became dangling regardless of the mons'
+  // own ownership, then a virtual call on a freed mon (e.g. isBoxMon() in
+  // PokemonStorageModel::data) crashed intermittently. Owning the box at birth
+  // closes that at the source (storage still frees boxes itself). The party path
+  // (getBox()->party) never went through the boxAt() wrap, so it was unprotected
+  // until now. See qmlownership.h / qt6-patterns.md.
+  QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
   load(saveFile, boxOffset);
 }
 

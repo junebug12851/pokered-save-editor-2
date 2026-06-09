@@ -26,6 +26,7 @@
 
 #include "./pokemonstoragemodel.h"
 #include "../bridge/router.h"
+#include <pse-savefile/qmlownership.h>
 #include <pse-db/pokemon.h>
 #include <pse-savefile/expanded/storage.h>
 #include <pse-savefile/expanded/player/playerpokemon.h>
@@ -472,7 +473,13 @@ void PokemonStorageModel::pageClosing()
 
 PokemonBox* PokemonStorageModel::getBoxMon(int index)
 {
-  return getCurBox()->pokemon.at(index);
+  // qmlCppOwned: these mons are owned by the storage box in C++ for its
+  // lifetime. Without this the parentless Q_INVOKABLE return defaults to
+  // JavaScriptOwnership, so QML GCs the mon when the details editor closes --
+  // leaving a dangling pointer in getCurBox()->pokemon that hasChecked()
+  // dereferences on the next onReset() -> use-after-free crash. (Opening the
+  // editor and leaving reproduced it.) See qt6-patterns.md / qmlownership.h.
+  return qmlCppOwned(getCurBox()->pokemon.at(index));
 }
 
 PokemonParty* PokemonStorageModel::getPartyMon(int index)
@@ -481,5 +488,6 @@ PokemonParty* PokemonStorageModel::getPartyMon(int index)
   if(mon->isBoxMon())
     return nullptr;
 
-  return (PokemonParty*)mon;
+  // qmlCppOwned: see getBoxMon() above -- same QML-GC use-after-free guard.
+  return qmlCppOwned((PokemonParty*)mon);
 }

@@ -4,6 +4,24 @@ Key choices made during the modernization, with rationale.
 
 ---
 
+## Trainer randomize grants badges linearly from badge 1 (2026-06-08)
+
+**Decision**: `PlayerBasics::randomize()` (the Trainer Card "Re-Roll" button) now awards a
+**random count** of badges earned **linearly in gym order** — always at least the first badge
+(Boulder), with the earned badges contiguous from badge 1. Previously it force-enabled the 4
+HM-relevant badges (Thunder/Cascade/Soul/Rainbow) and left the other 4 off.
+
+**Why**: Gen 1 progression is strictly linear — you earn badges in gym order. A random bitmask
+(or a fixed HM subset) could grant a later badge without the earlier ones, which is an
+impossible game state. "Random from badge 1, linear only" mirrors how a real save progresses:
+roll `rangeInclusive(1, 8)` and set `badges[0..N-1]`. Twilight-specified.
+
+**Tests**: `tst_randomizer` invariants updated to assert badge 0 is always set and the earned
+badges are contiguous from badge 1 (no gaps). `tst_player_basics` + `tst_verbs` byte-fidelity
+still green.
+
+---
+
 ## Removed qt_add_qml_module()
 
 **Decision**: Removed the entire `qt_add_qml_module()` block from `projects/app/CMakeLists.txt`.

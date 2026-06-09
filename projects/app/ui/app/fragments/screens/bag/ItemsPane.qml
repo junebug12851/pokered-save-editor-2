@@ -1,9 +1,10 @@
 // ItemsPane.qml -- one titled item box (used twice on the Bag screen).
 //
-// Wraps an ItemBoxView between a colored header bar (title + live count/max + a
-// check-all toggle) and a footer bar of bulk actions that appear only when items
-// are checked: move to top/up, delete, transfer to the other box, move
-// down/bottom. Bound to an ItemStorageBox (box) and its ItemStorageModel (model).
+// Wraps an ItemBoxView between a colored header bar (a centered RowLayout of
+// check-all toggle + title + live count/max) and a footer bar of bulk actions
+// that appear only when items are checked: move to top/up, delete, transfer to
+// the other box, move down/bottom. Bound to an ItemStorageBox (box) and its
+// ItemStorageModel (model).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -22,55 +23,46 @@ Rectangle {
   property ItemStorageModel model: null
   property ItemStorageBox box: null
 
+  // ---- Header bar: [check-all] Title (count/max), centered as one group ----
   Rectangle {
     id: bagHeader
     anchors.left: parent.left
-    anchors.top: parent.top
     anchors.right: parent.right
+    anchors.top: parent.top
     height: 45
 
+    color: brg.settings.accentColor
     Material.foreground: brg.settings.textColorLight
     Material.background: brg.settings.accentColor
-    color: brg.settings.accentColor
 
-    Rectangle {
+    // Check-all parked at the left, nudged right so its icon centers over the
+    // row checkboxes below (list inset 15 + a touch to clear the button's 6px
+    // padding and match the Material checkbox indicator).
+    IconButtonSquare {
+      anchors.left: parent.left
+      anchors.leftMargin: 24
+      anchors.verticalCenter: parent.verticalCenter
+      icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
+      onClicked: model.checkedToggleAll()
+    }
+
+    // Title centered in the bar, with the live count just to its right.
+    Text {
+      id: titleText
       anchors.centerIn: parent
-      height: parent.height
-      width: 265
-      color: brg.settings.accentColor
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignHCenter
+      text: title
+      font.pixelSize: 18
+      color: brg.settings.textColorLight
 
       Text {
-        anchors.centerIn: parent
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-
-        text: title
-        font.pixelSize: 18
-        color: brg.settings.textColorLight
-
-        Text {
-          anchors.left: parent.right
-          anchors.leftMargin: 15
-          anchors.verticalCenter: parent.verticalCenter
-
-          text: `(${box.itemsCount}/${box.itemsMax})`
-          font.pixelSize: 14
-          color: brg.settings.textColorLight
-        }
-      }
-
-      IconButtonSquare {
-        anchors.left: parent.left
+        anchors.left: parent.right
+        anchors.leftMargin: 15
         anchors.verticalCenter: parent.verticalCenter
-
-        icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
-        onClicked: model.checkedToggleAll()
-
-        rightInset: 0
-        leftInset: 0
-
-        leftPadding: 0
-        rightPadding: 0
+        text: `(${box.itemsCount}/${box.itemsMax})`
+        font.pixelSize: 14
+        color: brg.settings.textColorLight
       }
     }
   }
@@ -79,25 +71,25 @@ Rectangle {
     id: bagView
 
     model: top.model
+    box: top.box
 
     anchors.top: bagHeader.bottom
-    anchors.left: parent.left
-    anchors.leftMargin: 15
-    anchors.right: parent.right
-    anchors.rightMargin: 15
     anchors.bottom: bagFooter.top
-
-    box: top.box
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.leftMargin: 15
+    anchors.rightMargin: 15
   }
 
+  // ---- Footer bar: bulk actions, shown only while items are checked ----
   Rectangle {
     id: bagFooter
-    color: brg.settings.accentColor
-    anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
+    anchors.bottom: parent.bottom
     height: 45
 
+    color: brg.settings.accentColor
     Material.foreground: brg.settings.textColorLight
     Material.background: brg.settings.accentColor
 
@@ -109,72 +101,36 @@ Rectangle {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/angle-double-up.svg"
         onClicked: model.checkedMoveToTop();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/angle-up.svg"
         onClicked: model.checkedMoveUp();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
         onClicked: model.checkedDelete();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/exchange-alt.svg"
         onClicked: model.checkedTransfer();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/angle-down.svg"
         onClicked: model.checkedMoveDown();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
 
       IconButtonSquare {
         visible: model.hasChecked
         icon.source: "qrc:/assets/icons/fontawesome/angle-double-down.svg"
         onClicked: model.checkedMoveToBottom();
-
-        leftPadding: 0
-        rightPadding: 0
-
-        rightInset: 0
-        leftInset: 0
       }
     }
   }

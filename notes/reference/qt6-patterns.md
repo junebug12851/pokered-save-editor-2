@@ -398,6 +398,32 @@ Every `…At()` now does `return qmlCppOwned(vec.at(ind));`. (`Qt6::Qml` is link
 **When you add a new Q_INVOKABLE that returns a QObject, wrap it in `qmlCppOwned()`** — that's the
 standing rule now.
 
+**Stronger rule for parentless QObjects exposed to QML (2026-06-08): set CppOwnership in the
+constructor, not only at accessors.** Per-accessor `qmlCppOwned()` only protects an object *once it's
+handed out through that accessor* — it leaves an exposure window for any other path, and the QML-GC-vs-
+event-loop timing makes the resulting use-after-free **intermittent** (the worst kind). `PokemonBox` /
+`PokemonParty` / `PokemonMove` are parentless (the `parentMon` is a plain member, not a QObject parent)
+and their ctors carried a long-dead commented `@TODO` for exactly this. Realised it:
+`QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership)` in the `PokemonBox` and `PokemonMove`
+ctors (static call, needs no engine; `PokemonParty` and `new PokemonBox()` both chain the default-arg
+`PokemonBox` ctor) — now every mon/move self-protects from birth. Symptom this cured: create/open a
+stored mon's editor, back out, re-open → intermittent crash in `PokemonStorageModel::hasChecked()`
+(`…→el->property()`) **or** `data()`→`PokemonBox::toData()` (reads `species` off a GC'd mon). The
+accessor wraps stay as harmless redundancy.
+
+**`public slots:` returning a QObject are GC-exposed too — not just `Q_INVOKABLE` (2026-06-09).** QML
+calls a public slot exactly like an invokable, so a slot returning a parentless QObject hands it
+JavaScriptOwnership the same way. `PokemonStorageModel::getCurBox()`/`getBox()` are public slots, and
+`PokemonBoxView`'s new-mon path calls `theModel.getCurBox().pokemonNew()` from QML — exposing the
+**`PokemonStorageBox`** itself to GC. **GC'ing a container cascades:** `~PokemonStorageBox()`
+`deleteLater()`s every mon it owns, so the box's whole `pokemon` list dangled regardless of each mon's
+own CppOwnership — a later **virtual** call on a freed mon (`isBoxMon()` in `data()`) crashed while
+scalar reads (`species`) on the same freed memory still "worked" (clobbered vtable, intact data — the
+classic UAF tell). Fixed with CppOwnership in the `PokemonStorageBox` ctor (covers the party via
+`PlayerPokemon` inheritance). **Lesson: audit `public slots:` for QObject returns the same as
+`Q_INVOKABLE`, and protect the container, not just the leaves — anything handed to QML can take its
+children down with it.**
+
 Why not parenting (option 2 — `new PokemonBox(box)` so QObject parent-ownership applies)? It would
 have collided with this codebase's existing manual lifecycle: the containers already
 `deleteLater()` their children in dtor/reset/remove AND **move children between containers**

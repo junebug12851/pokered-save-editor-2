@@ -22,6 +22,8 @@
  */
 
 #include <QtTest>
+#include <QSet>
+#include <QVector>
 
 #include "../helpers/savefilefixture.h"
 
@@ -49,6 +51,28 @@ private:
       box->itemNew();
   }
 
+  // True if no two slots in the box share an item index (per-list uniqueness).
+  static bool allIndsUnique(ItemStorageBox* box)
+  {
+    QSet<int> seen;
+    for(int i = 0; i < box->itemsCount(); i++) {
+      int ind = box->itemAt(i)->ind;
+      if(seen.contains(ind))
+        return false;
+      seen.insert(ind);
+    }
+    return true;
+  }
+
+  // Capture the current item-index order.
+  static QVector<int> indOrder(ItemStorageBox* box)
+  {
+    QVector<int> out;
+    for(int i = 0; i < box->itemsCount(); i++)
+      out.append(box->itemAt(i)->ind);
+    return out;
+  }
+
 private slots:
   void initTestCase();
   void item_amountClamps();
@@ -59,6 +83,8 @@ private slots:
   void box_removeShrinks();
   void box_roundTripAfterMutation();
   void box_relocateOneToPairedBox();
+  void box_itemNewNeverDuplicates();
+  void box_randomizeIsUniqueAndSorted();
 };
 
 void TestItemsLogic::initTestCase()
@@ -208,6 +234,52 @@ void TestItemsLogic::box_relocateOneToPairedBox()
   QVERIFY(bag->relocateOne(0));
   QCOMPARE(bag->itemsCount(), bagBefore - 1);
   QCOMPARE(dest->itemsCount(), destBefore + 1);
+}
+
+// Filling a box one item at a time (the "+" button) must never produce a
+// duplicate within that box.
+void TestItemsLogic::box_itemNewNeverDuplicates()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* bag = sf.dataExpanded->player->items;
+
+  bag->reset();
+  QCOMPARE(bag->itemsCount(), 0);
+
+  // Add as many as the box will take; each add must keep every index distinct.
+  for(int i = 0; i < bag->itemsMax(); i++) {
+    const int before = bag->itemsCount();
+    bag->itemNew();
+    // The pool (103 real items) is larger than the bag, so each add lands.
+    QCOMPARE(bag->itemsCount(), before + 1);
+    QVERIFY2(allIndsUnique(bag), "itemNew produced a duplicate item index");
+  }
+}
+
+// Re-Roll (randomize) must leave each box duplicate-free AND sorted, for both
+// the bag and the PC box, independently (uniqueness is per-list).
+void TestItemsLogic::box_randomizeIsUniqueAndSorted()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  ItemStorageBox* boxes[2] = {
+    sf.dataExpanded->player->items,
+    sf.dataExpanded->storage->items
+  };
+
+  for(auto* box : boxes) {
+    // Several iterations to be robust against the RNG.
+    for(int iter = 0; iter < 10; iter++) {
+      box->randomize();
+
+      QVERIFY2(allIndsUnique(box), "randomize produced a duplicate within a box");
+
+      // randomize() sorts by default: the order it leaves must already equal a
+      // fresh sort (i.e. sorting again is a no-op).
+      const QVector<int> afterRandomize = indOrder(box);
+      box->sort();
+      QCOMPARE(indOrder(box), afterRandomize);
+    }
+  }
 }
 
 QTEST_GUILESS_MAIN(TestItemsLogic)

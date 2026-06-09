@@ -1,6 +1,6 @@
 // Bag.qml -- the items editor screen.
 //
-// Two ItemsPane side by side: the player's Bag (bound to
+// Two ItemsPane side by side (a 50/50 RowLayout): the player's Bag (bound to
 // player.items / brg.bagItemsModel) and the PC Storage box
 // (storage.items / brg.pcItemsModel). Footer buttons: Re-Roll (randomize both
 // boxes) and Sort (sort both).
@@ -16,30 +16,31 @@ import "../../fragments/screens/bag"
 Page {
   id: page
 
-  ItemsPane {
-    id: bagPane
+  // Two equal panes via an auto layout — each fillWidth so they split the
+  // screen 50/50 with no manual width math.
+  RowLayout {
+    anchors.fill: parent
+    spacing: 0
 
-    anchors.left: parent.left
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    width: Math.trunc(parent.width * 0.50)
+    ItemsPane {
+      id: bagPane
+      Layout.fillWidth: true
+      Layout.fillHeight: true
 
-    title: "Bag"
-    box: brg.file.data.dataExpanded.player.items
-    model: brg.bagItemsModel
-  }
+      title: "Bag"
+      box: brg.file.data.dataExpanded.player.items
+      model: brg.bagItemsModel
+    }
 
-  ItemsPane {
-    id: storagePane
+    ItemsPane {
+      id: storagePane
+      Layout.fillWidth: true
+      Layout.fillHeight: true
 
-    anchors.left: bagPane.right
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    anchors.right: parent.right
-
-    title: "Storage"
-    box: brg.file.data.dataExpanded.storage.items
-    model: brg.pcItemsModel
+      title: "Storage"
+      box: brg.file.data.dataExpanded.storage.items
+      model: brg.pcItemsModel
+    }
   }
 
   // 1 Button Footer, the Randomize Button
