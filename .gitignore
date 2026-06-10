@@ -83,6 +83,11 @@ no-git/
 build/
 projects/build/
 
+# Local build/CI helper scripts & logs at the repo root (machine-specific paths,
+# regenerated; never meant to be tracked). Underscore-prefixed by convention.
+/_*.bat
+/_*.log
+
 # Generated documentation (Doxygen). The Doxyfile and the vendored theme under
 # docs/doxygen-awesome/ ARE tracked; only the generated HTML is ignored.
 /docs/html/
