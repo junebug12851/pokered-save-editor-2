@@ -124,14 +124,59 @@ breathing room is a `footer: Item { height: 25 }` (not an empty trailing `Text`)
 (check-all `IconButtonSquare` parked at the bar's left edge `leftMargin: 24`; a
 `SelectPokemonBox` switcher `anchors.centerIn`; the "set as current box" dot
 `IconButtonSquare` anchored to the switcher's right, `visible` only when this pane
-isn't the current box) at top, an anchored 45px **footer bar** (centered `RowLayout`,
-`spacing: 15`, of bulk-move/release/transfer `IconButtonSquare`s, each `visible:
-model.hasChecked`) at bottom, and a `PokemonBoxView` filling between them (15px
-left/right inset). Removed the old `width: 265` magic-width wrapper `Row` and every
-repeated `leftPadding/rightPadding/leftInset/rightInset: 0` override on the
-`IconButtonSquare`s (use them bare per "⋮ icon menu buttons" above). Note: when the dot
-button was briefly nested *inside* the combo, `model` rebound to the combo's model — it
-must reference `top.model.curBox`; as a sibling it's clearer.
+isn't the current box) at top, and a `PokemonBoxView` filling the rest (15px
+left/right inset, 15px bottom margin). Removed the old `width: 265` magic-width wrapper
+`Row` and every repeated `leftPadding/rightPadding/leftInset/rightInset: 0` override on
+the `IconButtonSquare`s (use them bare per "⋮ icon menu buttons" above). Note: when the
+dot button was briefly nested *inside* the combo, `model` rebound to the combo's model —
+it must reference `top.model.curBox`; as a sibling it's clearer.
+
+**No footer bulk-action bar (removed once drag & drop landed).** The old 45px footer of
+move-to-top/up/down/bottom + transfer + release `IconButtonSquare`s (each `visible:
+model.hasChecked`) is **gone** — reorder and cross-pane moves are now drag gestures, and
+delete moved onto the cell (below). The model's `checkedMove*`/`checkedTransfer` slots
+still exist but are now unused by the UI; `checkedToggleAll` (header check-all) and
+`checkedDelete` (group delete) are still used.
+
+**Checkbox selection — scoped persistence (Twilight's exact rule).** Selection should survive
+**only** the Pokémon-detail editor round-trip (open a mon → back), and should **clear** on a box
+switch and on leaving the screen (back / Home). The mechanics:
+- The delegate `CheckBox` **binds** `checked: (itemChecked === true)` and writes back only
+  `onToggled` (the old one-shot `Component.onCompleted: checked = itemChecked` didn't restore on
+  delegate reuse/reset → "checks disappear"). Checked state is a per-mon QObject property, so it
+  survives a model reset — which is what makes the editor round-trip restore work (closing the
+  editor only resets the model; the page itself stays mounted).
+- **Box switch clears** (`PokemonStorageModel::switchBox` clears the outgoing box's checks).
+- **Leaving the screen clears** via `Pokemon.qml`'s `Component.onDestruction` →
+  `pokemonStorageModel1/2.clearCheckedState()`. This is the key trick: `appBody` is a `StackView`,
+  and opening the editor **pushes** `PokemonDetails` *over* `Pokemon.qml` (which stays alive →
+  `onDestruction` does NOT fire → selection kept); leaving the screen **pops** `Pokemon.qml`
+  (destroyed → fires → cleared). The router's `closeNonModal` can't distinguish the two (it fires
+  for both editor-close and screen-close), so we deliberately drive the clear off page destruction,
+  not a router signal. (`PokemonStorageModel::pageClosing` is now an inert hook.)
+- Transfers/deletes still clear the specific mons they touch; `hasChecked` recomputes per box via
+  `curBoxChanged → onReset → hasCheckedChanged → checkStateDirty`.
+
+**Whole-cell hover via a `HoverHandler`** (`cellHover`), NOT `dragHandler.containsMouse`: the
+checkbox and delete button key their visibility off `cellHover.hovered`. A child `Button`/
+`CheckBox` that's hovered **steals** hover from the cell `MouseArea`, so `containsMouse` would
+flip false the moment you reach for the delete button and it'd vanish — the `HoverHandler`
+stays true over the whole cell incl. its child controls.
+
+**Per-cell delete button** (`deleteBtn`, a round `Button` chip in the cell `content`):
+bottom-right (5px margins), `visible: !itemIsPlaceholder && (cellHover.hovered || itemChecked)`.
+A real button with states: at rest an **opaque accent chip** (`accentColor`, the in-screen
+"menu bar" colour — a semi-transparent rest circle looked bad, and since it only shows on
+hover/checked an opaque chip is fine) with a **white** (`textColorLight`) `times.svg`; on hover the
+chip fills `primaryColor` (the X stays white); on `down` it darkens (`Qt.darker(primaryColor,1.25)`);
+`Behavior on color` for a 90ms fade. **`24×24`** chip. **`icon 16×23`** — the `times.svg` viewBox is
+`352×512` (taller than wide, heavy vertical padding), so keep `width ≈ 0.69·height` for a square,
+un-stretched visible X; the padding lets the tall icon box still fit the circle. **`icon.width/height`
+are `int` — a non-integer (e.g. `13.75`) is a hard QML type error that fails the whole component and
+the screen won't open; keep them whole numbers.** `radius width/2`, all insets/padding 0, `z: 100`.
+`onClicked: theModel.deleteMon(index, itemChecked)` — a **checked** mon deletes the whole
+checked set (`deleteMon` `group` → `checkedDelete()`); otherwise just that mon (single path keeps
+the party non-empty and reveals the trailing "+" slot if the box was full).
 
 `PokemonBoxView` cell (`GridView` delegate, `cellSize: 100`): species/shiny `Image`
 anchored top→`nameLabel.top` (margins 8) so the icon and name stack as one unit; a level
@@ -142,6 +187,62 @@ The old hover-only accent **edit pill + pen icon was removed** (the cell-wide `M
 already opens the editor on click, so the pen/button was redundant); with it went the
 `QtQuick.Effects` import and the pen `MultiEffect` tint. Names show **always** here now —
 contrast the trainer/rival/Pokémon *name-row* convention where names show on hover.
+
+### Drag & drop reordering + cross-pane transfer (the standard for this grid)
+
+`PokemonBoxView` cells support **drag-to-reorder within a pane** and **drag-to-transfer
+between the two panes**. Twilight's chosen interaction (decided up front): **insert at the
+drop slot**, **drop-to-commit** (no live reshuffle — most reliable on a C++
+`QAbstractListModel`-backed `GridView`), a **drag threshold** so a plain click still opens the
+editor, **group operations via the existing checkboxes**, and a **dashed placeholder** marking
+the hovered drop slot.
+
+How it's built (`PokemonBoxView.qml` delegate):
+
+- The **delegate root is a `DropArea`** (`id: cell`), sized to the cell. It exposes the info a
+  drop target needs off the dragged item: `ownerModel` (`view.theModel`), `cellIndex` (`index`),
+  `grabbedChecked` (`itemChecked === true`), `isPlaceholder`.
+- The visible cell is a child **`content` `Item`** (centered via center anchors). It's the **drag
+  target** (`Drag.source: cell`, hot-spot centered). While dragging, a `State { when:
+  content.Drag.active }` **reparents `content` to `view.dragLayer`** (`property Item dragLayer:
+  Overlay.overlay`) and clears its center anchors, so the "ghost" floats **across both panes** and
+  isn't clipped by the `GridView`. The source slot empties as the content lifts (free "picked up" feel).
+- **You must drive `Drag.active` manually and call `Drag.drop()` on release** (don't bind
+  `Drag.active` to the MouseArea's `drag.active`). An *internal* MouseArea drag never auto-commits, so
+  `DropArea.onDropped` will **never fire** on its own — silently no-op drops. Pattern: track
+  `property bool maActive: dragHandler.drag.active`; in `onMaActiveChanged`, set `content.Drag.active =
+  true` when it goes true, and when it goes false call `content.Drag.drop()` (fires `onDropped` under
+  the cursor) **then** set `content.Drag.active = false` (reverts the lift). This was the cause of the
+  first cut's "drag does nothing, no error" bug.
+- The drag handler is the cell's `MouseArea` (`dragHandler`): `drag.target: cell.isPlaceholder ?
+  null : content` (the "+" slot isn't draggable), `drag.threshold: 8`, **`preventStealing: true`**
+  (so the `GridView` flick can't steal the gesture). Its `onClicked` is the **unchanged**
+  open-editor path — a press that moves less than the threshold stays a click; a completed drag
+  suppresses the click automatically.
+- **Drop target slot = the hovered cell** (insert *before* it). The trailing "+" placeholder cell's
+  `index == count`, so dropping there appends. `onDropped` reads `drop.source.*`, then dispatches:
+  same pane → `theModel.dragReorder(from, to, group)`, other pane → `srcModel.dragTransfer(from,
+  to, group)`. `group` = the grabbed mon was checked (then the whole checked set moves).
+- **Defer the model mutation with `Qt.callLater`** inside `onDropped`. The mutation resets the model
+  (rebuilding these delegates); running it next tick lets the dragged `content` reparent back to its
+  cell first, so no delegate is destroyed while it still owns the floating ghost (avoids an orphaned
+  ghost / dangling visual).
+- The **drop indicator is an insertion caret** (Twilight's call): a `Canvas` (`dropHint`) drawing a
+  **dashed vertical bar straddling the cell's LEFT edge** (`width: 6`, `anchors.left` + `leftMargin:
+  -3` to center on the cell boundary, `lineWidth 3`, `setLineDash([5,4])`, round caps),
+  `visible: cell.containsDrag`. It marks the **gap before** the hovered cell — i.e. *between* entries —
+  and is a pure overlay, so **icons never shuffle or resize** while dragging (Twilight explicitly
+  rejected the earlier full-cell box that sat *over* a mon and the idea of live-reflowing entries — it
+  made the user fight a moving target, esp. at row ends). Hovering the trailing **"+" slot** puts the
+  caret at its left edge = the gap **after the last mon, before the New button** (so "+" stays a valid
+  drop-at-end target, just with a between-entries caret instead of a box).
+
+Backing C++ (`PokemonStorageModel`): two `Q_INVOKABLE`s — `dragReorder(from, to, group)` (in-box
+splice + `onReset()`; count unchanged so no `pokemonChanged` needed) and `dragTransfer(from, to,
+group)` (mirrors `checkedTransfer`'s party↔box conversion + capacity / last-party-mon guards via
+`relocateOne`, then slides the appended block to the drop slot). `group` pulls the set from
+`getChecked()`. `toIndex` is the destination insertion slot (0..count; insert before, == append at
+count). These are the drag analogue of the `checked*` bulk actions.
 
 ## Centered overlay editor popups (escape clipping)
 

@@ -88,6 +88,43 @@ full **Rebuild** is required. After building: test (1) clicking a recent file wh
 should silently be gone from the list on next launch, never crash; (2) opening a present-but-truncated/locked
 `.sav` → should show the `FileError` modal, and the underlying save stays untouched.
 
+**Pokémon-storage drag & drop (BUILT + tests green 2026-06-09; awaiting in-app review):** C++ changed —
+two new `Q_INVOKABLE`s on `PokemonStorageModel` (`dragReorder`, `dragTransfer` in
+`mvc/pokemonstoragemodel.cpp/.h`) — plus the QML edit in `fragments/screens/pokemon/PokemonBoxView.qml`.
+**Built clean** in the kit dir (`PokeredSaveEditor.exe` relinked, QML re-embedded via `app.qrc` RCC) and
+in the repo `build/`; ran `tst_storage_model`, `tst_models`, `tst_pokemonbox`, `tst_move_select_model`,
+`tst_roundtrip` — **all exit 0** (byte-fidelity roundtrip included). **No new QML files** (no `app.qrc`
+membership change). The storage grid now supports **drag-to-reorder within a pane** and
+**drag-to-transfer between the two panes** (drop-to-commit, insert at the drop slot, drag-threshold so a
+plain click still opens the editor, **group moves via the existing checkboxes**, dashed drop-slot
+placeholder). Convention written up in `reference/ui-patterns.md` → "Drag & drop reordering + cross-pane
+transfer". After building, test: (1) drag a mon within a box → lands at the drop slot; (2) drag a mon onto
+the other pane's box → transfers + lands at the drop slot (incl. party↔box: party never empties, dest never
+overflows); (3) check several mons, drag one of them → the whole checked set moves together; (4) a quick
+click still opens the editor; (5) the trailing "+" slot accepts a drop (appends). Watch for: a stray
+floating "ghost" after a drop (the `Qt.callLater` defer + overlay reparent are meant to prevent this), and
+that the `GridView` doesn't flick instead of dragging (`preventStealing` guards it).
+
+**Drag & drop — iterated in-app with Twilight (2026-06-09, built + storage tests green, app relaunched):**
+(1) **drop now commits** — an internal MouseArea drag never auto-fires `DropArea.onDropped`; we drive
+`Drag.active` manually and call `Drag.drop()` on release (was the "drag does nothing, no error" bug).
+(2) **indicator is now an insertion caret** — a dashed vertical bar in the gap *before* the hovered cell
+(overlay, no reflow; Twilight rejected the full-cell box and any live entry-shuffle); the "+" slot's caret
+marks "after the last mon, before New". (3) **footer bulk-action bar removed** (`PokemonPane.qml`) — moves
+are drag now. (4) **checkbox selection has scoped persistence** (Twilight's rule): survives **only** the
+detail-editor round-trip, **clears** on box-switch and on leaving the screen. Mechanics: delegate `CheckBox`
+**binds** `checked: itemChecked` (+ `onToggled`) so per-mon checks restore across the model reset that the
+editor-close triggers; `switchBox` clears the outgoing box; and **`Pokemon.qml`'s `Component.onDestruction`**
+clears both models — `appBody` is a `StackView`, so opening the editor *pushes over* `Pokemon.qml` (stays
+alive, no clear) while leaving *pops* it (destroyed → clear). `closeNonModal` fires for both so it can't be
+used; `pageClosing` is now inert. (5) **per-cell delete button** is a **round chip `Button`** with real
+hover/press states — **dark** chip + red `times` (16px) at rest → fills red w/ white glyph on hover →
+darkens on press (90ms fade), `28×28`, bottom-right, hover-or-checked. Checkbox + delete visibility key off
+a **`HoverHandler`** (`cellHover`), not `containsMouse`, so reaching for the button doesn't hide it.
+`deleteMon(index, group)` — group(checked) deletes the whole checked set, else just that mon. New/changed
+C++: `deleteMon`; `switchBox` clears the outgoing box; `pageClosing` inert. Convention in
+`reference/ui-patterns.md`.
+
 ## Open Issues
 
 | Issue | Where | Status / notes |
