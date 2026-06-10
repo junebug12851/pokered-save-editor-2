@@ -125,6 +125,35 @@ a **`HoverHandler`** (`cellHover`), not `containsMouse`, so reaching for the but
 C++: `deleteMon`; `switchBox` clears the outgoing box; `pageClosing` inert. Convention in
 `reference/ui-patterns.md`.
 
+**Pokémon box-header UX pass (2026-06-10, Twilight-directed; built clean in repo `build/`, KIT-DIR
+REBUILD pending for her in-app review):** Reworked the two affordances on the Pokémon screen's box
+header that were "clean UI but not clean UX." (1) **Fill circle removed** from the box dropdown —
+`PokemonBoxSelectModel::getDecoratedName` no longer prepends `●`/`○`/blank; the `(N/Max)` count it
+already shows conveys fullness better (unused `box*Sym` fill members deleted from the `.h`). (2)
+**Current-box marker moved + flipped** — was a trailing `◁`, now a *leading* `▷` (where the circle
+sat, pointing at the label); non-current rows pad to stay aligned. (3) **The "set current box" dot/
+target button → an `Active` `FlatToggle`** on **both** panes: On (filled) when this pane's box is the
+game's active box, Off (outlined) otherwise; `enabled: !active` (a save always has exactly one active
+box — you click Off→On to activate, can't turn the active box off), **hidden on Party panes**. (4)
+**`FlatToggle` color-parameterized** (defaults unchanged → keyboard toggles unaffected) so the header
+instance can invert colors to read on the accent bar. Files: `mvc/pokemonboxselectmodel.cpp/.h`,
+`fragments/general/FlatToggle.qml`, `fragments/screens/pokemon/PokemonPane.qml`. **C++ changed →
+Rebuild required** (no new QML files, no `app.qrc` change). Repo `build/` compiled + linked green
+(`pokemonboxselectmodel.cpp.obj` OK, app re-linked, RCC re-embedded QML); rebuild the **kit dir**
+(`projects/build/Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug`) for her to test in-app. Convention:
+`reference/ui-patterns.md` → "Pokémon storage screen layout".
+
+**Credits screen — now living + AI contributors added (2026-06-10, Twilight-directed):** Added a new
+**"AI Assistance"** credits section (Claude — 2026 revival/debug/test/notes; ChatGPT — dev & design help)
+and credited **ChatGPT** under **Icons** for the in-app status symbol icons. Data is in
+`projects/db/assets/data/credits.json`; the new section is wired into `CreditDBEntry::process()`
+(`projects/db/src/pse-db/entries/creditdbentry.cpp`) in display order
+(…Framework → **AI Assistance** → Tools Used…). **Rebuild required** — the JSON is baked into `db.qrc`
+so the RCC must re-embed it (plus the `process()` C++ change). No `app.qrc` change; no test breakage
+(credits tests read `getStoreSize()` dynamically). Going forward the credits screen is to be **kept up
+to date by default** — see `CLAUDE.md` → "Keep the Credits Screen Living". (Section order is a UX choice;
+Twilight can move "AI Assistance" — it's just the `process()` append order.)
+
 ## Open Issues
 
 | Issue | Where | Status / notes |

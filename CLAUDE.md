@@ -48,6 +48,49 @@ The full notes system is in `notes/`. Everything is organized by topic:
 
 ## Build System
 
+Toolchain (Qt Creator kit `Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug`), all on Twilight's
+Windows machine via the PowerShell terminal:
+
+- Compiler/runtime: `C:\Qt\Tools\llvm-mingw1706_64\bin` (clang++, llvm-cov, llvm-profdata, llvm-nm)
+- Qt: `C:\Qt\6.11.0\llvm-mingw_64`; cmake `C:\Qt\Tools\CMake_64\bin\cmake.exe`; Ninja generator
+- **Two build dirs — do not mix them up:**
+  - `build/` (repo root, Ninja) — the **test** build the automated loop uses (`cmake -S projects -B build`).
+  - `projects/build/Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug/` (Makefiles) — the **app** kit dir Twilight
+    actually runs. Siblings: `asan/`, `coverage/`. **Rebuild THIS for in-app testing**, not just `build/`.
+  - `build-cov/` — coverage build (`-fprofile-instr-generate -fcoverage-mapping`, `PSE_SHARED_APPCORE=ON`).
+- Every PowerShell call must prepend PATH with the llvm-mingw + Qt `bin` dirs and set `$env:CC=clang;
+  $env:CXX=clang++`, or clang++ isn't found. The PowerShell transport caps ~60s — **run long builds
+  detached** (`Start-Process` writing a log) and poll the log. **Always redirect stdout AND stderr to a
+  log file** so the output is readable (`… > build.log 2>&1`). Before running any test/app exe, set
+  crash-fast error mode (`SetErrorMode(0x0003)` via a P/Invoke `Add-Type`) so a crash fails fast instead
+  of hanging on the qtcdebugger dialog.
+- `PokeredSaveEditor.exe` links `savefile.dll` via its import lib, so editing a `savefile` `.cpp`
+  rebuilds the **DLL** but does NOT relink the exe (exe mtime stays put) — fine, it loads the new DLL at
+  runtime; verify by the **DLL** timestamp, not the exe.
+
+## Default Workflow — Do These By Default (Twilight's standing instruction)
+
+After making changes, run this loop **without being asked** (established 2026-06-10). Route all build/test
+output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (PowerShell ~60s cap).
+
+1. **Build + launch (on any C++/qrc change).** Rebuild the **kit dir**
+   (`cmake --build "projects\build\Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug" --target PokeredSaveEditor`)
+   and **launch the app** so Twilight can test in-app immediately. (Pure edits to existing QML hot-reload —
+   no rebuild; **new** QML files still need adding to `app/app.qrc` + a rebuild.)
+2. **Test.** Run the **affected** test(s) per change for speed (build `build/`, run `build\tst_x.exe`);
+   run the **full `ctest`** suite before fast-forwarding `main`. Only proceed past a **green** result.
+3. **Debug / profile.** If anything **crashes**, rebuild via the **`asan/`** (or debugger) sibling build,
+   capture a **real stack trace** (output routed to a log), and diagnose from that — never guess.
+   Do **periodic profiling** passes when touching hot paths. Always redirect std+err to a log to read it.
+4. **Commit + push + FF main — fully automatic (green-gated).** This is Twilight's explicit standing
+   request (it overrides the older "push only when asked" wording in `git-workflow.md`):
+   - Commit early/often on **`dev`** with focused `type: summary` messages, **staging specific files only**
+     (never `git add -A`/`.`), and `git push origin dev` after each commit.
+   - When the **full suite is green**, fast-forward `main` and push automatically:
+     `git checkout main && git merge --ff-only dev && git push origin main && git checkout dev`.
+   - **Hard safety rules still absolute:** never `push --force`/force-with-lease, never rewrite pushed
+     history, never `reset --hard`/`rebase`/`clean -fd`/delete a branch without an explicit request.
+     Inspect `git status` before and after, every time. Full standards: `notes/reference/git-workflow.md`.
 
 ## Maintaining the Notes — Your Responsibility
 
@@ -65,12 +108,28 @@ As things happen during a session, update the appropriate file on the spot:
 | Completed a task or unblocked something | Update `notes/plans/next-steps.md` |
 | Build health changes | Update `notes/status.md` |
 | Something significant about the project's history changes | Update `notes/context/history.md` |
+| A new contributor/tool/service/asset/AI helps the project | Add them to `projects/db/assets/data/credits.json` (see "Keep the Credits Screen Living" below) |
 
 Also: if something comes up that doesn't fit any existing file, create a new file in the right folder.
 The structure is meant to grow. Don't stuff things into the wrong place to avoid creating a new file.
 
 The goal is that any AI opening this project cold can read the notes and be fully oriented —
 with no information trapped in a human's head or lost between sessions.
+
+## Keep the Credits Screen Living
+
+The in-app **Credits / About** screen is a living document — keep it current **by default,
+without being asked** (Twilight's standing instruction). Whenever someone or something new
+contributes — a person, framework, tool, service, icon/asset source, or an AI assistant
+(e.g. Claude, ChatGPT) — add them to `projects/db/assets/data/credits.json` under the right
+section. Sections are read, in display order, by `CreditDBEntry::process()`
+(`projects/db/src/pse-db/entries/creditdbentry.cpp`): **Project Leaders, Data Sources,
+Framework, AI Assistance, Tools Used, Services Used, Icons, Wallpapers**. Entry fields:
+`name`, `url`, `note`, `license`, `mandated` (all optional except a name). Adding a brand-new
+**section** also requires a matching read in `process()`. The JSON is baked into `db.qrc`, so
+**any credits change needs a rebuild** to show in-app (editing existing entries = rebuild;
+new section = rebuild + the C++ read). No hardcoded credit counts exist in the tests, so
+adding entries won't break them.
 
 ## Owner Preferences
 

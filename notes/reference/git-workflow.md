@@ -34,6 +34,14 @@ squash-merges then — not now.)
 expected to keep the remote current, just like they keep the living notes current — don't leave green
 work sitting only on the local machine.
 
+> **Standing default (2026-06-10):** commit/push on `dev` AND the green-gated `main` fast-forward are
+> now **fully automatic — done by default without being asked** (Twilight's explicit instruction). This
+> supersedes the "push only when asked" phrasing in the Hard safety rules below; the *only-when-asked*
+> restriction now applies just to the genuinely destructive ops (force-push, history rewrite,
+> `reset --hard`, `rebase`, `clean -fd`, branch deletion), which remain off-limits without an explicit
+> request. The full default loop (build+launch, test, debug/profile, commit/push/FF) lives in
+> `CLAUDE.md` → "Default Workflow — Do These By Default."
+
 - **`dev`**: `git push origin dev` after each commit. (This environment appears to push `dev` on commit
   automatically — `origin/dev` was already current after local commits — but push explicitly anyway;
   it's a harmless no-op when already in sync.)
@@ -67,7 +75,9 @@ after-the-fact surgery.
 - **Never** `push --force`, force-with-lease, or rewrite pushed history.
 - **Never** `reset --hard`, `rebase`, `clean -fd`, or delete a branch **without an explicit request**.
 - Only routine ops: `status`, `log`, `add <specific paths>`, `commit`, `branch`, `checkout`,
-  `merge --ff-only`, and `push` (push only when asked).
+  `merge --ff-only`, and `push`. (Commit/push/FF-main are now done **by default** — see the Pushing
+  section's "Standing default" note above; the destructive ops in the first two bullets still require an
+  explicit request.)
 - **Stage specific files**, never `git add -A`/`.` — build artifacts stay out (also gitignored:
   `build/`, `projects/build/`, `*.dll`, `*.exe`, `*.o`, `*.moc`).
 - Inspect `git status` before, verify clean/expected after — every time.
