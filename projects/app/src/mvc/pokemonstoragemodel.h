@@ -74,6 +74,9 @@ public:
     LevelRole,
     IsShinyRole,
     IsPartyRole,
+    HpRole,      ///< Current HP (for the storage-grid health bar).
+    HpMaxRole,   ///< Computed max HP (hpStat).
+    StatusRole,  ///< Raw status byte (0 none; 1-7 sleep; 8 poison; 16 burn; 32 freeze; 64 paralyze).
   };
 
   /// Sentinel box index for the party.

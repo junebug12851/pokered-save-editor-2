@@ -149,6 +149,18 @@ GridView {
         return nick;
     }
 
+    // Map the raw gen-1 status byte to its icon (bit decode: sleep 0x07, poison
+    // 0x08, burn 0x10, freeze 0x20, paralyze 0x40; matches StatusSelectModel's
+    // values 1-7 / 8 / 16 / 32 / 64). "" = no status.
+    function getStatusIcon(s) {
+      if(s & 0x07) return "qrc:/assets/icons/status/sleep.png";
+      if(s & 0x08) return "qrc:/assets/icons/status/poison.png";
+      if(s & 0x10) return "qrc:/assets/icons/status/burn.png";
+      if(s & 0x20) return "qrc:/assets/icons/status/freeze.png";
+      if(s & 0x40) return "qrc:/assets/icons/status/paralyze.png";
+      return "";
+    }
+
     // A mon was dropped onto this slot: reorder within the pane, or transfer in
     // from the other pane. toIndex == this slot (insert before it); the trailing
     // placeholder slot's index == count, so dropping there appends.
@@ -264,6 +276,29 @@ GridView {
         Material.foreground: brg.settings.textColorLight
       }
 
+      // Status condition badge, upper-left of the icon. Shown only when the mon
+      // has a status AND the checkbox isn't occupying that corner (not hovered /
+      // not checked), so the two never overlap. z below the checkbox.
+      Image {
+        id: statusIcon
+        visible: !itemIsPlaceholder && (itemStatus > 0)
+                 && !cellHover.hovered && (itemChecked !== true)
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.topMargin: 3
+        anchors.leftMargin: 3
+
+        width: 26
+        height: 26
+        sourceSize.width: width
+        sourceSize.height: height
+        z: 90
+
+        source: cell.getStatusIcon(itemStatus)
+        fillMode: Image.PreserveAspectFit
+      }
+
       // Always-visible name label below the icon: nickname (or species name as
       // fallback), dark text on no background. The cell-wide MouseArea handles the
       // click that opens the editor, so this is purely a label.
@@ -282,6 +317,43 @@ GridView {
         font.pixelSize: 12
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideRight
+      }
+
+      // Narrow HP bar tucked just under the icon (above the name). Fill colour
+      // matches the editor's HP slider EXACTLY (GlancePane hpEdit.getColor):
+      // >50% green #4CAF50, >20% amber #FFA000, else red #D32F2F. The fraction is
+      // hp / hpStat (current / computed-max), same as the slider's position.
+      Rectangle {
+        id: hpBar
+        visible: !itemIsPlaceholder && (itemHpMax > 0)
+
+        anchors.bottom: nameLabel.top
+        anchors.bottomMargin: 3
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 14
+        anchors.rightMargin: 14
+
+        height: 5
+        radius: height / 2
+        color: Qt.rgba(0, 0, 0, 0.22)   // empty track
+
+        Rectangle {
+          anchors.left: parent.left
+          anchors.top: parent.top
+          anchors.bottom: parent.bottom
+          width: parent.width * Math.max(0, Math.min(1, (itemHpMax > 0) ? (itemHp / itemHpMax) : 0))
+          radius: parent.radius
+          color: {
+            var pos = (itemHpMax > 0) ? (itemHp / itemHpMax) : 0;
+            if(pos > 0.5)
+              return "#4CAF50";       // green
+            else if(pos > 0.2)
+              return "#FFA000";       // amber
+            else
+              return "#D32F2F";       // red
+          }
+        }
       }
 
       MouseArea {
@@ -311,10 +383,10 @@ GridView {
       Image {
         visible: !itemIsPlaceholder
 
-        // Fills the cell above the name label, so the icon and its name read as one
-        // stacked unit.
+        // Fills the cell above the HP bar / name label, so the icon, bar and name
+        // read as one stacked unit.
         anchors.top: parent.top
-        anchors.bottom: nameLabel.top
+        anchors.bottom: hpBar.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 8

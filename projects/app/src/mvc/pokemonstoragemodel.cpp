@@ -153,6 +153,12 @@ QVariant PokemonStorageModel::data(const QModelIndex& index, int role) const
     return mon->isShiny();
   else if (role == IsPartyRole)
     return !mon->isBoxMon();
+  else if (role == HpRole)
+    return mon->hp;
+  else if (role == HpMaxRole)
+    return mon->hpStat();
+  else if (role == StatusRole)
+    return mon->status;
 
   // All else fails, return nothing
   return QVariant();
@@ -171,6 +177,9 @@ QHash<int, QByteArray> PokemonStorageModel::roleNames() const
   roles[LevelRole] = "itemLevel";
   roles[IsShinyRole] = "itemIsShiny";
   roles[IsPartyRole] = "itemIsParty";
+  roles[HpRole] = "itemHp";
+  roles[HpMaxRole] = "itemHpMax";
+  roles[StatusRole] = "itemStatus";
 
   return roles;
 }
