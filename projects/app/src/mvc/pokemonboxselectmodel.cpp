@@ -148,19 +148,14 @@ QString PokemonBoxSelectModel::getDecoratedName(int box) const
   // Get name of box
   QString name = boxSelect[box];
 
-  // Prepend symbol for empty, not-full, or full
-  if(selBox->isFull())
-    name = boxFullSym + " " + name;
-  else if(selBox->pokemon.size() > 0)
-    name = boxNotEmptySym + " " + name;
-  else
-    name = "  " + name;
-
-  // Append symbol for current box if so
+  // Prepend the current-box marker (points at the label), where the old fill
+  // circle used to sit; otherwise pad with equal-width blank so every row stays
+  // left-aligned. The fill circle is gone -- the (N/Max) count below already
+  // conveys how full a box is, and more precisely than empty/partly/full did.
   if(box > 0 && storage->curBox == (box - 1))
-    name += " " + curBoxSym;
+    name = curBoxSym + " " + name;
   else
-    name += "  ";
+    name = "   " + name;
 
   // Next append box count
   name += " (" +

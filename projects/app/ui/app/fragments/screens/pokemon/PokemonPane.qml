@@ -1,8 +1,9 @@
 // PokemonPane.qml -- one PC storage half (used twice on the Pokemon screen).
 //
 // Wraps a PokemonBoxView below a header bar (check-all toggle, a SelectPokemonBox
-// box-switcher, and a "set as current box" dot button). Bound to a
-// PokemonStorageModel (model) and its PokemonBoxSelectModel (selectModel).
+// box-switcher, and an "Active" toggle showing/setting whether this pane's box is
+// the game's current/active box). Bound to a PokemonStorageModel (model) and its
+// PokemonBoxSelectModel (selectModel).
 //
 // The old footer of bulk actions (move to top/up/down/bottom, transfer, release)
 // was removed once drag & drop landed -- reordering and cross-pane moves are now
@@ -26,7 +27,7 @@ Rectangle {
   property PokemonStorageModel model: null
   property PokemonBoxSelectModel selectModel: null
 
-  // ---- Header bar: [check-all]  box-switcher (set-current), centered group ----
+  // ---- Header bar: [check-all]  box-switcher + Active toggle, centered group ----
   Rectangle {
     id: boxHeader
     anchors.left: parent.left
@@ -57,17 +58,29 @@ Rectangle {
       Component.onCompleted: currentIndex = top.model.curBox + 1;
     }
 
-    // "Set as current box" dot, just to the right of the switcher (shown only
-    // when this pane isn't already the current box).
-    IconButtonSquare {
+    // "Active" toggle, just to the right of the switcher. Shows whether the box
+    // this pane displays is the game's current/active storage box: On (filled)
+    // when it is, Off (outlined) when it isn't. Clicking an Off toggle makes
+    // this box active; once On it is non-clickable (a save always has exactly
+    // one active box, so you can only switch which box is active from elsewhere,
+    // never turn the active box off). Hidden on the Party pane, which has no
+    // active-box concept. Bar-appropriate colors (light on the accent header).
+    FlatToggle {
+      id: activeToggle
       anchors.left: boxSwitcher.right
-      anchors.leftMargin: 4
+      anchors.leftMargin: 10
       anchors.verticalCenter: boxSwitcher.verticalCenter
 
-      visible: (brg.file.data.dataExpanded.storage.curBox != top.model.curBox) &&
-               (top.model.curBox >= 0)
+      text: qsTr("Active")
+      visible: top.model.curBox >= 0
+      active: brg.file.data.dataExpanded.storage.curBox === top.model.curBox
+      enabled: !active
 
-      icon.source: "qrc:/assets/icons/fontawesome/dot-circle.svg"
+      toggleColor: brg.settings.textColorLight
+      activeTextColor: brg.settings.accentColor
+      inactiveTextColor: brg.settings.textColorLight
+      hoverColor: Qt.rgba(1, 1, 1, 0.18)
+
       onClicked: brg.file.data.dataExpanded.storage.curBox = top.model.curBox;
     }
   }

@@ -122,14 +122,36 @@ breathing room is a `footer: Item { height: 25 }` (not an empty trailing `Text`)
 `width: Math.trunc(parent.width * 0.50)` + chained anchors). Each `PokemonPane`
 (`fragments/screens/pokemon/`) is a `Rectangle` with an anchored 45px **header bar**
 (check-all `IconButtonSquare` parked at the bar's left edge `leftMargin: 24`; a
-`SelectPokemonBox` switcher `anchors.centerIn`; the "set as current box" dot
-`IconButtonSquare` anchored to the switcher's right, `visible` only when this pane
-isn't the current box) at top, and a `PokemonBoxView` filling the rest (15px
+`SelectPokemonBox` switcher `anchors.centerIn`; an **`Active` `FlatToggle`** anchored to
+the switcher's right) at top, and a `PokemonBoxView` filling the rest (15px
 left/right inset, 15px bottom margin). Removed the old `width: 265` magic-width wrapper
 `Row` and every repeated `leftPadding/rightPadding/leftInset/rightInset: 0` override on
-the `IconButtonSquare`s (use them bare per "⋮ icon menu buttons" above). Note: when the
-dot button was briefly nested *inside* the combo, `model` rebound to the combo's model —
-it must reference `top.model.curBox`; as a sibling it's clearer.
+the `IconButtonSquare`s (use them bare per "⋮ icon menu buttons" above). Note: keep the
+toggle a **sibling** of the combo (not nested) — when the old dot button was briefly nested
+*inside* the combo, `model` rebound to the combo's model; it must reference `top.model.curBox`.
+
+**Box-header "Active" toggle + box-dropdown decoration (2026-06-10, Twilight-directed; built
+clean in repo `build/`, kit-dir rebuild pending for her in-app review).** Replaced two
+not-self-explanatory affordances with clearer ones:
+- **The fill circle is gone** from the box dropdown. `PokemonBoxSelectModel::getDecoratedName`
+  no longer prepends `●`/`○`/blank — the `(N/Max)` count it already appends conveys fullness
+  more precisely. The unused `boxEmptySym`/`boxNotEmptySym`/`boxFullSym` members were removed.
+- **The current-box marker moved + flipped.** It used to be a trailing `◁`; it's now a *leading*
+  `▷` (where the circle used to sit, pointing at the label). `curBoxSym` is the only decoration
+  symbol left. Non-current rows pad with 3 spaces so the list stays left-aligned.
+- **The "set current box" target/dot button became an `Active` `FlatToggle`.** It shows On
+  (filled) when this pane's box *is* the game's current/active storage box, Off (outlined)
+  otherwise — self-describing state, not a cryptic target icon. Rule (Twilight): a save always
+  has exactly **one** active box, so the toggle is **`enabled: !active`** — you click an Off
+  toggle to activate that box (the other pane's toggle then reads Off); you can't turn the active
+  box off, only switch which box is active. **Hidden on the Party pane** (`visible: top.model.curBox >= 0`)
+  — the party has no active-box concept. `onClicked` sets
+  `brg.file.data.dataExpanded.storage.curBox = top.model.curBox`.
+- **`FlatToggle` is now color-parameterized** (`toggleColor`/`activeTextColor`/`inactiveTextColor`/
+  `hoverColor`), defaults reproducing the original look so the keyboard toggles are unchanged. The
+  header instance sits on the **accent bar**, so it inverts them (light border/text, light fill +
+  accent text when On) to read against the colored header. If a flat toggle ever needs to live on a
+  colored surface again, override these four — don't fork the component.
 
 **No footer bulk-action bar (removed once drag & drop landed).** The old 45px footer of
 move-to-top/up/down/bottom + transfer + release `IconButtonSquare`s (each `visible:

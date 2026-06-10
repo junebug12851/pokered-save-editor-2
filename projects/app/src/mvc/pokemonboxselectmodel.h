@@ -25,8 +25,8 @@ class PlayerPokemon;
 /**
  * @brief The "which PC box" selector model (Party + 12 boxes).
  *
- * A combo-box model listing the party and the twelve storage boxes, each decorated
- * with a fill-status symbol (empty/partly/full + a current-box marker). It is
+ * A combo-box model listing the party and the twelve storage boxes. Each row shows a
+ * (filled count / max) tally and the current box is marked with a leading ▷. It is
  * @e paired to a PokemonStorageModel: selecting a box here drives that model's
  * current box, and vice versa (see the note at @ref pairedModel). setData() handles
  * the selection write-back. Exposed as `brg.pokemonBoxSelectModel1/2`.
@@ -48,10 +48,7 @@ public:
 
   PokemonBoxSelectModel(PokemonStorageModel* pairedModel); ///< @param pairedModel the storage model to drive.
 
-  QString boxEmptySym = " ";    ///< Decoration: empty box.
-  QString boxNotEmptySym = "○"; ///< Decoration: partly-filled box.
-  QString boxFullSym = "●";     ///< Decoration: full box.
-  QString curBoxSym = "◁";      ///< Decoration: current box marker.
+  QString curBoxSym = "▷";      ///< Decoration: current-box marker (points at the label). Fill status is conveyed by the (N/Max) count.
 
   QString boxSelect[13] = {
     "Party",
