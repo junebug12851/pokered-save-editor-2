@@ -1,11 +1,13 @@
 // PokemonPane.qml -- one PC storage half (used twice on the Pokemon screen).
 //
-// Wraps a PokemonBoxView between a header bar (check-all toggle, a
-// SelectPokemonBox box-switcher, and a "set as current box" dot button) and a
-// footer of bulk actions shown when mons are checked: move to top/up, release,
-// transfer, move down/bottom. Bound to a PokemonStorageModel (model) and its
-// PokemonBoxSelectModel (selectModel). Note Twilight's inline remark on the
-// release ("times" not trash) icon choice -- leave it.
+// Wraps a PokemonBoxView below a header bar (check-all toggle, a SelectPokemonBox
+// box-switcher, and a "set as current box" dot button). Bound to a
+// PokemonStorageModel (model) and its PokemonBoxSelectModel (selectModel).
+//
+// The old footer of bulk actions (move to top/up/down/bottom, transfer, release)
+// was removed once drag & drop landed -- reordering and cross-pane moves are now
+// direct drag gestures (PokemonBoxView), and delete moved to a per-mon
+// hover/checked button on the cell. See notes/reference/ui-patterns.md.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -80,66 +82,9 @@ Rectangle {
     anchors.leftMargin: 15
     anchors.right: parent.right
     anchors.rightMargin: 15
-    anchors.bottom: pokemonFooter.top
+    anchors.bottom: parent.bottom
+    anchors.bottomMargin: 15
 
     theModel: top.model
-  }
-
-  Rectangle {
-    id: pokemonFooter
-    color: brg.settings.accentColor
-    anchors.bottom: parent.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    height: 45
-
-    Material.foreground: brg.settings.textColorLight
-    Material.background: brg.settings.accentColor
-
-    RowLayout {
-      anchors.centerIn: parent
-      spacing: 15
-
-      IconButtonSquare {
-        visible: model.hasChecked
-        icon.source: "qrc:/assets/icons/fontawesome/angle-double-up.svg"
-        onClicked: model.checkedMoveToTop();
-      }
-
-      IconButtonSquare {
-        visible: model.hasChecked
-        icon.source: "qrc:/assets/icons/fontawesome/angle-up.svg"
-        onClicked: model.checkedMoveUp();
-      }
-
-      // Releasing a pokemon probably shouldn't be represented with a trashcan
-      // icon. just saying... The trash can icon shows clearest that we want to
-      // remove the data.... but probably shouldn't forget that a living breathing
-      // animal is represented with that icon and the implications it gives by
-      // clicking the "Trash Can" to delete the Pokemon data.
-      IconButtonSquare {
-        visible: model.hasChecked
-        icon.source: "qrc:/assets/icons/fontawesome/times.svg"
-        onClicked: model.checkedDelete();
-      }
-
-      IconButtonSquare {
-        visible: model.hasChecked
-        icon.source: "qrc:/assets/icons/fontawesome/exchange-alt.svg"
-        onClicked: model.checkedTransfer();
-      }
-
-      IconButtonSquare {
-        visible: model.hasChecked
-        icon.source: "qrc:/assets/icons/fontawesome/angle-down.svg"
-        onClicked: model.checkedMoveDown();
-      }
-
-      IconButtonSquare {
-        visible: model.hasChecked
-        icon.source: "qrc:/assets/icons/fontawesome/angle-double-down.svg"
-        onClicked: model.checkedMoveToBottom();
-      }
-    }
   }
 }

@@ -112,6 +112,26 @@ public:
   Q_INVOKABLE PokemonBox* getBoxMon(int index);    ///< Typed box mon at @p index (for the details screen).
   Q_INVOKABLE PokemonParty* getPartyMon(int index); ///< Typed party mon at @p index (for the details screen).
 
+  // ---- Drag & drop (Pokemon storage screen) -------------------------------
+  // Backing for the grid's drag-to-reorder and drag-between-panes gestures.
+  // `toIndex` is the destination insertion slot (0..count): the moved mon(s)
+  // land *before* the mon currently at that slot (== append when toIndex is the
+  // count). When `group` is true the whole currently-checked set moves together
+  // (preserving order); otherwise just the single mon at `fromIndex`. These are
+  // the drag analogue of the checked* bulk actions and obey the same rules
+  // (party never empties, destination never overflows, party<->box conversion).
+
+  /// Reorder within this box: move @p fromIndex (or the checked set) to @p toIndex.
+  Q_INVOKABLE void dragReorder(int fromIndex, int toIndex, bool group);
+
+  /// Move @p fromIndex (or the checked set) from this box into the paired pane's
+  /// box, inserting at @p toIndex there.
+  Q_INVOKABLE void dragTransfer(int fromIndex, int toIndex, bool group);
+
+  /// Delete the mon at @p index, or -- when @p group -- the whole checked set
+  /// (the per-cell hover/checked delete button; replaces the old footer release).
+  Q_INVOKABLE void deleteMon(int index, bool group);
+
 public slots:
   // Attached property management
   void clearCheckedState();     ///< Uncheck everything.

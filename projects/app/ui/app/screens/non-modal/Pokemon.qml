@@ -17,6 +17,16 @@ import "../../fragments/screens/pokemon"
 
 Page {
 
+  // Clear all checkbox selections when this screen is actually left (popped to
+  // Home or back) -- NOT when the Pokemon-detail editor is pushed over it (the
+  // StackView keeps this page alive during that round-trip, so onDestruction
+  // doesn't fire and the selection is preserved, which is what Twilight wants).
+  // Box-switch clearing is handled in PokemonStorageModel::switchBox.
+  Component.onDestruction: {
+    brg.pokemonStorageModel1.clearCheckedState();
+    brg.pokemonStorageModel2.clearCheckedState();
+  }
+
   // Two equal panes via an auto layout — each fillWidth so they split the
   // screen 50/50 with no manual width math.
   RowLayout {

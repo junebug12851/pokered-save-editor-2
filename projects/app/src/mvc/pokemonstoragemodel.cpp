@@ -59,7 +59,9 @@ void PokemonStorageModel::switchBox(int newBox, bool force)
   if(!force && curBox == newBox)
     return;
 
-  // Remove all checks
+  // Clear the OUTGOING box's checks: changing boxes should NOT keep the selection
+  // (Twilight's UX rule -- checks only persist across the Pokemon-detail editor
+  // round-trip, handled by Pokemon.qml's Component.onDestruction, not here).
   if(checkedStateDirty)
     clearCheckedState();
 
@@ -467,8 +469,13 @@ void PokemonStorageModel::checkStateDirty()
 
 void PokemonStorageModel::pageClosing()
 {
-  if(checkedStateDirty)
-    clearCheckedState();
+  // Intentionally does NOT clear the checked state. This fires on
+  // router.closeNonModal (which includes closing a mon's *detail editor* and
+  // returning to the storage screen) and on goHome -- clearing here wiped every
+  // checkbox the moment the user opened a mon and came back, which read as
+  // "checkboxes lose their selection". Checked state is per-mon and now persists
+  // for the file's lifetime (Twilight's call); transfers/deletes still clear the
+  // specific mons they touch. Kept as a hook in case a future close action needs it.
 }
 
 PokemonBox* PokemonStorageModel::getBoxMon(int index)
@@ -490,4 +497,151 @@ PokemonParty* PokemonStorageModel::getPartyMon(int index)
 
   // qmlCppOwned: see getBoxMon() above -- same QML-GC use-after-free guard.
   return qmlCppOwned((PokemonParty*)mon);
+}
+
+void PokemonStorageModel::dragReorder(int fromIndex, int toIndex, bool group)
+{
+  auto& vec = getCurBox()->pokemon;
+
+  // The mons to move, gathered in current box order. A group drag carries the
+  // whole checked set; a plain drag carries just the grabbed mon.
+  QVector<PokemonBox*> set;
+  if(group)
+    set = getChecked();
+  else if(fromIndex >= 0 && fromIndex < vec.size())
+    set.append(vec.at(fromIndex));
+
+  if(set.isEmpty())
+    return;
+
+  // Anchor = the first mon at/after the drop slot that ISN'T being moved; the
+  // set is re-inserted directly before it (or appended when there is none, e.g.
+  // dropping past the last mon / onto the empty trailing slot).
+  PokemonBox* anchor = nullptr;
+  for(int i = qBound(0, toIndex, vec.size()); i < vec.size(); i++) {
+    if(!set.contains(vec.at(i))) {
+      anchor = vec.at(i);
+      break;
+    }
+  }
+
+  // Pull the set out, then splice it back in before the anchor, preserving the
+  // set's internal order.
+  for(auto el : set)
+    vec.removeOne(el);
+
+  int insertAt = (anchor != nullptr) ? vec.indexOf(anchor) : vec.size();
+  for(int i = 0; i < set.size(); i++)
+    vec.insert(insertAt + i, set.at(i));
+
+  // A whole-vector reshuffle: a model reset is the clean, reliable refresh and
+  // sidesteps the beginMoveRows index gymnastics (count is unchanged, so the
+  // box-selector counts -- the only pokemonChanged listener -- need no update).
+  // Mirrors checkedToggleAll's external-change reset.
+  onReset();
+}
+
+void PokemonStorageModel::dragTransfer(int fromIndex, int toIndex, bool group)
+{
+  // Never transfer onto ourselves (both panes showing the same box).
+  if(otherModel == nullptr || getCurBox() == otherModel->getCurBox())
+    return;
+
+  auto src = getCurBox();
+  auto dst = otherModel->getCurBox();
+
+  // The mons to move, in current (source) box order -- checked set or single.
+  QVector<PokemonBox*> set;
+  if(group)
+    set = getChecked();
+  else if(fromIndex >= 0 && fromIndex < src->pokemon.size())
+    set.append(src->pokemon.at(fromIndex));
+
+  if(set.isEmpty())
+    return;
+
+  int inserted = 0;
+
+  for(auto el : set) {
+
+    // Same guards as checkedTransfer: keep the party non-empty, never overflow
+    // the destination.
+    if(src == party && party->pokemonCount() <= 1)
+      break;
+
+    if(dst->isFull())
+      break;
+
+    int ind = src->pokemon.indexOf(el);
+    if(ind < 0)
+      continue;
+
+    // Party and box records aren't interchangeable on disk -- convert to the
+    // destination's format before relocating (mirrors checkedTransfer exactly).
+    if(dst->isParty) {
+      el = PokemonParty::convertToParty(el);
+      src->pokemon.replace(ind, el);
+    }
+    else if(!dst->isParty && src->isParty) {
+      auto partyEl = (PokemonParty*)el;
+      el = partyEl->toBoxData();
+      partyEl->deleteLater();
+      src->pokemon.replace(ind, el);
+    }
+
+    // relocateOne appends to dst's end and emits the remove/insert signals that
+    // refresh both panes' models.
+    src->relocateOne(dst, ind);
+    inserted++;
+  }
+
+  // The transferred mons are now the last `inserted` slots of dst. Slide that
+  // block to the requested drop slot, clamped to the mons that were already
+  // there so we insert *among* them (never past the freshly-appended block).
+  if(inserted > 0) {
+    int firstAppended = dst->pokemon.size() - inserted;
+    int target = qBound(0, toIndex, firstAppended);
+
+    if(target != firstAppended) {
+      QVector<PokemonBox*> moved = dst->pokemon.mid(firstAppended, inserted);
+      dst->pokemon.remove(firstAppended, inserted);
+      for(int i = 0; i < moved.size(); i++)
+        dst->pokemon.insert(target + i, moved.at(i));
+
+      otherModel->onReset();
+    }
+  }
+
+  hasCheckedChanged();
+}
+
+void PokemonStorageModel::deleteMon(int index, bool group)
+{
+  // A group delete (the mon is checked) removes the whole checked set -- this is
+  // the replacement for the old footer "release" bulk button.
+  if(group) {
+    checkedDelete();
+    return;
+  }
+
+  // Single delete (hovering an unchecked mon).
+  auto box = getCurBox();
+
+  if(index < 0 || index >= box->pokemon.size())
+    return;
+
+  // Keep the party non-empty (same guard as checkedDelete).
+  if(box == party && party->pokemonCount() <= 1)
+    return;
+
+  // If the box was full it had no trailing "+" placeholder row; removing one mon
+  // opens it, so announce that new row (mirrors checkedDelete).
+  bool annPlaceholder = box->pokemonCount() == box->pokemonMax();
+
+  box->pokemonRemove(index); // emits pokemonRemoveChange -> onRemove (begin/endRemoveRows)
+
+  if(annPlaceholder) {
+    beginInsertRows(QModelIndex(), box->pokemonCount(), box->pokemonCount());
+    endInsertRows();
+  }
 }
