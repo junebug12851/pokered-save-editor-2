@@ -1,0 +1,4 @@
+# Temporary staging area for icons being imported into the app asset tree.
+# Ignore everything here but keep the folder itself tracked.
+*
+!.gitignore
