@@ -36,7 +36,7 @@
 #include <pse-db/mapsdb.h>
 #include <pse-db/flydb.h>
 #include <pse-db/gamecornerdb.h>
-#include <pse-db/hiddenitemsdb.h>
+#include <pse-db/hiddenItemsdb.h>
 #include <pse-db/entries/flydbentry.h>
 #include <pse-db/entries/gamecornerdbentry.h>
 #include <pse-db/entries/hiddenitemdbentry.h>
