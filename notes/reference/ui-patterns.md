@@ -174,6 +174,34 @@ chip fills `primaryColor` (the X stays white); on `down` it darkens (`Qt.darker(
 un-stretched visible X; the padding lets the tall icon box still fit the circle. **`icon.width/height`
 are `int` — a non-integer (e.g. `13.75`) is a hard QML type error that fails the whole component and
 the screen won't open; keep them whole numbers.** `radius width/2`, all insets/padding 0, `z: 100`.
+
+**HP bar** (`hpBar`, a narrow `Rectangle` track + fill, between the icon and the name label):
+`height 5`, `radius height/2`, 14px left/right insets, dark `Qt.rgba(0,0,0,0.22)` track; the fill
+width is `parent.width * clamp(itemHp/itemHpMax)` and its colour matches the **editor's HP slider
+exactly** (`GlancePane.qml` `hpEdit.getColor`): **`>0.5` green `#4CAF50`, `>0.2` amber `#FFA000`,
+else red `#D32F2F`** (fraction = current `hp` / computed-max `hpStat`). Backed by two new model
+roles `itemHp`/`itemHpMax` (`PokemonStorageModel` `HpRole`/`HpMaxRole` → `mon->hp` / `mon->hpStat()`).
+The icon's `anchors.bottom` is `hpBar.top` so icon → bar → name stack as one unit; `visible` only for
+real mons with `itemHpMax > 0`. (No live `dataChanged` for HP needed — the grid resets when the
+detail editor closes, which is the only place HP changes.)
+
+**Status condition badge** (`statusIcon`, an `Image` upper-left of the cell, `26×26`, `topMargin/
+leftMargin 3`): shows the mon's status condition. New model role `itemStatus` (`StatusRole` →
+`mon->status`, the raw gen-1 byte). `cell.getStatusIcon(s)` bit-decodes it (sleep `0x07`, poison
+`0x08`, burn `0x10`, freeze `0x20`, paralyze `0x40` — matching `StatusSelectModel`'s values
+1-7/8/16/32/64) to `qrc:/assets/icons/status/{sleep,poison,burn,freeze,paralyze}.png`. **Shares the
+top-left corner with the hover/checked checkbox** — `visible` is gated on `itemStatus > 0 &&
+!cellHover.hovered && itemChecked !== true` (z 90, below the checkbox's z 100) so the two never
+overlap: status at rest, checkbox when interacting. Assets are Twilight's ChatGPT-made framed badges
+(1254×1254 **RGBA / transparent**; `sourceSize` caps the decode to the display size).
+Source PNGs live in `projects/app/assets/icons/status/` and are listed in `app/app.qrc` (new files →
+**must** be in the qrc or they 404 at runtime). **Import workflow:** Twilight drops revised art in
+the **repo-root `assets/icons/`** staging folder (sleep-icon/poisoned/burned/frozen/paralyzed); copy +
+rename into the app tree, then rebuild (touch `app.qrc` so AUTORCC re-embeds changed bytes). That
+staging folder's **contents are gitignored** (`assets/icons/.gitignore` = `*` + `!.gitignore`, so the
+folder stays tracked but the dropped files don't). **Do the copy on the Windows side, not bash** — the
+Cowork bash mount serves stale cached bytes for these (a bash `cp` grabbed the pre-revision art twice;
+see [[feedback_bash_mount_stale]]).
 `onClicked: theModel.deleteMon(index, itemChecked)` — a **checked** mon deletes the whole
 checked set (`deleteMon` `group` → `checkedDelete()`); otherwise just that mon (single path keeps
 the party non-empty and reveals the trailing "+" slot if the box was full).
