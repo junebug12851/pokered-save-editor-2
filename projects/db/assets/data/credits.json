@@ -20,6 +20,18 @@
       "note": "Literally powers this app"
     }
   ],
+  "AI Assistance": [
+    {
+      "name": "Claude (Anthropic)",
+      "url": "claude.ai",
+      "note": "Helped revive and modernize the project in 2026 -- debugging, testing, and the living project notes"
+    },
+    {
+      "name": "ChatGPT (OpenAI)",
+      "url": "chatgpt.com",
+      "note": "Development and design help, including the in-app status symbol icons"
+    }
+  ],
   "Tools Used": [
     {
       "name": "JSON Editor Online",
@@ -103,6 +115,11 @@
       "url": "github.com/TheArtificial/pokemon-icons",
       "license": "Creative Commons Attribution",
       "note": "Literally all 151 Pokemon icons including shinies, Huge shoutout to the amazing team!"
+    },
+    {
+      "name": "ChatGPT (OpenAI)",
+      "url": "chatgpt.com",
+      "note": "The in-app status symbol icons"
     }
   ],
   "Wallpapers": [

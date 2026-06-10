@@ -102,6 +102,11 @@ void CreditDBEntry::process(QJsonObject& data)
   for(QJsonValue entry : data["Framework"].toArray())
     CreditsDB::inst()->store.append(new CreditDBEntry(entry));
 
+  CreditsDB::inst()->store.append(new CreditDBEntry("AI Assistance"));
+
+  for(QJsonValue entry : data["AI Assistance"].toArray())
+    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
+
   CreditsDB::inst()->store.append(new CreditDBEntry("Tools Used"));
 
   for(QJsonValue entry : data["Tools Used"].toArray())
