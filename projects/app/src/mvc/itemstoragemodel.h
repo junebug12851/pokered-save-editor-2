@@ -83,6 +83,27 @@ public:
 
   void pageClosing(); ///< Hook for when the page closes.
 
+  // ---- Drag & drop (Bag / Items screen) -----------------------------------
+  // Backing for the list's drag-to-reorder and drag-between-panes gestures, the
+  // direct analogue of PokemonStorageModel's. `toIndex` is the destination
+  // insertion slot (0..count): the moved item(s) land *before* the item at that
+  // slot (== append when toIndex is the count). When `group` is true the whole
+  // currently-checked set moves together (preserving order); otherwise just the
+  // single item at `fromIndex`. Same rules as the checked* bulk actions
+  // (destination never overflows). An item box can be empty, so -- unlike the
+  // Pokemon party -- there is no "never empties" guard.
+
+  /// Reorder within this box: move @p fromIndex (or the checked set) to @p toIndex.
+  Q_INVOKABLE void dragReorder(int fromIndex, int toIndex, bool group);
+
+  /// Move @p fromIndex (or the checked set) from this box into the paired box,
+  /// inserting at @p toIndex there.
+  Q_INVOKABLE void dragTransfer(int fromIndex, int toIndex, bool group);
+
+  /// Delete the item at @p index, or -- when @p group -- the whole checked set
+  /// (the per-row hover/checked delete button; replaces the old footer delete).
+  Q_INVOKABLE void deleteItem(int index, bool group);
+
 public slots:
   // Attached property management
   void clearCheckedState();     ///< Uncheck everything.
@@ -99,5 +120,6 @@ public slots:
 public:
   ItemStorageBox* items = nullptr; ///< The wrapped item box.
   Router* router;                  ///< For page hooks.
+  ItemStorageModel* otherModel = nullptr; ///< The paired sibling model (for cross-pane transfers).
   bool checkedStateDirty = false;  ///< Whether the checked-state cache needs refresh.
 };

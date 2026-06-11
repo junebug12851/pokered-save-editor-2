@@ -154,6 +154,24 @@ so the RCC must re-embed it (plus the `process()` C++ change). No `app.qrc` chan
 to date by default** — see `CLAUDE.md` → "Keep the Credits Screen Living". (Section order is a UX choice;
 Twilight can move "AI Assistance" — it's just the `process()` append order.)
 
+**Items / Bag screen drag & drop (2026-06-10, Twilight-directed; BUILT + full `ctest` green 57/57,
+kit-dir rebuilt + app launched for her in-app review):** Brought the same drag interaction the Pokémon
+storage grid got to the **items LIST**. New C++ on `ItemStorageModel` (mirrors `PokemonStorageModel`):
+`dragReorder`/`dragTransfer`/`deleteItem` `Q_INVOKABLE`s + an `otherModel` pairing wired in
+`bridge.cpp`. QML (`fragments/screens/bag/ItemBoxView.qml`, `ItemsPane.qml`): each row is now a
+`DropArea` whose `content` reparents to the overlay while dragging (ghost floats across both panes);
+**drag is started only from a new left grip handle** (`grip-lines.svg`) because the row's combo/count
+controls must keep their clicks (Twilight chose the grip over press-hold); reorder within a list +
+**cross-pane transfer** (bag↔PC) via drag; the **footer bulk-action bar was removed** (match Pokémon);
+a **per-row delete chip** sits to the right of the count field, `visible: hover || checked` (Twilight's
+placement); horizontal dashed drop caret; group drag/delete via the existing checkboxes. Header
+check-all `leftMargin` bumped `24→56` to clear the grip column. **C++ changed → Rebuild required** (no
+new QML files, no `app.qrc` change). Repo `build/` + kit dir both built clean; full suite green incl.
+new `tst_item_storage_model` drag tests (`dragReorder_*`, `dragTransfer_movesToOtherBox`,
+`deleteItem_singleAndGroup`). Convention: `reference/ui-patterns.md` → "Drag & drop on the items LIST".
+**Awaiting Twilight's in-app review** (watch: grip/checkbox column alignment under the header check-all,
+the wide-row ghost when transferring across panes, and that combo/count clicks still work mid-list).
+
 ## Open Issues
 
 | Issue | Where | Status / notes |

@@ -365,3 +365,120 @@ void ItemStorageModel::pageClosing()
   if(checkedStateDirty)
     clearCheckedState();
 }
+
+void ItemStorageModel::dragReorder(int fromIndex, int toIndex, bool group)
+{
+  auto& vec = items->items;
+
+  // The items to move, gathered in current box order. A group drag carries the
+  // whole checked set; a plain drag carries just the grabbed item.
+  QVector<Item*> set;
+  if(group)
+    set = getChecked();
+  else if(fromIndex >= 0 && fromIndex < vec.size())
+    set.append(vec.at(fromIndex));
+
+  if(set.isEmpty())
+    return;
+
+  // Anchor = the first item at/after the drop slot that ISN'T being moved; the
+  // set is re-inserted directly before it (or appended when there is none, e.g.
+  // dropping past the last item / onto the empty trailing "+" slot).
+  Item* anchor = nullptr;
+  for(int i = qBound(0, toIndex, vec.size()); i < vec.size(); i++) {
+    if(!set.contains(vec.at(i))) {
+      anchor = vec.at(i);
+      break;
+    }
+  }
+
+  // Pull the set out, then splice it back in before the anchor, preserving the
+  // set's internal order.
+  for(auto el : set)
+    vec.removeOne(el);
+
+  int insertAt = (anchor != nullptr) ? vec.indexOf(anchor) : vec.size();
+  for(int i = 0; i < set.size(); i++)
+    vec.insert(insertAt + i, set.at(i));
+
+  // A whole-vector reshuffle: a model reset is the clean, reliable refresh and
+  // sidesteps the beginMoveRows index gymnastics (mirrors PokemonStorageModel's
+  // dragReorder and checkedToggleAll). Count is unchanged.
+  onReset();
+}
+
+void ItemStorageModel::dragTransfer(int fromIndex, int toIndex, bool group)
+{
+  // Never transfer onto ourselves (both panes are the bag + PC, never the same
+  // box, but guard anyway).
+  if(otherModel == nullptr || items == otherModel->items)
+    return;
+
+  auto src = items;
+  auto dst = items->destBox();
+
+  // The items to move, in current (source) box order -- checked set or single.
+  QVector<Item*> set;
+  if(group)
+    set = getChecked();
+  else if(fromIndex >= 0 && fromIndex < src->items.size())
+    set.append(src->items.at(fromIndex));
+
+  if(set.isEmpty())
+    return;
+
+  int inserted = 0;
+
+  for(auto el : set) {
+
+    // Never overflow the destination (same guard as checkedTransfer/relocateOne).
+    if(dst->items.size() >= dst->itemsMax())
+      break;
+
+    int ind = src->items.indexOf(el);
+    if(ind < 0)
+      continue;
+
+    // relocateOne appends to dst's end and emits the remove/insert signals that
+    // refresh both panes' models (items need no party/box-style conversion).
+    src->relocateOne(ind);
+    inserted++;
+  }
+
+  // The transferred items are now the last `inserted` slots of dst. Slide that
+  // block to the requested drop slot, clamped to the items that were already
+  // there so we insert *among* them (never past the freshly-appended block).
+  if(inserted > 0) {
+    int firstAppended = dst->items.size() - inserted;
+    int target = qBound(0, toIndex, firstAppended);
+
+    if(target != firstAppended) {
+      QVector<Item*> moved = dst->items.mid(firstAppended, inserted);
+      dst->items.remove(firstAppended, inserted);
+      for(int i = 0; i < moved.size(); i++)
+        dst->items.insert(target + i, moved.at(i));
+
+      otherModel->onReset();
+    }
+  }
+
+  hasCheckedChanged();
+}
+
+void ItemStorageModel::deleteItem(int index, bool group)
+{
+  // A group delete (the item is checked) removes the whole checked set -- this
+  // is the replacement for the old footer delete bulk button.
+  if(group) {
+    checkedDelete();
+    return;
+  }
+
+  // Single delete (hovering an unchecked item). itemRemove emits
+  // itemRemoveChange -> onRemove (begin/endRemoveRows). An item box has no
+  // minimum, so no "never empties" guard is needed.
+  if(index < 0 || index >= items->items.size())
+    return;
+
+  items->itemRemove(index);
+}

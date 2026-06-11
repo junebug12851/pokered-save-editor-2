@@ -106,14 +106,58 @@ caused the inconsistent / too-wide / stretched ⋮ we cleaned up). Per-instance 
 `Layout.fillHeight` (50/50 split, no `Math.trunc(width*0.5)` math). Each `ItemsPane`
 (`fragments/screens/bag/`) is a `Rectangle` with an anchored 45px **header bar** (check-all
 `IconButtonSquare` parked at the bar's left edge, title `Text` centered in the bar with the
-`(count/max)` `Text` anchored to its right) at top, an anchored 45px
-**footer bar** (centered `RowLayout` of the bulk-action `IconButtonSquare`s, each `visible:
-model.hasChecked`) at bottom, and an `ItemBoxView` filling between them (15px left/right inset). No
-magic-width wrapper boxes. `ItemBoxView` is a `ListView`; rows are a **left-aligned** `RowLayout` [CheckBox |
-SelectItem | DefTextEdit count] (`Layout.alignment: Qt.AlignLeft`) so each row's checkbox forms a
-column directly under the header's check-all button — both share the list's 15px left inset. Pinned to
-the `rowH`/`comboH`/`textH` knobs so the three differently-sized Material controls vcenter and line up. The "+" add row is the placeholder delegate; bottom
-breathing room is a `footer: Item { height: 25 }` (not an empty trailing `Text`).
+`(count/max)` `Text` anchored to its right) at top, and an `ItemBoxView` filling the rest (15px
+left/right inset, anchored straight to the pane bottom). No magic-width wrapper boxes.
+`ItemBoxView` is a `ListView`; rows are a **left-aligned** `RowLayout` [**grip handle** | CheckBox |
+SelectItem | DefTextEdit count | **delete chip**] (anchored left + vcenter) so each row's checkbox
+forms a column directly under the header's check-all button. Pinned to the `rowH`/`comboH`/`textH`
+knobs so the differently-sized Material controls vcenter and line up. The "+" add row is the
+placeholder delegate; bottom breathing room is a `footer: Item { height: 25 }` (not an empty trailing
+`Text`).
+
+**No footer bulk-action bar (removed once drag & drop landed, 2026-06-10).** The old 45px footer of
+move-to-top/up/down/bottom + transfer + delete `IconButtonSquare`s (each `visible: model.hasChecked`)
+is **gone** — reorder and cross-pane moves are now drag gestures (below), and delete moved onto the
+row. The model's `checkedMove*`/`checkedTransfer` slots still exist but are now unused by the UI;
+`checkedToggleAll` (header check-all) and `checkedDelete` (group delete via the chip) are still used.
+The header check-all `IconButtonSquare` `leftMargin` was bumped `24 → 56` to clear the new grip column
+(grip 24 + 8 spacing); it's a visual tuning knob — adjust if the grip width/spacing changes.
+
+### Drag & drop on the items LIST (the list analogue of the Pokémon grid drag)
+
+`ItemBoxView` rows support **drag-to-reorder within a list** and **drag-to-transfer between the two
+panes** (bag ↔ PC), the direct analogue of `PokemonBoxView`'s grid drag (read that section first — the
+mechanics are identical). The **list-specific differences**:
+
+- **Drag is started ONLY from a left grip handle**, never the whole row — a list row holds interactive
+  controls (the `SelectItem` combo and the count `DefTextEdit`) that must keep their clicks/typing, so a
+  whole-row drag `MouseArea` would steal them. The grip is the first `RowLayout` column: an `Item`
+  (24px) holding a muted `grip-lines.svg` `Image` (`opacity 0.4`, → 0.8 on hover) over the drag
+  `MouseArea` (`id: dragHandler`, `cursorShape: Qt.OpenHandCursor`, `preventStealing: true`,
+  `drag.target: row.isPlaceholder ? null : content`, `drag.threshold: 8`). Everything else
+  (manual-`Drag.active` driving via `maActive`, `Drag.drop()` on release, `content` reparent to
+  `Overlay.overlay`, `Qt.callLater` deferred mutation, `DropArea`-per-row dispatch
+  `dragReorder`/`dragTransfer`) is copied verbatim from `PokemonBoxView`.
+- **`Drag.hotSpot.x` is fixed near the grip (`24`)**, not centered — you always grab the grip on the
+  far left, so a centered hotspot would jump the wide row ghost out from under the pointer on lift.
+- **The drop caret is HORIZONTAL** (a `Canvas` `dropHint` dashed bar straddling the row's **top** edge,
+  `height 6`, `anchors.top` + `topMargin: -3`), marking the gap *before* the hovered row — vs. the
+  grid's vertical bar on the cell's left edge. Same overlay-only, no-reflow behaviour.
+- **A lifted-card background**: while `content.Drag.active`, a white rounded `Rectangle` (`z:-1`,
+  accent 1px border) sits behind the row so the floating full-width ghost reads as a card.
+- **Per-row delete chip** (`deleteBtn`): placed **to the right of the count field** (Twilight's call),
+  `visible: cellHover.hovered || itemChecked` off a `content` `HoverHandler` (`cellHover`). Same chip as
+  the Pokémon grid's delete (`28×28`, `times.svg` `icon 19×27` white, accent rest → `primaryColor`
+  hover → darker press, 90ms `Behavior on color`). `onClicked: model.deleteItem(index, itemChecked)`.
+
+Backing C++ (`ItemStorageModel`, mirrors `PokemonStorageModel`): `dragReorder(from, to, group)` (in-box
+splice + `onReset()`), `dragTransfer(from, to, group)` (`relocateOne` to the paired `destBox` then slide
+the appended block to the drop slot; capacity guard, **no** "never empties" guard — an item box may be
+empty, unlike the party), `deleteItem(index, group)` (group → `checkedDelete`, else `itemRemove`).
+`group` pulls the set from `getChecked()`; `toIndex` is the insertion slot (0..count, insert before, ==
+append at count). The two item models are paired via `otherModel` in `bridge.cpp` (like the Pokémon
+pair). Regression-guarded in `tst_item_storage_model` (`dragReorder_*`, `dragTransfer_movesToOtherBox`,
+`deleteItem_singleAndGroup`).
 
 ## Pokémon storage screen layout (the standard for this screen)
 

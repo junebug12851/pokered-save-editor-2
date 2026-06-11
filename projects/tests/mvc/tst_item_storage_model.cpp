@@ -31,6 +31,7 @@
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/expanded/savefileexpanded.h>
 #include <pse-savefile/expanded/player/player.h>
+#include <pse-savefile/expanded/storage.h>
 #include <pse-savefile/expanded/fragments/itemstoragebox.h>
 #include <pse-savefile/expanded/fragments/item.h>
 
@@ -49,11 +50,18 @@ private:
   Bridge* m_brg = nullptr;
   ItemStorageModel* m_bag = nullptr;   // brg.bagItemsModel
   ItemStorageBox* m_box = nullptr;     // the underlying bag box
+  ItemStorageModel* m_pc = nullptr;    // brg.pcItemsModel (the paired box)
+  ItemStorageBox* m_pcBox = nullptr;   // the underlying PC item box
 
   void ensureItems(int n)
   {
     while(m_box->itemsCount() < n && m_box->itemsCount() < m_box->itemsMax())
       m_box->itemNew();
+  }
+  void ensurePcItems(int n)
+  {
+    while(m_pcBox->itemsCount() < n && m_pcBox->itemsCount() < m_pcBox->itemsMax())
+      m_pcBox->itemNew();
   }
   void check(int row, bool on)
   {
@@ -71,6 +79,11 @@ private slots:
   void checkedToggleAll_andClear();
   void checkedMoveToBottom_reorders();
   void checkedDelete_removes();
+
+  void dragReorder_movesWithinList();
+  void dragReorder_groupMovesCheckedSet();
+  void dragTransfer_movesToOtherBox();
+  void deleteItem_singleAndGroup();
 };
 
 void TestItemStorageModel::initTestCase()
@@ -86,6 +99,8 @@ void TestItemStorageModel::init()
   m_brg = new Bridge(m_file);
   m_bag = m_brg->bagItemsModel;
   m_box = m_file->data->dataExpanded->player->items;
+  m_pc = m_brg->pcItemsModel;
+  m_pcBox = m_file->data->dataExpanded->storage->items;
 }
 
 void TestItemStorageModel::cleanup()
@@ -174,6 +189,83 @@ void TestItemStorageModel::checkedDelete_removes()
 
   QCOMPARE(m_box->itemsCount(), before - 1);
   QVERIFY2(!m_box->items.contains(doomed), "deleted item still present");
+}
+
+// ---- Drag & drop (the list analogue of PokemonStorageModel's grid drag) ------
+
+void TestItemStorageModel::dragReorder_movesWithinList()
+{
+  // BaseSAV's bag is already populated, so assert relative to the live count.
+  ensureItems(3);
+  const int n = m_box->itemsCount();
+  QVERIFY(n >= 3);
+  Item* a = m_box->items.at(0);
+  Item* b = m_box->items.at(1);
+  Item* c = m_box->items.at(2);
+
+  // Drop A onto slot 2 (== C): insert A *before* C -> [B, A, C, ...].
+  m_bag->dragReorder(0, 2, false);
+
+  QCOMPARE(m_box->itemsCount(), n);   // count preserved
+  QCOMPARE(m_box->items.at(0), b);
+  QCOMPARE(m_box->items.at(1), a);
+  QCOMPARE(m_box->items.at(2), c);
+}
+
+void TestItemStorageModel::dragReorder_groupMovesCheckedSet()
+{
+  ensureItems(4);
+  const int n = m_box->itemsCount();
+  QVERIFY(n >= 4);
+  Item* a = m_box->items.at(0);
+  Item* c = m_box->items.at(2);
+
+  // Check A and C, then group-drag to the end (toIndex == count): the checked set
+  // lands at the bottom, keeping its internal order -> [..., A, C].
+  check(0, true);
+  check(2, true);
+  m_bag->dragReorder(0, m_box->itemsCount(), true);
+
+  QCOMPARE(m_box->itemsCount(), n);
+  QCOMPARE(m_box->items.at(n - 2), a);   // checked set kept its internal order
+  QCOMPARE(m_box->items.at(n - 1), c);
+}
+
+void TestItemStorageModel::dragTransfer_movesToOtherBox()
+{
+  ensureItems(2);
+  ensurePcItems(2);
+  Item* moved = m_box->items.at(0);
+  const int bagBefore = m_box->itemsCount();
+  const int pcBefore = m_pcBox->itemsCount();
+
+  // Drag bag item 0 into the PC box at slot 0.
+  m_bag->dragTransfer(0, 0, false);
+
+  QCOMPARE(m_box->itemsCount(), bagBefore - 1);
+  QCOMPARE(m_pcBox->itemsCount(), pcBefore + 1);
+  QVERIFY2(!m_box->items.contains(moved), "transferred item still in the bag");
+  QCOMPARE(m_pcBox->items.at(0), moved);     // landed at the requested drop slot
+}
+
+void TestItemStorageModel::deleteItem_singleAndGroup()
+{
+  ensureItems(3);
+  const int n = m_box->itemsCount();
+  QVERIFY(n >= 3);
+  Item* a = m_box->items.at(0);
+  Item* b = m_box->items.at(1);
+
+  // Single delete (unchecked): drop item at index 1.
+  m_bag->deleteItem(1, false);
+  QCOMPARE(m_box->itemsCount(), n - 1);
+  QVERIFY2(!m_box->items.contains(b), "single-deleted item still present");
+
+  // Group delete (checked): check A, delete the whole checked set (just A here).
+  check(0, true);
+  m_bag->deleteItem(0, true);
+  QCOMPARE(m_box->itemsCount(), n - 2);
+  QVERIFY2(!m_box->items.contains(a), "group-deleted item still present");
 }
 
 QTEST_GUILESS_MAIN(TestItemStorageModel)

@@ -53,6 +53,11 @@ Bridge::Bridge(FileManagement* file)
   pokemonStorageModel1->otherModel = pokemonStorageModel2;
   pokemonStorageModel2->otherModel = pokemonStorageModel1;
 
+  // Link the two item models too (for drag-to-transfer between the bag and the
+  // PC item box).
+  bagItemsModel->otherModel = pcItemsModel;
+  pcItemsModel->otherModel = bagItemsModel;
+
   // Switch the second half to box 0, the two halves don't need to show the same
   // box
   pokemonStorageModel2->switchBox(0);
