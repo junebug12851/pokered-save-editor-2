@@ -204,16 +204,20 @@ reflow now.
 
 **Items "View All" overview drawer (2026-06-10, Twilight-directed; BUILT + full `ctest` green 57/57, kit
 rebuilt + relaunched):** New **View All** button (leftmost in the Bag footer, now an `AppFooterBtn3`)
-slides in a **left-edge `Drawer`** with a condensed **alphabetized** table of every item the save holds:
+slides in a **left panel** with a condensed **alphabetized** table of every item the save holds:
 `Item | Bag | Storage`, two right-aligned count columns, **0 hidden** (0 opacity). Backed by a new
 read-only `ItemOverviewModel` (`mvc/itemoverviewmodel.*`, `brg.itemOverviewModel`) that aggregates both
 item boxes by index (summing duplicate rows), drops both-zero rows, sorts by name (`QCollator`), and
 iterates the boxes so glitch items still show. Wired: `app/CMakeLists.txt`, `bootQmlLinkage.cpp`
-(registration), `bridge.h/.cpp` (property + construct). Drawer is button-only (`dragMargin: 0`, so a
-left-swipe doesn't fight the bag grip handles) and rebuilds `onAboutToShow` (amount edits don't always
-emit `itemsChanged`). **C++ changed + new source files + new QML embedded → Rebuild (reconfigure)
-required.** Test: `itemOverview_aggregatesSortsHidesZeros`. Convention: `reference/ui-patterns.md` →
-"View All overview drawer".
+(registration), `bridge.h/.cpp` (property + construct). **C++ changed + new source files + new QML
+embedded → Rebuild (reconfigure) required.** Test: `itemOverview_aggregatesSortsHidesZeros`.
+Convention: `reference/ui-patterns.md` → "View All overview drawer".
+**Twilight-iterated to done (same day):** started as a Material `Drawer` but it kept leaving a white
+frame/strip that padding/inset/elevation zeroing couldn't kill, so it was **replaced with a hand-rolled
+slide-in `Rectangle` panel + dimming scrim** (full pixel control). Final touches: no right-edge divider;
+panel width `min(page.width*0.45, 330)`; both panel and scrim block input pass-through to the panes
+behind via a `MouseArea` + `WheelHandler` + `HoverHandler{blocking:true}` (the last stops the bag rows'
+hover delete chip showing through); rebuild `onShownChanged`. Twilight signed off.
 
 ## Open Issues
 
