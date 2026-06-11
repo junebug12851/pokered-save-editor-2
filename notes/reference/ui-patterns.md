@@ -148,10 +148,12 @@ mechanics are identical). The **list-specific differences**:
 - **Per-row delete chip** (`deleteBtn`): placed **to the right of the count field** (Twilight's call),
   shown when `cellHover.hovered || itemChecked` (off a `content` `HoverHandler`, `cellHover`). `28×28`,
   `times.svg` `icon 19×27`. **No background at rest** (Twilight) — just an **accent-coloured X** so it
-  reads on the white row; on **hover** the chip fills `primaryColor` (red) and the **X goes white**
-  (`textColorLight`), on **press** the fill darkens (`Qt.darker(primaryColor,1.25)`), 90ms `Behavior on
-  color`. (So unlike the Pokémon grid's always-filled chip, the items-row chip is transparent until
-  hovered; the icon colour flips with the chip so the X is always legible.) **Toggle it with `opacity`
+  reads on the white row. A `lit` state (`deleteBtn.hovered || itemChecked`) fills the chip
+  `primaryColor` (red) with a **white X** — so a **checked** row shows the chip filled *permanently*
+  (reads as "armed for deletion"), exactly like the hover look; **press** darkens it
+  (`Qt.darker(primaryColor,1.25)`), 90ms `Behavior on color`. (Unlike the Pokémon grid's always-filled
+  chip, the items-row chip is transparent at rest; the icon colour flips with the chip so the X is always
+  legible.) **Toggle it with `opacity`
   (+`enabled`), NOT `visible`** — a `visible:false` *layout* item collapses to zero width, so with the
   `fillWidth` combo the whole row REFLOWED on every hover (combo grew/shrank as the chip came and went).
   Keeping the chip permanently in the layout and fading `opacity 0↔1` reserves its slot so nothing

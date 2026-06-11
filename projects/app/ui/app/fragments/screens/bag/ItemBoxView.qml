@@ -330,6 +330,11 @@ ListView {
           enabled: shown
           Behavior on opacity { NumberAnimation { duration: 90 } }
 
+          // "Lit" = the filled red look. A CHECKED row shows it permanently
+          // (Twilight) -- same as the button's own hover -- so a checked-for-
+          // deletion item reads as armed; press still darkens it.
+          property bool lit: deleteBtn.hovered || (itemChecked === true)
+
           padding: 0
           topInset: 0
           bottomInset: 0
@@ -345,19 +350,20 @@ ListView {
           icon.height: 27
           icon.width: 19
           // At rest (no chip) the X must read on the white row, so it's accent;
-          // on hover/press the chip fills red and the X goes white.
-          icon.color: (deleteBtn.hovered || deleteBtn.down)
+          // when lit (hover or checked) or pressed the chip fills and the X
+          // goes white.
+          icon.color: (deleteBtn.lit || deleteBtn.down)
                       ? brg.settings.textColorLight
                       : brg.settings.accentColor
 
           background: Rectangle {
             radius: width / 2
             // No background at rest (Twilight) -- just the accent X. The chip
-            // only appears on hover (red) / press (darker red); same mouseover
-            // effects as before, only the rest fill is removed.
+            // fills red when lit (hover OR checked) and darker red on press;
+            // same mouseover effects, plus checked stays filled.
             color: deleteBtn.down
                    ? Qt.darker(brg.settings.primaryColor, 1.25)
-                   : deleteBtn.hovered
+                   : deleteBtn.lit
                      ? brg.settings.primaryColor
                      : "transparent"
             Behavior on color { ColorAnimation { duration: 90 } }
