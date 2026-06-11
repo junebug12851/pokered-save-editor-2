@@ -92,6 +92,7 @@ public:
   // Item RNG never duplicates within a single box (uniqueness is per-list: the
   // bag and the PC box are independent).
   Q_INVOKABLE bool hasItemInd(int ind);  ///< Does this box already contain an item with index @p ind? (Q_INVOKABLE: the SelectItem dropdown greys out already-present names.)
+  Q_INVOKABLE int amountOfInd(int ind);  ///< Total amount of item @p ind across all rows in this box (Q_INVOKABLE: the SelectItem dropdown shows the cross-pane owned total).
   int randomUniqueInd();     ///< A random non-glitch/non-once item index absent from this box, or -1 if none remain.
 
 signals:

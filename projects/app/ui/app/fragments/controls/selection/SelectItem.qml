@@ -13,6 +13,9 @@
 // stacking tidy). Same-pane only; the other pane is irrelevant. Pre-existing
 // duplicate save data is untouched -- this only blocks NEW duplicate picks. When
 // `box` is null (other screens) the guard is inert and the combo behaves as before.
+// When `box` is set the dropdown also appends each item's TOTAL owned across both
+// panes (bag + storage) in parens, e.g. "POTION  (x12)", so the user can see what
+// they already hold elsewhere at a glance.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -64,7 +67,21 @@ ComboBox {
                   && control.box.hasItemInd(itemSelectInd))
 
     contentItem: Text {
-      text: itemSelectName
+      // Item name, plus the TOTAL owned across BOTH panes (bag + storage) in
+      // parens, e.g. "POTION  (x12)". This lets the user see they already own
+      // some in the other pane even when this pane has none -- the dropdown is
+      // alphabetized/categorized, so it's a reliable quick glance regardless of
+      // whether either box is sorted. Hidden for section rows and when the total
+      // is 0 (don't clutter items the user doesn't own anywhere).
+      text: {
+        if(itemSelectInd < 0 || !control.box)
+          return itemSelectName;
+        var total = control.box.amountOfInd(itemSelectInd)
+                    + control.box.destBox.amountOfInd(itemSelectInd);
+        return (total > 0)
+            ? itemSelectName + "  (x" + total + ")"
+            : itemSelectName;
+      }
       font: control.font
       color: itemDel.enabled
              ? brg.settings.textColorDark

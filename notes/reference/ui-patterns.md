@@ -159,33 +159,42 @@ append at count). The two item models are paired via `otherModel` in `bridge.cpp
 pair). Regression-guarded in `tst_item_storage_model` (`dragReorder_*`, `dragTransfer_movesToOtherBox`,
 `deleteItem_singleAndGroup`).
 
-**Auto-stack on cross-pane transfer (Twilight, 2026-06-10).** `dragTransfer` does NOT blindly create a
-new dst row — for each moved item, if the destination already holds that item id it **stacks** (folds
-the moved amount onto the existing row) instead of inserting a duplicate. It stacks onto the **LAST**
-matching dst row (Twilight's rule — four Antidotes → the bottom one is the stack target). The merge uses
-`Item::setAmount`, which **clamps to the Gen 1 max 99** (consistent with the count field and the rest of
-the editor — any excess beyond 99 is dropped, no overflow row). A stack creates no new row, so it's
-allowed even when dst is row-count **full** (and the loop uses `continue`, not `break`, so a later item
-can still stack into a full box). Stacked items don't participate in the drop-slot slide (only genuinely
-new rows do). One `otherModel->onReset()` at the end refreshes both the slide and the stacked-count
-display (a stack mutates an `Item` amount but emits no row insert, so the dst model must reset to re-read
-it). Group move / group delete are unaffected — each moved item just stacks-or-inserts on drop.
-**Important:** this only governs the *editor's own* moves; **pre-existing duplicate items in a loaded
-save are left exactly as-is** (the app fully supports a save holding multiple rows of the same item — it
-is not the editor's job to "normalize" someone's save). Tests: `dragTransfer_autoStacksOntoExisting`,
-`dragTransfer_stacksOntoLastDuplicate`, `dragTransfer_clampsStackAt99`.
+**Auto-stack on cross-pane transfer, NEVER lossy (Twilight, 2026-06-10).** `dragTransfer` does NOT
+blindly create a new dst row — for each moved item, if the destination already holds that item id it
+**stacks** (folds the moved amount onto the existing row) instead of inserting a duplicate. It stacks
+onto the **LAST** matching dst row (Twilight's rule — four Antidotes → the bottom one is the stack
+target). **The merge happens ONLY when the whole amount fits under the Gen 1 max 99** — we never clamp a
+stack and drop the excess (losing legitimate items is bad UX). If the merge would overflow 99, the item
+falls through to the **new-row path** (it becomes its own **2nd row**, full amount preserved, no clamp);
+and if even that has no room (dst is row-count full), the transfer is **refused** for that item (it
+stays in the source), never silently truncated. A *fitting* stack creates no new row, so it's allowed
+even when dst is full; the loop uses `continue`, not `break`, so a later item can still fully-merge into
+a full box. Stacked items don't participate in the drop-slot slide (only genuinely new rows do). One
+`otherModel->onReset()` at the end refreshes both the slide and the stacked-count display (a stack
+mutates an `Item` amount but emits no row insert, so the dst model must reset to re-read it). Group move
+/ group delete are unaffected. **Important:** this only governs the *editor's own* moves; **pre-existing
+duplicate items in a loaded save are left exactly as-is** (the app fully supports a save holding
+multiple rows of the same item — it is not the editor's job to "normalize" someone's save). Tests:
+`dragTransfer_autoStacksOntoExisting`, `_stacksOntoLastDuplicate`, `_overflowAddsSecondRow`,
+`_overflowRefusedWhenDstFull`.
 
-**Duplicate-pick guard in the `SelectItem` dropdown (same pane only).** `SelectItem` gained two
-optional props — `box` (the pane's `ItemStorageBox`) and `currentItemId` (the row's current item). When
-`box` is set, the dropdown **disables/greys** any item the box ALREADY holds, *except* this row's own
-current item, so the user can't accidentally pick a name that's already in the **same** pane (keeps
-stacking tidy; the other pane is irrelevant). The delegate's `enabled` is
-`itemSelectInd >= 0 && !(box && itemSelectInd !== currentItemId && box.hasItemInd(itemSelectInd))`;
-greyed text uses `enabled ? textColorDark : textColorMid`. `ItemStorageBox::hasItemInd` was made
-`Q_INVOKABLE` for this. The check is a plain method call (not a notifying binding) but the combo popup
-is rebuilt on each open, so it re-evaluates every time it's opened — fine. Defaults (`box: null`) make
-the guard **inert** on any other screen that reuses `SelectItem`. This blocks only NEW duplicate picks;
-it never rewrites pre-existing duplicate save data.
+**Duplicate-pick guard + cross-pane owned total in the `SelectItem` dropdown.** `SelectItem` gained two
+optional props — `box` (the pane's `ItemStorageBox`) and `currentItemId` (the row's current item):
+- **Duplicate guard (same pane only):** when `box` is set, the dropdown **disables/greys** any item the
+  box ALREADY holds, *except* this row's own current item, so the user can't accidentally pick a name
+  that's already in the **same** pane (keeps stacking tidy; the other pane is irrelevant). Delegate
+  `enabled` is `itemSelectInd >= 0 && !(box && itemSelectInd !== currentItemId && box.hasItemInd(itemSelectInd))`;
+  greyed text uses `enabled ? textColorDark : textColorMid`.
+- **Owned total across both panes:** each entry's text appends the **total amount owned across bag +
+  storage** in parens, e.g. `POTION  (x12)` (`box.amountOfInd(ind) + box.destBox.amountOfInd(ind)`,
+  shown only when > 0). So even when *this* pane has none, the user sees what they already hold in the
+  other pane. The dropdown is alphabetized/categorized, so it's a reliable quick glance no matter
+  whether either box is sorted.
+`ItemStorageBox::hasItemInd` and the new `amountOfInd(ind)` (sums all matching rows) were made
+`Q_INVOKABLE` for this. The checks are plain method calls (not notifying bindings) but the combo popup
+is rebuilt on each open, so they re-evaluate every open — fine for the boxes' small sizes. Defaults
+(`box: null`) make both features **inert** on any other screen that reuses `SelectItem`. Neither rewrites
+pre-existing duplicate save data; the guard only blocks NEW duplicate picks.
 
 ## Pokémon storage screen layout (the standard for this screen)
 

@@ -172,18 +172,23 @@ new `tst_item_storage_model` drag tests (`dragReorder_*`, `dragTransfer_movesToO
 **Awaiting Twilight's in-app review** (watch: grip/checkbox column alignment under the header check-all,
 the wide-row ghost when transferring across panes, and that combo/count clicks still work mid-list).
 
-**Items screen — auto-stack on transfer + duplicate-pick guard (2026-06-10, Twilight-directed; BUILT +
-full `ctest` green 57/57, kit rebuilt + app relaunched):** Two follow-ups to the items drag work. (1)
-**Auto-stack:** `ItemStorageModel::dragTransfer` now folds a moved item onto an existing same-id row in
-the destination (stacking onto the **last** duplicate) instead of inserting a duplicate row; amounts
-clamp to 99 via `Item::setAmount`; stacking is allowed even when the dst is row-full (no new row). Group
+**Items screen — auto-stack on transfer + duplicate-pick guard + owned-total display (2026-06-10,
+Twilight-directed; BUILT + full `ctest` green 57/57, kit rebuilt + app relaunched):** Follow-ups to the
+items drag work. (1) **Auto-stack, never lossy:** `ItemStorageModel::dragTransfer` folds a moved item
+onto an existing same-id dst row (the **last** duplicate) — but **only when the whole amount fits under
+99**. If it would overflow it becomes its own **2nd row** (full amount kept, no clamp); if there's no
+room for that row, the transfer is **refused** (item stays put). Never clamps/loses items (Twilight's
+correction to the earlier clamp-to-99). Stacking-that-fits is allowed even when dst is row-full; group
 move/delete unchanged. (2) **Duplicate-pick guard:** the `SelectItem` dropdown greys out item names
-already present in the **same** pane (except the row's own current item) so the user can't make an
-accidental duplicate; `ItemStorageBox::hasItemInd` is now `Q_INVOKABLE`. Both explicitly **leave
-pre-existing duplicate save data untouched** — the app supports same-name rows; it's not our job to
-normalize someone's save. **C++ changed (savefile `itemstoragebox.h` + app `itemstoragemodel.cpp`) →
-Rebuild required.** Tests: `dragTransfer_autoStacksOntoExisting`/`_stacksOntoLastDuplicate`/
-`_clampsStackAt99`. Convention: `reference/ui-patterns.md` → "Drag & drop on the items LIST".
+already present in the **same** pane (except the row's own current item). (3) **Owned total:** each
+dropdown entry now shows the total owned across **both** panes in parens, e.g. `POTION  (x12)`, so the
+user sees what they hold elsewhere even when this pane has none. New `Q_INVOKABLE`s on `ItemStorageBox`:
+`hasItemInd`, `amountOfInd`. All three **leave pre-existing duplicate save data untouched** — the app
+supports same-name rows; not our job to normalize someone's save. **C++ changed (savefile
+`itemstoragebox.h/.cpp` + app `itemstoragemodel.cpp`) → Rebuild required.** Tests:
+`dragTransfer_autoStacksOntoExisting`/`_stacksOntoLastDuplicate`/`_overflowAddsSecondRow`/
+`_overflowRefusedWhenDstFull`/`amountOfInd_sumsAcrossRows`. Convention: `reference/ui-patterns.md` →
+"Drag & drop on the items LIST".
 
 ## Open Issues
 

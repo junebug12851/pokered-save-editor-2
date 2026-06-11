@@ -449,24 +449,29 @@ void ItemStorageModel::dragTransfer(int fromIndex, int toIndex, bool group)
       }
     }
 
-    if(stackTarget != nullptr) {
-      // setAmount clamps to the Gen 1 max (99), matching the count field and the
-      // rest of the editor -- a stack can't exceed 99, any excess is dropped.
-      // No new dst row is created, so this is allowed even when dst is "full".
+    // Merge ONLY when the whole amount fits under the Gen 1 max (99). We never
+    // clamp a stack and drop the excess -- losing legitimate items is bad UX.
+    // If it would overflow, the item falls through to the new-row path below
+    // (a 2nd row), and if even that has no room the transfer is refused (the
+    // item stays put), never silently truncated.
+    if(stackTarget != nullptr && stackTarget->amount + el->amount <= 99) {
       stackTarget->setAmount(stackTarget->amount + el->amount);
       src->itemRemove(ind);  // emits itemRemoveChange -> this model's onRemove; deletes el
       dstStacked = true;
       continue;
     }
 
-    // No match in dst -> move as a new row (capacity-guarded). Use `continue`,
-    // not `break`: a later item in the set might still stack onto an existing dst
-    // row even when dst is row-count full.
+    // No (fitting) stack target -> move as a new row (capacity-guarded). This
+    // covers both "item not present in dst" and "present but the stack would
+    // overflow 99" (the overflow becomes its own 2nd row, lossless). Use
+    // `continue`, not `break`: when dst is row-count full we REFUSE this item but
+    // a later item in the set might still fully-merge into an existing dst stack.
     if(dst->items.size() >= dst->itemsMax())
       continue;
 
     // relocateOne appends to dst's end and emits the remove/insert signals that
-    // refresh both panes' models (items need no party/box-style conversion).
+    // refresh both panes' models (items need no party/box-style conversion). The
+    // moved item keeps its exact amount -- no clamp, no loss.
     src->relocateOne(ind);
     inserted++;
   }

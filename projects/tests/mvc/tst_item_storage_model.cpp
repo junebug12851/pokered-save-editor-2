@@ -85,7 +85,9 @@ private slots:
   void dragTransfer_movesToOtherBox();
   void dragTransfer_autoStacksOntoExisting();
   void dragTransfer_stacksOntoLastDuplicate();
-  void dragTransfer_clampsStackAt99();
+  void dragTransfer_overflowAddsSecondRow();
+  void dragTransfer_overflowRefusedWhenDstFull();
+  void amountOfInd_sumsAcrossRows();
   void deleteItem_singleAndGroup();
 };
 
@@ -288,16 +290,63 @@ void TestItemStorageModel::dragTransfer_stacksOntoLastDuplicate()
   QCOMPARE(lastAntidote->amount, 10);          // 7 + 3 -> stacked onto the LAST
 }
 
-void TestItemStorageModel::dragTransfer_clampsStackAt99()
+void TestItemStorageModel::dragTransfer_overflowAddsSecondRow()
 {
-  m_pcBox->reset(); m_pcBox->itemNew(); m_pcBox->items.at(0)->load(QStringLiteral("ANTIDOTE"), 98);
-  m_box->reset();   m_box->itemNew();   m_box->items.at(0)->load(QStringLiteral("ANTIDOTE"), 5);
-  Item* dstStack = m_pcBox->items.at(0);
+  // PC: Antidote x95.  Bag: Antidote x10.  95+10 > 99, so it must NOT clamp/lose
+  // -- the moved item becomes its own 2nd row, full amount preserved.
+  m_pcBox->reset(); m_pcBox->itemNew(); m_pcBox->items.at(0)->load(QStringLiteral("ANTIDOTE"), 95);
+  m_box->reset();   m_box->itemNew();   m_box->items.at(0)->load(QStringLiteral("ANTIDOTE"), 10);
+  Item* original = m_pcBox->items.at(0);
+  Item* moved = m_box->items.at(0);
+  const int antidote = original->ind;
 
   m_bag->dragTransfer(0, 0, false);
 
-  QCOMPARE(m_pcBox->itemsCount(), 1);
-  QCOMPARE(dstStack->amount, 99);              // 98 + 5 clamped to the Gen 1 max
+  QCOMPARE(m_box->itemsCount(), 0);            // fully moved out -- no loss
+  QCOMPARE(m_pcBox->itemsCount(), 2);          // overflow became a 2nd row
+  QVERIFY(m_pcBox->items.contains(original));
+  QVERIFY(m_pcBox->items.contains(moved));
+  QCOMPARE(original->amount, 95);              // existing stack untouched (not topped)
+  QCOMPARE(moved->amount, 10);                 // moved amount preserved exactly
+  QCOMPARE(moved->ind, antidote);
+}
+
+void TestItemStorageModel::dragTransfer_overflowRefusedWhenDstFull()
+{
+  // Fill PC to capacity, make the LAST row an Antidote x95.
+  m_pcBox->reset();
+  ensurePcItems(m_pcBox->itemsMax());
+  QCOMPARE(m_pcBox->itemsCount(), m_pcBox->itemsMax());
+  m_pcBox->items.at(m_pcBox->itemsCount() - 1)->load(QStringLiteral("ANTIDOTE"), 95);
+  Item* dstStack = m_pcBox->items.at(m_pcBox->itemsCount() - 1);
+  const int fullCount = m_pcBox->itemsCount();
+
+  // Bag Antidote x10 would overflow the (full) PC's Antidote stack and there is no
+  // room for a 2nd row -> the transfer is REFUSED rather than clamping/losing.
+  m_box->reset(); m_box->itemNew(); m_box->items.at(0)->load(QStringLiteral("ANTIDOTE"), 10);
+  Item* srcItem = m_box->items.at(0);
+
+  m_bag->dragTransfer(0, 0, false);
+
+  QCOMPARE(m_box->itemsCount(), 1);            // stayed in the bag
+  QCOMPARE(m_box->items.at(0), srcItem);
+  QCOMPARE(m_pcBox->itemsCount(), fullCount);  // dst unchanged
+  QCOMPARE(dstStack->amount, 95);              // stack untouched (not topped to 99)
+}
+
+void TestItemStorageModel::amountOfInd_sumsAcrossRows()
+{
+  // amountOfInd sums every matching row (duplicate rows are supported).
+  m_box->reset();
+  m_box->itemNew(); m_box->items.at(0)->load(QStringLiteral("ANTIDOTE"), 4);
+  m_box->itemNew(); m_box->items.at(1)->load(QStringLiteral("POTION"),   9);
+  m_box->itemNew(); m_box->items.at(2)->load(QStringLiteral("ANTIDOTE"), 6);
+  const int antidote = m_box->items.at(0)->ind;
+  const int potion = m_box->items.at(1)->ind;
+
+  QCOMPARE(m_box->amountOfInd(antidote), 10);  // 4 + 6 across two rows
+  QCOMPARE(m_box->amountOfInd(potion), 9);
+  QCOMPARE(m_box->amountOfInd(-1), 0);         // absent -> 0
 }
 
 void TestItemStorageModel::deleteItem_singleAndGroup()

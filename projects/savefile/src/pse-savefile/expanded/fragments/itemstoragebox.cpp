@@ -201,6 +201,20 @@ bool ItemStorageBox::hasItemInd(int ind)
   return false;
 }
 
+int ItemStorageBox::amountOfInd(int ind)
+{
+  int total = 0;
+
+  // Sum every matching row's amount (a box may legitimately hold the same item
+  // in more than one row -- pre-existing duplicate save data is supported).
+  for(auto el : items) {
+    if(el->ind == ind)
+      total += el->amount;
+  }
+
+  return total;
+}
+
 int ItemStorageBox::randomUniqueInd()
 {
   // Build the candidate pool: every real (non-glitch, non-once) item that this
