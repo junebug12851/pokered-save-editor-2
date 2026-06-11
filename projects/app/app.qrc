@@ -34,6 +34,7 @@
         <file>assets/tilesets/ship_port.png</file>
         <file>assets/tilesets/underground.png</file>
         <file>assets/icons/app/512x512.png</file>
+        <file>assets/icons/trainer.png</file>
         <file>assets/icons/status/sleep.png</file>
         <file>assets/icons/status/poison.png</file>
         <file>assets/icons/status/burn.png</file>

@@ -104,7 +104,7 @@ Rectangle {
   }
 
   Image {
-    source: "qrc:/assets/images/red-larger.png"
+    source: "qrc:/assets/icons/trainer.png"
 
     anchors.left: parent.left
     anchors.leftMargin: 75

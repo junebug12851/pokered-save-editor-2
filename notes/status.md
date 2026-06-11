@@ -219,6 +219,18 @@ panel width `min(page.width*0.45, 330)`; both panel and scrim block input pass-t
 behind via a `MouseArea` + `WheelHandler` + `HoverHandler{blocking:true}` (the last stops the bag rows'
 hover delete chip showing through); rebuild `onShownChanged`. Twilight signed off.
 
+**Trainer-card artwork swap (2026-06-10, Twilight-directed; BUILT + app relaunched for in-app review):**
+Replaced the trainer image on the Trainer Card front (the grayscale Gen-1 Red sprite,
+`qrc:/assets/images/red-larger.png`) with the new colored two-trainer illustration. The PNG was
+dropped at the repo-root `assets/icons/trainer.png` (766×1334 RGBA, ~1.1 MB); copied into the app
+asset tree at `projects/app/assets/icons/trainer.png`, registered in `projects/app/app.qrc`, and
+`CardFront.qml`'s `Image.source` repointed to `qrc:/assets/icons/trainer.png`. Layout untouched
+(`width: parent.width/3`, `PreserveAspectFit`, anchored under the divider). **New asset in qrc →
+Rebuild required** — kit dir rebuilt clean (Automatic RCC re-ran on `app.qrc`, exe relinked) and
+launched. `red-larger.png` left in place (no longer referenced; safe to remove later if Twilight
+wants). Note: the new art is a tall portrait, so within the `parent.width/3` box it fits to height
+and reads fairly narrow — easy to widen later if she wants it bigger.
+
 ## Open Issues
 
 | Issue | Where | Status / notes |
