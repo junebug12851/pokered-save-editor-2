@@ -49,7 +49,10 @@ Page {
   Drawer {
     id: viewAllDrawer
     edge: Qt.LeftEdge
-    width: Math.min(page.width * 0.66, 460)
+    // Item names are short, so the table doesn't need to be wide -- the Item
+    // column is fillWidth and was eating all the slack. Cap narrower (still
+    // roomy enough for the longest names + both count columns).
+    width: Math.min(page.width * 0.5, 360)
     height: page.height
 
     // Open ONLY via the footer button -- a left-edge swipe-to-open would fight the
