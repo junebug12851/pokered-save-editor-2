@@ -3,7 +3,7 @@
 // Two ItemsPane side by side (a 50/50 RowLayout): the player's Bag (bound to
 // player.items / brg.bagItemsModel) and the PC Storage box
 // (storage.items / brg.pcItemsModel). Footer buttons: View All (slides in a
-// left drawer summarising every item and where it is), Re-Roll (randomize both
+// left panel summarising every item and where it is), Re-Roll (randomize both
 // boxes) and Sort (sort both).
 import QtQuick
 import QtQuick.Layouts
@@ -44,47 +44,56 @@ Page {
     }
   }
 
-  // ---- "View All": a left drawer with a condensed, alphabetized table of every
-  // item the user holds and how many are in the Bag vs PC Storage. -------------
-  Drawer {
-    id: viewAllDrawer
-    edge: Qt.LeftEdge
-    // Item names are short, so the table doesn't need to be wide -- the Item
-    // column is fillWidth and was eating all the slack. Cap narrower (still
-    // roomy enough for the longest names + both count columns).
+  // ---- "View All": a left slide-in panel with a condensed, alphabetized table
+  // of every item the user holds and how many are in the Bag vs PC Storage. -----
+  //
+  // A hand-rolled panel (not a Material Drawer): the Drawer's padding/insets/
+  // elevation kept leaving a white frame around the content. This Rectangle is
+  // fully under our control -- every edge is ours, so there is no stray frame.
+
+  // Scrim behind the panel: dims the panes and closes the panel on an outside
+  // click. Fades with the panel.
+  Rectangle {
+    id: viewAllScrim
+    anchors.fill: parent
+    z: 50
+    color: "black"
+    opacity: viewAllPanel.shown ? 0.4 : 0
+    visible: opacity > 0
+    Behavior on opacity { NumberAnimation { duration: 180 } }
+
+    MouseArea {
+      anchors.fill: parent
+      enabled: viewAllPanel.shown
+      onClicked: viewAllPanel.shown = false
+    }
+  }
+
+  Rectangle {
+    id: viewAllPanel
+    z: 51
+
+    property bool shown: false
+
     width: Math.min(page.width * 0.5, 360)
-    height: page.height
+    height: parent.height
+    y: 0
+    // Slides in from the left edge.
+    x: shown ? 0 : -width
+    Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 
-    // Open ONLY via the footer button -- a left-edge swipe-to-open would fight the
-    // bag rows' left grip handles (they sit near the window's left edge).
-    dragMargin: 0
+    color: "white"
 
-    // Refresh on every open: an amount edit via the count field writes the Item
-    // directly and may not emit itemsChanged, so rebuild here to be certain the
-    // table is current (the drawer is modal, so nothing changes while it's open).
-    onAboutToShow: brg.itemOverviewModel.rebuild()
-
-    // Full-bleed, no frame. The Material Drawer's default padding/insets + the
-    // elevation shadow left a white strip above the accent header and a slim
-    // white border around the whole panel. Zero them all and give it our own
-    // flat white background so the header sits flush at the very top and the
-    // panel has no frame. (The list area is transparent, so this white shows
-    // behind the rows -- matching the items panes.)
-    padding: 0
-    topInset: 0
-    bottomInset: 0
-    leftInset: 0
-    rightInset: 0
-    Material.elevation: 0
-    background: Rectangle { color: "white" }
-
-    Material.foreground: brg.settings.textColorDark
+    // Refresh on open: an amount edit via the count field writes the Item
+    // directly and may not emit itemsChanged, so rebuild here to be sure the
+    // table is current.
+    onShownChanged: if(shown) brg.itemOverviewModel.rebuild()
 
     ColumnLayout {
       anchors.fill: parent
       spacing: 0
 
-      // Title bar (accent, matching the pane headers).
+      // Title bar (accent, matching the pane headers) -- flush to the very top.
       Rectangle {
         Layout.fillWidth: true
         height: 45
@@ -216,13 +225,22 @@ Page {
         }
       }
     }
+
+    // Right-edge divider so the panel reads as raised against the dimmed panes.
+    Rectangle {
+      anchors.right: parent.right
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      width: 1
+      color: brg.settings.dividerColor
+    }
   }
 
-  // 3 Button Footer: View All (opens the drawer), Re-Roll, Sort.
+  // 3 Button Footer: View All (slides the panel in), Re-Roll, Sort.
   footer: AppFooterBtn3 {
     icon1.source: "qrc:/assets/icons/fontawesome/th.svg"
     text1: "View All"
-    onBtn1Clicked: viewAllDrawer.open()
+    onBtn1Clicked: viewAllPanel.shown = true
 
     icon2.source: "qrc:/assets/icons/fontawesome/dice.svg"
     text2: "Re-Roll"

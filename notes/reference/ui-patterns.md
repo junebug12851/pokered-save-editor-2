@@ -216,21 +216,28 @@ pre-existing duplicate save data; the guard only blocks NEW duplicate picks.
 
 The Bag screen's footer is an **`AppFooterBtn3`** (was `AppFooterBtn2`): the footer tiles equal-width
 buttons left→right, so the **leftmost** is **View All** (`th.svg`), then Re-Roll, then Sort. View All
-opens a **left-edge `Drawer`** (`viewAllDrawer`) holding a condensed, **alphabetized** table of every
-item the save holds and where it is: `Item` | `Bag` | `Storage`, two right-aligned count columns. A
-count of **0 is hidden** (`opacity: count > 0 ? 1 : 0`) so each row shows only the side(s) the user
-actually has. Rows reserve the **20px scrollbar lane** on the right (see "Scrollable forms"). Key
-points:
-- **`dragMargin: 0`** on the drawer — a left-edge *swipe-to-open* would fight the bag rows' left grip
-  handles (they sit near the window's left edge). Open is **button-only**.
-- **`onAboutToShow: brg.itemOverviewModel.rebuild()`** — an amount edit via the count field writes the
-  `Item` directly and may not emit `itemsChanged`, so rebuild on open to guarantee fresh data. (The
-  drawer is modal, so nothing changes underneath while it's open.)
-- **Full-bleed (no frame):** the Material `Drawer`'s default padding/insets + elevation shadow left a
-  white strip above the accent header and a slim white border around the panel. Kill all of it:
-  `padding: 0`, `topInset/bottomInset/leftInset/rightInset: 0`, `Material.elevation: 0`, and a plain
-  `background: Rectangle { color: "white" }` (the list is transparent so this white backs the rows,
-  matching the items panes). Then the accent header sits flush at the very top.
+slides in a left panel holding a condensed, **alphabetized** table of every item the save holds and
+where it is: `Item` | `Bag` | `Storage`, two right-aligned count columns. A count of **0 is hidden**
+(`opacity: count > 0 ? 1 : 0`) so each row shows only the side(s) the user actually has. Rows reserve the
+**20px scrollbar lane** on the right (see "Scrollable forms").
+
+**DON'T use a Material `Drawer` here — use a hand-rolled sliding `Rectangle`.** The Material `Drawer`'s
+content never sat flush: padding/insets + elevation kept leaving a **white strip above the header** and a
+**slim white frame** around the panel, and zeroing `padding`/all four insets/`Material.elevation` +
+a custom `background` did **not** fix it (the contentItem still didn't fill edge-to-edge). The reliable
+pattern is a plain `Rectangle` we fully control:
+- **`viewAllPanel`**: a `Rectangle` (`color: "white"`), `width: Math.min(page.width*0.5, 360)`,
+  `height: parent.height`, child of the `Page` (so it covers the panes but not the footer). A
+  `property bool shown`; `x: shown ? 0 : -width` with a `Behavior on x` (`200ms OutCubic`) slides it in
+  from the left. The accent header is the first child of an `anchors.fill` `ColumnLayout`, so it's flush
+  at the very top — **no frame, every edge is ours**. A 1px `dividerColor` strip on the right edge reads
+  as raised.
+- **`viewAllScrim`**: a black `Rectangle` `anchors.fill: parent`, `opacity: shown ? 0.4 : 0` (Behavior
+  fade), `z` below the panel, with a full-size `MouseArea` (`enabled: shown`) that closes the panel on an
+  outside click. Dismiss is scrim-click (no Drawer swipe to fight the bag grip handles).
+- **Refresh on open:** `onShownChanged: if(shown) brg.itemOverviewModel.rebuild()` — an amount edit via
+  the count field writes the `Item` directly and may not emit `itemsChanged`, so rebuild to be sure the
+  table is current.
 
 Backed by **`ItemOverviewModel`** (`mvc/itemoverviewmodel.*`, `brg.itemOverviewModel`): a read-only
 `QAbstractListModel` that aggregates the two item boxes by item index — summing amounts across any
