@@ -64,6 +64,11 @@ Page {
     // table is current (the drawer is modal, so nothing changes while it's open).
     onAboutToShow: brg.itemOverviewModel.rebuild()
 
+    // No content padding -- the default Popup padding left a white strip of the
+    // drawer's background above the accent header bar. 0 makes the header flush
+    // to the top (and the list flush to the edges).
+    padding: 0
+
     Material.foreground: brg.settings.textColorDark
 
     ColumnLayout {
