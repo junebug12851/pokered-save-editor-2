@@ -38,6 +38,7 @@
 #include <bridge/bridge.h>
 #include <bridge/router.h>
 #include <mvc/itemstoragemodel.h>
+#include <mvc/itemoverviewmodel.h>
 
 using namespace pse_test;
 
@@ -88,6 +89,7 @@ private slots:
   void dragTransfer_overflowAddsSecondRow();
   void dragTransfer_overflowRefusedWhenDstFull();
   void amountOfInd_sumsAcrossRows();
+  void itemOverview_aggregatesSortsHidesZeros();
   void deleteItem_singleAndGroup();
 };
 
@@ -347,6 +349,39 @@ void TestItemStorageModel::amountOfInd_sumsAcrossRows()
   QCOMPARE(m_box->amountOfInd(antidote), 10);  // 4 + 6 across two rows
   QCOMPARE(m_box->amountOfInd(potion), 9);
   QCOMPARE(m_box->amountOfInd(-1), 0);         // absent -> 0
+}
+
+void TestItemStorageModel::itemOverview_aggregatesSortsHidesZeros()
+{
+  // Bag: Antidote x3, Potion x9.  Storage: Antidote x5 + Antidote x2 (a duplicate
+  // row, which must be SUMMED to 7). Potion is bag-only (storage 0).
+  m_box->reset();
+  m_box->itemNew();   m_box->items.at(0)->load(QStringLiteral("ANTIDOTE"), 3);
+  m_box->itemNew();   m_box->items.at(1)->load(QStringLiteral("POTION"),   9);
+  m_pcBox->reset();
+  m_pcBox->itemNew(); m_pcBox->items.at(0)->load(QStringLiteral("ANTIDOTE"), 5);
+  m_pcBox->itemNew(); m_pcBox->items.at(1)->load(QStringLiteral("ANTIDOTE"), 2);
+
+  auto ov = m_brg->itemOverviewModel;
+  ov->rebuild();
+
+  // Exactly two distinct items, alphabetical (Antidote before Potion).
+  QCOMPARE(ov->rowCount(QModelIndex()), 2);
+
+  const QModelIndex a = ov->index(0);
+  const QModelIndex p = ov->index(1);
+
+  QVERIFY(!ov->data(a, ItemOverviewModel::NameRole).toString().isEmpty());
+  // Row 0 = Antidote: bag 3, storage 5+2 = 7 (duplicate rows summed).
+  QCOMPARE(ov->data(a, ItemOverviewModel::BagCountRole).toInt(), 3);
+  QCOMPARE(ov->data(a, ItemOverviewModel::StorageCountRole).toInt(), 7);
+  // Row 1 = Potion: bag 9, storage 0 (bag-only -- the view hides the 0).
+  QCOMPARE(ov->data(p, ItemOverviewModel::BagCountRole).toInt(), 9);
+  QCOMPARE(ov->data(p, ItemOverviewModel::StorageCountRole).toInt(), 0);
+
+  // Alphabetical order (collator, case-insensitive enough for A vs P).
+  QVERIFY(ov->data(a, ItemOverviewModel::NameRole).toString().toLower()
+          < ov->data(p, ItemOverviewModel::NameRole).toString().toLower());
 }
 
 void TestItemStorageModel::deleteItem_singleAndGroup()

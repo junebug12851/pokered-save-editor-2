@@ -33,6 +33,7 @@
 #include "../bridge/router.h"
 
 #include "../mvc/itemstoragemodel.h"
+#include "../mvc/itemoverviewmodel.h"
 #include "../mvc/pokedexmodel.h"
 #include "../mvc/itemmarketmodel.h"
 #include "../mvc/pokemonboxselectmodel.h"
@@ -159,6 +160,7 @@ extern void bootQmlLinkage()
 
   qmlRegisterUncreatableType<Utility>("App.Utility", 1, 0, "Utility", "Can't instantiate in QML");
   qmlRegisterUncreatableType<ItemStorageModel>("App.ItemStorageModel", 1, 0, "ItemStorageModel", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<ItemOverviewModel>("App.ItemOverviewModel", 1, 0, "ItemOverviewModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<PokedexModel>("App.PokedexModel", 1, 0, "PokedexModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<ItemMarketModel>("App.MarketModel", 1, 0, "MarketModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<PokemonStorageModel>("App.PokemonStorageModel", 1, 0, "PokemonStorageModel", "Can't instantiate in QML");

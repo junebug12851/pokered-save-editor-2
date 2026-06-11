@@ -212,6 +212,30 @@ is rebuilt on each open, so they re-evaluate every open — fine for the boxes' 
 (`box: null`) make both features **inert** on any other screen that reuses `SelectItem`. Neither rewrites
 pre-existing duplicate save data; the guard only blocks NEW duplicate picks.
 
+### "View All" overview drawer (Bag screen)
+
+The Bag screen's footer is an **`AppFooterBtn3`** (was `AppFooterBtn2`): the footer tiles equal-width
+buttons left→right, so the **leftmost** is **View All** (`th.svg`), then Re-Roll, then Sort. View All
+opens a **left-edge `Drawer`** (`viewAllDrawer`) holding a condensed, **alphabetized** table of every
+item the save holds and where it is: `Item` | `Bag` | `Storage`, two right-aligned count columns. A
+count of **0 is hidden** (`opacity: count > 0 ? 1 : 0`) so each row shows only the side(s) the user
+actually has. Rows reserve the **20px scrollbar lane** on the right (see "Scrollable forms"). Key
+points:
+- **`dragMargin: 0`** on the drawer — a left-edge *swipe-to-open* would fight the bag rows' left grip
+  handles (they sit near the window's left edge). Open is **button-only**.
+- **`onAboutToShow: brg.itemOverviewModel.rebuild()`** — an amount edit via the count field writes the
+  `Item` directly and may not emit `itemsChanged`, so rebuild on open to guarantee fresh data. (The
+  drawer is modal, so nothing changes underneath while it's open.)
+
+Backed by **`ItemOverviewModel`** (`mvc/itemoverviewmodel.*`, `brg.itemOverviewModel`): a read-only
+`QAbstractListModel` that aggregates the two item boxes by item index — summing amounts across any
+duplicate rows — into `{name, bag, storage}` rows, **drops both-zero rows**, and **sorts by name**
+(same `QCollator` as `ItemStorageBox::sort`). It iterates the BOXES (not the items DB) so glitch/unknown
+items in a save still appear, resolving each name via `Item::toItem()->getReadable()`. Rebuilds (full
+reset) on either box's `itemsChanged`, plus the explicit rebuild-on-open. Registered in
+`bootQmlLinkage.cpp`, constructed in `bridge.cpp` with both boxes. Roles `itemName` / `bagCount` /
+`storageCount`. Test: `tst_item_storage_model` `itemOverview_aggregatesSortsHidesZeros`.
+
 ## Pokémon storage screen layout (the standard for this screen)
 
 `screens/non-modal/Pokemon.qml` mirrors Bag: two `PokemonPane` in a **`RowLayout`**

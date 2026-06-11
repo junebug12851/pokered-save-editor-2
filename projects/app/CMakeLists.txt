@@ -53,6 +53,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/mvc/itemselectmodel.h
     src/mvc/itemstoragemodel.cpp
     src/mvc/itemstoragemodel.h
+    src/mvc/itemoverviewmodel.cpp
+    src/mvc/itemoverviewmodel.h
     src/mvc/mapselectmodel.cpp
     src/mvc/mapselectmodel.h
     src/mvc/moveselectmodel.cpp
