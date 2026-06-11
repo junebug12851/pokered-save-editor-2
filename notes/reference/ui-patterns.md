@@ -230,11 +230,18 @@ pattern is a plain `Rectangle` we fully control:
   `height: parent.height`, child of the `Page` (so it covers the panes but not the footer). A
   `property bool shown`; `x: shown ? 0 : -width` with a `Behavior on x` (`200ms OutCubic`) slides it in
   from the left. The accent header is the first child of an `anchors.fill` `ColumnLayout`, so it's flush
-  at the very top — **no frame, every edge is ours**. A 1px `dividerColor` strip on the right edge reads
-  as raised.
+  at the very top — **no frame, every edge is ours** (Twilight rejected even a 1px right-edge divider;
+  the white panel on the dimmed scrim reads fine on its own).
 - **`viewAllScrim`**: a black `Rectangle` `anchors.fill: parent`, `opacity: shown ? 0.4 : 0` (Behavior
   fade), `z` below the panel, with a full-size `MouseArea` (`enabled: shown`) that closes the panel on an
   outside click. Dismiss is scrim-click (no Drawer swipe to fight the bag grip handles).
+- **Block input pass-through (both the panel AND the scrim).** Plain `Rectangle`/`Text` don't accept
+  events, so a click on the header/empty area — or a **wheel the overview list doesn't consume** (a short
+  list at its scroll limit) — would reach the pane BEHIND (Qt walks the z-stack top→bottom for unaccepted
+  wheel/hover, so it finds the sibling pane behind). Each of the panel and scrim therefore carries **a
+  full-size `MouseArea` + a `WheelHandler` (`onWheel: wheel.accepted = true`), both `enabled: shown`**.
+  On the panel the `MouseArea` is the lowest child so the list above still gets first crack (it scrolls
+  when it can; the handler only swallows what falls through).
 - **Refresh on open:** `onShownChanged: if(shown) brg.itemOverviewModel.rebuild()` — an amount edit via
   the count field writes the `Item` directly and may not emit `itemsChanged`, so rebuild to be sure the
   table is current.

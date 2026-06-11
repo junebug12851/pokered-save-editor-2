@@ -67,6 +67,11 @@ Page {
       enabled: viewAllPanel.shown
       onClicked: viewAllPanel.shown = false
     }
+    // Also swallow the wheel so the dimmed pane behind the scrim doesn't scroll.
+    WheelHandler {
+      enabled: viewAllPanel.shown
+      onWheel: (wheel) => { wheel.accepted = true; }
+    }
   }
 
   Rectangle {
@@ -88,6 +93,22 @@ Page {
     // directly and may not emit itemsChanged, so rebuild here to be sure the
     // table is current.
     onShownChanged: if(shown) brg.itemOverviewModel.rebuild()
+
+    // Absorb input so it never falls through to the panes BEHIND the panel.
+    // Plain Rectangles/Text don't accept events, so without these a click on the
+    // header/empty area or a wheel the overview list doesn't consume (e.g. a
+    // short list at its scroll limit) would reach the bag pane underneath. The
+    // MouseArea (lowest child) catches clicks the list above doesn't; the
+    // WheelHandler catches wheels the list above doesn't (the list still scrolls
+    // first when it can, since it's higher in the stack). Only active while open.
+    MouseArea {
+      anchors.fill: parent
+      enabled: viewAllPanel.shown
+    }
+    WheelHandler {
+      enabled: viewAllPanel.shown
+      onWheel: (wheel) => { wheel.accepted = true; }
+    }
 
     ColumnLayout {
       anchors.fill: parent
@@ -224,15 +245,6 @@ Page {
           }
         }
       }
-    }
-
-    // Right-edge divider so the panel reads as raised against the dimmed panes.
-    Rectangle {
-      anchors.right: parent.right
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      width: 1
-      color: brg.settings.dividerColor
     }
   }
 
