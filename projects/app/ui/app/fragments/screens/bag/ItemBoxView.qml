@@ -182,8 +182,16 @@ ListView {
         id: rowEntry
         // Left-aligned so each row's checkbox forms a column directly under the
         // header's check-all button (both share the list's 15px left inset; the
-        // header check-all is nudged right to clear the grip handle).
+        // header check-all is nudged right to clear the grip handle). Spans to the
+        // right with a 16px margin to RESERVE THE SCROLLBAR LANE -- the Material
+        // ScrollBar is a right-edge overlay, so the trailing delete button would
+        // otherwise sit under it and be unclickable (recurring gotcha; see
+        // ui-patterns.md "Scrollable forms"). The combo is the fillWidth element,
+        // so when space is tight it shrinks to keep the delete clear, and on wide
+        // panes it just caps at its normal width (no visible change).
         anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.rightMargin: 16
         anchors.verticalCenter: parent.verticalCenter
         spacing: 8
         visible: !itemIsPlaceholder
@@ -243,7 +251,12 @@ ListView {
         SelectItem {
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredHeight: itemBoxView.comboH
-          Layout.preferredWidth: font.pixelSize * 15
+          // The flexible element: caps at its normal width, but shrinks when the
+          // row is tight so the trailing delete button stays clear of the
+          // reserved scrollbar lane (see rowEntry's rightMargin).
+          Layout.fillWidth: true
+          Layout.maximumWidth: font.pixelSize * 15
+          Layout.minimumWidth: font.pixelSize * 7
 
           // Duplicate guard: grey out item names already present in THIS pane's
           // box (except this row's own current item) so the user can't make an
@@ -323,15 +336,22 @@ ListView {
           // component, so keep these whole numbers (see ui-patterns.md).
           icon.height: 27
           icon.width: 19
-          icon.color: brg.settings.textColorLight
+          // At rest (no chip) the X must read on the white row, so it's accent;
+          // on hover/press the chip fills red and the X goes white.
+          icon.color: (deleteBtn.hovered || deleteBtn.down)
+                      ? brg.settings.textColorLight
+                      : brg.settings.accentColor
 
           background: Rectangle {
             radius: width / 2
+            // No background at rest (Twilight) -- just the accent X. The chip
+            // only appears on hover (red) / press (darker red); same mouseover
+            // effects as before, only the rest fill is removed.
             color: deleteBtn.down
                    ? Qt.darker(brg.settings.primaryColor, 1.25)
                    : deleteBtn.hovered
                      ? brg.settings.primaryColor
-                     : brg.settings.accentColor
+                     : "transparent"
             Behavior on color { ColorAnimation { duration: 90 } }
           }
 

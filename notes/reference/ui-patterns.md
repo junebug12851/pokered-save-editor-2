@@ -146,9 +146,19 @@ mechanics are identical). The **list-specific differences**:
 - **A lifted-card background**: while `content.Drag.active`, a white rounded `Rectangle` (`z:-1`,
   accent 1px border) sits behind the row so the floating full-width ghost reads as a card.
 - **Per-row delete chip** (`deleteBtn`): placed **to the right of the count field** (Twilight's call),
-  `visible: cellHover.hovered || itemChecked` off a `content` `HoverHandler` (`cellHover`). Same chip as
-  the Pokémon grid's delete (`28×28`, `times.svg` `icon 19×27` white, accent rest → `primaryColor`
-  hover → darker press, 90ms `Behavior on color`). `onClicked: model.deleteItem(index, itemChecked)`.
+  `visible: cellHover.hovered || itemChecked` off a `content` `HoverHandler` (`cellHover`). `28×28`,
+  `times.svg` `icon 19×27`. **No background at rest** (Twilight) — just an **accent-coloured X** so it
+  reads on the white row; on **hover** the chip fills `primaryColor` (red) and the **X goes white**
+  (`textColorLight`), on **press** the fill darkens (`Qt.darker(primaryColor,1.25)`), 90ms `Behavior on
+  color`. (So unlike the Pokémon grid's always-filled chip, the items-row chip is transparent until
+  hovered; the icon colour flips with the chip so the X is always legible.) `onClicked:
+  model.deleteItem(index, itemChecked)`.
+- **Reserve the scrollbar lane** so the trailing delete chip isn't under the `ScrollBar` (recurring
+  gotcha — see "Scrollable forms" below). The `rowEntry` `RowLayout` spans `anchors.left`→`anchors.right`
+  with `rightMargin: 16`, and the `SelectItem` combo is the `Layout.fillWidth` element (capped at its
+  normal `font*15`, min `font*7`): when the row is tight the combo shrinks so the delete stays inside the
+  reserved 16px; on wide panes the combo just caps and nothing visibly changes. (A plain left-packed row
+  put the delete under the overlay scrollbar on narrower panes.)
 
 Backing C++ (`ItemStorageModel`, mirrors `PokemonStorageModel`): `dragReorder(from, to, group)` (in-box
 splice + `onReset()`), `dragTransfer(from, to, group)` (`relocateOne` to the paired `destBox` then slide
@@ -415,6 +425,13 @@ right-aligned controls (⋮ buttons) end up under it and become unclickable. Res
 ScrollView { id: sv; anchors.fill: parent; clip: true; contentWidth: availableWidth
   ColumnLayout { width: sv.availableWidth - 16; … } }   // -16 keeps ⋮ clear of the scrollbar
 ```
+
+**Same gotcha on a `ListView`/`GridView` with a vertical `ScrollBar` and a trailing control in each
+row** (e.g. the items-row delete chip — 2026-06-10). The scrollbar overlays the right ~16px of the view,
+so a right-most row control lands under it. Fix the row the same way: span the row layout to the view
+width minus 16 (`anchors.right` + `rightMargin: 16`) and make a middle element (`SelectItem` combo there)
+`Layout.fillWidth` so the trailing control is pulled inside the reserved lane when space is tight. **This
+keeps coming back — whenever you add a right-edge control to a scrollable list/grid, reserve the 16px.**
 
 ## Sliders: value tooltip on hover + quick fade
 

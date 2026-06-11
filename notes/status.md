@@ -190,6 +190,15 @@ supports same-name rows; not our job to normalize someone's save. **C++ changed 
 `_overflowRefusedWhenDstFull`/`amountOfInd_sumsAcrossRows`. Convention: `reference/ui-patterns.md` →
 "Drag & drop on the items LIST".
 
+**Items delete chip — no rest background + scrollbar clearance (2026-06-10, Twilight-directed; QML-only,
+kit rebuilt + relaunched):** The per-row delete chip now has **no background at rest** (just an accent X
+that reads on the white row); the red hover-fill / darker-press / white-X mouseover effects are
+unchanged. Also fixed the recurring **"button under the scrollbar"** problem: the row layout now reserves
+the 16px scrollbar lane (`rowEntry` spans to `right - 16`) and the `SelectItem` combo is `fillWidth`
+(capped at its normal width) so it shrinks on tight rows to keep the delete clear. General fix written up
+in `reference/ui-patterns.md` → "Scrollable forms" + the items delete-chip bullet. QML-only (hot-reloads;
+kit rebuilt anyway for her review).
+
 ## Open Issues
 
 | Issue | Where | Status / notes |
