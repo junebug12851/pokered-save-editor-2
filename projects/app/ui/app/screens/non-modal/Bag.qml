@@ -64,10 +64,19 @@ Page {
     // table is current (the drawer is modal, so nothing changes while it's open).
     onAboutToShow: brg.itemOverviewModel.rebuild()
 
-    // No content padding -- the default Popup padding left a white strip of the
-    // drawer's background above the accent header bar. 0 makes the header flush
-    // to the top (and the list flush to the edges).
+    // Full-bleed, no frame. The Material Drawer's default padding/insets + the
+    // elevation shadow left a white strip above the accent header and a slim
+    // white border around the whole panel. Zero them all and give it our own
+    // flat white background so the header sits flush at the very top and the
+    // panel has no frame. (The list area is transparent, so this white shows
+    // behind the rows -- matching the items panes.)
     padding: 0
+    topInset: 0
+    bottomInset: 0
+    leftInset: 0
+    rightInset: 0
+    Material.elevation: 0
+    background: Rectangle { color: "white" }
 
     Material.foreground: brg.settings.textColorDark
 

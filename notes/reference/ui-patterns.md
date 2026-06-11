@@ -226,6 +226,11 @@ points:
 - **`onAboutToShow: brg.itemOverviewModel.rebuild()`** — an amount edit via the count field writes the
   `Item` directly and may not emit `itemsChanged`, so rebuild on open to guarantee fresh data. (The
   drawer is modal, so nothing changes underneath while it's open.)
+- **Full-bleed (no frame):** the Material `Drawer`'s default padding/insets + elevation shadow left a
+  white strip above the accent header and a slim white border around the panel. Kill all of it:
+  `padding: 0`, `topInset/bottomInset/leftInset/rightInset: 0`, `Material.elevation: 0`, and a plain
+  `background: Rectangle { color: "white" }` (the list is transparent so this white backs the rows,
+  matching the items panes). Then the accent header sits flush at the very top.
 
 Backed by **`ItemOverviewModel`** (`mvc/itemoverviewmodel.*`, `brg.itemOverviewModel`): a read-only
 `QAbstractListModel` that aggregates the two item boxes by item index — summing amounts across any
