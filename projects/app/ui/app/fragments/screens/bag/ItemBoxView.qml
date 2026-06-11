@@ -245,6 +245,12 @@ ListView {
           Layout.preferredHeight: itemBoxView.comboH
           Layout.preferredWidth: font.pixelSize * 15
 
+          // Duplicate guard: grey out item names already present in THIS pane's
+          // box (except this row's own current item) so the user can't make an
+          // accidental duplicate. Same pane only.
+          box: itemBoxView.box
+          currentItemId: itemId
+
           onActivated: itemId = currentValue;
           Component.onCompleted: {
 

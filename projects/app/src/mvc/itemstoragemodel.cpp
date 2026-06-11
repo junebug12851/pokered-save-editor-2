@@ -427,16 +427,42 @@ void ItemStorageModel::dragTransfer(int fromIndex, int toIndex, bool group)
   if(set.isEmpty())
     return;
 
-  int inserted = 0;
+  int inserted = 0;       // how many NEW rows were appended to dst (for the slide)
+  bool dstStacked = false; // did we merge into an existing dst stack?
 
   for(auto el : set) {
 
-    // Never overflow the destination (same guard as checkedTransfer/relocateOne).
-    if(dst->items.size() >= dst->itemsMax())
-      break;
-
     int ind = src->items.indexOf(el);
     if(ind < 0)
+      continue;
+
+    // Auto-stack: if the destination already holds this item, merge the moved
+    // amount onto the existing stack instead of creating a duplicate row. We
+    // stack onto the LAST matching row (Twilight's rule -- if there are e.g. four
+    // Antidotes, the bottom one is the stack target). Pre-existing duplicates are
+    // left untouched; only the moved item folds in.
+    Item* stackTarget = nullptr;
+    for(int i = dst->items.size() - 1; i >= 0; i--) {
+      if(dst->items.at(i)->ind == el->ind) {
+        stackTarget = dst->items.at(i);
+        break;
+      }
+    }
+
+    if(stackTarget != nullptr) {
+      // setAmount clamps to the Gen 1 max (99), matching the count field and the
+      // rest of the editor -- a stack can't exceed 99, any excess is dropped.
+      // No new dst row is created, so this is allowed even when dst is "full".
+      stackTarget->setAmount(stackTarget->amount + el->amount);
+      src->itemRemove(ind);  // emits itemRemoveChange -> this model's onRemove; deletes el
+      dstStacked = true;
+      continue;
+    }
+
+    // No match in dst -> move as a new row (capacity-guarded). Use `continue`,
+    // not `break`: a later item in the set might still stack onto an existing dst
+    // row even when dst is row-count full.
+    if(dst->items.size() >= dst->itemsMax())
       continue;
 
     // relocateOne appends to dst's end and emits the remove/insert signals that
@@ -445,9 +471,10 @@ void ItemStorageModel::dragTransfer(int fromIndex, int toIndex, bool group)
     inserted++;
   }
 
-  // The transferred items are now the last `inserted` slots of dst. Slide that
-  // block to the requested drop slot, clamped to the items that were already
-  // there so we insert *among* them (never past the freshly-appended block).
+  // The newly-added (non-stacked) items are the last `inserted` slots of dst.
+  // Slide that block to the requested drop slot, clamped to the items that were
+  // already there so we insert *among* them (never past the freshly-appended
+  // block). Stacked items don't move a row, so they don't participate here.
   if(inserted > 0) {
     int firstAppended = dst->items.size() - inserted;
     int target = qBound(0, toIndex, firstAppended);
@@ -457,10 +484,15 @@ void ItemStorageModel::dragTransfer(int fromIndex, int toIndex, bool group)
       dst->items.remove(firstAppended, inserted);
       for(int i = 0; i < moved.size(); i++)
         dst->items.insert(target + i, moved.at(i));
-
-      otherModel->onReset();
     }
   }
+
+  // One dst refresh covers both the slide reorder and any stacked-count display
+  // change (a stack updates an Item amount but emits no row insert, so the dst
+  // model needs a reset to re-read it). relocateOne already reset the dst model
+  // per new row; an extra reset is idempotent and cheap.
+  if(inserted > 0 || dstStacked)
+    otherModel->onReset();
 
   hasCheckedChanged();
 }

@@ -83,6 +83,9 @@ private slots:
   void dragReorder_movesWithinList();
   void dragReorder_groupMovesCheckedSet();
   void dragTransfer_movesToOtherBox();
+  void dragTransfer_autoStacksOntoExisting();
+  void dragTransfer_stacksOntoLastDuplicate();
+  void dragTransfer_clampsStackAt99();
   void deleteItem_singleAndGroup();
 };
 
@@ -246,6 +249,55 @@ void TestItemStorageModel::dragTransfer_movesToOtherBox()
   QCOMPARE(m_pcBox->itemsCount(), pcBefore + 1);
   QVERIFY2(!m_box->items.contains(moved), "transferred item still in the bag");
   QCOMPARE(m_pcBox->items.at(0), moved);     // landed at the requested drop slot
+}
+
+void TestItemStorageModel::dragTransfer_autoStacksOntoExisting()
+{
+  // Bag: one Antidote x3.  PC: one Antidote x5.
+  m_box->reset();   m_box->itemNew();   m_box->items.at(0)->load(QStringLiteral("ANTIDOTE"), 3);
+  m_pcBox->reset(); m_pcBox->itemNew(); m_pcBox->items.at(0)->load(QStringLiteral("ANTIDOTE"), 5);
+  Item* dstStack = m_pcBox->items.at(0);
+  const int antidote = dstStack->ind;
+
+  m_bag->dragTransfer(0, 0, false);
+
+  QCOMPARE(m_box->itemsCount(), 0);            // moved out of the bag
+  QCOMPARE(m_pcBox->itemsCount(), 1);          // no duplicate row -- stacked
+  QCOMPARE(m_pcBox->items.at(0), dstStack);    // same existing row
+  QCOMPARE(dstStack->ind, antidote);
+  QCOMPARE(dstStack->amount, 8);               // 5 + 3
+}
+
+void TestItemStorageModel::dragTransfer_stacksOntoLastDuplicate()
+{
+  // PC already has TWO Antidotes (pre-existing duplicate, left as-is) with a
+  // Potion between them; the moved Antidote must fold into the LAST one.
+  m_pcBox->reset();
+  m_pcBox->itemNew(); m_pcBox->items.at(0)->load(QStringLiteral("ANTIDOTE"), 5);
+  m_pcBox->itemNew(); m_pcBox->items.at(1)->load(QStringLiteral("POTION"),   2);
+  m_pcBox->itemNew(); m_pcBox->items.at(2)->load(QStringLiteral("ANTIDOTE"), 7);
+  m_box->reset(); m_box->itemNew(); m_box->items.at(0)->load(QStringLiteral("ANTIDOTE"), 3);
+
+  Item* firstAntidote = m_pcBox->items.at(0);
+  Item* lastAntidote  = m_pcBox->items.at(2);
+
+  m_bag->dragTransfer(0, 0, false);
+
+  QCOMPARE(m_pcBox->itemsCount(), 3);          // no new row
+  QCOMPARE(firstAntidote->amount, 5);          // earlier duplicate untouched
+  QCOMPARE(lastAntidote->amount, 10);          // 7 + 3 -> stacked onto the LAST
+}
+
+void TestItemStorageModel::dragTransfer_clampsStackAt99()
+{
+  m_pcBox->reset(); m_pcBox->itemNew(); m_pcBox->items.at(0)->load(QStringLiteral("ANTIDOTE"), 98);
+  m_box->reset();   m_box->itemNew();   m_box->items.at(0)->load(QStringLiteral("ANTIDOTE"), 5);
+  Item* dstStack = m_pcBox->items.at(0);
+
+  m_bag->dragTransfer(0, 0, false);
+
+  QCOMPARE(m_pcBox->itemsCount(), 1);
+  QCOMPARE(dstStack->amount, 99);              // 98 + 5 clamped to the Gen 1 max
 }
 
 void TestItemStorageModel::deleteItem_singleAndGroup()

@@ -172,6 +172,19 @@ new `tst_item_storage_model` drag tests (`dragReorder_*`, `dragTransfer_movesToO
 **Awaiting Twilight's in-app review** (watch: grip/checkbox column alignment under the header check-all,
 the wide-row ghost when transferring across panes, and that combo/count clicks still work mid-list).
 
+**Items screen — auto-stack on transfer + duplicate-pick guard (2026-06-10, Twilight-directed; BUILT +
+full `ctest` green 57/57, kit rebuilt + app relaunched):** Two follow-ups to the items drag work. (1)
+**Auto-stack:** `ItemStorageModel::dragTransfer` now folds a moved item onto an existing same-id row in
+the destination (stacking onto the **last** duplicate) instead of inserting a duplicate row; amounts
+clamp to 99 via `Item::setAmount`; stacking is allowed even when the dst is row-full (no new row). Group
+move/delete unchanged. (2) **Duplicate-pick guard:** the `SelectItem` dropdown greys out item names
+already present in the **same** pane (except the row's own current item) so the user can't make an
+accidental duplicate; `ItemStorageBox::hasItemInd` is now `Q_INVOKABLE`. Both explicitly **leave
+pre-existing duplicate save data untouched** — the app supports same-name rows; it's not our job to
+normalize someone's save. **C++ changed (savefile `itemstoragebox.h` + app `itemstoragemodel.cpp`) →
+Rebuild required.** Tests: `dragTransfer_autoStacksOntoExisting`/`_stacksOntoLastDuplicate`/
+`_clampsStackAt99`. Convention: `reference/ui-patterns.md` → "Drag & drop on the items LIST".
+
 ## Open Issues
 
 | Issue | Where | Status / notes |

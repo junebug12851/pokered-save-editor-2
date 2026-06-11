@@ -5,6 +5,14 @@
 // Entries with a negative index are section/disabled rows (greyed out). All the
 // Select* combos in this folder share this exact pattern -- only the model, roles,
 // and width differ.
+//
+// Duplicate guard (Bag/Items screen): set `box` (the pane's ItemStorageBox) and
+// `currentItemId` (this row's current item) and the dropdown greys out / disables
+// any item the box ALREADY holds -- except this row's own current item -- so the
+// user can't accidentally pick a name that's already in the same pane (which keeps
+// stacking tidy). Same-pane only; the other pane is irrelevant. Pre-existing
+// duplicate save data is untouched -- this only blocks NEW duplicate picks. When
+// `box` is null (other screens) the guard is inert and the combo behaves as before.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -14,6 +22,10 @@ ComboBox {
   id: control
   textRole: "itemSelectName"
   valueRole: "itemSelectInd"
+
+  // Duplicate guard inputs (default off -> inert on screens that don't set them).
+  property var box: null        // the pane's ItemStorageBox
+  property int currentItemId: -1 // this row's current item id (never greyed)
 
   font.capitalization: Font.Capitalize
   font.pixelSize: 14
@@ -39,13 +51,22 @@ ComboBox {
   }
 
   delegate: ItemDelegate {
+    id: itemDel
     width: control.width
-    enabled: itemSelectInd >= 0;
+
+    // Disabled when it's a section/header row (negative ind) OR the item is
+    // already present in this pane's box and isn't this row's own current item
+    // (the duplicate guard). The box check is a plain method call -- fine because
+    // the popup is rebuilt each time it opens, so it re-evaluates on open.
+    enabled: itemSelectInd >= 0
+             && !(control.box
+                  && itemSelectInd !== control.currentItemId
+                  && control.box.hasItemInd(itemSelectInd))
 
     contentItem: Text {
       text: itemSelectName
       font: control.font
-      color: (itemSelectInd >= 0)
+      color: itemDel.enabled
              ? brg.settings.textColorDark
              : brg.settings.textColorMid
       verticalAlignment: Text.AlignVCenter
