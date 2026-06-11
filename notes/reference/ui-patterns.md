@@ -239,9 +239,11 @@ pattern is a plain `Rectangle` we fully control:
   events, so a click on the header/empty area — or a **wheel the overview list doesn't consume** (a short
   list at its scroll limit) — would reach the pane BEHIND (Qt walks the z-stack top→bottom for unaccepted
   wheel/hover, so it finds the sibling pane behind). Each of the panel and scrim therefore carries **a
-  full-size `MouseArea` + a `WheelHandler` (`onWheel: wheel.accepted = true`), both `enabled: shown`**.
+  full-size `MouseArea` + a `WheelHandler` (`onWheel: wheel.accepted = true`) + a `HoverHandler { blocking:
+  true }`, all `enabled: shown`**. The `HoverHandler.blocking` is the one that stops the bag rows behind
+  from lighting up their **hover delete chip** through the panel (hover passes through plain Rectangles).
   On the panel the `MouseArea` is the lowest child so the list above still gets first crack (it scrolls
-  when it can; the handler only swallows what falls through).
+  when it can; the handlers only swallow what falls through).
 - **Refresh on open:** `onShownChanged: if(shown) brg.itemOverviewModel.rebuild()` — an amount edit via
   the count field writes the `Item` directly and may not emit `itemsChanged`, so rebuild to be sure the
   table is current.

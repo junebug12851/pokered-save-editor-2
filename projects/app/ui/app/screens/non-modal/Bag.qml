@@ -72,6 +72,11 @@ Page {
       enabled: viewAllPanel.shown
       onWheel: (wheel) => { wheel.accepted = true; }
     }
+    // Block HOVER too, so the pane rows behind don't light up their hover chips.
+    HoverHandler {
+      enabled: viewAllPanel.shown
+      blocking: true
+    }
   }
 
   Rectangle {
@@ -80,7 +85,7 @@ Page {
 
     property bool shown: false
 
-    width: Math.min(page.width * 0.5, 360)
+    width: Math.min(page.width * 0.45, 330)
     height: parent.height
     y: 0
     // Slides in from the left edge.
@@ -108,6 +113,13 @@ Page {
     WheelHandler {
       enabled: viewAllPanel.shown
       onWheel: (wheel) => { wheel.accepted = true; }
+    }
+    // Block hover from reaching the bag rows behind (their delete chip lights up
+    // on hover via a HoverHandler, which the cursor would otherwise trigger
+    // through the panel). `blocking` stops items/handlers behind from hovering.
+    HoverHandler {
+      enabled: viewAllPanel.shown
+      blocking: true
     }
 
     ColumnLayout {
