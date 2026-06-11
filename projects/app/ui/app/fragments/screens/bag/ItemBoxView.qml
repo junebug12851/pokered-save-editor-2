@@ -320,7 +320,15 @@ ListView {
           Layout.preferredWidth: 28
           Layout.preferredHeight: 28
 
-          visible: cellHover.hovered || (itemChecked === true)
+          // Reserve the slot ALWAYS (it stays in the layout) and fade it with
+          // opacity rather than `visible` -- a `visible:false` layout item
+          // COLLAPSES to zero width, which reflowed the whole row (the fillWidth
+          // combo grabbed/released the space) every time you hovered. `enabled`
+          // tracks the same condition so the invisible chip can't be clicked.
+          property bool shown: cellHover.hovered || (itemChecked === true)
+          opacity: shown ? 1 : 0
+          enabled: shown
+          Behavior on opacity { NumberAnimation { duration: 90 } }
 
           padding: 0
           topInset: 0

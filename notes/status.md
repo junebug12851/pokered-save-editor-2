@@ -197,7 +197,10 @@ unchanged. Also fixed the recurring **"button under the scrollbar"** problem: th
 the 16px scrollbar lane (`rowEntry` spans to `right - 16`) and the `SelectItem` combo is `fillWidth`
 (capped at its normal width) so it shrinks on tight rows to keep the delete clear. General fix written up
 in `reference/ui-patterns.md` → "Scrollable forms" + the items delete-chip bullet. QML-only (hot-reloads;
-kit rebuilt anyway for her review).
+kit rebuilt anyway for her review). **Follow-up (same day):** the chip used `visible:` which collapsed
+its layout slot → the `fillWidth` combo grew/shrank and the **whole row reflowed on every hover**. Fixed
+by reserving the slot permanently and fading `opacity` (+`enabled`) instead of `visible` — no resize/
+reflow now.
 
 ## Open Issues
 

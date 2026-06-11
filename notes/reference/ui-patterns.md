@@ -146,13 +146,17 @@ mechanics are identical). The **list-specific differences**:
 - **A lifted-card background**: while `content.Drag.active`, a white rounded `Rectangle` (`z:-1`,
   accent 1px border) sits behind the row so the floating full-width ghost reads as a card.
 - **Per-row delete chip** (`deleteBtn`): placed **to the right of the count field** (Twilight's call),
-  `visible: cellHover.hovered || itemChecked` off a `content` `HoverHandler` (`cellHover`). `28×28`,
+  shown when `cellHover.hovered || itemChecked` (off a `content` `HoverHandler`, `cellHover`). `28×28`,
   `times.svg` `icon 19×27`. **No background at rest** (Twilight) — just an **accent-coloured X** so it
   reads on the white row; on **hover** the chip fills `primaryColor` (red) and the **X goes white**
   (`textColorLight`), on **press** the fill darkens (`Qt.darker(primaryColor,1.25)`), 90ms `Behavior on
   color`. (So unlike the Pokémon grid's always-filled chip, the items-row chip is transparent until
-  hovered; the icon colour flips with the chip so the X is always legible.) `onClicked:
-  model.deleteItem(index, itemChecked)`.
+  hovered; the icon colour flips with the chip so the X is always legible.) **Toggle it with `opacity`
+  (+`enabled`), NOT `visible`** — a `visible:false` *layout* item collapses to zero width, so with the
+  `fillWidth` combo the whole row REFLOWED on every hover (combo grew/shrank as the chip came and went).
+  Keeping the chip permanently in the layout and fading `opacity 0↔1` reserves its slot so nothing
+  resizes; `enabled` tracks the same `shown` condition so the invisible chip isn't clickable.
+  `onClicked: model.deleteItem(index, itemChecked)`.
 - **Reserve the scrollbar lane** so the trailing delete chip isn't under the `ScrollBar` (recurring
   gotcha — see "Scrollable forms" below). The `rowEntry` `RowLayout` spans `anchors.left`→`anchors.right`
   with `rightMargin: 16`, and the `SelectItem` combo is the `Layout.fillWidth` element (capped at its
