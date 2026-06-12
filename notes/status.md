@@ -219,6 +219,18 @@ panel width `min(page.width*0.45, 330)`; both panel and scrim block input pass-t
 behind via a `MouseArea` + `WheelHandler` + `HoverHandler{blocking:true}` (the last stops the bag rows'
 hover delete chip showing through); rebuild `onShownChanged`. Twilight signed off.
 
+**Trainer-card badge sizing/aspect fix + optimized badge PNGs (2026-06-12, Twilight-directed; BUILT +
+full `ctest` green 57/57 + app relaunched):** Two follow-ups to the badge swap below. (1) Re-imported the
+**8 badge icons** after Twilight optimized them (~1 MB → ~360–430 KB each, ~3 MB total now vs ~8 MB);
+the leader shadows were already optimized/unchanged. (2) **Fixed the varying-size rendering:** the badge
+icons are near-square (aspect ~0.85–1.0) but the gym-leader shadows are tall & narrow (aspect ~0.38–0.86),
+and the `ListBadges.qml` delegate used the default `Image.Stretch` fill → everything was squished into the
+square cell. Now `fillMode: Image.PreserveAspectFit` (scales each image to fit undistorted **and**
+auto-centers it in the cell) + `smooth`/`mipmap: true` + a capped `sourceSize` (`cellSize*4`) so the large
+source art stays crisp and memory-light at the small display size. No per-image fudge factors — each image
+just renders at its true proportions, centered. **Badge PNGs changed in qrc → Rebuild required** (done).
+Convention note added below. **Awaiting Twilight's in-app review.**
+
 **Trainer-card badge artwork swap (2026-06-12, Twilight-directed; BUILT + full `ctest` green 57/57 +
 app relaunched):** Replaced the eight gym-badge images on the Trainer Card. Earned (on) now uses the
 **badge icon** (`<badge>-badge.png`); unearned (off) now uses the **gym leader's shadow**

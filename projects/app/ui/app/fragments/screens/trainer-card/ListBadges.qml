@@ -27,6 +27,17 @@ GridView {
     width: view.cellSize
     height: view.cellSize
 
+    // The badge icons and gym-leader shadows have varying, non-square dimensions
+    // (badges ~square, leader silhouettes tall & narrow). Fit each within the cell
+    // preserving its own aspect ratio so nothing is stretched; PreserveAspectFit
+    // also centers the painted image inside the square cell. mipmap + a capped
+    // sourceSize keep the large source art crisp and memory-light at this small size.
+    fillMode: Image.PreserveAspectFit
+    smooth: true
+    mipmap: true
+    sourceSize.width: view.cellSize * 4
+    sourceSize.height: view.cellSize * 4
+
     MouseArea {
       anchors.fill: parent
       hoverEnabled: true
