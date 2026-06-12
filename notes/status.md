@@ -219,6 +219,15 @@ panel width `min(page.width*0.45, 330)`; both panel and scrim block input pass-t
 behind via a `MouseArea` + `WheelHandler` + `HoverHandler{blocking:true}` (the last stops the bag rows'
 hover delete chip showing through); rebuild `onShownChanged`. Twilight signed off.
 
+**Trainer-card leader shadows recropped to square busts (2026-06-12, Twilight-directed; BUILT + full
+`ctest` green 57/57 + app relaunched):** Twilight recropped all 8 gym-leader shadows to **256×256 square
+head-and-shoulders busts** (~10–12 KB each, down from the tall full-body silhouettes of ~45–69 KB) so they
+fill the 35px cell uniformly alongside the near-square badges instead of rendering as skinny full-body
+slivers. Re-imported the 8 into `projects/app/assets/images/badges/`; badges unchanged. No QML change
+needed — the `PreserveAspectFit` + centered delegate already handles them, and now that they're 1:1 they
+sit the same size as the badges. **Shadow PNGs changed in qrc → Rebuild required** (done; RCC re-embedded).
+**Awaiting Twilight's in-app review.**
+
 **Trainer-card badge sizing/aspect fix + optimized badge PNGs (2026-06-12, Twilight-directed; BUILT +
 full `ctest` green 57/57 + app relaunched):** Two follow-ups to the badge swap below. (1) Re-imported the
 **8 badge icons** after Twilight optimized them (~1 MB → ~360–430 KB each, ~3 MB total now vs ~8 MB);
