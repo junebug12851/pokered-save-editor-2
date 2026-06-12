@@ -45,9 +45,9 @@ GridView {
       source = brg.file.data.dataExpanded.player.basics.badgeAt(index)
                    ? iconOnSrc
                    : iconOffSrc;
-      opacity = brg.file.data.dataExpanded.player.basics.badgeAt(index)
-          ? 1.00
-          : 0.50;
+      // Unearned badges now show the gym leader's shadow at full opacity (no
+      // dimming) -- the shadow image itself conveys the not-yet-earned state.
+      opacity = 1.00;
     }
 
     Connections {

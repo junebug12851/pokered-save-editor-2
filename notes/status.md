@@ -219,6 +219,19 @@ panel width `min(page.width*0.45, 330)`; both panel and scrim block input pass-t
 behind via a `MouseArea` + `WheelHandler` + `HoverHandler{blocking:true}` (the last stops the bag rows'
 hover delete chip showing through); rebuild `onShownChanged`. Twilight signed off.
 
+**Trainer-card badge artwork swap (2026-06-12, Twilight-directed; BUILT + full `ctest` green 57/57 +
+app relaunched):** Replaced the eight gym-badge images on the Trainer Card. Earned (on) now uses the
+**badge icon** (`<badge>-badge.png`); unearned (off) now uses the **gym leader's shadow**
+(`<leader>-shadow.png`) — Brock/Boulder, Misty/Cascade, Lt.Surge(`ltsurge`)/Thunder, Erika/Rainbow,
+Koga/Soul, Sabrina/Marsh, Blaine/Volcano, Giovanni/Earth. Imported all 16 PNGs from the
+`assets/icons/` staging folder (gitignored, per its `.gitignore`) into `projects/app/assets/images/badges/`,
+swapped the 16 qrc entries, and `git rm`'d the old `<name>-off/on.png` files. `BadgesModel.qml` repointed;
+`ListBadges.qml` `reCalc()` **keeps all existing effects but no longer dims unearned badges**
+(`opacity = 1.00` always — the shadow image itself conveys not-yet-earned). **New assets in qrc →
+Rebuild required** (done; RCC re-embedded). Note: the badge icons are large (~1 MB each, ~8 MB total
+baked into the binary) — easy win later to downscale them to display size if Twilight wants. Convention
+unchanged. **Awaiting Twilight's in-app review.**
+
 **Trainer-card artwork swap (2026-06-10, Twilight-directed; BUILT + app relaunched for in-app review):**
 Replaced the trainer image on the Trainer Card front (the grayscale Gen-1 Red sprite,
 `qrc:/assets/images/red-larger.png`) with the new colored two-trainer illustration. The PNG was

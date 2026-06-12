@@ -440,22 +440,22 @@
         <file>ui/app/fragments/screens/trainer-card/FramesEdit.qml</file>
         <file>ui/app/fragments/general/InfoButtonReg.qml</file>
         <file>ui/app/fragments/screens/trainer-card/CardFront.qml</file>
-        <file>assets/images/badges/boulder-off.png</file>
-        <file>assets/images/badges/boulder-on.png</file>
-        <file>assets/images/badges/cascade-off.png</file>
-        <file>assets/images/badges/cascade-on.png</file>
-        <file>assets/images/badges/earth-off.png</file>
-        <file>assets/images/badges/earth-on.png</file>
-        <file>assets/images/badges/marsh-off.png</file>
-        <file>assets/images/badges/marsh-on.png</file>
-        <file>assets/images/badges/rainbow-off.png</file>
-        <file>assets/images/badges/rainbow-on.png</file>
-        <file>assets/images/badges/soul-off.png</file>
-        <file>assets/images/badges/soul-on.png</file>
-        <file>assets/images/badges/thunder-off.png</file>
-        <file>assets/images/badges/thunder-on.png</file>
-        <file>assets/images/badges/volcano-off.png</file>
-        <file>assets/images/badges/volcano-on.png</file>
+        <file>assets/images/badges/boulder-badge.png</file>
+        <file>assets/images/badges/cascade-badge.png</file>
+        <file>assets/images/badges/thunder-badge.png</file>
+        <file>assets/images/badges/rainbow-badge.png</file>
+        <file>assets/images/badges/soul-badge.png</file>
+        <file>assets/images/badges/marsh-badge.png</file>
+        <file>assets/images/badges/volcano-badge.png</file>
+        <file>assets/images/badges/earth-badge.png</file>
+        <file>assets/images/badges/brock-shadow.png</file>
+        <file>assets/images/badges/misty-shadow.png</file>
+        <file>assets/images/badges/ltsurge-shadow.png</file>
+        <file>assets/images/badges/erika-shadow.png</file>
+        <file>assets/images/badges/koga-shadow.png</file>
+        <file>assets/images/badges/sabrina-shadow.png</file>
+        <file>assets/images/badges/blaine-shadow.png</file>
+        <file>assets/images/badges/giovanni-shadow.png</file>
         <file>ui/app/fragments/screens/trainer-card/BadgesModel.qml</file>
         <file>ui/app/fragments/screens/trainer-card/ListBadges.qml</file>
         <file>ui/app/screens/non-modal/Pokedex.qml</file>
