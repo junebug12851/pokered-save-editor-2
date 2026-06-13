@@ -72,6 +72,11 @@
           "name": "Git",
           "url": "git-scm.com",
           "note": "Powers the projects VCS"
+        },
+        {
+          "name": "Docker",
+          "url": "docker.com",
+          "note": "Containerized Linux build/test environment -- runs the full test suite plus AddressSanitizer/UBSan and coverage, which can't run on the Windows kit"
         }
       ]
     },
