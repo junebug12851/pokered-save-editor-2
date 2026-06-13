@@ -31,6 +31,22 @@
 #include <pse-savefile/expanded/fragments/pokemonbox.h>
 #include <pse-savefile/expanded/player/playerbasics.h>
 
+namespace {
+// Render the species name markup the same way the Pokedex / storage grid do, so a
+// tooltip name reads "Nidoran ♂" rather than "NIDORAN<m>" (gender markers can show
+// up in either case; Mr.Mime gets its space). Presentation only -- a real custom
+// nickname won't match these patterns, so it's left untouched.
+QString fixSpeciesMarkup(QString s)
+{
+  s.replace(QStringLiteral("<f>"), QStringLiteral(" ♀"));
+  s.replace(QStringLiteral("<F>"), QStringLiteral(" ♀"));
+  s.replace(QStringLiteral("<m>"), QStringLiteral(" ♂"));
+  s.replace(QStringLiteral("<M>"), QStringLiteral(" ♂"));
+  s.replace(QStringLiteral("Mr.Mime"), QStringLiteral("Mr. Mime"));
+  return s;
+}
+}
+
 PokemonOverviewModel::PokemonOverviewModel(PokemonStorageBox* party, Storage* storage, PlayerBasics* basics)
   : party(party),
     storage(storage),
@@ -129,7 +145,7 @@ PokemonOverviewModel::Cell PokemonOverviewModel::buildCell(PokemonStorageBox* bo
       caught++;
 
     if(mon->hasNickname())
-      nicknames.append(mon->nickname);
+      nicknames.append(fixSpeciesMarkup(mon->nickname));
     else
       others++;
   }
