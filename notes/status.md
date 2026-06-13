@@ -219,6 +219,18 @@ panel width `min(page.width*0.45, 330)`; both panel and scrim block input pass-t
 behind via a `MouseArea` + `WheelHandler` + `HoverHandler{blocking:true}` (the last stops the bag rows'
 hover delete chip showing through); rebuild `onShownChanged`. Twilight signed off.
 
+**Trainer-card badges normalized to uniform square canvases (2026-06-12, Twilight-directed; BUILT + full
+`ctest` green 57/57 + app relaunched):** The 8 badge PNGs were full-bleed (content = 99.8–100% of canvas)
+with **differing aspect ratios** (0.85–1.01), so under `PreserveAspectFit` each filled the square cell by a
+different width (full height, varying width) — inconsistent with each other and with the now-square leader
+busts. Fix: re-processed each badge onto a **256×256 transparent square canvas, content centered, longest
+side ~98%** — measured to match the leader busts' ~98% canvas fill, so earned badges and unearned shadows
+now render at the same footprint in the cell. Done with PIL (alpha-bbox crop → LANCZOS scale → center on
+256²), files dropped to ~80–104 KB each. No QML change (the `PreserveAspectFit` delegate handles the now-
+square images uniformly). **Badge PNGs changed in qrc → Rebuild required** (done; RCC re-embedded).
+**Awaiting Twilight's in-app review.** (If she wants a different margin, re-run the normalize at a different
+fill fraction; 98% chosen to match leaders.)
+
 **Trainer-card leader shadows recropped to square busts (2026-06-12, Twilight-directed; BUILT + full
 `ctest` green 57/57 + app relaunched):** Twilight recropped all 8 gym-leader shadows to **256×256 square
 head-and-shoulders busts** (~10–12 KB each, down from the tall full-body silhouettes of ~45–69 KB) so they
