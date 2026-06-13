@@ -533,8 +533,8 @@ Page {
         color: brg.settings.textColorDark
         font.pixelSize: 14
         text: boxesWarn.target
-          ? qsTr("Formatting sets up all 12 storage boxes the same way the game does — just faster — and opens every box for use.\n\nWhat ends up in those boxes depends on how you got here. If this save was loaded unformatted, the other boxes will be empty. But if you've only toggled formatting off and on this session and haven't reloaded the save, your Pokémon are all still there.\n\nOutside the current box (Box %1), this can't be undone once the save is reloaded.").arg(boxesWarn.boxNo)
-          : qsTr("This tells the game your boxes aren't set up, so only the current box (Box %1) is loaded — the other boxes aren't touched, but the game treats them as if they don't exist.\n\nIt's a soft delete, and this app keeps those boxes loaded in memory: you can fully undo it by re-formatting — as long as you don't close or reload this save.\n\nOnce you reload this save (or open it in the game), this app no longer reads those boxes and can't recover them, and the game is free to overwrite that space — permanently erasing every Pokémon outside Box %1.").arg(boxesWarn.boxNo)
+          ? qsTr("Formatting just unlocks all 12 storage boxes for use — the same setup the game does, only faster.\n\nWhat's in them depends on how you got here. If this save was loaded unformatted, the other boxes will be empty. But if you've only toggled formatting off and on this session and haven't reloaded the save, your Pokémon are all still there.")
+          : qsTr("This puts every Pokémon outside the current box (Box %1) in danger.\n\nUnformatting tells the game your boxes aren't set up, so only Box %1 is loaded. The other boxes are left in place but treated as if they don't exist — so the game is free to overwrite that space and permanently erase everything in them.\n\nThis app can still bring them back if you re-format, but only while this save stays loaded. Once you reload it here or open it in the game, those Pokémon are gone for good.").arg(boxesWarn.boxNo)
       }
 
       // Actions.
