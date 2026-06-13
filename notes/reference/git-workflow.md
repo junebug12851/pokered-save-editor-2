@@ -28,6 +28,19 @@ This gives a clean *linear* history **and** keeps every original commit/message 
 Fine at this stage; if pristine release history is wanted later, tag releases or switch to
 squash-merges then — not now.)
 
+### Windows gotcha: checking out pre-`dab0a1d` history collides with `VERSION`
+
+Before commit `dab0a1d` (2026-06-13) the version file was `VERSION.txt` and the changelog folder was
+`version/`. That commit renamed them to `VERSION` and `version-notes/`. Because the Windows filesystem
+is **case-insensitive**, the working-tree file `VERSION` and an old commit's tracked directory `version/`
+are the *same path*, so `git checkout <pre-rename-ref>` aborts with *"untracked working tree files would
+be overwritten: version"*. Going forward this never bites a normal `dev → main` FF (both have `VERSION` +
+`version-notes/`); it only happens when checking out / bisecting **old** history. Workarounds: fast-forward
+a ref **without** a working-tree switch — `git fetch . dev:main` (FF-only; safely updates local `main`
+off-branch) — or temporarily move `VERSION` aside before the historical checkout. (This case collision is
+exactly why the file was originally suffixed `.txt`; renaming `version/` → `version-notes/` is what freed
+the bare `VERSION` name. See `reference/versioning.md`.)
+
 ## Pushing — push every commit (added 2026-06-08, Twilight)
 
 **Push on every commit**, same as commits themselves: early and often. All chat tabs/sessions are
