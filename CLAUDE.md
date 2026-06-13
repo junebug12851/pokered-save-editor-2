@@ -48,6 +48,16 @@ The full notes system is in `notes/`. Everything is organized by topic:
 
 ## Build System
 
+> **YOU CAN ACTUALLY BUILD/TEST/RUN/GIT — you are NOT limited to a sandbox.** The PowerShell
+> terminal tool has real access to Twilight's Windows machine, where the full Qt 6.11 llvm-mingw
+> toolchain is installed. From it you can directly **configure, build, run the tests, launch the
+> app, and `git add`/`commit`/`push`/fast-forward `main`** — by default, without asking. Prior Qt
+> command history from other chats and from Qt Creator is available to crib exact invocations from.
+> **Do NOT open a session claiming "I can't build, no Qt tools in the sandbox"** — that's wrong and
+> Twilight is tired of re-explaining it. (The Cowork *bash* sandbox is a separate, weaker tool with
+> stale-read issues — use **PowerShell** for anything real here, not bash.) The exact commands,
+> paths, and gotchas are below and in the Default Workflow section.
+
 Toolchain (Qt Creator kit `Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug`), all on Twilight's
 Windows machine via the PowerShell terminal:
 
@@ -79,6 +89,14 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
    no rebuild; **new** QML files still need adding to `app/app.qrc` + a rebuild.)
 2. **Test.** Run the **affected** test(s) per change for speed (build `build/`, run `build\tst_x.exe`);
    run the **full `ctest`** suite before fast-forwarding `main`. Only proceed past a **green** result.
+   **On ANY QML/screen change (or a new `.qml` added to `app.qrc`), the QML screen smoke test
+   `tst_qml_screens` MUST be green before FF `main`.** It loads every registered screen through the
+   real engine and fails on any QML warning/error (FINAL overrides → "Component is not ready", binding
+   `TypeError`s, missing types/providers, anchor-on-null). The C++ ctest suite never instantiates QML,
+   so it cannot catch this class — this is what let a non-opening Credits screen reach `main` on
+   2026-06-13. `tst_qml_screens` is registered with CTest (and `tests_all`), so a full `ctest` run
+   already includes it; for a fast QML-only check, build + run just `build\tst_qml_screens.exe` with
+   `QT_QPA_PLATFORM=offscreen`. Details: `notes/plans/testing.md` → "QML screen smoke test".
 3. **Debug / profile.** If anything **crashes**, rebuild via the **`asan/`** (or debugger) sibling build,
    capture a **real stack trace** (output routed to a log), and diagnose from that — never guess.
    Do **periodic profiling** passes when touching hot paths. Always redirect std+err to a log to read it.
