@@ -257,6 +257,53 @@ reset) on either box's `itemsChanged`, plus the explicit rebuild-on-open. Regist
 `bootQmlLinkage.cpp`, constructed in `bridge.cpp` with both boxes. Roles `itemName` / `bagCount` /
 `storageCount`. Test: `tst_item_storage_model` `itemOverview_aggregatesSortsHidesZeros`.
 
+### "View All" overview drawer (Pokémon screen)
+
+The Pokémon analogue of the Bag View All (read that first — the **slide-in `Rectangle`
+panel + scrim + input-blocking handlers + rebuild-on-open** are copied verbatim). The
+footer became an **`AppFooterBtn3`** (was `AppFooterBtn2`): **View All** (`th.svg`, leftmost)
+then Re-Roll then Boxes Setup. The differences are all in the content, because this is a
+**2-D table** not a flat list:
+
+- **Rows = species** (alphabetized by **species name, not nickname**; same `QCollator` as the
+  items overview). **Columns = the Party first, then ONLY the non-empty boxes** (Twilight's
+  call — empty boxes would be all-blank columns; 12 always-on columns would never fit). Column
+  header labels come from the model's `columns` `QStringList` (`"Party"`, `"Box 1"`, …) so the
+  header row and every body row stay aligned off one source.
+- **Each cell = the count** of that species in that column, **0 hidden** (`opacity: cnt>0?1:0`),
+  exactly like the items table.
+- **NEW vs items — a per-cell hover tooltip.** Hovering a non-zero count shows (line 1) the
+  **differing nicknames** in that cell spelled out, then an **"…and ×N other(s)"** tail for the
+  un-nicknamed remainder; (line 2) a **caught/traded split** (`×A caught, ×B traded`, hiding a
+  zero side). A mon is "traded" when `PokemonBox::hasTradeStatus(basics)` (OT name/ID differs
+  from the player); "nicknamed" = `hasNickname()` (nickname differs from the species default). The
+  **whole string is precomputed in C++** (`PokemonOverviewModel::buildCell`) and handed to QML as
+  the `tooltips` role, so the QML just shows it (`ToolTip` styled like the slider tooltip — accent
+  bg, 80 ms fade). When nothing in the cell is nicknamed, line 1 is omitted (the count + line 2
+  already convey it).
+- **Layout = a horizontal `Flickable` wrapping a `Column` of [header row | vertical `ListView`].**
+  The species column is a frozen-width first column; the inner `ListView` scrolls vertically while
+  the outer `Flickable` (`flickableDirection: HorizontalFlick`) scrolls a wide many-box table
+  sideways — orthogonal directions so the two don't fight. Panel width adapts to the column count
+  (`tableW = nameColW + colCount*countColW + scrollLane`, clamped to `page.width*0.92`); a narrow
+  save shows a compact panel, a many-box save scrolls. Reserve the **16px vertical-scrollbar lane**
+  (`scrollLane`) on the right of the rows/divider so the last count column isn't under the scrollbar
+  (the recurring "Scrollable forms" gotcha).
+- Body delegates use **injected model-role properties** (`speciesName`/`counts`/`tooltips`, like
+  Bag.qml's `itemName`/`bagCount`), NOT `required` declarations; the row root lifts them onto
+  `rowName`/`rowTips` so the nested count `Repeater` (model: `counts`) can index `rowTips[index]`
+  for the matching column's tooltip.
+
+Backed by **`PokemonOverviewModel`** (`mvc/pokemonoverviewmodel.*`, `brg.pokemonOverviewModel`): a
+read-only `QAbstractListModel` over the **party + 12 boxes + player basics**. Keyed by raw species
+id (so two ids sharing a name stay distinct rows, like the items overview keys by index), name via
+`PokemonBox::speciesName()`. Roles `speciesName` / `counts` (QVariantList<int>) / `tooltips`
+(QVariantList<QString>); the column labels are a separate `columns` `Q_PROPERTY`. Rebuilds (full
+reset) on the party's or any box's `pokemonChanged`, plus the explicit rebuild-on-open (species/
+nickname/OT edits happen in the detail editor and don't emit a box `pokemonChanged`). Registered in
+`bootQmlLinkage.cpp`, constructed in `bridge.cpp`. Test:
+`tst_storage_model` `pokemonOverview_columnsCountsTooltips`.
+
 ## Pokémon storage screen layout (the standard for this screen)
 
 `screens/non-modal/Pokemon.qml` mirrors Bag: two `PokemonPane` in a **`RowLayout`**

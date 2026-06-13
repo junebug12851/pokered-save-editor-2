@@ -278,6 +278,26 @@ launched. `red-larger.png` left in place (no longer referenced; safe to remove l
 wants). Note: the new art is a tall portrait, so within the `parent.width/3` box it fits to height
 and reads fairly narrow — easy to widen later if she wants it bigger.
 
+**Pokémon "View All" overview drawer (2026-06-12, Twilight-directed; BUILT + full `ctest` green
+57/57 + new test green, kit rebuilt + app launched for in-app review):** The Pokémon analogue of the
+Bag View All. Footer became an **`AppFooterBtn3`** (View All / Re-Roll / Boxes Setup); View All slides
+in the same hand-rolled left panel + scrim, but holds a **2-D table**: **rows = species** (alphabetized
+by species name, not nickname), **columns = Party first then only NON-EMPTY boxes** (Twilight's call —
+empty boxes omitted, all-12 would never fit). Each cell is the per-box **count, 0 hidden**; the new bit
+vs items is a **per-cell hover tooltip** listing the **differing nicknames** + an **"…and ×N others"**
+tail + a **caught/traded split** (`×A caught, ×B traded`; traded = `hasTradeStatus`, nicknamed =
+`hasNickname`). Tooltip string is **precomputed in C++**. Layout is a horizontal `Flickable` (frozen
+species column + sideways scroll for many-box saves) wrapping a vertical `ListView`; panel width adapts
+to the column count. Backed by a new read-only **`PokemonOverviewModel`** (`mvc/pokemonoverviewmodel.*`,
+`brg.pokemonOverviewModel`) over the party + 12 boxes + basics; roles `speciesName`/`counts`/`tooltips`
++ a `columns` label list; rebuilds on party/box `pokemonChanged` + rebuild-on-open. Wired:
+`app/CMakeLists.txt`, `bootQmlLinkage.cpp`, `bridge.h/.cpp`. **C++ changed + new source files + new QML
+embedded → Rebuild (reconfigure) required** (done: repo `build/` 92/92, kit dir relinked, app launched).
+Test: `tst_storage_model` `pokemonOverview_columnsCountsTooltips` (columns, counts, alphabetization,
+nickname/others/caught/traded tooltip). Convention: `reference/ui-patterns.md` → "View All overview
+drawer (Pokémon screen)". **Awaiting Twilight's in-app review** (watch: column widths/labels when
+several boxes are non-empty, the horizontal scroll on a many-box save, and the tooltip wording/cramping).
+
 ## Open Issues
 
 | Issue | Where | Status / notes |

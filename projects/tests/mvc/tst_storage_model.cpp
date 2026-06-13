@@ -25,6 +25,8 @@
  */
 
 #include <QtTest>
+#include <QCollator>
+#include <QVariantList>
 
 #include "../helpers/savefilefixture.h"
 
@@ -34,10 +36,14 @@
 #include <pse-savefile/expanded/savefileexpanded.h>
 #include <pse-savefile/expanded/fragments/pokemonstoragebox.h>
 #include <pse-savefile/expanded/fragments/pokemonbox.h>
+#include <pse-savefile/expanded/storage.h>
+#include <pse-savefile/expanded/player/player.h>
+#include <pse-savefile/expanded/player/playerbasics.h>
 
 #include <bridge/bridge.h>
 #include <bridge/router.h>
 #include <mvc/pokemonstoragemodel.h>
+#include <mvc/pokemonoverviewmodel.h>
 
 using namespace pse_test;
 
@@ -65,6 +71,8 @@ private slots:
   void moveToTop_movesCheckedUp();
   void delete_removesCheckedMon();
   void transfer_movesToPairedBox();
+
+  void pokemonOverview_columnsCountsTooltips();
 };
 
 void TestStorageModel::initTestCase()
@@ -164,6 +172,105 @@ void TestStorageModel::transfer_movesToPairedBox()
   for(PokemonBox* m : dst->pokemon)
     if(m->species == movedSpecies) { found = true; break; }
   QVERIFY2(found, "no mon of the transferred species found in destination box");
+}
+
+// The "View All" overview: rows are alphabetized species, columns are the Party
+// then each NON-EMPTY box, cells carry per-box counts, and each non-zero cell has
+// a tooltip listing differing nicknames + an "...and ×N others" tail + a
+// caught/traded split. Build a deterministic scene: empty every PC box, then fill
+// box 0 with two mons of a species (S1) the party also holds -- one nicknamed +
+// traded, one plain + caught.
+void TestStorageModel::pokemonOverview_columnsCountsTooltips()
+{
+  auto* party   = m_file->data->dataExpanded->player->pokemon;
+  auto* basics  = m_file->data->dataExpanded->player->basics;
+  auto* storage = m_file->data->dataExpanded->storage;
+
+  if(party->pokemon.size() < 1) QSKIP("party is empty");
+
+  // Two distinct species from the party: S0 (party-only) and S1 (also placed in a box).
+  const int S0 = party->pokemon.at(0)->species;
+  int S1 = -1;
+  for(PokemonBox* m : party->pokemon)
+    if(m->species != S0) { S1 = m->species; break; }
+  if(S1 < 0) QSKIP("party holds only one species");
+
+  auto countInParty = [&](int sp) {
+    int n = 0;
+    for(PokemonBox* m : party->pokemon) if(m->species == sp) n++;
+    return n;
+  };
+  const int partyS0 = countInParty(S0);
+  const int partyS1 = countInParty(S1);
+
+  // Empty every PC box, then fill box 0 with two S1 mons.
+  for(int i = 0; i < storage->boxCount(); ++i)
+    storage->boxAt(i)->reset();
+
+  auto* box0 = storage->boxAt(0);
+  box0->pokemonNew();
+  box0->pokemonNew();
+  PokemonBox* a = box0->pokemon.at(0);
+  PokemonBox* b = box0->pokemon.at(1);
+
+  // a: nicknamed + traded.   b: no nickname + caught (player's own OT).
+  a->species = S1; a->nickname = QStringLiteral("Sparky"); a->nicknameChanged();
+  a->otName = basics->playerName + QStringLiteral("X");  // force a different OT name
+  a->otID = basics->playerID;
+
+  b->species = S1; b->changeName(true);                  // sets nickname to the species default
+  b->otName = basics->playerName;
+  b->otID = basics->playerID;
+
+  auto* ov = m_brg->pokemonOverviewModel;
+  ov->rebuild();
+
+  // ---- Columns: Party first, then only box 0 (every other box is empty). ----
+  const QStringList cols = ov->columns();
+  QCOMPARE(cols.size(), 2);
+  QCOMPARE(cols.at(0), QStringLiteral("Party"));
+  QCOMPARE(cols.at(1), QStringLiteral("Box 1"));
+
+  // ---- Locate the two species rows by display name. ----
+  const QString nameS0 = party->pokemon.at(0)->speciesName();
+  QString nameS1;
+  for(PokemonBox* m : party->pokemon) if(m->species == S1) { nameS1 = m->speciesName(); break; }
+
+  int rowS0 = -1, rowS1 = -1;
+  for(int r = 0; r < ov->rowCount(QModelIndex()); ++r) {
+    const QString nm = ov->data(ov->index(r), PokemonOverviewModel::NameRole).toString();
+    if(nm == nameS0) rowS0 = r;
+    if(nm == nameS1) rowS1 = r;
+  }
+  QVERIFY(rowS0 >= 0);
+  QVERIFY(rowS1 >= 0);
+
+  // ---- Counts: S0 is party-only (box cell 0 + empty tooltip); S1 spans both. ----
+  const QVariantList s0Counts   = ov->data(ov->index(rowS0), PokemonOverviewModel::CountsRole).toList();
+  const QVariantList s0Tips     = ov->data(ov->index(rowS0), PokemonOverviewModel::TooltipsRole).toList();
+  QCOMPARE(s0Counts.at(0).toInt(), partyS0); // Party
+  QCOMPARE(s0Counts.at(1).toInt(), 0);       // Box 1 (none)
+  QVERIFY(s0Tips.at(1).toString().isEmpty()); // a zero cell carries no tooltip
+
+  const QVariantList s1Counts = ov->data(ov->index(rowS1), PokemonOverviewModel::CountsRole).toList();
+  const QVariantList s1Tips   = ov->data(ov->index(rowS1), PokemonOverviewModel::TooltipsRole).toList();
+  QCOMPARE(s1Counts.at(0).toInt(), partyS1); // Party
+  QCOMPARE(s1Counts.at(1).toInt(), 2);       // Box 1: the two we added
+
+  // ---- Tooltip on the Box-1 S1 cell: nickname list + others + caught/traded. ----
+  const QString tip = s1Tips.at(1).toString();
+  QVERIFY2(tip.contains(QStringLiteral("Sparky")), qPrintable(tip));
+  QVERIFY2(tip.contains(QStringLiteral("×1 other")), qPrintable(tip)); // the un-nicknamed b
+  QVERIFY2(tip.contains(QStringLiteral("×1 caught")), qPrintable(tip)); // b
+  QVERIFY2(tip.contains(QStringLiteral("×1 traded")), qPrintable(tip)); // a
+
+  // ---- Rows are alphabetized by species name. ----
+  QCollator coll; coll.setNumericMode(true); coll.setIgnorePunctuation(true);
+  for(int r = 1; r < ov->rowCount(QModelIndex()); ++r) {
+    const QString prev = ov->data(ov->index(r - 1), PokemonOverviewModel::NameRole).toString();
+    const QString cur  = ov->data(ov->index(r),     PokemonOverviewModel::NameRole).toString();
+    QVERIFY2(coll.compare(prev, cur) <= 0, "overview rows are not alphabetized");
+  }
 }
 
 QTEST_GUILESS_MAIN(TestStorageModel)

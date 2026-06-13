@@ -31,6 +31,7 @@
 #include "../mvc/itemselectmodel.h"
 #include "../mvc/itemstoragemodel.h"
 #include "../mvc/itemoverviewmodel.h"
+#include "../mvc/pokemonoverviewmodel.h"
 #include "../mvc/itemmarketmodel.h"
 #include "../mvc/pokemonstoragemodel.h"
 #include "../mvc/pokemonboxselectmodel.h"
@@ -78,6 +79,7 @@ class Bridge : public QObject
   Q_PROPERTY(ItemStorageModel* bagItemsModel MEMBER bagItemsModel NOTIFY bagItemsModelChanged) ///< Bag items model.
   Q_PROPERTY(ItemStorageModel* pcItemsModel MEMBER pcItemsModel NOTIFY pcItemsModelChanged) ///< PC items model.
   Q_PROPERTY(ItemOverviewModel* itemOverviewModel MEMBER itemOverviewModel NOTIFY itemOverviewModelChanged) ///< Bag+storage "where are my items" overview (View All pane).
+  Q_PROPERTY(PokemonOverviewModel* pokemonOverviewModel MEMBER pokemonOverviewModel NOTIFY pokemonOverviewModelChanged) ///< Party+boxes "where are my Pokemon" overview (View All pane).
   Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged) ///< Live font finder.
   Q_PROPERTY(FontSearchModel* fontSearchModel MEMBER fontSearchModel NOTIFY fontSearchModelChanged) ///< Font finder as a list model.
   Q_PROPERTY(FontsDB* fonts MEMBER fonts NOTIFY fontsChanged) ///< The font database (codec + glyphs).
@@ -121,6 +123,7 @@ signals:
   void bagItemsModelChanged();
   void pcItemsModelChanged();
   void itemOverviewModelChanged();
+  void pokemonOverviewModelChanged();
   void marketModelChanged();
   void pokemonStorageModel1Changed();
   void pokemonStorageModel2Changed();
@@ -157,6 +160,7 @@ public:
   ItemStorageModel* bagItemsModel = nullptr;          ///< @see bagItemsModel property.
   ItemStorageModel* pcItemsModel = nullptr;           ///< @see pcItemsModel property.
   ItemOverviewModel* itemOverviewModel = nullptr;     ///< @see itemOverviewModel property.
+  PokemonOverviewModel* pokemonOverviewModel = nullptr; ///< @see pokemonOverviewModel property.
   ItemMarketModel* marketModel = nullptr;             ///< @see marketModel property.
   PokemonStorageModel* pokemonStorageModel1 = nullptr; ///< @see pokemonStorageModel1 property.
   PokemonStorageModel* pokemonStorageModel2 = nullptr; ///< @see pokemonStorageModel2 property.
