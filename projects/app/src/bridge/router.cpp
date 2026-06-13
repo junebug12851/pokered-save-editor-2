@@ -22,6 +22,8 @@
 
 #include "./router.h"
 
+#include <QCoreApplication>
+
 Screen::Screen() {}
 Screen::Screen(bool modal, QString title, QString url, bool homeBtn)
   : modal(modal),
@@ -43,7 +45,7 @@ void Router::changeScreen(QString name)
   // Otherwise this causes a momentary flicker on the title where it changes
   // to the modal title briefly before displaying modal which looks very odd
   if(!scrn->modal) {
-    title = scrn->title;
+    title = QCoreApplication::translate("Screen", scrn->title.toUtf8().constData());
     titleChanged();
   }
 
@@ -100,7 +102,7 @@ void Router::closeScreen()
   // Otherwise this causes a momentary flicker on the title where it changes
   // to the modal title briefly before displaying modal which looks very odd
   if(!scrn->modal) {
-    title = scrn->title;
+    title = QCoreApplication::translate("Screen", scrn->title.toUtf8().constData());
     titleChanged();
   }
 
@@ -123,7 +125,7 @@ void Router::manualStackPush(QString name)
     return;
 
   if(!scrn->modal) {
-    title = scrn->title;
+    title = QCoreApplication::translate("Screen", scrn->title.toUtf8().constData());
     titleChanged();
   }
 
@@ -139,24 +141,27 @@ void Router::loadScreens()
   // Empty
   screens.insert("", new Screen);
 
-  // Modal
-  screens.insert("newFile", new Screen(true, "New File", "qrc:/ui/app/screens/modal/NewFile.qml"));
-  screens.insert("fileTools", new Screen(true, "File Tools", "qrc:/ui/app/screens/modal/FileTools.qml"));
-  screens.insert("about", new Screen(true, "About", "qrc:/ui/app/screens/modal/About.qml"));
-  screens.insert("fullKeyboard", new Screen(true, "Full Keyboard", "qrc:/ui/app/screens/modal/FullKeyboard.qml"));
-  screens.insert("fileError", new Screen(true, "File Error", "qrc:/ui/app/screens/modal/FileError.qml"));
+  // Modal. Titles are marked with QT_TRANSLATE_NOOP so lupdate extracts them
+  // (context "Screen"); they're stored as the en_US source here and translated
+  // at point of use (see changeScreen) — loadScreens runs at boot before the
+  // translator is installed, so they must not be translated eagerly.
+  screens.insert("newFile", new Screen(true, QT_TRANSLATE_NOOP("Screen", "New File"), "qrc:/ui/app/screens/modal/NewFile.qml"));
+  screens.insert("fileTools", new Screen(true, QT_TRANSLATE_NOOP("Screen", "File Tools"), "qrc:/ui/app/screens/modal/FileTools.qml"));
+  screens.insert("about", new Screen(true, QT_TRANSLATE_NOOP("Screen", "About"), "qrc:/ui/app/screens/modal/About.qml"));
+  screens.insert("fullKeyboard", new Screen(true, QT_TRANSLATE_NOOP("Screen", "Full Keyboard"), "qrc:/ui/app/screens/modal/FullKeyboard.qml"));
+  screens.insert("fileError", new Screen(true, QT_TRANSLATE_NOOP("Screen", "File Error"), "qrc:/ui/app/screens/modal/FileError.qml"));
 
   // Non-Modal
-  screens.insert("home", new Screen(false, "Home", "qrc:/ui/app/screens/non-modal/Home.qml"));
-  screens.insert("trainerCard", new Screen(false, "Trainer Card", "qrc:/ui/app/screens/non-modal/TrainerCard.qml"));
-  screens.insert("pokedex", new Screen(false, "Pokedex", "qrc:/ui/app/screens/non-modal/Pokedex.qml"));
-  screens.insert("bag", new Screen(false, "Items", "qrc:/ui/app/screens/non-modal/Bag.qml"));
-  screens.insert("pokemart", new Screen(false, "Pokemart", "qrc:/ui/app/screens/non-modal/Pokemart.qml"));
-  screens.insert("pokemon", new Screen(false, "Pokemon", "qrc:/ui/app/screens/non-modal/Pokemon.qml"));
-  screens.insert("pokemonDetails", new Screen(false, "Pokemon Details", "qrc:/ui/app/screens/non-modal/PokemonDetails.qml", false));
-  screens.insert("rival", new Screen(false, "Rival", "qrc:/ui/app/screens/non-modal/Rival.qml"));
-  screens.insert("maps", new Screen(false, "Maps", "qrc:/ui/app/screens/non-modal/Maps.qml"));
-  screens.insert("mapDetails", new Screen(false, "Map Details", "qrc:/ui/app/screens/non-modal/MapDetails.qml", false));
+  screens.insert("home", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Home"), "qrc:/ui/app/screens/non-modal/Home.qml"));
+  screens.insert("trainerCard", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Trainer Card"), "qrc:/ui/app/screens/non-modal/TrainerCard.qml"));
+  screens.insert("pokedex", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokedex"), "qrc:/ui/app/screens/non-modal/Pokedex.qml"));
+  screens.insert("bag", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Items"), "qrc:/ui/app/screens/non-modal/Bag.qml"));
+  screens.insert("pokemart", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokemart"), "qrc:/ui/app/screens/non-modal/Pokemart.qml"));
+  screens.insert("pokemon", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokemon"), "qrc:/ui/app/screens/non-modal/Pokemon.qml"));
+  screens.insert("pokemonDetails", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokemon Details"), "qrc:/ui/app/screens/non-modal/PokemonDetails.qml", false));
+  screens.insert("rival", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Rival"), "qrc:/ui/app/screens/non-modal/Rival.qml"));
+  screens.insert("maps", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Maps"), "qrc:/ui/app/screens/non-modal/Maps.qml"));
+  screens.insert("mapDetails", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Map Details"), "qrc:/ui/app/screens/non-modal/MapDetails.qml", false));
 }
 
 QHash<QString, Screen*> Router::screens = QHash<QString, Screen*>();

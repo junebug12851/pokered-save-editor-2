@@ -34,7 +34,7 @@ IconButtonSquare {
     }
 
     MenuItem {
-      text: "Close"
+      text: qsTr("Close")
       onTriggered: menu.close();
     }
   }

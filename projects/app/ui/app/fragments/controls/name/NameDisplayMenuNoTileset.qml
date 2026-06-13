@@ -28,18 +28,18 @@ Menu {
   }
 
   MenuItem {
-    text: "Toggle Example"
+    text: qsTr("Toggle Example")
     onTriggered: toggleExample();
   }
 
   MenuItem {
     enabled: hasBox
-    text: "Randomize Example"
+    text: qsTr("Randomize Example")
     onTriggered: reUpdateExample();
   }
 
   MenuItem {
-    text: "Close"
+    text: qsTr("Close")
     onTriggered: menu.close();
   }
 }

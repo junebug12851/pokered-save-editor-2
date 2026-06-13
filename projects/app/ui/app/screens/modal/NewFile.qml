@@ -28,7 +28,7 @@ Page {
   }
 
   TileButton {
-    title: "New Blank File"
+    title: qsTr("New Blank File")
     imgSrc: "qrc:/assets/icons/fontawesome/file.svg"
     hotKey: "Ctrl + N"
     sizeH: blankHeight
@@ -42,7 +42,7 @@ Page {
   }
 
   TileButton {
-    title: "New Random File"
+    title: qsTr("New Random File")
     imgSrc: "qrc:/assets/icons/fontawesome/dice.svg"
     hotKey: "Ctrl + Shift + R"
     anchors.bottom: parent.bottom
@@ -58,7 +58,7 @@ Page {
   }
 
   TileButton {
-    title: "Load an Existing File..."
+    title: qsTr("Load an Existing File...")
     imgSrc: "qrc:/assets/icons/fontawesome/folder-open.svg"
     hotKey: "Ctrl + O"
     anchors.top: parent.top
@@ -76,7 +76,7 @@ Page {
   }
 
   RecentFilesTile {
-    title: "Load a Recent File..."
+    title: qsTr("Load a Recent File...")
     imgSrc: "qrc:/assets/icons/fontawesome/file-import.svg"
     hotKey: "Ctrl + Shift + [0-4]"
     anchors.bottom: parent.bottom

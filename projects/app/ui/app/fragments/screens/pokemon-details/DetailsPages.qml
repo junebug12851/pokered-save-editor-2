@@ -36,13 +36,13 @@ Rectangle {
     font.capitalization: Font.Capitalize
 
     TabButton {
-      text: "General"
+      text: qsTr("General")
     }
     TabButton {
-      text: "DV/EV"
+      text: qsTr("DV/EV")
     }
     TabButton {
-      text: "Moves"
+      text: qsTr("Moves")
     }
   }
 

@@ -61,7 +61,7 @@ ColumnLayout {
     SearchParam {
       id: allSearch
       Layout.fillWidth: true
-      text: "All"
+      text: qsTr("All")
       ButtonGroup.group: filterGroup
       onReSearch: top.reSearch();
       Material.foreground: brg.settings.textColorDark
@@ -82,7 +82,7 @@ ColumnLayout {
       Layout.fillWidth: true
       // "Only" subtly signals that leaving Normal (for Single-Char, etc.) means
       // leaving the always-safe set — reinforced by its ⓘ tooltip.
-      text: "Normal Only"
+      text: qsTr("Normal Only")
       checked: true
       ButtonGroup.group: filterGroup
       onReSearch: top.reSearch();
@@ -100,7 +100,7 @@ ColumnLayout {
     SearchParam {
       id: singleSearch
       Layout.fillWidth: true
-      text: "Single-Char"
+      text: qsTr("Single-Char")
       ButtonGroup.group: filterGroup
       onReSearch: top.reSearch();
       Material.foreground: brg.settings.fontColorSingle
@@ -116,7 +116,7 @@ ColumnLayout {
     SearchParam {
       id: multiSearch
       Layout.fillWidth: true
-      text: "Multi-Char"
+      text: qsTr("Multi-Char")
       ButtonGroup.group: filterGroup
       onReSearch: top.reSearch();
       Material.foreground: brg.settings.fontColorMulti
@@ -133,7 +133,7 @@ ColumnLayout {
     SearchParam {
       id: varSearch
       Layout.fillWidth: true
-      text: "Variable"
+      text: qsTr("Variable")
       ButtonGroup.group: filterGroup
       onReSearch: top.reSearch();
       Material.foreground: brg.settings.fontColorVar
@@ -152,7 +152,7 @@ ColumnLayout {
     SearchParam {
       id: pictureSearch
       Layout.fillWidth: true
-      text: "Picture"
+      text: qsTr("Picture")
       ButtonGroup.group: filterGroup
       onReSearch: top.reSearch();
       Material.foreground: brg.settings.fontColorPicture
@@ -169,7 +169,7 @@ ColumnLayout {
     SearchParam {
       id: controlSearch
       Layout.fillWidth: true
-      text: "Control"
+      text: qsTr("Control")
       ButtonGroup.group: filterGroup
       onReSearch: top.reSearch();
       Material.foreground: brg.settings.fontColorControl

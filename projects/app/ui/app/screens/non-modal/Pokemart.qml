@@ -146,7 +146,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "Shop at the Pokemart"
+        text: qsTr("Shop at the Pokemart")
         font.pixelSize: 18
         color: brg.settings.textColorLight
       }
@@ -158,7 +158,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "Shop at the Game Corner"
+        text: qsTr("Shop at the Game Corner")
         font.pixelSize: 18
         color: brg.settings.textColorLight
       }
@@ -170,7 +170,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "Sell to the Pokemart"
+        text: qsTr("Sell to the Pokemart")
         font.pixelSize: 18
         color: brg.settings.textColorLight
       }
@@ -182,7 +182,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "Sell to the Game Corner"
+        text: qsTr("Sell to the Game Corner")
         font.pixelSize: 18
         color: brg.settings.textColorLight
       }
@@ -404,7 +404,7 @@ Page {
             anchors.bottom: cartAmount.bottom
 
             color: brg.settings.textColorMid
-            text: "Item cannot be sold"
+            text: qsTr("Item cannot be sold")
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
@@ -556,7 +556,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "There's not enough space for one or more items on the shopping cart."
+        text: qsTr("There's not enough space for one or more items on the shopping cart.")
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }
@@ -568,7 +568,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "You don't have enough space for the money your getting back."
+        text: qsTr("You don't have enough space for the money your getting back.")
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }
@@ -580,7 +580,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
 
-        text: "There's not enough money for all items on the cart."
+        text: qsTr("There's not enough money for all items on the cart.")
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }

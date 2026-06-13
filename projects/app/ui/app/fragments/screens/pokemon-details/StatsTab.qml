@@ -43,7 +43,7 @@ Rectangle {
       Button {
         id: statsTglBtn
         anchors.horizontalCenter: parent.horizontalCenter
-        text: "DV"
+        text: qsTr("DV")
         width: font.pixelSize * 5
         flat: true
 
@@ -143,7 +143,7 @@ Rectangle {
         }
 
         MainToolTip {
-          text: "Shiny didn't exist in Gen 1, but Gen 2 provided a way to determine a shiny from Gen 1 data. This way has been kept up with ever since."
+          text: qsTr("Shiny didn't exist in Gen 1, but Gen 2 provided a way to determine a shiny from Gen 1 data. This way has been kept up with ever since.")
         }
       }
 
@@ -169,12 +169,12 @@ Rectangle {
           }
           MenuSeparator { }
           MenuItem {
-            text: "Convert to Shiny"
+            text: qsTr("Convert to Shiny")
             enabled: !boxData.isShiny
             onTriggered: { boxData.makeShiny(); }
           }
           MenuItem {
-            text: "Convert to Non-Shiny"
+            text: qsTr("Convert to Non-Shiny")
             enabled: boxData.isShiny
             onTriggered: { boxData.unmakeShiny(); }
           }

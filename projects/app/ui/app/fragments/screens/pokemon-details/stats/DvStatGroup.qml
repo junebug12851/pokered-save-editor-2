@@ -37,7 +37,7 @@ Rectangle {
 
     // ---- HP (read-only, computed) ----
     Text {
-      text: "HP"
+      text: qsTr("HP")
       font.pixelSize: 14
       horizontalAlignment: Text.AlignRight
       Layout.preferredWidth: font.pixelSize * 3
@@ -71,7 +71,7 @@ Rectangle {
 
     // ---- Atk ----
     Text {
-      text: "Atk"
+      text: qsTr("Atk")
       font.pixelSize: 14
       horizontalAlignment: Text.AlignRight
       Layout.preferredWidth: font.pixelSize * 3
@@ -101,7 +101,7 @@ Rectangle {
 
     // ---- Def ----
     Text {
-      text: "Def"
+      text: qsTr("Def")
       font.pixelSize: 14
       horizontalAlignment: Text.AlignRight
       Layout.preferredWidth: font.pixelSize * 3
@@ -131,7 +131,7 @@ Rectangle {
 
     // ---- Spd ----
     Text {
-      text: "Spd"
+      text: qsTr("Spd")
       font.pixelSize: 14
       horizontalAlignment: Text.AlignRight
       Layout.preferredWidth: font.pixelSize * 3
@@ -161,7 +161,7 @@ Rectangle {
 
     // ---- Sp ----
     Text {
-      text: "Sp"
+      text: qsTr("Sp")
       font.pixelSize: 14
       horizontalAlignment: Text.AlignRight
       Layout.preferredWidth: font.pixelSize * 3

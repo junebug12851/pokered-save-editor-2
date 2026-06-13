@@ -44,7 +44,7 @@ QVariant PokemonStartersModel::data(const QModelIndex& index, int role) const
   if(index.row() == 0 && role == IndRole)
     return 0;
   else if(index.row() == 0 && role == NameRole)
-    return "None";
+    return tr("None");
   else if(index.row() == 0)
     return QVariant();
 

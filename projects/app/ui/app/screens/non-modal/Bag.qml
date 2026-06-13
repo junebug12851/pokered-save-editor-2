@@ -28,7 +28,7 @@ Page {
       Layout.fillWidth: true
       Layout.fillHeight: true
 
-      title: "Bag"
+      title: qsTr("Bag")
       box: brg.file.data.dataExpanded.player.items
       model: brg.bagItemsModel
     }
@@ -38,7 +38,7 @@ Page {
       Layout.fillWidth: true
       Layout.fillHeight: true
 
-      title: "Storage"
+      title: qsTr("Storage")
       box: brg.file.data.dataExpanded.storage.items
       model: brg.pcItemsModel
     }

@@ -46,7 +46,7 @@ MouseArea {
     Component.onCompleted: child.text = brg.file.data.dataExpanded.player.basics.money.toString()
 
     MainToolTip {
-      text: "Money, 0 - 999,999"
+      text: qsTr("Money, 0 - 999,999")
     }
 
     Connections {

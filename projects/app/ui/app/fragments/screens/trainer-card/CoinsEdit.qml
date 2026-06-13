@@ -42,7 +42,7 @@ MouseArea {
     Component.onCompleted: child.text = brg.file.data.dataExpanded.player.basics.coins.toString()
 
     MainToolTip {
-      text: "Casino Coins, 0 - 9,999"
+      text: qsTr("Casino Coins, 0 - 9,999")
     }
 
     Connections {

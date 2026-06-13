@@ -103,7 +103,7 @@ Rectangle {
           }
 
           MainToolTip {
-            text: "Pokemon's display name, it's considered to be a Nickname if it isn't the species name in all caps. Nickname's are difficult to change and are unaffected by evolution."
+            text: qsTr("Pokemon's display name, it's considered to be a Nickname if it isn't the species name in all caps. Nickname's are difficult to change and are unaffected by evolution.")
           }
         }
       }
@@ -127,7 +127,7 @@ Rectangle {
             function onType1Changed() { type1.currentIndex = brg.typesModel.valToIndex(boxData.type1); }
           }
           MainToolTip {
-            text: "The Pokemon's first type used for damage from incomming moves."
+            text: qsTr("The Pokemon's first type used for damage from incomming moves.")
           }
         }
 
@@ -144,7 +144,7 @@ Rectangle {
             function onType2Changed() { theType2.currentIndex = brg.typesModel.valToIndex(boxData.type2); }
           }
           MainToolTip {
-            text: "The Pokemon's second type used for damage from incomming moves."
+            text: qsTr("The Pokemon's second type used for damage from incomming moves.")
           }
         }
 
@@ -170,7 +170,7 @@ Rectangle {
             function onOtNameChanged() { otNameEdit.text = boxData.otName; }
           }
           MainToolTip {
-            text: "This determines if the Pokemon is a traded Pokemon. If this doesn't match your character's Name and ID then it's considered not yours."
+            text: qsTr("This determines if the Pokemon is a traded Pokemon. If this doesn't match your character's Name and ID then it's considered not yours.")
           }
         }
 
@@ -235,7 +235,7 @@ Rectangle {
             function onOtIDChanged() { otIDEdit.text = boxData.otID.toString(16).toUpperCase(); }
           }
           MainToolTip {
-            text: "This determines if the Pokemon is a traded Pokemon. If this doesn't match your character's Name and ID then it's considered not yours."
+            text: qsTr("This determines if the Pokemon is a traded Pokemon. If this doesn't match your character's Name and ID then it's considered not yours.")
           }
         }
 
@@ -305,7 +305,7 @@ Rectangle {
             function onExpChanged() { nextExpEdit.value = boxData.exp; }
           }
           MainToolTip {
-            text: "Fine-tune your Pokemon's exp between levels, for whole level changes change thel evel directly."
+            text: qsTr("Fine-tune your Pokemon's exp between levels, for whole level changes change thel evel directly.")
           }
         }
       }
@@ -342,7 +342,7 @@ Rectangle {
             function onCatchRateChanged() { catchRateEdit.text = boxData.catchRate.toString(10); }
           }
           MainToolTip {
-            text: "This isn't used at all, it's leftover garbage from when you were battling the Pokemon. Nonetheless it does exist and you can edit it here."
+            text: qsTr("This isn't used at all, it's leftover garbage from when you were battling the Pokemon. Nonetheless it does exist and you can edit it here.")
           }
         }
 
@@ -369,7 +369,7 @@ Rectangle {
             function onExpChanged() { futureNatureEdit.currentIndex = brg.natureSelectModel.natureToListIndex(boxData.getNature); }
           }
           MainToolTip {
-            text: "Nature's weren't created until gen 3, in the past few years Game Freak has released a formula for determining natures retroactively for Gen 1 games using IVs."
+            text: qsTr("Nature's weren't created until gen 3, in the past few years Game Freak has released a formula for determining natures retroactively for Gen 1 games using IVs.")
           }
         }
 

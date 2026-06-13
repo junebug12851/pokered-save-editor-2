@@ -23,7 +23,7 @@ Rectangle {
     rowSpacing: 3
 
     Text {
-      text: "HP"
+      text: qsTr("HP")
       font.pixelSize: 14
       font.bold: true
       horizontalAlignment: Text.AlignRight
@@ -37,7 +37,7 @@ Rectangle {
     }
 
     Text {
-      text: "Atk"
+      text: qsTr("Atk")
       font.pixelSize: 14
       font.bold: true
       horizontalAlignment: Text.AlignRight
@@ -51,7 +51,7 @@ Rectangle {
     }
 
     Text {
-      text: "Def"
+      text: qsTr("Def")
       font.pixelSize: 14
       font.bold: true
       horizontalAlignment: Text.AlignRight
@@ -65,7 +65,7 @@ Rectangle {
     }
 
     Text {
-      text: "Spd"
+      text: qsTr("Spd")
       font.pixelSize: 14
       font.bold: true
       horizontalAlignment: Text.AlignRight
@@ -79,7 +79,7 @@ Rectangle {
     }
 
     Text {
-      text: "Sp"
+      text: qsTr("Sp")
       font.pixelSize: 14
       font.bold: true
       horizontalAlignment: Text.AlignRight

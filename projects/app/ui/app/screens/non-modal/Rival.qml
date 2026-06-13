@@ -114,7 +114,7 @@ Page {
       Label {
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 14
-        text: "Starter"
+        text: qsTr("Starter")
       }
 
       ComboBox {
@@ -152,7 +152,7 @@ Page {
         }
 
         MainToolTip {
-          text: "Set at start of game and determines your rivals team, namely which Pokemon he has growing with him."
+          text: qsTr("Set at start of game and determines your rivals team, namely which Pokemon he has growing with him.")
         }
       }
     }

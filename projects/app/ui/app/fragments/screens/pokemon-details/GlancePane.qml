@@ -70,7 +70,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: "The Pokemon's species, glitch Pokemon are available."
+        text: qsTr("The Pokemon's species, glitch Pokemon are available.")
       }
     }
 
@@ -88,7 +88,7 @@ Rectangle {
 
       font.pixelSize: 14
 
-      text: "Lv."
+      text: qsTr("Lv.")
     }
 
     DefTextEdit {
@@ -133,7 +133,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: "Pokemon level from 1 to 100, pokemon below level 5 could cause underflow bugs as per gen 1 game issues."
+        text: qsTr("Pokemon level from 1 to 100, pokemon below level 5 could cause underflow bugs as per gen 1 game issues.")
       }
     }
 
@@ -155,7 +155,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: "The Pokemon's status, sleep also has number of turns left."
+        text: qsTr("The Pokemon's status, sleep also has number of turns left.")
       }
     }
   }
@@ -260,7 +260,7 @@ Rectangle {
 
       font.pixelSize: 14
 
-      text: "HP"
+      text: qsTr("HP")
     }
 
     Slider {
@@ -359,7 +359,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: "HP Left from the Pokemon's maximum"
+        text: qsTr("HP Left from the Pokemon's maximum")
       }
     }
   }

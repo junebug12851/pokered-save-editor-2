@@ -40,9 +40,9 @@ QString ItemMarketEntryMoney::_name()
     return "";
 
   if(*isBuyMode)
-    return "Money => Coins";
+    return tr("Money => Coins");
 
-  return   "Coins => Money";
+  return   tr("Coins => Money");
 }
 
 // An exception, Money is strictly a money exchange as in your always selling

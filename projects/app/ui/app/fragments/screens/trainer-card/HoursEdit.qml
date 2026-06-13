@@ -38,7 +38,7 @@ DefTextEdit {
   }
 
   MainToolTip {
-    text: "Hours played, 0-23. If days is 10 then 0-15"
+    text: qsTr("Hours played, 0-23. If days is 10 then 0-15")
   }
 
   Connections {

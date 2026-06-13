@@ -38,7 +38,7 @@ DefTextEdit {
   }
 
   MainToolTip {
-    text: "Days played, 0-10"
+    text: qsTr("Days played, 0-10")
   }
 
   Connections {

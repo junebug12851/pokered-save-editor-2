@@ -78,7 +78,7 @@ Page {
       parent: footer.btn3
       MenuItem { text: "Max Out"; onTriggered: boxData.maxOut();
         MainToolTip {
-          text: "Max out all stats, health, move pp & pp-up, etc..."
+          text: qsTr("Max out all stats, health, move pp & pp-up, etc...")
         }
       }
       MenuItem { text: "Correct Data"; onTriggered: {
@@ -91,22 +91,22 @@ Page {
         }
 
         MainToolTip {
-          text: "Make all all stats, health, moves, types etc... Game Accurate"
+          text: qsTr("Make all all stats, health, moves, types etc... Game Accurate")
         }
       }
       MenuItem { text: "Reset"; onTriggered: boxData.resetPokemon();
         MainToolTip {
-          text: "Reset this Pokemon back to a level 5 Pokemon including all moves and other data."
+          text: qsTr("Reset this Pokemon back to a level 5 Pokemon including all moves and other data.")
         }
       }
       MenuItem { text: "Evolve"; onTriggered: boxData.evolve(); enabled: boxData.hasEvolution
         MainToolTip {
-          text: "Evolve this Pokemon"
+          text: qsTr("Evolve this Pokemon")
         }
       }
       MenuItem { text: "De-Evolve"; onTriggered: boxData.deEvolve(); enabled: boxData.hasDeEvolution
         MainToolTip {
-          text: "De-Evolve this Pokemon"
+          text: qsTr("De-Evolve this Pokemon")
         }
       }
       MenuSeparator { }

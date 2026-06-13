@@ -9,155 +9,155 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 
 Menu {
-  title: "Simulated Tileset"
+  title: qsTr("Simulated Tileset")
 
   MenuItem {
-    text: "Simulate Outdoors"
+    text: qsTr("Simulate Outdoors")
     checkable: true
     checked: brg.settings.previewOutdoor
     onTriggered: brg.settings.previewOutdoor = !brg.settings.previewOutdoor
   }
 
   MenuItem {
-    text: "Cavern"
+    text: qsTr("Cavern")
     enabled: brg.settings.previewTileset !== "Cavern"
     onTriggered: brg.settings.previewTileset = "Cavern"
   }
 
   MenuItem {
-    text: "Cemetery"
+    text: qsTr("Cemetery")
     enabled: brg.settings.previewTileset !== "Cemetery"
     onTriggered: brg.settings.previewTileset = "Cemetery"
   }
 
   MenuItem {
-    text: "Club"
+    text: qsTr("Club")
     enabled: brg.settings.previewTileset !== "Club"
     onTriggered: brg.settings.previewTileset = "Club"
   }
 
   MenuItem {
-    text: "Dojo"
+    text: qsTr("Dojo")
     enabled: brg.settings.previewTileset !== "Dojo"
     onTriggered: brg.settings.previewTileset = "Dojo"
   }
 
   MenuItem {
-    text: "Facility"
+    text: qsTr("Facility")
     enabled: brg.settings.previewTileset !== "Facility"
     onTriggered: brg.settings.previewTileset = "Facility"
   }
 
   MenuItem {
-    text: "Forest"
+    text: qsTr("Forest")
     enabled: brg.settings.previewTileset !== "Forest"
     onTriggered: brg.settings.previewTileset = "Forest"
   }
 
   MenuItem {
-    text: "Forest Gate"
+    text: qsTr("Forest Gate")
     enabled: brg.settings.previewTileset !== "Forest Gate"
     onTriggered: brg.settings.previewTileset = "Forest Gate"
   }
 
   MenuItem {
-    text: "Gate"
+    text: qsTr("Gate")
     enabled: brg.settings.previewTileset !== "Gate"
     onTriggered: brg.settings.previewTileset = "Gate"
   }
 
   MenuItem {
-    text: "Gym"
+    text: qsTr("Gym")
     enabled: brg.settings.previewTileset !== "Gym"
     onTriggered: brg.settings.previewTileset = "Gym"
   }
 
   MenuItem {
-    text: "House"
+    text: qsTr("House")
     enabled: brg.settings.previewTileset !== "House"
     onTriggered: brg.settings.previewTileset = "House"
   }
 
   MenuItem {
-    text: "Interior"
+    text: qsTr("Interior")
     enabled: brg.settings.previewTileset !== "Interior"
     onTriggered: brg.settings.previewTileset = "Interior"
   }
 
   MenuItem {
-    text: "Lab"
+    text: qsTr("Lab")
     enabled: brg.settings.previewTileset !== "Lab"
     onTriggered: brg.settings.previewTileset = "Lab"
   }
 
   MenuItem {
-    text: "Lobby"
+    text: qsTr("Lobby")
     enabled: brg.settings.previewTileset !== "Lobby"
     onTriggered: brg.settings.previewTileset = "Lobby"
   }
 
   MenuItem {
-    text: "Mansion"
+    text: qsTr("Mansion")
     enabled: brg.settings.previewTileset !== "Mansion"
     onTriggered: brg.settings.previewTileset = "Mansion"
   }
 
   MenuItem {
-    text: "Mart"
+    text: qsTr("Mart")
     enabled: brg.settings.previewTileset !== "Mart"
     onTriggered: brg.settings.previewTileset = "Mart"
   }
 
   MenuItem {
-    text: "Museum"
+    text: qsTr("Museum")
     enabled: brg.settings.previewTileset !== "Museum"
     onTriggered: brg.settings.previewTileset = "Museum"
   }
 
   MenuItem {
-    text: "Overworld"
+    text: qsTr("Overworld")
     enabled: brg.settings.previewTileset !== "Overworld"
     onTriggered: brg.settings.previewTileset = "Overworld"
   }
 
   MenuItem {
-    text: "Plateau"
+    text: qsTr("Plateau")
     enabled: brg.settings.previewTileset !== "Plateau"
     onTriggered: brg.settings.previewTileset = "Plateau"
   }
 
   MenuItem {
-    text: "Pokecenter"
+    text: qsTr("Pokecenter")
     enabled: brg.settings.previewTileset !== "Pokecenter"
     onTriggered: brg.settings.previewTileset = "Pokecenter"
   }
 
   MenuItem {
-    text: "Reds House 1"
+    text: qsTr("Reds House 1")
     enabled: brg.settings.previewTileset !== "Reds House 1"
     onTriggered: brg.settings.previewTileset = "Reds House 1"
   }
 
   MenuItem {
-    text: "Reds House 2"
+    text: qsTr("Reds House 2")
     enabled: brg.settings.previewTileset !== "Reds House 2"
     onTriggered: brg.settings.previewTileset = "Reds House 2"
   }
 
   MenuItem {
-    text: "Ship"
+    text: qsTr("Ship")
     enabled: brg.settings.previewTileset !== "Ship"
     onTriggered: brg.settings.previewTileset = "Ship"
   }
 
   MenuItem {
-    text: "Ship Port"
+    text: qsTr("Ship Port")
     enabled: brg.settings.previewTileset !== "Ship Port"
     onTriggered: brg.settings.previewTileset = "Ship Port"
   }
 
   MenuItem {
-    text: "Underground"
+    text: qsTr("Underground")
     enabled: brg.settings.previewTileset !== "Underground"
     onTriggered: brg.settings.previewTileset = "Underground"
   }

@@ -346,7 +346,7 @@ Image {
         spacing: 4
 
         Label {
-          text: "Simulated"
+          text: qsTr("Simulated")
           font.bold: true
           font.pixelSize: 13
           color: brg.settings.textColorDark
@@ -360,7 +360,7 @@ Image {
         }
 
         FlatToggle {
-          text: "Outdoor"
+          text: qsTr("Outdoor")
           active: brg.settings.previewOutdoor
           onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
           MainToolTip { text: "Render tiles as they'd look outdoors vs. indoors." }
@@ -442,7 +442,7 @@ Image {
         font.pixelSize: 11
         color: feedbackColorNormal
         wrapMode: Text.WordWrap
-        text: "Using " + regCount + " out of " + chopLen + " bytes."
+        text: qsTr("Using %1 out of %2 bytes.").arg(regCount).arg(chopLen)
       }
 
       Label {
@@ -455,7 +455,7 @@ Image {
         font.pixelSize: 11
         color: feedbackColorWarning
         wrapMode: Text.WordWrap
-        text: "Warning: This name is meant to be a max of 7 characters"
+        text: qsTr("Warning: This name is meant to be a max of 7 characters")
       }
 
       Label {
@@ -466,7 +466,7 @@ Image {
         font.pixelSize: 11
         color: feedbackColorWarning
         wrapMode: Text.WordWrap
-        text: "Warning: This name expands out to be much longer on screen."
+        text: qsTr("Warning: This name expands out to be much longer on screen.")
       }
 
       Label {
@@ -476,7 +476,7 @@ Image {
         font.pixelSize: 11
         color: feedbackColorWarning
         wrapMode: Text.WordWrap
-        text: "Warning: You've used all 10 out of 10 bytes available."
+        text: qsTr("Warning: You've used all 10 out of 10 bytes available.")
       }
     }
   }
@@ -515,7 +515,7 @@ Image {
     color: feedbackColorWarning
     horizontalAlignment: (centerFeedback) ? Text.AlignHCenter : undefined
 
-    text: "Warning: This name is meant to be a max of 7 characters"
+    text: qsTr("Warning: This name is meant to be a max of 7 characters")
   }
 
   Text {
@@ -531,7 +531,7 @@ Image {
     color: feedbackColorWarning
     horizontalAlignment: (centerFeedback) ? Text.AlignHCenter : undefined
 
-    text: "Warning: This name expands out to be much longer on screen."
+    text: qsTr("Warning: This name expands out to be much longer on screen.")
   }
 
   Text {
@@ -546,7 +546,7 @@ Image {
     color: feedbackColorWarning
     horizontalAlignment: (centerFeedback) ? Text.AlignHCenter : undefined
 
-    text: "Warning: You've used all 10 out of 10 bytes available."
+    text: qsTr("Warning: You've used all 10 out of 10 bytes available.")
   }
 
   // Initial ground-work

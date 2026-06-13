@@ -32,7 +32,7 @@ Page {
 
   TileButton {
     id: saveFileBtn
-    title: "Save File"
+    title: qsTr("Save File")
     imgSrc: "qrc:/assets/icons/fontawesome/save.svg"
     hotKey: "Ctrl + S"
     sizeH: saveHeight
@@ -49,7 +49,7 @@ Page {
   }
 
   TileButton {
-    title: "Revert File"
+    title: qsTr("Revert File")
     imgSrc: "qrc:/assets/icons/fontawesome/undo.svg"
     hotKey: "Ctrl + Shift + O"
     anchors.top: saveFileBtn.bottom
@@ -65,7 +65,7 @@ Page {
   }
 
   TileButton {
-    title: "Scrub File"
+    title: qsTr("Scrub File")
     imgSrc: "qrc:/assets/icons/fontawesome/broom.svg"
     hotKey: "Ctrl + Shift + W"
     anchors.bottom: parent.bottom
@@ -82,7 +82,7 @@ Page {
   }
 
   TileButton {
-    title: "Save File As..."
+    title: qsTr("Save File As...")
     imgSrc: "qrc:/assets/icons/fontawesome/file-export.svg"
     hotKey: "Ctrl + Shift + S"
     anchors.top: parent.top
@@ -102,7 +102,7 @@ Page {
   }
 
   TileButton {
-    title: "Save Copy As..."
+    title: qsTr("Save Copy As...")
     imgSrc: "qrc:/assets/icons/fontawesome/copy.svg"
     hotKey: "Ctrl + Alt + S"
     anchors.bottom: parent.bottom

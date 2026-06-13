@@ -39,7 +39,7 @@ Page {
     }
 
     Text {
-      text: "Couldn't open this file"
+      text: qsTr("Couldn't open this file")
       color: brg.settings.textColorDark
       font.pixelSize: 24
       font.bold: true

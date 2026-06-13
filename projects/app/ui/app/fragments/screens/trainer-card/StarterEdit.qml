@@ -34,7 +34,7 @@ MouseArea {
     Component.onCompleted: currentIndex = brg.starterModel.valToIndex(brg.file.data.dataExpanded.player.basics.playerStarter);
 
     MainToolTip {
-      text: "Set based on starter you chose, I don't think this is ever used in gameplay."
+      text: qsTr("Set based on starter you chose, I don't think this is ever used in gameplay.")
     }
 
     Connections {
@@ -53,7 +53,7 @@ MouseArea {
       horizontalAlignment: Text.AlignRight
       verticalAlignment: Text.AlignVCenter
 
-      text: "Starter"
+      text: qsTr("Starter")
     }
 
     RandomMenu {

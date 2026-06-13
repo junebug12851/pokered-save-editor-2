@@ -44,7 +44,7 @@ RowLayout {
     font.letterSpacing: 2
     font.pixelSize: 14
 
-    placeholderText: "Enter a name"
+    placeholderText: qsTr("Enter a name")
     placeholderTextColor: Qt.lighter(brg.settings.textColorDark, 1.25)
 
     onAccepted: root.accepted()

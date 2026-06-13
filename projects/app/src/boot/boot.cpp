@@ -25,6 +25,10 @@
 #include <QIcon>
 #include <QElapsedTimer>
 #include <QDebug>
+#include <QTranslator>
+#include <QLocale>
+#include <QSettings>
+#include <QLibraryInfo>
 
 #include "../../ui/window/mainwindow.h"
 #include "../bridge/router.h"
@@ -38,6 +42,38 @@ extern void bootQmlLinkage();
 
 // There is only ever one main window.
 MainWindow* mainWindow = nullptr;
+
+// Installs the UI translators, before any QML is instantiated, so qsTr()/tr()
+// resolve to the chosen language at load time.
+//
+// Language preference resolves as: an explicit "ui/language" setting (a locale
+// name like "fr" or "de"), else the system locale. English is the source
+// language, so when no .qm matches — or a particular string is untranslated —
+// the UI simply falls back to the source text. That graceful degradation is by
+// design (see notes/context/principles.md): a missing translation never blanks
+// a label or blocks the user. See notes/reference/i18n.md for the pipeline.
+static void installTranslators(QApplication* app)
+{
+  QSettings settings; // uses the org/app names set in createApp()
+  const QString pref = settings.value(QStringLiteral("ui/language")).toString();
+  const QLocale locale = pref.isEmpty() ? QLocale::system() : QLocale(pref);
+
+  // The app's own strings (translations/pse_<locale>.ts → :/i18n/pse_<locale>.qm).
+  auto* appTr = new QTranslator(app);
+  if (appTr->load(locale, QStringLiteral("pse"), QStringLiteral("_"),
+                  QStringLiteral(":/i18n")))
+    app->installTranslator(appTr);
+  else
+    delete appTr; // no catalog for this locale — stay on the en_US source strings
+
+  // Qt's own built-in strings (standard dialog buttons, etc.), best-effort.
+  auto* qtTr = new QTranslator(app);
+  if (qtTr->load(locale, QStringLiteral("qtbase"), QStringLiteral("_"),
+                 QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+    app->installTranslator(qtTr);
+  else
+    delete qtTr;
+}
 
 // Sets critical Qt options that must be configured before QApplication is created.
 static void preBootAttributes()
@@ -64,6 +100,10 @@ static void preBootAttributes()
   // on many Windows drivers. Qt Quick handles its own antialiasing internally.
 
   auto* app = new QApplication(argc, argv);
+
+  // Install translators right after the app exists and before the MainWindow
+  // (and thus any QML) is created, so qsTr()/tr() resolve at load time.
+  installTranslators(app);
 
   qSetMessagePattern("[%{type}]: %{message} ~ %{time} %{file} %{function} %{line}");
 

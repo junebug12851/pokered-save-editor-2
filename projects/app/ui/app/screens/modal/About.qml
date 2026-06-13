@@ -73,7 +73,7 @@ Page {
         Text {
           width: parent.width
           horizontalAlignment: Text.AlignHCenter
-          text: "Credits"
+          text: qsTr("Credits")
           font.pixelSize: 36
           font.bold: true
           color: brg.settings.primaryColor
@@ -83,7 +83,7 @@ Page {
           width: parent.width
           horizontalAlignment: Text.AlignHCenter
           wrapMode: Text.WordWrap
-          text: "A heartfelt thank-you to all the people, projects, and tools that made this editor possible."
+          text: qsTr("A heartfelt thank-you to all the people, projects, and tools that made this editor possible.")
           font.pixelSize: 15
           color: brg.settings.textColorDark
         }
@@ -283,7 +283,7 @@ Page {
         Text {
           width: parent.width
           horizontalAlignment: Text.AlignHCenter
-          text: "© 2017–2026 Twilight  •  Licensed under the Apache License 2.0"
+          text: qsTr("© 2017–2026 Twilight  •  Licensed under the Apache License 2.0")
           font.pixelSize: 12
           color: brg.settings.textColorMid
         }

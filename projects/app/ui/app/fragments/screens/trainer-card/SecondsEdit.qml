@@ -40,7 +40,7 @@ DefTextEdit {
   }
 
   MainToolTip {
-    text: "Seconds played, 0-59"
+    text: qsTr("Seconds played, 0-59")
   }
 
   Connections {

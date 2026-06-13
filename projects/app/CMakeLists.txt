@@ -144,3 +144,35 @@ if(WIN32 AND PSE_GEN_WINRC)
         ${CMAKE_CURRENT_BINARY_DIR}/pse_app.rc @ONLY)
     target_sources(PokeredSaveEditor PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/pse_app.rc)
 endif()
+
+# --- Internationalization (i18n) — Qt Linguist pipeline ----------------------
+# Source language is en_US (the literal strings in the code). Each shipped locale
+# gets a translations/pse_<locale>.ts catalog; lupdate extracts qsTr()/tr() calls
+# into it, lrelease compiles it to a binary .qm, and qt_add_translations embeds
+# the .qm under the ":/i18n" resource prefix. boot.cpp installs a QTranslator that
+# loads the right .qm at startup; English (or any untranslated string) just shows
+# the source text — graceful degradation, no missing-string blanks.
+#
+# To add a language: add translations/pse_<locale>.ts below, build the
+# `update_translations` target once to populate it, translate it in Qt Linguist,
+# and rebuild. Full guide: notes/reference/i18n.md.
+#
+# Translatable sources. QML lives inside app.qrc (not target SOURCES), so it is
+# gathered explicitly for lupdate; C++ (appcore models + boot/bridge) is scanned
+# too so tr() in models is picked up. CONFIGURE_DEPENDS re-globs on each build.
+set(PSE_TS_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/pse_en.ts
+)
+
+file(GLOB_RECURSE PSE_I18N_SOURCES CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/ui/*.qml
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
+)
+
+qt_add_translations(PokeredSaveEditor
+    TS_FILES ${PSE_TS_FILES}
+    SOURCES ${PSE_I18N_SOURCES}
+    RESOURCE_PREFIX "/i18n"
+    LUPDATE_OPTIONS -no-obsolete -locations none
+)

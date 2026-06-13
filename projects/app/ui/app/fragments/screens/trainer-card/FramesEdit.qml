@@ -41,7 +41,7 @@ DefTextEdit {
   }
 
   MainToolTip {
-    text: "Frames played, 0-59"
+    text: qsTr("Frames played, 0-59")
   }
 
   Connections {
@@ -93,7 +93,7 @@ DefTextEdit {
       }
 
       MenuItem {
-        text: "Close"
+        text: qsTr("Close")
         onTriggered: playtimeMenu.close();
       }
     }

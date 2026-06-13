@@ -128,7 +128,7 @@ Page {
         onClicked: top.toggleExample();
 
         MainToolTip {
-          text: "Preview just the name, or the name inside an example sentence."
+          text: qsTr("Preview just the name, or the name inside an example sentence.")
         }
       }
 

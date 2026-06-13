@@ -51,7 +51,7 @@ QVariant RecentFilesModel::data(const QModelIndex& index, int role) const
 
   // If it's the special clear button then treat that specially
   if(index.row() == 0 && role == PathRole)
-    return "Clear Recent Files";
+    return tr("Clear Recent Files");
   else if(index.row() == 0 && role == EnabledRole)
     return file->recentFilesCount() > 0;
   else if(index.row() == 0 && role == FileIndexRole)

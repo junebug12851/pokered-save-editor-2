@@ -81,7 +81,7 @@ ToolBar {
 
       // Plain caption — NOT a button.
       Label {
-        text: "Simulated"
+        text: qsTr("Simulated")
         font.bold: true
         font.pixelSize: 13
         color: brg.settings.textColorDark
@@ -96,7 +96,7 @@ ToolBar {
       }
 
       FlatToggle {
-        text: "Outdoor"
+        text: qsTr("Outdoor")
         active: brg.settings.previewOutdoor
         onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
 
@@ -119,8 +119,8 @@ ToolBar {
         onClicked: top.showTileset = !top.showTileset;
 
         MainToolTip {
-          text: "Switch between the character grid and the full simulated " +
-                "tileset (click any tile to insert it)."
+          text: qsTr("Switch between the character grid and the full simulated " +
+                "tileset (click any tile to insert it).")
         }
       }
     }

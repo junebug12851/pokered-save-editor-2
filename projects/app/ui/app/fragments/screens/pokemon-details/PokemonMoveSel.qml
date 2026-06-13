@@ -107,7 +107,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: "Pokemon Move"
+        text: qsTr("Pokemon Move")
       }
     }
 
@@ -160,7 +160,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: "Pokemon PP"
+        text: qsTr("Pokemon PP")
       }
     }
 
@@ -199,7 +199,7 @@ Rectangle {
         id: moveSelMenu
 
         Menu {
-          title: "PP Up"
+          title: qsTr("PP Up")
 
           MenuItem { text: "Currently: " + monMove.ppUp + "/3"}
           MenuSeparator { }
@@ -210,7 +210,7 @@ Rectangle {
         }
 
         Menu {
-          title: "All Moves"
+          title: qsTr("All Moves")
 
           MenuItem { text: "Clear All"; onTriggered: { boxData.clearMoves(); } }
           MenuItem { text: "Re-Roll All"; onTriggered: { boxData.randomizeMoves(); } }
