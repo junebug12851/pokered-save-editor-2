@@ -49,27 +49,27 @@ Both are exactly `0x8000` bytes. See `plans/testing.md`.
 - **Box checksums (bank 2):** each of boxes 1–6 has its own individual checksum, plus one overall
   bank-2 checksum that *excludes* the individual ones. The game doesn't always use or recalculate
   the box checksums, so only recompute them when the boxes are actually touched.
-- **"Boxes formatted" flag + when the game actually wipes the boxes (Twilight, ex-pret team — verify
-  against `pret/pokered` if relied on).** `0x284C` holds the current box index in its low 7 bits;
-  **bit 7 is the "boxes are formatted" flag**. The 12 boxes live at `0x4000` (set A, boxes 1–6) and
-  `0x6000` (set B, boxes 7–12); the *active* box is also cached at `0x30C0` and that cache is what's
-  edited/loaded regardless of the flag. Key behaviour Twilight recalls from the disassembly:
-  - The game only **zeroes large box blocks in two places**: the hidden **"clear save" / new-file
-    screen**, and the **box-switch routine when the formatted flag is OFF** (switching boxes formats
-    *all* boxes to empty and sets the flag on). **Starting a new game does NOT wipe the box region**
-    (the old data persists until one of those two events).
-  - So an unformatted save's `0x4000`/`0x6000` regions can still hold **real, intact Pokémon** — the
-    data isn't destroyed until the player switches boxes in-game. This is the basis for the Unformat
-    warning copy (`Pokemon.qml`) and a possible **recovery feature** (see below).
-  - **Recovery-opportunity THEORY (unproven — needs disassembly research before building):** the app
-    could let a user keep the boxes 2–12 data across an unformat/reformat (or even a fresh game),
-    since box 1 defaults active and the party is wiped on a new file. The hard part is that
-    unformatted box bytes may be **garbage** (the game treats them as untrusted and so do we — the
-    editor currently does NOT expand `0x4000`/`0x6000` when the flag is off, by design). Any recovery
-    path must parse that region **defensively + fail-closed** (validate species/counts/checksums and
-    bail to "not recoverable" on any inconsistency) rather than feeding unvalidated data into the live
-    model — ideally quarantined in a separate opt-in "box recovery" view/tool, not the main editor.
-    Tracked as an idea only; do not implement without Twilight's go-ahead + a proper source check.
+- **"Boxes formatted" flag + when the game actually wipes the boxes (SOURCE-VERIFIED 2026-06-13
+  against `pret/pokered`; full writeup: `reference/box-recovery-research.md`).** `0x284C` holds the
+  current box index in its low 7 bits; **bit 7 is `BIT_HAS_CHANGED_BOXES`** — literally *"has the
+  player ever changed PC boxes"* (`wCurrentBoxNum`), which the editor exposes as `boxesFormatted`.
+  The 12 boxes live at `0x4000` (boxes 1–6 + checksums) and `0x6000` (boxes 7–12 + checksums); the
+  active box is cached at `0x30C0`, and that cache is what's edited/loaded regardless of the flag.
+  - **Only two routines ever write the 12 boxes:** `ChangeBox` (PC box switch) and
+    `ClearAllSRAMBanks`. Normal saves + new game write only `sGameData` (which **excludes** the
+    boxes), so **a new game does NOT wipe them** — old box data persists in SRAM.
+  - **The in-game box "format" is NOT a real erase.** On the *first* box switch (flag off),
+    `ChangeBox` calls `EmptyAllSRAMBoxes`, which per box writes only **2 bytes** — count → `0x00`,
+    first species → `0xFF` (list reads empty) — then recomputes checksums. **Every mon record / OT /
+    nickname below the header stays physically intact.** The only true full wipe is
+    `ClearAllSRAMBanks` (fills all SRAM with `0xFF`), reached **only** via the secret "Clear saved
+    data?" screen answered YES.
+  - So unformatted boxes very likely hold **real, recoverable Pokémon**, and they survive even the
+    in-game box switch (until new deposits overwrite the records or clear-save runs). A **recovery
+    feature** is viable: Tier 1 = still-intact + checksum-valid boxes (high confidence); Tier 2 =
+    game-emptied boxes whose records survive (heuristic, checksum useless). Keep it quarantined in a
+    fail-closed opt-in scanner, never in the main editor. Details + design stance:
+    `reference/box-recovery-research.md`. Do not build without Twilight's go-ahead.
 - **Hall of Fame:** records are `0x60` bytes each and start at `0x598`; record *N* lives at
   `0x598 + N*0x60`.
 - **Map-view VRAM pointer:** fixed at `0x9800` (`VramBGPtr`, the GB background-tilemap pointer —
