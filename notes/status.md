@@ -461,10 +461,19 @@ the Windows CI ctest step now also sets `offscreen`.
 **Second comprehensive pass (2026-06-13, Twilight-directed "I really need good comprehensive testing"):**
 (1) **`tst_gui_fidelity`** — the sacred byte-fidelity promise as a test: browse heavily (navigate all
 screens, open/close every dropdown + modal, focus/blur every field — NO edits) → flatten → assert
-byte-identical (over progressed + new). (2) **`assets/dirty/` + `tst_dirty_fixtures`** — malformed saves
+byte-identical (over progressed + new + a synthetic maxed save). (2) **`assets/dirty/` + `tst_dirty_fixtures`** — malformed saves
 (empty/truncated/oversized/all-00/all-FF/garbage + README + runtime checksum-flip cases) with a negative
 suite proving graceful degradation. **Found + fixed a real corrupt-save crash** (out-of-range current-box
-index → `boxes[121]`; see Open Issues). (3) The Pokémon editor verification above.
+index → `boxes[121]`; see Open Issues). (3) The Pokémon editor verification above. (4) **`assets/synthetic/`
++ `gen_synthetic_fixtures` + `tst_synthetic_fixtures`** — engine-generated deterministic edge-case saves
+(maxed/zeroed/allbadges/midgame, built from a FRESH new file so no real data; real saves stay Twilight's),
+each load + round-trip byte-stable + carries its edited values. **Found + fixed a 3rd bug**:
+`PlayerBasics::badgeCount()` was a stub returning 8 always (see `fix-patterns.md`). Full `ctest` **64/64**.
+
+**Still queued (task — the remaining per-control depth):** extend fidelity-browsing INTO the Pokémon
+editor + name popup + drawers; per-control DESTRUCTIVE edit tests with byte-DELTA assertions at the GUI
+level (model-level byte-isolation already exists in `tst_fields`); keyboard shortcuts; drag&drop flows;
+`mapDetails` runtime once Maps is wired.
 
 Next: **per-control depth** (task) — destructive edits per control with byte-delta assertions, and
 extending fidelity-browsing into the editor + name popup + drawers; synthetic fixture matrix; shortcuts;
