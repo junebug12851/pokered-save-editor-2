@@ -655,10 +655,9 @@ Each phase is independently valuable; the suite is useful from phase 1.
    (`qt-mirror.dannhauer.de`) serves a bad SSL cert (`CERTIFICATE_VERIFY_FAILED`), aborting the install.
    Mitigation: `cache: true` + pinned exact `6.8.3` on both `install-qt-action` steps, so a successful
    download is reused and almost every run skips the download (a rare cache-miss flake is fixed by a
-   re-run). **Check CI by default after pushing** (windows + linux-asan): a "failed linux" is EITHER this
-   Qt flake OR a real sanitized-ctest failure — inspect which **step** failed via the GitHub REST API
-   `.../actions/runs/<id>/jobs` (no auth). Note CI runs Qt **6.8.3** while the kit is **6.11**, so a
-   GUI/QML test can pass locally yet differ on CI. See memory `feedback_check_ci_by_default`._
+   re-run). Note CI runs Qt **6.8.3** while the kit is **6.11**, so a GUI/QML test could in principle pass
+   locally yet differ on CI. (CI status is not part of the default loop — checking it needs GitHub auth
+   that isn't wired up; the local Windows kit + ctest is the working gate.)_
 9. **app C++** (Bridge, models, FileManagement) headless.
    _Unblocked 2026-06-07 (Twilight-approved refactor): the app's logic — `bridge/`, all `mvc/` models,
    `engine/` — was extracted from the executable into a **static library `appcore`** (`app/CMakeLists.txt`);
