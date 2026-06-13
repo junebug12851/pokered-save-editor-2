@@ -475,20 +475,21 @@ editor + name popup + drawers; per-control DESTRUCTIVE edit tests with byte-DELT
 level (model-level byte-isolation already exists in `tst_fields`); keyboard shortcuts; drag&drop flows;
 `mapDetails` runtime once Maps is wired.
 
-**Shortcuts + drag flows added (2026-06-13):** (1) **`tst_shortcuts`** — the global keyboard shortcut
-key sequences were extracted into a shared `app/src/boot/shortcutdefs.h` (single source of truth);
-`MainWindow::setupShortcuts()` now builds from it (and the `auto os = otherShortcuts` copy bug that left
-the member empty is fixed). The test pins every binding (new/open/save/saveas/savecopyas/reopen/scrub/
-clear-recent/exit/random + recent-file Ctrl+Shift+0..4) and proves no two collide — guards accidental
-rebinds. (2) **`tst_gui_drag`** — E2E drag flows through the live bridge models: bag item
-**reorder / transfer-to-PC / delete** each driven via the real `ItemStorageModel` Q_INVOKABLEs the QML
-drag calls, then **save → reopen → asserted persisted** (the model mechanics are already unit-tested;
-this is the persistence half). Full `ctest` **66/66**.
+**Shortcuts + drag flows added (2026-06-13):** (1) **`tst_shortcuts`** — the shortcut key sequences AND
+the action→verb wiring were extracted into the shared `app/src/boot/shortcutdefs.h`
+(`pse::shortcutKeyMap()` + `pse::shortcutActions()`); `MainWindow::setupShortcuts()` builds from both
+(and the `auto os = otherShortcuts` copy bug that left the member empty is fixed). The test pins every
+binding (guards rebinds), proves none collide, asserts every shortcut has an action, AND **fires the
+safe/non-dialog verbs** (clear-recent / scrub / random / exit×2 / new) asserting each ran. (2)
+**`tst_gui_drag`** — E2E drag flows through the live bridge models: **bag item** reorder / transfer-to-PC
+/ delete AND **PC-box Pokémon** reorder / delete, each driven via the real `ItemStorageModel` /
+`PokemonStorageModel` Q_INVOKABLEs the QML drag calls, then **save → reopen → asserted persisted** (model
+mechanics already unit-tested; this is the persistence half; the Pokémon box is populated at runtime +
+marked formatted). Full `ctest` **66/66**.
 
 Next: **per-control depth** (remaining) — destructive edits per control with byte-delta assertions, and
-extending fidelity-browsing into the editor + name popup + drawers; Pokémon drag E2E (needs a populated-box
-fixture); mapDetails when Maps is wired. See `plans/testing.md` → "Broader GUI coverage".
-(CI is not part of the default loop — see the testing-plan CI note.)
+extending fidelity-browsing into the editor + name popup + drawers; mapDetails when Maps is wired; (later,
+deferred) profiling/perf tests. See `plans/testing.md` → "Broader GUI coverage".
 
 ## Open Issues
 

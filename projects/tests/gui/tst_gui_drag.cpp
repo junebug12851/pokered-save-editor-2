@@ -41,9 +41,12 @@
 #include <pse-savefile/expanded/storage.h>
 #include <pse-savefile/expanded/fragments/itemstoragebox.h>
 #include <pse-savefile/expanded/fragments/item.h>
+#include <pse-savefile/expanded/fragments/pokemonstoragebox.h>
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
 
 #include <bridge/bridge.h>
 #include <mvc/itemstoragemodel.h>
+#include <mvc/pokemonstoragemodel.h>
 
 using namespace pse_test;
 
@@ -69,11 +72,34 @@ class TestGuiDrag : public QObject
     return out;
   }
 
+  // Species ids of a Pokemon box, in slot order.
+  static QVector<int> pokeSpecies(PokemonStorageBox* box)
+  {
+    QVector<int> out;
+    for (int i = 0; i < box->pokemonCount(); ++i)
+      out.append(box->pokemonAt(i)->species);
+    return out;
+  }
+
+  // Add @p species.size() fresh mons to @p box with the given distinct species ids,
+  // appended after whatever is already there. Returns the index of the first added.
+  static int addMons(PokemonStorageBox* box, const QVector<int>& species)
+  {
+    const int first = box->pokemonCount();
+    for (int s : species) {
+      box->pokemonNew();
+      box->pokemonAt(box->pokemonCount() - 1)->species = s;
+    }
+    return first;
+  }
+
 private slots:
   void initTestCase();
   void itemReorder_persists();
   void itemTransferBagToPc_persists();
   void itemDelete_persists();
+  void pokemonReorder_persists();
+  void pokemonDelete_persists();
 };
 
 void TestGuiDrag::initTestCase()
@@ -182,6 +208,74 @@ void TestGuiDrag::itemDelete_persists()
   FileManagement fm; QVERIFY(reopen(fm, out));
   QCOMPARE(fm.data->dataExpanded->player->items->itemsCount(), countBefore - 1);
   QCOMPARE(snapshotBox(fm.data->dataExpanded->player->items), remainingExpected);
+}
+
+// Drag-reorder mons within a PC box: the slot order changes (a permutation, nothing
+// gained/lost) and survives save -> reopen. The box is populated at runtime (BaseSAV's
+// PC boxes may be empty) and marked formatted so it persists.
+void TestGuiDrag::pokemonReorder_persists()
+{
+  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  QVERIFY(app.start());
+  app.closeTop();
+
+  auto* exp = app.file()->data->dataExpanded;
+  exp->storage->boxesFormatted = true;                 // ensure boxes are written
+  PokemonStorageBox* box = exp->storage->boxAt(0);
+  addMons(box, { 1, 4, 7 });                           // distinct, identifiable mons
+  QVERIFY(box->pokemonCount() >= 2);
+
+  PokemonStorageModel* model = app.bridge()->pokemonStorageModel1;
+  model->switchBox(0);
+
+  const QVector<int> before = pokeSpecies(box);
+  QmlWarningScope scope;
+  model->dragReorder(0, box->pokemonCount() - 1, false);   // first slot -> last
+  QVERIFY2(scope.clean(), qPrintable("dragReorder emitted QML warnings:\n" + scope.messages().join('\n')));
+
+  const QVector<int> after = pokeSpecies(box);
+  QCOMPARE(after.size(), before.size());
+  QVERIFY2(after != before, "reorder did not change the slot order");
+  QVector<int> sb = before, sa = after;
+  std::sort(sb.begin(), sb.end()); std::sort(sa.begin(), sa.end());
+  QCOMPARE(sa, sb);                                     // a permutation -- no mon lost
+
+  const QString out = m_tmp.filePath(QStringLiteral("poke_reorder.sav"));
+  QVERIFY(app.saveTo(out));
+  FileManagement fm; QVERIFY(reopen(fm, out));
+  QCOMPARE(pokeSpecies(fm.data->dataExpanded->storage->boxAt(0)), after);
+}
+
+// Delete a mon from a PC box: it is removed and stays gone after save -> reopen.
+void TestGuiDrag::pokemonDelete_persists()
+{
+  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  QVERIFY(app.start());
+  app.closeTop();
+
+  auto* exp = app.file()->data->dataExpanded;
+  exp->storage->boxesFormatted = true;
+  PokemonStorageBox* box = exp->storage->boxAt(0);
+  addMons(box, { 1, 4, 7 });
+  QVERIFY(box->pokemonCount() >= 1);
+
+  PokemonStorageModel* model = app.bridge()->pokemonStorageModel1;
+  model->switchBox(0);
+
+  const QVector<int> before = pokeSpecies(box);
+  const QVector<int> expected = before.mid(1);         // all but slot 0
+
+  QmlWarningScope scope;
+  model->deleteMon(0, false);
+  QVERIFY2(scope.clean(), qPrintable("deleteMon emitted QML warnings:\n" + scope.messages().join('\n')));
+
+  QCOMPARE(box->pokemonCount(), before.size() - 1);
+  QCOMPARE(pokeSpecies(box), expected);
+
+  const QString out = m_tmp.filePath(QStringLiteral("poke_delete.sav"));
+  QVERIFY(app.saveTo(out));
+  FileManagement fm; QVERIFY(reopen(fm, out));
+  QCOMPARE(pokeSpecies(fm.data->dataExpanded->storage->boxAt(0)), expected);
 }
 
 QTEST_MAIN(TestGuiDrag)

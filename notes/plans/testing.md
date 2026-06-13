@@ -819,11 +819,12 @@ benign offscreen font warning allowlisted; `tst_gui_input` now locates the money
    sequence and proves none collide (guards accidental rebinds). It does NOT fire `activated` (that
    needs the QtWidgets+QML `MainWindow` shell, in the exe not appcore) — the action→verb wiring is a
    thin set of `connect()`s over the FileManagement verbs, which are themselves tested.
-5b. **More synthesized-input + drag flows.** ✅ **Items drag E2E done** (`tst_gui_drag`, 2026-06-13):
-   bag **reorder / transfer-to-PC / delete** via the real `ItemStorageModel` Q_INVOKABLEs → save →
-   reopen → assert persisted (model mechanics already unit-tested; this is the persistence half).
-   _Still to do:_ the **Pokémon** drag E2E (needs a populated-box fixture — BaseSAV's PC boxes may be
-   empty), badge toggle clicks, popup open/dismiss, name popup-keyboard commit.
+5b. **More synthesized-input + drag flows.** ✅ **Drag E2E done** (`tst_gui_drag`, 2026-06-13): bag
+   **reorder / transfer-to-PC / delete** AND PC-box **Pokémon reorder / delete** via the real
+   `ItemStorageModel` / `PokemonStorageModel` Q_INVOKABLEs → save → reopen → assert persisted (model
+   mechanics already unit-tested; this is the persistence half; the Pokémon box is populated at runtime
+   via `pokemonNew()` + `boxesFormatted=true` since BaseSAV's PC boxes may be empty). _Still to do:_
+   badge toggle clicks, popup open/dismiss, name popup-keyboard commit, Pokémon cross-box drag transfer.
 7.  **Compatibility fixture matrix at GUI level.** Run the navigation + save/load journeys over Red
    vs Blue and fresh/mid/post-E4 saves once those fixtures exist.
 8.  **ASan under GUI load (Linux CI).** When the Linux ASan job runs these, a QML-instantiation
