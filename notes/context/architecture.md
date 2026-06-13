@@ -115,3 +115,11 @@ projects/
 - Old `.pro` files exist but are unused
 - **Do not use** `qt_add_qml_module()` — it conflicts with `app.qrc` (causes QML hang)
 - QML files are listed in `app.qrc` and registered via `qmlRegisterType()` in `bootQmlLinkage.cpp`
+
+## Internationalization (i18n)
+
+UI strings (QML `qsTr()` / C++ `tr()`) are translated via a Qt Linguist pipeline: per-locale
+catalogs in `projects/app/translations/pse_<locale>.ts` → `.qm` embedded at `:/i18n` by
+`qt_add_translations`, with a `QTranslator` installed in `boot.cpp`. Source language is en_US
+(English ships); untranslated strings fall back to the source. Covers UI chrome only — game-data
+names are out of scope. Full guide, gotchas, and "how to add a language": `reference/i18n.md`.

@@ -58,6 +58,26 @@ the kit toolchain: configure OK, app builds incl. the RC object, full `ctest` 66
 `tst_qml_screens`). **To bump:** edit one line in `VERSION.txt` + reconfigure. Releases get a `vX.Y.Z`
 git tag (on request).
 
+**Internationalization (i18n) pipeline added (2026-06-13; BUILT + full `ctest` green 66/66 +
+`tst_qml_screens` 17/17 + app launched):** The app now has a proper Qt Linguist translation
+pipeline — UI strings wrapped in `qsTr()`/`tr()`, per-locale catalogs in
+`projects/app/translations/pse_<locale>.ts`, compiled to `.qm` and embedded at `:/i18n` by
+`qt_add_translations`, with a `QTranslator` installed early in `boot.cpp` (locale from a
+`ui/language` setting, else system locale; untranslated → en_US source fallback, graceful).
+Source language is **en_US** (English ships); the machinery makes a new locale a one-line `TS_FILES`
+add + translate-in-Linguist. Covers **UI chrome only** — game-data names (Pokémon/move/item) are a
+separate, larger, region/encoding-bound effort, deliberately out of scope. Scope of the wrapping
+pass: ~139 QML display literals (`text`/`title`/`placeholderText`/`ToolTip.text`), a couple of prose
+concatenations rewritten as `qsTr().arg()`, the Router screen titles via `QT_TRANSLATE_NOOP` +
+translate-at-use, and a few C++ model strings; logical/value strings, mandated license attributions,
+and tiny format prefixes were intentionally left alone. Initial `pse_en.ts` = 200 messages / 42
+contexts. **C++ + CMake (added `LinguistTools`) + new QML resource → reconfigure + Rebuild required**
+(done: kit dir + repo `build/` both clean; full `ctest` 66/66; `tst_qml_screens` 17/17; kit exe
+relinked w/ the translations qrc; app launched). **Gotcha:** `lupdate` hangs in the headless agent
+shell (`lrelease` is fine) — refresh catalogs from Qt Creator. Full guide + decision:
+`reference/i18n.md`, `decisions/architecture.md` → "i18n via Qt Linguist". **Awaiting Twilight's
+in-app review** (everything should look identical — English is the source language).
+
 ## Current State (read this first)
 
 The big structural blocker is **solved**: the `brg.file.data.dataExpanded.*` chain works, data

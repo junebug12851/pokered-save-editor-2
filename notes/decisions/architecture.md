@@ -4,6 +4,34 @@ Key choices made during the modernization, with rationale.
 
 ---
 
+## i18n via Qt Linguist, not a custom stringfile (2026-06-13)
+
+**Decision**: Added a full Qt Linguist translation pipeline (`qsTr`/`tr` + `translations/*.ts` →
+`.qm` embedded at `:/i18n`, `QTranslator` installed in `boot.cpp`) for **UI chrome only**, rather
+than a hand-rolled "stringlist/stringfile in a folder." Source language is en_US; English ships.
+Full mechanics: `reference/i18n.md`.
+
+**Why**: For a Qt app, a custom string table reinvents what the framework provides and would be a
+hack by this project's bar. Qt's system still gives the desired clean `translations/` folder (just
+`.ts`/`.qm`), is editable in Qt Linguist, and needs zero custom loading code. It opens the door to
+future locales (add one `.ts` line) at near-zero ongoing cost, and untranslated strings fall back to
+the source — matching the graceful-degradation principle.
+
+**Notable sub-decisions**:
+- **Router screen titles** use `QT_TRANSLATE_NOOP("Screen", …)` and are translated at point of use
+  (`router.cpp`), because `loadScreens()` runs at boot *before* the translator is installed —
+  translating eagerly there would freeze them to English.
+- **Display vs. value** strings are kept distinct: only display text is wrapped; logical keys
+  (`previewTileset !== "Cavern"`, internal mon names, `"phony"`) are left as English literals so
+  translation can't desync logic. Mandated license/attribution text and tiny format prefixes
+  (`"L"+level`) are intentionally not wrapped.
+- **Game-data names** (Pokémon/move/item) are explicitly **out of scope** — they're region/encoding
+  -bound save data, a separate and larger effort, not Qt-translation material.
+- **Tooling gotcha**: `lupdate` hangs in the headless agent shell (`lrelease` doesn't), so catalog
+  refresh is done from Qt Creator. Normal builds (lrelease only) work from automation.
+
+---
+
 ## Trainer randomize grants badges linearly from badge 1 (2026-06-08)
 
 **Decision**: `PlayerBasics::randomize()` (the Trainer Card "Re-Roll" button) now awards a

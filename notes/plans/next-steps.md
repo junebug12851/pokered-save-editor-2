@@ -55,6 +55,19 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
     leaves load-only), keyboard shortcuts, drag & drop flows, shell/fragment smoke, Red/Blue +
     game-state fixtures, and ASan-under-GUI on Linux CI.
 
+## i18n (new track — added 2026-06-13)
+
+The Qt Linguist pipeline is in place (`reference/i18n.md`); English ships. Open follow-ups, none urgent:
+
+1. **Build the in-app language switcher** — `ui/language` is the hook; needs engine `retranslate()`
+   + re-evaluating bindings (and probably a Settings UI). Until then, locale = system/registry only.
+2. **Ship a real second locale** when wanted — add one `TS_FILES` line, run `update_translations` in
+   Qt Creator, translate in Linguist. Proves the path end-to-end (currently only en_US exists).
+3. **Optional**: wrap the deliberately-skipped tiny format prefixes (`"L"+level`, `"x"+count`,
+   `"No."+n`) as `qsTr().arg()` if a real locale needs them.
+4. **Out of scope / much later**: game-data name localization (Pokémon/move/item) — region/encoding
+   -bound save data, a separate effort; do NOT route through Qt translations.
+
 ## Pending decisions — tracked temporary exceptions (resolve, don't let linger)
 
 These are deliberate "dirty patches" the test pass put in to keep things working until
