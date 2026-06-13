@@ -11,6 +11,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import QtQuick.Effects
 
 import "../../fragments/general"
 import "../../fragments/header"
@@ -449,8 +450,125 @@ Page {
     }
   }
 
-  // 3 Button Footer: View All (slides the panel in), Re-Roll, Boxes Setup.
+  // ---- "Boxes Formatted" confirm popup (opened from the Tools menu) -----------
+  // Flipping the boxesFormatted flag is destructive in DIFFERENT ways depending on
+  // direction, so gate it behind a clear, direction-aware warning. Proceeding only
+  // flips the flag (the save engine already replicates the game's load/save
+  // semantics from it) -- no extra bytes are touched here.
+  Popup {
+    id: boxesWarn
+    parent: Overlay.overlay
+    anchors.centerIn: Overlay.overlay
+    modal: true
+    dim: true
+    focus: true
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    padding: 0
+    width: Math.min((page.width > 0 ? page.width : 480) - 80, 460)
+
+    // The value boxesFormatted will flip TO if the user proceeds.
+    property bool target: false
+    property int boxNo: brg.file.data.dataExpanded.storage.curBox + 1
+
+    function openFor(t) { target = t; open(); }
+
+    background: Rectangle {
+      color: brg.settings.textColorLight
+      radius: 10
+      border.color: Qt.rgba(0, 0, 0, 0.15)
+      border.width: 1
+    }
+
+    contentItem: ColumnLayout {
+      spacing: 0
+
+      // Alert header bar.
+      Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 52
+        color: brg.settings.primaryColor
+        radius: 10
+        // Square off the bottom corners so the bar meets the body cleanly.
+        Rectangle {
+          anchors.bottom: parent.bottom
+          width: parent.width
+          height: 12
+          color: parent.color
+        }
+
+        RowLayout {
+          anchors.fill: parent
+          anchors.leftMargin: 16
+          anchors.rightMargin: 16
+          spacing: 10
+
+          Image {
+            source: "qrc:/assets/icons/fontawesome/info-circle.svg"
+            sourceSize.width: 24
+            sourceSize.height: 24
+            Layout.preferredWidth: 24
+            Layout.preferredHeight: 24
+            layer.enabled: true
+            layer.effect: MultiEffect {
+              colorization: 1.0
+              colorizationColor: brg.settings.textColorLight
+            }
+          }
+          Text {
+            Layout.fillWidth: true
+            text: boxesWarn.target ? qsTr("Format boxes?") : qsTr("Unformat boxes?")
+            color: brg.settings.textColorLight
+            font.pixelSize: 18
+            font.bold: true
+          }
+        }
+      }
+
+      // Body message (direction-aware).
+      Text {
+        Layout.fillWidth: true
+        Layout.margins: 18
+        wrapMode: Text.WordWrap
+        lineHeight: 1.25
+        color: brg.settings.textColorDark
+        font.pixelSize: 14
+        text: boxesWarn.target
+          ? qsTr("Formatting sets up all 12 storage boxes the same way the game does — just faster.\n\nEvery box except the current one (Box %1) will be permanently erased and formatted. Afterwards all 12 boxes open up for use.\n\nThis can't be undone.").arg(boxesWarn.boxNo)
+          : qsTr("This tells the game your boxes aren't set up, so only the current box (Box %1) is loaded — the other boxes won't be touched, but the game treats them as if they don't exist.\n\nIt's a soft delete: the data is still there for now. But that space is then considered free, so the game (or formatting again later) can overwrite it — permanently erasing every Pokémon outside Box %1. Once that happens they can't be recovered here or in the game.").arg(boxesWarn.boxNo)
+      }
+
+      // Actions.
+      RowLayout {
+        Layout.fillWidth: true
+        Layout.leftMargin: 16
+        Layout.rightMargin: 16
+        Layout.bottomMargin: 14
+        spacing: 8
+
+        Item { Layout.fillWidth: true }
+
+        Button {
+          flat: true
+          text: qsTr("Cancel")
+          onClicked: boxesWarn.close()
+        }
+        Button {
+          highlighted: true
+          Material.background: brg.settings.primaryColor
+          Material.foreground: brg.settings.textColorLight
+          text: boxesWarn.target ? qsTr("Format") : qsTr("Unformat")
+          onClicked: {
+            brg.file.data.dataExpanded.storage.boxesFormatted = boxesWarn.target;
+            boxesWarn.close();
+          }
+        }
+      }
+    }
+  }
+
+  // 3-button footer: View All, Re-Roll, and a Tools menu (Boxes Formatted lives there).
   footer: AppFooterBtn3 {
+    id: footerBar
 
     icon1.source: "qrc:/assets/icons/fontawesome/th.svg"
     text1: "View All"
@@ -464,10 +582,22 @@ Page {
       brg.file.data.dataExpanded.player.pokemon.randomize(brg.file.data.dataExpanded.player.basics);
     }
 
-    icon3.source: (brg.file.data.dataExpanded.storage.boxesFormatted)
-                  ? "qrc:/assets/icons/fontawesome/check-circle.svg"
-                  : "qrc:/assets/icons/fontawesome/times-circle.svg"
-    text3: "Boxes Setup"
-    onBtn3Clicked: brg.file.data.dataExpanded.storage.boxesFormatted = !brg.file.data.dataExpanded.storage.boxesFormatted;
+    icon3.source: "qrc:/assets/icons/fontawesome/wrench.svg"
+    text3: "Tools"
+    onBtn3Clicked: toolsMenu.open()
+
+    // Opens just above the footer, right-aligned under the Tools button.
+    Menu {
+      id: toolsMenu
+      x: footerBar.width - implicitWidth
+      y: -implicitHeight
+
+      MenuItem {
+        text: brg.file.data.dataExpanded.storage.boxesFormatted
+              ? qsTr("Boxes Formatted  •  On")
+              : qsTr("Boxes Formatted  •  Off")
+        onTriggered: boxesWarn.openFor(!brg.file.data.dataExpanded.storage.boxesFormatted)
+      }
+    }
   }
 }

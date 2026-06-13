@@ -342,10 +342,37 @@ nickname/OT edits happen in the detail editor and don't emit a box `pokemonChang
 
 **`fixName()` also applies to the storage GRID cell labels (2026-06-12).** The Pokémon selection screen
 (`fragments/screens/pokemon/PokemonBoxView.qml`) shows each mon's nickname or species fallback via
-`getMonNickname()`; it now runs the same markup mapping (`fixMonName()`: `Nidoran<f>`→`Nidoran ♀`, etc.)
-on the resolved label **before** the 10-char truncation, so `<m>`/`<f>` render as `♂`/`♀` on the grid too
-(matching the Pokedex + View All). The mapping is duplicated in three QML spots now (Pokedex delegate, View
-All panel, box-view cell) — fine for a 4-line presentation helper; consolidate only if a 4th use appears.
+`getMonNickname()`; it now renders the species gender markup so `<m>`/`<f>` show as `♂`/`♀` on the grid too.
+**Gotcha:** unlike the Pokedex/View All (which only ever see the title-case DB `readable`, so an exact
+`"Nidoran<m>"` match works), the grid label is usually the mon's **nickname**, which for an un-nicknamed mon
+is the game's **UPPERCASE default** (`"NIDORAN<m>"`) — the exact-match version silently missed it. So
+`PokemonBoxView`'s `fixMonName()` does a **generic marker replace** (`<m>`/`<M>`→` ♂`, `<f>`/`<F>`→` ♀`,
+`Mr.Mime`→`Mr. Mime`), case-independent on the base name, applied before the 10-char truncation. (The Pokedex
+delegate + View All panel keep their exact-match `fixName()` since they only see the title-case readable.)
+
+### Tools menu + "Boxes Formatted" confirm (Pokémon storage footer)
+
+The storage footer's third button is **Tools** (`wrench.svg`) — it opens a `Menu` (`toolsMenu`, declared
+inside the `AppFooterBtn3` instance, `x: footerBar.width - implicitWidth`, `y: -implicitHeight` so it pops
+**above** the footer, right-aligned) rather than being a one-off action button. (Was a standalone "Boxes
+Setup" toggle button.) Today the menu holds one item, **"Boxes Formatted • On/Off"** (label binds to
+`storage.boxesFormatted`); add future storage tools here.
+
+Flipping `boxesFormatted` is **destructive in different ways by direction**, so the menu item opens a
+**centered modal confirm `Popup`** (`boxesWarn`, `openFor(target)` where `target` is the value it'll flip
+TO; alert-red header bar + `info-circle` tinted light via `MultiEffect`; Cancel + a red Format/Unformat
+button). Direction-aware copy:
+- **→ Format** (currently unformatted): all boxes except the current one are permanently erased + formatted,
+  then all 12 open up — "same as the game, just faster", can't be undone.
+- **→ Unformat** (currently formatted): only the current box loads; the others aren't touched but are treated
+  as nonexistent (a recoverable *soft delete*) — **but** that space is then free for the game/a later format
+  to overwrite, permanently erasing every mon outside the current box.
+
+**Proceeding only flips the flag** (`storage.boxesFormatted = target`) — the save engine
+(`Storage::load`/`save`) already replicates the game's behaviour from that one bit (bit 7 of `0x284C`): when
+unformatted it loads/saves ONLY the current box, leaving the other boxes' bytes untouched; when formatted it
+loads/saves all boxes. **No extra bytes are written here** (byte-fidelity preserved — we toggle exactly the
+bit the user is toggling).
 - **Tooltip ownership rule (refined).** The caught/traded line is shown **only when something is traded**
   — an all-caught cell omits it (it adds nothing). So a cell with **no differing nicknames AND nothing
   traded yields an empty tooltip**, and the view shows **no tooltip at all** on it (the QML already gates

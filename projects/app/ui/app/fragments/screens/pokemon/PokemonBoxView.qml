@@ -135,12 +135,17 @@ GridView {
       return "qrc:/assets/icons/mon-icons/" + num + "-" + name + shiny + ".svg";
     }
 
-    // Pretty-print the few species whose internal readable name carries markup,
-    // mirroring the Pokedex screen's fixName() so <m>/<f> render as ♂/♀ here too.
+    // Pretty-print the species whose name carries markup so <m>/<f> render as
+    // ♂/♀ here too. Unlike the Pokedex (which only ever sees the title-case DB
+    // readable), the grid label can be the mon's NICKNAME, which for an
+    // un-nicknamed mon is the game's UPPERCASE default ("NIDORAN<m>"). So replace
+    // the gender markers generically (either case) rather than exact-matching one
+    // spelling; add the space + symbol to match the Pokedex look.
     function fixMonName(n) {
-      if(n === "Nidoran<f>") return "Nidoran ♀";
-      if(n === "Nidoran<m>") return "Nidoran ♂";
-      if(n === "Mr.Mime")    return "Mr. Mime";
+      if(n === undefined || n === null) return "";
+      n = n.replace("<f>", " ♀").replace("<F>", " ♀");
+      n = n.replace("<m>", " ♂").replace("<M>", " ♂");
+      n = n.replace("Mr.Mime", "Mr. Mime");
       return n;
     }
 

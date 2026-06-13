@@ -327,6 +327,21 @@ Rebuild (RCC re-embed).** Convention: `reference/ui-patterns.md` → "...Polish 
 -columns bullets). **Awaiting Twilight's in-app review** (watch: the three sort icons' relative visual size
 under `PreserveAspectFit`, and box-number-only headers reading clearly enough).
 
+**Pokémon storage: grid name-fix + Tools menu / Boxes-Formatted warning (2026-06-12, Twilight-directed;
+BUILT + full `ctest` green 57/57, kit rebuilt + app relaunched, QML loads clean):** (1) **Grid cell labels
+now render `<m>`/`<f>`** — `PokemonBoxView::getMonNickname` runs a **generic** marker replace
+(`fixMonName`: `<m>/<M>`→`♂`, `<f>/<F>`→`♀`, `Mr.Mime`→`Mr. Mime`). The earlier exact-match version missed it
+because the grid shows the mon's **nickname**, which for un-nicknamed mons is the game's UPPERCASE default
+(`NIDORAN<m>`), not the title-case readable. (2) **Footer "Boxes Setup" button → a "Tools" menu** (wrench);
+"Boxes Setup" is now the menu item **"Boxes Formatted • On/Off"**. (3) Clicking it opens a **direction-aware
+modal confirm popup**: formatting warns that all boxes but the current one are erased/formatted then all open
+(same as the game, faster); unformatting warns it's a recoverable soft delete (only the current box loads)
+but the freed space can be overwritten → permanent loss. **Proceeding only flips `boxesFormatted`** — the
+engine already replicates the game's load/save from that one bit; **no extra save bytes touched**. QML-only
+(`Pokemon.qml` + `PokemonBoxView.qml`; added `QtQuick.Effects` import). Convention:
+`reference/ui-patterns.md` → "Tools menu + Boxes Formatted confirm" + the grid `fixMonName` gotcha. **Awaiting
+Twilight's in-app review** (watch: Tools menu position above the footer, and the warning copy/wording).
+
 ## Open Issues
 
 | Issue | Where | Status / notes |
