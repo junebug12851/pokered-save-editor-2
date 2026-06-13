@@ -342,6 +342,21 @@ engine already replicates the game's load/save from that one bit; **no extra sav
 `reference/ui-patterns.md` → "Tools menu + Boxes Formatted confirm" + the grid `fixMonName` gotcha. **Awaiting
 Twilight's in-app review** (watch: Tools menu position above the footer, and the warning copy/wording).
 
+**Rival screen cleanup — matched to the Trainer Card layout (2026-06-13, Twilight-directed; BUILT +
+full `ctest` green 57/57, kit rebuilt + app launched, FF'd to main):** `screens/non-modal/Rival.qml` was
+messy — it positioned the name/image/starter with a 1×1 transparent anchor `Rectangle` and magic negative
+margins (`-110`, `-125`, horizontalCenterOffset `40`) and hand-rolled the starter `ComboBox` inline.
+Rewrote it to mirror `CardFront`: a **centered bordered card** (`360×250`-style box, `border.color:
+textColorMid`, transparent fill), a shared **`fieldH: 28`** height knob, and a **divider `Spacer`** under
+the name — elements anchored below one another (no fixed/negative offsets). Twilight chose to **keep the
+simple vertical stack** (name → image → starter) rather than the trainer card's two columns, since the
+rival has only a couple of fields. Behavior/bindings unchanged (name ↔ `rival.name`, starter ↔
+`rival.starter`, footer Re-Roll → `rival.randomize()`); the inline combo is now a **centered label+combo
+`Row`** (no magic offset) and all model access routes through a null-guarded `rival()` helper (mirrors
+`PlayerNameEdit.basics()`). QML-only edit to a file already in `app.qrc` → hot-reloads, but the kit dir was
+rebuilt (RCC re-embedded) + launched per the default loop; full suite green (no compiled source changed).
+**Twilight approved the card-box approach up front; awaiting her in-app review of the result.**
+
 ## Open Issues
 
 | Issue | Where | Status / notes |
