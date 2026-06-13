@@ -87,4 +87,9 @@ jobs:
         run: cmake --build build -j --target tests_all
 
       - name: Run ctest
+        # offscreen so the GUI tests (tst_qml_screens, tst_gui_*) run headless and
+        # deterministically on the CI runner, matching the Linux job. (Each GUI test
+        # also sets this per-test in CMake, so this is belt-and-suspenders.)
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: ctest --test-dir build --output-on-failure

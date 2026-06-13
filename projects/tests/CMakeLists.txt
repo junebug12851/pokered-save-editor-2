@@ -129,7 +129,53 @@ if(TARGET Qt6::QuickTest)
         add_test(NAME tst_qml_brg COMMAND tst_qml_brg)
         set_tests_properties(tst_qml_brg PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
         set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_qml_brg)
+
+        # QML SCREEN SMOKE TEST: loads EVERY registered screen through a real engine
+        # (brg + the two image providers + DB::qmlProtect + the exe's full
+        # bootQmlLinkage type registration) and FAILS on any QML warning/error.
+        # Catches the load/runtime QML-bug class the C++ suite can't see (e.g. the
+        # 2026-06-13 Credits FINAL-override + `id: top` anchor-collision). A QTEST_MAIN
+        # GUI test (not a QUICK_TEST), so it's built directly rather than via the
+        # qmltest macros. It compiles in:
+        #   - app.qrc            -> qrc:/ui/app/... screens + qtquickcontrols2.conf (Material style)
+        #   - bootQmlLinkage.cpp -> the SAME QML type registration the exe uses (one source of truth)
+        qt_add_executable(tst_qml_screens
+            qml/tst_qml_screens.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/../app/src/boot/bootQmlLinkage.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+        target_link_libraries(tst_qml_screens PRIVATE appcore Qt6::Qml Qt6::Quick Qt6::Test)
+        target_compile_definitions(tst_qml_screens PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+        add_test(NAME tst_qml_screens COMMAND tst_qml_screens)
+        set_tests_properties(tst_qml_screens PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+        set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_qml_screens)
     endif()
+endif()
+
+# --- Comprehensive GUI tests (real app shell, headless offscreen) ----------------
+# These boot the REAL application UI (App.qml + AppWindow + the live C++ Router
+# driving both StackViews) through a QQuickView and drive navigation / edits /
+# synthesized input, asserting persistence (save -> reopen), cross-file independence,
+# byte-fidelity, and ZERO QML warnings. Like tst_qml_screens each compiles in app.qrc
+# (qrc:/ui/app/... + the Material-style qtquickcontrols2.conf) and the exe's own
+# bootQmlLinkage.cpp (one shared source of truth for QML type registration), links
+# appcore, and runs on the offscreen platform so it gates BOTH the Linux and Windows
+# CI jobs. The shared harness is tests/helpers/guiapp.h.
+if(TARGET appcore)
+    function(pse_add_gui_test name)
+        qt_add_executable(${name}
+            ${ARGN}
+            ${CMAKE_CURRENT_SOURCE_DIR}/../app/src/boot/bootQmlLinkage.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+        target_link_libraries(${name} PRIVATE appcore Qt6::Qml Qt6::Quick Qt6::Test)
+        target_compile_definitions(${name} PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+        add_test(NAME ${name} COMMAND ${name})
+        set_tests_properties(${name} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+        set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS ${name})
+    endfunction()
+
+    pse_add_gui_test(tst_gui_navigation gui/tst_gui_navigation.cpp)
+    pse_add_gui_test(tst_gui_saveload   gui/tst_gui_saveload.cpp)
+    pse_add_gui_test(tst_gui_input      gui/tst_gui_input.cpp)
 endif()
 
 # Aggregate target: builds every registered test exe in one shot. CI builds this
