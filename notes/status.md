@@ -43,6 +43,21 @@ ASan/UBSan clean with zero errors; coverage 89.73% line.** Run with `.\docker\dt
 Details: `plans/testing.md` → "Local Linux container (Docker)" and `docker/README.md`. Docker added
 to the credits (Tools Used) — **needs a kit rebuild to show in-app** (db.qrc re-embed).
 
+**Proper version system added (2026-06-13; BUILT + full `ctest` green 66/66):** The app now has a
+real SemVer pipeline with a **single source of truth** — repo-root **`VERSION.txt`** (`0.7.0-alpha`).
+CMake reads it (`projects/cmake/PSEVersion.cmake`), feeds `project(VERSION)`, and generates
+`pse_version.h` (into `<build>/generated/`) from `cmake/pse_version.h.in`, appending the **git commit
+as SemVer build metadata** (`0.7.0-alpha+g<hash>[.dirty]`) via a build-time `pse_version_gen` target so
+dev builds stay traceable while the human number stays clean. `boot.cpp` now sets the runtime version
+from `PSE_VERSION_FULL` (was a hardcoded `"v1.0.0"`); `About.qml` shows the cleaned `v<SemVer>` (strips
+`+g…`). A Windows **VERSIONINFO** resource (`app/pse_app.rc.in` → `.rc`, behind `-DPSE_GEN_WINRC` default
+ON) embeds the version in the `.exe` details. **Start number 0.7.0-alpha** was derived from project
+maturity (byte-fidelity engine + most screens done, but pre-release/in-polish) — see
+`reference/versioning.md` for the scheme, the bump/release/tag process, and the rationale. Verified on
+the kit toolchain: configure OK, app builds incl. the RC object, full `ctest` 66/66 green (incl.
+`tst_qml_screens`). **To bump:** edit one line in `VERSION.txt` + reconfigure. Releases get a `vX.Y.Z`
+git tag (on request).
+
 ## Current State (read this first)
 
 The big structural blocker is **solved**: the `brg.file.data.dataExpanded.*` chain works, data

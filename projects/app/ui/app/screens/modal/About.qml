@@ -272,7 +272,9 @@ Page {
         Text {
           width: parent.width
           horizontalAlignment: Text.AlignHCenter
-          text: Qt.application.name + "  •  " + Qt.application.version
+          // Show a clean "v<SemVer>" (strip any "+g<hash>" build metadata that
+          // dev builds carry; the full string still lives in Qt.application.version).
+          text: Qt.application.name + "  •  v" + Qt.application.version.split("+")[0]
           font.pixelSize: 13
           font.bold: true
           color: brg.settings.textColorDark

@@ -1,0 +1,22 @@
+# Pokered Save Editor -- version (single source of truth).
+#
+# Format: MAJOR.MINOR.PATCH[-prerelease]   (Semantic Versioning 2.0.0)
+# Bump THIS by editing the version line below; CMake reads it and propagates
+# the number everywhere (the app's runtime version, the About screen, and the
+# Windows .exe resource). Lines starting with '#' and blank lines are ignored;
+# the first remaining line is the version.
+#
+# (Named VERSION.txt, not VERSION, because the repo-root already has a "version/"
+#  changelog folder and Windows is case-insensitive -- "VERSION" would collide.)
+#
+# How to bump (see notes/reference/versioning.md for the full guide):
+#   - PATCH (0.7.0 -> 0.7.1): bug fixes / small tweaks, no new user-facing features.
+#   - MINOR (0.7.0 -> 0.8.0): new features or notable changes, still backward-OK.
+#   - MAJOR (0.x   -> 1.0.0): the first real release / a stability promise.
+#   - prerelease label: -alpha (early), -beta (feature-stable), -rc.1 (release
+#     candidate). Drop the label entirely for a final release. Pre-1.0 (0.x)
+#     already signals "in development, things still move."
+#
+# Build identity (the git commit) is appended automatically by the build as
+# SemVer build metadata, e.g. 0.7.0-alpha+g1a2b3c4d -- you do NOT edit that here.
+0.7.0-alpha

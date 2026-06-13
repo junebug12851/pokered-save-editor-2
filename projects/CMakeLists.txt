@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(PokeredSaveEditor VERSION 1.0.0 LANGUAGES CXX)
+# --- Version: single source of truth is the repo-root VERSION.txt -----------
+# (See notes/reference/versioning.md.) Parse it BEFORE project() so the parsed
+# core number is what project(VERSION) records.
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/PSEVersion.cmake)
+pse_read_version(${CMAKE_CURRENT_LIST_DIR}/../VERSION.txt)
+
+project(PokeredSaveEditor VERSION ${PSE_VERSION_CORE} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,6 +26,47 @@ endif()
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick QuickControls2 QuickWidgets Svg Qml Charts Test)
 qt_standard_project_setup()
+
+# --- Version header generation ----------------------------------------------
+# Generate pse_version.h (numeric + human SemVer + git build metadata) into the
+# build tree. A configure-time pass creates it so the first compile has it; a
+# build-time custom target refreshes the git metadata on every rebuild (it only
+# rewrites the header when the contents change, so no needless recompiles).
+set(PSE_VERSION_HEADER_IN  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pse_version.h.in")
+set(PSE_VERSION_HEADER_DIR "${CMAKE_BINARY_DIR}/generated")
+set(PSE_VERSION_HEADER     "${PSE_VERSION_HEADER_DIR}/pse_version.h")
+file(MAKE_DIRECTORY "${PSE_VERSION_HEADER_DIR}")
+
+pse_git_metadata("${CMAKE_SOURCE_DIR}" PSE_GIT_HASH PSE_GIT_DIRTY)
+pse_compose_full("${PSE_VERSION_HUMAN}" "${PSE_GIT_HASH}" "${PSE_GIT_DIRTY}" PSE_VERSION_FULL)
+if(PSE_GIT_DIRTY STREQUAL "")
+  set(PSE_GIT_DIRTY_BOOL 0)
+else()
+  set(PSE_GIT_DIRTY_BOOL 1)
+endif()
+configure_file("${PSE_VERSION_HEADER_IN}" "${PSE_VERSION_HEADER}" @ONLY)
+
+add_custom_target(pse_version_gen
+  BYPRODUCTS "${PSE_VERSION_HEADER}"
+  COMMAND ${CMAKE_COMMAND}
+          -DPSE_MODULE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/cmake
+          -DPSE_SRC_DIR=${CMAKE_SOURCE_DIR}
+          -DPSE_VERSION_MAJOR=${PSE_VERSION_MAJOR}
+          -DPSE_VERSION_MINOR=${PSE_VERSION_MINOR}
+          -DPSE_VERSION_PATCH=${PSE_VERSION_PATCH}
+          -DPSE_VERSION_HUMAN=${PSE_VERSION_HUMAN}
+          -DPSE_HEADER_IN=${PSE_VERSION_HEADER_IN}
+          -DPSE_HEADER_OUT=${PSE_VERSION_HEADER}
+          -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/PSEVersionGen.cmake
+  COMMENT "PSEVersion: refreshing version (${PSE_VERSION_HUMAN}) build metadata"
+  VERBATIM)
+
+# Windows: embed a VERSIONINFO resource in the .exe (toggle off if your kit's
+# RC compiler chokes: -DPSE_GEN_WINRC=OFF).
+option(PSE_GEN_WINRC "Embed a Windows VERSIONINFO resource in the .exe" ON)
+if(WIN32 AND PSE_GEN_WINRC)
+  enable_language(RC)
+endif()
 
 add_subdirectory(common)
 add_subdirectory(db)

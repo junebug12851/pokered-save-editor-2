@@ -129,3 +129,18 @@ target_link_libraries(PokeredSaveEditor
     PRIVATE
         appcore
 )
+
+# --- App version (from VERSION.txt via the generated pse_version.h) ----------
+# boot.cpp includes "pse_version.h" to set the runtime version. The header is
+# produced by the top-level pse_version_gen target into ${PSE_VERSION_HEADER_DIR}.
+add_dependencies(PokeredSaveEditor pse_version_gen)
+target_include_directories(PokeredSaveEditor PRIVATE ${PSE_VERSION_HEADER_DIR})
+
+# Windows: compile the generated VERSIONINFO resource into the .exe so its
+# Properties -> Details shows the version. Guarded by PSE_GEN_WINRC (top level).
+if(WIN32 AND PSE_GEN_WINRC)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/pse_app.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/pse_app.rc @ONLY)
+    target_sources(PokeredSaveEditor PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/pse_app.rc)
+endif()

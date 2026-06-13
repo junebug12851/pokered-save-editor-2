@@ -27,6 +27,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems |
 | `notes/reference/documentation.md` | **Doc generation** — build C++ API docs (Doxygen), comment style, why QML is excluded |
 | `notes/reference/git-workflow.md` | **Git standards** — branch model (`main` FF-only/stable, `dev` frequent), no history rewriting, commit-message style, hard safety rules. Read before any git op |
+| `notes/reference/versioning.md` | **Version system** — SemVer scheme, single source of truth (`VERSION.txt`), how it propagates (CMake → `pse_version.h` → app/About/.exe), git build metadata, how to bump, release/tag process. Read before touching the version |
 | `notes/decisions/architecture.md` | Key structural choices and why |
 | `notes/decisions/rejected.md` | Things tried that failed — do not repeat |
 | `notes/plans/next-steps.md` | Ordered task list |
@@ -133,6 +134,7 @@ As things happen during a session, update the appropriate file on the spot:
 | Build health changes | Update `notes/status.md` |
 | Something significant about the project's history changes | Update `notes/context/history.md` |
 | A new contributor/tool/service/asset/AI helps the project | Add them to `projects/db/assets/data/credits.json` (see "Keep the Credits Screen Living" below) |
+| The version changes / a release is cut | Bump the one line in repo-root `VERSION.txt` (reconfigure to apply); tag `vX.Y.Z` on release (on request). The number propagates everywhere automatically — never hardcode a version. See `notes/reference/versioning.md` |
 
 Also: if something comes up that doesn't fit any existing file, create a new file in the right folder.
 The structure is meant to grow. Don't stuff things into the wrong place to avoid creating a new file.
