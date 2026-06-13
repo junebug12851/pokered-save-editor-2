@@ -337,7 +337,15 @@ nickname/OT edits happen in the detail editor and don't emit a box `pokemonChang
   `colW(i)` = `i===0 ? partyColW : boxColW`, used by the header, the column bands, AND the row cells so all
   three stay aligned). Box **headers show just the number** ("Box 3" → "3", bold, via `boxNum()`) since
   "Box 12" can't fit 30px; the Party column keeps its word. `tableW` recomputed from the per-column widths;
-  the narrower table fits without horizontal scroll in the common case.
+  the narrower table fits without horizontal scroll in the common case. (Box-number headers are **not**
+  bolded — Twilight.)
+
+**`fixName()` also applies to the storage GRID cell labels (2026-06-12).** The Pokémon selection screen
+(`fragments/screens/pokemon/PokemonBoxView.qml`) shows each mon's nickname or species fallback via
+`getMonNickname()`; it now runs the same markup mapping (`fixMonName()`: `Nidoran<f>`→`Nidoran ♀`, etc.)
+on the resolved label **before** the 10-char truncation, so `<m>`/`<f>` render as `♂`/`♀` on the grid too
+(matching the Pokedex + View All). The mapping is duplicated in three QML spots now (Pokedex delegate, View
+All panel, box-view cell) — fine for a 4-line presentation helper; consolidate only if a 4th use appears.
 - **Tooltip ownership rule (refined).** The caught/traded line is shown **only when something is traded**
   — an all-caught cell omits it (it adds nothing). So a cell with **no differing nicknames AND nothing
   traded yields an empty tooltip**, and the view shows **no tooltip at all** on it (the QML already gates

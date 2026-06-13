@@ -296,7 +296,6 @@ Page {
                       text: (index === 0) ? modelData : viewAllPanel.boxNum(modelData)
                       color: brg.settings.textColorMid
                       font.pixelSize: (index === 0) ? 11 : 13
-                      font.bold: index !== 0
                       horizontalAlignment: Text.AlignHCenter
                       elide: Text.ElideRight
                     }

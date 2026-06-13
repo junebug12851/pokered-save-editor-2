@@ -135,6 +135,15 @@ GridView {
       return "qrc:/assets/icons/mon-icons/" + num + "-" + name + shiny + ".svg";
     }
 
+    // Pretty-print the few species whose internal readable name carries markup,
+    // mirroring the Pokedex screen's fixName() so <m>/<f> render as ♂/♀ here too.
+    function fixMonName(n) {
+      if(n === "Nidoran<f>") return "Nidoran ♀";
+      if(n === "Nidoran<m>") return "Nidoran ♂";
+      if(n === "Mr.Mime")    return "Mr. Mime";
+      return n;
+    }
+
     function getMonNickname() {
       // Show the nickname; for an un-nicknamed mon (empty nickname) fall back to
       // the species name, matching the in-game display. (Most mons in a save have
@@ -142,6 +151,9 @@ GridView {
       var nick = (itemNickname === undefined || itemNickname === null) ? "" : itemNickname;
       if(nick === "")
         nick = (itemName === undefined || itemName === null) ? "" : itemName;
+
+      // Render the species markup (Nidoran<f>/<m>, Mr.Mime) before truncating.
+      nick = fixMonName(nick);
 
       if(nick.length > 10)
         return nick.substring(0, 7) + "...";
