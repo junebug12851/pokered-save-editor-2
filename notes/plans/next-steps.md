@@ -37,10 +37,23 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
   machine** — next action: build in Qt Creator (or `cmake --build` then `ctest --output-on-failure`)
   and triage results. The first run may legitimately surface a round-trip imperfection or an offset to
   nudge. Then continue the phased rollout (savefile/common/db coverage → negative/integration/E2E →
-  randomizer/fuzz → sanitizers/coverage → CI → app C++ → QML last). **QML/UI testing deferred** —
-  Twilight to decide (low ROI, high maintenance during the UI-iteration phase; rationale in
-  `testing.md`). Remaining open questions there: coverage-gate strictness, CI host, characterizing
-  `BaseSAV.sav`.
+  randomizer/fuzz → sanitizers/coverage → CI → app C++ → QML last). Remaining open questions there:
+  coverage-gate strictness, CI host, characterizing `BaseSAV.sav`.
+
+- **QML smoke test + first comprehensive GUI suite — BUILT 2026-06-13.** `tst_qml_screens` (loads
+  every screen, fails on any QML warning; `main` gated on it) PLUS a real-app GUI suite on the
+  `tests/helpers/guiapp.h` harness: `tst_gui_navigation` (sweep every screen on populated + new saves),
+  `tst_gui_saveload` (edit through screens → save → reopen across files, independence, randomize,
+  byte-stability), `tst_gui_input` (synthesized keyboard input). All run `offscreen` and gate BOTH the
+  Linux and Windows CI jobs. ✅ **BUILT + RUN + GREEN on the Qt 6.11 kit 2026-06-13 (full `ctest`
+  61/61).** Triage done (harness `keyType`/`appBody` StackView-class/`busy`-wait fixes, font allowlist,
+  money-field `objectName`, detail-screen load-only smoke); a real **Pokemart empty-cart crash** was
+  found + fixed (`status.md` Open Issues). Full writeup in `status.md` + `testing.md`.
+  - **NEXT: continue the GUI roadmap** (`plans/testing.md` → "Broader GUI coverage"): synthetic
+    fixture matrix (generated edge-case saves in a clearly-synthetic folder), detail-screen flows
+    (pokemon→select→details with a real selection — verifies the cold-load bindings the smoke test
+    leaves load-only), keyboard shortcuts, drag & drop flows, shell/fragment smoke, Red/Blue +
+    game-state fixtures, and ASan-under-GUI on Linux CI.
 
 ## Pending decisions — tracked temporary exceptions (resolve, don't let linger)
 

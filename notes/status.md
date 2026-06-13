@@ -410,10 +410,59 @@ and FF-ing `main` on green C++ tests alone let a non-opening screen reach `main`
 `main` on a QML-load smoke check, not just `ctest`.** Both fixes added to `reference/fix-patterns.md`. A
 dedicated GUI/automated-test setup is being spun up separately (see `plans/testing.md`).
 
+**QML screen smoke test — BUILT 2026-06-13 (the gate for the bug class above):**
+`projects/tests/qml/tst_qml_screens.cpp` (CTest: `tst_qml_screens`) loads EVERY registered screen
+(modal + non-modal, list taken from `Router::loadScreens()`) through a real `QQmlEngine` wired exactly
+like `MainWindow` (`brg` over the BaseSAV fixture, the `tileset`/`font` image providers,
+`DB::qmlProtect`, the exe's `bootQmlLinkage()` type registration, `app.qrc` compiled in for
+`qrc:/ui/app/...` + the Material-style `qtquickcontrols2.conf`). Per screen it fails on any component
+load error AND on any qWarning/qCritical emitted while instantiating into a sized parent + running
+`Component.onCompleted` — i.e. FINAL-overrides, "Component is not ready", binding `TypeError`s,
+missing types/providers, anchor-on-null. Runs headless (`offscreen`) so it's a Linux/CI gate.
+**`main` is now gated on it** (CLAUDE.md default workflow → step 2); wired into `tests/CMakeLists.txt`
+(+ `tests_all`). ⚠️ **Not yet built/run on the Qt 6.11 kit or CI** — run the standing build/test loop
+to confirm green and triage any pre-existing per-screen warnings (the `isBenign()` allowlist hook is
+empty by design). Broader GUI-coverage roadmap (navigation, shortcuts, GUI save/load round-trips,
+platform diffs) is stubbed in `plans/testing.md` → "Broader GUI coverage".
+
+**Comprehensive GUI test suite — BUILT 2026-06-13 (real-app, headless, both-platform CI):** a first
+full pass of true GUI/interaction testing on a shared harness `projects/tests/helpers/guiapp.h`, which
+boots the REAL app (`App.qml` + `AppWindow` + both StackViews + the live C++ Router) into a
+`QQuickView` offscreen, wired exactly like `MainWindow` (`brg`, the `tileset`/`font` providers,
+`DB::qmlProtect`, `bootQmlLinkage`), with navigation / item-find / **real input synthesis** /
+QML-warning-capture / save-reopen helpers. Tests (all `offscreen`, gating BOTH CI jobs):
+**`tst_gui_navigation`** (drive the real Router through every screen on a populated AND a new save;
+correct push/pop + zero QML warnings; clean `goHome`), **`tst_gui_saveload`** (edit trainer
+card/bag/party-mon THROUGH the live screens → Save-As → reopen fresh → assert persisted; cross-file
+independence; randomize-a-new-file journey; app-saved-file byte-stability), **`tst_gui_input`** (real
+key events into the money field → commit → persists). Wired into `tests/CMakeLists.txt` (+ `tests_all`);
+the Windows CI ctest step now also sets `offscreen`.
+
+**✅ BUILT + RUN + GREEN on the Qt 6.11 kit 2026-06-13 — full `ctest` 61/61.** First-run triage done:
+- **`tst_gui_input` no longer skips** — added a non-visual `objectName: "trainerMoneyField"` to MoneyEdit's
+  field and locate by it (value-match fallback kept); real keystrokes into money now commit + persist (hard
+  assert, no `QSKIP`).
+- **Harness fixes (`guiapp.h`):** (1) `QTest::keyClicks(QString)` is QWidget-only → added `keyType()` that
+  loops the `QWindow` `keyClick(char)` overload. (2) The inner `appBody` StackView's metaobject class is
+  `StackView_QMLTYPE_N` (not `QQuickStackView`) → `appBody()` now matches the `"StackView"` substring (this
+  was why every non-modal screen read "no current page"). (3) `navigate()`/`closeTop()` now wait on the
+  StackView `busy` transition (`waitForStacksIdle`) instead of a fixed 60 ms. (4) benign offscreen
+  `QFontDatabase: Cannot find font directory` added to `isBenign()`.
+- **`tst_gui_navigation`** now reports ALL problem screens at once (accumulate, not stop-on-first).
+- **Real crash found + fixed (see Open Issues):** opening **Pokemart** aborted via an unguarded
+  `ItemMarketModel::at(0)` on an empty cart cache.
+- `tst_qml_screens` (the load smoke) also runs green now: font warning allowlisted; **detail screens
+  (`pokemonDetails`/`mapDetails`) are load-only** (cold-load with a null selection is an unreachable state;
+  their runtime bindings are the detail-flow GUI test's job).
+
+Next increments (synthetic fixture matrix, detail-screen flows with a real selection, shortcuts, drag
+flows) are in `plans/testing.md` → "Broader GUI coverage".
+
 ## Open Issues
 
 | Issue | Where | Status / notes |
 |-------|-------|----------------|
+| ~~Opening the Pokemart screen aborts (empty-cart `at(0)` assert)~~ | `mvc/itemmarketmodel.cpp` `moneyLeftover()`/`totalCartWorth()`/`canAnyCheckout()` | **Fixed 2026-06-13 (Twilight-approved: "guards + fix the problem").** The three aggregate accessors read `itemListCache.at(0)` (entry 0 carries the model-wide value) with no empty guard; the Pokemart footer/summary bindings evaluate during the screen's `StackView.push` **before** the model's `pageOpening` slot builds the list (both on the same `openNonModal` signal), so they hit an empty list → `Q_ASSERT` → `qFatal`. Root-cause fix: `buildList()` now runs in the **ctor** (model valid from construction, not dependent on navigation slot order); plus the accessors return sane empties (`moneyStart()`/`0`/`false`) as defense-in-depth. **Found by `tst_gui_navigation`** (the harness loads the save before the Bridge, missing the initial `dataExpandedChanged` build, which exposed it). `tst_market_model`/`tst_bridge` still green. See `reference/fix-patterns.md`. |
 | ~~`PokemonBox::update(resetType=false, …)` clobbered a dual-type mon's `type2`~~ (+ 2 related type/reset bugs) | `pokemonbox.cpp` `update()`, `isCorrected()`, `isPokemonReset()` | **Fixed 2026-06-08 (Twilight-approved, brought to her before fixing).** Found while coverage-testing `pokemonbox.cpp` (`tst_pokemonbox`). (1) `update()`'s bare `else type2 = toType1->ind` ran on every call with `resetType=false`, overwriting a dual-type mon's `type2` with `type1` (silently dropping the second type; reachable via `maxLevel`/`maxEVs`/`resetEVs`/`reRollEVs`/`manualLevelChanged`; emitted no `type2Changed`). Fixed: type2 (re)derivation is wrapped in `if(resetType)`. (2) `isCorrected()` vs `update()` disagreed for a species whose DB `toType2`==`toType1` (update collapses to `type2=0xFF`; isCorrected demanded `type2==toType2->ind`). Fixed: isCorrected treats a record as dual-type only when `toType2` genuinely differs from `toType1`, accepting `0xFF` or `type1` for single types (faithful to the DB's mixed 0xFF-vs-duplicate storage). (3) the empty-slot bug in `isMaxPP()`/`isMaxPpUps()` (an empty moveID-0 slot counted as "not maxed") propagated into `isHealed()`, so **any mon with <4 moves could never read as healed** (user-facing — the heal indicator — not just `isPokemonReset()`). Twilight asked this not be squashed aside; fixed at source: `isMaxPP`/`isMaxPpUps` skip empty slots (mirroring `isMaxedOut`'s guard), `isPokemonReset` then simplifies to iterate the real initial moves, check `ppUp==0`, reuse `isHealed()`. Regression-guarded in `tst_pokemonbox` (incl. `box_healedWithFewerThanFourMoves`). type2 single-WRITE truth + `isMinEvs` `||` tracked in `plans/next-steps.md`. See `reference/fix-patterns.md`. |
 | ~~db map-search/connect bugs (2, found coverage-testing db)~~ | `mapsearch.cpp`, `mapdbentryconnect.cpp` | **Fixed 2026-06-08 (Twilight-approved).** (1) `MapSearch::hasDynamicSpriteSet/noDynamicSpriteSet` dereferenced a null `toSpriteSet` on maps with no sprite set — `!spriteSet` only catches index 0, but `-1` is the "none" sentinel; `hasSpriteSet/noSpriteSet` had the same sentinel bug (wrong results, no crash). Now use `spriteSet < 0` + guard `toSpriteSet == nullptr`. (2) `MapDBEntryConnect::xAlign()` guard was missing `<= 0` (`if(toMap->getWidth())`), so it returned 0 for every real map and its connection-math body was dead — fixed to `getWidth() <= 0`, confirmed against the connection-data formulas Twilight added to `gen1-knowledge.md`. Both gated behind the disabled Maps feature; regression/coverage-guarded in `tst_mapsearch_predicates` + `tst_db_entry_getters2`. See `reference/fix-patterns.md`. |
 | ~~Area-family bugs (3, found coverage-testing area/\*)~~ | `areatileset.cpp`, `pokemonbox.cpp`, `areapokemon.cpp` | **Fixed 2026-06-08 (Twilight-approved, brought before fixing).** (1) `AreaTileset::loadFromData` inverted ternary — `(map==nullptr) ? map->getToTileset() : nullptr` crashed on a null map and discarded the real tileset on a non-null map (both branches wrong); fixed to `? nullptr : map->getToTileset()`. Masked today (disabled Maps path). (2) `PokemonBox::newPokemon(Random_Pokedex)` rolled `rangeExclusive(1,151)` so could **never randomize to Bulbasaur** — dex keys are 0-based (probe-confirmed: dex0=Bulbasaur..dex150=Mew, dex151 null); fixed to `rangeExclusive(0,151)`. (3) considered adding an `i < wildMonsCount` bound to `AreaPokemon::setTo`'s array writes, but **Twilight declined** — gen-1 wild tables are fixed at exactly 10, so a defensive bound just implies a case that can't happen; left unbounded (trust the fixed data). Bugs (1)+(2) regression-guarded in `tst_area_logic` (+ `tst_pokemonbox`). See `reference/fix-patterns.md`. |

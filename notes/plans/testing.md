@@ -3,7 +3,14 @@
 _Created 2026-06-07. Status: **Phases 1–2 built, run & ALL GREEN on the real Qt 6.11 kit (3/3 suites,
 31 field assertions) — 2 real bugs found and fixed** (Daycare empty-destructor crash; bank-2 checksum
 off-by-one). Tests live under `projects/tests/`; later phases here are still the design to build
-against. QML/UI testing is **deferred pending Twilight's decision** — see "QML / UI testing" below._
+against. **QML SCREEN SMOKE TEST + a first COMPREHENSIVE GUI SUITE are now BUILT** (2026-06-13):
+`tst_qml_screens` loads every screen and fails on any QML warning/error (`main` gated on it), and a
+real-app GUI suite on the `guiapp.h` harness — `tst_gui_navigation` (sweep every screen on populated
++ new saves), `tst_gui_saveload` (edit through screens → save → reopen across files, independence,
+randomize, byte-stability), `tst_gui_input` (synthesized keyboard input) — runs headless on BOTH the
+Linux and Windows CI jobs. See "QML screen smoke test" and "Broader GUI coverage" below. ⚠️ The GUI
+suite is written but **not yet built/run on the kit or CI** — first-run triage expected (risk points
+noted inline)._
 
 > **Phase 2 added (2026-06-07): `tests/savefile/tst_fields.cpp` — per-field expand/flatten coverage,
 > all green.** Two styles per field: VALUE round-trip (set on the model → flatten → re-expand → assert
@@ -665,14 +672,59 @@ Each phase is independently valuable; the suite is useful from phase 1.
       the box's actual `pokemon.size()` (load a non-blank fixture if you want a non-empty box/party)._
 10. **QML/UI** — Twilight opted in. _Harness established 2026-06-07: `tests/qml/` (Qt Quick Test,
     `QUICK_TEST_MAIN`) builds and runs headless via the `offscreen` platform; `cases/tst_smoke.qml`
-    is green (6 cases). This proves the QML test path works. **Screen-level tests still to do** — the
-    app's screens bind to `brg.*`, so testing them needs the Bridge + DB + registered types booted
-    into the test engine (a larger harness); behavioural smoke tests (name commit-on-blur, editor
-    reactivity, popup dismiss) come after that._
+    is green (6 cases). This proves the QML test path works._
+    _**Screen smoke test added 2026-06-13 (`tests/qml/tst_qml_screens.cpp`) — see the dedicated
+    "QML screen smoke test" section below.** It loads EVERY registered screen through a real engine
+    and fails on any QML warning/error; `main` is now gated on it (CLAUDE.md default workflow).
+    Still to do after this: behavioural flow tests (name commit-on-blur, editor tab reactivity, popup
+    open/dismiss) — those simulate input and assert state, a larger effort built on this same harness._
 
 ---
 
-## QML / UI testing — DEFERRED (Twilight to decide)
+## QML screen smoke test (BUILT 2026-06-13 — `main` is gated on it)
+
+**File:** `tests/qml/tst_qml_screens.cpp` · **CTest name:** `tst_qml_screens` · headless (`offscreen`).
+
+**What it guards.** The C++ ctest suite never instantiates QML, so a screen that fails to *load*
+("Cannot override FINAL property" → "Component is not ready") or that loads but degrades (binding
+`TypeError`s, missing types, missing image providers, anchor-on-null) passes every C++ test yet is
+broken in the app. Exactly that reached `main` on 2026-06-13 (the Credits `Page.contentWidth` FINAL
+override + the `id: top` anchor-line collision — `reference/fix-patterns.md`). This test is the
+automated gate for that whole class; the standing workflow now requires it green before FF `main`.
+
+**How it works.** A data-driven `QTEST_MAIN` GUI test, one ctest row per screen, list taken straight
+from `Router::loadScreens()` (the authoritative registry — can't drift). Per screen it: builds a
+`QQmlComponent` for the qrc url; fails on any `component.errors()`; instantiates it into a **sized
+parent** via `beginCreate`/`completeCreate` (so `anchors.fill: parent` / `parent.width` resolve
+against a real non-null parent, as when the app pushes it onto its StackView); spins the event loop
+briefly so `Component.onCompleted` + deferred bindings run; then **FAILS if any qWarning/qCritical/
+qFatal was emitted** during the load (captured via an installed `qInstallMessageHandler`).
+
+**Engine wiring mirrors `MainWindow::injectIntoQML` + `setupProviders`** (keep in sync if that
+changes): `brg` context property (a real `Bridge` over the `BaseSAV.sav` fixture), the `tileset` +
+`font` image providers, `DB::inst()->qmlProtect(engine)` (GC guard), and `bootQmlLinkage()` for the
+full type registration. It compiles in `app.qrc` (so `qrc:/ui/app/...` resolves and the bundled
+`qtquickcontrols2.conf` auto-selects the Material style, same as the app) and the exe's own
+`src/boot/bootQmlLinkage.cpp` (one source of truth for QML type registration — not duplicated).
+
+**Why this approach (C++ `QQmlComponent` harness + message handler) over Qt Quick Test (`qmltest`):**
+the goal is "load every screen, fail on ANY warning." That is a C++-level concern — intercepting the
+Qt message handler and treating `QtWarningMsg`/`QtCriticalMsg` as failures across a data-driven sweep
+— which a C++ harness expresses directly and uniformly. `qmltest` is built to write per-case QML
+assertions on properties; making "any warning anywhere = fail" awkward and per-case, and it has no
+clean hook to enumerate+instantiate the real screen registry with the app's exact engine wiring. We
+keep `qmltest` (`tst_qml`, `tst_qml_brg`) for the *behavioural* flow tests below, where asserting QML
+state from QML is the natural fit. Tradeoff accepted: the harness duplicates a few lines of engine
+setup that must track `MainWindow` (documented above).
+
+**First-run note (for whoever runs it first on the kit/CI):** if a screen surfaces a *pre-existing*
+benign warning (e.g. an unavoidable offscreen-platform message — NOT a QML bug), triage it and, only
+if truly benign, add a narrow justified substring to the `isBenign()` allowlist in the test (empty by
+default). Real QML warnings must be fixed, not allowlisted. A screen that binds to a "current
+selection" only set during navigation (e.g. `PokemonDetails`) is a good robustness probe — if it
+warns when loaded cold, the binding wants a null guard.
+
+## QML / UI testing — behavioural flows still DEFERRED (load smoke now DONE above)
 
 **It is technically doable.** Qt Quick Test drives QML components, simulates clicks/keystrokes, and
 asserts on properties, running headless via the `offscreen` platform plugin (so it works in CI).
@@ -692,6 +744,69 @@ asserts on properties, running headless via the `offscreen` platform plugin (so 
 **If greenlit, scope would be narrow:** a handful of behavioral smoke tests on the highest-value
 flows (name commit-on-finish, Pokémon editor reactivity, popup open/dismiss), run offscreen, kept
 deliberately small. Decision pending; revisit once the UI-polish phase settles.
+
+---
+
+## Broader GUI coverage — roadmap (first comprehensive pass BUILT 2026-06-13)
+
+The screen smoke test is the floor (load + zero-warnings). On top of it a **comprehensive GUI suite**
+is now built on a shared headless harness, **`tests/helpers/guiapp.h`**, which boots the REAL app —
+`qrc:/ui/app/App.qml` (+ `AppWindow.qml`, both StackViews, the live C++ Router) into a `QQuickView`
+on the `offscreen` platform, wired exactly like `MainWindow` (`brg` over a fixture/new save, the
+`tileset`/`font` providers, `DB::qmlProtect`, `bootQmlLinkage`). It provides navigation
+(`brg.router.changeScreen`), item finders (by objectName / type / value), real input synthesis
+(`clickItem`/`typeInto`/`pressKey`), QML-warning capture (`QmlWarningScope`), and save/reopen helpers.
+**Per the hybrid approach:** flagship journeys use real synthesized input; breadth uses the real bound
+objects + real navigation. All run `offscreen`, so they gate **both** CI jobs (Linux + Windows).
+
+✅ **BUILT + RUN + GREEN on the Qt 6.11 kit 2026-06-13 (full `ctest` 61/61).** First-run triage done —
+fixes: harness `keyType()` (QtTest `keyClicks(QString)` is QWidget-only); `appBody()` matches the
+`"StackView"` substring (the inner stack's class is `StackView_QMLTYPE_N`, not `QQuickStackView` — was why
+every non-modal screen read "no current page"); `navigate()` waits on the StackView `busy` transition;
+benign offscreen font warning allowlisted; `tst_gui_input` now locates the money field by a non-visual
+`objectName` and hard-asserts (no `QSKIP`); the nav sweep accumulates + reports all bad screens at once.
+**A real crash was found + fixed** (Pokemart empty-cart `at(0)` assert — see `status.md` Open Issues +
+`reference/fix-patterns.md`).
+
+**Built (this pass):**
+
+- ✅ **2. Navigation sweep — `tst_gui_navigation`.** Drives the real Router through **every** screen
+  (modal + non-modal) on both a populated `BaseSAV.sav` and a fresh New File; asserts the correct
+  push/pop (router title for non-modal, shell-stack depth for modal) + a live current page + **zero
+  QML warnings** per transition, and a clean `goHome` unwind. Detail screens (`pokemonDetails`,
+  `mapDetails`, i.e. `Screen.homeBtn == false`) are excluded here — they need a parent selection
+  (see item 1b below).
+- ✅ **4. GUI save/load across files — `tst_gui_saveload`.** Edits trainer card (money/name/badges),
+  bag (via `ItemStorageModel`), and a party Pokémon **through the live screens**, Save-As to temp,
+  reopens fresh, asserts every edit persisted; plus **cross-file independence** (two sessions, one
+  randomized New File, neither disturbs the other) and **byte-stability** of an app-saved file
+  (reopen → flatten → recalc == bytes on disk). Covers "save/load across files", "per-screen edits",
+  and "randomize + verify".
+- ✅ **5a. Synthesized-input flagship — `tst_gui_input`.** Real key events into the money field
+  (select-all → type → commit), asserting the model updated **and** it persisted through save/reopen.
+  The pattern to extend to badge clicks, footer buttons, the name popup keyboard, the Pokémon editor.
+- ✅ **6. Both-platform CI.** The Linux **and** Windows jobs already build `tests_all` + run `ctest`;
+  every GUI test sets `offscreen` per-test, so the green check now means "opens + runs on both."
+
+**Still to build (next increments):**
+
+1a. **Shell + fragment-leaf smoke (extend `tst_qml_screens`).** Also instantiate `App.qml` /
+   `AppWindow.qml` and standalone reusable fragments the zero-warning way.
+1b. **Detail-screen flows.** Navigate `pokemon` → select a mon → open `pokemonDetails`; `maps` →
+   select → `mapDetails`. Exercises the parent→child push the sweep skips (and the editor tab
+   reactivity / Glance pane bindings).
+3.  **Keyboard shortcuts — `tst_shortcuts`.** `MainWindow` wires `QShortcut`s to `FileManagement`
+   verbs (new/open/reopen/save/saveAs/saveCopyAs/scrub/clear-recent/random) + recent-file
+   `Ctrl+Shift+0..4`. Factor the shortcut map out of `MainWindow` (or construct it headless), fire
+   each `activated`, assert the bound slot ran. Guards accidental rebinds.
+5b. **More synthesized-input + drag flows.** Badge toggle clicks; the Pokémon/items **drag & drop**
+   (reorder / cross-pane transfer / group / delete) via synthesized drag through `guiapp.h` (the
+   `dragReorder`/`dragTransfer`/`deleteMon` paths already unit-tested at model level); popup
+   open/dismiss; name popup-keyboard commit.
+7.  **Compatibility fixture matrix at GUI level.** Run the navigation + save/load journeys over Red
+   vs Blue and fresh/mid/post-E4 saves once those fixtures exist.
+8.  **ASan under GUI load (Linux CI).** When the Linux ASan job runs these, a QML-instantiation
+   use-after-free (the s13f/g/h class) is caught automatically — pair with the planned ASan/UBSan job.
 
 ---
 
