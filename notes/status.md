@@ -451,12 +451,24 @@ the Windows CI ctest step now also sets `offscreen`.
 - **`tst_gui_navigation`** now reports ALL problem screens at once (accumulate, not stop-on-first).
 - **Real crash found + fixed (see Open Issues):** opening **Pokemart** aborted via an unguarded
   `ItemMarketModel::at(0)` on an empty cart cache.
-- `tst_qml_screens` (the load smoke) also runs green now: font warning allowlisted; **detail screens
-  (`pokemonDetails`/`mapDetails`) are load-only** (cold-load with a null selection is an unreachable state;
-  their runtime bindings are the detail-flow GUI test's job).
+- `tst_qml_screens` (the load smoke) also runs green now: font warning allowlisted. **The Pokémon editor
+  (`pokemonDetails`) is fully verified** — the smoke test injects a real party mon as `boxData` (exactly
+  as `PokemonBoxView.openMonEditor` does) before completing creation, so its bindings resolve against real
+  data and it's held to the full zero-warning bar (no screen change needed; its earlier cold-load
+  TypeErrors were purely the unreachable null-selection state). `mapDetails` stays **load-only** (Maps not
+  wired; no selection to inject yet).
 
-Next increments (synthetic fixture matrix, detail-screen flows with a real selection, shortcuts, drag
-flows) are in `plans/testing.md` → "Broader GUI coverage".
+**Second comprehensive pass (2026-06-13, Twilight-directed "I really need good comprehensive testing"):**
+(1) **`tst_gui_fidelity`** — the sacred byte-fidelity promise as a test: browse heavily (navigate all
+screens, open/close every dropdown + modal, focus/blur every field — NO edits) → flatten → assert
+byte-identical (over progressed + new). (2) **`assets/dirty/` + `tst_dirty_fixtures`** — malformed saves
+(empty/truncated/oversized/all-00/all-FF/garbage + README + runtime checksum-flip cases) with a negative
+suite proving graceful degradation. **Found + fixed a real corrupt-save crash** (out-of-range current-box
+index → `boxes[121]`; see Open Issues). (3) The Pokémon editor verification above.
+
+Next: **per-control depth** (task) — destructive edits per control with byte-delta assertions, and
+extending fidelity-browsing into the editor + name popup + drawers; synthetic fixture matrix; shortcuts;
+drag flows; mapDetails when Maps is wired. See `plans/testing.md` → "Broader GUI coverage".
 
 ## Open Issues
 
