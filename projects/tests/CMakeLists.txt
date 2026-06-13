@@ -176,6 +176,7 @@ if(TARGET appcore)
     pse_add_gui_test(tst_gui_navigation gui/tst_gui_navigation.cpp)
     pse_add_gui_test(tst_gui_saveload   gui/tst_gui_saveload.cpp)
     pse_add_gui_test(tst_gui_input      gui/tst_gui_input.cpp)
+    pse_add_gui_test(tst_gui_fidelity   gui/tst_gui_fidelity.cpp)
 endif()
 
 # Aggregate target: builds every registered test exe in one shot. CI builds this

@@ -281,6 +281,29 @@ public:
     return nullptr;
   }
 
+  /// Collect EVERY item under @p root matching @p pred (depth-first, includes root).
+  static void collectItems(QQuickItem* root, const std::function<bool(QQuickItem*)>& pred,
+                           QList<QQuickItem*>& out)
+  {
+    if (!root) return;
+    if (pred(root)) out.append(root);
+    const auto kids = root->childItems();
+    for (QQuickItem* c : kids)
+      collectItems(c, pred, out);
+  }
+
+  /// All items under @p from (default: current non-modal screen) whose metaobject
+  /// class name contains @p typeSub (e.g. "ComboBox", "TextField").
+  QList<QQuickItem*> itemsByType(const QString& typeSub, QQuickItem* from = nullptr) const
+  {
+    QQuickItem* root = from ? from : currentNonModal();
+    QList<QQuickItem*> out;
+    collectItems(root, [&](QQuickItem* i){
+      return QString::fromLatin1(i->metaObject()->className()).contains(typeSub);
+    }, out);
+    return out;
+  }
+
   /// First item whose objectName == @p name, anywhere under the view root.
   QQuickItem* itemByName(const QString& name) const
   {
