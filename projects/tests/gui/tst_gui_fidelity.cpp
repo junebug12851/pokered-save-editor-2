@@ -130,6 +130,7 @@ void TestGuiFidelity::navigatingScreens_changesNoBytes_data()
   QTest::addColumn<QString>("fixture");
   QTest::newRow("progressed") << QStringLiteral("BaseSAV.sav");
   QTest::newRow("new")        << QStringLiteral("new");
+  QTest::newRow("synth_maxed")<< QStringLiteral("synthetic/new_maxed.sav");
 }
 
 // Walking through every screen (and opening/closing every modal) writes nothing.
@@ -166,6 +167,7 @@ void TestGuiFidelity::browsingControls_changesNoBytes_data()
   QTest::addColumn<QString>("fixture");
   QTest::newRow("progressed") << QStringLiteral("BaseSAV.sav");
   QTest::newRow("new")        << QStringLiteral("new");
+  QTest::newRow("synth_maxed")<< QStringLiteral("synthetic/new_maxed.sav");
 }
 
 // On every screen: open + close every dropdown/select box, and focus + blur every

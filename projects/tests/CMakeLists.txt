@@ -31,6 +31,12 @@ function(pse_add_test name lib)
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS ${name})
 endfunction()
 
+# One-shot generator for assets/synthetic/ (NOT a CTest test). Build + run manually to
+# regenerate the synthetic fixtures; the output .sav files are committed.
+qt_add_executable(gen_synthetic_fixtures tools/gen_synthetic_fixtures.cpp)
+target_link_libraries(gen_synthetic_fixtures PRIVATE savefile)
+target_compile_definitions(gen_synthetic_fixtures PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+
 pse_add_test(tst_roundtrip    savefile savefile/tst_roundtrip.cpp)
 pse_add_test(tst_fields       savefile savefile/tst_fields.cpp)
 pse_add_test(tst_pokemon      savefile savefile/tst_pokemon.cpp)
@@ -60,6 +66,7 @@ pse_add_test(tst_verbs        savefile savefile/tst_verbs.cpp)
 pse_add_test(tst_toolset      savefile savefile/tst_toolset.cpp)
 pse_add_test(tst_errors       savefile savefile/tst_errors.cpp)
 pse_add_test(tst_dirty_fixtures savefile savefile/tst_dirty_fixtures.cpp)
+pse_add_test(tst_synthetic_fixtures savefile savefile/tst_synthetic_fixtures.cpp)
 pse_add_test(tst_e2e          savefile savefile/tst_e2e.cpp)
 pse_add_test(tst_randomizer   savefile savefile/tst_randomizer.cpp)
 pse_add_test(tst_common       common   common/tst_common.cpp)
