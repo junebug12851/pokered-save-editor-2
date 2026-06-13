@@ -47,6 +47,9 @@
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/savefiletoolset.h>
 #include <pse-savefile/expanded/savefileexpanded.h>
+#include <pse-savefile/expanded/player/player.h>
+#include <pse-savefile/expanded/player/playerpokemon.h>
+#include <pse-savefile/expanded/fragments/pokemonparty.h>
 
 #include <bridge/router.h>
 
@@ -114,6 +117,7 @@ private slots:
   void navigatingScreens_changesNoBytes();
   void browsingControls_changesNoBytes_data();
   void browsingControls_changesNoBytes();
+  void browsingPokemonEditor_changesNoBytes();
 };
 
 void TestGuiFidelity::initTestCase()
@@ -232,6 +236,85 @@ void TestGuiFidelity::browsingControls_changesNoBytes()
            "browse sweep found no dropdowns or fields -- the control locator is broken");
 
   assertSameImage(baseline, flattenedImage(app), QStringLiteral("[%1] browsing controls").arg(fixture));
+}
+
+// Opening the Pokemon EDITOR over a real mon and browsing it -- switching its tabs,
+// opening/closing its dropdowns (species/nature/move/status selects), focusing its
+// number fields -- WITHOUT changing a selection or typing, touches ZERO save bytes.
+// This is the "opening edit boxes changes nothing" guarantee for the biggest control
+// surface in the app.
+void TestGuiFidelity::browsingPokemonEditor_changesNoBytes()
+{
+  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  QVERIFY(app.start());
+  toHome(app);
+
+  PlayerPokemon* party = app.file()->data->dataExpanded->player->pokemon;
+  if (party->pokemonCount() < 1)
+    QSKIP("BaseSAV party is empty; the editor needs a mon to bind to.");
+  PokemonParty* mon = party->partyAt(0);
+
+  const QByteArray baseline = app.flattenedImage();
+
+  QVariantHash props;
+  props.insert(QStringLiteral("boxData"),   QVariant::fromValue<QObject*>(mon));
+  props.insert(QStringLiteral("partyData"), QVariant::fromValue<QObject*>(mon));
+
+  QQuickItem* editor = nullptr;
+  {
+    QmlWarningScope scope;
+    editor = app.instantiate(QStringLiteral("qrc:/ui/app/screens/non-modal/PokemonDetails.qml"), props);
+    QVERIFY2(editor != nullptr, "PokemonDetails failed to instantiate with a real selection");
+    QVERIFY2(scope.clean(), qPrintable("editor load emitted QML warnings:\n" + scope.messages().join('\n')));
+  }
+
+  int tabs = 0, combos = 0, fields = 0;
+
+  // Cycle tab-like controls (currentIndex + count, no popup): General/DV-EV/Moves etc.
+  QList<QQuickItem*> tabCtrls;
+  GuiApp::collectItems(editor, [](QQuickItem* i){
+    const auto* mo = i->metaObject();
+    return mo->indexOfProperty("currentIndex") >= 0 && mo->indexOfProperty("count") >= 0
+        && mo->indexOfProperty("popup") < 0;
+  }, tabCtrls);
+  for (QQuickItem* t : tabCtrls) {
+    const int n = t->property("count").toInt();
+    const int orig = t->property("currentIndex").toInt();
+    for (int k = 0; k < n; ++k) { t->setProperty("currentIndex", k); app.settle(8); ++tabs; }
+    t->setProperty("currentIndex", orig);
+    app.settle(8);
+  }
+
+  // Open + close every dropdown / select box (no selection change).
+  QList<QQuickItem*> combosL;
+  GuiApp::collectItems(editor, [](QQuickItem* i){
+    const auto* mo = i->metaObject();
+    return mo->indexOfProperty("popup") >= 0 && mo->indexOfProperty("currentIndex") >= 0;
+  }, combosL);
+  for (QQuickItem* c : combosL) {
+    QObject* popup = c->property("popup").value<QObject*>();
+    if (!popup) continue;
+    QMetaObject::invokeMethod(popup, "open");  app.settle(12);
+    QMetaObject::invokeMethod(popup, "close"); app.settle(8);
+    ++combos;
+  }
+
+  // Focus + blur every editable field (no typing).
+  QList<QQuickItem*> fieldsL;
+  GuiApp::collectItems(editor, [](QQuickItem* i){
+    const auto* mo = i->metaObject();
+    return mo->indexOfProperty("selectByMouse") >= 0 && mo->indexOfProperty("text") >= 0;
+  }, fieldsL);
+  for (QQuickItem* f : fieldsL) { f->forceActiveFocus(); app.settle(5); ++fields; }
+  editor->forceActiveFocus();
+  app.settle(10);
+
+  qInfo("editor browsed: %d tab switches, %d dropdowns, %d fields", tabs, combos, fields);
+  QVERIFY2(tabs + combos + fields > 0, "editor browse exercised no controls -- locator broken");
+
+  assertSameImage(baseline, app.flattenedImage(), QStringLiteral("Pokemon editor browse"));
+
+  delete editor;
 }
 
 QTEST_MAIN(TestGuiFidelity)

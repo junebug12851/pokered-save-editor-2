@@ -55,6 +55,8 @@
 #include <QElapsedTimer>
 #include <QQmlEngine>
 #include <QQmlContext>
+#include <QQmlComponent>
+#include <QVariantHash>
 #include <QQuickView>
 #include <QQuickItem>
 #include <QQuickWindow>
@@ -65,6 +67,7 @@
 #include <pse-db/db.h>
 #include <pse-savefile/filemanagement.h>
 #include <pse-savefile/savefile.h>
+#include <pse-savefile/savefiletoolset.h>
 #include <pse-savefile/expanded/savefileexpanded.h>
 
 #include <bridge/bridge.h>
@@ -365,6 +368,39 @@ public:
   {
     m_file->setPath(path);
     return m_file->saveFile();
+  }
+
+  /// Flatten + recalc the live save and return its raw 32 KB on-disk image (the bytes
+  /// a save would write). Used to assert that interaction touched no save bytes.
+  QByteArray flattenedImage()
+  {
+    m_file->data->flattenData();
+    m_file->data->toolset->recalcChecksums();
+    return snapshot(*m_file->data);
+  }
+
+  /// Instantiate a screen/component on the LIVE engine (with `brg` + providers), with
+  /// @p props set BEFORE completion so its bindings resolve against them (e.g. a detail
+  /// screen's `boxData`). Parented + sized into the view, then settled. Returns the item
+  /// (or nullptr on a component error). Caller owns it (delete to tear it down).
+  QQuickItem* instantiate(const QString& url, const QVariantHash& props = QVariantHash())
+  {
+    QQmlComponent comp(m_view->engine(), QUrl(url));
+    if (comp.isError())
+      return nullptr;
+    QObject* obj = comp.beginCreate(m_view->engine()->rootContext());
+    if (!obj)
+      return nullptr;
+    for (auto it = props.constBegin(); it != props.constEnd(); ++it)
+      obj->setProperty(it.key().toUtf8().constData(), it.value());
+    if (auto* item = qobject_cast<QQuickItem*>(obj)) {
+      item->setParentItem(m_view->contentItem());   // a real, sized parent (anchors resolve)
+      item->setWidth(m_view->width());
+      item->setHeight(m_view->height());
+    }
+    comp.completeCreate();
+    settle(50);
+    return qobject_cast<QQuickItem*>(obj);
   }
 
   static void installMessageHandler()   { gui_detail::g_prev = qInstallMessageHandler(gui_detail::handler); }

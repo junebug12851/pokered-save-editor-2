@@ -487,9 +487,15 @@ safe/non-dialog verbs** (clear-recent / scrub / random / exit×2 / new) assertin
 mechanics already unit-tested; this is the persistence half; the Pokémon box is populated at runtime +
 marked formatted). Full `ctest` **66/66**.
 
-Next: **per-control depth** (remaining) — destructive edits per control with byte-delta assertions, and
-extending fidelity-browsing into the editor + name popup + drawers; mapDetails when Maps is wired; (later,
-deferred) profiling/perf tests. See `plans/testing.md` → "Broader GUI coverage".
+**Editor byte-fidelity browsing added (2026-06-13):** `tst_gui_fidelity` now also opens the **Pokémon
+editor** over a real party mon (via the new `GuiApp::instantiate()` with `boxData` set) and browses it
+non-destructively — cycles every tab (9), opens/closes every dropdown (9), focuses all fields (22) — then
+asserts the flattened save is **byte-identical**. The "opening edit boxes changes nothing" guarantee now
+covers the app's biggest control surface. Helpers added to `guiapp.h`: `flattenedImage()` + `instantiate()`.
+
+Next: **per-control depth** (remaining) — destructive edits per control with byte-delta assertions;
+fidelity-browse the **name popup** + **View All drawers**; Pokémon cross-box drag transfer; mapDetails
+when Maps is wired; (later, deferred) profiling/perf tests. See `plans/testing.md` → "Broader GUI coverage".
 
 ## Open Issues
 
