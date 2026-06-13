@@ -223,22 +223,23 @@ hover delete chip showing through); rebuild `onShownChanged`. Twilight signed of
 `ctest` green 57/57 + app relaunched):** The 8 badge PNGs were full-bleed (content = 99.8–100% of canvas)
 with **differing aspect ratios** (0.85–1.01), so under `PreserveAspectFit` each filled the square cell by a
 different width (full height, varying width) — inconsistent with each other and with the now-square leader
-busts. Fix: re-processed each badge onto a **256×256 transparent square canvas, content centered, longest
-side ~98%** — measured to match the leader busts' ~98% canvas fill, so earned badges and unearned shadows
+portraits. Fix: re-processed each badge onto a **256×256 transparent square canvas, content centered, longest
+side ~98%** — measured to match the leader portraits' ~98% canvas fill, so earned badges and unearned shadows
 now render at the same footprint in the cell. Done with PIL (alpha-bbox crop → LANCZOS scale → center on
 256²), files dropped to ~80–104 KB each. No QML change (the `PreserveAspectFit` delegate handles the now-
 square images uniformly). **Badge PNGs changed in qrc → Rebuild required** (done; RCC re-embedded).
-**Awaiting Twilight's in-app review.** (If she wants a different margin, re-run the normalize at a different
-fill fraction; 98% chosen to match leaders.)
+**Twilight approved 2026-06-12.** Credits updated: ChatGPT credited (AI Assistance + Icons) for the
+gym-badge images and the gym leader portraits. (If she later wants a different badge margin, re-run the
+normalize at a different fill fraction; 98% chosen to match the leader portraits.)
 
 **Trainer-card leader shadows recropped to square busts (2026-06-12, Twilight-directed; BUILT + full
 `ctest` green 57/57 + app relaunched):** Twilight recropped all 8 gym-leader shadows to **256×256 square
-head-and-shoulders busts** (~10–12 KB each, down from the tall full-body silhouettes of ~45–69 KB) so they
+head-and-shoulders portraits** (~10–12 KB each, down from the tall full-body silhouettes of ~45–69 KB) so they
 fill the 35px cell uniformly alongside the near-square badges instead of rendering as skinny full-body
 slivers. Re-imported the 8 into `projects/app/assets/images/badges/`; badges unchanged. No QML change
 needed — the `PreserveAspectFit` + centered delegate already handles them, and now that they're 1:1 they
 sit the same size as the badges. **Shadow PNGs changed in qrc → Rebuild required** (done; RCC re-embedded).
-**Awaiting Twilight's in-app review.**
+**Twilight approved 2026-06-12.**
 
 **Trainer-card badge sizing/aspect fix + optimized badge PNGs (2026-06-12, Twilight-directed; BUILT +
 full `ctest` green 57/57 + app relaunched):** Two follow-ups to the badge swap below. (1) Re-imported the
@@ -250,7 +251,7 @@ square cell. Now `fillMode: Image.PreserveAspectFit` (scales each image to fit u
 auto-centers it in the cell) + `smooth`/`mipmap: true` + a capped `sourceSize` (`cellSize*4`) so the large
 source art stays crisp and memory-light at the small display size. No per-image fudge factors — each image
 just renders at its true proportions, centered. **Badge PNGs changed in qrc → Rebuild required** (done).
-Convention note added below. **Awaiting Twilight's in-app review.**
+Convention note added below. **Twilight approved 2026-06-12.**
 
 **Trainer-card badge artwork swap (2026-06-12, Twilight-directed; BUILT + full `ctest` green 57/57 +
 app relaunched):** Replaced the eight gym-badge images on the Trainer Card. Earned (on) now uses the
