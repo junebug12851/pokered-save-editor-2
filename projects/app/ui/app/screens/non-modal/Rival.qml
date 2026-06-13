@@ -1,11 +1,16 @@
 // Rival.qml -- the rival editor screen.
 //
 // Edits the rival's name (NameDisplay, two-way bound to
-// brg.file.data.dataExpanded.rival.name) and chosen starter (a borderless
-// ComboBox over brg.starterModel that sets rival.starter -- which determines the
-// rival's team). Layout centers a name box, the rival image, and the starter
-// combo; the footer "Re-Roll" randomizes the rival. Bindings guard against a null
-// rival (no save loaded yet).
+// brg.file.data.dataExpanded.rival.name) and chosen starter (a flat ComboBox over
+// brg.starterModel that sets rival.starter -- which determines the rival's team).
+//
+// Laid out like the Trainer Card (CardFront): a centered bordered card with a
+// single shared fieldH height knob and a divider under the name, so the boxes stay
+// compact and the rows line up regardless of the Qt 6 Material control height.
+// The rival has only a couple of fields, so they stay in a simple vertical stack
+// (name -> image -> starter) rather than the trainer card's two columns. The footer
+// "Re-Roll" randomizes the rival. All bindings guard against a null rival (no save
+// loaded yet).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -17,108 +22,138 @@ import "../../fragments/header"
 Page {
   id: top
 
-  Rectangle {
-    anchors.centerIn: parent
+  // The rival object, or null before a file is open. Always go through this
+  // (never dereference the chain blind) so the screen is safe during load/reset.
+  function rival() {
+    return brg.file.data.dataExpanded
+         ? brg.file.data.dataExpanded.rival
+         : null;
+  }
 
+  // Centered card, matching the Trainer Card's grey box.
+  Rectangle {
+    id: card
+    anchors.centerIn: parent
+    width: 360
+    height: 300
+
+    border.color: brg.settings.textColorMid
     color: "transparent"
-    width: 1
-    height: 1
+
+    // One height knob for every editable field on the card (same pattern as
+    // CardFront): Qt 6 Material gives ComboBox/TextField a tall implicit height,
+    // so pin an explicit shared height to keep the field compact. See
+    // notes/reference/ui-patterns.md.
+    property int fieldH: 28
 
     NameDisplay {
       id: rivalNameEdit
+
       anchors.top: parent.top
-      anchors.topMargin: -110
-//      anchors.left: parent.left
+      anchors.topMargin: 33
       anchors.horizontalCenter: parent.horizontalCenter
 
       isPersonName: true
       isPlayerName: false
 
       onStrChanged: {
-        let r = brg.file.data.dataExpanded.rival;
+        let r = top.rival();
         if(r) r.name = str;
       }
 
       Connections {
-        target: brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null
+        target: top.rival()
         function onNameChanged() {
-          let r = brg.file.data.dataExpanded.rival;
+          let r = top.rival();
           if(r) rivalNameEdit.str = r.name;
         }
       }
 
       Component.onCompleted: {
-        let r = brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null;
+        let r = top.rival();
         if(r) rivalNameEdit.str = r.name;
       }
+    }
+
+    // Divider under the name (matches CardFront's spacer).
+    Spacer {
+      id: divider
+
+      anchors.top: rivalNameEdit.bottom
+      anchors.topMargin: 25
+      anchors.left: parent.left
+
+      width: parent.width
+      height: 1
+      border.color: brg.settings.dividerColor
     }
 
     Image {
       source: "qrc:/assets/images/rival-larger.png"
 
-      //anchors.left: parent.left
-      anchors.top: rivalNameEdit.bottom
-      anchors.topMargin: 20
+      anchors.top: divider.bottom
+      anchors.topMargin: 15
+      anchors.bottom: starterRow.top
+      anchors.bottomMargin: 15
       anchors.horizontalCenter: parent.horizontalCenter
 
-      anchors.bottom: rivalStarterEdit.top
-      anchors.bottomMargin: 10
-
-      width: top.width / 3
-
+      width: card.width / 3
       fillMode: Image.PreserveAspectFit
     }
 
-    ComboBox {
-      id: rivalStarterEdit
+    // Starter label + combo, centered as a unit (no magic offset).
+    Row {
+      id: starterRow
+
       anchors.bottom: parent.bottom
-      anchors.bottomMargin: -125
-      //anchors.left: parent.left
+      anchors.bottomMargin: 25
       anchors.horizontalCenter: parent.horizontalCenter
-      anchors.horizontalCenterOffset: 40
 
-      textRole: "monName"
-      valueRole: "monInd"
-
-      font.capitalization: Font.Capitalize
-      font.pixelSize: 14
-      flat: true
-      model: brg.starterModel
-      width: font.pixelSize * 10
-
-      // Borderless: clean look, no frame around the combo (Twilight's call s13n).
-      background: Rectangle { color: "transparent"; border.width: 0 }
-
-      onActivated: {
-        let r = brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null;
-        if(r) r.starter = currentValue;
-      }
-      Component.onCompleted: {
-        let r = brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null;
-        if(r) currentIndex = brg.starterModel.valToIndex(r.starter);
-      }
-
-      MainToolTip {
-        text: "Set at start of game and determines your rivals team, namely which Pokemon he has growing with him."
-      }
-
-      Connections {
-        target: brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null
-        function onStarterChanged() {
-          let r = brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null;
-          if(r) rivalStarterEdit.currentIndex = brg.starterModel.valToIndex(r.starter);
-        }
-      }
+      spacing: 7
 
       Label {
-        anchors.right: parent.left
-        anchors.rightMargin: 7
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 14
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
         text: "Starter"
+      }
+
+      ComboBox {
+        id: rivalStarterEdit
+        height: card.fieldH
+        width: font.pixelSize * 10 // Starter name is max of 10 chars
+
+        textRole: "monName"
+        valueRole: "monInd"
+
+        font.capitalization: Font.Capitalize
+        font.pixelSize: 14
+        flat: true
+        model: brg.starterModel
+
+        // Borderless: clean look, no frame around the combo (Twilight's call s13n).
+        background: Rectangle { color: "transparent"; border.width: 0 }
+
+        onActivated: {
+          let r = top.rival();
+          if(r) r.starter = currentValue;
+        }
+
+        Component.onCompleted: {
+          let r = top.rival();
+          if(r) currentIndex = brg.starterModel.valToIndex(r.starter);
+        }
+
+        Connections {
+          target: top.rival()
+          function onStarterChanged() {
+            let r = top.rival();
+            if(r) rivalStarterEdit.currentIndex = brg.starterModel.valToIndex(r.starter);
+          }
+        }
+
+        MainToolTip {
+          text: "Set at start of game and determines your rivals team, namely which Pokemon he has growing with him."
+        }
       }
     }
   }
@@ -127,9 +162,8 @@ Page {
     icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
     text1: "Re-Roll"
     onBtn1Clicked: {
-      let r = brg.file.data.dataExpanded ? brg.file.data.dataExpanded.rival : null;
+      let r = top.rival();
       if(r) r.randomize();
     }
   }
 }
-
