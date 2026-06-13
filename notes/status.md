@@ -73,10 +73,12 @@ translate-at-use, and a few C++ model strings; logical/value strings, mandated l
 and tiny format prefixes were intentionally left alone. Initial `pse_en.ts` = 200 messages / 42
 contexts. **C++ + CMake (added `LinguistTools`) + new QML resource → reconfigure + Rebuild required**
 (done: kit dir + repo `build/` both clean; full `ctest` 66/66; `tst_qml_screens` 17/17; kit exe
-relinked w/ the translations qrc; app launched). **Gotcha:** `lupdate` hangs in the headless agent
-shell (`lrelease` is fine) — refresh catalogs from Qt Creator. Full guide + decision:
-`reference/i18n.md`, `decisions/architecture.md` → "i18n via Qt Linguist". **Awaiting Twilight's
-in-app review** (everything should look identical — English is the source language).
+relinked w/ the translations qrc; app launched). **Language switching is deferred** (Twilight's
+call) until a second locale + the in-app Options/Settings screen exist; `ui/language` is the hook.
+(lupdate/lrelease both work fine — the initial apparent "lupdate hang" was stacked Windows UAC
+dialogs, not a tooling issue.) Full guide + decision: `reference/i18n.md`,
+`decisions/architecture.md` → "i18n via Qt Linguist". **Awaiting Twilight's in-app review**
+(everything should look identical — English is the source language).
 
 ## Current State (read this first)
 

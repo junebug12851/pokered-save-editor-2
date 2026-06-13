@@ -27,8 +27,10 @@ the source — matching the graceful-degradation principle.
   (`"L"+level`) are intentionally not wrapped.
 - **Game-data names** (Pokémon/move/item) are explicitly **out of scope** — they're region/encoding
   -bound save data, a separate and larger effort, not Qt-translation material.
-- **Tooling gotcha**: `lupdate` hangs in the headless agent shell (`lrelease` doesn't), so catalog
-  refresh is done from Qt Creator. Normal builds (lrelease only) work from automation.
+- **Language switching is deferred** (Twilight, 2026-06-13): with only en_US and no in-app
+  Options/Settings screen yet, there's nothing to switch to. The `ui/language` setting is the hook;
+  revisit when a second locale and the Options screen exist. (lupdate/lrelease both work fine — the
+  initial "lupdate hang" was just stacked Windows UAC dialogs, not a tooling issue.)
 
 ---
 

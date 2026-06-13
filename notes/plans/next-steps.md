@@ -59,8 +59,10 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
 
 The Qt Linguist pipeline is in place (`reference/i18n.md`); English ships. Open follow-ups, none urgent:
 
-1. **Build the in-app language switcher** — `ui/language` is the hook; needs engine `retranslate()`
-   + re-evaluating bindings (and probably a Settings UI). Until then, locale = system/registry only.
+1. **In-app language switcher — DEFERRED** (Twilight, 2026-06-13): with only en_US and no in-app
+   Options/Settings screen yet, there's nothing to switch to. Revisit once a second locale + the
+   Options screen exist. `ui/language` is the hook; it'll need engine `retranslate()` + re-evaluating
+   bindings plus the Settings UI. Until then, locale = system/registry only.
 2. **Ship a real second locale** when wanted — add one `TS_FILES` line, run `update_translations` in
    Qt Creator, translate in Linguist. Proves the path end-to-end (currently only en_US exists).
 3. **Optional**: wrap the deliberately-skipped tiny format prefixes (`"L"+level`, `"x"+count`,

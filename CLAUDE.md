@@ -24,7 +24,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/gen1-knowledge.md` | Gen 1 Red/Blue **save-format + gameplay** domain knowledge (offsets, checksum, badges, trade status, retroactive natures/shininess, randomizer rules) |
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems |
 | `notes/reference/ui-patterns.md` | **UI/QML conventions** — layouts, borderless combos, ⋮ buttons, editor popups, sliders. Read before UI work |
-| `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language, what is/isn't wrapped, the lupdate-hangs-in-headless gotcha |
+| `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language, what is/isn't wrapped; language switching deferred until a 2nd locale + Options screen exist |
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems |
 | `notes/reference/documentation.md` | **Doc generation** — build C++ API docs (Doxygen), comment style, why QML is excluded |
 | `notes/reference/git-workflow.md` | **Git standards** — branch model (`main` FF-only/stable, `dev` frequent), no history rewriting, commit-message style, hard safety rules. Read before any git op |
