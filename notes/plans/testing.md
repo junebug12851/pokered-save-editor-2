@@ -812,14 +812,18 @@ benign offscreen font warning allowlisted; `tst_gui_input` now locates the money
 1b. **Detail-screen flows.** Navigate `pokemon` → select a mon → open `pokemonDetails`; `maps` →
    select → `mapDetails`. Exercises the parent→child push the sweep skips (and the editor tab
    reactivity / Glance pane bindings).
-3.  **Keyboard shortcuts — `tst_shortcuts`.** `MainWindow` wires `QShortcut`s to `FileManagement`
-   verbs (new/open/reopen/save/saveAs/saveCopyAs/scrub/clear-recent/random) + recent-file
-   `Ctrl+Shift+0..4`. Factor the shortcut map out of `MainWindow` (or construct it headless), fire
-   each `activated`, assert the bound slot ran. Guards accidental rebinds.
-5b. **More synthesized-input + drag flows.** Badge toggle clicks; the Pokémon/items **drag & drop**
-   (reorder / cross-pane transfer / group / delete) via synthesized drag through `guiapp.h` (the
-   `dragReorder`/`dragTransfer`/`deleteMon` paths already unit-tested at model level); popup
-   open/dismiss; name popup-keyboard commit.
+3.  ✅ **Keyboard shortcuts — `tst_shortcuts` (DONE 2026-06-13).** The key sequences were factored out
+   of `MainWindow` into the shared `app/src/boot/shortcutdefs.h` (`pse::shortcutKeyMap()` +
+   `recentFileShortcutKey()`); `setupShortcuts()` builds from it (and the `auto os = otherShortcuts`
+   copy bug that left the member empty is fixed). The test pins every binding to its documented key
+   sequence and proves none collide (guards accidental rebinds). It does NOT fire `activated` (that
+   needs the QtWidgets+QML `MainWindow` shell, in the exe not appcore) — the action→verb wiring is a
+   thin set of `connect()`s over the FileManagement verbs, which are themselves tested.
+5b. **More synthesized-input + drag flows.** ✅ **Items drag E2E done** (`tst_gui_drag`, 2026-06-13):
+   bag **reorder / transfer-to-PC / delete** via the real `ItemStorageModel` Q_INVOKABLEs → save →
+   reopen → assert persisted (model mechanics already unit-tested; this is the persistence half).
+   _Still to do:_ the **Pokémon** drag E2E (needs a populated-box fixture — BaseSAV's PC boxes may be
+   empty), badge toggle clicks, popup open/dismiss, name popup-keyboard commit.
 7.  **Compatibility fixture matrix at GUI level.** Run the navigation + save/load journeys over Red
    vs Blue and fresh/mid/post-E4 saves once those fixtures exist.
 8.  **ASan under GUI load (Linux CI).** When the Linux ASan job runs these, a QML-instantiation
