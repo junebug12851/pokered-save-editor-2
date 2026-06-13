@@ -534,7 +534,7 @@ Page {
         font.pixelSize: 14
         text: boxesWarn.target
           ? qsTr("Formatting just unlocks all 12 storage boxes for use — the same setup the game does, only faster.\n\nWhat's in them depends on how you got here. If this save was loaded unformatted, the other boxes will be empty. But if you've only toggled formatting off and on this session and haven't reloaded the save, your Pokémon are all still there.")
-          : qsTr("This puts every Pokémon outside the current box (Box %1) in danger.\n\nUnformatting tells the game your boxes aren't set up, so only Box %1 loads and the others are treated as if they don't exist. The data stays put for now — but the next time you switch boxes in the game, it formats the other boxes and erases them for good.\n\nThis app can still bring them back if you re-format, but only while this save stays loaded. Once you reload the save, the app no longer reaches that data.").arg(boxesWarn.boxNo)
+          : qsTr("This puts every Pokémon outside the current box (Box %1) in danger.\n\nUnformatting tells the game your boxes aren't set up, so only Box %1 loads and the others are treated as if they don't exist. The data isn't wiped right away, but treat it as effectively gone for good — it survives only if you recover it elsewhere before an editor or the game destroys it. In the game, that happens the next time you switch boxes.\n\nThis app can still bring them back if you re-format, but only while this save stays loaded. Once you reload the save, the app no longer reaches that data.").arg(boxesWarn.boxNo)
       }
 
       // Actions.
