@@ -373,6 +373,19 @@ button). Direction-aware copy:
 unformatted it loads/saves ONLY the current box, leaving the other boxes' bytes untouched; when formatted it
 loads/saves all boxes. **No extra bytes are written here** (byte-fidelity preserved — we toggle exactly the
 bit the user is toggling).
+
+**The in-app recovery exception (this drives the warning copy — confirmed in `Storage::load`/`save`).**
+`load()` always `reset()`s the boxes then expands the 12 box regions (`0x4000`/`0x6000`) **only if
+`boxesFormatted`** (an unformatted save loads its other boxes as *empty*); `save()` likewise **only writes
+those regions if formatted** (unformatted leaves them untouched). Flipping the flag in-app does **NOT** clear
+memory or reload. So:
+- **Within a loaded session, unformatting is fully reversible** — the boxes stay in memory, so re-formatting
+  restores every mon exactly (and saving unformatted preserves the file's box bytes too).
+- **The loss only becomes real once the save is unloaded/reloaded** (the app then won't re-expand those boxes
+  while unformatted → can't recover in-app) **or the game overwrites the freed space**. Reformatting *after* a
+  reload writes the now-empty boxes over the preserved bytes → permanent.
+The two warning messages spell this out (unformat = soft delete, recoverable by reformat until reload; format
+= boxes are saved with whatever's loaded, empty ones overwrite what was there).
 - **Tooltip ownership rule (refined).** The caught/traded line is shown **only when something is traded**
   — an all-caught cell omits it (it adds nothing). So a cell with **no differing nicknames AND nothing
   traded yields an empty tooltip**, and the view shows **no tooltip at all** on it (the QML already gates

@@ -533,8 +533,8 @@ Page {
         color: brg.settings.textColorDark
         font.pixelSize: 14
         text: boxesWarn.target
-          ? qsTr("Formatting sets up all 12 storage boxes the same way the game does — just faster.\n\nEvery box except the current one (Box %1) will be permanently erased and formatted. Afterwards all 12 boxes open up for use.\n\nThis can't be undone.").arg(boxesWarn.boxNo)
-          : qsTr("This tells the game your boxes aren't set up, so only the current box (Box %1) is loaded — the other boxes won't be touched, but the game treats them as if they don't exist.\n\nIt's a soft delete: the data is still there for now. But that space is then considered free, so the game (or formatting again later) can overwrite it — permanently erasing every Pokémon outside Box %1. Once that happens they can't be recovered here or in the game.").arg(boxesWarn.boxNo)
+          ? qsTr("Formatting sets up all 12 storage boxes the same way the game does — just faster — and opens every box for use.\n\nEach box is saved with whatever this app currently has loaded. Boxes still loaded keep their Pokémon, but any box shown as empty (the other boxes load empty from an unformatted save) is saved empty — permanently overwriting whatever the game had stored there.\n\nOutside the current box (Box %1), this can't be undone once the save is reloaded.").arg(boxesWarn.boxNo)
+          : qsTr("This tells the game your boxes aren't set up, so only the current box (Box %1) is loaded — the other boxes aren't touched, but the game treats them as if they don't exist.\n\nIt's a soft delete, and this app keeps those boxes loaded in memory: you can fully undo it by re-formatting — as long as you don't close or reload this save.\n\nOnce you reload this save (or open it in the game), this app no longer reads those boxes and can't recover them, and the game is free to overwrite that space — permanently erasing every Pokémon outside Box %1.").arg(boxesWarn.boxNo)
       }
 
       // Actions.
