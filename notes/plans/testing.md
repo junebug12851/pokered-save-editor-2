@@ -785,6 +785,15 @@ benign offscreen font warning allowlisted; `tst_gui_input` now locates the money
 - ✅ **5a. Synthesized-input flagship — `tst_gui_input`.** Real key events into the money field
   (select-all → type → commit), asserting the model updated **and** it persisted through save/reopen.
   The pattern to extend to badge clicks, footer buttons, the name popup keyboard, the Pokémon editor.
+- ✅ **Byte-fidelity "browsing changes nothing" — `tst_gui_fidelity` (2026-06-13).** The automated form
+  of the sacred byte-fidelity promise: take a no-interaction baseline (load → dismiss modal → flatten →
+  recalc), then in a fresh session do a heavy **non-destructive** sweep — navigate every screen + open/
+  close every modal; open+close every dropdown/select box (duck-typed on `popup`+`currentIndex`, so the
+  custom `Select*` types are caught); focus+blur every editable field (no typing) — flatten, and assert
+  the 32 KB image is **byte-identical** (mismatch prints every changed offset). Over progressed + new
+  saves; logs control counts and `QVERIFY`s the sweep exercised controls (no false pass). Does NOT press
+  randomize/toggle/stepper/checkout/delete (those are edits, covered by the editing tests). **Still to
+  extend (per Twilight): the detail editor + name popup + drawers, and per-control depth.**
 - ✅ **6. Both-platform CI.** The Linux **and** Windows jobs already build `tests_all` + run `ctest`;
   every GUI test sets `offscreen` per-test, so the green check now means "opens + runs on both."
 
