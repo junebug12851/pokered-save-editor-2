@@ -30,6 +30,7 @@
 #include "mainwindow.h"
 
 #include "../../src/bridge/bridge.h"
+#include "../../src/boot/shortcutdefs.h"
 
 #include <pse-common/types.h>
 #include <pse-savefile/filemanagement.h>
@@ -196,37 +197,27 @@ void MainWindow::loadState()
 
 void MainWindow::setupShortcuts()
 {
-  // Create recent files shortcut
+  // Create recent files shortcut (Ctrl+Shift+0..4 -> open recent file 0..Max).
   for(var8 i = 0; i < MAX_RECENT_FILES; i++) {
-
-    // Ctrl + Shift + #
-    // Opens recent file 0 to Max
-    // Key_0 is 0x30 - add i to 0x30 to get shortcut offset
-    var8 shortcutKey{static_cast<var8>(0x30 + i)};
 
     // Create and link up a shortcut
     // Ensure it's disabled, assign a shortcut, and assign the index to it
     recentFileShortcuts[i] = new QShortcut(this);
     recentFileShortcuts[i]->setEnabled(false);
-    recentFileShortcuts[i]->setKey(QKeySequence(Qt::CTRL | Qt::SHIFT | shortcutKey));
+    recentFileShortcuts[i]->setKey(pse::recentFileShortcutKey(i));
     recentFileShortcuts[i]->setProperty("index", i);
     connect(recentFileShortcuts[i], &QShortcut::activated, this, &MainWindow::onRecentFileClick);
   }
 
-  // Create and link up other shortcuts
-  auto os = otherShortcuts;
-
-  os.insert("new", new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_N), this));
-  os.insert("open", new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_O), this));
-  os.insert("reopen", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_O), this));
-  os.insert("save", new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S), this));
-  os.insert("saveas", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S), this));
-  os.insert("savecopyas", new QShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_S), this));
-  os.insert("scrub", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_W), this));
-  os.insert("clear-recentfiles", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Minus), this));
-  os.insert("exit", new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q), this));
-  os.insert("exit2", new QShortcut(QKeySequence(Qt::ALT | Qt::Key_F4), this));
-  os.insert("random", new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_R), this));
+  // Create and link up other shortcuts. Key sequences come from the shared
+  // pse::shortcutKeyMap() (single source of truth, asserted by tst_shortcuts);
+  // the action→verb wiring stays here. NB: write into the `otherShortcuts` MEMBER
+  // directly -- the previous `auto os = otherShortcuts;` copied it, so the member
+  // was left empty (the shortcuts only survived via their QObject parent).
+  auto& os = otherShortcuts;
+  const auto keymap = pse::shortcutKeyMap();
+  for (auto it = keymap.constBegin(); it != keymap.constEnd(); ++it)
+    os.insert(it.key(), new QShortcut(it.value(), this));
 
   connect(os.value("new"), &QShortcut::activated, file, &FileManagement::newFile);
   connect(os.value("open"), &QShortcut::activated, file, &FileManagement::openFile);
