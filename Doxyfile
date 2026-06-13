@@ -32,8 +32,8 @@ OUTPUT_LANGUAGE        = English
 # `notes` is included so the living project notes build as cross-linked doc pages
 # alongside the API reference (their relative Markdown links resolve page-to-page).
 INPUT                  = README.md \
-                         version.md \
-                         version \
+                         version-notes.md \
+                         version-notes \
                          notes \
                          projects/common/src \
                          projects/db/src \

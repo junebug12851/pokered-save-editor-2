@@ -33,26 +33,26 @@ stabilize, `0.9`/`-rc` as a release nears, `1.0.0` at the first real release. (T
 real version numbers before now -- CMake just said `1.0.0` and `boot.cpp` said `v1.0.0`, never
 synced -- so this is the first *formal* baseline rather than a renumbering of history.)
 
-The number is one line in `VERSION.txt`; if Twilight judges the maturity differently, it's a
+The number is one line in `VERSION`; if Twilight judges the maturity differently, it's a
 one-line change.
 
-## Single source of truth: `VERSION.txt`
+## Single source of truth: `VERSION`
 
-The repo-root **`VERSION.txt`** holds the number on one line (comments with `#` allowed). It is
-the *only* place a human edits the version. (It's `VERSION.txt`, not `VERSION`, because the repo
-root already has a `version/` changelog folder and Windows is case-insensitive -- a bare
-`VERSION` would collide with it.)
+The repo-root **`VERSION`** holds the number on one line (comments with `#` allowed). It is
+the *only* place a human edits the version. (It's the bare `VERSION` -- the changelog folder
+that used to be `version/` was renamed to `version-notes/`, so on case-insensitive Windows there
+is no longer a `VERSION`/`version/` collision to dodge.)
 
 Everything else is derived from it at build time. **Do not** hardcode a version anywhere else.
 
 ## How it propagates (the machine)
 
 ```
-VERSION.txt  (you edit this)
+VERSION  (you edit this)
    |
    v
 projects/CMakeLists.txt
-   - include(cmake/PSEVersion.cmake); pse_read_version(../VERSION.txt)
+   - include(cmake/PSEVersion.cmake); pse_read_version(../VERSION)
    - project(PokeredSaveEditor VERSION <core>)          # numeric M.m.p
    - generates  <build>/generated/pse_version.h         # via cmake/pse_version.h.in
         * configure-time pass (so the first compile has it)
@@ -88,11 +88,11 @@ A tagged, clean release build has no `+g...` at all, so both forms read simply `
 
 | File | Role |
 |------|------|
-| `VERSION.txt` | The number (the only thing you edit) |
-| `projects/cmake/PSEVersion.cmake` | Parse VERSION.txt; git metadata; compose full string |
+| `VERSION` | The number (the only thing you edit) |
+| `projects/cmake/PSEVersion.cmake` | Parse VERSION; git metadata; compose full string |
 | `projects/cmake/PSEVersionGen.cmake` | Build-time script: refresh git metadata, regenerate header |
 | `projects/cmake/pse_version.h.in` | Template for the generated C++ header |
-| `projects/CMakeLists.txt` | Reads VERSION.txt before `project()`; wires generation + RC option |
+| `projects/CMakeLists.txt` | Reads VERSION before `project()`; wires generation + RC option |
 | `projects/app/CMakeLists.txt` | Adds the generated include dir + `pse_version_gen` dep; compiles the .rc |
 | `projects/app/pse_app.rc.in` | Windows VERSIONINFO template |
 | `projects/app/src/boot/boot.cpp` | Sets the runtime version from `PSE_VERSION_FULL` |
@@ -100,7 +100,7 @@ A tagged, clean release build has no `+g...` at all, so both forms read simply `
 
 ## How to bump the version
 
-1. Edit the version line in **`VERSION.txt`** (e.g. `0.7.0-alpha` -> `0.8.0-alpha`, or
+1. Edit the version line in **`VERSION`** (e.g. `0.7.0-alpha` -> `0.8.0-alpha`, or
    `-> 0.7.1`). That's the whole change.
 2. Re-run CMake configure (the kit build, or `cmake -S projects -B build`) so `project(VERSION)`
    and the generated header pick up the new core number. (Just rebuilding refreshes the *git
@@ -111,7 +111,7 @@ A tagged, clean release build has no `+g...` at all, so both forms read simply `
 
 When cutting a real release:
 
-1. Bump `VERSION.txt` to the release number (drop any `-alpha`/`-beta` for a final release).
+1. Bump `VERSION` to the release number (drop any `-alpha`/`-beta` for a final release).
 2. Commit on `dev`, run the full suite green, fast-forward `main` (the standing workflow).
 3. **Tag the release commit** `vX.Y.Z` and push the tag:
    `git tag -a v0.8.0 -m "v0.8.0" && git push origin v0.8.0`.
@@ -120,12 +120,12 @@ When cutting a real release:
 
 A build from a clean, tagged checkout shows the plain number with no `+g...` suffix.
 
-## Relationship to the changelog (`version.md` / `version/`)
+## Relationship to the changelog (`version-notes.md` / `version-notes/`)
 
 These are **complementary, not the same thing**:
 
-- **`VERSION.txt` + this scheme** = the *identity* of a build / release (one number).
-- **`version.md` + `version/`** = the plain-English *narrative history*, one entry per commit
+- **`VERSION` + this scheme** = the *identity* of a build / release (one number).
+- **`version-notes.md` + `version-notes/`** = the plain-English *narrative history*, one entry per commit
   (see `reference/version-history.md`). It explains what changed; the version number labels
   where you are.
 
@@ -134,7 +134,7 @@ changelog stays per-commit and is maintained separately (by hand, on request).
 
 ## Maintenance (keep this current by default)
 
-- Bump `VERSION.txt` at the commit where a feature/fix warrants it (the git hash updates itself;
+- Bump `VERSION` at the commit where a feature/fix warrants it (the git hash updates itself;
   you never touch metadata by hand).
 - If you add a new place that needs the version, derive it from `pse_version.h` (C++) or
   `Qt.application.version` (QML) -- never add a new hardcoded literal.

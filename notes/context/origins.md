@@ -2,7 +2,7 @@
 
 The story *before* the 2026 revival. `context/history.md` picks up at "the repo had 592
 commits, last pushed March 2020" — this file is the prologue it assumes. It's reconstructed
-from the full commit history (see the root `version.md` changelog; commit hashes below tie
+from the full commit history (see the root `version-notes.md` changelog; commit hashes below tie
 each claim back to a real diff).
 
 The short version: the project was started in June 2019, rewritten from scratch **three

@@ -6,9 +6,6 @@
 # Windows .exe resource). Lines starting with '#' and blank lines are ignored;
 # the first remaining line is the version.
 #
-# (Named VERSION.txt, not VERSION, because the repo-root already has a "version/"
-#  changelog folder and Windows is case-insensitive -- "VERSION" would collide.)
-#
 # How to bump (see notes/reference/versioning.md for the full guide):
 #   - PATCH (0.7.0 -> 0.7.1): bug fixes / small tweaks, no new user-facing features.
 #   - MINOR (0.7.0 -> 0.8.0): new features or notable changes, still backward-OK.

@@ -9,7 +9,7 @@ This is the **map**. The detailed fixes live elsewhere and are linked per row:
 - `reference/fix-patterns.md` — compiler/runtime error → fix lookup.
 - `decisions/rejected.md` — approaches abandoned because of a gotcha.
 - `decisions/architecture.md` — workarounds adopted as deliberate design.
-- `version.md` — the commit (hash) where each historical one was hit.
+- `version-notes.md` — the commit (hash) where each historical one was hit.
 
 ---
 

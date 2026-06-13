@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.21)
 
-# --- Version: single source of truth is the repo-root VERSION.txt -----------
+# --- Version: single source of truth is the repo-root VERSION ---------------
 # (See notes/reference/versioning.md.) Parse it BEFORE project() so the parsed
 # core number is what project(VERSION) records.
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/PSEVersion.cmake)
-pse_read_version(${CMAKE_CURRENT_LIST_DIR}/../VERSION.txt)
+pse_read_version(${CMAKE_CURRENT_LIST_DIR}/../VERSION)
 
 project(PokeredSaveEditor VERSION ${PSE_VERSION_CORE} LANGUAGES CXX)
 

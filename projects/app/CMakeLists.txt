@@ -130,7 +130,7 @@ target_link_libraries(PokeredSaveEditor
         appcore
 )
 
-# --- App version (from VERSION.txt via the generated pse_version.h) ----------
+# --- App version (from VERSION via the generated pse_version.h) --------------
 # boot.cpp includes "pse_version.h" to set the runtime version. The header is
 # produced by the top-level pse_version_gen target into ${PSE_VERSION_HEADER_DIR}.
 add_dependencies(PokeredSaveEditor pse_version_gen)

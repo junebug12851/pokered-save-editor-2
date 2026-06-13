@@ -30,7 +30,7 @@ Requirements on the machine running it:
 - **Also covered:** the `notes/` tree is in `INPUT`, so the living project notes
   (including the `notes/systems/` architecture deep-dive) build as cross-linked
   doc-site pages alongside the API reference. The **changelog** is in `INPUT` too
-  — `version.md` (the index) plus the `version/` directory (one page per month) —
+  — `version-notes.md` (the index) plus the `version-notes/` directory (one page per month) —
   rendering as a "Version History" index and a page per month under Related Pages;
   the hidden `<!-- commit: … -->` markers are HTML comments and stay invisible in
   the output.

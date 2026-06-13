@@ -6,10 +6,10 @@ whole history -- the 2019 origins, the 2020 library/DB refactor, and the 2026 re
 
 ## Layout
 
-- [`version.md`](../../version.md) (repo root) is the **index**: the intro, a months table, and
+- [`version-notes.md`](../../version-notes.md) (repo root) is the **index**: the intro, a months table, and
   the maintenance notes.
-- [`version/`](../../version/) holds **one file per month**, newest first, e.g.
-  `version/2026-06.md`, `version/2020-03.md`, ... down to `version/2019-06.md`. The changelog was
+- [`version-notes/`](../../version-notes/) holds **one file per month**, newest first, e.g.
+  `version-notes/2026-06.md`, `version-notes/2020-03.md`, ... down to `version-notes/2019-06.md`. The changelog was
   split by month so no single page got unwieldy (596 entries as of June 2026).
 
 ## How it's kept updated
@@ -24,13 +24,13 @@ an entry. A quick way to list the undocumented ones (both sides sorted so `comm`
 
 ```
 comm -23 <(git rev-list HEAD | sort) \
-         <(grep -rhoE 'commit: [0-9a-f]{40}' version.md version/ | awk '{print $2}' | sort -u)
+         <(grep -rhoE 'commit: [0-9a-f]{40}' version-notes.md version-notes/ | awk '{print $2}' | sort -u)
 ```
 
 For each new commit, `git show -s --format='%an%n%s%n%b' <hash>` + `git show --stat <hash>` gives
 the message and file list to write from; pull the full patch with `git show <hash>` when a terse
 message needs a closer look. Then add an entry at the **top of the current month's file** under
-`version/` (create `version/YYYY-MM.md` and a new row in `version.md`'s table when the month rolls
+`version-notes/` (create `version-notes/YYYY-MM.md` and a new row in `version-notes.md`'s table when the month rolls
 over).
 
 Entry format:
@@ -51,12 +51,12 @@ trivial ones. No diff noise.
 - Merge commits, README/version bumps, and "fml"-style frustration commits still each get an
   entry -- summarize plainly and keep the human flavor where it's part of the story.
 - ASCII only, to match the rest of the codebase.
-- The `<!-- commit: ... -->` lines in `version.md`'s own header are illustrative examples (not
+- The `<!-- commit: ... -->` lines in `version-notes.md`'s own header are illustrative examples (not
   real 40-hex hashes), so a marker scan correctly ignores them.
 
 ## Doxygen
 
-`version.md` **and** the `version/` directory are in the Doxyfile `INPUT`, so the changelog builds
+`version-notes.md` **and** the `version-notes/` directory are in the Doxyfile `INPUT`, so the changelog builds
 into the generated doc site (the index plus a page per month, under Related Pages). The
 `<!-- commit: ... -->` markers are HTML comments and don't show up in the rendered output. See
 `reference/documentation.md`.
