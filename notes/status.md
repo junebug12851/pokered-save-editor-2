@@ -32,6 +32,17 @@ This file is the **current state** only. For the chronological history of what c
 session and why, see `sessions/session-log.md`. For root-cause mechanics, see
 `reference/qt6-patterns.md` and `decisions/`.
 
+**Linux Docker test environment — set up + all variants green (2026-06-13):** A containerized
+Linux build/test setup now lives under **`docker/`** (Dockerfile + `run-tests.sh` + `dtest.ps1`
+wrapper). It mirrors the kit (Qt 6.11 + clang), bind-mounts the repo read-only and `rsync`s it
+into a persistent ext4 volume (so builds run on the container's fast FS, not the slow WSL bind
+mount, with ccache persisted), and exposes four variants: `standard` (offscreen ctest),
+`asan` (AddressSanitizer+UBSan — **the thing that can't run on the Windows kit**), `xvfb`
+(real virtual X server), and `coverage` (llvm-cov). **First run: all four green — 66/66 ctest each;
+ASan/UBSan clean with zero errors; coverage 89.73% line.** Run with `.\docker\dtest.ps1 [variant]`.
+Details: `plans/testing.md` → "Local Linux container (Docker)" and `docker/README.md`. Docker added
+to the credits (Tools Used) — **needs a kit rebuild to show in-app** (db.qrc re-embed).
+
 ## Current State (read this first)
 
 The big structural blocker is **solved**: the `brg.file.data.dataExpanded.*` chain works, data

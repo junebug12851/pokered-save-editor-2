@@ -635,9 +635,11 @@ Each phase is independently valuable; the suite is useful from phase 1.
    (`projects/build/asan`, `-fsanitize=address`), but every instrumented exe crashes at startup with
    `interception_win: unhandled instruction` (0xC0000005) before any test runs — a known ASan-on-Windows
    limitation in its API-interception engine, NOT a bug in our code (the same tests pass under the normal
-   + coverage builds). Real memory-sanitizer coverage (ASan/UBSan/Valgrind) should run in a **Linux CI
-   job** (phase 9), where ASan is mature. The use-after-free risk is meanwhile addressed by the
-   qmlProtect/qmlCppOwned fixes and the null-deref bugs this suite already found + fixed._
+   + coverage builds). Real memory-sanitizer coverage (ASan/UBSan/Valgrind) runs on **Linux** — now
+   available **locally** via the Docker container (`docker/`, `.\docker\dtest.ps1 asan`; see "Local Linux
+   container" below) in addition to the Linux CI job. **As of 2026-06-13 the full suite (66/66) runs clean
+   under ASan+UBSan in the container — zero errors.** The use-after-free risk is meanwhile also addressed
+   by the qmlProtect/qmlCppOwned fixes and the null-deref bugs this suite already found + fixed._
 8. **CI** (ctest + sanitizer + coverage on push).
    _Workflow written 2026-06-07: `.github/workflows/tests.yml` — a **linux-asan** job (installs Qt via
    aqt, builds with ASan+UBSan which work on Linux, runs `ctest` headless/offscreen) and a **windows**
@@ -831,6 +833,61 @@ benign offscreen font warning allowlisted; `tst_gui_input` now locates the money
    use-after-free (the s13f/g/h class) is caught automatically — pair with the planned ASan/UBSan job.
 
 ---
+
+## Local Linux container (Docker) — ASan/UBSan + coverage run HERE (set up 2026-06-13)
+
+The long-standing gap "ASan isn't viable on the Windows llvm-mingw kit, real
+sanitizer coverage needs Linux" (see the AddressSanitizer note in phase 7) is now
+filled **locally**, not only in CI: a Docker setup under **`docker/`** builds and
+runs the whole suite on Linux with Qt 6.11 + clang, including the things the
+Windows kit can't do.
+
+**Run it (PowerShell, from repo root):**
+
+```powershell
+.\docker\dtest.ps1            # standard: build + full ctest (offscreen)
+.\docker\dtest.ps1 asan       # AddressSanitizer + UBSan ctest run
+.\docker\dtest.ps1 xvfb       # run under a real virtual X server (xcb)
+.\docker\dtest.ps1 coverage   # llvm-cov per-module report + HTML
+.\docker\dtest.ps1 all        # every variant
+```
+
+`-Rebuild` rebuilds the image (after a Dockerfile edit); `-Clean` wipes the
+persistent build volume.
+
+**Architecture (why it's fast):** the `Dockerfile` bakes the toolchain ONCE
+(clang/lld/llvm, CMake+Ninja, Qt 6.11 via aqtinstall, the headless-GUI libs,
+Xvfb, ccache, and `libclang-rt-18-dev` for the sanitizer runtime). The repo is
+**not** in the image — it's bind-mounted read-only at `/host` and `rsync`ed into
+a persistent named volume `pse-build` (ext4 inside the Docker VM) by
+`run-tests.sh`. Building there instead of over the slow Windows/WSL bind mount is
+the speed win Twilight asked for, and the build tree + ccache persist across runs
+so repeats are incremental. Each variant configures its own dir under
+`/build/out/` and runs `cmake --build … --target tests_all` then `ctest`. Full
+how-to + caveats: **`docker/README.md`**.
+
+**First-run results (2026-06-13, Qt 6.11 + clang 18, all green):**
+
+| variant    | result |
+|------------|--------|
+| `standard` | **66/66** ctest passed (offscreen). |
+| `asan`     | **66/66** passed, **zero ASan/UBSan errors** across the whole suite incl. the QML-instantiation GUI tests — the s13f–h use-after-free class is now covered automatically on Linux (and validates the recent `ItemMarketEntryPlayerItem` UAF fix, HEAD `5bcd3e4`). |
+| `xvfb`     | **66/66** under a real virtual X server. |
+| `coverage` | **66/66**; llvm-cov **89.73% line / 86.52% region / 78.24% branch** over project source (Qt/tests/system excluded); HTML in `/build/out/coverage/html`. |
+
+**First-run shakeout (fixed in the committed files):** (1) CMake `find_package(Qt6Gui)`
+needs the OpenGL **dev** libs (`mesa-common-dev libgl-dev libegl-dev libglx-dev
+libopengl-dev`), not just the runtime libs. (2) clang's sanitizer archives
+(`libclang_rt.asan*`) aren't in the base `clang` package — need
+`libclang-rt-18-dev` (added as a layer AFTER the Qt download so it stays cached).
+(3) `llvm-cov report` takes ONE binary as the first positional + the rest via
+`-object` (passing the source dir as the positional → "Is a directory").
+
+**Relationship to CI:** the GitHub `linux-asan` job is **Qt 6.8.3 + gcc**; this
+container is **6.11 + clang** (the kit toolchain) — the closer-to-runtime local
+reproduction, runnable on demand without GitHub auth. Both run `tests_all` + ctest
+offscreen, so a green container ≈ a green CI Linux job (modulo the Qt/compiler
+delta).
 
 ## Open questions / decisions needed
 

@@ -77,6 +77,12 @@ Windows machine via the PowerShell terminal:
 - `PokeredSaveEditor.exe` links `savefile.dll` via its import lib, so editing a `savefile` `.cpp`
   rebuilds the **DLL** but does NOT relink the exe (exe mtime stays put) — fine, it loads the new DLL at
   runtime; verify by the **DLL** timestamp, not the exe.
+- **Linux build/test via Docker (`docker/`).** A containerized Linux toolchain (Qt 6.11 + clang, baked
+  once) runs the full suite four ways: `.\docker\dtest.ps1 [standard|asan|xvfb|coverage|all]`. This is
+  where **ASan/UBSan actually work** (broken on the llvm-mingw kit) and where llvm-cov coverage runs on
+  Linux. It rsyncs the repo into a persistent ext4 volume (fast, ccache-cached) rather than building over
+  the WSL bind mount. First run (2026-06-13): all four green (66/66; ASan clean; 89.73% line cov). See
+  `notes/plans/testing.md` → "Local Linux container (Docker)" and `docker/README.md`.
 
 ## Default Workflow — Do These By Default (Twilight's standing instruction)
 
