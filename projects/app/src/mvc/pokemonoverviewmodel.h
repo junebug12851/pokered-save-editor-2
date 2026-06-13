@@ -57,8 +57,11 @@ class PokemonOverviewModel : public QAbstractListModel
 
   /// Current species-column sort order (see SortSelect). Cycled by sortCycle().
   Q_PROPERTY(int sortSelect MEMBER sortSelect NOTIFY sortSelectChanged)
-  /// Human-readable label for the current sort (for the header sort-icon tooltip).
+  /// Human-readable label for the current sort (kept for reference/debug).
   Q_PROPERTY(QString sortLabel READ sortLabel NOTIFY sortSelectChanged)
+  /// qrc path of the icon for the current sort (so the header button shows which
+  /// order is active, instead of one static icon + a tooltip).
+  Q_PROPERTY(QString sortIcon READ sortIcon NOTIFY sortSelectChanged)
 
 public:
   /// Roles (mapped in roleNames()).
@@ -88,6 +91,7 @@ public:
 
   QStringList columns() const; ///< @see columns property.
   QString sortLabel() const;   ///< @see sortLabel property.
+  QString sortIcon() const;    ///< @see sortIcon property.
 
   Q_INVOKABLE void sortCycle(); ///< Advance to the next species sort order (re-sorts in place).
 

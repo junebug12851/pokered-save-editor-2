@@ -96,13 +96,21 @@ Page {
     property bool shown: false
 
     // Table geometry knobs (shared by the header row and every body row so the
-    // columns line up exactly).
-    property int nameColW: 124   // wide enough for "Nidoran ♀" + the like
-    property int countColW: 48
+    // columns line up exactly). The count columns are deliberately narrow -- they
+    // hold a 1-2 digit number + a small number header -- so the whole table reads
+    // about half as wide as a "Box 12"-labelled grid would.
+    property int nameColW: 110   // wide enough for "Nidoran ♀" + the like
+    property int partyColW: 46   // the Party column (fits the word)
+    property int boxColW: 30     // each box column -- a 1-2 digit count + number header
     property int headerH: 32
     property int rowH: 30
     property int scrollLane: 16   // reserve the vertical scrollbar's lane on the right
     property color accent: brg.settings.accentColor
+
+    // Width of model data column i (0 = Party, 1+ = boxes).
+    function colW(i) { return (i === 0) ? partyColW : boxColW; }
+    // Header text for a column: just the box number ("Box 3" -> "3"); "" for Party.
+    function boxNum(label) { return (label === "Party") ? "" : label.replace("Box ", ""); }
 
     // Pretty-print the few species whose internal readable name carries markup,
     // mirroring the Pokedex screen's fixName() so the two screens read the same.
@@ -115,7 +123,7 @@ Page {
 
     // Zebra tints (kept very faint so a row stripe + a column band layer into a
     // clean grid rather than a busy checkerboard). Both return an alpha over white.
-    function colTintAlpha(colI) { return (colI % 2 === 1) ? 0.050 : 0.0; } // species col = 0 (untinted)
+    function colTintAlpha(colI) { return (colI % 2 === 1) ? 0.050 : 0.0; } // Party col = 0 (untinted)
     function rowTintAlpha(rowI) { return (rowI % 2 === 1) ? 0.030 : 0.0; }
 
     // Columns come from the model (Party + non-empty boxes); the table's natural
@@ -123,7 +131,7 @@ Page {
     // overflowing the screen).
     property var cols: brg.pokemonOverviewModel.columns
     property int colCount: cols.length
-    property int tableW: nameColW + colCount * countColW + scrollLane
+    property int tableW: nameColW + partyColW + Math.max(0, colCount - 1) * boxColW + scrollLane
 
     width: Math.min(page.width * 0.92, Math.max(240, tableW + 8))
     height: parent.height
@@ -234,36 +242,61 @@ Page {
                     font.pixelSize: 12
                   }
 
-                  // Sort control -- cycles the same orders as the Pokedex screen
-                  // (dex / alphabetical / internal). Tooltip names the active one.
-                  IconButtonSquare {
-                    id: sortBtn
+                  // Sort control -- shows the icon of the CURRENT order and cycles
+                  // through the same orders as the Pokedex screen on click
+                  // (alphabetical / internal / dex). No tooltip; the icon itself
+                  // says which order is active. The image is aspect-fit so the
+                  // (non-square) source art is never squished/stretched, inside a
+                  // tight square hover highlight matching the app's icon buttons.
+                  Item {
+                    id: sortCtl
                     anchors.left: speciesHdr.right
-                    anchors.leftMargin: 3
+                    anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
-                    icon.source: "qrc:/assets/icons/fontawesome/sort-amount-up.svg"
-                    icon.color: brg.settings.textColorMid
-                    icon.width: 13
-                    icon.height: 13
-                    onClicked: brg.pokemonOverviewModel.sortCycle()
+                    width: 26
+                    height: 26
 
-                    ToolTip.visible: hovered
-                    ToolTip.delay: 300
-                    ToolTip.text: qsTr("Sort: ") + brg.pokemonOverviewModel.sortLabel
+                    Rectangle {
+                      anchors.fill: parent
+                      radius: 2
+                      color: sortMa.pressed ? Qt.rgba(0, 0, 0, 0.16)
+                             : sortMa.containsMouse ? Qt.rgba(0, 0, 0, 0.08)
+                             : "transparent"
+                    }
+                    Image {
+                      anchors.centerIn: parent
+                      width: 19
+                      height: 19
+                      source: brg.pokemonOverviewModel.sortIcon
+                      fillMode: Image.PreserveAspectFit
+                      sourceSize.width: 38
+                      sourceSize.height: 38
+                      smooth: true
+                      mipmap: true
+                    }
+                    MouseArea {
+                      id: sortMa
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
+                      onClicked: brg.pokemonOverviewModel.sortCycle()
+                    }
                   }
                 }
 
                 Repeater {
                   model: viewAllPanel.cols
                   delegate: Item {
-                    width: viewAllPanel.countColW
+                    width: viewAllPanel.colW(index)
                     height: viewAllPanel.headerH
                     Text {
                       anchors.centerIn: parent
-                      width: parent.width - 4
-                      text: modelData
+                      width: parent.width - 2
+                      // Party keeps its word; boxes show just the number to stay narrow.
+                      text: (index === 0) ? modelData : viewAllPanel.boxNum(modelData)
                       color: brg.settings.textColorMid
-                      font.pixelSize: 11
+                      font.pixelSize: (index === 0) ? 11 : 13
+                      font.bold: index !== 0
                       horizontalAlignment: Text.AlignHCenter
                       elide: Text.ElideRight
                     }
@@ -296,9 +329,9 @@ Page {
                 Repeater {
                   model: viewAllPanel.colCount
                   delegate: Rectangle {
-                    width: viewAllPanel.countColW
+                    width: viewAllPanel.colW(index)
                     height: parent.height
-                    color: Qt.rgba(0, 0, 0, viewAllPanel.colTintAlpha(index + 1))
+                    color: Qt.rgba(0, 0, 0, viewAllPanel.colTintAlpha(index))
                   }
                 }
               }
@@ -365,7 +398,7 @@ Page {
                     Repeater {
                       model: counts
                       delegate: Item {
-                        width: viewAllPanel.countColW
+                        width: viewAllPanel.colW(index)
                         height: viewAllPanel.rowH
 
                         property int cnt: modelData

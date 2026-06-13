@@ -316,11 +316,28 @@ nickname/OT edits happen in the detail editor and don't emit a box `pokemonChang
   **Pokedex screen's** mapping (`Nidoran<f>`→`Nidoran ♀`, `Nidoran<m>`→`Nidoran ♂`, `Mr.Mime`→`Mr. Mime`)
   so the two screens read the same; `nameColW` was widened to **124** so those don't elide. (The model's
   `NameRole` stays the raw readable so sorting matches the Pokedex's `SortName` exactly.)
-- **Sort control in the header.** A small **`IconButtonSquare`** (`sort-amount-up.svg`) sits next to the
-  "Species" label and **cycles the SAME orders as the Pokedex** (`PokemonOverviewModel::sortCycle()` mirrors
-  `PokedexModel::dexSortCycle`: **Dex / Alphabetical / Internal**); its `ToolTip` names the active order
-  (`sortLabel`). Default is **Alphabetical**. Each `Row` now carries `dex`/`id` sort keys; `applySort()`
-  re-sorts in place on a model reset.
+- **Sort control in the header.** A small hand-rolled icon button next to the "Species" label **cycles the
+  SAME orders as the Pokedex** (`PokemonOverviewModel::sortCycle()` mirrors `PokedexModel::dexSortCycle`:
+  **Dex / Alphabetical / Internal**). Default **Alphabetical**. Each `Row` carries `dex`/`id` sort keys;
+  `applySort()` re-sorts in place on a model reset.
+  - **The button shows the CURRENT order's icon, not one static icon + a tooltip** (Twilight: the tooltip
+    looked bad / cluttered). `PokemonOverviewModel::sortIcon` (a `Q_PROPERTY`) returns the qrc path for the
+    active order; the QML binds `Image.source` to it. **No tooltip.**
+  - Built as an `Item` { hover/press `Rectangle` (radius 2, the same tight square highlight as
+    `IconButtonSquare`) + a centered `Image` (`fillMode: PreserveAspectFit`, capped `sourceSize`) + a
+    `MouseArea` }. **Not** a `Button`/`IconButtonSquare`: the three sort PNGs are **non-square** (512×~400),
+    and `PreserveAspectFit` guarantees they're never squished/stretched (Button.icon can stretch to the
+    icon box). They render full-colour (no `icon.color` tint).
+  - **Assets:** `sort-alphabetical/internal/pokedex.png` were dropped in the repo-root `assets/icons/`
+    staging folder; copied (Windows-side — bash mount serves stale bytes) into
+    `projects/app/assets/icons/sort/{alphabetical,internal,pokedex}.png`, added to `app/app.qrc`, referenced
+    as `qrc:/assets/icons/sort/*.png`. New assets in qrc → **Rebuild** (RCC re-embed).
+- **Condensed columns (Twilight: ~half width).** The count columns were too wide and the table scrolled
+  sideways. Per-column widths now: **`nameColW` 110, `partyColW` 46, box columns `boxColW` 30** (via
+  `colW(i)` = `i===0 ? partyColW : boxColW`, used by the header, the column bands, AND the row cells so all
+  three stay aligned). Box **headers show just the number** ("Box 3" → "3", bold, via `boxNum()`) since
+  "Box 12" can't fit 30px; the Party column keeps its word. `tableW` recomputed from the per-column widths;
+  the narrower table fits without horizontal scroll in the common case.
 - **Tooltip ownership rule (refined).** The caught/traded line is shown **only when something is traded**
   — an all-caught cell omits it (it adds nothing). So a cell with **no differing nicknames AND nothing
   traded yields an empty tooltip**, and the view shows **no tooltip at all** on it (the QML already gates

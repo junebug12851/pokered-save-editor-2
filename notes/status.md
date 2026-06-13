@@ -313,6 +313,20 @@ changed (model `.h/.cpp`; no new files) + QML (`Pokemon.qml`). Test extended
 `reference/ui-patterns.md` → "View All overview drawer (Pokémon screen)" → "Polish pass". **Awaiting
 Twilight's in-app review.**
 
+**Pokémon "View All" — sort icons + condensed columns (2026-06-12, Twilight-directed; BUILT + full
+`ctest` green 57/57, kit rebuilt + app relaunched, QML loads clean / no warnings):** Two follow-ups to the
+polish pass. (1) **The header sort button now shows the CURRENT order's icon and has NO tooltip** (the
+tooltip looked bad/cluttered). Twilight added three PNGs (`sort-alphabetical/internal/pokedex`); copied
+(Windows-side) into `projects/app/assets/icons/sort/`, added to `app.qrc`, exposed via a new
+`PokemonOverviewModel::sortIcon` `Q_PROPERTY`. The control is a hand-rolled `Item` (square hover highlight +
+`Image` `PreserveAspectFit` so the non-square art isn't squished), NOT an `IconButtonSquare`. (2)
+**Columns condensed ~half** — was scrolling sideways; per-column widths now `nameColW 110 / partyColW 46 /
+boxColW 30` (via a `colW(i)` helper used by header + bands + cells), box headers show **just the number**
+("Box 3"→"3"), Party keeps its word. **C++ changed (model `.h/.cpp`) + new PNG assets in qrc + QML →
+Rebuild (RCC re-embed).** Convention: `reference/ui-patterns.md` → "...Polish pass" (sort-control + condensed
+-columns bullets). **Awaiting Twilight's in-app review** (watch: the three sort icons' relative visual size
+under `PreserveAspectFit`, and box-number-only headers reading clearly enough).
+
 ## Open Issues
 
 | Issue | Where | Status / notes |

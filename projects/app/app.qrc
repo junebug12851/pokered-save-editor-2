@@ -40,6 +40,9 @@
         <file>assets/icons/status/burn.png</file>
         <file>assets/icons/status/freeze.png</file>
         <file>assets/icons/status/paralyze.png</file>
+        <file>assets/icons/sort/alphabetical.png</file>
+        <file>assets/icons/sort/internal.png</file>
+        <file>assets/icons/sort/pokedex.png</file>
         <file>assets/icons/fontawesome/broom.svg</file>
         <file>assets/icons/fontawesome/certificate.svg</file>
         <file>assets/icons/fontawesome/copy.svg</file>

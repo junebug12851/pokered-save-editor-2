@@ -285,3 +285,13 @@ QString PokemonOverviewModel::sortLabel() const
   default:           return QString();
   }
 }
+
+QString PokemonOverviewModel::sortIcon() const
+{
+  switch(sortSelect) {
+  case SortDex:      return QStringLiteral("qrc:/assets/icons/sort/pokedex.png");
+  case SortName:     return QStringLiteral("qrc:/assets/icons/sort/alphabetical.png");
+  case SortInternal: return QStringLiteral("qrc:/assets/icons/sort/internal.png");
+  default:           return QString();
+  }
+}
