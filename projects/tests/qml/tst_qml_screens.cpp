@@ -78,6 +78,11 @@
 #include <engine/tilesetprovider.h>
 #include <engine/fontpreviewprovider.h>
 
+#include <pse-savefile/expanded/player/player.h>
+#include <pse-savefile/expanded/player/playerpokemon.h>
+#include <pse-savefile/expanded/fragments/pokemonparty.h>
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
+
 // bootQmlLinkage() lives in the executable (src/boot/bootQmlLinkage.cpp), not in
 // appcore. We compile that same .cpp into this test target (see CMakeLists) so the
 // QML type registration stays a SINGLE source of truth shared with the app.
@@ -207,11 +212,12 @@ void TestQmlScreens::screenLoadsClean_data()
       continue;   // skip the empty "" fallback screen (no url)
     // Detail screens (homeBtn == false: pokemonDetails, mapDetails) are only ever
     // shown AFTER a parent selection (their `boxData`/map property is null until
-    // navigation sets it). Loaded cold here they would emit null-binding TypeErrors
-    // for an unreachable state, so they get LOAD-ONLY coverage (compile/instantiate
-    // without component errors -- still catching the Credits-class FINAL/"not ready"
-    // bug). Their RUNTIME bindings are verified in their real, selection-backed state
-    // by the detail-flow GUI test (tst_gui_navigation / Broader GUI coverage 1b).
+    // navigation sets it). Default to LOAD-ONLY coverage (compile/instantiate without
+    // component errors -- still catching the Credits-class FINAL/"not ready" bug).
+    // EXCEPTION: pokemonDetails is given a REAL party mon as `boxData` below (as the
+    // app does) and then held to the full zero-warning bar -- so the Pokemon editor's
+    // runtime bindings ARE verified here. mapDetails stays load-only (Maps feature is
+    // not wired; no map selection to inject yet).
     QTest::newRow(name.toUtf8().constData()) << s->url << !s->homeBtn;
   }
 }
@@ -244,6 +250,24 @@ void TestQmlScreens::screenLoadsClean()
     item->setWidth(m_window->width());
     item->setHeight(m_window->height());
   }
+
+  // The Pokemon editor is a detail screen, but unlike a cold load we can give it a
+  // REAL selection -- exactly as the app does (PokemonBoxView.openMonEditor pushes it
+  // with `boxData: monData`). With a populated fixture the party has mons, so inject
+  // party mon 0 as boxData BEFORE completeCreate; its bindings then resolve against
+  // real data and we demand it loads as CLEAN as any other screen (not load-only).
+  if (url.contains(QLatin1String("PokemonDetails.qml"))) {
+    PlayerPokemon* party = m_file->data->dataExpanded->player->pokemon;
+    if (party && party->pokemonCount() > 0) {
+      PokemonParty* mon = party->partyAt(0);   // PokemonParty IS-A PokemonBox
+      if (mon) {
+        obj->setProperty("boxData",   QVariant::fromValue<QObject*>(mon));
+        obj->setProperty("partyData", QVariant::fromValue<QObject*>(mon));
+        detail = false;   // selection-backed -> hold it to the full zero-warning bar
+      }
+    }
+  }
+
   component.completeCreate();
 
   // (3) Let Component.onCompleted + deferred bindings run (runtime TypeErrors surface here).
