@@ -146,7 +146,11 @@ void TestModels::creditsModel_loads()
   const int rows = m.rowCount(QModelIndex());
   QVERIFY2(rows >= 0, "credits model returned a negative row count");
   if(rows > 0)
-    QVERIFY(m.data(m.index(0, 0), CreditsModel::NameRole).isValid());
+  {
+    // Row 0 is the first section: it has a heading and a list of entry maps.
+    QVERIFY(m.data(m.index(0, 0), CreditsModel::SectionRole).isValid());
+    QVERIFY(m.data(m.index(0, 0), CreditsModel::EntriesRole).canConvert<QVariantList>());
+  }
 }
 
 void TestModels::itemSelectModel_listsItems()

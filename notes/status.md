@@ -367,6 +367,33 @@ longer referenced; safe to remove later). **Credited 2026-06-13:** the rival art
 illustration is the same lineage but remains historically uncredited.) Standing ask from Twilight: **keep
 her on top of credits/sources proactively** — flag and add credits for new assets/contributors by default.
 
+**Credits / About screen redesign + data/back-end cleanup (2026-06-13, Twilight-directed; BUILT +
+full `ctest` green 57/57, kit rebuilt + app launched):** Reworked the About/Credits modal end-to-end
+while keeping what Twilight liked (wallpaper, categories, font-size variation). (1) **Data:**
+`credits.json` restructured from an object-of-arrays into an ordered `{ "sections": [ {section,
+entries:[…]} ] }` list — section ORDER now lives in the JSON; adding a credit or a section is a pure
+JSON edit (no C++). Entries preserved verbatim (incl. Twilight's wording/typos). (2) **Back end:**
+`CreditDBEntry::process()` is now a single data-driven loop over `sections` (was 8 hardcoded repeated
+blocks); the store stays **flat** (section-header sentinel + entries) so the documented DB-entry pattern
+and every DB-layer consumer/test are unchanged. (3) **Model:** `CreditsModel` is now **section-grouped**
+— one row per category with roles `section` + `entries` (a `QVariantList` of {name,url,note,license,
+mandated} maps), regrouped **lazily** from the flat store (was the flat NameRole/UrlRole/… set).
+`tst_models creditsModel_loads` updated to the new roles. (4) **UI (`About.qml`):** each category now
+renders as a **soft translucent rounded card** over the wallpaper (white α0.88, 1px hairline border,
+subtle `MultiEffect` drop shadow), with a **section icon** + heading + divider, then a `Repeater` over
+that section's entries. Section icons reuse already-bundled Font Awesome svgs (users / file-import / cog /
+magic / wrench / globe-americas / th / map), **colorized to `primaryColor`** via a `MultiEffect`
+(`Image visible:false` as the source). Added **clickable URLs** (`StyledText` `<a>` →
+`Qt.openUrlExternally`, scheme auto-prepended, pointer cursor via a `NoButton` MouseArea), a **"Credits"
+title + warm intro** (ListView `header`), and a **version + copyright footer** (`Qt.application.name`/
+`.version` → "Pokered Save Editor • v1.0.0", set in `boot.cpp`; "© 2017–2026 Twilight • Apache License
+2.0"). Kept the pinned `CreditWork` wallpaper attribution. **No new assets** (all FA icons already in
+`app.qrc`) → **no credits.json contributor change needed**. **C++ + baked `db.qrc` JSON + `app.qrc` QML
+changed → Rebuild required** (done: db RCC re-embedded `credits.json`, app RCC re-embedded `About.qml`,
+exe relinked; repo `build/` full `ctest` 57/57). Convention: `reference/ui-patterns.md` → "Credits /
+About screen". **Awaiting Twilight's in-app review** (watch: card width/shadow on wide windows; the
+**Wallpapers** section icon — `map` is a best-fit placeholder; and the link color over the cards).
+
 ## Open Issues
 
 | Issue | Where | Status / notes |

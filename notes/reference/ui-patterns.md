@@ -772,3 +772,27 @@ internal `onStrChanged` recalc while a consumer adds its own handler.
 | Trainer-card row spacing | `CardFront.qml` per-field `anchors.topMargin` (spacer→money 18, inter-row 4) |
 | Playtime clock field width | `PlaytimeEdit.qml` `digitPad` (2) — applied as left/right padding; width = 2*font.pixelSize + padding |
 | Playtime row vertical centering | `PlaytimeEdit.qml` row `height: top.fieldH` + each `PlaytimeDivider` `anchors.verticalCenter` (don't let it size to `childRow.implicitHeight` — that's the Material ~48px, fields then ride high) |
+
+## Credits / About screen
+
+`screens/modal/About.qml` renders `brg.creditsModel` (now **section-grouped**: one row per category,
+roles `section` + `entries`). Layout conventions:
+
+- **One translucent card per category.** A `ListView` (spacing 18) whose delegate is a rounded
+  `Rectangle` (`radius 12`, `color Qt.rgba(1,1,1,0.88)`, 1px `Qt.rgba(0,0,0,0.06)` border, subtle
+  `MultiEffect` drop shadow). Card width is capped + centered via `top.contentWidth`
+  (`Math.min(width-48, 580)`), shared by the `header` (title + intro) and `footer` (version + copyright)
+  so everything lines up in one column. Inner content sits in a `Column` inset by `card.pad` (22).
+- **Section icon.** A bundled Font Awesome svg mapped by heading in `About.sectionIcon()` (presentation
+  only — kept out of `credits.json`). Tint a black FA svg to the palette: an `Image { visible:false }`
+  as the source of a sibling `MultiEffect { colorization:1.0; colorizationColor: … }` (here
+  `primaryColor`). `map` is a placeholder for **Wallpapers** — swap if a better fit is added.
+- **Clickable links.** Render the URL as `textFormat: Text.StyledText`, `text:'<a href="…">…</a>'`,
+  `linkColor: primaryColor`, `onLinkActivated: (l)=>Qt.openUrlExternally(l)`. URLs in the data omit the
+  scheme — `About.linkHref()` prepends `https://`. A `MouseArea { acceptedButtons: Qt.NoButton;
+  cursorShape: PointingHandCursor }` gives a pointer without swallowing the click.
+- **Font-size variation is intentional** (Twilight's): heading 22 bold, entry name 16 bold, note 14,
+  mandated/url 13 italic, license 12 italic; greys via `textColorDark`/`textColorMid`.
+- **Version/copyright** comes from `Qt.application.name`/`.version` (set in `boot.cpp`) — don't hardcode.
+- The data + back end are data-driven: add a credit by editing **only** `credits.json` (ordered
+  `sections` array). `CreditDBEntry::process()` loops it; the flat store is regrouped by `CreditsModel`.

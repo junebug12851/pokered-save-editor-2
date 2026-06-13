@@ -20,44 +20,68 @@
  */
 
 #include "./creditsmodel.h"
+#include <QVariantMap>
 #include <pse-db/creditsdb.h>
 #include <pse-db/entries/creditdbentry.h>
+
+void CreditsModel::ensureBuilt() const
+{
+  if (m_built)
+    return;
+
+  // Walk the flat store: a non-empty section name starts a new group; every
+  // other entry is an item under the current group.
+  int cur = -1;
+  for (auto entry : CreditsDB::inst()->getStore())
+  {
+    if (!entry->getSection().isEmpty())
+    {
+      m_sections.append(Section{ entry->getSection(), {} });
+      cur = m_sections.size() - 1;
+      continue;
+    }
+
+    if (cur < 0)
+      continue; // defensive: an entry before any header
+
+    QVariantMap item;
+    item["name"]     = entry->getName();
+    item["url"]      = entry->getUrl();
+    item["note"]     = entry->getNote();
+    item["license"]  = entry->getLicense();
+    item["mandated"] = entry->getMandated();
+    m_sections[cur].entries.append(item);
+  }
+
+  m_built = true;
+}
 
 int CreditsModel::rowCount(const QModelIndex& parent) const
 {
   Q_UNUSED(parent)
 
-  return CreditsDB::inst()->getStore().size();
+  ensureBuilt();
+  return m_sections.size();
 }
 
 QVariant CreditsModel::data(const QModelIndex& index, int role) const
 {
+  ensureBuilt();
+
   // If index is invalid in any way, return nothing
   if (!index.isValid())
     return QVariant();
 
-  if (index.row() >= CreditsDB::inst()->getStore().size())
+  if (index.row() < 0 || index.row() >= m_sections.size())
     return QVariant();
 
-  auto entry = CreditsDB::inst()->getStore().at(index.row());
+  const Section& section = m_sections.at(index.row());
 
   if (role == SectionRole)
-    return entry->getSection();
+    return section.name;
 
-  if (role == NameRole)
-    return entry->getName();
-
-  if (role == UrlRole)
-    return entry->getUrl();
-
-  if (role == NoteRole)
-    return entry->getNote();
-
-  if (role == LicenseRole)
-    return entry->getLicense();
-
-  if (role == MandatedRole)
-    return entry->getMandated();
+  if (role == EntriesRole)
+    return section.entries;
 
   // All else fails, return nothing
   return QVariant();
@@ -68,11 +92,7 @@ QHash<int, QByteArray> CreditsModel::roleNames() const
   QHash<int, QByteArray> roles;
 
   roles[SectionRole] = "section";
-  roles[NameRole] = "creditTo";
-  roles[UrlRole] = "urlTo";
-  roles[NoteRole] = "note";
-  roles[LicenseRole] = "license";
-  roles[MandatedRole] = "mandated";
+  roles[EntriesRole] = "entries";
 
   return roles;
 }

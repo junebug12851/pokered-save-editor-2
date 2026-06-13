@@ -87,45 +87,21 @@ QString CreditDBEntry::getSection() const
 
 void CreditDBEntry::process(QJsonObject& data)
 {
-  CreditsDB::inst()->store.append(new CreditDBEntry("Project Leaders"));
+  // Data-driven: walk the ordered "sections" array. Each section contributes a
+  // section-header entry (section name, no other fields) followed by its
+  // entries. Section ORDER is whatever the JSON lists -- adding/reordering a
+  // section, or adding a credit, is now a pure credits.json edit (no C++ change).
+  // The store stays flat (header sentinel + entries) so the DB-entry pattern and
+  // every DB-layer consumer/test is unchanged; CreditsModel regroups it for the view.
+  for(QJsonValue sectionVal : data["sections"].toArray())
+  {
+    QJsonObject section = sectionVal.toObject();
 
-  for(QJsonValue entry : data["Project Leaders"].toArray())
-    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
+    CreditsDB::inst()->store.append(new CreditDBEntry(section["section"].toString("")));
 
-  CreditsDB::inst()->store.append(new CreditDBEntry("Data Sources"));
-
-  for(QJsonValue entry : data["Data Sources"].toArray())
-    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
-
-  CreditsDB::inst()->store.append(new CreditDBEntry("Framework"));
-
-  for(QJsonValue entry : data["Framework"].toArray())
-    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
-
-  CreditsDB::inst()->store.append(new CreditDBEntry("AI Assistance"));
-
-  for(QJsonValue entry : data["AI Assistance"].toArray())
-    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
-
-  CreditsDB::inst()->store.append(new CreditDBEntry("Tools Used"));
-
-  for(QJsonValue entry : data["Tools Used"].toArray())
-    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
-
-  CreditsDB::inst()->store.append(new CreditDBEntry("Services Used"));
-
-  for(QJsonValue entry : data["Services Used"].toArray())
-    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
-
-  CreditsDB::inst()->store.append(new CreditDBEntry("Icons"));
-
-  for(QJsonValue entry : data["Icons"].toArray())
-    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
-
-  CreditsDB::inst()->store.append(new CreditDBEntry("Wallpapers"));
-
-  for(QJsonValue entry : data["Wallpapers"].toArray())
-    CreditsDB::inst()->store.append(new CreditDBEntry(entry));
+    for(QJsonValue entry : section["entries"].toArray())
+      CreditsDB::inst()->store.append(new CreditDBEntry(entry));
+  }
 }
 
 void CreditDBEntry::qmlRegister() const
