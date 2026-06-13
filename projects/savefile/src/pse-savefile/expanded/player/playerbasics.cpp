@@ -232,7 +232,15 @@ PokemonDBEntry* PlayerBasics::toStarter()
 
 int PlayerBasics::badgeCount()
 {
-  return maxBadges;
+  // How many badges are actually earned (the header's contract). This was a stub
+  // returning maxBadges unconditionally -- so it always read "8" regardless of the
+  // real badge bits. Count the set flags instead. (Found by tst_synthetic_fixtures
+  // 2026-06-13: a 0-badge save reported 8.)
+  int count = 0;
+  for(var8 i = 0; i < maxBadges; i++)
+    if(badges[i])
+      count++;
+  return count;
 }
 
 bool PlayerBasics::badgeAt(int ind)
