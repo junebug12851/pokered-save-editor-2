@@ -108,6 +108,15 @@ void Storage::load(SaveFile* saveFile)
   // not. If they aren't formatted then don't load them as they contain garbage
   // information
   curBox = (toolset->getByte(0x284C) & 0b01111111);
+
+  // Graceful degradation on a corrupt/garbage save: the current-box index must be a
+  // real box (0 .. 2*setMaxBoxes-1 == 0..11). A malformed save (e.g. all-0xFF -> 127)
+  // would otherwise flow into loadSpecific()/boxAt() and index boxes[] out of bounds
+  // -> crash. Clamp an out-of-range value to 0. A valid save is always in range, so
+  // this is a no-op for real saves and byte-fidelity is unaffected.
+  if(curBox >= setMaxBoxes * 2)
+    curBox = 0;
+
   curBoxChanged();
 
   boxesFormatted = toolset->getBit(0x284C, 0x1, 7);
