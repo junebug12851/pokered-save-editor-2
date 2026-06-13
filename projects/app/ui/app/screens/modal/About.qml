@@ -15,11 +15,11 @@ import QtQuick.Effects
 import "../../fragments/modal"
 
 Page {
-  id: top
+  id: root
 
   // Card width is capped so lines stay readable on wide windows, and the same
   // cap is shared by the header/footer so everything lines up in one column.
-  readonly property int contentWidth: Math.min(width - 48, 580)
+  readonly property int colWidth: Math.min(width - 48, 580)
 
   // Maps a section heading to a (already-bundled) Font Awesome glyph. Kept in QML
   // so credits.json stays pure data; tweak freely -- it's presentation only.
@@ -66,7 +66,7 @@ Page {
       Column {
         id: headerCol
         y: 30
-        width: top.contentWidth
+        width: root.colWidth
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 8
 
@@ -99,7 +99,7 @@ Page {
         id: card
         readonly property int pad: 22
 
-        width: top.contentWidth
+        width: root.colWidth
         anchors.horizontalCenter: parent.horizontalCenter
         height: cardCol.implicitHeight + pad * 2
         radius: 12
@@ -135,7 +135,7 @@ Page {
               Image {
                 id: secIcon
                 anchors.fill: parent
-                source: top.sectionIcon(model.section)
+                source: root.sectionIcon(model.section)
                 sourceSize.width: 52
                 sourceSize.height: 52
                 fillMode: Image.PreserveAspectFit
@@ -217,7 +217,7 @@ Page {
                 width: parent.width
                 wrapMode: Text.WrapAnywhere
                 textFormat: Text.StyledText
-                text: '<a href="' + top.linkHref(modelData.url) + '">' + modelData.url + '</a>'
+                text: '<a href="' + root.linkHref(modelData.url) + '">' + modelData.url + '</a>'
                 linkColor: brg.settings.primaryColor
                 font.pixelSize: 13
                 font.italic: true
@@ -255,7 +255,7 @@ Page {
       Column {
         id: footCol
         y: 28
-        width: top.contentWidth
+        width: root.colWidth
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 5
 

@@ -394,6 +394,22 @@ exe relinked; repo `build/` full `ctest` 57/57). Convention: `reference/ui-patte
 About screen". **Awaiting Twilight's in-app review** (watch: card width/shadow on wide windows; the
 **Wallpapers** section icon — `map` is a best-fit placeholder; and the link color over the cards).
 
+**Credits screen — two QML-load bugs found + fixed (2026-06-13; verified on-screen):** The first build of
+the redesign above **wouldn't open** in-app (it errored) even though all 57 C++ tests passed — because the
+unit tests never instantiate QML. Both were caught only by launching + reading the app's stderr log
+(`qCritical() << "[QML]"`, captured via `Start-Process -RedirectStandardError`). (1) **`Page.contentWidth`
+is FINAL** — `About.qml` declared `readonly property int contentWidth` on its `Page` root → "Cannot
+override FINAL property" → `QQmlComponent: Component is not ready` → the StackView push failed → screen
+never opened. Renamed the property to `colWidth`. (2) **`id: top` collides with the `top` anchor line** —
+inside delegates that have `anchors`, bare `top` resolved to a `QQuickAnchorLine`, so `top.sectionIcon()`/
+`top.linkHref()` threw `TypeError: … is not a function` (icons + links silently broke; screen loaded but
+degraded). Renamed the Page `id` to `root`. After both fixes the screen renders correctly (verified via
+screenshot: Wallpapers card with tinted icon, entries, pink clickable links, license lines). **Process
+lesson (Twilight, valid):** these are exactly what a **QML load/GUI smoke test** would catch automatically,
+and FF-ing `main` on green C++ tests alone let a non-opening screen reach `main`. **Going forward, gate
+`main` on a QML-load smoke check, not just `ctest`.** Both fixes added to `reference/fix-patterns.md`. A
+dedicated GUI/automated-test setup is being spun up separately (see `plans/testing.md`).
+
 ## Open Issues
 
 | Issue | Where | Status / notes |
