@@ -96,6 +96,7 @@ if(TARGET appcore)
     pse_add_test(tst_item_storage_model appcore mvc/tst_item_storage_model.cpp)
     pse_add_test(tst_move_select_model appcore mvc/tst_move_select_model.cpp)
     pse_add_test(tst_app_e2e  appcore  mvc/tst_app_e2e.cpp)
+    pse_add_test(tst_shortcuts appcore mvc/tst_shortcuts.cpp)
 
     # The graphics engine + QML image providers need a GUI app (QPixmap/QPainter)
     # and the app's qrc (the tileset/font PNGs live in app.qrc, not appcore), and
@@ -185,6 +186,7 @@ if(TARGET appcore)
     pse_add_gui_test(tst_gui_saveload   gui/tst_gui_saveload.cpp)
     pse_add_gui_test(tst_gui_input      gui/tst_gui_input.cpp)
     pse_add_gui_test(tst_gui_fidelity   gui/tst_gui_fidelity.cpp)
+    pse_add_gui_test(tst_gui_drag       gui/tst_gui_drag.cpp)
 endif()
 
 # Aggregate target: builds every registered test exe in one shot. CI builds this
