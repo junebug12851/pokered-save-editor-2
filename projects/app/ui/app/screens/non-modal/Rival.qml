@@ -89,7 +89,7 @@ Page {
     }
 
     Image {
-      source: "qrc:/assets/images/rival-larger.png"
+      source: "qrc:/assets/icons/rival.png"
 
       anchors.top: divider.bottom
       anchors.topMargin: 15
