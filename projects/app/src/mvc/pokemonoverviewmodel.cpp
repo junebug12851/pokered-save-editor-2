@@ -150,16 +150,28 @@ PokemonOverviewModel::Cell PokemonOverviewModel::buildCell(PokemonStorageBox* bo
                  .arg(others == 1 ? QStringLiteral("other") : QStringLiteral("others"));
   }
 
-  // Line 2 (ownership): caught/traded split, hiding whichever side is zero (the
-  // whole screen hides zeros).
-  QStringList own;
-  if(caught > 0)
-    own.append(QStringLiteral("×%1 caught").arg(caught));
-  if(traded > 0)
+  // Line 2 (ownership): the caught/traded split. Shown ONLY when at least one mon
+  // is traded -- if they're all caught (the common case) the split adds nothing, so
+  // it's omitted (Twilight). When shown, each side appears only if non-zero, so an
+  // all-traded cell reads "×N traded".
+  QString line2;
+  if(traded > 0) {
+    QStringList own;
+    if(caught > 0)
+      own.append(QStringLiteral("×%1 caught").arg(caught));
     own.append(QStringLiteral("×%1 traded").arg(traded));
-  QString line2 = own.join(QStringLiteral(", "));
+    line2 = own.join(QStringLiteral(", "));
+  }
 
-  cell.tooltip = line1.isEmpty() ? line2 : (line1 + QStringLiteral("\n") + line2);
+  // No nicknames AND nothing traded -> nothing worth a tooltip; leave it empty so
+  // the view shows no tooltip at all on that cell.
+  if(line1.isEmpty())
+    cell.tooltip = line2;
+  else if(line2.isEmpty())
+    cell.tooltip = line1;
+  else
+    cell.tooltip = line1 + QStringLiteral("\n") + line2;
+
   return cell;
 }
 
@@ -186,9 +198,10 @@ void PokemonOverviewModel::rebuild()
 
   // ---- Species universe: every distinct species id present in any column. ------
   // Keyed by raw species id (so two ids that happen to share a display name stay
-  // distinct rows, like the items overview keys by index); name resolved once.
+  // distinct rows, like the items overview keys by index); name + dex resolved once.
   QSet<int> speciesIds;
   QHash<int, QString> names;
+  QHash<int, int> dexes;
 
   for(auto box : colBoxes) {
     if(box == nullptr)
@@ -198,8 +211,10 @@ void PokemonOverviewModel::rebuild()
         continue;
       int id = mon->species;
       speciesIds.insert(id);
-      if(!names.contains(id))
+      if(!names.contains(id)) {
         names[id] = mon->speciesName();
+        dexes[id] = mon->dexNum();
+      }
     }
   }
 
@@ -207,21 +222,66 @@ void PokemonOverviewModel::rebuild()
   for(int id : speciesIds) {
     Row row;
     row.name = names.value(id, QStringLiteral("???"));
+    row.dex = dexes.value(id, 0);
+    row.id = id;
     row.cells.reserve(colBoxes.size());
     for(auto box : colBoxes)
       row.cells.append(buildCell(box, id));
     rows.append(row);
   }
 
-  // Alphabetical by species name (numeric-aware, punctuation-insensitive), mirroring
-  // the items overview so the table reads consistently regardless of box order.
-  QCollator collator;
-  collator.setNumericMode(true);
-  collator.setIgnorePunctuation(true);
-  std::sort(rows.begin(), rows.end(), [&collator](const Row& a, const Row& b) {
-    return collator.compare(a.name, b.name) < 0;
-  });
+  applySort();
 
   endResetModel();
   columnsChanged();
+}
+
+void PokemonOverviewModel::applySort()
+{
+  // The Pokedex screen's sort orders (PokedexModel): dex number, alphabetical,
+  // internal id. Stable, deterministic ties (id) so the order never wobbles.
+  if(sortSelect == SortName) {
+    QCollator collator;
+    collator.setNumericMode(true);
+    collator.setIgnorePunctuation(true);
+    std::sort(rows.begin(), rows.end(), [&collator](const Row& a, const Row& b) {
+      int c = collator.compare(a.name, b.name);
+      return (c != 0) ? (c < 0) : (a.id < b.id);
+    });
+  }
+  else if(sortSelect == SortInternal) {
+    std::sort(rows.begin(), rows.end(), [](const Row& a, const Row& b) {
+      return a.id < b.id;
+    });
+  }
+  else { // SortDex (default fallback)
+    std::sort(rows.begin(), rows.end(), [](const Row& a, const Row& b) {
+      return (a.dex != b.dex) ? (a.dex < b.dex) : (a.id < b.id);
+    });
+  }
+}
+
+void PokemonOverviewModel::sortCycle()
+{
+  // Mirror PokedexModel::dexSortCycle -- advance through the three orders, wrapping
+  // past the sentinels.
+  sortSelect++;
+  if(sortSelect >= SortEnd)
+    sortSelect = SortBegin + 1;
+
+  beginResetModel();
+  applySort();
+  endResetModel();
+
+  sortSelectChanged();
+}
+
+QString PokemonOverviewModel::sortLabel() const
+{
+  switch(sortSelect) {
+  case SortDex:      return QStringLiteral("Dex order");
+  case SortName:     return QStringLiteral("Alphabetical");
+  case SortInternal: return QStringLiteral("Internal order");
+  default:           return QString();
+  }
 }

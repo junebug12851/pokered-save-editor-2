@@ -304,6 +304,28 @@ nickname/OT edits happen in the detail editor and don't emit a box `pokemonChang
 `bootQmlLinkage.cpp`, constructed in `bridge.cpp`. Test:
 `tst_storage_model` `pokemonOverview_columnsCountsTooltips`.
 
+**Polish pass (2026-06-12, Twilight-directed):**
+- **Zebra rows + columns + row hover.** Alternate **columns** are tinted via a **full-height band
+  backdrop** (`Row` of `Rectangle`s behind the `ListView`, so the colour runs past the last row);
+  alternate **rows** add a faint semi-transparent stripe over it (`rowTintAlpha`/`colTintAlpha`, both
+  ≈0.03–0.05 black so they *layer* into a clean grid, not a loud checkerboard — the species column is
+  col 0, untinted). **Whole-row hover** highlight is an accent-tinted overlay driven by a row
+  `HoverHandler` (stays true over the child count cells, same reason as the storage grid). The header
+  got a faint bar (`rgba 0,0,0,0.05`) to read apart from the body.
+- **Species-name prettifying + wider column.** Names render through a QML `fixName()` that mirrors the
+  **Pokedex screen's** mapping (`Nidoran<f>`→`Nidoran ♀`, `Nidoran<m>`→`Nidoran ♂`, `Mr.Mime`→`Mr. Mime`)
+  so the two screens read the same; `nameColW` was widened to **124** so those don't elide. (The model's
+  `NameRole` stays the raw readable so sorting matches the Pokedex's `SortName` exactly.)
+- **Sort control in the header.** A small **`IconButtonSquare`** (`sort-amount-up.svg`) sits next to the
+  "Species" label and **cycles the SAME orders as the Pokedex** (`PokemonOverviewModel::sortCycle()` mirrors
+  `PokedexModel::dexSortCycle`: **Dex / Alphabetical / Internal**); its `ToolTip` names the active order
+  (`sortLabel`). Default is **Alphabetical**. Each `Row` now carries `dex`/`id` sort keys; `applySort()`
+  re-sorts in place on a model reset.
+- **Tooltip ownership rule (refined).** The caught/traded line is shown **only when something is traded**
+  — an all-caught cell omits it (it adds nothing). So a cell with **no differing nicknames AND nothing
+  traded yields an empty tooltip**, and the view shows **no tooltip at all** on it (the QML already gates
+  `hoverEnabled`/`visible` on `tip !== ""`). Built in `PokemonOverviewModel::buildCell`.
+
 ## Pokémon storage screen layout (the standard for this screen)
 
 `screens/non-modal/Pokemon.qml` mirrors Bag: two `PokemonPane` in a **`RowLayout`**

@@ -298,6 +298,21 @@ nickname/others/caught/traded tooltip). Convention: `reference/ui-patterns.md` �
 drawer (Pokémon screen)". **Awaiting Twilight's in-app review** (watch: column widths/labels when
 several boxes are non-empty, the horizontal scroll on a many-box save, and the tooltip wording/cramping).
 
+**Pokémon "View All" polish pass (2026-06-12, Twilight-directed; BUILT + full `ctest` green 57/57 + test
+green, kit rebuilt + app relaunched):** Follow-ups to the drawer above. (1) **Zebra rows + columns + row
+hover** — alternate columns via a full-height band backdrop, alternate rows via a faint semi-transparent
+stripe (layered, not loud), whole-row accent hover via a row `HoverHandler`; faint header bar. (2)
+**Species names no longer clip** — wider name column (124) + a QML `fixName()` mirroring the Pokedex's
+markup mapping (`Nidoran<f>`→`Nidoran ♀`, etc.). (3) **Sort control** — an `IconButtonSquare` next to the
+"Species" header cycles the **same orders as the Pokedex screen** (Dex/Alphabetical/Internal) via the new
+`PokemonOverviewModel::sortCycle()`; tooltip names the active order; rows carry `dex`/`id` sort keys.
+(4) **Tooltip refined** — the caught/traded line shows **only when something is traded** (all-caught
+omits it), so a cell with no differing nicknames and nothing traded has **no tooltip at all**. C++
+changed (model `.h/.cpp`; no new files) + QML (`Pokemon.qml`). Test extended
+(`pokemonOverview_columnsCountsTooltips`: empty-tooltip all-caught cell + sort cycle). Convention:
+`reference/ui-patterns.md` → "View All overview drawer (Pokémon screen)" → "Polish pass". **Awaiting
+Twilight's in-app review.**
+
 ## Open Issues
 
 | Issue | Where | Status / notes |

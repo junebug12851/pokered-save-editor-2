@@ -222,14 +222,26 @@ void TestStorageModel::pokemonOverview_columnsCountsTooltips()
   b->otName = basics->playerName;
   b->otID = basics->playerID;
 
+  // Box 1 (index 1): two S0 mons, both caught (player's OT) + no nickname -- so the
+  // S0/Box-2 cell must carry NO tooltip at all (nothing nicknamed, nothing traded).
+  auto* box1 = storage->boxAt(1);
+  box1->pokemonNew();
+  box1->pokemonNew();
+  for(PokemonBox* m : { box1->pokemon.at(0), box1->pokemon.at(1) }) {
+    m->species = S0; m->changeName(true);
+    m->otName = basics->playerName;
+    m->otID = basics->playerID;
+  }
+
   auto* ov = m_brg->pokemonOverviewModel;
   ov->rebuild();
 
-  // ---- Columns: Party first, then only box 0 (every other box is empty). ----
+  // ---- Columns: Party first, then only the non-empty boxes (box 0 + box 1). ----
   const QStringList cols = ov->columns();
-  QCOMPARE(cols.size(), 2);
+  QCOMPARE(cols.size(), 3);
   QCOMPARE(cols.at(0), QStringLiteral("Party"));
   QCOMPARE(cols.at(1), QStringLiteral("Box 1"));
+  QCOMPARE(cols.at(2), QStringLiteral("Box 2"));
 
   // ---- Locate the two species rows by display name. ----
   const QString nameS0 = party->pokemon.at(0)->speciesName();
@@ -249,8 +261,11 @@ void TestStorageModel::pokemonOverview_columnsCountsTooltips()
   const QVariantList s0Counts   = ov->data(ov->index(rowS0), PokemonOverviewModel::CountsRole).toList();
   const QVariantList s0Tips     = ov->data(ov->index(rowS0), PokemonOverviewModel::TooltipsRole).toList();
   QCOMPARE(s0Counts.at(0).toInt(), partyS0); // Party
-  QCOMPARE(s0Counts.at(1).toInt(), 0);       // Box 1 (none)
+  QCOMPARE(s0Counts.at(1).toInt(), 0);       // Box 1 (S1 only)
   QVERIFY(s0Tips.at(1).toString().isEmpty()); // a zero cell carries no tooltip
+  QCOMPARE(s0Counts.at(2).toInt(), 2);        // Box 2: the two caught S0 mons
+  QVERIFY2(s0Tips.at(2).toString().isEmpty(),  // all caught + no nickname -> NO tooltip
+           qPrintable(s0Tips.at(2).toString()));
 
   const QVariantList s1Counts = ov->data(ov->index(rowS1), PokemonOverviewModel::CountsRole).toList();
   const QVariantList s1Tips   = ov->data(ov->index(rowS1), PokemonOverviewModel::TooltipsRole).toList();
@@ -264,13 +279,22 @@ void TestStorageModel::pokemonOverview_columnsCountsTooltips()
   QVERIFY2(tip.contains(QStringLiteral("×1 caught")), qPrintable(tip)); // b
   QVERIFY2(tip.contains(QStringLiteral("×1 traded")), qPrintable(tip)); // a
 
-  // ---- Rows are alphabetized by species name. ----
+  // ---- Default sort is alphabetical (SortName); rows are in name order. ----
   QCollator coll; coll.setNumericMode(true); coll.setIgnorePunctuation(true);
   for(int r = 1; r < ov->rowCount(QModelIndex()); ++r) {
     const QString prev = ov->data(ov->index(r - 1), PokemonOverviewModel::NameRole).toString();
     const QString cur  = ov->data(ov->index(r),     PokemonOverviewModel::NameRole).toString();
     QVERIFY2(coll.compare(prev, cur) <= 0, "overview rows are not alphabetized");
   }
+
+  // ---- The species-column sort cycles (same orders as the Pokedex screen) and
+  // never adds/drops rows. ----
+  const int nrows  = ov->rowCount(QModelIndex());
+  const int before = ov->property("sortSelect").toInt();
+  ov->sortCycle();
+  QVERIFY(ov->property("sortSelect").toInt() != before);
+  QVERIFY(!ov->sortLabel().isEmpty());
+  QCOMPARE(ov->rowCount(QModelIndex()), nrows);
 }
 
 QTEST_GUILESS_MAIN(TestStorageModel)

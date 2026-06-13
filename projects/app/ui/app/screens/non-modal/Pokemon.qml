@@ -97,11 +97,26 @@ Page {
 
     // Table geometry knobs (shared by the header row and every body row so the
     // columns line up exactly).
-    property int nameColW: 92
+    property int nameColW: 124   // wide enough for "Nidoran ♀" + the like
     property int countColW: 48
-    property int headerH: 30
+    property int headerH: 32
     property int rowH: 30
     property int scrollLane: 16   // reserve the vertical scrollbar's lane on the right
+    property color accent: brg.settings.accentColor
+
+    // Pretty-print the few species whose internal readable name carries markup,
+    // mirroring the Pokedex screen's fixName() so the two screens read the same.
+    function fixName(n) {
+      if(n === "Nidoran<f>") return "Nidoran ♀";
+      if(n === "Nidoran<m>") return "Nidoran ♂";
+      if(n === "Mr.Mime")    return "Mr. Mime";
+      return n;
+    }
+
+    // Zebra tints (kept very faint so a row stripe + a column band layer into a
+    // clean grid rather than a busy checkerboard). Both return an alpha over white.
+    function colTintAlpha(colI) { return (colI % 2 === 1) ? 0.050 : 0.0; } // species col = 0 (untinted)
+    function rowTintAlpha(rowI) { return (rowI % 2 === 1) ? 0.030 : 0.0; }
 
     // Columns come from the model (Party + non-empty boxes); the table's natural
     // width drives the panel width (capped so a many-box save scrolls instead of
@@ -190,10 +205,17 @@ Page {
           Column {
             width: Math.max(viewAllPanel.tableW, hFlick.width)
 
-            // ---- Header row: "Species" + one label per column. ----
+            // ---- Header row: "Species" (+ sort control) + one label per column. ----
             Item {
               width: parent.width
               height: viewAllPanel.headerH
+
+              // Faint header bar so the titles read apart from the body.
+              Rectangle {
+                anchors.fill: parent
+                anchors.rightMargin: viewAllPanel.scrollLane
+                color: Qt.rgba(0, 0, 0, 0.05)
+              }
 
               Row {
                 anchors.fill: parent
@@ -201,13 +223,33 @@ Page {
                 Item {
                   width: viewAllPanel.nameColW
                   height: parent.height
+
                   Text {
+                    id: speciesHdr
                     anchors.left: parent.left
                     anchors.leftMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
                     text: qsTr("Species")
                     color: brg.settings.textColorMid
                     font.pixelSize: 12
+                  }
+
+                  // Sort control -- cycles the same orders as the Pokedex screen
+                  // (dex / alphabetical / internal). Tooltip names the active one.
+                  IconButtonSquare {
+                    id: sortBtn
+                    anchors.left: speciesHdr.right
+                    anchors.leftMargin: 3
+                    anchors.verticalCenter: parent.verticalCenter
+                    icon.source: "qrc:/assets/icons/fontawesome/sort-amount-up.svg"
+                    icon.color: brg.settings.textColorMid
+                    icon.width: 13
+                    icon.height: 13
+                    onClicked: brg.pokemonOverviewModel.sortCycle()
+
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 300
+                    ToolTip.text: qsTr("Sort: ") + brg.pokemonOverviewModel.sortLabel
                   }
                 }
 
@@ -240,93 +282,132 @@ Page {
               }
             }
 
-            // ---- Body: one row per species. ----
-            ListView {
-              id: overviewList
+            // ---- Body: column-band backdrop + one row per species. ----
+            Item {
               width: parent.width
               height: Math.max(0, hFlick.height - viewAllPanel.headerH)
-              clip: true
-              model: brg.pokemonOverviewModel
-              ScrollBar.vertical: ScrollBar {}
 
-              delegate: Item {
-                id: rowRoot
-                width: overviewList.width
-                height: viewAllPanel.rowH
-
-                // Lift the row's roles onto explicit properties so the nested count
-                // Repeater can reach the species name + per-column tooltip cleanly.
-                property string rowName: speciesName
-                property var rowTips: tooltips
-
-                Row {
-                  anchors.fill: parent
-
-                  // Species name (frozen first column).
-                  Item {
-                    width: viewAllPanel.nameColW
+              // Alternate-column bands, full height (so the column colouring runs
+              // past the last row too), behind the scrolling rows. The species
+              // column is left untinted; the count rows draw transparent over this.
+              Row {
+                anchors.fill: parent
+                Item { width: viewAllPanel.nameColW; height: parent.height }
+                Repeater {
+                  model: viewAllPanel.colCount
+                  delegate: Rectangle {
+                    width: viewAllPanel.countColW
                     height: parent.height
-                    Text {
-                      anchors.left: parent.left
-                      anchors.leftMargin: 12
-                      anchors.right: parent.right
-                      anchors.rightMargin: 4
-                      anchors.verticalCenter: parent.verticalCenter
-                      text: rowRoot.rowName
-                      color: brg.settings.textColorDark
-                      font.capitalization: Font.Capitalize
-                      font.pixelSize: 14
-                      elide: Text.ElideRight
-                    }
-                  }
-
-                  // One count cell per column -- 0 hidden (0 opacity), hover shows
-                  // the tooltip.
-                  Repeater {
-                    model: counts
-                    delegate: Item {
-                      width: viewAllPanel.countColW
-                      height: viewAllPanel.rowH
-
-                      property int cnt: modelData
-                      property string tip: (rowRoot.rowTips && index < rowRoot.rowTips.length)
-                                           ? rowRoot.rowTips[index] : ""
-
-                      Text {
-                        anchors.centerIn: parent
-                        text: cnt
-                        opacity: cnt > 0 ? 1 : 0
-                        color: brg.settings.textColorDark
-                        font.pixelSize: 14
-                      }
-
-                      MouseArea {
-                        id: cellHover
-                        anchors.fill: parent
-                        hoverEnabled: cnt > 0 && tip !== ""
-                      }
-
-                      ToolTip {
-                        visible: cellHover.containsMouse && cnt > 0 && tip !== ""
-                        text: tip
-                        delay: 250
-                        Material.background: brg.settings.accentColor
-                        Material.foreground: brg.settings.textColorLight
-                        enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 80 } }
-                        exit:  Transition { NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 80 } }
-                      }
-                    }
+                    color: Qt.rgba(0, 0, 0, viewAllPanel.colTintAlpha(index + 1))
                   }
                 }
+              }
 
-                // Faint row separator.
-                Rectangle {
-                  anchors.left: parent.left
-                  anchors.right: parent.right
-                  anchors.bottom: parent.bottom
-                  anchors.rightMargin: viewAllPanel.scrollLane
-                  height: 1
-                  color: Qt.rgba(0, 0, 0, 0.06)
+              ListView {
+                id: overviewList
+                anchors.fill: parent
+                clip: true
+                model: brg.pokemonOverviewModel
+                ScrollBar.vertical: ScrollBar {}
+
+                delegate: Item {
+                  id: rowRoot
+                  width: overviewList.width
+                  height: viewAllPanel.rowH
+
+                  // Lift the row's roles + index onto explicit properties so the
+                  // nested count Repeater can reach name/tooltip/stripe cleanly.
+                  property int rowIndex: index
+                  property string rowName: speciesName
+                  property var rowTips: tooltips
+                  property bool rowHovered: false
+
+                  // Whole-row hover (a HoverHandler stays true over the child count
+                  // cells, unlike a MouseArea's containsMouse -- same trick as the grid).
+                  HoverHandler { onHoveredChanged: rowRoot.rowHovered = hovered }
+
+                  // Alternate-row stripe (semi-transparent so the column bands still
+                  // read through it), then the hover highlight on top.
+                  Rectangle {
+                    anchors.fill: parent
+                    anchors.rightMargin: viewAllPanel.scrollLane
+                    color: Qt.rgba(0, 0, 0, viewAllPanel.rowTintAlpha(rowRoot.rowIndex))
+                  }
+                  Rectangle {
+                    anchors.fill: parent
+                    anchors.rightMargin: viewAllPanel.scrollLane
+                    visible: rowRoot.rowHovered
+                    color: Qt.rgba(viewAllPanel.accent.r, viewAllPanel.accent.g, viewAllPanel.accent.b, 0.13)
+                  }
+
+                  Row {
+                    anchors.fill: parent
+
+                    // Species name (frozen first column), prettified.
+                    Item {
+                      width: viewAllPanel.nameColW
+                      height: parent.height
+                      Text {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 12
+                        anchors.right: parent.right
+                        anchors.rightMargin: 6
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: viewAllPanel.fixName(rowRoot.rowName)
+                        color: brg.settings.textColorDark
+                        font.pixelSize: 14
+                        elide: Text.ElideRight
+                      }
+                    }
+
+                    // One count cell per column -- 0 hidden (0 opacity), hover shows
+                    // the tooltip (none when there's no tooltip text).
+                    Repeater {
+                      model: counts
+                      delegate: Item {
+                        width: viewAllPanel.countColW
+                        height: viewAllPanel.rowH
+
+                        property int cnt: modelData
+                        property string tip: (rowRoot.rowTips && index < rowRoot.rowTips.length)
+                                             ? rowRoot.rowTips[index] : ""
+
+                        Text {
+                          anchors.centerIn: parent
+                          text: cnt
+                          opacity: cnt > 0 ? 1 : 0
+                          color: brg.settings.textColorDark
+                          font.pixelSize: 14
+                        }
+
+                        MouseArea {
+                          id: cellHover
+                          anchors.fill: parent
+                          hoverEnabled: cnt > 0 && tip !== ""
+                        }
+
+                        ToolTip {
+                          visible: cellHover.containsMouse && cnt > 0 && tip !== ""
+                          text: tip
+                          delay: 250
+                          Material.background: brg.settings.accentColor
+                          Material.foreground: brg.settings.textColorLight
+                          enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 80 } }
+                          exit:  Transition { NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 80 } }
+                        }
+                      }
+                    }
+                  }
+
+                  // Faint row separator.
+                  Rectangle {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.rightMargin: viewAllPanel.scrollLane
+                    height: 1
+                    color: Qt.rgba(0, 0, 0, 0.06)
+                  }
                 }
               }
             }

@@ -18,6 +18,7 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include <QCollator>
 #include <QAbstractListModel>
 
 class Storage;
@@ -54,12 +55,27 @@ class PokemonOverviewModel : public QAbstractListModel
   /// entry in each row's `counts`/`tooltips`. Changes on every rebuild.
   Q_PROPERTY(QStringList columns READ columns NOTIFY columnsChanged)
 
+  /// Current species-column sort order (see SortSelect). Cycled by sortCycle().
+  Q_PROPERTY(int sortSelect MEMBER sortSelect NOTIFY sortSelectChanged)
+  /// Human-readable label for the current sort (for the header sort-icon tooltip).
+  Q_PROPERTY(QString sortLabel READ sortLabel NOTIFY sortSelectChanged)
+
 public:
   /// Roles (mapped in roleNames()).
   enum OverviewRoles {
     NameRole = Qt::UserRole + 1, ///< Species display name.
     CountsRole,                  ///< Per-column counts (QVariantList<int>, aligned to `columns`).
     TooltipsRole,                ///< Per-column hover tooltips (QVariantList<QString>; empty when count 0).
+  };
+
+  /// Species-column sort orders -- the SAME set the Pokedex screen cycles
+  /// (PokedexModel::PokemonSortSelect): dex number, alphabetical, internal id.
+  enum SortSelect {
+    SortBegin,
+    SortDex,      ///< Pokedex number order.
+    SortName,     ///< Alphabetical by species name.
+    SortInternal, ///< Internal / creation (raw species id) order.
+    SortEnd
   };
 
   /// @param party the player's party; @param storage the PC (12 boxes);
@@ -71,12 +87,16 @@ public:
   virtual QHash<int, QByteArray> roleNames() const override;                ///< Role -> QML name.
 
   QStringList columns() const; ///< @see columns property.
+  QString sortLabel() const;   ///< @see sortLabel property.
+
+  Q_INVOKABLE void sortCycle(); ///< Advance to the next species sort order (re-sorts in place).
 
 public slots:
   void rebuild(); ///< Re-aggregate the party + boxes (full model reset). Wired to pokemonChanged.
 
 signals:
   void columnsChanged();
+  void sortSelectChanged();
 
 private:
   /// One table cell: how many of the row's species sit in the column's box, and
@@ -86,14 +106,18 @@ private:
     QString tooltip;
   };
 
-  /// One aggregated species line: display name + one Cell per column.
+  /// One aggregated species line: display name + sort keys + one Cell per column.
   struct Row {
-    QString name;
+    QString name; ///< Species display name (raw readable, e.g. "Nidoran<f>").
+    int dex;      ///< Pokedex number (for SortDex).
+    int id;       ///< Internal species id (for SortInternal / tiebreak).
     QVector<Cell> cells;
   };
 
   /// Build the tooltip for the @p speciesId mons inside @p box.
   Cell buildCell(PokemonStorageBox* box, int speciesId) const;
+
+  void applySort(); ///< Order `rows` by the current sortSelect (in place, no model signals).
 
   PokemonStorageBox* party = nullptr; ///< The party (always the first column).
   Storage* storage = nullptr;         ///< The PC (its 12 boxes supply the rest).
@@ -102,4 +126,6 @@ private:
   QVector<PokemonStorageBox*> colBoxes; ///< The boxes backing each column (party + non-empty boxes).
   QStringList colLabels;                ///< The header label for each column.
   QVector<Row> rows;                    ///< Current aggregated, sorted rows.
+
+  int sortSelect = SortName; ///< @see sortSelect property (default alphabetical).
 };
