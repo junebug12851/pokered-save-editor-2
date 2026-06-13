@@ -361,8 +361,11 @@ rebuilt (RCC re-embedded) + launched per the default loop; full suite green (no 
 trainer.png swap). Imported `assets/icons/rival.png` (~132 KB) into `projects/app/assets/icons/` and added
 it to `app.qrc` → **new asset in qrc → Rebuild required** (done; RCC re-embedded, kit rebuilt + app
 relaunched, `ctest` green 57/57, FF'd to main). Old `assets/images/rival-larger.png` left in place (no
-longer referenced; safe to remove later). Not credited in `credits.json` — the parallel trainer.png
-illustration isn't credited either and the art source is unconfirmed; add a credit if Twilight wants one.
+longer referenced; safe to remove later). **Credited 2026-06-13:** the rival artwork is ChatGPT's — added
+"the rival artwork" to the ChatGPT note in both the **AI Assistance** and **Icons** sections of
+`credits.json` (baked into `db.qrc` → rebuilt; `ctest` green 57/57; FF'd to main). (The main trainer.png
+illustration is the same lineage but remains historically uncredited.) Standing ask from Twilight: **keep
+her on top of credits/sources proactively** — flag and add credits for new assets/contributors by default.
 
 ## Open Issues
 
