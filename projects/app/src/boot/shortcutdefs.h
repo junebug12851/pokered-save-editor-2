@@ -33,6 +33,10 @@
 #include <QString>
 #include <QKeySequence>
 #include <Qt>
+#include <functional>
+
+#include <pse-savefile/filemanagement.h>
+#include <pse-savefile/savefile.h>
 
 namespace pse {
 
@@ -60,6 +64,30 @@ inline QHash<QString, QKeySequence> shortcutKeyMap()
 inline QKeySequence recentFileShortcutKey(int i)
 {
   return QKeySequence(Qt::CTRL | Qt::SHIFT | static_cast<Qt::Key>(0x30 + i));
+}
+
+/// What each named shortcut DOES, action id -> callable, over a live FileManagement.
+/// The single source of truth for the shortcut→verb wiring: MainWindow connects each
+/// QShortcut's `activated` to the matching callable here, and tst_shortcuts fires the
+/// side-effect-free / non-dialog verbs directly to prove the mapping is correct. The
+/// action ids match shortcutKeyMap()'s keys (every key has exactly one action).
+/// @param onExit  invoked for the exit/exit2 shortcuts (MainWindow passes window close).
+inline QHash<QString, std::function<void()>> shortcutActions(FileManagement* file,
+                                                             std::function<void()> onExit)
+{
+  return {
+    { QStringLiteral("new"),               [file]{ file->newFile(); } },
+    { QStringLiteral("open"),              [file]{ file->openFile(); } },
+    { QStringLiteral("reopen"),            [file]{ file->reopenFile(); } },
+    { QStringLiteral("save"),              [file]{ file->saveFile(); } },
+    { QStringLiteral("saveas"),            [file]{ file->saveFileAs(); } },
+    { QStringLiteral("savecopyas"),        [file]{ file->saveFileCopy(); } },
+    { QStringLiteral("scrub"),             [file]{ file->wipeUnusedSpace(); } },
+    { QStringLiteral("clear-recentfiles"), [file]{ file->clearRecentFiles(); } },
+    { QStringLiteral("exit"),              [onExit]{ if (onExit) onExit(); } },
+    { QStringLiteral("exit2"),             [onExit]{ if (onExit) onExit(); } },
+    { QStringLiteral("random"),            [file]{ file->data->randomizeExpansion(); } },
+  };
 }
 
 } // namespace pse

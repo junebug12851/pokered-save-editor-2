@@ -219,17 +219,15 @@ void MainWindow::setupShortcuts()
   for (auto it = keymap.constBegin(); it != keymap.constEnd(); ++it)
     os.insert(it.key(), new QShortcut(it.value(), this));
 
-  connect(os.value("new"), &QShortcut::activated, file, &FileManagement::newFile);
-  connect(os.value("open"), &QShortcut::activated, file, &FileManagement::openFile);
-  connect(os.value("reopen"), &QShortcut::activated, file, &FileManagement::reopenFile);
-  connect(os.value("clear-recentfiles"), &QShortcut::activated, file, &FileManagement::clearRecentFiles);
-  connect(os.value("save"), &QShortcut::activated, file, &FileManagement::saveFile);
-  connect(os.value("saveas"), &QShortcut::activated, file, &FileManagement::saveFileAs);
-  connect(os.value("savecopyas"), &QShortcut::activated, file, &FileManagement::saveFileCopy);
-  connect(os.value("scrub"), &QShortcut::activated, file, &FileManagement::wipeUnusedSpace);
-  connect(os.value("exit"), &QShortcut::activated, this, &MainWindow::close);
-  connect(os.value("exit2"), &QShortcut::activated, this, &MainWindow::close);
-  connect(os.value("random"), &QShortcut::activated, file->data, &SaveFile::randomizeExpansion);
+  // Wire each shortcut to its verb via the shared pse::shortcutActions() map (the
+  // single source of truth tst_shortcuts fires against). exit/exit2 close the window.
+  const auto actions = pse::shortcutActions(file, [this]{ close(); });
+  for (auto it = actions.constBegin(); it != actions.constEnd(); ++it) {
+    QShortcut* sc = os.value(it.key(), nullptr);
+    if (!sc) continue;
+    const std::function<void()> verb = it.value();
+    connect(sc, &QShortcut::activated, this, [verb]{ verb(); });
+  }
 }
 
 void MainWindow::setupProviders()

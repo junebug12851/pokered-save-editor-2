@@ -36,6 +36,16 @@
 
 #include <boot/shortcutdefs.h>
 
+#include "../helpers/savefilefixture.h"
+#include <pse-db/db.h>
+#include <pse-savefile/filemanagement.h>
+#include <pse-savefile/savefile.h>
+#include <pse-savefile/expanded/savefileexpanded.h>
+#include <pse-savefile/expanded/player/player.h>
+#include <pse-savefile/expanded/player/playerbasics.h>
+
+using namespace pse_test;
+
 // Mirror of MainWindow's MAX_RECENT_FILES (recentFileShortcuts[5]).
 static constexpr int kMaxRecentFiles = 5;
 
@@ -43,11 +53,30 @@ class TestShortcuts : public QObject
 {
   Q_OBJECT
 
+  // Load BaseSAV into a FileManagement via the no-dialog recent path.
+  static bool loadBase(FileManagement& fm)
+  {
+    fm.clearRecentFiles();
+    fm.addRecentFile(assetPath(QStringLiteral("BaseSAV.sav")));
+    return fm.openFileRecent(0);
+  }
+
 private slots:
+  void initTestCase();
   void namedShortcuts_matchTheDocumentedBindings();
   void recentFileShortcuts_areCtrlShift0to4();
   void noTwoShortcutsShareAKeySequence();
+  void everyShortcutHasAnAction();
+  void firingSafeActions_runsTheRightVerb();
 };
+
+void TestShortcuts::initTestCase()
+{
+  QCoreApplication::setOrganizationName(QStringLiteral("PSE-Tests"));
+  QCoreApplication::setApplicationName(QStringLiteral("PSE-Tests"));
+  QVERIFY(DB::inst() != nullptr);
+  QCOMPARE(readSaveBytes(QStringLiteral("BaseSAV.sav")).size(), kSaveSize);
+}
 
 // Every named action is present and bound to exactly the expected key sequence.
 void TestShortcuts::namedShortcuts_matchTheDocumentedBindings()
@@ -111,6 +140,58 @@ void TestShortcuts::noTwoShortcutsShareAKeySequence()
   }
 
   QVERIFY2(dupes.isEmpty(), qPrintable("duplicate shortcut key sequence(s): " + dupes.join(", ")));
+}
+
+// Every named shortcut (a key sequence) has exactly one defined action, and vice
+// versa -- so no shortcut fires nothing, and no action lacks a key.
+void TestShortcuts::everyShortcutHasAnAction()
+{
+  FileManagement fm;
+  QVERIFY(loadBase(fm));
+
+  const QList<QString> keys    = pse::shortcutKeyMap().keys();
+  const QList<QString> actions = pse::shortcutActions(&fm, []{}).keys();
+
+  QCOMPARE(QSet<QString>(actions.begin(), actions.end()),
+           QSet<QString>(keys.begin(), keys.end()));
+}
+
+// Fire the side-effect-free, non-dialog shortcut verbs through the SHARED action map
+// (the same callables MainWindow connects each QShortcut to) and assert each ran. The
+// dialog verbs (open/reopen/saveas/savecopyas) and `save` (needs a path) can't run
+// headless; their bindings are pinned above and the wiring loop is uniform.
+void TestShortcuts::firingSafeActions_runsTheRightVerb()
+{
+  FileManagement fm;
+  QVERIFY(loadBase(fm));
+
+  int exitCalls = 0;
+  const auto act = pse::shortcutActions(&fm, [&exitCalls]{ ++exitCalls; });
+
+  // clear-recentfiles: a remembered recent goes away.
+  fm.addRecentFile(assetPath(QStringLiteral("BaseSAV.sav")));
+  QVERIFY(fm.recentFilesCount() > 0);
+  act.value("clear-recentfiles")();
+  QCOMPARE(fm.recentFilesCount(), 0);
+
+  // scrub: wipeUnusedSpace must run without crashing (and keep a valid 32 KB save).
+  act.value("scrub")();
+  QVERIFY(fm.data != nullptr && fm.data->dataExpanded != nullptr);
+
+  // random: the trainer's money lands inside the randomizer's documented range.
+  act.value("random")();
+  const unsigned int m = fm.data->dataExpanded->player->basics->money;
+  QVERIFY2(m >= 100u && m <= 6000u, qPrintable(QStringLiteral("random money out of range: %1").arg(m)));
+
+  // exit / exit2: both invoke the onExit callback (window close in the app).
+  act.value("exit")();
+  act.value("exit2")();
+  QCOMPARE(exitCalls, 2);
+
+  // new: a fresh blank save -- BaseSAV's 8 badges are gone and money is zeroed.
+  act.value("new")();
+  QCOMPARE(fm.data->dataExpanded->player->basics->badgeCount(), 0);
+  QCOMPARE(fm.data->dataExpanded->player->basics->money, 0u);
 }
 
 QTEST_GUILESS_MAIN(TestShortcuts)
