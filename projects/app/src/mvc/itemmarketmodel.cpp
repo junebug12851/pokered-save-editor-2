@@ -73,6 +73,14 @@ ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
   connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::isAnyChanged);
 
   connect(this, &ItemMarketModel::reUpdateValues, this, &ItemMarketModel::onReUpdateValues);
+
+  // Build the list up front so the model is in a valid, populated state from
+  // construction. Otherwise the cache stays empty until the first dataExpandedChanged
+  // or Pokemart page-open, and a QML binding that reads an aggregate accessor before
+  // then (the order in which the navigation signal reaches this model vs. the screen's
+  // StackView push is not guaranteed) would hit an empty list. reUpdateAll on
+  // dataExpandedChanged and pageOpening still refresh it for the current save/mode.
+  buildList();
 }
 
 int ItemMarketModel::rowCount(const QModelIndex& parent) const
@@ -195,6 +203,9 @@ bool ItemMarketModel::setData(const QModelIndex& index, const QVariant& value, i
 
 int ItemMarketModel::totalCartWorth()
 {
+  // Aggregate carried on entry 0; an empty list is an empty cart -> zero worth.
+  if(itemListCache.isEmpty())
+    return 0;
   return itemListCache.at(0)->totalWorth();
 }
 
@@ -241,6 +252,10 @@ int ItemMarketModel::moneyStart()
 
 int ItemMarketModel::moneyLeftover()
 {
+  // Every entry exposes the same model-wide leftover, so entry 0 is the proxy; with
+  // no entries the cart is empty, so nothing is spent and all the currency remains.
+  if(itemListCache.isEmpty())
+    return moneyStart();
   return itemListCache.at(0)->moneyLeftover();
 }
 
@@ -264,6 +279,9 @@ bool ItemMarketModel::anyNotEnoughSpace()
 
 bool ItemMarketModel::canAnyCheckout()
 {
+  // Aggregate carried on entry 0; with no entries there is nothing to check out.
+  if(itemListCache.isEmpty())
+    return false;
   return itemListCache.at(0)->canAnyCheckout();
 }
 

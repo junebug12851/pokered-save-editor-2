@@ -22,6 +22,10 @@ MouseArea {
     id: child
     anchors.fill: parent
 
+    // Non-visual test hook so the GUI suite can locate this field reliably
+    // (tst_gui_input drives real keystrokes into it). Does not affect appearance.
+    objectName: "trainerMoneyField"
+
     labelEl.text: "Money"
     maximumLength: 6
 
