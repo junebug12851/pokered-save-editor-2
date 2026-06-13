@@ -14,10 +14,16 @@
   * limitations under the License.
 */
 #pragma once
-#include "./itemmarketentry.h"
+#include <QPointer>
 
-class ItemStorageBox;
-class Item;
+#include "./itemmarketentry.h"
+// Full types (not fwd decls) so QPointer<> can verify they are QObjects. toBox/toItem
+// are NOT owned by this entry (they live in the save's item box) and can be freed out
+// from under a stale entry that lingers in the static instances registry -- QPointer
+// auto-nulls on their destruction so a stale read returns a safe default, not a UAF.
+#include <pse-savefile/expanded/fragments/item.h>
+#include <pse-savefile/expanded/fragments/itemstoragebox.h>
+
 class PlayerBasics;
 
 // Selling player inventory for money or coins
@@ -49,7 +55,7 @@ public slots:
   virtual void checkout() override; ///< Sell the item (remove qty, credit balance).
 
 public:
-  ItemStorageBox* toBox = nullptr; ///< The box the item is sold from.
-  Item* toItem = nullptr;          ///< The item being sold.
+  QPointer<ItemStorageBox> toBox;  ///< The box the item is sold from (auto-nulls if freed).
+  QPointer<Item> toItem;           ///< The item being sold (auto-nulls if freed).
   static constexpr const char* type = "playerItem"; ///< This row's type key.
 };

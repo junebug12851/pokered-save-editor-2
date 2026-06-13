@@ -39,7 +39,7 @@ ItemMarketEntryPlayerItem::~ItemMarketEntryPlayerItem() {}
 
 QString ItemMarketEntryPlayerItem::_name()
 {
-  if(!requestFilter())
+  if(!toItem || !requestFilter())   // toItem may have been freed (stale entry)
     return "";
 
   auto itemData = toItem->toItem();
@@ -51,7 +51,7 @@ QString ItemMarketEntryPlayerItem::_name()
 
 int ItemMarketEntryPlayerItem::_inStockCount()
 {
-  if(!requestFilter())
+  if(!toItem || !requestFilter())
     return 0;
 
   return toItem->amount;
@@ -59,7 +59,7 @@ int ItemMarketEntryPlayerItem::_inStockCount()
 
 bool ItemMarketEntryPlayerItem::_canSell()
 {
-  if(!requestFilter())
+  if(!toItem || !requestFilter())
     return false;
 
   auto itemData = toItem->toItem();
@@ -71,7 +71,10 @@ bool ItemMarketEntryPlayerItem::_canSell()
 
 int ItemMarketEntryPlayerItem::_itemWorth()
 {
-  if(!requestFilter())
+  // A stale entry (left in the static instances registry by a torn-down model) can
+  // outlive its Item; QPointer nulls on free, so bail before touching it. This is the
+  // exact dangling read AddressSanitizer caught at itemmarketentryplayeritem.cpp:79.
+  if(!toItem || !requestFilter())
     return 0;
 
   // Sell item to money
@@ -92,7 +95,7 @@ QString ItemMarketEntryPlayerItem::_whichType()
 
 int ItemMarketEntryPlayerItem::onCartLeft()
 {
-  if(!requestFilter())
+  if(!toItem || !requestFilter())
     return 0;
 
   // Maximum items left that can be sold
@@ -121,7 +124,8 @@ int ItemMarketEntryPlayerItem::stackCount()
 
 void ItemMarketEntryPlayerItem::checkout()
 {
-  if(!requestFilter() ||
+  if(!toItem || !toBox ||
+     !requestFilter() ||
      !canCheckout())
     return;
 
