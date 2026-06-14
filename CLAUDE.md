@@ -110,6 +110,14 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
    Do **periodic profiling** passes when touching hot paths. Always redirect std+err to a log to read it.
 4. **Commit + push + FF main — fully automatic (green-gated).** This is Twilight's explicit standing
    request (it overrides the older "push only when asked" wording in `git-workflow.md`):
+   - **Changelog rides inside the commit (write it BEFORE committing).** For any substantive change,
+     write its plain-English entry at the top of the current month's file in `notes/version/` and stage
+     it in the **same commit** as the change — one commit carries both. Inline entries take **no
+     `<!-- commit: hash -->` marker and no short-hash byline** (a commit can't hold its own hash; `git
+     blame` the entry line to find its commit). **Never** make a separate "document the last commit"
+     commit, and **never** give a changelog/notes-only maintenance commit its own entry — that recursion
+     (commit → entry → commit → …) is exactly what this rule prevents. See `notes/version.md` →
+     "How this is kept updated" and `notes/reference/version-history.md`.
    - Commit early/often on **`dev`** with focused `type: summary` messages, **staging specific files only**
      (never `git add -A`/`.`), and `git push origin dev` after each commit.
    - When the **full suite is green**, fast-forward `main` and push automatically:
@@ -133,6 +141,7 @@ As things happen during a session, update the appropriate file on the spot:
 | Tried something that failed | Add to `notes/decisions/rejected.md` |
 | Completed a task or unblocked something | Update `notes/plans/next-steps.md` |
 | Build health changes | Update `notes/status.md` |
+| Made any substantive commit | Write its changelog entry inline in `notes/version/YYYY-MM.md` and stage it in the **same** commit (no marker; never a separate doc commit). See Default Workflow step 4 + `notes/version.md` |
 | Something significant about the project's history changes | Update `notes/context/history.md` |
 | A new contributor/tool/service/asset/AI helps the project | Add them to `projects/db/assets/data/credits.json` (see "Keep the Credits Screen Living" below) |
 | The version changes / a release is cut | Bump the one line in repo-root `VERSION` (reconfigure to apply); tag `vX.Y.Z` on release (on request). The number propagates everywhere automatically — never hardcode a version. See `notes/reference/versioning.md` |
