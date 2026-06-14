@@ -33,7 +33,7 @@ stabilize, `0.9`/`-rc` as a release nears, `1.0.0` at the first real release. (T
 real version numbers before now -- CMake just said `1.0.0` and `boot.cpp` said `v1.0.0`, never
 synced -- so this is the first *formal* baseline rather than a renumbering of history.)
 
-The number is one line in `VERSION`; if Twilight judges the maturity differently, it's a
+The number is one line in `VERSION`; if the maintainer judges the maturity differently, it's a
 one-line change.
 
 ## Single source of truth: `VERSION`

@@ -14,7 +14,7 @@ QObjects" for the full rule.
 
 ## Session — sed/mount corruption + full transcript recovery (2026-06-06)
 
-**What happened:** a bulk `sed -i` rename (prior name -> Twilight) run over the Cowork **mounted**
+**What happened:** a bulk `sed -i` rename (prior name -> the maintainer) run over the Cowork **mounted**
 filesystem silently **truncated 55 source files + 8 notes** on the real disk. The mount does
 partial/truncated writes under load (and also gives false-truncated *reads*). The damage was real
 (the Windows compiler saw the truncation), and git HEAD had been committed *after* the damage, so it
@@ -43,7 +43,7 @@ verified with Windows-side PowerShell (the bash mount is unreliable). Full how-t
   areasprites `mapdbentry.h` include restored.
 - Notes comprehensively restored to their fullest recent versions (history.md 294, CLAUDE.md 74,
   next-steps.md 81, qt6-patterns.md 496, etc.).
-- The prior-name -> Twilight / Apache-2.0 header / gmail-removal work was re-applied consistently.
+- The prior-name -> the maintainer / Apache-2.0 header / gmail-removal work was re-applied consistently.
 
 **Verified final state:** 380 source files, 0 truncated, 0 missing Apache headers, 0 stray name/gmail,
 0 INCOMPLETE banners. Recommend a clean build to confirm linkage, then commit to lock it in.
@@ -79,7 +79,7 @@ shadow). Result: the accent pill painted but the name STILL didn't show → **ru
 
 ## Session 13h — Systemic Q_INVOKABLE-GC fix (`qmlCppOwned` across all `…At()`)
 
-Did the full systemic fix for the Q_INVOKABLE-GC bug (Twilight chose `setObjectOwnership` over
+Did the full systemic fix for the Q_INVOKABLE-GC bug (the maintainer chose `setObjectOwnership` over
 parenting — parenting would have fought the existing manual `deleteLater`/cross-box-relocate
 lifecycle and risked double-frees; `setObjectOwnership` leaves the C++ lifecycle untouched).
 
@@ -136,7 +136,7 @@ Pokémon click works (the earlier "crash" was interference). Fixes:
 - Diagnosed the trainer-card/playtime vertical overlap as the **Qt 6 Material control-height**
   issue (hardcoded offsets assume the shorter Qt 5 field). Not caused by the width fixes.
 - `é` in "Pokémon" only ever appeared in one code comment; the app's tooltips already use plain
-  "Pokemon" (Twilight's original spelling). No displayed string altered. Preserve `é` going forward.
+  "Pokemon" (the maintainer's original spelling). No displayed string altered. Preserve `é` going forward.
 - `val is not declared` warning is harmless (the `changeStr(string val)` signal declares `val`;
   Qt 6 just deprecates injected handler params).
 

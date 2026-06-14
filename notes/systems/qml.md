@@ -57,7 +57,7 @@ QML files start with `import` lines (no licence header). The house style:
   component is, what it binds to, and any non-obvious behaviour.
 - Inline `//` comments on non-obvious properties, signals, JS functions, and layout
   tricks (especially the Qt 6 Material height workarounds noted in `ui-patterns.md`).
-- **Preserve every existing comment** (Twilight iterated these heavily); merge, never
+- **Preserve every existing comment** (the maintainer iterated these heavily); merge, never
   delete. Comments only -- never change UI code while documenting.
 
 > Documentation status: `App.qml` done (the convention setter). Screens, sections,

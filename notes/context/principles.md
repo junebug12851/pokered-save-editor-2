@@ -124,7 +124,7 @@ Not a browser pretending to be an app.
 "Keep it simple" here isn't a platitude; it's scar tissue. The project was rewritten from
 scratch **three times** (`context/origins.md`): a pure-C++ attempt, a JavaScript/QML version,
 and the final C++ design. The JavaScript version in particular was torn out wholesale
-(`df68676`) once it proved the wrong foundation. The takeaway Twilight carries: build the
+(`df68676`) once it proved the wrong foundation. The takeaway carried forward: build the
 simplest thing that's genuinely powerful, and finish it before adding more — complexity is what
 overwhelmed the project the first time and shelved it for six years.
 

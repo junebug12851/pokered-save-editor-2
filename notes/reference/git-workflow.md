@@ -1,6 +1,6 @@
 # Git Workflow & Standards
 
-Twilight's standards for this repo. The overriding goal: a **clean, faithful, low-risk** history —
+The maintainer's standards for this repo. The overriding goal: a **clean, faithful, low-risk** history —
 "a dull flat repo over a screwed-up one." Established 2026-06-07.
 
 ## Branches
@@ -41,14 +41,14 @@ off-branch) — or temporarily move `VERSION` aside before the historical checko
 exactly why the file was originally suffixed `.txt`; renaming `version/` → `version-notes/` is what freed
 the bare `VERSION` name. See `reference/versioning.md`.)
 
-## Pushing — push every commit (added 2026-06-08, Twilight)
+## Pushing — push every commit (added 2026-06-08, the maintainer)
 
 **Push on every commit**, same as commits themselves: early and often. All chat tabs/sessions are
 expected to keep the remote current, just like they keep the living notes current — don't leave green
 work sitting only on the local machine.
 
 > **Standing default (2026-06-10):** commit/push on `dev` AND the green-gated `main` fast-forward are
-> now **fully automatic — done by default without being asked** (Twilight's explicit instruction). This
+> now **fully automatic — done by default without being asked** (the maintainer's explicit instruction). This
 > supersedes the "push only when asked" phrasing in the Hard safety rules below; the *only-when-asked*
 > restriction now applies just to the genuinely destructive ops (force-push, history rewrite,
 > `reset --hard`, `rebase`, `clean -fd`, branch deletion), which remain off-limits without an explicit
@@ -58,7 +58,7 @@ work sitting only on the local machine.
 - **`dev`**: `git push origin dev` after each commit. (This environment appears to push `dev` on commit
   automatically — `origin/dev` was already current after local commits — but push explicitly anyway;
   it's a harmless no-op when already in sync.)
-- **`main`** (Twilight sometimes calls it "master" out of habit — the branch was renamed master→main on
+- **`main`** (the maintainer sometimes calls it "master" out of habit — the branch was renamed master→main on
   2026-06-08; the stable branch is **`main`**): after a green checkpoint, fast-forward it to the latest
   green `dev` and push:
   ```
@@ -83,7 +83,7 @@ after-the-fact surgery.
 - Commit a batch only after it **builds and the suite is green** (for `dev`, broken WIP commits are
   allowed but prefer green; for `main`, always green).
 
-## Hard safety rules (to avoid the repo corruption Twilight has hit before)
+## Hard safety rules (to avoid the repo corruption the maintainer has hit before)
 
 - **Never** `push --force`, force-with-lease, or rewrite pushed history.
 - **Never** `reset --hard`, `rebase`, `clean -fd`, or delete a branch **without an explicit request**.

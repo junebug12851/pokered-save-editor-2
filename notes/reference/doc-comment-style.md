@@ -27,13 +27,13 @@ read as one consistent voice. Paired with the Doxygen setup in
   randomness" beats "the Random class".
 - Call out the non-obvious: ownership, singletons, Qt 6 gotchas, byte-fidelity
   implications, why a guard exists. Link related types with `@see`.
-- Depth setting for this project (Twilight's call): **document everything**,
+- Depth setting for this project (the maintainer's call): **document everything**,
   including trivial getters/setters and private members -- but keep each line
   genuinely informative rather than padding.
 
-## Preserving Twilight's existing comments (hard rule)
+## Preserving the maintainer's existing comments (hard rule)
 
-- **Never delete an existing comment written by Twilight.** If it overlaps a new
+- **Never delete an existing comment written by the maintainer.** If it overlaps a new
   Doxygen block, *merge* its content into the block (keep the meaning/wording);
   otherwise leave it exactly where it is, untouched.
 - Adding new explanatory `//` notes on the code is **encouraged** -- as the

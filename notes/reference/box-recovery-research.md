@@ -70,7 +70,7 @@ truly goes away when the player deposits new mons over those record bytes, or ru
 
 Declining clear-save jumps to `Init`; normal saves only write `sGameData` (boxes excluded). So a
 fresh game started over an old cartridge **leaves the old box records sitting in SRAM** until a
-box change (2-byte empty) or clear-save (full `0xFF` wipe). Twilight's recollection was correct.
+box change (2-byte empty) or clear-save (full `0xFF` wipe). The maintainer's recollection was correct.
 
 ## Implications for an editor recovery feature
 
@@ -100,4 +100,4 @@ The Unformat warning currently says the in-game box switch "formats the other bo
 them for good." Functionally true *to the player* (the game shows them gone and offers no way
 back), but technically the bytes survive the switch — they're only gone after new deposits or a
 clear-save. If we ship recovery, that copy should soften to "the game treats them as gone" rather
-than "erases them." Flagged for Twilight; not changed unilaterally.
+than "erases them." Flagged for the maintainer; not changed unilaterally.

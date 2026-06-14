@@ -6,7 +6,7 @@ Structural blockers are solved (the `dataExpanded` chain + the QML-GC use-after-
 in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open Issues". History:
 `sessions/session-log.md`. UI conventions: `reference/ui-patterns.md`.
 
-## Done — two big screens polished + Twilight-iterated
+## Done — two big screens polished + maintainer-iterated
 
 - **Pokémon details editor** (13k–13t): responsive (`function onX()` → `onX:`), proper layouts,
   borderless combos w/ hover underlines, square move pills, slider tooltips, popup nickname editor.
@@ -18,22 +18,22 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
 
 ## Now / next
 
-1. **Twilight's continued review of the name editors.** Live tweaks ongoing. `NameDisplay`/`NameEdit` are
+1. **The maintainer's continued review of the name editors.** Live tweaks ongoing. `NameDisplay`/`NameEdit` are
    shared by player/rival/nickname + the keyboard footer — verify all on each rebuild.
 2. **Decide the fate of the right-side `DetailView`** in the full keyboard. The pill tooltip now shows
    the rendered tile; `DetailView` still shows text info on hover (and the tileset page uses it). Ask
-   Twilight whether to keep it, slim it, or drop it for more grid room.
+   the maintainer whether to keep it, slim it, or drop it for more grid room.
 3. **End-to-end persistence pass** (edit → save → reopen) across player, rival, money, coins, badges,
-   pokédex, items, pokémon. Twilight has spot-confirmed several; do a full pass. Especially confirm the new
+   pokédex, items, pokémon. The maintainer has spot-confirmed several; do a full pass. Especially confirm the new
    **commit-on-finish** name path round-trips correctly and OT data on owned mons follows the player.
 4. **Trainer-card number-field spacing** — apply the `FieldLabel` + RowLayout pattern to retire the
-   last fixed-offset layouts (`CardFront.qml`, `DefTextEdit.qml`). Twilight owns the exact look.
+   last fixed-offset layouts (`CardFront.qml`, `DefTextEdit.qml`). The maintainer owns the exact look.
 
 ## Testing (new track — planned 2026-06-07)
 
 - **Comprehensive automated test suite** — full strategy in `plans/testing.md`. **Phase 1 is now
   implemented** under `projects/tests/` (CMake/CTest harness + fixture helper; round-trip identity &
-  money-isolation tests on the real saves; DB integrity test). ⚠️ **Not yet built/run on Twilight's
+  money-isolation tests on the real saves; DB integrity test). ⚠️ **Not yet built/run on the maintainer's
   machine** — next action: build in Qt Creator (or `cmake --build` then `ctest --output-on-failure`)
   and triage results. The first run may legitimately surface a round-trip imperfection or an offset to
   nudge. Then continue the phased rollout (savefile/common/db coverage → negative/integration/E2E →
@@ -59,7 +59,7 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
 
 The Qt Linguist pipeline is in place (`reference/i18n.md`); English ships. Open follow-ups, none urgent:
 
-1. **In-app language switcher — DEFERRED** (Twilight, 2026-06-13): with only en_US and no in-app
+1. **In-app language switcher — DEFERRED** (the maintainer, 2026-06-13): with only en_US and no in-app
    Options/Settings screen yet, there's nothing to switch to. Revisit once a second locale + the
    Options screen exist. `ui/language` is the hook; it'll need engine `retranslate()` + re-evaluating
    bindings plus the Settings UI. Until then, locale = system/registry only.
@@ -73,7 +73,7 @@ The Qt Linguist pipeline is in place (`reference/i18n.md`); English ships. Open 
 ## Pending decisions — tracked temporary exceptions (resolve, don't let linger)
 
 These are deliberate "dirty patches" the test pass put in to keep things working until
-Twilight makes a real call. Each is a single-truth question with (likely) one correct answer.
+The maintainer makes a real call. Each is a single-truth question with (likely) one correct answer.
 
 1. **type2 single truth (single-type Pokémon).** Real saves store a single type inconsistently —
    sometimes `0xFF`, sometimes a duplicate of type1 — so the **load/expanded side officially tolerates
@@ -84,13 +84,13 @@ Twilight makes a real call. Each is a single-truth question with (likely) one co
    when `type2Explicit` is false. Pick the real truth, then tighten `isCorrected()`/`save()` to it.
    Refs: `pokemonbox.cpp` `isCorrected()`/`update()`/`save()`, `reference/fix-patterns.md`.
 
-_(Resolved 2026-06-08: `isMinEvs()` `||`→`&&` — confirmed a bug by Twilight and fixed, not a pending
+_(Resolved 2026-06-08: `isMinEvs()` `||`→`&&` — confirmed a bug by the maintainer and fixed, not a pending
 decision.)_
 
 ## Optional cleanup
 
 5. Delete the now-unused menu files (`name/NameDisplayMenu.qml`, `NameDisplayMenuNoTileset.qml`,
-   `TilesetMenu.qml`) and their `app.qrc` entries once Twilight's happy with the button-based editors.
+   `TilesetMenu.qml`) and their `app.qrc` entries once the maintainer's happy with the button-based editors.
 6. Give the inline combos (`StarterEdit`, `Rival` starter, `SimulatedTilesetCombo`) the same hover
    underline as the `Select*` combos, for consistency.
 7. Maps screen — confirm map data loads and `appBody.push` to MapDetails works.
@@ -103,7 +103,7 @@ decision.)_
 ## Longer Term
 
 - **Window chrome & selective fluidity**, randomization features, map editor, full screen coverage —
-  `plans/future.md`. Twilight owns these.
+  `plans/future.md`. The maintainer owns these.
 
 ## Don't chase
 
@@ -113,10 +113,10 @@ decision.)_
 
 ## Longer Term
 
-- **Window chrome & selective fluidity** — Twilight's exploratory idea (lock to the design resolution
+- **Window chrome & selective fluidity** — the maintainer's exploratory idea (lock to the design resolution
   but let tall-list screens like Pokemart grow; leaning toward frameless custom chrome with
   app-driven per-screen sizing). Direction + open questions in `plans/future.md` → "Window Chrome &
-  Fluid Layout". Twilight owns this.
+  Fluid Layout". The maintainer owns this.
 - Randomization features, map editor, full screen coverage — `plans/future.md`.
 
 - The **system-wide** `terminated abnormally` / Qt-debugger pop-ups (also in Notepad/taskbar) —
@@ -126,11 +126,11 @@ decision.)_
 ## Cosmetic / layout (in progress)
 
 - ✅ Combo box popups now scroll on long lists (s13k); ✅ hover pen tints light (s13k).
-- **Window chrome & selective fluidity** — Twilight's exploratory idea (lock to resolution but let
+- **Window chrome & selective fluidity** — the maintainer's exploratory idea (lock to resolution but let
   tall-list screens like Pokemart grow; possibly borderless custom chrome + drag handle that
   animates back to the design size). Direction + open questions captured in `plans/future.md`
   → "Window Chrome & Fluid Layout". Suggested low-risk first step: make tall-list screens
-  internally scrollable / height-flexible before attempting custom window chrome. Twilight owns this.
+  internally scrollable / height-flexible before attempting custom window chrome. The maintainer owns this.
 
 ## Longer Term
 

@@ -198,12 +198,12 @@ Applied to all combos (7 `Select*` + `StarterEdit`/`Rival`/`NameFullTileset`).
 ScrollView { id: sv; anchors.fill: parent; clip: true; contentWidth: availableWidth
   ColumnLayout { width: sv.availableWidth; spacing: 8; /* RowLayout rows */ } }
 ```
-**"Label + field" row that stays aligned at any Material height** (Twilight's "option #2"): a `RowLayout`
+**"Label + field" row that stays aligned at any Material height** (the maintainer's "option #2"): a `RowLayout`
 of `[shaded label box | control]` where the label box uses `Layout.fillHeight` so it grows to the
 field height; the control is `Layout.alignment: Qt.AlignVCenter`; a trailing
 `Item { Layout.fillWidth: true }` keeps the field left-sized. See `OverviewTab.qml`'s inline
 `component FieldLabel`. This is the proper-layout replacement for the old `ShadedBG` + fixed/negative
-`topMargin` rows. (Twilight's standing preference: proper layouts, no margin hacks — see
+`topMargin` rows. (the maintainer's standing preference: proper layouts, no margin hacks — see
 `context/principles.md` "The Quality Bar".)
 
 ### Signal handlers are `onX:`, NOT `function onX()` (except inside Connections) (s13l)
@@ -282,7 +282,7 @@ Fixes, in order of preference:
 3. **Center text with `verticalAlignment: TextInput.AlignVCenter`**, not fixed `topPadding` nudges.
 4. **If a compact field is wanted everywhere**, the shared base is `fragments/general/DefTextEdit.qml`
    (a Material `TextField`, sets `topPadding: 0`). Reducing its height there would tighten many
-   screens at once — but it changes field appearance globally, so it's Twilight's call (she owns UI).
+   screens at once — but it changes field appearance globally, so it's the maintainer's call (they own the UI).
 
 When fixing a "things overlap / too tall" report, suspect this first. It is layout tuning, not a
 data bug, and it is NOT caused by the width-padding fixes (width ≠ height).
@@ -300,7 +300,7 @@ popup: Popup {
 }
 ```
 With the popup as tall as the content, the ListView's height equals its `contentHeight`, so there
-is **nothing to flick** — it just clips at the screen edge and rubber-bands (exactly Twilight's "bounces
+is **nothing to flick** — it just clips at the screen edge and rubber-bands (exactly the maintainer's "bounces
 but won't scroll, rest is cut off"). The ScrollBar is present but has no overflow to scroll.
 
 **Fix — cap the popup height so it's shorter than the content:**

@@ -1,7 +1,7 @@
 # Player / Rival name edit hang — diagnosis + fix
 
-Status: **FIXED in s13w.** (Root-caused s13v, fixed s13w.) Symptom Twilight reported: clicking / editing the
-**rival** name (and "probably the player name too") makes the app crash/hang. Twilight suspected "a
+Status: **FIXED in s13w.** (Root-caused s13v, fixed s13w.) Symptom the maintainer reported: clicking / editing the
+**rival** name (and "probably the player name too") makes the app crash/hang. The maintainer suspected "a
 circular reference from a hack to get the rival and player name variables working." The analysis below
 confirms the player path; rival was light. **What was actually done is in "The fix (s13w)" at the
 bottom — read that first if you just want the current state.**
@@ -37,7 +37,7 @@ save (hundreds of boxed mons) that's enough work per character to look like a fr
 (`context/principles.md` → "Save File Integrity Is Sacred": only write bytes you were told to).
 
 `Rival::name` by contrast is a plain `Q_PROPERTY(... MEMBER name ...)` (cheap, moc-guarded), so the
-rival editor itself is light — Twilight's rival report may be the same UI pattern feeling sluggish, or a
+rival editor itself is light — the maintainer's rival report may be the same UI pattern feeling sluggish, or a
 separate issue. The rival two-way bind in `Rival.qml` is the same shape but cheap.
 
 ## Secondary issue — missing null guards
@@ -93,6 +93,6 @@ before any save.)
 (`OverviewTab.qml`) deliberately still writes on `onStrChanged` — its `nickname` setter is a cheap
 `MEMBER` with no cascade, so per-keystroke is fine there. Only player/rival moved to `committed`.
 
-**UX change to confirm with Twilight:** the player **ID** now applies on Enter/focus-out instead of live
-per digit. If Twilight wants it live, revert `PlayerIdEdit` to `onTextChanged` — but then it keeps the
+**UX change to confirm with the maintainer:** the player **ID** now applies on Enter/focus-out instead of live
+per digit. If the maintainer wants it live, revert `PlayerIdEdit` to `onTextChanged` — but then it keeps the
 (rare) intermediate-collision risk for IDs.

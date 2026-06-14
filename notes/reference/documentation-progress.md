@@ -80,7 +80,7 @@ creditsdb/creditdbentry; system map in `../systems/db.md`); every `.cpp` carries
 
 ### >>> qml layer COMPLETE (2026-06-06): all 95 .qml documented. <<<
 Every QML file now opens with a `// <Filename>.qml -- ...` header block describing
-what it is, what it binds to on `brg`, and any gotchas; existing Twilight comments
+what it is, what it binds to on `brg`, and any gotchas; existing the maintainer comments
 were preserved (filename prepended, never replaced). Edits were **insertion-only**
 (whole comment lines before the code), so `git diff` is pure additions and no code
 line changed -- confirmed by a sweep (`head -20` of all 95 files shows a header; 0

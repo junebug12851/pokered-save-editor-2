@@ -1,7 +1,7 @@
 # UI Patterns & Conventions
 
 How this app's QML UI is built and styled, distilled from the sessions-13k–13t polish pass on the
-Pokémon details editor. **Read this before doing UI work** so screens stay consistent. Twilight's
+Pokémon details editor. **Read this before doing UI work** so screens stay consistent. The maintainer's
 standing rule (see `../context/principles.md` → "The Quality Bar"): **proper layouts, no
 fixed/negative-margin hacks.** When a "things overlap / wrong size" bug appears, the cause is almost
 always the Qt 6 Material control-height change (`qt6-patterns.md` → "Material 3 control heights") and
@@ -14,7 +14,7 @@ playbook.
 
 ## Labeled field rows ("option #2")
 
-The standard "label : control" row. Twilight's chosen look: the shaded label box grows to the field's
+The standard "label : control" row. The maintainer's chosen look: the shaded label box grows to the field's
 height so label-strip and field read as one aligned row.
 
 ```qml
@@ -79,7 +79,7 @@ ComboBox {
 - **Underline color by context:** default `accentColor` (blue-ish) on normal backgrounds; on
   **white-text header/accent bars** override `hoverColor: brg.settings.textColorLight` at the
   instance (e.g. `SelectSpecies` / `SelectStatus` in `GlancePane`). Do NOT use `primaryColor` — it's
-  red and Twilight rejected it for underlines.
+  red and the maintainer rejected it for underlines.
 - The custom combo `popup` must cap its height or it can't scroll — see `qt6-patterns.md`
   → "Custom ComboBox popup must cap its height".
 
@@ -145,9 +145,9 @@ mechanics are identical). The **list-specific differences**:
   grid's vertical bar on the cell's left edge. Same overlay-only, no-reflow behaviour.
 - **A lifted-card background**: while `content.Drag.active`, a white rounded `Rectangle` (`z:-1`,
   accent 1px border) sits behind the row so the floating full-width ghost reads as a card.
-- **Per-row delete chip** (`deleteBtn`): placed **to the right of the count field** (Twilight's call),
+- **Per-row delete chip** (`deleteBtn`): placed **to the right of the count field** (the maintainer's call),
   shown when `cellHover.hovered || itemChecked` (off a `content` `HoverHandler`, `cellHover`). `28×28`,
-  `times.svg` `icon 19×27`. **No background at rest** (Twilight) — just an **accent-coloured X** so it
+  `times.svg` `icon 19×27`. **No background at rest** (the maintainer) — just an **accent-coloured X** so it
   reads on the white row. A `lit` state (`deleteBtn.hovered || itemChecked`) fills the chip
   `primaryColor` (red) with a **white X** — so a **checked** row shows the chip filled *permanently*
   (reads as "armed for deletion"), exactly like the hover look; **press** darkens it
@@ -175,10 +175,10 @@ append at count). The two item models are paired via `otherModel` in `bridge.cpp
 pair). Regression-guarded in `tst_item_storage_model` (`dragReorder_*`, `dragTransfer_movesToOtherBox`,
 `deleteItem_singleAndGroup`).
 
-**Auto-stack on cross-pane transfer, NEVER lossy (Twilight, 2026-06-10).** `dragTransfer` does NOT
+**Auto-stack on cross-pane transfer, NEVER lossy (the maintainer, 2026-06-10).** `dragTransfer` does NOT
 blindly create a new dst row — for each moved item, if the destination already holds that item id it
 **stacks** (folds the moved amount onto the existing row) instead of inserting a duplicate. It stacks
-onto the **LAST** matching dst row (Twilight's rule — four Antidotes → the bottom one is the stack
+onto the **LAST** matching dst row (the maintainer's rule — four Antidotes → the bottom one is the stack
 target). **The merge happens ONLY when the whole amount fits under the Gen 1 max 99** — we never clamp a
 stack and drop the excess (losing legitimate items is bad UX). If the merge would overflow 99, the item
 falls through to the **new-row path** (it becomes its own **2nd row**, full amount preserved, no clamp);
@@ -230,7 +230,7 @@ pattern is a plain `Rectangle` we fully control:
   `height: parent.height`, child of the `Page` (so it covers the panes but not the footer). A
   `property bool shown`; `x: shown ? 0 : -width` with a `Behavior on x` (`200ms OutCubic`) slides it in
   from the left. The accent header is the first child of an `anchors.fill` `ColumnLayout`, so it's flush
-  at the very top — **no frame, every edge is ours** (Twilight rejected even a 1px right-edge divider;
+  at the very top — **no frame, every edge is ours** (the maintainer rejected even a 1px right-edge divider;
   the white panel on the dimmed scrim reads fine on its own).
 - **`viewAllScrim`**: a black `Rectangle` `anchors.fill: parent`, `opacity: shown ? 0.4 : 0` (Behavior
   fade), `z` below the panel, with a full-size `MouseArea` (`enabled: shown`) that closes the panel on an
@@ -266,7 +266,7 @@ then Re-Roll then Boxes Setup. The differences are all in the content, because t
 **2-D table** not a flat list:
 
 - **Rows = species** (alphabetized by **species name, not nickname**; same `QCollator` as the
-  items overview). **Columns = the Party first, then ONLY the non-empty boxes** (Twilight's
+  items overview). **Columns = the Party first, then ONLY the non-empty boxes** (the maintainer's
   call — empty boxes would be all-blank columns; 12 always-on columns would never fit). Column
   header labels come from the model's `columns` `QStringList` (`"Party"`, `"Box 1"`, …) so the
   header row and every body row stay aligned off one source.
@@ -304,7 +304,7 @@ nickname/OT edits happen in the detail editor and don't emit a box `pokemonChang
 `bootQmlLinkage.cpp`, constructed in `bridge.cpp`. Test:
 `tst_storage_model` `pokemonOverview_columnsCountsTooltips`.
 
-**Polish pass (2026-06-12, Twilight-directed):**
+**Polish pass (2026-06-12, maintainer-directed):**
 - **Zebra rows + columns + row hover.** Alternate **columns** are tinted via a **full-height band
   backdrop** (`Row` of `Rectangle`s behind the `ListView`, so the colour runs past the last row);
   alternate **rows** add a faint semi-transparent stripe over it (`rowTintAlpha`/`colTintAlpha`, both
@@ -320,7 +320,7 @@ nickname/OT edits happen in the detail editor and don't emit a box `pokemonChang
   SAME orders as the Pokedex** (`PokemonOverviewModel::sortCycle()` mirrors `PokedexModel::dexSortCycle`:
   **Dex / Alphabetical / Internal**). Default **Alphabetical**. Each `Row` carries `dex`/`id` sort keys;
   `applySort()` re-sorts in place on a model reset.
-  - **The button shows the CURRENT order's icon, not one static icon + a tooltip** (Twilight: the tooltip
+  - **The button shows the CURRENT order's icon, not one static icon + a tooltip** (the maintainer: the tooltip
     looked bad / cluttered). `PokemonOverviewModel::sortIcon` (a `Q_PROPERTY`) returns the qrc path for the
     active order; the QML binds `Image.source` to it. **No tooltip.**
   - Built as an `Item` { hover/press `Rectangle` (radius 2, the same tight square highlight as
@@ -332,13 +332,13 @@ nickname/OT edits happen in the detail editor and don't emit a box `pokemonChang
     staging folder; copied (Windows-side — bash mount serves stale bytes) into
     `projects/app/assets/icons/sort/{alphabetical,internal,pokedex}.png`, added to `app/app.qrc`, referenced
     as `qrc:/assets/icons/sort/*.png`. New assets in qrc → **Rebuild** (RCC re-embed).
-- **Condensed columns (Twilight: ~half width).** The count columns were too wide and the table scrolled
+- **Condensed columns (the maintainer: ~half width).** The count columns were too wide and the table scrolled
   sideways. Per-column widths now: **`nameColW` 110, `partyColW` 46, box columns `boxColW` 30** (via
   `colW(i)` = `i===0 ? partyColW : boxColW`, used by the header, the column bands, AND the row cells so all
   three stay aligned). Box **headers show just the number** ("Box 3" → "3", bold, via `boxNum()`) since
   "Box 12" can't fit 30px; the Party column keeps its word. `tableW` recomputed from the per-column widths;
   the narrower table fits without horizontal scroll in the common case. (Box-number headers are **not**
-  bolded — Twilight.)
+  bolded — the maintainer.)
 
 **`fixName()` also applies to the storage GRID cell labels (2026-06-12).** The Pokémon selection screen
 (`fragments/screens/pokemon/PokemonBoxView.qml`) shows each mon's nickname or species fallback via
@@ -406,8 +406,8 @@ the `IconButtonSquare`s (use them bare per "⋮ icon menu buttons" above). Note:
 toggle a **sibling** of the combo (not nested) — when the old dot button was briefly nested
 *inside* the combo, `model` rebound to the combo's model; it must reference `top.model.curBox`.
 
-**Box-header "Active" toggle + box-dropdown decoration (2026-06-10, Twilight-directed; built
-clean in repo `build/`, kit-dir rebuild pending for her in-app review).** Replaced two
+**Box-header "Active" toggle + box-dropdown decoration (2026-06-10, maintainer-directed; built
+clean in repo `build/`, kit-dir rebuild pending for in-app review).** Replaced two
 not-self-explanatory affordances with clearer ones:
 - **The fill circle is gone** from the box dropdown. `PokemonBoxSelectModel::getDecoratedName`
   no longer prepends `●`/`○`/blank — the `(N/Max)` count it already appends conveys fullness
@@ -417,7 +417,7 @@ not-self-explanatory affordances with clearer ones:
   symbol left. Non-current rows pad with 3 spaces so the list stays left-aligned.
 - **The "set current box" target/dot button became an `Active` `FlatToggle`.** It shows On
   (filled) when this pane's box *is* the game's current/active storage box, Off (outlined)
-  otherwise — self-describing state, not a cryptic target icon. Rule (Twilight): a save always
+  otherwise — self-describing state, not a cryptic target icon. Rule (the maintainer): a save always
   has exactly **one** active box, so the toggle is **`enabled: !active`** — you click an Off
   toggle to activate that box (the other pane's toggle then reads Off); you can't turn the active
   box off, only switch which box is active. **Hidden on the Party pane** (`visible: top.model.curBox >= 0`)
@@ -436,7 +436,7 @@ delete moved onto the cell (below). The model's `checkedMove*`/`checkedTransfer`
 still exist but are now unused by the UI; `checkedToggleAll` (header check-all) and
 `checkedDelete` (group delete) are still used.
 
-**Checkbox selection — scoped persistence (Twilight's exact rule).** Selection should survive
+**Checkbox selection — scoped persistence (the maintainer's exact rule).** Selection should survive
 **only** the Pokémon-detail editor round-trip (open a mon → back), and should **clear** on a box
 switch and on leaving the screen (back / Home). The mechanics:
 - The delegate `CheckBox` **binds** `checked: (itemChecked === true)` and writes back only
@@ -490,10 +490,10 @@ leftMargin 3`): shows the mon's status condition. New model role `itemStatus` (`
 1-7/8/16/32/64) to `qrc:/assets/icons/status/{sleep,poison,burn,freeze,paralyze}.png`. **Shares the
 top-left corner with the hover/checked checkbox** — `visible` is gated on `itemStatus > 0 &&
 !cellHover.hovered && itemChecked !== true` (z 90, below the checkbox's z 100) so the two never
-overlap: status at rest, checkbox when interacting. Assets are Twilight's ChatGPT-made framed badges
+overlap: status at rest, checkbox when interacting. Assets are the maintainer's ChatGPT-made framed badges
 (1254×1254 **RGBA / transparent**; `sourceSize` caps the decode to the display size).
 Source PNGs live in `projects/app/assets/icons/status/` and are listed in `app/app.qrc` (new files →
-**must** be in the qrc or they 404 at runtime). **Import workflow:** Twilight drops revised art in
+**must** be in the qrc or they 404 at runtime). **Import workflow:** the maintainer drops revised art in
 the **repo-root `assets/staging/`** staging folder (sleep-icon/poisoned/burned/frozen/paralyzed); copy +
 rename into the app tree, then rebuild (touch `app.qrc` so AUTORCC re-embeds changed bytes). That
 staging folder's **contents are gitignored** (`assets/staging/.gitignore` = `*` + `!.gitignore`, so the
@@ -517,7 +517,7 @@ contrast the trainer/rival/Pokémon *name-row* convention where names show on ho
 ### Drag & drop reordering + cross-pane transfer (the standard for this grid)
 
 `PokemonBoxView` cells support **drag-to-reorder within a pane** and **drag-to-transfer
-between the two panes**. Twilight's chosen interaction (decided up front): **insert at the
+between the two panes**. The maintainer's chosen interaction (decided up front): **insert at the
 drop slot**, **drop-to-commit** (no live reshuffle — most reliable on a C++
 `QAbstractListModel`-backed `GridView`), a **drag threshold** so a plain click still opens the
 editor, **group operations via the existing checkboxes**, and a **dashed placeholder** marking
@@ -553,11 +553,11 @@ How it's built (`PokemonBoxView.qml` delegate):
   (rebuilding these delegates); running it next tick lets the dragged `content` reparent back to its
   cell first, so no delegate is destroyed while it still owns the floating ghost (avoids an orphaned
   ghost / dangling visual).
-- The **drop indicator is an insertion caret** (Twilight's call): a `Canvas` (`dropHint`) drawing a
+- The **drop indicator is an insertion caret** (the maintainer's call): a `Canvas` (`dropHint`) drawing a
   **dashed vertical bar straddling the cell's LEFT edge** (`width: 6`, `anchors.left` + `leftMargin:
   -3` to center on the cell boundary, `lineWidth 3`, `setLineDash([5,4])`, round caps),
   `visible: cell.containsDrag`. It marks the **gap before** the hovered cell — i.e. *between* entries —
-  and is a pure overlay, so **icons never shuffle or resize** while dragging (Twilight explicitly
+  and is a pure overlay, so **icons never shuffle or resize** while dragging (the maintainer explicitly
   rejected the earlier full-cell box that sat *over* a mon and the idea of live-reflowing entries — it
   made the user fight a moving target, esp. at row ends). Hovering the trailing **"+" slot** puts the
   caret at its left edge = the gap **after the last mon, before the New button** (so "+" stays a valid
@@ -688,7 +688,7 @@ quick-edit popup (`general/NameDisplay.qml`) — were rebuilt across sessions 13
   gap then **Picture, Control**. Backend = `FontSearch::keepAnyOf(...)` (union; one selected = that
   category); **All** calls `startOver()`. No Clear button (one is always active). "Normal **Only**"
   subtly signals that leaving it leaves the always-safe set. *(History: started tristate → AND s13v →
-  OR/union s13y → radios s13z3; Twilight's call each time.)*
+  OR/union s13y → radios s13z3; the maintainer's call each time.)*
 - **Compact filter rows**: Material `CheckBox`/`RadioButton` floor at ~40px — trim `topPadding`/
   `bottomPadding` + `Layout.minimumHeight: 0` to halve the spacing.
 - **Help on a ⓘ dot, not the whole row** (`SearchCriteria.qml` `HelpDot`): a `Label "ⓘ"` with its own
@@ -697,15 +697,15 @@ quick-edit popup (`general/NameDisplay.qml`) — were rebuilt across sessions 13
   - 16`) so the right-aligned dots aren't under the scrollbar.
 - **`FlatToggle`** (`general/FlatToggle.qml`): the flat, **square** (radius 0), **no-shadow**
   (`Material.elevation: 0`, custom background) toggle button — filled accent when `active`, outlined
-  otherwise. Used for Outdoor, Grid/Tileset (keyboard), and Name/Example (both editors). Twilight rejected
+  otherwise. Used for Outdoor, Grid/Tileset (keyboard), and Name/Example (both editors). The maintainer rejected
   Material's elevated/rounded buttons here.
-- **Paged view toggle, not swipe** (`PagedPicker`): Twilight dislikes `SwipeView` dots/gestures (clip over
+- **Paged view toggle, not swipe** (`PagedPicker`): the maintainer dislikes `SwipeView` dots/gestures (clip over
   content). Keep `SwipeView { interactive: false }` for the slide, drive `currentIndex` from a header
   `FlatToggle` (`showTileset`) whose label reflects the **current** view ("Grid" / "Tileset").
 - **`SimulatedTilesetCombo`** (`general/`): the app-wide tileset picker (drives
   `brg.settings.previewTileset`). In `general` so the keyboard header AND the popup reuse it (was
   `name-full/NameFullTileset` — moved to avoid a `general → name-full` import cycle).
-- **Editors are menu-free** (s13z7): Twilight's rule — *UI isn't first, UX is*; the old ⋮ overflow menu
+- **Editors are menu-free** (s13z7): the maintainer's rule — *UI isn't first, UX is*; the old ⋮ overflow menu
   meant too much clicking. `NameEdit`/`NameFullEdit` dropped the menu for a **dice Randomize-Name
   button** (square the icon: `icon.width == icon.height`, the button stretches non-square icons).
   Example actions are a **Name/Example `FlatToggle` + a `>>` (angle-double-right) "next" button** that
@@ -791,7 +791,7 @@ roles `section` + `entries`). Layout conventions:
   `linkColor: primaryColor`, `onLinkActivated: (l)=>Qt.openUrlExternally(l)`. URLs in the data omit the
   scheme — `About.linkHref()` prepends `https://`. A `MouseArea { acceptedButtons: Qt.NoButton;
   cursorShape: PointingHandCursor }` gives a pointer without swallowing the click.
-- **Font-size variation is intentional** (Twilight's): heading 22 bold, entry name 16 bold, note 14,
+- **Font-size variation is intentional** (the maintainer's): heading 22 bold, entry name 16 bold, note 14,
   mandated/url 13 italic, license 12 italic; greys via `textColorDark`/`textColorMid`.
 - **Version/copyright** comes from `Qt.application.name`/`.version` (set in `boot.cpp`) — don't hardcode.
 - The data + back end are data-driven: add a credit by editing **only** `credits.json` (ordered

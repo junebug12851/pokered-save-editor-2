@@ -13,7 +13,7 @@ section is drawn from an external mapping project (clearly marked there) and is 
 confirm against `pret/pokered` / our `MapsDB`, not yet code-verified.
 
 **Authoritative external byte map:** `assets/saves/structure.bt` (a 010 Editor binary
-template, authored by Twilight) is the full field-by-field layout of the 32 KB save — banks,
+template, authored by the maintainer) is the full field-by-field layout of the 32 KB save — banks,
 structs, bit-fields, offsets. A human-readable companion, `assets/saves/structure.md`, mirrors it
 in prose and is included in the generated Doxygen docs (the `.bt` remains the byte-exact authority). Because it was written **independently of the app's C++**, it is the
 *oracle* for testing: per-field offset and golden tests can validate against it rather than against
@@ -70,7 +70,7 @@ Both are exactly `0x8000` bytes. See `plans/testing.md`.
     feature** is viable: Tier 1 = still-intact + checksum-valid boxes (high confidence); Tier 2 =
     game-emptied boxes whose records survive (heuristic, checksum useless). Keep it quarantined in a
     fail-closed opt-in scanner, never in the main editor. Details + design stance:
-    `reference/box-recovery-research.md`. Do not build without Twilight's go-ahead.
+    `reference/box-recovery-research.md`. Do not build without the maintainer's go-ahead.
 - **Hall of Fame:** records are `0x60` bytes each and start at `0x598`; record *N* lives at
   `0x598 + N*0x60`.
 - **Map-view VRAM pointer:** fixed at `0x9800` (`VramBGPtr`, the GB background-tilemap pointer —
@@ -160,7 +160,7 @@ code-asserted truth. Where it touches a value the save actually stores, that's c
   and the Data Crystal wiki — both define a **block as 4×4 tiles (32×32 px)**, so that's the truth.
   vjeux's rendering post loosely called the 2×2-tile *movement cell* a "block" (dividing warp coords
   by 2 to reach it); that was his own informal usage, **not** the game's. My earlier "a block is 2×2
-  tiles" note was wrong — Twilight's "not completely sure" instinct was right. **Standardize
+  tiles" note was wrong — the maintainer's "not completely sure" instinct was right. **Standardize
   `MapsDB`/`AreaTileset`/`AreaMap` on: tile / movement-cell / block (4×4 tiles).**
 - **The 2×2-cell property quirk (Old Man Glitch).** Because movement happens per 2×2-tile cell, the
   game checks the cell's **bottom-left tile** for properties like grass and talking-over — *except*

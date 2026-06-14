@@ -67,7 +67,7 @@ hovered/down state until the next interaction — looking like a frozen, greyed 
   mon is healed there's nothing to heal), and stuck in the mouse-down look. Resolution: the
   `btn2.enabled` binding is **commented out** — the button just stays enabled. (`PokemonDetails.qml`)
 - **Pokémart "Checkout" button**: `btn2.enabled: brg.marketModel.canAnyCheckout` flips off after
-  a checkout while hovered, and sticks. Twilight tried programmatically forcing `down` off before
+  a checkout while hovered, and sticks. The maintainer tried programmatically forcing `down` off before
   disabling and via a `Connections` hook — same result, because `pressed`/`hovered` are
   read-only — and accepted the cosmetic glitch ("a bit of an eyesore"). (`Pokemart.qml`)
 
@@ -76,7 +76,7 @@ make the *action* a no-op when nothing applies.
 
 ### A QML call to a 5-bool C++ method only passes 4 args
 In `PokemonDetails.qml`'s "Correct Data" action, `boxData.update(...)` was expanded to take 5
-bools, but calling it from QML with 5 only ever delivered 4. Twilight tried everything and gave
+bools, but calling it from QML with 5 only ever delivered 4. The maintainer tried everything and gave
 up; the workaround is to call the follow-on work explicitly — `update(true,true,true,true)` then
 `correctMoves()` + `cleanupMoves()` directly. If you extend a `Q_INVOKABLE`'s argument list and
 QML seems to drop the last argument, this is why — pass fewer args and call the remainder
