@@ -4,6 +4,22 @@ Key choices made during the modernization, with rationale.
 
 ---
 
+## `assets/references/` as the home for reference material (2026-06-14)
+
+**Decision**: Added `assets/references/` as the official spot to keep reference material used while
+working on the project -- project-folder references and source clones such as the `pret/pokered`
+disassembly, or the GitHub sources credited in `projects/db/assets/data/credits.json`. The folder is
+tracked (via a `.gitignore`) but **its contents are not version-controlled**: the `.gitignore` ignores
+everything (`*`) except itself (`!.gitignore`), the same "tracked folder, ignored contents" pattern as
+`assets/staging/`.
+
+**Why**: These references are useful to have on hand but are large and not ours to ship, so they don't
+belong in git history. Giving them a known, checked-in home means anyone (including an AI assistant)
+has one obvious place to drop a reference back into if it gets deleted, and to look for it until then.
+Nothing here is a build input -- it is read-only working material.
+
+---
+
 ## i18n via Qt Linguist, not a custom stringfile (2026-06-13)
 
 **Decision**: Added a full Qt Linguist translation pipeline (`qsTr`/`tr` + `translations/*.ts` →
