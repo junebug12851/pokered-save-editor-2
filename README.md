@@ -1,7 +1,5 @@
 # Pokered Save Editor 2
 
-![UI/UX progress](https://i.imgur.com/ULhYfEN.png)
-
 **A polished desktop save editor for Pokémon Red & Blue (Game Boy), built in Qt 6 with C++ & QML.**
 
 Open a Gen 1 `.sav`, edit your trainer, team, Pokédex, items, boxes and world — then save it back
@@ -14,6 +12,8 @@ native, fluid, and fun to poke around in — not a wall of hex.
 > Six years dormant, revived in 2026, and still going. ♡〜٩( ˃́▿˂̀ )۶〜♡
 
 ---
+
+![UI/UX progress](https://i.imgur.com/ULhYfEN.png)
 
 ## ⚠️ Status — early alpha, work in progress
 
@@ -167,8 +167,6 @@ containerized harness:
 
 A change is considered green only when the **full `ctest` suite passes**, including the QML screen
 smoke test (`tst_qml_screens`), which loads every screen through the real engine.
-
-![Pokémart screen](https://i.imgur.com/2MMsNqk.png)
 
 ## Contributing
 
