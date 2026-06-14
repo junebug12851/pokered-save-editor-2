@@ -40,7 +40,7 @@ one-line change.
 
 The repo-root **`VERSION`** holds the number on one line (comments with `#` allowed). It is
 the *only* place a human edits the version. (It's the bare `VERSION` -- the changelog folder
-that used to be `version/` was renamed to `version-notes/` (since moved to `notes/version-info/`), so on case-insensitive Windows there
+that used to be `version/` was renamed to `version-notes/` (since moved into `notes/` and renamed back to `version` — now `notes/version/`, a subdirectory that doesn't collide with the root `VERSION`), so on case-insensitive Windows there
 is no longer a `VERSION`/`version/` collision to dodge.)
 
 Everything else is derived from it at build time. **Do not** hardcode a version anywhere else.
@@ -120,12 +120,12 @@ When cutting a real release:
 
 A build from a clean, tagged checkout shows the plain number with no `+g...` suffix.
 
-## Relationship to the changelog (`notes/version-info.md` / `notes/version-info/`)
+## Relationship to the changelog (`notes/version.md` / `notes/version/`)
 
 These are **complementary, not the same thing**:
 
 - **`VERSION` + this scheme** = the *identity* of a build / release (one number).
-- **`notes/version-info.md` + `notes/version-info/`** = the plain-English *narrative history*, one entry per commit
+- **`notes/version.md` + `notes/version/`** = the plain-English *narrative history*, one entry per commit
   (see `reference/version-history.md`). It explains what changed; the version number labels
   where you are.
 

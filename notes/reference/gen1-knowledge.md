@@ -7,7 +7,7 @@ save layer, the databases, or the randomizer, so the editor keeps matching how t
 actually behave.
 
 Everything here is asserted by the code (and verified against it); inline source comments are
-the primary record, and `version-info.md` shows where several facts were figured out (e.g. the
+the primary record, and `version.md` shows where several facts were figured out (e.g. the
 tile-block map-view VRAM pointer in `14a73be`). **One exception:** the "Map geometry & structure"
 section is drawn from an external mapping project (clearly marked there) and is orienting context to
 confirm against `pret/pokered` / our `MapsDB`, not yet code-verified.

@@ -309,7 +309,7 @@ Check each `Q_PROPERTY(T name READ funcName)` and verify `funcName` is declared.
 # Original Architecture Rationale (2019–2020)
 
 The decisions above are from the 2026 revival. The ones below are the *founding* choices that
-shaped the codebase in the first place — reconstructed from the commit history (`version-info.md`,
+shaped the codebase in the first place — reconstructed from the commit history (`version.md`,
 `context/origins.md`). They explain **why the structure exists at all**, so revival work
 extends the original intent instead of accidentally undoing it.
 

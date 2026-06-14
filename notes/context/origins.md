@@ -2,7 +2,7 @@
 
 The story *before* the 2026 revival. `context/history.md` picks up at "the repo had 592
 commits, last pushed March 2020" — this file is the prologue it assumes. It's reconstructed
-from the full commit history (see the `version-info.md` changelog; commit hashes below tie
+from the full commit history (see the `version.md` changelog; commit hashes below tie
 each claim back to a real diff).
 
 The project's **original `README.md` from this era is preserved verbatim** as an artifact at
