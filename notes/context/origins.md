@@ -5,6 +5,10 @@ commits, last pushed March 2020" — this file is the prologue it assumes. It's 
 from the full commit history (see the root `version-notes.md` changelog; commit hashes below tie
 each claim back to a real diff).
 
+The project's **original `README.md` from this era is preserved verbatim** as an artifact at
+[`original-readme-2020.md`](original-readme-2020.md) — worth reading for the voice and the reboot
+story in Twilight's own words (the live repo-root README is the current, rewritten one).
+
 The short version: the project was started in June 2019, rewritten from scratch **three
 times** as Twilight fought the Qt framework, eventually settled into the architecture the
 codebase still uses today, and was abandoned mid-refactor in March 2020 — not from lack of
@@ -131,9 +135,9 @@ The architecture the revival inherited — and the notes describe — was all se
 - The **font/tileset image providers** and the `encodeBeforeUrl` hex trick (`systems/app.md`,
   `reference/qt-gotchas.md`).
 
-And the *temperament* carried over too: a builder who will rewrite the whole thing three times
-to get it right, who insists on native-feeling, non-janky software, and who fights a difficult
-framework rather than ship something sloppy. See `context/principles.md`.
+The working style carried over too: a willingness to rewrite from scratch to get the design right,
+an insistence on native-feeling, non-janky software, and a preference for fighting a difficult
+framework over shipping something sloppy. See `context/principles.md`.
 
 For the dead ends this era produced (so they aren't re-tried), see
 `decisions/rejected.md` → "Historical dead ends (2019–2020)". For the catalog of Qt landmines

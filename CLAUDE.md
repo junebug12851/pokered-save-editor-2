@@ -1,7 +1,7 @@
 # pokered-save-editor-2 — AI Context
 
-Pokemon Red & Blue save file editor. Qt 6 C++/QML desktop app. Solo project by Twilight,
-originally built 2017-2020, revived in 2026.
+Pokemon Red & Blue save file editor. Qt 6 C++/QML desktop app. Open source; Twilight has been
+its only developer so far. Originally built 2017-2020, revived in 2026.
 
 ## Start Here
 
@@ -45,8 +45,8 @@ The full notes system is in `notes/`. Everything is organized by topic:
 - **Do NOT access DB entry fields directly** — all fields are protected. Use getters (`entry->getName()` not `entry->name`).
 - **Do NOT `Q_DECLARE_OPAQUE_POINTER` a QObject type you traverse in QML** — it forces `IsPointerToTypeDerivedFromQObject = false`, so QML reads the whole `brg.file.data.dataExpanded.*` chain as `undefined`. Fully `#include` the type's header instead. This (not missing `qRegisterMetaType`) was the real cause of the long-standing "undefined chain" bug, fixed in session 13. See `notes/reference/qt6-patterns.md`.
 - **Do wrap any `Q_INVOKABLE` that returns a QObject in `qmlCppOwned()`** (`pse-savefile/qmlownership.h`). Q_INVOKABLE returns of a parentless QObject default to JavaScriptOwnership and get garbage-collected by QML mid-session → dangling pointer → use-after-free crash. (Q_PROPERTY returns are safe; Q_INVOKABLE returns are NOT.) All existing `…At()` methods were fixed in session 13h. See `notes/reference/qt6-patterns.md`.
-- **Do NOT write any save-file byte you weren't explicitly instructed to change.** Byte-exact fidelity is a top-tier project value: the editor flips *only* the exact bytes for the edit and leaves every other byte of the save totally untouched (Twilight verified this over dozens of hours of manual testing and brags about it in the README). Never "rewrite/normalize the whole save," never reorder/repack, never touch checksums/regions you weren't told to. Corrupting a save is among the worst possible outcomes. See `notes/context/principles.md` → "Save File Integrity Is Sacred".
-- **No hacks, no temporary fixes, no bad fallbacks.** This is Twilight's most-prized project and the quality bar is extreme — UX is the #1 priority and there is no room for clunky/janky/interrupting behavior. Prefer the correct, clean solution even when it's the longer route; if you can only see a hacky path, surface it and ask rather than commit it. See `notes/context/principles.md` → "UX Is the Prime Directive" and "The Quality Bar".
+- **Do NOT write any save-file bit or byte you weren't explicitly instructed to change.** Bit- and byte-exact fidelity is a top-tier project value: the editor changes *only* the exact bits and bytes for the edit and leaves every other bit and byte of the save totally untouched — even unused/unallocated bits are precious; a single unintended bit flip is unacceptable (this has been verified over many hours of manual testing). Never "rewrite/normalize the whole save," never reorder/repack, never touch checksums/regions you weren't told to. Corrupting a save is among the worst possible outcomes. See `notes/context/principles.md` → "Save File Integrity Is Sacred".
+- **No hacks, no temporary fixes, no bad fallbacks.** The quality bar here is high — UX is the #1 priority and there is no room for clunky/janky/interrupting behavior. Prefer the correct, clean solution even when it's the longer route; if you can only see a hacky path, surface it and ask rather than commit it. See `notes/context/principles.md` → "What the App Should Feel Like".
 
 ## Build System
 
@@ -160,7 +160,7 @@ adding entries won't break them.
 
 ## Owner Preferences
 
-- Twilight makes all UI/UX decisions — do not independently change QML appearance
-- Debug builds show error dialogs; release builds degrade silently (Sims 2 philosophy)
+- UI/UX decisions are the maintainer's call — do not independently change QML appearance
+- Debug builds show error dialogs; release builds degrade gracefully and clearly (never silently swallow errors, and never at the cost of save data)
 - The app should feel like polished software, not a dev tool
 

@@ -1,31 +1,42 @@
-# Project Principles and Will
+# Project Principles
 
 The convictions behind the project — what it should be, what to avoid,
 and the constraints that matter. These should inform every decision.
 
 ---
 
-## What This Is To the Owner
+## The Goal
 
-This is one of Twilight's proudest projects. It was built solo, meticulously, line by line.
-It was abandoned not from lack of care but from the complexity growing past what one person
-could sustain alone. The revival in 2026 is a genuine second chance to finish something
-important. Treat it that way.
+Let the user edit **every bit and byte of a Red/Blue save** through a clean, simple, stable, and
+dependable GUI — and make that same app scale smoothly across the whole range of use. At the quick,
+casual end: re-roll a name in seconds, tweak money or badges. At the deep, advanced end:
+import/export the raw `.bin` (including the normally-unused bytes), work with map state, and do
+assisted code injection into the save. Lightweight and easy on the surface; comprehensive and solid
+underneath.
+
+---
+
+## Background
+
+An open-source Pokémon Red & Blue save editor. The first version was shelved around 2020 when its
+complexity outgrew what the project could sustain; it was revived in 2026. The constraints below are
+what keep it focused.
 
 ---
 
 ## Core Philosophy: Graceful Degradation
 
-**Inspired by The Sims 2.** The app must never:
+The app must never:
 - Crash or freeze unexpectedly
-- Show blocking error dialogs in production (release builds)
+- Trap the user behind a blocking error dialog in production (release builds)
 - Leave the user stuck with no way forward
 
-When something fails, it should fail silently and gracefully. Log it, degrade the feature,
-but keep the app alive and usable. Debug builds show error dialogs (visible to the developer).
-Release builds catch and log quietly.
-
-This isn't about hiding bugs — it's about treating the user with respect.
+This is **not** about hiding errors or pretending everything is fine. It's about handling failures
+with care: catch even an otherwise-fatal problem, present it through a clean, clear UI, degrade the
+affected feature, and — where it's possible — offer a way to keep going (e.g. reloading what failed)
+instead of crashing or stranding the user. Debug builds surface problems to the developer in detail;
+release builds handle them gracefully and clearly. Above all, a failure must never put save data at
+risk — degradation is always preferred over any chance of corruption.
 
 ---
 
@@ -60,14 +71,23 @@ This is the most ambitious feature and must be done right. Constraints:
 **The spirit of it:** You should laugh when you see what you got. Curious, surprising,
 but never immediately broken. The fun is discovery within a playable sandbox.
 
+**Randomization is a growing system, not one fixed feature.** Today's basics (a quick name re-roll and
+an early new-game randomizer) are just the foundation. The planned system is built around three modes:
+**Constrained Random** (randomized but kept within sensible, playable bounds), **Unconstrained Random**
+(anything that still loads — chaotic by design), and **Synthetic Natural** (a generated save crafted to
+look like one genuinely earned by playing the real game). Don't describe randomization as if the simple
+constrained version is all there is.
+
 ---
 
 ## Save File Integrity Is Sacred
 
-**Byte-exact fidelity has been a core value since day one.** The editor flips *only* the exact
-bytes for an edit and leaves every other byte of the save totally untouched — no rewriting or
-"normalizing" the whole file, no reordering/repacking, no touching checksums or regions you
-weren't told to change. Corrupting a save is among the worst possible outcomes.
+**Bit- and byte-exact fidelity has been a core value since day one.** The editor changes *only* the
+exact bits and bytes an edit needs and leaves every other bit and byte of the save totally untouched
+— even unused or unallocated bits are treated as precious; a single unintended bit flip is
+unacceptable. No rewriting or "normalizing" the whole file, no reordering/repacking, no touching
+checksums or regions you weren't told to change. Corrupting a save is among the worst possible
+outcomes.
 
 This isn't a revival-era rule bolted on; it's why the **expanded-data object model flattens
 only changed bytes** (`decisions/architecture.md`). The early corruption bugs were hunted down
@@ -108,12 +128,11 @@ and the final C++ design. The JavaScript version in particular was torn out whol
 simplest thing that's genuinely powerful, and finish it before adding more — complexity is what
 overwhelmed the project the first time and shelved it for six years.
 
-## Persistence Is Part of the Project's Character
+## Historical Context
 
-The commit history is, in places, a record of someone refusing to quit a difficult framework:
-days lost to Qt gotchas, multiple rewrites, blunt frustration in the commit messages — and then
-the work continuing anyway. That temperament is context worth respecting. This is the one
-project Twilight most wanted to finish; the bar is high because the project means something.
+The codebase carries the marks of multiple from-scratch rewrites and a long fight with Qt's quirks
+(see `context/origins.md`). That's why some code looks the way it does — much of it is hard-won, so
+check the notes before assuming a given choice is accidental.
 
 ---
 
@@ -140,17 +159,4 @@ The editor is most useful when these core screens work well:
 
 Maps, Hall of Fame, and Rival are secondary. The font keyboard (name editing) should feel
 native and in-game, not like a table of hex values.
-
----
-
-## The Owner's Voice on This Project
-
-From the original chat:
-
-> "It was in the days before AI, i was meticulously coding everything line by line... Eventually
-> a great many commits never got pushed and then the project was trashed. All I have is whatever
-> is online now, its in a broken buggy state. I've wondered for a long time if it could be
-> salvaged... i didn't realize AI had come as far as you."
-
-This is a project that matters personally. The technical work serves something real.
 

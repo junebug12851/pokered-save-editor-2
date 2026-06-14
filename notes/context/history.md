@@ -13,8 +13,7 @@ decisions were made and why the codebase looks the way it does.
 ## State When Work Resumed (2026)
 
 The repository had 592 commits, last pushed March 2020. It was mid-refactor — abandoned
-not from lack of care, but from complexity overwhelming solo capacity. Twilight wrote this
-entirely solo, line by line.
+when its complexity outgrew what a single developer could sustain.
 
 What the code looked like at revival:
 

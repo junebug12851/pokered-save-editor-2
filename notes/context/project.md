@@ -3,8 +3,8 @@
 ## What It Is
 
 A desktop save file editor for Pokemon Red & Blue (Game Boy), built in Qt C++/QML.
-This is the second version — a rewrite from scratch after the first version (JS/Electron) became
-unmaintainable. The owner wrote the original solo, meticulously, line by line.
+This is the second version — a from-scratch rewrite after the first version (JS/Electron) became
+unmaintainable. It is open source; Twilight has been its only developer so far.
 
 ## History
 
@@ -35,10 +35,12 @@ https://github.com/junebug12851/pokered-save-editor-2
 
 ## Philosophy
 
-- **Sims 2-style graceful degradation** — never crash, never block the user
-- Debug builds show error dialogs; release builds degrade silently
+- **Graceful degradation** — never crash, never block the user; handle even otherwise-fatal errors
+  through a clean, clear UI and, where possible, offer a way to continue
+- Debug builds show error dialogs; release builds degrade gracefully and clearly — never silently
+  swallowing errors, and never at the cost of save data
 - The app should feel like polished software, not a hacker tool
 
-## Owner
+## Maintainer
 
-Twilight
+Twilight (sole developer so far; contributions welcome — the project is open source)
