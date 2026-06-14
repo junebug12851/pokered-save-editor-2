@@ -39,6 +39,14 @@ in three categories — **`natural-clean/`** (game-generated saves, real hardwar
 The byte-map oracle moved to `assets/saves/structure.bt` (from `assets/savefile-structure.bt`) and
 gained a human-readable companion `assets/saves/structure.md` (now in the Doxygen docs). All
 `PSE_ASSETS_DIR`-relative test paths, the two fixture READMEs, and the notes were updated to match.
+The repo-root icon **staging** folder was also renamed `assets/icons/` → `assets/staging/` (a
+gitignored scratch area; only its `.gitignore` is tracked — distinct from the app icon tree at
+`projects/app/assets/icons/`).
+
+**Repo-root `tmp/` scratch folder (2026-06-13):** a tracked-but-ignored `tmp/` now exists at the
+project root for transient files — **build/run artifacts, logs, generated outputs, throwaway test
+data**. Same pattern as `assets/staging/`: its `.gitignore` is `*` + `!.gitignore`, so the folder is
+tracked but nothing inside it is. Prefer `tmp/` for scratch output going forward.
 
 **Linux Docker test environment — set up + all variants green (2026-06-13):** A containerized
 Linux build/test setup now lives under **`docker/`** (Dockerfile + `run-tests.sh` + `dtest.ps1`
