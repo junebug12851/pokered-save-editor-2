@@ -328,7 +328,7 @@ nickname/OT edits happen in the detail editor and don't emit a box `pokemonChang
     `MouseArea` }. **Not** a `Button`/`IconButtonSquare`: the three sort PNGs are **non-square** (512×~400),
     and `PreserveAspectFit` guarantees they're never squished/stretched (Button.icon can stretch to the
     icon box). They render full-colour (no `icon.color` tint).
-  - **Assets:** `sort-alphabetical/internal/pokedex.png` were dropped in the repo-root `assets/icons/`
+  - **Assets:** `sort-alphabetical/internal/pokedex.png` were dropped in the repo-root `assets/staging/`
     staging folder; copied (Windows-side — bash mount serves stale bytes) into
     `projects/app/assets/icons/sort/{alphabetical,internal,pokedex}.png`, added to `app/app.qrc`, referenced
     as `qrc:/assets/icons/sort/*.png`. New assets in qrc → **Rebuild** (RCC re-embed).
@@ -494,9 +494,9 @@ overlap: status at rest, checkbox when interacting. Assets are Twilight's ChatGP
 (1254×1254 **RGBA / transparent**; `sourceSize` caps the decode to the display size).
 Source PNGs live in `projects/app/assets/icons/status/` and are listed in `app/app.qrc` (new files →
 **must** be in the qrc or they 404 at runtime). **Import workflow:** Twilight drops revised art in
-the **repo-root `assets/icons/`** staging folder (sleep-icon/poisoned/burned/frozen/paralyzed); copy +
+the **repo-root `assets/staging/`** staging folder (sleep-icon/poisoned/burned/frozen/paralyzed); copy +
 rename into the app tree, then rebuild (touch `app.qrc` so AUTORCC re-embeds changed bytes). That
-staging folder's **contents are gitignored** (`assets/icons/.gitignore` = `*` + `!.gitignore`, so the
+staging folder's **contents are gitignored** (`assets/staging/.gitignore` = `*` + `!.gitignore`, so the
 folder stays tracked but the dropped files don't). **Do the copy on the Windows side, not bash** — the
 Cowork bash mount serves stale cached bytes for these (a bash `cp` grabbed the pre-revision art twice;
 see [[feedback_bash_mount_stale]]).

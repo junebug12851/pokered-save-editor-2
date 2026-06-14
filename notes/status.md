@@ -314,7 +314,7 @@ app relaunched):** Replaced the eight gym-badge images on the Trainer Card. Earn
 **badge icon** (`<badge>-badge.png`); unearned (off) now uses the **gym leader's shadow**
 (`<leader>-shadow.png`) — Brock/Boulder, Misty/Cascade, Lt.Surge(`ltsurge`)/Thunder, Erika/Rainbow,
 Koga/Soul, Sabrina/Marsh, Blaine/Volcano, Giovanni/Earth. Imported all 16 PNGs from the
-`assets/icons/` staging folder (gitignored, per its `.gitignore`) into `projects/app/assets/images/badges/`,
+`assets/staging/` staging folder (gitignored, per its `.gitignore`) into `projects/app/assets/images/badges/`,
 swapped the 16 qrc entries, and `git rm`'d the old `<name>-off/on.png` files. `BadgesModel.qml` repointed;
 `ListBadges.qml` `reCalc()` **keeps all existing effects but no longer dims unearned badges**
 (`opacity = 1.00` always — the shadow image itself conveys not-yet-earned). **New assets in qrc →
@@ -325,7 +325,7 @@ unchanged. **Awaiting Twilight's in-app review.**
 **Trainer-card artwork swap (2026-06-10, Twilight-directed; BUILT + app relaunched for in-app review):**
 Replaced the trainer image on the Trainer Card front (the grayscale Gen-1 Red sprite,
 `qrc:/assets/images/red-larger.png`) with the new colored two-trainer illustration. The PNG was
-dropped at the repo-root `assets/icons/trainer.png` (766×1334 RGBA, ~1.1 MB); copied into the app
+dropped at the repo-root `assets/staging/trainer.png` (766×1334 RGBA, ~1.1 MB); copied into the app
 asset tree at `projects/app/assets/icons/trainer.png`, registered in `projects/app/app.qrc`, and
 `CardFront.qml`'s `Image.source` repointed to `qrc:/assets/icons/trainer.png`. Layout untouched
 (`width: parent.width/3`, `PreserveAspectFit`, anchored under the divider). **New asset in qrc →
@@ -414,7 +414,7 @@ rebuilt (RCC re-embedded) + launched per the default loop; full suite green (no 
 **Twilight approved the card-box approach up front; awaiting her in-app review of the result.**
 **Follow-up (same day) — rival artwork swap:** repointed the Rival screen `Image` from the old grayscale
 `qrc:/assets/images/rival-larger.png` to the **new colored `qrc:/assets/icons/rival.png`** (mirrors the
-trainer.png swap). Imported `assets/icons/rival.png` (~132 KB) into `projects/app/assets/icons/` and added
+trainer.png swap). Imported `assets/staging/rival.png` (~132 KB) into `projects/app/assets/icons/` and added
 it to `app.qrc` → **new asset in qrc → Rebuild required** (done; RCC re-embedded, kit rebuilt + app
 relaunched, `ctest` green 57/57, FF'd to main). Old `assets/images/rival-larger.png` left in place (no
 longer referenced; safe to remove later). **Credited 2026-06-13:** the rival artwork is ChatGPT's — added
