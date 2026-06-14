@@ -1,93 +1,266 @@
 # Pokered Save Editor 2
-Pokemon Red & Blue Save Editor 2 ~ Qt C++ Reboot
 
-We've reached 500 Commits ♡〜٩( ˃́▿˂̀ )۶〜♡!
+![UI/UX progress](https://i.imgur.com/ULhYfEN.png)
 
-## An early WIP (This is by far not finished)
+**A polished desktop save editor for Pokémon Red & Blue (Game Boy), built in Qt 6 with C++ & QML.**
 
-**>> This is not complete and may contain lots of bugs, this is a work in progress and in deep construction <<**
+Open a Gen 1 `.sav`, edit your trainer, team, Pokédex, items, boxes and world — then save it back
+*byte-for-byte intact*. The goal is software that feels like it belongs in your applications folder:
+native, fluid, and fun to poke around in — not a wall of hex.
 
-> **Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature and complete version 
-until this leaves WIP status.**
+> _The reboot of [`pokered-save-editor`](https://github.com/junebug12851/pokered-save-editor) — same
+> heart, rebuilt from scratch on Qt/C++ to escape the weight of the old JavaScript/Electron stack._
+>
+> Six years dormant, revived in 2026, and still going. ♡〜٩( ˃́▿˂̀ )۶〜♡
 
-**This is also not meant to be used with Pokemon Bank or Pokemon Home or the Virtual Consoles. I make no effort to support any compatibility for that process.**
+---
 
-*Pokemon, Pokemon Bank, Pokemon Home, Virtual Consoles, and related sprites and artwork are owned by GameFreak/Nintendo/Pokemon, I make no claims to them. Majority of artwork and icons are by fans and are creddited accordingly on the credits screen or the credits file in the repo.*
+## ⚠️ Status — early alpha, work in progress
 
-So this is going to look like nothing to you, a simple image, however it took very close to 300 commits to get to this point. This is the result of QML communicating with the C++ back-end in conjuction with the C++ Pokered Database to extract the player name of the save file and display it.
+This is an **active WIP and not finished** — expect rough edges and bugs. It now edits real saves and has a large
+automated test suite, but it is not yet a 1.0. Current version lives in [`VERSION`](VERSION)
+(presently in the `0.x-alpha` range).
 
-![initialImage](https://i.imgur.com/LB7LDxr.png)
+- 👉 For a **mature, complete** editor today, use the original:
+  **<https://github.com/junebug12851/pokered-save-editor>**. This reboot will supersede it once it
+  leaves WIP.
+- This editor targets **original Red/Blue `.sav` files only**. It is **not** built for Pokémon Bank,
+  Pokémon Home, or the Virtual Console releases, and makes no effort to support that pipeline.
 
-Looking good so far, more progress!!!
+---
 
-![More Progress in the ui/ux](https://i.imgur.com/ULhYfEN.png)
-![Pokemon Details Screen](https://i.imgur.com/jnOZoyG.png)
-![Trainer Card Screen](https://i.imgur.com/iRUopfu.png)
-![Pokedex Screen](https://i.imgur.com/Ks6KzaT.png)
-![Stage 3 Name Editor A](https://i.imgur.com/oYshJk2.png)
-![Item Screen](https://i.imgur.com/5DU81im.png)
-![Pokemart Screen](https://i.imgur.com/2MMsNqk.png)
-![Initial New File Screen](https://i.imgur.com/Woakr9P.png)
-![Initial File Tools Screen](https://i.imgur.com/4oPvOE9.png)
+## Table of contents
 
-Here's sort of a rough preview of a before and after, note that the after image below may become outdated as new updates roll in. You can clearly see how beautiful the new interface is.
-![Before and After Image](https://i.imgur.com/KFhx0Rd.png)
+- [What it is](#what-it-is)
+- [Features](#features)
+- [Building from source](#building-from-source)
+- [Running the tests](#running-the-tests)
+- [Contributing](#contributing)
+- [Why the reboot](#why-the-reboot)
+- [Architecture](#architecture)
+- [Project layout](#project-layout)
+- [Screenshots](#screenshots)
+- [Credits](#credits)
+- [License & disclaimer](#license--disclaimer)
 
-## New page for reboot goals / features
+---
 
-Please see NewGoals.md for the breakdown of new goals and features specific to 
-this reboot.
+![Pokémon details screen](https://i.imgur.com/jnOZoyG.png)
 
-### Large refactoring
+## What it is
 
-So QML is a learning expirience for me, I know Qt and C++ and I love both. While I've always wanted to make a QML project, this is my first and so it's been a pretty big challenge. I initially did a lot of stuff wrong and I could tell that more and more as I progressed, eventually QML sort of forced my hand into figuring out where I went wrong... and re-writing a lot of code leading to a big refactor. But thanks to me doing that everything is much nicer and cleaner, smoother, more expandable in the future, etc...
+Pokered Save Editor 2 reads a 32 KB Pokémon Red/Blue battery save, **expands** it into a full tree of
+editable C++ objects, lets you change things through a native desktop UI, and **flattens** your edits
+back to disk.
 
-Sadly one of the things that had to go was the angled bars for the header and footer. I didn't want to let them go but after weighing the prs and cons it would have made expandability and usability a nightmare. It's been very refreshing to use the newer setup but I will mose those really cool angled bars.
+The aim is to let you edit **every bit and byte of the save** through a clean, simple, dependable GUI,
+at whatever depth you want — from quickly re-rolling a name, to editing your team and items, all the
+way to advanced things like importing/exporting the the normally-unused bytes as raw `.bin`, and
+working with map state. The quick stuff stays quick; the powerful stuff is
+there when you want it. (Plenty of that in development — see [Features](#features).)
 
-There all kinds of other little changes but overall it feels more dynamic and fluid and that's kidn of how I wanted it to feel.
+A few convictions shape everything:
 
-## Why the Reboot
+- **Bit- and byte-exact fidelity, always.** An edit changes *only* the exact bits and bytes it needs
+  to, and leaves everything else untouched — no rewriting, re-packing, or "normalizing" the file, and
+  checksums are recomputed only where they genuinely must be. Even *unused* bits are treated as
+  precious: it would be unacceptable for a single unintended bit to flip. Protecting your save data is
+  the project's highest priority, and wherever something could go wrong, graceful degradation is always
+  preferred over any risk of corruption.
+- **Careful, graceful failure** The goal is to take real care with errors: even an otherwise-fatal problem should
+  be caught and presented through a clean, clear UI, degrading smoothly and — where it's possible —
+  offering a way to keep going (for example, reloading what failed) instead of crashing or stranding
+  you. Debug builds surface problems to the developer in detail; release builds handle them gracefully
+  and clearly, without ever putting your data at risk.
+- **A real native desktop app.** A native `MainWindow` with native menus hosts the Qt Quick UI —
+  this is not a web app.
 
-I didn't realize how really messy and overly complicated building a desktop app in pure Javascript
-would be. Sure Javascript itself is very simple, I absolutely love Javascript and love to use it
-in all kinds of ways from simple to complex but lately it's getting really old to handle so much complexity
-and baggage that comes from a large app, especially a desktop app.
+![New File screen](https://i.imgur.com/Woakr9P.png)
 
-I'm havign to juggle Angular, electron, back-end, front-end (because of sandboxing), myriad of
-libraries, async and sync coding, overly complicated build systems, complicated debugging from all
-this, resources and assets from all sides. It's really just a lot, not really difficult, just.... 
-a lot.
+## Features
 
-Plus electron building in and of itself is complicated and extremely slow. Packages help and
-I do use them but they add that much more to worry about and I've already run itno countless problems
-with them over the time I've used them.
+**What works today** — open a save and edit:
 
-It takes abut 45 minutes for each and every build if memory serves and the resulting files are gigantic.
-It's a cluster mess to put it politely.
+- **Trainer Card** — name, money, badges, play time, starter, IDs.
+- **Pokémon** — team & PC box editing: species, level, stats, moves, DVs/EVs, nickname, OT.
+- **Pokédex** — seen/caught state for all 151.
+- **Items** — bag, PC storage, and Pokémart.
+- **Rival** — name and related data.
+- **Quick name randomization** — one-click re-roll in the name editor and trainer screen.
+- **In-game font keyboard** — a name editor that renders the real Game Boy font and character picker,
+  not a table of hex codes.
 
-On a side note Angular is just too complicated for my needs and is designed for a website, I've run into
-far too many issues, glitches, and overall limitations trying to work with and use Angular especially
-for an electron desktop app.
+**In development / planned** — the bigger picture:
 
-For months I've been researching moving back to simpler times with C++ and without losing any of the 
-visual appeal of the current UX. Doing this would allow me to remove hundreds of layers, frameworks,
-libraries, and overall baggage.
+- A deeper **randomization** system (described below).
+- **Map / location** editing and map randomization.
+- **Hall of Fame** and broader world-state editing.
+- **Raw `.bin` import/export** of the whole save — including the normally-unused bytes.
+- **Assisted code / state injection** into the save.
 
-The problem with Qt is that the file size will still be very large and sometimes packaging and deploying
-is complicated and error-prone on the other side. However the result is a still beautiful UI/UX with
-my toolset being amazingly simpler and built for exactly what I want to do. It also opens up a vast
-range of additional features I want to be able to include but haven't because of, well, Angular and
-many other complexities.
+**Randomization** is a flagship part of the app, and a *growing* one. Today it covers the basics — a
+quick one-click name re-roll and an early new-game randomizer. The planned system is built around
+three modes:
 
-Furthermore while the build size will still be large, it'll build SUPER QUICK, like REALLY REALLY quick,
-like not 45 minutes lol and so so much simpler.
+- **Constrained Random** — randomized, but kept within sensible, playable bounds.
+- **Unconstrained Random** — anything goes; chaotic by design; it may not even load.
+- **Synthetic Natural** — a generated save crafted to look like one genuinely earned by playing the
+  real game.
 
-Right now all a WIP but I'm really holding out hope I can make the reboot happen and completed.
+**Under the hood:**
 
-## License
+- Bit- and byte-exact save round-tripping with a comprehensive automated test suite (savefile, model,
+  GUI, and QML-screen smoke tests) run on Windows and in a Linux container (incl. ASan/UBSan and
+  coverage).
+- A C++ game database of all Gen 1 data (Pokémon, moves, items, maps, …) with cross-linked entries.
 
-Copyright 2020 Twilight
+![Pokédex screen](https://i.imgur.com/Ks6KzaT.png)
 
-This project's source code is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for the full text, or http://www.apache.org/licenses/LICENSE-2.0.
+## Building from source
 
-Pokemon and related artwork are owned by GameFreak/Nintendo/The Pokemon Company; see the credits screen and `non-app-assets` / asset license files for third-party assets, which retain their own licenses (e.g. Qt under LGPL v3, icon sets under their respective licenses).
+**Prerequisites**
+
+- **Qt 6.11** (the project is developed against the `llvm-mingw` 64-bit kit on Windows; a recent
+  Clang-based Qt 6 kit on Linux/macOS should also work).
+- **CMake ≥ 3.21** and **Ninja**.
+- A **C++17** compiler (Clang from the llvm-mingw toolchain is the reference).
+
+**Option A — Qt Creator (easiest):** open `projects/CMakeLists.txt` as a CMake project, select your
+Qt 6.11 kit, and build/run the `PokeredSaveEditor` target.
+
+**Option B — command line:**
+
+```sh
+# Configure (the CMake root is the projects/ folder, not the repo root)
+cmake -S projects -B build -G Ninja
+
+# Build the app
+cmake --build build --target PokeredSaveEditor
+
+# Run it (path varies by generator/kit; e.g.)
+./build/app/PokeredSaveEditor
+```
+
+The version number is single-sourced from [`VERSION`](VERSION); CMake propagates it to the runtime,
+the About screen, and the Windows executable resource — never hardcode a version.
+
+**API documentation** (optional): the C++ is Doxygen-commented. Run `doxygen Doxyfile` from the repo
+root to generate HTML docs (QML is intentionally excluded).
+
+![File Tools screen](https://i.imgur.com/4oPvOE9.png)
+
+## Running the tests
+
+The test tree configures from the same CMake root:
+
+```sh
+cmake -S projects -B build -G Ninja
+cmake --build build
+cd build && ctest --output-on-failure
+```
+
+For Linux builds, sanitizers (ASan/UBSan — which don't run on the Windows kit), and coverage, use the
+containerized harness:
+
+```powershell
+./docker/dtest.ps1 [standard|asan|xvfb|coverage|all]
+```
+
+A change is considered green only when the **full `ctest` suite passes**, including the QML screen
+smoke test (`tst_qml_screens`), which loads every screen through the real engine.
+
+![Pokémart screen](https://i.imgur.com/2MMsNqk.png)
+
+## Contributing
+
+This is an open-source project and contributions are welcome. The workflow and standards are written
+down so anyone (human or AI assistant) can pick it up cleanly. **Please read the living notes in
+[`notes/`](notes/) before making changes** — start with [`notes/status.md`](notes/status.md) for
+current state, and [`notes/context/`](notes/context/) for the project's goals and principles.
+
+A few things to keep in mind:
+
+- **Save-data fidelity is a big deal here.** The editor only ever changes the exact bits and bytes an
+  edit needs, leaving everything else untouched — please hold contributions to that same high
+  standard. Background in the save-data integrity section of
+  [`notes/context/principles.md`](notes/context/principles.md).
+- **Quality bar is high:** prefer the correct, clean solution over a quick hack. Well-documented
+  workarounds for genuine framework defects are fine; hacks of convenience are not.
+- **Branches:** `main` is stable (builds + tests green) and only ever fast-forwards from `dev`; do
+  day-to-day work on `dev`. Never commit directly to `main`.
+- **Commits:** one focused change each, imperative `type: summary` messages (`fix:`, `feat:`,
+  `refactor:`, `docs:`, `tests:`, …). Stage specific files; never `git add -A`. Don't rewrite pushed
+  history.
+- **Keep the notes and the in-app Credits living** — update them as part of the change, not after.
+
+Full details: [`notes/reference/git-workflow.md`](notes/reference/git-workflow.md) and
+[`notes/plans/testing.md`](notes/plans/testing.md).
+
+## Why the reboot
+
+The first version was JavaScript: Angular + Electron, back-end and front-end split by sandboxing, a
+pile of libraries, sync/async juggling, and a build that took **~45 minutes** to produce a gigantic
+binary. JavaScript itself is lovely — but on that stack a large *desktop* app grew unwieldy fast.
+Angular is built for the web; Electron packaging is slow and error-prone; the complexity outgrew what
+the project could sustain, and it was shelved.
+
+Qt/C++ buys back simplicity without giving up the look and feel: a far smaller toolset built for
+exactly this job, room for the features that were always wanted, and builds that finish in *minutes,
+not 45 minutes*. The trade-off (large output, fiddlier deployment) is well worth it.
+
+Getting here was long — the codebase was **rewritten from scratch three times** (a pure-C++ start,
+a JavaScript/QML detour, and the final C++ design) while wrestling a framework that often fights
+modern C++. The hard-won takeaway: keep the foundation lightweight and solid, then build the powerful
+stuff on top of it. The fuller story lives in [`notes/context/origins.md`](notes/context/origins.md).
+
+## Architecture
+
+A four-library split (build order), with the app shell on top:
+
+```
+common  →  db  →  savefile  →  appcore  →  app
+```
+
+| Layer | Role |
+|-------|------|
+| `common` | Shared types and a `Random` wrapper. |
+| `db` | All Gen 1 game data, loaded from JSON, cross-linked, exposed via `XxxDB::inst()` singletons. |
+| `savefile` | Parse → **expand** into editable C++ objects → **flatten** back with bit- and byte-exact fidelity. |
+| `appcore` | The testable app logic: the `Bridge`, ~25 MVC list models, the font/tileset engine, the `Router`, settings. |
+| `app` | Thin Qt/QML shell: `main`, boot, native `MainWindow`, `app.qrc`. QML talks to C++ through one `Bridge` object exposed as `brg`. |
+
+For the in-depth, code-grounded version, see [`notes/systems/overview.md`](notes/systems/overview.md)
+and [`notes/context/architecture.md`](notes/context/architecture.md). The save format itself is
+documented in [`assets/saves/structure.md`](assets/saves/structure.md) (with the byte-exact 010 Editor
+template `structure.bt` beside it).
+
+## Project layout
+
+```
+assets/        Non-code assets: save fixtures (assets/saves/), tilesets, wallpaper, staging
+docker/        Containerized Linux build/test harness (standard, ASan, xvfb, coverage)
+notes/         The living project knowledge base — read notes/status.md first
+projects/      All source: common / db / savefile / appcore / app, plus tests
+tmp/           Tracked-but-ignored scratch area for build/run artifacts
+Doxyfile       C++ API doc generation
+VERSION        Single source of truth for the version number
+```
+
+## Credits
+
+The **in-app Credits screen** (data in
+[`projects/db/assets/data/credits.json`](projects/db/assets/data/credits.json)) lists everyone and
+everything that helped: contributors, data sources, frameworks, tools, services, and the artists
+behind the icons and artwork. Most artwork and icons are by fans and are credited there accordingly.
+The 2026 revival has been done with the help of development tooling.
+
+## License & disclaimer
+
+Copyright © Twilight. The project's **source code** is licensed under the **Apache License,
+Version 2.0** — see [`LICENSE`](LICENSE) for the full text, or
+<http://www.apache.org/licenses/LICENSE-2.0>.
+
+Pokémon, Pokémon Bank, Pokémon Home, the Virtual Consoles, and related names, sprites, and artwork are
+owned by GameFreak / Nintendo / The Pokémon Company. This project claims no ownership of them. Bundled
+third-party assets and dependencies retain their own licenses (e.g. Qt under LGPL v3, icon sets under
+their respective terms); see the Credits screen and asset license files.
