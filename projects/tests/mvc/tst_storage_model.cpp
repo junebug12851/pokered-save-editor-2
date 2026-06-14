@@ -84,7 +84,7 @@ void TestStorageModel::initTestCase()
 void TestStorageModel::init()
 {
   m_file = new FileManagement;
-  loadInto(*m_file->data, readSaveBytes(QStringLiteral("BaseSAV.sav")));
+  loadInto(*m_file->data, readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
   m_brg = new Bridge(m_file);
   m_sm = m_brg->pokemonStorageModel1;
   m_sm->switchBox(PokemonStorageModel::PartyBox); // the party always has mons in BaseSAV

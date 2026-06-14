@@ -55,7 +55,7 @@ private:
   QByteArray loadGood(FileManagement& fm)
   {
     fm.clearRecentFiles();
-    fm.addRecentFile(assetPath(QStringLiteral("BaseSAV.sav")));
+    fm.addRecentFile(assetPath(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
     [&]{ QVERIFY(fm.openFileRecent(0)); }();
     return liveBytes(fm);
   }
@@ -90,7 +90,7 @@ void TestErrors::initTestCase()
 
 void TestErrors::setData_nullIsIgnored()
 {
-  const QByteArray orig = readSaveBytes(QStringLiteral("BaseSAV.sav"));
+  const QByteArray orig = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QCOMPARE(orig.size(), kSaveSize);
 
   SaveFile sf;
@@ -106,7 +106,7 @@ void TestErrors::openGoodRecent_succeeds()
 {
   FileManagement fm;
   fm.clearRecentFiles();
-  fm.addRecentFile(assetPath(QStringLiteral("BaseSAV.sav")));
+  fm.addRecentFile(assetPath(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
   QVERIFY(fm.openFileRecent(0));
 }
 

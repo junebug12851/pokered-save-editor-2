@@ -66,14 +66,14 @@ void TestGuiInput::initTestCase()
   QCoreApplication::setApplicationName(QStringLiteral("PSE-Tests"));
   QVERIFY(DB::inst() != nullptr);
   QVERIFY(m_tmp.isValid());
-  QCOMPARE(readSaveBytes(QStringLiteral("BaseSAV.sav")).size(), kSaveSize);
+  QCOMPARE(readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")).size(), kSaveSize);
   GuiApp::installMessageHandler();
 }
 
 // Real keystrokes into the money field commit to the model and survive save/reopen.
 void TestGuiInput::typeMoney_commits_andPersists()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   app.closeTop();                       // dismiss the startup New File modal
 

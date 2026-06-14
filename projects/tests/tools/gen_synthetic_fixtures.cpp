@@ -16,20 +16,20 @@
 
 /**
  * @file gen_synthetic_fixtures.cpp
- * @brief One-shot generator for the SYNTHETIC test saves in `assets/synthetic/`.
+ * @brief One-shot generator for the SYNTHETIC test saves in `assets/saves/synthetic-clean/`.
  *
  * These are NOT real game saves -- they are deterministic edge-case saves built from
  * a FRESH New File (so they embed no real progressed/personal data) using the app's
  * own save engine, so they are byte-accurate and reproducible. Run it once and commit
  * the output; it stays in the tree as the reproducible source-of-truth (the dirty/
  * fixtures README points here for synthetic ones). Real saves remain Twilight's to
- * commit; only these clearly-synthetic, engine-generated files live in assets/synthetic/.
+ * commit; only these clearly-synthetic, engine-generated files live in assets/saves/synthetic-clean/.
  *
  * Build target `gen_synthetic_fixtures` (not a CTest test). Run with no args; it writes
- * into <repo>/assets/synthetic/ (located via PSE_ASSETS_DIR).
+ * into <repo>/assets/saves/synthetic-clean/ (located via PSE_ASSETS_DIR).
  *
  * Consumed by tst_synthetic_fixtures.cpp (savefile round-trip matrix) and referenced by
- * the GUI tests as "synthetic/<name>.sav".
+ * the GUI tests as "saves/synthetic-clean/<name>.sav".
  */
 
 #include <QCoreApplication>
@@ -46,7 +46,7 @@
 
 static QString g_outDir;
 
-// Build one variant from a fresh New File, apply @p edit, write to assets/synthetic/<name>.
+// Build one variant from a fresh New File, apply @p edit, write to assets/saves/synthetic-clean/<name>.
 static bool makeVariant(const QString& name, const std::function<void(PlayerBasics*)>& edit)
 {
   FileManagement fm;
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   QCoreApplication app(argc, argv);
   (void)DB::inst();   // boot the game databases (needed by the expand/flatten engine)
 
-  g_outDir = QString::fromUtf8(PSE_ASSETS_DIR) + QStringLiteral("/synthetic");
+  g_outDir = QString::fromUtf8(PSE_ASSETS_DIR) + QStringLiteral("/saves/synthetic-clean");
   QDir().mkpath(g_outDir);
 
   qInfo("Generating synthetic fixtures into %s", qPrintable(g_outDir));

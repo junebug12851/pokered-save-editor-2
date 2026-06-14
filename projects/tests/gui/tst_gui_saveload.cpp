@@ -84,7 +84,7 @@ void TestGuiSaveLoad::initTestCase()
   QCoreApplication::setApplicationName(QStringLiteral("PSE-Tests"));
   QVERIFY(DB::inst() != nullptr);
   QVERIFY(m_tmp.isValid());
-  QCOMPARE(readSaveBytes(QStringLiteral("BaseSAV.sav")).size(), kSaveSize);
+  QCOMPARE(readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")).size(), kSaveSize);
   GuiApp::installMessageHandler();
 }
 
@@ -92,7 +92,7 @@ void TestGuiSaveLoad::initTestCase()
 // and verify every edit survived the full app -> disk -> app round-trip.
 void TestGuiSaveLoad::editAcrossScreens_savesAndReopens()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   app.closeTop();   // dismiss the startup New File modal
 
@@ -173,7 +173,7 @@ void TestGuiSaveLoad::multipleFiles_independent_includingRandomize()
 
   // File A: a known, distinctive money value.
   {
-    GuiApp a(QStringLiteral("BaseSAV.sav"));
+    GuiApp a(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
     QVERIFY(a.start());
     a.closeTop();
     a.navigate(QStringLiteral("trainerCard"));
@@ -215,7 +215,7 @@ void TestGuiSaveLoad::appSavedFile_roundTripsByteStable()
 {
   const QString out = m_tmp.filePath(QStringLiteral("stable.sav"));
   {
-    GuiApp app(QStringLiteral("BaseSAV.sav"));
+    GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
     QVERIFY(app.start());
     app.closeTop();
     app.navigate(QStringLiteral("trainerCard"));

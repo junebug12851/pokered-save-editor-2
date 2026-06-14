@@ -69,7 +69,7 @@ private slots:
 void TestRandomizer::initTestCase()
 {
   QVERIFY(DB::inst() != nullptr);
-  m_orig = readSaveBytes(QStringLiteral("BaseSAV.sav"));
+  m_orig = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QCOMPARE(m_orig.size(), kSaveSize);
 
   m_bulba = PokemonDB::inst()->getIndAt(QStringLiteral("Bulbasaur"))->ind;

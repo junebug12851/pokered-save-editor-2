@@ -68,7 +68,7 @@ public slots:
     qRegisterMetaType<WorldOther*>("WorldOther*");
 
     m_file = new FileManagement;
-    loadInto(*m_file->data, readSaveBytes(QStringLiteral("BaseSAV.sav")));
+    loadInto(*m_file->data, readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
     m_brg = new Bridge(m_file);
 
     engine->rootContext()->setContextProperty(QStringLiteral("brg"), m_brg);

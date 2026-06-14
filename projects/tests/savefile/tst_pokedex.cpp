@@ -55,7 +55,7 @@ private slots:
 void TestPokedex::initTestCase()
 {
   QVERIFY(DB::inst() != nullptr);
-  m_orig = readSaveBytes(QStringLiteral("BaseSAV.sav"));
+  m_orig = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QCOMPARE(m_orig.size(), kSaveSize);
 }
 

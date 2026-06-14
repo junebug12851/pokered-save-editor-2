@@ -27,7 +27,7 @@
  *    bytes it wasn't told to (the project's prime value).
  *
  * Field offsets are the ones the engine itself documents in playerbasics.cpp,
- * cross-checked against assets/savefile-structure.bt:
+ * cross-checked against assets/saves/structure.bt:
  *   name 0x2598 (11B), ID 0x2605 (word), money 0x25F3 (BCD3), coins 0x2850 (BCD2),
  *   starter 0x29C3 (byte), badges 0x2602 AND its duplicate 0x29D6.
  */
@@ -118,7 +118,7 @@ private slots:
 void TestFields::initTestCase()
 {
   QVERIFY(DB::inst() != nullptr);
-  m_orig = readSaveBytes(QStringLiteral("BaseSAV.sav"));
+  m_orig = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QCOMPARE(m_orig.size(), kSaveSize);
 }
 

@@ -108,7 +108,7 @@ void TestGuiDrag::initTestCase()
   QCoreApplication::setApplicationName(QStringLiteral("PSE-Tests"));
   QVERIFY(DB::inst() != nullptr);
   QVERIFY(m_tmp.isValid());
-  QCOMPARE(readSaveBytes(QStringLiteral("BaseSAV.sav")).size(), kSaveSize);
+  QCOMPARE(readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")).size(), kSaveSize);
   GuiApp::installMessageHandler();
 }
 
@@ -116,7 +116,7 @@ void TestGuiDrag::initTestCase()
 // new order survives save -> reopen.
 void TestGuiDrag::itemReorder_persists()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   app.closeTop();
 
@@ -151,7 +151,7 @@ void TestGuiDrag::itemReorder_persists()
 // the owned total is conserved, and it survives save -> reopen.
 void TestGuiDrag::itemTransferBagToPc_persists()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   app.closeTop();
 
@@ -185,7 +185,7 @@ void TestGuiDrag::itemTransferBagToPc_persists()
 // Delete a bag item: the slot is removed and stays gone after save -> reopen.
 void TestGuiDrag::itemDelete_persists()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   app.closeTop();
 
@@ -215,7 +215,7 @@ void TestGuiDrag::itemDelete_persists()
 // PC boxes may be empty) and marked formatted so it persists.
 void TestGuiDrag::pokemonReorder_persists()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   app.closeTop();
 
@@ -249,7 +249,7 @@ void TestGuiDrag::pokemonReorder_persists()
 // Delete a mon from a PC box: it is removed and stays gone after save -> reopen.
 void TestGuiDrag::pokemonDelete_persists()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   app.closeTop();
 

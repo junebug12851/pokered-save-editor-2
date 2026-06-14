@@ -67,7 +67,7 @@ void TestFileManagement::initTestCase()
   QCoreApplication::setApplicationName(QStringLiteral("PSE-Tests"));
   QVERIFY(DB::inst() != nullptr);
 
-  m_realFile = assetPath(QStringLiteral("BaseSAV.sav"));
+  m_realFile = assetPath(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(QFile::exists(m_realFile));
 
   QVERIFY(m_tmp.isValid());

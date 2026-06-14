@@ -17,13 +17,13 @@
 /**
  * @file tst_dirty_fixtures.cpp
  * @brief Negative coverage over the committed dirty/malformed saves in
- *        `assets/dirty/` (+ checksum-corruption cases derived from BaseSAV at runtime).
+ *        `assets/saves/synthetic-dirty/` (+ checksum-corruption cases derived from BaseSAV at runtime).
  *        Proves the graceful-degradation promise on hostile input: wrong-size files
  *        are cleanly REJECTED (no crash, error surfaced, any open save untouched);
  *        right-size garbage (all-00 / all-FF / random) LOADS, EXPANDS and FLATTENS
  *        without crashing; a bad checksum still loads (the editor recomputes on save).
  *
- * Each dirty file and its intent is documented in `assets/dirty/README.md`.
+ * Each dirty file and its intent is documented in `assets/saves/synthetic-dirty/README.md`.
  */
 
 #include <QtTest>
@@ -54,7 +54,7 @@ class TestDirtyFixtures : public QObject
 
   static QString dirtyPath(const QString& name)
   {
-    return assetPath(QStringLiteral("dirty/") + name);
+    return assetPath(QStringLiteral("saves/synthetic-dirty/") + name);
   }
 
   // Open a path via the no-dialog recent-file route.
@@ -68,7 +68,7 @@ class TestDirtyFixtures : public QObject
   // Load BaseSAV, returning its live bytes (for the "untouched on failed load" checks).
   QByteArray loadGood(FileManagement& fm)
   {
-    bool ok = open(fm, assetPath(QStringLiteral("BaseSAV.sav")));
+    bool ok = open(fm, assetPath(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
     [&]{ QVERIFY(ok); }();
     return liveBytes(fm);
   }
@@ -76,7 +76,7 @@ class TestDirtyFixtures : public QObject
   // Copy BaseSAV to a temp file with one byte XOR-flipped at @p offset.
   QString baseWithFlippedByte(const QString& tag, int offset)
   {
-    QByteArray bytes = readSaveBytes(QStringLiteral("BaseSAV.sav"));
+    QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
     bytes[offset] = static_cast<char>(bytes[offset] ^ 0xFF);
     const QString path = m_tmp.filePath(tag + QStringLiteral(".sav"));
     QFile f(path);
@@ -105,7 +105,7 @@ void TestDirtyFixtures::initTestCase()
   QVERIFY(m_tmp.isValid());
   // The dirty fixtures must be present.
   QVERIFY2(QFile::exists(dirtyPath(QStringLiteral("all_ff.sav"))),
-           "assets/dirty/ fixtures missing -- see assets/dirty/README.md to regenerate");
+           "assets/saves/synthetic-dirty/ fixtures missing -- see assets/saves/synthetic-dirty/README.md to regenerate");
 }
 
 // Empty and short files (< 0x8000) must be rejected cleanly, an error surfaced, and

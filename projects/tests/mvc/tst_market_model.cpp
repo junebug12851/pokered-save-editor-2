@@ -92,7 +92,7 @@ void TestMarketModel::initTestCase()
   QVERIFY(DB::inst() != nullptr);
   Router::loadScreens();
   m_file = new FileManagement;
-  loadInto(*m_file->data, readSaveBytes(QStringLiteral("BaseSAV.sav")));
+  loadInto(*m_file->data, readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
   m_brg = new Bridge(m_file);
   m_mkt = m_brg->marketModel;
 }

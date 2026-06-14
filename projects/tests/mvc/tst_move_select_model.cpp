@@ -73,7 +73,7 @@ void TestMoveSelectModel::generalList_hasAllMoves()
 
 void TestMoveSelectModel::specificList_isSpeciesLegalSubset()
 {
-  SaveFile sf; loadInto(sf, readSaveBytes(QStringLiteral("BaseSAV.sav")));
+  SaveFile sf; loadInto(sf, readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
   PokemonParty* partyMon = sf.dataExpanded->player->pokemon->partyAt(0);
   QVERIFY(partyMon != nullptr);
 
@@ -92,7 +92,7 @@ void TestMoveSelectModel::specificList_isSpeciesLegalSubset()
 
 void TestMoveSelectModel::monFromBoxNull_fallsBackToGeneral()
 {
-  SaveFile sf; loadInto(sf, readSaveBytes(QStringLiteral("BaseSAV.sav")));
+  SaveFile sf; loadInto(sf, readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
 
   MoveSelectModel m;
   const int general = rows(m);

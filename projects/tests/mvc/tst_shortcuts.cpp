@@ -57,7 +57,7 @@ class TestShortcuts : public QObject
   static bool loadBase(FileManagement& fm)
   {
     fm.clearRecentFiles();
-    fm.addRecentFile(assetPath(QStringLiteral("BaseSAV.sav")));
+    fm.addRecentFile(assetPath(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
     return fm.openFileRecent(0);
   }
 
@@ -75,7 +75,7 @@ void TestShortcuts::initTestCase()
   QCoreApplication::setOrganizationName(QStringLiteral("PSE-Tests"));
   QCoreApplication::setApplicationName(QStringLiteral("PSE-Tests"));
   QVERIFY(DB::inst() != nullptr);
-  QCOMPARE(readSaveBytes(QStringLiteral("BaseSAV.sav")).size(), kSaveSize);
+  QCOMPARE(readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")).size(), kSaveSize);
 }
 
 // Every named action is present and bound to exactly the expected key sequence.
@@ -169,7 +169,7 @@ void TestShortcuts::firingSafeActions_runsTheRightVerb()
   const auto act = pse::shortcutActions(&fm, [&exitCalls]{ ++exitCalls; });
 
   // clear-recentfiles: a remembered recent goes away.
-  fm.addRecentFile(assetPath(QStringLiteral("BaseSAV.sav")));
+  fm.addRecentFile(assetPath(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
   QVERIFY(fm.recentFilesCount() > 0);
   act.value("clear-recentfiles")();
   QCOMPARE(fm.recentFilesCount(), 0);

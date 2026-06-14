@@ -7,7 +7,7 @@ lock that behaviour in with tests.
 
 They are generated, synthetic, and safe to regenerate. None of them is a real game
 save. The structural/garbage files below contain no real save data; checksum-corruption
-cases are derived from `../BaseSAV.sav` **at test time** (into a temp dir, not committed)
+cases are derived from `../natural-clean/BaseSAV.sav` **at test time** (into a temp dir, not committed)
 so this folder never duplicates real save data.
 
 Consumed by `projects/tests/savefile/tst_dirty_fixtures.cpp`.
@@ -36,7 +36,7 @@ one byte, so no real save data is committed here:
 PowerShell (sizes in bytes; `0x8000` = 32768):
 
 ```powershell
-$dir = "assets/dirty"; $SZ = 0x8000
+$dir = "assets/saves/synthetic-dirty"; $SZ = 0x8000
 [IO.File]::WriteAllBytes("$dir/empty.sav",           (New-Object byte[] 0))
 [IO.File]::WriteAllBytes("$dir/truncated_4kb.sav",   (New-Object byte[] 4096))
 [IO.File]::WriteAllBytes("$dir/truncated_32767.sav", (New-Object byte[] ($SZ-1)))

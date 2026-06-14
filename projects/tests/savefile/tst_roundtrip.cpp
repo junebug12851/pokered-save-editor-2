@@ -27,7 +27,7 @@
  *    assert that ONLY the money bytes and the main-data checksum byte changed, and
  *    that the new value round-trips back through raw->expand.
  *
- * Field offsets come from the independent oracle assets/savefile-structure.bt
+ * Field offsets come from the independent oracle assets/saves/structure.bt
  * (cross-checked against notes/reference/gen1-knowledge.md), NOT from the code under
  * test -- so a wrong offset in the engine can't quietly agree with a wrong offset
  * in the test.
@@ -50,7 +50,7 @@
 using namespace pse_test;
 
 namespace {
-// From assets/savefile-structure.bt (bank1 base 0x2000; main data begins after the
+// From assets/saves/structure.bt (bank1 base 0x2000; main data begins after the
 // 0x598 lead-in + the 0xB player name). Cross-checked with gen1-knowledge.md.
 constexpr int kMoneyOffset   = 0x25F3; ///< Money: 24-bit BCD, 3 bytes.
 constexpr int kMoneySize     = 3;
@@ -80,8 +80,8 @@ void TestRoundTrip::initTestCase()
 void TestRoundTrip::loadFlatten_isIdentity_data()
 {
   QTest::addColumn<QString>("fixture");
-  QTest::newRow("progressed (default)") << QStringLiteral("BaseSAV.sav");
-  QTest::newRow("new game")             << QStringLiteral("BaseSAV.new.sav");
+  QTest::newRow("progressed (default)") << QStringLiteral("saves/natural-clean/BaseSAV.sav");
+  QTest::newRow("new game")             << QStringLiteral("saves/natural-clean/BaseSAV.new.sav");
 }
 
 void TestRoundTrip::loadFlatten_isIdentity()
@@ -127,7 +127,7 @@ void TestRoundTrip::loadFlatten_isIdentity()
 
 void TestRoundTrip::moneyEdit_touchesOnlyMoneyAndChecksum()
 {
-  const QByteArray orig = readSaveBytes(QStringLiteral("BaseSAV.sav"));
+  const QByteArray orig = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QCOMPARE(orig.size(), kSaveSize);
 
   SaveFile sf;

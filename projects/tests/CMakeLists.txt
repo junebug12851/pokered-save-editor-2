@@ -31,7 +31,7 @@ function(pse_add_test name lib)
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS ${name})
 endfunction()
 
-# One-shot generator for assets/synthetic/ (NOT a CTest test). Build + run manually to
+# One-shot generator for assets/saves/synthetic-clean/ (NOT a CTest test). Build + run manually to
 # regenerate the synthetic fixtures; the output .sav files are committed.
 qt_add_executable(gen_synthetic_fixtures tools/gen_synthetic_fixtures.cpp)
 target_link_libraries(gen_synthetic_fixtures PRIVATE savefile)

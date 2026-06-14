@@ -16,7 +16,7 @@
 
 /**
  * @file tst_synthetic_fixtures.cpp
- * @brief Matrix coverage over the committed synthetic saves in `assets/synthetic/`
+ * @brief Matrix coverage over the committed synthetic saves in `assets/saves/synthetic-clean/`
  *        (see that folder's README + tools/gen_synthetic_fixtures.cpp). Each is an
  *        engine-generated edge-case save; this proves they all (1) load + expand
  *        without crashing, (2) round-trip byte-stable (open -> flatten -> recalc ==
@@ -45,7 +45,7 @@ class TestSyntheticFixtures : public QObject
   static bool open(FileManagement& fm, const QString& name)
   {
     fm.clearRecentFiles();
-    fm.addRecentFile(assetPath(QStringLiteral("synthetic/") + name));
+    fm.addRecentFile(assetPath(QStringLiteral("saves/synthetic-clean/") + name));
     return fm.openFileRecent(0);
   }
 
@@ -61,8 +61,8 @@ void TestSyntheticFixtures::initTestCase()
   QCoreApplication::setOrganizationName(QStringLiteral("PSE-Tests"));
   QCoreApplication::setApplicationName(QStringLiteral("PSE-Tests"));
   QVERIFY(DB::inst() != nullptr);
-  QVERIFY2(QFile::exists(assetPath(QStringLiteral("synthetic/new_maxed.sav"))),
-           "assets/synthetic/ fixtures missing -- build + run gen_synthetic_fixtures");
+  QVERIFY2(QFile::exists(assetPath(QStringLiteral("saves/synthetic-clean/new_maxed.sav"))),
+           "assets/saves/synthetic-clean/ fixtures missing -- build + run gen_synthetic_fixtures");
 }
 
 // Every synthetic save loads, and reopening + reflattening reproduces its on-disk
@@ -80,7 +80,7 @@ void TestSyntheticFixtures::loadsAndRoundTripsByteStable()
 {
   QFETCH(QString, file);
 
-  const QByteArray onDisk = readSaveBytes(QStringLiteral("synthetic/") + file);
+  const QByteArray onDisk = readSaveBytes(QStringLiteral("saves/synthetic-clean/") + file);
   QCOMPARE(onDisk.size(), kSaveSize);
 
   FileManagement fm;

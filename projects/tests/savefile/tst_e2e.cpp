@@ -57,7 +57,7 @@ private:
   void loadGood(FileManagement& fm)
   {
     fm.clearRecentFiles();
-    fm.addRecentFile(assetPath(QStringLiteral("BaseSAV.sav")));
+    fm.addRecentFile(assetPath(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
     QVERIFY(fm.openFileRecent(0));
   }
 

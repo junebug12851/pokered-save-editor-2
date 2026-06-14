@@ -108,7 +108,7 @@ void TestEngineProviders::tilesetProvider_validAndMalformedIds()
 
 void TestEngineProviders::fontPreviewProvider_validAndMalformedIds()
 {
-  SaveFile sf; loadInto(sf, readSaveBytes(QStringLiteral("BaseSAV.sav")));
+  SaveFile sf; loadInto(sf, readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
   FontPreviewProvider provider(sf.dataExpanded);
   QSize size;
 

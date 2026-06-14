@@ -126,8 +126,8 @@ void TestGuiNavigation::initTestCase()
 void TestGuiNavigation::navigatesEveryScreen_populatedSave()
 {
   // Fixture must exist (the populated path matters: screens bind real party/dex/items).
-  QCOMPARE(readSaveBytes(QStringLiteral("BaseSAV.sav")).size(), kSaveSize);
-  sweep(QStringLiteral("BaseSAV.sav"));
+  QCOMPARE(readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")).size(), kSaveSize);
+  sweep(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
 }
 
 // Every screen opens cleanly over a blank New File (empty party/boxes/dex --
@@ -140,7 +140,7 @@ void TestGuiNavigation::navigatesEveryScreen_newFile()
 // goHome unwinds the stack back to Home without emitting warnings.
 void TestGuiNavigation::homeUnwind_clean()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   app.closeTop();                       // dismiss the startup New File modal
 

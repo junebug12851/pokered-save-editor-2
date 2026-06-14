@@ -144,7 +144,7 @@ class GuiApp
 public:
   /// @param fixture  a fixture filename (e.g. "BaseSAV.sav") to open, or "" / "new"
   ///                 to start from a blank New File.
-  explicit GuiApp(const QString& fixture = QStringLiteral("BaseSAV.sav"))
+  explicit GuiApp(const QString& fixture = QStringLiteral("saves/natural-clean/BaseSAV.sav"))
   {
     bootOnce();
 

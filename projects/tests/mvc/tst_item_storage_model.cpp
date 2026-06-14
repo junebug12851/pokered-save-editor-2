@@ -102,7 +102,7 @@ void TestItemStorageModel::initTestCase()
 void TestItemStorageModel::init()
 {
   m_file = new FileManagement;
-  loadInto(*m_file->data, readSaveBytes(QStringLiteral("BaseSAV.sav")));
+  loadInto(*m_file->data, readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")));
   m_brg = new Bridge(m_file);
   m_bag = m_brg->bagItemsModel;
   m_box = m_file->data->dataExpanded->player->items;

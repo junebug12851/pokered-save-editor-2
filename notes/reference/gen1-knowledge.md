@@ -12,13 +12,14 @@ tile-block map-view VRAM pointer in `14a73be`). **One exception:** the "Map geom
 section is drawn from an external mapping project (clearly marked there) and is orienting context to
 confirm against `pret/pokered` / our `MapsDB`, not yet code-verified.
 
-**Authoritative external byte map:** `assets/savefile-structure.bt` (a 010 Editor binary
+**Authoritative external byte map:** `assets/saves/structure.bt` (a 010 Editor binary
 template, authored by Twilight) is the full field-by-field layout of the 32 KB save — banks,
-structs, bit-fields, offsets. Because it was written **independently of the app's C++**, it is the
+structs, bit-fields, offsets. A human-readable companion, `assets/saves/structure.md`, mirrors it
+in prose and is included in the generated Doxygen docs (the `.bt` remains the byte-exact authority). Because it was written **independently of the app's C++**, it is the
 *oracle* for testing: per-field offset and golden tests can validate against it rather than against
 the code under test (which would be circular). Two real saves live beside it as test fixtures:
-`assets/BaseSAV.new.sav` (a fresh file saved right after the new-game screen) and
-`assets/BaseSAV.sav` (a progressed save; exact progress not recorded — characterize as needed).
+`assets/saves/natural-clean/BaseSAV.new.sav` (a fresh file saved right after the new-game screen) and
+`assets/saves/natural-clean/BaseSAV.sav` (a progressed save; exact progress not recorded — characterize as needed).
 Both are exactly `0x8000` bytes. See `plans/testing.md`.
 
 ---

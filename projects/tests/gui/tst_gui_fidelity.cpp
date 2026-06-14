@@ -125,16 +125,16 @@ void TestGuiFidelity::initTestCase()
   QCoreApplication::setOrganizationName(QStringLiteral("PSE-Tests"));
   QCoreApplication::setApplicationName(QStringLiteral("PSE-Tests"));
   QVERIFY(DB::inst() != nullptr);
-  QCOMPARE(readSaveBytes(QStringLiteral("BaseSAV.sav")).size(), kSaveSize);
+  QCOMPARE(readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")).size(), kSaveSize);
   GuiApp::installMessageHandler();
 }
 
 void TestGuiFidelity::navigatingScreens_changesNoBytes_data()
 {
   QTest::addColumn<QString>("fixture");
-  QTest::newRow("progressed") << QStringLiteral("BaseSAV.sav");
+  QTest::newRow("progressed") << QStringLiteral("saves/natural-clean/BaseSAV.sav");
   QTest::newRow("new")        << QStringLiteral("new");
-  QTest::newRow("synth_maxed")<< QStringLiteral("synthetic/new_maxed.sav");
+  QTest::newRow("synth_maxed")<< QStringLiteral("saves/synthetic-clean/new_maxed.sav");
 }
 
 // Walking through every screen (and opening/closing every modal) writes nothing.
@@ -169,9 +169,9 @@ void TestGuiFidelity::navigatingScreens_changesNoBytes()
 void TestGuiFidelity::browsingControls_changesNoBytes_data()
 {
   QTest::addColumn<QString>("fixture");
-  QTest::newRow("progressed") << QStringLiteral("BaseSAV.sav");
+  QTest::newRow("progressed") << QStringLiteral("saves/natural-clean/BaseSAV.sav");
   QTest::newRow("new")        << QStringLiteral("new");
-  QTest::newRow("synth_maxed")<< QStringLiteral("synthetic/new_maxed.sav");
+  QTest::newRow("synth_maxed")<< QStringLiteral("saves/synthetic-clean/new_maxed.sav");
 }
 
 // On every screen: open + close every dropdown/select box, and focus + blur every
@@ -245,7 +245,7 @@ void TestGuiFidelity::browsingControls_changesNoBytes()
 // surface in the app.
 void TestGuiFidelity::browsingPokemonEditor_changesNoBytes()
 {
-  GuiApp app(QStringLiteral("BaseSAV.sav"));
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QVERIFY(app.start());
   toHome(app);
 

@@ -169,7 +169,7 @@ void TestQmlScreens::initTestCase()
   // A real save behind `brg`, so screens bind to populated data (party, items,
   // dex, badges) -- the realistic path. Fixture is read-only; we copy into memory.
   m_file = new FileManagement;
-  const QByteArray bytes = readSaveBytes(QStringLiteral("BaseSAV.sav"));
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QCOMPARE(bytes.size(), kSaveSize);   // fail loudly if the fixture is missing
   loadInto(*m_file->data, bytes);
 

@@ -195,20 +195,30 @@ common/savefile. Coverage gaps become the to-do list for filling tests.
 - **Qt Quick Test** (`qmltest`) — for QML, runs on `QT_QPA_PLATFORM=offscreen`. **Deferred.**
 - **CTest** — `enable_testing()` in root CMake; each test exe registered via `add_test`; whole suite
   runs with one `ctest` command. Honors the existing CMake/Qt 6.11/llvm-mingw setup.
-- **Fixtures (these exist — see `assets/`):**
-  - `assets/BaseSAV.sav` — **the default/primary fixture.** A regular save progressed to a point;
+- **Fixtures (these exist — see `assets/saves/`):** the save corpus is organised into three
+  categories under `assets/saves/`:
+  - **`natural-clean/`** — saves produced by **normal generation by the game** (whether on real
+    hardware **or** an emulator — "natural" is about how the bytes were produced, not whether
+    emulation was involved). Holds `BaseSAV.sav` and `BaseSAV.new.sav`.
+  - **`synthetic-clean/`** — well-formed saves built by the app's own engine from a fresh New File
+    (`gen_synthetic_fixtures`), for edge-case coverage with no real/personal data.
+  - **`synthetic-dirty/`** — intentionally malformed/garbage saves for negative testing.
+  - The byte-map oracle (`structure.bt` + its human-readable companion `structure.md`) also lives in
+    `assets/saves/`.
+  - `assets/saves/natural-clean/BaseSAV.sav` — **the default/primary fixture.** A regular save progressed to a point;
     this is what most tests load (round-trip, per-field, E2E) because it has populated
     party/items/dex/flags — realistic, representative data. Exact progress not recorded; characterize
     it once and pin the values in a test so the fixture is self-documenting.
-  - `assets/BaseSAV.new.sav` — **secondary, used sparingly.** A save at the very start of the game
+  - `assets/saves/natural-clean/BaseSAV.new.sav` — **secondary, used sparingly.** A save at the very start of the game
     (hence "new"). Useful for the specific cases that want a clean/minimal baseline (e.g. proving an
     edit on near-empty data, or empty-party/empty-box edge cases) — not the everyday fixture.
   - Both are exactly `0x8000` bytes. The negative-test corpus (truncated / oversized / locked /
     garbage) still needs to be **generated** (trivially, by slicing/padding a copy).
   - Plan: copy these into `tests/fixtures/` (don't have tests mutate the originals in `assets/`), or
     reference them read-only and always operate on an in-memory/temp copy.
-- **The byte-map oracle — `assets/savefile-structure.bt`.** A 010 Editor binary template authored by
-  Twilight, independent of the app's C++, mapping every field/offset/bit-field of the save. This is
+- **The byte-map oracle — `assets/saves/structure.bt`** (with `assets/saves/structure.md`, a
+  human-readable translation that is also pulled into the Doxygen docs). A 010 Editor binary template
+  authored by Twilight, independent of the app's C++, mapping every field/offset/bit-field of the save. This is
   the **independent oracle** that breaks test circularity: per-field offset tests and golden
   assertions validate expand/flatten against *the .bt's* offsets, not against the same code being
   tested. A small parser (or a hand-transcribed offset table derived from it) feeds the data-driven
@@ -892,8 +902,8 @@ delta).
 ## Open questions / decisions needed
 
 - **QML/UI scope** — deferred above; Twilight to decide later.
-- ~~**Fixtures**~~ — RESOLVED 2026-06-07: `assets/BaseSAV.new.sav` (fresh) + `assets/BaseSAV.sav`
-  (progressed) exist, plus `assets/savefile-structure.bt` as the independent offset oracle. Still TODO:
+- ~~**Fixtures**~~ — RESOLVED 2026-06-07: `assets/saves/natural-clean/BaseSAV.new.sav` (fresh) + `assets/saves/natural-clean/BaseSAV.sav`
+  (progressed) exist, plus `assets/saves/structure.bt` as the independent offset oracle. Still TODO:
   generate the negative-test corpus, and add Red-vs-Blue / additional game-state fixtures if we want a
   fuller compatibility matrix.
 - **Characterize `BaseSAV.sav`** — its exact progress (party, badges, money, dex) isn't recorded; do

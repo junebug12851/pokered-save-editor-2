@@ -116,7 +116,7 @@ void TestBridge::initTestCase()
   // Load the real default fixture so the models have actual data (a party, a
   // pokedex with seen/owned entries, bag items). Must happen BEFORE the Bridge
   // is built: the Bridge captures pointers into the expanded tree at construction.
-  const QByteArray bytes = readSaveBytes(QStringLiteral("BaseSAV.sav"));
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
   QCOMPARE(bytes.size(), kSaveSize);
   loadInto(*m_file->data, bytes); // setData + re-expand, in place
   QVERIFY(m_file->data->dataExpanded != nullptr);
