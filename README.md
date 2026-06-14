@@ -39,7 +39,6 @@ automated test suite, but it is not yet a 1.0. Current version lives in [`VERSIO
 - [Why the reboot](#why-the-reboot)
 - [Architecture](#architecture)
 - [Project layout](#project-layout)
-- [Screenshots](#screenshots)
 - [Credits](#credits)
 - [License & disclaimer](#license--disclaimer)
 
@@ -55,9 +54,9 @@ back to disk.
 
 The aim is to let you edit **every bit and byte of the save** through a clean, simple, dependable GUI,
 at whatever depth you want — from quickly re-rolling a name, to editing your team and items, all the
-way to advanced things like importing/exporting the the normally-unused bytes as raw `.bin`, and
-working with map state. The quick stuff stays quick; the powerful stuff is
-there when you want it. (Plenty of that in development — see [Features](#features).)
+way to advanced things like importing/exporting the normally-unused bytes as raw `.bin`, and
+working with map state. The quick stuff stays quick; the powerful stuff is there when you want it.
+(Plenty of that is in development — see [Features](#features).)
 
 A few convictions shape everything:
 
@@ -67,7 +66,7 @@ A few convictions shape everything:
   precious: it would be unacceptable for a single unintended bit to flip. Protecting your save data is
   the project's highest priority, and wherever something could go wrong, graceful degradation is always
   preferred over any risk of corruption.
-- **Careful, graceful failure** The goal is to take real care with errors: even an otherwise-fatal problem should
+- **Careful, graceful failure.** The goal is to take real care with errors: even an otherwise-fatal problem should
   be caught and presented through a clean, clear UI, degrading smoothly and — where it's possible —
   offering a way to keep going (for example, reloading what failed) instead of crashing or stranding
   you. Debug builds surface problems to the developer in detail; release builds handle them gracefully
