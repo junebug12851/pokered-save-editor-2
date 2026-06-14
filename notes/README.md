@@ -21,7 +21,7 @@ anyone picking up the project — orient fast, avoid re-learning things the hard
 | `reference/qt-gotchas.md` | Project-lifetime catalog of every Qt/QML landmine hit (2019→2026), cross-linked to the detail files |
 | `reference/gen1-knowledge.md` | Domain knowledge about the Gen 1 Red/Blue save format & gameplay quirks the editor encodes (offsets, checksum, badges, retroactive natures/shininess, trade status, …) |
 | `reference/diagnostic-methods.md` | How to find and fix systemic problems (truncation, hangs, QML chain failures) |
-| `reference/version-history.md` | The living changelog (`version-notes.md` index + `version-notes/` monthly files) and how it's kept updated (by hand, on request) |
+| `reference/version-history.md` | The living changelog (`version-info.md` index + `version-info/` monthly files) and how it's kept updated (by hand, on request) |
 | `decisions/architecture.md` | Key choices made and *why* — so they don't get undone accidentally |
 | `decisions/rejected.md` | Things tried that failed — so they don't get tried again |
 | `plans/next-steps.md` | Ordered list of what to do next |

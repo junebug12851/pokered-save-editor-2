@@ -3,13 +3,13 @@
 Things that were tried, failed, and should NOT be tried again.
 
 The first batch below comes from the 2019–2020 development history (reconstructed from the
-commit log; see `version-notes.md` and `context/origins.md`). The rest are from the 2026 revival.
+commit log; see `version-info.md` and `context/origins.md`). The rest are from the 2026 revival.
 
 ---
 
 ## Historical dead ends (2019–2020)
 
-These were each tried for real and abandoned. Hashes point at the commit in `version-notes.md`.
+These were each tried for real and abandoned. Hashes point at the commit in `version-info.md`.
 
 ### The whole JavaScript implementation
 **Tried** (`7c59d67`, Oct 2019): rewrite the app in QML/QtQuick + JavaScript instead of C++,

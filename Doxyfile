@@ -33,8 +33,6 @@ OUTPUT_LANGUAGE        = English
 # alongside the API reference (their relative Markdown links resolve page-to-page).
 INPUT                  = README.md \
                           assets/saves/structure.md \
-                         version-notes.md \
-                         version-notes \
                          notes \
                          projects/common/src \
                          projects/db/src \
