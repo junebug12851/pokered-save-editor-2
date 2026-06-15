@@ -43,10 +43,6 @@ jobs:
             build-essential ninja-build \
             libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev \
             xvfb fonts-dejavu-core
-          # Pillow for the `python3` actually on PATH (setup-python hostedtoolcache),
-          # which make_gifs.py uses.
-          python3 -m pip install --upgrade Pillow \
-            || python3 -m pip install --break-system-packages --upgrade Pillow
 
       - name: Install Qt (Linux gcc_64)
         uses: jurplel/install-qt-action@v4
@@ -64,7 +60,12 @@ jobs:
       - name: Capture screenshots (headless, xvfb)
         # Builds + runs the screenshooter under xvfb (MultiEffect via llvmpipe), then
         # assembles the GIFs with Pillow. Renders only -- never writes a save byte.
-        run: bash scripts/capture_screenshots.sh
+        # Pillow is installed HERE (same step/python3 the .sh uses) -- install-qt-action
+        # swaps the `python3` on PATH, so installing it earlier targets the wrong one.
+        run: |
+          python3 -m pip install --upgrade Pillow \
+            || python3 -m pip install --break-system-packages --upgrade Pillow
+          bash scripts/capture_screenshots.sh
 
       - name: Assemble the Pages site (screens + editor + GIFs; NO frames/)
         run: |

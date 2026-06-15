@@ -227,10 +227,6 @@ jobs:
             xvfb fonts-dejavu-core \
             doxygen graphviz \
             file desktop-file-utils
-          # Pillow for the `python3` actually on PATH (setup-python hostedtoolcache,
-          # not the system one apt's python3-pil targets) -- make_gifs.py needs it.
-          python3 -m pip install --upgrade Pillow \
-            || python3 -m pip install --break-system-packages --upgrade Pillow
 
       - name: Install Qt (Linux gcc_64)
         uses: jurplel/install-qt-action@v4
@@ -292,6 +288,10 @@ jobs:
           # Builds the `screenshooter` target into the existing build/ and runs it
           # under xvfb (real GPU-less X => MultiEffect renders via llvmpipe), then
           # assembles the GIFs with Pillow. Renders only; never writes a save byte.
+          # Install Pillow HERE so it targets the python3 the .sh uses (install-qt-action
+          # swaps the python3 on PATH, so an earlier install hits the wrong interpreter).
+          python3 -m pip install --upgrade Pillow \
+            || python3 -m pip install --break-system-packages --upgrade Pillow
           bash scripts/capture_screenshots.sh
           ( cd tmp/screenshots && zip -r "$GITHUB_WORKSPACE/out/PokeredSaveEditor-${ver}-screenshots.zip" . )
 
