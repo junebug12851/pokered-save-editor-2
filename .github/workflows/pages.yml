@@ -45,7 +45,15 @@ jobs:
             build-essential ninja-build \
             libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev \
             xvfb fonts-dejavu-core \
-            doxygen graphviz
+            graphviz
+          # Doxygen from the official binary, NOT apt: ubuntu's 1.9.1 mis-renders some
+          # Markdown (blockquotes/emphasis -> leaked </blockquote>); 1.17 matches the
+          # local toolchain and renders cleanly. /usr/local/bin precedes /usr/bin.
+          DOXV=1.17.0
+          curl -fsSL -o /tmp/doxygen.tgz "https://www.doxygen.nl/files/doxygen-${DOXV}.linux.bin.tar.gz"
+          tar -xzf /tmp/doxygen.tgz -C /tmp
+          sudo install -m755 "/tmp/doxygen-${DOXV}/bin/doxygen" /usr/local/bin/doxygen
+          doxygen --version
 
       - name: Install Qt (Linux gcc_64)
         uses: jurplel/install-qt-action@v4

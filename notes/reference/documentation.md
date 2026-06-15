@@ -86,6 +86,11 @@ correctly:
   `---` turns into a stray `<h1>` (polluting the page and the auto-TOC/nav). Seen on the README intro
   when it became the Pages docs home (2026-06-15). GitHub renders both forms fine, so prefer the
   single-line `*…*` form that satisfies both renderers.
+- **Doxygen VERSION matters — CI installs 1.17 from the official binary, not apt's 1.9.1.** The
+  blockquote bug above is present in ubuntu's old Doxygen 1.9.1 but fixed by ~1.17 (the local toolchain).
+  A local `doxygen` test can therefore pass while CI (if it used apt's 1.9.1) stays broken. So
+  `pages.yml` and `release.yml` download Doxygen 1.17.0 from `doxygen.nl/files/` to `/usr/local/bin`,
+  keeping CI output identical to local. Bump that pinned version when the local toolchain moves.
 
 ---
 
