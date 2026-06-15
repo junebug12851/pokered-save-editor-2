@@ -191,7 +191,7 @@ As things happen during a session, update the appropriate file on the spot:
 
 | Trigger | Action |
 |---------|--------|
-| Did work worth recording this session | Append an entry to today's `notes/sessions/YYYY-MM/YYYY-MM-DD.md` (create the file — and the `YYYY-MM/` month folder if it's a new month — if it's the first entry today; newest on top). See `notes/sessions/README.md` |
+| Did work worth recording this session | Append an entry to today's `notes/sessions/YYYY-MM/YYYY-MM-DD.md` (create the file — and the `YYYY-MM/` month folder if it's a new month — if it's the first entry today; newest on top). **If you CREATE a new day file, add its `\subpage` to `notes/_nav.dox`** (newest-first under the month hub; a new month → add a month-hub page too) or it floats to the Doxygen root. See `notes/sessions/README.md` |
 | Fixed a compiler or runtime error | Add a row to `notes/reference/fix-patterns.md` |
 | Hit a Qt 5 → Qt 6 difference or any Qt/QML landmine | Add a section/row to `notes/reference/qt-patterns.md` |
 | Used a diagnostic technique to find a problem | Add/update `notes/reference/diagnostic-methods.md` |
@@ -203,6 +203,7 @@ As things happen during a session, update the appropriate file on the spot:
 | Something significant about the project's history changes | Update `notes/context/history.md` |
 | A new contributor/tool/service/asset/AI helps the project | Add them to `projects/db/assets/data/credits.json` (see "Keep the Credits Screen Living" below) |
 | A change warrants a new version (keep `VERSION` current by default) | Bump the one line in repo-root `VERSION` in the **same commit** — **PATCH** for a fix/small change, **MINOR** for a feature; **never MAJOR** (leaders-only). Reconfigure to apply; tag `vX.Y.Z` on release (on request). Never hardcode a version. See `notes/reference/versioning.md` |
+| Created ANY new Markdown note in the Doxyfile `INPUT` (a session day, a new month folder, a `reference/`/`decisions/`/etc. page, a new changelog month) | Add its `\subpage` to `notes/_nav.dox` under the right hub, **same commit** — a page with no entry floats flat to the top of "Related Pages" on the Doxygen/Pages site instead of nesting. New month/folder → add its hub page too. (This bites easily — today's session + new reference docs all floated until fixed, 2026-06-15.) See the hard rule atop `notes/_nav.dox` |
 
 Also: if something comes up that doesn't fit any existing file, create a new file in the right folder.
 The structure is meant to grow. Don't stuff things into the wrong place to avoid creating a new file.
