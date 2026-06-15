@@ -420,6 +420,11 @@ Page {
                         }
 
                         ToolTip {
+                          // Anchor to the count cell: centered on the number and
+                          // tucked just below it, instead of the default top-left
+                          // popup placement that floated away from the number.
+                          x: (parent.width - width) / 2
+                          y: parent.height + 4
                           visible: cellHover.containsMouse && cnt > 0 && tip !== ""
                           text: tip
                           delay: 250

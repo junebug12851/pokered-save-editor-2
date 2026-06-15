@@ -176,7 +176,7 @@ void MainWindow::saveState()
 void MainWindow::loadState()
 {
   settings.beginGroup("WindowState");
-  QSize  savedSize = settings.value("size", QSize(640, 480)).toSize();
+  QSize  savedSize = settings.value("size", QSize(1130, 740)).toSize();
   QPoint savedPos  = settings.value("pos",  QPoint(200, 200)).toPoint();
   settings.endGroup();
 

@@ -35,7 +35,7 @@ Page {
     id: card
     anchors.centerIn: parent
     width: 360
-    height: 300
+    height: 250 // matches the Trainer Card grey box height (CardFront / SwipeView)
 
     border.color: brg.settings.textColorMid
     color: "transparent"

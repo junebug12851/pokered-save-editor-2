@@ -166,7 +166,7 @@ public:
     DB::inst()->qmlProtect(m_view->engine());
 
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
-    m_view->resize(1024, 768);
+    m_view->resize(1130, 740);
   }
 
   ~GuiApp()
