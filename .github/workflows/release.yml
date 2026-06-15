@@ -225,9 +225,12 @@ jobs:
             build-essential ninja-build \
             libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev \
             xvfb fonts-dejavu-core \
-            python3-pil \
             doxygen graphviz \
             file desktop-file-utils
+          # Pillow for the `python3` actually on PATH (setup-python hostedtoolcache,
+          # not the system one apt's python3-pil targets) -- make_gifs.py needs it.
+          python3 -m pip install --upgrade Pillow \
+            || python3 -m pip install --break-system-packages --upgrade Pillow
 
       - name: Install Qt (Linux gcc_64)
         uses: jurplel/install-qt-action@v4
@@ -341,12 +344,44 @@ jobs:
         with:
           path: artifacts
 
+      # A well-structured, descriptive release body by default. softprops appends the
+      # auto-generated "What's Changed" (commits/PRs) below this.
+      - name: Compose release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          ver="${{ needs.version.outputs.version }}"
+          {
+            echo "**Pokered Save Editor v${ver}** — a save-file editor for Pokémon Red & Blue (Gen 1), built with Qt 6 (C++/QML)."
+            echo
+            if [ "${{ needs.version.outputs.prerelease }}" = "true" ]; then
+              echo "> ⚠️ **Pre-release** — under active development; expect rough edges. The binaries are **unsigned**, so Windows SmartScreen (and some Linux setups) will warn on first launch — that's expected for an alpha."
+              echo
+            fi
+            echo "### Downloads"
+            echo
+            echo "| Platform | File | Notes |"
+            echo "|---|---|---|"
+            echo "| Windows | \`*-windows-x64-setup.exe\` | Installer (recommended) |"
+            echo "| Windows | \`*-windows-x64-portable.zip\` | Portable — unzip and run \`PokeredSaveEditor.exe\` |"
+            echo "| Linux | \`*-x86_64.AppImage\` | Portable — \`chmod +x\` then run |"
+            echo "| Linux | \`*-linux-x64-portable.tar.gz\` | Portable tree |"
+            echo
+            echo "### Also attached"
+            echo "- \`*-docs.zip\` — generated code documentation (Doxygen)"
+            echo "- \`*-screenshots.zip\` — UI screenshots & animations"
+            echo
+            echo "_Built automatically from \`main\` by the release pipeline; the full per-commit changelog lives in \`notes/version/\`._"
+          } > RELEASE_BODY.md
+          cat RELEASE_BODY.md
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.version.outputs.tag }}
           target_commitish: ${{ github.sha }}
-          name: ${{ needs.version.outputs.tag }}
+          name: Pokered Save Editor ${{ needs.version.outputs.tag }}
+          body_path: RELEASE_BODY.md
           prerelease: ${{ needs.version.outputs.prerelease == 'true' }}
           generate_release_notes: true
           fail_on_unmatched_files: true

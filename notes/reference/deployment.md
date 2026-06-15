@@ -1,8 +1,19 @@
 # Deployment / Releases (GitHub Actions)
 
 How release binaries are built and published. CI (test-on-every-push) lives in
-`.github/workflows/tests.yml`; **deployment** lives in `.github/workflows/release.yml`.
+`.github/workflows/tests.yml`; **software deployment** lives in `.github/workflows/release.yml`;
+**README screenshots** are deployed to GitHub Pages by `.github/workflows/screenshots.yml`.
 Built 2026-06-15.
+
+## Policy (standing rules)
+
+- **Releases are SOFTWARE releases only** — never an images-only or otherwise non-software release.
+  The versioned `release.yml` release is the only kind; don't create side releases to host files.
+- **Every Release has a well-written title + description by default** — clear, concise, informative,
+  structured (downloads table + prerelease/unsigned note); `release.yml`'s `Compose release notes` step
+  builds it and the auto "What's Changed" is appended.
+- **README screenshots go on GitHub Pages**, not git or a release (zero repo-size growth, no third
+  party). See "README screenshots (GitHub Pages)" below.
 
 ## What gets published
 
@@ -17,6 +28,25 @@ Each release attaches:
 - **Docs `.zip`** — the generated Doxygen HTML site (`doxygen Doxyfile` → `docs/html`).
 - **Screenshots `.zip`** — the UI PNGs + GIFs from the `screenshooter` tool (captured
   headless under `xvfb`).
+
+## README screenshots (GitHub Pages)
+
+`.github/workflows/screenshots.yml` runs on every push to `main`: it captures the UI headless
+(`screenshooter` under xvfb), gathers the **loose** images (`screens/*.png` + `editor/*.png` + the GIFs;
+the `frames/` folder is excluded) into a small site (+ a browsable `index.html` gallery), and deploys it
+to **GitHub Pages** (`actions/configure-pages` → `upload-pages-artifact` → `deploy-pages`). Served at:
+
+```
+https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>
+```
+
+Why Pages: images live on the Pages CDN, **not** in the git repo (no size growth, no LFS) and **not** in
+a release (releases stay software-only), and CI keeps them current. Pages was enabled with the
+**GitHub Actions** build source (`gh api -X POST repos/:owner/:repo/pages -f build_type=workflow`); the
+workflow needs `permissions: pages: write` + `id-token: write` and the `github-pages` environment.
+README embeds these URLs directly. (Considered + rejected: rolling images-only release — violates the
+software-only rule; orphan branch — repo object-store bloat; Imgur — image purges / deprecated API /
+needs a secret.)
 
 ## When it runs (the version gate)
 

@@ -166,6 +166,20 @@ calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, 
 - **Never auto-act on issues/PRs** (no closing issues, merging PRs, or pushing to PR branches) without an
   explicit go-ahead — surfacing + asking is the default, acting is opt-in. Hard git safety rules apply.
 
+### Release & publishing policy (standing rules)
+
+- **GitHub Releases are for SOFTWARE releases ONLY — never an images-only or otherwise non-software
+  release.** The versioned `release.yml` release (Windows installer/portable, Linux AppImage/tar.gz, docs
+  zip, screenshots zip) is the only kind. Don't create side releases just to host files.
+- **Every Release gets a well-written title + description by default** — clear, concise, informative,
+  structured/organized (a downloads table, the prerelease/unsigned note, etc.). `release.yml` composes
+  this automatically (`Compose release notes` step → `body_path`) with the auto "What's Changed" appended;
+  keep that quality bar if you touch it.
+- **README screenshots live on GitHub Pages, not in git or a release.** `screenshots.yml` deploys the
+  loose images (screens + editor + GIFs, no `frames/`) to Pages on every `main` push — zero repo-size
+  growth, no third-party host. README embeds `https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>`.
+  See `notes/reference/deployment.md`.
+
 ## Maintaining the Notes — Your Responsibility
 
 **The notes system is a living document. Keep it updated as you work — do not wait to be asked.**
