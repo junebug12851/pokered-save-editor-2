@@ -89,8 +89,10 @@ correctly:
 - **Doxygen VERSION matters — CI installs 1.17 from the official binary, not apt's 1.9.1.** The
   blockquote bug above is present in ubuntu's old Doxygen 1.9.1 but fixed by ~1.17 (the local toolchain).
   A local `doxygen` test can therefore pass while CI (if it used apt's 1.9.1) stays broken. So
-  `pages.yml` and `release.yml` download Doxygen 1.17.0 from `doxygen.nl/files/` to `/usr/local/bin`,
-  keeping CI output identical to local. Bump that pinned version when the local toolchain moves.
+  `pages.yml` and `release.yml` download Doxygen 1.17.0 to `/usr/local/bin` — from the **Doxygen GitHub
+  release** (`github.com/doxygen/doxygen/releases/.../doxygen-<v>.linux.bin.tar.gz`), since
+  `doxygen.nl/files/` returns **403** to datacenter/curl requests (a browser-UA `doxygen.nl` fetch is the
+  fallback). Keeps CI output identical to local; bump the pinned version when the local toolchain moves.
 
 ---
 
