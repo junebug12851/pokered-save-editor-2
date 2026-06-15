@@ -67,13 +67,38 @@ Write-Host "Capturing screenshots -> $OutDir"
 & $exe $OutDir
 if ($LASTEXITCODE -ne 0) { throw "screenshooter run failed ($LASTEXITCODE)" }
 
+# Find a REAL Python, skipping the Microsoft Store execution-alias stub
+# (the WindowsApps "python.exe" that just prints "Python was not found"). Checks
+# PATH (minus WindowsApps) then the registered PythonCore installs.
+function Resolve-Python {
+  $cands = @()
+  foreach ($n in 'python.exe', 'python3.exe') {
+    $cands += (Get-Command $n -All -ErrorAction SilentlyContinue |
+               Where-Object { $_.Source -and $_.Source -notlike '*WindowsApps*' } |
+               Select-Object -ExpandProperty Source)
+  }
+  foreach ($h in 'HKLM:\SOFTWARE\Python\PythonCore', 'HKCU:\SOFTWARE\Python\PythonCore',
+                 'HKLM:\SOFTWARE\WOW6432Node\Python\PythonCore') {
+    Get-ChildItem $h -ErrorAction SilentlyContinue | ForEach-Object {
+      $ip = (Get-ItemProperty "$($_.PSPath)\InstallPath" -ErrorAction SilentlyContinue).'(default)'
+      if ($ip) { $cands += (Join-Path $ip 'python.exe') }
+    }
+  }
+  foreach ($c in $cands) {
+    if ($c -and (Test-Path $c)) {
+      try { & $c --version *> $null; if ($LASTEXITCODE -eq 0) { return $c } } catch { }
+    }
+  }
+  return $null
+}
+
 if (-not $SkipGifs) {
-  $py = (Get-Command python -ErrorAction SilentlyContinue) ?? (Get-Command python3 -ErrorAction SilentlyContinue)
+  $py = Resolve-Python
   if ($py) {
-    Write-Host "Assembling GIFs..."
-    & $py.Source (Join-Path $repo 'scripts\make_gifs.py') --dir $OutDir
+    Write-Host "Assembling GIFs ($py)..."
+    & $py (Join-Path $repo 'scripts\make_gifs.py') --dir $OutDir
   } else {
-    Write-Warning "python not found; skipping GIF assembly (PNGs are still in $OutDir)."
+    Write-Warning "No real Python found (only the Store stub?); skipping GIF assembly (PNGs are still in $OutDir)."
   }
 }
 
