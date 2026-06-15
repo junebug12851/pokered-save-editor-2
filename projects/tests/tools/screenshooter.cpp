@@ -95,6 +95,14 @@ bool grab(GuiApp& app, const QString& rel)
     ++g_failed;
     return false;
   }
+  // grabWindow() returns PHYSICAL pixels (a HiDPI display renders at its DPR, e.g.
+  // 1695x1110 on a 150% screen). Downsample to the LOGICAL window size so output is a
+  // stable 1130x740 regardless of display scaling (a smooth downscale is, if anything,
+  // crisper than a native DPR-1 render).
+  const QSize logical(app.view()->width(), app.view()->height());
+  if (logical.isValid() && !logical.isEmpty() && img.size() != logical)
+    img = img.scaled(logical, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  img.setDevicePixelRatio(1.0);
   const QString p = outPath(rel);
   if (!img.save(p, "PNG")) {
     qWarning().noquote() << "  [FAIL] save ->" << p;
@@ -164,25 +172,34 @@ static void captureScreens(GuiApp& app)
   }
 }
 
-// 2) The Pokemon + Bag "View All" overview drawers slid open.
+// First item under @p from whose `text` property equals @p label (DFS).
+static QQuickItem* itemByText(QQuickItem* from, const QString& label)
+{
+  return GuiApp::findItem(from, [&](QQuickItem* i) {
+    return i->property("text").toString() == label;
+  });
+}
+
+// 2) The Pokemon + Bag "View All" overview drawers slid open. Opened by CLICKING
+//    the real footer "View All" button (the user action), which is robust across
+//    both screens -- guessing the panel by a `shown` property hit the wrong item
+//    on the Bag screen.
 static void captureViewAll(GuiApp& app)
 {
   qInfo().noquote() << "== view all drawers ==";
   const char* screens[] = { "pokemon", "bag" };
   for (const char* sc : screens) {
     app.navigate(QString::fromLatin1(sc));
-    app.settle(120);
-    QQuickItem* page  = app.currentNonModal();
-    QQuickItem* panel = findByProp(page, "shown");   // viewAllPanel.shown
-    if (!panel) {
-      qWarning().noquote() << "  [skip] no View All panel found on" << sc;
+    app.settle(140);
+    QQuickItem* page = app.currentNonModal();
+    QQuickItem* btn  = itemByText(page, QStringLiteral("View All"));
+    if (!btn) {
+      qWarning().noquote() << "  [skip] no View All button on" << sc;
       continue;
     }
-    panel->setProperty("shown", true);
-    app.settle(280);                                 // 200ms slide + breathing room
+    app.clickItem(btn);          // triggers the footer's onBtn1Clicked -> panel.shown = true
+    app.settle(320);             // 200ms slide-in + breathing room
     grab(app, QStringLiteral("screens/%1_view_all.png").arg(QString::fromLatin1(sc)));
-    panel->setProperty("shown", false);
-    app.settle(60);
   }
 }
 
@@ -274,8 +291,8 @@ static void capturePokedexHover(GuiApp& app)
   app.settle(160);
   // Hover a dex tile delegate (an Image fairly deep in the grid).
   QList<QQuickItem*> imgs = app.itemsByType(QStringLiteral("QQuickImage"), app.currentNonModal());
-  if (imgs.size() > 6) {
-    hover(app, imgs.at(imgs.size() / 3), 700);
+  if (imgs.size() >= 2) {
+    hover(app, imgs.at(imgs.size() / 2), 700);
     grab(app, QStringLiteral("screens/pokedex_hover_tile.png"));
   } else {
     qWarning().noquote() << "  [skip] not enough dex tiles to hover (" << imgs.size() << ")";
@@ -341,27 +358,37 @@ static void captureFramesTyping(GuiApp& app)
   QQuickItem* nd = findByProp(app.currentNonModal(), "editorVisible");
   if (!nd) { qWarning().noquote() << "  [skip] no name editor"; return; }
   nd->setProperty("editorVisible", true);
-  app.settle(260);
+  app.settle(300);
 
-  // The popup field (NameEdit) lives in Overlay.overlay; prefer the focused
-  // TextField, else the last one (the modal popup's field is added last).
-  QList<QQuickItem*> fields = app.itemsByType(QStringLiteral("TextField"), viewRoot(app));
+  // The popup's editable NAME field. The Popup is a QML child of this NameDisplay
+  // (even though its visuals render in Overlay.overlay), so the field is reachable as
+  // a descendant of nd. Identify it by its unique placeholder "Enter a name" (NOT the
+  // first TextField -- that's the tileset combo's). Driving THIS field's text controls
+  // the value: its onTextChanged pushes up to NameDisplay.str, so the field AND the
+  // live GB-font preview update together (the textbox owns the value).
   QQuickItem* field = nullptr;
-  for (QQuickItem* fl : fields)
-    if (fl->property("activeFocus").toBool()) { field = fl; break; }
-  if (!field && !fields.isEmpty()) field = fields.last();
+  for (QQuickItem* o : nd->findChildren<QQuickItem*>())   // QObject tree (incl. the overlay popup)
+    if (o->property("placeholderText").toString().contains(QStringLiteral("Enter a name"))) {
+      field = o; break;
+    }
+  if (!field) {   // fallback: the LAST TextField under nd (the name field follows the combo)
+    for (QObject* o : nd->findChildren<QObject*>())
+      if (QString::fromLatin1(o->metaObject()->className()).contains(QLatin1String("TextField")))
+        field = qobject_cast<QQuickItem*>(o);
+  }
+  if (!field) {
+    qWarning().noquote() << "  [skip] popup name field not found";
+    nd->setProperty("editorVisible", false);
+    return;
+  }
 
-  // Drive the value letter-by-letter. Setting the field text simulates typing
-  // (its onTextChanged pushes up to `str`); also set `str` directly so the live
-  // in-game preview is guaranteed to update even if the field push is missed.
   const QStringList steps = { QStringLiteral(""), QStringLiteral("P"), QStringLiteral("PI"),
                               QStringLiteral("PIK"), QStringLiteral("PIKA"),
                               QStringLiteral("PIKAC"), QStringLiteral("PIKACHU") };
   int f = 0;
   for (const QString& s : steps) {
-    if (field) field->setProperty("text", s);
-    nd->setProperty("str", s);
-    app.settle(150);
+    field->setProperty("text", s);          // type THROUGH the textbox; preview follows
+    app.settle(170);
     grab(app, QStringLiteral("frames/typing/frame_%1.png").arg(f++, 3, 10, QLatin1Char('0')));
   }
 
@@ -443,10 +470,21 @@ int main(int argc, char** argv)
     qCritical().noquote() << "App.qml failed to load -- aborting.";
     return 2;
   }
-  app.view()->show();          // offscreen show: lets the scene graph render for grabs
-  app.settle(120);
+  // Render via a REAL GPU-backed window so MultiEffect / layered content renders
+  // exactly like the app's QQuickWidget. The offscreen+software path silently drops
+  // those items (missing Credits cards + Home disabled tiles, washed-out shadows).
+  // Frameless + Tool + an off-screen position keeps it from flashing on the desktop.
+  // (Under QT_QPA_PLATFORM=offscreen these are simply no-ops -- a CI fallback that
+  // still runs, with the known effect-rendering limitation.)
+  {
+    QQuickView* v = app.view();
+    v->setFlags(v->flags() | Qt::FramelessWindowHint | Qt::Tool);
+    v->setPosition(-4000, -4000);
+    v->show();
+  }
+  app.settle(300);             // let the window expose + do its first GPU render
   app.closeTop();              // dismiss the New File modal -> Home
-  app.settle(80);
+  app.settle(120);
 
   captureScreens(app);
   captureViewAll(app);

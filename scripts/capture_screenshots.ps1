@@ -62,7 +62,12 @@ Add-Type -Namespace Win32 -Name Err -MemberDefinition @'
 [Win32.Err]::SetErrorMode(0x0003) | Out-Null   # SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
-$env:QT_QPA_PLATFORM = 'offscreen'
+# Render through a REAL GPU-backed window (NOT offscreen): the offscreen+software
+# path silently drops MultiEffect/layered content (Credits cards, Home disabled
+# tiles, shadows). The tool shows the window off-screen so nothing flashes on the
+# desktop. Pin DPR=1 so the grab is exactly 1130x740 regardless of display scaling.
+Remove-Item Env:\QT_QPA_PLATFORM -ErrorAction SilentlyContinue
+$env:QT_SCALE_FACTOR = '1'
 Write-Host "Capturing screenshots -> $OutDir"
 & $exe $OutDir
 if ($LASTEXITCODE -ne 0) { throw "screenshooter run failed ($LASTEXITCODE)" }
