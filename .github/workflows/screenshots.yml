@@ -1,0 +1,88 @@
+name: screenshots
+
+# Keeps a set of LOOSE UI images on GitHub that the README can embed and that stay
+# current automatically. On every push to `main` it captures the screenshots headless
+# (the `screenshooter` tool under xvfb) and uploads the individual files to a single
+# ROLLING prerelease tagged `screenshots`, clobbering the previous ones. That gives
+# each image a permanent, always-latest URL:
+#
+#   https://github.com/junebug12851/pokered-save-editor-2/releases/download/screenshots/<name>
+#
+# Embed them in README.md with normal Markdown image syntax. This is NOT a software
+# release — the versioned `release.yml` artifacts are the downloads; this is just an
+# image host CI keeps fresh. Uploads screens/*.png + editor/*.png + the GIFs (the
+# frames/ folder is intentionally excluded).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write          # create/replace the rolling release + assets
+
+concurrency:
+  group: screenshots
+  cancel-in-progress: true # a newer push supersedes an in-flight capture
+
+env:
+  QT_VERSION: "6.8.3"
+
+jobs:
+  shots:
+    runs-on: ubuntu-22.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build + capture deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential ninja-build \
+            libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev \
+            xvfb fonts-dejavu-core python3-pil
+
+      - name: Install Qt (Linux gcc_64)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtcharts
+          cache: true
+
+      - name: Configure (Release, tests ON for the screenshooter target)
+        run: cmake -S projects -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Capture screenshots (headless, xvfb)
+        # Builds the `screenshooter` target and runs it under xvfb (MultiEffect renders
+        # via llvmpipe), then assembles the GIFs with Pillow. Renders only -- never
+        # writes a save byte.
+        run: bash scripts/capture_screenshots.sh
+
+      - name: Collect loose images (screens + editor + GIFs; NO frames/)
+        run: |
+          set -euo pipefail
+          mkdir -p shots
+          cp tmp/screenshots/screens/*.png shots/ 2>/dev/null || true
+          cp tmp/screenshots/editor/*.png  shots/ 2>/dev/null || true
+          cp tmp/screenshots/*.gif         shots/ 2>/dev/null || true
+          echo "collected $(ls -1 shots | wc -l) files:"; ls -1 shots
+          test -n "$(ls -A shots)"   # fail if nothing was captured
+
+      - name: Publish to the rolling 'screenshots' release
+        run: |
+          set -euo pipefail
+          # Create the rolling release once (idempotent); then clobber its assets so the
+          # download URLs always serve the latest image.
+          gh release view screenshots >/dev/null 2>&1 || \
+            gh release create screenshots \
+              --prerelease \
+              --title "UI Screenshots (latest — auto-updated)" \
+              --notes "Auto-updated on every push to \`main\` by .github/workflows/screenshots.yml; embedded in the README. NOT a software release — see the versioned releases for downloads."
+          gh release upload screenshots shots/* --clobber
+          echo "Updated $(ls -1 shots | wc -l) images at:"
+          echo "  https://github.com/${GITHUB_REPOSITORY}/releases/download/screenshots/<name>"
