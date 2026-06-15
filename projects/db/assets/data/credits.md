@@ -30,6 +30,8 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 - **[Git](https://git-scm.com)** -- Powers the projects VCS
 - **[Docker](https://docker.com)** -- Containerized Linux build/test environment -- runs the full test suite plus AddressSanitizer/UBSan and coverage, which can't run on the Windows kit
 - **[Pillow](https://python-pillow.github.io)** -- Assembles the captured UI screenshot frames into animated GIFs (the developer screenshot pipeline) _(License: MIT-CMU)_
+- **[Inno Setup](https://jrsoftware.org/isinfo.php)** -- Builds the Windows installer in the release pipeline
+- **[linuxdeploy](https://github.com/linuxdeploy/linuxdeploy)** -- Bundles the Linux AppImage (with its Qt plugin) in the release pipeline
 
 ## Services Used
 

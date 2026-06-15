@@ -30,6 +30,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/documentation.md` | **Docs** — generating the Doxygen site, the comment house-style, and the doc-pass progress ledger (all merged here) |
 | `notes/reference/git-workflow.md` | **Git standards** — branch model (`main` FF-only/stable, `dev` frequent), no history rewriting, commit-message style, hard safety rules. Read before any git op |
 | `notes/reference/versioning.md` | **Version-number scheme** — SemVer, single source of truth (`VERSION`), how it propagates (CMake → `pse_version.h` → app/About/.exe), how to bump, release/tag process. (The *changelog* is `notes/version.md`) |
+| `notes/reference/deployment.md` | **Releases / deployment** — the GitHub Actions `release.yml` pipeline: builds Windows portable+zip+installer, Linux AppImage+tar.gz, Doxygen docs zip, screenshots zip, and publishes a GitHub Release on each `main` commit that bumped `VERSION` (tag-gated). Toolchain mirrors `tests.yml`; first-run shakeout points noted |
 | `notes/decisions/architecture.md` | Key structural choices and why |
 | `notes/decisions/rejected.md` | Things tried that failed — do not repeat |
 | `notes/plans/next-steps.md` | Ordered task list |

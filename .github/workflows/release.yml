@@ -1,0 +1,307 @@
+name: release
+
+# Builds release artifacts and publishes a GitHub Release whenever `main` advances
+# to a NEW version. The trigger is a push to `main` (which is FF-only from green
+# `dev`, so it's always all-green); the gate is that the tag `v<VERSION>` does not
+# yet exist -- i.e. VERSION has been bumped since the last release. If VERSION is
+# unchanged (tag already exists), the run is a no-op. So: bump VERSION (PATCH/MINOR)
+# -> the next main commit cuts the release; commits that don't bump VERSION don't.
+#
+# Artifacts attached to the release:
+#   * Windows portable .zip            (windeployqt'd, run-in-place)
+#   * Windows installer .exe           (Inno Setup)
+#   * Linux .AppImage                  (portable, double-click run)
+#   * Linux portable .tar.gz           (the AppDir tree)
+#   * Doxygen HTML docs .zip
+#   * UI screenshots + GIFs .zip       (the screenshooter, headless under xvfb)
+#
+# workflow_dispatch lets you DRY-RUN: it builds + uploads everything as workflow
+# artifacts but (with dry_run = true, the default) does NOT create the Release.
+#
+# Toolchain mirrors .github/workflows/tests.yml (the proven-locally Qt setup):
+# Qt 6.8.3 via install-qt-action; Windows = win64_llvm_mingw + tools_llvm_mingw1706
+# + "MinGW Makefiles"; Linux = linux_gcc_64 + Ninja. Just Release instead of Debug,
+# and the app target instead of tests.
+#
+# NOTE: like tests.yml, the very first run may need a small shakeout (windeployqt
+# runtime DLLs, linuxdeploy-qt QML discovery, Inno path). Shakeout points are
+# flagged inline. See notes/reference/deployment.md.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build artifacts but do NOT publish a GitHub Release"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write          # create the tag + release
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  QT_VERSION: "6.8.3"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Decide whether to release: read VERSION, derive the tag, check it's new.
+  # ---------------------------------------------------------------------------
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      tag: ${{ steps.v.outputs.tag }}
+      prerelease: ${{ steps.v.outputs.prerelease }}
+      should_release: ${{ steps.v.outputs.should_release }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - id: v
+        shell: bash
+        run: |
+          set -euo pipefail
+          # First non-comment, non-blank line of VERSION (strip whitespace/CR).
+          VER=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' VERSION | head -n1 | tr -d '[:space:]\r')
+          TAG="v${VER}"
+          echo "version=${VER}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}"     >> "$GITHUB_OUTPUT"
+          # A '-' label (-alpha/-beta/-rc) => mark the GitHub Release as a prerelease.
+          if printf '%s' "$VER" | grep -q '-'; then
+            echo "prerelease=true"  >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+          if git rev-parse "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists -> nothing to release."
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag ${TAG} is new -> will build + release."
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Windows: portable .zip + Inno Setup installer .exe
+  # ---------------------------------------------------------------------------
+  windows:
+    needs: version
+    if: needs.version.outputs.should_release == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt (Windows llvm-mingw)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_llvm_mingw
+          modules: qtcharts
+          tools: "tools_llvm_mingw1706"
+          cache: true
+
+      - name: Configure (Release)
+        shell: bash
+        run: >
+          cmake -S projects -B build
+          -G "MinGW Makefiles"
+          -DCMAKE_BUILD_TYPE=Release
+          -DPSE_BUILD_TESTS=OFF
+
+      - name: Build app
+        run: cmake --build build -j --target PokeredSaveEditor
+
+      - name: Deploy Qt runtime (windeployqt)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/PokeredSaveEditor
+          EXE=$(find build -name PokeredSaveEditor.exe | head -n1)
+          echo "exe: $EXE"
+          cp "$EXE" dist/PokeredSaveEditor/
+          # --compiler-runtime pulls the llvm-mingw runtime DLLs (libc++/libunwind/
+          # libwinpthread) -- the toolchain bin must be on PATH (install-qt-action
+          # adds it). SHAKEOUT: if the app fails to start with a missing-DLL error,
+          # copy the offending DLL from the llvm-mingw bin here explicitly.
+          windeployqt --release --compiler-runtime --no-translations \
+            --qmldir projects/app/ui \
+            dist/PokeredSaveEditor/PokeredSaveEditor.exe
+
+      - name: Package portable .zip
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force out | Out-Null
+          $ver = "${{ needs.version.outputs.version }}"
+          Compress-Archive -Path dist/PokeredSaveEditor/* `
+            -DestinationPath "out/PokeredSaveEditor-$ver-windows-x64-portable.zip" -Force
+
+      - name: Build installer (Inno Setup)
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          $ver = "${{ needs.version.outputs.version }}"
+          & "$Env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe" `
+            "/DMyAppVersion=$ver" `
+            "/DMySourceDir=$(Resolve-Path dist/PokeredSaveEditor)" `
+            "/DMyOutputDir=$(Join-Path (Get-Location) 'out')" `
+            "/DMyIconFile=$(Resolve-Path projects/app/assets/icons/app/icon.ico)" `
+            packaging/windows/installer.iss
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: out/*
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Linux: AppImage + portable .tar.gz + UI screenshots .zip
+  # ---------------------------------------------------------------------------
+  linux:
+    needs: version
+    if: needs.version.outputs.should_release == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-22.04          # older base => wider AppImage glibc compatibility
+    env:
+      APPIMAGE_EXTRACT_AND_RUN: 1   # run the linuxdeploy AppImages without FUSE on CI
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build + packaging deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential ninja-build \
+            libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev \
+            xvfb fonts-dejavu-core \
+            python3-pil \
+            doxygen graphviz \
+            file desktop-file-utils
+
+      - name: Install Qt (Linux gcc_64)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtcharts
+          cache: true
+
+      - name: Configure (Release, tests ON so the screenshooter target exists)
+        run: >
+          cmake -S projects -B build
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build app
+        run: cmake --build build -j --target PokeredSaveEditor
+
+      - name: Fetch linuxdeploy + Qt plugin
+        run: |
+          base="https://github.com/linuxdeploy"
+          curl -fL -o linuxdeploy.AppImage \
+            "$base/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+          curl -fL -o linuxdeploy-plugin-qt.AppImage \
+            "$base/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
+          chmod +x linuxdeploy*.AppImage
+
+      - name: Build AppImage + portable tar.gz
+        run: |
+          set -euo pipefail
+          ver="${{ needs.version.outputs.version }}"
+          EXE=$(find build -type f -name PokeredSaveEditor | head -n1)
+          echo "exe: $EXE"
+          mkdir -p AppDir/usr/bin
+          cp "$EXE" AppDir/usr/bin/
+          # linuxdeploy-plugin-qt discovers QML imports from these source paths.
+          export QML_SOURCES_PATHS="$PWD/projects/app/ui"
+          export QMAKE="$QT_ROOT_DIR/bin/qmake"
+          export OUTPUT="PokeredSaveEditor-${ver}-x86_64.AppImage"
+          ./linuxdeploy.AppImage \
+            --appdir AppDir \
+            --executable "$EXE" \
+            --desktop-file packaging/linux/PokeredSaveEditor.desktop \
+            --icon-file projects/app/assets/icons/app/256x256.png \
+            --icon-filename PokeredSaveEditor \
+            --plugin qt \
+            --output appimage
+          mkdir -p out
+          mv "$OUTPUT" "out/$OUTPUT"
+          # Portable tarball = the fully-populated AppDir (Qt libs bundled).
+          tar -C AppDir -czf "out/PokeredSaveEditor-${ver}-linux-x64-portable.tar.gz" .
+
+      - name: Capture UI screenshots (headless, xvfb)
+        run: |
+          set -euo pipefail
+          ver="${{ needs.version.outputs.version }}"
+          # Builds the `screenshooter` target into the existing build/ and runs it
+          # under xvfb (real GPU-less X => MultiEffect renders via llvmpipe), then
+          # assembles the GIFs with Pillow. Renders only; never writes a save byte.
+          bash scripts/capture_screenshots.sh
+          ( cd tmp/screenshots && zip -r "$GITHUB_WORKSPACE/out/PokeredSaveEditor-${ver}-screenshots.zip" . )
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: out/*
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Doxygen HTML docs -> .zip
+  # ---------------------------------------------------------------------------
+  docs:
+    needs: version
+    if: needs.version.outputs.should_release == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Doxygen + Graphviz
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz zip
+      - name: Generate docs
+        run: doxygen Doxyfile
+      - name: Package docs .zip
+        run: |
+          set -euo pipefail
+          ver="${{ needs.version.outputs.version }}"
+          mkdir -p out
+          if [ ! -d docs/html ]; then echo "docs/html not produced (check Doxyfile OUTPUT_DIRECTORY/HTML_OUTPUT)"; exit 1; fi
+          ( cd docs/html && zip -r "$GITHUB_WORKSPACE/out/PokeredSaveEditor-${ver}-docs.zip" . )
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: out/*
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Publish: gather all artifacts, create the tag + GitHub Release.
+  # Skipped on a dry-run workflow_dispatch.
+  # ---------------------------------------------------------------------------
+  release:
+    needs: [version, windows, linux, docs]
+    if: >
+      needs.version.outputs.should_release == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.dry_run == false)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ needs.version.outputs.tag }}
+          prerelease: ${{ needs.version.outputs.prerelease == 'true' }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: artifacts/**/*

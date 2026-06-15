@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Pokered Save Editor
+GenericName=Pokemon Save Editor
+Comment=Pokemon Red & Blue save file editor
+Exec=PokeredSaveEditor
+Icon=PokeredSaveEditor
+Terminal=false
+Categories=Utility;Game;
+Keywords=pokemon;save;editor;gameboy;

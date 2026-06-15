@@ -83,6 +83,16 @@
           "url": "python-pillow.github.io",
           "license": "MIT-CMU",
           "note": "Assembles the captured UI screenshot frames into animated GIFs (the developer screenshot pipeline)"
+        },
+        {
+          "name": "Inno Setup",
+          "url": "jrsoftware.org/isinfo.php",
+          "note": "Builds the Windows installer in the release pipeline"
+        },
+        {
+          "name": "linuxdeploy",
+          "url": "github.com/linuxdeploy/linuxdeploy",
+          "note": "Bundles the Linux AppImage (with its Qt plugin) in the release pipeline"
         }
       ]
     },
