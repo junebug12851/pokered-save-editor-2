@@ -118,10 +118,17 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
      commit, and **never** give a changelog/notes-only maintenance commit its own entry — that recursion
      (commit → entry → commit → …) is exactly what this rule prevents. See `notes/version.md` →
      "How this is kept updated (the inline rule)".
+   - **Keep `VERSION` current — bump it inside the same commit when a change warrants it.** **PATCH**
+     for a bug fix / small change, **MINOR** for a feature / notable change (you decide). **NEVER bump
+     MAJOR** (`→ 1.0.0`) — that's the project leaders' (Twilight's) call only. Docs / notes / test /
+     CI-only commits don't move the number. See `notes/reference/versioning.md`.
    - Commit early/often on **`dev`** with focused `type: summary` messages, **staging specific files only**
      (never `git add -A`/`.`), and `git push origin dev` after each commit.
    - When the **full suite is green**, fast-forward `main` and push automatically:
      `git checkout main && git merge --ff-only dev && git push origin main && git checkout dev`.
+   - **After fast-forwarding `main`, rebuild the Doxygen docs by default** — `doxygen Doxyfile` from the
+     repo root — so the generated `docs/html/` (git-ignored) always tracks `main`. See
+     `notes/reference/documentation.md`.
    - **Hard safety rules still absolute:** never `push --force`/force-with-lease, never rewrite pushed
      history, never `reset --hard`/`rebase`/`clean -fd`/delete a branch without an explicit request.
      Inspect `git status` before and after, every time. Full standards: `notes/reference/git-workflow.md`.
@@ -145,7 +152,7 @@ As things happen during a session, update the appropriate file on the spot:
 | Made any substantive commit | Write its changelog entry inline in `notes/version/YYYY-MM.md` and stage it in the **same** commit (no marker; never a separate doc commit). See Default Workflow step 4 + `notes/version.md` |
 | Something significant about the project's history changes | Update `notes/context/history.md` |
 | A new contributor/tool/service/asset/AI helps the project | Add them to `projects/db/assets/data/credits.json` (see "Keep the Credits Screen Living" below) |
-| The version changes / a release is cut | Bump the one line in repo-root `VERSION` (reconfigure to apply); tag `vX.Y.Z` on release (on request). The number propagates everywhere automatically — never hardcode a version. See `notes/reference/versioning.md` |
+| A change warrants a new version (keep `VERSION` current by default) | Bump the one line in repo-root `VERSION` in the **same commit** — **PATCH** for a fix/small change, **MINOR** for a feature; **never MAJOR** (leaders-only). Reconfigure to apply; tag `vX.Y.Z` on release (on request). Never hardcode a version. See `notes/reference/versioning.md` |
 
 Also: if something comes up that doesn't fit any existing file, create a new file in the right folder.
 The structure is meant to grow. Don't stuff things into the wrong place to avoid creating a new file.

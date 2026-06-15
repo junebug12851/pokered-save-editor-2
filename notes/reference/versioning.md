@@ -134,6 +134,11 @@ changelog stays per-commit and is maintained separately (by hand, on request).
 
 ## Maintenance (keep this current by default)
 
+- **Who bumps what.** The AI assistant keeps `VERSION` current by default and **decides MINOR and
+  PATCH bumps** — applied in the *same commit* as the change that warrants one (app fix → PATCH,
+  feature → MINOR). **MAJOR (`0.x` → `1.0.0`) is the project leaders' (Twilight's) call only, never
+  bumped automatically** — it's the stability/"first real release" promise. Docs / notes / test /
+  CI-only commits don't move the number (the app didn't change).
 - Bump `VERSION` at the commit where a feature/fix warrants it (the git hash updates itself;
   you never touch metadata by hand).
 - If you add a new place that needs the version, derive it from `pse_version.h` (C++) or

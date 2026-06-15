@@ -14,6 +14,12 @@
 #     candidate). Drop the label entirely for a final release. Pre-1.0 (0.x)
 #     already signals "in development, things still move."
 #
+# WHO bumps what (kept current by default): the AI assistant keeps this line
+# current -- it decides and applies MINOR and PATCH bumps in the same commit as
+# the change that warrants one. MAJOR (-> 1.0.0) is reserved for the project
+# leaders (Twilight) and is NEVER bumped automatically. App fixes -> PATCH,
+# features -> MINOR; docs/notes/test/CI-only commits do not move the number.
+#
 # Build identity (the git commit) is appended automatically by the build as
 # SemVer build metadata, e.g. 0.7.0-alpha+g1a2b3c4d -- you do NOT edit that here.
-0.7.0-alpha
+0.7.1-alpha
