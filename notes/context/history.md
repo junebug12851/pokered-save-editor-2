@@ -274,7 +274,7 @@ Fix: de-opaque the traversed QObject types and `#include` their full headers at 
 sites so Qt detects them as QObject pointers. Then (session 13c) the includes were **scoped down**
 to only the branches QML actually traverses, because including the whole tree into the
 everywhere-included `savefileexpanded.h` dragged db headers into every TU and tanked build time.
-See `decisions/architecture.md` → "QML Property-Chain Traversal" and `reference/qt6-patterns.md`.
+See `decisions/architecture.md` → "QML Property-Chain Traversal" and `reference/qt-patterns.md`.
 
 This unblocked everything: Trainer Card, Bag, Pokédex, Pokémon storage all read and persist;
 the "Connections: no signal matches" warning flood cleared (the targets were just undefined).

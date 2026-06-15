@@ -1,7 +1,7 @@
 # pokered-save-editor-2 — AI Context
 
-Pokemon Red & Blue save file editor. Qt 6 C++/QML desktop app. Open source; Twilight has been
-its only developer so far. Originally built 2017-2020, revived in 2026.
+Pokemon Red & Blue save file editor. Qt 6 C++/QML desktop app. Open source, built by Twilight.
+Originally built 2017-2020, revived in 2026.
 
 ## Start Here
 
@@ -11,28 +11,28 @@ The full notes system is in `notes/`. Everything is organized by topic:
 
 | File | What's in it |
 |------|-------------|
-| `notes/status.md` | **Current state** — build health, runtime status, immediate actions |
+| `notes/status.md` | **Current state** — build/runtime health, open issues, immediate actions. Start here |
+| `notes/sessions/` | **Session logs**, one file per day grouped in month folders (`YYYY-MM/YYYY-MM-DD.md`) — the day-by-day story of what changed and why. `sessions/README.md` defines the system; `revival-s13-series.md` holds the undated pre-corruption revival narrative |
+| `notes/version.md` | **Changelog** — the plain-English, one-entry-per-commit history (index; months under `notes/version/`). NOT the version-number scheme (that's `reference/versioning.md`) |
 | `notes/context/project.md` | What the project is and its goals |
 | `notes/context/architecture.md` | Codebase structure, build system, key patterns |
-| `notes/context/principles.md` | Owner's philosophy — what the app must/must not do |
+| `notes/context/principles.md` | Project philosophy — what the app must/must not do |
 | `notes/context/origins.md` | The 2019–2020 pre-revival story — three rewrites, the JS detour, the library/DB refactor |
 | `notes/context/history.md` | How the project was revived — what was broken, what was fixed |
-| `notes/systems/overview.md` | **System map** — in-depth macro/micro architecture: layers, boot, data flow, byte-fidelity. Start here to understand the machine |
+| `notes/systems/overview.md` | **System map** — in-depth macro/micro architecture: layers, boot, data flow, byte-fidelity. Per-layer deep-dives in `notes/systems/{common,savefile,db,app,qml}.md`. Start here to understand the machine |
 | `notes/reference/fix-patterns.md` | Compiler/runtime error → fix lookup table |
-| `notes/reference/qt6-patterns.md` | Qt 5 → Qt 6 migration gotchas |
-| `notes/reference/qt-gotchas.md` | Project-lifetime catalog of Qt/QML landmines (2019→2026), cross-linked to detail files |
-| `notes/reference/gen1-knowledge.md` | Gen 1 Red/Blue **save-format + gameplay** domain knowledge (offsets, checksum, badges, trade status, retroactive natures/shininess, randomizer rules) |
-| `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems |
-| `notes/reference/ui-patterns.md` | **UI/QML conventions** — layouts, borderless combos, ⋮ buttons, editor popups, sliders. Read before UI work |
-| `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language, what is/isn't wrapped; language switching deferred until a 2nd locale + Options screen exist |
-| `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems |
-| `notes/reference/documentation.md` | **Doc generation** — build C++ API docs (Doxygen), comment style, why QML is excluded |
+| `notes/reference/qt-patterns.md` | **The Qt/QML reference** — the project-lifetime catalog of every Qt/QML landmine (2019→2026) + the detailed Qt 5→6 patterns (with code) + case studies. (Merged: was `qt6-patterns.md` + `qt-gotchas.md` + `player-name-hang.md`) |
+| `notes/reference/gen1-knowledge.md` | Gen 1 Red/Blue **save-format + gameplay** domain knowledge (offsets, checksum, badges, trade status, retroactive natures/shininess, randomizer rules); box-recovery deep-dive in `notes/reference/box-recovery-research.md` |
+| `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems (truncation, hangs, QML chain failures, transcript recovery) |
+| `notes/reference/ui-patterns.md` | **UI/QML conventions** — layouts, borderless combos, ⋮ buttons, editor popups, sliders, drag & drop, View All drawers. Read before UI work |
+| `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language; language switching deferred until a 2nd locale + Options screen exist |
+| `notes/reference/documentation.md` | **Docs** — generating the Doxygen site, the comment house-style, and the doc-pass progress ledger (all merged here) |
 | `notes/reference/git-workflow.md` | **Git standards** — branch model (`main` FF-only/stable, `dev` frequent), no history rewriting, commit-message style, hard safety rules. Read before any git op |
-| `notes/reference/versioning.md` | **Version system** — SemVer scheme, single source of truth (`VERSION`), how it propagates (CMake → `pse_version.h` → app/About/.exe), git build metadata, how to bump, release/tag process. Read before touching the version |
+| `notes/reference/versioning.md` | **Version-number scheme** — SemVer, single source of truth (`VERSION`), how it propagates (CMake → `pse_version.h` → app/About/.exe), how to bump, release/tag process. (The *changelog* is `notes/version.md`) |
 | `notes/decisions/architecture.md` | Key structural choices and why |
 | `notes/decisions/rejected.md` | Things tried that failed — do not repeat |
 | `notes/plans/next-steps.md` | Ordered task list |
-| `notes/plans/testing.md` | **Testing strategy** — comprehensive plan: every test type mapped to the layers, tooling (QtTest/CTest/sanitizers/coverage), phased rollout, regression seed list. Blueprint; not yet implemented |
+| `notes/plans/testing.md` | **Testing** — the suite (QtTest/CTest, GUI harness, Docker variants, coverage) and remaining gaps. Live, not a blueprint — full `ctest` is green |
 | `notes/plans/future.md` | Longer-term ambitions |
 
 ## Critical Things Not to Get Wrong
@@ -43,31 +43,31 @@ The full notes system is in `notes/`. Everything is organized by topic:
 - **Do NOT change `(dexInd+1)` arithmetic in Pokedex.qml** — 0-indexed, +1 is correct. See `decisions/rejected.md`.
 - **Do NOT call `new XxxDB()`** — all DB classes have private constructors. Use `XxxDB::inst()`.
 - **Do NOT access DB entry fields directly** — all fields are protected. Use getters (`entry->getName()` not `entry->name`).
-- **Do NOT `Q_DECLARE_OPAQUE_POINTER` a QObject type you traverse in QML** — it forces `IsPointerToTypeDerivedFromQObject = false`, so QML reads the whole `brg.file.data.dataExpanded.*` chain as `undefined`. Fully `#include` the type's header instead. This (not missing `qRegisterMetaType`) was the real cause of the long-standing "undefined chain" bug, fixed in session 13. See `notes/reference/qt6-patterns.md`.
-- **Do wrap any `Q_INVOKABLE` that returns a QObject in `qmlCppOwned()`** (`pse-savefile/qmlownership.h`). Q_INVOKABLE returns of a parentless QObject default to JavaScriptOwnership and get garbage-collected by QML mid-session → dangling pointer → use-after-free crash. (Q_PROPERTY returns are safe; Q_INVOKABLE returns are NOT.) All existing `…At()` methods were fixed in session 13h. See `notes/reference/qt6-patterns.md`.
+- **Do NOT `Q_DECLARE_OPAQUE_POINTER` a QObject type you traverse in QML** — it forces `IsPointerToTypeDerivedFromQObject = false`, so QML reads the whole `brg.file.data.dataExpanded.*` chain as `undefined`. Fully `#include` the type's header instead. This (not missing `qRegisterMetaType`) was the real cause of the long-standing "undefined chain" bug, fixed in session 13. See `notes/reference/qt-patterns.md`.
+- **Do wrap any `Q_INVOKABLE` that returns a QObject in `qmlCppOwned()`** (`pse-savefile/qmlownership.h`). Q_INVOKABLE returns of a parentless QObject default to JavaScriptOwnership and get garbage-collected by QML mid-session → dangling pointer → use-after-free crash. (Q_PROPERTY returns are safe; Q_INVOKABLE returns are NOT.) All existing `…At()` methods were fixed in session 13h. See `notes/reference/qt-patterns.md`.
 - **Do NOT write any save-file bit or byte you weren't explicitly instructed to change.** Bit- and byte-exact fidelity is a top-tier project value: the editor changes *only* the exact bits and bytes for the edit and leaves every other bit and byte of the save totally untouched — even unused/unallocated bits are precious; a single unintended bit flip is unacceptable (this has been verified over many hours of manual testing). Never "rewrite/normalize the whole save," never reorder/repack, never touch checksums/regions you weren't told to. Corrupting a save is among the worst possible outcomes. See `notes/context/principles.md` → "Save File Integrity Is Sacred".
 - **No hacks, no temporary fixes, no bad fallbacks.** The quality bar here is high — UX is the #1 priority and there is no room for clunky/janky/interrupting behavior. Prefer the correct, clean solution even when it's the longer route; if you can only see a hacky path, surface it and ask rather than commit it. See `notes/context/principles.md` → "What the App Should Feel Like".
 
 ## Build System
 
 > **YOU CAN ACTUALLY BUILD/TEST/RUN/GIT — you are NOT limited to a sandbox.** The PowerShell
-> terminal tool has real access to Twilight's Windows machine, where the full Qt 6.11 llvm-mingw
+> terminal tool has real access to the local Windows machine, where the full Qt 6.11 llvm-mingw
 > toolchain is installed. From it you can directly **configure, build, run the tests, launch the
 > app, and `git add`/`commit`/`push`/fast-forward `main`** — by default, without asking. Prior Qt
 > command history from other chats and from Qt Creator is available to crib exact invocations from.
 > **Do NOT open a session claiming "I can't build, no Qt tools in the sandbox"** — that's wrong and
-> Twilight is tired of re-explaining it. (The Cowork *bash* sandbox is a separate, weaker tool with
+> do not repeat this misconception. (The Cowork *bash* sandbox is a separate, weaker tool with
 > stale-read issues — use **PowerShell** for anything real here, not bash.) The exact commands,
 > paths, and gotchas are below and in the Default Workflow section.
 
-Toolchain (Qt Creator kit `Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug`), all on Twilight's
+Toolchain (Qt Creator kit `Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug`), all on the local
 Windows machine via the PowerShell terminal:
 
 - Compiler/runtime: `C:\Qt\Tools\llvm-mingw1706_64\bin` (clang++, llvm-cov, llvm-profdata, llvm-nm)
 - Qt: `C:\Qt\6.11.0\llvm-mingw_64`; cmake `C:\Qt\Tools\CMake_64\bin\cmake.exe`; Ninja generator
 - **Two build dirs — do not mix them up:**
   - `build/` (repo root, Ninja) — the **test** build the automated loop uses (`cmake -S projects -B build`).
-  - `projects/build/Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug/` (Makefiles) — the **app** kit dir Twilight
+  - `projects/build/Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug/` (Makefiles) — the **app** kit dir
     actually runs. Siblings: `asan/`, `coverage/`. **Rebuild THIS for in-app testing**, not just `build/`.
   - `build-cov/` — coverage build (`-fprofile-instr-generate -fcoverage-mapping`, `PSE_SHARED_APPCORE=ON`).
 - Every PowerShell call must prepend PATH with the llvm-mingw + Qt `bin` dirs and set `$env:CC=clang;
@@ -86,14 +86,14 @@ Windows machine via the PowerShell terminal:
   the WSL bind mount. First run (2026-06-13): all four green (66/66; ASan clean; 89.73% line cov). See
   `notes/plans/testing.md` → "Local Linux container (Docker)" and `docker/README.md`.
 
-## Default Workflow — Do These By Default (Twilight's standing instruction)
+## Default Workflow — Do These By Default (a standing instruction)
 
 After making changes, run this loop **without being asked** (established 2026-06-10). Route all build/test
 output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (PowerShell ~60s cap).
 
 1. **Build + launch (on any C++/qrc change).** Rebuild the **kit dir**
    (`cmake --build "projects\build\Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug" --target PokeredSaveEditor`)
-   and **launch the app** so Twilight can test in-app immediately. (Pure edits to existing QML hot-reload —
+   and **launch the app** so it can be tested in-app immediately. (Pure edits to existing QML hot-reload —
    no rebuild; **new** QML files still need adding to `app/app.qrc` + a rebuild.)
 2. **Test.** Run the **affected** test(s) per change for speed (build `build/`, run `build\tst_x.exe`);
    run the **full `ctest`** suite before fast-forwarding `main`. Only proceed past a **green** result.
@@ -108,7 +108,7 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
 3. **Debug / profile.** If anything **crashes**, rebuild via the **`asan/`** (or debugger) sibling build,
    capture a **real stack trace** (output routed to a log), and diagnose from that — never guess.
    Do **periodic profiling** passes when touching hot paths. Always redirect std+err to a log to read it.
-4. **Commit + push + FF main — fully automatic (green-gated).** This is Twilight's explicit standing
+4. **Commit + push + FF main — fully automatic (green-gated).** This is an explicit standing
    request (it overrides the older "push only when asked" wording in `git-workflow.md`):
    - **Changelog rides inside the commit (write it BEFORE committing).** For any substantive change,
      write its plain-English entry at the top of the current month's file in `notes/version/` and stage
@@ -117,7 +117,7 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
      blame` the entry line to find its commit). **Never** make a separate "document the last commit"
      commit, and **never** give a changelog/notes-only maintenance commit its own entry — that recursion
      (commit → entry → commit → …) is exactly what this rule prevents. See `notes/version.md` →
-     "How this is kept updated" and `notes/reference/version-history.md`.
+     "How this is kept updated (the inline rule)".
    - Commit early/often on **`dev`** with focused `type: summary` messages, **staging specific files only**
      (never `git add -A`/`.`), and `git push origin dev` after each commit.
    - When the **full suite is green**, fast-forward `main` and push automatically:
@@ -134,8 +134,9 @@ As things happen during a session, update the appropriate file on the spot:
 
 | Trigger | Action |
 |---------|--------|
+| Did work worth recording this session | Append an entry to today's `notes/sessions/YYYY-MM/YYYY-MM-DD.md` (create the file — and the `YYYY-MM/` month folder if it's a new month — if it's the first entry today; newest on top). See `notes/sessions/README.md` |
 | Fixed a compiler or runtime error | Add a row to `notes/reference/fix-patterns.md` |
-| Hit a Qt 5 → Qt 6 difference | Add a section to `notes/reference/qt6-patterns.md` |
+| Hit a Qt 5 → Qt 6 difference or any Qt/QML landmine | Add a section/row to `notes/reference/qt-patterns.md` |
 | Used a diagnostic technique to find a problem | Add/update `notes/reference/diagnostic-methods.md` |
 | Made a structural decision | Add to `notes/decisions/architecture.md` |
 | Tried something that failed | Add to `notes/decisions/rejected.md` |
@@ -155,7 +156,7 @@ with no information trapped in a human's head or lost between sessions.
 ## Keep the Credits Screen Living
 
 The in-app **Credits / About** screen is a living document — keep it current **by default,
-without being asked** (Twilight's standing instruction). Whenever someone or something new
+without being asked** (a standing instruction). Whenever someone or something new
 contributes — a person, framework, tool, service, icon/asset source, or an AI assistant
 (e.g. Claude, ChatGPT) — add them to `projects/db/assets/data/credits.json` under the right
 section. Sections are read, in display order, by `CreditDBEntry::process()`
@@ -167,9 +168,15 @@ Framework, AI Assistance, Tools Used, Services Used, Icons, Wallpapers**. Entry 
 new section = rebuild + the C++ read). No hardcoded credit counts exist in the tests, so
 adding entries won't break them.
 
-## Owner Preferences
+**Also regenerate `projects/db/assets/data/credits.md` whenever you edit `credits.json`** — it's the
+human-readable Markdown rendering of the same data (linked from the root `README.md` and built into
+the Doxygen docs under "Project & Repository"). Keep the two in sync: edit the JSON, then rewrite the
+`.md` from it (same sections/entries, each `name` linked to its `url`, with note/license/mandated
+shown). The JSON is the source of truth; the `.md` is a generated view.
 
-- UI/UX decisions are the maintainer's call — do not independently change QML appearance
+## Project Preferences
+
+- UI/UX decisions are a design decision — do not independently change QML appearance
 - Debug builds show error dialogs; release builds degrade gracefully and clearly (never silently swallow errors, and never at the cost of save data)
 - The app should feel like polished software, not a dev tool
 

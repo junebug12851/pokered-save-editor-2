@@ -7,10 +7,10 @@ each claim back to a real diff).
 
 The project's **original `README.md` from this era is preserved verbatim** as an artifact at
 [`original-readme-2020.md`](original-readme-2020.md) — worth reading for the voice and the reboot
-story in the maintainer's own words (the live repo-root README is the current, rewritten one).
+story in the developer's own words (the live repo-root README is the current, rewritten one).
 
 The short version: the project was started in June 2019, rewritten from scratch **three
-times** as the maintainer fought the Qt framework, eventually settled into the architecture the
+times** fighting the Qt framework, eventually settled into the architecture the
 codebase still uses today, and was abandoned mid-refactor in March 2020 — not from lack of
 care, but because the complexity outgrew what one solo developer could sustain. Everything
 below is *why the code looks the way it does*.
@@ -100,7 +100,7 @@ is a disaster and Object chain is a disaster"); `cb36cbc` tears out ~2,000 lines
 `d0b4f41` introduces the **C++ `Router`** that drives navigation through the `Bridge` — the
 pattern the app still uses. On top of that, each screen was built: Trainer Card, Pokedex,
 Bag/Items, Pokemon storage + details, Pokemart, Maps, Rival — plus the elaborate **3-stage
-name editor** and full on-screen keyboard, which the maintainer put considerable care into (the in-game
+name editor** and full on-screen keyboard, which got considerable care (the in-game
 font preview, the searchable character picker, the simulated tilesets).
 
 ---
@@ -133,7 +133,7 @@ The architecture the revival inherited — and the notes describe — was all se
 - The **expanded-data object model** with byte-exact flattening (`systems/savefile.md`).
 - The **Bridge + Router** QML↔C++ wiring (`systems/app.md`).
 - The **font/tileset image providers** and the `encodeBeforeUrl` hex trick (`systems/app.md`,
-  `reference/qt-gotchas.md`).
+  `reference/qt-patterns.md`).
 
 The working style carried over too: a willingness to rewrite from scratch to get the design right,
 an insistence on native-feeling, non-janky software, and a preference for fighting a difficult
@@ -141,4 +141,4 @@ framework over shipping something sloppy. See `context/principles.md`.
 
 For the dead ends this era produced (so they aren't re-tried), see
 `decisions/rejected.md` → "Historical dead ends (2019–2020)". For the catalog of Qt landmines
-hit along the way, see `reference/qt-gotchas.md`.
+hit along the way, see `reference/qt-patterns.md`.

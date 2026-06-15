@@ -32,7 +32,10 @@ OUTPUT_LANGUAGE        = English
 # `notes` is included so the living project notes build as cross-linked doc pages
 # alongside the API reference (their relative Markdown links resolve page-to-page).
 INPUT                  = README.md \
+                         LICENSE \
+                         VERSION \
                           assets/saves/structure.md \
+                         projects/db/assets/data/credits.md \
                          notes \
                          projects/common/src \
                          projects/db/src \
@@ -42,7 +45,11 @@ INPUT                  = README.md \
 
 INPUT_ENCODING         = UTF-8
 RECURSIVE              = YES
-FILE_PATTERNS          = *.h *.hpp *.cpp *.cc *.cxx *.md
+# *.dox lets notes/_nav.dox (the page-tree navigation) be parsed.
+# VERSION + LICENSE (extensionless) are listed so the README's [VERSION](VERSION)/[LICENSE](LICENSE)
+# links resolve; EXTENSION_MAPPING below tells Doxygen to treat extensionless files as Markdown.
+FILE_PATTERNS          = *.h *.hpp *.cpp *.cc *.cxx *.md *.dox VERSION LICENSE
+EXTENSION_MAPPING      = no_extension=md
 
 # Never scan build trees or Qt-generated files.
 EXCLUDE                = projects/build
@@ -54,6 +61,12 @@ EXCLUDE_PATTERNS       = */build/* \
 
 # Use the existing README as the documentation landing page (no extra file).
 USE_MDFILE_AS_MAINPAGE = README.md
+
+# The notes are organized into a browsable page tree by notes/_nav.dox (the "Project Notes" tree
+# under Related Pages) instead of being dumped flat. IMPLICIT_DIR_DOCS=NO stops Doxygen from
+# consuming the index READMEs (notes/, notes/sessions/, notes/systems/) as directory documentation
+# so they become real, \subpage-able pages (they carry explicit {#labels}).
+IMPLICIT_DIR_DOCS      = NO
 
 #---------------------------------------------------------------------------
 # What to extract
@@ -76,6 +89,16 @@ INTERNAL_DOCS          = NO
 # Comment-style behaviour (keeps comments human + Markdown-friendly)
 #---------------------------------------------------------------------------
 MARKDOWN_SUPPORT       = YES
+# GITHUB so heading anchor IDs match the `#what-it-is` slug style that the README's manual Table of
+# Contents (and other in-page `[text](#heading)` links) use. With the default (DOXYGEN) style, those
+# anchors don't resolve -- the TOC links go dead and render doubled ("What it isWhat it is").
+MARKDOWN_ID_STYLE      = GITHUB
+# YES so C++ symbols mentioned in prose (class/function names like `MainWindow`, `Bridge`, `Router`,
+# `Random`) auto-link to their API pages throughout the README and notes -- the expected behavior for
+# an API doc site, and GitHub-safe (GitHub ignores it). Cost: a bare Markdown filename mentioned in
+# prose (e.g. a `ui-patterns.md` reference NOT written as an explicit link) auto-links to a thin
+# "File Reference" stub instead of the content page. Explicit [text](file.md) links, the directory
+# links, and the nav tree are unaffected and always point at the real content pages.
 AUTOLINK_SUPPORT       = YES
 # Treat the first sentence of a Qt-/Javadoc-style block as the brief — lets you
 # write plain prose comments without an explicit \brief command.

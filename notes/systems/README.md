@@ -1,9 +1,9 @@
-# System Map
+# System Map {#pse_systems_about}
 
 A deep, structured account of how Pokered Save Editor 2 is built -- the macro
 systems, the micro systems, and how they wire together. This is the "understand
 the whole machine" reference; it grows alongside the project-wide documentation
-pass tracked in [../reference/documentation-progress.md](../reference/documentation-progress.md).
+pass tracked in [../reference/documentation.md](../reference/documentation.md).
 
 Read in this order:
 
@@ -20,4 +20,4 @@ How this relates to the other notes:
 
 - [../context/architecture.md](../context/architecture.md) is the quick orientation; this folder is the in-depth version.
 - [../decisions/architecture.md](../decisions/architecture.md) explains *why* key structures are the way they are.
-- [../reference/qt6-patterns.md](../reference/qt6-patterns.md) holds the Qt 6 mechanics referenced throughout.
+- [../reference/qt-patterns.md](../reference/qt-patterns.md) holds the Qt 6 mechanics referenced throughout.

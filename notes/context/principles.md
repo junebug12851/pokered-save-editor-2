@@ -107,7 +107,7 @@ these and they were accepted deliberately: the `encodeBeforeUrl` hex trick aroun
 broken URL decoding (`8fe8447`), reporting a specific image size so Quick won't rescale/blur
 (`0fb0106`), a small compromise to get the models working at all (`8fa9dca`). The distinction:
 reject hacks of *convenience*; accept and **document** workarounds for genuine framework defects
-(see the inline comments and `reference/qt-gotchas.md`). A few QML quirks were even left
+(see the inline comments and `reference/qt-patterns.md`). A few QML quirks were even left
 deliberately unfixed when the cost outweighed the benefit (a rare ListView glitch in `3e9e367`)
 — a conscious trade, not neglect.
 

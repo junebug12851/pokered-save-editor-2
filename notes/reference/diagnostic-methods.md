@@ -179,7 +179,7 @@ forward-declaration) on a QObject type in the chain.** It forces
 `IsPointerToTypeDerivedFromQObject<T*> = false`, so Qt stores the pointer as opaque and QML can't
 read its sub-properties. `qRegisterMetaType` and `qmlRegisterUncreatableType` do NOT override it.
 Fix: `#include` the full header at the declaring site, remove the opaque decl. See
-`reference/qt6-patterns.md` and `decisions/architecture.md`.
+`reference/qt-patterns.md` and `decisions/architecture.md`.
 
 **The fastest way to confirm it (the "natural experiment"):** find a property at the same depth
 that *works* and one that *fails*, and compare how their types are declared.
@@ -232,7 +232,7 @@ The freed object is whatever a `Q_INVOKABLE` recently handed to QML.
 - Savefile `Q_INVOKABLE` returns: wrap the return in `qmlCppOwned()` (`pse-savefile/qmlownership.h`).
   All `…At()` methods done s13h. **Any new Q_INVOKABLE returning a QObject must be wrapped.**
 
-Full rule + reasoning: `reference/qt6-patterns.md` → "QML garbage-collects parentless C++ QObjects"
+Full rule + reasoning: `reference/qt-patterns.md` → "QML garbage-collects parentless C++ QObjects"
 and "Q_PROPERTY returns are safe; Q_INVOKABLE returns are NOT". Note: **system-wide** Qt-debugger
 pop-ups (also in other apps) are an environment issue, not this — see `status.md`.
 

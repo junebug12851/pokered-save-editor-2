@@ -48,7 +48,7 @@ Every database and save object in the project calls into this. Centralizing the
 GC-ownership incantation here means exactly one place knows it. This is one half of
 the project's answer to the "QML GC'd my parentless QObject" class of crashes; the
 other half (`qmlCppOwned()` for `Q_INVOKABLE` returns) lives in the savefile layer.
-Full mechanism: [../reference/qt6-patterns.md](../reference/qt6-patterns.md).
+Full mechanism: [../reference/qt-patterns.md](../reference/qt-patterns.md).
 
 ## How it connects outward
 

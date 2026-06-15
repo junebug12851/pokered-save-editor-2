@@ -39,7 +39,7 @@ between QML and C++. Off it hang:
 
 For QML to traverse `brg.file.data.dataExpanded.*`, every QObject in that chain
 must be a complete type at the property's MOC TU -- the rule documented in
-[savefile.md](savefile.md) and [../reference/qt6-patterns.md](../reference/qt6-patterns.md).
+[savefile.md](savefile.md) and [../reference/qt-patterns.md](../reference/qt-patterns.md).
 
 ## Router and Settings
 
@@ -68,4 +68,4 @@ must be a complete type at the property's MOC TU -- the rule documented in
 
 > Documentation status: boot + bridge spine done (main, boot/*, bridge.h, router.h,
 > settings.h). `engine/`, `mvc/`, and the `.cpp` are in progress -- tracked in
-> [../reference/documentation-progress.md](../reference/documentation-progress.md).
+> [../reference/documentation.md](../reference/documentation.md).

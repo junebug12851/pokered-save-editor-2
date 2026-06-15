@@ -1,0 +1,144 @@
+/*
+ * Doxygen navigation tree for the project notes.
+ *
+ * This file ONLY defines page hierarchy (via \subpage); it holds no prose of its own beyond short
+ * hub descriptions. Every note's actual content lives in its Markdown file — this just organizes
+ * those pages into a browsable tree under "Project Notes" in Related Pages, instead of one flat pile.
+ *
+ * Page IDs:
+ *   - Markdown files get Doxygen's automatic, path-derived IDs: notes/<dir>/<file>.md  ->
+ *     md_notes_2<dir>_2<file>   (the "_2" encodes a "/").  e.g. md_notes_2reference_2qt-patterns
+ *   - The three index READMEs and assets/saves/structure.md carry explicit {#labels} in their
+ *     Markdown (README files otherwise collide on a filename-derived ID and don't become pages).
+ *
+ * MAINTENANCE — a hard rule: EVERY Markdown page Doxygen ingests must be placed in a tree here,
+ * never left to auto-append. When you ADD or RENAME a Markdown file that is in the Doxyfile INPUT
+ * (a note, or a repo doc like credits.md / VERSION / LICENSE), add/adjust its \subpage line below.
+ * If a page isn't listed it still builds — it just lands flat at the TOP of Related Pages, which is
+ * exactly the unstructured pile we don't want. The only top-level Related Pages should be the hub
+ * pages defined in this file: "Project Notes" and "Project & Repository".
+ */
+
+/**
+\page pse_notes Project Notes
+\brief Living documentation for the codebase — start with Status, then explore by section.
+
+The full project-notes system, organized. Read **Status** for the current state, then the section
+that fits what you need: the day-by-day **Session Logs**, the per-commit **Changelog**, the **Context**
+background, the **System Map**, the **Reference** lookups, the **Decisions**, and the **Plans**.
+
+\subpage pse_notes_system <br>
+\subpage md_notes_2status <br>
+\subpage pse_sessions <br>
+\subpage pse_changelog <br>
+\subpage pse_context <br>
+\subpage pse_systems <br>
+\subpage pse_reference <br>
+\subpage pse_decisions <br>
+\subpage pse_plans
+*/
+
+/**
+\page pse_sessions Session Logs
+\brief The day-by-day history — per-day files grouped into month folders, newest first.
+
+\subpage pse_sessions_about <br>
+\subpage pse_sessions_2026_06 <br>
+\subpage md_notes_2sessions_2revival-s13-series
+*/
+
+/**
+\page pse_sessions_2026_06 June 2026
+\brief Daily session logs for June 2026 (`notes/sessions/2026-06/`).
+
+\subpage md_notes_2sessions_22026-06_22026-06-14 <br>
+\subpage md_notes_2sessions_22026-06_22026-06-13 <br>
+\subpage md_notes_2sessions_22026-06_22026-06-12 <br>
+\subpage md_notes_2sessions_22026-06_22026-06-10 <br>
+\subpage md_notes_2sessions_22026-06_22026-06-09 <br>
+\subpage md_notes_2sessions_22026-06_22026-06-08 <br>
+\subpage md_notes_2sessions_22026-06_22026-06-07 <br>
+\subpage md_notes_2sessions_22026-06_22026-06-06
+*/
+
+/**
+\page pse_changelog Changelog
+\brief Plain-English history, one entry per commit, split by month.
+
+\subpage md_notes_2version <br>
+\subpage md_notes_2version_22026-06 <br>
+\subpage md_notes_2version_22020-03 <br>
+\subpage md_notes_2version_22020-02 <br>
+\subpage md_notes_2version_22020-01 <br>
+\subpage md_notes_2version_22019-12 <br>
+\subpage md_notes_2version_22019-10 <br>
+\subpage md_notes_2version_22019-06
+*/
+
+/**
+\page pse_context Context
+\brief Background that changes rarely — what the project is and how it got here.
+
+\subpage md_notes_2context_2project <br>
+\subpage md_notes_2context_2architecture <br>
+\subpage md_notes_2context_2principles <br>
+\subpage md_notes_2context_2origins <br>
+\subpage md_notes_2context_2history <br>
+\subpage md_notes_2context_2original-readme-2020
+*/
+
+/**
+\page pse_systems System Map
+\brief How the machine is built — macro overview plus per-layer deep-dives.
+
+\subpage pse_systems_about <br>
+\subpage md_notes_2systems_2overview <br>
+\subpage md_notes_2systems_2common <br>
+\subpage md_notes_2systems_2savefile <br>
+\subpage md_notes_2systems_2db <br>
+\subpage md_notes_2systems_2app <br>
+\subpage md_notes_2systems_2qml
+*/
+
+/**
+\page pse_reference Reference
+\brief Quick lookups, no story — patterns, conventions, and domain knowledge.
+
+\subpage md_notes_2reference_2fix-patterns <br>
+\subpage md_notes_2reference_2qt-patterns <br>
+\subpage md_notes_2reference_2ui-patterns <br>
+\subpage md_notes_2reference_2gen1-knowledge <br>
+\subpage savestructure <br>
+\subpage md_notes_2reference_2box-recovery-research <br>
+\subpage md_notes_2reference_2diagnostic-methods <br>
+\subpage md_notes_2reference_2i18n <br>
+\subpage md_notes_2reference_2documentation <br>
+\subpage md_notes_2reference_2git-workflow <br>
+\subpage md_notes_2reference_2versioning
+*/
+
+/**
+\page pse_decisions Decisions
+\brief Why the structural choices were made — and what was tried and rejected.
+
+\subpage md_notes_2decisions_2architecture <br>
+\subpage md_notes_2decisions_2rejected
+*/
+
+/**
+\page pse_plans Plans
+\brief What comes next — ordered tasks, the testing picture, and longer-term ambitions.
+
+\subpage md_notes_2plans_2next-steps <br>
+\subpage md_notes_2plans_2testing <br>
+\subpage md_notes_2plans_2future
+*/
+
+/**
+\page pse_project Project & Repository
+\brief Repository-level docs that aren't development notes — credits, version, and license.
+
+\subpage credits <br>
+\subpage md__v_e_r_s_i_o_n <br>
+\subpage md__l_i_c_e_n_s_e
+*/

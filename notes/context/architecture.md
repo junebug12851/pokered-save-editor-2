@@ -80,7 +80,7 @@ TU that declares the property — i.e. fully `#include`d, NOT forward-declared a
 `Q_DECLARE_OPAQUE_POINTER`'d (the opaque macro forces Qt to treat the pointer as a non-QObject,
 returning `undefined` in QML). `qRegisterMetaType` / `qmlRegisterUncreatableType` do not change
 this. Include only the branches QML actually traverses, to keep build times sane. See
-`decisions/architecture.md` → "QML Property-Chain Traversal" and `reference/qt6-patterns.md`.
+`decisions/architecture.md` → "QML Property-Chain Traversal" and `reference/qt-patterns.md`.
 
 ## Project Layout (files)
 

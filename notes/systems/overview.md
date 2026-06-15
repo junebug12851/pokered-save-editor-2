@@ -84,7 +84,7 @@ be a **complete type** at the property's MOC translation unit -- fully included,
 forward-declared, not `Q_DECLARE_OPAQUE_POINTER`'d. That single rule (and why it was
 the cause of the long-standing "undefined chain" bug) is documented in
 [../decisions/architecture.md](../decisions/architecture.md) and
-[../reference/qt6-patterns.md](../reference/qt6-patterns.md).
+[../reference/qt-patterns.md](../reference/qt-patterns.md).
 
 ## The data lifecycle (raw <-> expanded <-> UI)
 
@@ -129,6 +129,6 @@ Sacred".
   garbage-collected unless pinned. `Utility::qmlProtectUtil()` (see [common.md](common.md))
   is the shared guard; `Q_INVOKABLE` returns additionally use `qmlCppOwned()`
   (`savefile/src/pse-savefile/qmlownership.h`). Background in
-  [../reference/qt6-patterns.md](../reference/qt6-patterns.md).
+  [../reference/qt-patterns.md](../reference/qt-patterns.md).
 - **Fixed-width integers** -- all save math uses the `var8`/`var16`/... aliases
   ([common.md](common.md)) so byte widths are never left to platform defaults.

@@ -50,7 +50,7 @@ back to static.
 **Tried** (during the Era-1 C++ models): storing model data in `QHash<…, QVariant>`.
 **Failed** (`476ba72`): `QVariant` can't be used as a `QHash` value type. Moved toward
 `QString`-keyed/typed storage. (Filed here as a Qt limitation to remember — see
-`reference/qt-gotchas.md`.)
+`reference/qt-patterns.md`.)
 
 ### `Q_PROPERTY` on the plain data-model classes
 **Tried**: putting `Q_PROPERTY` directly on the early C++ data models. **Failed**
@@ -95,7 +95,7 @@ The actual root cause is `Q_DECLARE_OPAQUE_POINTER` on the QObject chain types (
 `IsPointerToTypeDerivedFromQObject<T*> = false`, so Qt treats those QObject pointers as opaque
 values that QML cannot traverse. `qRegisterMetaType` / `qmlRegisterUncreatableType` do not
 override it. Fix = remove the opaque decls for the QObject types and `#include` their full
-headers down the chain. See `reference/qt6-patterns.md` and `reference/fix-patterns.md`.
+headers down the chain. See `reference/qt-patterns.md` and `reference/fix-patterns.md`.
 
 (Truncation repair and the registrations were still worthwhile — they just weren't the cause.)
 

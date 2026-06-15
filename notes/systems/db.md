@@ -63,9 +63,9 @@ types), DB entry pointers are declared **opaque** once in `db_autoport.h` and
 shared library-wide. QML reaches entries through invokable accessors
 (`getStoreAt`, `...At`) rather than a deep `Q_PROPERTY` chain, so opaque is fine
 and keeps MOC/compile costs down. (Contrast with
-[savefile.md](savefile.md) and [../reference/qt6-patterns.md](../reference/qt6-patterns.md).)
+[savefile.md](savefile.md) and [../reference/qt-patterns.md](../reference/qt-patterns.md).)
 
 > Documentation status: spine done -- `db.h`, `db_autoport.h`, and the convention
 > setters `creditsdb.h` / `creditdbentry.h`. The remaining databases, entries, and
 > `util/` are in progress; tracked in
-> [../reference/documentation-progress.md](../reference/documentation-progress.md).
+> [../reference/documentation.md](../reference/documentation.md).

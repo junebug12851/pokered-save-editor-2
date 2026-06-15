@@ -1,8 +1,87 @@
-# Qt 6 Patterns and Gotchas
+# Qt / QML Patterns & Gotchas
 
-Things that worked in Qt 5 that silently break or error in Qt 6.
+The project's single Qt reference: the **catalog** (a project-lifetime index of every Qt/QML landmine
+hit, 2019 → 2026) followed by the **detailed Qt 5 → Qt 6 patterns** (with code) and **case studies**.
+When something "impossible" happens at the QML/C++ boundary, assume a framework gotcha before assuming
+your own bug — check the catalog here first, then the detailed section, then
+[`fix-patterns.md`](fix-patterns.md). When you find a new one, add a row to the catalog and document
+the workaround at the call site.
 
 ---
+
+## Catalog (project-lifetime index)
+
+A single index of the Qt/QML landmines this project has hit across its whole life. The same kinds of
+surprises recur, and a lot of the project's hardest days went into these — many cost hours or whole
+days, a few caused rewrites. The detailed fixes live in the sections below, or in
+[`fix-patterns.md`](fix-patterns.md) (error → fix), [`../decisions/rejected.md`](../decisions/rejected.md)
+(approaches abandoned), [`../decisions/architecture.md`](../decisions/architecture.md) (workarounds
+adopted as design), and [`../version.md`](../version.md) (the commit where each historical one was hit).
+
+### Historical (2019–2020)
+
+| Gotcha | What happens | Resolution | Where |
+|--------|-------------|------------|-------|
+| **`QVariant` can't be a `QHash` value** | Won't compile / won't store as expected | Use `QString`-typed storage instead | `476ba72` |
+| **`Q_PROPERTY` won't sit on plain data models** | QML/C++ interop rejects non-Qt-ecosystem object shapes | Reshape models into plain structs registered with the Qt Meta Object System | `bceb15e`, `99188ed`, `9fb2775`, `42da8d7` |
+| **Qt Quick URL-encodes but can't decode its own encoding** | Image-provider source strings arrive corrupted | Hex-encode in QML, pass through the URL, decode from hex in C++ (`encodeBeforeUrl`) | `8fe8447` · `../decisions/architecture.md` |
+| **Image provider must report the "whole" size or Quick rescales it** | Tiles/text render blurry | Provider returns the exact requested size | `0fb0106` |
+| **QML `Loader` + object-chain navigation is unworkable** | Fragile, hard to reason about | Replaced with a C++ `Router` via the `Bridge` | `aba290a`/`cb36cbc`/`d0b4f41` · `../decisions/rejected.md` |
+| **QML drag-and-drop is disproportionately hard** | Hours lost, docs mostly C++-only | (2019 era) explicit move buttons; (2026) finally done — see "Drag & drop" in `ui-patterns.md` | `53d69ea` |
+| **Static libraries link out-of-order** | Build breaks unpredictably | Build sub-projects as shared libraries (+ export headers) | `5cbd7ff` · `../decisions/rejected.md` |
+| **QML `ListView` + C++ MVC is fragile** | Recurring view/model glitches | Known hazard; some rare glitches left deliberately unfixed | `1799397`, `3e9e367` |
+| **Naive random index repeats picks** | The same names keep coming up | No-repeat pool that reloads when depleted | `12eb978`/`7eff6bb` |
+
+> Some Era-1/2 "QML only accepts a strict `int`" type pain is the historical cousin of the Qt-6
+> `unsigned int` Q_PROPERTY issue below — both come from QML's narrow numeric handling.
+
+### Revival-era (2026) — detail in the sections below / `fix-patterns.md`
+
+| Gotcha | One-line |
+|--------|----------|
+| **`Q_DECLARE_OPAQUE_POINTER` blocks QML traversal** | Opaque-declaring a real QObject type makes QML read `obj.prop.sub` as `undefined`; `#include` + de-opaque the traversed branches only (build speed) |
+| **DB static-init deadlock** | A DB constructor re-entering its own `inst()` deadlocks C++11 static-local init; `loadAll()` is the sole `load()` caller |
+| **`qt_add_qml_module()` vs `app.qrc`** | Double-registering QML paths hangs `QQuickWidget::setSource()`; keep `app.qrc` + `qmlRegister*` only |
+| **`QSurfaceFormat` MSAA on `QQuickWidget`** | MSAA on the offscreen FBO hangs Windows GPU drivers 40s+; remove the surface-format setup |
+| **`unsigned int` Q_PROPERTY blank in `TextField`** | QML needs an explicit `.toString()` |
+| **Strict QML ID scoping** | IDs no longer leak across files; thread shared refs as explicit `property var` |
+| **`Q_PROPERTY` methods aren't callable from QML** | Use `Q_INVOKABLE` for functions QML calls |
+| **`Q_INVOKABLE` returning a parentless QObject gets GC'd** | Wrap returns in `qmlCppOwned()` |
+| **Qt 6 Material 3 control heights** | Taller than Qt-5-era hardcoded layouts assumed; pin heights / anchor below |
+| **`parent` briefly null in delegates during model reset** | Guard `parent ? parent.width : 0` |
+| **`=== NaN` / `isNaN` misuse** | `x === NaN` is always false in JS; use `isNaN(x)` |
+
+### Deliberately accepted quirks (don't "fix" these)
+
+A few Qt/QML behaviors had no clean fix and were consciously left alone. Documented at the call sites;
+listed here so nobody burns time re-discovering them.
+
+**Disabling a `Button` while it's hovered/pressed leaves it visually stuck.** `Button.hovered` /
+`Button.pressed` are read-only, so flipping `enabled = false` while the cursor is over it (or
+mid-press) sticks it rendering in the hovered/down state until the next interaction. The Pokémon
+details "Heal" button leaves its `enabled` binding **commented out** (stays enabled); the Pokémart
+"Checkout" button accepts the cosmetic glitch (forcing `down` off before disabling was tried, and
+a `Connections` hook — same result, because the states are read-only). If you must disable-on-click,
+expect this; the cleaner path is to leave the control enabled and make the *action* a no-op.
+
+**A QML call to a 5-bool C++ method only passes 4 args.** In `PokemonDetails.qml`'s "Correct Data"
+action, calling `boxData.update(...)` from QML with 5 bools only ever delivered 4. Workaround: call
+`update(true,true,true,true)` then `correctMoves()` + `cleanupMoves()` directly. If you extend a
+`Q_INVOKABLE`'s argument list and QML seems to drop the last argument, this is why.
+
+**One rare ListView/MVC glitch left unfixed** (`3e9e367`) — most users won't notice it and the fix
+risked worse ListView bugs. The QML `ListView` + C++ MVC combo is fragile (see the historical table).
+
+### Meta-lesson
+
+The throughline: **Qt's QML/C++ boundary is where the surprises live** — numeric types, property
+exposure, object ownership, URL handling, meta-object requirements.
+
+---
+
+# Detailed patterns (Qt 5 → Qt 6)
+
+Things that worked in Qt 5 that silently break or error in Qt 6.
 
 ## C++ Changes
 
@@ -198,12 +277,12 @@ Applied to all combos (7 `Select*` + `StarterEdit`/`Rival`/`NameFullTileset`).
 ScrollView { id: sv; anchors.fill: parent; clip: true; contentWidth: availableWidth
   ColumnLayout { width: sv.availableWidth; spacing: 8; /* RowLayout rows */ } }
 ```
-**"Label + field" row that stays aligned at any Material height** (the maintainer's "option #2"): a `RowLayout`
+**"Label + field" row that stays aligned at any Material height** (by design "option #2"): a `RowLayout`
 of `[shaded label box | control]` where the label box uses `Layout.fillHeight` so it grows to the
 field height; the control is `Layout.alignment: Qt.AlignVCenter`; a trailing
 `Item { Layout.fillWidth: true }` keeps the field left-sized. See `OverviewTab.qml`'s inline
 `component FieldLabel`. This is the proper-layout replacement for the old `ShadedBG` + fixed/negative
-`topMargin` rows. (the maintainer's standing preference: proper layouts, no margin hacks — see
+`topMargin` rows. (by design standing preference: proper layouts, no margin hacks — see
 `context/principles.md` "The Quality Bar".)
 
 ### Signal handlers are `onX:`, NOT `function onX()` (except inside Connections) (s13l)
@@ -282,7 +361,7 @@ Fixes, in order of preference:
 3. **Center text with `verticalAlignment: TextInput.AlignVCenter`**, not fixed `topPadding` nudges.
 4. **If a compact field is wanted everywhere**, the shared base is `fragments/general/DefTextEdit.qml`
    (a Material `TextField`, sets `topPadding: 0`). Reducing its height there would tighten many
-   screens at once — but it changes field appearance globally, so it's the maintainer's call (they own the UI).
+   screens at once — but it changes field appearance globally, so it's a design decision (they own the UI).
 
 When fixing a "things overlap / too tall" report, suspect this first. It is layout tuning, not a
 data bug, and it is NOT caused by the width-padding fixes (width ≠ height).
@@ -300,7 +379,7 @@ popup: Popup {
 }
 ```
 With the popup as tall as the content, the ListView's height equals its `contentHeight`, so there
-is **nothing to flick** — it just clips at the screen edge and rubber-bands (exactly the maintainer's "bounces
+is **nothing to flick** — it just clips at the screen edge and rubber-bands (exactly the "bounces
 but won't scroll, rest is cut off"). The ScrollBar is present but has no overflow to scroll.
 
 **Fix — cap the popup height so it's shorter than the content:**
@@ -403,7 +482,7 @@ constructor, not only at accessors.** Per-accessor `qmlCppOwned()` only protects
 handed out through that accessor* — it leaves an exposure window for any other path, and the QML-GC-vs-
 event-loop timing makes the resulting use-after-free **intermittent** (the worst kind). `PokemonBox` /
 `PokemonParty` / `PokemonMove` are parentless (the `parentMon` is a plain member, not a QObject parent)
-and their ctors carried a long-dead commented `@TODO` for exactly this. Realised it:
+and their ctors carried a long-dead commented `TODO` for exactly this. Realised it:
 `QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership)` in the `PokemonBox` and `PokemonMove`
 ctors (static call, needs no engine; `PokemonParty` and `new PokemonBox()` both chain the default-arg
 `PokemonBox` ctor) — now every mon/move self-protects from birth. Symptom this cured: create/open a
@@ -519,3 +598,52 @@ Fix: don't let the heavy item exist while hidden. Build it with `Loader { active
 has an `opened` property) so only the visible one instantiates. Same idea for any expensive per-delegate
 content (image providers with `cache:false`, animations): gate creation on the thing actually being on
 screen, not on a `visible:` binding.
+
+---
+
+# Case study: player / rival name-edit hang (the two-way-bind feedback loop)
+
+**Status: FIXED in s13w** (root-caused s13v). Reported symptom: clicking/editing the rival
+name (and "probably the player name too") makes the app crash/hang; she suspected "a circular reference
+from a hack to get the rival and player name variables working." This is the canonical example of why
+heavy `WRITE` setters + a manual QML two-way bind + per-keystroke writes are a trap.
+
+## What happened
+
+`PlayerBasics::playerName` is `Q_PROPERTY(QString playerName READ getPlayerName WRITE
+fullSetPlayerName NOTIFY playerNameChanged)`. `fullSetPlayerName(val)` did, on **every** write:
+(1) `getNonTradeMons()` — scans the whole party + every storage box + every mon, calling
+`hasTradeStatus()` per mon; (2) sets the name; (3) `fixNonTradeMons()` — `changeOtData(true,this)` on
+every non-trade mon (rewrites OT name bytes); (4) emits `playerNameChanged()` **unconditionally — no
+`if(val == playerName) return;` guard.**
+
+The QML two-way bind (`PlayerNameEdit.qml`) wrote `playerName = str` on `onStrChanged` and a
+`Connections.onPlayerNameChanged` wrote back `str = playerName`. So **each keystroke** triggered a
+full save-wide OT scan + rewrite. On a populated save that looks like a freeze — and it **writes OT
+bytes on every keystroke**, violating byte-fidelity (`../context/principles.md` → "Save File Integrity
+Is Sacred"). `Rival::name` was a plain `MEMBER` property (cheap), so the rival editor itself was light.
+
+## The fix (s13w)
+
+**C++:** added an **equality guard** at the top of `fullSetPlayerName`/`fullSetPlayerId`
+(`if(val == playerName) return;`) — no-op when unchanged → no rescan, no OT writes, no signal, and it
+kills the two-way bind's feedback loop. Made `PokemonBox::changeOtData`'s adopt-player-OT branch
+**idempotent** (only assign + emit for a field that actually differs).
+
+**QML — commit on finish, not per keystroke (the real cleanup):** `NameDisplay` gained a
+**`committed(string val)`** signal, emitted when an edit session *finishes* (the quick-edit popup or
+the full keyboard closing; a `suppressNextCommit` flag avoids a double-write on popup→keyboard
+hand-off). `PlayerNameEdit.qml` / `Rival.qml` persist on **`onCommitted`** (atomic) with null guards on
+the `dataExpanded` chain; `PlayerIdEdit.qml` does the same via `onEditingFinished`.
+
+**Why per-keystroke was not just slow but WRONG:** the OT cascade captures "owned" mons by comparing
+their OT to the *current* player name. Typing char-by-char meant an intermediate value (e.g. "AB"
+while typing "ABC") could momentarily equal a **traded** mon's OT and sweep it into the owned set,
+permanently rewriting that traded mon's OT — a byte-fidelity violation. One atomic commit eliminates
+this. (The editors are modal, so commit-on-close always lands before any save.)
+
+**Shared-component note:** `NameDisplay` is shared by player / rival / nickname. The nickname
+(`OverviewTab.qml`) deliberately still writes on `onStrChanged` — its `nickname` setter is a cheap
+`MEMBER` with no cascade. Only player/rival moved to `committed`. The player **ID** now applies on
+Enter/focus-out instead of live per digit (revertible to `onTextChanged`, but that reintroduces the
+rare intermediate-collision risk).

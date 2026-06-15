@@ -22,7 +22,7 @@ noted inline)._
 > taken from `playerbasics.cpp` (second oracle) cross-checked with the `.bt`. Name/ID round-trips set
 > the member directly to avoid the intentional OT-rewrite side effect of `fullSet*`.
 
-> **Implemented so far (2026-06-07, phase 1 — needs a build + run on the maintainer's Qt kit):**
+> **Implemented so far (2026-06-07, phase 1 — needs a build + run on the Qt kit):**
 > - `projects/tests/` wired into CMake via `add_subdirectory(tests)` + `enable_testing()` (root
 >   `CMakeLists.txt`, guarded by `option(PSE_BUILD_TESTS ON)`; `Test` added to the Qt6 components).
 >   Each test is a `qt_add_executable` registered with `add_test` (run via `ctest`). Fixtures are
@@ -40,7 +40,7 @@ noted inline)._
 > **not** recompute checksums; `recalcChecksums()` runs in `FileManagement::writeSaveData()` at file-write
 > time. So a faithful "open→save" test must call `flattenData()` **then** `toolset->recalcChecksums()`.
 >
-> **Built & run on the real Qt 6.11 / llvm-mingw kit (2026-06-07, via PowerShell on the maintainer's PC):**
+> **Built & run on the real Qt 6.11 / llvm-mingw kit (2026-06-07, via PowerShell on the dev PC):**
 > configure + build clean; `ctest` results:
 > - `tst_db_integrity` — **PASS** (DB boots, ≥151 species, every non-glitch species deep-links its type).
 > - `loadFlatten_isIdentity(new game)` — **PASS** (a fresh save round-trips byte-perfectly, 0 changes).
@@ -218,7 +218,7 @@ common/savefile. Coverage gaps become the to-do list for filling tests.
     reference them read-only and always operate on an in-memory/temp copy.
 - **The byte-map oracle — `assets/saves/structure.bt`** (with `assets/saves/structure.md`, a
   human-readable translation that is also pulled into the Doxygen docs). A 010 Editor binary template
-  authored by the maintainer, independent of the app's C++, mapping every field/offset/bit-field of the save. This is
+  hand-authored, independent of the app's C++, mapping every field/offset/bit-field of the save. This is
   the **independent oracle** that breaks test circularity: per-field offset tests and golden
   assertions validate expand/flatten against *the .bt's* offsets, not against the same code being
   tested. A small parser (or a hand-transcribed offset table derived from it) feeds the data-driven
@@ -374,7 +374,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    non-empty name; 50 iterations), pokedex (counts stay 0..151), and `newPokemon(Random_Starters3)`
    (valid starter species, sane level). **Full `randomizeExpansion()` now runs end-to-end and is tested**
    (`tst_randomizer` 10-iteration invariants + `tst_verbs` byte-fidelity, both green) after the
-   map/area randomizers were disabled (maintainer-authorised; maps WIP) and the `HoFPokemon::load()`
+   map/area randomizers were disabled (authorised; maps WIP) and the `HoFPokemon::load()`
    null-deref was fixed. Re-enabling map randomize is future map-feature work (see status.md). Random-edit
    fuzz + Red/Blue compatibility fixtures still to do._
 7. **Sanitizer build + coverage reporting**, then coverage-gap fill to targets.
@@ -444,9 +444,9 @@ Each phase is independently valuable; the suite is useful from phase 1.
    ~55 lines are the native open/save **file dialogs** + the to-disk save path, which can't run headless
    (the save→reopen cycle is covered by tst_e2e). savefile real-source overall → **77.9% (4600/5905)**, 9
    cases green (47/47 full suite)._
-   _**Off-by-one found AND fixed 2026-06-08 (maintainer-approved after confirming intent):**
+   _**Off-by-one found AND fixed 2026-06-08 (approved after confirming intent):**
    `processRecentFileChanges()` capped with `append(file); if(size > MAX_RECENT_FILES) break;` —
-   appending *then* breaking retained **MAX+1** (6, not 5). The maintainer asked to verify the extra slot
+   appending *then* breaking retained **MAX+1** (6, not 5). worth verifying the extra slot
    wasn't an intentional sentinel first; it wasn't — `mainwindow` bounds its menu loop at
    `MAX_RECENT_FILES` (and its shortcut array is sized MAX, so a 6th is never read), and
    `RecentFilesModel` uses `recentFilesCount()` directly (its `+1` is just the row-0 "Clear Recent Files"
@@ -472,7 +472,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    speciesName, isPokemonReset/isCorrected, isBoxMon, and a dedicated invalid-mon (species 0) safe-default
    sweep (dexNum=-1, hpStat=1 floor, levelToExp=0, expLevelRange* fall back to raw exp, resetExp no-op).
    **pokemonbox.cpp 72% → 94.4% (1071/1134, 63 missed)**; savefile real-source overall → **82.5%
-   (4879/5916)**, 19 cases green (49/49 full suite). Three latent bugs were brought to the maintainer and,
+   (4879/5916)**, 19 cases green (49/49 full suite). Three latent bugs were raised and,
    with their approval, **FIXED in pokemonbox.cpp this pass** (the tests now assert the corrected behaviour
    and stand as regression guards): (1) `update()` with `resetType=false` ran its bare `else type2 =
    toType1->ind` on every call, overwriting a **dual-type** mon's type2 with type1 (silently dropping the
@@ -483,7 +483,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    isCorrected now treats a record as dual-type only when toType2 genuinely differs from toType1, and
    accepts either 0xFF or type1 for a single type (faithful to the DB's mixed 0xFF-vs-duplicate storage).
    (3) `isPokemonReset()` could only ever be true for a species with 4 initial moves AND wrongly required
-   `isMaxPpUps()` when a reset mon has 0 PP-Ups. **Root cause traced (the maintainer asked it not be squashed
+   `isMaxPpUps()` when a reset mon has 0 PP-Ups. **Root cause traced (it was kept, not squashed
    aside): the empty-slot bug lived in `PokemonBox::isMaxPP()`/`isMaxPpUps()`** — they looped all four
    slots and counted an EMPTY slot (moveID 0) as "not maxed", which propagates into **`isHealed()`** so any
    mon with fewer than four moves could never read as healed (a user-facing wrong result on the heal
@@ -491,7 +491,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    slots (mirroring `isMaxedOut()`'s existing guard), so `isHealed()` is correct for any move count;
    `isPokemonReset()` then simplifies to iterate the real initial moves (empty after), check `ppUp==0`, and
    reuse `isHealed()`. Regression-guarded by `box_healedWithFewerThanFourMoves` (a <4-move mon at full
-   HP/PP now reads isMaxPP + isHealed). **Also maintainer-confirmed and fixed:**
+   HP/PP now reads isMaxPP + isHealed). **Also confirmed and fixed:**
    `isMinEvs()` used `||` (true if ANY single EV is 0) → changed to `&&` (all-zero), matching its
    "All stat-exp zero?" contract and `isMaxEVs()`; it had a real UX impact (StatsTab disables "Reset EVs"
    on `isMinEvs`, so the action was greyed out whenever one stat-exp was 0). **Still open (tracked,
@@ -501,12 +501,12 @@ Each phase is independently valuable; the suite is useful from phase 1.
    **Cumulative savefile progress this pass: 72.9% → 82.5% across signdata(100%), warpdata(98.5%),
    mapconndata(100%), savefileiterator(100%), item(96.7%), playerbasics(98.9%), filemanagement(77%,
    headless ceiling), storage(98%), pokemonbox(94.4%) — plus the recent-files cap off-by-one and five
-   pokemonbox bugs fixed (maintainer-approved: type2-clobber, isCorrected dual-type,
+   pokemonbox bugs fixed (approved: type2-clobber, isCorrected dual-type,
    isMaxPP/isMaxPpUps/isHealed empty-slot, isPokemonReset, isMinEvs ||→&&), with only the type2
    single-write truth tracked for a later decision._
 
    _Tenth file: **`tst_sprite_data.cpp`** — SpriteData (one on-map sprite/NPC). **Crash investigation
-   first (the maintainer asked me to identify, not route around, problems):** a probe with
+   first (the rule is to identify, not route around, problems):** a probe with
    `MapsDB::inst()->deepLink()` called showed **all 918 map sprites across 249 maps resolve
    `getToSprite()` (0 nulls)**, and `setToAll` (918) + `randomizeAll` (1167) run **clean over every map**.
    **Verdict: there is no SpriteData defect** — the documented "sprite-link crash" is entirely the
@@ -526,14 +526,14 @@ Each phase is independently valuable; the suite is useful from phase 1.
    coordsToPtr, randomize/setTo from a real map incl. MapConnData::loadFromData, null-safe), and
    AreaPokemon/AreaPokemonWild (wild randomize over the 0-based dex range + operators + explicit ctor,
    table randomize, setTo from a map, null-safe) and AreaWarps (list accessors swap/new/remove, setTo +
-   randomize from a real map). 20 cases. **Found + fixed (maintainer-approved) 3 bugs
+   randomize from a real map). 20 cases. **Found + fixed (approved) 3 bugs
    along the way:** (1) `AreaTileset::loadFromData` inverted ternary — `(map==nullptr) ? map->getToTileset()
    : nullptr` crashed on a null map and discarded the tileset on a real map; fixed to
    `? nullptr : map->getToTileset()` (regression-guarded by the null + from-map tests). (2) `PokemonBox::
    newPokemon(Random_Pokedex)` used `rangeExclusive(1,151)` and so could never roll Bulbasaur (dex keys
    are 0-based, confirmed by probe: dex0=Bulbasaur..dex150=Mew, dex151 null) — fixed to
    `rangeExclusive(0,151)`. (A bounds guard on `AreaPokemon::setTo`'s array writes was considered but
-   **The maintainer declined** — gen-1 wild tables are fixed at 10, so trust the data; left unbounded.) **areatileset.cpp 62% → 100.0%
+   **declined** — gen-1 wild tables are fixed at 10, so trust the data; left unbounded.) **areatileset.cpp 62% → 100.0%
    (0 missed), areamap.cpp 62% → 93.1% (15 missed), areapokemon.cpp 61% → 90.5% (18 missed),
    areawarps.cpp 70% → 98.7% (2 missed), pokemonbox.cpp → 94.6%**; savefile real-source overall →
    **90.2% (5336/5916)**, 20 cases green (51/51 full suite). **Stale-note correction (probed,
@@ -559,31 +559,31 @@ Each phase is independently valuable; the suite is useful from phase 1.
      `tst_db_entry_getters2` (Font/Event/Missable/EventPokemon/Fly/GameCorner/HiddenItem getters, the
      resolved Map links + MapDBEntryConnect math + sprite subtypes + item evolve/teach lists, and the
      DB base accessors + qmlProtect cascade)._
-   - _**Two real bugs found + fixed (maintainer-approved):** MapSearch spriteSet `-1`-sentinel crash
+   - _**Two real bugs found + fixed (approved):** MapSearch spriteSet `-1`-sentinel crash
      (hasDynamicSpriteSet/noDynamicSpriteSet derefed null toSpriteSet; hasSpriteSet/noSpriteSet wrong
      results), and `MapDBEntryConnect::xAlign()` missing `<= 0` guard (its math was dead code). Both gated
      behind the disabled Maps feature. See `reference/fix-patterns.md`._
    - _Remaining db gap is load/JSON-parse branches + disabled-subtype entry code (diminishing value)._
 
-   _**App-layer push toward 100% started 2026-06-08 (the maintainer: "go for 100%, all tiers incl. GUI").**
+   _**App-layer push toward 100% started 2026-06-08 (goal: 100%, all tiers incl. GUI).**
    Measured with the SHARED appcore (`PSE_SHARED_APPCORE=ON`) so the number is real: **appcore was
    80.2%**, raised by: `tst_select_models` (every select model driven exhaustively — all rows × all
    roles incl. the placeholder-row default branch, + each model's value↔row helper across edge values),
    and `tst_bridge` extended for PokedexModel (all 3 sort comparators via dexSortCycle, pageClosing
-   reset/early-return, dex lookup hit/miss, dataChanged). **Bug fixed (maintainer-approved polish):**
+   reset/early-return, dex lookup hit/miss, dataChanged). **Bug fixed (approved polish):**
    `TypesModel::data()` crashed on the placeholder row 0 with an undeclared role (fell through to
    `at(-1)`) — now guarded (matches PokemonStartersModel). Gated (QML only queries declared roles).
    Market/storage models were already well-covered (`tst_market_model` sweeps all 4 modes + checkout;
    `tst_storage_model`/`tst_item_storage_model`/`tst_bridge`). Remaining app gaps: fine-grained per-entry
    item-market branches, `fontpreviewprovider`, `router` edge paths — diminishing-value._
 
-   _**The full comprehensive-testing program (the maintainer wants ALL tiers; tracked):**
+   _**The full comprehensive-testing program (all tiers in scope; tracked):**
    (1) finish app C++ leaf coverage; (2) **GUI/QML behavioural** (Qt Quick Test offscreen — the
    `tst_qml_brg` Bridge-as-`brg` harness already exists; remaining = screen-flow tests: name
    commit-on-blur, editor tab reactivity, popup dismiss — needs the app screens loaded from app.qrc into
    the test engine, a larger harness); (3) cross-module integration + whole-system E2E + a
    compatibility fixture matrix (Red/Blue, fresh/mid/post-E4) + fuzz/property expansion + `QBENCHMARK`
-   perf pins; (4) **CI already builds + runs ctest on Linux on push (the maintainer confirmed)** — remaining is
+   perf pins; (4) **CI already builds + runs ctest on Linux on push (confirmed)** — remaining is
    to ADD the **ASan/UBSan** Linux job (sanitizers don't run on the Windows llvm-mingw kit; Linux is
    where the QML-GC use-after-free class gets caught automatically) + optional coverage gate. This is a
    multi-session program; pick up from the task list / this block._
@@ -629,7 +629,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    `tst_qml_brg` boots a real Bridge as the QML `brg` context property and drives the C++<->QML
    property chain from QML (the undefined-chain guard). So no app tier is wholly untested now — the
    only remaining QML work is full screen-flow tests (commit-on-blur etc.), which stay optional /
-   low-ROI per the maintainer's call._
+   low-ROI per a design decision._
 
    Trend across the effort (line): common 65 → **79** (Random chance helpers), savefile 63 → 67 → 68 →
    **72** (area, area-fragments, pokedex, items-logic, misc-regions), db 51 → 53 → **56** (db-entries +
@@ -653,7 +653,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
 8. **CI** (ctest + sanitizer + coverage on push).
    _Workflow written 2026-06-07: `.github/workflows/tests.yml` — a **linux-asan** job (installs Qt via
    aqt, builds with ASan+UBSan which work on Linux, runs `ctest` headless/offscreen) and a **windows**
-   job (Qt llvm-mingw, matches the maintainer's kit). Not yet exercised on GitHub — the Qt module/arch names
+   job (Qt llvm-mingw, matches the local kit). Not yet exercised on GitHub — the Qt module/arch names
    may need a first-run tweak (noted in the file). This is the right home for ASan, which can't run on
    the local Windows kit._
    _**Cross-platform gotcha (CI first-run shakeout, 2026-06-08):** the local kit is Windows
@@ -671,7 +671,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    locally yet differ on CI. (CI status is not part of the default loop — checking it needs GitHub auth
    that isn't wired up; the local Windows kit + ctest is the working gate.)_
 9. **app C++** (Bridge, models, FileManagement) headless.
-   _Unblocked 2026-06-07 (maintainer-approved refactor): the app's logic — `bridge/`, all `mvc/` models,
+   _Unblocked 2026-06-07 (approved refactor): the app's logic — `bridge/`, all `mvc/` models,
    `engine/` — was extracted from the executable into a **static library `appcore`** (`app/CMakeLists.txt`);
    the exe is now just main/boot/mainwindow/QML-resources linking `appcore`. Tests can now link the app
    layer. First app-layer tests: `tests/mvc/tst_models.cpp` (TypesModel, NatureSelectModel — rows/roles/
@@ -690,7 +690,7 @@ Each phase is independently valuable; the suite is useful from phase 1.
    _2. `PokemonStorageModel::getBoxMon()/getPartyMon()` do an **unchecked `.at(index)`** — their contract
       is that QML only calls them for already-rendered rows. In a test, only call them with an index `<`
       the box's actual `pokemon.size()` (load a non-blank fixture if you want a non-empty box/party)._
-10. **QML/UI** — the maintainer opted in. _Harness established 2026-06-07: `tests/qml/` (Qt Quick Test,
+10. **QML/UI** — in scope. _Harness established 2026-06-07: `tests/qml/` (Qt Quick Test,
     `QUICK_TEST_MAIN`) builds and runs headless via the `offscreen` platform; `cases/tst_smoke.qml`
     is green (6 cases). This proves the QML test path works._
     _**Screen smoke test added 2026-06-13 (`tests/qml/tst_qml_screens.cpp`) — see the dedicated
@@ -753,13 +753,13 @@ asserts on properties, running headless via the `offscreen` platform plugin (so 
 
 - **Lower ROI here.** The bugs that actually threaten this project are byte-level (save corruption)
   and lifetime-level (use-after-free) — both fully covered by C++ tests + sanitizers. UI bugs are
-  mostly cosmetic/layout, which the maintainer already catches fast in live hot-reload iteration.
+  mostly cosmetic/layout, already caught fast in live hot-reload iteration.
 - **Highest maintenance burden.** UI tests are the most brittle kind: every layout tweak (and this
   project is in a heavy, ongoing UI-iteration phase — see `status.md`) risks breaking them, creating
   churn that competes with the actual design work.
 - **Pixel/layout assertions are a trap.** Only *behavioral* flows are worth testing
   (commit-on-blur actually commits; popup actually dismisses; editor tab actually reacts), never
-  positions/sizes — those are the maintainer's live-owned design decisions.
+  positions/sizes — those are live-owned design decisions.
 
 **If greenlit, scope would be narrow:** a handful of behavioral smoke tests on the highest-value
 flows (name commit-on-finish, Pokémon editor reactivity, popup open/dismiss), run offscreen, kept
@@ -813,7 +813,7 @@ benign offscreen font warning allowlisted; `tst_gui_input` now locates the money
   the 32 KB image is **byte-identical** (mismatch prints every changed offset). Over progressed + new
   saves; logs control counts and `QVERIFY`s the sweep exercised controls (no false pass). Does NOT press
   randomize/toggle/stepper/checkout/delete (those are edits, covered by the editing tests). **Still to
-  extend (per the maintainer): the detail editor + name popup + drawers, and per-control depth.**
+  extend: the detail editor + name popup + drawers, and per-control depth.**
 - ✅ **6. Both-platform CI.** The Linux **and** Windows jobs already build `tests_all` + run `ctest`;
   every GUI test sets `offscreen` per-test, so the green check now means "opens + runs on both."
 
@@ -871,7 +871,7 @@ Xvfb, ccache, and `libclang-rt-18-dev` for the sanitizer runtime). The repo is
 **not** in the image — it's bind-mounted read-only at `/host` and `rsync`ed into
 a persistent named volume `pse-build` (ext4 inside the Docker VM) by
 `run-tests.sh`. Building there instead of over the slow Windows/WSL bind mount is
-the speed win the maintainer asked for, and the build tree + ccache persist across runs
+the speed win sought, and the build tree + ccache persist across runs
 so repeats are incremental. Each variant configures its own dir under
 `/build/out/` and runs `cmake --build … --target tests_all` then `ctest`. Full
 how-to + caveats: **`docker/README.md`**.
@@ -901,7 +901,7 @@ delta).
 
 ## Open questions / decisions needed
 
-- **QML/UI scope** — deferred above; the maintainer to decide later.
+- **QML/UI scope** — deferred above; to decide later.
 - ~~**Fixtures**~~ — RESOLVED 2026-06-07: `assets/saves/natural-clean/BaseSAV.new.sav` (fresh) + `assets/saves/natural-clean/BaseSAV.sav`
   (progressed) exist, plus `assets/saves/structure.bt` as the independent offset oracle. Still TODO:
   generate the negative-test corpus, and add Red-vs-Blue / additional game-state fixtures if we want a
@@ -914,7 +914,7 @@ delta).
   automatically (constants can drift).
 - **Minor .bt discrepancy to confirm (don't silently fix):** the `PLAY_TIME` struct lists all five
   members as `char hours` (the display `<name=...>` tags say Hours/Maxed/Minutes/Seconds/Frames). Looks
-  like a copy-paste in the template, not a save-format claim — flag for the maintainer, leave the .bt as-is.
+  like a copy-paste in the template, not a save-format claim — flag for review, leave the .bt as-is.
 - **Coverage gate strictness** — are the initial targets acceptable, and should CI *fail* below them
   or just report?
 - **CI host** — GitHub Actions assumed; confirm the llvm-mingw/Qt 6.11 toolchain is reproducible

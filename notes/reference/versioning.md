@@ -33,15 +33,15 @@ stabilize, `0.9`/`-rc` as a release nears, `1.0.0` at the first real release. (T
 real version numbers before now -- CMake just said `1.0.0` and `boot.cpp` said `v1.0.0`, never
 synced -- so this is the first *formal* baseline rather than a renumbering of history.)
 
-The number is one line in `VERSION`; if the maintainer judges the maturity differently, it's a
+The number is one line in `VERSION`; if the maturity is judged differently, it's a
 one-line change.
 
 ## Single source of truth: `VERSION`
 
 The repo-root **`VERSION`** holds the number on one line (comments with `#` allowed). It is
-the *only* place a human edits the version. (It's the bare `VERSION` -- the changelog folder
-that used to be `version/` was renamed to `version-notes/` (since moved into `notes/` and renamed back to `version` — now `notes/version/`, a subdirectory that doesn't collide with the root `VERSION`), so on case-insensitive Windows there
-is no longer a `VERSION`/`version/` collision to dodge.)
+the *only* place a human edits the version. (The changelog lives at `notes/version/` — a
+subdirectory, so on case-insensitive Windows there is no `VERSION`/`version/` collision with the
+repo-root file.)
 
 Everything else is derived from it at build time. **Do not** hardcode a version anywhere else.
 
@@ -125,9 +125,9 @@ A build from a clean, tagged checkout shows the plain number with no `+g...` suf
 These are **complementary, not the same thing**:
 
 - **`VERSION` + this scheme** = the *identity* of a build / release (one number).
-- **`notes/version.md` + `notes/version/`** = the plain-English *narrative history*, one entry per commit
-  (see `reference/version-history.md`). It explains what changed; the version number labels
-  where you are.
+- **`notes/version.md` + `notes/version/`** = the plain-English *narrative history*, one entry per
+  commit (the changelog; see [`../version.md`](../version.md)). It explains what changed; the version
+  number labels where you are.
 
 When you tag a release, it's worth noting the version in the changelog month file too, but the
 changelog stays per-commit and is maintained separately (by hand, on request).

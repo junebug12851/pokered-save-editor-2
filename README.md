@@ -31,16 +31,16 @@ Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` rang
 
 ## Table of contents
 
-- [What it is](#what-it-is)
-- [Features](#features)
-- [Building from source](#building-from-source)
-- [Running the tests](#running-the-tests)
-- [Contributing](#contributing)
-- [Why the reboot](#why-the-reboot)
-- [Architecture](#architecture)
-- [Project layout](#project-layout)
-- [Credits](#credits)
-- [License & disclaimer](#license--disclaimer)
+- <a href="#what-it-is">What it is</a>
+- <a href="#features">Features</a>
+- <a href="#building-from-source">Building from source</a>
+- <a href="#running-the-tests">Running the tests</a>
+- <a href="#contributing">Contributing</a>
+- <a href="#why-the-reboot">Why the reboot</a>
+- <a href="#architecture">Architecture</a>
+- <a href="#project-layout">Project layout</a>
+- <a href="#credits">Credits</a>
+- <a href="#license--disclaimer">License & disclaimer</a>
 
 ---
 
@@ -56,7 +56,7 @@ The aim is to let you edit **every bit and byte of the save** through a clean, s
 at whatever depth you want — from quickly re-rolling a name, to editing your team and items, all the
 way to advanced things like importing/exporting the normally-unused bytes as raw `.bin`, and
 working with map state. The quick stuff stays quick; the deeper stuff is there when you want it.
-(Plenty of it is in development — see [Features](#features).)
+(Plenty of it is in development — see <a href="#features">Features</a>.)
 
 A few convictions shape everything:
 
@@ -179,8 +179,8 @@ smoke test (`tst_qml_screens`), which loads every screen through the real engine
 
 This is an open-source project and contributions are welcome. The workflow and standards are written
 down so anyone (human or AI assistant) can pick it up cleanly. **Please read the living notes in
-[`notes/`](notes/) before making changes** — start with [`notes/status.md`](notes/status.md) for
-current state, and [`notes/context/`](notes/context/) for the project's goals and principles.
+[`notes/`](notes/README.md) before making changes** — start with [`notes/status.md`](notes/status.md) for
+current state, and [`notes/context/`](notes/context/project.md) for the project's goals and principles.
 
 A few things to keep in mind:
 
@@ -222,11 +222,11 @@ common  →  db  →  savefile  →  appcore  →  app
 
 | Layer | Role |
 |-------|------|
-| `common` | Shared types and a `Random` wrapper. |
-| `db` | All Gen 1 game data, loaded from JSON, cross-linked, exposed via `XxxDB::inst()` singletons. |
-| `savefile` | Parse → **expand** into editable C++ objects → **flatten** back with bit- and byte-exact fidelity. |
-| `appcore` | The testable app logic: the `Bridge`, ~25 MVC list models, the font/tileset engine, the `Router`, settings. |
-| `app` | Thin Qt/QML shell: `main`, boot, native `MainWindow`, `app.qrc`. QML talks to C++ through one `Bridge` object exposed as `brg`. |
+| [`common`](notes/systems/common.md) | Shared types and a `Random` wrapper. |
+| [`db`](notes/systems/db.md) | All Gen 1 game data, loaded from JSON, cross-linked, exposed via `XxxDB::inst()` singletons. |
+| [`savefile`](notes/systems/savefile.md) | Parse → **expand** into editable C++ objects → **flatten** back with bit- and byte-exact fidelity. |
+| [`appcore`](notes/systems/app.md) | The testable app logic: the `Bridge`, ~25 MVC list models, the font/tileset engine, the `Router`, settings. |
+| [`app`](notes/systems/app.md) | Thin Qt/QML shell: `main`, boot, native `MainWindow`, `app.qrc`. QML talks to C++ through one `Bridge` object exposed as `brg`. |
 
 For the in-depth, code-grounded version, see [`notes/systems/overview.md`](notes/systems/overview.md)
 and [`notes/context/architecture.md`](notes/context/architecture.md). The save format itself is
@@ -247,10 +247,10 @@ VERSION        Single source of truth for the version number
 
 ## Credits
 
-The **in-app Credits screen** (data in
-[`projects/db/assets/data/credits.json`](projects/db/assets/data/credits.json)) lists everyone and
-everything that helped: contributors, data sources, frameworks, tools, services, and the artists
-behind the icons and artwork. Most artwork and icons are by fans and are credited there accordingly.
+The **in-app Credits screen** lists everyone and everything that helped: contributors, data sources,
+frameworks, tools, services, and the artists behind the icons and artwork. See the full list in
+[`credits.md`](projects/db/assets/data/credits.md) (the human-readable rendering of the underlying
+[`credits.json`](projects/db/assets/data/credits.json) the app reads). Most artwork and icons are by fans and are credited there accordingly.
 The 2026 revival has been done with the help of development tooling.
 
 ## License & disclaimer

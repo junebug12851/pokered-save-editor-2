@@ -14,7 +14,7 @@ bytes an edit requires. It knows nothing about the UI. See the macro picture in
 > Documentation status: **all 50 headers are documented + verified** -- the core
 > spine *and* the entire `expanded/*` object tree (root, player, fragments, area,
 > world, root siblings). Only the `.cpp` implementations remain. Tracked in
-> [../reference/documentation-progress.md](../reference/documentation-progress.md).
+> [../reference/documentation.md](../reference/documentation.md).
 
 ## The core spine
 

@@ -43,7 +43,7 @@ the source — matching the graceful-degradation principle.
   (`"L"+level`) are intentionally not wrapped.
 - **Game-data names** (Pokémon/move/item) are explicitly **out of scope** — they're region/encoding
   -bound save data, a separate and larger effort, not Qt-translation material.
-- **Language switching is deferred** (the maintainer, 2026-06-13): with only en_US and no in-app
+- **Language switching is deferred** (decided 2026-06-13): with only en_US and no in-app
   Options/Settings screen yet, there's nothing to switch to. The `ui/language` setting is the hook;
   revisit when a second locale and the Options screen exist. (lupdate/lrelease both work fine — the
   initial "lupdate hang" was just stacked Windows UAC dialogs, not a tooling issue.)
@@ -60,7 +60,7 @@ HM-relevant badges (Thunder/Cascade/Soul/Rainbow) and left the other 4 off.
 **Why**: Gen 1 progression is strictly linear — you earn badges in gym order. A random bitmask
 (or a fixed HM subset) could grant a later badge without the earlier ones, which is an
 impossible game state. "Random from badge 1, linear only" mirrors how a real save progresses:
-roll `rangeInclusive(1, 8)` and set `badges[0..N-1]`. maintainer-specified.
+roll `rangeInclusive(1, 8)` and set `badges[0..N-1]`. as specified.
 
 **Tests**: `tst_randomizer` invariants updated to assert badge 0 is always set and the earned
 badges are contiguous from badge 1 (no gaps). `tst_player_basics` + `tst_verbs` byte-fidelity
@@ -219,7 +219,7 @@ forward-declared signal/slot parameter (Qt 6 MOC tolerates that — proven by th
 Includes are only strictly required at `Q_PROPERTY` / `Q_INVOKABLE`-return sites for *traversal*.
 
 Full mechanism + the "include only traversed branches" corollary live in
-`reference/qt6-patterns.md`. The rule is also in the top-level `CLAUDE.md` "Critical Things".
+`reference/qt-patterns.md`. The rule is also in the top-level `CLAUDE.md` "Critical Things".
 
 ---
 
@@ -233,7 +233,7 @@ human-readable comments only.
 qdoc doesn't associate a comment with the declaration beneath it the way Doxygen does — it makes
 you restate what you're documenting with topic commands (`\fn bool SaveFile::load(...)`,
 `\qmltype Pokedex`, `\qmlproperty ...`). That turns in-code comments verbose and machine-like.
-The maintainer's UX-first bar applies to the *source itself*: comments must read cleanly for a developer.
+the project UX-first bar applies to the *source itself*: comments must read cleanly for a developer.
 qdoc fails that test.
 
 **Why Doxygen**: it reads the next line of code, so comments stay human and Markdown-friendly
@@ -248,13 +248,13 @@ comments give the real value. Revisit qdoc only if contributors ever need a brow
 `docs/html/` (git-ignored). Build: `doxygen Doxyfile`. Details + comment-style examples in
 `reference/documentation.md`.
 
-**Reaffirmed same session**: the maintainer reconsidered switching to qdoc for full-project (QML)
+**Reaffirmed same session**: switching to qdoc was reconsidered for full-project (QML)
 coverage, then chose to **stay on Doxygen**. Deciding factors: qdoc has **no Markdown** — its
 prose pages use qdoc's own markup (`\page`/`\section1`/`\c`/`\l`), so it can't ingest the
 `notes/*.md` and would force any custom pages out of Markdown; it also reintroduces the verbose
 `\fn`/`\qmltype` comment style. Doxygen keeps comments human AND ingests Markdown pages natively
 (curated `.md` pages can be added to `INPUT` later). Accepted cost: no generated QML doc site.
-**Update (same session)**: the maintainer then asked for the `notes/` to be **built into the Doxygen
+**Update (same session)**: the `notes/` were then **built into the Doxygen
 output and cross-linked**. So `notes` is now in the Doxyfile `INPUT`: the Markdown notes render as
 doc-site pages and their relative links resolve page-to-page. The notes remain plain, readable
 Markdown (no Doxygen markup added) — they are still the living dev notes, just now also published
@@ -402,7 +402,7 @@ URL, and decoded from hex in C++ — the `Utility::encodeBeforeUrl` helper. This
 documented workaround for a genuine framework defect, not a hack of convenience (see
 `context/principles.md` → "No hacks — but accept necessary workarounds"). Also note the provider
 must report the correct "whole" image size or Qt Quick rescales and blurs it (`0fb0106`). See
-`systems/app.md` and `reference/qt-gotchas.md`.
+`systems/app.md` and `reference/qt-patterns.md`.
 
 ## The `Random` helper
 

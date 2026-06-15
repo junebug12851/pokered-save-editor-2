@@ -45,7 +45,7 @@ Everything flows through the single context property **`brg`** (the Bridge):
 
 The Qt 6 rule that makes the `brg.file.data.dataExpanded.*` chain readable from QML
 (complete types, not opaque) is in [savefile.md](savefile.md) /
-[../reference/qt6-patterns.md](../reference/qt6-patterns.md). UI conventions
+[../reference/qt-patterns.md](../reference/qt-patterns.md). UI conventions
 (layouts, borderless combos, the kebab buttons, editor popups, sliders) are in
 [../reference/ui-patterns.md](../reference/ui-patterns.md) -- read that before UI work.
 
@@ -57,9 +57,9 @@ QML files start with `import` lines (no licence header). The house style:
   component is, what it binds to, and any non-obvious behaviour.
 - Inline `//` comments on non-obvious properties, signals, JS functions, and layout
   tricks (especially the Qt 6 Material height workarounds noted in `ui-patterns.md`).
-- **Preserve every existing comment** (the maintainer iterated these heavily); merge, never
+- **Preserve every existing comment** (these were iterated heavily); merge, never
   delete. Comments only -- never change UI code while documenting.
 
 > Documentation status: `App.qml` done (the convention setter). Screens, sections,
 > and fragments are in progress -- tracked in
-> [../reference/documentation-progress.md](../reference/documentation-progress.md).
+> [../reference/documentation.md](../reference/documentation.md).

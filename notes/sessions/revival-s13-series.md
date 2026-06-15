@@ -1,57 +1,29 @@
-# Session Log — pokered-save-editor-2
+# Revival Sessions — the `s13` series (legacy combined log)
 
-Chronological "what just happened" log, **newest first**. `../status.md` holds the *current*
-state (health, open issues); this file is the running history of what changed each session and
-why. Deep root-cause mechanics live in `../reference/qt6-patterns.md` and `../decisions/`; this is
-the narrative.
+This is the pre-per-day session narrative from the 2026 revival, preserved verbatim from the old
+single-file `session-log.md`. These sessions were tracked by number (`s13`, `s13b` … `s13z11`, plus
+`s14`) rather than by calendar date — the work was never committed (HEAD was the corrupted commit
+until the 2026-06-06 recovery), so it has no reliable per-day dates. Newest first.
+
+Dated work from 2026-06-06 onward lives in the per-day files (`2026-06-NN.md`).
 
 The recurring theme of sessions 13f–13j: **QML garbage-collects parentless C++ QObjects.** Two
 distinct fixes came out of it — `DB::qmlProtect` for DB entries (13f) and `qmlCppOwned()` for
-savefile `Q_INVOKABLE` returns (13g–13h). See qt6-patterns "QML garbage-collects parentless C++
-QObjects" for the full rule.
+savefile `Q_INVOKABLE` returns (13g–13h). See `../reference/qt-patterns.md` → "QML garbage-collects
+parentless C++ QObjects" for the full rule.
 
 ---
 
-## Session — sed/mount corruption + full transcript recovery (2026-06-06)
+## Session 13z10–13z11 — Trainer Card layout pass (QML-only, no rebuild)
 
-**What happened:** a bulk `sed -i` rename (prior name -> the maintainer) run over the Cowork **mounted**
-filesystem silently **truncated 55 source files + 8 notes** on the real disk. The mount does
-partial/truncated writes under load (and also gives false-truncated *reads*). The damage was real
-(the Windows compiler saw the truncation), and git HEAD had been committed *after* the damage, so it
-was not a usable restore point.
-
-**Recovery method (worked):** reconstructed every file from prior-session **Cowork chat transcripts**
-(`%APPDATA%\Claude\local-agent-mode-sessions\...\.claude\projects\*.jsonl`). Each transcript
-records every tool call — `Read` results (full file dumps with line numbers), `Write`/`Edit` inputs,
-and `bash` commands. Techniques, by fidelity: (1) a full `Write` or full `Read` capture = exact; (2)
-line-number stitching of multiple partial `Read`s; (3) **replaying the captured `Edit` history onto the
-`af883fd` clone base** for files only ever edited incrementally; (4) grafting intact disk-head +
-`af883fd` tail. Every result was **validated against the most recent transcript reads** and written/
-verified with Windows-side PowerShell (the bash mount is unreliable). Full how-to:
-`reference/diagnostic-methods.md` -> "Recovering files from Cowork chat transcripts".
-
-**Final outcome — fully recovered, project intact:**
-- ~45 source files + all notes: exact recovery.
-- `pokemonbox.cpp` (1781 ln) / `pokemonbox.h` (455 ln): reconstructed by replaying the captured Edit
-  history + the `::ind.value(` -> `::inst()->getIndAt(` DB refactor onto af883fd; validated line-for-
-  line vs recent reads (h 12/12 exact, cpp 120/122 — the 2 diffs are pre-edit older reads). These are
-  ~1765-line files lightly edited from af883fd, NOT rewrites.
-- The 7 "clone-based" files (settings.cpp, fontsdb.cpp, area.h, areasign.cpp, areasprites.cpp,
-  pokemonstoragebox.h, storage.cpp): af883fd + replayed Edits + refactor, then read-corrected. The
-  earlier residuals are now **FIXED**: fontsdb `splice()`/`search()`/`getStoreAt`/`getIndAt` restored
-  from reads; area.h s13c include-trim restored; settings `previewOutdoor` accessor + areasign/
-  areasprites `mapdbentry.h` include restored.
-- Notes comprehensively restored to their fullest recent versions (history.md 294, CLAUDE.md 74,
-  next-steps.md 81, qt6-patterns.md 496, etc.).
-- The prior-name -> the maintainer / Apache-2.0 header / gmail-removal work was re-applied consistently.
-
-**Verified final state:** 380 source files, 0 truncated, 0 missing Apache headers, 0 stray name/gmail,
-0 INCOMPLETE banners. Recommend a clean build to confirm linkage, then commit to lock it in.
-
-**HARD RULE:** NEVER bulk-edit project files with `sed -i` / `perl -i` / shell redirection over the
-Cowork mount — it silently corrupts files. Use the Read/Edit/Write tools or PowerShell
-(`[System.IO.File]::WriteAllText`, UTF8-no-BOM) and verify every write (re-read + brace balance).
-See `decisions/rejected.md`.
+(Pre-corruption; the last pre-corruption work was s13z11.) agreed, live-iterated:
+(1) restored the **centered grey box** (the `SwipeView` had been changed to `anchors.fill: parent`
+in the refactor → back to centered `500×250`); (2) **compacted every field** via one
+`CardFront.fieldH` (28) knob + tighter row margins, fixing the too-tall Qt 6 Material boxes;
+(3) **fixed the playtime clock** — narrowed each digit field to ~2 chars (`PlaytimeEdit.digitPad`)
+and stopped the row sizing to the Material implicit height (it now pins to `fieldH` and vcenters the
+`:`), which had made the digits ride high; (4) **vcentered `DefTextEdit`'s built-in label** (it
+lacked `verticalAlignment`, so ID/Money/Coins labels rode high).
 
 ## Session 13j — Pokémon box hover name finally renders (+ pen icon restored)
 
@@ -79,7 +51,7 @@ shadow). Result: the accent pill painted but the name STILL didn't show → **ru
 
 ## Session 13h — Systemic Q_INVOKABLE-GC fix (`qmlCppOwned` across all `…At()`)
 
-Did the full systemic fix for the Q_INVOKABLE-GC bug (the maintainer chose `setObjectOwnership` over
+Did the full systemic fix for the Q_INVOKABLE-GC bug (`setObjectOwnership` was chosen over
 parenting — parenting would have fought the existing manual `deleteLater`/cross-box-relocate
 lifecycle and risked double-frees; `setObjectOwnership` leaves the C++ lifecycle untouched).
 
@@ -91,7 +63,7 @@ lifecycle and risked double-frees; `setObjectOwnership` leaves the C++ lifecycle
 - (The two app-model wrappers `getBoxMon`/`getPartyMon` were already done in 13g.)
 
 Removes the whole class of "QML frees a savefile object I still hold" crashes/decay. Needs a
-rebuild. Standing rule added (CLAUDE.md + qt6-patterns): wrap any new Q_INVOKABLE QObject return in
+rebuild. Standing rule added (CLAUDE.md + qt-patterns): wrap any new Q_INVOKABLE QObject return in
 `qmlCppOwned()`.
 
 ## Session 13g — Clicking-Pokémon crash root-caused (Q_INVOKABLE ownership)
@@ -136,7 +108,7 @@ Pokémon click works (the earlier "crash" was interference). Fixes:
 - Diagnosed the trainer-card/playtime vertical overlap as the **Qt 6 Material control-height**
   issue (hardcoded offsets assume the shorter Qt 5 field). Not caused by the width fixes.
 - `é` in "Pokémon" only ever appeared in one code comment; the app's tooltips already use plain
-  "Pokemon" (the maintainer's original spelling). No displayed string altered. Preserve `é` going forward.
+  "Pokemon" (the original spelling). No displayed string altered. Preserve `é` going forward.
 - `val is not declared` warning is harmless (the `changeStr(string val)` signal declares `val`;
   Qt 6 just deprecates injected handler params).
 
@@ -151,8 +123,7 @@ back to forward-decl + `Q_DECLARE_OPAQUE_POINTER`. Added `-Wno-ignored-attribute
 silence the harmless `dllimport` warning. Chain still works (verified no traversed type is opaque).
 
 > Tooling note: the bash sandbox mount lags behind the editor's writes and shows false truncation /
-> stale content. The Read/Edit/Write file tools are the source of truth. (Persisted to Claude's
-> cross-session memory, not a project fact.)
+> stale content. The Read/Edit/Write file tools (and PowerShell) are the source of truth.
 
 ## Session 13b — Chain works; pokemon types de-opaqued; number-box widths; About guard
 
@@ -180,4 +151,5 @@ opaque-declared beneath it failed. This also produced the "Connections: no signa
 (the targets were just `undefined`).
 
 Fix: removed the opaque decls for the traversed QObject chain types and added full `#include`s down
-the chain so Qt d
+the chain so Qt sees them as real QObject pointers. See `../reference/qt-patterns.md` →
+"`Q_DECLARE_OPAQUE_POINTER` breaks the QML property chain".
