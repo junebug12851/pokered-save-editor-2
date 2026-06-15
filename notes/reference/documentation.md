@@ -80,6 +80,12 @@ correctly:
   `EXTENSION_MAPPING = no_extension=md`, so the README's `[LICENSE](LICENSE)` / `[VERSION](VERSION)`
   links resolve. `credits.md` is the human-readable rendering of `credits.json` (regenerate on every
   JSON edit — see `CLAUDE.md` → "Keep the Credits Screen Living").
+- **Blockquote gotcha: keep blockquotes single-line, and use `*italics*` not `_italics_`.** A
+  **multi-line** `> …` blockquote (and/or `_..._` emphasis next to a link/code span) makes Doxygen
+  mis-parse it — it doesn't render the emphasis AND leaks a literal `</blockquote>` that a following
+  `---` turns into a stray `<h1>` (polluting the page and the auto-TOC/nav). Seen on the README intro
+  when it became the Pages docs home (2026-06-15). GitHub renders both forms fine, so prefer the
+  single-line `*…*` form that satisfies both renderers.
 
 ---
 

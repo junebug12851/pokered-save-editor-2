@@ -7,8 +7,7 @@ simple, intuitive interface — heavily tested for stability and built to protec
 save, even the unused ones, from unintended changes during editing, to the best of what testing can
 ensure.
 
-> _The reboot of [`pokered-save-editor`](https://github.com/junebug12851/pokered-save-editor) —
-> rebuilt from scratch in Qt/C++._
+> *The reboot of [`pokered-save-editor`](https://github.com/junebug12851/pokered-save-editor) — rebuilt from scratch in Qt/C++.*
 
 ---
 
