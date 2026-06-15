@@ -19,15 +19,17 @@ Over the populated fixture `assets/saves/natural-clean/BaseSAV.sav`:
   `editor/pokemon_editor_{general,dvev,moves}.png`.
 - **Both text-editor modes** — the quick-edit popup and the modal full keyboard, plus the keyboard's
   tileset "tileviewer" → `editor/text_{quick_popup,full_keyboard,keyboard_tileset}.png`.
-- **Hover states** — the keyboard's font-tile preview tooltip and a Pokédex tile →
-  `editor/text_keyboard_hover_tile.png`, `screens/pokedex_hover_tile.png`.
+- **Hover state** — the full keyboard's font-tile preview tooltip (hover a real character pill to
+  raise its `TilePreview`) → `editor/text_keyboard_hover_tile.png`. (No Pokédex hover shot — the
+  Pokédex doesn't need one.)
 - **Animation frame sequences** under `frames/<name>/frame_NNN.png`, assembled into GIFs:
   - `tileset_anim` — the full keyboard's animated tileset tiles (water/flower) cycling. The capture
     sets the preview tileset to **Overworld + outdoor** (only outdoor tilesets actually move tiles),
     stops `TilesetDisplay`'s Timer, and drives its `curFrame` 0–7 so each frame is distinct.
-  - `typing` — the quick-edit name editor building a name letter-by-letter: the capture sets the field
-    text **and** `NameDisplay.str` per step so the live GB-font preview + byte counter update (a plain
-    `name` preview does NOT animate on its own — only tileset tiles do; that's why this drives `str`).
+  - `typing` — the quick-edit name editor building a name letter-by-letter: the capture drives the
+    **popup's name field** (found by its "Enter a name" placeholder, NOT the tileset combo), so the
+    textbox owns the value and the live GB-font preview + byte counter follow it. (A plain `name`
+    preview does NOT animate on its own — only tileset tiles do.)
   - `tab_cycle` — cycling the editor's General/DV-EV/Moves tabs.
 
   Frame playback speeds live in `make_gifs.py` `DURATION_MS` (per sequence).
@@ -61,15 +63,26 @@ The tool **only ever reads** the save in memory to render the UI. It never calls
 
 ## Key technical notes (don't relearn these the hard way)
 
-- **Render through a REAL GPU window — NOT offscreen+software.** This is the big lesson. The app draws
-  its QML through a GPU-backed `QQuickWidget`; the `offscreen` platform with `QT_QUICK_BACKEND=software`
-  **silently drops every `MultiEffect`/layered item** — so the Credits cards vanished, Home's disabled
-  (greyed) tiles vanished, and shadows/whole screens rendered washed-out. The fix: the `.ps1` does NOT
-  set `QT_QPA_PLATFORM`, so the tool runs on the native platform and `main()` shows the `QQuickView` as a
-  **frameless, `Qt::Tool`, off-screen-positioned** window (`setPosition(-4000,-4000)`) — it renders on
-  the GPU exactly like the app but never flashes on the user's desktop. `grabWindow()` renders the scene
-  graph to an image regardless of the window being off-screen/occluded. (Offscreen+software is still the
-  CI fallback — it runs, with the known missing-effects caveat. xvfb on Linux would render effects.)
+- **Render through a REAL GPU window — NOT offscreen.** This is the big lesson. The app draws its QML
+  through a GPU-backed `QQuickWidget`; the `offscreen` platform **silently drops every `MultiEffect`/
+  layered item** (Credits cards, Home's greyed disabled tiles, shadows → washed-out screens). And it's
+  not just the software backend: **offscreen with the default RHI was tested on Windows and STILL didn't
+  render the effects** (the offscreen platform has no real swapchain). So the only way to get the
+  effects is a real GPU window. The `.ps1` does NOT set `QT_QPA_PLATFORM`; the tool runs on the native
+  platform and `main()` shows the `QQuickView` **frameless + `Qt::Tool`**, positioned **off the visible
+  desktop** on Windows/macOS (`setPosition(-4000,-4000)`) so it renders on the GPU without flashing, and
+  at `(0,0)` under xvfb/X so it stays on the virtual screen. `grabWindow()` renders the scene graph to
+  an image regardless of the window being off-screen/occluded.
+  - **CI:** `capture_screenshots.sh` runs under **`xvfb-run`** (a real X window + llvmpipe renders the
+    effects, still headless). Only if `xvfb-run` is absent does it fall back to `offscreen` +
+    `PSE_FORCE_SOFTWARE=1` — which runs but with **missing effects** (documented, last resort).
+- **`QQuickView` doesn't size the Controls overlay → centered popups land bottom-right.** A plain
+  `QQuickView` (unlike an `ApplicationWindow`/`QQuickWidget`) leaves `QQuickOverlay` at **size 0×0**,
+  parked at the window centre. So `anchors.centerIn: Overlay.overlay` popups (the quick-edit name
+  editor) had nothing to center against and rendered at the bottom-right. `fixOverlay()` finds the
+  `QQuickOverlay` and sets its geometry to fill the window (called after show + before each popup grab),
+  which makes the `centerIn` bindings re-evaluate and center correctly. (Diagnosed by logging the
+  overlay/popup geometry — it read `QQuickOverlay … size 0×0` at the window centre.)
 - **HiDPI → downscale to 1130×740.** On a scaled display `grabWindow()` returns PHYSICAL pixels (e.g.
   1695×1110 on a 150% screen). `grab()` downsamples every image to the window's LOGICAL size (1130×740)
   with a smooth transform, so output is a stable 1130×740 regardless of the dev machine's scaling (and

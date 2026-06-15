@@ -138,6 +138,25 @@ void hover(GuiApp& app, QQuickItem* item, int settleMs = 900)
   app.settle(settleMs);
 }
 
+// Size the QQuickOverlay to fill the window. A plain QQuickView does NOT auto-size
+// the Controls overlay the way an ApplicationWindow/QQuickWidget does -- it stays 0x0
+// at the window centre, so `anchors.centerIn: Overlay.overlay` popups (the quick-edit
+// name editor) land bottom-right instead of centered. Forcing the overlay's geometry
+// makes those `centerIn` bindings re-evaluate and center correctly.
+void fixOverlay(GuiApp& app)
+{
+  QQuickItem* ci = app.view()->contentItem();
+  if (!ci) return;
+  for (QObject* o : ci->findChildren<QObject*>())
+    if (QString::fromLatin1(o->metaObject()->className()).contains(QLatin1String("QQuickOverlay")))
+      if (QQuickItem* ov = qobject_cast<QQuickItem*>(o)) {
+        ov->setX(0);
+        ov->setY(0);
+        ov->setWidth(app.view()->width());
+        ov->setHeight(app.view()->height());
+      }
+}
+
 } // namespace
 
 // ---------------------------------------------------------------------------
@@ -250,6 +269,8 @@ static void captureTextEditors(GuiApp& app)
   if (QQuickItem* nd = findByProp(app.currentNonModal(), "editorVisible")) {
     nd->setProperty("editorVisible", true);
     app.settle(260);
+    fixOverlay(app);            // re-center the popup (overlay sizing)
+    app.settle(60);
     grab(app, QStringLiteral("editor/text_quick_popup.png"));
     nd->setProperty("editorVisible", false);
     app.settle(80);
@@ -260,42 +281,49 @@ static void captureTextEditors(GuiApp& app)
   // -- Full keyboard modal. --
   if (Router::screens.contains(QStringLiteral("fullKeyboard"))) {
     app.navigate(QStringLiteral("fullKeyboard"));
-    app.settle(220);
+    app.settle(240);
     grab(app, QStringLiteral("editor/text_full_keyboard.png"));
 
     QQuickItem* root = viewRoot(app);
 
+    // Hover a real character "pill" (a SearchResults delegate -- has a `fontInd`
+    // property) in the GRID view to raise its TilePreview tooltip. Pick a visible,
+    // non-control pill (control codes get no tooltip) and wait out the ToolTip's
+    // 250ms delay before grabbing.
+    QList<QQuickItem*> pills;
+    GuiApp::collectItems(root, [](QQuickItem* i) {
+      return i->metaObject()->indexOfProperty("fontInd") >= 0;
+    }, pills);
+    QQuickItem* pill = nullptr;
+    for (QQuickItem* p : pills) {
+      QObject* f = p->property("f").value<QObject*>();
+      if (!f) continue;
+      const QString nm = f->property("name").toString().trimmed();
+      const QPointF c = p->mapToScene(QPointF(p->width() / 2.0, p->height() / 2.0));
+      // Skip control codes (no tooltip) and the blank "Space" (empty preview); pick a
+      // visible glyph that's within the viewport.
+      if (!f->property("control").toBool() && !nm.isEmpty() && nm != QLatin1String("Space")
+          && c.y() > 0 && c.y() < app.view()->height()) {
+        pill = p;
+        break;
+      }
+    }
+    if (pill) {
+      hover(app, pill, 1000);      // exceed the ToolTip's 250ms delay so it shows
+      grab(app, QStringLiteral("editor/text_keyboard_hover_tile.png"));
+    } else {
+      qWarning().noquote() << "  [skip] no hoverable keyboard pill found";
+    }
+
     // Flip the Grid/Tileset paged toggle to show the tileset "tileviewer".
     if (QQuickItem* paged = findByProp(root, "showTileset")) {
       paged->setProperty("showTileset", true);
-      app.settle(260);
+      app.settle(280);
       grab(app, QStringLiteral("editor/text_keyboard_tileset.png"));
     }
 
-    // Hover a font "pill" (SearchResults delegate) to raise the TilePreview tooltip.
-    // The pills live in a Flow; just hover an Image/Label deep in the keyboard tree.
-    if (QQuickItem* pill = app.itemByType(QStringLiteral("Label"), root)) {
-      hover(app, pill);
-      grab(app, QStringLiteral("editor/text_keyboard_hover_tile.png"));
-    }
     app.closeTop();
     app.settle(80);
-  }
-}
-
-// 5) Pokedex tile hover state.
-static void capturePokedexHover(GuiApp& app)
-{
-  qInfo().noquote() << "== pokedex hover ==";
-  app.navigate(QStringLiteral("pokedex"));
-  app.settle(160);
-  // Hover a dex tile delegate (an Image fairly deep in the grid).
-  QList<QQuickItem*> imgs = app.itemsByType(QStringLiteral("QQuickImage"), app.currentNonModal());
-  if (imgs.size() >= 2) {
-    hover(app, imgs.at(imgs.size() / 2), 700);
-    grab(app, QStringLiteral("screens/pokedex_hover_tile.png"));
-  } else {
-    qWarning().noquote() << "  [skip] not enough dex tiles to hover (" << imgs.size() << ")";
   }
 }
 
@@ -359,6 +387,8 @@ static void captureFramesTyping(GuiApp& app)
   if (!nd) { qWarning().noquote() << "  [skip] no name editor"; return; }
   nd->setProperty("editorVisible", true);
   app.settle(300);
+  fixOverlay(app);             // center the popup (overlay sizing)
+  app.settle(60);
 
   // The popup's editable NAME field. The Popup is a QML child of this NameDisplay
   // (even though its visuals render in Overlay.overlay), so the field is reachable as
@@ -431,10 +461,13 @@ static void captureFramesTabs(GuiApp& app)
 // ---------------------------------------------------------------------------
 int main(int argc, char** argv)
 {
-  // Force the software scene-graph backend for reliable offscreen pixel grabs (no
-  // GPU needed -> works in CI/Docker). Override by pre-setting QT_QUICK_BACKEND.
-  if (qgetenv("QT_QPA_PLATFORM") == "offscreen" && qEnvironmentVariableIsEmpty("QT_QUICK_BACKEND"))
+  // NOTE: we deliberately do NOT force QT_QUICK_BACKEND=software. The software
+  // backend silently drops MultiEffect/layered items (Credits cards, Home disabled
+  // tiles, shadows). We let Qt use its default RHI so effects render. Set
+  // PSE_FORCE_SOFTWARE=1 to opt into the software backend (last-resort CI fallback).
+  if (!qEnvironmentVariableIsEmpty("PSE_FORCE_SOFTWARE"))
     qputenv("QT_QUICK_BACKEND", "software");
+
 
   // The offscreen platform uses Qt's FreeType font DB, which finds NO fonts unless
   // pointed at a font directory (otherwise all UI text renders as tofu boxes). Point
@@ -479,10 +512,15 @@ int main(int argc, char** argv)
   {
     QQuickView* v = app.view();
     v->setFlags(v->flags() | Qt::FramelessWindowHint | Qt::Tool);
-    v->setPosition(-4000, -4000);
+    const QString plat = QGuiApplication::platformName();
+    if (plat == QLatin1String("windows") || plat == QLatin1String("cocoa"))
+      v->setPosition(-4000, -4000);   // off the visible desktop: renders on GPU, no flash
+    else
+      v->setPosition(0, 0);           // xvfb/X (CI): stay on the virtual screen so it exposes
     v->show();
   }
   app.settle(300);             // let the window expose + do its first GPU render
+  fixOverlay(app);             // size the Controls overlay to the window (popup centering)
   app.closeTop();              // dismiss the New File modal -> Home
   app.settle(120);
 
@@ -490,7 +528,6 @@ int main(int argc, char** argv)
   captureViewAll(app);
   capturePokemonEditor(app);
   captureTextEditors(app);
-  capturePokedexHover(app);
   captureFramesTileset(app);
   captureFramesTyping(app);
   captureFramesTabs(app);

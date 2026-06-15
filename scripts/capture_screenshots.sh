@@ -29,7 +29,15 @@ exe="$build/screenshooter"
 
 mkdir -p "$out"
 echo "Capturing screenshots -> $out"
-QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software "$exe" "$out"
+# Prefer a REAL window under a virtual X display (xvfb): the GPU/llvmpipe path renders
+# MultiEffect/layered content (Credits cards, Home disabled tiles, shadows) that the
+# offscreen+software backend silently drops -- and it's still headless/CI-friendly.
+if command -v xvfb-run >/dev/null 2>&1; then
+  xvfb-run -a -s "-screen 0 1280x800x24" "$exe" "$out"
+else
+  echo "xvfb-run not found; falling back to offscreen+software (MultiEffect content will be MISSING)"
+  QT_QPA_PLATFORM=offscreen PSE_FORCE_SOFTWARE=1 "$exe" "$out"
+fi
 
 if command -v python3 >/dev/null 2>&1; then
   echo "Assembling GIFs..."
