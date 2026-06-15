@@ -126,14 +126,21 @@ jobs:
           EXE=$(find build -name PokeredSaveEditor.exe | head -n1)
           echo "exe: $EXE"
           cp "$EXE" dist/PokeredSaveEditor/
-          # NOTE: windeployqt's --compiler-runtime supports ONLY MSVC/g++, not
-          # llvm-mingw (it errors "implemented for Desktop MSVC/g++ only"), so deploy
-          # Qt WITHOUT it and copy the llvm-mingw runtime DLLs by hand below.
+          # windeployqt on llvm-mingw can print "Unable to find the platform plugin"
+          # and return NON-ZERO even when it deploys everything else -- don't let that
+          # rc abort the step; verify the result afterward. (--compiler-runtime is also
+          # MSVC/g++ only, so it's omitted and the runtime DLLs are copied by hand.)
           windeployqt --release --no-translations \
             --qmldir projects/app/ui \
-            dist/PokeredSaveEditor/PokeredSaveEditor.exe
-          # llvm-mingw C++/unwind/pthread runtime DLLs (live in the compiler's bin,
-          # which install-qt-action puts on PATH; fall back to searching Qt Tools).
+            dist/PokeredSaveEditor/PokeredSaveEditor.exe \
+            || echo "windeployqt returned $? -- verifying deployment below"
+          # Make sure the Windows platform plugin is present (hand-copy if missed).
+          if [ ! -f dist/PokeredSaveEditor/platforms/qwindows.dll ]; then
+            mkdir -p dist/PokeredSaveEditor/platforms
+            cp "$QT_ROOT_DIR/plugins/platforms/qwindows.dll" dist/PokeredSaveEditor/platforms/
+          fi
+          # llvm-mingw C++/unwind/pthread runtime DLLs (compiler bin is on PATH; fall
+          # back to searching Qt Tools).
           CXXBIN=$(dirname "$(command -v clang++ 2>/dev/null || command -v clang 2>/dev/null || echo /nonexistent)")
           echo "compiler bin: $CXXBIN"
           for dll in libc++.dll libunwind.dll libwinpthread.dll; do
@@ -145,6 +152,10 @@ jobs:
               [ -n "$f" ] && cp "$f" dist/PokeredSaveEditor/ && echo "copied $dll from $f" || true
             done
           fi
+          # Sanity: the core Qt runtime + platform plugin MUST be present, else fail.
+          echo "--- deployed (top level) ---"; ls dist/PokeredSaveEditor
+          test -f dist/PokeredSaveEditor/Qt6Core.dll
+          test -f dist/PokeredSaveEditor/platforms/qwindows.dll
 
       - name: Package portable .zip
         shell: pwsh
