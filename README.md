@@ -1,15 +1,14 @@
 # Pokered Save Editor 2
 
-**A polished desktop save editor for Pokémon Red & Blue (Game Boy), built in Qt 6 with C++ & QML.**
+**A Pokémon Red & Blue save editor written in C++/Qt/QML.**
 
-Open a Gen 1 `.sav`, edit your trainer, team, Pokédex, items, boxes and world — then save it back
-*byte-for-byte intact*. The goal is software that feels like it belongs in your applications folder:
-native, fluid, and fun to poke around in — not a wall of hex.
+A desktop app for comprehensively editing every aspect of a Generation 1 save file through a clean,
+simple, intuitive interface — heavily tested for stability and built to protect every byte in your
+save, even the unused ones, from unintended changes during editing, to the best of what testing can
+ensure.
 
-> _The reboot of [`pokered-save-editor`](https://github.com/junebug12851/pokered-save-editor) — same
-> heart, rebuilt from scratch on Qt/C++ to escape the weight of the old JavaScript/Electron stack._
->
-> Six years dormant, revived in 2026, and still going. ♡〜٩( ˃́▿˂̀ )۶〜♡
+> _The reboot of [`pokered-save-editor`](https://github.com/junebug12851/pokered-save-editor) —
+> rebuilt from scratch in Qt/C++._
 
 ---
 
@@ -17,9 +16,10 @@ native, fluid, and fun to poke around in — not a wall of hex.
 
 ## ⚠️ Status — early alpha, work in progress
 
-This is an **active WIP and not finished** — expect rough edges and bugs. It now edits real saves and has a large
-automated test suite, but it is not yet a 1.0. Current version lives in [`VERSION`](VERSION)
-(presently in the `0.x-alpha` range).
+This is an **active WIP and not finished** — expect rough edges and bugs. It carries a large
+automated test suite that does its best to ensure stability and byte fidelity, protecting your save
+file as completely as it can throughout editing — but it is not considered released or finished yet.
+Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` range).
 
 - 👉 For a **mature, complete** editor today, use the original:
   **<https://github.com/junebug12851/pokered-save-editor>**. This reboot will supersede it once it
@@ -55,24 +55,28 @@ back to disk.
 The aim is to let you edit **every bit and byte of the save** through a clean, simple, dependable GUI,
 at whatever depth you want — from quickly re-rolling a name, to editing your team and items, all the
 way to advanced things like importing/exporting the normally-unused bytes as raw `.bin`, and
-working with map state. The quick stuff stays quick; the powerful stuff is there when you want it.
-(Plenty of that is in development — see [Features](#features).)
+working with map state. The quick stuff stays quick; the deeper stuff is there when you want it.
+(Plenty of it is in development — see [Features](#features).)
 
 A few convictions shape everything:
 
 - **Bit- and byte-exact fidelity, always.** An edit changes *only* the exact bits and bytes it needs
   to, and leaves everything else untouched — no rewriting, re-packing, or "normalizing" the file, and
   checksums are recomputed only where they genuinely must be. Even *unused* bits are treated as
-  precious: it would be unacceptable for a single unintended bit to flip. Protecting your save data is
-  the project's highest priority, and wherever something could go wrong, graceful degradation is always
-  preferred over any risk of corruption.
-- **Careful, graceful failure.** The goal is to take real care with errors: even an otherwise-fatal problem should
-  be caught and presented through a clean, clear UI, degrading smoothly and — where it's possible —
-  offering a way to keep going (for example, reloading what failed) instead of crashing or stranding
-  you. Debug builds surface problems to the developer in detail; release builds handle them gracefully
-  and clearly, without ever putting your data at risk.
-- **A real native desktop app.** A native `MainWindow` with native menus hosts the Qt Quick UI —
-  this is not a web app.
+  immutable without intent: it would be unacceptable for a single unintended bit to flip. Protecting
+  your save data is the project's highest priority, and wherever something could go wrong, graceful
+  degradation is always preferred over any risk of corruption.
+- **Beautiful UI/UX.** The interface must be clean, polished, creative, and artistic; the experience
+  must be clean, structured, organized, intuitive, and comprehensive. Anything that would put the UI,
+  the UX, or their stability at risk doesn't ship as-is — it waits for an implementation route that
+  doesn't.
+- **Graceful failure.** Even an otherwise-fatal error or crash should be caught and presented through
+  a clean, clear UI, degrading smoothly and — where it's possible — offering a way to keep going (for
+  example, reloading what failed) instead of crashing or stranding you. Data integrity, byte fidelity,
+  and preventing data loss stay the highest priority through error handling. Debug builds surface
+  problems to the developer in detail; release builds handle them gracefully and clearly.
+- **No longer a web app.** A native `MainWindow` with native menus hosts the Qt Quick UI — this is a
+  real desktop application, not a packaged web page.
 
 ![New File screen](https://i.imgur.com/Woakr9P.png)
 
@@ -95,16 +99,19 @@ A few convictions shape everything:
 - **Map / location** editing and map randomization.
 - **Hall of Fame** and broader world-state editing.
 - **Raw `.bin` import/export** of the whole save — including the normally-unused bytes.
-- **Assisted code / state injection** into the save.
+- **Assisted custom-code execution** — help injecting custom code into a save so it runs in-game, and
+  help scrubbing custom code back out of a save.
 
-**Randomization** is a flagship part of the app, and a *growing* one. Today it covers the basics — a
-quick one-click name re-roll and an early new-game randomizer. The planned system is built around
-three modes:
+**Randomization** is a flagship part of the app, and a *growing* one. Today it covers the basics —
+sensible randomizations on request, applicable to many parts of the save — and is functional but
+still early. The planned system is built around three modes:
 
 - **Constrained Random** — randomized, but kept within sensible, playable bounds.
-- **Unconstrained Random** — anything goes; chaotic by design; it may not even load.
-- **Synthetic Natural** — a generated save crafted to look like one genuinely earned by playing the
-  real game.
+- **Unconstrained Random** — anything goes; chaotic by design.
+- **Synthetic Natural** — a generated save crafted to look like one genuinely *earned* by playing the
+  real game. Imagine pressing a button for a random save and being handed an old, worn file with real
+  history and depth — one you might get caught up in, want to finish, or just dig through. The goal is
+  to make that its own button, sitting right next to the constrained and unconstrained options.
 
 **Under the hood:**
 
@@ -204,11 +211,6 @@ the project could sustain, and it was shelved.
 Qt/C++ buys back simplicity without giving up the look and feel: a far smaller toolset built for
 exactly this job, room for the features that were always wanted, and builds that finish in *minutes,
 not 45 minutes*. The trade-off (large output, fiddlier deployment) is well worth it.
-
-Getting here was long — the codebase was **rewritten from scratch three times** (a pure-C++ start,
-a JavaScript/QML detour, and the final C++ design) while wrestling a framework that often fights
-modern C++. The hard-won takeaway: keep the foundation lightweight and solid, then build the powerful
-stuff on top of it. The fuller story lives in [`notes/context/origins.md`](notes/context/origins.md).
 
 ## Architecture
 
