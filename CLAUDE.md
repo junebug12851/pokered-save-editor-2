@@ -177,9 +177,10 @@ calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, 
   keep that quality bar if you touch it.
 - **The GitHub Pages site (docs + screenshots) is deployed by `pages.yml`, not git or a release.** On
   every `main` push it builds the Doxygen docs + captures the screenshots and deploys one Pages site:
-  `…/docs/` (documentation) and `…/screenshots/<name>` (UI images + GIFs, no `frames/`) — zero repo-size
-  growth, no third-party host. README + docs embed the absolute
-  `https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>` URLs. See
+  the **Doxygen home is the root** (`…github.io/pokered-save-editor-2/`) with **Screenshots + GitHub**
+  custom nav tabs (injected via a generated `DoxygenLayout.xml`, README untouched), and the images live
+  at `…/screenshots/<name>` (no `frames/`) — zero repo-size growth, no third-party host. README + docs
+  embed the absolute `https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>` URLs. See
   `notes/reference/deployment.md`.
 
 ## Maintaining the Notes — Your Responsibility

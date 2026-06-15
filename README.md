@@ -12,7 +12,7 @@ ensure.
 
 ---
 
-![Pokered Save Editor — Home screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/home.png)
+![UI/UX progress](https://i.imgur.com/ULhYfEN.png)
 
 ## ⚠️ Status — early alpha, work in progress
 
@@ -32,7 +32,6 @@ Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` rang
 ## Table of contents
 
 - <a href="#what-it-is">What it is</a>
-- <a href="#screenshots">Screenshots</a>
 - <a href="#features">Features</a>
 - <a href="#building-from-source">Building from source</a>
 - <a href="#running-the-tests">Running the tests</a>
@@ -45,22 +44,7 @@ Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` rang
 
 ---
 
-## Screenshots
-
-> Live UI images, **auto-updated on every commit** (rendered headlessly in CI and hosted on GitHub
-> Pages — so they always reflect the current `main`). Full gallery + docs linked below.
-
-| | |
-|---|---|
-| ![Home](https://junebug12851.github.io/pokered-save-editor-2/screenshots/home.png) | ![Trainer Card](https://junebug12851.github.io/pokered-save-editor-2/screenshots/trainerCard.png) |
-| ![Pokémon storage](https://junebug12851.github.io/pokered-save-editor-2/screenshots/pokemon.png) | ![Pokémon editor](https://junebug12851.github.io/pokered-save-editor-2/screenshots/pokemon_editor_general.png) |
-| ![Bag](https://junebug12851.github.io/pokered-save-editor-2/screenshots/bag.png) | ![Pokédex](https://junebug12851.github.io/pokered-save-editor-2/screenshots/pokedex.png) |
-
-The in-game name editor, building a name live:
-
-![Typing a name in the in-game font](https://junebug12851.github.io/pokered-save-editor-2/screenshots/typing.gif)
-
-📸 **[Full screenshot gallery](https://junebug12851.github.io/pokered-save-editor-2/screenshots/)** &nbsp;·&nbsp; 📖 **[Documentation](https://junebug12851.github.io/pokered-save-editor-2/docs/)**
+![Pokémon details screen](https://i.imgur.com/jnOZoyG.png)
 
 ## What it is
 

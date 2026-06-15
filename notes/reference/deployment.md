@@ -35,19 +35,22 @@ Each release attaches:
 screenshots (a repo gets a single Pages site, so they share one deploy):
 
 ```
-https://junebug12851.github.io/pokered-save-editor-2/                  # landing page
-https://junebug12851.github.io/pokered-save-editor-2/docs/             # Doxygen documentation
-https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name># UI images + a gallery
+https://junebug12851.github.io/pokered-save-editor-2/                   # Doxygen docs home (the ROOT)
+https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name> # UI images + a gallery
 ```
 
-It captures the UI headless (`screenshooter` under xvfb → `screens/*.png` + `editor/*.png` + GIFs,
-**excluding `frames/`**), runs `doxygen Doxyfile`, assembles `site/{docs,screenshots,index.html}`, and
+The **Doxygen home is the Pages root** (the docs HTML is copied to the site root). The docs main page
+is the README (`USE_MDFILE_AS_MAINPAGE`, left untouched); **Screenshots** + **GitHub** appear as custom
+top-nav tabs on every docs page — added without editing the README by generating the default
+`DoxygenLayout.xml` (`doxygen -l`), injecting two `<tab type="user">` entries, and building with that
+layout. It captures the UI headless (`screenshooter` under xvfb → `screens/*.png` + `editor/*.png` +
+GIFs, **excluding `frames/`**), runs Doxygen, assembles `site/` (docs at root + `screenshots/`), and
 deploys via `actions/configure-pages` → `upload-pages-artifact` → `deploy-pages`.
 
 **Referencing screenshots from the docs:** use the absolute Pages URL
 (`https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>`) — it resolves the same
 whether the page is viewed as Doxygen-on-Pages, on GitHub (the notes `.md` are also rendered there), or
-in the README. (From a `/docs/` page you can also use the relative `../screenshots/<name>`.)
+in the README. (From a docs page you can also use the relative `screenshots/<name>`.)
 
 Why Pages: images + docs live on the Pages CDN — **not** in the git repo (no size growth, no LFS) and
 **not** in a release (releases stay software-only) — and CI keeps them current. Pages was enabled with
