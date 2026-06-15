@@ -55,6 +55,8 @@
 #include <QImage>
 #include <QVariantHash>
 #include <QPointF>
+#include <QSettings>
+#include <QSize>
 
 #include <pse-db/db.h>
 #include <bridge/bridge.h>
@@ -499,10 +501,37 @@ int main(int argc, char** argv)
 
   // Boot the real UI on the populated fixture; dismiss the startup New File modal.
   GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+
+  // Match the user's ACTUAL window size. The app saves it to QSettings (org
+  // "Twilight" / app "Pokered Save Editor", group WindowState, key size). The
+  // harness's 1130x740 is only the fresh-profile DEFAULT; the user runs a smaller
+  // rectangle (~751x480) -- the UI is designed for that -- so capturing at 1130x740
+  // looked "too big". Read the real size; override with PSE_SHOT_SIZE="WxH".
+  // Resize BEFORE start() so the QML lays out at the final size exactly once -- a
+  // resize AFTER layout left some MultiEffect-layered tiles (Maps/Options) unrendered.
+  {
+    QSize shot(1130, 740);
+    QSettings s(QStringLiteral("Twilight"), QStringLiteral("Pokered Save Editor"));
+    s.beginGroup(QStringLiteral("WindowState"));
+    const QSize saved = s.value(QStringLiteral("size")).toSize();
+    s.endGroup();
+    if (saved.isValid() && saved.width() >= 320 && saved.height() >= 240)
+      shot = saved;
+    const QByteArray env = qgetenv("PSE_SHOT_SIZE");
+    if (env.contains('x')) {
+      const auto p = env.split('x');
+      const QSize e(p.value(0).toInt(), p.value(1).toInt());
+      if (e.isValid() && e.width() >= 320 && e.height() >= 240) shot = e;
+    }
+    app.view()->resize(shot);
+    qInfo().noquote() << "Capture window size:" << shot;
+  }
+
   if (!app.start()) {
     qCritical().noquote() << "App.qml failed to load -- aborting.";
     return 2;
   }
+
   // Render via a REAL GPU-backed window so MultiEffect / layered content renders
   // exactly like the app's QQuickWidget. The offscreen+software path silently drops
   // those items (missing Credits cards + Home disabled tiles, washed-out shadows).
