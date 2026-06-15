@@ -175,10 +175,12 @@ calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, 
   structured/organized (a downloads table, the prerelease/unsigned note, etc.). `release.yml` composes
   this automatically (`Compose release notes` step → `body_path`) with the auto "What's Changed" appended;
   keep that quality bar if you touch it.
-- **README screenshots live on GitHub Pages, not in git or a release.** `screenshots.yml` deploys the
-  loose images (screens + editor + GIFs, no `frames/`) to Pages on every `main` push — zero repo-size
-  growth, no third-party host. README embeds `https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>`.
-  See `notes/reference/deployment.md`.
+- **The GitHub Pages site (docs + screenshots) is deployed by `pages.yml`, not git or a release.** On
+  every `main` push it builds the Doxygen docs + captures the screenshots and deploys one Pages site:
+  `…/docs/` (documentation) and `…/screenshots/<name>` (UI images + GIFs, no `frames/`) — zero repo-size
+  growth, no third-party host. README + docs embed the absolute
+  `https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>` URLs. See
+  `notes/reference/deployment.md`.
 
 ## Maintaining the Notes — Your Responsibility
 

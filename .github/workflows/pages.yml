@@ -1,0 +1,116 @@
+name: pages
+
+# Builds and deploys the project's GitHub Pages site on every push to `main`:
+#
+#   /             -> a small landing page
+#   /docs/        -> the generated Doxygen documentation (doxygen Doxyfile -> docs/html)
+#   /screenshots/ -> the UI screenshots (screens + editor + GIFs; the frames/ folder
+#                    is excluded), with a browsable gallery
+#
+# Docs reference the screenshots with the absolute Pages URL
+# (https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>) -- which also
+# works when the same Markdown is viewed on GitHub -- or relatively as ../screenshots/<name>
+# from a /docs/ page. Images live on the Pages CDN: NOT in the git repo, NOT a release.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  QT_VERSION: "6.8.3"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build + capture + docs deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential ninja-build \
+            libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev \
+            xvfb fonts-dejavu-core \
+            doxygen graphviz
+
+      - name: Install Qt (Linux gcc_64)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtcharts
+          cache: true
+
+      - name: Configure (Release, tests ON for the screenshooter target)
+        run: cmake -S projects -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Capture screenshots (headless, xvfb)
+        # Install Pillow HERE so it targets the python3 the .sh uses (install-qt-action
+        # swaps the python3 on PATH). Renders only -- never writes a save byte.
+        run: |
+          python3 -m pip install --upgrade Pillow \
+            || python3 -m pip install --break-system-packages --upgrade Pillow
+          bash scripts/capture_screenshots.sh
+
+      - name: Generate Doxygen docs
+        run: |
+          doxygen Doxyfile
+          test -d docs/html
+
+      - name: Assemble the Pages site (docs + screenshots + landing)
+        run: |
+          set -euo pipefail
+          rm -rf site && mkdir -p site/screenshots site/docs
+          cp -r docs/html/. site/docs/
+          test -f site/docs/index.html
+          cp tmp/screenshots/screens/*.png site/screenshots/ 2>/dev/null || true
+          cp tmp/screenshots/editor/*.png  site/screenshots/ 2>/dev/null || true
+          cp tmp/screenshots/*.gif         site/screenshots/ 2>/dev/null || true
+          test -n "$(ls -A site/screenshots)"
+          # Root landing page.
+          {
+            echo '<!doctype html><meta charset="utf-8"><title>Pokered Save Editor</title>'
+            echo '<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:3rem auto;padding:0 1rem;color:#222}a{color:#c2185b}</style>'
+            echo '<h1>Pokered Save Editor</h1>'
+            echo '<p>A save-file editor for Pok&eacute;mon Red &amp; Blue, built with Qt 6 (C++/QML).</p>'
+            echo '<ul>'
+            echo '<li><a href="docs/">Documentation</a> (Doxygen)</li>'
+            echo '<li><a href="screenshots/">UI screenshots gallery</a></li>'
+            echo '<li><a href="https://github.com/junebug12851/pokered-save-editor-2">Source &amp; releases on GitHub</a></li>'
+            echo '</ul>'
+          } > site/index.html
+          # Screenshots gallery (its own index under /screenshots/).
+          {
+            echo '<!doctype html><meta charset="utf-8"><title>UI screenshots</title>'
+            echo '<style>body{font-family:system-ui,sans-serif;max-width:1000px;margin:2rem auto;padding:0 1rem;color:#222}img{max-width:100%;border:1px solid #ddd;border-radius:6px;margin:.4rem 0}h3{margin:1.4rem 0 .2rem}</style>'
+            echo '<h1>Pokered Save Editor &mdash; UI screenshots</h1>'
+            echo '<p>Auto-updated from <code>main</code>. <a href="../">&larr; home</a> &middot; <a href="../docs/">docs</a></p>'
+            for f in $(ls site/screenshots | sort); do
+              case "$f" in *.html) continue;; esac
+              echo "<h3>$f</h3><img src=\"$f\" alt=\"$f\" loading=\"lazy\">"
+            done
+          } > site/screenshots/index.html
+          echo "docs: $(find site/docs -type f | wc -l) files; screenshots: $(ls -1 site/screenshots | wc -l)"
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

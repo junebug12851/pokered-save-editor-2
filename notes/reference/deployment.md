@@ -2,7 +2,7 @@
 
 How release binaries are built and published. CI (test-on-every-push) lives in
 `.github/workflows/tests.yml`; **software deployment** lives in `.github/workflows/release.yml`;
-**README screenshots** are deployed to GitHub Pages by `.github/workflows/screenshots.yml`.
+the **GitHub Pages site** (docs + screenshots) is deployed by `.github/workflows/pages.yml`.
 Built 2026-06-15.
 
 ## Policy (standing rules)
@@ -29,24 +29,33 @@ Each release attaches:
 - **Screenshots `.zip`** — the UI PNGs + GIFs from the `screenshooter` tool (captured
   headless under `xvfb`).
 
-## README screenshots (GitHub Pages)
+## GitHub Pages site — docs + screenshots (`.github/workflows/pages.yml`)
 
-`.github/workflows/screenshots.yml` runs on every push to `main`: it captures the UI headless
-(`screenshooter` under xvfb), gathers the **loose** images (`screens/*.png` + `editor/*.png` + the GIFs;
-the `frames/` folder is excluded) into a small site (+ a browsable `index.html` gallery), and deploys it
-to **GitHub Pages** (`actions/configure-pages` → `upload-pages-artifact` → `deploy-pages`). Served at:
+`pages.yml` runs on every push to `main` and deploys ONE Pages site holding both the docs and the
+screenshots (a repo gets a single Pages site, so they share one deploy):
 
 ```
-https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>
+https://junebug12851.github.io/pokered-save-editor-2/                  # landing page
+https://junebug12851.github.io/pokered-save-editor-2/docs/             # Doxygen documentation
+https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name># UI images + a gallery
 ```
 
-Why Pages: images live on the Pages CDN, **not** in the git repo (no size growth, no LFS) and **not** in
-a release (releases stay software-only), and CI keeps them current. Pages was enabled with the
-**GitHub Actions** build source (`gh api -X POST repos/:owner/:repo/pages -f build_type=workflow`); the
-workflow needs `permissions: pages: write` + `id-token: write` and the `github-pages` environment.
-README embeds these URLs directly. (Considered + rejected: rolling images-only release — violates the
-software-only rule; orphan branch — repo object-store bloat; Imgur — image purges / deprecated API /
-needs a secret.)
+It captures the UI headless (`screenshooter` under xvfb → `screens/*.png` + `editor/*.png` + GIFs,
+**excluding `frames/`**), runs `doxygen Doxyfile`, assembles `site/{docs,screenshots,index.html}`, and
+deploys via `actions/configure-pages` → `upload-pages-artifact` → `deploy-pages`.
+
+**Referencing screenshots from the docs:** use the absolute Pages URL
+(`https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>`) — it resolves the same
+whether the page is viewed as Doxygen-on-Pages, on GitHub (the notes `.md` are also rendered there), or
+in the README. (From a `/docs/` page you can also use the relative `../screenshots/<name>`.)
+
+Why Pages: images + docs live on the Pages CDN — **not** in the git repo (no size growth, no LFS) and
+**not** in a release (releases stay software-only) — and CI keeps them current. Pages was enabled with
+the **GitHub Actions** build source (`gh api -X POST repos/:owner/:repo/pages -f build_type=workflow`);
+the workflow needs `permissions: pages: write` + `id-token: write` and the `github-pages` environment.
+(Considered + rejected for images: a rolling images-only release — violates the software-only rule; an
+orphan branch — repo object-store bloat; Imgur — image purges / deprecated API / needs a secret.)
+The versioned release still attaches its own `*-docs.zip` + `*-screenshots.zip` as archival snapshots.
 
 ## When it runs (the version gate)
 
