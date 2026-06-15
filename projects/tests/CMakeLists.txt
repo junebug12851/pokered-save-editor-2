@@ -187,6 +187,21 @@ if(TARGET appcore)
     pse_add_gui_test(tst_gui_input      gui/tst_gui_input.cpp)
     pse_add_gui_test(tst_gui_fidelity   gui/tst_gui_fidelity.cpp)
     pse_add_gui_test(tst_gui_drag       gui/tst_gui_drag.cpp)
+
+    # Screenshot / animation-frame capture tool (NOT a CTest test). Same wiring as a
+    # GUI test (appcore + bootQmlLinkage + app.qrc, runs offscreen), but it renders
+    # the live UI to PNGs via grabWindow() instead of asserting. Build + run manually
+    # (or via scripts/capture_screenshots.*) -- output goes to <repo>/tmp/screenshots
+    # (git-ignored). See notes/reference/screenshots.md.
+    get_filename_component(PSE_SCREENSHOTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../tmp/screenshots" ABSOLUTE)
+    qt_add_executable(screenshooter
+        tools/screenshooter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/src/boot/bootQmlLinkage.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(screenshooter PRIVATE appcore Qt6::Qml Qt6::Quick Qt6::Test)
+    target_compile_definitions(screenshooter PRIVATE
+        PSE_ASSETS_DIR="${PSE_ASSETS_DIR}"
+        PSE_SCREENSHOTS_DIR="${PSE_SCREENSHOTS_DIR}")
 endif()
 
 # Aggregate target: builds every registered test exe in one shot. CI builds this

@@ -25,6 +25,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/gen1-knowledge.md` | Gen 1 Red/Blue **save-format + gameplay** domain knowledge (offsets, checksum, badges, trade status, retroactive natures/shininess, randomizer rules); box-recovery deep-dive in `notes/reference/box-recovery-research.md` |
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems (truncation, hangs, QML chain failures, transcript recovery) |
 | `notes/reference/ui-patterns.md` | **UI/QML conventions** — layouts, borderless combos, ⋮ buttons, editor popups, sliders, drag & drop, View All drawers. Read before UI work |
+| `notes/reference/screenshots.md` | **UI screenshot + animation capture** — the headless `screenshooter` tool + Pillow GIF assembler + capture scripts that render the live UI to `tmp/screenshots/` (offscreen, no save writes). How it's driven + the font/backend gotchas |
 | `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language; language switching deferred until a 2nd locale + Options screen exist |
 | `notes/reference/documentation.md` | **Docs** — generating the Doxygen site, the comment house-style, and the doc-pass progress ledger (all merged here) |
 | `notes/reference/git-workflow.md` | **Git standards** — branch model (`main` FF-only/stable, `dev` frequent), no history rewriting, commit-message style, hard safety rules. Read before any git op |
@@ -129,6 +130,11 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
    - **After fast-forwarding `main`, rebuild the Doxygen docs by default** — `doxygen Doxyfile` from the
      repo root — so the generated `docs/html/` (git-ignored) always tracks `main`. See
      `notes/reference/documentation.md`.
+   - **Also after fast-forwarding `main`, refresh the UI screenshots by default** —
+     `pwsh -File scripts/capture_screenshots.ps1` (Linux/CI: `scripts/capture_screenshots.sh`) — so the
+     `tmp/screenshots/` PNGs + GIFs (git-ignored; never committed) always track `main`. It builds + runs
+     the headless `screenshooter` tool (renders only, never writes a save byte) and assembles the GIFs
+     with Pillow (skipped cleanly if Python/Pillow is absent). See `notes/reference/screenshots.md`.
    - **Hard safety rules still absolute:** never `push --force`/force-with-lease, never rewrite pushed
      history, never `reset --hard`/`rebase`/`clean -fd`/delete a branch without an explicit request.
      Inspect `git status` before and after, every time. Full standards: `notes/reference/git-workflow.md`.

@@ -77,6 +77,12 @@
           "name": "Docker",
           "url": "docker.com",
           "note": "Containerized Linux build/test environment -- runs the full test suite plus AddressSanitizer/UBSan and coverage, which can't run on the Windows kit"
+        },
+        {
+          "name": "Pillow",
+          "url": "python-pillow.github.io",
+          "license": "MIT-CMU",
+          "note": "Assembles the captured UI screenshot frames into animated GIFs (the developer screenshot pipeline)"
         }
       ]
     },

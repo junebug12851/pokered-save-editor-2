@@ -29,6 +29,7 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 - **[Quicktype](https://app.quicktype.io)** -- They helped breakdown JSON structure into C++ so much easier!!!
 - **[Git](https://git-scm.com)** -- Powers the projects VCS
 - **[Docker](https://docker.com)** -- Containerized Linux build/test environment -- runs the full test suite plus AddressSanitizer/UBSan and coverage, which can't run on the Windows kit
+- **[Pillow](https://python-pillow.github.io)** -- Assembles the captured UI screenshot frames into animated GIFs (the developer screenshot pipeline) _(License: MIT-CMU)_
 
 ## Services Used
 

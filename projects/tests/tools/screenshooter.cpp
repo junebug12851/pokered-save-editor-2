@@ -1,0 +1,413 @@
+/*
+  * Copyright 2026 Twilight
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *   http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+*/
+
+/**
+ * @file screenshooter.cpp
+ * @brief Headless screenshot + animation-frame capture tool (NOT a CTest test).
+ *
+ * Boots the REAL application UI headless on the `offscreen` platform via the shared
+ * GUI harness (tests/helpers/guiapp.h) -- the exact same engine/provider wiring the
+ * app uses -- loads a populated save fixture, then walks the UI grabbing PNGs with
+ * QQuickWindow::grabWindow():
+ *
+ *   - every top-level screen (Home, Trainer Card, Bag, Pokemon, Rival, Pokedex,
+ *     Pokemart, ...) over the populated save;
+ *   - the "View All" overview drawers (Pokemon + Bag) slid open;
+ *   - the three Pokemon-editor tabs (General / DV-EV / Moves) + Glance pane;
+ *   - both text-editor modes (quick-edit popup + full keyboard) and the keyboard's
+ *     tileset "tileviewer";
+ *   - hover states (font pill/tile preview tooltip; Pokedex tiles);
+ *   - and FRAME SEQUENCES under frames/<name>/ for assembling GIFs (the animated
+ *     in-game name preview / tileviewer, live typing, and a tab-cycle interaction).
+ *
+ * BYTE-FIDELITY: this tool ONLY ever reads the save in memory. It never calls
+ * saveFile()/flattenData() and never writes a save byte -- it just renders the UI.
+ *
+ * Output dir: argv[1], else the PSE_SCREENSHOTS_DIR compile def (=<repo>/tmp/screenshots).
+ * Each capture is independent + logged; one failing step never aborts the run, so a
+ * partial UI change degrades to "that one shot is missing", not "no shots".
+ *
+ * Run headless:  QT_QPA_PLATFORM=offscreen ./screenshooter [outdir]
+ * The software scene-graph backend (forced below unless overridden) makes offscreen
+ * grabWindow() produce real pixels with no GPU -- so it also works in CI/Docker.
+ * (Trade-off: the software backend skips MultiEffect shadows/desaturation -- a minor
+ *  cosmetic loss; set QT_QUICK_BACKEND= to try the GPU path for effect-accurate shots.)
+ */
+
+#include "../helpers/guiapp.h"
+
+#include <QGuiApplication>
+#include <QDir>
+#include <QFileInfo>
+#include <QImage>
+#include <QVariantHash>
+#include <QPointF>
+
+#include <pse-db/db.h>
+#include <bridge/bridge.h>
+#include <bridge/router.h>
+
+#include <pse-savefile/filemanagement.h>
+#include <pse-savefile/savefile.h>
+#include <pse-savefile/expanded/savefileexpanded.h>
+#include <pse-savefile/expanded/player/player.h>
+#include <pse-savefile/expanded/player/playerpokemon.h>
+#include <pse-savefile/expanded/fragments/pokemonparty.h>
+#include <pse-savefile/expanded/fragments/pokemonbox.h>
+
+using namespace pse_test;
+
+// ---------------------------------------------------------------------------
+// Small capture helpers (file-scope state kept tiny + obvious).
+// ---------------------------------------------------------------------------
+namespace {
+
+QString g_outDir;
+int     g_saved = 0;
+int     g_failed = 0;
+
+QString outPath(const QString& rel)
+{
+  const QString p = g_outDir + QStringLiteral("/") + rel;
+  QDir().mkpath(QFileInfo(p).absolutePath());
+  return p;
+}
+
+// Grab the live window into <outdir>/<rel>. Logs + counts; never throws.
+bool grab(GuiApp& app, const QString& rel)
+{
+  QImage img = app.view()->grabWindow();
+  if (img.isNull() || img.size().isEmpty()) {
+    qWarning().noquote() << "  [FAIL] null/empty grab ->" << rel;
+    ++g_failed;
+    return false;
+  }
+  const QString p = outPath(rel);
+  if (!img.save(p, "PNG")) {
+    qWarning().noquote() << "  [FAIL] save ->" << p;
+    ++g_failed;
+    return false;
+  }
+  qInfo().noquote() << "  [ok ]" << rel << QStringLiteral("(%1x%2)").arg(img.width()).arg(img.height());
+  ++g_saved;
+  return true;
+}
+
+// First item anywhere under @p root that declares the QML property @p prop
+// (custom props like "shown" / "showTileset" / "editorVisible" are distinctive).
+QQuickItem* findByProp(QQuickItem* root, const char* prop)
+{
+  return GuiApp::findItem(root, [&](QQuickItem* i) {
+    return i->metaObject()->indexOfProperty(prop) >= 0;
+  });
+}
+
+QQuickItem* viewRoot(GuiApp& app)
+{
+  return qobject_cast<QQuickItem*>(app.view()->rootObject());
+}
+
+// Deliver a real hover (mouse move) to the centre of @p item so HoverHandlers /
+// MouseArea hoverEnabled / ToolTips light up, then let the hover/tooltip settle.
+void hover(GuiApp& app, QQuickItem* item, int settleMs = 900)
+{
+  if (!item) return;
+  const QPointF c = item->mapToScene(QPointF(item->width() / 2.0, item->height() / 2.0));
+  QTest::mouseMove(app.view(), c.toPoint());
+  app.settle(settleMs);
+}
+
+} // namespace
+
+// ---------------------------------------------------------------------------
+// Capture routines. Each is self-contained + defensive.
+// ---------------------------------------------------------------------------
+
+// 1) Every registered non-modal screen (the ones with a Home tile), plus the
+//    explicit modal screens, over the populated save.
+static void captureScreens(GuiApp& app)
+{
+  qInfo().noquote() << "== screens ==";
+  const QList<QString> names = Router::screens.keys();
+  for (const QString& name : names) {
+    Screen* s = Router::screens.value(name, nullptr);
+    if (!s || s->url.isEmpty()) continue;     // the empty fallback screen
+    if (s->modal)               continue;     // modals handled separately
+    if (!s->homeBtn)            continue;     // detail screens need a selection context
+    app.navigate(name);
+    app.settle(140);
+    grab(app, QStringLiteral("screens/%1.png").arg(name));
+  }
+
+  // Explicit modal screens (pushed onto the outer shell stack).
+  const char* modals[] = { "about", "fileTools", "newFile" };
+  for (const char* m : modals) {
+    if (!Router::screens.contains(QString::fromLatin1(m))) continue;
+    app.navigate(QString::fromLatin1(m));
+    app.settle(160);
+    grab(app, QStringLiteral("screens/modal_%1.png").arg(QString::fromLatin1(m)));
+    app.closeTop();
+    app.settle(60);
+  }
+}
+
+// 2) The Pokemon + Bag "View All" overview drawers slid open.
+static void captureViewAll(GuiApp& app)
+{
+  qInfo().noquote() << "== view all drawers ==";
+  const char* screens[] = { "pokemon", "bag" };
+  for (const char* sc : screens) {
+    app.navigate(QString::fromLatin1(sc));
+    app.settle(120);
+    QQuickItem* page  = app.currentNonModal();
+    QQuickItem* panel = findByProp(page, "shown");   // viewAllPanel.shown
+    if (!panel) {
+      qWarning().noquote() << "  [skip] no View All panel found on" << sc;
+      continue;
+    }
+    panel->setProperty("shown", true);
+    app.settle(280);                                 // 200ms slide + breathing room
+    grab(app, QStringLiteral("screens/%1_view_all.png").arg(QString::fromLatin1(sc)));
+    panel->setProperty("shown", false);
+    app.settle(60);
+  }
+}
+
+// 3) The Pokemon deep editor: instantiate it on the live engine with a real party
+//    mon as boxData, then grab each of the three tabs (General / DV-EV / Moves).
+static void capturePokemonEditor(GuiApp& app)
+{
+  qInfo().noquote() << "== pokemon editor tabs ==";
+  app.navigate(QStringLiteral("home"));
+  app.settle(60);
+
+  auto* exp = app.file()->data->dataExpanded;
+  PokemonParty* mon = (exp->player->pokemon->pokemonCount() > 0)
+                        ? exp->player->pokemon->partyAt(0) : nullptr;
+  if (!mon) { qWarning().noquote() << "  [skip] save has no party mon"; return; }
+
+  QVariantHash props;
+  props.insert(QStringLiteral("boxData"),  QVariant::fromValue<PokemonBox*>(mon));
+  props.insert(QStringLiteral("partyData"), QVariant::fromValue<PokemonBox*>(mon));
+  QQuickItem* details =
+      app.instantiate(QStringLiteral("qrc:/ui/app/screens/non-modal/PokemonDetails.qml"), props);
+  if (!details) { qWarning().noquote() << "  [skip] PokemonDetails failed to instantiate"; return; }
+
+  QQuickItem* bar = app.itemByType(QStringLiteral("TabBar"), details);
+  const char* tabRel[] = { "editor/pokemon_editor_general.png",
+                           "editor/pokemon_editor_dvev.png",
+                           "editor/pokemon_editor_moves.png" };
+  for (int t = 0; t < 3; ++t) {
+    if (bar) bar->setProperty("currentIndex", t);
+    app.settle(160);
+    grab(app, QString::fromLatin1(tabRel[t]));
+  }
+  delete details;
+  app.settle(40);
+}
+
+// 4) Both text-editor modes + the keyboard tileset, plus hover tooltips.
+static void captureTextEditors(GuiApp& app)
+{
+  qInfo().noquote() << "== text editors ==";
+
+  // -- Quick-edit popup: open it on the Trainer Card's player-name display (renders
+  //    in the shell overlay, so it shows in the grab). --
+  app.navigate(QStringLiteral("trainerCard"));
+  app.settle(140);
+  // The player-name display (a NameDisplay) is found by its distinctive custom
+  // `editorVisible` property rather than by metatype name.
+  if (QQuickItem* nd = findByProp(app.currentNonModal(), "editorVisible")) {
+    nd->setProperty("editorVisible", true);
+    app.settle(260);
+    grab(app, QStringLiteral("editor/text_quick_popup.png"));
+    nd->setProperty("editorVisible", false);
+    app.settle(80);
+  } else {
+    qWarning().noquote() << "  [skip] no name editor on trainer card";
+  }
+
+  // -- Full keyboard modal. --
+  if (Router::screens.contains(QStringLiteral("fullKeyboard"))) {
+    app.navigate(QStringLiteral("fullKeyboard"));
+    app.settle(220);
+    grab(app, QStringLiteral("editor/text_full_keyboard.png"));
+
+    QQuickItem* root = viewRoot(app);
+
+    // Flip the Grid/Tileset paged toggle to show the tileset "tileviewer".
+    if (QQuickItem* paged = findByProp(root, "showTileset")) {
+      paged->setProperty("showTileset", true);
+      app.settle(260);
+      grab(app, QStringLiteral("editor/text_keyboard_tileset.png"));
+    }
+
+    // Hover a font "pill" (SearchResults delegate) to raise the TilePreview tooltip.
+    // The pills live in a Flow; just hover an Image/Label deep in the keyboard tree.
+    if (QQuickItem* pill = app.itemByType(QStringLiteral("Label"), root)) {
+      hover(app, pill);
+      grab(app, QStringLiteral("editor/text_keyboard_hover_tile.png"));
+    }
+    app.closeTop();
+    app.settle(80);
+  }
+}
+
+// 5) Pokedex tile hover state.
+static void capturePokedexHover(GuiApp& app)
+{
+  qInfo().noquote() << "== pokedex hover ==";
+  app.navigate(QStringLiteral("pokedex"));
+  app.settle(160);
+  // Hover a dex tile delegate (an Image fairly deep in the grid).
+  QList<QQuickItem*> imgs = app.itemsByType(QStringLiteral("QQuickImage"), app.currentNonModal());
+  if (imgs.size() > 6) {
+    hover(app, imgs.at(imgs.size() / 3), 700);
+    grab(app, QStringLiteral("screens/pokedex_hover_tile.png"));
+  } else {
+    qWarning().noquote() << "  [skip] not enough dex tiles to hover (" << imgs.size() << ")";
+  }
+}
+
+// 6a) Animation frames: the live in-game name preview animates via the font image
+//     provider. Grab a spaced sequence on the Trainer Card.
+static void captureFramesAnimation(GuiApp& app)
+{
+  qInfo().noquote() << "== frames: animation (in-game name preview) ==";
+  app.navigate(QStringLiteral("trainerCard"));
+  app.settle(200);
+  const int frames = 8;
+  for (int i = 0; i < frames; ++i) {
+    grab(app, QStringLiteral("frames/name_anim/frame_%1.png").arg(i, 3, 10, QLatin1Char('0')));
+    app.settle(220);     // spaced across the provider's animation period
+  }
+}
+
+// 6b) Animation frames: live typing into the quick-edit name field.
+static void captureFramesTyping(GuiApp& app)
+{
+  qInfo().noquote() << "== frames: typing ==";
+  app.navigate(QStringLiteral("trainerCard"));
+  app.settle(140);
+  QQuickItem* nd = findByProp(app.currentNonModal(), "editorVisible");
+  if (!nd) { qWarning().noquote() << "  [skip] no name editor"; return; }
+  nd->setProperty("editorVisible", true);
+  app.settle(260);
+
+  QQuickItem* field = app.itemByType(QStringLiteral("TextField"), viewRoot(app));
+  if (!field) { qWarning().noquote() << "  [skip] no TextField in popup"; nd->setProperty("editorVisible", false); return; }
+  field->forceActiveFocus();
+  app.settle(40);
+
+  int f = 0;
+  grab(app, QStringLiteral("frames/typing/frame_%1.png").arg(f++, 3, 10, QLatin1Char('0')));
+  for (const QChar c : QStringLiteral("PIKA")) {
+    QTest::keyClick(app.view(), c.toLatin1());
+    app.settle(180);
+    grab(app, QStringLiteral("frames/typing/frame_%1.png").arg(f++, 3, 10, QLatin1Char('0')));
+  }
+  nd->setProperty("editorVisible", false);
+  app.settle(80);
+}
+
+// 6c) Animation frames: a tab-cycle interaction on the Pokemon editor.
+static void captureFramesTabs(GuiApp& app)
+{
+  qInfo().noquote() << "== frames: editor tab cycle ==";
+  app.navigate(QStringLiteral("home"));
+  app.settle(60);
+  auto* exp = app.file()->data->dataExpanded;
+  PokemonParty* mon = (exp->player->pokemon->pokemonCount() > 0)
+                        ? exp->player->pokemon->partyAt(0) : nullptr;
+  if (!mon) { qWarning().noquote() << "  [skip] no party mon"; return; }
+
+  QVariantHash props;
+  props.insert(QStringLiteral("boxData"),  QVariant::fromValue<PokemonBox*>(mon));
+  props.insert(QStringLiteral("partyData"), QVariant::fromValue<PokemonBox*>(mon));
+  QQuickItem* details =
+      app.instantiate(QStringLiteral("qrc:/ui/app/screens/non-modal/PokemonDetails.qml"), props);
+  if (!details) { qWarning().noquote() << "  [skip] PokemonDetails failed"; return; }
+
+  QQuickItem* bar = app.itemByType(QStringLiteral("TabBar"), details);
+  const int seq[] = { 0, 1, 2, 1, 0 };
+  int f = 0;
+  for (int idx : seq) {
+    if (bar) bar->setProperty("currentIndex", idx);
+    app.settle(200);
+    grab(app, QStringLiteral("frames/tab_cycle/frame_%1.png").arg(f++, 3, 10, QLatin1Char('0')));
+  }
+  delete details;
+  app.settle(40);
+}
+
+// ---------------------------------------------------------------------------
+int main(int argc, char** argv)
+{
+  // Force the software scene-graph backend for reliable offscreen pixel grabs (no
+  // GPU needed -> works in CI/Docker). Override by pre-setting QT_QUICK_BACKEND.
+  if (qgetenv("QT_QPA_PLATFORM") == "offscreen" && qEnvironmentVariableIsEmpty("QT_QUICK_BACKEND"))
+    qputenv("QT_QUICK_BACKEND", "software");
+
+  // The offscreen platform uses Qt's FreeType font DB, which finds NO fonts unless
+  // pointed at a font directory (otherwise all UI text renders as tofu boxes). Point
+  // it at the OS font dir so labels/titles/buttons render. (Linux/CI: fontconfig
+  // already serves fonts, so only set it when empty; honour any pre-set value.)
+  if (qEnvironmentVariableIsEmpty("QT_QPA_FONTDIR")) {
+#if defined(Q_OS_WIN)
+    QByteArray winDir = qgetenv("WINDIR");
+    if (winDir.isEmpty()) winDir = "C:\\Windows";
+    qputenv("QT_QPA_FONTDIR", winDir + "\\Fonts");
+#elif defined(Q_OS_MAC)
+    qputenv("QT_QPA_FONTDIR", "/System/Library/Fonts");
+#endif
+  }
+
+  QGuiApplication qapp(argc, argv);
+  QGuiApplication::setApplicationName(QStringLiteral("PokeredSaveEditor"));
+
+  g_outDir = (argc > 1)
+               ? QString::fromLocal8Bit(argv[1])
+#ifdef PSE_SCREENSHOTS_DIR
+               : QStringLiteral(PSE_SCREENSHOTS_DIR);
+#else
+               : QDir::currentPath() + QStringLiteral("/screenshots");
+#endif
+  QDir().mkpath(g_outDir);
+  qInfo().noquote() << "Screenshot output:" << g_outDir;
+
+  // Boot the real UI on the populated fixture; dismiss the startup New File modal.
+  GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  if (!app.start()) {
+    qCritical().noquote() << "App.qml failed to load -- aborting.";
+    return 2;
+  }
+  app.view()->show();          // offscreen show: lets the scene graph render for grabs
+  app.settle(120);
+  app.closeTop();              // dismiss the New File modal -> Home
+  app.settle(80);
+
+  captureScreens(app);
+  captureViewAll(app);
+  capturePokemonEditor(app);
+  captureTextEditors(app);
+  capturePokedexHover(app);
+  captureFramesAnimation(app);
+  captureFramesTyping(app);
+  captureFramesTabs(app);
+
+  qInfo().noquote() << QStringLiteral("Done: %1 saved, %2 failed.").arg(g_saved).arg(g_failed);
+  return 0;        // a tool: partial capture is still a successful run
+}
