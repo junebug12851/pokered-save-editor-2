@@ -282,18 +282,54 @@ static void capturePokedexHover(GuiApp& app)
   }
 }
 
-// 6a) Animation frames: the live in-game name preview animates via the font image
-//     provider. Grab a spaced sequence on the Trainer Card.
-static void captureFramesAnimation(GuiApp& app)
+// 6a) Animation frames: the tileset's animated tiles (water/flower) cycle across 8
+//     frames. Only OUTDOOR tilesets actually move tiles, so set Overworld/outdoor,
+//     then drive the TilesetDisplay's curFrame 0..7 deterministically (its own
+//     animation Timer is stopped so each grab is a distinct, stable frame). This is
+//     the "tileviewer" animation the full editor shows.
+static void captureFramesTileset(GuiApp& app)
 {
-  qInfo().noquote() << "== frames: animation (in-game name preview) ==";
-  app.navigate(QStringLiteral("trainerCard"));
-  app.settle(200);
-  const int frames = 8;
-  for (int i = 0; i < frames; ++i) {
-    grab(app, QStringLiteral("frames/name_anim/frame_%1.png").arg(i, 3, 10, QLatin1Char('0')));
-    app.settle(220);     // spaced across the provider's animation period
+  qInfo().noquote() << "== frames: tileset animation ==";
+
+  // Animated tiles only move outdoors -> use the Overworld tileset.
+  if (QObject* st = qvariant_cast<QObject*>(app.bridge()->property("settings"))) {
+    st->setProperty("previewTileset", QStringLiteral("Overworld"));
+    st->setProperty("previewOutdoor", true);
   }
+  if (!Router::screens.contains(QStringLiteral("fullKeyboard"))) {
+    qWarning().noquote() << "  [skip] no fullKeyboard screen";
+    return;
+  }
+  app.navigate(QStringLiteral("fullKeyboard"));
+  app.settle(220);
+  QQuickItem* root = viewRoot(app);
+  if (QQuickItem* paged = findByProp(root, "showTileset")) {
+    paged->setProperty("showTileset", true);
+    app.settle(280);
+  }
+
+  // The animated tileset image: has curFrame AND an image://tileset source.
+  QQuickItem* tile = GuiApp::findItem(root, [](QQuickItem* i) {
+    return i->metaObject()->indexOfProperty("curFrame") >= 0
+        && i->property("source").toString().contains(QStringLiteral("image://tileset"));
+  });
+  if (!tile) {
+    qWarning().noquote() << "  [skip] no animated TilesetDisplay found";
+    app.closeTop();
+    return;
+  }
+  // Stop its self-running Timer so our manual curFrame steps aren't overwritten.
+  for (QObject* c : tile->findChildren<QObject*>())
+    if (QString::fromLatin1(c->metaObject()->className()).contains(QLatin1String("Timer")))
+      c->setProperty("running", false);
+
+  for (int f = 0; f < 8; ++f) {
+    tile->setProperty("curFrame", f);
+    app.settle(110);     // let the (uncached) provider re-render the frame
+    grab(app, QStringLiteral("frames/tileset_anim/frame_%1.png").arg(f, 3, 10, QLatin1Char('0')));
+  }
+  app.closeTop();
+  app.settle(80);
 }
 
 // 6b) Animation frames: live typing into the quick-edit name field.
@@ -307,18 +343,30 @@ static void captureFramesTyping(GuiApp& app)
   nd->setProperty("editorVisible", true);
   app.settle(260);
 
-  QQuickItem* field = app.itemByType(QStringLiteral("TextField"), viewRoot(app));
-  if (!field) { qWarning().noquote() << "  [skip] no TextField in popup"; nd->setProperty("editorVisible", false); return; }
-  field->forceActiveFocus();
-  app.settle(40);
+  // The popup field (NameEdit) lives in Overlay.overlay; prefer the focused
+  // TextField, else the last one (the modal popup's field is added last).
+  QList<QQuickItem*> fields = app.itemsByType(QStringLiteral("TextField"), viewRoot(app));
+  QQuickItem* field = nullptr;
+  for (QQuickItem* fl : fields)
+    if (fl->property("activeFocus").toBool()) { field = fl; break; }
+  if (!field && !fields.isEmpty()) field = fields.last();
 
+  // Drive the value letter-by-letter. Setting the field text simulates typing
+  // (its onTextChanged pushes up to `str`); also set `str` directly so the live
+  // in-game preview is guaranteed to update even if the field push is missed.
+  const QStringList steps = { QStringLiteral(""), QStringLiteral("P"), QStringLiteral("PI"),
+                              QStringLiteral("PIK"), QStringLiteral("PIKA"),
+                              QStringLiteral("PIKAC"), QStringLiteral("PIKACHU") };
   int f = 0;
-  grab(app, QStringLiteral("frames/typing/frame_%1.png").arg(f++, 3, 10, QLatin1Char('0')));
-  for (const QChar c : QStringLiteral("PIKA")) {
-    QTest::keyClick(app.view(), c.toLatin1());
-    app.settle(180);
+  for (const QString& s : steps) {
+    if (field) field->setProperty("text", s);
+    nd->setProperty("str", s);
+    app.settle(150);
     grab(app, QStringLiteral("frames/typing/frame_%1.png").arg(f++, 3, 10, QLatin1Char('0')));
   }
+
+  // Close without committing (don't mutate the in-memory player name / OT data).
+  nd->setProperty("suppressNextCommit", true);
   nd->setProperty("editorVisible", false);
   app.settle(80);
 }
@@ -385,6 +433,7 @@ int main(int argc, char** argv)
 #else
                : QDir::currentPath() + QStringLiteral("/screenshots");
 #endif
+  QDir(g_outDir).removeRecursively();   // start clean so no stale shots/frames linger
   QDir().mkpath(g_outDir);
   qInfo().noquote() << "Screenshot output:" << g_outDir;
 
@@ -404,7 +453,7 @@ int main(int argc, char** argv)
   capturePokemonEditor(app);
   captureTextEditors(app);
   capturePokedexHover(app);
-  captureFramesAnimation(app);
+  captureFramesTileset(app);
   captureFramesTyping(app);
   captureFramesTabs(app);
 

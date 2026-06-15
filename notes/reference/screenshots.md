@@ -22,9 +22,15 @@ Over the populated fixture `assets/saves/natural-clean/BaseSAV.sav`:
 - **Hover states** — the keyboard's font-tile preview tooltip and a Pokédex tile →
   `editor/text_keyboard_hover_tile.png`, `screens/pokedex_hover_tile.png`.
 - **Animation frame sequences** under `frames/<name>/frame_NNN.png`, assembled into GIFs:
-  - `name_anim` — the live in-game name preview animating (font image provider),
-  - `typing` — live typing into the quick-edit name field,
+  - `tileset_anim` — the full keyboard's animated tileset tiles (water/flower) cycling. The capture
+    sets the preview tileset to **Overworld + outdoor** (only outdoor tilesets actually move tiles),
+    stops `TilesetDisplay`'s Timer, and drives its `curFrame` 0–7 so each frame is distinct.
+  - `typing` — the quick-edit name editor building a name letter-by-letter: the capture sets the field
+    text **and** `NameDisplay.str` per step so the live GB-font preview + byte counter update (a plain
+    `name` preview does NOT animate on its own — only tileset tiles do; that's why this drives `str`).
   - `tab_cycle` — cycling the editor's General/DV-EV/Moves tabs.
+
+  Frame playback speeds live in `make_gifs.py` `DURATION_MS` (per sequence).
 
 GIFs are written next to the PNGs: `tmp/screenshots/<name>.gif`.
 

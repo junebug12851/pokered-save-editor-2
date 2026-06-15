@@ -40,11 +40,12 @@ import re
 import sys
 
 # Per-sequence frame duration overrides (ms). Anything not listed uses --fps.
-# These match the cadences the capture tool grabs at, so the GIFs feel right.
+# Tuned so each GIF reads at a comfortable pace (the earlier values played far too
+# fast). Higher = slower playback.
 DURATION_MS = {
-    "name_anim": 220,   # in-game name preview animation
-    "typing":    180,   # live typing
-    "tab_cycle": 260,   # editor tab-cycle interaction
+    "tileset_anim": 300,   # animated tileset tiles (water/flower) cycling
+    "typing":       420,   # live typing -- each letter should register
+    "tab_cycle":    850,   # editor tab-cycle -- hold each tab long enough to read
 }
 
 _NUM = re.compile(r"(\d+)")
