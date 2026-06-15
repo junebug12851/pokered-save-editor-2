@@ -63,14 +63,11 @@ The tool **only ever reads** the save in memory to render the UI. It never calls
 
 ## Key technical notes (don't relearn these the hard way)
 
-- **Capture at the user's REAL window size, read from QSettings.** The app is designed for a small
-  rectangle and the user runs it that way; the `1130×740` in `guiapp.h` is only the fresh-profile
-  default. The tool reads the saved size from `QSettings("Twilight", "Pokered Save Editor")` →
-  group `WindowState` → key `size` (the value `MainWindow::saveState()` writes) and resizes the view to
-  it (override with `PSE_SHOT_SIZE="WxH"`; falls back to 1130×740). Capturing at 1130×740 made every
-  shot look "too big". **Resize BEFORE `start()`** so the QML lays out at the final size exactly once —
-  resizing *after* the initial layout left some `MultiEffect`-layered tiles (Home's greyed Maps/Options)
-  unrendered.
+- **Capture at a fixed 750×480** — the small rectangle the UI is designed for (the app's own saved
+  window size is ~751×480; 750 is just the round number). The `1130×740` in `guiapp.h` is only the
+  fresh-profile default and made every shot look "too big". Override with `PSE_SHOT_SIZE="WxH"`.
+  **Resize BEFORE `start()`** so the QML lays out at the final size exactly once — resizing *after* the
+  initial layout left some `MultiEffect`-layered tiles (Home's greyed Maps/Options) unrendered.
 
 - **Render through a REAL GPU window — NOT offscreen.** This is the big lesson. The app draws its QML
   through a GPU-backed `QQuickWidget`; the `offscreen` platform **silently drops every `MultiEffect`/

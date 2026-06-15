@@ -55,7 +55,6 @@
 #include <QImage>
 #include <QVariantHash>
 #include <QPointF>
-#include <QSettings>
 #include <QSize>
 
 #include <pse-db/db.h>
@@ -502,21 +501,14 @@ int main(int argc, char** argv)
   // Boot the real UI on the populated fixture; dismiss the startup New File modal.
   GuiApp app(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
 
-  // Match the user's ACTUAL window size. The app saves it to QSettings (org
-  // "Twilight" / app "Pokered Save Editor", group WindowState, key size). The
-  // harness's 1130x740 is only the fresh-profile DEFAULT; the user runs a smaller
-  // rectangle (~751x480) -- the UI is designed for that -- so capturing at 1130x740
-  // looked "too big". Read the real size; override with PSE_SHOT_SIZE="WxH".
-  // Resize BEFORE start() so the QML lays out at the final size exactly once -- a
-  // resize AFTER layout left some MultiEffect-layered tiles (Maps/Options) unrendered.
+  // Capture at the small rectangle the UI is designed for: a rounded **750x480**
+  // (the app's own saved window size is ~751x480). The harness's 1130x740 is only
+  // the fresh-profile default and made every shot look "too big". Override with
+  // PSE_SHOT_SIZE="WxH". Resize BEFORE start() so the QML lays out at the final size
+  // exactly once -- a resize AFTER layout left some MultiEffect-layered tiles
+  // (Home's greyed Maps/Options) unrendered.
   {
-    QSize shot(1130, 740);
-    QSettings s(QStringLiteral("Twilight"), QStringLiteral("Pokered Save Editor"));
-    s.beginGroup(QStringLiteral("WindowState"));
-    const QSize saved = s.value(QStringLiteral("size")).toSize();
-    s.endGroup();
-    if (saved.isValid() && saved.width() >= 320 && saved.height() >= 240)
-      shot = saved;
+    QSize shot(750, 480);
     const QByteArray env = qgetenv("PSE_SHOT_SIZE");
     if (env.contains('x')) {
       const auto p = env.split('x');
