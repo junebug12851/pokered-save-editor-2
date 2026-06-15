@@ -126,15 +126,30 @@ jobs:
           EXE=$(find build -name PokeredSaveEditor.exe | head -n1)
           echo "exe: $EXE"
           cp "$EXE" dist/PokeredSaveEditor/
-          # windeployqt on llvm-mingw can print "Unable to find the platform plugin"
-          # and return NON-ZERO even when it deploys everything else -- don't let that
-          # rc abort the step; verify the result afterward. (--compiler-runtime is also
-          # MSVC/g++ only, so it's omitted and the runtime DLLs are copied by hand.)
-          windeployqt --release --no-translations \
+          # Use OUR Qt's windeployqt by FULL PATH -- a stray windeployqt on PATH (a
+          # different Qt) is what hit "Unable to find the platform plugin" and aborted
+          # without deploying. (--compiler-runtime is MSVC/g++ only, so it's omitted and
+          # the runtime DLLs are copied by hand; tolerate a nonzero rc, verify below.)
+          WDQT="$QT_ROOT_DIR/bin/windeployqt.exe"
+          echo "windeployqt: $WDQT"
+          "$WDQT" --release --no-translations \
             --qmldir projects/app/ui \
             dist/PokeredSaveEditor/PokeredSaveEditor.exe \
-            || echo "windeployqt returned $? -- verifying deployment below"
-          # Make sure the Windows platform plugin is present (hand-copy if missed).
+            || echo "windeployqt returned $? -- verifying/repairing deployment below"
+          # Fallback: if windeployqt under-deployed (no Qt6Core.dll), deploy the Qt
+          # runtime DLLs + the essential plugin sets + the full QML dir by hand.
+          if [ ! -f dist/PokeredSaveEditor/Qt6Core.dll ]; then
+            echo "windeployqt under-deployed -- manual fallback"
+            cp "$QT_ROOT_DIR"/bin/Qt6*.dll dist/PokeredSaveEditor/ 2>/dev/null || true
+            for pg in platforms styles imageformats iconengines tls networkinformation generic; do
+              [ -d "$QT_ROOT_DIR/plugins/$pg" ] && mkdir -p "dist/PokeredSaveEditor/$pg" \
+                && cp -r "$QT_ROOT_DIR/plugins/$pg/." "dist/PokeredSaveEditor/$pg/" || true
+            done
+            # QML modules (the app imports QtQuick/Controls.Material/Layouts/Effects/...);
+            # copy the whole module tree -- simplest reliable option.
+            cp -r "$QT_ROOT_DIR/qml/." dist/PokeredSaveEditor/ 2>/dev/null || true
+          fi
+          # Make sure the Windows platform plugin is present (hand-copy if still missed).
           if [ ! -f dist/PokeredSaveEditor/platforms/qwindows.dll ]; then
             mkdir -p dist/PokeredSaveEditor/platforms
             cp "$QT_ROOT_DIR/plugins/platforms/qwindows.dll" dist/PokeredSaveEditor/platforms/
