@@ -183,14 +183,22 @@ jobs:
       - name: Build installer (Inno Setup)
         shell: pwsh
         run: |
-          choco install innosetup --no-progress -y
+          # ISCC is pre-installed on windows-latest. Resolve it robustly: the braces
+          # around ${Env:ProgramFiles(x86)} are REQUIRED -- "$Env:ProgramFiles(x86)"
+          # mis-parses (PowerShell reads it as $Env:ProgramFiles + literal "(x86)").
+          $iscc = "${Env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { $iscc = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source }
+          if (-not $iscc) { choco install innosetup --no-progress -y; $iscc = "${Env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+          if (-not (Test-Path $iscc)) { throw "ISCC.exe not found" }
+          Write-Host "ISCC: $iscc"
           $ver = "${{ needs.version.outputs.version }}"
-          & "$Env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe" `
+          & $iscc `
             "/DMyAppVersion=$ver" `
             "/DMySourceDir=$(Resolve-Path dist/PokeredSaveEditor)" `
             "/DMyOutputDir=$(Join-Path (Get-Location) 'out')" `
             "/DMyIconFile=$(Resolve-Path projects/app/assets/icons/app/icon.ico)" `
             packaging/windows/installer.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed ($LASTEXITCODE)" }
 
       - uses: actions/upload-artifact@v4
         with:
