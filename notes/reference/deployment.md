@@ -42,24 +42,30 @@ Built **Release** (`-DCMAKE_BUILD_TYPE=Release`); the app target is `PokeredSave
 Linux is built with tests **ON** (default) so the `screenshooter` target exists for the
 screenshot step; Windows builds with `-DPSE_BUILD_TESTS=OFF` (app only).
 
-## First-run shakeout (expected)
+## First-run shakeout (DONE — `v0.7.2-alpha` shipped 2026-06-15)
 
-GitHub Actions can't be fully reproduced locally, so the first real run may need small
-tweaks (same caveat as `tests.yml`). Known watch points, flagged inline in the workflow:
+The pipeline ran green and published its first release. The shakeout fixes (now baked into
+the workflow) were all Windows + one script path:
 
-- **`windeployqt` runtime DLLs.** `--compiler-runtime` should pull the llvm-mingw runtime
-  (libc++ / libunwind / libwinpthread); if the portable app fails to start with a
-  missing-DLL error, copy the offending DLL from the llvm-mingw `bin` in that step.
-- **`linuxdeploy-plugin-qt` QML discovery.** Driven by `QML_SOURCES_PATHS=projects/app/ui`
-  and `QMAKE=$QT_ROOT_DIR/bin/qmake`; if a QML import is missing at runtime, add its path.
-- **Inno Setup path.** `ISCC.exe` is invoked from `%ProgramFiles(x86)%\Inno Setup 6\`
-  after `choco install innosetup`.
+- **`windeployqt --compiler-runtime` is MSVC/g++ only** (errors on llvm-mingw) → dropped it;
+  the llvm-mingw runtime DLLs (libc++ / libunwind / libwinpthread) are copied from the
+  compiler `bin` by hand.
+- **Invoke `windeployqt` by FULL PATH** (`$QT_ROOT_DIR/bin/windeployqt.exe`). A stray
+  windeployqt on PATH (a different Qt) printed "Unable to find the platform plugin" and
+  deployed nothing. There's also a manual Qt-DLL / plugin-set / `qml` fallback and a hard
+  assertion that `Qt6Core.dll` + `platforms/qwindows.dll` ended up deployed.
+- **Inno Setup:** `ISCC.exe` is at `${Env:ProgramFiles(x86)}\Inno Setup 6\` and is
+  **pre-installed** on windows-latest. The braces matter — `$Env:ProgramFiles(x86)`
+  mis-parses in PowerShell.
+- **`capture_screenshots.sh`** searches for the `screenshooter` binary (it's at `build/tests/`
+  on Linux, the build root on Windows). Screenshots render under xvfb + llvmpipe (MultiEffect
+  included).
 - **AppImage on CI** runs the `linuxdeploy` AppImages with `APPIMAGE_EXTRACT_AND_RUN=1`
-  (no FUSE on runners).
+  (no FUSE on runners) — worked first try.
 
-To iterate: push the workflow, open the repo's **Actions** tab, run **release** via
-"Run workflow" with `dry_run` checked, and read the logs. (Or install the GitHub CLI
-`gh` to `gh workflow run release.yml -f dry_run=true` and `gh run watch`.)
+To iterate further: edit the workflow, push, and watch with `gh run watch` / `gh run view
+--log-failed` (the GitHub CLI is installed). For a no-publish trial, run **release** from the
+Actions tab (or `gh workflow run release.yml -f dry_run=true`).
 
 ## Code signing (not done — intentional)
 
