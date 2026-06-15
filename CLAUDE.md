@@ -128,6 +128,15 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
      (never `git add -A`/`.`), and `git push origin dev` after each commit.
    - When the **full suite is green**, fast-forward `main` and push automatically:
      `git checkout main && git merge --ff-only dev && git push origin main && git checkout dev`.
+   - **"Green" now includes the GitHub Actions CI, not just local `ctest` (standing request).** Before
+     fast-forwarding `main`, confirm the remote **`tests`** workflow passed on the `dev` HEAD being
+     merged — `gh run list --branch dev -L 1` / `gh run view <id>` (the GitHub CLI is installed +
+     authed). If that CI run is still in progress, wait for it; if it failed, treat it exactly like a
+     local red and do **not** FF. Local `ctest` green is necessary but no longer sufficient.
+   - **After FF `main`, watch the `release` run** — pushing `main` triggers `release.yml`, which (when
+     `VERSION` was bumped → tag `v<VERSION>` is new) builds + publishes the GitHub Release. Monitor it
+     with `gh run watch` / `gh run view --log-failed`; a failed build leaves NO tag/release, so fix
+     forward and the next `main` push retries the same version. See `notes/reference/deployment.md`.
    - **After fast-forwarding `main`, rebuild the Doxygen docs by default** — `doxygen Doxyfile` from the
      repo root — so the generated `docs/html/` (git-ignored) always tracks `main`. See
      `notes/reference/documentation.md`.
@@ -139,6 +148,23 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
    - **Hard safety rules still absolute:** never `push --force`/force-with-lease, never rewrite pushed
      history, never `reset --hard`/`rebase`/`clean -fd`/delete a branch without an explicit request.
      Inspect `git status` before and after, every time. Full standards: `notes/reference/git-workflow.md`.
+
+## GitHub Is Part of Default Management (a standing instruction)
+
+The GitHub CLI (`gh`) is installed + authenticated (account `junebug12851`), so GitHub state is part of
+the normal workflow — not something to wait to be asked about. The cadence is **event-based, not a
+calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, not a timed ping.
+
+- **Whenever prepping `main` for shipment** (i.e. about to FF `main`), do a quick GitHub check as part of
+  the same step: `gh run list` (CI/release health — must be green; see Default Workflow step 4), plus
+  `gh issue list` and `gh pr list`. If there are **open/new/changed issues or PRs**, surface them to
+  Twilight as a short summary and **ask whether to work on them now or later** — don't silently start.
+- **Non-trivial issues / PR reviews are usually their own chat.** Offer to spin one up rather than
+  derailing the shipment; a quick "these are open — now or later?" is the default, not diving in.
+- **No timed/scheduled pings** unless Twilight later asks for one — the check rides on the
+  shipment-prep event. (If wanted, a scheduled digest can be added with the scheduled-tasks tools.)
+- **Never auto-act on issues/PRs** (no closing issues, merging PRs, or pushing to PR branches) without an
+  explicit go-ahead — surfacing + asking is the default, acting is opt-in. Hard git safety rules apply.
 
 ## Maintaining the Notes — Your Responsibility
 

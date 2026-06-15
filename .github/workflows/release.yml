@@ -126,13 +126,25 @@ jobs:
           EXE=$(find build -name PokeredSaveEditor.exe | head -n1)
           echo "exe: $EXE"
           cp "$EXE" dist/PokeredSaveEditor/
-          # --compiler-runtime pulls the llvm-mingw runtime DLLs (libc++/libunwind/
-          # libwinpthread) -- the toolchain bin must be on PATH (install-qt-action
-          # adds it). SHAKEOUT: if the app fails to start with a missing-DLL error,
-          # copy the offending DLL from the llvm-mingw bin here explicitly.
-          windeployqt --release --compiler-runtime --no-translations \
+          # NOTE: windeployqt's --compiler-runtime supports ONLY MSVC/g++, not
+          # llvm-mingw (it errors "implemented for Desktop MSVC/g++ only"), so deploy
+          # Qt WITHOUT it and copy the llvm-mingw runtime DLLs by hand below.
+          windeployqt --release --no-translations \
             --qmldir projects/app/ui \
             dist/PokeredSaveEditor/PokeredSaveEditor.exe
+          # llvm-mingw C++/unwind/pthread runtime DLLs (live in the compiler's bin,
+          # which install-qt-action puts on PATH; fall back to searching Qt Tools).
+          CXXBIN=$(dirname "$(command -v clang++ 2>/dev/null || command -v clang 2>/dev/null || echo /nonexistent)")
+          echo "compiler bin: $CXXBIN"
+          for dll in libc++.dll libunwind.dll libwinpthread.dll; do
+            [ -f "$CXXBIN/$dll" ] && cp "$CXXBIN/$dll" dist/PokeredSaveEditor/ && echo "copied $dll" || true
+          done
+          if [ ! -f dist/PokeredSaveEditor/libc++.dll ]; then
+            for dll in libc++.dll libunwind.dll libwinpthread.dll; do
+              f=$(find "${IQTA_TOOLS:-/}" -name "$dll" 2>/dev/null | head -n1)
+              [ -n "$f" ] && cp "$f" dist/PokeredSaveEditor/ && echo "copied $dll from $f" || true
+            done
+          fi
 
       - name: Package portable .zip
         shell: pwsh

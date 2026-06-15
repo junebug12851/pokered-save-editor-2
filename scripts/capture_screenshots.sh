@@ -23,9 +23,13 @@ fi
 echo "Building screenshooter..."
 cmake --build "$build" --target screenshooter
 
+# The screenshooter exe lands at the build root on Windows (CMAKE_RUNTIME_OUTPUT_
+# DIRECTORY) but under build/tests/ on Linux -- search for it rather than assume.
 exe="$build/screenshooter"
 [ -x "$exe" ] || exe="$build/screenshooter.exe"
-[ -x "$exe" ] || { echo "screenshooter binary not found in $build" >&2; exit 1; }
+[ -x "$exe" ] || exe="$(find "$build" -type f -name screenshooter 2>/dev/null | head -n1)"
+[ -x "$exe" ] || exe="$(find "$build" -type f -name 'screenshooter.exe' 2>/dev/null | head -n1)"
+[ -n "$exe" ] && [ -x "$exe" ] || { echo "screenshooter binary not found under $build" >&2; exit 1; }
 
 mkdir -p "$out"
 echo "Capturing screenshots -> $out"
