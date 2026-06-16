@@ -48,6 +48,7 @@ class Settings : public QObject
   Q_PROPERTY(QColor primaryColor MEMBER primaryColor NOTIFY primaryColorChanged)          ///< Primary accent colour.
   Q_PROPERTY(QColor primaryColorLight MEMBER primaryColorLight NOTIFY primaryColorLightChanged) ///< Lighter primary.
   Q_PROPERTY(QColor primaryColorDark MEMBER primaryColorDark NOTIFY primaryColorDarkChanged)    ///< Darker primary.
+  Q_PROPERTY(QColor errorColor MEMBER errorColor NOTIFY errorColorChanged)                 ///< Error/invalid colour (red); theme-independent.
   Q_PROPERTY(QColor dividerColor MEMBER dividerColor NOTIFY dividerColorChanged)           ///< Divider/line colour.
   Q_PROPERTY(QColor accentColor MEMBER accentColor NOTIFY accentColorChanged)              ///< Secondary accent colour.
   Q_PROPERTY(int previewTilesetIndex READ getPreviewTilesetIndex NOTIFY previewTilesetChanged STORED false) ///< Index of the preview tileset.
@@ -73,6 +74,7 @@ signals:
   void primaryColorChanged();
   void primaryColorLightChanged();
   void primaryColorDarkChanged();
+  void errorColorChanged();
   void dividerColorChanged();
   void accentColorChanged();
 
@@ -108,6 +110,12 @@ public:
   QColor primaryColor = QColor("#d81b60");
   QColor primaryColorLight = QColor("#ff5c8d");
   QColor primaryColorDark = QColor("#a00037");
+
+  // Error/invalid red. Deliberately a fixed, theme-independent red (NOT derived
+  // from primaryColor -- that's pink). setColorScheme() leaves it untouched so a
+  // recoloured palette never turns "error" into the accent. Screens should use
+  // brg.settings.errorColor for plain red instead of a literal "red".
+  QColor errorColor = QColor("red");
 
   QColor dividerColor = QColor("#BDBDBD");
   QColor accentColor = QColor("#607D8B");
