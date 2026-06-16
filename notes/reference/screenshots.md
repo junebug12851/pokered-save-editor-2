@@ -1,7 +1,12 @@
-# UI Screenshots & Animation Capture
+# UI Screenshot Capture
 
-How the project's UI screenshots and animated GIFs are generated — automatically, headlessly,
-and without ever touching save data. Built 2026-06-15.
+How the project's UI **still screenshots** are generated — automatically, headlessly, and without
+ever touching save data. Built 2026-06-15.
+
+> **No automated GIFs.** This pipeline captures still PNGs only. Animated GIFs are added **manually,
+> one at a time** (Twilight's call, 2026-06-15): the headless tool's frame-sequence capture routines
+> were removed, and the scripts/CI no longer auto-assemble GIFs. `scripts/make_gifs.py` (the Pillow
+> assembler) is **kept for manual use** — run it by hand to turn your own captured frames into a GIF.
 
 The output is **not tracked** (it's regenerated on demand); it lands in `tmp/screenshots/`
 (ignored by `tmp/.gitignore`, which ignores everything in `tmp/` except itself). Regenerate it
@@ -22,38 +27,26 @@ Over the populated fixture `assets/saves/natural-clean/BaseSAV.sav`:
 - **Hover state** — the full keyboard's font-tile preview tooltip (hover a real character pill to
   raise its `TilePreview`) → `editor/text_keyboard_hover_tile.png`. (No Pokédex hover shot — the
   Pokédex doesn't need one.)
-- **Animation frame sequences** under `frames/<name>/frame_NNN.png`, assembled into GIFs:
-  - `tileset_anim` — the full keyboard's animated tileset tiles (water/flower) cycling. The capture
-    sets the preview tileset to **Overworld + outdoor** (only outdoor tilesets actually move tiles),
-    stops `TilesetDisplay`'s Timer, and drives its `curFrame` 0–7 so each frame is distinct.
-  - `typing` — the quick-edit name editor building a name letter-by-letter: the capture drives the
-    **popup's name field** (found by its "Enter a name" placeholder, NOT the tileset combo), so the
-    textbox owns the value and the live GB-font preview + byte counter follow it. (A plain `name`
-    preview does NOT animate on its own — only tileset tiles do.)
-  - `tab_cycle` — cycling the editor's General/DV-EV/Moves tabs.
 
-  Frame playback speeds live in `make_gifs.py` `DURATION_MS` (per sequence).
-
-GIFs are written next to the PNGs: `tmp/screenshots/<name>.gif`.
+All automated output is flat PNGs under `screens/` and `editor/` — the tool no longer writes any
+`frames/` folders or `.gif` files. To add an animation, capture/record the frames by hand and assemble
+them yourself (`scripts/make_gifs.py` is kept for exactly this — point it at a `frames/<name>/` folder
+you populated), then drop the finished `.gif` wherever it's needed.
 
 ## How it works
 
-Two pieces, both repo-friendly and CI-friendly:
+One piece, repo-friendly and CI-friendly:
 
-1. **`projects/tests/tools/screenshooter.cpp`** — a small C++ tool (NOT a CTest test) built on the
-   shared GUI harness `tests/helpers/guiapp.h`. It boots the **real** application UI headless on the
-   `offscreen` platform — the exact engine/provider wiring the app uses (`brg`, the tileset + font
-   image providers, `DB::qmlProtect`, the exe's `bootQmlLinkage`) — then navigates / instantiates /
-   drives the live UI and grabs each frame with `QQuickWindow::grabWindow()`. CMake target
-   `screenshooter` (in `projects/tests/CMakeLists.txt`, modeled on `pse_add_gui_test` +
-   `gen_synthetic_fixtures`).
-
-2. **`scripts/make_gifs.py`** — a Pillow script that assembles each `frames/<name>/` folder into a
-   GIF. Pure Python + one common dependency; prints a clear message (and exits non-zero) if Pillow
-   isn't installed, without affecting the PNG captures.
+- **`projects/tests/tools/screenshooter.cpp`** — a small C++ tool (NOT a CTest test) built on the
+  shared GUI harness `tests/helpers/guiapp.h`. It boots the **real** application UI headless on the
+  `offscreen` platform — the exact engine/provider wiring the app uses (`brg`, the tileset + font
+  image providers, `DB::qmlProtect`, the exe's `bootQmlLinkage`) — then navigates / instantiates /
+  drives the live UI and grabs each shot with `QQuickWindow::grabWindow()`. CMake target
+  `screenshooter` (in `projects/tests/CMakeLists.txt`, modeled on `pse_add_gui_test` +
+  `gen_synthetic_fixtures`).
 
 Driven by **`scripts/capture_screenshots.ps1`** (Windows dev kit) / **`scripts/capture_screenshots.sh`**
-(Linux/Docker/CI): build the `screenshooter` target, run it, then run `make_gifs.py`.
+(Linux/Docker/CI): build the `screenshooter` target and run it. No GIF/assembly step.
 
 ## Byte-fidelity (sacred)
 
@@ -112,7 +105,8 @@ The tool **only ever reads** the save in memory to render the UI. It never calls
 
 ## Dependencies
 
-- Capture: the normal Qt 6.11 kit (no extra deps) — `screenshooter` builds in the `build/` test dir.
-- GIFs: **Python + Pillow** (`pip install Pillow`). Optional locally — if Python isn't present the
-  script step is skipped and the PNGs are still produced (the `.ps1` warns and continues). Pillow is
+- Capture (automated): the normal Qt 6.11 kit (no extra deps) — `screenshooter` builds in the `build/`
+  test dir and produces PNGs only. The scripts/CI need nothing beyond that.
+- Manual GIFs: **Python + Pillow** (`pip install Pillow`), used only when you run `scripts/make_gifs.py`
+  by hand to assemble frames you captured yourself. Not part of the automated pipeline. Pillow is
   credited in `credits.json` → Tools Used.

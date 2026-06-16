@@ -26,8 +26,8 @@ Each release attaches:
   of the Windows installer/portable).
 - **Linux portable `.tar.gz`** — the fully-populated AppDir tree (the `.zip` equivalent).
 - **Docs `.zip`** — the generated Doxygen HTML site (`doxygen Doxyfile` → `docs/html`).
-- **Screenshots `.zip`** — the UI PNGs + GIFs from the `screenshooter` tool (captured
-  headless under `xvfb`).
+- **Screenshots `.zip`** — the UI **still PNGs** from the `screenshooter` tool (captured
+  headless under `xvfb`). No automated GIFs — animated GIFs are added manually.
 
 ## GitHub Pages site — docs + screenshots (`.github/workflows/pages.yml`)
 
@@ -43,8 +43,8 @@ The **Doxygen home is the Pages root** (the docs HTML is copied to the site root
 is the README (`USE_MDFILE_AS_MAINPAGE`, left untouched); **Screenshots** + **GitHub** appear as custom
 top-nav tabs on every docs page — added without editing the README by generating the default
 `DoxygenLayout.xml` (`doxygen -l`), injecting two `<tab type="user">` entries, and building with that
-layout. It captures the UI headless (`screenshooter` under xvfb → `screens/*.png` + `editor/*.png` +
-GIFs, **excluding `frames/`**), runs Doxygen, assembles `site/` (docs at root + `screenshots/`), and
+layout. It captures the UI headless (`screenshooter` under xvfb → `screens/*.png` + `editor/*.png`,
+still PNGs only — no GIFs), runs Doxygen, assembles `site/` (docs at root + `screenshots/`), and
 deploys via `actions/configure-pages` → `upload-pages-artifact` → `deploy-pages`.
 
 **Referencing screenshots from the docs:** use the absolute Pages URL

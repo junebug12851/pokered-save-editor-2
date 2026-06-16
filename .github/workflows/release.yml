@@ -13,7 +13,7 @@ name: release
 #   * Linux .AppImage                  (portable, double-click run)
 #   * Linux portable .tar.gz           (the AppDir tree)
 #   * Doxygen HTML docs .zip
-#   * UI screenshots + GIFs .zip       (the screenshooter, headless under xvfb)
+#   * UI screenshots .zip              (the screenshooter, headless under xvfb)
 #
 # workflow_dispatch lets you DRY-RUN: it builds + uploads everything as workflow
 # artifacts but (with dry_run = true, the default) does NOT create the Release.
@@ -286,12 +286,8 @@ jobs:
           set -euo pipefail
           ver="${{ needs.version.outputs.version }}"
           # Builds the `screenshooter` target into the existing build/ and runs it
-          # under xvfb (real GPU-less X => MultiEffect renders via llvmpipe), then
-          # assembles the GIFs with Pillow. Renders only; never writes a save byte.
-          # Install Pillow HERE so it targets the python3 the .sh uses (install-qt-action
-          # swaps the python3 on PATH, so an earlier install hits the wrong interpreter).
-          python3 -m pip install --upgrade Pillow \
-            || python3 -m pip install --break-system-packages --upgrade Pillow
+          # under xvfb (real GPU-less X => MultiEffect renders via llvmpipe). Still
+          # PNGs only; never writes a save byte. Animated GIFs are added manually.
           bash scripts/capture_screenshots.sh
           ( cd tmp/screenshots && zip -r "$GITHUB_WORKSPACE/out/PokeredSaveEditor-${ver}-screenshots.zip" . )
 

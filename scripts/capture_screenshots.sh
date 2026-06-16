@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Copyright 2026 Twilight  --  Apache-2.0 (see LICENSE).
 #
-# Portable (Linux/CI/Docker) driver for the screenshot + animation capture tool.
+# Portable (Linux/CI/Docker) driver for the still-screenshot capture tool.
 # Mirror of capture_screenshots.ps1 for the containerized Linux toolchain (docker/).
-# Builds ONLY the screenshooter target, runs it offscreen (software backend), and
-# assembles GIFs with Pillow. Output -> <repo>/tmp/screenshots (git-ignored).
+# Builds ONLY the screenshooter target and runs it offscreen (software backend).
+# Output -> <repo>/tmp/screenshots (git-ignored). Still PNGs only -- animated GIFs are
+# added manually, one at a time, so there is NO automated GIF/frame generation here.
 #
 # Nothing here writes a save byte; the tool only renders the UI.
 #
@@ -41,14 +42,6 @@ if command -v xvfb-run >/dev/null 2>&1; then
 else
   echo "xvfb-run not found; falling back to offscreen+software (MultiEffect content will be MISSING)"
   QT_QPA_PLATFORM=offscreen PSE_FORCE_SOFTWARE=1 "$exe" "$out"
-fi
-
-if command -v python3 >/dev/null 2>&1; then
-  echo "Assembling GIFs..."
-  python3 "$repo/scripts/make_gifs.py" --dir "$out" || \
-    echo "GIF assembly skipped (Pillow missing?); PNGs are in $out"
-else
-  echo "python3 not found; skipping GIF assembly (PNGs are in $out)"
 fi
 
 echo "Screenshot capture complete: $out"

@@ -82,7 +82,7 @@
           "name": "Pillow",
           "url": "python-pillow.github.io",
           "license": "MIT-CMU",
-          "note": "Assembles the captured UI screenshot frames into animated GIFs (the developer screenshot pipeline)"
+          "note": "Assembles UI screenshot frames into animated GIFs (scripts/make_gifs.py) -- used manually to add GIFs; the automated screenshot pipeline itself produces still PNGs only"
         },
         {
           "name": "Inno Setup",

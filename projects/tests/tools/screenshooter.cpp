@@ -16,7 +16,7 @@
 
 /**
  * @file screenshooter.cpp
- * @brief Headless screenshot + animation-frame capture tool (NOT a CTest test).
+ * @brief Headless still-screenshot capture tool (NOT a CTest test).
  *
  * Boots the REAL application UI headless on the `offscreen` platform via the shared
  * GUI harness (tests/helpers/guiapp.h) -- the exact same engine/provider wiring the
@@ -29,16 +29,18 @@
  *   - the three Pokemon-editor tabs (General / DV-EV / Moves) + Glance pane;
  *   - both text-editor modes (quick-edit popup + full keyboard) and the keyboard's
  *     tileset "tileviewer";
- *   - hover states (font pill/tile preview tooltip; Pokedex tiles);
- *   - and FRAME SEQUENCES under frames/<name>/ for assembling GIFs (the animated
- *     in-game name preview / tileviewer, live typing, and a tab-cycle interaction).
+ *   - hover states (font pill/tile preview tooltip; Pokedex tiles).
+ *
+ * This tool captures STILL images only. Animated GIFs are added manually, one at a
+ * time -- there is no automated frame-sequence/GIF generation here.
  *
  * BYTE-FIDELITY: this tool ONLY ever reads the save in memory. It never calls
  * saveFile()/flattenData() and never writes a save byte -- it just renders the UI.
  *
- * Output dir: argv[1], else the PSE_SCREENSHOTS_DIR compile def (=<repo>/tmp/screenshots).
- * Each capture is independent + logged; one failing step never aborts the run, so a
- * partial UI change degrades to "that one shot is missing", not "no shots".
+ * Output dir: argv[1], else the PSE_SCREENSHOTS_DIR compile def (=<repo>/tmp/screenshots),
+ * laid out as screens/<name>.png and editor/<name>.png. Each capture is independent +
+ * logged; one failing step never aborts the run, so a partial UI change degrades to
+ * "that one shot is missing", not "no shots".
  *
  * Run headless:  QT_QPA_PLATFORM=offscreen ./screenshooter [outdir]
  * The software scene-graph backend (forced below unless overridden) makes offscreen
@@ -328,137 +330,6 @@ static void captureTextEditors(GuiApp& app)
   }
 }
 
-// 6a) Animation frames: the tileset's animated tiles (water/flower) cycle across 8
-//     frames. Only OUTDOOR tilesets actually move tiles, so set Overworld/outdoor,
-//     then drive the TilesetDisplay's curFrame 0..7 deterministically (its own
-//     animation Timer is stopped so each grab is a distinct, stable frame). This is
-//     the "tileviewer" animation the full editor shows.
-static void captureFramesTileset(GuiApp& app)
-{
-  qInfo().noquote() << "== frames: tileset animation ==";
-
-  // Animated tiles only move outdoors -> use the Overworld tileset.
-  if (QObject* st = qvariant_cast<QObject*>(app.bridge()->property("settings"))) {
-    st->setProperty("previewTileset", QStringLiteral("Overworld"));
-    st->setProperty("previewOutdoor", true);
-  }
-  if (!Router::screens.contains(QStringLiteral("fullKeyboard"))) {
-    qWarning().noquote() << "  [skip] no fullKeyboard screen";
-    return;
-  }
-  app.navigate(QStringLiteral("fullKeyboard"));
-  app.settle(220);
-  QQuickItem* root = viewRoot(app);
-  if (QQuickItem* paged = findByProp(root, "showTileset")) {
-    paged->setProperty("showTileset", true);
-    app.settle(280);
-  }
-
-  // The animated tileset image: has curFrame AND an image://tileset source.
-  QQuickItem* tile = GuiApp::findItem(root, [](QQuickItem* i) {
-    return i->metaObject()->indexOfProperty("curFrame") >= 0
-        && i->property("source").toString().contains(QStringLiteral("image://tileset"));
-  });
-  if (!tile) {
-    qWarning().noquote() << "  [skip] no animated TilesetDisplay found";
-    app.closeTop();
-    return;
-  }
-  // Stop its self-running Timer so our manual curFrame steps aren't overwritten.
-  for (QObject* c : tile->findChildren<QObject*>())
-    if (QString::fromLatin1(c->metaObject()->className()).contains(QLatin1String("Timer")))
-      c->setProperty("running", false);
-
-  for (int f = 0; f < 8; ++f) {
-    tile->setProperty("curFrame", f);
-    app.settle(110);     // let the (uncached) provider re-render the frame
-    grab(app, QStringLiteral("frames/tileset_anim/frame_%1.png").arg(f, 3, 10, QLatin1Char('0')));
-  }
-  app.closeTop();
-  app.settle(80);
-}
-
-// 6b) Animation frames: live typing into the quick-edit name field.
-static void captureFramesTyping(GuiApp& app)
-{
-  qInfo().noquote() << "== frames: typing ==";
-  app.navigate(QStringLiteral("trainerCard"));
-  app.settle(140);
-  QQuickItem* nd = findByProp(app.currentNonModal(), "editorVisible");
-  if (!nd) { qWarning().noquote() << "  [skip] no name editor"; return; }
-  nd->setProperty("editorVisible", true);
-  app.settle(300);
-  fixOverlay(app);             // center the popup (overlay sizing)
-  app.settle(60);
-
-  // The popup's editable NAME field. The Popup is a QML child of this NameDisplay
-  // (even though its visuals render in Overlay.overlay), so the field is reachable as
-  // a descendant of nd. Identify it by its unique placeholder "Enter a name" (NOT the
-  // first TextField -- that's the tileset combo's). Driving THIS field's text controls
-  // the value: its onTextChanged pushes up to NameDisplay.str, so the field AND the
-  // live GB-font preview update together (the textbox owns the value).
-  QQuickItem* field = nullptr;
-  for (QQuickItem* o : nd->findChildren<QQuickItem*>())   // QObject tree (incl. the overlay popup)
-    if (o->property("placeholderText").toString().contains(QStringLiteral("Enter a name"))) {
-      field = o; break;
-    }
-  if (!field) {   // fallback: the LAST TextField under nd (the name field follows the combo)
-    for (QObject* o : nd->findChildren<QObject*>())
-      if (QString::fromLatin1(o->metaObject()->className()).contains(QLatin1String("TextField")))
-        field = qobject_cast<QQuickItem*>(o);
-  }
-  if (!field) {
-    qWarning().noquote() << "  [skip] popup name field not found";
-    nd->setProperty("editorVisible", false);
-    return;
-  }
-
-  const QStringList steps = { QStringLiteral(""), QStringLiteral("P"), QStringLiteral("PI"),
-                              QStringLiteral("PIK"), QStringLiteral("PIKA"),
-                              QStringLiteral("PIKAC"), QStringLiteral("PIKACHU") };
-  int f = 0;
-  for (const QString& s : steps) {
-    field->setProperty("text", s);          // type THROUGH the textbox; preview follows
-    app.settle(170);
-    grab(app, QStringLiteral("frames/typing/frame_%1.png").arg(f++, 3, 10, QLatin1Char('0')));
-  }
-
-  // Close without committing (don't mutate the in-memory player name / OT data).
-  nd->setProperty("suppressNextCommit", true);
-  nd->setProperty("editorVisible", false);
-  app.settle(80);
-}
-
-// 6c) Animation frames: a tab-cycle interaction on the Pokemon editor.
-static void captureFramesTabs(GuiApp& app)
-{
-  qInfo().noquote() << "== frames: editor tab cycle ==";
-  app.navigate(QStringLiteral("home"));
-  app.settle(60);
-  auto* exp = app.file()->data->dataExpanded;
-  PokemonParty* mon = (exp->player->pokemon->pokemonCount() > 0)
-                        ? exp->player->pokemon->partyAt(0) : nullptr;
-  if (!mon) { qWarning().noquote() << "  [skip] no party mon"; return; }
-
-  QVariantHash props;
-  props.insert(QStringLiteral("boxData"),  QVariant::fromValue<PokemonBox*>(mon));
-  props.insert(QStringLiteral("partyData"), QVariant::fromValue<PokemonBox*>(mon));
-  QQuickItem* details =
-      app.instantiate(QStringLiteral("qrc:/ui/app/screens/non-modal/PokemonDetails.qml"), props);
-  if (!details) { qWarning().noquote() << "  [skip] PokemonDetails failed"; return; }
-
-  QQuickItem* bar = app.itemByType(QStringLiteral("TabBar"), details);
-  const int seq[] = { 0, 1, 2, 1, 0 };
-  int f = 0;
-  for (int idx : seq) {
-    if (bar) bar->setProperty("currentIndex", idx);
-    app.settle(200);
-    grab(app, QStringLiteral("frames/tab_cycle/frame_%1.png").arg(f++, 3, 10, QLatin1Char('0')));
-  }
-  delete details;
-  app.settle(40);
-}
-
 // ---------------------------------------------------------------------------
 int main(int argc, char** argv)
 {
@@ -494,7 +365,7 @@ int main(int argc, char** argv)
 #else
                : QDir::currentPath() + QStringLiteral("/screenshots");
 #endif
-  QDir(g_outDir).removeRecursively();   // start clean so no stale shots/frames linger
+  QDir(g_outDir).removeRecursively();   // start clean so no stale shots linger
   QDir().mkpath(g_outDir);
   qInfo().noquote() << "Screenshot output:" << g_outDir;
 
@@ -549,9 +420,6 @@ int main(int argc, char** argv)
   captureViewAll(app);
   capturePokemonEditor(app);
   captureTextEditors(app);
-  captureFramesTileset(app);
-  captureFramesTyping(app);
-  captureFramesTabs(app);
 
   qInfo().noquote() << QStringLiteral("Done: %1 saved, %2 failed.").arg(g_saved).arg(g_failed);
   return 0;        // a tool: partial capture is still a successful run

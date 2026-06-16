@@ -1,25 +1,24 @@
 <#
   Copyright 2026 Twilight  --  Apache-2.0 (see LICENSE).
 
-  Build + run the headless screenshot/animation capture tool, then assemble the
-  frame sequences into GIFs. Output -> <repo>\tmp\screenshots\ (git-ignored).
+  Build + run the headless still-screenshot capture tool. Output ->
+  <repo>\tmp\screenshots\ (git-ignored). Still PNGs only -- animated GIFs are added
+  manually, one at a time, so there is NO automated GIF/frame generation here.
 
   This is the Windows / dev-kit driver, meant to run by default after a fast-forward
   of `main` (see CLAUDE.md "Default Workflow"). It:
     1. ensures the Ninja test build dir is configured,
     2. builds ONLY the `screenshooter` target,
-    3. runs it on the offscreen platform (software backend, crash-fast error mode),
-    4. runs scripts\make_gifs.py (Pillow) to build the GIFs.
+    3. runs it on the offscreen platform (software backend, crash-fast error mode).
 
   Nothing here writes a save byte -- the tool only renders the UI.
 
-  Usage:  pwsh -File scripts\capture_screenshots.ps1 [-OutDir <path>] [-SkipBuild] [-SkipGifs]
+  Usage:  pwsh -File scripts\capture_screenshots.ps1 [-OutDir <path>] [-SkipBuild]
 #>
 [CmdletBinding()]
 param(
   [string]$OutDir,
-  [switch]$SkipBuild,
-  [switch]$SkipGifs
+  [switch]$SkipBuild
 )
 
 $ErrorActionPreference = 'Stop'
@@ -71,40 +70,5 @@ $env:QT_SCALE_FACTOR = '1'
 Write-Host "Capturing screenshots -> $OutDir"
 & $exe $OutDir
 if ($LASTEXITCODE -ne 0) { throw "screenshooter run failed ($LASTEXITCODE)" }
-
-# Find a REAL Python, skipping the Microsoft Store execution-alias stub
-# (the WindowsApps "python.exe" that just prints "Python was not found"). Checks
-# PATH (minus WindowsApps) then the registered PythonCore installs.
-function Resolve-Python {
-  $cands = @()
-  foreach ($n in 'python.exe', 'python3.exe') {
-    $cands += (Get-Command $n -All -ErrorAction SilentlyContinue |
-               Where-Object { $_.Source -and $_.Source -notlike '*WindowsApps*' } |
-               Select-Object -ExpandProperty Source)
-  }
-  foreach ($h in 'HKLM:\SOFTWARE\Python\PythonCore', 'HKCU:\SOFTWARE\Python\PythonCore',
-                 'HKLM:\SOFTWARE\WOW6432Node\Python\PythonCore') {
-    Get-ChildItem $h -ErrorAction SilentlyContinue | ForEach-Object {
-      $ip = (Get-ItemProperty "$($_.PSPath)\InstallPath" -ErrorAction SilentlyContinue).'(default)'
-      if ($ip) { $cands += (Join-Path $ip 'python.exe') }
-    }
-  }
-  foreach ($c in $cands) {
-    if ($c -and (Test-Path $c)) {
-      try { & $c --version *> $null; if ($LASTEXITCODE -eq 0) { return $c } } catch { }
-    }
-  }
-  return $null
-}
-
-if (-not $SkipGifs) {
-  $py = Resolve-Python
-  if ($py) {
-    Write-Host "Assembling GIFs ($py)..."
-    & $py (Join-Path $repo 'scripts\make_gifs.py') --dir $OutDir
-  } else {
-    Write-Warning "No real Python found (only the Store stub?); skipping GIF assembly (PNGs are still in $OutDir)."
-  }
-}
 
 Write-Host "Screenshot capture complete: $OutDir"

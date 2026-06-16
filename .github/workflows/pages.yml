@@ -4,8 +4,8 @@ name: pages
 #
 #   /             -> a small landing page
 #   /docs/        -> the generated Doxygen documentation (doxygen Doxyfile -> docs/html)
-#   /screenshots/ -> the UI screenshots (screens + editor + GIFs; the frames/ folder
-#                    is excluded), with a browsable gallery
+#   /screenshots/ -> the UI still screenshots (screens + editor), with a browsable
+#                    gallery. Animated GIFs are added manually, not generated here.
 #
 # Docs reference the screenshots with the absolute Pages URL
 # (https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>) -- which also
@@ -74,12 +74,8 @@ jobs:
         run: cmake -S projects -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Capture screenshots (headless, xvfb)
-        # Install Pillow HERE so it targets the python3 the .sh uses (install-qt-action
-        # swaps the python3 on PATH). Renders only -- never writes a save byte.
-        run: |
-          python3 -m pip install --upgrade Pillow \
-            || python3 -m pip install --break-system-packages --upgrade Pillow
-          bash scripts/capture_screenshots.sh
+        # Still PNGs only -- renders the UI, never writes a save byte. No GIF assembly.
+        run: bash scripts/capture_screenshots.sh
 
       - name: Generate Doxygen docs (with Screenshots + GitHub nav tabs)
         run: |
@@ -102,7 +98,6 @@ jobs:
           mkdir -p site/screenshots
           cp tmp/screenshots/screens/*.png site/screenshots/ 2>/dev/null || true
           cp tmp/screenshots/editor/*.png  site/screenshots/ 2>/dev/null || true
-          cp tmp/screenshots/*.gif         site/screenshots/ 2>/dev/null || true
           test -n "$(ls -A site/screenshots)"
           # Screenshots gallery (its own index under /screenshots/, linking back to the docs root).
           {
