@@ -25,8 +25,12 @@
 #include <pse-db/gamecornerdb.h>
 #include <pse-savefile/expanded/player/playerbasics.h>
 
-ItemMarketEntryMoney::ItemMarketEntryMoney()
-  : ItemMarketEntry(CompatNo, CompatEither) // Only Coins, either buy/sell
+// Compatibility is Either/Either: these rows are only ever built into the dedicated
+// Exchange list now (never the buy/sell item lists), so they always pass the filter;
+// the swap direction comes from forceDir, not the global buy/sell flag.
+ItemMarketEntryMoney::ItemMarketEntryMoney(int forceDir)
+  : ItemMarketEntry(CompatEither, CompatEither),
+    forceDir(forceDir)
 {
   finishConstruction();
   exclude = true;
@@ -34,25 +38,26 @@ ItemMarketEntryMoney::ItemMarketEntryMoney()
 
 ItemMarketEntryMoney::~ItemMarketEntryMoney() {}
 
+bool ItemMarketEntryMoney::buying() const
+{
+  if(forceDir != DirGlobal)
+    return forceDir == DirToCoins;
+  return *isBuyMode;
+}
+
 QString ItemMarketEntryMoney::_name()
 {
-  if(!requestFilter())
-    return "";
-
-  if(*isBuyMode)
+  if(buying())
     return tr("Money => Coins");
 
-  return   tr("Coins => Money");
+  return tr("Coins => Money");
 }
 
 // An exception, Money is strictly a money exchange as in your always selling
 // something and therefore always have an in-stock value which has a limit.
 int ItemMarketEntryMoney::_inStockCount()
 {
-  if(!requestFilter())
-    return 0;
-
-  if(*isBuyMode)
+  if(buying())
     return player->money;
 
   return player->coins;
@@ -65,10 +70,7 @@ bool ItemMarketEntryMoney::_canSell()
 
 int ItemMarketEntryMoney::_itemWorth()
 {
-  if(!requestFilter())
-    return 0;
-
-  if(*isBuyMode)
+  if(buying())
     return GameCornerDB::inst()->getBuyPrice();
 
   return GameCornerDB::inst()->getSellPrice();
@@ -81,13 +83,10 @@ QString ItemMarketEntryMoney::_whichType()
 
 int ItemMarketEntryMoney::onCartLeft()
 {
-  if(!requestFilter())
-    return 0;
-
   int ret = 0;
 
   // Selling money to buy coins
-  if(*isBuyMode) {
+  if(buying()) {
 
     //How much coins can we get
     int coinsLeft = (9999 - player->coins) / itemWorth();
@@ -120,13 +119,27 @@ int ItemMarketEntryMoney::stackCount()
   return 0;
 }
 
+// Exchange-aware affordability. The base canCheckout() leans on the model-wide
+// moneyLeftover(), which is single-currency and excludes money rows -- meaningless
+// for a swap. Gate directly on the currency actually being spent instead.
+bool ItemMarketEntryMoney::canCheckout()
+{
+  if(onCart <= 0)
+    return false;
+  if(onCartLeft() < 0)        // destination would overflow its cap
+    return false;
+
+  // buying() spends money (Money=>Coins); else spends coins (Coins=>Money).
+  return buying() ? (player->money >= onCart)
+                  : (player->coins >= onCart);
+}
+
 void ItemMarketEntryMoney::checkout()
 {
-  if(!canCheckout() ||
-     !requestFilter())
+  if(!canCheckout())
     return;
 
-  if(*isBuyMode) {
+  if(buying()) {
     player->money -= onCart;
     player->coins += cartWorth();
   }

@@ -578,7 +578,19 @@ on the left and a store-style **receipt** on the right, with a 1px `dividerColor
 between. (The first pass that day was an internal-only modernization; the two-pane receipt
 was the follow-up redesign Twilight asked for.)
 
-- **Left pane = the shopping list** (accent mode-title header + a `ListView` of proper item rows).
+- **Mode controls = two segmented strips in the left header** (not footer buttons, not a title). An
+  inline `component SegStrip` (a connected single-select control styled for the accent bar: selected =
+  light fill + accent text, light outline, dividers, `clip`+radius; `options` array, bound `currentIndex`,
+  `stripEnabled`, `picked(index)` signal). Two of them: **action** `[Buy|Sell|Exchange]` →
+  `isExchangeMode`/`isBuyMode`; **venue** `[Pokemart|Game Corner]` → `isMoneyCurrency`, **disabled while
+  Exchange is selected**. The footer is a single **Checkout** `AppFooterBtn1`.
+- **Exchange is its own mode.** `isExchangeMode` builds a dedicated list (a header + the two fixed-direction
+  `ItemMarketEntryMoney` rows via `forceDir`); the money exchange was **removed** from the buy/sell lists.
+  In Exchange the receipt shows a **dual-currency** Money / Coins `start → after (Δ)` summary (not the item
+  receipt), driven by `exchangeMoney/CoinsStart/After` (which mirror the money rows' checkout deltas
+  exactly). Buy/sell affordability for a swap is gated by `ItemMarketEntryMoney::canCheckout()` on the
+  currency actually spent (the base single-currency `moneyLeftover()` can't).
+- **Left pane = the shopping list** (segmented-strip header + a `ListView` of proper item rows).
   Each item row is a left-aligned `RowLayout` (14px left, 16px scrollbar lane): **name** (`fillWidth`,
   elide) · **owned `xN`** (sell only) · **unit price** (right-aligned, min-width 54) · a **stepper
   "pill"** as the row action (`-`/qty/`+` in a rounded `Rectangle` that turns white on hover; the
@@ -607,10 +619,10 @@ was the follow-up redesign Twilight asked for.)
   second pass made it a plain `Item` with the `-/amount/+` stepper `anchors.centerIn: parent` (screen-
   centered, labels fanned around it). Both are **superseded** — don't reintroduce the width:1 trick or
   the screen-centered stepper.
-- **One text per adaptive label, not N visibility-toggled copies.** The header title comes from
-  `headerText()` (switch on `whichMode`); the receipt's warning line from `warningText()` (priority:
-  money-left < 0 > money-overflow > no-space, else ""). Don't fan these back out into one `Text` per
-  case with `visible:` flags (the old anti-pattern).
+- **One text per adaptive label, not N visibility-toggled copies.** The receipt's warning line comes from
+  `warningText()` (buy/sell) or `exchangeWarningText()` (exchange); don't fan these back into one `Text`
+  per case with `visible:` flags (the old anti-pattern). *(The old mode-title `headerText()` is gone — the
+  segmented strips replaced the title.)*
 - **Currency helpers live on the page root** (`maxMoney`/`curSym`/`signing`/`moneyStr`/`moneyColor`) —
   presentation/formatting only. `moneyColor` returns **`brg.settings.errorColor`** for the error red.
   Use that token for plain red — **not** `brg.settings.primaryColor` (that's *pink*, `#d81b60`) and not a

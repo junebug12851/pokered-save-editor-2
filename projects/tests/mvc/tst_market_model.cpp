@@ -52,6 +52,7 @@ private:
 
   void setMode(bool buy, bool money)
   {
+    m_mkt->isExchangeMode = false; // defensive: leave exchange mode if a prior test set it
     m_mkt->isBuyMode = buy;
     m_mkt->isMoneyCurrency = money;
     m_mkt->reUpdateAll(); // member writes don't fire NOTIFY, so rebuild explicitly
@@ -81,6 +82,7 @@ private slots:
   void buyCheckout_lowersMoney();
   void coinsMode_rowsAndRolesExercised();
   void cartModel_filtersToCartedRows();
+  void exchangeMode_swapsMoneyForCoins();
 };
 
 // One Bridge for the whole case (built once, like the real app -- which never
@@ -230,6 +232,42 @@ void TestMarketModel::cartModel_filtersToCartedRows()
 
   m_mkt->setData(m_mkt->index(row), QVariant(0), ItemMarketModel::CartCountRole);
   QCOMPARE(cart->rowCount(QModelIndex()), 0);            // clearing removes it live
+}
+
+void TestMarketModel::exchangeMode_swapsMoneyForCoins()
+{
+  // Exchange mode is its own list: a header + the two money<->coins swap rows
+  // (Money=>Coins, then Coins=>Money), pulled out of the buy/sell item lists.
+  m_mkt->isExchangeMode = true;
+  m_mkt->reUpdateAll();
+
+  QCOMPARE(m_mkt->rowCount(QModelIndex()), 3);
+  const int row = 1; // the Money=>Coins (buying) direction
+  QCOMPARE(m_mkt->data(m_mkt->index(row), ItemMarketModel::WhichTypeRole).toString(),
+           QString("money"));
+
+  const int moneyStart = m_mkt->exchangeMoneyStart();
+  const int coinsStart = m_mkt->exchangeCoinsStart();
+  if(moneyStart <= 0 ||
+     m_mkt->data(m_mkt->index(row), ItemMarketModel::OnCartLeftRole).toInt() <= 0) {
+    m_mkt->isExchangeMode = false; m_mkt->reUpdateAll();
+    QSKIP("player has no money/room to exchange");
+  }
+
+  QVERIFY(m_mkt->setData(m_mkt->index(row), QVariant(1), ItemMarketModel::CartCountRole));
+
+  // The dual-currency preview mirrors checkout exactly: 1 money spent, coins gained.
+  QCOMPARE(m_mkt->exchangeMoneyAfter(), moneyStart - 1);
+  QVERIFY2(m_mkt->exchangeCoinsAfter() >= coinsStart,
+           "buying coins should not lower the coin balance");
+
+  QVERIFY(m_mkt->canAnyCheckout());
+  m_mkt->checkout();
+  QVERIFY2((int)m_file->data->dataExpanded->player->basics->money < moneyStart,
+           "exchanging money for coins did not lower the player's money");
+
+  m_mkt->isExchangeMode = false; // leave the shared fixture in buy/sell mode
+  m_mkt->reUpdateAll();
 }
 
 QTEST_GUILESS_MAIN(TestMarketModel)

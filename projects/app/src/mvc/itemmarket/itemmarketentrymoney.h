@@ -27,7 +27,17 @@ class ItemMarketEntryMoney : public ItemMarketEntry
   Q_OBJECT
 
 public:
-  ItemMarketEntryMoney();
+  /// Direction of a money row.
+  enum {
+    DirGlobal = -1, ///< Follow the model's global buy/sell flag (legacy behaviour).
+    DirToMoney = 0, ///< Coins => Money (the "sell" direction).
+    DirToCoins = 1  ///< Money => Coins (the "buy" direction).
+  };
+
+  /// @param forceDir fix this row's exchange direction (see Dir*); DirGlobal
+  ///        follows the model's buy/sell flag. The dedicated Exchange list builds
+  ///        one of each fixed direction so both swaps appear at once.
+  explicit ItemMarketEntryMoney(int forceDir = DirGlobal);
   virtual ~ItemMarketEntryMoney();
 
   virtual QString _name() override;       ///< @copydoc ItemMarketEntry::_name
@@ -37,10 +47,17 @@ public:
   virtual QString _whichType() override;  ///< @copydoc ItemMarketEntry::_whichType
   virtual int onCartLeft() override;      ///< @copydoc ItemMarketEntry::onCartLeft
   virtual int stackCount() override;      ///< @copydoc ItemMarketEntry::stackCount
+  virtual bool canCheckout() override;    ///< Exchange-aware affordability gate.
+
+  /// This row's effective direction: true = Money=>Coins (spend money), false =
+  /// Coins=>Money (spend coins). Honours @ref forceDir, else the global buy flag.
+  bool buying() const;
 
 public slots:
   virtual void checkout() override; ///< Apply the money/coins change.
 
 public:
   static constexpr const char* type = "money"; ///< This row's type key.
+
+  int forceDir = DirGlobal; ///< Fixed direction, or DirGlobal to follow the model.
 };

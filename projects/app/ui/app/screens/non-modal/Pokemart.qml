@@ -1,19 +1,18 @@
-// Pokemart.qml -- the buy/sell shop screen (Pokemart and Game Corner).
+// Pokemart.qml -- the buy/sell/exchange shop screen (Pokemart and Game Corner).
 //
 // Two panes side by side:
 //   * LEFT  -- the shopping list over brg.marketModel: a clean list of item rows
-//              (name | owned | unit price | an inline -/qty/+ stepper as the row's
-//              action), with section headers, hover highlight and zebra striping.
-//              This is where you build the cart.
-//   * RIGHT -- a store-style RECEIPT over brg.marketCartModel (a cart-only filter of
-//              the same model): money on hand, one itemized buy/sell line per carted
-//              item, then the total, the resulting balance, and any warning. The
-//              receipt does the totalling, so the list rows carry no running total.
+//              (name | owned | unit price | an inline -/qty/+ stepper action), with
+//              section headers, hover highlight and zebra striping. In Exchange mode
+//              it instead lists the two money<->coins swaps.
+//   * RIGHT -- a store-style RECEIPT over brg.marketCartModel: in buy/sell, an
+//              itemized money receipt (money on hand, lines, total, balance); in
+//              Exchange, a dual-currency before->after summary for money AND coins.
 //
-// The list pane is wider than the receipt (stretch 5:3). Four modes (whichMode 0-3)
-// combine buy/sell with money/coins; the header text and currency symbols adapt per
-// mode. The JS helpers up top (maxMoney/curSym/signing/moneyStr/...) handle currency
-// formatting, signing and out-of-range clamping. Footer: Buy/Sell, Checkout, Currency.
+// The mode is chosen by two segmented control strips in the left header: the action
+// (Buy / Sell / Exchange) and the venue (Pokemart / Game Corner; disabled in
+// Exchange). The footer is a single Checkout button. The list pane is wider than the
+// receipt (~67/33). The JS helpers up top handle currency formatting/clamping.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -30,6 +29,73 @@ Page {
   property int headH: 32    // section-header row height
   property int qtyW: 34     // stepper quantity field width
 
+  // ---- A connected, single-select segmented control (styled for the accent bar) --
+  component SegStrip: Rectangle {
+    id: seg
+    property var options: []          // array of label strings
+    property int currentIndex: 0
+    property bool stripEnabled: true
+    signal picked(int index)
+
+    implicitHeight: 28
+    implicitWidth: segRow.implicitWidth
+    radius: 6
+    color: "transparent"
+    border.width: 1
+    border.color: Qt.rgba(1, 1, 1, 0.55)   // light outline on the accent bar
+    clip: true
+    opacity: stripEnabled ? 1 : 0.45
+
+    Row {
+      id: segRow
+      anchors.fill: parent
+
+      Repeater {
+        model: seg.options
+        delegate: Item {
+          id: segItem
+          required property int index
+          required property string modelData
+          height: seg.height
+          width: Math.max(segLabel.implicitWidth + 24, 46)
+
+          // Selected segment fills light; others are transparent.
+          Rectangle {
+            anchors.fill: parent
+            color: segItem.index === seg.currentIndex
+                   ? brg.settings.textColorLight : "transparent"
+          }
+
+          // Divider before every segment but the first.
+          Rectangle {
+            visible: segItem.index > 0
+            anchors.left: parent.left
+            width: 1
+            height: parent.height
+            color: Qt.rgba(1, 1, 1, 0.45)
+          }
+
+          Text {
+            id: segLabel
+            anchors.centerIn: parent
+            text: segItem.modelData
+            font.pixelSize: 13
+            font.bold: segItem.index === seg.currentIndex
+            color: segItem.index === seg.currentIndex
+                   ? brg.settings.accentColor : brg.settings.textColorLight
+          }
+
+          MouseArea {
+            anchors.fill: parent
+            enabled: seg.stripEnabled
+            cursorShape: Qt.PointingHandCursor
+            onClicked: seg.picked(segItem.index)
+          }
+        }
+      }
+    }
+  }
+
   // ---- Currency formatting helpers -------------------------------------------
 
   // Maximum money for the active currency (money 999,999; coins 9,999).
@@ -39,15 +105,9 @@ Page {
     return 9999;
   }
 
-  // Negative bound for the active currency.
-  function maxMoneyNeg(sym) {
-    return -maxMoney(sym);
-  }
+  function maxMoneyNeg(sym) { return -maxMoney(sym); }
 
-  // Is the value outside the currency's representable range?
-  function moneyOutOfRange(val, sym) {
-    return Math.abs(val) > maxMoney(sym);
-  }
+  function moneyOutOfRange(val, sym) { return Math.abs(val) > maxMoney(sym); }
 
   // Error red when out of range (or, with zeroRed, when negative); else normal.
   function moneyColor(val, zeroRed, sym) {
@@ -58,8 +118,6 @@ Page {
     return brg.settings.textColorDark;
   }
 
-  // Currency symbol, including the exchange exception (selling items for money
-  // while in coins mode still pays out in coins, but the money row shows ₽).
   function curSym(dataWhichType) {
     if(brg.marketModel.isMoneyCurrency)
       return "₽";
@@ -70,15 +128,12 @@ Page {
     return "₽";
   }
 
-  // Buy/Sell sign, with the money row always reading as a "+" (you receive it).
   function signing(dataWhichType) {
     if(dataWhichType === "money")
       return "+";
     return brg.marketModel.isBuyMode ? "-" : "+";
   }
 
-  // Format a value as a currency string, clamped to range, optionally absolute
-  // and/or signed, with a leading "<"/">" when the true value overflows range.
   function moneyStr(val, abs, useSigning, dataWhichType) {
     var sym = curSym(dataWhichType);
 
@@ -108,18 +163,7 @@ Page {
     return _val;
   }
 
-  // Header title for the current mode (buy/sell x mart/game-corner).
-  function headerText() {
-    switch(brg.marketModel.whichMode) {
-      case 0: return qsTr("Shop at the Pokemart");
-      case 1: return qsTr("Shop at the Game Corner");
-      case 2: return qsTr("Sell to the Pokemart");
-      case 3: return qsTr("Sell to the Game Corner");
-    }
-    return "";
-  }
-
-  // The highest-priority transaction warning, or "" when the cart is fine.
+  // The highest-priority buy/sell warning, or "" when the cart is fine.
   function warningText() {
     if(brg.marketModel.moneyLeftover < 0)
       return qsTr("There's not enough money for all items on the cart.");
@@ -128,6 +172,25 @@ Page {
     if(brg.marketModel.anyNotEnoughSpace)
       return qsTr("There's not enough space for one or more items on the shopping cart.");
     return "";
+  }
+
+  // Exchange-mode warning, or "" when the swap is valid.
+  function exchangeWarningText() {
+    if(brg.marketModel.exchangeMoneyAfter < 0)
+      return qsTr("You don't have enough money for this exchange.");
+    if(brg.marketModel.exchangeCoinsAfter < 0)
+      return qsTr("You don't have enough coins for this exchange.");
+    if(brg.marketModel.exchangeMoneyAfter > 999999)
+      return qsTr("That's more money than you can hold.");
+    if(brg.marketModel.exchangeCoinsAfter > 9999)
+      return qsTr("That's more coins than you can hold.");
+    return "";
+  }
+
+  // "(+₽150)" / "(-⭘30)" style delta string.
+  function deltaStr(after, start, sym) {
+    var d = after - start;
+    return "(" + (d >= 0 ? "+" : "-") + sym + Math.abs(d).toLocaleString() + ")";
   }
 
   // ---- Two panes: shopping list (left, wider) | receipt (right) ---------------
@@ -143,7 +206,7 @@ Page {
       Layout.fillHeight: true
       color: "white"
 
-      // Mode title on the accent bar.
+      // Header: the two segmented mode strips, side by side, on the accent bar.
       Rectangle {
         id: listHeader
         anchors.left: parent.left
@@ -154,13 +217,34 @@ Page {
         Material.foreground: brg.settings.textColorLight
         Material.background: brg.settings.accentColor
 
-        Text {
+        Row {
           anchors.centerIn: parent
-          horizontalAlignment: Text.AlignHCenter
-          verticalAlignment: Text.AlignVCenter
-          text: topz.headerText()
-          font.pixelSize: 18
-          color: brg.settings.textColorLight
+          spacing: 14
+
+          // Action: Buy / Sell / Exchange.
+          SegStrip {
+            anchors.verticalCenter: parent.verticalCenter
+            options: ["Buy", "Sell", "Exchange"]
+            currentIndex: brg.marketModel.isExchangeMode
+                          ? 2 : (brg.marketModel.isBuyMode ? 0 : 1)
+            onPicked: (i) => {
+              if(i === 2) {
+                brg.marketModel.isExchangeMode = true;
+              } else {
+                brg.marketModel.isExchangeMode = false;
+                brg.marketModel.isBuyMode = (i === 0);
+              }
+            }
+          }
+
+          // Venue: Pokemart (money) / Game Corner (coins). Irrelevant in Exchange.
+          SegStrip {
+            anchors.verticalCenter: parent.verticalCenter
+            options: ["Pokemart", "Game Corner"]
+            stripEnabled: !brg.marketModel.isExchangeMode
+            currentIndex: brg.marketModel.isMoneyCurrency ? 0 : 1
+            onPicked: (i) => brg.marketModel.isMoneyCurrency = (i === 0)
+          }
         }
       }
 
@@ -176,7 +260,6 @@ Page {
         clip: true
         ScrollBar.vertical: ScrollBar {}
 
-        // Breathing room under the last row.
         footer: Item { width: 1; height: 16 }
 
         delegate: Item {
@@ -184,9 +267,8 @@ Page {
           width: marketView.width
           height: dataWhichType === "msg" ? topz.headH : topz.rowH
 
-          // Whether this row can be added to the cart (always when buying; only
-          // sellable items when selling).
           property bool canStep: dataCanSell || brg.marketModel.isBuyMode
+                                 || brg.marketModel.isExchangeMode
 
           // ---------------- Section header row ("msg") ----------------
           Rectangle {
@@ -220,10 +302,8 @@ Page {
             visible: dataWhichType !== "msg"
             anchors.fill: parent
 
-            // Whole-row hover (stays true over the child controls too).
             HoverHandler { id: rowHover }
 
-            // Row background: accent-tinted on hover, faint zebra otherwise.
             Rectangle {
               anchors.fill: parent
               color: rowHover.hovered
@@ -239,7 +319,6 @@ Page {
               anchors.rightMargin: 16          // reserve the scrollbar lane
               spacing: 10
 
-              // Item name.
               Text {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
@@ -251,9 +330,9 @@ Page {
                 verticalAlignment: Text.AlignVCenter
               }
 
-              // Owned count (sell mode only).
+              // Owned count (sell mode only; not in exchange).
               Text {
-                visible: !brg.marketModel.isBuyMode
+                visible: !brg.marketModel.isBuyMode && !brg.marketModel.isExchangeMode
                 Layout.alignment: Qt.AlignVCenter
                 text: "x" + dataInStockCount.toLocaleString()
                 font.pixelSize: 12
@@ -307,7 +386,7 @@ Page {
                     width: topz.qtyW
                     horizontalAlignment: TextInput.AlignHCenter
                     labelEl.visible: false
-                    background: Item {}        // borderless inside the pill
+                    background: Item {}
                     inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
 
                     color: (!dataCanCheckout && dataCartCount > 0)
@@ -348,7 +427,6 @@ Page {
               }
             }
 
-            // Faint row separator.
             Rectangle {
               anchors.left: parent.left
               anchors.right: parent.right
@@ -387,18 +465,16 @@ Page {
 
         Text {
           anchors.centerIn: parent
-          horizontalAlignment: Text.AlignHCenter
-          verticalAlignment: Text.AlignVCenter
-          text: qsTr("Cart")
+          text: brg.marketModel.isExchangeMode ? qsTr("Exchange") : qsTr("Cart")
           font.pixelSize: 18
           color: brg.settings.textColorLight
 
-          // Live item count beside the title (hidden when empty).
           Text {
             anchors.left: parent.right
             anchors.leftMargin: 12
             anchors.verticalCenter: parent.verticalCenter
-            visible: brg.marketModel.totalCartCount > 0
+            visible: !brg.marketModel.isExchangeMode
+                     && brg.marketModel.totalCartCount > 0
             text: "x" + brg.marketModel.totalCartCount.toLocaleString()
             font.pixelSize: 14
             color: brg.settings.textColorLight
@@ -406,8 +482,9 @@ Page {
         }
       }
 
-      // Receipt body: money on hand, the itemized lines, then totals + warning.
+      // ----- BUY/SELL receipt: money on hand, itemized lines, total, balance -----
       ColumnLayout {
+        visible: !brg.marketModel.isExchangeMode
         anchors.top: receiptHeader.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -415,7 +492,6 @@ Page {
         anchors.margins: 16
         spacing: 8
 
-        // -- Money on hand --
         RowLayout {
           Layout.fillWidth: true
           Text {
@@ -431,14 +507,8 @@ Page {
           }
         }
 
-        // Dashed-look divider.
-        Rectangle {
-          Layout.fillWidth: true
-          height: 1
-          color: brg.settings.dividerColor
-        }
+        Rectangle { Layout.fillWidth: true; height: 1; color: brg.settings.dividerColor }
 
-        // -- Itemized lines (one per carted item) --
         ListView {
           id: receiptList
           Layout.fillWidth: true
@@ -447,7 +517,6 @@ Page {
           clip: true
           ScrollBar.vertical: ScrollBar {}
 
-          // Empty state.
           Text {
             anchors.centerIn: parent
             visible: receiptList.count === 0
@@ -463,11 +532,10 @@ Page {
             ColumnLayout {
               anchors.left: parent.left
               anchors.right: parent.right
-              anchors.rightMargin: 16        // reserve the scrollbar lane
+              anchors.rightMargin: 16
               anchors.verticalCenter: parent.verticalCenter
               spacing: 2
 
-              // Name + signed line total.
               RowLayout {
                 Layout.fillWidth: true
                 spacing: 8
@@ -487,7 +555,6 @@ Page {
                 }
               }
 
-              // qty x unit price (the line's makeup).
               Text {
                 text: "x" + dataCartCount.toLocaleString() + "  @ "
                       + topz.curSym(dataWhichType) + dataItemWorth.toLocaleString()
@@ -496,7 +563,6 @@ Page {
               }
             }
 
-            // Faint row separator.
             Rectangle {
               anchors.left: parent.left
               anchors.right: parent.right
@@ -508,14 +574,8 @@ Page {
           }
         }
 
-        // Solid divider above the totals.
-        Rectangle {
-          Layout.fillWidth: true
-          height: 1
-          color: brg.settings.dividerColor
-        }
+        Rectangle { Layout.fillWidth: true; height: 1; color: brg.settings.dividerColor }
 
-        // -- Total --
         RowLayout {
           Layout.fillWidth: true
           Text {
@@ -534,7 +594,6 @@ Page {
           }
         }
 
-        // -- Resulting balance --
         RowLayout {
           Layout.fillWidth: true
           Text {
@@ -552,7 +611,6 @@ Page {
           }
         }
 
-        // -- Warning (not enough money / no space) --
         Text {
           Layout.fillWidth: true
           visible: topz.warningText() !== ""
@@ -563,28 +621,114 @@ Page {
           horizontalAlignment: Text.AlignHCenter
         }
       }
+
+      // ----- EXCHANGE receipt: dual-currency before -> after for money AND coins ---
+      ColumnLayout {
+        visible: brg.marketModel.isExchangeMode
+        anchors.top: receiptHeader.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 16
+        spacing: 14
+
+        // Money balance row.
+        ColumnLayout {
+          Layout.fillWidth: true
+          spacing: 2
+          Text {
+            text: qsTr("Money")
+            font.pixelSize: 13
+            color: brg.settings.textColorMid
+          }
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+            Text {
+              text: "₽" + brg.marketModel.exchangeMoneyStart.toLocaleString()
+              font.pixelSize: 15
+              color: brg.settings.textColorMid
+            }
+            Text { text: "→"; font.pixelSize: 15; color: brg.settings.textColorMid }
+            Text {
+              text: "₽" + brg.marketModel.exchangeMoneyAfter.toLocaleString()
+              font.pixelSize: 15
+              font.bold: true
+              color: (brg.marketModel.exchangeMoneyAfter < 0
+                      || brg.marketModel.exchangeMoneyAfter > 999999)
+                     ? brg.settings.errorColor : brg.settings.textColorDark
+            }
+            Item { Layout.fillWidth: true }
+            Text {
+              visible: brg.marketModel.exchangeMoneyAfter !== brg.marketModel.exchangeMoneyStart
+              text: topz.deltaStr(brg.marketModel.exchangeMoneyAfter,
+                                  brg.marketModel.exchangeMoneyStart, "₽")
+              font.pixelSize: 13
+              color: brg.settings.textColorMid
+            }
+          }
+        }
+
+        Rectangle { Layout.fillWidth: true; height: 1; color: brg.settings.dividerColor }
+
+        // Coins balance row.
+        ColumnLayout {
+          Layout.fillWidth: true
+          spacing: 2
+          Text {
+            text: qsTr("Coins")
+            font.pixelSize: 13
+            color: brg.settings.textColorMid
+          }
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+            Text {
+              text: "⭘" + brg.marketModel.exchangeCoinsStart.toLocaleString()
+              font.pixelSize: 15
+              color: brg.settings.textColorMid
+            }
+            Text { text: "→"; font.pixelSize: 15; color: brg.settings.textColorMid }
+            Text {
+              text: "⭘" + brg.marketModel.exchangeCoinsAfter.toLocaleString()
+              font.pixelSize: 15
+              font.bold: true
+              color: (brg.marketModel.exchangeCoinsAfter < 0
+                      || brg.marketModel.exchangeCoinsAfter > 9999)
+                     ? brg.settings.errorColor : brg.settings.textColorDark
+            }
+            Item { Layout.fillWidth: true }
+            Text {
+              visible: brg.marketModel.exchangeCoinsAfter !== brg.marketModel.exchangeCoinsStart
+              text: topz.deltaStr(brg.marketModel.exchangeCoinsAfter,
+                                  brg.marketModel.exchangeCoinsStart, "⭘")
+              font.pixelSize: 13
+              color: brg.settings.textColorMid
+            }
+          }
+        }
+
+        // Push the warning to the bottom.
+        Item { Layout.fillWidth: true; Layout.fillHeight: true }
+
+        Text {
+          Layout.fillWidth: true
+          visible: topz.exchangeWarningText() !== ""
+          text: topz.exchangeWarningText()
+          font.pixelSize: 13
+          color: brg.settings.errorColor
+          wrapMode: Text.WordWrap
+          horizontalAlignment: Text.AlignHCenter
+        }
+      }
     }
   }
 
-  // ---- 3-button footer: Buy/Sell, Checkout, Currency. ----
-  footer: AppFooterBtn3 {
-    id: theFooter
-
-    // Toggle between buying (store stock) and selling (your items).
-    icon1.source: "qrc:/assets/icons/fontawesome/exchange-alt.svg"
-    text1: "Buy/Sell"
-    onBtn1Clicked: brg.marketModel.isBuyMode = !brg.marketModel.isBuyMode
-
-    // Commit the cart. Disabled (and never stuck-highlighted -- see
-    // FooterButton.qml) until the transaction can complete.
-    btn2.enabled: brg.marketModel.canAnyCheckout
-    icon2.source: "qrc:/assets/icons/fontawesome/shopping-cart.svg"
-    text2: "Checkout"
-    onBtn2Clicked: brg.marketModel.checkout()
-
-    // Toggle between money and coins.
-    icon3.source: "qrc:/assets/icons/fontawesome/coins.svg"
-    text3: "Currency"
-    onBtn3Clicked: brg.marketModel.isMoneyCurrency = !brg.marketModel.isMoneyCurrency
+  // ---- Footer: a single Checkout button. ----
+  footer: AppFooterBtn1 {
+    btn1.enabled: brg.marketModel.canAnyCheckout
+    icon1.source: "qrc:/assets/icons/fontawesome/shopping-cart.svg"
+    text1: "Checkout"
+    onBtn1Clicked: brg.marketModel.checkout()
   }
 }

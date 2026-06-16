@@ -47,7 +47,14 @@ class ItemMarketModel : public QAbstractListModel
 
   Q_PROPERTY(bool isBuyMode MEMBER isBuyMode NOTIFY isBuyModeChanged)             ///< Buy (store) vs sell (player) view.
   Q_PROPERTY(bool isMoneyCurrency MEMBER isMoneyCurrency NOTIFY isMoneyCurrencyChanged) ///< Money vs coins currency.
+  Q_PROPERTY(bool isExchangeMode MEMBER isExchangeMode NOTIFY isExchangeModeChanged) ///< Money<->coins exchange (its own list).
   Q_PROPERTY(int whichMode READ whichMode NOTIFY isAnyChanged)                    ///< Combined mode (see SelBuy* enum).
+
+  // Dual-currency totals for the Exchange receipt (money AND coins both move).
+  Q_PROPERTY(int exchangeMoneyStart READ exchangeMoneyStart NOTIFY reUpdateValues) ///< Money before the exchange.
+  Q_PROPERTY(int exchangeMoneyAfter READ exchangeMoneyAfter NOTIFY reUpdateValues) ///< Money after the cart's swaps.
+  Q_PROPERTY(int exchangeCoinsStart READ exchangeCoinsStart NOTIFY reUpdateValues) ///< Coins before the exchange.
+  Q_PROPERTY(int exchangeCoinsAfter READ exchangeCoinsAfter NOTIFY reUpdateValues) ///< Coins after the cart's swaps.
 
   Q_PROPERTY(int totalCartWorth READ totalCartWorth NOTIFY reUpdateValues)        ///< Total cart value (-/+ = buy/sell).
   Q_PROPERTY(int totalCartCount READ totalCartCount NOTIFY reUpdateValues)        ///< Total items in the cart.
@@ -59,6 +66,7 @@ class ItemMarketModel : public QAbstractListModel
 signals:
   void isBuyModeChanged();
   void isMoneyCurrencyChanged();
+  void isExchangeModeChanged();
   void isAnyChanged();
   void reUpdateValues();
 
@@ -150,6 +158,12 @@ public:
   bool anyNotEnoughSpace(); ///< @see anyNotEnoughSpace property.
   bool canAnyCheckout();  ///< @see canAnyCheckout property.
 
+  // Exchange receipt totals (mirror the money rows' checkout deltas exactly).
+  int exchangeMoneyStart(); ///< @see exchangeMoneyStart property.
+  int exchangeMoneyAfter(); ///< @see exchangeMoneyAfter property.
+  int exchangeCoinsStart(); ///< @see exchangeCoinsStart property.
+  int exchangeCoinsAfter(); ///< @see exchangeCoinsAfter property.
+
   void onReUpdateValues(); ///< Recompute the derived totals.
 
   // Re-create list cache methods
@@ -158,6 +172,7 @@ public:
   void buildList();           ///< Build the rows for the current mode.
   void buildPlayerItemList(); ///< Build rows from the player's items.
   void buildMartItemList();   ///< Build rows from the store stock.
+  void buildExchangeList();   ///< Build the money<->coins exchange rows (both directions).
 
   // Respodning to events and signals
   void pageOpening(QString path); ///< Hook when the market page opens.
@@ -177,6 +192,11 @@ public:
   // Pokemart or Game Corner Mart to buy with money and coins
   // Default to dealing with money
   bool isMoneyCurrency = true; ///< @see isMoneyCurrency property.
+
+  // The money<->coins exchange as its own list (pulled out of the buy/sell lists).
+  // When true the buy/sell + currency choice is irrelevant; the list is the two
+  // swap rows.
+  bool isExchangeMode = false; ///< @see isExchangeMode property.
 
   // Connections to the Sav Data
   ItemStorageBox* itemBag = nullptr;     ///< The player's bag.

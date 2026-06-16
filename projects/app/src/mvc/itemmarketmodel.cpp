@@ -63,6 +63,7 @@ ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
   // Reset if mode changed or expanded data has been reset or changed in any way
   connect(this, &ItemMarketModel::isBuyModeChanged, this, &ItemMarketModel::reUpdateAll);
   connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::reUpdateAll);
+  connect(this, &ItemMarketModel::isExchangeModeChanged, this, &ItemMarketModel::reUpdateAll);
   connect(file, &SaveFile::dataExpandedChanged, this, &ItemMarketModel::reUpdateAll);
 
   // Cleanup and reset on page open
@@ -71,6 +72,7 @@ ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
   // Any mode change
   connect(this, &ItemMarketModel::isBuyModeChanged, this, &ItemMarketModel::isAnyChanged);
   connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::isAnyChanged);
+  connect(this, &ItemMarketModel::isExchangeModeChanged, this, &ItemMarketModel::isAnyChanged);
 
   connect(this, &ItemMarketModel::reUpdateValues, this, &ItemMarketModel::onReUpdateValues);
 
@@ -285,6 +287,55 @@ bool ItemMarketModel::canAnyCheckout()
   return itemListCache.at(0)->canAnyCheckout();
 }
 
+int ItemMarketModel::exchangeMoneyStart()
+{
+  return basics->money;
+}
+
+int ItemMarketModel::exchangeCoinsStart()
+{
+  return basics->coins;
+}
+
+// Money on hand after applying every carted swap -- computed by mirroring
+// ItemMarketEntryMoney::checkout() exactly (buy spends onCart money + gains coins;
+// sell gains cartWorth money), so the preview can never disagree with the commit.
+int ItemMarketModel::exchangeMoneyAfter()
+{
+  int m = basics->money;
+
+  for(auto el : itemListCache) {
+    auto money = qobject_cast<ItemMarketEntryMoney*>(el);
+    if(money == nullptr || money->onCart <= 0)
+      continue;
+
+    if(money->buying())
+      m -= money->onCart;        // Money => Coins: money is spent
+    else
+      m += money->cartWorth();   // Coins => Money: money is received
+  }
+
+  return m;
+}
+
+int ItemMarketModel::exchangeCoinsAfter()
+{
+  int c = basics->coins;
+
+  for(auto el : itemListCache) {
+    auto money = qobject_cast<ItemMarketEntryMoney*>(el);
+    if(money == nullptr || money->onCart <= 0)
+      continue;
+
+    if(money->buying())
+      c += money->cartWorth();   // Money => Coins: coins are received
+    else
+      c -= money->onCart;        // Coins => Money: coins are spent
+  }
+
+  return c;
+}
+
 void ItemMarketModel::onReUpdateValues()
 {
   dataChanged(index(0), index(itemListCache.size() - 1));
@@ -322,7 +373,9 @@ void ItemMarketModel::clearList()
 
 void ItemMarketModel::buildList()
 {
-  if(isBuyMode)
+  if(isExchangeMode)
+    buildExchangeList();
+  else if(isBuyMode)
     buildMartItemList();
   else
     buildPlayerItemList();
@@ -330,14 +383,21 @@ void ItemMarketModel::buildList()
   reUpdateValues();
 }
 
-void ItemMarketModel::buildPlayerItemList()
+// The money<->coins exchange as its own list: both swap directions at once
+// (Money=>Coins and Coins=>Money), each a fixed-direction money row. Pulled out of
+// the buy/sell lists so those stay pure item lists.
+void ItemMarketModel::buildExchangeList()
 {
   clearList();
 
-  if(!isMoneyCurrency) {
-    itemListCache.append(new ItemMarketEntryMessage("Money Exchange"));
-    itemListCache.append(new ItemMarketEntryMoney);
-  }
+  itemListCache.append(new ItemMarketEntryMessage("Coin Exchange"));
+  itemListCache.append(new ItemMarketEntryMoney(ItemMarketEntryMoney::DirToCoins));
+  itemListCache.append(new ItemMarketEntryMoney(ItemMarketEntryMoney::DirToMoney));
+}
+
+void ItemMarketModel::buildPlayerItemList()
+{
+  clearList();
 
   itemListCache.append(new ItemMarketEntryMessage("Bag"));
 
@@ -355,11 +415,6 @@ void ItemMarketModel::buildPlayerItemList()
 void ItemMarketModel::buildMartItemList()
 {
   clearList();
-
-  if(!isMoneyCurrency) {
-    itemListCache.append(new ItemMarketEntryMessage("Money Exchange"));
-    itemListCache.append(new ItemMarketEntryMoney);
-  }
 
   // Setup Collator
   QCollator collator;
