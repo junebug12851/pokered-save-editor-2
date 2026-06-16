@@ -592,8 +592,9 @@ design call).
   money-left < 0 > money-overflow > no-space > cart count). Don't fan these back out into one `Text`
   per case with `visible:` flags (the old anti-pattern).
 - **Currency helpers live on the page root** (`maxMoney`/`curSym`/`signing`/`moneyStr`/`moneyColor`) —
-  presentation/formatting only. `moneyColor` returns `brg.settings.primaryColor` for the error red
-  (the app-wide error/delete red), **not** a literal `"red"`.
+  presentation/formatting only. `moneyColor` returns the **literal `"red"`** for the error red —
+  deliberately **not** `brg.settings.primaryColor` (that's *pink*, and theming is coming, so don't bake a
+  palette role in as "the red"). Until a real theming pass lands, use literal `"red"` for plain red here.
 - **Floating summary box** (`summaryScreen`): a white rounded `Rectangle` parked off-screen
   (`y: -height-5`) that slides to `y: 5` via a `State`/`Behavior on y` when `totalCartCount > 0`.
   Money-before / signed cart-cost / leftover. Positioned `x: parent.width - width - 40`.

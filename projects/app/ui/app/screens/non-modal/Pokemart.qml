@@ -44,9 +44,9 @@ Page {
   // Error red when out of range (or, with zeroRed, when negative); else normal.
   function moneyColor(val, zeroRed, sym) {
     if(moneyOutOfRange(val, sym))
-      return brg.settings.primaryColor;
+      return "red";
     if(zeroRed === true && val < 0)
-      return brg.settings.primaryColor;
+      return "red";
     return brg.settings.textColorDark;
   }
 
@@ -222,7 +222,7 @@ Page {
               inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
 
               color: (!dataCanCheckout && dataCartCount > 0)
-                     ? brg.settings.primaryColor
+                     ? "red"
                      : brg.settings.textColorDark
 
               validator: IntValidator { bottom: 0; top: 2147483647 }
@@ -360,7 +360,7 @@ Page {
             width: font.pixelSize + 4
             text: topz.signing()
             color: topz.moneyOutOfRange(brg.marketModel.totalCartWorth)
-                   ? brg.settings.primaryColor
+                   ? "red"
                    : brg.settings.textColorDark
             font.pixelSize: 14
           }
@@ -381,7 +381,7 @@ Page {
             width: font.pixelSize + 4
             text: (brg.marketModel.moneyLeftover < 0) ? "-" : ""
             color: (brg.marketModel.moneyLeftover < 0)
-                   ? brg.settings.primaryColor
+                   ? "red"
                    : brg.settings.textColorDark
             font.pixelSize: 14
           }
