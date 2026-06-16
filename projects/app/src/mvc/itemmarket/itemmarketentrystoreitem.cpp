@@ -32,11 +32,14 @@ ItemMarketEntryStoreItem::ItemMarketEntryStoreItem(
     ItemDBEntry* data,
     ItemStorageBox* toBag,
     ItemStorageBox* toBox)
-  : ItemMarketEntry(CompatEither, CompatYes), // Any currency, only buying
+  : ItemMarketEntry(CompatEither, CompatEither), // Any currency; buying, but coexists
+                                                 // with sells in the unified cart, so it
+                                                 // no longer mode-gates on the buy flag.
     data(data),
     toBag(toBag),
     toBox(toBox)
 {
+  cartSignVal = -1; // buying spends the active currency
   finishConstruction();
 }
 
@@ -173,15 +176,12 @@ int ItemMarketEntryStoreItem::_itemWorth()
   if(!requestFilter())
     return 0;
 
-  // Buy item for money
-  if(*isMoneyCurrency && *isBuyMode)
+  // Buying is intrinsic to a store row now (no longer gated on the buy flag);
+  // the currency is the active venue.
+  if(*isMoneyCurrency)
     return data->buyPriceMoney();
 
-  // Buy item for coins
-  else if(!(*isMoneyCurrency) && *isBuyMode)
-    return data->buyPriceCoins();
-
-  return 0;
+  return data->buyPriceCoins();
 }
 
 QString ItemMarketEntryStoreItem::_whichType()

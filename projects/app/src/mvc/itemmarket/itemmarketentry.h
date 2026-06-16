@@ -142,7 +142,7 @@ public:
 
   // Returns total stack count for all instances in this type
   int totalStackCount();      ///< Stacks across all rows of this type.
-  unsigned int totalWorth();  ///< Worth across all rows of this type.
+  int totalWorth();           ///< Signed worth across ALL rows (sell +, buy -).
 
   // Calculate how much money is leftover
   int moneyLeftover(); ///< Money remaining if this checks out.
@@ -169,6 +169,19 @@ public:
   // on cart and total worth amongst others.
   bool exclude = false; ///< Exclude from aggregate totals (see note).
 
+  // Which left-list view this row belongs to in the unified buy+sell list:
+  // ViewBuy / ViewSell (see ItemMarketModel), or -1 for "not view-filtered"
+  // (e.g. the exchange list, which is shown wholesale). Set during the build.
+  int viewTag = -1; ///< Left-list view filter tag.
+
+  // Sign this row contributes to the cart's single-currency net: +1 for a sell
+  // (money in), -1 for a buy (money out). A PLAIN member (not a virtual) on
+  // purpose: totalWorth() sweeps the static `instancesCombined` registry, which can
+  // briefly hold torn-down entries across model rebuilds -- a virtual call there
+  // would deref a freed vtable and crash (a plain member read does not). Buys set
+  // this to -1 in their constructor. Money/exchange rows are excluded from totals.
+  int cartSignVal = 1; ///< Net contribution sign (-1 buy / +1 sell).
+
   // References to the model class, these are static because the model class
   // is a singleton
   static bool* isMoneyCurrency; ///< Shared: current currency mode.
@@ -180,6 +193,13 @@ public:
 
   // Holds all instances combined regardless of type
   static QVector<ItemMarketEntry*> instancesCombined; ///< All rows, flat.
+
+  // The CURRENT model's row list (its itemListCache), set by ItemMarketModel on every
+  // build. Aggregates (totalWorth / canAnyCheckout / totalStackCount) iterate THIS, not
+  // the global registries above -- those accumulate rows across every model/app and, on
+  // a per-test app teardown, can hand back a freed entry (use-after-free). Restricting
+  // the sweep to the live current list keeps the totals correct AND memory-safe.
+  static QVector<ItemMarketEntry*>* activeList; ///< Current model's live rows.
 
   // Cached data
   // Many data are very expensive to re-create, we cache them here and re-create

@@ -71,6 +71,22 @@ private:
     return -1;
   }
 
+  // The unified list now holds BOTH buy and sell rows, so direction-sensitive
+  // tests must pick a specific type ("playerItem" = sell, "storeItem" = buy).
+  QString typeOf(int row)
+  { return m_mkt->data(m_mkt->index(row), ItemMarketModel::WhichTypeRole).toString(); }
+
+  int findRowOfType(const QString& type, bool needWorth)
+  {
+    for(int i = 0; i < m_mkt->rowCount(QModelIndex()); i++) {
+      if(typeOf(i) == type &&
+         roleInt(i, ItemMarketModel::OnCartLeftRole) > 0 &&
+         (!needWorth || roleInt(i, ItemMarketModel::ItemWorthRole) > 0))
+        return i;
+    }
+    return -1;
+  }
+
 private slots:
   void initTestCase();
   void cleanupTestCase();
@@ -83,6 +99,7 @@ private slots:
   void coinsMode_rowsAndRolesExercised();
   void cartModel_filtersToCartedRows();
   void exchangeMode_swapsMoneyForCoins();
+  void unifiedCart_buyAndSellNetTogether();
 };
 
 // One Bridge for the whole case (built once, like the real app -- which never
@@ -142,7 +159,7 @@ void TestMarketModel::cart_setCountUpdatesTotals()
 void TestMarketModel::sellCheckout_raisesMoney()
 {
   setMode(false, true);
-  const int row = findCartableRow(/*needWorth*/true);
+  const int row = findRowOfType("playerItem", /*needWorth*/true);
   if(row < 0) QSKIP("no positively-valued sellable row");
 
   const unsigned int before = m_file->data->dataExpanded->player->basics->money;
@@ -160,9 +177,10 @@ void TestMarketModel::buyCheckout_lowersMoney()
   if(m_mkt->rowCount(QModelIndex()) == 0) QSKIP("buy/money store list is empty");
 
   const int money = m_mkt->moneyStart();
-  // Find a store row we can both cart and afford one of.
+  // Find a STORE (buy) row we can both cart and afford one of.
   int row = -1;
   for(int i = 0; i < m_mkt->rowCount(QModelIndex()); i++) {
+    if(typeOf(i) != "storeItem") continue;
     const int worth = roleInt(i, ItemMarketModel::ItemWorthRole);
     if(roleInt(i, ItemMarketModel::OnCartLeftRole) > 0 && worth > 0 && worth <= money) { row = i; break; }
   }
@@ -268,6 +286,39 @@ void TestMarketModel::exchangeMode_swapsMoneyForCoins()
 
   m_mkt->isExchangeMode = false; // leave the shared fixture in buy/sell mode
   m_mkt->reUpdateAll();
+}
+
+void TestMarketModel::unifiedCart_buyAndSellNetTogether()
+{
+  // One single-currency cart now holds BOTH a buy and a sell at once; the total is
+  // the signed net (sell + , buy -), and the balance-after follows it.
+  setMode(/*buy*/false, /*money*/true); // Pokemart (money) cart; builds buy + sell
+  const int sellRow = findRowOfType("playerItem", /*needWorth*/true);
+  const int buyRow  = findRowOfType("storeItem",  /*needWorth*/true);
+  if(sellRow < 0 || buyRow < 0)
+    QSKIP("need both a sellable item and a positively-priced store item");
+
+  const int sellWorth = roleInt(sellRow, ItemMarketModel::ItemWorthRole); // qty 1
+  const int buyWorth  = roleInt(buyRow,  ItemMarketModel::ItemWorthRole);
+  const int start     = m_mkt->moneyStart();
+
+  QVERIFY(m_mkt->setData(m_mkt->index(sellRow), QVariant(1), ItemMarketModel::CartCountRole));
+  QVERIFY(m_mkt->setData(m_mkt->index(buyRow),  QVariant(1), ItemMarketModel::CartCountRole));
+
+  // Both live in the cart together.
+  QVERIFY2(m_mkt->totalCartCount() >= 2, "buy and sell did not both stay on the cart");
+
+  // Signed net: sell adds, buy subtracts. Balance after = start + net.
+  QCOMPARE(m_mkt->totalCartWorth(), sellWorth - buyWorth);
+  QCOMPARE(m_mkt->moneyLeftover(), start + (sellWorth - buyWorth));
+
+  // Per-row sign roles back the receipt's +/-.
+  QCOMPARE(m_mkt->data(m_mkt->index(sellRow), ItemMarketModel::CartSignRole).toInt(), 1);
+  QCOMPARE(m_mkt->data(m_mkt->index(buyRow),  ItemMarketModel::CartSignRole).toInt(), -1);
+
+  m_mkt->setData(m_mkt->index(sellRow), QVariant(0), ItemMarketModel::CartCountRole);
+  m_mkt->setData(m_mkt->index(buyRow),  QVariant(0), ItemMarketModel::CartCountRole);
+  QCOMPARE(m_mkt->totalCartCount(), 0);
 }
 
 QTEST_GUILESS_MAIN(TestMarketModel)

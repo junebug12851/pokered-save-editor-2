@@ -39,6 +39,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/mvc/itemmarketmodel.h
     src/mvc/itemmarketcartmodel.cpp
     src/mvc/itemmarketcartmodel.h
+    src/mvc/itemmarketviewmodel.cpp
+    src/mvc/itemmarketviewmodel.h
     src/mvc/itemmarket/itemmarketentry.cpp
     src/mvc/itemmarket/itemmarketentry.h
     src/mvc/itemmarket/itemmarketentrygcpokemon.cpp

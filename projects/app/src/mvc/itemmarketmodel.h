@@ -125,6 +125,12 @@ public:
     // Which modes we're in
     BuyModeRole,
     MoneyCurrencyRole,
+
+    // Which left-list VIEW this row belongs to (ViewBuy / ViewSell); -1 = unfiltered
+    ViewTagRole,
+
+    // Sign this row contributes to the net (+1 sell, -1 buy)
+    CartSignRole,
   };
 
   /// The four combined modes (returned by whichMode()).
@@ -133,6 +139,12 @@ public:
     SelBuyCoins,
     SelSellMoney,
     SelSellCoins
+  };
+
+  /// Left-list view tags for the unified buy+sell list (see @ref viewTag).
+  enum {
+    ViewBuy = 0,
+    ViewSell = 1
   };
 
   ItemMarketModel(ItemStorageBox* itemBag,

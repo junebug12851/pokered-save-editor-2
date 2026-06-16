@@ -150,42 +150,46 @@ int ItemMarketEntry::totalStackCount()
 {
   int ret = 0;
 
-  auto instArr = instances.value(whichType());
+  if(activeList == nullptr)
+    return 0;
 
-  for(auto el : *instArr) {
-    ret += el->stackCount();
+  // Only same-type rows in the CURRENT list (was: the cross-app `instances` registry).
+  const QString myType = whichType();
+  for(auto el : *activeList) {
+    if(el->whichType() == myType)
+      ret += el->stackCount();
   }
 
   return ret;
 }
 
-unsigned int ItemMarketEntry::totalWorth()
+// Signed net worth of the whole cart in its single currency: sells add, buys
+// subtract. (Money/exchange rows are excluded -- the exchange is its own mode.)
+// Uses the plain cartSignVal member, NOT a virtual, so sweeping a registry that may
+// hold a torn-down entry can't deref a freed vtable.
+int ItemMarketEntry::totalWorth()
 {
-  unsigned int ret = 0;
+  int ret = 0;
 
-  for(auto el : instancesCombined) {
-    // Again, skip if we're dealing with money exchange
+  if(activeList == nullptr)
+    return 0;
+
+  for(auto el : *activeList) {
     if(el->exclude)
       continue;
 
-    ret += el->cartWorth();
+    ret += el->cartSignVal * el->cartWorth();
   }
 
   return ret;
 }
 
+// Balance after the whole cart: starting balance in the active currency plus the
+// signed net (sells already +, buys already -). One formula for a mixed cart.
 int ItemMarketEntry::moneyLeftover()
 {
-  if(*isMoneyCurrency && *isBuyMode)
-    return player->money - totalWorth();
-  else if(!(*isMoneyCurrency) && *isBuyMode)
-    return player->coins - totalWorth();
-  else if(*isMoneyCurrency && !(*isBuyMode))
-    return player->money + totalWorth();
-  else if(!(*isMoneyCurrency) && !(*isBuyMode))
-    return player->coins + totalWorth();
-
-  return -1;
+  const int start = (*isMoneyCurrency) ? (int)player->money : (int)player->coins;
+  return start + totalWorth();
 }
 
 bool ItemMarketEntry::canCheckout()
@@ -200,16 +204,15 @@ bool ItemMarketEntry::canCheckout()
 
 bool ItemMarketEntry::canAnyCheckout()
 {
-  bool ret = false;
+  if(activeList == nullptr)
+    return false;
 
-  for(auto el : instancesCombined) {
-    if(el->canCheckout()) {
-      ret = true;
-      break;
-    }
+  for(auto el : *activeList) {
+    if(el->canCheckout())
+      return true;
   }
 
-  return ret;
+  return false;
 }
 
 void ItemMarketEntry::setCartCount(int val)
@@ -242,3 +245,5 @@ QHash<QString, QVector<ItemMarketEntry*>*> ItemMarketEntry::instances =
 
 QVector<ItemMarketEntry*> ItemMarketEntry::instancesCombined =
     QVector<ItemMarketEntry*>();
+
+QVector<ItemMarketEntry*>* ItemMarketEntry::activeList = nullptr;

@@ -250,7 +250,7 @@ Page {
 
       ListView {
         id: marketView
-        model: brg.marketModel
+        model: brg.marketViewModel        // Buy or Sell slice of the unified list
 
         anchors.top: listHeader.bottom
         anchors.left: parent.left
@@ -267,8 +267,9 @@ Page {
           width: marketView.width
           height: dataWhichType === "msg" ? topz.headH : topz.rowH
 
-          property bool canStep: dataCanSell || brg.marketModel.isBuyMode
-                                 || brg.marketModel.isExchangeMode
+          // Store rows and money rows report canSell == true, so this covers buys,
+          // sellable items, and the exchange; only unsellable owned items fall out.
+          property bool canStep: dataCanSell
 
           // ---------------- Section header row ("msg") ----------------
           Rectangle {
@@ -395,11 +396,16 @@ Page {
 
                     validator: IntValidator { bottom: 0; top: 2147483647 }
 
+                    // Don't write back to the model during the initial programmatic
+                    // fill -- only once the field is live -- so creating a delegate
+                    // never mutates the model mid-incubation (re-entrancy through the
+                    // view proxy crashed delegate creation on a fresh save).
+                    property bool live: false
                     function getValInt() { return parseInt(text, 10); }
                     function setValInt(val) { text = val.toString(); }
 
-                    onTextChanged: if(acceptableInput) dataCartCount = getValInt();
-                    Component.onCompleted: setValInt(dataCartCount);
+                    onTextChanged: if(live && acceptableInput) dataCartCount = getValInt();
+                    Component.onCompleted: { setValInt(dataCartCount); live = true; }
                   }
 
                   IconButtonSquare {
@@ -547,7 +553,9 @@ Page {
                   elide: Text.ElideRight
                 }
                 Text {
-                  text: topz.moneyStr(dataCartWorth, false, true, dataWhichType)
+                  // Per-row sign: + for a sell (money in), - for a buy (money out).
+                  text: (dataCartSign > 0 ? "+ " : "- ")
+                        + topz.moneyStr(dataCartWorth, true, false, dataWhichType)
                   font.pixelSize: 14
                   color: topz.moneyColor(dataCartWorth, false,
                                          topz.curSym(dataWhichType))
@@ -586,7 +594,9 @@ Page {
             color: brg.settings.textColorDark
           }
           Text {
-            text: topz.moneyStr(brg.marketModel.totalCartWorth, true, true)
+            // Signed net of the whole cart (sells +, buys -).
+            text: (brg.marketModel.totalCartWorth >= 0 ? "+ " : "- ")
+                  + topz.moneyStr(brg.marketModel.totalCartWorth, true, false)
             font.pixelSize: 16
             font.bold: true
             color: topz.moneyColor(brg.marketModel.totalCartWorth)

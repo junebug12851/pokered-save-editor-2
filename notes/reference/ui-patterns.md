@@ -584,6 +584,15 @@ was the follow-up redesign Twilight asked for.)
   `stripEnabled`, `picked(index)` signal). Two of them: **action** `[Buy|Sell|Exchange]` →
   `isExchangeMode`/`isBuyMode`; **venue** `[Pokemart|Game Corner]` → `isMoneyCurrency`, **disabled while
   Exchange is selected**. The footer is a single **Checkout** `AppFooterBtn1`.
+- **One unified Buy+Sell cart per currency.** Within a venue the list holds BOTH the sell rows (your items)
+  and the buy rows (the store) at once, and the cart spans both — the Buy/Sell strip only filters the left
+  VIEW, it does **not** split or clear the cart (`isBuyMode` no longer triggers a rebuild). Each row's
+  direction is intrinsic (`cartSignVal` member: sell +1, buy -1); `totalWorth()` is the **signed** net and
+  the receipt itemizes with `+`/`-` per row (`dataCartSign`) and one net total. The left `ListView` binds
+  to **`brg.marketViewModel`** (`ItemMarketViewModel`, a proxy that slices the unified list to the active
+  view via `viewTag`); the receipt still binds to `brg.marketCartModel` (cart across both). **Aggregates
+  sweep the current model's own list (`ItemMarketEntry::activeList`), never the global static registry** —
+  see `qt-patterns.md` → "Global static object registries → cross-app use-after-free".
 - **Exchange is its own mode.** `isExchangeMode` builds a dedicated list (a header + the two fixed-direction
   `ItemMarketEntryMoney` rows via `forceDir`); the money exchange was **removed** from the buy/sell lists.
   In Exchange the receipt shows a **dual-currency** Money / Coins `start → after (Δ)` summary (not the item

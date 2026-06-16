@@ -28,7 +28,9 @@
 
 ItemMarketEntryPlayerItem::ItemMarketEntryPlayerItem(ItemStorageBox* toBox,
                                                      Item* toItem)
-  : ItemMarketEntry(CompatEither, CompatNo), // Any currency, only selling
+  : ItemMarketEntry(CompatEither, CompatEither), // Any currency; selling, but coexists
+                                                 // with buys in the unified cart, so it
+                                                 // no longer mode-gates on the buy flag.
     toBox(toBox),
     toItem(toItem)
 {

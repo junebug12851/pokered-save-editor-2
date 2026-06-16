@@ -517,6 +517,25 @@ files to be registered at two different `qrc:/` paths. The generated module init
 `QQuickWidget::setSource()` (synchronous call). **Remove `qt_add_qml_module()` entirely.**
 QRC + `qmlRegisterType()` is sufficient.
 
+### Global static object registries → cross-app use-after-free (`0xfeeefeee` in a QML binding)
+A QObject subtree that registers every instance into a **static** container (e.g. `ItemMarketEntry`'s
+`static instancesCombined` / `instances`, swept by `totalWorth`/`canAnyCheckout`/`totalStackCount`) is a
+trap once the GUI tests run: each test spins up its OWN `GuiApp` (its own Bridge + models + entries), but
+the static survives **across apps**. On a later test the aggregate sweeps a row freed with the previous
+app → use-after-free. The signature: a crash reached from a **QML binding** (`QmlSignalHandler::call` →
+`getterQObject`) whose faulting address is `0xfeeefeee…` / `0xffffffffffffffff`, and it reproduces on the
+**second** GUI test (e.g. `tst_gui_navigation`'s `newFile`) but not the first. lldb pins it as
+`atomic_load<int>` on a `0xfeeefeee` `this` (a freed QObject's refcount/QPointer).
+
+**Fix:** don't aggregate over a process-global registry that outlives a model. Sweep the **current
+model's own live list** instead — here, `ItemMarketEntry::activeList` is set to the model's `itemListCache`
+at the top of `ItemMarketModel::buildList()`, and the aggregates iterate `*activeList`. Also prefer a
+plain **member** over a **virtual** for anything read during such a sweep (a virtual call on a freed entry
+derefs a freed vtable — strictly worse). This bit when the unified buy+sell cart started building store
+rows in every mode, so the default view's `canAnyCheckout` footer binding swept them. (Build is "release"
+in `build/` → no symbols in the QtTest crash dump; `lldb --batch -o run -o bt` gave the freed-pointer
+tell.)
+
 ### Disabled control keeps its hover highlight (stuck-hover button)
 A Material `Button` (any `QQuickControl`) that becomes **disabled while the cursor is over it** keeps
 `hovered == true` — Qt stops delivering hover-*leave* events to a disabled item, so the hover background

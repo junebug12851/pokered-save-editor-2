@@ -60,8 +60,10 @@ ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
   ItemMarketEntry::isBuyMode = &isBuyMode;
   ItemMarketEntry::player = basics;
 
-  // Reset if mode changed or expanded data has been reset or changed in any way
-  connect(this, &ItemMarketModel::isBuyModeChanged, this, &ItemMarketModel::reUpdateAll);
+  // Rebuild on a currency or exchange-mode change (a different cart) or on a data
+  // reset. NOT on isBuyMode: Buy/Sell only filters the left VIEW now (the cart holds
+  // both), so toggling it must NOT rebuild/clear the cart -- the view proxy just
+  // re-filters off isBuyModeChanged.
   connect(this, &ItemMarketModel::isMoneyCurrencyChanged, this, &ItemMarketModel::reUpdateAll);
   connect(this, &ItemMarketModel::isExchangeModeChanged, this, &ItemMarketModel::reUpdateAll);
   connect(file, &SaveFile::dataExpandedChanged, this, &ItemMarketModel::reUpdateAll);
@@ -150,6 +152,10 @@ QVariant ItemMarketModel::data(const QModelIndex& index, int role) const
     return isBuyMode;
   else if(role == MoneyCurrencyRole)
     return isMoneyCurrency;
+  else if(role == ViewTagRole)
+    return item->viewTag;
+  else if(role == CartSignRole)
+    return item->cartSignVal;
 
   return QVariant();
 }
@@ -175,6 +181,8 @@ QHash<int, QByteArray> ItemMarketModel::roleNames() const
   roles[MoneyLeftRole] = "dataMoneyLeft";
   roles[BuyModeRole] = "dataBuyMode";
   roles[MoneyCurrencyRole] = "dataMoneyCurrency";
+  roles[ViewTagRole] = "dataViewTag";
+  roles[CartSignRole] = "dataCartSign";
 
   return roles;
 }
@@ -373,31 +381,42 @@ void ItemMarketModel::clearList()
 
 void ItemMarketModel::buildList()
 {
-  if(isExchangeMode)
+  clearList();
+
+  // Claim the aggregate sweep for THIS model's list. The entry-level totals
+  // (totalWorth / canAnyCheckout / totalStackCount) iterate activeList, so point it
+  // at our live cache -- never the global cross-model registry (use-after-free).
+  ItemMarketEntry::activeList = &itemListCache;
+
+  // Exchange is its own (separate-currency) list. Otherwise the cart is a single
+  // currency holding BOTH the sell rows (your items) and the buy rows (the store);
+  // the Buy/Sell strip only filters the left VIEW (see marketViewModel), it does
+  // not split the cart -- so both are built into one list here.
+  if(isExchangeMode) {
     buildExchangeList();
-  else if(isBuyMode)
-    buildMartItemList();
-  else
-    buildPlayerItemList();
+  } else {
+    buildPlayerItemList(); // sell rows (tagged ViewSell)
+    buildMartItemList();   // buy rows (tagged ViewBuy)
+  }
 
   reUpdateValues();
 }
 
 // The money<->coins exchange as its own list: both swap directions at once
 // (Money=>Coins and Coins=>Money), each a fixed-direction money row. Pulled out of
-// the buy/sell lists so those stay pure item lists.
+// the buy/sell lists so those stay pure item lists. (Caller clears the list.)
 void ItemMarketModel::buildExchangeList()
 {
-  clearList();
-
   itemListCache.append(new ItemMarketEntryMessage("Coin Exchange"));
   itemListCache.append(new ItemMarketEntryMoney(ItemMarketEntryMoney::DirToCoins));
   itemListCache.append(new ItemMarketEntryMoney(ItemMarketEntryMoney::DirToMoney));
 }
 
+// Sell rows (your bag + storage items). Caller clears the list; the whole appended
+// range is tagged ViewSell so the Buy/Sell strip can filter the left view.
 void ItemMarketModel::buildPlayerItemList()
 {
-  clearList();
+  const int from = itemListCache.size();
 
   itemListCache.append(new ItemMarketEntryMessage("Bag"));
 
@@ -410,11 +429,16 @@ void ItemMarketModel::buildPlayerItemList()
   for(auto el: itemStorage->items) {
     itemListCache.append(new ItemMarketEntryPlayerItem(itemStorage, el));
   }
+
+  for(int i = from; i < itemListCache.size(); i++)
+    itemListCache[i]->viewTag = ViewSell;
 }
 
+// Buy rows (the store stock for the active currency). Caller clears the list; the
+// whole appended range is tagged ViewBuy.
 void ItemMarketModel::buildMartItemList()
 {
-  clearList();
+  const int from = itemListCache.size();
 
   // Setup Collator
   QCollator collator;
@@ -502,6 +526,9 @@ void ItemMarketModel::buildMartItemList()
   }
 
   tmp.clear();
+
+  for(int i = from; i < itemListCache.size(); i++)
+    itemListCache[i]->viewTag = ViewBuy;
 }
 
 void ItemMarketModel::reUpdateAll()
