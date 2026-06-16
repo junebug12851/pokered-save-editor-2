@@ -580,10 +580,13 @@ was the follow-up redesign Twilight asked for.)
 
 - **Mode controls = two segmented strips in the left header** (not footer buttons, not a title). An
   inline `component SegStrip` (a connected single-select control styled for the accent bar: selected =
-  light fill + accent text, light outline, dividers, `clip`+radius; `options` array, bound `currentIndex`,
-  `stripEnabled`, `picked(index)` signal). Two of them: **action** `[Buy|Sell|Exchange]` →
-  `isExchangeMode`/`isBuyMode`; **venue** `[Pokemart|Game Corner]` → `isMoneyCurrency`, **disabled while
-  Exchange is selected**. The footer is a single **Checkout** `AppFooterBtn1`.
+  light fill + accent text, light outline, dividers; `options` array, bound `currentIndex`,
+  `stripEnabled`, `picked(index)` signal). Two of them: **action** `[Buy|Sell]` → `isBuyMode`, **disabled
+  while Exchange is selected**; **venue** `[Pokemart|Game Corner|Exchange]` → `isMoneyCurrency` /
+  `isExchangeMode` (index 2). The footer is a single **Checkout** `AppFooterBtn1`. **Selected-segment
+  corners:** the strip has `radius` but `clip` is *rectangular* (won't round child corners), so the
+  selected fill uses **per-corner radius** (`topLeftRadius`/… , Qt 6.7+) on the first/last segment to
+  follow the rounded ends. *(Home tile label is "Market"; the venue tab stays "Pokemart".)*
 - **One unified Buy+Sell cart per currency.** Within a venue the list holds BOTH the sell rows (your items)
   and the buy rows (the store) at once, and the cart spans both — the Buy/Sell strip only filters the left
   VIEW, it does **not** split or clear the cart (`isBuyMode` no longer triggers a rebuild). Each row's

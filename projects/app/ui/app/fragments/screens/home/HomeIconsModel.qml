@@ -66,7 +66,7 @@ ListModel {
     disabled: true
   }
   ListElement {
-    name: "Pokemart"
+    name: "Market"
     iconSrc: "qrc:/assets/icons/poke-go/pokeballs.svg"
     page: "pokemart"
     disabled: false

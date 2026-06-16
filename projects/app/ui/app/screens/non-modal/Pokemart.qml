@@ -59,11 +59,17 @@ Page {
           height: seg.height
           width: Math.max(segLabel.implicitWidth + 24, 46)
 
-          // Selected segment fills light; others are transparent.
+          // Selected segment fills light; others are transparent. Round the OUTER
+          // corners on the end segments so the fill follows the strip's rounded
+          // border (a plain `clip` is rectangular and won't round child corners).
           Rectangle {
             anchors.fill: parent
             color: segItem.index === seg.currentIndex
                    ? brg.settings.textColorLight : "transparent"
+            topLeftRadius: segItem.index === 0 ? seg.radius : 0
+            bottomLeftRadius: segItem.index === 0 ? seg.radius : 0
+            topRightRadius: segItem.index === (seg.options.length - 1) ? seg.radius : 0
+            bottomRightRadius: segItem.index === (seg.options.length - 1) ? seg.radius : 0
           }
 
           // Divider before every segment but the first.
@@ -221,29 +227,30 @@ Page {
           anchors.centerIn: parent
           spacing: 14
 
-          // Action: Buy / Sell / Exchange.
+          // Action: Buy / Sell. Disabled while the Exchange venue is selected
+          // (there's nothing to buy/sell -- it's a currency swap).
           SegStrip {
             anchors.verticalCenter: parent.verticalCenter
-            options: ["Buy", "Sell", "Exchange"]
+            options: ["Buy", "Sell"]
+            stripEnabled: !brg.marketModel.isExchangeMode
+            currentIndex: brg.marketModel.isBuyMode ? 0 : 1
+            onPicked: (i) => brg.marketModel.isBuyMode = (i === 0)
+          }
+
+          // Venue: Pokemart (money) / Game Corner (coins) / Exchange (money<->coins).
+          SegStrip {
+            anchors.verticalCenter: parent.verticalCenter
+            options: ["Pokemart", "Game Corner", "Exchange"]
             currentIndex: brg.marketModel.isExchangeMode
-                          ? 2 : (brg.marketModel.isBuyMode ? 0 : 1)
+                          ? 2 : (brg.marketModel.isMoneyCurrency ? 0 : 1)
             onPicked: (i) => {
               if(i === 2) {
                 brg.marketModel.isExchangeMode = true;
               } else {
                 brg.marketModel.isExchangeMode = false;
-                brg.marketModel.isBuyMode = (i === 0);
+                brg.marketModel.isMoneyCurrency = (i === 0);
               }
             }
-          }
-
-          // Venue: Pokemart (money) / Game Corner (coins). Irrelevant in Exchange.
-          SegStrip {
-            anchors.verticalCenter: parent.verticalCenter
-            options: ["Pokemart", "Game Corner"]
-            stripEnabled: !brg.marketModel.isExchangeMode
-            currentIndex: brg.marketModel.isMoneyCurrency ? 0 : 1
-            onPicked: (i) => brg.marketModel.isMoneyCurrency = (i === 0)
           }
         }
       }
