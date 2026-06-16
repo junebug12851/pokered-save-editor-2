@@ -22,4 +22,4 @@
 #
 # Build identity (the git commit) is appended automatically by the build as
 # SemVer build metadata, e.g. 0.7.0-alpha+g1a2b3c4d -- you do NOT edit that here.
-0.8.0-alpha
+0.8.1-alpha

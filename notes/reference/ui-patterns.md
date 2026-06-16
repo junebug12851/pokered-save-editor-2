@@ -578,8 +578,16 @@ on the left and a store-style **receipt** on the right, with a 1px `dividerColor
 between. (The first pass that day was an internal-only modernization; the two-pane receipt
 was the follow-up redesign Twilight asked for.)
 
-- **Left pane = the shopping list** (accent mode-title header + the `ListView` with the centered
-  cart-stepper rows, described below). This is where you build the cart.
+- **Left pane = the shopping list** (accent mode-title header + a `ListView` of proper item rows).
+  Each item row is a left-aligned `RowLayout` (14px left, 16px scrollbar lane): **name** (`fillWidth`,
+  elide) · **owned `xN`** (sell only) · **unit price** (right-aligned, min-width 54) · a **stepper
+  "pill"** as the row action (`-`/qty/`+` in a rounded `Rectangle` that turns white on hover; the
+  `DefTextEdit` qty is borderless via `background: Item {}`). A whole-row `HoverHandler` drives an
+  **accent-tinted hover highlight** (0.12 alpha) with faint **zebra** (`index % 2`) otherwise. `"msg"`
+  rows are **uppercase section headers** on a tint bar. Sizing knobs on the page root: `rowH`/`headH`/
+  `qtyW`. The list carries **no running total** (the receipt totals it). *(This replaced the earlier
+  centered-stepper delegate — do not bring back the screen-centered stepper with labels fanned around
+  it; rows are plain left-aligned list rows now.)*
 - **Right pane = the receipt** (`brg.marketCartModel`). An accent "Cart" header (+ a live `xN`
   count), then a `ColumnLayout`: "Money on hand" → divider → an **itemized `ListView`** (one line
   per carted item: name + signed line total on top via `moneyStr(dataCartWorth,false,true,type)`,
@@ -593,16 +601,12 @@ was the follow-up redesign Twilight asked for.)
   it inherits the source role names (so the receipt delegate uses the same `data*` roles) and
   re-filters live off the source's `dataChanged`. Model-wide totals stay on `ItemMarketModel`.
 
-- **Centered cart-stepper rows.** Each item row is a plain `Item` (`height: 50`, or
-  `msgText.implicitHeight` for a `dataWhichType === "msg"` section header). The `-/amount/+`
-  stepper (`Row`, id `cartAmount`) is `anchors.centerIn: parent` so it sits at the **screen's**
-  horizontal center regardless of label width; the **name / unit-price / owned-count** are
-  right-aligned up against `cartAmount.left` (each `anchors.verticalCenter: cartAmount.verticalCenter`),
-  and the **running cart cost** (or the "Item cannot be sold" note, gated on `cartAmount.enabled`)
-  sits at `cartAmount.right`. This replaced a fragile `Rectangle { width: 1; height: 50 }` whose
-  children all chained off each other — **do not reintroduce the width:1 centering trick**; anchor the
-  two side groups to the stepper instead. The left-group margins are the original `font.pixelSize`-based
-  values (name→price `font`, price→owned `font`, owned→stepper `font/3`, price→stepper `font/4`).
+- **Item-row layout** is described in the "Left pane" bullet above (left-aligned columns + a trailing
+  stepper-pill action, hover/zebra backgrounds, uppercase section headers). *History:* the very first
+  pass used a fragile `Rectangle { width: 1; height: 50 }` with everything chained off siblings; the
+  second pass made it a plain `Item` with the `-/amount/+` stepper `anchors.centerIn: parent` (screen-
+  centered, labels fanned around it). Both are **superseded** — don't reintroduce the width:1 trick or
+  the screen-centered stepper.
 - **One text per adaptive label, not N visibility-toggled copies.** The header title comes from
   `headerText()` (switch on `whichMode`); the receipt's warning line from `warningText()` (priority:
   money-left < 0 > money-overflow > no-space, else ""). Don't fan these back out into one `Text` per
@@ -616,8 +620,8 @@ was the follow-up redesign Twilight asked for.)
 - **No floating summary box / status bar.** The earlier internal-modernization pass had a slide-down
   `summaryScreen` `Rectangle` and a bottom accent status bar; both were **removed** when the receipt
   pane landed — the receipt now carries money-before / total / balance / warnings.
-- **Breathing room** at the left list's bottom is a `ListView { footer: Item { height: 25 } }` (was a
-  per-delegate `isLast` empty `Text`) — same as the Bag/Pokémon lists.
+- **Breathing room** at the left list's bottom is a `ListView { footer: Item { height: 16 } }` (was a
+  per-delegate `isLast` empty `Text`) — same idea as the Bag/Pokémon lists.
 - **Footer disabled-button highlight:** the Checkout button (`btn2.enabled: canAnyCheckout`) used to
   stick in its hover highlight when it disabled under the cursor — fixed at the root in
   `FooterButton.qml` (`hoverEnabled: enabled`); see `qt-patterns.md` → "Disabled control keeps its

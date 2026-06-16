@@ -1,19 +1,19 @@
 // Pokemart.qml -- the buy/sell shop screen (Pokemart and Game Corner).
 //
 // Two panes side by side:
-//   * LEFT  -- the shopping list over brg.marketModel: every buyable/sellable row
-//              with a centered -/amount/+ cart stepper (this is where you build the
-//              cart).
+//   * LEFT  -- the shopping list over brg.marketModel: a clean list of item rows
+//              (name | owned | unit price | an inline -/qty/+ stepper as the row's
+//              action), with section headers, hover highlight and zebra striping.
+//              This is where you build the cart.
 //   * RIGHT -- a store-style RECEIPT over brg.marketCartModel (a cart-only filter of
 //              the same model): money on hand, one itemized buy/sell line per carted
-//              item (qty x unit and a signed line total), then the total, the
-//              resulting balance, and any not-enough-money / no-space warning.
+//              item, then the total, the resulting balance, and any warning. The
+//              receipt does the totalling, so the list rows carry no running total.
 //
-// Four modes (whichMode 0-3) combine buy/sell with money/coins currency; the header
-// text and currency symbols adapt per mode. The JS helpers up top (maxMoney/curSym/
-// signing/moneyStr/...) handle currency formatting, signing and out-of-range clamping
-// for the two currencies (money caps at 999,999; coins at 9,999). Footer: Buy/Sell
-// toggle, Checkout (commits the cart), Currency toggle.
+// The list pane is wider than the receipt (stretch 5:3). Four modes (whichMode 0-3)
+// combine buy/sell with money/coins; the header text and currency symbols adapt per
+// mode. The JS helpers up top (maxMoney/curSym/signing/moneyStr/...) handle currency
+// formatting, signing and out-of-range clamping. Footer: Buy/Sell, Checkout, Currency.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -24,6 +24,11 @@ import "../../fragments/header"
 
 Page {
   id: topz
+
+  // List-row sizing knobs.
+  property int rowH: 46     // item row height
+  property int headH: 32    // section-header row height
+  property int qtyW: 34     // stepper quantity field width
 
   // ---- Currency formatting helpers -------------------------------------------
 
@@ -125,7 +130,7 @@ Page {
     return "";
   }
 
-  // ---- Two panes: shopping list (left) | receipt (right) ----------------------
+  // ---- Two panes: shopping list (left, wider) | receipt (right) ---------------
   RowLayout {
     anchors.fill: parent
     spacing: 0
@@ -135,6 +140,7 @@ Page {
       id: listPane
       Layout.fillWidth: true
       Layout.fillHeight: true
+      Layout.horizontalStretchFactor: 5     // wider than the receipt (5:3)
       color: "white"
 
       // Mode title on the accent bar.
@@ -164,164 +170,191 @@ Page {
 
         anchors.top: listHeader.bottom
         anchors.left: parent.left
-        anchors.leftMargin: 15
         anchors.right: parent.right
-        anchors.rightMargin: 15
         anchors.bottom: parent.bottom
 
         clip: true
         ScrollBar.vertical: ScrollBar {}
 
         // Breathing room under the last row.
-        footer: Item { width: 1; height: 25 }
+        footer: Item { width: 1; height: 16 }
 
         delegate: Item {
-          id: delegate
+          id: row
           width: marketView.width
-          height: dataWhichType === "msg" ? msgText.implicitHeight : 50
+          height: dataWhichType === "msg" ? topz.headH : topz.rowH
 
-          // Section / category message row.
-          Text {
-            id: msgText
+          // Whether this row can be added to the cart (always when buying; only
+          // sellable items when selling).
+          property bool canStep: dataCanSell || brg.marketModel.isBuyMode
+
+          // ---------------- Section header row ("msg") ----------------
+          Rectangle {
             visible: dataWhichType === "msg"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            text: dataName
-            font.pixelSize: 16
-            font.bold: true
-            topPadding: 16
-            bottomPadding: 24
+            anchors.fill: parent
+            color: Qt.rgba(0, 0, 0, 0.045)
+
+            Text {
+              anchors.verticalCenter: parent.verticalCenter
+              anchors.left: parent.left
+              anchors.leftMargin: 14
+              text: dataName
+              font.pixelSize: 12
+              font.bold: true
+              font.capitalization: Font.AllUppercase
+              font.letterSpacing: 1
+              color: brg.settings.textColorMid
+            }
+
+            Rectangle {
+              anchors.left: parent.left
+              anchors.right: parent.right
+              anchors.bottom: parent.bottom
+              height: 1
+              color: brg.settings.dividerColor
+            }
           }
 
-          // Item row: a center-anchored cart stepper, with the item name / unit
-          // price / owned-count right-aligned up against it, and the running cart
-          // cost to its right.
+          // ---------------- Item row ----------------
           Item {
             visible: dataWhichType !== "msg"
             anchors.fill: parent
 
-            // -/amount/+ stepper, centered.
-            Row {
-              id: cartAmount
-              anchors.centerIn: parent
-              enabled: dataCanSell || brg.marketModel.isBuyMode
+            // Whole-row hover (stays true over the child controls too).
+            HoverHandler { id: rowHover }
 
-              IconButtonSquare {
-                id: negBtn
-                icon.source: "qrc:/assets/icons/fontawesome/minus.svg"
-                enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
-                onClicked: {
-                  if(amountEdit.getValInt() === 0 && dataOnCartLeft > 0)
-                    amountEdit.setValInt(dataOnCartLeft);
-                  else if(amountEdit.getValInt() > 0)
-                    amountEdit.setValInt(amountEdit.getValInt() - 1);
+            // Row background: accent-tinted on hover, faint zebra otherwise.
+            Rectangle {
+              anchors.fill: parent
+              color: rowHover.hovered
+                     ? Qt.rgba(brg.settings.accentColor.r,
+                               brg.settings.accentColor.g,
+                               brg.settings.accentColor.b, 0.12)
+                     : (index % 2 === 1 ? Qt.rgba(0, 0, 0, 0.025) : "transparent")
+            }
+
+            RowLayout {
+              anchors.fill: parent
+              anchors.leftMargin: 14
+              anchors.rightMargin: 16          // reserve the scrollbar lane
+              spacing: 10
+
+              // Item name.
+              Text {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                text: dataName
+                elide: Text.ElideRight
+                font.pixelSize: 14
+                color: row.canStep ? brg.settings.textColorDark
+                                   : brg.settings.textColorMid
+                verticalAlignment: Text.AlignVCenter
+              }
+
+              // Owned count (sell mode only).
+              Text {
+                visible: !brg.marketModel.isBuyMode
+                Layout.alignment: Qt.AlignVCenter
+                text: "x" + dataInStockCount.toLocaleString()
+                font.pixelSize: 12
+                color: brg.settings.textColorMid
+                horizontalAlignment: Text.AlignRight
+              }
+
+              // Unit price.
+              Text {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.minimumWidth: 54
+                text: topz.curSym(dataWhichType) + dataItemWorth.toLocaleString()
+                font.pixelSize: 13
+                color: row.canStep ? brg.settings.textColorDark
+                                   : brg.settings.textColorMid
+                horizontalAlignment: Text.AlignRight
+              }
+
+              // -- Action: an inline -/qty/+ stepper pill. --
+              Rectangle {
+                id: stepPill
+                visible: row.canStep
+                Layout.alignment: Qt.AlignVCenter
+                implicitHeight: 30
+                implicitWidth: stepRow.width + 8
+                radius: 6
+                color: rowHover.hovered ? "white" : Qt.rgba(0, 0, 0, 0.03)
+                border.width: 1
+                border.color: Qt.rgba(0, 0, 0, 0.10)
+
+                Row {
+                  id: stepRow
+                  anchors.centerIn: parent
+
+                  IconButtonSquare {
+                    id: negBtn
+                    icon.source: "qrc:/assets/icons/fontawesome/minus.svg"
+                    enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
+                    onClicked: {
+                      if(amountEdit.getValInt() === 0 && dataOnCartLeft > 0)
+                        amountEdit.setValInt(dataOnCartLeft);
+                      else if(amountEdit.getValInt() > 0)
+                        amountEdit.setValInt(amountEdit.getValInt() - 1);
+                    }
+                  }
+
+                  DefTextEdit {
+                    id: amountEdit
+                    anchors.top: negBtn.top
+                    anchors.bottom: negBtn.bottom
+                    width: topz.qtyW
+                    horizontalAlignment: TextInput.AlignHCenter
+                    labelEl.visible: false
+                    background: Item {}        // borderless inside the pill
+                    inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
+
+                    color: (!dataCanCheckout && dataCartCount > 0)
+                           ? brg.settings.errorColor
+                           : brg.settings.textColorDark
+
+                    validator: IntValidator { bottom: 0; top: 2147483647 }
+
+                    function getValInt() { return parseInt(text, 10); }
+                    function setValInt(val) { text = val.toString(); }
+
+                    onTextChanged: if(acceptableInput) dataCartCount = getValInt();
+                    Component.onCompleted: setValInt(dataCartCount);
+                  }
+
+                  IconButtonSquare {
+                    id: posBtn
+                    icon.source: "qrc:/assets/icons/fontawesome/plus.svg"
+                    enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
+                    onClicked: {
+                      if(amountEdit.getValInt() > 0 && dataOnCartLeft === 0)
+                        amountEdit.setValInt(0);
+                      else if(dataOnCartLeft > 0)
+                        amountEdit.setValInt(amountEdit.getValInt() + 1);
+                    }
+                  }
                 }
               }
 
-              DefTextEdit {
-                id: amountEdit
-                anchors.top: negBtn.top
-                anchors.bottom: negBtn.bottom
-                width: 3 * font.pixelSize
-                horizontalAlignment: TextInput.AlignHCenter
-                labelEl.visible: false
-                inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
-
-                color: (!dataCanCheckout && dataCartCount > 0)
-                       ? brg.settings.errorColor
-                       : brg.settings.textColorDark
-
-                validator: IntValidator { bottom: 0; top: 2147483647 }
-
-                function getValInt() { return parseInt(text, 10); }
-                function setValInt(val) { text = val.toString(); }
-
-                onTextChanged: if(acceptableInput) dataCartCount = getValInt();
-                Component.onCompleted: setValInt(dataCartCount);
-              }
-
-              IconButtonSquare {
-                id: posBtn
-                icon.source: "qrc:/assets/icons/fontawesome/plus.svg"
-                enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
-                onClicked: {
-                  if(amountEdit.getValInt() > 0 && dataOnCartLeft === 0)
-                    amountEdit.setValInt(0);
-                  else if(dataOnCartLeft > 0)
-                    amountEdit.setValInt(amountEdit.getValInt() + 1);
-                }
+              // Can't-sell note (replaces the stepper for unsellable items).
+              Text {
+                visible: !row.canStep
+                Layout.alignment: Qt.AlignVCenter
+                text: qsTr("Can't sell")
+                font.pixelSize: 12
+                font.italic: true
+                color: brg.settings.textColorMid
               }
             }
 
-            // Owned-count ("x N"), only when selling.
-            Text {
-              id: inventoryAmount
-              visible: !brg.marketModel.isBuyMode
-              anchors.right: cartAmount.left
-              anchors.rightMargin: font.pixelSize / 3
-              anchors.verticalCenter: cartAmount.verticalCenter
-              width: (dataWhichType === "money") ? implicitWidth : font.pixelSize * 1.75
-              text: "x" + dataInStockCount.toString().padStart(2, " ")
-              font.pixelSize: 14
-              color: cartAmount.enabled ? brg.settings.textColorDark
-                                        : brg.settings.textColorMid
-              horizontalAlignment: Text.AlignLeft
-              verticalAlignment: Text.AlignVCenter
-            }
-
-            // Unit price.
-            Text {
-              id: eachPrice
-              anchors.right: inventoryAmount.visible ? inventoryAmount.left
-                                                     : cartAmount.left
-              anchors.rightMargin: inventoryAmount.visible ? font.pixelSize
-                                                           : font.pixelSize / 4
-              anchors.verticalCenter: cartAmount.verticalCenter
-              width: (dataWhichType === "money") ? implicitWidth : font.pixelSize * 3
-              text: topz.curSym(dataWhichType) + dataItemWorth.toLocaleString()
-              font.pixelSize: 14
-              color: cartAmount.enabled ? brg.settings.textColorDark
-                                        : brg.settings.textColorMid
-              horizontalAlignment: Text.AlignRight
-              verticalAlignment: Text.AlignVCenter
-            }
-
-            // Item name.
-            Text {
-              anchors.right: eachPrice.left
-              anchors.rightMargin: font.pixelSize
-              anchors.verticalCenter: cartAmount.verticalCenter
-              text: dataName
-              font.pixelSize: 14
-              horizontalAlignment: Text.AlignRight
-              verticalAlignment: Text.AlignVCenter
-            }
-
-            // Right of the stepper: running cart cost, or a "can't sell" note.
-            Text {
-              visible: cartAmount.enabled
-              anchors.left: cartAmount.right
-              anchors.leftMargin: font.pixelSize / 4
-              anchors.verticalCenter: cartAmount.verticalCenter
-              text: (dataCartWorth <= 0)
-                    ? " "
-                    : topz.moneyStr(dataCartWorth, false, true, dataWhichType)
-              color: topz.moneyColor(dataCartWorth, false, topz.curSym(dataWhichType))
-              font.pixelSize: 14
-              horizontalAlignment: Text.AlignLeft
-              verticalAlignment: Text.AlignVCenter
-            }
-
-            Text {
-              visible: !cartAmount.enabled
-              anchors.left: cartAmount.right
-              anchors.leftMargin: font.pixelSize / 4
-              anchors.verticalCenter: cartAmount.verticalCenter
-              text: qsTr("Item cannot be sold")
-              color: brg.settings.textColorMid
-              font.pixelSize: 14
-              horizontalAlignment: Text.AlignLeft
-              verticalAlignment: Text.AlignVCenter
+            // Faint row separator.
+            Rectangle {
+              anchors.left: parent.left
+              anchors.right: parent.right
+              anchors.bottom: parent.bottom
+              height: 1
+              color: Qt.rgba(0, 0, 0, 0.06)
             }
           }
         }
@@ -340,6 +373,7 @@ Page {
       id: receiptPane
       Layout.fillWidth: true
       Layout.fillHeight: true
+      Layout.horizontalStretchFactor: 3     // narrower than the list (5:3)
       color: "white"
 
       Rectangle {
@@ -379,7 +413,7 @@ Page {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: 18
+        anchors.margins: 16
         spacing: 8
 
         // -- Money on hand --
