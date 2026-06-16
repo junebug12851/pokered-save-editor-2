@@ -132,15 +132,15 @@ Page {
 
   // ---- Two panes: shopping list (left, wider) | receipt (right) ---------------
   RowLayout {
+    id: paneRow
     anchors.fill: parent
     spacing: 0
 
     // ====================== LEFT: the shopping list ==========================
     Rectangle {
       id: listPane
-      Layout.fillWidth: true
+      Layout.fillWidth: true                // takes the remaining ~67%
       Layout.fillHeight: true
-      Layout.horizontalStretchFactor: 5     // wider than the receipt (5:3)
       color: "white"
 
       // Mode title on the accent bar.
@@ -371,9 +371,8 @@ Page {
     // ====================== RIGHT: the receipt ===============================
     Rectangle {
       id: receiptPane
-      Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.horizontalStretchFactor: 3     // narrower than the list (5:3)
+      Layout.preferredWidth: Math.round(paneRow.width * 0.33)   // ~1/3 of the screen
       color: "white"
 
       Rectangle {
