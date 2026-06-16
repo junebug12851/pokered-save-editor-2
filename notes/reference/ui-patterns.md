@@ -573,9 +573,25 @@ count). These are the drag analogue of the `checked*` bulk actions.
 ## Pokemart (shop) screen layout (the standard for this screen)
 
 `screens/non-modal/Pokemart.qml` is the buy/sell shop over `brg.marketModel` (four modes:
-buy/sell × money/coins). Modernized 2026-06-15 — **internal rebuild only, look + behavior
-unchanged** (the first pass of a longer effort; a visual restyle, if wanted, is a separate
-design call).
+buy/sell × money/coins). It's a **two-pane** `RowLayout` (2026-06-15): the **shopping list**
+on the left and a store-style **receipt** on the right, with a 1px `dividerColor` divider
+between. (The first pass that day was an internal-only modernization; the two-pane receipt
+was the follow-up redesign Twilight asked for.)
+
+- **Left pane = the shopping list** (accent mode-title header + the `ListView` with the centered
+  cart-stepper rows, described below). This is where you build the cart.
+- **Right pane = the receipt** (`brg.marketCartModel`). An accent "Cart" header (+ a live `xN`
+  count), then a `ColumnLayout`: "Money on hand" → divider → an **itemized `ListView`** (one line
+  per carted item: name + signed line total on top via `moneyStr(dataCartWorth,false,true,type)`,
+  `xQty @ unit` beneath; 16px scrollbar lane; "Your cart is empty." placeholder) → divider → bold
+  **Total** (`moneyStr(totalCartWorth,true,true)`) → **Balance after** (`moneyLeftover`) → a wrapped
+  **warning** line (`errorColor`) shown only when `warningText() !== ""`. The receipt is read-only —
+  all quantity control stays on the left. There is **no** floating summary box or bottom status bar
+  anymore (both folded into the receipt).
+- **`ItemMarketCartModel`** (`mvc/itemmarketcartmodel.*`, `brg.marketCartModel`) is a
+  `QSortFilterProxyModel` over `ItemMarketModel` filtering `cartCount > 0` and dropping `"msg"` rows;
+  it inherits the source role names (so the receipt delegate uses the same `data*` roles) and
+  re-filters live off the source's `dataChanged`. Model-wide totals stay on `ItemMarketModel`.
 
 - **Centered cart-stepper rows.** Each item row is a plain `Item` (`height: 50`, or
   `msgText.implicitHeight` for a `dataWhichType === "msg"` section header). The `-/amount/+`
@@ -588,19 +604,19 @@ design call).
   two side groups to the stepper instead. The left-group margins are the original `font.pixelSize`-based
   values (name→price `font`, price→owned `font`, owned→stepper `font/3`, price→stepper `font/4`).
 - **One text per adaptive label, not N visibility-toggled copies.** The header title comes from
-  `headerText()` (switch on `whichMode`); the bottom status bar from `statusText()` (priority:
-  money-left < 0 > money-overflow > no-space > cart count). Don't fan these back out into one `Text`
-  per case with `visible:` flags (the old anti-pattern).
+  `headerText()` (switch on `whichMode`); the receipt's warning line from `warningText()` (priority:
+  money-left < 0 > money-overflow > no-space, else ""). Don't fan these back out into one `Text` per
+  case with `visible:` flags (the old anti-pattern).
 - **Currency helpers live on the page root** (`maxMoney`/`curSym`/`signing`/`moneyStr`/`moneyColor`) —
   presentation/formatting only. `moneyColor` returns **`brg.settings.errorColor`** for the error red.
   Use that token for plain red — **not** `brg.settings.primaryColor` (that's *pink*, `#d81b60`) and not a
   literal `"red"`. `errorColor` is a fixed, theme-independent red defined next to the primary palette in
   `Settings` (`setColorScheme()` leaves it untouched), so it survives the upcoming theming work. See
   `../../projects/app/src/bridge/settings.h`.
-- **Floating summary box** (`summaryScreen`): a white rounded `Rectangle` parked off-screen
-  (`y: -height-5`) that slides to `y: 5` via a `State`/`Behavior on y` when `totalCartCount > 0`.
-  Money-before / signed cart-cost / leftover. Positioned `x: parent.width - width - 40`.
-- **Breathing room** at the list bottom is a `ListView { footer: Item { height: 25 } }` (was a
+- **No floating summary box / status bar.** The earlier internal-modernization pass had a slide-down
+  `summaryScreen` `Rectangle` and a bottom accent status bar; both were **removed** when the receipt
+  pane landed — the receipt now carries money-before / total / balance / warnings.
+- **Breathing room** at the left list's bottom is a `ListView { footer: Item { height: 25 } }` (was a
   per-delegate `isLast` empty `Text`) — same as the Bag/Pokémon lists.
 - **Footer disabled-button highlight:** the Checkout button (`btn2.enabled: canAnyCheckout`) used to
   stick in its hover highlight when it disabled under the cursor — fixed at the root in

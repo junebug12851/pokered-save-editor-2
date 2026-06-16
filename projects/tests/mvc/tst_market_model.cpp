@@ -37,6 +37,7 @@
 #include <bridge/bridge.h>
 #include <bridge/router.h>
 #include <mvc/itemmarketmodel.h>
+#include <mvc/itemmarketcartmodel.h>
 
 using namespace pse_test;
 
@@ -79,6 +80,7 @@ private slots:
   void sellCheckout_raisesMoney();
   void buyCheckout_lowersMoney();
   void coinsMode_rowsAndRolesExercised();
+  void cartModel_filtersToCartedRows();
 };
 
 // One Bridge for the whole case (built once, like the real app -- which never
@@ -200,6 +202,34 @@ void TestMarketModel::coinsMode_rowsAndRolesExercised()
   const int row = findCartableRow(/*needWorth*/false);
   if(row >= 0)
     m_mkt->setData(m_mkt->index(row), QVariant(1), ItemMarketModel::CartCountRole);
+}
+
+void TestMarketModel::cartModel_filtersToCartedRows()
+{
+  // brg.marketCartModel is a cart-only filter proxy over the market model -- it
+  // backs the Pokemart receipt pane. It should show exactly the rows currently on
+  // the cart (cartCount > 0), never a section-header ("msg") row, and update live as
+  // the cart changes.
+  setMode(/*buy*/false, /*money*/true);   // rebuild clears the cart
+  ItemMarketCartModel* cart = m_brg->marketCartModel;
+  QVERIFY(cart != nullptr);
+  QCOMPARE(cart->rowCount(QModelIndex()), 0);            // empty cart -> empty receipt
+
+  const int row = findCartableRow(/*needWorth*/false);
+  if(row < 0) QSKIP("no cartable row in sell/money mode");
+  const QString name =
+      m_mkt->data(m_mkt->index(row), ItemMarketModel::NameRole).toString();
+
+  QVERIFY(m_mkt->setData(m_mkt->index(row), QVariant(2), ItemMarketModel::CartCountRole));
+  QCOMPARE(cart->rowCount(QModelIndex()), 1);            // exactly the carted row
+  const QModelIndex idx = cart->index(0, 0);
+  QCOMPARE(cart->data(idx, ItemMarketModel::NameRole).toString(), name);
+  QCOMPARE(cart->data(idx, ItemMarketModel::CartCountRole).toInt(), 2);
+  QVERIFY2(cart->data(idx, ItemMarketModel::WhichTypeRole).toString() != "msg",
+           "a section-header row leaked into the receipt");
+
+  m_mkt->setData(m_mkt->index(row), QVariant(0), ItemMarketModel::CartCountRole);
+  QCOMPARE(cart->rowCount(QModelIndex()), 0);            // clearing removes it live
 }
 
 QTEST_GUILESS_MAIN(TestMarketModel)

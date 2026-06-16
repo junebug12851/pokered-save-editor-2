@@ -33,6 +33,7 @@
 #include "../mvc/itemoverviewmodel.h"
 #include "../mvc/pokemonoverviewmodel.h"
 #include "../mvc/itemmarketmodel.h"
+#include "../mvc/itemmarketcartmodel.h"
 #include "../mvc/pokemonstoragemodel.h"
 #include "../mvc/pokemonboxselectmodel.h"
 #include "../mvc/typesmodel.h"
@@ -91,6 +92,7 @@ class Bridge : public QObject
   Q_PROPERTY(ExamplesRival* randomExampleRival MEMBER randomExampleRival NOTIFY randomExampleRivalChanged) ///< Example-rival source.
   Q_PROPERTY(Settings* settings MEMBER settings NOTIFY settingsChanged) ///< UI theme/layout settings.
   Q_PROPERTY(ItemMarketModel* marketModel MEMBER marketModel NOTIFY marketModelChanged) ///< Poke-mart market model.
+  Q_PROPERTY(ItemMarketCartModel* marketCartModel MEMBER marketCartModel NOTIFY marketCartModelChanged) ///< Cart-only filter of @ref marketModel (receipt pane).
   Q_PROPERTY(PokemonStorageModel* pokemonStorageModel1 MEMBER pokemonStorageModel1 NOTIFY pokemonStorageModel1Changed) ///< PC box-set 1 model.
   Q_PROPERTY(PokemonStorageModel* pokemonStorageModel2 MEMBER pokemonStorageModel2 NOTIFY pokemonStorageModel2Changed) ///< PC box-set 2 model.
   Q_PROPERTY(PokemonBoxSelectModel* pokemonBoxSelectModel1 MEMBER pokemonBoxSelectModel1 NOTIFY pokemonBoxSelectModel1Changed) ///< Box selector 1 model.
@@ -125,6 +127,7 @@ signals:
   void itemOverviewModelChanged();
   void pokemonOverviewModelChanged();
   void marketModelChanged();
+  void marketCartModelChanged();
   void pokemonStorageModel1Changed();
   void pokemonStorageModel2Changed();
   void pokemonBoxSelectModel1Changed();
@@ -162,6 +165,7 @@ public:
   ItemOverviewModel* itemOverviewModel = nullptr;     ///< @see itemOverviewModel property.
   PokemonOverviewModel* pokemonOverviewModel = nullptr; ///< @see pokemonOverviewModel property.
   ItemMarketModel* marketModel = nullptr;             ///< @see marketModel property.
+  ItemMarketCartModel* marketCartModel = nullptr;     ///< @see marketCartModel property.
   PokemonStorageModel* pokemonStorageModel1 = nullptr; ///< @see pokemonStorageModel1 property.
   PokemonStorageModel* pokemonStorageModel2 = nullptr; ///< @see pokemonStorageModel2 property.
   PokemonBoxSelectModel* pokemonBoxSelectModel1 = nullptr; ///< @see pokemonBoxSelectModel1 property.

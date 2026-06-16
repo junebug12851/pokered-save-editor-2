@@ -47,6 +47,7 @@ Bridge::Bridge(FileManagement* file)
                   file->data->dataExpanded->storage,
                   file->data
                   )),
+    marketCartModel(new ItemMarketCartModel(marketModel)),
     pokemonStorageModel1(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon)),
     pokemonStorageModel2(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon)),
     mapSelectModel(new MapSelectModel(file->data->dataExpanded->area->map))
