@@ -2,12 +2,15 @@
 //
 // A shopping-cart UI over brg.marketModel. Four modes (whichMode 0-3) combine
 // buy/sell with money/coins currency; the header text and currency symbols adapt
-// per mode. The big block of JS helpers up top (maxMoney/curSym/signing/moneyStr/
-// etc.) handle currency formatting, signing, and out-of-range clamping for the two
-// currencies (money caps at 999,999; coins at 9,999). Each row is an item with a
-// -/amount/+ cart stepper; a floating summary box shows money start / cart cost /
-// leftover, and the bottom bar shows cart count or an error (no space / not enough
-// money). Footer: Buy/Sell toggle, Checkout (commits the cart), Currency toggle.
+// per mode. The JS helpers up top (maxMoney / curSym / signing / moneyStr / ...)
+// handle currency formatting, signing and out-of-range clamping for the two
+// currencies (money caps at 999,999; coins at 9,999).
+//
+// Each item row is a centered -/amount/+ cart stepper with the item name, unit
+// price and (when selling) owned-count fanned out to its left and the running
+// cart cost to its right. A floating summary box shows money start / cart cost /
+// leftover; an accent status bar shows the cart count or an error. Footer:
+// Buy/Sell toggle, Checkout (commits the cart), Currency toggle.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -19,80 +22,59 @@ import "../../fragments/header"
 Page {
   id: topz
 
-  // Maximum money depending on the currency
+  // ---- Currency formatting helpers -------------------------------------------
+
+  // Maximum money for the active currency (money 999,999; coins 9,999).
   function maxMoney(sym) {
     if(sym === "₽" || brg.marketModel.isMoneyCurrency)
       return 999999;
-    else
-      return 9999;
+    return 9999;
   }
 
-  // Negative version of max money
+  // Negative bound for the active currency.
   function maxMoneyNeg(sym) {
     return -maxMoney(sym);
   }
 
-  // If the money is above or below the maximum range
+  // Is the value outside the currency's representable range?
   function moneyOutOfRange(val, sym) {
-    if(Math.abs(val) > maxMoney(sym))
-      return true;
-    else
-      return false;
+    return Math.abs(val) > maxMoney(sym);
   }
 
-  // Returns red if outside of range and if below zero if enabled
+  // Error red when out of range (or, with zeroRed, when negative); else normal.
   function moneyColor(val, zeroRed, sym) {
-    var ret = moneyOutOfRange(val, sym)
-          ? "red"
-          : brg.settings.textColorDark;
-
+    if(moneyOutOfRange(val, sym))
+      return brg.settings.primaryColor;
     if(zeroRed === true && val < 0)
-      ret = "red";
-
-    return ret;
+      return brg.settings.primaryColor;
+    return brg.settings.textColorDark;
   }
 
-  // Returns currency symbol including the exchange exception which follows
-  // different rules
+  // Currency symbol, including the exchange exception (selling items for money
+  // while in coins mode still pays out in coins, but the money row shows ₽).
   function curSym(dataWhichType) {
     if(brg.marketModel.isMoneyCurrency)
-      return "₽"
-    else if(!brg.marketModel.isMoneyCurrency && dataWhichType !== "money")
-      return "⭘"
-    else if(!brg.marketModel.isMoneyCurrency && dataWhichType === "money" && brg.marketModel.isBuyMode)
-      return "⭘"
-    else if(!brg.marketModel.isMoneyCurrency && dataWhichType === "money" && !brg.marketModel.isBuyMode)
-      return "₽"
-
-    return "?"
+      return "₽";
+    if(dataWhichType !== "money")
+      return "⭘";
+    if(brg.marketModel.isBuyMode)
+      return "⭘";
+    return "₽";
   }
 
-  // Buy/Sell signing including exchange exception which follows different rules
+  // Buy/Sell sign, with the money row always reading as a "+" (you receive it).
   function signing(dataWhichType) {
-    if(brg.marketModel.isBuyMode && dataWhichType !== "money")
-      return "-"
-    else if(!brg.marketModel.isBuyMode && dataWhichType !== "money")
-      return "+"
-    else if(dataWhichType === "money")
-      return "+"
-
-    return "?"
+    if(dataWhichType === "money")
+      return "+";
+    return brg.marketModel.isBuyMode ? "-" : "+";
   }
 
-  // Name of currency
-  function curName() {
-    if(brg.marketModel.isMoneyCurrency)
-      return "Money"
-    else
-      return "Coins"
-  }
-
-  // This converts money to a properly formatted string and adaptable to
-  // different scenarios.
+  // Format a value as a currency string, clamped to range, optionally absolute
+  // and/or signed, with a leading "<"/">" when the true value overflows range.
   function moneyStr(val, abs, useSigning, dataWhichType) {
-    var _val = val;
     var sym = curSym(dataWhichType);
 
+    var _val = val;
     if(_val > maxMoney(sym))
       _val = maxMoney(sym);
     else if(_val < maxMoneyNeg(sym))
@@ -101,96 +83,76 @@ Page {
     if(abs === true)
       _val = Math.abs(_val);
 
-    _val = _val.toLocaleString();
-    _val = sym + _val;
+    _val = sym + _val.toLocaleString();
 
-    var curSigning = "";
-    if(useSigning === true)
-      curSigning = signing(dataWhichType);
+    var sign = useSigning === true ? signing(dataWhichType) : "";
 
     if(abs !== true && useSigning === true)
-      _val = curSigning + " " + _val;
+      _val = sign + " " + _val;
 
-    if(useSigning === true && curSigning === "-" && moneyOutOfRange(val, sym))
-      _val = "< " + _val;
-    else if(useSigning === true && curSigning === "+" && moneyOutOfRange(val, sym))
-      _val = "> " + _val;
-    else if(useSigning === true && moneyOutOfRange(val, sym))
-      _val = "? " + _val;
+    if(useSigning === true && moneyOutOfRange(val, sym))
+      _val = (sign === "-" ? "< " : sign === "+" ? "> " : "? ") + _val;
     else if(useSigning !== true && val < maxMoneyNeg(sym))
       _val = "< " + _val;
-    else if(useSigning !== true && val > maxMoney(sym) && useSigning !== true)
+    else if(useSigning !== true && val > maxMoney(sym))
       _val = "> " + _val;
 
     return _val;
   }
 
+  // Header title for the current mode (buy/sell x mart/game-corner).
+  function headerText() {
+    switch(brg.marketModel.whichMode) {
+      case 0: return qsTr("Shop at the Pokemart");
+      case 1: return qsTr("Shop at the Game Corner");
+      case 2: return qsTr("Sell to the Pokemart");
+      case 3: return qsTr("Sell to the Game Corner");
+    }
+    return "";
+  }
+
+  // Status-bar text: the highest-priority error if any, else the cart count.
+  function statusText() {
+    if(brg.marketModel.moneyLeftover < 0)
+      return qsTr("There's not enough money for all items on the cart.");
+    if(moneyOutOfRange(brg.marketModel.moneyLeftover))
+      return qsTr("You don't have enough space for the money your getting back.");
+    if(brg.marketModel.anyNotEnoughSpace)
+      return qsTr("There's not enough space for one or more items on the shopping cart.");
+    if(brg.marketModel.totalCartCount > 0)
+      return qsTr("On Cart: x") + brg.marketModel.totalCartCount.toLocaleString();
+    return "";
+  }
+
+  // White page background.
   Rectangle {
     anchors.fill: parent
 
+    // ---- Header bar: mode title, centered on the accent bar ----
     Rectangle {
       id: header
       anchors.left: parent.left
-      anchors.top: parent.top
       anchors.right: parent.right
+      anchors.top: parent.top
       height: 45
 
+      color: brg.settings.accentColor
       Material.foreground: brg.settings.textColorLight
       Material.background: brg.settings.accentColor
-      color: brg.settings.accentColor
 
       Text {
-        // Buy with Money
-        visible: brg.marketModel.whichMode == 0
         anchors.centerIn: parent
-        verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-
-        text: qsTr("Shop at the Pokemart")
-        font.pixelSize: 18
-        color: brg.settings.textColorLight
-      }
-
-      Text {
-        // Buy with Coins
-        visible: brg.marketModel.whichMode == 1
-        anchors.centerIn: parent
         verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-
-        text: qsTr("Shop at the Game Corner")
-        font.pixelSize: 18
-        color: brg.settings.textColorLight
-      }
-
-      Text {
-        // Sell with Money
-        visible: brg.marketModel.whichMode == 2
-        anchors.centerIn: parent
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-
-        text: qsTr("Sell to the Pokemart")
-        font.pixelSize: 18
-        color: brg.settings.textColorLight
-      }
-
-      Text {
-        // Sell with Coins
-        visible: brg.marketModel.whichMode == 3
-        anchors.centerIn: parent
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-
-        text: qsTr("Sell to the Game Corner")
+        text: topz.headerText()
         font.pixelSize: 18
         color: brg.settings.textColorLight
       }
     }
 
+    // ---- Market list ----
     ListView {
       id: marketView
-
       model: brg.marketModel
 
       anchors.top: header.bottom
@@ -198,115 +160,41 @@ Page {
       anchors.leftMargin: 15
       anchors.right: parent.right
       anchors.rightMargin: 15
-      anchors.bottom: footer.top
+      anchors.bottom: statusBar.top
 
       clip: true
       ScrollBar.vertical: ScrollBar {}
 
-      delegate: ColumnLayout {
+      // Breathing room under the last row (was a per-delegate isLast hack).
+      footer: Item { width: 1; height: 25 }
+
+      delegate: Item {
         id: delegate
+        width: marketView.width
+        height: dataWhichType === "msg" ? msgText.implicitHeight : 50
 
-        property bool isLast: index+1 < marketView.count ? false : true
-
-        width: parent ? parent.width : 0
-
-//        function getTo() {
-//          if(dataWhichType === "playerItem" || dataWhichType === "money")
-//            return dataInStockCount;
-
-//          return 2147483647;
-//        }
-
+        // Section / category message row.
         Text {
+          id: msgText
           visible: dataWhichType === "msg"
-          Layout.alignment: Qt.AlignHCenter
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.top: parent.top
           text: dataName
           font.pixelSize: 16
           font.bold: true
-
-          topPadding: font.pixelSize
-          bottomPadding: font.pixelSize * 1.5
+          topPadding: 16
+          bottomPadding: 24
         }
 
-        Rectangle {
-          id: rowContainer
+        // Item row: a center-anchored cart stepper, with the item name / unit
+        // price / owned-count right-aligned up against it, and the running cart
+        // cost to its right. The stepper is centered on the screen so the rows
+        // line up regardless of label width.
+        Item {
           visible: dataWhichType !== "msg"
-          Layout.alignment: Qt.AlignHCenter
-          width: 1
-          height: 50
+          anchors.fill: parent
 
-          Text {
-            anchors.top: eachPrice.top
-            anchors.right: eachPrice.left
-            anchors.rightMargin: font.pixelSize / 1
-            anchors.bottom: eachPrice.bottom
-
-            text: dataName
-            font.pixelSize: 14
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignRight
-            verticalAlignment: Text.AlignVCenter
-
-            //topPadding: 15
-          }
-
-          Text {
-            id: eachPrice
-
-            anchors.top: (inventoryAmount.visible)
-                         ? inventoryAmount.top
-                         : cartAmount.top
-            anchors.right: (inventoryAmount.visible)
-                           ? inventoryAmount.left
-                           : cartAmount.left
-            anchors.rightMargin: (inventoryAmount.visible)
-                                 ? font.pixelSize / 1
-                                 : font.pixelSize / 4
-            anchors.bottom: (inventoryAmount.visible)
-                            ? inventoryAmount.bottom
-                            : cartAmount.bottom
-
-            color: (cartAmount.enabled)
-                   ? brg.settings.textColorDark
-                   : brg.settings.textColorMid
-            width: (dataWhichType === "money")
-                   ? implicitWidth
-                   : font.pixelSize * 3
-
-            text: topz.curSym(dataWhichType) + dataItemWorth.toLocaleString()
-            font.pixelSize: 14
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignRight
-            verticalAlignment: Text.AlignVCenter
-
-            //topPadding: 15
-          }
-
-          Text {
-            id: inventoryAmount
-
-            anchors.top: cartAmount.top
-            anchors.right: cartAmount.left
-            anchors.rightMargin: font.pixelSize / 3
-            anchors.bottom: cartAmount.bottom
-
-            color: (cartAmount.enabled)
-                   ? brg.settings.textColorDark
-                   : brg.settings.textColorMid
-
-            // Only when selling
-            visible: !brg.marketModel.isBuyMode
-            text: "x" + dataInStockCount.toString().padStart(2, " ")
-            font.pixelSize: 14
-            width: (dataWhichType === "money")
-                   ? implicitWidth //font.pixelSize * 3.5
-                   : font.pixelSize * 1.75
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
-
-            //topPadding: 15
-          }
-
+          // -/amount/+ stepper, centered.
           Row {
             id: cartAmount
             anchors.centerIn: parent
@@ -328,42 +216,27 @@ Page {
               id: amountEdit
               anchors.top: negBtn.top
               anchors.bottom: negBtn.bottom
+              width: 3 * font.pixelSize
               horizontalAlignment: TextInput.AlignHCenter
+              labelEl.visible: false
+              inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
 
               color: (!dataCanCheckout && dataCartCount > 0)
-                     ? "red"
+                     ? brg.settings.primaryColor
                      : brg.settings.textColorDark
 
-              function getValInt() {
-                return parseInt(text, 10);
-              }
+              validator: IntValidator { bottom: 0; top: 2147483647 }
 
-              function setValInt(val) {
-                text = val.toString();
-              }
+              function getValInt() { return parseInt(text, 10); }
+              function setValInt(val) { text = val.toString(); }
 
-              validator: IntValidator {
-                bottom: 0;
-                top: 2147483647;
-              }
-
-              onTextChanged: {
-                if(acceptableInput)
-                  dataCartCount = getValInt();
-              }
-
+              onTextChanged: if(acceptableInput) dataCartCount = getValInt();
               Component.onCompleted: setValInt(dataCartCount);
-
-              width: 3 * font.pixelSize
-              labelEl.visible: false
-
-              inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
             }
 
             IconButtonSquare {
               id: posBtn
               icon.source: "qrc:/assets/icons/fontawesome/plus.svg"
-
               enabled: !(dataOnCartLeft === 0 && amountEdit.getValInt() === 0)
               onClicked: {
                 if(amountEdit.getValInt() > 0 && dataOnCartLeft === 0)
@@ -374,58 +247,89 @@ Page {
             }
           }
 
+          // -- Left group (right-aligned against the stepper): name, unit
+          //    price, and -- when selling -- the owned-count. --
+
+          // Owned-count ("x N"), only when selling.
           Text {
-            anchors.top: cartAmount.top
+            id: inventoryAmount
+            visible: !brg.marketModel.isBuyMode
+            anchors.right: cartAmount.left
+            anchors.rightMargin: font.pixelSize / 3
+            anchors.verticalCenter: cartAmount.verticalCenter
+            width: (dataWhichType === "money") ? implicitWidth : font.pixelSize * 1.75
+            text: "x" + dataInStockCount.toString().padStart(2, " ")
+            font.pixelSize: 14
+            color: cartAmount.enabled ? brg.settings.textColorDark
+                                      : brg.settings.textColorMid
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+          }
+
+          // Unit price.
+          Text {
+            id: eachPrice
+            anchors.right: inventoryAmount.visible ? inventoryAmount.left
+                                                   : cartAmount.left
+            anchors.rightMargin: inventoryAmount.visible ? font.pixelSize
+                                                         : font.pixelSize / 4
+            anchors.verticalCenter: cartAmount.verticalCenter
+            width: (dataWhichType === "money") ? implicitWidth : font.pixelSize * 3
+            text: topz.curSym(dataWhichType) + dataItemWorth.toLocaleString()
+            font.pixelSize: 14
+            color: cartAmount.enabled ? brg.settings.textColorDark
+                                      : brg.settings.textColorMid
+            horizontalAlignment: Text.AlignRight
+            verticalAlignment: Text.AlignVCenter
+          }
+
+          // Item name.
+          Text {
+            anchors.right: eachPrice.left
+            anchors.rightMargin: font.pixelSize
+            anchors.verticalCenter: cartAmount.verticalCenter
+            text: dataName
+            font.pixelSize: 14
+            horizontalAlignment: Text.AlignRight
+            verticalAlignment: Text.AlignVCenter
+          }
+
+          // -- Right of the stepper: running cart cost, or a "can't sell" note. --
+          Text {
+            visible: cartAmount.enabled
             anchors.left: cartAmount.right
             anchors.leftMargin: font.pixelSize / 4
-            anchors.bottom: cartAmount.bottom
-
+            anchors.verticalCenter: cartAmount.verticalCenter
             text: (dataCartWorth <= 0)
                   ? " "
                   : topz.moneyStr(dataCartWorth, false, true, dataWhichType)
-
-            color: (dataCartWorth === "phony" || topz.moneyOutOfRange(dataCartWorth, topz.curSym(dataWhichType)))
-                   ? topz.moneyColor(dataCartWorth, false, topz.curSym(dataWhichType))
-                   : topz.moneyColor(dataCartWorth, false, topz.curSym(dataWhichType))
-
+            color: topz.moneyColor(dataCartWorth, false, topz.curSym(dataWhichType))
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
-
-            //topPadding: 15
           }
 
           Text {
             visible: !cartAmount.enabled
-
-            anchors.top: cartAmount.top
             anchors.left: cartAmount.right
             anchors.leftMargin: font.pixelSize / 4
-            anchors.bottom: cartAmount.bottom
-
-            color: brg.settings.textColorMid
+            anchors.verticalCenter: cartAmount.verticalCenter
             text: qsTr("Item cannot be sold")
+            color: brg.settings.textColorMid
             font.pixelSize: 14
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
-
-            //topPadding: 15
           }
-        }
-
-        Text {
-          visible: isLast
-          bottomPadding: 25
         }
       }
     }
 
+    // ---- Floating summary box: slides down when the cart is non-empty.
+    //      Shows money before, signed cart cost, and money leftover. ----
     Rectangle {
       id: summaryScreen
-
       x: parent.width - width - 40
       y: 0 - height - 5
-
       width: 150
       height: 100
 
@@ -434,87 +338,65 @@ Page {
       border.width: 3
       radius: 15
 
-      state: (brg.marketModel.totalCartCount > 0)
-             ? "displayed"
-             : ""
+      state: (brg.marketModel.totalCartCount > 0) ? "displayed" : ""
 
       ColumnLayout {
         anchors.fill: parent
         anchors.margins: 10
 
+        // Money before checkout.
         Text {
           Layout.fillWidth: true
           leftPadding: font.pixelSize + 4
-
           text: topz.curSym() + brg.marketModel.moneyStart.toLocaleString()
           font.pixelSize: 14
         }
 
+        // Signed cart cost.
         Row {
           Layout.fillWidth: true
 
           Text {
-            text: topz.signing()
-
-            color: topz.moneyOutOfRange(brg.marketModel.totalCartWorth)
-                   ? "red"
-                   : brg.settings.textColorDark
-
-            font.pixelSize: 14
             width: font.pixelSize + 4
+            text: topz.signing()
+            color: topz.moneyOutOfRange(brg.marketModel.totalCartWorth)
+                   ? brg.settings.primaryColor
+                   : brg.settings.textColorDark
+            font.pixelSize: 14
           }
 
           Text {
             Layout.fillWidth: true
-
-            text: (brg.marketModel.totalCartWorth === "phony")
-                  ? topz.moneyStr(brg.marketModel.totalCartWorth, true, true)
-                  : topz.moneyStr(brg.marketModel.totalCartWorth, true, true)
-
-            color: (brg.marketModel.totalCartWorth === "phony" || topz.moneyOutOfRange(brg.marketModel.totalCartWorth))
-                   ? topz.moneyColor(brg.marketModel.totalCartWorth)
-                   : topz.moneyColor(brg.marketModel.totalCartWorth)
-
+            text: topz.moneyStr(brg.marketModel.totalCartWorth, true, true)
+            color: topz.moneyColor(brg.marketModel.totalCartWorth)
             font.pixelSize: 14
           }
         }
 
+        // Money leftover.
         Row {
           Layout.fillWidth: true
 
           Text {
-            text: (brg.marketModel.moneyLeftover < 0)
-                  ? "-"
-                  : ""
+            width: font.pixelSize + 4
+            text: (brg.marketModel.moneyLeftover < 0) ? "-" : ""
             color: (brg.marketModel.moneyLeftover < 0)
-                   ? "red"
+                   ? brg.settings.primaryColor
                    : brg.settings.textColorDark
             font.pixelSize: 14
-            width: font.pixelSize + 4
           }
 
           Text {
             Layout.fillWidth: true
-
-            text: (brg.marketModel.moneyLeftover === "phony")
-                  ? topz.moneyStr(brg.marketModel.moneyLeftover, true)
-                  : topz.moneyStr(brg.marketModel.moneyLeftover, true)
-
-            color: (brg.marketModel.moneyLeftover === "phony" || topz.moneyOutOfRange(brg.marketModel.moneyLeftover))
-                   ? topz.moneyColor(brg.marketModel.moneyLeftover, true)
-                   : topz.moneyColor(brg.marketModel.moneyLeftover, true)
-
+            text: topz.moneyStr(brg.marketModel.moneyLeftover, true)
+            color: topz.moneyColor(brg.marketModel.moneyLeftover, true)
             font.pixelSize: 14
           }
         }
       }
 
       Behavior on y {
-        NumberAnimation {
-          easing {
-            type: Easing.InOutQuad
-          }
-        }
+        NumberAnimation { easing.type: Easing.InOutQuad }
       }
 
       states: [
@@ -525,91 +407,48 @@ Page {
       ]
     }
 
+    // ---- Status bar: cart count, or the highest-priority error. ----
     Rectangle {
-      id: footer
-      color: brg.settings.accentColor
+      id: statusBar
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       anchors.right: parent.right
       height: 45
 
+      color: brg.settings.accentColor
       Material.foreground: brg.settings.textColorLight
       Material.background: brg.settings.accentColor
 
       Text {
-        visible: !errSpaceLeft.visible && !errMoneyLeft.visible && !errMoneyTooMuch.visible
         anchors.centerIn: parent
-        verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-
-        text: (brg.marketModel.totalCartCount <= 0)
-              ? ""
-              : "On Cart: x" + brg.marketModel.totalCartCount.toLocaleString()
-        font.pixelSize: 14
-        color: brg.settings.textColorLight
-      }
-
-      Text {
-        id: errSpaceLeft
-        visible: brg.marketModel.anyNotEnoughSpace && !errMoneyLeft.visible && !errMoneyTooMuch.visible
-        anchors.centerIn: parent
         verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-
-        text: qsTr("There's not enough space for one or more items on the shopping cart.")
-        font.pixelSize: 14
-        color: brg.settings.textColorLight
-      }
-
-      Text {
-        id: errMoneyTooMuch
-        visible: topz.moneyOutOfRange(brg.marketModel.moneyLeftover) &&  !errMoneyLeft.visible
-        anchors.centerIn: parent
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-
-        text: qsTr("You don't have enough space for the money your getting back.")
-        font.pixelSize: 14
-        color: brg.settings.textColorLight
-      }
-
-      Text {
-        id: errMoneyLeft
-        visible: brg.marketModel.moneyLeftover < 0
-        anchors.centerIn: parent
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-
-        text: qsTr("There's not enough money for all items on the cart.")
+        text: topz.statusText()
         font.pixelSize: 14
         color: brg.settings.textColorLight
       }
     }
   }
 
+  // ---- 3-button footer: Buy/Sell, Checkout, Currency. ----
   footer: AppFooterBtn3 {
     id: theFooter
 
-    // Converts between Buying and Selling
+    // Toggle between buying (store stock) and selling (your items).
     icon1.source: "qrc:/assets/icons/fontawesome/exchange-alt.svg"
     text1: "Buy/Sell"
-    onBtn1Clicked: brg.marketModel.isBuyMode = !brg.marketModel.isBuyMode;
+    onBtn1Clicked: brg.marketModel.isBuyMode = !brg.marketModel.isBuyMode
 
-    // Checks out shopping cart
-    // There's a glitch where it becomes disabled when hovered and then stuck
-    // in the hovered state now disabled. Unfortunately I'm not able to find
-    // any way around this even going as far as creating a Connection function
-    // to programatically disable "down" before disabling the button but same
-    // result. "pressed" and "hovered" are read-only and I'm out of options so
-    // I'm going to have to stick with this glitch that's a bit of an eyesore.
+    // Commit the cart. Disabled (and never stuck-highlighted -- see
+    // FooterButton.qml) until the transaction can complete.
     btn2.enabled: brg.marketModel.canAnyCheckout
     icon2.source: "qrc:/assets/icons/fontawesome/shopping-cart.svg"
     text2: "Checkout"
-    onBtn2Clicked: brg.marketModel.checkout();
+    onBtn2Clicked: brg.marketModel.checkout()
 
-    // Converts between Money and Coins
+    // Toggle between money and coins.
     icon3.source: "qrc:/assets/icons/fontawesome/coins.svg"
     text3: "Currency"
-    onBtn3Clicked: brg.marketModel.isMoneyCurrency = !brg.marketModel.isMoneyCurrency;
+    onBtn3Clicked: brg.marketModel.isMoneyCurrency = !brg.marketModel.isMoneyCurrency
   }
 }

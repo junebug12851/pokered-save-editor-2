@@ -517,6 +517,18 @@ files to be registered at two different `qrc:/` paths. The generated module init
 `QQuickWidget::setSource()` (synchronous call). **Remove `qt_add_qml_module()` entirely.**
 QRC + `qmlRegisterType()` is sufficient.
 
+### Disabled control keeps its hover highlight (stuck-hover button)
+A Material `Button` (any `QQuickControl`) that becomes **disabled while the cursor is over it** keeps
+`hovered == true` — Qt stops delivering hover-*leave* events to a disabled item, so the hover background
+never clears and the control sits **stuck highlighted**. This was the long-noted Pokemart **Checkout**
+button "eyesore" (it disables the instant the cart can't check out, often right under the pointer).
+
+**Fix:** tie hovering to enablement — `hoverEnabled: enabled`. Disabling then flips `hoverEnabled` false,
+which forces `hovered` back to false and clears the highlight immediately; re-enabling restores normal
+hovering. Done once on the shared `FooterButton.qml` so every footer button is covered (only the Checkout
+button actually toggles disabled today). Don't chase this with `Connections`/manual `down` resets (the
+earlier attempt) — `pressed`/`hovered` are read-only; gating `hoverEnabled` is the clean root fix.
+
 ---
 
 ## JavaScript/QML Runtime

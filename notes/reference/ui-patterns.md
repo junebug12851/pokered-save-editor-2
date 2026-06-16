@@ -570,6 +570,40 @@ group)` (mirrors `checkedTransfer`'s party↔box conversion + capacity / last-pa
 `getChecked()`. `toIndex` is the destination insertion slot (0..count; insert before, == append at
 count). These are the drag analogue of the `checked*` bulk actions.
 
+## Pokemart (shop) screen layout (the standard for this screen)
+
+`screens/non-modal/Pokemart.qml` is the buy/sell shop over `brg.marketModel` (four modes:
+buy/sell × money/coins). Modernized 2026-06-15 — **internal rebuild only, look + behavior
+unchanged** (the first pass of a longer effort; a visual restyle, if wanted, is a separate
+design call).
+
+- **Centered cart-stepper rows.** Each item row is a plain `Item` (`height: 50`, or
+  `msgText.implicitHeight` for a `dataWhichType === "msg"` section header). The `-/amount/+`
+  stepper (`Row`, id `cartAmount`) is `anchors.centerIn: parent` so it sits at the **screen's**
+  horizontal center regardless of label width; the **name / unit-price / owned-count** are
+  right-aligned up against `cartAmount.left` (each `anchors.verticalCenter: cartAmount.verticalCenter`),
+  and the **running cart cost** (or the "Item cannot be sold" note, gated on `cartAmount.enabled`)
+  sits at `cartAmount.right`. This replaced a fragile `Rectangle { width: 1; height: 50 }` whose
+  children all chained off each other — **do not reintroduce the width:1 centering trick**; anchor the
+  two side groups to the stepper instead. The left-group margins are the original `font.pixelSize`-based
+  values (name→price `font`, price→owned `font`, owned→stepper `font/3`, price→stepper `font/4`).
+- **One text per adaptive label, not N visibility-toggled copies.** The header title comes from
+  `headerText()` (switch on `whichMode`); the bottom status bar from `statusText()` (priority:
+  money-left < 0 > money-overflow > no-space > cart count). Don't fan these back out into one `Text`
+  per case with `visible:` flags (the old anti-pattern).
+- **Currency helpers live on the page root** (`maxMoney`/`curSym`/`signing`/`moneyStr`/`moneyColor`) —
+  presentation/formatting only. `moneyColor` returns `brg.settings.primaryColor` for the error red
+  (the app-wide error/delete red), **not** a literal `"red"`.
+- **Floating summary box** (`summaryScreen`): a white rounded `Rectangle` parked off-screen
+  (`y: -height-5`) that slides to `y: 5` via a `State`/`Behavior on y` when `totalCartCount > 0`.
+  Money-before / signed cart-cost / leftover. Positioned `x: parent.width - width - 40`.
+- **Breathing room** at the list bottom is a `ListView { footer: Item { height: 25 } }` (was a
+  per-delegate `isLast` empty `Text`) — same as the Bag/Pokémon lists.
+- **Footer disabled-button highlight:** the Checkout button (`btn2.enabled: canAnyCheckout`) used to
+  stick in its hover highlight when it disabled under the cursor — fixed at the root in
+  `FooterButton.qml` (`hoverEnabled: enabled`); see `qt-patterns.md` → "Disabled control keeps its
+  hover highlight".
+
 ## Centered overlay editor popups (escape clipping)
 
 An editor that opens near a screen edge gets clipped by ancestors (tabs/headers). Don't anchor it

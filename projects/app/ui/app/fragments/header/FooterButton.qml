@@ -18,4 +18,13 @@ Button {
   icon.width: 25
   icon.height: 25
   font.capitalization: Font.Capitalize
+
+  // Never show the hover/ripple highlight on a disabled button. A Material
+  // Button that becomes disabled while the cursor is over it keeps hovered ==
+  // true (Qt stops delivering hover-leave to a disabled item), leaving it stuck
+  // visually highlighted -- the long-standing Checkout-button "eyesore" on the
+  // Pokemart screen. Tying hoverEnabled to enabled forces hovered back to false
+  // the instant the button disables, clearing the highlight. (Re-enabling
+  // restores normal hovering.)
+  hoverEnabled: enabled
 }
