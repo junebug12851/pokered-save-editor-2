@@ -472,6 +472,14 @@ public slots:
 
   void changeMove(int ind, int moveID = 0, int pp = 0, int ppUp = 0); ///< Set move slot @p ind.
 
+  /// Delete the move in slot @p ind, then compact so there is no gap in the move
+  /// list (the slots after it slide up; empties stay parked at the bottom).
+  Q_INVOKABLE void deleteMoveAt(int ind);
+
+  /// Remove every move except the first one (slots 1..3 cleared). The list is
+  /// compacted first, so "first" is whatever move currently leads the list.
+  Q_INVOKABLE void clearMovesButFirst();
+
   /// Reorder the filled move slots: take the move at @p from and re-insert it
   /// before slot @p to (drop-slot convention: 0..movesCount; == movesCount
   /// appends after the last move). Only the filled prefix participates (empty

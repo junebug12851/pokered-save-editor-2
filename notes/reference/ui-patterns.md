@@ -675,12 +675,26 @@ slots** as zebra rows, with the **16px scrollbar lane** reserved on the `ColumnL
 forms"). `MovesTab` owns the **layout + drag**; `PokemonMoveSel` owns the **controls** (so the row drag
 mechanics don't fight the combo/PP field).
 
-- **Row look (type accent, not a pill).** The old whole-row type-colored pill is gone. Each filled row
-  keeps its type identity with a **colored left accent strip** (`getColor()`, the Bulbapedia CC-BY-NC-SA
-  palette — keep the attribution) + a **faint type chip** (`Qt.lighter(getColor(),1.35)`); then the
-  `SelectMove` combo (`fillWidth`), PP `DefTextEdit`, `/ maxPP`, and the ⋮ overflow menu (PP-Up submenu,
-  per-move restore/re-roll/correct, All-Moves bulk ops — every prior action preserved). Empty slots show
-  just the combo (so a move can be picked) and a faint neutral strip so the column edge stays aligned.
+- **Row look (type accent, not a pill) + fixed columns.** The old whole-row type-colored pill is gone.
+  Each filled row keeps its type identity with a **colored left accent strip** (`getColor()`, the
+  Bulbapedia CC-BY-NC-SA palette — keep the attribution) + a **fixed-width faint type chip**
+  (`Qt.lighter(getColor(),1.35)`, width 58). The **move name combo fills** the remainder; everything to
+  its right is **fixed width** so the name + type columns line up across rows (don't make the type chip
+  implicit-width — that's what made the rows jitter). Empty slots show just the combo (so a move can be
+  picked) and a faint neutral strip so the column edge stays aligned.
+- **PP / PP-Ups dual view + min/max arrows.** A tab-level `showPpUps` (`SegSel` `[PP | PP Ups]` in the top
+  bar) flips what every row's editable box edits: current/max **PP**, or current/max **PP-Ups** (max 3).
+  One state for the whole tab so it stays consistent through drag-reorder. The box is flanked by
+  **arrow-to-line** buttons in a bordered group — `|←` → 0 (`pp=0` / `resetPpUp()`), `→|` → cap
+  (`restorePP()` / `maxPpUp()`), reusing the DV/EV `arrow-left/right-to-line` icons. Size the box for 2
+  digits in both views so its width doesn't jump on toggle.
+- **No ⋮ menu — per-move + bulk action groups.** Each row has a connected `[dice | check-double | trash]`
+  group: randomize this move (`monMove.randomize()`), make valid (`correctMove()`), delete
+  (`boxData.deleteMoveAt(index)`, which **compacts** the list). The **top bar** carries the view toggle plus
+  `[broom | dice | check-double]`: clear-all-but-first (`clearMovesButFirst()`), randomize all
+  (`randomizeMoves()`), make all valid (`correctMoves()`). The broom's `enabled` tests
+  `boxData.movesAt(1).moveID > 0` (because `movesCount()` is a plain C++ method, not QML-callable). Reuse
+  the DV/EV `SegSel`/`SegBtn` components; the per-row buttons are the same flat-segment idea (`RowBtn`).
 - **`PokemonMoveSel` needs an explicit `boxData` property.** A separate component can't see the parent
   file's properties by bare name, and `PokemonMove::parentMon` is a plain C++ member (not a `Q_PROPERTY`)
   so it isn't reachable from QML — `MovesTab` passes `boxData` down for the All-Moves ops + species hook.

@@ -1697,6 +1697,41 @@ void PokemonBox::changeMove(int ind, int moveID, int pp, int ppUp)
   moves[ind]->changeMove(moveID, pp, ppUp);
 }
 
+void PokemonBox::deleteMoveAt(int ind)
+{
+  if(ind < 0 || ind >= maxMoves)
+    return;
+
+  // Clear the slot, then compact (cleanupMoves slides the later moves up and
+  // emits each slot's per-field signals so the UI refreshes).
+  moves[ind]->moveID = 0;
+  moves[ind]->pp = 0;
+  moves[ind]->ppUp = 0;
+  cleanupMoves();
+
+  movesChanged();
+}
+
+void PokemonBox::clearMovesButFirst()
+{
+  // Compact first so the surviving move is genuinely the list's first slot, then
+  // clear the rest.
+  cleanupMoves();
+
+  for(int i = 1; i < maxMoves; i++) {
+    moves[i]->moveID = 0;
+    moves[i]->moveIDChanged();
+
+    moves[i]->pp = 0;
+    moves[i]->ppChanged();
+
+    moves[i]->ppUp = 0;
+    moves[i]->ppUpChanged();
+  }
+
+  movesChanged();
+}
+
 void PokemonBox::reorderMove(int from, int to)
 {
   // The (id, pp, ppUp) triple that travels together when a move is reordered, so

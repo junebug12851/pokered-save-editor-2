@@ -82,6 +82,7 @@ private slots:
   void box_cleanupAndCorrectMoves();
   void box_changeMoveByIndexAndManualHooks();
   void box_reorderMove();
+  void box_deleteMoveAndClearButFirst();
   void box_correctTypesResetsToSpeciesDefault();
   void box_reRollEvsAndMaxPpUps();
   void box_dexNumAndSpeciesName();
@@ -434,6 +435,41 @@ void TestPokemonBox::box_reorderMove()
   QCOMPARE(p->moves[1]->moveID, 55);
   QCOMPARE(p->moves[2]->moveID, 0);     // empties still parked
   QCOMPARE(p->moves[3]->moveID, 0);
+
+  delete p;
+}
+
+// deleteMoveAt() clears a slot and compacts (no gap); clearMovesButFirst() keeps
+// only the leading move. Both keep the move list compact (empties at the bottom).
+void TestPokemonBox::box_deleteMoveAndClearButFirst()
+{
+  PokemonBox* p = makeMon(QStringLiteral("Bulbasaur"));
+  QVERIFY(p != nullptr);
+
+  p->changeMove(0, 10, 11, 0);
+  p->changeMove(1, 20, 21, 0);
+  p->changeMove(2, 30, 31, 0);
+  p->changeMove(3, 40, 41, 0);
+
+  // Delete the middle move -> the later moves slide up, no gap, last slot empties.
+  p->deleteMoveAt(1);
+  QCOMPARE(p->moves[0]->moveID, 10);
+  QCOMPARE(p->moves[1]->moveID, 30);
+  QCOMPARE(p->moves[2]->moveID, 40);
+  QCOMPARE(p->moves[3]->moveID, 0);
+  QCOMPARE(p->movesCount(), 3);
+
+  // Out-of-range delete is a no-op.
+  p->deleteMoveAt(9);
+  QCOMPARE(p->movesCount(), 3);
+
+  // clearMovesButFirst keeps only the leading move.
+  p->clearMovesButFirst();
+  QCOMPARE(p->moves[0]->moveID, 10);
+  QCOMPARE(p->moves[1]->moveID, 0);
+  QCOMPARE(p->moves[2]->moveID, 0);
+  QCOMPARE(p->moves[3]->moveID, 0);
+  QCOMPARE(p->movesCount(), 1);
 
   delete p;
 }
