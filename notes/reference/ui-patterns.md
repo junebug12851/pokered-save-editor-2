@@ -898,3 +898,34 @@ roles `section` + `entries`). Layout conventions:
 - **Version/copyright** comes from `Qt.application.name`/`.version` (set in `boot.cpp`) — don't hardcode.
 - The data + back end are data-driven: add a credit by editing **only** `credits.json` (ordered
   `sections` array). `CreditDBEntry::process()` loops it; the flat store is regrouped by `CreditsModel`.
+
+## Connected action-button "combo" groups + grouped form rows (Pokémon details General tab)
+
+The Pokémon details **General** tab (`OverviewTab.qml`, 2026-06-17 redesign) is the reference for a
+form that reads as a cohesive grouped list rather than "a pile of fields next to a pile of buttons":
+
+- **Per-field actions = a connected segmented control**, not loose icons. `component SegBtn: Button`
+  (flat, `IconOnly`, `padding: 7`, `icon.color: textColorDark`, `Layout.fillHeight`+`minimumHeight: 0`)
+  is one segment with a square hover/press fill and a 1px **left divider** (drawn except when
+  `first: true`). Wrap N of them in a bordered, rounded, `clip: true` `Rectangle` holding a
+  spacing-0 `RowLayout` → the group reads as one Material control. Used for `[randomize | clear]`
+  (Nickname/OT/Type) and `[randomize]` (Nature). The group is right-aligned in one action column
+  (an `Item { Layout.fillWidth: true }` before it) so the buttons line up and stay clear of the
+  scrollbar. (This replaced both the ⋮ overflow menus and the loose `IconButtonSquare`s.)
+  - **trash-alt / X / other tall-narrow glyphs only "render as a sliver" when the button is clipped
+    off the pane edge** — that was a layout (right-aligned-into-the-scrollbar) bug, not an icon bug.
+    Inside a properly-sized group they render fine.
+- **Rows grouped in one panel with zebra + muted labels.** A single `Rectangle` panel (white,
+  `clip: true`, border optional — dropped here so rows fill it) holds a spacing-0 `ColumnLayout` of
+  row `Rectangle`s. Alternate rows tint `Qt.rgba(0,0,0,0.04)` (zebra); labels are muted right-aligned
+  `Text` (`component RowLabel`, fixed 90px) instead of the chunky shaded "option #2" boxes. This is the
+  Bag/Market "cohesive list" look applied to a heterogeneous form.
+- **Slider rows with end markers above the bar.** Exp shows **Lv. N / Lv. N+1** (a `RowLayout` of two
+  `Text`s with an `Item{fillWidth}` between, above the slider in a `ColumnLayout`); Catch Difficulty shows
+  **Easy / Hard** the same way. Both show their value on hover+press (the standard slider tooltip). Catch
+  Difficulty is **inverted** (`value = 255 - byte`, tooltip shows the byte) so Easy (high catch rate) is on
+  the left.
+- **GlancePane stat column needs an `implicitWidth`.** The stats `Rectangle` (`StatsGroup`/`StatsGroupInvalid`)
+  must expose `implicitWidth: grid.implicitWidth` (and be `color: "transparent"`) so `GlancePane` can size the
+  stats column and anchor the sprite to its right — without it the rect is 0-wide and the sprite overlaps the
+  stats (only visible once the pane is narrowed).

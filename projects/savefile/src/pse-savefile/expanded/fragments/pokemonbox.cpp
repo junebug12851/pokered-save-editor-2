@@ -1000,6 +1000,30 @@ void PokemonBox::update(bool resetHp,
   }
 }
 
+// Reset the typing to the species' DB defaults. Mirrors update()'s resetType block
+// but standalone, so QML can call it without the unreliable multi-bool update() call
+// (see the header note). No-ops on a glitch species (no DB record / unlinked type).
+void PokemonBox::correctTypes()
+{
+  auto record = isValid();
+  if(record == nullptr || !record->toType1)
+    return;
+
+  type1 = record->toType1->ind;
+  type1Changed();
+
+  if(record->toType2)
+    type2 = record->toType2->ind;
+  else
+    type2 = record->toType1->ind;
+
+  // A single type (no distinct second type) is stored internally as 0xFF.
+  if(type1 == type2)
+    type2 = 0xFF;
+
+  type2Changed();
+}
+
 bool PokemonBox::isHealed()
 {
   return isMaxHp() && !isAfflicted() && isMaxPP();

@@ -91,7 +91,10 @@ int TypesModel::valToIndex(int val)
 
   for(int i = 0; i < TypesDB::inst()->getStore().size(); i++) {
     if(TypesDB::inst()->getStore().at(i)->ind == val) {
-      ret = i;
+      // +1 to skip the "-----" (no-type) placeholder that occupies model row 0,
+      // so store entry i maps to its real model row i+1. Without this every type
+      // combo displayed the type one row early (e.g. Fire showed as Ghost).
+      ret = i + 1;
       break;
     }
   }

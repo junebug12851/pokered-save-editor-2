@@ -52,7 +52,24 @@ private slots:
   void deposit_succeedsIntoFreeBox();
   void deposit_failsWhenTargetFull();
   void randomizeVerbs_noCrash();
+  void repro_partyMonCorrectTypes();
 };
+
+// Guards that the loaded data is correct (the Ghost/Fighting the UI showed was a
+// combo display bug, not the data): the fixture's party slot 0 is a Charizard whose
+// stored typing is the real Fire(20)/Flying(2), and correctTypes leaves it that way.
+void TestStorage::repro_partyMonCorrectTypes()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* mon = sf.dataExpanded->player->pokemon->pokemonAt(0);
+  QVERIFY(mon != nullptr);
+  QCOMPARE(mon->species, 180);          // Charizard
+  QCOMPARE(mon->type1, 20);             // Fire
+  QCOMPARE(mon->type2, 2);              // Flying
+  mon->correctTypes();
+  QCOMPARE(mon->type1, 20);
+  QCOMPARE(mon->type2, 2);
+}
 
 void TestStorage::initTestCase()
 {

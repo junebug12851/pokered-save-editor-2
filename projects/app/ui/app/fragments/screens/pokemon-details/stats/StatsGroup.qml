@@ -14,7 +14,16 @@ import "../../../header"
 // Read-only computed stats (HP/Atk/Def/Spd/Sp) shown as a clean label | value
 // grid. Two columns align on their own — no per-row anchor offsets.
 Rectangle {
+  color: "transparent"
+
+  // Expose the grid's content size so the GlancePane can size the stats column and
+  // anchor the sprite to its right (without this the rect is 0-wide and the sprite
+  // overlaps the stats — visible once the pane is narrowed).
+  implicitWidth: statsGrid.implicitWidth
+  implicitHeight: statsGrid.implicitHeight
+
   GridLayout {
+    id: statsGrid
     anchors.top: parent.top
     anchors.left: parent.left
 

@@ -430,6 +430,11 @@ public slots:
                       bool resetCatchRate = false,
                       bool correctMoves = false);
 
+  /// Reset type1/type2 to this species' DB-default type(s) (e.g. Fire/Flying for
+  /// Charizard). Standalone so QML can call it cleanly -- update() with mixed bool
+  /// args is unreliable from QML (the arg-passing glitch), so don't route through it.
+  Q_INVOKABLE void correctTypes();
+
   void heal(); ///< Pokecenter heal: full HP, clear status.
 
   // Remove or Randomize nickname/ OT Data

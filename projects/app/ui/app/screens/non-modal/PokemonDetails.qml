@@ -36,7 +36,8 @@ Page {
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    width: parent.width * .5
+    // Editor takes ~62%; the GlancePane sprite/stats get a wider ~38%.
+    width: parent.width * .62
   }
 
   GlancePane {

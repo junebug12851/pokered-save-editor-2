@@ -17,11 +17,18 @@ import "../../../header"
 // anchor offsets.
 Rectangle {
   property PokemonParty partyData: null
+  color: "transparent"
+
+  // Expose the grid's content size so GlancePane sizes the stats column correctly
+  // (see StatsGroup) — keeps the sprite from overlapping the editable fields.
+  implicitWidth: invalidGrid.implicitWidth
+  implicitHeight: invalidGrid.implicitHeight
 
   Material.foreground: brg.settings.textColorDark
   Material.background: brg.settings.textColorLight
 
   GridLayout {
+    id: invalidGrid
     anchors.top: parent.top
     anchors.left: parent.left
 

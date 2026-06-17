@@ -79,6 +79,20 @@ void TestModels::typesModel_hasRowsRolesAndData()
 
   const QVariant name = m.data(m.index(0, 0), TypesModel::NameRole);
   QVERIFY2(!name.toString().isEmpty(), "first type has empty name");
+
+  // Regression for the valToIndex placeholder off-by-one: row 0 is the "-----"
+  // no-type placeholder, so the row valToIndex returns for a type value must
+  // actually DISPLAY that type (Fire(20) -> a row whose ind is 20 / name "Fire",
+  // not the row before it). This bug made every type combo show the type one early.
+  QCOMPARE(m.data(m.index(0, 0), TypesModel::IndRole).toInt(), 0xFF);   // placeholder
+  QCOMPARE(m.valToIndex(0xFF), 0);                                      // no-type -> row 0
+
+  const int fireRow = m.valToIndex(20);                                 // FIRE
+  QCOMPARE(m.data(m.index(fireRow, 0), TypesModel::IndRole).toInt(), 20);
+  QCOMPARE(m.data(m.index(fireRow, 0), TypesModel::NameRole).toString(), QStringLiteral("Fire"));
+
+  const int flyingRow = m.valToIndex(2);                                // FLYING
+  QCOMPARE(m.data(m.index(flyingRow, 0), TypesModel::IndRole).toInt(), 2);
 }
 
 void TestModels::natureModel_has25NaturesAndRoundTrips()

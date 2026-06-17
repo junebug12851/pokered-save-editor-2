@@ -162,6 +162,12 @@ Rectangle {
 
   Rectangle {
     id: statsData
+    color: "transparent"
+
+    // Size to the visible stats grid so the sprite anchors to its right instead of
+    // overlapping it (the rect had no width before; the narrower pane exposed it).
+    width: statsDataValid.visible ? statsDataValid.implicitWidth
+                                  : statsDataInvalid.implicitWidth
 
     anchors.top: topBar.bottom
     anchors.topMargin: 15

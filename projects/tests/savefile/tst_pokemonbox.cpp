@@ -81,6 +81,7 @@ private slots:
   void box_tradeStatusAndOtData();
   void box_cleanupAndCorrectMoves();
   void box_changeMoveByIndexAndManualHooks();
+  void box_correctTypesResetsToSpeciesDefault();
   void box_reRollEvsAndMaxPpUps();
   void box_dexNumAndSpeciesName();
   void box_resetMakesItPokemonResetAndCorrected();
@@ -375,6 +376,33 @@ void TestPokemonBox::box_changeMoveByIndexAndManualHooks()
   QCOMPARE(p->hp, p->hpStat());                         // HP recomputed
   QCOMPARE(p->exp, p->levelToExp());                    // EXP pinned to the level
   QVERIFY(p->isCorrected());                            // single-type mon reads corrected (#2 fix)
+
+  delete p;
+}
+
+// correctTypes() must reset a tampered typing back to the species' DB defaults.
+// Charizard is Fire(20)/Flying(2) -- asserted against the literal type ids, NOT
+// chz->toType1->ind (that would be tautological with what correctTypes reads).
+void TestPokemonBox::box_correctTypesResetsToSpeciesDefault()
+{
+  const int FIRE = 20, FLYING = 2, GHOST = 8, FIGHTING = 1;
+
+  PokemonBox* p = makeMon(QStringLiteral("Charizard"));
+  QVERIFY(p != nullptr);
+
+  // A fresh Charizard should already carry its real typing (sanity-checks the
+  // species->type deep-link itself, not just correctTypes).
+  QCOMPARE(p->type1, FIRE);
+  QCOMPARE(p->type2, FLYING);
+
+  // Tamper the typing (Ghost / Fighting), then correct it back.
+  p->type1 = GHOST;
+  p->type2 = FIGHTING;
+  p->type2Explicit = true;
+  p->correctTypes();
+
+  QCOMPARE(p->type1, FIRE);
+  QCOMPARE(p->type2, FLYING);
 
   delete p;
 }
