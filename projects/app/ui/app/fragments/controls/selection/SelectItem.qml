@@ -21,10 +21,21 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
+import "../../general"
+
 ComboBox {
   id: control
   textRole: "itemSelectName"
   valueRole: "itemSelectInd"
+
+  // Detailed (help-mode) tooltip for the currently-selected item: what it is and
+  // how it's obtained. Tied to the item, so it shows wherever this picker is used
+  // (the Bag/Items screen and anywhere else), gated on the header "?" toggle.
+  DetailToolTip {
+    title: control.currentText
+    text: brg.itemSelectModel.infoForInd(control.currentValue)
+    hovered: control.hovered
+  }
 
   // Duplicate guard inputs (default off -> inert on screens that don't set them).
   property var box: null        // the pane's ItemStorageBox
@@ -90,6 +101,14 @@ ComboBox {
     }
 
     highlighted: control.highlightedIndex === index
+
+    // Per-item detailed tooltip while browsing the dropdown (section rows have no
+    // info, so they stay quiet).
+    DetailToolTip {
+      title: itemSelectName
+      text: itemSelectInfo
+      hovered: itemDel.hovered
+    }
   }
 
   popup: Popup {

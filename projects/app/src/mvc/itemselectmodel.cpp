@@ -137,6 +137,8 @@ QVariant ItemSelectModel::data(const QModelIndex& index, int role) const
     return item->ind;
   else if (role == NameRole)
     return item->name;
+  else if (role == InfoRole)
+    return infoForInd(item->ind);
 
   // All else fails, return nothing
   return QVariant();
@@ -148,8 +150,17 @@ QHash<int, QByteArray> ItemSelectModel::roleNames() const
 
   roles[IndRole] = "itemSelectInd";
   roles[NameRole] = "itemSelectName";
+  roles[InfoRole] = "itemSelectInfo";
 
   return roles;
+}
+
+QString ItemSelectModel::infoForInd(int ind) const
+{
+  if(ind < 0)
+    return QString();
+  auto el = ItemsDB::inst()->getIndAt(QString::number(ind));
+  return (el != nullptr) ? el->getInfo() : QString();
 }
 
 int ItemSelectModel::itemToListIndex(int ind)

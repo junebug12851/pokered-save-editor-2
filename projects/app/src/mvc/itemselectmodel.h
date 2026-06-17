@@ -44,6 +44,7 @@ public:
   enum ItemRoles {
     IndRole = Qt::UserRole + 1,
     NameRole,
+    InfoRole,
   };
 
   ItemSelectModel();
@@ -55,4 +56,5 @@ public:
   QVector<ItemSelectEntryData*> itemListCache; ///< Cached picker rows.
 
   Q_INVOKABLE int itemToListIndex(int ind); ///< Row index for item @p ind.
+  Q_INVOKABLE QString infoForInd(int ind) const; ///< Detailed-tooltip text for item @p ind (empty if none).
 };
