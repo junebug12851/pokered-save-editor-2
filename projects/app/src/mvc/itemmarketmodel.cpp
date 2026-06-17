@@ -40,6 +40,7 @@
 #include <pse-savefile/expanded/savefileexpanded.h>
 #include <pse-savefile/expanded/player/playerbasics.h>
 #include <pse-savefile/expanded/fragments/itemstoragebox.h>
+#include <pse-savefile/expanded/fragments/item.h>
 
 ItemMarketModel::ItemMarketModel(ItemStorageBox* itemBag,
                                  ItemStorageBox* itemStorage,
@@ -548,15 +549,26 @@ void ItemMarketModel::buildPlayerItemList()
 {
   const int from = itemListCache.size();
 
+  // Only list items the player can actually sell. An item is sellable iff it has a
+  // discernible price -- Item::canSell() is `price >= 0`, so a *free* item (price 0:
+  // Master Ball, Moon Stone, the PP restoratives, ...) still counts: you can sell it
+  // (for nothing), it just can't be bought. Items with NO price at all (Town Map, the
+  // HMs, badges, the key items -- canSell() false) can't be sold and are left off the
+  // sell list rather than shown as dead rows. canSell() is null-safe (false for an
+  // unknown/glitch id).
   itemListCache.append(new ItemMarketEntryMessage("Bag"));
 
   for(auto el: itemBag->items) {
+    if(!el->canSell())
+      continue;
     itemListCache.append(new ItemMarketEntryPlayerItem(itemBag, el));
   }
 
   itemListCache.append(new ItemMarketEntryMessage("Storage"));
 
   for(auto el: itemStorage->items) {
+    if(!el->canSell())
+      continue;
     itemListCache.append(new ItemMarketEntryPlayerItem(itemStorage, el));
   }
 
