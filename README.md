@@ -11,7 +11,7 @@ ensure.
 
 ---
 
-![UI/UX progress](https://i.imgur.com/ULhYfEN.png)
+![UI/UX progress](https://junebug12851.github.io/pokered-save-editor-2/screenshots/home.png)
 
 ## ⚠️ Status — early alpha, work in progress
 
@@ -44,7 +44,7 @@ Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` rang
 
 ---
 
-![Pokémon details screen](https://i.imgur.com/jnOZoyG.png)
+![Pokémon details screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/pokemon_editor_general.png)
 
 ## What it is
 
@@ -78,7 +78,7 @@ A few convictions shape everything:
 - **No longer a web app.** A native `MainWindow` with native menus hosts the Qt Quick UI — this is a
   real desktop application, not a packaged web page.
 
-![New File screen](https://i.imgur.com/Woakr9P.png)
+![New File screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/modal_newFile.png)
 
 ## Features
 
@@ -120,7 +120,7 @@ still early. The planned system is built around three modes:
   coverage).
 - A C++ game database of all Gen 1 data (Pokémon, moves, items, maps, …) with cross-linked entries.
 
-![Pokédex screen](https://i.imgur.com/Ks6KzaT.png)
+![Trainer card screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/trainerCard.png)
 
 ## Building from source
 
@@ -153,7 +153,7 @@ the About screen, and the Windows executable resource — never hardcode a versi
 **API documentation** (optional): the C++ is Doxygen-commented. Run `doxygen Doxyfile` from the repo
 root to generate HTML docs (QML is intentionally excluded).
 
-![File Tools screen](https://i.imgur.com/4oPvOE9.png)
+![File Tools screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/modal_fileTools.png)
 
 ## Running the tests
 
@@ -200,6 +200,8 @@ A few things to keep in mind:
 Full details: [`notes/reference/git-workflow.md`](notes/reference/git-workflow.md) and
 [`notes/plans/testing.md`](notes/plans/testing.md).
 
+![Bag screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/bag.png)
+
 ## Why the reboot
 
 The first version was JavaScript: Angular + Electron, back-end and front-end split by sandboxing, a
@@ -232,6 +234,8 @@ For the in-depth, code-grounded version, see [`notes/systems/overview.md`](notes
 and [`notes/context/architecture.md`](notes/context/architecture.md). The save format itself is
 documented in [`assets/saves/structure.md`](assets/saves/structure.md) (with the byte-exact 010 Editor
 template `structure.bt` beside it).
+
+![Market screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/pokemart.png)
 
 ## Project layout
 
