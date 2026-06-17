@@ -9,9 +9,19 @@ Built 2026-06-15.
 
 - **Releases are SOFTWARE releases only** — never an images-only or otherwise non-software release.
   The versioned `release.yml` release is the only kind; don't create side releases to host files.
-- **Every Release has a well-written title + description by default** — clear, concise, informative,
-  structured (downloads table + prerelease/unsigned note); `release.yml`'s `Compose release notes` step
-  builds it and the auto "What's Changed" is appended.
+- **Every Release has a well-written, user-facing description by default.** `release.yml`'s `Compose
+  release notes` step builds a structured body, top→bottom: a plain-English "what the app is", a
+  prerelease/unsigned note, **"What's new in this release"** (the *actual* changes — see below), **"How to
+  get it"** (downloads table), and **Links** (Pages docs, full changelog, issues). softprops then appends
+  the auto **"What's Changed"** (raw commit/PR list — the deepest technical layer).
+  - **"What's new" is pulled from our living changelog automatically.** The step finds the previous
+    release tag (`git describe --tags --abbrev=0 HEAD`, by *ancestry* — robust to the version-number
+    reset), then extracts the entries **added to `notes/version/` since then** (`git diff <prev>..HEAD`,
+    added lines, newest-first). Those entries are already plain-English ("what + why"), so the release
+    note reflects exactly this deployment — no "go look elsewhere". (The release job checks out with
+    `fetch-depth: 0` + `fetch-tags: true` so the diff/describe work.)
+  - **Override for a big release:** drop a hand-written `notes/releases/<version>.md` and the step uses
+    that verbatim for the "What's new" prose instead of the auto changelog.
 - **README screenshots go on GitHub Pages**, not git or a release (zero repo-size growth, no third
   party). See "README screenshots (GitHub Pages)" below.
 

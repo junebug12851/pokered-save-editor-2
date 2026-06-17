@@ -347,42 +347,88 @@ jobs:
       (github.event_name != 'workflow_dispatch' || inputs.dry_run == false)
     runs-on: ubuntu-latest
     steps:
+      # Full history + tags so the notes step can diff this release against the
+      # previous release tag (to pull the changelog entries added since).
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
 
-      # A well-structured, descriptive release body by default. softprops appends the
-      # auto-generated "What's Changed" (commits/PRs) below this.
+      # Build a human, structured release body that actually describes THIS release.
+      # Order (top -> bottom): a plain-English "what this means for you", then the
+      # itemised changes (pulled from our living changelog for exactly this release),
+      # then how to get it, then links. softprops appends the auto "What's Changed"
+      # (the raw commit/PR list -- the deepest technical layer) below all of this.
+      #
+      # The per-release prose comes from one of two sources, in order:
+      #   1. A hand-curated notes/releases/<version>.md (write one for a big release).
+      #   2. Otherwise, the changelog entries ADDED to notes/version/ since the last
+      #      release tag -- these are already plain-English ("what + why"), newest first.
       - name: Compose release notes
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
           ver="${{ needs.version.outputs.version }}"
+          repo="${{ github.server_url }}/${{ github.repository }}"
+
+          # --- gather the per-release prose -------------------------------------
+          curated="notes/releases/${ver}.md"
+          changes=""
+          if [ -f "$curated" ]; then
+            changes="$(cat "$curated")"
+          else
+            prev="$(git describe --tags --abbrev=0 HEAD 2>/dev/null || true)"   # previous release (by ancestry)
+            range="HEAD"; [ -n "$prev" ] && range="${prev}..HEAD"
+            # Added lines to the monthly changelog files in this range = the new
+            # entries (we prepend newest-first). Strip the leading '+', drop diff
+            # headers and the per-file "N commit(s) this month" counter line.
+            changes="$(git diff $range -- 'notes/version/*.md' 2>/dev/null \
+              | sed -n 's/^+//p' \
+              | grep -vE '^\+\+ |commit\(s\) this month|^# Version History|All months \(index\)' \
+              | sed '/./,$!d' || true)"
+          fi
+          [ -n "${changes//[$'\n\r\t ']/}" ] || changes="_See the commit list below for what changed in this build._"
+
+          # --- compose ----------------------------------------------------------
           {
-            echo "**Pokered Save Editor v${ver}** — a save-file editor for Pokémon Red & Blue (Gen 1), built with Qt 6 (C++/QML)."
+            echo "**Pokered Save Editor v${ver}** — a free, open-source save-file editor for Pokémon Red & Blue (Gen 1), built with Qt 6 (C++/QML)."
+            echo
+            echo "It lets you open a \`.sav\` and edit your team, items, Pokédex, trainer card, PC boxes and more, with bit-for-bit fidelity (it changes only what you change)."
             echo
             if [ "${{ needs.version.outputs.prerelease }}" = "true" ]; then
-              echo "> ⚠️ **Pre-release** — under active development; expect rough edges. The binaries are **unsigned**, so Windows SmartScreen (and some Linux setups) will warn on first launch — that's expected for an alpha."
+              echo "> ⚠️ **Pre-release / alpha** — under active development, so expect rough edges and occasional changes to how things work. The downloads are **unsigned**, so Windows SmartScreen (and some Linux setups) will warn on first launch — that's expected for an alpha, not a problem with the file."
               echo
             fi
-            echo "### Downloads"
+            echo "## What's new in this release"
             echo
-            echo "| Platform | File | Notes |"
+            echo "Here's what changed and why, in plain English — what you'll see or do differently, and the reasoning behind it:"
+            echo
+            echo "$changes"
+            echo
+            echo "## How to get it"
+            echo
+            echo "| Platform | File | What to do |"
             echo "|---|---|---|"
-            echo "| Windows | \`*-windows-x64-setup.exe\` | Installer (recommended) |"
-            echo "| Windows | \`*-windows-x64-portable.zip\` | Portable — unzip and run \`PokeredSaveEditor.exe\` |"
-            echo "| Linux | \`*-x86_64.AppImage\` | Portable — \`chmod +x\` then run |"
-            echo "| Linux | \`*-linux-x64-portable.tar.gz\` | Portable tree |"
+            echo "| Windows | \`*-windows-x64-setup.exe\` | Installer — **recommended**; just run it. |"
+            echo "| Windows | \`*-windows-x64-portable.zip\` | No-install — unzip and run \`PokeredSaveEditor.exe\`. |"
+            echo "| Linux | \`*-x86_64.AppImage\` | Portable — \`chmod +x\` then run. |"
+            echo "| Linux | \`*-linux-x64-portable.tar.gz\` | Portable tree — extract and run \`usr/bin/PokeredSaveEditor\`. |"
             echo
-            echo "### Also attached"
-            echo "- \`*-docs.zip\` — generated code documentation (Doxygen)"
-            echo "- \`*-screenshots.zip\` — UI screenshots & animations"
+            echo "Also attached: \`*-docs.zip\` (generated code docs) and \`*-screenshots.zip\` (UI screenshots)."
             echo
-            echo "_Built automatically from \`main\` by the release pipeline; the full per-commit changelog lives in \`notes/version/\`._"
+            echo "## Links"
+            echo
+            echo "- 📖 **Docs & screenshots:** https://junebug12851.github.io/pokered-save-editor-2/"
+            echo "- 📝 **Full changelog (every commit):** ${repo}/tree/main/notes/version"
+            echo "- 🐛 **Issues / feedback:** ${repo}/issues"
+            echo
+            echo "_Built automatically from \`main\`. The deepest technical layer — the raw commit list — is in **What's Changed** below._"
           } > RELEASE_BODY.md
-          cat RELEASE_BODY.md
+          echo "----- composed release body -----"; cat RELEASE_BODY.md
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
