@@ -36,6 +36,21 @@ Item {
 
   implicitHeight: rowH
 
+  // Point the move combo at monMove's current move. DEFERRED via Qt.callLater
+  // because brg.moveSelectModel is per-mon and rebuilt asynchronously
+  // (PokemonDetails.onCompleted -> monFromBox switches it from the general list to
+  // this mon's specific list): syncing inline can compute an index against the
+  // wrong model state, leaving the combo showing a different move's NAME while the
+  // real type/PP are correct. Deferring runs the lookup after the model settles.
+  function syncMoveCombo() {
+    if(monMove)
+      moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
+  }
+
+  // Re-sync whenever the slot points at a different move object (in the
+  // Repeater-backed MovesTab monMove can resolve after the combo's onCompleted).
+  onMonMoveChanged: Qt.callLater(syncMoveCombo)
+
   // Thanks to Bulbapedia
   // bulbapedia.bulbagarden.net/wiki/Category:Type_color_templates
   // Licensed: CC-BY-NC-SA 2.5 (creativecommons.org/licenses/by-nc-sa/2.5)
@@ -102,26 +117,24 @@ Item {
       Layout.preferredHeight: top.rowH
 
       onActivated: { if(monMove) monMove.moveID = currentValue; }
-      Component.onCompleted: if(monMove) currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
+      Component.onCompleted: top.syncMoveCombo();
 
       Connections {
         target: monMove
-        function onMoveIDChanged() { moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID); }
+        function onMoveIDChanged() { top.syncMoveCombo(); }
       }
 
       Connections {
         target: brg.moveSelectModel
-        function onMonChanged() {
-          if(monMove) moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
-        }
+        // The model rebuilt (it was pointed at a different mon) -- re-sync once it
+        // settles so the combo shows the right move for the new list.
+        function onMonChanged() { Qt.callLater(top.syncMoveCombo); }
       }
 
       Connections {
         target: top.boxData
         ignoreUnknownSignals: true
-        function onSpeciesChanged() {
-          if(monMove) moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
-        }
+        function onSpeciesChanged() { Qt.callLater(top.syncMoveCombo); }
       }
 
       MainToolTip {

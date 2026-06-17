@@ -6,9 +6,14 @@
 // drag-to-reorder; empty slots stay parked at the bottom and aren't draggable
 // (game move-list compaction). The drag mirrors the Bag list drag (ItemBoxView):
 // the row content reparents to the window overlay so the ghost floats freely, a
-// dashed insertion caret marks the drop slot (top edge = before, bottom edge =
-// after), and the model mutation (PokemonBox::reorderMove) is deferred a tick so
-// no delegate is destroyed mid-drag. See notes/reference/ui-patterns.md.
+// dashed insertion caret marks the drop slot (top edge = before, bottom = after),
+// and the model mutation (PokemonBox::reorderMove) is deferred a tick so no
+// delegate is destroyed mid-drag. See notes/reference/ui-patterns.md.
+//
+// NOTE the root id is `movesTab`, NOT `top`: PokemonMoveSel (instantiated in the
+// Repeater delegate below) also uses `id: top`, and inside the delegate that inner
+// `top` shadows the root -- so `top.boxData` there resolved to PokemonMoveSel's own
+// (null) boxData, leaving every row blank. A unique root id avoids the collision.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -23,7 +28,7 @@ import "../../header"
 import "../../controls/selection"
 
 Rectangle {
-  id: top
+  id: movesTab
   property PokemonBox boxData: null
 
   color: "transparent"
@@ -56,33 +61,43 @@ Rectangle {
         color: brg.settings.textColorLight
         clip: true
 
-        Column {
+        // A ColumnLayout (not a plain Column): the rows use Layout.fillWidth to
+        // take the panel's width. A plain Column auto-sizes its width FROM its
+        // children, so a child bound to `rowsCol.width` is circular and collapses
+        // the rows to zero width (the "empty Moves tab" bug). Mirrors OverviewTab.
+        ColumnLayout {
           id: rowsCol
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.top: parent.top
+          spacing: 0
 
           // One DropArea row per move slot. The visible content lives in a child
           // `content` Item that becomes the drag target; while dragging it
-          // reparents to the overlay (top.dragLayer). The drag is started ONLY
+          // reparents to the overlay (movesTab.dragLayer). The drag is started ONLY
           // from the left grip handle, and only on filled moves.
           Repeater {
             // Always exactly four move slots (PokemonBox::movesMax()). It's a
             // plain C++ method, not Q_INVOKABLE, so QML can't call it -- use the
             // constant. boxData null-guarded so the panel is empty before binding.
-            model: top.boxData ? 4 : 0
+            model: movesTab.boxData ? 4 : 0
 
             delegate: DropArea {
               id: row
               required property int index
 
-              width: rowsCol.width
-              height: top.rowH
+              // Row height is a delegate-local constant (NOT movesTab.rowH read
+              // through the root id from inside the delegate -- that goes
+              // [undefined] transiently and collapses the row). Keep in sync.
+              readonly property int rowHeight: 44
+
+              Layout.fillWidth: true
+              Layout.preferredHeight: rowHeight
 
               // null-guarded: boxData can read undefined transiently (Repeater
               // re-evaluation / teardown), and every binding below already
               // tolerates a null move, so don't let the lookup itself throw.
-              property PokemonMove rowMove: top.boxData ? top.boxData.movesAt(index) : null
+              property PokemonMove rowMove: movesTab.boxData ? movesTab.boxData.movesAt(index) : null
               property bool filled: rowMove !== null && rowMove.moveID !== 0
               property int rowIndex: index
 
@@ -107,15 +122,15 @@ Rectangle {
                 // overlay until the release settles; running next tick lets it
                 // return to its row first (no delegate destroyed mid-drag).
                 Qt.callLater(function() {
-                  if(top.boxData)
-                    top.boxData.reorderMove(fromIndex, toIndex);
+                  if(movesTab.boxData)
+                    movesTab.boxData.reorderMove(fromIndex, toIndex);
                 });
               }
 
               // Zebra background over the white panel (positional striping). The
-              // alt tint is inlined (not top.rowAlt) so the delegate doesn't read
-              // through `top` during build/teardown -- that read goes [undefined]
-              // transiently and would trip the zero-warning screen-load test.
+              // alt tint is inlined (not movesTab.rowAlt) so the delegate doesn't
+              // read through the root id during build/teardown -- that read goes
+              // [undefined] transiently and would trip the zero-warning load test.
               Rectangle {
                 anchors.fill: parent
                 color: (row.index % 2 === 0) ? "transparent" : Qt.rgba(0, 0, 0, 0.04)
@@ -151,7 +166,7 @@ Rectangle {
               }
 
               // The visible row content. Fills the row at rest; while dragging it
-              // reparents to top.dragLayer (the overlay) so the ghost floats free.
+              // reparents to movesTab.dragLayer (the overlay) so the ghost floats free.
               Item {
                 id: content
                 width: row.width
@@ -237,10 +252,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
                     monMove: row.rowMove
-                    // Coerce a transient [undefined] read of top.boxData to null
-                    // (assignable to PokemonBox*); rowH from row.height avoids the
-                    // through-`top` read entirely (zero-warning load test).
-                    boxData: top.boxData ? top.boxData : null
+                    boxData: movesTab.boxData
                     rowH: row.height
                   }
                 }
@@ -248,7 +260,7 @@ Rectangle {
                 // While dragging: detach to the overlay and fade slightly.
                 states: State {
                   when: content.Drag.active
-                  ParentChange { target: content; parent: top.dragLayer }
+                  ParentChange { target: content; parent: movesTab.dragLayer }
                   AnchorChanges {
                     target: content
                     anchors.left: undefined

@@ -240,6 +240,16 @@ FontSearch* startOver();
 Q_INVOKABLE FontSearch* startOver();
 ```
 
+### Same `id` in a parent and the component it instantiates — the inner shadows the outer
+If a component (say `MovesTab`, `id: top`) instantiates ANOTHER component that also uses `id: top`
+(`PokemonMoveSel`), then **inside a Repeater/inline delegate of the parent that creates the child**,
+a reference to `top` can resolve to the *child's* `top`, not the parent's. Symptom that nailed it:
+`MovesTab` had a "ROOT" probe reading `top.boxData=Y` while a probe inside the same file's delegate read
+`top.boxData=n` — because `top.boxData` in the delegate hit `PokemonMoveSel`'s own (null) `boxData`. The
+result was every move row silently blank (monMove null), with NO QML warning. Fix: give the outer root a
+**unique id** (`movesTab`) — never reuse a generic id like `top` across a component and a child it
+instantiates. (Found 2026-06-17; see ui-patterns.md → "Pokémon details — Moves tab".)
+
 ### Repeater delegates read through transient-null bindings
 A `Repeater`/`ListView` delegate that dereferences a screen property (`boxData.movesAt(index)`,
 `monMove.moveType`, …) **will** see that property go `null`/`undefined` transiently — during delegate
