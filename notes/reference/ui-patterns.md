@@ -929,3 +929,24 @@ form that reads as a cohesive grouped list rather than "a pile of fields next to
   must expose `implicitWidth: grid.implicitWidth` (and be `color: "transparent"`) so `GlancePane` can size the
   stats column and anchor the sprite to its right — without it the rect is 0-wide and the sprite overlaps the
   stats (only visible once the pane is narrowed).
+
+### Segmented **text** selector (`SegSel`) + the "active = data binding" rule (DV/EV tab)
+
+The **DV/EV** tab (`StatsTab.qml`, 2026-06-17) extends the same language to *mode* and *state*
+selectors with `component SegSel: Button` — the text-label sibling of `SegBtn`. It's a flat,
+**non-checkable** `Button` (`TextOnly`, `Layout.fillHeight`) whose `background` fills with
+`accentColor` when a `property bool active` is true (text → `textColorLight`), else a hover/press
+wash; a 1px left divider shows except when `first` or `active`. Wrap N in the same bordered/rounded/
+`clip:true` `Rectangle` + spacing-0 `RowLayout` as `SegBtn`. Used for `[DV | EV]` and
+`[Shiny | Non-Shiny]`; the `[Max | Re-Roll | Reset]` action combo reuses `SegBtn`
+(angle-double-up / dice / angle-double-down, retargeted by `statKind`).
+
+- **`active` must be a binding to the underlying value, never a `checkable` toggle.** When the
+  selection has to mirror *live data that can change without clicking the control* — Shiny/Non-Shiny
+  flips when you **drag a DV slider**, not only when you click a segment — `checkable` + `ButtonGroup`
+  is wrong: a click toggles `checked` and severs the binding. Instead bind `active: boxData.isShiny`
+  (and `active: !boxData.isShiny` on the sibling), and let `onClicked` perform the *action*
+  (`makeShiny`/`unmakeShiny`), which mutates the data, which re-drives `active`. One source of truth,
+  zero drift. Same shape for the `[DV|EV]` switch (`active: statKind === "DV"`,
+  `onClicked: statKind = "DV"`).
+- This removed the tab's last `CheckBox` **and** its ⋮ menus — the details editor is now ⋮-menu-free.
