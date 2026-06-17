@@ -11,8 +11,9 @@ literally what SemVer reserves "build metadata" for) so nothing is lost for debu
 `MAJOR.MINOR.PATCH[-prerelease][+build]`
 
 - **MAJOR** -- `0` while pre-release; `1` at the first real, stability-promising release.
-- **MINOR** -- new features / notable changes.
-- **PATCH** -- bug fixes and small tweaks.
+- **MINOR** -- **rare**: a genuine milestone (a big, headline feature set), Twilight's call on feel.
+- **PATCH** -- **the default**: bug fixes AND ordinary features alike. Not capped at 9 — let it run to
+  2-3 digits (0.8.4 … 0.8.47 …). When unsure between PATCH and MINOR, choose PATCH (or flag it).
 - **-prerelease** -- `-alpha` (early), `-beta` (feature-stable), `-rc.1` (release candidate);
   dropped entirely for a final release. While we're at `0.x`, the `0` already signals
   "in development, things still move," so `-alpha`/`-beta` is an extra honesty layer, not a
@@ -134,9 +135,10 @@ changelog stays per-commit and is maintained separately (by hand, on request).
 
 ## Maintenance (keep this current by default)
 
-- **Who bumps what.** The AI assistant keeps `VERSION` current by default and **decides MINOR and
-  PATCH bumps** — applied in the *same commit* as the change that warrants one (app fix → PATCH,
-  feature → MINOR). **MAJOR (`0.x` → `1.0.0`) is the project leaders' (Twilight's) call only, never
+- **Who bumps what.** The AI assistant keeps `VERSION` current by default — **PATCH by default for
+  almost everything** (fixes AND ordinary features), applied in the *same commit* as the change.
+  **MINOR is rare** (a real milestone; prefer PATCH / flag when unsure). **MAJOR (`0.x` → `1.0.0`) is
+  the project leaders' (Twilight's) call only, never
   bumped automatically** — it's the stability/"first real release" promise. Docs / notes / test /
   CI-only commits don't move the number (the app didn't change).
 - Bump `VERSION` at the commit where a feature/fix warrants it (the git hash updates itself;

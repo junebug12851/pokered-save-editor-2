@@ -7,8 +7,12 @@
 # the first remaining line is the version.
 #
 # How to bump (see notes/reference/versioning.md for the full guide):
-#   - PATCH (0.7.0 -> 0.7.1): bug fixes / small tweaks, no new user-facing features.
-#   - MINOR (0.7.0 -> 0.8.0): new features or notable changes, still backward-OK.
+#   - PATCH (0.8.3 -> 0.8.4 -> ... -> 0.8.47): THE DEFAULT. Almost every change is a
+#     PATCH -- fixes AND ordinary features. The PATCH number is NOT capped at 9; let it
+#     climb into 2-3 digits. Favor this.
+#   - MINOR (0.8.x -> 0.9.0): RARE -- only a genuine milestone (a big, headline feature
+#     set). Don't roll a new MINOR just because something is "a feature"; prefer PATCH
+#     and, when unsure, flag it rather than auto-bump. (Project leader's call on feel.)
 #   - MAJOR (0.x   -> 1.0.0): the first real release / a stability promise.
 #   - prerelease label: -alpha (early), -beta (feature-stable), -rc.1 (release
 #     candidate). Drop the label entirely for a final release. Pre-1.0 (0.x)
@@ -22,4 +26,4 @@
 #
 # Build identity (the git commit) is appended automatically by the build as
 # SemVer build metadata, e.g. 0.7.0-alpha+g1a2b3c4d -- you do NOT edit that here.
-0.10.1-alpha
+0.8.3-alpha

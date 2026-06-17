@@ -463,7 +463,7 @@ Page {
     Rectangle {
       id: receiptPane
       Layout.fillHeight: true
-      Layout.preferredWidth: Math.round(paneRow.width * 0.33)   // ~1/3 of the screen
+      Layout.preferredWidth: Math.round(paneRow.width * 0.37)   // a bit over 1/3
       color: "white"
 
       Rectangle {
