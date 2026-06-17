@@ -503,7 +503,7 @@ void ItemMarketModel::buildMartItemList()
   /////////////////////////////////////////////////
 
   if(!isMoneyCurrency) {
-    itemListCache.append(new ItemMarketEntryMessage("In-House Exclusives"));
+    itemListCache.append(new ItemMarketEntryMessage("Pokemon Inventory"));
 
     for(auto el : ItemsDB::inst()->getStore()) {
       if(el->isGameCornerExclusive())

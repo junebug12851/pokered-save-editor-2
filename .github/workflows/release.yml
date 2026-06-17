@@ -405,8 +405,6 @@ jobs:
             fi
             echo "## What's new in this release"
             echo
-            echo "Here's what changed and why, in plain English — what you'll see or do differently, and the reasoning behind it:"
-            echo
             echo "$changes"
             echo
             echo "## How to get it"

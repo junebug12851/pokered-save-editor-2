@@ -208,9 +208,9 @@ public slots:
 public:
   QVector<ItemMarketEntry*> itemListCache; ///< The current market rows.
 
-  // Buy or Sell, do we view your items or their items?
-  // Default to viewing your items
-  bool isBuyMode = false; ///< @see isBuyMode property.
+  // Buy or Sell, do we view the store's items or our own?
+  // Default to Buy (the Market opens on Buy + Pokemart).
+  bool isBuyMode = true; ///< @see isBuyMode property.
 
   // Money or Coins, do we sell your items to money/coins or do we look at the
   // Pokemart or Game Corner Mart to buy with money and coins

@@ -660,27 +660,27 @@ Page {
                 // Big balance with the +/- change as a small superscript at top-right.
                 Item {
                   Layout.alignment: Qt.AlignHCenter
-                  implicitWidth: mRow.implicitWidth
-                  implicitHeight: mRow.implicitHeight
-                  Row {
-                    id: mRow
-                    spacing: 3
-                    Text {
-                      id: mNum
-                      text: "₽" + brg.marketModel.exchangeMoneyAfter.toLocaleString()
-                      font.pixelSize: 24; font.bold: true
-                      color: (brg.marketModel.exchangeMoneyAfter < 0
-                              || brg.marketModel.exchangeMoneyAfter > 999999)
-                             ? brg.settings.errorColor : brg.settings.textColorDark
-                    }
-                    Text {
-                      anchors.top: mNum.top
-                      visible: brg.marketModel.exchangeMoneyAfter !== brg.marketModel.exchangeMoneyStart
-                      text: topz.deltaStr(brg.marketModel.exchangeMoneyAfter,
-                                          brg.marketModel.exchangeMoneyStart, "₽")
-                      font.pixelSize: 11; font.bold: true
-                      color: brg.settings.textColorMid
-                    }
+                  implicitWidth: mNum.implicitWidth
+                  implicitHeight: mNum.implicitHeight
+                  Text {
+                    id: mNum
+                    anchors.centerIn: parent
+                    text: "₽" + brg.marketModel.exchangeMoneyAfter.toLocaleString()
+                    font.pixelSize: 24; font.bold: true
+                    color: (brg.marketModel.exchangeMoneyAfter < 0
+                            || brg.marketModel.exchangeMoneyAfter > 999999)
+                           ? brg.settings.errorColor : brg.settings.textColorDark
+                  }
+                  // Superscript delta -- OVERLAID at the number's top-right (not in
+                  // the layout) so it never shifts the number as it appears / changes.
+                  Text {
+                    anchors.left: mNum.right; anchors.leftMargin: 2
+                    anchors.top: mNum.top; anchors.topMargin: -1
+                    visible: brg.marketModel.exchangeMoneyAfter !== brg.marketModel.exchangeMoneyStart
+                    text: topz.deltaStr(brg.marketModel.exchangeMoneyAfter,
+                                        brg.marketModel.exchangeMoneyStart, "₽")
+                    font.pixelSize: 11; font.bold: true
+                    color: brg.settings.textColorMid
                   }
                 }
                 Button {
@@ -723,27 +723,25 @@ Page {
                 }
                 Item {
                   Layout.alignment: Qt.AlignHCenter
-                  implicitWidth: cRow.implicitWidth
-                  implicitHeight: cRow.implicitHeight
-                  Row {
-                    id: cRow
-                    spacing: 3
-                    Text {
-                      id: cNum
-                      text: "⭘" + brg.marketModel.exchangeCoinsAfter.toLocaleString()
-                      font.pixelSize: 24; font.bold: true
-                      color: (brg.marketModel.exchangeCoinsAfter < 0
-                              || brg.marketModel.exchangeCoinsAfter > 9999)
-                             ? brg.settings.errorColor : brg.settings.textColorDark
-                    }
-                    Text {
-                      anchors.top: cNum.top
-                      visible: brg.marketModel.exchangeCoinsAfter !== brg.marketModel.exchangeCoinsStart
-                      text: topz.deltaStr(brg.marketModel.exchangeCoinsAfter,
-                                          brg.marketModel.exchangeCoinsStart, "⭘")
-                      font.pixelSize: 11; font.bold: true
-                      color: brg.settings.textColorMid
-                    }
+                  implicitWidth: cNum.implicitWidth
+                  implicitHeight: cNum.implicitHeight
+                  Text {
+                    id: cNum
+                    anchors.centerIn: parent
+                    text: "⭘" + brg.marketModel.exchangeCoinsAfter.toLocaleString()
+                    font.pixelSize: 24; font.bold: true
+                    color: (brg.marketModel.exchangeCoinsAfter < 0
+                            || brg.marketModel.exchangeCoinsAfter > 9999)
+                           ? brg.settings.errorColor : brg.settings.textColorDark
+                  }
+                  Text {
+                    anchors.left: cNum.right; anchors.leftMargin: 2
+                    anchors.top: cNum.top; anchors.topMargin: -1
+                    visible: brg.marketModel.exchangeCoinsAfter !== brg.marketModel.exchangeCoinsStart
+                    text: topz.deltaStr(brg.marketModel.exchangeCoinsAfter,
+                                        brg.marketModel.exchangeCoinsStart, "⭘")
+                    font.pixelSize: 11; font.bold: true
+                    color: brg.settings.textColorMid
                   }
                 }
                 Button {
