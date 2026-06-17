@@ -682,19 +682,28 @@ mechanics don't fight the combo/PP field).
   its right is **fixed width** so the name + type columns line up across rows (don't make the type chip
   implicit-width — that's what made the rows jitter). Empty slots show just the combo (so a move can be
   picked) and a faint neutral strip so the column edge stays aligned.
-- **PP / PP-Ups dual view + min/max arrows.** A tab-level `showPpUps` (`SegSel` `[PP | PP Ups]` in the top
-  bar) flips what every row's editable box edits: current/max **PP**, or current/max **PP-Ups** (max 3).
-  One state for the whole tab so it stays consistent through drag-reorder. The box is flanked by
-  **arrow-to-line** buttons in a bordered group — `|←` → 0 (`pp=0` / `resetPpUp()`), `→|` → cap
-  (`restorePP()` / `maxPpUp()`), reusing the DV/EV `arrow-left/right-to-line` icons. Size the box for 2
-  digits in both views so its width doesn't jump on toggle.
-- **No ⋮ menu — per-move + bulk action groups.** Each row has a connected `[dice | check-double | trash]`
-  group: randomize this move (`monMove.randomize()`), make valid (`correctMove()`), delete
-  (`boxData.deleteMoveAt(index)`, which **compacts** the list). The **top bar** carries the view toggle plus
-  `[broom | dice | check-double]`: clear-all-but-first (`clearMovesButFirst()`), randomize all
-  (`randomizeMoves()`), make all valid (`correctMoves()`). The broom's `enabled` tests
-  `boxData.movesAt(1).moveID > 0` (because `movesCount()` is a plain C++ method, not QML-callable). Reuse
-  the DV/EV `SegSel`/`SegBtn` components; the per-row buttons are the same flat-segment idea (`RowBtn`).
+- **PP / PP-Ups dual view — TWO INDEPENDENT boxes (anti-desync), max-only arrow.** A tab-level `showPpUps`
+  (`SegSel` `[PP | PP Ups]` in the top bar) flips what each row edits: current/max **PP**, or current/max
+  **PP-Ups** (max 3). **Do NOT use one shared text box that writes `pp` or `ppUp` depending on the view** —
+  that desyncs: the `maximumLength` flip on toggle truncates the text and fires a cross-field write, and
+  the "max" buttons feed the same broken box. Instead use **two boxes** (`movePP<i>` / `movePPUp<i>`), each
+  bound to + writing ONLY its own field, swapped by a `StackLayout` (`currentIndex: showPpUps ? 1 : 0`).
+  Each box has its own `→|` "set to max" button (`restorePP()` / `maxPpUp()`); the **min/reset arrow was
+  dropped** for space. Size both boxes for 2 digits so the width doesn't jump on toggle. (Regression-tested
+  in `tst_gui_moves`: toggling never mutates data, the boxes are independent.) Note `onMoveIdChanged`
+  legitimately **clamps `pp` to `getMaxPP`**, so a typed PP above the cap snaps down — expected.
+- **Per-move actions = a HOVER SLIDE-IN reveal (no reflow).** Each row's `[dice | check-double | trash]`
+  group (randomize `monMove.randomize()` / make-valid `correctMove()` / delete `boxData.deleteMoveAt(index)`,
+  which **compacts**) is an **overlay** anchored to the row's right edge — NOT in the layout flow. A
+  `HoverHandler` drives `revealed`; the panel slides in via `x` translate (`root.width` → `root.width-width`)
+  + opacity, over an **opaque backing matching the row** (`rowColor`, computed from `altRow` passed by
+  MovesTab). The row is `clip:true` so the panel is hidden off-right at rest. Because it's an overlay, the
+  reveal never reflows the row — it covers the value box / `/max` on hover (the accepted space tradeoff).
+- **Bulk top bar.** Carries the view toggle plus `[broom | dice | check-double]`: clear-all-but-first
+  (`clearMovesButFirst()`), randomize all (`randomizeMoves()`), make all valid (`correctMoves()`). The
+  broom's `enabled` tests `boxData.movesAt(1).moveID > 0` (because `movesCount()` is a plain C++ method, not
+  QML-callable). Reuse the DV/EV `SegSel`/`SegBtn` components; the per-row buttons are the same flat-segment
+  idea (`RowBtn`).
 - **`PokemonMoveSel` needs an explicit `boxData` property.** A separate component can't see the parent
   file's properties by bare name, and `PokemonMove::parentMon` is a plain C++ member (not a `Q_PROPERTY`)
   so it isn't reachable from QML — `MovesTab` passes `boxData` down for the All-Moves ops + species hook.

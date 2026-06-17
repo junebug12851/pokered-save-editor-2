@@ -837,6 +837,10 @@ benign offscreen font warning allowlisted; `tst_gui_input` now locates the money
    mechanics already unit-tested; this is the persistence half; the Pokémon box is populated at runtime
    via `pokemonNew()` + `boxesFormatted=true` since BaseSAV's PC boxes may be empty). _Still to do:_
    badge toggle clicks, popup open/dismiss, name popup-keyboard commit, Pokémon cross-box drag transfer.
+   ✅ **Moves-tab sync E2E done** (`tst_gui_moves`, 2026-06-17): drives the live editor — the PP/PP-Ups
+   **view toggle never mutates data** (the desync regression), the PP and PP-Up boxes are **independent +
+   write through**, and model changes reflect in the right box. Boxes carry objectNames; found rooted at
+   the editor via `GuiApp::collectItems`.
 7.  **Compatibility fixture matrix at GUI level.** Run the navigation + save/load journeys over Red
    vs Blue and fresh/mid/post-E4 saves once those fixtures exist.
 8.  **ASan under GUI load (Linux CI).** When the Linux ASan job runs these, a QML-instantiation

@@ -418,6 +418,7 @@ Rectangle {
                     boxData: movesTab.boxData
                     moveIndex: row.index
                     showPpUps: movesTab.showPpUps
+                    altRow: (row.index % 2 !== 0)
                     rowH: row.height
                   }
                 }

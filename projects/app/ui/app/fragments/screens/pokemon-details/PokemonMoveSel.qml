@@ -15,36 +15,36 @@ import "../../controls/selection"
 //
 // Bound to a PokemonMove (monMove) + its owning PokemonBox (boxData) + slot index
 // (moveIndex). Rendered inside MovesTab's grouped panel as a zebra row, so this is
-// just the controls (transparent background). Layout, left→right:
-//   [type strip] [move name combo, fills] [type chip, FIXED width]
-//   [ |←  current(PP|PP-Up) textbox  →| ]  [ / max ]   [ dice | check-double | trash ]
-// The columns after the name are fixed-width so rows line up regardless of move
-// name / type length. A tab-level PP / PP-Ups view (showPpUps) switches what the
-// editable box edits: current/max PP, or current/max PP-Ups (max 3). The |← / →|
-// arrow-to-line buttons set the value to its min / max. The per-row action group
-// is randomize-this-move / make-this-move-valid / delete-this-move (delete
-// compacts the list). The ⋮ overflow menu is gone -- bulk ops live in the tab's
-// top bar. getColor() type palette is Bulbapedia (CC-BY-NC-SA); keep the credit.
+// just the controls. Layout, left→right:
+//   [type strip] [move name combo, fills] [type chip, FIXED] [ value(PP|PP-Up) →| ] [ / max ]
+// and a per-row action group (randomize / make-valid / delete) that is HIDDEN at
+// rest and SLIDES IN from the right edge on hover (an overlay, so it never reflows
+// the row).
+//
+// PP vs PP-Ups is a tab-level view (showPpUps). CRUCIAL: each view has its OWN
+// independent text box (ppBox / ppUpBox) bound to its OWN field. They are never
+// the same widget, so toggling the view, editing, or hitting "max" can NEVER write
+// the wrong field (the earlier single-shared-box design desynced PP and PP-Ups,
+// esp. when the maxLength flip truncated the text into a cross-field write).
+// getColor() type palette is Bulbapedia (CC-BY-NC-SA); keep the credit.
 Item {
   id: root
   property PokemonMove monMove: null
-  // The owning Pokemon + this move's slot index -- needed for delete (which
-  // compacts the list). A separate component can't see the parent file's
-  // properties by bare name, and PokemonMove::parentMon is a plain C++ member
-  // (not a Q_PROPERTY), so neither is reachable without passing them in.
   property PokemonBox boxData: null
   property int moveIndex: 0
   property int rowH: 44
 
   // Tab-level view: false = edit current/max PP, true = edit current/max PP-Ups.
   property bool showPpUps: false
+  // Whether this is an alternate (zebra-tinted) row -- so the hover reveal's
+  // backing matches the row exactly.
+  property bool altRow: false
 
   property bool filled: monMove !== null && monMove.moveID !== 0
+  readonly property color rowColor: altRow ? Qt.darker(brg.settings.textColorLight, 1.04)
+                                           : brg.settings.textColorLight
 
-  // The current value + its max for the active view.
-  readonly property int curVal: !filled ? 0 : (showPpUps ? monMove.ppUp : monMove.pp)
-  readonly property int maxVal: !filled ? 0 : (showPpUps ? 3 : monMove.getMaxPP)
-
+  clip: true
   implicitHeight: rowH
 
   // Thanks to Bulbapedia
@@ -89,38 +89,25 @@ Item {
   }
 
   // Point the move combo at monMove's current move. DEFERRED via Qt.callLater
-  // because brg.moveSelectModel is per-mon and rebuilt asynchronously
-  // (PokemonDetails.onCompleted -> monFromBox switches it from the general list to
-  // this mon's specific list): syncing inline can compute an index against the
-  // wrong model state, leaving the combo showing a different move's NAME while the
-  // real type/PP are correct. Deferring runs the lookup after the model settles.
+  // because brg.moveSelectModel is per-mon and rebuilt asynchronously: syncing
+  // inline can compute an index against the wrong model state.
   function syncMoveCombo() {
     if(monMove)
       moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
   }
 
-  onMonMoveChanged: Qt.callLater(syncMoveCombo)
+  // When the slot points at a different move object, re-sync the combo and re-seat
+  // BOTH value boxes from their own fields.
+  onMonMoveChanged: {
+    Qt.callLater(syncMoveCombo);
+    ppBox.reseat();
+    ppUpBox.reseat();
+  }
 
-  // Set the active value to its minimum (0) / maximum (cap), honoring the view.
-  function setMin() {
-    if(!monMove) return;
-    if(showPpUps) monMove.resetPpUp();
-    else monMove.pp = 0;
-  }
-  function setMax() {
-    if(!monMove) return;
-    if(showPpUps) monMove.maxPpUp();
-    else monMove.restorePP();
-  }
-  // Re-seat the editable box's text from the model for the active view.
-  function reseatVal() {
-    valEdit.text = filled ? curVal.toString(10) : "";
-  }
-  onShowPpUpsChanged: reseatVal();
-
-  // A flat icon button used as one segment of a connected, bordered "combo"
-  // group (matches the DV/EV tab's SegBtn). Hairline left divider unless first.
+  // A flat icon button -- one segment of a connected, bordered "combo" group
+  // (matches the DV/EV tab's SegBtn). Hairline left divider unless first.
   component RowBtn: Button {
+    id: rbtn
     property bool first: false
     property string tip: ""
     flat: true
@@ -131,27 +118,31 @@ Item {
     Layout.fillHeight: true
     Layout.minimumHeight: 0
     background: Rectangle {
-      color: parent.down ? Qt.rgba(0, 0, 0, 0.16)
-             : parent.hovered ? Qt.rgba(0, 0, 0, 0.08)
+      color: rbtn.down ? Qt.rgba(0, 0, 0, 0.16)
+             : rbtn.hovered ? Qt.rgba(0, 0, 0, 0.08)
              : "transparent"
       Rectangle {
-        visible: !parent.parent.first
+        visible: !rbtn.first
         anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
         width: 1
         color: Qt.rgba(0, 0, 0, 0.15)
       }
     }
-    MainToolTip { text: tip }
+    MainToolTip { text: rbtn.tip }
   }
 
+  // Whole-row hover drives the action reveal. A HoverHandler stays true over the
+  // child controls (a MouseArea would lose it when the pointer reaches a button).
+  HoverHandler { id: rowHover }
+
   RowLayout {
+    id: mainRow
     anchors.fill: parent
     anchors.leftMargin: 4
     anchors.rightMargin: 4
     spacing: 6
 
-    // Type-color accent strip -- the move's type identity. Empty slots show a
-    // faint neutral strip so the column edge stays aligned.
+    // Type-color accent strip. Empty slots show a faint neutral strip.
     Rectangle {
       Layout.alignment: Qt.AlignVCenter
       Layout.preferredWidth: 5
@@ -160,8 +151,8 @@ Item {
       color: root.filled ? root.getColor() : Qt.rgba(0, 0, 0, 0.10)
     }
 
-    // Move name combo -- fills the leftover width (so every row's name column is
-    // the same width, since everything to its right is fixed).
+    // Move name combo -- fills the remainder (every row's name column is the same
+    // width since everything to its right is fixed).
     SelectMove {
       id: moveSelect
       Layout.fillWidth: true
@@ -209,98 +200,160 @@ Item {
       }
     }
 
-    // PP / PP-Up editor: |← (min) · current textbox · →| (max), in one bordered
-    // group. The middle box is typed; the arrow-to-line buttons set it to its
-    // min (0) / max (cap or 3).
+    // Value editor: an independent box per view (PP / PP-Up), swapped by a
+    // StackLayout, plus the →| "set to max" button. No min/reset button.
     Rectangle {
       visible: root.filled
       Layout.alignment: Qt.AlignVCenter
       Layout.preferredHeight: root.rowH - 12
-      implicitWidth: ppGrp.implicitWidth
+      implicitWidth: ppStack.implicitWidth
       radius: 4; color: "transparent"
       border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.18)
       clip: true
 
-      RowLayout {
-        id: ppGrp
+      StackLayout {
+        id: ppStack
         anchors.fill: parent
-        spacing: 0
+        // 0 = PP view, 1 = PP-Ups view.
+        currentIndex: root.showPpUps ? 1 : 0
 
-        RowBtn {
-          first: true
-          icon.width: 15; icon.height: 15
-          icon.source: "qrc:/assets/icons/fontawesome/arrow-left-to-line.svg"
-          enabled: root.curVal > 0
-          onClicked: root.setMin();
-          tip: root.showPpUps ? qsTr("Set PP-Ups to 0.") : qsTr("Set PP to 0.")
-        }
+        // ---- PP editor (own field: monMove.pp) ----
+        RowLayout {
+          spacing: 0
+          DefTextEdit {
+            id: ppBox
+            objectName: "movePP" + root.moveIndex
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: root.rowH - 14
+            horizontalAlignment: Text.AlignHCenter
+            leftPadding: 6; rightPadding: 6
+            Layout.preferredWidth: 2 * font.pixelSize + leftPadding + rightPadding
+            maximumLength: 2
+            color: brg.settings.textColorDark
+            background: Item {}
 
-        DefTextEdit {
-          id: valEdit
-          Layout.alignment: Qt.AlignVCenter
-          Layout.preferredHeight: root.rowH - 14
-          horizontalAlignment: Text.AlignHCenter
-          leftPadding: 6
-          rightPadding: 6
-          // Reserve room for 2 digits in both views so widths don't jump when the
-          // PP / PP-Ups toggle flips.
-          Layout.preferredWidth: 2 * font.pixelSize + leftPadding + rightPadding
-          maximumLength: root.showPpUps ? 1 : 2
-          color: brg.settings.textColorDark
-          background: Item {}
+            function reseat() { ppBox.text = root.filled ? monMove.pp.toString(10) : ""; }
+            Component.onCompleted: reseat();
 
-          onTextChanged: {
-            if(text === "" || !monMove)
-              return;
-            var v = parseInt(text, 10);
-            if(isNaN(v))
-              return;
-            if(root.showPpUps) {
-              if(v < 0 || v > 3) return;
-              monMove.ppUp = v;
-            } else {
-              if(v < 0 || v > 0xFF) return;
+            onTextChanged: {
+              if(text === "" || !monMove)
+                return;
+              var v = parseInt(text, 10);
+              if(isNaN(v) || v < 0 || v > 0xFF)
+                return;
               monMove.pp = v;
             }
+            Connections {
+              target: monMove
+              function onPpChanged() { ppBox.reseat(); }
+            }
+            MainToolTip { text: qsTr("Current PP.") }
           }
-          Component.onCompleted: root.reseatVal();
-
-          Connections {
-            target: monMove
-            function onPpChanged()   { if(!root.showPpUps) root.reseatVal(); }
-            function onPpUpChanged() { if(root.showPpUps)  root.reseatVal(); }
+          RowBtn {
+            first: true
+            icon.width: 15; icon.height: 15
+            icon.source: "qrc:/assets/icons/fontawesome/arrow-right-to-line.svg"
+            enabled: root.filled && monMove.pp < monMove.getMaxPP
+            onClicked: { if(monMove) monMove.restorePP(); }
+            tip: qsTr("Restore PP to the max.")
           }
-
-          MainToolTip { text: root.showPpUps ? qsTr("Current PP-Ups (0–3).") : qsTr("Current PP.") }
         }
 
-        RowBtn {
-          icon.width: 15; icon.height: 15
-          icon.source: "qrc:/assets/icons/fontawesome/arrow-right-to-line.svg"
-          enabled: root.curVal < root.maxVal
-          onClicked: root.setMax();
-          tip: root.showPpUps ? qsTr("Set PP-Ups to the max (3).") : qsTr("Restore PP to the max.")
+        // ---- PP-Ups editor (own field: monMove.ppUp) ----
+        RowLayout {
+          spacing: 0
+          DefTextEdit {
+            id: ppUpBox
+            objectName: "movePPUp" + root.moveIndex
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: root.rowH - 14
+            horizontalAlignment: Text.AlignHCenter
+            leftPadding: 6; rightPadding: 6
+            // Same width as the PP box so the cluster doesn't resize on toggle.
+            Layout.preferredWidth: 2 * font.pixelSize + leftPadding + rightPadding
+            maximumLength: 1
+            color: brg.settings.textColorDark
+            background: Item {}
+
+            function reseat() { ppUpBox.text = root.filled ? monMove.ppUp.toString(10) : ""; }
+            Component.onCompleted: reseat();
+
+            onTextChanged: {
+              if(text === "" || !monMove)
+                return;
+              var v = parseInt(text, 10);
+              if(isNaN(v) || v < 0 || v > 3)
+                return;
+              monMove.ppUp = v;
+            }
+            Connections {
+              target: monMove
+              function onPpUpChanged() { ppUpBox.reseat(); }
+            }
+            MainToolTip { text: qsTr("Current PP-Ups (0–3).") }
+          }
+          RowBtn {
+            first: true
+            icon.width: 15; icon.height: 15
+            icon.source: "qrc:/assets/icons/fontawesome/arrow-right-to-line.svg"
+            enabled: root.filled && monMove.ppUp < 3
+            onClicked: { if(monMove) monMove.maxPpUp(); }
+            tip: qsTr("Set PP-Ups to the max (3).")
+          }
         }
       }
     }
 
-    // " / max " for the active view (max PP, or 3 PP-Ups).
+    // " / max " for the active view (max PP, or 3 PP-Ups). Display only -- never
+    // writes a field, so switching its text by view is safe.
     Text {
       visible: root.filled
       Layout.alignment: Qt.AlignVCenter
-      Layout.preferredWidth: 28
+      Layout.preferredWidth: 26
       horizontalAlignment: Text.AlignHCenter
       color: brg.settings.textColorMid
-      text: "/ " + root.maxVal
+      text: "/ " + (root.showPpUps ? 3 : (root.filled ? monMove.getMaxPP : 0))
       font.pixelSize: 12
     }
+  }
 
-    // Per-move action group: randomize this move · make this move valid · delete
-    // this move (delete compacts the list).
+  // ---- Per-row action reveal: randomize this move · make valid · delete. HIDDEN
+  // at rest; on hover it SLIDES IN from the right edge (translate x + fade) over an
+  // opaque backing that matches the row. It is an OVERLAY (not in mainRow's flow),
+  // so revealing it never reflows the row. `clip` on root keeps it off-screen at
+  // rest. ----
+  Item {
+    id: actionReveal
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    width: actBox.implicitWidth + 14
+    visible: root.filled
+
+    property bool revealed: rowHover.hovered && root.filled
+    x: revealed ? (root.width - width) : root.width
+    opacity: revealed ? 1 : 0
+    Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+    Behavior on opacity { NumberAnimation { duration: 110 } }
+    z: 50
+
+    // Opaque backing so the sliding panel cleanly covers the content beneath it.
     Rectangle {
-      visible: root.filled
-      Layout.alignment: Qt.AlignVCenter
-      Layout.preferredHeight: root.rowH - 12
+      anchors.fill: parent
+      color: root.rowColor
+      // A hairline left edge so the panel reads as sliding over the row.
+      Rectangle {
+        anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+        width: 1
+        color: Qt.rgba(0, 0, 0, 0.10)
+      }
+    }
+
+    Rectangle {
+      id: actBox
+      anchors.right: parent.right
+      anchors.rightMargin: 4
+      anchors.verticalCenter: parent.verticalCenter
+      height: root.rowH - 12
       implicitWidth: actGrp.implicitWidth
       radius: 4; color: "transparent"
       border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.18)
@@ -322,7 +375,7 @@ Item {
           icon.width: 15; icon.height: 15
           icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
           onClicked: { if(monMove) monMove.correctMove(); }
-          tip: qsTr("Make this move valid for the Pokémon (fix an illegal move / PP).")
+          tip: qsTr("Make this move valid for the Pokémon.")
         }
         RowBtn {
           icon.width: 14; icon.height: 15

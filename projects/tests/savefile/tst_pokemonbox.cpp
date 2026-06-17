@@ -83,6 +83,7 @@ private slots:
   void box_changeMoveByIndexAndManualHooks();
   void box_reorderMove();
   void box_deleteMoveAndClearButFirst();
+  void move_ppAndPpUpIndependent();
   void box_correctTypesResetsToSpeciesDefault();
   void box_reRollEvsAndMaxPpUps();
   void box_dexNumAndSpeciesName();
@@ -470,6 +471,43 @@ void TestPokemonBox::box_deleteMoveAndClearButFirst()
   QCOMPARE(p->moves[2]->moveID, 0);
   QCOMPARE(p->moves[3]->moveID, 0);
   QCOMPARE(p->movesCount(), 1);
+
+  delete p;
+}
+
+// PP and PP-Ups are independent fields: the "set to max" actions and direct edits
+// each touch ONLY their own field. (The Moves tab's PP / PP-Ups views must never
+// cross-write -- this is the model-level guarantee the UI relies on.)
+void TestPokemonBox::move_ppAndPpUpIndependent()
+{
+  PokemonBox* p = makeMon(QStringLiteral("Bulbasaur"));
+  QVERIFY(p != nullptr);
+
+  PokemonMove* m = p->moves[0];
+  QVERIFY(m->moveID > 0);
+
+  // A known starting point: low PP, no PP-Ups.
+  m->changeMove(m->moveID, 1, 0);
+  QCOMPARE(m->pp, 1);
+  QCOMPARE(m->ppUp, 0);
+
+  // restorePP() fills PP to the cap and leaves PP-Ups alone.
+  m->restorePP();
+  QCOMPARE(m->pp, m->getMaxPP());
+  QCOMPARE(m->ppUp, 0);
+
+  // maxPpUp() sets PP-Ups to 3 and leaves the current PP value alone (it does NOT
+  // auto-refill PP, even though the cap rises).
+  const int ppBefore = m->pp;
+  m->maxPpUp();
+  QCOMPARE(m->ppUp, 3);
+  QCOMPARE(m->pp, ppBefore);
+
+  // Editing one field directly never disturbs the other.
+  m->pp = 5;          m->ppChanged();
+  QCOMPARE(m->ppUp, 3);
+  m->ppUp = 1;        m->ppUpChanged();
+  QCOMPARE(m->pp, 5);
 
   delete p;
 }
