@@ -582,11 +582,15 @@ was the follow-up redesign Twilight asked for.)
   accent header** (not the left pane). Below, the body switches on `isExchangeMode`: **Buy/Sell** → the
   two-pane shop (list + receipt); **Exchange** → a centered **converter card**. The shop list/receipt and
   the converter each bind their `model:` to `null` in the other mode so hidden delegates aren't built.
-- **Exchange = a money<->coins CONVERTER card** (not a list). Centered white card: both balances
-  **MONEY ⇄ COINS** large with the live resulting balance + `(±Δ)` under each (`exchangeMoney/CoinsAfter`/
-  `…Start`), and the two swap **lanes** (a `Repeater` over `brg.marketViewModel`'s money rows): `"₽ → ⭘"` /
-  `"⭘ → ₽"`, each a `StepPill` (spend) + a live `"= <get>"`. Direction per lane comes from the
-  `dataMoneyDir` role (1 = Money=>Coins). Footer Checkout commits.
+- **Exchange = a money<->coins CONVERTER card** (not a list). Centered white card: **MONEY (left) ⇄ COINS
+  (right)**, each a big live balance (`exchangeMoneyAfter`/`exchangeCoinsAfter`) with a **±Δ above**
+  (`deltaStr` vs `…Start`) and a Material accent **`Button` under it**: **"+ Coins"** (buys 1 coin, by
+  money) on the coins side, **"+ Money"** (sells 1 coin, for money) on the money side — each with the
+  **per-coin rate beneath** (`₽<buyRate>/coin`, `₽<sellRate>/coin`). The buttons drive one **net axis**
+  via `brg.marketModel.exchangeAdjust(±1)` (+Coins = +1, +Money = -1, so they cancel) / `exchangeNet()`;
+  `autoRepeat` for hold-to-bulk; `enabled` gated on the money/coin caps + affordability. Rates come from
+  `exchangeBuyRate`/`exchangeSellRate`. **Rate truth:** a coin costs `getBuyPrice()` (₽20) — the model's
+  `ItemMarketEntryMoney` treats `onCart` as *coins* (cost = rate·coins); don't invert it.
 - **`StepPill` inline component** is the shared `-/qty/+` pill (borderless `DefTextEdit`, a `live` guard so
   the initial fill doesn't write the model mid-incubation, and a `Connections` re-seat on external value
   change). Used by both shop rows and converter lanes — don't re-inline a stepper.

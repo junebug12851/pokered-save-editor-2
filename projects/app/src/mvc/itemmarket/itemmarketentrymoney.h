@@ -53,6 +53,12 @@ public:
   /// Coins=>Money (spend coins). Honours @ref forceDir, else the global buy flag.
   bool buying() const;
 
+  // The unit traded is ONE COIN (onCart = number of coins). A coin costs
+  // GameCornerDB buy price (~20) to buy and returns the sell price (~half) when
+  // sold -- the source of truth for the whole Game Corner / Mart economy.
+  int moneyDelta() const; ///< Signed money change for this row's onCart (-cost buying, +gain selling).
+  int coinsDelta() const; ///< Signed coins change for this row's onCart (+buying, -selling).
+
 public slots:
   virtual void checkout() override; ///< Apply the money/coins change.
 

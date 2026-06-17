@@ -638,118 +638,108 @@ Page {
             anchors.rightMargin: 22
             spacing: 16
 
-            // ---- Both balances with a swap glyph between them. ----
+            // ---- MONEY (left)  ⇄  COINS (right): each balance with a "+" button
+            //      that pulls from the OTHER side at the per-coin rate. ----
             RowLayout {
               Layout.fillWidth: true
-              spacing: 12
+              spacing: 10
 
-              // Money
+              // ===== MONEY (left): the "+ Money" button SELLS coins for money. =====
               ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 1
+                Layout.alignment: Qt.AlignTop
+                spacing: 4
+
+                Text {  // +/- change, above
+                  Layout.alignment: Qt.AlignHCenter
+                  visible: brg.marketModel.exchangeMoneyAfter !== brg.marketModel.exchangeMoneyStart
+                  text: topz.deltaStr(brg.marketModel.exchangeMoneyAfter,
+                                      brg.marketModel.exchangeMoneyStart, "₽")
+                  font.pixelSize: 13; font.bold: true
+                  color: brg.settings.textColorDark
+                }
                 Text {
-                  text: qsTr("MONEY")
-                  font.pixelSize: 11; font.letterSpacing: 1
+                  Layout.alignment: Qt.AlignHCenter
+                  text: qsTr("MONEY"); font.pixelSize: 11; font.letterSpacing: 1
                   color: brg.settings.textColorMid
                 }
                 Text {
+                  Layout.alignment: Qt.AlignHCenter
                   text: "₽" + brg.marketModel.exchangeMoneyAfter.toLocaleString()
-                  font.pixelSize: 22; font.bold: true
+                  font.pixelSize: 24; font.bold: true
                   color: (brg.marketModel.exchangeMoneyAfter < 0
                           || brg.marketModel.exchangeMoneyAfter > 999999)
                          ? brg.settings.errorColor : brg.settings.textColorDark
                 }
+                Button {
+                  Layout.fillWidth: true
+                  Layout.topMargin: 4
+                  text: qsTr("+ Money")
+                  autoRepeat: true; autoRepeatDelay: 350; autoRepeatInterval: 70
+                  Material.background: brg.settings.accentColor
+                  Material.foreground: brg.settings.textColorLight
+                  enabled: brg.marketModel.exchangeCoinsAfter >= 1
+                           && (brg.marketModel.exchangeMoneyAfter
+                               + brg.marketModel.exchangeSellRate) <= 999999
+                  onClicked: brg.marketModel.exchangeAdjust(-1)   // sell 1 coin
+                }
                 Text {
-                  visible: brg.marketModel.exchangeMoneyAfter !== brg.marketModel.exchangeMoneyStart
-                  text: topz.deltaStr(brg.marketModel.exchangeMoneyAfter,
-                                      brg.marketModel.exchangeMoneyStart, "₽")
-                  font.pixelSize: 12
+                  Layout.alignment: Qt.AlignHCenter
+                  text: "₽" + brg.marketModel.exchangeSellRate + qsTr(" / coin")
+                  font.pixelSize: 11
                   color: brg.settings.textColorMid
                 }
               }
 
               Text {
-                text: "⇄"
-                font.pixelSize: 26
+                Layout.alignment: Qt.AlignVCenter
+                text: "⇄"; font.pixelSize: 26
                 color: brg.settings.accentColor
               }
 
-              // Coins
+              // ===== COINS (right): the "+ Coins" button BUYS coins with money. =====
               ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 1
+                Layout.alignment: Qt.AlignTop
+                spacing: 4
+
                 Text {
-                  text: qsTr("COINS")
-                  font.pixelSize: 11; font.letterSpacing: 1
-                  horizontalAlignment: Text.AlignRight
-                  Layout.fillWidth: true
+                  Layout.alignment: Qt.AlignHCenter
+                  visible: brg.marketModel.exchangeCoinsAfter !== brg.marketModel.exchangeCoinsStart
+                  text: topz.deltaStr(brg.marketModel.exchangeCoinsAfter,
+                                      brg.marketModel.exchangeCoinsStart, "⭘")
+                  font.pixelSize: 13; font.bold: true
+                  color: brg.settings.textColorDark
+                }
+                Text {
+                  Layout.alignment: Qt.AlignHCenter
+                  text: qsTr("COINS"); font.pixelSize: 11; font.letterSpacing: 1
                   color: brg.settings.textColorMid
                 }
                 Text {
+                  Layout.alignment: Qt.AlignHCenter
                   text: "⭘" + brg.marketModel.exchangeCoinsAfter.toLocaleString()
-                  font.pixelSize: 22; font.bold: true
-                  horizontalAlignment: Text.AlignRight
-                  Layout.fillWidth: true
+                  font.pixelSize: 24; font.bold: true
                   color: (brg.marketModel.exchangeCoinsAfter < 0
                           || brg.marketModel.exchangeCoinsAfter > 9999)
                          ? brg.settings.errorColor : brg.settings.textColorDark
                 }
-                Text {
-                  visible: brg.marketModel.exchangeCoinsAfter !== brg.marketModel.exchangeCoinsStart
-                  text: topz.deltaStr(brg.marketModel.exchangeCoinsAfter,
-                                      brg.marketModel.exchangeCoinsStart, "⭘")
-                  font.pixelSize: 12
-                  horizontalAlignment: Text.AlignRight
+                Button {
                   Layout.fillWidth: true
-                  color: brg.settings.textColorMid
+                  Layout.topMargin: 4
+                  text: qsTr("+ Coins")
+                  autoRepeat: true; autoRepeatDelay: 350; autoRepeatInterval: 70
+                  Material.background: brg.settings.accentColor
+                  Material.foreground: brg.settings.textColorLight
+                  enabled: brg.marketModel.exchangeMoneyAfter >= brg.marketModel.exchangeBuyRate
+                           && brg.marketModel.exchangeCoinsAfter < 9999
+                  onClicked: brg.marketModel.exchangeAdjust(1)    // buy 1 coin
                 }
-              }
-            }
-
-            Rectangle { Layout.fillWidth: true; height: 1; color: brg.settings.dividerColor }
-
-            // ---- The two swap lanes (spend -> get), driven by the money rows. ----
-            Repeater {
-              model: brg.marketModel.isExchangeMode ? brg.marketViewModel : null
-
-              delegate: Item {
-                id: lane
-                Layout.fillWidth: true
-                Layout.preferredHeight: dataWhichType === "money" ? 44 : 0
-                visible: dataWhichType === "money"
-
-                // dataMoneyDir: 1 = Money=>Coins, 0 = Coins=>Money.
-                property bool toCoins: dataMoneyDir === 1
-                property string spendSym: toCoins ? "₽" : "⭘"
-                property string getSym: toCoins ? "⭘" : "₽"
-
-                RowLayout {
-                  anchors.fill: parent
-                  spacing: 10
-
-                  Text {
-                    Layout.preferredWidth: 92
-                    text: lane.spendSym + " → " + lane.getSym
-                    font.pixelSize: 14
-                    font.bold: true
-                    color: brg.settings.textColorDark
-                  }
-
-                  StepPill {
-                    Layout.alignment: Qt.AlignVCenter
-                    value: dataCartCount
-                    onLeft: dataOnCartLeft
-                    errored: !dataCanCheckout && dataCartCount > 0
-                    onCommit: (v) => dataCartCount = v
-                  }
-
-                  Text {
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                    text: "= " + lane.getSym + dataCartWorth.toLocaleString()
-                    font.pixelSize: 14
-                    color: brg.settings.textColorDark
-                  }
+                Text {
+                  Layout.alignment: Qt.AlignHCenter
+                  text: "₽" + brg.marketModel.exchangeBuyRate + qsTr(" / coin")
+                  font.pixelSize: 11
+                  color: brg.settings.textColorMid
                 }
               }
             }

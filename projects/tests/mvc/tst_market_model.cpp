@@ -99,6 +99,7 @@ private slots:
   void coinsMode_rowsAndRolesExercised();
   void cartModel_filtersToCartedRows();
   void exchangeMode_swapsMoneyForCoins();
+  void exchangeAdjust_netAxis();
   void unifiedCart_buyAndSellNetTogether();
 };
 
@@ -266,25 +267,60 @@ void TestMarketModel::exchangeMode_swapsMoneyForCoins()
 
   const int moneyStart = m_mkt->exchangeMoneyStart();
   const int coinsStart = m_mkt->exchangeCoinsStart();
-  if(moneyStart <= 0 ||
-     m_mkt->data(m_mkt->index(row), ItemMarketModel::OnCartLeftRole).toInt() <= 0) {
+  const int buyRate    = m_mkt->exchangeBuyRate();   // money cost of ONE coin (~20)
+  QVERIFY2(buyRate > 0, "game corner buy rate should be positive");
+  if(moneyStart < buyRate) {
     m_mkt->isExchangeMode = false; m_mkt->reUpdateAll();
-    QSKIP("player has no money/room to exchange");
+    QSKIP("player can't afford a single coin");
   }
 
+  // onCart = number of COINS. Buying 1 coin costs `buyRate` money and gains 1 coin.
   QVERIFY(m_mkt->setData(m_mkt->index(row), QVariant(1), ItemMarketModel::CartCountRole));
-
-  // The dual-currency preview mirrors checkout exactly: 1 money spent, coins gained.
-  QCOMPARE(m_mkt->exchangeMoneyAfter(), moneyStart - 1);
-  QVERIFY2(m_mkt->exchangeCoinsAfter() >= coinsStart,
-           "buying coins should not lower the coin balance");
+  QCOMPARE(m_mkt->exchangeMoneyAfter(), moneyStart - buyRate);
+  QCOMPARE(m_mkt->exchangeCoinsAfter(), coinsStart + 1);
 
   QVERIFY(m_mkt->canAnyCheckout());
   m_mkt->checkout();
-  QVERIFY2((int)m_file->data->dataExpanded->player->basics->money < moneyStart,
-           "exchanging money for coins did not lower the player's money");
+  QCOMPARE((int)m_file->data->dataExpanded->player->basics->money, moneyStart - buyRate);
+  QCOMPARE((int)m_file->data->dataExpanded->player->basics->coins, coinsStart + 1);
 
   m_mkt->isExchangeMode = false; // leave the shared fixture in buy/sell mode
+  m_mkt->reUpdateAll();
+}
+
+void TestMarketModel::exchangeAdjust_netAxis()
+{
+  // The converter drives ONE net coin axis: +Coins buys (net+1), +Money sells (net-1).
+  m_mkt->isExchangeMode = true;
+  m_mkt->reUpdateAll();
+
+  const int moneyStart = m_mkt->exchangeMoneyStart();
+  const int coinsStart = m_mkt->exchangeCoinsStart();
+  const int buyRate    = m_mkt->exchangeBuyRate();
+  const int sellRate   = m_mkt->exchangeSellRate();
+  QCOMPARE(m_mkt->exchangeNet(), 0);
+
+  if(moneyStart >= buyRate) {
+    m_mkt->exchangeAdjust(+1);                       // buy 1 coin
+    QCOMPARE(m_mkt->exchangeNet(), 1);
+    QCOMPARE(m_mkt->exchangeMoneyAfter(), moneyStart - buyRate);
+    QCOMPARE(m_mkt->exchangeCoinsAfter(), coinsStart + 1);
+    m_mkt->exchangeAdjust(-1);                        // +Money cancels it back to 0
+    QCOMPARE(m_mkt->exchangeNet(), 0);
+    QCOMPARE(m_mkt->exchangeMoneyAfter(), moneyStart);
+  }
+
+  if(coinsStart >= 1) {
+    m_mkt->exchangeAdjust(-1);                        // sell 1 coin
+    QCOMPARE(m_mkt->exchangeNet(), -1);
+    QCOMPARE(m_mkt->exchangeMoneyAfter(), moneyStart + sellRate);
+    QCOMPARE(m_mkt->exchangeCoinsAfter(), coinsStart - 1);
+  }
+
+  m_mkt->exchangeAdjust(-1000000);                    // clamps, never goes below owned coins
+  QVERIFY2(m_mkt->exchangeCoinsAfter() >= 0, "sold more coins than owned");
+
+  m_mkt->isExchangeMode = false;
   m_mkt->reUpdateAll();
 }
 

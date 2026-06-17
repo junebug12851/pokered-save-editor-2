@@ -17,6 +17,13 @@
 /**
  * @file itemmarketentrymoney.cpp
  * @brief Implementation of ItemMarketEntryMoney. See itemmarketentrymoney.h.
+ *
+ * Rate semantics (the fix): the traded unit is ONE COIN, and `onCart` is the number
+ * of coins. A coin costs GameCornerDB::getBuyPrice() money to BUY (~20 = ¥20/coin,
+ * straight from the game data) and returns getSellPrice() money when SOLD (the
+ * project's half-back policy). So buying N coins costs 20·N money; selling N coins
+ * returns 10·N money. (The earlier code multiplied coins by the rate, which inverted
+ * it -- 20 coins per ¥1.)
  */
 
 #include <QDebug>
@@ -26,8 +33,8 @@
 #include <pse-savefile/expanded/player/playerbasics.h>
 
 // Compatibility is Either/Either: these rows are only ever built into the dedicated
-// Exchange list now (never the buy/sell item lists), so they always pass the filter;
-// the swap direction comes from forceDir, not the global buy/sell flag.
+// Exchange list now, so they always pass the filter; the swap direction comes from
+// forceDir, not the global buy/sell flag.
 ItemMarketEntryMoney::ItemMarketEntryMoney(int forceDir)
   : ItemMarketEntry(CompatEither, CompatEither),
     forceDir(forceDir)
@@ -53,8 +60,8 @@ QString ItemMarketEntryMoney::_name()
   return tr("Coins => Money");
 }
 
-// An exception, Money is strictly a money exchange as in your always selling
-// something and therefore always have an in-stock value which has a limit.
+// Always "selling" something, so it always has an in-stock value: how many of the
+// SOURCE currency you hold (money when buying coins, coins when selling them).
 int ItemMarketEntryMoney::_inStockCount()
 {
   if(buying())
@@ -68,6 +75,7 @@ bool ItemMarketEntryMoney::_canSell()
   return true;
 }
 
+// The per-coin rate: cost to buy a coin, or money returned for selling one.
 int ItemMarketEntryMoney::_itemWorth()
 {
   if(buying())
@@ -81,36 +89,41 @@ QString ItemMarketEntryMoney::_whichType()
   return type;
 }
 
+int ItemMarketEntryMoney::moneyDelta() const
+{
+  const int rate = buying() ? GameCornerDB::inst()->getBuyPrice()
+                            : GameCornerDB::inst()->getSellPrice();
+  // Buying coins spends money; selling coins gains money.
+  return (buying() ? -rate : rate) * onCart;
+}
+
+int ItemMarketEntryMoney::coinsDelta() const
+{
+  // Buying gains coins; selling spends them.
+  return (buying() ? 1 : -1) * onCart;
+}
+
+// How many MORE coins can be added to the cart, bounded by both currencies' caps and
+// by what the player can afford / actually owns.
 int ItemMarketEntryMoney::onCartLeft()
 {
-  int ret = 0;
+  const int rate = buying() ? GameCornerDB::inst()->getBuyPrice()
+                            : GameCornerDB::inst()->getSellPrice();
+  if(rate <= 0)
+    return 0;
 
-  // Selling money to buy coins
+  int maxCoins = 0;
   if(buying()) {
-
-    //How much coins can we get
-    int coinsLeft = (9999 - player->coins) / itemWorth();
-
-    // How much coins can the player buy
-    int coinsBuyable = player->money - onCart; /// itemWorth();
-
-    // Return the smaller of the two
-    ret = qMin(coinsLeft - onCart, coinsBuyable);
+    const int coinCapRoom = 9999 - player->coins;       // coins fit under 9,999
+    const int affordable  = player->money / rate;       // coins you can pay for
+    maxCoins = qMin(coinCapRoom, affordable);
+  } else {
+    const int coinsOwned   = player->coins;             // coins you actually have
+    const int moneyCapRoom = (999999 - player->money) / rate; // money fits under 999,999
+    maxCoins = qMin(coinsOwned, moneyCapRoom);
   }
 
-  // Selling coins to buy money
-  else {
-    //How much money can we get
-    int moneyLeft = (999999 - player->money)  / itemWorth();
-
-    // How much money can the player buy
-    int moneyBuyable = player->coins - onCart; /// itemWorth();
-
-    // Return the smaller of the two
-    ret = qMin(moneyLeft - onCart, moneyBuyable);
-  }
-
-  return ret;
+  return maxCoins - onCart;
 }
 
 int ItemMarketEntryMoney::stackCount()
@@ -119,19 +132,17 @@ int ItemMarketEntryMoney::stackCount()
   return 0;
 }
 
-// Exchange-aware affordability. The base canCheckout() leans on the model-wide
-// moneyLeftover(), which is single-currency and excludes money rows -- meaningless
-// for a swap. Gate directly on the currency actually being spent instead.
+// Exchange-aware affordability: gate on the currency actually being spent.
 bool ItemMarketEntryMoney::canCheckout()
 {
   if(onCart <= 0)
     return false;
-  if(onCartLeft() < 0)        // destination would overflow its cap
+  if(onCartLeft() < 0)
     return false;
 
-  // buying() spends money (Money=>Coins); else spends coins (Coins=>Money).
-  return buying() ? (player->money >= onCart)
-                  : (player->coins >= onCart);
+  const int rate = GameCornerDB::inst()->getBuyPrice();
+  return buying() ? (player->money >= rate * onCart)   // can pay for the coins
+                  : (player->coins >= onCart);          // owns the coins to sell
 }
 
 void ItemMarketEntryMoney::checkout()
@@ -139,14 +150,8 @@ void ItemMarketEntryMoney::checkout()
   if(!canCheckout())
     return;
 
-  if(buying()) {
-    player->money -= onCart;
-    player->coins += cartWorth();
-  }
-  else {
-    player->money += cartWorth();
-    player->coins -= onCart;
-  }
+  player->money += moneyDelta();
+  player->coins += coinsDelta();
 
   player->moneyChanged();
   player->coinsChanged();

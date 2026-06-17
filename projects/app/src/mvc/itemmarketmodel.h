@@ -55,6 +55,8 @@ class ItemMarketModel : public QAbstractListModel
   Q_PROPERTY(int exchangeMoneyAfter READ exchangeMoneyAfter NOTIFY reUpdateValues) ///< Money after the cart's swaps.
   Q_PROPERTY(int exchangeCoinsStart READ exchangeCoinsStart NOTIFY reUpdateValues) ///< Coins before the exchange.
   Q_PROPERTY(int exchangeCoinsAfter READ exchangeCoinsAfter NOTIFY reUpdateValues) ///< Coins after the cart's swaps.
+  Q_PROPERTY(int exchangeBuyRate READ exchangeBuyRate NOTIFY reUpdateValues)        ///< Money cost to BUY one coin.
+  Q_PROPERTY(int exchangeSellRate READ exchangeSellRate NOTIFY reUpdateValues)      ///< Money returned for SELLING one coin.
 
   Q_PROPERTY(int totalCartWorth READ totalCartWorth NOTIFY reUpdateValues)        ///< Total cart value (-/+ = buy/sell).
   Q_PROPERTY(int totalCartCount READ totalCartCount NOTIFY reUpdateValues)        ///< Total items in the cart.
@@ -174,11 +176,17 @@ public:
   bool anyNotEnoughSpace(); ///< @see anyNotEnoughSpace property.
   bool canAnyCheckout();  ///< @see canAnyCheckout property.
 
-  // Exchange receipt totals (mirror the money rows' checkout deltas exactly).
+  // Exchange totals (mirror the money rows' checkout deltas exactly).
   int exchangeMoneyStart(); ///< @see exchangeMoneyStart property.
   int exchangeMoneyAfter(); ///< @see exchangeMoneyAfter property.
   int exchangeCoinsStart(); ///< @see exchangeCoinsStart property.
   int exchangeCoinsAfter(); ///< @see exchangeCoinsAfter property.
+  int exchangeBuyRate();    ///< @see exchangeBuyRate property.
+  int exchangeSellRate();   ///< @see exchangeSellRate property.
+
+  // The Exchange converter drives one net coin axis via two buttons.
+  Q_INVOKABLE int exchangeNet();                 ///< +N buying N coins / -N selling N coins.
+  Q_INVOKABLE void exchangeAdjust(int deltaCoins); ///< Nudge the net (+Coins = +1, +Money = -1).
 
   void onReUpdateValues(); ///< Recompute the derived totals.
 

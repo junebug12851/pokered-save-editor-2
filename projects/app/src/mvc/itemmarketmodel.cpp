@@ -319,13 +319,8 @@ int ItemMarketModel::exchangeMoneyAfter()
 
   for(auto el : itemListCache) {
     auto money = qobject_cast<ItemMarketEntryMoney*>(el);
-    if(money == nullptr || money->onCart <= 0)
-      continue;
-
-    if(money->buying())
-      m -= money->onCart;        // Money => Coins: money is spent
-    else
-      m += money->cartWorth();   // Coins => Money: money is received
+    if(money != nullptr)
+      m += money->moneyDelta();   // signed: -cost buying, +gain selling
   }
 
   return m;
@@ -337,16 +332,67 @@ int ItemMarketModel::exchangeCoinsAfter()
 
   for(auto el : itemListCache) {
     auto money = qobject_cast<ItemMarketEntryMoney*>(el);
-    if(money == nullptr || money->onCart <= 0)
-      continue;
-
-    if(money->buying())
-      c += money->cartWorth();   // Money => Coins: coins are received
-    else
-      c -= money->onCart;        // Coins => Money: coins are spent
+    if(money != nullptr)
+      c += money->coinsDelta();   // signed: +buying, -selling
   }
 
   return c;
+}
+
+int ItemMarketModel::exchangeBuyRate()
+{
+  return GameCornerDB::inst()->getBuyPrice();
+}
+
+int ItemMarketModel::exchangeSellRate()
+{
+  return GameCornerDB::inst()->getSellPrice();
+}
+
+// The two exchange rows are one net axis: +N = buying N coins (the Money=>Coins row),
+// -N = selling N coins (the Coins=>Money row). The +Coins / +Money buttons nudge this.
+int ItemMarketModel::exchangeNet()
+{
+  int net = 0;
+  for(auto el : itemListCache) {
+    auto money = qobject_cast<ItemMarketEntryMoney*>(el);
+    if(money == nullptr)
+      continue;
+    net += money->buying() ? money->onCart : -money->onCart;
+  }
+  return net;
+}
+
+void ItemMarketModel::exchangeAdjust(int deltaCoins)
+{
+  ItemMarketEntryMoney* buyRow = nullptr;   // Money => Coins
+  ItemMarketEntryMoney* sellRow = nullptr;  // Coins => Money
+  for(auto el : itemListCache) {
+    auto money = qobject_cast<ItemMarketEntryMoney*>(el);
+    if(money == nullptr)
+      continue;
+    if(money->buying()) buyRow = money; else sellRow = money;
+  }
+  if(buyRow == nullptr || sellRow == nullptr)
+    return;
+
+  // Work out the requested new net, then clamp it to what each side allows.
+  const int net = buyRow->onCart - sellRow->onCart;
+  int want = net + deltaCoins;
+
+  // Start both at zero so onCartLeft() reads the full available range per side.
+  buyRow->onCart = 0;
+  sellRow->onCart = 0;
+
+  if(want > 0) {
+    buyRow->onCart = qMin(want, buyRow->onCartLeft());   // cap at affordable / coin-cap
+  } else if(want < 0) {
+    sellRow->onCart = qMin(-want, sellRow->onCartLeft()); // cap at owned / money-cap
+  }
+
+  buyRow->onCartChanged();
+  sellRow->onCartChanged();
+  reUpdateValues();
 }
 
 void ItemMarketModel::onReUpdateValues()
