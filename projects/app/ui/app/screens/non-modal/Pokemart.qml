@@ -457,26 +457,27 @@ Page {
           Layout.preferredWidth: Math.round(paneRow.width * 0.37)
           color: "white"
 
+          // A tint section header matching the left list's section headers (same
+          // height/style) so the two panes line up under the one accent header above.
           Rectangle {
             id: receiptHeader
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
-            height: 45
-            color: brg.settings.accentColor
-            Material.foreground: brg.settings.textColorLight
-            Material.background: brg.settings.accentColor
+            height: topz.headH
+            color: Qt.rgba(0, 0, 0, 0.045)
             Text {
-              anchors.centerIn: parent
-              text: qsTr("Cart")
-              font.pixelSize: 18
-              color: brg.settings.textColorLight
-              Text {
-                anchors.left: parent.right; anchors.leftMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
-                visible: brg.marketModel.totalCartCount > 0
-                text: "x" + brg.marketModel.totalCartCount.toLocaleString()
-                font.pixelSize: 14
-                color: brg.settings.textColorLight
-              }
+              anchors.verticalCenter: parent.verticalCenter
+              anchors.left: parent.left; anchors.leftMargin: 14
+              text: brg.marketModel.totalCartCount > 0
+                    ? qsTr("CART") + "  ×" + brg.marketModel.totalCartCount.toLocaleString()
+                    : qsTr("CART")
+              font.pixelSize: 12; font.bold: true
+              font.capitalization: Font.AllUppercase; font.letterSpacing: 1
+              color: brg.settings.textColorMid
+            }
+            Rectangle {
+              anchors.left: parent.left; anchors.right: parent.right
+              anchors.bottom: parent.bottom
+              height: 1; color: brg.settings.dividerColor
             }
           }
 
@@ -647,29 +648,40 @@ Page {
               // ===== MONEY (left): the "+ Money" button SELLS coins for money. =====
               ColumnLayout {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1          // equal halves (50/50 with coins)
                 Layout.alignment: Qt.AlignTop
                 spacing: 4
 
-                Text {  // +/- change, above
-                  Layout.alignment: Qt.AlignHCenter
-                  visible: brg.marketModel.exchangeMoneyAfter !== brg.marketModel.exchangeMoneyStart
-                  text: topz.deltaStr(brg.marketModel.exchangeMoneyAfter,
-                                      brg.marketModel.exchangeMoneyStart, "₽")
-                  font.pixelSize: 13; font.bold: true
-                  color: brg.settings.textColorDark
-                }
                 Text {
                   Layout.alignment: Qt.AlignHCenter
                   text: qsTr("MONEY"); font.pixelSize: 11; font.letterSpacing: 1
                   color: brg.settings.textColorMid
                 }
-                Text {
+                // Big balance with the +/- change as a small superscript at top-right.
+                Item {
                   Layout.alignment: Qt.AlignHCenter
-                  text: "₽" + brg.marketModel.exchangeMoneyAfter.toLocaleString()
-                  font.pixelSize: 24; font.bold: true
-                  color: (brg.marketModel.exchangeMoneyAfter < 0
-                          || brg.marketModel.exchangeMoneyAfter > 999999)
-                         ? brg.settings.errorColor : brg.settings.textColorDark
+                  implicitWidth: mRow.implicitWidth
+                  implicitHeight: mRow.implicitHeight
+                  Row {
+                    id: mRow
+                    spacing: 3
+                    Text {
+                      id: mNum
+                      text: "₽" + brg.marketModel.exchangeMoneyAfter.toLocaleString()
+                      font.pixelSize: 24; font.bold: true
+                      color: (brg.marketModel.exchangeMoneyAfter < 0
+                              || brg.marketModel.exchangeMoneyAfter > 999999)
+                             ? brg.settings.errorColor : brg.settings.textColorDark
+                    }
+                    Text {
+                      anchors.top: mNum.top
+                      visible: brg.marketModel.exchangeMoneyAfter !== brg.marketModel.exchangeMoneyStart
+                      text: topz.deltaStr(brg.marketModel.exchangeMoneyAfter,
+                                          brg.marketModel.exchangeMoneyStart, "₽")
+                      font.pixelSize: 11; font.bold: true
+                      color: brg.settings.textColorMid
+                    }
+                  }
                 }
                 Button {
                   Layout.fillWidth: true
@@ -700,29 +712,39 @@ Page {
               // ===== COINS (right): the "+ Coins" button BUYS coins with money. =====
               ColumnLayout {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1          // equal halves (50/50 with money)
                 Layout.alignment: Qt.AlignTop
                 spacing: 4
 
                 Text {
                   Layout.alignment: Qt.AlignHCenter
-                  visible: brg.marketModel.exchangeCoinsAfter !== brg.marketModel.exchangeCoinsStart
-                  text: topz.deltaStr(brg.marketModel.exchangeCoinsAfter,
-                                      brg.marketModel.exchangeCoinsStart, "⭘")
-                  font.pixelSize: 13; font.bold: true
-                  color: brg.settings.textColorDark
-                }
-                Text {
-                  Layout.alignment: Qt.AlignHCenter
                   text: qsTr("COINS"); font.pixelSize: 11; font.letterSpacing: 1
                   color: brg.settings.textColorMid
                 }
-                Text {
+                Item {
                   Layout.alignment: Qt.AlignHCenter
-                  text: "⭘" + brg.marketModel.exchangeCoinsAfter.toLocaleString()
-                  font.pixelSize: 24; font.bold: true
-                  color: (brg.marketModel.exchangeCoinsAfter < 0
-                          || brg.marketModel.exchangeCoinsAfter > 9999)
-                         ? brg.settings.errorColor : brg.settings.textColorDark
+                  implicitWidth: cRow.implicitWidth
+                  implicitHeight: cRow.implicitHeight
+                  Row {
+                    id: cRow
+                    spacing: 3
+                    Text {
+                      id: cNum
+                      text: "⭘" + brg.marketModel.exchangeCoinsAfter.toLocaleString()
+                      font.pixelSize: 24; font.bold: true
+                      color: (brg.marketModel.exchangeCoinsAfter < 0
+                              || brg.marketModel.exchangeCoinsAfter > 9999)
+                             ? brg.settings.errorColor : brg.settings.textColorDark
+                    }
+                    Text {
+                      anchors.top: cNum.top
+                      visible: brg.marketModel.exchangeCoinsAfter !== brg.marketModel.exchangeCoinsStart
+                      text: topz.deltaStr(brg.marketModel.exchangeCoinsAfter,
+                                          brg.marketModel.exchangeCoinsStart, "⭘")
+                      font.pixelSize: 11; font.bold: true
+                      color: brg.settings.textColorMid
+                    }
+                  }
                 }
                 Button {
                   Layout.fillWidth: true
