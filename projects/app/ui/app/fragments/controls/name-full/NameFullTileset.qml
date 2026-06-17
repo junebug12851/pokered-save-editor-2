@@ -38,7 +38,7 @@ ComboBox {
     "Museum",
     "Overworld",
     "Plateau",
-    "Pokecenter",
+    "Pokécenter",
     "Reds House 1",
     "Reds House 2",
     "Ship",

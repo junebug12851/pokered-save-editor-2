@@ -23,8 +23,9 @@ Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` rang
 - 👉 For a **mature, complete** editor today, use the original:
   **<https://github.com/junebug12851/pokered-save-editor>**. This reboot will supersede it once it
   leaves WIP.
-- This editor targets **original Red/Blue `.sav` files only**. It is **not** built for Pokémon Bank,
-  Pokémon Home, or the Virtual Console releases, and makes no effort to support that pipeline.
+- This editor targets the **US English release of Pokémon Red & Blue** — **original `.sav` files only**.
+  It is **not** built for other localizations (Japanese, the European languages), Pokémon Bank, Pokémon
+  Home, or the Virtual Console releases, and makes no effort to support that pipeline.
 
 ---
 
@@ -47,7 +48,7 @@ Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` rang
 
 ## What it is
 
-Pokered Save Editor 2 reads a 32 KB Pokémon Red/Blue battery save, **expands** it into a full tree of
+Pokered Save Editor 2 reads a 32 KB **US English** Pokémon Red/Blue battery save, **expands** it into a full tree of
 editable C++ objects, lets you change things through a native desktop UI, and **flattens** your edits
 back to disk.
 

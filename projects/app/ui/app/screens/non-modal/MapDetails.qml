@@ -84,7 +84,7 @@ Page {
     // Daycare (Pokemon in Daycare)
     if(mapInd === 72)
       iconsModel.append({
-                          name: "Pokemon",
+                          name: "Pokémon",
                           iconSrc: "qrc:/assets/icons/fontawesome/baby-carriage.svg"
                         });
 

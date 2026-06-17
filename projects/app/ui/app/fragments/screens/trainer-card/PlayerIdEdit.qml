@@ -56,7 +56,7 @@ MouseArea {
     }
 
     MainToolTip {
-      text: qsTr("Determines if your Pokemon are traded or not. 4 Characters each 0-9 or A-F.")
+      text: qsTr("Determines if your Pokémon are traded or not. 4 Characters each 0-9 or A-F.")
     }
 
     Connections {

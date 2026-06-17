@@ -56,8 +56,8 @@ Rectangle {
 
         MainToolTip {
           text: (statsTglBtn.text == "DV")
-                ? "These are set on capture and never change in-game, they help affect the stats making each Pokemon unique. HP is a 5th DV that's calculated from the other DV."
-                : "These are zero on capture and increase after every battle until maxed out. They slowly increase based on each opponent defeated and help make each Pokemon unique."
+                ? "These are set on capture and never change in-game, they help affect the stats making each Pokémon unique. HP is a 5th DV that's calculated from the other DV."
+                : "These are zero on capture and increase after every battle until maxed out. They slowly increase based on each opponent defeated and help make each Pokémon unique."
         }
       }
 

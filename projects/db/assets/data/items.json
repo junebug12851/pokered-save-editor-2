@@ -21,7 +21,7 @@
   {
     "name": "POKE BALL",
     "ind": 4,
-    "readable": "Poke Ball",
+    "readable": "Poké Ball",
     "price": 200
   },
   {
@@ -53,7 +53,7 @@
     "name": "POKEDEX",
     "ind": 9,
     "glitch": true,
-    "readable": "Pokedex"
+    "readable": "Pokédex"
   },
   {
     "name": "MOON STONE",
@@ -305,7 +305,7 @@
   {
     "name": "POKE DOLL",
     "ind": 51,
-    "readable": "Poke Doll",
+    "readable": "Poké Doll",
     "price": 1000
   },
   {
@@ -439,7 +439,7 @@
     "name": "POKE FLUTE",
     "ind": 73,
     "once": true,
-    "readable": "Poke Flute"
+    "readable": "Poké Flute"
   },
   {
     "name": "LIFT KEY",

@@ -154,11 +154,11 @@ void Router::loadScreens()
   // Non-Modal
   screens.insert("home", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Home"), "qrc:/ui/app/screens/non-modal/Home.qml"));
   screens.insert("trainerCard", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Trainer Card"), "qrc:/ui/app/screens/non-modal/TrainerCard.qml"));
-  screens.insert("pokedex", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokedex"), "qrc:/ui/app/screens/non-modal/Pokedex.qml"));
+  screens.insert("pokedex", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokédex"), "qrc:/ui/app/screens/non-modal/Pokedex.qml"));
   screens.insert("bag", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Items"), "qrc:/ui/app/screens/non-modal/Bag.qml"));
   screens.insert("pokemart", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Market"), "qrc:/ui/app/screens/non-modal/Pokemart.qml"));
-  screens.insert("pokemon", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokemon"), "qrc:/ui/app/screens/non-modal/Pokemon.qml"));
-  screens.insert("pokemonDetails", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokemon Details"), "qrc:/ui/app/screens/non-modal/PokemonDetails.qml", false));
+  screens.insert("pokemon", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokémon"), "qrc:/ui/app/screens/non-modal/Pokemon.qml"));
+  screens.insert("pokemonDetails", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokémon Details"), "qrc:/ui/app/screens/non-modal/PokemonDetails.qml", false));
   screens.insert("rival", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Rival"), "qrc:/ui/app/screens/non-modal/Rival.qml"));
   screens.insert("maps", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Maps"), "qrc:/ui/app/screens/non-modal/Maps.qml"));
   screens.insert("mapDetails", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Map Details"), "qrc:/ui/app/screens/non-modal/MapDetails.qml", false));

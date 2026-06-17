@@ -237,7 +237,7 @@ void TestBridge::router_navigateAndClose()
   // Navigate to a registered non-modal screen, then back. closeScreen() guards
   // against popping the root, so this round-trips without underflowing the stack.
   r->changeScreen(QStringLiteral("pokedex"));
-  QCOMPARE(r->title, QStringLiteral("Pokedex"));
+  QCOMPARE(r->title, QStringLiteral("Pokédex"));
   r->changeScreen(QStringLiteral("bag"));
   QCOMPARE(r->title, QStringLiteral("Items"));
   r->closeScreen();

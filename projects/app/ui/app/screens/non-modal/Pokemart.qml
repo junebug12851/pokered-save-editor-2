@@ -289,7 +289,7 @@ Page {
         // Venue: Pokemart (money) / Game Corner (coins) / Exchange (money<->coins).
         SegStrip {
           anchors.verticalCenter: parent.verticalCenter
-          options: ["Pokemart", "Game Corner", "Exchange"]
+          options: ["Poké Mart", "Game Corner", "Exchange"]
           currentIndex: brg.marketModel.isExchangeMode
                         ? 2 : (brg.marketModel.isMoneyCurrency ? 0 : 1)
           onPicked: (i) => {

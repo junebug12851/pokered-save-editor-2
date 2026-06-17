@@ -96,17 +96,17 @@ Page {
       }
       MenuItem { text: "Reset"; onTriggered: boxData.resetPokemon();
         MainToolTip {
-          text: qsTr("Reset this Pokemon back to a level 5 Pokemon including all moves and other data.")
+          text: qsTr("Reset this Pokémon back to a level 5 Pokémon including all moves and other data.")
         }
       }
       MenuItem { text: "Evolve"; onTriggered: boxData.evolve(); enabled: boxData.hasEvolution
         MainToolTip {
-          text: qsTr("Evolve this Pokemon")
+          text: qsTr("Evolve this Pokémon")
         }
       }
       MenuItem { text: "De-Evolve"; onTriggered: boxData.deEvolve(); enabled: boxData.hasDeEvolution
         MainToolTip {
-          text: qsTr("De-Evolve this Pokemon")
+          text: qsTr("De-Evolve this Pokémon")
         }
       }
       MenuSeparator { }

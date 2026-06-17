@@ -107,7 +107,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: qsTr("Pokemon Move")
+        text: qsTr("Pokémon Move")
       }
     }
 
@@ -160,7 +160,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: qsTr("Pokemon PP")
+        text: qsTr("Pokémon PP")
       }
     }
 

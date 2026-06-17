@@ -70,7 +70,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: qsTr("The Pokemon's species, glitch Pokemon are available.")
+        text: qsTr("The Pokémon's species, glitch Pokémon are available.")
       }
     }
 
@@ -133,7 +133,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: qsTr("Pokemon level from 1 to 100, pokemon below level 5 could cause underflow bugs as per gen 1 game issues.")
+        text: qsTr("Pokémon level from 1 to 100, pokemon below level 5 could cause underflow bugs as per gen 1 game issues.")
       }
     }
 
@@ -155,7 +155,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: qsTr("The Pokemon's status, sleep also has number of turns left.")
+        text: qsTr("The Pokémon's status, sleep also has number of turns left.")
       }
     }
   }
@@ -359,7 +359,7 @@ Rectangle {
       }
 
       MainToolTip {
-        text: qsTr("HP Left from the Pokemon's maximum")
+        text: qsTr("HP Left from the Pokémon's maximum")
       }
     }
   }

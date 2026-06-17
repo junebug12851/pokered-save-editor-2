@@ -127,9 +127,9 @@ Menu {
   }
 
   MenuItem {
-    text: qsTr("Pokecenter")
-    enabled: brg.settings.previewTileset !== "Pokecenter"
-    onTriggered: brg.settings.previewTileset = "Pokecenter"
+    text: qsTr("Pokécenter")
+    enabled: brg.settings.previewTileset !== "Pokécenter"
+    onTriggered: brg.settings.previewTileset = "Pokécenter"
   }
 
   MenuItem {

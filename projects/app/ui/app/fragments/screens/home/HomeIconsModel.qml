@@ -2,7 +2,7 @@
 //
 // A ListModel of {name, iconSrc, page, disabled} entries for the Home IconsView.
 // `page` is the router screen key (e.g. "trainerCard", "pokedex", "bag"); entries
-// with an empty page ("Options", "Hall of Fame", "Event Pokemon") are placeholders
+// with an empty page ("Options", "Hall of Fame", "Event Pokémon") are placeholders
 // for not-yet-implemented screens. `disabled: true` greys the tile out and makes it
 // non-clickable (see IconDelegate.qml) — used for not-yet-available screens.
 import QtQuick
@@ -18,7 +18,7 @@ ListModel {
     disabled: false
   }
   ListElement {
-    name: "Pokedex"
+    name: "Pokédex"
     iconSrc: "qrc:/assets/icons/poke-go/pokedex.svg"
     page: "pokedex"
     disabled: false
@@ -30,7 +30,7 @@ ListModel {
     disabled: false
   }
   ListElement {
-    name: "Pokemon"
+    name: "Pokémon"
     iconSrc: "qrc:/assets/icons/poke-go/pikachu-2.svg"
     page: "pokemon"
     disabled: false
@@ -60,7 +60,7 @@ ListModel {
     disabled: true
   }
   ListElement {
-    name: "Event Pokemon"
+    name: "Event Pokémon"
     iconSrc: "qrc:/assets/icons/poke-go/mew.svg"
     page: ""
     disabled: true

@@ -152,7 +152,7 @@ Page {
         }
 
         MainToolTip {
-          text: qsTr("Set at start of game and determines your rivals team, namely which Pokemon he has growing with him.")
+          text: qsTr("Set at start of game and determines your rivals team, namely which Pokémon he has growing with him.")
         }
       }
     }
