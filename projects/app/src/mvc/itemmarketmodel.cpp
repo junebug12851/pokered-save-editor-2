@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <QCollator>
+#include <QSet>
 
 #include "./itemmarketmodel.h"
 #include "./itemmarket/itemmarketentry.h"
@@ -408,6 +409,68 @@ bool ItemMarketModel::vendorListItem(ItemDBEntry* el)
   return el->canSell() && (el->buyPriceCoins() > 0) && !el->isGameCornerExclusive();
 }
 
+// Is this item stocked by a *reachable* Poke-Mart in Gen 1 R/B? "Buyable" means it
+// appears in the union of every referenced mart inventory in pokered
+// data/items/marts.asm. The two unused/unreferenced clerks (the bike shop and a
+// stray spare-mart text) are deliberately excluded -- their stock is never
+// purchasable in-game, and every item they list is sold elsewhere anyway.
+//
+// Indices are the stable game item IDs (ItemDBEntry::getInd), so this needs no JSON
+// data. A priced item that is NOT here is sellable-only ("Unbuyable Items"); a buyer
+// can BUY *and* SELL anything that is here ("Normal Items").
+bool ItemMarketModel::buyableInMart(ItemDBEntry* el) const
+{
+  static const QSet<int> kMartStock = {
+    4,   // POKE BALL
+    3,   // GREAT BALL
+    2,   // ULTRA BALL
+    20,  // POTION
+    19,  // SUPER POTION
+    18,  // HYPER POTION
+    17,  // MAX POTION
+    16,  // FULL RESTORE
+    11,  // ANTIDOTE
+    12,  // BURN HEAL
+    13,  // ICE HEAL
+    14,  // AWAKENING
+    15,  // PARLYZ HEAL
+    52,  // FULL HEAL
+    53,  // REVIVE
+    29,  // ESCAPE ROPE
+    30,  // REPEL
+    56,  // SUPER REPEL
+    57,  // MAX REPEL
+    32,  // FIRE STONE
+    33,  // THUNDER STONE
+    34,  // WATER STONE
+    47,  // LEAF STONE
+    35,  // HP UP
+    36,  // PROTEIN
+    37,  // IRON
+    38,  // CARBOS
+    39,  // CALCIUM
+    46,  // X ACCURACY
+    55,  // GUARD SPEC
+    58,  // DIRE HIT
+    65,  // X ATTACK
+    66,  // X DEFEND
+    67,  // X SPEED
+    68,  // X SPECIAL
+    51,  // POKE DOLL
+    201, // TM01 MEGA PUNCH    (Celadon Dept. TM counter)
+    202, // TM02 RAZOR WIND
+    205, // TM05 MEGA KICK
+    207, // TM07 HORN DRILL
+    209, // TM09 TAKE DOWN
+    217, // TM17 SUBMISSION
+    232, // TM32 DOUBLE TEAM
+    233, // TM33 REFLECT
+    237, // TM37 EGG BOMB
+  };
+
+  return kMartStock.contains(el->getInd());
+}
+
 void ItemMarketModel::checkout()
 {
   // Perform checkout
@@ -496,35 +559,36 @@ void ItemMarketModel::buildMartItemList()
   collator.setNumericMode(true);
   collator.setIgnorePunctuation(true);
 
-  // Gather normal repeatable items and sort by name, then add into list
+  auto sortByName = [&collator](QVector<ItemDBEntry*>& v)
+  {
+    std::sort(v.begin(), v.end(),
+              [&collator](const ItemDBEntry* a, const ItemDBEntry* b)
+    {
+      return collator.compare(a->getReadable(), b->getReadable()) < 0;
+    });
+  };
+
+  auto appendItems = [this](const QVector<ItemDBEntry*>& v)
+  {
+    for(auto el : v)
+      itemListCache.append(new ItemMarketEntryStoreItem(el, itemBag, itemStorage));
+  };
+
   QVector<ItemDBEntry*> tmp;
-  QVector<GameCornerDBEntry*> tmpGC;
 
   /////////////////////////////////////////////////
-
+  // Game Corner inventory (coins only): the coins-priced Game-Corner-exclusive
+  // items plus the Pokemon prizes.
   if(!isMoneyCurrency) {
-    itemListCache.append(new ItemMarketEntryMessage("Pokemon Inventory"));
+    itemListCache.append(new ItemMarketEntryMessage("Inventory"));
 
     for(auto el : ItemsDB::inst()->getStore()) {
       if(el->isGameCornerExclusive())
         tmp.append(el);
     }
-
-    std::sort(
-          tmp.begin(),
-          tmp.end(),
-          [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
-    {
-      return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
-    });
-
-    for(auto el : tmp) {
-      itemListCache.append(new ItemMarketEntryStoreItem(el, itemBag, itemStorage));
-    }
-
+    sortByName(tmp);
+    appendItems(tmp);
     tmp.clear();
-
-    //////////////////////////////////////////////
 
     for(auto el : GameCornerDB::inst()->getStore()) {
       if(el->getType() == "pokemon")
@@ -533,49 +597,43 @@ void ItemMarketModel::buildMartItemList()
   }
 
   /////////////////////////////////////////////////
-
-  itemListCache.append(new ItemMarketEntryMessage("Normal Items"));
+  // Normal (non-glitch) priced items, split by real Gen-1 buyability:
+  //   * Normal Items    -- stocked by a reachable mart: you can BUY *and* SELL them.
+  //   * Unbuyable Items -- priced (so SELLABLE) but sold by no mart, e.g. Nugget,
+  //                        Rare Candy, Max Revive, the vending-machine drinks, and
+  //                        every TM that isn't on the Celadon shelf.
+  // vendorListItem() is the price gate (a positive buy price in the active currency,
+  // and not a Game-Corner exclusive). An item with no price in this currency lands in
+  // neither list -- there is no way to buy *or* sell it, so it is shown nowhere. This
+  // matches pokered data/items/prices.asm, where price 0 means "cannot be priced/sold"
+  // (Master Ball, Moon Stone, the PP restoratives, key items, ...).
+  QVector<ItemDBEntry*> normalItems;
+  QVector<ItemDBEntry*> unbuyableItems;
 
   for(auto el : ItemsDB::inst()->getStore()) {
-    if(!el->getOnce() && !el->getGlitch() && vendorListItem(el))
-      tmp.append(el);
+    if(el->getOnce() || el->getGlitch() || !vendorListItem(el))
+      continue;
+    (buyableInMart(el) ? normalItems : unbuyableItems).append(el);
   }
 
-  std::sort(
-        tmp.begin(),
-        tmp.end(),
-        [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
-  {
-    return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
-  });
+  itemListCache.append(new ItemMarketEntryMessage("Normal Items"));
+  sortByName(normalItems);
+  appendItems(normalItems);
 
-  for(auto el : tmp) {
-    itemListCache.append(new ItemMarketEntryStoreItem(el, itemBag, itemStorage));
-  }
-
-  tmp.clear();
+  itemListCache.append(new ItemMarketEntryMessage("Unbuyable Items"));
+  sortByName(unbuyableItems);
+  appendItems(unbuyableItems);
 
   ////////////////////////////////////////////////////
-
+  // Glitch items (unchanged): any glitch item that still carries a price.
   itemListCache.append(new ItemMarketEntryMessage("Glitch Items"));
 
   for(auto el : ItemsDB::inst()->getStore()) {
     if(el->getGlitch() && vendorListItem(el))
       tmp.append(el);
   }
-
-  std::sort(
-        tmp.begin(),
-        tmp.end(),
-        [&collator](const ItemDBEntry* item1, const ItemDBEntry* item2)
-  {
-    return collator.compare(item1->getReadable(), item2->getReadable()) < 0;
-  });
-
-  for(auto el : tmp) {
-    itemListCache.append(new ItemMarketEntryStoreItem(el, itemBag, itemStorage));
-  }
-
+  sortByName(tmp);
+  appendItems(tmp);
   tmp.clear();
 
   for(int i = from; i < itemListCache.size(); i++)

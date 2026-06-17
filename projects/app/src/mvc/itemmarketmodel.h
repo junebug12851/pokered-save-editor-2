@@ -191,7 +191,8 @@ public:
   void onReUpdateValues(); ///< Recompute the derived totals.
 
   // Re-create list cache methods
-  bool vendorListItem(ItemDBEntry* el); ///< Should @p el appear in the store list?
+  bool vendorListItem(ItemDBEntry* el); ///< Should @p el appear in the store list (has a price here)?
+  bool buyableInMart(ItemDBEntry* el) const; ///< Is @p el stocked by a reachable Gen-1 mart (buyable)?
   void clearList();           ///< Empty the row cache.
   void buildList();           ///< Build the rows for the current mode.
   void buildPlayerItemList(); ///< Build rows from the player's items.
