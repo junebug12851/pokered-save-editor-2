@@ -54,6 +54,9 @@ ItemDBEntry::ItemDBEntry(const QJsonValue& data)
 
   if(data["price"].isDouble())
     price = data["price"].toDouble();
+
+  if(data["info"].isString())
+    info = data["info"].toString();
 }
 
 void ItemDBEntry::deepLink()
@@ -152,6 +155,11 @@ MoveDBEntry* ItemDBEntry::getToMove() const
 int ItemDBEntry::getPrice() const
 {
     return price;
+}
+
+QString ItemDBEntry::getInfo() const
+{
+    return info;
 }
 
 int ItemDBEntry::getHm() const

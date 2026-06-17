@@ -39,6 +39,14 @@ ItemMarketEntryPlayerItem::ItemMarketEntryPlayerItem(ItemStorageBox* toBox,
 
 ItemMarketEntryPlayerItem::~ItemMarketEntryPlayerItem() {}
 
+QString ItemMarketEntryPlayerItem::infoText()
+{
+  if(!toItem)
+    return QString();
+  auto itemData = toItem->toItem();
+  return (itemData != nullptr) ? itemData->getInfo() : QString();
+}
+
 QString ItemMarketEntryPlayerItem::_name()
 {
   if(!toItem || !requestFilter())   // toItem may have been freed (stale entry)

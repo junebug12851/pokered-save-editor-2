@@ -10,7 +10,8 @@
     "name": "ULTRA BALL",
     "ind": 2,
     "readable": "Ultra Ball",
-    "price": 1200
+    "price": 1200,
+    "info": "The strongest standard Poké Ball (after the Master Ball), with a high catch rate. Sold at the later Poké Marts — Fuchsia, Cinnabar, Saffron and the Indigo Plateau."
   },
   {
     "name": "GREAT BALL",
@@ -47,7 +48,8 @@
     "ind": 8,
     "glitch": true,
     "readable": "Safari Ball",
-    "price": 1000
+    "price": 1000,
+    "info": "Item ID 0x08 — the special ball used only inside the Safari Zone. It cannot normally be carried or obtained elsewhere, so it is flagged as a glitch entry here; in battle it behaves like a Poké Ball."
   },
   {
     "name": "POKEDEX",
@@ -119,7 +121,8 @@
     "name": "POTION",
     "ind": 20,
     "readable": "Potion",
-    "price": 300
+    "price": 300,
+    "info": "A basic medicine that restores 20 HP. Stocked by nearly every Poké Mart and found throughout the early game — the cheapest healing item you can buy."
   },
   {
     "name": "BOULDER BADGE",
@@ -239,7 +242,8 @@
     "name": "RARE CANDY",
     "ind": 40,
     "readable": "Rare Candy",
-    "price": 4800
+    "price": 4800,
+    "info": "Instantly raises one Pokémon by a level. No shop sells it — every Rare Candy is found in the world, hidden or lying on the ground (Mt. Moon, the Rocket Hideout, Cerulean Cave, the Safari Zone and more)."
   },
   {
     "name": "DOME FOSSIL",
@@ -293,14 +297,16 @@
     "name": "NUGGET",
     "ind": 49,
     "readable": "Nugget",
-    "price": 10000
+    "price": 10000,
+    "info": "A pure-gold nugget with no use other than selling — it fetches a high price. In-game it is a found item (several are hidden or lying on the ground), and one is the reward for clearing the trainers on Nugget Bridge (Route 24)."
   },
   {
     "name": "PP UP 2",
     "ind": 50,
     "glitch": true,
     "readable": "PP Up 2",
-    "price": 9800
+    "price": 9800,
+    "info": "Item ID 0x32 — an unused, unnamed item slot in the game data (the disassembly calls it ITEM_32). It is not obtainable in normal play and has no defined behavior; it appears only because the slot exists."
   },
   {
     "name": "POKE DOLL",
@@ -324,7 +330,8 @@
     "name": "MAX REVIVE",
     "ind": 54,
     "readable": "Max Revive",
-    "price": 4000
+    "price": 4000,
+    "info": "Revives a fainted Pokémon and fully restores its HP. Not stocked by any Mart — it is only found in the field, in places like the Pokémon Mansion, the Power Plant, Cerulean Cave and Victory Road."
   },
   {
     "name": "GUARD SPEC",
@@ -355,25 +362,29 @@
     "ind": 59,
     "glitch": true,
     "readable": "Coin",
-    "price": 10
+    "price": 10,
+    "info": "Item ID 0x3B — the Game Corner 'coin' represented as a bag item. Coins are really tracked by a separate counter (the Coin Case), not as a normal item, so a Coin sitting in the bag is a glitch state."
   },
   {
     "name": "FRESH WATER",
     "ind": 60,
     "readable": "Fresh Water",
-    "price": 200
+    "price": 200,
+    "info": "A bottle of water that restores 50 HP. Bought from the vending machines on the roof of the Celadon Department Store for ₽200 — also handy for the thirsty Saffron City guard, who lets you pass for a drink."
   },
   {
     "name": "SODA POP",
     "ind": 61,
     "readable": "Soda Pop",
-    "price": 300
+    "price": 300,
+    "info": "A fizzy soda that restores 60 HP. Sold by the Celadon Dept. Store roof vending machines for ₽300; the Saffron City guard will accept one as well."
   },
   {
     "name": "LEMONADE",
     "ind": 62,
     "readable": "Lemonade",
-    "price": 350
+    "price": 350,
+    "info": "A sweet drink that restores 80 HP — the best-value roof vending-machine drink at ₽350 (Celadon Dept. Store). The Saffron City guard will take one too."
   },
   {
     "name": "S.S. TICKET",

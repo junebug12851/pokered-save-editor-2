@@ -137,6 +137,9 @@ public:
     // For a money/exchange row: its fixed direction (1 = Money=>Coins, 0 = Coins=>
     // Money); -1 for non-money rows. Lets the Exchange converter label each lane.
     MoneyDirRole,
+
+    // Detailed-tooltip text for the row (what the item is / how it's obtained).
+    InfoRole,
   };
 
   /// The four combined modes (returned by whichMode()).

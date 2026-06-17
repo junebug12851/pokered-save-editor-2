@@ -370,6 +370,14 @@ Page {
 
                 HoverHandler { id: rowHover }
 
+                // Detailed (help-mode) tooltip: what the item is / how it's obtained.
+                // Shows only when the header "?" toggle is on and the item has info.
+                DetailToolTip {
+                  title: dataName
+                  text: dataInfo
+                  hovered: rowHover.hovered
+                }
+
                 Rectangle {
                   anchors.fill: parent
                   color: rowHover.hovered

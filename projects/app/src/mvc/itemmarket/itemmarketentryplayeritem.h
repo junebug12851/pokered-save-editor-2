@@ -50,6 +50,7 @@ public:
   virtual QString _whichType() override;  ///< @copydoc ItemMarketEntry::_whichType
   virtual int onCartLeft() override;      ///< @copydoc ItemMarketEntry::onCartLeft
   virtual int stackCount() override;      ///< @copydoc ItemMarketEntry::stackCount
+  virtual QString infoText() override;    ///< @copydoc ItemMarketEntry::infoText
 
 public slots:
   virtual void checkout() override; ///< Sell the item (remove qty, credit balance).

@@ -45,6 +45,11 @@ ItemMarketEntryStoreItem::ItemMarketEntryStoreItem(
 
 ItemMarketEntryStoreItem::~ItemMarketEntryStoreItem() {}
 
+QString ItemMarketEntryStoreItem::infoText()
+{
+  return (data != nullptr) ? data->getInfo() : QString();
+}
+
 StackReturn ItemMarketEntryStoreItem::calculateStacks()
 {
   if(!requestFilter())

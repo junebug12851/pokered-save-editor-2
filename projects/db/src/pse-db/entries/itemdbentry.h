@@ -53,6 +53,7 @@ struct DB_AUTOPORT ItemDBEntry : public QObject {
   Q_PROPERTY(int     getTm       READ getTm       CONSTANT) ///< TM number, if a TM.
   Q_PROPERTY(int     getHm       READ getHm       CONSTANT) ///< HM number, if an HM.
   Q_PROPERTY(int     getPrice    READ getPrice    CONSTANT) ///< Base price.
+  Q_PROPERTY(QString getInfo     READ getInfo     CONSTANT) ///< Detailed-tooltip lore: what it is / how it's obtained.
   Q_PROPERTY(int     buyPriceMoney          READ buyPriceMoney          CONSTANT) ///< Buy price in money.
   Q_PROPERTY(int     buyPriceCoins          READ buyPriceCoins          CONSTANT) ///< Buy price in coins.
   Q_PROPERTY(int     sellPriceMoney         READ sellPriceMoney         CONSTANT) ///< Sell price in money.
@@ -75,6 +76,7 @@ public:
   int     getTm()       const; ///< @see getTm property.
   int     getHm()       const; ///< @see getHm property.
   int     getPrice()    const; ///< @see getPrice property.
+  QString getInfo()     const; ///< @see getInfo property.
   int     buyPriceMoney()         const; ///< @see buyPriceMoney property.
   int     buyPriceCoins()         const; ///< @see buyPriceCoins property.
   int     sellPriceMoney()        const; ///< @see sellPriceMoney property.
@@ -114,6 +116,7 @@ protected:
   int     tm       = -1;  ///< Backing field (read via getTm()).
   int     hm       = -1;  ///< Backing field (read via getHm()).
   int     price    = -1;  ///< Backing field (read via getPrice()).
+  QString info     = "";  ///< Backing field (read via getInfo()); optional "info" in items.json.
 
   MoveDBEntry*       toMove       = nullptr; ///< Resolved taught move (deepLink).
   GameCornerDBEntry* toGameCorner = nullptr; ///< Resolved Game Corner entry (deepLink).

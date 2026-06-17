@@ -120,6 +120,10 @@ public:
   QString whichType();     ///< Cached type label.
   virtual QString _whichType() = 0; ///< Subtype: report the type label.
 
+  // Detailed-tooltip text for this row (what it is / how it's obtained). Empty by
+  // default (messages, money); item rows override to return their DB entry's info.
+  virtual QString infoText() { return QString(); } ///< Detailed-tooltip body (default none).
+
   // Stack count of this item
   // This goes for all types, anything that takes up more than one stack
   // Pokemon are a stack of 1, Items are a stack of 99, Money and others don't
