@@ -162,9 +162,6 @@ Rectangle {
 
   Rectangle {
     id: statsData
-//    width: (statsDataValid.visible)
-//           ? statsDataValid.implicitWidth
-//           : statsDataInvalid.implicitWidth
 
     anchors.top: topBar.bottom
     anchors.topMargin: 15
@@ -282,9 +279,7 @@ Rectangle {
       anchors.rightMargin: 10
 
       from: 0
-      to: (boxData.isValidBool || boxData.hpStat === "phony")
-          ? getTo()
-          : getTo()
+      to: getTo()
 
       Material.foreground: brg.settings.textColorDark
       Material.background: brg.settings.textColorLight
@@ -313,9 +308,7 @@ Rectangle {
         width: hpEdit.availableWidth
         height: implicitHeight
         radius: 2
-        color: hpEdit.value === "phony"
-               ? hpEdit.getColor()
-               : hpEdit.getColor()
+        color: hpEdit.getColor()
 
         Rectangle {
           width: hpEdit.visualPosition * parent.width

@@ -225,7 +225,7 @@ Rectangle {
 
         MenuItem { text: "Restore PP"; onTriggered: { monMove.restorePP(); } enabled: !monMove.isMaxPP }
         MenuItem { text: "Re-Roll"; onTriggered: { monMove.randomize(); } }
-        MenuItem { text: "Corect Move"; onTriggered: { monMove.correctMove(); } }
+        MenuItem { text: "Correct Move"; onTriggered: { monMove.correctMove(); } }
 
         MenuSeparator { }
         MenuItem { text: "Close" }

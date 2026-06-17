@@ -715,6 +715,11 @@ width minus 16 (`anchors.right` + `rightMargin: 16`) and make a middle element (
 `Layout.fillWidth` so the trailing control is pulled inside the reserved lane when space is tight. **This
 keeps coming back — whenever you add a right-edge control to a scrollable list/grid, reserve the 16px.**
 
+The Pokémon details **General tab** (`OverviewTab.qml`) was the latest to get this (2026-06-16): it had
+shipped with `width: scroller.availableWidth` (no `- 16`), so its Nickname / OT Name / OT ID ⋮ menus sat
+under the scrollbar. Fixed to `- 16`, and the Exp slider's one-off `Layout.rightMargin: 25` was dropped in
+favour of the same lane (a `fillWidth` slider in a lane-reserved column — no per-control magic margin).
+
 ## Sliders: value tooltip on hover + quick fade
 
 Sliders without a separate readout (HP, EV) show their value in a tooltip on **hover and press**,

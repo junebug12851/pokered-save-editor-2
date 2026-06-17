@@ -31,6 +31,12 @@ Rectangle {
 
   property PokemonBox boxData: null
 
+  // One height knob per control type so rows stay consistently sized despite
+  // Material text fields and combos having different natural heights (see
+  // ui-patterns.md -> "Field heights").
+  property int textH: 30   // text boxes (shorter)
+  property int comboH: 38  // combos (a touch taller)
+
   // Close details screen if the file data changes
   Connections {
     target: brg.file.data
@@ -55,7 +61,10 @@ Rectangle {
     contentWidth: availableWidth
 
     ColumnLayout {
-      width: scroller.availableWidth
+      // -16 reserves the Material scrollbar lane so the trailing ⋮ menu buttons
+      // (and the Exp slider) don't sit under the overlay scrollbar and become
+      // unclickable (see ui-patterns.md -> "Scrollable forms").
+      width: scroller.availableWidth - 16
       spacing: 4
 
       // ---- Nickname ----
@@ -119,6 +128,7 @@ Rectangle {
           id: type1
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: font.pixelSize * 8
+          Layout.preferredHeight: top.comboH
 
           onActivated: boxData.type1 = currentValue;
           Component.onCompleted: currentIndex = brg.typesModel.valToIndex(boxData.type1);
@@ -136,6 +146,7 @@ Rectangle {
           type2: true
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: font.pixelSize * 8
+          Layout.preferredHeight: top.comboH
 
           onActivated: boxData.type2 = currentValue;
           Component.onCompleted: currentIndex = brg.typesModel.valToIndex(boxData.type2);
@@ -162,6 +173,7 @@ Rectangle {
           id: otNameEdit
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: font.pixelSize * 10
+          Layout.preferredHeight: top.textH
 
           onTextChanged: boxData.otName = text;
           Component.onCompleted: text = boxData.otName;
@@ -214,6 +226,7 @@ Rectangle {
           id: otIDEdit
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: 4 * font.pixelSize + leftPadding + rightPadding
+          Layout.preferredHeight: top.textH
           maximumLength: 4
 
           onTextChanged: {
@@ -280,7 +293,6 @@ Rectangle {
         Slider {
           id: nextExpEdit
           Layout.fillWidth: true
-          Layout.rightMargin: 25
           Layout.alignment: Qt.AlignVCenter
 
           enabled: boxData.level < 100 || !boxData.isValidBool
@@ -321,6 +333,7 @@ Rectangle {
           id: catchRateEdit
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: 4 * font.pixelSize + leftPadding + rightPadding
+          Layout.preferredHeight: top.textH
           maximumLength: 3
 
           onTextChanged: {
@@ -361,6 +374,7 @@ Rectangle {
           id: futureNatureEdit
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredWidth: font.pixelSize * 10
+          Layout.preferredHeight: top.comboH
 
           onActivated: boxData.setNature(currentValue);
           Component.onCompleted: currentIndex = brg.natureSelectModel.natureToListIndex(boxData.getNature);
