@@ -47,7 +47,9 @@ Rectangle {
       anchors.bottom: parent.bottom
       anchors.bottomMargin: 2
 
-      width: font.pixelSize * 14
+      // Narrowed (was font*14) so the species/level/status header fits the slimmer
+      // GlancePane; Gen 1 names are <=10 chars so font*10 stays comfortable.
+      width: font.pixelSize * 10
 
       onActivated: {
         if(currentValue === boxData.species)

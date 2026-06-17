@@ -35,14 +35,19 @@ Rectangle {
 
     font.capitalization: Font.Capitalize
 
+    // Snug, content-width tabs (Material stretches them edge-to-edge by default,
+    // which left huge gaps); padding gives a little breathing room without spreading.
     TabButton {
       text: qsTr("General")
+      width: implicitContentWidth + 28
     }
     TabButton {
       text: qsTr("DV/EV")
+      width: implicitContentWidth + 28
     }
     TabButton {
       text: qsTr("Moves")
+      width: implicitContentWidth + 28
     }
   }
 
