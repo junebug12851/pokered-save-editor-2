@@ -950,3 +950,23 @@ wash; a 1px left divider shows except when `first` or `active`. Wrap N in the sa
   zero drift. Same shape for the `[DV|EV]` switch (`active: statKind === "DV"`,
   `onClicked: statKind = "DV"`).
 - This removed the tab's last `CheckBox` **and** its ⋮ menus — the details editor is now ⋮-menu-free.
+
+### Segmented active segment: round the fill's outer corners (the "Market" flat-edge)
+
+When a segment in a rounded, `clip:true` group is filled (an **active** `SegSel`, or any hover/press
+wash on an **end** segment), its corner shows up **square** where the group is rounded — because
+`clip: true` on a `Rectangle` clips to the *bounding box*, not the rounded radius. The Pokémart
+segmented strips have this same bug. Fix: don't rely on clip — give the segment's **fill** per-corner
+radii (Qt 6.7+): `topLeftRadius`/`bottomLeftRadius` when the segment is `first`, and
+`topRightRadius`/`bottomRightRadius` when it's `last` (a `last` flag added alongside `first`), each
+equal to the group's `radius`. Middle segments keep all-0. Now the fill follows the group's rounded
+corners. Used by both `SegSel` and `SegBtn` in `StatsTab.qml`; the same fix would clean up the
+Pokémart strips.
+
+### Custom "to-line" icons (`arrow-left-to-line` / `arrow-right-to-line`)
+
+For min/max-style actions, `|←` (to minimum) and `→|` (to maximum) read far better than vertical
+chevrons. They weren't in the FA subset, so they're **hand-authored** SVGs in
+`assets/icons/fontawesome/` (a `<rect>` bar + an arrow `<path>`, viewBox `0 0 512 512`, **plain black
+fill** so a Button's `icon.color` tints them like the real FA icons). Any new icon must also be added
+to `app.qrc` (the file list is explicit, no wildcard) — then RCC rebakes it on the next build.
