@@ -409,18 +409,21 @@ bool ItemMarketModel::vendorListItem(ItemDBEntry* el)
   return el->canSell() && (el->buyPriceCoins() > 0) && !el->isGameCornerExclusive();
 }
 
-// Is this item stocked by a *reachable* Poke-Mart in Gen 1 R/B? "Buyable" means it
-// appears in the union of every referenced mart inventory in pokered
-// data/items/marts.asm. The two unused/unreferenced clerks (the bike shop and a
-// stray spare-mart text) are deliberately excluded -- their stock is never
-// purchasable in-game, and every item they list is sold elsewhere anyway.
+// Is this item sold by a reachable vendor in the actual Gen 1 R/B game? True = a real
+// shop stocks it (so it's "Normal"); false = the game only ever lets you find/sell it,
+// never buy it (so it's "Special"). EITHER way the editor can buy *and* sell it -- this
+// only labels the in-game availability, it does not gate the editor.
 //
-// Indices are the stable game item IDs (ItemDBEntry::getInd), so this needs no JSON
-// data. A priced item that is NOT here is sellable-only ("Unbuyable Items"); a buyer
-// can BUY *and* SELL anything that is here ("Normal Items").
-bool ItemMarketModel::buyableInMart(ItemDBEntry* el) const
+// "Buyable in game" = the union of every referenced Poke-Mart inventory (pokered
+// data/items/marts.asm) PLUS the Celadon-roof vending machine (data/items/
+// vending_prices.asm: Fresh Water, Soda Pop, Lemonade). The two unused/unreferenced
+// mart clerks (the bike shop and a stray spare-mart text) are excluded -- never
+// reachable, and everything they list is sold elsewhere anyway.
+//
+// Indices are the stable game item IDs (ItemDBEntry::getInd), so this needs no JSON.
+bool ItemMarketModel::buyableInGame(ItemDBEntry* el) const
 {
-  static const QSet<int> kMartStock = {
+  static const QSet<int> kBuyable = {
     4,   // POKE BALL
     3,   // GREAT BALL
     2,   // ULTRA BALL
@@ -457,6 +460,9 @@ bool ItemMarketModel::buyableInMart(ItemDBEntry* el) const
     67,  // X SPEED
     68,  // X SPECIAL
     51,  // POKE DOLL
+    60,  // FRESH WATER        (Celadon roof vending machine)
+    61,  // SODA POP           (Celadon roof vending machine)
+    62,  // LEMONADE           (Celadon roof vending machine)
     201, // TM01 MEGA PUNCH    (Celadon Dept. TM counter)
     202, // TM02 RAZOR WIND
     205, // TM05 MEGA KICK
@@ -468,7 +474,17 @@ bool ItemMarketModel::buyableInMart(ItemDBEntry* el) const
     237, // TM37 EGG BOMB
   };
 
-  return kMartStock.contains(el->getInd());
+  return kBuyable.contains(el->getInd());
+}
+
+// The three Celadon-roof vending-machine drinks (pokered data/items/vending_prices.asm).
+// They ARE buyable in-game (so buyableInGame() is true for them too), but the vending
+// machine is a separate vendor from the Mart, so they get their own "Vending Machine"
+// group rather than sitting in Normal Items.
+bool ItemMarketModel::isVendingItem(ItemDBEntry* el) const
+{
+  const int i = el->getInd();
+  return i == 60 || i == 61 || i == 62; // Fresh Water, Soda Pop, Lemonade
 }
 
 void ItemMarketModel::checkout()
@@ -597,32 +613,44 @@ void ItemMarketModel::buildMartItemList()
   }
 
   /////////////////////////////////////////////////
-  // Normal (non-glitch) priced items, split by real Gen-1 buyability:
-  //   * Normal Items    -- stocked by a reachable mart: you can BUY *and* SELL them.
-  //   * Unbuyable Items -- priced (so SELLABLE) but sold by no mart, e.g. Nugget,
-  //                        Rare Candy, Max Revive, the vending-machine drinks, and
-  //                        every TM that isn't on the Celadon shelf.
-  // vendorListItem() is the price gate (a positive buy price in the active currency,
-  // and not a Game-Corner exclusive). An item with no price in this currency lands in
-  // neither list -- there is no way to buy *or* sell it, so it is shown nowhere. This
-  // matches pokered data/items/prices.asm, where price 0 means "cannot be priced/sold"
-  // (Master Ball, Moon Stone, the PP restoratives, key items, ...).
+  // Normal (non-glitch) priced items. Anything with a discernible price is buyable AND
+  // sellable *in the editor* (it infers a buy price, a half-value sell price, and a
+  // coin/money equivalent). They're grouped by how the real game treats them:
+  //   * Normal Items   -- a Poke-Mart shelf also sells it in-game (buy + sell everywhere).
+  //   * Vending Machine-- the three Celadon-roof drinks; buyable in-game, but from a
+  //                       separate vendor, so they get their own group.
+  //   * Special Items  -- the game only lets you find/sell it, never buy it (Nugget,
+  //                       Rare Candy, Max Revive, every TM that isn't on a Celadon shelf)
+  //                       -- still fully buyable + sellable here in the editor.
+  // vendorListItem() is the price gate; an item with no price anywhere (pokered
+  // prices.asm 0 / absent -- Master Ball, Moon Stone, the PP restoratives, the key
+  // items) has no way to buy or sell and is listed in none of these sections.
   QVector<ItemDBEntry*> normalItems;
-  QVector<ItemDBEntry*> unbuyableItems;
+  QVector<ItemDBEntry*> vendingItems;
+  QVector<ItemDBEntry*> specialItems;
 
   for(auto el : ItemsDB::inst()->getStore()) {
     if(el->getOnce() || el->getGlitch() || !vendorListItem(el))
       continue;
-    (buyableInMart(el) ? normalItems : unbuyableItems).append(el);
+    if(isVendingItem(el))
+      vendingItems.append(el);
+    else if(buyableInGame(el))
+      normalItems.append(el);
+    else
+      specialItems.append(el);
   }
 
   itemListCache.append(new ItemMarketEntryMessage("Normal Items"));
   sortByName(normalItems);
   appendItems(normalItems);
 
-  itemListCache.append(new ItemMarketEntryMessage("Unbuyable Items"));
-  sortByName(unbuyableItems);
-  appendItems(unbuyableItems);
+  itemListCache.append(new ItemMarketEntryMessage("Vending Machine"));
+  sortByName(vendingItems);
+  appendItems(vendingItems);
+
+  itemListCache.append(new ItemMarketEntryMessage("Special Items"));
+  sortByName(specialItems);
+  appendItems(specialItems);
 
   ////////////////////////////////////////////////////
   // Glitch items (unchanged): any glitch item that still carries a price.

@@ -192,7 +192,8 @@ public:
 
   // Re-create list cache methods
   bool vendorListItem(ItemDBEntry* el); ///< Should @p el appear in the store list (has a price here)?
-  bool buyableInMart(ItemDBEntry* el) const; ///< Is @p el stocked by a reachable Gen-1 mart (buyable)?
+  bool buyableInGame(ItemDBEntry* el) const; ///< Is @p el sold by a reachable Gen-1 vendor (Normal vs Special)?
+  bool isVendingItem(ItemDBEntry* el) const; ///< Is @p el a Celadon vending-machine drink (its own group)?
   void clearList();           ///< Empty the row cache.
   void buildList();           ///< Build the rows for the current mode.
   void buildPlayerItemList(); ///< Build rows from the player's items.
