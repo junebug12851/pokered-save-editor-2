@@ -95,6 +95,7 @@ Build speed restored s13c (over-includes trimmed). `dllimport` warning silenced 
 | Trainer-card layout — centered box, compact fields, clock width | ✅ confirmed |
 | Randomize name (full editor + trainer screen) | ✅ |
 | Pokémon **editor** responsiveness + layout/styling | ✅ confirmed |
+| Pokémon editor **Moves tab** — grouped-panel restyle + drag-to-reorder (`reorderMove`) | ✅ tests green; in-app review pending |
 | Name editors (nickname / player / rival) — popup + full keyboard | ✅ iterated |
 | Player/rival name + player ID — atomic commit-on-finish, no hang, no OT corruption | ✅ |
 | Tileset picker — every tile clickable; no freeze on variable render | ✅ |

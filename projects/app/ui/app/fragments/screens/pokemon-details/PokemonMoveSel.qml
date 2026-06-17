@@ -11,31 +11,37 @@ import "../../general"
 import "../../header"
 import "../../controls/selection"
 
-// PokemonMoveSel.qml -- one of the four move rows in the Moves tab.
+// PokemonMoveSel.qml -- the inner controls of one move row in the Moves tab.
 //
-// Bound to a PokemonMove (monMove). A type-colored pill holding the move combo
-// (SelectMove), the move's type, an editable PP field, "/ maxPP", and an overflow
-// menu (PP-Up sub-menu, All-Moves bulk ops, restore PP, re-roll, correct). The
-// getColor() type palette is from Bulbapedia (CC-BY-NC-SA) -- keep the
-// attribution comment.
-//
-// One move row: a colored (by type) pill containing the move selector, its
-// type, PP / max-PP, and a ⋮ menu. Compact height; the move combo fills the
-// leftover width so the row always fits the pane and the trailing items (incl.
-// the ⋮ menu) stay inside it instead of overflowing onto the stats pane.
-Rectangle {
+// Bound to a PokemonMove (monMove). Rendered inside MovesTab's grouped panel as a
+// zebra row, so this component is just the controls (transparent background, no
+// pill) following the General-tab design language: a type-COLOR accent strip +
+// type chip carry the move's identity, then the move combo (SelectMove, fills the
+// leftover width), an editable PP field, "/ maxPP", and a ⋮ overflow menu (PP-Up
+// sub-menu, per-move restore/re-roll/correct, All-Moves bulk ops). The grip handle
+// and drag-to-reorder live in MovesTab (the row owns the drag; this owns the
+// controls). The getColor() type palette is from Bulbapedia (CC-BY-NC-SA) -- keep
+// the attribution comment.
+Item {
   id: top
   property PokemonMove monMove: null
-  property int rowH: 34
+  // The owning Pokemon -- needed for the All-Moves bulk ops and the species
+  // change hook. Passed in by MovesTab (a separate component can't see the
+  // parent file's properties by bare name, and PokemonMove::parentMon is a plain
+  // C++ member, not a Q_PROPERTY, so it isn't reachable from QML).
+  property PokemonBox boxData: null
+  property int rowH: 40
 
-  radius: 0
+  property bool filled: monMove !== null && monMove.moveID !== 0
+
   implicitHeight: rowH
-  color: getColor()
 
   // Thanks to Bulbapedia
   // bulbapedia.bulbagarden.net/wiki/Category:Type_color_templates
   // Licensed: CC-BY-NC-SA 2.5 (creativecommons.org/licenses/by-nc-sa/2.5)
   function getColor() {
+    if(monMove === null)
+      return "#E5D6D0";
     if(monMove.moveType === "Normal")
       return "#A8A878";
     else if(monMove.moveType === "Fighting")
@@ -73,9 +79,20 @@ Rectangle {
 
   RowLayout {
     anchors.fill: parent
-    anchors.leftMargin: 10
+    anchors.leftMargin: 4
     anchors.rightMargin: 6
-    spacing: 4
+    spacing: 8
+
+    // Type-color accent strip -- the move's type identity in the otherwise neutral
+    // grouped panel (replaces the old full-row colored pill). Empty slots show a
+    // faint neutral strip so the column edge stays aligned.
+    Rectangle {
+      Layout.alignment: Qt.AlignVCenter
+      Layout.preferredWidth: 5
+      Layout.preferredHeight: top.rowH - 12
+      radius: 2.5
+      color: top.filled ? top.getColor() : Qt.rgba(0, 0, 0, 0.10)
+    }
 
     SelectMove {
       id: moveSelect
@@ -84,8 +101,8 @@ Rectangle {
       Layout.minimumWidth: 60
       Layout.preferredHeight: top.rowH
 
-      onActivated: { monMove.moveID = currentValue; }
-      Component.onCompleted: currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
+      onActivated: { if(monMove) monMove.moveID = currentValue; }
+      Component.onCompleted: if(monMove) currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
 
       Connections {
         target: monMove
@@ -95,14 +112,15 @@ Rectangle {
       Connections {
         target: brg.moveSelectModel
         function onMonChanged() {
-          moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
+          if(monMove) moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
         }
       }
 
       Connections {
-        target: boxData
+        target: top.boxData
+        ignoreUnknownSignals: true
         function onSpeciesChanged() {
-          moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
+          if(monMove) moveSelect.currentIndex = brg.moveSelectModel.moveToListIndex(monMove.moveID);
         }
       }
 
@@ -111,25 +129,31 @@ Rectangle {
       }
     }
 
-    Text {
-      visible: monMove.moveID !== 0
-
+    // Type name chip -- a faint type-tinted pill so the type reads at a glance.
+    Rectangle {
+      visible: top.filled
       Layout.alignment: Qt.AlignVCenter
-      horizontalAlignment: Text.AlignHCenter
-      Layout.preferredWidth: font.pixelSize * 4
-      color: brg.settings.textColorDark
+      Layout.preferredHeight: 20
+      implicitWidth: typeChipText.implicitWidth + 16
+      radius: 10
+      color: Qt.lighter(top.getColor(), 1.35)
 
-      text: monMove.moveType
-      font.pixelSize: 13
-      font.capitalization: Font.Capitalize
+      Text {
+        id: typeChipText
+        anchors.centerIn: parent
+        text: top.filled ? monMove.moveType : ""
+        color: brg.settings.textColorDark
+        font.pixelSize: 12
+        font.capitalization: Font.Capitalize
+      }
     }
 
     DefTextEdit {
       id: movePPEdit
-      visible: monMove.moveID !== 0
+      visible: top.filled
 
       Layout.alignment: Qt.AlignVCenter
-      Layout.preferredHeight: top.rowH
+      Layout.preferredHeight: top.rowH - 8
       horizontalAlignment: Text.AlignHCenter
 
       // PP is at most 2 digits; size for 2 chars + a little padding (trimmed).
@@ -140,7 +164,7 @@ Rectangle {
       color: brg.settings.textColorDark
 
       onTextChanged: {
-        if(text === "")
+        if(text === "" || monMove === null)
           return;
 
         var idDec = parseInt(text, 10);
@@ -152,7 +176,7 @@ Rectangle {
 
         monMove.pp = idDec;
       }
-      Component.onCompleted: text = monMove.pp.toString(10);
+      Component.onCompleted: text = monMove ? monMove.pp.toString(10) : "";
 
       Connections {
         target: monMove
@@ -165,29 +189,27 @@ Rectangle {
     }
 
     Text {
-      visible: monMove.moveID !== 0
+      visible: top.filled
       Layout.alignment: Qt.AlignVCenter
       horizontalAlignment: Text.AlignHCenter
-      color: brg.settings.textColorDark
+      color: brg.settings.textColorMid
       text: "/"
       font.pixelSize: 13
-      font.capitalization: Font.Capitalize
     }
 
     Text {
-      visible: monMove.moveID !== 0
+      visible: top.filled
       Layout.alignment: Qt.AlignVCenter
       horizontalAlignment: Text.AlignHCenter
-      color: brg.settings.textColorDark
-      text: monMove.getMaxPP
+      color: brg.settings.textColorMid
+      text: top.filled ? monMove.getMaxPP : ""
       font.pixelSize: 13
-      font.capitalization: Font.Capitalize
     }
 
     IconButtonSquare {
-      visible: monMove.moveID !== 0
+      visible: top.filled
       Layout.alignment: Qt.AlignVCenter
-      Layout.leftMargin: 8
+      Layout.leftMargin: 4
 
       icon.width: 7
       icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
@@ -201,31 +223,33 @@ Rectangle {
         Menu {
           title: qsTr("PP Up")
 
-          MenuItem { text: "Currently: " + monMove.ppUp + "/3"}
+          MenuItem { text: "Currently: " + (top.filled ? monMove.ppUp : 0) + "/3"}
           MenuSeparator { }
-          MenuItem { text: "Max Out"; onTriggered: { monMove.maxPpUp(); } enabled: monMove.ppUp < 3 }
-          MenuItem { text: "Raise"; onTriggered: { monMove.raisePpUp(); } enabled: monMove.ppUp < 3 }
-          MenuItem { text: "Lower"; onTriggered: { monMove.lowerPpUp(); } enabled: monMove.ppUp > 0 }
-          MenuItem { text: "Reset"; onTriggered: { monMove.resetPpUp(); } enabled: monMove.ppUp > 0 }
+          MenuItem { text: "Max Out"; onTriggered: { if(monMove) monMove.maxPpUp(); } enabled: top.filled && monMove.ppUp < 3 }
+          MenuItem { text: "Raise"; onTriggered: { if(monMove) monMove.raisePpUp(); } enabled: top.filled && monMove.ppUp < 3 }
+          MenuItem { text: "Lower"; onTriggered: { if(monMove) monMove.lowerPpUp(); } enabled: top.filled && monMove.ppUp > 0 }
+          MenuItem { text: "Reset"; onTriggered: { if(monMove) monMove.resetPpUp(); } enabled: top.filled && monMove.ppUp > 0 }
         }
 
         Menu {
           title: qsTr("All Moves")
 
-          MenuItem { text: "Clear All"; onTriggered: { boxData.clearMoves(); } }
-          MenuItem { text: "Re-Roll All"; onTriggered: { boxData.randomizeMoves(); } }
-          MenuItem { text: "Correct All"; onTriggered: { boxData.correctMoves(); } }
-          MenuItem { text: "Move Empty"; onTriggered: { boxData.cleanupMoves(); } }
+          MenuItem { text: "Clear All"; onTriggered: { if(top.boxData) top.boxData.clearMoves(); } }
+          MenuItem { text: "Re-Roll All"; onTriggered: { if(top.boxData) top.boxData.randomizeMoves(); } }
+          MenuItem { text: "Correct All"; onTriggered: { if(top.boxData) top.boxData.correctMoves(); } }
+          MenuItem { text: "Move Empty"; onTriggered: { if(top.boxData) top.boxData.cleanupMoves(); } }
           MenuItem { text: "Correct / Move"; onTriggered: {
-              boxData.correctMoves();
-              boxData.cleanupMoves();
+              if(top.boxData) {
+                top.boxData.correctMoves();
+                top.boxData.cleanupMoves();
+              }
             }
           }
         }
 
-        MenuItem { text: "Restore PP"; onTriggered: { monMove.restorePP(); } enabled: !monMove.isMaxPP }
-        MenuItem { text: "Re-Roll"; onTriggered: { monMove.randomize(); } }
-        MenuItem { text: "Correct Move"; onTriggered: { monMove.correctMove(); } }
+        MenuItem { text: "Restore PP"; onTriggered: { if(monMove) monMove.restorePP(); } enabled: top.filled && !monMove.isMaxPP }
+        MenuItem { text: "Re-Roll"; onTriggered: { if(monMove) monMove.randomize(); } }
+        MenuItem { text: "Correct Move"; onTriggered: { if(monMove) monMove.correctMove(); } }
 
         MenuSeparator { }
         MenuItem { text: "Close" }

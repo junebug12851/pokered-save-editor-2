@@ -472,6 +472,15 @@ public slots:
 
   void changeMove(int ind, int moveID = 0, int pp = 0, int ppUp = 0); ///< Set move slot @p ind.
 
+  /// Reorder the filled move slots: take the move at @p from and re-insert it
+  /// before slot @p to (drop-slot convention: 0..movesCount; == movesCount
+  /// appends after the last move). Only the filled prefix participates (empty
+  /// slots stay parked at the bottom, per game move-list compaction). The fixed
+  /// PokemonMove slot objects keep their identity -- the (id/pp/ppUp) VALUES move
+  /// between them -- so QML's movesAt() pointers stay valid. Writes only the move
+  /// bytes the reorder touches; nothing else in the save changes.
+  Q_INVOKABLE void reorderMove(int from, int to);
+
   void manualSpeciesChanged(); ///< UI hook: species edited directly.
   void manualLevelChanged();   ///< UI hook: level edited directly.
 

@@ -667,6 +667,46 @@ was the follow-up redesign Twilight asked for.)
   `FooterButton.qml` (`hoverEnabled: enabled`); see `qt-patterns.md` → "Disabled control keeps its
   hover highlight".
 
+## Pokémon details — Moves tab (the standard for this tab)
+
+`fragments/screens/pokemon-details/MovesTab.qml` + `PokemonMoveSel.qml`. Same grouped-panel language as
+the General/DV-EV tabs: a `ScrollView` → one white bordered panel → a `Repeater` of the **four move
+slots** as zebra rows, with the **16px scrollbar lane** reserved on the `ColumnLayout` (see "Scrollable
+forms"). `MovesTab` owns the **layout + drag**; `PokemonMoveSel` owns the **controls** (so the row drag
+mechanics don't fight the combo/PP field).
+
+- **Row look (type accent, not a pill).** The old whole-row type-colored pill is gone. Each filled row
+  keeps its type identity with a **colored left accent strip** (`getColor()`, the Bulbapedia CC-BY-NC-SA
+  palette — keep the attribution) + a **faint type chip** (`Qt.lighter(getColor(),1.35)`); then the
+  `SelectMove` combo (`fillWidth`), PP `DefTextEdit`, `/ maxPP`, and the ⋮ overflow menu (PP-Up submenu,
+  per-move restore/re-roll/correct, All-Moves bulk ops — every prior action preserved). Empty slots show
+  just the combo (so a move can be picked) and a faint neutral strip so the column edge stays aligned.
+- **`PokemonMoveSel` needs an explicit `boxData` property.** A separate component can't see the parent
+  file's properties by bare name, and `PokemonMove::parentMon` is a plain C++ member (not a `Q_PROPERTY`)
+  so it isn't reachable from QML — `MovesTab` passes `boxData` down for the All-Moves ops + species hook.
+- **Drag-to-reorder = the Bag list drag, on a fixed 4-row Repeater.** Read "Drag & drop on the items
+  LIST" first — the mechanics (grip-only drag via a `MouseArea` whose `drag.target` is a `content` Item,
+  manual `Drag.active`/`Drag.drop()`, reparent `content` to `Overlay.overlay`, lifted-card bg, dashed
+  caret, `Qt.callLater` deferred mutation) are copied. Tab-specific differences:
+  - **Grip only on FILLED moves** (`row.filled`); empties park at the bottom (game move-list compaction)
+    and aren't draggable. The grip column (24px) is always reserved so every combo lines up.
+  - **The drop slot uses the pointer's vertical half** (`DropArea.onPositionChanged` → `dropAfter =
+    drag.y > height/2`): top half inserts before the row, bottom half after — so the **lower half of the
+    last move appends to the end** (no trailing "+" placeholder exists here). The caret `y` flips to the
+    row's bottom edge when `dropAfter`.
+  - Backed by **`PokemonBox::reorderMove(from, to)`** (Q_INVOKABLE): it anchor-splices the **filled**
+    slots' `(id/pp/ppUp)` **values** among the **fixed** `moves[4]` objects (the same anchor convention as
+    `PokemonStorageModel::dragReorder`) and writes them back via `PokemonMove::changeMove`. The slot
+    QObjects keep their identity, so QML's `movesAt()` pointers stay valid; PP rides with its move; only
+    the reordered move bytes change (byte-fidelity — `tst_gui_fidelity` guards it). `toIndex == movesCount`
+    appends; an empty/out-of-range `from` is a no-op.
+- **Null-safety is mandatory here** (the Repeater delegate reads through `boxData`/`monMove`, both
+  transiently null during build & in the `tst_qml_screens` inject-then-complete path). Guard EVERY
+  `monMove.` deref — including the `Menu` items, which evaluate eagerly — and don't read tab constants
+  through the root `top` id inside a delegate (that warns `Unable to assign [undefined]` mid-build): inline
+  the literal tint / use `row.height`, and coerce `top.boxData ? … : null`. See `qt-patterns.md` →
+  "Repeater delegates read through transient-null bindings".
+
 ## Centered overlay editor popups (escape clipping)
 
 An editor that opens near a screen edge gets clipped by ancestors (tabs/headers). Don't anchor it

@@ -240,6 +240,26 @@ FontSearch* startOver();
 Q_INVOKABLE FontSearch* startOver();
 ```
 
+### Repeater delegates read through transient-null bindings
+A `Repeater`/`ListView` delegate that dereferences a screen property (`boxData.movesAt(index)`,
+`monMove.moveType`, …) **will** see that property go `null`/`undefined` transiently — during delegate
+build, and especially in `tst_qml_screens`, which injects the data property then calls
+`completeCreate()` (so bindings evaluate before/around the inject). A static child bound to the same
+property often *doesn't* hit this, which is why converting a fixed set of rows to a `Repeater` can
+surface warnings the old layout never did. Two distinct failure shapes, both of which **fail the
+zero-warning screen-load test**:
+- `TypeError: Cannot read property 'x' of null` — guard **every** deref (`monMove ? monMove.x : …`,
+  or gate on a `filled` bool). Note **`Menu`/`MenuItem` bindings evaluate eagerly** (text/enabled), so
+  they need guarding too even though the menu isn't open.
+- `Unable to assign [undefined] to <T>` — a delegate binding reading a tab **constant through the root
+  `id`** (`top.rowH`, `top.rowAlt`, `top.boxData`) gets `undefined` mid-build/teardown. Fix: don't read
+  through `top` from inside the delegate — **inline the literal** (`Qt.rgba(0,0,0,0.04)`), use a local
+  (`row.height`), or coerce a pointer with a ternary (`top.boxData ? top.boxData : null`, which turns a
+  transient `undefined` into an assignable `null`).
+The Moves tab (`MovesTab`/`PokemonMoveSel`) hit all of this; see `ui-patterns.md` → "Pokémon details —
+Moves tab". (Related: `movesMax()`/`movesCount()` are plain methods, not `Q_INVOKABLE`, so QML can't
+call them at all — see "Q_PROPERTY READ vs Q_INVOKABLE" above; the Repeater uses the constant 4.)
+
 ### Q_PROPERTY names — no "get" prefix for QML
 Q_PROPERTY first argument is the QML-visible name. A `get` prefix makes QML code ugly:
 ```cpp

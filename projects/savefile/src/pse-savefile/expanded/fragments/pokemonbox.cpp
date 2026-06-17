@@ -1697,6 +1697,58 @@ void PokemonBox::changeMove(int ind, int moveID, int pp, int ppUp)
   moves[ind]->changeMove(moveID, pp, ppUp);
 }
 
+void PokemonBox::reorderMove(int from, int to)
+{
+  // The (id, pp, ppUp) triple that travels together when a move is reordered, so
+  // a move keeps its current/max PP as it changes slots.
+  struct MoveVals { int id; int pp; int ppUp; };
+
+  // Collect the filled move slots (the compact prefix -- the first empty slot
+  // ends the move list in game logic). Only filled moves reorder; empties stay
+  // parked at the bottom.
+  QVector<MoveVals> vec;
+  for(int i = 0; i < maxMoves; i++) {
+    if(moves[i]->moveID <= 0)
+      break;
+    vec.append({moves[i]->moveID, moves[i]->pp, moves[i]->ppUp});
+  }
+
+  if(from < 0 || from >= vec.size())
+    return;
+
+  MoveVals moved = vec.at(from);
+
+  // Anchor = the first move at/after the drop slot that ISN'T the one being moved;
+  // the move is re-inserted directly before it, or appended when there is none
+  // (dropping past the last move). Mirrors the storage drag-reorder convention.
+  int anchorIdx = -1;
+  for(int i = qBound(0, to, vec.size()); i < vec.size(); i++) {
+    if(i != from) {
+      anchorIdx = i;
+      break;
+    }
+  }
+  int anchorShift = (anchorIdx > from) ? 1 : 0; // removing 'from' shifts the anchor left
+
+  vec.removeAt(from);
+  if(anchorIdx < 0)
+    vec.append(moved);
+  else
+    vec.insert(anchorIdx - anchorShift, moved);
+
+  // Write the reordered values back into the fixed slot objects (the slot QObjects
+  // themselves stay put -- only their values move -- so QML's movesAt() pointers
+  // remain valid). changeMove() emits the per-field signals each row binds to.
+  for(int i = 0; i < maxMoves; i++) {
+    if(i < vec.size())
+      moves[i]->changeMove(vec.at(i).id, vec.at(i).pp, vec.at(i).ppUp);
+    else
+      moves[i]->changeMove(0, 0, 0);
+  }
+
+  movesChanged();
+}
+
 void PokemonBox::resetPokemon()
 {
   level = 5;

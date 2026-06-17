@@ -81,6 +81,7 @@ private slots:
   void box_tradeStatusAndOtData();
   void box_cleanupAndCorrectMoves();
   void box_changeMoveByIndexAndManualHooks();
+  void box_reorderMove();
   void box_correctTypesResetsToSpeciesDefault();
   void box_reRollEvsAndMaxPpUps();
   void box_dexNumAndSpeciesName();
@@ -376,6 +377,63 @@ void TestPokemonBox::box_changeMoveByIndexAndManualHooks()
   QCOMPARE(p->hp, p->hpStat());                         // HP recomputed
   QCOMPARE(p->exp, p->levelToExp());                    // EXP pinned to the level
   QVERIFY(p->isCorrected());                            // single-type mon reads corrected (#2 fix)
+
+  delete p;
+}
+
+// reorderMove() drag-reorders the FILLED move slots (id/pp/ppUp travel together),
+// leaving the fixed slot objects in place and keeping the move list compact. The
+// drop-slot convention matches the storage drags: toIndex inserts BEFORE that slot,
+// toIndex == movesCount appends after the last move.
+void TestPokemonBox::box_reorderMove()
+{
+  PokemonBox* p = makeMon(QStringLiteral("Bulbasaur"));
+  QVERIFY(p != nullptr);
+
+  // Give the mon a known, distinct 4-move set with distinct PP so we can track
+  // each move (and prove PP rides along with its move).
+  p->changeMove(0, 10, 11, 0);
+  p->changeMove(1, 20, 21, 1);
+  p->changeMove(2, 30, 31, 2);
+  p->changeMove(3, 40, 41, 3);
+
+  // Move slot 0 to the end (toIndex == 4 appends): {10,20,30,40} -> {20,30,40,10}.
+  p->reorderMove(0, 4);
+  QCOMPARE(p->moves[0]->moveID, 20);
+  QCOMPARE(p->moves[1]->moveID, 30);
+  QCOMPARE(p->moves[2]->moveID, 40);
+  QCOMPARE(p->moves[3]->moveID, 10);
+  QCOMPARE(p->moves[3]->pp, 11);     // PP rode along with move 10
+  QCOMPARE(p->moves[3]->ppUp, 0);
+
+  // Move the last move to the front (insert before slot 0): {20,30,40,10} -> {10,20,30,40}.
+  p->reorderMove(3, 0);
+  QCOMPARE(p->moves[0]->moveID, 10);
+  QCOMPARE(p->moves[1]->moveID, 20);
+  QCOMPARE(p->moves[2]->moveID, 30);
+  QCOMPARE(p->moves[3]->moveID, 40);
+
+  // Insert-before in the middle: move slot 0 before slot 2 -> {20,10,30,40}.
+  p->reorderMove(0, 2);
+  QCOMPARE(p->moves[0]->moveID, 20);
+  QCOMPARE(p->moves[1]->moveID, 10);
+  QCOMPARE(p->moves[2]->moveID, 30);
+  QCOMPARE(p->moves[3]->moveID, 40);
+
+  // Only the filled prefix reorders + stays compact. With two moves, dragging an
+  // EMPTY slot (index 2) is a no-op, and reordering the two filled keeps the two
+  // empty slots parked at the bottom.
+  p->clearMoves();
+  p->changeMove(0, 55, 5, 0);
+  p->changeMove(1, 66, 6, 0);
+  p->reorderMove(2, 0);                 // empty source -> no-op
+  QCOMPARE(p->moves[0]->moveID, 55);
+  QCOMPARE(p->moves[1]->moveID, 66);
+  p->reorderMove(1, 0);                 // swap the two filled moves
+  QCOMPARE(p->moves[0]->moveID, 66);
+  QCOMPARE(p->moves[1]->moveID, 55);
+  QCOMPARE(p->moves[2]->moveID, 0);     // empties still parked
+  QCOMPARE(p->moves[3]->moveID, 0);
 
   delete p;
 }
