@@ -131,6 +131,10 @@ public:
 
     // Sign this row contributes to the net (+1 sell, -1 buy)
     CartSignRole,
+
+    // For a money/exchange row: its fixed direction (1 = Money=>Coins, 0 = Coins=>
+    // Money); -1 for non-money rows. Lets the Exchange converter label each lane.
+    MoneyDirRole,
   };
 
   /// The four combined modes (returned by whichMode()).

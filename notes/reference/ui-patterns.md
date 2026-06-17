@@ -578,7 +578,19 @@ on the left and a store-style **receipt** on the right, with a 1px `dividerColor
 between. (The first pass that day was an internal-only modernization; the two-pane receipt
 was the follow-up redesign Twilight asked for.)
 
-- **Mode controls = two segmented strips in the left header** (not footer buttons, not a title). An
+- **Layout = a full-width header + a switching body.** The two segmented strips live in a **full-width
+  accent header** (not the left pane). Below, the body switches on `isExchangeMode`: **Buy/Sell** → the
+  two-pane shop (list + receipt); **Exchange** → a centered **converter card**. The shop list/receipt and
+  the converter each bind their `model:` to `null` in the other mode so hidden delegates aren't built.
+- **Exchange = a money<->coins CONVERTER card** (not a list). Centered white card: both balances
+  **MONEY ⇄ COINS** large with the live resulting balance + `(±Δ)` under each (`exchangeMoney/CoinsAfter`/
+  `…Start`), and the two swap **lanes** (a `Repeater` over `brg.marketViewModel`'s money rows): `"₽ → ⭘"` /
+  `"⭘ → ₽"`, each a `StepPill` (spend) + a live `"= <get>"`. Direction per lane comes from the
+  `dataMoneyDir` role (1 = Money=>Coins). Footer Checkout commits.
+- **`StepPill` inline component** is the shared `-/qty/+` pill (borderless `DefTextEdit`, a `live` guard so
+  the initial fill doesn't write the model mid-incubation, and a `Connections` re-seat on external value
+  change). Used by both shop rows and converter lanes — don't re-inline a stepper.
+- **Mode controls = two segmented strips** (not footer buttons, not a title). An
   inline `component SegStrip` (a connected single-select control styled for the accent bar: selected =
   light fill + accent text, light outline, dividers; `options` array, bound `currentIndex`,
   `stripEnabled`, `picked(index)` signal). Two of them: **action** `[Buy|Sell]` → `isBuyMode`, **disabled

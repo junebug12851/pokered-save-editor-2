@@ -156,6 +156,10 @@ QVariant ItemMarketModel::data(const QModelIndex& index, int role) const
     return item->viewTag;
   else if(role == CartSignRole)
     return item->cartSignVal;
+  else if(role == MoneyDirRole) {
+    auto money = qobject_cast<ItemMarketEntryMoney*>(item);
+    return money ? money->forceDir : -1;
+  }
 
   return QVariant();
 }
@@ -183,6 +187,7 @@ QHash<int, QByteArray> ItemMarketModel::roleNames() const
   roles[MoneyCurrencyRole] = "dataMoneyCurrency";
   roles[ViewTagRole] = "dataViewTag";
   roles[CartSignRole] = "dataCartSign";
+  roles[MoneyDirRole] = "dataMoneyDir";
 
   return roles;
 }
