@@ -53,7 +53,9 @@ ToolTip {
         border.color: Qt.rgba(1, 1, 1, 0.65)
         border.width: 1
         Text {
-          anchors.centerIn: parent
+          anchors.fill: parent
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
           text: "i"
           font.pixelSize: 10
           font.bold: true
