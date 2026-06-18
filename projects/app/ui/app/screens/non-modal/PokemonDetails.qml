@@ -36,8 +36,8 @@ Page {
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    // Editor takes ~62%; the GlancePane sprite/stats get a wider ~38%.
-    width: parent.width * .62
+    // Editor takes ~58%; the GlancePane sprite/stats get a wider ~42%.
+    width: parent.width * .58
   }
 
   GlancePane {
@@ -50,7 +50,9 @@ Page {
     anchors.right: parent.right
   }
 
-  footer: AppFooterBtn3 {
+  // Footer: Re-Roll + Heal. The old Toolkit menu (Max Out / Correct Data / Reset /
+  // Evolve / De-Evolve) moved to the Moves tab's actions section.
+  footer: AppFooterBtn2 {
     id: footer
 
     icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
@@ -66,52 +68,6 @@ Page {
     text2: "Heal"
     onBtn2Clicked: {
       boxData.heal();
-    }
-
-    icon3.source: "qrc:/assets/icons/fontawesome/wrench.svg"
-    text3: "Toolkit"
-    onBtn3Clicked: {
-      toolkitMenu.open();
-    }
-
-    Menu {
-      id: toolkitMenu
-      parent: footer.btn3
-      MenuItem { text: "Max Out"; onTriggered: boxData.maxOut();
-        MainToolTip {
-          text: qsTr("Max out all stats, health, move pp & pp-up, etc...")
-        }
-      }
-      MenuItem { text: "Correct Data"; onTriggered: {
-          // Another QML glitch, I expanded update() to 5 bools but despite
-          // calling it with 5 it only calls it with 4. I've tried everything
-          // so I'm giving up and calling the 2nd function explicitly
-          boxData.update(true, true, true, true);
-          boxData.correctMoves();
-          boxData.cleanupMoves();
-        }
-
-        MainToolTip {
-          text: qsTr("Make all all stats, health, moves, types etc... Game Accurate")
-        }
-      }
-      MenuItem { text: "Reset"; onTriggered: boxData.resetPokemon();
-        MainToolTip {
-          text: qsTr("Reset this Pokémon back to a level 5 Pokémon including all moves and other data.")
-        }
-      }
-      MenuItem { text: "Evolve"; onTriggered: boxData.evolve(); enabled: boxData.hasEvolution
-        MainToolTip {
-          text: qsTr("Evolve this Pokémon")
-        }
-      }
-      MenuItem { text: "De-Evolve"; onTriggered: boxData.deEvolve(); enabled: boxData.hasDeEvolution
-        MainToolTip {
-          text: qsTr("De-Evolve this Pokémon")
-        }
-      }
-      MenuSeparator { }
-      MenuItem { text: "Close" }
     }
   }
 }

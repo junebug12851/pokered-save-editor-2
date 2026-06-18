@@ -502,6 +502,11 @@
         <file>ui/app/screens/non-modal/PokemonDetails.qml</file>
         <file>assets/icons/fontawesome/magic.svg</file>
         <file>assets/icons/fontawesome/file-circle-check.svg</file>
+        <file>assets/icons/fontawesome/down-left-and-up-right-to-center.svg</file>
+        <file>assets/icons/fontawesome/up-right-and-down-left-from-center.svg</file>
+        <file>assets/icons/fontawesome/fish.svg</file>
+        <file>assets/icons/fontawesome/arrow-left.svg</file>
+        <file>assets/icons/fontawesome/arrow-right.svg</file>
         <file>assets/icons/fontawesome/wrench.svg</file>
         <file>ui/app/fragments/screens/pokemon-details/DetailsPages.qml</file>
         <file>ui/app/fragments/screens/pokemon-details/OverviewTab.qml</file>

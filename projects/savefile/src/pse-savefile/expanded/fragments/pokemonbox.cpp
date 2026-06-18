@@ -1732,6 +1732,19 @@ void PokemonBox::clearMovesButFirst()
   movesChanged();
 }
 
+void PokemonBox::correctMoveAt(int ind)
+{
+  if(ind < 0 || ind >= maxMoves)
+    return;
+
+  // correctMove() may clear an invalid/duplicate move (leaving a gap); compact so
+  // the later moves slide up and there is no hole.
+  moves[ind]->correctMove();
+  cleanupMoves();
+
+  movesChanged();
+}
+
 void PokemonBox::reorderMove(int from, int to)
 {
   // The (id, pp, ppUp) triple that travels together when a move is reordered, so

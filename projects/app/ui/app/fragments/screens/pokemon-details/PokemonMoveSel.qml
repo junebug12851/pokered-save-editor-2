@@ -407,7 +407,9 @@ Item {
             Layout.preferredWidth: 36
             icon.width: 20; icon.height: 18
             icon.source: "qrc:/assets/icons/fontawesome/file-circle-check.svg"
-            onClicked: { if(monMove) monMove.correctMove(); }
+            // Validate THEN compact -- correctMove can clear a duplicate/invalid
+            // move, and we don't want a gap left behind.
+            onClicked: { if(root.boxData) root.boxData.correctMoveAt(root.moveIndex); }
             tip: qsTr("Make this move valid for the Pokémon.")
           }
           RowBtn {

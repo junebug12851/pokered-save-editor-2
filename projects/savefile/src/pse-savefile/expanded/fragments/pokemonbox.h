@@ -480,6 +480,11 @@ public slots:
   /// compacted first, so "first" is whatever move currently leads the list.
   Q_INVOKABLE void clearMovesButFirst();
 
+  /// Make the move in slot @p ind valid (PokemonMove::correctMove) THEN compact:
+  /// correctMove can clear an invalid/duplicate move, which would otherwise leave a
+  /// gap, so the list is reflowed so there is no hole.
+  Q_INVOKABLE void correctMoveAt(int ind);
+
   /// Reorder the filled move slots: take the move at @p from and re-insert it
   /// before slot @p to (drop-slot convention: 0..movesCount; == movesCount
   /// appends after the last move). Only the filled prefix participates (empty

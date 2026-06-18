@@ -83,6 +83,7 @@ private slots:
   void box_changeMoveByIndexAndManualHooks();
   void box_reorderMove();
   void box_deleteMoveAndClearButFirst();
+  void box_correctMoveAtCompacts();
   void move_ppAndPpUpIndependent();
   void box_correctTypesResetsToSpeciesDefault();
   void box_reRollEvsAndMaxPpUps();
@@ -471,6 +472,33 @@ void TestPokemonBox::box_deleteMoveAndClearButFirst()
   QCOMPARE(p->moves[2]->moveID, 0);
   QCOMPARE(p->moves[3]->moveID, 0);
   QCOMPARE(p->movesCount(), 1);
+
+  delete p;
+}
+
+// correctMoveAt() validates a slot AND compacts: a duplicate/invalid move that
+// correctMove clears must not leave a gap -- the later moves slide up.
+void TestPokemonBox::box_correctMoveAtCompacts()
+{
+  PokemonBox* p = makeMon(QStringLiteral("Bulbasaur"));
+  QVERIFY(p != nullptr);
+
+  const int a = p->moves[0]->moveID;
+  const int b = p->moves[1]->moveID;
+  if(a <= 0 || b <= 0 || a == b)
+    QSKIP("need two distinct initial moves for this test");
+
+  // slot0 = A, slot1 = duplicate of A, slot2 = B.
+  p->changeMove(1, a, 5, 0);
+  p->changeMove(2, b, 5, 0);
+  QVERIFY(p->moves[1]->isDuplicateMove());
+
+  // Validate the duplicate slot: it's cleared, and B slides up -- no gap.
+  p->correctMoveAt(1);
+  QCOMPARE(p->moves[0]->moveID, a);
+  QCOMPARE(p->moves[1]->moveID, b);   // slid up from slot 2
+  QCOMPARE(p->moves[2]->moveID, 0);
+  QCOMPARE(p->movesCount(), 2);
 
   delete p;
 }
