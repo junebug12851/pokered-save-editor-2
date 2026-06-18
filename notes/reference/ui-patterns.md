@@ -692,14 +692,19 @@ mechanics don't fight the combo/PP field).
   dropped** for space. Size both boxes for 2 digits so the width doesn't jump on toggle. (Regression-tested
   in `tst_gui_moves`: toggling never mutates data, the boxes are independent.) Note `onMoveIdChanged`
   legitimately **clamps `pp` to `getMaxPP`**, so a typed PP above the cap snaps down — expected.
-- **Per-move actions = a HOVER SLIDE-IN reveal (no reflow).** Each row's `[dice | check-double | trash]`
-  group (randomize `monMove.randomize()` / make-valid `correctMove()` / delete `boxData.deleteMoveAt(index)`,
-  which **compacts**) is an **overlay** anchored to the row's right edge — NOT in the layout flow. A
-  `HoverHandler` drives `revealed`; the panel slides in via `x` translate (`root.width` → `root.width-width`)
-  + opacity, over an **opaque backing matching the row** (`rowColor`, computed from `altRow` passed by
-  MovesTab). The row is `clip:true` so the panel is hidden off-right at rest. Because it's an overlay, the
-  reveal never reflows the row — it covers the value box / `/max` on hover (the accepted space tradeoff).
-- **Bulk top bar.** Carries the view toggle plus `[broom | dice | check-double]`: clear-all-but-first
+- **Per-move actions = a HANDLE-TRIGGERED, FULL-COVER reveal (no reflow).** Each row's `[dice | magic |
+  trash]` group (randomize `monMove.randomize()` / make-valid `correctMove()` / delete
+  `boxData.deleteMoveAt(index)`, which **compacts**) lives behind a small **chevron handle** (`angle-left`)
+  in a reserved right lane (`mainRow.rightMargin: 26`, so the value box is visible + editable at rest).
+  Hovering the handle OR the slid-in panel (`handleHover`/`panelHover`) reveals it. The panel is a **solid
+  `accentColor` surface** (rounded left, flush right, width 138 so it **completely covers** the value box +
+  max + `/max`) with **light icons** (`RowBtn { light: true }` → white icon + white hover wash); it slides
+  via `x` translate (`width` → `0`) and the handle fades as it covers. It's an overlay (not in the layout)
+  over a `clip:true` root, so revealing it **never reflows** the row. Don't trigger the reveal on whole-row
+  hover and don't only partly cover the value box — both were rejected (covered/blocked the field while
+  editing). Icons: make-valid is **`magic`** (a wand), NOT `check-double` (that's the select-all icon);
+  per-row delete + the top-bar clear-all-but-first share **`trash-alt`**.
+- **Bulk top bar.** Carries the view toggle plus `[trash-alt | dice | magic]`: clear-all-but-first
   (`clearMovesButFirst()`), randomize all (`randomizeMoves()`), make all valid (`correctMoves()`). The
   broom's `enabled` tests `boxData.movesAt(1).moveID > 0` (because `movesCount()` is a plain C++ method, not
   QML-callable). Reuse the DV/EV `SegSel`/`SegBtn` components; the per-row buttons are the same flat-segment

@@ -109,37 +109,36 @@ Item {
   component RowBtn: Button {
     id: rbtn
     property bool first: false
+    property bool light: false   // for use on the accent tool panel (light icons + wash)
     property string tip: ""
     flat: true
     display: AbstractButton.IconOnly
     topInset: 0; bottomInset: 0; leftInset: 0; rightInset: 0
     padding: 5
-    icon.color: brg.settings.textColorDark
+    icon.color: light ? brg.settings.textColorLight : brg.settings.textColorDark
     Layout.fillHeight: true
     Layout.minimumHeight: 0
     background: Rectangle {
-      color: rbtn.down ? Qt.rgba(0, 0, 0, 0.16)
-             : rbtn.hovered ? Qt.rgba(0, 0, 0, 0.08)
+      color: rbtn.down ? (rbtn.light ? Qt.rgba(1, 1, 1, 0.30) : Qt.rgba(0, 0, 0, 0.16))
+             : rbtn.hovered ? (rbtn.light ? Qt.rgba(1, 1, 1, 0.18) : Qt.rgba(0, 0, 0, 0.08))
              : "transparent"
       Rectangle {
         visible: !rbtn.first
         anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
         width: 1
-        color: Qt.rgba(0, 0, 0, 0.15)
+        color: rbtn.light ? Qt.rgba(1, 1, 1, 0.28) : Qt.rgba(0, 0, 0, 0.15)
       }
     }
     MainToolTip { text: rbtn.tip }
   }
 
-  // Whole-row hover drives the action reveal. A HoverHandler stays true over the
-  // child controls (a MouseArea would lose it when the pointer reaches a button).
-  HoverHandler { id: rowHover }
-
   RowLayout {
     id: mainRow
     anchors.fill: parent
     anchors.leftMargin: 4
-    anchors.rightMargin: 4
+    // Reserve a lane on the right for the tool-reveal handle so the value box is
+    // never under it at rest.
+    anchors.rightMargin: 26
     spacing: 6
 
     // Type-color accent strip. Empty slots show a faint neutral strip.
@@ -317,68 +316,95 @@ Item {
     }
   }
 
-  // ---- Per-row action reveal: randomize this move · make valid · delete. HIDDEN
-  // at rest; on hover it SLIDES IN from the right edge (translate x + fade) over an
-  // opaque backing that matches the row. It is an OVERLAY (not in mainRow's flow),
-  // so revealing it never reflows the row. `clip` on root keeps it off-screen at
-  // rest. ----
+  // ---- Per-row tool reveal. At REST a small chevron HANDLE sits in the reserved
+  // right lane (the value box stays fully visible + editable). Hovering the handle
+  // (or the panel) slides a SOLID accent tool panel in from the right that FULLY
+  // covers the value cluster -- a clear "tools revealed" surface holding randomize
+  // / make-valid / delete. It is an OVERLAY (not in mainRow's flow) and root is
+  // clipped, so it's hidden off-right at rest and revealing it never reflows. ----
   Item {
-    id: actionReveal
+    id: toolReveal
+    anchors.right: parent.right
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    width: actBox.implicitWidth + 14
+    // Wide enough to completely cover the value editor + max + "/ max".
+    width: 138
     visible: root.filled
-
-    property bool revealed: rowHover.hovered && root.filled
-    x: revealed ? (root.width - width) : root.width
-    opacity: revealed ? 1 : 0
-    Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-    Behavior on opacity { NumberAnimation { duration: 110 } }
     z: 50
 
-    // Opaque backing so the sliding panel cleanly covers the content beneath it.
+    // Revealed when the pointer is on the handle OR on the slid-in panel.
+    property bool revealed: (handleHover.hovered || panelHover.hovered) && root.filled
+
+    // Rest-state handle: a subtle tab with a left chevron, in the reserved lane at
+    // the far right. Fades out as the panel covers it.
     Rectangle {
-      anchors.fill: parent
-      color: root.rowColor
-      // A hairline left edge so the panel reads as sliding over the row.
-      Rectangle {
-        anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
-        width: 1
-        color: Qt.rgba(0, 0, 0, 0.10)
+      id: handle
+      anchors.right: parent.right
+      anchors.rightMargin: 2
+      anchors.verticalCenter: parent.verticalCenter
+      width: 22
+      height: root.rowH - 12
+      radius: 4
+      color: handleHover.hovered ? Qt.rgba(0, 0, 0, 0.10) : Qt.rgba(0, 0, 0, 0.05)
+      opacity: toolReveal.revealed ? 0 : 1
+      Behavior on opacity { NumberAnimation { duration: 110 } }
+
+      Image {
+        anchors.centerIn: parent
+        width: 9; height: 14
+        sourceSize.width: width; sourceSize.height: height
+        source: "qrc:/assets/icons/fontawesome/angle-left.svg"
+        fillMode: Image.PreserveAspectFit
+        opacity: 0.55
       }
+
+      HoverHandler { id: handleHover }
     }
 
+    // The slid-in tool panel: a SOLID accent surface (rounded left, flush right)
+    // with light icons. Slides x from off-right (width) to flush (0).
     Rectangle {
-      id: actBox
-      anchors.right: parent.right
-      anchors.rightMargin: 4
-      anchors.verticalCenter: parent.verticalCenter
-      height: root.rowH - 12
-      implicitWidth: actGrp.implicitWidth
-      radius: 4; color: "transparent"
-      border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.18)
-      clip: true
+      id: panel
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.topMargin: 3
+      anchors.bottomMargin: 3
+      width: parent.width
+      x: toolReveal.revealed ? 0 : width
+      Behavior on x { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+
+      color: brg.settings.accentColor
+      topLeftRadius: 6
+      bottomLeftRadius: 6
+
+      HoverHandler { id: panelHover }
 
       RowLayout {
-        id: actGrp
         anchors.fill: parent
+        anchors.leftMargin: 6
+        anchors.rightMargin: 4
         spacing: 0
 
         RowBtn {
-          first: true
-          icon.width: 15; icon.height: 15
+          first: true; light: true
+          Layout.fillWidth: true
+          icon.width: 16; icon.height: 16
           icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
           onClicked: { if(monMove) monMove.randomize(); }
           tip: qsTr("Replace this move with a random valid one.")
         }
         RowBtn {
-          icon.width: 15; icon.height: 15
-          icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
+          light: true
+          Layout.fillWidth: true
+          icon.width: 16; icon.height: 16
+          icon.source: "qrc:/assets/icons/fontawesome/magic.svg"
           onClicked: { if(monMove) monMove.correctMove(); }
           tip: qsTr("Make this move valid for the Pokémon.")
         }
         RowBtn {
-          icon.width: 14; icon.height: 15
+          light: true
+          Layout.fillWidth: true
+          icon.width: 15; icon.height: 16
           icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
           onClicked: { if(root.boxData) root.boxData.deleteMoveAt(root.moveIndex); }
           tip: qsTr("Delete this move (the rest slide up to fill the gap).")

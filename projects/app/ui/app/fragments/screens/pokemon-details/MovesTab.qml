@@ -209,7 +209,7 @@ Rectangle {
                   SegBtn {
                     first: true
                     icon.width: 18; icon.height: 18
-                    icon.source: "qrc:/assets/icons/fontawesome/broom.svg"
+                    icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
                     // Enabled only when there's a 2nd move to clear. movesCount() is
                     // a plain C++ method (not QML-callable), so test slot 1 directly
                     // -- movesAt(1).moveID has a NOTIFY, so this stays reactive.
@@ -226,7 +226,7 @@ Rectangle {
                   SegBtn {
                     last: true
                     icon.width: 18; icon.height: 18
-                    icon.source: "qrc:/assets/icons/fontawesome/check-double.svg"
+                    icon.source: "qrc:/assets/icons/fontawesome/magic.svg"
                     onClicked: if(movesTab.boxData) movesTab.boxData.correctMoves();
                     tip: qsTr("Make every move valid for the Pokémon.")
                   }
