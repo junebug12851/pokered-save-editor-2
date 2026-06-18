@@ -194,7 +194,8 @@ Rectangle {
 
               Item { Layout.fillWidth: true }
 
-              // Clear-all-but-first | Randomize all | Make all valid.
+              // Make all valid | Randomize all | Clear-all-but-first -- same order
+              // as the per-row tool reveal (validate · random · destructive).
               Rectangle {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.preferredHeight: 32
@@ -209,13 +210,9 @@ Rectangle {
                   SegBtn {
                     first: true
                     icon.width: 18; icon.height: 18
-                    icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
-                    // Enabled only when there's a 2nd move to clear. movesCount() is
-                    // a plain C++ method (not QML-callable), so test slot 1 directly
-                    // -- movesAt(1).moveID has a NOTIFY, so this stays reactive.
-                    enabled: movesTab.boxData ? movesTab.boxData.movesAt(1).moveID > 0 : false
-                    onClicked: if(movesTab.boxData) movesTab.boxData.clearMovesButFirst();
-                    tip: qsTr("Clear every move except the first.")
+                    icon.source: "qrc:/assets/icons/fontawesome/file-circle-check.svg"
+                    onClicked: if(movesTab.boxData) movesTab.boxData.correctMoves();
+                    tip: qsTr("Make every move valid for the Pokémon.")
                   }
                   SegBtn {
                     icon.width: 18; icon.height: 18
@@ -225,10 +222,14 @@ Rectangle {
                   }
                   SegBtn {
                     last: true
-                    icon.width: 18; icon.height: 18
-                    icon.source: "qrc:/assets/icons/fontawesome/magic.svg"
-                    onClicked: if(movesTab.boxData) movesTab.boxData.correctMoves();
-                    tip: qsTr("Make every move valid for the Pokémon.")
+                    icon.width: 17; icon.height: 18
+                    icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
+                    // Enabled only when there's a 2nd move to clear. movesCount() is
+                    // a plain C++ method (not QML-callable), so test slot 1 directly
+                    // -- movesAt(1).moveID has a NOTIFY, so this stays reactive.
+                    enabled: movesTab.boxData ? movesTab.boxData.movesAt(1).moveID > 0 : false
+                    onClicked: if(movesTab.boxData) movesTab.boxData.clearMovesButFirst();
+                    tip: qsTr("Clear every move except the first.")
                   }
                 }
               }

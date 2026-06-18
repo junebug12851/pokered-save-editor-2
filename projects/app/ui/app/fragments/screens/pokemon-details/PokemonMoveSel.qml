@@ -109,24 +109,23 @@ Item {
   component RowBtn: Button {
     id: rbtn
     property bool first: false
-    property bool light: false   // for use on the accent tool panel (light icons + wash)
     property string tip: ""
     flat: true
     display: AbstractButton.IconOnly
     topInset: 0; bottomInset: 0; leftInset: 0; rightInset: 0
     padding: 5
-    icon.color: light ? brg.settings.textColorLight : brg.settings.textColorDark
+    icon.color: brg.settings.textColorDark
     Layout.fillHeight: true
     Layout.minimumHeight: 0
     background: Rectangle {
-      color: rbtn.down ? (rbtn.light ? Qt.rgba(1, 1, 1, 0.30) : Qt.rgba(0, 0, 0, 0.16))
-             : rbtn.hovered ? (rbtn.light ? Qt.rgba(1, 1, 1, 0.18) : Qt.rgba(0, 0, 0, 0.08))
+      color: rbtn.down ? Qt.rgba(0, 0, 0, 0.16)
+             : rbtn.hovered ? Qt.rgba(0, 0, 0, 0.08)
              : "transparent"
       Rectangle {
         visible: !rbtn.first
         anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
         width: 1
-        color: rbtn.light ? Qt.rgba(1, 1, 1, 0.28) : Qt.rgba(0, 0, 0, 0.15)
+        color: Qt.rgba(0, 0, 0, 0.15)
       }
     }
     MainToolTip { text: rbtn.tip }
@@ -318,9 +317,11 @@ Item {
 
   // ---- Per-row tool reveal. At REST a small chevron HANDLE sits in the reserved
   // right lane (the value box stays fully visible + editable). Hovering the handle
-  // (or the panel) slides a SOLID accent tool panel in from the right that FULLY
-  // covers the value cluster -- a clear "tools revealed" surface holding randomize
-  // / make-valid / delete. It is an OVERLAY (not in mainRow's flow) and root is
+  // (or the panel) slides a panel in from the right that covers the value cluster.
+  // The panel's background is the ROW colour (it just hides the value box behind
+  // it), and the tools are the SAME bordered icon group as the tab's top bar
+  // (`validate · random · delete`, dark icons) so they read as part of the screen,
+  // not a foreign accent bar. It's an OVERLAY (not in mainRow's flow) + root is
   // clipped, so it's hidden off-right at rest and revealing it never reflows. ----
   Item {
     id: toolReveal
@@ -328,7 +329,7 @@ Item {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     // Wide enough to completely cover the value editor + max + "/ max".
-    width: 138
+    width: 132
     visible: root.filled
     z: 50
 
@@ -361,53 +362,68 @@ Item {
       HoverHandler { id: handleHover }
     }
 
-    // The slid-in tool panel: a SOLID accent surface (rounded left, flush right)
-    // with light icons. Slides x from off-right (width) to flush (0).
-    Rectangle {
+    // The slid-in panel: ROW-coloured backing (hides the value box) + a hairline
+    // left edge so it reads as a panel, with the bordered tool group at the right.
+    // Slides x from off-right (width) to flush (0).
+    Item {
       id: panel
       anchors.top: parent.top
       anchors.bottom: parent.bottom
-      anchors.topMargin: 3
-      anchors.bottomMargin: 3
       width: parent.width
       x: toolReveal.revealed ? 0 : width
       Behavior on x { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
-      color: brg.settings.accentColor
-      topLeftRadius: 6
-      bottomLeftRadius: 6
-
       HoverHandler { id: panelHover }
 
-      RowLayout {
+      Rectangle {
         anchors.fill: parent
-        anchors.leftMargin: 6
-        anchors.rightMargin: 4
-        spacing: 0
+        color: root.rowColor
+        Rectangle {   // hairline left edge
+          anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+          width: 1
+          color: Qt.rgba(0, 0, 0, 0.10)
+        }
+      }
 
-        RowBtn {
-          first: true; light: true
-          Layout.fillWidth: true
-          icon.width: 16; icon.height: 16
-          icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
-          onClicked: { if(monMove) monMove.randomize(); }
-          tip: qsTr("Replace this move with a random valid one.")
-        }
-        RowBtn {
-          light: true
-          Layout.fillWidth: true
-          icon.width: 16; icon.height: 16
-          icon.source: "qrc:/assets/icons/fontawesome/magic.svg"
-          onClicked: { if(monMove) monMove.correctMove(); }
-          tip: qsTr("Make this move valid for the Pokémon.")
-        }
-        RowBtn {
-          light: true
-          Layout.fillWidth: true
-          icon.width: 15; icon.height: 16
-          icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
-          onClicked: { if(root.boxData) root.boxData.deleteMoveAt(root.moveIndex); }
-          tip: qsTr("Delete this move (the rest slide up to fill the gap).")
+      // Bordered icon group, identical styling to the tab's top-bar group:
+      // validate · random · delete (dark icons, even widths).
+      Rectangle {
+        anchors.right: parent.right
+        anchors.rightMargin: 4
+        anchors.verticalCenter: parent.verticalCenter
+        height: root.rowH - 12
+        implicitWidth: toolGrp.implicitWidth
+        radius: 4; color: "transparent"
+        border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.18)
+        clip: true
+
+        RowLayout {
+          id: toolGrp
+          anchors.fill: parent
+          spacing: 0
+
+          RowBtn {
+            first: true
+            padding: 7
+            icon.width: 18; icon.height: 18
+            icon.source: "qrc:/assets/icons/fontawesome/file-circle-check.svg"
+            onClicked: { if(monMove) monMove.correctMove(); }
+            tip: qsTr("Make this move valid for the Pokémon.")
+          }
+          RowBtn {
+            padding: 7
+            icon.width: 18; icon.height: 18
+            icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
+            onClicked: { if(monMove) monMove.randomize(); }
+            tip: qsTr("Replace this move with a random valid one.")
+          }
+          RowBtn {
+            padding: 7
+            icon.width: 17; icon.height: 18
+            icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
+            onClicked: { if(root.boxData) root.boxData.deleteMoveAt(root.moveIndex); }
+            tip: qsTr("Delete this move (the rest slide up to fill the gap).")
+          }
         }
       }
     }

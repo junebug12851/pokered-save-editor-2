@@ -501,6 +501,7 @@
         <file>assets/icons/fontawesome/times.svg</file>
         <file>ui/app/screens/non-modal/PokemonDetails.qml</file>
         <file>assets/icons/fontawesome/magic.svg</file>
+        <file>assets/icons/fontawesome/file-circle-check.svg</file>
         <file>assets/icons/fontawesome/wrench.svg</file>
         <file>ui/app/fragments/screens/pokemon-details/DetailsPages.qml</file>
         <file>ui/app/fragments/screens/pokemon-details/OverviewTab.qml</file>
