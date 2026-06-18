@@ -207,22 +207,28 @@ Rectangle {
                   id: bulkGrp
                   anchors.fill: parent
                   spacing: 0
+                  // Uniform button width + aspect-correct icon sizes (FA viewBoxes
+                  // differ: dice 640×512, file-circle-check 576×512, trash 448×512),
+                  // so the glyphs aren't squished but the buttons stay even.
                   SegBtn {
                     first: true
-                    icon.width: 18; icon.height: 18
+                    Layout.preferredWidth: 36
+                    icon.width: 20; icon.height: 18
                     icon.source: "qrc:/assets/icons/fontawesome/file-circle-check.svg"
                     onClicked: if(movesTab.boxData) movesTab.boxData.correctMoves();
                     tip: qsTr("Make every move valid for the Pokémon.")
                   }
                   SegBtn {
-                    icon.width: 18; icon.height: 18
+                    Layout.preferredWidth: 36
+                    icon.width: 22; icon.height: 18
                     icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
                     onClicked: if(movesTab.boxData) movesTab.boxData.randomizeMoves();
                     tip: qsTr("Replace all moves with a random valid set.")
                   }
                   SegBtn {
                     last: true
-                    icon.width: 17; icon.height: 18
+                    Layout.preferredWidth: 36
+                    icon.width: 16; icon.height: 18
                     icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
                     // Enabled only when there's a 2nd move to clear. movesCount() is
                     // a plain C++ method (not QML-callable), so test slot 1 directly

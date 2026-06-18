@@ -398,24 +398,30 @@ Item {
           anchors.fill: parent
           spacing: 0
 
+          // Uniform width + aspect-correct icon sizes (matches the top bar): the
+          // FA glyphs have different aspect ratios, so size each to its ratio at a
+          // common height while keeping the buttons even.
           RowBtn {
             first: true
             padding: 7
-            icon.width: 18; icon.height: 18
+            Layout.preferredWidth: 36
+            icon.width: 20; icon.height: 18
             icon.source: "qrc:/assets/icons/fontawesome/file-circle-check.svg"
             onClicked: { if(monMove) monMove.correctMove(); }
             tip: qsTr("Make this move valid for the Pokémon.")
           }
           RowBtn {
             padding: 7
-            icon.width: 18; icon.height: 18
+            Layout.preferredWidth: 36
+            icon.width: 22; icon.height: 18
             icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
             onClicked: { if(monMove) monMove.randomize(); }
             tip: qsTr("Replace this move with a random valid one.")
           }
           RowBtn {
             padding: 7
-            icon.width: 17; icon.height: 18
+            Layout.preferredWidth: 36
+            icon.width: 16; icon.height: 18
             icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
             onClicked: { if(root.boxData) root.boxData.deleteMoveAt(root.moveIndex); }
             tip: qsTr("Delete this move (the rest slide up to fill the gap).")
