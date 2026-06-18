@@ -362,9 +362,9 @@ Item {
       HoverHandler { id: handleHover }
     }
 
-    // The slid-in panel: ROW-coloured backing (hides the value box) + a hairline
-    // left edge so it reads as a panel, with the bordered tool group at the right.
-    // Slides x from off-right (width) to flush (0).
+    // The slid-in panel: a plain ROW-coloured backing that simply hides the value
+    // box behind it (no edge/border line), with the bordered tool group at the
+    // right. Slides x from off-right (width) to flush (0).
     Item {
       id: panel
       anchors.top: parent.top
@@ -378,18 +378,14 @@ Item {
       Rectangle {
         anchors.fill: parent
         color: root.rowColor
-        Rectangle {   // hairline left edge
-          anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
-          width: 1
-          color: Qt.rgba(0, 0, 0, 0.10)
-        }
       }
 
-      // Bordered icon group, identical styling to the tab's top-bar group:
-      // validate · random · delete (dark icons, even widths).
+      // Bordered icon group, identical styling to the tab's top-bar group. The
+      // rightMargin matches the top bar's (10) so the buttons line up in the same
+      // columns as the bulk buttons above.
       Rectangle {
         anchors.right: parent.right
-        anchors.rightMargin: 4
+        anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
         height: root.rowH - 12
         implicitWidth: toolGrp.implicitWidth
