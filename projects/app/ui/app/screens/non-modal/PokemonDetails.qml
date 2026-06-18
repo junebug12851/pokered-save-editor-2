@@ -3,10 +3,9 @@
 // Edits one Pokemon (boxData, a PokemonBox passed in by the caller; partyData is
 // the party-only sibling view). Left half is DetailsPages (the tabbed editors:
 // species, moves, stats, etc.); right half is GlancePane (a live summary). On load
-// it points brg.moveSelectModel at this mon's box. Footer: Re-Roll (randomize this
-// mon), Heal, and a Toolkit menu (Max Out / Correct Data / Reset / Evolve /
-// De-Evolve). The two // comments on btn2.enabled and update() document known QML
-// quirks -- leave them; they are real workarounds, not dead code.
+// it points brg.moveSelectModel at this mon's box. Footer: Re-Roll (whole mon) +
+// Heal. Destructive actions gate behind one shared ConfirmPopup, reached via the
+// `confirmAsk(title, body, action, label)` function threaded down to the children.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -27,11 +26,18 @@ Page {
 
   Component.onCompleted: brg.moveSelectModel.monFromBox(boxData);
 
+  // One shared confirmation modal for every destructive action in this editor. The
+  // function is threaded down to DetailsPages/MovesTab/PokemonMoveSel so a single
+  // popup serves them all.
+  ConfirmPopup { id: confirm }
+  property var confirmAsk: function(title, body, action, label) { confirm.ask(title, body, action, label); }
+
   DetailsPages {
     id: detailsPages
 
     boxData: top.boxData
     partyData: top.partyData
+    confirmAsk: top.confirmAsk
 
     anchors.top: parent.top
     anchors.left: parent.left
@@ -58,7 +64,10 @@ Page {
     icon1.source: "qrc:/assets/icons/fontawesome/dice.svg"
     text1: "Re-Roll"
     onBtn1Clicked: {
-      boxData.randomize(brg.file.data.dataExpanded.player.basics)
+      top.confirmAsk(qsTr("Re-Roll this Pokémon?"),
+        qsTr("This replaces the WHOLE Pokémon with a fresh random one — species, moves, stats, everything. It can't be undone."),
+        function() { boxData.randomize(brg.file.data.dataExpanded.player.basics); },
+        qsTr("Re-Roll"));
     }
 
     // Not going to use because of a glitch where once you click it and the pokemon

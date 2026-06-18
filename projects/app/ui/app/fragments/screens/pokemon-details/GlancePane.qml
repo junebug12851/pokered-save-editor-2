@@ -103,7 +103,8 @@ Rectangle {
       anchors.left: levelTxt.right
       anchors.leftMargin: 5
 
-      width: font.pixelSize * 3
+      // Wide enough for 3 digits ("100") incl. padding.
+      width: 3 * font.pixelSize + leftPadding + rightPadding
       color: brg.settings.textColorLight
       maximumLength: 3
 
@@ -216,6 +217,31 @@ Rectangle {
     }
 
     fillMode: Image.PreserveAspectFit
+
+    // Status-condition badge in the sprite's upper-right corner (sleep / poison /
+    // burn / freeze / paralyze), shown only when the mon is afflicted. Same decode
+    // + assets as the storage grid (PokemonBoxView).
+    Image {
+      id: statusBadge
+      anchors.top: parent.top
+      anchors.right: parent.right
+      anchors.margins: 4
+      width: 34
+      height: 34
+      sourceSize.width: width
+      sourceSize.height: height
+      visible: boxData.status > 0 && source != ""
+      source: getStatusIcon(boxData.status)
+
+      function getStatusIcon(s) {
+        if(s & 0x07) return "qrc:/assets/icons/status/sleep.png";
+        if(s & 0x08) return "qrc:/assets/icons/status/poison.png";
+        if(s & 0x10) return "qrc:/assets/icons/status/burn.png";
+        if(s & 0x20) return "qrc:/assets/icons/status/freeze.png";
+        if(s & 0x40) return "qrc:/assets/icons/status/paralyze.png";
+        return "";
+      }
+    }
 
     function getMonUrl() {
 

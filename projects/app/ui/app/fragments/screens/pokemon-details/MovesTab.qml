@@ -30,6 +30,8 @@ import "../../controls/selection"
 Rectangle {
   id: movesTab
   property PokemonBox boxData: null
+  // Shared confirmation accessor threaded down from DetailsPages.
+  property var confirmAsk: null
 
   color: "transparent"
 
@@ -215,14 +217,18 @@ Rectangle {
                     Layout.preferredWidth: 36
                     icon.width: 20; icon.height: 18
                     icon.source: "qrc:/assets/icons/fontawesome/file-circle-check.svg"
-                    onClicked: if(movesTab.boxData) movesTab.boxData.correctMoves();
+                    onClicked: movesTab.confirmAsk(qsTr("Make all moves valid?"),
+                      qsTr("Fixes any illegal or duplicate moves. Some moves may be removed."),
+                      function() { if(movesTab.boxData) movesTab.boxData.correctMoves(); }, qsTr("Validate"))
                     tip: qsTr("Make every move valid for the Pokémon.")
                   }
                   SegBtn {
                     Layout.preferredWidth: 36
                     icon.width: 22; icon.height: 18
                     icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
-                    onClicked: if(movesTab.boxData) movesTab.boxData.randomizeMoves();
+                    onClicked: movesTab.confirmAsk(qsTr("Re-roll all moves?"),
+                      qsTr("Replaces every move with a new random valid set."),
+                      function() { if(movesTab.boxData) movesTab.boxData.randomizeMoves(); }, qsTr("Re-Roll"))
                     tip: qsTr("Replace all moves with a random valid set.")
                   }
                   SegBtn {
@@ -234,7 +240,9 @@ Rectangle {
                     // a plain C++ method (not QML-callable), so test slot 1 directly
                     // -- movesAt(1).moveID has a NOTIFY, so this stays reactive.
                     enabled: movesTab.boxData ? movesTab.boxData.movesAt(1).moveID > 0 : false
-                    onClicked: if(movesTab.boxData) movesTab.boxData.clearMovesButFirst();
+                    onClicked: movesTab.confirmAsk(qsTr("Clear other moves?"),
+                      qsTr("Removes every move except the first."),
+                      function() { if(movesTab.boxData) movesTab.boxData.clearMovesButFirst(); }, qsTr("Clear"))
                     tip: qsTr("Clear every move except the first.")
                   }
                 }
@@ -426,6 +434,7 @@ Rectangle {
                     moveIndex: row.index
                     showPpUps: movesTab.showPpUps
                     altRow: (row.index % 2 !== 0)
+                    confirmAsk: movesTab.confirmAsk
                     rowH: row.height
                   }
                 }

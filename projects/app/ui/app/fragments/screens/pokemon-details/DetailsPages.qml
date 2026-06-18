@@ -23,6 +23,8 @@ Rectangle {
 
   property PokemonBox boxData: null
   property PokemonBox partyData: null
+  // Shared confirmation accessor threaded down from PokemonDetails.
+  property var confirmAsk: null
 
   // A flat icon button styled for the ACCENT header bar (light icon + light hover
   // wash + light divider), grouped into a connected bordered group like the tabs'
@@ -109,38 +111,47 @@ Rectangle {
           Layout.preferredWidth: 36
           icon.width: 18; icon.height: 18
           icon.source: "qrc:/assets/icons/fontawesome/down-left-and-up-right-to-center.svg"
-          onClicked: if(top.boxData) top.boxData.resetPokemon();
+          onClicked: top.confirmAsk(qsTr("Reset this Pokémon?"),
+            qsTr("Resets this Pokémon to a fresh level-5 — all moves, stats, and data revert. This can't be undone."),
+            function() { if(top.boxData) top.boxData.resetPokemon(); }, qsTr("Reset"))
           tip: qsTr("Reset this Pokémon back to a fresh level-5 (all moves + data).")
         }
         HdrBtn {
           Layout.preferredWidth: 36
           icon.width: 18; icon.height: 18
           icon.source: "qrc:/assets/icons/fontawesome/up-right-and-down-left-from-center.svg"
-          onClicked: if(top.boxData) top.boxData.maxOut();
+          onClicked: top.confirmAsk(qsTr("Max out this Pokémon?"),
+            qsTr("Maxes all stats, HP, move PP & PP-Ups, level, etc. This overwrites the current values."),
+            function() { if(top.boxData) top.boxData.maxOut(); }, qsTr("Max Out"))
           tip: qsTr("Max out all stats, HP, move PP & PP-Ups, etc.")
         }
         HdrBtn {
           Layout.preferredWidth: 36
           icon.width: 20; icon.height: 18
           icon.source: "qrc:/assets/icons/fontawesome/file-circle-check.svg"
-          onClicked: {
-            if(top.boxData) {
-              // (Kept from the old Toolkit: update()'s 5th bool is dropped by a QML
-              // arg glitch, so call the moves correction explicitly.)
-              top.boxData.update(true, true, true, true);
-              top.boxData.correctMoves();
-              top.boxData.cleanupMoves();
-            }
-          }
+          onClicked: top.confirmAsk(qsTr("Correct all data?"),
+            qsTr("Rewrites stats, HP, moves, types, etc. to be game-accurate. This may change current values and remove illegal moves."),
+            function() {
+              if(top.boxData) {
+                // (Kept from the old Toolkit: update()'s 5th bool is dropped by a
+                // QML arg glitch, so call the moves correction explicitly.)
+                top.boxData.update(true, true, true, true);
+                top.boxData.correctMoves();
+                top.boxData.cleanupMoves();
+              }
+            }, qsTr("Correct"))
           tip: qsTr("Make all stats, HP, moves, types, etc. game-accurate.")
         }
       }
     }
 
-    // Evolution: de-evolve <- [fish] -> evolve.
+    // Evolution: de-evolve <- [fish] -> evolve. The WHOLE group is hidden when the
+    // species can neither evolve nor de-evolve (a standalone / glitch mon); each
+    // arrow is disabled when that direction isn't possible.
     Rectangle {
       Layout.fillHeight: true
       implicitWidth: evoGrp.implicitWidth
+      visible: top.boxData ? (top.boxData.hasEvolution || top.boxData.hasDeEvolution) : false
       radius: 4; color: "transparent"
       border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.35)
       clip: true
@@ -154,7 +165,9 @@ Rectangle {
           icon.width: 15; icon.height: 18
           icon.source: "qrc:/assets/icons/fontawesome/arrow-left.svg"
           enabled: top.boxData ? top.boxData.hasDeEvolution : false
-          onClicked: if(top.boxData) top.boxData.deEvolve();
+          onClicked: top.confirmAsk(qsTr("De-evolve this Pokémon?"),
+            qsTr("Reverts this Pokémon to its previous form. Stats and data update accordingly."),
+            function() { if(top.boxData) top.boxData.deEvolve(); }, qsTr("De-evolve"))
           tip: qsTr("De-evolve this Pokémon.")
         }
         // Static "fish" centrepiece (a non-interactive icon so it tints light like
@@ -185,7 +198,9 @@ Rectangle {
           icon.width: 15; icon.height: 18
           icon.source: "qrc:/assets/icons/fontawesome/arrow-right.svg"
           enabled: top.boxData ? top.boxData.hasEvolution : false
-          onClicked: if(top.boxData) top.boxData.evolve();
+          onClicked: top.confirmAsk(qsTr("Evolve this Pokémon?"),
+            qsTr("Evolves this Pokémon to its next form. Stats and data update accordingly."),
+            function() { if(top.boxData) top.boxData.evolve(); }, qsTr("Evolve"))
           tip: qsTr("Evolve this Pokémon.")
         }
       }
@@ -211,6 +226,7 @@ Rectangle {
 
     MovesTab {
       boxData: top.boxData
+      confirmAsk: top.confirmAsk
     }
   }
 }

@@ -33,6 +33,8 @@ Item {
   property PokemonBox boxData: null
   property int moveIndex: 0
   property int rowH: 44
+  // Shared confirmation accessor threaded down from MovesTab.
+  property var confirmAsk: null
 
   // Tab-level view: false = edit current/max PP, true = edit current/max PP-Ups.
   property bool showPpUps: false
@@ -408,8 +410,10 @@ Item {
             icon.width: 20; icon.height: 18
             icon.source: "qrc:/assets/icons/fontawesome/file-circle-check.svg"
             // Validate THEN compact -- correctMove can clear a duplicate/invalid
-            // move, and we don't want a gap left behind.
-            onClicked: { if(root.boxData) root.boxData.correctMoveAt(root.moveIndex); }
+            // move, and we don't want a gap left behind. Confirmed (it can remove).
+            onClicked: root.confirmAsk(qsTr("Validate this move?"),
+              qsTr("Makes this move valid for the Pokémon. An illegal or duplicate move may be removed."),
+              function() { if(root.boxData) root.boxData.correctMoveAt(root.moveIndex); }, qsTr("Validate"))
             tip: qsTr("Make this move valid for the Pokémon.")
           }
           RowBtn {
@@ -425,7 +429,9 @@ Item {
             Layout.preferredWidth: 36
             icon.width: 16; icon.height: 18
             icon.source: "qrc:/assets/icons/fontawesome/trash-alt.svg"
-            onClicked: { if(root.boxData) root.boxData.deleteMoveAt(root.moveIndex); }
+            onClicked: root.confirmAsk(qsTr("Delete this move?"),
+              qsTr("Removes this move; the moves after it slide up to fill the gap."),
+              function() { if(root.boxData) root.boxData.deleteMoveAt(root.moveIndex); }, qsTr("Delete"))
             tip: qsTr("Delete this move (the rest slide up to fill the gap).")
           }
         }
