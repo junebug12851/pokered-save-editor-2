@@ -72,9 +72,11 @@ function Invoke-ClangTidy {
     $script:gatedFailures++; return
   }
   $entries = Get-Content $cc -Raw | ConvertFrom-Json
+  # Skip generated TUs and the app exe-shell `boot/` (includes AUTOUIC ui_*.h that
+  # only the exe target generates -- can't be parsed from a tests_all build).
   $files = $entries.file | Where-Object {
     ($_ -match 'projects[\\/](common|db|savefile|app)[\\/]src') -and
-    ($_ -notmatch '(moc_|qrc_|ui_|_autogen|/generated/|\\generated\\)')
+    ($_ -notmatch '(moc_|qrc_|ui_|_autogen|[\\/]generated[\\/]|[\\/]boot[\\/])')
   } | Sort-Object -Unique
   $log = Join-Path $repo "lint-clang-tidy.log"
   if ($Fix) {
@@ -145,6 +147,7 @@ function Invoke-Cppcheck {
   Write-Host "== cppcheck (informational, not gated) ==" -ForegroundColor Cyan
   $log = Join-Path $repo "lint-cppcheck.log"
   & cppcheck --quiet --enable=warning,performance,portability `
+    -j $env:NUMBER_OF_PROCESSORS --max-configs=1 `
     --inline-suppr --suppressions-list=(Join-Path $repo ".cppcheck-suppressions") `
     --std=c++20 `
     -i (Join-Path $repo "build") `

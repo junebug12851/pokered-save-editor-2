@@ -48,7 +48,12 @@ run_clang_tidy() {
 import json,sys,re
 for e in json.load(open(sys.argv[1])):
     f=e["file"]
-    if re.search(r'projects/(common|db|savefile|app)/src',f) and not re.search(r'(moc_|qrc_|ui_|_autogen|/generated/)',f):
+    # Skip Qt/system + generated (moc/qrc/ui/autogen) and the app exe-shell `boot/`
+    # TUs -- those include the app's AUTOUIC ui_*.h which only the exe target (not
+    # tests_all) generates, so clang-tidy can't parse them headless. boot is thin
+    # GUI glue, not unit-tested logic.
+    if re.search(r'projects/(common|db|savefile|app)/src',f) \
+       and not re.search(r'(moc_|qrc_|ui_|_autogen|/generated/|/boot/)',f):
         print(f)
 PY
 )
@@ -105,7 +110,10 @@ run_cppcheck() {
     echo "== cppcheck == (not installed, skipping)"; return
   fi
   echo "== cppcheck (informational, not gated) =="
+  # -j + --max-configs=1: a full cppcheck over every -D combination took >10 min on
+  # CI; limiting configurations and parallelising keeps it to a few minutes.
   cppcheck --quiet --enable=warning,performance,portability \
+    -j "$(nproc 2>/dev/null || echo 4)" --max-configs=1 \
     --inline-suppr --suppressions-list=.cppcheck-suppressions \
     --std=c++20 -i build \
     projects/common/src projects/db/src projects/savefile/src projects/app/src \

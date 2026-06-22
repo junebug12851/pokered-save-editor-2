@@ -32,6 +32,8 @@ Checks: >
   -bugprone-unchecked-optional-access,
   clang-analyzer-*,
   -clang-analyzer-optin.cplusplus.VirtualCall,
+  -clang-analyzer-cplusplus.NewDelete,
+  -clang-analyzer-cplusplus.NewDeleteLeaks,
   performance-*,
   -performance-no-int-to-ptr,
   -performance-unnecessary-value-param,
@@ -57,6 +59,13 @@ Checks: >
 #   performance-unnecessary-value-param   : mostly Q_INVOKABLE / slot signatures
 #                                           (deliberate API) — high mechanical churn
 #                                           for a minor gain; run by hand if wanted.
+#   clang-analyzer-cplusplus.NewDelete[Leaks] : notorious FALSE POSITIVES on Qt's
+#                                           QSharedPointer/implicitly-shared internals
+#                                           (e.g. a "use-after-free" reported inside
+#                                           qsharedpointer_impl.h on some Qt versions).
+#                                           The project's ownership is Qt parenting +
+#                                           qmlProtect/qmlCppOwned, not raw new/delete,
+#                                           so the check's real-bug value here is low.
 
 # Only diagnose our own headers (not Qt/system). Generated moc_/qrc_/ui_ headers
 # live in the build tree, so this src/-anchored pattern already excludes them.
