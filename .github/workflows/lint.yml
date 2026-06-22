@@ -25,13 +25,29 @@ jobs:
           modules: qtcharts         # qtdeclarative/qtsvg are base components (see tests.yml)
           cache: true
 
-      - name: Install clang-tidy + cppcheck
-        run: sudo apt-get update && sudo apt-get install -y clang-tidy cppcheck
+      - name: Install clang 17 toolchain + cppcheck
+        # Pin to clang/clang-tidy **17** to MATCH the local kit (llvm-mingw 1706 ==
+        # clang 17.0.6). Two reasons, both learned the hard way:
+        #  1) the compile DB must be generated with CLANG, not gcc -- a gcc DB makes
+        #     clang-tidy choke on gcc-only flags/libstdc++ (a flood of bogus
+        #     clang-diagnostic-error "findings").
+        #  2) clang-tidy's check SET drifts by version -- a newer Ubuntu clang-tidy
+        #     adds checks (e.g. performance-enum-size) the kit's 17 doesn't have, so
+        #     the gate would diverge from local. Pinning 17 keeps CI == kit.
+        # Symlink the unversioned names so cmake / scripts/lint.sh pick up 17.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-17 clang-tidy-17 cppcheck
+          sudo ln -sf "$(command -v clang-17)"       /usr/local/bin/clang
+          sudo ln -sf "$(command -v clang++-17)"     /usr/local/bin/clang++
+          sudo ln -sf "$(command -v clang-tidy-17)"  /usr/local/bin/clang-tidy
+          clang --version && clang-tidy --version
 
-      - name: Configure (emit compile_commands.json)
-        # CMAKE_EXPORT_COMPILE_COMMANDS is forced ON in projects/CMakeLists.txt;
-        # a plain configure is enough to produce build/compile_commands.json.
-        run: cmake -S projects -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+      - name: Configure (clang, emit compile_commands.json)
+        # CMAKE_EXPORT_COMPILE_COMMANDS is forced ON in projects/CMakeLists.txt.
+        run: >
+          cmake -S projects -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
       - name: Generate AUTOMOC/qrc sources for analysis
         # clang-tidy needs the generated headers (moc_*, qrc_*, ui_*) to exist for
