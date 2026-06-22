@@ -61,10 +61,13 @@ PokemonMove::PokemonMove(PokemonBox* parentMon, var8 move, var8 pp, var8 ppUp)
   this->pp = pp;
   this->ppUp = ppUp;
 
-  if(move == 0) {
+  if(move == 0)
     randomize();
-    ppUp = 0;
-  }
+  // (Removed a dead `ppUp = 0;` here: it assigned the constructor PARAMETER `ppUp`
+  //  -- which shadows the member -- so it was a no-op, never read. Removing it
+  //  preserves behavior. If the intent was to zero the move's PP-Ups after a random
+  //  fill, that wants `this->ppUp = 0;` instead -- flagged for review in testing.md.
+  //  Found by clang-analyzer-deadcode.DeadStores.)
 }
 
 MoveDBEntry* PokemonMove::toMove()
@@ -867,8 +870,15 @@ float PokemonBox::expLevelRangePercent()
   var32 curExp = exp - expLevelRangeStart();
   var32 expEnd = expLevelRangeEnd() - expLevelRangeStart();
 
-  // Return percentage
-  return curExp / expEnd;
+  // Return percentage. Both operands are var32, so the previous `curExp / expEnd`
+  // was an INTEGER division truncated to 0 (or 1 at the very top of the level)
+  // before being widened to the float return -- the fractional percent was always
+  // lost. Divide in floating point, and guard a zero-width range (degenerate exp
+  // data) against divide-by-zero. Found by clang-tidy (bugprone-integer-division +
+  // clang-analyzer-core.DivideZero); see notes/reference/fix-patterns.md.
+  if(expEnd == 0)
+    return 0;
+  return static_cast<float>(curExp) / static_cast<float>(expEnd);
 }
 
 void PokemonBox::resetExp()
@@ -974,8 +984,10 @@ void PokemonBox::update(bool resetHp,
   if(resetType) {
     if(record->toType2)
       type2 = (*record).toType2->ind;
-    else
-      type2 = (*record).toType1->ind;
+    else if(record->toType1)   // guard toType1 (matches the resetType-&&-toType1
+      type2 = (*record).toType1->ind;  // check above) -- avoid a null deref on a
+                                       // record with neither type resolved.
+                                       // Found by clang-analyzer-core.NullDereference.
 
     // A single type (no distinct second type) is stored internally as 0xFF.
     if(type1 == type2)

@@ -1,0 +1,73 @@
+# clang-tidy configuration for pokered-save-editor-2
+# ---------------------------------------------------
+# Philosophy (matches the project's quality bar): high-signal, low-noise. We run
+# the static analyzer plus the genuinely-valuable bugprone / performance / a small
+# modernize set, and DISABLE the famously noisy/opinionated checks that flag style,
+# not defects (include-cleaner, const-correctness, easily-swappable-parameters, ...).
+#
+# Run it with scripts/lint.ps1 (Windows kit) or scripts/lint.sh (Linux/CI); both
+# point clang-tidy at build/compile_commands.json. See notes/plans/testing.md ->
+# "Static analysis / linting".
+#
+# WarningsAsErrors is intentionally empty here: severity is decided by the runner
+# (the `lint` CI job promotes the curated set to errors). Keeping it empty lets a
+# developer run clang-tidy locally for information without it hard-failing.
+# The gate is DEFECT-DETECTION, not style. We run the clang static analyzer plus
+# the bug-pattern / performance / unused checks that flag genuine problems, and
+# deliberately EXCLUDE the modernize-* / readability-* style families: they are
+# code-style opinions (not defects), they generate large mechanical churn (e.g.
+# modernize-use-override alone fires 100+ times), and auto-applying some of them
+# (value->const-ref signature changes) can alter behavior. That conflicts with the
+# project's "no unnecessary churn / appearance & API are deliberate" bar. A
+# developer who wants a style pass can still run `clang-tidy -checks=modernize-*`
+# by hand; it just isn't part of the green gate.
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions,
+  -bugprone-assignment-in-if-condition,
+  -bugprone-branch-clone,
+  -bugprone-too-small-loop-variable,
+  -bugprone-unchecked-optional-access,
+  clang-analyzer-*,
+  -clang-analyzer-optin.cplusplus.VirtualCall,
+  performance-*,
+  -performance-no-int-to-ptr,
+  -performance-unnecessary-value-param,
+  misc-unused-parameters,
+  misc-unused-using-decls,
+  misc-redundant-expression,
+  misc-misleading-identifier,
+  misc-misplaced-const
+
+# Why these are OFF (each flags a DELIBERATE project idiom or is high-churn style,
+# not a defect — keeping the gate meaningful and green without forcing risky churn):
+#   bugprone-too-small-loop-variable      : the var8/var16 GameBoy-width types are
+#                                           used as loop counters over fixed gen-1
+#                                           ranges (<=255) by design; no overflow.
+#   bugprone-unchecked-optional-access    : the DB base-stat / sprite std::optional
+#                                           fields are contract-guaranteed populated
+#                                           once a record passes its isValid()/null
+#                                           guard; per-access checks would be
+#                                           defensive churn on hot, tested math.
+#   optin.cplusplus.VirtualCall           : DB/savefile types intentionally call
+#                                           virtual qmlRegister()/load()/reset() from
+#                                           their constructors (core boot pattern).
+#   performance-unnecessary-value-param   : mostly Q_INVOKABLE / slot signatures
+#                                           (deliberate API) — high mechanical churn
+#                                           for a minor gain; run by hand if wanted.
+
+# Only diagnose our own headers (not Qt/system). Generated moc_/qrc_/ui_ headers
+# live in the build tree, so this src/-anchored pattern already excludes them.
+# (ExcludeHeaderFilterRegex would be cleaner but needs clang-tidy >= 19; the kit
+# ships 17.)
+HeaderFilterRegex: 'projects[/\\](common|db|savefile|app)[/\\](src|include)[/\\].*\.h$'
+
+WarningsAsErrors: ''
+
+FormatStyle: none
+
+CheckOptions:
+  - key: misc-unused-parameters.StrictMode
+    value: 'false'

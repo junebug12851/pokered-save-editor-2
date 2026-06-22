@@ -198,6 +198,22 @@ When you get "incomplete type" or "member access into incomplete type":
 | `About.qml:NN: Cannot override FINAL property` → `Component is not ready` → screen never opens | A custom `property` re-declared a name that a QtQuick.Controls base already defines as **FINAL**. Here `Page` already has `contentWidth` (also `contentHeight`, `contentItem`, `header`, `footer`, `title`); declaring `readonly property int contentWidth` on the `Page` root made the whole component fail to load. Fix: rename the custom property (→ `colWidth`). Don't reuse Control/Page property names. (2026-06-13.) **Now gated by `tst_qml_screens` (loads every screen, fails on any QML error/warning).** |
 | `TypeError: Property 'X' of object QQuickAnchorLine() is not a function` (calling a root function from a delegate) | The root was `id: top`, and inside delegates that have `anchors`, bare `top` resolves to the **`top` anchor line** (a `QQuickAnchorLine`), not the id — so `top.someFunc()` throws. Avoid `id: top` (also `bottom`/`left`/`right`/`fill`). Fix: rename the id (→ `root`). (2026-06-13, Credits screen.) **Now gated by `tst_qml_screens`.** |
 
+### Static-analysis findings (clang-tidy, 2026-06-22)
+
+Found by the new clang-tidy gate (`scripts/lint.*`, `.clang-tidy`). See
+`notes/plans/testing.md` → "Static analysis / linting".
+
+| Symptom | Fix |
+|---------|-----|
+| `PokemonBox::expLevelRangePercent()` returns 0.0 everywhere except the very top of a level (progress reads empty) | `return curExp / expEnd;` divided two `var32`s in **integer** math, then widened to the float return — the fraction was always truncated. Fix: `static_cast<float>(curExp) / static_cast<float>(expEnd)`, plus an `expEnd == 0` divide-by-zero guard. Regression: `tst_pokemonbox` now puts exp at the window midpoint and requires ~0.5. (`bugprone-integer-division` + `clang-analyzer-core.DivideZero`.) |
+| Possible null deref in `PokemonBox::update()` type2 else-branch | The `if(resetType){ if(toType2)… else type2 = (*record).toType1->ind; }` else dereferenced `toType1` unguarded, though line ~964 guards the same pointer for type1. Fix: `else if(record->toType1)`. Valid records are unaffected (toType1 set); only a record with neither type resolved is now safe. (`clang-analyzer-core.NullDereference`.) |
+| Dead store in `PokemonMove` ctor | `if(move==0){ randomize(); ppUp = 0; }` — `ppUp` here is the **constructor parameter** (shadows the member), so the assignment was a no-op never read. Removed it (behavior-preserving). If zeroing the member was intended it wants `this->ppUp = 0;` — flagged in testing.md. (`clang-analyzer-deadcode.DeadStores`.) |
+| signed/unsigned `char` compare in `PokemonStorageSet::load`/`save` | `i == skipInd` compared `var8` (unsigned) with `svar8` (signed). The `skipInd >= 0` guard makes it safe; made explicit with `i == static_cast<var8>(skipInd)`. (`bugprone-signed-char-misuse`.) |
+| int-multiply widened to `size_t` in `WorldScripts::reset()` | `memset(curScripts, 0, scriptCount * 2)` computed the size in `int`. No overflow (fixed small count) but made explicit: `static_cast<size_t>(scriptCount) * 2`. (`bugprone-implicit-widening-of-multiplication-result`.) |
+| copy-in-loop / implicit-conversion-in-loop | `for(auto x : …)` copying each element where a `const&` suffices (fontpreviewprovider, eventdbentry), and `for(const QJsonValue& : QJsonArray)` creating a per-iteration temporary (scripts, spriteSet) → `for(const auto& …)`. (`performance-for-range-copy`, `performance-implicit-conversion-in-loop`.) |
+| `PokedexModel::dexSort()` switch without default | Added `default: break;` (order unchanged for any unexpected value). (`bugprone-switch-missing-default-case`.) |
+| `~ItemMarketEntry()` calls pure-virtual `_whichType()` (latent UB) | **Suppressed + flagged, not fixed** — safe on every real path (cached during the object's life) but UB if destroyed with `whichType()` never called. A real fix is a lifetime refactor of this UAF-historied area; deferred to Twilight. `NOLINT` + full note at the call site. (`clang-analyzer-cplusplus.PureVirtualCall`.) |
+
 ### GUI-test harness gotchas (offscreen / QtTest)
 
 | Symptom | Fix |

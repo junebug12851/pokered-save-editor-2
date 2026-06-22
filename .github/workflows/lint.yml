@@ -1,0 +1,43 @@
+name: lint
+
+# Static-analysis gate: clang-tidy (C++), qmllint (QML), cppcheck (C++).
+# Mirrors scripts/lint.sh locally. Runs on every push/PR alongside `tests`.
+# See notes/plans/testing.md -> "Static analysis / linting".
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt (Linux gcc_64)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.3"          # pinned exact so the Qt cache key is stable
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtcharts         # qtdeclarative/qtsvg are base components (see tests.yml)
+          cache: true
+
+      - name: Install clang-tidy + cppcheck
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy cppcheck
+
+      - name: Configure (emit compile_commands.json)
+        # CMAKE_EXPORT_COMPILE_COMMANDS is forced ON in projects/CMakeLists.txt;
+        # a plain configure is enough to produce build/compile_commands.json.
+        run: cmake -S projects -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Generate AUTOMOC/qrc sources for analysis
+        # clang-tidy needs the generated headers (moc_*, qrc_*, ui_*) to exist for
+        # includes to resolve; building the autogen targets is cheaper than a full
+        # build. A full build is the safe superset and keeps the gate honest.
+        run: cmake --build build -j --target tests_all || cmake --build build -j
+
+      - name: Run static analysis
+        run: bash scripts/lint.sh

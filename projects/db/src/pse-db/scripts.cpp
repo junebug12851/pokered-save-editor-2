@@ -43,7 +43,7 @@ ScriptDBEntry::ScriptDBEntry(QJsonValue& data)
     skip = static_cast<var8>(data["skip"].toDouble());
 
   if (data["maps"].isArray()) {
-    for (const QJsonValue& mapEntry : data["maps"].toArray())
+    for (const auto& mapEntry : data["maps"].toArray())
       maps.append(mapEntry.toString());
   } else {
     maps.append(name);

@@ -97,7 +97,7 @@ void WorldScripts::scriptsSet(int ind, int val)
 
 void WorldScripts::reset()
 {
-  memset(curScripts, 0, scriptCount * 2); // 2 * 8-bit widths
+  memset(curScripts, 0, static_cast<size_t>(scriptCount) * 2); // 2 * 8-bit widths
   curScriptsChanged();
 }
 

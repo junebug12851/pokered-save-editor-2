@@ -348,8 +348,12 @@ void SaveFileToolset::recalcBoxesChecksums()
   saveFile->data[0x7A4C] = getChecksum(0x6000, 0x1A4C);
 }
 
-void SaveFileToolset::recalcChecksums(bool force)
+void SaveFileToolset::recalcChecksums(bool /*force*/)
 {
+  // NOTE: `force` is currently unused -- the box-checksum block below self-gates on
+  // whether the game has formatted the boxes yet. Kept in the signature (callers
+  // pass it) and flagged for review in notes/plans/testing.md. (clang-tidy
+  // misc-unused-parameters.)
   // Apply Bank 1 Checksum
   saveFile->data[0x3523] = getChecksum(0x2598, 0xF8B);
 

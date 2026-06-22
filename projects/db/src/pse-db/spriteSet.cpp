@@ -47,7 +47,7 @@ SpriteSetDBEntry::SpriteSetDBEntry(QJsonValue& data)
     setES = static_cast<var8>(data["setES"].toDouble());
 
   if (data["sprites"].isArray())
-    for (const QJsonValue& s : data["sprites"].toArray())
+    for (const auto& s : data["sprites"].toArray())
       spriteList.append(s.toString());
 }
 

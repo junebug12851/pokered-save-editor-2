@@ -12,6 +12,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Emit compile_commands.json so clang-tidy / clangd / cppcheck can see the exact
+# per-file flags. Harmless for normal builds; consumed by scripts/lint.* and the
+# `lint` CI workflow. See notes/plans/testing.md -> "Static analysis / linting".
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)

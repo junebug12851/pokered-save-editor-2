@@ -1,0 +1,24 @@
+# cppcheck suppressions for pokered-save-editor-2
+# ------------------------------------------------
+# cppcheck (run by scripts/lint.* and the `lint` CI job) is high-value but noisy on
+# Qt/MOC code. These suppress the well-known structural false positives so the gate
+# reflects real defects. Prefer an INLINE // cppcheck-suppress <id> comment for a
+# one-off; this file is for the categories that recur project-wide.
+
+# Qt's moc generates definitions cppcheck can't see -> slots/signals look unused.
+unusedFunction
+
+# We do not ship the full system/Qt headers to cppcheck (it only sees our --enable
+# set), so "missing system include" is expected and not actionable.
+missingIncludeSystem
+
+# Qt value types and QObject subclasses routinely use implicit single-arg ctors and
+# pass-by-value of small Q types by design; these style checks are not in our gate.
+noExplicitConstructor
+
+# cppcheck occasionally cannot resolve a Qt template and emits a spurious syntax/
+# internal note on otherwise-valid C++20 — don't fail the build on cppcheck's own
+# parser limits (real bugs still surface via the warning/performance categories).
+internalAstError
+syntaxError
+unknownMacro

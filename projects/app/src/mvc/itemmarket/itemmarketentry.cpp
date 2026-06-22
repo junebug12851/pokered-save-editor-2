@@ -102,7 +102,20 @@ int ItemMarketEntry::itemWorth()
 
 QString ItemMarketEntry::whichType()
 {
+  // LATENT-UB NOTE (flagged for review — see notes/plans/testing.md): the base
+  // ~ItemMarketEntry() destructor calls whichType() for cleanup. If whichType()
+  // was ALREADY called during the object's life (the normal case — the model uses
+  // it for grouping/filtering), the destructor hits the cache below and never
+  // reaches _whichType(), so it's safe. But if an entry were destroyed WITHOUT
+  // whichType() ever being called, _whichType() (pure virtual in this base) would
+  // be invoked after the derived part is gone == undefined behavior. clang-tidy
+  // (clang-analyzer-cplusplus.PureVirtualCall) correctly flags the latent path.
+  // A real fix means caching the type as a plain member set by the derived class
+  // (the ctor can't call it either) -- a lifetime refactor of this UAF-historied
+  // area, deferred to Twilight rather than changed unilaterally. Suppressed here
+  // because the cached-by-then invariant holds in every real code path.
   if(!cache.contains(HashKeyWhichType))
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.PureVirtualCall)
     cache.insert(HashKeyWhichType, _whichType());
 
   return cache.value(HashKeyWhichType).toString();

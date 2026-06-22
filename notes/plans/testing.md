@@ -903,6 +903,62 @@ reproduction, runnable on demand without GitHub auth. Both run `tests_all` + cte
 offscreen, so a green container ≈ a green CI Linux job (modulo the Qt/compiler
 delta).
 
+## Static analysis / linting (BUILT 2026-06-22)
+
+The suite's static-analysis layer — the last missing test *type*. Three tools, one
+entry point each locally (`scripts/lint.ps1` on the Windows kit, `scripts/lint.sh`
+on Linux/CI) and a `lint` GitHub Actions workflow (`.github/workflows/lint.yml`,
+Linux, runs alongside `tests`).
+
+**clang-tidy (GATED).** Config: repo-root `.clang-tidy`. Reads
+`build/compile_commands.json` (`CMAKE_EXPORT_COMPILE_COMMANDS` is forced ON in
+`projects/CMakeLists.txt`). The check set is **defect-detection, not style**: the
+clang static analyzer + the high-signal `bugprone-*` / `performance-*` /
+`misc-unused*` checks. Deliberately OFF (each documented in `.clang-tidy`): the
+`modernize-*`/`readability-*` style families (churn, not defects); and three checks
+that only flag *intentional project idioms* — `bugprone-too-small-loop-variable`
+(the `var8`/`var16` GameBoy-width loop counters over fixed ranges),
+`bugprone-unchecked-optional-access` (DB base-stat/sprite `std::optional`s are
+contract-guaranteed populated past their `isValid()`/null guards),
+`clang-analyzer-optin.cplusplus.VirtualCall` (the `qmlRegister()`/`load()`-in-ctor
+boot pattern), and `performance-unnecessary-value-param` (mostly deliberate
+Q_INVOKABLE/slot signatures). Gate status: **clean — 143 TUs, 0 findings.** (The kit
+ships clang-tidy 17, so `ExcludeHeaderFilterRegex` — added in 19 — is not used.) The
+local serial run is slow (~15 min, header re-analysis per TU); for a fast sweep run
+clang-tidy file-parallel (see the throwaway `tidy_par.ps1` pattern) — CI uses
+`run-clang-tidy`-style parallelism implicitly via the script.
+
+**cppcheck (GATED if installed).** `.cppcheck-suppressions` carries the recurring
+Qt/MOC structural false positives (unusedFunction, missingIncludeSystem, …). Not on
+the Windows kit by default; the Linux `lint` job apt-installs it. Inline
+`// cppcheck-suppress <id>` for one-offs.
+
+**qmllint (INFORMATIONAL, never gates).** qmllint cannot resolve the project's
+C++-registered QML types — a direct consequence of the deliberate no-`qt_add_qml_module`
+design — so its type-dependent categories are false positives AND its unused-import
+detection is unreliable (a *used* directory import like `import "../controls"` can be
+misflagged; removing it would break the app). Changing QML is also a design decision.
+So qmllint is surfaced for human review but never fails the build. (If we ever want a
+real QML gate, the path is generating `.qmltypes` for the C++ types — a sub-project
+that somewhat fights the current architecture.)
+
+**Bugs the gate found + fixed (2026-06-22)** — see `notes/reference/fix-patterns.md`:
+`expLevelRangePercent()` integer-division-as-float (+ div-by-zero guard); an unguarded
+`toType1->ind` deref in `PokemonBox::update()`; a dead-store in `PokemonMove`'s ctor;
+a signed/unsigned `char` compare; an int-multiply widening; cheap const-ref loop fixes;
+a missing switch `default`.
+
+**Flagged for review (NOT changed unilaterally — referenced from code comments):**
+- **`~ItemMarketEntry()` pure-virtual-call (UB).** The base destructor calls
+  `whichType()` → pure-virtual `_whichType()`. Safe on every real path (the result is
+  cached during the object's life), but UB if an entry is destroyed having *never* had
+  `whichType()` called. Suppressed with a `NOLINT` + full note at the call site; a real
+  fix is a lifetime refactor of this UAF-historied area. **Decision needed.**
+- **`SaveFileToolset::recalcChecksums(bool force)`** — `force` is unused (param name
+  commented out to silence the warning). Was it meant to bypass the box-format gate?
+- **`PokemonMove` ctor `ppUp`** — the removed dead store *assigned the parameter*; if the
+  intent was to zero the member after a random fill, it should be `this->ppUp = 0;`.
+
 ## Open questions / decisions needed
 
 - **QML/UI scope** — deferred above; to decide later.

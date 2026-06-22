@@ -51,7 +51,10 @@ void PokemonStorageSet::load(SaveFile* saveFile, var16 boxesOffset, svar8 skipIn
 
   for (var8 i = 0; i < setMaxBoxes; i++) {
 
-    if(skipInd >= 0 && i == skipInd)
+    // skipInd is signed (svar8, -1 == "skip nothing"); i is unsigned (var8). The
+    // `skipInd >= 0` guard means the cast is safe -- it just makes the signed/
+    // unsigned comparison explicit (clang-tidy bugprone-signed-char-misuse).
+    if(skipInd >= 0 && i == static_cast<var8>(skipInd))
       continue;
 
     boxes[i]->load(
@@ -64,7 +67,10 @@ void PokemonStorageSet::save(SaveFile* saveFile, var16 boxesOffset, svar8 skipIn
 {
   for (var8 i = 0; i < setMaxBoxes; i++) {
 
-    if(skipInd >= 0 && i == skipInd)
+    // skipInd is signed (svar8, -1 == "skip nothing"); i is unsigned (var8). The
+    // `skipInd >= 0` guard means the cast is safe -- it just makes the signed/
+    // unsigned comparison explicit (clang-tidy bugprone-signed-char-misuse).
+    if(skipInd >= 0 && i == static_cast<var8>(skipInd))
       continue;
 
     boxes[i]->save(

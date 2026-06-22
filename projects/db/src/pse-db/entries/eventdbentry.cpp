@@ -53,7 +53,7 @@ EventDBEntry::EventDBEntry(QJsonValue& data)
 
 void EventDBEntry::deepLink()
 {
-  for(auto map : maps)
+  for(const auto& map : maps)
   {
     auto tmp = MapsDB::inst()->getIndAt(map);
     toMaps.append(tmp);

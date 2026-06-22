@@ -246,6 +246,18 @@ void TestPokemonBox::box_resetExpAndLevelRangePercent()
   const float pct = p->expLevelRangePercent();
   QVERIFY(pct >= 0.0f && pct <= 1.0f);
 
+  // Regression (clang-tidy bugprone-integer-division): mid-window must be a genuine
+  // FRACTION. The old `curExp / expEnd` divided two var32s in INTEGER math before
+  // widening to the float return, so it was truncated to 0.0 everywhere except the
+  // very top of the level. Put exp at the window midpoint and require ~0.5.
+  p->exp = p->expLevelRangeStart()
+           + (p->expLevelRangeEnd() - p->expLevelRangeStart()) / 2;
+  p->expChanged();
+  const float midPct = p->expLevelRangePercent();
+  QVERIFY2(midPct > 0.4f && midPct < 0.6f,
+           qPrintable(QStringLiteral("midPct=%1 (would be 0 under the old integer "
+                                     "division)").arg(midPct)));
+
   // ...and is exactly 1 at level 100.
   p->level = 100;
   p->levelChanged();

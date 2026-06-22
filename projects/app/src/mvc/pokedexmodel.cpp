@@ -144,6 +144,11 @@ void PokedexModel::dexSort()
   case SortInternal:
     dexSortInternal();
     break;
+
+  default:
+    // dexSortSelect is clamped to the Sort* set elsewhere; leave order unchanged
+    // for any unexpected value. (clang-tidy bugprone-switch-missing-default-case.)
+    break;
   }
 
   beginResetModel();

@@ -146,7 +146,7 @@ void FontPreviewInstance::getResultingText()
       .split("\n", Qt::SkipEmptyParts);
 
   QVector<QVector<var8>> ret;
-  for(auto entry : res) {
+  for(const auto& entry : res) {
     QVector<int> tmp = FontsDB::inst()->convertToCode(entry, 255, false);
     QVector<var8> tmpBytes;
     tmpBytes.reserve(tmp.size());
@@ -225,7 +225,7 @@ void FontPreviewInstance::drawFg()
   p.setBrush(bgColor);
   p.setPen(QColor("transparent"));
 
-  for(auto yLine : resultingText) {
+  for(const auto& yLine : resultingText) {
     for(auto xTile : yLine) {
 
       if(box)
