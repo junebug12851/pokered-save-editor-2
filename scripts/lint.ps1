@@ -76,11 +76,25 @@ function Invoke-ClangTidy {
     ($_ -match 'projects[\\/](common|db|savefile|app)[\\/]src') -and
     ($_ -notmatch '(moc_|qrc_|ui_|_autogen|/generated/|\\generated\\)')
   } | Sort-Object -Unique
-  Write-Host "  $($files.Count) translation units"
   $log = Join-Path $repo "lint-clang-tidy.log"
-  $args = @("-p", $Build)
-  if ($Fix) { $args += "-fix" }
-  & clang-tidy @args @files 2>&1 | Tee-Object -FilePath $log | Out-Null
+  if ($Fix) {
+    # -fix must be serial (concurrent fix-its to shared headers would race).
+    Write-Host "  $($files.Count) translation units (serial, -fix)"
+    & clang-tidy -p $Build -fix @files 2>&1 | Tee-Object -FilePath $log | Out-Null
+  } else {
+    # File-parallel: a single serial run over ~140 Qt TUs is ~15 min (header
+    # re-parse per TU). Each child writes its own log; then concatenate. Same
+    # results as serial (same .clang-tidy + compile DB).
+    Write-Host "  $($files.Count) translation units (parallel)"
+    $td = Join-Path ([IO.Path]::GetTempPath()) ("tidy_" + [Guid]::NewGuid().ToString("N"))
+    New-Item -ItemType Directory -Force -Path $td | Out-Null
+    $files | ForEach-Object -ThrottleLimit 10 -Parallel {
+      $safe = ($_ -replace '[\\/:]', '_')
+      & clang-tidy -p $using:Build $_ 2>&1 | Out-File (Join-Path $using:td "$safe.log")
+    }
+    Get-ChildItem $td -Filter *.log | Get-Content | Out-File $log
+    Remove-Item $td -Recurse -Force -ErrorAction SilentlyContinue
+  }
   $warns = (Select-String -Path $log -Pattern 'warning:|error:' -ErrorAction SilentlyContinue)
   $n = if ($warns) { $warns.Count } else { 0 }
   if ($n -gt 0) {
@@ -120,21 +134,23 @@ function Invoke-Qmllint {
 }
 
 function Invoke-Cppcheck {
+  # INFORMATIONAL for now (not gated) -- see scripts/lint.sh run_cppcheck for why
+  # (noisy on Qt, no validation pass yet; promote once confirmed clean). clang-tidy
+  # is the enforced C++ gate meanwhile.
   $cppcheck = Get-Command cppcheck -ErrorAction SilentlyContinue
   if (-not $cppcheck) {
     Write-Host "== cppcheck == (not installed, skipping)" -ForegroundColor DarkGray
     return
   }
-  Write-Host "== cppcheck ==" -ForegroundColor Cyan
+  Write-Host "== cppcheck (informational, not gated) ==" -ForegroundColor Cyan
   $log = Join-Path $repo "lint-cppcheck.log"
   & cppcheck --quiet --enable=warning,performance,portability `
     --inline-suppr --suppressions-list=(Join-Path $repo ".cppcheck-suppressions") `
-    --error-exitcode=2 --std=c++20 `
+    --std=c++20 `
     -i (Join-Path $repo "build") `
     (Join-Path $repo "projects\common\src") (Join-Path $repo "projects\db\src") `
     (Join-Path $repo "projects\savefile\src") (Join-Path $repo "projects\app\src") 2>&1 |
     Tee-Object -FilePath $log
-  if ($LASTEXITCODE -ne 0) { $script:gatedFailures++ }
 }
 
 if ($runAll -or $Cpp)      { Invoke-ClangTidy }

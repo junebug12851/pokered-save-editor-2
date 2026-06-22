@@ -928,10 +928,13 @@ local serial run is slow (~15 min, header re-analysis per TU); for a fast sweep 
 clang-tidy file-parallel (see the throwaway `tidy_par.ps1` pattern) — CI uses
 `run-clang-tidy`-style parallelism implicitly via the script.
 
-**cppcheck (GATED if installed).** `.cppcheck-suppressions` carries the recurring
+**cppcheck (INFORMATIONAL for now).** `.cppcheck-suppressions` carries the recurring
 Qt/MOC structural false positives (unusedFunction, missingIncludeSystem, …). Not on
-the Windows kit by default; the Linux `lint` job apt-installs it. Inline
-`// cppcheck-suppress <id>` for one-offs.
+the Windows kit by default; the Linux `lint` job apt-installs it. Surfaced but **not
+gated yet** — it's noisy on Qt and hasn't had a validation pass on this codebase
+(only seen on Linux CI, since it isn't on the kit). **Promote to gating** (re-add
+`--error-exitcode=2` + the fail increment in `scripts/lint.*`) once a clean run is
+confirmed and the suppressions tuned. Inline `// cppcheck-suppress <id>` for one-offs.
 
 **qmllint (INFORMATIONAL, never gates).** qmllint cannot resolve the project's
 C++-registered QML types — a direct consequence of the deliberate no-`qt_add_qml_module`

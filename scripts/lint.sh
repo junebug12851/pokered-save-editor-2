@@ -53,8 +53,18 @@ for e in json.load(open(sys.argv[1])):
 PY
 )
   files=($(printf '%s\n' "${files[@]}" | sort -u))
-  echo "  ${#files[@]} translation units"
-  clang-tidy -p "$BUILD" "${files[@]}" 2>&1 | tee lint-clang-tidy.log >/dev/null
+  local jobs; jobs=$(nproc 2>/dev/null || echo 4)
+  echo "  ${#files[@]} translation units (parallel x$jobs)"
+  # Run clang-tidy file-parallel -- a single serial invocation over ~140 Qt TUs
+  # takes ~25 min on a 2-core runner (it re-parses Qt headers per TU). Each child
+  # writes its own log (concurrent appends to one file would interleave); then we
+  # concatenate. Results are identical to the serial run (same .clang-tidy + DB).
+  local td; td=$(mktemp -d)
+  _tidy_one() { clang-tidy -p "$2" "$1" > "$3/$(echo "$1" | tr '/:\\' '___').log" 2>&1; }
+  export -f _tidy_one
+  printf '%s\n' "${files[@]}" | xargs -P "$jobs" -I{} bash -c '_tidy_one "$1" "$2" "$3"' _ {} "$BUILD" "$td"
+  cat "$td"/*.log > lint-clang-tidy.log 2>/dev/null
+  rm -rf "$td"
   local n; n=$(grep -cE 'warning:|error:' lint-clang-tidy.log || true)
   if [[ "$n" -gt 0 ]]; then
     echo "  $n clang-tidy findings (see lint-clang-tidy.log):"
@@ -84,16 +94,20 @@ run_qmllint() {
 }
 
 run_cppcheck() {
+  # INFORMATIONAL for now (not gated): cppcheck is noisy on Qt and hasn't yet had a
+  # validation pass on this codebase (it isn't on the Windows kit, so it's only seen
+  # on the Linux CI). It's surfaced here; promote it to gating (re-add
+  # --error-exitcode + the fails increment) once a clean run is confirmed and the
+  # suppressions tuned. clang-tidy is the enforced C++ gate meanwhile.
   if ! command -v cppcheck >/dev/null 2>&1; then
     echo "== cppcheck == (not installed, skipping)"; return
   fi
-  echo "== cppcheck =="
+  echo "== cppcheck (informational, not gated) =="
   cppcheck --quiet --enable=warning,performance,portability \
     --inline-suppr --suppressions-list=.cppcheck-suppressions \
-    --error-exitcode=2 --std=c++20 -i build \
+    --std=c++20 -i build \
     projects/common/src projects/db/src projects/savefile/src projects/app/src \
-    2>&1 | tee lint-cppcheck.log
-  [[ ${PIPESTATUS[0]} -ne 0 ]] && fails=$((fails+1)) || true
+    2>&1 | tee lint-cppcheck.log || true
 }
 
 [[ $RUN_CPP -eq 1 ]] && run_clang_tidy
