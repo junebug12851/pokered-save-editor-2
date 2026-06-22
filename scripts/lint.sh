@@ -69,6 +69,8 @@ PY
   if [[ "$n" -gt 0 ]]; then
     echo "  $n clang-tidy findings (see lint-clang-tidy.log):"
     grep -oE '\[[a-z0-9.-]+\]$' lint-clang-tidy.log | sort | uniq -c | sort -rn
+    echo "  --- offending lines (first 60) ---"
+    grep -nE 'warning:|error:' lint-clang-tidy.log | head -60
     fails=$((fails+n))
   else
     echo "  clean."
