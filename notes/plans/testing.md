@@ -989,10 +989,23 @@ worth chasing now:**
    save→reopen *cycle* is already covered by tst_e2e / tst_gui_saveload). This ceiling is permanent for a
    headless suite; it is not a real gap.
 
-**So the honest target is ~100% of *reachable, built* code, not a literal 100% of every line.** The
-next coverage passes should work the category-1 list above (each a focused test file + the standard
-build/ctest/commit loop), and re-measure with the Docker `coverage` variant. Category 2 unlocks as the
-Maps/HoF/Options screens are built; category 3 stays documented-excluded.
+**Progress + a 4th, newly-found constraint (2026-06-22).** First fill pass landed:
+`tst_db_coverage_fill.cpp` covers the Examples / TmHmsDB / MusicDB / TrainersDB accessor one-liners.
+Building it surfaced an important reachability limit: **the db/savefile shared libs only EXPORT their
+`DB_AUTOPORT`/`SAVEFILE_AUTOPORT`-marked classes.** Unmarked classes (e.g. `Examples`, `HiddenCoinsDB`)
+can't be called from an external test exe at all — their accessor lines are only reachable via QML's
+meta-object (a `Q_PROPERTY` `property("x")` read invokes the getter inside the dll — that's how the
+Examples accessors got covered) or internal dll calls. Plain non-`Q_PROPERTY` methods on an unexported
+class are simply not reachable headless. Also data-driven dead ends exist: the HiddenItems/Coins entry
+getters can't be covered because those stores are empty in the test fixtures. So a chunk of the raw
+"miss" is export-gated/data-gated, not genuinely fillable — treat the per-line report with that lens
+(prefer `Q_PROPERTY` meta-reads for unexported classes; don't add export macros just for coverage).
+
+**So the honest target is ~100% of *reachable, built, exported* code, not a literal 100% of every line.**
+The next coverage passes should work the category-1 list above (each a focused test file + the standard
+build/ctest/commit loop; app-layer targets need a Bridge à la tst_bridge), and re-measure with the Docker
+`coverage` variant. Category 2 unlocks as the Maps/HoF/Options screens are built; category 3 stays
+documented-excluded.
 
 ## Open questions / decisions needed
 
