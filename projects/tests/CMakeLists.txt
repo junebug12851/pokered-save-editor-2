@@ -190,6 +190,8 @@ if(TARGET appcore)
     pse_add_gui_test(tst_gui_fidelity   gui/tst_gui_fidelity.cpp)
     pse_add_gui_test(tst_gui_drag       gui/tst_gui_drag.cpp)
     pse_add_gui_test(tst_gui_moves      gui/tst_gui_moves.cpp)
+    pse_add_gui_test(tst_visual_regression gui/tst_visual_regression.cpp)
+    pse_add_gui_test(tst_acceptance     gui/tst_acceptance.cpp)
 
     # Screenshot / animation-frame capture tool (NOT a CTest test). Same wiring as a
     # GUI test (appcore + bootQmlLinkage + app.qrc, runs offscreen), but it renders
