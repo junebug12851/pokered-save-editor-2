@@ -962,6 +962,38 @@ a missing switch `default`.
   checksum system is intact; `force` is just a never-wired-up leftover param (no byte-fidelity
   impact). Param name commented out to silence the warning.
 
+## Coverage status & the road to "100%" (measured 2026-06-22)
+
+Fresh authoritative measurement (Docker `coverage` variant, Qt 6.11 + clang, all 71 ctest):
+**TOTAL ≈ 89.98% line / 90.30% function / 86.81% region / 78.67% branch** over project source.
+(Up slightly from the 89.73% baseline — the new signal/model/visual/acceptance suites + the
+analyzer bug-fix paths.) common ≈ 100%; savefile/db ≈ 90%; app is the laggard.
+
+**"100% on every level" is bounded — the remaining miss is three distinct kinds, only one of which is
+worth chasing now:**
+
+1. **Genuinely fillable (the real to-do).** Reachable-headless code with leaf getters / model branches
+   not yet exercised — the actionable target list, worst-first by line %:
+   - **db:** `hiddenitemdbentry.cpp` 44%, `examples.cpp` 57%, `mapdbentry.cpp` 69%, `tmHm.cpp` 70%,
+     `music.cpp`/`trainers.cpp`/`spriteSet.cpp` ~77%, `tileset.cpp` 79% — mostly DB-entry getter sweeps
+     (low-risk, read-only, no source changes; the `tst_db_entry_getters*` pattern).
+   - **app:** `itemmarketentrymoney.cpp` 64%, `itemmarketviewmodel.cpp` 67%, `settings.cpp` 75%,
+     `itemstoragemodel.cpp` 75% — model-method branches (extend `tst_market_model`/`tst_item_storage_model`).
+2. **WIP / not-yet-wired features — exercising them is not meaningful until they're built.**
+   `individualmap.cpp` **0%** (Maps detail model), the `expanded/area/*.cpp` ~71% (Maps-adjacent),
+   and `halloffame.cpp`/`hofrecord.cpp`/`hofpokemon.cpp` ~66-71% (Hall of Fame). These are the same
+   disabled Maps/HoF/Options features excluded from randomizer scope (see status.md Open issues). Pulling
+   them to 100% would test dead-until-enabled code; defer until the feature lands.
+3. **Structurally headless-unreachable.** `filemanagement.cpp` 77.5% — the missed ~54 lines are the
+   **native open/save file dialogs** + the to-disk dialog path, which cannot run without a display (the
+   save→reopen *cycle* is already covered by tst_e2e / tst_gui_saveload). This ceiling is permanent for a
+   headless suite; it is not a real gap.
+
+**So the honest target is ~100% of *reachable, built* code, not a literal 100% of every line.** The
+next coverage passes should work the category-1 list above (each a focused test file + the standard
+build/ctest/commit loop), and re-measure with the Docker `coverage` variant. Category 2 unlocks as the
+Maps/HoF/Options screens are built; category 3 stays documented-excluded.
+
 ## Open questions / decisions needed
 
 - **QML/UI scope** — deferred above; to decide later.

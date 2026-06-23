@@ -61,10 +61,14 @@ revertible if wanted live.
 ## Testing
 
 A comprehensive automated suite lives under `projects/tests/` (QtTest + CTest). **Full `ctest` is
-green (67/67 on the Qt 6.11 kit).** Library-layer line coverage is at/above 90% (common 100%, db
+green (71/71 on the Qt 6.11 kit).** Library-layer line coverage is at/above 90% (common 100%, db
 ~90%, savefile ~90%; app layer is the laggard). The Linux Docker env runs four variants green
-(standard / asan+ubsan / xvfb / coverage 89.73%). A QML-load smoke test (`tst_qml_screens`) and a
-real-app GUI suite (`tst_gui_*`) gate `main`. A **static-analysis layer** (clang-tidy + cppcheck +
+(standard / asan+ubsan / xvfb / coverage **89.98%** as of 2026-06-22). A QML-load smoke test
+(`tst_qml_screens`), a real-app GUI suite (`tst_gui_*`), signal/slot (`tst_signals`), model-contract
+(`tst_model_tester`), visual-regression (`tst_visual_regression`) and BDD acceptance (`tst_acceptance`)
+suites gate `main`. The road to "100%" (3 gap kinds; only the reachable-fillable one is worth chasing)
+is mapped in [`plans/testing.md`](plans/testing.md) → "Coverage status". A **static-analysis layer**
+(clang-tidy + cppcheck +
 informational qmllint, via `scripts/lint.*` and a `lint` CI workflow) was added 2026-06-22 — the
 clang-tidy gate is clean (143 TUs, 0 findings) and surfaced/fixed 8 real defects (see version.md).
 Strategy, coverage baseline, and remaining gaps: [`plans/testing.md`](plans/testing.md).
