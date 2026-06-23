@@ -951,16 +951,16 @@ that somewhat fights the current architecture.)
 a signed/unsigned `char` compare; an int-multiply widening; cheap const-ref loop fixes;
 a missing switch `default`.
 
-**Flagged for review (NOT changed unilaterally — referenced from code comments):**
-- **`~ItemMarketEntry()` pure-virtual-call (UB).** The base destructor calls
-  `whichType()` → pure-virtual `_whichType()`. Safe on every real path (the result is
-  cached during the object's life), but UB if an entry is destroyed having *never* had
-  `whichType()` called. Suppressed with a `NOLINT` + full note at the call site; a real
-  fix is a lifetime refactor of this UAF-historied area. **Decision needed.**
-- **`SaveFileToolset::recalcChecksums(bool force)`** — `force` is unused (param name
-  commented out to silence the warning). Was it meant to bypass the box-format gate?
-- **`PokemonMove` ctor `ppUp`** — the removed dead store *assigned the parameter*; if the
-  intent was to zero the member after a random fill, it should be `this->ppUp = 0;`.
+**Reviewed with Twilight 2026-06-22:**
+- **`PokemonMove` ctor `ppUp`** — RESOLVED: confirmed intended; fixed to `this->ppUp = 0;`
+  so new move slots start clean (see fix-patterns.md).
+- **`~ItemMarketEntry()` pure-virtual-call (UB)** — Acknowledged, **left as-is** (suppressed +
+  documented). Shop-screen lifetime hygiene only, no save-data impact; safe on every real path
+  (the value is cached before destruction). A real fix is a lifetime refactor of this
+  UAF-historied area — deferred, not worth the risk now.
+- **`SaveFileToolset::recalcChecksums(bool force)`** — Acknowledged, **left as-is**. The working
+  checksum system is intact; `force` is just a never-wired-up leftover param (no byte-fidelity
+  impact). Param name commented out to silence the warning.
 
 ## Open questions / decisions needed
 

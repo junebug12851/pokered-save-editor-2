@@ -61,13 +61,17 @@ PokemonMove::PokemonMove(PokemonBox* parentMon, var8 move, var8 pp, var8 ppUp)
   this->pp = pp;
   this->ppUp = ppUp;
 
-  if(move == 0)
+  if(move == 0) {
     randomize();
-  // (Removed a dead `ppUp = 0;` here: it assigned the constructor PARAMETER `ppUp`
-  //  -- which shadows the member -- so it was a no-op, never read. Removing it
-  //  preserves behavior. If the intent was to zero the move's PP-Ups after a random
-  //  fill, that wants `this->ppUp = 0;` instead -- flagged for review in testing.md.
-  //  Found by clang-analyzer-deadcode.DeadStores.)
+    // A freshly-created empty move slot starts with 0 PP-Ups. randomize() (above)
+    // assigns a RANDOM 0-3 ppUp; this resets it so a brand-new move is clean. The
+    // original code wrote `ppUp = 0`, which assigned the constructor PARAMETER
+    // (shadowing the member) -- a no-op, so new moves silently kept a random ppUp.
+    // Now writes the member. (clang-analyzer-deadcode.DeadStores; confirmed intended
+    // with Twilight 2026-06-22.) Set directly (no ppUpChanged()) -- we're in the
+    // ctor, matching the plain member writes above; nothing is connected yet.
+    this->ppUp = 0;
+  }
 }
 
 MoveDBEntry* PokemonMove::toMove()
