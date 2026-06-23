@@ -98,6 +98,7 @@ if(TARGET appcore)
     pse_add_test(tst_move_select_model appcore mvc/tst_move_select_model.cpp)
     pse_add_test(tst_app_e2e  appcore  mvc/tst_app_e2e.cpp)
     pse_add_test(tst_shortcuts appcore mvc/tst_shortcuts.cpp)
+    pse_add_test(tst_model_tester appcore mvc/tst_model_tester.cpp)
 
     # The graphics engine + QML image providers need a GUI app (QPixmap/QPainter)
     # and the app's qrc (the tileset/font PNGs live in app.qrc, not appcore), and
