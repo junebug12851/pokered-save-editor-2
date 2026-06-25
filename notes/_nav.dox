@@ -51,6 +51,7 @@ background, the **System Map**, the **Reference** lookups, the **Decisions**, an
 \page pse_sessions_2026_06 June 2026
 \brief Daily session logs for June 2026 (`notes/sessions/2026-06/`).
 
+\subpage md_notes_2sessions_22026-06_22026-06-25 <br>
 \subpage md_notes_2sessions_22026-06_22026-06-17 <br>
 \subpage md_notes_2sessions_22026-06_22026-06-16 <br>
 \subpage md_notes_2sessions_22026-06_22026-06-15 <br>
@@ -118,6 +119,7 @@ background, the **System Map**, the **Reference** lookups, the **Decisions**, an
 \subpage md_notes_2reference_2i18n <br>
 \subpage md_notes_2reference_2documentation <br>
 \subpage md_notes_2reference_2git-workflow <br>
+\subpage md_notes_2reference_2cross-project-sync <br>
 \subpage md_notes_2reference_2versioning <br>
 \subpage md_notes_2reference_2deployment
 */

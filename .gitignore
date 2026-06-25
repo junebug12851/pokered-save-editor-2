@@ -92,3 +92,11 @@ projects/build/
 # Generated documentation (Doxygen). The Doxyfile and the vendored theme under
 # docs/doxygen-awesome/ ARE tracked; only the generated HTML is ignored.
 /docs/html/
+
+# Read-only reference clones — the fairyfox.io hub mesh plus other repos pulled
+# in for reference (the pret/pokered disassembly, the v1 editor, etc.). These are
+# throwaway shallow clones living under assets/references/ and must NEVER be
+# tracked (committing them nests repos and bloats history). A pull here produces
+# no commit, so it triggers nothing downstream. See
+# notes/reference/cross-project-sync.md.
+/assets/references/

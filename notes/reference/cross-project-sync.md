@@ -1,0 +1,80 @@
+# Cross-Project Sync — the fairyfox mesh
+
+How this project shares standards with, and stays aware of, the **fairyfox.io hub**
+**without entanglement.** This is this project's committed copy of the hub's
+canonical `cross-project-sync` standard, lightly adapted to local paths. The hub is
+the source of truth; re-pull and reconcile by hand (see "Checking for updates" below).
+
+> This project's identity in the mesh: **key** `pokered-save-editor-2`, **branch**
+> `dev` (work) fast-forwarding to `main` (stable). The hub lives at
+> `github.com/junebug12851/junebug12851.github.io` and is published at fairyfox.io.
+
+## The one rule
+
+**Communication is git-only, one-directional per flow, and happens only on explicit
+request.** No submodules, no package dependency, no build-time coupling, no webhooks,
+no cross-repo automation. Each side *reads* a shallow clone of the other when a human
+or AI deliberately asks. Both flows track the **`dev`** branch (latest work); fall
+back to a repo's default branch if it has no `dev`.
+
+This keeps things modular and **prevents recursion**: nothing on one side
+automatically triggers a pull on the other, so the repos can't set each other off in
+a loop.
+
+## Roles
+
+- **Hub** — the fairyfox.io repo that holds shared standards/templates (`hub/`) and a
+  project `registry.yml`. It also *reads* projects to track changes / blog about them.
+- **Project** — this repo (and its siblings), which adopts the hub's standards.
+
+## The two flows
+
+### 1. Hub reads projects (inbound)
+
+The hub keeps read-only shallow clones of each project under its own
+`assets/references/<project>/` (git-ignored). Nothing for this project to do.
+
+### 2. This project reads the hub (outbound)
+
+This project keeps a read-only shallow clone of the hub under
+`assets/references/fairyfox.io/` (git-ignored — see the repo `.gitignore`) and
+**copies** what it needs out of `hub/standards/` and `hub/templates/` into its own
+tree, committing *that*:
+
+```sh
+# first time
+git -C assets/references clone --depth 1 --branch dev \
+    https://github.com/junebug12851/junebug12851.github.io fairyfox.io
+# refresh
+git -C assets/references/fairyfox.io pull --depth 1 --ff-only origin dev
+```
+
+Adopting a standard is a **copy committed locally**, not a live link — re-pull later
+and merge changes by hand.
+
+## Checking for updates ("check the fairyfox system for updates")
+
+On request only (the request must carry the word *fairyfox* + an update/sync intent —
+see the standing instruction in the repo-root `CLAUDE.md`). The default is **check,
+report, then wait**:
+
+1. Refresh the read-only clone under `assets/references/fairyfox.io/` (commands above).
+2. Diff it against what this project has adopted (this file, `git-workflow.md`,
+   `versioning.md`, the `CLAUDE.md` mesh block, the notes skeleton).
+3. **Report what changed and what adopting it would touch — then stop.** Apply nothing
+   until Twilight says go ahead; applying is a separate, confirmed act. Full procedure:
+   the hub's `adopting-updates` runbook (`hub/standards/adopting-updates.md`).
+
+## Anti-recursion checklist
+
+- ✅ Pulls are manual / on request — never scheduled to chain across repos.
+- ✅ Each flow is read-only on the far side — sync never pushes into the other repo.
+- ✅ Reference clones are git-ignored — a pull produces no commit, so it triggers
+  nothing downstream.
+- ✅ Adoption is a copy, not a runtime dependency.
+
+## Why `assets/references/`, not submodules
+
+Submodules pin a commit and couple repos at clone/build time — the opposite of the
+goal. A throwaway shallow clone in a git-ignored folder gives the content to read with
+zero coupling and zero history weight.

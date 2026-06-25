@@ -29,6 +29,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language; language switching deferred until a 2nd locale + Options screen exist |
 | `notes/reference/documentation.md` | **Docs** — generating the Doxygen site, the comment house-style, and the doc-pass progress ledger (all merged here) |
 | `notes/reference/git-workflow.md` | **Git standards** — branch model (`main` FF-only/stable, `dev` frequent), no history rewriting, commit-message style, hard safety rules. Read before any git op |
+| `notes/reference/cross-project-sync.md` | **Fairyfox mesh** — how this project shares standards with the fairyfox.io hub: git-only, read-only, on-request sync (no submodules/automation). The model behind "check the fairyfox system for updates" |
 | `notes/reference/versioning.md` | **Version-number scheme** — SemVer, single source of truth (`VERSION`), how it propagates (CMake → `pse_version.h` → app/About/.exe), how to bump, release/tag process. (The *changelog* is `notes/version.md`) |
 | `notes/reference/deployment.md` | **Releases / deployment** — the GitHub Actions `release.yml` pipeline: builds Windows portable+zip+installer, Linux AppImage+tar.gz, Doxygen docs zip, screenshots zip, and publishes a GitHub Release on each `main` commit that bumped `VERSION` (tag-gated). Toolchain mirrors `tests.yml`; first-run shakeout points noted |
 | `notes/decisions/architecture.md` | Key structural choices and why |
@@ -231,6 +232,40 @@ human-readable Markdown rendering of the same data (linked from the root `README
 the Doxygen docs under "Project & Repository"). Keep the two in sync: edit the JSON, then rewrite the
 `.md` from it (same sections/entries, each `name` linked to its `url`, with note/license/mandated
 shown). The JSON is the source of truth; the `.md` is a generated view.
+
+## Cross-project standards & checking the fairyfox system for updates
+
+This project is a **node in the fairyfox system** (the hub mesh at fairyfox.io): it
+pulls shared standards from the system on request and keeps its own committed copies
+under `notes/reference/`. The model is in
+[`notes/reference/cross-project-sync.md`](notes/reference/cross-project-sync.md):
+communication is git-only, one-directional per flow, read-only on the far side, and
+happens **only on explicit request** (so the repos can never set each other off in a
+loop).
+
+**When Twilight asks you to check *the fairyfox system* for updates** — to sync the
+standards, get the latest version, or pull a particular standard/runbook — treat it as
+the check-for-updates flow. **To invoke it the request must carry the word "fairyfox"**
+— normally **"the fairyfox system"**, or a *fairyfox*-prefixed variant ("fairyfox.io",
+"fairyfox standards") — *paired with* an update/sync intent (check for updates · what
+changed · sync · refresh · pull the latest · get the newest). Generic handles — "the
+hub", "the mesh", "the standards", a runbook name, a bare "system", or an update verb
+alone — do **not** qualify; the word *fairyfox* must be present, or don't assume this
+flow.
+
+The default is **check, report, then wait**: refresh the read-only system clone under
+`assets/references/fairyfox.io/` (git-ignored), diff it against what this project has
+adopted, and **report what changed + what adopting it would touch — then stop.** Apply
+nothing until Twilight clearly says go ahead; applying is a separate, confirmed act.
+Full procedure: the shared `adopting-updates` runbook (in the hub's `hub/standards/`).
+
+**Guardrails (don't break these):** on-request only — never auto-pull or schedule
+cross-repo syncs (anti-recursion); the reference clone is read-only and git-ignored;
+never apply changes or rewrite history without an explicit go-ahead; reconcile with
+local edits, don't clobber them.
+
+> Naming: Twilight calls it **the fairyfox system** in conversation; the public website
+> calls it the **hub**. Both name the same fairyfox.io mesh.
 
 ## Project Preferences
 
