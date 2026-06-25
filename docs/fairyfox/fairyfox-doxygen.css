@@ -1,0 +1,377 @@
+/* SPDX-License-Identifier: MIT */
+/*
+ * Fairy Fox theme layer for Doxygen (on top of doxygen-awesome).
+ * --------------------------------------------------------------
+ * Re-skins the generated C++ docs to the fairyfox.io design system so the docs
+ * site at fairyfox.io/pokered-save-editor-2/ is seamless with the hub. This is
+ * the "generator IS the site" (Case B) approach from the hub docs-site standard:
+ * the values below are the normative fairyfox tokens (hub/standards/docs-site/
+ * 02-design-tokens.md + 11-measurements-reference.md), re-pointing every
+ * doxygen-awesome CSS variable at them rather than overriding piecemeal.
+ *
+ * Dark-first, OS-following (prefers-color-scheme). The one per-project change is
+ * the ACCENT: this project's registry colour #e6488f (pink). Every neutral
+ * surface/text/line stays on the shared palette.
+ *
+ * Load order (set in the Doxyfile HTML_EXTRA_STYLESHEET): doxygen-awesome.css
+ * first, then this file, so these win.
+ */
+
+/* ----------------------------------------------------------------------------
+ * 1. Fairy Fox tokens  (dark = default; light via prefers-color-scheme)
+ * ------------------------------------------------------------------------- */
+:root {
+  --ff-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --ff-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --ff-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --ff-radius: 20px;
+  --ff-radius-sm: 13px;
+  --ff-radius-xs: 9px;
+  --ff-maxw: 1180px;
+  --ff-maxw-text: 43rem;
+  --ff-gutter: clamp(1.15rem, 4vw, 2.75rem);
+  --ff-ease: cubic-bezier(.22, .61, .36, 1);
+
+  /* dark palette (default) */
+  --ff-bg: #191116;
+  --ff-bg-grad-top: #211622;
+  --ff-panel: #241823;
+  --ff-panel-2: #2a1d29;
+  --ff-panel-3: #322433;
+  --ff-line: #3a2a37;
+  --ff-line-2: #4a3646;
+  --ff-text: #f7ece6;
+  --ff-text-soft: #cdb8c2;
+  --ff-text-faint: #9c8893;
+  --ff-code-bg: #120c12;
+
+  /* per-project accent (#e6488f pink) -- the one colour a project may differ on */
+  --ff-accent: #e6488f;
+  --ff-accent-deep: #b5316c;
+  --ff-accent-ink: #ff9ec4;
+  --ff-on-accent: #2a1016;
+  --ff-link: #ff9ec4;
+  --ff-link-hover: #ffc1da;
+  --ff-glow: rgba(230, 72, 143, .34);
+
+  --ff-shadow: 0 1px 0 rgba(255,255,255,.03), 0 18px 40px -24px rgba(0,0,0,.8);
+  --ff-shadow-lg: 0 34px 80px -30px rgba(0,0,0,.86);
+  --ff-grain-op: .05;
+
+  /* fixed lifecycle hues (both themes) */
+  --ff-hue-alpha: #e5484d;
+  --ff-hue-beta: #e0a210;
+  --ff-hue-released: #22a06b;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --ff-bg: #fbf2ea;
+    --ff-bg-grad-top: #fff6ee;
+    --ff-panel: #fffaf5;
+    --ff-panel-2: #fdf2e9;
+    --ff-panel-3: #f7e7da;
+    --ff-line: #efddcf;
+    --ff-line-2: #e6cdba;
+    --ff-text: #2c2230;
+    --ff-text-soft: #6a5a62;
+    --ff-text-faint: #9c8b92;
+    --ff-code-bg: #2b2030;
+
+    --ff-accent: #cc2f76;
+    --ff-accent-deep: #a81f5d;
+    --ff-accent-ink: #ad1f5e;
+    --ff-on-accent: #fff8f4;
+    --ff-link: #b51f5f;
+    --ff-link-hover: #98114e;
+    --ff-glow: rgba(204, 47, 118, .26);
+
+    --ff-shadow: 0 1px 2px rgba(80,40,30,.05), 0 14px 34px -20px rgba(120,60,40,.28);
+    --ff-shadow-lg: 0 30px 70px -28px rgba(120,55,35,.4);
+    --ff-grain-op: .03;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * 2. Map doxygen-awesome's variables onto the fairyfox tokens.
+ *    (referencing var(--ff-*) makes light/dark automatic; this file loads after
+ *    doxygen-awesome so its own dark @media block is superseded.)
+ * ------------------------------------------------------------------------- */
+html {
+  --primary-color: var(--ff-accent);
+  --primary-dark-color: var(--ff-accent-deep);
+  --primary-light-color: var(--ff-accent-ink);
+  --on-primary-color: var(--ff-on-accent);
+  --link-color: var(--ff-link);
+
+  --page-background-color: var(--ff-bg);
+  --page-foreground-color: var(--ff-text);
+  --page-secondary-foreground-color: var(--ff-text-soft);
+  --separator-color: var(--ff-line);
+
+  --border-radius-large: var(--ff-radius);
+  --border-radius-medium: var(--ff-radius-sm);
+  --border-radius-small: var(--ff-radius-xs);
+
+  --box-shadow: var(--ff-shadow);
+  --odd-color: color-mix(in srgb, var(--ff-text) 4%, transparent);
+
+  --font-family: var(--ff-sans);
+  --font-family-monospace: var(--ff-mono);
+
+  --page-font-size: 16.5px;
+  --navigation-font-size: 14.4px;
+  --toc-font-size: 13.4px;
+  --code-font-size: 14px;
+  --title-font-size: 22px;
+  --content-line-height: 1.62;
+  --content-maxwidth: var(--ff-maxw);
+
+  /* side nav + toc */
+  --side-nav-background: var(--ff-panel);
+  --side-nav-foreground: var(--ff-text-soft);
+  --toc-background: var(--ff-panel-2);
+  --toc-foreground: var(--ff-text-soft);
+
+  /* top header / menu */
+  --header-background: color-mix(in srgb, var(--ff-bg) 72%, transparent);
+  --header-foreground: var(--ff-text);
+  --menu-selected-background: color-mix(in srgb, var(--ff-accent) 16%, transparent);
+  --menu-focus-foreground: var(--ff-on-accent);
+  --menu-focus-background: var(--ff-accent);
+
+  /* search */
+  --searchbar-background: var(--ff-panel-2);
+  --searchbar-foreground: var(--ff-text);
+  --searchbar-border-radius: 999px;
+
+  /* code + fragments */
+  --code-background: var(--ff-panel-3);
+  --code-foreground: var(--ff-accent-ink);
+  --fragment-background: var(--ff-code-bg);
+  --fragment-foreground: #d7cfe0;
+  --section-code-background: color-mix(in srgb, var(--ff-text) 6%, transparent);
+  --section-code-border: var(--ff-line);
+
+  /* syntax highlighting (readable on the dark code surface) */
+  --fragment-keyword: #ff9ec4;
+  --fragment-keywordtype: #c8a6ff;
+  --fragment-keywordflow: #ff9ec4;
+  --fragment-token: #c5e8a0;
+  --fragment-comment: #8d7f93;
+  --fragment-link: #8fd0ff;
+  --fragment-preprocessor: #f0b86e;
+  --fragment-linenumber-color: #6f6275;
+  --fragment-linenumber-background: var(--ff-code-bg);
+  --fragment-linenumber-border: var(--ff-line);
+
+  /* blockquote + tables */
+  --blockquote-background: var(--ff-panel-2);
+  --blockquote-foreground: var(--ff-text-soft);
+  --tablehead-background: var(--ff-panel-2);
+  --tablehead-foreground: var(--ff-text);
+
+  /* callout boxes (@note/@warning/...) tinted onto the palette */
+  --note-color: color-mix(in srgb, var(--ff-accent) 12%, var(--ff-panel));
+  --note-color-dark: var(--ff-accent);
+  --note-color-darker: var(--ff-accent-ink);
+  --warning-color: color-mix(in srgb, var(--ff-hue-beta) 14%, var(--ff-panel));
+  --warning-color-dark: var(--ff-hue-beta);
+  --warning-color-darker: #f0c879;
+  --bug-color: color-mix(in srgb, var(--ff-hue-alpha) 14%, var(--ff-panel));
+  --bug-color-dark: var(--ff-hue-alpha);
+  --bug-color-darker: #ff9a9d;
+  --invariant-color: color-mix(in srgb, var(--ff-hue-released) 14%, var(--ff-panel));
+  --invariant-color-dark: var(--ff-hue-released);
+  --invariant-color-darker: #79d3a6;
+
+  scroll-behavior: smooth;
+}
+
+/* ----------------------------------------------------------------------------
+ * 3. Base typography + page backdrop
+ * ------------------------------------------------------------------------- */
+body {
+  font-family: var(--ff-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background:
+    radial-gradient(1100px 520px at 88% -8%, color-mix(in srgb, var(--ff-hue-beta) 10%, transparent), transparent 60%),
+    radial-gradient(900px 480px at 6% -6%, color-mix(in srgb, var(--ff-accent) 12%, transparent), transparent 60%),
+    linear-gradient(var(--ff-bg-grad-top), var(--ff-bg) 42%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5,
+.title, div.title,
+#projectname,
+.memtitle, .groupheader {
+  font-family: var(--ff-display);
+  letter-spacing: -.02em;
+}
+h1, h2, h3, .title, div.title { font-weight: 700; line-height: 1.14; }
+
+a { color: var(--ff-link); }
+a:hover { color: var(--ff-link-hover); }
+
+/* inline code + fragments shaped per the tokens */
+code, tt, .fragment, pre.fragment, div.fragment {
+  font-family: var(--ff-mono);
+}
+.contents code, code.JavaDocCode, span.code, p code {
+  background: var(--ff-panel-3);
+  color: var(--ff-accent-ink);
+  border-radius: 6px;
+  padding: .12em .42em;
+}
+div.fragment, pre.fragment {
+  border-radius: var(--ff-radius-sm);
+  border: 1px solid var(--ff-line);
+  background: var(--ff-code-bg);
+}
+
+blockquote {
+  border-left: 3px solid var(--ff-accent);
+  border-radius: 0 var(--ff-radius-sm) var(--ff-radius-sm) 0;
+  background: var(--ff-panel-2);
+  color: var(--ff-text-soft);
+}
+
+/* accessible focus ring everywhere */
+a:focus-visible, button:focus-visible,
+input:focus-visible, .ff-home:focus-visible,
+#main-menu a:focus-visible {
+  outline: 2px solid var(--ff-accent);
+  outline-offset: 2px;
+  border-radius: 5px;
+}
+
+/* ----------------------------------------------------------------------------
+ * 4. The Fairy Fox bar  (brand left + persistent way-home right)
+ *    Injected at the top of <body> by the custom header.html.
+ * ------------------------------------------------------------------------- */
+#ff-bar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 56px;
+  padding: 0 var(--ff-gutter);
+  background: color-mix(in srgb, var(--ff-bg) 80%, transparent);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid var(--ff-line);
+}
+#ff-bar .ff-brand {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -.01em;
+  color: var(--ff-text);
+  text-decoration: none;
+}
+#ff-bar .ff-brand:hover { color: var(--ff-text); }
+#ff-bar .ff-brand .ff-glyph {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--ff-line-2);
+  box-shadow: 0 4px 14px -4px var(--ff-glow);
+}
+#ff-bar .ff-spacer { margin-left: auto; }
+#ff-bar .ff-home {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .42rem .85rem;
+  border-radius: 999px;
+  border: 1px solid var(--ff-line-2);
+  background: var(--ff-panel-2);
+  color: var(--ff-text-soft);
+  font-family: var(--ff-sans);
+  font-size: .88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform .15s var(--ff-ease), color .2s, border-color .2s, background .2s;
+}
+#ff-bar .ff-home:hover {
+  transform: translateY(-1px);
+  color: var(--ff-text);
+  border-color: color-mix(in srgb, var(--ff-accent) 55%, var(--ff-line-2));
+}
+#ff-bar .ff-home .ff-fox {
+  width: 18px; height: 18px; border-radius: 50%;
+}
+
+/* ----------------------------------------------------------------------------
+ * 5. The Fairy Fox footer  (way-home + connections), from footer.html
+ * ------------------------------------------------------------------------- */
+#ff-foot {
+  border-top: 1px solid var(--ff-line);
+  background: var(--ff-panel);
+  padding: 2.4rem var(--ff-gutter) 1.6rem;
+  margin-top: 2rem;
+  font-family: var(--ff-sans);
+}
+#ff-foot .ff-foot-wrap {
+  max-width: var(--ff-maxw);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: baseline;
+}
+#ff-foot .ff-foot-brand {
+  display: flex; align-items: center; gap: .5rem;
+  font-family: var(--ff-display); font-weight: 700; color: var(--ff-text);
+}
+#ff-foot .ff-foot-brand img { width: 24px; height: 24px; border-radius: 50%; }
+#ff-foot nav { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-left: auto; }
+#ff-foot nav a {
+  color: var(--ff-text-soft); font-size: .9rem; font-weight: 600; text-decoration: none;
+}
+#ff-foot nav a:hover { color: var(--ff-link-hover); }
+#ff-foot .ff-foot-bar {
+  max-width: var(--ff-maxw); margin: 1rem auto 0; padding-top: 1rem;
+  border-top: 1px solid var(--ff-line);
+  color: var(--ff-text-faint); font-size: .83rem;
+}
+
+/* ----------------------------------------------------------------------------
+ * 5b. Treeview sidebar + top menu -- keep links on the fairyfox palette
+ * ------------------------------------------------------------------------- */
+#nav-tree, #side-nav { background: var(--ff-panel); }
+#nav-tree a,
+#nav-tree a:visited,
+#nav-tree .label a,
+#nav-tree .label a:visited { color: var(--ff-text-soft) !important; }
+#nav-tree .label a:hover { color: var(--ff-link-hover) !important; }
+#nav-tree .item.selected a,
+#nav-tree .selected .label a,
+#nav-tree li.selected > div a,
+#nav-tree a.selected { color: var(--ff-accent-ink) !important; font-weight: 650; }
+#nav-tree .selected { background-image: none; background: color-mix(in srgb, var(--ff-accent) 14%, transparent); }
+
+/* top menu bar (Main Page / Namespaces / Classes / Files) */
+#main-menu { background: transparent; }
+#main-menu a { color: var(--ff-text-soft); font-weight: 600; }
+#main-menu a:hover { color: var(--ff-text); }
+#main-menu li.current > a,
+#main-menu a.current { color: var(--ff-text); background: color-mix(in srgb, var(--ff-accent) 16%, transparent); }
+/* the doxygen-awesome top title area sits below #ff-bar; soften its name */
+#titlearea { border-bottom: 1px solid var(--ff-line); }
+#projectname { color: var(--ff-text); }
+#projectbrief { color: var(--ff-text-faint); }
+
+/* ----------------------------------------------------------------------------
+ * 6. Reduced motion
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}

@@ -155,9 +155,18 @@ HTML_FILE_EXTENSION    = .html
 GENERATE_TREEVIEW      = YES
 DISABLE_INDEX          = NO
 FULL_SIDEBAR           = NO
-HTML_COLORSTYLE        = LIGHT
+# Dark-first, OS-following, to match the fairyfox.io hub theme.
+HTML_COLORSTYLE        = AUTO_DARK
 HTML_DYNAMIC_SECTIONS  = YES
-HTML_EXTRA_STYLESHEET  = docs/doxygen-awesome/doxygen-awesome.css
+# Fairy Fox docs-site theme (hub mesh). doxygen-awesome is the variable-driven
+# base; fairyfox-doxygen.css re-points its variables to the hub design tokens and
+# MUST load last. See docs/fairyfox/ and notes/reference/cross-project-sync.md.
+HTML_HEADER            = docs/fairyfox/header.html
+HTML_FOOTER            = docs/fairyfox/footer.html
+HTML_EXTRA_STYLESHEET  = docs/doxygen-awesome/doxygen-awesome.css \
+                         docs/fairyfox/fairyfox-doxygen.css
+# Brand glyph for the Fairy Fox bar (copied into the html output as-is).
+HTML_EXTRA_FILES       = docs/fairyfox/pse-logo.png
 
 # Other output formats off — HTML is the deliverable.
 GENERATE_LATEX         = NO

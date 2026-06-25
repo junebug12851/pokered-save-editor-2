@@ -43,6 +43,16 @@ Requirements on the machine running it:
 - `Doxyfile` — the one config file (root). Curated, not a full default dump; unlisted tags take
   defaults. Upgrade across Doxygen versions with `doxygen -u Doxyfile`.
 - `docs/doxygen-awesome/doxygen-awesome.css` — vendored theme (MIT). See that folder's README.
+- `docs/fairyfox/` — the **fairyfox.io hub theme** layered on doxygen-awesome (the docs-site is part
+  of the fairyfox mesh; see [`cross-project-sync.md`](cross-project-sync.md)). `fairyfox-doxygen.css`
+  re-points doxygen-awesome's CSS variables at the hub design tokens (dark-first, OS-following light;
+  per-project accent = the registry pink `#e6488f`); `header.html`/`footer.html` are the customised
+  Doxygen templates that load the shared fonts (Fraunces / Inter / JetBrains Mono), set the
+  `theme-color` metas, and inject the project brand + the persistent "Back to Fairy Fox" way-home link
+  and footer. `pse-logo.png` is the brand glyph (copied into the output via `HTML_EXTRA_FILES`). Wired
+  in the Doxyfile (`HTML_HEADER`/`HTML_FOOTER`/`HTML_EXTRA_STYLESHEET`, `HTML_COLORSTYLE = AUTO_DARK`).
+  The hub standard + checklist live in the read-only clone at
+  `assets/references/fairyfox.io/hub/standards/docs-site/`.
 - `docs/html/` — generated output. **git-ignored**, never committed.
 
 The Doxyfile predefines Qt's macros (`Q_OBJECT`, `Q_PROPERTY`, `Q_INVOKABLE`, `signals`, `slots`,
