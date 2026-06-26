@@ -79,9 +79,19 @@ can adopt without the pause.
 - The adopted `cross-project-sync.md` previously shipped only the `--ff-only` refresh,
   which reliably aborts against the force-pushed hub `dev`; this adoption closes that
   recurring snag by documenting the `reset --hard` mirror fallback.
-- Worth a standing decision from Twilight: should unattended scheduled check runs ever
-  auto-apply express-authorized change sets, or always defer to a human? This run
-  deferred even though the change was pre-authorized.
+
+## Standing decision — verification is never skipped (Twilight, 2026-06-26)
+
+Twilight's directive on the open question above: **safeties, checks, tests, and
+compliance must be run regularly and comprehensively at every level throughout —
+especially around any automated or express-authorized applying.** Pre-authorization
+(or any automated apply) skips *only* the redundant confirmation pause; it never skips
+verification. Every such apply must still reconcile without clobbering local
+divergence, run the relevant build/tests, run the standards compliance / `## Verify`
+checks, and confirm the change stays within all project constraints (save-file
+fidelity, no hacks, UX bar, git safety rules) — before and after. If full verification
+can't be completed, do not auto-apply; fall back to check-report-wait. Baked into the
+`CLAUDE.md` mesh block alongside the express-authorization exception.
 
 ## Outcome
 

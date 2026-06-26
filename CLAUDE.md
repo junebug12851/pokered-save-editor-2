@@ -277,6 +277,17 @@ commit as a reviewable act. Nothing in the ledger covers it → fall back to
 check-report-wait. (Reading the ledger is read-only and on-request — it lets a node
 skip a prompt, never lets the system act on this repo, so anti-recursion holds.)
 
+**Pre-authorization skips the confirmation pause — it never skips safety.** Whenever
+a change is applied automatically or under an express-authorization (and *especially*
+then), every safety net still runs, comprehensively and at every level: reconcile
+without clobbering local divergence (re-prompt if unsure), run the relevant
+build/tests, run the standards **compliance / `## Verify`** checks, and confirm the
+change stays within all project constraints (save-file fidelity, no hacks, UX bar,
+git safety rules) before and after. Checks, tests, and compliance are run regularly
+and thoroughly throughout — bypassing the *pause* must never become bypassing the
+*verification*. If full verification can't be completed, do not auto-apply; fall back
+to check-report-wait.
+
 **Guardrails (don't break these):** on-request only — never auto-pull or schedule
 cross-repo syncs (anti-recursion); the reference clone is read-only and git-ignored
 (the authorization ledger included — reading it lets you skip a prompt, it never lets
