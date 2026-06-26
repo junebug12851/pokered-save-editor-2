@@ -267,10 +267,22 @@ adopted, and **report what changed + what adopting it would touch — then stop.
 nothing until Twilight clearly says go ahead; applying is a separate, confirmed act.
 Full procedure: the shared `adopting-updates` runbook (in the hub's `hub/standards/`).
 
+**Exception — pre-authorized changes.** The system keeps an express-authorization
+ledger (`assets/references/fairyfox.io/hub/authorizations.yml`), read out of the same
+read-only clone. If an active entry there `covers` the change being adopted, Twilight
+**already gave the go-ahead at the system** — apply it directly, skipping the "wait"
+pause. Skip *only* that redundant pause: still reconcile (don't clobber a deliberate
+local divergence — re-prompt if you would), still write the process report, still
+commit as a reviewable act. Nothing in the ledger covers it → fall back to
+check-report-wait. (Reading the ledger is read-only and on-request — it lets a node
+skip a prompt, never lets the system act on this repo, so anti-recursion holds.)
+
 **Guardrails (don't break these):** on-request only — never auto-pull or schedule
-cross-repo syncs (anti-recursion); the reference clone is read-only and git-ignored;
-never apply changes or rewrite history without an explicit go-ahead; reconcile with
-local edits, don't clobber them.
+cross-repo syncs (anti-recursion); the reference clone is read-only and git-ignored
+(the authorization ledger included — reading it lets you skip a prompt, it never lets
+the system act on this repo); never apply changes or rewrite history without an
+explicit go-ahead (an active `authorizations.yml` entry that covers the change *is*
+that go-ahead, given at the system); reconcile with local edits, don't clobber them.
 
 > Naming: Twilight calls it **the fairyfox system** in conversation; the public website
 > calls it the **hub**. Both name the same fairyfox.io mesh.
