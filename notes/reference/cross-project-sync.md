@@ -64,6 +64,28 @@ report, then wait**:
 3. **Report what changed and what adopting it would touch — then stop.** Apply nothing
    until Twilight says go ahead; applying is a separate, confirmed act. Full procedure:
    the hub's `adopting-updates` runbook (`hub/standards/adopting-updates.md`).
+4. **Either way, write a process report** in `notes/fairyfox-reports/` — running this flow
+   (applied or check-only) is a fairyfox system interaction, so it ends with an honest report
+   the hub reads to improve the procedure. See "Process reports" below.
+
+## Process reports (adopted 2026-06-26)
+
+Every run of a fairyfox system procedure here — setup, onboarding, adopting updates, or a
+check-for-updates pass — ends with a **process report** committed under
+`notes/fairyfox-reports/` (`YYYY-MM-DD-<procedure>.md`, from the hub's
+`templates/fairyfox-report.md`). It's a full, honest account of how the run went and what would
+improve the procedure. Reports are **this repo's own record** (committed, unlike the git-ignored
+reference clone); the hub *reads* them through its read-only inbound clone, on request — the node
+never pushes to the hub, preserving anti-recursion. Canonical standard:
+`hub/standards/process-reports.md`.
+
+## Compliance audit (the enforcement layer)
+
+The hub also defines a **standards compliance audit** (`hub/standards/compliance.md`): an
+on-request pass that runs each standard's `## Verify` check and reports `done`/`partial`/`missing`.
+This project's adopted standards carry their own `## Verify` sections (`git-workflow.md`,
+`versioning.md`) so the node can be — and can self-run — that audit. Like every cross-repo read
+here it's on-request, read-only, and changes nothing on disk without a go-ahead.
 
 ## Anti-recursion checklist
 

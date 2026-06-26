@@ -1,11 +1,19 @@
 name: release
 
 # Builds release artifacts and publishes a GitHub Release whenever `main` advances
-# to a NEW version. The trigger is a push to `main` (which is FF-only from green
-# `dev`, so it's always all-green); the gate is that the tag `v<VERSION>` does not
-# yet exist -- i.e. VERSION has been bumped since the last release. If VERSION is
+# to a NEW version. The trigger is a push to `main`. Under the git-flow model
+# (notes/reference/git-workflow.md) `main` advances only by a `--no-ff` tagged-
+# release merge from green `dev` (PATCH) or a `release/*`/`hotfix/*` branch, so a
+# main push is always all-green. The gate is that the tag `v<VERSION>` does not yet
+# exist -- i.e. VERSION has been bumped since the last release. If VERSION is
 # unchanged (tag already exists), the run is a no-op. So: bump VERSION (PATCH/MINOR)
-# -> the next main commit cuts the release; commits that don't bump VERSION don't.
+# -> the next main merge cuts the release; merges that don't bump VERSION don't.
+#
+# This pipeline OWNS tagging: the `version` job derives `v<VERSION>` and the
+# `release` job's softprops/action-gh-release creates the tag on the merge commit.
+# That's the project's one deliberate divergence from the hub git-flow runbook
+# (which tags by hand) -- so DO NOT `git tag` manually when releasing, or this run
+# sees the tag already exists and skips. See notes/reference/git-workflow.md.
 #
 # Artifacts attached to the release:
 #   * Windows portable .zip            (windeployqt'd, run-in-place)
