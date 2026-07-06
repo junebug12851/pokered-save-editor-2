@@ -96,18 +96,27 @@
     }
   }
 
-  function applyAccent(root, hex) {
+  function applyAccent(root, hex, dark) {
     var i;
     if (!hex) {
       for (i = 0; i < ACCENT_VARS.length; i++) root.style.removeProperty(ACCENT_VARS[i]);
       return;
     }
-    var ink = "color-mix(in srgb, " + hex + ", var(--ff-text) 42%)";
+    // Link / ink = a READABLE, still-saturated shade of the accent for the theme.
+    // Mixing toward the near-white body text (the old formula) desaturated links to
+    // a washed pastel on dark; mix toward pure white/black instead, and less, so the
+    // accent stays vivid. Theme-aware: lighten on dark, darken on light/sepia.
+    var link = dark
+      ? "color-mix(in srgb, " + hex + ", #fff 28%)"
+      : "color-mix(in srgb, " + hex + ", #000 16%)";
+    var linkHover = dark
+      ? "color-mix(in srgb, " + hex + ", #fff 48%)"
+      : "color-mix(in srgb, " + hex + ", #000 30%)";
     root.style.setProperty("--ff-accent", hex);
     root.style.setProperty("--ff-accent-deep", "color-mix(in srgb, " + hex + ", #000 12%)");
-    root.style.setProperty("--ff-accent-ink", ink);
-    root.style.setProperty("--ff-link", ink);
-    root.style.setProperty("--ff-link-hover", "color-mix(in srgb, " + hex + ", var(--ff-text) 26%)");
+    root.style.setProperty("--ff-accent-ink", link);
+    root.style.setProperty("--ff-link", link);
+    root.style.setProperty("--ff-link-hover", linkHover);
     root.style.setProperty("--ff-glow", "color-mix(in srgb, " + hex + " 40%, transparent)");
   }
 
@@ -139,7 +148,14 @@
     if (w) root.style.setProperty("--content-maxwidth", w);
     else root.style.removeProperty("--content-maxwidth"); // "normal" -> stylesheet default (--ff-maxw)
 
-    applyAccent(root, prefs.accent);
+    // Effective dark? (explicit dark, or "system" on a dark OS) — so accent links
+    // are lightened on dark and darkened on light/sepia.
+    var effectiveDark =
+      prefs.theme === "dark" ||
+      (prefs.theme === "system" &&
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    applyAccent(root, prefs.accent, effectiveDark);
   }
 
   // Apply saved prefs immediately (root exists in <head>) — before first paint.

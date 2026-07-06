@@ -54,6 +54,12 @@ Requirements on the machine running it:
       footer), the reader-panel styling, and the **API-only sidebar** rule
       (`html.ff-no-sidebar #side-nav{display:none}`). Per-project accent = the registry pink
       `#e6488f`, kept across all three themes (readers can recolour it live).
+    - **Layout integration** (section 4b) — our chrome replaces doxygen-awesome's own header, so we
+      hide `#titlearea` + `#main-menu` (they duplicated the nav; **this also hides Doxygen's built-in
+      search box**, which lives in `#main-menu` — matching the reference site's chrome) and switch to a
+      single-page scroll: `#doc-content` flows (`height:auto; overflow:visible`) instead of its own
+      inner scroll pane (which produced a second scrollbar), and on API pages the treeview is a
+      `position:fixed` column pinned below the sticky chrome. Prose pages are full-width, no sidebar.
     - `header.html`/`footer.html` — customised Doxygen templates carrying the static chrome: the
       fixed mesh-wide primary nav (Home · Projects · Games · Docs · Updates · About — **Projects**
       active for a project's docs), the project subnav (Overview · Notes · Classes · Files ·

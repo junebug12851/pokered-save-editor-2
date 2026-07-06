@@ -465,10 +465,34 @@ input:focus-visible,
 }
 .subnav .ext { color: var(--ff-accent-ink); }
 
-/* doxygen-awesome's own sticky menu bar sits BELOW the fixed chrome */
-#main-menu.sm-dox,
-#main-menu {
-  top: var(--ff-header-h);
+/* ----------------------------------------------------------------------------
+ * 4b. Layout integration with doxygen-awesome.
+ *   Our chrome (header + subnav) replaces doxygen-awesome's own title bar and menu,
+ *   and we want ONE page scroll (like the hub / the sibling), not doxygen-awesome's
+ *   app-style inner #doc-content scroll pane. Without this the page showed a
+ *   duplicated nav row and two scrollbars.
+ * ------------------------------------------------------------------------- */
+
+/* Hide doxygen-awesome's redundant title area + top menu (Main Page / Related
+   Pages / Namespaces / Classes / Files). Our subnav + the treeview cover navigation. */
+#titlearea { display: none !important; }
+#main-menu { display: none !important; }
+
+/* Single-page scroll: content flows and the whole page scrolls once, instead of a
+   fixed-height #doc-content with its own scrollbar (which fought the sticky chrome). */
+html, body { height: auto !important; overflow: visible !important; }
+#doc-content {
+  height: auto !important;
+  min-height: calc(100vh - var(--ff-header-h)) !important;
+  overflow: visible !important;
+}
+
+/* API pages keep the treeview as a FIXED column pinned below the sticky chrome
+   (always visible while the page scrolls). Prose pages have no sidebar (below). */
+html:not(.ff-no-sidebar) #side-nav {
+  position: fixed !important;
+  top: var(--ff-header-h) !important;
+  height: calc(100vh - var(--ff-header-h)) !important;
 }
 
 @media (max-width: 820px) {
