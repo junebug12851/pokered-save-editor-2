@@ -19,6 +19,9 @@
 PROJECT_NAME           = "Pokered Save Editor 2"
 PROJECT_BRIEF          = "Pokemon Red & Blue save file editor - Qt 6 C++/QML"
 PROJECT_NUMBER         =
+# Browser-tab favicon: the project glyph (the header brand is the hub fox). Doxygen
+# copies this into the html output and header.html links it via $projecticon.
+PROJECT_ICON           = docs/fairyfox/pse-logo.png
 OUTPUT_DIRECTORY       = docs
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -155,8 +158,11 @@ HTML_FILE_EXTENSION    = .html
 GENERATE_TREEVIEW      = YES
 DISABLE_INDEX          = NO
 FULL_SIDEBAR           = NO
-# Dark-first, OS-following, to match the fairyfox.io hub theme.
-HTML_COLORSTYLE        = AUTO_DARK
+# The Fairy Fox reader menu (docs/fairyfox/ff-docs.js) is the single theme
+# authority: it drives doxygen-awesome's light-mode/dark-mode class and the
+# --ff-* tokens (dark by default, OS-following for "system"). LIGHT here stops
+# Doxygen injecting its own competing dark-mode script/toggle.
+HTML_COLORSTYLE        = LIGHT
 HTML_DYNAMIC_SECTIONS  = YES
 # Fairy Fox docs-site theme (hub mesh). doxygen-awesome is the variable-driven
 # base; fairyfox-doxygen.css re-points its variables to the hub design tokens and
@@ -165,8 +171,15 @@ HTML_HEADER            = docs/fairyfox/header.html
 HTML_FOOTER            = docs/fairyfox/footer.html
 HTML_EXTRA_STYLESHEET  = docs/doxygen-awesome/doxygen-awesome.css \
                          docs/fairyfox/fairyfox-doxygen.css
-# Brand glyph for the Fairy Fox bar (copied into the html output as-is).
-HTML_EXTRA_FILES       = docs/fairyfox/pse-logo.png
+# Fairy Fox chrome/reader assets, copied flat into the html output as-is:
+#   ff-docs.js         reader menu + chrome behaviour (loaded early in the header)
+#   fonts.css + woff2  self-hosted type families (Fraunces / Inter / JetBrains Mono)
+# (pse-logo.png is copied by Doxygen itself via PROJECT_ICON, so it's not listed here.)
+HTML_EXTRA_FILES       = docs/fairyfox/ff-docs.js \
+                         docs/fairyfox/fonts/fonts.css \
+                         docs/fairyfox/fonts/fraunces-latin.woff2 \
+                         docs/fairyfox/fonts/inter-latin.woff2 \
+                         docs/fairyfox/fonts/jetbrains-mono-latin.woff2
 
 # Other output formats off — HTML is the deliverable.
 GENERATE_LATEX         = NO

@@ -77,15 +77,13 @@ jobs:
         # Still PNGs only -- renders the UI, never writes a save byte. No GIF assembly.
         run: bash scripts/capture_screenshots.sh
 
-      - name: Generate Doxygen docs (with Screenshots + GitHub nav tabs)
+      - name: Generate Doxygen docs
         run: |
           set -euo pipefail
-          # Add custom top-nav links to the docs WITHOUT touching the README (which is
-          # the Doxygen main page): generate the default layout and inject two user
-          # tabs, then build with it. They appear on every docs page incl. the home.
-          doxygen -l DoxygenLayout.xml
-          sed -i '/<navindex>/a\    <tab type="user" url="https://junebug12851.github.io/pokered-save-editor-2/screenshots/" title="Screenshots"/>\n    <tab type="user" url="https://github.com/junebug12851/pokered-save-editor-2" title="GitHub"/>' DoxygenLayout.xml
-          ( cat Doxyfile; echo 'LAYOUT_FILE=DoxygenLayout.xml' ) | doxygen -
+          # The Fairy Fox chrome subnav (in docs/fairyfox/header.html) now carries the
+          # Screenshots + Repository + Notes links on every page, so no DoxygenLayout
+          # user-tab injection is needed — build straight from the Doxyfile.
+          doxygen Doxyfile
           test -d docs/html
 
       - name: Assemble the Pages site (Doxygen home at root + /screenshots/)
