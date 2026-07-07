@@ -2,14 +2,20 @@
 
 **A Pokémon Red & Blue save editor written in C++/Qt/QML.**
 
-A desktop app for comprehensively editing every aspect of a Generation 1 save file through a clean,
-simple, intuitive interface — heavily tested for stability and built to protect every byte in your
-save, even the unused ones, from unintended changes during editing, to the best of what testing can
-ensure.
-
-> *The reboot of [`pokered-save-editor`](https://github.com/junebug12851/pokered-save-editor) — rebuilt from scratch in Qt/C++.*
-
----
+[![Contributors](https://img.shields.io/github/contributors/junebug12851/pokered-save-editor-2?style=flat&logo=github&label=contributors)](https://github.com/junebug12851/pokered-save-editor-2/graphs/contributors)
+[![Stars](https://img.shields.io/github/stars/junebug12851/pokered-save-editor-2?style=flat&logo=github)](https://github.com/junebug12851/pokered-save-editor-2/stargazers)
+[![Forks](https://img.shields.io/github/forks/junebug12851/pokered-save-editor-2?style=flat&logo=github)](https://github.com/junebug12851/pokered-save-editor-2/network/members)
+[![Watchers](https://img.shields.io/github/watchers/junebug12851/pokered-save-editor-2?style=flat&logo=github)](https://github.com/junebug12851/pokered-save-editor-2/watchers)
+[![Last commit](https://img.shields.io/github/last-commit/junebug12851/pokered-save-editor-2?style=flat&logo=git&logoColor=white)](https://github.com/junebug12851/pokered-save-editor-2/commits/main)
+[![Commits](https://img.shields.io/github/commit-activity/t/junebug12851/pokered-save-editor-2?style=flat&logo=git&logoColor=white&label=commits)](https://github.com/junebug12851/pokered-save-editor-2/commits/main)
+[![CI](https://img.shields.io/github/actions/workflow/status/junebug12851/pokered-save-editor-2/tests.yml?style=flat&logo=githubactions&logoColor=white&label=CI)](https://github.com/junebug12851/pokered-save-editor-2/actions/workflows/tests.yml)
+[![Docs](https://img.shields.io/github/actions/workflow/status/junebug12851/pokered-save-editor-2/pages.yml?style=flat&logo=readthedocs&logoColor=white&label=docs)](https://junebug12851.github.io/pokered-save-editor-2/)
+[![Top language](https://img.shields.io/github/languages/top/junebug12851/pokered-save-editor-2?style=flat)](https://github.com/junebug12851/pokered-save-editor-2)
+[![Code size](https://img.shields.io/github/languages/code-size/junebug12851/pokered-save-editor-2?style=flat)](https://github.com/junebug12851/pokered-save-editor-2)
+[![Open issues](https://img.shields.io/github/issues/junebug12851/pokered-save-editor-2?style=flat&logo=github)](https://github.com/junebug12851/pokered-save-editor-2/issues)
+[![Pull requests](https://img.shields.io/github/issues-pr/junebug12851/pokered-save-editor-2?style=flat&logo=github)](https://github.com/junebug12851/pokered-save-editor-2/pulls)
+[![Version](https://img.shields.io/github/v/tag/junebug12851/pokered-save-editor-2?style=flat&label=version&color=8a3560)](https://github.com/junebug12851/pokered-save-editor-2/tags)
+[![License](https://img.shields.io/github/license/junebug12851/pokered-save-editor-2?style=flat)](LICENSE)
 
 ![UI/UX progress](https://junebug12851.github.io/pokered-save-editor-2/screenshots/home.png)
 

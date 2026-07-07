@@ -944,7 +944,7 @@ html.ff-no-sidebar #doc-content .contents {
 
 /* Screenshots on prose pages: a centered, contained, framed preview card (not a
    raw full-bleed image), like the reference. */
-html.ff-no-sidebar #doc-content .contents img {
+html.ff-no-sidebar #doc-content .contents img:not([src*="shields.io"]):not([src*="badge"]) {
   display: block;
   max-width: min(100%, 720px);
   height: auto;
@@ -953,6 +953,17 @@ html.ff-no-sidebar #doc-content .contents img {
   border-radius: var(--ff-radius);
   box-shadow: var(--ff-shadow-lg);
 }
+/* shields.io status badges: small, inline, in wrapping rows — never framed. */
+#doc-content .contents img[src*="shields.io"] {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 2px 3px;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: none;
+  max-width: none;
+}
+#doc-content .contents a:has(> img[src*="shields.io"]) { border: 0; background: none; }
 
 /* Fewer / lighter horizontal dividers (the reference barely uses them). */
 .contents hr,
