@@ -938,17 +938,49 @@ table.doxtable th,
    instead of a full-width article. API pages keep the wide column for tables. */
 html.ff-no-sidebar #doc-content .header,
 html.ff-no-sidebar #doc-content .contents {
-  max-width: 920px !important;
+  max-width: 820px !important;
   margin-inline: auto !important;
 }
 
-/* Screenshots on prose pages: a centered, contained, framed preview card (not a
-   raw full-bleed image), like the reference. */
-html.ff-no-sidebar #doc-content .contents img:not([src*="shields.io"]):not([src*="badge"]) {
+/* Compact hero: tight gaps between title, the badge cluster, and the screenshot
+   (a dashboard-like density, not loose article spacing). */
+html.ff-no-sidebar #doc-content .headertitle,
+html.ff-no-sidebar #doc-content div.title { margin-bottom: .5rem !important; }
+/* The badge cluster is the first paragraph of the content — pack the rows tight. */
+html.ff-no-sidebar #doc-content .contents > p:first-child {
+  margin: .1rem 0 .3rem !important;
+  line-height: 2.1;
+}
+
+/* Screenshot preview: a compact, CENTERED image sitting INSIDE a dark charcoal
+   rounded frame (with padding), like the reference — not a raw full-bleed image
+   that dominates the page. */
+.ff-shot {
   display: block;
-  max-width: min(100%, 720px);
+  max-width: 580px;
+  margin: .9rem auto 0;
+  padding: 12px;
+  background: var(--ff-code-bg);
+  border: 1px solid var(--ff-line-2);
+  border-radius: var(--ff-radius);
+  box-shadow: var(--ff-shadow-lg);
+}
+.ff-shot img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+/* Any other prose image (not a badge, not already framed): contained + centered. */
+html.ff-no-sidebar #doc-content .contents p > img:not([src*="shields.io"]):not([src*="badge"]) {
+  display: block;
+  max-width: min(100%, 640px);
   height: auto;
-  margin: 1.6rem auto;
+  margin: 1.4rem auto;
   border: 1px solid var(--ff-line-2);
   border-radius: var(--ff-radius);
   box-shadow: var(--ff-shadow-lg);
