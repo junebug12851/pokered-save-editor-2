@@ -58,14 +58,14 @@
   --ff-text-faint: #9c8893;
   --ff-code-bg: #120c12;
 
-  /* per-project accent (#e6488f pink) -- the one colour a project may differ on */
-  --ff-accent: #e6488f;
-  --ff-accent-deep: #b5316c;
-  --ff-accent-ink: #ff9ec4;
+  /* per-project accent -- a MUTED rose/plum (not hot pink): soft, dark, restrained. */
+  --ff-accent: #bd6a8e;
+  --ff-accent-deep: #9a5073;
+  --ff-accent-ink: #dcabc2;
   --ff-on-accent: #2a1016;
-  --ff-link: #ff9ec4;
-  --ff-link-hover: #ffc1da;
-  --ff-glow: rgba(230, 72, 143, .34);
+  --ff-link: #dcabc2;
+  --ff-link-hover: #eecdda;
+  --ff-glow: rgba(189, 106, 142, .22);
 
   --ff-shadow: 0 1px 0 rgba(255,255,255,.03), 0 18px 40px -24px rgba(0,0,0,.8);
   --ff-shadow-lg: 0 34px 80px -30px rgba(0,0,0,.86);
@@ -119,13 +119,13 @@
     --ff-text-faint: #9c8b92;
     --ff-code-bg: #2b2030;
 
-    --ff-accent: #cc2f76;
-    --ff-accent-deep: #a81f5d;
-    --ff-accent-ink: #ad1f5e;
+    --ff-accent: #a75078;
+    --ff-accent-deep: #863a5e;
+    --ff-accent-ink: #8a3560;
     --ff-on-accent: #fff8f4;
-    --ff-link: #b51f5f;
-    --ff-link-hover: #98114e;
-    --ff-glow: rgba(204, 47, 118, .26);
+    --ff-link: #8a3560;
+    --ff-link-hover: #6f284b;
+    --ff-glow: rgba(167, 80, 120, .20);
 
     --ff-shadow: 0 1px 2px rgba(80,40,30,.05), 0 14px 34px -20px rgba(120,60,40,.28);
     --ff-shadow-lg: 0 30px 70px -28px rgba(120,55,35,.4);
@@ -231,9 +231,9 @@ html:not(.dark-mode):not(.light-mode) {
   --section-code-border: var(--ff-line);
 
   /* syntax highlighting (readable on the dark code surface) */
-  --fragment-keyword: #ff9ec4;
+  --fragment-keyword: #dcabc2;
   --fragment-keywordtype: #c8a6ff;
-  --fragment-keywordflow: #ff9ec4;
+  --fragment-keywordflow: #dcabc2;
   --fragment-token: #c5e8a0;
   --fragment-comment: #8d7f93;
   --fragment-link: #8fd0ff;
@@ -461,6 +461,32 @@ input:focus-visible,
   background: color-mix(in srgb, var(--ff-accent) 16%, transparent);
 }
 .subnav .ext { color: var(--ff-accent-ink); }
+
+/* doxygen-awesome forces EVERY <a> to --link-color with !important, which turns
+   the whole nav/subnav/footer the accent colour. The chrome links must read as
+   neutral off-white (only the current item + ext links take the accent), so
+   re-assert them with !important. This is the fix for "links are the wrong colour". */
+.ff-top .brand,
+.ff-top .brand:hover { color: var(--ff-text) !important; }
+.site-header .nav > a { color: var(--ff-text-soft) !important; }
+.site-header .nav > a:hover,
+.site-header .nav > a.active,
+.site-header .nav > a[aria-current] { color: var(--ff-text) !important; }
+.ff-reader-btn { color: var(--ff-text) !important; }
+.subnav .sub-brand { color: var(--ff-text) !important; }
+.subnav .sub-brand:hover { color: var(--ff-accent-ink) !important; }
+.subnav a:not(.sub-brand):not(.ext) { color: var(--ff-text-soft) !important; }
+.subnav a:not(.sub-brand):not(.ext):hover,
+.subnav a.active,
+.subnav a[aria-current] { color: var(--ff-text) !important; }
+.subnav .ext { color: var(--ff-accent-ink) !important; }
+.ff-foot .brand,
+.ff-foot .brand:hover { color: var(--ff-text) !important; }
+.ff-foot .ff-foot-col a { color: var(--ff-text-soft) !important; }
+.ff-foot .ff-foot-col a:hover { color: var(--ff-text) !important; }
+.ff-foot-bar,
+.ff-foot-bar a { color: var(--ff-text-faint) !important; }
+.ff-foot-bar a:hover { color: var(--ff-text) !important; }
 
 /* ----------------------------------------------------------------------------
  * 4b. Layout integration with doxygen-awesome.
@@ -907,6 +933,35 @@ table.doxtable th,
 .textblock {
   color: var(--ff-text-soft);
 }
+
+/* Prose pages: a narrower, CENTERED content column (~900px) like the reference,
+   instead of a full-width article. API pages keep the wide column for tables. */
+html.ff-no-sidebar #doc-content .header,
+html.ff-no-sidebar #doc-content .contents {
+  max-width: 920px !important;
+  margin-inline: auto !important;
+}
+
+/* Screenshots on prose pages: a centered, contained, framed preview card (not a
+   raw full-bleed image), like the reference. */
+html.ff-no-sidebar #doc-content .contents img {
+  display: block;
+  max-width: min(100%, 720px);
+  height: auto;
+  margin: 1.6rem auto;
+  border: 1px solid var(--ff-line-2);
+  border-radius: var(--ff-radius);
+  box-shadow: var(--ff-shadow-lg);
+}
+
+/* Fewer / lighter horizontal dividers (the reference barely uses them). */
+.contents hr,
+hr.footer,
+div.header {
+  border: 0 !important;
+  background: none !important;
+}
+.contents hr { border-top: 1px solid var(--ff-line) !important; opacity: .5; }
 
 /* ----------------------------------------------------------------------------
  * 7. Reduced motion
