@@ -500,6 +500,10 @@ input:focus-visible,
    Pages / Namespaces / Classes / Files). Our subnav + the treeview cover navigation. */
 #titlearea { display: none !important; }
 #main-menu { display: none !important; }
+/* With #titlearea + #main-menu hidden, doxygen-awesome's #top is an empty strip
+   that still carries a bottom border -- it showed as a second faint line ~11px
+   below the subnav (the "double line"). Collapse it and drop its border. */
+#top { border-bottom: 0 !important; padding: 0 !important; }
 
 /* Single-page scroll: content flows and the whole page scrolls once, instead of a
    fixed-height #doc-content with its own scrollbar (which fought the sticky chrome). */
