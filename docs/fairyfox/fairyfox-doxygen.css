@@ -58,14 +58,16 @@
   --ff-text-faint: #9c8893;
   --ff-code-bg: #120c12;
 
-  /* per-project accent -- a MUTED rose/plum (not hot pink): soft, dark, restrained. */
-  --ff-accent: #bd6a8e;
-  --ff-accent-deep: #9a5073;
-  --ff-accent-ink: #dcabc2;
+  /* per-project accent -- pokered's registered pink, applied like the hub's coral:
+     a mid pink for surfaces, a SOFT desaturated pink ink for links (not hot/neon),
+     used consistently everywhere. */
+  --ff-accent: #db5f92;
+  --ff-accent-deep: #b34a75;
+  --ff-accent-ink: #f2b7ce;
   --ff-on-accent: #2a1016;
-  --ff-link: #dcabc2;
-  --ff-link-hover: #eecdda;
-  --ff-glow: rgba(189, 106, 142, .22);
+  --ff-link: #f2b7ce;
+  --ff-link-hover: #f9d5e2;
+  --ff-glow: rgba(219, 95, 146, .24);
 
   --ff-shadow: 0 1px 0 rgba(255,255,255,.03), 0 18px 40px -24px rgba(0,0,0,.8);
   --ff-shadow-lg: 0 34px 80px -30px rgba(0,0,0,.86);
@@ -231,9 +233,9 @@ html:not(.dark-mode):not(.light-mode) {
   --section-code-border: var(--ff-line);
 
   /* syntax highlighting (readable on the dark code surface) */
-  --fragment-keyword: #dcabc2;
+  --fragment-keyword: #f2b7ce;
   --fragment-keywordtype: #c8a6ff;
-  --fragment-keywordflow: #dcabc2;
+  --fragment-keywordflow: #f2b7ce;
   --fragment-token: #c5e8a0;
   --fragment-comment: #8d7f93;
   --fragment-link: #8fd0ff;
@@ -351,7 +353,7 @@ input:focus-visible,
   width: 100%;
   max-width: var(--ff-maxw);
   margin-inline: auto;
-  padding-inline: var(--ff-gutter);
+  padding-inline: 2.4rem;   /* exact hub value (39.6px @ 16.5px root), not a clamp */
 }
 .site-header {
   background: color-mix(in srgb, var(--ff-bg) 80%, transparent);
@@ -940,21 +942,29 @@ table.doxtable th,
 
 /* Prose pages: a narrower, CENTERED content column (~900px) like the reference,
    instead of a full-width article. API pages keep the wide column for tables. */
+/* Content column: the exact hub overview measures -- a ~751px text column
+   (reference #main is 825px incl. 2.25rem padding), left-aligned, centered on the
+   page. Not a narrow centered hero. */
 html.ff-no-sidebar #doc-content .header,
 html.ff-no-sidebar #doc-content .contents {
-  max-width: 600px !important;   /* one shared, controlled content column */
+  max-width: 760px !important;
   margin-inline: auto !important;
-  text-align: left !important;   /* everything LEFT-aligned to one edge, not centered */
+  padding-inline: 0 !important;
+  text-align: left !important;
 }
 
-/* Compact hero: tight gaps between title, the badge cluster, and the screenshot
-   (a dashboard-like density, not loose article spacing). Everything shares the
-   same left edge -- a docs overview column, not a centered marketing hero. */
-html.ff-no-sidebar #doc-content { padding-top: .2rem !important; }
+/* ~24px gap below the subnav before the title (matches the hub), then the title
+   at the hub's exact size, then a tight badge/screenshot rhythm. */
+html.ff-no-sidebar #doc-content { padding-top: 1.4rem !important; }
 html.ff-no-sidebar #doc-content .header { margin-block: 0 !important; padding-block: 0 !important; }
 html.ff-no-sidebar #doc-content .headertitle,
 html.ff-no-sidebar #doc-content div.title {
-  margin: .1rem 0 .5rem !important;
+  font-family: var(--ff-display) !important;
+  font-size: 2.7rem !important;   /* 44.55px @ 16.5px root -- the hub title size */
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.02em !important;
+  margin: 0 0 1.6rem !important;
   padding-top: 0 !important;
   text-align: left !important;
 }
@@ -970,12 +980,12 @@ html.ff-no-sidebar #doc-content .contents > p:first-child {
 .ff-shot {
   display: block;
   max-width: 100%;                   /* fills the shared column, flush-left with title/badges */
-  margin: .6rem 0 3.6rem;            /* left-aligned; big bottom gap pushes Status below the fold */
-  padding: 22px;                     /* chunkier preview card */
-  background: #0d080d;               /* deep charcoal, so the bright shot sits inside it */
+  margin: .4rem 0 2.4rem;
+  padding: 8px;                      /* light -- a clean embedded preview, not a thick box */
+  background: var(--ff-code-bg);
   border: 1px solid var(--ff-line);
-  border-radius: 20px;
-  box-shadow: 0 28px 64px -32px rgba(0, 0, 0, .9);
+  border-radius: 14px;
+  box-shadow: 0 14px 36px -28px rgba(0, 0, 0, .75);
 }
 .ff-shot img {
   display: block !important;
@@ -984,7 +994,7 @@ html.ff-no-sidebar #doc-content .contents > p:first-child {
   height: auto !important;
   margin: 0 !important;
   border: 0 !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   box-shadow: none !important;
 }
 /* Any other prose image (not a badge, not already framed): contained + centered. */
