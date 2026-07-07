@@ -139,7 +139,6 @@ def main():
       <a class="active" aria-current="page" href="index.html">Screenshots</a>
       <span class="sep" aria-hidden="true"></span>
       <a class="ext" href="{repo}">Repository&nbsp;&#8599;</a>
-      <a class="ext" href="{repo}/tree/main/notes">Notes&nbsp;&#8599;</a>
     </div>
   </nav>
 </div>
@@ -169,8 +168,9 @@ def main():
     <nav class="ff-foot-col" aria-label="This project">
       <h2>This project</h2>
       <a href="../index.html">Docs home</a>
+      <a href="../pages.html">Project notes</a>
+      <a href="index.html">Screenshots</a>
       <a href="{repo}">Repository&nbsp;&#8599;</a>
-      <a href="{repo}/tree/main/notes">Notes&nbsp;&#8599;</a>
     </nav>
   </div>
   <div class="ff-foot-bar">
