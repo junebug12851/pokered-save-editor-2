@@ -202,15 +202,7 @@
       var on = false;
       if (target === "index.html") on = page === "index.html";
       else if (target === "pages.html") on = page === "pages.html" || page.indexOf("md_") === 0;
-      else if (target === "annotated.html")
-        on =
-          page === "annotated.html" ||
-          page === "hierarchy.html" ||
-          page.indexOf("class") === 0 ||
-          page.indexOf("struct") === 0 ||
-          page.indexOf("namespace") === 0;
-      else if (target === "files.html")
-        on = page === "files.html" || page.indexOf("dir_") === 0 || /_8[a-z]+\.html$/.test(page);
+      else if (target === "api") on = isApiPage(); // one API item covers class/file/namespace pages
       if (on) {
         links[i].classList.add("active");
         links[i].setAttribute("aria-current", "page");

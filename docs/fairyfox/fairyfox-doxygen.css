@@ -272,11 +272,8 @@ body {
   font-family: var(--ff-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background:
-    radial-gradient(1100px 520px at 88% -8%, color-mix(in srgb, var(--ff-hue-beta) 10%, transparent), transparent 60%),
-    radial-gradient(900px 480px at 6% -6%, color-mix(in srgb, var(--ff-accent) 12%, transparent), transparent 60%),
-    linear-gradient(var(--ff-bg-grad-top), var(--ff-bg) 42%);
-  background-attachment: fixed;
+  /* Flat surface, like the hub / the reference site — no gradient washes. */
+  background: var(--ff-bg);
 }
 
 h1, h2, h3, h4, h5,
@@ -837,6 +834,79 @@ html.ff-no-sidebar #top { border-right: none; }
   font: inherit; font-size: .75rem; font-weight: 650; color: var(--ff-accent-ink);
 }
 .ff-rp-reset:hover { text-decoration: underline; }
+
+/* ----------------------------------------------------------------------------
+ * 6b. Flat, reference-matched content surfaces (no gradient washes / banding).
+ *   The reference site uses flat dark panels and clean cards; doxygen-awesome's
+ *   member summary rows fill each type/name cell with the dark code background +
+ *   borders, which reads as heavy horizontal banding. Flatten it, and turn the
+ *   DETAILED member docs into clean cards with a left accent bar (like the ref).
+ * ------------------------------------------------------------------------- */
+
+/* Member SUMMARY list: flat rows, one hairline separator — no dark cell fills. */
+.memberdecls .memItemLeft,
+.memberdecls .memItemRight,
+.memberdecls .memTemplItemLeft,
+.memberdecls .memTemplItemRight,
+.memberdecls .memTemplParams,
+.memberdecls .mdescLeft,
+.memberdecls .mdescRight {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--ff-line) !important;
+}
+.memberdecls .memSeparator { border: 0 !important; height: 0 !important; line-height: 0 !important; }
+.memberdecls .heading td { border: 0 !important; }
+
+/* DETAILED member docs -> a flat card with a left accent bar. */
+.memitem {
+  background: var(--ff-panel) !important;
+  background-image: none !important;
+  border: 1px solid var(--ff-line) !important;
+  border-left: 3px solid var(--ff-accent) !important;
+  border-radius: var(--ff-radius-sm) !important;
+  box-shadow: none !important;
+  margin: 1.1rem 0 !important;
+  overflow: hidden;
+}
+.memproto,
+.memproto table.mlabels,
+.memproto .memname,
+.memproto td {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--ff-text) !important;
+}
+.memdoc {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Kill leftover gradient washes / heavy shadows on common doxygen-awesome panels. */
+div.contents .memproto,
+table.doxtable th,
+.directory td.entry,
+.fieldtable th,
+.tabsproto,
+.levelstable {
+  background-image: none !important;
+}
+.contents table.doxtable,
+.contents .fieldtable { box-shadow: none !important; }
+
+/* Body copy = the softer warm grey (headings stay bright), matching the reference. */
+#doc-content .contents,
+#doc-content p,
+#doc-content li,
+.memdoc,
+.textblock {
+  color: var(--ff-text-soft);
+}
 
 /* ----------------------------------------------------------------------------
  * 7. Reduced motion
