@@ -17,6 +17,7 @@ file is the index; pick a month below (newest first).
 
 | Month | Commits |
 |-------|---------|
+| [July 2026](version/2026-07.md) | 1 |
 | [June 2026](version/2026-06.md) | 4 |
 | [March 2020](version/2020-03.md) | 84 |
 | [February 2020](version/2020-02.md) | 163 |

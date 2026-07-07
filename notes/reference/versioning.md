@@ -108,18 +108,37 @@ A tagged, clean release build has no `+g...` at all, so both forms read simply `
    metadata* but not a changed *number* -- a number change needs a reconfigure.)
 3. Build + run; the About screen and `.exe` details reflect the new number.
 
-## Releases and git tags
+## Releases and git tags (git-flow)
 
-When cutting a real release:
+The **release path is set by the SemVer level** (see `reference/git-workflow.md` →
+"Cutting a release"):
 
-1. Bump `VERSION` to the release number (drop any `-alpha`/`-beta` for a final release).
-2. Commit on `dev`, run the full suite green, fast-forward `main` (the standing workflow).
-3. **Tag the release commit** `vX.Y.Z` and push the tag:
-   `git tag -a v0.8.0 -m "v0.8.0" && git push origin v0.8.0`.
-   The tag is the accurate anchor that maps the SemVer number to one commit and lets
-   `git describe` derive versions. (Tags are created on request -- not automatically.)
+- **PATCH** (the default): bump `VERSION` on `dev`, go green, then release **directly**
+  `dev → main` with a `--no-ff` merge.
+- **MINOR / MAJOR** (a milestone): bump `VERSION` on a `release/X.Y.0` branch, then merge it
+  `--no-ff` into `main` (and back into `dev`).
+
+**The tag is created by CI, not by hand.** Pushing `main` triggers `release.yml`, whose
+`version` job derives `v<VERSION>` and whose `release` job (softprops) creates the tag
+`vX.Y.Z` on the release merge commit and publishes the GitHub Release. So **do not run
+`git tag` manually** — a hand-pushed tag makes the release run see the tag already exists and
+skip itself. (This is the project's recorded divergence from the hub git-flow runbook, which
+tags by hand; here the pipeline owns tagging. See `reference/git-workflow.md` → "Cutting a
+release.") The tag is still the accurate anchor mapping the SemVer number to one commit and
+letting `git describe` derive versions.
 
 A build from a clean, tagged checkout shows the plain number with no `+g...` suffix.
+
+## Verify (is it being followed?)
+
+The fairyfox [compliance audit](compliance.md) aggregates this per-standard slice — run on
+request, report `done`/`partial`/`missing`:
+
+| Passes only when… | How to check |
+|-------------------|--------------|
+| `VERSION` is a single SemVer line; nothing hardcodes a version elsewhere | `cat VERSION`; grep for stray version literals |
+| The newest `main` release tag equals `v<VERSION>` | `git tag --merged main \| sort -V \| tail -1` vs `VERSION` |
+| Bumps rode in the same commit as the change that warranted them (PATCH default, MINOR rare, never auto-MAJOR) | `git log -p -- VERSION` |
 
 ## Relationship to the changelog (`notes/version.md` / `notes/version/`)
 

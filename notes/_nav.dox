@@ -35,7 +35,21 @@ background, the **System Map**, the **Reference** lookups, the **Decisions**, an
 \subpage pse_systems <br>
 \subpage pse_reference <br>
 \subpage pse_decisions <br>
-\subpage pse_plans
+\subpage pse_plans <br>
+\subpage pse_fairyfox_reports
+*/
+
+/**
+\page pse_fairyfox_reports Fairyfox Reports
+\brief Process reports — one honest write-up per run of a fairyfox system procedure.
+
+This node's own record of running fairyfox system procedures (setup, onboarding, adopting updates,
+check-for-updates). The hub reads these on request to improve the shared standards. See
+`notes/reference/cross-project-sync.md` → "Process reports".
+
+\subpage pse_fairyfox_reports_about <br>
+\subpage md_notes_2fairyfox-reports_22026-07-06-adopting-updates <br>
+\subpage md_notes_2fairyfox-reports_22026-06-26-adopting-updates
 */
 
 /**
@@ -43,14 +57,23 @@ background, the **System Map**, the **Reference** lookups, the **Decisions**, an
 \brief The day-by-day history — per-day files grouped into month folders, newest first.
 
 \subpage pse_sessions_about <br>
+\subpage pse_sessions_2026_07 <br>
 \subpage pse_sessions_2026_06 <br>
 \subpage md_notes_2sessions_2revival-s13-series
+*/
+
+/**
+\page pse_sessions_2026_07 July 2026
+\brief Daily session logs for July 2026 (`notes/sessions/2026-07/`).
+
+\subpage md_notes_2sessions_22026-07_22026-07-06
 */
 
 /**
 \page pse_sessions_2026_06 June 2026
 \brief Daily session logs for June 2026 (`notes/sessions/2026-06/`).
 
+\subpage md_notes_2sessions_22026-06_22026-06-26 <br>
 \subpage md_notes_2sessions_22026-06_22026-06-25 <br>
 \subpage md_notes_2sessions_22026-06_22026-06-17 <br>
 \subpage md_notes_2sessions_22026-06_22026-06-16 <br>
@@ -70,6 +93,7 @@ background, the **System Map**, the **Reference** lookups, the **Decisions**, an
 \brief Plain-English history, one entry per commit, split by month.
 
 \subpage md_notes_2version <br>
+\subpage md_notes_2version_22026-07 <br>
 \subpage md_notes_2version_22026-06 <br>
 \subpage md_notes_2version_22020-03 <br>
 \subpage md_notes_2version_22020-02 <br>

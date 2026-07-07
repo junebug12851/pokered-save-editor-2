@@ -28,7 +28,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/screenshots.md` | **UI screenshot capture** — the headless `screenshooter` tool + capture scripts that render the live UI to `tmp/screenshots/` as **still PNGs** (offscreen, no save writes). How it's driven + the font/backend gotchas. (No automated GIFs — animated GIFs are added manually, one at a time) |
 | `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language; language switching deferred until a 2nd locale + Options screen exist |
 | `notes/reference/documentation.md` | **Docs** — generating the Doxygen site, the comment house-style, and the doc-pass progress ledger (all merged here) |
-| `notes/reference/git-workflow.md` | **Git standards** — branch model (`main` FF-only/stable, `dev` frequent), no history rewriting, commit-message style, hard safety rules. Read before any git op |
+| `notes/reference/git-workflow.md` | **Git standards** — the fairyfox **git-flow** model (`main` = `--no-ff` tagged releases, `dev` integration, `feature/`/`release/`/`hotfix/` branches; PATCH releases direct, MINOR/MAJOR via `release/*`), no history rewriting, commit-message style, hard safety rules. Read before any git op |
 | `notes/reference/cross-project-sync.md` | **Fairyfox mesh** — how this project shares standards with the fairyfox.io hub: git-only, read-only, on-request sync (no submodules/automation). The model behind "check the fairyfox system for updates" |
 | `notes/reference/versioning.md` | **Version-number scheme** — SemVer, single source of truth (`VERSION`), how it propagates (CMake → `pse_version.h` → app/About/.exe), how to bump, release/tag process. (The *changelog* is `notes/version.md`) |
 | `notes/reference/deployment.md` | **Releases / deployment** — the GitHub Actions `release.yml` pipeline: builds Windows portable+zip+installer, Linux AppImage+tar.gz, Doxygen docs zip, screenshots zip, and publishes a GitHub Release on each `main` commit that bumped `VERSION` (tag-gated). Toolchain mirrors `tests.yml`; first-run shakeout points noted |
@@ -99,9 +99,9 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
    and **launch the app** so it can be tested in-app immediately. (Pure edits to existing QML hot-reload —
    no rebuild; **new** QML files still need adding to `app/app.qrc` + a rebuild.)
 2. **Test.** Run the **affected** test(s) per change for speed (build `build/`, run `build\tst_x.exe`);
-   run the **full `ctest`** suite before fast-forwarding `main`. Only proceed past a **green** result.
+   run the **full `ctest`** suite before releasing `dev → main`. Only proceed past a **green** result.
    **On ANY QML/screen change (or a new `.qml` added to `app.qrc`), the QML screen smoke test
-   `tst_qml_screens` MUST be green before FF `main`.** It loads every registered screen through the
+   `tst_qml_screens` MUST be green before the release merge to `main`.** It loads every registered screen through the
    real engine and fails on any QML warning/error (FINAL overrides → "Component is not ready", binding
    `TypeError`s, missing types/providers, anchor-on-null). The C++ ctest suite never instantiates QML,
    so it cannot catch this class — this is what let a non-opening Credits screen reach `main` on
@@ -111,8 +111,11 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
 3. **Debug / profile.** If anything **crashes**, rebuild via the **`asan/`** (or debugger) sibling build,
    capture a **real stack trace** (output routed to a log), and diagnose from that — never guess.
    Do **periodic profiling** passes when touching hot paths. Always redirect std+err to a log to read it.
-4. **Commit + push + FF main — fully automatic (green-gated).** This is an explicit standing
-   request (it overrides the older "push only when asked" wording in `git-workflow.md`):
+4. **Commit + push + release `main` the git-flow way — fully automatic (green-gated).** This is an
+   explicit standing request (it overrides the older "push only when asked" wording in
+   `git-workflow.md`). The repo follows **git-flow**: `main` advances only by `--no-ff`
+   tagged-release merges (PATCH straight from `dev`; MINOR/MAJOR via a `release/*` branch). See
+   `notes/reference/git-workflow.md`:
    - **Changelog rides inside the commit (write it BEFORE committing).** For any substantive change,
      write its plain-English entry at the top of the current month's file in `notes/version/` and stage
      it in the **same commit** as the change — one commit carries both. Inline entries take **no
@@ -127,21 +130,26 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
      CI-only commits don't move the number. See `notes/reference/versioning.md`.
    - Commit early/often on **`dev`** with focused `type: summary` messages, **staging specific files only**
      (never `git add -A`/`.`), and `git push origin dev` after each commit.
-   - When the **full suite is green**, fast-forward `main` and push automatically:
-     `git checkout main && git merge --ff-only dev && git push origin main && git checkout dev`.
+   - When the **full suite is green**, release `dev → main` automatically the git-flow way (a
+     **PATCH** goes direct; a **MINOR/MAJOR** milestone goes through a `release/X.Y.0` branch —
+     see git-workflow.md):
+     `git checkout main && git merge --no-ff dev && git push origin main && git checkout dev`.
+     The `--no-ff` merge commit is the release; **do not manually `git tag`** — `release.yml`
+     creates the `v<VERSION>` tag and publishes (the recorded CI-owns-tagging divergence). A
+     hand-pushed tag would make the release run skip itself.
    - **"Green" now includes the GitHub Actions CI, not just local `ctest` (standing request).** Before
      fast-forwarding `main`, confirm the remote **`tests`** workflow passed on the `dev` HEAD being
      merged — `gh run list --branch dev -L 1` / `gh run view <id>` (the GitHub CLI is installed +
      authed). If that CI run is still in progress, wait for it; if it failed, treat it exactly like a
      local red and do **not** FF. Local `ctest` green is necessary but no longer sufficient.
-   - **After FF `main`, watch the `release` run** — pushing `main` triggers `release.yml`, which (when
-     `VERSION` was bumped → tag `v<VERSION>` is new) builds + publishes the GitHub Release. Monitor it
+   - **After releasing to `main`, watch the `release` run** — pushing `main` triggers `release.yml`,
+     which (when `VERSION` was bumped → tag `v<VERSION>` is new) builds + publishes the GitHub Release. Monitor it
      with `gh run watch` / `gh run view --log-failed`; a failed build leaves NO tag/release, so fix
      forward and the next `main` push retries the same version. See `notes/reference/deployment.md`.
-   - **After fast-forwarding `main`, rebuild the Doxygen docs by default** — `doxygen Doxyfile` from the
+   - **After releasing to `main`, rebuild the Doxygen docs by default** — `doxygen Doxyfile` from the
      repo root — so the generated `docs/html/` (git-ignored) always tracks `main`. See
      `notes/reference/documentation.md`.
-   - **Also after fast-forwarding `main`, refresh the UI screenshots by default** —
+   - **Also after releasing to `main`, refresh the UI screenshots by default** —
      `pwsh -File scripts/capture_screenshots.ps1` (Linux/CI: `scripts/capture_screenshots.sh`) — so the
      `tmp/screenshots/` **still PNGs** (git-ignored; never committed) always track `main`. It builds +
      runs the headless `screenshooter` tool (renders only, never writes a save byte). No automated GIFs
@@ -156,7 +164,7 @@ The GitHub CLI (`gh`) is installed + authenticated (account `junebug12851`), so 
 the normal workflow — not something to wait to be asked about. The cadence is **event-based, not a
 calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, not a timed ping.
 
-- **Whenever prepping `main` for shipment** (i.e. about to FF `main`), do a quick GitHub check as part of
+- **Whenever prepping `main` for shipment** (i.e. about to release `dev → main`), do a quick GitHub check as part of
   the same step: `gh run list` (CI/release health — must be green; see Default Workflow step 4), plus
   `gh issue list` and `gh pr list`. If there are **open/new/changed issues or PRs**, surface them to
   Twilight as a short summary and **ask whether to work on them now or later** — don't silently start.
@@ -259,10 +267,33 @@ adopted, and **report what changed + what adopting it would touch — then stop.
 nothing until Twilight clearly says go ahead; applying is a separate, confirmed act.
 Full procedure: the shared `adopting-updates` runbook (in the hub's `hub/standards/`).
 
+**Exception — pre-authorized changes.** The system keeps an express-authorization
+ledger (`assets/references/fairyfox.io/hub/authorizations.yml`), read out of the same
+read-only clone. If an active entry there `covers` the change being adopted, Twilight
+**already gave the go-ahead at the system** — apply it directly, skipping the "wait"
+pause. Skip *only* that redundant pause: still reconcile (don't clobber a deliberate
+local divergence — re-prompt if you would), still write the process report, still
+commit as a reviewable act. Nothing in the ledger covers it → fall back to
+check-report-wait. (Reading the ledger is read-only and on-request — it lets a node
+skip a prompt, never lets the system act on this repo, so anti-recursion holds.)
+
+**Pre-authorization skips the confirmation pause — it never skips safety.** Whenever
+a change is applied automatically or under an express-authorization (and *especially*
+then), every safety net still runs, comprehensively and at every level: reconcile
+without clobbering local divergence (re-prompt if unsure), run the relevant
+build/tests, run the standards **compliance / `## Verify`** checks, and confirm the
+change stays within all project constraints (save-file fidelity, no hacks, UX bar,
+git safety rules) before and after. Checks, tests, and compliance are run regularly
+and thoroughly throughout — bypassing the *pause* must never become bypassing the
+*verification*. If full verification can't be completed, do not auto-apply; fall back
+to check-report-wait.
+
 **Guardrails (don't break these):** on-request only — never auto-pull or schedule
-cross-repo syncs (anti-recursion); the reference clone is read-only and git-ignored;
-never apply changes or rewrite history without an explicit go-ahead; reconcile with
-local edits, don't clobber them.
+cross-repo syncs (anti-recursion); the reference clone is read-only and git-ignored
+(the authorization ledger included — reading it lets you skip a prompt, it never lets
+the system act on this repo); never apply changes or rewrite history without an
+explicit go-ahead (an active `authorizations.yml` entry that covers the change *is*
+that go-ahead, given at the system); reconcile with local edits, don't clobber them.
 
 > Naming: Twilight calls it **the fairyfox system** in conversation; the public website
 > calls it the **hub**. Both name the same fairyfox.io mesh.

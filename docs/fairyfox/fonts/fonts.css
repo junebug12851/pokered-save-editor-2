@@ -1,0 +1,33 @@
+/* Self-hosted web fonts — served from this site's own origin, never Google Fonts.
+   This removes the third-party IP exposure a Google Fonts request creates (see the
+   fairyfox legal-docs standard). Files are the latin variable subsets from Fontsource:
+   Fraunces, Inter, and JetBrains Mono — all OFL-1.1 licensed and freely redistributable.
+   Family names match the theme tokens in fairyfox-doxygen.css (--ff-display / --ff-sans
+   / --ff-mono).
+
+   Doxygen's HTML_EXTRA_FILES copies these flat into the html/ output root, so the
+   url()s below resolve as same-directory (./x.woff2) siblings of this stylesheet. */
+
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("./fraunces-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("./inter-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url("./jetbrains-mono-latin.woff2") format("woff2");
+}

@@ -9,10 +9,13 @@
 <!-- Fairy Fox: browser-chrome colour matches the hub (light + dark) -->
 <meta name="theme-color" content="#ef6149" media="(prefers-color-scheme: light)"/>
 <meta name="theme-color" content="#191116" media="(prefers-color-scheme: dark)"/>
-<!-- Fairy Fox: shared type families (Fraunces / Inter / JetBrains Mono) -->
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<!-- Fairy Fox: self-hosted type families (Fraunces / Inter / JetBrains Mono) — no
+     Google Fonts (removes third-party IP exposure; see the hub legal-docs standard). -->
+<link href="$relpath^fonts.css" rel="stylesheet" type="text/css"/>
+<!-- Fairy Fox docs behaviour: applies the shared reading prefs (theme / accent / size /
+     spacing / width) BEFORE paint to avoid a flash, then wires the reader menu + subnav.
+     Loaded in <head> (not deferred) so loadAndApply() runs before the body renders. -->
+<script type="text/javascript" src="$relpath^ff-docs.js"></script>
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 <!--BEGIN PROJECT_ICON-->
@@ -40,21 +43,46 @@ $mermaidjs
 $extrastylesheet
 </head>
 <body>
-<!-- Fairy Fox bar: project brand (left) + persistent way-home (right). Part of the
-     hub mesh seamlessness; see hub/standards/docs-site/05-navigation-and-cross-linking.md -->
-<div id="ff-bar">
-  <a class="ff-brand" href="$relpath^index.html">
-    <img class="ff-glyph" src="$relpath^pse-logo.png" alt="" aria-hidden="true"/>
-    <span>Pokered Save Editor&nbsp;2</span>
-  </a>
-  <span class="ff-spacer"></span>
-  <a class="ff-home" href="https://fairyfox.io/" title="Back to the Fairy Fox hub">
-    <svg class="ff-fox" viewBox="0 0 24 24" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 4l4 3 5-2 5 2 4-3-1 8a9 9 0 0 1-16 0L3 4z" fill="#ff7a5e"/>
-      <path d="M9.5 11.5l1.2 1 .3 1.4M14.5 11.5l-1.2 1-.3 1.4" stroke="#241016" stroke-width="1.2" stroke-linecap="round"/>
-    </svg>
-    <span>Back to Fairy&nbsp;Fox</span>
-  </a>
+<!-- Fairy Fox skip link (WCAG 2.4.1) -->
+<a class="ff-skip" href="#top">Skip to content</a>
+<!-- Fairy Fox chrome: a copy of the fairyfox.io header (fixed mesh-wide primary nav)
+     + this project's subnav, in one fixed .ff-top stack. The brand mark and the Home
+     item ARE the way home (no separate "Back" button). See the hub docs-site standard
+     05-navigation-and-cross-linking.md. Reader ("Aa") button sits just after the nav;
+     its panel is appended to <body> by ff-docs.js. -->
+<div class="ff-top">
+  <header class="site-header ff-header" role="banner">
+    <div class="wrap">
+      <a class="brand" href="https://fairyfox.io/">
+        <img class="brand-logo" src="https://fairyfox.io/assets/icons/fox.png" alt="" aria-hidden="true"/>
+        <span class="brand-name">Fairy&nbsp;Fox</span>
+      </a>
+      <nav class="nav" aria-label="Fairy Fox">
+        <a href="https://fairyfox.io/">Home</a>
+        <a href="https://fairyfox.io/projects/">Projects</a>
+        <a href="https://fairyfox.io/games/">Games</a>
+        <a href="https://fairyfox.io/docs/" class="active" aria-current="page">Docs</a>
+        <a href="https://fairyfox.io/blog/">Updates</a>
+        <a href="https://fairyfox.io/about/">About</a>
+      </nav>
+      <button class="ff-reader-btn" type="button" aria-label="Reading settings"
+        aria-haspopup="dialog" aria-expanded="false" aria-controls="ff-reader-panel" title="Reading settings">
+        <span class="aa-lg">A</span><span class="aa-sm">a</span>
+      </button>
+    </div>
+  </header>
+  <nav class="subnav ff-subnav" aria-label="Pokered Save Editor 2 sections">
+    <div class="wrap">
+      <a class="sub-brand" href="$relpath^index.html">Pokered Save Editor&nbsp;2</a>
+      <a href="$relpath^index.html" data-ff-page="index.html">Overview</a>
+      <a href="$relpath^pages.html" data-ff-page="pages.html">Notes</a>
+      <a href="$relpath^annotated.html" data-ff-page="api">API</a>
+      <a class="ext" href="https://junebug12851.github.io/pokered-save-editor-2/screenshots/">Screenshots&nbsp;↗</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a class="ext" href="https://github.com/junebug12851/pokered-save-editor-2">Repository&nbsp;↗</a>
+      <a class="ext" href="https://github.com/junebug12851/pokered-save-editor-2/tree/main/notes">Notes&nbsp;↗</a>
+    </div>
+  </nav>
 </div>
 <!--BEGIN FULL_SIDEBAR-->
 <div id="side-nav" class="ui-resizable side-nav-resizable"><!-- do not remove this div, it is closed by doxygen! -->
