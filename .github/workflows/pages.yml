@@ -93,22 +93,14 @@ jobs:
           # The Doxygen home becomes the Pages ROOT (so / is the docs home page).
           cp -r docs/html/. site/
           test -f site/index.html
-          mkdir -p site/screenshots
-          cp tmp/screenshots/screens/*.png site/screenshots/ 2>/dev/null || true
-          cp tmp/screenshots/editor/*.png  site/screenshots/ 2>/dev/null || true
-          test -n "$(ls -A site/screenshots)"
-          # Screenshots gallery (its own index under /screenshots/, linking back to the docs root).
-          {
-            echo '<!doctype html><meta charset="utf-8"><title>UI screenshots</title>'
-            echo '<style>body{font-family:system-ui,sans-serif;max-width:1000px;margin:2rem auto;padding:0 1rem;color:#222}img{max-width:100%;border:1px solid #ddd;border-radius:6px;margin:.4rem 0}h3{margin:1.4rem 0 .2rem}a{color:#c2185b}</style>'
-            echo '<h1>Pokered Save Editor &mdash; UI screenshots</h1>'
-            echo '<p>Auto-updated from <code>main</code>. <a href="../">&larr; back to docs</a></p>'
-            for f in $(ls site/screenshots | sort); do
-              case "$f" in *.html) continue;; esac
-              echo "<h3>$f</h3><img src=\"$f\" alt=\"$f\" loading=\"lazy\">"
-            done
-          } > site/screenshots/index.html
-          echo "docs (root): $(find site -maxdepth 1 -type f | wc -l) files; screenshots: $(ls -1 site/screenshots | wc -l)"
+          # Themed screenshots gallery under /screenshots/ -- reuses the docs chrome +
+          # stylesheet (../fairyfox-doxygen.css, ../ff-docs.js, ...) so it is seamless with
+          # the rest of the site. The script copies the capture groups (screens/, editor/)
+          # flat into site/screenshots/ and writes the gallery index.html.
+          python3 scripts/build_gallery.py tmp/screenshots site/screenshots
+          test -f site/screenshots/index.html
+          test -n "$(ls site/screenshots/*.png 2>/dev/null)"
+          echo "docs (root): $(find site -maxdepth 1 -type f | wc -l) files; screenshots: $(ls -1 site/screenshots/*.png | wc -l)"
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

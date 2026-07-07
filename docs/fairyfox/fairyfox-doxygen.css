@@ -1029,6 +1029,57 @@ div.header {
 .contents hr { border-top: 1px solid var(--ff-line) !important; opacity: .5; }
 
 /* ----------------------------------------------------------------------------
+ * 6c. Screenshots gallery (the /screenshots/ page). A standalone themed page
+ *   that reuses this stylesheet + the chrome, so it's seamless with the docs.
+ * ------------------------------------------------------------------------- */
+.ff-gallery {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.6rem var(--ff-gutter) 3.5rem;
+}
+.ff-gallery-title {
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: 2.4rem;
+  letter-spacing: -.02em;
+  color: var(--ff-text);
+  margin: .3rem 0 .35rem;
+}
+.ff-gallery-lead { color: var(--ff-text-faint); margin: 0 0 1.8rem; font-size: .95rem; }
+.ff-gallery-lead a { color: var(--ff-accent-ink); }
+.ff-gallery h2 {
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: 1.45rem;
+  color: var(--ff-text);
+  letter-spacing: -.01em;
+  margin: 2.1rem 0 1rem;
+}
+.ff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.15rem;
+}
+.ff-card {
+  margin: 0;
+  background: var(--ff-panel);
+  border: 1px solid var(--ff-line);
+  border-radius: var(--ff-radius-sm);
+  overflow: hidden;
+  transition: transform .16s var(--ff-ease), border-color .16s var(--ff-ease), box-shadow .16s var(--ff-ease);
+}
+.ff-card:hover { transform: translateY(-3px); border-color: var(--ff-line-2); box-shadow: var(--ff-shadow-lg); }
+.ff-card > a { display: block; background: var(--ff-code-bg); line-height: 0; }
+.ff-card img { display: block; width: 100%; height: auto; }
+.ff-card figcaption {
+  padding: .6rem .85rem;
+  font-family: var(--ff-sans);
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--ff-text-soft);
+}
+
+/* ----------------------------------------------------------------------------
  * 7. Reduced motion
  * ------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
