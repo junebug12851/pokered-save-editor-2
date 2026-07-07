@@ -944,8 +944,10 @@ html.ff-no-sidebar #doc-content .contents {
 
 /* Compact hero: tight gaps between title, the badge cluster, and the screenshot
    (a dashboard-like density, not loose article spacing). */
+html.ff-no-sidebar #doc-content { padding-top: .2rem !important; }
+html.ff-no-sidebar #doc-content .header { margin-block: 0 !important; padding-block: 0 !important; }
 html.ff-no-sidebar #doc-content .headertitle,
-html.ff-no-sidebar #doc-content div.title { margin-bottom: .5rem !important; }
+html.ff-no-sidebar #doc-content div.title { margin: .1rem 0 .5rem !important; padding-top: 0 !important; }
 /* The badge cluster is the first paragraph of the content — pack the rows tight. */
 html.ff-no-sidebar #doc-content .contents > p:first-child {
   margin: .1rem 0 .3rem !important;
@@ -957,13 +959,13 @@ html.ff-no-sidebar #doc-content .contents > p:first-child {
    that dominates the page. */
 .ff-shot {
   display: block;
-  max-width: 580px;
-  margin: .9rem auto 0;
-  padding: 12px;
-  background: var(--ff-code-bg);
-  border: 1px solid var(--ff-line-2);
-  border-radius: var(--ff-radius);
-  box-shadow: var(--ff-shadow-lg);
+  max-width: 520px;
+  margin: .6rem auto 2.8rem;         /* pushes the Status section below the fold */
+  padding: 22px;                     /* chunkier preview card */
+  background: #0d080d;               /* deep charcoal, so the bright shot sits inside it */
+  border: 1px solid var(--ff-line);
+  border-radius: 20px;
+  box-shadow: 0 28px 64px -32px rgba(0, 0, 0, .9);
 }
 .ff-shot img {
   display: block !important;
