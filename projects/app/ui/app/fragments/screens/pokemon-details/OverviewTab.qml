@@ -67,35 +67,6 @@ Rectangle {
     font.pixelSize: 13
     elide: Text.ElideRight
   }
-
-  // A single segment of a connected action-button "combo" group. Flat, icon-only,
-  // with a square hover/press fill and a hairline left divider (except the first),
-  // filling the group's height. Tinted like the app's other icons.
-  component SegBtn: Button {
-    id: seg
-    property bool first: false
-    property string tip: ""
-    flat: true
-    display: AbstractButton.IconOnly
-    topInset: 0; bottomInset: 0; leftInset: 0; rightInset: 0
-    padding: 7
-    icon.color: brg.settings.textColorDark
-    Layout.fillHeight: true
-    Layout.minimumHeight: 0
-    background: Rectangle {
-      color: seg.down ? Qt.rgba(0, 0, 0, 0.16)
-             : seg.hovered ? Qt.rgba(0, 0, 0, 0.08)
-             : "transparent"
-      Rectangle {
-        visible: !seg.first
-        anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
-        width: 1
-        color: Qt.rgba(0, 0, 0, 0.15)
-      }
-    }
-    MainToolTip { text: seg.tip }
-  }
-
   ScrollView {
     id: scroller
     anchors.fill: parent

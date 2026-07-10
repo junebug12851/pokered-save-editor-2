@@ -13,7 +13,6 @@ import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
-import "../../controls/menu"
 
 Rectangle {
   id: cardFront

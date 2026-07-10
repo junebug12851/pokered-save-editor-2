@@ -10,7 +10,6 @@ import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
-import "../../controls/menu"
 
 DefTextEdit {
   id: secondsEdit

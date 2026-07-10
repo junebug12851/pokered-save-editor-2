@@ -1,11 +1,11 @@
 // PlayerIdEdit.qml -- the trainer ID (OT ID) field on the trainer card.
 //
-// A 4-digit hex DefTextEdit bound to player.basics.playerID, with a hover
-// RandomMenu (randomizeID). Like the name field, it commits only on edit-finish:
-// writing playerID runs fullSetPlayerId, which rescans storage and updates owned
-// mons' OT IDs, so a per-keystroke write would hang and could rewrite a traded
-// mon's OT. Invalid/partial input reverts to the stored value. The basics() guard
-// avoids a null-chain crash during load. Leave Twilight's inline note.
+// A 4-digit hex DefTextEdit bound to player.basics.playerID, with a RandomButton
+// (randomizeID). Like the name field, it commits only on edit-finish: writing playerID
+// runs fullSetPlayerId, which rescans storage and updates owned mons' OT IDs, so a
+// per-keystroke write would hang and could rewrite a traded mon's OT. Invalid/partial
+// input reverts to the stored value. The basics() guard avoids a null-chain crash
+// during load. Leave Twilight's inline note.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -13,7 +13,6 @@ import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
-import "../../controls/menu"
 
 MouseArea {
   id: mouseArea
@@ -36,7 +35,7 @@ MouseArea {
 
     // Commit on edit-finish (Enter / focus-out), NOT per keystroke. Writing
     // playerID runs fullSetPlayerId, which rescans all storage and updates owned
-    // mons' OT IDs — doing that on every digit hung the editor and could rewrite
+    // mons' OT IDs -- doing that on every digit hung the editor and could rewrite
     // a traded mon's OT ID if an intermediate value collided with it. One atomic
     // commit avoids both. Invalid/partial input reverts to the stored value.
     onEditingFinished: {
@@ -74,9 +73,8 @@ MouseArea {
       if(b) child.text = b.playerID.toString(16).toUpperCase();
     }
 
-    RandomMenu {
-      id: menuBtn
-      visible: mouseArea.containsMouse
+    RandomButton {
+      tip: qsTr("Randomize the ID.")
       onRandomize: {
         let b = mouseArea.basics();
         if(b) b.randomizeID();

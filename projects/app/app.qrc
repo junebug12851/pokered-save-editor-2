@@ -405,6 +405,8 @@
         <file>ui/app/screens/non-modal/TrainerCard.qml</file>
         <file>ui/app/fragments/general/IconButtonRound.qml</file>
         <file>ui/app/fragments/general/IconButtonSquare.qml</file>
+        <file>ui/app/fragments/general/RandomButton.qml</file>
+        <file>ui/app/fragments/general/SegBtn.qml</file>
         <file>ui/app/fragments/general/FlatToggle.qml</file>
         <file>ui/app/fragments/general/SimulatedTilesetCombo.qml</file>
         <file>ui/app/fragments/controls/name/TilesetMenu.qml</file>
@@ -433,7 +435,6 @@
         <file>ui/app/fragments/general/DefTextEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/PlayerNameEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/PlayerIdEdit.qml</file>
-        <file>ui/app/fragments/controls/menu/RandomMenu.qml</file>
         <file>ui/app/fragments/screens/trainer-card/MoneyEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/CoinsEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/StarterEdit.qml</file>
