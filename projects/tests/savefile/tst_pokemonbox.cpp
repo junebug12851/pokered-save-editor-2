@@ -86,6 +86,7 @@ private slots:
   void box_correctMoveAtCompacts();
   void move_ppAndPpUpIndependent();
   void box_correctTypesResetsToSpeciesDefault();
+  void box_singleTypeCanonicalForm();
   void box_reRollEvsAndMaxPpUps();
   void box_dexNumAndSpeciesName();
   void box_resetMakesItPokemonResetAndCorrected();
@@ -575,6 +576,48 @@ void TestPokemonBox::box_correctTypesResetsToSpeciesDefault()
 
   QCOMPARE(p->type1, FIRE);
   QCOMPARE(p->type2, FLYING);
+
+  delete p;
+}
+
+// The resolved type-2 "single truth" (2026-07-09, grounded in the pokered
+// disassembly: base_stats store a single type as duplicate-of-type1, e.g.
+// Charmander `db FIRE, FIRE`, and 0xFF is not a valid type). Internally a single
+// type is the 0xFF sentinel; type2Explicit preserves a literally-loaded 0xFF for
+// byte fidelity, but ANY editor (re)generation must drop it so the single type
+// serialises as the canonical duplicate-of-type1, never a stray 0xFF.
+void TestPokemonBox::box_singleTypeCanonicalForm()
+{
+  const int FIRE = 20;
+
+  // Charmander is single-type Fire. A freshly built mon holds the single type as
+  // the internal 0xFF sentinel with type2Explicit false -> save() writes the
+  // duplicate-of-type1 form the game uses.
+  PokemonBox* p = makeMon(QStringLiteral("Charmander"));
+  QVERIFY(p != nullptr);
+  QCOMPARE(p->type1, FIRE);
+  QCOMPARE(p->type2, 0xFF);
+  QVERIFY2(!p->type2Explicit,
+           "a generated single type must be canonical (writes duplicate-of-type1), not explicit 0xFF");
+
+  // Simulate a hacked save that literally stored 0xFF (type2Explicit true), then
+  // run an editor correction: correctTypes() must drop the stale fidelity flag so
+  // the corrected single type serialises as the canonical duplicate, not 0xFF.
+  p->type2Explicit = true;
+  p->type2ExplicitChanged();
+  p->correctTypes();
+  QCOMPARE(p->type1, FIRE);
+  QCOMPARE(p->type2, 0xFF);
+  QVERIFY2(!p->type2Explicit,
+           "correctTypes() must clear the load-fidelity flag so a single type writes duplicate-of-type1");
+
+  // A species/type reset via update(resetType) must clear the flag too (same
+  // canonical guarantee through the manual*/update path).
+  p->type2Explicit = true;
+  p->type2ExplicitChanged();
+  p->update(false, false, /*resetType=*/true, false);
+  QVERIFY2(!p->type2Explicit,
+           "update(resetType) must clear the load-fidelity flag for a single type");
 
   delete p;
 }

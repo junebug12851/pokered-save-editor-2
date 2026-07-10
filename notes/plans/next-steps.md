@@ -75,14 +75,19 @@ The Qt Linguist pipeline is in place (`reference/i18n.md`); English ships. Open 
 These are deliberate "dirty patches" the test pass put in to keep things working until
 a human makes the call. Each is a single-truth question with (likely) one correct answer.
 
-1. **type2 single truth (single-type Pokémon).** Real saves store a single type inconsistently —
-   sometimes `0xFF`, sometimes a duplicate of type1 — so the **load/expanded side officially tolerates
-   both** (byte fidelity: read it back exactly as loaded, change only when asked; `isCorrected()` was
-   patched 2026-06-08 to accept either form). **Undecided:** the single canonical form the editor should
-   **write** when it itself generates/corrects a single type (`0xFF` vs duplicate-of-type1). Today a
-   generated single type collapses to `type2=0xFF` internally and `save()` writes the duplicate (`type1`)
-   when `type2Explicit` is false. Pick the real truth, then tighten `isCorrected()`/`save()` to it.
-   Refs: `pokemonbox.cpp` `isCorrected()`/`update()`/`save()`, `reference/fix-patterns.md`.
+1. **type2 single truth (single-type Pokémon) — RESOLVED 2026-07-09.** Settled from the pokered
+   disassembly: the game stores a single type as **duplicate-of-type1** (`data/pokemon/base_stats/*.asm`,
+   e.g. Charmander `db FIRE, FIRE`; `engine/pokemon/add_mon.asm` copies both type bytes verbatim into
+   party/box data), and **`0xFF` is not a valid type** (`constants/type_constants.asm` runs `$00..$1A`).
+   So the canonical WRITTEN form is duplicate-of-type1 — which is what `save()` already emits for a
+   non-explicit single type, so on-disk output is unchanged for normal saves. Byte fidelity is
+   untouched: a save that literally stored `0xFF` (only ever hacked/glitch) still round-trips as `0xFF`
+   via `type2Explicit`. The fix: every editor (re)generation — `randomize()`, `correctTypes()`,
+   `update(resetType)` — now clears `type2Explicit`, so a generated/corrected single type serialises as
+   the duplicate, never a stray `0xFF`. `isCorrected()`'s tolerance (accept `0xFF` OR the duplicate) is
+   now the finalized intended behaviour, not a temporary patch. Regression: `box_singleTypeCanonicalForm`.
+   Refs: `pokemonbox.cpp` `load()`/`save()`/`update()`/`correctTypes()`/`randomize()`/`isCorrected()`,
+   `reference/gen1-knowledge.md` → "Single-type storage".
 
 _(Resolved 2026-06-08: `isMinEvs()` `||`→`&&` — confirmed a bug and fixed, not a pending
 decision.)_

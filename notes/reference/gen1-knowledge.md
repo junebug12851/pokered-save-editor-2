@@ -103,6 +103,14 @@ These come from the in-app tooltips (the user-facing explanations) and the model
   editor warns about it rather than forbidding it.
 - **Catch rate:** unused leftover garbage from when the species was a wild battle encounter. It
   still exists in the data and is editable, but does nothing in normal play.
+- **Single-type storage (the `type2` byte):** a Pokémon with only one type stores it as a
+  **duplicate of type 1** — the game's real form (pokered `data/pokemon/base_stats/*.asm`, e.g.
+  Charmander is `db FIRE, FIRE`; `engine/pokemon/add_mon.asm` copies both type bytes verbatim into
+  party/box data). **`0xFF` is not a valid type** (`constants/type_constants.asm` runs `$00..$1A`);
+  it only ever appears in hacked/glitch saves. The editor holds a single type internally as the
+  `0xFF` "None" sentinel but **writes the duplicate-of-type1 form**; a save that literally stored
+  `0xFF` is round-tripped back as `0xFF` for byte fidelity (`type2Explicit`). Resolved 2026-07-09;
+  see `pokemonbox.cpp` `save()`/`load()`.
 - **Natures (retroactive):** natures didn't exist until Gen 3. Game Freak later published a
   formula to derive a Gen 1 mon's nature **from its IVs/DVs**; the editor surfaces this as a
   read-only **"future nature."**

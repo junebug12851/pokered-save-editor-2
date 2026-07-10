@@ -443,8 +443,13 @@ SaveFileIterator* PokemonBox::load(SaveFile* saveFile,
   type2 = it->getByte();
   type2Changed();
 
-  // Don't duplicate type 1 to type 2, fill type 2 only if it's different
-  // Also mark if it was explicitly marked no in-game
+  // Normalise type 2 to the internal single-type sentinel (0xFF = "None") while
+  // preserving on-disk fidelity (see the "single truth" note in save()):
+  //   * a literal 0xFF (only from a hacked/glitch save -- the game never writes
+  //     it) is kept as-is AND flagged type2Explicit so save() writes 0xFF back;
+  //   * the game's real single-type form (type2 == type1, a duplicate) collapses
+  //     to the 0xFF sentinel with type2Explicit left false, so save() writes the
+  //     duplicate back. A genuine dual type is stored verbatim.
   if (type2 == 0xFF) {
     type2Explicit = true;
     type2ExplicitChanged();
@@ -586,18 +591,26 @@ SaveFileIterator* PokemonBox::save(SaveFile* saveFile,
   it->setByte(status);
   it->setByte(type1);
 
-  // If type 2 explicit no then just write what's in type 2
+  // Type 2 storage -- the resolved "single truth" (grounded in the pokered
+  // disassembly; see notes/reference/gen1-knowledge.md "Single-type storage"):
+  //   * the game stores a SINGLE type as a duplicate of type 1 (base_stats/*.asm,
+  //     e.g. Charmander `db FIRE, FIRE`), and 0xFF is not a valid type at all
+  //     (type_constants.asm runs $00..$1A). So the CANONICAL written form of a
+  //     single type is duplicate-of-type1 -- that is what the editor writes.
+  //   * Byte fidelity still rules for LOADED saves: a mon read with a literal
+  //     0xFF (only ever from a hacked/glitch save) is written back as 0xFF
+  //     unchanged (type2Explicit); a mon read as a duplicate is written back as
+  //     the duplicate. A type byte changes only when explicitly edited.
+  // Internally a single type is held as type2 == 0xFF ("None"); type2Explicit
+  // marks that the 0xFF was literal-on-disk (preserve it) vs. editor-implied
+  // (write the duplicate). Any editor (re)generation clears type2Explicit, so a
+  // freshly generated/corrected single type takes the canonical duplicate form.
   if (type2Explicit) {
-    it->setByte(type2);
-
-    // If type 2 is not explicitly no but implicitly no (Type 1 and 2 were marked the same)
-    // save it as type 1
+    it->setByte(type2);           // preserve a literally-loaded 0xFF (byte fidelity)
   } else if (type2 == 0xFF) {
-    it->setByte(type1);
-
-    // Else just save type 2
+    it->setByte(type1);           // canonical single type -> duplicate-of-type1
   } else {
-    it->setByte(type2);
+    it->setByte(type2);           // genuine dual type
   }
 
   it->setByte(catchRate);
@@ -773,6 +786,14 @@ void PokemonBox::randomize(PlayerBasics* basics)
   else
     this->type2 = 0xFF;
   type2Changed();
+
+  // Editor-generated typing is canonical (not preserved load bytes): a single
+  // type must serialise as duplicate-of-type1, the game's own form (see the note
+  // in save() and notes/reference/gen1-knowledge.md). Clear the load-fidelity
+  // flag so save() writes the duplicate, never a stray 0xFF. (randomize() also
+  // reset()s at the top, but keep the invariant local + explicit here.)
+  type2Explicit = false;
+  type2ExplicitChanged();
 }
 
 void PokemonBox::clearMoves()
@@ -998,6 +1019,13 @@ void PokemonBox::update(bool resetHp,
       type2 = 0xFF;
 
     type2Changed();
+
+    // A DB-derived (re)typing is canonical, so drop any preserved load-fidelity
+    // 0xFF: a single type now serialises as duplicate-of-type1 (the game's form;
+    // see the note in save()). Stops a mon that was loaded with a literal 0xFF
+    // from re-writing 0xFF after its species/typing was reset here.
+    type2Explicit = false;
+    type2ExplicitChanged();
   }
 
   if(resetCatchRate && record->catchRate) {
@@ -1038,6 +1066,13 @@ void PokemonBox::correctTypes()
     type2 = 0xFF;
 
   type2Changed();
+
+  // This is an editor-driven correction, so the result is canonical, not loaded
+  // bytes: clear the load-fidelity flag so a single type serialises as
+  // duplicate-of-type1 (the game's form; see the note in save()) rather than a
+  // stale 0xFF carried over from a hacked save that literally stored 0xFF.
+  type2Explicit = false;
+  type2ExplicitChanged();
 }
 
 bool PokemonBox::isHealed()
@@ -1501,18 +1536,17 @@ bool PokemonBox::isCorrected()
 
   // A mon is genuinely dual-type only when the record's second type really
   // differs from its first. The DB inconsistently stores single-type mons with
-  // toType2 either null OR a duplicate of toType1; update() collapses a single
-  // type to 0xFF, so for the single-type case accept either 0xFF or type1 here.
+  // toType2 either null OR a duplicate of toType1; load()/update() collapse a
+  // single type to the internal 0xFF sentinel. Accept EITHER 0xFF or the
+  // duplicate (type2 == type1) as "corrected" for a single-type species.
   //
-  // TRACKED TEMPORARY EXCEPTION (see notes/plans/next-steps.md "type2 single
-  // truth"): accepting BOTH 0xFF and the duplicate form is the OFFICIAL, intended
-  // behaviour on the load/expanded side -- real saves disagree on how a single
-  // type is stored, and the editor must read back exactly what it loaded (byte
-  // fidelity: the type it reads is the type it writes, changed only when asked).
-  // What is NOT decided is the single canonical form the editor should WRITE when
-  // IT generates/corrects a single type (0xFF vs duplicate). Until Twilight makes
-  // that call this tolerant check is a deliberate dirty patch -- do not leave it
-  // indefinitely.
+  // RESOLVED "single truth" (2026-07-09, from the pokered disassembly -- see
+  // notes/reference/gen1-knowledge.md "Single-type storage"): the game's single-
+  // type form is duplicate-of-type1 and 0xFF is not a valid type, so BOTH the
+  // 0xFF sentinel and the duplicate are legitimate representations of the same
+  // single-type mon that serialise to the identical canonical bytes. Neither is
+  // "wrong", so tolerating both here is the intended final behaviour, not a
+  // temporary patch.
   bool dualType = record->toType2 != nullptr &&
                   record->toType1 != nullptr &&
                   record->toType2->ind != record->toType1->ind;
