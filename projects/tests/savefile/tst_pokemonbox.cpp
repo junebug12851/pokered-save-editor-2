@@ -87,6 +87,7 @@ private slots:
   void move_ppAndPpUpIndependent();
   void box_correctTypesResetsToSpeciesDefault();
   void box_singleTypeCanonicalForm();
+  void box_copyFromCopiesEachStatExp();
   void box_reRollEvsAndMaxPpUps();
   void box_dexNumAndSpeciesName();
   void box_resetMakesItPokemonResetAndCorrected();
@@ -620,6 +621,34 @@ void TestPokemonBox::box_singleTypeCanonicalForm()
            "update(resetType) must clear the load-fidelity flag for a single type");
 
   delete p;
+}
+
+// Regression guard for the copyFrom() stat-exp typo: Speed's stat-exp (spdExp) was
+// copied from the SOURCE's Special (spExp), silently overwriting Speed with Special.
+// Each stat-exp channel must copy from its own counterpart.
+void TestPokemonBox::box_copyFromCopiesEachStatExp()
+{
+  PokemonBox* src = makeMon(QStringLiteral("Bulbasaur"));
+  PokemonBox* dst = makeMon(QStringLiteral("Charmander"));
+  QVERIFY(src != nullptr && dst != nullptr);
+
+  // Distinct values per channel so a cross-wired copy cannot accidentally pass.
+  src->hpExp  = 0x1111;
+  src->atkExp = 0x2222;
+  src->defExp = 0x3333;
+  src->spdExp = 0x4444;
+  src->spExp  = 0x5555;
+
+  dst->copyFrom(src);
+
+  QCOMPARE(dst->hpExp,  0x1111);
+  QCOMPARE(dst->atkExp, 0x2222);
+  QCOMPARE(dst->defExp, 0x3333);
+  QCOMPARE(dst->spdExp, 0x4444);   // Speed stat-exp must come from Speed, not Special
+  QCOMPARE(dst->spExp,  0x5555);
+
+  delete src;
+  delete dst;
 }
 
 void TestPokemonBox::box_reRollEvsAndMaxPpUps()

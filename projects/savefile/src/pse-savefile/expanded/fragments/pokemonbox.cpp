@@ -1915,7 +1915,7 @@ void PokemonBox::copyFrom(PokemonBox* pkmn)
   defExp = pkmn->defExp;
   defExpChanged();
 
-  spdExp = pkmn->spExp;
+  spdExp = pkmn->spdExp;
   spdExpChanged();
 
   spExp = pkmn->spExp;
