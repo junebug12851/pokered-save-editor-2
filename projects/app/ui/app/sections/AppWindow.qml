@@ -13,8 +13,22 @@ import "../fragments/header"
 // App body is the initial modal, it allows non-modal app navigation
 Page {
   id: appPage
+  objectName: "appWindow"
 
   Material.background: brg.settings.textColorLight  // themed background
+
+  // DEBUG: open a party mon's details editor directly (mirrors PokemonBoxView's
+  // openMonEditor -- push PokemonDetails with a boxData). Used by the --screen
+  // pokemonDetails debug-launch flag so automation can reach the details editor
+  // without clicking a cell. The flag that calls it is compiled out of release.
+  function debugOpenPartyDetails(index) {
+    var mon = brg.file.data.dataExpanded.player.pokemon.partyAt(index);
+    if(!mon) return false;
+    appBody.push("qrc:/ui/app/screens/non-modal/PokemonDetails.qml",
+                 { boxData: mon, partyData: mon });
+    brg.router.manualStackPush("pokemonDetails");
+    return true;
+  }
 
   // App-wide header
   header: AppHeader {}

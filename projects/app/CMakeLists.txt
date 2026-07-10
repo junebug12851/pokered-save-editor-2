@@ -117,6 +117,8 @@ qt_add_executable(PokeredSaveEditor
     src/boot/boot.cpp
     src/boot/bootDatabase.cpp
     src/boot/bootQmlLinkage.cpp
+    src/boot/debuglaunch.cpp
+    src/boot/debugserver.cpp
     ui/window/mainwindow.cpp
     ui/window/mainwindow.h
     ui/window/mainwindow.ui
@@ -132,7 +134,11 @@ target_include_directories(PokeredSaveEditor
 target_link_libraries(PokeredSaveEditor
     PRIVATE
         appcore
+        Qt6::Network
 )
+
+# DEBUG hot-reload (--hot): let the app find its QML source tree on disk.
+target_compile_definitions(PokeredSaveEditor PRIVATE PSE_QML_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 # --- App version (from VERSION via the generated pse_version.h) --------------
 # boot.cpp includes "pse_version.h" to set the runtime version. The header is
