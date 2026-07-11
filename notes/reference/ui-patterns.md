@@ -837,10 +837,69 @@ DV/EV toggle + its ⋮): use an `Item` with A `anchors.horizontalCenter: parent.
 B `anchors.left: A.right; anchors.verticalCenter: A.verticalCenter`. A centered RowLayout of `[A,B]`
 centers the *pair*, leaving A left-of-center.
 
-## Full keyboard + quick-edit patterns (s13v–s13z8)
+## The full keyboard's DECK (2026-07-11 — the current design)
+
+⚠️ **This supersedes the "pill grid" / filter-sidebar / tilemap section below.** Those files
+(`SearchResults`, `SearchContainer`, `SearchCriteria`, `SearchParam`, `SearchRoot`, `PagedPicker`,
+`TilesetPicker`) and the C++ `FontSearchModel` are **deleted**. The section is kept for the parts still
+in force (`TilePreview`, `NameDisplay`, the commit-on-finish rule) and as history.
+
+`screens/modal/FullKeyboard.qml` is now a **keyboard**, not a search form. Full design + the whole
+tile→key map: [`../plans/full-keyboard-redesign.md`](../plans/full-keyboard-redesign.md).
+
+- **The map lives in C++, not QML** (`mvc/fontkeyboard.{h,cpp}` → `brg.keyboard`). 8 pages × 36 keys,
+  hand-authored. QML never guesses which tile is on a key; it asks `keyData(page, "A")` and gets
+  `{ ind, code, title, tip, category, render, empty }` — an *empty* key comes back as a well-formed
+  empty map, never a null the delegate has to guard.
+- **A page's index IS its modifier mask** (shift 1, ctrl 2, alt 4), so Alt is page **4**. `pageFor()` is
+  just the mask. The human reading order (by category, cheapest chord first) is the separate
+  `pageOrder` — the page strip renders in *that*. Confusing the two silently swaps two whole pages
+  (it did; `tst_font_keyboard` caught it).
+- **Every tile appears exactly once across the pages + the spacebar**, and that is a *test*
+  (`tst_font_keyboard`), not a comment. A duplicated tile is bad; a tile stranded with no key is
+  unreachable-forever and would never show up as a crash or a warning.
+- **Layout:** `PageStrip` spans the FULL body width (eight named chips do not fit a middle column at
+  the app's default 750×480 window), then a row of `ColorLegend` (132) · `KeyboardDeck` (fills) ·
+  `DetailView` (212). The deck's key unit `u` scales to fit: width/13.5, height/6.0 — those constants
+  are the deck's real extent in key units (10 caps + a 2u Backspace + 11 gaps + chassis padding). Get
+  them wrong and the chassis silently overflows and paints **on top of** the legend and the detail pane.
+- **Animated tiles: ONE shared sheet, not one request per key** (`TileGlyph.qml`). Every
+  `image://font` request rebuilds the whole tileset — 36 keys × 8 frames would melt the UI (it's the
+  same cost that froze the old hover tooltip). So the deck asks for the whole 16×16 sheet once per
+  frame (`image://tileset/...`, as `TilesetDisplay` does) and each key **clips its 8×8 cell** out of it
+  (`row = ind/16, col = ind%16`). Same URL for all keys ⇒ QML's pixmap cache serves one pixmap. **One
+  timer on the deck** drives `curFrame` for every cap — never a timer per delegate.
+- **A cap draws a tile OR a label, never an expanded preview.** Multi-char/variable codes
+  (`<player>`, `<trainer>`) expand to 7+ characters — rendered on a ~30px cap they draw wider than the
+  key and **smear across their neighbours** (tried; unusable). Those caps and the control codes show
+  the bare code (`<player>` → `player`); the *detail pane* renders the real expanded glyphs at a
+  readable size.
+- **The key legend** (which physical key types this tile) is a small superscript in the cap's corner.
+  It **dims when the name field takes focus** — that's the visible signal that the deck has handed the
+  keyboard over, so the mode is never hidden.
+- **Modifier caps LATCH on click.** Holding a chord is a shortcut, never the only way in: Windows eats
+  Shift+Alt and Ctrl+Shift on multi-language setups (switch layout) and Ctrl+Alt is AltGr. The strip,
+  the caps and the held keys all drive the same three latches, so they cannot disagree.
+- **Backspace is token-aware** (`FontKeyboard::chopLastToken`): it deletes a whole `<code>`, never one
+  character out of the middle of one — that would leave a string the codec can't round-trip.
+- **A key that won't fit shakes the name field** (`NameFullEdit.reject()`) rather than doing nothing.
+  It animates a `Translate`, **not** the field's `x` — `x` belongs to the RowLayout, and fighting a
+  layout over a position gives you a control that never sits still.
+- **Re-announce the hovered key when the page changes** (`KeyCap.onInfoChanged`): switching page under a
+  stationary mouse swaps the tile with no enter/exit, so the detail pane would keep describing the tile
+  that used to be there.
+- **Never name a component root `id: top` when it has a Repeater** — see `qt-patterns.md`. It cost real
+  time here: the bindings read `undefined`, the item gets a NaN width, and it renders as *nothing* with
+  no warning at all.
+
+## Full keyboard + quick-edit patterns (s13v–s13z8) — HISTORICAL
+
+⚠️ Superseded by the deck (above) as of 2026-07-11. The pill grid, the category filter sidebar and the
+tilemap view described here **no longer exist**. Still in force: `TilePreview`, `NameDisplay`, and the
+commit-on-finish rule.
 
 The font editors — the modal full keyboard (`name-full/*`, `screens/modal/FullKeyboard.qml`) and the
-quick-edit popup (`general/NameDisplay.qml`) — were rebuilt across sessions 13v–13z8. Final conventions:
+quick-edit popup (`general/NameDisplay.qml`) — were rebuilt across sessions 13v–13z8. Conventions:
 
 - **Pill grid for pickable items** (`SearchResults.qml`): a `Flickable > Flow > Repeater` of
   fixed-height (`22`), variable-width rounded `Rectangle` "pills", `Flow.spacing: 2`. Color each pill by

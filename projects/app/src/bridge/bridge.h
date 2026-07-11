@@ -25,7 +25,7 @@
 
 #include "../mvc/recentfilesmodel.h"
 #include "../mvc/creditsmodel.h"
-#include "../mvc/fontsearchmodel.h"
+#include "../mvc/fontkeyboard.h"
 #include "../mvc/pokemonstartersmodel.h"
 #include "../mvc/pokedexmodel.h"
 #include "../mvc/itemselectmodel.h"
@@ -46,7 +46,6 @@
 #include "../mvc/mapselectmodel.h"
 
 #include <pse-db/fontsdb.h>
-#include <pse-db/util/fontsearch.h>
 #include <pse-db/names.h>
 #include <pse-db/entries/namespokemon.h>
 #include <pse-db/entries/examplesplayer.h>
@@ -83,8 +82,7 @@ class Bridge : public QObject
   Q_PROPERTY(ItemStorageModel* pcItemsModel MEMBER pcItemsModel NOTIFY pcItemsModelChanged) ///< PC items model.
   Q_PROPERTY(ItemOverviewModel* itemOverviewModel MEMBER itemOverviewModel NOTIFY itemOverviewModelChanged) ///< Bag+storage "where are my items" overview (View All pane).
   Q_PROPERTY(PokemonOverviewModel* pokemonOverviewModel MEMBER pokemonOverviewModel NOTIFY pokemonOverviewModelChanged) ///< Party+boxes "where are my Pokemon" overview (View All pane).
-  Q_PROPERTY(FontSearch* fontSearch MEMBER fontSearch NOTIFY fontSearchChanged) ///< Live font finder.
-  Q_PROPERTY(FontSearchModel* fontSearchModel MEMBER fontSearchModel NOTIFY fontSearchModelChanged) ///< Font finder as a list model.
+  Q_PROPERTY(FontKeyboard* keyboard MEMBER keyboard NOTIFY keyboardChanged) ///< The full keyboard's tile->key map.
   Q_PROPERTY(FontsDB* fonts MEMBER fonts NOTIFY fontsChanged) ///< The font database (codec + glyphs).
   Q_PROPERTY(NamesPlayer* randomPlayerName MEMBER randomPlayerName NOTIFY randomPlayerNameChanged) ///< Random player-name source.
   Q_PROPERTY(NamesPokemon* randomPokemonName MEMBER randomPokemonName NOTIFY randomPokemonNameChanged) ///< Random nickname source.
@@ -114,8 +112,7 @@ signals:
   void pokedexModelChanged();
   void routerChanged();
   void creditsModelChanged();
-  void fontSearchChanged();
-  void fontSearchModelChanged();
+  void keyboardChanged();
   void fontsChanged();
   void randomPlayerNameChanged();
   void randomPokemonNameChanged();
@@ -151,8 +148,7 @@ public:
 
   FileManagement* file = nullptr; ///< @see file property.
 
-  FontSearch* fontSearch = new FontSearch;                       ///< @see fontSearch property.
-  FontSearchModel* fontSearchModel = new FontSearchModel(fontSearch); ///< @see fontSearchModel property.
+  FontKeyboard* keyboard = new FontKeyboard;                     ///< @see keyboard property.
 
   Router* router = new Router;                                   ///< @see router property.
   FontsDB* fonts = FontsDB::inst();                              ///< @see fonts property.

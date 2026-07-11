@@ -51,7 +51,6 @@
 #include <pse-db/entries/examplesrival.h>
 #include <pse-db/fontsdb.h>
 #include <pse-db/entries/fontdbentry.h>
-#include <pse-db/util/fontsearch.h>
 #include <pse-db/names.h>
 #include <pse-db/entries/namespokemon.h>
 
@@ -177,7 +176,7 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<ExamplesPlayer>("App.ExamplesPlayer", 1, 0, "ExamplesPlayer", "Can't instantiate in QML");
   qmlRegisterUncreatableType<ExamplesPokemon>("App.ExamplesPokemon", 1, 0, "ExamplesPokemon", "Can't instantiate in QML");
   qmlRegisterUncreatableType<ExamplesRival>("App.ExamplesRival", 1, 0, "ExamplesRival", "Can't instantiate in QML");
-  qmlRegisterUncreatableType<FontSearch>("App.FontSearch", 1, 0, "FontSearch", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<FontKeyboard>("App.FontKeyboard", 1, 0, "FontKeyboard", "Can't instantiate in QML");
   qmlRegisterUncreatableType<FontsDB>("App.FontsDB", 1, 0, "FontsDB", "Can't instantiate in QML");
   qmlRegisterUncreatableType<FontDBEntry>("App.FontDBEntry", 1, 0, "FontDBEntry", "Can't instantiate in QML");
   qmlRegisterUncreatableType<NamesPlayer>("App.NamesDB", 1, 0, "NamesDB", "Can't instantiate in QML");

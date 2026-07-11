@@ -5,9 +5,9 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.15.2-alpha` — shipped 2026-07-11, `main` @ `ac79c0a` (single source of truth: repo-root
-`VERSION`; see [`reference/versioning.md`](reference/versioning.md)). Full `ctest` green (73/73);
-release / pages / tests / lint all green on `main`.
+**Version:** `0.16.0-alpha` — on `dev`, **not yet shipped** (last shipped: `0.15.2-alpha`, `main` @
+`ac79c0a`). Single source of truth: repo-root `VERSION`; see
+[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (74/74).
 
 > **Releases are MANUAL.** Commit and push to `dev` freely, but `main` only moves when Twilight says
 > **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
@@ -43,11 +43,29 @@ step separately (the original bug, caught by Twilight and fixed on 2026-07-11) i
 thin air. `giveFor()` / `refundFor()` are the single pricing path shared by the preview, the "+"
 gating, and `checkout()` — keep it that way.
 
-**Next:** continued review of the name editors; an end-to-end save/reopen verification pass;
-remaining per-control test depth. See [`plans/next-steps.md`](plans/next-steps.md).
+The **full keyboard** was rebuilt on 2026-07-11 into an actual **ASDF keyboard deck** (0.16.0-alpha):
+36 alphanumeric keys × 8 pages (255 tiles ÷ 36 keys needs 8 pages; Shift/Ctrl/Alt give exactly 8
+chords), each cap carrying one game tile with the key that types it printed in its corner. The
+tile→key map is C++ (`mvc/fontkeyboard.*` → `brg.keyboard`) and **pinned by `tst_font_keyboard`** —
+every tile appears exactly once across the pages + the spacebar. The old chip list, filter sidebar,
+tilemap view and `FontSearchModel` are **deleted**. Design + the full map:
+[`plans/full-keyboard-redesign.md`](plans/full-keyboard-redesign.md); conventions:
+[`reference/ui-patterns.md`](reference/ui-patterns.md) → "The full keyboard's DECK".
+
+**Next:** in-app review of the new keyboard (see "Pending rebuilds" below); an end-to-end save/reopen
+verification pass; remaining per-control test depth. See [`plans/next-steps.md`](plans/next-steps.md).
 
 ## Pending rebuilds / awaiting in-app review
 
+- **The new full keyboard — awaiting Twilight's in-app review (2026-07-11).** Built + screenshot-
+  reviewed on every page; `ctest` green. Worth checking live, because they're the things a still PNG
+  can't show: **typing** on the real keyboard (and the caps flashing with it), **holding**
+  Shift/Ctrl/Alt to flip pages vs. **clicking** the modifier caps to latch them, the tiles
+  **animating** with the tileset, token-aware **Backspace**, the **shake** when a key won't fit, and
+  clicking into the name box (the key legends should dim, and Ctrl+C/V should behave normally).
+  ⚠️ Known environment caveat: on a Windows box with **two keyboard layouts installed**, the OS eats
+  Shift+Alt / Ctrl+Shift (switch layout) and Ctrl+Alt (AltGr) — those pages are still reachable by
+  clicking the modifier caps or the page strip, which is exactly why they latch.
 - **File-load crash fix (`s14`) — needs a kit rebuild.** C++ changed (`savefile.cpp`,
   `filemanagement.cpp/.h`, `router.cpp`) **and** a new QML file was added
   (`screens/modal/FileError.qml`, already in `app.qrc`). After building, test: (1) a recent file whose
@@ -69,7 +87,7 @@ remaining per-control test depth. See [`plans/next-steps.md`](plans/next-steps.m
 | **Latent landmine: map DB `getToMap()`/`getToSprite()` never resolved** | `db.cpp` `deepLinkAll()`; consumers in `WarpData`/`MapConnData`/`SpriteData`/`AreaMap` | Not a crash today — every consumer is part of the not-yet-wired Maps feature; normal save load reads Area straight from save bytes. **When Maps is enabled**, wiring map-change/re-enabling map randomize will dereference these → crash unless `MapsDB::inst()->deepLink()` is called first (add to `DB::deepLinkAll()`). Confirmed harmless today via `tst_sprite_data` (all 918 sprites resolve once `deepLink()` is called). |
 | Randomizer: not-yet-built screens (Maps, Hall of Fame, Options) excluded | `savefileexpanded.cpp`, `worldgeneral.cpp` | **Working within scope as of 2026-06-07.** `randomizeExpansion()` runs end-to-end + is test-covered. Maps/HoF/Options calls are commented out (matching the disabled home tiles), each with a re-enable note. Re-enabling map randomize is gated mainly on calling `MapsDB::inst()->deepLink()` at boot (the type strings + per-call guards turned out to be the same deepLink landmine, not separate defects). |
 | Name editors — ongoing review | `name-full/*`, `general/NameDisplay.qml` | Ongoing live tweaks. `NameEdit`/`NameDisplay` are **shared** by player/rival/nickname + the keyboard footer preview — verify all of them on each rebuild. |
-| Full keyboard right-side `DetailView` (text info on hover) | `name-full/DetailView.qml` | Still present + wired alongside the pill tooltip. Confirm it still reads well / whether to keep it. |
+| Keyboard caps are cramped at the default 750×480 window | `name-full/KeyboardDeck.qml` | By design it *scales* (key unit = min(width/13.5, height/6.0)), so it's comfortable on a resized window and tight on the default one. Multi-char code labels (`trainer`, `player`) elide at the smallest size. Revisit if Twilight wants the default window bigger, or the header/footer slimmer, to buy the deck more room. |
 | Dead menu files (unused after s13z7) | `name/NameDisplayMenu.qml`, `NameDisplayMenuNoTileset.qml`, `TilesetMenu.qml` | No longer instantiated; left in place + in qrc. Safe to delete later. |
 
 **Intentional (not bugs):** in the storage grid, Pokémon names are always visible below each icon

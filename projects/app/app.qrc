@@ -420,17 +420,16 @@
         <file>ui/app/fragments/controls/name-full/NameFullEdit.qml</file>
         <file>ui/app/fragments/controls/name-full/NameFullTileset.qml</file>
         <file>ui/app/fragments/general/Spacer.qml</file>
-        <file>ui/app/fragments/controls/name-full/SearchParam.qml</file>
-        <file>ui/app/fragments/controls/name-full/SearchCriteria.qml</file>
-        <file>ui/app/fragments/controls/name-full/SearchContainer.qml</file>
-        <file>ui/app/fragments/controls/name-full/SearchResults.qml</file>
         <file>ui/app/fragments/controls/name-full/TilePreview.qml</file>
-        <file>ui/app/fragments/controls/name-full/SearchRoot.qml</file>
-        <file>ui/app/fragments/controls/name-full/PagedPicker.qml</file>
+        <file>ui/app/fragments/controls/name-full/TileGlyph.qml</file>
+        <file>ui/app/fragments/controls/name-full/KeyCap.qml</file>
+        <file>ui/app/fragments/controls/name-full/StructKey.qml</file>
+        <file>ui/app/fragments/controls/name-full/KeyboardDeck.qml</file>
+        <file>ui/app/fragments/controls/name-full/PageStrip.qml</file>
+        <file>ui/app/fragments/controls/name-full/ColorLegend.qml</file>
         <file>assets/icons/fontawesome/backspace.svg</file>
         <file>ui/app/fragments/controls/name-full/DetailView.qml</file>
         <file>ui/app/fragments/general/TilesetDisplay.qml</file>
-        <file>ui/app/fragments/controls/name-full/TilesetPicker.qml</file>
         <file>assets/images/red.png</file>
         <file>assets/images/red-larger.png</file>
         <file>ui/app/fragments/general/DefTextEdit.qml</file>

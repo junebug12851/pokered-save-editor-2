@@ -152,7 +152,6 @@ void TestModelTester::bridgeModels_satisfyContract()
   checkContract(m_brg->pokemonBoxSelectModel1, "pokemonBoxSelectModel1");
   checkContract(m_brg->pokemonBoxSelectModel2, "pokemonBoxSelectModel2");
   checkContract(m_brg->recentFilesModel,       "recentFilesModel");
-  checkContract(m_brg->fontSearchModel,        "fontSearchModel");
   checkContract(m_brg->creditsModel,           "creditsModel");
   checkContract(m_brg->starterModel,           "starterModel");
   checkContract(m_brg->itemSelectModel,        "itemSelectModel");

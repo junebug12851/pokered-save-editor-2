@@ -134,8 +134,7 @@ void TestBridge::bridge_constructsEveryModel()
 {
   QVERIFY(m_brg->router != nullptr);
   QVERIFY(m_brg->settings != nullptr);
-  QVERIFY(m_brg->fontSearch != nullptr);
-  QVERIFY(m_brg->fontSearchModel != nullptr);
+  QVERIFY(m_brg->keyboard != nullptr);
   QVERIFY(m_brg->recentFilesModel != nullptr);
   QVERIFY(m_brg->pokedexModel != nullptr);
   QVERIFY(m_brg->bagItemsModel != nullptr);
@@ -171,7 +170,6 @@ void TestBridge::listModels_sweepRowsAndRoles()
   exerciseListModel(m_brg->pokemonBoxSelectModel1,"pokemonBoxSelectModel1");
   exerciseListModel(m_brg->pokemonBoxSelectModel2,"pokemonBoxSelectModel2");
   exerciseListModel(m_brg->recentFilesModel,      "recentFilesModel");
-  exerciseListModel(m_brg->fontSearchModel,       "fontSearchModel");
   exerciseListModel(m_brg->creditsModel,          "creditsModel");
   exerciseListModel(m_brg->itemSelectModel,       "itemSelectModel");
 }

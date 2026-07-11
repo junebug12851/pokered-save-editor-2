@@ -281,7 +281,7 @@ static void captureTextEditors(GuiApp& app)
     qWarning().noquote() << "  [skip] no name editor on trainer card";
   }
 
-  // -- Full keyboard modal. --
+  // -- Full keyboard modal (the ASDF deck). --
   if (Router::screens.contains(QStringLiteral("fullKeyboard"))) {
     app.navigate(QStringLiteral("fullKeyboard"));
     app.settle(240);
@@ -289,40 +289,66 @@ static void captureTextEditors(GuiApp& app)
 
     QQuickItem* root = viewRoot(app);
 
-    // Hover a real character "pill" (a SearchResults delegate -- has a `fontInd`
-    // property) in the GRID view to raise its TilePreview tooltip. Pick a visible,
-    // non-control pill (control codes get no tooltip) and wait out the ToolTip's
-    // 250ms delay before grabbing.
-    QList<QQuickItem*> pills;
+    // The deck is the item carrying the page latches. Driving THOSE (rather than a
+    // page index) is deliberate: it's the same path the on-screen modifier caps use,
+    // so a shot can't show a page the real UI can't reach.
+    QQuickItem* deck = findByProp(root, "latchShift");
+
+    // Hover a real keycap to raise the detail pane. Caps expose `info` (the tile's
+    // key map); skip the empty ones -- they have nothing to show.
+    QList<QQuickItem*> caps;
     GuiApp::collectItems(root, [](QQuickItem* i) {
-      return i->metaObject()->indexOfProperty("fontInd") >= 0;
-    }, pills);
-    QQuickItem* pill = nullptr;
-    for (QQuickItem* p : pills) {
-      QObject* f = p->property("f").value<QObject*>();
-      if (!f) continue;
-      const QString nm = f->property("name").toString().trimmed();
-      const QPointF c = p->mapToScene(QPointF(p->width() / 2.0, p->height() / 2.0));
-      // Skip control codes (no tooltip) and the blank "Space" (empty preview); pick a
-      // visible glyph that's within the viewport.
-      if (!f->property("control").toBool() && !nm.isEmpty() && nm != QLatin1String("Space")
-          && c.y() > 0 && c.y() < app.view()->height()) {
-        pill = p;
+      return i->metaObject()->indexOfProperty("info") >= 0
+          && i->metaObject()->indexOfProperty("legendsDim") >= 0;
+    }, caps);
+
+    QQuickItem* cap = nullptr;
+    for (QQuickItem* c : caps) {
+      if (c->property("isEmpty").toBool())
+        continue;
+
+      const QPointF p = c->mapToScene(QPointF(c->width() / 2.0, c->height() / 2.0));
+      if (p.y() > 0 && p.y() < app.view()->height()) {
+        cap = c;
         break;
       }
     }
-    if (pill) {
-      hover(app, pill, 1000);      // exceed the ToolTip's 250ms delay so it shows
-      grab(app, QStringLiteral("editor/text_keyboard_hover_tile.png"));
+
+    if (cap) {
+      hover(app, cap, 400);
+      grab(app, QStringLiteral("editor/text_keyboard_hover_key.png"));
     } else {
-      qWarning().noquote() << "  [skip] no hoverable keyboard pill found";
+      qWarning().noquote() << "  [skip] no hoverable keycap found";
     }
 
-    // Flip the Grid/Tileset paged toggle to show the tileset "tileviewer".
-    if (QQuickItem* paged = findByProp(root, "showTileset")) {
-      paged->setProperty("showTileset", true);
-      app.settle(280);
-      grab(app, QStringLiteral("editor/text_keyboard_tileset.png"));
+    // One shot per page, by latching the chord that reaches it. Named for the page,
+    // not the chord, so the files read like the strip does.
+    if (deck) {
+      struct Page { const char* file; bool shift; bool ctrl; bool alt; };
+      static const Page pages[] = {
+        { "editor/text_keyboard_lowercase.png", true,  false, false },
+        { "editor/text_keyboard_symbols.png",   false, true,  false },
+        { "editor/text_keyboard_codes.png",     false, false, true  },
+        { "editor/text_keyboard_tiles1.png",    true,  true,  false },
+        { "editor/text_keyboard_tiles2.png",    true,  false, true  },
+        { "editor/text_keyboard_tiles3.png",    false, true,  true  },
+        { "editor/text_keyboard_controls.png",  true,  true,  true  },
+      };
+
+      for (const Page& p : pages) {
+        deck->setProperty("latchShift", p.shift);
+        deck->setProperty("latchCtrl", p.ctrl);
+        deck->setProperty("latchAlt", p.alt);
+        app.settle(260);            // let the tiles render at the new page
+        grab(app, QString::fromLatin1(p.file));   // (not QStringLiteral -- p.file isn't a literal)
+      }
+
+      deck->setProperty("latchShift", false);
+      deck->setProperty("latchCtrl", false);
+      deck->setProperty("latchAlt", false);
+      app.settle(80);
+    } else {
+      qWarning().noquote() << "  [skip] keyboard deck not found";
     }
 
     app.closeTop();

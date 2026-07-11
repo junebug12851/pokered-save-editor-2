@@ -1,0 +1,349 @@
+/*
+  * Copyright 2026 Twilight
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *   http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+*/
+
+/**
+ * @file tst_font_keyboard.cpp
+ * @brief Pins FontKeyboard's tile->key map.
+ *
+ * The map is a hand-authored table of 8 pages x 36 keys. The failure modes that
+ * matter are all SILENT ones: a tile that appears twice, or -- far worse -- a tile
+ * that appears nowhere and is simply unreachable from the UI forever. Neither shows
+ * up as a crash, a warning, or a visibly broken screen. So they're asserted here.
+ */
+
+#include <QtTest>
+#include <QSet>
+
+#include <pse-db/db.h>
+#include <pse-db/fontsdb.h>
+#include <pse-db/entries/fontdbentry.h>
+
+#include "../../app/src/mvc/fontkeyboard.h"
+
+class TstFontKeyboard : public QObject
+{
+  Q_OBJECT
+
+private slots:
+  void initTestCase();
+
+  void everyTileIsReachableExactlyOnce();
+  void noPageOverflowsOrCollides();
+  void everyMappedIndResolves();
+  void identityContract_data();
+  void identityContract();
+  void pageForModifiers();
+  void pageOrderCoversEveryPage();
+  void categoriesAndRenderModes();
+  void chopLastToken_data();
+  void chopLastToken();
+  void pageProperty();
+};
+
+void TstFontKeyboard::initTestCase()
+{
+  QVERIFY(DB::inst() != nullptr);
+}
+
+/**
+ * THE invariant. 255 tiles; 254 of them on the 8x36 alphanumeric grid, plus Space
+ * on the spacebar. Each exactly once -- no duplicate, and (the one that would be
+ * unforgivable) no tile stranded with no key at all.
+ */
+void TstFontKeyboard::everyTileIsReachableExactlyOnce()
+{
+  FontKeyboard kb;
+  QVector<int> seen(256, 0);
+
+  for(int page = 0; page < FontKeyboard::pageTotal; page++) {
+    for(const QString& key : FontKeyboard::keyLabels()) {
+      const int ind = FontKeyboard::indFor(page, key);
+      if(ind == 0)
+        continue;
+
+      QVERIFY2(ind >= 1 && ind <= 255,
+               qPrintable(QString("page %1 key %2 -> out-of-range ind %3")
+                          .arg(page).arg(key).arg(ind)));
+      seen[ind]++;
+    }
+  }
+
+  // The spacebar carries the 255th tile.
+  const int spaceInd = kb.spaceData()["ind"].toInt();
+  QCOMPARE(spaceInd, 127);
+  seen[spaceInd]++;
+
+  QStringList missing;
+  QStringList duplicated;
+
+  for(int ind = 1; ind <= 255; ind++) {
+    if(seen[ind] == 0)
+      missing.append(QString::number(ind));
+    else if(seen[ind] > 1)
+      duplicated.append(QString("%1 (x%2)").arg(ind).arg(seen[ind]));
+  }
+
+  QVERIFY2(missing.isEmpty(),
+           qPrintable("tiles with NO key (unreachable): " + missing.join(", ")));
+  QVERIFY2(duplicated.isEmpty(),
+           qPrintable("tiles on more than one key: " + duplicated.join(", ")));
+}
+
+/// No page may map two tiles to the same key, and every page has exactly 36 keys.
+void TstFontKeyboard::noPageOverflowsOrCollides()
+{
+  const QStringList keys = FontKeyboard::keyLabels();
+
+  QCOMPARE(keys.size(), FontKeyboard::keyTotal);
+  QCOMPARE(QSet<QString>(keys.begin(), keys.end()).size(), FontKeyboard::keyTotal);
+
+  for(int page = 0; page < FontKeyboard::pageTotal; page++) {
+    QSet<int> used;
+
+    for(const QString& key : keys) {
+      const int ind = FontKeyboard::indFor(page, key);
+      if(ind == 0)
+        continue;
+
+      QVERIFY2(!used.contains(ind),
+               qPrintable(QString("page %1 maps ind %2 twice").arg(page).arg(ind)));
+      used.insert(ind);
+    }
+  }
+}
+
+/// Every code in the table must be a real tile in FontsDB -- a typo'd number would
+/// otherwise just render a blank key nobody notices.
+void TstFontKeyboard::everyMappedIndResolves()
+{
+  FontKeyboard kb;
+
+  for(int page = 0; page < FontKeyboard::pageTotal; page++) {
+    for(const QString& key : FontKeyboard::keyLabels()) {
+      const QVariantMap d = kb.keyData(page, key);
+      const int ind = d["ind"].toInt();
+
+      if(ind == 0) {
+        QVERIFY(d["empty"].toBool());
+        continue;
+      }
+
+      QVERIFY2(FontsDB::inst()->getStoreByVal(ind) != nullptr,
+               qPrintable(QString("page %1 key %2 -> ind %3 is not in FontsDB")
+                          .arg(page).arg(key).arg(ind)));
+      QVERIFY(!d["empty"].toBool());
+      QVERIFY(!d["code"].toString().isEmpty());
+      QVERIFY(!d["title"].toString().isEmpty());
+    }
+  }
+}
+
+void TstFontKeyboard::identityContract_data()
+{
+  QTest::addColumn<int>("page");
+  QTest::addColumn<QString>("key");
+  QTest::addColumn<QString>("code");
+
+  // Page 1: the alphabet and the digits are exactly where they are on a real
+  // keyboard. If this ever breaks, the whole design premise breaks with it.
+  QTest::newRow("A is A")       << 0 << "A" << "A";
+  QTest::newRow("Z is Z")       << 0 << "Z" << "Z";
+  QTest::newRow("M is M")       << 0 << "M" << "M";
+  QTest::newRow("7 is 7")       << 0 << "7" << "7";
+  QTest::newRow("0 is 0")       << 0 << "0" << "0";
+
+  // Page 2 (Shift): lowercase, same as pressing Shift on a real keyboard.
+  QTest::newRow("shift A is a") << 1 << "A" << "a";
+  QTest::newRow("shift Z is z") << 1 << "Z" << "z";
+  QTest::newRow("shift 1 is !") << 1 << "1" << "!";
+  QTest::newRow("shift 9 is (") << 1 << "9" << "(";
+
+  // Page 3 (Ctrl): the bold letters sit on their own letters. Ctrl+B = bold B.
+  QTest::newRow("ctrl B is bold B") << 2 << "B" << "<B>";
+  QTest::newRow("ctrl S is bold S") << 2 << "S" << "<S>";
+
+  // Alt (mask 4): mnemonics -- the contraction on its letter, the codes on theirs.
+  QTest::newRow("alt S is 's")      << 4 << "S" << "<'s>";
+  QTest::newRow("alt T is 't")      << 4 << "T" << "<'t>";
+  QTest::newRow("alt P is player")  << 4 << "P" << "<player>";
+  QTest::newRow("alt O is rival")   << 4 << "O" << "<rival>";
+  QTest::newRow("alt C is pc")      << 4 << "C" << "<pc>";
+
+  // Shift+Ctrl (mask 3): the box-frame glyphs are drawn AS a box on the keys.
+  QTest::newRow("frame corner on Q") << 3 << "Q" << "<ul>";
+  QTest::newRow("frame corner on X") << 3 << "X" << "<br>";
+  QTest::newRow("cursor arrow on J") << 3 << "J" << "<arr-r>";
+
+  // Shift+Ctrl+Alt (mask 7): the dangerous codes, on mnemonic keys behind the
+  // hardest chord on the deck.
+  QTest::newRow("all E is end")     << 7 << "E" << "<end>";
+  QTest::newRow("all X is dex")     << 7 << "X" << "<dex>";
+}
+
+void TstFontKeyboard::identityContract()
+{
+  QFETCH(int, page);
+  QFETCH(QString, key);
+  QFETCH(QString, code);
+
+  FontKeyboard kb;
+  QCOMPARE(kb.keyData(page, key)["code"].toString(), code);
+}
+
+/// 8 pages, 8 modifier combos, one each -- the fact that makes the design work.
+/// A page's number IS its modifier mask (shift 1, ctrl 2, alt 4), so Alt is page 4.
+void TstFontKeyboard::pageForModifiers()
+{
+  QCOMPARE(FontKeyboard::pageFor(false, false, false), 0);
+  QCOMPARE(FontKeyboard::pageFor(true,  false, false), 1);
+  QCOMPARE(FontKeyboard::pageFor(false, true,  false), 2);
+  QCOMPARE(FontKeyboard::pageFor(true,  true,  false), 3);
+  QCOMPARE(FontKeyboard::pageFor(false, false, true),  4);
+  QCOMPARE(FontKeyboard::pageFor(true,  false, true),  5);
+  QCOMPARE(FontKeyboard::pageFor(false, true,  true),  6);
+  QCOMPARE(FontKeyboard::pageFor(true,  true,  true),  7);
+
+  // Every combination lands on a distinct page: no page is unreachable by keyboard.
+  QSet<int> pages;
+  for(int i = 0; i < 8; i++)
+    pages.insert(FontKeyboard::pageFor(i & 1, i & 2, i & 4));
+
+  QCOMPARE(pages.size(), FontKeyboard::pageTotal);
+
+  // The badge on a page must be the chord that actually reaches it -- a strip that
+  // teaches the wrong shortcut is worse than no strip.
+  for(int i = 0; i < FontKeyboard::pageTotal; i++) {
+    const QString badge = FontKeyboard::pageBadge(i);
+
+    QCOMPARE(badge.contains("Shift"), (i & 1) != 0);
+    QCOMPARE(badge.contains("Ctrl"),  (i & 2) != 0);
+    QCOMPARE(badge.contains("Alt"),   (i & 4) != 0);
+  }
+}
+
+/// The strip's reading order is by category (cheapest chord first), NOT the mask
+/// order -- but it must still list every page exactly once.
+void TstFontKeyboard::pageOrderCoversEveryPage()
+{
+  FontKeyboard kb;
+  const QVariantList order = kb.getPageOrder();
+
+  QCOMPARE(order.size(), FontKeyboard::pageTotal);
+
+  QSet<int> seen;
+  for(const QVariant& v : order)
+    seen.insert(v.toInt());
+
+  QCOMPARE(seen.size(), FontKeyboard::pageTotal);
+
+  // Alt (a one-key chord) comes before Shift+Ctrl (a two-key one), which is the
+  // whole reason this order isn't just 0..7.
+  QVERIFY(order.indexOf(QVariant(4)) < order.indexOf(QVariant(3)));
+}
+
+/// The cap can't draw a control code as a tile (it has no glyph) nor a multi-char as
+/// one tile (it isn't one). Those must come back as Label/Preview or the deck would
+/// silently render garbage tiles.
+void TstFontKeyboard::categoriesAndRenderModes()
+{
+  FontKeyboard kb;
+
+  const QVariantMap upperA = kb.keyData(0, "A");
+  QCOMPARE(upperA["category"].toInt(), static_cast<int>(FontKeyboard::CatNormal));
+  QCOMPARE(upperA["render"].toInt(),   static_cast<int>(FontKeyboard::RenderTile));
+
+  const QVariantMap digit7 = kb.keyData(0, "7");
+  QCOMPARE(digit7["category"].toInt(), static_cast<int>(FontKeyboard::CatSingle));
+  QCOMPARE(digit7["render"].toInt(),   static_cast<int>(FontKeyboard::RenderTile));
+
+  const QVariantMap player = kb.keyData(4, "P");
+  QCOMPARE(player["category"].toInt(), static_cast<int>(FontKeyboard::CatVariable));
+  QCOMPARE(player["render"].toInt(),   static_cast<int>(FontKeyboard::RenderPreview));
+
+  const QVariantMap pkmn = kb.keyData(4, "K");
+  QCOMPARE(pkmn["category"].toInt(), static_cast<int>(FontKeyboard::CatMulti));
+  QCOMPARE(pkmn["render"].toInt(),   static_cast<int>(FontKeyboard::RenderPreview));
+
+  const QVariantMap tile = kb.keyData(3, "Q");
+  QCOMPARE(tile["category"].toInt(), static_cast<int>(FontKeyboard::CatPicture));
+  QCOMPARE(tile["render"].toInt(),   static_cast<int>(FontKeyboard::RenderTile));
+
+  const QVariantMap end = kb.keyData(7, "E");
+  QCOMPARE(end["category"].toInt(), static_cast<int>(FontKeyboard::CatControl));
+  QCOMPARE(end["render"].toInt(),   static_cast<int>(FontKeyboard::RenderLabel));
+
+  // An empty key is well-formed, not null.
+  const QVariantMap empty = kb.keyData(2, "6");
+  QVERIFY(empty["empty"].toBool());
+  QCOMPARE(empty["ind"].toInt(), 0);
+  QCOMPARE(empty["render"].toInt(), static_cast<int>(FontKeyboard::RenderEmpty));
+
+  // The spacebar's tile really is Space.
+  QCOMPARE(kb.spaceData()["code"].toString(), QString(" "));
+}
+
+void TstFontKeyboard::chopLastToken_data()
+{
+  QTest::addColumn<QString>("in");
+  QTest::addColumn<QString>("out");
+
+  QTest::newRow("empty")        << ""            << "";
+  QTest::newRow("plain char")   << "RED"         << "RE";
+  QTest::newRow("last char")    << "R"           << "";
+  QTest::newRow("whole token")  << "RED<player>" << "RED";
+  QTest::newRow("only a token") << "<player>"    << "";
+  QTest::newRow("token then char") << "<player>x" << "<player>";
+  QTest::newRow("two tokens")   << "<pk><mn>"    << "<pk>";
+  QTest::newRow("quote token")  << "A<o\">"      << "A";
+  QTest::newRow("stray gt")     << "A>"          << "A";
+}
+
+/// Backspace deletes a whole <code>, never one character out of the middle of one --
+/// that would leave a string the codec can't round-trip.
+void TstFontKeyboard::chopLastToken()
+{
+  QFETCH(QString, in);
+  QFETCH(QString, out);
+
+  QCOMPARE(FontKeyboard::chopLastToken(in), out);
+}
+
+void TstFontKeyboard::pageProperty()
+{
+  FontKeyboard kb;
+  QSignalSpy spy(&kb, &FontKeyboard::pageChanged);
+
+  QCOMPARE(kb.getPage(), 0);
+  QCOMPARE(kb.getPageCount(), FontKeyboard::pageTotal);
+  QCOMPARE(kb.getPageNames().size(), FontKeyboard::pageTotal);
+  QCOMPARE(FontKeyboard::pageBadge(0), QString(""));
+  QCOMPARE(FontKeyboard::pageBadge(4), QString("Alt"));
+  QCOMPARE(FontKeyboard::pageBadge(7), QString("Shift+Ctrl+Alt"));
+
+  kb.setPage(3);
+  QCOMPARE(kb.getPage(), 3);
+  QCOMPARE(spy.count(), 1);
+
+  // Same page: no churn. Out of range: refused, not clamped into a wrong page.
+  kb.setPage(3);
+  kb.setPage(99);
+  kb.setPage(-1);
+  QCOMPARE(kb.getPage(), 3);
+  QCOMPARE(spy.count(), 1);
+}
+
+QTEST_MAIN(TstFontKeyboard)
+#include "tst_font_keyboard.moc"

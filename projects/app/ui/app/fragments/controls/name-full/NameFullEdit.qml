@@ -25,11 +25,30 @@ RowLayout {
 
   onStrChanged: nameEdit.text = top.str
 
+  // The name is full and the key you pressed won't fit. Refusing in SILENCE would
+  // read as a broken key, so the field shakes -- the way a locked door rattles.
+  //
+  // It animates a Translate, NOT the field's x: x belongs to the RowLayout, and
+  // fighting a layout over a position is how you get a control that never sits still.
+  function reject() {
+    rejectShake.restart();
+  }
+
+  SequentialAnimation {
+    id: rejectShake
+    NumberAnimation { target: shakeT; property: "x"; to: -5; duration: 45 }
+    NumberAnimation { target: shakeT; property: "x"; to:  5; duration: 60 }
+    NumberAnimation { target: shakeT; property: "x"; to: -3; duration: 50 }
+    NumberAnimation { target: shakeT; property: "x"; to:  0; duration: 45 }
+  }
+
   NameEdit {
     id: nameEdit
 
     Layout.preferredWidth: 260
     Layout.alignment: Qt.AlignVCenter
+
+    transform: Translate { id: shakeT }
 
     text: top.str
     onTextChanged: {

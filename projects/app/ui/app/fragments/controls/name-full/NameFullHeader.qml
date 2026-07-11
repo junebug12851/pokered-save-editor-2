@@ -1,10 +1,13 @@
 // NameFullHeader.qml -- the full keyboard's top toolbar.
 //
-// Hosts the "Simulated" controls (Outdoor toggle + NameFullTileset combo), a
-// Grid/Tileset view toggle (drives showTileset, which PagedPicker follows), the
-// NameFullEdit name field, and a ModalClose that emits preClose() before closing
-// (so the value commits exactly once). Carries the shared str/chopLen/sizeMult/
-// isPersonName/hasBox state down to the editor.
+// Hosts the "Simulated" controls (Outdoor toggle + NameFullTileset combo -- they
+// pick which tileset the keys' animated glyphs are rendered from), the NameFullEdit
+// name field, and a ModalClose that emits preClose() before closing (so the value
+// commits exactly once). Carries the shared str/chopLen/sizeMult/isPersonName/hasBox
+// state down to the editor.
+//
+// The old Grid/Tileset toggle is GONE with the raw tilemap view it drove -- the deck
+// shows every tile now, so there is nothing left for a second view to add.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -25,10 +28,10 @@ ToolBar {
   property bool isPersonName: false
   property bool hasBox: false
 
-  // Drives which page the left pane shows: false = character list, true = the
-  // simulated tileset grid. Toggled by the "View" button below. FullKeyboard
-  // binds its picker to this.
-  property bool showTileset: false
+  // Shake the name field: the deck calls this when a key won't fit.
+  function reject() {
+    editor.reject();
+  }
 
   height: 124
   Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
@@ -109,19 +112,6 @@ ToolBar {
         // preferred width it collapses to its indicator and the tileset name
         // doesn't show. Keep it just wide enough for the names.
         Layout.preferredWidth: 132
-      }
-
-      // Label reflects the CURRENT view (it's the same simulated data, just shown
-      // as the pill grid vs. the full tileset).
-      FlatToggle {
-        text: top.showTileset ? "Tileset" : "Grid"
-        active: top.showTileset
-        onClicked: top.showTileset = !top.showTileset;
-
-        MainToolTip {
-          text: qsTr("Switch between the character grid and the full simulated " +
-                "tileset (click any tile to insert it).")
-        }
       }
     }
 
