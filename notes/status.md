@@ -5,8 +5,12 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.14.3-alpha` (single source of truth: repo-root `VERSION`; see
-[`reference/versioning.md`](reference/versioning.md)).
+**Version:** `0.15.2-alpha` — shipped 2026-07-11, `main` @ `ac79c0a` (single source of truth: repo-root
+`VERSION`; see [`reference/versioning.md`](reference/versioning.md)). Full `ctest` green (73/73);
+release / pages / tests / lint all green on `main`.
+
+> **Releases are MANUAL.** Commit and push to `dev` freely, but `main` only moves when Twilight says
+> **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
 
 ## Current state (read this first)
 
@@ -24,6 +28,20 @@ had cleanup/redesign passes. The recurring underlying theme is the **Qt 6 Materi
 issue** (Qt 6.5+ taller `TextField`/`ComboBox`); the fix everywhere is proper layouts, not pixel
 offsets ([`reference/qt-patterns.md`](reference/qt-patterns.md)). **Read
 [`reference/ui-patterns.md`](reference/ui-patterns.md) before any UI work.**
+
+The **Market** now does real item trading. Its Exchange tab has three sub-tabs — **Currency**
+(money↔coins), **Healing**, and **Custom** — where the last two swap one item for another, priced by
+each item's **buy price**, across the bag + PC storage combined, previewed live and written only on
+Checkout. The give side lists what you own, the get side lists **every** item with the unaffordable
+ones greyed out (which is what guarantees the two "+" buttons are never both dead). Backed by
+`ItemExchangeModel` and pinned by `tst_item_exchange` (14 cases).
+
+⚠️ **The one hard-won rule there:** an exchange is priced as **one whole trade**, not per step — the
+*total* value is rounded up to a whole number of the given item and only that single leftover is
+refunded. 3 Fresh Water (₽600) costs exactly 2 Potions (₽600) and refunds **nothing**. Pricing each
+step separately (the original bug, caught by Twilight and fixed on 2026-07-11) invents money out of
+thin air. `giveFor()` / `refundFor()` are the single pricing path shared by the preview, the "+"
+gating, and `checkout()` — keep it that way.
 
 **Next:** continued review of the name editors; an end-to-end save/reopen verification pass;
 remaining per-control test depth. See [`plans/next-steps.md`](plans/next-steps.md).

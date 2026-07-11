@@ -16,6 +16,16 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
   `>>`), example demo localized to each editor, plus the player/rival/ID **edit-hang + OT-corruption**
   fix and the `expandStr` infinite-loop + tileset off-by-one fixes. Conventions: `ui-patterns.md`.
 
+## Done — Market Exchange item trading (2026-07-11, shipped in 0.15.2-alpha)
+
+- **Exchange sub-tabs**: Currency (money↔coins) / Healing / Custom. The latter two trade item↔item by
+  buy price across bag + PC storage, previewed live, written only on Checkout (`ItemExchangeModel`).
+- **Asymmetric dropdowns**: give side = what you own, get side = every item, unaffordable ones greyed
+  (which makes "never both + disabled" structural). Healing opens on Potion ⇄ Fresh Water.
+- **Whole-trade pricing fix**: the total is rounded up once, not per step — an even trade refunds
+  nothing. See `status.md`; do not reintroduce per-step rates.
+- **`tst_item_exchange`** (14 cases) pins all of the above. Full `ctest` 73/73.
+
 ## Now / next
 
 1. **Continued review of the name editors.** Live tweaks ongoing. `NameDisplay`/`NameEdit` are
