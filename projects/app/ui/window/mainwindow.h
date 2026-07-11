@@ -77,6 +77,9 @@ public:
 
   /// DEBUG (--hot): clear the QML cache and reload the view from the source files on
   /// disk (live QML refresh). C++ state (the Bridge/save) survives; QML re-instantiates.
+  /// Restores the screen you were on afterwards (full-tree reload otherwise dumps you
+  /// at Home + the New File modal) -- see the implementation for why partial reload is
+  /// deliberately not attempted.
   void reloadQml();
 
   FileManagement* file = nullptr;   ///< @see file property.

@@ -68,10 +68,17 @@ disk instead of the baked qrc. A `QFileSystemWatcher` over `<root>/ui/**/*.qml|*
 (debounced 160 ms; re-arms the watch because editors rewrite/rename on save) and calls `reloadQml()`.
 
 `reloadQml()` = `engine->clearComponentCache()` + tear down and re-`setSource(App.qml)` — i.e. it rebuilds
-the **whole** QML tree from the root. **Known limitation:** this reliably applies every change but resets
-navigation (drops you back to Home + the New File modal) and doesn't restore the loaded save. **Per-file
-partial reload is deliberately NOT attempted** — in a single-`QQuickWidget` app the engine caches whole
-compiled components; reloading just the changed file would leave consumers of a shared component holding a
-stale cached copy (a subtle "quality loss" the project forbids). The correct fix is to keep the full,
-reliable reload but **capture and restore context** (loaded save + current route/screen + selection)
-across it, so you stay on the screen you were editing. (Tracked as the hot-reload state-preservation work.)
+the **whole** QML tree from the root. **Per-file partial reload is deliberately NOT attempted** — in a
+single-`QQuickWidget` app the engine caches whole compiled components; reloading just the changed file
+would leave consumers of a shared component holding a stale cached copy (a subtle "quality loss" the
+project forbids). So the reload is always full and reliable.
+
+**It preserves context (2026-07-10 fix).** A full-tree reload otherwise dumps you back at Home + the New
+File modal. `reloadQml()` now, before tearing down, records the **current screen** (reverse-looks-up the
+top of `Router::stack` to its registered name); after the reload it polls until App.qml re-seats its
+startup stack, dismisses the New File modal, and **navigates back to that screen** (`pokemonDetails`
+re-opens party mon 0, since it needs a selection). The **loaded save survives automatically** — it lives
+in C++ (`Bridge`/`FileManagement`), not QML, so only navigation needs restoring. Net effect: edit a
+screen's QML, save, and you stay on that screen with your save loaded, changes applied. (Verified over the
+TCP channel: `title` → `reload` → `title` returns the same screen; Home/modals are intentionally not
+auto-restored.)
