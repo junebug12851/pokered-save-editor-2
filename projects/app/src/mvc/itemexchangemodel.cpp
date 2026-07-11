@@ -19,12 +19,15 @@
  * @brief Implementation of ItemExchangeModel. See itemexchangemodel.h.
  *
  * The exchange is one net axis `m_net` (like the money<->coins converter's coin axis).
- * Positive net = gained-A steps, negative = gained-B. Per step: gain 1 of the target,
- * consume the minimum whole number of the other item whose BUY value covers the target,
- * and refund the leftover value as money. The after-counts and money for any candidate
- * net are pure functions (aAfterFor/bAfterFor/moneyAfterFor), which the "+" gating and
- * the preview both use; checkout() writes exactly that net via the box add/remove
- * helpers (bag first, then PC storage).
+ * Positive net = gained-A steps, negative = gained-B. The WHOLE net is priced as a single
+ * trade (giveFor/refundFor): the total value being bought is rounded up to a whole number
+ * of the given item, and only that one leftover comes back as money. Rounding the total --
+ * not each step -- is what makes an even trade free of change: 3 Fresh Water (₽600) costs
+ * exactly 2 Potions (₽600) and refunds nothing.
+ *
+ * The after-counts and money for any candidate net are pure functions (aAfterFor/bAfterFor/
+ * moneyAfterFor), which the "+" gating and the preview both use; checkout() writes exactly
+ * that net via the box add/remove helpers (bag first, then PC storage).
  */
 
 #include "./itemexchangemodel.h"
@@ -177,24 +180,38 @@ bool ItemExchangeModel::valid() const
       && aBuy() > 0 && bBuy() > 0;
 }
 
-int ItemExchangeModel::perAGive() const   { return valid() ? ceilDiv(aBuy(), bBuy()) : 0; }
-int ItemExchangeModel::perARefund() const { return valid() ? (perAGive() * bBuy() - aBuy()) : 0; }
-int ItemExchangeModel::perBGive() const   { return valid() ? ceilDiv(bBuy(), aBuy()) : 0; }
-int ItemExchangeModel::perBRefund() const { return valid() ? (perBGive() * aBuy() - bBuy()) : 0; }
+// The whole trade is priced ONCE: round the TOTAL value up to a whole number of the given
+// item, not each step separately. Steps that divide evenly therefore cost nothing extra and
+// refund nothing -- 3 Fresh Water (3 x ₽200 = ₽600) is exactly 2 Potions (2 x ₽300 = ₽600).
+int ItemExchangeModel::giveFor(int dir, int steps) const
+{
+  if(!valid() || steps <= 0 || dir == 0)
+    return 0;
+  return (dir > 0) ? ceilDiv(steps * aBuy(), bBuy())   // gaining A, paying in B
+                   : ceilDiv(steps * bBuy(), aBuy());  // gaining B, paying in A
+}
+
+int ItemExchangeModel::refundFor(int dir, int steps) const
+{
+  if(!valid() || steps <= 0 || dir == 0)
+    return 0;
+  return (dir > 0) ? (giveFor(1, steps) * bBuy() - steps * aBuy())
+                   : (giveFor(-1, steps) * aBuy() - steps * bBuy());
+}
 
 int ItemExchangeModel::aAfterFor(int m) const
 {
-  return aStart() + nA(m) - nB(m) * perBGive();
+  return aStart() + nA(m) - giveFor(-1, nB(m));
 }
 
 int ItemExchangeModel::bAfterFor(int m) const
 {
-  return bStart() + nB(m) - nA(m) * perAGive();
+  return bStart() + nB(m) - giveFor(1, nA(m));
 }
 
 int ItemExchangeModel::moneyAfterFor(int m) const
 {
-  return moneyStart() + nA(m) * perARefund() + nB(m) * perBRefund();
+  return moneyStart() + refundFor(1, nA(m)) + refundFor(-1, nB(m));
 }
 
 // A net value is legal when nothing goes negative, the gained item fits, and money
@@ -419,37 +436,28 @@ void ItemExchangeModel::checkout()
     return;
 
   const int steps = (m_net > 0) ? m_net : -m_net;
+  const int dir   = (m_net > 0) ? 1 : -1;
 
-  if(m_net > 0) {
-    // Gained A: consume B (bag first, then storage), then add A, then refund money.
-    const int giveB = steps * perAGive();
-    int rem = bag ? bag->removeAmount(m_itemBInd, giveB) : 0;
-    if(rem < giveB && storage)
-      storage->removeAmount(m_itemBInd, giveB - rem);
+  // Priced as ONE trade (giveFor/refundFor), so this writes exactly what was previewed.
+  const int give   = giveFor(dir, steps);
+  const int refund = refundFor(dir, steps);
 
-    int added = bag ? bag->addAmount(m_itemAInd, steps) : 0;
-    if(added < steps && storage)
-      storage->addAmount(m_itemAInd, steps - added);
+  const int gainInd = (dir > 0) ? m_itemAInd : m_itemBInd;
+  const int giveInd = (dir > 0) ? m_itemBInd : m_itemAInd;
 
-    if(basics) {
-      const int m = static_cast<int>(basics->money) + steps * perARefund();
-      basics->money = static_cast<unsigned int>(m > MoneyCap ? MoneyCap : m);
-    }
-  } else {
-    // Gained B: consume A, add B, refund money.
-    const int giveA = steps * perBGive();
-    int rem = bag ? bag->removeAmount(m_itemAInd, giveA) : 0;
-    if(rem < giveA && storage)
-      storage->removeAmount(m_itemAInd, giveA - rem);
+  // Consume the given item (bag first, then PC storage), add the gained one, refund the
+  // leftover value as money.
+  int rem = bag ? bag->removeAmount(giveInd, give) : 0;
+  if(rem < give && storage)
+    storage->removeAmount(giveInd, give - rem);
 
-    int added = bag ? bag->addAmount(m_itemBInd, steps) : 0;
-    if(added < steps && storage)
-      storage->addAmount(m_itemBInd, steps - added);
+  int added = bag ? bag->addAmount(gainInd, steps) : 0;
+  if(added < steps && storage)
+    storage->addAmount(gainInd, steps - added);
 
-    if(basics) {
-      const int m = static_cast<int>(basics->money) + steps * perBRefund();
-      basics->money = static_cast<unsigned int>(m > MoneyCap ? MoneyCap : m);
-    }
+  if(basics) {
+    const int m = static_cast<int>(basics->money) + refund;
+    basics->money = static_cast<unsigned int>(m > MoneyCap ? MoneyCap : m);
   }
 
   if(basics)

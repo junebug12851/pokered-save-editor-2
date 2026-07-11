@@ -997,8 +997,17 @@ Page {
                 Text {
                   Layout.alignment: Qt.AlignHCenter
                   visible: itemCol.exm.valid
-                  text: "-" + itemCol.exm.perAGive + " " + itemCol.exm.bName
-                        + "  +₽" + itemCol.exm.perARefund
+                  // The cost of the trade queued on THIS side (or of a single step when
+                  // nothing is queued yet). The refund is only shown when there IS one --
+                  // a trade that divides evenly needs no change back.
+                  text: {
+                    var exm = itemCol.exm;
+                    var rev = exm.revision;   // dependency -- do not remove
+                    var n = exm.net > 0 ? exm.net : 1;
+                    var give = exm.giveFor(1, n);
+                    var refund = exm.refundFor(1, n);
+                    return "-" + give + " " + exm.bName + (refund > 0 ? "  +₽" + refund : "");
+                  }
                   font.pixelSize: 11
                   color: brg.settings.textColorMid
                   horizontalAlignment: Text.AlignHCenter
@@ -1058,8 +1067,15 @@ Page {
                 Text {
                   Layout.alignment: Qt.AlignHCenter
                   visible: itemCol.exm.valid
-                  text: "-" + itemCol.exm.perBGive + " " + itemCol.exm.aName
-                        + "  +₽" + itemCol.exm.perBRefund
+                  // Cost of the trade queued on this side (see the A-side note above).
+                  text: {
+                    var exm = itemCol.exm;
+                    var rev = exm.revision;   // dependency -- do not remove
+                    var n = exm.net < 0 ? -exm.net : 1;
+                    var give = exm.giveFor(-1, n);
+                    var refund = exm.refundFor(-1, n);
+                    return "-" + give + " " + exm.aName + (refund > 0 ? "  +₽" + refund : "");
+                  }
                   font.pixelSize: 11
                   color: brg.settings.textColorMid
                   horizontalAlignment: Text.AlignHCenter

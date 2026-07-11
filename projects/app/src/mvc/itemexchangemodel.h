@@ -27,11 +27,15 @@ class PlayerBasics;
  *
  * Powers the two item-trading sub-tabs. Two items are selected (A and B); a single
  * net axis (@ref net) drives the trade the same way the money<->coins converter drives
- * one coin axis. Each "+A" step gains ONE of item A and draws the minimum whole number
- * of item B whose BUY value covers A's buy value, refunding the leftover value as money
- * (money only ever goes up); "+B" is the mirror. Everything is previewed (the after
- * counts + money) and only written on checkout(). Values come from each item's money
- * buy price; the traded items are counted across the bag + PC storage combined.
+ * one coin axis. Each "+A" step gains one more of item A; the WHOLE trade is then priced
+ * as one transaction -- the minimum whole number of item B whose BUY value covers the
+ * total value being bought, with only the single leftover refunded as money (money only
+ * ever goes up). "+B" is the mirror. Rounding up the TOTAL, not each step, is the point:
+ * 3 Fresh Water (₽600) is paid for by exactly 2 Potions (₽600) with NO refund, where
+ * pricing each Fresh Water on its own would have wasted 3 Potions and handed back ₽300.
+ * Everything is previewed (the after counts + money) and only written on checkout().
+ * Values come from each item's money buy price; the traded items are counted across the
+ * bag + PC storage combined.
  *
  * The two dropdowns are asymmetric: the LEFT one is what you GIVE, so it lists the items you
  * actually own (@ref sourceItems); the RIGHT one is what you GET, so it lists EVERY exchangeable
@@ -65,11 +69,6 @@ class ItemExchangeModel : public QObject
   Q_PROPERTY(int bAfter READ bAfter NOTIFY changed)         ///< Item B owned after.
   Q_PROPERTY(int moneyStart READ moneyStart NOTIFY changed) ///< Money before.
   Q_PROPERTY(int moneyAfter READ moneyAfter NOTIFY changed) ///< Money after (refunds only).
-
-  Q_PROPERTY(int perAGive READ perAGive NOTIFY changed)     ///< Item B consumed per +A step.
-  Q_PROPERTY(int perARefund READ perARefund NOTIFY changed) ///< Money refunded per +A step.
-  Q_PROPERTY(int perBGive READ perBGive NOTIFY changed)     ///< Item A consumed per +B step.
-  Q_PROPERTY(int perBRefund READ perBRefund NOTIFY changed) ///< Money refunded per +B step.
 
   Q_PROPERTY(bool canAddA READ canAddA NOTIFY changed)      ///< "+A" enabled (one more gained-A step is legal).
   Q_PROPERTY(bool canAddB READ canAddB NOTIFY changed)      ///< "+B" enabled.
@@ -106,10 +105,17 @@ public:
   int bAfter() const { return bAfterFor(m_net); }
   int moneyAfter() const { return moneyAfterFor(m_net); }
 
-  int perAGive() const;
-  int perARefund() const;
-  int perBGive() const;
-  int perBRefund() const;
+  /// How many of the OTHER item @p steps of this direction consume, priced as ONE whole
+  /// trade rather than @p steps separate ones: @p dir > 0 gains A (consuming B), @p dir < 0
+  /// gains B (consuming A). Because the total is what's rounded up, a trade that divides
+  /// evenly costs nothing extra -- 3 Fresh Water (₽600) is exactly 2 Potions (₽600), not
+  /// 3 Potions with three separate leftovers.
+  Q_INVOKABLE int giveFor(int dir, int steps) const;
+
+  /// The leftover value of @p steps in direction @p dir, refunded as money -- i.e.
+  /// giveFor() * (given item's buy price) minus the value actually being bought. Zero when
+  /// the trade divides evenly (nothing to refund).
+  Q_INVOKABLE int refundFor(int dir, int steps) const;
 
   bool canAddA() const { return valid() && stateValid(m_net + 1); }
   bool canAddB() const { return valid() && stateValid(m_net - 1); }
