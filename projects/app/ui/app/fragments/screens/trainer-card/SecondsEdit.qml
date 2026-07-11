@@ -22,7 +22,7 @@ DefTextEdit {
   // (the old `2 * font.pixelSize` ignored padding, clipping the value)
   width: 2 * font.pixelSize + leftPadding + rightPadding
 
-  horizontalAlignment: Text.AlignRight
+  horizontalAlignment: Text.AlignHCenter
 
   onTextChanged: {
     if(text === "")
