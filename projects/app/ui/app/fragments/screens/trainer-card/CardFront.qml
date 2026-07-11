@@ -42,14 +42,18 @@ Rectangle {
     anchors.bottom: spacer.top
     anchors.bottomMargin: 13
     anchors.right: parent.right
-    anchors.rightMargin: 65
+    // This is the anchor the whole right-hand column right-aligns to (Money, Coins,
+    // Starter, Playtime all sit at playerIdEdit.left / starterEdit.right). The
+    // margin leaves room to the right for the fields' [dice | trash] action groups
+    // so they stay inside the card border.
+    anchors.rightMargin: 92
   }
 
   Spacer {
     id: spacer
 
     anchors.top: playerNameEdit.bottom
-    anchors.topMargin: 25
+    anchors.topMargin: 20
     anchors.left: parent.left
 
     width: parent.width
@@ -60,8 +64,10 @@ Rectangle {
   MoneyEdit {
     id: moneyEdit
 
+    // Start the right-hand column a little higher than before to make vertical
+    // room for the Enabled/Paused toggle row added above the playtime clock.
     anchors.top: spacer.top
-    anchors.topMargin: 18
+    anchors.topMargin: 10
     anchors.left: playerIdEdit.left
 
     width: starterEdit.width
@@ -92,12 +98,22 @@ Rectangle {
     height: cardFront.fieldH
   }
 
+  // Enabled / Paused toggle pair, sitting just above the playtime clock and
+  // right-aligned to it.
+  PlaytimeToggles {
+    id: playtimeToggles
+
+    anchors.top: starterEdit.bottom
+    anchors.topMargin: 8
+    anchors.right: starterEdit.right
+  }
+
   PlaytimeEdit {
     id: playtimeEdit
     fieldH: cardFront.fieldH
 
-    anchors.top: starterEdit.bottom
-    anchors.topMargin: 4
+    anchors.top: playtimeToggles.bottom
+    anchors.topMargin: 5
     anchors.right: starterEdit.right
     anchors.rightMargin: 0
   }

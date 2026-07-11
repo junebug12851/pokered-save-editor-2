@@ -50,6 +50,9 @@ MouseArea {
     RandomButton {
       tip: qsTr("Randomize the coins.")
       onRandomize: brg.file.data.dataExpanded.player.basics.randomizeCoins();
+      showClear: true
+      clearTip: qsTr("Clear the coins to 0.")
+      onClear: brg.file.data.dataExpanded.player.basics.coins = 0;
     }
   }
 }

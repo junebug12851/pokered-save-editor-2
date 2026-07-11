@@ -3,8 +3,9 @@
 // Lays out the playtime sub-fields in a row -- Days : Hours : Minutes : Seconds :
 // Frames -- separated by PlaytimeDividers. The fieldH and digitPad knobs keep each
 // DefTextEdit compact and aligned with the rest of the card (see ui-patterns.md).
-// The Frames field carries the shared overflow menu (enable/pause/randomize/clear)
-// whose button shows on row hover.
+// The row carries the always-visible [dice | trash] RandomButton (randomize / clear
+// the playtime), matching the Money/Coins fields and the Pokemon-details combos.
+// The Enabled/Paused toggles live in PlaytimeToggles above this row.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -13,7 +14,7 @@ import QtQuick.Controls.Material
 import "../../general"
 import "../../header"
 
-MouseArea {
+Item {
   id: top
 
   // Shared compact field height (the sub-edits are DefTextEdits, so each one
@@ -21,8 +22,6 @@ MouseArea {
   // as the rest of the card's fields). Defaults to the card's knob via CardFront.
   property int fieldH: 28
 
-  hoverEnabled: true
-  onContainsMouseChanged: framesEdit.menuBtnVisible = containsMouse
   width: childRow.implicitWidth
   // Pin the row to the shared field height. (Sizing to childRow.implicitHeight
   // used the Material implicit height (~48), so the 28px fields sat top-aligned
@@ -58,5 +57,14 @@ MouseArea {
       leftPadding: top.digitPad
       rightPadding: top.digitPad
     }
+  }
+
+  // Randomize / clear the whole clock, same control as Money & Coins.
+  RandomButton {
+    tip: qsTr("Randomize the playtime.")
+    onRandomize: brg.file.data.dataExpanded.world.other.randomizePlaytime();
+    showClear: true
+    clearTip: qsTr("Clear the playtime to 0.")
+    onClear: brg.file.data.dataExpanded.world.other.clearPlaytime();
   }
 }

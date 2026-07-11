@@ -1023,6 +1023,29 @@ wash; a 1px left divider shows except when `first` or `active`. Wrap N in the sa
   `onClicked: statKind = "DV"`).
 - This removed the tab's last `CheckBox` **and** its ⋮ menus — the details editor is now ⋮-menu-free.
 
+### `RandomButton`'s optional clear segment + the shared `SegToggle` (trainer card, 2026-07-10)
+
+The trainer card adopted the same combo language, and two reusable pieces came out of it:
+
+- **`RandomButton` gained a `showClear` flag** (default **false**). Off, it's the lone rounded dice
+  exactly as before (Starter, Player ID). On, it appends a second **trash** `SegBtn` so the group reads
+  as one **[dice | trash]** pill and emits `clear()` (with `clearTip`). Money/Coins clear to 0; the
+  playtime clock uses `randomizePlaytime()` / `clearPlaytime()`. The trailing segment is toggled with
+  **`visible`** (a `!visible` `Layout` item collapses to zero width, so the group narrows back to just
+  the dice) — one source of truth, every screen's randomize/clear button identical. This replaced the
+  playtime's hover-reveal ⋮ overflow menu.
+- **`SegToggle` (`fragments/general/SegToggle.qml`)** is the **independent on/off** sibling of
+  `SegSel`: same flat accent-fill-when-`active` look and per-corner rounding, but each segment is its
+  own boolean — `active` binds to a bit and `onClicked` flips it (SegSel's segments are mutually
+  exclusive; SegToggle's aren't). The trainer card's `PlaytimeToggles` wraps two of them in the
+  standard bordered/rounded group as **[Enabled | Paused]** (bound to `playtime.clockMaxed` and
+  `area.general.countPlaytime`, both inverted), sitting just above the clock. Same "active = data
+  binding, never `checkable`" rule as SegSel.
+- **Layout note:** always-visible action groups need horizontal room the hover-menu didn't. Adding the
+  second (trash) segment overflowed the card border until the right-hand column was shifted left
+  (Player ID `rightMargin` 65 → 92) and the top spacing tightened to fit the extra toggle row — verified
+  against the headless trainer-card screenshot, not by eye.
+
 ### Segmented active segment: round the fill's outer corners (the "Market" flat-edge)
 
 When a segment in a rounded, `clip:true` group is filled (an **active** `SegSel`, or any hover/press
