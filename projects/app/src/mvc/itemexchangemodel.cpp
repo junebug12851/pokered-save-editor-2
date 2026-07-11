@@ -52,6 +52,25 @@ const QSet<QString>& healingNames()
   return s;
 }
 
+// Healing sub-tab default SOURCE preference (what you give). Potion family first -- a
+// player reaching for the Healing tab means potions long before Antidote.
+const QStringList& healingSourcePref()
+{
+  static const QStringList s = {
+    "POTION", "SUPER POTION", "HYPER POTION", "MAX POTION", "FULL RESTORE",
+    "FULL HEAL", "REVIVE", "MAX REVIVE",
+    "ELIXER", "MAX ELIXER", "ETHER", "MAX ETHER",
+  };
+  return s;
+}
+
+// Healing sub-tab default TARGET preference (what you get) -- the drinks, Fresh Water first.
+const QStringList& healingTargetPref()
+{
+  static const QStringList s = { "FRESH WATER", "SODA POP", "LEMONADE" };
+  return s;
+}
+
 int ceilDiv(int a, int b) { return (b <= 0) ? 0 : ((a + b - 1) / b); }
 }
 
@@ -66,9 +85,10 @@ ItemExchangeModel::ItemExchangeModel(ItemStorageBox* bag,
     if(ind < 0)
       continue;
     Info in;
+    in.name     = entry->getName();
     in.readable = entry->getReadable();
     in.buy      = entry->buyPriceMoney();
-    in.healing  = healingNames().contains(entry->getName());
+    in.healing  = healingNames().contains(in.name);
     m_info.insert(ind, in);
   }
 
@@ -99,6 +119,26 @@ bool ItemExchangeModel::isHealing(int ind) const
 {
   auto it = m_info.constFind(ind);
   return (it != m_info.constEnd()) && it->healing;
+}
+
+int ItemExchangeModel::indOfName(const QString& name) const
+{
+  for(auto it = m_info.constBegin(); it != m_info.constEnd(); ++it) {
+    if(it->name == name)
+      return it.key();
+  }
+  return -1;
+}
+
+void ItemExchangeModel::sortByName(QVariantList& list)
+{
+  QCollator col;
+  col.setNumericMode(true);
+  col.setCaseSensitivity(Qt::CaseInsensitive);
+  std::sort(list.begin(), list.end(), [&col](const QVariant& a, const QVariant& b) {
+    return col.compare(a.toMap().value("name").toString(),
+                       b.toMap().value("name").toString()) < 0;
+  });
 }
 
 // ---- Live save reads -------------------------------------------------------
@@ -188,6 +228,14 @@ void ItemExchangeModel::clampNet()
 
 // ---- Mutations -------------------------------------------------------------
 
+// Everything that can move the state goes through here so `revision` (which the dropdown
+// model bindings depend on) is always bumped BEFORE the binding re-reads it.
+void ItemExchangeModel::emitChanged()
+{
+  ++m_revision;
+  emit changed();
+}
+
 void ItemExchangeModel::setItemAInd(int v)
 {
   if(v == m_itemAInd)
@@ -195,7 +243,7 @@ void ItemExchangeModel::setItemAInd(int v)
   m_itemAInd = v;
   m_net = 0;
   emit selectionChanged();
-  emit changed();
+  emitChanged();
 }
 
 void ItemExchangeModel::setItemBInd(int v)
@@ -205,7 +253,7 @@ void ItemExchangeModel::setItemBInd(int v)
   m_itemBInd = v;
   m_net = 0;
   emit selectionChanged();
-  emit changed();
+  emitChanged();
 }
 
 void ItemExchangeModel::adjust(int dir)
@@ -216,7 +264,7 @@ void ItemExchangeModel::adjust(int dir)
     --m_net;
   else
     return;
-  emit changed();
+  emitChanged();
 }
 
 void ItemExchangeModel::reset()
@@ -224,43 +272,145 @@ void ItemExchangeModel::reset()
   if(m_net == 0)
     return;
   m_net = 0;
-  emit changed();
+  emitChanged();
 }
 
 void ItemExchangeModel::refresh()
 {
   clampNet();
-  emit changed();
+  emitChanged();
 }
 
-QVariantList ItemExchangeModel::ownedItems(bool healingOnly, int excludeInd) const
+// ---- Dropdown lists --------------------------------------------------------
+
+// LEFT: what you can give -- the items you own. If you own nothing in this category the
+// list would be empty (a dead dropdown), so it falls back to listing them all; no trade
+// is possible either way, but the UI still reads as a normal (inert) pair.
+QVariantList ItemExchangeModel::sourceItems(bool healingOnly, int excludeInd) const
+{
+  QVariantList out;
+  for(int pass = 0; pass < 2 && out.isEmpty(); ++pass) {
+    const bool ownedOnly = (pass == 0);
+    for(auto it = m_info.constBegin(); it != m_info.constEnd(); ++it) {
+      const int ind = it.key();
+      if(ind == excludeInd)
+        continue;
+      if(it->buy <= 0)                            // must be exchangeable (has a buy value)
+        continue;
+      if(healingOnly && !it->healing)
+        continue;
+      if(ownedOnly && combinedAmount(ind) <= 0)   // owned, non-zero
+        continue;
+      QVariantMap m;
+      m.insert("name", it->readable);
+      m.insert("ind", ind);
+      out.append(m);
+    }
+  }
+  sortByName(out);
+  return out;
+}
+
+// RIGHT: what you can get -- every exchangeable item, owned or not. `affordable` says
+// whether your current source stock can actually cover one of it; the dropdown greys the
+// ones that can't, so whatever IS selectable always leaves the "+" for it live.
+QVariantList ItemExchangeModel::targetItems(bool healingOnly, int excludeInd) const
 {
   QVariantList out;
   for(auto it = m_info.constBegin(); it != m_info.constEnd(); ++it) {
     const int ind = it.key();
     if(ind == excludeInd)
       continue;
-    if(it->buy <= 0)               // must be exchangeable (has a buy value)
+    if(it->buy <= 0)
       continue;
     if(healingOnly && !it->healing)
-      continue;
-    if(combinedAmount(ind) <= 0)   // owned, non-zero
       continue;
     QVariantMap m;
     m.insert("name", it->readable);
     m.insert("ind", ind);
+    m.insert("affordable", canGainTarget(ind));
     out.append(m);
   }
-
-  // Sort by display name (same collation feel as the other item lists).
-  QCollator col;
-  col.setNumericMode(true);
-  col.setCaseSensitivity(Qt::CaseInsensitive);
-  std::sort(out.begin(), out.end(), [&col](const QVariant& a, const QVariant& b) {
-    return col.compare(a.toMap().value("name").toString(),
-                       b.toMap().value("name").toString()) < 0;
-  });
+  sortByName(out);
   return out;
+}
+
+// Evaluated against the START state (nothing is written until checkout), i.e. exactly the
+// first "+<target>" step: enough of the source to cover it, room for the gained item, and
+// the refund doesn't push money past the cap.
+bool ItemExchangeModel::canGainTarget(int bInd) const
+{
+  if(m_itemAInd < 0 || bInd < 0 || bInd == m_itemAInd)
+    return false;
+
+  const int aB = buyOf(m_itemAInd);
+  const int bB = buyOf(bInd);
+  if(aB <= 0 || bB <= 0)
+    return false;
+
+  const int give   = ceilDiv(bB, aB);   // source items consumed for one target
+  const int refund = give * aB - bB;    // leftover value, refunded as money
+
+  if(combinedAmount(m_itemAInd) < give)      return false;
+  if(combinedCapacity(bInd) < 1)             return false;
+  if(moneyStart() + refund > MoneyCap)       return false;
+  return true;
+}
+
+void ItemExchangeModel::pickDefaults(bool healingOnly)
+{
+  m_net = 0;
+  m_itemAInd = -1;
+  m_itemBInd = -1;
+
+  // Source: on Healing, the best potion-family item the player actually HAS (Potion, then
+  // Super/Hyper/Max, Full Restore, ... -- never Antidote while a potion is on hand).
+  int a = -1;
+  if(healingOnly) {
+    for(const QString& n : healingSourcePref()) {
+      const int ind = indOfName(n);
+      if(ind >= 0 && buyOf(ind) > 0 && combinedAmount(ind) > 0) {
+        a = ind;
+        break;
+      }
+    }
+  }
+  if(a < 0) {
+    const QVariantList src = sourceItems(healingOnly, -1);
+    if(!src.isEmpty())
+      a = src.first().toMap().value("ind").toInt();
+  }
+  m_itemAInd = a;   // canGainTarget() below reads this
+
+  // Target: on Healing, Fresh Water (so the tab opens on Potion <=> Fresh Water). Fall
+  // back to the first AFFORDABLE item so the pair we land on always has a live "+".
+  int b = -1;
+  if(healingOnly) {
+    for(const QString& n : healingTargetPref()) {
+      const int ind = indOfName(n);
+      if(ind >= 0 && ind != a && canGainTarget(ind)) {
+        b = ind;
+        break;
+      }
+    }
+  }
+  if(b < 0) {
+    const QVariantList tgt = targetItems(healingOnly, a);
+    for(const QVariant& v : tgt) {
+      const QVariantMap m = v.toMap();
+      if(m.value("affordable").toBool()) {
+        b = m.value("ind").toInt();
+        break;
+      }
+    }
+    // Nothing affordable at all (player owns nothing to trade) -- still show a sane pair.
+    if(b < 0 && !tgt.isEmpty())
+      b = tgt.first().toMap().value("ind").toInt();
+  }
+  m_itemBInd = b;
+
+  emit selectionChanged();
+  emitChanged();
 }
 
 void ItemExchangeModel::checkout()
@@ -308,5 +458,5 @@ void ItemExchangeModel::checkout()
   m_net = 0;
   // The box itemsChanged/moneyChanged signals already trigger refresh(); emit anyway
   // so the preview settles even if a box somehow emitted nothing.
-  emit changed();
+  emitChanged();
 }

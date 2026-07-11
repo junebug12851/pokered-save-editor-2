@@ -836,18 +836,14 @@ Page {
         }
 
         // The item<->item converter card (Healing / Custom sub-tabs), driven by
-        // brg.itemExchangeModel. Two item sides (each a dropdown of owned items + a
-        // "+" that gains one, consuming the other item + refunding leftover to money).
+        // brg.itemExchangeModel. The LEFT side is what you give (a dropdown of the items
+        // you own); the RIGHT side is what you get (every item -- the ones your stock
+        // can't cover are greyed, which keeps at least one "+" always live).
         QtObject {
           id: itemConv
-          // Default the two dropdowns to the first two valid items for the entered tab.
+          // Sensible starting pair for the entered tab (Healing opens on Potion <=> Fresh Water).
           function enterTab(healingOnly) {
-            var exm = brg.itemExchangeModel;
-            exm.reset();
-            var a = exm.ownedItems(healingOnly, -1);
-            exm.itemAInd = (a.length >= 1) ? a[0].ind : -1;
-            var b = exm.ownedItems(healingOnly, exm.itemAInd);
-            exm.itemBInd = (b.length >= 1) ? b[0].ind : -1;
+            brg.itemExchangeModel.pickDefaults(healingOnly);
           }
         }
 
@@ -864,21 +860,38 @@ Page {
           border.width: 1
           border.color: Qt.rgba(0, 0, 0, 0.10)
 
-          // A borderless item dropdown (owned items, mutual-exclusion via excludeInd).
+          // A borderless item dropdown. `targetSide` picks which list it shows: the give
+          // side lists owned items, the get side lists every item (unaffordable ones
+          // greyed + unselectable). Mutual exclusion via excludeInd.
           component ItemCombo: ComboBox {
             id: ic
             property bool healingOnly: false
+            property bool targetSide: false    // false = give (owned), true = get (all)
             property int excludeInd: -1
             property int boundInd: -1          // the model value this side owns
             signal chose(int ind)
+
+            // Automation hook (debug channel): a ComboBox has no clicked() to drive, so
+            // the harness flips this to inspect the open list.
+            property bool debugPopup: false
+            onDebugPopupChanged: debugPopup ? ic.popup.open() : ic.popup.close()
 
             flat: true
             font.capitalization: Font.Capitalize
             font.pixelSize: 15
             textRole: "name"
             valueRole: "ind"
-            model: brg.itemExchangeModel.ownedItems(healingOnly, excludeInd)
             implicitWidth: font.pixelSize * 11
+
+            // sourceItems/targetItems are invokables, so the binding has nothing to
+            // re-run on by itself -- reading `revision` gives it a dependency, so the
+            // list (and the get-side `affordable` flags) rebuilds whenever state moves.
+            model: {
+              var exm = brg.itemExchangeModel;
+              var rev = exm.revision;   // dependency -- do not remove
+              return ic.targetSide ? exm.targetItems(ic.healingOnly, ic.excludeInd)
+                                   : exm.sourceItems(ic.healingOnly, ic.excludeInd);
+            }
 
             // indexOfValue() doesn't resolve against a plain QVariantList model, so
             // find the row for our bound item id ourselves (else currentIndex stays
@@ -894,6 +907,25 @@ Page {
               return -1;
             }
             onActivated: (i) => ic.chose(ic.model[i].ind)
+
+            // Greys (and blocks) the items the player's stock can't cover -- only the
+            // get side carries `affordable`, so the give side's rows are always enabled.
+            delegate: ItemDelegate {
+              id: icDel
+              required property var modelData
+              required property int index
+              width: ic.width
+              enabled: modelData.affordable === undefined || modelData.affordable === true
+              highlighted: ic.highlightedIndex === icDel.index
+              contentItem: Text {
+                text: icDel.modelData.name
+                font: ic.font
+                color: brg.settings.textColorDark
+                opacity: icDel.enabled ? 1.0 : 0.38
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+              }
+            }
 
             background: Rectangle {
               color: "transparent"
@@ -919,7 +951,7 @@ Page {
               Layout.fillWidth: true
               spacing: 10
 
-              // ===== Item A (gain A, spend B) =====
+              // ===== Item A -- the GIVE side (your items). "+A" gains A, spends B. =====
               ColumnLayout {
                 Layout.fillWidth: true; Layout.preferredWidth: 1
                 Layout.alignment: Qt.AlignTop
@@ -978,16 +1010,18 @@ Page {
                 text: "⇄"; font.pixelSize: 26; color: brg.settings.accentColor
               }
 
-              // ===== Item B (gain B, spend A) =====
+              // ===== Item B -- the GET side (every item). "+B" gains B, spends A. =====
               ColumnLayout {
                 Layout.fillWidth: true; Layout.preferredWidth: 1
                 Layout.alignment: Qt.AlignTop
                 spacing: 4
 
                 ItemCombo {
+                  objectName: "exGetCombo"       // automation hook for the debug channel
                   Layout.alignment: Qt.AlignHCenter
                   Layout.maximumWidth: parent.width
                   healingOnly: itemCol.healingOnly
+                  targetSide: true               // "get" side -- every item, unaffordable greyed
                   excludeInd: itemCol.exm.itemAInd
                   boundInd: itemCol.exm.itemBInd
                   onChose: (ind) => itemCol.exm.itemBInd = ind

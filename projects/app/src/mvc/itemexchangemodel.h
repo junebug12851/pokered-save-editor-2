@@ -33,8 +33,12 @@ class PlayerBasics;
  * counts + money) and only written on checkout(). Values come from each item's money
  * buy price; the traded items are counted across the bag + PC storage combined.
  *
- * The same engine serves both sub-tabs -- Custom lists every owned exchangeable item,
- * Healing filters the dropdowns to healing/drink items. Exposed as `brg.itemExchangeModel`.
+ * The two dropdowns are asymmetric: the LEFT one is what you GIVE, so it lists the items you
+ * actually own (@ref sourceItems); the RIGHT one is what you GET, so it lists EVERY exchangeable
+ * item (@ref targetItems) with the ones your stock can't cover flagged unaffordable and greyed.
+ * That greying is what keeps a selected pair always tradeable in at least one direction -- the
+ * two "+" buttons are never both disabled. Healing filters both lists to healing/drink items and
+ * starts on Potion <=> Fresh Water (@ref pickDefaults). Exposed as `brg.itemExchangeModel`.
  *
  * @see ItemStorageBox (addAmount/removeAmount/capacityForInd), ItemMarketModel (the
  *      money<->coins exchange this mirrors).
@@ -70,6 +74,11 @@ class ItemExchangeModel : public QObject
   Q_PROPERTY(bool canAddA READ canAddA NOTIFY changed)      ///< "+A" enabled (one more gained-A step is legal).
   Q_PROPERTY(bool canAddB READ canAddB NOTIFY changed)      ///< "+B" enabled.
 
+  /// Bumped on every change. sourceItems()/targetItems() are Q_INVOKABLE calls, so a QML
+  /// `model:` binding on them has no dependency to re-run on -- read this in the binding
+  /// and the lists (and their `affordable` flags) rebuild whenever the state moves.
+  Q_PROPERTY(int revision READ revision NOTIFY changed)
+
 public:
   static constexpr int MoneyCap = 999999; ///< Gen 1 money cap.
   static constexpr int StackCap = 99;     ///< Gen 1 per-stack cap.
@@ -82,6 +91,7 @@ public:
   void setItemBInd(int v);
 
   int net() const { return m_net; }
+  int revision() const { return m_revision; }
   bool valid() const;
 
   QString aName() const { return readableOf(m_itemAInd); }
@@ -104,10 +114,27 @@ public:
   bool canAddA() const { return valid() && stateValid(m_net + 1); }
   bool canAddB() const { return valid() && stateValid(m_net - 1); }
 
-  /// Owned, non-zero, exchangeable items (buy price > 0) for a dropdown -- optionally
-  /// only healing/drink items, and excluding @p excludeInd (the other side's pick).
+  /// LEFT list -- what you can GIVE: items you actually own (amount > 0) and that are
+  /// exchangeable (buy price > 0), optionally healing-only, excluding @p excludeInd.
   /// Returns [{name, ind}] sorted by display name.
-  Q_INVOKABLE QVariantList ownedItems(bool healingOnly, int excludeInd) const;
+  Q_INVOKABLE QVariantList sourceItems(bool healingOnly, int excludeInd) const;
+
+  /// RIGHT list -- what you can GET: EVERY exchangeable item (owned or not), optionally
+  /// healing-only, excluding @p excludeInd. Each entry carries an `affordable` flag --
+  /// false when your current source stock can't cover even one of it (or there's no room
+  /// / money would overflow). The dropdown greys those, which is what guarantees the
+  /// selected pair always has at least one usable "+" (never both disabled).
+  /// Returns [{name, ind, affordable}] sorted by display name.
+  Q_INVOKABLE QVariantList targetItems(bool healingOnly, int excludeInd) const;
+
+  /// Can we gain at least one of item @p bInd right now, paying with the selected source?
+  Q_INVOKABLE bool canGainTarget(int bInd) const;
+
+  /// Choose a sensible starting pair. Healing prefers a potion-family source the player
+  /// owns (Potion > Super > Hyper > Max > Full Restore, then any healing item) and Fresh
+  /// Water as the target -- i.e. Potion <=> Fresh Water by default. Always lands on a
+  /// pair with a usable "+" when one exists.
+  Q_INVOKABLE void pickDefaults(bool healingOnly);
 
   Q_INVOKABLE void adjust(int dir); ///< +1 = one gained-A step, -1 = one gained-B step (gated).
   Q_INVOKABLE void reset();         ///< Clear the net axis.
@@ -126,6 +153,8 @@ private:
   int buyOf(int ind) const;            ///< Money buy price, 0 if none / unknown.
   QString readableOf(int ind) const;   ///< Display name, "" if unknown.
   bool isHealing(int ind) const;       ///< In the curated healing/drink set?
+  int indOfName(const QString& name) const;      ///< Item index by INTERNAL name, -1 if unknown.
+  static void sortByName(QVariantList& list);    ///< Sort [{name,...}] by display name.
 
   static int nA(int m) { return m > 0 ? m : 0; }
   static int nB(int m) { return m < 0 ? -m : 0; }
@@ -134,6 +163,7 @@ private:
   int moneyAfterFor(int m) const;
   bool stateValid(int m) const;        ///< Is net==m a legal state (counts/caps/money)?
   void clampNet();                     ///< Pull net back into the legal range.
+  void emitChanged();                  ///< Bump @ref revision, then emit changed().
 
   ItemStorageBox* bag = nullptr;
   ItemStorageBox* storage = nullptr;
@@ -142,8 +172,9 @@ private:
   int m_itemAInd = -1;
   int m_itemBInd = -1;
   int m_net = 0;
+  int m_revision = 0;
 
-  /// Static per-item info cached at construction (ind -> readable / buy / healing).
-  struct Info { QString readable; int buy = 0; bool healing = false; };
+  /// Static per-item info cached at construction (ind -> internal / readable / buy / healing).
+  struct Info { QString name; QString readable; int buy = 0; bool healing = false; };
   QHash<int, Info> m_info;
 };
