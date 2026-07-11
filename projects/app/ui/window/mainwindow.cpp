@@ -64,6 +64,7 @@ private:
 #include "mainwindow.h"
 
 #include "../../src/bridge/bridge.h"
+#include "../../src/bridge/router.h"
 #include "../../src/boot/shortcutdefs.h"
 
 #include <pse-common/types.h>
@@ -235,11 +236,70 @@ void MainWindow::setupHotReload()
 void MainWindow::reloadQml()
 {
 #ifdef QT_DEBUG
+  // A hot-reload rebuilds the WHOLE QML tree from App.qml (there is no safe per-file
+  // partial reload in a single-QQuickWidget app -- the engine caches whole compiled
+  // components, so reloading only the changed file would leave consumers of a shared
+  // component holding a stale cached copy, a subtle correctness hazard we refuse). To
+  // keep the fast-iteration experience without that hazard, we do the full, reliable
+  // reload but RESTORE CONTEXT afterwards: the loaded save already survives untouched
+  // (it lives in C++ -- Bridge/FileManagement -- not QML), so we only need to return
+  // the user to the screen they were editing instead of dumping them at Home + the
+  // New File modal.
+
+  // 1) Remember the current screen (by name) before we tear the tree down. The top of
+  //    the nav stack is a Screen*; reverse-look-up its registered name.
+  QString currentName;
+  if(!Router::stack.isEmpty()) {
+    Screen* top = Router::stack.last();
+    for(auto it = Router::screens.cbegin(); it != Router::screens.cend(); ++it)
+      if(it.value() == top) { currentName = it.key(); break; }
+  }
+
+  // 2) Full reload.
   if(engine) engine->clearComponentCache();
   const QUrl src = ui.app->source();
   ui.app->setSource(QUrl());  // tear down the current tree
   ui.app->setSource(src.isValid() ? src : QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
-  qInfo() << "[hot-reload] reloaded" << (src.isValid() ? src.toString() : QStringLiteral("App.qml"));
+  qInfo() << "[hot-reload] reloaded" << (src.isValid() ? src.toString() : QStringLiteral("App.qml"))
+          << "-- restoring screen:" << (currentName.isEmpty() ? QStringLiteral("(none)") : currentName);
+
+  // 3) Only restore a real, non-modal screen. Home needs no action (App.qml lands
+  //    there), and we don't auto-reopen a modal (the startup New File modal is
+  //    legitimately shown when no save/target is active).
+  const bool restore = !currentName.isEmpty()
+                    && currentName != QStringLiteral("home")
+                    && Router::screens.contains(currentName)
+                    && Router::screens.value(currentName) != nullptr
+                    && !Router::screens.value(currentName)->modal;
+  if(!restore)
+    return;
+
+  // 4) App.qml re-seats its startup stack (home + New File modal) on a later event-
+  //    loop tick, so poll until it's seated, then dismiss the modal and navigate back
+  //    (same sequencing as the --screen debug-launch flag). pokemonDetails needs a
+  //    selection, so re-open party mon 0 rather than a bare changeScreen().
+  QTimer* timer = new QTimer(this);
+  int* tries = new int(0);
+  const QString target = currentName;
+  connect(timer, &QTimer::timeout, this, [this, timer, tries, target]() {
+    Bridge* brg = MainWindow::bridge;
+    const bool ready = (brg != nullptr) && Router::stack.size() >= 2;
+    if(!ready && ++(*tries) < 200) // wait up to ~10s (50ms x 200)
+      return;
+    timer->stop();
+    timer->deleteLater();
+    delete tries;
+    if(brg == nullptr)
+      return;
+    brg->router->closeScreen();               // dismiss the startup New File modal
+    if(target == QStringLiteral("pokemonDetails"))
+      debugOpenPartyDetails(0);               // needs a selected mon
+    else
+      brg->router->changeScreen(target);      // back to where we were
+    qInfo() << "[hot-reload] restored screen" << target;
+  });
+  timer->setInterval(50);
+  timer->start();
 #endif
 }
 

@@ -8,6 +8,14 @@ ever touching save data. Built 2026-06-15.
 > were removed, and the scripts/CI no longer auto-assemble GIFs. `scripts/make_gifs.py` (the Pillow
 > assembler) is **kept for manual use** — run it by hand to turn your own captured frames into a GIF.
 
+> **Capturing is not reviewing — you MUST look (2026-07-10, standing default).** On ANY UI / QML /
+> screen / layout change, after capturing you must **open the PNG and scrutinise it yourself** (crop/zoom
+> the changed area): hunt for overlaps (a field over the trainer art), misalignment, uneven spacing,
+> clipping past a card/panel border, and overall polish — then fix what's wrong before calling the work
+> done or telling Twilight it's ready. A glance is not a review; the trainer-card clock overlapped the
+> artwork and shipped precisely because this step was skipped. Enforced in `CLAUDE.md` → Default Workflow
+> step 1; see also `ui-patterns.md`.
+
 The output is **not tracked** (it's regenerated on demand); it lands in `tmp/screenshots/`
 (ignored by `tmp/.gitignore`, which ignores everything in `tmp/` except itself). Regenerate it
 by default after a fast-forward of `main` (see `CLAUDE.md` → Default Workflow), or any time by

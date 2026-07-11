@@ -144,16 +144,20 @@ anything already pushed; every original commit is preserved through every merge.
 **Push on every commit**, early and often — don't leave work only on the local machine. All
 sessions keep the remote current, just like the living notes.
 
-> **Standing default (2026-06-10):** commit/push on `dev` AND the green-gated release to `main`
-> are **fully automatic — done by default without being asked**. This supersedes the older
-> "push only when asked" phrasing; the *only-when-asked* restriction applies just to the
-> genuinely destructive ops (force-push, history rewrite, `reset --hard`, `rebase`, `clean -fd`,
-> long-lived-branch deletion), which remain off-limits without an explicit request. The full
-> default loop lives in `CLAUDE.md` → "Default Workflow — Do These By Default."
+> **Standing default (2026-06-10, amended 2026-07-10):** commit/push on `dev` is **automatic — done by
+> default without being asked**. **Releasing `dev → main` is NOT automatic anymore — it is MANUAL.**
+> Cut a release **only when Twilight explicitly says "ship" / "ship it" / similar** (2026-07-10); until
+> then, keep committing and pushing to `dev` but leave `main` alone, even when everything is green.
+> (Green is required for a ship, but no longer triggers one on its own — this supersedes the earlier
+> "green-gated release is fully automatic" wording.) The *only-when-asked* restriction still also covers
+> the genuinely destructive ops (force-push, history rewrite, `reset --hard`, `rebase`, `clean -fd`,
+> long-lived-branch deletion), which remain off-limits without an explicit request. The full default
+> loop lives in `CLAUDE.md` → "Default Workflow — Do These By Default."
 
 - **`dev`**: `git push origin dev` after each commit (and push `feature/*` branches as you go, to
   back them up).
-- **`main`**: advanced only by a `--no-ff` release merge after a **green** checkpoint ("green" =
+- **`main`**: advanced only by a `--no-ff` release merge, and **only on an explicit "ship it" from
+  Twilight** (releases are manual — see the note above), after a **green** checkpoint ("green" =
   builds + full `ctest` pass, and the remote `tests` CI is green). `git push origin main` then
   triggers `release.yml` (which tags + publishes). Never commit on `main` directly.
 

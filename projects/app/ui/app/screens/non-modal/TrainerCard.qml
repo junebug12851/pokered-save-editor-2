@@ -18,8 +18,10 @@ Page {
   SwipeView {
     id: pageView
     anchors.centerIn: parent
-    width: 500
-    height: 250
+    // Widened + made a touch taller (was 500x250) so the right-hand fields and the
+    // Playtime group no longer crowd or overlap the trainer artwork on the left.
+    width: 600
+    height: 310
     clip: true
     interactive: false
 

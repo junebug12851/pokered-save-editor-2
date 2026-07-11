@@ -109,6 +109,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \brief Background that changes rarely — what the project is and how it got here.
 
 \subpage md_notes_2context_2project <br>
+\subpage md_notes_2context_2collaboration <br>
 \subpage md_notes_2context_2architecture <br>
 \subpage md_notes_2context_2principles <br>
 \subpage md_notes_2context_2origins <br>
@@ -137,6 +138,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \subpage md_notes_2reference_2qt-patterns <br>
 \subpage md_notes_2reference_2ui-patterns <br>
 \subpage md_notes_2reference_2screenshots <br>
+\subpage md_notes_2reference_2dev-harness <br>
 \subpage md_notes_2reference_2gen1-knowledge <br>
 \subpage savestructure <br>
 \subpage md_notes_2reference_2box-recovery-research <br>

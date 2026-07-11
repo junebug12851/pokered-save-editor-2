@@ -439,6 +439,7 @@
         <file>ui/app/fragments/screens/trainer-card/MoneyEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/CoinsEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/StarterEdit.qml</file>
+        <file>ui/app/fragments/screens/trainer-card/PlaytimeGroup.qml</file>
         <file>ui/app/fragments/screens/trainer-card/PlaytimeToggles.qml</file>
         <file>ui/app/fragments/screens/trainer-card/PlaytimeEdit.qml</file>
         <file>ui/app/fragments/screens/trainer-card/DaysEdit.qml</file>
