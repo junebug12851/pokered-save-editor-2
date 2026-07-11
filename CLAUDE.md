@@ -15,6 +15,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/sessions/` | **Session logs**, one file per day grouped in month folders (`YYYY-MM/YYYY-MM-DD.md`) — the day-by-day story of what changed and why. `sessions/README.md` defines the system; `revival-s13-series.md` holds the undated pre-corruption revival narrative |
 | `notes/version.md` | **Changelog** — the plain-English, one-entry-per-commit history (index; months under `notes/version/`). NOT the version-number scheme (that's `reference/versioning.md`) |
 | `notes/context/project.md` | What the project is and its goals |
+| `notes/context/collaboration.md` | **Working with Twilight** — the consolidated standing preferences, working rules & cross-cutting feedback (who she is, content/spelling rules, data/JSON, git & MANUAL releases, tooling, credits, never-change list). The canonical home for what used to live in AI "memory" |
 | `notes/context/architecture.md` | Codebase structure, build system, key patterns |
 | `notes/context/principles.md` | Project philosophy — what the app must/must not do |
 | `notes/context/origins.md` | The 2019–2020 pre-revival story — three rewrites, the JS detour, the library/DB refactor |
@@ -26,6 +27,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems (truncation, hangs, QML chain failures, transcript recovery) |
 | `notes/reference/ui-patterns.md` | **UI/QML conventions** — layouts, borderless combos, ⋮ buttons, editor popups, sliders, drag & drop, View All drawers. Read before UI work |
 | `notes/reference/screenshots.md` | **UI screenshot capture** — the headless `screenshooter` tool + capture scripts that render the live UI to `tmp/screenshots/` as **still PNGs** (offscreen, no save writes). How it's driven + the font/backend gotchas. (No automated GIFs — animated GIFs are added manually, one at a time) |
+| `notes/reference/dev-harness.md` | **Debug automation harness + fast-dev loop** — DEBUG-only launch flags (`--sav`/`--screen`/`--hot`/`--shot`), the `127.0.0.1:8766` live TCP control channel, and QML hot-reload. How to launch straight to the screen under edit with a save loaded and preview edits live |
 | `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language; language switching deferred until a 2nd locale + Options screen exist |
 | `notes/reference/documentation.md` | **Docs** — generating the Doxygen site, the comment house-style, and the doc-pass progress ledger (all merged here) |
 | `notes/reference/git-workflow.md` | **Git standards** — the fairyfox **git-flow** model (`main` = `--no-ff` tagged releases, `dev` integration, `feature/`/`release/`/`hotfix/` branches; PATCH releases direct, MINOR/MAJOR via `release/*`), no history rewriting, commit-message style, hard safety rules. Read before any git op |
@@ -98,6 +100,25 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
    (`cmake --build "projects\build\Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug" --target PokeredSaveEditor`)
    and **launch the app** so it can be tested in-app immediately. (Pure edits to existing QML hot-reload —
    no rebuild; **new** QML files still need adding to `app/app.qrc` + a rebuild.)
+   - **Fast-dev loop for UI work (by default, 2026-07-10).** Use the DEBUG automation harness instead of
+     the rebuild-relaunch cycle: launch **once** straight to the screen under edit with the default save
+     loaded and hot-reload on — `PokeredSaveEditor.exe --hot --sav assets\saves\natural-clean\BaseSAV.sav
+     --screen <name> [--select party:N]` — then edit QML and let it **hot-reload live**; only rebuild +
+     relaunch when C++ / `.qrc` / a **new** `.qml` changes. Drive/inspect the running app over the live
+     TCP channel `127.0.0.1:8766` (`screen`/`sav`/`get`/`set`/`click`/`shot`/`reload`/`list`), and grab
+     screenshots with `--shot`/`shot` (framebuffer grab → works while backgrounded, no focus stealing).
+     All DEBUG-only (release builds don't contain it). Full reference: `notes/reference/dev-harness.md`.
+   - **Manual screenshot review is MANDATORY on ANY UI / QML / screen / layout change — by default,
+     every time (established 2026-07-10, after a missed overlap).** Capture the affected screen(s) with
+     the headless `screenshooter` (`scripts/capture_screenshots.ps1` → `tmp/screenshots/`) and then
+     **actually look at the image and scrutinise it yourself** — crop/zoom into the changed area. Check
+     for **overlaps** (e.g. a field overlapping the trainer art), misalignment, uneven spacing, anything
+     **clipping past a card/panel border**, whether groupings read cleanly, and overall polish. A glance
+     is not a review. Assume "there's a lot to pay attention to" and proactively fix layout problems
+     (overlaps, cramping, clipping) **even when not explicitly asked**. Do not call UI work done, and do
+     not tell Twilight it's ready, until this pass is complete. (The trainer-card clock overlapped the
+     artwork and shipped because this step was skipped — that must not recur.) See
+     `notes/reference/screenshots.md` and `notes/reference/ui-patterns.md`.
 2. **Test.** Run the **affected** test(s) per change for speed (build `build/`, run `build\tst_x.exe`);
    run the **full `ctest`** suite before releasing `dev → main`. Only proceed past a **green** result.
    **On ANY QML/screen change (or a new `.qml` added to `app.qrc`), the QML screen smoke test
@@ -111,11 +132,15 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
 3. **Debug / profile.** If anything **crashes**, rebuild via the **`asan/`** (or debugger) sibling build,
    capture a **real stack trace** (output routed to a log), and diagnose from that — never guess.
    Do **periodic profiling** passes when touching hot paths. Always redirect std+err to a log to read it.
-4. **Commit + push + release `main` the git-flow way — fully automatic (green-gated).** This is an
-   explicit standing request (it overrides the older "push only when asked" wording in
-   `git-workflow.md`). The repo follows **git-flow**: `main` advances only by `--no-ff`
-   tagged-release merges (PATCH straight from `dev`; MINOR/MAJOR via a `release/*` branch). See
-   `notes/reference/git-workflow.md`:
+4. **Commit + push often on `dev`; release `main` ONLY on an explicit "ship it" (manual releases).**
+   Releases are **manual** as of 2026-07-10 (Twilight): commit early/often and `git push origin dev`
+   after each commit **by default**, but **NEVER** cut a release (merge/FF `dev → main`) on your own —
+   even when everything is green. **Wait for Twilight to say "ship", "ship it", or similar**; that word
+   is the trigger. Green is necessary but no longer sufficient. When work is done, finish on `dev`,
+   verify (build/test/CI), and **tell Twilight it's ready to ship — then stop and leave `main` alone.**
+   (This supersedes the earlier "fully automatic green-gated release" default.) When Twilight *does* say
+   ship, release the git-flow way: `main` advances only by `--no-ff` tagged-release merges (PATCH
+   straight from `dev`; MINOR/MAJOR via a `release/*` branch). See `notes/reference/git-workflow.md`:
    - **Changelog rides inside the commit (write it BEFORE committing).** For any substantive change,
      write its plain-English entry at the top of the current month's file in `notes/version/` and stage
      it in the **same commit** as the change — one commit carries both. Inline entries take **no
@@ -130,9 +155,9 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
      CI-only commits don't move the number. See `notes/reference/versioning.md`.
    - Commit early/often on **`dev`** with focused `type: summary` messages, **staging specific files only**
      (never `git add -A`/`.`), and `git push origin dev` after each commit.
-   - When the **full suite is green**, release `dev → main` automatically the git-flow way (a
-     **PATCH** goes direct; a **MINOR/MAJOR** milestone goes through a `release/X.Y.0` branch —
-     see git-workflow.md):
+   - When the **full suite is green AND Twilight has said "ship it"**, release `dev → main` the git-flow
+     way (a **PATCH** goes direct; a **MINOR/MAJOR** milestone goes through a `release/X.Y.0` branch —
+     see git-workflow.md). Without an explicit ship command, do **not** run this even if green:
      `git checkout main && git merge --no-ff dev && git push origin main && git checkout dev`.
      The `--no-ff` merge commit is the release; **do not manually `git tag`** — `release.yml`
      creates the `v<VERSION>` tag and publishes (the recorded CI-owns-tagging divergence). A
@@ -195,6 +220,13 @@ calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, 
 ## Maintaining the Notes — Your Responsibility
 
 **The notes system is a living document. Keep it updated as you work — do not wait to be asked.**
+
+**These `notes/` are THE memory of this project — use them by default: read them at the start of every
+session and write to them regularly as you work.** Any standing instruction, preference, decision, or
+piece of feedback from Twilight goes **into the right notes file** (and, when it's a workflow rule, into
+this `CLAUDE.md`) — that is the single source of truth. **Do NOT stash project knowledge in any
+external/personal "memory" instead of the notes** (established 2026-07-10, Twilight); default to the
+notes, not a side channel. If a fact doesn't fit an existing file, create the right one (see below).
 
 As things happen during a session, update the appropriate file on the spot:
 
