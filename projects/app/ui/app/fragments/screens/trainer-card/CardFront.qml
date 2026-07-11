@@ -98,24 +98,20 @@ Rectangle {
     height: cardFront.fieldH
   }
 
-  // Enabled / Paused toggle pair, sitting just above the playtime clock and
-  // right-aligned to it.
-  PlaytimeToggles {
-    id: playtimeToggles
-
-    anchors.top: starterEdit.bottom
-    anchors.topMargin: 8
-    anchors.right: starterEdit.right
-  }
-
-  PlaytimeEdit {
-    id: playtimeEdit
+  // The "Playtime" grouping box: clock fields + [dice | trash] + Enabled/Paused
+  // toggles, all under one labelled border. Right-aligned so its border lines up
+  // with the action buttons of the fields above it.
+  PlaytimeGroup {
+    id: playtimeGroup
     fieldH: cardFront.fieldH
 
-    anchors.top: playtimeToggles.bottom
-    anchors.topMargin: 5
-    anchors.right: starterEdit.right
-    anchors.rightMargin: 0
+    anchors.top: starterEdit.bottom
+    anchors.topMargin: 12
+    // Line the group's right border up with the Money/Coins [dice | trash] buttons'
+    // right edge: those end at parent.right - 22 (field right = parent.right - 92,
+    // + 6 margin + ~64 button group), so match that inset here.
+    anchors.right: parent.right
+    anchors.rightMargin: 22
   }
 
   Image {

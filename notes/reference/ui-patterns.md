@@ -1045,6 +1045,21 @@ The trainer card adopted the same combo language, and two reusable pieces came o
   second (trash) segment overflowed the card border until the right-hand column was shifted left
   (Player ID `rightMargin` 65 → 92) and the top spacing tightened to fit the extra toggle row — verified
   against the headless trainer-card screenshot, not by eye.
+- **`PlaytimeGroup` — a light titled "grouping box" (2026-07-10 redesign).** The playtime cluster reads
+  better wrapped in one labelled group than as loose rows. `PlaytimeGroup.qml` is a rounded, 1px
+  `rgba(0,0,0,0.22)`-bordered `Rectangle` (title "Playtime" top-left, muted bold) holding: row 1 =
+  `PlaytimeEdit` (now **clock digits only** — the button was pulled out) + the shared `RandomButton`
+  re-anchored beside it (instance `anchors.left: clock.right` overrides the component's default
+  "off parent's right"); row 2 = `PlaytimeToggles` **below** the fields. It sizes to content
+  (`implicitWidth`/`Height` from the clock+button row) and is right-aligned in `CardFront` so its border
+  lines up with the Money/Coins action buttons. Reusable takeaway: to put a `RandomButton` *inside* a
+  layout instead of floating off a field's right edge, just re-anchor it at the instance.
+- **The trainer card was widened 500×250 → 600×310 for this.** The old width let the clock butt up
+  against / overlap the trainer artwork; more width gives the right column + Playtime group clear
+  separation from the art, more height fits the two-row group. **Lesson (the important one): capture and
+  actually scrutinise the screenshot** — the overlap existed in the first action-groups pass and was only
+  caught when Twilight pointed it out. Manual screenshot review (overlaps, alignment, clipping, polish)
+  is a standing default for any card/screen layout change, not a glance.
 
 ### Segmented active segment: round the fill's outer corners (the "Market" flat-edge)
 
