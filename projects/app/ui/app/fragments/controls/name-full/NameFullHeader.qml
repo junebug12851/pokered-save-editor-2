@@ -40,8 +40,22 @@ ToolBar {
     editor.reject();
   }
 
-  height: 132
-  Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
+  // Slim, and a clean surface -- NOT the old washed-out `lighter(accent, 1.5)` blue
+  // stripe. That colour was ugly on its own and, at 132px plus a 119px footer, the two
+  // bars were eating half the screen: the keyboard is the point of this page, and it
+  // was being squeezed into what was left. The bar is now a light surface with a hairline
+  // divider, and it earns its height back for the deck.
+  height: 88
+  Material.background: brg.settings.textColorLight
+
+  // The hairline that separates the bar from the body (replacing the colour block).
+  Rectangle {
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    height: 1
+    color: brg.settings.dividerColor
+  }
 
   onStrChanged: editor.str = top.str
 
@@ -53,13 +67,13 @@ ToolBar {
 
     flat: true
     font.capitalization: Font.Capitalize
-    font.pixelSize: 12
+    font.pixelSize: 11
     Material.elevation: 0
 
-    topPadding: 9
-    bottomPadding: 9
-    leftPadding: 5
-    rightPadding: 5
+    topPadding: 4
+    bottomPadding: 4
+    leftPadding: 6
+    rightPadding: 6
 
     background: Rectangle {
       radius: 0
@@ -81,7 +95,7 @@ ToolBar {
 
   ColumnLayout {
     anchors.centerIn: parent
-    spacing: 6
+    spacing: 3
 
     // ---- "Simulated" control group: a plain text label, then two toggle
     //      buttons and the tileset combo. ----
@@ -93,7 +107,7 @@ ToolBar {
       Label {
         text: qsTr("Simulated")
         font.bold: true
-        font.pixelSize: 13
+        font.pixelSize: 11
         color: brg.settings.textColorDark
         Layout.alignment: Qt.AlignVCenter
       }
@@ -101,7 +115,7 @@ ToolBar {
       // Bold vertical pipe between the label and the controls (Twilight likes it).
       ToolSeparator {
         Layout.fillHeight: false
-        Layout.preferredHeight: 24
+        Layout.preferredHeight: 18
         Layout.alignment: Qt.AlignVCenter
       }
 

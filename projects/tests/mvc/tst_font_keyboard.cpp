@@ -46,7 +46,7 @@ private slots:
   void identityContract_data();
   void identityContract();
   void pageForModifiers();
-  void capsLockAffectsLettersOnly();
+  void capsLockLocksTheShiftPage();
   void pageOrderCoversEveryPage();
   void categoriesAndRenderModes();
   void chopLastToken_data();
@@ -236,46 +236,55 @@ void TstFontKeyboard::pageForModifiers()
   }
 }
 
-/// Caps Lock is a real Caps Lock, not "latch the Shift page". Letters only; the digit
-/// row keeps typing digits (so you can type PIKA2 without unlocking); Ctrl/Alt ignore
-/// it entirely; and Shift inverts it. Every one of those is a rule a user already
-/// knows from their own keyboard, so breaking one would be a genuine surprise.
-void TstFontKeyboard::capsLockAffectsLettersOnly()
+/// Caps Lock LOCKS THE SHIFT PAGE -- it is a page selector, not a per-key letter-case
+/// rule. That means every state the deck can be in is exactly one of the 8 pages, so
+/// the page strip is always telling the truth. Shift inverts caps; Ctrl/Alt ignore it.
+///
+/// (The real-keyboard behaviour -- caps on letters only, digits still digits -- was
+/// built first and rejected: it produces a layer that ISN'T one of the pages, and the
+/// deck then looks like it's lying about where you are.)
+void TstFontKeyboard::capsLockLocksTheShiftPage()
 {
   FontKeyboard kb;
 
-  // Caps on: letters go uppercase...
-  QCOMPARE(FontKeyboard::pageForKey("A", false, false, false, true), 1);
+  // Caps on = the Shift page, WHOLE. Letters uppercase...
+  QCOMPARE(FontKeyboard::effectivePage(false, false, false, true), 1);
   QCOMPARE(kb.keyDataFor("A", false, false, false, true)["code"].toString(), QString("A"));
   QCOMPARE(kb.keyDataFor("K", false, false, false, true)["code"].toString(), QString("K"));
 
-  // ...but the number row still types NUMBERS. This is the whole reason caps isn't
-  // just a latched Shift: "PIKA2" has to be typeable without unlocking.
-  QCOMPARE(FontKeyboard::pageForKey("2", false, false, false, true), 0);
-  QCOMPARE(kb.keyDataFor("2", false, false, false, true)["code"].toString(), QString("2"));
+  // ...and the number row comes with it (this is the deliberate trade: one page at a
+  // time, and the deck SHOWS the row change rather than hiding it).
+  QCOMPARE(kb.keyDataFor("1", false, false, false, true)["code"].toString(), QString("!"));
 
-  // Shift INVERTS caps -- caps + Shift is lowercase, as on any keyboard.
-  QCOMPARE(FontKeyboard::pageForKey("A", true, false, false, true), 0);
+  // Shift INVERTS caps: caps + Shift is the base page, as caps + Shift is lowercase on
+  // any keyboard.
+  QCOMPARE(FontKeyboard::effectivePage(true, false, false, true), 0);
   QCOMPARE(kb.keyDataFor("A", true, false, false, true)["code"].toString(), QString("a"));
+  QCOMPARE(kb.keyDataFor("1", true, false, false, true)["code"].toString(), QString("1"));
 
-  // ...and Shift alone (no caps) is uppercase, with the shifted number row.
+  // Shift alone (no caps) is the same page as caps alone.
+  QCOMPARE(FontKeyboard::effectivePage(true, false, false, false), 1);
   QCOMPARE(kb.keyDataFor("A", true, false, false, false)["code"].toString(), QString("A"));
   QCOMPARE(kb.keyDataFor("1", true, false, false, false)["code"].toString(), QString("!"));
 
-  // Ctrl/Alt ignore caps completely: Ctrl+B is bold B with the caps light on or off,
-  // and Alt+S is 's either way.
-  QCOMPARE(FontKeyboard::pageForKey("B", false, true, false, true), 2);
+  // Ctrl/Alt IGNORE caps: Ctrl+B is bold B with the caps light on or off. Without this,
+  // typing a name in caps and then reaching for Ctrl would land on Tiles I instead of
+  // Symbols -- which nobody would expect.
+  QCOMPARE(FontKeyboard::effectivePage(false, true, false, true), 2);
   QCOMPARE(kb.keyDataFor("B", false, true, false, true)["code"].toString(), QString("<B>"));
+  QCOMPARE(FontKeyboard::effectivePage(false, false, true, true), 4);
   QCOMPARE(kb.keyDataFor("S", false, false, true, true)["code"].toString(), QString("<'s>"));
   QCOMPARE(kb.keyDataFor("S", false, false, true, false)["code"].toString(), QString("<'s>"));
 
   // Caps off + nothing held = the base layer.
+  QCOMPARE(FontKeyboard::effectivePage(false, false, false, false), 0);
   QCOMPARE(kb.keyDataFor("A", false, false, false, false)["code"].toString(), QString("a"));
 
-  QVERIFY(FontKeyboard::isLetterKey("A"));
-  QVERIFY(FontKeyboard::isLetterKey("z"));
-  QVERIFY(!FontKeyboard::isLetterKey("7"));
-  QVERIFY(!FontKeyboard::isLetterKey(""));
+  // Whatever the caps state, the deck is always on ONE of the 8 real pages.
+  for(int i = 0; i < 16; i++) {
+    const int p = FontKeyboard::effectivePage(i & 1, i & 2, i & 4, i & 8);
+    QVERIFY(p >= 0 && p < FontKeyboard::pageTotal);
+  }
 }
 
 /// The strip's reading order is by category (cheapest chord first), NOT the mask

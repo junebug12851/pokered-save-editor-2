@@ -16,10 +16,15 @@
 //     latched page is the only way in when the OS eats the chord (Shift+Alt and
 //     Ctrl+Shift switch keyboard layout on multi-language Windows; Ctrl+Alt is AltGr).
 //
-// CAPS LOCK is a real Caps Lock, not a latched Shift: letters only, so the number row
-// keeps typing digits ("PIKA2" without unlocking); ignored under Ctrl/Alt (Ctrl+B is
-// still bold B); inverted by Shift. The rules live in C++ (FontKeyboard::pageForKey)
-// where they're pinned by tst_font_keyboard, so the deck just asks.
+// CAPS LOCK locks the Shift PAGE (Shift inverts it; Ctrl/Alt ignore it), so the deck
+// is always showing exactly one page and the strip can always name it. The rules live
+// in C++ (FontKeyboard::effectivePage), pinned by tst_font_keyboard.
+//
+// The look: a DARK chassis with light caps, like a real keyboard. It isn't decoration
+// -- light-grey caps on a light-grey chassis on a light-grey pane had no figure/ground
+// at all, and the category colours washed out to nothing (you could only see them by
+// hovering). Dark body, coloured caps: the colours now read at a glance, which is the
+// entire point of colouring them.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -33,10 +38,12 @@ Item {
   readonly property bool ctrlOn:  heldCtrl  || latchCtrl
   readonly property bool altOn:   heldAlt   || latchAlt
 
-  // The CHORD's page. Note this is not necessarily what every cap shows -- with Caps
-  // Lock on, the letters read a different page than the number row, exactly as they
-  // do on a real keyboard. This is what the page strip highlights.
-  readonly property int page: brg.keyboard.pageFor(shiftOn, ctrlOn, altOn)
+  // The page on show. Caps Lock LOCKS THE SHIFT PAGE (Shift inverts it, Ctrl/Alt
+  // ignore it), so this is always exactly one of the 8 pages -- every key on the deck
+  // reads it, and the page strip can always say where you are. That is precisely why
+  // caps isn't the real-keyboard letters-only rule: that produced a hybrid layer the
+  // strip could not name.
+  readonly property int page: brg.keyboard.effectivePage(shiftOn, ctrlOn, altOn, capsOn)
 
   property bool heldShift: false
   property bool heldCtrl: false
@@ -207,13 +214,13 @@ Item {
   // instead of spilling over its neighbours. Get these constants wrong and the chassis
   // quietly overflows the column and paints on top of the legend and the detail pane.
   //
-  // Widest row is now the HOME row: Caps(1.75u) + 9 caps + Enter(2u) = 12.75u, plus 11
-  // gaps at 0.07u = 13.52u, plus the chassis' 0.55u padding = 14.07u.
-  // Tallest: 5 rows + 4 gaps + the same padding = 5.83u. Round both up a hair.
-  readonly property real u: Math.max(18, Math.min(56,
-                              Math.min(width  / 14.1,
-                                       height / 6.0)))
-  readonly property real gap: Math.max(2, Math.round(u * 0.07))
+  // Every row is a standard ANSI 15u wide (see the rows below), plus up to 13 gaps at
+  // 0.06u = 15.78u, plus the chassis' 0.4u padding = 16.2u.
+  // Tallest: 5 rows + 4 gaps + the same padding = 5.65u. Round both up a hair.
+  readonly property real u: Math.max(16, Math.min(52,
+                              Math.min(width  / 16.3,
+                                       height / 5.9)))
+  readonly property real gap: Math.max(2, Math.round(u * 0.06))
   readonly property real tileScale: Math.max(2, (u - 20) / 8)
 
   // Clicking the bare chassis takes focus back from the name field.
@@ -226,23 +233,38 @@ Item {
     id: chassis
     anchors.centerIn: parent
 
-    width: deckRows.width + deck.u * 0.55
-    height: deckRows.height + deck.u * 0.55
+    width: deckRows.width + deck.u * 0.4
+    height: deckRows.height + deck.u * 0.4
     radius: 12
 
-    color: Qt.lighter(brg.settings.dividerColor, 1.44)
+    // The keyboard's BODY: a dark slate derived from the app accent, so the light,
+    // category-tinted caps sit on it the way real keycaps sit in a real keyboard.
+    color: Qt.darker(brg.settings.accentColor, 1.55)
     border.width: 1
-    border.color: Qt.rgba(0, 0, 0, 0.10)
+    border.color: Qt.darker(brg.settings.accentColor, 1.9)
 
     Column {
       id: deckRows
       anchors.centerIn: parent
       spacing: deck.gap
 
-      // ---- Number row + Backspace ----
+      // ================= THE ROWS ==================================================
+      // Every row is a standard ANSI 15u. The keys this deck DOESN'T use (Tab, ` - =,
+      // [ ] \, ; ', , . /, Win/Menu) are drawn as DEAD caps: muted, unclickable, inert.
+      //
+      // They're pure silhouette, and they earn their keep. Without them the deck was a
+      // floating block of 36 caps -- roomier, and somehow worse to look at, because the
+      // shape everyone recognises as "a keyboard" comes from those ragged edges as much
+      // as from the letters. The cost is that the real keys get ~10% smaller; the deck
+      // scales, so a wider window gives it straight back.
+      // =============================================================================
+
+      // ---- Number row: ` 1..0 - = ⌫ ----
       Row {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: deck.gap
+
+        StructKey { label: "`"; unit: deck.u; units: 1; dead: true }
 
         Repeater {
           model: ["1","2","3","4","5","6","7","8","9","0"]
@@ -265,6 +287,9 @@ Item {
           }
         }
 
+        StructKey { label: "-"; unit: deck.u; units: 1; dead: true }
+        StructKey { label: "="; unit: deck.u; units: 1; dead: true }
+
         StructKey {
           id: backspaceKey
           label: "⌫"
@@ -274,10 +299,12 @@ Item {
         }
       }
 
-      // ---- QWERTY row ----
+      // ---- QWERTY row: Tab Q..P [ ] \ ----
       Row {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: deck.gap
+
+        StructKey { label: "Tab"; unit: deck.u; units: 1.5; dead: true }
 
         Repeater {
           model: ["Q","W","E","R","T","Y","U","I","O","P"]
@@ -299,9 +326,13 @@ Item {
             Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
+
+        StructKey { label: "["; unit: deck.u; units: 1; dead: true }
+        StructKey { label: "]"; unit: deck.u; units: 1; dead: true }
+        StructKey { label: "\\"; unit: deck.u; units: 1.5; dead: true }
       }
 
-      // ---- Caps + home row + Enter ----
+      // ---- Caps + home row + ; ' + Enter ----
       Row {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: deck.gap
@@ -335,16 +366,19 @@ Item {
           }
         }
 
+        StructKey { label: ";"; unit: deck.u; units: 1; dead: true }
+        StructKey { label: "'"; unit: deck.u; units: 1; dead: true }
+
         StructKey {
           id: enterKey
           label: "Enter"
           unit: deck.u
-          units: 2
+          units: 2.25
           onFired: deck.accept();
         }
       }
 
-      // ---- Bottom row, wrapped in the two Shift caps ----
+      // ---- Bottom row: Shift Z..M , . / Shift ----
       Row {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: deck.gap
@@ -352,7 +386,7 @@ Item {
         StructKey {
           label: "Shift"
           unit: deck.u
-          units: 1.9
+          units: 2.25
           active: deck.shiftOn
           onFired: deck.latchShift = !deck.latchShift;
         }
@@ -378,18 +412,24 @@ Item {
           }
         }
 
+        StructKey { label: ","; unit: deck.u; units: 1; dead: true }
+        StructKey { label: "."; unit: deck.u; units: 1; dead: true }
+        StructKey { label: "/"; unit: deck.u; units: 1; dead: true }
+
         StructKey {
           label: "Shift"
           unit: deck.u
-          units: 1.9
+          units: 2.75
           active: deck.shiftOn
           onFired: deck.latchShift = !deck.latchShift;
         }
       }
 
-      // ---- Modifiers + the spacebar ----
+      // ---- Modifier row + the spacebar ----
       // The spacebar carries the Space TILE. It is the one tile not on a letter or a
-      // number, because this is where every human already expects it.
+      // number, because this is where every human already expects it -- and it says
+      // "Space" across it, because the Space tile renders as (correctly) nothing, and a
+      // blank cap read as a dead key.
       Row {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: deck.gap
@@ -397,15 +437,17 @@ Item {
         StructKey {
           label: "Ctrl"
           unit: deck.u
-          units: 1.7
+          units: 1.25
           active: deck.ctrlOn
           onFired: deck.latchCtrl = !deck.latchCtrl;
         }
 
+        StructKey { label: ""; unit: deck.u; units: 1.25; dead: true }   // Win
+
         StructKey {
           label: "Alt"
           unit: deck.u
-          units: 1.7
+          units: 1.25
           active: deck.altOn
           onFired: deck.latchAlt = !deck.latchAlt;
         }
@@ -413,7 +455,7 @@ Item {
         KeyCap {
           id: spaceCap
 
-          width: deck.u * 4.9
+          width: deck.u * 6.25
           height: deck.u
           tileScale: deck.tileScale
           curFrame: deck.curFrame
@@ -427,15 +469,18 @@ Item {
         StructKey {
           label: "Alt"
           unit: deck.u
-          units: 1.7
+          units: 1.25
           active: deck.altOn
           onFired: deck.latchAlt = !deck.latchAlt;
         }
 
+        StructKey { label: ""; unit: deck.u; units: 1.25; dead: true }   // Win
+        StructKey { label: ""; unit: deck.u; units: 1.25; dead: true }   // Menu
+
         StructKey {
           label: "Ctrl"
           unit: deck.u
-          units: 1.7
+          units: 1.25
           active: deck.ctrlOn
           onFired: deck.latchCtrl = !deck.latchCtrl;
         }

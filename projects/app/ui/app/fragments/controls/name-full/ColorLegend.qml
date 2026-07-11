@@ -18,7 +18,7 @@ import "../../general"
 Item {
   id: top
 
-  implicitWidth: 132
+  implicitWidth: 118
 
   Column {
     anchors.left: parent.left

@@ -882,13 +882,14 @@ tile→key map: [`../plans/full-keyboard-redesign.md`](../plans/full-keyboard-re
   button) *latches*, because a mouse can't hold a chord and click a key at once — and because a latched
   page is the only way in when the OS eats the chord (Windows takes Shift+Alt / Ctrl+Shift on
   multi-language setups; Ctrl+Alt is AltGr). Held and latched are OR'd, so nothing can disagree.
-- **Caps Lock is a REAL Caps Lock, not a latched Shift** (`FontKeyboard::pageForKey`, pinned by
-  `tst_font_keyboard`): letters only (the number row keeps typing digits, so `PIKA2` needs no
-  unlocking — this is exactly why it can't be "latch the Shift page", which drags the punctuation row
-  along), ignored under Ctrl/Alt, and inverted by Shift. So the deck can show **two pages at once**
-  (uppercase letters over a digit row) — which is what a keyboard does. **Qt can't read the caps light
-  portably**, so the deck re-syncs from `event.text` (the OS's own answer, caps + shift already folded
-  in) on the first letter typed.
+- **Caps Lock LOCKS THE SHIFT PAGE** (`FontKeyboard::effectivePage`, pinned by `tst_font_keyboard`):
+  Shift inverts it, Ctrl/Alt ignore it. So **every state the deck can be in is exactly one of the 8
+  pages** — which is what lets the page strip always be right.
+  *Rejected first:* the real-keyboard rule (caps affects the 26 letters only, number row keeps typing
+  digits). It's what a physical keyboard does, but it produces a layer that **isn't one of the pages**,
+  the strip can't name it, and it reads as a bug ("why are there two different page 2s?"). **A model the
+  UI can't display is a bad model, however correct it is.** The cost of the fix is that the punctuation
+  row rides along with caps (tap caps off to type a digit — rare, and the deck shows the change).
 - **The base layer is LOWERCASE.** `a–z` unshifted, `A–Z` on Shift — like every keyboard. Uppercase-
   unshifted was tried (Gen 1 names are all-caps) and **rejected**: that's an argument for a good Caps
   Lock, not for inverting the alphabet.
@@ -910,6 +911,32 @@ tile→key map: [`../plans/full-keyboard-redesign.md`](../plans/full-keyboard-re
 - **Never name a component root `id: top` when it has a Repeater** — see `qt-patterns.md`. It cost real
   time here: the bindings read `undefined`, the item gets a NaN width, and it renders as *nothing* with
   no warning at all.
+
+### The deck's LOOK — the rules the first cut broke (2026-07-11)
+
+Twilight's verdict on the first pass was *"looks really bad but i cant place my finger on why"*. Every
+cause was nameable, and each one is a rule worth keeping:
+
+- **Figure/ground.** Light caps on a light chassis on a light pane = mush. The chassis is a **dark
+  slate** (`Qt.darker(accentColor, 1.55)`) and the caps are light. Structural keys (Caps/Shift/Ctrl/Alt/
+  Enter/⌫) are **dark with light text**, so the eye separates *keys that type* from *keys that do*; a
+  held/latched modifier goes **bright**.
+- **If a colour only appears on hover, it isn't doing anything.** The category tint was a 6% wash behind
+  a 35% border — invisible until you hovered, which defeats the entire point of a colour legend. Caps
+  now carry a real wash of their category colour (`Qt.lighter(cat, 1.82)`) with a solid border.
+- **The key legend has to be readable**, or "just type it" is undiscoverable. It scales with the key
+  (`height * 0.30`), full opacity, in a dark shade of the cap's own colour. (The glyph is nudged
+  −2/+2 off centre so the legend isn't sitting on it.)
+- **Draw the whole silhouette, even the keys you don't use.** 36 caps floating in a block reads as
+  *worse* than a real layout, even though it's roomier. The deck draws the full ANSI outline — `` ` ``
+  `-` `=` Tab `[` `]` `\` `;` `'` `,` `.` `/` Win Menu — as **dead keys** (`StructKey.dead`): muted,
+  inert, no hover, no cursor, no clicks. Pure silhouette, and it's what makes the thing read as a
+  keyboard.
+- **A blank key looks broken.** The spacebar was rendering the Space *tile*, which is (correctly)
+  nothing — so it read as disabled. It says **"Space"** across it.
+- **Chrome takes room from the thing the page is for.** The old header (132px) + footer (119px) of
+  washed-out `lighter(accent, 1.5)` blue ate half a 480px window and squeezed the keyboard into the
+  rest. Both are now a clean light surface with a hairline divider, at 88px / ~104px.
 
 ## Full keyboard + quick-edit patterns (s13v–s13z8) — HISTORICAL
 

@@ -272,43 +272,39 @@ QString FontKeyboard::pageBadge(int page)
   return QString(kPageBadges[page]);
 }
 
-bool FontKeyboard::isLetterKey(const QString& key)
+int FontKeyboard::effectivePage(bool shift, bool ctrl, bool alt, bool caps)
 {
-  if(key.size() != 1)
-    return false;
-
-  const QChar c = key.at(0).toUpper();
-  return c >= 'A' && c <= 'Z';
-}
-
-int FontKeyboard::pageForKey(const QString& key,
-                             bool shift, bool ctrl, bool alt, bool caps)
-{
-  // Caps Lock does exactly what it does on a real keyboard, and NOTHING else:
+  // CAPS LOCK LOCKS THE SHIFT PAGE. It is a page selector like every other modifier
+  // here -- not a per-key letter-case rule (2026-07-11, Twilight).
   //
-  //  * It affects the 26 LETTER keys only. The number row keeps typing digits, so you
-  //    can type "PIKA2" without unlocking -- which is the whole point of having it.
-  //  * It is ignored the moment Ctrl or Alt is involved: Ctrl+B is bold B whether or
-  //    not the caps light is on, exactly as Ctrl+B stays Ctrl+B everywhere else.
-  //  * Shift INVERTS it (shift XOR caps), so caps-lock + Shift gives you lowercase --
-  //    again, what every keyboard on earth does.
+  // The first cut gave caps its real-keyboard behaviour: letters only, leaving the
+  // number row typing digits. That is what a physical keyboard does, but it produces a
+  // layer that is NOT one of the 8 pages -- uppercase letters over an unshifted number
+  // row -- so the page strip could not say where you were, and it read as a bug
+  // ("why are there two different page 2s?"). A model the UI cannot display is a bad
+  // model however correct it is. So caps now moves the WHOLE page, and every state the
+  // deck can be in is exactly one page.
   //
-  // This is why caps can't just be "latch the Shift page": that would drag the number
-  // row along with it, and typing a digit would mean unlocking first.
+  // Two rules keep it sane:
+  //   * Shift INVERTS it (shift XOR caps) -- caps + Shift is the base page, just as
+  //     caps + Shift is lowercase on a real keyboard.
+  //   * Ctrl/Alt IGNORE it -- Ctrl+B is bold B with the caps light on or off. Without
+  //     this, typing a name in caps and then reaching for Ctrl would land you on Tiles
+  //     I instead of Symbols, which nobody would expect or want.
+  //
+  // The cost is that the punctuation row rides along with caps, so typing a digit
+  // means tapping caps off. That is a rare need (digits aren't even in-game-legal in a
+  // name), and the deck SHOWS the number row change, so nothing is hidden.
   if(ctrl || alt)
     return pageFor(shift, ctrl, alt);
 
-  const bool shifted = isLetterKey(key)
-      ? (shift != caps)   // XOR
-      : shift;
-
-  return pageFor(shifted, false, false);
+  return pageFor(shift != caps, false, false);   // XOR
 }
 
 QVariantMap FontKeyboard::keyDataFor(const QString& key,
                                      bool shift, bool ctrl, bool alt, bool caps) const
 {
-  return keyData(pageForKey(key, shift, ctrl, alt, caps), key);
+  return keyData(effectivePage(shift, ctrl, alt, caps), key);
 }
 
 int FontKeyboard::indFor(int page, const QString& key)

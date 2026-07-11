@@ -2,9 +2,14 @@
 //
 // A cap carries ONE game tile plus the physical key it's bound to, printed as a
 // superscript legend in the corner (so you can either click the cap or just type
-// that key). It is tinted by the tile's category colour -- a hairline border plus a
-// faint wash of the same colour in the face -- so the deck reads as coloured regions
-// without turning into a paint chart.
+// that key).
+//
+// THE CATEGORY COLOUR MUST READ AT A GLANCE. The first cut tinted the face 6% and
+// bordered it at 35%, which on a light chassis meant you could only really see a key's
+// category by hovering it -- i.e. the colour did nothing, which defeats the point of
+// having a colour legend at all. The cap face is now a proper wash of its category
+// colour with a solid border, sitting on a DARK chassis: the deck reads as coloured
+// regions the moment you look at it.
 //
 // It draws a cap two ways, because the tile sheet cannot render everything (see
 // FontKeyboard::Render):
@@ -34,14 +39,22 @@ Item {
   readonly property bool isEmpty: !info || info.empty === true
   readonly property color cat: top.catColor(info ? info.category : 0)
 
-  // A single tile => draw the glyph. Anything else => draw the bare code.
-  readonly property bool isGlyph: !isEmpty && info.render === 1
+  // The Space tile renders as... nothing, because it's a space. Drawn as a glyph the
+  // spacebar looked like a dead, disabled key. It gets its name written on it instead
+  // -- it is ALWAYS Space, on every page, and should look it.
+  readonly property bool isSpace: !isEmpty && top.info.code === " "
+
+  // A single tile => draw the glyph. Anything else => draw its name.
+  readonly property bool isGlyph: !isEmpty && info.render === 1 && !isSpace
 
   // "<player>" -> "player". The brackets cost 2 of the ~6 characters that fit on a
   // cap, and every code has them, so they carry no information here.
-  readonly property string capLabel: isEmpty
-                                     ? ""
-                                     : top.info.code.replace(/^</, "").replace(/>$/, "")
+  readonly property string capLabel: {
+    if(top.isEmpty)  return "";
+    if(top.isSpace)  return qsTr("Space");
+
+    return top.info.code.replace(/^</, "").replace(/>$/, "");
+  }
 
   signal activated(string code)
   signal entered()
@@ -93,48 +106,53 @@ Item {
     anchors.margins: 2
     radius: 6
 
-    // An empty key still gets a cap -- a hole in the deck would read as broken.
-    // It's just flat, borderless and inert.
+    // A real wash of the category colour, not a hint of one -- this is what makes the
+    // colour legible without hovering. An EMPTY key stays a dark, inert well in the
+    // chassis: it reads as "no key here", not as a broken white one.
     color: {
       if(top.isEmpty)
-        return Qt.rgba(0, 0, 0, 0.03);
+        return Qt.darker(brg.settings.accentColor, 1.75);
       if(mouse.pressed)
-        return Qt.tint("#ffffff", Qt.rgba(top.cat.r, top.cat.g, top.cat.b, 0.26));
+        return Qt.lighter(top.cat, 1.35);
       if(mouse.containsMouse)
-        return Qt.tint("#ffffff", Qt.rgba(top.cat.r, top.cat.g, top.cat.b, 0.14));
+        return Qt.lighter(top.cat, 1.58);
 
-      return Qt.tint("#ffffff", Qt.rgba(top.cat.r, top.cat.g, top.cat.b, 0.06));
+      return Qt.lighter(top.cat, 1.82);
     }
 
     border.width: 1
     border.color: top.isEmpty
-                  ? Qt.rgba(0, 0, 0, 0.06)
+                  ? Qt.darker(brg.settings.accentColor, 1.9)
                   : (mouse.containsMouse
-                     ? top.cat
-                     : Qt.rgba(top.cat.r, top.cat.g, top.cat.b, 0.35))
+                     ? Qt.darker(top.cat, 1.25)
+                     : Qt.lighter(top.cat, 1.25))
 
     Behavior on color { ColorAnimation { duration: 90 } }
     Behavior on border.color { ColorAnimation { duration: 90 } }
 
-    // The cap physically depresses on a press -- 1px, the way a real key does.
-    y: (mouse.pressed ? 3 : 2)
+    // The cap physically depresses on a press -- the way a real key does.
+    y: (mouse.pressed ? 3 : 1)
     Behavior on y { NumberAnimation { duration: 60 } }
 
-    // A soft lift while hovered. Not a Material elevation (that rounds/insets the
-    // whole control); just a shadow-ish underlay so the cap reads as raised.
+    // The cap's shadow on the dark chassis, so it reads as a raised keycap rather than
+    // a painted rectangle. Deeper while hovered.
     Rectangle {
       z: -1
       anchors.fill: parent
-      anchors.topMargin: 2
+      anchors.topMargin: mouse.containsMouse && !mouse.pressed ? 3 : 2
       radius: parent.radius
-      color: Qt.rgba(0, 0, 0, 0.10)
-      visible: mouse.containsMouse && !mouse.pressed && !top.isEmpty
+      color: Qt.rgba(0, 0, 0, 0.22)
+      visible: !top.isEmpty && !mouse.pressed
     }
 
     // ---- The glyph ----
 
     TileGlyph {
       anchors.centerIn: parent
+      // Nudged off dead-centre so the corner legend isn't sitting on top of the glyph.
+      anchors.horizontalCenterOffset: -2
+      anchors.verticalCenterOffset: 2
+
       visible: top.isGlyph
       ind: top.isGlyph ? top.info.ind : 0
       curFrame: top.curFrame
@@ -145,14 +163,17 @@ Item {
       anchors.fill: parent
       anchors.leftMargin: 2
       anchors.rightMargin: 2
-      anchors.topMargin: 8      // clear of the key legend in the corner
+      // The spacebar has no corner legend to dodge, so its name can sit dead centre.
+      anchors.topMargin: top.isSpace ? 1 : 8
       anchors.bottomMargin: 1
 
       visible: !top.isEmpty && !top.isGlyph
       text: top.capLabel
-      color: top.cat
+      color: Qt.darker(top.cat, 1.35)
 
-      font.pixelSize: Math.max(7, Math.round(top.height * 0.225))
+      font.pixelSize: top.isSpace
+                      ? Math.max(9, Math.round(top.height * 0.28))
+                      : Math.max(7, Math.round(top.height * 0.225))
       font.bold: true
       lineHeight: 0.92
       wrapMode: Text.WrapAnywhere
@@ -163,18 +184,28 @@ Item {
     }
 
     // ---- The legend: which physical key this is ----
+    // Not on the spacebar: its key IS the spacebar, and "Space" is already written
+    // across the middle of it.
+    //
+    // This is the thing that makes "just type it" discoverable, and in the first cut you
+    // could barely SEE it: 9px of mid-grey at 75% on a near-white cap. It now scales
+    // with the key, sits at full opacity, and is drawn in a dark shade of the cap's own
+    // category colour -- legible, and still clearly a legend rather than the glyph.
 
     Text {
       anchors.top: parent.top
       anchors.right: parent.right
-      anchors.topMargin: 3
-      anchors.rightMargin: 4
+      anchors.topMargin: 2
+      anchors.rightMargin: 3
 
+      visible: !top.isSpace
       text: top.info ? top.info.key : ""
-      font.pixelSize: 9
+      font.pixelSize: Math.max(9, Math.round(top.height * 0.30))
       font.bold: true
-      color: brg.settings.textColorMid
-      opacity: top.isEmpty ? 0.35 : 0.75
+      color: top.isEmpty
+             ? brg.settings.textColorLight
+             : Qt.darker(top.cat, 1.85)
+      opacity: top.isEmpty ? 0.35 : 1.0
     }
 
     MouseArea {

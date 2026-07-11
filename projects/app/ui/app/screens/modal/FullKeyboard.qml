@@ -163,11 +163,13 @@ Page {
         spacing: 0
 
         // ---- Left rail: what the key colours mean ----
+        // Kept tight: every pixel here and in the detail pane comes straight off the
+        // deck's key size (the deck is width-limited at the app's default window).
         ColorLegend {
-          Layout.preferredWidth: 132
+          Layout.preferredWidth: 118
           Layout.fillHeight: true
           Layout.topMargin: 6
-          Layout.leftMargin: 12
+          Layout.leftMargin: 10
         }
 
         // ---- Middle: the deck ----
@@ -189,7 +191,7 @@ Page {
         DetailView {
           id: detailView
 
-          Layout.preferredWidth: 212
+          Layout.preferredWidth: 190
           Layout.fillHeight: true
         }
       }
@@ -201,9 +203,24 @@ Page {
   Component.onCompleted: deck.forceActiveFocus();
 
   footer: ToolBar {
-    // Room for the Name/Example toggle row above the preview.
-    height: ((top.hasBox) ? nameDisplay.height + 25 + (8 * 2) : 75) + 44
-    Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
+    // Slimmer, and no longer a 119px slab of pale blue -- between this and the header
+    // the two stripes were eating half the screen while the keyboard, the actual point
+    // of the page, got squeezed into what was left. Same clean light surface as the
+    // header.
+    //
+    // NOTE the 78: `nameDisplay.height` is the rendered NAME only -- its length
+    // feedback ("Using 3 out of 10 bytes") hangs BELOW that height, so sizing purely to
+    // nameDisplay.height clips the feedback clean off the bottom of the window.
+    height: exampleControls.height + (top.hasBox ? nameDisplay.height + 36 : 78)
+    Material.background: brg.settings.textColorLight
+
+    Rectangle {
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: parent.top
+      height: 1
+      color: brg.settings.dividerColor
+    }
 
     // Toggle the preview between just the Name and an Example sentence, with a
     // next-button to re-roll the example. Anchored (not in a layout) so the
@@ -212,7 +229,7 @@ Page {
     RowLayout {
       id: exampleControls
       anchors.top: parent.top
-      anchors.topMargin: 6
+      anchors.topMargin: 5
       anchors.horizontalCenter: parent.horizontalCenter
       spacing: 4
 
@@ -241,7 +258,7 @@ Page {
       id: nameDisplay
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.top: exampleControls.bottom
-      anchors.topMargin: 8
+      anchors.topMargin: 6
 
       placeholder: top.placeholder
       str: top.str
