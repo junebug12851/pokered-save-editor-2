@@ -1,8 +1,8 @@
 // MoneyEdit.qml -- the money field on the trainer card.
 //
 // A 6-digit DefTextEdit bound to player.basics.money (clamped 0-999,999) with a
-// hover RandomMenu (randomizeMoney). Writes are cheap, so it persists on every
-// valid keystroke. Mirrors CoinsEdit.
+// RandomButton (randomizeMoney). Writes are cheap, so it persists on every valid
+// keystroke. Mirrors CoinsEdit.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -10,13 +10,11 @@ import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
-import "../../controls/menu"
 
 MouseArea {
   hoverEnabled: true
   width: child.implicitWidth
   height: child.implicitHeight
-  onContainsMouseChanged: menuBtn.visible = containsMouse
 
   DefTextEdit {
     id: child
@@ -54,9 +52,12 @@ MouseArea {
       function onMoneyChanged() { child.text = brg.file.data.dataExpanded.player.basics.money.toString(); }
     }
 
-    RandomMenu {
-      id: menuBtn
+    RandomButton {
+      tip: qsTr("Randomize the money.")
       onRandomize: brg.file.data.dataExpanded.player.basics.randomizeMoney();
+      showClear: true
+      clearTip: qsTr("Clear the money to 0.")
+      onClear: brg.file.data.dataExpanded.player.basics.money = 0;
     }
   }
 }

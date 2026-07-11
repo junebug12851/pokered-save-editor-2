@@ -39,6 +39,8 @@
 
 extern void bootDatabase();
 extern void bootQmlLinkage();
+extern void applyDebugLaunch(QApplication* app); // DEBUG-only launch flags (no-op in release)
+extern void startDebugServer();                  // DEBUG-only live control channel (no-op in release)
 
 // There is only ever one main window.
 MainWindow* mainWindow = nullptr;
@@ -112,7 +114,18 @@ static void preBootAttributes()
   // Qt 6 uses QRandomGenerator internally; no manual seeding required.
 
   mainWindow = new MainWindow();
+
+  // DEBUG: --minimized starts the window minimized (background) so automation can
+  // open + drive + screenshot the app without it popping up / stealing focus. The
+  // QQuickWidget framebuffer grab still works while minimized, so --shot is unaffected.
+#ifdef QT_DEBUG
+  if(app->arguments().contains(QStringLiteral("--minimized")))
+    mainWindow->showMinimized();
+  else
+    mainWindow->show();
+#else
   mainWindow->show();
+#endif
 
   return app;
 }
@@ -138,6 +151,12 @@ extern QApplication* boot(int argc, char* argv[])
   qDebug() << "[boot] createApp() start";
   auto* app = createApp(argc, argv);
   qDebug() << "[boot] createApp() done (window visible) —" << t.elapsed() << "ms";
+
+  // DEBUG-only: honour --sav/--screen/--select launch flags (no-op in release).
+  applyDebugLaunch(app);
+
+  // DEBUG-only: start the live control channel on 127.0.0.1:8766 (no-op in release).
+  startDebugServer();
 
   return app;
 }

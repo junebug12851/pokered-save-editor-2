@@ -27,6 +27,40 @@
 #include <QElapsedTimer>
 #include <QDebug>
 #include <QMessageBox>
+#include <QImage>
+#include <QVariant>
+#include <QQuickItem>
+#include <QApplication>
+
+#ifdef QT_DEBUG
+#include <QQmlAbstractUrlInterceptor>
+#include <QFileSystemWatcher>
+#include <QDirIterator>
+#include <QFileInfo>
+#include <QDir>
+#include <QTimer>
+#include <QUrl>
+namespace {
+// Redirects qrc:/...qml|js URLs to the matching file on the source tree so the running
+// app loads QML from disk (enabling live reload). Falls back to qrc when the source
+// file isn't present. DEBUG-only.
+class QmlDiskInterceptor : public QQmlAbstractUrlInterceptor {
+public:
+  explicit QmlDiskInterceptor(const QString& root) : m_root(root) {}
+  QUrl intercept(const QUrl& url, DataType) override {
+    if(url.scheme() != QLatin1String("qrc")) return url;
+    const QString path = url.path(); // e.g. "/ui/app/App.qml"
+    if(!path.endsWith(QLatin1String(".qml")) && !path.endsWith(QLatin1String(".js")))
+      return url;
+    const QString disk = m_root + path;
+    if(QFileInfo::exists(disk)) return QUrl::fromLocalFile(disk);
+    return url;
+  }
+private:
+  QString m_root;
+};
+} // namespace
+#endif
 #include "mainwindow.h"
 
 #include "../../src/bridge/bridge.h"
@@ -90,6 +124,13 @@ MainWindow::MainWindow(QWidget *parent) :
     }
   });
 
+#ifdef QT_DEBUG
+  // DEBUG (--hot): load QML from the source tree + watch it, so edits reload live.
+  // Must be installed BEFORE setSource so App.qml itself loads from disk.
+  if(QApplication::arguments().contains(QStringLiteral("--hot")))
+    setupHotReload();
+#endif
+
   // Now load the QML page, has to be done after setup and injection
   ui.app->setSource(QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
   qDebug() << "[MainWindow] setSource —" << t.elapsed() << "ms";
@@ -125,6 +166,81 @@ QQmlEngine* MainWindow::engine = nullptr;
 MainWindow *MainWindow::getInstance()
 {
   return MainWindow::instance;
+}
+
+// DEBUG helper: render the live QML view (the QQuickWidget's framebuffer) to an image
+// file. Works regardless of window focus/occlusion, so an automation harness can grab
+// the current screen without raising or activating the window. See --shot in
+// src/boot/debuglaunch.cpp.
+bool MainWindow::saveShot(const QString& path)
+{
+  const QImage img = ui.app->grabFramebuffer();
+  if(img.isNull())
+    return false;
+  return img.save(path);
+}
+
+bool MainWindow::debugOpenPartyDetails(int index)
+{
+  QObject* root = ui.app->rootObject();
+  if(root == nullptr)
+    return false;
+  QObject* appWindow = root->findChild<QObject*>(QStringLiteral("appWindow"));
+  if(appWindow == nullptr)
+    return false;
+  QVariant ret;
+  const bool ok = QMetaObject::invokeMethod(
+      appWindow, "debugOpenPartyDetails",
+      Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, index));
+  return ok && ret.toBool();
+}
+
+QObject* MainWindow::qmlRootObject()
+{
+  return ui.app->rootObject();
+}
+
+void MainWindow::setupHotReload()
+{
+#ifdef QT_DEBUG
+#ifdef PSE_QML_SOURCE_DIR
+  const QString root = QStringLiteral(PSE_QML_SOURCE_DIR);
+#else
+  const QString root;
+#endif
+  if(root.isEmpty() || !QDir(root + QStringLiteral("/ui")).exists()) {
+    qWarning() << "[hot-reload] QML source dir not found:" << root << "-- staying on qrc.";
+    return;
+  }
+  ui.app->engine()->addUrlInterceptor(new QmlDiskInterceptor(root));
+
+  m_qmlWatcher = new QFileSystemWatcher(this);
+  QStringList files;
+  QDirIterator it(root + QStringLiteral("/ui"), QStringList{ QStringLiteral("*.qml"), QStringLiteral("*.js") },
+                  QDir::Files, QDirIterator::Subdirectories);
+  while(it.hasNext()) files << it.next();
+  if(!files.isEmpty()) m_qmlWatcher->addPaths(files);
+  connect(m_qmlWatcher, &QFileSystemWatcher::fileChanged, this, [this](const QString& p) {
+    // Editors often rewrite/rename on save, which drops the watch -- re-arm it.
+    if(!m_qmlWatcher->files().contains(p) && QFileInfo::exists(p))
+      m_qmlWatcher->addPath(p);
+    if(m_reloadPending) return;              // debounce a burst of change events
+    m_reloadPending = true;
+    QTimer::singleShot(160, this, [this]{ m_reloadPending = false; reloadQml(); });
+  });
+  qInfo() << "[hot-reload] watching" << files.size() << "QML files under" << (root + QStringLiteral("/ui"));
+#endif
+}
+
+void MainWindow::reloadQml()
+{
+#ifdef QT_DEBUG
+  if(engine) engine->clearComponentCache();
+  const QUrl src = ui.app->source();
+  ui.app->setSource(QUrl());  // tear down the current tree
+  ui.app->setSource(src.isValid() ? src : QUrl(QStringLiteral("qrc:/ui/app/App.qml")));
+  qInfo() << "[hot-reload] reloaded" << (src.isValid() ? src.toString() : QStringLiteral("App.qml"));
+#endif
 }
 
 void MainWindow::reUpdateRecentFiles(QList<QString> files)

@@ -1,8 +1,8 @@
 // StarterEdit.qml -- the player's-starter field on the trainer card.
 //
-// A flat ComboBox over brg.starterModel bound to player.basics.playerStarter, with
-// a hover RandomMenu (randomizeStarter). This records which starter the player
-// chose (per the tooltip, likely cosmetic in-game).
+// A flat ComboBox over brg.starterModel bound to player.basics.playerStarter, with a
+// RandomButton (randomizeStarter). This records which starter the player chose (per
+// the tooltip, likely cosmetic in-game).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -10,13 +10,11 @@ import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
-import "../../controls/menu"
 
 MouseArea {
   hoverEnabled: true
   width: child.implicitWidth
   height: child.implicitHeight
-  onContainsMouseChanged: menuBtn.visible = containsMouse
 
   ComboBox {
     id: child
@@ -56,14 +54,9 @@ MouseArea {
       text: qsTr("Starter")
     }
 
-    RandomMenu {
-      id: menuBtn
-      anchors.top: parent.top
-      anchors.left: parent.right
-      anchors.bottom: parent.bottom
-      anchors.topMargin: 0
-
+    RandomButton {
+      tip: qsTr("Randomize the starter.")
       onRandomize: brg.file.data.dataExpanded.player.basics.randomizeStarter();
-     }
+    }
   }
 }

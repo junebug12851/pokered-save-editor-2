@@ -32,6 +32,7 @@
 class RecentFilesModel;
 class QAbstractItemModel;
 class Bridge;
+class QFileSystemWatcher;
 
 /**
  * @brief The top-level window -- a QMainWindow hosting the QML UI in a QQuickWidget.
@@ -61,6 +62,23 @@ public:
   static Bridge* bridge;            ///< The `brg` aggregate (created here, injected into QML).
   static QQmlEngine* engine;        ///< The QML engine behind the hosted QQuickWidget.
 
+  /// DEBUG: render the live QML view to an image file (focus/occlusion-independent).
+  /// Backs the --shot debug launch flag. @return false on failure.
+  bool saveShot(const QString& path);
+
+  /// DEBUG: open the details editor for party mon @p index (drives the QML
+  /// AppWindow.debugOpenPartyDetails). Backs --screen pokemonDetails. @return false
+  /// if the item/mon can't be resolved.
+  bool debugOpenPartyDetails(int index);
+
+  /// DEBUG: the root QML object of the hosted view (for the debug control server's
+  /// object lookups). @return null before QML is loaded.
+  QObject* qmlRootObject();
+
+  /// DEBUG (--hot): clear the QML cache and reload the view from the source files on
+  /// disk (live QML refresh). C++ state (the Bridge/save) survives; QML re-instantiates.
+  void reloadQml();
+
   FileManagement* file = nullptr;   ///< @see file property.
 
   // MAX_RECENT_FILES
@@ -86,6 +104,9 @@ private:
   void setupShortcuts(); ///< Wire the global keyboard shortcuts.
   void setupProviders(); ///< Register the QML image providers (font/tileset).
   void injectIntoQML();  ///< Create the Bridge and expose it to QML as `brg`.
+  void setupHotReload(); ///< DEBUG (--hot): install the disk URL interceptor + watch QML files.
+  QFileSystemWatcher* m_qmlWatcher = nullptr; ///< DEBUG: watches the source QML tree.
+  bool m_reloadPending = false;               ///< DEBUG: debounce flag for reloads.
   void ssConnect();      ///< Connect FileManagement signals to the window.
 
   static MainWindow* instance; ///< Backing singleton pointer.

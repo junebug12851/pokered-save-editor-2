@@ -29,7 +29,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wno-ignored-attributes)
 endif()
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick QuickControls2 QuickWidgets Svg Qml Charts Test LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick QuickControls2 QuickWidgets Svg Qml Charts Network Test LinguistTools)
 qt_standard_project_setup()
 
 # --- Version header generation ----------------------------------------------

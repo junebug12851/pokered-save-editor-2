@@ -1,9 +1,10 @@
-// FramesEdit.qml -- the "frames" field of the playtime clock (+ the clock's menu).
+// FramesEdit.qml -- the "frames" field of the playtime clock.
 //
 // A 2-digit DefTextEdit bound to playtime.frames (clamped 0-59), dimmed when the
-// clock is maxed. The last PlaytimeEdit sub-field; it also hosts the playtime
-// overflow menu (exposed via menuBtnVisible): Enabled (clockMaxed toggle), Paused
-// (area.general.countPlaytime), Randomize, Clear, Close.
+// clock is maxed. The last PlaytimeEdit sub-field. (The playtime overflow menu that
+// used to live here was replaced by the always-visible [dice | trash] RandomButton
+// on the playtime row and the [Enabled | Paused] toggle group above it -- see
+// PlaytimeEdit.qml / PlaytimeToggles.qml.)
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -11,12 +12,9 @@ import QtQuick.Controls.Material
 
 import "../../general"
 import "../../header"
-import "../../controls/menu"
 
 DefTextEdit {
   id: framesEdit
-
-  property alias menuBtnVisible: menuBtn.visible
 
   opacity: (brg.file.data.dataExpanded.world.other.playtime.clockMaxed)
            ? 0.50
@@ -50,52 +48,4 @@ DefTextEdit {
   }
 
   Component.onCompleted: framesEdit.text = brg.file.data.dataExpanded.world.other.playtime.frames.toString();
-
-  IconButtonSquare {
-    id: menuBtn
-    visible: false
-
-    anchors.topMargin: -12
-
-    anchors.top: parent.top
-    anchors.left: parent.right
-
-    icon.width: 7
-    icon.source: "qrc:/assets/icons/fontawesome/ellipsis-v.svg"
-
-    onClicked: playtimeMenu.open();
-
-    Menu {
-      id: playtimeMenu
-
-      MenuItem {
-        text: "Enabled";
-        checkable: true
-        checked: !brg.file.data.dataExpanded.world.other.playtime.clockMaxed
-        onTriggered: brg.file.data.dataExpanded.world.other.playtime.clockMaxed = !brg.file.data.dataExpanded.world.other.playtime.clockMaxed;
-      }
-
-      MenuItem {
-        text: "Paused";
-        checkable: true
-        checked: !brg.file.data.dataExpanded.area.general.countPlaytime
-        onTriggered: brg.file.data.dataExpanded.area.general.countPlaytime = !brg.file.data.dataExpanded.area.general.countPlaytime;
-      }
-
-      MenuItem {
-        text: "Randomize";
-        onTriggered: brg.file.data.dataExpanded.world.other.randomizePlaytime();
-      }
-
-      MenuItem {
-        text: "Clear";
-        onTriggered: brg.file.data.dataExpanded.world.other.clearPlaytime();
-      }
-
-      MenuItem {
-        text: qsTr("Close")
-        onTriggered: playtimeMenu.close();
-      }
-    }
-  }
 }
