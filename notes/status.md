@@ -5,7 +5,7 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.16.0-alpha` — on `dev`, **not yet shipped** (last shipped: `0.15.2-alpha`, `main` @
+**Version:** `0.16.1-alpha` — on `dev`, **not yet shipped** (last shipped: `0.15.2-alpha`, `main` @
 `ac79c0a`). Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (74/74).
 
@@ -43,12 +43,17 @@ step separately (the original bug, caught by Twilight and fixed on 2026-07-11) i
 thin air. `giveFor()` / `refundFor()` are the single pricing path shared by the preview, the "+"
 gating, and `checkout()` — keep it that way.
 
-The **full keyboard** was rebuilt on 2026-07-11 into an actual **ASDF keyboard deck** (0.16.0-alpha):
-36 alphanumeric keys × 8 pages (255 tiles ÷ 36 keys needs 8 pages; Shift/Ctrl/Alt give exactly 8
-chords), each cap carrying one game tile with the key that types it printed in its corner. The
-tile→key map is C++ (`mvc/fontkeyboard.*` → `brg.keyboard`) and **pinned by `tst_font_keyboard`** —
-every tile appears exactly once across the pages + the spacebar. The old chip list, filter sidebar,
-tilemap view and `FontSearchModel` are **deleted**. Design + the full map:
+The **full keyboard** was rebuilt on 2026-07-11 into an actual **ASDF keyboard deck**: 36 alphanumeric
+keys × 8 pages (255 tiles ÷ 36 keys needs 8 pages; Shift/Ctrl/Alt give exactly 8 chords), each cap
+carrying one game tile with the key that types it printed in its corner. The tile→key map is C++
+(`mvc/fontkeyboard.*` → `brg.keyboard`) and **pinned by `tst_font_keyboard`** — every tile appears
+exactly once across the pages + the spacebar. **The base layer is lowercase, Shift is uppercase, and
+Caps Lock is a real Caps Lock** (letters only, ignored under Ctrl/Alt, inverted by Shift). Physical
+modifiers are **momentary**; only *clicking* a modifier cap or a page button latches. The name field
+has two explicit modes — **keyboard mode** (field read-only, Backspace eats a whole tile) and **edit
+mode** (ordinary text field; the whole keyboard fades out and goes dead; check applies, cross
+discards). The old chip list, filter sidebar, tilemap view and `FontSearchModel` are **deleted**.
+Design + the full map:
 [`plans/full-keyboard-redesign.md`](plans/full-keyboard-redesign.md); conventions:
 [`reference/ui-patterns.md`](reference/ui-patterns.md) → "The full keyboard's DECK".
 
@@ -59,10 +64,13 @@ verification pass; remaining per-control test depth. See [`plans/next-steps.md`]
 
 - **The new full keyboard — awaiting Twilight's in-app review (2026-07-11).** Built + screenshot-
   reviewed on every page; `ctest` green. Worth checking live, because they're the things a still PNG
-  can't show: **typing** on the real keyboard (and the caps flashing with it), **holding**
-  Shift/Ctrl/Alt to flip pages vs. **clicking** the modifier caps to latch them, the tiles
-  **animating** with the tileset, token-aware **Backspace**, the **shake** when a key won't fit, and
-  clicking into the name box (the key legends should dim, and Ctrl+C/V should behave normally).
+  can't show: **typing** on the real keyboard (and the caps flashing with it); **holding**
+  Shift/Ctrl/Alt (momentary — the page must drop back on release) vs. **clicking** the modifier caps
+  (latched); **Caps Lock** (letters go uppercase, the number row must stay numbers — and if your OS
+  caps light was already on when the screen opened, the deck should correct itself on the first letter);
+  the tiles **animating** with the tileset; token-aware **Backspace**; the **shake** when a key won't
+  fit; and **edit mode** (pen → the keyboard fades out and goes dead, check applies, cross discards,
+  Backspace is character-wise in there).
   ⚠️ Known environment caveat: on a Windows box with **two keyboard layouts installed**, the OS eats
   Shift+Alt / Ctrl+Shift (switch layout) and Ctrl+Alt (AltGr) — those pages are still reachable by
   clicking the modifier caps or the page strip, which is exactly why they latch.

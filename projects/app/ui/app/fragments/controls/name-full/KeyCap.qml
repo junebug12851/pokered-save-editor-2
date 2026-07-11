@@ -29,10 +29,6 @@ Item {
   // The shared animation frame (one timer on the deck drives every cap).
   property int curFrame: 0
 
-  // Set while the name field has focus: the deck isn't listening to the keyboard,
-  // so the key legends are dimmed to SHOW that -- the mode is never hidden.
-  property bool legendsDim: false
-
   property real tileScale: 3
 
   readonly property bool isEmpty: !info || info.empty === true
@@ -66,10 +62,17 @@ Item {
     return brg.settings.dividerColor;
   }
 
-  // Fire the key: click, or the physical key being pressed (the deck calls this).
+  // The cap's press animation on its own. A PHYSICAL key press resolves its tile
+  // against the model (the deck does that) and only flashes the cap, so typing and
+  // clicking stay visibly the same act without two sources of truth for the code.
+  function flash() {
+    pressAnim.restart();
+  }
+
+  // A click on the cap itself.
   function press() {
     if(top.isEmpty) return;
-    pressAnim.restart();
+    top.flash();
     top.activated(top.info.code);
   }
 
@@ -171,9 +174,7 @@ Item {
       font.pixelSize: 9
       font.bold: true
       color: brg.settings.textColorMid
-      opacity: top.legendsDim ? 0.25 : (top.isEmpty ? 0.35 : 0.75)
-
-      Behavior on opacity { NumberAnimation { duration: 120 } }
+      opacity: top.isEmpty ? 0.35 : 0.75
     }
 
     MouseArea {

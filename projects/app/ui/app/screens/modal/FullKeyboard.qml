@@ -12,6 +12,14 @@
 // there is nothing left to filter), the page strip + deck take the middle, and the
 // detail split shows whatever key you're hovering on the right.
 //
+// TWO MODES, and the screen never leaves you guessing which one you're in:
+//   KEYBOARD MODE -- the deck is live and the name field is a read-only display of
+//   what it's building. Backspace removes a whole TILE.
+//   EDIT MODE -- the pen button turns the field into an ordinary text field (caret,
+//   selection, Ctrl+C/V/Z, character-by-character Backspace) and the keyboard FADES
+//   OUT and goes dead, because it has no say in what you type. Check applies the edit,
+//   cross discards it; the header says which mode you're in in words.
+//
 // The `str` property is the single source of truth, fanned out to header, deck and
 // preview on change. The header carries the editable str; the footer previews the
 // name -- either bare or inside a random example sentence (toggleExample /
@@ -91,14 +99,6 @@ Page {
     nameDisplay.str = str;
   }
 
-  // Esc while the NAME FIELD has focus hands the keys back to the deck (rather than
-  // closing the screen out from under someone who was only editing text). Esc on the
-  // deck itself closes -- the deck handles that one.
-  Keys.onEscapePressed: (event) => {
-    deck.forceActiveFocus();
-    event.accepted = true;
-  }
-
   // Header toolbar
   header: NameFullHeader {
     id: header
@@ -112,6 +112,15 @@ Page {
 
     str: top.str
     onStrChanged: top.str = str;
+
+    // Entering edit mode drops the hover detail: the deck is about to go dead, and a
+    // pane still describing the key the cursor happens to be parked on would be
+    // describing something you can no longer press.
+    onEditStarted: detailView.info = null;
+
+    // Leaving it hands the keys straight back to the deck, so you can carry on typing
+    // without having to click anything to "re-arm" it.
+    onEditEnded: deck.forceActiveFocus();
   }
 
   Pane {
@@ -119,8 +128,20 @@ Page {
     padding: 0
 
     ColumnLayout {
+      id: body
+
       anchors.fill: parent
       spacing: 0
+
+      // ALL of this -- strip, legend, deck, detail -- is "the keyboard". In edit mode
+      // it fades out and goes dead as one thing. A keyboard that stayed bright and
+      // clickable while it has no say in what you're typing would be lying about who's
+      // listening; disabling it without fading it would just look broken.
+      readonly property bool kbOn: !header.editMode
+
+      enabled: kbOn
+      opacity: kbOn ? 1.0 : 0.25
+      Behavior on opacity { NumberAnimation { duration: 160 } }
 
       // ---- The pages, across the FULL width ----
       // Eight named buttons don't fit a narrow middle column at the app's default
@@ -176,8 +197,7 @@ Page {
   }
 
   // The deck, not the name field, gets the keys on open -- so you can walk in and
-  // start typing. Clicking into the field takes them back (and dims the key legends
-  // to show it).
+  // start typing immediately. The field only takes them in edit mode, deliberately.
   Component.onCompleted: deck.forceActiveFocus();
 
   footer: ToolBar {

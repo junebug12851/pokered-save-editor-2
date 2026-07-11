@@ -18,7 +18,17 @@ RowLayout {
   // Forwarded so callers that use NameEdit as just a field (NameFullEdit) can
   // still set the inner field's inset.
   property alias topInset: txtField.topInset
+  // Read-only display (the full keyboard's "keyboard mode" -- the deck does the
+  // typing, so the field must not offer a caret it won't honour). Defaults to false,
+  // so every other caller is unchanged.
+  property alias readOnly: txtField.readOnly
   property bool isPersonName: false
+
+  /// Hand the caret to the field (the full keyboard's edit mode does this).
+  function focusField() {
+    txtField.forceActiveFocus();
+    txtField.cursorPosition = txtField.text.length;
+  }
 
   property bool disableRandomize: false
   property bool disableAcceptBtn: false
@@ -38,6 +48,9 @@ RowLayout {
 
     hoverEnabled: true
     selectByMouse: true
+    // A read-only field shouldn't take focus on a stray click either -- in the full
+    // keyboard that would quietly steal the keys from the deck.
+    activeFocusOnPress: !readOnly
     selectedTextColor: Qt.lighter(selectedColor, 2)
     selectionColor: selectedColor
     color: brg.settings.textColorDark

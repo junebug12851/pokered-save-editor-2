@@ -53,25 +53,30 @@ const char* const kKeys[FontKeyboard::keyTotal] = {
 // The human reading order lives in kPageOrder.
 // ---------------------------------------------------------------------------
 
-// (no modifier) -- LETTERS. Pure identity: the alphabet is where the alphabet is,
-// and the digits are on the digits. Nothing to learn.
+// (no modifier) -- LETTERS. The base layer of a real keyboard: press a key, get the
+// LOWERCASE letter; press a digit, get the digit. Pure identity, nothing to learn.
+//
+// (This was uppercase-unshifted at first, on the reasoning that Gen 1 names are all
+// caps. Twilight rejected it, and she's right: it's the one place the deck would have
+// contradicted every keyboard the user has ever touched. Caps Lock is how you type a
+// name in caps -- see pageForKey().)
 const int kPageLetters[FontKeyboard::keyTotal] = {
   247, 248, 249, 250, 251, 252, 253, 254, 255, 246,   // 1 2 3 4 5 6 7 8 9 0
-  144, 150, 132, 145, 147, 152, 148, 136, 142, 143,   // Q W E R T Y U I O P
-  128, 146, 131, 133, 134, 135, 137, 138, 139,        // A S D F G H J K L
-  153, 151, 130, 149, 129, 141, 140,                  // Z X C V B N M
-};
-
-// Shift -- LOWERCASE + the Normal symbols. Letters are identity again
-// (Shift+A really is "a"). The number row keeps the real keyboard's shifted
-// symbols wherever the game HAS that glyph: Shift+1 = !, Shift+8 = x (multiply,
-// i.e. "*"), Shift+9/0 = ( ). Pages 0+1 together are the entire in-game-legal
-// character set -- everything you can type on the real Game Boy's name screen.
-const int kPageLower[FontKeyboard::keyTotal] = {
-  231, 230, 232, 244, 227, 239, 245, 241, 154, 155,   // ! ? . , - male female x ( )
   176, 182, 164, 177, 179, 184, 180, 168, 174, 175,   // q w e r t y u i o p
   160, 178, 163, 165, 166, 167, 169, 170, 171,        // a s d f g h j k l
   185, 183, 162, 181, 161, 173, 172,                  // z x c v b n m
+};
+
+// Shift -- UPPERCASE + the Normal symbols. Letters are identity again (Shift+a really
+// is "A"). The number row keeps the real keyboard's shifted symbols wherever the game
+// HAS that glyph: Shift+1 = !, Shift+8 = x (multiply, i.e. "*"), Shift+9/0 = ( ).
+// Pages 0+1 together are the entire in-game-legal character set -- everything you can
+// type on the real Game Boy's name screen.
+const int kPageCaps[FontKeyboard::keyTotal] = {
+  231, 230, 232, 244, 227, 239, 245, 241, 154, 155,   // ! ? . , - male female x ( )
+  144, 150, 132, 145, 147, 152, 148, 136, 142, 143,   // Q W E R T Y U I O P
+  128, 146, 131, 133, 134, 135, 137, 138, 139,        // A S D F G H J K L
+  153, 151, 130, 149, 129, 141, 140,                  // Z X C V B N M
 };
 
 // Ctrl -- SYMBOLS. The 13 bold letters sit on their own letters, so
@@ -139,7 +144,7 @@ const int kPageControls[FontKeyboard::keyTotal] = {
 // page that disagrees with the keys you're holding.
 const int* const kPages[FontKeyboard::pageTotal] = {
   kPageLetters,   // 0 = ---              (nothing held)
-  kPageLower,     // 1 = Shift
+  kPageCaps,      // 1 = Shift
   kPageSymbols,   // 2 = Ctrl
   kPageTiles1,    // 3 = Shift+Ctrl
   kPageCodes,     // 4 = Alt
@@ -154,7 +159,7 @@ constexpr int kSpaceInd = 127;
 
 // Indexed by mask, like kPages.
 const char* const kPageNames[FontKeyboard::pageTotal] = {
-  "Letters", "Lowercase", "Symbols", "Tiles I",
+  "Letters", "Uppercase", "Symbols", "Tiles I",
   "Codes", "Tiles II", "Tiles III", "Controls",
 };
 
@@ -265,6 +270,45 @@ QString FontKeyboard::pageBadge(int page)
     return QString();
 
   return QString(kPageBadges[page]);
+}
+
+bool FontKeyboard::isLetterKey(const QString& key)
+{
+  if(key.size() != 1)
+    return false;
+
+  const QChar c = key.at(0).toUpper();
+  return c >= 'A' && c <= 'Z';
+}
+
+int FontKeyboard::pageForKey(const QString& key,
+                             bool shift, bool ctrl, bool alt, bool caps)
+{
+  // Caps Lock does exactly what it does on a real keyboard, and NOTHING else:
+  //
+  //  * It affects the 26 LETTER keys only. The number row keeps typing digits, so you
+  //    can type "PIKA2" without unlocking -- which is the whole point of having it.
+  //  * It is ignored the moment Ctrl or Alt is involved: Ctrl+B is bold B whether or
+  //    not the caps light is on, exactly as Ctrl+B stays Ctrl+B everywhere else.
+  //  * Shift INVERTS it (shift XOR caps), so caps-lock + Shift gives you lowercase --
+  //    again, what every keyboard on earth does.
+  //
+  // This is why caps can't just be "latch the Shift page": that would drag the number
+  // row along with it, and typing a digit would mean unlocking first.
+  if(ctrl || alt)
+    return pageFor(shift, ctrl, alt);
+
+  const bool shifted = isLetterKey(key)
+      ? (shift != caps)   // XOR
+      : shift;
+
+  return pageFor(shifted, false, false);
+}
+
+QVariantMap FontKeyboard::keyDataFor(const QString& key,
+                                     bool shift, bool ctrl, bool alt, bool caps) const
+{
+  return keyData(pageForKey(key, shift, ctrl, alt, caps), key);
 }
 
 int FontKeyboard::indFor(int page, const QString& key)

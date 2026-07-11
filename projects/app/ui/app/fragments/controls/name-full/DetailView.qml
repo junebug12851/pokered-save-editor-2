@@ -193,12 +193,16 @@ Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
       visible: !top.has
-      text: qsTr("Each key holds one game character.\n\nClick it — or type the key " +
-                 "printed in its corner.\n\nShift / Ctrl / Alt switch pages.")
+      // THREE lines, single-spaced, and no more: the pane is ~175px tall in the app's
+      // default window and a fourth line elides to a trailing "..." that reads as a
+      // bug. (Blank lines between them pushed two lines off the bottom.)
+      text: qsTr("Each key holds one game character.\n" +
+                 "Click it, or type the key in its corner.\n" +
+                 "Shift / Ctrl / Alt switch pages.")
       font.pixelSize: 11
       color: brg.settings.textColorMid
       wrapMode: Text.WordWrap
-      lineHeight: 1.2
+      lineHeight: 1.35
       elide: Text.ElideRight
       verticalAlignment: Text.AlignTop
     }

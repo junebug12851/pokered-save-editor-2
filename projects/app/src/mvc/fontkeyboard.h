@@ -109,6 +109,22 @@ public:
   /// Which page a modifier combination selects. The whole point of 8 pages / 8 combos.
   Q_INVOKABLE static int pageFor(bool shift, bool ctrl, bool alt);
 
+  /// Is @p key one of the 26 letter keys? (Caps Lock affects only those.)
+  Q_INVOKABLE static bool isLetterKey(const QString& key);
+
+  /// The page THIS key reads, once Caps Lock is taken into account.
+  ///
+  /// Caps is not "latch the Shift page" -- it behaves like a real Caps Lock: letters
+  /// only (digits keep typing digits), ignored under Ctrl/Alt, and inverted by Shift.
+  /// So the deck can show two different pages at once (uppercase letters + a digit
+  /// row), exactly as a keyboard does. @see the note in the .cpp.
+  Q_INVOKABLE static int pageForKey(const QString& key,
+                                    bool shift, bool ctrl, bool alt, bool caps);
+
+  /// keyData() for the page this key actually reads. What the deck binds to.
+  Q_INVOKABLE QVariantMap keyDataFor(const QString& key,
+                                     bool shift, bool ctrl, bool alt, bool caps) const;
+
   /// The modifier badge for a page, e.g. "" / "Shift" / "Ctrl+Alt".
   Q_INVOKABLE static QString pageBadge(int page);
 

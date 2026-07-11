@@ -90,15 +90,20 @@ Deck rows: **A** = number row `1 2 3 4 5 6 7 8 9 0`, **B** = `Q W E R T Y U I O 
 
 | Key | Tile | | Key | Tile |
 |---|---|---|---|---|
-| 1–0 | `1 2 3 4 5 6 7 8 9 0` (Single-Char) | | Q–P | `Q W E R T Y U I O P` |
-| A–L | `A S D F G H J K L` | | Z–M | `Z X C V B N M` |
+| 1–0 | `1 2 3 4 5 6 7 8 9 0` (Single-Char) | | Q–P | `q w e r t y u i o p` |
+| A–L | `a s d f g h j k l` | | Z–M | `z x c v b n m` |
 | **Space** | ` ` (Normal) | | | |
 
-Pure identity. 36/36 used.
+Pure identity: the base layer of a real keyboard — press a letter key, get the **lowercase** letter.
+36/36 used.
 
-### Page 2 — Lowercase (Shift)
+> **Corrected 2026-07-11 (Twilight).** The first cut had uppercase here, reasoning that Gen 1 names are
+> all-caps. That was wrong: it's the one place the deck would have contradicted every keyboard its user
+> has ever touched. All-caps is what **Caps Lock** is for (§5).
 
-Letters: `q w e r t y u i o p / a s d f g h j k l / z x c v b n m` — identity, exactly like a real
+### Page 2 — Uppercase (Shift)
+
+Letters: `Q W E R T Y U I O P / A S D F G H J K L / Z X C V B N M` — identity, exactly like a real
 keyboard. Number row = the 10 Normal symbols, matching the real Shift-row where the game has the
 glyph:
 
@@ -240,28 +245,49 @@ The deck applies them as **borders + a faint face wash**, so they stay legible w
 
 ## 5. Interaction
 
-- **Click** a key → its code is inserted at the name field's caret.
+- **Click** a key → its code is appended to the name.
 - **Type** on the real keyboard → same thing, and the on-screen cap flashes its pressed state.
-- **Hold** Shift / Ctrl / Alt → the deck flips to that page live (release → back to page 1).
-  **Click** a modifier cap or a page button → the page **latches** (mouse/touch users never have to
-  hold anything).
+- **Hold** Shift / Ctrl / Alt → the deck flips to that page live, and **drops straight back when you
+  let go**. Physical modifiers are **momentary — nothing latches**, exactly like the shift layer on the
+  keyboard under your hands.
+- **Click** a modifier cap or a page button → the page **latches**. A mouse can't hold a chord and
+  click a key at the same time; and a latched page is the only way in when the OS eats the chord.
 - **⌫ Backspace is token-aware** — it deletes a whole `<code>` (e.g. all of `<player>`), never one
-  character out of the middle of one. Same for the on-screen `⌫` cap.
+  character out of the middle of one. (In *edit mode*, below, Backspace is an ordinary character
+  backspace, as it should be.)
 - **⏎ Enter** commits and closes; **Esc** closes.
 - **Space** inserts the Space tile.
 
-### Ctrl+C / Ctrl+V — resolved: the box is click-to-edit (decided 2026-07-11)
+### Caps Lock (added 2026-07-11 — it's a real one)
 
-Page 3 is the Ctrl page, so `Ctrl+C` is bold C and `Ctrl+V` is bold V — they can't also be
-copy/paste. Resolution: **the name box stays a real editable text field.**
+Caps Lock is **not** "latch the Shift page". It behaves the way it does on every keyboard:
 
-- **The deck holds keyboard focus by default**, so typing anywhere drives the keyboard (and the caps
-  flash). This is the normal state.
-- **Click into the name box** and it behaves like any text field — `Ctrl+C` / `Ctrl+V` / `Ctrl+Z`,
-  selection, arrow keys, the lot. While it's focused the deck's key capture is suspended (its caps
-  grey out their legends slightly so the state is *visible*, not hidden).
-- **Esc**, or clicking any key on the deck, hands focus back to the deck. The page buttons and the
-  on-screen modifier caps keep working in both states, so no page is ever unreachable.
+- **Letters only.** The number row keeps typing digits, so `PIKA2` needs no unlocking. *(This is the
+  whole reason it can't just be a latched Shift.)*
+- **Ignored under Ctrl/Alt.** Ctrl+B is bold B with the caps light on or off.
+- **Shift inverts it.** Caps + Shift = lowercase.
+
+The consequence is that the deck can show two pages at once — uppercase letters above a digit row —
+which is exactly what a keyboard does. The rules live in C++ (`FontKeyboard::pageForKey`), pinned by
+`tst_font_keyboard`, so the QML just asks. Qt exposes no portable way to *read* the caps light, so if
+it was already on before the screen opened, the deck corrects itself from the OS's own answer
+(`event.text`) on the first letter you press.
+
+### The two modes — keyboard vs. edit (decided 2026-07-11)
+
+Page 3 is the Ctrl page, so `Ctrl+C` is bold C and `Ctrl+V` is bold V — they can't *also* be
+copy/paste. Rather than hide that behind a focus rule, the screen has two explicit modes and says
+which one you're in:
+
+- **Keyboard mode** (the default): the deck is live and holds the keys. The name field is a
+  **read-only** display of what the deck is building — no caret it won't honour. Backspace removes a
+  whole **tile**. The field's **pen** button switches to…
+- **Edit mode**: the field becomes an ordinary text field — caret, selection, `Ctrl+C/V/Z`, and a
+  character-by-character Backspace. **The whole keyboard fades out and goes dead**: it has no say in
+  what you're typing and shouldn't pretend to. The pen is replaced by a **check** (apply) and a
+  **cross** (discard), so an edit is something you commit or throw away — never something that
+  half-happened. Nothing typed here reaches the name until the check is pressed; the cross puts the
+  field back. Enter applies, Esc discards. Leaving edit mode hands the keys straight back to the deck.
 
 ### Known OS-level risks (honest ones)
 
@@ -361,9 +387,15 @@ Plus `tst_qml_screens` must stay green (it loads every screen through the real e
 
 ## 7. Decisions (Twilight, 2026-07-11)
 
-1. **Name box = click-to-edit** (option B). The deck owns keys by default; click the box for real
-   text-field behaviour incl. Ctrl+C/V. (§5)
-2. **Space rides the spacebar** — the only tile not on an alphanumeric key. (§1)
-3. **Category colours stay as they are** — no re-ramp. (§4)
-4. **Dead search code goes in this same change** — `FontSearchModel` / `brg.fontSearch` and the six
-   dead QML files are removed with the redesign. (§6)
+1. **Lowercase is the base layer; Shift is uppercase.** The first cut had it inverted (Gen 1 names are
+   all-caps) — rejected, and rightly: it contradicted every keyboard the user knows. All-caps is what
+   **Caps Lock** is for. (§3, §5)
+2. **Caps Lock is a real Caps Lock** — letters only, ignored under Ctrl/Alt, inverted by Shift. (§5)
+3. **Physical modifiers are momentary; only clicking latches.** (§5)
+4. **Two explicit modes** — keyboard mode (deck live, field read-only, tile-wise Backspace) and edit
+   mode (field is a normal text field, keyboard fades out + goes dead, check applies / cross discards),
+   with the mode named in words on screen. (§5)
+5. **Space rides the spacebar** — the only tile not on an alphanumeric key. (§1)
+6. **Category colours stay as they are** — no re-ramp. (§4)
+7. **Dead search code went in the same change** — `FontSearchModel` / `brg.fontSearch` and the six dead
+   QML files were removed with the redesign. (§6)

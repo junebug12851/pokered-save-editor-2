@@ -46,6 +46,7 @@ private slots:
   void identityContract_data();
   void identityContract();
   void pageForModifiers();
+  void capsLockAffectsLettersOnly();
   void pageOrderCoversEveryPage();
   void categoriesAndRenderModes();
   void chopLastToken_data();
@@ -157,17 +158,18 @@ void TstFontKeyboard::identityContract_data()
   QTest::addColumn<QString>("key");
   QTest::addColumn<QString>("code");
 
-  // Page 1: the alphabet and the digits are exactly where they are on a real
-  // keyboard. If this ever breaks, the whole design premise breaks with it.
-  QTest::newRow("A is A")       << 0 << "A" << "A";
-  QTest::newRow("Z is Z")       << 0 << "Z" << "Z";
-  QTest::newRow("M is M")       << 0 << "M" << "M";
+  // The base layer: press a letter key, get the LOWERCASE letter; press a digit, get
+  // the digit -- exactly like every keyboard the user has ever touched. If this ever
+  // breaks, the whole design premise breaks with it.
+  QTest::newRow("A is a")       << 0 << "A" << "a";
+  QTest::newRow("Z is z")       << 0 << "Z" << "z";
+  QTest::newRow("M is m")       << 0 << "M" << "m";
   QTest::newRow("7 is 7")       << 0 << "7" << "7";
   QTest::newRow("0 is 0")       << 0 << "0" << "0";
 
-  // Page 2 (Shift): lowercase, same as pressing Shift on a real keyboard.
-  QTest::newRow("shift A is a") << 1 << "A" << "a";
-  QTest::newRow("shift Z is z") << 1 << "Z" << "z";
+  // Shift: uppercase, and the real shifted number row wherever the game has the glyph.
+  QTest::newRow("shift A is A") << 1 << "A" << "A";
+  QTest::newRow("shift Z is Z") << 1 << "Z" << "Z";
   QTest::newRow("shift 1 is !") << 1 << "1" << "!";
   QTest::newRow("shift 9 is (") << 1 << "9" << "(";
 
@@ -232,6 +234,48 @@ void TstFontKeyboard::pageForModifiers()
     QCOMPARE(badge.contains("Ctrl"),  (i & 2) != 0);
     QCOMPARE(badge.contains("Alt"),   (i & 4) != 0);
   }
+}
+
+/// Caps Lock is a real Caps Lock, not "latch the Shift page". Letters only; the digit
+/// row keeps typing digits (so you can type PIKA2 without unlocking); Ctrl/Alt ignore
+/// it entirely; and Shift inverts it. Every one of those is a rule a user already
+/// knows from their own keyboard, so breaking one would be a genuine surprise.
+void TstFontKeyboard::capsLockAffectsLettersOnly()
+{
+  FontKeyboard kb;
+
+  // Caps on: letters go uppercase...
+  QCOMPARE(FontKeyboard::pageForKey("A", false, false, false, true), 1);
+  QCOMPARE(kb.keyDataFor("A", false, false, false, true)["code"].toString(), QString("A"));
+  QCOMPARE(kb.keyDataFor("K", false, false, false, true)["code"].toString(), QString("K"));
+
+  // ...but the number row still types NUMBERS. This is the whole reason caps isn't
+  // just a latched Shift: "PIKA2" has to be typeable without unlocking.
+  QCOMPARE(FontKeyboard::pageForKey("2", false, false, false, true), 0);
+  QCOMPARE(kb.keyDataFor("2", false, false, false, true)["code"].toString(), QString("2"));
+
+  // Shift INVERTS caps -- caps + Shift is lowercase, as on any keyboard.
+  QCOMPARE(FontKeyboard::pageForKey("A", true, false, false, true), 0);
+  QCOMPARE(kb.keyDataFor("A", true, false, false, true)["code"].toString(), QString("a"));
+
+  // ...and Shift alone (no caps) is uppercase, with the shifted number row.
+  QCOMPARE(kb.keyDataFor("A", true, false, false, false)["code"].toString(), QString("A"));
+  QCOMPARE(kb.keyDataFor("1", true, false, false, false)["code"].toString(), QString("!"));
+
+  // Ctrl/Alt ignore caps completely: Ctrl+B is bold B with the caps light on or off,
+  // and Alt+S is 's either way.
+  QCOMPARE(FontKeyboard::pageForKey("B", false, true, false, true), 2);
+  QCOMPARE(kb.keyDataFor("B", false, true, false, true)["code"].toString(), QString("<B>"));
+  QCOMPARE(kb.keyDataFor("S", false, false, true, true)["code"].toString(), QString("<'s>"));
+  QCOMPARE(kb.keyDataFor("S", false, false, true, false)["code"].toString(), QString("<'s>"));
+
+  // Caps off + nothing held = the base layer.
+  QCOMPARE(kb.keyDataFor("A", false, false, false, false)["code"].toString(), QString("a"));
+
+  QVERIFY(FontKeyboard::isLetterKey("A"));
+  QVERIFY(FontKeyboard::isLetterKey("z"));
+  QVERIFY(!FontKeyboard::isLetterKey("7"));
+  QVERIFY(!FontKeyboard::isLetterKey(""));
 }
 
 /// The strip's reading order is by category (cheapest chord first), NOT the mask

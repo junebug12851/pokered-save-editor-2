@@ -877,9 +877,28 @@ tile→key map: [`../plans/full-keyboard-redesign.md`](../plans/full-keyboard-re
 - **The key legend** (which physical key types this tile) is a small superscript in the cap's corner.
   It **dims when the name field takes focus** — that's the visible signal that the deck has handed the
   keyboard over, so the mode is never hidden.
-- **Modifier caps LATCH on click.** Holding a chord is a shortcut, never the only way in: Windows eats
-  Shift+Alt and Ctrl+Shift on multi-language setups (switch layout) and Ctrl+Alt is AltGr. The strip,
-  the caps and the held keys all drive the same three latches, so they cannot disagree.
+- **Physical modifiers are MOMENTARY; clicking latches.** Hold Ctrl → the page flips; let go → it drops
+  straight back, like the shift layer on a real keyboard. Clicking an on-screen modifier cap (or a page
+  button) *latches*, because a mouse can't hold a chord and click a key at once — and because a latched
+  page is the only way in when the OS eats the chord (Windows takes Shift+Alt / Ctrl+Shift on
+  multi-language setups; Ctrl+Alt is AltGr). Held and latched are OR'd, so nothing can disagree.
+- **Caps Lock is a REAL Caps Lock, not a latched Shift** (`FontKeyboard::pageForKey`, pinned by
+  `tst_font_keyboard`): letters only (the number row keeps typing digits, so `PIKA2` needs no
+  unlocking — this is exactly why it can't be "latch the Shift page", which drags the punctuation row
+  along), ignored under Ctrl/Alt, and inverted by Shift. So the deck can show **two pages at once**
+  (uppercase letters over a digit row) — which is what a keyboard does. **Qt can't read the caps light
+  portably**, so the deck re-syncs from `event.text` (the OS's own answer, caps + shift already folded
+  in) on the first letter typed.
+- **The base layer is LOWERCASE.** `a–z` unshifted, `A–Z` on Shift — like every keyboard. Uppercase-
+  unshifted was tried (Gen 1 names are all-caps) and **rejected**: that's an argument for a good Caps
+  Lock, not for inverting the alphabet.
+- **Two explicit modes, named on screen** (`NameFullEdit` owns the state). *Keyboard mode*: the deck is
+  live and the field is **read-only** (a caret in a field you can't type into is a lie); Backspace eats a
+  whole tile. *Edit mode*: the pen makes the field an ordinary text field (caret, selection, Ctrl+C/V/Z,
+  character-wise Backspace) and **the whole lower half — strip, legend, deck, detail — fades to 0.25 and
+  goes `enabled: false` as one thing**. The pen becomes check (apply) / cross (discard); nothing typed
+  there reaches `str` until the check. This replaced a *hidden* mode (click the box and the deck quietly
+  stopped listening).
 - **Backspace is token-aware** (`FontKeyboard::chopLastToken`): it deletes a whole `<code>`, never one
   character out of the middle of one — that would leave a string the codec can't round-trip.
 - **A key that won't fit shakes the name field** (`NameFullEdit.reject()`) rather than doing nothing.

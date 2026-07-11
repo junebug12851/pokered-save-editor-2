@@ -28,12 +28,19 @@ ToolBar {
   property bool isPersonName: false
   property bool hasBox: false
 
+  // Which of the screen's two modes we're in. Owned by the editor row (it holds the
+  // pen / check / cross), surfaced here so FullKeyboard can fade + disable the deck.
+  readonly property bool editMode: editor.editMode
+
+  signal editStarted()
+  signal editEnded()
+
   // Shake the name field: the deck calls this when a key won't fit.
   function reject() {
     editor.reject();
   }
 
-  height: 124
+  height: 132
   Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
 
   onStrChanged: editor.str = top.str
@@ -115,7 +122,7 @@ ToolBar {
       }
     }
 
-    // ---- Name input: wide, centered, with Clear right beside it ----
+    // ---- Name input: wide, centered, with its mode buttons beside it ----
     NameFullEdit {
       id: editor
       Layout.alignment: Qt.AlignHCenter
@@ -127,6 +134,24 @@ ToolBar {
 
       str: top.str
       onStrChanged: top.str = str;
+
+      onEditStarted: top.editStarted();
+      onEditEnded: top.editEnded();
+    }
+
+    // ---- Which mode you're in, said out loud ----
+    // The keyboard fading out is the loud signal; this is the one that names it, so
+    // nobody has to infer the rule from the animation.
+    Label {
+      Layout.alignment: Qt.AlignHCenter
+
+      text: top.editMode
+            ? qsTr("Edit mode — keyboard off. ✓ applies, ✗ discards.")
+            : qsTr("Keyboard mode — type or click the keys. ✎ edits the text directly.")
+
+      font.pixelSize: 10
+      color: brg.settings.textColorDark
+      opacity: 0.75
     }
   }
 

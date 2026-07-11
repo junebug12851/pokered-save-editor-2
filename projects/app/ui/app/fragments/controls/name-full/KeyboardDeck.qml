@@ -2,21 +2,24 @@
 //
 // A real ASDF/QWERTY silhouette. Its 36 alphanumeric caps each carry one game tile
 // (the map lives in C++, `brg.keyboard` -- see FontKeyboard); the structural caps
-// (Shift/Ctrl/Alt/Space/Backspace/Enter) do what they say.
+// (Caps/Shift/Ctrl/Alt/Space/Backspace/Enter) do what they say.
 //
 // 255 tiles / 36 keys = 8 pages, and Shift/Ctrl/Alt give exactly 8 combinations --
-// one per page, no leftovers. You reach a page three ways, and all three agree:
-//   * HOLD the modifiers (like a real keyboard's shift layer),
-//   * CLICK the on-screen modifier caps -- they LATCH, so mouse/touch users never
-//     have to hold a chord, and a page stays reachable even when the OS eats the
-//     combo (Shift+Alt / Ctrl+Shift are Windows' switch-layout shortcuts on
-//     multi-language setups, and Ctrl+Alt is AltGr),
-//   * CLICK a button in the page strip above.
-// setPage() drives the latches, so the strip and the caps can never disagree.
+// one page per chord, no leftovers.
 //
-// The deck holds keyboard focus whenever the name field doesn't. When the field IS
-// focused (the user clicked in to paste or select), the deck stops listening and
-// DIMS every key legend -- the mode is visible, never hidden.
+// TWO WAYS IN, AND THEY BEHAVE DIFFERENTLY ON PURPOSE (Twilight's call):
+//   * The PHYSICAL modifier keys are MOMENTARY. Hold Ctrl -> the deck flips to that
+//     page; let go -> it drops straight back. Nothing latches, exactly like the shift
+//     layer on the keyboard under your hands.
+//   * CLICKING an on-screen modifier cap (or a page button) LATCHES it, because a
+//     mouse can't hold a chord and click a key at the same time -- and because a
+//     latched page is the only way in when the OS eats the chord (Shift+Alt and
+//     Ctrl+Shift switch keyboard layout on multi-language Windows; Ctrl+Alt is AltGr).
+//
+// CAPS LOCK is a real Caps Lock, not a latched Shift: letters only, so the number row
+// keeps typing digits ("PIKA2" without unlocking); ignored under Ctrl/Alt (Ctrl+B is
+// still bold B); inverted by Shift. The rules live in C++ (FontKeyboard::pageForKey)
+// where they're pinned by tst_font_keyboard, so the deck just asks.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -25,10 +28,14 @@ import QtQuick.Controls.Material
 Item {
   id: deck
 
-  // The page on show = whatever the modifiers say, held or latched.
+  // Held (momentary, from the real keys) OR latched (sticky, from a click).
   readonly property bool shiftOn: heldShift || latchShift
   readonly property bool ctrlOn:  heldCtrl  || latchCtrl
   readonly property bool altOn:   heldAlt   || latchAlt
+
+  // The CHORD's page. Note this is not necessarily what every cap shows -- with Caps
+  // Lock on, the letters read a different page than the number row, exactly as they
+  // do on a real keyboard. This is what the page strip highlights.
   readonly property int page: brg.keyboard.pageFor(shiftOn, ctrlOn, altOn)
 
   property bool heldShift: false
@@ -39,15 +46,17 @@ Item {
   property bool latchCtrl: false
   property bool latchAlt: false
 
-  signal insert(string code) ///< A tile was picked (its code, e.g. "A" or "<player>").
+  property bool capsOn: false
+
+  signal insert(string code) ///< A tile was picked (its code, e.g. "a" or "<player>").
   signal backspace()
   signal accept()
   signal dismiss()
   signal detail(var info)    ///< Hover feedback for the side pane; null when nothing is hovered.
 
-  // Registry of live caps, so a physical key press can find and flash its on-screen
-  // cap (typing and clicking are then literally the same act).
-  property var caps: ({})
+  // Registry of live caps, so a physical key press can flash its on-screen cap --
+  // typing and clicking are then visibly the same act.
+  property var capIndex: ({})
 
   function setPage(p) {
     latchShift = (p & 1) !== 0;
@@ -57,8 +66,8 @@ Item {
 
   // Shift+digit does NOT arrive as Key_1..Key_0 -- the OS hands us the SYMBOL's key
   // code (Shift+1 == Key_Exclam). Map the US-layout number row back to its digit key
-  // so the Shift page's number row still types. Other layouts simply fall through
-  // (the caps and the page strip still reach every tile).
+  // so the Shift layer's number row still types. Other layouts fall through (the caps
+  // and the page strip still reach every tile).
   readonly property var shiftedDigits: ({
     "33": "1",  // !
     "64": "2",  // @
@@ -81,12 +90,19 @@ Item {
     return (mapped !== undefined) ? mapped : "";
   }
 
+  /// Resolve a key press against C++ (which owns the Caps Lock rules), insert its
+  /// tile, and flash the on-screen cap. Resolving from the model rather than reading
+  /// the cap's binding means a caps re-sync in the same event can't race the binding.
   function pressKey(label) {
-    var cap = deck.caps[label];
-    if(!cap || cap.isEmpty)
+    var d = brg.keyboard.keyDataFor(label, shiftOn, ctrlOn, altOn, capsOn);
+    if(!d || d.empty)
       return false;
 
-    cap.press();
+    var cap = deck.capIndex[label];
+    if(cap)
+      cap.flash();
+
+    deck.insert(d.code);
     return true;
   }
 
@@ -109,14 +125,22 @@ Item {
     if(event.key === Qt.Key_Alt ||
        event.key === Qt.Key_AltGr)   { deck.heldAlt   = true; event.accepted = true; return; }
 
-    // Re-sync from the event: a modifier pressed while we DIDN'T have focus never
-    // gave us its press, but it's still down and the event knows it.
+    if(event.key === Qt.Key_CapsLock) {
+      if(!event.isAutoRepeat)
+        deck.capsOn = !deck.capsOn;
+      event.accepted = true;
+      return;
+    }
+
+    // Re-sync the held modifiers from the event: one pressed while we DIDN'T have
+    // focus never gave us its press, but it's still down and the event knows it.
     deck.heldShift = (event.modifiers & Qt.ShiftModifier)   !== 0;
     deck.heldCtrl  = (event.modifiers & Qt.ControlModifier) !== 0;
     deck.heldAlt   = (event.modifiers & Qt.AltModifier)     !== 0;
 
     if(event.key === Qt.Key_Backspace) {
-      backspaceKey.press();
+      backspaceKey.flash();
+      deck.backspace();
       event.accepted = true;
       return;
     }
@@ -128,7 +152,8 @@ Item {
     }
 
     if(event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-      enterKey.press();
+      enterKey.flash();
+      deck.accept();
       event.accepted = true;
       return;
     }
@@ -140,8 +165,22 @@ Item {
     }
 
     var label = deck.keyLabelFor(event.key);
-    if(label !== "")
-      event.accepted = deck.pressKey(label);
+    if(label === "")
+      return;
+
+    // Trust the OS about the caps state. Qt gives us no portable way to READ the caps
+    // light, so if it was already on before this screen opened we'd be out of step --
+    // but `event.text` is the OS's own answer (it already folded in caps AND shift),
+    // so a letter press tells us the truth and we correct ourselves from it.
+    if(!deck.ctrlOn && !deck.altOn && event.text.length === 1) {
+      var t = event.text;
+      var isUpper = (t >= "A" && t <= "Z");
+      var isLower = (t >= "a" && t <= "z");
+      if(isUpper || isLower)
+        deck.capsOn = (isUpper !== deck.heldShift);
+    }
+
+    event.accepted = deck.pressKey(label);
   }
 
   Keys.onReleased: (event) => {
@@ -158,23 +197,21 @@ Item {
 
   Timer {
     interval: 1000 / 3
-    running: deck.visible
+    running: deck.visible && deck.enabled
     repeat: true
     onTriggered: deck.curFrame = ((deck.curFrame + 1) >= 8) ? 0 : deck.curFrame + 1;
   }
 
   // ---- Sizing ----
-  // The deck is ~12.5 units wide and 5 rows tall; the unit shrinks to fit whatever
-  // room the screen gives it, so the deck scales instead of spilling over its
-  // neighbours. Get these constants wrong and the chassis quietly overflows the column
-  // and paints on top of the legend and the detail pane -- which is exactly what the
-  // first cut did.
+  // The key unit shrinks to fit whatever room the screen gives us, so the deck SCALES
+  // instead of spilling over its neighbours. Get these constants wrong and the chassis
+  // quietly overflows the column and paints on top of the legend and the detail pane.
   //
-  // Widest row (the number row) = 10 caps + a 2u Backspace + 11 gaps, gap = 0.07u:
-  //   12u + 11*0.07u = 12.77u, plus the chassis' 0.55u padding = 13.32u.
+  // Widest row is now the HOME row: Caps(1.75u) + 9 caps + Enter(2u) = 12.75u, plus 11
+  // gaps at 0.07u = 13.52u, plus the chassis' 0.55u padding = 14.07u.
   // Tallest: 5 rows + 4 gaps + the same padding = 5.83u. Round both up a hair.
   readonly property real u: Math.max(18, Math.min(56,
-                              Math.min(width  / 13.5,
+                              Math.min(width  / 14.1,
                                        height / 6.0)))
   readonly property real gap: Math.max(2, Math.round(u * 0.07))
   readonly property real tileScale: Math.max(2, (u - 20) / 8)
@@ -217,14 +254,14 @@ Item {
             height: deck.u
             tileScale: deck.tileScale
             curFrame: deck.curFrame
-            legendsDim: !deck.activeFocus
-            info: brg.keyboard.keyData(deck.page, modelData)
+            info: brg.keyboard.keyDataFor(modelData, deck.shiftOn, deck.ctrlOn,
+                                          deck.altOn, deck.capsOn)
 
             onActivated: (code) => deck.insert(code);
             onEntered: deck.detail(info);
             onExited: deck.detail(null);
 
-            Component.onCompleted: deck.caps[modelData] = this;
+            Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
 
@@ -252,22 +289,30 @@ Item {
             height: deck.u
             tileScale: deck.tileScale
             curFrame: deck.curFrame
-            legendsDim: !deck.activeFocus
-            info: brg.keyboard.keyData(deck.page, modelData)
+            info: brg.keyboard.keyDataFor(modelData, deck.shiftOn, deck.ctrlOn,
+                                          deck.altOn, deck.capsOn)
 
             onActivated: (code) => deck.insert(code);
             onEntered: deck.detail(info);
             onExited: deck.detail(null);
 
-            Component.onCompleted: deck.caps[modelData] = this;
+            Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
       }
 
-      // ---- Home row + Enter ----
+      // ---- Caps + home row + Enter ----
       Row {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: deck.gap
+
+        StructKey {
+          label: "Caps"
+          unit: deck.u
+          units: 1.75
+          active: deck.capsOn
+          onFired: deck.capsOn = !deck.capsOn;
+        }
 
         Repeater {
           model: ["A","S","D","F","G","H","J","K","L"]
@@ -279,14 +324,14 @@ Item {
             height: deck.u
             tileScale: deck.tileScale
             curFrame: deck.curFrame
-            legendsDim: !deck.activeFocus
-            info: brg.keyboard.keyData(deck.page, modelData)
+            info: brg.keyboard.keyDataFor(modelData, deck.shiftOn, deck.ctrlOn,
+                                          deck.altOn, deck.capsOn)
 
             onActivated: (code) => deck.insert(code);
             onEntered: deck.detail(info);
             onExited: deck.detail(null);
 
-            Component.onCompleted: deck.caps[modelData] = this;
+            Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
 
@@ -322,14 +367,14 @@ Item {
             height: deck.u
             tileScale: deck.tileScale
             curFrame: deck.curFrame
-            legendsDim: !deck.activeFocus
-            info: brg.keyboard.keyData(deck.page, modelData)
+            info: brg.keyboard.keyDataFor(modelData, deck.shiftOn, deck.ctrlOn,
+                                          deck.altOn, deck.capsOn)
 
             onActivated: (code) => deck.insert(code);
             onEntered: deck.detail(info);
             onExited: deck.detail(null);
 
-            Component.onCompleted: deck.caps[modelData] = this;
+            Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
 
@@ -372,7 +417,6 @@ Item {
           height: deck.u
           tileScale: deck.tileScale
           curFrame: deck.curFrame
-          legendsDim: !deck.activeFocus
           info: brg.keyboard.spaceData()
 
           onActivated: (code) => deck.insert(code);

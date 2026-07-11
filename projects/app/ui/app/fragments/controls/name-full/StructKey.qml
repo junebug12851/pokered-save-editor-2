@@ -18,8 +18,14 @@ Item {
 
   signal fired()
 
-  function press() {
+  /// Just the press animation -- for when the PHYSICAL key was pressed and the deck
+  /// has already done the work itself.
+  function flash() {
     pressAnim.restart();
+  }
+
+  function press() {
+    top.flash();
     top.fired();
   }
 

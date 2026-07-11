@@ -295,11 +295,11 @@ static void captureTextEditors(GuiApp& app)
     QQuickItem* deck = findByProp(root, "latchShift");
 
     // Hover a real keycap to raise the detail pane. Caps expose `info` (the tile's
-    // key map); skip the empty ones -- they have nothing to show.
+    // key map) + `capLabel`; skip the empty ones -- they have nothing to show.
     QList<QQuickItem*> caps;
     GuiApp::collectItems(root, [](QQuickItem* i) {
       return i->metaObject()->indexOfProperty("info") >= 0
-          && i->metaObject()->indexOfProperty("legendsDim") >= 0;
+          && i->metaObject()->indexOfProperty("capLabel") >= 0;
     }, caps);
 
     QQuickItem* cap = nullptr;
@@ -326,7 +326,7 @@ static void captureTextEditors(GuiApp& app)
     if (deck) {
       struct Page { const char* file; bool shift; bool ctrl; bool alt; };
       static const Page pages[] = {
-        { "editor/text_keyboard_lowercase.png", true,  false, false },
+        { "editor/text_keyboard_uppercase.png", true,  false, false },
         { "editor/text_keyboard_symbols.png",   false, true,  false },
         { "editor/text_keyboard_codes.png",     false, false, true  },
         { "editor/text_keyboard_tiles1.png",    true,  true,  false },
@@ -347,8 +347,34 @@ static void captureTextEditors(GuiApp& app)
       deck->setProperty("latchCtrl", false);
       deck->setProperty("latchAlt", false);
       app.settle(80);
+
+      // Caps Lock: letters go uppercase, and the number row stays NUMBERS. That
+      // second half is the whole point of it, so it's worth a shot of its own.
+      deck->setProperty("capsOn", true);
+      app.settle(260);
+      grab(app, QStringLiteral("editor/text_keyboard_capslock.png"));
+      deck->setProperty("capsOn", false);
+      app.settle(80);
     } else {
       qWarning().noquote() << "  [skip] keyboard deck not found";
+    }
+
+    // Edit mode: the field becomes a real text field and the keyboard fades out+dead.
+    // Find it by its METHOD, not by the `editMode` property -- NameFullHeader
+    // re-exposes that property, and being an ancestor it gets found first (it has no
+    // beginEdit(), so the invoke would silently do nothing and the shot would lie).
+    QQuickItem* editor = GuiApp::findItem(root, [](QQuickItem* i) {
+      return i->metaObject()->indexOfMethod("beginEdit()") >= 0;
+    });
+
+    if (editor) {
+      QMetaObject::invokeMethod(editor, "beginEdit");
+      app.settle(300);
+      grab(app, QStringLiteral("editor/text_keyboard_edit_mode.png"));
+      QMetaObject::invokeMethod(editor, "discardEdit");
+      app.settle(120);
+    } else {
+      qWarning().noquote() << "  [skip] name editor not found";
     }
 
     app.closeTop();
