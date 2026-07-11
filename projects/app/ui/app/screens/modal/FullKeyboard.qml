@@ -170,6 +170,8 @@ Page {
           Layout.fillHeight: true
           Layout.topMargin: 6
           Layout.leftMargin: 10
+          // Breathing room between the legend's ⓘ dots and the keyboard's edge.
+          Layout.rightMargin: 12
         }
 
         // ---- Middle: the deck ----
@@ -208,10 +210,12 @@ Page {
     // of the page, got squeezed into what was left. Same clean light surface as the
     // header.
     //
-    // NOTE the 78: `nameDisplay.height` is the rendered NAME only -- its length
-    // feedback ("Using 3 out of 10 bytes") hangs BELOW that height, so sizing purely to
-    // nameDisplay.height clips the feedback clean off the bottom of the window.
-    height: exampleControls.height + (top.hasBox ? nameDisplay.height + 36 : 78)
+    // NOTE the constant: `nameDisplay.height` is the rendered NAME only -- its length
+    // feedback ("Using 3 out of 10 bytes") hangs BELOW that height. Size purely to
+    // nameDisplay.height and the feedback is clipped clean off the bottom of the window;
+    // leave too much and you get a slab of dead white under it. This is tuned so the
+    // feedback line sits just off the bottom edge.
+    height: exampleControls.height + (top.hasBox ? nameDisplay.height + 30 : 60)
     Material.background: brg.settings.textColorLight
 
     Rectangle {

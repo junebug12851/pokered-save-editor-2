@@ -26,14 +26,19 @@
 
 namespace {
 
-// The 36 assignable keys, in the order they appear on the deck: the number row,
-// then QWERTY, then the home row, then the bottom row. EVERY page table below is
-// written in exactly this order, so a page reads like the keyboard looks.
+// The 47 assignable keys, in the order they appear on the deck: the number row, then
+// QWERTY, then the home row, then the bottom row. EVERY page table below is written in
+// exactly this order, so a page reads like the keyboard looks.
+//
+// The punctuation keys (` - = [ ] \ ; ' , . /) are in here because the tiles that
+// BELONG on them should be on them: `.` types `.`, `,` types `,`, Shift+`/` types `?`,
+// Shift+`;` types `:`. They were dead filler in the first cut, which meant `.` and `,`
+// were exiled to a number row they have no business being on.
 const char* const kKeys[FontKeyboard::keyTotal] = {
-  "1","2","3","4","5","6","7","8","9","0",
-  "Q","W","E","R","T","Y","U","I","O","P",
-  "A","S","D","F","G","H","J","K","L",
-  "Z","X","C","V","B","N","M",
+  "`","1","2","3","4","5","6","7","8","9","0","-","=",
+  "Q","W","E","R","T","Y","U","I","O","P","[","]","\\",
+  "A","S","D","F","G","H","J","K","L",";","'",
+  "Z","X","C","V","B","N","M",",",".","/",
 };
 
 // ---------------------------------------------------------------------------
@@ -53,90 +58,102 @@ const char* const kKeys[FontKeyboard::keyTotal] = {
 // The human reading order lives in kPageOrder.
 // ---------------------------------------------------------------------------
 
+// Each block is written as the deck reads, one line per row:
+//   row 1:  `  1 2 3 4 5 6 7 8 9 0  -  =
+//   row 2:  Q W E R T Y U I O P  [  ]  '\'
+//   row 3:  A S D F G H J K L  ;  '
+//   row 4:  Z X C V B N M  ,  .  /
+
 // (no modifier) -- LETTERS. The base layer of a real keyboard: press a key, get the
-// LOWERCASE letter; press a digit, get the digit. Pure identity, nothing to learn.
+// LOWERCASE letter; press a digit, get the digit; press "." and get ".". Pure identity,
+// nothing to learn.
 //
 // (This was uppercase-unshifted at first, on the reasoning that Gen 1 names are all
 // caps. Twilight rejected it, and she's right: it's the one place the deck would have
 // contradicted every keyboard the user has ever touched. Caps Lock is how you type a
-// name in caps -- see pageForKey().)
+// name in caps -- see effectivePage().)
 const int kPageLetters[FontKeyboard::keyTotal] = {
-  247, 248, 249, 250, 251, 252, 253, 254, 255, 246,   // 1 2 3 4 5 6 7 8 9 0
-  176, 182, 164, 177, 179, 184, 180, 168, 174, 175,   // q w e r t y u i o p
-  160, 178, 163, 165, 166, 167, 169, 170, 171,        // a s d f g h j k l
-  185, 183, 162, 181, 161, 173, 172,                  // z x c v b n m
+    0, 247, 248, 249, 250, 251, 252, 253, 254, 255, 246, 227,   0, //   1..0  -
+  176, 182, 164, 177, 179, 184, 180, 168, 174, 175, 158, 159,   0, // q..p  [  ]
+  160, 178, 163, 165, 166, 167, 169, 170, 171, 157, 224,          // a..l  ;  '
+  185, 183, 162, 181, 161, 173, 172, 244, 232, 243,               // z..m  ,  .  /
 };
 
-// Shift -- UPPERCASE + the Normal symbols. Letters are identity again (Shift+a really
-// is "A"). The number row keeps the real keyboard's shifted symbols wherever the game
-// HAS that glyph: Shift+1 = !, Shift+8 = x (multiply, i.e. "*"), Shift+9/0 = ( ).
-// Pages 0+1 together are the entire in-game-legal character set -- everything you can
+// Shift -- UPPERCASE + the Normal symbols, each on the key a real keyboard puts it on
+// wherever the game HAS that glyph:
+//   Shift+1 = !     Shift+4 = $     Shift+8 = x (the "*" key -- multiply)
+//   Shift+9 = (     Shift+0 = )     Shift+; = :     Shift+' = "     Shift+/ = ?
+// The glyphs the game simply doesn't have (@ # % ^ & _ + { } | < >) leave their keys
+// empty -- except that the five spare number-row slots take the Normal characters with
+// nowhere else to be: the gender signs and Pk/Mn.
+//
+// Pages 0+1 together are the entire in-game-legal character set: everything you can
 // type on the real Game Boy's name screen.
 const int kPageCaps[FontKeyboard::keyTotal] = {
-  231, 230, 232, 244, 227, 239, 245, 241, 154, 155,   // ! ? . , - male female x ( )
-  144, 150, 132, 145, 147, 152, 148, 136, 142, 143,   // Q W E R T Y U I O P
-  128, 146, 131, 133, 134, 135, 137, 138, 139,        // A S D F G H J K L
-  153, 151, 130, 149, 129, 141, 140,                  // Z X C V B N M
+    0, 231, 239, 245, 240, 225, 226,   0, 241, 154, 155,   0,   0, //  ! M F $ Pk Mn _ x ( )
+  144, 150, 132, 145, 147, 152, 148, 136, 142, 143,   0,   0,   0, // Q..P
+  128, 146, 131, 133, 134, 135, 137, 138, 139, 156, 114,          // A..L  :  "
+  153, 151, 130, 149, 129, 141, 140,   0,   0, 230,               // Z..M  ?
 };
 
-// Ctrl -- SYMBOLS. The 13 bold letters sit on their own letters, so
-// Ctrl+B is bold B -- the same thing it means in every other program on earth.
-// The rest of the row is punctuation, with the leftover Normal chars (: ; [ ] /
-// Pk Mn) folded in so the whole Normal category is done by the end of this page.
+// Ctrl -- SYMBOLS. The 13 bold letters sit on their own letters, so Ctrl+B is bold B --
+// the same thing it means in every other program on earth. The rest is the punctuation
+// that has a "real" partner one layer up: the closing double quote under the opening
+// one on ', the narrow colon under ":" on ;, the ellipsis on "." (dots on the dot key),
+// the middle dot on ",", and the open/close single quotes on the brackets.
 const int kPageSymbols[FontKeyboard::keyTotal] = {
-  156, 157, 158, 159, 243,   0,   0,   0,   0,   0,   // : ; [ ] /
-  114, 115, 100, 112, 113, 116, 117, 104, 240, 225,   // " " boldE ' ' mdot ... boldI $ Pk
-   96, 106,  99, 101, 102, 103, 224, 186, 107,        // boldA boldS boldD boldF boldG boldH ' e-acute boldL
-  109, 242,  98, 105,  97, 226, 108,                  // :(narrow) .(alt) boldC boldV boldB Mn boldM
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0, 100,   0,   0,   0,   0, 104,   0,   0, 112, 113,   0, // boldE boldI  '  '
+   96, 106,  99, 101, 102, 103,   0, 186, 107, 109, 115,          // boldA..H  e-acute boldL  :(narrow)  "
+    0,   0,  98, 105,  97,   0, 108, 116, 117, 242,               // boldC boldV boldB boldM  mdot  ...  .(alt)
 };
 
-// Alt -- CODES. Contractions sit on their own letter ('s on S, 't on
-// T...). The variables pair up: Player on P with Rival ("Opponent") right beside
-// it on O, and the two usage codes on Y ("Your usage") / U ("User"). The kana --
-// the rarest things here -- take the number row.
+// Alt -- CODES. Contractions sit on their own letter ('s on S, 't on T...). The
+// variables pair up: Player on P with Rival ("Opponent") right beside it on O, and the
+// two usage codes on Y ("Your usage") / U ("User"). The kana -- the rarest things here
+// -- take the number row.
 const int kPageCodes[FontKeyboard::keyTotal] = {
-  118, 110, 111, 119, 120, 233, 234, 235,   0,   0,   // a i u e o + small a u e
-    0,   0,  84, 228, 190,  89,  90,   0,  83,  82,   // Poke 'r 't targ user rival player
-    0, 189, 187,  86,  94,  93,  92,  74, 188,        // 's 'd ...... ROCKET TRAINER TM PkMn 'l
-    0,   0,  91, 191,   0,   0, 229,                  // PC 'v 'm
+    0, 118, 110, 111, 119, 120, 233, 234, 235,   0,   0,   0,   0, // a i u e o + small a u e
+    0,   0,  84, 228, 190,  89,  90,   0,  83,  82,   0,   0,   0, // Poke 'r 't targ user rival player
+    0, 189, 187,  86,  94,  93,  92,  74, 188,   0,   0,          // 's 'd ...... ROCKET TRAINER TM PkMn 'l
+    0,   0,  91, 191,   0,   0, 229,   0,   0,   0,               // PC 'v 'm
 };
 
-// Shift+Ctrl -- TILES I. The nine Pictures anyone actually uses get the
-// best keys on the page: the six box-frame glyphs are literally DRAWN as a box on
-// the keys (Q=TL W=top E=TR / A=left / Z=BL X=BR) and the three cursor arrows take
-// the right home keys (J K L). Raw tiles 01-1B fill what's left, in reading order.
+// Shift+Ctrl -- TILES I. The nine Pictures anyone actually uses get the best keys on
+// the page: the six box-frame glyphs are literally DRAWN as a box on the keys
+// (Q=TL W=top E=TR / A=left / Z=BL X=BR) and the three cursor arrows take the right
+// home keys (J K L). Raw tiles 01-26 fill everything else, in reading order.
 const int kPageTiles1[FontKeyboard::keyTotal] = {
-    1,   2,   3,   4,   5,   6,   7,   8,   9,  10,   // tile01..tile0A
-  121, 122, 123,  11,  12,  13,  14,  15,  16,  17,   // box-TL box-horz box-TR, tile0B..tile11
-  124,  18,  19,  20,  21,  22, 237, 238, 236,        // box-vert, tile12..tile16, arrows
-  125, 126,  23,  24,  25,  26,  27,                  // box-BL box-BR, tile17..tile1B
+    1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,
+  121, 122, 123,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23, // box-TL box-horz box-TR
+  124,  24,  25,  26,  27,  28, 237, 238, 236,  29,  30,          // box-vert ... arrows
+  125, 126,  31,  32,  33,  34,  35,  36,  37,  38,               // box-BL box-BR
 };
 
-// Shift+Alt -- TILES II. tile1C..tile3F, straight reading order.
+// Shift+Alt -- TILES II. tile27..tile48, tile4D, tileC0..tileCB -- reading order.
 const int kPageTiles2[FontKeyboard::keyTotal] = {
-   28,  29,  30,  31,  32,  33,  34,  35,  36,  37,
-   38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
-   48,  49,  50,  51,  52,  53,  54,  55,  56,
-   57,  58,  59,  60,  61,  62,  63,
+   39,  40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,
+   52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  64,
+   65,  66,  67,  68,  69,  70,  71,  72,  77, 192, 193,          // ...tile48, tile4D, tileC0, tileC1
+  194, 195, 196, 197, 198, 199, 200, 201, 202, 203,
 };
 
-// Ctrl+Alt -- TILES III. tile40..tile48 + tile4D, then tileC0..tileD9.
+// Ctrl+Alt -- TILES III. tileCC..tileDF, the last of them.
 const int kPageTiles3[FontKeyboard::keyTotal] = {
-   64,  65,  66,  67,  68,  69,  70,  71,  72,  77,   // tile40..tile48, tile4D
-  192, 193, 194, 195, 196, 197, 198, 199, 200, 201,   // tileC0..tileC9
-  202, 203, 204, 205, 206, 207, 208, 209, 210,        // tileCA..tileD2
-  211, 212, 213, 214, 215, 216, 217,                  // tileD3..tileD9
+  204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216,
+  217, 218, 219, 220, 221, 222, 223,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
-// Shift+Ctrl+Alt -- CONTROLS. The codes that GLITCH a name live behind
-// the most deliberate key combination on the deck -- you cannot hit <end> by
-// accident. Mnemonic letters throughout (E=end, L=line, N=next, P=page, X=dex...).
-// The last six raw tiles ride the number row.
+// Shift+Ctrl+Alt -- CONTROLS. The codes that GLITCH a name live behind the most
+// deliberate key combination on the deck -- you cannot hit <end> by accident. Mnemonic
+// letters throughout (E=end, L=line, N=next, P=page, X=dex...).
 const int kPageControls[FontKeyboard::keyTotal] = {
-  218, 219, 220, 221, 222, 223,   0,   0,   0,   0,   // tileDA..tileDF
-    0,   0,  80,  88,   0,   0,   0,   0,   0,  73,   // end prompt ... page
-   81,   0,  87,   0,   0,   0,   0,   0,  79,        // para done line
-    0,  95,  85,  75,  76,  78,   0,                  // dex cont cont_ autocont next
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  80,  88,   0,   0,   0,   0,   0,  73,   0,   0,   0, // end prompt ... page
+   81,   0,  87,   0,   0,   0,   0,   0,  79,   0,   0,          // para done line
+    0,  95,  85,  75,  76,  78,   0,   0,   0,   0,               // dex cont cont_ autocont next
 };
 
 // A page's INDEX IS ITS MODIFIER MASK (shift = 1, ctrl = 2, alt = 4). That's the

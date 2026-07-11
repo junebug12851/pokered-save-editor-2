@@ -71,29 +71,44 @@ Item {
     latchAlt   = (p & 4) !== 0;
   }
 
-  // Shift+digit does NOT arrive as Key_1..Key_0 -- the OS hands us the SYMBOL's key
-  // code (Shift+1 == Key_Exclam). Map the US-layout number row back to its digit key
-  // so the Shift layer's number row still types. Other layouts fall through (the caps
-  // and the page strip still reach every tile).
-  readonly property var shiftedDigits: ({
-    "33": "1",  // !
-    "64": "2",  // @
-    "35": "3",  // #
-    "36": "4",  // $
-    "37": "5",  // %
-    "94": "6",  // ^
-    "38": "7",  // &
-    "42": "8",  // *
-    "40": "9",  // (
-    "41": "0"   // )
+  // A key does NOT arrive as "the key you pressed" -- the OS hands us the key code of
+  // the CHARACTER it produced. Shift+1 is Key_Exclam, not Key_1; Shift+/ is Key_Question;
+  // Shift+; is Key_Colon. So both the plain and the shifted code of every non-letter key
+  // have to map back to the same physical key, or half the deck stops responding to the
+  // keyboard. (US layout; other layouts fall through to the caps and the page strip,
+  // which reach every tile regardless.)
+  readonly property var physicalKeys: ({
+    // number row, plain then shifted
+    "49":"1", "33":"1",   // 1  !
+    "50":"2", "64":"2",   // 2  @
+    "51":"3", "35":"3",   // 3  #
+    "52":"4", "36":"4",   // 4  $
+    "53":"5", "37":"5",   // 5  %
+    "54":"6", "94":"6",   // 6  ^
+    "55":"7", "38":"7",   // 7  &
+    "56":"8", "42":"8",   // 8  *
+    "57":"9", "40":"9",   // 9  (
+    "48":"0", "41":"0",   // 0  )
+
+    // punctuation, plain then shifted
+    "96":"`",  "126":"`",   // `  ~
+    "45":"-",  "95":"-",    // -  _
+    "61":"=",  "43":"=",    // =  +
+    "91":"[",  "123":"[",   // [  {
+    "93":"]",  "125":"]",   // ]  }
+    "92":"\\", "124":"\\",  // \  |
+    "59":";",  "58":";",    // ;  :
+    "39":"'",  "34":"'",    // '  "
+    "44":",",  "60":",",    // ,  <
+    "46":".",  "62":".",    // .  >
+    "47":"/",  "63":"/"     // /  ?
   })
 
-  /// Physical key -> this deck's key label ("A", "7"), or "" if it isn't one of ours.
+  /// Physical key -> this deck's key label ("A", "7", "."), or "" if it isn't ours.
   function keyLabelFor(k) {
     if(k >= Qt.Key_A && k <= Qt.Key_Z) return String.fromCharCode(k);
-    if(k >= Qt.Key_0 && k <= Qt.Key_9) return String.fromCharCode(k);
 
-    var mapped = deck.shiftedDigits[k.toString()];
+    var mapped = deck.physicalKeys[k.toString()];
     return (mapped !== undefined) ? mapped : "";
   }
 
@@ -249,14 +264,17 @@ Item {
       spacing: deck.gap
 
       // ================= THE ROWS ==================================================
-      // Every row is a standard ANSI 15u. The keys this deck DOESN'T use (Tab, ` - =,
-      // [ ] \, ; ', , . /, Win/Menu) are drawn as DEAD caps: muted, unclickable, inert.
+      // A standard ANSI silhouette, 15u per row.
       //
-      // They're pure silhouette, and they earn their keep. Without them the deck was a
-      // floating block of 36 caps -- roomier, and somehow worse to look at, because the
-      // shape everyone recognises as "a keyboard" comes from those ragged edges as much
-      // as from the letters. The cost is that the real keys get ~10% smaller; the deck
-      // scales, so a wider window gives it straight back.
+      // The PUNCTUATION keys (` - = [ ] \ ; ' , . /) are real, typing keys: the tiles
+      // that belong on them are on them ("." types ".", Shift+"/" types "?"). They were
+      // dead filler in the first cut, which meant "." and "," were exiled onto a number
+      // row they have no business being on.
+      //
+      // Only Tab and the Win/Menu keys stay DEAD -- drawn, muted, inert, unclickable.
+      // They're pure silhouette, and they earn it: without them the deck was a floating
+      // block of caps, roomier and somehow worse, because the shape you recognise as "a
+      // keyboard" comes from the ragged edges as much as from the letters.
       // =============================================================================
 
       // ---- Number row: ` 1..0 - = ⌫ ----
@@ -264,10 +282,8 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: deck.gap
 
-        StructKey { label: "`"; unit: deck.u; units: 1; dead: true }
-
         Repeater {
-          model: ["1","2","3","4","5","6","7","8","9","0"]
+          model: ["`","1","2","3","4","5","6","7","8","9","0","-","="]
 
           KeyCap {
             required property string modelData
@@ -286,9 +302,6 @@ Item {
             Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
-
-        StructKey { label: "-"; unit: deck.u; units: 1; dead: true }
-        StructKey { label: "="; unit: deck.u; units: 1; dead: true }
 
         StructKey {
           id: backspaceKey
@@ -307,12 +320,13 @@ Item {
         StructKey { label: "Tab"; unit: deck.u; units: 1.5; dead: true }
 
         Repeater {
-          model: ["Q","W","E","R","T","Y","U","I","O","P"]
+          model: ["Q","W","E","R","T","Y","U","I","O","P","[","]","\\"]
 
           KeyCap {
             required property string modelData
 
-            width: deck.u
+            // The backslash key is the one 1.5u cap in the alphanumeric block.
+            width: deck.u * (modelData === "\\" ? 1.5 : 1)
             height: deck.u
             tileScale: deck.tileScale
             curFrame: deck.curFrame
@@ -326,10 +340,6 @@ Item {
             Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
-
-        StructKey { label: "["; unit: deck.u; units: 1; dead: true }
-        StructKey { label: "]"; unit: deck.u; units: 1; dead: true }
-        StructKey { label: "\\"; unit: deck.u; units: 1.5; dead: true }
       }
 
       // ---- Caps + home row + ; ' + Enter ----
@@ -346,7 +356,7 @@ Item {
         }
 
         Repeater {
-          model: ["A","S","D","F","G","H","J","K","L"]
+          model: ["A","S","D","F","G","H","J","K","L",";","'"]
 
           KeyCap {
             required property string modelData
@@ -365,9 +375,6 @@ Item {
             Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
-
-        StructKey { label: ";"; unit: deck.u; units: 1; dead: true }
-        StructKey { label: "'"; unit: deck.u; units: 1; dead: true }
 
         StructKey {
           id: enterKey
@@ -392,7 +399,7 @@ Item {
         }
 
         Repeater {
-          model: ["Z","X","C","V","B","N","M"]
+          model: ["Z","X","C","V","B","N","M",",",".","/"]
 
           KeyCap {
             required property string modelData
@@ -411,10 +418,6 @@ Item {
             Component.onCompleted: deck.capIndex[modelData] = this;
           }
         }
-
-        StructKey { label: ","; unit: deck.u; units: 1; dead: true }
-        StructKey { label: "."; unit: deck.u; units: 1; dead: true }
-        StructKey { label: "/"; unit: deck.u; units: 1; dead: true }
 
         StructKey {
           label: "Shift"

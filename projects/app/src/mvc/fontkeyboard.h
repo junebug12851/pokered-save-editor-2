@@ -95,7 +95,10 @@ public:
   explicit FontKeyboard(QObject* parent = nullptr);
 
   static constexpr int pageTotal = 8;  ///< Modifier combos: none/S/C/A/SC/SA/CA/SCA.
-  static constexpr int keyTotal = 36;  ///< Alphanumeric keys per page (26 letters + 10 digits).
+  /// Assignable keys per page: 26 letters + 10 digits + the 11 punctuation keys
+  /// (` - = [ ] \ ; ' , . /). The punctuation keys were dead filler at first; they now
+  /// carry the tiles that BELONG on them (`.` types `.`, Shift+`/` types `?`).
+  static constexpr int keyTotal = 47;
 
   int getPage() const;                 ///< @see page property.
   void setPage(int val);               ///< @see page property.

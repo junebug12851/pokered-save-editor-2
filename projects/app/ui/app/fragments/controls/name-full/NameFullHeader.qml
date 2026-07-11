@@ -45,7 +45,7 @@ ToolBar {
   // bars were eating half the screen: the keyboard is the point of this page, and it
   // was being squeezed into what was left. The bar is now a light surface with a hairline
   // divider, and it earns its height back for the deck.
-  height: 88
+  height: 80
   Material.background: brg.settings.textColorLight
 
   // The hairline that separates the bar from the body (replacing the colour block).
@@ -59,8 +59,9 @@ ToolBar {
 
   onStrChanged: editor.str = top.str
 
-  // Flat, square toggle button: no Material elevation/shadow, no rounded
-  // corners. Filled with the accent when `active`, outlined otherwise.
+  // The "Simulated" group's pill toggle. Rounded, properly PADDED (it read as a bare
+  // word crammed in a box before -- 5px of side padding and none to speak of on top),
+  // and it fills with the accent when on.
   component FlatToggle: Button {
     id: ftb
     property bool active: false
@@ -70,18 +71,20 @@ ToolBar {
     font.pixelSize: 11
     Material.elevation: 0
 
-    topPadding: 4
-    bottomPadding: 4
-    leftPadding: 6
-    rightPadding: 6
+    topPadding: 6
+    bottomPadding: 6
+    leftPadding: 12
+    rightPadding: 12
 
     background: Rectangle {
-      radius: 0
+      radius: 4
       border.width: 1
-      border.color: brg.settings.accentColor
+      border.color: ftb.active
+                    ? brg.settings.accentColor
+                    : brg.settings.dividerColor
       color: ftb.active
              ? brg.settings.accentColor
-             : (ftb.hovered ? Qt.lighter(brg.settings.accentColor, 1.65) : "transparent")
+             : (ftb.hovered ? Qt.lighter(brg.settings.dividerColor, 1.18) : "#ffffff")
     }
 
     contentItem: Text {
@@ -93,46 +96,102 @@ ToolBar {
     }
   }
 
+  // ---- The MODE indicator, top-left ----
+  // Replaces the sentence that used to sit under the field ("Keyboard mode — type or
+  // click the keys..."): it was long, it was ugly, and it said in twenty words what an
+  // icon says instantly. Keyboard icon = the deck is live. Pen = you're editing the text
+  // directly and the keyboard is off.
+  Item {
+    id: modeIcon
+
+    anchors.left: parent.left
+    anchors.leftMargin: 14
+    anchors.verticalCenter: parent.verticalCenter
+    width: 40
+    height: 40
+
+    Rectangle {
+      anchors.fill: parent
+      radius: 6
+      color: top.editMode
+             ? Qt.lighter(brg.settings.accentColor, 1.75)
+             : Qt.lighter(brg.settings.dividerColor, 1.25)
+      border.width: 1
+      border.color: top.editMode
+                    ? brg.settings.accentColor
+                    : brg.settings.dividerColor
+
+      Behavior on color { ColorAnimation { duration: 140 } }
+    }
+
+    Image {
+      anchors.centerIn: parent
+      source: top.editMode
+              ? "qrc:/assets/icons/fontawesome/pen.svg"
+              : "qrc:/assets/icons/fontawesome/keyboard.svg"
+      sourceSize.width: top.editMode ? 17 : 22
+      sourceSize.height: top.editMode ? 17 : 22
+      opacity: 0.85
+    }
+
+    HoverHandler { id: modeHover }
+
+    MainToolTip {
+      followGlobalSetting: false
+      visible: modeHover.hovered
+      text: top.editMode
+            ? qsTr("Edit mode — the keyboard is off. ✓ applies your edit, ✗ discards it.")
+            : qsTr("Keyboard mode — type or click the keys. The pen edits the text directly.")
+    }
+  }
+
   ColumnLayout {
     anchors.centerIn: parent
-    spacing: 3
+    spacing: 6
 
-    // ---- "Simulated" control group: a plain text label, then two toggle
-    //      buttons and the tileset combo. ----
-    RowLayout {
+    // ---- "Simulated" control group ----
+    // The label + the two controls now live in ONE tray, so they read as a single group
+    // that belongs together rather than three things loose at the top of the bar. (They
+    // were: a bold word, a toggle with no padding, and a bare combo, all floating.)
+    Rectangle {
       Layout.alignment: Qt.AlignHCenter
-      spacing: 3
+      implicitWidth: simRow.implicitWidth + 22
+      implicitHeight: simRow.implicitHeight + 10
 
-      // Plain caption — NOT a button.
-      Label {
-        text: qsTr("Simulated")
-        font.bold: true
-        font.pixelSize: 11
-        color: brg.settings.textColorDark
-        Layout.alignment: Qt.AlignVCenter
-      }
+      radius: 6
+      color: Qt.lighter(brg.settings.dividerColor, 1.34)
+      border.width: 1
+      border.color: brg.settings.dividerColor
 
-      // Bold vertical pipe between the label and the controls (Twilight likes it).
-      ToolSeparator {
-        Layout.fillHeight: false
-        Layout.preferredHeight: 18
-        Layout.alignment: Qt.AlignVCenter
-      }
+      RowLayout {
+        id: simRow
+        anchors.centerIn: parent
+        spacing: 9
 
-      FlatToggle {
-        text: qsTr("Outdoor")
-        active: brg.settings.previewOutdoor
-        onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
+        // Plain caption — NOT a button.
+        Label {
+          text: qsTr("Simulated")
+          font.bold: true
+          font.pixelSize: 11
+          color: brg.settings.textColorMid
+          Layout.alignment: Qt.AlignVCenter
+        }
 
-        MainToolTip { text: "Render tiles as they'd look outdoors vs. indoors." }
-      }
+        FlatToggle {
+          text: qsTr("Outdoor")
+          active: brg.settings.previewOutdoor
+          onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
 
-      NameFullTileset {
-        Layout.alignment: Qt.AlignVCenter
-        // In a RowLayout the combo's internal `width` is ignored, so without a
-        // preferred width it collapses to its indicator and the tileset name
-        // doesn't show. Keep it just wide enough for the names.
-        Layout.preferredWidth: 132
+          MainToolTip { text: "Render tiles as they'd look outdoors vs. indoors." }
+        }
+
+        NameFullTileset {
+          Layout.alignment: Qt.AlignVCenter
+          // In a RowLayout the combo's internal `width` is ignored, so without a
+          // preferred width it collapses to its indicator and the tileset name
+          // doesn't show. Keep it just wide enough for the names.
+          Layout.preferredWidth: 132
+        }
       }
     }
 
@@ -151,21 +210,6 @@ ToolBar {
 
       onEditStarted: top.editStarted();
       onEditEnded: top.editEnded();
-    }
-
-    // ---- Which mode you're in, said out loud ----
-    // The keyboard fading out is the loud signal; this is the one that names it, so
-    // nobody has to infer the rule from the animation.
-    Label {
-      Layout.alignment: Qt.AlignHCenter
-
-      text: top.editMode
-            ? qsTr("Edit mode — keyboard off. ✓ applies, ✗ discards.")
-            : qsTr("Keyboard mode — type or click the keys. ✎ edits the text directly.")
-
-      font.pixelSize: 10
-      color: brg.settings.textColorDark
-      opacity: 0.75
     }
   }
 

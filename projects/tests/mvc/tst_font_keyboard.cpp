@@ -167,11 +167,28 @@ void TstFontKeyboard::identityContract_data()
   QTest::newRow("7 is 7")       << 0 << "7" << "7";
   QTest::newRow("0 is 0")       << 0 << "0" << "0";
 
-  // Shift: uppercase, and the real shifted number row wherever the game has the glyph.
+  // Punctuation is on ITS OWN KEY, not exiled to a number row it has no business being
+  // on. This is the whole reason the deck grew from 36 keys to 47.
+  QTest::newRow(". is .")       << 0 << "." << ".";
+  QTest::newRow(", is ,")       << 0 << "," << ",";
+  QTest::newRow("/ is /")       << 0 << "/" << "/";
+  QTest::newRow("; is ;")       << 0 << ";" << ";";
+  QTest::newRow("' is '")       << 0 << "'" << "'";
+  QTest::newRow("- is -")       << 0 << "-" << "-";
+  QTest::newRow("[ is [")       << 0 << "[" << "[";
+  QTest::newRow("] is ]")       << 0 << "]" << "]";
+
+  // Shift: uppercase, and the real shifted keys wherever the game has that glyph.
   QTest::newRow("shift A is A") << 1 << "A" << "A";
   QTest::newRow("shift Z is Z") << 1 << "Z" << "Z";
   QTest::newRow("shift 1 is !") << 1 << "1" << "!";
+  QTest::newRow("shift 4 is $") << 1 << "4" << "$";
   QTest::newRow("shift 9 is (") << 1 << "9" << "(";
+  QTest::newRow("shift 0 is )") << 1 << "0" << ")";
+  QTest::newRow("shift 8 is x") << 1 << "8" << "<x>";   // the "*" key = multiply
+  QTest::newRow("shift / is ?") << 1 << "/" << "?";
+  QTest::newRow("shift ; is :") << 1 << ";" << ":";
+  QTest::newRow("shift ' is \"") << 1 << "'" << "<o\">";
 
   // Page 3 (Ctrl): the bold letters sit on their own letters. Ctrl+B = bold B.
   QTest::newRow("ctrl B is bold B") << 2 << "B" << "<B>";

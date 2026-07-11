@@ -47,6 +47,14 @@ Item {
   // A single tile => draw the glyph. Anything else => draw its name.
   readonly property bool isGlyph: !isEmpty && info.render === 1 && !isSpace
 
+  // When the tile IS this key's own character -- "a" on the A key, "7" on the 7, "." on
+  // the "." -- the corner legend would just be repeating the glyph back at you. The
+  // legend exists to say "this tile lives on THAT key"; when the answer is obvious it's
+  // noise, so it's dropped. It stays wherever the two differ (the "?" on the "/" key
+  // still tells you which key to press).
+  readonly property bool legendRedundant:
+    !isEmpty && top.info.code.toLowerCase() === top.info.key.toLowerCase()
+
   // "<player>" -> "player". The brackets cost 2 of the ~6 characters that fit on a
   // cap, and every code has them, so they carry no information here.
   readonly property string capLabel: {
@@ -149,9 +157,11 @@ Item {
 
     TileGlyph {
       anchors.centerIn: parent
-      // Nudged off dead-centre so the corner legend isn't sitting on top of the glyph.
-      anchors.horizontalCenterOffset: -2
-      anchors.verticalCenterOffset: 2
+      // Nudged off dead-centre so the corner legend isn't sitting on top of the glyph --
+      // but only when there IS a legend. On a key that types itself, the glyph gets the
+      // whole cap and sits dead centre, which is how a keycap should look.
+      anchors.horizontalCenterOffset: top.legendRedundant ? 0 : -2
+      anchors.verticalCenterOffset: top.legendRedundant ? 0 : 2
 
       visible: top.isGlyph
       ind: top.isGlyph ? top.info.ind : 0
@@ -198,7 +208,7 @@ Item {
       anchors.topMargin: 2
       anchors.rightMargin: 3
 
-      visible: !top.isSpace
+      visible: !top.isSpace && !top.legendRedundant
       text: top.info ? top.info.key : ""
       font.pixelSize: Math.max(9, Math.round(top.height * 0.30))
       font.bold: true
