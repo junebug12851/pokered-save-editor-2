@@ -37,6 +37,7 @@ Bridge::Bridge(FileManagement* file)
     bagItemsModel(new ItemStorageModel(file->data->dataExpanded->player->items, router)),
     pcItemsModel(new ItemStorageModel(file->data->dataExpanded->storage->items, router)),
     itemOverviewModel(new ItemOverviewModel(file->data->dataExpanded->player->items, file->data->dataExpanded->storage->items)),
+    itemExchangeModel(new ItemExchangeModel(file->data->dataExpanded->player->items, file->data->dataExpanded->storage->items, file->data->dataExpanded->player->basics)),
     pokemonOverviewModel(new PokemonOverviewModel(file->data->dataExpanded->player->pokemon, file->data->dataExpanded->storage, file->data->dataExpanded->player->basics)),
     marketModel(new ItemMarketModel(
                   file->data->dataExpanded->player->items,

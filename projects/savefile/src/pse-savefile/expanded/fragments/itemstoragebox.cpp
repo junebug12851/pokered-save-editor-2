@@ -215,6 +215,90 @@ int ItemStorageBox::amountOfInd(int ind)
   return total;
 }
 
+int ItemStorageBox::capacityForInd(int ind)
+{
+  if(ind < 0)
+    return 0;
+
+  int room = 0;
+
+  // Unused space in existing matching rows (each stack caps at 99).
+  for(auto el : items) {
+    if(el->ind == ind)
+      room += (99 - el->amount);
+  }
+
+  // Plus a full stack for each free row slot.
+  room += (maxSize - items.size()) * 99;
+
+  return room;
+}
+
+int ItemStorageBox::addAmount(int ind, int amount)
+{
+  if(ind < 0 || amount <= 0)
+    return 0;
+
+  int added = 0;
+
+  // Top up existing matching rows first (keep stacks tidy).
+  for(auto el : items) {
+    if(added >= amount)
+      break;
+    if(el->ind != ind)
+      continue;
+    const int put = qMin(99 - el->amount, amount - added);
+    if(put <= 0)
+      continue;
+    el->setAmount(el->amount + put);
+    added += put;
+  }
+
+  // Then spill the remainder into new rows, up to the box capacity.
+  while(added < amount && items.size() < maxSize) {
+    const int put = qMin(99, amount - added);
+    items.append(new Item(static_cast<var8>(ind), static_cast<var8>(put)));
+    itemInsertChange();
+    added += put;
+  }
+
+  if(added > 0)
+    itemsChanged();
+
+  return added;
+}
+
+int ItemStorageBox::removeAmount(int ind, int amount)
+{
+  if(ind < 0 || amount <= 0)
+    return 0;
+
+  int removed = 0;
+
+  // Drain matching rows from the last toward the first, deleting a row once empty
+  // (iterate backward so removeAt() doesn't shift rows we haven't visited).
+  for(int i = items.size() - 1; i >= 0 && removed < amount; --i) {
+    Item* el = items.at(i);
+    if(el->ind != ind)
+      continue;
+
+    const int take = qMin(el->amount, amount - removed);
+    if(take >= el->amount) {
+      el->deleteLater();
+      items.removeAt(i);
+      itemRemoveChange(i);
+    } else {
+      el->setAmount(el->amount - take);
+    }
+    removed += take;
+  }
+
+  if(removed > 0)
+    itemsChanged();
+
+  return removed;
+}
+
 int ItemStorageBox::randomUniqueInd()
 {
   // Build the candidate pool: every real (non-glitch, non-once) item that this

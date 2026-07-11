@@ -21,6 +21,21 @@ import "../../fragments/header"
 Page {
   id: topz
 
+  // Non-visual automation hook for the debug control channel (same idea as the trainer
+  // card's `trainerMoneyField`): the harness can drive straight to an Exchange sub-tab
+  // without simulating clicks --  `set marketPage debugExchangeSub <0|1|2>`
+  // (0 Currency, 1 Healing, 2 Custom). -1 leaves the screen untouched.
+  objectName: "marketPage"
+  property int debugExchangeSub: -1
+  onDebugExchangeSubChanged: {
+    if(debugExchangeSub < 0)
+      return;
+    brg.marketModel.isExchangeMode = true;
+    exchangeArea.subTab = debugExchangeSub;
+    if(debugExchangeSub >= 1)
+      itemConv.enterTab(debugExchangeSub === 1);
+  }
+
   // List-row sizing knobs.
   property int rowH: 46     // item row height
   property int headH: 32    // section-header row height
@@ -34,12 +49,21 @@ Page {
     property bool stripEnabled: true
     signal picked(int index)
 
+    // Colors default to the accent-bar look (light outline/text, light selected
+    // fill + accent selected text). A strip on a LIGHT surface (the Exchange
+    // sub-tab bar) overrides these for a dark outline/text + accent selected fill.
+    property color stripBorder: Qt.rgba(1, 1, 1, 0.55)
+    property color dividerCol: Qt.rgba(1, 1, 1, 0.45)
+    property color selFill: brg.settings.textColorLight
+    property color selText: brg.settings.accentColor
+    property color unselText: brg.settings.textColorLight
+
     implicitHeight: 28
     implicitWidth: segRow.implicitWidth
     radius: 6
     color: "transparent"
     border.width: 1
-    border.color: Qt.rgba(1, 1, 1, 0.55)   // light outline on the accent bar
+    border.color: stripBorder
     clip: true
     opacity: stripEnabled ? 1 : 0.45
 
@@ -61,8 +85,7 @@ Page {
           // rectangular and won't round child corners).
           Rectangle {
             anchors.fill: parent
-            color: segItem.index === seg.currentIndex
-                   ? brg.settings.textColorLight : "transparent"
+            color: segItem.index === seg.currentIndex ? seg.selFill : "transparent"
             topLeftRadius: segItem.index === 0 ? seg.radius : 0
             bottomLeftRadius: segItem.index === 0 ? seg.radius : 0
             topRightRadius: segItem.index === (seg.options.length - 1) ? seg.radius : 0
@@ -74,7 +97,7 @@ Page {
             anchors.left: parent.left
             width: 1
             height: parent.height
-            color: Qt.rgba(1, 1, 1, 0.45)
+            color: seg.dividerCol
           }
 
           Text {
@@ -83,11 +106,12 @@ Page {
             text: segItem.modelData
             font.pixelSize: 13
             font.bold: segItem.index === seg.currentIndex
-            color: segItem.index === seg.currentIndex
-                   ? brg.settings.accentColor : brg.settings.textColorLight
+            color: segItem.index === seg.currentIndex ? seg.selText : seg.unselText
           }
 
           MouseArea {
+            // objectName lets the debug control channel click a segment by label.
+            objectName: "segmouse_" + segItem.modelData
             anchors.fill: parent
             enabled: seg.stripEnabled
             cursorShape: Qt.PointingHandCursor
@@ -618,19 +642,46 @@ Page {
         }
       }
 
-      // =================== EXCHANGE converter ===================
+      // =================== EXCHANGE converters ===================
       Item {
+        id: exchangeArea
         anchors.fill: parent
         visible: brg.marketModel.isExchangeMode
+
+        // Which exchange: 0 Currency (money<->coins), 1 Healing (items), 2 Custom (items).
+        property int subTab: 0
 
         // Subtle backdrop so the card reads as a focused panel.
         Rectangle { anchors.fill: parent; color: Qt.rgba(0, 0, 0, 0.03) }
 
-        // The converter card.
-        Rectangle {
-          id: convCard
+        // ---- Sub-tab bar (Currency / Healing / Custom), on the light backdrop. ----
+        SegStrip {
+          id: exSubStrip
           anchors.horizontalCenter: parent.horizontalCenter
           anchors.verticalCenter: parent.verticalCenter
+          anchors.verticalCenterOffset: -(convCard.height / 2) - 26
+          options: ["Currency", "Healing", "Custom"]
+          currentIndex: exchangeArea.subTab
+          // Light-surface styling (dark outline/text, accent selected fill).
+          stripBorder: Qt.rgba(0, 0, 0, 0.18)
+          dividerCol: Qt.rgba(0, 0, 0, 0.15)
+          selFill: brg.settings.accentColor
+          selText: brg.settings.textColorLight
+          unselText: brg.settings.textColorMid
+          onPicked: (i) => {
+            exchangeArea.subTab = i;
+            if(i >= 1)
+              itemConv.enterTab(i === 1);   // Healing = i===1 (healing-only dropdowns)
+          }
+        }
+
+        // The money<->coins converter card (Currency sub-tab).
+        Rectangle {
+          id: convCard
+          visible: exchangeArea.subTab === 0
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.verticalCenter: parent.verticalCenter
+          anchors.verticalCenterOffset: 18
           width: Math.min(parent.width - 48, 560)
           height: convCol.implicitHeight + 40
           radius: 14
@@ -783,15 +834,251 @@ Page {
             }
           }
         }
+
+        // The item<->item converter card (Healing / Custom sub-tabs), driven by
+        // brg.itemExchangeModel. Two item sides (each a dropdown of owned items + a
+        // "+" that gains one, consuming the other item + refunding leftover to money).
+        QtObject {
+          id: itemConv
+          // Default the two dropdowns to the first two valid items for the entered tab.
+          function enterTab(healingOnly) {
+            var exm = brg.itemExchangeModel;
+            exm.reset();
+            var a = exm.ownedItems(healingOnly, -1);
+            exm.itemAInd = (a.length >= 1) ? a[0].ind : -1;
+            var b = exm.ownedItems(healingOnly, exm.itemAInd);
+            exm.itemBInd = (b.length >= 1) ? b[0].ind : -1;
+          }
+        }
+
+        Rectangle {
+          id: itemCard
+          visible: exchangeArea.subTab >= 1
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.verticalCenter: parent.verticalCenter
+          anchors.verticalCenterOffset: 18
+          width: Math.min(parent.width - 48, 560)
+          height: itemCol.implicitHeight + 40
+          radius: 14
+          color: "white"
+          border.width: 1
+          border.color: Qt.rgba(0, 0, 0, 0.10)
+
+          // A borderless item dropdown (owned items, mutual-exclusion via excludeInd).
+          component ItemCombo: ComboBox {
+            id: ic
+            property bool healingOnly: false
+            property int excludeInd: -1
+            property int boundInd: -1          // the model value this side owns
+            signal chose(int ind)
+
+            flat: true
+            font.capitalization: Font.Capitalize
+            font.pixelSize: 15
+            textRole: "name"
+            valueRole: "ind"
+            model: brg.itemExchangeModel.ownedItems(healingOnly, excludeInd)
+            implicitWidth: font.pixelSize * 11
+
+            // indexOfValue() doesn't resolve against a plain QVariantList model, so
+            // find the row for our bound item id ourselves (else currentIndex stays
+            // -1 and the combo renders with no text).
+            currentIndex: {
+              var m = ic.model;
+              if(!m)
+                return -1;
+              for(var i = 0; i < m.length; i++) {
+                if(m[i].ind === ic.boundInd)
+                  return i;
+              }
+              return -1;
+            }
+            onActivated: (i) => ic.chose(ic.model[i].ind)
+
+            background: Rectangle {
+              color: "transparent"
+              Rectangle {
+                anchors.bottom: parent.bottom; width: parent.width; height: 2
+                visible: ic.hovered; color: brg.settings.accentColor
+              }
+            }
+          }
+
+          ColumnLayout {
+            id: itemCol
+            anchors.left: parent.left; anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 22; anchors.rightMargin: 22
+            spacing: 14
+
+            property var exm: brg.itemExchangeModel
+            property bool healingOnly: exchangeArea.subTab === 1
+
+            // ---- Item A  ⇄  Item B ----
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: 10
+
+              // ===== Item A (gain A, spend B) =====
+              ColumnLayout {
+                Layout.fillWidth: true; Layout.preferredWidth: 1
+                Layout.alignment: Qt.AlignTop
+                spacing: 4
+
+                ItemCombo {
+                  Layout.alignment: Qt.AlignHCenter
+                  Layout.maximumWidth: parent.width
+                  healingOnly: itemCol.healingOnly
+                  excludeInd: itemCol.exm.itemBInd
+                  boundInd: itemCol.exm.itemAInd
+                  onChose: (ind) => itemCol.exm.itemAInd = ind
+                }
+                Item {
+                  Layout.alignment: Qt.AlignHCenter
+                  implicitWidth: aNum.implicitWidth; implicitHeight: aNum.implicitHeight
+                  Text {
+                    id: aNum
+                    anchors.centerIn: parent
+                    text: "x" + itemCol.exm.aAfter.toLocaleString()
+                    font.pixelSize: 24; font.bold: true
+                    color: brg.settings.textColorDark
+                  }
+                  Text {
+                    anchors.left: aNum.right; anchors.leftMargin: 2
+                    anchors.top: aNum.top; anchors.topMargin: -1
+                    visible: itemCol.exm.aAfter !== itemCol.exm.aStart
+                    text: topz.deltaStr(itemCol.exm.aAfter, itemCol.exm.aStart, "")
+                    font.pixelSize: 11; font.bold: true
+                    color: brg.settings.textColorMid
+                  }
+                }
+                Button {
+                  objectName: "exAddA"   // automation hook for the debug channel
+                  Layout.fillWidth: true; Layout.topMargin: 4
+                  text: qsTr("+ ") + (itemCol.exm.aName !== "" ? itemCol.exm.aName : qsTr("Item"))
+                  autoRepeat: true; autoRepeatDelay: 350; autoRepeatInterval: 70
+                  Material.background: brg.settings.accentColor
+                  Material.foreground: brg.settings.textColorLight
+                  enabled: itemCol.exm.canAddA
+                  onClicked: itemCol.exm.adjust(1)
+                }
+                Text {
+                  Layout.alignment: Qt.AlignHCenter
+                  visible: itemCol.exm.valid
+                  text: "-" + itemCol.exm.perAGive + " " + itemCol.exm.bName
+                        + "  +₽" + itemCol.exm.perARefund
+                  font.pixelSize: 11
+                  color: brg.settings.textColorMid
+                  horizontalAlignment: Text.AlignHCenter
+                }
+              }
+
+              Text {
+                Layout.alignment: Qt.AlignVCenter
+                text: "⇄"; font.pixelSize: 26; color: brg.settings.accentColor
+              }
+
+              // ===== Item B (gain B, spend A) =====
+              ColumnLayout {
+                Layout.fillWidth: true; Layout.preferredWidth: 1
+                Layout.alignment: Qt.AlignTop
+                spacing: 4
+
+                ItemCombo {
+                  Layout.alignment: Qt.AlignHCenter
+                  Layout.maximumWidth: parent.width
+                  healingOnly: itemCol.healingOnly
+                  excludeInd: itemCol.exm.itemAInd
+                  boundInd: itemCol.exm.itemBInd
+                  onChose: (ind) => itemCol.exm.itemBInd = ind
+                }
+                Item {
+                  Layout.alignment: Qt.AlignHCenter
+                  implicitWidth: bNum.implicitWidth; implicitHeight: bNum.implicitHeight
+                  Text {
+                    id: bNum
+                    anchors.centerIn: parent
+                    text: "x" + itemCol.exm.bAfter.toLocaleString()
+                    font.pixelSize: 24; font.bold: true
+                    color: brg.settings.textColorDark
+                  }
+                  Text {
+                    anchors.left: bNum.right; anchors.leftMargin: 2
+                    anchors.top: bNum.top; anchors.topMargin: -1
+                    visible: itemCol.exm.bAfter !== itemCol.exm.bStart
+                    text: topz.deltaStr(itemCol.exm.bAfter, itemCol.exm.bStart, "")
+                    font.pixelSize: 11; font.bold: true
+                    color: brg.settings.textColorMid
+                  }
+                }
+                Button {
+                  objectName: "exAddB"   // automation hook for the debug channel
+                  Layout.fillWidth: true; Layout.topMargin: 4
+                  text: qsTr("+ ") + (itemCol.exm.bName !== "" ? itemCol.exm.bName : qsTr("Item"))
+                  autoRepeat: true; autoRepeatDelay: 350; autoRepeatInterval: 70
+                  Material.background: brg.settings.accentColor
+                  Material.foreground: brg.settings.textColorLight
+                  enabled: itemCol.exm.canAddB
+                  onClicked: itemCol.exm.adjust(-1)
+                }
+                Text {
+                  Layout.alignment: Qt.AlignHCenter
+                  visible: itemCol.exm.valid
+                  text: "-" + itemCol.exm.perBGive + " " + itemCol.exm.aName
+                        + "  +₽" + itemCol.exm.perBRefund
+                  font.pixelSize: 11
+                  color: brg.settings.textColorMid
+                  horizontalAlignment: Text.AlignHCenter
+                }
+              }
+            }
+
+            Rectangle { Layout.fillWidth: true; height: 1; color: brg.settings.dividerColor }
+
+            // ---- Money refunded ----
+            RowLayout {
+              Layout.fillWidth: true
+              Text {
+                Layout.fillWidth: true
+                text: qsTr("Money")
+                font.pixelSize: 14; color: brg.settings.textColorMid
+              }
+              Text {
+                text: "₽" + itemCol.exm.moneyAfter.toLocaleString()
+                      + (itemCol.exm.moneyAfter !== itemCol.exm.moneyStart
+                         ? "  " + topz.deltaStr(itemCol.exm.moneyAfter, itemCol.exm.moneyStart, "₽")
+                         : "")
+                font.pixelSize: 14
+                color: brg.settings.textColorDark
+                horizontalAlignment: Text.AlignRight
+              }
+            }
+
+            Text {
+              Layout.fillWidth: true
+              visible: !itemCol.exm.valid
+              text: qsTr("Pick two different items you own to exchange.")
+              font.pixelSize: 12; font.italic: true
+              color: brg.settings.textColorMid
+              wrapMode: Text.WordWrap
+              horizontalAlignment: Text.AlignHCenter
+            }
+          }
+        }
       }
     }
   }
 
   // ---- Footer: a single Checkout button (commits whichever cart is active). ----
+  // On the Healing/Custom item-exchange sub-tabs it commits the item exchange;
+  // otherwise it commits the buy/sell/currency cart.
   footer: AppFooterBtn1 {
-    btn1.enabled: brg.marketModel.canAnyCheckout
+    readonly property bool itemExchange: brg.marketModel.isExchangeMode && exchangeArea.subTab >= 1
+    btn1.enabled: itemExchange ? (brg.itemExchangeModel.net !== 0)
+                               : brg.marketModel.canAnyCheckout
     icon1.source: "qrc:/assets/icons/fontawesome/shopping-cart.svg"
     text1: "Checkout"
-    onBtn1Clicked: brg.marketModel.checkout()
+    onBtn1Clicked: itemExchange ? brg.itemExchangeModel.checkout()
+                                : brg.marketModel.checkout()
   }
 }

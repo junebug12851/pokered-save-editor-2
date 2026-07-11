@@ -93,6 +93,19 @@ public:
   // bag and the PC box are independent).
   Q_INVOKABLE bool hasItemInd(int ind);  ///< Does this box already contain an item with index @p ind? (Q_INVOKABLE: the SelectItem dropdown greys out already-present names.)
   Q_INVOKABLE int amountOfInd(int ind);  ///< Total amount of item @p ind across all rows in this box (Q_INVOKABLE: the SelectItem dropdown shows the cross-pane owned total).
+
+  /// Room to add more of item @p ind: the unused space in existing matching rows
+  /// (up to 99 each) plus 99 for each free row slot (maxSize - itemsCount). Used by
+  /// the item exchange to gate the "+" buttons.
+  Q_INVOKABLE int capacityForInd(int ind);
+  /// Add @p amount of item @p ind: top up existing matching rows to 99 first, then
+  /// add new rows (up to @ref maxSize). Emits itemsChanged. @return amount actually
+  /// added (< amount if the box ran out of room).
+  Q_INVOKABLE int addAmount(int ind, int amount);
+  /// Remove @p amount of item @p ind from this box (drains matching rows from the
+  /// last, deleting emptied rows). Emits itemsChanged. @return amount actually removed.
+  Q_INVOKABLE int removeAmount(int ind, int amount);
+
   int randomUniqueInd();     ///< A random non-glitch/non-once item index absent from this box, or -1 if none remain.
 
 signals:
