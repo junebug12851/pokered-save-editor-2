@@ -59,6 +59,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/mvc/itemstoragemodel.h
     src/mvc/itemoverviewmodel.cpp
     src/mvc/itemoverviewmodel.h
+    src/mvc/itemexchangemodel.cpp
+    src/mvc/itemexchangemodel.h
     src/mvc/pokemonoverviewmodel.cpp
     src/mvc/pokemonoverviewmodel.h
     src/mvc/mapselectmodel.cpp

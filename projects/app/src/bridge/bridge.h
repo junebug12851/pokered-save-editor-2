@@ -31,6 +31,7 @@
 #include "../mvc/itemselectmodel.h"
 #include "../mvc/itemstoragemodel.h"
 #include "../mvc/itemoverviewmodel.h"
+#include "../mvc/itemexchangemodel.h"
 #include "../mvc/pokemonoverviewmodel.h"
 #include "../mvc/itemmarketmodel.h"
 #include "../mvc/itemmarketcartmodel.h"
@@ -92,6 +93,7 @@ class Bridge : public QObject
   Q_PROPERTY(ExamplesPokemon* randomExamplePokemon MEMBER randomExamplePokemon NOTIFY randomExamplePokemonChanged) ///< Example-pokemon source.
   Q_PROPERTY(ExamplesRival* randomExampleRival MEMBER randomExampleRival NOTIFY randomExampleRivalChanged) ///< Example-rival source.
   Q_PROPERTY(Settings* settings MEMBER settings NOTIFY settingsChanged) ///< UI theme/layout settings.
+  Q_PROPERTY(ItemExchangeModel* itemExchangeModel MEMBER itemExchangeModel NOTIFY itemExchangeModelChanged) ///< Item<->item exchange (Market Exchange tab: Healing/Custom).
   Q_PROPERTY(ItemMarketModel* marketModel MEMBER marketModel NOTIFY marketModelChanged) ///< Poke-mart market model.
   Q_PROPERTY(ItemMarketCartModel* marketCartModel MEMBER marketCartModel NOTIFY marketCartModelChanged) ///< Cart-only filter of @ref marketModel (receipt pane).
   Q_PROPERTY(ItemMarketViewModel* marketViewModel MEMBER marketViewModel NOTIFY marketViewModelChanged) ///< Buy/Sell view filter of @ref marketModel (left list).
@@ -127,6 +129,7 @@ signals:
   void bagItemsModelChanged();
   void pcItemsModelChanged();
   void itemOverviewModelChanged();
+  void itemExchangeModelChanged();
   void pokemonOverviewModelChanged();
   void marketModelChanged();
   void marketCartModelChanged();
@@ -166,6 +169,7 @@ public:
   ItemStorageModel* bagItemsModel = nullptr;          ///< @see bagItemsModel property.
   ItemStorageModel* pcItemsModel = nullptr;           ///< @see pcItemsModel property.
   ItemOverviewModel* itemOverviewModel = nullptr;     ///< @see itemOverviewModel property.
+  ItemExchangeModel* itemExchangeModel = nullptr;     ///< @see itemExchangeModel property.
   PokemonOverviewModel* pokemonOverviewModel = nullptr; ///< @see pokemonOverviewModel property.
   ItemMarketModel* marketModel = nullptr;             ///< @see marketModel property.
   ItemMarketCartModel* marketCartModel = nullptr;     ///< @see marketCartModel property.

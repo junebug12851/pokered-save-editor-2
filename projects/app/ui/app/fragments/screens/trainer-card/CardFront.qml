@@ -43,10 +43,11 @@ Rectangle {
     anchors.bottomMargin: 13
     anchors.right: parent.right
     // This is the anchor the whole right-hand column right-aligns to (Money, Coins,
-    // Starter, Playtime all sit at playerIdEdit.left / starterEdit.right). The
-    // margin leaves room to the right for the fields' [dice | trash] action groups
-    // so they stay inside the card border.
-    anchors.rightMargin: 92
+    // Starter, Playtime all sit at playerIdEdit.left / starterEdit.right). The margin
+    // is tuned so the fields' [dice | trash] action groups land in the SAME random /
+    // delete columns as the Playtime group's [dice | trash] buttons (whose right edge
+    // is the playtime group's right border minus its padding).
+    anchors.rightMargin: 100
   }
 
   Spacer {
@@ -137,8 +138,12 @@ Rectangle {
     anchors.left: parent.left
     anchors.leftMargin: 10
 
-    anchors.top: spacer.bottom
-    anchors.topMargin: 20
+    // Line the badge grid up with the right-hand fields (Money) so both sides of the
+    // card start at the same height. The small margin compensates for the badge art
+    // peaking a little above its grid cell, so the visible badge bodies sit level
+    // with the Money field's box (tuned against the screenshot).
+    anchors.top: moneyEdit.top
+    anchors.topMargin: 0
 
     cellSize: 35
     width: cellSize * 2

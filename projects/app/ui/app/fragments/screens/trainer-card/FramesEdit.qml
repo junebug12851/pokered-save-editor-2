@@ -22,7 +22,7 @@ DefTextEdit {
   maximumLength: 2
   width: 2 * font.pixelSize + leftPadding + rightPadding
 
-  horizontalAlignment: Text.AlignRight
+  horizontalAlignment: Text.AlignHCenter
 
   onTextChanged: {
     if(text === "")

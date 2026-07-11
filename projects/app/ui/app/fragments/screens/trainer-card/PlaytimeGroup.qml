@@ -40,18 +40,16 @@ Rectangle {
     font.bold: true
     font.capitalization: Font.Capitalize
     anchors.top: parent.top
-    anchors.left: parent.left
     anchors.topMargin: grp.padV
-    anchors.leftMargin: grp.padH
+    anchors.horizontalCenter: parent.horizontalCenter
   }
 
-  // ---- Clock fields + [dice | trash] ----
+  // ---- Clock fields + [dice | trash] ---- (centered in the group)
   Item {
     id: clockRow
     anchors.top: title.bottom
     anchors.topMargin: 8
-    anchors.left: parent.left
-    anchors.leftMargin: grp.padH
+    anchors.horizontalCenter: parent.horizontalCenter
     height: grp.fieldH
     width: clock.width + 6 + rand.width
 
@@ -77,11 +75,11 @@ Rectangle {
     }
   }
 
-  // ---- Enabled | Paused, below the fields ----
+  // ---- Enabled / Paused, below the fields (centered) ----
   PlaytimeToggles {
     id: toggles
     anchors.top: clockRow.bottom
     anchors.topMargin: 8
-    anchors.left: clockRow.left
+    anchors.horizontalCenter: parent.horizontalCenter
   }
 }
