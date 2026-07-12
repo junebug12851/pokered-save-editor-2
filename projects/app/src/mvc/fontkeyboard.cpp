@@ -98,14 +98,19 @@ const int kPageCaps[FontKeyboard::keyTotal] = {
 
 // Ctrl -- SYMBOLS. The 13 bold letters sit on their own letters, so Ctrl+B is bold B --
 // the same thing it means in every other program on earth. The rest is the punctuation
-// that has a "real" partner one layer up: the closing double quote under the opening
-// one on ', the narrow colon under ":" on ;, the ellipsis on "." (dots on the dot key),
-// the middle dot on ",", and the open/close single quotes on the brackets.
+// that has a real partner one layer up: the closing double quote under the opening one
+// on ', the narrow colon under ":" on ;, the ellipsis on "." (three dots on the dot
+// key), and the middle dot on ",".
+//
+// The alternate period `<.>` sits on the spare "=" key, NOT on "/" where it was: a
+// period that appears on the SLASH key -- while a perfectly good period sits on the
+// period key one layer down -- is a false affordance. If a tile can go where a real
+// keyboard would put it, it goes there; if it can't, it must not pretend.
 const int kPageSymbols[FontKeyboard::keyTotal] = {
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 242, //  .(alt) on "="
     0,   0, 100,   0,   0,   0,   0, 104,   0,   0, 112, 113,   0, // boldE boldI  '  '
    96, 106,  99, 101, 102, 103,   0, 186, 107, 109, 115,          // boldA..H  e-acute boldL  :(narrow)  "
-    0,   0,  98, 105,  97,   0, 108, 116, 117, 242,               // boldC boldV boldB boldM  mdot  ...  .(alt)
+    0,   0,  98, 105,  97,   0, 108, 116, 117,   0,               // boldC boldV boldB boldM  mdot  ...
 };
 
 // Alt -- CODES. Contractions sit on their own letter ('s on S, 't on T...). The
@@ -119,29 +124,41 @@ const int kPageCodes[FontKeyboard::keyTotal] = {
     0,   0,  91, 191,   0,   0, 229,   0,   0,   0,               // PC 'v 'm
 };
 
-// Shift+Ctrl -- TILES I. The nine Pictures anyone actually uses get the best keys on
-// the page: the six box-frame glyphs are literally DRAWN as a box on the keys
-// (Q=TL W=top E=TR / A=left / Z=BL X=BR) and the three cursor arrows take the right
-// home keys (J K L). Raw tiles 01-26 fill everything else, in reading order.
+// Shift+Ctrl -- TILES I. The box-frame glyphs are laid out AS A BOX you can type:
+//
+//        Q  W  E          ╔  ═  ╗
+//        A  S  D    -->   ║     ║      (S is the box's hollow middle, so it's empty)
+//        Z  X  C          ╚  ═  ╝
+//
+// so a border is literally "Q W W W E" then "Z X X X C". Twilight's idea, and it's a
+// better one than parking them in reading order: the keys ARE the picture.
+//
+// This is why the horizontal (122) and vertical (124) edges appear TWICE on this page --
+// deliberately, and the only duplicated tiles anywhere in the map. You cannot draw a box
+// with one vertical edge on one side. `tst_font_keyboard` pins exactly this: every tile
+// reachable, and these two the only ones reachable from more than one key.
+//
+// The three cursor arrows take , . / -- they're arrow-ish keys, and it keeps the whole
+// "things that point" family together.
 const int kPageTiles1[FontKeyboard::keyTotal] = {
     1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,
-  121, 122, 123,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23, // box-TL box-horz box-TR
-  124,  24,  25,  26,  27,  28, 237, 238, 236,  29,  30,          // box-vert ... arrows
-  125, 126,  31,  32,  33,  34,  35,  36,  37,  38,               // box-BL box-BR
+  121, 122, 123,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23, // ╔ ═ ╗ + tiles
+  124,   0, 124,  24,  25,  26,  27,  28,  29,  30,  31,          // ║ (hollow) ║ + tiles
+  125, 122, 126,  32,  33,  34,  35, 237, 238, 236,               // ╚ ═ ╝ + tiles, arrows on , . /
 };
 
-// Shift+Alt -- TILES II. tile27..tile48, tile4D, tileC0..tileCB -- reading order.
+// Shift+Alt -- TILES II. Straight reading order: tile24..tile48, tile4D, tileC0..tileC8.
 const int kPageTiles2[FontKeyboard::keyTotal] = {
-   39,  40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,
-   52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  64,
-   65,  66,  67,  68,  69,  70,  71,  72,  77, 192, 193,          // ...tile48, tile4D, tileC0, tileC1
-  194, 195, 196, 197, 198, 199, 200, 201, 202, 203,
+   36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
+   49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,
+   62,  63,  64,  65,  66,  67,  68,  69,  70,  71,  72,          // ...tile48
+   77, 192, 193, 194, 195, 196, 197, 198, 199, 200,               // tile4D, tileC0..tileC8
 };
 
-// Ctrl+Alt -- TILES III. tileCC..tileDF, the last of them.
+// Ctrl+Alt -- TILES III. tileC9..tileDF, the last of them.
 const int kPageTiles3[FontKeyboard::keyTotal] = {
-  204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216,
-  217, 218, 219, 220, 221, 222, 223,   0,   0,   0,   0,   0,   0,
+  201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
+  214, 215, 216, 217, 218, 219, 220, 221, 222, 223,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
@@ -190,6 +207,31 @@ const char* const kPageBadges[FontKeyboard::pageTotal] = {
 // order: Alt (4) is a one-key chord and belongs before Shift+Ctrl (3), which is two.
 // The page strip renders in this order; everything else indexes by mask.
 const int kPageOrder[FontKeyboard::pageTotal] = { 0, 1, 2, 4, 3, 5, 6, 7 };
+
+// A quiet line under the deck saying what you're looking at. Indexed by mask.
+const char* const kPageDescs[FontKeyboard::pageTotal] = {
+  "The characters the game itself lets you type into a name.",
+  "The same set, shifted -- capitals and the punctuation above the number row.",
+  "Bold letters and the extra marks: accents, quotes, dots.",
+  "Tiles from the loaded tileset -- they change as you play. Type Q W E / A D / Z X C to draw a box.",
+  "One byte, many characters: names pulled from memory, and words the game spells out for you.",
+  "More tiles from the loaded tileset -- these change as you play.",
+  "The last of the tileset's tiles.",
+  "Text-engine codes. These do not print -- they END, WRAP or PAUSE the text, and in a name they glitch it.",
+};
+
+// What a REAL keyboard produces for this key, so a tile that lands on its natural key
+// can drop the little legend in the corner (there is nothing to teach: the key IS the
+// character). US layout, unshifted then shifted.
+const char* const kNaturalPlain[] = {
+  "`","1","2","3","4","5","6","7","8","9","0","-","=",
+  "[","]","\\",";","'",",",".","/",
+};
+const char* const kNaturalShift[] = {
+  "~","!","@","#","$","%","^","&","*","(",")","_","+",
+  "{","}","|",":","\"","<",">","?",
+};
+constexpr int kNaturalCount = 21;
 
 /// One colour per tile, so the same precedence the old picker used (and therefore
 /// the same colours users already learned): normal, then control, then picture,
@@ -341,22 +383,58 @@ int FontKeyboard::indFor(int page, const QString& key)
   return 0;
 }
 
+QString FontKeyboard::naturalChar(const QString& key, bool shift)
+{
+  if(key.size() == 1) {
+    const QChar c = key.at(0);
+    if(c.isLetter())
+      return shift ? key.toUpper() : key.toLower();
+  }
+
+  for(int i = 0; i < kNaturalCount; i++) {
+    if(key != QString(kNaturalPlain[i]))
+      continue;
+
+    return QString(shift ? kNaturalShift[i] : kNaturalPlain[i]);
+  }
+
+  return QString();
+}
+
+QString FontKeyboard::pageDescription(int page)
+{
+  if(page < 0 || page >= pageTotal)
+    return QString();
+
+  return QString(kPageDescs[page]);
+}
+
 QVariantMap FontKeyboard::keyData(int page, const QString& key) const
 {
-  return dataForInd(indFor(page, key), key.toUpper());
+  return dataForInd(indFor(page, key), key.toUpper(), page);
 }
 
 QVariantMap FontKeyboard::spaceData() const
 {
-  return dataForInd(kSpaceInd, QStringLiteral("Space"));
+  return dataForInd(kSpaceInd, QStringLiteral("Space"), 0);
 }
 
-QVariantMap FontKeyboard::dataForInd(int ind, const QString& key) const
+QVariantMap FontKeyboard::dataForInd(int ind, const QString& key, int page) const
 {
   QVariantMap ret;
 
   ret["key"] = key;
   ret["ind"] = ind;
+
+  // Does this key produce, on THIS page, exactly what the same key + the same modifiers
+  // would produce on a real keyboard? (Shift+1 = "!", the A key = "a", "." = ".") If so
+  // the corner legend is noise -- the key is telling you what it types by BEING that
+  // key. Ctrl/Alt pages never match: a real keyboard produces no character for those, so
+  // those keys always keep their legend.
+  const bool chorded = (page & 2) || (page & 4);
+  const QString natural = chorded
+      ? QString()
+      : naturalChar(key, (page & 1) != 0);
 
   // An unmapped key is a normal, expected thing (34 of the 288 slots are empty) --
   // it must come back as a well-formed "empty" map, never a null the QML has to
@@ -372,6 +450,7 @@ QVariantMap FontKeyboard::dataForInd(int ind, const QString& key) const
     ret["tip"] = QString();
     ret["category"] = static_cast<int>(CatNone);
     ret["render"] = static_cast<int>(RenderEmpty);
+    ret["natural"] = false;
     return ret;
   }
 
@@ -383,6 +462,7 @@ QVariantMap FontKeyboard::dataForInd(int ind, const QString& key) const
   ret["tip"] = f->getTip();
   ret["category"] = static_cast<int>(categoryOf(f));
   ret["render"] = static_cast<int>(renderOf(f));
+  ret["natural"] = (!natural.isEmpty() && natural == f->getName());
 
   return ret;
 }

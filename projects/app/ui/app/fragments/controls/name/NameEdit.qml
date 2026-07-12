@@ -24,6 +24,17 @@ RowLayout {
   property alias readOnly: txtField.readOnly
   property bool isPersonName: false
 
+  /// The text colour. Defaults to the usual dark, so every other caller is unchanged;
+  /// the full keyboard greys it out while the DECK owns the text.
+  property color textColor: brg.settings.textColorDark
+
+  /// Where the text ends, in this row's coordinates -- so a caller can park its own
+  /// caret at the end of it (the full keyboard's keyboard-mode caret).
+  readonly property real textEndX: txtField.x + txtField.leftPadding
+                                   + Math.min(txtField.contentWidth,
+                                              txtField.width - txtField.leftPadding
+                                                             - txtField.rightPadding)
+
   /// Hand the caret to the field (the full keyboard's edit mode does this).
   function focusField() {
     txtField.forceActiveFocus();
@@ -53,9 +64,11 @@ RowLayout {
     activeFocusOnPress: !readOnly
     selectedTextColor: Qt.lighter(selectedColor, 2)
     selectionColor: selectedColor
-    color: brg.settings.textColorDark
+    color: root.textColor
     font.letterSpacing: 2
     font.pixelSize: 14
+
+    Behavior on color { ColorAnimation { duration: 140 } }
 
     placeholderText: qsTr("Enter a name")
     placeholderTextColor: Qt.lighter(brg.settings.textColorDark, 1.25)

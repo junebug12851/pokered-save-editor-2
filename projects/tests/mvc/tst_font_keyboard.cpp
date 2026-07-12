@@ -41,6 +41,8 @@ private slots:
   void initTestCase();
 
   void everyTileIsReachableExactlyOnce();
+  void bordersAreLaidOutAsABox();
+  void naturalKeysNeedNoLegend();
   void noPageOverflowsOrCollides();
   void everyMappedIndResolves();
   void identityContract_data();
@@ -87,20 +89,87 @@ void TstFontKeyboard::everyTileIsReachableExactlyOnce()
   QCOMPARE(spaceInd, 127);
   seen[spaceInd]++;
 
+  // The box-frame edges are the ONE deliberate exception: the horizontal (122) and
+  // vertical (124) edges each sit on two keys of the Tiles I page, because you cannot
+  // draw a box with a single vertical edge (see kPageTiles1 -- the keys are laid out AS
+  // the box). Everything else is on exactly one key.
+  const QSet<int> allowedTwice = { 122, 124 };
+
   QStringList missing;
   QStringList duplicated;
 
   for(int ind = 1; ind <= 255; ind++) {
+    const int want = allowedTwice.contains(ind) ? 2 : 1;
+
     if(seen[ind] == 0)
       missing.append(QString::number(ind));
-    else if(seen[ind] > 1)
-      duplicated.append(QString("%1 (x%2)").arg(ind).arg(seen[ind]));
+    else if(seen[ind] != want)
+      duplicated.append(QString("%1 (x%2, expected x%3)").arg(ind).arg(seen[ind]).arg(want));
   }
 
   QVERIFY2(missing.isEmpty(),
            qPrintable("tiles with NO key (unreachable): " + missing.join(", ")));
   QVERIFY2(duplicated.isEmpty(),
-           qPrintable("tiles on more than one key: " + duplicated.join(", ")));
+           qPrintable("tiles on the wrong number of keys: " + duplicated.join(", ")));
+}
+
+/// The box-frame page IS the box: Q W E / A _ D / Z X C draws it. That's why two tiles
+/// are duplicated, and it's worth pinning so nobody "tidies" it away.
+void TstFontKeyboard::bordersAreLaidOutAsABox()
+{
+  FontKeyboard kb;
+  const int p = FontKeyboard::pageFor(true, true, false);   // Shift+Ctrl -- Tiles I
+
+  QCOMPARE(kb.keyData(p, "Q")["code"].toString(), QString("<ul>"));    // top-left
+  QCOMPARE(kb.keyData(p, "W")["code"].toString(), QString("<horz>"));  // top edge
+  QCOMPARE(kb.keyData(p, "E")["code"].toString(), QString("<ur>"));    // top-right
+  QCOMPARE(kb.keyData(p, "A")["code"].toString(), QString("<vert>"));  // left edge
+  QVERIFY(kb.keyData(p, "S")["empty"].toBool());                       // the hollow middle
+  QCOMPARE(kb.keyData(p, "D")["code"].toString(), QString("<vert>"));  // right edge
+  QCOMPARE(kb.keyData(p, "Z")["code"].toString(), QString("<bl>"));    // bottom-left
+  QCOMPARE(kb.keyData(p, "X")["code"].toString(), QString("<horz>"));  // bottom edge
+  QCOMPARE(kb.keyData(p, "C")["code"].toString(), QString("<br>"));    // bottom-right
+
+  // The arrows keep the "things that point" family together on , . /
+  QCOMPARE(kb.keyData(p, ",")["code"].toString(), QString("<arr-r>"));
+  QCOMPARE(kb.keyData(p, ".")["code"].toString(), QString("<arr-d>"));
+  QCOMPARE(kb.keyData(p, "/")["code"].toString(), QString("<arr-r2>"));
+}
+
+/// A tile that lands on the key a real keyboard would put it on is flagged `natural`,
+/// and the cap then drops its corner legend -- the key IS the character, so a label
+/// saying which key to press is noise. Chorded pages can never be natural.
+void TstFontKeyboard::naturalKeysNeedNoLegend()
+{
+  FontKeyboard kb;
+
+  QCOMPARE(FontKeyboard::naturalChar("A", false), QString("a"));
+  QCOMPARE(FontKeyboard::naturalChar("A", true),  QString("A"));
+  QCOMPARE(FontKeyboard::naturalChar("1", false), QString("1"));
+  QCOMPARE(FontKeyboard::naturalChar("1", true),  QString("!"));
+  QCOMPARE(FontKeyboard::naturalChar("/", true),  QString("?"));
+  QCOMPARE(FontKeyboard::naturalChar(";", true),  QString(":"));
+
+  // The base + shift layers are the keyboard, so they're natural...
+  QVERIFY(kb.keyData(0, "A")["natural"].toBool());   // a
+  QVERIFY(kb.keyData(0, "7")["natural"].toBool());   // 7
+  QVERIFY(kb.keyData(0, ".")["natural"].toBool());   // .
+  QVERIFY(kb.keyData(1, "A")["natural"].toBool());   // A
+  QVERIFY(kb.keyData(1, "1")["natural"].toBool());   // !
+  QVERIFY(kb.keyData(1, "9")["natural"].toBool());   // (
+  QVERIFY(kb.keyData(1, "/")["natural"].toBool());   // ?
+  QVERIFY(kb.keyData(1, ";")["natural"].toBool());   // :
+
+  // ...but the ones with nowhere natural to be are not, and keep their legend.
+  QVERIFY(!kb.keyData(1, "2")["natural"].toBool());  // male sign on the "@" key
+  QVERIFY(!kb.keyData(1, "8")["natural"].toBool());  // x (multiply) on the "*" key
+
+  // A chorded page can never be natural -- a real keyboard types nothing for Ctrl+B.
+  QVERIFY(!kb.keyData(2, "B")["natural"].toBool());  // bold B
+  QVERIFY(!kb.keyData(4, "S")["natural"].toBool());  // 's
+
+  // ...and nothing may pretend: no period on a slash key while a real period exists.
+  QCOMPARE(kb.keyData(2, "/")["ind"].toInt(), 0);
 }
 
 /// No page may map two tiles to the same key, and every page has exactly 36 keys.
@@ -111,12 +180,16 @@ void TstFontKeyboard::noPageOverflowsOrCollides()
   QCOMPARE(keys.size(), FontKeyboard::keyTotal);
   QCOMPARE(QSet<QString>(keys.begin(), keys.end()).size(), FontKeyboard::keyTotal);
 
+  // The two box-frame edges are on two keys of the Tiles I page BY DESIGN (you can't
+  // draw a box with one vertical edge). Nothing else may repeat within a page.
+  const QSet<int> allowedTwice = { 122, 124 };
+
   for(int page = 0; page < FontKeyboard::pageTotal; page++) {
     QSet<int> used;
 
     for(const QString& key : keys) {
       const int ind = FontKeyboard::indFor(page, key);
-      if(ind == 0)
+      if(ind == 0 || allowedTwice.contains(ind))
         continue;
 
       QVERIFY2(!used.contains(ind),
@@ -201,10 +274,10 @@ void TstFontKeyboard::identityContract_data()
   QTest::newRow("alt O is rival")   << 4 << "O" << "<rival>";
   QTest::newRow("alt C is pc")      << 4 << "C" << "<pc>";
 
-  // Shift+Ctrl (mask 3): the box-frame glyphs are drawn AS a box on the keys.
+  // Shift+Ctrl (mask 3): the frames are laid out AS a box -- pinned in full by
+  // bordersAreLaidOutAsABox().
   QTest::newRow("frame corner on Q") << 3 << "Q" << "<ul>";
-  QTest::newRow("frame corner on X") << 3 << "X" << "<br>";
-  QTest::newRow("cursor arrow on J") << 3 << "J" << "<arr-r>";
+  QTest::newRow("frame corner on C") << 3 << "C" << "<br>";
 
   // Shift+Ctrl+Alt (mask 7): the dangerous codes, on mnemonic keys behind the
   // hardest chord on the deck.

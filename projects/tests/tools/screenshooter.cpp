@@ -359,6 +359,26 @@ static void captureTextEditors(GuiApp& app)
       qWarning().noquote() << "  [skip] keyboard deck not found";
     }
 
+    // The Example toggle. It must NOT resize the keyboard -- the footer is a fixed
+    // height precisely so flipping this can't re-flow the deck -- so shoot it and look.
+    // (Find the PAGE by its method -- `hasBox` is re-exposed by the header and the
+    // editor row too, and being descendants they'd match a property search first.)
+    QQuickItem* kbPage = GuiApp::findItem(root, [](QQuickItem* i) {
+      return i->metaObject()->indexOfMethod("toggleExample()") >= 0;
+    });
+
+    if (kbPage) {
+      const bool ok = QMetaObject::invokeMethod(kbPage, "toggleExample");
+      app.settle(320);
+      qInfo().noquote() << "  [dbg] toggleExample invoked:" << ok
+                        << "hasBox:" << kbPage->property("hasBox").toBool();
+      grab(app, QStringLiteral("editor/text_keyboard_example.png"));
+      QMetaObject::invokeMethod(kbPage, "toggleExample");
+      app.settle(150);
+    } else {
+      qWarning().noquote() << "  [skip] keyboard page not found (no toggleExample)";
+    }
+
     // Edit mode: the field becomes a real text field and the keyboard fades out+dead.
     // Find it by its METHOD, not by the `editMode` property -- NameFullHeader
     // re-exposes that property, and being an ancestor it gets found first (it has no

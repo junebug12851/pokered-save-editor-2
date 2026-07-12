@@ -47,13 +47,15 @@ Item {
   // A single tile => draw the glyph. Anything else => draw its name.
   readonly property bool isGlyph: !isEmpty && info.render === 1 && !isSpace
 
-  // When the tile IS this key's own character -- "a" on the A key, "7" on the 7, "." on
-  // the "." -- the corner legend would just be repeating the glyph back at you. The
-  // legend exists to say "this tile lives on THAT key"; when the answer is obvious it's
-  // noise, so it's dropped. It stays wherever the two differ (the "?" on the "/" key
-  // still tells you which key to press).
-  readonly property bool legendRedundant:
-    !isEmpty && top.info.code.toLowerCase() === top.info.key.toLowerCase()
+  // The corner legend exists to teach you "this tile lives on THAT key". When the deck
+  // types, on this key with these modifiers, exactly what a REAL keyboard would --
+  // "a" on A, "!" on Shift+1, "?" on Shift+/ -- there is nothing to teach: the key is
+  // already telling you, by being that key. So the legend is dropped.
+  //
+  // C++ decides this (`natural`), because it's the same rule that governs the map: a
+  // tile goes where a real keyboard would put it whenever it can. It stays on every
+  // Ctrl/Alt key, where a real keyboard types nothing and the legend is the only clue.
+  readonly property bool legendRedundant: !isEmpty && top.info.natural === true
 
   // "<player>" -> "player". The brackets cost 2 of the ~6 characters that fit on a
   // cap, and every code has them, so they carry no information here.

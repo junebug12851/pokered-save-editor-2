@@ -174,19 +174,56 @@ Page {
           Layout.rightMargin: 12
         }
 
-        // ---- Middle: the deck ----
-        KeyboardDeck {
-          id: deck
-
+        // ---- Middle: the Simulated bar (tile pages only), the deck, its description ----
+        ColumnLayout {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          Layout.bottomMargin: 8
+          spacing: 4
 
-          onInsert: (code) => top.insertCode(code);
-          onBackspace: top.backspace();
-          onAccept: top.commitAndClose();
-          onDismiss: top.commitAndClose();
-          onDetail: (info) => detailView.info = info;
+          // The tileset controls sit with the thing they affect. They're only meaningful
+          // on the picture pages, so that's the only place they appear -- and the row
+          // ALWAYS holds its height, so showing/hiding them can't resize the keyboard.
+          Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+
+            SimulatedBar {
+              anchors.fill: parent
+              visible: deck.isTilePage
+            }
+          }
+
+          KeyboardDeck {
+            id: deck
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            onInsert: (code) => top.insertCode(code);
+            onBackspace: top.backspace();
+            onAccept: top.commitAndClose();
+            onDismiss: top.commitAndClose();
+            onDetail: (info) => detailView.info = info;
+          }
+
+          // A quiet line saying what this page IS -- the page strip gives it a name and a
+          // chord; this says what it's for. Fixed height so switching pages never nudges
+          // the deck.
+          Text {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 26
+            Layout.bottomMargin: 4
+
+            text: brg.keyboard.pageDescription(deck.page)
+            font.pixelSize: 10
+            color: brg.settings.textColorMid
+            opacity: 0.9
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
+            maximumLineCount: 2
+            elide: Text.ElideRight
+          }
         }
 
         // ---- Right: the detail split ----
@@ -205,17 +242,19 @@ Page {
   Component.onCompleted: deck.forceActiveFocus();
 
   footer: ToolBar {
-    // Slimmer, and no longer a 119px slab of pale blue -- between this and the header
-    // the two stripes were eating half the screen while the keyboard, the actual point
-    // of the page, got squeezed into what was left. Same clean light surface as the
-    // header.
+    // FIXED HEIGHT -- it must not depend on Name-vs-Example. Sizing it to the preview
+    // meant flipping that toggle grew the footer, which shrank the body, which shrank
+    // the KEYBOARD: the whole deck re-flowed under your hands because you asked to see an
+    // example sentence. The footer now reserves the taller of the two states once, and
+    // the preview sits inside it.
     //
-    // NOTE the constant: `nameDisplay.height` is the rendered NAME only -- its length
-    // feedback ("Using 3 out of 10 bytes") hangs BELOW that height. Size purely to
-    // nameDisplay.height and the feedback is clipped clean off the bottom of the window;
-    // leave too much and you get a slab of dead white under it. This is tuned so the
-    // feedback line sits just off the bottom edge.
-    height: exampleControls.height + (top.hasBox ? nameDisplay.height + 30 : 60)
+    // (The height also has to clear the length feedback -- "Using 3 out of 10 bytes"
+    // hangs BELOW nameDisplay.height, so anything sized to that alone clips it off the
+    // bottom of the window.)
+    //
+    // The number: the toggle row (~26) + the Example box preview (8 * 6 * 1.4 = 67) +
+    // the feedback line + margins.
+    height: 134
     Material.background: brg.settings.textColorLight
 
     Rectangle {
@@ -230,10 +269,16 @@ Page {
     // next-button to re-roll the example. Anchored (not in a layout) so the
     // NameDisplay below keeps its own width/height bindings — a layout would
     // override them and the box→name toggle would stay box-shaped/distorted.
+    // Anchored UP from the bottom, not down from the top. The footer's height is FIXED
+    // (so Name/Example can't re-flow the deck), but the two previews are very different
+    // heights -- and hung off the top, the short one leaves a slab of white beneath it
+    // with the byte counter floating in the middle of nowhere. Bottom-up, the counter
+    // sits just off the bottom edge in BOTH modes, and the toggle simply rides higher
+    // when the example box needs the room.
     RowLayout {
       id: exampleControls
-      anchors.top: parent.top
-      anchors.topMargin: 5
+      anchors.bottom: nameDisplay.top
+      anchors.bottomMargin: 8
       anchors.horizontalCenter: parent.horizontalCenter
       spacing: 4
 
@@ -261,8 +306,9 @@ Page {
     NameDisplay {
       id: nameDisplay
       anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: exampleControls.bottom
-      anchors.topMargin: 6
+      // The 24 is the length feedback, which hangs BELOW this item's height.
+      anchors.bottom: parent.bottom
+      anchors.bottomMargin: 24
 
       placeholder: top.placeholder
       str: top.str
@@ -270,6 +316,12 @@ Page {
       is2Line: top.is2Line
       isPersonName: top.isPersonName
       isPlayerName: top.isPlayerName
+
+      // Smaller than the default 2. The Example (box) preview is `8 * 6 * sizeMult` tall
+      // -- 96px at the default -- and the footer has to reserve that height CONSTANTLY
+      // (it must not resize when you flip Name/Example, or the whole keyboard re-flows).
+      // At 1.75 the box fits a footer that isn't a slab.
+      sizeMult: 1.4
 
       disableEditor: true
       disableAutoPlaceholder: true

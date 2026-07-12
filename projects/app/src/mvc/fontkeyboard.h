@@ -130,7 +130,21 @@ public:
   /// The font code on @p key of @p page, or 0 when that key is empty.
   Q_INVOKABLE static int indFor(int page, const QString& key);
 
-  /// Everything a keycap needs: { ind, code, title, tip, category, render, empty }.
+  /// What a REAL keyboard (US layout) types for @p key with/without Shift -- "a"/"A",
+  /// "1"/"!", "."/">". Empty for keys that produce no character.
+  ///
+  /// This is what lets a cap drop its corner legend: if the deck types, on this key with
+  /// these modifiers, exactly what the physical keyboard would, the legend has nothing
+  /// to teach. It also states the design rule -- a tile goes where a real keyboard would
+  /// put it whenever it can, and must never pretend (a period on Ctrl+"/" while a real
+  /// period sits on the period key is a false affordance).
+  Q_INVOKABLE static QString naturalChar(const QString& key, bool shift);
+
+  /// The quiet line under the deck saying what this page is.
+  Q_INVOKABLE static QString pageDescription(int page);
+
+  /// Everything a keycap needs:
+  /// { ind, code, title, tip, category, render, empty, natural }.
   /// Returns an empty-flagged map for an unmapped key -- never a null/undefined.
   Q_INVOKABLE QVariantMap keyData(int page, const QString& key) const;
 
@@ -145,7 +159,9 @@ signals:
   void pageChanged();
 
 private:
-  QVariantMap dataForInd(int ind, const QString& key) const; ///< Shared body of keyData/spaceData.
+  /// Shared body of keyData/spaceData. @p page is needed to work out whether the tile
+  /// lands on the key a real keyboard would put it on (the `natural` flag).
+  QVariantMap dataForInd(int ind, const QString& key, int page) const;
 
   int page = 0; ///< @see page property.
 };

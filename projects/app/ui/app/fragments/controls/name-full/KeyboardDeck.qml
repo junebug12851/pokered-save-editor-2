@@ -45,6 +45,10 @@ Item {
   // strip could not name.
   readonly property int page: brg.keyboard.effectivePage(shiftOn, ctrlOn, altOn, capsOn)
 
+  /// The picture-tile pages (Tiles I/II/III) -- the only ones where the "Simulated"
+  /// tileset controls mean anything, so they're the only ones that show them.
+  readonly property bool isTilePage: page === 3 || page === 5 || page === 6
+
   property bool heldShift: false
   property bool heldCtrl: false
   property bool heldAlt: false

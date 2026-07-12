@@ -1,11 +1,10 @@
 // DetailView.qml -- the right-hand detail pane of the full keyboard.
 //
 // Fed by whichever key the mouse is over (KeyboardDeck's `detail` signal). Shows a
-// big render of the tile, its name, its raw code, its category, and its description.
+// render of the tile, its name, its raw code, its category, and its description.
 //
-// When nothing is hovered it does NOT go blank -- a pane that empties itself every
-// time the mouse moves reads as broken. It falls back to a short "what am I looking
-// at" hint instead.
+// When nothing is hovered it does NOT go blank -- a pane that empties itself every time
+// the mouse moves reads as broken. It falls back to a short "what am I looking at" note.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -19,9 +18,6 @@ Item {
 
   readonly property bool has: info && info.empty === false
 
-  // The pane is only ~185px tall in the app's default 750x480 window. Everything
-  // below is sized to fit that, and clip guarantees a long tip can never bleed into
-  // the footer.
   clip: true
 
   function catColor(c) {
@@ -68,38 +64,50 @@ Item {
     anchors.margins: 14
     spacing: 7
 
-    // ---- The tile, big ----
+    // ---- The tile ----
     Rectangle {
+      id: previewBox
+
       Layout.fillWidth: true
-      Layout.preferredHeight: 68
+      Layout.preferredHeight: 64
       radius: 8
 
       color: top.has
              ? Qt.tint("#ffffff", Qt.rgba(top.catColor(top.info.category).r,
                                           top.catColor(top.info.category).g,
-                                          top.catColor(top.info.category).b, 0.08))
+                                          top.catColor(top.info.category).b, 0.10))
              : Qt.rgba(0, 0, 0, 0.03)
 
       border.width: 1
       border.color: top.has
                     ? Qt.rgba(top.catColor(top.info.category).r,
                               top.catColor(top.info.category).g,
-                              top.catColor(top.info.category).b, 0.35)
+                              top.catColor(top.info.category).b, 0.4)
                     : Qt.rgba(0, 0, 0, 0.06)
 
       // A control code has no glyph to show at all -- so say what it does instead of
       // rendering a lie.
       TilePreview {
+        id: preview
         anchors.centerIn: parent
+
         visible: top.has && top.info.render !== 3
         tileName: (top.has && top.info.render !== 3) ? top.info.code : ""
-        sizeMult: 4
+
+        // ONE BYTE CAN PRINT FIFTEEN CHARACTERS (<user> -> "Enemy <SPECIES>"). At a fixed
+        // scale that render is wider than the whole pane and gets sliced off, so the
+        // scale is fitted to the expansion: big for a single glyph, small for a sentence.
+        sizeMult: {
+          var w = previewBox.width - 16;
+          var perTile = w / Math.max(1, preview.chop * 8);
+          return Math.max(1, Math.min(4, perTile));
+        }
       }
 
       Text {
         anchors.centerIn: parent
         visible: top.has && top.info.render === 3
-        text: qsTr("text engine code\n(no glyph)")
+        text: qsTr("text-engine code\n(prints nothing)")
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 11
         font.italic: true
@@ -153,7 +161,7 @@ Item {
 
       Text {
         Layout.fillWidth: true
-        // Only worth showing when it differs from the name -- "A" is its own code.
+        // Only worth showing when it differs from the name -- "a" is its own code.
         text: (top.has && top.info.code !== top.info.title) ? top.info.code : ""
         font.pixelSize: 12
         font.italic: true
@@ -171,43 +179,48 @@ Item {
     }
 
     // ---- Description ----
-    // fillHeight + elide: a long tip TRUNCATES inside the pane instead of running off
-    // the bottom edge (which it did, straight into the footer).
-    Text {
+    // SCROLLS. Some of these descriptions are long, and the pane is ~175px tall in the
+    // app's default window: eliding them just hid the half that explained what the code
+    // actually does to your save.
+    Flickable {
       Layout.fillWidth: true
       Layout.fillHeight: true
       visible: top.has && top.info.tip !== ""
-      text: top.has ? top.info.tip : ""
-      font.pixelSize: 11
-      color: brg.settings.textColorDark
-      wrapMode: Text.WordWrap
-      lineHeight: 1.15
-      elide: Text.ElideRight
-      verticalAlignment: Text.AlignTop
+
+      clip: true
+      contentWidth: width
+      contentHeight: tipText.implicitHeight
+      boundsBehavior: Flickable.StopAtBounds
+      ScrollBar.vertical: ScrollBar { width: 6 }
+
+      Text {
+        id: tipText
+        width: parent.width - 8
+        text: top.has ? top.info.tip : ""
+        font.pixelSize: 11
+        color: brg.settings.textColorDark
+        wrapMode: Text.WordWrap
+        lineHeight: 1.2
+      }
     }
 
-    // ---- The idle hint ----
-    // Kept SHORT on purpose: the pane is ~212 x 185 in the app's default window, and a
-    // paragraph here simply runs off the bottom edge.
+    // ---- The idle note ----
+    // ONE block, and factually right. "Each key holds one game character" was simply
+    // wrong: a key holds one BYTE, and that byte might print one character, or several,
+    // or a name pulled out of memory, or nothing at all while it does something to the
+    // text engine.
     Text {
       Layout.fillWidth: true
       Layout.fillHeight: true
       visible: !top.has
-      // THREE lines, single-spaced, and no more: the pane is ~175px tall in the app's
-      // default window and a fourth line elides to a trailing "..." that reads as a
-      // bug. (Blank lines between them pushed two lines off the bottom.)
-      text: qsTr("Each key holds one game character.\n" +
-                 "Click it, or type the key in its corner.\n" +
-                 "Shift / Ctrl / Alt switch pages.")
+      text: qsTr("Every key is one byte. That byte may print one character, several, a " +
+                 "whole name — or nothing at all, and change the text instead.")
       font.pixelSize: 11
       color: brg.settings.textColorMid
       wrapMode: Text.WordWrap
-      lineHeight: 1.35
+      lineHeight: 1.3
       elide: Text.ElideRight
       verticalAlignment: Text.AlignTop
     }
-
-    // Soaks up any leftover height so nothing stretches when a tile has no tip.
-    Item { Layout.fillWidth: true; Layout.fillHeight: true }
   }
 }

@@ -19,15 +19,31 @@ Button {
   rightInset: 0
   padding: 6
 
-  // NOTE: use as-is — do NOT re-add leftPadding/rightPadding/leftInset/
-  // rightInset:0 per instance (those were the "dirty" Bag-screen overrides; the
-  // tight square highlight is already baked in here). See ui-patterns.md.
+  // OPT-IN "tray" chrome: a bordered, rounded, always-visible button face rather than
+  // the default transparent-until-hovered one. Off by default, so every existing caller
+  // is unchanged.
+  //
+  // It exists because a ROW of these looked broken: sitting next to controls that DO have
+  // a background, the flat ones read as a different, unrelated kind of thing. Within one
+  // row of buttons, either all of them have a face or none do.
+  property bool trayed: false
+
   background: Rectangle {
-    radius: 2
-    color: control.down
-           ? Qt.rgba(0, 0, 0, 0.16)
-           : control.hovered
-             ? Qt.rgba(0, 0, 0, 0.08)
-             : "transparent"
+    radius: control.trayed ? 4 : 2
+
+    color: control.trayed
+           ? (control.down
+              ? Qt.lighter(brg.settings.dividerColor, 1.05)
+              : control.hovered
+                ? Qt.lighter(brg.settings.dividerColor, 1.22)
+                : "#ffffff")
+           : (control.down
+              ? Qt.rgba(0, 0, 0, 0.16)
+              : control.hovered
+                ? Qt.rgba(0, 0, 0, 0.08)
+                : "transparent")
+
+    border.width: control.trayed ? 1 : 0
+    border.color: brg.settings.dividerColor
   }
 }
