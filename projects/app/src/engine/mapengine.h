@@ -132,6 +132,26 @@ public:
   /// Render @p buffer with tileset @p tilesetInd at animation @p frame. 32 px per block.
   static QImage render(const Buffer& buffer, int tilesetInd, int frame = 0);
 
+  /**
+   * @brief The 6x5-block scratch area as TILE ids -- the game's `wSurroundingTiles`.
+   *
+   * 24x20 = 480 tile ids, row-major, exactly what `LoadCurrentMapView` leaves in RAM at
+   * `$C508`. Not needed to draw anything (@ref render goes straight to pixels) -- it
+   * exists so the emulator harness can compare our expansion of blocks into tiles
+   * against the real console's, byte for byte. See `reference/emulator-verification.md`.
+   */
+  static QByteArray surroundingTiles(const Buffer& buffer, int tilesetInd, int x, int y);
+
+  /**
+   * @brief The visible screen as TILE ids -- the game's `wTileMap`.
+   *
+   * 20x18 = 360 tile ids, row-major: `$C3A0` on the console. This is the whole view
+   * pipeline in one array -- blocks, the block->tile expansion, the scratch area, and
+   * the half-block screen offset -- so comparing it against real RAM verifies all of it
+   * at once, with no sprites and no palettes in the way.
+   */
+  static QByteArray screenTiles(const Buffer& buffer, int tilesetInd, int x, int y);
+
   /// The tileset id a map uses per its own header (its `getToTileset` equivalent, without deep links).
   static int tilesetOf(int mapInd);
 

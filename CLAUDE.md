@@ -27,6 +27,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/diagnostic-methods.md` | How to find and fix systemic problems (truncation, hangs, QML chain failures, transcript recovery) |
 | `notes/reference/ui-patterns.md` | **UI/QML conventions** — layouts, borderless combos, ⋮ buttons, editor popups, sliders, drag & drop, View All drawers. Read before UI work |
 | `notes/reference/screenshots.md` | **UI screenshot capture** — the headless `screenshooter` tool + capture scripts that render the live UI to `tmp/screenshots/` as **still PNGs** (offscreen, no save writes). How it's driven + the font/backend gotchas. (No automated GIFs — animated GIFs are added manually, one at a time) |
+| `notes/reference/emulator-verification.md` | **The actual Game Boy checks our work** — `tst_emu_parity` boots the real ROM (PyBoy, headless) with one of our saves, reads the console's own RAM + framebuffer, and demands `MapEngine` match byte-for-byte. Setup, the ROM rules (git-ignored, never committed/shipped; SKIPs without it), licensing, and the traps (the "has the save loaded?" trap; `wCurMapTileset` bit 7). **Read before any map/render work** — it is the oracle |
 | `notes/reference/dev-harness.md` | **Debug automation harness + fast-dev loop** — DEBUG-only launch flags (`--sav`/`--screen`/`--hot`/`--shot`), the `127.0.0.1:8766` live TCP control channel, and QML hot-reload. How to launch straight to the screen under edit with a save loaded and preview edits live |
 | `notes/reference/i18n.md` | **Translations** — Qt Linguist pipeline (`qsTr`/`tr` → `.ts`/`.qm` at `:/i18n`, `QTranslator` in boot), how to add a language; language switching deferred until a 2nd locale + Options screen exist |
 | `notes/reference/documentation.md` | **Docs** — generating the Doxygen site, the comment house-style, and the doc-pass progress ledger (all merged here) |
@@ -95,6 +96,14 @@ Windows machine via the PowerShell terminal:
 
 After making changes, run this loop **without being asked** (established 2026-06-10). Route all build/test
 output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (PowerShell ~60s cap).
+
+> **EVERYTHING RUNS IN THE BACKGROUND — mandatory, by default (2026-07-12, Twilight).** Builds, tests,
+> screenshot captures, emulator runs, git, installs: all of it runs **hidden/headless** (`Start-Process
+> -WindowStyle Hidden`, `QT_QPA_PLATFORM=offscreen`, detached + polled via a log). **Nothing steals her
+> screen or her focus.** Bring something to the foreground **only** when it genuinely needs her hands or
+> her eyes — i.e. a real in-app review she asked for, or a step that cannot be automated. Even then, say
+> why it's coming up. A window appearing unbidden mid-work is an interruption, and interruptions are not
+> free. If you can capture it headless and *show her the image instead*, do that.
 
 0. **Track the work with TASKS — early, often, and comprehensively (by default, 2026-07-11, Twilight).**
    Open a task list at the *start* of anything with more than one step — not retroactively, not "if it

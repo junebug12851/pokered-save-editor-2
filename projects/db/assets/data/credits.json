@@ -49,6 +49,12 @@
       "section": "Tools Used",
       "entries": [
         {
+          "name": "PyBoy",
+          "url": "github.com/Baekalfen/PyBoy",
+          "note": "A Game Boy emulator we drive from the test suite -- it boots the real game with our save files so the editor can be checked against the console itself, byte for byte. A developer tool only: it is installed separately, run as its own process, and is never linked into or shipped with the editor",
+          "license": "LGPL-3.0 (dev/test tool, not distributed with this app)"
+        },
+        {
           "name": "JSON Editor Online",
           "url": "jsoneditoronline.org",
           "note": "Huge help in formatting and validating json data"

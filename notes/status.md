@@ -38,6 +38,22 @@ Nothing invented, no JSON changed.
 **Not yet drawn:** the player, connection strips bleeding into the border ring, warps/signs/sprites,
 tile animation frames (frame 0 only), and the palettes/"contrast" (currently the tileset PNG's greys).
 
+### ✅ And now the actual Game Boy checks our work (2026-07-12)
+
+`tst_emu_parity` boots the **real ROM** in an emulator with one of our saves, reads the **console's own
+RAM**, and demands `MapEngine` match it byte for byte. The verdict: the view pointer, the map's blocks, the
+24×20 scratch area and the **20×18 screen tiles all MATCH** — `wTileMap` matching means the entire view
+pipeline is right, with no sprites or palettes in the way.
+
+It also immediately caught the one thing that *is* wrong: **the border ring**. We fill it with the border
+block; the game bleeds the **connected maps' edges** over it (Pallet Town's ring is Route 1 and Route 21,
+not trees). Held as an explicit `QEXPECT_FAIL` so it can't be forgotten — implement connection strips and
+the test starts passing.
+
+The ROM is Twilight's own cartridge backup: **git-ignored, never committed, never shipped**; without it
+every case SKIPs. Setup + the traps (the "has the save loaded?" trap, `wCurMapTileset` bit 7):
+[`reference/emulator-verification.md`](reference/emulator-verification.md).
+
 The big structural blocker is **solved**: the `brg.file.data.dataExpanded.*` chain works, data reads
 and **persists** across every screen, and the build is fast. The other major bug class — **QML
 garbage-collecting parentless C++ QObjects** (the font/name blanking and the clicking-Pokémon crash)

@@ -227,6 +227,69 @@ QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame)
   return img;
 }
 
+QByteArray MapEngine::surroundingTiles(const Buffer& buffer, int tilesetInd, int x, int y)
+{
+  // LoadCurrentMapView, in full: walk the 6x5 blocks starting at the view block, and
+  // stamp each one's 4x4 tiles into a 24x20 tile grid.
+  const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(tilesetInd);
+  if (!buffer.valid || blockset.isEmpty())
+    return QByteArray();
+
+  const int blockCount = blockset.size() / tilesPerBlock;
+  const int width = screenBlocksW * blockTiles;   // 24
+  const int height = screenBlocksH * blockTiles;  // 20
+
+  QByteArray out(width * height, '\0');
+  const QPoint view = viewBlock(x, y);
+
+  for (int by = 0; by < screenBlocksH; by++) {
+    for (int bx = 0; bx < screenBlocksW; bx++) {
+      const int col = view.x() + bx;
+      const int row = view.y() + by;
+
+      if (col < 0 || col >= buffer.stride || row < 0 || row >= buffer.rows)
+        continue;
+
+      const int block = static_cast<quint8>(buffer.blocks[row * buffer.stride + col]);
+      if (block >= blockCount)
+        continue;
+
+      const int base = block * tilesPerBlock;
+
+      for (int ty = 0; ty < blockTiles; ty++) {
+        for (int tx = 0; tx < blockTiles; tx++) {
+          const int dst = (by * blockTiles + ty) * width + (bx * blockTiles + tx);
+          out[dst] = blockset[base + ty * blockTiles + tx];
+        }
+      }
+    }
+  }
+
+  return out;
+}
+
+QByteArray MapEngine::screenTiles(const Buffer& buffer, int tilesetInd, int x, int y)
+{
+  const QByteArray surrounding = surroundingTiles(buffer, tilesetInd, x, y);
+  if (surrounding.isEmpty())
+    return QByteArray();
+
+  const int srcWidth = screenBlocksW * blockTiles; // 24
+
+  // The screen is copied out of the scratch area, pushed over by which half of his block
+  // the player stands in -- 2 tiles per half-block, on each axis.
+  const int offsetX = (x % 2) * 2;
+  const int offsetY = (y % 2) * 2;
+
+  QByteArray out(screenTilesW * screenTilesH, '\0');
+
+  for (int row = 0; row < screenTilesH; row++)
+    for (int col = 0; col < screenTilesW; col++)
+      out[row * screenTilesW + col] = surrounding[(row + offsetY) * srcWidth + (col + offsetX)];
+
+  return out;
+}
+
 // ── The game's view maths ──────────────────────────────────────────────────────
 //
 // x and y are the player's coordinates: they count in half-blocks (one walking step

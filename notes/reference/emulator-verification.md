@@ -1,0 +1,117 @@
+# Emulator verification — checking the editor against the actual Game Boy
+
+Every other test in this project asks *"is the editor consistent with itself?"*. This one asks the only
+question that really settles it: **does the real game agree?**
+
+`tst_emu_parity` boots the genuine ROM in an emulator with one of our save files, lets the game load it,
+and then reads the **console's own RAM** back out — and demands that what `MapEngine` built matches it
+**byte for byte**. The editor can be internally consistent and still be wrong. The console can't.
+
+> **It found a real gap the first time it was pointed at us.** Our border ring was the map's border block;
+> the game's was Route 1 and Route 21 bleeding in over it. See "What it caught immediately" below.
+
+## The ROM — read this first
+
+`assets/references/backup.gb` is a dump of a cartridge **Twilight owns**, kept locally for verification.
+
+- It is **git-ignored** (`/assets/references/` plus explicit `*.gb` / `*.gbc` / `*.gba` / `*.rom` rules, so
+  it cannot be added by accident even if it moves). It has **never** been committed — verified against the
+  full history, not just the working tree.
+- It is **never** published, released, copied into a build artifact, or uploaded anywhere. The harness
+  copies it only into `tmp/emu/` (also git-ignored) because PyBoy wants the battery save beside the ROM.
+- It is **not required**. Without it — CI, a fresh clone, anybody else's machine — every case **SKIPs** and
+  the suite stays green. Nothing about building, testing or shipping the editor depends on it.
+
+Its SHA-1 is `ea9bcae617fdf159b045185467ae58b2e4a48b9a`, which is **exactly the `pokered.gbc` SHA-1 in the
+disassembly's own `roms.sha1`**. The ROM, the disassembly we read the map format out of, and the editor are
+therefore all the *same game* — which is what makes the emulator a valid oracle rather than an approximation.
+
+## Licensing
+
+- **PyBoy** (LGPL-3.0) is a **developer tool**: installed separately into a throwaway venv, invoked as its
+  own process, **never linked into or shipped with the editor**. The app remains Apache-2.0 and ships
+  nothing of PyBoy's. It is credited in `credits.json` → Tools Used, with that distinction stated.
+- Its dependencies are all permissive and equally dev-only: **numpy** (BSD-3), **Pillow** (MIT-CMU, already
+  credited — the GIF scripts use it), **PySDL2** (CC0) and the **SDL2** binaries it bundles (zlib).
+- Nothing in `tmp/emu-venv/` is committed, redistributed, or bundled into a release.
+
+> ⚠️ Windows Defender flagged something during the first install (it passed on its own). Bundled binary
+> DLLs like SDL2's are a common false positive. If it recurs, `pwsh -File scripts/emu/setup.ps1 -Recreate`
+> rebuilds the venv from scratch, and deleting `tmp/emu-venv` removes every trace of it.
+
+## Setup
+
+```powershell
+pwsh -File scripts\emu\setup.ps1        # creates tmp/emu-venv, installs PyBoy, verifies the ROM's SHA-1
+ctest -R tst_emu_parity --output-on-failure
+```
+
+## How it works
+
+`scripts/emu/dump_state.py` (PyBoy) boots the ROM with a copy of one of our `.sav` fixtures and dumps what
+the game actually did into `tmp/emu/`:
+
+| File | What it is | WRAM |
+|------|-----------|------|
+| `state.json` | the game's own map, tileset, size, coords — and the view pointer **it** computed | — |
+| `wOverworldMap.bin` | the block buffer it built: the map ringed by its 3-block border | `$C6E8` |
+| `wSurroundingTiles.bin` | the 6×5-block scratch area, expanded to 24×20 **tile** ids | `$C508` |
+| `wTileMap.bin` | the 20×18 tile ids actually **on screen** | `$C3A0` |
+| `screen.png` | the 160×144 framebuffer (BG + sprites + palette) | — |
+
+`tst_emu_parity` then compares each against `MapEngine`. **`wTileMap` is the strongest of them**: it is the
+entire view pipeline in one array — blocks → tiles → scratch area → half-block screen offset — with no
+sprites and no palettes in the way. If that matches, the map emulator is right.
+
+### Booting the front end — mechanically, not hopefully
+
+Getting from the title screen to the overworld has to work *every* time, so it is driven by the game's own
+memory rather than by pressing buttons and hoping:
+
+- **The obvious check is a trap.** "Does WRAM hold the save's map and coordinates?" passes **while the title
+  screen is still up** — the main menu reads the save into WRAM just to decide whether to offer CONTINUE.
+  This harness was fooled by exactly that, and reported a beautifully wrong parity failure. The emulator
+  *screenshot* is what gave it away: WRAM said Pallet Town, the screen said "Pokémon — Red Version".
+- **`wOverworldMap` is the honest signal.** Nothing fills it but `LoadTileBlockMap`, and nothing calls that
+  but `EnterMap` — so it stays blank right up until the player is genuinely standing on the map.
+- **A is only ever pressed before the map loads** (A is what takes CONTINUE). Once we're on the overworld,
+  **no button is touched at all** — A there would talk to a sign or an NPC and change the very state we came
+  to measure.
+
+### A trap worth knowing: bit 7 of `wCurMapTileset`
+
+The **live** `wCurMapTileset` carries `BIT_NO_PREVIOUS_MAP` in bit 7 (`home/overworld.asm`), so Overworld
+reads back as **128**, not 0. The save file stores the id clean, which is why the editor never sees it. The
+dumper masks it. (Our `.sav` fixtures were checked: bit 7 clear.)
+
+## What it caught immediately
+
+On its first honest run, the console agreed with us about the view pointer, the map's blocks, the 24×20
+scratch area and the 20×18 screen — and disagreed about **the border ring**.
+
+We fill the ring with the map's border block. The game does that *too*, and then bleeds the **connected
+maps' edge strips** over the top (`LoadNorthSouthConnectionsTileMap` / `LoadEastWestConnectionsTileMap`).
+Pallet Town connects north to Route 1 and south to Route 21, so its ring is really Route 1's bottom rows and
+Route 21's top rows — not a wall of trees.
+
+That is the connection-strips feature, and it is the next step of the map emulator. It is held as an
+explicit **`QEXPECT_FAIL`**, not a skip: the moment connections land, the test starts passing and the
+expectation *must* be deleted — so the gap cannot be quietly forgotten.
+
+## Save files: you may invent them
+
+Twilight has said (2026-07-12) that **creating `.sav` files to experiment with is allowed**. Purpose-built
+saves are how this harness gets interesting: put the player on a map edge, in a cave, in a copy/glitch map,
+next to a connection — and check the console still agrees. Keep experiments in `tmp/` (git-ignored) unless a
+fixture earns a permanent place in `assets/saves/`, and never modify the natural saves in place.
+
+## Where this goes next
+
+The same oracle answers the questions still open:
+
+- **Connection strips** — implement, then delete the `QEXPECT_FAIL`. Verification is already written.
+- **Palettes / "contrast"** — `screen.png` is the ground truth. The 4 contrast levels and the 6 glitch
+  palettes can be checked against real emulator output instead of reasoned about.
+- **The player sprite, warps, signs, animation frames** — all visible in the framebuffer.
+- **Save-file acceptance** — hand the game a save the *editor wrote* and prove the console loads it and
+  agrees with every field. The editor's byte-fidelity promise, checked by the machine that has to honour it.

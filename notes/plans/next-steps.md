@@ -33,17 +33,33 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
    area and the 20×18-tile screen, over a real block/tile render. Verified against the view pointer the
    Game Boy left in the save. See `status.md` and `sessions/2026-07/2026-07-12.md`.
 
-   **Ordered next steps for the map** (Twilight said one step at a time):
+   **Ordered next steps for the map** (Twilight said one step at a time). **Every one of these can now be
+   verified against the real console** — `tst_emu_parity` boots the ROM and compares us to its RAM and its
+   framebuffer (see [`reference/emulator-verification.md`](../reference/emulator-verification.md)):
+
    1. **Review step 1 in-app** — is the render right, are the boxes where she expects, is the grid too
       loud/quiet, is the fit-to-window default right?
-   2. **The player** — draw him (and his facing) at his real screen position (screen tile 8,8).
-   3. **Connection strips** — the neighbouring maps' edges bleeding into the border ring
-      (`LoadNorthSouthConnectionsTileMap` / `LoadEastWestConnectionsTileMap`). The ring is currently
-      just the border block, which is what an *unconnected* map looks like.
-   4. **Tile animation** — flower + water frames. The renderer already takes a frame; it asks for 0.
-   5. **Overlays** — warps, signs, sprites, hidden items (all already in the DB, all with coordinates).
-   6. **Then, and only then, editing** — and that is what finally forces the `MapsDB::deepLink()`
+   2. **Connection strips** ← *the emulator says this is our only wrong buffer.* The neighbouring maps'
+      edges bleed into the border ring (`LoadNorthSouthConnectionsTileMap` /
+      `LoadEastWestConnectionsTileMap`); we currently leave it as the plain border block, which is what an
+      *unconnected* map looks like. **The verification is already written**: implement it, then delete the
+      `QEXPECT_FAIL` in `tst_emu_parity::theBorderRing_isStillMissingItsConnections`.
+   3. **Palettes / "contrast"** (Twilight, 2026-07-12) — the 4 contrast levels and the **6 glitch
+      palettes**. If the render is truly accurate the glitch palettes should fall out correctly, which
+      would be a real showcase. The emulator's `screen.png` is the ground truth here — check against it
+      rather than reason about it. Derive from pokered/the save; invent nothing.
+   4. **Navigation** (Twilight, 2026-07-12) — pinch-to-zoom (touchpad + touchscreen) and free horizontal +
+      vertical scrolling, zoom anchored on the pinch/cursor. Gets urgent once connected maps are drawn
+      together: a lot of surface area and detail.
+   5. **The player** — draw him (and his facing) at his real screen position (screen tile 8,8).
+   6. **Tile animation** — flower + water frames. The renderer already takes a frame; it asks for 0.
+   7. **Overlays** — warps, signs, sprites, hidden items (all already in the DB, all with coordinates).
+   8. **Then, and only then, editing** — and that is what finally forces the `MapsDB::deepLink()`
       landmine to be defused (see `status.md` → Open issues).
+
+   Also now possible and worth doing: **save-file acceptance testing** — hand the game a save the *editor
+   wrote* and prove the console loads it and agrees with every field. The editor's byte-fidelity promise,
+   checked by the machine that actually has to honour it.
 
    **Two `maps.json` data questions are waiting on Twilight** (glitch-map dimensions; 3 empty tileset
    strings) — see `status.md` → Open issues. Nothing was changed in the JSON.

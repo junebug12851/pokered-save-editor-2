@@ -100,3 +100,13 @@ projects/build/
 # no commit, so it triggers nothing downstream. See
 # notes/reference/cross-project-sync.md.
 /assets/references/
+
+# --- ROMs: NEVER commit a ROM, anywhere, under any name ------------------------
+# A legally-backed-up cartridge dump lives at assets/references/backup.gb and is used
+# (locally only) to verify the editor against the real game in an emulator. It is NOT
+# ours to distribute. /assets/references/ already covers that path; these rules make it
+# impossible to add one by accident from anywhere else in the tree, or after a move.
+*.gb
+*.gbc
+*.gba
+*.rom

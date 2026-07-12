@@ -35,6 +35,11 @@ has a deeper home, it's cross-referenced.
   evaporate mid-flight. She watches the task list live; it's a working artifact, not paperwork. It does
   not replace the `notes/` — durable knowledge still lands there; tasks carry the in-flight trail.
   See CLAUDE.md → Default Workflow step 0.
+- **Run EVERYTHING in the background (2026-07-12, mandatory).** Builds, tests, captures, emulator runs,
+  installs — hidden windows, headless/offscreen, detached + polled through a log. **Never steal her
+  screen or her focus.** A window is only allowed to appear when it truly needs her hands or her eyes
+  (a live in-app review she asked for), and then say why. If it can be captured headless and shown to
+  her as an image instead, do that. See CLAUDE.md → Default Workflow.
 - **Manual screenshot review is mandatory on any UI change** — capture and actually scrutinise it
   yourself before declaring done. See CLAUDE.md → Default Workflow step 1, `screenshots.md`, `ui-patterns.md`.
 
@@ -63,6 +68,14 @@ has a deeper home, it's cross-referenced.
   exchange math using it inverted — fixed the code, left the JSON alone.)
 - **Save-file fidelity is sacred** — only ever write the exact bits/bytes for the requested edit; never
   normalize/repack/touch checksums or regions you weren't told to. (See `principles.md`.)
+- **You MAY create `.sav` files to experiment with (2026-07-12).** Purpose-built saves are encouraged —
+  they're how the emulator harness gets interesting (player on a map edge, in a cave, on a glitch map,
+  beside a connection). Keep experiments in git-ignored `tmp/`; only promote one into `assets/saves/` if it
+  earns a permanent place; and **never modify the natural saves in place**.
+- **The ROM (`assets/references/backup.gb`) is Twilight's own legal cartridge backup and must NEVER be
+  committed, published, released, or copied into a build artifact.** It is git-ignored (plus blanket
+  `*.gb`/`*.gbc`/`*.gba`/`*.rom` rules) and has never been in the history. Everything that uses it degrades
+  to a SKIP without it. See `reference/emulator-verification.md`.
 
 ## Credits (keep proactively)
 

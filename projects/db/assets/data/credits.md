@@ -23,6 +23,7 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 
 ## Tools Used
 
+- **[PyBoy](https://github.com/Baekalfen/PyBoy)** -- A Game Boy emulator we drive from the test suite: it boots the real game with our save files so the editor can be checked against the console itself, byte for byte. A developer tool only: installed separately, run as its own process, and never linked into or shipped with the editor. _(License: LGPL-3.0 -- a dev/test tool, NOT distributed with this app)_
 - **[JSON Editor Online](https://jsoneditoronline.org)** -- Huge help in formatting and validating json data
 - **[Regular Expressions 101](https://regex101.com)** -- Major help in converting data from the Pokered Team to JSON
 - **[Codepen](https://codepen.io)** -- Huge help in further converting data from the Pokered Team to JSON

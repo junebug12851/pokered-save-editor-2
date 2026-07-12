@@ -127,6 +127,25 @@ if(TARGET appcore)
     add_test(NAME tst_map COMMAND tst_map)
     set_tests_properties(tst_map PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_map)
+
+    # EMULATOR PARITY -- the editor judged against the actual Game Boy.
+    #
+    # Boots the real ROM with one of our saves (via scripts/emu/dump_state.py + PyBoy),
+    # reads the console's own RAM back out, and demands MapEngine match it byte for byte:
+    # the view pointer, the whole block buffer, the scratch area, and the 20x18 screen.
+    #
+    # LOCAL-ONLY BY CONSTRUCTION. It needs assets/references/backup.gb -- a legally
+    # backed-up cartridge dump that is gitignored and is NEVER committed or shipped.
+    # Without the ROM (CI, a fresh clone, anyone else) every case SKIPs and the suite
+    # stays green. Nothing here copies the ROM anywhere but the git-ignored tmp/emu.
+    qt_add_executable(tst_emu_parity
+        emu/tst_emu_parity.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_emu_parity PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_emu_parity PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_emu_parity COMMAND tst_emu_parity)
+    set_tests_properties(tst_emu_parity PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_emu_parity)
 endif()
 
 # --- QML smoke test (Qt Quick Test, headless via offscreen) ---
