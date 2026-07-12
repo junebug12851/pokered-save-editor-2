@@ -178,6 +178,12 @@ public:
   /// `rBGP` for @p contrast -- the palette the MAP is drawn with. -1 if past the table.
   static int backgroundPalette(int contrast);
 
+  /// `rOBP0` for @p contrast -- the palette the PLAYER is drawn with. -1 if past the table.
+  ///
+  /// This is the byte the "harmless" glitch palettes really damage. Contrast 1 and 2 leave
+  /// `rBGP` alone -- the map looks normal -- and shift *this* one along the fade table.
+  static int spritePalette(int contrast);
+
   /// Is @p contrast one of the six misaligned reads? (Not a level -- a glitch palette.)
   static bool isGlitchPalette(int contrast);
 
@@ -186,6 +192,25 @@ public:
 
   /// Render @p buffer with tileset @p tilesetInd at animation @p frame, through @p contrast.
   static QImage render(const Buffer& buffer, int tilesetInd, int frame = 0, int contrast = 0);
+
+  // ── The player's sprite (see reference/sprites.md) ────────────────────────────
+
+  /// `SPRITE_FACING_*` (constants/sprite_data_constants.asm).
+  enum Facing { FacingDown = 0x0, FacingUp = 0x4, FacingLeft = 0x8, FacingRight = 0xC };
+
+  /// Sprites sit **4 pixels above** their tile row -- "which makes sprites appear to be in
+  /// the centre of a tile" (ram/wram.asm). Measured off the console's OAM, not assumed.
+  static constexpr int spriteLift = 4;
+
+  /// The save's `playerCurDir` bit flags (1 right, 2 left, 4 down, 8 up) -> a @ref Facing.
+  static int facingFromPlayerDir(int playerCurDir);
+
+  /// The player's 16x16 sprite, facing @p facing, through the sprite palette for @p contrast.
+  /// Colour 0 comes back **transparent**, as it is on the hardware.
+  static QImage playerSprite(int facing, int contrast = 0);
+
+  /// Where that sprite goes, in buffer pixels -- the 4-pixel lift included.
+  static QRect playerRect(int x, int y);
 
   /**
    * @brief The 6x5-block scratch area as TILE ids -- the game's `wSurroundingTiles`.

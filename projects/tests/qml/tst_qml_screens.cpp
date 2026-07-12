@@ -78,6 +78,7 @@
 #include <engine/tilesetprovider.h>
 #include <engine/fontpreviewprovider.h>
 #include <engine/mapprovider.h>
+#include <engine/playerprovider.h>
 
 #include <pse-savefile/expanded/player/player.h>
 #include <pse-savefile/expanded/player/playerpokemon.h>
@@ -183,6 +184,7 @@ void TestQmlScreens::initTestCase()
   m_engine->addImageProvider(QStringLiteral("font"),
                              new FontPreviewProvider(m_file->data->dataExpanded));
   m_engine->addImageProvider(QStringLiteral("map"), new MapProvider);
+  m_engine->addImageProvider(QStringLiteral("player"), new PlayerProvider);
   DB::inst()->qmlProtect(m_engine);   // GC guard (s13f) -- mirrors the app
 
   // A sized offscreen window: screens get a real, non-null, sized parent (as if

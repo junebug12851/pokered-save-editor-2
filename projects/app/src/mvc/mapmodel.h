@@ -98,6 +98,15 @@ class MapModel : public QObject
   Q_PROPERTY(int screenW READ screenW NOTIFY changed) ///< @see screenX
   Q_PROPERTY(int screenH READ screenH NOTIFY changed) ///< @see screenX
 
+  /// The player's sprite: `image://player/...` (drawn through the OBJECT palette).
+  Q_PROPERTY(QString playerSource READ playerSource NOTIFY changed)
+  Q_PROPERTY(int playerRectX READ playerRectX NOTIFY changed) ///< His sprite, in buffer px --
+  Q_PROPERTY(int playerRectY READ playerRectY NOTIFY changed) ///< 4 px above his tile row,
+  Q_PROPERTY(int playerRectW READ playerRectW NOTIFY changed) ///< exactly as the console
+  Q_PROPERTY(int playerRectH READ playerRectH NOTIFY changed) ///< places him.
+  /// Which way he is facing (`SPRITE_FACING_*`), from the save's `playerCurDir`.
+  Q_PROPERTY(int playerFacing READ playerFacing NOTIFY changed)
+
 public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general);
 
@@ -140,6 +149,13 @@ public:
   int screenY() const;
   int screenW() const;
   int screenH() const;
+
+  QString playerSource() const;
+  int playerRectX() const;
+  int playerRectY() const;
+  int playerRectW() const;
+  int playerRectH() const;
+  int playerFacing() const;
 
 signals:
   /// The loaded map, the tileset or the player moved -- everything above may have changed.

@@ -389,6 +389,22 @@ int MapEngine::backgroundPalette(int contrast)
   return fadeTable[at];
 }
 
+int MapEngine::spritePalette(int contrast)
+{
+  // rOBP0 -- the SECOND of the three bytes LoadGBPal reads. The player's OAM attributes are
+  // 0, so he is drawn with OBP0.
+  //
+  // This is the byte the "harmless-looking" glitch palettes actually damage: contrast 1 and
+  // 2 leave rBGP at $E4 (the map looks perfectly normal) but shift rOBP0 by one and two
+  // bytes into the table respectively. Nothing showed it until the player was drawn.
+  const int at = fadePal4 - contrast + 1;
+
+  if (contrast < 0 || (fadePal4 - contrast) < 0)
+    return -1;  // past the table -- unknown, and we say so rather than invent one
+
+  return fadeTable[at];
+}
+
 bool MapEngine::isGlitchPalette(int contrast)
 {
   // A level is an ALIGNED read. Anything else straddles two entries in the fade table and
@@ -489,6 +505,89 @@ QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame, int co
   }
 
   return img;
+}
+
+// ── The player's sprite ───────────────────────────────────────────────────────
+
+int MapEngine::facingFromPlayerDir(int playerCurDir)
+{
+  // The save stores `playerCurDir` as BIT FLAGS (PLAYER_DIR_*), which are not the sprite
+  // facing values (SPRITE_FACING_*). Two different encodings of the same idea.
+  switch (playerCurDir) {
+    case 1: return FacingRight; // PLAYER_DIR_RIGHT -> $C
+    case 2: return FacingLeft;  // PLAYER_DIR_LEFT  -> $8
+    case 4: return FacingDown;  // PLAYER_DIR_DOWN  -> $0
+    case 8: return FacingUp;    // PLAYER_DIR_UP    -> $4
+    default: break;
+  }
+
+  return FacingDown; // the game's own default, and what a fresh save holds
+}
+
+QRect MapEngine::playerRect(int x, int y)
+{
+  // His 2x2-tile cell, lifted 4 px -- exactly where the console puts him. Cross-checked:
+  // for the player at (5,6) this lands at buffer (176, 188), and the console's OAM says he
+  // is at screen (64, 60) -- which is (176,188) minus the screen's origin (112,128). Same
+  // pixel, arrived at two different ways.
+  return QRect(mapBorder * blockPx + x * 16,
+               mapBorder * blockPx + y * 16 - spriteLift,
+               16, 16);
+}
+
+QImage MapEngine::playerSprite(int facing, int contrast)
+{
+  // gfx/sprites/red.png: six 16x16 frames -- stand down, stand up, stand LEFT, then the
+  // three walking ones. There is NO "right" frame: the game draws facing-right as
+  // facing-left, X-flipped (SpriteFacingAndAnimationTable -> .FlippedOAM). We do the same.
+  static const QImage sheet = QImage(":/assets/sprites/red.png").convertToFormat(QImage::Format_ARGB32);
+
+  if (sheet.isNull())
+    return QImage();
+
+  int frame = 0;
+  bool mirror = false;
+
+  switch (facing) {
+    case FacingDown:  frame = 0; break;
+    case FacingUp:    frame = 1; break;
+    case FacingLeft:  frame = 2; break;
+    case FacingRight: frame = 2; mirror = true; break;  // left, flipped -- as the game does
+    default: break;
+  }
+
+  QImage sprite = sheet.copy(0, frame * 16, 16, 16);
+
+  if (mirror)
+    sprite = sprite.mirrored(true, false);
+
+  // The OBJECT palette. Two things the hardware does that a naive tint would not:
+  //   * colour 0 is ALWAYS transparent for an object -- that is the sprite's cut-out;
+  //   * the other three go through rOBP0 (the player's OAM attributes are 0, so OBP0).
+  //
+  // This is also where the glitch palettes finally bite: contrast 1 and 2 leave rBGP alone
+  // -- the map looks fine -- and wreck rOBP0/rOBP1. Until the player was drawn, they looked
+  // like nothing was wrong. See reference/palettes.md and reference/sprites.md.
+  const int obp0 = spritePalette(contrast);
+
+  for (int y = 0; y < sprite.height(); y++) {
+    QRgb* row = reinterpret_cast<QRgb*>(sprite.scanLine(y));
+
+    for (int x = 0; x < sprite.width(); x++) {
+      const int index = shadeOf(qRed(row[x]));
+
+      if (index == 0) {
+        row[x] = qRgba(0, 0, 0, 0);   // transparent, always
+        continue;
+      }
+
+      const int shade = (obp0 >= 0) ? ((obp0 >> (2 * index)) & 3) : index;
+      const int grey = shadeGrey[shade];
+      row[x] = qRgba(grey, grey, grey, 255);
+    }
+  }
+
+  return sprite;
 }
 
 QByteArray MapEngine::surroundingTiles(const Buffer& buffer, int tilesetInd, int x, int y)

@@ -133,6 +133,9 @@ private slots:
   void buffer_isTheMapRingedByItsBorderBlock();
   void palettes_matchTheConsoleForEveryContrastValue();
   void palettes_actuallyRepaintTheMap();
+  void player_isDrawnWhereTheConsolePutsHim();
+  void player_facingComesFromTheSavesBitFlags();
+  void player_spriteIsCutOutAndPalettedLikeAnObject();
   void buffer_glitchMapHasNone();
   void render_isOneScreenPixelPerGameBoyPixel();
   void provider_servesTheMapAndFallsBackCleanly();
@@ -584,6 +587,68 @@ void TestMap::palettes_actuallyRepaintTheMap()
   for (int y = 0; y < black.height(); y += 8)
     for (int x = 0; x < black.width(); x += 8)
       QCOMPARE(black.pixelColor(x, y), QColor(Qt::black));
+}
+
+void TestMap::player_isDrawnWhereTheConsolePutsHim()
+{
+  // Four pixels above his tile row -- "which makes sprites appear to be in the centre of a
+  // tile" (ram/wram.asm), and measured off the console's own OAM, not assumed.
+  const QRect at = MapEngine::playerRect(5, 6);   // BaseSAV: Pallet Town
+
+  QCOMPARE(at.width(), 16);
+  QCOMPARE(at.height(), 16);
+  QCOMPARE(at.x(), MapEngine::mapBorder * MapEngine::blockPx + 5 * 16);
+  QCOMPARE(at.y(), MapEngine::mapBorder * MapEngine::blockPx + 6 * 16 - MapEngine::spriteLift);
+
+  // And relative to the visible screen he lands on the fixed spot the game pins him to.
+  const QRect screen = MapEngine::screenRect(5, 6);
+  QCOMPARE(at.x() - screen.x(), 64);
+  QCOMPARE(at.y() - screen.y(), 60);
+}
+
+void TestMap::player_facingComesFromTheSavesBitFlags()
+{
+  // The save's playerCurDir is BIT FLAGS (PLAYER_DIR_*), not the sprite facing values
+  // (SPRITE_FACING_*). Two encodings of the same idea, and mixing them up would silently
+  // point him the wrong way.
+  QCOMPARE(MapEngine::facingFromPlayerDir(1), (int)MapEngine::FacingRight); // $C
+  QCOMPARE(MapEngine::facingFromPlayerDir(2), (int)MapEngine::FacingLeft);  // $8
+  QCOMPARE(MapEngine::facingFromPlayerDir(4), (int)MapEngine::FacingDown);  // $0
+  QCOMPARE(MapEngine::facingFromPlayerDir(8), (int)MapEngine::FacingUp);    // $4
+  QCOMPARE(MapEngine::facingFromPlayerDir(0), (int)MapEngine::FacingDown);  // the default
+}
+
+void TestMap::player_spriteIsCutOutAndPalettedLikeAnObject()
+{
+  const QImage down = MapEngine::playerSprite(MapEngine::FacingDown, 0);
+  QVERIFY(!down.isNull());
+  QCOMPARE(down.size(), QSize(16, 16));
+
+  // Colour 0 is transparent for an OBJECT -- always. Without that he'd be a white box.
+  QVERIFY2(down.pixelColor(0, 0).alpha() == 0, "the sprite's corner should be transparent");
+
+  bool anyOpaque = false;
+  for (int y = 0; y < 16 && !anyOpaque; y++)
+    for (int x = 0; x < 16 && !anyOpaque; x++)
+      if (down.pixelColor(x, y).alpha() == 255)
+        anyOpaque = true;
+  QVERIFY2(anyOpaque, "the sprite is entirely transparent");
+
+  // Facing right is facing LEFT, mirrored -- there is no right-facing art in the game.
+  const QImage left = MapEngine::playerSprite(MapEngine::FacingLeft, 0);
+  const QImage right = MapEngine::playerSprite(MapEngine::FacingRight, 0);
+  QCOMPARE(right, left.mirrored(true, false));
+
+  // Up and down are genuinely different drawings.
+  QVERIFY(MapEngine::playerSprite(MapEngine::FacingUp, 0) != down);
+
+  // *** The payoff. *** Contrast 1 leaves the MAP untouched (rBGP is still 0xE4) but shifts
+  // the OBJECT palette -- so the player, and only the player, changes. That is exactly what
+  // the console does, and it is why these two glitch values looked harmless until now.
+  QCOMPARE(MapEngine::backgroundPalette(1), MapEngine::backgroundPalette(0));
+  QVERIFY(MapEngine::spritePalette(1) != MapEngine::spritePalette(0));
+  QVERIFY2(MapEngine::playerSprite(MapEngine::FacingDown, 1) != down,
+           "contrast 1 should wreck the player even though the map looks fine");
 }
 
 void TestMap::buffer_glitchMapHasNone()

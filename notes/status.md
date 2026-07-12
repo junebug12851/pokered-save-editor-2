@@ -35,7 +35,9 @@ maps but *unfinished copies*: `maps.json`'s own `incomplete` field says which ma
 with the ROM, so we follow it and draw the map they copy (what a Game Boy actually does with those ids).
 Nothing invented, no JSON changed.
 
-**Not yet drawn:** the player, warps/signs/sprites, and tile animation frames (frame 0 only). **Connection strips and the palettes/"contrast" are DONE** (below).
+**Not yet drawn:** the **NPCs** (the other 15 sprite slots), the grass-priority bit, warps/signs overlays, and
+tile animation frames (frame 0 only). **Connection strips, the palettes/"contrast" and the PLAYER are DONE**
+(below).
 
 ### ✅ And now the actual Game Boy checks our work (2026-07-12)
 
@@ -77,6 +79,20 @@ mismatches.**
 palettes. They will show the moment the player is drawn. That is the console's behaviour, not a gap.
 
 Everything about it: [`reference/palettes.md`](reference/palettes.md).
+
+### ✅ The player is drawn — and the "harmless" glitch palettes stop being harmless (2026-07-12)
+
+He is where the **console's own OAM** says he is: screen (64, 60) — his tile column, and **4 pixels above**
+his tile row ("*which makes sprites appear to be in the centre of a tile*"). Facing right is drawn as facing
+**left, mirrored** — there is no right-facing art in the game. Colour 0 of an object is **always
+transparent** (his cut-out).
+
+**And this is what finally makes contrast 1 and 2 bite.** They leave `rBGP` alone — the map looks perfectly
+normal — and wreck `rOBP0`/`rOBP1`, the **object** palettes. With the player on screen, contrast 1 now leaves
+the world untouched and ruins *him*, exactly as the cartridge does.
+
+Everything about it (incl. the OAM hardware and Gen 1's 16-slot system):
+[`reference/sprites.md`](reference/sprites.md).
 
 The ROM is Twilight's own cartridge backup: **git-ignored, never committed, never shipped**; without it
 every case SKIPs. Setup + the traps (the "has the save loaded?" trap, `wCurMapTileset` bit 7):

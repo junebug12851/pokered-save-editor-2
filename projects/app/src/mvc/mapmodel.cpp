@@ -42,6 +42,7 @@ MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaG
   connect(player, &AreaPlayer::xCoordChanged, this, &MapModel::changed);
   connect(player, &AreaPlayer::yCoordChanged, this, &MapModel::changed);
   connect(general, &AreaGeneral::contrastChanged, this, &MapModel::changed);
+  connect(player, &AreaPlayer::playerCurDirChanged, this, &MapModel::changed);
 }
 
 int MapModel::mapInd() const     { return map->curMap; }
@@ -171,3 +172,23 @@ int MapModel::screenX() const { return MapEngine::screenRect(playerX(), playerY(
 int MapModel::screenY() const { return MapEngine::screenRect(playerX(), playerY()).y(); }
 int MapModel::screenW() const { return MapEngine::screenRect(playerX(), playerY()).width(); }
 int MapModel::screenH() const { return MapEngine::screenRect(playerX(), playerY()).height(); }
+
+// ── The player ────────────────────────────────────────────────────────────────
+
+int MapModel::playerFacing() const
+{
+  return MapEngine::facingFromPlayerDir(player->playerCurDir);
+}
+
+QString MapModel::playerSource() const
+{
+  // The contrast rides along because the player is drawn through the OBJECT palette -- and
+  // that is the one the "harmless" glitch palettes actually damage.
+  return "image://player/" + QString::number(playerFacing())
+       + "/" + QString::number(contrast());
+}
+
+int MapModel::playerRectX() const { return MapEngine::playerRect(playerX(), playerY()).x(); }
+int MapModel::playerRectY() const { return MapEngine::playerRect(playerX(), playerY()).y(); }
+int MapModel::playerRectW() const { return MapEngine::playerRect(playerX(), playerY()).width(); }
+int MapModel::playerRectH() const { return MapEngine::playerRect(playerX(), playerY()).height(); }

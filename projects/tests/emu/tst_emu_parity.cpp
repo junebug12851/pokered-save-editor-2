@@ -101,6 +101,8 @@ private slots:
   void theBorderRing_carriesTheConnectedMaps();
   void theGameAgreesWithOurScratchArea();
   void theGameAgreesWithOurScreen();
+  void theGameAgreesWithOurPalettes();
+  void theGameAgreesWithWhereWePutThePlayer();
 
 private:
   /// Boot the ROM with @p sav and read the console's RAM. Returns false if unavailable.
@@ -286,6 +288,38 @@ void TestEmuParity::theGameAgreesWithOurScreen()
                      .arg(static_cast<quint8>(m_tileMap[i]), 2, 16, QChar('0'))
                      .arg(static_cast<quint8>(ours[i]), 2, 16, QChar('0'))));
   }
+}
+
+void TestEmuParity::theGameAgreesWithOurPalettes()
+{
+  // The palette registers the console actually ended up holding, against the ones we
+  // compute from the save's contrast byte. (All ten contrast values are swept separately by
+  // scripts/emu/verify_palettes.py; this pins the one the fixture carries.)
+  const int contrast = 0; // BaseSAV
+  QCOMPARE(MapEngine::backgroundPalette(contrast), m_state["rBGP"].toInt());
+  QCOMPARE(MapEngine::spritePalette(contrast), m_state["rOBP0"].toInt());
+}
+
+void TestEmuParity::theGameAgreesWithWhereWePutThePlayer()
+{
+  // Where the Game Boy ACTUALLY put him: OAM entry 0, with the hardware's (16, 8) bias
+  // already undone by the dumper. The 4-pixel lift is not folklore -- it is in this number.
+  const int screenX = m_state["playerScreenX"].toInt();
+  const int screenY = m_state["playerScreenY"].toInt();
+
+  const int x = m_state["xCoord"].toInt();
+  const int y = m_state["yCoord"].toInt();
+
+  const QRect ours = MapEngine::playerRect(x, y);
+  const QRect screen = MapEngine::screenRect(x, y);
+
+  // Our buffer-space rect, expressed in screen pixels, must be the console's OAM position.
+  QCOMPARE(ours.x() - screen.x(), screenX);
+  QCOMPARE(ours.y() - screen.y(), screenY);
+
+  // And that had better be the fixed spot the game pins him to: screen tile (8,8), lifted 4.
+  QCOMPARE(screenX, 8 * MapEngine::tilePx);
+  QCOMPARE(screenY, 8 * MapEngine::tilePx - MapEngine::spriteLift);
 }
 
 QTEST_MAIN(TestEmuParity)

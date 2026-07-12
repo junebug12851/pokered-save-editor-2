@@ -51,9 +51,13 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
       [`reference/palettes.md`](../reference/palettes.md).
    4. ~~**Navigation**~~ — ✅ **DONE 2026-07-12.** Pinch-to-zoom (touch + touchpad), Ctrl+wheel, both scroll
       axes, drag-to-pan, and zoom anchored on the cursor/pinch centroid.
-   5. **The player** ← *next.* Draw him (and his facing) at his real screen position (screen tile 8,8).
-      **This is also what makes contrast 1 and 2 finally show their damage** — their glitch is in the
-      *sprite* palettes (`rOBP0`/`rOBP1`), which are already computed and waiting.
+   5. ~~**The player**~~ — ✅ **DONE 2026-07-12.** Drawn where the console's own OAM puts him (screen 64,60 —
+      4 px above his tile row), facing per the save, through the **object** palette — which is what finally
+      makes contrast 1 and 2 show their damage. See [`reference/sprites.md`](../reference/sprites.md).
+   5b. **The NPCs** ← *next.* The other 15 sprite slots: their sprite-set VRAM allocation, screen placement
+      relative to the player, the `$FF` off-screen rule, and missables (a sprite may not be there at all).
+      Then the **grass-priority bit** (grass draws over a sprite's *lower half only*). Both are already
+      written up in `sprites.md`.
    6. **Tile animation** — flower + water frames. The renderer already takes a frame; it asks for 0.
    7. **Overlays** — warps, signs, sprites, hidden items (all already in the DB, all with coordinates).
    8. **Then, and only then, editing** — and that is what finally forces the `MapsDB::deepLink()`

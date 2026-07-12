@@ -29,6 +29,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/engine/mapengine.h
     src/engine/mapprovider.cpp
     src/engine/mapprovider.h
+    src/engine/playerprovider.cpp
+    src/engine/playerprovider.h
     src/engine/tilesetengine.cpp
     src/engine/tilesetengine.h
     src/engine/tilesetprovider.cpp

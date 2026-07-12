@@ -75,6 +75,7 @@
 #include <engine/tilesetprovider.h>
 #include <engine/fontpreviewprovider.h>
 #include <engine/mapprovider.h>
+#include <engine/playerprovider.h>
 
 // Defined in the app exe (src/boot/bootQmlLinkage.cpp), compiled into each GUI
 // test target so QML type registration stays a single shared source of truth.
@@ -165,6 +166,7 @@ public:
     m_view->engine()->addImageProvider(QStringLiteral("font"),
                                        new FontPreviewProvider(m_file->data->dataExpanded));
     m_view->engine()->addImageProvider(QStringLiteral("map"), new MapProvider);
+    m_view->engine()->addImageProvider(QStringLiteral("player"), new PlayerProvider);
     DB::inst()->qmlProtect(m_view->engine());
 
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);

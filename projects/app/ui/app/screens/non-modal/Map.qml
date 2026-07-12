@@ -263,6 +263,26 @@ Page {
           border.color: brg.settings.accentColor
         }
 
+        // The player. He is drawn 4 px ABOVE his tile row -- "which makes sprites appear to
+        // be in the centre of a tile" (ram/wram.asm), and confirmed against the console's
+        // own OAM. Facing right is facing LEFT, mirrored: there is no right-facing art.
+        //
+        // He is drawn through the OBJECT palette (rOBP0), which is the one the "harmless"
+        // glitch palettes actually wreck -- contrast 1 and 2 leave the map looking perfectly
+        // normal and do their damage here. See reference/sprites.md.
+        Image {
+          x: brg.map.playerRectX * mapScreen.zoom
+          y: brg.map.playerRectY * mapScreen.zoom
+          width: brg.map.playerRectW * mapScreen.zoom
+          height: brg.map.playerRectH * mapScreen.zoom
+
+          source: brg.map.playerSource
+          smooth: false
+          mipmap: false
+          fillMode: Image.Stretch
+          cache: true
+        }
+
         // The visible screen: the 20x18 tiles actually on the Game Boy's screen.
         Rectangle {
           x: brg.map.screenX * mapScreen.zoom

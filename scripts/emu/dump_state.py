@@ -213,6 +213,20 @@ def main() -> int:
         "rows": rows,
     }
 
+    # The palette registers the console actually ends up holding, and where it actually put
+    # the player. Both are things we would otherwise be guessing at.
+    state["rBGP"] = mem[0xFF47]
+    state["rOBP0"] = mem[0xFF48]
+    state["rOBP1"] = mem[0xFF49]
+
+    # OAM entry 0 is the player. Its stored y/x are offset by the hardware's own (16, 8) --
+    # an object at screen (0,0) is written as (16, 8) -- so undo that to get screen pixels.
+    oam_y, oam_x = mem[0xFE00], mem[0xFE01]
+    state["playerScreenY"] = oam_y - 16
+    state["playerScreenX"] = oam_x - 8
+    state["playerOamTile"] = mem[0xFE02]
+    state["playerOamFlags"] = mem[0xFE03]
+
     (out / "state.json").write_text(json.dumps(state, indent=2))
     (out / "wOverworldMap.bin").write_bytes(bytes(mem[W_OVERWORLD_MAP:W_OVERWORLD_MAP + stride * rows]))
     (out / "wSurroundingTiles.bin").write_bytes(bytes(mem[W_SURROUNDING_TILES:W_SURROUNDING_TILES + SURROUNDING_TILES]))
