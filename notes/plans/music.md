@@ -130,7 +130,7 @@ modelled too, and they are not cosmetic: the engine's duty-rotation code does `a
 back, and the hardware returns the length bits as 1s — which is why rotating the duty also writes a
 sound length of 63.
 
-### Phase 4 — the engine (`pse-audio`, part 2) ✅ BUILT (2026-07-12) — parity test still to come
+### Phase 4 — the engine (`pse-audio`, part 2) ✅ DONE + VERIFIED AGAINST THE CONSOLE (2026-07-12)
 
 `Gen1SoundEngine` — `engine_1.asm`, transliterated. Its entire state is a 256-byte array laid out exactly
 like the console's `$C000`. The load-bearing oddities are all in there: the pitch table's signed
@@ -143,9 +143,37 @@ noise channel silent** (it has no drums); every sampled track from all three ban
 is silence; and — the one the whole "151 tracks" claim rests on — **id 187 plays Pallet Town's channel 2
 ALONE**, with `wChannelSoundIDs = [0, 187, 0, 0]`, exactly as the cartridge did it.
 
-⬜ **Still owed: `tst_sound_parity`.** PyBoy boots the real ROM, plays track *N*, dumps `$C000–$C0FF`
-**every frame**; our engine runs the same track for the same frames; **demand a byte-for-byte match,
-frame by frame, for all 46 tracks.** Until that exists, the engine is "sounds right", not "is right".
+✅ **`tst_sound_parity` — DONE, and it is the keystone.** PyBoy boots the real cartridge with a track
+patched into a save, waits until it is genuinely playing **in its own bank**, and photographs
+`$C000–$C0FF` **every frame**. Our engine is seeded from the console's own first photograph and must
+reproduce every one after it. **All 46 tracks + an inner voice: byte-for-byte, frame by frame. 48/48.**
+
+The command pointers are compared *through* a ROM-address → our-address map that `import_music.py` emits
+from the same lockstep walk that proves our bytes match the cartridge — so "we are reading the same byte
+of the same stream on the same frame" is checked, not assumed.
+
+**It found three real bugs in the port, and one in my own test rig:**
+
+1. 🐞 **`InitPitchSlideVars` CLOBBERS `de`** — it uses `d`/`e` as scratch for its divide, and the caller
+   pushes `de` only *afterwards*. So a pitch-slide note starts on the **divide's leftovers**, not the
+   note's pitch. The console proved it (PkmnHealed wants `$F4` at `$C066`). Not a bug to fix — a bug to
+   **copy**.
+2. 🐞 **`PlaySound` does not restore `wSoundID`** — so after a drum, the engine's "current sound" *is*
+   the noise instrument. I had helpfully saved and restored it. (Routes1, `$C001`.)
+3. 🐞 **`wSfxHeaderPointer` was never written** by our SFX path.
+4. ⚠️ **The dump itself was wrong at first.** Entering a map *fades the old music out*, and during the
+   fade the channel sound-ids already read as the new track while **`wAudioROMBank` is still the old
+   bank** — so the pointers are addresses in a *different bank's* data. Photographing that gives a dump
+   that looks plausible and is nonsense. Half the tracks "failed" until the dumper started insisting on
+   the bank too.
+
+And a negative control was run: breaking the note length by one made it fail on frame 7 with the exact
+byte. A test that cannot fail is worth nothing.
+
+⚠️ **One honest limit:** the *game* sometimes re-calls `PlaySound` mid-track (the Title Screen theme
+restarts on the overworld after ~80 frames — every channel re-pointed, every return address zeroed). That
+is the game, not `UpdateMusic`, and `UpdateMusic` is the only thing this test is entitled to judge, so it
+stops cleanly there and requires ≥ 60 verified frames.
 
 ### Phase 5 — playback + the UI ✅ DONE (2026-07-12) — awaiting Twilight's live review
 
@@ -276,7 +304,10 @@ answers "what is this map's music?")
   **glitch ids** (the last one verified on the cartridge).
 - ✅ Save bytes/bits verified against the disassembly; the `setTo()` bug found.
 - ✅ UI decided and specced (§6) — placement provisional, deliberately one file.
-- ✅ **Phase 2 — DONE (2026-07-12).** The data is imported and verified byte-for-byte against the cartridge.
-- ⬜ Phase 1 (the save half + the bank guard) — not started.
-- ⬜ Phase 3 (`GbApu`), Phase 4 (`Gen1SoundEngine` + parity), Phase 5 (player + panel) — not started.
-- ⬜ Phases 6–7 (SFX/cries; inner voices in the UI + sheet music) — not started.
+- ✅ **Phase 1** — the two flags, the track picker, the bank guard, the `setTo()` fix.
+- ✅ **Phase 2** — the data, verified byte-for-byte against the cartridge.
+- ✅ **Phase 3** — `GbApu`.
+- ✅ **Phase 4** — `Gen1SoundEngine`, **verified frame-by-frame against the console on all 46 tracks**.
+- ✅ **Phase 5** — `MusicPlayer` + the Map screen's Music panel (▶ + hover-preview).
+- ⏳ **Twilight's live pass** — it is sound and hover; a still PNG can review neither.
+- ⬜ Phases 6–7 (SFX/cries; the inner voices in the UI + sheet music) — not started.

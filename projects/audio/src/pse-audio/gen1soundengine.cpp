@@ -202,6 +202,8 @@ void Gen1SoundEngine::playSound(uint8_t id)
   } else {
     // ---- .playSfx: only the channels this header names are reset
     const uint16_t hdr = static_cast<uint16_t>(0x4000 + id * 3);
+    r(W_SFX_HDR_PTR) = static_cast<uint8_t>(hdr >> 8);      // stored HIGH byte first
+    r(W_SFX_HDR_PTR + 1) = static_cast<uint8_t>(hdr & 0xFF);
     const int count = ((romByte(hdr) & 0xC0) >> 6) + 1;
     for (int k = 0; k < count; ++k) {
       const int e = romByte(static_cast<uint16_t>(hdr + k * 3)) & 0x0F;
@@ -520,9 +522,10 @@ void Gen1SoundEngine::runCommands(int c)
     if (c == CHAN4 && hi == 0xB0) {
       const uint8_t instrument = nextMusicByte(c);
       if (r(W_DISABLE_OUT) == 0) {
-        const uint8_t savedId = r(W_SOUND_ID);
+        // PlaySound overwrites wSoundID and does NOT put it back -- so after a drum, the engine's
+        // "current sound" IS the noise instrument. (I originally saved and restored it; the console
+        // said otherwise -- tst_sound_parity, Routes1, $C001.)
         playSound(instrument);
-        r(W_SOUND_ID) = savedId;
       }
       noteLength(c, d);
       return;
@@ -531,9 +534,10 @@ void Gen1SoundEngine::runCommands(int c)
       // The 1-byte drum: instrument in the high nibble, length - 1 in the low. Unused by the game.
       const uint8_t instrument = static_cast<uint8_t>(hi >> 4);
       if (r(W_DISABLE_OUT) == 0) {
-        const uint8_t savedId = r(W_SOUND_ID);
+        // PlaySound overwrites wSoundID and does NOT put it back -- so after a drum, the engine's
+        // "current sound" IS the noise instrument. (I originally saved and restored it; the console
+        // said otherwise -- tst_sound_parity, Routes1, $C001.)
         playSound(instrument);
-        r(W_SOUND_ID) = savedId;
       }
       noteLength(c, static_cast<uint8_t>(d & 0x0F));
       return;
@@ -604,8 +608,14 @@ void Gen1SoundEngine::notePitch(int c, uint8_t d)
   const uint8_t note = static_cast<uint8_t>(hi >> 4);
   uint16_t de = calculateFrequency(note, ram[W_OCTAVE + c]);
 
-  if (ram[W_FLAGS1 + c] & (1 << BIT_PITCH_SLIDE_ON))
-    initPitchSlideVars(c, de);
+  if (ram[W_FLAGS1 + c] & (1 << BIT_PITCH_SLIDE_ON)) {
+    // ⚠️ `Audio1_InitPitchSlideVars` CLOBBERS de -- it uses d and e as scratch for the divide --
+    // and the caller pushes de only AFTERWARDS. So the frequency a pitch-slide note actually
+    // starts on is the divide's leftovers, not the note's pitch. It is not a mistake to fix; it
+    // is what the console does, and the console proved it (tst_sound_parity: PkmnHealed wants
+    // $F4 at $C066, which is exactly this).
+    de = initPitchSlideVars(c, de);
+  }
 
   if (c < CHAN5 && ram[W_SOUND_IDS + CHAN5 + c] != 0)
     return;   // an SFX has this hardware channel: stay quiet, but keep counting
@@ -706,7 +716,7 @@ void Gen1SoundEngine::applyDutyCyclePattern(int c)
 
 // ------------------------------------------------------------------------------ pitch slide
 
-void Gen1SoundEngine::initPitchSlideVars(int c, uint16_t de)
+uint16_t Gen1SoundEngine::initPitchSlideVars(int c, uint16_t de)
 {
   ram[W_PS_CUR_HI + c] = static_cast<uint8_t>(de >> 8);
   ram[W_PS_CUR_LO + c] = static_cast<uint8_t>(de & 0xFF);
@@ -743,23 +753,31 @@ void Gen1SoundEngine::initPitchSlideVars(int c, uint16_t de)
     ram[W_FLAGS1 + c] &= static_cast<uint8_t>(~(1 << BIT_PITCH_SLIDE_DECREASING));
   }
 
-  // ...then divide the distance by the length, by repeated subtraction.
+  // ...then divide the distance by the length, by repeated subtraction. Everything here is 8-bit
+  // and wraps, exactly as the Game Boy's registers do.
   const uint8_t divisor = ram[W_PS_LEN_MOD + c];
-  int b = 0;
-  int eWork = e;
-  int dWork = d;
+  int e8 = e;
+  int d8 = d;
+  int b8 = 0;
   for (;;) {
-    ++b;
-    eWork -= divisor;
-    if (eWork >= 0) continue;
-    if (dWork == 0) break;
-    --dWork;
-    eWork &= 0xFF;
+    b8 = (b8 + 1) & 0xFF;
+    const int t = e8 - divisor;
+    const bool borrow = t < 0;
+    e8 = t & 0xFF;
+    if (!borrow)
+      continue;
+    if (d8 == 0)
+      break;
+    d8 = (d8 - 1) & 0xFF;
   }
-  const uint8_t remainder = static_cast<uint8_t>((eWork + divisor) & 0xFF);
-  ram[W_PS_STEP + c] = static_cast<uint8_t>(b);
+  const uint8_t remainder = static_cast<uint8_t>((e8 + divisor) & 0xFF);
+  ram[W_PS_STEP + c] = static_cast<uint8_t>(b8);
   ram[W_PS_STEP_FRAC + c] = remainder;
   ram[W_PS_CUR_FRAC + c] = remainder;
+
+  // The registers this routine leaves behind -- which the caller then uses AS THE FREQUENCY.
+  // d = the quotient it just counted, e = the divide's leftover. See the note at the call site.
+  return static_cast<uint16_t>((b8 << 8) | e8);
 }
 
 void Gen1SoundEngine::applyPitchSlide(int c)

@@ -150,6 +150,18 @@ if(TARGET appcore)
     add_test(NAME tst_emu_parity COMMAND tst_emu_parity)
     set_tests_properties(tst_emu_parity PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_emu_parity)
+
+    # The SOUND engine, judged the same way. Gen 1's whole sequencer state is 243 bytes at $C000,
+    # so the emulator can photograph it every frame while the real cartridge plays a track, and we
+    # demand our port -- seeded from the console's own state -- evolve identically. Same ROM rules:
+    # local-only, SKIPs without it. It boots the emulator once per track, so it is SLOW by nature.
+    qt_add_executable(tst_sound_parity emu/tst_sound_parity.cpp)
+    target_link_libraries(tst_sound_parity PRIVATE audio db Qt6::Test)
+    target_compile_definitions(tst_sound_parity PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_sound_parity COMMAND tst_sound_parity)
+    set_tests_properties(tst_sound_parity PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+                                                     TIMEOUT 900)
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_sound_parity)
 endif()
 
 # --- QML smoke test (Qt Quick Test, headless via offscreen) ---

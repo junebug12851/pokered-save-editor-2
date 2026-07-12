@@ -113,7 +113,8 @@ private:
   void notePitch(int c, uint8_t d);   // Audio1_note_pitch
   uint8_t nextMusicByte(int c);
   uint16_t calculateFrequency(uint8_t note, uint8_t octave) const;
-  void initPitchSlideVars(int c, uint16_t de);
+  /// Returns the CLOBBERED de -- the caller uses it as the frequency. See the .cpp.
+  uint16_t initPitchSlideVars(int c, uint16_t de);
   void applyPitchSlide(int c);
   void applyDutyCyclePattern(int c);
   void applyDutyCycleAndSoundLength(int c);

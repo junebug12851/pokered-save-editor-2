@@ -65,12 +65,19 @@ mouse never touches the save, and a line says plainly when what you hear isn't w
 ⚠️ The **bank** picker offers only 2 / 8 / 31, because we measured what a real console does with anything
 else: it **stops producing frames**. A save holding a bad bank is **shown, never silently rewritten**.
 
-Green: `tst_audio` 10/10, `tst_qml_screens` 16/16, full `ctest` 77/77. Plan + the whole story:
-[`plans/music.md`](plans/music.md).
+**And the console says it's right.** `tst_sound_parity` boots the real cartridge, photographs the engine's
+entire mind (`$C000–$C0FF`) **every frame**, seeds our port from the console's own state, and demands it
+reproduce every frame after — **all 46 tracks plus an inner voice, byte-for-byte: 48/48**. It found three
+real bugs in the port (the pitch-slide routine **clobbers `de`**, so a slide note starts on the divide's
+leftovers; `PlaySound` never restores `wSoundID` after a drum; `wSfxHeaderPointer` was never written) and
+one in the test rig itself (photographing the console **mid-fade**, while `wAudioROMBank` was still the
+*old* bank, produced dumps that looked plausible and were nonsense). A negative control was run: break the
+note length by one and it fails on frame 7 with the exact byte.
 
-⏳ **Owed:** (1) **Twilight's live pass** — it is sound and hover, and a still PNG can review neither.
-(2) **`tst_sound_parity`** — PyBoy dumps the console's `$C000–$C0FF` every frame and demands our engine
-match, frame by frame, for all 46 tracks. Until that exists this is "sounds right", not "is right".
+Green: `tst_sound_parity` 48/48, `tst_audio` 10/10, `tst_qml_screens` 16/16, full `ctest` **78/78**. The
+whole story: [`plans/music.md`](plans/music.md).
+
+⏳ **Owed: Twilight's live pass.** It is sound and it is hover — a still PNG can review neither.
 
 ### 🎵 Music — the research (2026-07-12)
 

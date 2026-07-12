@@ -380,7 +380,8 @@ def cmd_len(op: int, chan: int) -> int:
     return 1                        # a note
 
 
-def verify_against_rom(blobs: dict[int, bytearray], rom: bytes, music_json: list) -> bool:
+def verify_against_rom(blobs: dict[int, bytearray], rom: bytes, music_json: list,
+                       ptrmap_out: Path | None = None) -> bool:
     """Walk OUR stream and the CARTRIDGE's stream in lockstep. Every command byte must match.
 
     The two live at different addresses, so pointer operands can't be compared directly -- instead
@@ -388,8 +389,14 @@ def verify_against_rom(blobs: dict[int, bytearray], rom: bytes, music_json: list
     stronger statement than byte equality: it says the two graphs are the same graph.
     """
     ok = True
+    # ROM address -> our address, for every byte of every track's streams. The parity test needs
+    # this: the console's command pointers are ROM addresses, and ours are addresses in the
+    # relocated data, so the two states can only be compared once the pointers are translated.
+    ptrmap: dict[str, dict[str, int]] = {}
+
     for bank, blob in blobs.items():
         rb = rom[bank * 0x4000: (bank + 1) * 0x4000]
+        bankmap: dict[str, int] = {}
 
         def byte_rom(a: int) -> int:
             return rb[a - BASE] if BASE <= a < BASE + len(rb) else -1
@@ -430,6 +437,7 @@ def verify_against_rom(blobs: dict[int, bytearray], rom: bytes, music_json: list
                         continue
                     seen[ar] = ao
                     while True:
+                        bankmap[str(ar)] = ao
                         opr, opo = byte_rom(ar), byte_our(ao)
                         if opr != opo:
                             print(f"  MISMATCH {m['name']} ch{k+1}: ROM ${ar:04X}=${opr:02X} "
@@ -461,7 +469,15 @@ def verify_against_rom(blobs: dict[int, bytearray], rom: bytes, music_json: list
                             break
                         ar += ln
                         ao += ln
-        print(f"bank {bank:2d}: {'MATCHES' if ok else 'DIFFERS FROM'} the cartridge")
+        ptrmap[str(bank)] = bankmap
+        print(f"bank {bank:2d}: {'MATCHES' if ok else 'DIFFERS FROM'} the cartridge "
+              f"({len(bankmap)} bytes mapped)")
+
+    if ok and ptrmap_out is not None:
+        ptrmap_out.parent.mkdir(parents=True, exist_ok=True)
+        ptrmap_out.write_text(json.dumps(ptrmap), "utf-8")
+        print(f"wrote {ptrmap_out} (for tst_sound_parity)")
+
     return ok
 
 
@@ -536,7 +552,8 @@ def main() -> int:
     rom_path = REPO / "assets" / "references" / "backup.gb"
     if rom_path.exists():
         print()
-        if not verify_against_rom(blobs, rom_path.read_bytes(), music_json):
+        if not verify_against_rom(blobs, rom_path.read_bytes(), music_json,
+                                  REPO / "tmp" / "music_ptrmap.json"):
             print("REFUSING TO WRITE: the imported data does not match the cartridge.")
             return 1
     else:
