@@ -79,6 +79,31 @@ public:
   bool hasMap(int mapInd) const;         ///< Does @p mapInd have block data?
   bool hasTileset(int tilesetInd) const; ///< Does @p tilesetInd have a blockset?
 
+  /**
+   * @brief One block byte, addressed the way the Game Boy addresses it: bank + ROM address.
+   *
+   * Map connections do not index a tidy per-map array -- they hold a **pointer** into the
+   * neighbouring map's block data in ROM (`ConnectionStripSrc`), and the game reads through
+   * it with `SwitchToMapRomBank` set to the *connected* map's bank. A strip can therefore
+   * legitimately be asked to read past the end of that map's blocks, and the console simply
+   * hands over whatever bytes follow.
+   *
+   * So we read the same way: a block is looked up by (@p bank, @p addr) against the block
+   * regions we actually have -- every map's `.blk`, placed at its own `bank`/`dataPtr` from
+   * maps.json. An address that lands in a region we hold gives the true byte, even if it
+   * belongs to a *different* map than the one being read. An address in ROM we do not hold
+   * (headers, scripts, text -- we don't ship the ROM) returns **-1**: unknown, and said so,
+   * never guessed.
+   *
+   * No connection in the shipped game reads outside its neighbour's own blocks (verified for
+   * all 78 -- `scripts/emu/verify_connections.py`). This exists so that a *hostile* offset --
+   * an edited or glitched header -- overruns exactly where the console would, instead of
+   * being quietly clamped into something that merely looks plausible.
+   *
+   * @return the block id, or -1 if that address is not block data we hold.
+   */
+  int blockAt(int bank, int addr) const;
+
   int tilesetBlockCount(int tilesetInd) const; ///< Number of blocks in @p tilesetInd's blockset.
 
   int mapCount() const;     ///< Number of maps with block data.
@@ -94,6 +119,15 @@ private slots:
 private:
   BlocksDB(); ///< Private -- use inst().
 
+  /// One map's block data, placed where it really lives in ROM.
+  struct Region {
+    int addr = 0;      ///< Its `dataPtr` -- the address of the map's `_Blocks` label.
+    QByteArray blocks; ///< The bytes there.
+  };
+
+  void indexRom(); ///< Build @ref rom from maps.json's bank/dataPtr. Called by load().
+
   QHash<int, QByteArray> maps;     ///< mapInd -> block ids.
   QHash<int, QByteArray> tilesets; ///< tilesetInd -> blockset.
+  QHash<int, QVector<Region>> rom; ///< bank -> the block regions we hold in it.
 };

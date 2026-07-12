@@ -35,8 +35,8 @@ maps but *unfinished copies*: `maps.json`'s own `incomplete` field says which ma
 with the ROM, so we follow it and draw the map they copy (what a Game Boy actually does with those ids).
 Nothing invented, no JSON changed.
 
-**Not yet drawn:** the player, connection strips bleeding into the border ring, warps/signs/sprites,
-tile animation frames (frame 0 only), and the palettes/"contrast" (currently the tileset PNG's greys).
+**Not yet drawn:** the player, warps/signs/sprites, tile animation frames (frame 0 only), and the
+palettes/"contrast" (currently the tileset PNG's greys). **Connection strips are DONE** (below).
 
 ### ✅ And now the actual Game Boy checks our work (2026-07-12)
 
@@ -45,10 +45,22 @@ RAM**, and demands `MapEngine` match it byte for byte. The verdict: the view poi
 24×20 scratch area and the **20×18 screen tiles all MATCH** — `wTileMap` matching means the entire view
 pipeline is right, with no sprites or palettes in the way.
 
-It also immediately caught the one thing that *is* wrong: **the border ring**. We fill it with the border
-block; the game bleeds the **connected maps' edges** over it (Pallet Town's ring is Route 1 and Route 21,
-not trees). Held as an explicit `QEXPECT_FAIL` so it can't be forgotten — implement connection strips and
-the test starts passing.
+It also immediately caught the one thing that *was* wrong — **the border ring** — which is now **fixed and
+verified**: see below.
+
+### ✅ Connection strips — done, and the hardest part of the map engine (2026-07-12)
+
+The border ring is not a wall of trees: the game bleeds the **connected maps' edges** into it, so Pallet
+Town's ring is really Route 1's bottom rows and Route 21's top rows. Now reproduced —
+**78 of 78 connections in the game, byte-for-byte against the compiled structs in the real cartridge, zero
+mismatches**, and the resulting ring is byte-identical to the console's `wOverworldMap`.
+
+⚠️ **`MapDBEntryConnect::stripSize()` is WRONG** (it branches on `fromWidth < toWidth`; the macro clamps on
+`min(curW + 3 - offset, toW)`), and `maps.json`'s **`flag`** field exists only to patch that. The real game
+has no flag. `MapEngine` ignores both and recomputes from the macro, so nothing is broken today — but the DB
+still carries a wrong formula. **Fixing it is Twilight's call** (curated data + a public DB API).
+
+Everything about it: [`reference/map-connections.md`](reference/map-connections.md).
 
 The ROM is Twilight's own cartridge backup: **git-ignored, never committed, never shipped**; without it
 every case SKIPs. Setup + the traps (the "has the save loaded?" trap, `wCurMapTileset` bit 7):

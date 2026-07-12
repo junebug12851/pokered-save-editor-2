@@ -22,9 +22,12 @@
 
 #include <QFile>
 #include <QQmlEngine>
+#include <QVector>
 #include <pse-common/utility.h>
 
 #include "./blocksdb.h"
+#include "./mapsdb.h"
+#include "./entries/mapdbentry.h"
 
 namespace {
 /// Ids are one byte in the save, so this covers every map / tileset that can exist.
@@ -74,7 +77,39 @@ void BlocksDB::load()
       tilesets.insert(i, bst);
   }
 
+  indexRom();
+
   once = true;
+}
+
+void BlocksDB::indexRom()
+{
+  // Put every map's blocks back where they actually live in the cartridge: its own bank,
+  // at its own dataPtr (the address of its `_Blocks` label). That is what lets a
+  // connection's ConnectionStripSrc be read as a POINTER -- the way the game reads it --
+  // rather than as an index into a per-map array it isn't.
+  rom.clear();
+
+  for (auto* entry : MapsDB::inst()->getStore()) {
+    const QByteArray blocks = mapBlocks(entry->getInd());
+    if (blocks.isEmpty() || entry->getBank() < 0 || entry->getDataPtr() <= 0)
+      continue;
+
+    rom[entry->getBank()].append({ entry->getDataPtr(), blocks });
+  }
+}
+
+int BlocksDB::blockAt(int bank, int addr) const
+{
+  for (const Region& region : rom.value(bank)) {
+    const int i = addr - region.addr;
+    if (i >= 0 && i < region.blocks.size())
+      return static_cast<quint8>(region.blocks[i]);
+  }
+
+  // ROM we don't hold (headers, scripts, text -- we don't ship the cartridge). Unknown,
+  // and we say so rather than invent a block.
+  return -1;
 }
 
 QByteArray BlocksDB::mapBlocks(int mapInd) const

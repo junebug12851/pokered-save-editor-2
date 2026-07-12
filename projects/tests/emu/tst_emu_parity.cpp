@@ -98,7 +98,7 @@ private slots:
 
   void theGameAgreesWithOurViewPointer();
   void theGameAgreesWithOurBlockBuffer();
-  void theBorderRing_isStillMissingItsConnections();
+  void theBorderRing_carriesTheConnectedMaps();
   void theGameAgreesWithOurScratchArea();
   void theGameAgreesWithOurScreen();
 
@@ -217,25 +217,20 @@ void TestEmuParity::theGameAgreesWithOurBlockBuffer()
   }
 }
 
-void TestEmuParity::theBorderRing_isStillMissingItsConnections()
+void TestEmuParity::theBorderRing_carriesTheConnectedMaps()
 {
-  // The border ring is the one place we KNOWINGLY differ from the console, and the
-  // emulator found it the first time it was pointed at us.
+  // The border ring is not a wall of trees. The game fills it with the map's border block
+  // and then bleeds the CONNECTED maps' edges over the top -- Pallet Town's ring is really
+  // Route 1's bottom rows and Route 21's top rows. This test was an expected failure until
+  // connection strips landed; now the console has to agree with us block for block.
   //
-  // We fill the 3-block ring with the map's border block. The game does that too -- and
-  // then bleeds the CONNECTED maps' edge strips over the top of it
-  // (LoadNorthSouthConnectionsTileMap / LoadEastWestConnectionsTileMap). Pallet Town
-  // connects north to Route 1 and south to Route 21, so its ring is really Route 1's
-  // bottom rows and Route 21's top rows -- not a wall of trees.
-  //
-  // Connection strips are the next step of the map emulator. This test is deliberately
-  // an EXPECTED failure rather than a skip: the moment they land, it starts passing and
-  // this expectation has to be deleted -- so the gap cannot be quietly forgotten.
+  // (The strips are the most error-prone corner of the whole map engine: a clamp that turns
+  // one signed offset into two, a length either map can limit, and a length byte that means
+  // a WIDTH going north/south but a ROW COUNT going east/west. See reference/map-connections.md.)
   const auto buffer = MapEngine::buildOverworldMap(m_state["curMap"].toInt());
   QVERIFY(buffer.valid);
 
   const int border = MapEngine::mapBorder;
-  int differing = 0;
 
   for (int row = 0; row < buffer.rows; row++) {
     for (int col = 0; col < buffer.stride; col++) {
@@ -245,15 +240,15 @@ void TestEmuParity::theBorderRing_isStillMissingItsConnections()
         continue;
 
       const int i = row * buffer.stride + col;
-      if (buffer.blocks[i] != m_overworldMap[i])
-        differing++;
+      if (buffer.blocks[i] == m_overworldMap[i])
+        continue;
+
+      QFAIL(qPrintable(QString("border block (%1,%2): the game has %3, we built %4")
+                       .arg(col).arg(row)
+                       .arg(static_cast<quint8>(m_overworldMap[i]))
+                       .arg(static_cast<quint8>(buffer.blocks[i]))));
     }
   }
-
-  QEXPECT_FAIL("", "connection strips are not implemented yet -- the ring should carry the "
-                   "neighbouring maps' edges, not the border block (see next-steps.md)",
-               Continue);
-  QCOMPARE(differing, 0);
 }
 
 void TestEmuParity::theGameAgreesWithOurScratchArea()

@@ -39,11 +39,13 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
 
    1. **Review step 1 in-app** — is the render right, are the boxes where she expects, is the grid too
       loud/quiet, is the fit-to-window default right?
-   2. **Connection strips** ← *the emulator says this is our only wrong buffer.* The neighbouring maps'
-      edges bleed into the border ring (`LoadNorthSouthConnectionsTileMap` /
-      `LoadEastWestConnectionsTileMap`); we currently leave it as the plain border block, which is what an
-      *unconnected* map looks like. **The verification is already written**: implement it, then delete the
-      `QEXPECT_FAIL` in `tst_emu_parity::theBorderRing_isStillMissingItsConnections`.
+   2. ~~**Connection strips**~~ — ✅ **DONE 2026-07-12.** The ring now carries the neighbouring maps' edges.
+      **78/78 connections verified byte-for-byte against the compiled structs in the real cartridge**, and
+      the ring is byte-identical to the console's `wOverworldMap`. Full write-up:
+      [`reference/map-connections.md`](../reference/map-connections.md).
+      ⚠️ **Left open for Twilight:** `MapDBEntryConnect::stripSize()` is wrong and `maps.json`'s `flag`
+      field is a patch for it (the real game has no flag). `MapEngine` doesn't use either, so nothing is
+      broken — but the DB carries a wrong formula. Fixing it touches curated data + a public API: her call.
    3. **Palettes / "contrast"** (Twilight, 2026-07-12) — the 4 contrast levels and the **6 glitch
       palettes**. If the render is truly accurate the glitch palettes should fall out correctly, which
       would be a real showcase. The emulator's `screen.png` is the ground truth here — check against it

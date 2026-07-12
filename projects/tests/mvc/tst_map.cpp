@@ -44,6 +44,7 @@
 #include <pse-db/mapsdb.h>
 #include <pse-db/tileset.h>
 #include <pse-db/entries/mapdbentry.h>
+#include <pse-db/entries/mapdbentryconnect.h>
 
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/savefiletoolset.h>
@@ -126,6 +127,8 @@ private slots:
   void view_everyViewFitsInsideTheBuffer();
 
   // The buffer + the renderer
+  void connections_bleedTheNeighbouringMapsIntoTheRing();
+  void connections_offsetIsRecoveredFromTheStoredPair();
   void buffer_isTheMapRingedByItsBorderBlock();
   void buffer_glitchMapHasNone();
   void render_isOneScreenPixelPerGameBoyPixel();
@@ -395,7 +398,19 @@ void TestMap::view_everyViewFitsInsideTheBuffer()
 
 void TestMap::buffer_isTheMapRingedByItsBorderBlock()
 {
-  const int mapInd = 0; // Pallet Town, 10x9
+  // An UNCONNECTED map -- Red's House 1F, an interior with no neighbours. Its ring really
+  // is nothing but the border block, all the way round, because there is nothing to bleed
+  // into it. (A connected map's ring is a different story entirely: see
+  // connections_bleedTheNeighbouringMapsIntoTheRing.)
+  auto* redsHouse = MapsDB::inst()->getIndAt("Reds House 1F");
+  QVERIFY(redsHouse != nullptr);
+  QVERIFY2(redsHouse->getConnectAt(MapDBEntryConnect::ConnectDir::NORTH) == nullptr
+        && redsHouse->getConnectAt(MapDBEntryConnect::ConnectDir::SOUTH) == nullptr
+        && redsHouse->getConnectAt(MapDBEntryConnect::ConnectDir::EAST) == nullptr
+        && redsHouse->getConnectAt(MapDBEntryConnect::ConnectDir::WEST) == nullptr,
+           "Red's House 1F was supposed to have no connections");
+
+  const int mapInd = redsHouse->getInd();
   const auto buffer = MapEngine::buildOverworldMap(mapInd);
   QVERIFY(buffer.valid);
 
@@ -426,6 +441,77 @@ void TestMap::buffer_isTheMapRingedByItsBorderBlock()
         QCOMPARE(block, buffer.border);
       }
     }
+  }
+}
+
+void TestMap::connections_bleedTheNeighbouringMapsIntoTheRing()
+{
+  // Pallet Town connects north to Route 1 and south to Route 21. Its border ring is
+  // therefore NOT a wall of trees: the top three rows are Route 1's bottom three, and the
+  // bottom three are Route 21's top three. (The console agrees -- tst_emu_parity.)
+  const auto pallet = MapEngine::buildOverworldMap(0);
+  QVERIFY(pallet.valid);
+
+  auto* route1 = MapsDB::inst()->getIndAt("Route 1");
+  auto* route21 = MapsDB::inst()->getIndAt("Route 21");
+  QVERIFY(route1 != nullptr);
+  QVERIFY(route21 != nullptr);
+
+  const QByteArray r1 = BlocksDB::inst()->mapBlocks(route1->getInd());
+  const QByteArray r21 = BlocksDB::inst()->mapBlocks(route21->getInd());
+  QVERIFY(!r1.isEmpty());
+  QVERIFY(!r21.isEmpty());
+
+  const int border = MapEngine::mapBorder;
+
+  // Both connections have offset 0, and both routes are 10 wide -- the same as Pallet --
+  // so the strips line up column-for-column with no shift, which makes this readable.
+  for (int row = 0; row < border; row++) {
+    for (int col = 0; col < pallet.width; col++) {
+      // North: Route 1's LAST three rows.
+      const int north = static_cast<quint8>(
+        r1[(route1->getHeight() - 3 + row) * route1->getWidth() + col]);
+      QCOMPARE(static_cast<quint8>(pallet.blocks[row * pallet.stride + border + col]), north);
+
+      // South: Route 21's FIRST three rows.
+      const int south = static_cast<quint8>(r21[row * route21->getWidth() + col]);
+      const int at = (border + pallet.height + row) * pallet.stride + border + col;
+      QCOMPARE(static_cast<quint8>(pallet.blocks[at]), south);
+    }
+  }
+
+  // And the ring is NOT simply the border block any more -- which is the whole point.
+  bool anyNotBorder = false;
+  for (int col = 0; col < pallet.width && !anyNotBorder; col++)
+    if (static_cast<quint8>(pallet.blocks[border + col]) != pallet.border)
+      anyNotBorder = true;
+
+  QVERIFY2(anyNotBorder, "the north ring is still just the border block");
+}
+
+void TestMap::connections_offsetIsRecoveredFromTheStoredPair()
+{
+  // maps.json keeps the POST-clamp pair, not the raw offset the header was written with.
+  // Recovering it is what makes the macro computable at all, and it is verified against the
+  // real cartridge for all 78 connections (scripts/emu/verify_connections.py).
+  struct Case { const char* map; int dir; int offset; };
+
+  const QVector<Case> cases = {
+    { "Route 4",       MapDBEntryConnect::ConnectDir::SOUTH, -25 },
+    { "Route 11",      MapDBEntryConnect::ConnectDir::EAST,  -27 },
+    { "Route 2",       MapDBEntryConnect::ConnectDir::NORTH,  -5 },
+    { "Viridian City", MapDBEntryConnect::ConnectDir::NORTH,   5 },
+    { "Pallet Town",   MapDBEntryConnect::ConnectDir::NORTH,   0 },
+  };
+
+  for (const auto& c : cases) {
+    auto* map = MapsDB::inst()->getIndAt(c.map);
+    QVERIFY2(map != nullptr, c.map);
+
+    const auto* connect = map->getConnectAt(c.dir);
+    QVERIFY2(connect != nullptr, c.map);
+
+    QCOMPARE(MapEngine::connectionOffset(connect), c.offset);
   }
 }
 

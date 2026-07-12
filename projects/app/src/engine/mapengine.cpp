@@ -28,6 +28,7 @@
 #include <pse-db/mapsdb.h>
 #include <pse-db/tileset.h>
 #include <pse-db/entries/mapdbentry.h>
+#include <pse-db/entries/mapdbentryconnect.h>
 
 #include "./mapengine.h"
 #include "./tilesetengine.h"
@@ -145,8 +146,158 @@ MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd)
       out.blocks[dst + x] = blocks[src + x];
   }
 
+  applyConnections(out, map);
+
   out.valid = true;
   return out;
+}
+
+MapEngine::Connection MapEngine::connectionOf(const MapDBEntry* from, int dir,
+                                              const MapDBEntry* to, int offset)
+{
+  // The `connection` macro (macros/scripts/maps.asm), reproduced exactly. It is a pure
+  // function of the two maps' sizes and the offset, and it is the ONLY thing that decides
+  // where a strip comes from, where it lands, and how long it is.
+  //
+  // Verified byte-for-byte against the compiled structs in the real cartridge, for all 78
+  // connections in the game (scripts/emu/verify_connections.py).
+  //
+  // We deliberately do NOT use MapDBEntryConnect::stripLocation()/stripSize(): stripSize()
+  // branches on `fromWidth < toWidth` where the macro clamps on min(curW + 3 - offset, toW),
+  // and maps.json's `flag` is a patch for that divergence. The real game has no flag.
+  // See reference/map-connections.md.
+  Connection c;
+  c.valid = false;
+
+  const int curW = from->getWidth();
+  const int curH = from->getHeight();
+  const int toW = to->getWidth();
+  const int toH = to->getHeight();
+
+  if (curW <= 0 || curH <= 0 || toW <= 0 || toH <= 0)
+    return c;
+
+  // THE CLAMP. Two numbers out of one: `tgt` is where the strip lands in OUR ring, `src`
+  // is how far into the NEIGHBOUR it starts. A negative offset would push the destination
+  // out of the buffer, so the game slides the SOURCE along and pins the destination to 0.
+  int src = 0;
+  int tgt = offset + 3;
+  if (tgt < 2) {
+    src = -tgt;
+    tgt = 0;
+  }
+
+  int blk = 0;   // src, relative to the neighbour's block data
+  int map = 0;   // dest, relative to wOverworldMap
+  int len = 0;
+
+  switch (dir) {
+    case MapDBEntryConnect::ConnectDir::NORTH:
+      blk = toW * (toH - 3) + src;               // the neighbour's LAST 3 rows
+      map = tgt;
+      len = qMin(curW + 3 - offset, toW);
+      break;
+
+    case MapDBEntryConnect::ConnectDir::SOUTH:
+      blk = src;                                 // its FIRST row
+      map = (curW + 6) * (curH + 3) + tgt;
+      len = qMin(curW + 3 - offset, toW);
+      break;
+
+    case MapDBEntryConnect::ConnectDir::WEST:
+      blk = toW * src + toW - 3;                 // its LAST 3 columns
+      map = (curW + 6) * tgt;
+      len = qMin(curH + 3 - offset, toH);
+      break;
+
+    case MapDBEntryConnect::ConnectDir::EAST:
+      blk = toW * src;                           // its FIRST column
+      map = (curW + 6) * tgt + curW + 3;
+      len = qMin(curH + 3 - offset, toH);
+      break;
+
+    default:
+      return c;
+  }
+
+  c.dir = dir;
+  c.toInd = to->getInd();
+  c.toBank = to->getBank();
+  c.toWidth = toW;
+  c.srcAddr = to->getDataPtr() + blk;   // a ROM POINTER, in the neighbour's bank
+  c.destIndex = map;                    // an index into our buffer
+  c.length = len - src;                 // N/S: a width. E/W: a ROW COUNT.
+  c.valid = true;
+
+  return c;
+}
+
+int MapEngine::connectionOffset(const MapDBEntryConnect* connect)
+{
+  // maps.json keeps the POST-clamp pair (stripMove == tgt - 3, stripOffset == src), not the
+  // raw offset the header was written with. The clamp is invertible: a non-zero src can only
+  // have come from tgt < 2, where src = -(offset + 3).
+  //
+  // Verified on all 78 connections (Route 4 south = -25 -> stored (-3, 22); Route 11 east
+  // = -27 -> stored (-3, 24); Viridian north = +5 -> stored (5, 0)).
+  const int stripOffset = connect->getStripOffset();
+  const int stripMove = connect->getStripMove();
+
+  return (stripOffset != 0) ? (-stripOffset - 3) : stripMove;
+}
+
+void MapEngine::applyConnections(Buffer& out, const MapDBEntry* map)
+{
+  // LoadTileBlockMap fills the ring with the border block and THEN bleeds the connected
+  // maps' edges over the top of it. Pallet Town's ring is not a wall of trees -- it is the
+  // bottom of Route 1 and the top of Route 21, which is why you can see into the next route
+  // before you walk there, and why the walk across is seamless.
+  const int dirs[] = {
+    MapDBEntryConnect::ConnectDir::NORTH,
+    MapDBEntryConnect::ConnectDir::SOUTH,
+    MapDBEntryConnect::ConnectDir::WEST,
+    MapDBEntryConnect::ConnectDir::EAST
+  };
+
+  for (int dir : dirs) {
+    const auto* connect = map->getConnectAt(dir);
+    if (connect == nullptr)
+      continue;
+
+    auto* to = MapsDB::inst()->getIndAt(connect->getMap());
+    if (to == nullptr)
+      continue;
+
+    const Connection c = connectionOf(map, dir, to, connectionOffset(connect));
+    if (!c.valid || c.length <= 0)
+      continue;
+
+    // The two loop shapes are NOT the same, and the length means different things in them:
+    //   N/S -- 3 rows (MAP_BORDER), each `length` blocks wide
+    //   E/W -- `length` rows, each 3 blocks wide
+    // Both step the source by the NEIGHBOUR's width and the destination by OUR stride.
+    const bool northSouth = (dir == MapDBEntryConnect::ConnectDir::NORTH
+                          || dir == MapDBEntryConnect::ConnectDir::SOUTH);
+
+    const int rows = northSouth ? mapBorder : c.length;
+    const int cols = northSouth ? c.length : mapBorder;
+
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        const int dst = c.destIndex + row * out.stride + col;
+        if (dst < 0 || dst >= out.blocks.size())
+          continue; // the game would scribble on neighbouring WRAM; we simply don't
+
+        // Read it as the console does: a pointer, in the neighbour's bank. An address we
+        // don't hold comes back -1 -- unknown, left as the border block rather than faked.
+        const int block = BlocksDB::inst()->blockAt(c.toBank, c.srcAddr + row * c.toWidth + col);
+        if (block < 0)
+          continue;
+
+        out.blocks[dst] = static_cast<char>(block);
+      }
+    }
+  }
 }
 
 int MapEngine::tilesetOf(int mapInd)

@@ -22,6 +22,7 @@
 #include <QString>
 
 struct MapDBEntry;
+struct MapDBEntryConnect;
 
 /**
  * @brief Rebuilds the Game Boy's overworld map exactly as the game does, and draws it.
@@ -126,6 +127,34 @@ public:
    */
   static MapDBEntry* sourceMap(int mapInd);
 
+  /**
+   * @brief One connection strip, resolved: where it reads, where it lands, how much.
+   *
+   * The `connection` macro's output, recomputed. @ref srcAddr is a **ROM pointer** into the
+   * neighbour's block data, read in @ref toBank -- not an index into an array. @ref length
+   * means a **width** for north/south and a **row count** for east/west; the same byte, two
+   * meanings, which is one of the several ways this gets implemented wrong.
+   *
+   * See `reference/map-connections.md`.
+   */
+  struct Connection {
+    int dir = -1;        ///< MapDBEntryConnect::ConnectDir.
+    int toInd = -1;      ///< The neighbour.
+    int toBank = -1;     ///< Its ROM bank -- what SwitchToMapRomBank selects.
+    int toWidth = 0;     ///< Its width: the source row stride.
+    int srcAddr = 0;     ///< `ConnectionStripSrc` -- a pointer into its blocks.
+    int destIndex = 0;   ///< `ConnectionStripDest`, as an index into @ref Buffer::blocks.
+    int length = 0;      ///< `ConnectionStripLength`. N/S: width. E/W: rows.
+    bool valid = false;
+  };
+
+  /// The macro's arithmetic, for @p from's connection in @p dir to @p to at @p offset.
+  static Connection connectionOf(const MapDBEntry* from, int dir,
+                                 const MapDBEntry* to, int offset);
+
+  /// Recover the header's raw signed offset from what maps.json kept (see the .cpp).
+  static int connectionOffset(const MapDBEntryConnect* connect);
+
   /// Build @p mapInd's overworld buffer -- the map placed inside its 3-block border ring.
   static Buffer buildOverworldMap(int mapInd);
 
@@ -175,4 +204,7 @@ public:
 private:
   /// The tileset image id TilesetEngine wants: `<tileset>/<type>/<font>/<frame>`.
   static QString tilesetId(int tilesetInd, int frame);
+
+  /// Bleed every connected map's edge strip into @p out's border ring (LoadTileBlockMap).
+  static void applyConnections(Buffer& out, const MapDBEntry* map);
 };
