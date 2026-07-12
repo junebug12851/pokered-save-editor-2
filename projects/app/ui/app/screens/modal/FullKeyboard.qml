@@ -212,7 +212,6 @@ Page {
             onDetail: (info) => detailView.info = info;
 
             onOpenSimulated: simulated.openPicker();
-            onToggleOutdoor: simulated.flipOutdoor();
           }
 
           // A quiet line saying what this page IS -- the page strip gives it a name and a
@@ -315,9 +314,14 @@ Page {
     NameDisplay {
       id: nameDisplay
       anchors.horizontalCenter: parent.horizontalCenter
-      // The 24 is the length feedback, which hangs BELOW this item's height.
-      anchors.bottom: parent.bottom
-      anchors.bottomMargin: 24
+
+      // CENTRED in the fixed footer, not shoved against its bottom edge. Bottom-anchored,
+      // the short Name preview left a slab of empty white above it with the toggle
+      // stranded in the middle of nowhere. The offset accounts for the length feedback,
+      // which hangs BELOW this item's height and so has to be counted into the block being
+      // centred.
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.verticalCenterOffset: -2
 
       placeholder: top.placeholder
       str: top.str

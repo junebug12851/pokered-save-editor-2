@@ -65,11 +65,12 @@ Item {
   signal dismiss()
   signal detail(var info)    ///< Hover feedback for the side pane; null when nothing is hovered.
 
-  /// Tab -- open the tileset picker (tile pages only). Ctrl+Tab -- flip Outdoor.
-  /// Tab is a key that controls the KEYBOARD, not one that types, so it's coloured with
-  /// the modifiers and it's dead everywhere the tileset doesn't matter.
+  /// Tab -- open the tileset picker (tile pages only). No modifier chords: a modifier's
+  /// one job on this deck is to change page, and giving it a second meaning is how a
+  /// keyboard stops being predictable. Tab is a key that controls the KEYBOARD rather
+  /// than one that types, so it's coloured with the modifiers, and it's dead everywhere
+  /// the tileset doesn't matter.
   signal openSimulated()
-  signal toggleOutdoor()
 
   // Registry of live caps, so a physical key press can flash its on-screen cap --
   // typing and clicking are then visibly the same act.
@@ -79,6 +80,23 @@ Item {
     latchShift = (p & 1) !== 0;
     latchCtrl  = (p & 2) !== 0;
     latchAlt   = (p & 4) !== 0;
+  }
+
+  /// TOUCHING A REAL MODIFIER KEY DROPS THE LATCHED PAGE. (Twilight, and she's right.)
+  ///
+  /// Latched and held used to be OR'd, which meant: click "Uppercase" in the strip to
+  /// poke around, then start typing -- and Shift does NOTHING, because the page was
+  /// already latched shifted. Every letter comes out capital and the keyboard has quietly
+  /// stopped telling the truth about itself. The moment you touch a physical modifier you
+  /// are saying "I'm driving now", so the latch gets out of the way and the deck goes
+  /// back to being exactly the keyboard under your hands.
+  ///
+  /// Caps Lock is NOT cleared: it's a lock, not a latch, and on a real keyboard Shift
+  /// inverts it rather than cancelling it -- which is what effectivePage() already does.
+  function dropLatches() {
+    latchShift = false;
+    latchCtrl = false;
+    latchAlt = false;
   }
 
   // A key does NOT arrive as "the key you pressed" -- the OS hands us the key code of
@@ -152,10 +170,29 @@ Item {
   focus: true
 
   Keys.onPressed: (event) => {
-    if(event.key === Qt.Key_Shift)   { deck.heldShift = true; event.accepted = true; return; }
-    if(event.key === Qt.Key_Control) { deck.heldCtrl  = true; event.accepted = true; return; }
-    if(event.key === Qt.Key_Alt ||
-       event.key === Qt.Key_AltGr)   { deck.heldAlt   = true; event.accepted = true; return; }
+    // A real modifier is you taking the wheel: the latched page steps aside (see
+    // dropLatches -- otherwise Shift silently does nothing on a latched Uppercase page
+    // and every letter comes out capital).
+    if(event.key === Qt.Key_Shift) {
+      deck.dropLatches();
+      deck.heldShift = true;
+      event.accepted = true;
+      return;
+    }
+
+    if(event.key === Qt.Key_Control) {
+      deck.dropLatches();
+      deck.heldCtrl = true;
+      event.accepted = true;
+      return;
+    }
+
+    if(event.key === Qt.Key_Alt || event.key === Qt.Key_AltGr) {
+      deck.dropLatches();
+      deck.heldAlt = true;
+      event.accepted = true;
+      return;
+    }
 
     if(event.key === Qt.Key_CapsLock) {
       if(!event.isAutoRepeat)
@@ -197,14 +234,17 @@ Item {
     }
 
     // Tab is a keyboard CONTROL, not a character: on the tile pages it opens the tileset
-    // picker, and Ctrl+Tab flips Outdoor. (Accepted unconditionally so Tab never wanders
-    // off doing focus navigation inside a modal that has nowhere to navigate to.)
+    // picker. Nothing more -- there is no Ctrl+Tab, and no modifier chord of any kind
+    // here. A modifier is how you change PAGE; overloading it to also mean "and by the
+    // way, flip a tileset setting" is exactly the kind of second meaning that makes a
+    // keyboard stop being predictable. Outdoor is a button; click it.
+    //
+    // (Accepted unconditionally, so Tab never wanders off doing focus navigation inside a
+    // modal that has nowhere to navigate to.)
     if(event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
-      if(deck.isTilePage) {
+      if(deck.isTilePage && !deck.shiftOn && !deck.ctrlOn && !deck.altOn) {
         tabKey.flash();
-
-        if(deck.ctrlOn) deck.toggleOutdoor();
-        else            deck.openSimulated();
+        deck.openSimulated();
       }
 
       event.accepted = true;
@@ -261,7 +301,13 @@ Item {
                               Math.min(width  / 16.3,
                                        height / 5.9)))
   readonly property real gap: Math.max(2, Math.round(u * 0.06))
-  readonly property real tileScale: Math.max(2, (u - 20) / 8)
+
+  // The tile must FIT INSIDE the cap. A tile is 8px square at scale 1, and the cap's face
+  // is the unit minus its 2px inset each side; leave a further 5px of margin so the glyph
+  // (and, on the picture tiles, the white card behind it) sits inside the key rather than
+  // running over its edges -- which is exactly what a hard floor of 2 was doing at the
+  // app's default window size.
+  readonly property real tileScale: Math.max(1.5, (u - 4 - 10) / 8)
 
   // Clicking the bare chassis takes focus back from the name field.
   MouseArea {
@@ -351,10 +397,7 @@ Item {
           units: 1.5
           dead: !deck.isTilePage
           modifier: deck.isTilePage
-          onFired: {
-            if(deck.ctrlOn) deck.toggleOutdoor();
-            else            deck.openSimulated();
-          }
+          onFired: deck.openSimulated();
         }
 
         Repeater {

@@ -116,6 +116,10 @@ Item {
     anchors.margins: 2
     radius: 6
 
+    // Nothing may spill over the edge of a key. (The tile scale is sized to fit -- this
+    // is the belt to that pair of braces.)
+    clip: true
+
     // A real wash of the category colour, not a hint of one -- this is what makes the
     // colour legible without hovering. An EMPTY key stays a dark, inert well in the
     // chassis: it reads as "no key here", not as a broken white one.

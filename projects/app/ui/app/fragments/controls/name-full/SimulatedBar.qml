@@ -21,14 +21,11 @@ Item {
   /// The picker closed -- hand the keys back to the keyboard.
   signal picked()
 
-  /// Driven by the deck's Tab key: Tab opens the tileset picker (then Up/Down to walk it
-  /// and Tab or Enter to choose), Ctrl+Tab flips Outdoor.
+  /// Driven by the deck's Tab key: Tab opens the tileset picker, then Up/Down walks it and
+  /// Tab or Enter chooses. There is no modifier chord for any of this -- a modifier's one
+  /// job on this deck is to change page.
   function openPicker() {
     tileset.openMenu();
-  }
-
-  function flipOutdoor() {
-    brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
   }
 
   // Same pill toggle as the rest of the screen's chrome -- properly padded, rounded,
@@ -102,11 +99,9 @@ Item {
       FlatToggle {
         text: qsTr("Outdoor")
         active: brg.settings.previewOutdoor
-        onClicked: bar.flipOutdoor();
+        onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
 
-        MainToolTip {
-          text: "Render these tiles as they'd look outdoors vs. indoors. (Ctrl+Tab)"
-        }
+        MainToolTip { text: "Render these tiles as they'd look outdoors vs. indoors." }
       }
     }
   }
