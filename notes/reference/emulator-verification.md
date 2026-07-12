@@ -105,6 +105,26 @@ saves are how this harness gets interesting: put the player on a map edge, in a 
 next to a connection — and check the console still agrees. Keep experiments in `tmp/` (git-ignored) unless a
 fixture earns a permanent place in `assets/saves/`, and never modify the natural saves in place.
 
+## The audio tools (2026-07-12)
+
+Two more scripts hang off the same ROM, same rules (local-only, exit 2 without it):
+
+| Script | What it does |
+|--------|--------------|
+| `scripts/emu/analyze_music_ids.py` | **Static.** Parses all 256 music ids × 3 audio banks straight out of the cartridge exactly as `AudioN_PlaySound` does (`SFX_Headers_N + id × 3`), disassembles each channel's command stream, follows `sound_call`/`sound_loop`, and classifies every id. Writes `tmp/music_ids.json`. |
+| `scripts/emu/probe_glitch_music.py` | **Live.** Patches a music id/bank into a real save (**recomputing the checksum** — without it the game rejects the save and you end up silently testing a *new game*, which fooled this once), boots the cartridge, walks onto the map, and reads back `wChannelSoundIDs`, `wAudioROMBank`, NR51/NR52 and the engine's own pitch bytes at `$C066`. |
+
+Two traps worth remembering, both learned the hard way here:
+
+- **PyBoy reads battery RAM from `<rom>.gb.ram`.** Passing a `.sav` path to your own script does nothing;
+  you must copy it next to the ROM copy. Otherwise the game just starts a **new game** and happily reports
+  Pallet Town's music — a green-looking result that means nothing.
+- **The APU's frequency registers are write-only** (they read back `$FF`). To watch a tune move, read the
+  *engine's own* copy: `wChannelFrequencyLowBytes` at `$C066`.
+
+What they found: [`glitch-music.md`](glitch-music.md) — including the fact that a bad music **bank** makes
+the console execute arbitrary cartridge bytes as code and **hang**, which the probe demonstrates.
+
 ## Where this goes next
 
 The same oracle answers the questions still open:

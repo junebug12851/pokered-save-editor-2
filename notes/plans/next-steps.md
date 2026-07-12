@@ -72,6 +72,12 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
       [`../reference/gameboy-apu.md`](../reference/gameboy-apu.md).
       🐞 Its Phase 1 also fixes a real bug found during the research: `AreaAudio::setTo()` writes the bank
       into `musicID`.
+      🎼 And the glitch-id research (verified on the cartridge) turned up a **perk**: the music region has
+      **zero garbage ids** — it has **105 "inner voices"**, each a real song's single channel playing alone
+      (id 187 = Pallet Town's bassline). They cost no extra data → **151 tracks for the price of 46**, plus
+      near-free sheet-music export. ⚠️ But an invalid **bank** byte **hangs the console** (arbitrary code
+      execution), so Phase 1 must guard the bank picker. See
+      [`../reference/glitch-music.md`](../reference/glitch-music.md).
 
    Also now possible and worth doing: **save-file acceptance testing** — hand the game a save the *editor
    wrote* and prove the console loads it and agrees with every field. The editor's byte-fidelity promise,

@@ -68,6 +68,28 @@ The keystone, when it's built: the engine's **entire state is 243 bytes at `$C00
 from the real cartridge every frame and our port must match **byte-for-byte, frame by frame**. Same doctrine
 as the map — the console is the judge.
 
+### 🎼 …and there is no such thing as glitch music. There are 105 extra songs. (2026-07-12)
+
+A music header is **3 bytes per channel**, and ids are computed *by address* (`SFX_Headers_N + id × 3`) — so
+a 3-channel song **eats three ids**, and the spare two parse as perfectly valid **one-channel headers
+pointing at that song's channel 2 and channel 3**. **Id 186 is Pallet Town; id 187 is Pallet Town's
+bassline, alone.**
+
+Parsed out of the cartridge: across the three banks the music region holds **46 real tracks, 105 inner
+voices, and zero garbage ids**. The console confirms it — with id 187 the save loads, `wChannelSoundIDs` is
+`[0, 187, 0, …]` and NR51 is `$22`: **one channel, playing a melody.** Every inner voice points *into* a
+stream we already intend to import, so the shipped app gets **151 pieces of audio for the price of 46** —
+and, because we run the *engine*, every note is known exactly, so sheet-music export (MIDI/MusicXML) is
+nearly free.
+
+⚠️ **The BANK byte is a loaded gun, though.** `PlaySound` maps whatever bank the save names and *then*
+picks an engine — so a bank that isn't 2/8/31 executes **arbitrary cartridge bytes as code, every frame**.
+**Verified: the console stops producing frames the instant the map loads.** The editor will offer only
+2/8/31, and will *show* (never silently rewrite) a save that holds anything else.
+
+Everything, with the cartridge's own testimony: [`reference/glitch-music.md`](reference/glitch-music.md).
+Tools: `scripts/emu/analyze_music_ids.py`, `scripts/emu/probe_glitch_music.py` (both local-only, ROM-gated).
+
 ### ✅ Connection strips — done, and the hardest part of the map engine (2026-07-12)
 
 The border ring is not a wall of trees: the game bleeds the **connected maps' edges** into it, so Pallet

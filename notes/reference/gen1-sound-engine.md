@@ -275,6 +275,15 @@ why the escort/rival music follows you across map boundaries — and explicitly 
 > default music writes the wrong track id. (`load()`/`save()`/`randomize()` are fine.) Fix in the Phase 1
 > work of [`../plans/music.md`](../plans/music.md), with a test.
 
+## 9b. What happens when the id (or bank) is a glitch value
+
+Short version: **most "glitch" music ids aren't garbage — they're a song's inner voices** (a header is 3
+bytes per channel, so a 3-channel song eats 3 ids, and the spare ids are its channel 2 / channel 3 read as
+one-channel headers). **105 of them**, all deterministic, all playable from the data we already import.
+The **bank** byte, by contrast, is a loaded gun: an invalid bank makes the game *execute arbitrary
+cartridge bytes as code* — **verified: the console hangs.** All of it, with the cartridge's own testimony:
+[`glitch-music.md`](glitch-music.md).
+
 ## 10. What this gives us for free, later
 
 Because the port is *the engine*, not "a music player", the same machine also plays: **every SFX**, the

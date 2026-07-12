@@ -88,6 +88,8 @@ Each phase is independently shippable and independently *green*.
 
 - Expose **No Audio Fadeout** + **Prevent Music Change** on the **Map screen**.
 - Expose the **music track picker** (through `MusicDB`, showing real names, not `02_BA`).
+- **The bank guard** (see Phase 7): only 2 / 8 / 31 are offerable; a save holding any other bank is shown
+  as-is, never rewritten, and warned about — it hangs the real game.
 - 🐞 **Fix `AreaAudio::setTo()`** — it currently does `musicBank = musicID = musicEntry->bank;`, clobbering
   the id with the bank. Pin it with a test.
 - Tests: `tst_area` extensions (round-trip the two bits and the two bytes; `setTo()` correctness);
@@ -133,6 +135,30 @@ Each phase is independently shippable and independently *green*.
 SFX, the 19-piece drum kit, the Poké Flute, the low-health alarm, and **all 151 cries** (base cry +
 per-species pitch/length, already in our Pokémon data). Nearly free once Phase 4 is real. **Not in scope
 until asked.**
+
+### Phase 7 — the glitch tracks + sheet music (the perk)
+
+Researched 2026-07-12 and **verified on the cartridge** —
+[`../reference/glitch-music.md`](../reference/glitch-music.md). The headline:
+
+- **Every id in the music region is a real track or one of its INNER VOICES.** A header is 3 bytes per
+  channel, so a 3-channel song eats 3 ids — and the extra ids are that song's channel 2 / channel 3,
+  read as one-channel headers. **Id 187 is Pallet Town's bassline, alone.** There are **105 of them.**
+- They need **no extra data**: every inner voice points *into* a stream we already import. So the shipped
+  app plays **46 real tracks + 105 inner voices = 151 pieces of audio, for the price of 46.**
+- Because we run the *engine*, every note is known exactly (pitch, octave, length, duty, volume, tempo,
+  ornaments) — no pitch detection. A **`Transcriber`** sink on the engine can export any of the 151 as
+  **MIDI** and as real notation (**MusicXML / LilyPond**), following a track to its end or its loop point
+  (the analyser already finds loop points: `sound_loop` count 0 = the repeat mark).
+
+Work: (a) surface the inner voices in the track list (a disclosure under each track: *"channel 2 · 59
+notes · loops"*), (b) `Transcriber` + exporters, (c) a score view, eventually.
+
+⚠️ **And the guard rail this research forces into Phase 1:** the **bank** byte is not a glitch, it is a
+loaded gun. An invalid bank makes the game execute arbitrary cartridge bytes as code, every frame —
+**verified: the console stops producing frames the instant the map loads.** The bank picker offers only
+**2 / 8 / 31**; a save that already holds something else is **shown, never silently rewritten**, with a
+plain warning that it hangs the real game.
 
 ## 5. Risks, and what we do about them
 
@@ -212,7 +238,8 @@ answers "what is this map's music?")
 
 ## 7. Status
 
-- ✅ Research complete; both reference docs written (2026-07-12).
+- ✅ Research complete; three reference docs written (2026-07-12) — the APU, the sound engine, and the
+  **glitch ids** (the last one verified on the cartridge).
 - ✅ Save bytes/bits verified against the disassembly; the `setTo()` bug found.
 - ✅ UI decided and specced (§6) — placement provisional, deliberately one file.
 - ⬜ Phase 1 — not started.
