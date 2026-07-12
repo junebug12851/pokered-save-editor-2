@@ -11,6 +11,7 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 ## Data Sources
 
 - **[The Pokered Team](https://github.com/pret/pokered)** -- None of this would have been possible without them
+- **[Pan Docs (gbdev)](https://gbdev.io/pandocs)** -- The definitive Game Boy hardware reference -- the sound chip documentation the editor's audio engine is built from _(License: CC0 1.0 (public domain))_
 
 ## Framework
 

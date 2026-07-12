@@ -16,6 +16,12 @@
           "name": "The Pokered Team",
           "url": "github.com/pret/pokered",
           "note": "None of this would have been possible without them"
+        },
+        {
+          "name": "Pan Docs (gbdev)",
+          "url": "gbdev.io/pandocs",
+          "note": "The definitive Game Boy hardware reference -- the sound chip documentation the editor's audio engine is built from",
+          "license": "CC0 1.0 (public domain)"
         }
       ]
     },
