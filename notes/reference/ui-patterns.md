@@ -837,10 +837,115 @@ DV/EV toggle + its ⋮): use an `Item` with A `anchors.horizontalCenter: parent.
 B `anchors.left: A.right; anchors.verticalCenter: A.verticalCenter`. A centered RowLayout of `[A,B]`
 centers the *pair*, leaving A left-of-center.
 
-## Full keyboard + quick-edit patterns (s13v–s13z8)
+## The full keyboard's DECK (2026-07-11 — the current design)
+
+⚠️ **This supersedes the "pill grid" / filter-sidebar / tilemap section below.** Those files
+(`SearchResults`, `SearchContainer`, `SearchCriteria`, `SearchParam`, `SearchRoot`, `PagedPicker`,
+`TilesetPicker`) and the C++ `FontSearchModel` are **deleted**. The section is kept for the parts still
+in force (`TilePreview`, `NameDisplay`, the commit-on-finish rule) and as history.
+
+`screens/modal/FullKeyboard.qml` is now a **keyboard**, not a search form. Full design + the whole
+tile→key map: [`../plans/full-keyboard-redesign.md`](../plans/full-keyboard-redesign.md).
+
+- **The map lives in C++, not QML** (`mvc/fontkeyboard.{h,cpp}` → `brg.keyboard`). 8 pages × 36 keys,
+  hand-authored. QML never guesses which tile is on a key; it asks `keyData(page, "A")` and gets
+  `{ ind, code, title, tip, category, render, empty }` — an *empty* key comes back as a well-formed
+  empty map, never a null the delegate has to guard.
+- **A page's index IS its modifier mask** (shift 1, ctrl 2, alt 4), so Alt is page **4**. `pageFor()` is
+  just the mask. The human reading order (by category, cheapest chord first) is the separate
+  `pageOrder` — the page strip renders in *that*. Confusing the two silently swaps two whole pages
+  (it did; `tst_font_keyboard` caught it).
+- **Every tile appears exactly once across the pages + the spacebar**, and that is a *test*
+  (`tst_font_keyboard`), not a comment. A duplicated tile is bad; a tile stranded with no key is
+  unreachable-forever and would never show up as a crash or a warning.
+- **Layout:** `PageStrip` spans the FULL body width (eight named chips do not fit a middle column at
+  the app's default 750×480 window), then a row of `ColorLegend` (132) · `KeyboardDeck` (fills) ·
+  `DetailView` (212). The deck's key unit `u` scales to fit: width/13.5, height/6.0 — those constants
+  are the deck's real extent in key units (10 caps + a 2u Backspace + 11 gaps + chassis padding). Get
+  them wrong and the chassis silently overflows and paints **on top of** the legend and the detail pane.
+- **Animated tiles: ONE shared sheet, not one request per key** (`TileGlyph.qml`). Every
+  `image://font` request rebuilds the whole tileset — 36 keys × 8 frames would melt the UI (it's the
+  same cost that froze the old hover tooltip). So the deck asks for the whole 16×16 sheet once per
+  frame (`image://tileset/...`, as `TilesetDisplay` does) and each key **clips its 8×8 cell** out of it
+  (`row = ind/16, col = ind%16`). Same URL for all keys ⇒ QML's pixmap cache serves one pixmap. **One
+  timer on the deck** drives `curFrame` for every cap — never a timer per delegate.
+- **A cap draws a tile OR a label, never an expanded preview.** Multi-char/variable codes
+  (`<player>`, `<trainer>`) expand to 7+ characters — rendered on a ~30px cap they draw wider than the
+  key and **smear across their neighbours** (tried; unusable). Those caps and the control codes show
+  the bare code (`<player>` → `player`); the *detail pane* renders the real expanded glyphs at a
+  readable size.
+- **The key legend** (which physical key types this tile) is a small superscript in the cap's corner.
+  It **dims when the name field takes focus** — that's the visible signal that the deck has handed the
+  keyboard over, so the mode is never hidden.
+- **Physical modifiers are MOMENTARY; clicking latches.** Hold Ctrl → the page flips; let go → it drops
+  straight back, like the shift layer on a real keyboard. Clicking an on-screen modifier cap (or a page
+  button) *latches*, because a mouse can't hold a chord and click a key at once — and because a latched
+  page is the only way in when the OS eats the chord (Windows takes Shift+Alt / Ctrl+Shift on
+  multi-language setups; Ctrl+Alt is AltGr). Held and latched are OR'd, so nothing can disagree.
+- **Caps Lock LOCKS THE SHIFT PAGE** (`FontKeyboard::effectivePage`, pinned by `tst_font_keyboard`):
+  Shift inverts it, Ctrl/Alt ignore it. So **every state the deck can be in is exactly one of the 8
+  pages** — which is what lets the page strip always be right.
+  *Rejected first:* the real-keyboard rule (caps affects the 26 letters only, number row keeps typing
+  digits). It's what a physical keyboard does, but it produces a layer that **isn't one of the pages**,
+  the strip can't name it, and it reads as a bug ("why are there two different page 2s?"). **A model the
+  UI can't display is a bad model, however correct it is.** The cost of the fix is that the punctuation
+  row rides along with caps (tap caps off to type a digit — rare, and the deck shows the change).
+- **The base layer is LOWERCASE.** `a–z` unshifted, `A–Z` on Shift — like every keyboard. Uppercase-
+  unshifted was tried (Gen 1 names are all-caps) and **rejected**: that's an argument for a good Caps
+  Lock, not for inverting the alphabet.
+- **Two explicit modes, named on screen** (`NameFullEdit` owns the state). *Keyboard mode*: the deck is
+  live and the field is **read-only** (a caret in a field you can't type into is a lie); Backspace eats a
+  whole tile. *Edit mode*: the pen makes the field an ordinary text field (caret, selection, Ctrl+C/V/Z,
+  character-wise Backspace) and **the whole lower half — strip, legend, deck, detail — fades to 0.25 and
+  goes `enabled: false` as one thing**. The pen becomes check (apply) / cross (discard); nothing typed
+  there reaches `str` until the check. This replaced a *hidden* mode (click the box and the deck quietly
+  stopped listening).
+- **Backspace is token-aware** (`FontKeyboard::chopLastToken`): it deletes a whole `<code>`, never one
+  character out of the middle of one — that would leave a string the codec can't round-trip.
+- **A key that won't fit shakes the name field** (`NameFullEdit.reject()`) rather than doing nothing.
+  It animates a `Translate`, **not** the field's `x` — `x` belongs to the RowLayout, and fighting a
+  layout over a position gives you a control that never sits still.
+- **Re-announce the hovered key when the page changes** (`KeyCap.onInfoChanged`): switching page under a
+  stationary mouse swaps the tile with no enter/exit, so the detail pane would keep describing the tile
+  that used to be there.
+- **Never name a component root `id: top` when it has a Repeater** — see `qt-patterns.md`. It cost real
+  time here: the bindings read `undefined`, the item gets a NaN width, and it renders as *nothing* with
+  no warning at all.
+
+### The deck's LOOK — the rules the first cut broke (2026-07-11)
+
+Twilight's verdict on the first pass was *"looks really bad but i cant place my finger on why"*. Every
+cause was nameable, and each one is a rule worth keeping:
+
+- **Figure/ground.** Light caps on a light chassis on a light pane = mush. The chassis is a **dark
+  slate** (`Qt.darker(accentColor, 1.55)`) and the caps are light. Structural keys (Caps/Shift/Ctrl/Alt/
+  Enter/⌫) are **dark with light text**, so the eye separates *keys that type* from *keys that do*; a
+  held/latched modifier goes **bright**.
+- **If a colour only appears on hover, it isn't doing anything.** The category tint was a 6% wash behind
+  a 35% border — invisible until you hovered, which defeats the entire point of a colour legend. Caps
+  now carry a real wash of their category colour (`Qt.lighter(cat, 1.82)`) with a solid border.
+- **The key legend has to be readable**, or "just type it" is undiscoverable. It scales with the key
+  (`height * 0.30`), full opacity, in a dark shade of the cap's own colour. (The glyph is nudged
+  −2/+2 off centre so the legend isn't sitting on it.)
+- **Draw the whole silhouette, even the keys you don't use.** 36 caps floating in a block reads as
+  *worse* than a real layout, even though it's roomier. The deck draws the full ANSI outline — `` ` ``
+  `-` `=` Tab `[` `]` `\` `;` `'` `,` `.` `/` Win Menu — as **dead keys** (`StructKey.dead`): muted,
+  inert, no hover, no cursor, no clicks. Pure silhouette, and it's what makes the thing read as a
+  keyboard.
+- **A blank key looks broken.** The spacebar was rendering the Space *tile*, which is (correctly)
+  nothing — so it read as disabled. It says **"Space"** across it.
+- **Chrome takes room from the thing the page is for.** The old header (132px) + footer (119px) of
+  washed-out `lighter(accent, 1.5)` blue ate half a 480px window and squeezed the keyboard into the
+  rest. Both are now a clean light surface with a hairline divider, at 88px / ~104px.
+
+## Full keyboard + quick-edit patterns (s13v–s13z8) — HISTORICAL
+
+⚠️ Superseded by the deck (above) as of 2026-07-11. The pill grid, the category filter sidebar and the
+tilemap view described here **no longer exist**. Still in force: `TilePreview`, `NameDisplay`, and the
+commit-on-finish rule.
 
 The font editors — the modal full keyboard (`name-full/*`, `screens/modal/FullKeyboard.qml`) and the
-quick-edit popup (`general/NameDisplay.qml`) — were rebuilt across sessions 13v–13z8. Final conventions:
+quick-edit popup (`general/NameDisplay.qml`) — were rebuilt across sessions 13v–13z8. Conventions:
 
 - **Pill grid for pickable items** (`SearchResults.qml`): a `Flickable > Flow > Repeater` of
   fixed-height (`22`), variable-width rounded `Rectangle` "pills", `Flow.spacing: 2`. Color each pill by

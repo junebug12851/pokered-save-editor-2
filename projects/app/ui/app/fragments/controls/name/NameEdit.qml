@@ -18,7 +18,28 @@ RowLayout {
   // Forwarded so callers that use NameEdit as just a field (NameFullEdit) can
   // still set the inner field's inset.
   property alias topInset: txtField.topInset
+  // Read-only display (the full keyboard's "keyboard mode" -- the deck does the
+  // typing, so the field must not offer a caret it won't honour). Defaults to false,
+  // so every other caller is unchanged.
+  property alias readOnly: txtField.readOnly
   property bool isPersonName: false
+
+  /// The text colour. Defaults to the usual dark, so every other caller is unchanged;
+  /// the full keyboard greys it out while the DECK owns the text.
+  property color textColor: brg.settings.textColorDark
+
+  /// Where the text ends, in this row's coordinates -- so a caller can park its own
+  /// caret at the end of it (the full keyboard's keyboard-mode caret).
+  readonly property real textEndX: txtField.x + txtField.leftPadding
+                                   + Math.min(txtField.contentWidth,
+                                              txtField.width - txtField.leftPadding
+                                                             - txtField.rightPadding)
+
+  /// Hand the caret to the field (the full keyboard's edit mode does this).
+  function focusField() {
+    txtField.forceActiveFocus();
+    txtField.cursorPosition = txtField.text.length;
+  }
 
   property bool disableRandomize: false
   property bool disableAcceptBtn: false
@@ -38,11 +59,16 @@ RowLayout {
 
     hoverEnabled: true
     selectByMouse: true
+    // A read-only field shouldn't take focus on a stray click either -- in the full
+    // keyboard that would quietly steal the keys from the deck.
+    activeFocusOnPress: !readOnly
     selectedTextColor: Qt.lighter(selectedColor, 2)
     selectionColor: selectedColor
-    color: brg.settings.textColorDark
+    color: root.textColor
     font.letterSpacing: 2
     font.pixelSize: 14
+
+    Behavior on color { ColorAnimation { duration: 140 } }
 
     placeholderText: qsTr("Enter a name")
     placeholderTextColor: Qt.lighter(brg.settings.textColorDark, 1.25)

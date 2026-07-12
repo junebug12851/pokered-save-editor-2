@@ -1,14 +1,31 @@
 // FullKeyboard.qml -- the full-screen name-entry modal (the "big keyboard").
 //
-// The large name editor opened from a NameDisplay row. Left side is a PagedPicker
-// (the on-screen character grid / tileset); right side is a DetailView (per-char
-// detail). The header (NameFullHeader) carries the editable str and the tileset
-// View toggle; the footer previews the name -- either bare or inside a random
-// example sentence (toggleExample / reUpdateExample pull samples from
-// brg.randomExamplePlayer / randomExampleRival / randomExamplePokemon). The `str`
-// property is the single source of truth, fanned out to header, picker, and
-// preview on change. The two longer // comments explain why the example demo is
-// locally owned and why the preview uses anchors (not a layout) -- keep them.
+// Redesigned 2026-07-11 from a filter form + chip list into an actual KEYBOARD: an
+// ASDF/QWERTY deck whose 36 alphanumeric keys each hold one game tile, with the
+// physical key printed in the corner of every cap. Click a key, or just type it.
+// Shift/Ctrl/Alt switch pages -- 255 tiles over 36 keys needs 8 pages, and three
+// modifiers give exactly 8 combinations. The map is in C++ (`brg.keyboard`,
+// FontKeyboard) and pinned by tst_font_keyboard; the full design is in
+// notes/plans/full-keyboard-redesign.md.
+//
+// Layout: the colour legend rails the left (it explains what the key colours MEAN --
+// there is nothing left to filter), the page strip + deck take the middle, and the
+// detail split shows whatever key you're hovering on the right.
+//
+// TWO MODES, and the screen never leaves you guessing which one you're in:
+//   KEYBOARD MODE -- the deck is live and the name field is a read-only display of
+//   what it's building. Backspace removes a whole TILE.
+//   EDIT MODE -- the pen button turns the field into an ordinary text field (caret,
+//   selection, Ctrl+C/V/Z, character-by-character Backspace) and the keyboard FADES
+//   OUT and goes dead, because it has no say in what you type. Check applies the edit,
+//   cross discards it; the header says which mode you're in in words.
+//
+// The `str` property is the single source of truth, fanned out to header, deck and
+// preview on change. The header carries the editable str; the footer previews the
+// name -- either bare or inside a random example sentence (toggleExample /
+// reUpdateExample pull samples from brg.randomExamplePlayer / randomExampleRival /
+// randomExamplePokemon). The two longer // comments below explain why the example
+// demo is locally owned and why the preview uses anchors (not a layout) -- keep them.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -52,10 +69,34 @@ Page {
       placeholder = brg.randomExamplePokemon.randomExample();
   }
 
+  // A key was pressed (clicked or typed). The 10-tile ceiling is the same one the
+  // name field enforces -- so check BEFORE writing rather than letting str and the
+  // field drift apart. A refusal shakes the field; it is never silent.
+  function insertCode(code) {
+    var next = top.str.toString() + code;
+
+    if(brg.fonts.countSizeOf(next) > 10) {
+      header.reject();
+      return;
+    }
+
+    top.str = next;
+  }
+
+  // Delete a whole <code>, never one character out of the middle of one -- that would
+  // leave a string the codec can't round-trip. The rule lives in C++ with the map.
+  function backspace() {
+    top.str = brg.keyboard.chopLastToken(top.str.toString());
+  }
+
+  function commitAndClose() {
+    top.preClose();
+    brg.router.closeScreen();
+  }
+
   onStrChanged: {
     header.str = top.str
     nameDisplay.str = str;
-    pagedPicker.str = str;
   }
 
   // Header toolbar
@@ -71,54 +112,181 @@ Page {
 
     str: top.str
     onStrChanged: top.str = str;
+
+    // Entering edit mode drops the hover detail: the deck is about to go dead, and a
+    // pane still describing the key the cursor happens to be parked on would be
+    // describing something you can no longer press.
+    onEditStarted: detailView.info = null;
+
+    // Leaving it hands the keys straight back to the deck, so you can carry on typing
+    // without having to click anything to "re-arm" it.
+    onEditEnded: deck.forceActiveFocus();
   }
 
   Pane {
     anchors.fill: parent
+    padding: 0
 
-    PagedPicker {
-      id: pagedPicker
+    ColumnLayout {
+      id: body
 
-      anchors.left: parent.left
-      anchors.leftMargin: 15
+      anchors.fill: parent
+      spacing: 0
 
-      anchors.top: parent.top
-      anchors.topMargin: 15
+      // ALL of this -- strip, legend, deck, detail -- is "the keyboard". In edit mode
+      // it fades out and goes dead as one thing. A keyboard that stayed bright and
+      // clickable while it has no say in what you're typing would be lying about who's
+      // listening; disabling it without fading it would just look broken.
+      readonly property bool kbOn: !header.editMode
 
-      height: parent.height - anchors.topMargin
-      width: (parent.width * 0.70) - anchors.leftMargin
+      enabled: kbOn
+      opacity: kbOn ? 1.0 : 0.25
+      Behavior on opacity { NumberAnimation { duration: 160 } }
 
-      str: top.str
-      onStrChanged: top.str = str;
-      detailView: detailView
+      // ---- The pages, across the FULL width ----
+      // Eight named buttons don't fit a narrow middle column at the app's default
+      // 750px window -- they'd clip at both ends. So the strip spans the body.
+      PageStrip {
+        Layout.fillWidth: true
+        Layout.topMargin: 8
 
-      // Driven by the header's "View" toggle instead of swipe/dots.
-      showTileset: header.showTileset
-    }
+        page: deck.page
+        onPicked: (p) => {
+          deck.setPage(p);
+          deck.forceActiveFocus();
+        }
+      }
 
-    DetailView {
-      id: detailView
+      RowLayout {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        spacing: 0
 
-      anchors.left: pagedPicker.right
-      anchors.top: pagedPicker.top
-      width: parent.width - pagedPicker.width
-      height: parent.height
+        // ---- Left rail: what the key colours mean ----
+        // Kept tight: every pixel here and in the detail pane comes straight off the
+        // deck's key size (the deck is width-limited at the app's default window).
+        ColorLegend {
+          Layout.preferredWidth: 118
+          Layout.fillHeight: true
+          Layout.topMargin: 6
+          Layout.leftMargin: 10
+          // Breathing room between the legend's ⓘ dots and the keyboard's edge.
+          Layout.rightMargin: 12
+        }
+
+        // ---- Middle: the Simulated bar (tile pages only), the deck, its description ----
+        ColumnLayout {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          spacing: 4
+
+          // The tileset controls sit with the thing they affect. They're only meaningful
+          // on the picture pages, so that's the only place they appear -- and the row
+          // ALWAYS holds its height, so showing/hiding them can't resize the keyboard.
+          Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 36
+            Layout.topMargin: 8
+
+            SimulatedBar {
+              id: simulated
+              anchors.fill: parent
+              visible: deck.isTilePage
+
+              // The picker was opened with the keyboard (Tab), so the keyboard gets the
+              // keys back the moment it closes.
+              onPicked: deck.forceActiveFocus();
+            }
+          }
+
+          KeyboardDeck {
+            id: deck
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            onInsert: (code) => top.insertCode(code);
+            onBackspace: top.backspace();
+            onAccept: top.commitAndClose();
+            onDismiss: top.commitAndClose();
+            onDetail: (info) => detailView.info = info;
+
+            onOpenSimulated: simulated.openPicker();
+          }
+
+          // A quiet line saying what this page IS -- the page strip gives it a name and a
+          // chord; this says what it's for. Fixed height so switching pages never nudges
+          // the deck.
+          Text {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 26
+            Layout.bottomMargin: 4
+
+            text: brg.keyboard.pageDescription(deck.page)
+            font.pixelSize: 10
+            color: brg.settings.textColorMid
+            opacity: 0.9
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
+            maximumLineCount: 2
+            elide: Text.ElideRight
+          }
+        }
+
+        // ---- Right: the detail split ----
+        DetailView {
+          id: detailView
+
+          Layout.preferredWidth: 190
+          Layout.fillHeight: true
+        }
+      }
     }
   }
 
+  // The deck, not the name field, gets the keys on open -- so you can walk in and
+  // start typing immediately. The field only takes them in edit mode, deliberately.
+  Component.onCompleted: deck.forceActiveFocus();
+
   footer: ToolBar {
-    // Room for the Name/Example toggle row above the preview.
-    height: ((top.hasBox) ? nameDisplay.height + 25 + (8 * 2) : 75) + 44
-    Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
+    // FIXED HEIGHT -- it must not depend on Name-vs-Example. Sizing it to the preview
+    // meant flipping that toggle grew the footer, which shrank the body, which shrank
+    // the KEYBOARD: the whole deck re-flowed under your hands because you asked to see an
+    // example sentence. The footer now reserves the taller of the two states once, and
+    // the preview sits inside it.
+    //
+    // (The height also has to clear the length feedback -- "Using 3 out of 10 bytes"
+    // hangs BELOW nameDisplay.height, so anything sized to that alone clips it off the
+    // bottom of the window.)
+    //
+    // The number: the toggle row (~26) + the Example box preview (8 * 6 * 1.5 = 72) +
+    // the feedback line + margins.
+    height: 138
+    Material.background: brg.settings.textColorLight
+
+    Rectangle {
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: parent.top
+      height: 1
+      color: brg.settings.dividerColor
+    }
 
     // Toggle the preview between just the Name and an Example sentence, with a
     // next-button to re-roll the example. Anchored (not in a layout) so the
     // NameDisplay below keeps its own width/height bindings — a layout would
     // override them and the box→name toggle would stay box-shaped/distorted.
+    // Anchored UP from the bottom, not down from the top. The footer's height is FIXED
+    // (so Name/Example can't re-flow the deck), but the two previews are very different
+    // heights -- and hung off the top, the short one leaves a slab of white beneath it
+    // with the byte counter floating in the middle of nowhere. Bottom-up, the counter
+    // sits just off the bottom edge in BOTH modes, and the toggle simply rides higher
+    // when the example box needs the room.
     RowLayout {
       id: exampleControls
-      anchors.top: parent.top
-      anchors.topMargin: 6
+      anchors.bottom: nameDisplay.top
+      anchors.bottomMargin: 8
       anchors.horizontalCenter: parent.horizontalCenter
       spacing: 4
 
@@ -146,8 +314,14 @@ Page {
     NameDisplay {
       id: nameDisplay
       anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: exampleControls.bottom
-      anchors.topMargin: 8
+
+      // CENTRED in the fixed footer, not shoved against its bottom edge. Bottom-anchored,
+      // the short Name preview left a slab of empty white above it with the toggle
+      // stranded in the middle of nowhere. The offset accounts for the length feedback,
+      // which hangs BELOW this item's height and so has to be counted into the block being
+      // centred.
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.verticalCenterOffset: -2
 
       placeholder: top.placeholder
       str: top.str
@@ -155,6 +329,17 @@ Page {
       is2Line: top.is2Line
       isPersonName: top.isPersonName
       isPlayerName: top.isPlayerName
+
+      // The two previews scale INDEPENDENTLY, because they are wildly different shapes:
+      // the Name is one row of tiles (8 * 1 * sizeMult tall), the Example is a whole
+      // dialogue box (8 * 6 * sizeMult). The footer's height is FIXED -- it must not
+      // change when you flip between them, or the body shrinks and the entire keyboard
+      // re-flows -- so the box takes the scale that FITS that height, and the name takes
+      // the scale that makes it READABLE.
+      //
+      // Giving them one shared scale (the first fix) shrank the name to the box's size for
+      // no reason at all: the name has the room, so it should use it.
+      sizeMult: top.hasBox ? 1.5 : 3
 
       disableEditor: true
       disableAutoPlaceholder: true

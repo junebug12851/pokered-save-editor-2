@@ -148,6 +148,21 @@ variable-tile / lone-variable-tile cases (the s13y infinite-loop bug).
 `mapSelectModel`, …) map C++ → item-model rows correctly (rowCount, roles, data at index, empty
 state); `FileManagement` open/save/recent-prune logic; `Router` screen set.
 
+**app — economics (`tst_item_exchange`, 2026-07-11).** Anything that computes a *number the player
+then keeps* needs tests, not a screenshot. The Market's item exchange is the case in point: the
+preview looked perfectly self-consistent while silently over-refunding money, because the trade was
+priced per step instead of as one whole trade. A UI review cannot catch that — the numbers on screen
+agreed with each other, they were just wrong. So the exchange is pinned by unit tests over a real
+Bridge: the whole-trade rounding rule (3 Fresh Water = 2 Potions, **no** refund), the invariant that a
+refund is always the single rounding leftover (`0 <= refund < the given item's price`) and money never
+goes down, that `checkout()` writes **exactly** the preview across bag + PC storage, the dropdown
+give/get split and its affordability flags, the "never both + disabled" guarantee, and the Healing
+default. A `priceData_isWhatTheseTestsAssume()` guard asserts the Gen 1 buy prices the worked examples
+depend on, so an `items.json` edit fails there rather than confusingly inside the arithmetic.
+
+> **The lesson, written down:** the tests were added *after* the feature shipped. That's backwards.
+> Any new model that does arithmetic on save data gets its tests **in the same commit as the model**.
+
 ---
 
 ## Randomization testing (flagship feature)

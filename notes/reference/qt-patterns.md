@@ -50,6 +50,8 @@ adopted as design), and [`../version.md`](../version.md) (the commit where each 
 | **Qt 6 Material 3 control heights** | Taller than Qt-5-era hardcoded layouts assumed; pin heights / anchor below |
 | **`parent` briefly null in delegates during model reset** | Guard `parent ? parent.width : 0` |
 | **`=== NaN` / `isNaN` misuse** | `x === NaN` is always false in JS; use `isNaN(x)` |
+| **`id: top` + a Repeater delegate** | Inside the delegate, `top.*` silently reads `undefined` (→ NaN width → the item renders as *nothing*, with no warning). Give the root a distinctive id (`deck`, `strip`). The old `id: topz` files were this bug, worked around |
+| **Two files both rooted `id: top`** | The inner file's `top` shadows the outer one's — every `top.*` binding in the delegates hits the wrong object (108 QML warnings, all caps blank). Caught by `tst_qml_screens` |
 
 ### Deliberately accepted quirks (don't "fix" these)
 
@@ -646,6 +648,37 @@ Key differences:
 
 **In this codebase:** `Pokedex.qml` had three `Colorize` usages — all converted to `MultiEffect`
 on the Image's `layer.effect`.
+
+## `id: top` + a Repeater delegate = the root id silently resolves to something else
+
+**Symptom (2026-07-11, the keyboard deck):** a component whose root is `id: top` builds its keys in a
+`Repeater`. Every `top.<something>` written **inside the delegate** comes back `undefined` — with **no
+QML warning, no ReferenceError, and a clean `tst_qml_screens`**. `top.page` was `undefined` while
+`typeof top.page` said `"undefined"` and `top` itself was a perfectly good object. Outside the
+delegate, in the very same file, `top.page` resolved fine.
+
+What it looks like in practice:
+- A property bound to `top.someNumber` gets `undefined` → the item is laid out with a **NaN width** →
+  it renders **nothing at all**, and the strip/row just isn't there. Nothing is logged.
+- A comparison like `active: top.page === index` is silently always `false` → the "selected" state
+  never highlights.
+- Assigning `undefined` into a typed property (`int`/`real`) DOES warn ("Unable to assign [undefined]
+  to int") — so you may get a warning for *some* of the uses and none for the ones that matter.
+
+**Fix: never name a root id `top` in a component that has a Repeater delegate.** Give the root a
+distinctive id (`deck`, `strip`, `cell`, …) and reference *that*. It fixes it immediately. The
+project's older `SearchResults.qml`/`SearchContainer.qml` used `id: topz` — that odd name was almost
+certainly this same bug being worked around years ago, so it has bitten here before.
+
+Related and just as quiet: **an outer id is shadowed by the inner file's id of the same name.** When
+`KeyboardDeck.qml` (root `id: top`) instantiated `KeyCap.qml` (also root `id: top`), the delegates'
+`top.u` / `top.curFrame` / `top.caps` bindings resolved against the *KeyCap*, not the deck — 108 QML
+warnings, and every cap rendered empty. `tst_qml_screens` **did** catch this one (it fails on any QML
+warning), which is exactly why that test exists.
+
+**Rule of thumb: an `id` is only as safe as it is unique.** `top` is the project's habit for a file
+root — keep it for leaf components, but the moment a file has a Repeater, or is instantiated by
+another file that also uses `top`, rename the root.
 
 ## Per-delegate timers/animations: gate on EFFECTIVE visibility, not `visible`
 

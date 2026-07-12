@@ -1,10 +1,15 @@
-// NameFullHeader.qml -- the full keyboard's top toolbar.
+// NameFullHeader.qml -- the full keyboard's top bar.
 //
-// Hosts the "Simulated" controls (Outdoor toggle + NameFullTileset combo), a
-// Grid/Tileset view toggle (drives showTileset, which PagedPicker follows), the
-// NameFullEdit name field, and a ModalClose that emits preClose() before closing
-// (so the value commits exactly once). Carries the shared str/chopLen/sizeMult/
-// isPersonName/hasBox state down to the editor.
+// Just the name row now: a MODE indicator on the left, the NameFullEdit field centred,
+// and a ModalClose that emits preClose() before closing (so the value commits exactly
+// once). Carries the shared str/chopLen/sizeMult/isPersonName/hasBox state down.
+//
+// The "Simulated" tileset controls used to live up here, floating over a name field they
+// have nothing to do with. They moved to SimulatedBar, which sits directly above the
+// keyboard on the tile pages -- next to the only thing they affect, where they explain
+// themselves. And the sentence that used to sit under the field ("Keyboard mode — type or
+// click the keys...") is gone: it was long, it was ugly, and the mode icon says it
+// instantly.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -25,118 +30,104 @@ ToolBar {
   property bool isPersonName: false
   property bool hasBox: false
 
-  // Drives which page the left pane shows: false = character list, true = the
-  // simulated tileset grid. Toggled by the "View" button below. FullKeyboard
-  // binds its picker to this.
-  property bool showTileset: false
+  // Which of the screen's two modes we're in. Owned by the editor row (it holds the
+  // pen / check / cross), surfaced here so FullKeyboard can fade + disable the deck.
+  readonly property bool editMode: editor.editMode
 
-  height: 124
-  Material.background: Qt.lighter(brg.settings.accentColor, 1.50)
+  signal editStarted()
+  signal editEnded()
+
+  // Shake the name field: the deck calls this when a key won't fit.
+  function reject() {
+    editor.reject();
+  }
+
+  // Slim, and a clean surface -- NOT the old washed-out `lighter(accent, 1.5)` blue
+  // stripe. That colour was ugly on its own and, at 132px plus a 119px footer, the two
+  // bars were eating half the screen: the keyboard is the point of this page, and it was
+  // being squeezed into what was left.
+  height: 74
+  Material.background: brg.settings.textColorLight
+
+  // The hairline that separates the bar from the body (replacing the colour block).
+  Rectangle {
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    height: 1
+    color: brg.settings.dividerColor
+  }
 
   onStrChanged: editor.str = top.str
 
-  // Flat, square toggle button: no Material elevation/shadow, no rounded
-  // corners. Filled with the accent when `active`, outlined otherwise.
-  component FlatToggle: Button {
-    id: ftb
-    property bool active: false
+  // ---- The name row, centred ----
+  NameFullEdit {
+    id: editor
 
-    flat: true
-    font.capitalization: Font.Capitalize
-    font.pixelSize: 12
-    Material.elevation: 0
+    anchors.centerIn: parent
+    // A touch of headroom: the row was sitting hard against the top of the bar.
+    anchors.verticalCenterOffset: 2
 
-    topPadding: 9
-    bottomPadding: 9
-    leftPadding: 5
-    rightPadding: 5
+    chopLen: top.chopLen
+    sizeMult: top.sizeMult
+    isPersonName: top.isPersonName
+    hasBox: top.hasBox
 
-    background: Rectangle {
-      radius: 0
-      border.width: 1
-      border.color: brg.settings.accentColor
-      color: ftb.active
-             ? brg.settings.accentColor
-             : (ftb.hovered ? Qt.lighter(brg.settings.accentColor, 1.65) : "transparent")
-    }
+    str: top.str
+    onStrChanged: top.str = str;
 
-    contentItem: Text {
-      text: ftb.text
-      font: ftb.font
-      color: ftb.active ? brg.settings.textColorLight : brg.settings.textColorDark
-      horizontalAlignment: Text.AlignHCenter
-      verticalAlignment: Text.AlignVCenter
-    }
+    onEditStarted: top.editStarted();
+    onEditEnded: top.editEnded();
   }
 
-  ColumnLayout {
-    anchors.centerIn: parent
-    spacing: 6
+  // ---- The MODE indicator ----
+  // Keyboard icon = the deck is live and owns your keystrokes. Pen = you're editing the
+  // text directly and the keyboard is off.
+  //
+  // It is CENTRED in the gutter to the left of the name row -- both ways. Anchored to the
+  // left edge it just hung there; centred in its own space it looks placed.
+  Item {
+    id: modeIcon
 
-    // ---- "Simulated" control group: a plain text label, then two toggle
-    //      buttons and the tileset combo. ----
-    RowLayout {
-      Layout.alignment: Qt.AlignHCenter
-      spacing: 3
+    width: 40
+    height: 40
 
-      // Plain caption — NOT a button.
-      Label {
-        text: qsTr("Simulated")
-        font.bold: true
-        font.pixelSize: 13
-        color: brg.settings.textColorDark
-        Layout.alignment: Qt.AlignVCenter
-      }
+    x: Math.max(12, (editor.x - width) / 2)
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.verticalCenterOffset: 2
 
-      // Bold vertical pipe between the label and the controls (Twilight likes it).
-      ToolSeparator {
-        Layout.fillHeight: false
-        Layout.preferredHeight: 24
-        Layout.alignment: Qt.AlignVCenter
-      }
+    Rectangle {
+      anchors.fill: parent
+      radius: 6
+      color: top.editMode
+             ? Qt.lighter(brg.settings.accentColor, 1.75)
+             : Qt.lighter(brg.settings.dividerColor, 1.28)
+      border.width: 1
+      border.color: top.editMode
+                    ? brg.settings.accentColor
+                    : brg.settings.dividerColor
 
-      FlatToggle {
-        text: qsTr("Outdoor")
-        active: brg.settings.previewOutdoor
-        onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
-
-        MainToolTip { text: "Render tiles as they'd look outdoors vs. indoors." }
-      }
-
-      NameFullTileset {
-        Layout.alignment: Qt.AlignVCenter
-        // In a RowLayout the combo's internal `width` is ignored, so without a
-        // preferred width it collapses to its indicator and the tileset name
-        // doesn't show. Keep it just wide enough for the names.
-        Layout.preferredWidth: 132
-      }
-
-      // Label reflects the CURRENT view (it's the same simulated data, just shown
-      // as the pill grid vs. the full tileset).
-      FlatToggle {
-        text: top.showTileset ? "Tileset" : "Grid"
-        active: top.showTileset
-        onClicked: top.showTileset = !top.showTileset;
-
-        MainToolTip {
-          text: qsTr("Switch between the character grid and the full simulated " +
-                "tileset (click any tile to insert it).")
-        }
-      }
+      Behavior on color { ColorAnimation { duration: 140 } }
     }
 
-    // ---- Name input: wide, centered, with Clear right beside it ----
-    NameFullEdit {
-      id: editor
-      Layout.alignment: Qt.AlignHCenter
+    Image {
+      anchors.centerIn: parent
+      source: top.editMode
+              ? "qrc:/assets/icons/fontawesome/pen.svg"
+              : "qrc:/assets/icons/fontawesome/keyboard.svg"
+      sourceSize.width: top.editMode ? 17 : 22
+      sourceSize.height: top.editMode ? 17 : 22
+      opacity: 0.85
+    }
 
-      chopLen: top.chopLen
-      sizeMult: top.sizeMult
-      isPersonName: top.isPersonName
-      hasBox: top.hasBox
+    HoverHandler { id: modeHover }
 
-      str: top.str
-      onStrChanged: top.str = str;
+    MainToolTip {
+      followGlobalSetting: false
+      visible: modeHover.hovered
+      text: top.editMode
+            ? qsTr("Edit mode — the keyboard is off. ✓ keeps your edit, ✗ discards it.")
+            : qsTr("Keyboard mode — type or click the keys. The pen edits the text directly.")
     }
   }
 
@@ -151,4 +142,3 @@ ToolBar {
     icon.height: 28
   }
 }
-

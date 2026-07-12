@@ -16,13 +16,30 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
   `>>`), example demo localized to each editor, plus the player/rival/ID **edit-hang + OT-corruption**
   fix and the `expandStr` infinite-loop + tileset off-by-one fixes. Conventions: `ui-patterns.md`.
 
+## Done — Market Exchange item trading (2026-07-11, shipped in 0.15.2-alpha)
+
+- **Exchange sub-tabs**: Currency (money↔coins) / Healing / Custom. The latter two trade item↔item by
+  buy price across bag + PC storage, previewed live, written only on Checkout (`ItemExchangeModel`).
+- **Asymmetric dropdowns**: give side = what you own, get side = every item, unaffordable ones greyed
+  (which makes "never both + disabled" structural). Healing opens on Potion ⇄ Fresh Water.
+- **Whole-trade pricing fix**: the total is rounded up once, not per step — an even trade refunds
+  nothing. See `status.md`; do not reintroduce per-step rates.
+- **`tst_item_exchange`** (14 cases) pins all of the above. Full `ctest` 73/73.
+
 ## Now / next
 
-1. **Continued review of the name editors.** Live tweaks ongoing. `NameDisplay`/`NameEdit` are
+1. **In-app review of the NEW full keyboard** (rebuilt 2026-07-11 as an ASDF deck — see
+   [`full-keyboard-redesign.md`](full-keyboard-redesign.md)). Screenshot-reviewed on every page and
+   `ctest` green; what a still PNG can't show still needs a live pass: typing (caps flashing with it),
+   held vs. latched modifiers, tiles animating, token-aware Backspace, the shake when a key won't fit,
+   and clicking into the name box (legends dim; Ctrl+C/V behave).
+2. **Continued review of the name editors.** Live tweaks ongoing. `NameDisplay`/`NameEdit` are
    shared by player/rival/nickname + the keyboard footer — verify all on each rebuild.
-2. **Decide the fate of the right-side `DetailView`** in the full keyboard. The pill tooltip now shows
-   the rendered tile; `DetailView` still shows text info on hover (and the tileset page uses it). Ask
-   whether to keep it, slim it, or drop it for more grid room.
+3. **Does the deck want more room at the default 750×480 window?** It scales, so it's comfortable
+   resized and tight at the default: caps land around 30px and the longer code labels (`trainer`,
+   `player`) elide. Options if Twilight wants it roomier out of the box: a bigger default window, a
+   slimmer header/footer, or a narrower detail pane. (`DetailView` was kept — it's now the only place
+   a multi-char/variable code can be rendered large enough to read.)
 3. **End-to-end persistence pass** (edit → save → reopen) across player, rival, money, coins, badges,
    pokédex, items, pokémon. several have been spot-confirmed; do a full pass. Especially confirm the new
    **commit-on-finish** name path round-trips correctly and OT data on owned mons follows the player.

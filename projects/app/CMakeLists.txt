@@ -31,8 +31,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/engine/tilesetprovider.h
     src/mvc/creditsmodel.cpp
     src/mvc/creditsmodel.h
-    src/mvc/fontsearchmodel.cpp
-    src/mvc/fontsearchmodel.h
+    src/mvc/fontkeyboard.cpp
+    src/mvc/fontkeyboard.h
     src/mvc/individualmap.cpp
     src/mvc/individualmap.h
     src/mvc/itemmarketmodel.cpp
