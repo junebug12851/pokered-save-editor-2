@@ -261,9 +261,9 @@ Page {
     // hangs BELOW nameDisplay.height, so anything sized to that alone clips it off the
     // bottom of the window.)
     //
-    // The number: the toggle row (~26) + the Example box preview (8 * 6 * 1.4 = 67) +
+    // The number: the toggle row (~26) + the Example box preview (8 * 6 * 1.5 = 72) +
     // the feedback line + margins.
-    height: 134
+    height: 138
     Material.background: brg.settings.textColorLight
 
     Rectangle {
@@ -326,11 +326,16 @@ Page {
       isPersonName: top.isPersonName
       isPlayerName: top.isPlayerName
 
-      // Smaller than the default 2. The Example (box) preview is `8 * 6 * sizeMult` tall
-      // -- 96px at the default -- and the footer has to reserve that height CONSTANTLY
-      // (it must not resize when you flip Name/Example, or the whole keyboard re-flows).
-      // At 1.75 the box fits a footer that isn't a slab.
-      sizeMult: 1.4
+      // The two previews scale INDEPENDENTLY, because they are wildly different shapes:
+      // the Name is one row of tiles (8 * 1 * sizeMult tall), the Example is a whole
+      // dialogue box (8 * 6 * sizeMult). The footer's height is FIXED -- it must not
+      // change when you flip between them, or the body shrinks and the entire keyboard
+      // re-flows -- so the box takes the scale that FITS that height, and the name takes
+      // the scale that makes it READABLE.
+      //
+      // Giving them one shared scale (the first fix) shrank the name to the box's size for
+      // no reason at all: the name has the room, so it should use it.
+      sizeMult: top.hasBox ? 1.5 : 3
 
       disableEditor: true
       disableAutoPlaceholder: true
