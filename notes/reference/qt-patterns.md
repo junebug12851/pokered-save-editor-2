@@ -680,6 +680,48 @@ warning), which is exactly why that test exists.
 root — keep it for leaf components, but the moment a file has a Repeater, or is instantiated by
 another file that also uses `top`, rename the root.
 
+### It bit again immediately — and the second symptom is worse (2026-07-12, the map screen)
+
+`Map.qml` was written with the project's habitual `id: top` and a `Repeater` drawing the block grid:
+
+```qml
+Repeater {                                  // 17 lines expected
+  model: Math.floor(canvas.width / (brg.map.blockSize * top.zoom)) + 1
+  Rectangle { x: index * brg.map.blockSize * top.zoom; width: 1; height: canvas.height }
+}
+```
+
+**The grid simply wasn't there.** No warning. `tst_qml_screens` green. The boxes, the map image and a
+`Text` probe elsewhere in the same file all rendered perfectly — so `brg.map.*` clearly worked.
+
+What actually happened: `top.zoom` **inside the delegate** was `undefined`, so `x` evaluated to
+`0 * undefined = NaN`, and **Qt silently placed every one of the 17 rectangles at x = 0**, stacked on
+top of each other. One line where there should have been seventeen. This is nastier than the
+`undefined`-width case above, because NaN geometry doesn't vanish — it *collapses to the origin*, so
+you get a plausible-looking single artifact instead of an obvious hole, and nothing is logged.
+
+**The fix is the rule above** (the root is now `id: mapScreen`), plus: inside a delegate, reach values
+through a plain **sibling id** (`canvas.gridStep`) rather than the root. `required property int index`
+was **innocent** — it works fine with an integer model; it was investigated and cleared.
+
+**How it was actually found — do this, it's fast.** Set the suspect item to an opaque, unmistakable
+colour (`"magenta"`), capture a screenshot, then *pixel-sample the PNG* rather than squinting at it:
+
+```powershell
+$img = [System.Drawing.Bitmap]::FromFile($abs)   # ABSOLUTE path -- see the trap below
+for ($x = 110; $x -le 640; $x++) { $c = $img.GetPixel($x, 300); ... }   # count the lines
+```
+
+One magenta line where seventeen were expected → they're all at the same x → the x binding is NaN →
+the only NaN-able term is the one that shouldn't be `undefined`. That reasoning took minutes; staring
+at the render took far longer.
+
+> ⚠️ **Trap inside the trap:** `System.Drawing.Bitmap::FromFile` resolves a *relative* path against the
+> **.NET process** working directory, which `Set-Location` does **not** change. A relative path there
+> quietly reads the wrong file (or throws into a swallowed error) and hands you a confident, completely
+> false answer — it briefly convinced me the fix hadn't worked when it had. **Always pass an absolute
+> path** when pixel-sampling a capture.
+
 ## Per-delegate timers/animations: gate on EFFECTIVE visibility, not `visible`
 
 A `Timer { running: someItem.visible }` (or animation) inside a delegate that's a child of a *closed*

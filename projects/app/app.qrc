@@ -533,8 +533,7 @@
         <file>ui/app/screens/non-modal/Rival.qml</file>
         <file>assets/images/rival.png</file>
         <file>assets/images/rival-larger.png</file>
-        <file>ui/app/screens/non-modal/Maps.qml</file>
-        <file>ui/app/screens/non-modal/MapDetails.qml</file>
+        <file>ui/app/screens/non-modal/Map.qml</file>
         <file>assets/icons/fontawesome/map.svg</file>
         <file>assets/icons/fontawesome/cog.svg</file>
         <file>assets/icons/fontawesome/bicycle.svg</file>

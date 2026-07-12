@@ -43,7 +43,7 @@
 #include "../mvc/statusselectmodel.h"
 #include "../mvc/natureselectmodel.h"
 #include "../mvc/moveselectmodel.h"
-#include "../mvc/mapselectmodel.h"
+#include "../mvc/mapmodel.h"
 
 #include <pse-db/fontsdb.h>
 #include <pse-db/names.h>
@@ -104,7 +104,7 @@ class Bridge : public QObject
   Q_PROPERTY(StatusSelectModel* statusSelectModel MEMBER statusSelectModel NOTIFY statusSelectModelChanged) ///< Status picker model.
   Q_PROPERTY(NatureSelectModel* natureSelectModel MEMBER natureSelectModel NOTIFY natureSelectModelChanged) ///< Nature picker model.
   Q_PROPERTY(MoveSelectModel* moveSelectModel MEMBER moveSelectModel NOTIFY moveSelectModelChanged) ///< Move picker model.
-  Q_PROPERTY(MapSelectModel* mapSelectModel MEMBER mapSelectModel NOTIFY mapSelectModelChanged) ///< Map picker model.
+  Q_PROPERTY(MapModel* map MEMBER map NOTIFY mapChanged) ///< The loaded map: its rendered image + the game's view boxes.
 
 signals:
   void fileChanged();
@@ -140,7 +140,7 @@ signals:
   void statusSelectModelChanged();
   void natureSelectModelChanged();
   void moveSelectModelChanged();
-  void mapSelectModelChanged();
+  void mapChanged();
 
 public:
   /// @param file the live FileManagement to expose as `brg.file`.
@@ -182,5 +182,5 @@ public:
   StatusSelectModel* statusSelectModel = new StatusSelectModel; ///< @see statusSelectModel property.
   NatureSelectModel* natureSelectModel = new NatureSelectModel; ///< @see natureSelectModel property.
   MoveSelectModel* moveSelectModel = new MoveSelectModel; ///< @see moveSelectModel property.
-  MapSelectModel* mapSelectModel = nullptr;           ///< @see mapSelectModel property.
+  MapModel* map = nullptr;                            ///< @see map property.
 };

@@ -1,5 +1,6 @@
 qt_add_library(db SHARED
     src/pse-db/abstracthiddenitemdb.cpp
+    src/pse-db/blocksdb.cpp
     src/pse-db/creditsdb.cpp
     src/pse-db/db.cpp
     src/pse-db/entries/abstractrandomstring.cpp

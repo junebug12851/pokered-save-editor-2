@@ -5,14 +5,34 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.16.6-alpha` — **shipped 2026-07-11** (MINOR milestone, released via `release/0.16.6`).
-Single source of truth: repo-root `VERSION`; see [`reference/versioning.md`](reference/versioning.md).
-Full `ctest` green (74/74); tests + lint green on CI.
+**Version:** `0.17.0-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
+release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
+[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (75/75).
 
 > **Releases are MANUAL.** Commit and push to `dev` freely, but `main` only moves when Twilight says
 > **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
 
 ## Current state (read this first)
+
+**New territory: the MAP (2026-07-12).** The app has fully resurfaced from the revival, and the first
+new ground is the biggest one. The old Maps screen (a greyed-out tile → a menu of dead ends) is
+**deleted**, and in its place is a **map emulator**, step 1 of several.
+
+It rebuilds what the Game Boy rebuilds: the map ringed by its **3-block border**, the **6×5-block
+scratch area** the game redraws, and the **20×18-tile screen** sliding around inside that in half-block
+steps — all drawn from `.blk`/`.bst` data imported **verbatim** from `pret/pokered`, at one screen pixel
+per Game Boy pixel. It is an emulation, not an impression, and it proves it: the view pointer the game
+itself computed and left in the save (`0x260B`) is **reproduced byte-for-byte** from just the player's
+coords and the map width, on both real saves (`tst_map::viewPointer_matchesWhatTheGameStored`). If that
+ever fails, our model of the game is wrong — read it first.
+
+Pieces: `BlocksDB` (db) → `MapEngine` + `MapProvider` (app) → `MapModel` = `brg.map` → `Map.qml`.
+Domain write-up: [`reference/gen1-knowledge.md`](reference/gen1-knowledge.md) → "VERIFIED from the
+disassembly". Import: `scripts/import_map_blocks.ps1` (self-validating, `-Check`).
+
+**Not yet drawn:** the player, connection strips bleeding into the border ring, warps/signs/sprites,
+tile animation frames (frame 0 only). **Two `maps.json` data gaps are open questions for Twilight** —
+see "Open issues".
 
 The big structural blocker is **solved**: the `brg.file.data.dataExpanded.*` chain works, data reads
 and **persists** across every screen, and the build is fast. The other major bug class — **QML
@@ -95,7 +115,9 @@ verification pass; remaining per-control test depth. See [`plans/next-steps.md`]
 
 | Issue | Where | Status / notes |
 |-------|-------|----------------|
-| **Latent landmine: map DB `getToMap()`/`getToSprite()` never resolved** | `db.cpp` `deepLinkAll()`; consumers in `WarpData`/`MapConnData`/`SpriteData`/`AreaMap` | Not a crash today — every consumer is part of the not-yet-wired Maps feature; normal save load reads Area straight from save bytes. **When Maps is enabled**, wiring map-change/re-enabling map randomize will dereference these → crash unless `MapsDB::inst()->deepLink()` is called first (add to `DB::deepLinkAll()`). Confirmed harmless today via `tst_sprite_data` (all 918 sprites resolve once `deepLink()` is called). |
+| **❓ FOR TWILIGHT — 22 glitch map ids have no width/height in `maps.json`** | `maps.json` (ids 11, 105–107, 109–112, 114–117, 204–206, 231, 237–238, 241–244; all `glitch: true`) | The ROM is less tidy than our DB: its header table points those ids at a **real map's header** (11 → Saffron City, 105–117 → Lance's Room, 204–206 → Rocket Hideout Elevator, 231 → Route 16 Gate 1F, 237–244 → Silph Co 2F), so a Game Boy renders one. We don't import a map the DB can't size — the screen says "no block data" instead. To render them like the ROM, those entries need width/height/tileset (or an alias field). **Data change = Twilight's call.** |
+| **❓ FOR TWILIGHT — 3 sized "Copy" maps have an empty `tileset` string** | `maps.json` ids 69 (Trashed House Copy → ROM: House), 75 (Path Entrance Route 6 Copy → Gate), 173 (Cinnabar Mart Copy → Mart) | Harmless in-app: the loaded map's tileset comes from the **save** (`wCurMapTileset`), which is right. It only means the DB alone can't name their tileset. Pinned by `tst_map` (`kMapsWithNoTilesetInJson`) so the gap can't grow silently. |
+| **Latent landmine: map DB `getToMap()`/`getToSprite()` never resolved** | `db.cpp` `deepLinkAll()`; consumers in `WarpData`/`MapConnData`/`SpriteData`/`AreaMap` | Still dormant, and the new map screen **deliberately does not touch those accessors** (it resolves the tileset by name and looks maps up by id, so it needs no deep link). Not a crash today. **Still must be defused before map *editing* / re-enabling map randomize** — those will dereference the unresolved `to*` links → add `MapsDB::inst()->deepLink()` to `DB::deepLinkAll()` first. Confirmed safe once called, via `tst_sprite_data` (all 918 sprites resolve). |
 | Randomizer: not-yet-built screens (Maps, Hall of Fame, Options) excluded | `savefileexpanded.cpp`, `worldgeneral.cpp` | **Working within scope as of 2026-06-07.** `randomizeExpansion()` runs end-to-end + is test-covered. Maps/HoF/Options calls are commented out (matching the disabled home tiles), each with a re-enable note. Re-enabling map randomize is gated mainly on calling `MapsDB::inst()->deepLink()` at boot (the type strings + per-call guards turned out to be the same deepLink landmine, not separate defects). |
 | Name editors — ongoing review | `name-full/*`, `general/NameDisplay.qml` | Ongoing live tweaks. `NameEdit`/`NameDisplay` are **shared** by player/rival/nickname + the keyboard footer preview — verify all of them on each rebuild. |
 | Keyboard caps are cramped at the default 750×480 window | `name-full/KeyboardDeck.qml` | By design it *scales* (key unit = min(width/13.5, height/6.0)), so it's comfortable on a resized window and tight on the default one. Multi-char code labels (`trainer`, `player`) elide at the smallest size. Revisit if Twilight wants the default window bigger, or the header/footer slimmer, to buy the deck more room. |
@@ -108,7 +130,11 @@ revertible if wanted live.
 ## Testing
 
 A comprehensive automated suite lives under `projects/tests/` (QtTest + CTest). **Full `ctest` is
-green (71/71 on the Qt 6.11 kit).** Library-layer line coverage is at/above 90% (common 100%, db
+green (75/75 on the Qt 6.11 kit).** Newest: **`tst_map`** (18 cases) — the block data, the overworld
+buffer, the view maths, the renderer and `brg.map`. Its keystone is
+`viewPointer_matchesWhatTheGameStored`: it recomputes the view pointer the *Game Boy* wrote into the
+save and demands a byte-exact match. That test is the map emulator's foundation — if it goes red,
+nothing downstream of it can be trusted. Library-layer line coverage is at/above 90% (common 100%, db
 ~90%, savefile ~90%; app layer is the laggard). The Linux Docker env runs four variants green
 (standard / asan+ubsan / xvfb / coverage **89.98%** as of 2026-06-22). A QML-load smoke test
 (`tst_qml_screens`), a real-app GUI suite (`tst_gui_*`), signal/slot (`tst_signals`), model-contract

@@ -74,6 +74,7 @@
 #include <bridge/router.h>
 #include <engine/tilesetprovider.h>
 #include <engine/fontpreviewprovider.h>
+#include <engine/mapprovider.h>
 
 // Defined in the app exe (src/boot/bootQmlLinkage.cpp), compiled into each GUI
 // test target so QML type registration stays a single shared source of truth.
@@ -163,6 +164,7 @@ public:
     m_view->engine()->addImageProvider(QStringLiteral("tileset"), new TilesetProvider);
     m_view->engine()->addImageProvider(QStringLiteral("font"),
                                        new FontPreviewProvider(m_file->data->dataExpanded));
+    m_view->engine()->addImageProvider(QStringLiteral("map"), new MapProvider);
     DB::inst()->qmlProtect(m_view->engine());
 
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);

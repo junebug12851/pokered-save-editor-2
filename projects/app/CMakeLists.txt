@@ -25,6 +25,10 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/bridge/settings.h
     src/engine/fontpreviewprovider.cpp
     src/engine/fontpreviewprovider.h
+    src/engine/mapengine.cpp
+    src/engine/mapengine.h
+    src/engine/mapprovider.cpp
+    src/engine/mapprovider.h
     src/engine/tilesetengine.cpp
     src/engine/tilesetengine.h
     src/engine/tilesetprovider.cpp
@@ -33,8 +37,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/mvc/creditsmodel.h
     src/mvc/fontkeyboard.cpp
     src/mvc/fontkeyboard.h
-    src/mvc/individualmap.cpp
-    src/mvc/individualmap.h
+    src/mvc/mapmodel.cpp
+    src/mvc/mapmodel.h
     src/mvc/itemmarketmodel.cpp
     src/mvc/itemmarketmodel.h
     src/mvc/itemmarketcartmodel.cpp
@@ -63,8 +67,6 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/mvc/itemexchangemodel.h
     src/mvc/pokemonoverviewmodel.cpp
     src/mvc/pokemonoverviewmodel.h
-    src/mvc/mapselectmodel.cpp
-    src/mvc/mapselectmodel.h
     src/mvc/moveselectmodel.cpp
     src/mvc/moveselectmodel.h
     src/mvc/natureselectmodel.cpp

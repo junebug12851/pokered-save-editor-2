@@ -157,6 +157,63 @@ system is laid out. **Provenance:** most of this comes from an external full-gam
 orienting domain knowledge to confirm against `pret/pokered` and our `MapsDB`, **not** as
 code-asserted truth. Where it touches a value the save actually stores, that's called out.
 
+### ✅ VERIFIED from the disassembly + real saves (2026-07-12) — the map emulator's basis
+
+Everything in this subsection is **code-asserted**, not orienting: it is read straight out of
+`pret/pokered`, implemented in `MapEngine`, and pinned by `tst_map`. It **confirms** the "block = 4×4
+tiles" resolution below. Where the rest of this section is marked "confirm before relying on it",
+this part is the part that has been confirmed.
+
+**The buffer the game actually draws from** (`LoadTileBlockMap`, `home/overworld.asm`). The game does
+not hold the map on its own. It holds the map **ringed by a 3-block border** (`MAP_BORDER EQU 3`,
+`constants/map_data_constants.asm`), pre-filled with the map's **border block** and then partly
+overwritten by connected maps' edge strips. So `wOverworldMap` is `(width + 6) × (height + 6)` blocks,
+with the map itself at block (3, 3), and its row stride is `width + 6`.
+
+- The **border block** is `wMapBackgroundTile` — and it is **the first byte of the map's object data**
+  (`home/overworld.asm:2079`), which is exactly what `maps.json` records as a map's `border`.
+
+**The view** (`LoadCurrentMapView`). From that buffer the game copies a **6×5-block scratch area**
+(`SCREEN_BLOCK_WIDTH`/`HEIGHT` → 24×20 tiles, `wSurroundingTiles`), then copies the **20×18-tile
+screen** out of *that*, offset by `(2·xBlockCoord, 2·yBlockCoord)` tiles — 0 or 16 px per axis.
+`xBlockCoord = xCoord & 1` (`engine/overworld/tilesets.asm`). The scratch area is always block-aligned;
+the screen slides inside it. **That is the whole trick**: the map scrolls smoothly while the block grid
+it is built from never moves.
+
+**The view pointer — and the formula that proves all of the above.** The scratch area's top-left block
+is always the player's block **minus 2** on each axis (which is what puts the player at screen tile
+8,8). So:
+
+```
+wCurrentTileBlockMapViewPointer = 0xC6E8 + (1 + Y/2) · (width + 6) + (1 + X/2)
+```
+
+The save **stores** that pointer (offset `0x260B`, little-endian — the game's own arithmetic, frozen on
+disk). Recomputing it from nothing but the player's X/Y and the map's width reproduces the stored value
+**byte-for-byte** on both real saves (Pallet Town 10×9, Red's House 2F 4×4). That is what makes this an
+emulation rather than an approximation, and `tst_map::viewPointer_matchesWhatTheGameStored` will fail
+loudly if the understanding ever drifts.
+
+This also explains **why the border is 3** and not some other number: `(width+6) × (height+6)` is
+exactly the smallest buffer that can hold every view the player can produce, right out to the map's
+corners. Nothing about it is decorative.
+
+**Blocks → tiles → pixels.** A block is 16 bytes in the tileset's **blockset** (`gfx/blocksets/*.bst`):
+a 4×4 grid of tile ids, row-major. A map is `width × height` **block ids** (`maps/*.blk`, one byte
+each, row-major). Both are imported verbatim into `db.qrc` — see `projects/db/assets/blocks/README.md`.
+
+**Tile ids are Game Boy BG tile ids under signed addressing:** `0x00`–`0x5F` = the tileset's own
+graphics (`MAP_TILESET_SIZE EQU $60`, at `$9000`), `0x60`–`0x7F` = the text-box tiles (`$9600`),
+`0x80`–`0xFF` = the **font** (`$8800`). A few *unused* blocks in the reds_house/house/gate blocksets
+do carry ids from those upper regions — but **no map places them**: verified across all 226 importable
+maps, every block any map actually uses stays inside `0x00`–`0x5F`. That is why the renderer needs only
+the tileset graphics and no font overlay (pinned by `tst_map`).
+
+**A ROM quirk we reproduce rather than fix:** `UNDERGROUND_PATH_NORTH_SOUTH` declares 4×24 = 96 blocks
+but its `.blk` is only 92 bytes — the disassembly says so out loud. The game copies `width × height`
+bytes regardless, so its last row is really the first 4 bytes of the *next* map's blocks in ROM
+(`UndergroundPathWestEast`). Our import reads on through, exactly as the Game Boy does.
+
 - **Three nested grid units (now resolved).** Gen 1 maps use three sizes, smallest to largest:
   - **tile** = 8×8 px — the smallest unit; what the tileset graphics are stored as.
   - **movement cell** = 16×16 px = **2×2 tiles** — what the player actually walks on ("the player

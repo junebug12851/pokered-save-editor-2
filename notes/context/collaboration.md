@@ -27,8 +27,14 @@ has a deeper home, it's cross-referenced.
   "verify before relying on this" question — annotate, don't rewrite. (She once had me stop "fixing" the
   Gen 1 growth-rate formulas in `growth-notes.txt`; she may have pasted them for a reason and they may
   matter to the algorithms.)
-- **Track stacked-up asks as tasks by default.** When she fires several requests in a row, capture them
-  all in the task list so nothing slips (established 2026-07-10).
+- **Use the task list HEAVILY — early, often, comprehensively (restated 2026-07-11, now a hard default).**
+  Not just for stacked-up asks (2026-07-10) and not just when work "looks complicated": open a task list
+  at the *start* of anything multi-step, break it down properly, keep statuses live as you go, and add
+  tasks the moment new work surfaces. **By default, OFFER to record anything newly learned onto a task**
+  — findings, gotchas, decisions, constraints — and put it in the task's description so it doesn't
+  evaporate mid-flight. She watches the task list live; it's a working artifact, not paperwork. It does
+  not replace the `notes/` — durable knowledge still lands there; tasks carry the in-flight trail.
+  See CLAUDE.md → Default Workflow step 0.
 - **Manual screenshot review is mandatory on any UI change** — capture and actually scrutinise it
   yourself before declaring done. See CLAUDE.md → Default Workflow step 1, `screenshots.md`, `ui-patterns.md`.
 
@@ -60,6 +66,9 @@ has a deeper home, it's cross-referenced.
 
 ## Credits (keep proactively)
 
+- **ENFORCED, checked on every substantive change (restated 2026-07-11).** Credits are not a
+  release-time chore — **before each commit**, ask "did this bring in anyone or anything new?" and if so
+  add it in that **same commit**. A missing credit is treated like a missing test: the work isn't done.
 - Twilight tends to forget credits and explicitly asked me to **proactively flag & add them** for any new
   asset, tool, service, data source, or AI assistance — don't wait to be asked. Credits live in
   `projects/db/assets/data/credits.json` (baked into `db.qrc` → change needs a rebuild) + the generated

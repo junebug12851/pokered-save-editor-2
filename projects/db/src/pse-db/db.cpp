@@ -39,6 +39,7 @@ DB* DB::inst()
 // ── Accessors ────────────────────────────────────────────────────────────────
 
 GameData*        DB::json()         const { return GameData::inst(); }
+BlocksDB*        DB::blocks()       const { return BlocksDB::inst(); }
 CreditsDB*       DB::credits()      const { return CreditsDB::inst(); }
 EventPokemonDB*  DB::eventPokemon() const { return EventPokemonDB::inst(); }
 EventsDB*        DB::events()       const { return EventsDB::inst(); }
@@ -126,6 +127,7 @@ void DB::loadAll() const
   HiddenItemsDB::inst()->load();  lap("HiddenItemsDB");
   MapsDB::inst()->load();         lap("MapsDB");
   MissablesDB::inst()->load();    lap("MissablesDB");
+  BlocksDB::inst()->load();       lap("BlocksDB");
 
   once = true;
 }
@@ -194,6 +196,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   Utility::qmlProtectUtil(this, engine);
 
   GameData::inst()->qmlProtect(engine);
+  BlocksDB::inst()->qmlProtect(engine);
   CreditsDB::inst()->qmlProtect(engine);
   EventPokemonDB::inst()->qmlProtect(engine);
   EventsDB::inst()->qmlProtect(engine);

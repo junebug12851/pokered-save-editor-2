@@ -25,6 +25,8 @@
 #include <pse-savefile/expanded/savefileexpanded.h>
 #include <pse-savefile/expanded/area/area.h>
 #include <pse-savefile/expanded/area/areamap.h>
+#include <pse-savefile/expanded/area/areaplayer.h>
+#include <pse-savefile/expanded/area/areatileset.h>
 #include <pse-savefile/expanded/player/player.h>
 #include <pse-savefile/expanded/player/playerpokedex.h>
 #include <pse-savefile/expanded/storage.h>
@@ -52,7 +54,9 @@ Bridge::Bridge(FileManagement* file)
     marketViewModel(new ItemMarketViewModel(marketModel)),
     pokemonStorageModel1(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon)),
     pokemonStorageModel2(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon)),
-    mapSelectModel(new MapSelectModel(file->data->dataExpanded->area->map))
+    map(new MapModel(file->data->dataExpanded->area->map,
+                     file->data->dataExpanded->area->player,
+                     file->data->dataExpanded->area->tileset))
 {
   // Link the two
   pokemonStorageModel1->otherModel = pokemonStorageModel2;

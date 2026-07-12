@@ -66,6 +66,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \page pse_sessions_2026_07 July 2026
 \brief Daily session logs for July 2026 (`notes/sessions/2026-07/`).
 
+\subpage md_notes_2sessions_22026-07_22026-07-12 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-11 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-09 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-06

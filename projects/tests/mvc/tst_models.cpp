@@ -35,7 +35,6 @@
 #include <mvc/pokemonstartersmodel.h>
 #include <mvc/creditsmodel.h>
 #include <mvc/itemselectmodel.h>
-#include <mvc/mapselectmodel.h>
 
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/expanded/savefileexpanded.h>
@@ -47,7 +46,7 @@ class TestModels : public QObject
   Q_OBJECT
 
 private:
-  SaveFile m_sf; // blank save -> supplies a live AreaMap for MapSelectModel
+  SaveFile m_sf; // blank save -> a live Area for the map-backed models
 
 private slots:
   void initTestCase();
@@ -59,7 +58,6 @@ private slots:
   void startersModel_hasThreeStartersAndResolves();
   void creditsModel_loads();
   void itemSelectModel_listsItems();
-  void mapSelectModel_listsMaps();
 };
 
 void TestModels::initTestCase()
@@ -180,19 +178,8 @@ void TestModels::itemSelectModel_listsItems()
   QVERIFY(m.itemToListIndex(1) >= 0);
 }
 
-void TestModels::mapSelectModel_listsMaps()
-{
-  // Construct against the blank save's live AreaMap (used for current-map highlight).
-  MapSelectModel m(m_sf.dataExpanded->area->map);
-  const int rows = m.rowCount(QModelIndex());
-  QVERIFY2(rows > 0, "map picker is empty");
-  bool anyName = false;
-  for(int i = 0; i < rows && !anyName; i++)
-    if(!m.data(m.index(i, 0), MapSelectModel::NameRole).toString().isEmpty())
-      anyName = true;
-  QVERIFY2(anyName, "no map row had a non-empty name");
-  QVERIFY(m.mapToListIndex(0) >= 0);
-}
+// (The map picker's model was deleted with the old Maps screen. The map is now
+// MapModel -- not a list model -- and is covered by tst_map.)
 
 QTEST_GUILESS_MAIN(TestModels)
 #include "tst_models.moc"

@@ -160,8 +160,7 @@ void Router::loadScreens()
   screens.insert("pokemon", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokémon"), "qrc:/ui/app/screens/non-modal/Pokemon.qml"));
   screens.insert("pokemonDetails", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Pokémon Details"), "qrc:/ui/app/screens/non-modal/PokemonDetails.qml", false));
   screens.insert("rival", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Rival"), "qrc:/ui/app/screens/non-modal/Rival.qml"));
-  screens.insert("maps", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Maps"), "qrc:/ui/app/screens/non-modal/Maps.qml"));
-  screens.insert("mapDetails", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Map Details"), "qrc:/ui/app/screens/non-modal/MapDetails.qml", false));
+  screens.insert("maps", new Screen(false, QT_TRANSLATE_NOOP("Screen", "Map"), "qrc:/ui/app/screens/non-modal/Map.qml"));
 }
 
 QHash<QString, Screen*> Router::screens = QHash<QString, Screen*>();

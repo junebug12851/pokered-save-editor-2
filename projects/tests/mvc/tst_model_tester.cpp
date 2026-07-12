@@ -54,7 +54,6 @@
 #include <mvc/pokemonstartersmodel.h>
 #include <mvc/creditsmodel.h>
 #include <mvc/itemselectmodel.h>
-#include <mvc/mapselectmodel.h>
 #include <mvc/pokemonstoragemodel.h>
 #include <mvc/pokemonboxselectmodel.h>
 
@@ -136,8 +135,6 @@ void TestModelTester::standaloneModels_satisfyContract()
   PokemonStartersModel starters;          checkContract(&starters, "PokemonStartersModel");
   CreditsModel credits;                   checkContract(&credits,  "CreditsModel");
   ItemSelectModel items;                  checkContract(&items,    "ItemSelectModel");
-  MapSelectModel maps(m_sf.dataExpanded->area->map);
-  checkContract(&maps, "MapSelectModel");
 }
 
 void TestModelTester::bridgeModels_satisfyContract()
@@ -160,7 +157,8 @@ void TestModelTester::bridgeModels_satisfyContract()
   checkContract(m_brg->statusSelectModel,      "statusSelectModel");
   checkContract(m_brg->natureSelectModel,      "natureSelectModel");
   checkContract(m_brg->moveSelectModel,        "moveSelectModel");
-  checkContract(m_brg->mapSelectModel,         "mapSelectModel");
+  // brg.map (MapModel) is not a list model -- it has no rows/roles contract to check.
+  // It is covered by tst_map instead.
 }
 
 void TestModelTester::dynamicModels_satisfyContractUnderChanges()

@@ -152,7 +152,7 @@ void TestBridge::bridge_constructsEveryModel()
   QVERIFY(m_brg->statusSelectModel != nullptr);
   QVERIFY(m_brg->natureSelectModel != nullptr);
   QVERIFY(m_brg->moveSelectModel != nullptr);
-  QVERIFY(m_brg->mapSelectModel != nullptr);
+  QVERIFY(m_brg->map != nullptr);
 
   // The two PC storage halves are cross-linked for transfers.
   QCOMPARE(m_brg->pokemonStorageModel1->otherModel, m_brg->pokemonStorageModel2);

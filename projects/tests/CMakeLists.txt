@@ -115,6 +115,18 @@ if(TARGET appcore)
     add_test(NAME tst_engine_providers COMMAND tst_engine_providers)
     set_tests_properties(tst_engine_providers PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_engine_providers)
+
+    # The map emulator (MapEngine/MapProvider/MapModel + the block data). Same wiring
+    # as tst_engine_providers -- it renders real tiles, so it needs a GUI app and the
+    # tileset PNGs out of app.qrc, and runs offscreen.
+    qt_add_executable(tst_map
+        mvc/tst_map.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_map PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_map PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_map COMMAND tst_map)
+    set_tests_properties(tst_map PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_map)
 endif()
 
 # --- QML smoke test (Qt Quick Test, headless via offscreen) ---

@@ -42,10 +42,10 @@ ListModel {
     disabled: false
   }
   ListElement {
-    name: "Maps"
+    name: "Map"
     iconSrc: "qrc:/assets/icons/poke-go/map.svg"
     page: "maps"
-    disabled: true
+    disabled: false
   }
   ListElement {
     name: "Options"

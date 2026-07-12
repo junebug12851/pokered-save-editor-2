@@ -23,6 +23,7 @@
 // forward-declared) so MOC can register them as metatypes. Include all
 // sub-database headers here rather than forward-declaring them.
 #include "./util/gamedata.h"
+#include "./blocksdb.h"
 #include "./creditsdb.h"
 #include "./eventpokemondb.h"
 #include "./eventsdb.h"
@@ -76,6 +77,7 @@ class DB_AUTOPORT DB : public QObject
   Q_OBJECT
 
   Q_PROPERTY(GameData*        json         READ json         CONSTANT) ///< Raw parsed JSON assets behind every DB.
+  Q_PROPERTY(BlocksDB*        blocks       READ blocks       CONSTANT) ///< Raw map block layouts + tileset blocksets.
   Q_PROPERTY(CreditsDB*       credits      READ credits      CONSTANT) ///< Credits/attribution entries.
   Q_PROPERTY(EventPokemonDB*  eventPokemon READ eventPokemon CONSTANT) ///< Event/gift Pokemon definitions.
   Q_PROPERTY(EventsDB*        events       READ events       CONSTANT) ///< Story-event metadata.
@@ -107,6 +109,7 @@ public:
   [[nodiscard]] static DB* inst();
 
   [[nodiscard]] GameData*        json()         const; ///< The GameData JSON source (backs @c json).
+  [[nodiscard]] BlocksDB*        blocks()       const; ///< The block database (backs @c blocks).
   [[nodiscard]] CreditsDB*       credits()      const; ///< The credits database (backs @c credits).
   [[nodiscard]] EventPokemonDB*  eventPokemon() const; ///< The event-Pokemon database (backs @c eventPokemon).
   [[nodiscard]] EventsDB*        events()       const; ///< The events database (backs @c events).

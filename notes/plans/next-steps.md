@@ -28,6 +28,26 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
 
 ## Now / next
 
+0. **THE MAP — step 1 done (2026-07-12), awaiting in-app review.** The old Maps screen is deleted; the
+   new one rebuilds the game's own overworld buffer (map + 3-block border ring), the 6×5-block scratch
+   area and the 20×18-tile screen, over a real block/tile render. Verified against the view pointer the
+   Game Boy left in the save. See `status.md` and `sessions/2026-07/2026-07-12.md`.
+
+   **Ordered next steps for the map** (Twilight said one step at a time):
+   1. **Review step 1 in-app** — is the render right, are the boxes where she expects, is the grid too
+      loud/quiet, is the fit-to-window default right?
+   2. **The player** — draw him (and his facing) at his real screen position (screen tile 8,8).
+   3. **Connection strips** — the neighbouring maps' edges bleeding into the border ring
+      (`LoadNorthSouthConnectionsTileMap` / `LoadEastWestConnectionsTileMap`). The ring is currently
+      just the border block, which is what an *unconnected* map looks like.
+   4. **Tile animation** — flower + water frames. The renderer already takes a frame; it asks for 0.
+   5. **Overlays** — warps, signs, sprites, hidden items (all already in the DB, all with coordinates).
+   6. **Then, and only then, editing** — and that is what finally forces the `MapsDB::deepLink()`
+      landmine to be defused (see `status.md` → Open issues).
+
+   **Two `maps.json` data questions are waiting on Twilight** (glitch-map dimensions; 3 empty tileset
+   strings) — see `status.md` → Open issues. Nothing was changed in the JSON.
+
 1. **In-app review of the NEW full keyboard** (rebuilt 2026-07-11 as an ASDF deck — see
    [`full-keyboard-redesign.md`](full-keyboard-redesign.md)). Screenshot-reviewed on every page and
    `ctest` green; what a still PNG can't show still needs a live pass: typing (caps flashing with it),

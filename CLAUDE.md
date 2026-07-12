@@ -96,6 +96,15 @@ Windows machine via the PowerShell terminal:
 After making changes, run this loop **without being asked** (established 2026-06-10). Route all build/test
 output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (PowerShell ~60s cap).
 
+0. **Track the work with TASKS — early, often, and comprehensively (by default, 2026-07-11, Twilight).**
+   Open a task list at the *start* of anything with more than one step — not retroactively, not "if it
+   gets complicated". Break the work down properly (a real breakdown, not three vague buckets), keep
+   statuses live as you go (`in_progress` when you start it, `completed` the moment it's done), and add
+   new tasks the instant new work surfaces mid-flight. **Whenever you learn something worth keeping —
+   a finding, a gotcha, a decision, a constraint — offer to record it on a task by default** (and write
+   it into the task's description), so nothing learned evaporates between steps. The task list is a
+   working artifact Twilight watches live, not a formality. (This does NOT replace the `notes/` — durable
+   knowledge still lands in the notes; tasks carry the in-flight state and the trail that gets it there.)
 1. **Build + launch (on any C++/qrc change).** Rebuild the **kit dir**
    (`cmake --build "projects\build\Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug" --target PokeredSaveEditor`)
    and **launch the app** so it can be tested in-app immediately. (Pure edits to existing QML hot-reload —
@@ -253,6 +262,14 @@ The goal is that any AI opening this project cold can read the notes and be full
 with no information trapped in a human's head or lost between sessions.
 
 ## Keep the Credits Screen Living
+
+> **ENFORCED, BY DEFAULT — check credits on every substantive change (re-stated 2026-07-11 by
+> Twilight, who is the first to admit she forgets them).** Credits are not a release-time chore you
+> remember if you happen to think of it: **before you commit**, ask "did this change bring in anyone
+> or anything new?" — a new data source, library, tool, service, asset/icon/artwork, or AI helper —
+> and if so, add it to `credits.json` **in that same commit** (and regenerate `credits.md`). Treat a
+> missing credit exactly like a missing test: the work is not done. This is part of the Default
+> Workflow, not an optional extra.
 
 The in-app **Credits / About** screen is a living document — keep it current **by default,
 without being asked** (a standing instruction). Whenever someone or something new

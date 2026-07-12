@@ -37,7 +37,6 @@
 #include <mvc/statusselectmodel.h>
 #include <mvc/pokemonstartersmodel.h>
 #include <mvc/moveselectmodel.h>
-#include <mvc/mapselectmodel.h>
 #include <mvc/itemselectmodel.h>
 
 #include <pse-savefile/savefile.h>
@@ -76,7 +75,7 @@ class TestSelectModels : public QObject
 {
   Q_OBJECT
 
-  SaveFile m_sf;   // blank save -> live AreaMap for MapSelectModel
+  SaveFile m_sf;   // blank save -> a live Area for the save-backed models
 
 private slots:
   void initTestCase();
@@ -87,7 +86,6 @@ private slots:
   void starters();
   void moves();
   void items();
-  void maps();
 };
 
 void TestSelectModels::initTestCase()
@@ -157,13 +155,8 @@ void TestSelectModels::items()
   (void)m.itemToListIndex(0xFFFF);
 }
 
-void TestSelectModels::maps()
-{
-  MapSelectModel m(m_sf.dataExpanded->area->map);
-  driveModel(&m);
-  QVERIFY(m.mapToListIndex(0) >= 0);
-  (void)m.mapToListIndex(0xFFFF);
-}
+// (The map picker's list model went with the old Maps screen; the map is now
+// MapModel, which is not a list model. See tst_map.)
 
 QTEST_GUILESS_MAIN(TestSelectModels)
 #include "tst_select_models.moc"

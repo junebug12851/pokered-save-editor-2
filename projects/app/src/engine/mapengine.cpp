@@ -1,0 +1,227 @@
+/*
+  * Copyright 2026 Twilight
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *   http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+*/
+
+/**
+ * @file mapengine.cpp
+ * @brief Implementation of MapEngine -- the overworld buffer + the renderer.
+ *        See mapengine.h for the geometry this reproduces.
+ */
+
+#include <QPainter>
+#include <QPixmap>
+#include <QVector>
+
+#include <pse-db/blocksdb.h>
+#include <pse-db/mapsdb.h>
+#include <pse-db/tileset.h>
+#include <pse-db/entries/mapdbentry.h>
+
+#include "./mapengine.h"
+#include "./tilesetengine.h"
+
+namespace {
+
+/// The maps DB is keyed by the map id as a string (same as AreaMap::toCurMap()).
+MapDBEntry* mapAt(int mapInd)
+{
+  return MapsDB::inst()->getIndAt(QString::number(mapInd));
+}
+
+/// Tilesets are stored in id order, but never assume it -- verify, then scan.
+TilesetDBEntry* tilesetAt(int tilesetInd)
+{
+  auto* entry = TilesetDB::inst()->getStoreAt(tilesetInd);
+  if (entry != nullptr && entry->ind == tilesetInd)
+    return entry;
+
+  for (auto* el : TilesetDB::inst()->getStore())
+    if (el->ind == tilesetInd)
+      return el;
+
+  return nullptr;
+}
+
+} // namespace
+
+MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd)
+{
+  Buffer out;
+  out.mapInd = mapInd;
+
+  auto* map = mapAt(mapInd);
+  const QByteArray blocks = BlocksDB::inst()->mapBlocks(mapInd);
+
+  // Glitch ids past the last real map have no block data at all -- there is
+  // nothing in ROM to draw, and pretending otherwise would be inventing a map.
+  if (map == nullptr || blocks.isEmpty())
+    return out;
+
+  out.width  = map->getWidth();
+  out.height = map->getHeight();
+
+  if (out.width <= 0 || out.height <= 0 || blocks.size() != out.width * out.height)
+    return out;
+
+  // The border block is wMapBackgroundTile -- the first byte of the map's object
+  // data, which is what maps.json records as the map's border.
+  out.border = qMax(0, map->getBorder());
+
+  out.stride = out.width + 2 * mapBorder;
+  out.rows   = out.height + 2 * mapBorder;
+
+  // LoadTileBlockMap: fill the whole buffer with the border block, then drop the
+  // map in past the border. (Connected maps' edge strips overwrite parts of the
+  // ring afterwards -- not yet reproduced; see notes.)
+  out.blocks = QByteArray(out.stride * out.rows, static_cast<char>(out.border));
+
+  for (int y = 0; y < out.height; y++) {
+    const int src = y * out.width;
+    const int dst = (y + mapBorder) * out.stride + mapBorder;
+    for (int x = 0; x < out.width; x++)
+      out.blocks[dst + x] = blocks[src + x];
+  }
+
+  out.valid = true;
+  return out;
+}
+
+int MapEngine::tilesetOf(int mapInd)
+{
+  auto* map = mapAt(mapInd);
+  if (map == nullptr)
+    return -1;
+
+  // MapsDB is not deep-linked at boot, so resolve the tileset by name ourselves --
+  // TilesetDB indexes by both name and nameAlias, and maps.json stores the alias.
+  auto* tileset = TilesetDB::inst()->getIndAt(map->getTileset());
+  return (tileset == nullptr) ? -1 : tileset->ind;
+}
+
+QString MapEngine::tilesetId(int tilesetInd, int frame)
+{
+  auto* tileset = tilesetAt(tilesetInd);
+  if (tileset == nullptr)
+    return QString();
+
+  // <tileset>/<type>/<font>/<frame>. Never "font": the font overlay paints over
+  // tiles 0x49-0x5F, which belong to the tileset -- and no map uses a tile id past
+  // the tileset's own 0x00-0x5F anyway (verified across all 248 maps, and pinned by
+  // tst_map_blocks), so there is nothing in the font/text VRAM region to draw.
+  return tileset->name + "/" + tileset->type + "/nofont/" + QString::number(frame);
+}
+
+QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame)
+{
+  if (!buffer.valid)
+    return QImage();
+
+  const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(tilesetInd);
+  const QString id = tilesetId(tilesetInd, frame);
+
+  if (blockset.isEmpty() || id.isEmpty())
+    return QImage();
+
+  const int blockCount = blockset.size() / tilesPerBlock;
+  const QVector<QPixmap> tiles = TilesetEngine::buildTileset(id);
+
+  if (tiles.isEmpty())
+    return QImage();
+
+  QImage img(buffer.stride * blockPx, buffer.rows * blockPx, QImage::Format_ARGB32);
+  img.fill(Qt::white);
+
+  QPainter p(&img);
+
+  for (int by = 0; by < buffer.rows; by++) {
+    for (int bx = 0; bx < buffer.stride; bx++) {
+      const int block = static_cast<quint8>(buffer.blocks[by * buffer.stride + bx]);
+
+      // A block id the tileset doesn't have is not something the game can draw
+      // either -- leave it blank rather than invent a tile for it.
+      if (block >= blockCount)
+        continue;
+
+      const int base = block * tilesPerBlock;
+
+      for (int ty = 0; ty < blockTiles; ty++) {
+        for (int tx = 0; tx < blockTiles; tx++) {
+          const int tile = static_cast<quint8>(blockset[base + ty * blockTiles + tx]);
+          if (tile >= tiles.size())
+            continue;
+
+          p.drawPixmap(bx * blockPx + tx * tilePx,
+                       by * blockPx + ty * tilePx,
+                       tiles.at(tile));
+        }
+      }
+    }
+  }
+
+  p.end();
+  return img;
+}
+
+// ── The game's view maths ──────────────────────────────────────────────────────
+//
+// x and y are the player's coordinates: they count in half-blocks (one walking step
+// = 2x2 tiles), so the player's block is x / 2 and the half he stands in is x & 1.
+
+QPoint MapEngine::viewBlock(int x, int y)
+{
+  // The scratch area starts 2 blocks up and left of the player's block, which is
+  // what puts the player at screen tile (8, 8). +mapBorder converts a map block
+  // into a buffer block.
+  return QPoint(mapBorder + (x / 2) - viewBlockOffset,
+                mapBorder + (y / 2) - viewBlockOffset);
+}
+
+int MapEngine::viewPointer(int x, int y, int mapWidth)
+{
+  // wCurrentTileBlockMapViewPointer -- the WRAM address of the scratch area's
+  // top-left block inside wOverworldMap. The save stores this; recomputing it and
+  // comparing is how we prove the maths is the game's (tst_map_engine).
+  const QPoint block = viewBlock(x, y);
+  const int stride = mapWidth + 2 * mapBorder;
+
+  return overworldMapAddr + block.y() * stride + block.x();
+}
+
+QRect MapEngine::mapRect(int width, int height)
+{
+  return QRect(mapBorder * blockPx, mapBorder * blockPx,
+               width * blockPx, height * blockPx);
+}
+
+QRect MapEngine::scratchRect(int x, int y)
+{
+  const QPoint block = viewBlock(x, y);
+
+  return QRect(block.x() * blockPx, block.y() * blockPx,
+               screenBlocksW * blockPx, screenBlocksH * blockPx);
+}
+
+QRect MapEngine::screenRect(int x, int y)
+{
+  const QRect scratch = scratchRect(x, y);
+
+  // The screen sits inside the scratch area, pushed over by which half of his block
+  // the player is standing in: 2 tiles (16 px) per half-block, on each axis.
+  const int offsetX = (x % 2) * 2 * tilePx;
+  const int offsetY = (y % 2) * 2 * tilePx;
+
+  return QRect(scratch.x() + offsetX, scratch.y() + offsetY,
+               screenTilesW * tilePx, screenTilesH * tilePx);
+}

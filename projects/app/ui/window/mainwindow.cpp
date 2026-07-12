@@ -83,6 +83,7 @@ private:
 
 #include "../../src/engine/tilesetprovider.h"
 #include "../../src/engine/fontpreviewprovider.h"
+#include "../../src/engine/mapprovider.h"
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent)
@@ -411,6 +412,7 @@ void MainWindow::setupProviders()
   auto engine = ui.app->engine();
   engine->addImageProvider("tileset", new TilesetProvider);
   engine->addImageProvider("font", new FontPreviewProvider(file->data->dataExpanded));
+  engine->addImageProvider("map", new MapProvider);
 }
 
 void MainWindow::injectIntoQML()

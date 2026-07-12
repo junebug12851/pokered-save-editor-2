@@ -1185,3 +1185,30 @@ chevrons. They weren't in the FA subset, so they're **hand-authored** SVGs in
 `assets/icons/fontawesome/` (a `<rect>` bar + an arrow `<path>`, viewBox `0 0 512 512`, **plain black
 fill** so a Button's `icon.color` tints them like the real FA icons). Any new icon must also be added
 to `app.qrc` (the file list is explicit, no wildcard) — then RCC rebakes it on the next build.
+
+## The map screen (2026-07-12 — step 1 of the map emulator)
+
+The map screen draws **nothing of its own invention**. Every number comes from `brg.map` (MapModel) in
+**buffer pixels** — one screen pixel per Game Boy pixel, 32 to a block, origin at the top-left of the
+border ring — and QML's only job is to multiply by an integer `zoom`. If a rectangle looks wrong,
+the bug is in C++ (`MapEngine`), not here. Keep it that way.
+
+Conventions established here:
+
+- **Integer zoom only.** This is 8x8 pixel art; a fractional scale smears it. `Image { smooth: false }`,
+  and the provider scales with `Qt::FastTransformation` when asked at all.
+- **Default zoom is fit-to-window** (`userZoom == 0`), with a **Fit** button to return to it. Opening a
+  screen onto the corner of a map is not showing someone their map. Big maps (Route 17 is 78 blocks tall)
+  land on 1x and scroll — correct, they simply are bigger than the window.
+- **The grid line is TINTED, not grey.** The map is four shades of grey, so a grey line disappears into it
+  — over the black trees or over the white paths, depending which grey you pick. A low-alpha colour has
+  nothing to hide against and reads everywhere. (This is why the block grid was invisible on the first
+  pass; the *other* reason is the Repeater landmine below.)
+- **Three boxes, three theme colours:** the visible screen = `errorColor`, the draw/scratch area =
+  `accentColor`, the map bounds = `primaryColor`. A footer legend names them, because three nested
+  coloured rectangles are meaningless without one.
+- ⚠️ **The root id is `mapScreen`, NOT `top`** — this file has Repeaters, and a Repeater delegate
+  cannot see the file's root id. `top.zoom` inside a delegate is `undefined` -> `x` goes NaN ->
+  every line silently collapses onto x = 0, with **no warning and a green `tst_qml_screens`**. Inside a
+  delegate, reach values through a plain sibling id (`canvas.gridStep`). See
+  [`qt-patterns.md`](qt-patterns.md) -> "`id: top` + a Repeater delegate".
