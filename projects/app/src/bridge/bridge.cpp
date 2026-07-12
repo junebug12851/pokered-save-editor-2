@@ -25,6 +25,7 @@
 #include <pse-savefile/expanded/savefileexpanded.h>
 #include <pse-savefile/expanded/area/area.h>
 #include <pse-savefile/expanded/area/areamap.h>
+#include <pse-savefile/expanded/area/areageneral.h>
 #include <pse-savefile/expanded/area/areaplayer.h>
 #include <pse-savefile/expanded/area/areatileset.h>
 #include <pse-savefile/expanded/player/player.h>
@@ -56,7 +57,8 @@ Bridge::Bridge(FileManagement* file)
     pokemonStorageModel2(new PokemonStorageModel(router, file->data->dataExpanded->storage, file->data->dataExpanded->player->pokemon)),
     map(new MapModel(file->data->dataExpanded->area->map,
                      file->data->dataExpanded->area->player,
-                     file->data->dataExpanded->area->tileset))
+                     file->data->dataExpanded->area->tileset,
+                     file->data->dataExpanded->area->general))
 {
   // Link the two
   pokemonStorageModel1->otherModel = pokemonStorageModel2;

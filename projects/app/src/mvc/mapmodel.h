@@ -18,6 +18,7 @@
 #include <QObject>
 #include <QString>
 
+class AreaGeneral;
 class AreaMap;
 class AreaPlayer;
 class AreaTileset;
@@ -61,6 +62,15 @@ class MapModel : public QObject
   /// The map that data came from (@see isCopy) -- empty when the id draws its own.
   Q_PROPERTY(QString copyOfName READ copyOfName NOTIFY changed)
 
+  /// The save's "contrast" (`wMapPalOffset`): which palette the map is drawn with.
+  Q_PROPERTY(int contrast READ contrast WRITE setContrast NOTIFY changed)
+  /// Is that one of the six **glitch palettes** -- a read straddling two fade-table entries?
+  Q_PROPERTY(bool contrastIsGlitch READ contrastIsGlitch NOTIFY changed)
+  /// What it is, in words ("Normal", "Very dark — the needs-FLASH cave palette", "Glitch palette"...).
+  Q_PROPERTY(QString contrastName READ contrastName NOTIFY changed)
+  /// The highest contrast still inside the fade table.
+  Q_PROPERTY(int contrastMax READ contrastMax CONSTANT)
+
   Q_PROPERTY(int mapInd READ mapInd NOTIFY changed)         ///< Loaded map id (`wCurMap`).
   Q_PROPERTY(int tilesetInd READ tilesetInd NOTIFY changed) ///< Loaded tileset id (`wCurMapTileset`).
   Q_PROPERTY(int playerX READ playerX NOTIFY changed)       ///< Player x, in half-blocks.
@@ -89,7 +99,7 @@ class MapModel : public QObject
   Q_PROPERTY(int screenH READ screenH NOTIFY changed) ///< @see screenX
 
 public:
-  MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset);
+  MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general);
 
   bool valid() const;
   QString source() const;
@@ -97,6 +107,12 @@ public:
   QString tilesetName() const;
   bool isCopy() const;
   QString copyOfName() const;
+
+  int contrast() const;
+  void setContrast(int contrast); ///< Writes `wMapPalOffset` in the save.
+  bool contrastIsGlitch() const;
+  QString contrastName() const;
+  int contrastMax() const;
 
   int mapInd() const;
   int tilesetInd() const;
@@ -133,4 +149,5 @@ private:
   AreaMap* map = nullptr;         ///< The save's live map.
   AreaPlayer* player = nullptr;   ///< The save's live player position.
   AreaTileset* tileset = nullptr; ///< The save's live tileset.
+  AreaGeneral* general = nullptr; ///< The save's live "contrast" (wMapPalOffset).
 };

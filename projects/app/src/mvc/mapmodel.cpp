@@ -24,6 +24,7 @@
 #include <pse-db/mapsdb.h>
 #include <pse-db/tileset.h>
 #include <pse-db/entries/mapdbentry.h>
+#include <pse-savefile/expanded/area/areageneral.h>
 #include <pse-savefile/expanded/area/areamap.h>
 #include <pse-savefile/expanded/area/areaplayer.h>
 #include <pse-savefile/expanded/area/areatileset.h>
@@ -31,15 +32,16 @@
 #include "./mapmodel.h"
 #include "../engine/mapengine.h"
 
-MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset)
-  : map(map), player(player), tileset(tileset)
+MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general)
+  : map(map), player(player), tileset(tileset), general(general)
 {
-  // Everything this model publishes is derived from these four values, so one
-  // "changed" signal for the lot is honest -- any of them moving redraws the map.
+  // Everything this model publishes is derived from these few values, so one "changed"
+  // signal for the lot is honest -- any of them moving redraws the map.
   connect(map, &AreaMap::curMapChanged, this, &MapModel::changed);
   connect(tileset, &AreaTileset::currentChanged, this, &MapModel::changed);
   connect(player, &AreaPlayer::xCoordChanged, this, &MapModel::changed);
   connect(player, &AreaPlayer::yCoordChanged, this, &MapModel::changed);
+  connect(general, &AreaGeneral::contrastChanged, this, &MapModel::changed);
 }
 
 int MapModel::mapInd() const     { return map->curMap; }
@@ -59,10 +61,42 @@ QString MapModel::source() const
   if (!valid())
     return QString();
 
-  // Frame 0: a still map. (The flower/water animation frames are a later step.)
+  // Frame 0: a still map. (The flower/water animation frames are a later step.) The
+  // contrast rides in the URL so the image is rebuilt whenever the palette changes.
   return "image://map/" + QString::number(mapInd())
        + "/" + QString::number(tilesetInd())
-       + "/0";
+       + "/0"
+       + "/" + QString::number(contrast());
+}
+
+int MapModel::contrast() const
+{
+  return general->contrast;
+}
+
+void MapModel::setContrast(int contrast)
+{
+  if (general->contrast == contrast)
+    return;
+
+  // This writes a real save byte (wMapPalOffset, 0x2609) -- and only that byte.
+  general->contrast = contrast;
+  general->contrastChanged();
+}
+
+bool MapModel::contrastIsGlitch() const
+{
+  return MapEngine::isGlitchPalette(contrast());
+}
+
+QString MapModel::contrastName() const
+{
+  return MapEngine::contrastName(contrast());
+}
+
+int MapModel::contrastMax() const
+{
+  return MapEngine::contrastMax;
 }
 
 QString MapModel::mapName() const

@@ -140,6 +140,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \subpage md_notes_2reference_2qt-patterns <br>
 \subpage md_notes_2reference_2ui-patterns <br>
 \subpage md_notes_2reference_2screenshots <br>
+\subpage md_notes_2reference_2palettes <br>
 \subpage md_notes_2reference_2map-connections <br>
 \subpage md_notes_2reference_2emulator-verification <br>
 \subpage md_notes_2reference_2dev-harness <br>

@@ -5,9 +5,9 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.17.0-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
+**Version:** `0.20.0-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
-[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (75/75).
+[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (76/76).
 
 > **Releases are MANUAL.** Commit and push to `dev` freely, but `main` only moves when Twilight says
 > **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
@@ -35,8 +35,7 @@ maps but *unfinished copies*: `maps.json`'s own `incomplete` field says which ma
 with the ROM, so we follow it and draw the map they copy (what a Game Boy actually does with those ids).
 Nothing invented, no JSON changed.
 
-**Not yet drawn:** the player, warps/signs/sprites, tile animation frames (frame 0 only), and the
-palettes/"contrast" (currently the tileset PNG's greys). **Connection strips are DONE** (below).
+**Not yet drawn:** the player, warps/signs/sprites, and tile animation frames (frame 0 only). **Connection strips and the palettes/"contrast" are DONE** (below).
 
 ### ✅ And now the actual Game Boy checks our work (2026-07-12)
 
@@ -61,6 +60,23 @@ has no flag. `MapEngine` ignores both and recomputes from the macro, so nothing 
 still carries a wrong formula. **Fixing it is Twilight's call** (curated data + a public DB API).
 
 Everything about it: [`reference/map-connections.md`](reference/map-connections.md).
+
+### ✅ Palettes / "contrast" — the six glitch palettes render (2026-07-12)
+
+The save's `contrast` byte (`0x2609` = `wMapPalOffset`) is **not a brightness dial**: the game **subtracts it
+from a pointer** into its fade-palette table (`LoadGBPal`, `home/fade.asm`). `0/3/6/9` land on real entries —
+**the four contrast levels** (0 normal, 6 the "needs FLASH" cave palette, 9 black). Everything else reads
+**across the seam between two entries** — `1, 2, 4, 5, 7, 8`: **the six glitch palettes.** Exactly what
+Twilight said, and now we know why.
+
+The map is drawn **through** whichever `rBGP` that produces, so a glitch palette renders as the genuine
+article, not an imitation. **All ten verified against the real console's palette registers — zero
+mismatches.**
+
+⚠️ Note contrast **1 and 2 look normal on the map** — their damage is in `rOBP0`/`rOBP1`, the **sprite**
+palettes. They will show the moment the player is drawn. That is the console's behaviour, not a gap.
+
+Everything about it: [`reference/palettes.md`](reference/palettes.md).
 
 The ROM is Twilight's own cartridge backup: **git-ignored, never committed, never shipped**; without it
 every case SKIPs. Setup + the traps (the "has the save loaded?" trap, `wCurMapTileset` bit 7):

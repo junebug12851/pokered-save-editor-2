@@ -46,14 +46,14 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
       ⚠️ **Left open for Twilight:** `MapDBEntryConnect::stripSize()` is wrong and `maps.json`'s `flag`
       field is a patch for it (the real game has no flag). `MapEngine` doesn't use either, so nothing is
       broken — but the DB carries a wrong formula. Fixing it touches curated data + a public API: her call.
-   3. **Palettes / "contrast"** (Twilight, 2026-07-12) — the 4 contrast levels and the **6 glitch
-      palettes**. If the render is truly accurate the glitch palettes should fall out correctly, which
-      would be a real showcase. The emulator's `screen.png` is the ground truth here — check against it
-      rather than reason about it. Derive from pokered/the save; invent nothing.
-   4. **Navigation** (Twilight, 2026-07-12) — pinch-to-zoom (touchpad + touchscreen) and free horizontal +
-      vertical scrolling, zoom anchored on the pinch/cursor. Gets urgent once connected maps are drawn
-      together: a lot of surface area and detail.
-   5. **The player** — draw him (and his facing) at his real screen position (screen tile 8,8).
+   3. ~~**Palettes / "contrast"**~~ — ✅ **DONE 2026-07-12.** The 4 levels *and* the 6 glitch palettes, all
+      ten verified against the real console's palette registers. See
+      [`reference/palettes.md`](../reference/palettes.md).
+   4. ~~**Navigation**~~ — ✅ **DONE 2026-07-12.** Pinch-to-zoom (touch + touchpad), Ctrl+wheel, both scroll
+      axes, drag-to-pan, and zoom anchored on the cursor/pinch centroid.
+   5. **The player** ← *next.* Draw him (and his facing) at his real screen position (screen tile 8,8).
+      **This is also what makes contrast 1 and 2 finally show their damage** — their glitch is in the
+      *sprite* palettes (`rOBP0`/`rOBP1`), which are already computed and waiting.
    6. **Tile animation** — flower + water frames. The renderer already takes a frame; it asks for 0.
    7. **Overlays** — warps, signs, sprites, hidden items (all already in the DB, all with coordinates).
    8. **Then, and only then, editing** — and that is what finally forces the `MapsDB::deepLink()`

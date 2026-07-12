@@ -52,14 +52,14 @@ Page {
     // ── What is loaded ────────────────────────────────────────────────────────
     Rectangle {
       Layout.fillWidth: true
-      implicitHeight: 34
+      implicitHeight: 38
       color: "transparent"
 
       RowLayout {
         anchors.fill: parent
         anchors.leftMargin: 12
         anchors.rightMargin: 12
-        spacing: 14
+        spacing: 12
 
         Text {
           text: brg.map.mapName
@@ -102,6 +102,52 @@ Page {
         }
 
         Item { Layout.fillWidth: true }
+
+        // ── Contrast (wMapPalOffset) ─────────────────────────────────────────
+        //
+        // Not a brightness slider. The game SUBTRACTS this byte from a pointer into its
+        // fade-palette table, so 0/3/6/9 land on real entries (the four levels) and
+        // everything else reads across the seam between two of them -- the six glitch
+        // palettes. The map is drawn through whichever byte that produces, so a glitch
+        // palette renders as the genuine article rather than an imitation of one.
+        //
+        // Hand-rolled rather than a SpinBox on purpose: Material controls fight small
+        // heights (see ui-patterns.md), and a SpinBox here shoved the zoom controls clean
+        // off the footer.
+        Text {
+          text: qsTr("Contrast")
+          font.pixelSize: 11
+          color: brg.settings.textColorDark
+        }
+
+        ContrastStep {
+          text: "−"
+          enabled: brg.map.contrast > 0
+          onClicked: brg.map.contrast = brg.map.contrast - 1
+        }
+
+        Text {
+          text: brg.map.contrast
+          font.pixelSize: 12
+          font.bold: true
+          color: brg.map.contrastIsGlitch ? brg.settings.errorColor : brg.settings.textColorDark
+          horizontalAlignment: Text.AlignHCenter
+          Layout.minimumWidth: 14
+        }
+
+        ContrastStep {
+          text: "+"
+          enabled: brg.map.contrast < brg.map.contrastMax
+          onClicked: brg.map.contrast = brg.map.contrast + 1
+        }
+
+        Text {
+          text: brg.map.contrastName
+          font.pixelSize: 11
+          color: brg.map.contrastIsGlitch ? brg.settings.errorColor : brg.settings.textColorMid
+          elide: Text.ElideRight
+          Layout.maximumWidth: 210
+        }
       }
     }
 
@@ -117,8 +163,12 @@ Page {
       contentHeight: Math.max(height, mapScreen.scaledHeight)
       boundsBehavior: Flickable.StopAtBounds
 
-      ScrollBar.vertical: ScrollBar {}
-      ScrollBar.horizontal: ScrollBar {}
+      // Both axes, and a drag anywhere pans -- the map is the thing, not the scrollbars.
+      flickableDirection: Flickable.HorizontalAndVerticalFlick
+      interactive: true
+
+      ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+      ScrollBar.horizontal: ScrollBar { policy: ScrollBar.AsNeeded }
 
       // Genuinely nothing in the game to draw, and nothing this id is a copy of either.
       Text {
@@ -225,12 +275,79 @@ Page {
         }
       }
 
-      // Ctrl+wheel zooms; a plain wheel still scrolls, as it should.
+      // ── Navigation ────────────────────────────────────────────────────────
+      //
+      // The map only gets bigger from here -- Route 17 is 78 blocks tall, and once whole
+      // connected regions are drawn together it is a lot of surface area at a lot of
+      // detail. So panning and zooming have to be properly good, not a scrollbar and a
+      // pair of buttons.
+      //
+      // Zoom ANCHORS on the thing you are pointing at (the cursor, or the middle of the
+      // pinch) rather than the top-left corner. Zooming into a corner you aren't looking
+      // at is the single most annoying thing a map viewer can do.
+
+      // Keep the point under `centre` (in viewport coords) fixed across a zoom change.
+      function zoomAround(newZoom, centre) {
+        newZoom = Math.max(mapScreen.minZoom, Math.min(mapScreen.maxZoom, Math.round(newZoom)));
+        if (newZoom === mapScreen.zoom) {
+          mapScreen.userZoom = newZoom;
+          return;
+        }
+
+        // Where that point sits on the MAP right now, in unscaled buffer pixels.
+        const mapX = (view.contentX + centre.x - canvas.x) / mapScreen.zoom;
+        const mapY = (view.contentY + centre.y - canvas.y) / mapScreen.zoom;
+
+        mapScreen.userZoom = newZoom;
+
+        // canvas.x/y and contentWidth/Height are bindings; let them settle before we put
+        // that same map point back under the cursor.
+        Qt.callLater(function() {
+          view.contentX = Math.max(0, Math.min(view.contentWidth - view.width,
+                                               canvas.x + mapX * mapScreen.zoom - centre.x));
+          view.contentY = Math.max(0, Math.min(view.contentHeight - view.height,
+                                               canvas.y + mapY * mapScreen.zoom - centre.y));
+        });
+      }
+
+      // Pinch: touchscreen, and a touchpad's two-finger pinch. Integer zoom only (pixel
+      // art), so the scale is snapped -- but it tracks the gesture live.
+      PinchHandler {
+        target: null
+        onScaleChanged: (delta) => {
+          if (Math.abs(activeScale - 1) < 0.15)
+            return;
+
+          view.zoomAround(mapScreen.zoom * activeScale, centroid.position);
+        }
+      }
+
+      // Ctrl+wheel (and a touchpad's pinch, which most platforms report as Ctrl+wheel).
       WheelHandler {
         acceptedModifiers: Qt.ControlModifier
         onWheel: (event) => {
-          mapScreen.userZoom = Math.max(mapScreen.minZoom,
-                                  Math.min(mapScreen.maxZoom, mapScreen.zoom + (event.angleDelta.y > 0 ? 1 : -1)))
+          view.zoomAround(mapScreen.zoom + (event.angleDelta.y > 0 ? 1 : -1), point.position);
+        }
+      }
+
+      // A plain wheel scrolls -- vertically, and HORIZONTALLY when the wheel/trackpad says
+      // so (Shift+wheel, or a real two-finger sideways swipe). Flickable does the vertical
+      // axis on its own; the horizontal one it ignores unless we hand it over.
+      WheelHandler {
+        acceptedModifiers: Qt.NoModifier | Qt.ShiftModifier
+        onWheel: (event) => {
+          const dx = (event.angleDelta.x !== 0)
+                   ? event.angleDelta.x
+                   : ((event.modifiers & Qt.ShiftModifier) ? event.angleDelta.y : 0);
+
+          if (dx !== 0) {
+            view.contentX = Math.max(0, Math.min(view.contentWidth - view.width,
+                                                 view.contentX - dx));
+            event.accepted = true;
+            return;
+          }
+
+          event.accepted = false;  // let the Flickable scroll vertically
         }
       }
     }

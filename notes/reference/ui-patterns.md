@@ -1212,3 +1212,21 @@ Conventions established here:
   every line silently collapses onto x = 0, with **no warning and a green `tst_qml_screens`**. Inside a
   delegate, reach values through a plain sibling id (`canvas.gridStep`). See
   [`qt-patterns.md`](qt-patterns.md) -> "`id: top` + a Repeater delegate".
+
+### Map screen: contrast + navigation (2026-07-12)
+
+- **Contrast lives in the INFO BAR, not the footer, and is hand-rolled.** A Material `SpinBox` in the
+  footer shoved the zoom controls clean off the screen -- Qt 6.5+ gives its controls a large implicit
+  height and width (the recurring "Material controls fight small heights" theme). `ContrastStep.qml` is a
+  22x22 flat button; the value and its meaning sit between two of them. **The mandatory screenshot review
+  is what caught this** -- the SpinBox looked fine in the code and was visibly broken in the render.
+- **The contrast VALUE and its NAME both turn `errorColor` on a glitch palette.** Six of the ten values
+  are palettes that exist nowhere in the game (see [`palettes.md`](palettes.md)); the screen says so
+  rather than presenting them as ordinary settings.
+- **Zoom anchors on what you are pointing at** -- the cursor, or the centroid of the pinch -- never the
+  top-left corner. `PinchHandler` (touch + touchpad) and Ctrl+wheel both route through one
+  `zoomAround(newZoom, centre)`, which keeps the map point under the cursor fixed across the change.
+  Zoom stays integer (pixel art), so the gesture snaps.
+- **Both scroll axes.** `flickableDirection: HorizontalAndVerticalFlick`, a drag anywhere pans, and a
+  horizontal wheel/Shift+wheel scrolls X (a plain `Flickable` ignores the X wheel axis unless you hand it
+  over). This matters more the bigger the map gets -- Route 17 is 78 blocks tall.

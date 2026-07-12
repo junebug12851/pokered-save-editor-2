@@ -408,6 +408,7 @@
         <file>ui/app/fragments/general/RandomButton.qml</file>
         <file>ui/app/fragments/general/SegBtn.qml</file>
         <file>ui/app/fragments/general/SegToggle.qml</file>
+        <file>ui/app/fragments/general/ContrastStep.qml</file>
         <file>ui/app/fragments/general/FlatToggle.qml</file>
         <file>ui/app/fragments/general/SimulatedTilesetCombo.qml</file>
         <file>ui/app/fragments/controls/name/TilesetMenu.qml</file>

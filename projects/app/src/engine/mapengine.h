@@ -158,8 +158,34 @@ public:
   /// Build @p mapInd's overworld buffer -- the map placed inside its 3-block border ring.
   static Buffer buildOverworldMap(int mapInd);
 
-  /// Render @p buffer with tileset @p tilesetInd at animation @p frame. 32 px per block.
-  static QImage render(const Buffer& buffer, int tilesetInd, int frame = 0);
+  // ── Palettes, and the "contrast" byte (home/fade.asm) ────────────────────────
+  //
+  // What the save calls CONTRAST (`wMapPalOffset`, 0x2609) is not a brightness dial. The
+  // game does something wonderfully unsafe with it:
+  //
+  //     LoadGBPal:  hl = FadePal4 - wMapPalOffset ; rBGP = [hl+], rOBP0 = [hl+], rOBP1 = [hl+]
+  //
+  // It SUBTRACTS the byte from a pointer INTO a table of eight contiguous 3-byte palettes.
+  // Land on a multiple of 3 and you get a real entry -- 0, 3, 6, 9 give FadePal4, 3, 2, 1:
+  // **the four contrast levels** (0 normal, 6 the dark "needs FLASH" cave palette, 9 black).
+  // Land anywhere else and the read **straddles two entries**, producing a palette that
+  // exists nowhere in the game -- 1, 2, 4, 5, 7, 8: **the six glitch palettes**.
+  //
+  // All ten verified against the real console's palette registers (scripts/emu/verify_palettes.py).
+
+  static constexpr int contrastMax = 9;  ///< The last value still inside the fade table.
+
+  /// `rBGP` for @p contrast -- the palette the MAP is drawn with. -1 if past the table.
+  static int backgroundPalette(int contrast);
+
+  /// Is @p contrast one of the six misaligned reads? (Not a level -- a glitch palette.)
+  static bool isGlitchPalette(int contrast);
+
+  /// What this contrast value is, in words ("Normal", "Dark (needs Flash)", "Glitch palette"...).
+  static QString contrastName(int contrast);
+
+  /// Render @p buffer with tileset @p tilesetInd at animation @p frame, through @p contrast.
+  static QImage render(const Buffer& buffer, int tilesetInd, int frame = 0, int contrast = 0);
 
   /**
    * @brief The 6x5-block scratch area as TILE ids -- the game's `wSurroundingTiles`.

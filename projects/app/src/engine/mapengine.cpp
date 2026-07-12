@@ -327,7 +327,95 @@ QString MapEngine::tilesetId(int tilesetInd, int frame)
   return tileset->name + "/" + tileset->type + "/nofont/" + QString::number(frame);
 }
 
-QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame)
+// ── Palettes ──────────────────────────────────────────────────────────────────
+namespace {
+
+/// `dc a,b,c,d` -- four 2-bit shades packed MSB-first, which IS the Game Boy's palette
+/// register layout (bits 7-6 = colour 3 ... bits 1-0 = colour 0). So `dc 3,2,1,0` == 0xE4,
+/// the identity palette.
+constexpr int dc(int c3, int c2, int c1, int c0)
+{
+  return (c3 << 6) | (c2 << 4) | (c1 << 2) | c0;
+}
+
+/// FadePal1..FadePal8 (home/fade.asm), laid out contiguously exactly as they are in ROM --
+/// three bytes each: rBGP, rOBP0, rOBP1. The whole point is that they are CONTIGUOUS: the
+/// glitch palettes are what you get by reading across the seams.
+constexpr int fadeTable[] = {
+  dc(3,3,3,3), dc(3,3,3,3), dc(3,3,3,3),   // FadePal1  @ 0   -- black
+  dc(3,3,3,2), dc(3,3,3,2), dc(3,3,2,0),   // FadePal2  @ 3   -- very dark (needs Flash)
+  dc(3,3,2,1), dc(3,2,1,0), dc(3,2,1,0),   // FadePal3  @ 6   -- dark
+  dc(3,2,1,0), dc(3,1,0,0), dc(3,2,0,0),   // FadePal4  @ 9   -- NORMAL, and the base
+  dc(3,2,1,0), dc(3,1,0,0), dc(3,2,0,0),   // FadePal5  @ 12
+  dc(2,1,0,0), dc(2,0,0,0), dc(2,1,0,0),   // FadePal6  @ 15
+  dc(1,0,0,0), dc(1,0,0,0), dc(1,0,0,0),   // FadePal7  @ 18
+  dc(0,0,0,0), dc(0,0,0,0), dc(0,0,0,0),   // FadePal8  @ 21  -- white
+};
+
+constexpr int fadePal4 = 9; ///< What LoadGBPal subtracts the contrast from.
+
+/// The four shades the tileset art is drawn in -- and, under the identity palette the art
+/// was captured with, a pixel's shade IS its colour index. That is what makes the remap
+/// exact rather than approximate.
+constexpr int shadeGrey[4] = { 255, 170, 85, 0 };
+
+int shadeOf(int grey)
+{
+  for (int i = 0; i < 4; i++)
+    if (grey == shadeGrey[i])
+      return i;
+
+  // Not one of the four -- shouldn't happen with the game's art, but never guess wildly:
+  // fall back to the nearest shade.
+  int best = 0;
+  for (int i = 1; i < 4; i++)
+    if (qAbs(grey - shadeGrey[i]) < qAbs(grey - shadeGrey[best]))
+      best = i;
+
+  return best;
+}
+
+} // namespace
+
+int MapEngine::backgroundPalette(int contrast)
+{
+  // hl = FadePal4 - contrast, then read three bytes. rBGP is the first of them.
+  const int at = fadePal4 - contrast;
+
+  if (contrast < 0 || at < 0)
+    return -1;  // past the table -- the game would read whatever ROM sits before it, and
+                // we don't ship the ROM, so we say "unknown" rather than invent a palette
+
+  return fadeTable[at];
+}
+
+bool MapEngine::isGlitchPalette(int contrast)
+{
+  // A level is an ALIGNED read. Anything else straddles two entries in the fade table and
+  // is a palette that exists nowhere in the game.
+  return contrast >= 0 && contrast <= contrastMax && (contrast % 3) != 0;
+}
+
+QString MapEngine::contrastName(int contrast)
+{
+  if (contrast < 0 || contrast > contrastMax)
+    return QObject::tr("Past the fade table — the game reads whatever ROM follows");
+
+  if (isGlitchPalette(contrast))
+    return QObject::tr("Glitch palette — a read straddling two entries");
+
+  switch (contrast) {
+    case 0: return QObject::tr("Normal");
+    case 3: return QObject::tr("Dark");
+    case 6: return QObject::tr("Very dark — the “needs FLASH” cave palette");
+    case 9: return QObject::tr("Black");
+    default: break;
+  }
+
+  return QString();
+}
+
+QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame, int contrast)
 {
   if (!buffer.valid)
     return QImage();
@@ -375,6 +463,31 @@ QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame)
   }
 
   p.end();
+
+  // Now push the whole thing through the Game Boy's background palette, exactly as the
+  // hardware does: every pixel's shade is its colour index (the art is drawn under the
+  // identity palette), and rBGP says what shade each index actually comes out as.
+  //
+  // This is what makes contrast real rather than a filter -- and it is why the glitch
+  // palettes render *correctly as glitches*: we aren't simulating "broken", we are applying
+  // the byte the console would genuinely be holding.
+  const int bgp = backgroundPalette(contrast);
+
+  if (bgp >= 0 && bgp != dc(3, 2, 1, 0)) {  // 0xE4 is identity -- nothing to do
+    QRgb lut[4];
+    for (int i = 0; i < 4; i++) {
+      const int shade = (bgp >> (2 * i)) & 3;
+      const int grey = shadeGrey[shade];
+      lut[i] = qRgb(grey, grey, grey);
+    }
+
+    for (int y = 0; y < img.height(); y++) {
+      QRgb* row = reinterpret_cast<QRgb*>(img.scanLine(y));
+      for (int x = 0; x < img.width(); x++)
+        row[x] = lut[shadeOf(qRed(row[x]))] | 0xFF000000;
+    }
+  }
+
   return img;
 }
 

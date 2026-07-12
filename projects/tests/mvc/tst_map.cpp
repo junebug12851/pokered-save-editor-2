@@ -52,6 +52,7 @@
 #include <pse-savefile/expanded/area/area.h>
 #include <pse-savefile/expanded/area/areamap.h>
 #include <pse-savefile/expanded/area/areaplayer.h>
+#include <pse-savefile/expanded/area/areageneral.h>
 #include <pse-savefile/expanded/area/areatileset.h>
 
 #include <engine/mapengine.h>
@@ -130,6 +131,8 @@ private slots:
   void connections_bleedTheNeighbouringMapsIntoTheRing();
   void connections_offsetIsRecoveredFromTheStoredPair();
   void buffer_isTheMapRingedByItsBorderBlock();
+  void palettes_matchTheConsoleForEveryContrastValue();
+  void palettes_actuallyRepaintTheMap();
   void buffer_glitchMapHasNone();
   void render_isOneScreenPixelPerGameBoyPixel();
   void provider_servesTheMapAndFallsBackCleanly();
@@ -515,6 +518,74 @@ void TestMap::connections_offsetIsRecoveredFromTheStoredPair()
   }
 }
 
+void TestMap::palettes_matchTheConsoleForEveryContrastValue()
+{
+  // These ten rBGP bytes are not from the disassembly -- they are what the REAL Game Boy's
+  // palette register actually held, for each contrast value, read out of the console
+  // (scripts/emu/verify_palettes.py). The four aligned reads are the contrast levels; the
+  // six misaligned ones are the glitch palettes, and they are just as real.
+  struct Case { int contrast; int bgp; bool glitch; };
+
+  const QVector<Case> cases = {
+    { 0, 0xE4, false },  // FadePal4 -- normal (the identity palette)
+    { 1, 0xE4, true  },  // straddles 4/5: the BG survives, the SPRITES are wrecked
+    { 2, 0xE4, true  },
+    { 3, 0xF9, false },  // FadePal3 -- dark
+    { 4, 0xF8, true  },
+    { 5, 0xFE, true  },
+    { 6, 0xFE, false },  // FadePal2 -- the "needs FLASH" cave palette
+    { 7, 0xFF, true  },
+    { 8, 0xFF, true  },
+    { 9, 0xFF, false },  // FadePal1 -- black
+  };
+
+  for (const auto& c : cases) {
+    QCOMPARE(MapEngine::backgroundPalette(c.contrast), c.bgp);
+    QCOMPARE(MapEngine::isGlitchPalette(c.contrast), c.glitch);
+    QVERIFY(!MapEngine::contrastName(c.contrast).isEmpty());
+  }
+
+  // Exactly four levels and exactly six glitch palettes -- which is what Twilight said,
+  // before any of this was looked at.
+  int levels = 0, glitches = 0;
+  for (int i = 0; i <= MapEngine::contrastMax; i++)
+    MapEngine::isGlitchPalette(i) ? glitches++ : levels++;
+
+  QCOMPARE(levels, 4);
+  QCOMPARE(glitches, 6);
+
+  // Past the table the game would read whatever ROM precedes it. We don't ship the ROM, so
+  // we say "unknown" rather than invent a palette.
+  QCOMPARE(MapEngine::backgroundPalette(MapEngine::contrastMax + 1), -1);
+  QCOMPARE(MapEngine::backgroundPalette(-1), -1);
+}
+
+void TestMap::palettes_actuallyRepaintTheMap()
+{
+  const auto buffer = MapEngine::buildOverworldMap(0); // Pallet Town
+  QVERIFY(buffer.valid);
+
+  const int tileset = MapEngine::tilesetOf(0);
+
+  const QImage normal = MapEngine::render(buffer, tileset, 0, 0);
+  const QImage dark   = MapEngine::render(buffer, tileset, 0, 3);
+  const QImage glitch = MapEngine::render(buffer, tileset, 0, 4);
+  const QImage black  = MapEngine::render(buffer, tileset, 0, 9);
+
+  QVERIFY(!normal.isNull());
+  QCOMPARE(dark.size(), normal.size());
+
+  // A different palette must actually produce a different picture...
+  QVERIFY2(dark != normal, "contrast 3 rendered identically to normal");
+  QVERIFY2(glitch != normal, "the glitch palette rendered identically to normal");
+  QVERIFY2(glitch != dark, "the glitch palette rendered identically to contrast 3");
+
+  // ...and FadePal1 (0xFF: every colour -> shade 3) really is a black screen.
+  for (int y = 0; y < black.height(); y += 8)
+    for (int x = 0; x < black.width(); x += 8)
+      QCOMPARE(black.pixelColor(x, y), QColor(Qt::black));
+}
+
 void TestMap::buffer_glitchMapHasNone()
 {
   // An id past the end of the header table has nothing in ROM and is a copy of nothing.
@@ -578,7 +649,8 @@ void TestMap::model_publishesTheLoadedMap()
 
   MapModel model(sf.dataExpanded->area->map,
                  sf.dataExpanded->area->player,
-                 sf.dataExpanded->area->tileset);
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
 
   QVERIFY(model.valid());
   QCOMPARE(model.mapInd(), 0);                 // Pallet Town

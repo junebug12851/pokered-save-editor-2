@@ -34,16 +34,17 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
 {
   const auto parts = id.split("/", Qt::SkipEmptyParts);
 
-  // <mapInd>/<tilesetInd>/<frame>
+  // <mapInd>/<tilesetInd>/<frame>/<contrast>
   if (parts.size() < 3)
     return blankImage(size);
 
   const int mapInd     = parts.at(0).toInt();
   const int tilesetInd = parts.at(1).toInt();
   const int frame      = parts.at(2).toInt();
+  const int contrast   = (parts.size() > 3) ? parts.at(3).toInt() : 0;
 
   const auto buffer = MapEngine::buildOverworldMap(mapInd);
-  const QImage img = MapEngine::render(buffer, tilesetInd, frame);
+  const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast);
 
   // No block data (a glitch map id) -- there is nothing in ROM to draw.
   if (img.isNull())

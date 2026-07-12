@@ -23,7 +23,7 @@
 /**
  * @brief QML image provider for a whole rendered map ("image://map/...").
  *
- * QML asks for `image://map/<mapInd>/<tilesetInd>/<frame>` and gets back the map's
+ * QML asks for `image://map/<mapInd>/<tilesetInd>/<frame>/<contrast>` and gets back the map's
  * entire overworld buffer -- the map plus its 3-block border ring -- drawn by
  * MapEngine at one screen pixel per Game Boy pixel (32 px per block). Scale it in
  * QML with `smooth: false` so it stays pixel art.
