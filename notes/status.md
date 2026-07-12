@@ -49,6 +49,25 @@ pipeline is right, with no sprites or palettes in the way.
 It also immediately caught the one thing that *was* wrong — **the border ring** — which is now **fixed and
 verified**: see below.
 
+### 🎵 Music — researched and planned, not started (2026-07-12)
+
+The next organ of the map emulator is **sound**, and it all lands on the **Map screen**: the two save flags
+(**No Audio Fadeout**, **Prevent Music Change**), the map's **music track** picker, and — the real ask —
+**actually playing the music**, accurately, with a ▶ per track and **hover-to-preview**.
+
+Decided with Twilight: the music data is **imported from `pret/pokered`** (the same precedent as the map
+blocks — it ships, no ROM needed), and playback is a **full port** — the real Gen 1 sequencer driving a real
+**DMG APU** model in C++ (`pse-audio`), not an impression. Nothing is built yet.
+
+The research is done and written down:
+[`reference/gameboy-apu.md`](reference/gameboy-apu.md) (the chip),
+[`reference/gen1-sound-engine.md`](reference/gen1-sound-engine.md) (the game's sequencer + the two flags,
+**verified against the disassembly**), and the six-phase build in [`plans/music.md`](plans/music.md).
+
+The keystone, when it's built: the engine's **entire state is 243 bytes at `$C000`**, so PyBoy can dump it
+from the real cartridge every frame and our port must match **byte-for-byte, frame by frame**. Same doctrine
+as the map — the console is the judge.
+
 ### ✅ Connection strips — done, and the hardest part of the map engine (2026-07-12)
 
 The border ring is not a wall of trees: the game bleeds the **connected maps' edges** into it, so Pallet
@@ -180,6 +199,7 @@ verification pass; remaining per-control test depth. See [`plans/next-steps.md`]
 | Issue | Where | Status / notes |
 |-------|-------|----------------|
 | ~~Glitch / half-baked maps don't render~~ **RESOLVED 2026-07-12 — they all render now** | `MapEngine::sourceMap()` | They were never a data gap. `maps.json` **already models them**: every one of the 25 (22 unsized "Unused Map XX" + the 3 sized `*_Copy`) carries an `incomplete` field naming the map it is an unfinished duplicate of — and it agrees **exactly** with the ROM's header-pointer table (11 → Saffron City, 105–117 → Lance's Room, 204–206 → Rocket Hideout Elevator, 231 → Route 16 Gate 1F, 237–244 → Silph Co 2F, 69 → Trashed House, 75 → Path Entrance Route 6, 173 → Cinnabar Mart). The renderer now follows that link and draws the map they copy — which is precisely what a Game Boy loading that id puts on screen. **No JSON was changed and nothing was invented.** The screen says plainly that it's showing an unfinished copy, and of what. **All 248 ids render** (`tst_map::everyMapIdRenders`); only "Last Map" (255) is genuinely empty. |
+| 🐞 **`AreaAudio::setTo()` clobbers the track id with the bank** | `savefile/…/expanded/area/areaaudio.cpp` | `musicBank = musicID = musicEntry->bank;` — setting a map's default music writes the **bank** into `musicID`. `load()`/`save()`/`randomize()` are fine, so no save is corrupted by merely opening one; the bug only fires on "set music to this map's default". Found 2026-07-12 during the music research. Fix + test = Phase 1 of [`plans/music.md`](plans/music.md). |
 | **Latent landmine: map DB `getToMap()`/`getToSprite()` never resolved** | `db.cpp` `deepLinkAll()`; consumers in `WarpData`/`MapConnData`/`SpriteData`/`AreaMap` | Still dormant, and the new map screen **deliberately does not touch those accessors** (it resolves the tileset by name and looks maps up by id, so it needs no deep link). Not a crash today. **Still must be defused before map *editing* / re-enabling map randomize** — those will dereference the unresolved `to*` links → add `MapsDB::inst()->deepLink()` to `DB::deepLinkAll()` first. Confirmed safe once called, via `tst_sprite_data` (all 918 sprites resolve). |
 | Randomizer: not-yet-built screens (Maps, Hall of Fame, Options) excluded | `savefileexpanded.cpp`, `worldgeneral.cpp` | **Working within scope as of 2026-06-07.** `randomizeExpansion()` runs end-to-end + is test-covered. Maps/HoF/Options calls are commented out (matching the disabled home tiles), each with a re-enable note. Re-enabling map randomize is gated mainly on calling `MapsDB::inst()->deepLink()` at boot (the type strings + per-call guards turned out to be the same deepLink landmine, not separate defects). |
 | Name editors — ongoing review | `name-full/*`, `general/NameDisplay.qml` | Ongoing live tweaks. `NameEdit`/`NameDisplay` are **shared** by player/rival/nickname + the keyboard footer preview — verify all of them on each rebuild. |

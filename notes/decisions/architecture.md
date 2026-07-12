@@ -411,3 +411,35 @@ and route all randomization through it (`e1543c3`).
 
 **Why**: a single seam for randomness keeps call sites clean and makes the randomization
 feature's behavior consistent and tunable in one place.
+
+## `pse-audio` — a separate library, and a literal port (2026-07-12)
+
+**Decision**: music playback goes in a **new library, `pse-audio`**, beside `common`/`db`/`savefile`/`app`.
+It contains exactly two things — `Gen1SoundEngine` (a *literal transliteration* of `pret/pokered`'s
+`audio/engine_1.asm`, whose whole state is the game's own 243-byte `$C000` WRAM block) and `GbApu` (a model
+of the DMG sound chip). The engine emits **APU register writes** and nothing else; the APU knows nothing
+about notes, tracks, or Pokemon; the Qt/QML player (`brg.music`, `QAudioSink`) sits above both and owns
+timing. The **music data is imported from `pret/pokered`** into our own data files -- the same precedent as
+the map `.blk`/`.bst` blocks -- so it ships and needs no ROM.
+
+**Why**:
+
+- **The seam is the point.** Every hard question in Game Boy audio is a question about *the chip*, and every
+  hard question about the *music* is a question about *the sequencer*. Fusing them ("a Pokemon music player")
+  is how chiptune ports end up sounding almost right and being unfixably wrong.
+- **It makes the work verifiable.** Because the engine's state is byte-identical to the console's, PyBoy can
+  dump `$C000-$C0FF` from the real cartridge **every frame** and demand our port match **byte-for-byte,
+  frame by frame** -- the audio equivalent of `viewPointer_matchesWhatTheGameStored`. A "cleaner"
+  reimplementation would have thrown that oracle away.
+- **Transliterate, don't interpret.** The disassembly is full of load-bearing oddities (the pitch table's
+  signed negatives, length-enable cleared by `and $c7`, the pitch-slide borrow bug). They are not mistakes to
+  fix; they are the sound. Copying the arithmetic is both more correct and less work than understanding it.
+- **It pays forward.** SFX, the drum kit, the Poke Flute, the low-health alarm and all 151 cries are the same
+  machine with different data.
+
+**Rejected**: pre-rendered audio files (tens of MB, awkward loops, forecloses SFX/cries, and not actually
+faithful); reading music out of the user's own ROM at runtime (nothing to ship, but no music for anyone
+without a cartridge dump); three engines because the disassembly has three copies (`engine_1.asm` and
+`engine_3.asm` are byte-for-byte identical -- one engine with a bank-8 flavour flag covers all of it).
+
+Full plan: `plans/music.md`. The domain: `reference/gen1-sound-engine.md`, `reference/gameboy-apu.md`.

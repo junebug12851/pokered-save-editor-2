@@ -63,6 +63,16 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
    8. **Then, and only then, editing** — and that is what finally forces the `MapsDB::deepLink()`
       landmine to be defused (see `status.md` → Open issues).
 
+   9. **MUSIC — the other big organ of the Map screen** (researched + planned 2026-07-12, **not started**).
+      The two save flags (No Audio Fadeout, Prevent Music Change), the map's music-track picker, and then
+      **actually playing the music**: a full C++ port of Gen 1's sequencer driving a real DMG APU model, with
+      a ▶ per track and hover-to-preview. Six phases, verifiable frame-by-frame against the console.
+      **Read the plan before touching it:** [`music.md`](music.md), plus
+      [`../reference/gen1-sound-engine.md`](../reference/gen1-sound-engine.md) and
+      [`../reference/gameboy-apu.md`](../reference/gameboy-apu.md).
+      🐞 Its Phase 1 also fixes a real bug found during the research: `AreaAudio::setTo()` writes the bank
+      into `musicID`.
+
    Also now possible and worth doing: **save-file acceptance testing** — hand the game a save the *editor
    wrote* and prove the console loads it and agrees with every field. The editor's byte-fidelity promise,
    checked by the machine that actually has to honour it.
