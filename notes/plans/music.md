@@ -121,10 +121,9 @@ Each phase is independently shippable and independently *green*.
 
 ### Phase 5 — playback + the UI
 
-- `MusicPlayer` on `brg.music`: `play(id, bank)`, `stop()`, `volume`, `isPlaying`, `currentTrack`.
-  `QAudioSink`, audio thread, ring buffer, no UI-thread jank.
-- Map screen: ▶ per track; **hover-preview** (playing + hover a track ⇒ switch to it, with a small debounce
-  so a fast sweep doesn't machine-gun the engine); stop; volume.
+- `MusicPlayer` on `brg.music`: `play(id, bank)`, `preview(id, bank)`, `stop()`, `volume`, `isPlaying`,
+  `previewing`, `currentTrack`. `QAudioSink`, audio thread, ring buffer, no UI-thread jank.
+- The Map screen's **Music panel** — full spec in §6.
 - Audio **never starts by itself** and never plays on app launch. Nothing steals her attention — the same
   rule as windows. (See `principles.md` → "What the App Should Feel Like".)
 - Screenshot review + in-app review with Twilight.
@@ -145,18 +144,76 @@ until asked.**
 | Scope creep into SFX/cries | Phase 6 is explicitly fenced off. |
 | APU edge cases (zombie envelope, wave-RAM quirks) | Not implemented until the parity/PCM evidence says they're needed. Record the decision here if they are. |
 
-## 6. Open questions for Twilight
+## 6. The UI — decided (2026-07-12, with Twilight)
 
-- **Where exactly on the Map screen?** The audio controls need a home in that layout (a panel? a tab
-  alongside the map view?). This is a design decision → hers, not mine.
-- **Track list ordering** — game order (the id order in `music.json`) or grouped (towns / routes / battle /
-  dungeons)? Hover-preview makes grouping much nicer to skim.
-- **Should the Map screen preview the map's *current* music automatically** when you press play, or always
-  start from the picker's selection?
+Twilight: *"figure out a place — I'm going to redo the UI/UX later anyway. Hover preview: nice. The map's
+current music should be selected by default."*
+
+So placement is **mine and provisional**, which sets one hard constraint: **the whole thing must be one
+self-contained file** (`ui/app/screens/non-modal/map/MusicPanel.qml`, driven by `brg.music` + `brg.map`) so a
+future redesign moves *one* component, not a dozen bindings scattered through `Map.qml`.
+
+### 6.1 Where it goes
+
+The Map screen today is: a **header info strip** (map name / tileset / size / player / contrast), the **map**
+filling everything, and a **footer** (legend + zoom).
+
+The music lives in a **collapsible right-hand panel**, because a 46-track list with hover-preview needs
+*vertical* space and the map is the star and must not shrink permanently.
+
+- A **♪ Music** toggle button joins the header strip (next to Contrast).
+- Toggling slides the panel in on the right (~260 px). The map keeps its centre; zoom is untouched.
+- The panel is **closed by default**, and closing it **stops playback** (no invisible audio).
+
+### 6.2 What's in it, top to bottom
+
+1. **Now playing** — the track name, big; and, when auditioning, a quiet second line saying *"previewing —
+   the save still holds **X**"*. This line is the whole safety of hover-preview: it is always obvious when
+   what you're hearing is not what's saved.
+2. **Transport** — ▶ / ■ and a volume slider. Playing starts on the **selected** track (see 6.4).
+3. **The two flags** — `No Audio Fadeout` and `Prevent Music Change`, as checkboxes, each with a tooltip that
+   says what it *actually does* (per [`../reference/gen1-sound-engine.md`](../reference/gen1-sound-engine.md)
+   §9), not what its name implies:
+   - *No Audio Fadeout* → "The game normally forces the volume back to full every frame. With this set, it
+     leaves the volume alone."
+   - *Prevent Music Change* → "Entering a map won't start that map's music — whatever is playing keeps
+     playing."
+4. **The track list** — all 46, scrollable, **grouped** (Towns & Cities · Routes · Places · Battle ·
+   Encounters · Special), **game order within each group** (the `music.json` id order). Grouping is what
+   makes a hover-sweep worth doing; a flat 46-row list is just a wall.
+   Each row: the track name, a dim `bank·id`, a ▶ that appears on hover, and a **check on the selected row**.
+5. **The odd one out** — if the save holds an id/bank that isn't in `music.json` (a glitch value, or `0`),
+   it gets its **own pinned row at the top**: *"Unknown — id $XX, bank $YY"*, selected. We never silently
+   round a strange save to a nice-looking one. (It is un-previewable; the ▶ is disabled with a tooltip
+   saying why.)
+
+### 6.3 Hover-preview — the exact behaviour
+
+The rule: **hover auditions, click commits.** The save is never touched by moving a mouse.
+
+| | |
+|---|---|
+| **Armed only while playing** | If nothing is playing, hovering does **nothing**. Audio never begins because a cursor drifted somewhere. ▶ is always a deliberate act. |
+| **Settle, don't sweep** | A row must be hovered for **~120 ms** before it plays. Dragging the cursor down the list at speed doesn't machine-gun the engine — only the row you *settle* on sounds. |
+| **Instant, because it's cheap** | Switching = re-running the game's own `PlaySound` init and re-pointing the sequencer. No file to load, no decode. It lands on the **next engine frame (~17 ms)** — a clean cut, exactly like the game switching tracks, not a crossfade. |
+| **Always from the top** | A previewed track starts at its beginning, every time. |
+| **Leaving the list snaps back to the truth** | Move off the list and, after a **~400 ms** grace (so crossing a gap between rows doesn't trigger it), playback returns to the **selected** track — the one actually in the save. You always end up back on what's real, never on silence. |
+| **Click = select** | Clicking a row writes `musicID` + `musicBank` to the save and makes it the selected row; playback continues on it, and the "previewing" line disappears. |
+| **▶ on a row = pin the audition** | Same as hovering it, but it *stays* — the mouse leaving the list won't snap away from a pinned track. Hovering another row un-pins. |
+| **Keyboard parity** | ↑/↓ move the highlight and audition it under the same 120 ms rule; **Enter** selects; **Esc** un-pins/snaps back. Hover-only UI is not acceptable. |
+| **It stops when it should** | Leaving the Map screen, closing the panel, closing the file, or loading another save → **stop**. Nothing keeps humming behind another screen. |
+
+### 6.4 Default selection
+
+**The map's current music is the selected track** the moment the panel opens — read straight from
+`AreaAudio` (`0x2607`/`0x2608`), scrolled into view, checked. ▶ therefore plays *this map's music* with no
+clicks. (This is also why `AreaAudio::setTo()`'s id/bank bug has to die in Phase 1: it is the code path that
+answers "what is this map's music?")
 
 ## 7. Status
 
 - ✅ Research complete; both reference docs written (2026-07-12).
 - ✅ Save bytes/bits verified against the disassembly; the `setTo()` bug found.
+- ✅ UI decided and specced (§6) — placement provisional, deliberately one file.
 - ⬜ Phase 1 — not started.
 - ⬜ Phases 2–6 — not started.
