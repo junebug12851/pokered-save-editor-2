@@ -45,6 +45,8 @@
 #include "../mvc/natureselectmodel.h"
 #include "../mvc/moveselectmodel.h"
 #include "../mvc/mapmodel.h"
+#include "../engine/musicplayer.h"
+#include <pse-db/music.h>
 
 #include <pse-db/entries/examplesplayer.h>
 #include <pse-db/entries/examplespokemon.h>
@@ -172,6 +174,8 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<NatureSelectModel>("App.NatureSelectModel", 1, 0, "NatureSelectModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<MoveSelectModel>("App.MoveSelectModel", 1, 0, "MoveSelectModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<MapModel>("App.MapModel", 1, 0, "MapModel", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<MusicPlayer>("App.MusicPlayer", 1, 0, "MusicPlayer", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<MusicDB>("App.MusicDB", 1, 0, "MusicDB", "Can't instantiate in QML");
 
   qmlRegisterUncreatableType<ExamplesPlayer>("App.ExamplesPlayer", 1, 0, "ExamplesPlayer", "Can't instantiate in QML");
   qmlRegisterUncreatableType<ExamplesPokemon>("App.ExamplesPokemon", 1, 0, "ExamplesPokemon", "Can't instantiate in QML");

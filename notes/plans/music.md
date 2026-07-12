@@ -84,17 +84,18 @@ dependency** and knows nothing about save files — it is a Game Boy that only d
 
 Each phase is independently shippable and independently *green*.
 
-### Phase 1 — the save half (small, immediate value, no sound)
+### Phase 1 — the save half ✅ DONE (2026-07-12, folded into the panel)
 
-- Expose **No Audio Fadeout** + **Prevent Music Change** on the **Map screen**.
-- Expose the **music track picker** (through `MusicDB`, showing real names, not `02_BA`).
-- **The bank guard** (see Phase 7): only 2 / 8 / 31 are offerable; a save holding any other bank is shown
-  as-is, never rewritten, and warned about — it hangs the real game.
-- 🐞 **Fix `AreaAudio::setTo()`** — it currently does `musicBank = musicID = musicEntry->bank;`, clobbering
-  the id with the bank. Pin it with a test.
-- Tests: `tst_area` extensions (round-trip the two bits and the two bytes; `setTo()` correctness);
-  `tst_qml_screens` must stay green.
-- **Mandatory screenshot review** of the Map screen after the layout change.
+- **No Audio Fadeout** + **Prevent Music Change** are on the Map screen, with tooltips that say what they
+  actually do.
+- The **track picker** is the panel's list (real names, not `02_BA`), with the map's own music selected.
+- **The bank guard**: only 2 / 8 / 31 can be chosen; a save holding any other bank is **shown as it is,
+  never rewritten**, with a plain warning that it hangs the real game.
+- 🐞 **`AreaAudio::setTo()` fixed** — it was doing `musicBank = musicID = musicEntry->bank;`, clobbering
+  the track id with the bank. Pinned by `tst_area::audio_setTo_keepsIdAndBankApart`, which checks **every
+  map in the game**.
+  ⚠️ That test also surfaced the known landmine: `MapsDB` is never deep-linked at boot, so `getToMusic()`
+  is null for every map — meaning the bug was **dormant**, not live. The test deep-links explicitly.
 
 ### Phase 2 — the data import ✅ DONE (2026-07-12)
 
@@ -146,14 +147,22 @@ ALONE**, with `wChannelSoundIDs = [0, 187, 0, 0]`, exactly as the cartridge did 
 **every frame**; our engine runs the same track for the same frames; **demand a byte-for-byte match,
 frame by frame, for all 46 tracks.** Until that exists, the engine is "sounds right", not "is right".
 
-### Phase 5 — playback + the UI
+### Phase 5 — playback + the UI ✅ DONE (2026-07-12) — awaiting Twilight's live review
 
-- `MusicPlayer` on `brg.music`: `play(id, bank)`, `preview(id, bank)`, `stop()`, `volume`, `isPlaying`,
-  `previewing`, `currentTrack`. `QAudioSink`, audio thread, ring buffer, no UI-thread jank.
-- The Map screen's **Music panel** — full spec in §6.
-- Audio **never starts by itself** and never plays on app launch. Nothing steals her attention — the same
-  rule as windows. (See `principles.md` → "What the App Should Feel Like".)
-- Screenshot review + in-app review with Twilight.
+`MusicPlayer` (`brg.music`) owns the engine + the chip and hands `QAudioSink` a `QIODevice` that **runs
+the Game Boy on demand** — a frame of the sequencer, a frame of the chip, drain the samples, repeat.
+There is no decoding and no file, so a track change costs one call to the game's own `PlaySound`: that
+is why the preview can be instant.
+
+`MusicPanel.qml` (one file, on the Map screen behind a **♪** toggle — closed by default, and closing it
+stops playback): now-playing, ▶/■ + volume, the two flags with tooltips that say what they *actually*
+do, the bank warning, and the track list with **hover-preview** (120 ms settle, 400 ms snap-back,
+hover-auditions/click-commits, and the "previewing — the save still holds X" line).
+
+Green: `tst_qml_screens` 16/16, `tst_audio` 10/10, full `ctest` **77/77**. Screenshot-reviewed with the
+panel open (the ♪ was crowding the contrast name; the panel was white-on-white — both fixed).
+
+**Still needs Twilight's live pass** — it is *sound* and *hover*, and neither survives a still PNG.
 
 ### Phase 6 — the free stuff (later, optional)
 

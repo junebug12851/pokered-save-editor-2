@@ -49,7 +49,30 @@ pipeline is right, with no sprites or palettes in the way.
 It also immediately caught the one thing that *was* wrong — **the border ring** — which is now **fixed and
 verified**: see below.
 
-### 🎵 Music — researched and planned, not started (2026-07-12)
+### ✅ 🎵 THE EDITOR PLAYS THE GAME'S MUSIC (2026-07-12, 0.22.0-alpha)
+
+There is not an audio file in the repo. **`pse-audio` is a Game Boy sound chip** (`GbApu` — two squares, a
+wave table, a noise LFSR, the 512 Hz frame sequencer) with **Pokémon Red's own sequencer running on top of
+it** (`Gen1SoundEngine` — `engine_1.asm`, transliterated over a 256-byte state laid out exactly like the
+console's `$C000`). The music data is **imported from `pret/pokered` and verified byte-for-byte against the
+cartridge** (38 KB for the whole soundtrack).
+
+On the **Map screen**, behind a **♪** toggle: the map's music (its own is selected on open), the two save
+flags — **No Audio Fadeout** and **Prevent Music Change** — a **▶**, and **hover-preview**: with the music
+playing, run the mouse down the list and it changes as you go. **Hover auditions; click commits** — moving a
+mouse never touches the save, and a line says plainly when what you hear isn't what's stored.
+
+⚠️ The **bank** picker offers only 2 / 8 / 31, because we measured what a real console does with anything
+else: it **stops producing frames**. A save holding a bad bank is **shown, never silently rewritten**.
+
+Green: `tst_audio` 10/10, `tst_qml_screens` 16/16, full `ctest` 77/77. Plan + the whole story:
+[`plans/music.md`](plans/music.md).
+
+⏳ **Owed:** (1) **Twilight's live pass** — it is sound and hover, and a still PNG can review neither.
+(2) **`tst_sound_parity`** — PyBoy dumps the console's `$C000–$C0FF` every frame and demands our engine
+match, frame by frame, for all 46 tracks. Until that exists this is "sounds right", not "is right".
+
+### 🎵 Music — the research (2026-07-12)
 
 The next organ of the map emulator is **sound**, and it all lands on the **Map screen**: the two save flags
 (**No Audio Fadeout**, **Prevent Music Change**), the map's **music track** picker, and — the real ask —
@@ -221,7 +244,7 @@ verification pass; remaining per-control test depth. See [`plans/next-steps.md`]
 | Issue | Where | Status / notes |
 |-------|-------|----------------|
 | ~~Glitch / half-baked maps don't render~~ **RESOLVED 2026-07-12 — they all render now** | `MapEngine::sourceMap()` | They were never a data gap. `maps.json` **already models them**: every one of the 25 (22 unsized "Unused Map XX" + the 3 sized `*_Copy`) carries an `incomplete` field naming the map it is an unfinished duplicate of — and it agrees **exactly** with the ROM's header-pointer table (11 → Saffron City, 105–117 → Lance's Room, 204–206 → Rocket Hideout Elevator, 231 → Route 16 Gate 1F, 237–244 → Silph Co 2F, 69 → Trashed House, 75 → Path Entrance Route 6, 173 → Cinnabar Mart). The renderer now follows that link and draws the map they copy — which is precisely what a Game Boy loading that id puts on screen. **No JSON was changed and nothing was invented.** The screen says plainly that it's showing an unfinished copy, and of what. **All 248 ids render** (`tst_map::everyMapIdRenders`); only "Last Map" (255) is genuinely empty. |
-| 🐞 **`AreaAudio::setTo()` clobbers the track id with the bank** | `savefile/…/expanded/area/areaaudio.cpp` | `musicBank = musicID = musicEntry->bank;` — setting a map's default music writes the **bank** into `musicID`. `load()`/`save()`/`randomize()` are fine, so no save is corrupted by merely opening one; the bug only fires on "set music to this map's default". Found 2026-07-12 during the music research. Fix + test = Phase 1 of [`plans/music.md`](plans/music.md). |
+| ~~🐞 `AreaAudio::setTo()` clobbers the track id with the bank~~ **FIXED 2026-07-12** | `savefile/…/expanded/area/areaaudio.cpp` | It was `musicBank = musicID = musicEntry->bank;`. Fixed and pinned by `tst_area::audio_setTo_keepsIdAndBankApart` (every map in the game). ⚠️ Writing that test proved the bug was **dormant**: `MapsDB` is never deep-linked at boot, so `getToMusic()` is null for every map and `setTo()` has been writing `0/0`. **The moment the deep-link landmine below is defused, this code path goes live** — which is exactly why it's fixed now. |
 | **Latent landmine: map DB `getToMap()`/`getToSprite()` never resolved** | `db.cpp` `deepLinkAll()`; consumers in `WarpData`/`MapConnData`/`SpriteData`/`AreaMap` | Still dormant, and the new map screen **deliberately does not touch those accessors** (it resolves the tileset by name and looks maps up by id, so it needs no deep link). Not a crash today. **Still must be defused before map *editing* / re-enabling map randomize** — those will dereference the unresolved `to*` links → add `MapsDB::inst()->deepLink()` to `DB::deepLinkAll()` first. Confirmed safe once called, via `tst_sprite_data` (all 918 sprites resolve). |
 | Randomizer: not-yet-built screens (Maps, Hall of Fame, Options) excluded | `savefileexpanded.cpp`, `worldgeneral.cpp` | **Working within scope as of 2026-06-07.** `randomizeExpansion()` runs end-to-end + is test-covered. Maps/HoF/Options calls are commented out (matching the disabled home tiles), each with a re-enable note. Re-enabling map randomize is gated mainly on calling `MapsDB::inst()->deepLink()` at boot (the type strings + per-call guards turned out to be the same deepLink landmine, not separate defects). |
 | Name editors — ongoing review | `name-full/*`, `general/NameDisplay.qml` | Ongoing live tweaks. `NameEdit`/`NameDisplay` are **shared** by player/rival/nickname + the keyboard footer preview — verify all of them on each rebuild. |

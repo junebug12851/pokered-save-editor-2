@@ -100,16 +100,20 @@ void AreaAudio::setTo(MapDBEntry* map)
 {
   reset();
 
-  // Select a random song
+  // The map's own default music
   MusicDBEntry* musicEntry = map->getToMusic();
 
-  // Load it into the map
+  // Load it into the map.
+  //
+  // 🐞 This used to read `musicBank = musicID = musicEntry->bank;` -- which clobbered the TRACK ID
+  // with the BANK, so setting a map's default music wrote the wrong track entirely. Found
+  // 2026-07-12 while researching the music work; pinned by tst_area::audio_setTo_keepsIdAndBankApart.
   musicID = (musicEntry == nullptr)
       ? 0
       : musicEntry->id;
   musicIDChanged();
 
-  musicBank = musicID = (musicEntry == nullptr)
+  musicBank = (musicEntry == nullptr)
       ? 0
       : musicEntry->bank;
   musicBankChanged();

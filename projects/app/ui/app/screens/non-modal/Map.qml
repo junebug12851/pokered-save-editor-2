@@ -21,6 +21,7 @@ import QtQuick.Controls.Material
 
 import "../../fragments/general"
 import "../../fragments/header"
+import "map"
 
 Page {
   id: mapScreen
@@ -44,6 +45,11 @@ Page {
 
   readonly property int scaledWidth: brg.map.imageWidth * zoom
   readonly property int scaledHeight: brg.map.imageHeight * zoom
+
+  // The music panel is CLOSED by default, and closing it stops playback: no invisible audio, and
+  // nothing starts making noise because a screen opened. (notes/plans/music.md §6)
+  property bool musicOpen: false
+  onMusicOpenChanged: if (!musicOpen) brg.music.stop()
 
   ColumnLayout {
     anchors.fill: parent
@@ -148,10 +154,25 @@ Page {
           elide: Text.ElideRight
           Layout.maximumWidth: 210
         }
+
+        // ── Music ────────────────────────────────────────────────────────────
+        // The map's music, its two save flags, and -- the point of all of it --
+        // actually playing the thing. Closed by default: no invisible audio.
+        // See screens/non-modal/map/MusicPanel.qml and notes/plans/music.md.
+        ContrastStep {
+          text: "♪"
+          Layout.leftMargin: 10   // don't crowd the contrast name
+          onClicked: mapScreen.musicOpen = !mapScreen.musicOpen
+        }
       }
     }
 
-    // ── The map ───────────────────────────────────────────────────────────────
+    // ── The map, and (when opened) the music panel beside it ──────────────────
+    RowLayout {
+      Layout.fillWidth: true
+      Layout.fillHeight: true
+      spacing: 0
+
     Flickable {
       id: view
 
@@ -369,6 +390,14 @@ Page {
 
           event.accepted = false;  // let the Flickable scroll vertically
         }
+      }
+    }
+
+      // The music panel. Provisional placement -- and one file, so a redesign moves one thing.
+      MusicPanel {
+        visible: mapScreen.musicOpen
+        Layout.preferredWidth: 260
+        Layout.fillHeight: true
       }
     }
   }

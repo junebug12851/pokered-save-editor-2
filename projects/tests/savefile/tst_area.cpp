@@ -38,6 +38,9 @@
 #include <pse-savefile/expanded/area/areamap.h>
 #include <pse-savefile/expanded/area/areatileset.h>
 #include <pse-savefile/expanded/area/areawarps.h>
+#include <pse-db/mapsdb.h>
+#include <pse-db/music.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-savefile/expanded/storage.h>
 #include <pse-savefile/expanded/fragments/pokemonstoragebox.h>
 
@@ -61,6 +64,7 @@ private slots:
   void areaWarps_flags_roundTrip();
   void storage_curBoxAndFormatting_roundTrip();
   void storage_allTwelveBoxesResolve();
+  void audio_setTo_keepsIdAndBankApart();
 };
 
 void TestArea::initTestCase()
@@ -242,6 +246,43 @@ void TestArea::storage_allTwelveBoxesResolve()
   for(int i = 0; i < s->boxCount(); i++)
     QVERIFY2(s->boxAt(i) != nullptr,
              qPrintable(QStringLiteral("PC box %1 did not resolve").arg(i)));
+}
+
+/**
+ * setTo() writes a map's DEFAULT music into the save. It used to do this:
+ *
+ *     musicBank = musicID = musicEntry->bank;
+ *
+ * ...which clobbers the track id with the bank, so the save ended up pointing at an entirely
+ * different piece of music (bank 2 -> id 2, which is a drum). A track's id and its bank are two
+ * different numbers and must stay two different numbers. (Found 2026-07-12.)
+ */
+void TestArea::audio_setTo_keepsIdAndBankApart()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* audio = sf.dataExpanded->area->audio;
+
+  // ⚠️ MapsDB is NOT deep-linked at boot -- the known latent landmine in status.md -- so
+  // map->getToMusic() is null for every map until it is. That means setTo() currently writes 0/0
+  // in the running app and the bug below is dormant, not live. Deep-link here so the test actually
+  // exercises the code (confirmed safe: tst_sprite_data does the same).
+  MapsDB::inst()->deepLink();
+
+  // Every map in the game, not a hand-picked one: if any map's default music comes back with the
+  // bank sitting in the id, this fails.
+  const auto& maps = MapsDB::inst()->getStore();
+  int checked = 0;
+  for(auto* map : maps) {
+    MusicDBEntry* want = map->getToMusic();
+    if(want == nullptr)
+      continue;
+
+    audio->setTo(map);
+    QCOMPARE(audio->musicID, static_cast<int>(want->id));
+    QCOMPARE(audio->musicBank, static_cast<int>(want->bank));
+    ++checked;
+  }
+  QVERIFY2(checked > 0, "no map in the DB resolved a default music track -- the test proved nothing");
 }
 
 QTEST_GUILESS_MAIN(TestArea)

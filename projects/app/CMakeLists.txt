@@ -27,6 +27,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/engine/fontpreviewprovider.h
     src/engine/mapengine.cpp
     src/engine/mapengine.h
+    src/engine/musicplayer.cpp
+    src/engine/musicplayer.h
     src/engine/mapprovider.cpp
     src/engine/mapprovider.h
     src/engine/playerprovider.cpp
@@ -107,6 +109,8 @@ target_link_libraries(appcore
         common
         db
         savefile
+        audio
+        Qt6::Multimedia
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
