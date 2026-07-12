@@ -57,15 +57,25 @@ before the table is ever read. Our `music.json` already calls it `None`.)
 
 | id | is | notes | ends how |
 |----|----|------:|----------|
-| 187 | Pallet Town **ch2** | 59 | loops forever |
-| 188 | Pallet Town **ch3** | 33 | loops forever |
-| 196–198 | Title Screen **ch2 / ch3 / ch4** | 468 / 444 / 159 | loop forever |
+| 187 | Pallet Town **ch2** | 72 | loops forever |
+| 188 | Pallet Town **ch3** | 42 | loops forever |
+| 196–198 (bank 31) | Title Screen **ch2 / ch3 / ch4** | 102 / 148 / 159 | loop forever |
 | 213 | Lavender **ch2** | **4** | loops forever — a four-note drone |
-| 235–236 | Gym Leader Battle **ch2 / ch3** | 147 / 238 | loop forever |
-| 252–254 | Indigo Plateau **ch2 / ch3 / ch4** | 390 / 386 / 190 | loop forever |
+| 235–236 (bank 8) | Gym Leader Battle **ch2 / ch3** | 177 / 251 | loop forever |
+| 252–254 | Indigo Plateau **ch2 / ch3 / ch4** | 66 / 66 / 190 | loop forever |
 | 235 (bank 31) | Dungeon 3 **ch4** | **0** | ends — a track that plays nothing |
 
 Full machine-generated table: run the analyser (it writes `tmp/music_ids.json`).
+
+> 🐞 **Two disassembler bugs were in the first pass of these numbers** (found 2026-07-12 by the
+> cartridge cross-check in `scripts/import_music.py`, and now fixed in both tools). They inflated the
+> **note counts** — the structure above (which ids are inner voices, and of what) was never affected:
+>
+> 1. **`$2x` is only an SFX note on CHAN4–CHAN8.** On the three music tone channels it is an ordinary
+>    one-byte **note**. Reading it as a 4-byte `square_note` walks off the beat and turns the rest of
+>    the song into nonsense.
+> 2. **`sound_loop 0` is a terminator.** It never falls through — so walking past it wanders straight
+>    into the *next song's* bytes and counts them too.
 
 ### The console agrees
 

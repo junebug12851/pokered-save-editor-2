@@ -49,9 +49,18 @@ BANK_LO, BANK_HI = 0x4000, 0x8000  # the switchable ROM window
 
 
 def cmd_len(op: int, chan: int) -> tuple[int, str]:
-    """(total byte length, mnemonic) for a command byte on software channel `chan` (0-7)."""
+    """(total byte length, mnemonic) for a command byte on software channel `chan` (0-7).
+
+    ⚠️ The channel changes what a byte MEANS. `$2x` is an `sfx_note` only on CHAN4-CHAN8; on the
+    three music tone channels it is an ordinary one-byte **note**. `$10` is `pitch_sweep` only on
+    CHAN5+. `$Bx` is `drum_note` only on the music noise channel. Getting this wrong walks off the
+    beat and turns the rest of the song into nonsense -- it did, until the cartridge cross-check in
+    scripts/import_music.py caught it (2026-07-12).
+    """
     hi = op & 0xF0
-    is_noise = chan in (3, 7)  # music noise / sfx noise
+    is_noise = chan in (3, 7)   # music noise / sfx noise
+    sfx_note_ok = chan >= 3     # CHAN4..CHAN8
+    sweep_ok = chan >= 4        # CHAN5..CHAN8
 
     if op == 0xFF:
         return 1, "sound_ret"
@@ -86,11 +95,11 @@ def cmd_len(op: int, chan: int) -> tuple[int, str]:
         return (1, "drum_speed") if is_noise else (2, "note_type")
     if hi == 0xC0:
         return 1, "rest"
-    if hi == 0xB0 and is_noise:
+    if hi == 0xB0 and chan == 3:
         return 2, "drum_note"
-    if op == 0x10:
+    if op == 0x10 and sweep_ok:
         return 2, "pitch_sweep"
-    if hi == 0x20:
+    if hi == 0x20 and sfx_note_ok:
         # sfx_note: length+volume/fade+frequency (noise has one less byte)
         return (3, "noise_note") if is_noise else (4, "square_note")
     return 1, "note"
@@ -139,6 +148,9 @@ def disassemble(bank: bytes, ptr: int, chan: int, budget: int = 4000):
             count = bank[ptr - BANK_LO + 1]
             target = bank[ptr - BANK_LO + 2] | (bank[ptr - BANK_LO + 3] << 8)
             if count == 0:
+                # `sound_loop 0` never falls through: it is a terminator. (Walking past it wanders
+                # into the NEXT song's bytes -- which is how the note counts got inflated before
+                # 2026-07-12.)
                 events.append(f"loop forever -> ${target:04X}")
                 return events, "loops forever (a real, looping track)", notes
             done = loops.get(ptr, 0) + 1

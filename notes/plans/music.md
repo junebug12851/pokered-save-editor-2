@@ -96,15 +96,29 @@ Each phase is independently shippable and independently *green*.
   `tst_qml_screens` must stay green.
 - **Mandatory screenshot review** of the Map screen after the layout change.
 
-### Phase 2 — the data import
+### Phase 2 — the data import ✅ DONE (2026-07-12)
 
-- `scripts/import_music.ps1`, modelled on `import_map_blocks.ps1`: reads `pret/pokered`'s
-  `audio/headers/*.asm` + `audio/music/*.asm` + `audio/sfx/noise_instrument*.asm` +
-  `audio/wave_samples.asm`, resolves labels, and emits our own compact format
-  (`db/assets/data/music/*.bin` + an index) — **self-validating, with a `-Check` mode**.
-- The assembler-level truth check: the imported bytes must **match the bytes in the ROM** at the address
-  the header points to (uses the local `backup.gb`, dev-only; skips without it).
-- Credits: add/confirm **pret/pokered** as a data source in `credits.json` (+ regenerate `credits.md`).
+`scripts/import_music.py` assembles the music straight out of `pret/pokered`'s `.asm` (a small rgbasm
+subset: the whole `$10`–`$FF` macro set, local-label scoping, `IF DEF(_RED)` → **US English Red**),
+relocates every pointer into our own address space, and writes
+`projects/db/assets/data/music/{bank02,bank08,bank1f}.bin` + `waves.bin` + `index.json` — **38 KB for the
+entire soundtrack**, including all 105 inner voices (they come free with the header table).
+
+**It proves itself twice, and refuses to write if either proof fails:**
+
+1. **The ids** — recomputed from the table it just built, and required to equal `music.json`'s for all 46
+   real tracks. (A track's id *is* its header's address ÷ 3, so the layout is load-bearing.)
+2. **The bytes** — with the cartridge present it walks our stream and the ROM's **in lockstep**, requiring
+   every command byte to match and each ROM address to map to exactly one of ours (a graph isomorphism,
+   which is stronger than byte equality). **All three banks: MATCHES the cartridge.**
+
+🐞 That second check earned its keep on day one — it caught two bugs in my own disassembler (`$2x` is only
+an SFX note on CHAN4–CHAN8; `sound_loop 0` is a terminator), *before* a line of the engine existed.
+
+⚠️ **`.wave5` has no data** — the label's bytes are whatever follows the wave table in that bank, and it's
+different in all three. Lavender Town and Pokémon Tower are built on the result. Imported verbatim.
+
+Credits: **pret/pokered** and **Pan Docs (gbdev)** are both in `credits.json`.
 
 ### Phase 3 — the APU (`pse-audio`, part 1)
 
@@ -242,5 +256,7 @@ answers "what is this map's music?")
   **glitch ids** (the last one verified on the cartridge).
 - ✅ Save bytes/bits verified against the disassembly; the `setTo()` bug found.
 - ✅ UI decided and specced (§6) — placement provisional, deliberately one file.
-- ⬜ Phase 1 — not started.
-- ⬜ Phases 2–6 — not started.
+- ✅ **Phase 2 — DONE (2026-07-12).** The data is imported and verified byte-for-byte against the cartridge.
+- ⬜ Phase 1 (the save half + the bank guard) — not started.
+- ⬜ Phase 3 (`GbApu`), Phase 4 (`Gen1SoundEngine` + parity), Phase 5 (player + panel) — not started.
+- ⬜ Phases 6–7 (SFX/cries; inner voices in the UI + sheet music) — not started.
