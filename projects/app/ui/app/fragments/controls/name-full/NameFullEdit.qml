@@ -97,27 +97,107 @@ RowLayout {
     id: fieldWrap
 
     Layout.preferredWidth: 268
-    Layout.preferredHeight: 34
+    Layout.preferredHeight: 44
     Layout.alignment: Qt.AlignVCenter
 
     transform: Translate { id: shakeT }
 
+    // ---- The caption ----
+    // Sits ABOVE the name, well clear of it. In keyboard mode there is no form control
+    // here at all, so this is the only thing naming what you're looking at.
+    Text {
+      id: caption
+
+      anchors.left: parent.left
+      anchors.top: parent.top
+
+      visible: !top.editMode
+      text: qsTr("Name")
+      font.pixelSize: 9
+      font.bold: true
+      font.capitalization: Font.AllUppercase
+      font.letterSpacing: 1
+      color: brg.settings.textColorMid
+      opacity: 0.8
+    }
+
+    // ================= KEYBOARD MODE =========================================
+    // NOT a text field. A text field here was a lie: it drew an underline, a caret you
+    // could place, a placeholder -- all the affordances of something you type into,
+    // while the thing you actually type into is the deck below. It's a plain label with
+    // a soft caret at the end: the invitation to type, sitting exactly where the next
+    // key will land.
+    // =========================================================================
+    Item {
+      id: displayMode
+
+      visible: !top.editMode
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      height: 24
+
+      Text {
+        id: nameText
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+
+        text: top.str
+        color: Qt.lighter(brg.settings.textColorDark, 2.2)
+        font.letterSpacing: 2
+        font.pixelSize: 15
+        textFormat: Text.PlainText
+      }
+
+      // Nudged right of the caret, so the caret sits AT the insertion point (position
+      // zero) rather than on top of the first word of the hint.
+      Text {
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
+        visible: top.str === ""
+        text: qsTr("type or click the keys…")
+        font.italic: true
+        font.pixelSize: 13
+        color: brg.settings.textColorMid
+        opacity: 0.55
+      }
+
+      Rectangle {
+        id: caret
+
+        width: 2
+        height: 18
+        radius: 1
+        color: brg.settings.accentColor
+
+        x: nameText.width + (top.str === "" ? 0 : 3)
+        anchors.verticalCenter: parent.verticalCenter
+
+        SequentialAnimation on opacity {
+          running: displayMode.visible
+          loops: Animation.Infinite
+          NumberAnimation { to: 0.12; duration: 620; easing.type: Easing.InOutSine }
+          NumberAnimation { to: 0.95; duration: 620; easing.type: Easing.InOutSine }
+        }
+      }
+    }
+
+    // ================= EDIT MODE =============================================
+    // Now a real text field IS the truth, so it gets all of it: underline, caret,
+    // selection, and live updates straight through to the name.
+    // =========================================================================
     NameEdit {
       id: nameEdit
-      anchors.fill: parent
 
-      // Read-only in keyboard mode: the deck is what's typing, and a caret you can move
-      // in a field you can't type into is a lie.
-      readOnly: !top.editMode
+      visible: top.editMode
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      height: 36
 
       isPersonName: top.isPersonName
       selectedColor: brg.settings.accentColor
-
-      // Grey, not black, while the deck owns the text -- it reads as "shown to you"
-      // rather than "being edited by you", and it goes full-strength in edit mode.
-      textColor: top.editMode
-                 ? brg.settings.textColorDark
-                 : Qt.lighter(brg.settings.textColorDark, 2.4)
 
       disableAcceptBtn: true
       disableKeyboardBtn: true
@@ -137,31 +217,6 @@ RowLayout {
         event.accepted = true;
       }
     }
-
-    // ---- The keyboard-mode caret ----
-    // A soft pulse at the end of the text. It isn't a real caret (the field is read-only
-    // and has none) -- it's the invitation to type, sitting exactly where the next key
-    // will land.
-    Rectangle {
-      id: caret
-
-      visible: !top.editMode
-      width: 2
-      height: 17
-      radius: 1
-      color: brg.settings.accentColor
-
-      x: nameEdit.textEndX + 1
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.verticalCenterOffset: -1
-
-      SequentialAnimation on opacity {
-        running: caret.visible
-        loops: Animation.Infinite
-        NumberAnimation { to: 0.15; duration: 620; easing.type: Easing.InOutSine }
-        NumberAnimation { to: 0.95; duration: 620; easing.type: Easing.InOutSine }
-      }
-    }
   }
 
   // ---- The buttons ----
@@ -172,6 +227,8 @@ RowLayout {
     visible: !top.editMode
     Layout.alignment: Qt.AlignVCenter
     trayed: true
+    Layout.preferredWidth: 34
+    Layout.preferredHeight: 34
     icon.width: 15
     icon.height: 15
     icon.source: "qrc:/assets/icons/fontawesome/pen.svg"
@@ -184,6 +241,8 @@ RowLayout {
     visible: !top.editMode
     Layout.alignment: Qt.AlignVCenter
     trayed: true
+    Layout.preferredWidth: 34
+    Layout.preferredHeight: 34
     icon.source: "qrc:/assets/icons/fontawesome/backspace.svg"
     onClicked: top.str = "";
 
@@ -194,6 +253,8 @@ RowLayout {
     visible: !top.editMode
     Layout.alignment: Qt.AlignVCenter
     trayed: true
+    Layout.preferredWidth: 34
+    Layout.preferredHeight: 34
     icon.width: 16
     icon.height: 16
     icon.source: "qrc:/assets/icons/fontawesome/dice.svg"
@@ -208,6 +269,8 @@ RowLayout {
     visible: top.editMode
     Layout.alignment: Qt.AlignVCenter
     trayed: true
+    Layout.preferredWidth: 34
+    Layout.preferredHeight: 34
     icon.width: 16
     icon.height: 16
     icon.source: "qrc:/assets/icons/fontawesome/check.svg"
@@ -221,6 +284,8 @@ RowLayout {
     visible: top.editMode
     Layout.alignment: Qt.AlignVCenter
     trayed: true
+    Layout.preferredWidth: 34
+    Layout.preferredHeight: 34
     icon.width: 12
     icon.height: 17
     icon.source: "qrc:/assets/icons/fontawesome/times.svg"

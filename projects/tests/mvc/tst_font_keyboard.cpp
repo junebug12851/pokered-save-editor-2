@@ -164,9 +164,16 @@ void TstFontKeyboard::naturalKeysNeedNoLegend()
   QVERIFY(!kb.keyData(1, "2")["natural"].toBool());  // male sign on the "@" key
   QVERIFY(!kb.keyData(1, "8")["natural"].toBool());  // x (multiply) on the "*" key
 
-  // A chorded page can never be natural -- a real keyboard types nothing for Ctrl+B.
-  QVERIFY(!kb.keyData(2, "B")["natural"].toBool());  // bold B
+  // A bold letter on its own letter is silent too: a little "B" in the corner of a key
+  // showing a big bold B tells you nothing you can't already see.
+  QVERIFY(kb.keyData(2, "B")["natural"].toBool());   // bold B on B
+  QVERIFY(kb.keyData(2, "S")["natural"].toBool());   // bold S on S
+
+  // But a contraction is NOT its letter -- `<'s>` prints "'s", and the legend is the
+  // only thing telling you which key made it.
   QVERIFY(!kb.keyData(4, "S")["natural"].toBool());  // 's
+  QVERIFY(!kb.keyData(4, "P")["natural"].toBool());  // <player>
+  QVERIFY(!kb.keyData(2, "K")["natural"].toBool());  // e-acute on K
 
   // ...and nothing may pretend: no period on a slash key while a real period exists.
   QCOMPARE(kb.keyData(2, "/")["ind"].toInt(), 0);

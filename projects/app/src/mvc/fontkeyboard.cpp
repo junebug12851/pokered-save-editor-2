@@ -107,10 +107,10 @@ const int kPageCaps[FontKeyboard::keyTotal] = {
 // period key one layer down -- is a false affordance. If a tile can go where a real
 // keyboard would put it, it goes there; if it can't, it must not pretend.
 const int kPageSymbols[FontKeyboard::keyTotal] = {
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 242, //  .(alt) on "="
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 116, //  middle-dot on "="
     0,   0, 100,   0,   0,   0,   0, 104,   0,   0, 112, 113,   0, // boldE boldI  '  '
    96, 106,  99, 101, 102, 103,   0, 186, 107, 109, 115,          // boldA..H  e-acute boldL  :(narrow)  "
-    0,   0,  98, 105,  97,   0, 108, 116, 117,   0,               // boldC boldV boldB boldM  mdot  ...
+    0,   0,  98, 105,  97,   0, 108, 242, 117,   0,               // boldC boldV boldB boldM  .(alt)  ...
 };
 
 // Alt -- CODES. Contractions sit on their own letter ('s on S, 't on T...). The
@@ -140,26 +140,31 @@ const int kPageCodes[FontKeyboard::keyTotal] = {
 //
 // The three cursor arrows take , . / -- they're arrow-ish keys, and it keeps the whole
 // "things that point" family together.
+// (tile14 sits on the "1" key by request -- it's the one people reach for -- so it and
+// the tile that would have been there simply trade places.)
 const int kPageTiles1[FontKeyboard::keyTotal] = {
-    1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,
-  121, 122, 123,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23, // ╔ ═ ╗ + tiles
+    1,  20,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13, // tile14 on "1"
+  121, 122, 123,  14,  15,  16,  17,  18,  19,   2,  21,  22,  23, // ╔ ═ ╗ + tiles
   124,   0, 124,  24,  25,  26,  27,  28,  29,  30,  31,          // ║ (hollow) ║ + tiles
   125, 122, 126,  32,  33,  34,  35, 237, 238, 236,               // ╚ ═ ╝ + tiles, arrows on , . /
 };
 
-// Shift+Alt -- TILES II. Straight reading order: tile24..tile48, tile4D, tileC0..tileC8.
+// Shift+Alt -- TILES II. The rest of the real tileset: tile24..tile48 + tile4D.
 const int kPageTiles2[FontKeyboard::keyTotal] = {
    36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
    49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,
    62,  63,  64,  65,  66,  67,  68,  69,  70,  71,  72,          // ...tile48
-   77, 192, 193, 194, 195, 196, 197, 198, 199, 200,               // tile4D, tileC0..tileC8
+   77,   0,   0,   0,   0,   0,   0,   0,   0,   0,               // tile4D
 };
 
-// Ctrl+Alt -- TILES III. tileC9..tileDF, the last of them.
+// Ctrl+Alt -- TILES III. tileC0..tileDF -- the high half of the tilemap, which is
+// USUALLY BLANK. These only hold anything in particular game states, which is exactly
+// why they're all together on their own page behind their own chord, with a description
+// that says so rather than leaving you wondering why the keys look empty.
 const int kPageTiles3[FontKeyboard::keyTotal] = {
-  201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
-  214, 215, 216, 217, 218, 219, 220, 221, 222, 223,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+  192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204,
+  205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217,
+  218, 219, 220, 221, 222, 223,   0,   0,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
@@ -213,10 +218,10 @@ const char* const kPageDescs[FontKeyboard::pageTotal] = {
   "The characters the game itself lets you type into a name.",
   "The same set, shifted -- capitals and the punctuation above the number row.",
   "Bold letters and the extra marks: accents, quotes, dots.",
-  "Tiles from the loaded tileset -- they change as you play. Type Q W E / A D / Z X C to draw a box.",
+  "Tiles from the loaded tileset. Q W E / A D / Z X C draws a box.",
   "One byte, many characters: names pulled from memory, and words the game spells out for you.",
-  "More tiles from the loaded tileset -- these change as you play.",
-  "The last of the tileset's tiles.",
+  "The rest of the loaded tileset -- these change as you play.",
+  "Usually blank: these only hold anything in certain game states.",
   "Text-engine codes. These do not print -- they END, WRAP or PAUSE the text, and in a name they glitch it.",
 };
 
@@ -462,7 +467,24 @@ QVariantMap FontKeyboard::dataForInd(int ind, const QString& key, int page) cons
   ret["tip"] = f->getTip();
   ret["category"] = static_cast<int>(categoryOf(f));
   ret["render"] = static_cast<int>(renderOf(f));
-  ret["natural"] = (!natural.isEmpty() && natural == f->getName());
+  // Two ways a corner legend earns its silence:
+  //
+  //  1. `natural` -- the deck types exactly what a real keyboard would for this key +
+  //     these modifiers ("a" on A, "!" on Shift+1).
+  //  2. the tile IS this key's letter, whatever the chord: bold A (`<A>`) on the A key
+  //     is still, unmistakably, A. Printing a little "A" in the corner of a key showing
+  //     a big bold A tells the user nothing they can't see.
+  //
+  // Note this deliberately does NOT catch `<'s>` on S: that tile prints "'s", not "s",
+  // and the legend is the only thing saying which key produced it.
+  QString bare = f->getName();
+  if(bare.startsWith('<') && bare.endsWith('>'))
+    bare = bare.mid(1, bare.size() - 2);
+
+  const bool sameLetter = (bare.size() == 1)
+      && (bare.compare(key, Qt::CaseInsensitive) == 0);
+
+  ret["natural"] = (!natural.isEmpty() && natural == f->getName()) || sameLetter;
 
   return ret;
 }

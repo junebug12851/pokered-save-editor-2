@@ -169,6 +169,11 @@ Item {
       ind: top.isGlyph ? top.info.ind : 0
       curFrame: top.curFrame
       sizeMult: top.tileScale
+
+      // Only the PICTURE tiles get the white card behind them -- they're the transparent
+      // ones, and without it they render patchy and inconsistent on a coloured cap. The
+      // font glyphs sit straight on the cap, where they belong.
+      backing: !top.isEmpty && top.info.category === 5
     }
 
     Text {

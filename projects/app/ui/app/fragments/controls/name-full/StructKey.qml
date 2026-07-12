@@ -28,6 +28,12 @@ Item {
   // clicks, no hover, and no cursor, so they can't be mistaken for keys that type.
   property bool dead: false
 
+  // A key that changes what the KEYBOARD does rather than typing something: Shift, Ctrl,
+  // Alt, Caps -- and Tab, which opens the tileset controls on the tile pages. They're
+  // tinted apart from the plain structural keys (Enter, Backspace) so the eye can find
+  // the modifiers without reading them.
+  property bool modifier: false
+
   signal fired()
 
   /// Just the press animation -- for when the PHYSICAL key was pressed and the deck
@@ -64,13 +70,17 @@ Item {
       if(mouse.containsMouse)
         return Qt.darker(brg.settings.accentColor, 1.02);
 
-      return Qt.darker(brg.settings.accentColor, 1.22);
+      // Modifiers sit a shade lighter than the plain structural keys, so the row of
+      // things that CHANGE the keyboard reads apart from the things that just type.
+      return Qt.darker(brg.settings.accentColor, top.modifier ? 1.02 : 1.26);
     }
 
     border.width: 1
     border.color: top.active
                   ? Qt.lighter(brg.settings.accentColor, 1.6)
-                  : Qt.darker(brg.settings.accentColor, 1.7)
+                  : (top.modifier && !top.dead
+                     ? Qt.lighter(brg.settings.accentColor, 1.15)
+                     : Qt.darker(brg.settings.accentColor, 1.7))
 
     Behavior on color { ColorAnimation { duration: 90 } }
 

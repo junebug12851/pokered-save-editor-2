@@ -185,11 +185,17 @@ Page {
           // ALWAYS holds its height, so showing/hiding them can't resize the keyboard.
           Item {
             Layout.fillWidth: true
-            Layout.preferredHeight: 30
+            Layout.preferredHeight: 36
+            Layout.topMargin: 8
 
             SimulatedBar {
+              id: simulated
               anchors.fill: parent
               visible: deck.isTilePage
+
+              // The picker was opened with the keyboard (Tab), so the keyboard gets the
+              // keys back the moment it closes.
+              onPicked: deck.forceActiveFocus();
             }
           }
 
@@ -204,6 +210,9 @@ Page {
             onAccept: top.commitAndClose();
             onDismiss: top.commitAndClose();
             onDetail: (info) => detailView.info = info;
+
+            onOpenSimulated: simulated.openPicker();
+            onToggleOutdoor: simulated.flipOutdoor();
           }
 
           // A quiet line saying what this page IS -- the page strip gives it a name and a

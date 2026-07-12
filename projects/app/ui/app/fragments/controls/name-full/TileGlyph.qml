@@ -33,12 +33,27 @@ Item {
   property bool isOutdoor: brg.settings.previewOutdoor
   property string isOutdoorStr: isOutdoor ? "outdoor" : "indoor"
 
+  // Paint a white square under the tile. The tileset's tiles are TRANSPARENT wherever
+  // the game would show the background through them, so on a coloured keycap they came
+  // out patchy and inconsistent -- some looked like they had a white card behind them and
+  // some didn't. White backing gives every tile the same "screen" to sit on.
+  //
+  // Only the PICTURE tiles want this: the font glyphs (letters, punctuation) are meant to
+  // sit straight on the cap and look wrong boxed in.
+  property bool backing: false
+
   readonly property int cell: Math.trunc(8 * sizeMult)
   readonly property int sheetSize: cell * 16
 
   width: cell
   height: cell
   clip: true
+
+  Rectangle {
+    anchors.fill: parent
+    visible: top.backing
+    color: "#ffffff"
+  }
 
   Image {
     id: sheet

@@ -65,6 +65,12 @@ Item {
   signal dismiss()
   signal detail(var info)    ///< Hover feedback for the side pane; null when nothing is hovered.
 
+  /// Tab -- open the tileset picker (tile pages only). Ctrl+Tab -- flip Outdoor.
+  /// Tab is a key that controls the KEYBOARD, not one that types, so it's coloured with
+  /// the modifiers and it's dead everywhere the tileset doesn't matter.
+  signal openSimulated()
+  signal toggleOutdoor()
+
   // Registry of live caps, so a physical key press can flash its on-screen cap --
   // typing and clicking are then visibly the same act.
   property var capIndex: ({})
@@ -186,6 +192,21 @@ Item {
 
     if(event.key === Qt.Key_Escape) {
       deck.dismiss();
+      event.accepted = true;
+      return;
+    }
+
+    // Tab is a keyboard CONTROL, not a character: on the tile pages it opens the tileset
+    // picker, and Ctrl+Tab flips Outdoor. (Accepted unconditionally so Tab never wanders
+    // off doing focus navigation inside a modal that has nowhere to navigate to.)
+    if(event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
+      if(deck.isTilePage) {
+        tabKey.flash();
+
+        if(deck.ctrlOn) deck.toggleOutdoor();
+        else            deck.openSimulated();
+      }
+
       event.accepted = true;
       return;
     }
@@ -321,7 +342,20 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: deck.gap
 
-        StructKey { label: "Tab"; unit: deck.u; units: 1.5; dead: true }
+        // Tab: dead everywhere the tileset doesn't matter; on the tile pages it's a live
+        // control key (same tint as the modifiers) that opens the tileset picker.
+        StructKey {
+          id: tabKey
+          label: "Tab"
+          unit: deck.u
+          units: 1.5
+          dead: !deck.isTilePage
+          modifier: deck.isTilePage
+          onFired: {
+            if(deck.ctrlOn) deck.toggleOutdoor();
+            else            deck.openSimulated();
+          }
+        }
 
         Repeater {
           model: ["Q","W","E","R","T","Y","U","I","O","P","[","]","\\"]
@@ -355,6 +389,7 @@ Item {
           label: "Caps"
           unit: deck.u
           units: 1.75
+          modifier: true
           active: deck.capsOn
           onFired: deck.capsOn = !deck.capsOn;
         }
@@ -398,6 +433,7 @@ Item {
           label: "Shift"
           unit: deck.u
           units: 2.25
+          modifier: true
           active: deck.shiftOn
           onFired: deck.latchShift = !deck.latchShift;
         }
@@ -427,6 +463,7 @@ Item {
           label: "Shift"
           unit: deck.u
           units: 2.75
+          modifier: true
           active: deck.shiftOn
           onFired: deck.latchShift = !deck.latchShift;
         }
@@ -445,6 +482,7 @@ Item {
           label: "Ctrl"
           unit: deck.u
           units: 1.25
+          modifier: true
           active: deck.ctrlOn
           onFired: deck.latchCtrl = !deck.latchCtrl;
         }
@@ -455,6 +493,7 @@ Item {
           label: "Alt"
           unit: deck.u
           units: 1.25
+          modifier: true
           active: deck.altOn
           onFired: deck.latchAlt = !deck.latchAlt;
         }
@@ -477,6 +516,7 @@ Item {
           label: "Alt"
           unit: deck.u
           units: 1.25
+          modifier: true
           active: deck.altOn
           onFired: deck.latchAlt = !deck.latchAlt;
         }
@@ -488,6 +528,7 @@ Item {
           label: "Ctrl"
           unit: deck.u
           units: 1.25
+          modifier: true
           active: deck.ctrlOn
           onFired: deck.latchCtrl = !deck.latchCtrl;
         }

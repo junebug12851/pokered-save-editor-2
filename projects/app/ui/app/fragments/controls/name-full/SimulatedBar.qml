@@ -18,6 +18,19 @@ Item {
 
   implicitHeight: tray.implicitHeight
 
+  /// The picker closed -- hand the keys back to the keyboard.
+  signal picked()
+
+  /// Driven by the deck's Tab key: Tab opens the tileset picker (then Up/Down to walk it
+  /// and Tab or Enter to choose), Ctrl+Tab flips Outdoor.
+  function openPicker() {
+    tileset.openMenu();
+  }
+
+  function flipOutdoor() {
+    brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
+  }
+
   // Same pill toggle as the rest of the screen's chrome -- properly padded, rounded,
   // accent-filled when on.
   component FlatToggle: Button {
@@ -29,10 +42,12 @@ Item {
     font.pixelSize: 11
     Material.elevation: 0
 
-    topPadding: 5
-    bottomPadding: 5
-    leftPadding: 12
-    rightPadding: 12
+    // Taller, and sized like a control rather than a word with a box drawn round it.
+    topPadding: 7
+    bottomPadding: 7
+    leftPadding: 14
+    rightPadding: 14
+    implicitHeight: 28
 
     background: Rectangle {
       radius: 4
@@ -77,16 +92,21 @@ Item {
       }
 
       NameFullTileset {
+        id: tileset
         Layout.alignment: Qt.AlignVCenter
         Layout.preferredWidth: 122
+
+        onMenuClosed: bar.picked();
       }
 
       FlatToggle {
         text: qsTr("Outdoor")
         active: brg.settings.previewOutdoor
-        onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
+        onClicked: bar.flipOutdoor();
 
-        MainToolTip { text: "Render these tiles as they'd look outdoors vs. indoors." }
+        MainToolTip {
+          text: "Render these tiles as they'd look outdoors vs. indoors. (Ctrl+Tab)"
+        }
       }
     }
   }
