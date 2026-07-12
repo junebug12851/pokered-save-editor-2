@@ -198,7 +198,7 @@ Rectangle {
       currentIndex: -1
       boundsBehavior: Flickable.StopAtBounds
 
-      ScrollBar.vertical: ScrollBar {}
+      ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
       // Hover auditions -- but only after you SETTLE on a row. A fast sweep down the list must not
       // machine-gun the engine.
@@ -246,7 +246,10 @@ Rectangle {
         RowLayout {
           anchors.fill: parent
           anchors.leftMargin: 4
-          anchors.rightMargin: 4
+          // RESERVE THE SCROLLBAR LANE. The ScrollBar is an OVERLAY -- it sits on top of the rows,
+          // so anything flush right (here: the ▶ and the bank·id) ends up underneath it and can't
+          // be clicked. Recurring gotcha; see reference/ui-patterns.md.
+          anchors.rightMargin: 18
           spacing: 6
 
           Text {

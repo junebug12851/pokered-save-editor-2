@@ -25,6 +25,7 @@ import "map"
 
 Page {
   id: mapScreen
+  objectName: "mapScreen"   // so the DEBUG harness can drive it (reference/dev-harness.md)
 
   // Integer zoom only -- this is 8x8 pixel art and a fractional scale would smear it.
   //

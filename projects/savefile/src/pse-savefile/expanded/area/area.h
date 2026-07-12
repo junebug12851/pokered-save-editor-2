@@ -31,14 +31,19 @@ class AreaSprites;
 class AreaTileset;
 class AreaWarps;
 
-// Only `area.general` is traversed in QML (the playtime "countPlaytime" helper),
-// so include ONLY that child as a full type. The other 10 area children stay
-// forward-declared + Q_DECLARE_OPAQUE_POINTER below. Pulling all 11 in dragged
-// the heavy area subtree (whose .cpp's include db headers) into the global
-// include path and ballooned build time. See notes/reference/qt6-patterns.md.
+// Children that QML TRAVERSES must be full types here. A Q_DECLARE_OPAQUE_POINTER'd QObject sets
+// IsPointerToTypeDerivedFromQObject = false, so QML reads the whole chain past it as `undefined` --
+// silently. Everything else stays forward-declared + opaque, because pulling all 11 in drags the
+// heavy area subtree (whose .cpp's include db headers) into the global include path and balloons
+// build time. See notes/reference/qt-patterns.md.
+//
+//   general -> the playtime "countPlaytime" helper
+//   audio   -> the Map screen's Music panel (musicID / musicBank / the two flags).
+//              Being opaque is what made that panel read "No save open" with a save wide open,
+//              on 2026-07-12. It is the same trap, for the second time.
 #include "./areageneral.h"
+#include "./areaaudio.h"
 
-class AreaAudio;
 class AreaLoadedSprites;
 class AreaMap;
 class AreaNPC;
@@ -49,7 +54,6 @@ class AreaSprites;
 class AreaTileset;
 class AreaWarps;
 
-Q_DECLARE_OPAQUE_POINTER(AreaAudio*)
 Q_DECLARE_OPAQUE_POINTER(AreaLoadedSprites*)
 Q_DECLARE_OPAQUE_POINTER(AreaMap*)
 Q_DECLARE_OPAQUE_POINTER(AreaNPC*)

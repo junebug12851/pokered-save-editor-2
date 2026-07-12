@@ -39,7 +39,7 @@ adopted as design), and [`../version.md`](../version.md) (the commit where each 
 
 | Gotcha | One-line |
 |--------|----------|
-| **`Q_DECLARE_OPAQUE_POINTER` blocks QML traversal** | Opaque-declaring a real QObject type makes QML read `obj.prop.sub` as `undefined`; `#include` + de-opaque the traversed branches only (build speed) |
+| **`Q_DECLARE_OPAQUE_POINTER` blocks QML traversal** | Opaque-declaring a real QObject type makes QML read `obj.prop.sub` as `undefined`; `#include` + de-opaque the traversed branches only (build speed). ⚠️ **It bit a SECOND time on 2026-07-12**: the Map screen's new Music panel read "No save open" with a save wide open, because `AreaAudio` was still opaque in `area.h` while its sibling `AreaGeneral` (contrast) was included and worked. **Whenever QML starts traversing a child that wasn't traversed before, that child must become a full `#include`.** Nothing warns you: `undefined` is a valid value, every binding "works", and the whole feature is simply dead. The `area.h` comment now names every traversed child for this reason. |
 | **DB static-init deadlock** | A DB constructor re-entering its own `inst()` deadlocks C++11 static-local init; `loadAll()` is the sole `load()` caller |
 | **`qt_add_qml_module()` vs `app.qrc`** | Double-registering QML paths hangs `QQuickWidget::setSource()`; keep `app.qrc` + `qmlRegister*` only |
 | **`QSurfaceFormat` MSAA on `QQuickWidget`** | MSAA on the offscreen FBO hangs Windows GPU drivers 40s+; remove the surface-format setup |
