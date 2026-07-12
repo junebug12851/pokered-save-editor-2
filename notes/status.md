@@ -5,9 +5,9 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.16.1-alpha` — on `dev`, **not yet shipped** (last shipped: `0.15.2-alpha`, `main` @
-`ac79c0a`). Single source of truth: repo-root `VERSION`; see
-[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (74/74).
+**Version:** `0.16.6-alpha` — **shipped 2026-07-11** (MINOR milestone, released via `release/0.16.6`).
+Single source of truth: repo-root `VERSION`; see [`reference/versioning.md`](reference/versioning.md).
+Full `ctest` green (74/74); tests + lint green on CI.
 
 > **Releases are MANUAL.** Commit and push to `dev` freely, but `main` only moves when Twilight says
 > **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
@@ -43,17 +43,24 @@ step separately (the original bug, caught by Twilight and fixed on 2026-07-11) i
 thin air. `giveFor()` / `refundFor()` are the single pricing path shared by the preview, the "+"
 gating, and `checkout()` — keep it that way.
 
-The **full keyboard** was rebuilt on 2026-07-11 into an actual **ASDF keyboard deck**: 36 alphanumeric
-keys × 8 pages (255 tiles ÷ 36 keys needs 8 pages; Shift/Ctrl/Alt give exactly 8 chords), each cap
-carrying one game tile with the key that types it printed in its corner. The tile→key map is C++
-(`mvc/fontkeyboard.*` → `brg.keyboard`) and **pinned by `tst_font_keyboard`** — every tile appears
-exactly once across the pages + the spacebar. **The base layer is lowercase, Shift is uppercase, and
-Caps Lock is a real Caps Lock** (letters only, ignored under Ctrl/Alt, inverted by Shift). Physical
-modifiers are **momentary**; only *clicking* a modifier cap or a page button latches. The name field
-has two explicit modes — **keyboard mode** (field read-only, Backspace eats a whole tile) and **edit
-mode** (ordinary text field; the whole keyboard fades out and goes dead; check applies, cross
-discards). The old chip list, filter sidebar, tilemap view and `FontSearchModel` are **deleted**.
-Design + the full map:
+The **full keyboard** was rebuilt on 2026-07-11 into an actual **ASDF keyboard deck** — the headline of
+**0.16.x**. **47 assignable keys** (26 letters + 10 digits + the 11 punctuation keys) × **8 pages**
+(255 tiles need 8 pages; Shift/Ctrl/Alt give exactly 8 chords), each cap carrying one game tile with
+the key that types it printed in the corner. The tile→key map is C++ (`mvc/fontkeyboard.*` →
+`brg.keyboard`) and **pinned by `tst_font_keyboard`** — every tile reachable, and the only duplicated
+tiles anywhere are the two box-frame edges (the Tiles I page lays the frame glyphs out **as the box**:
+`Q W E / A _ D / Z X C` draws one).
+
+The doctrine, in one line: **a tile goes where a real keyboard would put it whenever it can, and must
+never pretend.** Base layer = lowercase + digits + punctuation on their own keys; Shift = uppercase +
+the real shifted symbols (`!`, `$`, `?` on `/`, `:` on `;`); a cap whose tile matches what the physical
+keyboard would type **drops its corner legend**, because there's nothing left to teach. **Caps Lock
+locks the Shift page** (Shift inverts it, Ctrl/Alt ignore it), and **touching a physical modifier drops
+any latched page** — otherwise Shift silently does nothing on a clicked-in Uppercase page. The name row
+has two explicit modes: **keyboard mode** (no text field at all — a label with a soft caret; Backspace
+eats a whole tile) and **edit mode** (a real field, live-updating, keyboard faded out and dead; check
+applies, cross discards). The old chip list, filter sidebar, tilemap view and `FontSearchModel` are
+**deleted**. Design + the full map:
 [`plans/full-keyboard-redesign.md`](plans/full-keyboard-redesign.md); conventions:
 [`reference/ui-patterns.md`](reference/ui-patterns.md) → "The full keyboard's DECK".
 
@@ -62,15 +69,11 @@ verification pass; remaining per-control test depth. See [`plans/next-steps.md`]
 
 ## Pending rebuilds / awaiting in-app review
 
-- **The new full keyboard — awaiting Twilight's in-app review (2026-07-11).** Built + screenshot-
-  reviewed on every page; `ctest` green. Worth checking live, because they're the things a still PNG
-  can't show: **typing** on the real keyboard (and the caps flashing with it); **holding**
-  Shift/Ctrl/Alt (momentary — the page must drop back on release) vs. **clicking** the modifier caps
-  (latched); **Caps Lock** (letters go uppercase, the number row must stay numbers — and if your OS
-  caps light was already on when the screen opened, the deck should correct itself on the first letter);
-  the tiles **animating** with the tileset; token-aware **Backspace**; the **shake** when a key won't
-  fit; and **edit mode** (pen → the keyboard fades out and goes dead, check applies, cross discards,
-  Backspace is character-wise in there).
+- **The new full keyboard — reviewed in-app across five rounds with Twilight and SHIPPED in
+  0.16.6-alpha (2026-07-11).** Nothing outstanding. The live-only behaviours (typing with the caps
+  flashing, held-vs-latched modifiers, Caps Lock, animated tiles, token-aware Backspace, the shake when
+  a key won't fit, edit mode, Tab opening the tileset picker on the tile pages) were all exercised on
+  the real build.
   ⚠️ Known environment caveat: on a Windows box with **two keyboard layouts installed**, the OS eats
   Shift+Alt / Ctrl+Shift (switch layout) and Ctrl+Alt (AltGr) — those pages are still reachable by
   clicking the modifier caps or the page strip, which is exactly why they latch.
