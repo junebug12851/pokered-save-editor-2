@@ -76,6 +76,7 @@ endif()
 add_subdirectory(common)
 add_subdirectory(db)
 add_subdirectory(savefile)
+add_subdirectory(audio)
 add_subdirectory(app)
 
 # Test suite (QtTest + CTest). See notes/plans/testing.md. Toggle off with

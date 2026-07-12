@@ -259,10 +259,10 @@ def parse_headers(path: Path) -> list[tuple[str, int, list[tuple[int, str]]]]:
     return out
 
 
-def build_bank(bank: int, streams: dict[str, Stream]) -> tuple[bytearray, dict]:
+def build_bank(bank: int, streams: dict[str, Stream]) -> tuple[bytearray, dict, list, int]:
     sfxh, mush, _suffix = BANKS[bank]
-    entries = parse_headers(PRET / "audio" / "headers" / sfxh) + \
-        parse_headers(PRET / "audio" / "headers" / mush)
+    sfx_entries = parse_headers(PRET / "audio" / "headers" / sfxh)
+    entries = sfx_entries + parse_headers(PRET / "audio" / "headers" / mush)
 
     # ---- the header table. 3 bytes per CHANNEL; id 0 is the $ff $ff $ff padding.
     table = bytearray(b"\xff\xff\xff")
@@ -322,7 +322,11 @@ def build_bank(bank: int, streams: dict[str, Stream]) -> tuple[bytearray, dict]:
         blob[off] = addr & 0xFF
         blob[off + 1] = (addr >> 8) & 0xFF
 
-    return blob, id_of, sorted(unresolved)
+    # MAX_SFX_ID_N -- the id of the LAST sound-effect header. PlaySound branches on it:
+    # id <= max => the SFX path (partial init), id > max => the MUSIC path (full re-init).
+    max_sfx = id_of[sfx_entries[-1][0]]
+
+    return blob, id_of, sorted(unresolved), max_sfx
 
 
 def cmd_len(op: int, chan: int) -> int:
@@ -482,7 +486,7 @@ def main() -> int:
     index = {"banks": {}, "tracks": []}
     blobs: dict[int, bytearray] = {}
     for bank in BANKS:
-        blob, id_of, unresolved = build_bank(bank, streams)
+        blob, id_of, unresolved, max_sfx = build_bank(bank, streams)
         blobs[bank] = blob
 
         # ---- THE PROOF. Recompute every real track's id from the table we just built.
@@ -506,10 +510,11 @@ def main() -> int:
             print(f"  bank {bank}: code-only SFX stubbed -> {', '.join(unresolved[:4])}"
                   f"{' …' if len(unresolved) > 4 else ''}")
 
-        index["banks"][str(bank)] = {"size": len(blob), "base": BASE,
+        index["banks"][str(bank)] = {"size": len(blob), "base": BASE, "maxSfxId": max_sfx,
                                      "unresolved_sfx": unresolved}
         print(f"bank {bank:2d}: {len(blob):6d} bytes, "
-              f"{len([k for k in id_of if k.startswith('Music_')]):2d} tracks -- ids verified"
+              f"{len([k for k in id_of if k.startswith('Music_')]):2d} tracks, "
+              f"maxSfxId={max_sfx} -- ids verified"
               + (f" ({len(unresolved)} code-only SFX stubbed)" if unresolved else ""))
 
     # ---- the id -> what-it-is map, INCLUDING the inner voices (see glitch-music.md)

@@ -7,6 +7,11 @@
         <file>assets/data/hiddenItems.json</file>
         <file>assets/data/items.json</file>
         <file>assets/data/maps.json</file>
+        <file>assets/data/music/bank02.bin</file>
+        <file>assets/data/music/bank08.bin</file>
+        <file>assets/data/music/bank1f.bin</file>
+        <file>assets/data/music/waves.bin</file>
+        <file>assets/data/music/index.json</file>
         <file>assets/data/missables.json</file>
         <file>assets/data/moves.json</file>
         <file>assets/data/names.json</file>

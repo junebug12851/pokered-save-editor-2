@@ -3,16 +3,19 @@
   "2": {
    "size": 13073,
    "base": 16384,
+   "maxSfxId": 185,
    "unresolved_sfx": []
   },
   "8": {
    "size": 11927,
    "base": 16384,
+   "maxSfxId": 233,
    "unresolved_sfx": []
   },
   "31": {
    "size": 13520,
    "base": 16384,
+   "maxSfxId": 194,
    "unresolved_sfx": []
   }
  },

@@ -51,6 +51,10 @@ pse_add_test(tst_area         savefile savefile/tst_area.cpp)
 pse_add_test(tst_area_fragments savefile savefile/tst_area_fragments.cpp)
 pse_add_test(tst_sign_data    savefile savefile/tst_sign_data.cpp)
 pse_add_test(tst_map_fragments savefile savefile/tst_map_fragments.cpp)
+
+# The sound chip + the sound engine. Links `db` too: the imported music data is baked into db.qrc.
+pse_add_test(tst_audio audio audio/tst_audio.cpp)
+target_link_libraries(tst_audio PRIVATE db)
 pse_add_test(tst_iterator     savefile savefile/tst_iterator.cpp)
 pse_add_test(tst_item         savefile savefile/tst_item.cpp)
 pse_add_test(tst_player_basics savefile savefile/tst_player_basics.cpp)

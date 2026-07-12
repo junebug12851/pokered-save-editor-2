@@ -120,20 +120,31 @@ different in all three. Lavender Town and Pokémon Tower are built on the result
 
 Credits: **pret/pokered** and **Pan Docs (gbdev)** are both in `credits.json`.
 
-### Phase 3 — the APU (`pse-audio`, part 1)
+### Phase 3 — the APU (`pse-audio`, part 1) ✅ DONE (2026-07-12)
 
-- `GbApu`: channels 1–4, frame sequencer, envelopes, sweep, LFSR, wave RAM, NR50/NR51 mixing, DAC-off,
-  proper downsample to 48 kHz.
-- Tests: register-level unit tests + golden PCM snapshots for hand-written register sequences.
+`GbApu` — channels 1–4, the 512 Hz frame sequencer, envelopes, sweep (with the trigger-time overflow
+check), the LFSR, wave RAM, NR50/NR51 mixing, DAC-off-is-dead, and a **box-averaged downsample to
+48 kHz** (naive decimation aliases audibly on the 12.5 % duty and on noise). Register **read masks** are
+modelled too, and they are not cosmetic: the engine's duty-rotation code does `and $3f` on an NR11 read
+back, and the hardware returns the length bits as 1s — which is why rotating the duty also writes a
+sound length of 63.
 
-### Phase 4 — the engine (`pse-audio`, part 2) — **the hard one**
+### Phase 4 — the engine (`pse-audio`, part 2) ✅ BUILT (2026-07-12) — parity test still to come
 
-- `Gen1SoundEngine`: the literal port. State = the 243-byte block. One `updateFrame()`.
-- **`tst_sound_parity`** — the whole point: PyBoy boots the real ROM, plays track *N*, and dumps
-  `$C000–$C0FF` **every frame** for *K* frames; our engine runs the same track for *K* frames; **demand a
-  byte-for-byte match, frame by frame, for all 46 tracks.** This is the `viewPointer_matchesWhatTheGameStored`
-  of the audio work — if it goes red, nothing downstream can be trusted.
-- A second, weaker gate: compare the **APU register writes** per frame.
+`Gen1SoundEngine` — `engine_1.asm`, transliterated. Its entire state is a 256-byte array laid out exactly
+like the console's `$C000`. The load-bearing oddities are all in there: the pitch table's signed
+negatives, the length-enable bit cleared by `and $c7`, the pitch-slide borrow bug, the dead branch in
+perfect-pitch, drums that *play an SFX*, and SFX channels that pre-empt (not mix with) the music.
+
+**`tst_audio` is green (10 cases):** a triggered pulse makes sound; DAC-off kills a channel dead; NR11's
+read mask; the imported data loads; **Pallet Town plays on channels 1–3 with the pitches moving and the
+noise channel silent** (it has no drums); every sampled track from all three banks makes a sound; id 255
+is silence; and — the one the whole "151 tracks" claim rests on — **id 187 plays Pallet Town's channel 2
+ALONE**, with `wChannelSoundIDs = [0, 187, 0, 0]`, exactly as the cartridge did it.
+
+⬜ **Still owed: `tst_sound_parity`.** PyBoy boots the real ROM, plays track *N*, dumps `$C000–$C0FF`
+**every frame**; our engine runs the same track for the same frames; **demand a byte-for-byte match,
+frame by frame, for all 46 tracks.** Until that exists, the engine is "sounds right", not "is right".
 
 ### Phase 5 — playback + the UI
 
