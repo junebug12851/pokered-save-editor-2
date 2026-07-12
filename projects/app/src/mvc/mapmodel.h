@@ -51,10 +51,15 @@ class MapModel : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool valid READ valid NOTIFY changed)          ///< Does the loaded map have block data?
+  Q_PROPERTY(bool valid READ valid NOTIFY changed)          ///< Is there anything to draw for this map?
   Q_PROPERTY(QString source READ source NOTIFY changed)     ///< `image://map/...` URL for the whole map.
   Q_PROPERTY(QString mapName READ mapName NOTIFY changed)   ///< The loaded map's display name.
   Q_PROPERTY(QString tilesetName READ tilesetName NOTIFY changed) ///< The loaded tileset's name.
+
+  /// Is the loaded id a glitch / half-baked **copy**, drawn from another map's data?
+  Q_PROPERTY(bool isCopy READ isCopy NOTIFY changed)
+  /// The map that data came from (@see isCopy) -- empty when the id draws its own.
+  Q_PROPERTY(QString copyOfName READ copyOfName NOTIFY changed)
 
   Q_PROPERTY(int mapInd READ mapInd NOTIFY changed)         ///< Loaded map id (`wCurMap`).
   Q_PROPERTY(int tilesetInd READ tilesetInd NOTIFY changed) ///< Loaded tileset id (`wCurMapTileset`).
@@ -90,6 +95,8 @@ public:
   QString source() const;
   QString mapName() const;
   QString tilesetName() const;
+  bool isCopy() const;
+  QString copyOfName() const;
 
   int mapInd() const;
   int tilesetInd() const;

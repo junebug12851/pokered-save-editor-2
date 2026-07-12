@@ -21,6 +21,8 @@
 #include <QRect>
 #include <QString>
 
+struct MapDBEntry;
+
 /**
  * @brief Rebuilds the Game Boy's overworld map exactly as the game does, and draws it.
  *
@@ -95,15 +97,34 @@ public:
    * data (the glitch ids past the end of the real maps).
    */
   struct Buffer {
-    int mapInd = -1;      ///< Map id.
-    int width = 0;        ///< Map width, blocks.
-    int height = 0;       ///< Map height, blocks.
-    int stride = 0;       ///< Buffer width, blocks (`width + 2 * mapBorder`).
-    int rows = 0;         ///< Buffer height, blocks (`height + 2 * mapBorder`).
-    int border = 0;       ///< The border block id the ring is filled with.
-    QByteArray blocks;    ///< `stride * rows` block ids.
-    bool valid = false;   ///< Was there block data for this map?
+    int mapInd = -1;       ///< Map id asked for.
+    int sourceInd = -1;    ///< Map id the data actually came from (see @ref sourceMap).
+    QString sourceName;    ///< That map's name.
+    bool isCopy = false;   ///< Is this id a glitch/half-baked copy of another map?
+    int width = 0;         ///< Map width, blocks.
+    int height = 0;        ///< Map height, blocks.
+    int stride = 0;        ///< Buffer width, blocks (`width + 2 * mapBorder`).
+    int rows = 0;          ///< Buffer height, blocks (`height + 2 * mapBorder`).
+    int border = 0;        ///< The border block id the ring is filled with.
+    QByteArray blocks;     ///< `stride * rows` block ids.
+    bool valid = false;    ///< Was there block data to build from?
   };
+
+  /**
+   * @brief The map whose data a given id actually draws.
+   *
+   * Usually itself. But the glitch and half-baked map ids are not empty -- they are
+   * **copies**, and `maps.json` already says which map of (`incomplete`), in exact
+   * agreement with the ROM: its header-pointer table sends "Unused Map 0B" at Saffron
+   * City's header, the Lance's Room ids at Lance's Room, "Cinnabar Mart Copy" at
+   * Cinnabar Mart. An aliased header means the two really are the same map.
+   *
+   * So rather than invent dimensions for an id that carries none, we follow that link
+   * and draw the map it is a copy of -- which is precisely what a Game Boy loading that
+   * id would put on screen. Returns nullptr only when there is genuinely nothing (no
+   * size, no blocks, and nothing to fall back to -- e.g. "Last Map").
+   */
+  static MapDBEntry* sourceMap(int mapInd);
 
   /// Build @p mapInd's overworld buffer -- the map placed inside its 3-block border ring.
   static Buffer buildOverworldMap(int mapInd);

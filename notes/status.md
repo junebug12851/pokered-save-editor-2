@@ -30,9 +30,13 @@ Pieces: `BlocksDB` (db) → `MapEngine` + `MapProvider` (app) → `MapModel` = `
 Domain write-up: [`reference/gen1-knowledge.md`](reference/gen1-knowledge.md) → "VERIFIED from the
 disassembly". Import: `scripts/import_map_blocks.ps1` (self-validating, `-Check`).
 
+**Every one of the 248 map ids renders** — including the glitch and half-baked ones, which are not empty
+maps but *unfinished copies*: `maps.json`'s own `incomplete` field says which map of, in exact agreement
+with the ROM, so we follow it and draw the map they copy (what a Game Boy actually does with those ids).
+Nothing invented, no JSON changed.
+
 **Not yet drawn:** the player, connection strips bleeding into the border ring, warps/signs/sprites,
-tile animation frames (frame 0 only). **Two `maps.json` data gaps are open questions for Twilight** —
-see "Open issues".
+tile animation frames (frame 0 only), and the palettes/"contrast" (currently the tileset PNG's greys).
 
 The big structural blocker is **solved**: the `brg.file.data.dataExpanded.*` chain works, data reads
 and **persists** across every screen, and the build is fast. The other major bug class — **QML
@@ -115,8 +119,7 @@ verification pass; remaining per-control test depth. See [`plans/next-steps.md`]
 
 | Issue | Where | Status / notes |
 |-------|-------|----------------|
-| **❓ FOR TWILIGHT — 22 glitch map ids have no width/height in `maps.json`** | `maps.json` (ids 11, 105–107, 109–112, 114–117, 204–206, 231, 237–238, 241–244; all `glitch: true`) | The ROM is less tidy than our DB: its header table points those ids at a **real map's header** (11 → Saffron City, 105–117 → Lance's Room, 204–206 → Rocket Hideout Elevator, 231 → Route 16 Gate 1F, 237–244 → Silph Co 2F), so a Game Boy renders one. We don't import a map the DB can't size — the screen says "no block data" instead. To render them like the ROM, those entries need width/height/tileset (or an alias field). **Data change = Twilight's call.** |
-| **❓ FOR TWILIGHT — 3 sized "Copy" maps have an empty `tileset` string** | `maps.json` ids 69 (Trashed House Copy → ROM: House), 75 (Path Entrance Route 6 Copy → Gate), 173 (Cinnabar Mart Copy → Mart) | Harmless in-app: the loaded map's tileset comes from the **save** (`wCurMapTileset`), which is right. It only means the DB alone can't name their tileset. Pinned by `tst_map` (`kMapsWithNoTilesetInJson`) so the gap can't grow silently. |
+| ~~Glitch / half-baked maps don't render~~ **RESOLVED 2026-07-12 — they all render now** | `MapEngine::sourceMap()` | They were never a data gap. `maps.json` **already models them**: every one of the 25 (22 unsized "Unused Map XX" + the 3 sized `*_Copy`) carries an `incomplete` field naming the map it is an unfinished duplicate of — and it agrees **exactly** with the ROM's header-pointer table (11 → Saffron City, 105–117 → Lance's Room, 204–206 → Rocket Hideout Elevator, 231 → Route 16 Gate 1F, 237–244 → Silph Co 2F, 69 → Trashed House, 75 → Path Entrance Route 6, 173 → Cinnabar Mart). The renderer now follows that link and draws the map they copy — which is precisely what a Game Boy loading that id puts on screen. **No JSON was changed and nothing was invented.** The screen says plainly that it's showing an unfinished copy, and of what. **All 248 ids render** (`tst_map::everyMapIdRenders`); only "Last Map" (255) is genuinely empty. |
 | **Latent landmine: map DB `getToMap()`/`getToSprite()` never resolved** | `db.cpp` `deepLinkAll()`; consumers in `WarpData`/`MapConnData`/`SpriteData`/`AreaMap` | Still dormant, and the new map screen **deliberately does not touch those accessors** (it resolves the tileset by name and looks maps up by id, so it needs no deep link). Not a crash today. **Still must be defused before map *editing* / re-enabling map randomize** — those will dereference the unresolved `to*` links → add `MapsDB::inst()->deepLink()` to `DB::deepLinkAll()` first. Confirmed safe once called, via `tst_sprite_data` (all 918 sprites resolve). |
 | Randomizer: not-yet-built screens (Maps, Hall of Fame, Options) excluded | `savefileexpanded.cpp`, `worldgeneral.cpp` | **Working within scope as of 2026-06-07.** `randomizeExpansion()` runs end-to-end + is test-covered. Maps/HoF/Options calls are commented out (matching the disabled home tiles), each with a re-enable note. Re-enabling map randomize is gated mainly on calling `MapsDB::inst()->deepLink()` at boot (the type strings + per-call guards turned out to be the same deepLink landmine, not separate defects). |
 | Name editors — ongoing review | `name-full/*`, `general/NameDisplay.qml` | Ongoing live tweaks. `NameEdit`/`NameDisplay` are **shared** by player/rival/nickname + the keyboard footer preview — verify all of them on each rebuild. |

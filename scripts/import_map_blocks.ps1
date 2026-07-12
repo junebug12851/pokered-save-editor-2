@@ -199,15 +199,17 @@ foreach ($mapId in ($idToLabel.Keys | Sort-Object)) {
 
   # Dimensions must agree with maps.json.
   #
-  # The 22 glitch ids ("Unused Map XX") carry NO width/height there: maps.json treats
-  # them as unused, while the ROM's header table quietly points them at a real map's
-  # header (id 11 -> Saffron City, 105-117 -> Lance's Room, ...). We do NOT import
-  # block data we cannot legitimately size -- the editor's DB is the thing that has to
-  # describe a map, and it says these have no dimensions. Skipped, and reported.
+  # The glitch ids ("Unused Map XX") carry NO width/height there -- because they are not
+  # maps of their own: they are unfinished COPIES, and maps.json says so itself in its
+  # `incomplete` field (id 11 -> Saffron City, 105-117 -> Lance's Room, ...), in exact
+  # agreement with the ROM's header-pointer table, which sends those ids at the very same
+  # maps' headers. They still render -- MapEngine::sourceMap() follows that link and draws
+  # the map they copy -- so there is nothing to import for them: they borrow the original's
+  # blocks, byte for byte, rather than carry a duplicate copy of them here.
   $j = $jsonByInd[[int]$mapId]
   if ($null -eq $j) { $problems += "id $mapId ($label): no maps.json entry"; continue }
   if ($null -eq $j.width -or "" -eq [string]$j.width) {
-    $unsized += "id $mapId (maps.json: '$($j.name)', glitch) -- ROM would load $label's header (${w}x${hgt})"
+    $unsized += "id $mapId '$($j.name)' -- a copy of '$($j.incomplete)'; borrows its blocks (ROM agrees: header = $label)"
     continue
   }
   if ([int]$j.width -ne $w -or [int]$j.height -ne $hgt) {
@@ -230,8 +232,8 @@ foreach ($mapId in ($idToLabel.Keys | Sort-Object)) {
 Write-Host "maps      : $($plan.Count) imported (ids 0..$(($plan.Id | Measure-Object -Maximum).Maximum))"
 Write-Host "tilesets  : $($tilesetBlockset.Count)"
 if ($unsized.Count) {
-  Write-Host "`nskipped -- maps.json gives these no size ($($unsized.Count)):" -ForegroundColor Yellow
-  $unsized | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
+  Write-Host "`nnot imported -- these ids are COPIES and borrow the original's blocks ($($unsized.Count)):" -ForegroundColor Cyan
+  $unsized | ForEach-Object { Write-Host "  $_" -ForegroundColor Cyan }
 }
 if ($overruns.Count) {
   Write-Host "`nROM overruns reproduced ($($overruns.Count)):" -ForegroundColor Yellow
@@ -288,18 +290,19 @@ $md += "not from file names: several maps share one ``.blk`` through label alias
 $md += "``UndergroundPathRoute7Copy`` has no ``.blk`` of its own."
 $md += ""
 if ($unsized.Count) {
-  $md += "## Glitch ids: imported, or not"
+  $md += "## The copies: not imported, because they borrow"
   $md += ""
-  $md += "``maps.json`` marks $($unsized.Count) ids as unused glitch maps and gives them **no width or"
-  $md += "height**. The ROM is less tidy: its header table quietly points those ids at a real map's"
-  $md += "header, so a Game Boy would happily render one. We do not import them -- a map the editor's"
-  $md += "own DB cannot size is a map it has no business drawing, and inventing the dimensions is not"
-  $md += "ours to do. The map screen says so plainly instead."
+  $md += "$($unsized.Count) ids carry no width or height in ``maps.json`` -- because they are not maps of"
+  $md += "their own. They are **unfinished copies**, and ``maps.json`` already says which map of, in its"
+  $md += "``incomplete`` field. The ROM agrees exactly: its header-pointer table sends those ids at the"
+  $md += "very same maps' headers, so a Game Boy loading one really does draw the original."
+  $md += ""
+  $md += "So they render -- ``MapEngine::sourceMap()`` follows ``incomplete`` and draws the map they copy."
+  $md += "There is nothing to import for them: they borrow the original's blocks byte-for-byte instead of"
+  $md += "carrying a duplicate here. Nothing is invented, and nothing is hidden -- the map screen says"
+  $md += "plainly that it is showing an unfinished copy, and of what."
   $md += ""
   foreach ($u in $unsized) { $md += "* $u" }
-  $md += ""
-  $md += "(The reachable ``*_COPY`` ids are a different thing -- ``maps.json`` sizes those, and they import"
-  $md += "normally.)"
   $md += ""
 }
 if ($overruns.Count) {

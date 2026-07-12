@@ -33,6 +33,7 @@
 #include <QtTest>
 #include <QImage>
 #include <QPixmap>
+#include <QPair>
 #include <QSet>
 #include <QSize>
 
@@ -76,18 +77,27 @@ int tilesetOf(int mapInd)
   return MapEngine::tilesetOf(mapInd);
 }
 
-/// The three "Copy" maps maps.json sizes but leaves with an EMPTY tileset string.
+/// The glitch / half-baked ids, and the map each one is really a copy of.
 ///
-/// In ROM they alias the original map's header, so their tileset is really House,
-/// Gate and Mart. maps.json simply doesn't say so -- a small data gap, left alone
-/// rather than quietly patched (the JSON is curated). It costs the map screen
-/// nothing: when one of these is the loaded map, the tileset comes from the SAVE
-/// (wCurMapTileset), which the game filled in correctly. It only means the DB alone
-/// cannot name their tileset. Pinned here so the gap can't silently grow.
-const QVector<int> kMapsWithNoTilesetInJson = {
-  69,  // Trashed House Copy          -> ROM: CeruleanTrashedHouse (House)
-  75,  // Path Entrance Route 6 Copy  -> ROM: UndergroundPathRoute6 (Gate)
-  173  // Cinnabar Mart Copy          -> ROM: CinnabarMart (Mart)
+/// These are the ids that carry no size and/or no tileset of their own. They are not
+/// empty maps -- they are unfinished duplicates, and `maps.json` already says which
+/// map of (its `incomplete` field), in exact agreement with the ROM's header-pointer
+/// table. So they render: we follow the link and draw the map they copy, which is what
+/// a Game Boy loading that id puts on screen. Nothing is invented.
+const QVector<QPair<int, QString>> kCopyMaps = {
+  { 11,  "Saffron City" },
+  { 69,  "Trashed House" },            // sized, but no tileset of its own
+  { 75,  "Path Entrance Route 6" },    // ditto
+  { 105, "Lances Room" }, { 106, "Lances Room" }, { 107, "Lances Room" },
+  { 109, "Lances Room" }, { 110, "Lances Room" }, { 111, "Lances Room" },
+  { 112, "Lances Room" }, { 114, "Lances Room" }, { 115, "Lances Room" },
+  { 116, "Lances Room" }, { 117, "Lances Room" },
+  { 173, "Cinnabar Mart" },            // sized, but no tileset of its own
+  { 204, "Rocket Hideout Elevator" }, { 205, "Rocket Hideout Elevator" },
+  { 206, "Rocket Hideout Elevator" },
+  { 231, "Route 16 Gate 1F" },
+  { 237, "Silph Co 2F" }, { 238, "Silph Co 2F" }, { 241, "Silph Co 2F" },
+  { 242, "Silph Co 2F" }, { 243, "Silph Co 2F" }, { 244, "Silph Co 2F" }
 };
 
 } // namespace
@@ -102,7 +112,8 @@ private slots:
   // The data
   void blocks_everyRealMapHasBlockData();
   void blocks_everyMapIsExactlyItsDeclaredSize();
-  void blocks_everyMapNamesATileset();
+  void everyMapIdRenders();
+  void copyMaps_drawTheMapTheyAreACopyOf();
   void blocks_everyBlockUsedExistsInItsTileset();
   void blocks_noMapUsesATileBeyondItsTilesetGraphics();
   void blocks_everyBorderBlockExistsInItsTileset();
@@ -133,27 +144,72 @@ void TestMap::initTestCase()
 
 void TestMap::blocks_everyRealMapHasBlockData()
 {
-  // 248 map ids exist in ROM, but 22 of them are ids maps.json marks as unused glitch
-  // maps and gives no dimensions -- we deliberately do not import those (the ROM would
-  // load another map's header for them; see the blocks README + scripts/import_map_blocks.ps1).
-  // That leaves 226 maps we can honestly draw, across 24 tilesets.
+  // 226 maps own their block data outright; the other ids are copies that borrow it
+  // (see everyMapIdRenders below). 24 tilesets.
   QCOMPARE(BlocksDB::inst()->mapCount(), 226);
   QCOMPARE(BlocksDB::inst()->tilesetCount(), 24);
 
-  // Every map the editor considers real must be drawable...
+  // Every map the editor sizes must own its blocks...
   for (auto* entry : MapsDB::inst()->getStore()) {
     if (entry->getWidth() <= 0 || entry->getHeight() <= 0)
-      continue; // unsized => a glitch id, nothing to draw
+      continue; // unsized => a copy, it borrows
 
     QVERIFY2(BlocksDB::inst()->hasMap(entry->getInd()),
              qPrintable(QString("map %1 (%2) has no block data")
                         .arg(entry->getInd()).arg(entry->bestName())));
   }
 
-  // ...and the unsized/absent ids must not acquire any by accident.
-  QVERIFY(!BlocksDB::inst()->hasMap(11));  // "Unused Map 0B"
+  // ...and ids that own none must not acquire any by accident.
+  QVERIFY(!BlocksDB::inst()->hasMap(11));  // "Unused Map 0B" -- a copy of Saffron City
   QVERIFY(!BlocksDB::inst()->hasMap(248)); // past the end of the header table
   QVERIFY(!BlocksDB::inst()->hasMap(255));
+}
+
+void TestMap::everyMapIdRenders()
+{
+  // The whole point: if the game has data for an id -- even second-hand, as a copy --
+  // we draw it. Every one of the 248 real ids must produce a buffer.
+  for (int ind = 0; ind < 248; ind++) {
+    auto* entry = MapsDB::inst()->getIndAt(QString::number(ind));
+    if (entry == nullptr)
+      continue;
+
+    const auto buffer = MapEngine::buildOverworldMap(ind);
+    QVERIFY2(buffer.valid,
+             qPrintable(QString("map %1 (%2) renders nothing").arg(ind).arg(entry->bestName())));
+    QVERIFY(MapEngine::tilesetOf(ind) >= 0);
+  }
+
+  // "Last Map" (255) really is empty -- no size, no blocks, nothing it is a copy of.
+  // Drawing something for it would mean inventing a map, so it stays blank.
+  QVERIFY(!MapEngine::buildOverworldMap(255).valid);
+}
+
+void TestMap::copyMaps_drawTheMapTheyAreACopyOf()
+{
+  for (const auto& [ind, copyOf] : kCopyMaps) {
+    const auto buffer = MapEngine::buildOverworldMap(ind);
+
+    QVERIFY2(buffer.valid, qPrintable(QString("copy map %1 renders nothing").arg(ind)));
+    QVERIFY2(buffer.isCopy, qPrintable(QString("map %1 should be flagged a copy").arg(ind)));
+
+    // It must land on the map maps.json says it copies -- and be the *same* map, not a
+    // lookalike: same size, and identical blocks byte for byte.
+    auto* source = MapsDB::inst()->getIndAt(copyOf);
+    QVERIFY2(source != nullptr, qPrintable(QString("'%1' does not resolve").arg(copyOf)));
+
+    QCOMPARE(buffer.sourceInd, source->getInd());
+    QCOMPARE(buffer.sourceName, source->bestName());  // the display name QML shows
+    QCOMPARE(buffer.width, source->getWidth());
+    QCOMPARE(buffer.height, source->getHeight());
+    QCOMPARE(MapEngine::buildOverworldMap(source->getInd()).blocks, buffer.blocks);
+
+    // ...and the tileset it draws with is the original's, not a guess.
+    QCOMPARE(MapEngine::tilesetOf(ind), MapEngine::tilesetOf(source->getInd()));
+  }
+
+  // A map that owns its data is never flagged a copy.
+  QVERIFY(!MapEngine::buildOverworldMap(0).isCopy); // Pallet Town
 }
 
 void TestMap::blocks_everyMapIsExactlyItsDeclaredSize()
@@ -172,23 +228,11 @@ void TestMap::blocks_everyMapIsExactlyItsDeclaredSize()
   }
 }
 
-void TestMap::blocks_everyMapNamesATileset()
-{
-  // Exactly three maps can't name their tileset from the DB alone, and we know which.
-  QVector<int> missing;
-  for (int ind : mapsWithBlocks())
-    if (tilesetOf(ind) < 0)
-      missing.append(ind);
-
-  QCOMPARE(missing, kMapsWithNoTilesetInJson);
-}
-
 void TestMap::blocks_everyBlockUsedExistsInItsTileset()
 {
   for (int ind : mapsWithBlocks()) {
     const int ts = tilesetOf(ind);
-    if (ts < 0)
-      continue; // see kMapsWithNoTilesetInJson
+    QVERIFY2(ts >= 0, qPrintable(QString("map %1 names no tileset").arg(ind)));
 
     const int blockCount = BlocksDB::inst()->tilesetBlockCount(ts);
     QVERIFY(blockCount > 0);
@@ -213,8 +257,7 @@ void TestMap::blocks_noMapUsesATileBeyondItsTilesetGraphics()
   // did use a tile past 0x5F, the render would silently be wrong -- so pin it.
   for (int ind : mapsWithBlocks()) {
     const int ts = tilesetOf(ind);
-    if (ts < 0)
-      continue; // see kMapsWithNoTilesetInJson
+    QVERIFY(ts >= 0);
 
     const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(ts);
     QVERIFY(!blockset.isEmpty());
@@ -243,9 +286,10 @@ void TestMap::blocks_everyBorderBlockExistsInItsTileset()
     auto* entry = MapsDB::inst()->getIndAt(QString::number(ind));
     const int border = entry->getBorder();
     const int ts = tilesetOf(ind);
-    if (border < 0 || ts < 0)
-      continue; // no border recorded / see kMapsWithNoTilesetInJson
+    if (border < 0)
+      continue; // no border recorded
 
+    QVERIFY(ts >= 0);
     const int blockCount = BlocksDB::inst()->tilesetBlockCount(ts);
     QVERIFY2(border < blockCount,
              qPrintable(QString("map %1 (%2): border block %3, tileset has only %4")
@@ -387,8 +431,8 @@ void TestMap::buffer_isTheMapRingedByItsBorderBlock()
 
 void TestMap::buffer_glitchMapHasNone()
 {
-  // A glitch id has no blocks in ROM. Inventing a map for it would be worse than
-  // drawing nothing, so the buffer must simply come back invalid.
+  // An id past the end of the header table has nothing in ROM and is a copy of nothing.
+  // Inventing a map for it would be worse than drawing nothing.
   const auto buffer = MapEngine::buildOverworldMap(250);
   QVERIFY(!buffer.valid);
   QVERIFY(MapEngine::render(buffer, 0, 0).isNull());
@@ -426,8 +470,12 @@ void TestMap::provider_servesTheMapAndFallsBackCleanly()
   QCOMPARE(map.width(), (10 + 6) * MapEngine::blockPx);
   QCOMPARE(size.width(), (10 + 6) * MapEngine::blockPx);
 
-  // A malformed id, and a map with no data, must both degrade quietly rather than
-  // crash or draw garbage.
+  // A glitch id draws the map it is a copy of -- same picture as Saffron City.
+  const QPixmap copy = provider.requestPixmap("11/0/0", &size, QSize());
+  QCOMPARE(copy.size(), provider.requestPixmap("10/0/0", &size, QSize()).size());
+
+  // A malformed id, and an id with nothing behind it at all, must both degrade quietly
+  // rather than crash or draw garbage.
   QVERIFY(!provider.requestPixmap("nonsense", &size, QSize()).isNull());
   QVERIFY(!provider.requestPixmap("250/0/0", &size, QSize()).isNull());
 }

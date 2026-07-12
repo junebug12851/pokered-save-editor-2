@@ -88,6 +88,19 @@ Page {
           color: brg.settings.textColorMid
         }
 
+        // A glitch / half-baked map id draws another map's data -- which is exactly what
+        // the game does with it. Say so, rather than let it pass as a map of its own.
+        Text {
+          visible: brg.map.isCopy
+          text: qsTr("⚠ unfinished copy — the game draws %1's data here").arg(brg.map.copyOfName)
+          font.pixelSize: 12
+          color: brg.settings.errorColor
+          elide: Text.ElideRight
+          // Room to say it in full; it only elides when the window really is too narrow.
+          Layout.maximumWidth: implicitWidth
+          Layout.minimumWidth: 0
+        }
+
         Item { Layout.fillWidth: true }
       }
     }
@@ -107,11 +120,11 @@ Page {
       ScrollBar.vertical: ScrollBar {}
       ScrollBar.horizontal: ScrollBar {}
 
-      // The map has no block data (a glitch map id) -- say so rather than show a void.
+      // Genuinely nothing in the game to draw, and nothing this id is a copy of either.
       Text {
         anchors.centerIn: parent
         visible: !brg.map.valid
-        text: qsTr("This map has no block data in the game.")
+        text: qsTr("There is no map data in the game for this one.")
         font.pixelSize: 13
         color: brg.settings.textColorMid
       }

@@ -49,7 +49,7 @@ int MapModel::playerY() const    { return player->yCoord; }
 
 bool MapModel::valid() const
 {
-  return BlocksDB::inst()->hasMap(mapInd())
+  return MapEngine::sourceMap(mapInd()) != nullptr
       && BlocksDB::inst()->hasTileset(tilesetInd())
       && blocksWide() > 0 && blocksHigh() > 0;
 }
@@ -71,6 +71,22 @@ QString MapModel::mapName() const
   return (entry == nullptr) ? QString() : entry->bestName();
 }
 
+bool MapModel::isCopy() const
+{
+  auto* source = MapEngine::sourceMap(mapInd());
+  return source != nullptr && source->getInd() != mapInd();
+}
+
+QString MapModel::copyOfName() const
+{
+  auto* source = MapEngine::sourceMap(mapInd());
+
+  if (source == nullptr || source->getInd() == mapInd())
+    return QString();
+
+  return source->bestName();
+}
+
 QString MapModel::tilesetName() const
 {
   for (auto* el : TilesetDB::inst()->getStore())
@@ -80,15 +96,18 @@ QString MapModel::tilesetName() const
   return QString();
 }
 
+// The size comes from whichever map actually supplies the data -- a glitch id carries
+// no dimensions of its own, so it takes the ones from the map it is a copy of.
+
 int MapModel::blocksWide() const
 {
-  auto* entry = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  auto* entry = MapEngine::sourceMap(mapInd());
   return (entry == nullptr) ? 0 : entry->getWidth();
 }
 
 int MapModel::blocksHigh() const
 {
-  auto* entry = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  auto* entry = MapEngine::sourceMap(mapInd());
   return (entry == nullptr) ? 0 : entry->getHeight();
 }
 

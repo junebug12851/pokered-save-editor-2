@@ -40,6 +40,50 @@ MapDBEntry* mapAt(int mapInd)
   return MapsDB::inst()->getIndAt(QString::number(mapInd));
 }
 
+/// How many `incomplete` hops to follow before deciding the data is looping.
+constexpr int maxIncompleteHops = 4;
+
+} // namespace
+
+MapDBEntry* MapEngine::sourceMap(int mapInd)
+{
+  auto* entry = mapAt(mapInd);
+
+  // The glitch and half-baked maps are not empty -- they are *copies*. maps.json says
+  // so itself: `incomplete` names the map they are an unfinished duplicate of, and it
+  // agrees exactly with what the ROM does (its header-pointer table sends "Unused Map
+  // 0B" at Saffron City's header, the Lance's Room ids at Lance's Room, and so on). So
+  // when an entry doesn't carry its own size or tileset, we don't invent one -- we walk
+  // to the map it is a copy of and use that map's real data, which is what a Game Boy
+  // loading that id would draw.
+  //
+  // The reachable "*_Copy" maps (Trashed House Copy, Cinnabar Mart Copy, ...) have their
+  // own dimensions but no tileset string; they hop for the tileset alone. The unused ids
+  // have neither and hop for everything.
+  for (int hop = 0; entry != nullptr && hop < maxIncompleteHops; hop++) {
+    // "Drawable" means it has everything the renderer needs: a size, blocks, and a
+    // tileset it can actually name. A copy that has its own size but no tileset (the
+    // reachable "*_Copy" maps) is still not drawable, so it keeps hopping -- and it
+    // lands on the very map the ROM would have loaded for it anyway, since an aliased
+    // header means the two are literally the same map.
+    const bool sized = entry->getWidth() > 0 && entry->getHeight() > 0;
+    const bool hasBlocks = BlocksDB::inst()->hasMap(entry->getInd());
+    const bool hasTileset = TilesetDB::inst()->getIndAt(entry->getTileset()) != nullptr;
+
+    if (sized && hasBlocks && hasTileset)
+      return entry;
+
+    if (entry->getIncomplete().isEmpty())
+      return nullptr; // nothing to fall back to -- there is genuinely no map here
+
+    entry = MapsDB::inst()->getIndAt(entry->getIncomplete());
+  }
+
+  return nullptr;
+}
+
+namespace {
+
 /// Tilesets are stored in id order, but never assume it -- verify, then scan.
 TilesetDBEntry* tilesetAt(int tilesetInd)
 {
@@ -61,13 +105,20 @@ MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd)
   Buffer out;
   out.mapInd = mapInd;
 
-  auto* map = mapAt(mapInd);
-  const QByteArray blocks = BlocksDB::inst()->mapBlocks(mapInd);
+  // The map whose data this id actually draws -- itself, or, for a glitch/half-baked
+  // copy, the map it is a copy of (see sourceMap()).
+  auto* map = sourceMap(mapInd);
 
-  // Glitch ids past the last real map have no block data at all -- there is
-  // nothing in ROM to draw, and pretending otherwise would be inventing a map.
-  if (map == nullptr || blocks.isEmpty())
+  // Nothing in the data and nothing to fall back to (e.g. "Last Map"). Drawing
+  // something anyway would mean inventing a map, so we draw nothing and say so.
+  if (map == nullptr)
     return out;
+
+  out.sourceInd = map->getInd();
+  out.sourceName = map->bestName();
+  out.isCopy = (out.sourceInd != mapInd);
+
+  const QByteArray blocks = BlocksDB::inst()->mapBlocks(out.sourceInd);
 
   out.width  = map->getWidth();
   out.height = map->getHeight();
@@ -100,7 +151,9 @@ MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd)
 
 int MapEngine::tilesetOf(int mapInd)
 {
-  auto* map = mapAt(mapInd);
+  // Walk to whichever map actually supplies this id's data -- a half-baked copy has no
+  // tileset string of its own, and the map it copies is where the real one lives.
+  auto* map = sourceMap(mapInd);
   if (map == nullptr)
     return -1;
 

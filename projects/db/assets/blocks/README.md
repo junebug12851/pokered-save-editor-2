@@ -14,39 +14,40 @@ Ids come from `data/maps/map_header_pointers.asm` (the authoritative id -> heade
 not from file names: several maps share one `.blk` through label aliases, and
 `UndergroundPathRoute7Copy` has no `.blk` of its own.
 
-## Glitch ids: imported, or not
+## The copies: not imported, because they borrow
 
-`maps.json` marks 22 ids as unused glitch maps and gives them **no width or
-height**. The ROM is less tidy: its header table quietly points those ids at a real map's
-header, so a Game Boy would happily render one. We do not import them -- a map the editor's
-own DB cannot size is a map it has no business drawing, and inventing the dimensions is not
-ours to do. The map screen says so plainly instead.
+22 ids carry no width or height in `maps.json` -- because they are not maps of
+their own. They are **unfinished copies**, and `maps.json` already says which map of, in its
+`incomplete` field. The ROM agrees exactly: its header-pointer table sends those ids at the
+very same maps' headers, so a Game Boy loading one really does draw the original.
 
-* id 11 (maps.json: 'Unused Map 0B', glitch) -- ROM would load SaffronCity's header (20x18)
-* id 105 (maps.json: 'Unused Map 69', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 106 (maps.json: 'Unused Map 6A', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 107 (maps.json: 'Unused Map 6B', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 109 (maps.json: 'Unused Map 6D', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 110 (maps.json: 'Unused Map 6E', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 111 (maps.json: 'Unused Map 6F', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 112 (maps.json: 'Unused Map 70', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 114 (maps.json: 'Unused Map 72', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 115 (maps.json: 'Unused Map 73', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 116 (maps.json: 'Unused Map 74', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 117 (maps.json: 'Unused Map 75', glitch) -- ROM would load LancesRoom's header (13x13)
-* id 204 (maps.json: 'Unused Map CC', glitch) -- ROM would load RocketHideoutElevator's header (3x4)
-* id 205 (maps.json: 'Unused Map CD', glitch) -- ROM would load RocketHideoutElevator's header (3x4)
-* id 206 (maps.json: 'Unused Map CE', glitch) -- ROM would load RocketHideoutElevator's header (3x4)
-* id 231 (maps.json: 'Unused Map E7', glitch) -- ROM would load Route16Gate1F's header (4x7)
-* id 237 (maps.json: 'Unused Map ED', glitch) -- ROM would load SilphCo2F's header (15x9)
-* id 238 (maps.json: 'Unused Map EE', glitch) -- ROM would load SilphCo2F's header (15x9)
-* id 241 (maps.json: 'Unused Map F1', glitch) -- ROM would load SilphCo2F's header (15x9)
-* id 242 (maps.json: 'Unused Map F2', glitch) -- ROM would load SilphCo2F's header (15x9)
-* id 243 (maps.json: 'Unused Map F3', glitch) -- ROM would load SilphCo2F's header (15x9)
-* id 244 (maps.json: 'Unused Map F4', glitch) -- ROM would load SilphCo2F's header (15x9)
+So they render -- `MapEngine::sourceMap()` follows `incomplete` and draws the map they copy.
+There is nothing to import for them: they borrow the original's blocks byte-for-byte instead of
+carrying a duplicate here. Nothing is invented, and nothing is hidden -- the map screen says
+plainly that it is showing an unfinished copy, and of what.
 
-(The reachable `*_COPY` ids are a different thing -- `maps.json` sizes those, and they import
-normally.)
+* id 11 'Unused Map 0B' -- a copy of 'Saffron City'; borrows its blocks (ROM agrees: header = SaffronCity)
+* id 105 'Unused Map 69' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 106 'Unused Map 6A' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 107 'Unused Map 6B' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 109 'Unused Map 6D' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 110 'Unused Map 6E' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 111 'Unused Map 6F' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 112 'Unused Map 70' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 114 'Unused Map 72' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 115 'Unused Map 73' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 116 'Unused Map 74' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 117 'Unused Map 75' -- a copy of 'Lances Room'; borrows its blocks (ROM agrees: header = LancesRoom)
+* id 204 'Unused Map CC' -- a copy of 'Rocket Hideout Elevator'; borrows its blocks (ROM agrees: header = RocketHideoutElevator)
+* id 205 'Unused Map CD' -- a copy of 'Rocket Hideout Elevator'; borrows its blocks (ROM agrees: header = RocketHideoutElevator)
+* id 206 'Unused Map CE' -- a copy of 'Rocket Hideout Elevator'; borrows its blocks (ROM agrees: header = RocketHideoutElevator)
+* id 231 'Unused Map E7' -- a copy of 'Route 16 Gate 1F'; borrows its blocks (ROM agrees: header = Route16Gate1F)
+* id 237 'Unused Map ED' -- a copy of 'Silph Co 2F'; borrows its blocks (ROM agrees: header = SilphCo2F)
+* id 238 'Unused Map EE' -- a copy of 'Silph Co 2F'; borrows its blocks (ROM agrees: header = SilphCo2F)
+* id 241 'Unused Map F1' -- a copy of 'Silph Co 2F'; borrows its blocks (ROM agrees: header = SilphCo2F)
+* id 242 'Unused Map F2' -- a copy of 'Silph Co 2F'; borrows its blocks (ROM agrees: header = SilphCo2F)
+* id 243 'Unused Map F3' -- a copy of 'Silph Co 2F'; borrows its blocks (ROM agrees: header = SilphCo2F)
+* id 244 'Unused Map F4' -- a copy of 'Silph Co 2F'; borrows its blocks (ROM agrees: header = SilphCo2F)
 
 ## ROM overruns (reproduced, not patched)
 
