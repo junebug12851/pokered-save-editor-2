@@ -20,11 +20,25 @@
  *
  *   [ ▶ ] [ ♪ Pallet Town ⌄ ]
  *
- * Inside the drop-down: a **sub-tracks** toggle, the **track list** (all 151 -- the 46 real tracks
- * and the 105 inner voices, which are real music too), and the two **save flags** underneath.
+ * Inside the drop-down, top to bottom:
  *
- * **Hover auditions; click commits.** Running the mouse down the list changes what you hear and
- * touches nothing. A line says plainly when what you are hearing is not what is stored.
+ *   * a **real grouped ComboBox** of all 151 pieces -- the 46 real tracks and the 105 inner voices,
+ *     which are real music too;
+ *   * a **volume slider**, directly under it;
+ *   * the **sub-tracks** toggle;
+ *   * the two **save flags**.
+ *
+ * ⚠️ **REBUILT 2026-07-13.** The first cut was a hand-rolled ListView of 151 rows in a popup, which
+ * Twilight had already told me not to build: *"The map dropdown has actual group real combo boxes,
+ * the music dropdown does not — it's way too big and it's a manual list when I stated combo box
+ * earlier. It's also missing the volume slider, which should be below the combo box."* It is now the
+ * same `ComboBox` + grouped `ItemDelegate` as MapPicker's 248-map list, and for the same reason: one
+ * control, one language, no wall.
+ *
+ * ⚠️ **HOVER NO LONGER AUDITIONS.** It did, and it was wrong -- sweeping the list to read it meant
+ * the music kept changing under you. Twilight: *"Stop music change on hover change. Just only when
+ * it's selected."* Selecting a track plays it (if the player is running) **and** writes the save.
+ * There is one gesture and it does the one thing.
  *
  * ⚠️ Nothing plays on its own. The ▶ is a thing you press.
  */
@@ -34,6 +48,7 @@ import QtQuick.Layouts
 
 RowLayout {
   id: music
+  objectName: "musicPicker"   // the DEBUG harness opens the drop-down through this
   spacing: 4
 
   property bool openState: false
@@ -109,16 +124,16 @@ RowLayout {
         opacity: 0.75
       }
 
+      // The chip always says what is IN THE SAVE. (It used to go italic while a hover-audition was
+      // playing something else -- there are no auditions any more, so there is nothing to disclaim:
+      // what you hear IS what is saved.)
       Label {
         Layout.fillWidth: true
-        text: !music.hasAudio ? qsTr("—")
-            : brg.music.previewing ? brg.music.playingName
-            : brg.music.describe(music.audio.musicBank, music.audio.musicID)
+        text: !music.hasAudio
+                ? qsTr("—")
+                : brg.music.describe(music.audio.musicBank, music.audio.musicID)
         font.pixelSize: 11
-        font.bold: !brg.music.previewing
-        // ⚠️ Italic while you are AUDITIONING -- what you are hearing is not what is saved, and the
-        // chip must not quietly imply that it is.
-        font.italic: brg.music.previewing
+        font.bold: true
         elide: Text.ElideRight
       }
 
@@ -136,10 +151,7 @@ RowLayout {
       id: panel
 
       visible: music.openState
-      onClosed: {
-        music.openState = false;
-        brg.music.unpreview();     // stop auditioning; snap back to the truth
-      }
+      onClosed: music.openState = false
 
       y: chip.height + 5
       x: -60
@@ -156,9 +168,149 @@ RowLayout {
 
       ColumnLayout {
         width: parent.width
-        spacing: 6
+        spacing: 8
 
-        // ── Sub-tracks, above the list ─────────────────────────────────────────────────────
+        // ── The track: a REAL grouped ComboBox ─────────────────────────────────────────────
+        //
+        // The same control, and the same grouped delegate, as MapPicker's 248-map list. The group
+        // heading rides on the FIRST entry of its group (MusicPlayer::tracks puts it there), so
+        // there is one model and one list rather than two that can drift apart.
+        ComboBox {
+          id: trackCombo
+
+          Layout.fillWidth: true
+          Layout.preferredHeight: 32
+          font.pixelSize: 12
+
+          model: showInner.checked
+                 ? brg.music.tracks
+                 : brg.music.tracks.filter(function(t) { return !t.inner; })
+
+          textRole: "name"
+
+          currentIndex: {
+            if (!music.hasAudio)
+              return -1;
+
+            const list = trackCombo.model;
+            for (let i = 0; i < list.length; i++)
+              if (list[i].bank === music.audio.musicBank && list[i].id === music.audio.musicID)
+                return i;
+
+            return -1;   // a bank/id pair no track has -- shown as it is, never corrected
+          }
+
+          // A save can hold a bank/id the game never wrote. Say what it is rather than snapping the
+          // combo to the nearest thing it likes.
+          displayText: currentIndex >= 0
+                         ? currentText
+                         : (music.hasAudio
+                              ? brg.music.describe(music.audio.musicBank, music.audio.musicID)
+                              : "—")
+
+          // ⚠️ SELECTING is the ONLY thing that changes the music, and it is also the only thing
+          // that writes the save. Hovering a row used to audition it -- so reading the list changed
+          // what you were hearing, which Twilight (rightly) asked me to stop.
+          onActivated: {
+            if (!music.hasAudio)
+              return;
+
+            const t = trackCombo.model[trackCombo.currentIndex];
+            if (!t)
+              return;
+
+            music.audio.musicBank = t.bank;
+            music.audio.musicID = t.id;
+
+            brg.music.select(t.bank, t.id);
+          }
+
+          popup.height: Math.min(280, popup.contentItem.implicitHeight + 2)
+
+          delegate: ItemDelegate {
+            id: row
+            required property var modelData
+            required property int index
+
+            width: trackCombo.width
+            height: (modelData.group !== "" ? 20 : 0) + 24
+            highlighted: trackCombo.highlightedIndex === row.index
+
+            readonly property bool isSaved: music.hasAudio
+                                         && music.audio.musicBank === row.modelData.bank
+                                         && music.audio.musicID === row.modelData.id
+
+            contentItem: ColumnLayout {
+              spacing: 0
+
+              Text {
+                visible: row.modelData.group !== ""
+                Layout.fillWidth: true
+                text: row.modelData.group
+                font.pixelSize: 10
+                font.bold: true
+                color: brg.settings.textColorMid
+              }
+
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: 6
+
+                Text {
+                  Layout.fillWidth: true
+                  text: row.modelData.name
+                  font.pixelSize: 12
+                  // An inner voice is one channel of a song, alone. Real music -- and worth saying
+                  // it is a part rather than a whole.
+                  font.italic: row.modelData.inner
+                  color: brg.settings.textColorDark
+                  opacity: row.modelData.inner ? 0.8 : 1.0
+                  elide: Text.ElideRight
+                }
+
+                Text {
+                  visible: row.isSaved
+                  text: qsTr("in the save")
+                  font.pixelSize: 9
+                  color: "#0072b2"
+                }
+              }
+            }
+          }
+        }
+
+        // ── Volume, DIRECTLY under the combo ───────────────────────────────────────────────
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 6
+
+          Label {
+            text: "🔉"
+            font.pixelSize: 12
+            opacity: 0.6
+          }
+
+          Slider {
+            id: vol
+            Layout.fillWidth: true
+            Layout.preferredHeight: 22
+
+            from: 0.0
+            to: 1.0
+            value: brg.music.volume
+            onMoved: brg.music.volume = value
+
+            ToolTip {
+              parent: vol.handle
+              visible: vol.pressed || vol.hovered
+              text: Math.round(vol.value * 100) + "%"
+              enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 70 } }
+              exit:  Transition { NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 70 } }
+            }
+          }
+        }
+
+        // ── Sub-tracks ─────────────────────────────────────────────────────────────────────
         //
         // The 105 "inner voices" are real music: one channel of a song, played alone, exactly as
         // the console plays it. On by default, because they are the point -- but 151 rows is a lot
@@ -179,112 +331,6 @@ RowLayout {
             checked: true
             implicitHeight: 22
             scale: 0.8
-          }
-        }
-
-        Label {
-          Layout.fillWidth: true
-          visible: brg.music.previewing
-          text: qsTr("You're hearing a preview. The save still has %1.")
-                  .arg(music.hasAudio
-                         ? brg.music.describe(music.audio.musicBank, music.audio.musicID) : "—")
-          font.pixelSize: 10
-          color: "#c77800"
-          wrapMode: Text.Wrap
-        }
-
-        // ── The tracks ─────────────────────────────────────────────────────────────────────
-        ListView {
-          id: list
-
-          Layout.fillWidth: true
-          Layout.preferredHeight: 210
-          clip: true
-
-          model: showInner.checked
-                 ? brg.music.tracks
-                 : brg.music.tracks.filter(function(t) { return !t.inner; })
-
-          boundsBehavior: Flickable.StopAtBounds
-          ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
-
-          // Hover auditions -- but only once you SETTLE. A fast sweep must not machine-gun the
-          // engine with 151 track changes.
-          Timer {
-            id: settle
-            interval: 120
-            property int bank: 0
-            property int id: 0
-            onTriggered: brg.music.preview(bank, id)
-          }
-
-          delegate: Rectangle {
-            id: row
-            required property var modelData
-
-            width: ListView.view.width
-            implicitHeight: 22
-            radius: 4
-
-            readonly property bool isSaved: music.hasAudio
-                                         && music.audio.musicBank === row.modelData.bank
-                                         && music.audio.musicID === row.modelData.id
-
-            color: row.isSaved ? Qt.rgba(0.34, 0.71, 0.91, 0.18)
-                 : rowHover.hovered ? Qt.rgba(0, 0, 0, 0.06)
-                 : "transparent"
-
-            RowLayout {
-              anchors.fill: parent
-              anchors.leftMargin: 6
-              anchors.rightMargin: 6
-              spacing: 6
-
-              Label {
-                Layout.fillWidth: true
-                text: row.modelData.name
-                font.pixelSize: 11
-                font.italic: row.modelData.inner
-                color: "#212121"
-                opacity: row.modelData.inner ? 0.75 : 1.0
-                elide: Text.ElideRight
-              }
-
-              Label {
-                visible: row.isSaved
-                text: qsTr("in the save")
-                font.pixelSize: 9
-                color: "#0072b2"
-              }
-            }
-
-            HoverHandler {
-              id: rowHover
-              cursorShape: Qt.PointingHandCursor
-
-              // HOVER AUDITIONS. It never touches the save.
-              onHoveredChanged: {
-                if (!hovered || !brg.music.isPlaying)
-                  return;
-
-                settle.bank = row.modelData.bank;
-                settle.id = row.modelData.id;
-                settle.restart();
-              }
-            }
-
-            // CLICK COMMITS. This, and only this, writes the save.
-            TapHandler {
-              onTapped: {
-                if (!music.hasAudio)
-                  return;
-
-                music.audio.musicBank = row.modelData.bank;
-                music.audio.musicID = row.modelData.id;
-
-                brg.music.select(row.modelData.bank, row.modelData.id);
-              }
-            }
           }
         }
 

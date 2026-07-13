@@ -229,12 +229,41 @@ And four things simply **not modelled**:
 
 5. StateData1 `a` **YADJUSTED**, `b` **XADJUSTED**, `c` **COLLISIONDATA**.
 6. StateData2 `9` **ORIGFACINGDIRECTION** (backed up by `DisplayTextIDInit`, restored by `CloseTextDisplay`)
-   and `d` — a **duplicate `PICTUREID`**.
+   and `d` — **`SPRITESTATEDATA2_PICTUREID`**. ⚠️ **NOT a "duplicate picture id"** — see below.
 7. **The link from a sprite to its visibility flag.** The flags themselves *are* modelled (`WorldMissables`,
    `0x2852`) — but `SpriteData::missableIndex` points into them and **nothing has ever followed that
    arrow**, and the polarity (*set = hidden*) was written down nowhere. (An earlier draft of this document
    claimed the flags weren't modelled at all, at the wrong address. It was wrong on both counts.)
 8. `SpriteMovement` is missing `ANY_DIR ($00)` and `NONE ($FF)`, and its comments say *"I have no idea"*.
+
+### The fifth bug — and it was **mine** (2026-07-13)
+
+`SPRITESTATEDATA2_PICTUREID` (StateData2 `d`, the field v2 calls `pictureIDCopy`) **is not a second copy of
+the picture id.** I read the name, assumed it was, and built the Details panel a row that said *"the game's
+second copy disagrees"* whenever it differed from `pictureID`.
+
+It differs **on every sprite in every save**, because the game **wipes it**:
+
+```asm
+; the pictures IDs stored at [x#SPRITESTATEDATA2_PICTUREID] are no longer needed,
+; so zero them
+.zeroStoredPictureIDLoop
+    xor a
+    ld [hl], a          ; [x#SPRITESTATEDATA2_PICTUREID]
+    ...
+        -- engine/overworld/map_sprites.asm, end of LoadMapSpriteTilePatterns
+```
+
+What it really is: a **scratch byte**. `LoadMapSpriteTilePatterns` needs a picture id per slot to know which
+artwork to load into VRAM, so `LoadMapSpriteData` copies StateData1's picture ids into StateData2's slot…
+and then, the moment the tile patterns are in, it **zeroes all sixteen of them**. At rest it is `0`. Always.
+
+So it belongs with the **animation scratch** (yellow **!**, "the game reloads this"), not up beside the
+character's real picture. It is now modelled that way.
+
+> **The lesson is the one Part 6 already teaches, and I had to learn it twice in one day: a warning that
+> fires on every save is not a warning, it is noise — and noise is a bug.** Before shipping a "these two
+> disagree" notice, load a *clean* save and check it stays quiet. Both times, it didn't.
 
 ## Part 6 — the console settled the big one: **sprite edits DO survive**
 

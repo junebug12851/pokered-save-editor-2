@@ -47,6 +47,39 @@ Rectangle {
   // The dock owns the frame and the title bar. A panel is its content.
   color: "transparent"
 
+  /// A dirty counter. `anyOn()` / `groupAnyOn()` are METHODS, and a binding on a method never
+  /// re-evaluates -- so the Clear buttons would light up once and then lie forever. Bumping this on
+  /// the model's own signals is what gives those calls something to depend on. (This is THE recurring
+  /// QML trap on this screen -- reference/qt-patterns.md.)
+  property int revision: 0
+
+  Connections {
+    target: brg.mapLayers
+    function onViewBitsChanged() { panel.revision++; }
+  }
+
+  Connections {
+    target: brg.map
+    function onOverlayChanged() { panel.revision++; }
+  }
+
+  readonly property bool anythingOn: {
+    panel.revision;
+    return brg.mapLayers.anyOn();
+  }
+
+  // ── The Clear, in the dock's title bar ──────────────────────────────────────────────────────
+  //
+  // Not down in a footer -- it was, and it ate two rows out of a list that only fits eight. The dock
+  // instantiates this into the panel's own title, hard right (Twilight, 2026-07-13).
+  property Component headerAction: Component {
+    MapClearButton {
+      enabled: panel.anythingOn
+      tip: qsTr("Turn every layer off, in every group — back to just the map")
+      onClicked: brg.mapLayers.clearAll()
+    }
+  }
+
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: 10
@@ -186,15 +219,24 @@ Rectangle {
             elide: Text.ElideRight
           }
 
-          // "none on this map" -- said on the row, not by leaving you to work it out.
-          Text {
-            visible: !row.layerIsGroup && !row.layerApplies
-            text: qsTr("none here")
-            font.pixelSize: 10
-            font.italic: true
-            color: brg.settings.textColorMid
-            opacity: 0.6
+          // (A "none here" tag sat here on any layer this map has none of. Removed 2026-07-13,
+          // Twilight: "extra clutter". The row is already dimmed and its hollow eye already says it,
+          // and the tooltip spells it out -- three ways of saying one thing was two too many.)
+
+          // ── Clear, per category ───────────────────────────────────────────────────────────
+          //
+          // Not the group's eye: the eye is a TOGGLE, and clicking it with nothing on switches the
+          // whole group ON. A control that sometimes does the opposite of clearing is not a Clear.
+          MapClearButton {
+            visible: row.layerIsGroup
+            compact: true
+            enabled: {
+              panel.revision;
+              return brg.mapLayers.groupAnyOn(row.index);
+            }
             Layout.rightMargin: 2
+            tip: qsTr("Turn off everything in %1").arg(row.layerName)
+            onClicked: brg.mapLayers.clearGroup(row.index)
           }
         }
 
@@ -210,25 +252,22 @@ Rectangle {
       }
     }
 
-    // ── The footer: the one dial, and the way back ───────────────────────────────────────────
+    // ── The footer: the one dial ─────────────────────────────────────────────────────────────
     //
-    // ONE row, not two. The overlay-strength slider and the clear button used to be stacked, and
-    // between them they ate two layer rows out of a list that only has room for eight at the
-    // default window size. (Caught by the screenshot review -- which is why it is mandatory.)
-    //
-    // The dial: how hard the meaning overlay is painted. Stacked annotation over four shades of
-    // grey genuinely needs it, and it is shared rather than repeated nine times.
+    // The Clear that used to sit down here has gone UP, into the dock's title bar (Twilight,
+    // 2026-07-13) -- which is also where a panel-wide action belongs. What is left is the dial:
+    // how hard the overlay is painted. Stacked annotation over four shades of grey genuinely needs
+    // it, and it is shared rather than repeated nine times.
     RowLayout {
       Layout.fillWidth: true
       Layout.rightMargin: 16
       Layout.topMargin: 2
       spacing: 8
-      // Bound to the two NOTIFYING properties, not to anyOn(): a plain method call is not a
-      // binding, so this would appear once and then never update again. (The classic QML trap.)
-      visible: brg.mapLayers.viewBits !== 0 || brg.map.layers !== 0
+      // Bound to the NOTIFYING property, not to a method call: a plain method call is not a binding,
+      // so this would appear once and then never update again. (The classic QML trap.)
+      visible: brg.map.layers !== 0
 
       Text {
-        visible: brg.map.layers !== 0
         text: qsTr("Overlay")
         font.pixelSize: 11
         color: brg.settings.textColorMid
@@ -236,7 +275,6 @@ Rectangle {
 
       Slider {
         id: opacitySlider
-        visible: brg.map.layers !== 0
         Layout.fillWidth: true
         Layout.minimumHeight: 0
         Layout.preferredHeight: 24
@@ -252,15 +290,6 @@ Rectangle {
           enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 70 } }
           exit:  Transition { NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 70 } }
         }
-      }
-
-      Item { Layout.fillWidth: brg.map.layers === 0 }
-
-      MapRailButton {
-        size: 24
-        glyph: "⊘"
-        tip: qsTr("Turn every layer off — back to just the map")
-        onClicked: brg.mapLayers.clearAll()
       }
     }
   }

@@ -28,9 +28,10 @@ class MapModel;
  * Exposed as `brg.mapLayers`. Three groups today (a fourth, Objects, arrives with the objects
  * themselves -- notes/plans/map-screen.md):
  *
- *  - **Guides**    -- the block grid, the tile grid, the map bounds, the border ring.
- *  - **Meaning**   -- walls, grass, water, warps, doors, ledges, counters, cut trees, elevation
- *                     edges: the nine semantic overlays MapEngine renders.
+ *  - **Guides**     -- the block grid, the tile grid, the map bounds, the border ring.
+ *  - **Components** -- walls, grass, water, warps, doors, ledges, counters, cut trees, elevation
+ *                     edges: the nine semantic overlays MapEngine renders. (Was "Meaning"; renamed
+ *                     by Twilight, 2026-07-13. The KEY is still `meaning` -- tests address it.)
  *  - **Game View** -- the player, the **red screen box** (the 20x18 tiles the Game Boy is actually
  *                     showing) and the **accent draw area** (the 6x5 blocks LoadCurrentMapView
  *                     redraws). These three were hard-coded rectangles you could not switch off.
@@ -137,8 +138,19 @@ public:
   /// Everything off, in every group. (The map is the point; this is the way back to it.)
   Q_INVOKABLE void clearAll();
 
+  /// Everything in ONE group off. @p row is any row of that group -- in practice its header, which
+  /// carries a Clear of its own (Twilight, 2026-07-13: a Clear per category, not just one at the top).
+  ///
+  /// This is NOT the group's tri-state eye. The eye is a toggle -- click it with none on and it turns
+  /// the whole group ON -- so it cannot be the thing you reach for when you mean "off". A Clear that
+  /// sometimes switches everything on is not a Clear.
+  Q_INVOKABLE void clearGroup(int row);
+
   /// Is anything at all switched on? (Drives the "Clear" affordance.)
   Q_INVOKABLE bool anyOn() const;
+
+  /// Is anything on in @p row's group? (Drives that group's own Clear.)
+  Q_INVOKABLE bool groupAnyOn(int row) const;
 
 signals:
   void viewBitsChanged();

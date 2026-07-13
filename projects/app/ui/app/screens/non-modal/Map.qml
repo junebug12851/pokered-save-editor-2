@@ -61,7 +61,10 @@ Page {
   objectName: "mapScreen"   // so the DEBUG harness can drive it (reference/dev-harness.md)
 
   /// The map's hard floor. It is the screen; it does not get to vanish so that furniture can fit.
-  /// Below this the dock stops taking width and starts floating over the canvas instead.
+  ///
+  /// ⚠️ The docks no longer take any width from it AT ALL -- their panels always float over the
+  /// canvas (Twilight: "map does not need to resize on panel changes"). This is now just the floor
+  /// for the WINDOW getting small.
   readonly property int mapMinWidth: 280
 
   // ── Handles for the DEBUG harness ───────────────────────────────────────────────────────────
@@ -173,9 +176,7 @@ Page {
         panelContext: canvas
 
         Layout.fillHeight: true
-        Layout.preferredWidth: inlineWidth
-
-        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth - rightDock.inlineWidth
+        Layout.preferredWidth: inlineWidth   // the RAIL, and only the rail. The panel floats.
       }
 
       MapCanvas {
@@ -187,6 +188,10 @@ Page {
         Layout.minimumWidth: mapScreen.mapMinWidth
 
         tool: identityBar.tool
+
+        // Drag a sprite off the map and onto the open Characters panel and it goes back in the box.
+        // The canvas does the containment test itself -- there is no DropArea anywhere on this screen.
+        deleteZone: leftDock
 
         // The ✎ button on a sprite opens the Details panel ON it -- no hunting for the panel.
         onEditRequested: (slot) => { leftDock.open = "details"; }
@@ -214,11 +219,7 @@ Page {
                     "sprites": "SpriteSetPanel.qml" })
 
         Layout.fillHeight: true
-        Layout.preferredWidth: inlineWidth
-
-        // How much width the canvas could give up before it hits its floor. Below the panel's
-        // minimum the dock floats instead -- the map never gets squeezed to nothing.
-        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth - leftDock.inlineWidth
+        Layout.preferredWidth: inlineWidth   // the RAIL, and only the rail. The panel floats.
       }
     }
 

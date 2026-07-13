@@ -58,7 +58,9 @@ private slots:
   void moveNpc_clampsToTheMap();
   void addNpc_thenRemove_slidesTheRestUp();
   void npcFields_coverEveryByteAndAreGrouped();
+  void npcFields_showOnlyTheFieldsTheSpritesKindHas();
   void setNpcField_writesTheByteAndTakesHackValues();
+  void detailLists_comeFromTheRealGameData();
   void spriteCatalog_isAllSeventyTwoInGroupOrder();
   void sim_actuallyMovesTheWalkersAndLeavesTheRest();
 
@@ -244,7 +246,8 @@ void TestMapSprites::addNpc_thenRemove_slidesTheRestUp()
   delete r;
 }
 
-/// Every byte of a sprite has a home in the panel, in a named group, with a sentence explaining it.
+/// Every byte of a sprite has a home in the panel, in a named group, with a sentence explaining it
+/// -- and every field declares the KIND that decides which control it gets.
 void TestMapSprites::npcFields_coverEveryByteAndAreGrouped()
 {
   Rig* r = makeRig();
@@ -252,9 +255,14 @@ void TestMapSprites::npcFields_coverEveryByteAndAreGrouped()
   const int slot = r->map->npcList().first().toMap().value("slot").toInt();
   const QVariantList fields = r->map->npcFields(slot);
 
-  QVERIFY2(fields.size() >= 25, "a sprite has more bytes than the panel is showing");
+  QVERIFY2(fields.size() >= 18, "a sprite has more bytes than the panel is showing");
 
-  const QStringList groups = { "Who", "Where", "Movement", "What it is", "Animation scratch" };
+  // ⚠️ The 2026-07-13 rebuild. "Who / Where / When" is gone (Twilight: "really really dumb"), and
+  // the groups now say what is under them.
+  const QStringList groups = { "Character", "Where", "Movement", "Talking to it",
+                               "Right now", "The drawing" };
+  const QStringList kinds = { "picture", "coords", "pixels", "enum", "frames", "team", "byte" };
+
   QSet<QString> seenGroups;
   QSet<QString> seenKeys;
 
@@ -263,14 +271,20 @@ void TestMapSprites::npcFields_coverEveryByteAndAreGrouped()
 
     const QString group = f.value("group").toString();
     const QString key   = f.value("key").toString();
+    const QString kind  = f.value("kind").toString();
 
     QVERIFY2(groups.contains(group),
              qPrintable(QStringLiteral("field '%1' is in unknown group '%2'").arg(key, group)));
+    QVERIFY2(kinds.contains(kind),
+             qPrintable(QStringLiteral("field '%1' has unknown kind '%2'").arg(key, kind)));
     QVERIFY2(!f.value("label").toString().isEmpty(), qPrintable("field " + key + " has no label"));
-    QVERIFY2(!f.value("blurb").toString().isEmpty(),
-             qPrintable("field " + key + " has no explanation -- nobody should have to already "
-                                         "know what it is"));
     QVERIFY2(!seenKeys.contains(key), qPrintable("field " + key + " is listed twice"));
+
+    // An `enum` with no options is a combo with nothing in it -- i.e. a bug that looks like a
+    // control.
+    if (kind == "enum")
+      QVERIFY2(!f.value("options").toList().isEmpty(),
+               qPrintable("enum field " + key + " has no options"));
 
     seenKeys.insert(key);
     seenGroups.insert(group);
@@ -280,12 +294,48 @@ void TestMapSprites::npcFields_coverEveryByteAndAreGrouped()
   for (const QString& g : groups)
     QVERIFY2(seenGroups.contains(g), qPrintable(QStringLiteral("group '%1' is empty").arg(g)));
 
-  // The bytes the 2026-07-13 research added must all be reachable.
-  for (const char* key : { "yAdjusted", "xAdjusted", "collisionData",
-                           "origFacingDir", "pictureIDCopy",
-                           "movementByte", "rangeDirByte", "faceDir", "grassPriority" })
+  // Every byte still has to be REACHABLE. Some are now grouped into one control (X+Y; the two pixel
+  // pairs), which is the point -- but nothing may fall off the panel.
+  for (const char* key : { "pictureID", "mapXY", "movementByte", "rangeDirByte", "faceDir",
+                           "origFacingDir", "grassPriority", "spriteKind", "textID",
+                           "movementStatus", "movementDelay", "yDisp", "xDisp",
+                           "imageIndex", "imageBaseOffset", "walkAnimationCounter",
+                           "animFrameCounter", "intraAnimationFrameCounter",
+                           "yStepVector", "xStepVector", "screenXY", "gridXY", "collisionData" })
     QVERIFY2(seenKeys.contains(QString::fromLatin1(key)),
              qPrintable(QStringLiteral("the panel has no row for '%1'").arg(key)));
+
+  delete r;
+}
+
+/// The panel's shape FOLLOWS THE SPRITE. A plain NPC is not shown a trainer roster; an item ball is
+/// not shown a trainer class. The kind lives in bits 6-7 of the text byte and the panel reads it.
+void TestMapSprites::npcFields_showOnlyTheFieldsTheSpritesKindHas()
+{
+  Rig* r = makeRig();
+  const int slot = r->map->npcList().first().toMap().value("slot").toInt();
+
+  auto keysOf = [&]() {
+    QSet<QString> out;
+    for (const QVariant& v : r->map->npcFields(slot))
+      out.insert(v.toMap().value("key").toString());
+    return out;
+  };
+
+  // Plain: neither bit. No item, no roster.
+  r->map->setNpcField(slot, "spriteKind", 0);
+  QVERIFY(!keysOf().contains("trainerClassOrItemID"));
+  QVERIFY(!keysOf().contains("trainerSetID"));
+
+  // A trainer: the class AND which of its teams.
+  r->map->setNpcField(slot, "spriteKind", 1);
+  QVERIFY(keysOf().contains("trainerClassOrItemID"));
+  QVERIFY(keysOf().contains("trainerSetID"));
+
+  // An item ball: the item, and NO roster -- a Pokéball does not have a team.
+  r->map->setNpcField(slot, "spriteKind", 2);
+  QVERIFY(keysOf().contains("trainerClassOrItemID"));
+  QVERIFY(!keysOf().contains("trainerSetID"));
 
   delete r;
 }
@@ -296,24 +346,80 @@ void TestMapSprites::setNpcField_writesTheByteAndTakesHackValues()
 {
   Rig* r = makeRig();
   const int slot = r->map->npcList().first().toMap().value("slot").toInt();
+  SpriteData* s = r->sf.dataExpanded->area->sprites->spriteAt(slot);
 
   r->map->setNpcField(slot, "grassPriority", 0x80);
-  QCOMPARE(r->sf.dataExpanded->area->sprites->spriteAt(slot)->grassPriority, 0x80);
+  QCOMPARE(s->grassPriority, 0x80);
 
   // A hack value. Movement byte 1 has exactly two legal values; $37 is not one of them, and the
   // editor takes it anyway -- shown and flagged in the panel, never refused, never rewritten.
   r->map->setNpcField(slot, "movementByte", 0x37);
-  QCOMPARE(r->sf.dataExpanded->area->sprites->spriteAt(slot)->movementByte, 0x37);
+  QCOMPARE(s->movementByte, 0x37);
 
-  // X and Y are shown WITHOUT the +4 bias and stored WITH it. One conversion, one place.
-  r->map->setNpcField(slot, "mapX", 7);
-  QCOMPARE(r->sf.dataExpanded->area->sprites->spriteAt(slot)->mapX, 11);
+  // X and Y are ONE control now, packed low-byte-X / high-byte-Y -- and still shown WITHOUT the
+  // game's +4 bias and stored WITH it. One conversion, one place.
+  r->map->setNpcField(slot, "mapXY", 7 | (9 << 8));
+  QCOMPARE(s->mapX, 11);
+  QCOMPARE(s->mapY, 13);
   QCOMPARE(r->map->npcAt(slot).value("x").toInt(), 7);
+  QCOMPARE(r->map->npcAt(slot).value("y").toInt(), 9);
+
+  // ── The text byte is TWO fields in one, and each writes only its own bits ────────────────────
+  //
+  // BIT_TRAINER = 6, BIT_ITEM = 7 (constants/map_object_constants.asm); the script id is the low
+  // six. Changing what a sprite IS must not silently rewrite what it SAYS, and vice versa -- that
+  // is the byte-fidelity rule applied inside a single byte.
+  r->map->setNpcField(slot, "spriteKind", 0);
+  r->map->setNpcField(slot, "textID", 5);
+  QCOMPARE(s->getTextID(), 5);
+
+  r->map->setNpcField(slot, "spriteKind", 1);          // trainer
+  QCOMPARE(s->getTextID(), 0x40 | 5);                  // ...and the script survived
+
+  r->map->setNpcField(slot, "textID", 9);              // a new script
+  QCOMPARE(s->getTextID(), 0x40 | 9);                  // ...and it is STILL a trainer
+
+  r->map->setNpcField(slot, "spriteKind", 2);          // item ball
+  QCOMPARE(s->getTextID(), 0x80 | 9);
+
+  r->map->setNpcField(slot, "spriteKind", 3);          // both -- a hack, and it is allowed
+  QCOMPARE(s->getTextID(), 0xC0 | 9);
 
   // An unknown key writes NOTHING rather than guessing at a byte.
-  const int before = r->sf.dataExpanded->area->sprites->spriteAt(slot)->pictureID;
+  const int before = s->pictureID;
   r->map->setNpcField(slot, "notAField", 99);
-  QCOMPARE(r->sf.dataExpanded->area->sprites->spriteAt(slot)->pictureID, before);
+  QCOMPARE(s->pictureID, before);
+
+  delete r;
+}
+
+/// The Details panel's pickers hold REAL data -- the map's own scripts, the game's items, the
+/// game's trainer classes. (Twilight: "Text id needs to reference whatever it's supposed to... it
+/// needs to show real data.")
+void TestMapSprites::detailLists_comeFromTheRealGameData()
+{
+  Rig* r = makeRig();
+
+  // The map's scripts. All 64 reachable ids are offered; the ones this map REALLY uses carry the
+  // name of who uses them, and the rest are honestly flagged as unused.
+  const QVariantList texts = r->map->mapTextList();
+  QCOMPARE(texts.size(), 64);
+
+  int named = 0;
+  for (const QVariant& v : texts)
+    if (!v.toMap().value("hack").toBool())
+      named++;
+
+  QVERIFY2(named > 1, "this map's real scripts are not named -- the picker is a list of numbers");
+
+  // Pallet Town's script 1 is Prof. Oak's, out of the cartridge.
+  QVERIFY2(texts.at(1).toMap().value("name").toString().contains("Oak"),
+           qPrintable("script 1 should be Oak's, got: "
+                      + texts.at(1).toMap().value("name").toString()));
+
+  QVERIFY2(r->map->itemList().size() > 100, "the item picker is not the real item list");
+  QVERIFY2(r->map->trainerClassList().size() > 20,
+           "the trainer-class picker is not the real class list");
 
   delete r;
 }

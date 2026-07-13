@@ -179,12 +179,15 @@ Item {
     }
   }
 
-  // ── The ghost: what the DropArea actually sees ───────────────────────────────────────────
+  // ── The ghost ────────────────────────────────────────────────────────────────────────────
+  //
+  // It only appears once you have dragged OFF the map -- over the Characters panel, where dropping
+  // means delete. On the map itself the sprite previews in place, which reads better.
   Image {
     id: ghost
 
     parent: sprite.Window.window ? sprite.Window.window.contentItem : sprite
-    visible: sprite.dragging
+    visible: sprite.dragging && sprite.overBin
     z: 9999
 
     width: 32
@@ -194,17 +197,10 @@ Item {
     mipmap: false
     fillMode: Image.PreserveAspectFit
     opacity: 0.9
-
-    /// What the Characters panel's DropArea reads off us. The player cannot be deleted, so he does
-    /// not offer a slot to delete.
-    property int spriteSlot: sprite.isPlayer ? -1 : sprite.slot
-
-    Drag.active: sprite.dragging && !sprite.isPlayer
-    Drag.source: ghost
-    Drag.keys: ["pse/map-sprite"]
-    Drag.hotSpot.x: width / 2
-    Drag.hotSpot.y: height / 2
   }
+
+  /// True while the cursor is over the delete zone mid-drag. @see MapCanvas.overDeleteZone
+  property bool overBin: false
 
   // ── Input ────────────────────────────────────────────────────────────────────────────────
   MouseArea {
@@ -232,11 +228,6 @@ Item {
       if (!area.pressed)
         return;
 
-      const step = 16 * sprite.canvas.zoom;
-
-      const dx = Math.round((m.x - area.press.x) / step);
-      const dy = Math.round((m.y - area.press.y) / step);
-
       // A tiny wobble on a click is not a drag.
       if (!area.moved
           && Math.abs(m.x - area.press.x) < 4 && Math.abs(m.y - area.press.y) < 4)
@@ -244,33 +235,56 @@ Item {
 
       area.moved = true;
 
-      sprite.dragX = Math.max(0, Math.min(brg.map.blocksWide * 2 - 1, sprite.tileX + dx));
-      sprite.dragY = Math.max(0, Math.min(brg.map.blocksHigh * 2 - 1, sprite.tileY + dy));
+      // Over the Characters panel? Then this is a delete-in-progress, not a move.
+      const g = sprite.mapToGlobal(m.x, m.y);
+      sprite.overBin = !sprite.isPlayer && sprite.canvas.overDeleteZone(g.x, g.y);
+      sprite.canvas.deleteHover = sprite.overBin;
 
-      // Keep the ghost under the cursor, in SCENE coordinates.
-      const scene = sprite.mapToItem(null, m.x, m.y);
-      ghost.x = scene.x - ghost.width / 2;
-      ghost.y = scene.y - ghost.height / 2;
+      if (sprite.overBin) {
+        const w = sprite.mapToItem(ghost.parent, m.x, m.y);
+        ghost.x = w.x - ghost.width / 2;
+        ghost.y = w.y - ghost.height / 2;
+
+        sprite.dragX = sprite.tileX;   // keep the preview where it was; it is on its way to the bin
+        sprite.dragY = sprite.tileY;
+        return;
+      }
+
+      // ⚠️ TILE-SNAPPED FROM THE CURSOR, not from an accumulated delta.
+      //
+      // The old version rounded (cursor − press) into tile steps, which drifts: the sprite's own
+      // coordinate moves under you while `press` stays put, so the two disagree by a tile and the
+      // thing skitters. (Twilight: "moving main character around is very glitchy.") Ask where the
+      // cursor IS, in map tiles, and put the sprite there. There is nothing to drift.
+      const p = sprite.canvas.tileAtGlobal(g.x, g.y);
+
+      sprite.dragX = Math.max(0, Math.min(brg.map.blocksWide * 2 - 1, p.x));
+      sprite.dragY = Math.max(0, Math.min(brg.map.blocksHigh * 2 - 1, p.y));
     }
 
-    onReleased: {
-      if (!sprite.dragging) {
-        area.moved = false;
+    onReleased: (m) => {
+      if (!sprite.dragging && !area.moved)
         return;      // it was a click, and the click already selected
-      }
 
       const nx = sprite.dragX;
       const ny = sprite.dragY;
+      const bin = sprite.overBin;
 
       sprite.dragX = -1;
       sprite.dragY = -1;
+      sprite.overBin = false;
+      sprite.canvas.deleteHover = false;
       area.moved = false;
 
-      // Dropped on the Characters panel? Then it was a DELETE, and the panel has already done it.
-      if (!sprite.isPlayer && ghost.Drag.drop() === Qt.MoveAction)
+      // Dropped on the Characters panel: that is a DELETE.
+      if (bin && !sprite.isPlayer) {
+        brg.map.removeNpc(sprite.slot);
+        sprite.canvas.selectedNpc = -1;
+        sprite.canvas.status = qsTr("Removed. The sprites after it slid up a slot.");
         return;
+      }
 
-      if (nx === sprite.tileX && ny === sprite.tileY)
+      if (nx < 0 || (nx === sprite.tileX && ny === sprite.tileY))
         return;   // put back where it started: write nothing
 
       if (sprite.isPlayer)
@@ -284,6 +298,7 @@ Item {
     onCanceled: {
       sprite.dragX = -1;
       sprite.dragY = -1;
+      sprite.overBin = false;
       area.moved = false;
     }
   }

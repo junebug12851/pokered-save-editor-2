@@ -26,9 +26,17 @@
       evicted behind your back (the first cut had an eviction QUEUE -- a workaround for a layout
       that was never designed to hold this much).
     * IT COLLAPSES TO NOTHING. Click the lit icon and the panel folds away, leaving the rail.
-    * THE MAP NEVER DISAPPEARS. Too narrow to seat a panel beside the map? The panel FLOATS over the
-      canvas edge instead of squeezing it -- with a shadow, and swallowing its own clicks, wheel and
-      hover so nothing falls through to the map behind.
+    * THE MAP NEVER MOVES. A panel ALWAYS floats over the canvas -- it never pushes it.
+
+  ⚠️ **The panel always floats.** It used to be seated *beside* the map when there was room and float
+  only when there wasn't, and the cost of that was: open a panel and the canvas resized, so the map
+  re-laid-out and jumped under the cursor. Twilight, 2026-07-13: *"Map does not need to resize on
+  panel changes."* It doesn't. The dock takes the RAIL's width out of the row and nothing else; the
+  panel is drawn over the canvas edge with a shadow, and swallows its own clicks, wheel and hover so
+  nothing falls through to the map behind.
+
+  A panel may put ONE action in the title bar (the Layers panel's Clear) by declaring a
+  `headerAction` Component. @see LayersPanel.qml.
 */
 import QtQuick
 import QtQuick.Controls
@@ -65,21 +73,29 @@ Item {
   readonly property int minPanelWidth: 170
   readonly property int maxPanelWidth: 340
 
-  /// How much room the canvas can spare. Below the panel's minimum it floats instead of pushing.
-  property int roomForPanel: 0
-  readonly property bool overlayMode: dock.open !== "" && roomForPanel < dock.minPanelWidth
+  /// ⚠️ ALWAYS. The panel is never seated in the row -- see the note at the top of this file. Opening
+  /// one must not move the map.
+  readonly property bool overlayMode: dock.open !== ""
 
-  /// What the dock actually takes out of the row (just the rail, when the panel floats).
-  readonly property int inlineWidth: railWidth + ((open !== "" && !overlayMode) ? panelWidth : 0)
+  /// What the dock takes out of the row: the rail, and only ever the rail.
+  readonly property int inlineWidth: railWidth
 
   function toggle(id) { dock.open = (dock.open === id) ? "" : id; }
   function show(id)   { if (dock.open !== id) dock.open = id; }
 
   implicitWidth: inlineWidth
 
+  // ⚠️ The panel hangs OUT of the dock, over the canvas -- and the canvas is a later sibling in the
+  // row, so without this it would paint straight over the panel and the panel would be invisible.
+  z: 5
+
   // ── The panel column ────────────────────────────────────────────────────────────────────────
   Rectangle {
     id: column
+
+    // The DEBUG harness reads this to answer "is the panel actually on screen?" -- which is exactly
+    // the question that took an hour on 2026-07-13.
+    objectName: dock.isLeft ? "mapLeftPanel" : "mapRightPanel"
 
     width: dock.panelWidth
     height: parent.height
@@ -136,7 +152,6 @@ Item {
           spacing: 4
 
           Text {
-            Layout.fillWidth: true
             text: {
               for (let i = 0; i < dock.panels.length; i++)
                 if (dock.panels[i].id === dock.open)
@@ -147,6 +162,36 @@ Item {
             font.bold: true
             color: brg.settings.textColorDark
             elide: Text.ElideRight
+            Layout.maximumWidth: parent.width - 70
+          }
+
+          // ── The "?" ─────────────────────────────────────────────────────────────────────────
+          //
+          // A panel declares `panelInfo` and gets one. It is where the PARAGRAPHS went: these panels
+          // used to open with two or three of them stacked over the controls, which is a wall you
+          // have to read past every time to reach what you came for (Twilight, 2026-07-13: "remove
+          // all the text below Sprite Set — it's way too much to read").
+          //
+          // ONE per panel. Don't litter them; the mark only means something while it is rare.
+          MapInfoIcon {
+            Layout.alignment: Qt.AlignVCenter
+            visible: body.item && body.item.panelInfo !== undefined && body.item.panelInfo !== ""
+            text: (body.item && body.item.panelInfo !== undefined) ? body.item.panelInfo : ""
+          }
+
+          Item { Layout.fillWidth: true }
+
+          // ── The panel's ONE title-bar action ─────────────────────────────────────────────────
+          //
+          // A panel can put a single control up here by declaring a `headerAction` Component -- the
+          // Layers panel's Clear (Twilight: "Clear button on layers should be at top, actually in the
+          // pull-out panel title on the right side").
+          //
+          // ONE. A title bar that grows a toolbar is a toolbar, and this app does not have those.
+          Loader {
+            Layout.alignment: Qt.AlignVCenter
+            sourceComponent: (body.item && body.item.headerAction !== undefined)
+                               ? body.item.headerAction : null
           }
 
           // Collapse. (The rail icon does the same -- two ways to the same door, because "click the

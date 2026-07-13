@@ -29,11 +29,23 @@
       loads a map -- including the one it loads when you press CONTINUE -- and then re-reads the set
       from the map you are standing on. So nothing you change here changes the game.
 
-  Which is exactly why the panel says so, at the top, in plain words. These are your save's bytes and
-  you may edit them; they are simply bytes the game will overwrite before it ever reads them.
+  These are your save's bytes and you may edit every one of them; they are simply bytes the game will
+  overwrite before it ever reads them.
 
   Indoors, the game skips the whole routine -- so a save made in a building keeps whatever set was
   loaded in the last outdoor map. That is not a bug in the save; it is what a console holds too.
+
+  ⚠️ **THE WALL OF TEXT IS GONE.** All of the above used to be printed *in the panel*, two paragraphs
+  over the controls plus a blurb under every group heading, and you had to read past the lot every
+  time to reach a combo box. Twilight, 2026-07-13: *"Remove all the text below Sprite Set — it's way
+  too much to read; condense it somehow and put it somewhere like a tooltip or hint."*
+
+  So the words moved to two marks:
+
+    * the **?** in the title (`panelInfo`) -- what this is. Hover it if you want it. (MapInfoIcon)
+    * the yellow **!** on the cache      -- the game overwrites this on load. (MapWarnIcon)
+
+  Don't put prose back in here.
 */
 import QtQuick
 import QtQuick.Controls
@@ -45,11 +57,26 @@ Rectangle {
   // The dock owns the frame and the title bar. A panel is its content.
   color: "transparent"
 
+  /// The panel's "?" — everything this panel used to print at you. (MapDock puts it in the title.)
+  readonly property string panelInfo: qsTr(
+    "The eleven sprite pictures the game had loaded for this map — nine that walk, two that don't. "
+    + "Every character on the map has to come out of this set.\n\n"
+    + "It's a cache: the game rebuilds it from the map you're standing on every time it loads a "
+    + "save, so editing it here won't change what you see in-game.")
+
+  /// A group box. A title, and whatever you put in it — the per-group paragraph is GONE (it is what
+  /// made this panel a wall of text). If a group needs a caveat, it gets a `hint` or a MapWarnIcon.
   component Group: Rectangle {
     id: grp
     default property alias content: inner.data
     property string title: ""
-    property string blurb: ""
+
+    /// One SHORT line, under the title. Not a paragraph. If it wants to be a paragraph, it belongs
+    /// in `panelInfo` behind the "?".
+    property string hint: ""
+
+    /// The game overwrites these bytes when it loads the save. Shows the yellow "!" beside the title.
+    property string overwritten: ""
 
     Layout.fillWidth: true
     implicitHeight: col.implicitHeight + 16
@@ -65,19 +92,31 @@ Rectangle {
       anchors.margins: 8
       spacing: 6
 
-      Text {
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: 5
         visible: grp.title !== ""
-        text: grp.title
-        font.pixelSize: 12
-        font.bold: true
-        color: brg.settings.textColorDark
+
+        Text {
+          text: grp.title
+          font.pixelSize: 12
+          font.bold: true
+          color: brg.settings.textColorDark
+        }
+
+        MapWarnIcon {
+          visible: grp.overwritten !== ""
+          text: grp.overwritten
+        }
+
+        Item { Layout.fillWidth: true }
       }
 
       Text {
         Layout.fillWidth: true
-        visible: grp.blurb !== ""
-        text: grp.blurb
-        font.pixelSize: 11
+        visible: grp.hint !== ""
+        text: grp.hint
+        font.pixelSize: 10
         color: brg.settings.textColorMid
         wrapMode: Text.WordWrap
       }
@@ -99,30 +138,14 @@ Rectangle {
       width: panel.width - 24
       spacing: 10
 
-      // ── What this is, and the one thing worth knowing about it ────────────────────────────────
-      Text {
-        Layout.fillWidth: true
-        text: qsTr("The eleven sprite pictures the game had loaded for this map — nine that walk, "
-                   + "two that don't. Every NPC here has to come out of this set.")
-        font.pixelSize: 11
-        color: brg.settings.textColorMid
-        wrapMode: Text.WordWrap
-      }
-
-      Text {
-        Layout.fillWidth: true
-        text: qsTr("It's a cache. The game rebuilds it from the map you're standing on every time it "
-                   + "loads a save, so editing it here won't change what you see in-game.")
-        font.pixelSize: 10
-        font.italic: true
-        color: brg.settings.textColorMid
-        wrapMode: Text.WordWrap
-      }
+      // (Two paragraphs of explanation opened this panel. They are the "?" in the title now --
+      // Twilight, 2026-07-13. Do not put them back.)
 
       // ── Which set ────────────────────────────────────────────────────────────────────────────
       Group {
         title: qsTr("The set")
-        blurb: qsTr("Which of the game's ten sprite sets these came from.")
+        overwritten: qsTr("The game rebuilds this from the map you're standing on every time it "
+                          + "loads your save — so whatever you set here, it won't survive Continue.")
 
         ComboBox {
           Layout.fillWidth: true
@@ -161,10 +184,9 @@ Rectangle {
       // ── What the game would load here ────────────────────────────────────────────────────────
       Group {
         title: qsTr("This map's set")
-        blurb: brg.map.mapHasSpriteSet
-               ? qsTr("What the game loads when you walk in here.")
-               : qsTr("Indoor maps don't have one — the game leaves whatever was cached alone, so "
-                      + "this is the set from the last outdoor map you were on.")
+        hint: brg.map.mapHasSpriteSet
+              ? ""
+              : qsTr("Indoors — there isn't one. This is the last outdoor map's.")
 
         RowLayout {
           Layout.fillWidth: true
@@ -206,8 +228,7 @@ Rectangle {
       // ── The eleven slots ─────────────────────────────────────────────────────────────────────
       Group {
         title: qsTr("The eleven")
-        blurb: qsTr("Slots 1–9 walk. Slots 10 and 11 stand still — Pokéballs, boulders, that sort of "
-                    + "thing.")
+        hint: qsTr("1–9 walk · 10 and 11 stand still")
 
         Repeater {
           model: brg.map.cachedSprites()

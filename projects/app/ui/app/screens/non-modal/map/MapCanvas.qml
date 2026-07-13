@@ -66,6 +66,77 @@ Item {
   /// The 3-block border ring, in buffer pixels. A sprite at map (0,0) starts here.
   readonly property int mapBorderPx: 3 * 32
 
+  // ── DROPPING, done explicitly ──────────────────────────────────────────────────────────────
+  //
+  // ⚠️ Qt's `Drag` / `DropArea` is GONE from this screen, and it is not coming back.
+  //
+  // It decides what you are over by intersecting the **dragged item's geometry** with the drop
+  // area's -- so it needs the drag source to physically be over the target, which meant reparenting
+  // ghosts into the window, and it broke twice in ways that were invisible until Twilight tried it.
+  // Two rounds of "dragging and dropping doesn't work" is enough.
+  //
+  // So the drop is a FUNCTION CALL with a scene coordinate. The dragger asks "is this point over
+  // you?", and the answer is a plain geometric containment test we can read, reason about and test.
+  // Nothing hidden, nothing implicit.
+
+  /// Where a sprite dragged OFF the map gets deleted -- the left dock, handed over by the screen.
+  property var deleteZone: null
+
+  /// True while a map sprite is being dragged over the delete zone. The Characters panel reads this
+  /// to light itself up red; it has no DropArea of its own any more.
+  property bool deleteHover: false
+
+  /// Is this scene point over the delete zone (the Characters panel, while it is open)?
+  function overDeleteZone(sx, sy) {
+    if (!canvasRoot.deleteZone || canvasRoot.deleteZone.open !== "characters")
+      return false;
+
+    const p = canvasRoot.deleteZone.mapFromGlobal(sx, sy);
+    return p.x >= 0 && p.y >= 0
+        && p.x < canvasRoot.deleteZone.width && p.y < canvasRoot.deleteZone.height;
+  }
+
+  /// The MAP TILE under a global point. The one place that conversion is written down.
+  ///
+  /// ⚠️ Dragging a sprite asks *where the cursor is* and puts the sprite there. It does NOT
+  /// accumulate a delta from the press point -- that drifts, because the sprite's own coordinate
+  /// moves under you while the press point stays put, and after a tile or two the two disagree and
+  /// the sprite skitters. (Twilight: *"moving main character around is very glitchy."*)
+  function tileAtGlobal(sx, sy) {
+    const p = canvas.mapFromGlobal(sx, sy);
+
+    return Qt.point(Math.floor((p.x / canvasRoot.zoom - canvasRoot.mapBorderPx) / 16),
+                    Math.floor((p.y / canvasRoot.zoom - canvasRoot.mapBorderPx) / 16));
+  }
+
+  /// Drop a character from the Characters panel onto the map. @p sx/@p sy are GLOBAL coordinates.
+  /// @return true if it landed.
+  function dropCharacter(sx, sy, picture) {
+    if (picture <= 0)
+      return false;
+
+    // Global -> the canvas item's own coordinates. `canvas` is the scaled map; its origin is the
+    // top-left of the border ring.
+    const p = canvas.mapFromGlobal(sx, sy);
+
+    if (p.x < 0 || p.y < 0 || p.x >= canvas.width || p.y >= canvas.height)
+      return false;   // not over the map at all -- the drag is simply abandoned
+
+    if (brg.map.npcRoomLeft() <= 0) {
+      canvasRoot.status = qsTr("This map is full — 15 people and objects is the most the Game Boy can hold.");
+      return false;
+    }
+
+    const t = canvasRoot.tileAtGlobal(sx, sy);
+    const slot = brg.map.addNpc(picture, t.x, t.y);
+    if (slot <= 0)
+      return false;
+
+    canvasRoot.selectedNpc = slot;
+    canvasRoot.status = qsTr("Placed in slot %1.").arg(slot);
+    return true;
+  }
+
   // ⚠️ THE REASON THE CHARACTERS DID NOT MOVE.
   //
   // `brg.map.npcList()` is a FUNCTION CALL. A QML binding on a function call only re-evaluates when
@@ -549,48 +620,6 @@ Item {
         }
       }
 
-      // ── Dropping a character in from the Characters bar ────────────────────────────────────
-      //
-      // The drop point becomes a TILE, and a new sprite lands on it with the game's own sane
-      // defaults. If the map is full we say so in the status bar rather than swallowing the drop
-      // and leaving the user wondering.
-      DropArea {
-        anchors.fill: parent
-        keys: ["pse/catalog-sprite"]
-
-        onDropped: (drop) => {
-          const picture = drop.source && drop.source.spritePicture !== undefined
-                            ? drop.source.spritePicture : 0;
-
-          if (picture <= 0) {
-            drop.accept();
-            return;
-          }
-
-          if (brg.map.npcRoomLeft() <= 0) {
-            canvasRoot.status = qsTr("This map is full — 15 people and objects is the most the Game Boy can hold.");
-            drop.accept();
-            return;
-          }
-
-          // Buffer pixels -> map tiles. The 3-block border ring comes off first, because a map
-          // coordinate is measured from the map, not from the trees around it.
-          const bx = drop.x / canvasRoot.zoom;
-          const by = drop.y / canvasRoot.zoom;
-
-          const tx = Math.floor((bx - canvasRoot.mapBorderPx) / 16);
-          const ty = Math.floor((by - canvasRoot.mapBorderPx) / 16);
-
-          const slot = brg.map.addNpc(picture, tx, ty);
-
-          if (slot > 0) {
-            canvasRoot.selectedNpc = slot;
-            canvasRoot.status = qsTr("Placed in slot %1.").arg(slot);
-          }
-
-          drop.accept();
-        }
-      }
     }
 
     // ── Navigation ───────────────────────────────────────────────────────────────────────────

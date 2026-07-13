@@ -80,86 +80,111 @@ Item {
       }
     }
 
-    // ── The ! ────────────────────────────────────────────────────────────────────────────────
+    // ── The marks ────────────────────────────────────────────────────────────────────────────
     //
     // A dot said "something", which is not information. An exclamation mark says "careful"
-    // (Twilight, 2026-07-13).
-    Rectangle {
-      id: warn
+    // (Twilight, 2026-07-13). They are the ONLY tooltips in the panel, and each sits ON its own
+    // mark -- not on the cell (which would fire every time you swept the grid) and not across the
+    // screen from it.
+    //
+    // ⚠️ **!** and **?** are different marks and they mean different things:
+    //
+    //   * **!**  this map hasn't loaded this picture -- the console would draw garbage;
+    //   * **?**  something you'd want to know, but nothing is wrong.
+    //
+    // The Player has a **?**, and that is the whole point of the distinction. He used to carry a
+    // **!** -- because he is not in any sprite SET -- which made the panel say "this map hasn't
+    // loaded the player's picture", and Twilight (rightly) called that weird: the player's picture
+    // is loaded on every map in the game. It is loaded, it draws perfectly, and dropping one out
+    // gives you a second Red. That is a **?**, not a **!**.
+    MapWarnIcon {
       visible: !cell.character.inSpriteSet
 
       anchors.top: parent.top
       anchors.right: parent.right
       anchors.margins: 2
 
-      width: 14
-      height: 14
-      radius: 7
+      text: qsTr("This map hasn't loaded this picture — the game would draw it as garbage. You can "
+                 + "still place it.")
+      tipWidth: 180
+    }
 
-      color: warnHover.hovered ? "#c79100" : "#ffd54f"
-      border.width: 1
-      border.color: "#8a6d00"
+    MapInfoIcon {
+      visible: cell.character.inSpriteSet && (cell.character.note || "") !== ""
 
-      // ⚠️ `anchors.centerIn` centres the ITEM's box, and a Label's box carries the font's ascent
-      // and descent -- so a "!" (which has neither) ends up shoved down and left. Fill the circle
-      // and centre the GLYPH inside it instead. (It was visibly bottom-left; Twilight caught it.)
-      Text {
-        anchors.fill: parent
-        text: "!"
-        font.pixelSize: 10
-        font.bold: true
-        color: "#3a2e00"
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-      }
+      anchors.top: parent.top
+      anchors.right: parent.right
+      anchors.margins: 2
 
-      HoverHandler {
-        id: warnHover
-        cursorShape: Qt.PointingHandCursor
-      }
-
-      // The ONLY tooltip in the panel, and it sits ON the mark. Not on the cell (which would fire
-      // every time you swept the grid) and not across the screen from it.
-      ToolTip {
-        visible: warnHover.hovered
-        delay: 200
-
-        x: warn.width + 4
-        y: -2
-
-        // ⚠️ OPAQUE, and light-on-dark. The stock tooltip is dark text on a translucent background,
-        // which over a pale panel is genuinely hard to read (Twilight, 2026-07-13).
-        background: Rectangle {
-          color: "#212121"
-          radius: 4
-        }
-
-        contentItem: Label {
-          text: qsTr("This map hasn't loaded this picture — the game would draw it as garbage. You can still place it.")
-          color: "#ffffff"
-          font.pixelSize: 10
-          wrapMode: Text.Wrap
-          width: 180
-        }
-      }
+      text: cell.character.note || ""
+      tipWidth: 190
     }
   }
 
   // ── Drag onto the map ────────────────────────────────────────────────────────────────────
   //
-  // ⚠️ THE DRAG SOURCE HAS TO ACTUALLY MOVE. Qt's DropArea decides what you are over by GEOMETRIC
-  // OVERLAP with the dragged item. The first version left the Drag source anchored inside this
-  // panel and floated a separate "ghost" image under the cursor -- so the source was never over the
-  // map, the DropArea never fired, and dragging a character out did nothing at all. (It is why
-  // deleting did not work either: same bug, other direction.)
+  // ⚠️ NO `Drag` / `DropArea`. It broke twice, invisibly, and it is gone from this screen.
   //
-  // So the ghost IS the source. It is reparented to the window, it follows the cursor, and it is
-  // what the DropArea sees.
+  // A MouseArea (which takes an exclusive grab and cannot be stolen by the ScrollView we sit in),
+  // a ghost that follows the cursor, and on release **one function call** with a global coordinate:
+  // `canvas.dropCharacter(x, y, picture)`. The canvas does a containment test and answers. Nothing
+  // hidden, nothing implicit, and it can be reasoned about by reading it.
+  MouseArea {
+    id: drag
+    anchors.fill: parent
+
+    enabled: brg.map.npcRoomLeft() > 0
+    preventStealing: true          // the ScrollView does NOT get to steal this
+    cursorShape: drag.dragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+
+    property bool dragging: false
+    property point origin
+
+    onPressed: (m) => {
+      drag.origin = Qt.point(m.x, m.y);
+      drag.dragging = false;
+    }
+
+    onPositionChanged: (m) => {
+      if (!drag.pressed)
+        return;
+
+      // A wobble is not a drag.
+      if (!drag.dragging
+          && Math.abs(m.x - drag.origin.x) < 5 && Math.abs(m.y - drag.origin.y) < 5)
+        return;
+
+      drag.dragging = true;
+
+      // The ghost lives in the WINDOW's coordinates (its parent is the window's content item), so
+      // the cursor has to be mapped there -- not to the screen.
+      const w = cell.mapToItem(ghost.parent, m.x, m.y);
+      ghost.x = w.x - ghost.width / 2;
+      ghost.y = w.y - ghost.height / 2;
+    }
+
+    onReleased: (m) => {
+      if (!drag.dragging)
+        return;
+
+      drag.dragging = false;
+
+      if (!cell.canvas)
+        return;
+
+      const g = cell.mapToGlobal(m.x, m.y);
+      cell.canvas.dropCharacter(g.x, g.y, cell.character.ind);
+    }
+
+    onCanceled: drag.dragging = false
+  }
+
+  // What follows the cursor. Global coordinates, so it goes over anything -- including the map.
   Image {
     id: ghost
 
     parent: cell.Window.window ? cell.Window.window.contentItem : cell
-    visible: dragHandler.active
+    visible: drag.dragging
     z: 9999
 
     width: 32
@@ -169,28 +194,5 @@ Item {
     mipmap: false
     fillMode: Image.PreserveAspectFit
     opacity: 0.85
-
-    /// What the canvas's DropArea reads off us.
-    property int spritePicture: cell.character.ind
-
-    x: dragHandler.centroid.scenePosition.x - width / 2
-    y: dragHandler.centroid.scenePosition.y - height / 2
-
-    Drag.active: dragHandler.active
-    Drag.source: ghost
-    Drag.keys: ["pse/catalog-sprite"]
-    Drag.hotSpot.x: width / 2
-    Drag.hotSpot.y: height / 2
-  }
-
-  DragHandler {
-    id: dragHandler
-    target: null                                  // we position the ghost ourselves
-    enabled: brg.map.npcRoomLeft() > 0
-
-    onActiveChanged: {
-      if (!active)
-        ghost.Drag.drop();
-    }
   }
 }

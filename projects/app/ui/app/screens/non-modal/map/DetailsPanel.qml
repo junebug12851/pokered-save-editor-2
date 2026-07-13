@@ -24,10 +24,18 @@
  * Right now sprites are the only selectable thing on the map (the ground is deliberately not
  * clickable); warps, signs and connections join them later, on the same machinery.
  *
- * ⚠️ It also tells the truth about something the cartridge does and nobody would guess: **the game
- * rebuilds the map's original cast from ROM the moment the player leaves the map and walks back
- * in.** An edited sprite is really there when the save loads — and it does not survive a round
- * trip through the door. Verified on the console. See notes/reference/sprites.md, Part 6.
+ * ⚠️ **REBUILT 2026-07-13.** The first cut was a list of raw byte boxes under headings called Who,
+ * Where and When, and Twilight took it apart -- rightly. What changed, and why, is written up in
+ * MapModel::npcFields (the schema) and SpriteField.qml (the controls). The short version:
+ *
+ *   * every field declares a **kind**, and the kind picks the control -- a picture is a grid of
+ *     ARTWORK, an X/Y pair is ONE control, a countdown is drawn as a countdown;
+ *   * the raw number box appears **only when the combo cannot say the value**;
+ *   * the "Talking to it" group **changes shape with the sprite**: the item picker exists for an
+ *     item ball and the trainer roster for a trainer, because the save's own bits say which it is;
+ *   * a byte the console recomputes on load wears a yellow **!**;
+ *   * the panel's paragraph is a **?** in the title bar, and the ✕ is a **Delete** button that says
+ *     Delete.
  *
  * @see notes/plans/map-screen.md -> Phase 4d
  */
@@ -50,6 +58,20 @@ Item {
 
   readonly property int slot: canvas ? canvas.selectedNpc : -1
   readonly property bool hasSprite: slot > 0
+
+  /// The player is slot 0. He is selectable and draggable like anybody else (Twilight, 2026-07-13),
+  /// but he has no NPC record -- his bytes live in the save's player block, not the sprite table --
+  /// so he gets his own short list rather than an empty one.
+  readonly property bool hasPlayer: slot === 0
+
+  /// The panel's "?". MapDock puts it in the title bar; it is the one tooltip icon this panel gets.
+  readonly property string panelInfo: qsTr(
+    "Everything the save holds about whoever is selected — and it is genuinely everything, including "
+    + "the values no real game would ever write. Nothing here is refused and nothing is quietly "
+    + "corrected.\n\n"
+    + "A yellow ! means the game works that value out again when it loads your save: real bytes, "
+    + "yours to set, but they won't survive Continue.\n\n"
+    + "Nothing selected? Then this is the map itself.")
 
   // ⚠️ BINDINGS, not an imperative refresh().
   //
@@ -78,7 +100,11 @@ Item {
     return details.hasSprite ? brg.map.npcFields(details.slot) : [];
   }
 
-  readonly property var groupOrder: ["Who", "Where", "Movement", "What it is", "Animation scratch"]
+  // ⚠️ These strings must match MapModel::npcFields' group names EXACTLY -- they are what the rows
+  // are filtered by. (Was Who / Where / When, which Twilight called "really really dumb", and she is
+  // right: they told you nothing about what was under them.)
+  readonly property var groupOrder: ["Character", "Where", "Movement", "Talking to it",
+                                     "Right now", "The drawing"]
 
   ScrollView {
     id: scroller
@@ -98,7 +124,7 @@ Item {
         Layout.fillWidth: true
         Layout.margins: 10
         spacing: 6
-        visible: !details.hasSprite
+        visible: !details.hasSprite && !details.hasPlayer
 
         Label {
           text: brg.map.mapName
@@ -156,6 +182,133 @@ Item {
         }
       }
 
+      // ── The PLAYER selected ──────────────────────────────────────────────────────────────
+      //
+      // He is slot 0, he is selectable and draggable like anybody else -- and he does not live in
+      // the sprite table, so `npcFields` has nothing for him. His position is the one thing about
+      // him that is genuinely a map fact, and the canvas already edits it by dragging; the rest of
+      // him (name, badges, money, the lot) is the Trainer Card's job, not the map's.
+      ColumnLayout {
+        Layout.fillWidth: true
+        Layout.margins: 10
+        spacing: 8
+        visible: details.hasPlayer
+
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 8
+
+          Image {
+            Layout.preferredWidth: 32
+            Layout.preferredHeight: 32
+            source: "image://player/npc/1/0/" + brg.map.contrast
+            smooth: false
+            fillMode: Image.PreserveAspectFit
+          }
+
+          ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("The player")
+              font.bold: true
+              font.pixelSize: 14
+              elide: Text.ElideRight
+            }
+
+            Label {
+              text: qsTr("Slot 0 — the game requires him")
+              font.pixelSize: 10
+              opacity: 0.6
+            }
+          }
+        }
+
+        Label {
+          Layout.fillWidth: true
+          Layout.topMargin: 2
+          text: qsTr("Where he is standing")
+          font.pixelSize: 11
+          color: brg.settings.textColorMid
+        }
+
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 6
+
+          Label { text: qsTr("X"); font.pixelSize: 10; opacity: 0.6 }
+
+          SpinBox {
+            Layout.fillWidth: true
+            Layout.minimumWidth: 0
+            Layout.preferredHeight: 28
+            font.pixelSize: 11
+            editable: true
+            from: 0
+            to: 255
+            value: brg.map.playerX
+            onValueModified: brg.map.movePlayer(value, brg.map.playerY)
+          }
+
+          Label { text: qsTr("Y"); font.pixelSize: 10; opacity: 0.6 }
+
+          SpinBox {
+            Layout.fillWidth: true
+            Layout.minimumWidth: 0
+            Layout.preferredHeight: 28
+            font.pixelSize: 11
+            editable: true
+            from: 0
+            to: 255
+            value: brg.map.playerY
+            onValueModified: brg.map.movePlayer(brg.map.playerX, value)
+          }
+        }
+
+        // Moving him invalidates the view pointer the GAME computed. We say so and offer the fix --
+        // we never quietly rewrite it. (The derived-byte doctrine; map-screen.md.)
+        Rectangle {
+          Layout.fillWidth: true
+          Layout.topMargin: 6
+          visible: !brg.map.headerMatches
+          radius: 6
+          color: Qt.rgba(1, 0.84, 0.31, 0.15)
+          border.width: 1
+          border.color: "#ffd54f"
+          implicitHeight: pFixCol.implicitHeight + 16
+
+          ColumnLayout {
+            id: pFixCol
+            anchors.fill: parent
+            anchors.margins: 8
+            spacing: 6
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("The map view pointer the game computed no longer matches where he is.")
+              wrapMode: Text.Wrap
+              font.pixelSize: 11
+            }
+
+            Button {
+              text: qsTr("Fix it")
+              onClicked: brg.map.fixMapHeader()
+            }
+          }
+        }
+
+        Label {
+          Layout.fillWidth: true
+          Layout.topMargin: 6
+          text: qsTr("His name, his badges and everything else about him live on the Trainer Card.")
+          wrapMode: Text.Wrap
+          font.pixelSize: 10
+          opacity: 0.55
+        }
+      }
+
       // ── A sprite selected ────────────────────────────────────────────────────────────────
       ColumnLayout {
         Layout.fillWidth: true
@@ -195,16 +348,42 @@ Item {
               opacity: 0.6
             }
           }
+        }
 
-          ToolButton {
-            text: "✕"
-            ToolTip.visible: brg.settings.infoBtnPressed && (hovered)
-            ToolTip.text: qsTr("Remove this sprite")
-            onClicked: {
-              brg.map.removeNpc(details.slot);
-              if (details.canvas)
-                details.canvas.selectedNpc = -1;
-            }
+        // ⚠️ A DELETE BUTTON THAT SAYS DELETE.
+        //
+        // It was a "✕" ToolButton with a tooltip. Twilight: *"The x button deletes — it's not
+        // self-explanatory, should be delete button."* A destructive action gets a word, not a glyph
+        // you have to hover to identify.
+        Button {
+          Layout.fillWidth: true
+          Layout.topMargin: 2
+          Layout.preferredHeight: 28
+          font.pixelSize: 11
+
+          text: qsTr("Delete this character")
+
+          contentItem: Label {
+            text: parent.text
+            font: parent.font
+            color: parent.hovered ? "#ffffff" : "#d55e00"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+          }
+
+          background: Rectangle {
+            radius: 4
+            color: parent.hovered ? "#d55e00" : "transparent"
+            border.width: 1
+            border.color: "#d55e00"
+
+            Behavior on color { ColorAnimation { duration: 90 } }
+          }
+
+          onClicked: {
+            brg.map.removeNpc(details.slot);
+            if (details.canvas)
+              details.canvas.selectedNpc = -1;
           }
         }
 
@@ -228,31 +407,11 @@ Item {
           }
         }
 
-        // ⚠️ The honest note -- and it only appears once you have actually CHANGED something.
-        //
-        // A first version of this compared the save's cast against the ROM's and showed the warning
-        // whenever they differed. That was wrong: a real save's cast ALREADY differs, because
-        // walking NPCs wander. Pallet Town's girl stands at (3,8) in the cartridge and (3,6) in the
-        // fixture save -- she had simply taken a few steps. The warning would have fired on
-        // essentially every save ever loaded, which is noise, and noise is a bug.
-        Rectangle {
-          Layout.fillWidth: true
-          visible: brg.map.npcsEdited()
-          radius: 6
-          color: Qt.rgba(0.34, 0.71, 0.91, 0.12)
-          border.width: 1
-          border.color: "#56b4e9"
-          implicitHeight: romWarn.implicitHeight + 14
-
-          Label {
-            id: romWarn
-            anchors.fill: parent
-            anchors.margins: 7
-            text: qsTr("This map's cast no longer matches the game's. Your changes are real and they load — but the game rebuilds the original cast from the cartridge the moment the player leaves this map and walks back in.")
-            wrapMode: Text.Wrap
-            font.pixelSize: 11
-          }
-        }
+        // (A blue "this map's cast no longer matches the game's" notice sat here. REMOVED 2026-07-13
+        // -- Twilight: "do not have notice on cast no longer matches". It fired on every edit, said
+        // the same thing every time, and pushed the fields you were editing down the panel. The fact
+        // it carried -- the game rebuilds a map's cast from ROM when you walk back in -- is still
+        // true, and it is written down where a fact belongs: notes/reference/sprites.md, Part 6.)
 
         // ── Every byte, grouped ──────────────────────────────────────────────────────────────
         Repeater {

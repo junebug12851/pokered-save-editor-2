@@ -15,19 +15,30 @@
 */
 
 /**
- * ONE editable byte of a sprite, in the Details panel.
+ * ONE field of a sprite, in the Details panel. The field says what KIND it is; this file draws the
+ * control that kind deserves.
  *
- * Two shapes, from the field's `kind`:
+ * ⚠️ **Rewritten 2026-07-13.** The old version drew every byte the same way — a number box, with the
+ * combo (if any) squeezed in beside it and a paragraph underneath. Twilight:
  *
- *   * **enum** -- a combo of the values the game actually names, and a **number box beside it**.
- *     The combo is a convenience, never a cage: the byte takes its **full range**, and a value the
- *     game has no name for is *shown* ("Hack value $37"), never refused, never rewritten. That is
- *     the whole doctrine — every value the save can hold is editable, including the ones no real
- *     game would.
- *   * **byte** -- a number box.
+ *   > *"the fields are all just raw values, exactly what I said not to do... I don't know what most
+ *   > of those numbers mean on sprite details, it's cryptic as crap... **Don't show boxes if it's
+ *   > unnecessary** — some of these raw values have a combo box next to them and I bet that combo
+ *   > box value is going to determine if the textbox raw value is even needed to be there or not."*
  *
- * The blurb under each row says what the byte *does*. Nobody should have to already know what an
- * "image base offset" is to be allowed to look at it.
+ * So the rules now are:
+ *
+ *  1. **The raw byte box only appears when the combo cannot say it.** If the value is one the game
+ *     names, the combo IS the control and there is nothing to type — so there is no box. The box
+ *     appears the instant the value is one no option covers, which is exactly when you need it.
+ *     Nothing is ever refused and nothing is ever silently corrected: the full byte range is always
+ *     one click away, behind "Something else…".
+ *  2. **The label is above the control**, always. A 190px panel cannot seat a label beside a combo —
+ *     the combo ends up 90px wide with its text cut off, which is what happened.
+ *  3. **A duration is drawn as a duration**, not as a number with a sentence explaining the number.
+ *  4. **Scratch bytes wear a yellow "!"** — the console recomputes them when it loads the save.
+ *
+ * @see MapModel::npcFields -- the schema, and which kind each byte gets.
  */
 import QtQuick
 import QtQuick.Controls
@@ -39,98 +50,309 @@ ColumnLayout {
   required property var fieldData
   required property int slot
 
-  spacing: 1
+  spacing: 2
 
-  readonly property bool isEnum: fieldData.kind === "enum"
+  readonly property string kind: fieldData.kind || "byte"
   readonly property var options: fieldData.options || []
+  readonly property int value: fieldData.value || 0
 
-  /// Is the current value one the game has a name for?
+  /// Is the current value one the game has a name for? (An `enum` whose value nothing names is a
+  /// HACK value -- shown, flagged, editable, never refused.)
   readonly property bool known: {
-    if (!field.isEnum)
+    if (field.kind !== "enum")
       return true;
+
     for (let i = 0; i < field.options.length; i++)
-      if (field.options[i].value === field.fieldData.value)
+      if (field.options[i].value === field.value)
         return true;
+
     return false;
   }
 
-  // ⚠️ The label goes ABOVE the controls, not beside them.
+  /// Does the picked option itself carry the hack flag? (A glitch item; a trainer class the game
+  /// never uses. Real bytes, offered, and said out loud.)
+  readonly property bool pickedHack: {
+    for (let i = 0; i < field.options.length; i++)
+      if (field.options[i].value === field.value)
+        return field.options[i].hack === true;
+    return false;
+  }
+
+  /// The user has asked for the raw box on a value the combo COULD have said. Sticky, so it does not
+  /// vanish under them mid-edit.
+  property bool rawOpen: false
+
+  /// The raw box is up when the value needs it, or when it was asked for.
+  readonly property bool rawShown: field.kind === "enum" && (!field.known || field.rawOpen)
+
+  function commit(v) { brg.map.setNpcField(field.slot, field.fieldData.key, v); }
+
+  // ── The label ──────────────────────────────────────────────────────────────────────────────
+  RowLayout {
+    Layout.fillWidth: true
+    Layout.topMargin: 2
+    spacing: 4
+
+    Label {
+      Layout.fillWidth: true
+      text: field.fieldData.label
+      font.pixelSize: 11
+      color: brg.settings.textColorMid
+      wrapMode: Text.Wrap
+
+      HoverHandler { id: labelHover }
+
+      // ⚠️ Gated on the header's tooltip toggle, like every other tooltip on this screen. The two
+      // exceptions are icons you point at deliberately: MapInfoIcon and MapWarnIcon.
+      MapToolTip {
+        shown: labelHover.hovered && (field.fieldData.blurb || "") !== ""
+        text: field.fieldData.blurb || ""
+      }
+    }
+
+    // The game works this byte out again the next time it loads the save.
+    MapWarnIcon {
+      visible: field.fieldData.scratch === true
+      text: qsTr("The game reloads this when it loads your save — it works it out from the map and "
+                 + "the player. You can set it, and it won't survive Continue.")
+    }
+  }
+
+  // ── picture: a grid of the actual artwork ──────────────────────────────────────────────────
+  PicturePick {
+    Layout.fillWidth: true
+    Layout.bottomMargin: 6
+    visible: field.kind === "picture"
+
+    picture: field.value
+    onPicked: (p) => field.commit(p)
+  }
+
+  // ── coords / pixels: X and Y are ONE fact, so they are ONE control ─────────────────────────
+  RowLayout {
+    Layout.fillWidth: true
+    Layout.bottomMargin: 6
+    visible: field.kind === "coords" || field.kind === "pixels"
+    spacing: 6
+
+    // Packed: low byte X, high byte Y. @see MapModel::setNpcField.
+    readonly property int px: field.value & 0xFF
+    readonly property int py: (field.value >> 8) & 0xFF
+
+    Label {
+      text: field.kind === "coords" ? qsTr("X") : qsTr("←→")
+      font.pixelSize: 10
+      opacity: 0.6
+    }
+
+    SpinBox {
+      id: xBox
+      Layout.fillWidth: true
+      Layout.minimumWidth: 0
+      Layout.preferredHeight: 28
+      font.pixelSize: 11
+      editable: true
+
+      from: 0
+      to: 255
+      value: parent.px
+
+      onValueModified: field.commit((value & 0xFF) | (parent.py << 8))
+    }
+
+    Label {
+      text: field.kind === "coords" ? qsTr("Y") : qsTr("↑↓")
+      font.pixelSize: 10
+      opacity: 0.6
+    }
+
+    SpinBox {
+      id: yBox
+      Layout.fillWidth: true
+      Layout.minimumWidth: 0
+      Layout.preferredHeight: 28
+      font.pixelSize: 11
+      editable: true
+
+      from: 0
+      to: 255
+      value: parent.py
+
+      onValueModified: field.commit((parent.px & 0xFF) | ((value & 0xFF) << 8))
+    }
+  }
+
+  // ── enum: the combo IS the control ─────────────────────────────────────────────────────────
   //
-  // The first version put label | combo | number all on one row, and the number box fell off the
-  // right edge of the dock -- a panel is ~190px and that row wants 250. Shrinking the controls to
-  // fit would have been shrinking the CONTENT to make room for the furniture, which is the wrong
-  // way round. So the row became two.
+  // Full width. No number box beside it stealing 74px and cutting its text off.
+  ComboBox {
+    id: combo
+    visible: field.kind === "enum"
+    Layout.fillWidth: true
+    Layout.bottomMargin: field.rawShown || field.pickedHack ? 0 : 6
+    Layout.preferredHeight: 30
+    font.pixelSize: 11
+
+    model: field.options
+    textRole: "name"
+    valueRole: "value"
+
+    // A value the game never names still has to READ correctly -- the combo says what it is rather
+    // than silently snapping to the nearest thing it likes.
+    displayText: field.known
+                   ? currentText
+                   : qsTr("Something else — $%1").arg(field.value.toString(16).toUpperCase())
+
+    Component.onCompleted: currentIndex = indexOfValue(field.value)
+    onActivated: field.commit(currentValue)
+
+    Connections {
+      target: field
+      function onFieldDataChanged() { combo.currentIndex = combo.indexOfValue(field.value); }
+    }
+  }
+
+  // ── The escape hatch ───────────────────────────────────────────────────────────────────────
+  //
+  // "Every value the save can hold is editable, including the hack ones." The combo covers the
+  // values the game names; THIS covers the rest — and it stays out of the way until it is wanted.
   Label {
     Layout.fillWidth: true
-    text: field.fieldData.label
-    font.pixelSize: 11
-    wrapMode: Text.Wrap
+    Layout.bottomMargin: 6
+    visible: field.kind === "enum" && !field.rawShown
 
-    HoverHandler { id: labelHover }
-    ToolTip.visible: brg.settings.infoBtnPressed && (labelHover.hovered && field.fieldData.blurb !== "")
-    ToolTip.delay: 400
-    ToolTip.text: field.fieldData.blurb
+    text: qsTr("Something else…")
+    font.pixelSize: 10
+    font.underline: linkHover.hovered
+    color: "#56b4e9"
+
+    HoverHandler { id: linkHover; cursorShape: Qt.PointingHandCursor }
+    TapHandler { onTapped: field.rawOpen = true }
   }
 
   RowLayout {
     Layout.fillWidth: true
-    Layout.bottomMargin: 4
+    Layout.bottomMargin: 6
+    visible: field.rawShown
     spacing: 4
 
-    ComboBox {
-      id: combo
-      visible: field.isEnum
+    SpinBox {
       Layout.fillWidth: true
       Layout.minimumWidth: 0
-      Layout.preferredHeight: 30
+      Layout.preferredHeight: 28
       font.pixelSize: 11
-
-      model: field.options
-      textRole: "name"
-      valueRole: "value"
-
-      // A value the game never names still has to READ correctly -- so when it is unknown the
-      // combo shows what it is rather than silently snapping to the nearest thing it likes.
-      displayText: field.known
-                     ? currentText
-                     : qsTr("Hack value $%1").arg(field.fieldData.value.toString(16).toUpperCase())
-
-      Component.onCompleted: currentIndex = indexOfValue(field.fieldData.value)
-
-      onActivated: brg.map.setNpcField(field.slot, field.fieldData.key, currentValue)
-
-      Connections {
-        target: field
-        function onFieldDataChanged() {
-          combo.currentIndex = combo.indexOfValue(field.fieldData.value);
-        }
-      }
-    }
-
-    SpinBox {
-      id: spin
-      Layout.fillWidth: !field.isEnum
-      Layout.preferredWidth: field.isEnum ? 74 : 0
-      Layout.preferredHeight: 30
-      font.pixelSize: 11
+      editable: true
 
       from: field.fieldData.min
       to: field.fieldData.max
-      value: field.fieldData.value
-      editable: true
+      value: field.value
 
-      // Commit on the value settling, not on every keystroke -- typing "12" into a byte box should
-      // not briefly write 1.
-      onValueModified: brg.map.setNpcField(field.slot, field.fieldData.key, value)
+      onValueModified: field.commit(value)
+    }
+
+    // Only offered when the value is one the combo COULD have said -- otherwise there is nothing to
+    // fold back into.
+    MapRailButton {
+      visible: field.known
+      size: 22
+      glyph: "⌃"
+      tip: qsTr("Put the raw box away")
+      onClicked: field.rawOpen = false
     }
   }
 
-  // The hack flag, in words. Not a refusal, not a correction -- a sentence.
+  // ── frames: a DURATION, drawn as one ───────────────────────────────────────────────────────
+  //
+  // ⚠️ Twilight: *"What is 'delay until next move'? What does that mean, how is it measured? Don't
+  // tell them with text — tell them with a beautiful, polished, clean UI/UX."*
+  //
+  // So: a bar you can drag, with the answer written on it in both of the units that matter — the
+  // frames the console counts, and the seconds you would feel. The Game Boy runs at 59.7275 Hz, and
+  // that is where the seconds come from; it is not a round 60 and we do not pretend it is.
+  ColumnLayout {
+    Layout.fillWidth: true
+    Layout.bottomMargin: 6
+    visible: field.kind === "frames"
+    spacing: 2
+
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: 6
+
+      Label {
+        text: field.value === 0
+                ? qsTr("no wait")
+                : qsTr("%1 frames").arg(field.value)
+        font.pixelSize: 12
+        font.bold: true
+        color: brg.settings.textColorDark
+      }
+
+      Label {
+        visible: field.value > 0
+        text: qsTr("≈ %1 s").arg((field.value / 59.7275).toFixed(2))
+        font.pixelSize: 11
+        opacity: 0.55
+      }
+
+      Item { Layout.fillWidth: true }
+    }
+
+    Slider {
+      Layout.fillWidth: true
+      Layout.preferredHeight: 22
+      from: 0
+      to: 255
+      stepSize: 1
+      value: field.value
+
+      onMoved: field.commit(Math.round(value))
+    }
+  }
+
+  // ── team: which of a trainer class's rosters ───────────────────────────────────────────────
+  SpinBox {
+    visible: field.kind === "team"
+    Layout.fillWidth: true
+    Layout.bottomMargin: 6
+    Layout.preferredHeight: 28
+    font.pixelSize: 11
+    editable: true
+
+    from: 0
+    to: 255
+    value: field.value
+
+    onValueModified: field.commit(value)
+  }
+
+  // ── byte: the last resort ──────────────────────────────────────────────────────────────────
+  SpinBox {
+    visible: field.kind === "byte"
+    Layout.fillWidth: true
+    Layout.bottomMargin: 6
+    Layout.preferredHeight: 28
+    font.pixelSize: 11
+    editable: true
+
+    from: field.fieldData.min
+    to: field.fieldData.max
+    value: field.value
+
+    onValueModified: field.commit(value)
+  }
+
+  // ── The hack flag, in words ────────────────────────────────────────────────────────────────
+  //
+  // Not a refusal, not a correction. A sentence.
   Label {
     Layout.fillWidth: true
-    Layout.bottomMargin: 4
-    visible: field.isEnum && !field.known
-    text: qsTr("No real game holds this value here.")
+    Layout.bottomMargin: 6
+    visible: field.kind === "enum" && (!field.known || field.pickedHack)
+
+    text: field.known
+            ? qsTr("No real game uses this one.")
+            : qsTr("No real game holds this value here.")
     font.pixelSize: 10
     color: "#c79100"
     wrapMode: Text.Wrap

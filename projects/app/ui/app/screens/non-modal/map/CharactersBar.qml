@@ -75,41 +75,14 @@ Item {
 
   // ── The delete target ──────────────────────────────────────────────────────────────────────
   //
-  // Drag somebody off the map and onto the panel and they go back in the box. The WHOLE panel is
-  // the target -- a small bin icon would be a thing to aim at, and aiming is work.
-  DropArea {
-    anchors.fill: parent
-    keys: ["pse/map-sprite"]
-
-    onEntered: bar.deleteHover = true
-    onExited: bar.deleteHover = false
-
-    onDropped: (drop) => {
-      bar.deleteHover = false;
-
-      const slot = drop.source && drop.source.spriteSlot !== undefined ? drop.source.spriteSlot : -1;
-
-      if (slot <= 0) {
-        drop.accept(Qt.IgnoreAction);   // the player cannot be deleted; he offers slot -1
-        return;
-      }
-
-      brg.map.removeNpc(slot);
-
-      if (bar.canvas) {
-        bar.canvas.selectedNpc = -1;
-        bar.canvas.status = qsTr("Removed. The sprites after it slid up a slot.");
-      }
-
-      // ⚠️ MoveAction, specifically. It is what tells MapSprite "the drop was a DELETE" so it does
-      // not also commit a move on the sprite it has just destroyed.
-      drop.accept(Qt.MoveAction);
-    }
-  }
-
+  // ⚠️ NO DropArea. MapSprite asks the canvas `overDeleteZone(x, y)` on every drag move and does the
+  // delete itself on release. Qt's Drag/DropArea broke twice, invisibly; it is gone from this screen
+  // and the drop is now a function call with a coordinate. @see MapCanvas.
+  //
+  // The WHOLE panel is the target -- a small bin icon would be a thing to aim at, and aiming is work.
   Rectangle {
     anchors.fill: parent
-    visible: bar.deleteHover
+    visible: bar.canvas && bar.canvas.deleteHover
     color: Qt.rgba(0.85, 0.2, 0.2, 0.14)
     border.width: 2
     border.color: "#d55e00"

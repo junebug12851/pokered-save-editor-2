@@ -350,13 +350,55 @@ public:
   /// reads when a sprite is selected.
   Q_INVOKABLE QVariantMap npcAt(int slot) const;
 
-  /// Every editable byte of sprite @p slot, named and explained: a list of
-  /// `{ group, key, label, blurb, value, min, max, kind, options }`. This is the Details panel's
-  /// content -- **every byte, full range, hack values included and flagged, never refused**.
+  /**
+   * @brief Every editable byte of sprite @p slot, named and explained. The Details panel's content.
+   *
+   * A list of `{ group, key, label, blurb, value, min, max, kind, options, scratch }` --
+   * **every byte, full range, hack values included and flagged, never refused**.
+   *
+   * ⚠️ **`kind` is the point.** It says what the value IS, so the panel can draw the right control
+   * rather than a number box with a paragraph beside it:
+   *
+   *  | kind | the control |
+   *  |------|-------------|
+   *  | `picture` | a grid of the actual artwork -- you pick a character by looking at them |
+   *  | `coords`  | X and Y **together**; the packed value is `x \| (y << 8)` |
+   *  | `pixels`  | the same packing, for the two on-screen pixel pairs |
+   *  | `enum`    | a combo. The raw byte box appears **only** for a value no option names |
+   *  | `frames`  | a countdown, drawn as the duration it is -- never as a number |
+   *  | `team`    | which of a trainer class's rosters |
+   *  | `byte`    | the last resort |
+   *
+   * `scratch` marks a byte **the console recomputes when it loads the save**. It wears a yellow "!".
+   * It is not hidden and not refused -- just labelled, so nobody carefully sets a value the game is
+   * going to throw away.
+   *
+   * The `Talking to it` group is **variable**: the sprite's kind lives in bits 6-7 of its text byte
+   * (`TRAINER`/`ITEM` -- constants/map_object_constants.asm), and it decides whether the item picker
+   * or the trainer class + roster exist at all. A Pokéball is not shown a trainer roster.
+   *
+   * @see setNpcField, mapTextList, itemList, trainerClassList
+   */
   Q_INVOKABLE QVariantList npcFields(int slot) const;
 
-  /// Write one of @ref npcFields' keys on sprite @p slot. One field, one byte.
+  /// Write one of @ref npcFields' keys on sprite @p slot.
+  ///
+  /// Most keys are one byte. The composite ones (`mapXY`, `screenXY`, `gridXY`) arrive packed as
+  /// `x | (y << 8)`; `spriteKind` and `textID` are **two halves of the same byte** and each writes
+  /// only its own bits, leaving the other's exactly as they were.
   Q_INVOKABLE void setNpcField(int slot, const QString& key, int value);
+
+  /// **This map's own scripts**, out of the cartridge: `{ value, name, hack }`, where the name says
+  /// who the script belongs to ("3 — Fisher 2"). A text id is an index into *this map's* text table,
+  /// so a bare number is meaningless and a name is not.
+  Q_INVOKABLE QVariantList mapTextList() const;
+
+  /// Every item an item ball can hold: `{ value, name, hack }`. The glitch items are real bytes, so
+  /// they are offered -- and flagged.
+  Q_INVOKABLE QVariantList itemList() const;
+
+  /// Every trainer class: `{ value, name, hack }`.
+  Q_INVOKABLE QVariantList trainerClassList() const;
 
   /**
    * @brief Has the user changed this map's cast in this session?

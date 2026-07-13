@@ -22,13 +22,15 @@ namespace {
 
 /// The three groups, in the order they read: what helps you SEE (guides), what the map MEANS
 /// (the semantic overlays), and what the GAME is doing right now (the player and his two boxes).
-enum Group { GuidesGroup = 0, MeaningGroup = 1, GameViewGroup = 2, GroupCount = 3 };
+enum Group { GuidesGroup = 0, ComponentsGroup = 1, GameViewGroup = 2, GroupCount = 3 };
 
 const char* groupKey(int g)
 {
   switch (g) {
   case GuidesGroup:   return "guides";
-  case MeaningGroup:  return "meaning";
+  // ⚠️ The KEY stays "meaning" -- it is a stable id the tests and the DEBUG harness address the
+  // group by. Only the NAME changed ("Meaning" -> "Components", Twilight 2026-07-13).
+  case ComponentsGroup: return "meaning";
   case GameViewGroup: return "gameview";
   default:            break;
   }
@@ -39,7 +41,7 @@ QString groupName(int g)
 {
   switch (g) {
   case GuidesGroup:   return QObject::tr("Guides");
-  case MeaningGroup:  return QObject::tr("Meaning");
+  case ComponentsGroup: return QObject::tr("Components");
   case GameViewGroup: return QObject::tr("Game View");
   default:            break;
   }
@@ -51,7 +53,7 @@ QString groupBlurb(int g)
   switch (g) {
   case GuidesGroup:
     return QObject::tr("Lines that help you see the map's shape. None of it is in the save.");
-  case MeaningGroup:
+  case ComponentsGroup:
     return QObject::tr("What the map MEANS — a wall and a floor are just two pictures until "
                        "something says which is which.");
   case GameViewGroup:
@@ -135,17 +137,17 @@ void MapLayersModel::buildAll()
   // seeing the map's shape, not a fact about its tiles.
   overlay(GuidesGroup, MapEngine::LayerBorder);
 
-  // ── Meaning ─────────────────────────────────────────────────────────────────
-  group(MeaningGroup);
-  overlay(MeaningGroup, MapEngine::LayerWalls);
-  overlay(MeaningGroup, MapEngine::LayerGrass);
-  overlay(MeaningGroup, MapEngine::LayerWater);
-  overlay(MeaningGroup, MapEngine::LayerWarps);
-  overlay(MeaningGroup, MapEngine::LayerDoors);
-  overlay(MeaningGroup, MapEngine::LayerLedges);
-  overlay(MeaningGroup, MapEngine::LayerCounters);
-  overlay(MeaningGroup, MapEngine::LayerCutTrees);
-  overlay(MeaningGroup, MapEngine::LayerElevation);
+  // ── Components ──────────────────────────────────────────────────────────────
+  group(ComponentsGroup);
+  overlay(ComponentsGroup, MapEngine::LayerWalls);
+  overlay(ComponentsGroup, MapEngine::LayerGrass);
+  overlay(ComponentsGroup, MapEngine::LayerWater);
+  overlay(ComponentsGroup, MapEngine::LayerWarps);
+  overlay(ComponentsGroup, MapEngine::LayerDoors);
+  overlay(ComponentsGroup, MapEngine::LayerLedges);
+  overlay(ComponentsGroup, MapEngine::LayerCounters);
+  overlay(ComponentsGroup, MapEngine::LayerCutTrees);
+  overlay(ComponentsGroup, MapEngine::LayerElevation);
 
   // ── Game View ───────────────────────────────────────────────────────────────
   group(GameViewGroup);
@@ -442,9 +444,52 @@ void MapLayersModel::clearAll()
   refreshAll();
 }
 
+void MapLayersModel::clearGroup(int row)
+{
+  if (row < 0 || row >= rows.size())
+    return;
+
+  const int g = rows[row].group;
+
+  // A solo is a LOOK on top of a setup. Clearing the group it was in throws both away -- keeping the
+  // snapshot would mean a later alt-click restored layers the user had explicitly just cleared.
+  if (!soloKey.isEmpty()) {
+    for (const Row& c : allRows) {
+      if (!c.isGroup && c.group == g && c.key == soloKey) {
+        soloKey.clear();
+        break;
+      }
+    }
+  }
+
+  for (const Row& c : allRows) {
+    if (c.isGroup || c.group != g)
+      continue;
+
+    setRowVisible(c, false);
+  }
+
+  refreshAll();
+}
+
 bool MapLayersModel::anyOn() const
 {
   return bits != ViewNone || (map != nullptr && map->layers() != 0);
+}
+
+bool MapLayersModel::groupAnyOn(int row) const
+{
+  if (row < 0 || row >= rows.size())
+    return false;
+
+  const int g = rows[row].group;
+
+  for (const Row& c : allRows) {
+    if (!c.isGroup && c.group == g && rowVisible(c))
+      return true;
+  }
+
+  return false;
 }
 
 void MapLayersModel::refreshAll()

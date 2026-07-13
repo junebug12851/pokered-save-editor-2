@@ -60,6 +60,41 @@ object per line, get one reply per line. Verbs:
 Drive it from PowerShell with a `TcpClient` (write a line, read a line). Great for scripted checks:
 navigate, `set` a field, `shot`, then eyeball.
 
+### ⚠️ Two traps that will eat an hour each (found 2026-07-13, the hard way)
+
+**1. Do NOT `screen` to a screen you are already on.** The router *pushes* — it does not check. Launch
+with `--screen maps` and then send `{"cmd":"screen","arg":"maps"}` and there are now **two Map screens**
+on the stack, one dead behind the other. `findItem` walks the object tree and returns the **first**
+match, which is the dead one. So:
+
+* every `set` replies `{"ok":true}` — it really did set the property, on an invisible copy;
+* every `get` reads that copy's stale value;
+* every `shot` looks completely unchanged, no matter what you do.
+
+The tell is `{"cmd":"list","arg":"mapLeftPanel"}` coming back with the **same name three times**. If a
+`set` "works" and the screen doesn't move, `list` your object before you debug anything else.
+
+**2. One connection per command.** Hold a single socket open for a whole scripted run and every `shot`
+comes back **byte-identical** — the grab returns the same frame no matter what changed in between.
+Open a fresh `TcpClient` per command (it costs nothing) and the grabs are live. A working driver script
+is `tmp/drive.ps1`'s shape:
+
+```powershell
+function Send($obj) {
+  $c = New-Object System.Net.Sockets.TcpClient('127.0.0.1', 8766)
+  $s = $c.GetStream(); $w = New-Object System.IO.StreamWriter($s); $w.AutoFlush = $true
+  $r = New-Object System.IO.StreamReader($s)
+  $w.WriteLine(($obj | ConvertTo-Json -Compress))
+  $reply = $r.ReadLine(); $c.Close(); return $reply
+}
+```
+
+**And a third, smaller one:** grab shots with `QT_QPA_PLATFORM=offscreen`, **not** with a *minimised*
+window. A minimised window stops rendering, so `shot` hands back whatever was on screen when it went
+down. (Offscreen loses the pixel-art shader — `PixelImage` falls back to nearest — which does not
+matter for a *layout* review, which is what the mandatory pass is.) Set `QT_QPA_FONTDIR=C:\Windows\Fonts`
+or every string renders as tofu boxes.
+
 ## How hot-reload works (and its known limitation)
 
 `--hot` installs a `QmlDiskInterceptor` (a `QQmlAbstractUrlInterceptor`) that redirects `qrc:/…qml|js`

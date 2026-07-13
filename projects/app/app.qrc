@@ -619,7 +619,11 @@
         <file>ui/app/screens/non-modal/map/MapCanvas.qml</file>
         <file>ui/app/screens/non-modal/map/MapDock.qml</file>
         <file>ui/app/screens/non-modal/map/MapStatusBar.qml</file>
+        <file>ui/app/screens/non-modal/map/MapClearButton.qml</file>
+        <file>ui/app/screens/non-modal/map/MapInfoIcon.qml</file>
         <file>ui/app/screens/non-modal/map/MapRailButton.qml</file>
+        <file>ui/app/screens/non-modal/map/MapWarnIcon.qml</file>
+        <file>ui/app/screens/non-modal/map/PicturePick.qml</file>
         <file>ui/app/screens/non-modal/map/MapToolTip.qml</file>
         <file>ui/app/screens/non-modal/map/SpriteSetPanel.qml</file>
         <file>ui/app/screens/non-modal/map/CharactersBar.qml</file>

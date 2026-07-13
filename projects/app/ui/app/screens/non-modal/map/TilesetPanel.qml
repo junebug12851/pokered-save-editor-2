@@ -57,13 +57,28 @@ Rectangle {
   // it does not draw its own header, its own edge, or its own background chrome. (2026-07-12)
   color: "transparent"
 
-  // A titled group. Used for every section so the panel reads as a stack of ideas rather than
-  // a wall of controls.
+  /// The panel's "?" — the explanation that used to be a paragraph under every group heading.
+  readonly property string panelInfo: qsTr(
+    "What the map's tiles MEAN. A wall and a floor are just two pictures until something says which "
+    + "is which — and this is where the save says it.\n\n"
+    + "Grass is the tile that means wild Pokémon. A counter is a tile you can talk ACROSS (a shop "
+    + "desk — without one, the clerk behind it is out of reach). The edge of the world is the block "
+    + "that fills the ring around the map, where no connected map bleeds in.")
+
+  /// A titled group. A title, a MapWarnIcon if the game overwrites these bytes, and a SHORT hint.
+  ///
+  /// ⚠️ The multi-line `blurb` under every heading is gone (Twilight, 2026-07-13: the Strength group
+  /// "has blocks of text again"). Prose goes in `panelInfo`, behind the "?" — not in the panel.
   component Group: Rectangle {
     id: grp
     default property alias content: inner.data
     property string title: ""
-    property string blurb: ""
+
+    /// ONE short line. Not a paragraph.
+    property string hint: ""
+
+    /// The game overwrites these bytes. Shows the yellow "!" beside the title. @see MapWarnIcon
+    property string overwritten: ""
 
     Layout.fillWidth: true
     implicitHeight: col.implicitHeight + 16
@@ -79,19 +94,31 @@ Rectangle {
       anchors.margins: 8
       spacing: 6
 
-      Text {
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: 5
         visible: grp.title !== ""
-        text: grp.title
-        font.pixelSize: 12
-        font.bold: true
-        color: brg.settings.textColorDark
+
+        Text {
+          text: grp.title
+          font.pixelSize: 12
+          font.bold: true
+          color: brg.settings.textColorDark
+        }
+
+        MapWarnIcon {
+          visible: grp.overwritten !== ""
+          text: grp.overwritten
+        }
+
+        Item { Layout.fillWidth: true }
       }
 
       Text {
         Layout.fillWidth: true
-        visible: grp.blurb !== ""
-        text: grp.blurb
-        font.pixelSize: 11
+        visible: grp.hint !== ""
+        text: grp.hint
+        font.pixelSize: 10
         color: brg.settings.textColorMid
         wrapMode: Text.WordWrap
       }
@@ -120,8 +147,6 @@ Rectangle {
       // the map's tiles, and it was the one thing in that panel worth keeping.
       Group {
         title: qsTr("Edge of the world")
-        blurb: qsTr("The block filling the ring around the map — what you see past its edges, where "
-                  + "no connected map bleeds in.")
 
         BlockPick {
           Layout.fillWidth: true
@@ -139,8 +164,6 @@ Rectangle {
       // ── Grass ───────────────────────────────────────────────────────────────
       Group {
         title: qsTr("Grass")
-        blurb: qsTr("The one tile that means wild Pokémon. It's also the tile drawn over "
-                  + "your feet when you stand in it.")
 
         TilePick {
           Layout.fillWidth: true
@@ -159,8 +182,7 @@ Rectangle {
       // ── Counters ────────────────────────────────────────────────────────────
       Group {
         title: qsTr("Counters")
-        blurb: qsTr("The tiles you can talk ACROSS — a shop desk. Without one of these, the "
-                  + "clerk standing behind the counter is out of reach. Three slots.")
+        hint: qsTr("Three slots.")
 
         Repeater {
           model: 3
@@ -186,12 +208,13 @@ Rectangle {
       //
       // These two really are leftovers -- the game rewrites them the next time you shove a
       // rock. But they ARE save bytes, so they are the user's, and they get proper editors.
-      // What they don't get is a pretense that they configure anything.
+      // What they don't get is a pretense that they configure anything -- or, as of 2026-07-13, a
+      // three-line paragraph saying so. The yellow ! says it, in one hover.
       Group {
         title: qsTr("Last Strength push")
-        blurb: qsTr("Scratch the game left behind the last time a boulder was pushed. It "
-                  + "overwrites these the next time you push one — but they're yours, so "
-                  + "here they are.")
+        overwritten: qsTr("Scratch the game left behind the last time a boulder was pushed. It "
+                          + "overwrites these the next time you push one — but they're yours, so "
+                          + "here they are.")
 
         // ⚠️ The label goes ABOVE the control, not beside it. Beside it, a 70px label left ~90px for
         // the combo in a 170px panel, and its text was unreadable (Twilight, 2026-07-13). In a narrow
