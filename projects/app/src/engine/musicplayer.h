@@ -19,6 +19,7 @@
 #include <QMutex>
 #include <QObject>
 #include <QString>
+#include <QVariantList>
 #include <QVariantMap>
 #include <memory>
 
@@ -57,6 +58,7 @@ class MusicPlayer : public QObject
   Q_PROPERTY(QString playingName READ playingName NOTIFY playingChanged) ///< Human name of what's heard.
   Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged) ///< 0..1.
   Q_PROPERTY(bool dataReady READ dataReady CONSTANT)                  ///< Did the music data load?
+  Q_PROPERTY(QVariantList tracks READ tracks CONSTANT)                ///< All 151 pieces of music.
 
 public:
   explicit MusicPlayer(QObject* parent = nullptr);
@@ -69,13 +71,23 @@ public:
     return bank == 2 || bank == 8 || bank == 31;
   }
 
-  /// The name of a track id, including the "inner voices" -- e.g. 187 -> "Pallet Town (channel 2)".
-  Q_INVOKABLE static QString describe(int bank, int id);
+  /// The name of a track id, including the "inner voices" -- e.g. 187 -> "Pallet Town — channel 2".
+  Q_INVOKABLE QString describe(int bank, int id) const;
 
-  /// The track list, for QML. MusicDBEntry is a plain struct (not a QObject/gadget), so QML cannot
-  /// walk it -- these hand it over as plain values instead of QObject-ifying the database.
-  Q_INVOKABLE static int trackCount();
-  Q_INVOKABLE static QVariantMap track(int i);   ///< { name, bank, id }
+  /// **Every piece of music in the game**: the 46 real tracks AND their 105 inner voices.
+  ///
+  /// An inner voice is not a glitch. A music header is 3 bytes per channel, and a track's id is
+  /// computed from its header's *address*, so a 3-channel song eats three consecutive ids -- and the
+  /// spare two parse as perfectly valid ONE-channel headers pointing at that song's channel 2 and
+  /// channel 3. The console plays them as exactly that: one voice of the song, alone. They cost no
+  /// extra data (they point into streams we already import), and they are reachable in a real save,
+  /// which is why they belong in this list rather than in a footnote.
+  /// See notes/reference/glitch-music.md.
+  ///
+  /// Each entry: { name, group, header, bank, id, inner, channel }.
+  /// (MusicDBEntry is a plain struct, not a QObject/gadget, so QML cannot walk it -- we hand the
+  /// list over as plain values rather than QObject-ifying the database.)
+  [[nodiscard]] QVariantList tracks() const { return entries; }
 
   Q_INVOKABLE void play();                       ///< Start, on the SELECTED track. A deliberate act.
   Q_INVOKABLE void stop();                       ///< Silence. Nothing keeps humming behind a screen.
@@ -120,6 +132,12 @@ private:
   QMutex lock;                 ///< The UI thread changes the track; the audio thread reads it.
   std::unique_ptr<QAudioSink> sink;
   QIODevice* device = nullptr; ///< Owned by us; handed to the sink.
+
+  void buildTrackList();
+  [[nodiscard]] int channelCount(int bank, int id) const;
+
+  QVariantList entries;                       ///< @see tracks().
+  pse::audio::Gen1SoundEngine::Bank banks[3]; ///< A copy, so we can read the header table.
 
   bool ready = false;
   bool playing = false;

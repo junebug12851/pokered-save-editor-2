@@ -77,9 +77,11 @@ class MapDBEntry;
  * "place the player on any map" feature: it reconfigures the whole area to a
  * chosen map with correct warps/sprites/music/tileset.
  *
- * @note Only @ref general is QML-traversed, so only it is a full include here; the
- *       other ten children are kept opaque above purely for build speed (see the
- *       in-code note). This mirrors `savefile_autoport.h`'s opaque list.
+ * @note @ref general and @ref audio are QML-traversed, so those two are full includes here; the
+ *       other nine children are kept opaque above purely for build speed (see the in-code note).
+ *       This mirrors `savefile_autoport.h`'s opaque list. **Traverse a new one from QML and you
+ *       must add its include** -- `tst_qml_brg` (`test_areaChildrenQmlTraverses_resolve`) is what
+ *       catches you if you forget.
  * @see SaveFileExpanded, MapDBEntry, and [the system map](../../../../../notes/systems/savefile.md).
  */
 class SAVEFILE_AUTOPORT Area : public QObject

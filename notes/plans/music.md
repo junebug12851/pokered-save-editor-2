@@ -198,7 +198,26 @@ SFX, the 19-piece drum kit, the Poké Flute, the low-health alarm, and **all 151
 per-species pitch/length, already in our Pokémon data). Nearly free once Phase 4 is real. **Not in scope
 until asked.**
 
-### Phase 7 — the glitch tracks + sheet music (the perk)
+### Phase 7 — the inner voices, in the UI ✅ DONE (2026-07-12)
+
+All **151** pieces of music are in the panel: the 46 tracks and their **105 inner voices**, grouped
+(Towns & Cities · Routes · Places · Battle · Encounters · Special), properly named at last (Poké Center,
+Pokémon Tower, Jigglypuff's Song — display text only; the JSON keys are untouched), each inner voice
+indented under its parent and labelled *"channel 2 alone"*. A switch hides them.
+
+The channel count comes straight out of the header table we imported, at the address the game reads it
+from — so the list is derived, not hand-maintained.
+
+**Decisions taken with Twilight (2026-07-12):**
+
+- **They stay in the picker.** They *are* selectable map music — verified on the cartridge: id 187 in the
+  save's music byte makes the real game play Pallet Town's channel 2 alone.
+- **The data stays as bytes.** She asked whether a JSON-of-instructions would reduce liability. It would
+  not: it's the same instructions in a different encoding, and pret publishes the same content as readable
+  text. There is an *engineering* argument (readable/diffable) but no legal one, and rewriting the engine's
+  fetch layer would cost the console-verified parity proof. **Left as bytes, deliberately.**
+
+### Phase 7b — sheet music (still open)
 
 Researched 2026-07-12 and **verified on the cartridge** —
 [`../reference/glitch-music.md`](../reference/glitch-music.md). The headline:

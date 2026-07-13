@@ -22,6 +22,7 @@
 
 #include <QAudioFormat>
 #include <QAudioSink>
+#include <QCoreApplication>
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -49,6 +50,86 @@ Gen1SoundEngine::Bank loadBank(const QString& path, int maxSfxId)
   b.data.assign(d.begin(), d.end());
   b.maxSfxId = maxSfxId;
   return b;
+}
+
+/**
+ * The music.json key -> what a human should read, and where it belongs in the list.
+ *
+ * The keys are internal ids and stay untouched; this is display text only -- which is why Poké and
+ * Pokémon are spelled properly here and nowhere near the data.
+ */
+struct TrackInfo {
+  const char* key;
+  const char* name;
+  const char* group;
+};
+
+const TrackInfo TRACKS[] = {
+    // Towns & Cities
+    {"PalletTown",        QT_TRANSLATE_NOOP("MusicPlayer", "Pallet Town"),           "Towns & Cities"},
+    {"Cities1",           QT_TRANSLATE_NOOP("MusicPlayer", "Cities 1"),              "Towns & Cities"},
+    {"Cities2",           QT_TRANSLATE_NOOP("MusicPlayer", "Cities 2"),              "Towns & Cities"},
+    {"Celadon",           QT_TRANSLATE_NOOP("MusicPlayer", "Celadon City"),          "Towns & Cities"},
+    {"Cinnabar",          QT_TRANSLATE_NOOP("MusicPlayer", "Cinnabar Island"),       "Towns & Cities"},
+    {"Vermilion",         QT_TRANSLATE_NOOP("MusicPlayer", "Vermilion City"),        "Towns & Cities"},
+    {"Lavender",          QT_TRANSLATE_NOOP("MusicPlayer", "Lavender Town"),         "Towns & Cities"},
+    {"IndigoPlateau",     QT_TRANSLATE_NOOP("MusicPlayer", "Indigo Plateau"),        "Towns & Cities"},
+
+    // Routes
+    {"Routes1",           QT_TRANSLATE_NOOP("MusicPlayer", "Routes 1"),              "Routes"},
+    {"Routes2",           QT_TRANSLATE_NOOP("MusicPlayer", "Routes 2"),              "Routes"},
+    {"Routes3",           QT_TRANSLATE_NOOP("MusicPlayer", "Routes 3"),              "Routes"},
+    {"Routes4",           QT_TRANSLATE_NOOP("MusicPlayer", "Routes 4"),              "Routes"},
+    {"BikeRiding",        QT_TRANSLATE_NOOP("MusicPlayer", "Bike Riding"),           "Routes"},
+    {"Surfing",           QT_TRANSLATE_NOOP("MusicPlayer", "Surfing"),               "Routes"},
+
+    // Places
+    {"Pokecenter",        QT_TRANSLATE_NOOP("MusicPlayer", "Poké Center"),           "Places"},
+    {"Gym",               QT_TRANSLATE_NOOP("MusicPlayer", "Gym"),                   "Places"},
+    {"OaksLab",           QT_TRANSLATE_NOOP("MusicPlayer", "Oak's Lab"),             "Places"},
+    {"SSAnne",            QT_TRANSLATE_NOOP("MusicPlayer", "S.S. Anne"),             "Places"},
+    {"SafariZone",        QT_TRANSLATE_NOOP("MusicPlayer", "Safari Zone"),           "Places"},
+    {"GameCorner",        QT_TRANSLATE_NOOP("MusicPlayer", "Game Corner"),           "Places"},
+    {"CinnabarMansion",   QT_TRANSLATE_NOOP("MusicPlayer", "Pokémon Mansion"),       "Places"},
+    {"PokemonTower",      QT_TRANSLATE_NOOP("MusicPlayer", "Pokémon Tower"),         "Places"},
+    {"SilphCo",           QT_TRANSLATE_NOOP("MusicPlayer", "Silph Co."),             "Places"},
+    {"Dungeon1",          QT_TRANSLATE_NOOP("MusicPlayer", "Dungeon 1"),             "Places"},
+    {"Dungeon2",          QT_TRANSLATE_NOOP("MusicPlayer", "Dungeon 2"),             "Places"},
+    {"Dungeon3",          QT_TRANSLATE_NOOP("MusicPlayer", "Dungeon 3"),             "Places"},
+    {"HallOfFame",        QT_TRANSLATE_NOOP("MusicPlayer", "Hall of Fame"),          "Places"},
+
+    // Battle
+    {"WildBattle",        QT_TRANSLATE_NOOP("MusicPlayer", "Wild Battle"),           "Battle"},
+    {"TrainerBattle",     QT_TRANSLATE_NOOP("MusicPlayer", "Trainer Battle"),        "Battle"},
+    {"GymLeaderBattle",   QT_TRANSLATE_NOOP("MusicPlayer", "Gym Leader Battle"),     "Battle"},
+    {"FinalBattle",       QT_TRANSLATE_NOOP("MusicPlayer", "Final Battle"),          "Battle"},
+    {"IntroBattle",       QT_TRANSLATE_NOOP("MusicPlayer", "Intro Battle"),          "Battle"},
+    {"DefeatedWildMon",   QT_TRANSLATE_NOOP("MusicPlayer", "Defeated a Wild Pokémon"), "Battle"},
+    {"DefeatedTrainer",   QT_TRANSLATE_NOOP("MusicPlayer", "Defeated a Trainer"),    "Battle"},
+    {"DefeatedGymLeader", QT_TRANSLATE_NOOP("MusicPlayer", "Defeated a Gym Leader"), "Battle"},
+
+    // Encounters
+    {"MeetProfOak",       QT_TRANSLATE_NOOP("MusicPlayer", "Meet Professor Oak"),    "Encounters"},
+    {"MeetRival",         QT_TRANSLATE_NOOP("MusicPlayer", "Meet Rival"),            "Encounters"},
+    {"MeetEvilTrainer",   QT_TRANSLATE_NOOP("MusicPlayer", "Meet Evil Trainer"),     "Encounters"},
+    {"MeetFemaleTrainer", QT_TRANSLATE_NOOP("MusicPlayer", "Meet Female Trainer"),   "Encounters"},
+    {"MeetMaleTrainer",   QT_TRANSLATE_NOOP("MusicPlayer", "Meet Male Trainer"),     "Encounters"},
+    {"MuseumGuy",         QT_TRANSLATE_NOOP("MusicPlayer", "Follow Me"),             "Encounters"},
+
+    // Special
+    {"TitleScreen",       QT_TRANSLATE_NOOP("MusicPlayer", "Title Screen"),          "Special"},
+    {"Credits",           QT_TRANSLATE_NOOP("MusicPlayer", "Credits"),               "Special"},
+    {"JigglypuffSong",    QT_TRANSLATE_NOOP("MusicPlayer", "Jigglypuff's Song"),     "Special"},
+    {"PkmnHealed",        QT_TRANSLATE_NOOP("MusicPlayer", "Pokémon Healed"),        "Special"},
+    {"None",              QT_TRANSLATE_NOOP("MusicPlayer", "No music"),              "Special"},
+};
+
+const TrackInfo* infoFor(const QString& key)
+{
+  for (const TrackInfo& t : TRACKS)
+    if (key == QLatin1String(t.key))
+      return &t;
+  return nullptr;
 }
 
 } // namespace
@@ -99,7 +180,12 @@ MusicPlayer::MusicPlayer(QObject* parent) : QObject(parent)
   Gen1SoundEngine::Bank b31 = loadBank(":/assets/data/music/bank1f.bin", max31);
 
   ready = !b2.data.empty() && !b8.data.empty() && !b31.data.empty() && !w.isEmpty();
+  banks[0] = b2;
+  banks[1] = b8;
+  banks[2] = b31;
   engine.setData(b2, b8, b31, std::vector<uint8_t>(w.begin(), w.end()));
+
+  buildTrackList();
 }
 
 MusicPlayer::~MusicPlayer()
@@ -107,53 +193,99 @@ MusicPlayer::~MusicPlayer()
   closeSink();
 }
 
-QString MusicPlayer::describe(int bank, int id)
+QString MusicPlayer::describe(int bank, int id) const
 {
-  if (id == 255)
-    return tr("No music");
-
-  MusicDB* db = MusicDB::inst();
-  const int n = db->getStoreSize();
-
-  // An exact hit is a real track.
-  for (int i = 0; i < n; ++i) {
-    MusicDBEntry* e = db->getStoreAt(i);
-    if (e && e->bank == bank && e->id == id)
-      return e->name;
+  // One source of truth: the same list the panel shows, so a name can never disagree with itself.
+  for (const QVariant& v : entries) {
+    const QVariantMap m = v.toMap();
+    if (m.value("bank").toInt() == bank && m.value("id").toInt() == id)
+      return m.value("name").toString();
   }
 
-  // Otherwise: it is one of the INNER VOICES -- a real song's channel, played alone, because a
-  // header is 3 bytes per channel and so a 3-channel song eats 3 ids. Name it honestly.
-  // (notes/reference/glitch-music.md)
-  int bestId = -1;
-  QString bestName;
-  for (int i = 0; i < n; ++i) {
-    MusicDBEntry* e = db->getStoreAt(i);
-    if (!e || e->bank != bank || e->id > id || e->id == 255)
-      continue;
-    if (e->id > bestId) {
-      bestId = e->id;
-      bestName = e->name;
-    }
-  }
-  if (bestId >= 0 && id - bestId >= 1 && id - bestId <= 3)
-    return tr("%1 — channel %2 alone").arg(bestName).arg(id - bestId + 1);
-
+  // A save can hold an id that is not any track and not any of their inner voices. We say so
+  // plainly rather than rounding it to something that looks tidy -- the save is the truth.
   return tr("Unknown — id %1, bank %2").arg(id).arg(bank);
 }
 
-int MusicPlayer::trackCount()
+int MusicPlayer::channelCount(int bank, int id) const
 {
-  return MusicDB::inst()->getStoreSize();
+  // Straight out of the header table we imported, at exactly the address the game reads:
+  // SFX_Headers_N + id * 3, top two bits of the first byte.
+  const int idx = bank == 2 ? 0 : (bank == 8 ? 1 : 2);
+  const std::vector<uint8_t>& d = banks[idx].data;
+  const size_t off = static_cast<size_t>(id) * 3;
+  if (off >= d.size())
+    return 1;
+  return ((d[off] & 0xC0) >> 6) + 1;
 }
 
-QVariantMap MusicPlayer::track(int i)
+void MusicPlayer::buildTrackList()
 {
-  MusicDBEntry* e = MusicDB::inst()->getStoreAt(i);
-  if (!e)
-    return {};
-  return QVariantMap{{"name", e->name}, {"bank", static_cast<int>(e->bank)},
-                     {"id", static_cast<int>(e->id)}};
+  entries.clear();
+  MusicDB* db = MusicDB::inst();
+
+  QString lastGroup;
+
+  // Walk the groups in display order, and inside each, the tracks in the order they're listed.
+  const QStringList order = {QStringLiteral("Towns & Cities"), QStringLiteral("Routes"),
+                             QStringLiteral("Places"), QStringLiteral("Battle"),
+                             QStringLiteral("Encounters"), QStringLiteral("Special")};
+
+  for (const QString& group : order) {
+    for (const TrackInfo& t : TRACKS) {
+      if (group != QLatin1String(t.group))
+        continue;
+
+      // Find it in the DB (which owns the real bank/id).
+      MusicDBEntry* e = nullptr;
+      for (int i = 0; i < db->getStoreSize(); ++i) {
+        MusicDBEntry* c = db->getStoreAt(i);
+        if (c && c->name == QLatin1String(t.key)) {
+          e = c;
+          break;
+        }
+      }
+      if (!e)
+        continue;
+
+      const int bank = e->bank;
+      const int id = e->id;
+      const QString name = QCoreApplication::translate("MusicPlayer", t.name);
+
+      QVariantMap row;
+      row["name"] = name;
+      row["group"] = group;
+      row["header"] = (group == lastGroup) ? QString() : group;
+      row["bank"] = bank;
+      row["id"] = id;
+      row["inner"] = false;
+      row["channel"] = 0;
+      entries.append(row);
+      lastGroup = group;
+
+      // ---- and its INNER VOICES.
+      //
+      // A header is 3 bytes per channel and a track's id IS its header's address / 3 -- so a
+      // 3-channel song occupies three consecutive ids, and the spare two are that song's channel 2
+      // and channel 3, read as one-channel headers in their own right. The console plays them as
+      // exactly that. They are real, they are reachable in a real save, and they cost us nothing:
+      // 105 more pieces of music from the data we already have.
+      if (id == 255)
+        continue;   // "No music" is SFX_STOP_ALL_MUSIC -- it has no channels to take apart
+      const int chans = channelCount(bank, id);
+      for (int k = 1; k < chans; ++k) {
+        QVariantMap voice;
+        voice["name"] = tr("%1 — channel %2 alone").arg(name).arg(k + 1);
+        voice["group"] = group;
+        voice["header"] = QString();
+        voice["bank"] = bank;
+        voice["id"] = id + k;
+        voice["inner"] = true;
+        voice["channel"] = k + 1;
+        entries.append(voice);
+      }
+    }
+  }
 }
 
 bool MusicPlayer::previewing() const
