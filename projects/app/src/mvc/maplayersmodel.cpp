@@ -270,14 +270,21 @@ QVariant MapLayersModel::data(const QModelIndex& index, int role) const
     if (r.overlayBit != 0)
       return MapEngine::layerColor(static_cast<MapEngine::Layer>(r.overlayBit));
 
-    // The view layers paint in the app's own three: the map bounds and the grids are the same
-    // colours the canvas draws them in, so the row IS the legend -- there is no second source of
-    // truth to drift.
-    if (r.viewBit == ViewScreenBox) return QColor(QStringLiteral("#d32f2f"));  // errorColor: the screen
-    if (r.viewBit == ViewDrawArea)  return QColor(QStringLiteral("#2979b6"));  // accent: the draw area
-    if (r.viewBit == ViewMapBounds) return QColor(QStringLiteral("#d81b60"));  // primary: the bounds
-    if (r.viewBit == ViewPlayer)    return QColor(QStringLiteral("#616161"));
-    return QColor(41, 112, 191, 102);                                          // the grid's tint
+    // ── The view layers' ink ────────────────────────────────────────────────────────────────
+    //
+    // These are the EXACT colours MapCanvas draws them in, so the row IS the legend and there is no
+    // second source of truth to drift from.
+    //
+    // Re-picked 2026-07-13 (Twilight: "lots of red outlines, it looks confusing"). The old set was
+    // the app's theme colours -- error red, primary pink, accent blue -- which put three warm,
+    // similar lines over a grey map and made none of them mean anything. These are Okabe-Ito, the
+    // standard colour-blind-safe set: they stay distinct to every kind of colour vision, and they
+    // are muted enough to sit over four shades of grey without shouting.
+    if (r.viewBit == ViewScreenBox) return QColor(QStringLiteral("#e69f00"));  // orange -- what he SEES
+    if (r.viewBit == ViewDrawArea)  return QColor(QStringLiteral("#009e73"));  // green  -- what the game REDRAWS
+    if (r.viewBit == ViewMapBounds) return QColor(QStringLiteral("#0072b2"));  // blue   -- where the map ENDS
+    if (r.viewBit == ViewPlayer)    return QColor(QStringLiteral("#6b6b6b"));  // him
+    return QColor(86, 180, 233, 110);                                          // sky blue -- the grids
   }
 
   return QVariant();

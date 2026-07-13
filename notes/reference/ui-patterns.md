@@ -1237,6 +1237,36 @@ MapRailButton`.
 - **The canvas well is dark** (`#2b2b2b`, not black — black swallows the darkest Game Boy grey), and
   the map floats on it with a soft shadow. Every pixel editor does this; four shades of grey need it.
 
+## Colour, tooltips and hierarchy — the rules from the 2026-07-13 review
+
+Twilight's live pass on the map screen produced five rules that are **not map-specific**:
+
+- 🔴 **RED MEANS BROKEN. Nothing else.** ("You have red text everywhere, even to indicate
+  information, which is bad.") A save that legitimately holds an unusual value — blocks from one
+  tileset and tiles from another, an id that is an unfinished copy, a stored size from another map —
+  is **information**, and information is `textColorMid`. A *notice* that offers an action gets muted
+  amber (`#8a6d00`). `errorColor` is reserved for *this is broken / this will not work*.
+- 🔴 **A tooltip must not need a preference.** The shared `MainToolTip` is gated on the header's "?"
+  toggle (`brg.settings.infoBtnPressed`), so tooltips written with it are invisible to anyone who
+  never found that button. For a control whose tooltip IS the explanation, use a plain hover tooltip
+  (`map/MapToolTip.qml`): **dark, rounded, 11px, `x` centred on the parent and `y = parent.height + 6`**
+  so it explains *that* control and not the general area.
+- 🔴 **In a tree, a child's control must sit RIGHT of its parent's.** A group row that starts with a
+  fold chevron and *then* its eye needs its children indented by **chevron + spacing** (26px), not by
+  a guessed 14 — otherwise the child's eye lands LEFT of the parent's and the hierarchy reads upside
+  down. Caught by Twilight, not by us: *"a manual screenshot would have detected this."*
+- 🔴 **Outline colours must be distinguishable, and not all warm.** Three theme colours (error red,
+  primary pink, accent blue) over a grey map read as one alarm. The map's boxes now use **Okabe-Ito**
+  — the colour-blind-safe set: `#0072b2` blue (map bounds), `#009e73` green (draw area), `#e69f00`
+  orange (the screen), `#cc79a7` purple (the selection). Muted enough for four shades of grey, and
+  distinct to every kind of colour vision.
+- **A long list is grouped.** 248 map names in a flat combo is a wall; group them (the map picker
+  groups by the map's own tileset — real data, not an invented category — with the unfinished copies
+  last), exactly as the music list groups its 151 tracks.
+- **Clicking the canvas must not fling a panel open.** ("I don't like click a block and a sidebar
+  opens — it's clunky.") The click marks the block; the **status bar** already names it and says what
+  its tiles do. A wall of information arriving uninvited on the side of the screen is not an answer.
+
 ## The map's LAYER TREE (2026-07-12, phase 2 — the standard for a grouped toggle list)
 
 `map/LayersPanel.qml` over **`MapLayersModel`** (`brg.mapLayers`). The rules that came out of it:

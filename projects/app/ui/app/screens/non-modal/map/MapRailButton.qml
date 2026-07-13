@@ -71,25 +71,9 @@ Rectangle {
     onClicked: btn.clicked()
   }
 
-  ToolTip {
-    id: tt
+  // Hover shows it. Not "hover, if you first found the ? toggle in the header" -- see MapToolTip.
+  MapToolTip {
     visible: ma.containsMouse && btn.tip !== ""
-    delay: 400
     text: btn.shortcut === "" ? btn.tip : btn.tip + "  (" + btn.shortcut + ")"
-
-    // `tt.text`, NOT `parent.text` -- a contentItem's parent is not the ToolTip, and QML only
-    // tells you at RUNTIME, as "Unable to assign [undefined] to QString". (qt-patterns.md)
-    contentItem: Text {
-      text: tt.text
-      font.pixelSize: 11
-      color: brg.settings.textColorLight
-      wrapMode: Text.WordWrap
-      width: 240
-    }
-
-    background: Rectangle {
-      color: "#e0212121"
-      radius: 4
-    }
   }
 }

@@ -15,18 +15,18 @@
 */
 
 /*
-  MapStatusBar.qml -- where the cursor is, what is under it, and how far in we are zoomed.
+  MapStatusBar.qml -- the DETAILS. Where the cursor is, what is under it, how big the map is, what
+  the animation is doing, how far in you are zoomed.
 
-  Aseprite's status bar, in this app's clothes. It replaces the old footer, which was a colour
-  legend (three swatches naming three rectangles) plus the zoom buttons. The legend is gone because
-  the LAYERS PANEL is the legend now -- every layer row carries the exact ink the renderer uses, so
-  it cannot drift out of sync with what is drawn. A legend that lives next to the thing it explains
-  beats a legend in a footer.
+  Twilight, 2026-07-13: "details like the map size and many other details need to be in a status bar
+  below, not in the toolbar at top". Right -- the toolbar is for things you DO; the status bar is for
+  things that are TRUE. So the size chip and the unfinished-copy note came down here, and the
+  "Click a block to inspect it" bar above the map went away entirely.
 
-  What replaces it is the thing a map editor actually needs on every mouse-move: the coordinates,
-  in BOTH systems the game uses (the map's own, and the buffer's -- the ring included), the block id
-  under the cursor, and what that tile DOES in words. Everything comes from brg.map.describeAt();
-  QML computes none of it.
+  It is also what replaced the old footer legend, and the old click-a-block-opens-a-panel behaviour:
+  the block under your cursor is named here, with what its tiles DO, without a wall of information
+  arriving uninvited on the side of the screen. Everything comes from one C++ call
+  (`brg.map.describeAt`) on each mouse-move, and it renders nothing.
 */
 import QtQuick
 import QtQuick.Layouts
@@ -34,8 +34,8 @@ import QtQuick.Layouts
 Rectangle {
   id: bar
 
-  /// What the canvas last reported under the cursor (brg.map.describeAt()), or null when the
-  /// cursor is off the map.
+  /// What the canvas last reported under the cursor (brg.map.describeAt()), or null when it is off
+  /// the map.
   property var at: null
 
   /// The canvas, for the zoom readout + buttons.
@@ -51,14 +51,21 @@ Rectangle {
     color: brg.settings.dividerColor
   }
 
+  component Sep: Rectangle {
+    implicitWidth: 1
+    implicitHeight: 12
+    color: brg.settings.dividerColor
+    Layout.alignment: Qt.AlignVCenter
+  }
+
   RowLayout {
     anchors.fill: parent
-    anchors.leftMargin: 12
-    anchors.rightMargin: 8
-    spacing: 14
+    anchors.leftMargin: 10
+    anchors.rightMargin: 6
+    spacing: 10
 
-    // Where the cursor is. Two coordinate systems, because the game uses both and they differ by
-    // the 3-block ring -- and a save editor that shows you only one of them is hiding the other.
+    // Where the cursor is. BOTH of the game's coordinate systems, because it uses both and they
+    // differ by the 3-block ring -- and an editor that shows you only one of them is hiding the other.
     Text {
       text: {
         if (!bar.at || !bar.at.valid)
@@ -76,17 +83,13 @@ Rectangle {
       color: brg.settings.textColorDark
     }
 
-    Rectangle {
-      visible: bar.at && bar.at.valid
-      implicitWidth: 1
-      implicitHeight: 12
-      color: brg.settings.dividerColor
-    }
+    Sep { visible: bar.at && bar.at.valid }
 
-    // What is under it, in words. The whole reason the meaning layer exists: a wall and a floor are
-    // just two pictures until something says which is which.
+    // What is under it, in words -- the whole reason the meaning layer exists: a wall and a floor
+    // are just two pictures until something says which is which.
     Text {
       visible: bar.at && bar.at.valid
+      Layout.maximumWidth: 300
       text: {
         if (!bar.at || !bar.at.valid)
           return "";
@@ -99,73 +102,62 @@ Rectangle {
       font.pixelSize: 11
       color: brg.settings.textColorMid
       elide: Text.ElideRight
-      Layout.fillWidth: true
-      Layout.maximumWidth: implicitWidth
     }
 
     Item { Layout.fillWidth: true }
 
-    // ── The transport ────────────────────────────────────────────────────────────────────────
-    //
-    // The map MOVES: the console rewrites the water tile every 20 frames (21 with flowers), which
-    // is about three times a second. That is not decoration -- it is what a Game Boy puts on the
-    // screen, and a still map is a map telling you something false.
-    //
-    // ⏸ exists partly because the screenshots and the visual-regression tests need a frozen frame 0
-    // anyway (MapClock refuses to run headless), so exposing it costs one button. The step button
-    // is for walking the water round its 8-step cycle by hand.
-    //
-    // A map with nothing to animate says so by being absent: no transport, no lie.
-    RowLayout {
-      spacing: 2
-      visible: brg.mapClock.animates
-
-      MapRailButton {
-        size: 22
-        glyph: brg.mapClock.playing ? "⏸" : "▶"
-        tip: brg.mapClock.playing
-             ? qsTr("Pause the animation")
-             : qsTr("Animate the map — the water and the flowers, at the console's own pace")
-        onClicked: brg.mapClock.playing = !brg.mapClock.playing
-      }
-
-      MapRailButton {
-        size: 22
-        glyph: "⏭"
-        tip: qsTr("One animation step (there are 8 in a full cycle)")
-        onClicked: brg.mapClock.step()
-      }
-
-      // The cadence, stated: 20 frames for water, 21 when the flowers move too. It is the sort of
-      // number that makes someone trust what they are looking at.
-      Text {
-        text: qsTr("%1f · %2/8").arg(brg.mapClock.cadence).arg(brg.mapClock.frame % 8)
-        font.pixelSize: 10
-        font.family: "monospace"
-        color: brg.settings.textColorMid
-        Layout.leftMargin: 2
-      }
+    // ── The facts about the map itself ───────────────────────────────────────────────────────
+    Text {
+      text: qsTr("%1 × %2 blocks").arg(brg.map.blocksWide).arg(brg.map.blocksHigh)
+      font.pixelSize: 11
+      color: brg.settings.textColorMid
     }
 
-    Rectangle {
-      visible: brg.mapClock.animates
-      implicitWidth: 1
-      implicitHeight: 12
-      color: brg.settings.dividerColor
-      Layout.leftMargin: 6
-      Layout.rightMargin: 2
+    Sep {}
+
+    Text {
+      text: qsTr("map %1").arg(brg.map.mapInd)
+      font.pixelSize: 11
+      font.family: "monospace"
+      color: brg.settings.textColorMid
     }
+
+    // A glitch / half-baked id draws ANOTHER map's data -- which is exactly what a Game Boy does with
+    // it. Said plainly, in the place facts live, and not in red: it is information, not an error.
+    Text {
+      visible: brg.map.isCopy
+      text: qsTr("· unfinished copy of %1").arg(brg.map.copyOfName)
+      font.pixelSize: 11
+      color: brg.settings.textColorMid
+      font.italic: true
+      elide: Text.ElideRight
+      Layout.maximumWidth: 220
+    }
+
+    Sep { visible: brg.mapClock.animates }
+
+    // The animation, as a fact. (The ▶/⏸ itself is one button in the toolbar -- it is a thing you
+    // DO.) The cadence is worth showing: 20 frames a step for water, 21 when the flowers move too.
+    Text {
+      visible: brg.mapClock.animates
+      text: qsTr("anim %1f · %2/8").arg(brg.mapClock.cadence).arg(brg.mapClock.frame % 8)
+      font.pixelSize: 11
+      font.family: "monospace"
+      color: brg.settings.textColorMid
+    }
+
+    Sep {}
 
     Text {
       text: bar.canvas ? qsTr("%1×").arg(bar.canvas.zoom) : ""
       font.pixelSize: 11
       color: brg.settings.textColorMid
-      Layout.minimumWidth: 24
+      Layout.minimumWidth: 22
       horizontalAlignment: Text.AlignRight
     }
 
     MapRailButton {
-      size: 22
+      size: 20
       glyph: "−"
       tip: qsTr("Zoom out")
       enabledBtn: bar.canvas && bar.canvas.zoom > bar.canvas.minZoom
@@ -173,7 +165,7 @@ Rectangle {
     }
 
     MapRailButton {
-      size: 22
+      size: 20
       glyph: "+"
       tip: qsTr("Zoom in")
       enabledBtn: bar.canvas && bar.canvas.zoom < bar.canvas.maxZoom
@@ -181,7 +173,7 @@ Rectangle {
     }
 
     MapRailButton {
-      size: 22
+      size: 20
       glyph: "⤢"
       tip: qsTr("Fit the whole map in the window")
       enabledBtn: bar.canvas && bar.canvas.userZoom > 0

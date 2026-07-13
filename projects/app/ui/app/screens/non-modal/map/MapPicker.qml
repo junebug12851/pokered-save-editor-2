@@ -157,47 +157,72 @@ Item {
 
         onActivated: brg.map.mapInd = currentValue
 
-        // Every one of the 248 ids, glitch and half-baked included -- and the list says which of
-        // them are unfinished copies of another map, because that is what the game draws for them.
+        // Every one of the 248 ids, glitch and half-baked included -- GROUPED, like the music list
+        // (Twilight, 2026-07-13). The group is the map's own tileset, which is real data out of
+        // maps.json rather than a category we invented; the unfinished copies gather at the end.
+        // 248 names in one flat list is a wall.
         delegate: ItemDelegate {
           required property var modelData
           required property int index
 
           width: mapCombo.width
+          height: (modelData.group !== "" ? 20 : 0) + 26
           highlighted: mapCombo.highlightedIndex === index
 
-          contentItem: RowLayout {
-            spacing: 6
+          contentItem: ColumnLayout {
+            spacing: 0
 
+            // The heading rides on the first entry of its group (the model puts it there), so there
+            // is one list and one model rather than two that can drift.
             Text {
-              text: modelData.ind
-              font.pixelSize: 10
-              font.family: "monospace"
-              color: brg.settings.textColorMid
-              Layout.minimumWidth: 22
-            }
-
-            Text {
+              visible: modelData.group !== ""
               Layout.fillWidth: true
-              text: modelData.name
-              font.pixelSize: 12
-              color: brg.settings.textColorDark
-              elide: Text.ElideRight
+              text: modelData.group
+              font.pixelSize: 10
+              font.bold: true
+              color: brg.settings.textColorMid
             }
 
-            Text {
-              visible: modelData.isCopy
-              text: qsTr("copy of %1").arg(modelData.copyOf)
-              font.pixelSize: 10
-              font.italic: true
-              color: brg.settings.errorColor
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: 6
+
+              Text {
+                text: modelData.ind
+                font.pixelSize: 10
+                font.family: "monospace"
+                color: brg.settings.textColorMid
+                Layout.minimumWidth: 22
+              }
+
+              Text {
+                Layout.fillWidth: true
+                text: modelData.name
+                font.pixelSize: 12
+                color: brg.settings.textColorDark
+                elide: Text.ElideRight
+              }
+
+              // A fact, not an alarm: this id has no map of its own, so the game draws the one it is
+              // an unfinished copy of.
+              Text {
+                visible: modelData.isCopy
+                text: qsTr("→ %1").arg(modelData.copyOf)
+                font.pixelSize: 10
+                font.italic: true
+                color: brg.settings.textColorMid
+              }
             }
           }
         }
       }
 
-      // The size the save stores is a DIFFERENT set of bytes from the map id. Picking a map leaves
-      // them stale -- so say it, and offer the fix. Never do it silently. (map-screen.md -> doctrine)
+      // The size the save stores is a DIFFERENT set of bytes from the map id, and picking a map
+      // leaves them stale. The doctrine says SHOW it and offer the fix -- never rewrite it quietly.
+      //
+      // But it is not an ERROR, so it is not red (Twilight, 2026-07-13: "you have red text everywhere,
+      // even to indicate information, which is bad"). Red means *something is broken*. This is a
+      // notice, so it reads as a notice: a muted amber line with a button that does the thing.
       RowLayout {
         Layout.fillWidth: true
         visible: !brg.map.headerMatches
@@ -205,9 +230,9 @@ Item {
 
         Text {
           Layout.fillWidth: true
-          text: qsTr("⚠ the save's stored map size is for a different map")
+          text: qsTr("The stored map size is from another map.")
           font.pixelSize: 10
-          color: brg.settings.errorColor
+          color: "#8a6d00"
           wrapMode: Text.WordWrap
         }
 
@@ -292,23 +317,32 @@ Item {
               font.bold: parent.active
               color: parent.active ? brg.settings.textColorLight : brg.settings.textColorDark
             }
-
-            ToolTip {
-              visible: segHover.hovered
-              delay: 350
-              text: modelData.does
-            }
           }
         }
       }
 
+      // What the chosen one DOES, said underneath and changing as you pick (Twilight, 2026-07-13) --
+      // rather than hidden in a tooltip you have to go hunting for. This is the whole reason the
+      // control exists: "Indoor" is not a place, it is *nothing animates*.
       Text {
         Layout.fillWidth: true
-        visible: !brg.map.tileAnimIsDefault
-        text: qsTr("⚠ this tileset normally animates differently — the save says otherwise, and the "
-                   + "console would obey the save.")
+        text: {
+          switch (brg.map.tileAnim) {
+            case 0: return qsTr("Nothing animates — no water, no flowers. (Surf needs the water tile, "
+                                + "so this breaks it on a water map.)");
+            case 1: return qsTr("The water animates. The flowers don't.");
+            case 2: return qsTr("The water and the flowers both animate.");
+          }
+          // Every value the save can hold, including the ones no real game ships: the console tests
+          // bit 0 and nothing else.
+          return (brg.map.tileAnim % 2 === 1)
+                 ? qsTr("%1 — the console reads bit 0, so this behaves as water only.")
+                     .arg(brg.map.tileAnim)
+                 : qsTr("%1 — the console reads bit 0, so this behaves as water and flowers.")
+                     .arg(brg.map.tileAnim);
+        }
         font.pixelSize: 10
-        color: brg.settings.errorColor
+        color: brg.settings.textColorMid
         wrapMode: Text.WordWrap
       }
 
@@ -342,17 +376,18 @@ Item {
         onActivated: brg.map.blocksetInd = currentValue
       }
 
+      // A fact about an unusual save, in the same muted voice as everything else here. It is not an
+      // error -- a console draws it perfectly happily -- so it does not shout.
       Text {
         Layout.fillWidth: true
         visible: !brg.map.blocksetIsTileset
         text: brg.map.blocksetInd < 0
-              ? qsTr("The save's blocks pointer isn't any tileset's — the game would read whatever "
-                     + "is at that address.")
-              : qsTr("The blocks come from %1 while the tiles come from %2. That is legal, it is "
-                     + "rare, and the console draws exactly that.")
+              ? qsTr("The blocks pointer is not any tileset's. The game would read whatever sits at "
+                     + "that address.")
+              : qsTr("The blocks come from %1 and the tiles from %2.")
                 .arg(brg.map.blocksetName).arg(brg.map.tilesetName)
         font.pixelSize: 10
-        color: brg.settings.errorColor
+        color: brg.settings.textColorMid
         wrapMode: Text.WordWrap
       }
     }

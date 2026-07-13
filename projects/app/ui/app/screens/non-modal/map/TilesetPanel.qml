@@ -47,6 +47,14 @@ Rectangle {
   readonly property bool hasTs: ts !== null && ts !== undefined
                                 && ts.grassTile !== undefined
 
+  // The map's own block (the edge of the world lives here now).
+  readonly property var areaMap: (brg.file.data.dataExpanded
+                                  && brg.file.data.dataExpanded.area)
+                                 ? brg.file.data.dataExpanded.area.map
+                                 : null
+  readonly property bool hasMap: areaMap !== null && areaMap !== undefined
+                                 && areaMap.outOfBoundsBlock !== undefined
+
   // The dock owns the panel's frame and its title bar (MapDock.qml). A panel is its CONTENT --
   // it does not draw its own header, its own edge, or its own background chrome. (2026-07-12)
   color: "transparent"
@@ -107,122 +115,26 @@ Rectangle {
       width: panel.width - 24
       spacing: 10
 
-      // ── Which tileset ───────────────────────────────────────────────────────
+      // ── The edge of the world ───────────────────────────────────────────────
+      //
+      // `wMapBackgroundTile` (save 0x2659): the block that fills the 3-block ring around every map.
+      // It moved here when the Blocks panel was deleted (Twilight, 2026-07-13) -- it is a property of
+      // the map's tiles, and it was the one thing in that panel worth keeping.
       Group {
-        title: qsTr("Which tileset")
-        blurb: qsTr("The graphics, the blocks, and the rules for every tile on this map.")
+        title: qsTr("Edge of the world")
+        blurb: qsTr("The block filling the ring around the map — what you see past its edges, where "
+                  + "no connected map bleeds in.")
 
-        ComboBox {
+        BlockPick {
           Layout.fillWidth: true
-          font.pixelSize: 12
-          enabled: panel.hasTs
+          visible: panel.hasMap
 
-          // Plain data, straight from MapModel -- QML never touches the DB struct.
-          model: brg.map.tilesetList()
-          textRole: "name"
-          valueRole: "ind"
+          block: panel.hasMap ? panel.areaMap.outOfBoundsBlock : 0
 
-          currentIndex: brg.map.tilesetInd
-
-          // Changing this changes what every block and tile on the map MEANS, so it is
-          // deliberately the first and most prominent control -- not buried.
-          onActivated: {
-            if (!panel.hasTs) return;
-            panel.ts.current = currentValue;
+          onPicked: (b) => {
+            if (!panel.hasMap) return;
+            panel.areaMap.outOfBoundsBlock = b;   // save 0x2659, and only that byte
           }
-        }
-      }
-
-      // ── What animates. The tri-state. ───────────────────────────────────────
-      Group {
-        title: qsTr("Indoor / Cave / Outdoor")
-        blurb: qsTr("Not a place — it's which tiles MOVE. The game keeps one byte for this, "
-                  + "and these are its three values.")
-
-        // Three real options, each saying what it does. Nobody should have to know that
-        // "Cave" is the ROM's TILEANIM_WATER.
-        Repeater {
-          model: [
-            { v: 0, name: qsTr("Indoor"),  does: qsTr("Nothing animates.") },
-            { v: 1, name: qsTr("Cave"),    does: qsTr("Water animates. Flowers don't.") },
-            { v: 2, name: qsTr("Outdoor"), does: qsTr("Water and flowers animate.") }
-          ]
-
-          Rectangle {
-            required property var modelData
-
-            readonly property bool on: brg.map.tileAnim === modelData.v
-
-            Layout.fillWidth: true
-            implicitHeight: optRow.implicitHeight + 12
-
-            radius: 4
-            color: on ? Qt.rgba(0.85, 0.11, 0.38, 0.08)
-                      : (optMouse.containsMouse ? "#f5f5f5" : "transparent")
-            border.width: 1
-            border.color: on ? brg.settings.primaryColor : brg.settings.dividerColor
-
-            Behavior on color { ColorAnimation { duration: 110 } }
-
-            RowLayout {
-              id: optRow
-              anchors.fill: parent
-              anchors.margins: 6
-              spacing: 8
-
-              Rectangle {
-                implicitWidth: 12
-                implicitHeight: 12
-                radius: 6
-                color: "transparent"
-                border.width: parent.parent.on ? 4 : 1
-                border.color: parent.parent.on
-                              ? brg.settings.primaryColor
-                              : brg.settings.dividerColor
-              }
-
-              ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 0
-
-                Text {
-                  text: modelData.name
-                  font.pixelSize: 12
-                  font.bold: parent.parent.parent.on
-                  color: brg.settings.textColorDark
-                }
-
-                Text {
-                  Layout.fillWidth: true
-                  text: modelData.does
-                  font.pixelSize: 10
-                  color: brg.settings.textColorMid
-                  elide: Text.ElideRight
-                }
-              }
-            }
-
-            MouseArea {
-              id: optMouse
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: brg.map.tileAnim = modelData.v
-            }
-          }
-        }
-
-        // The save is allowed to disagree with the cartridge. Say so; never rewrite it.
-        Text {
-          Layout.fillWidth: true
-          visible: !brg.map.tileAnimIsDefault
-          text: qsTr("⚠ %1 normally uses %2. This save says otherwise — which is what a "
-                   + "console would actually run, so that's what's drawn.")
-                  .arg(brg.map.tilesetName)
-                  .arg(brg.map.tileAnimStrFor(brg.map.tileAnimDefault))
-          font.pixelSize: 10
-          color: brg.settings.errorColor
-          wrapMode: Text.WordWrap
         }
       }
 

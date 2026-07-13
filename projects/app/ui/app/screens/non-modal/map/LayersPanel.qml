@@ -57,8 +57,11 @@ Rectangle {
     // screenshot review is for. (It wrapped to two lines on the first pass.)
     Text {
       Layout.fillWidth: true
-      text: qsTr("How you look at the map — none of it is in the save.")
+      // Short enough to FIT the 170px panel. The longer version elided to "How you look at the map
+      // — …", which is a sentence that has given up. (Screenshot review, 2026-07-13.)
+      text: qsTr("None of this is in the save.")
       font.pixelSize: 11
+      font.italic: true
       color: brg.settings.textColorMid
       elide: Text.ElideRight
     }
@@ -100,9 +103,19 @@ Rectangle {
 
         HoverHandler { id: hover }
 
+        // ⚠️ The indent, and why it is 26.
+        //
+        // A group row starts with its fold chevron (a 20px button) and only THEN its eye. A child
+        // row has no chevron -- so with a naive 14px indent the child's eye landed LEFT of its
+        // parent's, and the tree read upside down. (Twilight caught it: "the sub elements are
+        // indented left past the root element, which is confusing and unintuitive -- a manual
+        // screenshot would have detected this." She is right on both counts.)
+        //
+        // 26 = the chevron (20) + the row spacing (6), so a child's eye sits exactly under its
+        // parent's eye, one step in. Change the chevron's size and change this with it.
         RowLayout {
           anchors.fill: parent
-          anchors.leftMargin: row.layerIsGroup ? 0 : 14
+          anchors.leftMargin: row.layerIsGroup ? 0 : 26
           spacing: 6
 
           // The group's fold. Clutter is a bug: a group you are not using takes one line.
@@ -195,27 +208,12 @@ Rectangle {
 
         // The whole row explains itself. Half these words -- "counter" meaning a shop desk you can
         // talk across -- are things nobody should be expected to already know, and the app is where
-        // that gets answered.
-        ToolTip {
-          id: tip
+        // that gets answered. Hover shows it; no preference to find first. (MapToolTip.qml)
+        MapToolTip {
           visible: hover.hovered && row.layerDescription !== ""
-          delay: 450
           text: row.layerApplies
                 ? row.layerDescription
                 : qsTr("%1 — there is none of it on this map.").arg(row.layerName)
-
-          contentItem: Text {
-            text: tip.text
-            font.pixelSize: 11
-            color: brg.settings.textColorLight
-            wrapMode: Text.WordWrap
-            width: 260
-          }
-
-          background: Rectangle {
-            color: "#e0212121"
-            radius: 4
-          }
         }
       }
     }

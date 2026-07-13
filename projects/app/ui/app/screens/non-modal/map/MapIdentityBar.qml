@@ -103,47 +103,31 @@ Rectangle {
     // ── What is loaded, and what it is drawn out of ───────────────────────────────────────────
     MapPicker { id: mapPicker }
 
-    // ── The palette ──────────────────────────────────────────────────────────────────────────
+    // ── Contrast ─────────────────────────────────────────────────────────────────────────────
     ContrastPicker { id: contrastPicker }
 
-    // A plain fact, not a control: the map's size. (Changing it lives in the map picker's "Fix",
-    // and in the Blocks panel -- it is a property of the map, not of this bar.)
     Rectangle {
-      implicitWidth: sizeText.implicitWidth + 14
-      implicitHeight: 20
-      radius: 10
-      color: "transparent"
-      border.width: 1
-      border.color: brg.settings.dividerColor
-
-      Text {
-        id: sizeText
-        anchors.centerIn: parent
-        text: qsTr("%1 × %2").arg(brg.map.blocksWide).arg(brg.map.blocksHigh)
-        font.pixelSize: 11
-        color: brg.settings.textColorMid
-      }
+      visible: brg.mapClock.animates
+      implicitWidth: 1
+      implicitHeight: 18
+      color: brg.settings.dividerColor
+      Layout.leftMargin: 2
     }
 
-    // A glitch / half-baked map id draws ANOTHER map's data -- which is exactly what a Game Boy does
-    // with it. Say so, rather than let it pass as a map of its own.
-    Rectangle {
-      visible: brg.map.isCopy
-      implicitWidth: warnText.implicitWidth + 16
-      implicitHeight: 20
-      radius: 10
-      color: Qt.rgba(brg.settings.errorColor.r, brg.settings.errorColor.g,
-                     brg.settings.errorColor.b, 0.10)
-      border.width: 1
-      border.color: brg.settings.errorColor
-
-      Text {
-        id: warnText
-        anchors.centerIn: parent
-        text: qsTr("⚠ unfinished copy of %1").arg(brg.map.copyOfName)
-        font.pixelSize: 11
-        color: brg.settings.errorColor
-      }
+    // ── The animation: ONE button that is either ▶ or ⏸ ──────────────────────────────────────
+    //
+    // The console rewrites the water tile every 20 frames (21 with flowers) -- about three times a
+    // second -- so the map MOVES. This is the switch for it, and it is a thing you DO, which is why
+    // it is up here and the frame counter is down in the status bar with the other facts.
+    MapRailButton {
+      objectName: "animToggle"
+      visible: brg.mapClock.animates
+      size: 26
+      glyph: brg.mapClock.playing ? "⏸" : "▶"
+      tip: brg.mapClock.playing
+           ? qsTr("Pause the animation")
+           : qsTr("Animate the map — the water and the flowers, at the console's own pace")
+      onClicked: brg.mapClock.playing = !brg.mapClock.playing
     }
 
     Item { Layout.fillWidth: true }

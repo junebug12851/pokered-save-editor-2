@@ -21,6 +21,7 @@
  */
 
 #include <QStringList>
+#include <algorithm>
 
 #include <pse-db/blocksdb.h>
 #include <pse-db/mapsdb.h>
@@ -227,17 +228,47 @@ QVariantList MapModel::mapList() const
 
   // DB entry fields are protected -- always the getters, never the members (a standing rule; see
   // CLAUDE.md).
-  for (auto* el : MapsDB::inst()->getStore()) {
+  //
+  // GROUPED, like the music list (Twilight, 2026-07-13). 248 names in one flat list is a wall. The
+  // group is the map's own TILESET -- which is real data out of maps.json, not a category we made up:
+  // "Overworld" gathers the towns and routes, "Cave" the caves, "Pokecenter" every Poké Center, and
+  // so on. The unfinished copies get their own group, because that is what they are.
+  QString lastGroup;
+
+  QVector<MapDBEntry*> sorted;
+  for (auto* el : MapsDB::inst()->getStore())
+    sorted.append(el);
+
+  std::stable_sort(sorted.begin(), sorted.end(), [](MapDBEntry* a, MapDBEntry* b) {
+    auto groupOf = [](MapDBEntry* e) {
+      auto* src = MapEngine::sourceMap(e->getInd());
+      const bool copy = (src != nullptr && src != e);
+      // The copies sort last -- they are curiosities, not places.
+      return copy ? QStringLiteral("zzz") + e->getTileset() : e->getTileset();
+    };
+
+    const QString ga = groupOf(a);
+    const QString gb = groupOf(b);
+    return (ga == gb) ? (a->getInd() < b->getInd()) : (ga < gb);
+  });
+
+  for (auto* el : sorted) {
+    auto* src = MapEngine::sourceMap(el->getInd());
+    const bool copy = (src != nullptr && src != el);
+
+    const QString group = copy ? QObject::tr("Unfinished copies")
+                               : (el->getTileset().isEmpty() ? QObject::tr("Other")
+                                                             : el->getTileset());
+
+    // The heading rides on the first entry of each group, so QML can draw it without a second model.
     QVariantMap m;
     m["ind"] = el->getInd();
     m["name"] = el->getName();
+    m["group"] = (group != lastGroup) ? group : QString();
+    m["isCopy"] = copy;
+    m["copyOf"] = copy ? src->getName() : QString();
 
-    // A glitch / half-baked id is not an empty map -- it is an unfinished COPY, and the game draws
-    // the map it copies. Say which, right in the list.
-    auto* src = MapEngine::sourceMap(el->getInd());
-    m["isCopy"] = (src != nullptr && src != el);
-    m["copyOf"] = (src != nullptr && src != el) ? src->getName() : QString();
-
+    lastGroup = group;
     out.append(m);
   }
 

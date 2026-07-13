@@ -73,10 +73,6 @@ Item {
   readonly property int scaledWidth: brg.map.imageWidth * zoom
   readonly property int scaledHeight: brg.map.imageHeight * zoom
 
-  /// Which tile of the selected block the Blocks panel is hovering -- mirrored onto the map, so the
-  /// two views are one thing rather than two. -1 = none.
-  property int hoveredTile: -1
-
   /// What is under the cursor (brg.map.describeAt()), or null when it is off the map. The status
   /// bar reads this; nothing else does.
   property var at: null
@@ -178,8 +174,22 @@ Item {
       // disappears into it (over the black trees or over the white paths, depending which grey you
       // pick). A low-alpha colour has nothing to hide against and reads everywhere without
       // shouting over the three boxes.
-      readonly property color gridColor: Qt.rgba(0.16, 0.44, 0.75, 0.40)
-      readonly property color tileGridColor: Qt.rgba(0.16, 0.44, 0.75, 0.18)
+      // ── The ink ──────────────────────────────────────────────────────────────────────────────
+      //
+      // Okabe-Ito, the colour-blind-safe set, re-picked 2026-07-13 (Twilight: "lots of red outlines
+      // and it looks confusing"). Three warm theme colours -- error red, primary pink, accent blue --
+      // over a grey map read as one alarming mess and told you nothing. These stay distinct to every
+      // kind of colour vision and sit quietly over four shades of grey.
+      //
+      // The SAME values are in MapLayersModel, which is what the Layers panel's swatches show -- so
+      // the panel is the legend, and it cannot drift.
+      readonly property color boundsColor: "#0072b2"   // blue   -- where the map ENDS
+      readonly property color drawColor:   "#009e73"   // green  -- what the game REDRAWS
+      readonly property color screenColor: "#e69f00"   // orange -- what the player SEES
+      readonly property color selectColor: "#cc79a7"   // purple -- what YOU picked
+
+      readonly property color gridColor: Qt.rgba(0.34, 0.71, 0.91, 0.42)
+      readonly property color tileGridColor: Qt.rgba(0.34, 0.71, 0.91, 0.18)
       readonly property int tileStep: brg.map.blockSize / 4 * canvasRoot.zoom
 
       // The TILE grid (8px). Off by default -- it is four times as many lines, and at 1x they would
@@ -243,7 +253,7 @@ Item {
         height: brg.map.mapH * canvasRoot.zoom
         color: "transparent"
         border.width: 2
-        border.color: brg.settings.primaryColor
+        border.color: canvas.boundsColor
       }
 
       // The draw area: the 6x5 blocks LoadCurrentMapView redraws. Always block-aligned.
@@ -255,7 +265,7 @@ Item {
         height: brg.map.scratchH * canvasRoot.zoom
         color: "transparent"
         border.width: 2
-        border.color: brg.settings.accentColor
+        border.color: canvas.drawColor
       }
 
       // The player. He is drawn 4px ABOVE his tile row -- "which makes sprites appear to be in the
@@ -288,13 +298,18 @@ Item {
         height: brg.map.screenH * canvasRoot.zoom
         color: "transparent"
         border.width: 2
-        border.color: brg.settings.errorColor
+        border.color: canvas.screenColor
       }
 
       // ── The selection ───────────────────────────────────────────────────────────────────────
       //
       // Held ABOVE everything -- the grid, the boxes, the player, any overlay -- because a
       // selection you can lose under a layer is not a selection.
+      //
+      // Clicking a block no longer OPENS anything (Twilight, 2026-07-13: "I don't like click a block
+      // and a sidebar opens, it's clunky"). It marks the block, and the STATUS BAR already says what
+      // is there -- the block id and what its tiles do -- without a wall of information arriving
+      // uninvited on the side of the screen.
       Rectangle {
         visible: brg.map.hasSelection
         z: 10
@@ -306,7 +321,7 @@ Item {
 
         color: "transparent"
         border.width: 2
-        border.color: brg.settings.primaryColor
+        border.color: canvas.selectColor
 
         // A second, inner line in white: the outer one alone can vanish against dark trees or a
         // glitch palette, and a selection you can't find is not a selection.
@@ -317,26 +332,6 @@ Item {
           border.width: 1
           border.color: "#ccffffff"
         }
-      }
-
-      // The tile the Blocks panel is hovering, lit up on the map. Hovering a tile in the panel and
-      // seeing it on the map is what makes the two one thing rather than two.
-      Rectangle {
-        visible: brg.map.hasSelection && canvasRoot.hoveredTile >= 0
-        z: 11
-
-        readonly property int tileStep: canvas.gridStep / 4
-
-        x: brg.map.selectedBlockX * canvas.gridStep
-           + (canvasRoot.hoveredTile % 4) * tileStep
-        y: brg.map.selectedBlockY * canvas.gridStep
-           + Math.floor(canvasRoot.hoveredTile / 4) * tileStep
-        width: tileStep
-        height: tileStep
-
-        color: Qt.rgba(1, 1, 1, 0.30)
-        border.width: 1
-        border.color: brg.settings.primaryColor
       }
 
       // ── Pointing at things ──────────────────────────────────────────────────────────────────
@@ -370,11 +365,6 @@ Item {
             return;   // the hand does not select
 
           brg.map.selectAtPixel(px, py);
-
-          // Selecting opens the panel that explains the selection -- otherwise the click did
-          // something invisible, which is the same as doing nothing.
-          if (brg.map.hasSelection)
-            canvasRoot.blockSelected();
         }
       }
     }
@@ -451,9 +441,6 @@ Item {
     }
   }
 
-  /// A block was picked on the map. The screen opens the panel that explains it.
-  signal blockSelected()
-
   /// "x,y" in BUFFER pixels -> select the block there, exactly as a click would. (DEBUG harness:
   /// it can only set properties on named items, and `brg.map` is a model, not an item.)
   property string selectAt: ""
@@ -463,7 +450,5 @@ Item {
       return;
 
     brg.map.selectAtPixel(parseInt(p[0]), parseInt(p[1]));
-    if (brg.map.hasSelection)
-      canvasRoot.blockSelected();
   }
 }

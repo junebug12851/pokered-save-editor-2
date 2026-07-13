@@ -78,9 +78,10 @@ Page {
   /// "x,y" in BUFFER pixels -> select the block there, exactly as a click would.
   property alias selectAt: canvas.selectAt
 
-  /// Which tool is in hand, and which dock panel is open -- both drivable by name.
+  /// Which tool is in hand, and which panel each dock has open -- all drivable by name.
   property alias tool: identityBar.tool
-  property alias dockPanel: dock.open
+  property alias dockPanel: rightDock.open
+  property alias layersPanel: leftDock.open
 
   /// The top bar's two drop-downs (the map/tileset/blockset picker, and the palette).
   property alias mapPickerOpen: identityBar.mapPickerOpen
@@ -105,7 +106,11 @@ Page {
     case Qt.Key_Z:     identityBar.tool = "zoom";   event.accepted = true; break;
     case Qt.Key_Space: canvas.spaceHeld = true;  event.accepted = true; break;
     case Qt.Key_Escape:
-      if (dock.open !== "") { dock.open = ""; event.accepted = true; }
+      if (rightDock.open !== "" || leftDock.open !== "") {
+        rightDock.open = "";
+        leftDock.open = "";
+        event.accepted = true;
+      }
       break;
     }
   }
@@ -134,45 +139,66 @@ Page {
       Layout.fillHeight: true
       spacing: 0
 
-      // The canvas column: the context bar sits directly over the map it configures (Aseprite puts
-      // it exactly there, and it is right -- the options belong to the canvas, not to the window).
-      ColumnLayout {
+      // ── LEFT: the layers ─────────────────────────────────────────────────────────────────────
+      //
+      // The map's legend and its navigation, on the left where your other hand is (Twilight,
+      // 2026-07-13). The panels that EDIT things are on the right; the panel that decides what you
+      // are LOOKING at is here.
+      MapDock {
+        id: leftDock
+
+        side: "left"
+        open: "layers"
+
+        panels: [
+          { id: "layers", glyph: "◈", title: qsTr("Layers"),
+            tip: qsTr("Layers — everything drawn over the map, in groups") }
+        ]
+        sources: ({ "layers": "LayersPanel.qml" })
+
+        Layout.fillHeight: true
+        Layout.preferredWidth: inlineWidth
+
+        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth - rightDock.inlineWidth
+      }
+
+      MapCanvas {
+        id: canvas
+
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.minimumWidth: mapScreen.mapMinWidth
-        spacing: 0
 
-        MapContextBar {
-          Layout.fillWidth: true
-          tool: identityBar.tool
-          canvas: canvas
-        }
-
-        MapCanvas {
-          id: canvas
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-
-          tool: identityBar.tool
-          hoveredTile: dock.hoveredTile
-
-          // A click on the map opens the panel that explains what it selected. A click that does
-          // something invisible is a click that did nothing.
-          onBlockSelected: dock.show("blocks")
-        }
+        tool: identityBar.tool
       }
 
+      // ── RIGHT: the things you edit ───────────────────────────────────────────────────────────
       MapDock {
-        id: dock
+        id: rightDock
+
+        side: "right"
+        open: ""
+
+        panels: [
+          { id: "tiles", glyph: "▦", title: qsTr("Tiles"),
+            tip: qsTr("Tiles — the grass, the counters, the edge of the world, and where the tileset lives") },
+          { id: "music", glyph: "♪", title: qsTr("Music"),
+            tip: qsTr("Music — the map's track, and play it") }
+        ]
+        sources: ({ "tiles": "TilesetPanel.qml", "music": "MusicPanel.qml" })
+
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth
 
         // How much width the canvas could give up before it hits its floor. Below the panel's
         // minimum the dock floats instead -- the map never gets squeezed to nothing.
-        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth
+        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth - leftDock.inlineWidth
       }
     }
 
+    // Everything ABOUT what you're looking at lives down here, not in the toolbar (Twilight,
+    // 2026-07-13): the cursor's coordinates, the block under it, the map's size, whether this id is
+    // an unfinished copy, the animation, the zoom.
     MapStatusBar {
       Layout.fillWidth: true
       at: canvas.at
@@ -183,18 +209,13 @@ Page {
   // Closing the Music panel stops playback: no invisible audio, and nothing starts making noise
   // because a screen opened. (notes/plans/music.md §6)
   //
-  // The dock UNLOADS a closed panel, so this also covers "switched to another panel" -- but the
-  // stop is explicit rather than relying on a destructor to be polite about it.
+  // The dock UNLOADS a closed panel, so this also covers "switched to another panel" -- but the stop
+  // is explicit rather than relying on a destructor to be polite about it.
   Connections {
-    target: dock
+    target: rightDock
     function onOpenChanged() {
-      if (dock.open !== "music")
+      if (rightDock.open !== "music")
         brg.music.stop();
-
-      // A selection with nothing to say about it is a highlight in the way. Closing the panel that
-      // explains it drops it.
-      if (dock.open !== "blocks")
-        brg.map.clearSelection();
     }
   }
 }
