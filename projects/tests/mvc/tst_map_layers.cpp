@@ -181,13 +181,16 @@ void TestMapLayers::connectionsAreALayer()
   const bool applies = r->layers->data(r->layers->index(row, 0),
                                        MapLayersModel::AppliesRole).toBool();
   QVERIFY2(applies, "Pallet Town has two connections -- the layer should apply");
-  QVERIFY2(visible(r->layers, row), "the connections should be on by default -- the ring is "
-                                    "meaningless until you can see whose edges are in it");
+
+  // OFF by default (Twilight, 2026-07-13): it is something you go looking for, not something that
+  // should be sitting on the map before you asked for it.
+  QVERIFY2(!visible(r->layers, row), "the connections should be OFF by default");
+  QVERIFY(!r->layers->showConnections());
 
   QVERIFY(!r->map->connectionList().isEmpty());
 
   r->layers->toggle(row);
-  QVERIFY(!r->layers->showConnections());
+  QVERIFY(r->layers->showConnections());
 }
 
 /// One click on a group's eye always changes something: any child on -> all off; none on -> all on.

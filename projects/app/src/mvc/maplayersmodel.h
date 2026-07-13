@@ -173,9 +173,9 @@ private:
   int savedView = 0;
   int savedOverlay = 0;
 
-  // What is on when the screen opens. The DRAW AREA is off (Twilight, 2026-07-13) -- it is the
-  // engine's scratch, useful when you want it and clutter when you don't; the CONNECTIONS are on,
-  // because the ring is meaningless until you can see whose edges are in it.
-  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewScreenBox | ViewConnections;
+  // What is on when the screen opens. The DRAW AREA and the CONNECTIONS are both OFF (Twilight,
+  // 2026-07-13): they are things you go looking for, not things that should be sitting on top of the
+  // map before you have asked for them. The map is the point.
+  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewScreenBox;
   qreal opacity = 1.0;
 };

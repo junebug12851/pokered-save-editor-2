@@ -265,12 +265,15 @@ Item {
           width: modelData.w * canvasRoot.zoom
           height: modelData.h * canvasRoot.zoom
 
-          color: Qt.rgba(0.84, 0.37, 0.0, 0.10)   // the same vermillion, barely there
+          // No FILL (Twilight, 2026-07-13). An outline shows you the strip; a wash over it hides the
+          // map you are trying to look at -- which is the one thing every layer here must not do.
+          color: "transparent"
           border.width: 2
           border.color: canvas.connectColor
 
-          // The label sits INSIDE the strip when it fits, and hugs it from outside when it doesn't
-          // -- a 3-block strip is 96px, which at 1x is not much to write in.
+          // Which neighbour, and which way. The strip's SIZE is not on the label: it is on the
+          // rectangle, which you can see, and a label that recites what the outline already shows is
+          // just noise.
           Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
@@ -286,7 +289,7 @@ Item {
             Text {
               id: label
               anchors.centerIn: parent
-              text: modelData.dirName + " · " + modelData.name + "  " + modelData.blocks
+              text: modelData.dirName + " · " + modelData.name
               font.pixelSize: 10
               color: "#ffffff"
             }
