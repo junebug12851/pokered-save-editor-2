@@ -394,6 +394,16 @@ public:
   /// Every warp on this map, as a centre in BUFFER pixels: `{ x, y, ind }`.
   Q_INVOKABLE QVariantList warpPoints() const;
 
+  /// The save's live sprite list. MapSim runs the game's own state machine straight over these bytes,
+  /// so it needs the real objects rather than the QVariant view the QML gets.
+  ///
+  /// (NOT `sprites()` -- that name is already the sprite-SET cache, which is a different thing.)
+  AreaSprites* npcSprites() const { return npcs; }
+
+  /// The block that fills the 3-block border ring. Public because MapSim rebuilds the same overworld
+  /// buffer the renderer draws, to ask what tile a sprite would be stepping onto.
+  int borderBlock() const;
+
   int tileAnim() const;
   void setTileAnim(int anim);   ///< Writes the save's `type` byte (0x3522) -- and only that byte.
   QString tileAnimName() const;
@@ -506,8 +516,6 @@ private:
 
   /// The block filling the 3-block ring -- the SAVE's `wMapBackgroundTile`, which is what the
   /// console reads. Edit it and the edge of the world changes.
-  int borderBlock() const;
-
   /// The overworld buffer as it is ACTUALLY DRAWN (the save's border block included). Every question
   /// about the map's blocks goes through here, so nothing can disagree with what is on screen.
   MapEngine::Buffer mapBuffer() const;

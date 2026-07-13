@@ -52,6 +52,29 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/plans/testing.md` | **Testing** — the suite (QtTest/CTest, GUI harness, Docker variants, coverage) and remaining gaps. Live, not a blueprint — full `ctest` is green |
 | `notes/plans/future.md` | Longer-term ambitions |
 
+## USE THE GAME'S OWN FILE FORMATS (a standing rule, 2026-07-13, Twilight)
+
+> **Where `pret/pokered` has a format, WE USE THAT FORMAT. By default, without asking.**
+
+Not "a format inspired by theirs", not "our own JSON of the same data" — **theirs**. Their bytes, their
+text, their macro names, their directory shape. It is the format the game's own source is written in, it
+is what every other tool in this scene reads and writes, and every hour spent inventing a parallel one is
+an hour spent building a thing that can only talk to itself.
+
+| Data | The format | Why |
+|---|---|---|
+| Map blocks | `.blk` — **raw block bytes, exactly as `pret/pokered` stores them** | Already done. Byte-identical; anyone's `.blk` drops straight in. |
+| Music | **the game's own `.asm` sheet music**, parsed **line by line** | ⚠️ We do **not** need a byte compiler. The sound engine's data is *line-based assembly* — `note C_, 8`, `octave 4`, `dutycycle 2` — so a **line parser** turns it straight into engine commands. Their macro names *are* the command names; leverage them. |
+| Sprites | one loose `.png` per sprite | Not an atlas. You can open one and look at it. |
+| Everything else | **whatever `pret/pokered` uses** | The default. If you are about to invent a format, stop and go and look at what they do first. |
+
+**The rule for anything new:** before designing a data format, **open `pret/pokered` and find theirs.**
+Deviating is a decision that has to be argued for and written down in
+[`notes/decisions/architecture.md`](notes/decisions/architecture.md) — not a thing that happens because
+nobody looked.
+
+Full write-up: [`notes/reference/file-formats.md`](notes/reference/file-formats.md).
+
 ## Critical Things Not to Get Wrong
 
 - **Do NOT put `load()` in DB constructors** — causes Qt 6 static-init deadlock. See `decisions/architecture.md`.

@@ -14,6 +14,51 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🚶 The NPCs walk the way the GAME walks (2026-07-13, `0.30.0-alpha`)
+
+`MapSim` is now **`UpdateNPCSprite`, transliterated** — the console's per-frame state machine out of
+`engine/overworld/movement.asm`, instruction for instruction, **bugs included**, ticking at the DMG's
+own **59.7275 Hz** (every counter in it is measured in Game Boy frames). Full write-up with the assembly
+beside it: [`reference/npc-movement.md`](reference/npc-movement.md).
+
+Three things it taught us, and none of them were guessable:
+
+1. ⚠️ **A `STAY` sprite is not standing still — it is TURNING.** It runs the whole random-direction path,
+   and `TryWalking` writes the new facing *before* `CanWalkOntoTile` refuses the step. Oak picks a
+   direction, turns to face it, fails to move, and sets a new delay — about once a second, forever. Our
+   first sim just *skipped* `STAY` sprites, which is a still picture, not a simulation.
+2. ⚠️ **The game only animates the people NEAR THE PLAYER.** The screen-bounds check is measured
+   *relative to him*, so Pallet's Fisherman — eight tiles below Red — takes no step until Red walks
+   towards him. The test found this by failing on him.
+3. ⚠️ **The wander limit is BUGGED and we copy the bug.** Walk up five times and `yDisplacement` hits 3;
+   now `3 + 1 = 4 < 5` and the sprite **can never walk down again**. The disassembly flags it itself.
+
+**And every "animation scratch" byte is now live state** — `movementStatus`, `movementDelay`,
+`walkAnimationCounter`, the two frame counters, the step vectors, `yDisp`/`xDisp`. They are not scratch.
+They are the simulation.
+
+### 📐 STANDING RULE: use the GAME's file formats (2026-07-13)
+
+Where `pret/pokered` has a format, **we use that format** — by default, without asking. `.blk` already is
+theirs. **Music becomes their own `.asm` sheet music, parsed line by line** (⏳ owed): it is line-based
+assembly with macro names, so a *line parser* turns it straight into sound-engine commands — we never
+needed a byte compiler. See [`reference/file-formats.md`](reference/file-formats.md) and `CLAUDE.md`.
+
+### ⏳ Owed from Twilight's 2026-07-13 review (captured, not yet done)
+
+- **The sprite Details panel is bad and gets rebuilt.** Raw values, cryptic, cramped, "Who/Where/When" is
+  dumb. Group X+Y into one control; picture = a *picker* with the artwork; hide fields the combo makes
+  irrelevant; movement status is not a number; "delay until next move" must be *shown*, not explained in
+  prose. **Text id / item / trainer class / trainer team must resolve to REAL map data** (extract it if we
+  haven't got it). `✕` becomes a **Delete** button. A **?** icon in the panel title (the one allowed
+  tooltip-icon), and a **yellow !** on anything the game rebuilds on load.
+- **Music**: a real grouped **ComboBox** like the map picker (not a hand-rolled list), **volume slider
+  below it**, and **hover must not change the track** — only selection does.
+- **Canvas/panels**: player drag is glitchy; drag-and-drop *still* not working; drop the "cast no longer
+  matches" notice; the map must not resize when panels open; Layers "Clear" belongs in the panel title
+  (+ one per category) and must look like a clear button; delete "none here"; **"Meaning" → "Components"**;
+  the Sprite Set and Strength panels' walls of text go; the scrollbar-overlap problem (it is in the notes).
+
 ### 🧍 SPRITES — phase 4 is COMPLETE (2026-07-13, `0.27.0-alpha`)
 
 | | | |

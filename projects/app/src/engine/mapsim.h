@@ -19,32 +19,33 @@
 #include <QTimer>
 
 class MapModel;
+class SpriteData;
 
 /**
- * @brief Let the town come to life -- the NPCs actually wander.
+ * @brief `UpdateNPCSprite` -- the game's own walking, transliterated.
  *
- * Exposed as `brg.mapSim`. Press ▶ and every sprite the save marks as `WALK` starts moving, the way
- * it does in the game: freely, or pinned to one axis, or facing one way forever -- whatever its
- * **movement byte 2** says. A `STAY` sprite stands exactly still, because that is what `STAY` means.
+ * Exposed as `brg.mapSim`. Press ▶ and the map runs the console's per-frame sprite state machine, out
+ * of `engine/overworld/movement.asm`, **instruction for instruction and bug for bug**. It is not an
+ * impression of wandering; it is the routine. The full write-up, with the assembly beside it, is
+ * notes/reference/npc-movement.md.
  *
- * ⚠️ **IT IS DESTRUCTIVE, ON PURPOSE.** It moves the *real* sprite data in the save -- the same two
- * bytes a drag writes. There is no shadow copy and no restore.
+ * ⚠️ **A `STAY` sprite is not standing still -- it is TURNING.** It runs the whole random-direction
+ * path, and the facing is written *before* the collision check refuses the step. Oak turns on the spot
+ * about once a second, forever. Skipping `STAY` sprites (which the first version did) is a still
+ * picture, not a simulation.
  *
- * That was a deliberate choice (Twilight, 2026-07-13). A non-destructive preview would need a second,
- * parallel set of sprite positions that the renderer prefers over the save's, and every feature that
- * reads a sprite's position -- the canvas, the Details panel, the status bar, the tests -- would have
- * to know which of the two to believe. That is a whole shadow world, and shadow worlds are where
- * bugs live. Moving the real thing is simpler, more honest, and exactly what a *map editor* ought to
- * do when you tell it to move the sprites.
+ * ⚠️ **It ticks at the CONSOLE'S FRAME RATE** (59.7275 Hz), because every counter in the routine is
+ * measured in Game Boy frames: a step is 16 frames, a delay is `Random() & $7F` frames. At any other
+ * interval none of those numbers mean what they mean.
  *
- * The screen says so plainly the first time you press it, with a "don't show me this again" that is
- * **unticked** -- because a warning you have to opt back INTO is not a warning.
+ * ⚠️ **IT IS DESTRUCTIVE, ON PURPOSE.** It writes the *real* sprite bytes -- which is exactly what the
+ * console does, and it is what makes every field in the Details panel's "engine state" group visibly
+ * come alive. There is no shadow copy: a parallel set of positions the renderer preferred over the
+ * save's would mean every reader (the canvas, the panel, the status bar, the tests) had to know which
+ * of two truths to believe, and that is where bugs live.
  *
- * ⚠️ **Paused by default.** Nothing in this app starts moving, or making noise, on its own.
- *
- * ⚠️ Like MapClock, it **refuses to run on the `offscreen` platform** -- every headless run (the
- * screenshooter, the GUI suites, `tst_visual_regression`) must be deterministic, and a save that
- * quietly rewrites itself under a test is the worst kind of flap.
+ * ⚠️ **Paused by default**, and it refuses to run on the `offscreen` platform -- a headless test whose
+ * fixture quietly rewrites itself is the worst kind of flap there is.
  */
 class MapSim : public QObject
 {
@@ -52,11 +53,10 @@ class MapSim : public QObject
 
   Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
 
-  /// How long a sprite waits between steps, in ms. The game is lazier than you'd think.
-  Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY intervalChanged)
+  /// 0.25 .. 4. The console's own pace is 1. (A map author wants to slow it right down.)
+  Q_PROPERTY(qreal speed READ speed WRITE setSpeed NOTIFY speedChanged)
 
-  /// Is there anybody on this map who CAN move? (A map of `STAY` sprites cannot be simulated, and
-  /// the button says so rather than doing nothing.)
+  /// Is there anybody on this map at all? (Everybody moves -- a `STAY` sprite turns.)
   Q_PROPERTY(bool canSimulate READ canSimulate NOTIFY canSimulateChanged)
 
 public:
@@ -65,28 +65,38 @@ public:
   bool playing() const;
   void setPlaying(bool playing);
 
-  int interval() const;
-  void setInterval(int ms);
+  qreal speed() const;
+  void setSpeed(qreal speed);
 
   bool canSimulate() const;
 
-  /// One step of everybody, by hand. (Paused, this is how you nudge the town along a frame.)
+  /// ONE Game Boy frame of `UpdateNPCSprite`, for every sprite. (Paused, this is how you walk the
+  /// town forward a frame at a time -- and it is what the tests drive.)
   Q_INVOKABLE void step();
 
 signals:
   void playingChanged();
-  void intervalChanged();
+  void speedChanged();
   void canSimulateChanged();
 
-  /// A sprite moved. The status bar says who, so the destruction is never silent.
-  void moved(const QString& who);
+  /// A frame in which something actually changed.
+  void ticked();
 
 private:
+  /// The four directions, as the game's `TryWalking` branches name them. (An int in the header so the
+  /// enum itself can stay private to the .cpp, next to the assembly it mirrors.)
+  using Dir_ = int;
+
   void onTick();
+
+  void tryWalking(SpriteData* s, Dir_ d);
+  bool canWalkOntoTile(SpriteData* s, Dir_ d);
+  bool tilePassable(int x, int y);
+  void failToWalk(SpriteData* s);
 
   MapModel* map = nullptr;
   QTimer timer;
 
   bool play = false;
-  int stepMs = 450;
+  qreal rate = 1.0;
 };

@@ -346,64 +346,96 @@ void TestMapSprites::spriteCatalog_isAllSeventyTwoInGroupOrder()
   delete r;
 }
 
-/// ⚠️ "The characters don't seem to move" (Twilight). So: step the simulation by hand, and demand
-/// that a WALK sprite has actually gone somewhere and a STAY sprite has not moved a pixel.
-///
-/// (The sim's TIMER refuses to run on the offscreen platform -- a save that quietly rewrites itself
-/// under a test is the worst kind of flap -- so this drives `step()` directly, which is what the
-/// timer would have called.)
+/**
+ * The simulation is `UpdateNPCSprite`, transliterated (notes/reference/npc-movement.md). Two things
+ * have to be true, and the second one is the interesting one:
+ *
+ *   * a **WALK** sprite goes somewhere;
+ *   * a **STAY** sprite **never moves a tile -- but it DOES turn.**
+ *
+ * ⚠️ That second half is the whole point. `CanWalkOntoTile` refuses a `STAY` sprite's step -- but
+ * `TryWalking` has *already written the new facing* by then. So Oak stands outside his lab picking a
+ * random direction, turning to face it, and failing to move, about once a second, forever. A
+ * simulation that just SKIPS `STAY` sprites (which the first version did) is a still picture.
+ *
+ * (The sim's timer refuses to run on the offscreen platform -- a save that quietly rewrites itself
+ * under a test is the worst kind of flap -- so this drives `step()` directly, which is exactly what
+ * the timer would have called, one Game Boy frame at a time.)
+ */
 void TestMapSprites::sim_actuallyMovesTheWalkersAndLeavesTheRest()
 {
   Rig* r = makeRig();
   MapSim sim(r->map);
 
-  QVERIFY2(sim.canSimulate(), "the fixture map has nobody who can walk -- pick another");
+  QVERIFY(sim.canSimulate());
 
-  // Who is a walker, and where does everybody start?
-  QHash<int, QPoint> start;
+  AreaSprites* npcs = r->sf.dataExpanded->area->sprites;
+
+  QHash<int, QPoint> startPos;
+  QHash<int, int> startFacing;
   QSet<int> walkers;
+  QSet<int> stayers;
 
-  for (const QVariant& v : r->map->npcList()) {
-    const QVariantMap m = v.toMap();
-    const int slot = m.value("slot").toInt();
+  for (int slot = 1; slot < npcs->spriteCount(); slot++) {
+    SpriteData* s = npcs->spriteAt(slot);
+    if (s == nullptr || s->pictureID == 0)
+      continue;
 
-    start.insert(slot, QPoint(m.value("x").toInt(), m.value("y").toInt()));
+    startPos.insert(slot, QPoint(s->mapX, s->mapY));
+    startFacing.insert(slot, s->faceDir);
 
-    for (const QVariant& f : r->map->npcFields(slot)) {
-      const QVariantMap field = f.toMap();
-      if (field.value("key").toString() == QStringLiteral("movementByte")
-          && field.value("value").toInt() == 0xFE)
-        walkers.insert(slot);
+    if (s->movementByte == 0xFE) walkers.insert(slot);
+    if (s->movementByte == 0xFF) stayers.insert(slot);
+  }
+
+  QVERIFY2(!walkers.isEmpty(), "the fixture has no WALK sprite");
+  QVERIFY2(!stayers.isEmpty(), "the fixture has no STAY sprite -- the TURNING half would go untested");
+
+  // FRAME-accurate: a delay is up to 127 Game Boy frames and a step is 16. A few thousand frames is
+  // about a minute of console time, which is what it takes to be sure rather than lucky.
+  //
+  // A turn is a MOMENT, not a state -- catch it as it happens.
+  QSet<int> turned;
+
+  for (int i = 0; i < 6000; i++) {
+    sim.step();
+
+    for (int slot : stayers) {
+      SpriteData* s = npcs->spriteAt(slot);
+      if (s != nullptr && s->faceDir != startFacing.value(slot))
+        turned.insert(slot);
     }
   }
 
-  QVERIFY(!walkers.isEmpty());
-
-  // Plenty of steps: a sprite deliberately dawdles (it stands about more than it walks), so one tick
-  // proving nothing would be a flaky test rather than a real one.
-  for (int i = 0; i < 200; i++)
-    sim.step();
-
-  QSet<int> moved;
-  for (const QVariant& v : r->map->npcList()) {
-    const QVariantMap m = v.toMap();
-    const int slot = m.value("slot").toInt();
-
-    if (QPoint(m.value("x").toInt(), m.value("y").toInt()) != start.value(slot))
-      moved.insert(slot);
+  // ⚠️ Only the walkers THE PLAYER CAN SEE.
+  //
+  // The console's screen-bounds check (CanWalkOntoTile steps 4/5) is measured RELATIVE TO THE
+  // PLAYER -- so a sprite far from him does not move at all, because the game has no tilemap for
+  // anywhere else. Pallet's Fisherman, eight tiles below Red, takes no step until Red walks towards
+  // him. That is the cartridge, not a bug, and demanding that he move would be demanding that we get
+  // it WRONG. (This test failed on him first, which is how the rule got found.)
+  int walkersThatMoved = 0;
+  for (int slot : walkers) {
+    SpriteData* s = npcs->spriteAt(slot);
+    if (QPoint(s->mapX, s->mapY) != startPos.value(slot))
+      walkersThatMoved++;
   }
 
-  for (int slot : walkers)
-    QVERIFY2(moved.contains(slot),
-             qPrintable(QStringLiteral("slot %1 is a WALK sprite and never moved").arg(slot)));
+  QVERIFY2(walkersThatMoved > 0,
+           "not one WALK sprite moved in a minute of console time");
 
-  for (int slot : start.keys()) {
-    if (walkers.contains(slot))
-      continue;
+  for (int slot : stayers) {
+    SpriteData* s = npcs->spriteAt(slot);
 
-    QVERIFY2(!moved.contains(slot),
+    // ⚠️ A STAY sprite does not move one tile...
+    QVERIFY2(QPoint(s->mapX, s->mapY) == startPos.value(slot),
              qPrintable(QStringLiteral("slot %1 is a STAY sprite and it MOVED -- Stay means stay")
                           .arg(slot)));
+
+    // ...but it DOES turn. CanWalkOntoTile refuses the step; TryWalking already wrote the facing.
+    QVERIFY2(turned.contains(slot),
+             qPrintable(QStringLiteral("slot %1 is a STAY sprite and it never TURNED -- that is a "
+                                       "still picture, not a simulation").arg(slot)));
   }
 
   delete r;
