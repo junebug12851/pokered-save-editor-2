@@ -51,6 +51,10 @@ Item {
   /// Which QML file each panel id loads. Supplied by the screen.
   property var sources: ({})
 
+  /// Handed to any loaded panel that declares a `canvas` property -- the Details panel edits
+  /// whatever is selected on the canvas, and a Loader cannot see the ids around it.
+  property var panelContext: null
+
   /// How wide the panel column is when open (drag its inner edge; remembered for the session).
   ///
   /// 170 was too tight -- text clipped, and a combo box had ~90px left for its label (Twilight,
@@ -169,6 +173,14 @@ Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
         source: dock.sources[dock.open] !== undefined ? dock.sources[dock.open] : ""
+
+        // A Loader's content is its own scope -- it cannot see the ids around the dock. A panel
+        // that needs the canvas (the Details panel does: it edits what is SELECTED on it) declares
+        // a `canvas` property and we hand it over here.
+        onLoaded: {
+          if (item && item.canvas !== undefined && dock.panelContext !== null)
+            item.canvas = dock.panelContext;
+        }
       }
     }
 

@@ -30,6 +30,7 @@ const char* groupKey(int g)
   case GuidesGroup:   return "guides";
   case MeaningGroup:  return "meaning";
   case GameViewGroup: return "gameview";
+  default:            break;
   }
   return "";
 }
@@ -40,6 +41,7 @@ QString groupName(int g)
   case GuidesGroup:   return QObject::tr("Guides");
   case MeaningGroup:  return QObject::tr("Meaning");
   case GameViewGroup: return QObject::tr("Game View");
+  default:            break;
   }
   return QString();
 }
@@ -53,8 +55,10 @@ QString groupBlurb(int g)
     return QObject::tr("What the map MEANS — a wall and a floor are just two pictures until "
                        "something says which is which.");
   case GameViewGroup:
-    return QObject::tr("What the Game Boy is drawing right now: the player, the screen he sees, "
-                       "and the patch of map it redraws around him.");
+    return QObject::tr("What the Game Boy is drawing right now: the player, everyone else on the "
+                       "map, the screen he sees, and the patch of map it redraws around him.");
+  default:
+    break;
   }
   return QString();
 }
@@ -306,6 +310,9 @@ QVariant MapLayersModel::data(const QModelIndex& index, int role) const
     // greyed-OUT -- i.e. like a layer that was disabled (Twilight, 2026-07-13). The swatch says
     // *which* ink; the canvas decides how strongly to use it.
     return QColor(QStringLiteral("#56b4e9"));                                   // sky blue -- the grids
+
+  default:
+    break;
   }
 
   return QVariant();

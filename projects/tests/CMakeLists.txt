@@ -150,6 +150,15 @@ if(TARGET appcore)
 
     # THE LAYER TREE -- the groups, the tri-state eye, solo, and the promise that a layer never
     # writes a byte of the save (byte-diffed across every toggle there is).
+    qt_add_executable(tst_map_sprites
+        mvc/tst_map_sprites.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_map_sprites PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_map_sprites PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_map_sprites COMMAND tst_map_sprites)
+    set_tests_properties(tst_map_sprites PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_map_sprites)
+
     qt_add_executable(tst_map_layers
         mvc/tst_map_layers.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)

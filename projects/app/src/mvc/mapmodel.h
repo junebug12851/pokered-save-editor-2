@@ -319,6 +319,54 @@ public:
    */
   Q_INVOKABLE QVariantList npcList() const;
 
+  /// Move sprite @p slot to map (@p x, @p y). **Exactly two bytes** (mapX, mapY), the game's +4
+  /// bias included. The drag-on-the-canvas path. Out-of-bounds coordinates are clamped to the
+  /// map -- a sprite parked in the border ring is one the game will never show you.
+  Q_INVOKABLE void moveNpc(int slot, int x, int y);
+
+  /// Put a sprite of picture @p pictureID at map (@p x, @p y). @return its new slot, or -1 if the
+  /// map is full (15 NPCs plus the player). The drag-from-the-Characters-bar path.
+  Q_INVOKABLE int addNpc(int pictureID, int x, int y);
+
+  /// Delete sprite @p slot. **The rest slide up** -- the game packs its sprite slots and so do we.
+  Q_INVOKABLE void removeNpc(int slot);
+
+  /// How many more sprites this map can hold. 0 means the "+" is dead, and we say so *before* the
+  /// user hits it rather than swallowing the drop.
+  Q_INVOKABLE int npcRoomLeft() const;
+
+  /// Every sprite picture in the game, for the Characters bar: `{ ind, name, group, source,
+  /// inSpriteSet }`, in group order. `source` is the artwork; `inSpriteSet` says whether THIS map
+  /// has that picture loaded (an amber flag on the canvas, not a refusal).
+  Q_INVOKABLE QVariantList spriteCatalog() const;
+
+  /// The sprite in @p slot, as `npcList()` shapes it -- or an empty map. What the Details panel
+  /// reads when a sprite is selected.
+  Q_INVOKABLE QVariantMap npcAt(int slot) const;
+
+  /// Every editable byte of sprite @p slot, named and explained: a list of
+  /// `{ group, key, label, blurb, value, min, max, kind, options }`. This is the Details panel's
+  /// content -- **every byte, full range, hack values included and flagged, never refused**.
+  Q_INVOKABLE QVariantList npcFields(int slot) const;
+
+  /// Write one of @ref npcFields' keys on sprite @p slot. One field, one byte.
+  Q_INVOKABLE void setNpcField(int slot, const QString& key, int value);
+
+  /**
+   * @brief Has the user changed this map's cast in this session?
+   *
+   * The game **rebuilds the map's original cast from ROM the moment the player leaves the map and
+   * walks back in** (verified on the cartridge -- see notes/reference/sprites.md, Part 6), so the
+   * screen owes the user that sentence *once they have made an edit that it applies to*.
+   *
+   * @warning It cannot be answered by comparing the save against the ROM, and a first attempt that
+   * did was **wrong**: a real save's cast **already** differs from the ROM's, because WALK sprites
+   * wander. Pallet Town's Girl stands at (3, 8) in the cartridge and at (3, 6) in the fixture save
+   * -- she had simply walked. Comparing would have flashed the warning on essentially every save
+   * ever loaded, which is noise, and noise is a bug. So we track the *edit*, not the difference.
+   */
+  Q_INVOKABLE bool npcsEdited() const;
+
   int tileAnim() const;
   void setTileAnim(int anim);   ///< Writes the save's `type` byte (0x3522) -- and only that byte.
   QString tileAnimName() const;
@@ -439,6 +487,9 @@ private:
 
   AreaLoadedSprites* sprites = nullptr; ///< The save's live sprite-set cache (may be null in tests).
   AreaSprites* npcs = nullptr;    ///< The save's live map cast -- the 16 sprite slots (may be null).
+
+  /// @see npcsEdited. Set by any edit to the cast; never by loading one.
+  bool castEdited = false;
   AreaMap* map = nullptr;         ///< The save's live map.
   AreaPlayer* player = nullptr;   ///< The save's live player position.
   AreaTileset* tileset = nullptr; ///< The save's live tileset.

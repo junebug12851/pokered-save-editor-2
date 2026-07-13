@@ -28,6 +28,7 @@
 #include <pse-db/tileset.h>
 #include <pse-db/tiletraitsdb.h>
 #include <pse-db/entries/mapdbentry.h>
+#include <pse-db/entries/mapdbentrysprite.h>
 #include <pse-db/spriteSet.h>
 #include <pse-db/sprites.h>
 #include <pse-savefile/expanded/area/areageneral.h>
@@ -177,6 +178,7 @@ QString spriteSetNameOf(int id)
     case 8:  return QObject::tr("Silence Bridge");
     case 9:  return QObject::tr("Cycling Road");
     case 10: return QObject::tr("Fuchsia");
+    default: break;
   }
 
   // $F1-$FC are the SPLIT ids -- real values in the game's map table, but never in wSpriteSetID:
@@ -737,6 +739,388 @@ QVariantList MapModel::npcList() const
   }
 
   return ret;
+}
+
+// ── Editing the cast ──────────────────────────────────────────────────────────
+
+void MapModel::moveNpc(int slot, int x, int y)
+{
+  if (npcs == nullptr)
+    return;
+
+  // Clamp to the map. The border ring is not a place a sprite can usefully be -- the game never
+  // draws one there -- so a drag that overshoots stops at the edge rather than parking somebody
+  // in the trees.
+  const int w = blocksWide() * 2;
+  const int h = blocksHigh() * 2;
+
+  x = std::max(0, std::min(w - 1, x));
+  y = std::max(0, std::min(h - 1, y));
+
+  npcs->spriteMove(slot, x, y);   // exactly two bytes
+  castEdited = true;
+  changed();
+}
+
+int MapModel::addNpc(int pictureID, int x, int y)
+{
+  if (npcs == nullptr)
+    return -1;
+
+  const int w = blocksWide() * 2;
+  const int h = blocksHigh() * 2;
+
+  x = std::max(0, std::min(w - 1, x));
+  y = std::max(0, std::min(h - 1, y));
+
+  const int slot = npcs->spriteAdd(pictureID, x, y);
+  castEdited = true;
+  changed();
+  return slot;
+}
+
+void MapModel::removeNpc(int slot)
+{
+  if (npcs == nullptr)
+    return;
+
+  npcs->spriteRemove(slot);   // the rest slide up -- the game packs its slots and so do we
+  castEdited = true;
+  changed();
+}
+
+int MapModel::npcRoomLeft() const
+{
+  if (npcs == nullptr)
+    return 0;
+
+  // 16 slots, and slot 0 is always the player.
+  return std::max(0, npcs->spriteMax() - npcs->spriteCount());
+}
+
+QVariantList MapModel::spriteCatalog() const
+{
+  QVariantList ret;
+
+  // The eleven pictures this map has actually loaded -- so the bar can say, before you drag
+  // anything, which characters this map can draw properly and which it cannot.
+  QVector<int> loaded;
+  if (sprites != nullptr) {
+    for (int slot = 0; slot < 11; slot++)
+      loaded.append(sprites->lSpriteAt(slot));
+  }
+
+  // The shelves, in the order they read.
+  const QStringList order = { "Story", "Trainers", "Townsfolk", "Pokemon", "Objects" };
+
+  for (const QString& group : order) {
+    for (int i = 0; i < SpritesDB::inst()->getStoreSize(); i++) {
+      SpriteDBEntry* e = SpritesDB::inst()->getStoreAt(i);
+      if (e == nullptr || e->group != group)
+        continue;
+
+      QVariantMap m;
+      m["ind"]   = int(e->ind);
+      m["name"]  = e->name;
+      m["group"] = e->group;
+
+      // Facing down -- that is what a character looks like when you are choosing one.
+      m["source"] = "image://player/npc/" + QString::number(e->ind)
+                  + "/" + QString::number(MapEngine::FacingDown)
+                  + "/" + QString::number(contrast());
+
+      m["inSpriteSet"] = loaded.isEmpty() || loaded.contains(int(e->ind));
+
+      ret.append(m);
+    }
+  }
+
+  return ret;
+}
+
+QVariantMap MapModel::npcAt(int slot) const
+{
+  const QVariantList all = npcList();
+  for (const QVariant& v : all) {
+    const QVariantMap m = v.toMap();
+    if (m.value("slot").toInt() == slot)
+      return m;
+  }
+  return QVariantMap();
+}
+
+bool MapModel::npcsEdited() const
+{
+  return castEdited;
+}
+
+namespace {
+
+/// One row of the Details panel.
+QVariantMap field(const QString& group, const QString& key, const QString& label,
+                  const QString& blurb, int value, int min, int max,
+                  const QString& kind = QStringLiteral("byte"),
+                  const QVariantList& options = {})
+{
+  QVariantMap m;
+  m["group"]   = group;
+  m["key"]     = key;
+  m["label"]   = label;
+  m["blurb"]   = blurb;
+  m["value"]   = value;
+  m["min"]     = min;
+  m["max"]     = max;
+  m["kind"]    = kind;   // "byte" | "enum" | "flag"
+  m["options"] = options;
+  return m;
+}
+
+/// One named value of an enum field. `hack` marks a value no real game would hold -- shown and
+/// selectable, flagged in words, never refused.
+QVariantMap option(int value, const QString& name, bool hack = false)
+{
+  QVariantMap m;
+  m["value"] = value;
+  m["name"]  = name;
+  m["hack"]  = hack;
+  return m;
+}
+
+} // namespace
+
+QVariantList MapModel::npcFields(int slot) const
+{
+  QVariantList ret;
+
+  if (npcs == nullptr || slot < 1 || slot >= npcs->spriteCount())
+    return ret;
+
+  SpriteData* s = npcs->spriteAt(slot);
+  if (s == nullptr)
+    return ret;
+
+  // ── Who ────────────────────────────────────────────────────────────────────────────────────
+  QVariantList pictures;
+  for (int i = 0; i < SpritesDB::inst()->getStoreSize(); i++) {
+    SpriteDBEntry* e = SpritesDB::inst()->getStoreAt(i);
+    if (e != nullptr)
+      pictures.append(option(int(e->ind), e->name));
+  }
+
+  ret.append(field(tr("Who"), "pictureID", tr("Picture"),
+                   tr("Which of the game's 72 overworld sprites this is."),
+                   s->pictureID, 0, 255, "enum", pictures));
+
+  ret.append(field(tr("Who"), "pictureIDCopy", tr("Picture (the game's 2nd copy)"),
+                   tr("The game keeps the picture id twice. They normally agree — and the save "
+                      "can hold two that don't, so we show you both rather than pretend."),
+                   s->pictureIDCopy, 0, 255));
+
+  // ── Where ──────────────────────────────────────────────────────────────────────────────────
+  ret.append(field(tr("Where"), "mapX", tr("X"),
+                   tr("Map column. Stored with the game's +4 bias — the leftmost tile is a 4 — "
+                      "and shown here without it, the way a player would count."),
+                   s->mapX - 4, -4, 251));
+
+  ret.append(field(tr("Where"), "mapY", tr("Y"),
+                   tr("Map row. Same +4 bias as X."),
+                   s->mapY - 4, -4, 251));
+
+  ret.append(field(tr("Where"), "yPixels", tr("Screen Y (pixels)"),
+                   tr("Engine scratch. The game recomputes it from the map coordinates."),
+                   s->yPixels, 0, 255));
+
+  ret.append(field(tr("Where"), "xPixels", tr("Screen X (pixels)"),
+                   tr("Engine scratch. The game recomputes it."),
+                   s->xPixels, 0, 255));
+
+  // ── Movement ───────────────────────────────────────────────────────────────────────────────
+  //
+  // Two different bytes in two different tables, and telling them apart is the whole of the
+  // 2026-07-13 research. See notes/reference/sprites.md.
+  const QVariantList mobility = {
+    option(0xFF, tr("Stay — stands still")),
+    option(0xFE, tr("Walk — wanders")),
+    option(0x00, tr("No collision — walks through walls"), true),
+  };
+  ret.append(field(tr("Movement"), "movementByte", tr("May it move? (movement byte 1)"),
+                   tr("The game has exactly two words for this: WALK ($FE) and STAY ($FF). "
+                      "Anything else lets the sprite move with no collision detection at all."),
+                   s->movementByte, 0, 255, "enum", mobility));
+
+  const QVariantList movement2 = {
+    option(0x00, tr("Any direction")),
+    option(0x01, tr("Up and down only")),
+    option(0x02, tr("Left and right only")),
+    option(0x10, tr("Boulder — pushable with Strength")),
+    option(0xD0, tr("Faces down")),
+    option(0xD1, tr("Faces up")),
+    option(0xD2, tr("Faces left")),
+    option(0xD3, tr("Faces right")),
+    option(0xFF, tr("None — does not move")),
+  };
+  ret.append(field(tr("Movement"), "rangeDirByte", tr("How may it move? (movement byte 2)"),
+                   tr("ONE byte, and the map data splits it in two: a wander range for walking "
+                      "sprites, a fixed facing for still ones. It is not the animation facing "
+                      "below — that is a different byte in a different table."),
+                   s->getRangeDirByte(), 0, 255, "enum", movement2));
+
+  const QVariantList facings = {
+    option(0x0, tr("Down")),
+    option(0x4, tr("Up")),
+    option(0x8, tr("Left")),
+    option(0xC, tr("Right — drawn as LEFT, mirrored")),
+  };
+  ret.append(field(tr("Movement"), "faceDir", tr("Facing (the animation)"),
+                   tr("Which way the sprite is drawn. There is no right-facing artwork in the "
+                      "game for anybody — facing right is facing left, mirrored."),
+                   s->faceDir, 0, 255, "enum", facings));
+
+  ret.append(field(tr("Movement"), "origFacingDir", tr("Facing before it turned to you"),
+                   tr("The game backs the facing up here when a sprite turns to talk, and puts "
+                      "it back when the text box closes."),
+                   s->origFacingDir, 0, 255, "enum", facings));
+
+  const QVariantList grass = {
+    option(0x00, tr("On open ground")),
+    option(0x80, tr("In tall grass — the grass draws over its legs")),
+  };
+  ret.append(field(tr("Movement"), "grassPriority", tr("Standing in grass?"),
+                   tr("$80 makes the game draw the grass OVER the sprite's lower half, so it "
+                      "looks like it is standing in it."),
+                   s->grassPriority, 0, 255, "enum", grass));
+
+  ret.append(field(tr("Movement"), "movementStatus", tr("Movement status"),
+                   tr("0 uninitialised, 1 ready, 2 delayed, 3 moving. A save at rest is 1."),
+                   s->movementStatus, 0, 255));
+
+  ret.append(field(tr("Movement"), "movementDelay", tr("Delay until it next moves"),
+                   tr("Counts down; at zero the sprite is ready to move again."),
+                   s->movementDelay, 0, 255));
+
+  ret.append(field(tr("Movement"), "yDisp", tr("Y wander limit"),
+                   tr("Meant to stop a sprite wandering too far. The game initialises it to 8 — "
+                      "and the disassembly notes the whole mechanism is bugged."),
+                   s->yDisp, 0, 255));
+
+  ret.append(field(tr("Movement"), "xDisp", tr("X wander limit"),
+                   tr("As above, and just as bugged."),
+                   s->xDisp, 0, 255));
+
+  // ── What it is ─────────────────────────────────────────────────────────────────────────────
+  ret.append(field(tr("What it is"), "textID", tr("Text id"),
+                   tr("Which of the map's scripts runs when you talk to it."),
+                   s->getTextID(), 0, 255));
+
+  ret.append(field(tr("What it is"), "trainerClassOrItemID", tr("Item / trainer class"),
+                   tr("An item ball keeps its item id here; a trainer keeps their class. A plain "
+                      "NPC leaves it at zero."),
+                   s->getTrainerClassOrItemID(), 0, 255));
+
+  ret.append(field(tr("What it is"), "trainerSetID", tr("Trainer team / level"),
+                   tr("Which team of that trainer class — or, for a wild Pokémon sprite, its "
+                      "level."),
+                   s->getTrainerSetID(), 0, 255));
+
+  // ── Animation scratch ──────────────────────────────────────────────────────────────────────
+  //
+  // Every one of these is a byte the save really holds. The game recomputes most of them on the
+  // next frame, and we say so rather than hiding them.
+  ret.append(field(tr("Animation scratch"), "imageIndex", tr("Image index"),
+                   tr("Which frame of which sprite, plus its slot in the Game Boy's sprite "
+                      "memory. $FF means \"off screen, do not draw\"."),
+                   s->imageIndex, 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "imageBaseOffset", tr("Sprite-memory slot"),
+                   tr("Where this sprite's pictures live in the Game Boy's video memory. The "
+                      "player is always slot 1."),
+                   s->imageBaseOffset, 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "walkAnimationCounter", tr("Walk counter"),
+                   tr("Counts down from $10 while the sprite is taking a step."),
+                   s->walkAnimationCounter, 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "animFrameCounter", tr("Frame counter"),
+                   tr("Four states, which is what makes the four-frame walk cycle."),
+                   s->animFrameCounter, 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "intraAnimationFrameCounter", tr("Frame sub-counter"),
+                   tr("Counts to 4 between animation frames, so a sprite does not flicker."),
+                   s->intraAnimationFrameCounter, 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "yStepVector", tr("Y step"),
+                   tr("How far it moves each frame: -1, 0 or 1 (stored as a byte, so -1 is $FF)."),
+                   s->getYStepVector(), 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "xStepVector", tr("X step"),
+                   tr("As above."),
+                   s->getXStepVector(), 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "yAdjusted", tr("Y, snapped to the grid"),
+                   tr("What the collision code reads. The game recomputes it."),
+                   s->yAdjusted, 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "xAdjusted", tr("X, snapped to the grid"),
+                   tr("As above."),
+                   s->xAdjusted, 0, 255));
+
+  ret.append(field(tr("Animation scratch"), "collisionData", tr("Last collision"),
+                   tr("Which way this sprite last bumped into something."),
+                   s->collisionData, 0, 255));
+
+  return ret;
+}
+
+void MapModel::setNpcField(int slot, const QString& key, int value)
+{
+  if (npcs == nullptr || slot < 1 || slot >= npcs->spriteCount())
+    return;
+
+  SpriteData* s = npcs->spriteAt(slot);
+  if (s == nullptr)
+    return;
+
+  // Every one of these is a byte, and every byte takes its full range. A value no real game would
+  // hold is FLAGGED in the panel, never refused and never quietly corrected.
+  const int b = value & 0xFF;
+
+  if      (key == "pictureID")      { s->pictureID = b;      s->pictureIDChanged(); }
+  else if (key == "pictureIDCopy")  { s->pictureIDCopy = b;  s->pictureIDCopyChanged(); }
+
+  // X and Y are shown WITHOUT the game's +4 bias and stored WITH it -- one conversion, in one
+  // place, so the panel and the canvas can never disagree about where somebody is.
+  else if (key == "mapX")           { s->mapX = (value + 4) & 0xFF; s->mapXChanged(); }
+  else if (key == "mapY")           { s->mapY = (value + 4) & 0xFF; s->mapYChanged(); }
+
+  else if (key == "yPixels")        { s->yPixels = b;        s->yPixelsChanged(); }
+  else if (key == "xPixels")        { s->xPixels = b;        s->xPixelsChanged(); }
+  else if (key == "movementByte")   { s->movementByte = b;   s->movementByteChanged(); }
+  else if (key == "rangeDirByte")   { s->setRangeDirByte(b); }
+  else if (key == "faceDir")        { s->faceDir = b;        s->faceDirChanged(); }
+  else if (key == "origFacingDir")  { s->origFacingDir = b;  s->origFacingDirChanged(); }
+  else if (key == "grassPriority")  { s->grassPriority = b;  s->grassPriorityChanged(); }
+  else if (key == "movementStatus") { s->movementStatus = b; s->movementStatusChanged(); }
+  else if (key == "movementDelay")  { s->movementDelay = b;  s->movementDelayChanged(); }
+  else if (key == "yDisp")          { s->yDisp = b;          s->yDispChanged(); }
+  else if (key == "xDisp")          { s->xDisp = b;          s->xDispChanged(); }
+  else if (key == "textID")         { s->setTextID(b); }
+  else if (key == "trainerClassOrItemID") { s->setTrainerClassOrItemID(b); }
+  else if (key == "trainerSetID")   { s->setTrainerSetID(b); }
+  else if (key == "imageIndex")     { s->imageIndex = b;     s->imageIndexChanged(); }
+  else if (key == "imageBaseOffset"){ s->imageBaseOffset = b; s->imageBaseOffsetChanged(); }
+  else if (key == "walkAnimationCounter") { s->walkAnimationCounter = b; s->walkAnimationCounterChanged(); }
+  else if (key == "animFrameCounter") { s->animFrameCounter = b; s->animFrameCounterChanged(); }
+  else if (key == "intraAnimationFrameCounter") { s->intraAnimationFrameCounter = b; s->intraAnimationFrameCounterChanged(); }
+  else if (key == "yStepVector")    { s->setYStepVector(b); }
+  else if (key == "xStepVector")    { s->setXStepVector(b); }
+  else if (key == "yAdjusted")      { s->yAdjusted = b;      s->yAdjustedChanged(); }
+  else if (key == "xAdjusted")      { s->xAdjusted = b;      s->xAdjustedChanged(); }
+  else if (key == "collisionData")  { s->collisionData = b;  s->collisionDataChanged(); }
+  else
+    return;   // an unknown key writes NOTHING -- we do not guess at bytes
+
+  castEdited = true;
+  changed();
 }
 
 // ── Which tiles animate (the save's `type` byte, 0x3522 = sTileAnimations) ─────

@@ -128,7 +128,11 @@ MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd, int borderBlock)
   out.width  = map->getWidth();
   out.height = map->getHeight();
 
-  if (out.width <= 0 || out.height <= 0 || blocks.size() != out.width * out.height)
+  // qsizetype throughout: Route 17 is 512x2496 px, and a map's block count is compared against a
+  // QByteArray size. Multiplying two ints and letting the result widen is how you get a silent
+  // overflow on a big map -- so widen first, multiply second.
+  if (out.width <= 0 || out.height <= 0
+      || blocks.size() != static_cast<qsizetype>(out.width) * out.height)
     return out;
 
   // The border block is `wMapBackgroundTile` -- and the SAVE holds it (`AreaMap::outOfBoundsBlock`).
@@ -145,7 +149,8 @@ MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd, int borderBlock)
   // LoadTileBlockMap: fill the whole buffer with the border block, then drop the
   // map in past the border. (Connected maps' edge strips overwrite parts of the
   // ring afterwards -- not yet reproduced; see notes.)
-  out.blocks = QByteArray(out.stride * out.rows, static_cast<char>(out.border));
+  out.blocks = QByteArray(static_cast<qsizetype>(out.stride) * out.rows,
+                          static_cast<char>(out.border));
 
   for (int y = 0; y < out.height; y++) {
     const int src = y * out.width;
@@ -1143,7 +1148,7 @@ QByteArray MapEngine::surroundingTiles(const Buffer& buffer, int tilesetInd, int
   const int width = screenBlocksW * blockTiles;   // 24
   const int height = screenBlocksH * blockTiles;  // 20
 
-  QByteArray out(width * height, '\0');
+  QByteArray out(static_cast<qsizetype>(width) * height, '\0');
   const QPoint view = viewBlock(x, y);
 
   for (int by = 0; by < screenBlocksH; by++) {
@@ -1185,7 +1190,7 @@ QByteArray MapEngine::screenTiles(const Buffer& buffer, int tilesetInd, int x, i
   const int offsetX = (x % 2) * 2;
   const int offsetY = (y % 2) * 2;
 
-  QByteArray out(screenTilesW * screenTilesH, '\0');
+  QByteArray out(static_cast<qsizetype>(screenTilesW) * screenTilesH, '\0');
 
   for (int row = 0; row < screenTilesH; row++)
     for (int col = 0; col < screenTilesW; col++)

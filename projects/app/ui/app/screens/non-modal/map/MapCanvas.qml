@@ -57,6 +57,15 @@ Item {
   /// selectable object on the map right now -- the ground is deliberately not clickable.
   property int selectedNpc: -1
 
+  /// The ✎ button on a selected sprite -- the Map screen opens the Details panel on it.
+  signal editRequested(int slot)
+
+  /// A line for the status bar (a drop, a delete, a cap hit). Never a modal.
+  property string status: ""
+
+  /// The 3-block border ring, in buffer pixels. A sprite at map (0,0) starts here.
+  readonly property int mapBorderPx: 3 * 32
+
   // ── Zoom ────────────────────────────────────────────────────────────────────────────────────
   //
   // Integer only -- this is 8x8 pixel art and a fractional scale would smear it. Until the user
@@ -85,6 +94,18 @@ Item {
   property bool spaceHeld: false
 
   readonly property bool panning: tool === "pan" || spaceHeld
+
+  /// Bumped to cancel any drag in flight. A delegate watching this puts the sprite back where it
+  /// was and writes **nothing** -- Esc must never be a half-commit.
+  property int cancelDrag: 0
+
+  Shortcut {
+    sequences: ["Escape"]
+    onActivated: {
+      canvasRoot.cancelDrag++;
+      canvasRoot.selectedNpc = -1;
+    }
+  }
 
   // The dark well. Not black: black would make the darkest Game Boy grey vanish into it.
   Rectangle {
@@ -362,10 +383,26 @@ Item {
 
           required property var modelData
 
-          x: npc.modelData.rectX * canvasRoot.zoom
-          y: npc.modelData.rectY * canvasRoot.zoom
+          /// What the Characters bar's DropArea reads when somebody is dragged off the map.
+          readonly property int spriteSlot: npc.modelData.slot
+
+          // While dragging, the sprite follows the cursor tile-by-tile. On release we commit -- or,
+          // on Esc, we put it back and write NOTHING.
+          property int dragX: -1
+          property int dragY: -1
+          readonly property bool dragging: npc.dragX >= 0
+
+          readonly property int liveX: npc.dragging ? npc.dragX : npc.modelData.x
+          readonly property int liveY: npc.dragging ? npc.dragY : npc.modelData.y
+
+          // The 4-pixel lift, applied to wherever the sprite currently IS -- so the ghost sits
+          // where the console would actually draw it, not one row off.
+          x: (canvasRoot.mapBorderPx + npc.liveX * 16) * canvasRoot.zoom
+          y: (canvasRoot.mapBorderPx + npc.liveY * 16 - 4) * canvasRoot.zoom
           width: npc.modelData.rectW * canvasRoot.zoom
           height: npc.modelData.rectH * canvasRoot.zoom
+
+          z: npc.dragging ? 30 : 0
 
           readonly property bool selected: canvasRoot.selectedNpc === npc.modelData.slot
 
@@ -376,6 +413,7 @@ Item {
             mipmap: false
             fillMode: Image.Stretch
             cache: true
+            opacity: npc.dragging ? 0.75 : 1.0
           }
 
           // The one thing you cannot see by looking at a sprite: whether this map has actually
@@ -409,14 +447,137 @@ Item {
             }
           }
 
+          // ── The two buttons ───────────────────────────────────────────────────────────────
+          //
+          // Only on the selected sprite, and OUTSIDE its 16x16 box, because a delete button drawn
+          // on top of a character you are trying to look at is worse than no button.
+          Row {
+            visible: npc.selected && !npc.dragging
+            z: 40
+            anchors.bottom: parent.top
+            anchors.bottomMargin: 3
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 3
+
+            // ✎ opens the Details panel ON this sprite -- no hunting for it.
+            Rectangle {
+              width: 18; height: 18; radius: 9
+              color: editHover.hovered ? "#56b4e9" : Qt.rgba(0, 0, 0, 0.65)
+              border.width: 1
+              border.color: "#ccffffff"
+
+              Label {
+                anchors.centerIn: parent
+                text: "✎"
+                font.pixelSize: 10
+                color: "white"
+              }
+
+              HoverHandler { id: editHover; cursorShape: Qt.PointingHandCursor }
+              TapHandler { onTapped: canvasRoot.editRequested(npc.modelData.slot) }
+
+              ToolTip.visible: editHover.hovered
+              ToolTip.text: qsTr("Edit this sprite")
+            }
+
+            Rectangle {
+              width: 18; height: 18; radius: 9
+              color: delHover.hovered ? "#d55e00" : Qt.rgba(0, 0, 0, 0.65)
+              border.width: 1
+              border.color: "#ccffffff"
+
+              Label {
+                anchors.centerIn: parent
+                text: "✕"
+                font.pixelSize: 10
+                color: "white"
+              }
+
+              HoverHandler { id: delHover; cursorShape: Qt.PointingHandCursor }
+              TapHandler {
+                onTapped: {
+                  brg.map.removeNpc(npc.modelData.slot);
+                  canvasRoot.selectedNpc = -1;
+                  canvasRoot.status = qsTr("Removed. The sprites after it slid up a slot.");
+                }
+              }
+
+              ToolTip.visible: delHover.hovered
+              ToolTip.text: qsTr("Remove this sprite")
+            }
+          }
+
           TapHandler {
             enabled: !canvasRoot.panning && canvasRoot.tool !== "zoom"
             onTapped: canvasRoot.selectedNpc = npc.modelData.slot
           }
 
           HoverHandler {
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: npc.dragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor
           }
+
+          // ── Drag to move ────────────────────────────────────────────────────────────────
+          //
+          // Tile-snapped, live, and it commits on release -- writing EXACTLY two bytes (mapX,
+          // mapY). Esc puts it back and writes nothing at all.
+          DragHandler {
+            id: npcDrag
+            enabled: !canvasRoot.panning && canvasRoot.tool !== "zoom"
+            target: null   // we move it ourselves, in tile steps -- no free-floating pixels
+
+            onActiveChanged: {
+              if (active) {
+                canvasRoot.selectedNpc = npc.modelData.slot;
+                npc.dragX = npc.modelData.x;
+                npc.dragY = npc.modelData.y;
+                return;
+              }
+
+              // Released. Commit unless Esc already cancelled us (which clears dragX).
+              if (npc.dragging) {
+                const nx = npc.dragX;
+                const ny = npc.dragY;
+                npc.dragX = -1;
+                npc.dragY = -1;
+
+                if (nx !== npc.modelData.x || ny !== npc.modelData.y)
+                  brg.map.moveNpc(npc.modelData.slot, nx, ny);
+              }
+            }
+
+            // Tile-snapped, live. The handler hands us a pixel translation; one tile is 16 buffer
+            // pixels times the zoom, so the sprite jumps a whole tile at a time and never floats
+            // between two of them.
+            onTranslationChanged: {
+              if (!npcDrag.active)
+                return;
+
+              const step = 16 * canvasRoot.zoom;
+              const dx = Math.round(npcDrag.translation.x / step);
+              const dy = Math.round(npcDrag.translation.y / step);
+
+              npc.dragX = Math.max(0, Math.min(brg.map.blocksWide * 2 - 1, npc.modelData.x + dx));
+              npc.dragY = Math.max(0, Math.min(brg.map.blocksHigh * 2 - 1, npc.modelData.y + dy));
+            }
+          }
+
+          // Esc, mid-drag: put them back, write NOTHING. Clearing dragX before the handler goes
+          // inactive is what makes the commit above skip.
+          Connections {
+            target: canvasRoot
+            function onCancelDragChanged() {
+              npc.dragX = -1;
+              npc.dragY = -1;
+            }
+          }
+
+          // Dragging somebody onto the Characters bar deletes them. The bar's DropArea reads
+          // `spriteSlot` off this.
+          Drag.active: npcDrag.active
+          Drag.source: npc
+          Drag.keys: ["pse/map-sprite"]
+          Drag.hotSpot.x: width / 2
+          Drag.hotSpot.y: height / 2
         }
       }
 
@@ -474,6 +635,49 @@ Item {
           // Clicking the ground clears the sprite selection -- and does nothing else. The block
           // under the cursor is NOT selected any more; see the note above.
           canvasRoot.selectedNpc = -1;
+        }
+      }
+
+      // ── Dropping a character in from the Characters bar ────────────────────────────────────
+      //
+      // The drop point becomes a TILE, and a new sprite lands on it with the game's own sane
+      // defaults. If the map is full we say so in the status bar rather than swallowing the drop
+      // and leaving the user wondering.
+      DropArea {
+        anchors.fill: parent
+        keys: ["pse/catalog-sprite"]
+
+        onDropped: (drop) => {
+          const picture = drop.source && drop.source.spritePicture !== undefined
+                            ? drop.source.spritePicture : 0;
+
+          if (picture <= 0) {
+            drop.accept();
+            return;
+          }
+
+          if (brg.map.npcRoomLeft() <= 0) {
+            canvasRoot.status = qsTr("This map is full — 15 people and objects is the most the Game Boy can hold.");
+            drop.accept();
+            return;
+          }
+
+          // Buffer pixels -> map tiles. The 3-block border ring comes off first, because a map
+          // coordinate is measured from the map, not from the trees around it.
+          const bx = drop.x / canvasRoot.zoom;
+          const by = drop.y / canvasRoot.zoom;
+
+          const tx = Math.floor((bx - canvasRoot.mapBorderPx) / 16);
+          const ty = Math.floor((by - canvasRoot.mapBorderPx) / 16);
+
+          const slot = brg.map.addNpc(picture, tx, ty);
+
+          if (slot > 0) {
+            canvasRoot.selectedNpc = slot;
+            canvasRoot.status = qsTr("Placed in slot %1.").arg(slot);
+          }
+
+          drop.accept();
         }
       }
     }

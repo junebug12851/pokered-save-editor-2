@@ -139,37 +139,68 @@ Page {
       Layout.fillHeight: true
       spacing: 0
 
-      // ── LEFT: the layers ─────────────────────────────────────────────────────────────────────
+      // ── FAR LEFT: the CAST ───────────────────────────────────────────────────────────────────
+      //
+      // The Characters bar -- the people and objects you can put ON the map. A permanent rail, not
+      // a dock panel: you reach for it constantly while placing a cast, and something you reach for
+      // constantly should not need opening first.
+      //
+      // ⚠️ Not to be confused with the SPRITE SET panel on the right, which is a completely
+      // different thing: the eleven pictures the Game Boy actually has in memory for this map.
+      CharactersBar {
+        id: charactersBar
+
+        canvas: canvas
+
+        Layout.fillHeight: true
+        Layout.preferredWidth: implicitWidth
+      }
+
+      // ── LEFT: the layers, and the DETAILS ────────────────────────────────────────────────────
       //
       // The map's legend and its navigation, on the left where your other hand is (Twilight,
       // 2026-07-13). The panels that EDIT things are on the right; the panel that decides what you
       // are LOOKING at is here.
+      //
+      // The DETAILS panel is here too, because it edits whatever you have SELECTED -- and with
+      // nothing selected it shows the map's own details, so it is never blank.
       MapDock {
         id: leftDock
+        objectName: "mapLeftDock"
 
         side: "left"
         open: "layers"
 
         panels: [
           { id: "layers", glyph: "◈", title: qsTr("Layers"),
-            tip: qsTr("Layers — everything drawn over the map, in groups") }
+            tip: qsTr("Layers — everything drawn over the map, in groups") },
+          { id: "details", glyph: "✎", title: qsTr("Details"),
+            tip: qsTr("Details — edit whatever is selected. Nothing selected? The map itself.") }
         ]
-        sources: ({ "layers": "LayersPanel.qml" })
+        sources: ({ "layers": "LayersPanel.qml",
+                    "details": "DetailsPanel.qml" })
+
+        panelContext: canvas
 
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth
 
-        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth - rightDock.inlineWidth
+        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth
+                      - charactersBar.implicitWidth - rightDock.inlineWidth
       }
 
       MapCanvas {
         id: canvas
+        objectName: "mapCanvas"   // the DEBUG harness drives selection through this
 
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.minimumWidth: mapScreen.mapMinWidth
 
         tool: identityBar.tool
+
+        // The ✎ button on a sprite opens the Details panel ON it -- no hunting for the panel.
+        onEditRequested: (slot) => { leftDock.open = "details"; }
       }
 
       // ── RIGHT: the things you edit ───────────────────────────────────────────────────────────
@@ -199,7 +230,8 @@ Page {
 
         // How much width the canvas could give up before it hits its floor. Below the panel's
         // minimum the dock floats instead -- the map never gets squeezed to nothing.
-        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth - leftDock.inlineWidth
+        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth
+                      - charactersBar.implicitWidth - leftDock.inlineWidth
       }
     }
 

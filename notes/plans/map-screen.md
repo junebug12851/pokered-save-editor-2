@@ -543,12 +543,18 @@ every frame of it.
 
 ---
 
-### Phase 4 — SPRITES: the canvas becomes editable
+### Phase 4 — SPRITES: the canvas becomes editable ✅ **DONE (2026-07-13, `0.27.0-alpha`)**
 
 > Rewritten **2026-07-13** after the sprite research pass (Twilight). The research is in
 > [`../reference/sprites.md`](../reference/sprites.md) — read Parts 3, 5 and 6 before touching any of this.
 > Four sub-phases, each finished — designed, built, screenshot-reviewed, tested, documented — before the
 > next begins.
+>
+> **All four are in.** `tst_map_sprites` (10 cases) pins them; its keystone byte-diffs the whole save
+> across a drag and demands exactly `mapX` + `mapY` moved. Full `ctest` 83/83.
+>
+> ⏳ **Owed: Twilight's live pass** — the drag, the drop, the delete and the panel are all things a still
+> PNG cannot review.
 
 #### What changed in the design, and why
 

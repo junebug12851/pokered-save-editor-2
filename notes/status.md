@@ -14,23 +14,35 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
-### 🧍 SPRITES — phase 4a SHIPPED, 4b half-done (2026-07-13)
+### 🧍 SPRITES — phase 4 is COMPLETE (2026-07-13, `0.27.0-alpha`)
 
 | | | |
 |---|---|---|
-| **4a** | The data model, made true | ✅ **done** (`0.25.1-alpha`) — the four bugs fixed + negative-controlled, the five unread fields modelled, `sprites.json` grouped |
-| **4b** | NPCs on the canvas | 🔶 **half** — all 72 sprites **imported and drawn**, a *People & objects* layer, sprites **selectable**, the ground **no longer selectable** (`0.26.0-alpha`). ⏳ **Still owed: drag-to-move, the ✕ delete + ✎ edit buttons.** |
-| **4c** | The Characters bar | ⏳ not started (unblocked now — the artwork exists) |
-| **4d** | The Details panel | ⏳ not started |
+| **4a** | The data model, made true | ✅ the four bugs fixed + **negative-controlled**, the five unread fields modelled, `sprites.json` grouped |
+| **4b** | NPCs on the canvas | ✅ all 72 sprites **imported and drawn**; *People & objects* layer; **select, drag-to-move, ✕ delete, ✎ edit**; the ground is **no longer selectable** |
+| **4c** | The Characters bar | ✅ 72 characters on 5 shelves + filter; **drag in to place, drag out to delete**; collapses to a strip |
+| **4d** | The Details panel | ✅ edits what's selected; **the map's own details when nothing is**; every sprite byte named, explained, full-range, hack values flagged not refused |
 
 **The artwork blocker is gone.** The repo carried exactly *one* sprite sheet (`red.png`); every town was
-empty. `scripts/import_sprites.py` now pulls **all 72** out of `pret/pokered` into one atlas
+empty. `scripts/import_sprites.py` pulls **all 72** out of `pret/pokered` into one atlas
 (`assets/sprites/overworld.png`) + a generated `spriteart.h`. It is self-validating, and it **found a
 third art shape by itself**: `16x48` — the **twenty "still" people** (nurses, guards, Mom, the Gameboy
 Kid) who have **no walking art at all**, because the game never drew them a step.
 
 ⚠️ **A sprite whose picture this map has NOT loaded is outlined in amber.** That is the one the console
 draws as garbage. Shown, never silently corrected.
+
+⚠️ **The "you changed the cast" warning tracks the EDIT, not a diff against the ROM** — and the first
+version got that wrong. **A real save's cast already differs from the cartridge's**, because walking
+NPCs wander: Pallet's Girl is at (3, 8) in the ROM and (3, 6) in `BaseSAV`, having taken a couple of
+steps. Diffing would have cried wolf on every save ever opened. Pinned by
+`tst_map_sprites::npcsEdited_isQuietUntilYouActuallyChangeSomething`.
+
+New test: **`tst_map_sprites`** (10 cases). Its keystone is `moveNpc_writesExactlyTwoBytes` — drag a
+person across town and byte-diff the whole 32 KB save: **exactly `mapX` and `mapY` moved, nothing else.**
+
+⏳ **Owed: Twilight's live pass** on the drag, the drop, the delete and the panel — a still PNG can
+review none of those.
 
 ### 🧍 SPRITES — the research: the model was WRONG in four places (2026-07-13)
 
