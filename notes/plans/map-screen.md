@@ -543,43 +543,149 @@ every frame of it.
 
 ---
 
-### Phase 4 — Objects on the canvas
+### Phase 4 — SPRITES: the canvas becomes editable
 
-- **4a — `MapObjectsModel`.** One list over warps + signs + NPCs + connections + boulder. Hit-testing
-  (`objectAtTile`, active-layer-first, then z-order), caps, add, delete, and **`moveObject` that writes
-  exactly two bytes** — pinned by a whole-save byte-diff test.
-- **4b — The chips.** Object badges on the map: layer-coloured, glyphed, the NPC drawn as its **actual
-  sprite**, shrinking to a dot at 1× so they never bury the tile they mark.
-- **4c — Selection.** Click, shift-click, marquee, alt-click to cycle a stack. A selection you can lose
-  under a layer is not a selection — it draws above everything.
-- **4d — Drag.** Tile-snapped, live ghost, live X/Y/Δ in the context bar, commit on release. Locked layers
-  refuse the grab. `Esc` cancels a drag with **nothing written**.
-- **4e — Add / delete.** The Place tool and the panel "+" rows; `Del`; the caps stated before you hit them.
+> Rewritten **2026-07-13** after the sprite research pass (Twilight). The research is in
+> [`../reference/sprites.md`](../reference/sprites.md) — read Parts 3, 5 and 6 before touching any of this.
+> Four sub-phases, each finished — designed, built, screenshot-reviewed, tested, documented — before the
+> next begins.
 
-**Exit:** a warp, a sign, an NPC and the player can each be picked up and put somewhere else, and the save
-changed by exactly the bytes that describes.
+#### What changed in the design, and why
+
+Three decisions supersede what phases 4–5 used to say:
+
+1. **Background squares are no longer selectable.** Clicking a block/tile on the canvas is **removed**.
+   There is no benefit to it — blocks and tiles are better edited in their panels, and making the ground
+   clickable fights the thing that *should* be clickable. **Sprites are, for now, the only selectable
+   objects on the map.** (Warps, signs and connections join them later, on the same machinery.)
+2. **The "Sprite panel" is a DETAILS panel**, and it lives **on the left**. It edits whatever is
+   selected; with **nothing selected it shows the map's own details** (the Area block). One panel is the
+   single home for "edit what this thing is", and it is never blank.
+3. **The Characters bar** — a separate, permanent left-hand rail of *available* sprite pictures — is where
+   sprites are **dragged onto the map from**, and **dragged back out to** in order to delete them. It is
+   **not** the sprite-set panel (which stays what it is: the map's 11 loaded VRAM slots).
+
+**And the thing the screen must say out loud.** An edited sprite is genuinely there when the save is
+loaded — the console proved it — but the game **rebuilds the map's original cast from ROM the moment the
+player leaves the map and walks back in**. That is the cartridge's behaviour, not our gap, and it is a
+textbook case of the *derived-byte doctrine*: **show it plainly, never hide it, never silently "fix" it.**
+A line in the status bar, and a note in the Details panel when a sprite has been added or moved.
 
 ---
 
-### Phase 5 — The Inspector
+#### Phase 4a — The data model, made TRUE  *(no new UI; nothing else may be built on a lie)*
 
-The single largest content phase: **~120 fields**, each with a home, a control appropriate to its type, and
-a sentence explaining what it does.
+The sprite model is a straight port of v1 and it carries **four real bugs** that write wrong bytes into
+saves. Every one is confirmed against the disassembly, three of them against the cartridge
+([`../reference/sprites.md`](../reference/sprites.md) → Part 5).
 
-- **5a — The shell + the field kit.** `FieldRow`, `NumField` (byte/word, dec+hex, full range),
-  `HexField`, `FlagRow`, `TileField` (+eyedropper), `MapField` (all 248, glitch ids named), `FieldGroup`
-  (a titled, collapsible group — the trainer-card `PlaytimeGroup` language). Build the kit **properly
-  once**; every panel after this is assembled from it.
-- **5b — Map properties** (nothing selected) — identity, size, the world's edge, the ROM pointers, the
-  engine scratch, the odds and ends, the palette.
-- **5c — The view-pointer truth-teller.** Live mismatch detection + one-click **Sync** (§9.2). This is the
-  phase's keystone: it is the pattern for every derived byte in the app.
-- **5d — Warp / Sign** properties, incl. the destination resolver ("→ Viridian City, warp 2").
-- **5e — NPC** properties — all 20 fields, grouped Who / Where / Facing & movement / What it is /
-  Animation scratch, with the sprite drawn and every enum named.
-- **5f — Connection** properties — the eight fields against **what the game's macro computes**, with
+- **Fix `SpriteMobility`** — it is inverted. `STAY = $FF`, `WALK = $FE`.
+- **Fix `SpriteData::load(MapDBEntrySprite*)`** — it maps `"Stay"` to `$FE`, i.e. it writes **WALK for a
+  STAY sprite**.
+- **Fix `SpriteGrass`** — it is inverted. **`$80` = in grass.** `reset()` currently flags every blank
+  sprite as standing in grass.
+- **Fix `face` / `range`** — they are **the same byte** (movement byte 2, `wMapSpriteData`). `face` is
+  being routed into `faceDir`, the *animation* facing byte, which is a different field in a different
+  table. One byte, one home; `faceDir` becomes what it actually is.
+- **Complete `SpriteMovement`** — add `ANY_DIR ($00)` and `NONE ($FF)`; delete the "I have no idea"
+  comments and replace them with what the ROM says.
+- **Model the missing fields** — StateData1 `a`/`b`/`c` (Y-adjusted, X-adjusted, collision data),
+  StateData2 `9` (original facing) and `d` (the duplicate picture id).
+- **Model `wToggleableObjectFlags`** (`0x28A0`, 32 bytes, *bit set = hidden*) — the flags that actually
+  decide whether a missable NPC appears. We currently model only the per-map **list** (`0x287A`), which
+  the game rebuilds from ROM on every map load and which therefore does nothing.
+- **Add a `group` field to `sprites.json`** — People / Trainers / Pokémon / Objects, curated from the
+  ROM's own names, **approved by Twilight before it is written**. The Characters bar needs it.
+
+Pinned by a new `tst_sprite_data` expansion: every fix gets a **negative control** (put the bug back, the
+test fails by name with the exact byte), and a whole-save **byte-diff** proves that loading and re-saving
+an untouched save changes **nothing**.
+
+**Exit:** the sprite bytes we write are the bytes the cartridge means, and a test says so.
+
+---
+
+#### Phase 4b — NPCs on the canvas, and they are SELECTABLE
+
+- **Draw them.** The other 15 slots, with everything the player sprite already knows: the **4-pixel lift**,
+  **no right-facing art** (it's left, mirrored), the `$FF` = off-screen rule, and the VRAM slot resolved
+  through the map's **sprite set**. A sprite whose picture isn't in this map's set is drawn — and **flagged**,
+  because that is exactly the "glitchy outdoor sprite" the game will show.
+- **Remove background-square selection.** Block/tile clicking on the canvas goes. The Blocks and Tileset
+  panels keep their own pickers; the canvas stops competing with them.
+- **`MapObjectsModel`.** Hit-testing (`objectAtTile`), selection state, and a **`moveSprite` that writes
+  exactly two bytes** — pinned by a whole-save byte-diff.
+- **Selection.** Click to select; the selected sprite draws a ring **above every layer** (a selection you
+  can lose under a layer is not a selection). `Esc` clears.
+- **Two buttons on the selected sprite:** a **✕ delete** and a **✎ edit** — and ✎ **opens the Details
+  panel on that sprite**, no hunting for it.
+- **Drag to move.** Tile-snapped, live ghost, live X/Y/Δ in the context bar, commit on release. `Esc`
+  cancels a drag with **nothing written**.
+- **Delete slides the rest up.** The 16 slots are an ordered array; removing one compacts the list, exactly
+  as the game packs them. When a compaction moves a **toggleable-object link**, the status bar says so.
+
+**Exit:** every NPC on the map is drawn where the console draws it, can be picked up, moved, and deleted —
+and the save changes by exactly the bytes that describes.
+
+---
+
+#### Phase 4c — The Characters bar
+
+A permanent **left-hand rail**, separate from the dock, listing the sprite pictures you can place.
+
+- **1–2 columns**, each cell the sprite's **actual artwork** with its name.
+- **Grouped, sorted, organised** — People / Trainers / Pokémon / Objects (the new `group` field), each
+  group a collapsible header, with a filter box. 72 entries is a long scroll otherwise.
+- **Drag a character onto the map → a new sprite.** It lands tile-snapped, with the game's own sane
+  defaults (`movementStatus = Ready`, `imageIndex = $FF`, `yDisp = xDisp = 8`, `STAY`, not in grass) — and
+  **the caps are stated before you hit them**: 15 NPCs max, and the sprite-set warning if its picture isn't
+  loaded on this map.
+- **Drag a sprite off the map onto the bar → delete it.** The bar highlights as a drop target; the same
+  compaction rule as ✕.
+
+**Exit:** a person can build a map's cast with the mouse, and never once type a number.
+
+---
+
+#### Phase 4d — The Details panel
+
+The left-hand panel that edits **whatever is selected**, built on the field kit — and the pattern every
+future inspector copies.
+
+- **4d-i — The field kit, built properly once.** `FieldRow`, `NumField` (byte/word, dec + hex, **full
+  range**), `HexField`, `FlagRow`, `EnumField` (every value **named**, hack values included and labelled),
+  `FieldGroup` (titled, collapsible — the trainer-card `PlaytimeGroup` language).
+- **4d-ii — Nothing selected → the MAP's details.** The Area block: identity, size, the world's edge, the
+  tileset, the palette/contrast, the music, the player. Plus **the view-pointer truth-teller** — live
+  mismatch detection and a one-click **Sync**. This is the keystone: it is the pattern for every derived
+  byte in the app.
+- **4d-iii — A sprite selected → the sprite's details.** Every field, grouped and explained:
+  **Who** (picture, with the artwork drawn) · **Where** (map X/Y, the +4 bias shown honestly; screen
+  pixels) · **Movement** (movement byte 1 `WALK`/`STAY`; movement byte 2 — `ANY_DIR` / `UP_DOWN` /
+  `LEFT_RIGHT` / face `DOWN`/`UP`/`LEFT`/`RIGHT` / `NONE` / `BOULDER` — **one byte, one control**) ·
+  **Facing** (the animation facing, `$0`/`$4`/`$8`/`$C`) · **In grass** (`$80`) · **What it is** (text id,
+  and the item / trainer-class + set / Pokémon + level from `wMapSpriteExtraData`) · **Visibility** (the
+  toggleable-object flag) · **Animation scratch** (image index, base offset, the counters, the step
+  vectors, Y/X-adjusted, collision data — every one shown, every one editable).
+- **Every value editable across its full byte range**, hack and glitch values included, flagged in words
+  when it's a value no real game would hold, and **never refused or rewritten behind the user's back**.
+- **The honest note:** when the map's cast differs from the ROM's, the panel says the game will restore the
+  original on the next map re-entry.
+
+**Exit:** there is no byte of a sprite that a person can see in a hex editor and cannot see here, in words,
+with its range, and change.
+
+---
+
+### Phase 5 — The rest of the Inspector
+
+The Details panel from 4d, extended to the objects that aren't sprites yet.
+
+- **5a — Warp / Sign** properties, incl. the destination resolver ("→ Viridian City, warp 2") — and making
+  them selectable on the canvas, on 4b's machinery.
+- **5b — Connection** properties — the eight fields against **what the game's macro computes**, with
   Recompute. (Compute from the macro, never from the broken `stripSize()`.)
-- **5g — Player** properties — position, facing, movement, standing-on, what he may do here, battle state,
+- **5c — Player** properties — position, facing, movement, standing-on, what he may do here, battle state,
   scratch.
 
 **Exit:** there is no byte in the Area block that a person can see in a hex editor and cannot see here,

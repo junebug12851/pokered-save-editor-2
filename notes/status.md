@@ -14,6 +14,37 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🧍 SPRITES — researched, and the model is WRONG in four places (2026-07-13)
+
+The next phase of the map screen is **sprites**, and the research pass found that our sprite model — a
+straight port of v1's — has been **writing the opposite of what it says** into saves. Nothing is built yet;
+**phase 4a exists to fix this before anything is built on it.**
+
+| | v2 has | the truth |
+|---|---|---|
+| `SpriteMobility` | `Moving = 0xFF`, `NotMoving = 0xFE` | **inverted** — `STAY = $FF`, `WALK = $FE` (console: Oak reads `$FF`) |
+| `load(MapDBEntrySprite*)` | `"Stay"` → `0xFE` | writes **WALK for a STAY sprite** — every `setTo()`/randomize |
+| `SpriteGrass` | `InGrass = 0x00` | **inverted** — `$80` = in grass. `reset()` flags every blank sprite as in grass |
+| `face` / `range` | two fields | **one byte** (movement byte 2). `face` is being written into `faceDir` — a different field in a different table |
+
+Not modelled at all: StateData1 `a`/`b`/`c`, StateData2 `9`/`d`, and **`wToggleableObjectFlags`**
+(`0x28A0`, 32 bytes) — the flags that actually decide whether a missable NPC appears. (We model only the
+per-map *list* at `0x287A`, which the game rebuilds from ROM every map load — it does nothing.)
+
+⚠️ **And the cartridge overruled a careful reading of the source.** `LoadMapHeader` appears to zero and
+rebuild all sprite state from ROM on every map load — so I concluded sprite edits were being thrown away.
+**They are not.** `scripts/emu/probe_sprite_persistence.py` boots the real ROM: a re-pictured, moved sprite
+**and a fourth NPC invented in a three-NPC town** all survive Continue, because `MainMenu` sets
+`BIT_CUR_MAP_LOADED_1` and the map header is never re-read on that path. The true statement — **which the
+screen must say out loud** — is that an edited sprite is really there, and **the game restores the map's
+original cast when the player leaves and re-enters**.
+
+Everything: [`reference/sprites.md`](reference/sprites.md) → Parts 3, 5, 6.
+The design: [`plans/map-screen.md`](plans/map-screen.md) → **Phase 4**, rewritten into **4a** (make the
+model true) · **4b** (NPCs drawn, selectable, draggable; background squares **stop** being selectable) ·
+**4c** (the Characters bar — drag in to add, drag out to delete) · **4d** (the **Details panel**, left side,
+showing the map's own details when nothing is selected).
+
 ### 🗺️ The Map screen rebuild — phases 0–3 are IN (2026-07-12)
 
 | Phase | | Status |
