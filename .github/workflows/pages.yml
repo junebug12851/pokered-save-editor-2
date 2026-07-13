@@ -67,7 +67,7 @@ jobs:
           host: linux
           target: desktop
           arch: linux_gcc_64
-          modules: qtcharts
+          modules: qtcharts qtmultimedia
           cache: true
 
       - name: Configure (Release, tests ON for the screenshooter target)

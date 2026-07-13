@@ -22,7 +22,7 @@ jobs:
           host: linux
           target: desktop
           arch: linux_gcc_64
-          modules: qtcharts         # qtdeclarative/qtsvg are base components (see tests.yml)
+          modules: qtcharts qtmultimedia         # qtdeclarative/qtsvg are base components (see tests.yml)
           cache: true
 
       - name: Install clang 17 toolchain + cppcheck
