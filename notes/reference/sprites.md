@@ -148,9 +148,13 @@ The rest of the sprite story lives in `sMainData` (base `0x25A3` ↔ `wMainDataS
 | `0x278D` | `$D4E1` | `wNumSprites` — NPC count, **excluding** the player |
 | `0x2790` | `$D4E4` | `wMapSpriteData` — 16 × (**movement byte 2**, **text id**) |
 | `0x27B0` | `$D504` | `wMapSpriteExtraData` — 16 × (**trainer class / item id**, **trainer set id**) |
+| **`0x2852`** | `$D5A6` | **`wToggleableObjectFlags`** — `flag_array $100` (**32 bytes**); ***bit set = toggled OFF*** (hidden) |
 | `0x287A` | `$D5CE` | `wToggleableObjectList` — 16 × (sprite slot, global toggle index) + `$FF` terminator |
-| `0x28A0` | `$D5F4` | **`wToggleableObjectFlags`** — `flag_array $100` (**32 bytes**); *bit set = toggled OFF* |
 | `0x29DA` | `$D72E` | `wStatusFlags4` — bit 5 is `BIT_BATTLE_OVER_OR_BLACKOUT` (matters, see Part 6) |
+
+The flags come **before** the list in WRAM (`flags` · `ds 7` · `wSavedSpriteImageIndex` · `list`), which is
+why they land at `0x2852` and not after `0x287A`. **We already model them** — `WorldMissables`
+(`expanded/world/worldmissables.*`) reads exactly that bitfield.
 
 Plus the player's own two:
 
@@ -189,8 +193,16 @@ wrong. See Part 5.
 
 `wToggleableObjectList` (`0x287A`) is **rebuilt from ROM on every map load** by
 `MarkTownVisitedAndLoadToggleableObjects` — writing it from an editor accomplishes nothing. The part that
-persists and actually decides whether an NPC is on the map is **`wToggleableObjectFlags`** (`0x28A0`, 32
-bytes, *bit set = hidden*). **We do not model it at all** — see Part 5.
+persists and actually decides whether an NPC is on the map is **`wToggleableObjectFlags`** (`0x2852`, 32
+bytes, *bit set = **hidden***) — which `WorldMissables` already models.
+
+> ⚠️ **A correction, recorded honestly.** The first pass of this research claimed we didn't model those
+> flags at all, and put them at `0x28A0`. **Both were wrong.** `WorldMissables` has read them from `0x2852`
+> since 2020, and `0x2852` is the right address (the flags sit *before* the list in WRAM). The real gap is
+> smaller and different: **nothing wires a sprite to its flag** — `SpriteData::missableIndex` points into
+> `WorldMissables::missables[]` and no UI has ever followed the arrow — and **the polarity is nowhere
+> written down**, so a reader of `missablesAt()` cannot tell whether `true` means shown or hidden. It means
+> **hidden**. `wram.asm`: *"bit array of toggleable objects; bit set = toggled off"*.
 
 ## Part 4 — how we render it
 
@@ -218,7 +230,10 @@ And four things simply **not modelled**:
 5. StateData1 `a` **YADJUSTED**, `b` **XADJUSTED**, `c` **COLLISIONDATA**.
 6. StateData2 `9` **ORIGFACINGDIRECTION** (backed up by `DisplayTextIDInit`, restored by `CloseTextDisplay`)
    and `d` — a **duplicate `PICTUREID`**.
-7. **`wToggleableObjectFlags`** (`0x28A0`) — the flags that actually hide/show a missable NPC.
+7. **The link from a sprite to its visibility flag.** The flags themselves *are* modelled (`WorldMissables`,
+   `0x2852`) — but `SpriteData::missableIndex` points into them and **nothing has ever followed that
+   arrow**, and the polarity (*set = hidden*) was written down nowhere. (An earlier draft of this document
+   claimed the flags weren't modelled at all, at the wrong address. It was wrong on both counts.)
 8. `SpriteMovement` is missing `ANY_DIR ($00)` and `NONE ($FF)`, and its comments say *"I have no idea"*.
 
 ## Part 6 — the console settled the big one: **sprite edits DO survive**

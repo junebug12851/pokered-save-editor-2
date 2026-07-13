@@ -39,6 +39,7 @@
 #include <pse-db/entries/mapdbentry.h>
 #include <pse-db/entries/mapdbentrysprite.h>
 #include <pse-savefile/savefile.h>
+#include <pse-savefile/savefiletoolset.h>
 #include <pse-savefile/expanded/fragments/spritedata.h>
 
 class TestSpriteData : public QObject
@@ -57,6 +58,14 @@ private slots:
 
   void saveLoad_roundTripAllFields();
   void missables_saveThenCheck();
+
+  // The 2026-07-13 corrections -- each one negative-controlled (put the bug back and the
+  // case fails by name, with the byte).  See notes/reference/sprites.md -> Part 5.
+  void movementByte1_stayIsFF_walkIsFE();
+  void grassPriority_80MeansInGrass();
+  void movement2_faceAndRangeAreTheSameByte();
+  void movement2_neverLandsInTheFacingField();
+  void spriteStateTables_roundTripEveryFieldTheGameKeeps();
 
   // DB-population invariants (need deepLink)
   void mapSprites_allLinksResolve();
@@ -82,8 +91,10 @@ void TestSpriteData::reset_blankDefaults()
   QCOMPARE(s.xDisp, 0x8);
   QCOMPARE(s.mapY, 4);
   QCOMPARE(s.mapX, 4);
-  QCOMPARE(s.movementByte, (int)SpriteMobility::NotMoving);
-  QCOMPARE(s.grassPriority, (int)SpriteGrass::NotInGrass);
+  // A sprite you have just placed STANDS where you put it (STAY = 0xFF) and is NOT flagged
+  // as standing in grass (0x00). Both of these were the opposite until 2026-07-13.
+  QCOMPARE(s.movementByte, 0xFF);
+  QCOMPARE(s.grassPriority, 0x00);
   QCOMPARE(s.walkAnimationCounter, 0x10);
 
   // A non-blank sprite leaves all optional fields unset -> getters return -1.
@@ -147,6 +158,7 @@ void TestSpriteData::enumRandoms_inRange()
     var8 mv = SpriteMovement::random();
     QVERIFY(mv <= 10);
     QVERIFY(mv != SpriteMovement::UpDown && mv != SpriteMovement::LeftRight);
+    QVERIFY(mv != SpriteMovement::StrengthMovement);   // never randomize a sprite into a boulder
 
     var8 grass = SpriteGrass::random();
     QVERIFY(grass == 0x00 || grass == 0x80);
@@ -227,6 +239,156 @@ void TestSpriteData::missables_saveThenCheck()
   QCOMPARE(probe2.getMissableIndex(), 99);   // unchanged: no match for slot 2
 
   delete player; delete npc;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────────────
+// The 2026-07-13 corrections. Each of these fails, by name and with the byte, if the bug is
+// put back -- which was checked, one at a time, before they were committed.
+// ─────────────────────────────────────────────────────────────────────────────────────────
+
+/// MOVEMENT BYTE 1: `STAY = $FF`, `WALK = $FE`. The enum had these INVERTED, and
+/// load(MapDBEntrySprite*) therefore wrote WALK for every STAY sprite in the game.
+///
+/// Verified on the real cartridge (scripts/emu/probe_sprite_persistence.py): booting Pallet
+/// Town, the console's own WRAM holds movement byte 1 = $FF for Oak (STAY) and $FE for the
+/// Girl and the Fisher (WALK).
+void TestSpriteData::movementByte1_stayIsFF_walkIsFE()
+{
+  QCOMPARE((int)SpriteMobility::Stay, 0xFF);
+  QCOMPARE((int)SpriteMobility::Walk, 0xFE);
+
+  // Now drive it through the real DB path, on the real map the console was booted with.
+  MapDBEntry* pallet = nullptr;
+  for(int m = 0; m < MapsDB::inst()->getStoreSize(); m++) {
+    MapDBEntry* map = MapsDB::inst()->getStoreAt(m);
+    if(map != nullptr && map->getName() == "Pallet Town") { pallet = map; break; }
+  }
+  QVERIFY2(pallet != nullptr, "Pallet Town is missing from maps.json");
+
+  auto mapSprites = pallet->getSprites();
+  QVERIFY(mapSprites.size() >= 3);
+
+  for(MapDBEntrySprite* entry : mapSprites) {
+    SpriteData s(entry);
+    const int expected = (entry->getMove() == "Stay") ? 0xFF : 0xFE;
+    QCOMPARE(s.movementByte, expected);
+  }
+}
+
+/// GRASS PRIORITY: `$80` = IN grass. The enum had it inverted, so reset() flagged every
+/// blank sprite as standing in tall grass.
+void TestSpriteData::grassPriority_80MeansInGrass()
+{
+  QCOMPARE((int)SpriteGrass::InGrass, 0x80);
+  QCOMPARE((int)SpriteGrass::NotInGrass, 0x00);
+
+  SpriteData s;                       // a fresh sprite
+  QCOMPARE(s.grassPriority, 0x00);    // is standing on open ground
+}
+
+/// MOVEMENT BYTE 2: maps.json's `face` (a string, on STAY sprites) and `range` (a number, on
+/// WALK sprites) are TWO CURATIONS OF ONE BYTE. Whichever the data carries, it must land in
+/// rangeDirByte -- the byte the game reads out of wMapSpriteData.
+///
+/// The cartridge agrees: Pallet's Oak (`"face": "None"`) reads movement byte 2 = $FF; the
+/// Girl (`"range": 0`) reads $00.
+void TestSpriteData::movement2_faceAndRangeAreTheSameByte()
+{
+  int checked = 0;
+
+  for(int m = 0; m < MapsDB::inst()->getStoreSize(); m++) {
+    MapDBEntry* map = MapsDB::inst()->getStoreAt(m);
+    if(map == nullptr) continue;
+
+    for(MapDBEntrySprite* entry : map->getSprites()) {
+      SpriteData s(entry);
+
+      int expected;
+      if(entry->getRange() >= 0)                              expected = entry->getRange();
+      else if(entry->getFace() == "None")                     expected = 0xFF;
+      else if(entry->getFace() == "Down")                     expected = 0xD0;
+      else if(entry->getFace() == "Up")                       expected = 0xD1;
+      else if(entry->getFace() == "Left")                     expected = 0xD2;
+      else if(entry->getFace() == "Right")                    expected = 0xD3;
+      else if(entry->getFace() == "Boulder Movement Byte 2")  expected = 0x10;
+      else                                                    expected = 0x00;   // ANY_DIR
+
+      QCOMPARE(s.getRangeDirByte(), expected);
+      checked++;
+    }
+  }
+
+  QVERIFY2(checked > 900, "expected to walk every map sprite in the game");
+}
+
+/// ...and movement byte 2 must NEVER end up in faceDir. That field is `spritestatedata1`
+/// field 9 -- the ANIMATION facing -- and its only legal values are $0/$4/$8/$C. The old code
+/// wrote $FF (NONE) and $D0-$D3 straight into it.
+void TestSpriteData::movement2_neverLandsInTheFacingField()
+{
+  for(int m = 0; m < MapsDB::inst()->getStoreSize(); m++) {
+    MapDBEntry* map = MapsDB::inst()->getStoreAt(m);
+    if(map == nullptr) continue;
+
+    for(MapDBEntrySprite* entry : map->getSprites()) {
+      SpriteData s(entry);
+      QVERIFY2(s.faceDir == 0x0 || s.faceDir == 0x4 || s.faceDir == 0x8 || s.faceDir == 0xC,
+               qPrintable(QString("faceDir = 0x%1 on %2 -- that is a movement-byte-2 value, "
+                                  "not a facing")
+                            .arg(s.faceDir, 2, 16, QChar('0'))
+                            .arg(map->getName())));
+    }
+  }
+}
+
+/// Every field the game actually keeps in the two sprite-state tables must survive a
+/// save->load round trip -- including the five we never read until 2026-07-13 (Y-adjusted,
+/// X-adjusted, collision data, original facing, and the duplicate picture id).
+void TestSpriteData::spriteStateTables_roundTripEveryFieldTheGameKeeps()
+{
+  SaveFile sf;
+  const var8 index = 5;
+
+  SpriteData a(true);
+  a.pictureID = 0x2E;  a.movementStatus = 1;   a.imageIndex = 0xFF;
+  a.yStepVector = 0xFF; a.yPixels = 0x3C;      a.xStepVector = 0x01; a.xPixels = 0x40;
+  a.intraAnimationFrameCounter = 3;            a.animFrameCounter = 2;
+  a.faceDir = 0x0C;
+  a.yAdjusted = 0x11;  a.xAdjusted = 0x22;     a.collisionData = 0x33;   // fields a, b, c
+  a.walkAnimationCounter = 0x10;
+  a.yDisp = 0x08;      a.xDisp = 0x08;
+  a.mapY = 0x0D;       a.mapX = 0x0D;
+  a.movementByte = 0xFF;                        // STAY
+  a.grassPriority = 0x80;                       // in grass
+  a.movementDelay = 0x07;
+  a.origFacingDir = 0x04;                       // field 9
+  a.pictureIDCopy = 0x2E;                       // field d
+  a.imageBaseOffset = 0x0B;                     // field e
+
+  a.save(&sf, index);
+
+  SpriteData b(false, &sf, index);
+  QCOMPARE(b.yAdjusted, 0x11);
+  QCOMPARE(b.xAdjusted, 0x22);
+  QCOMPARE(b.collisionData, 0x33);
+  QCOMPARE(b.origFacingDir, 0x04);
+  QCOMPARE(b.pictureIDCopy, 0x2E);
+  QCOMPARE(b.imageBaseOffset, 0x0B);
+  QCOMPARE(b.movementDelay, 0x07);
+  QCOMPARE(b.movementByte, 0xFF);
+  QCOMPARE(b.grassPriority, 0x80);
+  QCOMPARE(b.faceDir, 0x0C);
+  QCOMPARE(b.mapX, 0x0D);
+  QCOMPARE(b.mapY, 0x0D);
+
+  // And the bytes the game does NOT use (StateData1 d/e/f, StateData2 1/a/b/c/f) must still
+  // be untouched -- a blank SaveFile is all zeroes, so writing any of them would show up.
+  auto ts = sf.toolset;
+  for(var16 off : { 0x2D2C + 0x10 * index + 0xD, 0x2D2C + 0x10 * index + 0xE,
+                    0x2D2C + 0x10 * index + 0xF, 0x2E2C + 0x10 * index + 0x1,
+                    0x2E2C + 0x10 * index + 0xA, 0x2E2C + 0x10 * index + 0xB,
+                    0x2E2C + 0x10 * index + 0xC, 0x2E2C + 0x10 * index + 0xF })
+    QCOMPARE((int)ts->getByte(off), 0);
 }
 
 void TestSpriteData::mapSprites_allLinksResolve()

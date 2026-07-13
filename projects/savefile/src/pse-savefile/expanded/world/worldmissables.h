@@ -29,12 +29,23 @@ constexpr var8 missableByteCount = 29; ///< 4 bits unused of 232
 /**
  * @brief Visibility flags for "missable" sprites (one-time NPCs/items on maps).
  *
- * Each SpriteData missable points at a bit here that decides whether it currently
- * renders -- e.g. an item ball that disappears once taken. Presented as a flat
- * @ref missables bool array (only the used bits; see the count note). QML
- * count/at/set access. Standard expanded-node convention (see SaveFileExpanded).
+ * This is the game's `wToggleableObjectFlags` (save `0x2852`), and its polarity is the thing
+ * to get right:
  *
- * @see World, SpriteData (its `missableIndex` points here).
+ * > `wram.asm`: *"bit array of toggleable objects; **bit set = toggled off**"*
+ *
+ * So **`true` means HIDDEN**, not shown. An item ball you have already picked up has its bit
+ * **set**. (This was documented nowhere until 2026-07-13, and "set/clear" reads either way.)
+ *
+ * Each SpriteData missable points at a bit here, via `SpriteData::missableIndex`, and that is
+ * the *only* thing that decides whether the sprite is on the map -- nothing in the sprite's
+ * own bytes does. The per-map list at `0x287A` merely maps a slot to an index here, and the
+ * game rebuilds that list from ROM on every map load.
+ *
+ * Presented as a flat @ref missables bool array (only the used bits; see the count note).
+ * QML count/at/set access. Standard expanded-node convention (see SaveFileExpanded).
+ *
+ * @see World, SpriteData (its `missableIndex` points here), notes/reference/sprites.md.
  */
 class SAVEFILE_AUTOPORT WorldMissables : public QObject
 {
@@ -48,8 +59,8 @@ public:
   void save(SaveFile* saveFile);           ///< Flatten the missable flags to the save.
 
   Q_INVOKABLE int missablesCount();              ///< Number of missable flags.
-  Q_INVOKABLE bool missablesAt(int ind);         ///< Is missable @p ind set (shown/hidden)?
-  Q_INVOKABLE void missablesSet(int ind, bool val); ///< Set/clear missable @p ind.
+  Q_INVOKABLE bool missablesAt(int ind);         ///< Is missable @p ind **HIDDEN**? (set = toggled off)
+  Q_INVOKABLE void missablesSet(int ind, bool val); ///< Hide (@p val true) or show missable @p ind.
 
 signals:
   void missablesChanged();

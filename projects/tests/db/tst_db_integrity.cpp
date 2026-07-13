@@ -29,6 +29,7 @@
 #include <pse-db/itemsdb.h>
 #include <pse-db/types.h>
 #include <pse-db/mapsdb.h>
+#include <pse-db/sprites.h>
 #include <pse-db/util/mapsearch.h>
 
 class TestDbIntegrity : public QObject
@@ -44,6 +45,7 @@ private slots:
   void itemsLoaded();
   void mapsSearchChainWorks();
   void allSubDbsLoadAndCount();
+  void everySpriteHasAKnownGroup();
 };
 
 void TestDbIntegrity::boots()
@@ -181,5 +183,28 @@ void TestDbIntegrity::allSubDbsLoadAndCount()
   QVERIFY(db->starters()->getStoreSize() > 0);
 }
 
+/// Every sprite carries one of the five known Characters-bar groups, and every group has
+/// somebody in it. The grouping is a curation (it groups the ARTWORK, not the role an
+/// object_event gives a sprite) -- so a typo in the JSON would otherwise sit there silently
+/// and quietly empty a shelf of the rail.
+void TestDbIntegrity::everySpriteHasAKnownGroup()
+{
+  const QStringList known = { "Story", "Trainers", "Townsfolk", "Pokemon", "Objects" };
+  QHash<QString, int> tally;
+
+  const int n = SpritesDB::inst()->getStoreSize();
+  QCOMPARE(n, 72);
+
+  for(int i = 0; i < n; i++) {
+    SpriteDBEntry* s = SpritesDB::inst()->getStoreAt(i);
+    QVERIFY(s != nullptr);
+    QVERIFY2(known.contains(s->group),
+             qPrintable(QString("sprite '%1' has unknown group '%2'").arg(s->name, s->group)));
+    tally[s->group]++;
+  }
+
+  for(const QString& g : known)
+    QVERIFY2(tally.value(g) > 0, qPrintable(QString("group '%1' is empty").arg(g)));
+}
 QTEST_GUILESS_MAIN(TestDbIntegrity)
 #include "tst_db_integrity.moc"

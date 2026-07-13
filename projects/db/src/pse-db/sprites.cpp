@@ -31,6 +31,12 @@ SpriteDBEntry::SpriteDBEntry(QJsonValue& data)
 {
   name = data["name"].toString();
   ind  = static_cast<var8>(data["ind"].toDouble());
+
+  // A sprite with no group is a townsperson -- so an entry added to the JSON without one
+  // still lands somewhere sensible in the Characters bar rather than vanishing.
+  group = data["group"].toString();
+  if(group.isEmpty())
+    group = "Townsfolk";
 }
 
 SpritesDB* SpritesDB::inst()

@@ -62,48 +62,84 @@ public:
   };
 };
 
-/// Sprite mobility byte values, QML-visible.
+/**
+ * @brief MOVEMENT BYTE 1 (`spritestatedata2` field 6) -- may this sprite move at all?
+ *
+ * The game's own two names (`constants/map_object_constants.asm`):
+ * @code
+ *   DEF WALK EQU $FE      ; random movements
+ *   DEF STAY EQU $FF      ; not moving
+ * @endcode
+ *
+ * @warning These values were **INVERTED** here until 2026-07-13 (`Moving = 0xFF`,
+ * `NotMoving = 0xFE`) -- so the editor wrote WALK for every STAY sprite. Verified on the
+ * cartridge: Pallet Town's Oak (`STAY`) reads `$FF`; the Girl and the Fisher (`WALK`) read
+ * `$FE`. See notes/reference/sprites.md -> Part 5.
+ */
 struct SAVEFILE_AUTOPORT SpriteMobility : public QObject
 {
   Q_OBJECT
   Q_ENUMS(SpriteMobility_)
 
 public:
-  Q_INVOKABLE static var8 random(); ///< A random mobility value.
+  Q_INVOKABLE static var8 random(); ///< A random mobility value (Walk or Stay).
 
   enum SpriteMobility_ : var8
   {
-    Moving = 0xFF,
-    NotMoving = 0xFE,
-    MovingWithoutCollision = 0x00
+    Walk = 0xFE, ///< `WALK` -- the sprite wanders.
+    Stay = 0xFF, ///< `STAY` -- the sprite stands still.
+
+    /// Anything else: the sprite moves *without collision detection*. Not a value any real
+    /// map holds -- but the byte accepts it, so we do too (shown, never refused).
+    NoCollision = 0x00
   };
 };
 
-/// Sprite movement-pattern byte values, QML-visible.
+/**
+ * @brief MOVEMENT BYTE 2 (`wMapSpriteData` byte 0) -- HOW it may move, or which way it stares.
+ *
+ * A different byte, in a different table, from @ref SpriteMobility. `maps.json` splits this
+ * one byte into two curated fields -- `range` (for `WALK` sprites: 0/1/2) and `face` (for
+ * `STAY` sprites: "None"/"Down"/"Up"/"Left"/"Right") -- but they are **the same byte**, and
+ * it is *not* the animation facing (that is @ref SpriteFacing, `spritestatedata1` field 9).
+ *
+ * From `constants/map_object_constants.asm`.
+ */
 struct SAVEFILE_AUTOPORT SpriteMovement : public QObject
 {
   Q_OBJECT
   Q_ENUMS(SpriteMovement_)
 
 public:
-  Q_INVOKABLE static var8 random(); ///< A random movement pattern.
+  Q_INVOKABLE static var8 random(); ///< A random movement pattern (an unrestricted one).
 
   enum SpriteMovement_ : var8 {
-    UpDown = 0x01,
-    LeftRight = 0x02,
-    Down = 0xD0,
-    Up = 0xD1,
-    Left = 0xD2,
-    Right = 0xD3,
+    AnyDir = 0x00,    ///< `ANY_DIR` -- wanders freely.
+    UpDown = 0x01,    ///< `UP_DOWN` -- confined to the vertical.
+    LeftRight = 0x02, ///< `LEFT_RIGHT` -- confined to the horizontal.
 
-    // Allow to be moved with strength
-    // Does this apply only to boulders or any sprite or does it enable it
-    // For special scripted sprites???
-    StrengthMovement = 0x10
+    /// `BOULDER_MOVEMENT_BYTE_2` -- the sprite is a boulder, pushable with Strength.
+    StrengthMovement = 0x10,
+
+    Down = 0xD0,  ///< `DOWN` -- always moves/faces down.
+    Up = 0xD1,    ///< `UP`
+    Left = 0xD2,  ///< `LEFT`
+    Right = 0xD3, ///< `RIGHT`
+
+    None = 0xFF   ///< `NONE` -- no movement at all (the usual partner of `STAY`).
   };
 };
 
-/// Sprite in-grass byte values, QML-visible.
+/**
+ * @brief The grass-priority byte (`spritestatedata2` field 7).
+ *
+ * `wram.asm`: *"set to $80 when in grass, else $0; may be used to draw grass above the
+ * sprite"* -- it ORs the OAM priority bit into the sprite's **lower half only**, so the tall
+ * grass draws over its legs.
+ *
+ * @warning These values were **INVERTED** here until 2026-07-13 (`InGrass = 0x00`), which
+ * meant `reset()` flagged every blank sprite as standing in grass.
+ */
 struct SAVEFILE_AUTOPORT SpriteGrass : public QObject
 {
   Q_OBJECT
@@ -114,8 +150,8 @@ public:
 
   enum SpriteGrass_ : var8
   {
-    InGrass = 0x00,
-    NotInGrass = 0x80
+    NotInGrass = 0x00, ///< Standing on open ground.
+    InGrass = 0x80     ///< Standing in tall grass -- draw the grass over its legs.
   };
 };
 
@@ -156,6 +192,11 @@ class SAVEFILE_AUTOPORT SpriteData : public QObject
   Q_PROPERTY(int walkAnimationCounter MEMBER walkAnimationCounter NOTIFY walkAnimationCounterChanged)
   Q_PROPERTY(int movementDelay MEMBER movementDelay NOTIFY movementDelayChanged)
   Q_PROPERTY(int imageBaseOffset MEMBER imageBaseOffset NOTIFY imageBaseOffsetChanged)
+  Q_PROPERTY(int yAdjusted MEMBER yAdjusted NOTIFY yAdjustedChanged)
+  Q_PROPERTY(int xAdjusted MEMBER xAdjusted NOTIFY xAdjustedChanged)
+  Q_PROPERTY(int collisionData MEMBER collisionData NOTIFY collisionDataChanged)
+  Q_PROPERTY(int origFacingDir MEMBER origFacingDir NOTIFY origFacingDirChanged)
+  Q_PROPERTY(int pictureIDCopy MEMBER pictureIDCopy NOTIFY pictureIDCopyChanged)
   Q_PROPERTY(int rangeDirByte READ getRangeDirByte WRITE setRangeDirByte RESET resetRangeDirByte NOTIFY rangeDirByteChanged)
   Q_PROPERTY(int textID READ getTextID WRITE setTextID RESET resetTextID NOTIFY textIDChanged)
   Q_PROPERTY(int trainerClassOrItemID READ getTrainerClassOrItemID WRITE setTrainerClassOrItemID RESET resetTrainerClassOrItemID NOTIFY trainerClassOrItemIDChanged)
@@ -254,6 +295,11 @@ signals:
   void walkAnimationCounterChanged();
   void movementDelayChanged();
   void imageBaseOffsetChanged();
+  void yAdjustedChanged();
+  void xAdjustedChanged();
+  void collisionDataChanged();
+  void origFacingDirChanged();
+  void pictureIDCopyChanged();
   void rangeDirByteChanged();
   void textIDChanged();
   void trainerClassOrItemIDChanged();
@@ -302,10 +348,13 @@ public:
   int mapY;
   int mapX;
 
-  /// (0xFF not moving, 0xFE random movements, others move without collision)
+  /// **MOVEMENT BYTE 1** (`spritestatedata2` field 6) -- may this sprite move?
+  /// `STAY = 0xFF` (still), `WALK = 0xFE` (wanders). Anything else moves without
+  /// collision detection. @see SpriteMobility.
   int movementByte;
 
   /// (0x80 in grass, 0x00 otherwise) - Prioritizing grass drawn around sprite
+  /// @see SpriteGrass.
   int grassPriority;
 
   /**
@@ -344,6 +393,25 @@ public:
   /// Used to help compute imageIndex based on vram
   int imageBaseOffset;
 
+  /// `spritestatedata1` field `a` -- the sprite's Y, snapped to the tile grid, as the
+  /// game's collision code wants it. Engine scratch; the game recomputes it.
+  int yAdjusted;
+
+  /// `spritestatedata1` field `b` -- ditto for X.
+  int xAdjusted;
+
+  /// `spritestatedata1` field `c` -- which way this sprite last bumped into something.
+  /// Engine scratch.
+  int collisionData;
+
+  /// `spritestatedata2` field `9` -- the facing the sprite had before it turned to talk to
+  /// you. Backed up by `DisplayTextIDInit`, restored by `CloseTextDisplay`.
+  int origFacingDir;
+
+  /// `spritestatedata2` field `d` -- a **second copy of the picture id**. The game keeps
+  /// both; we show both rather than pretend one of them isn't there.
+  int pictureIDCopy;
+
   /*
    * Sprite data that applies to all non-player sprites
    * (All sprites that aren't sprite #0)
@@ -351,10 +419,13 @@ public:
    * player so none of this matters to begin with
   */
 
-  /// How far a walking sprite can wander, or if still the facing direction
-  /// A walking sprite having a value of 0 faces all directions
-  /// There are certain special values that give special movement
-  /// Notably 1-2 and D0-D3
+  /// **MOVEMENT BYTE 2** (`wMapSpriteData` byte 0) -- how the sprite may move, or which way
+  /// it stares. `ANY_DIR 0x00` / `UP_DOWN 0x01` / `LEFT_RIGHT 0x02` / `BOULDER 0x10` /
+  /// `DOWN 0xD0` / `UP 0xD1` / `LEFT 0xD2` / `RIGHT 0xD3` / `NONE 0xFF`.
+  ///
+  /// @note `maps.json` splits this ONE byte into `range` (for WALK sprites) and `face`
+  /// (for STAY sprites). They are the same byte. It is **not** @ref faceDir -- that is the
+  /// animation facing, a different field in a different table. @see SpriteMovement.
   std::optional<int> rangeDirByte;
 
   /// Text id when this sprite is interacted with

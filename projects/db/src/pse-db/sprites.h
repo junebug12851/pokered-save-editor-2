@@ -42,6 +42,12 @@ struct DB_AUTOPORT SpriteDBEntry {
   QString name;  ///< Sprite name (key).
   var8 ind = 0;  ///< Picture id.
 
+  /// Which shelf of the Characters bar this picture lives on: `Story` (the unique named
+  /// cast) / `Trainers` / `Townsfolk` / `Pokemon` / `Objects`. A **curation** -- it groups
+  /// the ARTWORK, which is what a person is picking from a rail; it says nothing about what
+  /// role an `object_event` gives the sprite. Defaults to `Townsfolk`.
+  QString group;
+
   QVector<MapDBEntrySprite*> toMaps; ///< Map-sprites using this picture (back-ref).
 };
 

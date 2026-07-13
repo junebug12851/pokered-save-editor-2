@@ -76,6 +76,12 @@ void AreaSprites::spriteRemove(int ind)
   if(sprites.size() <= 1)
     return;
 
+  // Never remove the player (slot 0) -- the game requires him there.
+  if(ind <= 0 || ind >= sprites.size())
+    return;
+
+  // The 16 slots are an ordered array and the game packs them, so removing one SLIDES THE
+  // REST UP. That is what the console does and what Twilight asked for.
   sprites.at(ind)->deleteLater();
   sprites.removeAt(ind);
   spritesChanged();
@@ -90,6 +96,52 @@ void AreaSprites::spriteNew()
   spritesChanged();
 }
 
+int AreaSprites::spriteAdd(int pictureID, int x, int y)
+{
+  if(sprites.size() >= maxSprites)
+    return -1;   // 15 NPCs plus the player. The caller says so before the user hits it.
+
+  // A blank NPC: the four NPC-table optionals engaged, and the game's own sane defaults
+  // (movementStatus Ready, imageIndex $FF, yDisp/xDisp 8, STAY, not in grass).
+  auto sprite = new SpriteData(true);
+
+  sprite->pictureID = pictureID;
+  sprite->pictureIDChanged();
+
+  sprite->pictureIDCopy = pictureID;   // the game keeps a second copy
+  sprite->pictureIDCopyChanged();
+
+  // Map coordinates carry the game's +4 bias ("the topmost 2x2 tile has value 4").
+  sprite->mapX = x + 4;
+  sprite->mapXChanged();
+
+  sprite->mapY = y + 4;
+  sprite->mapYChanged();
+
+  sprites.append(sprite);
+  spritesChanged();
+
+  return sprites.size() - 1;
+}
+
+void AreaSprites::spriteMove(int ind, int x, int y)
+{
+  if(ind < 0 || ind >= sprites.size())
+    return;
+
+  auto sprite = sprites.at(ind);
+
+  // Exactly two bytes, both carrying the game's +4 bias. Nothing else is touched -- not the
+  // pixel positions, not the animation scratch. The game recomputes those from these.
+  sprite->mapX = x + 4;
+  sprite->mapXChanged();
+
+  sprite->mapY = y + 4;
+  sprite->mapYChanged();
+
+  spritesChanged();
+}
+
 void AreaSprites::load(SaveFile* saveFile)
 {
   reset();
@@ -100,9 +152,10 @@ void AreaSprites::load(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
 
   // Total sprite count including player
+  // (wNumSprites counts NPCs only -- the player is slot 0 and isn't in it.)
   var8 spriteCount = toolset->getByte(0x278D) + 1;
 
-  for (var8 i = 0; i < spriteCount && i < 16; i++) {
+  for (var8 i = 0; i < spriteCount && i < maxSprites; i++) {
     sprites.append(new SpriteData(false, saveFile, i));
   }
 
@@ -115,7 +168,7 @@ void AreaSprites::save(SaveFile* saveFile)
 
   // Save sprite count minus player
   toolset->setByte(0x278D, sprites.size() - 1);
-  for (var8 i = 0; i < sprites.size() && i < 16; i++) {
+  for (var8 i = 0; i < sprites.size() && i < maxSprites; i++) {
     sprites.at(i)->save(saveFile, i);
   }
 

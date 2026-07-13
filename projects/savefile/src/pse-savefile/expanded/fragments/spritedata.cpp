@@ -51,21 +51,21 @@ var8 SpriteFacing::random()
 
 var8 SpriteMobility::random()
 {
-  // Lets not randomize in the possibility of no-collision
-  return Random::inst()->rangeInclusive(0xFE, 0xFF);
+  // Only ever Walk (0xFE) or Stay (0xFF) -- never the no-collision values, which would let
+  // a randomized NPC walk through walls and out of the map.
+  return Random::inst()->rangeInclusive(SpriteMobility::Walk, SpriteMobility::Stay);
 }
 
 var8 SpriteMovement::random()
 {
-  // Lets not randomize such restricted movment
+  // Movement byte 2. Deliberately restricted to the *unrestricted* patterns: a randomized
+  // sprite should wander, not be pinned to an axis or a single direction (and certainly not
+  // become a boulder). Randomization is meant to be fun, not to quietly lock an NPC in place.
   var8 ret = Random::inst()->rangeInclusive(0, 10);
 
-  // Ensure we don't get a specialized movement value
-  // I have no idea where these sprites are or on what map so I'd hate to intend
-  // for them to move but don't or very far, randomization is about being a
-  // bit fun
   while(ret == UpDown ||
         ret == LeftRight ||
+        ret == StrengthMovement ||
         ret == Down ||
         ret == Up ||
         ret == Left ||
@@ -78,11 +78,53 @@ var8 SpriteMovement::random()
 var8 SpriteGrass::random()
 {
   var8 ret[2] = {
-    0x00,
-    0x80
+    SpriteGrass::NotInGrass,
+    SpriteGrass::InGrass
   };
 
   return ret[Random::inst()->rangeExclusive(0, 2)];
+}
+
+/**
+ * Movement byte 2 -> the animation facing (`spritestatedata1` field 9).
+ *
+ * These are two different bytes and the save carries both. But a sprite whose movement byte 2
+ * is one of the four fixed directions will be facing that way the moment the game draws it,
+ * so when we BUILD a sprite from map data it is honest -- and much nicer to look at -- to
+ * start it facing where the game will put it. Everything else starts facing Down, which is
+ * what the console leaves in the field after a map load (verified: Pallet's Oak, movement
+ * byte 2 = $FF, reads facing = $00).
+ */
+static int facingFromMovement2(int movement2)
+{
+  switch(movement2) {
+    case SpriteMovement::Down:  return SpriteFacing::Down;
+    case SpriteMovement::Up:    return SpriteFacing::Up;
+    case SpriteMovement::Left:  return SpriteFacing::Left;
+    case SpriteMovement::Right: return SpriteFacing::Right;
+    default:                    return SpriteFacing::Down;
+  }
+}
+
+/**
+ * `maps.json`'s `face` string -> movement byte 2.
+ *
+ * The curated data splits ONE byte in two: `range` (a number, for WALK sprites) and `face`
+ * (a string, for STAY sprites). This is the string half.
+ */
+static int movement2FromFace(const QString& face)
+{
+  if(face == "None")  return SpriteMovement::None;
+  if(face == "Down")  return SpriteMovement::Down;
+  if(face == "Up")    return SpriteMovement::Up;
+  if(face == "Left")  return SpriteMovement::Left;
+  if(face == "Right") return SpriteMovement::Right;
+
+  // The data spells the boulder's value out longhand rather than as a number.
+  if(face == "Boulder Movement Byte 2") return SpriteMovement::StrengthMovement;
+
+  // No `face` and no `range` at all -- the game's default: wander freely.
+  return SpriteMovement::AnyDir;
 }
 
 SpriteData::SpriteData(bool blankNPC, SaveFile* saveFile, var8 index)
@@ -121,51 +163,52 @@ void SpriteData::load(MapDBEntrySprite* spriteData)
   pictureID = spriteData->getToSprite()->ind;
   pictureIDChanged();
 
+  // The game keeps a second copy of the picture id in spritestatedata2 field d. Keep them
+  // agreeing -- a sprite whose two picture ids disagree is a thing the save can hold, but
+  // never a thing we should CREATE.
+  pictureIDCopy = pictureID;
+  pictureIDCopyChanged();
+
   mapX = spriteData->adjustedX();
   mapXChanged();
 
   mapY = spriteData->adjustedY();
   mapYChanged();
 
-  if(spriteData->getMove() == "Stay")
-    movementByte = SpriteMobility::NotMoving;
-  else
-    movementByte = SpriteMobility::Moving;
+  // MOVEMENT BYTE 1 -- may it move at all?  WALK = 0xFE, STAY = 0xFF.
+  // (These were inverted here until 2026-07-13: "Stay" wrote 0xFE, i.e. WALK.)
+  movementByte = (spriteData->getMove() == "Stay")
+                   ? SpriteMobility::Stay
+                   : SpriteMobility::Walk;
   movementByteChanged();
 
   textID = spriteData->getText();
   textIDChanged();
 
-  if(spriteData->getFace() == "Down")
-    faceDir = SpriteFacing::Down;
-  else if(spriteData->getFace() == "Left")
-    faceDir = SpriteFacing::Left;
-  else if(spriteData->getFace() == "None")
-    faceDir = SpriteFacing::None;
-  else if(spriteData->getFace() == "Right")
-    faceDir = SpriteFacing::Right;
-  else if(spriteData->getFace() == "Up")
-    faceDir = SpriteFacing::Up;
+  // MOVEMENT BYTE 2 -- ONE byte, which maps.json curates into two fields: `range` (a number,
+  // on WALK sprites) and `face` (a string, on STAY sprites). Whichever is present, it lands
+  // in the same place: rangeDirByte.
+  //
+  // This used to route `face` into faceDir -- the *animation facing*, a different field in a
+  // different table -- which both lost the real value and left movement byte 2 at 0 (ANY_DIR).
+  const int movement2 = (spriteData->getRange() >= 0)
+                          ? spriteData->getRange()
+                          : movement2FromFace(spriteData->getFace());
 
+  rangeDirByte = movement2;
+  rangeDirByteChanged();
+
+  // The animation facing is its own byte. Start it where the game will have it (see above).
+  faceDir = facingFromMovement2(movement2);
   faceDirChanged();
+
+  origFacingDir = faceDir;
+  origFacingDirChanged();
 
   // Set Missable
   if(spriteData->getMissable() >= 0) {
     missableIndex = spriteData->getMissable();
     missableIndexChanged();
-  }
-
-  if(spriteData->getRange() >= 0) {
-    rangeDirByte = spriteData->getRange();
-    rangeDirByteChanged();
-  }
-
-  // Because this is a string, it got incorrectly placed into "face"
-  // It's actually a number representing 0x10 and probably needs to go into
-  // range instead
-  else if(spriteData->getFace() == "Boulder Movement Byte 2") {
-    rangeDirByte = SpriteMovement::StrengthMovement;
-    rangeDirByteChanged();
   }
 
   if(spriteData->type() == MapDBEntrySprite::SpriteType::TRAINER) {
@@ -235,6 +278,18 @@ void SpriteData::loadSpriteData1(SaveFile* saveFile, var8 index)
   faceDir = it->getByte();
   faceDirChanged();
 
+  // Fields a, b, c -- the game keeps them, so we do too (they were never read before).
+  yAdjusted = it->getByte();
+  yAdjustedChanged();
+
+  xAdjusted = it->getByte();
+  xAdjustedChanged();
+
+  collisionData = it->getByte();
+  collisionDataChanged();
+
+  // d, e, f are unused by the game. Left alone -- we do not touch bytes we have no business
+  // touching.
   delete it;
 }
 
@@ -242,31 +297,37 @@ void SpriteData::loadSpriteData2(SaveFile* saveFile, var8 index)
 {
   auto it = saveFile->iterator()->offsetTo((0x10 * index) + 0x2E2C);
 
-  walkAnimationCounter = it->getByte(1);
+  walkAnimationCounter = it->getByte(1);   // field 0, then skip the unused field 1
   walkAnimationCounterChanged();
 
-  yDisp = it->getByte();
+  yDisp = it->getByte();                   // 2
   yDispChanged();
 
-  xDisp = it->getByte();
+  xDisp = it->getByte();                   // 3
   xDispChanged();
 
-  mapY = it->getByte();
+  mapY = it->getByte();                    // 4
   mapYChanged();
 
-  mapX = it->getByte();
+  mapX = it->getByte();                    // 5
   mapXChanged();
 
-  movementByte = it->getByte();
+  movementByte = it->getByte();            // 6 -- MOVEMENT BYTE 1
   movementByteChanged();
 
-  grassPriority = it->getByte();
+  grassPriority = it->getByte();           // 7
   grassPriorityChanged();
 
-  movementDelay = it->getByte(5);
+  movementDelay = it->getByte();           // 8
   movementDelayChanged();
 
-  imageBaseOffset = it->getByte();
+  origFacingDir = it->getByte(3);          // 9, then skip the unused a, b, c
+  origFacingDirChanged();
+
+  pictureIDCopy = it->getByte();           // d -- the game's second copy of the picture id
+  pictureIDCopyChanged();
+
+  imageBaseOffset = it->getByte();         // e
   imageBaseOffsetChanged();
 
   delete it;
@@ -347,6 +408,10 @@ void SpriteData::saveSpriteData1(SaveFile* saveFile, var8 index)
   it->setByte(intraAnimationFrameCounter);
   it->setByte(animFrameCounter);
   it->setByte(faceDir);
+  it->setByte(yAdjusted);        // a
+  it->setByte(xAdjusted);        // b
+  it->setByte(collisionData);    // c
+  // d, e, f: unused by the game -- and so not written by us.
 
   delete it;
 }
@@ -354,15 +419,17 @@ void SpriteData::saveSpriteData1(SaveFile* saveFile, var8 index)
 void SpriteData::saveSpriteData2(SaveFile* saveFile, var8 index)
 {
   auto it = saveFile->iterator()->offsetTo((0x10 * index) + 0x2E2C);
-  it->setByte(walkAnimationCounter, 1);
-  it->setByte(yDisp);
-  it->setByte(xDisp);
-  it->setByte(mapY);
-  it->setByte(mapX);
-  it->setByte(movementByte);
-  it->setByte(grassPriority);
-  it->setByte(movementDelay, 5);
-  it->setByte(imageBaseOffset);
+  it->setByte(walkAnimationCounter, 1); // 0, skip the unused 1
+  it->setByte(yDisp);                   // 2
+  it->setByte(xDisp);                   // 3
+  it->setByte(mapY);                    // 4
+  it->setByte(mapX);                    // 5
+  it->setByte(movementByte);            // 6
+  it->setByte(grassPriority);           // 7
+  it->setByte(movementDelay);           // 8
+  it->setByte(origFacingDir, 3);        // 9, skip the unused a, b, c
+  it->setByte(pictureIDCopy);           // d
+  it->setByte(imageBaseOffset);         // e
   delete it;
 }
 
@@ -552,9 +619,13 @@ void SpriteData::reset(bool blankNPC)
   mapX = 4;
   mapXChanged();
 
-  movementByte = (var8)SpriteMobility::NotMoving;
+  // STAY (0xFF). A sprite you have just placed should stand where you put it -- and until
+  // 2026-07-13 this wrote 0xFE, which is WALK: every new sprite wandered off.
+  movementByte = (var8)SpriteMobility::Stay;
   movementByteChanged();
 
+  // 0x00. Until 2026-07-13 this wrote 0x80 -- which flagged every blank sprite as standing
+  // in tall grass.
   grassPriority = (var8)SpriteGrass::NotInGrass;
   grassPriorityChanged();
 
@@ -584,6 +655,21 @@ void SpriteData::reset(bool blankNPC)
 
   imageBaseOffset = 0;
   imageBaseOffsetChanged();
+
+  yAdjusted = 0;
+  yAdjustedChanged();
+
+  xAdjusted = 0;
+  xAdjustedChanged();
+
+  collisionData = 0;
+  collisionDataChanged();
+
+  origFacingDir = (var8)SpriteFacing::Down;
+  origFacingDirChanged();
+
+  pictureIDCopy = 0;
+  pictureIDCopyChanged();
 
   if(!blankNPC) {
     rangeDirByte.reset();
@@ -697,11 +783,17 @@ void SpriteData::randomize(QVector<TmpSpritePos*>* tmpPos)
   pictureID = picture->ind;
   pictureIDChanged();
 
+  pictureIDCopy = pictureID;   // the game's second copy -- keep them agreeing
+  pictureIDCopyChanged();
+
   // Get a random facing direction and movement
   faceDir = SpriteFacing::random();
   faceDirChanged();
 
-  movementByte = SpriteMobility::random();
+  origFacingDir = faceDir;
+  origFacingDirChanged();
+
+  movementByte = SpriteMobility::random();   // WALK or STAY -- never a no-collision value
   movementByteChanged();
 
   // Without absurdly more complex coding there's no way to tell if the sprite

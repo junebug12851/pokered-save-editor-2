@@ -73,10 +73,13 @@ SCREEN_TILES = 20 * 18
 
 # spritestatedata1 fields
 S1_PICTUREID = 0x0
+S1_FACINGDIRECTION = 0x9
 # spritestatedata2 fields
 S2_MAPY = 0x4
 S2_MAPX = 0x5
 S2_MOVEMENTBYTE1 = 0x6
+S2_GRASSPRIORITY = 0x7
+S2_ORIGFACINGDIRECTION = 0x9
 
 
 def checksum(sav: bytearray) -> int:
@@ -147,9 +150,12 @@ def read_console(pyboy) -> dict:
     for i in range(1, 8):
         slots.append({
             "picture": mem[W_SPRITE_STATE_1 + 0x10 * i + S1_PICTUREID],
+            "facing": mem[W_SPRITE_STATE_1 + 0x10 * i + S1_FACINGDIRECTION],
             "mapY": mem[W_SPRITE_STATE_2 + 0x10 * i + S2_MAPY],
             "mapX": mem[W_SPRITE_STATE_2 + 0x10 * i + S2_MAPX],
             "move1": mem[W_SPRITE_STATE_2 + 0x10 * i + S2_MOVEMENTBYTE1],
+            "grass": mem[W_SPRITE_STATE_2 + 0x10 * i + S2_GRASSPRIORITY],
+            "origFacing": mem[W_SPRITE_STATE_2 + 0x10 * i + S2_ORIGFACINGDIRECTION],
         })
     return {
         "numSprites": n,
@@ -165,7 +171,9 @@ def show(label: str, r: dict) -> None:
     print(f"    wNumSprites        {r['numSprites']}")
     for i, s in enumerate(r["slots"][:5], start=1):
         print(f"    slot {i}  picture=0x{s['picture']:02X}  "
-              f"map=({s['mapX'] - 4:>3},{s['mapY'] - 4:>3})  move1=0x{s['move1']:02X}")
+              f"map=({s['mapX'] - 4:>3},{s['mapY'] - 4:>3})  move1=0x{s['move1']:02X}  "
+              f"facing=0x{s['facing']:02X}  origFacing=0x{s['origFacing']:02X}  "
+              f"grass=0x{s['grass']:02X}")
     print(f"    wMapSpriteData     {' '.join(f'{b:02X}' for b in r['mapSpriteData'])}")
     print(f"    wMapSpriteExtra    {' '.join(f'{b:02X}' for b in r['mapSpriteExtra'])}")
     print(f"    wToggleableObjList {' '.join(f'{b:02X}' for b in r['toggleList'])}")

@@ -1,290 +1,362 @@
 [
     {
         "name": "Player",
-        "ind": 1
+        "ind": 1,
+        "group": "Story"
     },
     {
         "name": "Rival",
-        "ind": 2
+        "ind": 2,
+        "group": "Story"
     },
     {
         "name": "Prof. Oak",
-        "ind": 3
+        "ind": 3,
+        "group": "Story"
     },
     {
         "name": "Bug Catcher",
-        "ind": 4
+        "ind": 4,
+        "group": "Trainers"
     },
     {
         "name": "Slowbro",
-        "ind": 5
+        "ind": 5,
+        "group": "Pokemon"
     },
     {
         "name": "Lass",
-        "ind": 6
+        "ind": 6,
+        "group": "Trainers"
     },
     {
         "name": "Black Hair Boy 1",
-        "ind": 7
+        "ind": 7,
+        "group": "Townsfolk"
     },
     {
         "name": "Little Girl",
-        "ind": 8
+        "ind": 8,
+        "group": "Townsfolk"
     },
     {
         "name": "Bird",
-        "ind": 9
+        "ind": 9,
+        "group": "Pokemon"
     },
     {
         "name": "Fat Bald Guy",
-        "ind": 10
+        "ind": 10,
+        "group": "Townsfolk"
     },
     {
         "name": "Gambler",
-        "ind": 11
+        "ind": 11,
+        "group": "Trainers"
     },
     {
         "name": "Black Hair Boy 2",
-        "ind": 12
+        "ind": 12,
+        "group": "Townsfolk"
     },
     {
         "name": "Girl",
-        "ind": 13
+        "ind": 13,
+        "group": "Townsfolk"
     },
     {
         "name": "Hiker",
-        "ind": 14
+        "ind": 14,
+        "group": "Trainers"
     },
     {
         "name": "Foulard Woman",
-        "ind": 15
+        "ind": 15,
+        "group": "Townsfolk"
     },
     {
         "name": "Gentleman",
-        "ind": 16
+        "ind": 16,
+        "group": "Trainers"
     },
     {
         "name": "Daisy",
-        "ind": 17
+        "ind": 17,
+        "group": "Story"
     },
     {
         "name": "Biker",
-        "ind": 18
+        "ind": 18,
+        "group": "Trainers"
     },
     {
         "name": "Sailor",
-        "ind": 19
+        "ind": 19,
+        "group": "Trainers"
     },
     {
         "name": "Cook",
-        "ind": 20
+        "ind": 20,
+        "group": "Townsfolk"
     },
     {
         "name": "Bike Shop Guy",
-        "ind": 21
+        "ind": 21,
+        "group": "Townsfolk"
     },
     {
         "name": "Mr. Fuji",
-        "ind": 22
+        "ind": 22,
+        "group": "Story"
     },
     {
         "name": "Giovanni",
-        "ind": 23
+        "ind": 23,
+        "group": "Story"
     },
     {
         "name": "Rocket",
-        "ind": 24
+        "ind": 24,
+        "group": "Trainers"
     },
     {
         "name": "Medium",
-        "ind": 25
+        "ind": 25,
+        "group": "Trainers"
     },
     {
         "name": "Waiter",
-        "ind": 26
+        "ind": 26,
+        "group": "Townsfolk"
     },
     {
         "name": "Erika",
-        "ind": 27
+        "ind": 27,
+        "group": "Story"
     },
     {
         "name": "Mom Geisha",
-        "ind": 28
+        "ind": 28,
+        "group": "Townsfolk"
     },
     {
         "name": "Brunette Girl",
-        "ind": 29
+        "ind": 29,
+        "group": "Townsfolk"
     },
     {
         "name": "Lance",
-        "ind": 30
+        "ind": 30,
+        "group": "Story"
     },
     {
         "name": "Oak Scientist Aide",
-        "ind": 31
+        "ind": 31,
+        "group": "Townsfolk"
     },
     {
         "name": "Oak Aide",
-        "ind": 32
+        "ind": 32,
+        "group": "Townsfolk"
     },
     {
         "name": "Rocker",
-        "ind": 33
+        "ind": 33,
+        "group": "Trainers"
     },
     {
         "name": "Swimmer",
-        "ind": 34
+        "ind": 34,
+        "group": "Trainers"
     },
     {
         "name": "White Player",
-        "ind": 35
+        "ind": 35,
+        "group": "Story"
     },
     {
         "name": "Gym Helper",
-        "ind": 36
+        "ind": 36,
+        "group": "Townsfolk"
     },
     {
         "name": "Old Person",
-        "ind": 37
+        "ind": 37,
+        "group": "Townsfolk"
     },
     {
         "name": "Mart Guy",
-        "ind": 38
+        "ind": 38,
+        "group": "Townsfolk"
     },
     {
         "name": "Fisher",
-        "ind": 39
+        "ind": 39,
+        "group": "Trainers"
     },
     {
         "name": "Old Medium Woman",
-        "ind": 40
+        "ind": 40,
+        "group": "Townsfolk"
     },
     {
         "name": "Nurse",
-        "ind": 41
+        "ind": 41,
+        "group": "Townsfolk"
     },
     {
         "name": "Cable Club Woman",
-        "ind": 42
+        "ind": 42,
+        "group": "Townsfolk"
     },
     {
         "name": "Mr. Masterball",
-        "ind": 43
+        "ind": 43,
+        "group": "Townsfolk"
     },
     {
         "name": "Lapras Giver",
-        "ind": 44
+        "ind": 44,
+        "group": "Townsfolk"
     },
     {
         "name": "Warden",
-        "ind": 45
+        "ind": 45,
+        "group": "Story"
     },
     {
         "name": "SS. Captain",
-        "ind": 46
+        "ind": 46,
+        "group": "Story"
     },
     {
         "name": "Fisher 2",
-        "ind": 47
+        "ind": 47,
+        "group": "Trainers"
     },
     {
         "name": "Blackbelt",
-        "ind": 48
+        "ind": 48,
+        "group": "Trainers"
     },
     {
         "name": "Guard",
-        "ind": 49
+        "ind": 49,
+        "group": "Townsfolk"
     },
     {
         "name": "Cop Guard",
-        "ind": 50
+        "ind": 50,
+        "group": "Townsfolk"
     },
     {
         "name": "Mom",
-        "ind": 51
+        "ind": 51,
+        "group": "Story"
     },
     {
         "name": "Balding Guy",
-        "ind": 52
+        "ind": 52,
+        "group": "Townsfolk"
     },
     {
         "name": "Young Boy",
-        "ind": 53
+        "ind": 53,
+        "group": "Townsfolk"
     },
     {
         "name": "Gameboy Kid",
-        "ind": 54
+        "ind": 54,
+        "group": "Townsfolk"
     },
     {
         "name": "Gameboy Kid Copy",
-        "ind": 55
+        "ind": 55,
+        "group": "Townsfolk"
     },
     {
         "name": "Clefairy",
-        "ind": 56
+        "ind": 56,
+        "group": "Pokemon"
     },
     {
         "name": "Agatha",
-        "ind": 57
+        "ind": 57,
+        "group": "Story"
     },
     {
         "name": "Bruno",
-        "ind": 58
+        "ind": 58,
+        "group": "Story"
     },
     {
         "name": "Lorelei",
-        "ind": 59
+        "ind": 59,
+        "group": "Story"
     },
     {
         "name": "Seel",
-        "ind": 60
+        "ind": 60,
+        "group": "Pokemon"
     },
     {
         "name": "Pokeball",
-        "ind": 61
+        "ind": 61,
+        "group": "Objects"
     },
     {
         "name": "Omanyte",
-        "ind": 62
+        "ind": 62,
+        "group": "Pokemon"
     },
     {
         "name": "Boulder",
-        "ind": 63
+        "ind": 63,
+        "group": "Objects"
     },
     {
         "name": "Paper Sheet",
-        "ind": 64
+        "ind": 64,
+        "group": "Objects"
     },
     {
         "name": "Book Map Dex",
-        "ind": 65
+        "ind": 65,
+        "group": "Objects"
     },
     {
         "name": "Clipboard",
-        "ind": 66
+        "ind": 66,
+        "group": "Objects"
     },
     {
         "name": "Snorlax",
-        "ind": 67
+        "ind": 67,
+        "group": "Pokemon"
     },
     {
         "name": "Old Amber Copy",
-        "ind": 68
+        "ind": 68,
+        "group": "Objects"
     },
     {
         "name": "Old Amber",
-        "ind": 69
+        "ind": 69,
+        "group": "Objects"
     },
     {
         "name": "Lying Old Man Unused 1",
-        "ind": 70
+        "ind": 70,
+        "group": "Story"
     },
     {
         "name": "Lying Old Man Unused 2",
-        "ind": 71
+        "ind": 71,
+        "group": "Story"
     },
     {
         "name": "Lying Old Man",
-        "ind": 72
+        "ind": 72,
+        "group": "Story"
     }
 ]

@@ -50,8 +50,24 @@ public:
   Q_INVOKABLE int spriteMax();               ///< Capacity (maxSprites).
   Q_INVOKABLE SpriteData* spriteAt(int ind); ///< Sprite @p ind (GC-protected return).
   Q_INVOKABLE void spriteSwap(int from, int to); ///< Reorder sprites.
-  Q_INVOKABLE void spriteRemove(int ind);    ///< Remove sprite @p ind.
+  Q_INVOKABLE void spriteRemove(int ind);    ///< Remove sprite @p ind (the rest slide up).
   Q_INVOKABLE void spriteNew();              ///< Add a fresh sprite.
+
+  /// Add a sprite of picture @p pictureID at map (@p x, @p y) -- the drag-from-the-
+  /// Characters-bar path. Returns the new sprite's slot, or -1 if the map is full.
+  Q_INVOKABLE int spriteAdd(int pictureID, int x, int y);
+
+  /// Move sprite @p ind to map (@p x, @p y). Writes **exactly two bytes** (mapX, mapY),
+  /// carrying the game's +4 bias. The drag-on-the-canvas path.
+  Q_INVOKABLE void spriteMove(int ind, int x, int y);
+
+  /**
+   * @note **A sprite's visibility does not live here.** A "missable" sprite is hidden by a
+   * global flag in `wToggleableObjectFlags` (save `0x2852`) -- *bit set = toggled OFF* --
+   * which SpriteData::missableIndex points at, and which @ref WorldMissables owns. The
+   * per-map list at `0x287A` only maps a slot to a flag index, and the game rebuilds it from
+   * ROM on every map load. See notes/reference/sprites.md -> Part 3.
+   */
 
 signals:
   void spritesChanged();
