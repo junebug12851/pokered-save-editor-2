@@ -48,6 +48,9 @@ pse_add_test(tst_items        savefile savefile/tst_items.cpp)
 pse_add_test(tst_items_logic  savefile savefile/tst_items_logic.cpp)
 pse_add_test(tst_world        savefile savefile/tst_world.cpp)
 pse_add_test(tst_area         savefile savefile/tst_area.cpp)
+# The sprite set (wSpriteSet / wSpriteSetID) -- incl. the split sets, which must store the RESOLVED
+# id (1-10) and never the split id ($F1-$FC) the game's own table uses. See reference/sprite-sets.md.
+pse_add_test(tst_sprite_set   savefile savefile/tst_sprite_set.cpp)
 pse_add_test(tst_area_fragments savefile savefile/tst_area_fragments.cpp)
 pse_add_test(tst_sign_data    savefile savefile/tst_sign_data.cpp)
 pse_add_test(tst_map_fragments savefile savefile/tst_map_fragments.cpp)

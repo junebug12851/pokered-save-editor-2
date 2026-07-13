@@ -25,6 +25,7 @@
 #include "../engine/mapengine.h"
 
 class AreaGeneral;
+class AreaLoadedSprites;
 class AreaMap;
 class AreaPlayer;
 class AreaTileset;
@@ -172,8 +173,30 @@ class MapModel : public QObject
   Q_PROPERTY(int selectedMapX READ selectedMapX NOTIFY selectionChanged)
   Q_PROPERTY(int selectedMapY READ selectedMapY NOTIFY selectionChanged)
 
+  // ── The sprite set (the "cached sprites") ─────────────────────────────────────
+  //
+  // 12 bytes the game keeps for the CURRENT outdoor map: the eleven sprite pictures it has loaded
+  // into VRAM, and the id of the set they came from. It is a CACHE -- and one the game throws away
+  // the moment it loads your save (`LoadMapData` zeroes the id, then `InitOutsideMapSprites`
+  // recomputes both from the map you are standing on). See notes/reference/sprite-sets.md.
+
+  /// What the save says is cached: the set id (0-10; 0 = nothing).
+  Q_PROPERTY(int spriteSetId READ spriteSetId NOTIFY changed)
+  /// Its name ("Pallet & Viridian", "Cycling Road"...), or "None".
+  Q_PROPERTY(QString spriteSetName READ spriteSetName NOTIFY changed)
+
+  /// What the GAME would load here, for this map, at the player's position. 0 for an indoor map --
+  /// indoor maps have no sprite set at all, and the game leaves whatever was cached alone.
+  Q_PROPERTY(int mapSpriteSetId READ mapSpriteSetId NOTIFY changed)
+  Q_PROPERTY(QString mapSpriteSetName READ mapSpriteSetName NOTIFY changed)
+  /// Is this map one the game loads a sprite set for at all? (Outdoor maps only.)
+  Q_PROPERTY(bool mapHasSpriteSet READ mapHasSpriteSet NOTIFY changed)
+  /// Does the cache agree with what the game would load? (Shown, never silently corrected.)
+  Q_PROPERTY(bool spriteSetMatchesMap READ spriteSetMatchesMap NOTIFY changed)
+
 public:
-  MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general);
+  MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
+           AreaLoadedSprites* sprites = nullptr);
 
   bool valid() const;
   QString source() const;
@@ -217,6 +240,34 @@ public:
    * reference/map-connections.md). This is what lets you look at it.
    */
   Q_INVOKABLE QVariantList connectionList() const;
+
+  // ── The sprite set ────────────────────────────────────────────────────────────
+  int spriteSetId() const;
+  QString spriteSetName() const;
+  int mapSpriteSetId() const;
+  QString mapSpriteSetName() const;
+  bool mapHasSpriteSet() const;
+  bool spriteSetMatchesMap() const;
+
+  /// Every sprite the game has: `{ ind, name }`. What the eleven slot pickers list.
+  Q_INVOKABLE QVariantList spriteList() const;
+
+  /// The ten sprite sets, by their real names: `{ ind, name, sprites }`. (The twelve SPLIT ids are
+  /// not offered: the console never stores one -- it resolves them first. @see
+  /// SpriteSetDBEntry::getResolvedSet.)
+  Q_INVOKABLE QVariantList spriteSetList() const;
+
+  /// The eleven cached picture ids, as the save holds them: `{ slot, ind, name }`.
+  Q_INVOKABLE QVariantList cachedSprites() const;
+
+  /// Put @p picture in cache slot @p slot. ONE byte.
+  Q_INVOKABLE void setCachedSprite(int slot, int picture);
+
+  /// Fill the cache with the set @p setId holds (all eleven slots + the id). A deliberate act.
+  Q_INVOKABLE void applySpriteSet(int setId);
+
+  /// Fill it with what the GAME would load here -- this map's set, at the player's position.
+  Q_INVOKABLE void applyMapSpriteSet();
 
   /// Put the save's stored map size back to what this map actually is. The ONE deliberate way those
   /// bytes change -- offered, never done behind your back. @see headerMatches.
@@ -371,6 +422,7 @@ private:
   /// about the map's blocks goes through here, so nothing can disagree with what is on screen.
   MapEngine::Buffer mapBuffer() const;
 
+  AreaLoadedSprites* sprites = nullptr; ///< The save's live sprite-set cache (may be null in tests).
   AreaMap* map = nullptr;         ///< The save's live map.
   AreaPlayer* player = nullptr;   ///< The save's live player position.
   AreaTileset* tileset = nullptr; ///< The save's live tileset.

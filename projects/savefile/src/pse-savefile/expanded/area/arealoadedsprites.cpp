@@ -132,12 +132,31 @@ void AreaLoadedSprites::setTo(MapDBEntry* map, int x, int y)
   loadSpriteSet(map->getToSpriteSet(), x, y);
 }
 
+void AreaLoadedSprites::lSpriteSet(int ind, int picture)
+{
+  if(ind < 0 || ind >= maxLoadedSprites)
+    return;
+
+  loadedSprites[ind] = static_cast<var8>(picture & 0xFF);
+  loadedSpritesChanged();
+}
+
 void AreaLoadedSprites::loadSpriteSet(SpriteSetDBEntry* entry, int x, int y)
 {
   auto set = entry->getSprites(x, y);
-  auto id = entry->ind;
 
-  for(var8 i = 0; i < set.size(); i++)
+  // ⚠️ The id we store is the RESOLVED one, never the split id ($F1-$FC). This was wrong until
+  // 2026-07-13: it stored `entry->ind`, so loading a split-set map (Route 2, Route 5-8, 10-12, 15,
+  // 16, 18, 20) wrote a value into `wSpriteSetID` that the console never writes.
+  //
+  // `InitOutsideMapSprites` calls `GetSplitMapSpriteSetID` FIRST -- it picks a side of the dividing
+  // line and hands back one of the ten real sets -- and only then does `ld [wSpriteSetID], a`. So a
+  // real save holds 0-10 there and nothing else. (engine/overworld/map_sprites.asm; see
+  // notes/reference/sprite-sets.md.)
+  const auto* resolved = entry->getResolvedSet(static_cast<var8>(x), static_cast<var8>(y));
+  const var8 id = (resolved != nullptr) ? resolved->ind : entry->ind;
+
+  for(var8 i = 0; i < set.size() && i < maxLoadedSprites; i++)
   {
     loadedSprites[i] = set.at(i)->ind;
   }

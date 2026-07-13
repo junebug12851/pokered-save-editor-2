@@ -54,6 +54,7 @@ public:
   // They can be swapped
   Q_INVOKABLE int lSpriteCount();              ///< Number of loaded-sprite slots (fixed).
   Q_INVOKABLE int lSpriteAt(int ind);          ///< Picture-id in slot @p ind.
+  Q_INVOKABLE void lSpriteSet(int ind, int picture); ///< Put @p picture in slot @p ind. One byte.
   Q_INVOKABLE void lSpriteSwap(int from, int to); ///< Swap two loaded-sprite slots.
 
 signals:

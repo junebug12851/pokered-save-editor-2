@@ -28,7 +28,10 @@
 #include <pse-db/tileset.h>
 #include <pse-db/tiletraitsdb.h>
 #include <pse-db/entries/mapdbentry.h>
+#include <pse-db/spriteSet.h>
+#include <pse-db/sprites.h>
 #include <pse-savefile/expanded/area/areageneral.h>
+#include <pse-savefile/expanded/area/arealoadedsprites.h>
 #include <pse-savefile/expanded/area/areamap.h>
 #include <pse-savefile/expanded/area/areaplayer.h>
 #include <pse-savefile/expanded/area/areatileset.h>
@@ -42,9 +45,17 @@ namespace {
 TilesetDBEntry* canonAt(int tilesetInd);
 } // namespace
 
-MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general)
-  : map(map), player(player), tileset(tileset), general(general)
+MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
+                   AreaLoadedSprites* sprites)
+  : sprites(sprites), map(map), player(player), tileset(tileset), general(general)
 {
+  // The sprite-set cache is part of "where you are", so a change to it redraws the panel that shows
+  // it. (It changes nothing about the map itself -- see notes/reference/sprite-sets.md.)
+  if (sprites != nullptr) {
+    connect(sprites, &AreaLoadedSprites::loadedSpritesChanged, this, &MapModel::changed);
+    connect(sprites, &AreaLoadedSprites::loadedSetIdChanged, this, &MapModel::changed);
+  }
+
   // Everything this model publishes is derived from these few values, so one "changed"
   // signal for the lot is honest -- any of them moving redraws the map.
   connect(map, &AreaMap::curMapChanged, this, &MapModel::changed);
@@ -134,6 +145,202 @@ QVariantList MapModel::connectionList() const
   }
 
   return out;
+}
+
+// ── The sprite set ("the cached sprites") ─────────────────────────────────────
+//
+// 12 bytes: eleven sprite pictures and the id of the set they came from. Everything about what they
+// mean -- and the fact that the game recomputes them the instant it loads your save -- is in
+// notes/reference/sprite-sets.md.
+
+namespace {
+
+/// The ten sets, by the names the game's own source gives them (constants/sprite_set_constants.asm).
+/// v1 called these "Static List 1..10", which told nobody anything.
+QString spriteSetNameOf(int id)
+{
+  switch (id) {
+    case 0:  return QObject::tr("None");
+    case 1:  return QObject::tr("Pallet & Viridian");
+    case 2:  return QObject::tr("Pewter & Cerulean");
+    case 3:  return QObject::tr("Lavender");
+    case 4:  return QObject::tr("Vermilion");
+    case 5:  return QObject::tr("Celadon");
+    case 6:  return QObject::tr("Indigo");
+    case 7:  return QObject::tr("Saffron");
+    case 8:  return QObject::tr("Silence Bridge");
+    case 9:  return QObject::tr("Cycling Road");
+    case 10: return QObject::tr("Fuchsia");
+  }
+
+  // $F1-$FC are the SPLIT ids -- real values in the game's map table, but never in wSpriteSetID:
+  // the console resolves them to one of the ten above before it stores anything.
+  if (id >= 0xF1 && id <= 0xFC)
+    return QObject::tr("Split set %1 — the game never stores this").arg(id);
+
+  return QObject::tr("Set %1 — no set in the game").arg(id);
+}
+
+SpriteSetDBEntry* setAt(int id)
+{
+  for (auto* el : SpriteSetDB::inst()->getStore())
+    if (el->ind == id)
+      return el;
+
+  return nullptr;
+}
+
+} // namespace
+
+int MapModel::spriteSetId() const
+{
+  return (sprites == nullptr) ? 0 : sprites->loadedSetId;
+}
+
+QString MapModel::spriteSetName() const
+{
+  return spriteSetNameOf(spriteSetId());
+}
+
+int MapModel::mapSpriteSetId() const
+{
+  // What InitOutsideMapSprites would put there: MapSpriteSets[curMap], resolved through the split
+  // table if it is one of the split ids. Indoor maps get nothing -- the routine returns before it
+  // touches anything at all.
+  auto* entry = MapEngine::sourceMap(mapInd());
+  if (entry == nullptr)
+    return 0;
+
+  auto* set = entry->getToSpriteSet();
+  if (set == nullptr)
+    return 0;
+
+  const auto* resolved = set->getResolvedSet(static_cast<var8>(playerX()),
+                                             static_cast<var8>(playerY()));
+  return (resolved == nullptr) ? 0 : resolved->ind;
+}
+
+QString MapModel::mapSpriteSetName() const
+{
+  return spriteSetNameOf(mapSpriteSetId());
+}
+
+bool MapModel::mapHasSpriteSet() const
+{
+  return mapSpriteSetId() != 0;
+}
+
+bool MapModel::spriteSetMatchesMap() const
+{
+  // Only meaningful where the game HAS a set for this map. Inside a building the cache is simply the
+  // last outdoor set you were in, and that is not a mismatch -- it is what a console holds too.
+  return !mapHasSpriteSet() || spriteSetId() == mapSpriteSetId();
+}
+
+QVariantList MapModel::spriteList() const
+{
+  QVariantList out;
+
+  QVariantMap none;
+  none["ind"] = 0;
+  none["name"] = QObject::tr("Empty");
+  out.append(none);
+
+  for (auto* el : SpritesDB::inst()->getStore()) {
+    QVariantMap m;
+    m["ind"] = el->ind;
+    m["name"] = el->name;
+    out.append(m);
+  }
+
+  return out;
+}
+
+QVariantList MapModel::spriteSetList() const
+{
+  QVariantList out;
+
+  QVariantMap none;
+  none["ind"] = 0;
+  none["name"] = spriteSetNameOf(0);
+  out.append(none);
+
+  // The ten real sets, in id order. The twelve split ids are deliberately NOT offered: the console
+  // resolves them before it stores anything, so a save can never legitimately hold one.
+  for (int id = 1; id <= 10; id++) {
+    auto* el = setAt(id);
+    if (el == nullptr)
+      continue;
+
+    QVariantMap m;
+    m["ind"] = id;
+    m["name"] = spriteSetNameOf(id);
+    out.append(m);
+  }
+
+  return out;
+}
+
+QVariantList MapModel::cachedSprites() const
+{
+  QVariantList out;
+  if (sprites == nullptr)
+    return out;
+
+  for (int i = 0; i < sprites->lSpriteCount(); i++) {
+    const int ind = sprites->lSpriteAt(i);
+
+    QString name = QObject::tr("Empty");
+    for (auto* el : SpritesDB::inst()->getStore())
+      if (el->ind == ind)
+        name = el->name;
+
+    QVariantMap m;
+    m["slot"] = i;
+    m["ind"] = ind;
+    m["name"] = (ind == 0) ? QObject::tr("Empty") : name;
+
+    // The game keeps NINE walking sprites and then TWO still ones -- the last two slots are a
+    // different kind of thing, and the panel says so.
+    m["still"] = (i >= 9);
+
+    out.append(m);
+  }
+
+  return out;
+}
+
+void MapModel::setCachedSprite(int slot, int picture)
+{
+  if (sprites == nullptr)
+    return;
+
+  sprites->lSpriteSet(slot, picture);   // one byte, and only that byte
+  changed();
+}
+
+void MapModel::applySpriteSet(int setId)
+{
+  if (sprites == nullptr)
+    return;
+
+  if (setId == 0) {
+    sprites->reset();       // all eleven slots + the id
+    changed();
+    return;
+  }
+
+  auto* el = setAt(setId);
+  if (el == nullptr)
+    return;
+
+  sprites->loadSpriteSet(el, playerX(), playerY());
+  changed();
+}
+
+void MapModel::applyMapSpriteSet()
+{
+  applySpriteSet(mapSpriteSetId());
 }
 
 int MapModel::borderBlock() const

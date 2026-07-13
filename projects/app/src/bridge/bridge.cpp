@@ -58,7 +58,8 @@ Bridge::Bridge(FileManagement* file)
     map(new MapModel(file->data->dataExpanded->area->map,
                      file->data->dataExpanded->area->player,
                      file->data->dataExpanded->area->tileset,
-                     file->data->dataExpanded->area->general)),
+                     file->data->dataExpanded->area->general,
+                     file->data->dataExpanded->area->preloadedSprites)),
     mapLayers(new MapLayersModel(map)),
     mapClock(new MapClock(map))
 {

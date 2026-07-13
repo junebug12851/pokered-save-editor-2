@@ -185,10 +185,14 @@ Page {
         panels: [
           { id: "tiles", glyph: "▦", title: qsTr("Blocks & Tiles"),
             tip: qsTr("Blocks & Tiles — the edge of the world, the grass, the counters, the boulder") },
+          { id: "sprites", glyph: "☻", title: qsTr("Sprite set"),
+            tip: qsTr("Sprite set — the eleven sprite pictures the game had loaded for this map") },
           { id: "music", glyph: "♪", title: qsTr("Music"),
             tip: qsTr("Music — the map's track, and play it") }
         ]
-        sources: ({ "tiles": "TilesetPanel.qml", "music": "MusicPanel.qml" })
+        sources: ({ "tiles": "TilesetPanel.qml",
+                    "sprites": "SpriteSetPanel.qml",
+                    "music": "MusicPanel.qml" })
 
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth

@@ -86,6 +86,19 @@ QVector<SpriteDBEntry*> SpriteSetDBEntry::getSprites(var8 x, var8 y) const
   return (x < splitAt) ? toSetWN->toSprites : toSetES->toSprites;
 }
 
+const SpriteSetDBEntry* SpriteSetDBEntry::getResolvedSet(var8 x, var8 y) const
+{
+  // The console never stores a split id. GetSplitMapSpriteSetID picks a side of the dividing line
+  // and returns one of the ten real sets, and THAT is what lands in wSpriteSetID.
+  if (!isDynamic())
+    return this;
+
+  if (split == "horz")
+    return (y < splitAt) ? toSetWN : toSetES;
+
+  return (x < splitAt) ? toSetWN : toSetES;
+}
+
 SpriteSetDB* SpriteSetDB::inst()
 {
   static SpriteSetDB* _inst = new SpriteSetDB;

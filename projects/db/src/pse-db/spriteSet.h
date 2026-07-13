@@ -52,6 +52,18 @@ struct DB_AUTOPORT SpriteSetDBEntry {
   [[nodiscard]] bool isDynamic() const; ///< True if this set is split by coordinate.
   [[nodiscard]] QVector<SpriteDBEntry*> getSprites(var8 x, var8 y) const; ///< Sprites active at (x,y).
 
+  /**
+   * @brief The set the game would actually LOAD at (@p x, @p y) -- never a split set.
+   *
+   * A split id ($F1-$FC) is not something the console ever stores: `GetSplitMapSpriteSetID`
+   * (engine/overworld/map_sprites.asm) resolves it against the dividing line and hands back one of
+   * the ten real set ids, and *that* is what goes in `wSpriteSetID`. So a save can only ever hold
+   * 1-10 (or 0), and anything else is a value the game did not put there.
+   *
+   * For a plain set this is `this`. See notes/reference/sprite-sets.md.
+   */
+  [[nodiscard]] const SpriteSetDBEntry* getResolvedSet(var8 x, var8 y) const;
+
   var8 ind = 0;   ///< Set index.
   QString split;  ///< Split descriptor.
 
