@@ -183,7 +183,16 @@ if(TARGET Qt6::QuickTest)
     # then drives the C++<->QML property chain from QML (the "undefined chain" guard).
     # Needs appcore (the Bridge), so it's nested in the appcore guard too.
     if(TARGET appcore)
-        qt_add_executable(tst_qml_brg qml/main_brg.cpp)
+        # bootQmlLinkage.cpp is compiled IN (as tst_qml_screens does) so this test drives the
+        # EXE's own type registration -- one source of truth. Hand-rolling a second registration
+        # list here would let the app ship with a type QML cannot touch while the test stayed
+        # green, which is precisely the bug class this test exists to catch (2026-07-12: the
+        # Q_INVOKABLE returns WarpData*/SignData*/SpriteData* were never registered, so
+        # area.warps.warpAt(0) threw "Unknown method return type" -- from QML, in the real app).
+        qt_add_executable(tst_qml_brg
+            qml/main_brg.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/../app/src/boot/bootQmlLinkage.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
         target_link_libraries(tst_qml_brg PRIVATE appcore Qt6::QuickTest Qt6::Qml Qt6::Quick Qt6::Test)
         target_compile_definitions(tst_qml_brg PRIVATE
             QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qml/brg_cases"

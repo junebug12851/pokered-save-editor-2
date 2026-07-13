@@ -42,6 +42,9 @@
 #include <bridge/bridge.h>
 #include <bridge/router.h>
 
+/// The exe's QML type registration (app/src/boot/bootQmlLinkage.cpp, compiled into this target).
+extern void bootQmlLinkage();
+
 using namespace pse_test;
 
 class BrgSetup : public QObject
@@ -57,15 +60,12 @@ public slots:
     DB::inst();             // boot the game databases
     Router::loadScreens();  // the bridge's router needs its screen registry
 
-    // Register the pointer types that QML traverses through the `brg.*` chain so
-    // they don't read back as `undefined` (the historic bug class).
-    qRegisterMetaType<FileManagement*>("FileManagement*");
-    qRegisterMetaType<SaveFile*>("SaveFile*");
-    qRegisterMetaType<SaveFileExpanded*>("SaveFileExpanded*");
-    qRegisterMetaType<Player*>("Player*");
-    qRegisterMetaType<PlayerBasics*>("PlayerBasics*");
-    qRegisterMetaType<World*>("World*");
-    qRegisterMetaType<WorldOther*>("WorldOther*");
+    // The EXE's own registration, not a copy of it (2026-07-12). This used to hand-roll a short
+    // list of qRegisterMetaType calls, which meant the test could be green while the real app
+    // shipped a type QML could not touch -- exactly what happened to WarpData*/SignData*/
+    // SpriteData* (area.warps.warpAt(0) threw "Unknown method return type" in the running app).
+    // One source of truth: call what main() calls.
+    bootQmlLinkage();
 
     m_file = new FileManagement;
     loadInto(*m_file->data, readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav")));

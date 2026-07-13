@@ -56,6 +56,11 @@ private:
 private slots:
   void initTestCase();
 
+  // FIRST, deliberately: QtTest runs slots in declaration order, and
+  // audio_setTo_keepsIdAndBankApart() calls MapsDB::deepLink() by hand. If this ran after it, the
+  // manual call would mask exactly the regression it exists to catch.
+  void mapsDb_isDeepLinkedAtBoot();
+
   void areaGeneral_roundTrip();
   void areaAudio_roundTrip();
   void areaPlayer_roundTrip();
@@ -262,10 +267,11 @@ void TestArea::audio_setTo_keepsIdAndBankApart()
   SaveFile sf; loadInto(sf, m_orig);
   auto* audio = sf.dataExpanded->area->audio;
 
-  // ⚠️ MapsDB is NOT deep-linked at boot -- the known latent landmine in status.md -- so
-  // map->getToMusic() is null for every map until it is. That means setTo() currently writes 0/0
-  // in the running app and the bug below is dormant, not live. Deep-link here so the test actually
-  // exercises the code (confirmed safe: tst_sprite_data does the same).
+  // MapsDB is deep-linked by DB::deepLinkAll() as of 2026-07-12 (map-screen Phase 0), so
+  // map->getToMusic() resolves in the running app and this code path is LIVE. It used to be
+  // dormant -- the deep link was never called, so setTo() quietly wrote 0/0 for every map.
+  // deepLink() is idempotent (a static `once` guard), so calling it here is a no-op that also
+  // keeps the test honest if it is ever run before DB boot.
   MapsDB::inst()->deepLink();
 
   // Every map in the game, not a hand-picked one: if any map's default music comes back with the
@@ -283,6 +289,32 @@ void TestArea::audio_setTo_keepsIdAndBankApart()
     ++checked;
   }
   QVERIFY2(checked > 0, "no map in the DB resolved a default music track -- the test proved nothing");
+}
+
+/**
+ * The landmine itself: `DB::deepLinkAll()` must deep-link MapsDB.
+ *
+ * It did not, for the whole life of the project. Every map's getToMap() / getToSprite() /
+ * getToMusic() came back null, which is why AreaAudio::setTo() silently wrote 0/0 and why map
+ * randomize stayed commented out. Nothing crashed and nothing warned -- the links were simply
+ * never there.
+ *
+ * initTestCase() boots DB::inst() and NOTHING here calls deepLink() by hand, so if the call is
+ * ever removed from deepLinkAll() again, this fails. (Found + fixed 2026-07-12, map-screen Phase 0.)
+ */
+void TestArea::mapsDb_isDeepLinkedAtBoot()
+{
+  const auto& maps = MapsDB::inst()->getStore();
+  QVERIFY2(!maps.isEmpty(), "MapsDB is empty -- the DB did not load");
+
+  int withMusic = 0;
+  for(auto* map : maps)
+    if(map->getToMusic() != nullptr)
+      ++withMusic;
+
+  QVERIFY2(withMusic > 0,
+           "no map resolved its music entry -- DB::deepLinkAll() is not deep-linking MapsDB "
+           "(the latent landmine is back: setTo() will write 0/0 again)");
 }
 
 QTEST_GUILESS_MAIN(TestArea)

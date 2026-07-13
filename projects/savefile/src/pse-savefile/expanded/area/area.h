@@ -19,50 +19,35 @@
 
 class SaveFile;
 class Player;
-class AreaAudio;
-class AreaLoadedSprites;
-class AreaGeneral;
-class AreaMap;
-class AreaNPC;
-class AreaPlayer;
-class AreaPokemon;
-class AreaSign;
-class AreaSprites;
-class AreaTileset;
-class AreaWarps;
 
-// Children that QML TRAVERSES must be full types here. A Q_DECLARE_OPAQUE_POINTER'd QObject sets
-// IsPointerToTypeDerivedFromQObject = false, so QML reads the whole chain past it as `undefined` --
-// silently. Everything else stays forward-declared + opaque, because pulling all 11 in drags the
-// heavy area subtree (whose .cpp's include db headers) into the global include path and balloons
-// build time. See notes/reference/qt-patterns.md.
+// ── EVERY child of Area is a FULL TYPE here, and none of them is opaque ──────────────────────
 //
-//   general -> the playtime "countPlaytime" helper
-//   audio   -> the Map screen's Music panel (musicID / musicBank / the two flags).
-//              Being opaque is what made that panel read "No save open" with a save wide open,
-//              on 2026-07-12. It is the same trap, for the second time.
+// A Q_DECLARE_OPAQUE_POINTER'd QObject sets IsPointerToTypeDerivedFromQObject = false, so QML
+// reads the whole chain past it as `undefined` -- silently, with no warning and a green
+// tst_qml_screens. That trap has now bitten this project three times: the original
+// dataExpanded.* chain (session 13), the Music panel reading "No save open" with a save wide
+// open (AreaAudio, 2026-07-12), and -- had we not fixed it here -- every single field of the
+// new Map screen, which edits the whole Area block from QML.
+//
+// The nine that used to be opaque (map, player, tileset, warps, signs, sprites, pokemon, npc,
+// preloadedSprites) were kept that way purely for BUILD SPEED. That trade is off: the Map screen
+// traverses all of them (notes/plans/map-screen.md), so they are full includes now. If the build
+// slows measurably, the fix is to trim the sub-tree's own includes -- NOT to make a QML-traversed
+// type opaque again.
+//
+// See notes/reference/qt-patterns.md. tst_qml_brg (test_areaChildrenQmlTraverses_resolve) is the
+// net that catches a regression here.
 #include "./areageneral.h"
 #include "./areaaudio.h"
-
-class AreaLoadedSprites;
-class AreaMap;
-class AreaNPC;
-class AreaPlayer;
-class AreaPokemon;
-class AreaSign;
-class AreaSprites;
-class AreaTileset;
-class AreaWarps;
-
-Q_DECLARE_OPAQUE_POINTER(AreaLoadedSprites*)
-Q_DECLARE_OPAQUE_POINTER(AreaMap*)
-Q_DECLARE_OPAQUE_POINTER(AreaNPC*)
-Q_DECLARE_OPAQUE_POINTER(AreaPlayer*)
-Q_DECLARE_OPAQUE_POINTER(AreaPokemon*)
-Q_DECLARE_OPAQUE_POINTER(AreaSign*)
-Q_DECLARE_OPAQUE_POINTER(AreaSprites*)
-Q_DECLARE_OPAQUE_POINTER(AreaTileset*)
-Q_DECLARE_OPAQUE_POINTER(AreaWarps*)
+#include "./arealoadedsprites.h"
+#include "./areamap.h"
+#include "./areanpc.h"
+#include "./areaplayer.h"
+#include "./areapokemon.h"
+#include "./areasign.h"
+#include "./areasprites.h"
+#include "./areatileset.h"
+#include "./areawarps.h"
 
 class MapDBEntry;
 
@@ -77,11 +62,10 @@ class MapDBEntry;
  * "place the player on any map" feature: it reconfigures the whole area to a
  * chosen map with correct warps/sprites/music/tileset.
  *
- * @note @ref general and @ref audio are QML-traversed, so those two are full includes here; the
- *       other nine children are kept opaque above purely for build speed (see the in-code note).
- *       This mirrors `savefile_autoport.h`'s opaque list. **Traverse a new one from QML and you
- *       must add its include** -- `tst_qml_brg` (`test_areaChildrenQmlTraverses_resolve`) is what
- *       catches you if you forget.
+ * @note **All eleven children are full types here and NONE is opaque** (2026-07-12). The Map screen
+ *       edits the whole Area block from QML, and a `Q_DECLARE_OPAQUE_POINTER`'d QObject makes QML
+ *       read the entire chain past it as `undefined`, silently. Never re-opaque a QML-traversed
+ *       type -- `tst_qml_brg` (`test_areaChildrenQmlTraverses_resolve`) is what catches you.
  * @see SaveFileExpanded, MapDBEntry, and [the system map](../../../../../notes/systems/savefile.md).
  */
 class SAVEFILE_AUTOPORT Area : public QObject

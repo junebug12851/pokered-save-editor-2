@@ -130,6 +130,36 @@ extern void bootQmlLinkage()
   qRegisterMetaType<AreaMap*>("AreaMap*");
   qRegisterMetaType<AreaGeneral*>("AreaGeneral*");
 
+  // ── The whole AREA block, and the objects hanging off it (2026-07-12, map-screen Phase 0) ──
+  //
+  // The Map screen edits every one of these from QML. Two different registrations are needed and
+  // they fail in two different ways:
+  //
+  //  * the CHILDREN are Q_PROPERTY hops (`area.warps.*`) -- an unregistered/opaque one reads back
+  //    as `undefined`, silently, with no warning at all;
+  //  * the FRAGMENTS come back from Q_INVOKABLEs (`area.warps.warpAt(0)`) -- an unregistered
+  //    return type throws at the call site: "Unknown method return type: WarpData*". Which is
+  //    exactly what happened: warpAt() / signAt() / spriteAt() / connAt() were NOT callable from
+  //    QML at all until now. The object layer of the map screen was dead on arrival.
+  //
+  // Pinned by tst_qml_brg (test_areaChildrenQmlTraverses_resolve,
+  // test_areaObjectFragments_areReachableFromQml).
+  qRegisterMetaType<AreaAudio*>("AreaAudio*");
+  qRegisterMetaType<AreaPlayer*>("AreaPlayer*");
+  qRegisterMetaType<AreaTileset*>("AreaTileset*");
+  qRegisterMetaType<AreaWarps*>("AreaWarps*");
+  qRegisterMetaType<AreaSign*>("AreaSign*");
+  qRegisterMetaType<AreaSprites*>("AreaSprites*");
+  qRegisterMetaType<AreaPokemon*>("AreaPokemon*");
+  qRegisterMetaType<AreaNPC*>("AreaNPC*");
+  qRegisterMetaType<AreaLoadedSprites*>("AreaLoadedSprites*");
+
+  qRegisterMetaType<WarpData*>("WarpData*");
+  qRegisterMetaType<SignData*>("SignData*");
+  qRegisterMetaType<SpriteData*>("SpriteData*");
+  qRegisterMetaType<MapConnData*>("MapConnData*");
+  qRegisterMetaType<AreaPokemonWild*>("AreaPokemonWild*");
+
   // Can't put this into a template because there would be no QML processing
   // for hints so I have to duplicate the class name 3 times on each line
   // EDIT: Apparently I literally can't have any help here, any sort of help

@@ -229,6 +229,40 @@ else went back to opaque. This kept the chain working AND the build fast. The bi
 The `'dllimport' attribute ignored` warning on `MapDBEntry` etc. is harmless (Qt + llvm-mingw
 shared libs) and is silenced project-wide via `-Wno-ignored-attributes` in the root CMakeLists.
 
+##### …and then the traversal grew: ALL eleven Area children are full includes now (2026-07-12)
+
+The corollary above ("only include what QML traverses") is still the rule — but the *answer* to
+"what does QML traverse?" changed. The **Map screen edits the entire Area block from QML**
+(`notes/plans/map-screen.md`), so `area.h` now full-`#include`s **all eleven** children and
+`Q_DECLARE_OPAQUE_POINTER` is gone from it entirely. Measured cost on the Ninja build: nothing
+worth naming.
+
+The rule that replaced it: **the moment QML traverses a type, it stops being opaque — build speed
+never wins that argument.** If the build ever slows for it, trim the sub-tree's own includes
+(`areamap.h` pulling `mapdbentry.h` was the historic offender); do not re-opaque a traversed type.
+
+### A Q_INVOKABLE's RETURN type needs `qRegisterMetaType` — and it fails LOUDLY, unlike the chain
+
+Two different registrations, two completely different failure modes, and it is easy to fix one and
+think you have fixed both:
+
+| What QML does | What it needs | How it fails |
+|---|---|---|
+| walks a `Q_PROPERTY` hop (`area.warps.x`) | the type **not opaque** (full `#include`) | **silently** `undefined` — no warning, green tests |
+| calls a `Q_INVOKABLE` that returns a QObject (`area.warps.warpAt(0)`) | **`qRegisterMetaType<T*>("T*")`** | **throws at the call site**: `Unknown method return type: WarpData*` |
+
+Found 2026-07-12 (map-screen Phase 0): `AreaWarps::warpAt()`, `AreaSign::signAt()`,
+`AreaSprites::spriteAt()`, `AreaMap::connAt()` and `AreaPokemon::grassMonsAt()` return
+`WarpData*` / `SignData*` / `SpriteData*` / `MapConnData*` / `AreaPokemonWild*` — **none of which
+was ever registered**. Every one of them was **uncallable from QML**, in the shipped app, for the
+life of the project. Nothing noticed, because no screen had ever called one.
+
+So: the fragment types are now registered in `bootQmlLinkage.cpp` alongside the chain types, and
+`tst_qml_brg` **compiles `bootQmlLinkage.cpp` in** (as `tst_qml_screens` already did) and calls it,
+instead of hand-rolling its own short registration list. A test that registers its own types can be
+green while the app ships a type QML cannot touch — which is exactly what happened here.
+(`test_areaObjectFragments_areReachableFromQml` is the net.)
+
 ### Q_PROPERTY READ vs Q_INVOKABLE
 `Q_PROPERTY(T* name READ funcName)` exposes `obj.name` (property read) but NOT `obj.name()`.
 Calling `obj.name()` from QML throws `TypeError: not a function`.

@@ -189,6 +189,14 @@ void DB::deepLinkAll() const
   GameCornerDB::inst()->deepLink();     lap("GameCornerDB");
   HiddenCoinsDB::inst()->deepLink();    lap("HiddenCoinsDB");
   HiddenItemsDB::inst()->deepLink();    lap("HiddenItemsDB");
+
+  // MapsDB is deep-linked LAST, and it must be deep-linked at all: without this call every map's
+  // getToMap() / getToSprite() / getToMusic() is null, which is why AreaAudio::setTo() has quietly
+  // been writing 0/0 for the music, and why map randomize was commented out. It resolves against
+  // the maps/sprites/music/tileset indexes, so it has to run after index() (it does -- indexAll()
+  // is called first) and after the other links. Confirmed safe: tst_sprite_data resolves all 918
+  // sprites. See notes/plans/map-screen.md -> Phase 0.
+  MapsDB::inst()->deepLink();           lap("MapsDB");
 }
 
 // ── QML ownership / context ──────────────────────────────────────────────────
