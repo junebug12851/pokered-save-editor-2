@@ -105,6 +105,57 @@ Rectangle {
 
     Item { Layout.fillWidth: true }
 
+    // ── The transport ────────────────────────────────────────────────────────────────────────
+    //
+    // The map MOVES: the console rewrites the water tile every 20 frames (21 with flowers), which
+    // is about three times a second. That is not decoration -- it is what a Game Boy puts on the
+    // screen, and a still map is a map telling you something false.
+    //
+    // ⏸ exists partly because the screenshots and the visual-regression tests need a frozen frame 0
+    // anyway (MapClock refuses to run headless), so exposing it costs one button. The step button
+    // is for walking the water round its 8-step cycle by hand.
+    //
+    // A map with nothing to animate says so by being absent: no transport, no lie.
+    RowLayout {
+      spacing: 2
+      visible: brg.mapClock.animates
+
+      MapRailButton {
+        size: 22
+        glyph: brg.mapClock.playing ? "⏸" : "▶"
+        tip: brg.mapClock.playing
+             ? qsTr("Pause the animation")
+             : qsTr("Animate the map — the water and the flowers, at the console's own pace")
+        onClicked: brg.mapClock.playing = !brg.mapClock.playing
+      }
+
+      MapRailButton {
+        size: 22
+        glyph: "⏭"
+        tip: qsTr("One animation step (there are 8 in a full cycle)")
+        onClicked: brg.mapClock.step()
+      }
+
+      // The cadence, stated: 20 frames for water, 21 when the flowers move too. It is the sort of
+      // number that makes someone trust what they are looking at.
+      Text {
+        text: qsTr("%1f · %2/8").arg(brg.mapClock.cadence).arg(brg.mapClock.frame % 8)
+        font.pixelSize: 10
+        font.family: "monospace"
+        color: brg.settings.textColorMid
+        Layout.leftMargin: 2
+      }
+    }
+
+    Rectangle {
+      visible: brg.mapClock.animates
+      implicitWidth: 1
+      implicitHeight: 12
+      color: brg.settings.dividerColor
+      Layout.leftMargin: 6
+      Layout.rightMargin: 2
+    }
+
     Text {
       text: bar.canvas ? qsTr("%1×").arg(bar.canvas.zoom) : ""
       font.pixelSize: 11

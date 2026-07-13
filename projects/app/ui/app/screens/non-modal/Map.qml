@@ -82,6 +82,13 @@ Page {
   property alias tool: toolRail.tool
   property alias dockPanel: dock.open
 
+  /// The animation, mirrored for the harness: does this map animate, is it running, which step.
+  /// (`brg.mapClock` is a C++ object, not a QML item, so automation cannot reach it directly.)
+  readonly property bool animates: brg.mapClock.animates
+  property bool animPlaying: brg.mapClock.playing
+  onAnimPlayingChanged: if (brg.mapClock.playing !== animPlaying) brg.mapClock.playing = animPlaying
+  property int animFrame: brg.mapClock.frame
+
   // Keyboard: the tools, and Space-to-pan. A tool the keyboard cannot reach is a tool half the
   // people who need it will never use.
   focus: true

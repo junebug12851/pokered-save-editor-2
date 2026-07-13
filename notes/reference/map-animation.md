@@ -108,6 +108,38 @@ See [`sprites.md`](sprites.md) for the hardware. The traps that bite an animator
 - Sprites are drawn through **`rOBP0`/`rOBP1`**, not `rBGP` — which is why contrast **1 and 2** leave the
   map looking perfectly normal and wreck *the people on it*. (See [`palettes.md`](palettes.md).)
 
+---
+
+## What we shipped (2026-07-12, map-screen phase 3) — and the two bugs it found
+
+`MapClock` (`brg.mapClock`) is the heartbeat: it advances **one number** — `MapModel::frame`, the
+animation *step* — at the cadence above (20 or 21 console frames, from the save's own byte), and it
+**refuses to run on the `offscreen` platform**, which is what every headless run uses. `MapEngine`
+renders from `(save, layers, frame)` and never reads a clock. The transport (▶/⏸ · step · the
+cadence) is in the status bar, and it is **absent on a map that does not animate** — no button that
+lies about what it does.
+
+**The port was already there, and it was wrong in two places.** `TilesetEngine` had implemented the
+water and the flower years ago — plausibly, and by invention:
+
+| | It ran | The console runs |
+|---|---|---|
+| **water offsets** (per step) | `0, 1, 2, 3, 4, 3, 2, 1` | **`0, 1, 2, 3, 2, 1, 0, -1`** |
+| **flower frames** (per step) | `2, 3, 1, 1` | **`1, 1, 2, 3`** |
+
+The water had the right *shape* — a ping-pong — but the wrong swing: the console's rotation runs
+from **−1 to +3**, not 0 to +4, because the direction flips on `counter2 & 4` while the offset keeps
+accumulating. The flower was simply a different order, and it missed that **flower1 shows for twice
+as long** as the other two. Both are fixed and pinned by `tst_map_animation` (8 cases), which checks
+that every water step is a **pure rotation** of the tile (never a second tile), that the offsets are
+the console's, that the flower runs `1,1,2,3`, and that a **hack** animation byte behaves the way the
+cartridge behaves.
+
+⏳ **Owed: VRAM parity.** `tst_emu_parity` does not yet dump VRAM tiles `$14`/`$03` from the running
+cartridge frame by frame. The tables above are read from the disassembly and pinned — but the
+project's standard is that **the console judges**, and until that dump exists this one organ is
+verified against the source rather than against the silicon.
+
 ## Determinism — the rule the tests depend on
 
 Animation and **screenshot/visual-regression tests are natural enemies.** So:

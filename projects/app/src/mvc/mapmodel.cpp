@@ -60,6 +60,12 @@ MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaG
   // so re-check it rather than let the inspector point at a block that isn't there.
   connect(map, &AreaMap::curMapChanged, this, &MapModel::revalidateSelection);
   connect(tileset, &AreaTileset::currentChanged, this, &MapModel::selectionChanged);
+
+  // The image's URL changes for TWO reasons -- the map/tileset/palette changed, or the animation
+  // moved on a frame. `changed()` covers the first; setFrame() emits the second directly. Keeping
+  // them separate is what stops a 3 Hz animation from re-deriving the whole overworld buffer for
+  // every listener of `changed()`, three times a second, forever.
+  connect(this, &MapModel::changed, this, &MapModel::sourceChanged);
 }
 
 int MapModel::mapInd() const     { return map->curMap; }
@@ -79,14 +85,35 @@ QString MapModel::source() const
   if (!valid())
     return QString();
 
-  // Frame 0: a still map. (The flower/water animation frames are a later step.) The
-  // contrast and the animation byte ride in the URL so the image is rebuilt whenever either
-  // changes -- no invalidation logic to get wrong.
+  // The FRAME, the contrast and the animation byte all ride in the URL, so the image is rebuilt
+  // whenever any of them changes -- no invalidation logic to get wrong. Frame 0 is the still map
+  // (what every screenshot and every test renders); MapClock advances it at the console's own
+  // cadence. See notes/reference/map-animation.md.
   return "image://map/" + QString::number(mapInd())
        + "/" + QString::number(tilesetInd())
-       + "/0"
+       + "/" + QString::number(frame())
        + "/" + QString::number(contrast())
        + "/" + QString::number(tileAnim());
+}
+
+int MapModel::frame() const
+{
+  return animFrame;
+}
+
+void MapModel::setFrame(int frame)
+{
+  // The water's rotation is an 8-step ping-pong and the flower's three tiles are chosen from the
+  // same counter, so the whole animation closes on 8. Keeping the number small keeps the image
+  // provider's cache small -- the URL is the cache key.
+  const int wrapped = ((frame % 8) + 8) % 8;
+
+  if (animFrame == wrapped)
+    return;
+
+  animFrame = wrapped;
+  emit frameChanged();
+  emit sourceChanged();   // the frame is IN the URL -- the image must be re-fetched
 }
 
 int MapModel::contrast() const

@@ -45,6 +45,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/mvc/mapmodel.h
     src/mvc/maplayersmodel.cpp
     src/mvc/maplayersmodel.h
+    src/engine/mapclock.cpp
+    src/engine/mapclock.h
     src/mvc/itemmarketmodel.cpp
     src/mvc/itemmarketmodel.h
     src/mvc/itemmarketcartmodel.cpp

@@ -46,6 +46,7 @@
 #include "../mvc/moveselectmodel.h"
 #include "../mvc/mapmodel.h"
 #include "../mvc/maplayersmodel.h"
+#include "../engine/mapclock.h"
 #include "../engine/musicplayer.h"
 #include <pse-db/music.h>
 
@@ -207,6 +208,8 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<MapModel>("App.MapModel", 1, 0, "MapModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<MapLayersModel>("App.MapLayersModel", 1, 0, "MapLayersModel", "Can't instantiate in QML");
   qRegisterMetaType<MapLayersModel*>("MapLayersModel*");
+  qmlRegisterUncreatableType<MapClock>("App.MapClock", 1, 0, "MapClock", "Can't instantiate in QML");
+  qRegisterMetaType<MapClock*>("MapClock*");
   qmlRegisterUncreatableType<MusicPlayer>("App.MusicPlayer", 1, 0, "MusicPlayer", "Can't instantiate in QML");
   qmlRegisterUncreatableType<MusicDB>("App.MusicDB", 1, 0, "MusicDB", "Can't instantiate in QML");
 

@@ -36,21 +36,27 @@ QImage TilesetEngine::getTileset(QString name)
 
 QImage TilesetEngine::getFlower(int frame)
 {
-  // Frame 0: flower2
-  // Frame 1: flower3
-  // Frame 2: flower1
-  // Frame 3: flower1
+  // ⚠️ FIXED 2026-07-12 against the disassembly. It used to run 2, 3, 1, 1 -- an invention.
+  //
+  // UpdateMovingBgTiles (home/vcopy.asm) picks the flower from the WATER's own phase counter:
+  //
+  //     ld a, [wMovingBGTilesCounter2]
+  //     and 3
+  //     cp 2
+  //     ld hl, FlowerTile1
+  //     jr c, .copy        ; 0 or 1 -> flower1
+  //     ld hl, FlowerTile2
+  //     jr z, .copy        ; 2      -> flower2
+  //     ld hl, FlowerTile3 ; 3      -> flower3
+  //
+  // So the sequence is 1, 1, 2, 3 -- flower1 shows for TWICE as long as the other two, and the
+  // flower is locked in step with the water (there is no "flower only" state, and there cannot be).
+  // See notes/reference/map-animation.md.
+  const int subFrame = ((frame % 4) + 4) % 4;   // negative-safe
 
-  // returns frame 0-3 no matter frame number
-  int subFrame = frame % 4;
-  int ind;
-
-  if(subFrame == 0)
-    ind = 2;
-  else if(subFrame == 1)
-    ind = 3;
-  else
-    ind = 1;
+  const int ind = (subFrame < 2) ? 1
+                : (subFrame == 2) ? 2
+                : 3;
 
   return QImage(":/assets/tilesets/_flower" + QString::number(ind) + ".png")
       .convertToFormat(QImage::Format::Format_ARGB32);
@@ -216,25 +222,40 @@ QImage TilesetEngine::postProcessWaveOnce(QImage tile)
 
 QImage TilesetEngine::postProcessWave(QImage tile, int frame)
 {
-  // frame #0 = 0 shift
-  // frame #1 = 1 shift
-  // frame #2 = 2 shift
-  // frame #3 = 3 shift
-  // frame #4 = 4 shift
-  // frame #5 = 3 shift
-  // frame #6 = 2 shift
-  // frame #7 = 1 shift
+  // ⚠️ FIXED 2026-07-12 against the disassembly. It used to run 0,1,2,3,4,3,2,1 -- the right SHAPE
+  // (a ping-pong) but the wrong offsets: the console's water swings from -1 to +3, not 0 to +4.
+  //
+  // What the console does, every animation step (UpdateMovingBgTiles, home/vcopy.asm):
+  //
+  //     ld a, [wMovingBGTilesCounter2]
+  //     inc a
+  //     and 7
+  //     ld [wMovingBGTilesCounter2], a
+  //     and 4
+  //     jr nz, .left            ; counter2 bit 2 set -> rotate LEFT
+  //     .right: rrca each of the tile's 16 bytes
+  //     .left:  rlca each of the tile's 16 bytes
+  //
+  // Rotating every byte of a 2bpp tile by one bit rotates every ROW of the tile by one pixel, with
+  // wraparound -- so "water has no frames; it has a rotation". Four steps right, four steps left,
+  // forever. Accumulating that gives, per step (counter2 = frame % 8):
+  //
+  //     frame % 8:  0   1   2   3   4   5   6   7
+  //     offset:     0  +1  +2  +3  +2  +1   0  -1
+  //
+  // (+ = rotate right.) See notes/reference/map-animation.md.
+  static const int offsets[8] = { 0, 1, 2, 3, 2, 1, 0, -1 };
 
-  // Get frame index 0-7 no matter frame number
-  int subFrame = frame % 8;
-
-  int count = subFrame;
-  if(subFrame > 4)
-    count = (8 - count);
+  const int subFrame = ((frame % 8) + 8) % 8;   // negative-safe
+  const int offset = offsets[subFrame];
 
   QImage ret = tile;
 
-  for(int i = 0; i < count; i++)
+  // A left rotation by one is a right rotation by (tileWidth - 1): the row wraps, so the two are
+  // the same operation counted from the other end. Doing it that way keeps ONE primitive.
+  const int steps = (offset >= 0) ? offset : (tileWidth + offset);
+
+  for(int i = 0; i < steps; i++)
     ret = postProcessWaveOnce(ret);
 
   return ret;

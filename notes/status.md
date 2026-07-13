@@ -14,7 +14,25 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
-### 🗺️ NEXT: the Map screen is being REBUILT — read the plan before touching it (2026-07-12)
+### 🗺️ The Map screen rebuild — phases 0–3 are IN (2026-07-12)
+
+| Phase | | Status |
+|---|---|---|
+| **0** | Unblock the bridge | ✅ shipped — nine opaque Area children opened up; the Q_INVOKABLE returns (`WarpData*` …) registered at last; `MapsDB` deep-linked at boot |
+| **1** | The chassis | ✅ shipped — identity bar · tool rail · context bar · dark canvas well · **collapsing icon dock (one panel, never stacked)** · status bar. The eviction queue and the chip bar are deleted |
+| **2** | The layer system | ✅ shipped — **Guides / Meaning / Game View**, tri-state group eyes, alt-click solo, folding; **the player and the red + grey boxes are layers now**; `tst_map_layers` byte-diffs the save across every toggle |
+| **3** | The map is ALIVE | ✅ shipped — the water's **rotation** and the flower's `1,1,2,3` at the console's **20/21-frame cadence**, a ▶/⏸/step transport, and **frame 0 when headless** so no test flaps. Found + fixed two long-standing inventions (see below) |
+| **4–13** | objects · inspector · encounters · area state · tileset/blocks · tools · polish · verification · notes · *(optional)* walk-the-map | ⏳ next |
+
+⚠️ **The water and the flowers were WRONG for years.** `TilesetEngine` ran the water `0,1,2,3,4,3,2,1`
+(the console swings **−1..+3**, not 0..+4) and the flower `2,3,1,1` (the console runs **`1,1,2,3`** —
+flower1 shows for twice as long). Both plausible, both invented, both now read out of
+`UpdateMovingBgTiles` and pinned by `tst_map_animation`.
+⏳ **Owed:** `tst_emu_parity` does not yet dump VRAM tiles `$14`/`$03` frame-by-frame — the animation
+is verified against the *disassembly*, not yet against the *silicon*. See
+[`reference/map-animation.md`](reference/map-animation.md).
+
+### 🗺️ The plan of record — read it before touching the map screen (2026-07-12)
 
 The map grew organs fast (blocks, tiles, meaning, palettes, the player, connections, music) and every one
 was bolted onto the same screen. Twilight's verdict — *"UX is one of the highest priorities and right now

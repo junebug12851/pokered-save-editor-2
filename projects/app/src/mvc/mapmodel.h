@@ -55,7 +55,11 @@ class MapModel : public QObject
   Q_OBJECT
 
   Q_PROPERTY(bool valid READ valid NOTIFY changed)          ///< Is there anything to draw for this map?
-  Q_PROPERTY(QString source READ source NOTIFY changed)     ///< `image://map/...` URL for the whole map.
+  /// `image://map/...` URL for the whole map. Its OWN notify: the URL carries the animation frame,
+  /// which moves ~3 times a second, and re-emitting the map-wide `changed()` at that rate would make
+  /// every listener (the layer tree's "does this layer apply here?" pass, for one) recompute the
+  /// whole overworld buffer three times a second for nothing.
+  Q_PROPERTY(QString source READ source NOTIFY sourceChanged)
   Q_PROPERTY(QString mapName READ mapName NOTIFY changed)   ///< The loaded map's display name.
   Q_PROPERTY(QString tilesetName READ tilesetName NOTIFY changed) ///< The loaded tileset's name.
 
@@ -72,6 +76,11 @@ class MapModel : public QObject
   Q_PROPERTY(QString contrastName READ contrastName NOTIFY changed)
   /// The highest contrast still inside the fade table.
   Q_PROPERTY(int contrastMax READ contrastMax CONSTANT)
+
+  /// The animation STEP being drawn (MapClock advances it). The renderer is a pure function of
+  /// (save, layers, frame) -- it never reads a clock, which is what keeps the screenshot and
+  /// visual-regression suites deterministic. Frame 0 is the still map.
+  Q_PROPERTY(int frame READ frame WRITE setFrame NOTIFY frameChanged)
 
   Q_PROPERTY(int mapInd READ mapInd NOTIFY changed)         ///< Loaded map id (`wCurMap`).
   Q_PROPERTY(int tilesetInd READ tilesetInd NOTIFY changed) ///< Loaded tileset id (`wCurMapTileset`).
@@ -154,6 +163,9 @@ public:
   bool contrastIsGlitch() const;
   QString contrastName() const;
   int contrastMax() const;
+
+  int frame() const;
+  void setFrame(int frame);   ///< A VIEW setting. Writes nothing to the save.
 
   int mapInd() const;
   int tilesetInd() const;
@@ -286,6 +298,10 @@ public:
 signals:
   /// The loaded map, the tileset or the player moved -- everything above may have changed.
   void changed();
+  /// The animation step moved on (a view setting; the save is untouched).
+  void frameChanged();
+  /// The rendered image's URL changed -- a new frame, or a new map/tileset/palette.
+  void sourceChanged();
   /// The shown layers changed (a view setting, not save data).
   void overlayChanged();
   /// The selected block changed.
@@ -301,6 +317,7 @@ private:
   AreaGeneral* general = nullptr; ///< The save's live "contrast" (wMapPalOffset).
 
   int shownLayers = 0;            ///< A VIEW setting. Off by default: the map is the point.
+  int animFrame = 0;              ///< The animation step. A VIEW setting; 0 is the still map.
   int selX = -1;                  ///< Selected block, in buffer coords. -1 = nothing selected.
   int selY = -1;
 };

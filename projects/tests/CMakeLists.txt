@@ -133,6 +133,18 @@ if(TARGET appcore)
     set_tests_properties(tst_map PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_map)
 
+    # THE MAP ANIMATES -- the water's rotation, the flower's 1,1,2,3, the 20/21-frame cadence, and
+    # what a HACK animation byte does (odd -> water only, even -> water + flower). Every number in it
+    # comes out of UpdateMovingBgTiles; both tables were wrong before it existed.
+    qt_add_executable(tst_map_animation
+        mvc/tst_map_animation.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_map_animation PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_map_animation PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_map_animation COMMAND tst_map_animation)
+    set_tests_properties(tst_map_animation PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_map_animation)
+
     # THE LAYER TREE -- the groups, the tri-state eye, solo, and the promise that a layer never
     # writes a byte of the save (byte-diffed across every toggle there is).
     qt_add_executable(tst_map_layers
