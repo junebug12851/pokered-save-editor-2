@@ -333,6 +333,10 @@ public:
   /// Delete sprite @p slot. **The rest slide up** -- the game packs its sprite slots and so do we.
   Q_INVOKABLE void removeNpc(int slot);
 
+  /// Move the PLAYER to map (@p x, @p y). He is slot 0 and he is draggable like anybody else --
+  /// but his position lives in his OWN two bytes (`wXCoord`/`wYCoord`), not in the sprite table.
+  Q_INVOKABLE void movePlayer(int x, int y);
+
   /// How many more sprites this map can hold. 0 means the "+" is dead, and we say so *before* the
   /// user hits it rather than swallowing the drop.
   Q_INVOKABLE int npcRoomLeft() const;

@@ -39,6 +39,9 @@
 #include <pse-savefile/expanded/area/areasprites.h>
 #include <pse-savefile/expanded/fragments/spritedata.h>
 #include <mvc/mapmodel.h>
+#include <engine/mapsim.h>
+#include <QSet>
+#include <QPoint>
 
 using namespace pse_test;
 
@@ -57,6 +60,7 @@ private slots:
   void npcFields_coverEveryByteAndAreGrouped();
   void setNpcField_writesTheByteAndTakesHackValues();
   void spriteCatalog_isAllSeventyTwoInGroupOrder();
+  void sim_actuallyMovesTheWalkersAndLeavesTheRest();
 
 private:
   QByteArray m_orig;
@@ -337,6 +341,69 @@ void TestMapSprites::spriteCatalog_isAllSeventyTwoInGroupOrder()
     QVERIFY(!m.value("name").toString().isEmpty());
     QVERIFY(m.value("source").toString().startsWith("image://player/npc/"));
     QVERIFY(m.contains("inSpriteSet"));
+  }
+
+  delete r;
+}
+
+/// ⚠️ "The characters don't seem to move" (Twilight). So: step the simulation by hand, and demand
+/// that a WALK sprite has actually gone somewhere and a STAY sprite has not moved a pixel.
+///
+/// (The sim's TIMER refuses to run on the offscreen platform -- a save that quietly rewrites itself
+/// under a test is the worst kind of flap -- so this drives `step()` directly, which is what the
+/// timer would have called.)
+void TestMapSprites::sim_actuallyMovesTheWalkersAndLeavesTheRest()
+{
+  Rig* r = makeRig();
+  MapSim sim(r->map);
+
+  QVERIFY2(sim.canSimulate(), "the fixture map has nobody who can walk -- pick another");
+
+  // Who is a walker, and where does everybody start?
+  QHash<int, QPoint> start;
+  QSet<int> walkers;
+
+  for (const QVariant& v : r->map->npcList()) {
+    const QVariantMap m = v.toMap();
+    const int slot = m.value("slot").toInt();
+
+    start.insert(slot, QPoint(m.value("x").toInt(), m.value("y").toInt()));
+
+    for (const QVariant& f : r->map->npcFields(slot)) {
+      const QVariantMap field = f.toMap();
+      if (field.value("key").toString() == QStringLiteral("movementByte")
+          && field.value("value").toInt() == 0xFE)
+        walkers.insert(slot);
+    }
+  }
+
+  QVERIFY(!walkers.isEmpty());
+
+  // Plenty of steps: a sprite deliberately dawdles (it stands about more than it walks), so one tick
+  // proving nothing would be a flaky test rather than a real one.
+  for (int i = 0; i < 200; i++)
+    sim.step();
+
+  QSet<int> moved;
+  for (const QVariant& v : r->map->npcList()) {
+    const QVariantMap m = v.toMap();
+    const int slot = m.value("slot").toInt();
+
+    if (QPoint(m.value("x").toInt(), m.value("y").toInt()) != start.value(slot))
+      moved.insert(slot);
+  }
+
+  for (int slot : walkers)
+    QVERIFY2(moved.contains(slot),
+             qPrintable(QStringLiteral("slot %1 is a WALK sprite and never moved").arg(slot)));
+
+  for (int slot : start.keys()) {
+    if (walkers.contains(slot))
+      continue;
+
+    QVERIFY2(!moved.contains(slot),
+             qPrintable(QStringLiteral("slot %1 is a STAY sprite and it MOVED -- Stay means stay")
+                          .arg(slot)));
   }
 
   delete r;

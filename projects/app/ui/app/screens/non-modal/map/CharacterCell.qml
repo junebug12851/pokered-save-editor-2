@@ -92,20 +92,25 @@ Item {
       anchors.right: parent.right
       anchors.margins: 2
 
-      width: 13
-      height: 13
-      radius: 6.5
+      width: 14
+      height: 14
+      radius: 7
 
       color: warnHover.hovered ? "#c79100" : "#ffd54f"
       border.width: 1
       border.color: "#8a6d00"
 
-      Label {
-        anchors.centerIn: parent
+      // ⚠️ `anchors.centerIn` centres the ITEM's box, and a Label's box carries the font's ascent
+      // and descent -- so a "!" (which has neither) ends up shoved down and left. Fill the circle
+      // and centre the GLYPH inside it instead. (It was visibly bottom-left; Twilight caught it.)
+      Text {
+        anchors.fill: parent
         text: "!"
-        font.pixelSize: 9
+        font.pixelSize: 10
         font.bold: true
         color: "#3a2e00"
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
       }
 
       HoverHandler {
@@ -142,42 +147,50 @@ Item {
 
   // ── Drag onto the map ────────────────────────────────────────────────────────────────────
   //
-  // The drag carries the PICTURE id; the canvas turns the drop point into a tile.
-  Item {
-    id: dragProxy
-    anchors.fill: parent
-
-    property int spritePicture: cell.character.ind
-
-    Drag.active: dragHandler.active
-    Drag.source: dragProxy
-    Drag.keys: ["pse/catalog-sprite"]
-    Drag.hotSpot.x: width / 2
-    Drag.hotSpot.y: height / 2
-
-    DragHandler {
-      id: dragHandler
-      enabled: brg.map.npcRoomLeft() > 0
-      onActiveChanged: {
-        if (!active)
-          dragProxy.Drag.drop();
-      }
-    }
-  }
-
-  // What actually follows the cursor. Drawing the cell itself would tear a hole in the panel.
+  // ⚠️ THE DRAG SOURCE HAS TO ACTUALLY MOVE. Qt's DropArea decides what you are over by GEOMETRIC
+  // OVERLAP with the dragged item. The first version left the Drag source anchored inside this
+  // panel and floated a separate "ghost" image under the cursor -- so the source was never over the
+  // map, the DropArea never fired, and dragging a character out did nothing at all. (It is why
+  // deleting did not work either: same bug, other direction.)
+  //
+  // So the ghost IS the source. It is reparented to the window, it follows the cursor, and it is
+  // what the DropArea sees.
   Image {
+    id: ghost
+
     parent: cell.Window.window ? cell.Window.window.contentItem : cell
     visible: dragHandler.active
-    z: 999
+    z: 9999
 
     width: 32
     height: 32
     source: cell.character.source
     smooth: false
+    mipmap: false
+    fillMode: Image.PreserveAspectFit
     opacity: 0.85
+
+    /// What the canvas's DropArea reads off us.
+    property int spritePicture: cell.character.ind
 
     x: dragHandler.centroid.scenePosition.x - width / 2
     y: dragHandler.centroid.scenePosition.y - height / 2
+
+    Drag.active: dragHandler.active
+    Drag.source: ghost
+    Drag.keys: ["pse/catalog-sprite"]
+    Drag.hotSpot.x: width / 2
+    Drag.hotSpot.y: height / 2
+  }
+
+  DragHandler {
+    id: dragHandler
+    target: null                                  // we position the ghost ourselves
+    enabled: brg.map.npcRoomLeft() > 0
+
+    onActiveChanged: {
+      if (!active)
+        ghost.Drag.drop();
+    }
   }
 }

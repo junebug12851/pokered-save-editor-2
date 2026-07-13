@@ -797,6 +797,26 @@ void MapModel::removeNpc(int slot)
   changed();
 }
 
+void MapModel::movePlayer(int x, int y)
+{
+  if (player == nullptr)
+    return;
+
+  // ⚠️ His coordinates are NOT in the sprite table -- they are his own two bytes, and the game's
+  // view pointer is computed from them. Moving him therefore invalidates the pointer the save is
+  // carrying, which the Details panel notices and offers to fix. (We never rewrite it behind you.)
+  x = std::max(0, std::min(blocksWide() * 2 - 1, x));
+  y = std::max(0, std::min(blocksHigh() * 2 - 1, y));
+
+  player->xCoord = x;
+  player->xCoordChanged();
+
+  player->yCoord = y;
+  player->yCoordChanged();
+
+  changed();
+}
+
 int MapModel::npcRoomLeft() const
 {
   if (npcs == nullptr)

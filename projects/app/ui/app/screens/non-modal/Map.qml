@@ -206,13 +206,12 @@ Page {
           { id: "tiles", glyph: "▦", title: qsTr("Blocks & Tiles"),
             tip: qsTr("Blocks & Tiles — the edge of the world, the grass, the counters, the boulder") },
           { id: "sprites", glyph: "☻", title: qsTr("Sprite set"),
-            tip: qsTr("Sprite set — the eleven sprite pictures the game had loaded for this map") },
-          { id: "music", glyph: "♪", title: qsTr("Music"),
-            tip: qsTr("Music — the map's track, and play it") }
+            tip: qsTr("Sprite set — the eleven sprite pictures the game had loaded for this map") }
         ]
+        // ⚠️ MUSIC IS NOT HERE ANY MORE. It is a chip in the toolbar (MusicPicker.qml) -- a whole
+        // dock panel for one combo, two checkboxes and a ▶ was a panel too many (Twilight).
         sources: ({ "tiles": "TilesetPanel.qml",
-                    "sprites": "SpriteSetPanel.qml",
-                    "music": "MusicPanel.qml" })
+                    "sprites": "SpriteSetPanel.qml" })
 
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth
@@ -233,16 +232,9 @@ Page {
     }
   }
 
-  // Closing the Music panel stops playback: no invisible audio, and nothing starts making noise
+  // Leaving the Map screen stops playback: no invisible audio, and nothing starts making noise
   // because a screen opened. (notes/plans/music.md §6)
   //
-  // The dock UNLOADS a closed panel, so this also covers "switched to another panel" -- but the stop
-  // is explicit rather than relying on a destructor to be polite about it.
-  Connections {
-    target: rightDock
-    function onOpenChanged() {
-      if (rightDock.open !== "music")
-        brg.music.stop();
-    }
-  }
+  // MusicPicker stops it on destruction too; this is the belt to that pair of braces.
+  Component.onDestruction: brg.music.stop()
 }

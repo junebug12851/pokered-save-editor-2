@@ -73,7 +73,7 @@ Rectangle {
 
   // Hover shows it. Not "hover, if you first found the ? toggle in the header" -- see MapToolTip.
   MapToolTip {
-    visible: ma.containsMouse && btn.tip !== ""
+    shown: ma.containsMouse && btn.tip !== ""
     text: btn.shortcut === "" ? btn.tip : btn.tip + "  (" + btn.shortcut + ")"
   }
 }

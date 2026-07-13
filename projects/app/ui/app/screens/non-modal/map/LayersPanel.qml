@@ -200,9 +200,9 @@ Rectangle {
 
         // The whole row explains itself. Half these words -- "counter" meaning a shop desk you can
         // talk across -- are things nobody should be expected to already know, and the app is where
-        // that gets answered. Hover shows it; no preference to find first. (MapToolTip.qml)
+        // that gets answered. ⚠️ Gated on the header's "?" toggle. (MapToolTip.qml)
         MapToolTip {
-          visible: hover.hovered && row.layerDescription !== ""
+          shown: hover.hovered && row.layerDescription !== ""
           text: row.layerApplies
                 ? row.layerDescription
                 : qsTr("%1 — there is none of it on this map.").arg(row.layerName)

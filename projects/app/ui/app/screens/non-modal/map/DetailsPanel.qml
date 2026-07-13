@@ -198,7 +198,7 @@ Item {
 
           ToolButton {
             text: "✕"
-            ToolTip.visible: hovered
+            ToolTip.visible: brg.settings.infoBtnPressed && (hovered)
             ToolTip.text: qsTr("Remove this sprite")
             onClicked: {
               brg.map.removeNpc(details.slot);

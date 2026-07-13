@@ -20,6 +20,7 @@
  *        See mapengine.h for the geometry this reproduces.
  */
 
+#include <QHash>
 #include <QObject>
 #include <QPainter>
 #include <QPen>
@@ -1038,7 +1039,7 @@ QImage MapEngine::playerSprite(int facing, int contrast)
   QImage sprite = sheet.copy(0, frame * 16, 16, 16);
 
   if (mirror)
-    sprite = sprite.mirrored(true, false);
+    sprite = sprite.flipped(Qt::Horizontal);
 
   // The OBJECT palette. Two things the hardware does that a naive tint would not:
   //   * colour 0 is ALWAYS transparent for an object -- that is the sprite's cut-out;
@@ -1127,21 +1128,29 @@ QVector<QPoint> MapEngine::tilesInLayer(const Buffer& buffer, int tilesetInd, La
 
 QImage MapEngine::npcSprite(int pictureID, int facing, int contrast)
 {
-  // The atlas: 72 cells of 16x96, cell (pictureID - 1). Imported verbatim from pret/pokered
-  // by scripts/import_sprites.py, in the same greyscale the player's sheet is in.
-  static const QImage atlas =
-      QImage(":/assets/sprites/overworld.png").convertToFormat(QImage::Format_ARGB32);
-
-  if (atlas.isNull())
-    return QImage();
-
   // Picture id 0 means "this slot is unused" (ram/wram.asm). Draw nothing -- do not guess.
   if (pictureID < 1 || pictureID > spriteArtCount)
     return QImage();
 
-  const int frames = spriteArtFrames[pictureID];
+  const SpriteArt& art = spriteArt[pictureID];
+  const int frames = art.frames;
+
   if (frames <= 0)
     return QImage();
+
+  // ⚠️ ONE LOOSE FILE PER SPRITE, not an atlas (Twilight). Cached on first use, so 72 tiny PNGs
+  // cost one decode each for the life of the process -- which is nothing, and the files stay
+  // something a person can open and look at.
+  static QHash<int, QImage> cache;
+
+  QImage sheet = cache.value(pictureID);
+  if (sheet.isNull()) {
+    sheet = QImage(QString::fromLatin1(art.file)).convertToFormat(QImage::Format_ARGB32);
+    if (sheet.isNull())
+      return QImage();
+
+    cache.insert(pictureID, sheet);
+  }
 
   // Which of the three standing frames, and whether to mirror. Right is LEFT, X-FLIPPED --
   // there is no right-facing art in the game, for anybody. (SpriteFacingAndAnimationTable
@@ -1162,10 +1171,10 @@ QImage MapEngine::npcSprite(int pictureID, int facing, int contrast)
   if (frame >= frames)
     frame = 0;
 
-  QImage sprite = atlas.copy((pictureID - 1) * 16, frame * 16, 16, 16);
+  QImage sprite = sheet.copy(0, frame * 16, 16, 16);
 
   if (mirror)
-    sprite = sprite.mirrored(true, false);
+    sprite = sprite.flipped(Qt::Horizontal);
 
   // Exactly as playerSprite does: colour 0 is ALWAYS transparent for an object (the sprite's
   // cut-out), and the other three go through rOBP0 -- which is where the "harmless" glitch

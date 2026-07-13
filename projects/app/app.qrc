@@ -25,7 +25,78 @@
         <file>assets/tilesets/mart.png</file>
         <file>assets/tilesets/museum.png</file>
         <file>assets/sprites/red.png</file>
-        <file>assets/sprites/overworld.png</file>
+        <file>assets/sprites/01_player.png</file>
+        <file>assets/sprites/02_rival.png</file>
+        <file>assets/sprites/03_prof_oak.png</file>
+        <file>assets/sprites/04_bug_catcher.png</file>
+        <file>assets/sprites/05_slowbro.png</file>
+        <file>assets/sprites/06_lass.png</file>
+        <file>assets/sprites/07_black_hair_boy_1.png</file>
+        <file>assets/sprites/08_little_girl.png</file>
+        <file>assets/sprites/09_bird.png</file>
+        <file>assets/sprites/10_fat_bald_guy.png</file>
+        <file>assets/sprites/11_gambler.png</file>
+        <file>assets/sprites/12_black_hair_boy_2.png</file>
+        <file>assets/sprites/13_girl.png</file>
+        <file>assets/sprites/14_hiker.png</file>
+        <file>assets/sprites/15_foulard_woman.png</file>
+        <file>assets/sprites/16_gentleman.png</file>
+        <file>assets/sprites/17_daisy.png</file>
+        <file>assets/sprites/18_biker.png</file>
+        <file>assets/sprites/19_sailor.png</file>
+        <file>assets/sprites/20_cook.png</file>
+        <file>assets/sprites/21_bike_shop_guy.png</file>
+        <file>assets/sprites/22_mr_fuji.png</file>
+        <file>assets/sprites/23_giovanni.png</file>
+        <file>assets/sprites/24_rocket.png</file>
+        <file>assets/sprites/25_medium.png</file>
+        <file>assets/sprites/26_waiter.png</file>
+        <file>assets/sprites/27_erika.png</file>
+        <file>assets/sprites/28_mom_geisha.png</file>
+        <file>assets/sprites/29_brunette_girl.png</file>
+        <file>assets/sprites/30_lance.png</file>
+        <file>assets/sprites/31_oak_scientist_aide.png</file>
+        <file>assets/sprites/32_oak_aide.png</file>
+        <file>assets/sprites/33_rocker.png</file>
+        <file>assets/sprites/34_swimmer.png</file>
+        <file>assets/sprites/35_white_player.png</file>
+        <file>assets/sprites/36_gym_helper.png</file>
+        <file>assets/sprites/37_old_person.png</file>
+        <file>assets/sprites/38_mart_guy.png</file>
+        <file>assets/sprites/39_fisher.png</file>
+        <file>assets/sprites/40_old_medium_woman.png</file>
+        <file>assets/sprites/41_nurse.png</file>
+        <file>assets/sprites/42_cable_club_woman.png</file>
+        <file>assets/sprites/43_mr_masterball.png</file>
+        <file>assets/sprites/44_lapras_giver.png</file>
+        <file>assets/sprites/45_warden.png</file>
+        <file>assets/sprites/46_ss_captain.png</file>
+        <file>assets/sprites/47_fisher_2.png</file>
+        <file>assets/sprites/48_blackbelt.png</file>
+        <file>assets/sprites/49_guard.png</file>
+        <file>assets/sprites/50_cop_guard.png</file>
+        <file>assets/sprites/51_mom.png</file>
+        <file>assets/sprites/52_balding_guy.png</file>
+        <file>assets/sprites/53_young_boy.png</file>
+        <file>assets/sprites/54_gameboy_kid.png</file>
+        <file>assets/sprites/55_gameboy_kid_copy.png</file>
+        <file>assets/sprites/56_clefairy.png</file>
+        <file>assets/sprites/57_agatha.png</file>
+        <file>assets/sprites/58_bruno.png</file>
+        <file>assets/sprites/59_lorelei.png</file>
+        <file>assets/sprites/60_seel.png</file>
+        <file>assets/sprites/61_pokeball.png</file>
+        <file>assets/sprites/62_omanyte.png</file>
+        <file>assets/sprites/63_boulder.png</file>
+        <file>assets/sprites/64_paper_sheet.png</file>
+        <file>assets/sprites/65_book_map_dex.png</file>
+        <file>assets/sprites/66_clipboard.png</file>
+        <file>assets/sprites/67_snorlax.png</file>
+        <file>assets/sprites/68_old_amber_copy.png</file>
+        <file>assets/sprites/69_old_amber.png</file>
+        <file>assets/sprites/70_lying_old_man_unused_1.png</file>
+        <file>assets/sprites/71_lying_old_man_unused_2.png</file>
+        <file>assets/sprites/72_lying_old_man.png</file>
         <file>assets/tilesets/overworld.png</file>
         <file>assets/tilesets/plateau.png</file>
         <file>assets/tilesets/pokecenter.png</file>
@@ -537,7 +608,7 @@
         <file>assets/images/rival.png</file>
         <file>assets/images/rival-larger.png</file>
         <file>ui/app/screens/non-modal/Map.qml</file>
-        <file>ui/app/screens/non-modal/map/MusicPanel.qml</file>
+        <file>ui/app/screens/non-modal/map/MusicPicker.qml</file>
         <file>ui/app/screens/non-modal/map/TilesetPanel.qml</file>
         <file>ui/app/screens/non-modal/map/TilePick.qml</file>
         <file>ui/app/screens/non-modal/map/BlockPick.qml</file>
@@ -554,6 +625,7 @@
         <file>ui/app/screens/non-modal/map/CharactersBar.qml</file>
         <file>ui/app/screens/non-modal/map/CharacterCell.qml</file>
         <file>ui/app/screens/non-modal/map/PixelImage.qml</file>
+        <file>ui/app/screens/non-modal/map/MapSprite.qml</file>
         <file>ui/app/screens/non-modal/map/ZoomMenu.qml</file>
         <file>ui/app/screens/non-modal/map/SimWarningDialog.qml</file>
         <file>ui/app/screens/non-modal/map/DetailsPanel.qml</file>

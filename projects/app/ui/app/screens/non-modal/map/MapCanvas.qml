@@ -66,6 +66,29 @@ Item {
   /// The 3-block border ring, in buffer pixels. A sprite at map (0,0) starts here.
   readonly property int mapBorderPx: 3 * 32
 
+  // ⚠️ THE REASON THE CHARACTERS DID NOT MOVE.
+  //
+  // `brg.map.npcList()` is a FUNCTION CALL. A QML binding on a function call only re-evaluates when
+  // one of the *properties it happens to read* changes -- and `npcList()` reads none, because it is
+  // C++. So the Repeater below bound to it ONCE, at load, and never asked again: you could drag a
+  // sprite, let the simulation run, delete somebody -- the model changed underneath and the canvas
+  // went on drawing the cast it had memorised at startup.
+  //
+  // `revision` is the dependency the binding was missing. Bump it on `changed()` and every list on
+  // this screen re-asks. (Exactly the bug that made the Details panel come up blank -- same shape,
+  // different symptom. If you are binding to a C++ *method*, you need one of these.)
+  property int revision: 0
+
+  Connections {
+    target: brg.map
+    function onChanged() { canvasRoot.revision++; }
+  }
+
+  readonly property var npcs: {
+    canvasRoot.revision;   // a dependency, deliberately
+    return brg.mapLayers.showNpcs ? brg.map.npcList() : [];
+  }
+
   // ── Zoom ────────────────────────────────────────────────────────────────────────────────────
   //
   // CONTINUOUS, not integer (Twilight, 2026-07-13: "it's too clunky"). It used to snap to whole
@@ -79,9 +102,66 @@ Item {
   readonly property real minZoom: 0.5
   readonly property real maxZoom: 12
 
+  // ⚠️ TRUE SUB-PIXEL ZOOM -- and only ONE input needs any interpolation at all.
+  //
+  // The zoom is a real number. Nothing snaps, nothing quantises: at 2.3718x the map really is at
+  // 2.3718x, and the pixel-art shader samples it correctly (PixelImage.qml). That is the smooth
+  // zoom, and it is not an animation.
+  //
+  // The catch is the MOUSE WHEEL. A wheel reports 120 units per detent and there is no such thing as
+  // half a click -- the hardware simply does not have sub-notch data to give us. So a wheel notch is
+  // ALWAYS a jump, and the only choices are to make the jump smaller (which is what the first attempt
+  // did, and which Twilight correctly called "still choppy, just finer steps") or to bridge it.
+  //
+  // So:
+  //
+  //   * **Continuous input** -- the slider, a trackpad's pixelDelta, a pinch -- goes STRAIGHT
+  //     THROUGH, with **no animation whatsoever**. It is already sub-pixel; interpolating it would
+  //     only add lag.
+  //   * **A wheel notch** gets a 90ms bridge, and nothing else does. That is the "between pixel
+  //     sizes, frame to frame" case Twilight allowed -- it exists purely because the hardware left
+  //     a gap, not to make anything look fancy.
+  //
+  // `anchorMap` is the map point that stays under the cursor. It is re-pinned on EVERY frame the
+  // zoom changes (see `onZoomChanged`), so it holds during a bridge as well as during a drag.
+
   /// 0 = "nobody has said otherwise, use the default view".
   property real userZoom: 0
-  readonly property real zoom: userZoom > 0 ? userZoom : defaultZoom
+
+  /// Where the map really is. Follows `userZoom` exactly -- except across a wheel notch.
+  property real zoom: userZoom > 0 ? userZoom : defaultZoom
+
+  /// True ONLY while bridging a wheel detent. @see the note above.
+  property bool bridging: false
+
+  Behavior on zoom {
+    enabled: canvasRoot.bridging
+
+    NumberAnimation {
+      duration: 90
+      easing.type: Easing.OutQuad
+      onFinished: canvasRoot.bridging = false
+    }
+  }
+
+  /// The map point (buffer px) to keep under `anchorView` while the zoom eases. Null = keep the
+  /// middle of the view.
+  property var anchorMap: null
+  property point anchorView: Qt.point(0, 0)
+
+  onZoomChanged: {
+    if (!canvasRoot.anchorMap || view.width <= 0)
+      return;
+
+    // Re-pin, every frame of the glide. The content geometry is a binding on `zoom`, so by the time
+    // we are called it has already moved -- which is exactly what we want to correct against.
+    view.contentX = Math.max(0, Math.min(Math.max(0, view.contentWidth - view.width),
+                                         canvas.x + canvasRoot.anchorMap.x * canvasRoot.zoom
+                                           - canvasRoot.anchorView.x));
+    view.contentY = Math.max(0, Math.min(Math.max(0, view.contentHeight - view.height),
+                                         canvas.y + canvasRoot.anchorMap.y * canvasRoot.zoom
+                                           - canvasRoot.anchorView.y));
+  }
 
   /// The whole map, fitted. What "Zoom to map" gives you.
   readonly property real fitZoom: (brg.map.imageWidth > 0 && view.width > 0)
@@ -365,223 +445,45 @@ Item {
       // He is drawn through the OBJECT palette (rOBP0), which is the one the "harmless" glitch
       // palettes actually wreck -- contrast 1 and 2 leave the map looking perfectly normal and do
       // their damage here. (reference/sprites.md)
-      PixelImage {
+      // ── The PLAYER ────────────────────────────────────────────────────────────────────────
+      //
+      // He is slot 0, and he is a sprite like any other: click him, drag him. There was never a
+      // reason he should be the one thing on the map you could not pick up (Twilight, 2026-07-13).
+      MapSprite {
         visible: brg.mapLayers.showPlayer
-        x: brg.map.playerRectX * canvasRoot.zoom
-        y: brg.map.playerRectY * canvasRoot.zoom
-        width: brg.map.playerRectW * canvasRoot.zoom
-        height: brg.map.playerRectH * canvasRoot.zoom
 
-        source: brg.map.playerSource
+        canvas: canvasRoot
+        slot: 0
+        tileX: brg.map.playerX
+        tileY: brg.map.playerY
+        art: brg.map.playerSource
+        inSet: true                       // his picture is always loaded
+
+        onEditRequested: canvasRoot.editRequested(0)
       }
 
-      // ── Everybody else ──────────────────────────────────────────────────────────────────────
+      // ── Everybody else ────────────────────────────────────────────────────────────────────
       //
       // The other fifteen sprite slots: every NPC, item ball and boulder the save has put on this
-      // map. Same geometry as the player (they ARE the player's geometry -- he is slot 0), same
-      // OBJECT palette, same "there is no right-facing art" rule.
+      // map. Same geometry as the player (they ARE the player's geometry), same OBJECT palette,
+      // same "there is no right-facing art" rule.
       //
-      // Click one to select it. The ground is NOT clickable any more (Twilight, 2026-07-13):
-      // blocks and tiles are edited in their panels, and the canvas should not compete with them.
+      // Click one to select it. The ground is NOT clickable (Twilight): blocks and tiles are edited
+      // in their panels, and the canvas should not compete with them.
       Repeater {
-        model: brg.mapLayers.showNpcs ? brg.map.npcList() : []
+        model: canvasRoot.npcs      // @see canvasRoot.revision -- a plain npcList() never re-asked
 
-        delegate: Item {
-          id: npc
-
+        delegate: MapSprite {
           required property var modelData
 
-          /// What the Characters bar's DropArea reads when somebody is dragged off the map.
-          readonly property int spriteSlot: npc.modelData.slot
+          canvas: canvasRoot
+          slot: modelData.slot
+          tileX: modelData.x
+          tileY: modelData.y
+          art: modelData.source
+          inSet: modelData.inSpriteSet
 
-          // While dragging, the sprite follows the cursor tile-by-tile. On release we commit -- or,
-          // on Esc, we put it back and write NOTHING.
-          property int dragX: -1
-          property int dragY: -1
-          readonly property bool dragging: npc.dragX >= 0
-
-          readonly property int liveX: npc.dragging ? npc.dragX : npc.modelData.x
-          readonly property int liveY: npc.dragging ? npc.dragY : npc.modelData.y
-
-          // The 4-pixel lift, applied to wherever the sprite currently IS -- so the ghost sits
-          // where the console would actually draw it, not one row off.
-          x: (canvasRoot.mapBorderPx + npc.liveX * 16) * canvasRoot.zoom
-          y: (canvasRoot.mapBorderPx + npc.liveY * 16 - 4) * canvasRoot.zoom
-          width: npc.modelData.rectW * canvasRoot.zoom
-          height: npc.modelData.rectH * canvasRoot.zoom
-
-          z: npc.dragging ? 30 : 0
-
-          readonly property bool selected: canvasRoot.selectedNpc === npc.modelData.slot
-
-          PixelImage {
-            anchors.fill: parent
-            source: npc.modelData.source
-            opacity: npc.dragging ? 0.75 : 1.0
-          }
-
-          // The one thing you cannot see by looking at a sprite: whether this map has actually
-          // LOADED its picture. If it hasn't, the console draws garbage there -- so we say so
-          // rather than drawing it correctly and letting the user find out on the cartridge.
-          Rectangle {
-            visible: !npc.modelData.inSpriteSet && !npc.selected
-            anchors.fill: parent
-            color: "transparent"
-            border.width: 1
-            border.color: "#ffd54f"      // amber -- a warning, not an error
-            opacity: 0.9
-          }
-
-          // A selection you can lose under a layer is not a selection: it draws above everything.
-          Rectangle {
-            visible: npc.selected
-            z: 20
-            anchors.fill: parent
-            anchors.margins: -2
-            color: "transparent"
-            border.width: 2
-            border.color: canvas.selectColor
-
-            Rectangle {
-              anchors.fill: parent
-              anchors.margins: 2
-              color: "transparent"
-              border.width: 1
-              border.color: "#ccffffff"
-            }
-          }
-
-          // ── The two buttons ───────────────────────────────────────────────────────────────
-          //
-          // Only on the selected sprite, and OUTSIDE its 16x16 box, because a delete button drawn
-          // on top of a character you are trying to look at is worse than no button.
-          Row {
-            visible: npc.selected && !npc.dragging
-            z: 40
-            anchors.bottom: parent.top
-            anchors.bottomMargin: 3
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 3
-
-            // ✎ opens the Details panel ON this sprite -- no hunting for it.
-            Rectangle {
-              width: 18; height: 18; radius: 9
-              color: editHover.hovered ? "#56b4e9" : Qt.rgba(0, 0, 0, 0.65)
-              border.width: 1
-              border.color: "#ccffffff"
-
-              Label {
-                anchors.centerIn: parent
-                text: "✎"
-                font.pixelSize: 10
-                color: "white"
-              }
-
-              HoverHandler { id: editHover; cursorShape: Qt.PointingHandCursor }
-              TapHandler { onTapped: canvasRoot.editRequested(npc.modelData.slot) }
-
-              ToolTip.visible: editHover.hovered
-              ToolTip.text: qsTr("Edit this sprite")
-            }
-
-            Rectangle {
-              width: 18; height: 18; radius: 9
-              color: delHover.hovered ? "#d55e00" : Qt.rgba(0, 0, 0, 0.65)
-              border.width: 1
-              border.color: "#ccffffff"
-
-              Label {
-                anchors.centerIn: parent
-                text: "✕"
-                font.pixelSize: 10
-                color: "white"
-              }
-
-              HoverHandler { id: delHover; cursorShape: Qt.PointingHandCursor }
-              TapHandler {
-                onTapped: {
-                  brg.map.removeNpc(npc.modelData.slot);
-                  canvasRoot.selectedNpc = -1;
-                  canvasRoot.status = qsTr("Removed. The sprites after it slid up a slot.");
-                }
-              }
-
-              ToolTip.visible: delHover.hovered
-              ToolTip.text: qsTr("Remove this sprite")
-            }
-          }
-
-          TapHandler {
-            enabled: !canvasRoot.panning && canvasRoot.tool !== "zoom"
-            onTapped: canvasRoot.selectedNpc = npc.modelData.slot
-          }
-
-          HoverHandler {
-            cursorShape: npc.dragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor
-          }
-
-          // ── Drag to move ────────────────────────────────────────────────────────────────
-          //
-          // Tile-snapped, live, and it commits on release -- writing EXACTLY two bytes (mapX,
-          // mapY). Esc puts it back and writes nothing at all.
-          DragHandler {
-            id: npcDrag
-            enabled: !canvasRoot.panning && canvasRoot.tool !== "zoom"
-            target: null   // we move it ourselves, in tile steps -- no free-floating pixels
-
-            onActiveChanged: {
-              if (active) {
-                canvasRoot.selectedNpc = npc.modelData.slot;
-                npc.dragX = npc.modelData.x;
-                npc.dragY = npc.modelData.y;
-                return;
-              }
-
-              // Released. Commit unless Esc already cancelled us (which clears dragX).
-              if (npc.dragging) {
-                const nx = npc.dragX;
-                const ny = npc.dragY;
-                npc.dragX = -1;
-                npc.dragY = -1;
-
-                if (nx !== npc.modelData.x || ny !== npc.modelData.y)
-                  brg.map.moveNpc(npc.modelData.slot, nx, ny);
-              }
-            }
-
-            // Tile-snapped, live. The handler hands us a pixel translation; one tile is 16 buffer
-            // pixels times the zoom, so the sprite jumps a whole tile at a time and never floats
-            // between two of them.
-            onTranslationChanged: {
-              if (!npcDrag.active)
-                return;
-
-              const step = 16 * canvasRoot.zoom;
-              const dx = Math.round(npcDrag.translation.x / step);
-              const dy = Math.round(npcDrag.translation.y / step);
-
-              npc.dragX = Math.max(0, Math.min(brg.map.blocksWide * 2 - 1, npc.modelData.x + dx));
-              npc.dragY = Math.max(0, Math.min(brg.map.blocksHigh * 2 - 1, npc.modelData.y + dy));
-            }
-          }
-
-          // Esc, mid-drag: put them back, write NOTHING. Clearing dragX before the handler goes
-          // inactive is what makes the commit above skip.
-          Connections {
-            target: canvasRoot
-            function onCancelDragChanged() {
-              npc.dragX = -1;
-              npc.dragY = -1;
-            }
-          }
-
-          // Dragging somebody onto the Characters bar deletes them. The bar's DropArea reads
-          // `spriteSlot` off this.
-          Drag.active: npcDrag.active
-          Drag.source: npc
-          Drag.keys: ["pse/map-sprite"]
-          Drag.hotSpot.x: width / 2
-          Drag.hotSpot.y: height / 2
+          onEditRequested: canvasRoot.editRequested(modelData.slot)
         }
       }
 
@@ -631,8 +533,10 @@ Item {
           if (canvasRoot.tool === "zoom") {
             // A RATIO, not a fixed step -- the same reason the wheel uses one. A 1.4x bite feels the
             // same at 0.6x as it does at 8x; "+1" does not.
+            // A click IS a detent -- there is nothing between one click and the next -- so this one
+            // gets the same 90ms bridge the wheel does.
             const bite = (eventPoint.modifiers & Qt.AltModifier) ? (1 / 1.4) : 1.4;
-            view.zoomAround(canvasRoot.zoom * bite, eventPoint.position);
+            view.zoomAround(canvasRoot.zoom * bite, eventPoint.position, true);
             return;
           }
 
@@ -695,32 +599,35 @@ Item {
     // than the top-left corner. Zooming into a corner you aren't looking at is the single most
     // annoying thing a map viewer can do.
 
-    /// Keep the point under `centre` (in viewport coords) fixed across a zoom change.
+    /// Zoom to @p newZoom, keeping the map point under @p centre (viewport coords) exactly where it
+    /// is -- on **every frame**, not just at the end.
     ///
-    /// Continuous now, and no rounding: the shader means a fractional zoom is a real zoom.
-    function zoomAround(newZoom, centre) {
+    /// @p bridge is true ONLY for a mouse-wheel detent, where the hardware left a gap that has to be
+    /// crossed somehow. Everything else -- the slider, a trackpad, a pinch -- is already continuous
+    /// and goes straight through with no interpolation at all. @see canvasRoot's zoom note.
+    function zoomAround(newZoom, centre, bridge) {
       newZoom = Math.max(canvasRoot.minZoom, Math.min(canvasRoot.maxZoom, newZoom));
       if (Math.abs(newZoom - canvasRoot.zoom) < 0.0001)
         return;
 
-      // Where that point sits on the MAP right now, in unscaled buffer pixels.
-      const mapX = (view.contentX + centre.x - canvas.x) / canvasRoot.zoom;
-      const mapY = (view.contentY + centre.y - canvas.y) / canvasRoot.zoom;
+      // Where that point sits on the MAP right now, in unscaled buffer pixels. This is what has to
+      // stay put.
+      canvasRoot.anchorMap = Qt.point((view.contentX + centre.x - canvas.x) / canvasRoot.zoom,
+                                      (view.contentY + centre.y - canvas.y) / canvasRoot.zoom);
+      canvasRoot.anchorView = centre;
 
+      canvasRoot.bridging = (bridge === true);
       canvasRoot.userZoom = newZoom;
-
-      // canvas.x/y and contentWidth/Height are bindings; let them settle before we put that same
-      // map point back under the cursor.
-      Qt.callLater(function() {
-        view.contentX = Math.max(0, Math.min(Math.max(0, view.contentWidth - view.width),
-                                             canvas.x + mapX * canvasRoot.zoom - centre.x));
-        view.contentY = Math.max(0, Math.min(Math.max(0, view.contentHeight - view.height),
-                                             canvas.y + mapY * canvasRoot.zoom - centre.y));
-      });
     }
 
-    /// Centre the view on a point in BUFFER pixels, at the zoom already set.
+    /// Centre the view on a point in BUFFER pixels. Used by "Go to…", which sets the zoom first --
+    /// so the anchor is the destination itself and it stays dead centre while the map eases in.
     function centreOn(bx, by) {
+      canvasRoot.anchorMap = Qt.point(bx, by);
+      canvasRoot.anchorView = Qt.point(view.width / 2, view.height / 2);
+
+      // Nudge the pin once now, in case the zoom did not actually change (in which case there is no
+      // animation to ride, and onZoomChanged will never fire).
       Qt.callLater(function() {
         view.contentX = Math.max(0, Math.min(Math.max(0, view.contentWidth - view.width),
                                              canvas.x + bx * canvasRoot.zoom - view.width / 2));
@@ -731,12 +638,14 @@ Item {
 
     // Pinch: touchscreen, and a touchpad's two-finger pinch. It tracks the gesture continuously --
     // there is nothing to snap to any more.
+    // A pinch is CONTINUOUS. Straight through, no interpolation -- it is already smooth, and
+    // bridging it would only put lag between your fingers and the map.
     PinchHandler {
       target: null
       onActiveScaleChanged: {
         if (!active)
           return;
-        view.zoomAround(canvasRoot.zoom * (1 + (activeScale - 1) * 0.25), centroid.position);
+        view.zoomAround(canvasRoot.zoom * (1 + (activeScale - 1) * 0.25), centroid.position, false);
       }
     }
 
@@ -748,8 +657,17 @@ Item {
     WheelHandler {
       acceptedModifiers: Qt.ControlModifier
       onWheel: (event) => {
-        const notches = event.angleDelta.y / 120;
-        view.zoomAround(canvasRoot.zoom * Math.pow(1.12, notches), point.position);
+        // A TRACKPAD reports a continuous pixelDelta -- true sub-pixel input, so it goes straight
+        // through with no bridge. A MOUSE WHEEL reports 120 units per detent and nothing in between,
+        // so that one (and only that one) gets bridged. @see canvasRoot's zoom note.
+        const fine = (event.pixelDelta.y !== 0);
+
+        const notches = fine ? event.pixelDelta.y / 50
+                             : event.angleDelta.y / 120;
+
+        const from = canvasRoot.userZoom > 0 ? canvasRoot.userZoom : canvasRoot.zoom;
+
+        view.zoomAround(from * Math.pow(1.12, notches), point.position, !fine);
       }
     }
 
@@ -782,8 +700,10 @@ Item {
   // places where zoom is").
 
   /// Zoom, keeping the middle of the view where it is. What the slider drives.
+  /// The SLIDER. Continuous input -- straight through, no bridge, no interpolation. This is the true
+  /// sub-pixel zoom: drag it and the map is exactly where the slider says, every frame.
   function zoomToCentre(z) {
-    view.zoomAround(z, Qt.point(view.width / 2, view.height / 2));
+    view.zoomAround(z, Qt.point(view.width / 2, view.height / 2), false);
   }
 
   // ── The opening view ──────────────────────────────────────────────────────────────────────

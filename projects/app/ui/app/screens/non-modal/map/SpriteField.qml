@@ -67,7 +67,7 @@ ColumnLayout {
     wrapMode: Text.Wrap
 
     HoverHandler { id: labelHover }
-    ToolTip.visible: labelHover.hovered && field.fieldData.blurb !== ""
+    ToolTip.visible: brg.settings.infoBtnPressed && (labelHover.hovered && field.fieldData.blurb !== "")
     ToolTip.delay: 400
     ToolTip.text: field.fieldData.blurb
   }

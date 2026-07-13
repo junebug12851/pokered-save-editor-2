@@ -17,18 +17,21 @@
 /*
   MapToolTip.qml -- the map screen's tooltip. Small, dark, close to the thing it explains.
 
-  Three things were wrong with what this replaces (Twilight, 2026-07-13):
+  ⚠️ **IT ONLY SHOWS WHEN THE HEADER'S "?" IS ON** (`brg.settings.infoBtnPressed`).
 
-    * IT DIDN'T SHOW. A Material ToolTip parks itself away from its parent and the app's shared
-      MainToolTip is gated on the header's "?" toggle (`brg.settings.infoBtnPressed`) -- so half the
-      map screen's tooltips only appeared if you had turned global tooltips on first. A tooltip that
-      needs a preference set is a tooltip nobody reads.
-    * IT SAT TOO FAR AWAY, so it read as a floating label rather than as an explanation of the button
-      under your cursor.
-    * IT LOOKED BAD -- default Material chrome, thin text, poor contrast.
+  This file used to say the opposite, in as many words, and it was WRONG (Twilight, 2026-07-13):
+  tooltips popping up on every hover, everywhere, is exactly the interrupting clutter this app is
+  built to avoid. The "?" toggle is the user's switch and it is not ours to override. If you want
+  tooltips, turn them on.
 
-  So: hover shows it, always. It sits 6px under the control, centred on it. Dark, rounded, 11px, and
-  wide enough for a real sentence.
+  There is **exactly one exception in the whole map screen**, granted explicitly: the **!** on a
+  character the map has not loaded (CharacterCell.qml). That is not a hint about a button -- it is a
+  notice about something that will go wrong, and it has to be readable the moment you point at it.
+
+  What was genuinely wrong with the stock tooltip, and is fixed here: it sat too far from the control
+  (so it read as a floating label rather than an explanation of the thing under the cursor), and its
+  contrast was poor. This one sits 6px under the control, centred on it -- dark, rounded, 11px, wide
+  enough for a real sentence.
 */
 import QtQuick
 import QtQuick.Controls
@@ -38,6 +41,15 @@ ToolTip {
 
   /// How wide the text may run before it wraps. A sentence, not a novel.
   property int maxWidth: 240
+
+  /// Set false ONLY for a notice the user must see whether or not they asked for hints. There is one
+  /// of those in the whole screen, and it is the character-not-loaded "!".
+  property bool followGlobalSetting: true
+
+  /// ⚠️ Callers set THIS, not `visible` -- so the "?" gate cannot be forgotten at a call site.
+  property bool shown: false
+
+  visible: tip.shown && (!tip.followGlobalSetting || brg.settings.infoBtnPressed)
 
   delay: 350
   timeout: -1

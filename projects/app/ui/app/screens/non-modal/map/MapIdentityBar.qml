@@ -118,6 +118,13 @@ Rectangle {
     // ── Contrast ─────────────────────────────────────────────────────────────────────────────
     ContrastPicker { id: contrastPicker }
 
+    // ── Music ────────────────────────────────────────────────────────────────────────────────
+    //
+    // In the toolbar, in the same language as the map picker beside it -- a chip that drops a
+    // picker (Twilight, 2026-07-13). The Music DOCK PANEL is gone: a whole panel for one combo box,
+    // two checkboxes and a ▶ was a panel too many.
+    MusicPicker { id: musicPicker }
+
     Rectangle {
       visible: brg.mapClock.animates
       implicitWidth: 1
@@ -207,7 +214,7 @@ Rectangle {
         }
       }
 
-      ToolTip.visible: simHover.hovered || (!brg.mapSim.canSimulate && simDeadHover.hovered)
+      ToolTip.visible: brg.settings.infoBtnPressed && (simHover.hovered || (!brg.mapSim.canSimulate && simDeadHover.hovered))
       ToolTip.delay: 400
       ToolTip.text: !brg.mapSim.canSimulate
                       ? qsTr("Nobody on this map can walk — they are all set to Stay")

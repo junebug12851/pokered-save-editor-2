@@ -1,4 +1,60 @@
-# Qt / QML Patterns & Gotchas
+# Qt / QML Patterns
+
+## ⚠️ THE THREE THAT COST A WHOLE REVIEW ROUND (2026-07-13)
+
+Three different symptoms, and they kept coming back because each looks like a feature bug rather than a
+QML bug. Learn them once.
+
+### 1. A binding on a C++ **method** never re-evaluates
+
+```qml
+Repeater { model: brg.map.npcList() }        // ❌ binds ONCE, at load, and never again
+```
+
+`npcList()` is a function call. QML re-evaluates a binding when a **property** it read changes -- and a
+C++ method reads none that QML can see. So the canvas went on drawing the cast it had memorised at
+startup: sprites you dragged snapped back, the walk simulation "didn't work" (it did -- nothing
+redrew), deletes did nothing visible.
+
+**The fix** is an explicit dependency:
+
+```qml
+property int revision: 0
+Connections { target: brg.map; function onChanged() { revision++; } }
+
+readonly property var npcs: { revision; return brg.map.npcList(); }   // ✅ re-asks
+Repeater { model: npcs }
+```
+
+**If you bind to a C++ method, you need one of these.** No exceptions.
+
+### 2. `Drag` works on GEOMETRIC OVERLAP -- the source must actually MOVE
+
+Qt's `DropArea` decides what you are over by intersecting it with the **dragged item's own geometry**.
+A "ghost" image that follows the cursor while the `Drag.source` stays parked in its panel drops
+**nothing, anywhere** -- the source was never over the target.
+
+So the ghost **is** the source: reparent it to the window, position it at the cursor, and put
+`Drag.active`/`Drag.keys` on **it**. And a sprite clamped to the map can never overlap a side panel, so
+dragging one out to delete it needs the same treatment.
+
+Accept with a **specific action** (`drop.accept(Qt.MoveAction)`) so the source can tell "I was consumed"
+from "I was let go over open ground" -- otherwise a delete also commits a move on the thing it deleted.
+
+### 3. An instance's `onFoo:` **overrides** the component's own `onFoo:`
+
+```qml
+// MyDialog.qml
+Dialog { onAccepted: { rememberThePreference(); } }
+
+// use site
+MyDialog { onAccepted: doTheThing(); }      // ❌ rememberThePreference() NEVER RUNS
+```
+
+The handler at the use site *replaces* the one in the component. Anything the component must always do
+belongs in a button's `onClicked` (or a named function), where nothing can shadow it.
+
+ & Gotchas
 
 The project's single Qt reference: the **catalog** (a project-lifetime index of every Qt/QML landmine
 hit, 2019 → 2026) followed by the **detailed Qt 5 → Qt 6 patterns** (with code) and **case studies**.

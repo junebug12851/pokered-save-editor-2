@@ -97,7 +97,7 @@ Item {
     HoverHandler { id: chevHover; cursorShape: Qt.PointingHandCursor }
     TapHandler { onTapped: zoomMenu.openState = !zoomMenu.openState }
 
-    ToolTip.visible: chevHover.hovered && !zoomMenu.openState
+    ToolTip.visible: brg.settings.infoBtnPressed && (chevHover.hovered && !zoomMenu.openState)
     ToolTip.delay: 500
     ToolTip.text: qsTr("Zoom — the slider, and somewhere to go")
   }

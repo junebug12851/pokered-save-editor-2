@@ -86,15 +86,24 @@ Item {
 
     onDropped: (drop) => {
       bar.deleteHover = false;
+
       const slot = drop.source && drop.source.spriteSlot !== undefined ? drop.source.spriteSlot : -1;
-      if (slot > 0) {
-        brg.map.removeNpc(slot);
-        if (bar.canvas) {
-          bar.canvas.selectedNpc = -1;
-          bar.canvas.status = qsTr("Removed. The sprites after it slid up a slot.");
-        }
+
+      if (slot <= 0) {
+        drop.accept(Qt.IgnoreAction);   // the player cannot be deleted; he offers slot -1
+        return;
       }
-      drop.accept();
+
+      brg.map.removeNpc(slot);
+
+      if (bar.canvas) {
+        bar.canvas.selectedNpc = -1;
+        bar.canvas.status = qsTr("Removed. The sprites after it slid up a slot.");
+      }
+
+      // ⚠️ MoveAction, specifically. It is what tells MapSprite "the drop was a DELETE" so it does
+      // not also commit a move on the sprite it has just destroyed.
+      drop.accept(Qt.MoveAction);
     }
   }
 
