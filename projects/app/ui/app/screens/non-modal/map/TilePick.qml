@@ -55,6 +55,10 @@ Item {
   /// Shown when the tile is 0xFF, e.g. "No grass on this tileset".
   property string noneLabel: qsTr("None")
 
+  /// May this be un-set from the row itself? True wherever "nothing" is a value the byte can hold --
+  /// which, for a tile, it always is ($FF).
+  property bool clearable: true
+
   /// Emitted when the user chooses one. The parent writes the save; this never does.
   signal picked(int tile)
 
@@ -159,6 +163,24 @@ Item {
         color: brg.settings.textColorMid
         elide: Text.ElideRight
       }
+    }
+
+    // ── Un-set it, right here ────────────────────────────────────────────────────────────────
+    //
+    // "None" ($FF) has always been a choice inside the picker, but you had to OPEN the picker to
+    // reach it -- which is a strange thing to have to do to remove something (Twilight, 2026-07-13:
+    // "allow unselecting things ... like how counters has an empty value"). Now the row clears itself.
+    //
+    // It only appears when there IS something to clear, so it never sits there looking like an
+    // action you have not taken.
+    MapRailButton {
+      visible: root.clearable && root.tile !== root.noTile
+      size: 22
+      glyph: "×"
+      tip: qsTr("Clear this — set it to none")
+      Layout.alignment: Qt.AlignVCenter
+
+      onClicked: root.picked(root.noTile)
     }
   }
 

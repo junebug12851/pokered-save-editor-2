@@ -209,6 +209,15 @@ public:
   /// and labelled. 248 of them, and every one renders.
   Q_INVOKABLE QVariantList mapList() const;
 
+  /**
+   * @brief Where each connected map bleeds into the ring: `{ dir, name, x, y, w, h }`, buffer px.
+   *
+   * The ring is not a wall of trees -- it carries the NEIGHBOURING maps' edges, and working out
+   * where each strip lands is the hardest arithmetic in the map engine (see
+   * reference/map-connections.md). This is what lets you look at it.
+   */
+  Q_INVOKABLE QVariantList connectionList() const;
+
   /// Put the save's stored map size back to what this map actually is. The ONE deliberate way those
   /// bytes change -- offered, never done behind your back. @see headerMatches.
   Q_INVOKABLE void fixMapHeader();

@@ -42,6 +42,12 @@ Item {
   implicitWidth: chip.implicitWidth
   implicitHeight: 24
 
+  /// The glitch ink. YELLOW, not red (Twilight, 2026-07-13): a glitch palette is not an ERROR --
+  /// the console renders it perfectly happily, and half the reason to have this control is to go
+  /// looking for them. Yellow says "unusual, look here"; red says "broken", and it isn't.
+  readonly property color glitchColor: "#c9a227"
+  readonly property color glitchFill: "#f2d35c"
+
   /// Show the six glitch values as their own segments.
   property bool showGlitch: brg.map.contrastIsGlitch   // a save already holding one has nothing to hide
 
@@ -72,7 +78,7 @@ Item {
 
     color: pop.opened ? "#e8e8e8" : (chipHover.hovered ? "#f0f0f0" : "#ffffff")
     border.width: 1
-    border.color: brg.map.contrastIsGlitch ? brg.settings.errorColor : brg.settings.dividerColor
+    border.color: brg.map.contrastIsGlitch ? root.glitchColor : brg.settings.dividerColor
 
     Behavior on color { ColorAnimation { duration: 90 } }
 
@@ -109,7 +115,7 @@ Item {
         text: qsTr("%1%").arg(brg.map.contrastPercent)
         font.pixelSize: 12
         font.bold: true
-        color: brg.map.contrastIsGlitch ? brg.settings.errorColor : brg.settings.textColorDark
+        color: brg.map.contrastIsGlitch ? root.glitchColor : brg.settings.textColorDark
       }
 
       Text {
@@ -149,7 +155,7 @@ Item {
 
         Text {
           Layout.fillWidth: true
-          text: qsTr("Palette")
+          text: qsTr("Contrast")
           font.pixelSize: 11
           font.bold: true
           color: brg.settings.textColorMid
@@ -158,7 +164,7 @@ Item {
         Text {
           text: root.nameOf(brg.map.contrast)
           font.pixelSize: 11
-          color: brg.map.contrastIsGlitch ? brg.settings.errorColor : brg.settings.textColorDark
+          color: brg.map.contrastIsGlitch ? root.glitchColor : brg.settings.textColorDark
         }
       }
 
@@ -197,15 +203,15 @@ Item {
               readonly property bool active: brg.map.contrast === modelData
 
               color: active
-                     ? (glitch ? brg.settings.errorColor : brg.settings.accentColor)
-                     : (glitch ? Qt.rgba(brg.settings.errorColor.r, brg.settings.errorColor.g,
-                                         brg.settings.errorColor.b, 0.12)
+                     ? (glitch ? root.glitchFill : brg.settings.accentColor)
+                     : (glitch ? Qt.rgba(root.glitchColor.r, root.glitchColor.g,
+                                         root.glitchColor.b, 0.16)
                                : "#f2f2f2")
 
               border.width: 1
               border.color: glitch
-                            ? Qt.rgba(brg.settings.errorColor.r, brg.settings.errorColor.g,
-                                      brg.settings.errorColor.b, 0.45)
+                            ? Qt.rgba(root.glitchColor.r, root.glitchColor.g,
+                                      root.glitchColor.b, 0.55)
                             : brg.settings.dividerColor
 
               topLeftRadius: index === 0 ? 4 : 0
@@ -221,7 +227,11 @@ Item {
                 font.pixelSize: 10
                 font.family: "monospace"
                 font.bold: parent.active
-                color: parent.active ? brg.settings.textColorLight : brg.settings.textColorMid
+                // On the yellow fill, dark text -- white on yellow is unreadable, and this control
+                // exists to be read.
+                color: parent.active
+                       ? (parent.glitch ? brg.settings.textColorDark : brg.settings.textColorLight)
+                       : brg.settings.textColorMid
               }
             }
           }
@@ -248,35 +258,20 @@ Item {
           onToggled: root.showGlitch = !root.showGlitch
         }
 
+        // "Glitch contrast", not "glitch palettes" (Twilight, 2026-07-13) -- the control is called
+        // Contrast, so its unusual values are glitch CONTRAST. One word for one thing.
         Text {
           Layout.fillWidth: true
-          text: qsTr("Glitch palettes")
+          text: qsTr("Glitch contrast")
           font.pixelSize: 11
           color: brg.settings.textColorDark
         }
       }
 
-      Text {
-        Layout.fillWidth: true
-        visible: root.showGlitch
-        text: qsTr("The game keeps four palettes — 0, 3, 6 and 9. It reaches them by subtracting "
-                   + "this byte from a pointer, so every other value reads across the seam between "
-                   + "two of them. Those six exist nowhere in the game, and they are yours to set.")
-        font.pixelSize: 10
-        color: brg.settings.textColorMid
-        wrapMode: Text.WordWrap
-      }
-
-      // The one that catches people out.
-      Text {
-        Layout.fillWidth: true
-        visible: brg.map.contrast === 1 || brg.map.contrast === 2
-        text: qsTr("⚠ This one leaves the map looking normal — it wrecks the SPRITE palette instead, "
-                   + "so it shows on the player, not the world.")
-        font.pixelSize: 10
-        color: brg.settings.errorColor
-        wrapMode: Text.WordWrap
-      }
+      // (The two paragraphs that used to sit here -- why the six in-between values exist, and the
+      // catch with 1 and 2 -- were removed on 2026-07-13 at Twilight's call. The control does not
+      // need an essay: the segments are yellow, they are named "Glitch N", and the map itself shows
+      // you what they do. The full story lives in notes/reference/palettes.md.)
     }
   }
 }

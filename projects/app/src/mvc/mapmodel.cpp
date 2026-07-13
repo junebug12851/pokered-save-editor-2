@@ -105,6 +105,37 @@ QString MapModel::source() const
        + "/" + QString::number(borderBlock());   // what fills the ring -- the save's own byte
 }
 
+QVariantList MapModel::connectionList() const
+{
+  QVariantList out;
+  if (!valid())
+    return out;
+
+  // MapDBEntryConnect::ConnectDir order -- NORTH, SOUTH, EAST, WEST. (Not the order you'd guess, and
+  // getting it wrong would label every strip with its neighbour's direction.)
+  static const char* dirName[] = { "North", "South", "East", "West" };
+
+  for (const MapEngine::Strip& s : MapEngine::connectionStrips(mapInd())) {
+    QVariantMap m;
+    m["dir"] = s.dir;
+    m["dirName"] = (s.dir >= 0 && s.dir < 4) ? QObject::tr(dirName[s.dir]) : QString();
+    m["name"] = s.name;
+
+    // Buffer PIXELS, like every other rectangle this model publishes -- QML multiplies by the zoom
+    // and does no arithmetic of its own.
+    m["x"] = s.bx * MapEngine::blockPx;
+    m["y"] = s.by * MapEngine::blockPx;
+    m["w"] = s.cols * MapEngine::blockPx;
+    m["h"] = s.rows * MapEngine::blockPx;
+
+    m["blocks"] = QStringLiteral("%1 × %2").arg(s.cols).arg(s.rows);
+
+    out.append(m);
+  }
+
+  return out;
+}
+
 int MapModel::borderBlock() const
 {
   // `wMapBackgroundTile` (save 0x2659). The console reads THIS, not the map's shipped border -- so

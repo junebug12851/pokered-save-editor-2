@@ -63,6 +63,7 @@ class MapLayersModel : public QAbstractListModel
   Q_PROPERTY(bool showPlayer READ showPlayer NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showScreenBox READ showScreenBox NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showDrawArea READ showDrawArea NOTIFY viewBitsChanged)
+  Q_PROPERTY(bool showConnections READ showConnections NOTIFY viewBitsChanged)
 
   /// How strongly the meaning overlay is drawn (0..1). The one dial the Meaning group carries:
   /// stacked annotation over four shades of grey genuinely needs it.
@@ -76,8 +77,12 @@ public:
     ViewTileGrid  = 1 << 1,   ///< The 8px tiles inside them. Off by default -- it is a lot of lines.
     ViewMapBounds = 1 << 2,   ///< Where the map ends and the 3-block ring begins.
     ViewPlayer    = 1 << 3,   ///< Him, where the console's own OAM puts him.
-    ViewScreenBox = 1 << 4,   ///< The 20x18 tiles actually on the Game Boy's screen (RED).
-    ViewDrawArea  = 1 << 5,   ///< The 6x5 blocks LoadCurrentMapView redraws (ACCENT).
+    ViewScreenBox = 1 << 4,   ///< The 20x18 tiles actually on the Game Boy's screen.
+    ViewDrawArea  = 1 << 5,   ///< The 6x5 blocks LoadCurrentMapView redraws.
+    /// Where each CONNECTED map bleeds into the ring -- and how big that strip is. The ring is not a
+    /// wall of trees: it carries the neighbours' edges, and working out where each lands is the
+    /// hardest arithmetic in the engine. This is the layer that lets you look at it.
+    ViewConnections = 1 << 6,
   };
   Q_ENUM(ViewLayer)
 
@@ -106,6 +111,7 @@ public:
   bool showPlayer() const;
   bool showScreenBox() const;
   bool showDrawArea() const;
+  bool showConnections() const;
 
   qreal overlayOpacity() const;
   void setOverlayOpacity(qreal opacity);
@@ -167,6 +173,9 @@ private:
   int savedView = 0;
   int savedOverlay = 0;
 
-  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewScreenBox | ViewDrawArea;
+  // What is on when the screen opens. The DRAW AREA is off (Twilight, 2026-07-13) -- it is the
+  // engine's scratch, useful when you want it and clutter when you don't; the CONNECTIONS are on,
+  // because the ring is meaningless until you can see whose edges are in it.
+  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewScreenBox | ViewConnections;
   qreal opacity = 1.0;
 };

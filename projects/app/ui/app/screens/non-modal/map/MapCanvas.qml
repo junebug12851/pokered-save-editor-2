@@ -186,7 +186,8 @@ Item {
       readonly property color boundsColor: "#0072b2"   // blue   -- where the map ENDS
       readonly property color drawColor:   "#009e73"   // green  -- what the game REDRAWS
       readonly property color screenColor: "#e69f00"   // orange -- what the player SEES
-      readonly property color selectColor: "#cc79a7"   // purple -- what YOU picked
+      readonly property color selectColor: "#cc79a7"   // purple     -- what YOU picked
+      readonly property color connectColor: "#d55e00"  // vermillion -- the NEIGHBOURS in the ring
 
       readonly property color gridColor: Qt.rgba(0.34, 0.71, 0.91, 0.42)
       readonly property color tileGridColor: Qt.rgba(0.34, 0.71, 0.91, 0.18)
@@ -241,6 +242,55 @@ Item {
           width: canvas.width
           height: 1
           color: canvas.gridColor
+        }
+      }
+
+      // ── The connections ──────────────────────────────────────────────────────────────────────
+      //
+      // The ring is NOT a wall of trees: the game bleeds each neighbouring map's edge into it, and
+      // where each strip lands is the hardest arithmetic in the whole engine (a clamp that turns one
+      // signed offset into two numbers, and two different loop shapes -- see
+      // reference/map-connections.md). It is worth being able to look at it, so here it is: the
+      // strip, its neighbour's name, and its size in blocks.
+      //
+      // Every number comes from brg.map.connectionList() in buffer pixels. QML multiplies by zoom.
+      Repeater {
+        model: brg.mapLayers.showConnections ? brg.map.connectionList() : []
+
+        Rectangle {
+          required property var modelData
+
+          x: modelData.x * canvasRoot.zoom
+          y: modelData.y * canvasRoot.zoom
+          width: modelData.w * canvasRoot.zoom
+          height: modelData.h * canvasRoot.zoom
+
+          color: Qt.rgba(0.84, 0.37, 0.0, 0.10)   // the same vermillion, barely there
+          border.width: 2
+          border.color: canvas.connectColor
+
+          // The label sits INSIDE the strip when it fits, and hugs it from outside when it doesn't
+          // -- a 3-block strip is 96px, which at 1x is not much to write in.
+          Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 2
+
+            width: label.implicitWidth + 8
+            height: label.implicitHeight + 4
+            radius: 3
+            color: "#e6212121"
+
+            visible: parent.width > width + 4 && parent.height > height + 4
+
+            Text {
+              id: label
+              anchors.centerIn: parent
+              text: modelData.dirName + " · " + modelData.name + "  " + modelData.blocks
+              font.pixelSize: 10
+              color: "#ffffff"
+            }
+          }
         }
       }
 

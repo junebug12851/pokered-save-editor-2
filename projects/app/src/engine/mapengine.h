@@ -154,6 +154,27 @@ public:
   static Connection connectionOf(const MapDBEntry* from, int dir,
                                  const MapDBEntry* to, int offset);
 
+  /**
+   * @brief Where each connected map's strip LANDS in the ring -- in buffer BLOCK coordinates.
+   *
+   * The border ring is not a wall of trees: the game bleeds the neighbouring maps' edges into it, so
+   * Pallet Town's ring really is the bottom of Route 1 and the top of Route 21. That is a lot of
+   * arithmetic (a clamp that turns one signed offset into two numbers, two different loop shapes),
+   * and it is worth being able to SEE. This is what the Connections layer draws.
+   *
+   * `{ dir, toInd, name, bx, by, cols, rows }` -- block coords into Buffer::blocks, one per
+   * connection this map has.
+   */
+  struct Strip {
+    int dir = -1;
+    int toInd = -1;
+    QString name;
+    int bx = 0, by = 0;     ///< Top-left, in buffer BLOCKS.
+    int cols = 0, rows = 0; ///< Its size, in blocks. N/S: 3 rows. E/W: 3 cols.
+  };
+
+  static QVector<Strip> connectionStrips(int mapInd);
+
   /// Recover the header's raw signed offset from what maps.json kept (see the .cpp).
   static int connectionOffset(const MapDBEntryConnect* connect);
 

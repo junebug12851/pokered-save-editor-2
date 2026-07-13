@@ -122,6 +122,10 @@ void MapLayersModel::buildAll()
           "off until you want it."), ViewTileGrid);
   view(GuidesGroup, "mapBounds", tr("Map bounds"),
        tr("Where the real map ends and the 3-block border ring begins."), ViewMapBounds);
+  view(GuidesGroup, "connections", tr("Connections"),
+       tr("Where each neighbouring map bleeds into the ring, and how big that strip is. The ring is "
+          "not a wall of trees — Pallet Town's is really the bottom of Route 1 and the top of Route "
+          "21, which is why the walk across is seamless."), ViewConnections);
 
   // The border ring is an OVERLAY bit (MapEngine paints it), but it belongs here: it is a way of
   // seeing the map's shape, not a fact about its tiles.
@@ -183,7 +187,12 @@ bool MapLayersModel::rowVisible(const Row& r) const
 
 bool MapLayersModel::rowApplies(const Row& r) const
 {
-  // A guide always applies -- there is always a grid to draw. A semantic overlay might have
+  // A map with no neighbours has no strips, and the row should say so rather than switch on nothing.
+  // (An indoor map is the common case -- most of the game's maps connect to nobody.)
+  if (r.viewBit == ViewConnections)
+    return map != nullptr && map->valid() && !map->connectionList().isEmpty();
+
+  // Any other guide always applies -- there is always a grid to draw. A semantic overlay might have
   // nothing to show on THIS map, and if so the row says so rather than switching on an empty
   // overlay and leaving you to wonder whether the feature is broken.
   if (r.overlayBit == 0 || map == nullptr)
@@ -280,11 +289,17 @@ QVariant MapLayersModel::data(const QModelIndex& index, int role) const
     // similar lines over a grey map and made none of them mean anything. These are Okabe-Ito, the
     // standard colour-blind-safe set: they stay distinct to every kind of colour vision, and they
     // are muted enough to sit over four shades of grey without shouting.
-    if (r.viewBit == ViewScreenBox) return QColor(QStringLiteral("#e69f00"));  // orange -- what he SEES
-    if (r.viewBit == ViewDrawArea)  return QColor(QStringLiteral("#009e73"));  // green  -- what the game REDRAWS
-    if (r.viewBit == ViewMapBounds) return QColor(QStringLiteral("#0072b2"));  // blue   -- where the map ENDS
-    if (r.viewBit == ViewPlayer)    return QColor(QStringLiteral("#6b6b6b"));  // him
-    return QColor(86, 180, 233, 110);                                          // sky blue -- the grids
+    if (r.viewBit == ViewScreenBox)   return QColor(QStringLiteral("#e69f00")); // orange -- what he SEES
+    if (r.viewBit == ViewDrawArea)    return QColor(QStringLiteral("#009e73")); // green  -- what the game REDRAWS
+    if (r.viewBit == ViewMapBounds)   return QColor(QStringLiteral("#0072b2")); // blue   -- where the map ENDS
+    if (r.viewBit == ViewConnections) return QColor(QStringLiteral("#d55e00")); // vermillion -- the neighbours
+    if (r.viewBit == ViewPlayer)      return QColor(QStringLiteral("#6b6b6b")); // him
+
+    // The grids. ⚠️ OPAQUE here, even though the canvas draws them at low alpha: this colour is what
+    // the layer PANEL paints its swatch with, and a translucent swatch on a white row looked
+    // greyed-OUT -- i.e. like a layer that was disabled (Twilight, 2026-07-13). The swatch says
+    // *which* ink; the canvas decides how strongly to use it.
+    return QColor(QStringLiteral("#56b4e9"));                                   // sky blue -- the grids
   }
 
   return QVariant();
@@ -436,6 +451,7 @@ bool MapLayersModel::showMapBounds() const { return (bits & ViewMapBounds) != 0;
 bool MapLayersModel::showPlayer() const    { return (bits & ViewPlayer) != 0; }
 bool MapLayersModel::showScreenBox() const { return (bits & ViewScreenBox) != 0; }
 bool MapLayersModel::showDrawArea() const  { return (bits & ViewDrawArea) != 0; }
+bool MapLayersModel::showConnections() const { return (bits & ViewConnections) != 0; }
 
 qreal MapLayersModel::overlayOpacity() const { return opacity; }
 

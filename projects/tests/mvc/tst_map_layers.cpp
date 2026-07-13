@@ -93,6 +93,7 @@ private slots:
 
   void theThreeGroups_areAllThere();
   void gameViewLayers_existAndToggle();
+  void connectionsAreALayer();
   void groupEye_isTriState();
   void solo_isALookNotAnEdit();
   void aLayerWithNothingToShow_saysSo();
@@ -149,20 +150,44 @@ void TestMapLayers::gameViewLayers_existAndToggle()
     const int row = rowOf(r->layers, key);
     QVERIFY2(row >= 0, qPrintable(QStringLiteral("%1 is not a layer").arg(key)));
 
-    QVERIFY2(visible(r->layers, row), qPrintable(QStringLiteral("%1 should start visible").arg(key)));
+    // Each one toggles, whichever state it starts in -- that is what makes it a layer rather than a
+    // rectangle painted on the map.
+    const bool was = visible(r->layers, row);
 
     r->layers->toggle(row);
-    QVERIFY2(!visible(r->layers, row),
-             qPrintable(QStringLiteral("%1 did not turn OFF -- it is not really a layer").arg(key)));
+    QVERIFY2(visible(r->layers, row) != was,
+             qPrintable(QStringLiteral("%1 did not toggle -- it is not really a layer").arg(key)));
 
     r->layers->toggle(row);
-    QVERIFY(visible(r->layers, row));
+    QCOMPARE(visible(r->layers, row), was);
   }
 
-  // And the bits QML actually binds to move with them.
-  QVERIFY(r->layers->showPlayer());
-  QVERIFY(r->layers->showScreenBox());
-  QVERIFY(r->layers->showDrawArea());
+  // The DEFAULTS (2026-07-13, Twilight): the player and the screen box are on; the DRAW AREA is off
+  // -- it is the engine's scratch, useful when you want it and clutter when you don't.
+  QVERIFY2(r->layers->showPlayer(), "the player should be on by default");
+  QVERIFY2(r->layers->showScreenBox(), "the screen box should be on by default");
+  QVERIFY2(!r->layers->showDrawArea(), "the draw area should be OFF by default");
+}
+
+/// The neighbours' strips in the ring are a layer -- and on a map with no neighbours it says so.
+void TestMapLayers::connectionsAreALayer()
+{
+  QScopedPointer<Rig> r(makeRig());
+
+  const int row = rowOf(r->layers, "connections");
+  QVERIFY2(row >= 0, "the connections are not a layer");
+
+  // The fixture save is in Pallet Town, which connects to Route 1 (north) and Route 21 (south).
+  const bool applies = r->layers->data(r->layers->index(row, 0),
+                                       MapLayersModel::AppliesRole).toBool();
+  QVERIFY2(applies, "Pallet Town has two connections -- the layer should apply");
+  QVERIFY2(visible(r->layers, row), "the connections should be on by default -- the ring is "
+                                    "meaningless until you can see whose edges are in it");
+
+  QVERIFY(!r->map->connectionList().isEmpty());
+
+  r->layers->toggle(row);
+  QVERIFY(!r->layers->showConnections());
 }
 
 /// One click on a group's eye always changes something: any child on -> all off; none on -> all on.
@@ -173,7 +198,9 @@ void TestMapLayers::groupEye_isTriState()
   const int group = rowOf(r->layers, "gameview");
   QVERIFY(group >= 0);
 
-  QCOMPARE(groupState(r->layers, group), 2);       // all three start on
+  // Game View starts on SOME: the player and the screen box on, the draw area off (the default
+  // changed 2026-07-13). Which makes it the perfect group to test the tri-state on.
+  QCOMPARE(groupState(r->layers, group), 1);       // some
 
   r->layers->toggle(group);                        // any on -> everything off
   QCOMPARE(groupState(r->layers, group), 0);
@@ -181,11 +208,12 @@ void TestMapLayers::groupEye_isTriState()
   QVERIFY(!r->layers->showScreenBox());
   QVERIFY(!r->layers->showDrawArea());
 
-  r->layers->toggle(group);                        // none on -> everything back on
+  r->layers->toggle(group);                        // none on -> everything on
   QCOMPARE(groupState(r->layers, group), 2);
+  QVERIFY(r->layers->showDrawArea());
 
-  // "Some" is a real state, and the group has to report it honestly (the folded group's eye depends
-  // on this being right).
+  // "Some" again, from the other side -- the group has to report it honestly (a folded group's eye
+  // depends on this being right).
   r->layers->toggle(rowOf(r->layers, "player"));
   QCOMPARE(groupState(r->layers, group), 1);
 }
@@ -199,8 +227,11 @@ void TestMapLayers::solo_isALookNotAnEdit()
   const int screen = rowOf(r->layers, "screenBox");
   const int draw   = rowOf(r->layers, "drawArea");
 
-  // A deliberately lopsided setup, so "restore" has something real to restore.
-  r->layers->toggle(draw);                         // draw area OFF
+  // A deliberately lopsided setup, so "restore" has something real to restore. (The draw area is
+  // already off by default -- make sure of it rather than assuming either way.)
+  if (visible(r->layers, draw))
+    r->layers->toggle(draw);
+
   QVERIFY(visible(r->layers, player));
   QVERIFY(visible(r->layers, screen));
   QVERIFY(!visible(r->layers, draw));
@@ -250,8 +281,9 @@ void TestMapLayers::foldingAGroup_hidesItsChildrenNotItsState()
   QVERIFY2(r->layers->rowCount() < before, "folding a group should hide its children");
   QVERIFY2(r->layers->showPlayer(), "folding a group must not switch its layers off");
 
-  // The folded group's eye still tells the truth about what it holds.
-  QCOMPARE(groupState(r->layers, rowOf(r->layers, "gameview")), 2);
+  // The folded group's eye still tells the truth about what it holds -- "some", here, because the
+  // draw area is off by default and the other two are on.
+  QCOMPARE(groupState(r->layers, rowOf(r->layers, "gameview")), 1);
 
   r->layers->toggleExpanded(rowOf(r->layers, "gameview"));
   QCOMPARE(r->layers->rowCount(), before);

@@ -253,6 +253,60 @@ int MapEngine::connectionOffset(const MapDBEntryConnect* connect)
   return (stripOffset != 0) ? (-stripOffset - 3) : stripMove;
 }
 
+QVector<MapEngine::Strip> MapEngine::connectionStrips(int mapInd)
+{
+  // The same walk applyConnections() does, recording WHERE each strip lands instead of copying it.
+  // One source of truth for the arithmetic (connectionOf), two consumers: the renderer, and the
+  // Connections layer that lets you SEE the thing. (2026-07-13, Twilight: "connector maps need
+  // outlines too -- they have a lot of calculations.")
+  QVector<Strip> out;
+
+  auto* map = sourceMap(mapInd);
+  if (map == nullptr)
+    return out;
+
+  const int stride = map->getWidth() + 2 * mapBorder;
+  if (map->getWidth() <= 0 || map->getHeight() <= 0)
+    return out;
+
+  const int dirs[] = {
+    MapDBEntryConnect::ConnectDir::NORTH,
+    MapDBEntryConnect::ConnectDir::SOUTH,
+    MapDBEntryConnect::ConnectDir::WEST,
+    MapDBEntryConnect::ConnectDir::EAST
+  };
+
+  for (int dir : dirs) {
+    const auto* connect = map->getConnectAt(dir);
+    if (connect == nullptr)
+      continue;
+
+    auto* to = MapsDB::inst()->getIndAt(connect->getMap());
+    if (to == nullptr)
+      continue;
+
+    const Connection c = connectionOf(map, dir, to, connectionOffset(connect));
+    if (!c.valid || c.length <= 0)
+      continue;
+
+    const bool northSouth = (dir == MapDBEntryConnect::ConnectDir::NORTH
+                          || dir == MapDBEntryConnect::ConnectDir::SOUTH);
+
+    Strip s;
+    s.dir = dir;
+    s.toInd = c.toInd;
+    s.name = to->bestName();
+    s.bx = c.destIndex % stride;
+    s.by = c.destIndex / stride;
+    s.rows = northSouth ? mapBorder : c.length;
+    s.cols = northSouth ? c.length : mapBorder;
+
+    out.append(s);
+  }
+
+  return out;
+}
+
 void MapEngine::applyConnections(Buffer& out, const MapDBEntry* map)
 {
   // LoadTileBlockMap fills the ring with the border block and THEN bleeds the connected

@@ -52,19 +52,11 @@ Rectangle {
     anchors.margins: 10
     spacing: 6
 
-    // One line, not two. At the default 750×480 window the panel has ~200px for the list, and a
-    // two-line blurb costs two layer rows -- which is exactly the kind of thing the mandatory
-    // screenshot review is for. (It wrapped to two lines on the first pass.)
-    Text {
-      Layout.fillWidth: true
-      // Short enough to FIT the 170px panel. The longer version elided to "How you look at the map
-      // — …", which is a sentence that has given up. (Screenshot review, 2026-07-13.)
-      text: qsTr("None of this is in the save.")
-      font.pixelSize: 11
-      font.italic: true
-      color: brg.settings.textColorMid
-      elide: Text.ElideRight
-    }
+    // (A caption sat here -- "None of this is in the save." Removed 2026-07-13, Twilight: it is
+    // inaccurate and confusing. It was true of the *switches*, but the things they draw are very
+    // much in the save -- the player's coordinates, the grass tile, the connections, the edge of the
+    // world. A caption that needs a paragraph of qualification should not be there at all; the rows
+    // explain themselves on hover.)
 
     ListView {
       id: list
