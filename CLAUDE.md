@@ -108,10 +108,17 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
 > **EVERYTHING RUNS IN THE BACKGROUND — mandatory, by default (2026-07-12, Twilight).** Builds, tests,
 > screenshot captures, emulator runs, git, installs: all of it runs **hidden/headless** (`Start-Process
 > -WindowStyle Hidden`, `QT_QPA_PLATFORM=offscreen`, detached + polled via a log). **Nothing steals her
-> screen or her focus.** Bring something to the foreground **only** when it genuinely needs her hands or
-> her eyes — i.e. a real in-app review she asked for, or a step that cannot be automated. Even then, say
-> why it's coming up. A window appearing unbidden mid-work is an interruption, and interruptions are not
-> free. If you can capture it headless and *show her the image instead*, do that.
+> screen or her focus** *while you are working*. A window appearing unbidden mid-work is an interruption,
+> and interruptions are not free. If you can capture it headless and *show her the image instead*, do that.
+>
+> **THE OTHER HALF (2026-07-12, Twilight): when it's ready for her to LOOK at it, OPEN IT — in the
+> foreground, already on the right screen, without being asked.** Don't finish by saying "it's ready for
+> your live pass" and leave her to launch the app and navigate to the feature herself. **Take the
+> opportunity the moment it presents itself:** launch it in front of her, with the save loaded, landed
+> directly on the screen under review —
+> `PokeredSaveEditor.exe --sav assets\saves\natural-clean\BaseSAV.sav --screen <name> [--select ...]`
+> (see `notes/reference/dev-harness.md`). Background while building; **foreground the second it's worth
+> her time.**
 
 0. **Track the work with TASKS — early, often, and comprehensively (by default, 2026-07-11, Twilight).**
    Open a task list at the *start* of anything with more than one step — not retroactively, not "if it

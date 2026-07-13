@@ -37,9 +37,16 @@ has a deeper home, it's cross-referenced.
   See CLAUDE.md → Default Workflow step 0.
 - **Run EVERYTHING in the background (2026-07-12, mandatory).** Builds, tests, captures, emulator runs,
   installs — hidden windows, headless/offscreen, detached + polled through a log. **Never steal her
-  screen or her focus.** A window is only allowed to appear when it truly needs her hands or her eyes
-  (a live in-app review she asked for), and then say why. If it can be captured headless and shown to
-  her as an image instead, do that. See CLAUDE.md → Default Workflow.
+  screen or her focus.** If it can be captured headless and shown to her as an image instead, do that.
+  See CLAUDE.md → Default Workflow.
+- **…but DO open the app in the FOREGROUND, on the right screen, the moment it's ready for her to look
+  at (2026-07-12, standing — the other half of the rule above).** Background is the default *while
+  working*. The instant the work reaches "ready for your live pass", **launch it yourself, in front,
+  already on the page in question, with the save loaded** — don't just say it's ready and make her go
+  open it and navigate there. **Take the opportunity when it presents itself**, without being asked.
+  Use the DEBUG harness flags to land her exactly where she needs to be:
+  `PokeredSaveEditor.exe --sav <save> --screen <name> [--select ...]`
+  (`reference/dev-harness.md`). Background while building; foreground the second it's worth her time.
 - **Manual screenshot review is mandatory on any UI change** — capture and actually scrutinise it
   yourself before declaring done. See CLAUDE.md → Default Workflow step 1, `screenshots.md`, `ui-patterns.md`.
 - **EVERY byte of the save must be editable — and NONE of them as a raw number (2026-07-12, standing).**
