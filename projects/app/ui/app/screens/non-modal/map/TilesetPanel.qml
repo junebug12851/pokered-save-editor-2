@@ -15,22 +15,20 @@
 */
 
 /*
-  TilesetPanel.qml -- the TILE layer of the map.
+  TilesetPanel.qml -- the TILES panel: the save bytes that decide what the map's tiles MEAN.
 
-  Every save byte the tileset owns, editable, and NOT ONE OF THEM AS A NUMBER
-  (principles.md -> "Every Byte, None of Them Raw"):
+  Not a number in sight (principles.md -> "Every Byte, None of Them Raw"):
 
-    * which tileset          -> a list of tilesets, by name
-    * Indoor / Cave / Outdoor -> a tri-state, each option saying what it ANIMATES
-    * grass tile              -> a picker of the real, rendered tiles
-    * counter tiles 1-3       -> the same, and it says what a "counter" IS
-    * bank + the 3 pointers   -> a named choice ("what Mart uses"), with Custom... behind it
-    * the two boulder bytes   -> a sprite slot and a tile, under "Last Strength push",
-                                 labelled as the leftovers they are -- but still editable,
-                                 because every byte is the user's property
+    * the edge of the world  -> the block that fills the ring around the map, as a block picker
+    * the grass tile         -> a picker of the real, rendered tiles
+    * counter tiles 1-3      -> the same, and it says what a "counter" IS
+    * the two boulder bytes  -> a sprite slot and a tile, under "Last Strength push", labelled as
+                                the leftovers they are -- but still editable, because every byte is
+                                the user's property
 
-  The doctrine, throughout: when the save disagrees with the cartridge we SHOW it and never
-  silently rewrite it. Same as the music bank and the glitch palettes.
+  What is NOT here (2026-07-13): which tileset, which blockset, and Indoor/Cave/Outdoor -- they live
+  in the TOP BAR's picker, where you pick things. And the raw pointers, which were a wall of hex
+  addresses you could not type into.
 */
 import QtQuick
 import QtQuick.Controls
@@ -195,21 +193,24 @@ Rectangle {
                   + "overwrites these the next time you push one — but they're yours, so "
                   + "here they are.")
 
-        RowLayout {
+        // ⚠️ The label goes ABOVE the control, not beside it. Beside it, a 70px label left ~90px for
+        // the combo in a 170px panel, and its text was unreadable (Twilight, 2026-07-13). In a narrow
+        // panel a control gets the FULL width and the label gets its own line. Cheap, and it reads.
+        ColumnLayout {
           Layout.fillWidth: true
-          spacing: 8
+          spacing: 2
           visible: panel.hasTs
 
           Text {
             text: qsTr("The boulder")
             font.pixelSize: 11
             color: brg.settings.textColorMid
-            Layout.preferredWidth: 70
           }
 
           // A sprite SLOT, so it's a slot picker -- "which of this map's 16 sprites".
           ComboBox {
             Layout.fillWidth: true
+            Layout.preferredHeight: 30
             font.pixelSize: 11
 
             model: {
@@ -230,16 +231,15 @@ Rectangle {
           }
         }
 
-        RowLayout {
+        ColumnLayout {
           Layout.fillWidth: true
-          spacing: 8
+          spacing: 2
           visible: panel.hasTs
 
           Text {
             text: qsTr("What it hit")
             font.pixelSize: 11
             color: brg.settings.textColorMid
-            Layout.preferredWidth: 70
           }
 
           // This byte does TWO jobs -- it holds the tile in front of the boulder, AND the
@@ -247,11 +247,12 @@ Rectangle {
           // rather than picking one and lying about the other.
           ComboBox {
             Layout.fillWidth: true
+            Layout.preferredHeight: 30
             font.pixelSize: 11
 
             model: [
-              qsTr("Blocked — the push failed ($FF)"),
-              qsTr("Clear — the boulder moved ($00)"),
+              qsTr("Blocked ($FF)"),
+              qsTr("Clear ($00)"),
               qsTr("A tile…")
             ]
 
@@ -287,113 +288,14 @@ Rectangle {
         }
       }
 
-      // ── Advanced ────────────────────────────────────────────────────────────
-      //
-      // The pointers. Editable -- every byte is -- but they are the ones that make a map
-      // unplayable if you get them wrong, so they sit behind a disclosure and each one is a
-      // NAMED choice rather than a hex box.
-      Group {
-        title: qsTr("Where the tileset lives")
-        blurb: qsTr("The cartridge addresses this tileset is read from. Getting these wrong "
-                  + "makes the map unplayable — which is why they're a list, not a box.")
-
-        Button {
-          Layout.fillWidth: true
-          flat: true
-          font.pixelSize: 11
-          text: advanced.visible ? qsTr("Hide") : qsTr("Show them anyway")
-          onClicked: advanced.visible = !advanced.visible
-        }
-
-        ColumnLayout {
-          id: advanced
-          Layout.fillWidth: true
-          spacing: 6
-          visible: false
-
-          // Say plainly when the save's pointers aren't the ones the cartridge has for this
-          // tileset. This is the check that would have caught the collPtr bug from the outside.
-          Text {
-            Layout.fillWidth: true
-            visible: panel.hasTs && !panel.matchesCartridge
-            text: qsTr("⚠ These don't match what the game ships for %1. Shown as they are, "
-                     + "never rewritten.").arg(brg.map.tilesetName)
-            font.pixelSize: 10
-            color: brg.settings.errorColor
-            wrapMode: Text.WordWrap
-          }
-
-          Repeater {
-            model: panel.hasTs ? panel.pointerRows : []
-
-            RowLayout {
-              required property var modelData
-              Layout.fillWidth: true
-              spacing: 8
-
-              Text {
-                text: modelData.name
-                font.pixelSize: 11
-                color: brg.settings.textColorMid
-                Layout.preferredWidth: 70
-              }
-
-              Text {
-                Layout.fillWidth: true
-                text: modelData.value
-                font.pixelSize: 11
-                font.family: "monospace"
-                color: modelData.ok ? brg.settings.textColorDark : brg.settings.errorColor
-                elide: Text.ElideRight
-              }
-            }
-          }
-
-          Button {
-            Layout.fillWidth: true
-            flat: true
-            font.pixelSize: 11
-            enabled: panel.hasTs && !panel.matchesCartridge
-            text: qsTr("Put them back to %1's").arg(brg.map.tilesetName)
-
-            // The only way these change: deliberately, back to the truth. There is no
-            // free-typing a pointer here, because there is no version of that which is a good
-            // idea -- and the tileset picker above already reaches every real combination.
-            // It touches ONLY the four pointer bytes; grass, counters and the animation byte
-            // are left exactly as they are, because the user may well have meant those.
-            onClicked: brg.map.restoreTilesetPointers()
-          }
-        }
-      }
-
       Item { Layout.preferredHeight: 8 }
     }
   }
 
-  // ── Does the save agree with the cartridge? ─────────────────────────────────
-  //
-  // Plain data from MapModel, never the DB struct (QML cannot read one, and handing it a
-  // parentless QObject instead would get it garbage-collected -- see qt-patterns.md).
-  readonly property var canon: brg.map.canonicalTileset()
-
-  readonly property bool matchesCartridge: {
-    if (!hasTs || !canon || canon.bank === undefined) return true;
-    return ts.bank === canon.bank
-        && ts.blockPtr === canon.blockPtr
-        && ts.gfxPtr === canon.gfxPtr
-        && ts.collPtr === canon.collPtr;
-  }
-
-  readonly property var pointerRows: {
-    if (!hasTs || !canon || canon.bank === undefined) return [];
-
-    const hex = (v) => "$" + v.toString(16).toUpperCase().padStart(4, "0");
-
-    return [
-      { name: qsTr("Bank"),      value: String(ts.bank), ok: ts.bank === canon.bank },
-      { name: qsTr("Blocks"),    value: hex(ts.blockPtr), ok: ts.blockPtr === canon.blockPtr },
-      { name: qsTr("Graphics"),  value: hex(ts.gfxPtr),   ok: ts.gfxPtr === canon.gfxPtr },
-      { name: qsTr("Collision"), value: hex(ts.collPtr),  ok: ts.collPtr === canon.collPtr }
-    ];
-  }
+  // ("Where the tileset lives" -- the bank and the three raw pointers -- was removed on 2026-07-13
+  // at Twilight's call. The tileset and blockset PICKERS in the top bar already reach every real
+  // combination of them, and `MapModel::setTilesetInd` / `setBlocksetInd` write them properly. A
+  // panel of hex addresses you cannot type into was a wall of numbers pretending to be a control.
+  // MapModel::canonicalTileset() / restoreTilesetPointers() still exist for when the Inspector wants
+  // them -- see notes/plans/map-screen.md, phase 5.)
 }

@@ -112,6 +112,7 @@ private slots:
   void initTestCase();
 
   // The data
+  void borderBlock_comesFromTheSave();
   void blocks_everyRealMapHasBlockData();
   void blocks_everyMapIsExactlyItsDeclaredSize();
   void everyMapIdRenders();
@@ -172,6 +173,46 @@ void TestMap::blocks_everyRealMapHasBlockData()
   QVERIFY(!BlocksDB::inst()->hasMap(11));  // "Unused Map 0B" -- a copy of Saffron City
   QVERIFY(!BlocksDB::inst()->hasMap(248)); // past the end of the header table
   QVERIFY(!BlocksDB::inst()->hasMap(255));
+}
+
+/**
+ * The edge of the world comes from the SAVE, not from the map's shipped border.
+ *
+ * `wMapBackgroundTile` (`AreaMap::outOfBoundsBlock`, save 0x2659) is the block the game fills the
+ * 3-block ring with, and it is a byte in the save -- so a save may hold something else, and a
+ * console draws whatever it holds.
+ *
+ * Until 2026-07-13 `buildOverworldMap` always used the *map's* border, so editing that byte in the
+ * editor changed nothing on screen -- the control did nothing and said nothing. Found by Twilight,
+ * by changing it and watching the map not change.
+ */
+void TestMap::borderBlock_comesFromTheSave()
+{
+  const int pallet = 0;
+
+  const auto shipped = MapEngine::buildOverworldMap(pallet);          // -1: the map's own border
+  QVERIFY(shipped.valid);
+
+  // A different block entirely. The ring must be built out of THAT.
+  const int want = (shipped.border == 1) ? 2 : 1;
+  const auto edited = MapEngine::buildOverworldMap(pallet, want);
+  QVERIFY(edited.valid);
+
+  QCOMPARE(edited.border, want);
+  QVERIFY2(edited.blocks != shipped.blocks,
+           "changing the save's out-of-bounds block did not change the map's blocks -- the edge of "
+           "the world is being drawn from the cartridge instead of from the save");
+
+  // The ring is what changed; the map itself is untouched.
+  const int mb = MapEngine::mapBorder;
+  QCOMPARE(static_cast<quint8>(edited.blocks.at(0)), static_cast<quint8>(want));   // a ring corner
+
+  for (int y = 0; y < edited.height; y++) {
+    for (int x = 0; x < edited.width; x++) {
+      const int at = (y + mb) * edited.stride + (x + mb);
+      QCOMPARE(edited.blocks.at(at), shipped.blocks.at(at));   // the map proper: identical
+    }
+  }
 }
 
 void TestMap::everyMapIdRenders()

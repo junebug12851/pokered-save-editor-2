@@ -103,19 +103,19 @@ Rectangle {
 
         HoverHandler { id: hover }
 
-        // ⚠️ The indent, and why it is 26.
+        // ⚠️ The indent, twice got wrong, so it is spelled out.
         //
-        // A group row starts with its fold chevron (a 20px button) and only THEN its eye. A child
-        // row has no chevron -- so with a naive 14px indent the child's eye landed LEFT of its
-        // parent's, and the tree read upside down. (Twilight caught it: "the sub elements are
-        // indented left past the root element, which is confusing and unintuitive -- a manual
-        // screenshot would have detected this." She is right on both counts.)
+        // A GROUP row is [chevron 20][spacing 6][eye] -- so its eye starts at x = 26.
+        // A CHILD row has no chevron, so its indent has to clear that AND then step in:
         //
-        // 26 = the chevron (20) + the row spacing (6), so a child's eye sits exactly under its
-        // parent's eye, one step in. Change the chevron's size and change this with it.
+        //     26 (where the group's eye is) + 14 (one indent step) = 40.
+        //
+        // First cut used 14 -- the child's eye landed LEFT of its parent's and the tree read upside
+        // down. Second cut used 26 -- the eyes lined up exactly, which is not a hierarchy either.
+        // (Twilight caught both, by looking. "A manual screenshot would have detected this.")
         RowLayout {
           anchors.fill: parent
-          anchors.leftMargin: row.layerIsGroup ? 0 : 26
+          anchors.leftMargin: row.layerIsGroup ? 0 : 40
           spacing: 6
 
           // The group's fold. Clutter is a bug: a group you are not using takes one line.

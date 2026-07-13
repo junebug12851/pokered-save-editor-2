@@ -52,10 +52,14 @@ Item {
   property var sources: ({})
 
   /// How wide the panel column is when open (drag its inner edge; remembered for the session).
-  property int panelWidth: 170
+  ///
+  /// 170 was too tight -- text clipped, and a combo box had ~90px left for its label (Twilight,
+  /// 2026-07-13). 200 is the width the content actually needs; it is still a third narrower than the
+  /// 300 it started at.
+  property int panelWidth: 200
   readonly property int railWidth: 40
-  readonly property int minPanelWidth: 140
-  readonly property int maxPanelWidth: 320
+  readonly property int minPanelWidth: 170
+  readonly property int maxPanelWidth: 340
 
   /// How much room the canvas can spare. Below the panel's minimum it floats instead of pushing.
   property int roomForPanel: 0

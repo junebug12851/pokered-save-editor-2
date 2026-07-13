@@ -178,7 +178,11 @@ Rectangle {
       wrapMode: Text.WordWrap
     }
 
-    // ── Tracks header + the inner-voice switch ───────────────────────────────────────────────
+    // ── Tracks header + the sub-track switch ─────────────────────────────────────────────────
+    //
+    // "Sub-tracks" is Twilight's word for them (2026-07-13). They were called "inner voices", which
+    // is what they musically ARE -- but nobody has to already know that, and "sub-track" says the
+    // thing: it is part of a track, and it plays on its own.
     RowLayout {
       Layout.fillWidth: true
       Layout.topMargin: 2
@@ -193,11 +197,11 @@ Rectangle {
 
       Item { Layout.fillWidth: true }
 
-      // The 105 "inner voices" are real music -- a song's single channel, played alone, exactly as
-      // the console plays it. They are on by default because they are the point; the switch is here
+      // The 105 sub-tracks are real music -- a song's single channel, played alone, exactly as the
+      // console plays it. They are on by default because they are the point; the switch is here
       // because 151 rows is a lot when all you want is Pallet Town.
       Text {
-        text: qsTr("inner voices")
+        text: qsTr("sub-tracks")
         font.pixelSize: 10
         color: brg.settings.textColorMid
       }

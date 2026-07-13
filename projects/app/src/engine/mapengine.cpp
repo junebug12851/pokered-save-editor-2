@@ -104,7 +104,7 @@ TilesetDBEntry* tilesetAt(int tilesetInd)
 
 } // namespace
 
-MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd)
+MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd, int borderBlock)
 {
   Buffer out;
   out.mapInd = mapInd;
@@ -130,9 +130,13 @@ MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd)
   if (out.width <= 0 || out.height <= 0 || blocks.size() != out.width * out.height)
     return out;
 
-  // The border block is wMapBackgroundTile -- the first byte of the map's object
-  // data, which is what maps.json records as the map's border.
-  out.border = qMax(0, map->getBorder());
+  // The border block is `wMapBackgroundTile` -- and the SAVE holds it (`AreaMap::outOfBoundsBlock`).
+  // That byte is what the console reads, and it is allowed to disagree with what the map ships with;
+  // change it and the edge of the world genuinely changes. So the caller's value wins, and the map's
+  // own is only the fallback (what a fresh load would put there).
+  //
+  // ⚠️ Until 2026-07-13 this always used the map's byte, so editing the save's did nothing on screen.
+  out.border = (borderBlock >= 0) ? borderBlock : qMax(0, map->getBorder());
 
   out.stride = out.width + 2 * mapBorder;
   out.rows   = out.height + 2 * mapBorder;

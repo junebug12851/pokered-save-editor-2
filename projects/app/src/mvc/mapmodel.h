@@ -20,6 +20,10 @@
 #include <QVariantList>
 #include <QVariantMap>
 
+// For MapEngine::Buffer, which the private mapBuffer() returns by value (so it must be a complete
+// type here). MapEngine is app-internal and header-only in its dependencies -- no fan-out.
+#include "../engine/mapengine.h"
+
 class AreaGeneral;
 class AreaMap;
 class AreaPlayer;
@@ -349,6 +353,14 @@ signals:
 private:
   /// Rebuild the selection when the map changes under it.
   void revalidateSelection();
+
+  /// The block filling the 3-block ring -- the SAVE's `wMapBackgroundTile`, which is what the
+  /// console reads. Edit it and the edge of the world changes.
+  int borderBlock() const;
+
+  /// The overworld buffer as it is ACTUALLY DRAWN (the save's border block included). Every question
+  /// about the map's blocks goes through here, so nothing can disagree with what is on screen.
+  MapEngine::Buffer mapBuffer() const;
 
   AreaMap* map = nullptr;         ///< The save's live map.
   AreaPlayer* player = nullptr;   ///< The save's live player position.

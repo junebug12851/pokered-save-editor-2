@@ -101,7 +101,23 @@ QString MapModel::source() const
        + "/" + QString::number(frame())
        + "/" + QString::number(contrast())
        + "/" + QString::number(tileAnim())
-       + "/" + QString::number(blocksetInd());   // whose BLOCKS -- the save's own second pointer
+       + "/" + QString::number(blocksetInd())    // whose BLOCKS -- the save's own second pointer
+       + "/" + QString::number(borderBlock());   // what fills the ring -- the save's own byte
+}
+
+int MapModel::borderBlock() const
+{
+  // `wMapBackgroundTile` (save 0x2659). The console reads THIS, not the map's shipped border -- so
+  // the renderer must too, or editing the edge of the world does nothing on screen (which it didn't,
+  // until 2026-07-13).
+  return map->outOfBoundsBlock;
+}
+
+MapEngine::Buffer MapModel::mapBuffer() const
+{
+  // Every question about the map's blocks -- what is at this pixel, does this layer apply, is the
+  // selection still inside -- goes through here, so they all agree with what is DRAWN.
+  return MapEngine::buildOverworldMap(mapInd(), borderBlock());
 }
 
 // ── The map, the tileset, the blockset ────────────────────────────────────────
@@ -523,8 +539,14 @@ QString MapModel::overlaySource() const
              + "/" + QString::number(static_cast<uint>(shownLayers))
              + "/" + QString::number(save.grassTile);
 
-  for (const int c : save.counters)
-    id += "/" + QString::number(c);
+  // Always THREE counter slots, even when the save has fewer -- the border block follows them in the
+  // id, and a variable-length list would shift its position and quietly turn a counter into a border.
+  for (int i = 0; i < 3; i++)
+    id += "/" + QString::number(i < save.counters.size() ? save.counters.at(i) : 0xFF);
+
+  // The block the ring is filled with (the save's own). The BORDER layer paints over the ring, so it
+  // has to be built from the same block the map is.
+  id += "/" + QString::number(borderBlock());
 
   return id;
 }
@@ -545,7 +567,7 @@ QVariantList MapModel::layerList() const
   if (!valid())
     return out;
 
-  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  const auto buffer = mapBuffer();
   const MapEngine::SaveTiles save = saveTilesOf(tileset);
 
   for (const MapEngine::Layer layer : order) {
@@ -577,7 +599,7 @@ int MapModel::selectedBlock() const
   if (!hasSelection())
     return -1;
 
-  return MapEngine::blockAt(MapEngine::buildOverworldMap(mapInd()), selX, selY);
+  return MapEngine::blockAt(mapBuffer(), selX, selY);
 }
 
 bool MapModel::selectedIsBorder() const
@@ -611,7 +633,7 @@ void MapModel::selectAtPixel(int px, int py)
   const int bx = px / MapEngine::blockPx;
   const int by = py / MapEngine::blockPx;
 
-  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  const auto buffer = mapBuffer();
   if (MapEngine::blockAt(buffer, bx, by) < 0)
     return;  // clicked outside the buffer -- keep whatever was selected
 
@@ -632,7 +654,7 @@ void MapModel::moveSelection(int dx, int dy)
   if (!hasSelection())
     return;
 
-  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  const auto buffer = mapBuffer();
   const int bx = qBound(0, selX + dx, buffer.stride - 1);
   const int by = qBound(0, selY + dy, buffer.rows - 1);
 
@@ -661,7 +683,7 @@ void MapModel::revalidateSelection()
   if (selX < 0 && selY < 0)
     return;
 
-  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  const auto buffer = mapBuffer();
   if (MapEngine::blockAt(buffer, selX, selY) < 0)
     clearSelection();
   else
@@ -714,7 +736,7 @@ QVariantMap MapModel::describeAt(int px, int py) const
   const int bx = px / MapEngine::blockPx;
   const int by = py / MapEngine::blockPx;
 
-  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  const auto buffer = mapBuffer();
   const int block = MapEngine::blockAt(buffer, bx, by);
   if (block < 0)
     return m;

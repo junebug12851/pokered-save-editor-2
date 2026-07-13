@@ -65,7 +65,11 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
   // Whose BLOCKS. -1 = the same tileset the graphics come from (the normal case).
   const int blocksetInd = (parts.size() > 5) ? parts.at(5).toInt() : -1;
 
-  const auto buffer = MapEngine::buildOverworldMap(mapInd);
+  // The block filling the 3-block ring -- the SAVE's `wMapBackgroundTile`, not the map's shipped
+  // one. Edit it and the edge of the world changes, which is what a console would do.
+  const int borderBlock = (parts.size() > 6) ? parts.at(6).toInt() : -1;
+
+  const auto buffer = MapEngine::buildOverworldMap(mapInd, borderBlock);
   const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast, tileAnim, blocksetInd);
 
   // No block data (a glitch map id) -- there is nothing in ROM to draw.
@@ -89,7 +93,7 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
 QPixmap MapProvider::requestOverlay(const QStringList& parts, QSize* size,
                                     const QSize& requestedSize)
 {
-  // overlay/<mapInd>/<tilesetInd>/<layers>/<grassTile>/<c0>/<c1>/<c2>
+  // overlay/<mapInd>/<tilesetInd>/<layers>/<grassTile>/<c0>/<c1>/<c2>/<borderBlock>
   if (parts.size() < 4)
     return blankImage(size);
 
@@ -105,7 +109,11 @@ QPixmap MapProvider::requestOverlay(const QStringList& parts, QSize* size,
   for (int i = 5; i < parts.size() && i < 8; i++)
     save.counters.append(parts.at(i).toInt());
 
-  const auto buffer = MapEngine::buildOverworldMap(mapInd);
+  // The block the ring is filled with -- the save's `wMapBackgroundTile`. The BORDER layer paints
+  // over the ring, so it has to be built from the same block the map itself is.
+  const int borderBlock = (parts.size() > 8) ? parts.at(8).toInt() : -1;
+
+  const auto buffer = MapEngine::buildOverworldMap(mapInd, borderBlock);
   const QImage img = MapEngine::overlay(buffer, tilesetInd, layers, save);
 
   if (img.isNull())

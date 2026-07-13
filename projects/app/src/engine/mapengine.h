@@ -158,7 +158,12 @@ public:
   static int connectionOffset(const MapDBEntryConnect* connect);
 
   /// Build @p mapInd's overworld buffer -- the map placed inside its 3-block border ring.
-  static Buffer buildOverworldMap(int mapInd);
+  /// @param borderBlock the block the 3-block ring is filled with. This is `wMapBackgroundTile`
+  ///        (`AreaMap::outOfBoundsBlock`) -- **the SAVE's byte**, which is what a console reads, and
+  ///        which is allowed to disagree with the map's shipped border. Pass **-1** to fall back to
+  ///        the map's own (what the game would put there on a fresh load). (2026-07-13: it used to
+  ///        always use the map's, so editing the save's byte changed nothing on screen.)
+  static Buffer buildOverworldMap(int mapInd, int borderBlock = -1);
 
   // ── Palettes, and the "contrast" byte (home/fade.asm) ────────────────────────
   //

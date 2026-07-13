@@ -179,9 +179,12 @@ Page {
         side: "right"
         open: ""
 
+        // "Blocks & Tiles", not "Tiles" (Twilight, 2026-07-13: "Tiles is not very good or accurate --
+        // it has to do with the block and tile config on the map"). It is exactly that: the BLOCK
+        // that fills the edge of the world, and the TILES that mean grass, counter, and boulder.
         panels: [
-          { id: "tiles", glyph: "▦", title: qsTr("Tiles"),
-            tip: qsTr("Tiles — the grass, the counters, the edge of the world, and where the tileset lives") },
+          { id: "tiles", glyph: "▦", title: qsTr("Blocks & Tiles"),
+            tip: qsTr("Blocks & Tiles — the edge of the world, the grass, the counters, the boulder") },
           { id: "music", glyph: "♪", title: qsTr("Music"),
             tip: qsTr("Music — the map's track, and play it") }
         ]
