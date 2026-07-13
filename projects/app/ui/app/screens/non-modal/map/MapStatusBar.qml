@@ -148,36 +148,22 @@ Rectangle {
 
     Sep {}
 
+    // ⚠️ The zoom READOUT, and nothing else. The −/+/fit buttons that used to live here are GONE:
+    // zoom now has exactly ONE home, the ▾ on the toolbar's zoom tool (Twilight, 2026-07-13: "I just
+    // don't want multiple places where zoom is").
+    //
+    // A number is a FACT, and facts are what this bar is for. A button is a THING YOU DO, and those
+    // live up top.
     Text {
-      text: bar.canvas ? qsTr("%1×").arg(bar.canvas.zoom) : ""
+      text: !bar.canvas ? ""
+          : Math.abs(bar.canvas.zoom - Math.round(bar.canvas.zoom)) < 0.02
+              ? qsTr("%1×").arg(Math.round(bar.canvas.zoom))
+              : (bar.canvas.zoom.toFixed(2) + "×")
       font.pixelSize: 11
+      font.family: "monospace"
       color: brg.settings.textColorMid
-      Layout.minimumWidth: 22
+      Layout.minimumWidth: 38
       horizontalAlignment: Text.AlignRight
-    }
-
-    MapRailButton {
-      size: 20
-      glyph: "−"
-      tip: qsTr("Zoom out")
-      enabledBtn: bar.canvas && bar.canvas.zoom > bar.canvas.minZoom
-      onClicked: bar.canvas.userZoom = bar.canvas.zoom - 1
-    }
-
-    MapRailButton {
-      size: 20
-      glyph: "+"
-      tip: qsTr("Zoom in")
-      enabledBtn: bar.canvas && bar.canvas.zoom < bar.canvas.maxZoom
-      onClicked: bar.canvas.userZoom = bar.canvas.zoom + 1
-    }
-
-    MapRailButton {
-      size: 20
-      glyph: "⤢"
-      tip: qsTr("Fit the whole map in the window")
-      enabledBtn: bar.canvas && bar.canvas.userZoom > 0
-      onClicked: bar.canvas.userZoom = 0
     }
   }
 }

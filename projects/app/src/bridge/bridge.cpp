@@ -60,9 +60,11 @@ Bridge::Bridge(FileManagement* file)
                      file->data->dataExpanded->area->tileset,
                      file->data->dataExpanded->area->general,
                      file->data->dataExpanded->area->preloadedSprites,
-                     file->data->dataExpanded->area->sprites)),
+                     file->data->dataExpanded->area->sprites,
+                     file->data->dataExpanded->area->warps)),
     mapLayers(new MapLayersModel(map)),
-    mapClock(new MapClock(map))
+    mapClock(new MapClock(map)),
+    mapSim(new MapSim(map))
 {
   // Link the two
   pokemonStorageModel1->otherModel = pokemonStorageModel2;

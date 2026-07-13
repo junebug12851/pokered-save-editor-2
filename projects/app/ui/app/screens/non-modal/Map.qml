@@ -131,6 +131,7 @@ Page {
     // whole height of the screen to hold three glyphs.
     MapIdentityBar {
       id: identityBar
+      canvas: canvas          // zoom lives here, and only here
       Layout.fillWidth: true
     }
 
@@ -139,45 +140,34 @@ Page {
       Layout.fillHeight: true
       spacing: 0
 
-      // ── FAR LEFT: the CAST ───────────────────────────────────────────────────────────────────
+      // ── LEFT: ONE dock, three panels, ONE open at a time ─────────────────────────────────────
       //
-      // The Characters bar -- the people and objects you can put ON the map. A permanent rail, not
-      // a dock panel: you reach for it constantly while placing a cast, and something you reach for
-      // constantly should not need opening first.
+      // ⚠️ The Characters bar was briefly its OWN rail beside this dock. That was a mistake and it
+      // broke the rule this whole screen was rebuilt around: **panels do not stack out beside each
+      // other.** It is a panel in this dock like everything else (Twilight, 2026-07-13).
       //
-      // ⚠️ Not to be confused with the SPRITE SET panel on the right, which is a completely
-      // different thing: the eleven pictures the Game Boy actually has in memory for this map.
-      CharactersBar {
-        id: charactersBar
-
-        canvas: canvas
-
-        Layout.fillHeight: true
-        Layout.preferredWidth: implicitWidth
-      }
-
-      // ── LEFT: the layers, and the DETAILS ────────────────────────────────────────────────────
-      //
-      // The map's legend and its navigation, on the left where your other hand is (Twilight,
-      // 2026-07-13). The panels that EDIT things are on the right; the panel that decides what you
-      // are LOOKING at is here.
-      //
-      // The DETAILS panel is here too, because it edits whatever you have SELECTED -- and with
-      // nothing selected it shows the map's own details, so it is never blank.
+      // The map's legend, the cast you can place, and the editor for whatever is selected. All on
+      // the left, where your other hand is; the panels that configure the MAP ITSELF are on the
+      // right.
       MapDock {
         id: leftDock
         objectName: "mapLeftDock"
 
         side: "left"
-        open: "layers"
+
+        // Nothing open (Twilight). You open the Map screen and you see THE MAP.
+        open: ""
 
         panels: [
           { id: "layers", glyph: "◈", title: qsTr("Layers"),
             tip: qsTr("Layers — everything drawn over the map, in groups") },
+          { id: "characters", glyph: "☻", title: qsTr("Characters"),
+            tip: qsTr("Characters — the people and objects you can put on the map. Drag one out.") },
           { id: "details", glyph: "✎", title: qsTr("Details"),
             tip: qsTr("Details — edit whatever is selected. Nothing selected? The map itself.") }
         ]
         sources: ({ "layers": "LayersPanel.qml",
+                    "characters": "CharactersBar.qml",
                     "details": "DetailsPanel.qml" })
 
         panelContext: canvas
@@ -185,8 +175,7 @@ Page {
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth
 
-        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth
-                      - charactersBar.implicitWidth - rightDock.inlineWidth
+        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth - rightDock.inlineWidth
       }
 
       MapCanvas {
@@ -230,8 +219,7 @@ Page {
 
         // How much width the canvas could give up before it hits its floor. Below the panel's
         // minimum the dock floats instead -- the map never gets squeezed to nothing.
-        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth
-                      - charactersBar.implicitWidth - leftDock.inlineWidth
+        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth - leftDock.inlineWidth
       }
     }
 

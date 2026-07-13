@@ -297,6 +297,12 @@ public:
   static bool layerApplies(const Buffer& buffer, int tilesetInd, Layer layer,
                            const SaveTiles& save);
 
+  /// Every tile that belongs to @p layer, as its top-left corner in **buffer pixels**. What
+  /// "Zoom to a random door" needs -- and the same walk @ref layerApplies already does, so the two
+  /// can never disagree about what a door is.
+  static QVector<QPoint> tilesInLayer(const Buffer& buffer, int tilesetInd, Layer layer,
+                                      const SaveTiles& save);
+
   // ── The player's sprite (see reference/sprites.md) ────────────────────────────
 
   /// `SPRITE_FACING_*` (constants/sprite_data_constants.asm).

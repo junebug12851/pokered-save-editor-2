@@ -47,6 +47,8 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/mvc/maplayersmodel.h
     src/engine/mapclock.cpp
     src/engine/mapclock.h
+    src/engine/mapsim.cpp
+    src/engine/mapsim.h
     src/mvc/itemmarketmodel.cpp
     src/mvc/itemmarketmodel.h
     src/mvc/itemmarketcartmodel.cpp
@@ -100,6 +102,17 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
 target_include_directories(appcore
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+# The pixel-art sampler. Compiled to .qsb by Qt's `qsb` and baked into appcore's resources as
+# :/shaders/pixelart.frag.qsb -- so the app AND the QML tests (which link appcore) both find it.
+#
+# It is what lets the map zoom to a FRACTIONAL scale without the art rippling. See
+# shaders/pixelart.frag and ui/.../map/PixelImage.qml.
+qt_add_shaders(appcore "pse_shaders"
+    PREFIX "/"
+    FILES
+        shaders/pixelart.frag
 )
 
 # When shared, auto-export all symbols so test exes link without per-class export

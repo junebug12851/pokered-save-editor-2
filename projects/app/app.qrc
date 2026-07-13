@@ -552,6 +552,10 @@
         <file>ui/app/screens/non-modal/map/MapToolTip.qml</file>
         <file>ui/app/screens/non-modal/map/SpriteSetPanel.qml</file>
         <file>ui/app/screens/non-modal/map/CharactersBar.qml</file>
+        <file>ui/app/screens/non-modal/map/CharacterCell.qml</file>
+        <file>ui/app/screens/non-modal/map/PixelImage.qml</file>
+        <file>ui/app/screens/non-modal/map/ZoomMenu.qml</file>
+        <file>ui/app/screens/non-modal/map/SimWarningDialog.qml</file>
         <file>ui/app/screens/non-modal/map/DetailsPanel.qml</file>
         <file>ui/app/screens/non-modal/map/MapDetailRow.qml</file>
         <file>ui/app/screens/non-modal/map/SpriteField.qml</file>

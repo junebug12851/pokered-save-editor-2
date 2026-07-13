@@ -1069,6 +1069,62 @@ QImage MapEngine::playerSprite(int facing, int contrast)
   return sprite;
 }
 
+QVector<QPoint> MapEngine::tilesInLayer(const Buffer& buffer, int tilesetInd, Layer layer,
+                                        const SaveTiles& save)
+{
+  QVector<QPoint> out;
+
+  if (!buffer.valid)
+    return out;
+
+  const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(tilesetInd);
+  if (blockset.isEmpty())
+    return out;
+
+  auto* traits = TileTraitsDB::inst();
+  const int blockCount = blockset.size() / tilesPerBlock;
+
+  QVector<var8> counters;
+  for (const int c : save.counters)
+    counters.append(static_cast<var8>(c));
+
+  // The same walk layerApplies does -- block by block, tile by tile -- so "is there a door here?"
+  // and "where are the doors?" can never disagree.
+  for (int b = 0; b < buffer.blocks.size(); b++) {
+    const int block = static_cast<quint8>(buffer.blocks.at(b));
+
+    const int blockX = b % buffer.stride;
+    const int blockY = b / buffer.stride;
+
+    if (layer == LayerCutTrees) {
+      if (traits->isCutTreeBlock(static_cast<var8>(block)))
+        out.append(QPoint(blockX * blockPx, blockY * blockPx));
+      continue;
+    }
+
+    if (block >= blockCount)
+      continue;
+
+    const int base = block * tilesPerBlock;
+    for (int i = 0; i < tilesPerBlock; i++) {
+      const var8 tile = static_cast<var8>(blockset[base + i]);
+      const TileTraitsDB::Traits t = traits->traitsOf(
+          tilesetInd, tile, static_cast<var8>(save.grassTile), counters);
+
+      if (!tileInLayer(layer, t))
+        continue;
+
+      // A block is 4x4 tiles of 8 px.
+      const int tx = i % blockTiles;
+      const int ty = i / blockTiles;
+
+      out.append(QPoint(blockX * blockPx + tx * 8, blockY * blockPx + ty * 8));
+    }
+  }
+
+  return out;
+}
+
 QImage MapEngine::npcSprite(int pictureID, int facing, int contrast)
 {
   // The atlas: 72 cells of 16x96, cell (pictureID - 1). Imported verbatim from pret/pokered

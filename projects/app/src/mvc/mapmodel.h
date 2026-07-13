@@ -27,6 +27,7 @@
 class AreaGeneral;
 class AreaLoadedSprites;
 class AreaSprites;
+class AreaWarps;
 class AreaMap;
 class AreaPlayer;
 class AreaTileset;
@@ -197,7 +198,8 @@ class MapModel : public QObject
 
 public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
-           AreaLoadedSprites* sprites = nullptr, AreaSprites* npcs = nullptr);
+           AreaLoadedSprites* sprites = nullptr, AreaSprites* npcs = nullptr,
+           AreaWarps* warps = nullptr);
 
   bool valid() const;
   QString source() const;
@@ -367,6 +369,27 @@ public:
    */
   Q_INVOKABLE bool npcsEdited() const;
 
+  /**
+   * @brief Somewhere worth looking, in BUFFER pixels: `{ ok, x, y, label }`.
+   *
+   * The "zoom to..." menu's whole content. @p kind is one of
+   * `player` · `sprite` · `object` · `door` · `warp` · `xy` · `connection`.
+   *
+   * The "random" ones pick a *different* one each time you ask, which is the point: they are how you
+   * go and LOOK at a map you have never seen, rather than hunting for something interesting on a
+   * 78-block route. `xy` lands on the centre of a random **block** (not a tile, not a pixel).
+   *
+   * `ok: false` when this map simply has none of that thing -- and the menu greys the entry out and
+   * says so, rather than doing nothing when you click it.
+   */
+  Q_INVOKABLE QVariantMap zoomTarget(const QString& kind);
+
+  /// Which of @ref zoomTarget's kinds this map actually HAS. Keyed by kind, `true`/`false`.
+  Q_INVOKABLE QVariantMap zoomTargetsAvailable() const;
+
+  /// Every warp on this map, as a centre in BUFFER pixels: `{ x, y, ind }`.
+  Q_INVOKABLE QVariantList warpPoints() const;
+
   int tileAnim() const;
   void setTileAnim(int anim);   ///< Writes the save's `type` byte (0x3522) -- and only that byte.
   QString tileAnimName() const;
@@ -487,6 +510,7 @@ private:
 
   AreaLoadedSprites* sprites = nullptr; ///< The save's live sprite-set cache (may be null in tests).
   AreaSprites* npcs = nullptr;    ///< The save's live map cast -- the 16 sprite slots (may be null).
+  AreaWarps* warps = nullptr;     ///< The map's warp points (may be null in tests).
 
   /// @see npcsEdited. Set by any edit to the cast; never by loading one.
   bool castEdited = false;

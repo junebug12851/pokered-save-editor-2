@@ -35,6 +35,7 @@
   Nothing here is a menu bar and nothing here is a toolbar with separators. It is chips.
 */
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 
 Rectangle {
@@ -42,6 +43,9 @@ Rectangle {
 
   /// The active tool. The rail moved into this bar, so the bar owns it now.
   property string tool: "select"
+
+  /// The canvas -- the zoom menu drives it, and zoom has exactly one home.
+  required property var canvas
 
   /// The two drop-downs, drivable by name for the DEBUG harness / the screenshot review.
   property alias mapPickerOpen: mapPicker.openState
@@ -90,6 +94,14 @@ Rectangle {
           onClicked: bar.tool = modelData.id
         }
       }
+
+      // The ▾ on the zoom tool: the slider, and somewhere to go. ZOOM LIVES IN EXACTLY ONE PLACE
+      // and this is it -- the canvas has no zoom buttons of its own any more.
+      ZoomMenu {
+        id: zoomMenu
+        canvas: bar.canvas
+        Layout.alignment: Qt.AlignVCenter
+      }
     }
 
     Rectangle {
@@ -128,6 +140,88 @@ Rectangle {
            ? qsTr("Pause the animation")
            : qsTr("Animate the map — the water and the flowers, at the console's own pace")
       onClicked: brg.mapClock.playing = !brg.mapClock.playing
+    }
+
+    // ── The town comes to life ───────────────────────────────────────────────────────────────
+    //
+    // The SECOND ▶. The one above animates the water; this one makes the PEOPLE walk.
+    //
+    // ⚠️ It is DESTRUCTIVE and it says so, once, with a "don't show me this again" that starts
+    // UNTICKED -- because a warning you have to opt back into is not a warning.
+    // ⚠️ A LABELLED chip, not a second ▶.
+    //
+    // The first version was a bare glyph sitting next to the animation's ▶, and two play buttons side
+    // by side is a puzzle, not a toolbar (caught on the screenshot review). The word costs 30px and
+    // buys "I know exactly what this does" -- which is the trade this whole screen is supposed to
+    // make. The app's language is chips, and this is one.
+    Rectangle {
+      objectName: "simToggle"
+
+      implicitWidth: simRow.implicitWidth + 14
+      implicitHeight: 26
+      radius: 13
+
+      enabled: brg.mapSim.canSimulate
+      opacity: enabled ? 1.0 : 0.4
+
+      color: brg.mapSim.playing ? "#d55e00"
+           : simHover.hovered ? Qt.rgba(0, 0, 0, 0.07)
+           : Qt.rgba(0, 0, 0, 0.04)
+
+      RowLayout {
+        id: simRow
+        anchors.centerIn: parent
+        spacing: 4
+
+        Label {
+          text: brg.mapSim.playing ? "⏸" : "▶"
+          font.pixelSize: 10
+          color: brg.mapSim.playing ? "white" : palette.text
+        }
+
+        Label {
+          text: brg.mapSim.playing ? qsTr("Walking") : qsTr("Walk")
+          font.pixelSize: 11
+          color: brg.mapSim.playing ? "white" : palette.text
+        }
+      }
+
+      HoverHandler {
+        id: simHover
+        enabled: brg.mapSim.canSimulate
+        cursorShape: Qt.PointingHandCursor
+      }
+
+      TapHandler {
+        enabled: brg.mapSim.canSimulate
+        onTapped: {
+          if (brg.mapSim.playing) {
+            brg.mapSim.playing = false;
+            return;
+          }
+
+          if (brg.settings.mapSimWarned)
+            brg.mapSim.playing = true;
+          else
+            simWarning.open();
+        }
+      }
+
+      ToolTip.visible: simHover.hovered || (!brg.mapSim.canSimulate && simDeadHover.hovered)
+      ToolTip.delay: 400
+      ToolTip.text: !brg.mapSim.canSimulate
+                      ? qsTr("Nobody on this map can walk — they are all set to Stay")
+                      : brg.mapSim.playing
+                        ? qsTr("Stop them")
+                        : qsTr("Let the people wander — ⚠️ this MOVES the real sprite data")
+
+      // A disabled chip still has to be able to SAY why it is disabled.
+      HoverHandler { id: simDeadHover }
+    }
+
+    SimWarningDialog {
+      id: simWarning
+      onAccepted: brg.mapSim.playing = true
     }
 
     Item { Layout.fillWidth: true }

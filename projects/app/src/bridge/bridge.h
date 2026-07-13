@@ -46,6 +46,7 @@
 #include "../mvc/mapmodel.h"
 #include "../mvc/maplayersmodel.h"
 #include "../engine/mapclock.h"
+#include "../engine/mapsim.h"
 #include "../engine/musicplayer.h"
 
 #include <pse-db/fontsdb.h>
@@ -111,6 +112,7 @@ class Bridge : public QObject
   Q_PROPERTY(MapModel* map MEMBER map NOTIFY mapChanged) ///< The loaded map: its rendered image + the game's view boxes.
   Q_PROPERTY(MapLayersModel* mapLayers MEMBER mapLayers NOTIFY mapLayersChanged) ///< The map's layer tree (Guides / Meaning / Game View).
   Q_PROPERTY(MapClock* mapClock MEMBER mapClock NOTIFY mapClockChanged) ///< The map's animation heartbeat (the console's 20/21-frame cadence).
+  Q_PROPERTY(MapSim* mapSim MEMBER mapSim NOTIFY mapSimChanged)         ///< The NPCs, wandering. DESTRUCTIVE -- it moves the real sprite data.
   Q_PROPERTY(MusicPlayer* music MEMBER music NOTIFY musicChanged) ///< The Game Boy's sound, live (play / preview / select).
   Q_PROPERTY(MusicDB* musicDb MEMBER musicDb NOTIFY musicDbChanged) ///< The 46 real tracks (name/bank/id).
 
@@ -151,6 +153,7 @@ signals:
   void mapChanged();
   void mapLayersChanged();
   void mapClockChanged();
+  void mapSimChanged();
   void musicChanged();
   void musicDbChanged();
 
@@ -197,6 +200,7 @@ public:
   MapModel* map = nullptr;                            ///< @see map property.
   MapLayersModel* mapLayers = nullptr;                ///< @see mapLayers property.
   MapClock* mapClock = nullptr;                       ///< @see mapClock property.
+  MapSim* mapSim = nullptr;                           ///< @see mapSim property.
   MusicPlayer* music = new MusicPlayer;               ///< @see music property.
   MusicDB* musicDb = MusicDB::inst();                 ///< @see musicDb property.
 };

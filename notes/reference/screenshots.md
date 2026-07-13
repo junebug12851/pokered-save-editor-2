@@ -95,6 +95,29 @@ The tool **only ever reads** the save in memory to render the UI. It never calls
   with a smooth transform, so output is a stable 1130×740 regardless of the dev machine's scaling (and
   the supersampled downscale is, if anything, crisper than a native DPR-1 render). `QT_SCALE_FACTOR`
   does NOT override the screen DPR, so don't rely on it — downscale the grab instead.
+> ## ⚠️ READ THIS BEFORE YOU REVIEW A SCREENSHOT
+>
+> **`QT_QPA_FONTDIR` must be set, or every word in the picture is a tofu box.** The `screenshooter`
+> tool sets it for you. **The app's own `--shot` flag does NOT** — so if you are grabbing a screen by
+> launching `PokeredSaveEditor.exe --shot` (which is the fast way, and the right way, for reviewing
+> one screen), you must set it yourself:
+>
+> ```powershell
+> $env:QT_QPA_PLATFORM = "offscreen"
+> $env:QT_QPA_FONTDIR  = "$env:WINDIR\Fonts"     # <- WITHOUT THIS, THERE IS NO TEXT
+> ```
+>
+> This bit on 2026-07-13: a whole map-screen review was done on shots with no text in them, so the
+> *layout* was checked and the *words* were not. Twilight noticed immediately. A screenshot with no
+> text in it is not a review — if the picture has boxes where the labels should be, **stop and fix the
+> capture before you look at anything else.**
+>
+> **And ⚠️ ShaderEffect does not run on the offscreen/software backend.** It silently draws nothing.
+> `PixelImage.qml` (the map's pixel-art sampler) therefore falls back to plain nearest-neighbour when
+> `GraphicsInfo.api` is `Software` -- which is why the map is not black in these shots, and why what
+> you see here is the *whole-zoom* rendering rather than the shader's. To review the **shader**, grab
+> the shot on the real GPU (no `QT_QPA_PLATFORM`) at a deliberately awkward fractional zoom.
+
 - **Fonts (offscreen only).** Under the offscreen fallback, Qt's FreeType font DB finds **no fonts**
   unless pointed at a font dir — else all UI text renders as tofu boxes (the in-game *bitmap* name
   preview still renders via the font image provider, which masked it at first). The tool sets

@@ -1,4 +1,33 @@
-# UI Patterns & Conventions
+# UI Patterns
+
+## Smooth zoom on pixel art (the map) — 2026-07-13
+
+A Game Boy map is 8×8 pixel art, and for a long time the map screen's zoom **snapped to whole numbers**
+for exactly that reason: at 2.37×, nearest-neighbour gives some source pixels two screen pixels and
+others three, and the art visibly ripples and crawls as you zoom. Plain bilinear is worse — the whole
+map goes soft, which is the one thing it must never do.
+
+The fix is a shader, and it is the standard one: **anti-aliased point sampling** (`shaders/pixelart.frag`,
+used via `map/PixelImage.qml`). Snap the sample onto the nearest texel centre, but leave a ramp exactly
+**one screen pixel** wide across the seam — `fwidth()` is what makes it exactly one, at any zoom. Flat
+inside a texel (crisp, like nearest), one pixel of blend at the boundary (smooth, like bilinear), and at
+a **whole** zoom it is pixel-for-pixel identical to nearest, so nothing is lost where it used to be exact.
+
+Use `PixelImage` for anything that draws Game Boy art at a zoom. Never `Image { smooth: true }`.
+
+> ⚠️ **`ShaderEffect` does not run on Qt Quick's SOFTWARE backend** — it silently draws nothing, and the
+> map came out **completely black** in the first headless screenshot of it. Every headless run here is
+> software-backed (the screenshooter, the GUI suites, `tst_visual_regression`, `tst_qml_screens`), so
+> `PixelImage` checks `GraphicsInfo.api` and falls back to plain nearest. That is not a fudge — nearest
+> is the honest behaviour of the only sampler that backend has, and it is exactly right at the whole
+> zooms a test renders at.
+
+**Zoom lives in exactly one place** (Twilight): the **▾** on the toolbar's zoom tool. A slider (log
+scale — a linear one spends half its travel between 6× and 12×, which nobody uses) and a **Go to…**
+list. The status bar keeps the *number* and has no buttons: a number is a fact, and that bar is for
+facts. A thing you DO belongs up top.
+
+ & Conventions
 
 How this app's QML UI is built and styled, distilled from the sessions-13k–13t polish pass on the
 Pokémon details editor. **Read this before doing UI work** so screens stay consistent. The

@@ -39,6 +39,10 @@ class Settings : public QObject
   Q_PROPERTY(int headerShadowHeight MEMBER headerShadowHeight NOTIFY headerShadowHeightChanged) ///< Header drop-shadow height.
 
   Q_PROPERTY(bool infoBtnPressed MEMBER infoBtnPressed NOTIFY infoBtnPressedChanged)      ///< Global tooltip (info button) toggle.
+  /// Has the user been told that letting the map's people walk is DESTRUCTIVE? Set only when they
+  /// tick "don't show me this again" -- which starts UNTICKED, because a warning you have to opt
+  /// back into is not a warning. @see MapSim
+  Q_PROPERTY(bool mapSimWarned MEMBER mapSimWarned NOTIFY mapSimWarnedChanged)
   Q_PROPERTY(QString previewTileset MEMBER previewTileset NOTIFY previewTilesetChanged)   ///< Tileset used for name previews.
 
   // The tileset's ANIMATION setting -- three states, not two. See the member below.
@@ -70,6 +74,7 @@ signals:
   void headerHeightChanged();
 
   void infoBtnPressedChanged();
+  void mapSimWarnedChanged();
   void previewTilesetChanged();
   void previewTilesetTypeChanged();
 
@@ -103,7 +108,8 @@ public:
   int headerShadowHeight = 20;  ///< @see headerShadowHeight property.
 
   // Global Tooltips
-  bool infoBtnPressed = false;  ///< @see infoBtnPressed property.
+  bool infoBtnPressed = false;
+  bool mapSimWarned = false;   ///< @see mapSimWarned property.
 
   // Tileset and related engine for naming previews
   QString previewTileset = "Overworld"; ///< @see previewTileset property.

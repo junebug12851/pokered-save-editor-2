@@ -37,7 +37,10 @@
 #include <pse-savefile/expanded/area/areaplayer.h>
 #include <pse-savefile/expanded/area/areasprites.h>
 #include <pse-savefile/expanded/area/areatileset.h>
+#include <pse-savefile/expanded/area/areawarps.h>
 #include <pse-savefile/expanded/fragments/spritedata.h>
+#include <pse-savefile/expanded/fragments/warpdata.h>
+#include <pse-common/random.h>
 
 #include "./mapmodel.h"
 #include "../engine/mapengine.h"
@@ -46,11 +49,16 @@ namespace {
 /// The DB entry for a tileset id. Defined further down (next to the other DB helpers); declared here
 /// because the map/tileset/blockset setters at the top of the file need it.
 TilesetDBEntry* canonAt(int tilesetInd);
+
+/// The three tile values the SAVE owns (grass, counters, the border block). Defined next to the
+/// other engine helpers; declared here because "zoom to a random door" needs it further up.
+MapEngine::SaveTiles saveTilesOf(AreaTileset* tileset);
 } // namespace
 
 MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
-                   AreaLoadedSprites* sprites, AreaSprites* npcs)
-  : sprites(sprites), npcs(npcs), map(map), player(player), tileset(tileset), general(general)
+                   AreaLoadedSprites* sprites, AreaSprites* npcs, AreaWarps* warps)
+  : sprites(sprites), npcs(npcs), warps(warps),
+    map(map), player(player), tileset(tileset), general(general)
 {
   // The map's cast changed -- somebody was placed, moved or deleted. Redraw.
   if (npcs != nullptr)
@@ -852,6 +860,166 @@ QVariantMap MapModel::npcAt(int slot) const
 bool MapModel::npcsEdited() const
 {
   return castEdited;
+}
+
+// ── "Zoom to…" ────────────────────────────────────────────────────────────────
+//
+// Everything here answers in BUFFER pixels, because that is the one coordinate system the canvas
+// speaks. The border ring is included, exactly as it is in every other rectangle this model
+// publishes -- so a warp at map tile (5, 5) is at buffer pixel (3*32 + 5*16, ...).
+
+namespace {
+
+/// A point worth looking at.
+QVariantMap target(bool ok, int x = 0, int y = 0, const QString& label = QString())
+{
+  QVariantMap m;
+  m["ok"]    = ok;
+  m["x"]     = x;
+  m["y"]     = y;
+  m["label"] = label;
+  return m;
+}
+
+} // namespace
+
+QVariantList MapModel::warpPoints() const
+{
+  QVariantList out;
+  if (warps == nullptr)
+    return out;
+
+  for (int i = 0; i < warps->warpCount(); i++) {
+    WarpData* w = warps->warpAt(i);
+    if (w == nullptr)
+      continue;
+
+    QVariantMap m;
+    // A warp's x/y are MAP tiles (half-blocks), like the player's.
+    m["x"] = MapEngine::mapBorder * MapEngine::blockPx + w->x * 16 + 8;
+    m["y"] = MapEngine::mapBorder * MapEngine::blockPx + w->y * 16 + 8;
+    m["ind"] = i;
+    out.append(m);
+  }
+
+  return out;
+}
+
+QVariantMap MapModel::zoomTarget(const QString& kind)
+{
+  const int border = MapEngine::mapBorder * MapEngine::blockPx;
+
+  if (kind == "player")
+    return target(true,
+                  border + playerX() * 16 + 8,
+                  border + playerY() * 16 + 8,
+                  tr("the player"));
+
+  if (kind == "sprite" || kind == "object") {
+    // An "object" is a Pokéball, a boulder, a fossil -- a sprite whose ARTWORK is in the Objects
+    // group. Everything else is somebody.
+    QVariantList pool;
+    for (const QVariant& v : npcList()) {
+      const QVariantMap m = v.toMap();
+
+      SpriteDBEntry* e = SpritesDB::inst()->getIndAt(QString::number(m.value("picture").toInt()));
+      const bool isObject = (e != nullptr && e->group == QStringLiteral("Objects"));
+
+      if (isObject == (kind == "object"))
+        pool.append(m);
+    }
+
+    if (pool.isEmpty())
+      return target(false);
+
+    const QVariantMap pick = pool.at(Random::inst()->rangeExclusive(0, pool.size())).toMap();
+    return target(true,
+                  pick.value("rectX").toInt() + 8,
+                  pick.value("rectY").toInt() + 8,
+                  pick.value("name").toString());
+  }
+
+  if (kind == "warp") {
+    const QVariantList pts = warpPoints();
+    if (pts.isEmpty())
+      return target(false);
+
+    const QVariantMap pick = pts.at(Random::inst()->rangeExclusive(0, pts.size())).toMap();
+    return target(true, pick.value("x").toInt(), pick.value("y").toInt(),
+                  tr("warp %1").arg(pick.value("ind").toInt() + 1));
+  }
+
+  if (kind == "door") {
+    const MapEngine::Buffer buf = MapEngine::buildOverworldMap(mapInd(), borderBlock());
+    const QVector<QPoint> doors =
+        MapEngine::tilesInLayer(buf, tilesetInd(), MapEngine::LayerDoors, saveTilesOf(tileset));
+
+    if (doors.isEmpty())
+      return target(false);
+
+    const QPoint p = doors.at(Random::inst()->rangeExclusive(0, doors.size()));
+    return target(true, p.x() + 4, p.y() + 4, tr("a door"));
+  }
+
+  if (kind == "connection") {
+    const auto strips = MapEngine::connectionStrips(mapInd());
+    if (strips.isEmpty())
+      return target(false);
+
+    const MapEngine::Strip s = strips.at(Random::inst()->rangeExclusive(0, strips.size()));
+    return target(true,
+                  (s.bx + s.cols / 2.0) * MapEngine::blockPx,
+                  (s.by + s.rows / 2.0) * MapEngine::blockPx,
+                  s.name);
+  }
+
+  if (kind == "xy") {
+    // The centre of a random BLOCK -- not a tile and not a pixel (Twilight). A block is the unit a
+    // map is actually built out of, so it is the unit that is worth landing on.
+    if (blocksWide() <= 0 || blocksHigh() <= 0)
+      return target(false);
+
+    const int bx = Random::inst()->rangeExclusive(0, blocksWide());
+    const int by = Random::inst()->rangeExclusive(0, blocksHigh());
+
+    return target(true,
+                  border + bx * MapEngine::blockPx + MapEngine::blockPx / 2,
+                  border + by * MapEngine::blockPx + MapEngine::blockPx / 2,
+                  tr("block %1, %2").arg(bx).arg(by));
+  }
+
+  return target(false);
+}
+
+QVariantMap MapModel::zoomTargetsAvailable() const
+{
+  QVariantMap m;
+
+  m["player"] = true;
+  m["camera"] = true;
+  m["map"]    = true;
+  m["xy"]     = blocksWide() > 0 && blocksHigh() > 0;
+
+  int people = 0, objects = 0;
+  for (const QVariant& v : npcList()) {
+    SpriteDBEntry* e = SpritesDB::inst()->getIndAt(
+        QString::number(v.toMap().value("picture").toInt()));
+
+    if (e != nullptr && e->group == QStringLiteral("Objects"))
+      objects++;
+    else
+      people++;
+  }
+
+  m["sprite"] = people > 0;
+  m["object"] = objects > 0;
+  m["warp"]   = !warpPoints().isEmpty();
+  m["connection"] = !MapEngine::connectionStrips(mapInd()).isEmpty();
+
+  const MapEngine::Buffer buf = MapEngine::buildOverworldMap(mapInd(), borderBlock());
+  m["door"] = MapEngine::layerApplies(buf, tilesetInd(), MapEngine::LayerDoors, saveTilesOf(tileset));
+
+  return m;
 }
 
 namespace {

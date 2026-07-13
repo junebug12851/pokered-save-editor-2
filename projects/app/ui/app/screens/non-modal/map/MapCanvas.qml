@@ -68,23 +68,41 @@ Item {
 
   // ── Zoom ────────────────────────────────────────────────────────────────────────────────────
   //
-  // Integer only -- this is 8x8 pixel art and a fractional scale would smear it. Until the user
-  // says otherwise (userZoom == 0) the map shows at the largest whole multiple that FITS, so
-  // opening the screen shows you the map rather than a corner of it. Route 17 is 78 blocks tall and
-  // will still land on 1x, which is correct -- it simply is bigger than the window.
-  readonly property int minZoom: 1
-  readonly property int maxZoom: 8
+  // CONTINUOUS, not integer (Twilight, 2026-07-13: "it's too clunky"). It used to snap to whole
+  // multiples because a fractional scale ruins pixel art -- at 2.37x, nearest-neighbour gives some
+  // Game Boy pixels two screen pixels and others three, and the map ripples as you zoom.
+  //
+  // That is now solved properly, in a shader (PixelImage.qml -> shaders/pixelart.frag): anti-aliased
+  // point sampling, flat inside a pixel and one screen pixel of blend across the seam. Crisp like
+  // nearest, smooth like bilinear, and pixel-identical to the old behaviour at whole zooms. So the
+  // zoom can be any real number, and it is.
+  readonly property real minZoom: 0.5
+  readonly property real maxZoom: 12
 
-  property int userZoom: 0
-  readonly property int fitZoom: (brg.map.imageWidth > 0 && view.width > 0)
+  /// 0 = "nobody has said otherwise, use the default view".
+  property real userZoom: 0
+  readonly property real zoom: userZoom > 0 ? userZoom : defaultZoom
+
+  /// The whole map, fitted. What "Zoom to map" gives you.
+  readonly property real fitZoom: (brg.map.imageWidth > 0 && view.width > 0)
     ? Math.max(minZoom, Math.min(maxZoom,
-        Math.floor(Math.min(view.width / brg.map.imageWidth,
-                            view.height / brg.map.imageHeight))))
-    : minZoom
-  readonly property int zoom: userZoom > 0 ? userZoom : fitZoom
+        Math.min(view.width / brg.map.imageWidth,
+                 view.height / brg.map.imageHeight)))
+    : 1
 
-  readonly property int scaledWidth: brg.map.imageWidth * zoom
-  readonly property int scaledHeight: brg.map.imageHeight * zoom
+  /// THE OPENING VIEW (Twilight): the Game Boy's own screen, plus **one block of breathing room on
+  /// every side**, with the player centred. You open the map looking at what the player is looking
+  /// at -- not at a postage stamp of the whole route.
+  ///
+  /// The screen is 20x18 tiles = 160x144 buffer px; a block is 32. One block out on each side is
+  /// therefore 160+64 by 144+64.
+  readonly property real defaultZoom: (view.width > 0 && view.height > 0)
+    ? Math.max(minZoom, Math.min(maxZoom,
+        Math.min(view.width / (160 + 64), view.height / (144 + 64))))
+    : 1
+
+  readonly property real scaledWidth: brg.map.imageWidth * zoom
+  readonly property real scaledHeight: brg.map.imageHeight * zoom
 
   /// What is under the cursor (brg.map.describeAt()), or null when it is off the map. The status
   /// bar reads this; nothing else does.
@@ -150,7 +168,7 @@ Item {
       width: canvasRoot.scaledWidth
       height: canvasRoot.scaledHeight
 
-      readonly property int gridStep: brg.map.blockSize * canvasRoot.zoom
+      readonly property real gridStep: brg.map.blockSize * canvasRoot.zoom
 
       // The map floats: a soft shadow under it, so the well reads as BEHIND rather than as a
       // border drawn around the art.
@@ -163,13 +181,12 @@ Item {
       }
 
       // The whole overworld buffer: the map inside its border ring.
-      Image {
+      //
+      // A PixelImage, not an Image: it samples through the pixel-art shader, which is what lets the
+      // zoom be a real number instead of snapping to whole multiples. See PixelImage.qml.
+      PixelImage {
         anchors.fill: parent
         source: brg.map.source
-        smooth: false           // pixel art -- never interpolate it
-        mipmap: false
-        fillMode: Image.Stretch
-        cache: true
       }
 
       // The semantic overlay -- walls, grass, warps... -- rendered by MapEngine as ONE transparent
@@ -178,7 +195,7 @@ Item {
       // An image, not a pile of QML rectangles, and that is not premature: Route 17 is 78 blocks
       // tall, which is over 20,000 tiles. As delegates it would crawl; as an image it scales with
       // the zoom for free and fades as one thing.
-      Image {
+      PixelImage {
         anchors.fill: parent
         source: brg.map.overlaySource
 
@@ -186,11 +203,6 @@ Item {
         // is the Layers panel's one dial -- stacked annotation over four shades of grey needs it.
         opacity: brg.map.layers !== 0 ? brg.mapLayers.overlayOpacity : 0
         Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
-
-        smooth: false
-        mipmap: false
-        fillMode: Image.Stretch
-        cache: true
       }
 
       // ── The block grid ──────────────────────────────────────────────────────────────────────
@@ -216,7 +228,7 @@ Item {
 
       readonly property color gridColor: Qt.rgba(0.34, 0.71, 0.91, 0.42)
       readonly property color tileGridColor: Qt.rgba(0.34, 0.71, 0.91, 0.18)
-      readonly property int tileStep: brg.map.blockSize / 4 * canvasRoot.zoom
+      readonly property real tileStep: brg.map.blockSize / 4 * canvasRoot.zoom
 
       // The TILE grid (8px). Off by default -- it is four times as many lines, and at 1x they would
       // be a hairline every eight pixels. Under the block grid, so the coarse structure still reads.
@@ -353,7 +365,7 @@ Item {
       // He is drawn through the OBJECT palette (rOBP0), which is the one the "harmless" glitch
       // palettes actually wreck -- contrast 1 and 2 leave the map looking perfectly normal and do
       // their damage here. (reference/sprites.md)
-      Image {
+      PixelImage {
         visible: brg.mapLayers.showPlayer
         x: brg.map.playerRectX * canvasRoot.zoom
         y: brg.map.playerRectY * canvasRoot.zoom
@@ -361,10 +373,6 @@ Item {
         height: brg.map.playerRectH * canvasRoot.zoom
 
         source: brg.map.playerSource
-        smooth: false
-        mipmap: false
-        fillMode: Image.Stretch
-        cache: true
       }
 
       // ── Everybody else ──────────────────────────────────────────────────────────────────────
@@ -406,13 +414,9 @@ Item {
 
           readonly property bool selected: canvasRoot.selectedNpc === npc.modelData.slot
 
-          Image {
+          PixelImage {
             anchors.fill: parent
             source: npc.modelData.source
-            smooth: false
-            mipmap: false
-            fillMode: Image.Stretch
-            cache: true
             opacity: npc.dragging ? 0.75 : 1.0
           }
 
@@ -625,7 +629,10 @@ Item {
           const py = Math.floor(eventPoint.position.y / canvasRoot.zoom);
 
           if (canvasRoot.tool === "zoom") {
-            view.zoomAround(canvasRoot.zoom + 1, eventPoint.position);
+            // A RATIO, not a fixed step -- the same reason the wheel uses one. A 1.4x bite feels the
+            // same at 0.6x as it does at 8x; "+1" does not.
+            const bite = (eventPoint.modifiers & Qt.AltModifier) ? (1 / 1.4) : 1.4;
+            view.zoomAround(canvasRoot.zoom * bite, eventPoint.position);
             return;
           }
 
@@ -689,12 +696,12 @@ Item {
     // annoying thing a map viewer can do.
 
     /// Keep the point under `centre` (in viewport coords) fixed across a zoom change.
+    ///
+    /// Continuous now, and no rounding: the shader means a fractional zoom is a real zoom.
     function zoomAround(newZoom, centre) {
-      newZoom = Math.max(canvasRoot.minZoom, Math.min(canvasRoot.maxZoom, Math.round(newZoom)));
-      if (newZoom === canvasRoot.zoom) {
-        canvasRoot.userZoom = newZoom;
+      newZoom = Math.max(canvasRoot.minZoom, Math.min(canvasRoot.maxZoom, newZoom));
+      if (Math.abs(newZoom - canvasRoot.zoom) < 0.0001)
         return;
-      }
 
       // Where that point sits on the MAP right now, in unscaled buffer pixels.
       const mapX = (view.contentX + centre.x - canvas.x) / canvasRoot.zoom;
@@ -705,30 +712,44 @@ Item {
       // canvas.x/y and contentWidth/Height are bindings; let them settle before we put that same
       // map point back under the cursor.
       Qt.callLater(function() {
-        view.contentX = Math.max(0, Math.min(view.contentWidth - view.width,
+        view.contentX = Math.max(0, Math.min(Math.max(0, view.contentWidth - view.width),
                                              canvas.x + mapX * canvasRoot.zoom - centre.x));
-        view.contentY = Math.max(0, Math.min(view.contentHeight - view.height,
+        view.contentY = Math.max(0, Math.min(Math.max(0, view.contentHeight - view.height),
                                              canvas.y + mapY * canvasRoot.zoom - centre.y));
       });
     }
 
-    // Pinch: touchscreen, and a touchpad's two-finger pinch. Integer zoom only (pixel art), so the
-    // scale is snapped -- but it tracks the gesture live.
+    /// Centre the view on a point in BUFFER pixels, at the zoom already set.
+    function centreOn(bx, by) {
+      Qt.callLater(function() {
+        view.contentX = Math.max(0, Math.min(Math.max(0, view.contentWidth - view.width),
+                                             canvas.x + bx * canvasRoot.zoom - view.width / 2));
+        view.contentY = Math.max(0, Math.min(Math.max(0, view.contentHeight - view.height),
+                                             canvas.y + by * canvasRoot.zoom - view.height / 2));
+      });
+    }
+
+    // Pinch: touchscreen, and a touchpad's two-finger pinch. It tracks the gesture continuously --
+    // there is nothing to snap to any more.
     PinchHandler {
       target: null
-      onScaleChanged: (delta) => {
-        if (Math.abs(activeScale - 1) < 0.15)
+      onActiveScaleChanged: {
+        if (!active)
           return;
-
-        view.zoomAround(canvasRoot.zoom * activeScale, centroid.position);
+        view.zoomAround(canvasRoot.zoom * (1 + (activeScale - 1) * 0.25), centroid.position);
       }
     }
 
     // Ctrl+wheel (and a touchpad's pinch, which most platforms report as Ctrl+wheel).
+    //
+    // MULTIPLICATIVE, not additive: a fixed step feels violent when you are at 0.6x and glacial when
+    // you are at 10x. A constant ratio per notch feels the same everywhere, which is the whole point
+    // of a smooth zoom. 1.12 per notch is about eight notches per doubling.
     WheelHandler {
       acceptedModifiers: Qt.ControlModifier
       onWheel: (event) => {
-        view.zoomAround(canvasRoot.zoom + (event.angleDelta.y > 0 ? 1 : -1), point.position);
+        const notches = event.angleDelta.y / 120;
+        view.zoomAround(canvasRoot.zoom * Math.pow(1.12, notches), point.position);
       }
     }
 
@@ -752,6 +773,93 @@ Item {
         event.accepted = false;  // let the Flickable scroll vertically
       }
     }
+  }
+
+  // ── The one zoom API ──────────────────────────────────────────────────────────────────────
+  //
+  // Everything that zooms goes through here: the slider, the Go-to entries, the wheel, the pinch.
+  // There is exactly one zoom in this screen and this is it (Twilight: "I just don't want multiple
+  // places where zoom is").
+
+  /// Zoom, keeping the middle of the view where it is. What the slider drives.
+  function zoomToCentre(z) {
+    view.zoomAround(z, Qt.point(view.width / 2, view.height / 2));
+  }
+
+  // ── The opening view ──────────────────────────────────────────────────────────────────────
+  //
+  // You open a map looking at what the PLAYER is looking at (Twilight): the Game Boy's screen with
+  // a block of breathing room round it, him in the middle. Not a postage stamp of a 78-block route.
+  //
+  // `framed` is a one-shot per map: after that the view is yours, and re-centring it under you every
+  // time something redraws would be maddening.
+  property bool framed: false
+
+  function frameOnPlayer() {
+    if (canvasRoot.framed || view.width <= 0 || view.height <= 0 || !brg.map.valid)
+      return;
+
+    canvasRoot.framed = true;
+    canvasRoot.userZoom = 0;   // = defaultZoom
+    view.centreOn(brg.map.playerRectX + 8, brg.map.playerRectY + 8);
+  }
+
+  Component.onCompleted: Qt.callLater(canvasRoot.frameOnPlayer)
+  onWidthChanged: Qt.callLater(canvasRoot.frameOnPlayer)
+
+  /// The map we last framed. MapModel publishes one `changed()` for everything, so we watch the id
+  /// ourselves rather than re-framing the view on every animation frame.
+  property int framedMap: -1
+
+  Connections {
+    target: brg.map
+
+    // A different map is a different place -- frame it the same way.
+    function onChanged() {
+      if (brg.map.mapInd === canvasRoot.framedMap)
+        return;
+
+      canvasRoot.framedMap = brg.map.mapInd;
+      canvasRoot.framed = false;
+      Qt.callLater(canvasRoot.frameOnPlayer);
+    }
+  }
+
+  /// Go and look at something. @p kind is a MapModel::zoomTarget kind, plus "map" and "camera",
+  /// which are about the FRAME rather than a point and so are answered here.
+  function goTo(kind) {
+    if (kind === "map") {
+      canvasRoot.userZoom = canvasRoot.fitZoom;
+      view.centreOn(brg.map.imageWidth / 2, brg.map.imageHeight / 2);
+      canvasRoot.status = qsTr("The whole map.");
+      return;
+    }
+
+    if (kind === "camera") {
+      // Exactly what the Game Boy is showing -- no breathing room at all. (The DEFAULT view is this
+      // plus one block on each side; this one is the screen itself.)
+      canvasRoot.userZoom = Math.max(canvasRoot.minZoom,
+                                     Math.min(canvasRoot.maxZoom,
+                                              Math.min(view.width / 160, view.height / 144)));
+      view.centreOn(brg.map.screenX + brg.map.screenW / 2,
+                    brg.map.screenY + brg.map.screenH / 2);
+      canvasRoot.status = qsTr("What the Game Boy is showing.");
+      return;
+    }
+
+    const t = brg.map.zoomTarget(kind);
+    if (!t.ok) {
+      canvasRoot.status = qsTr("This map hasn't got one of those.");
+      return;
+    }
+
+    // Close enough to see it, not so close you have lost the map around it. Four blocks of context
+    // is about a screen and a half.
+    const wanted = Math.min(view.width, view.height) / (4 * 32);
+    canvasRoot.userZoom = Math.max(canvasRoot.minZoom, Math.min(canvasRoot.maxZoom, wanted));
+
+    view.centreOn(t.x, t.y);
+    canvasRoot.status = t.label ? qsTr("Went to %1.").arg(t.label) : "";
   }
 
   /// "x,y" in BUFFER pixels -> select the block there, exactly as a click would. (DEBUG harness:
