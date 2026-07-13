@@ -539,9 +539,15 @@
         <file>ui/app/screens/non-modal/map/MusicPanel.qml</file>
         <file>ui/app/screens/non-modal/map/TilesetPanel.qml</file>
         <file>ui/app/screens/non-modal/map/BlockPanel.qml</file>
-        <file>ui/app/screens/non-modal/map/LayerChips.qml</file>
         <file>ui/app/screens/non-modal/map/TilePick.qml</file>
         <file>ui/app/screens/non-modal/map/BlockPick.qml</file>
+        <file>ui/app/screens/non-modal/map/MapIdentityBar.qml</file>
+        <file>ui/app/screens/non-modal/map/MapToolRail.qml</file>
+        <file>ui/app/screens/non-modal/map/MapContextBar.qml</file>
+        <file>ui/app/screens/non-modal/map/MapCanvas.qml</file>
+        <file>ui/app/screens/non-modal/map/MapDock.qml</file>
+        <file>ui/app/screens/non-modal/map/MapStatusBar.qml</file>
+        <file>ui/app/screens/non-modal/map/MapRailButton.qml</file>
         <file>assets/icons/fontawesome/map.svg</file>
         <file>assets/icons/fontawesome/cog.svg</file>
         <file>assets/icons/fontawesome/bicycle.svg</file>

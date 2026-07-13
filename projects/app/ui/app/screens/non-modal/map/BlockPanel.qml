@@ -51,14 +51,8 @@ Rectangle {
   /// Which tile of the selected block the mouse is over (-1 = none). Map.qml mirrors this.
   property int hoveredTile: -1
 
-  color: "#fafafa"
-
-  Rectangle {
-    anchors.left: parent.left
-    width: 1
-    height: parent.height
-    color: "#22000000"
-  }
+  // The dock owns the panel's frame and its title bar (MapDock.qml). A panel is its CONTENT.
+  color: "transparent"
 
   // A ScrollView, like the Tileset panel -- because this content is genuinely taller than a
   // 480px window and a bare ColumnLayout does not clip, it OVERFLOWS: the empty-state text
@@ -72,13 +66,6 @@ Rectangle {
   ColumnLayout {
     width: panel.width - 24
     spacing: 10
-
-    Text {
-      text: qsTr("Blocks")
-      font.pixelSize: 14
-      font.bold: true
-      color: brg.settings.textColorDark
-    }
 
     Text {
       Layout.fillWidth: true

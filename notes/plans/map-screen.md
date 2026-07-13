@@ -116,9 +116,12 @@ Four thin bars, each with **one** job, and two rails. Nothing wraps. Nothing evi
   that is always relevant to what you're looking at).
 - **Canvas well** — dark neutral surround, the map floats on it with a soft shadow, integer zoom, pans.
 - **Dock (right)** — an **icon rail (44px) that is always there** + **at most one expanded panel column**
-  (280–380px, drag-resizable, width remembered). Click a lit icon to collapse back to nothing. The map
-  never goes below `mapMinWidth`; if the window is too narrow for a panel, the panel **overlays** the
-  canvas edge (with a scrim) instead of squeezing the map — the eviction queue dies here.
+  (240–420px, drag-resizable, width remembered). Click a lit icon to collapse back to nothing. The map
+  never goes below `mapMinWidth`; if the window is too narrow for a panel, the panel **floats over** the
+  canvas edge instead of squeezing the map — the eviction queue dies here. **No scrim** (decided while
+  building phase 1): a scrim would dim the map you are working on, and Photoshop/Tiled don't dim theirs
+  either. The floating panel gets a shadow (so it reads as *above*) and swallows its own clicks, wheel and
+  hover so nothing falls through to the map behind it.
 - **Status bar (26px)** — cursor coords (tile *and* block, map-relative *and* buffer), what's under the
   cursor in words, the selection summary, and the zoom control.
 

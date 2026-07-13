@@ -47,14 +47,9 @@ Rectangle {
   readonly property bool hasTs: ts !== null && ts !== undefined
                                 && ts.grassTile !== undefined
 
-  color: "#fafafa"
-
-  Rectangle {
-    anchors.left: parent.left
-    width: 1
-    height: parent.height
-    color: "#22000000"
-  }
+  // The dock owns the panel's frame and its title bar (MapDock.qml). A panel is its CONTENT --
+  // it does not draw its own header, its own edge, or its own background chrome. (2026-07-12)
+  color: "transparent"
 
   // A titled group. Used for every section so the panel reads as a stack of ideas rather than
   // a wall of controls.
@@ -111,13 +106,6 @@ Rectangle {
     ColumnLayout {
       width: panel.width - 24
       spacing: 10
-
-      Text {
-        text: qsTr("Tileset")
-        font.pixelSize: 14
-        font.bold: true
-        color: brg.settings.textColorDark
-      }
 
       // ── Which tileset ───────────────────────────────────────────────────────
       Group {

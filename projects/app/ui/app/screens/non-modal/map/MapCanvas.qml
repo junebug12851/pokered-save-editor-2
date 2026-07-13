@@ -1,0 +1,434 @@
+/*
+  * Copyright 2026 Twilight
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *   http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+*/
+
+/*
+  MapCanvas.qml -- the map itself, floating in a dark well.
+
+  Every number here comes from brg.map (MapModel) in BUFFER PIXELS -- one screen pixel per Game Boy
+  pixel, 32 to a block, origin at the top-left of the 3-block border ring -- and QML's only job is to
+  multiply by an integer `zoom`. If a rectangle looks wrong, the bug is in C++ (MapEngine), not here.
+  Keep it that way.
+
+  What is drawn, outermost first:
+    * the WELL              -- a dark neutral surround. Every pixel editor does this, and for the
+                               same reason: Game Boy art is four shades of grey, and a white page
+                               behind it drowns the light end. The map floats on it with a shadow.
+    * the rendered image    -- the map PLUS its border ring (the game keeps the map inside that ring
+                               so connected maps can bleed in)
+    * the overlay image     -- the meaning layers, rendered by MapEngine as ONE transparent image
+    * the block grid        -- the 32px cells a map is really made of
+    * the map bounds        -- where the real map ends and the ring begins
+    * the draw area (6x5 blocks) -- what LoadCurrentMapView redraws (wSurroundingTiles)
+    * the player            -- where the console's own OAM puts him (4px above his tile row)
+    * the screen (20x18 tiles)   -- what the player actually SEES, sliding around inside the draw
+                               area in half-block steps
+
+  (In phase 2 those last five stop being hard-coded rectangles and become LAYERS you can switch off.
+  Today they are exactly what they were, just re-homed. -- notes/plans/map-screen.md)
+
+  ⚠️ The root id is `canvasRoot`, NOT `top`: this file has Repeaters, and a Repeater delegate cannot
+  see the file's root id -- `top.zoom` inside one comes back `undefined`, x goes NaN, and every grid
+  line silently collapses onto x = 0 with no warning and a green tst_qml_screens. Inside a delegate,
+  reach values through a plain sibling id (`canvas`). See reference/qt-patterns.md.
+*/
+import QtQuick
+import QtQuick.Controls
+
+Item {
+  id: canvasRoot
+
+  /// The active tool, from the rail: "select" | "pan" | "zoom".
+  property string tool: "select"
+
+  // ── Zoom ────────────────────────────────────────────────────────────────────────────────────
+  //
+  // Integer only -- this is 8x8 pixel art and a fractional scale would smear it. Until the user
+  // says otherwise (userZoom == 0) the map shows at the largest whole multiple that FITS, so
+  // opening the screen shows you the map rather than a corner of it. Route 17 is 78 blocks tall and
+  // will still land on 1x, which is correct -- it simply is bigger than the window.
+  readonly property int minZoom: 1
+  readonly property int maxZoom: 8
+
+  property int userZoom: 0
+  readonly property int fitZoom: (brg.map.imageWidth > 0 && view.width > 0)
+    ? Math.max(minZoom, Math.min(maxZoom,
+        Math.floor(Math.min(view.width / brg.map.imageWidth,
+                            view.height / brg.map.imageHeight))))
+    : minZoom
+  readonly property int zoom: userZoom > 0 ? userZoom : fitZoom
+
+  readonly property int scaledWidth: brg.map.imageWidth * zoom
+  readonly property int scaledHeight: brg.map.imageHeight * zoom
+
+  /// Which tile of the selected block the Blocks panel is hovering -- mirrored onto the map, so the
+  /// two views are one thing rather than two. -1 = none.
+  property int hoveredTile: -1
+
+  /// What is under the cursor (brg.map.describeAt()), or null when it is off the map. The status
+  /// bar reads this; nothing else does.
+  property var at: null
+
+  /// Space held = pan with any tool (the universal convention, and it costs nothing).
+  property bool spaceHeld: false
+
+  readonly property bool panning: tool === "pan" || spaceHeld
+
+  // The dark well. Not black: black would make the darkest Game Boy grey vanish into it.
+  Rectangle {
+    anchors.fill: parent
+    color: "#2b2b2b"
+  }
+
+  Flickable {
+    id: view
+
+    anchors.fill: parent
+    clip: true
+
+    contentWidth: Math.max(width, canvasRoot.scaledWidth)
+    contentHeight: Math.max(height, canvasRoot.scaledHeight)
+    boundsBehavior: Flickable.StopAtBounds
+
+    // Both axes, and a drag anywhere pans -- the map is the thing, not the scrollbars.
+    flickableDirection: Flickable.HorizontalAndVerticalFlick
+    interactive: true
+
+    ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+    ScrollBar.horizontal: ScrollBar { policy: ScrollBar.AsNeeded }
+
+    // Genuinely nothing in the game to draw, and nothing this id is a copy of either.
+    Text {
+      anchors.centerIn: parent
+      visible: !brg.map.valid
+      text: qsTr("There is no map data in the game for this one.")
+      font.pixelSize: 13
+      color: "#bdbdbd"
+    }
+
+    Item {
+      id: canvas
+
+      visible: brg.map.valid
+
+      // Centre the map while it is smaller than the view, then let it grow past it.
+      x: Math.max(0, (view.contentWidth - width) / 2)
+      y: Math.max(0, (view.contentHeight - height) / 2)
+      width: canvasRoot.scaledWidth
+      height: canvasRoot.scaledHeight
+
+      readonly property int gridStep: brg.map.blockSize * canvasRoot.zoom
+
+      // The map floats: a soft shadow under it, so the well reads as BEHIND rather than as a
+      // border drawn around the art.
+      Rectangle {
+        anchors.fill: parent
+        anchors.margins: -6
+        color: "#40000000"
+        radius: 3
+        z: -1
+      }
+
+      // The whole overworld buffer: the map inside its border ring.
+      Image {
+        anchors.fill: parent
+        source: brg.map.source
+        smooth: false           // pixel art -- never interpolate it
+        mipmap: false
+        fillMode: Image.Stretch
+        cache: true
+      }
+
+      // The semantic overlay -- walls, grass, warps... -- rendered by MapEngine as ONE transparent
+      // image exactly the size of the map, so it can simply sit on top.
+      //
+      // An image, not a pile of QML rectangles, and that is not premature: Route 17 is 78 blocks
+      // tall, which is over 20,000 tiles. As delegates it would crawl; as an image it scales with
+      // the zoom for free and fades as one thing.
+      Image {
+        anchors.fill: parent
+        source: brg.map.overlaySource
+
+        // The map stays the point. The layers arrive, they don't slam on.
+        opacity: brg.map.layers !== 0 ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+
+        smooth: false
+        mipmap: false
+        fillMode: Image.Stretch
+        cache: true
+      }
+
+      // ── The block grid ──────────────────────────────────────────────────────────────────────
+      //
+      // TINTED rather than grey on purpose: the map is four shades of grey, so a grey line
+      // disappears into it (over the black trees or over the white paths, depending which grey you
+      // pick). A low-alpha colour has nothing to hide against and reads everywhere without
+      // shouting over the three boxes.
+      readonly property color gridColor: Qt.rgba(0.16, 0.44, 0.75, 0.40)
+
+      Repeater {
+        model: Math.floor(canvas.width / canvas.gridStep) + 1
+        Rectangle {
+          required property int index
+          x: index * canvas.gridStep
+          y: 0
+          width: 1
+          height: canvas.height
+          color: canvas.gridColor
+        }
+      }
+
+      Repeater {
+        model: Math.floor(canvas.height / canvas.gridStep) + 1
+        Rectangle {
+          required property int index
+          x: 0
+          y: index * canvas.gridStep
+          width: canvas.width
+          height: 1
+          color: canvas.gridColor
+        }
+      }
+
+      // Where the real map ends and the 3-block border ring begins.
+      Rectangle {
+        x: brg.map.mapX * canvasRoot.zoom
+        y: brg.map.mapY * canvasRoot.zoom
+        width: brg.map.mapW * canvasRoot.zoom
+        height: brg.map.mapH * canvasRoot.zoom
+        color: "transparent"
+        border.width: 2
+        border.color: brg.settings.primaryColor
+      }
+
+      // The draw area: the 6x5 blocks LoadCurrentMapView redraws. Always block-aligned.
+      Rectangle {
+        x: brg.map.scratchX * canvasRoot.zoom
+        y: brg.map.scratchY * canvasRoot.zoom
+        width: brg.map.scratchW * canvasRoot.zoom
+        height: brg.map.scratchH * canvasRoot.zoom
+        color: "transparent"
+        border.width: 2
+        border.color: brg.settings.accentColor
+      }
+
+      // The player. He is drawn 4px ABOVE his tile row -- "which makes sprites appear to be in the
+      // centre of a tile" (ram/wram.asm), confirmed against the console's own OAM. Facing right is
+      // facing LEFT, mirrored: there is no right-facing art in the game.
+      //
+      // He is drawn through the OBJECT palette (rOBP0), which is the one the "harmless" glitch
+      // palettes actually wreck -- contrast 1 and 2 leave the map looking perfectly normal and do
+      // their damage here. (reference/sprites.md)
+      Image {
+        x: brg.map.playerRectX * canvasRoot.zoom
+        y: brg.map.playerRectY * canvasRoot.zoom
+        width: brg.map.playerRectW * canvasRoot.zoom
+        height: brg.map.playerRectH * canvasRoot.zoom
+
+        source: brg.map.playerSource
+        smooth: false
+        mipmap: false
+        fillMode: Image.Stretch
+        cache: true
+      }
+
+      // The visible screen: the 20x18 tiles actually on the Game Boy's screen.
+      Rectangle {
+        x: brg.map.screenX * canvasRoot.zoom
+        y: brg.map.screenY * canvasRoot.zoom
+        width: brg.map.screenW * canvasRoot.zoom
+        height: brg.map.screenH * canvasRoot.zoom
+        color: "transparent"
+        border.width: 2
+        border.color: brg.settings.errorColor
+      }
+
+      // ── The selection ───────────────────────────────────────────────────────────────────────
+      //
+      // Held ABOVE everything -- the grid, the boxes, the player, any overlay -- because a
+      // selection you can lose under a layer is not a selection.
+      Rectangle {
+        visible: brg.map.hasSelection
+        z: 10
+
+        x: brg.map.selectedBlockX * canvas.gridStep
+        y: brg.map.selectedBlockY * canvas.gridStep
+        width: canvas.gridStep
+        height: canvas.gridStep
+
+        color: "transparent"
+        border.width: 2
+        border.color: brg.settings.primaryColor
+
+        // A second, inner line in white: the outer one alone can vanish against dark trees or a
+        // glitch palette, and a selection you can't find is not a selection.
+        Rectangle {
+          anchors.fill: parent
+          anchors.margins: 2
+          color: "transparent"
+          border.width: 1
+          border.color: "#ccffffff"
+        }
+      }
+
+      // The tile the Blocks panel is hovering, lit up on the map. Hovering a tile in the panel and
+      // seeing it on the map is what makes the two one thing rather than two.
+      Rectangle {
+        visible: brg.map.hasSelection && canvasRoot.hoveredTile >= 0
+        z: 11
+
+        readonly property int tileStep: canvas.gridStep / 4
+
+        x: brg.map.selectedBlockX * canvas.gridStep
+           + (canvasRoot.hoveredTile % 4) * tileStep
+        y: brg.map.selectedBlockY * canvas.gridStep
+           + Math.floor(canvasRoot.hoveredTile / 4) * tileStep
+        width: tileStep
+        height: tileStep
+
+        color: Qt.rgba(1, 1, 1, 0.30)
+        border.width: 1
+        border.color: brg.settings.primaryColor
+      }
+
+      // ── Pointing at things ──────────────────────────────────────────────────────────────────
+      //
+      // Below the Flickable's own drag handling, so a drag still pans the map and only a genuine
+      // click acts.
+      HoverHandler {
+        id: hover
+        cursorShape: canvasRoot.panning ? Qt.OpenHandCursor
+                   : canvasRoot.tool === "zoom" ? Qt.CrossCursor
+                   : Qt.ArrowCursor
+
+        onPointChanged: {
+          const px = Math.floor(point.position.x / canvasRoot.zoom);
+          const py = Math.floor(point.position.y / canvasRoot.zoom);
+          canvasRoot.at = brg.map.describeAt(px, py);
+        }
+      }
+
+      TapHandler {
+        onTapped: (eventPoint) => {
+          const px = Math.floor(eventPoint.position.x / canvasRoot.zoom);
+          const py = Math.floor(eventPoint.position.y / canvasRoot.zoom);
+
+          if (canvasRoot.tool === "zoom") {
+            view.zoomAround(canvasRoot.zoom + 1, eventPoint.position);
+            return;
+          }
+
+          if (canvasRoot.panning)
+            return;   // the hand does not select
+
+          brg.map.selectAtPixel(px, py);
+
+          // Selecting opens the panel that explains the selection -- otherwise the click did
+          // something invisible, which is the same as doing nothing.
+          if (brg.map.hasSelection)
+            canvasRoot.blockSelected();
+        }
+      }
+    }
+
+    // ── Navigation ───────────────────────────────────────────────────────────────────────────
+    //
+    // Zoom ANCHORS on the thing you are pointing at (the cursor, or the middle of the pinch) rather
+    // than the top-left corner. Zooming into a corner you aren't looking at is the single most
+    // annoying thing a map viewer can do.
+
+    /// Keep the point under `centre` (in viewport coords) fixed across a zoom change.
+    function zoomAround(newZoom, centre) {
+      newZoom = Math.max(canvasRoot.minZoom, Math.min(canvasRoot.maxZoom, Math.round(newZoom)));
+      if (newZoom === canvasRoot.zoom) {
+        canvasRoot.userZoom = newZoom;
+        return;
+      }
+
+      // Where that point sits on the MAP right now, in unscaled buffer pixels.
+      const mapX = (view.contentX + centre.x - canvas.x) / canvasRoot.zoom;
+      const mapY = (view.contentY + centre.y - canvas.y) / canvasRoot.zoom;
+
+      canvasRoot.userZoom = newZoom;
+
+      // canvas.x/y and contentWidth/Height are bindings; let them settle before we put that same
+      // map point back under the cursor.
+      Qt.callLater(function() {
+        view.contentX = Math.max(0, Math.min(view.contentWidth - view.width,
+                                             canvas.x + mapX * canvasRoot.zoom - centre.x));
+        view.contentY = Math.max(0, Math.min(view.contentHeight - view.height,
+                                             canvas.y + mapY * canvasRoot.zoom - centre.y));
+      });
+    }
+
+    // Pinch: touchscreen, and a touchpad's two-finger pinch. Integer zoom only (pixel art), so the
+    // scale is snapped -- but it tracks the gesture live.
+    PinchHandler {
+      target: null
+      onScaleChanged: (delta) => {
+        if (Math.abs(activeScale - 1) < 0.15)
+          return;
+
+        view.zoomAround(canvasRoot.zoom * activeScale, centroid.position);
+      }
+    }
+
+    // Ctrl+wheel (and a touchpad's pinch, which most platforms report as Ctrl+wheel).
+    WheelHandler {
+      acceptedModifiers: Qt.ControlModifier
+      onWheel: (event) => {
+        view.zoomAround(canvasRoot.zoom + (event.angleDelta.y > 0 ? 1 : -1), point.position);
+      }
+    }
+
+    // A plain wheel scrolls -- vertically, and HORIZONTALLY when the wheel/trackpad says so
+    // (Shift+wheel, or a real two-finger sideways swipe). Flickable does the vertical axis on its
+    // own; the horizontal one it ignores unless we hand it over.
+    WheelHandler {
+      acceptedModifiers: Qt.NoModifier | Qt.ShiftModifier
+      onWheel: (event) => {
+        const dx = (event.angleDelta.x !== 0)
+                 ? event.angleDelta.x
+                 : ((event.modifiers & Qt.ShiftModifier) ? event.angleDelta.y : 0);
+
+        if (dx !== 0) {
+          view.contentX = Math.max(0, Math.min(view.contentWidth - view.width,
+                                               view.contentX - dx));
+          event.accepted = true;
+          return;
+        }
+
+        event.accepted = false;  // let the Flickable scroll vertically
+      }
+    }
+  }
+
+  /// A block was picked on the map. The screen opens the panel that explains it.
+  signal blockSelected()
+
+  /// "x,y" in BUFFER pixels -> select the block there, exactly as a click would. (DEBUG harness:
+  /// it can only set properties on named items, and `brg.map` is a model, not an item.)
+  property string selectAt: ""
+  onSelectAtChanged: {
+    const p = selectAt.split(",");
+    if (p.length !== 2)
+      return;
+
+    brg.map.selectAtPixel(parseInt(p[0]), parseInt(p[1]));
+    if (brg.map.hasSelection)
+      canvasRoot.blockSelected();
+  }
+}

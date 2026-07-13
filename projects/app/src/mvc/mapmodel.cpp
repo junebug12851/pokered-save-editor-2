@@ -494,6 +494,57 @@ QString tileLabel(TileTraitsDB::Traits t, const QString& ledgeFacing)
 }
 } // namespace
 
+QVariantMap MapModel::describeAt(int px, int py) const
+{
+  // What is under the cursor, in the two coordinate systems and in words -- everything the status
+  // bar says. One call per mouse-move, so it does no rendering: it reads the block buffer (cheap,
+  // and MapEngine caches it) and one tile's traits.
+  QVariantMap m;
+  m["valid"] = false;
+
+  if (!valid() || px < 0 || py < 0 || px >= imageWidth() || py >= imageHeight())
+    return m;
+
+  const int bx = px / MapEngine::blockPx;
+  const int by = py / MapEngine::blockPx;
+
+  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  const int block = MapEngine::blockAt(buffer, bx, by);
+  if (block < 0)
+    return m;
+
+  // Which of the block's 16 tiles the cursor is actually over (4x4 of 8px tiles).
+  const int tx = (px % MapEngine::blockPx) / MapEngine::tilePx;
+  const int ty = (py % MapEngine::blockPx) / MapEngine::tilePx;
+
+  const QByteArray tiles = MapEngine::blockTileIds(tilesetInd(), block);
+  const int idx = ty * MapEngine::blockTiles + tx;
+  const int tile = (idx >= 0 && idx < tiles.size())
+                   ? static_cast<quint8>(tiles.at(idx)) : -1;
+
+  const bool border = bx < MapEngine::mapBorder || by < MapEngine::mapBorder
+                   || bx >= blocksWide() + MapEngine::mapBorder
+                   || by >= blocksHigh() + MapEngine::mapBorder;
+
+  m["valid"] = true;
+  m["blockX"] = bx;                 // buffer coords (the ring included)
+  m["blockY"] = by;
+  m["block"] = block;
+  m["border"] = border;
+
+  // Map coords -- what a player would call the place. -1 out in the ring, rather than a negative
+  // number that looks like a real coordinate.
+  m["mapBlockX"] = border ? -1 : bx - MapEngine::mapBorder;
+  m["mapBlockY"] = border ? -1 : by - MapEngine::mapBorder;
+  m["mapTileX"] = border ? -1 : (bx - MapEngine::mapBorder) * 2 + (tx / 2);
+  m["mapTileY"] = border ? -1 : (by - MapEngine::mapBorder) * 2 + (ty / 2);
+
+  m["tile"] = tile;
+  m["label"] = (tile >= 0) ? tileInfo(tile).value("label").toString() : QString();
+
+  return m;
+}
+
 QVariantMap MapModel::tileInfo(int tile) const
 {
   const MapEngine::SaveTiles save = saveTilesOf(tileset);

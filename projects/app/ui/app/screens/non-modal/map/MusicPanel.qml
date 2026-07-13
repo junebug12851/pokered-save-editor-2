@@ -42,15 +42,8 @@ Rectangle {
   readonly property bool hasAudio: audio !== null && audio !== undefined
                                    && audio.musicID !== undefined
 
-  // Sit visibly BESIDE the map rather than bleeding into it: a hair of grey and one hard edge.
-  color: "#fafafa"
-
-  Rectangle {
-    anchors.left: parent.left
-    width: 1
-    height: parent.height
-    color: "#22000000"
-  }
+  // The dock owns the panel's frame and its title bar (MapDock.qml). A panel is its CONTENT.
+  color: "transparent"
 
   // ── Keep the player's idea of "selected" in step with the save ─────────────────────────────
   function syncFromSave() {
@@ -84,13 +77,6 @@ Rectangle {
     spacing: 4
 
     // ── Now playing ──────────────────────────────────────────────────────────────────────────
-    Text {
-      text: qsTr("Music")
-      font.pixelSize: 13
-      font.bold: true
-      color: brg.settings.textColorDark
-    }
-
     Text {
       Layout.fillWidth: true
       text: brg.music.isPlaying

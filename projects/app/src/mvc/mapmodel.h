@@ -238,6 +238,16 @@ public:
   /// The same, for any one tile of the current tileset -- what the tile pickers need.
   Q_INVOKABLE QVariantMap tileInfo(int tile) const;
 
+  /**
+   * @brief What is under the cursor at buffer pixel (@p px, @p py) -- the status bar's whole job.
+   *
+   * `{ valid, blockX, blockY, block, border, mapBlockX, mapBlockY, mapTileX, mapTileY, tile,
+   *    label }` -- buffer coords AND map coords (-1 out in the border ring, rather than a negative
+   * that reads like a real coordinate), the block id, the tile id, and what that tile DOES in
+   * words. Called on every mouse-move, so it renders nothing.
+   */
+  Q_INVOKABLE QVariantMap describeAt(int px, int py) const;
+
   /// The 16 tile ids of any block of the current tileset (row-major, 4x4). What the block
   /// pickers draw: there is no "block" image, a block only ever IS its tiles.
   Q_INVOKABLE QVariantList blockTileIds(int block) const;

@@ -1186,6 +1186,45 @@ chevrons. They weren't in the FA subset, so they're **hand-authored** SVGs in
 fill** so a Button's `icon.color` tints them like the real FA icons). Any new icon must also be added
 to `app.qrc` (the file list is explicit, no wildcard) — then RCC rebakes it on the next build.
 
+## The map screen's CHASSIS (2026-07-12, phase 1 — the standard for an editor screen)
+
+The frame every later phase hangs off. Files: `screens/non-modal/Map.qml` (the chassis, and nothing
+else) + `map/MapIdentityBar · MapToolRail · MapContextBar · MapCanvas · MapDock · MapStatusBar ·
+MapRailButton`.
+
+- **Four thin bars, one job each.** Identity (34px — *what is loaded*) · context (32px — *the options
+  for the tool in your hand*) · the canvas · status (26px — *where the cursor is, what's under it,
+  the zoom*). The moment a bar grows a second job, split it: the old info row carried the map name
+  AND a contrast stepper AND three panel toggles, and that is what made the screen read as a dev tool.
+- **`MapRailButton` is the flat square button** (rail, dock, bar): nothing at rest, a wash on hover,
+  the accent fill when active, a **glyph** rather than an icon file, and the words in the tooltip.
+  Deliberately **not** a Material `Button` — those carry a large implicit height that fights any
+  small control (see "Material controls fight small heights"), and a rail of them is a row of pills.
+- **The DOCK: an icon rail + exactly ONE open panel.** No stacking, no eviction queue (the old screen
+  silently closed the longest-open panel when a third wouldn't fit — a workaround for a layout that
+  was never designed for the content). Click the lit icon to collapse it to nothing. Drag the panel's
+  left edge to resize (240–420); the width is remembered.
+- **The panel FLOATS when the map would be squeezed.** Below `mapMinWidth + minPanelWidth` the column
+  moves to `x: -panelWidth` (over the canvas) with a shadow, and **swallows its own clicks, wheel and
+  hover** (`MouseArea` + `WheelHandler` + `HoverHandler { blocking: true }` — the same three-handler
+  rule as the Bag's View All drawer, and for the same reason: plain `Rectangle`s don't accept events,
+  so everything falls through to the map). **No scrim** — dimming the map you are working on is worse
+  than the problem it solves, and neither Photoshop nor Tiled dims theirs.
+- **A panel is its CONTENT.** The dock draws the frame, the title bar and the collapse button, so a
+  panel file has **no header, no left edge, no background chrome** (`color: "transparent"`). This is
+  what let three panels written weeks apart look like one screen.
+- **A closed panel is UNLOADED** (`Loader`), not hidden. A hidden Music panel that is still alive is
+  a screen that can make noise you cannot see the source of.
+- **An icon appears on the rail the day its panel is finished** — never before. A rail icon that
+  opens an empty panel is the "rough it in, clean it up later" this project does not do.
+- **The status bar replaced the footer legend.** Coordinates in *both* of the game's systems (map
+  coords, and buffer coords with the 3-block ring counted), the block id, and what the tile **does**
+  in words — all from one C++ call (`brg.map.describeAt(px, py)`), on every mouse-move, rendering
+  nothing. The legend's job belongs on the layer rows (phase 2), where it cannot drift out of sync
+  with the renderer.
+- **The canvas well is dark** (`#2b2b2b`, not black — black swallows the darkest Game Boy grey), and
+  the map floats on it with a soft shadow. Every pixel editor does this; four shades of grey need it.
+
 ## The map screen (2026-07-12 — step 1 of the map emulator)
 
 > ⚠️ **BEING REBUILT.** The whole screen is under a complete UI/UX overhaul — the design of record is
