@@ -64,6 +64,7 @@ class MapLayersModel : public QAbstractListModel
   Q_PROPERTY(bool showScreenBox READ showScreenBox NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showDrawArea READ showDrawArea NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showConnections READ showConnections NOTIFY viewBitsChanged)
+  Q_PROPERTY(bool showNpcs READ showNpcs NOTIFY viewBitsChanged)
 
   /// How strongly the meaning overlay is drawn (0..1). The one dial the Meaning group carries:
   /// stacked annotation over four shades of grey genuinely needs it.
@@ -83,6 +84,11 @@ public:
     /// wall of trees: it carries the neighbours' edges, and working out where each lands is the
     /// hardest arithmetic in the engine. This is the layer that lets you look at it.
     ViewConnections = 1 << 6,
+
+    /// The map's other fifteen sprite slots -- every NPC, item ball and boulder the save has
+    /// put here. Drawn from the game's own artwork, where the console's OAM puts them (4 px
+    /// above their tile row). See notes/reference/sprites.md.
+    ViewNpcs = 1 << 7,
   };
   Q_ENUM(ViewLayer)
 
@@ -112,6 +118,7 @@ public:
   bool showScreenBox() const;
   bool showDrawArea() const;
   bool showConnections() const;
+  bool showNpcs() const;
 
   qreal overlayOpacity() const;
   void setOverlayOpacity(qreal opacity);
@@ -176,6 +183,6 @@ private:
   // What is on when the screen opens. The DRAW AREA and the CONNECTIONS are both OFF (Twilight,
   // 2026-07-13): they are things you go looking for, not things that should be sitting on top of the
   // map before you have asked for them. The map is the point.
-  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewScreenBox;
+  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewScreenBox;
   qreal opacity = 1.0;
 };

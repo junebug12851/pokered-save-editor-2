@@ -53,6 +53,10 @@ Item {
   /// The active tool, from the rail: "select" | "pan" | "zoom".
   property string tool: "select"
 
+  /// The sprite SLOT currently selected (1-15), or -1 for nothing. Sprites are the only
+  /// selectable object on the map right now -- the ground is deliberately not clickable.
+  property int selectedNpc: -1
+
   // ── Zoom ────────────────────────────────────────────────────────────────────────────────────
   //
   // Integer only -- this is 8x8 pixel art and a fractional scale would smear it. Until the user
@@ -342,6 +346,80 @@ Item {
         cache: true
       }
 
+      // ── Everybody else ──────────────────────────────────────────────────────────────────────
+      //
+      // The other fifteen sprite slots: every NPC, item ball and boulder the save has put on this
+      // map. Same geometry as the player (they ARE the player's geometry -- he is slot 0), same
+      // OBJECT palette, same "there is no right-facing art" rule.
+      //
+      // Click one to select it. The ground is NOT clickable any more (Twilight, 2026-07-13):
+      // blocks and tiles are edited in their panels, and the canvas should not compete with them.
+      Repeater {
+        model: brg.mapLayers.showNpcs ? brg.map.npcList() : []
+
+        delegate: Item {
+          id: npc
+
+          required property var modelData
+
+          x: npc.modelData.rectX * canvasRoot.zoom
+          y: npc.modelData.rectY * canvasRoot.zoom
+          width: npc.modelData.rectW * canvasRoot.zoom
+          height: npc.modelData.rectH * canvasRoot.zoom
+
+          readonly property bool selected: canvasRoot.selectedNpc === npc.modelData.slot
+
+          Image {
+            anchors.fill: parent
+            source: npc.modelData.source
+            smooth: false
+            mipmap: false
+            fillMode: Image.Stretch
+            cache: true
+          }
+
+          // The one thing you cannot see by looking at a sprite: whether this map has actually
+          // LOADED its picture. If it hasn't, the console draws garbage there -- so we say so
+          // rather than drawing it correctly and letting the user find out on the cartridge.
+          Rectangle {
+            visible: !npc.modelData.inSpriteSet && !npc.selected
+            anchors.fill: parent
+            color: "transparent"
+            border.width: 1
+            border.color: "#ffd54f"      // amber -- a warning, not an error
+            opacity: 0.9
+          }
+
+          // A selection you can lose under a layer is not a selection: it draws above everything.
+          Rectangle {
+            visible: npc.selected
+            z: 20
+            anchors.fill: parent
+            anchors.margins: -2
+            color: "transparent"
+            border.width: 2
+            border.color: canvas.selectColor
+
+            Rectangle {
+              anchors.fill: parent
+              anchors.margins: 2
+              color: "transparent"
+              border.width: 1
+              border.color: "#ccffffff"
+            }
+          }
+
+          TapHandler {
+            enabled: !canvasRoot.panning && canvasRoot.tool !== "zoom"
+            onTapped: canvasRoot.selectedNpc = npc.modelData.slot
+          }
+
+          HoverHandler {
+            cursorShape: Qt.PointingHandCursor
+          }
+        }
+      }
+
       // The visible screen: the 20x18 tiles actually on the Game Boy's screen.
       Rectangle {
         visible: brg.mapLayers.showScreenBox
@@ -354,40 +432,16 @@ Item {
         border.color: canvas.screenColor
       }
 
-      // ── The selection ───────────────────────────────────────────────────────────────────────
-      //
-      // Held ABOVE everything -- the grid, the boxes, the player, any overlay -- because a
-      // selection you can lose under a layer is not a selection.
-      //
-      // Clicking a block no longer OPENS anything (Twilight, 2026-07-13: "I don't like click a block
-      // and a sidebar opens, it's clunky"). It marks the block, and the STATUS BAR already says what
-      // is there -- the block id and what its tiles do -- without a wall of information arriving
-      // uninvited on the side of the screen.
-      Rectangle {
-        visible: brg.map.hasSelection
-        z: 10
-
-        x: brg.map.selectedBlockX * canvas.gridStep
-        y: brg.map.selectedBlockY * canvas.gridStep
-        width: canvas.gridStep
-        height: canvas.gridStep
-
-        color: "transparent"
-        border.width: 2
-        border.color: canvas.selectColor
-
-        // A second, inner line in white: the outer one alone can vanish against dark trees or a
-        // glitch palette, and a selection you can't find is not a selection.
-        Rectangle {
-          anchors.fill: parent
-          anchors.margins: 2
-          color: "transparent"
-          border.width: 1
-          border.color: "#ccffffff"
-        }
-      }
-
       // ── Pointing at things ──────────────────────────────────────────────────────────────────
+      //
+      // ⚠️ The GROUND IS NOT SELECTABLE (Twilight, 2026-07-13). Clicking a block used to mark it;
+      // it no longer does anything at all. Blocks and tiles are edited in their own panels, and a
+      // clickable floor only fights the thing that should be clickable. **Sprites are, for now,
+      // the only selectable object on the map** -- warps, signs and connections join them later,
+      // on this same machinery.
+      //
+      // The hover readout stays: the status bar still tells you what you are pointing at, which
+      // costs nothing and interrupts nobody.
       //
       // Below the Flickable's own drag handling, so a drag still pans the map and only a genuine
       // click acts.
@@ -417,7 +471,9 @@ Item {
           if (canvasRoot.panning)
             return;   // the hand does not select
 
-          brg.map.selectAtPixel(px, py);
+          // Clicking the ground clears the sprite selection -- and does nothing else. The block
+          // under the cursor is NOT selected any more; see the note above.
+          canvasRoot.selectedNpc = -1;
         }
       }
     }

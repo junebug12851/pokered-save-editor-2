@@ -26,6 +26,7 @@
 
 class AreaGeneral;
 class AreaLoadedSprites;
+class AreaSprites;
 class AreaMap;
 class AreaPlayer;
 class AreaTileset;
@@ -196,7 +197,7 @@ class MapModel : public QObject
 
 public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
-           AreaLoadedSprites* sprites = nullptr);
+           AreaLoadedSprites* sprites = nullptr, AreaSprites* npcs = nullptr);
 
   bool valid() const;
   QString source() const;
@@ -303,6 +304,20 @@ public:
   int playerRectW() const;
   int playerRectH() const;
   int playerFacing() const;
+
+  /**
+   * @brief Everybody else on the map -- the other fifteen sprite slots.
+   *
+   * One entry per used slot: `{ slot, picture, name, x, y, facing, rectX/Y/W/H, source,
+   * inSpriteSet, missable }`. `source` is an `image://player/npc/...` id, so the artwork comes
+   * back through the OBJECT palette (which is the one the glitch palettes damage). `x`/`y` are
+   * map coordinates with the game's +4 bias already taken off -- what a player would call them.
+   *
+   * `inSpriteSet` is false when this map has **not loaded** that sprite's picture: the console
+   * would draw garbage there, and the canvas says so rather than quietly drawing it correctly.
+   * @see notes/reference/sprite-sets.md
+   */
+  Q_INVOKABLE QVariantList npcList() const;
 
   int tileAnim() const;
   void setTileAnim(int anim);   ///< Writes the save's `type` byte (0x3522) -- and only that byte.
@@ -423,6 +438,7 @@ private:
   MapEngine::Buffer mapBuffer() const;
 
   AreaLoadedSprites* sprites = nullptr; ///< The save's live sprite-set cache (may be null in tests).
+  AreaSprites* npcs = nullptr;    ///< The save's live map cast -- the 16 sprite slots (may be null).
   AreaMap* map = nullptr;         ///< The save's live map.
   AreaPlayer* player = nullptr;   ///< The save's live player position.
   AreaTileset* tileset = nullptr; ///< The save's live tileset.

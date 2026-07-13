@@ -34,6 +34,7 @@
 #include <pse-db/entries/mapdbentryconnect.h>
 
 #include "./mapengine.h"
+#include "./spriteart.h"
 #include "./tilesetengine.h"
 
 namespace {
@@ -1051,6 +1052,73 @@ QImage MapEngine::playerSprite(int facing, int contrast)
 
       if (index == 0) {
         row[x] = qRgba(0, 0, 0, 0);   // transparent, always
+        continue;
+      }
+
+      const int shade = (obp0 >= 0) ? ((obp0 >> (2 * index)) & 3) : index;
+      const int grey = shadeGrey[shade];
+      row[x] = qRgba(grey, grey, grey, 255);
+    }
+  }
+
+  return sprite;
+}
+
+QImage MapEngine::npcSprite(int pictureID, int facing, int contrast)
+{
+  // The atlas: 72 cells of 16x96, cell (pictureID - 1). Imported verbatim from pret/pokered
+  // by scripts/import_sprites.py, in the same greyscale the player's sheet is in.
+  static const QImage atlas =
+      QImage(":/assets/sprites/overworld.png").convertToFormat(QImage::Format_ARGB32);
+
+  if (atlas.isNull())
+    return QImage();
+
+  // Picture id 0 means "this slot is unused" (ram/wram.asm). Draw nothing -- do not guess.
+  if (pictureID < 1 || pictureID > spriteArtCount)
+    return QImage();
+
+  const int frames = spriteArtFrames[pictureID];
+  if (frames <= 0)
+    return QImage();
+
+  // Which of the three standing frames, and whether to mirror. Right is LEFT, X-FLIPPED --
+  // there is no right-facing art in the game, for anybody. (SpriteFacingAndAnimationTable
+  // -> .FlippedOAM; see reference/sprites.md.)
+  int frame = 0;
+  bool mirror = false;
+
+  switch (facing) {
+    case FacingDown:  frame = 0; break;
+    case FacingUp:    frame = 1; break;
+    case FacingLeft:  frame = 2; break;
+    case FacingRight: frame = 2; mirror = true; break;
+    default: break;
+  }
+
+  // A one-frame sprite (a ball, a boulder, a fossil) has ONE quad and the game's facing table
+  // sends every facing to it. Clamp rather than read past the art we have.
+  if (frame >= frames)
+    frame = 0;
+
+  QImage sprite = atlas.copy((pictureID - 1) * 16, frame * 16, 16, 16);
+
+  if (mirror)
+    sprite = sprite.mirrored(true, false);
+
+  // Exactly as playerSprite does: colour 0 is ALWAYS transparent for an object (the sprite's
+  // cut-out), and the other three go through rOBP0 -- which is where the "harmless" glitch
+  // palettes stop being harmless.
+  const int obp0 = spritePalette(contrast);
+
+  for (int y = 0; y < sprite.height(); y++) {
+    QRgb* row = reinterpret_cast<QRgb*>(sprite.scanLine(y));
+
+    for (int x = 0; x < sprite.width(); x++) {
+      const int index = shadeOf(qRed(row[x]));
+
+      if (index == 0) {
+        row[x] = qRgba(0, 0, 0, 0);
         continue;
       }
 

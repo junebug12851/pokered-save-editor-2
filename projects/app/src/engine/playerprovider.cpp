@@ -33,10 +33,24 @@ QPixmap PlayerProvider::requestPixmap(const QString& id, QSize* size, const QSiz
 {
   const auto parts = id.split("/", Qt::SkipEmptyParts);
 
-  const int facing   = (parts.size() > 0) ? parts.at(0).toInt() : MapEngine::FacingDown;
-  const int contrast = (parts.size() > 1) ? parts.at(1).toInt() : 0;
+  QImage sprite;
 
-  const QImage sprite = MapEngine::playerSprite(facing, contrast);
+  // Two forms, told apart by the first word:
+  //   <facing>/<contrast>                 -- the player (slot 0)
+  //   npc/<pictureID>/<facing>/<contrast> -- anybody else, from the imported atlas
+  if (!parts.isEmpty() && parts.at(0) == "npc") {
+    const int picture  = (parts.size() > 1) ? parts.at(1).toInt() : 0;
+    const int facing   = (parts.size() > 2) ? parts.at(2).toInt() : MapEngine::FacingDown;
+    const int contrast = (parts.size() > 3) ? parts.at(3).toInt() : 0;
+
+    sprite = MapEngine::npcSprite(picture, facing, contrast);
+  }
+  else {
+    const int facing   = (parts.size() > 0) ? parts.at(0).toInt() : MapEngine::FacingDown;
+    const int contrast = (parts.size() > 1) ? parts.at(1).toInt() : 0;
+
+    sprite = MapEngine::playerSprite(facing, contrast);
+  }
 
   if (sprite.isNull()) {
     QImage blank(1, 1, QImage::Format_ARGB32);

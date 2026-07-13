@@ -34,7 +34,9 @@
 #include <pse-savefile/expanded/area/arealoadedsprites.h>
 #include <pse-savefile/expanded/area/areamap.h>
 #include <pse-savefile/expanded/area/areaplayer.h>
+#include <pse-savefile/expanded/area/areasprites.h>
 #include <pse-savefile/expanded/area/areatileset.h>
+#include <pse-savefile/expanded/fragments/spritedata.h>
 
 #include "./mapmodel.h"
 #include "../engine/mapengine.h"
@@ -46,9 +48,13 @@ TilesetDBEntry* canonAt(int tilesetInd);
 } // namespace
 
 MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
-                   AreaLoadedSprites* sprites)
-  : sprites(sprites), map(map), player(player), tileset(tileset), general(general)
+                   AreaLoadedSprites* sprites, AreaSprites* npcs)
+  : sprites(sprites), npcs(npcs), map(map), player(player), tileset(tileset), general(general)
 {
+  // The map's cast changed -- somebody was placed, moved or deleted. Redraw.
+  if (npcs != nullptr)
+    connect(npcs, &AreaSprites::spritesChanged, this, &MapModel::changed);
+
   // The sprite-set cache is part of "where you are", so a change to it redraws the panel that shows
   // it. (It changes nothing about the map itself -- see notes/reference/sprite-sets.md.)
   if (sprites != nullptr) {
@@ -671,6 +677,67 @@ int MapModel::playerRectX() const { return MapEngine::playerRect(playerX(), play
 int MapModel::playerRectY() const { return MapEngine::playerRect(playerX(), playerY()).y(); }
 int MapModel::playerRectW() const { return MapEngine::playerRect(playerX(), playerY()).width(); }
 int MapModel::playerRectH() const { return MapEngine::playerRect(playerX(), playerY()).height(); }
+
+// ── Everybody else: the other fifteen sprite slots ────────────────────────────
+
+QVariantList MapModel::npcList() const
+{
+  QVariantList ret;
+
+  if (npcs == nullptr)
+    return ret;
+
+  // Which eleven pictures this map has actually LOADED into the Game Boy's sprite memory. A
+  // sprite whose picture is not among them is what the console draws as garbage -- so we say
+  // so rather than quietly drawing it correctly and letting the user find out in-game.
+  QVector<int> loaded;
+  if (sprites != nullptr) {
+    for (int slot = 0; slot < 11; slot++)
+      loaded.append(sprites->lSpriteAt(slot));
+  }
+
+  // Slot 0 is the player and has his own layer. Everyone else is here.
+  for (int i = 1; i < npcs->spriteCount(); i++) {
+    SpriteData* s = npcs->spriteAt(i);
+    if (s == nullptr)
+      continue;
+
+    // Picture id 0 means the slot is unused (ram/wram.asm). Draw nothing.
+    if (s->pictureID == 0)
+      continue;
+
+    // mapX/mapY carry the game's +4 bias ("the topmost 2x2 tile has value 4").
+    const int x = s->mapX - 4;
+    const int y = s->mapY - 4;
+
+    const QRect r = MapEngine::playerRect(x, y);   // same geometry, 4px lift and all
+
+    SpriteDBEntry* entry = s->toSprite();
+
+    QVariantMap m;
+    m["slot"]    = i;
+    m["picture"] = s->pictureID;
+    m["name"]    = (entry != nullptr) ? entry->name : tr("Sprite %1").arg(s->pictureID);
+    m["x"]       = x;
+    m["y"]       = y;
+    m["facing"]  = s->faceDir;
+    m["rectX"]   = r.x();
+    m["rectY"]   = r.y();
+    m["rectW"]   = r.width();
+    m["rectH"]   = r.height();
+    m["source"]  = "image://player/npc/" + QString::number(s->pictureID)
+                 + "/" + QString::number(s->faceDir)
+                 + "/" + QString::number(contrast());
+
+    // The two things about a sprite that a person cannot see by looking at it.
+    m["inSpriteSet"] = loaded.isEmpty() || loaded.contains(s->pictureID);
+    m["missable"]    = s->getMissableIndex();
+
+    ret.append(m);
+  }
+
+  return ret;
+}
 
 // ── Which tiles animate (the save's `type` byte, 0x3522 = sTileAnimations) ─────
 

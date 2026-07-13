@@ -149,6 +149,11 @@ void MapLayersModel::buildAll()
        tr("Him, drawn where the console's own OAM puts him — 4 pixels above his tile row, and "
           "facing right means facing LEFT, mirrored: the game has no right-facing art."),
        ViewPlayer);
+  view(GameViewGroup, "npcs", tr("People & objects"),
+       tr("Everyone else on this map — the other fifteen sprite slots. Drawn from the game's own "
+          "artwork, where the console puts them. A sprite whose picture this map hasn't loaded is "
+          "marked: that is the one the game would draw as garbage."),
+       ViewNpcs);
   view(GameViewGroup, "screenBox", tr("Screen box"),
        tr("The 20×18 tiles the Game Boy is actually showing — the screen, sliding around inside "
           "the draw area in half-block steps."), ViewScreenBox);
@@ -294,6 +299,7 @@ QVariant MapLayersModel::data(const QModelIndex& index, int role) const
     if (r.viewBit == ViewMapBounds)   return QColor(QStringLiteral("#0072b2")); // blue   -- where the map ENDS
     if (r.viewBit == ViewConnections) return QColor(QStringLiteral("#d55e00")); // vermillion -- the neighbours
     if (r.viewBit == ViewPlayer)      return QColor(QStringLiteral("#6b6b6b")); // him
+    if (r.viewBit == ViewNpcs)        return QColor(QStringLiteral("#cc79a7")); // everyone else
 
     // The grids. ⚠️ OPAQUE here, even though the canvas draws them at low alpha: this colour is what
     // the layer PANEL paints its swatch with, and a translucent swatch on a white row looked
@@ -452,6 +458,7 @@ bool MapLayersModel::showPlayer() const    { return (bits & ViewPlayer) != 0; }
 bool MapLayersModel::showScreenBox() const { return (bits & ViewScreenBox) != 0; }
 bool MapLayersModel::showDrawArea() const  { return (bits & ViewDrawArea) != 0; }
 bool MapLayersModel::showConnections() const { return (bits & ViewConnections) != 0; }
+bool MapLayersModel::showNpcs() const       { return (bits & ViewNpcs) != 0; }
 
 qreal MapLayersModel::overlayOpacity() const { return opacity; }
 
