@@ -1225,6 +1225,35 @@ MapRailButton`.
 - **The canvas well is dark** (`#2b2b2b`, not black — black swallows the darkest Game Boy grey), and
   the map floats on it with a soft shadow. Every pixel editor does this; four shades of grey need it.
 
+## The map's LAYER TREE (2026-07-12, phase 2 — the standard for a grouped toggle list)
+
+`map/LayersPanel.qml` over **`MapLayersModel`** (`brg.mapLayers`). The rules that came out of it:
+
+- **A tree, flattened into a list model** (`layerIsGroup` + a stable `layerKey` role). A QML
+  `TreeView` is not worth its weight for a fixed three-group tree, and a flat model is far easier to
+  test.
+- 🔴 **State is computed from ALL the layers, never from the rows that happen to be VISIBLE.** Fold a
+  group and its children leave the list — so a group whose eye is computed from the *shown* rows will
+  cheerfully report "none on" for a group that is fully on. Keep `allRows` (everything) separate from
+  `rows` (what is shown). This bug was written and caught by
+  `tst_map_layers::foldingAGroup_hidesItsChildrenNotItsState`.
+- **The group eye is tri-state and one click always changes something:** any child on → the click
+  turns the group *off*; none on → it turns on every child that *has something to show*. Half-filled
+  ("some") is drawn with a **shape as well as an alpha** — colour is never the only signal.
+- **Alt-click = solo** (Photoshop's gesture), and un-soloing **restores exactly what was on before**.
+  A solo is a look, not a destructive edit of the setup someone spent time on. Any manual toggle ends
+  the solo, because restoring a state the user has since edited is worse than not restoring at all.
+- **The ROW IS THE LEGEND.** Each row's swatch is the colour the *renderer* paints that layer in
+  (`MapEngine::layerColor`), so it cannot drift. This is why the screen has no legend bar.
+- **A layer with nothing to show says so and refuses to switch on** ("none here", dimmed) — lighting
+  an empty overlay teaches the user the feature is broken.
+- **A view-only model must PROVE it is view-only.** `tst_map_layers::everyToggle_writesNotOneByte`
+  flips every layer, every group, every solo, then byte-diffs the whole 32 KB save. Any model that
+  claims not to touch the save should carry a test shaped like that.
+- **Footer controls belong on ONE row.** The overlay-strength slider and the clear button were
+  stacked on the first pass and ate two layer rows out of a list that has room for ~8 at the default
+  750×480 window. The screenshot review caught it; a `MapRailButton` (⊘) replaced the text button.
+
 ## The map screen (2026-07-12 — step 1 of the map emulator)
 
 > ⚠️ **BEING REBUILT.** The whole screen is under a complete UI/UX overhaul — the design of record is

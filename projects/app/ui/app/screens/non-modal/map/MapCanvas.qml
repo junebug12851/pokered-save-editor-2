@@ -161,8 +161,9 @@ Item {
         anchors.fill: parent
         source: brg.map.overlaySource
 
-        // The map stays the point. The layers arrive, they don't slam on.
-        opacity: brg.map.layers !== 0 ? 1 : 0
+        // The map stays the point. The layers arrive, they don't slam on. How HARD they are painted
+        // is the Layers panel's one dial -- stacked annotation over four shades of grey needs it.
+        opacity: brg.map.layers !== 0 ? brg.mapLayers.overlayOpacity : 0
         Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
         smooth: false
@@ -178,9 +179,39 @@ Item {
       // pick). A low-alpha colour has nothing to hide against and reads everywhere without
       // shouting over the three boxes.
       readonly property color gridColor: Qt.rgba(0.16, 0.44, 0.75, 0.40)
+      readonly property color tileGridColor: Qt.rgba(0.16, 0.44, 0.75, 0.18)
+      readonly property int tileStep: brg.map.blockSize / 4 * canvasRoot.zoom
+
+      // The TILE grid (8px). Off by default -- it is four times as many lines, and at 1x they would
+      // be a hairline every eight pixels. Under the block grid, so the coarse structure still reads.
+      Repeater {
+        model: brg.mapLayers.showTileGrid && canvas.tileStep >= 4
+               ? Math.floor(canvas.width / canvas.tileStep) + 1 : 0
+        Rectangle {
+          required property int index
+          x: index * canvas.tileStep
+          y: 0
+          width: 1
+          height: canvas.height
+          color: canvas.tileGridColor
+        }
+      }
 
       Repeater {
-        model: Math.floor(canvas.width / canvas.gridStep) + 1
+        model: brg.mapLayers.showTileGrid && canvas.tileStep >= 4
+               ? Math.floor(canvas.height / canvas.tileStep) + 1 : 0
+        Rectangle {
+          required property int index
+          x: 0
+          y: index * canvas.tileStep
+          width: canvas.width
+          height: 1
+          color: canvas.tileGridColor
+        }
+      }
+
+      Repeater {
+        model: brg.mapLayers.showBlockGrid ? Math.floor(canvas.width / canvas.gridStep) + 1 : 0
         Rectangle {
           required property int index
           x: index * canvas.gridStep
@@ -192,7 +223,7 @@ Item {
       }
 
       Repeater {
-        model: Math.floor(canvas.height / canvas.gridStep) + 1
+        model: brg.mapLayers.showBlockGrid ? Math.floor(canvas.height / canvas.gridStep) + 1 : 0
         Rectangle {
           required property int index
           x: 0
@@ -205,6 +236,7 @@ Item {
 
       // Where the real map ends and the 3-block border ring begins.
       Rectangle {
+        visible: brg.mapLayers.showMapBounds
         x: brg.map.mapX * canvasRoot.zoom
         y: brg.map.mapY * canvasRoot.zoom
         width: brg.map.mapW * canvasRoot.zoom
@@ -216,6 +248,7 @@ Item {
 
       // The draw area: the 6x5 blocks LoadCurrentMapView redraws. Always block-aligned.
       Rectangle {
+        visible: brg.mapLayers.showDrawArea
         x: brg.map.scratchX * canvasRoot.zoom
         y: brg.map.scratchY * canvasRoot.zoom
         width: brg.map.scratchW * canvasRoot.zoom
@@ -233,6 +266,7 @@ Item {
       // palettes actually wreck -- contrast 1 and 2 leave the map looking perfectly normal and do
       // their damage here. (reference/sprites.md)
       Image {
+        visible: brg.mapLayers.showPlayer
         x: brg.map.playerRectX * canvasRoot.zoom
         y: brg.map.playerRectY * canvasRoot.zoom
         width: brg.map.playerRectW * canvasRoot.zoom
@@ -247,6 +281,7 @@ Item {
 
       // The visible screen: the 20x18 tiles actually on the Game Boy's screen.
       Rectangle {
+        visible: brg.mapLayers.showScreenBox
         x: brg.map.screenX * canvasRoot.zoom
         y: brg.map.screenY * canvasRoot.zoom
         width: brg.map.screenW * canvasRoot.zoom

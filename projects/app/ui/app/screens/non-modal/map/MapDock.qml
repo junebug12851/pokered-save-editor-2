@@ -48,13 +48,18 @@ Item {
   // icon that opens an empty panel is exactly the "rough it in and clean it up later" this project
   // does not do -- an icon appears here the day its panel is finished.
   readonly property var panels: [
+    { id: "layers",    glyph: "◈", title: qsTr("Layers"),     tip: qsTr("Layers — everything drawn over the map, in groups") },
     { id: "blocks",    glyph: "▣", title: qsTr("Blocks"),     tip: qsTr("Blocks — click the map to inspect one") },
     { id: "tileset",   glyph: "▦", title: qsTr("Tileset"),    tip: qsTr("Tileset — what the tiles are and what they do") },
     { id: "music",     glyph: "♪", title: qsTr("Music"),      tip: qsTr("Music — the map's track, and play it") }
   ]
 
   /// The open panel's id, or "" for none. ONE at a time, by design.
-  property string open: ""
+  ///
+  /// Layers is the one that opens with the screen: it is the primary navigation (Tiled and Photoshop
+  /// both open on it), and it is where the map's legend lives -- so the three coloured boxes on the
+  /// map have something naming them the moment you arrive.
+  property string open: "layers"
 
   /// How wide the panel column is when open (drag the edge to change it; remembered per session).
   property int panelWidth: 300
@@ -186,6 +191,7 @@ Item {
 
         source: {
           switch (dock.open) {
+          case "layers":    return "LayersPanel.qml";
           case "blocks":    return "BlockPanel.qml";
           case "tileset":   return "TilesetPanel.qml";
           case "music":     return "MusicPanel.qml";

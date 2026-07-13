@@ -548,6 +548,7 @@
         <file>ui/app/screens/non-modal/map/MapDock.qml</file>
         <file>ui/app/screens/non-modal/map/MapStatusBar.qml</file>
         <file>ui/app/screens/non-modal/map/MapRailButton.qml</file>
+        <file>ui/app/screens/non-modal/map/LayersPanel.qml</file>
         <file>assets/icons/fontawesome/map.svg</file>
         <file>assets/icons/fontawesome/cog.svg</file>
         <file>assets/icons/fontawesome/bicycle.svg</file>

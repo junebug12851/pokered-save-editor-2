@@ -44,6 +44,7 @@
 #include "../mvc/natureselectmodel.h"
 #include "../mvc/moveselectmodel.h"
 #include "../mvc/mapmodel.h"
+#include "../mvc/maplayersmodel.h"
 #include "../engine/musicplayer.h"
 
 #include <pse-db/fontsdb.h>
@@ -107,6 +108,7 @@ class Bridge : public QObject
   Q_PROPERTY(NatureSelectModel* natureSelectModel MEMBER natureSelectModel NOTIFY natureSelectModelChanged) ///< Nature picker model.
   Q_PROPERTY(MoveSelectModel* moveSelectModel MEMBER moveSelectModel NOTIFY moveSelectModelChanged) ///< Move picker model.
   Q_PROPERTY(MapModel* map MEMBER map NOTIFY mapChanged) ///< The loaded map: its rendered image + the game's view boxes.
+  Q_PROPERTY(MapLayersModel* mapLayers MEMBER mapLayers NOTIFY mapLayersChanged) ///< The map's layer tree (Guides / Meaning / Game View).
   Q_PROPERTY(MusicPlayer* music MEMBER music NOTIFY musicChanged) ///< The Game Boy's sound, live (play / preview / select).
   Q_PROPERTY(MusicDB* musicDb MEMBER musicDb NOTIFY musicDbChanged) ///< The 46 real tracks (name/bank/id).
 
@@ -145,6 +147,7 @@ signals:
   void natureSelectModelChanged();
   void moveSelectModelChanged();
   void mapChanged();
+  void mapLayersChanged();
   void musicChanged();
   void musicDbChanged();
 
@@ -189,6 +192,7 @@ public:
   NatureSelectModel* natureSelectModel = new NatureSelectModel; ///< @see natureSelectModel property.
   MoveSelectModel* moveSelectModel = new MoveSelectModel; ///< @see moveSelectModel property.
   MapModel* map = nullptr;                            ///< @see map property.
+  MapLayersModel* mapLayers = nullptr;                ///< @see mapLayers property.
   MusicPlayer* music = new MusicPlayer;               ///< @see music property.
   MusicDB* musicDb = MusicDB::inst();                 ///< @see musicDb property.
 };

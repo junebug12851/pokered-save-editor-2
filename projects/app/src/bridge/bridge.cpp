@@ -58,7 +58,8 @@ Bridge::Bridge(FileManagement* file)
     map(new MapModel(file->data->dataExpanded->area->map,
                      file->data->dataExpanded->area->player,
                      file->data->dataExpanded->area->tileset,
-                     file->data->dataExpanded->area->general))
+                     file->data->dataExpanded->area->general)),
+    mapLayers(new MapLayersModel(map))
 {
   // Link the two
   pokemonStorageModel1->otherModel = pokemonStorageModel2;

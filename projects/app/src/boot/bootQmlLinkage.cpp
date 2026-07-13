@@ -45,6 +45,7 @@
 #include "../mvc/natureselectmodel.h"
 #include "../mvc/moveselectmodel.h"
 #include "../mvc/mapmodel.h"
+#include "../mvc/maplayersmodel.h"
 #include "../engine/musicplayer.h"
 #include <pse-db/music.h>
 
@@ -204,6 +205,8 @@ extern void bootQmlLinkage()
   qmlRegisterUncreatableType<NatureSelectModel>("App.NatureSelectModel", 1, 0, "NatureSelectModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<MoveSelectModel>("App.MoveSelectModel", 1, 0, "MoveSelectModel", "Can't instantiate in QML");
   qmlRegisterUncreatableType<MapModel>("App.MapModel", 1, 0, "MapModel", "Can't instantiate in QML");
+  qmlRegisterUncreatableType<MapLayersModel>("App.MapLayersModel", 1, 0, "MapLayersModel", "Can't instantiate in QML");
+  qRegisterMetaType<MapLayersModel*>("MapLayersModel*");
   qmlRegisterUncreatableType<MusicPlayer>("App.MusicPlayer", 1, 0, "MusicPlayer", "Can't instantiate in QML");
   qmlRegisterUncreatableType<MusicDB>("App.MusicDB", 1, 0, "MusicDB", "Can't instantiate in QML");
 
