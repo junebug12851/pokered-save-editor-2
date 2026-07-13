@@ -14,7 +14,25 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
-### 🧍 SPRITES — researched, and the model is WRONG in four places (2026-07-13)
+### 🧍 SPRITES — phase 4a SHIPPED, 4b half-done (2026-07-13)
+
+| | | |
+|---|---|---|
+| **4a** | The data model, made true | ✅ **done** (`0.25.1-alpha`) — the four bugs fixed + negative-controlled, the five unread fields modelled, `sprites.json` grouped |
+| **4b** | NPCs on the canvas | 🔶 **half** — all 72 sprites **imported and drawn**, a *People & objects* layer, sprites **selectable**, the ground **no longer selectable** (`0.26.0-alpha`). ⏳ **Still owed: drag-to-move, the ✕ delete + ✎ edit buttons.** |
+| **4c** | The Characters bar | ⏳ not started (unblocked now — the artwork exists) |
+| **4d** | The Details panel | ⏳ not started |
+
+**The artwork blocker is gone.** The repo carried exactly *one* sprite sheet (`red.png`); every town was
+empty. `scripts/import_sprites.py` now pulls **all 72** out of `pret/pokered` into one atlas
+(`assets/sprites/overworld.png`) + a generated `spriteart.h`. It is self-validating, and it **found a
+third art shape by itself**: `16x48` — the **twenty "still" people** (nurses, guards, Mom, the Gameboy
+Kid) who have **no walking art at all**, because the game never drew them a step.
+
+⚠️ **A sprite whose picture this map has NOT loaded is outlined in amber.** That is the one the console
+draws as garbage. Shown, never silently corrected.
+
+### 🧍 SPRITES — the research: the model was WRONG in four places (2026-07-13)
 
 The next phase of the map screen is **sprites**, and the research pass found that our sprite model — a
 straight port of v1's — has been **writing the opposite of what it says** into saves. Nothing is built yet;
