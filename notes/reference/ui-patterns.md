@@ -1192,10 +1192,22 @@ The frame every later phase hangs off. Files: `screens/non-modal/Map.qml` (the c
 else) + `map/MapIdentityBar · MapToolRail · MapContextBar · MapCanvas · MapDock · MapStatusBar ·
 MapRailButton`.
 
-- **Four thin bars, one job each.** Identity (34px — *what is loaded*) · context (32px — *the options
-  for the tool in your hand*) · the canvas · status (26px — *where the cursor is, what's under it,
-  the zoom*). The moment a bar grows a second job, split it: the old info row carried the map name
-  AND a contrast stepper AND three panel toggles, and that is what made the screen read as a dev tool.
+- **Four thin bars, one job each.** Top (36px — **the tools**, *what is loaded*, *the palette*) ·
+  context (32px — *the options for the tool in your hand*) · the canvas · status (26px — *where the
+  cursor is, what's under it, the zoom*). The moment a bar grows a second job, split it.
+- **Tools in the TOP BAR, not a left rail (2026-07-13, Twilight).** A 44px rail down the whole height
+  of the screen to hold three glyphs is 44px the map isn't getting. They sit left of a divider, in
+  the same `MapRailButton` language, with their one-key shortcuts on the tooltip.
+- **A picker CHIP that drops a small panel beats three combo boxes in a bar.** `MapPicker.qml` is one
+  chip (`Pallet Town · Overworld ⌄`) whose popup holds the three things the save keeps separately —
+  the map id, the tileset (graphics), the blockset (blocks). `ContrastPicker.qml` is one chip
+  (`100% ⌄`) whose popup is a **segmented slider** — press and drag along the segments; a `MapSwitch`
+  grows it from the four real palette levels to all ten, the six glitch values in the error colour.
+  The chips read as facts; the panels are where the editing lives. **Give each popup a
+  `property bool openState`** — the DEBUG harness can only set properties on named items, and a
+  review that cannot open the control it is reviewing is not a review.
+- **A dropped panel is 300px wide; a docked panel is 170.** Content sized to what it *needs*, not to
+  what is comfortable — 300px of sidebar over a 750px window is 40% of the screen spent on furniture.
 - **`MapRailButton` is the flat square button** (rail, dock, bar): nothing at rest, a wash on hover,
   the accent fill when active, a **glyph** rather than an icon file, and the words in the tooltip.
   Deliberately **not** a Material `Button` — those carry a large implicit height that fights any

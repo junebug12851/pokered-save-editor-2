@@ -34,8 +34,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import "../../../fragments/general"
-
 Rectangle {
   id: bar
 
@@ -109,46 +107,8 @@ Rectangle {
 
     Item { Layout.fillWidth: true }
 
-    // ── The palette (wMapPalOffset) ──────────────────────────────────────────────────────────
-    //
-    // NOT a brightness slider. The game SUBTRACTS this byte from a pointer into its fade-palette
-    // table, so 0/3/6/9 land on real entries (the four levels) and everything else reads across the
-    // seam between two of them -- the six glitch palettes. The map is drawn THROUGH whichever byte
-    // that produces, so a glitch palette renders as the genuine article. (reference/palettes.md)
-    Text {
-      text: qsTr("Palette")
-      font.pixelSize: 11
-      font.bold: true
-      color: brg.settings.textColorMid
-    }
-
-    ContrastStep {
-      text: "−"
-      enabled: brg.map.contrast > 0
-      onClicked: brg.map.contrast = brg.map.contrast - 1
-    }
-
-    Text {
-      text: brg.map.contrast
-      font.pixelSize: 12
-      font.bold: true
-      color: brg.map.contrastIsGlitch ? brg.settings.errorColor : brg.settings.textColorDark
-      horizontalAlignment: Text.AlignHCenter
-      Layout.minimumWidth: 14
-    }
-
-    ContrastStep {
-      text: "+"
-      enabled: brg.map.contrast < brg.map.contrastMax
-      onClicked: brg.map.contrast = brg.map.contrast + 1
-    }
-
-    Text {
-      text: brg.map.contrastName
-      font.pixelSize: 11
-      color: brg.map.contrastIsGlitch ? brg.settings.errorColor : brg.settings.textColorMid
-      elide: Text.ElideRight
-      Layout.maximumWidth: 230
-    }
+    // (The PALETTE moved to the top bar on 2026-07-13 -- it is a property of the map you are
+    // looking at, not an option of the tool in your hand, and this bar is for the tool. It lives in
+    // ContrastPicker.qml now: a percentage that drops a segmented slider.)
   }
 }

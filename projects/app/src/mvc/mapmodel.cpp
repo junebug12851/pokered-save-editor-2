@@ -35,6 +35,12 @@
 #include "./mapmodel.h"
 #include "../engine/mapengine.h"
 
+namespace {
+/// The DB entry for a tileset id. Defined further down (next to the other DB helpers); declared here
+/// because the map/tileset/blockset setters at the top of the file need it.
+TilesetDBEntry* canonAt(int tilesetInd);
+} // namespace
+
 MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general)
   : map(map), player(player), tileset(tileset), general(general)
 {
@@ -93,7 +99,149 @@ QString MapModel::source() const
        + "/" + QString::number(tilesetInd())
        + "/" + QString::number(frame())
        + "/" + QString::number(contrast())
-       + "/" + QString::number(tileAnim());
+       + "/" + QString::number(tileAnim())
+       + "/" + QString::number(blocksetInd());   // whose BLOCKS -- the save's own second pointer
+}
+
+// ── The map, the tileset, the blockset ────────────────────────────────────────
+
+void MapModel::setMapInd(int ind)
+{
+  if (ind < 0 || ind > 255 || map->curMap == ind)
+    return;
+
+  // ONE byte. The map's size, its data pointers and its warps are all separate bytes elsewhere in
+  // the save, and rewriting them because someone picked another map from a list is precisely the
+  // "silently normalise the save" behaviour this editor exists not to do. The screen SHOWS when the
+  // stored size no longer matches (@ref headerMatches) and offers to fix it (@ref fixMapHeader).
+  map->curMap = ind;
+  map->curMapChanged();
+
+  changed();
+}
+
+void MapModel::setTilesetInd(int ind)
+{
+  if (ind < 0 || tileset->current == ind)
+    return;
+
+  auto* el = canonAt(ind);
+  if (el == nullptr)
+    return;
+
+  // The tileset id AND the four pointers that make it real -- because a tileset id with another
+  // tileset's pointers is not "tileset N", it is a mess, and the game reads the POINTERS. The grass
+  // tile, the counters and the animation byte are deliberately left alone: those are the user's.
+  tileset->current = ind;
+  tileset->bank = el->bank;
+  tileset->blockPtr = el->blockPtr;
+  tileset->gfxPtr = el->gfxPtr;
+  tileset->collPtr = el->collPtr;
+
+  tileset->currentChanged();
+  tileset->bankChanged();
+  tileset->blockPtrChanged();
+  tileset->gfxPtrChanged();
+  tileset->collPtrChanged();
+
+  changed();
+}
+
+int MapModel::blocksetInd() const
+{
+  // Which tileset's blocks the save's `blockPtr` actually names. Normally the loaded tileset's own;
+  // a save may point somewhere else entirely, and the console would draw exactly that.
+  for (auto* el : TilesetDB::inst()->getStore())
+    if (el->blockPtr == tileset->blockPtr)
+      return el->ind;
+
+  return -1;   // a pointer that is no tileset's blockset -- shown, never "corrected"
+}
+
+void MapModel::setBlocksetInd(int ind)
+{
+  auto* el = canonAt(ind);
+  if (el == nullptr || tileset->blockPtr == el->blockPtr)
+    return;
+
+  // Just the blocks pointer. NOT the graphics pointer -- picking a different blockset is the whole
+  // point of this being its own control.
+  tileset->blockPtr = el->blockPtr;
+  tileset->blockPtrChanged();
+
+  changed();
+}
+
+bool MapModel::blocksetIsTileset() const
+{
+  return blocksetInd() == tilesetInd();
+}
+
+QString MapModel::blocksetName() const
+{
+  auto* el = canonAt(blocksetInd());
+  return (el == nullptr) ? QObject::tr("Custom pointer") : el->name;
+}
+
+bool MapModel::headerMatches() const
+{
+  auto* entry = MapEngine::sourceMap(mapInd());
+  if (entry == nullptr)
+    return true;   // nothing to compare against -- don't cry wolf
+
+  return map->width == entry->getWidth() && map->height == entry->getHeight();
+}
+
+void MapModel::fixMapHeader()
+{
+  auto* entry = MapEngine::sourceMap(mapInd());
+  if (entry == nullptr)
+    return;
+
+  // Exactly the size the loaded map really is, and nothing else. (The 2x2 fields are the same size
+  // counted the way the game counts it for its bigger steps.)
+  map->width = entry->getWidth();
+  map->height = entry->getHeight();
+  map->width2x2 = entry->getWidth() * 2;
+  map->height2x2 = entry->getHeight() * 2;
+
+  map->widthChanged();
+  map->heightChanged();
+  map->width2x2Changed();
+  map->height2x2Changed();
+
+  changed();
+}
+
+int MapModel::contrastPercent() const
+{
+  // 0 is a normal screen, 9 is black -- so as a brightness it reads backwards. The picker shows the
+  // thing a person means: 100% is what you see when nothing is wrong.
+  const int c = qBound(0, contrast(), contrastMax());
+  return qRound((1.0 - (c / static_cast<double>(contrastMax()))) * 100.0);
+}
+
+QVariantList MapModel::mapList() const
+{
+  QVariantList out;
+
+  // DB entry fields are protected -- always the getters, never the members (a standing rule; see
+  // CLAUDE.md).
+  for (auto* el : MapsDB::inst()->getStore()) {
+    QVariantMap m;
+    m["ind"] = el->getInd();
+    m["name"] = el->getName();
+
+    // A glitch / half-baked id is not an empty map -- it is an unfinished COPY, and the game draws
+    // the map it copies. Say which, right in the list.
+    auto* src = MapEngine::sourceMap(el->getInd());
+    m["isCopy"] = (src != nullptr && src != el);
+    m["copyOf"] = (src != nullptr && src != el) ? src->getName() : QString();
+
+    out.append(m);
+  }
+
+  return out;
 }
 
 int MapModel::frame() const

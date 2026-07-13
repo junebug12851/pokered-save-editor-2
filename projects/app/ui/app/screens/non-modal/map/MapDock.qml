@@ -62,10 +62,15 @@ Item {
   property string open: "layers"
 
   /// How wide the panel column is when open (drag the edge to change it; remembered per session).
-  property int panelWidth: 300
-  readonly property int railWidth: 44
-  readonly property int minPanelWidth: 240
-  readonly property int maxPanelWidth: 420
+  ///
+  /// Halved on 2026-07-13 (Twilight: "too wide, needs shrinking by up to 50%"). 300px of panel over
+  /// a 750px window is 40% of the screen spent on a sidebar. The panels' content was built to a
+  /// comfortable width rather than a NECESSARY one -- so they were re-cut instead of the map being
+  /// squeezed. Drag the edge if a particular job wants more.
+  property int panelWidth: 170
+  readonly property int railWidth: 40
+  readonly property int minPanelWidth: 140
+  readonly property int maxPanelWidth: 320
 
   /// How much room the canvas can spare. Below this the panel floats OVER the canvas instead of
   /// pushing it -- the map is the screen, and it does not get squeezed to nothing.

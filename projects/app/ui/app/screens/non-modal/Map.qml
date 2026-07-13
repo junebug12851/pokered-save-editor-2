@@ -79,8 +79,13 @@ Page {
   property alias selectAt: canvas.selectAt
 
   /// Which tool is in hand, and which dock panel is open -- both drivable by name.
-  property alias tool: toolRail.tool
+  property alias tool: identityBar.tool
   property alias dockPanel: dock.open
+
+  /// The top bar's two drop-downs (the map/tileset/blockset picker, and the palette).
+  property alias mapPickerOpen: identityBar.mapPickerOpen
+  property alias contrastPickerOpen: identityBar.contrastPickerOpen
+  property alias contrastShowGlitch: identityBar.contrastShowGlitch
 
   /// The animation, mirrored for the harness: does this map animate, is it running, which step.
   /// (`brg.mapClock` is a C++ object, not a QML item, so automation cannot reach it directly.)
@@ -95,9 +100,9 @@ Page {
 
   Keys.onPressed: (event) => {
     switch (event.key) {
-    case Qt.Key_V:     toolRail.tool = "select"; event.accepted = true; break;
-    case Qt.Key_H:     toolRail.tool = "pan";    event.accepted = true; break;
-    case Qt.Key_Z:     toolRail.tool = "zoom";   event.accepted = true; break;
+    case Qt.Key_V:     identityBar.tool = "select"; event.accepted = true; break;
+    case Qt.Key_H:     identityBar.tool = "pan";    event.accepted = true; break;
+    case Qt.Key_Z:     identityBar.tool = "zoom";   event.accepted = true; break;
     case Qt.Key_Space: canvas.spaceHeld = true;  event.accepted = true; break;
     case Qt.Key_Escape:
       if (dock.open !== "") { dock.open = ""; event.accepted = true; }
@@ -116,7 +121,11 @@ Page {
     anchors.fill: parent
     spacing: 0
 
+    // The tools live HERE now, in the top bar, next to what they act on -- and the left edge went
+    // back to the map (Twilight, 2026-07-13). A rail of three buttons was 44px of chrome down the
+    // whole height of the screen to hold three glyphs.
     MapIdentityBar {
+      id: identityBar
       Layout.fillWidth: true
     }
 
@@ -124,11 +133,6 @@ Page {
       Layout.fillWidth: true
       Layout.fillHeight: true
       spacing: 0
-
-      MapToolRail {
-        id: toolRail
-        Layout.fillHeight: true
-      }
 
       // The canvas column: the context bar sits directly over the map it configures (Aseprite puts
       // it exactly there, and it is right -- the options belong to the canvas, not to the window).
@@ -140,7 +144,7 @@ Page {
 
         MapContextBar {
           Layout.fillWidth: true
-          tool: toolRail.tool
+          tool: identityBar.tool
           canvas: canvas
         }
 
@@ -149,7 +153,7 @@ Page {
           Layout.fillWidth: true
           Layout.fillHeight: true
 
-          tool: toolRail.tool
+          tool: identityBar.tool
           hoveredTile: dock.hoveredTile
 
           // A click on the map opens the panel that explains what it selected. A click that does
@@ -165,7 +169,7 @@ Page {
 
         // How much width the canvas could give up before it hits its floor. Below the panel's
         // minimum the dock floats instead -- the map never gets squeezed to nothing.
-        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - toolRail.width - railWidth
+        roomForPanel: mapScreen.width - mapScreen.mapMinWidth - railWidth
       }
     }
 

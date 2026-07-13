@@ -51,7 +51,7 @@ class TestTilesetEngine : public QObject
 private slots:
   void blankImage_isTransparentAndSized();
   void wave_frameZeroAndCycleAreIdentity();
-  void wave_isSymmetricAroundFrameFour();
+  void wave_isSymmetricAroundFrameThree();
   void wave_actuallyShifts();
   void waveOnce_eightApplicationsWrapToOriginal();
 };
@@ -74,12 +74,26 @@ void TestTilesetEngine::wave_frameZeroAndCycleAreIdentity()
   QCOMPARE(TilesetEngine::postProcessWave(tile, 8), tile);
 }
 
-void TestTilesetEngine::wave_isSymmetricAroundFrameFour()
+void TestTilesetEngine::wave_isSymmetricAroundFrameThree()
 {
   const QImage tile = makeVaryingTile();
-  // The shift ramp is 0,1,2,3,4,3,2,1 -> frames equidistant from 4 match.
-  QCOMPARE(TilesetEngine::postProcessWave(tile, 1), TilesetEngine::postProcessWave(tile, 7));
-  QCOMPARE(TilesetEngine::postProcessWave(tile, 3), TilesetEngine::postProcessWave(tile, 5));
+
+  // ⚠️ REWRITTEN 2026-07-12. This used to assert the ramp was `0,1,2,3,4,3,2,1` -- symmetric around
+  // frame 4 -- which pinned an INVENTION. The console's ramp is:
+  //
+  //     frame % 8:  0   1   2   3   4   5   6   7
+  //     offset:     0  +1  +2  +3  +2  +1   0  -1
+  //
+  // (`UpdateMovingBgTiles`, home/vcopy.asm: each step rotates the tile's bytes by one bit, right
+  // while `counter2 & 4` is clear and left once it is set, and the offset keeps accumulating.) So it
+  // is symmetric around frame **3**, frame 6 is back to the start, and frame 7 is one to the LEFT --
+  // a place the old ramp never went. See notes/reference/map-animation.md; the full table is pinned
+  // by tst_map_animation.
+  QCOMPARE(TilesetEngine::postProcessWave(tile, 2), TilesetEngine::postProcessWave(tile, 4));
+  QCOMPARE(TilesetEngine::postProcessWave(tile, 1), TilesetEngine::postProcessWave(tile, 5));
+  QCOMPARE(TilesetEngine::postProcessWave(tile, 6), tile);
+  QVERIFY2(TilesetEngine::postProcessWave(tile, 7) != tile,
+           "frame 7 rotates one pixel LEFT of the base -- the console's water goes past it");
 }
 
 void TestTilesetEngine::wave_actuallyShifts()

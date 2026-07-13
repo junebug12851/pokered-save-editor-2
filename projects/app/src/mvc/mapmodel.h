@@ -82,8 +82,28 @@ class MapModel : public QObject
   /// visual-regression suites deterministic. Frame 0 is the still map.
   Q_PROPERTY(int frame READ frame WRITE setFrame NOTIFY frameChanged)
 
-  Q_PROPERTY(int mapInd READ mapInd NOTIFY changed)         ///< Loaded map id (`wCurMap`).
-  Q_PROPERTY(int tilesetInd READ tilesetInd NOTIFY changed) ///< Loaded tileset id (`wCurMapTileset`).
+  /// Loaded map id (`wCurMap`). Writing it writes **that byte and nothing else** -- the map's size
+  /// and pointers are separate bytes in the save, and rewriting them behind the user's back is
+  /// exactly what this editor does not do. @see headerMatches / fixMapHeader.
+  Q_PROPERTY(int mapInd READ mapInd WRITE setMapInd NOTIFY changed)
+
+  /// Loaded tileset id (`wCurMapTileset`) -- where the map's GRAPHICS come from.
+  Q_PROPERTY(int tilesetInd READ tilesetInd WRITE setTilesetInd NOTIFY changed)
+
+  /// Which tileset's BLOCKS the map is built from (the save's `blockPtr`). Normally the same
+  /// tileset as the graphics -- but they are two separate pointers in the save, and a console
+  /// draws exactly what they say. -1 when `blockPtr` matches no tileset in the game at all.
+  Q_PROPERTY(int blocksetInd READ blocksetInd WRITE setBlocksetInd NOTIFY changed)
+  /// Do the blocks and the graphics come from the same tileset? (They normally do.)
+  Q_PROPERTY(bool blocksetIsTileset READ blocksetIsTileset NOTIFY changed)
+  Q_PROPERTY(QString blocksetName READ blocksetName NOTIFY changed)
+
+  /// Does the save's stored map header (its size) agree with the map it says it is on? Changing the
+  /// map id alone leaves it stale -- and we SAY so rather than quietly rewriting six more bytes.
+  Q_PROPERTY(bool headerMatches READ headerMatches NOTIFY changed)
+
+  /// The palette as a plain percentage -- 0 is black, 100 is a normal screen. What the picker shows.
+  Q_PROPERTY(int contrastPercent READ contrastPercent NOTIFY changed)
   Q_PROPERTY(int playerX READ playerX NOTIFY changed)       ///< Player x, in half-blocks.
   Q_PROPERTY(int playerY READ playerY NOTIFY changed)       ///< Player y, in half-blocks.
 
@@ -168,7 +188,26 @@ public:
   void setFrame(int frame);   ///< A VIEW setting. Writes nothing to the save.
 
   int mapInd() const;
+  void setMapInd(int ind);        ///< Writes `wCurMap`. ONE byte. @see fixMapHeader.
+
   int tilesetInd() const;
+  void setTilesetInd(int ind);    ///< Writes `wCurMapTileset` + that tileset's pointers.
+
+  int blocksetInd() const;
+  void setBlocksetInd(int ind);   ///< Writes `blockPtr` (and its bank). Nothing else.
+  bool blocksetIsTileset() const;
+  QString blocksetName() const;
+
+  bool headerMatches() const;
+  int contrastPercent() const;
+
+  /// Every map in the game -- `{ ind, name, incomplete, copyOf }`, glitch/half-baked ids included
+  /// and labelled. 248 of them, and every one renders.
+  Q_INVOKABLE QVariantList mapList() const;
+
+  /// Put the save's stored map size back to what this map actually is. The ONE deliberate way those
+  /// bytes change -- offered, never done behind your back. @see headerMatches.
+  Q_INVOKABLE void fixMapHeader();
   int playerX() const;
   int playerY() const;
 

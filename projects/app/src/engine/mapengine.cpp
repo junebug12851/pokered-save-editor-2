@@ -454,12 +454,17 @@ QString MapEngine::contrastName(int contrast)
 }
 
 QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame, int contrast,
-                         int tileAnim)
+                         int tileAnim, int blocksetInd)
 {
   if (!buffer.valid)
     return QImage();
 
-  const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(tilesetInd);
+  // The BLOCKS and the TILES are two different pointers in the save (`blockPtr` and `gfxPtr`), so
+  // they are two different choices here. Normally they name the same tileset; a save is entitled to
+  // disagree, and a console draws exactly what the pointers say. -1 = "the same one".
+  const int blocksFrom = (blocksetInd < 0) ? tilesetInd : blocksetInd;
+
+  const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(blocksFrom);
   const QString id = tilesetId(tilesetInd, frame, tileAnim);
 
   if (blockset.isEmpty() || id.isEmpty())

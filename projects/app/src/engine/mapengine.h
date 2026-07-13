@@ -201,8 +201,14 @@ public:
    *        is what the console would actually run, so the save wins. Pass **-1** to fall back
    *        to the tileset's own value. See notes/reference/tiles.md.
    */
+  ///
+  /// @param blocksetInd which tileset's BLOCKS to build the map out of. Normally the same tileset
+  ///        the graphics come from -- but the save keeps `blockPtr` and `gfxPtr` as **two separate
+  ///        pointers**, so a save can legitimately (or mischievously) draw one tileset's blocks with
+  ///        another tileset's tiles, and a real console will happily do it. Pass **-1** for "the same
+  ///        as @p tilesetInd". (2026-07-13)
   static QImage render(const Buffer& buffer, int tilesetInd, int frame = 0, int contrast = 0,
-                       int tileAnim = -1);
+                       int tileAnim = -1, int blocksetInd = -1);
 
   /// "Indoor" / "Cave" / "Outdoor" for a `sTileAnimations` value; empty if it isn't 0-2.
   static QString tileAnimName(int tileAnim);

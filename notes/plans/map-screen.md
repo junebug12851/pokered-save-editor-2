@@ -106,11 +106,21 @@ Sources: [Tiled — Working with Layers](https://doc.mapeditor.org/en/stable/man
 
 Four thin bars, each with **one** job, and two rails. Nothing wraps. Nothing evicts anything.
 
-- **Identity bar (34px)** — *what is loaded*. Map picker (all 248 ids, glitch ids included and labelled),
-  tileset picker, size chip, the unfinished-copy warning, and a save-dirty dot. Nothing else ever moves in
-  here.
-- **Tool rail (44px, left)** — the tools (§5). Icon + tooltip + single-key shortcut. Active tool = accent
-  fill (the app's `SegBtn` language, vertical).
+- **Top bar (36px)** — **the tools, then what is loaded, then the palette** (revised 2026-07-13, Twilight):
+  `[ ↖ ✥ ⌕ ] │ [ Pallet Town · Overworld ⌄ ] [ 100% ⌄ ] [ 10×9 ] [ ⚠ unfinished copy ]`.
+  - **The tools live here, not in a left rail.** A rail was 44px of chrome down the full height of the
+    screen to hold three glyphs; the left edge went back to the map.
+  - **One picker, three pointers** (`MapPicker.qml`): the **map id** (all 248, glitch ids labelled with
+    what they're a copy of), the **tileset** the graphics come from — carrying **Indoor / Cave / Outdoor**,
+    which is not a place but which tiles *move* — and the **blockset** the map is *built* from. The save
+    keeps `gfxPtr` and `blockPtr` as **two separate pointers** and a console obeys both, so they get two
+    separate controls, and a save that disagrees with itself is **shown** doing so.
+  - Picking a map writes **one byte** (`wCurMap`). The stored map size lives in other bytes: the picker
+    **says** when they no longer match and offers **Fix** — it never rewrites them behind you (§9.2).
+  - **The palette** (`ContrastPicker.qml`) reads as a **percentage** and drops a **segmented slider**.
+    Four segments by default (the game's only real levels: 0/3/6/9); a **switch** grows it to ten, the six
+    glitch values appearing as their own **differently-coloured** segments — because they are not levels,
+    they are a read that lands between two.
 - **Context bar (32px)** — *the options for the current tool, or the fields for the current selection*.
   Empty-ish when nothing is doing anything (it shows the palette/contrast stepper then — the one control
   that is always relevant to what you're looking at).

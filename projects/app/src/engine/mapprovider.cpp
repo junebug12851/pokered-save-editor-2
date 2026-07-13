@@ -36,8 +36,10 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
 
   // Two shapes, and the first word says which:
   //
-  //   <mapInd>/<tilesetInd>/<frame>/<contrast>/<tileAnim>
-  //     the map itself.
+  //   <mapInd>/<tilesetInd>/<frame>/<contrast>/<tileAnim>/<blocksetInd>
+  //     the map itself. <blocksetInd> is which tileset's BLOCKS to build it from -- normally the
+  //     same one the graphics come from, but the save keeps two separate pointers and is allowed
+  //     to disagree with itself. -1 = the same one.
   //
   //   overlay/<mapInd>/<tilesetInd>/<layers>/<grassTile>/<c0>/<c1>/<c2>
   //     the semantic layer -- walls, grass, warps... -- as a TRANSPARENT image exactly the
@@ -60,8 +62,11 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
   // Which tiles animate -- the SAVE's byte, not the tileset's default. -1 = fall back.
   const int tileAnim   = (parts.size() > 4) ? parts.at(4).toInt() : -1;
 
+  // Whose BLOCKS. -1 = the same tileset the graphics come from (the normal case).
+  const int blocksetInd = (parts.size() > 5) ? parts.at(5).toInt() : -1;
+
   const auto buffer = MapEngine::buildOverworldMap(mapInd);
-  const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast, tileAnim);
+  const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast, tileAnim, blocksetInd);
 
   // No block data (a glitch map id) -- there is nothing in ROM to draw.
   if (img.isNull())
