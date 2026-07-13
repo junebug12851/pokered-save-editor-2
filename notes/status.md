@@ -14,6 +14,31 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🗺️ NEXT: the Map screen is being REBUILT — read the plan before touching it (2026-07-12)
+
+The map grew organs fast (blocks, tiles, meaning, palettes, the player, connections, music) and every one
+was bolted onto the same screen. Twilight's verdict — *"UX is one of the highest priorities and right now
+it's really bad"* — and she is right: three bars of unrelated chrome, panels that stack sideways and
+**evict each other**, no real layer system, nothing editable on the canvas, and **most of the Area block
+has no UI at all**.
+
+The complete overhaul is **designed and approved**: [`plans/map-screen.md`](plans/map-screen.md). The
+chassis (identity bar · tool rail · context bar · dark canvas well · **collapsing icon dock, one panel at a
+time, never stacked** · status bar), a **4-group layer tree** (Guides / Meaning / Game View / Objects — the
+red screen box, the accent draw area and the player are **layers**), **on-canvas object editing** (drag,
+select, add, delete warps/signs/NPCs), **every byte of the Area block editable** (hack values included,
+shown never rewritten), and **frame-accurate animation** ([`reference/map-animation.md`](reference/map-animation.md)).
+**Thirteen phases, plus one optional** — each a full pass, finished before the next begins.
+
+⚠️ **Two blockers sit in front of ALL of it** (phase 0, both already diagnosed):
+1. `area.h` `Q_DECLARE_OPAQUE_POINTER`s **nine of its eleven children** → QML reads `area.map.*`,
+   `area.warps.*`, `area.player.*` as **`undefined`**. Same bug that bit `AreaAudio`. Fix: full `#include`.
+2. `DB::deepLinkAll()` never calls `MapsDB::inst()->deepLink()` (the latent landmine below).
+
+⚠️ **And the map does not animate.** `UpdateMovingBgTiles` rotates water tile `$14`'s bytes every 20 frames
+and cycles three flower tiles every 21 — we draw **frame 0, forever**. The water is dead; the console's
+water is not. That is a correctness bug, not a missing garnish.
+
 **New territory: the MAP (2026-07-12).** The app has fully resurfaced from the revival, and the first
 new ground is the biggest one. The old Maps screen (a greyed-out tile → a menu of dead ends) is
 **deleted**, and in its place is a **map emulator**, step 1 of several.

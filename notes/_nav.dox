@@ -144,6 +144,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \subpage md_notes_2reference_2palettes <br>
 \subpage md_notes_2reference_2map-connections <br>
 \subpage md_notes_2reference_2tiles <br>
+\subpage md_notes_2reference_2map-animation <br>
 \subpage md_notes_2reference_2gameboy-apu <br>
 \subpage md_notes_2reference_2gen1-sound-engine <br>
 \subpage md_notes_2reference_2glitch-music <br>
@@ -174,6 +175,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \brief What comes next — ordered tasks, the testing picture, and longer-term ambitions.
 
 \subpage md_notes_2plans_2next-steps <br>
+\subpage md_notes_2plans_2map-screen <br>
 \subpage md_notes_2plans_2testing <br>
 \subpage md_notes_2plans_2music <br>
 \subpage md_notes_2plans_2full-keyboard-redesign <br>

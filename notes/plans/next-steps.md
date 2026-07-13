@@ -28,6 +28,27 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
 
 ## Now / next
 
+**0. THE MAP SCREEN — the complete overhaul (approved 2026-07-12). This is the work.**
+The design of record is [`map-screen.md`](map-screen.md); read it before touching the screen. Thirteen
+phases plus one optional, each a *full* pass (built, screenshot-reviewed, tested, documented) before the
+next begins — Twilight, mandatory: *"put in the long work for each of these components."*
+
+| Phase | | Phase | |
+|---|---|---|---|
+| **0** | Unblock the bridge (un-opaque the Area children; `MapsDB` deep-link) 🔴 | **7** | Area State (NPC / warp state / loaded sprites) |
+| **1** | The chassis (bars, rails, dock, well) | **8** | Tileset & Blocks, properly |
+| **2** | The layer system (4 groups, eye/lock/solo) | **9** | Tools & precision |
+| **3** | The map is ALIVE (frame-accurate animation) | **10** | Motion & polish |
+| **4** | Objects on the canvas (drag / select / add) | **11** | The verification pass |
+| **5** | The Inspector (~120 fields) | **12** | The notes pass |
+| **6** | Encounters | **13** | *(optional)* SIMULATE: walk the map |
+
+Phase 0 is a hard blocker: **QML cannot read a single one of those fields today.**
+
+---
+
+**Superseded — the old map step-list** (step 1 shipped; the rest is folded into the phases above):
+
 0. **THE MAP — step 1 done (2026-07-12), awaiting in-app review.** The old Maps screen is deleted; the
    new one rebuilds the game's own overworld buffer (map + 3-block border ring), the 6×5-block scratch
    area and the 20×18-tile screen, over a real block/tile render. Verified against the view pointer the

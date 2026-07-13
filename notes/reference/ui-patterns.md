@@ -1188,6 +1188,15 @@ to `app.qrc` (the file list is explicit, no wildcard) — then RCC rebakes it on
 
 ## The map screen (2026-07-12 — step 1 of the map emulator)
 
+> ⚠️ **BEING REBUILT.** The whole screen is under a complete UI/UX overhaul — the design of record is
+> [`../plans/map-screen.md`](../plans/map-screen.md) (approved 2026-07-12): a **collapsing icon dock** (one
+> panel at a time — the panel-stacking + eviction queue described below is **deleted**), a **4-group layer
+> tree** (Guides / Meaning / Game View / Objects — the red screen box, the accent draw area and the player
+> become *layers*; the chip bar is deleted), **on-canvas object editing**, and **every byte of the Area
+> block** editable. **Read the plan, not this section, before doing map-screen work.** What survives below
+> is the *rendering* doctrine (integer zoom, tinted grid, buffer pixels, the Repeater landmine) — that part
+> is still law.
+
 The map screen draws **nothing of its own invention**. Every number comes from `brg.map` (MapModel) in
 **buffer pixels** — one screen pixel per Game Boy pixel, 32 to a block, origin at the top-left of the
 border ring — and QML's only job is to multiply by an integer `zoom`. If a rectangle looks wrong,
