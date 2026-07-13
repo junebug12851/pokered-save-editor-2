@@ -11,11 +11,11 @@ import QtQuick.Controls.Material
 Menu {
   title: qsTr("Simulated Tileset")
 
+  // Tri-state, like every other one of these: Indoor -> Cave -> Outdoor. (The label IS the
+  // state.) See notes/reference/tiles.md.
   MenuItem {
-    text: qsTr("Simulate Outdoors")
-    checkable: true
-    checked: brg.settings.previewOutdoor
-    onTriggered: brg.settings.previewOutdoor = !brg.settings.previewOutdoor
+    text: qsTr("Simulate: %1").arg(brg.settings.previewTilesetTypeName)
+    onTriggered: brg.settings.cyclePreviewTilesetType()
   }
 
   MenuItem {

@@ -42,6 +42,19 @@ has a deeper home, it's cross-referenced.
   her as an image instead, do that. See CLAUDE.md → Default Workflow.
 - **Manual screenshot review is mandatory on any UI change** — capture and actually scrutinise it
   yourself before declaring done. See CLAUDE.md → Default Workflow step 1, `screenshots.md`, `ui-patterns.md`.
+- **EVERY byte of the save must be editable — and NONE of them as a raw number (2026-07-12, standing).**
+  Two halves, and both are required:
+  1. **Nothing is hidden.** No field gets dropped from the UI because it is obscure, transient, or
+     "not really map data". If the save holds it, the user can edit it. (Said when I proposed simply
+     not giving the two Strength-push scratch bytes an editor. Wrong instinct — they get one.)
+  2. **Nothing is raw.** "Users typically don't find raw fields very useful or interesting." A byte is
+     never a spin box with a number in it. Work out what the byte *is* and build the control for that
+     thing: a tile id → a picker showing the actual tiles; a sprite slot → the actual sprites; a
+     pointer → a named choice ("the collision list Mart uses") with a **Custom…** escape hatch so any
+     value is still reachable; a dual-purpose byte → an editor that says both jobs out loud.
+  The escape hatch is what makes the two halves compatible: the *intuitive* choice is the default and
+  the *arbitrary* value is always still reachable, with a warning when it disagrees with the cartridge.
+  See `principles.md` → "Every byte, none of them raw" and `reference/ui-patterns.md`.
 
 ## Content & spelling rules
 

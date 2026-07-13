@@ -96,12 +96,19 @@ Item {
         onMenuClosed: bar.picked();
       }
 
+      // TRI-state. The game keeps THREE values here, not two -- Indoor (nothing animates),
+      // Cave (water animates) and Outdoor (water + flowers) -- so the button's label is the
+      // state, and clicking steps through them. See notes/reference/tiles.md.
       FlatToggle {
-        text: qsTr("Outdoor")
-        active: brg.settings.previewOutdoor
-        onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
+        text: brg.settings.previewTilesetTypeName
+        active: brg.settings.previewTilesetType !== 0
+        onClicked: brg.settings.cyclePreviewTilesetType();
 
-        MainToolTip { text: "Render these tiles as they'd look outdoors vs. indoors." }
+        MainToolTip {
+          text: qsTr("%1 — %2 Click to change.")
+                  .arg(brg.settings.previewTilesetTypeName)
+                  .arg(brg.settings.previewTilesetTypeDoes)
+        }
       }
     }
   }

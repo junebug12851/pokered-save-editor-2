@@ -103,5 +103,46 @@ void Settings::dataChanged()
 
   // Load in the 2 settings
   previewTileset = mapData->getToTileset()->name;
-  previewOutdoor = (mapData->getToTileset()->typeAsEnum() == TilesetType::OUTDOOR);
+
+  // All three states, not "is it Outdoor". TilesetType is INDOOR/CAVE/OUTDOOR = 0/1/2, the
+  // same numbering as the cartridge's TILEANIM_NONE/WATER/WATER_FLOWER, so this is a
+  // straight cast rather than a mapping. (It used to ask "== OUTDOOR" and hand back a bool,
+  // which silently killed the water animation in every cave. See notes/reference/tiles.md.)
+  previewTilesetType = static_cast<int>(mapData->getToTileset()->typeAsEnum());
+}
+
+void Settings::cyclePreviewTilesetType()
+{
+  previewTilesetType = (previewTilesetType + 1) % 3;
+  previewTilesetTypeChanged();
+}
+
+QString Settings::previewTilesetTypeStr() const
+{
+  // What the tileset image provider's id wants (tilesetengine.cpp).
+  switch(previewTilesetType) {
+    case 1:  return "cave";
+    case 2:  return "outdoor";
+    default: return "indoor";
+  }
+}
+
+QString Settings::previewTilesetTypeName() const
+{
+  switch(previewTilesetType) {
+    case 1:  return tr("Cave");
+    case 2:  return tr("Outdoor");
+    default: return tr("Indoor");
+  }
+}
+
+QString Settings::previewTilesetTypeDoes() const
+{
+  // Say what the setting DOES, not just what it's called -- the name is Twilight's friendly
+  // rename of the cartridge's animation byte, and both halves are true and worth showing.
+  switch(previewTilesetType) {
+    case 1:  return tr("Water animates. Flowers don't.");
+    case 2:  return tr("Water and flowers animate.");
+    default: return tr("Nothing animates.");
+  }
 }

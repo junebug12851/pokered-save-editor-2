@@ -40,7 +40,12 @@ class Settings : public QObject
 
   Q_PROPERTY(bool infoBtnPressed MEMBER infoBtnPressed NOTIFY infoBtnPressedChanged)      ///< Global tooltip (info button) toggle.
   Q_PROPERTY(QString previewTileset MEMBER previewTileset NOTIFY previewTilesetChanged)   ///< Tileset used for name previews.
-  Q_PROPERTY(bool previewOutdoor MEMBER previewOutdoor NOTIFY previewOutdoorChanged)      ///< Outdoor vs indoor preview.
+
+  // The tileset's ANIMATION setting -- three states, not two. See the member below.
+  Q_PROPERTY(int previewTilesetType MEMBER previewTilesetType NOTIFY previewTilesetTypeChanged)          ///< 0 Indoor / 1 Cave / 2 Outdoor.
+  Q_PROPERTY(QString previewTilesetTypeStr READ previewTilesetTypeStr NOTIFY previewTilesetTypeChanged STORED false)   ///< "indoor"/"cave"/"outdoor" -- what the image providers want.
+  Q_PROPERTY(QString previewTilesetTypeName READ previewTilesetTypeName NOTIFY previewTilesetTypeChanged STORED false) ///< "Indoor"/"Cave"/"Outdoor" -- what the user reads.
+  Q_PROPERTY(QString previewTilesetTypeDoes READ previewTilesetTypeDoes NOTIFY previewTilesetTypeChanged STORED false) ///< What it actually DOES, in words.
 
   Q_PROPERTY(QColor textColorLight MEMBER textColorLight NOTIFY textColorLightChanged)    ///< Light text colour.
   Q_PROPERTY(QColor textColorMid MEMBER textColorMid NOTIFY textColorMidChanged)          ///< Mid text colour.
@@ -66,7 +71,7 @@ signals:
 
   void infoBtnPressedChanged();
   void previewTilesetChanged();
-  void previewOutdoorChanged();
+  void previewTilesetTypeChanged();
 
   void textColorLightChanged();
   void textColorMidChanged();
@@ -90,6 +95,9 @@ public:
 
   Q_INVOKABLE void setColorScheme(QColor primary, QColor secondary); ///< Recolour the palette at runtime.
 
+  /// Step Indoor -> Cave -> Outdoor -> Indoor. What the tri-state button does.
+  Q_INVOKABLE void cyclePreviewTilesetType();
+
   // Header and Footer height
   int headerHeight = 80;        ///< @see headerHeight property.
   int headerShadowHeight = 20;  ///< @see headerShadowHeight property.
@@ -99,8 +107,27 @@ public:
 
   // Tileset and related engine for naming previews
   QString previewTileset = "Overworld"; ///< @see previewTileset property.
-  bool previewOutdoor = true;           ///< @see previewOutdoor property.
   int getPreviewTilesetIndex();         ///< Index of @ref previewTileset (backs the property).
+
+  /**
+   * @brief Which tiles animate: 0 Indoor, 1 Cave, 2 Outdoor.
+   *
+   * THREE states, not two. This mirrors the game's own byte (`hTileAnimations`, saved as
+   * `sTileAnimations` -- what AreaTileset calls `type`), whose values are TILEANIM_NONE,
+   * TILEANIM_WATER and TILEANIM_WATER_FLOWER. `tileset.json`'s Indoor/Cave/Outdoor is a
+   * verified 1:1 rename of exactly that, so the friendly name and the cartridge agree.
+   *
+   * It used to be a **bool** (`previewOutdoor`), which collapsed Cave into Indoor and so
+   * rendered every cave with *dead water* -- when the console animates it. Three states is
+   * the fix, not a relabel. See notes/reference/tiles.md.
+   *
+   * Defaults to Outdoor because the default preview tileset is Overworld, which is Outdoor.
+   */
+  int previewTilesetType = 2;
+
+  QString previewTilesetTypeStr() const;   ///< "indoor"/"cave"/"outdoor" (for the image provider ids).
+  QString previewTilesetTypeName() const;  ///< "Indoor"/"Cave"/"Outdoor" (for the user).
+  QString previewTilesetTypeDoes() const;  ///< What it does, in words (for the user).
 
   // Color Palette
   QColor textColorLight = QColor("#efefef"); //#fafafa

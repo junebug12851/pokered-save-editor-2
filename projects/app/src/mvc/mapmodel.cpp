@@ -20,9 +20,12 @@
  *        See mapmodel.h.
  */
 
+#include <QStringList>
+
 #include <pse-db/blocksdb.h>
 #include <pse-db/mapsdb.h>
 #include <pse-db/tileset.h>
+#include <pse-db/tiletraitsdb.h>
 #include <pse-db/entries/mapdbentry.h>
 #include <pse-savefile/expanded/area/areageneral.h>
 #include <pse-savefile/expanded/area/areamap.h>
@@ -43,6 +46,20 @@ MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaG
   connect(player, &AreaPlayer::yCoordChanged, this, &MapModel::changed);
   connect(general, &AreaGeneral::contrastChanged, this, &MapModel::changed);
   connect(player, &AreaPlayer::playerCurDirChanged, this, &MapModel::changed);
+
+  // The overlay is drawn from the SAVE's grass and counter tiles, so editing either has to
+  // redraw it -- otherwise the map would go on showing grass where the grass no longer is.
+  connect(tileset, &AreaTileset::typeChanged, this, &MapModel::changed);
+  connect(tileset, &AreaTileset::grassTileChanged, this, &MapModel::overlayChanged);
+  connect(tileset, &AreaTileset::talkingOverTilesChanged, this, &MapModel::overlayChanged);
+  connect(tileset, &AreaTileset::currentChanged, this, &MapModel::overlayChanged);
+  connect(map, &AreaMap::curMapChanged, this, &MapModel::overlayChanged);
+  connect(map, &AreaMap::outOfBoundsBlockChanged, this, &MapModel::changed);
+
+  // A selection is a block INDEX. Load another map and that index may not exist any more --
+  // so re-check it rather than let the inspector point at a block that isn't there.
+  connect(map, &AreaMap::curMapChanged, this, &MapModel::revalidateSelection);
+  connect(tileset, &AreaTileset::currentChanged, this, &MapModel::selectionChanged);
 }
 
 int MapModel::mapInd() const     { return map->curMap; }
@@ -63,11 +80,13 @@ QString MapModel::source() const
     return QString();
 
   // Frame 0: a still map. (The flower/water animation frames are a later step.) The
-  // contrast rides in the URL so the image is rebuilt whenever the palette changes.
+  // contrast and the animation byte ride in the URL so the image is rebuilt whenever either
+  // changes -- no invalidation logic to get wrong.
   return "image://map/" + QString::number(mapInd())
        + "/" + QString::number(tilesetInd())
        + "/0"
-       + "/" + QString::number(contrast());
+       + "/" + QString::number(contrast())
+       + "/" + QString::number(tileAnim());
 }
 
 int MapModel::contrast() const
@@ -192,3 +211,438 @@ int MapModel::playerRectX() const { return MapEngine::playerRect(playerX(), play
 int MapModel::playerRectY() const { return MapEngine::playerRect(playerX(), playerY()).y(); }
 int MapModel::playerRectW() const { return MapEngine::playerRect(playerX(), playerY()).width(); }
 int MapModel::playerRectH() const { return MapEngine::playerRect(playerX(), playerY()).height(); }
+
+// ── Which tiles animate (the save's `type` byte, 0x3522 = sTileAnimations) ─────
+
+int MapModel::tileAnim() const
+{
+  return tileset->type;
+}
+
+void MapModel::setTileAnim(int anim)
+{
+  // Three values and only three -- 0, 1, 2 -- because that is all the game's own byte can
+  // meaningfully be. (Unlike the music bank, an out-of-range value here isn't dangerous, it
+  // simply isn't reachable through this control; a save holding one is still SHOWN.)
+  if (anim < 0 || anim > 2 || tileset->type == anim)
+    return;
+
+  // Writes exactly one save byte, and nothing else.
+  tileset->type = anim;
+  tileset->typeChanged();
+
+  changed();
+  overlayChanged();
+}
+
+QString MapModel::tileAnimName() const
+{
+  const QString name = MapEngine::tileAnimName(tileAnim());
+
+  // A save can hold something that isn't 0/1/2. Say so rather than pretend it's "Indoor".
+  return name.isEmpty()
+       ? QObject::tr("Unknown (%1)").arg(tileAnim())
+       : name;
+}
+
+QString MapModel::tileAnimDoes() const
+{
+  switch (tileAnim()) {
+    case 0:  return QObject::tr("Nothing animates.");
+    case 1:  return QObject::tr("Water animates. Flowers don't.");
+    case 2:  return QObject::tr("Water and flowers animate.");
+    default: return QObject::tr("Not a value the game uses — it will read past its own table.");
+  }
+}
+
+int MapModel::tileAnimDefault() const
+{
+  for (auto* el : TilesetDB::inst()->getStore())
+    if (el->ind == tilesetInd())
+      return static_cast<int>(el->typeAsEnum());
+
+  return -1;
+}
+
+bool MapModel::tileAnimIsDefault() const
+{
+  const int def = tileAnimDefault();
+  return def < 0 || def == tileAnim();
+}
+
+// ── The semantic overlay ──────────────────────────────────────────────────────
+
+int MapModel::layers() const { return shownLayers; }
+
+void MapModel::setLayers(int layers)
+{
+  if (shownLayers == layers)
+    return;
+
+  shownLayers = layers;
+  overlayChanged();
+}
+
+void MapModel::toggleLayer(int layer)
+{
+  setLayers(shownLayers ^ layer);
+}
+
+bool MapModel::layerOn(int layer) const
+{
+  return (shownLayers & layer) != 0;
+}
+
+namespace {
+/// The save's grass + counter tiles, which the overlay and the inspector both need.
+MapEngine::SaveTiles saveTilesOf(AreaTileset* tileset)
+{
+  MapEngine::SaveTiles out;
+  out.grassTile = tileset->grassTile;
+  for (int i = 0; i < maxTalkingOverTiles; i++)
+    out.counters.append(tileset->talkingOverTiles[i]);
+  return out;
+}
+} // namespace
+
+QString MapModel::overlaySource() const
+{
+  if (!valid() || shownLayers == 0)
+    return QString();
+
+  const MapEngine::SaveTiles save = saveTilesOf(tileset);
+
+  QString id = "image://map/overlay/" + QString::number(mapInd())
+             + "/" + QString::number(tilesetInd())
+             + "/" + QString::number(static_cast<uint>(shownLayers))
+             + "/" + QString::number(save.grassTile);
+
+  for (const int c : save.counters)
+    id += "/" + QString::number(c);
+
+  return id;
+}
+
+QVariantList MapModel::layerList() const
+{
+  // Everything a chip needs to draw ITSELF as its own legend -- the colour it paints in, the
+  // name, and the sentence explaining what the thing actually is. No separate legend row,
+  // and no chance of the two drifting apart.
+  static const QVector<MapEngine::Layer> order = {
+    MapEngine::LayerWalls, MapEngine::LayerGrass, MapEngine::LayerWater,
+    MapEngine::LayerWarps, MapEngine::LayerDoors, MapEngine::LayerLedges,
+    MapEngine::LayerCounters, MapEngine::LayerElevation, MapEngine::LayerCutTrees,
+    MapEngine::LayerBorder,
+  };
+
+  QVariantList out;
+  if (!valid())
+    return out;
+
+  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  const MapEngine::SaveTiles save = saveTilesOf(tileset);
+
+  for (const MapEngine::Layer layer : order) {
+    QVariantMap m;
+    m["layer"] = static_cast<int>(layer);
+    m["name"] = MapEngine::layerName(layer);
+    m["description"] = MapEngine::layerDescription(layer);
+    m["color"] = MapEngine::layerColor(layer);
+    m["on"] = layerOn(static_cast<int>(layer));
+
+    // A chip for something this map hasn't got should say so plainly, rather than switch on
+    // an empty overlay and leave you wondering whether it's broken.
+    m["applies"] = MapEngine::layerApplies(buffer, tilesetInd(), layer, save);
+
+    out.append(m);
+  }
+
+  return out;
+}
+
+// ── The selected block ────────────────────────────────────────────────────────
+
+bool MapModel::hasSelection() const  { return selX >= 0 && selY >= 0 && valid(); }
+int MapModel::selectedBlockX() const { return selX; }
+int MapModel::selectedBlockY() const { return selY; }
+
+int MapModel::selectedBlock() const
+{
+  if (!hasSelection())
+    return -1;
+
+  return MapEngine::blockAt(MapEngine::buildOverworldMap(mapInd()), selX, selY);
+}
+
+bool MapModel::selectedIsBorder() const
+{
+  if (!hasSelection())
+    return false;
+
+  return selX < MapEngine::mapBorder || selY < MapEngine::mapBorder
+      || selX >= blocksWide() + MapEngine::mapBorder
+      || selY >= blocksHigh() + MapEngine::mapBorder;
+}
+
+// The user thinks in MAP coordinates; the engine thinks in BUFFER coordinates (which include
+// the 3-block ring). Translate, and say -1 out in the ring rather than hand back a negative
+// that looks like a real coordinate.
+int MapModel::selectedMapX() const
+{
+  return (!hasSelection() || selectedIsBorder()) ? -1 : selX - MapEngine::mapBorder;
+}
+
+int MapModel::selectedMapY() const
+{
+  return (!hasSelection() || selectedIsBorder()) ? -1 : selY - MapEngine::mapBorder;
+}
+
+void MapModel::selectAtPixel(int px, int py)
+{
+  if (!valid())
+    return;
+
+  const int bx = px / MapEngine::blockPx;
+  const int by = py / MapEngine::blockPx;
+
+  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  if (MapEngine::blockAt(buffer, bx, by) < 0)
+    return;  // clicked outside the buffer -- keep whatever was selected
+
+  // Clicking the selected block again deselects it. The map is the thing; a selection you
+  // can't get rid of is a selection that's in the way.
+  if (selX == bx && selY == by) {
+    clearSelection();
+    return;
+  }
+
+  selX = bx;
+  selY = by;
+  selectionChanged();
+}
+
+void MapModel::moveSelection(int dx, int dy)
+{
+  if (!hasSelection())
+    return;
+
+  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  const int bx = qBound(0, selX + dx, buffer.stride - 1);
+  const int by = qBound(0, selY + dy, buffer.rows - 1);
+
+  if (bx == selX && by == selY)
+    return;
+
+  selX = bx;
+  selY = by;
+  selectionChanged();
+}
+
+void MapModel::clearSelection()
+{
+  if (selX < 0 && selY < 0)
+    return;
+
+  selX = -1;
+  selY = -1;
+  selectionChanged();
+}
+
+void MapModel::revalidateSelection()
+{
+  // The map changed under the selection. A block index that was inside the old buffer may be
+  // outside the new one, so drop it rather than point at nothing.
+  if (selX < 0 && selY < 0)
+    return;
+
+  const auto buffer = MapEngine::buildOverworldMap(mapInd());
+  if (MapEngine::blockAt(buffer, selX, selY) < 0)
+    clearSelection();
+  else
+    selectionChanged();
+}
+
+namespace {
+/// The one-line human summary of a tile. This is the entire point of the inspector: nobody
+/// should have to know that $52 is grass, or that "counter" means the shop desk.
+QString tileLabel(TileTraitsDB::Traits t, const QString& ledgeFacing)
+{
+  QStringList parts;
+
+  if (t.testFlag(TileTraitsDB::Door))      parts << QObject::tr("Door");
+  else if (t.testFlag(TileTraitsDB::Warp)) parts << QObject::tr("Warp");
+  if (t.testFlag(TileTraitsDB::WarpPad))   parts << QObject::tr("Warp pad");
+  if (t.testFlag(TileTraitsDB::Hole))      parts << QObject::tr("Hole");
+  if (t.testFlag(TileTraitsDB::Grass))     parts << QObject::tr("Grass — wild Pokémon");
+  if (t.testFlag(TileTraitsDB::Water))     parts << QObject::tr("Water — needs Surf");
+  if (t.testFlag(TileTraitsDB::Counter))   parts << QObject::tr("Counter — talk across it");
+  if (t.testFlag(TileTraitsDB::Bookshelf)) parts << QObject::tr("Reads back");
+  if (t.testFlag(TileTraitsDB::Elevation)) parts << QObject::tr("Elevation edge");
+
+  if (t.testFlag(TileTraitsDB::Ledge)) {
+    parts << QObject::tr("Ledge — jump %1").arg(ledgeFacing.isEmpty()
+                                                ? QObject::tr("off") : ledgeFacing);
+  }
+
+  // Wall vs floor is the fallback, not the headline: if a tile is a door, "door" is the
+  // useful thing to say, and "you can't walk on it" is implied by it being a door.
+  if (parts.isEmpty())
+    parts << (t.testFlag(TileTraitsDB::Wall) ? QObject::tr("Wall")
+                                             : QObject::tr("Floor — you can walk here"));
+
+  return parts.join(QObject::tr(", "));
+}
+} // namespace
+
+QVariantMap MapModel::tileInfo(int tile) const
+{
+  const MapEngine::SaveTiles save = saveTilesOf(tileset);
+
+  QVector<var8> counters;
+  for (const int c : save.counters)
+    counters.append(static_cast<var8>(c));
+
+  auto* traits = TileTraitsDB::inst();
+  const TileTraitsDB::Traits t = traits->traitsOf(
+      tilesetInd(), static_cast<var8>(tile),
+      static_cast<var8>(save.grassTile), counters);
+
+  const QString facing = traits->ledgeFacing(static_cast<var8>(tile));
+
+  QVariantMap m;
+  m["tile"] = tile;
+  m["wall"] = t.testFlag(TileTraitsDB::Wall);
+  m["passable"] = t.testFlag(TileTraitsDB::Passable);
+  m["grass"] = t.testFlag(TileTraitsDB::Grass);
+  m["water"] = t.testFlag(TileTraitsDB::Water);
+  m["warp"] = t.testFlag(TileTraitsDB::Warp);
+  m["door"] = t.testFlag(TileTraitsDB::Door);
+  m["ledge"] = t.testFlag(TileTraitsDB::Ledge);
+  m["ledgeFacing"] = facing;
+  m["counter"] = t.testFlag(TileTraitsDB::Counter);
+  m["bookshelf"] = t.testFlag(TileTraitsDB::Bookshelf);
+  m["warpPad"] = t.testFlag(TileTraitsDB::WarpPad);
+  m["hole"] = t.testFlag(TileTraitsDB::Hole);
+  m["elevation"] = t.testFlag(TileTraitsDB::Elevation);
+  m["label"] = tileLabel(t, facing);
+
+  return m;
+}
+
+QVariantList MapModel::blockTileIds(int block) const
+{
+  QVariantList out;
+
+  const QByteArray tiles = MapEngine::blockTileIds(tilesetInd(), block);
+  for (int i = 0; i < tiles.size(); i++)
+    out.append(static_cast<int>(static_cast<quint8>(tiles.at(i))));
+
+  return out;
+}
+
+QString MapModel::tileAnimStrFor(int anim) const
+{
+  switch (anim) {
+    case 1:  return QStringLiteral("cave");
+    case 2:  return QStringLiteral("outdoor");
+    default: return QStringLiteral("indoor");
+  }
+}
+
+int MapModel::blockCount() const
+{
+  return BlocksDB::inst()->tilesetBlockCount(tilesetInd());
+}
+
+namespace {
+/// The DB entry for a tileset id. (Stored in id order, but never assume it -- verify, then scan.)
+TilesetDBEntry* canonAt(int tilesetInd)
+{
+  for (auto* el : TilesetDB::inst()->getStore())
+    if (el->ind == tilesetInd)
+      return el;
+
+  return nullptr;
+}
+} // namespace
+
+QVariantList MapModel::tilesetList() const
+{
+  QVariantList out;
+
+  for (auto* el : TilesetDB::inst()->getStore()) {
+    QVariantMap m;
+    m["ind"] = el->ind;
+    m["name"] = el->name;
+    m["tileAnim"] = static_cast<int>(el->typeAsEnum());
+    m["typeName"] = el->type;   // "Indoor" / "Cave" / "Outdoor"
+    out.append(m);
+  }
+
+  return out;
+}
+
+QVariantMap MapModel::canonicalTileset() const
+{
+  QVariantMap m;
+
+  auto* el = canonAt(tilesetInd());
+  if (el == nullptr)
+    return m;
+
+  m["ind"] = el->ind;
+  m["name"] = el->name;
+  m["bank"] = el->bank;
+  m["blockPtr"] = el->blockPtr;
+  m["gfxPtr"] = el->gfxPtr;
+  m["collPtr"] = el->collPtr;
+  m["tileAnim"] = static_cast<int>(el->typeAsEnum());
+  m["grassTile"] = el->grass;
+
+  return m;
+}
+
+void MapModel::restoreTilesetPointers()
+{
+  auto* el = canonAt(tilesetInd());
+  if (el == nullptr)
+    return;
+
+  // Exactly the four bytes that were wrong, and no others. In particular this does NOT touch
+  // the grass tile, the counters or the animation byte -- the user may have meant those.
+  tileset->bank = el->bank;
+  tileset->blockPtr = el->blockPtr;
+  tileset->gfxPtr = el->gfxPtr;
+  tileset->collPtr = el->collPtr;
+
+  tileset->bankChanged();
+  tileset->blockPtrChanged();
+  tileset->gfxPtrChanged();
+  tileset->collPtrChanged();
+
+  changed();
+}
+
+QVariantList MapModel::selectedTiles() const
+{
+  QVariantList out;
+  if (!hasSelection())
+    return out;
+
+  const QByteArray tiles = MapEngine::blockTileIds(tilesetInd(), selectedBlock());
+  if (tiles.isEmpty())
+    return out;
+
+  for (int i = 0; i < tiles.size(); i++) {
+    const int tile = static_cast<quint8>(tiles.at(i));
+
+    QVariantMap m = tileInfo(tile);
+    m["index"] = i;
+    m["x"] = i % MapEngine::blockTiles;   // 4x4, row-major -- the block's own layout
+    m["y"] = i / MapEngine::blockTiles;
+
+    out.append(m);
+  }
+
+  return out;
+}

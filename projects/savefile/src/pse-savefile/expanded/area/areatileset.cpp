@@ -48,6 +48,17 @@ int AreaTileset::talkingOverTilesAt(int ind)
   return talkingOverTiles[ind];
 }
 
+void AreaTileset::talkingOverTilesSet(int ind, int tile)
+{
+  if(ind < 0 || ind >= maxTalkingOverTiles)
+    return;
+
+  // One byte of the save (0x27DE + ind) and nothing else -- these three slots are independent
+  // and the game reads all three, so an empty slot is 0xFF, not a hole.
+  talkingOverTiles[ind] = (var8)(tile & 0xFF);
+  talkingOverTilesChanged();
+}
+
 void AreaTileset::talkingOverTilesSwap(int from, int to)
 {
   auto eFrom = talkingOverTiles[from];

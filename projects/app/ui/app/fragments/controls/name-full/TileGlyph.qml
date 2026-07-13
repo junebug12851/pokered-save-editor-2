@@ -30,8 +30,7 @@ Item {
   property int curFrame: 0
 
   property string tileset: brg.settings.previewTileset
-  property bool isOutdoor: brg.settings.previewOutdoor
-  property string isOutdoorStr: isOutdoor ? "outdoor" : "indoor"
+  property string isOutdoorStr: brg.settings.previewTilesetTypeStr
 
   // Paint a white square under the tile. The tileset's tiles are TRANSPARENT wherever
   // the game would show the background through them, so on a coloured keycap they came

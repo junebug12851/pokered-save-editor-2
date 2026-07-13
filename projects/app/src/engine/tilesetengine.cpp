@@ -74,8 +74,24 @@ QPixmap TilesetEngine::buildTilesetFullDebug(QString id)
     return QPixmap::fromImage(tmp);
   }
 
-  // Is outdoor? and use font? Also get frame
-  bool outdoorType = idParts.at(1).toLower() == "outdoor";
+  // ── Which tiles animate ─────────────────────────────────────────────────────
+  //
+  // THREE states, not two. This is the game's `hTileAnimations` byte, and
+  // UpdateMovingBgTiles (home/vcopy.asm) reads it like this:
+  //
+  //   0 (indoor  / TILEANIM_NONE)         -- returns immediately. Nothing moves.
+  //   1 (cave    / TILEANIM_WATER)        -- animates the WATER tile, then resets the frame
+  //                                          counter before it can ever reach the flower step.
+  //   2 (outdoor / TILEANIM_WATER_FLOWER) -- lets the counter run on to 21, so the FLOWER
+  //                                          tile animates as well.
+  //
+  // So water animates in a cave, and it always did on the console. This used to be a bool
+  // ("outdoor"), which lumped Cave in with Indoor and left every cave's water dead --
+  // Cerulean Cave, Seafoam, the Ship. See notes/reference/tiles.md.
+  const QString type = idParts.at(1).toLower();
+  const bool animatesWater  = (type == "cave" || type == "outdoor");
+  const bool animatesFlower = (type == "outdoor");
+
   bool useFont = idParts.at(2).toLower() == "font";
   int frame = idParts.at(3).toInt();
 
@@ -85,7 +101,7 @@ QPixmap TilesetEngine::buildTilesetFullDebug(QString id)
   auto fontImg = (useFont)
       ? getFont()
       : blankImage();
-  auto flowerImg = (outdoorType)
+  auto flowerImg = (animatesFlower)
       ? getFlower(frame)
       : blankImage();
 
@@ -100,8 +116,9 @@ QPixmap TilesetEngine::buildTilesetFullDebug(QString id)
   p.drawImage(0, 0, fontImg);
   p.drawImage(0, 0, flowerImg);
 
-  // Post-Process if applicable
-  if(outdoorType) {
+  // The wave. Cave AND outdoor -- the water tile ($14, i.e. column 4 of row 1) shifts its
+  // pixels sideways, exactly as the console rotates the tile's bytes each frame.
+  if(animatesWater) {
     // Copy water tile out to it's own image
     auto waterTile = tileset.copy(4 * tileWidth, 1 * tileHeight,
                                   tileWidth, tileHeight);

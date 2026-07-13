@@ -39,6 +39,49 @@ Nothing invented, no JSON changed.
 tile animation frames (frame 0 only). **Connection strips, the palettes/"contrast" and the PLAYER are DONE**
 (below).
 
+### ✅ 🗺️ The map now says what it MEANS — and it caught a save-corrupting bug (2026-07-12, 0.24.0-alpha)
+
+The map could draw Pallet Town; it could not tell you a thing about it. A wall and a floor are just two
+pictures. Now the **meaning layer** is in: **Show** chips over the map light up **Walls, Grass, Water,
+Warps, Doors, Ledges (with the arrow you jump), Counters, Elevation edges, Cut trees** and the **border
+ring** — each a tint *and* its own 8×8 pattern, so several stack and still read apart, and so they
+survive the glitch palettes. **Off by default** (the map is the point), and a chip with nothing to show
+says so rather than switching on an empty overlay. Rendered as **one image in C++** — Route 17 is 20,000+
+tiles and a per-tile QML delegate would crawl.
+
+**Click a block** → the **Blocks panel** draws it big with all 16 tiles, each labelled with what it *does*
+("Grass — wild Pokémon", "Ledge — jump down"). Hover a tile there, it lights up on the map.
+
+Domain write-up: [`reference/tiles.md`](reference/tiles.md). Import: `scripts/import_tile_traits.py`
+(self-validating; re-reads every collision list **out of the cartridge** and demands a byte-for-byte
+match). New DB: `TileTraitsDB`. Pinned by `tst_tile_traits` (10 cases).
+
+#### 🔑 There is no Indoor/Cave/Outdoor byte — there's an ANIMATION byte, and it was a real bug
+
+The tileset header's last byte is `TILEANIM_NONE / WATER / WATER_FLOWER`, saved at `0x3522`
+(`sTileAnimations`, the byte before the checksum) — what `AreaTileset` calls `type`. **`tileset.json`'s
+Indoor/Cave/Outdoor is a verified 1:1 rename of exactly that** (all 24 checked against the cartridge's
+header table).
+
+`Settings::previewOutdoor` was a **bool**, so it collapsed **Cave into Indoor** — every cave in the game
+rendered with **dead, motionless water** when the console animates it. Now tri-state everywhere
+(`previewTilesetType`), and each option says what it *does*.
+
+#### 🐞 THREE tilesets pointed at the WRONG collision list — and it was writing that into saves
+
+`tileset.json`'s `collPtr` was wrong for **Mart (→5971)**, **Forest (→5989)** and **Reds House 2
+(→5961)**. The collision lists are **shared** between tilesets in the ROM (Red's House 1 *and* 2 are one
+list; Mart *and* Poké Center are one list), and the v1 importer assumed one list each in index order — so
+the chain slipped by one.
+
+**This had teeth:** `AreaTileset::loadFromData()` writes `collPtr` into the save, so "put the player in a
+Poké Mart" wrote **Red's-house collision** into it. Fixed with Twilight's go-ahead (3 lines), verified
+against the cartridge, and pinned by `tst_tile_traits::derivedCollPtrs_matchTilesetJson` +
+`martAndRedsHouse_areNotTheSameList` — which were **negative-controlled**: put the bug back and they fail
+by name with the exact reason.
+
+⏳ **Owed: Twilight's live pass** on the chips, the click-to-inspect, and the two new panels.
+
 ### ✅ And now the actual Game Boy checks our work (2026-07-12)
 
 `tst_emu_parity` boots the **real ROM** in an emulator with one of our saves, reads the **console's own

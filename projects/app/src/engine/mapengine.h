@@ -16,10 +16,12 @@
 #pragma once
 
 #include <QByteArray>
+#include <QColor>
 #include <QImage>
 #include <QPoint>
 #include <QRect>
 #include <QString>
+#include <QVector>
 
 struct MapDBEntry;
 struct MapDBEntryConnect;
@@ -190,8 +192,78 @@ public:
   /// What this contrast value is, in words ("Normal", "Dark (needs Flash)", "Glitch palette"...).
   static QString contrastName(int contrast);
 
-  /// Render @p buffer with tileset @p tilesetInd at animation @p frame, through @p contrast.
-  static QImage render(const Buffer& buffer, int tilesetInd, int frame = 0, int contrast = 0);
+  /**
+   * @brief Render @p buffer with tileset @p tilesetInd at animation @p frame, through @p contrast.
+   *
+   * @param tileAnim which tiles animate -- 0 Indoor (none), 1 Cave (water), 2 Outdoor (water
+   *        + flowers). This is the SAVE's byte (`sTileAnimations`, `AreaTileset::type`), which
+   *        is allowed to disagree with the tileset's own default -- and when it does, the save
+   *        is what the console would actually run, so the save wins. Pass **-1** to fall back
+   *        to the tileset's own value. See notes/reference/tiles.md.
+   */
+  static QImage render(const Buffer& buffer, int tilesetInd, int frame = 0, int contrast = 0,
+                       int tileAnim = -1);
+
+  /// "Indoor" / "Cave" / "Outdoor" for a `sTileAnimations` value; empty if it isn't 0-2.
+  static QString tileAnimName(int tileAnim);
+
+  // ── The semantic overlay: what each tile of the map DOES ──────────────────────
+  //
+  // Walls, grass, water, warps, doors, ledges, counters... none of which is a thing you can
+  // see by looking at the art. TileTraitsDB knows what every tile means; this paints it.
+  //
+  // Rendered in C++ as ONE image rather than as QML rectangles, and that is not premature
+  // optimisation: Route 17 is 78 blocks tall, so a per-tile delegate would be tens of
+  // thousands of items and the screen would crawl. One image scales with zoom for free and
+  // fades in and out as one thing.
+
+  /// The overlay layers, as a bit set -- several can be shown at once.
+  enum Layer : quint32 {
+    LayerNone      = 0,
+    LayerWalls     = 1 << 0,  ///< Everything NOT in the tileset's collision list.
+    LayerGrass     = 1 << 1,  ///< The save's grass tile -- where wild Pokémon are.
+    LayerWater     = 1 << 2,
+    LayerWarps     = 1 << 3,
+    LayerDoors     = 1 << 4,
+    LayerLedges    = 1 << 5,  ///< With an arrow the way you jump.
+    LayerCounters  = 1 << 6,  ///< The save's talk-over tiles -- shop desks.
+    LayerBorder    = 1 << 7,  ///< The 3-block ring, and the out-of-bounds block filling it.
+    LayerCutTrees  = 1 << 8,  ///< Block-level, not tile-level.
+    LayerElevation = 1 << 9,  ///< Tile-pair collisions -- edges you can't cross.
+  };
+
+  /// What the save holds for the tiles only IT knows about. @see render / overlay.
+  struct SaveTiles {
+    int grassTile = 0xFF;        ///< `wGrassTile` -- 0xFF for none.
+    QVector<int> counters;       ///< `wTilesetTalkingOverTiles` -- 0xFF slots are unused.
+    int outOfBoundsBlock = -1;   ///< `wMapBackgroundTile` -- the block the ring is filled with.
+  };
+
+  /**
+   * @brief The overlay for @p layers, the same size as @ref render's image.
+   *
+   * Transparent everywhere it has nothing to say, so QML can simply stack it over the map
+   * and animate its opacity. Each layer has its own hue AND its own 8x8 pattern, so several
+   * of them stacked stay legible -- and so it still reads on four shades of grey, and
+   * through the glitch palettes, where a colour wash alone would not.
+   */
+  ///
+  /// (No default for @p save: a `= {}` here would need SaveTiles' member initialisers while
+  /// MapEngine is still an incomplete type. It is always known at every call site anyway.)
+  static QImage overlay(const Buffer& buffer, int tilesetInd, quint32 layers,
+                        const SaveTiles& save);
+
+  /// The colour a layer is drawn in, so the chip that toggles it can BE its own legend.
+  static QColor layerColor(Layer layer);
+
+  /// The layer's name, and the one-line explanation of what it actually is.
+  static QString layerName(Layer layer);
+  static QString layerDescription(Layer layer);
+
+  /// Does @p layer have anything at all to show on this map? (So a chip can say "none here"
+  /// instead of lying with an empty overlay.)
+  static bool layerApplies(const Buffer& buffer, int tilesetInd, Layer layer,
+                           const SaveTiles& save);
 
   // ── The player's sprite (see reference/sprites.md) ────────────────────────────
 
@@ -252,9 +324,18 @@ public:
   /// The 20x18-tile visible screen, in buffer pixels. Sits inside @ref scratchRect.
   static QRect screenRect(int x, int y);
 
+  /// Every tile id of one block of @p tilesetInd's blockset (16 of them, row-major).
+  /// Empty if that block doesn't exist. The Block inspector's raw material.
+  /// (Named `blockTileIds`, not `blockTiles` -- that name is already the constant 4.)
+  static QByteArray blockTileIds(int tilesetInd, int block);
+
+  /// The block id at buffer block coords (@p bx, @p by), or -1 if outside the buffer.
+  static int blockAt(const Buffer& buffer, int bx, int by);
+
 private:
   /// The tileset image id TilesetEngine wants: `<tileset>/<type>/<font>/<frame>`.
-  static QString tilesetId(int tilesetInd, int frame);
+  /// @param tileAnim the save's animation byte; -1 = use the tileset's own.
+  static QString tilesetId(int tilesetInd, int frame, int tileAnim = -1);
 
   /// Bleed every connected map's edge strip into @p out's border ring (LoadTileBlockMap).
   static void applyConnections(Buffer& out, const MapDBEntry* map);

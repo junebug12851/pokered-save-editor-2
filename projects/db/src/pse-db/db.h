@@ -45,6 +45,7 @@
 #include "./sprites.h"
 #include "./starterPokemon.h"
 #include "./tileset.h"
+#include "./tiletraitsdb.h"
 #include "./tmHm.h"
 #include "./trades.h"
 #include "./trainers.h"
@@ -99,6 +100,7 @@ class DB_AUTOPORT DB : public QObject
   Q_PROPERTY(SpritesDB*       sprites      READ sprites      CONSTANT) ///< Individual sprite definitions.
   Q_PROPERTY(StarterPokemonDB* starters    READ starters     CONSTANT) ///< Valid starter species.
   Q_PROPERTY(TilesetDB*       tilesets     READ tilesets     CONSTANT) ///< Tileset definitions.
+  Q_PROPERTY(TileTraitsDB*    tileTraits   READ tileTraits   CONSTANT) ///< What each tile MEANS (wall/grass/door/warp/ledge...).
   Q_PROPERTY(TmHmsDB*         tmHms        READ tmHms        CONSTANT) ///< TM/HM mappings.
   Q_PROPERTY(TradesDB*        trades       READ trades       CONSTANT) ///< In-game trade definitions.
   Q_PROPERTY(TrainersDB*      trainers     READ trainers     CONSTANT) ///< Trainer rosters.
@@ -131,6 +133,7 @@ public:
   [[nodiscard]] SpritesDB*       sprites()      const; ///< The sprites database (backs @c sprites).
   [[nodiscard]] StarterPokemonDB* starters()    const; ///< The starters database (backs @c starters).
   [[nodiscard]] TilesetDB*       tilesets()     const; ///< The tilesets database (backs @c tilesets).
+  [[nodiscard]] TileTraitsDB*    tileTraits()   const; ///< The tile-semantics database (backs @c tileTraits).
   [[nodiscard]] TmHmsDB*         tmHms()        const; ///< The TM/HM database (backs @c tmHms).
   [[nodiscard]] TradesDB*        trades()       const; ///< The trades database (backs @c trades).
   [[nodiscard]] TrainersDB*      trainers()     const; ///< The trainers database (backs @c trainers).

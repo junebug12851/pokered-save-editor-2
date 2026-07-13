@@ -48,6 +48,7 @@ qt_add_library(db SHARED
     src/pse-db/spriteSet.cpp
     src/pse-db/sprites.cpp
     src/pse-db/starterPokemon.cpp
+    src/pse-db/tiletraitsdb.cpp
     src/pse-db/tileset.cpp
     src/pse-db/tmHm.cpp
     src/pse-db/trades.cpp

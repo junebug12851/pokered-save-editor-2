@@ -20,13 +20,16 @@
  *        See mapengine.h for the geometry this reproduces.
  */
 
+#include <QObject>
 #include <QPainter>
+#include <QPen>
 #include <QPixmap>
 #include <QVector>
 
 #include <pse-db/blocksdb.h>
 #include <pse-db/mapsdb.h>
 #include <pse-db/tileset.h>
+#include <pse-db/tiletraitsdb.h>
 #include <pse-db/entries/mapdbentry.h>
 #include <pse-db/entries/mapdbentryconnect.h>
 
@@ -314,17 +317,36 @@ int MapEngine::tilesetOf(int mapInd)
   return (tileset == nullptr) ? -1 : tileset->ind;
 }
 
-QString MapEngine::tilesetId(int tilesetInd, int frame)
+QString MapEngine::tileAnimName(int tileAnim)
+{
+  // The save's `type` byte (0x3522 = sTileAnimations) and tileset.json's friendly names are
+  // the same three values -- verified 1:1 against the cartridge's header table for all 24
+  // tilesets. So this is a rename, not a mapping. (notes/reference/tiles.md)
+  switch (tileAnim) {
+    case 0:  return QStringLiteral("Indoor");   // TILEANIM_NONE
+    case 1:  return QStringLiteral("Cave");     // TILEANIM_WATER
+    case 2:  return QStringLiteral("Outdoor");  // TILEANIM_WATER_FLOWER
+    default: return QString();                  // not a value the game can produce
+  }
+}
+
+QString MapEngine::tilesetId(int tilesetInd, int frame, int tileAnim)
 {
   auto* tileset = tilesetAt(tilesetInd);
   if (tileset == nullptr)
     return QString();
 
+  // Which tiles animate comes from the SAVE, not the tileset -- they are allowed to
+  // disagree, and when they do the save is what the console would actually run. Only fall
+  // back to the tileset's own value when the caller has nothing to say (tileAnim < 0).
+  const QString anim = tileAnimName(tileAnim);
+  const QString type = anim.isEmpty() ? tileset->type : anim;
+
   // <tileset>/<type>/<font>/<frame>. Never "font": the font overlay paints over
   // tiles 0x49-0x5F, which belong to the tileset -- and no map uses a tile id past
   // the tileset's own 0x00-0x5F anyway (verified across all 248 maps, and pinned by
   // tst_map_blocks), so there is nothing in the font/text VRAM region to draw.
-  return tileset->name + "/" + tileset->type + "/nofont/" + QString::number(frame);
+  return tileset->name + "/" + type + "/nofont/" + QString::number(frame);
 }
 
 // ── Palettes ──────────────────────────────────────────────────────────────────
@@ -431,13 +453,14 @@ QString MapEngine::contrastName(int contrast)
   return QString();
 }
 
-QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame, int contrast)
+QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame, int contrast,
+                         int tileAnim)
 {
   if (!buffer.valid)
     return QImage();
 
   const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(tilesetInd);
-  const QString id = tilesetId(tilesetInd, frame);
+  const QString id = tilesetId(tilesetInd, frame, tileAnim);
 
   if (blockset.isEmpty() || id.isEmpty())
     return QImage();
@@ -505,6 +528,393 @@ QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame, int co
   }
 
   return img;
+}
+
+// ── The semantic overlay ──────────────────────────────────────────────────────
+//
+// The map is four shades of grey, and it can be pushed through a glitch palette that makes
+// it any four OTHER shades of grey. So an overlay cannot rely on a colour wash alone -- pick
+// any tint and there is some palette it disappears into.
+//
+// So every layer gets BOTH a hue and a PATTERN. The pattern is what carries the meaning when
+// several layers stack, or when the palette turns hostile; the hue is what makes it quick to
+// read when it doesn't. And the whole thing is drawn at low alpha, because the map is still
+// the point -- this is an annotation, not a repaint.
+
+namespace {
+
+/// One tile's worth of overlay: a tint, and a pattern drawn into it.
+enum class Pattern {
+  Hatch,      ///< Diagonal lines. Walls -- it reads as "solid", and it never looks walkable.
+  Dots,       ///< Grass -- scattered, like the grass sprite itself.
+  Waves,      ///< Water.
+  Ring,       ///< Warps + doors -- a target you step onto.
+  Arrow,      ///< Ledges -- and it points the way you jump.
+  Bar,        ///< Counters -- a desk, seen from above.
+  Wash,       ///< The border ring: no pattern, just a flat dim. It isn't a tile property.
+  Corners,    ///< Cut trees (a BLOCK, so it brackets the whole 32x32).
+  EdgeLine,   ///< Elevation edges.
+};
+
+void paintTile(QPainter& p, int px, int py, const QColor& colour, Pattern pattern,
+               const QString& arrowDir = QString())
+{
+  const QRect r(px, py, MapEngine::tilePx, MapEngine::tilePx);
+
+  // The tint. Deliberately weak -- you must still be able to see the map through it.
+  QColor fill = colour;
+  fill.setAlpha(64);
+  p.fillRect(r, fill);
+
+  QColor ink = colour;
+  ink.setAlpha(205);
+  QPen pen(ink);
+  pen.setWidth(1);
+  p.setPen(pen);
+  p.setBrush(Qt::NoBrush);
+
+  switch (pattern) {
+    case Pattern::Hatch:
+      // Two diagonals, corner to corner -- at 8 px this reads as a solid cross-hatch when
+      // tiled, which is exactly the "you cannot go here" idiom.
+      p.drawLine(px, py + 7, px + 7, py);
+      p.drawLine(px, py + 3, px + 3, py);
+      p.drawLine(px + 4, py + 7, px + 7, py + 4);
+      break;
+
+    case Pattern::Dots:
+      p.drawPoint(px + 2, py + 2);
+      p.drawPoint(px + 5, py + 4);
+      p.drawPoint(px + 3, py + 6);
+      p.drawPoint(px + 6, py + 1);
+      break;
+
+    case Pattern::Waves:
+      p.drawLine(px + 1, py + 2, px + 3, py + 2);
+      p.drawLine(px + 4, py + 3, px + 6, py + 3);
+      p.drawLine(px + 1, py + 5, px + 3, py + 5);
+      p.drawLine(px + 4, py + 6, px + 6, py + 6);
+      break;
+
+    case Pattern::Ring:
+      p.drawRect(px + 1, py + 1, 5, 5);
+      break;
+
+    case Pattern::Arrow: {
+      // A ledge is the one tile whose meaning has a DIRECTION, so the overlay has to carry
+      // it -- "you may hop off here, that way". A colour alone would throw that away.
+      const int cx = px + 3, cy = py + 3;
+      if (arrowDir == "down") {
+        p.drawLine(cx, cy - 2, cx, cy + 2);
+        p.drawLine(cx - 2, cy, cx, cy + 2);
+        p.drawLine(cx + 2, cy, cx, cy + 2);
+      } else if (arrowDir == "up") {
+        p.drawLine(cx, cy + 2, cx, cy - 2);
+        p.drawLine(cx - 2, cy, cx, cy - 2);
+        p.drawLine(cx + 2, cy, cx, cy - 2);
+      } else if (arrowDir == "left") {
+        p.drawLine(cx + 2, cy, cx - 2, cy);
+        p.drawLine(cx, cy - 2, cx - 2, cy);
+        p.drawLine(cx, cy + 2, cx - 2, cy);
+      } else {  // right
+        p.drawLine(cx - 2, cy, cx + 2, cy);
+        p.drawLine(cx, cy - 2, cx + 2, cy);
+        p.drawLine(cx, cy + 2, cx + 2, cy);
+      }
+      break;
+    }
+
+    case Pattern::Bar:
+      p.drawLine(px + 1, py + 3, px + 6, py + 3);
+      p.drawLine(px + 1, py + 4, px + 6, py + 4);
+      break;
+
+    case Pattern::EdgeLine:
+      p.drawLine(px + 1, py + 6, px + 6, py + 6);
+      break;
+
+    case Pattern::Corners:
+      p.drawLine(px, py, px + 2, py);
+      p.drawLine(px, py, px, py + 2);
+      break;
+
+    case Pattern::Wash:
+      break;  // the tint is the whole message
+  }
+}
+
+} // namespace
+
+QColor MapEngine::layerColor(Layer layer)
+{
+  // Hues chosen to stay apart from each other AND from four greys: no two adjacent on the
+  // wheel, and none of them so pale that a bright palette swallows them.
+  switch (layer) {
+    case LayerWalls:     return QColor("#37474F"); // blue grey 800 -- solid, heavy, "stop"
+    case LayerGrass:     return QColor("#2E7D32"); // green 800
+    case LayerWater:     return QColor("#0277BD"); // light blue 800
+    case LayerWarps:     return QColor("#6A1B9A"); // purple 800
+    case LayerDoors:     return QColor("#EF6C00"); // orange 800
+    case LayerLedges:    return QColor("#C62828"); // red 800
+    case LayerCounters:  return QColor("#00838F"); // cyan 800
+    case LayerBorder:    return QColor("#546E7A"); // blue grey 600
+    case LayerCutTrees:  return QColor("#9E9D24"); // lime 800
+    case LayerElevation: return QColor("#4527A0"); // deep purple 800
+    default:             return QColor("#000000");
+  }
+}
+
+QString MapEngine::layerName(Layer layer)
+{
+  switch (layer) {
+    case LayerWalls:     return QObject::tr("Walls");
+    case LayerGrass:     return QObject::tr("Grass");
+    case LayerWater:     return QObject::tr("Water");
+    case LayerWarps:     return QObject::tr("Warps");
+    case LayerDoors:     return QObject::tr("Doors");
+    case LayerLedges:    return QObject::tr("Ledges");
+    case LayerCounters:  return QObject::tr("Counters");
+    case LayerBorder:    return QObject::tr("Border");
+    case LayerCutTrees:  return QObject::tr("Cut trees");
+    case LayerElevation: return QObject::tr("Elevation");
+    default:             return QString();
+  }
+}
+
+QString MapEngine::layerDescription(Layer layer)
+{
+  // Say what the thing IS. Half of these are words Twilight said she didn't know the meaning
+  // of -- so the app is where that gets answered, not a wiki.
+  switch (layer) {
+    case LayerWalls:
+      return QObject::tr("Everything you can't walk onto. The game stores the list of tiles you CAN "
+                "walk on; a tile that isn't on it is a wall.");
+    case LayerGrass:
+      return QObject::tr("The grass tile. Standing here is what triggers a wild Pokémon, and it's "
+                "what draws over your feet.");
+    case LayerWater:
+      return QObject::tr("Water. You need Surf.");
+    case LayerWarps:
+      return QObject::tr("Step on it and you're somewhere else.");
+    case LayerDoors:
+      return QObject::tr("A door — a warp you walk into, with the door animation.");
+    case LayerLedges:
+      return QObject::tr("A ledge. The arrow is the only way you can jump it.");
+    case LayerCounters:
+      return QObject::tr("The tiles you can talk ACROSS — a shop counter. Without these the clerk is "
+                "out of reach behind the desk.");
+    case LayerBorder:
+      return QObject::tr("The 3-block ring around every map, filled with its out-of-bounds block. "
+                "Connected maps bleed their edges into it.");
+    case LayerCutTrees:
+      return QObject::tr("A tree Cut turns into something else. This one is a whole BLOCK, not a tile.");
+    case LayerElevation:
+      return QObject::tr("An edge you can't cross — the game fakes a difference in height by simply "
+                "forbidding the step between two particular tiles.");
+    default:
+      return QString();
+  }
+}
+
+namespace {
+/// Every layer, in the order the chips show them and the order they paint (back to front).
+const QVector<MapEngine::Layer>& allLayers()
+{
+  static const QVector<MapEngine::Layer> layers = {
+    MapEngine::LayerBorder, MapEngine::LayerWalls, MapEngine::LayerElevation,
+    MapEngine::LayerWater, MapEngine::LayerGrass, MapEngine::LayerCounters,
+    MapEngine::LayerCutTrees, MapEngine::LayerWarps, MapEngine::LayerDoors,
+    MapEngine::LayerLedges,
+  };
+  return layers;
+}
+
+Pattern patternFor(MapEngine::Layer layer)
+{
+  switch (layer) {
+    case MapEngine::LayerWalls:     return Pattern::Hatch;
+    case MapEngine::LayerGrass:     return Pattern::Dots;
+    case MapEngine::LayerWater:     return Pattern::Waves;
+    case MapEngine::LayerWarps:     return Pattern::Ring;
+    case MapEngine::LayerDoors:     return Pattern::Ring;
+    case MapEngine::LayerLedges:    return Pattern::Arrow;
+    case MapEngine::LayerCounters:  return Pattern::Bar;
+    case MapEngine::LayerBorder:    return Pattern::Wash;
+    case MapEngine::LayerCutTrees:  return Pattern::Corners;
+    case MapEngine::LayerElevation: return Pattern::EdgeLine;
+    default:                        return Pattern::Wash;
+  }
+}
+
+/// Does tile @p tile, in this tileset, belong to @p layer?
+bool tileInLayer(MapEngine::Layer layer, TileTraitsDB::Traits t)
+{
+  switch (layer) {
+    case MapEngine::LayerWalls:     return t.testFlag(TileTraitsDB::Wall);
+    case MapEngine::LayerGrass:     return t.testFlag(TileTraitsDB::Grass);
+    case MapEngine::LayerWater:     return t.testFlag(TileTraitsDB::Water);
+    case MapEngine::LayerWarps:     return t.testFlag(TileTraitsDB::Warp)
+                                        || t.testFlag(TileTraitsDB::WarpPad)
+                                        || t.testFlag(TileTraitsDB::Hole);
+    case MapEngine::LayerDoors:     return t.testFlag(TileTraitsDB::Door);
+    case MapEngine::LayerLedges:    return t.testFlag(TileTraitsDB::Ledge);
+    case MapEngine::LayerCounters:  return t.testFlag(TileTraitsDB::Counter);
+    case MapEngine::LayerElevation: return t.testFlag(TileTraitsDB::Elevation);
+    default:                        return false;  // Border + CutTrees are block-level
+  }
+}
+} // namespace
+
+QImage MapEngine::overlay(const Buffer& buffer, int tilesetInd, quint32 layers,
+                          const SaveTiles& save)   // no default -- see the header
+{
+  if (!buffer.valid || layers == LayerNone)
+    return QImage();
+
+  const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(tilesetInd);
+  if (blockset.isEmpty())
+    return QImage();
+
+  auto* traits = TileTraitsDB::inst();
+  const int blockCount = blockset.size() / tilesPerBlock;
+
+  QVector<var8> counters;
+  for (const int c : save.counters)
+    counters.append(static_cast<var8>(c));
+
+  QImage img(buffer.stride * blockPx, buffer.rows * blockPx, QImage::Format_ARGB32);
+  img.fill(Qt::transparent);   // transparent wherever we have nothing to say
+
+  QPainter p(&img);
+
+  for (int by = 0; by < buffer.rows; by++) {
+    for (int bx = 0; bx < buffer.stride; bx++) {
+      const int block = static_cast<quint8>(buffer.blocks[by * buffer.stride + bx]);
+      const int bpx = bx * blockPx;
+      const int bpy = by * blockPx;
+
+      // ── The two BLOCK-level layers. Getting these right is the whole reason this file
+      // keeps insisting on the difference: a cut tree is a block, and the border ring is
+      // made of blocks. Painting them per-tile would be a lie about what they are.
+      if ((layers & LayerBorder) != 0) {
+        const bool inRing = bx < mapBorder || by < mapBorder
+                         || bx >= buffer.stride - mapBorder
+                         || by >= buffer.rows - mapBorder;
+        if (inRing) {
+          QColor c = layerColor(LayerBorder);
+          c.setAlpha(72);
+          p.fillRect(bpx, bpy, blockPx, blockPx, c);
+        }
+      }
+
+      if ((layers & LayerCutTrees) != 0 && traits->isCutTreeBlock(static_cast<var8>(block))) {
+        QColor c = layerColor(LayerCutTrees);
+        c.setAlpha(60);
+        p.fillRect(bpx, bpy, blockPx, blockPx, c);
+        c.setAlpha(210);
+        p.setPen(QPen(c, 1));
+        p.setBrush(Qt::NoBrush);
+        p.drawRect(bpx, bpy, blockPx - 1, blockPx - 1);
+      }
+
+      if (block >= blockCount)
+        continue;
+
+      // ── The TILE-level layers.
+      const int base = block * tilesPerBlock;
+
+      for (int ty = 0; ty < blockTiles; ty++) {
+        for (int tx = 0; tx < blockTiles; tx++) {
+          const var8 tile = static_cast<var8>(blockset[base + ty * blockTiles + tx]);
+
+          const TileTraitsDB::Traits t = traits->traitsOf(
+              tilesetInd, tile, static_cast<var8>(save.grassTile), counters);
+
+          const int px = bpx + tx * tilePx;
+          const int py = bpy + ty * tilePx;
+
+          for (const Layer layer : allLayers()) {
+            if ((layers & layer) == 0 || !tileInLayer(layer, t))
+              continue;
+
+            paintTile(p, px, py, layerColor(layer), patternFor(layer),
+                      layer == LayerLedges ? traits->ledgeFacing(tile) : QString());
+          }
+        }
+      }
+    }
+  }
+
+  p.end();
+  return img;
+}
+
+bool MapEngine::layerApplies(const Buffer& buffer, int tilesetInd, Layer layer,
+                             const SaveTiles& save)
+{
+  // A chip for a layer with nothing to show should say so, not switch on an empty overlay
+  // and leave the user wondering whether it's broken.
+  if (!buffer.valid)
+    return false;
+
+  if (layer == LayerBorder)
+    return true;  // every map has a ring
+
+  const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(tilesetInd);
+  if (blockset.isEmpty())
+    return false;
+
+  auto* traits = TileTraitsDB::inst();
+  const int blockCount = blockset.size() / tilesPerBlock;
+
+  QVector<var8> counters;
+  for (const int c : save.counters)
+    counters.append(static_cast<var8>(c));
+
+  // Only the blocks this map actually PLACES count -- a tileset having a door tile is not
+  // the same as this map having a door.
+  for (const char raw : buffer.blocks) {
+    const int block = static_cast<quint8>(raw);
+
+    if (layer == LayerCutTrees) {
+      if (traits->isCutTreeBlock(static_cast<var8>(block)))
+        return true;
+      continue;
+    }
+
+    if (block >= blockCount)
+      continue;
+
+    const int base = block * tilesPerBlock;
+    for (int i = 0; i < tilesPerBlock; i++) {
+      const var8 tile = static_cast<var8>(blockset[base + i]);
+      const TileTraitsDB::Traits t = traits->traitsOf(
+          tilesetInd, tile, static_cast<var8>(save.grassTile), counters);
+      if (tileInLayer(layer, t))
+        return true;
+    }
+  }
+
+  return false;
+}
+
+QByteArray MapEngine::blockTileIds(int tilesetInd, int block)
+{
+  const QByteArray blockset = BlocksDB::inst()->tilesetBlocks(tilesetInd);
+  const int base = block * tilesPerBlock;
+
+  if (blockset.isEmpty() || block < 0 || base + tilesPerBlock > blockset.size())
+    return QByteArray();
+
+  return blockset.mid(base, tilesPerBlock);
+}
+
+int MapEngine::blockAt(const Buffer& buffer, int bx, int by)
+{
+  if (!buffer.valid || bx < 0 || by < 0 || bx >= buffer.stride || by >= buffer.rows)
+    return -1;
+
+  return static_cast<quint8>(buffer.blocks[by * buffer.stride + bx]);
 }
 
 // ── The player's sprite ───────────────────────────────────────────────────────

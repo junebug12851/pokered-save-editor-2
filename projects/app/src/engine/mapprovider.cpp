@@ -34,7 +34,21 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
 {
   const auto parts = id.split("/", Qt::SkipEmptyParts);
 
-  // <mapInd>/<tilesetInd>/<frame>/<contrast>
+  // Two shapes, and the first word says which:
+  //
+  //   <mapInd>/<tilesetInd>/<frame>/<contrast>/<tileAnim>
+  //     the map itself.
+  //
+  //   overlay/<mapInd>/<tilesetInd>/<layers>/<grassTile>/<c0>/<c1>/<c2>
+  //     the semantic layer -- walls, grass, warps... -- as a TRANSPARENT image exactly the
+  //     same size, so QML can stack it straight on top and just animate its opacity.
+  //
+  // The overlay is a rendered image and not a pile of QML rectangles for a plain reason:
+  // Route 17 is 78 blocks tall, which is over 20,000 tiles. As delegates that would crawl;
+  // as one image it scales with the zoom for free.
+  if (!parts.isEmpty() && parts.at(0) == "overlay")
+    return requestOverlay(parts, size, requestedSize);
+
   if (parts.size() < 3)
     return blankImage(size);
 
@@ -43,8 +57,11 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
   const int frame      = parts.at(2).toInt();
   const int contrast   = (parts.size() > 3) ? parts.at(3).toInt() : 0;
 
+  // Which tiles animate -- the SAVE's byte, not the tileset's default. -1 = fall back.
+  const int tileAnim   = (parts.size() > 4) ? parts.at(4).toInt() : -1;
+
   const auto buffer = MapEngine::buildOverworldMap(mapInd);
-  const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast);
+  const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast, tileAnim);
 
   // No block data (a glitch map id) -- there is nothing in ROM to draw.
   if (img.isNull())
@@ -57,6 +74,43 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
 
   // Only scale if QML explicitly asked to, and then never smooth it -- this is
   // 8x8 pixel art and interpolating it would be a lie about what the game drew.
+  if (requestedSize.width() > 0 && requestedSize.height() > 0)
+    ret = ret.scaled(requestedSize.width(), requestedSize.height(),
+                     Qt::IgnoreAspectRatio, Qt::FastTransformation);
+
+  return ret;
+}
+
+QPixmap MapProvider::requestOverlay(const QStringList& parts, QSize* size,
+                                    const QSize& requestedSize)
+{
+  // overlay/<mapInd>/<tilesetInd>/<layers>/<grassTile>/<c0>/<c1>/<c2>
+  if (parts.size() < 4)
+    return blankImage(size);
+
+  const int mapInd     = parts.at(1).toInt();
+  const int tilesetInd = parts.at(2).toInt();
+  const quint32 layers = parts.at(3).toUInt();
+
+  // The grass tile and the three counter tiles come from the SAVE, so they ride in the id --
+  // which also means the overlay is re-rendered the moment either is edited, with no
+  // invalidation logic to get wrong.
+  MapEngine::SaveTiles save;
+  save.grassTile = (parts.size() > 4) ? parts.at(4).toInt() : 0xFF;
+  for (int i = 5; i < parts.size() && i < 8; i++)
+    save.counters.append(parts.at(i).toInt());
+
+  const auto buffer = MapEngine::buildOverworldMap(mapInd);
+  const QImage img = MapEngine::overlay(buffer, tilesetInd, layers, save);
+
+  if (img.isNull())
+    return blankImage(size);
+
+  if (size != nullptr)
+    *size = img.size();
+
+  QPixmap ret = QPixmap::fromImage(img);
+
   if (requestedSize.width() > 0 && requestedSize.height() > 0)
     ret = ret.scaled(requestedSize.width(), requestedSize.height(),
                      Qt::IgnoreAspectRatio, Qt::FastTransformation);

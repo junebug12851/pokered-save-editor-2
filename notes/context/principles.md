@@ -52,6 +52,40 @@ The user should be able to open a save file and immediately have fun. The app sh
 
 ---
 
+## Every Byte, None of Them Raw
+
+_Twilight, 2026-07-12. A top-tier rule, and it has two halves that only work together._
+
+**1. Every byte of the save must be editable.** Nothing is withheld because it looks obscure,
+transient, or "not really data the user needs". If the save file holds it, the app lets you change
+it. This is a save *editor*; a byte we refuse to expose is a byte we have decided the user isn't
+allowed to own.
+
+**2. And none of them may be raw.** *"Users typically don't find raw fields very useful or
+interesting."* A byte is never a spin box with a number in it. Work out what the byte actually **is**
+and build the control for **that thing**:
+
+| The byte is… | So the control is… |
+|---|---|
+| a tile id | a picker of the actual, rendered tiles |
+| a block id | a picker of the actual blocks |
+| a sprite slot | the actual sprites, by name and picture |
+| a ROM pointer | a **named** choice — "the collision list Mart uses" |
+| a flag with a real-world meaning | that meaning, in words, as a switch |
+| a byte doing two jobs | an editor that says **both** jobs out loud |
+
+**The escape hatch is what reconciles the two.** Every one of those pickers carries a **Custom…**
+option that can still reach *any* value the byte can hold — including the nonsense ones, because a
+glitch hunter is a legitimate user and the save is theirs. The intuitive choice is the **default**;
+the arbitrary value is always still **reachable**; and when the value disagrees with what the
+cartridge would have there, we **say so** and never silently rewrite it (the same doctrine as the
+music bank and the glitch palettes).
+
+So: no field is hidden, and no field is a number box. If a byte seems to have no meaningful editor,
+that means the research isn't finished — not that the field should be dropped.
+
+---
+
 ## The Randomization Feature — What It Must Be
 
 This is the most ambitious feature and must be done right. Constraints:

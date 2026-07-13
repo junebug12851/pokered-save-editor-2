@@ -61,6 +61,7 @@ SpriteSetDB*     DB::spriteSets()   const { return SpriteSetDB::inst(); }
 SpritesDB*       DB::sprites()      const { return SpritesDB::inst(); }
 StarterPokemonDB* DB::starters()    const { return StarterPokemonDB::inst(); }
 TilesetDB*       DB::tilesets()     const { return TilesetDB::inst(); }
+TileTraitsDB*    DB::tileTraits()   const { return TileTraitsDB::inst(); }
 TmHmsDB*         DB::tmHms()        const { return TmHmsDB::inst(); }
 TradesDB*        DB::trades()       const { return TradesDB::inst(); }
 TrainersDB*      DB::trainers()     const { return TrainersDB::inst(); }
@@ -106,6 +107,7 @@ void DB::loadAll() const
   SpritesDB::inst()->load();      lap("SpritesDB");
   MusicDB::inst()->load();        lap("MusicDB");
   TilesetDB::inst()->load();      lap("TilesetDB");
+  TileTraitsDB::inst()->load();   lap("TileTraitsDB");
   TrainersDB::inst()->load();     lap("TrainersDB");
   ItemsDB::inst()->load();        lap("ItemsDB");
   MovesDB::inst()->load();        lap("MovesDB");
@@ -218,6 +220,7 @@ void DB::qmlProtect(const QQmlEngine* const engine) const
   SpritesDB::inst()->qmlProtect(engine);
   StarterPokemonDB::inst()->qmlProtect(engine);
   TilesetDB::inst()->qmlProtect(engine);
+  TileTraitsDB::inst()->qmlProtect(engine);
   TmHmsDB::inst()->qmlProtect(engine);
   TradesDB::inst()->qmlProtect(engine);
   TrainersDB::inst()->qmlProtect(engine);

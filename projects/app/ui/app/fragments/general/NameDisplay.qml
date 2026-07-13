@@ -88,9 +88,10 @@ Image {
    * Internal properties (Should never need to be changed)
    *********************************************/
 
-  // Is outdoor or not, used for tilemap building and processing
-  // Wired up to app-wide property
-  property bool isOutdoor: brg.settings.previewOutdoor
+  // Which tiles animate: Indoor / Cave / Outdoor. THREE states, not two -- it is the game's
+  // own byte (TILEANIM_NONE / WATER / WATER_FLOWER), and a cave animates its water.
+  // Wired up to the app-wide property.
+  property int tileAnim: brg.settings.previewTilesetType
 
   // Tileset to reference for <tileXX> codes
   // Wired up to app-wide property
@@ -132,7 +133,7 @@ Image {
   // Strings to send to the provider
   property string hasBoxStr: (hasBox) ? "box" : "no-box"
   property string is2LineStr: (is2Line) ? "2-lines" : "1-line"
-  property string isOutdoorStr: (isOutdoor) ? "outdoor" : "indoor"
+  property string isOutdoorStr: brg.settings.previewTilesetTypeStr
 
   // Error checks and corrects width and height to prevent blurring and to have
   // it display correctly. These, along with the width and height, should never
@@ -359,11 +360,19 @@ Image {
           Layout.alignment: Qt.AlignVCenter
         }
 
+        // TRI-state, not a toggle: the game has three of these, not two. Its label IS the
+        // current state, and clicking steps Indoor -> Cave -> Outdoor. (It was a bool called
+        // "Outdoor", which lumped Cave in with Indoor and left every cave's water dead.)
         FlatToggle {
-          text: qsTr("Outdoor")
-          active: brg.settings.previewOutdoor
-          onClicked: brg.settings.previewOutdoor = !brg.settings.previewOutdoor;
-          MainToolTip { text: "Render tiles as they'd look outdoors vs. indoors." }
+          text: brg.settings.previewTilesetTypeName
+          active: brg.settings.previewTilesetType !== 0
+          onClicked: brg.settings.cyclePreviewTilesetType();
+
+          MainToolTip {
+            text: qsTr("%1 — %2 Click to change.")
+                    .arg(brg.settings.previewTilesetTypeName)
+                    .arg(brg.settings.previewTilesetTypeDoes)
+          }
         }
 
         SimulatedTilesetCombo {

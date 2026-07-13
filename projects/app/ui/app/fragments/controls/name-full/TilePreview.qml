@@ -20,8 +20,7 @@ Image {
 
   // Follow the app-wide simulated tileset / outdoor settings.
   property string tileset: brg.settings.previewTileset
-  property bool isOutdoor: brg.settings.previewOutdoor
-  property string isOutdoorStr: isOutdoor ? "outdoor" : "indoor"
+  property string isOutdoorStr: brg.settings.previewTilesetTypeStr
 
   // Static single frame. Rendering a tile runs an expensive expand/convert pass;
   // animating it (re-rendering every frame) froze the UI when hovering an

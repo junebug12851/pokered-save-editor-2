@@ -46,7 +46,7 @@
     "bank": 25,
     "blockPtr": 21104,
     "gfxPtr": 19936,
-    "collPtr": 5961,
+    "collPtr": 5971,
     "nameAlias": "MART",
     "typeAlias": "INDOOR"
   },
@@ -63,7 +63,7 @@
     "bank": 26,
     "blockPtr": 21439,
     "gfxPtr": 19903,
-    "collPtr": 5971,
+    "collPtr": 5989,
     "nameAlias": "FOREST",
     "typeAlias": "CAVE"
   },
@@ -80,7 +80,7 @@
     "bank": 26,
     "blockPtr": 27135,
     "gfxPtr": 25599,
-    "collPtr": 5989,
+    "collPtr": 5961,
     "nameAlias": "REDS_HOUSE_2",
     "typeAlias": "INDOOR"
   },

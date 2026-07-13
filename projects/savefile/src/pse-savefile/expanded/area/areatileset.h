@@ -57,6 +57,7 @@ public:
 
   Q_INVOKABLE int talkingOverTilesCount();          ///< Number of talk-over tile slots.
   Q_INVOKABLE int talkingOverTilesAt(int ind);      ///< Talk-over tile at @p ind.
+  Q_INVOKABLE void talkingOverTilesSet(int ind, int tile); ///< Set the talk-over tile at @p ind.
   Q_INVOKABLE void talkingOverTilesSwap(int from, int to); ///< Reorder talk-over tiles.
 
 signals:

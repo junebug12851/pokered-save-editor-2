@@ -21,6 +21,7 @@
         <file>assets/data/sprites.json</file>
         <file>assets/data/font.json</file>
         <file>assets/data/tileset.json</file>
+        <file>assets/data/tileTraits.json</file>
         <file>assets/data/tmHm.json</file>
         <file>assets/data/trades.json</file>
         <file>assets/data/trainers.json</file>

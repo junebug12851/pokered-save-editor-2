@@ -25,7 +25,6 @@ Image {
 
   // Is outdoor or not, used for tilemap building and processing
   // Wired up to app-wide property
-  property bool isOutdoor: brg.settings.previewOutdoor
 
   // Tileset to reference for <tileXX> codes
   // Wired up to app-wide property
@@ -38,7 +37,7 @@ Image {
   property int tick: 1000 / 3
 
   // Strings to send to the provider
-  property string isOutdoorStr: (isOutdoor) ? "outdoor" : "indoor"
+  property string isOutdoorStr: brg.settings.previewTilesetTypeStr
 
   width: ((128 * sizeMult) < 1)
          ? 1

@@ -47,10 +47,108 @@ Page {
   readonly property int scaledWidth: brg.map.imageWidth * zoom
   readonly property int scaledHeight: brg.map.imageHeight * zoom
 
-  // The music panel is CLOSED by default, and closing it stops playback: no invisible audio, and
-  // nothing starts making noise because a screen opened. (notes/plans/music.md §6)
-  property bool musicOpen: false
+  // ── The side panels ─────────────────────────────────────────────────────────
+  //
+  // Each has its own toggle and its own column (Twilight's call), and several can be open at
+  // once. But "the map shrinks" must never become "the map disappears" -- with three 260px
+  // panels open in the default 750px window there is simply no room left, and the whole
+  // RowLayout overflows: the map is squeezed to nothing, the chip bar stops wrapping, and the
+  // panels spill over the footer. (All four of those were real, and all four were this.)
+  //
+  // So the map keeps a hard floor, and only as many panels as actually FIT can be open. Open
+  // one more than fits and the longest-open one steps aside -- predictable, never traps you,
+  // and it keeps every toggle independent the way she asked.
+  // Sized against the app's REAL default window, which is ~760 LOGICAL px (it renders at 1140
+  // physical on a 1.5x display -- measure the logical width, not the screenshot). At 760 these
+  // let two panels sit beside the map; on a resized or maximised window all three do.
+  readonly property int mapMinWidth: 280
+  readonly property int panelMinWidth: 220
+
+  readonly property int maxPanels: Math.max(1, Math.floor((width - mapMinWidth) / panelMinWidth))
+
+  /// The open panels, oldest first. The order IS the eviction order.
+  property var openPanels: []
+
+  readonly property bool tilesetOpen: openPanels.indexOf("tileset") >= 0
+  readonly property bool blocksOpen: openPanels.indexOf("blocks") >= 0
+  readonly property bool musicOpen: openPanels.indexOf("music") >= 0
+
+  function togglePanel(name) {
+    const next = openPanels.slice();
+    const at = next.indexOf(name);
+
+    if (at >= 0) {
+      next.splice(at, 1);
+    } else {
+      next.push(name);
+      while (next.length > maxPanels)
+        next.shift();          // the longest-open one gives up its column
+    }
+
+    openPanels = next;
+  }
+
+  // Shrink the window and the panels have to give way too, not overflow it.
+  onMaxPanelsChanged: {
+    if (openPanels.length <= maxPanels)
+      return;
+
+    const next = openPanels.slice();
+    while (next.length > maxPanels)
+      next.shift();
+
+    openPanels = next;
+  }
+
+  // What each open panel gets. They share what's left after the map's floor, and never take
+  // more than they need.
+  readonly property int panelWidth: Math.max(panelMinWidth,
+    Math.min(268, (width - mapMinWidth) / Math.max(1, openPanels.length)))
+
+  // Closing the music panel stops playback: no invisible audio, and nothing starts making
+  // noise because a screen opened. (notes/plans/music.md §6)
   onMusicOpenChanged: if (!musicOpen) brg.music.stop()
+
+  // Clicking a block opens the panel that explains it -- the click would otherwise do something
+  // invisible. Closing that panel drops the selection, so there is never a highlight on the map
+  // with nothing to say about it.
+  onBlocksOpenChanged: if (!blocksOpen) brg.map.clearSelection()
+
+  // Which tile of the selected block the Block panel is hovering -- mirrored onto the map, so
+  // the two views are one thing. -1 = none.
+  readonly property int hoveredTile: blockPanel.hoveredTile
+
+  // ── Handles for the DEBUG harness ───────────────────────────────────────────
+  //
+  // The harness can only SET PROPERTIES on NAMED QML ITEMS. `brg.map` is a C++ model, not an
+  // item, and its selection is a method -- so without these two there is no way for automation
+  // to switch a layer on or select a block.
+  //
+  // That matters more than it sounds: the mandatory screenshot review has to be able to reach
+  // the thing it is reviewing. A review that cannot turn the feature on is not a review. Both
+  // are plain mirrors of state the UI already owns; neither adds behaviour.
+  // (reference/dev-harness.md)
+
+  /// The shown overlay layers, as a bit set. Mirrors brg.map.layers.
+  property int layerBits: brg.map.layers
+  onLayerBitsChanged: if (brg.map.layers !== layerBits) brg.map.layers = layerBits
+
+  /// "x,y" in BUFFER pixels -> select the block there, exactly as a click would.
+  property string selectAt: ""
+  onSelectAtChanged: {
+    const p = selectAt.split(",");
+    if (p.length !== 2)
+      return;
+
+    brg.map.selectAtPixel(parseInt(p[0]), parseInt(p[1]));
+    mapScreen.showBlockPanel();
+  }
+
+  /// Open the Blocks panel if it isn't already. (togglePanel would CLOSE it if it were.)
+  function showBlockPanel() {
+    if (brg.map.hasSelection && !blocksOpen)
+      togglePanel("blocks");
+  }
 
   ColumnLayout {
     anchors.fill: parent
@@ -156,16 +254,60 @@ Page {
           Layout.maximumWidth: 210
         }
 
-        // ── Music ────────────────────────────────────────────────────────────
-        // The map's music, its two save flags, and -- the point of all of it --
-        // actually playing the thing. Closed by default: no invisible audio.
+        // ── The panels ───────────────────────────────────────────────────────
+        //
+        // One toggle each, and each opens its own column beside the map. The map is a
+        // Flickable, so it just gets narrower -- and it pans and zooms, so that costs
+        // nothing you can't get back.
+
+        // Tiles: the tileset, what animates, the grass, the counters. (map/TilesetPanel.qml)
+        ContrastStep {
+          objectName: "panelBtn_tileset"   // so the DEBUG harness can drive it
+          text: "▦"
+          Layout.leftMargin: 10   // don't crowd the contrast name
+          highlighted: mapScreen.tilesetOpen
+          onClicked: mapScreen.togglePanel("tileset")
+
+          MainToolTip { text: qsTr("Tileset — what the tiles are and what they do") }
+        }
+
+        // Blocks: what you clicked, and the block the border ring is made of.
+        ContrastStep {
+          objectName: "panelBtn_blocks"
+          text: "▣"
+          highlighted: mapScreen.blocksOpen
+          onClicked: mapScreen.togglePanel("blocks")
+
+          MainToolTip { text: qsTr("Blocks — click the map to inspect one") }
+        }
+
+        // The map's music, its two save flags, and -- the point of all of it -- actually
+        // playing the thing. Closed by default: no invisible audio.
         // See screens/non-modal/map/MusicPanel.qml and notes/plans/music.md.
         ContrastStep {
+          objectName: "panelBtn_music"
           text: "♪"
-          Layout.leftMargin: 10   // don't crowd the contrast name
-          onClicked: mapScreen.musicOpen = !mapScreen.musicOpen
+          highlighted: mapScreen.musicOpen
+          onClicked: mapScreen.togglePanel("music")
+
+          MainToolTip { text: qsTr("Music") }
         }
       }
+    }
+
+    // ── Show: the semantic layers ─────────────────────────────────────────────
+    //
+    // Walls, grass, warps, doors, ledges, counters -- none of which you can see by looking at
+    // the art. Off by default; the map is the point. Each chip carries the colour its layer
+    // paints in, so the chips ARE the legend. (map/LayerChips.qml)
+    LayerChips {
+      Layout.fillWidth: true
+    }
+
+    Rectangle {
+      Layout.fillWidth: true
+      implicitHeight: 1
+      color: brg.settings.dividerColor
     }
 
     // ── The map, and (when opened) the music panel beside it ──────────────────
@@ -179,6 +321,11 @@ Page {
 
       Layout.fillWidth: true
       Layout.fillHeight: true
+
+      // The map's floor. Without this the panels squeeze it to nothing and the whole row
+      // overflows the window -- which is what made the chip bar stop wrapping and the panels
+      // spill over the footer. The map is the screen; it does not get to vanish.
+      Layout.minimumWidth: mapScreen.mapMinWidth
 
       clip: true
       contentWidth: Math.max(width, mapScreen.scaledWidth)
@@ -220,6 +367,90 @@ Page {
           mipmap: false
           fillMode: Image.Stretch
           cache: true
+        }
+
+        // The semantic overlay -- walls, grass, warps... -- rendered by MapEngine as ONE
+        // transparent image exactly the size of the map, so it can simply sit on top.
+        //
+        // An image, not a pile of QML rectangles, and that is not premature: Route 17 is 78
+        // blocks tall, which is over 20,000 tiles. As delegates it would crawl; as an image it
+        // scales with the zoom for free and fades as one thing.
+        Image {
+          anchors.fill: parent
+          source: brg.map.overlaySource
+
+          // The map stays the point. The layers arrive, they don't slam on.
+          opacity: brg.map.layers !== 0 ? 1 : 0
+          Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+
+          smooth: false
+          mipmap: false
+          fillMode: Image.Stretch
+          cache: true
+        }
+
+        // ── Click a block ───────────────────────────────────────────────────
+        //
+        // Below the Flickable's own drag handling, so a drag still pans the map and only a
+        // genuine click selects. Selecting opens the panel that explains the selection --
+        // a click that does something invisible is a click that did nothing.
+        TapHandler {
+          onTapped: (eventPoint) => {
+            const px = Math.floor(eventPoint.position.x / mapScreen.zoom);
+            const py = Math.floor(eventPoint.position.y / mapScreen.zoom);
+
+            brg.map.selectAtPixel(px, py);
+
+            // Selecting opens the panel that explains the selection -- otherwise the click
+            // did something invisible, which is the same as doing nothing.
+            mapScreen.showBlockPanel();
+          }
+        }
+
+        // The selected block. Held ABOVE everything -- the grid, the three boxes, the player,
+        // and any overlay -- because a selection you can lose under a layer is not a selection.
+        Rectangle {
+          visible: brg.map.hasSelection
+          z: 10
+
+          x: brg.map.selectedBlockX * canvas.gridStep
+          y: brg.map.selectedBlockY * canvas.gridStep
+          width: canvas.gridStep
+          height: canvas.gridStep
+
+          color: "transparent"
+          border.width: 2
+          border.color: brg.settings.primaryColor
+
+          // A second, inner line in white: the border alone can vanish against dark trees or
+          // a glitch palette, and a selection you can't find is not a selection.
+          Rectangle {
+            anchors.fill: parent
+            anchors.margins: 2
+            color: "transparent"
+            border.width: 1
+            border.color: "#ccffffff"
+          }
+        }
+
+        // The tile the Block panel is hovering, lit up on the map. Hovering a tile in the
+        // panel and seeing it on the map is what makes the two one thing rather than two.
+        Rectangle {
+          visible: brg.map.hasSelection && mapScreen.hoveredTile >= 0
+          z: 11
+
+          readonly property int tileStep: canvas.gridStep / 4
+
+          x: brg.map.selectedBlockX * canvas.gridStep
+             + (mapScreen.hoveredTile % 4) * tileStep
+          y: brg.map.selectedBlockY * canvas.gridStep
+             + Math.floor(mapScreen.hoveredTile / 4) * tileStep
+          width: tileStep
+          height: tileStep
+
+          color: Qt.rgba(1, 1, 1, 0.30)
+          border.width: 1
+          border.color: brg.settings.primaryColor
         }
 
         // The block grid -- the 32 px cells a map is really made of.
@@ -394,10 +625,33 @@ Page {
       }
     }
 
-      // The music panel. Provisional placement -- and one file, so a redesign moves one thing.
+      // The panels. One file each, so a redesign moves one thing.
+      //
+      // Separate toggles and separate columns (Twilight's call): several can be open at once.
+      // The map is a Flickable and it pans and zooms, so the width it gives up is width you
+      // can always get back.
+
+      // A hidden panel must take NO width, or three of them still overflow the row while
+      // showing nothing. `visible: false` alone does not do that in a Layout.
+      TilesetPanel {
+        visible: mapScreen.tilesetOpen
+        Layout.preferredWidth: visible ? mapScreen.panelWidth : 0
+        Layout.maximumWidth: Layout.preferredWidth
+        Layout.fillHeight: true
+      }
+
+      BlockPanel {
+        id: blockPanel
+        visible: mapScreen.blocksOpen
+        Layout.preferredWidth: visible ? mapScreen.panelWidth : 0
+        Layout.maximumWidth: Layout.preferredWidth
+        Layout.fillHeight: true
+      }
+
       MusicPanel {
         visible: mapScreen.musicOpen
-        Layout.preferredWidth: 260
+        Layout.preferredWidth: visible ? mapScreen.panelWidth : 0
+        Layout.maximumWidth: Layout.preferredWidth
         Layout.fillHeight: true
       }
     }

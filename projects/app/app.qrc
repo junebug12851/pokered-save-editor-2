@@ -537,6 +537,11 @@
         <file>assets/images/rival-larger.png</file>
         <file>ui/app/screens/non-modal/Map.qml</file>
         <file>ui/app/screens/non-modal/map/MusicPanel.qml</file>
+        <file>ui/app/screens/non-modal/map/TilesetPanel.qml</file>
+        <file>ui/app/screens/non-modal/map/BlockPanel.qml</file>
+        <file>ui/app/screens/non-modal/map/LayerChips.qml</file>
+        <file>ui/app/screens/non-modal/map/TilePick.qml</file>
+        <file>ui/app/screens/non-modal/map/BlockPick.qml</file>
         <file>assets/icons/fontawesome/map.svg</file>
         <file>assets/icons/fontawesome/cog.svg</file>
         <file>assets/icons/fontawesome/bicycle.svg</file>
