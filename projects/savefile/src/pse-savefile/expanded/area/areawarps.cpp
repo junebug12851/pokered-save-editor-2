@@ -16,8 +16,9 @@
 
 /**
  * @file areawarps.cpp
- * @brief Implementation of AreaWarps -- the map's warp points plus the live
- *        warp-transition state. See areawarps.h for the documented API.
+ * @brief Implementation of AreaWarps -- the map's doors plus the live warp state.
+ *        See areawarps.h for the documented API, and notes/reference/warps.md for what
+ *        every one of these bytes actually is.
  */
 
 #include "./areawarps.h"
@@ -30,6 +31,62 @@
 #include <pse-db/entries/mapdbentry.h>
 #include <pse-db/util/mapsearch.h>
 #include <pse-common/random.h>
+
+// ── The two ROM tables, transcribed ────────────────────────────────────────────────────
+//
+// data/maps/special_warps.asm. Both are read by PrepareForSpecialWarp with NO bounds check,
+// and FlyWarpDataPtr has no terminator at all -- so these are not "recommended" values, they
+// are the only ones a console has an answer for. Map ids from constants/map_constants.asm.
+//
+// tst_warps cross-checks every id below against maps.json by NAME, so a typo here cannot hide.
+
+/// `FlyWarpDataPtr` -- the 13 maps a Fly / special warp may name.
+static const QVector<int> kFlyMaps = {
+  0,   // PALLET_TOWN
+  1,   // VIRIDIAN_CITY
+  2,   // PEWTER_CITY
+  3,   // CERULEAN_CITY
+  4,   // LAVENDER_TOWN
+  5,   // VERMILION_CITY
+  6,   // CELADON_CITY
+  7,   // FUCHSIA_CITY
+  8,   // CINNABAR_ISLAND
+  9,   // INDIGO_PLATEAU
+  10,  // SAFFRON_CITY
+  15,  // ROUTE_4   -- the Mt. Moon Poke Center. The game Flies you to a ROUTE, not a town.
+  21,  // ROUTE_10  -- the Rock Tunnel Poke Center.
+};
+
+/// `DungeonWarpList` -- the 12 legal (map, hole) pairs. Hole numbers are **1-based**.
+static const QVector<QPair<int, int>> kDungeonWarps = {
+  {159, 1}, {159, 2},  // SEAFOAM_ISLANDS_B1F
+  {160, 1}, {160, 2},  // SEAFOAM_ISLANDS_B2F
+  {161, 1}, {161, 2},  // SEAFOAM_ISLANDS_B3F
+  {162, 1}, {162, 2},  // SEAFOAM_ISLANDS_B4F
+  {194, 2},            // VICTORY_ROAD_2F   -- note: a hole 2 and NO hole 1.
+  {165, 1}, {165, 2},  // POKEMON_MANSION_1F
+  {214, 3},            // POKEMON_MANSION_2F
+};
+
+const QVector<int>& AreaWarps::legalFlyMaps()
+{
+  return kFlyMaps;
+}
+
+bool AreaWarps::isLegalFlyMap(int map)
+{
+  return kFlyMaps.contains(map);
+}
+
+const QVector<QPair<int, int>>& AreaWarps::legalDungeonWarps()
+{
+  return kDungeonWarps;
+}
+
+bool AreaWarps::isLegalDungeonWarp(int map, int which)
+{
+  return kDungeonWarps.contains(QPair<int, int>(map, which));
+}
 
 AreaWarps::AreaWarps(SaveFile* saveFile)
 {
@@ -95,46 +152,54 @@ void AreaWarps::load(SaveFile* saveFile)
 
   auto toolset = saveFile->toolset;
 
-  for (var8 i = 0; i < toolset->getByte(0x265A) && i < 32; i++) {
+  // wNumberOfWarps ($D3AE), then wWarpEntries ($D3AF): 32 x { Y, X, destWarp, destMap }.
+  for (var8 i = 0; i < toolset->getByte(0x265A) && i < maxWarps; i++) {
     warps.append(new WarpData(saveFile, i));
   }
 
   warpsChanged();
 
-  warpDest = toolset->getByte(0x26DB);
+  warpDest = toolset->getByte(0x26DB);          // wDestinationWarpID   $D42F
   warpDestChanged();
 
-  dungeonWarpDestMap = toolset->getByte(0x29C9);
+  dungeonWarpDestMap = toolset->getByte(0x29C9); // wDungeonWarpDestinationMap $D71D
   dungeonWarpDestMapChanged();
 
-  specialWarpDestMap = toolset->getByte(0x29C6);
+  specialWarpDestMap = toolset->getByte(0x29C6); // wDestinationMap      $D71A
   specialWarpDestMapChanged();
 
-  whichDungeonWarp = toolset->getByte(0x29CA);
+  whichDungeonWarp = toolset->getByte(0x29CA);   // wWhichDungeonWarp    $D71E
   whichDungeonWarpChanged();
 
-  scriptedWarp = toolset->getBit(0x29D9, 1, 3);
+  // wStatusFlags3 ($D72D) -- ⚠️ the console zeroes this WHOLE byte on every save load.
+  scriptedWarp = toolset->getBit(0x29D9, 1, 3);  // BIT_WARP_FROM_CUR_SCRIPT
   scriptedWarpChanged();
 
-  isDungeonWarp = toolset->getBit(0x29D9, 1, 4);
+  isDungeonWarp = toolset->getBit(0x29D9, 1, 4); // BIT_ON_DUNGEON_WARP
   isDungeonWarpChanged();
 
-  flyOrDungeonWarp = toolset->getBit(0x29DE, 1, 2);
+  // wStatusFlags6 ($D732)
+  flyOrDungeonWarp = toolset->getBit(0x29DE, 1, 2); // BIT_FLY_OR_DUNGEON_WARP
   flyOrDungeonWarpChanged();
 
-  flyWarp = toolset->getBit(0x29DE, 1, 3);
+  flyWarp = toolset->getBit(0x29DE, 1, 3);       // BIT_FLY_WARP
   flyWarpChanged();
 
-  dungeonWarp = toolset->getBit(0x29DE, 1, 4);
+  dungeonWarp = toolset->getBit(0x29DE, 1, 4);   // BIT_DUNGEON_WARP
   dungeonWarpChanged();
 
-  skipJoypadCheckWarps = toolset->getBit(0x29DF, 1, 2);
-  skipJoypadCheckWarpsChanged();
+  escapeWarp = toolset->getBit(0x29DE, 1, 6);    // BIT_ESCAPE_WARP -- Dig / Escape Rope / blackout.
+  escapeWarpChanged();                           // (Was AreaMap::blackoutDest. It never was one.)
 
-  warpedFromWarp = toolset->getByte(0x29E7);
+  // wStatusFlags7 ($D733)
+  forcedWarp = toolset->getBit(0x29DF, 1, 2);    // BIT_FORCED_WARP
+  forcedWarpChanged();
+
+  // 💀 Both written by the game on every warp; read by nothing, anywhere.
+  warpedFromWarp = toolset->getByte(0x29E7);     // wWarpedFromWhichWarp $D73B
   warpedFromWarpChanged();
 
-  warpedfromMap = toolset->getByte(0x29E8);
+  warpedfromMap = toolset->getByte(0x29E8);      // wWarpedFromWhichMap  $D73C
   warpedfromMapChanged();
 }
 
@@ -144,7 +209,7 @@ void AreaWarps::save(SaveFile* saveFile)
 
   toolset->setByte(0x265A, warps.size());
 
-  for (var8 i = 0; i < warps.size() && i < 32; i++) {
+  for (var8 i = 0; i < warps.size() && i < maxWarps; i++) {
     warps.at(i)->save(saveFile, i);
   }
 
@@ -157,7 +222,8 @@ void AreaWarps::save(SaveFile* saveFile)
   toolset->setBit(0x29DE, 1, 2, flyOrDungeonWarp);
   toolset->setBit(0x29DE, 1, 3, flyWarp);
   toolset->setBit(0x29DE, 1, 4, dungeonWarp);
-  toolset->setBit(0x29DF, 1, 2, skipJoypadCheckWarps);
+  toolset->setBit(0x29DE, 1, 6, escapeWarp);
+  toolset->setBit(0x29DF, 1, 2, forcedWarp);
   toolset->setByte(0x29E7, warpedFromWarp);
   toolset->setByte(0x29E8, warpedfromMap);
 }
@@ -170,10 +236,10 @@ void AreaWarps::reset()
   isDungeonWarp = false;
   isDungeonWarpChanged();
 
-  skipJoypadCheckWarps = false;
-  skipJoypadCheckWarpsChanged();
+  forcedWarp = false;
+  forcedWarpChanged();
 
-  warpDest = 0xFF;
+  warpDest = 0xFF; // "don't move the player" -- what PrepareForSpecialWarp itself writes.
   warpDestChanged();
 
   dungeonWarpDestMap = 0;
@@ -191,6 +257,9 @@ void AreaWarps::reset()
   dungeonWarp = false;
   dungeonWarpChanged();
 
+  escapeWarp = false;
+  escapeWarpChanged();
+
   whichDungeonWarp = 0;
   whichDungeonWarpChanged();
 
@@ -207,72 +276,54 @@ void AreaWarps::reset()
   warpsChanged();
 }
 
-void AreaWarps::randomize(MapDBEntry* map)
+/**
+ * @brief Rebuild the map's doors from @p map. **Not one state byte is touched.**
+ *
+ * ⚠️ This used to invent `dungeonWarpDestMap`, `specialWarpDestMap`, `whichDungeonWarp` and
+ * `warpedFromWarp` **at random** -- and three of the four were values no console has a table
+ * entry for (an arbitrary cave, an arbitrary map, a 0-based hole index where the game's are
+ * 1-based). It was dormant only because MapsDB is never deep-linked at boot.
+ *
+ * A map has **no opinion** about where your last Fly went, which hole you last fell down, or
+ * where you blacked out. Those are the *player's* state, they belong to whatever save is
+ * loaded, and "place the player on this map" has no business rewriting them. So it doesn't.
+ *
+ * @see notes/reference/warps.md §5.
+ */
+void AreaWarps::setTo(MapDBEntry* map)
 {
-  reset();
+  // Clear the DOORS only. The warp-transition state is the player's, not the map's.
+  for(auto warp : warps)
+    warp->deleteLater();
 
-  // Pick random map that you came from
-  auto dungeonWarp = MapsDB::inst()->search()->isGood()->isType("Cave")->pickRandom();
+  warps.clear();
 
-  // Assign index
-  dungeonWarpDestMap = dungeonWarp->getInd();
-  dungeonWarpDestMapChanged();
-
-  // Pick another random map for special warp destination
-  specialWarpDestMap = MapsDB::inst()->search()->isGood()->pickRandom()->getInd();
-  specialWarpDestMapChanged();
-
-  // Make up some random warps on said dungeon warp
-  whichDungeonWarp = Random::inst()->rangeExclusive(0, dungeonWarp->getWarpOut().size());
-  whichDungeonWarpChanged();
-
-  warpedFromWarp = Random::inst()->rangeExclusive(0, dungeonWarp->getWarpOut().size());
-  warpedFromWarpChanged();
-
-  // Re-create all map warps out, we can't blantly make-up stuff here
-  // and have to be careful
-  for(auto warpDataEntry : map->getWarpOut()) {
-    auto tmp = new WarpData(warpDataEntry);
-
-    // Randomize it so long as it's not a return warp
-    // Return warps return you back outside, for now we'll leave them as they
-    // are
-    if(tmp->destMap != 0xFF)
-      tmp->randomize();
-
-    warps.append(tmp);
+  if(map == nullptr) {
+    warpsChanged();
+    return;
   }
+
+  for(auto warpDataEntry : map->getWarpOut())
+    warps.append(new WarpData(warpDataEntry));
 
   warpsChanged();
 }
 
-void AreaWarps::setTo(MapDBEntry* map)
+/**
+ * @brief Randomize where this map's doors lead -- and **only** legal values, everywhere.
+ *
+ * The warp list is re-aimed (a "return" warp -- `destMap == 0xFF`, "back outside" -- is left
+ * alone, because rewriting it would strand the player indoors). The warp *state* is left
+ * exactly as `setTo()` leaves it: untouched. @see setTo.
+ */
+void AreaWarps::randomize(MapDBEntry* map)
 {
-  reset();
+  setTo(map);
 
-  // Pick random map that you came from
-  auto dungeonWarp = MapsDB::inst()->search()->isGood()->isType("Cave")->pickRandom();
-
-  // Assign index
-  dungeonWarpDestMap = dungeonWarp->getInd();
-  dungeonWarpDestMapChanged();
-
-  // Pick another random map for special warp destination
-  specialWarpDestMap = MapsDB::inst()->search()->isGood()->pickRandom()->getInd();
-  specialWarpDestMapChanged();
-
-  // Make up some random warps on said dungeon warp
-  whichDungeonWarp = Random::inst()->rangeExclusive(0, dungeonWarp->getWarpOut().size());
-  whichDungeonWarpChanged();
-
-  warpedFromWarp = Random::inst()->rangeExclusive(0, dungeonWarp->getWarpOut().size());
-  warpedFromWarpChanged();
-
-  // Re-create all map warps out, we can't blantly make-up stuff here
-  // and have to be careful
-  for(auto warpDataEntry : map->getWarpOut()) {
-    auto tmp = new WarpData(warpDataEntry);
-    warps.append(tmp);
+  for(auto warp : warps) {
+    // Return warps take you back outside. Leave them be.
+    if(warp->destMap != 0xFF)
+      warp->randomize();
   }
 
   warpsChanged();

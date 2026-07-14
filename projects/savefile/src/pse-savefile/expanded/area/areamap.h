@@ -58,9 +58,14 @@ class SAVEFILE_AUTOPORT AreaMap : public QObject
   Q_PROPERTY(int curMapScript MEMBER curMapScript NOTIFY curMapScriptChanged)      ///< Current map script index.
   Q_PROPERTY(int cardKeyDoorX MEMBER cardKeyDoorX NOTIFY cardKeyDoorXChanged)      ///< Card-key door X (purpose unclear).
   Q_PROPERTY(int cardKeyDoorY MEMBER cardKeyDoorY NOTIFY cardKeyDoorYChanged)      ///< Card-key door Y (purpose unclear).
-  Q_PROPERTY(bool forceBikeRide MEMBER forceBikeRide NOTIFY forceBikeRideChanged)  ///< Flag (may be unused).
-  Q_PROPERTY(bool blackoutDest MEMBER blackoutDest NOTIFY blackoutDestChanged)     ///< Flag (may be unused).
-  Q_PROPERTY(bool curMapNextFrame MEMBER curMapNextFrame NOTIFY curMapNextFrameChanged) ///< Flag (may be unused).
+  Q_PROPERTY(bool forceBikeRide MEMBER forceBikeRide NOTIFY forceBikeRideChanged)  ///< `BIT_ALWAYS_ON_BIKE` (wStatusFlags6 bit 5).
+  Q_PROPERTY(bool curMapNextFrame MEMBER curMapNextFrame NOTIFY curMapNextFrameChanged) ///< `BIT_USE_CUR_MAP_SCRIPT` (wStatusFlags7 bit 4).
+
+  // ⚠️ `blackoutDest` USED TO LIVE HERE, as a bool doc'd "Flag (may be unused)". It was neither a
+  // destination nor unused: it is **`BIT_ESCAPE_WARP`** (wStatusFlags6 bit 6) -- Dig, Escape Rope and
+  // blacking out. It moved to AreaWarps as `escapeWarp` on 2026-07-14. The blackout *destination* is
+  // a whole byte and a different field entirely: `wLastBlackoutMap`, which lives in WorldGeneral and
+  // always did. See notes/reference/warps.md.
 
 public:
   AreaMap(SaveFile* saveFile = nullptr);
@@ -95,7 +100,6 @@ signals:
   void cardKeyDoorXChanged();
   void cardKeyDoorYChanged();
   void forceBikeRideChanged();
-  void blackoutDestChanged();
   void curMapNextFrameChanged();
   void connectionsChanged();
 
@@ -137,7 +141,6 @@ public:
 
   /// Flags that may not be used, unknown
   bool forceBikeRide;
-  bool blackoutDest;
   bool curMapNextFrame;
 
   // Map Connections

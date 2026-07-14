@@ -28,6 +28,8 @@
 #include <pse-savefile/expanded/area/areageneral.h>
 #include <pse-savefile/expanded/area/areaplayer.h>
 #include <pse-savefile/expanded/area/areatileset.h>
+#include <pse-savefile/expanded/world/world.h>
+#include <pse-savefile/expanded/world/worldgeneral.h>
 #include <pse-savefile/expanded/player/player.h>
 #include <pse-savefile/expanded/player/playerpokedex.h>
 #include <pse-savefile/expanded/storage.h>
@@ -61,7 +63,11 @@ Bridge::Bridge(FileManagement* file)
                      file->data->dataExpanded->area->general,
                      file->data->dataExpanded->area->preloadedSprites,
                      file->data->dataExpanded->area->sprites,
-                     file->data->dataExpanded->area->warps)),
+                     file->data->dataExpanded->area->warps,
+                     // ⭐ `wLastMap` + `wLastBlackoutMap` -- the two most consequential warp bytes
+                     // in the save -- live in WorldGeneral, not AreaWarps, which is exactly why
+                     // nobody editing warps ever saw them. See notes/reference/warps.md §4.
+                     file->data->dataExpanded->world->general)),
     mapLayers(new MapLayersModel(map)),
     mapClock(new MapClock(map)),
     mapSim(new MapSim(map))

@@ -46,6 +46,9 @@
 #include <pse-savefile/expanded/area/areawarps.h>
 #include <pse-savefile/expanded/fragments/spritedata.h>
 #include <pse-savefile/expanded/fragments/warpdata.h>
+#include <pse-savefile/expanded/world/worldgeneral.h>
+#include <pse-db/entries/mapdbentrywarpin.h>
+#include <pse-db/entries/mapdbentrywarpout.h>
 #include <pse-common/random.h>
 
 #include "./mapmodel.h"
@@ -63,13 +66,36 @@ TilesetDBEntry* canonAt(int tilesetInd);
 /// The three tile values the SAVE owns (grass, counters, the border block). Defined next to the
 /// other engine helpers; declared here because "zoom to a random door" needs it further up.
 MapEngine::SaveTiles saveTilesOf(AreaTileset* tileset);
+
+/// The field kit. Defined further down (next to npcFields, where it was born); declared here
+/// because the WARP fields sit above it in the file and use the same kit -- which is the point of
+/// having a kit.
+QVariantMap field(const QString& group, const QString& key, const QString& label,
+                  const QString& blurb, int value, int min, int max,
+                  const QString& kind = QStringLiteral("byte"),
+                  const QVariantList& options = {},
+                  bool scratch = false);
+QVariantMap option(int value, const QString& name, bool hack = false);
 } // namespace
 
 MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
-                   AreaLoadedSprites* sprites, AreaSprites* npcs, AreaWarps* warps)
-  : sprites(sprites), npcs(npcs), warps(warps),
+                   AreaLoadedSprites* sprites, AreaSprites* npcs, AreaWarps* warps,
+                   WorldGeneral* world)
+  : sprites(sprites), npcs(npcs), warps(warps), world(world),
     map(map), player(player), tileset(tileset), general(general)
 {
+  // The doors get their own signal for exactly the reason the cast does: `changed()` re-renders the
+  // whole map image, and a warp chip sliding one tile does not change a pixel of the map.
+  if (warps != nullptr)
+    connect(warps, &AreaWarps::warpsChanged, this, &MapModel::warpsChanged);
+
+  // `wLastMap` is what every `$FF` ("back outside") door resolves through, so moving it re-labels
+  // a dozen chips at once -- which is the whole reason it sits in the toolbar and not in a panel.
+  if (world != nullptr) {
+    connect(world, &WorldGeneral::lastMapChanged, this, &MapModel::warpsChanged);
+    connect(world, &WorldGeneral::lastBlackoutMapChanged, this, &MapModel::warpsChanged);
+  }
+
   // ⚠️ THE CAST GETS ITS OWN SIGNAL, AND THIS IS THE WHOLE REASON THE WALK RAN AT 4 FPS.
   //
   // This used to be `connect(..., &MapModel::changed)`. But `changed()` is wired to `sourceChanged()`
@@ -1261,6 +1287,562 @@ QVariantList MapModel::warpPoints() const
   return out;
 }
 
+// ══ THE DOORS ═════════════════════════════════════════════════════════════════════════════════
+//
+// notes/reference/warps.md is the write-up, and it is verified against the cartridge. Nothing in
+// here is guessed, and several of the names v1 used were wrong.
+
+namespace {
+
+/// A map's display name, or a plain "Map N" if the id names nothing (a glitch id still renders).
+QString mapNameOf(int ind)
+{
+  auto* entry = MapsDB::inst()->getIndAt(QString::number(ind));
+  return (entry == nullptr) ? QObject::tr("Map %1").arg(ind) : entry->bestName();
+}
+
+/// `LAST_MAP` -- the destination that means "put me back outside", i.e. on `wLastMap`.
+constexpr int kReturnMap = 0xFF;
+
+/// How many **arrival points** map @p ind has (its ROM `warps_to` list). This -- NOT its warp count
+/// -- is what a door's `destWarp` indexes, and `LoadDestinationWarpPosition` does not bounds-check
+/// it: past the end, the console copies four arbitrary ROM bytes into the view pointer and the
+/// player's coordinates.
+int arrivalCountOf(int ind)
+{
+  auto* entry = MapsDB::inst()->getIndAt(QString::number(ind));
+  return (entry == nullptr) ? 0 : entry->getWarpIn().size();
+}
+
+} // namespace
+
+int MapModel::lastMap() const
+{
+  return (world == nullptr) ? 0 : world->lastMap;
+}
+
+void MapModel::setLastMap(int ind)
+{
+  if (world == nullptr || world->lastMap == ind)
+    return;
+
+  world->lastMap = ind & 0xFF;   // ONE byte. Nothing else moves.
+  world->lastMapChanged();
+}
+
+QString MapModel::lastMapName() const
+{
+  return mapNameOf(lastMap());
+}
+
+int MapModel::lastBlackoutMap() const
+{
+  return (world == nullptr) ? 0 : world->lastBlackoutMap;
+}
+
+void MapModel::setLastBlackoutMap(int ind)
+{
+  if (world == nullptr || world->lastBlackoutMap == ind)
+    return;
+
+  world->lastBlackoutMap = ind & 0xFF;
+  world->lastBlackoutMapChanged();
+}
+
+QString MapModel::lastBlackoutMapName() const
+{
+  return mapNameOf(lastBlackoutMap());
+}
+
+QString MapModel::warpDestLabel(int destMap, int destWarp) const
+{
+  // The $FF door. It does not name a map at all -- it means "back outside", and WHERE outside is
+  // lives in `wLastMap`. So it resolves live: change "Outside is…" and every one of these re-reads.
+  const int target = (destMap == kReturnMap) ? lastMap() : destMap;
+
+  const int arrivals = arrivalCountOf(target);
+  if (destWarp < 0 || destWarp >= arrivals)
+    return QString();   // the caller says "no such arrival point" -- it is not our job to soften it
+
+  auto* entry = MapsDB::inst()->getIndAt(QString::number(target));
+  if (entry == nullptr)
+    return QString();
+
+  MapDBEntryWarpIn* in = entry->getWarpIn().at(destWarp);
+  if (in == nullptr)
+    return QString();
+
+  return tr("→ %1, arrival point %2 (%3, %4)")
+      .arg(entry->bestName())
+      .arg(destWarp)
+      .arg(in->getX())
+      .arg(in->getY());
+}
+
+QVariantList MapModel::warpList() const
+{
+  QVariantList out;
+  if (warps == nullptr)
+    return out;
+
+  for (int i = 0; i < warps->warpCount(); i++) {
+    WarpData* w = warps->warpAt(i);
+    if (w == nullptr)
+      continue;
+
+    const bool isReturn = (w->destMap == kReturnMap);
+    const int target    = isReturn ? lastMap() : w->destMap;
+    const int arrivals  = arrivalCountOf(target);
+
+    // A door sits on a TILE, and a tile is a half-block: 16 buffer pixels. The ring is 3 blocks.
+    const int px = MapEngine::mapBorder * MapEngine::blockPx + w->x * 16;
+    const int py = MapEngine::mapBorder * MapEngine::blockPx + w->y * 16;
+
+    QVariantMap m;
+    m["ind"]      = i;
+    m["x"]        = w->x;
+    m["y"]        = w->y;
+    m["destMap"]  = w->destMap;
+    m["destWarp"] = w->destWarp;
+
+    m["rectX"] = px;
+    m["rectY"] = py;
+    m["rectW"] = 16;
+    m["rectH"] = 16;
+
+    m["isReturn"] = isReturn;
+
+    // What it SAYS on the chip and in the status bar.
+    m["destName"] = isReturn ? tr("back outside (%1)").arg(mapNameOf(lastMap()))
+                             : mapNameOf(w->destMap);
+    m["destLabel"]    = warpDestLabel(w->destMap, w->destWarp);
+    m["arrivalCount"] = arrivals;
+
+    // 🔫 The console does not bounds-check this. Shown and flagged; never refused, never rewritten.
+    m["destValid"] = (w->destWarp >= 0 && w->destWarp < arrivals);
+
+    out.append(m);
+  }
+
+  return out;
+}
+
+QVariantMap MapModel::warpAt(int ind) const
+{
+  const QVariantList all = warpList();
+  for (const QVariant& v : all) {
+    const QVariantMap m = v.toMap();
+    if (m.value("ind").toInt() == ind)
+      return m;
+  }
+  return QVariantMap();
+}
+
+void MapModel::moveWarp(int ind, int x, int y)
+{
+  if (warps == nullptr || ind < 0 || ind >= warps->warpCount())
+    return;
+
+  WarpData* w = warps->warpAt(ind);
+  if (w == nullptr)
+    return;
+
+  // Clamp to the map. A door out in the 3-block border ring is a door the player can never reach,
+  // so an overshooting drag stops at the edge rather than parking it in the trees.
+  const int mw = blocksWide() * 2;
+  const int mh = blocksHigh() * 2;
+
+  x = std::max(0, std::min(mw - 1, x));
+  y = std::max(0, std::min(mh - 1, y));
+
+  if (w->x == x && w->y == y)
+    return;
+
+  // ⚠️ EXACTLY TWO BYTES. tst_warps byte-diffs the whole 32 KB save across this call and demands
+  // that `x` and `y` are the only things in it that moved.
+  w->x = x;
+  w->xChanged();
+
+  w->y = y;
+  w->yChanged();
+
+  warpsWereEdited = true;
+  warps->warpsChanged();
+}
+
+int MapModel::addWarp(int x, int y)
+{
+  if (warps == nullptr || warpRoomLeft() <= 0)
+    return -1;
+
+  const int mw = blocksWide() * 2;
+  const int mh = blocksHigh() * 2;
+
+  x = std::max(0, std::min(mw - 1, x));
+  y = std::max(0, std::min(mh - 1, y));
+
+  warps->warpNew();
+
+  const int ind = warps->warpCount() - 1;
+  WarpData* w = warps->warpAt(ind);
+  if (w == nullptr)
+    return -1;
+
+  w->x = x;
+  w->xChanged();
+  w->y = y;
+  w->yChanged();
+
+  // The sane default, and it is not arbitrary: a door is nearly always a way OUT. `$FF` = "back
+  // outside" -- and it is the one destination that is always valid, because it resolves through
+  // `wLastMap` rather than naming a map that may have no arrival points.
+  w->destMap = kReturnMap;
+  w->destMapChanged();
+  w->destWarp = 0;
+  w->destWarpChanged();
+
+  warpsWereEdited = true;
+  warps->warpsChanged();
+  changed();   // the room left moved, and a layer may want lighting -- this one really does change things
+
+  return ind;
+}
+
+void MapModel::removeWarp(int ind)
+{
+  if (warps == nullptr || ind < 0 || ind >= warps->warpCount())
+    return;
+
+  warps->warpRemove(ind);   // the rest slide up -- the game packs its warp list and so do we
+  warpsWereEdited = true;
+  changed();
+}
+
+int MapModel::warpRoomLeft() const
+{
+  if (warps == nullptr)
+    return 0;
+
+  return std::max(0, warps->warpMax() - warps->warpCount());
+}
+
+bool MapModel::warpsEdited() const
+{
+  return warpsWereEdited;
+}
+
+QVariantList MapModel::flyWarpMapList() const
+{
+  QVariantList out;
+  for (int ind : AreaWarps::legalFlyMaps())
+    out.append(option(ind, mapNameOf(ind)));
+
+  return out;
+}
+
+QVariantList MapModel::dungeonWarpMapList() const
+{
+  QVariantList out;
+  QVector<int> seen;
+
+  for (const auto& pair : AreaWarps::legalDungeonWarps()) {
+    if (seen.contains(pair.first))
+      continue;
+
+    seen.append(pair.first);
+    out.append(option(pair.first, mapNameOf(pair.first)));
+  }
+
+  return out;
+}
+
+QVariantList MapModel::dungeonHoleList(int map) const
+{
+  QVariantList out;
+
+  for (const auto& pair : AreaWarps::legalDungeonWarps()) {
+    if (pair.first != map)
+      continue;
+
+    // ⚠️ 1-BASED. `IsPlayerOnDungeonWarp` writes `wCoordIndex`, which starts at 1 -- and Victory
+    // Road 2F has a hole **2** and no hole 1, which is why this is a per-map question and not a
+    // range. A 0 never matches anything in `DungeonWarpList`.
+    out.append(option(pair.second, tr("Hole %1").arg(pair.second)));
+  }
+
+  return out;
+}
+
+QVariantList MapModel::warpFields(int ind) const
+{
+  QVariantList ret;
+
+  if (warps == nullptr || ind < 0 || ind >= warps->warpCount())
+    return ret;
+
+  WarpData* w = warps->warpAt(ind);
+  if (w == nullptr)
+    return ret;
+
+  const QString where = tr("The door");
+
+  // X and Y are one fact, so they are one control -- the same `coords` kind the sprite panel uses.
+  ret.append(field(where, "xy", tr("Standing on"),
+                   tr("Which tile of this map is the door, counting from the top-left."),
+                   (w->x & 0xFF) | ((w->y & 0xFF) << 8), 0, 0, "coords"));
+
+  const QString leads = tr("Where it leads");
+
+  // The destination map is a REAL map picker, all 248, glitch ids labelled -- plus the one value
+  // that is not a map at all.
+  ret.append(field(leads, "destMap", tr("Takes you to"),
+                   tr("Which map the door opens onto.\n\n\"Back outside\" (255) is how every "
+                      "building's exit works: it doesn't name a map, it sends you to whatever map "
+                      "you last stood on outdoors — which you can see and change in the toolbar."),
+                   w->destMap, 0, 255, "map"));
+
+  ret.append(field(leads, "destWarp", tr("Arriving at door #"),
+                   tr("Which arrival point of that map you land on.\n\n⚠️ These are NOT the other "
+                      "map's doors — the game keeps a separate list of landing spots, and this "
+                      "counts into that. The console does not check it: point it past the end and "
+                      "it reads whatever cartridge bytes come next and drops you somewhere undefined."),
+                   w->destWarp, 0, 255, "byte"));
+
+  return ret;
+}
+
+void MapModel::setWarpField(int ind, const QString& key, int value)
+{
+  if (warps == nullptr || ind < 0 || ind >= warps->warpCount())
+    return;
+
+  WarpData* w = warps->warpAt(ind);
+  if (w == nullptr)
+    return;
+
+  if (key == "xy") {
+    // Packed x | (y << 8), the same shape the sprite panel's `coords` control speaks.
+    moveWarp(ind, value & 0xFF, (value >> 8) & 0xFF);
+    return;
+  }
+
+  if (key == "destMap") {
+    w->destMap = value & 0xFF;
+    w->destMapChanged();
+  } else if (key == "destWarp") {
+    w->destWarp = value & 0xFF;
+    w->destWarpChanged();
+  } else {
+    return;
+  }
+
+  warpsWereEdited = true;
+  warps->warpsChanged();
+}
+
+QVariantList MapModel::warpStateFields() const
+{
+  QVariantList ret;
+
+  if (warps == nullptr)
+    return ret;
+
+  // ⚠️ Same filter, same switch, same reason as the sprite panel's: a field the console rewrites on
+  // load is not hidden because it is unimportant, it is hidden because it is CLUTTER above the
+  // fields that do something. On, it appears wearing its mark. Filtered HERE, in the model, so no
+  // view can leak one and a test can prove they are gone.
+  auto add = [&](QVariantMap f) {
+    if (!showScratchFields && (f.value("scratch").toBool() || f.value("dead").toBool()))
+      return;
+
+    ret.append(f);
+  };
+
+  /// Mark a field as ⚠️ REWRITTEN ON LOAD. Console-verified: `wStatusFlags3` shares an address with
+  /// `wCableClubDestinationMap`, and `SpecialEnterMap` -- which is on the Continue path -- zeroes
+  /// it. The WHOLE byte. Wrote `$FF`, read back `$00`.
+  auto wiped = [](QVariantMap f) {
+    f["scratch"] = true;
+    f["mark"]    = QStringLiteral("wiped");
+    return f;
+  };
+
+  /// Mark a field as 💀 DEAD. It survives the save perfectly -- and nothing in the entire game
+  /// ever reads it. Two writes, zero reads, across the whole disassembly.
+  ///
+  /// ⚠️ A wiped byte and an unread byte are NOT the same fact, and lumping them together under one
+  /// grey "unused" would be the kind of hand-wave this project does not do.
+  auto dead = [](QVariantMap f) {
+    f["dead"] = true;
+    f["mark"] = QStringLiteral("dead");
+    return f;
+  };
+
+  /// Mark a field as 🔫 a value the console can be hurt by. @see AreaWarps::isLegalFlyMap.
+  auto gun = [](QVariantMap f, bool legal) {
+    f["gun"]   = true;
+    f["legal"] = legal;
+    return f;
+  };
+
+  // ── Where the special warps go ─────────────────────────────────────────────────────────────
+  const QString goes = tr("Where the special warps go");
+
+  ret.append(field(goes, "lastBlackoutMap", tr("Wake up at"),
+                   tr("Blacking out, digging out with DIG, and using an ESCAPE ROPE all bring you "
+                      "here."),
+                   lastBlackoutMap(), 0, 255, "map"));
+
+  ret.append(gun(field(goes, "specialWarpDestMap", tr("Fly sends you to"),
+                       tr("Where the last FLY (or other special warp) was headed.\n\n⚠️ Only 13 maps "
+                          "are legal here — the game looks this up in a table that has no end marker "
+                          "and no bounds check. Any other map and the console reads whatever ROM "
+                          "bytes follow the table and drops you somewhere undefined."),
+                       warps->specialWarpDestMap, 0, 255, "flyMap"),
+                 AreaWarps::isLegalFlyMap(warps->specialWarpDestMap)));
+
+  const bool holeLegal = AreaWarps::isLegalDungeonWarp(warps->dungeonWarpDestMap,
+                                                       warps->whichDungeonWarp);
+
+  ret.append(gun(field(goes, "dungeonWarpDestMap", tr("Falling drops you onto"),
+                       tr("The floor below, when you fall down a hole.\n\n⚠️ Only 7 maps have holes, "
+                          "and the map and the hole number have to MATCH — the game looks the pair up "
+                          "in a table it never bounds-checks."),
+                       warps->dungeonWarpDestMap, 0, 255, "dungeonMap"),
+                 holeLegal));
+
+  ret.append(gun(field(goes, "whichDungeonWarp", tr("…through hole #"),
+                       tr("Which hole on the floor above you fell through. The game counts these "
+                          "from 1, not 0 — and Victory Road 2F has a hole 2 and no hole 1."),
+                       warps->whichDungeonWarp, 0, 255, "dungeonHole"),
+                 holeLegal));
+
+  ret.append(field(goes, "warpDest", tr("Arriving at door #"),
+                   tr("Which arrival point of the map you are entering you will land on.\n\n255 "
+                      "means \"don't move me\" — every special warp sets that, because it has "
+                      "already placed you itself."),
+                   warps->warpDest, 0, 255, "byte"));
+
+  // ── What kind of warp is happening ─────────────────────────────────────────────────────────
+  const QString kind = tr("What kind of warp is happening");
+
+  ret.append(field(kind, "flyOrDungeonWarp", tr("A special warp is in progress"),
+                   tr("The switch the whole fly/hole/Dig path hangs off. With it off, the game "
+                      "thinks you are starting a new game and warps you to Red's bedroom."),
+                   warps->flyOrDungeonWarp ? 1 : 0, 0, 1, "flag"));
+
+  ret.append(field(kind, "flyWarp", tr("Arrive with the drop-in animation"),
+                   tr("How you land off a warp pad or a FLY — you drop in from above rather than "
+                      "just appearing."),
+                   warps->flyWarp ? 1 : 0, 0, 1, "flag"));
+
+  ret.append(field(kind, "dungeonWarp", tr("You fell down a hole"),
+                   tr("Sends the destination lookup to the hole table instead of the fly table."),
+                   warps->dungeonWarp ? 1 : 0, 0, 1, "flag"));
+
+  ret.append(field(kind, "escapeWarp", tr("Dig / Escape Rope / blacked out"),
+                   tr("Sends you to \"Wake up at\", above.\n\n(The editor used to call this "
+                      "\"blackout destination\" and treat it as a mystery flag. It is neither a "
+                      "destination nor a mystery.)"),
+                   warps->escapeWarp ? 1 : 0, 0, 1, "flag"));
+
+  ret.append(field(kind, "forcedWarp", tr("Doors fire without walking into them"),
+                   tr("Normally, stepping onto a door does nothing unless you are actually holding "
+                      "a direction — you have to walk INTO it. This removes that check, so touching "
+                      "the tile is enough.\n\nIt is how the Seafoam Islands current sweeps you along."),
+                   warps->forcedWarp ? 1 : 0, 0, 1, "flag"));
+
+  // ── ⚠️💀 The ones that do nothing — behind the switch ────────────────────────────────────────
+  //
+  // TWO DIFFERENT KINDS OF NOTHING, and the panel says which is which.
+  const QString nothing = tr("Fields that do nothing");
+
+  add(wiped(field(nothing, "scriptedWarp", tr("A script is warping you right now"),
+                  tr("Tells the game to warp you immediately, with no door needed. Exactly one "
+                     "script in the whole game uses it (Mr. Fuji carrying you out of Pokémon "
+                     "Tower).\n\n⚠️ The console ZEROES this byte every single time it loads a save "
+                     "— it shares an address with a cable-club field that gets cleared on the way "
+                     "in. Set it, save, load: it is gone. Verified on a real cartridge."),
+                  warps->scriptedWarp ? 1 : 0, 0, 1, "flag")));
+
+  add(wiped(field(nothing, "isDungeonWarp", tr("Standing on a hole"),
+                  tr("Stops wild Pokémon attacking you mid-fall.\n\n⚠️ Same byte as above, and so "
+                     "the same fate: zeroed on every save load."),
+                  warps->isDungeonWarp ? 1 : 0, 0, 1, "flag")));
+
+  add(dead(field(nothing, "warpedFromWarp", tr("Came in through door #"),
+                 tr("The game writes this every time you use a door — and then never reads it "
+                    "again.\n\n💀 Nothing anywhere in the game looks at it. It survives being saved "
+                    "perfectly; it simply does not do anything. Change it freely, and change nothing."),
+                 warps->warpedFromWarp, 0, 255, "byte")));
+
+  add(dead(field(nothing, "warpedfromMap", tr("Came from map"),
+                 tr("Same story: written on every warp, read by nothing.\n\n💀 If you are looking "
+                    "for the map a door sends you back to, that is \"Outside is…\" in the toolbar "
+                    "— a different byte entirely, and a real one."),
+                 warps->warpedfromMap, 0, 255, "map")));
+
+  return ret;
+}
+
+void MapModel::setWarpStateField(const QString& key, int value)
+{
+  if (warps == nullptr)
+    return;
+
+  if (key == "lastBlackoutMap") {
+    setLastBlackoutMap(value);
+    return;
+  }
+
+  // Every one of these writes its own byte (or its own bit) and nothing else. tst_warps byte-diffs
+  // the save across each of them.
+  if (key == "specialWarpDestMap") {
+    warps->specialWarpDestMap = value & 0xFF;
+    warps->specialWarpDestMapChanged();
+  } else if (key == "dungeonWarpDestMap") {
+    warps->dungeonWarpDestMap = value & 0xFF;
+    warps->dungeonWarpDestMapChanged();
+  } else if (key == "whichDungeonWarp") {
+    warps->whichDungeonWarp = value & 0xFF;
+    warps->whichDungeonWarpChanged();
+  } else if (key == "warpDest") {
+    warps->warpDest = value & 0xFF;
+    warps->warpDestChanged();
+  } else if (key == "flyOrDungeonWarp") {
+    warps->flyOrDungeonWarp = (value != 0);
+    warps->flyOrDungeonWarpChanged();
+  } else if (key == "flyWarp") {
+    warps->flyWarp = (value != 0);
+    warps->flyWarpChanged();
+  } else if (key == "dungeonWarp") {
+    warps->dungeonWarp = (value != 0);
+    warps->dungeonWarpChanged();
+  } else if (key == "escapeWarp") {
+    warps->escapeWarp = (value != 0);
+    warps->escapeWarpChanged();
+  } else if (key == "forcedWarp") {
+    warps->forcedWarp = (value != 0);
+    warps->forcedWarpChanged();
+  } else if (key == "scriptedWarp") {
+    warps->scriptedWarp = (value != 0);
+    warps->scriptedWarpChanged();
+  } else if (key == "isDungeonWarp") {
+    warps->isDungeonWarp = (value != 0);
+    warps->isDungeonWarpChanged();
+  } else if (key == "warpedFromWarp") {
+    warps->warpedFromWarp = value & 0xFF;
+    warps->warpedFromWarpChanged();
+  } else if (key == "warpedfromMap") {
+    warps->warpedfromMap = value & 0xFF;
+    warps->warpedfromMapChanged();
+  } else {
+    return;
+  }
+
+  emit warpsChanged();
+}
+
 QVariantMap MapModel::zoomTarget(const QString& kind)
 {
   const int border = MapEngine::mapBorder * MapEngine::blockPx;
@@ -1412,11 +1994,13 @@ namespace {
 // setting a value the game throws away. (Twilight: "animation scratch ... needs to be explained --
 // a yellow exclamation point next to it, when moused over, would say it's reloaded on game load.")
 
+// (The default arguments live on the forward declaration at the top of the file -- the warp fields
+//  sit above this point and share the kit, and a default may only be given once.)
 QVariantMap field(const QString& group, const QString& key, const QString& label,
                   const QString& blurb, int value, int min, int max,
-                  const QString& kind = QStringLiteral("byte"),
-                  const QVariantList& options = {},
-                  bool scratch = false)
+                  const QString& kind,
+                  const QVariantList& options,
+                  bool scratch)
 {
   QVariantMap m;
   m["group"]   = group;
@@ -1434,7 +2018,7 @@ QVariantMap field(const QString& group, const QString& key, const QString& label
 
 /// One named value of an enum field. `hack` marks a value no real game would hold -- shown and
 /// selectable, flagged in words, never refused.
-QVariantMap option(int value, const QString& name, bool hack = false)
+QVariantMap option(int value, const QString& name, bool hack)
 {
   QVariantMap m;
   m["value"] = value;

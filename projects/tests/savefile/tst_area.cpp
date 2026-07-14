@@ -154,7 +154,6 @@ void TestArea::areaMap_roundTrip()
   m->curMapScript = 5;
   m->cardKeyDoorX = 4; m->cardKeyDoorY = 6;
   m->forceBikeRide = true;
-  m->blackoutDest = false;
 
   sf.flattenData(); sf.expandData();
 
@@ -171,7 +170,6 @@ void TestArea::areaMap_roundTrip()
   QCOMPARE(m2->cardKeyDoorX, 4);
   QCOMPARE(m2->cardKeyDoorY, 6);
   QCOMPARE(m2->forceBikeRide, true);
-  QCOMPARE(m2->blackoutDest, false);
 }
 
 void TestArea::areaTileset_roundTrip()

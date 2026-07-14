@@ -143,8 +143,9 @@ void AreaMap::load(SaveFile* saveFile)
   forceBikeRide = toolset->getBit(0x29DE, 1, 5);
   forceBikeRideChanged();
 
-  blackoutDest = toolset->getBit(0x29DE, 1, 6);
-  blackoutDestChanged();
+  // (0x29DE bit 6 -- `BIT_ESCAPE_WARP` -- used to be read here as "blackoutDest". It is not a
+  //  destination and it is not unused; it is Dig / Escape Rope / blackout, and it now lives in
+  //  AreaWarps::escapeWarp. See notes/reference/warps.md.)
 
   curMapNextFrame = toolset->getBit(0x29DF, 1, 4);
   curMapNextFrameChanged();
@@ -191,7 +192,8 @@ void AreaMap::save(SaveFile* saveFile)
   toolset->setWord(0x27D2, mapViewVRAMPointer, true);
 
   toolset->setBit(0x29DE, 1, 5, forceBikeRide);
-  toolset->setBit(0x29DE, 1, 6, blackoutDest);
+  // 0x29DE bit 6 (BIT_ESCAPE_WARP) is AreaWarps::escapeWarp's now -- deliberately NOT written here.
+  // Two owners writing one bit is how a save gets quietly corrupted.
   toolset->setBit(0x29DF, 1, 4, curMapNextFrame);
   toolset->setByte(0x29EB, cardKeyDoorY);
   toolset->setByte(0x29EC, cardKeyDoorX);
@@ -247,14 +249,10 @@ void AreaMap::reset()
   cardKeyDoorY = 0;
   cardKeyDoorYChanged();
 
-  // Flags that may not be used, unknown
-  forceBikeRide = 0;
+  forceBikeRide = 0;   // BIT_ALWAYS_ON_BIKE
   forceBikeRideChanged();
 
-  blackoutDest = 0;
-  blackoutDestChanged();
-
-  curMapNextFrame = 0;
+  curMapNextFrame = 0; // BIT_USE_CUR_MAP_SCRIPT
   curMapNextFrameChanged();
 
   outOfBoundsBlock = 0;

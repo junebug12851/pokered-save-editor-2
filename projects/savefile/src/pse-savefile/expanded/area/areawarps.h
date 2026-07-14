@@ -23,35 +23,64 @@ class SaveFile;
 class WarpData;
 class MapDBEntry;
 
-constexpr var8 maxWarps = 32; ///< Maximum warps on a map.
+constexpr var8 maxWarps = 32; ///< Maximum warps on a map (the ROM's `MAX_WARP_EVENTS`).
 
 /**
- * @brief The current map's warps, plus the live warp-transition state.
+ * @brief The current map's doors, plus the live warp-transition state.
  *
- * Two things in one: the list of WarpData warp points (up to @ref maxWarps, with
- * QML add/remove/swap/access), and a set of transient flags describing an
- * in-progress warp -- whether it's scripted/dungeon/fly, the destinations, and
- * where the player warped @e from. The field comments below give each flag's
- * meaning. Standard expanded-node convention (see SaveFileExpanded).
+ * Two things in one: the list of WarpData **warp points** (up to @ref maxWarps), and the
+ * dozen bytes that describe a warp **in flight** -- fly, hole, Dig, scripted.
  *
- * @see WarpData (a warp point), Area, MapDBEntry.
+ * ⚠️ **Read `notes/reference/warps.md` before touching any of this.** It is verified against
+ * the cartridge, and several of these fields are not what v1 called them:
+ *
+ * - **The warp list is LIVE on Continue.** `LoadMapHeader` rebuilds it from ROM on every map
+ *   load -- but `LoadMainData` sets `BIT_NO_PREVIOUS_MAP` on the saved tileset byte as it
+ *   reads the save, which makes the very next `LoadMapHeader` bail out before it copies
+ *   anything. So an edited warp really is there. The game restores the map's original doors
+ *   the moment the player leaves the map and walks back in.
+ * - ⚠️ **@ref scriptedWarp and @ref isDungeonWarp CANNOT survive a save.** They live in
+ *   `wStatusFlags3`, which shares an address with `wCableClubDestinationMap` -- and
+ *   `SpecialEnterMap`, on the Continue path, writes 0 to it. **The whole byte is zeroed on
+ *   every load** (console-verified: wrote `$FF`, read back `$00`).
+ * - 💀 **@ref warpedFromWarp and @ref warpedfromMap are DEAD.** The game writes them on every
+ *   warp and **nothing anywhere reads them**. Two writes, zero reads, game-wide.
+ * - 🔫 **@ref specialWarpDestMap and the @ref dungeonWarpDestMap / @ref whichDungeonWarp pair
+ *   are LOADED GUNS.** Their lookup tables have no bounds check. @see isLegalFlyMap,
+ *   isLegalDungeonWarp.
+ *
+ * The two bytes that matter most for warps -- `wLastMap` (where a `$FF` door returns you) and
+ * `wLastBlackoutMap` (where Dig / Escape Rope / blacking out put you) -- are **not here**.
+ * They live in WorldGeneral, and always did.
+ *
+ * @see WarpData (a warp point), Area, MapDBEntry, notes/reference/warps.md.
  */
 class SAVEFILE_AUTOPORT AreaWarps : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool scriptedWarp MEMBER scriptedWarp NOTIFY scriptedWarpChanged)                 ///< Do a scripted warp.
-  Q_PROPERTY(bool isDungeonWarp MEMBER isDungeonWarp NOTIFY isDungeonWarpChanged)              ///< On a dungeon warp.
-  Q_PROPERTY(bool skipJoypadCheckWarps MEMBER skipJoypadCheckWarps NOTIFY skipJoypadCheckWarpsChanged) ///< Forced-warp joypad skip.
-  Q_PROPERTY(int warpDest MEMBER warpDest NOTIFY warpDestChanged)                              ///< Active warp destination (0xFF = same position).
-  Q_PROPERTY(int dungeonWarpDestMap MEMBER dungeonWarpDestMap NOTIFY dungeonWarpDestMapChanged) ///< Dungeon-warp destination map.
-  Q_PROPERTY(int specialWarpDestMap MEMBER specialWarpDestMap NOTIFY specialWarpDestMapChanged) ///< Special-warp destination map.
-  Q_PROPERTY(bool flyOrDungeonWarp MEMBER flyOrDungeonWarp NOTIFY flyOrDungeonWarpChanged)     ///< Is a fly or dungeon warp.
-  Q_PROPERTY(bool flyWarp MEMBER flyWarp NOTIFY flyWarpChanged)                                ///< Is a fly warp.
-  Q_PROPERTY(bool dungeonWarp MEMBER dungeonWarp NOTIFY dungeonWarpChanged)                    ///< Is a dungeon warp.
-  Q_PROPERTY(int whichDungeonWarp MEMBER whichDungeonWarp NOTIFY whichDungeonWarpChanged)      ///< Warped from which dungeon warp.
-  Q_PROPERTY(int warpedFromWarp MEMBER warpedFromWarp NOTIFY warpedFromWarpChanged)            ///< Warped from which warp.
-  Q_PROPERTY(int warpedfromMap MEMBER warpedfromMap NOTIFY warpedfromMapChanged)               ///< Warped from which map.
+  // ── Group C: a script wants a warp (wStatusFlags3 -- ZEROED ON EVERY LOAD) ─────────────
+  Q_PROPERTY(bool scriptedWarp MEMBER scriptedWarp NOTIFY scriptedWarpChanged)                 ///< `BIT_WARP_FROM_CUR_SCRIPT`. ⚠️ Wiped on load.
+  Q_PROPERTY(bool isDungeonWarp MEMBER isDungeonWarp NOTIFY isDungeonWarpChanged)              ///< `BIT_ON_DUNGEON_WARP`. ⚠️ Wiped on load.
+
+  // ── Group D: the joypad rule (wStatusFlags7) ──────────────────────────────────────────
+  Q_PROPERTY(bool forcedWarp MEMBER forcedWarp NOTIFY forcedWarpChanged)                       ///< `BIT_FORCED_WARP` -- doors fire without walking into them.
+
+  // ── Group B: where does it go ─────────────────────────────────────────────────────────
+  Q_PROPERTY(int warpDest MEMBER warpDest NOTIFY warpDestChanged)                              ///< `wDestinationWarpID`. `0xFF` = don't move the player.
+  Q_PROPERTY(int dungeonWarpDestMap MEMBER dungeonWarpDestMap NOTIFY dungeonWarpDestMapChanged) ///< `wDungeonWarpDestinationMap`. 🔫
+  Q_PROPERTY(int specialWarpDestMap MEMBER specialWarpDestMap NOTIFY specialWarpDestMapChanged) ///< `wDestinationMap`. 🔫
+  Q_PROPERTY(int whichDungeonWarp MEMBER whichDungeonWarp NOTIFY whichDungeonWarpChanged)      ///< `wWhichDungeonWarp`. **1-based.** 🔫
+
+  // ── Group A: a warp is happening (wStatusFlags6) ──────────────────────────────────────
+  Q_PROPERTY(bool flyOrDungeonWarp MEMBER flyOrDungeonWarp NOTIFY flyOrDungeonWarpChanged)     ///< `BIT_FLY_OR_DUNGEON_WARP` -- a special warp is in progress.
+  Q_PROPERTY(bool flyWarp MEMBER flyWarp NOTIFY flyWarpChanged)                                ///< `BIT_FLY_WARP` -- arrive with the drop-in animation.
+  Q_PROPERTY(bool dungeonWarp MEMBER dungeonWarp NOTIFY dungeonWarpChanged)                    ///< `BIT_DUNGEON_WARP` -- you fell down a hole.
+  Q_PROPERTY(bool escapeWarp MEMBER escapeWarp NOTIFY escapeWarpChanged)                       ///< `BIT_ESCAPE_WARP` -- Dig / Escape Rope / blacked out. (Was `AreaMap::blackoutDest`, which it never was.)
+
+  // ── Group E: where you came from -- 💀 DEAD. Written by the game, read by nothing. ─────
+  Q_PROPERTY(int warpedFromWarp MEMBER warpedFromWarp NOTIFY warpedFromWarpChanged)            ///< `wWarpedFromWhichWarp`. 💀 Nothing reads it.
+  Q_PROPERTY(int warpedfromMap MEMBER warpedfromMap NOTIFY warpedfromMapChanged)               ///< `wWarpedFromWhichMap`. 💀 Nothing reads it.
 
 public:
   AreaWarps(SaveFile* saveFile = nullptr);
@@ -67,44 +96,73 @@ public:
   Q_INVOKABLE void warpRemove(int ind);    ///< Remove warp @p ind.
   Q_INVOKABLE void warpNew();              ///< Add a fresh warp.
 
+  // ── 🔫 The legal-value tables ────────────────────────────────────────────────────────
+  //
+  // `PrepareForSpecialWarp` (engine/overworld/special_warps.asm) looks both destinations up in
+  // ROM tables that have **no bounds check** -- and `FlyWarpDataPtr` has no terminator at all.
+  // A value outside them makes the console run off the end of the table, read whatever bytes
+  // follow as a pointer, and copy six arbitrary ROM bytes into the view pointer + the player's
+  // coordinates.
+  //
+  // We do not REFUSE an illegal value -- every byte the save can hold stays editable -- we
+  // simply know which ones they are, so the screen can say so. @see notes/reference/warps.md §5.
+
+  /// The **13** maps `wDestinationMap` may legally name (`FlyWarpDataPtr`, data/maps/special_warps.asm).
+  static const QVector<int>& legalFlyMaps();
+
+  /// Is @p map one of them?
+  static bool isLegalFlyMap(int map);
+
+  /// The **12** legal `(dungeonWarpDestMap, whichDungeonWarp)` pairs (`DungeonWarpList`).
+  /// Hole numbers are **1-based** -- `IsPlayerOnDungeonWarp` writes `wCoordIndex`, which starts at 1.
+  static const QVector<QPair<int, int>>& legalDungeonWarps();
+
+  /// Is this pair one of them? (A legal map with the wrong hole number is just as broken as an
+  /// illegal map -- Victory Road 2F has a hole 2 and no hole 1.)
+  static bool isLegalDungeonWarp(int map, int which);
+
 signals:
   void scriptedWarpChanged();
   void isDungeonWarpChanged();
-  void skipJoypadCheckWarpsChanged();
+  void forcedWarpChanged();
   void warpDestChanged();
   void dungeonWarpDestMapChanged();
   void specialWarpDestMapChanged();
   void flyOrDungeonWarpChanged();
   void flyWarpChanged();
   void dungeonWarpChanged();
+  void escapeWarpChanged();
   void whichDungeonWarpChanged();
   void warpedFromWarpChanged();
   void warpedfromMapChanged();
   void warpsChanged();
 
 public slots:
-  void reset();                ///< Empty warps + clear state.
-  void randomize(MapDBEntry* map); ///< Randomize warps for @p map.
-  void setTo(MapDBEntry* map);     ///< Rebuild warps from @p map.
+  void reset();                    ///< Empty warps + clear state.
+  void randomize(MapDBEntry* map); ///< Randomize the warp list. Legal values only.
+  void setTo(MapDBEntry* map);     ///< Rebuild the warp list from @p map. **Touches no state byte.**
 
 public:
-  // Pre-Warp
-  bool scriptedWarp; ///< Do a scripted warp
-  bool isDungeonWarp; ///< On a dungeon warp
-  bool skipJoypadCheckWarps; ///< Skips check for warp after not collided (Forced Warp)??
+  // Pre-Warp -- ⚠️ wStatusFlags3. The console ZEROES this whole byte on every save load.
+  bool scriptedWarp;  ///< `BIT_WARP_FROM_CUR_SCRIPT` -- "warp me now, no tile needed".
+  bool isDungeonWarp; ///< `BIT_ON_DUNGEON_WARP` -- "standing on a hole" (suppresses wild battles).
+  bool forcedWarp;    ///< `BIT_FORCED_WARP` -- a door fires the instant you touch it, without
+                      ///  having to walk *into* it. How the Seafoam current sweeps you along.
 
   // Warping
-  int warpDest; ///< Warp actively warping to or 0xFF to warp to same position
-  int dungeonWarpDestMap; ///< Destination Map for dungeon warps
-  int specialWarpDestMap; ///< Destination Map for special warps
-  bool flyOrDungeonWarp; ///< Is a fly or dungeon warp
-  bool flyWarp; ///< Is a fly warp
-  bool dungeonWarp; ///< Is a dungeon warp
+  int warpDest;           ///< `wDestinationWarpID` -- which arrival point of the map you're entering.
+                          ///  `0xFF` = "don't move the player" (every special warp sets this).
+  int dungeonWarpDestMap; ///< `wDungeonWarpDestinationMap` -- the floor a hole drops you onto. 🔫
+  int specialWarpDestMap; ///< `wDestinationMap` -- where Fly / the Hall of Fame / the Cable Club go. 🔫
+  bool flyOrDungeonWarp;  ///< `BIT_FLY_OR_DUNGEON_WARP` -- a special warp is in progress.
+  bool flyWarp;           ///< `BIT_FLY_WARP` -- arrive with the drop-in animation.
+  bool dungeonWarp;       ///< `BIT_DUNGEON_WARP` -- you fell down a hole.
+  bool escapeWarp;        ///< `BIT_ESCAPE_WARP` -- Dig / Escape Rope / blacked out.
 
-  // Warped
-  int whichDungeonWarp; ///< Warped from which dungeon warp
-  int warpedFromWarp; ///< Warped from which warp
-  int warpedfromMap; ///< Warped from which map
+  // Warped -- 💀 both DEAD. The game writes them on every warp and never reads them.
+  int whichDungeonWarp; ///< `wWhichDungeonWarp` -- which hole you fell through. **1-based.** 🔫
+  int warpedFromWarp;   ///< `wWarpedFromWhichWarp`. 💀
+  int warpedfromMap;    ///< `wWarpedFromWhichMap`. 💀
 
-  QVector<WarpData*> warps; ///< The map's warp points.
+  QVector<WarpData*> warps; ///< The map's doors.
 };

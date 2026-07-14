@@ -31,6 +31,7 @@ class AreaWarps;
 class AreaMap;
 class AreaPlayer;
 class AreaTileset;
+class WorldGeneral;
 
 /**
  * @brief The loaded map, ready to draw: one image URL and four rectangles.
@@ -214,9 +215,127 @@ class MapModel : public QObject
   Q_PROPERTY(bool spriteSetMatchesMap READ spriteSetMatchesMap NOTIFY changed)
 
 public:
+  // ── The doors (warps) ─────────────────────────────────────────────────────────
+  //
+  // ⚠️ Read notes/reference/warps.md. The short version, because it changes what this API means:
+  //
+  // An edited warp is **genuinely live** on Continue. `LoadMapHeader` rebuilds the warp list from
+  // ROM on every map load -- but `LoadMainData` sets `BIT_NO_PREVIOUS_MAP` on the saved tileset
+  // byte as it reads the save, so the very next `LoadMapHeader` bails out before it copies
+  // anything. Verified on the cartridge, including a 4th warp invented in a 3-warp town.
+  //
+  // And the game puts the map's original doors back the moment the player leaves and walks in
+  // again. Which the screen SAYS. @see warpsEdited.
+
+  /// **Where a `$FF` door takes you** -- `wLastMap`, and the most consequential warp byte there is.
+  /// Every building's exit warp is `$FF` ("back outside"); this is the map it means. It lives in
+  /// WorldGeneral, not AreaWarps, which is exactly why nobody editing warps ever saw it.
+  Q_PROPERTY(int lastMap READ lastMap WRITE setLastMap NOTIFY warpsChanged)
+  Q_PROPERTY(QString lastMapName READ lastMapName NOTIFY warpsChanged)
+
+  /// **Where you wake up** -- `wLastBlackoutMap`. Blacking out, Dig and Escape Rope all land here.
+  Q_PROPERTY(int lastBlackoutMap READ lastBlackoutMap WRITE setLastBlackoutMap NOTIFY warpsChanged)
+  Q_PROPERTY(QString lastBlackoutMapName READ lastBlackoutMapName NOTIFY warpsChanged)
+
+  int lastMap() const;
+  void setLastMap(int ind);
+  QString lastMapName() const;
+
+  int lastBlackoutMap() const;
+  void setLastBlackoutMap(int ind);
+  QString lastBlackoutMapName() const;
+
+  /**
+   * @brief Every door on this map: `{ ind, x, y, destMap, destWarp, rectX/Y/W/H, isReturn,
+   *        destName, destLabel, destValid, arrivalCount }`.
+   *
+   * `x`/`y` are map TILES (what a player would count); the `rect*` are BUFFER pixels, the ring
+   * included, so the canvas can draw a chip straight on them.
+   *
+   * `isReturn` is the `$FF` door -- "back outside" -- and `destName` then resolves through
+   * @ref lastMap, live, so changing "Outside is…" re-labels every one of them at once.
+   *
+   * `destValid` is false when the destination map has no arrival point with that index: the
+   * console would copy four arbitrary ROM bytes into the view pointer and the player's coords.
+   * Shown, flagged, **never refused**.
+   */
+  Q_INVOKABLE QVariantList warpList() const;
+
+  /// One door, as @ref warpList shapes it -- or an empty map. What the Details panel reads.
+  Q_INVOKABLE QVariantMap warpAt(int ind) const;
+
+  /// Move door @p ind to map tile (@p x, @p y). **Exactly two bytes.** The drag-on-canvas path.
+  Q_INVOKABLE void moveWarp(int ind, int x, int y);
+
+  /// Put a new door at map tile (@p x, @p y). It defaults to `$FF` ("back outside"), because that
+  /// is what a door usually is. @return its index, or -1 if the map already has @ref warpRoomLeft
+  /// of 0 -- and the caller is expected to have said so *before* the click, not after.
+  Q_INVOKABLE int addWarp(int x, int y);
+
+  /// Delete door @p ind. The rest slide up -- the game packs its warp list and so do we.
+  ///
+  /// ⚠️ **Every other door that pointed at an arrival point on THIS map is unaffected** (they name
+  /// arrival points, not warps), but a door on this map pointing at an index *past* the new count
+  /// of some other map is not our business either. What compaction really breaks is nothing in the
+  /// save -- the warp list is positional and the game reads it positionally.
+  Q_INVOKABLE void removeWarp(int ind);
+
+  /// How many more doors this map can hold (32 max). 0 means the tool is dead, and we say so
+  /// *before* the click rather than swallowing it.
+  Q_INVOKABLE int warpRoomLeft() const;
+
+  /// Every editable byte of door @p ind, named and explained -- the Details panel's content.
+  /// Same `{ group, key, label, blurb, value, min, max, kind, options, scratch }` shape as
+  /// @ref npcFields, so the field kit draws it with no new code.
+  Q_INVOKABLE QVariantList warpFields(int ind) const;
+
+  /// Write one of @ref warpFields' keys on door @p ind. `xy` arrives packed as `x | (y << 8)`.
+  Q_INVOKABLE void setWarpField(int ind, const QString& key, int value);
+
+  /**
+   * @brief The map's warp STATE -- the twelve bytes around the doors, each named in English.
+   *
+   * Same field shape again, plus two markers that are **different facts** and must not be
+   * collapsed into one grey "unused":
+   *
+   *  | marker | means |
+   *  |--------|-------|
+   *  | `scratch` | ⚠️ **The console rewrites this on load.** `wStatusFlags3` shares an address with `wCableClubDestinationMap` and `SpecialEnterMap` zeroes it -- so the *whole byte* dies on every Continue. Console-verified. |
+   *  | `dead`    | 💀 **It survives perfectly, and nothing in the game ever reads it.** Two writes, zero reads, across the whole disassembly. |
+   *  | `gun`     | 🔫 **The console has no table entry for most values of this.** @see AreaWarps::isLegalFlyMap. |
+   *
+   * Both `scratch` kinds are filtered out unless @ref showScratch -- the same switch, and the same
+   * reason, as the sprite panel's.
+   */
+  Q_INVOKABLE QVariantList warpStateFields() const;
+
+  /// Write one of @ref warpStateFields' keys.
+  Q_INVOKABLE void setWarpStateField(const QString& key, int value);
+
+  /// The **13** maps a Fly / special warp may legally name: `{ value, name, hack }`.
+  /// (`hack` is never true here -- this list *is* the clean set. @see mapList for all 248.)
+  Q_INVOKABLE QVariantList flyWarpMapList() const;
+
+  /// The **7** maps a hole may legally drop you onto: `{ value, name }`.
+  Q_INVOKABLE QVariantList dungeonWarpMapList() const;
+
+  /// The legal hole numbers for @p map (1-based). Empty if @p map has no holes -- and Victory
+  /// Road 2F has a hole **2** and no hole 1, which is exactly why this is a per-map question.
+  Q_INVOKABLE QVariantList dungeonHoleList(int map) const;
+
+  /// "→ Viridian City, arrival point 2 (11, 5)" -- resolved, in words. Empty when it resolves to
+  /// nothing, so the caller can say *that* instead.
+  Q_INVOKABLE QString warpDestLabel(int destMap, int destWarp) const;
+
+  /// Has the user changed this map's doors in this session? @see npcsEdited -- same rule, same
+  /// reason (we track the EDIT, never a diff against the ROM), and the same sentence is owed:
+  /// the game restores the map's original doors when the player leaves and walks back in.
+  Q_INVOKABLE bool warpsEdited() const;
+
+public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
            AreaLoadedSprites* sprites = nullptr, AreaSprites* npcs = nullptr,
-           AreaWarps* warps = nullptr);
+           AreaWarps* warps = nullptr, WorldGeneral* world = nullptr);
 
   bool valid() const;
   QString source() const;
@@ -652,6 +771,18 @@ signals:
    */
   void castChanged();
 
+  /**
+   * @brief A DOOR moved, or was added, deleted or re-aimed -- and nothing else did.
+   *
+   * The warp analogue of @ref castChanged, and for the same performance reason: `changed()` is
+   * wired to `sourceChanged()`, so emitting it re-renders the whole map image. A warp chip moving
+   * does not change one pixel of the map.
+   *
+   * (An edit that really can change everything else -- adding a door, which changes the room left
+   * and can light a layer -- emits `changed()` as well.)
+   */
+  void warpsChanged();
+
   /// The "Reloaded values" switch moved -- the Details panel has a different set of fields now.
   void showScratchChanged();
 
@@ -675,10 +806,14 @@ private:
 
   AreaLoadedSprites* sprites = nullptr; ///< The save's live sprite-set cache (may be null in tests).
   AreaSprites* npcs = nullptr;    ///< The save's live map cast -- the 16 sprite slots (may be null).
-  AreaWarps* warps = nullptr;     ///< The map's warp points (may be null in tests).
+  AreaWarps* warps = nullptr;     ///< The map's doors (may be null in tests).
+  WorldGeneral* world = nullptr;  ///< Where `wLastMap` + `wLastBlackoutMap` actually live.
 
   /// @see npcsEdited. Set by any edit to the cast; never by loading one.
   bool castEdited = false;
+
+  /// @see warpsEdited. Set by any edit to the doors; never by loading them.
+  bool warpsWereEdited = false;
 
   /// @see showScratch. OFF -- it is clutter, and it is a third of the panel.
   bool showScratchFields = false;

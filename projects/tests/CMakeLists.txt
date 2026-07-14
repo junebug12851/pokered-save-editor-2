@@ -173,6 +173,19 @@ if(TARGET appcore)
     set_tests_properties(tst_map_sprites PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_map_sprites)
 
+    # THE DOORS -- the warp list, the twelve state bytes, and the two loaded guns. Its keystones are
+    # `moveWarp_writesExactlyTwoBytes` (byte-diff the whole 32 KB across a drag) and
+    # `setTo_touchesNoStateByte` (the regression guard for the randomizer bug this phase fixed).
+    # See notes/reference/warps.md -- verified against the cartridge.
+    qt_add_executable(tst_warps
+        mvc/tst_warps.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_warps PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_warps PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_warps COMMAND tst_warps)
+    set_tests_properties(tst_warps PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_warps)
+
     qt_add_executable(tst_map_layers
         mvc/tst_map_layers.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
