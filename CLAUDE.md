@@ -35,6 +35,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/gen1-sound-engine.md` | **The game's sequencer** — the byte-code that drives that chip: the full `$10`–`$FF` command set, the header format, the 3 banks (2/8/31 — and **engine 1 == engine 3**, so build ONE engine), the pitch table's signed-negative trick, the load-bearing bugs to copy verbatim, the **243-byte state at `$C000`** (the verification oracle), and the **two save flags verified**: `0x29D8` bit 1 = `BIT_NO_AUDIO_FADE_OUT`, `0x29DF` bit 1 = `BIT_NO_MAP_MUSIC`. Plan: `plans/music.md` |
 | `notes/reference/glitch-music.md` | **Glitch music ids** — verified on the cartridge. Most "glitch" ids are NOT garbage: a header is 3 bytes per channel, so a 3-channel song eats 3 ids and the spares are its **inner voices** (id 187 = Pallet Town's bassline, alone). **105 of them**, all playable from the data we already import → **151 tracks for the price of 46**. SFX ids play a sound effect once; id 0 fades out then hits a drum; id 255 is silence. ⚠️ The **BANK** byte is a loaded gun: an invalid bank executes arbitrary ROM as code — **the console hangs**. Tools: `scripts/emu/analyze_music_ids.py`, `scripts/emu/probe_glitch_music.py` |
 | `notes/reference/map-animation.md` | **The map, ANIMATED** — what the console does every frame, verified against the disassembly: `UpdateMovingBgTiles`, the **one save byte** (`0x3522`) that drives it, the **20/21-frame cadence**, the fact that **water has no frames — its tile's 16 bytes are bit-ROTATED** (right ×4, left ×4), the flower's `1,1,2,3`, the coupled counters, what **hack values** do (odd → water-only, even → water+flower; **0 breaks Surf**), the sprite traps, and the **determinism rule** (renderer takes a frame number; screenshots/tests render frame 0). **Read before any map animation work** |
+| `notes/reference/warps.md` | **Warps** — the doors, and the twelve bytes around them. **The linchpin**: `LoadMainData` *sets* `BIT_NO_PREVIOUS_MAP` on the saved tileset byte, so `LoadMapHeader` **bails out on Continue** and the save's own warp list is the one the console runs on (the game restores the map's original doors on re-entry — the sprite rule, again). The traps: **`wStatusFlags3` is ZEROED on every load** (it shares a byte with `wCableClubDestinationMap`, which `SpecialEnterMap` clears) so `scriptedWarp`/`isDungeonWarp` — and `npcsFaceAway`, `tradeCenterSpritesFaced`, `isBattle`, `isTrainerBattle` — **can never survive a save**; `wWarpedFromWhichWarp`/`Map` are **written and never read** (dead); and **two destination bytes are loaded guns** (`wDestinationMap` has **13** legal values, the dungeon map+hole pair has **12**, neither is bounds-checked) — which `AreaWarps::setTo()`/`randomize()` currently fill with **random illegal values**. The two bytes that actually matter (`wLastMap`, `wLastBlackoutMap`) live in `WorldGeneral`, not `AreaWarps`. **All verified on the cartridge** (`scripts/emu/probe_warp_persistence.py`). Plan: `plans/map-screen.md` → Phase 5 |
 | `notes/reference/sprite-sets.md` | **Sprite sets** (v1's "cached sprites") — the Game Boy holds only **11** overworld sprite pictures (9 walking + 2 still), so every outdoor map names one of **10 sets** (Pallet & Viridian, Pewter & Cerulean, … Fuchsia); 12 big routes **split** on a dividing line. The save caches the 11 pictures + the set id at `0x2649–0x2654` — and **the game throws it away**: `LoadMapData` zeroes the id on every map load (CONTINUE included) and `InitOutsideMapSprites` recomputes it. ⚠️ A **split id (`$F1`–`$FC`) is never stored** — the console resolves it first (was a real bug in our `loadSpriteSet`, fixed 2026-07-13) |
 | `notes/reference/emulator-verification.md` | **The actual Game Boy checks our work** — `tst_emu_parity` boots the real ROM (PyBoy, headless) with one of our saves, reads the console's own RAM + framebuffer, and demands `MapEngine` match byte-for-byte. Setup, the ROM rules (git-ignored, never committed/shipped; SKIPs without it), licensing, and the traps (the "has the save loaded?" trap; `wCurMapTileset` bit 7). **Read before any map/render work** — it is the oracle |
 | `notes/reference/dev-harness.md` | **Debug automation harness + fast-dev loop** — DEBUG-only launch flags (`--sav`/`--screen`/`--hot`/`--shot`), the `127.0.0.1:8766` live TCP control channel, and QML hot-reload. How to launch straight to the screen under edit with a save loaded and preview edits live |
@@ -74,6 +75,36 @@ Deviating is a decision that has to be argued for and written down in
 nobody looked.
 
 Full write-up: [`notes/reference/file-formats.md`](notes/reference/file-formats.md).
+
+## RESEARCH LANDS IN THE NOTES — every time, by default (a standing rule, 2026-07-14, Twilight)
+
+> **If you understood something you did not understand before, WRITE IT DOWN — in `notes/`, in the same
+> session, without being asked.**
+
+Not "if it seems important". Not "at the end of the project". **By default, in every chat.** A new or
+expanded understanding — a save byte's real name, what a routine actually does, a value the console
+can't survive, a field that turns out to be dead, a bug the model has been carrying — is the most
+perishable thing this project produces, and it is worth more than the code that came out of it. Code
+can be rewritten from notes. Notes cannot be rewritten from code.
+
+**The shape of a research pass, and none of these steps is optional:**
+
+1. **Go to the primary source.** `pret/pokered` for the game, the cartridge for the truth. Not memory,
+   not v1, not what the field is *called*.
+2. **Ask the console when it matters.** `scripts/emu/` — a careful reading of the assembly has been
+   **wrong before** (the sprite persistence pass, 2026-07-13) and the emulator caught it. If a
+   conclusion is load-bearing, **probe it**, and commit the probe.
+3. **Write the reference note** — `notes/reference/<topic>.md`: real names, addresses, ranges, who
+   writes it, who reads it, what a console does with a hack value, and the traps. Plain English, so a
+   person who does not already know the domain can learn it from the file.
+4. **Say what it means for OUR code.** Every research pass so far has found real bugs in the model
+   (sprites: four; tilesets: three wrong collision pointers; warps: seven). List them, and fix them in
+   a phase of their own **before** any UI is built on top.
+5. **Wire it up** — a row in this file's notes table, a `\subpage` in `notes/_nav.dox`, a line in
+   `notes/status.md`, an entry in today's session log, and the plan it feeds.
+
+**Then, and only then, design the UI.** A screen built on a field whose name is a guess is a screen
+that will have to be built twice.
 
 ## Critical Things Not to Get Wrong
 
@@ -298,6 +329,9 @@ As things happen during a session, update the appropriate file on the spot:
 | Fixed a compiler or runtime error | Add a row to `notes/reference/fix-patterns.md` |
 | Hit a Qt 5 → Qt 6 difference or any Qt/QML landmine | Add a section/row to `notes/reference/qt-patterns.md` |
 | Used a diagnostic technique to find a problem | Add/update `notes/reference/diagnostic-methods.md` |
+| **Learned ANYTHING new about the game, the save format, or the hardware** | **Write it into the right `notes/reference/` file — create one if the topic is new. Not optional, not deferred.** See "RESEARCH LANDS IN THE NOTES" above |
+| **Verified something against the real cartridge** | Commit the probe under `scripts/emu/` and quote the console's own output in the note. A claim the console checked is worth ten that it didn't |
+| **Found that a save field's name/behaviour in our model is WRONG** | Record it in the reference note **and** open a phase to fix the model *before* any UI is built on it (the sprite/tileset/warp precedent) |
 | Made a structural decision | Add to `notes/decisions/architecture.md` |
 | Tried something that failed | Add to `notes/decisions/rejected.md` |
 | Completed a task or unblocked something | Update `notes/plans/next-steps.md` |

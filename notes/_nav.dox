@@ -66,6 +66,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \page pse_sessions_2026_07 July 2026
 \brief Daily session logs for July 2026 (`notes/sessions/2026-07/`).
 
+\subpage md_notes_2sessions_22026-07_22026-07-14 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-13 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-12 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-11 <br>
@@ -147,6 +148,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \subpage md_notes_2reference_2tiles <br>
 \subpage md_notes_2reference_2map-animation <br>
 \subpage md_notes_2reference_2sprite-sets <br>
+\subpage md_notes_2reference_2warps <br>
 \subpage md_notes_2reference_2gameboy-apu <br>
 \subpage md_notes_2reference_2gen1-sound-engine <br>
 \subpage md_notes_2reference_2glitch-music <br>

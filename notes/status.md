@@ -14,6 +14,46 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🚪 WARPS — the research is done; the model has seven bugs (2026-07-14)
+
+The next phase of the map screen is **warps**, and — as with sprites — the research pass found that our
+model is a straight port of v1's guesses. Nothing is built; **Phase 5a exists to fix this first.**
+Everything: [`reference/warps.md`](reference/warps.md). Design:
+[`plans/map-screen.md`](plans/map-screen.md) → **Phase 5** (5a–5e).
+
+**The linchpin (and it is why a warp editor is possible at all).** `LoadMapHeader` rebuilds the warp
+list from ROM on every map load, with **no escape-hatch bit** — but `LoadMainData` **sets
+`BIT_NO_PREVIOUS_MAP` on the saved tileset byte** as it reads the save, which makes the next
+`LoadMapHeader` **`ret nz` before it copies anything**. So **an edited warp is genuinely live on
+Continue** — console-verified, including a **4th warp invented in a 3-warp town** — and the game
+restores the map's original doors when the player leaves and walks back in. The sprite rule, reached
+by a different route, and the screen must say it out loud.
+
+⚠️ **`wStatusFlags3` is ZEROED on every save load — the whole byte.** It shares an address with
+`wCableClubDestinationMap`, and `SpecialEnterMap` (on the Continue path) writes `0` to it. Verified:
+wrote `$FF`, console read back `$00`. So `scriptedWarp` + `isDungeonWarp` — **and `npcsFaceAway`,
+`tradeCenterSpritesFaced`, `isBattle` (really `BIT_TALKED_TO_TRAINER`) and `isTrainerBattle` (really
+`BIT_PRINT_END_BATTLE_TEXT`)** — can never survive a save. Every other warp byte came back exactly as
+written.
+
+💀 **`wWarpedFromWhichWarp` / `wWarpedFromWhichMap` are DEAD.** The game writes them on every warp and
+**nothing anywhere reads them**. Two writes, zero reads. A wiped byte and an unread byte are different
+facts and the panel must say which is which.
+
+⭐ **The two bytes that matter weren't on the warps screen at all:** `wLastMap` (`0x2611`) — *the map a
+`$FF` door returns you to*, i.e. every building's exit — and `wLastBlackoutMap` (`0x29C5`) — where
+blacking out / **Dig** / **Escape Rope** put you. Both **already modelled** in `WorldGeneral`; they just
+need surfacing. `wLastMap` goes in the **toolbar**, in words (*"Outside is: Pallet Town"*), because
+changing it re-labels every `$FF` door on the map at once.
+
+🔫 **Two loaded guns, and `AreaWarps::setTo()`/`randomize()` load them today.** `wDestinationMap` (Fly)
+has **13** legal values in an unterminated, unbounded table; the dungeon (map, hole) pair has **12**, and
+hole numbers are **1-based**. `setTo()` currently picks *any* cave, *any* map, and a 0-based hole index —
+out-of-table values that make a real console read arbitrary ROM as warp data. **Dormant only until the
+`MapsDB` deep-link landmine is defused** (see Open issues), exactly like `AreaAudio::setTo()` was.
+
+Tool: `scripts/emu/probe_warp_persistence.py` (local-only, ROM-gated).
+
 ### 🚶 The NPCs walk the way the GAME walks (2026-07-13, `0.30.0-alpha`)
 
 `MapSim` is now **`UpdateNPCSprite`, transliterated** — the console's per-frame state machine out of

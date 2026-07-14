@@ -683,16 +683,174 @@ with its range, and change.
 
 ---
 
-### Phase 5 — The rest of the Inspector
+### Phase 5 — WARPS: the doors  *(designed 2026-07-14; research done, nothing built)*
 
-The Details panel from 4d, extended to the objects that aren't sprites yet.
+> **Read [`../reference/warps.md`](../reference/warps.md) before touching any of this.** It is
+> verified against the cartridge, and it changes what several of these fields *are*. The headlines:
+> an **edited warp is genuinely live** on Continue (and the game restores the map's original doors when
+> the player leaves and re-enters — the sprite rule, again); **two of v1's fields are dead bytes**
+> nothing in the game reads; **two of them are loaded guns**; **two whole flags are wiped on load**;
+> and **the two bytes that actually matter aren't on the warps screen at all.**
+>
+> Warps ride on the machinery Phase 4 already built (`MapObjectsModel`, canvas selection, tile-snapped
+> drag, the Details panel, the field kit). This phase is mostly **honesty and naming** — plus the one
+> piece of new chrome the screen has been missing: **tools that make things.**
 
-- **5a — Warp / Sign** properties, incl. the destination resolver ("→ Viridian City, warp 2") — and making
-  them selectable on the canvas, on 4b's machinery.
-- **5b — Connection** properties — the eight fields against **what the game's macro computes**, with
+---
+
+#### Phase 5a — The model, made TRUE  *(no new UI; nothing gets built on a lie)*
+
+Same shape as 4a, and for the same reason.
+
+- **Rename `AreaWarps::skipJoypadCheckWarps` → `forcedWarp`** (`BIT_FORCED_WARP`). The `??` in its
+  comment goes with it.
+- **Move `AreaMap::blackoutDest` into `AreaWarps` as `escapeWarp`** (`BIT_ESCAPE_WARP`, `0x29DE` bit 6).
+  It is not a destination and it is not unused: it is **Dig / Escape Rope / blacked out**.
+- **Fix `AreaWarps::setTo()`** — it currently invents `dungeonWarpDestMap`, `specialWarpDestMap`,
+  `whichDungeonWarp` and `warpedFromWarp` **at random**, and three of the four are values the console
+  has no table entry for (§5 of `warps.md`). A map has **no opinion** about where your last Fly went:
+  `setTo()` sets the **warp list** from the map's `warpOut` and **touches no state byte**. Same for
+  `randomize()`, which additionally must pick only from the **13 legal fly maps** and the **12 legal
+  (dungeon map, hole) pairs** — and hole numbers are **1-based**.
+- **Model the legal-value tables** (`FlyWarpDataPtr`, `DungeonWarpList`) so the panel can *say* what is
+  legal rather than the code merely avoiding the illegal. Imported from `pret/pokered`, per the
+  standing file-format rule.
+- **Surface `wLastMap` + `wLastBlackoutMap`.** They already exist (`WorldGeneral::lastMap` /
+  `lastBlackoutMap`) — **no new C++ modelling** — they just have to be reachable from the map screen.
+- **A `regenerated` signal on the field kit.** Not warp-specific: a **`FieldRow` property** saying "the
+  game rewrites this on load" so *every* panel can mark them. Phase 5 is where it gets built, because
+  warps are where it first bites.
+
+Pinned by a new **`tst_warps`**, negative-controlled the way `tst_map_sprites` was, with a whole-save
+byte-diff proving that loading and re-saving an untouched save changes **nothing**, and that dragging a
+warp writes **exactly `x` and `y`**.
+
+**Exit:** the warp bytes we write are the bytes the cartridge means, and a test says so.
+
+---
+
+#### Phase 5b — Warps on the canvas
+
+The doors join the NPCs as first-class objects, on 4b's machinery. Nothing new is invented.
+
+- **Draw them** — a warp chip on its tile (⇄ glyph, its own layer colour), on the **Warps** layer.
+- **Select · drag · ✕ delete · ✎ edit** — identical to sprites. A drag commits **exactly two bytes**.
+- **Signs come with them** (they are the same shape, and the same ROM block loads them): the **Signs**
+  layer, 16 max, `x`/`y`/`txtId`.
+- **The pairing line.** Selecting a warp draws, in the status bar, **where it goes** — resolved through
+  `MapDBEntryWarpIn`: *"→ Viridian City, arrival point 2 (11, 5)"*. If the destination map has no such
+  arrival point, it says **that**, in red, with how many it does have.
+- **The `$FF` door.** A warp whose destination is `$FF` is drawn differently and reads as
+  **"→ back outside (Pallet Town)"** — resolving through `wLastMap`, live. This is the thing that makes
+  `wLastMap` suddenly make sense to a person, and it is why it goes in the toolbar (5c).
+
+---
+
+#### Phase 5c — The toolbar becomes TOOLS  *(Twilight, 2026-07-14)*
+
+> *"We would need the top toolbar to ironically contain actual tools and this is one of them — a create
+> random sprite here tool, and a create warp here tool. I guess they can be next to the cursor and stuff."*
+
+The tool group in the top bar (`[ ↖ ✥ ⌕ ]`) grows a **make** section. §5 of this file already specified
+a generic **Place** tool; this supersedes it with something better, because a *segmented sub-picker* on
+a context bar is a worse affordance than **a tool per thing you make**:
+
+```
+ [ ↖  ✥  ⌕ ] │ [ ⇄+  🧍+  🪧+ ] │ [ Pallet Town · Overworld ⌄ ] [ Outside is: Pallet Town ⌄ ] [ 100% ⌄ ] …
+   select    │   the makers     │        what is loaded
+```
+
+- **⇄+ Place warp** — click a tile, a door appears there. Defaults to `$FF` ("back outside") because
+  that is what a door usually is. The **32-cap is stated before you hit it** ("3 of 32"), never after.
+- **🧍+ Place sprite** — click a tile, a person appears there, **picture picked at random from the
+  map's own loaded sprite set** (so it can never be one of the amber "this map hasn't loaded that
+  picture" sprites). This is the "create random sprite here" tool, and it is the fast path that the
+  Characters bar's drag-and-drop is the *precise* path for. 15-cap stated up front.
+- **🪧+ Place sign** — same, 16-cap.
+- Each is a real tool: **a cursor, a context bar, an empty state, a keyboard path** (§9's rule), and
+  each **respects the active layer** (placing a warp switches the Warps layer on if it was off — a tool
+  that makes a thing you then can't see is a bug).
+
+**And the toolbar carries `wLastMap`** — labelled in words, because "wLastMap" means nothing to anyone:
+
+> **`[ Outside is: Pallet Town ⌄ ]`**
+
+It sits with *what is loaded*, not in a panel, because **every `$FF` door on the map re-reads as you
+change it** — it is the single control that changes what a dozen warps *mean*, and watching them
+re-label as you pick is the whole point. (This is the field Twilight was reaching for with "From map".
+`wWarpedFromWhichMap`, the byte actually named that, is **dead** — see 5d.)
+
+---
+
+#### Phase 5d — The Warp State group, in the Details panel
+
+Right-hand side, in the Details panel, as a **titled collapsible group** (the `FieldGroup` language) —
+`⇄ Warp State`, with **one ? icon** in the group title (the app's one allowed tooltip-icon; see
+`ui-patterns.md`). Every field gets a **plain-English name** and a **one-line "what this does"**, because
+the app is where that gets answered.
+
+**The group, top to bottom:**
+
+| Shown as | Real byte | The one-liner |
+|---|---|---|
+| **Wake up at…** *(map picker)* | `wLastBlackoutMap` | "Blacking out, Dig and Escape Rope all bring you here." |
+| **Fly sends you to…** *(picker, **13 maps only**)* | `wDestinationMap` | "Where the last Fly / special warp was headed." 🔫 |
+| **Falling drops you onto…** *(picker, **7 maps only**)* | `wDungeonWarpDestinationMap` | "The floor below, if you're falling down a hole." 🔫 |
+| **…through hole #** *(1–3, **paired** with the above)* | `wWhichDungeonWarp` | "Which hole. Seafoam B1F has two; Victory Road 2F only has a #2." 🔫 |
+| **Arriving at door #** | `wDestinationWarpID` | "Which arrival point of the map you're entering. `255` = don't move me." |
+| — *a divider* — | | |
+| **A special warp is in progress** | `BIT_FLY_OR_DUNGEON_WARP` | "Set while a Fly / hole / Dig warp is mid-flight." |
+| **Arrive with the drop-in animation** | `BIT_FLY_WARP` | "How you land off a warp pad or a Fly." |
+| **You fell down a hole** | `BIT_DUNGEON_WARP` | "Sends the destination lookup to the hole table instead of the fly table." |
+| **Dig / Escape Rope / blacked out** | `BIT_ESCAPE_WARP` | "Sends you to *Wake up at…*" |
+| **Doors fire without walking into them** | `BIT_FORCED_WARP` | "Normally you must walk *into* a door. This makes touching the tile enough. (It's how the Seafoam current sweeps you along.)" |
+
+**🔫 The two loaded guns get the music-bank treatment.** The pickers offer **only the legal values**
+by default, with a **switch** to show the full 248 — and a save that already holds an illegal one is
+**shown holding it**, in `errorColor`, with the plain-English consequence ("no console has a table entry
+for this; the game will read whatever ROM bytes follow the table and drop you somewhere undefined"). It
+is **never refused and never silently rewritten.** Same doctrine, same words, as the music bank.
+
+**And the ! group at the bottom — collapsed behind a switch, exactly as asked:**
+
+> **`[ ⚠ Show 4 fields the game rewrites on load ]`**  *(a `FlatToggle`; off by default)*
+
+Flip it and four rows appear, each carrying a **yellow `!`** (`MapWarnIcon` — the *other* allowed
+tooltip-icon):
+
+| ! | Shown as | Real byte | Why it's marked |
+|---|---|---|---|
+| ⚠ | **Script is warping you now** | `BIT_WARP_FROM_CUR_SCRIPT` | **Zeroed on load.** `wStatusFlags3` shares a byte with `wCableClubDestinationMap`, and `SpecialEnterMap` writes `0` to it on the Continue path. *Console-verified.* |
+| ⚠ | **Standing on a hole** | `BIT_ON_DUNGEON_WARP` | Same byte. **Zeroed on load.** |
+| 💀 | **Came in through door #** | `wWarpedFromWhichWarp` | **Survives the load perfectly — and nothing in the game ever reads it.** Two writes, zero reads, in the whole disassembly. |
+| 💀 | **Came from map** | `wWarpedFromWhichMap` | Same. A breadcrumb the game drops and never picks up. |
+
+Two different kinds of "this does nothing", and the panel **says which is which** — a wiped byte and an
+unread byte are not the same fact, and collapsing them into one grey "unused" would be exactly the kind
+of hand-wave this project doesn't do.
+
+> **The `!` is a general mechanism, not a warp feature.** `wStatusFlags3` is zeroed on load *in its
+> entirety*, so the same mark is owed to `AreaNPC::npcsFaceAway`, `AreaNPC::tradeCenterSpritesFaced`,
+> and `AreaPlayer`'s `isBattle`/`isTrainerBattle` (which are really `BIT_TALKED_TO_TRAINER` and
+> `BIT_PRINT_END_BATTLE_TEXT` — misnamed too). Phase 7 inherits the mechanism and the list.
+
+**The honest note**, in the panel and in the status bar, when the map's doors differ from the ROM's:
+
+> *"These doors are live — the game will use them when this save loads. It restores the map's original
+> doors when the player leaves the map and walks back in."*
+
+**Exit:** there is no warp byte a person can see in a hex editor and cannot see here, in words, with its
+range, its legal values, whether the game will keep it, and whether anything reads it at all.
+
+---
+
+### Phase 5e — Connections & the Player *(the rest of the Inspector)*
+
+- **Connection** properties — the eight fields against **what the game's macro computes**, with
   Recompute. (Compute from the macro, never from the broken `stripSize()`.)
-- **5c — Player** properties — position, facing, movement, standing-on, what he may do here, battle state,
-  scratch.
+- **Player** properties — position, facing, movement, standing-on (`BIT_STANDING_ON_DOOR` /
+  `BIT_EXITING_DOOR` / `BIT_STANDING_ON_WARP` — the warp-adjacent trio), what he may do here, battle
+  state, scratch.
 
 **Exit:** there is no byte in the Area block that a person can see in a hex editor and cannot see here,
 in words, with its range, and change.
