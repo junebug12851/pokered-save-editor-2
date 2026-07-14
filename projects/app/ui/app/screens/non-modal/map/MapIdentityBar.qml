@@ -41,40 +41,18 @@ import QtQuick.Layouts
 Rectangle {
   id: bar
 
-  /// The active tool. The rail moved into this bar, so the bar owns it now.
-  property string tool: "select"
-
-  /// The canvas -- the zoom menu drives it, and zoom has exactly one home.
-  required property var canvas
+  // ⚠️ THE TOOLS AND THE MAKERS ARE NOT HERE ANY MORE (2026-07-14).
+  //
+  // They moved to the LEFT RAIL (Twilight: *"move the tools onto the left toolbar above the panels,
+  // and the maker buttons below that"*). This bar is back to what it should always have been: a
+  // statement of WHAT IS LOADED. `tool` is owned by the screen now (`mapScreen.tool`), the rail sets
+  // it, and the canvas reads it. See Map.qml → the left dock's `railHeader`.
 
   /// The drop-downs, drivable by name for the DEBUG harness / the screenshot review.
   property alias mapPickerOpen: mapPicker.openState
   property alias contrastPickerOpen: contrastPicker.openState
   property alias contrastShowGlitch: contrastPicker.showGlitch
   property alias outsideOpen: outsidePicker.openState
-
-  readonly property var tools: [
-    { id: "select", glyph: "↖", key: "V", tip: qsTr("Select & Move — click to select, drag to move") },
-    { id: "pan",    glyph: "✥", key: "H", tip: qsTr("Pan — drag the map (or hold Space with any tool)") },
-    { id: "zoom",   glyph: "⌕", key: "Z", tip: qsTr("Zoom — click to zoom in, Alt-click to zoom out") }
-  ]
-
-  // ── THE MAKERS ─────────────────────────────────────────────────────────────────────────────
-  //
-  // Twilight, 2026-07-14: *"we would need the top toolbar to ironically contain actual tools and this
-  // is one of them, a create random sprite here tool, and a create warp here tool. I guess they can
-  // be next to the cursor and stuff."*
-  //
-  // ⚠️ EXACTLY THE TWO SHE NAMED, and no others. There is no sign tool, because signs have not been
-  // briefed -- and "it's the same shape as a warp" is not a brief. This group is designed to GROW one
-  // slot at a time, as each object type gets its own conversation.
-  // (notes/plans/map-screen.md §12b.)
-  readonly property var makers: [
-    { id: "placeWarp", glyph: "⇄", key: "W",
-      tip: qsTr("Place a door — click a tile. It starts as a way back outside, which is what a door usually is.") },
-    { id: "placeSprite", glyph: "☻", key: "N",
-      tip: qsTr("Place a character — click a tile. A random one, but only ever a picture THIS map has loaded, so it can never be one the console would draw as garbage.") }
-  ]
 
   implicitHeight: 36
   color: "#f7f7f7"
@@ -91,94 +69,6 @@ Rectangle {
     anchors.leftMargin: 8
     anchors.rightMargin: 10
     spacing: 8
-
-    // ── The tools ─────────────────────────────────────────────────────────────────────────────
-    RowLayout {
-      spacing: 2
-
-      Repeater {
-        model: bar.tools
-
-        MapRailButton {
-          required property var modelData
-
-          objectName: "toolBtn_" + modelData.id   // the DEBUG harness picks tools through these
-          size: 26
-          glyph: modelData.glyph
-          tip: modelData.tip
-          shortcut: modelData.key
-          active: bar.tool === modelData.id
-
-          onClicked: bar.tool = modelData.id
-        }
-      }
-
-      // The ▾ on the zoom tool: the slider, and somewhere to go. ZOOM LIVES IN EXACTLY ONE PLACE
-      // and this is it -- the canvas has no zoom buttons of its own any more.
-      ZoomMenu {
-        id: zoomMenu
-        canvas: bar.canvas
-        Layout.alignment: Qt.AlignVCenter
-      }
-    }
-
-    Rectangle {
-      implicitWidth: 1
-      implicitHeight: 18
-      color: brg.settings.dividerColor
-      Layout.leftMargin: 2
-      Layout.rightMargin: 2
-    }
-
-    // ── The MAKERS: the tools that put something on the map ───────────────────────────────────
-    //
-    // Separated from the three above by a divider, because they are a different kind of thing: those
-    // three change how you LOOK at the map, these two CHANGE it.
-    RowLayout {
-      spacing: 2
-
-      Repeater {
-        model: bar.makers
-
-        MapRailButton {
-          id: makerBtn
-          required property var modelData
-
-          objectName: "toolBtn_" + modelData.id
-          size: 26
-          glyph: modelData.glyph
-          shortcut: modelData.key
-          active: bar.tool === modelData.id
-
-          // ⚠️ THE CAP IS STATED BEFORE YOU HIT IT, NOT AFTER. A dead tool looks dead -- and the
-          // tooltip says why, so it is never a mystery. (map-screen.md §9: "the caps are stated
-          // before you hit them, not after".)
-          readonly property int roomLeft: modelData.id === "placeWarp" ? brg.map.warpRoomLeft()
-                                                                       : brg.map.npcRoomLeft()
-          readonly property int cap: modelData.id === "placeWarp" ? 32 : 15
-
-          enabled: makerBtn.roomLeft > 0
-          opacity: enabled ? 1.0 : 0.35
-
-          tip: makerBtn.roomLeft > 0
-               ? modelData.tip + "\n\n" + qsTr("%1 of %2 used.").arg(makerBtn.cap - makerBtn.roomLeft)
-                                                                .arg(makerBtn.cap)
-               : (modelData.id === "placeWarp"
-                  ? qsTr("This map already has all 32 doors the game can hold.")
-                  : qsTr("This map already has all 15 characters the game can hold."))
-
-          onClicked: bar.tool = modelData.id
-        }
-      }
-    }
-
-    Rectangle {
-      implicitWidth: 1
-      implicitHeight: 18
-      color: brg.settings.dividerColor
-      Layout.leftMargin: 2
-      Layout.rightMargin: 2
-    }
 
     // ── What is loaded, and what it is drawn out of ───────────────────────────────────────────
     MapPicker { id: mapPicker }
@@ -198,14 +88,14 @@ Rectangle {
     // it. This is the one she meant. See notes/reference/warps.md §4.
     OutsideIsPicker { id: outsidePicker }
 
-    // ── Contrast ─────────────────────────────────────────────────────────────────────────────
-    ContrastPicker { id: contrastPicker }
-
-    // ── Colour (a Game Boy Color / SGB / custom filter) ───────────────────────────────────────
+    // ── Contrast (+ Colour) ──────────────────────────────────────────────────────────────────
     //
-    // Next to Contrast, because they are the palette pair: contrast picks which shade, this picks
-    // what colour that shade is. A VIEW setting -- it never touches the save. (Twilight, 2026-07-13.)
-    ColourPicker { id: colourPicker }
+    // ⚠️ The COLOUR filter used to be its own chip beside this one. It is now folded INTO this
+    // dropdown, below the glitch-contrast switch (Twilight, 2026-07-14). They are the palette pair —
+    // contrast picks *which of the four shades* a pixel becomes, colour picks *what those four
+    // shades are painted* — so a person setting one is usually thinking about the other, and two
+    // chips for one idea was a chip too many.
+    ContrastPicker { id: contrastPicker }
 
     // ── Music ────────────────────────────────────────────────────────────────────────────────
     //

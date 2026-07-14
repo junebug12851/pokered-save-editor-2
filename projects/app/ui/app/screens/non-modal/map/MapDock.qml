@@ -59,6 +59,16 @@ Item {
   /// Which QML file each panel id loads. Supplied by the screen.
   property var sources: ({})
 
+  /// Optional content rendered at the TOP of the rail, above the panel icons.
+  ///
+  /// The left dock uses it to carry the TOOLS (select / pan / zoom) and the MAKERS (place a door,
+  /// place a person) — Twilight, 2026-07-14: *"move the tools onto the left toolbar above the
+  /// panels, and the maker buttons below that above the panels."* A rail is the natural home for
+  /// them: they are what your off hand reaches for, and the top bar goes back to saying what is
+  /// LOADED. The component is declared in the SCREEN (so it can see `mapScreen`, `canvas`, the
+  /// keyboard) and rendered here.
+  property Component railHeader: null
+
   /// Handed to any loaded panel that declares a `canvas` property -- the Details panel edits
   /// whatever is selected on the canvas, and a Loader cannot see the ids around it.
   property var panelContext: null
@@ -340,6 +350,24 @@ Item {
       anchors.topMargin: 6
       anchors.horizontalCenter: parent.horizontalCenter
       spacing: 4
+
+      // The tools + makers, when this dock has been given them (the left one has). They sit ABOVE
+      // the panel icons, with a divider between, so "what you DO" and "what you OPEN" read apart.
+      Loader {
+        active: dock.railHeader !== null
+        sourceComponent: dock.railHeader
+        Layout.alignment: Qt.AlignHCenter
+      }
+
+      Rectangle {
+        visible: dock.railHeader !== null
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: 2
+        Layout.bottomMargin: 2
+        implicitWidth: 22
+        implicitHeight: 1
+        color: brg.settings.dividerColor
+      }
 
       Repeater {
         model: dock.panels

@@ -82,7 +82,11 @@ Page {
   property alias selectAt: canvas.selectAt
 
   /// Which tool is in hand, and which panel each dock has open -- all drivable by name.
-  property alias tool: identityBar.tool
+  ///
+  /// ⚠️ `tool` is OWNED HERE now (2026-07-14). It used to live on the top bar, because that is where
+  /// the tools were. They moved to the LEFT RAIL (Twilight), so the top bar no longer owns them and
+  /// the screen does -- both the rail and the canvas read `mapScreen.tool`.
+  property string tool: "select"
   property alias dockPanel: rightDock.open
   property alias layersPanel: leftDock.open
 
@@ -116,14 +120,14 @@ Page {
 
   Keys.onPressed: (event) => {
     switch (event.key) {
-    case Qt.Key_V:     identityBar.tool = "select"; event.accepted = true; break;
-    case Qt.Key_H:     identityBar.tool = "pan";    event.accepted = true; break;
-    case Qt.Key_Z:     identityBar.tool = "zoom";   event.accepted = true; break;
+    case Qt.Key_V:     mapScreen.tool = "select"; event.accepted = true; break;
+    case Qt.Key_H:     mapScreen.tool = "pan";    event.accepted = true; break;
+    case Qt.Key_Z:     mapScreen.tool = "zoom";   event.accepted = true; break;
 
     // The makers. "A tool is not done until it has a cursor, a context bar, an empty state and a
     // keyboard path" (map-screen.md §9) -- this is the keyboard path.
-    case Qt.Key_W:     identityBar.tool = "placeWarp";   event.accepted = true; break;
-    case Qt.Key_N:     identityBar.tool = "placeSprite"; event.accepted = true; break;
+    case Qt.Key_W:     mapScreen.tool = "placeWarp";   event.accepted = true; break;
+    case Qt.Key_N:     mapScreen.tool = "placeSprite"; event.accepted = true; break;
 
     case Qt.Key_Space: canvas.spaceHeld = true;  event.accepted = true; break;
     case Qt.Key_Escape:
@@ -131,7 +135,7 @@ Page {
       // then drop the selection, then close the panels. Slamming all three shut at once is the kind
       // of "helpful" that loses you your place.
       if (canvas.placing) {
-        identityBar.tool = "select";
+        mapScreen.tool = "select";
         event.accepted = true;
       } else if (canvas.selectedNpc >= 0 || canvas.selectedWarp >= 0) {
         canvas.selectedNpc = -1;
@@ -157,12 +161,14 @@ Page {
     anchors.fill: parent
     spacing: 0
 
-    // The tools live HERE now, in the top bar, next to what they act on -- and the left edge went
-    // back to the map (Twilight, 2026-07-13). A rail of three buttons was 44px of chrome down the
-    // whole height of the screen to hold three glyphs.
+    // The top bar says WHAT IS LOADED -- the map picker, the palette, the music, the animation. The
+    // TOOLS moved to the left rail (Twilight, 2026-07-14: *"move the tools onto the left toolbar at
+    // the top above the panels, and the maker buttons below that"*), which is the natural home for
+    // "what you DO" -- your off hand lives there, and it leaves this bar to say "what you're looking
+    // AT". (It bounced back and forth: a left rail, then up here 2026-07-13, and now a left rail
+    // again -- but this time it carries the makers too, so it earns the width it did not before.)
     MapIdentityBar {
       id: identityBar
-      canvas: canvas          // zoom lives here, and only here
       Layout.fillWidth: true
     }
 
@@ -203,6 +209,93 @@ Page {
 
         panelContext: canvas
 
+        // ── The tools + the makers, above the panel icons ─────────────────────────────────────
+        //
+        // Declared HERE (in the screen), so the buttons can see `mapScreen`, `canvas` and the
+        // keyboard — a Component resolves ids from where it is written, not from the Loader that
+        // instantiates it. See MapDock.railHeader.
+        railHeader: Component {
+          Column {
+            spacing: 4
+
+            // Select · Pan · Zoom — the three that change how you LOOK at the map.
+            Repeater {
+              model: [
+                { id: "select", glyph: "↖", key: "V",
+                  tip: qsTr("Select & Move — click to select, drag to move") },
+                { id: "pan", glyph: "✥", key: "H",
+                  tip: qsTr("Pan — drag the map (or hold Space with any tool)") },
+                { id: "zoom", glyph: "⌕", key: "Z",
+                  tip: qsTr("Zoom — click to zoom in, Alt-click to zoom out") }
+              ]
+
+              MapRailButton {
+                required property var modelData
+                objectName: "toolBtn_" + modelData.id   // the DEBUG harness picks tools through these
+                anchors.horizontalCenter: parent.horizontalCenter
+                glyph: modelData.glyph
+                tip: modelData.tip
+                shortcut: modelData.key
+                active: mapScreen.tool === modelData.id
+                onClicked: mapScreen.tool = modelData.id
+              }
+            }
+
+            // The ▾ that owns the zoom slider + "Go to…". It belongs to the zoom tool, so it sits
+            // right under it. ZOOM LIVES IN EXACTLY ONE PLACE and this is it.
+            //
+            // ⚠️ `canvas: leftDock.panelContext`, NOT `canvas: canvas`. This header is loaded inside
+            // the dock, which is built BEFORE the MapCanvas exists — so a raw `canvas` id reference
+            // here resolves to undefined at construction and never updates (it is not a notifiable
+            // property). `panelContext` is a real property already bound to the canvas (the Details
+            // panel rides on it), so it is the one reference in scope that updates when the canvas
+            // arrives. `tst_qml_screens` caught the raw-id version.
+            ZoomMenu {
+              anchors.horizontalCenter: parent.horizontalCenter
+              canvas: leftDock.panelContext
+            }
+
+            Rectangle {
+              anchors.horizontalCenter: parent.horizontalCenter
+              width: 22; height: 1
+              color: brg.settings.dividerColor
+            }
+
+            // ⇄ Place a door · ☻ Place a person — the two that CHANGE the map. Same list, same caps,
+            // same "stated before you hit it" as before; only the address changed.
+            Repeater {
+              model: [
+                { id: "placeWarp", glyph: "⇄", key: "W", cap: 32,
+                  tip: qsTr("Place a door — click a tile. It starts as a way back outside, which is what a door usually is."),
+                  full: qsTr("This map already has all 32 doors the game can hold.") },
+                { id: "placeSprite", glyph: "☻", key: "N", cap: 15,
+                  tip: qsTr("Place a character — click a tile. A random one, but only ever a picture THIS map has loaded, so it can never be one the console would draw as garbage."),
+                  full: qsTr("This map already has all 15 characters the game can hold.") }
+              ]
+
+              MapRailButton {
+                required property var modelData
+                objectName: "toolBtn_" + modelData.id
+                anchors.horizontalCenter: parent.horizontalCenter
+                glyph: modelData.glyph
+                shortcut: modelData.key
+                active: mapScreen.tool === modelData.id
+
+                readonly property int roomLeft: modelData.id === "placeWarp" ? brg.map.warpRoomLeft()
+                                                                             : brg.map.npcRoomLeft()
+                enabledBtn: roomLeft > 0
+
+                tip: roomLeft > 0
+                     ? modelData.tip + "\n\n" + qsTr("%1 of %2 used.")
+                         .arg(modelData.cap - roomLeft).arg(modelData.cap)
+                     : modelData.full
+
+                onClicked: mapScreen.tool = modelData.id
+              }
+            }
+          }
+        }
+
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth   // the RAIL, and only the rail. The panel floats.
       }
@@ -215,7 +308,7 @@ Page {
         Layout.fillHeight: true
         Layout.minimumWidth: mapScreen.mapMinWidth
 
-        tool: identityBar.tool
+        tool: mapScreen.tool
 
         // Drag a sprite off the map and onto the open Characters panel and it goes back in the box.
         // The canvas does the containment test itself -- there is no DropArea anywhere on this screen.

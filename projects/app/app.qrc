@@ -614,7 +614,6 @@
         <file>ui/app/screens/non-modal/map/BlockPick.qml</file>
         <file>ui/app/screens/non-modal/map/MapIdentityBar.qml</file>
         <file>ui/app/screens/non-modal/map/MapPicker.qml</file>
-        <file>ui/app/screens/non-modal/map/ColourPicker.qml</file>
         <file>ui/app/screens/non-modal/map/ContrastPicker.qml</file>
         <file>ui/app/screens/non-modal/map/MapSwitch.qml</file>
         <file>ui/app/screens/non-modal/map/MapCanvas.qml</file>

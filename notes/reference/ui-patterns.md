@@ -43,6 +43,33 @@ On a panel with its own margins, the 16px is **on top of** them (`panel.width - 
 panel keeps eliding words, the panel is **too narrow** — widen it. Shrinking the content to make room
 for the furniture is the wrong way round, every time.
 
+## The map's LEFT RAIL — tools + makers above the panels (2026-07-14)
+
+The map screen's left dock rail carries three groups, top to bottom, each divided from the next:
+
+1. **Tools** — Select · Pan · Zoom, plus the zoom **▾** (the slider + "Go to…"). *How you look.*
+2. **Makers** — Place-a-door · Place-a-person. *How you change it.*
+3. **Panel icons** — Layers · Characters · Details. *What you open.*
+
+They used to be on the top bar (which now says only *what is loaded* — map, palette, music, anim).
+`MapDock` grew a `railHeader: Component` slot for groups 1+2; the screen supplies it, because a
+Component resolves ids from where it is **written** (the screen — so `mapScreen.tool`, `canvas`, the
+keyboard are all in scope), not from the Loader that instantiates it.
+
+> ⚠️ **The id-timing landmine, and `tst_qml_screens` is the one that catches it.** The rail Loader is
+> built *inside the dock, before the MapCanvas exists*, so a raw `canvas: canvas` inside the header
+> resolves to **undefined at construction and never updates** (an id is not a notifiable property —
+> the binding captures `undefined` once and is done). The fix is to route through a **real property
+> already bound to the canvas** — the dock's `panelContext` — so the reference is notifiable and
+> updates when the canvas arrives: `ZoomMenu { canvas: leftDock.panelContext }`. And guard the
+> consumer (`ZoomMenu`) against a null canvas, because its popup bindings evaluate eagerly. This is
+> the general rule for **anything a Loader builds that needs a later sibling**: don't reference the
+> sibling's id, reference a notifiable property that carries it.
+
+`tool` is owned by the **screen** (`mapScreen.tool`), not the bar — the rail sets it, the canvas reads
+it. `MapRailButton.enabledBtn` (not `enabled`) is the greying knob; the maker caps are stated in the
+tooltip *before* you hit them, exactly as on the old top-bar version.
+
 ## Smooth zoom on pixel art (the map) — 2026-07-13
 
 A Game Boy map is 8×8 pixel art, and for a long time the map screen's zoom **snapped to whole numbers**

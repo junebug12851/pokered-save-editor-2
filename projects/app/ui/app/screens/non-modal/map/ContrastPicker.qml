@@ -35,6 +35,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 
 Item {
   id: root
@@ -317,10 +318,150 @@ Item {
         }
       }
 
-      // (The two paragraphs that used to sit here -- why the six in-between values exist, and the
-      // catch with 1 and 2 -- were removed on 2026-07-13 at Twilight's call. The control does not
-      // need an essay: the segments are yellow, they are named "Glitch N", and the map itself shows
-      // you what they do. The full story lives in notes/reference/palettes.md.)
+      // ══ COLOUR ═══════════════════════════════════════════════════════════════════════════════
+      //
+      // ⚠️ Folded in here from its own chip (Twilight, 2026-07-14: *"mix the colour palette into the
+      // contrast dropdown below glitch contrast"*).
+      //
+      // It is a DIFFERENT thing from contrast, and the two must not blur together: **contrast is a
+      // save byte** — it decides which of the four shades each pixel becomes — and **colour is a VIEW
+      // setting that changes not one byte of the save** — it decides what those four shades are
+      // painted. They live in one dropdown because you usually think about them together; the heading
+      // and the "view only" note keep them from being mistaken for each other.
+
+      Rectangle {
+        Layout.fillWidth: true
+        Layout.topMargin: 2
+        implicitHeight: 1
+        color: brg.settings.dividerColor
+      }
+
+      RowLayout {
+        Layout.fillWidth: true
+
+        Text {
+          Layout.fillWidth: true
+          text: qsTr("Colour")
+          font.pixelSize: 11
+          font.bold: true
+          color: brg.settings.textColorMid
+        }
+
+        // The one line that keeps it honest: this half of the dropdown touches no save data.
+        Text {
+          text: qsTr("view only — no save change")
+          font.pixelSize: 9
+          font.italic: true
+          color: brg.settings.textColorMid
+          opacity: 0.75
+        }
+      }
+
+      // ── The presets ──────────────────────────────────────────────────────────────────────────
+      //
+      // Grey · Game Boy (the green screen) · Super Game Boy (each map in its OWN real colours, from
+      // pret's data) · Custom.
+      Repeater {
+        model: brg.map.colourPresets()
+
+        delegate: Rectangle {
+          id: colRow
+          required property var modelData
+
+          Layout.fillWidth: true
+          implicitHeight: 28
+          radius: 5
+
+          readonly property bool active: brg.map.colourMode === modelData.mode
+
+          color: colRow.active     ? Qt.rgba(0.34, 0.71, 0.91, 0.16)
+               : colRowHover.hovered ? Qt.rgba(0, 0, 0, 0.06)
+               : "transparent"
+
+          RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: 6
+            anchors.rightMargin: 6
+            spacing: 8
+
+            // The preset's own four-colour strip.
+            Row {
+              spacing: 0
+              Repeater {
+                model: colRow.modelData.swatch
+                Rectangle {
+                  required property var modelData
+                  width: 8
+                  height: 16
+                  color: modelData
+                }
+              }
+            }
+
+            Text {
+              Layout.fillWidth: true
+              text: colRow.modelData.name
+              font.pixelSize: 12
+              font.bold: colRow.active
+              color: brg.settings.textColorDark
+            }
+          }
+
+          HoverHandler { id: colRowHover; cursorShape: Qt.PointingHandCursor }
+          TapHandler { onTapped: brg.map.colourMode = colRow.modelData.mode }
+        }
+      }
+
+      // ── The custom swatches ────────────────────────────────────────────────────────────────
+      //
+      // Only when Custom is chosen. Four colours, lightest to darkest; clicking one opens the system
+      // colour dialog on it.
+      RowLayout {
+        Layout.fillWidth: true
+        Layout.topMargin: 2
+        visible: brg.map.colourMode === 3   // Custom
+        spacing: 4
+
+        Text {
+          text: qsTr("Shades")
+          font.pixelSize: 10
+          color: brg.settings.textColorMid
+        }
+
+        Item { Layout.fillWidth: true }
+
+        Repeater {
+          model: 4
+
+          delegate: Rectangle {
+            required property int index
+
+            width: 26
+            height: 22
+            radius: 4
+
+            color: brg.map.customColours()[index]
+            border.width: 1
+            border.color: swHover.hovered ? "#56b4e9" : brg.settings.dividerColor
+
+            HoverHandler { id: swHover; cursorShape: Qt.PointingHandCursor }
+            TapHandler {
+              onTapped: {
+                colourDialog.shade = index;
+                colourDialog.selectedColor = brg.map.customColours()[index];
+                colourDialog.open();
+              }
+            }
+          }
+        }
+      }
     }
+  }
+
+  // Qt's own colour dialog, for editing one custom shade. `shade` remembers which one.
+  ColorDialog {
+    id: colourDialog
+    property int shade: 0
+    onAccepted: brg.map.setCustomColour(colourDialog.shade, colourDialog.selectedColor)
   }
 }

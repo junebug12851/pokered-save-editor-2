@@ -41,7 +41,12 @@ Item {
   objectName: "zoomMenu"   // the DEBUG harness opens it through this
 
   /// The canvas we drive.
-  required property var canvas
+  ///
+  /// ⚠️ Not `required`, and every read of it below is NULL-GUARDED. This menu now lives in the left
+  /// rail, which is built inside the dock *before* the MapCanvas exists — so `canvas` is briefly null
+  /// at construction, and an unguarded binding (`Math.log(canvas.minZoom)`) throws during load. It
+  /// arrives a moment later via the dock's `panelContext`. `tst_qml_screens` is the backstop.
+  property var canvas: null
 
   property bool openState: false
 
@@ -145,9 +150,10 @@ Item {
         Label {
           // Two decimals would be noise; the zoom is a feel, not a measurement. But a whole
           // multiple is worth KNOWING about, because that is where the art is pixel-exact.
-          text: Math.abs(zoomMenu.canvas.zoom - Math.round(zoomMenu.canvas.zoom)) < 0.02
-                  ? qsTr("%1× (exact)").arg(Math.round(zoomMenu.canvas.zoom))
-                  : (zoomMenu.canvas.zoom.toFixed(1) + "×")
+          readonly property real zoomVal: zoomMenu.canvas ? zoomMenu.canvas.zoom : 1
+          text: Math.abs(zoomVal - Math.round(zoomVal)) < 0.02
+                  ? qsTr("%1× (exact)").arg(Math.round(zoomVal))
+                  : (zoomVal.toFixed(1) + "×")
           font.pixelSize: 11
           opacity: 0.6
         }
@@ -163,11 +169,11 @@ Item {
         // LOG scale. On a linear one half the travel is spent between 6× and 12×, which nobody
         // uses, and the range people actually live in (0.5×–3×) is crammed into a fingernail. On a
         // log scale every equal nudge is an equal *ratio*, which is what zoom actually feels like.
-        from: Math.log(zoomMenu.canvas.minZoom)
-        to: Math.log(zoomMenu.canvas.maxZoom)
-        value: Math.log(zoomMenu.canvas.zoom)
+        from: zoomMenu.canvas ? Math.log(zoomMenu.canvas.minZoom) : 0
+        to: zoomMenu.canvas ? Math.log(zoomMenu.canvas.maxZoom) : 1
+        value: zoomMenu.canvas ? Math.log(zoomMenu.canvas.zoom) : 0
 
-        onMoved: zoomMenu.canvas.zoomToCentre(Math.exp(value))
+        onMoved: if (zoomMenu.canvas) zoomMenu.canvas.zoomToCentre(Math.exp(value))
       }
 
       Rectangle {
@@ -243,7 +249,8 @@ Item {
           TapHandler {
             enabled: dest.here
             onTapped: {
-              zoomMenu.canvas.goTo(dest.modelData.kind);
+              if (zoomMenu.canvas)
+                zoomMenu.canvas.goTo(dest.modelData.kind);
               zoomMenu.openState = false;
             }
           }
