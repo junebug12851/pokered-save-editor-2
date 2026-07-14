@@ -59,11 +59,6 @@ Item {
   /// Which QML file each panel id loads. Supplied by the screen.
   property var sources: ({})
 
-  /// Collapse the panel icons into a SINGLE flyout group button (Twilight, 2026-07-14). The left
-  /// dock sets this; the right dock leaves its panels as separate icons. When true, the rail shows
-  /// one button whose face is the open panel, flying the rest out.
-  property bool collapse: false
-
   /// Optional content rendered at the TOP of the rail, above the panel icons.
   ///
   /// The left dock uses it to carry the TOOLS (select / pan / zoom) and the MAKERS (place a door,
@@ -374,22 +369,11 @@ Item {
         color: brg.settings.dividerColor
       }
 
-      // COLLAPSED (left dock): the panels are one flyout group. Its face is whatever panel is open.
-      MapRailGroup {
-        visible: dock.collapse
-        Layout.alignment: Qt.AlignHCenter
-
-        objectName: "panelsGroup"
-        members: dock.panels
-        activeId: dock.open
-        tip: qsTr("Panels")
-
-        onChosen: (id) => dock.toggle(id)
-      }
-
-      // EXPANDED (right dock): the panels as separate icons, as before.
+      // The panel icons -- separate buttons (layers / characters / details). They are NOT collapsed
+      // into a group: Twilight, 2026-07-14, asked for the panels ungrouped. (The tools and makers
+      // above them are still each one flyout group; see Map.qml → railHeader.)
       Repeater {
-        model: dock.collapse ? [] : dock.panels
+        model: dock.panels
 
         MapRailButton {
           required property var modelData

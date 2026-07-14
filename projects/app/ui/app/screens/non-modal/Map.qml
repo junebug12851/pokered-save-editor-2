@@ -192,10 +192,6 @@ Page {
 
         side: "left"
 
-        // The three panel icons collapse into ONE flyout group (Twilight, 2026-07-14) — so the left
-        // rail is three buttons: tools, makers, panels.
-        collapse: true
-
         // Nothing open (Twilight). You open the Map screen and you see THE MAP.
         open: ""
 

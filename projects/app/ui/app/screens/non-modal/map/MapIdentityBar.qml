@@ -155,9 +155,16 @@ Rectangle {
       implicitWidth: 1
       implicitHeight: 18
       color: brg.settings.dividerColor
-      Layout.leftMargin: 2
-      Layout.rightMargin: 2
+      Layout.leftMargin: 4
+      Layout.rightMargin: 4
     }
+
+    // ⚠️ The three sim buttons sit in their OWN tight RowLayout, so they read as a GROUP -- close
+    // together, and clearly apart from the config buttons across the divider (Twilight, 2026-07-14:
+    // *"make the simulation buttons look like a proper grouping with proper spacing"*). With the ▾
+    // now INSIDE each button, they are compact enough to cluster.
+    RowLayout {
+      spacing: 3
 
     // Music — ▶/⏸ ♪ ▾ (the ▾ drops the track / volume / flags).
     MusicPicker { id: musicPicker }
@@ -320,6 +327,8 @@ Rectangle {
 
       hasMenu: false
     }
+
+    }   // end of the simulation group's RowLayout
 
     SimWarningDialog {
       id: simWarning

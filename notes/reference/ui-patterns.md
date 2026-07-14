@@ -74,8 +74,15 @@ so zoom still lives in exactly one place. `MapDock` grew a `collapse` bool — t
 its panels to a group; the right dock keeps separate icons.
 
 **`MapSimButton`** — the top bar's *simulation* controls (music, tile-animation, walk) are a family:
-a play/pause button (▶/⏸ + a subject symbol) with an optional ▾ that drops a menu the caller owns.
-Running = filled orange, at rest = an outlined button. They sit together, right of the config buttons.
+a play/pause SPLIT button — one rounded frame with a **▶/⏸ + subject** zone and, when there's a menu,
+a hairline + a **▾** zone **inside the same frame** (Twilight: the ▾ must be inside, like a normal
+dropdown tool button; a floating ▾ sprawled the group out). Running = filled orange, at rest =
+outlined. The three sit in their **own tight RowLayout** so they read as a group, divider-separated
+from the config buttons. The button doesn't own the popup — the caller does, positioned under the ▾.
+
+The left rail's **panels are separate buttons** (layers / characters / details), not a group — only
+the tools and makers collapse into `MapRailGroup` flyouts. (`MapDock` had a `collapse` bool for a
+day; it was removed when the panels were ungrouped.)
 
 > ⚠️ **Icon tinting: two pre-coloured SVGs, NOT a shader recolour.** The walk icon is footprints
 > (`footprints.svg` dark + `footprints-light.svg` white), swapped by play state on a plain `Image`.
