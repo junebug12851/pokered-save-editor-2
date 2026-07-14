@@ -87,6 +87,37 @@ Item {
   function toggle(id) { dock.open = (dock.open === id) ? "" : id; }
   function show(id)   { if (dock.open !== id) dock.open = id; }
 
+  // ── Where the dock ACTUALLY is, in global coordinates ──────────────────────────────────────
+  //
+  // ⚠️ You cannot ask the dock ITEM. It is only `railWidth` wide (40px) -- the open panel hangs
+  // **outside** its bounds, floating over the canvas. So `dock.mapFromGlobal(...)` against
+  // `dock.width` tests the RAIL and nothing else, and anything relying on it is quietly wrong:
+  //
+  //   * the map's ground tap thought a click on the Details panel was a click on the map, and
+  //     cleared the selection out from under the panel you were using;
+  //   * `overDeleteZone` was testing the 40px rail rather than the Characters panel, so dragging
+  //     somebody out to delete them only worked if you dropped them on the icon strip.
+  //
+  // Ask the dock. It knows where its own parts are.
+
+  /// Is this global point inside the open PANEL? (Not the rail.)
+  function panelContainsGlobal(sx, sy) {
+    if (dock.open === "")
+      return false;
+
+    const p = column.mapFromGlobal(sx, sy);
+    return p.x >= 0 && p.y >= 0 && p.x < column.width && p.y < column.height;
+  }
+
+  /// Is this global point anywhere on the dock -- the rail, or the open panel?
+  function containsGlobal(sx, sy) {
+    const r = rail.mapFromGlobal(sx, sy);
+    if (r.x >= 0 && r.y >= 0 && r.x < rail.width && r.y < rail.height)
+      return true;
+
+    return dock.panelContainsGlobal(sx, sy);
+  }
+
   implicitWidth: inlineWidth
 
   // ⚠️ The panel hangs OUT of the dock, over the canvas -- and the canvas is a later sibling in the

@@ -54,7 +54,19 @@ object per line, get one reply per line. Verbs:
 - `{"cmd":"shot","arg":"C:/…/out.png"}` — grab the view to a PNG (backgrounded-safe).
 - `{"cmd":"title"}` — current screen title.
 - `{"cmd":"get","obj":"<objectName>","prop":"<p>"}` / `{"cmd":"set","obj":…,"prop":…,"val":…}` — read/write a QML property.
-- `{"cmd":"click","obj":"<objectName>"}` — emit a control's `clicked()`.
+- `{"cmd":"click","obj":"<objectName>"}` — emit a control's `clicked()` **signal**.
+- `{"cmd":"tap","x":152,"y":294}` / `{"cmd":"tap","obj":"<objectName>"}` — a **REAL mouse
+  press+release**, through Qt's actual delivery path.
+
+  🔴 **`click` and `tap` are not the same thing, and the difference is a whole class of bug.**
+  `click` emits the signal directly and therefore exercises **none** of the delivery machinery — no
+  grabs, no pointer handlers, no propagation. If a bug is about *which item gets the event* (who
+  grabs it, who consumes it, what it falls through to), `click` **cannot see it** and `tap` can.
+
+  That gap is why the "opening the picture picker drops your selection" bug survived a fix and why I
+  ended up clicking the screen by hand instead of using our own tooling. Twilight asked why; the
+  answer was that the harness couldn't do it. Now it can. **Reach for `tap` whenever the question is
+  "what happens when the user actually clicks *there*".**
 - `{"cmd":"reload"}` — force a QML reload. `{"cmd":"list","arg":"<substr>"}` — matching `objectName`s.
 
 Drive it from PowerShell with a `TcpClient` (write a line, read a line). Great for scripted checks:

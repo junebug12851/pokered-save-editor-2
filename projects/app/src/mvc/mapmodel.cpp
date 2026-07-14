@@ -1132,14 +1132,13 @@ QVariantList MapModel::spriteCatalog() const
       const bool ok = pictureWouldRenderIfAdded(int(e->ind));
       m["inSpriteSet"] = ok;
 
+      // ⚠️ SHORT. Twilight: *"the yellow exclamation point needs a shorter tooltip -- why not 'This
+      // sprite is not expected on this map so it would come off garbled'."* One sentence. The long
+      // version is what the panel's "?" is for.
       if (!ok) {
         m["why"] = mapIsIndoors()
-          ? tr("This map has run out of video memory — it can hold %1 walking characters and %2 "
-               "still ones, and it is full. Delete somebody and this frees up.")
-              .arg(WalkingVramSlots).arg(StillVramSlots)
-          : tr("This is an outdoor map, so the game loads a fixed set of 11 pictures from the "
-               "cartridge and this isn't one of them. The console would draw it as garbage. You can "
-               "still place it.");
+          ? tr("This map is out of room for characters, so this one would come out garbled.")
+          : tr("This character isn't expected on this map, so it would come out garbled.");
       }
 
       // The one character that needs a word of its own: dropping this out gives you a SECOND Red
@@ -1636,10 +1635,20 @@ QVariantList MapModel::npcFields(int slot) const
     option(0xD3, tr("Facing right")),
     option(0xFF, tr("Nowhere at all")),
   };
+  // ⚠️ *"Isn't wander supposed to let you pick how far they can walk?"* -- Twilight. The honest answer
+  // is **no**, and it is worth saying out loud rather than leaving her to wonder.
+  //
+  // This byte picks an AXIS and nothing else: anywhere / up-and-down / left-and-right. There IS a
+  // distance limit in the game -- `yDisp` and `xDisp` -- but it is not map data, it is live state
+  // (it sits under "Right now", behind the reloaded-values switch), the game always initialises it
+  // to **8**, and **the mechanism is bugged**: it only ever checks one end of the range, so a sprite
+  // can drift off the other way forever. We keep the bug, because it is the game.
   add(field(movement, "rangeDirByte", tr("Where they may go"),
-                   tr("ONE byte doing two jobs: a wander range for somebody who walks, a fixed "
-                      "facing for somebody who doesn't. It is NOT the facing below — that is a "
-                      "different byte in a different table, and it is the one you see."),
+                   tr("Which way they are allowed to wander — and that is ALL this picks. There is "
+                      "no \"how far\": the game's distance limit is a separate value, it is always 8, "
+                      "and it is bugged (it only checks one side, so they can drift off the other "
+                      "way forever).\n\nFor somebody who doesn't walk, this same byte fixes which way "
+                      "they stand."),
                    s->getRangeDirByte(), 0, 255, "enum", movement2));
 
   const QVariantList facings = {
@@ -1677,11 +1686,14 @@ QVariantList MapModel::npcFields(int slot) const
   const int textByte = s->getTextID();
   const int kind = kindOf(textByte);
 
+  // ⚠️ "Both at once" -- which Twilight quite reasonably read as *"both of WHAT? there are three
+  // other options."* It means both bits set at the same time, which is a thing no real game writes
+  // and the console does something confused with. So it says what it is.
   const QVariantList kinds = {
     option(KindPlain,   tr("Somebody to talk to")),
     option(KindTrainer, tr("A trainer — they will battle you")),
     option(KindItem,    tr("An item ball — pick it up")),
-    option(KindBoth,    tr("Both at once"), true),
+    option(KindBoth,    tr("A trainer AND an item ball"), true),
   };
   add(field(talk, "spriteKind", tr("What they are"),
                    tr("The top two bits of the script byte. The game reads them to decide whether "

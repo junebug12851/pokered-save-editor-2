@@ -1,5 +1,56 @@
 # Qt / QML Patterns
 
+## 🔴 A `TapHandler` does NOT stop the event. It fires *through* your floating panel. — 2026-07-13
+
+**The bug:** open the picture picker in the Details panel and the map underneath *also* got the
+click, and its ground tap cleared the sprite selection — so opening the picker dropped you straight
+back to the map's details. It survived one "fix" and came back.
+
+**The mechanism**, and it is not obvious:
+
+> Qt delivers a press to **every pointer handler on every item under the point, front to back,
+> BEFORE any item receives a mouse event.**
+
+`TapHandler`'s default `gesturePolicy` is **`DragThreshold`**, and on that policy the handler
+**does not take an exclusive grab**. So it does not stop that walk. The map screen's docks *float
+over* the canvas, so a point on a panel is geometrically also on the map — and the panel's
+`TapHandler` and the canvas's `TapHandler` both fired.
+
+**A `MouseArea` under the panel does not save you.** A MouseArea is an *item*, and the item pass runs
+*after* the handler pass. By the time it accepts and stops propagation, the damage is done.
+
+**Two fixes, and use both:**
+
+1. **`gesturePolicy: TapHandler.ReleaseWithinBounds`** — this policy *does* take an exclusive grab on
+   press, so the event stops there. Use it on any TapHandler in a floating panel.
+2. **Ask, geometrically.** The thing underneath should refuse taps that landed on a panel:
+   ```qml
+   const g = canvas.mapToGlobal(point.x, point.y);
+   if (canvasRoot.overPanel(g.x, g.y))
+     return;
+   ```
+   A containment test cannot be defeated by anyone's grab policy. `MapCanvas.overPanel` /
+   `MapDock.panelContainsGlobal`.
+
+⚠️ **And do not measure a floating panel against its dock's `width`.** The dock item is only the 40px
+*rail* — the open panel hangs **outside** its bounds. `dock.mapFromGlobal(...)` against `dock.width`
+tests the icon strip. (This silently broke drag-to-delete too: the "drop zone" was the rail.) Ask the
+dock: `panelContainsGlobal()`.
+
+## 🔴 Never size a `Popup` from its own `contentItem` — 2026-07-13
+
+```qml
+popup.height: Math.min(300, popup.contentItem.implicitHeight + 2)   // ❌ BINDING LOOP
+```
+
+The popup's height depends on its ListView's implicit height, which depends on the popup's height.
+Qt breaks the loop by dropping bindings, and what you get is a drop-down whose **rows are squashed
+too short to show their text** *and* **do not respond to clicks at all**. Two symptoms, one cause,
+and it looks like two separate bugs.
+
+**The popup sizes itself.** `MapPicker` — the one with 248 grouped maps in it, which works — does not
+lay a finger on it. A custom delegate binds its width to the **combo**, never to the popup.
+
 ## ⚠️ THE THREE THAT COST A WHOLE REVIEW ROUND (2026-07-13)
 
 Three different symptoms, and they kept coming back because each looks like a feature bug rather than a

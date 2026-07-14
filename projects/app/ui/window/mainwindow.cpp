@@ -24,6 +24,9 @@
 #include <QQmlContext>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QCoreApplication>
+#include <QMouseEvent>
+#include <QPointF>
 #include <QElapsedTimer>
 #include <QDebug>
 #include <QMessageBox>
@@ -181,6 +184,36 @@ bool MainWindow::saveShot(const QString& path)
   if(img.isNull())
     return false;
   return img.save(path);
+}
+
+// ── DEBUG: a REAL mouse press+release, through Qt's real delivery path ────────────────────────────
+//
+// ⚠️ The harness's `click` command emits a control's `clicked()` signal directly. That drives a
+// button, and it is **useless for a whole class of bug**: anything about how a pointer event is
+// DELIVERED -- which item grabs it, which handler consumes it, what it falls through to. Emitting
+// the signal skips every bit of that machinery, which is exactly the machinery that breaks.
+//
+// So the harness could not reproduce "opening the picture picker drops the selection", and I went
+// and clicked the screen by hand instead of fixing the tool. Twilight asked why, and she was right
+// to. This is the fix: a genuine QMouseEvent, posted at the QQuickWidget, through grabs, handlers,
+// propagation and all.
+bool MainWindow::debugTap(const QPointF& at)
+{
+  if(ui.app == nullptr)
+    return false;
+
+  const QPoint local = at.toPoint();
+  const QPointF global = ui.app->mapToGlobal(local);
+
+  QMouseEvent press(QEvent::MouseButtonPress, at, global,
+                    Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+  QMouseEvent release(QEvent::MouseButtonRelease, at, global,
+                      Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+
+  QCoreApplication::sendEvent(ui.app, &press);
+  QCoreApplication::sendEvent(ui.app, &release);
+
+  return true;
 }
 
 bool MainWindow::debugOpenPartyDetails(int index)

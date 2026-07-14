@@ -63,13 +63,44 @@ Item {
   /// A line for the status bar (a drop, a delete, a cap hit). Never a modal.
   property string status: ""
 
-  /// How many popups are currently open over the canvas.
-  ///
-  /// ⚠️ While this is > 0 the ground does not take clicks -- because a "click on the ground" arriving
-  /// while a picker is open is not a click on the ground: it is the press that dismissed the picker,
-  /// leaking through. That leak is what dropped you out of a sprite's Details panel the moment you
-  /// opened its picture picker. Any popup drawn over this canvas must raise and lower this.
+  /// How many popups are currently open over the canvas. While > 0 the ground does not take clicks.
   property int popupsOpen: 0
+
+  /// The panels that FLOAT OVER this canvas (the two docks). A tap that lands inside an open one is
+  /// not a tap on the ground, and the ground must not act on it.
+  ///
+  /// ⚠️ THIS IS NOT BELT-AND-BRACES. It is the fix, and here is the mechanism, because it is not
+  /// obvious and it cost two rounds:
+  ///
+  /// Qt delivers a press to **every pointer handler on every item under the point, front to back,
+  /// BEFORE any item gets a mouse event.** A `TapHandler` whose `gesturePolicy` is the default
+  /// `DragThreshold` **does not take an exclusive grab** -- so it does not stop that walk. The
+  /// picture picker's chip is a TapHandler in a panel that floats over the map… and the map's own
+  /// ground TapHandler is *also* under the point. Both fired. The picker opened and the ground
+  /// cleared the selection, so the Details panel fell straight back to showing the map.
+  ///
+  /// The dock's swallowing MouseArea does not help: a MouseArea is an ITEM, and the item pass
+  /// happens *after* the handler pass. By then the damage is done.
+  ///
+  /// So the ground asks, in as many words, whether the tap was over a panel. It is a plain geometric
+  /// containment test -- the same shape as `overDeleteZone`, which we already trust -- and no
+  /// handler's grab policy can defeat it.
+  property var overlays: []
+
+  /// Is this global point inside one of the panels floating over us?
+  ///
+  /// ⚠️ It asks the DOCK, because the dock item is only the 40px rail -- the open panel hangs outside
+  /// its bounds. Testing `dock.width` tests the rail. @see MapDock.panelContainsGlobal
+  function overPanel(sx, sy) {
+    for (let i = 0; i < canvasRoot.overlays.length; i++) {
+      const dock = canvasRoot.overlays[i];
+
+      if (dock && dock.panelContainsGlobal(sx, sy))
+        return true;
+    }
+
+    return false;
+  }
 
   /// The 3-block border ring, in buffer pixels. A sprite at map (0,0) starts here.
   readonly property int mapBorderPx: 3 * 32
@@ -94,14 +125,16 @@ Item {
   /// to light itself up red; it has no DropArea of its own any more.
   property bool deleteHover: false
 
-  /// Is this scene point over the delete zone (the Characters panel, while it is open)?
+  /// Is this global point over the delete zone (the Characters panel, while it is open)?
+  ///
+  /// ⚠️ It asks the DOCK for its PANEL's bounds. It used to test `deleteZone.width` -- and the dock
+  /// item is only the 40px rail, so it was testing the icon strip. Dragging somebody out to delete
+  /// them only worked if you dropped them on the rail. @see MapDock.panelContainsGlobal
   function overDeleteZone(sx, sy) {
     if (!canvasRoot.deleteZone || canvasRoot.deleteZone.open !== "characters")
       return false;
 
-    const p = canvasRoot.deleteZone.mapFromGlobal(sx, sy);
-    return p.x >= 0 && p.y >= 0
-        && p.x < canvasRoot.deleteZone.width && p.y < canvasRoot.deleteZone.height;
+    return canvasRoot.deleteZone.panelContainsGlobal(sx, sy);
   }
 
   /// The MAP TILE under a global point. The one place that conversion is written down.
@@ -640,6 +673,21 @@ Item {
 
       TapHandler {
         onTapped: (eventPoint) => {
+          // ⚠️ THE TAP LANDED ON A PANEL, NOT ON THE MAP.
+          //
+          // The docks FLOAT over this canvas, so a point inside one of them is also inside us -- and
+          // Qt walks every pointer handler under the point, front to back, before any item sees a
+          // mouse event. A TapHandler on the default `DragThreshold` policy takes no exclusive grab,
+          // so it does not stop that walk: the picker's handler fired AND this one fired, and this
+          // one cleared the selection the Details panel was editing. (Reproduced with the harness's
+          // `tap` -- a real pointer event -- 2026-07-13.)
+          //
+          // Asking "was it over a panel?" is a plain containment test and no grab policy can defeat
+          // it. @see overPanel.
+          const g = canvas.mapToGlobal(eventPoint.position.x, eventPoint.position.y);
+          if (canvasRoot.overPanel(g.x, g.y))
+            return;
+
           const px = Math.floor(eventPoint.position.x / canvasRoot.zoom);
           const py = Math.floor(eventPoint.position.y / canvasRoot.zoom);
 

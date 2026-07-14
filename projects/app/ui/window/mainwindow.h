@@ -66,6 +66,15 @@ public:
   /// Backs the --shot debug launch flag. @return false on failure.
   bool saveShot(const QString& path);
 
+  /// DEBUG: a **real** mouse press+release at @p at (view coordinates), through Qt's real delivery
+  /// path -- grabs, pointer handlers, propagation and all.
+  ///
+  /// ⚠️ NOT the same thing as the harness's `click`, which emits a control's `clicked()` signal and
+  /// therefore exercises **none** of the delivery machinery. If a bug is about *which item gets the
+  /// event* -- who grabs it, who consumes it, what it falls through to -- `click` cannot see it and
+  /// this can. @see debugserver.cpp -> "tap"
+  bool debugTap(const QPointF& at);
+
   /// DEBUG: open the details editor for party mon @p index (drives the QML
   /// AppWindow.debugOpenPartyDetails). Backs --screen pokemonDetails. @return false
   /// if the item/mon can't be resolved.

@@ -53,6 +53,9 @@
 #include <QMetaObject>
 #include <QByteArray>
 #include <QDebug>
+#include <QMouseEvent>
+#include <QPointF>
+#include <QQuickItem>
 
 #include "../../ui/window/mainwindow.h"
 #include "../bridge/bridge.h"
@@ -147,6 +150,48 @@ QJsonObject execute(const QJsonObject& c)
     if(it == nullptr) return err(QStringLiteral("no object"));
     const bool okClick = QMetaObject::invokeMethod(it, "clicked");
     return okClick ? ok(true) : err(QStringLiteral("no clicked() signal"));
+  }
+
+  // ── tap: a REAL mouse press+release, on the window ────────────────────────────────────────────
+  //
+  // ⚠️ `click` emits a control's `clicked()` signal directly. That is fine for driving a button, and
+  // **useless for a whole class of bug**: anything to do with how a pointer event is DELIVERED --
+  // which item grabs it, which handler consumes it, what it falls through to. Emitting the signal
+  // skips all of that.
+  //
+  // That is exactly the bug that sent me out of our own tooling and into clicking the screen by hand
+  // (2026-07-13, and Twilight rightly asked why). The answer is: the harness could not do it. Now it
+  // can. `tap` posts a genuine QMouseEvent to the window at a scene coordinate, through Qt's real
+  // delivery path -- grabs, handlers, propagation and all.
+  //
+  //   {"cmd":"tap","x":120,"y":300}          -- a scene coordinate
+  //   {"cmd":"tap","obj":"someItem"}         -- ...or the centre of a named item
+  if(cmd == QStringLiteral("tap")) {
+    auto* mw = MainWindow::getInstance();
+    if(mw == nullptr) return err(QStringLiteral("no window"));
+
+    QPointF at;
+
+    if(c.contains(QStringLiteral("obj"))) {
+      QObject* o = findItem(c.value(QStringLiteral("obj")).toString());
+      auto* item = qobject_cast<QQuickItem*>(o);
+      if(item == nullptr)
+        return err(QStringLiteral("no item: ") + c.value(QStringLiteral("obj")).toString());
+
+      at = item->mapToScene(QPointF(item->width() / 2.0, item->height() / 2.0));
+    }
+    else {
+      at = QPointF(c.value(QStringLiteral("x")).toDouble(),
+                   c.value(QStringLiteral("y")).toDouble());
+    }
+
+    if(!mw->debugTap(at))
+      return err(QStringLiteral("tap failed"));
+
+    QJsonObject where;
+    where[QStringLiteral("x")] = at.x();
+    where[QStringLiteral("y")] = at.y();
+    return ok(where);
   }
 
   if(cmd == QStringLiteral("reload")) {

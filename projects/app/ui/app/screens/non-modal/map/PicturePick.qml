@@ -69,6 +69,8 @@ Item {
   // ── Closed: who is chosen ──────────────────────────────────────────────────────────────────
   Rectangle {
     id: face
+    objectName: "picturePickChip"   // the DEBUG harness taps this (a REAL pointer event -- see `tap`)
+
     anchors.fill: parent
     radius: 4
 

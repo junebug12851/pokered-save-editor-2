@@ -231,18 +231,25 @@ ColumnLayout {
       function onFieldDataChanged() { combo.currentIndex = combo.indexOfValue(field.value); }
     }
 
-    // Let the LIST be as wide as its longest name, even though the closed combo is only as wide as
-    // the panel. This is the fix for "text still cut off" -- the popup escapes the dock.
-    popup.width: Math.max(combo.width, 260)
-    popup.height: Math.min(300, popup.contentItem.implicitHeight + 2)
-
+    // ⚠️ DO NOT TOUCH `popup.height`, AND DO NOT SIZE IT FROM `popup.contentItem`.
+    //
+    // I did exactly that -- `popup.height: Math.min(300, popup.contentItem.implicitHeight + 2)` --
+    // and it is a **binding loop**: the popup's height depends on its ListView's implicit height,
+    // which depends on the popup's height. Qt breaks the loop by dropping bindings, and what you get
+    // is a popup whose rows are **squashed too short to show their text** and **do not respond to
+    // clicks at all**. Twilight, and both symptoms in one sentence: *"combo box items render too
+    // short and I don't see text sometimes... none of the combo boxes' buttons work."*
+    //
+    // The popup sizes itself. MapPicker -- the one that works, with 248 grouped maps in it -- does
+    // not lay a finger on it, and neither do we. The delegate binds to the COMBO's width, never the
+    // popup's.
     delegate: ItemDelegate {
       id: opt
       required property var modelData
       required property int index
 
-      width: combo.popup.width
-      height: (opt.heading !== "" ? 20 : 0) + 26
+      width: combo.width
+      height: (opt.heading !== "" ? 20 : 0) + 28
       highlighted: combo.highlightedIndex === opt.index
 
       /// The section heading rides on the FIRST row of its section, and is empty on the rest.

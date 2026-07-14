@@ -147,14 +147,61 @@ Rectangle {
       width: panel.width - 24 - 16
       spacing: 10
 
-      // (Two paragraphs of explanation opened this panel. They are the "?" in the title now --
-      // Twilight, 2026-07-13. Do not put them back.)
+      // ── ONE NOTICE, AT THE TOP, FOR THE WHOLE PANEL ──────────────────────────────────────────
+      //
+      // ⚠️ Twilight took this panel apart and she was right to:
+      //
+      //   > *"What is 'This map's set — Pallet and Viridian'? 'Load this map's set', greyed-out text
+      //   > — is there any point to this at all? Is the set different from the eleven, are they
+      //   > together? The second one doesn't have an exclamation point, so does that mean it's
+      //   > different from 'The set'? The 'the' before it sounds dumb — call both of them something
+      //   > else."*
+      //
+      // Every one of those is the panel's fault. There were three groups that looked like three
+      // unrelated things, one of them wearing a "!" and the others not — as if some of it survived a
+      // load and some didn't. **It is all one cache and ALL of it is overwritten.** So the notice is
+      // said ONCE, here, for the panel, and the groups below are just the parts of it.
+      Rectangle {
+        Layout.fillWidth: true
+        radius: 6
+        color: Qt.rgba(1, 0.84, 0.31, 0.15)
+        border.width: 1
+        border.color: "#ffd54f"
+        implicitHeight: topRow.implicitHeight + 14
 
-      // ── Which set ────────────────────────────────────────────────────────────────────────────
+        RowLayout {
+          id: topRow
+          anchors.fill: parent
+          anchors.margins: 7
+          spacing: 6
+
+          MapWarnIcon {
+            Layout.alignment: Qt.AlignTop
+            text: qsTr("Every value on this panel is one the game works out again when it loads your "
+                       + "save. They're yours to edit; they just won't survive Continue.")
+          }
+
+          Label {
+            Layout.fillWidth: true
+            text: brg.map.mapIsIndoors()
+                    ? qsTr("Indoor maps don't use a sprite set at all — the game loads each "
+                           + "character's own artwork. Nothing on this panel does anything here.")
+                    : qsTr("The game rebuilds all of this from the cartridge every time it loads "
+                           + "your save.")
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+          }
+        }
+      }
+
+      // ── What the save is carrying ────────────────────────────────────────────────────────────
+      //
+      // Named for what it IS -- the save's copy -- rather than "The set", which said nothing and
+      // implied it was a different thing from the eleven pictures below it. It is not: picking here
+      // fills those eleven.
       Group {
-        title: qsTr("The set")
-        overwritten: qsTr("The game rebuilds this from the map you're standing on every time it "
-                          + "loads your save — so whatever you set here, it won't survive Continue.")
+        title: qsTr("Cached set")
+        hint: qsTr("Picking one fills the eleven pictures below.")
 
         ComboBox {
           Layout.fillWidth: true
@@ -190,34 +237,32 @@ Rectangle {
         }
       }
 
-      // ── What the game would load here ────────────────────────────────────────────────────────
+      // ── What the CARTRIDGE would load here ───────────────────────────────────────────────────
+      //
+      // ⚠️ HIDDEN INDOORS. Twilight: *"'Load this map's set', greyed-out text — is there any point to
+      // this at all?"* Indoors: no, there is not. The map has no set, the button can never do
+      // anything, and a permanently-disabled control that can never become enabled is furniture.
+      // Outdoors it is the useful thing on this panel: it is what the console will put here anyway,
+      // and the button gets you there in one click.
       Group {
-        title: qsTr("This map's set")
-        hint: brg.map.mapHasSpriteSet
-              ? ""
-              : qsTr("Indoors — the game doesn't use one. Anybody can go here.")
+        visible: brg.map.mapHasSpriteSet
 
-        RowLayout {
-          Layout.fillWidth: true
-          visible: brg.map.mapHasSpriteSet
-          spacing: 6
+        title: qsTr("What this map really loads")
+        hint: qsTr("Out of the cartridge. This is what the game will put in the cache anyway.")
 
-          Text {
-            Layout.fillWidth: true
-            text: brg.map.mapSpriteSetName
-            font.pixelSize: 11
-            font.bold: true
-            color: brg.settings.textColorDark
-            wrapMode: Text.WordWrap
-          }
-        }
-
-        // The cache disagrees with the map. Not an error -- the game will fix it itself on the next
-        // load -- so it says so quietly, and offers to do it now.
         Text {
           Layout.fillWidth: true
-          visible: brg.map.mapHasSpriteSet && !brg.map.spriteSetMatchesMap
-          text: qsTr("The cache is from a different set.")
+          text: brg.map.mapSpriteSetName
+          font.pixelSize: 12
+          font.bold: true
+          color: brg.settings.textColorDark
+          wrapMode: Text.WordWrap
+        }
+
+        Text {
+          Layout.fillWidth: true
+          visible: !brg.map.spriteSetMatchesMap
+          text: qsTr("The save is carrying a different one.")
           font.pixelSize: 10
           color: "#8a6d00"
           wrapMode: Text.WordWrap
@@ -225,19 +270,22 @@ Rectangle {
 
         Button {
           Layout.fillWidth: true
-          visible: brg.map.mapHasSpriteSet
           flat: true
           font.pixelSize: 11
           enabled: !brg.map.spriteSetMatchesMap
-          text: qsTr("Load this map's set")
+          text: qsTr("Copy it into the save")
           onClicked: brg.map.applyMapSpriteSet()
         }
       }
 
       // ── The eleven slots ─────────────────────────────────────────────────────────────────────
+      //
+      // "The eleven" -- which, as Twilight put it, "sounds dumb", and worse: it read as a *different
+      // thing* from the set above it. It isn't. It IS the set: these are the eleven pictures that set
+      // is made of, and picking a set up there fills them in down here.
       Group {
-        title: qsTr("The eleven")
-        hint: qsTr("1–9 walk · 10 and 11 stand still")
+        title: qsTr("Cached pictures")
+        hint: qsTr("The eleven the set is made of. 1–9 walk · 10 and 11 stand still.")
 
         Repeater {
           model: brg.map.cachedSprites()

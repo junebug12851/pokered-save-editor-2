@@ -266,32 +266,58 @@ Rectangle {
     // them stacked under the fields that DO matter is the difference between a panel and a hex dump.
     //
     // Off: they simply are not there. On: they are, each wearing its yellow "!".
-    RowLayout {
-      spacing: 6
+    //
+    // ⚠️ AN ICON, NOT A LABELLED SWITCH. It was "Reloaded values" + a Switch, and Twilight:
+    // *"it's way too long -- don't put a long label to the left of it, do something else, maybe an
+    // icon of sorts."* She is right: a sentence of chrome sitting permanently in the toolbar to
+    // describe a thing you touch once. It is a chip with a mark on it now, and the words are in its
+    // tooltip -- which is the whole bargain this toolbar makes everywhere else.
+    Rectangle {
+      objectName: "showScratchToggle"   // the DEBUG harness drives the panel through this
 
-      Label {
-        text: qsTr("Reloaded values")
-        font.pixelSize: 11
-        color: brg.settings.textColorMid
+      implicitWidth: 30
+      implicitHeight: 26
+      radius: 13
 
-        HoverHandler { id: scratchHover }
+      readonly property bool on: brg.map.showScratch
 
-        MapToolTip {
-          shown: scratchHover.hovered
-          text: qsTr("Show the fields the game works out again every time it loads your save — the "
-                     + "walk state, the on-screen pixels, the sprite cache. You can edit them; they "
-                     + "just won't survive Continue.")
-        }
+      color: on ? "#ffd54f"
+           : scratchHover.hovered ? Qt.rgba(0, 0, 0, 0.10)
+           : Qt.rgba(0, 0, 0, 0.05)
+
+      border.width: 1
+      border.color: on ? "#8a6d00" : brg.settings.dividerColor
+
+      Behavior on color { ColorAnimation { duration: 90 } }
+
+      // The same "!" that marks every one of the fields it reveals. One mark, one meaning.
+      Text {
+        anchors.fill: parent
+        text: "!"
+        font.pixelSize: 13
+        font.bold: true
+        color: parent.on ? "#3a2e00" : brg.settings.textColorMid
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        opacity: parent.on ? 1.0 : 0.55
       }
 
-      Switch {
-        objectName: "showScratchToggle"   // the DEBUG harness drives the panel through this
+      HoverHandler { id: scratchHover; cursorShape: Qt.PointingHandCursor }
 
-        implicitHeight: 22
-        scale: 0.8
+      // ⚠️ ReleaseWithinBounds -- it takes an EXCLUSIVE GRAB, so the press stops here. The default
+      // (DragThreshold) does not grab, and Qt then goes on delivering the point to every other
+      // pointer handler underneath. That is the bug that made the map's ground tap fire through the
+      // panels. @see MapCanvas.overPanel
+      TapHandler {
+        gesturePolicy: TapHandler.ReleaseWithinBounds
+        onTapped: brg.map.showScratch = !brg.map.showScratch
+      }
 
-        checked: brg.map.showScratch
-        onToggled: brg.map.showScratch = checked
+      MapToolTip {
+        shown: scratchHover.hovered
+        text: qsTr("Show cleared values — the ones the game works out again every time it loads your "
+                   + "save (the walk state, the on-screen pixels, the sprite cache).\n\nThey're real "
+                   + "bytes and you can edit every one of them. They just won't survive Continue.")
       }
     }
   }

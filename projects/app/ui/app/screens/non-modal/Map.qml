@@ -193,6 +193,12 @@ Page {
         // The canvas does the containment test itself -- there is no DropArea anywhere on this screen.
         deleteZone: leftDock
 
+        // ⚠️ The panels FLOAT over the canvas, so a click on one of them is geometrically also a
+        // click on the map -- and Qt's pointer handlers fire for BOTH. Without this the map's ground
+        // tap cleared the sprite selection every time you touched a control in the Details panel.
+        // @see MapCanvas.overPanel
+        overlays: [leftDock, rightDock]
+
         // The ✎ button on a sprite opens the Details panel ON it -- no hunting for the panel.
         onEditRequested: (slot) => { leftDock.open = "details"; }
       }

@@ -207,11 +207,14 @@ Rectangle {
 
       // ── Strength ────────────────────────────────────────────────────────────
       //
-      // These two really are leftovers -- the game rewrites them the next time you shove a
-      // rock. But they ARE save bytes, so they are the user's, and they get proper editors.
-      // What they don't get is a pretense that they configure anything -- or, as of 2026-07-13, a
-      // three-line paragraph saying so. The yellow ! says it, in one hover.
+      // ⚠️ BEHIND THE "SHOW CLEARED" SWITCH (Twilight, 2026-07-13: *"Last Strength push is still
+      // there, should be behind reloaded values"*). These two bytes are scratch the game left behind
+      // the last time somebody shoved a rock, and it overwrites them the next time. They are real,
+      // they are hers, and she can edit them -- but they configure nothing, and having them sitting
+      // under the grass and the counters implies they do.
       Group {
+        visible: brg.map.showScratch
+
         title: qsTr("Last Strength push")
         overwritten: qsTr("Scratch the game left behind the last time a boulder was pushed. It "
                           + "overwrites these the next time you push one — but they're yours, so "

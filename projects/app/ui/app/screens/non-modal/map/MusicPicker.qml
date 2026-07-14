@@ -225,15 +225,15 @@ RowLayout {
             brg.music.select(t.bank, t.id);
           }
 
-          popup.height: Math.min(280, popup.contentItem.implicitHeight + 2)
-
+          // ⚠️ NO `popup.height` BINDING. Sizing the popup from its own contentItem is a binding loop
+          // -- Qt breaks it, and the rows come out too short to read AND unclickable. @see SpriteField.
           delegate: ItemDelegate {
             id: row
             required property var modelData
             required property int index
 
             width: trackCombo.width
-            height: (row.heading !== "" ? 20 : 0) + 24
+            height: (row.heading !== "" ? 20 : 0) + 28
             highlighted: trackCombo.highlightedIndex === row.index
 
             readonly property bool isSaved: music.hasAudio

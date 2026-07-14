@@ -390,25 +390,11 @@ Item {
           }
         }
 
-        // The one thing about a sprite you cannot see by looking at it.
-        Rectangle {
-          Layout.fillWidth: true
-          visible: details.sprite.inSpriteSet === false
-          radius: 6
-          color: Qt.rgba(1, 0.84, 0.31, 0.15)
-          border.width: 1
-          border.color: "#ffd54f"
-          implicitHeight: setWarn.implicitHeight + 14
-
-          Label {
-            id: setWarn
-            anchors.fill: parent
-            anchors.margins: 7
-            text: qsTr("This map hasn't loaded this character's picture, so the game will draw it as garbage. The save allows it — we're just telling you.")
-            wrapMode: Text.Wrap
-            font.pixelSize: 11
-          }
-        }
+        // (A big yellow BLOCK saying "this map hasn't loaded this character's picture" sat here.
+        //  REMOVED 2026-07-13 -- Twilight: *"don't have it also as a big yellow block on the details
+        //  page."* And she is right: the picture picker two rows below already carries the yellow "!"
+        //  on exactly that character, with the sentence in its tooltip. Saying it a second time, in a
+        //  paragraph, in a coloured box, above the fields you came to edit, is the panel shouting.)
 
         // (A blue "this map's cast no longer matches the game's" notice sat here. REMOVED 2026-07-13
         // -- Twilight: "do not have notice on cast no longer matches". It fired on every edit, said
