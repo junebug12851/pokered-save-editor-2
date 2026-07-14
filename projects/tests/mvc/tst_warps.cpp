@@ -115,6 +115,7 @@ private slots:
   void legalFlyMaps_areTheCartridgesThirteen();
   void legalDungeonWarps_arePairs_andHolesAreOneBased();
   void guns_flagTheIllegalValue_butNeverRefuseIt();
+  void guns_dontCryWolfOnAnOrdinarySave();
 
   // ── The bug this phase existed to fix ───────────────────────────────────────
   void setTo_touchesNoStateByte();
@@ -712,17 +713,85 @@ void TestWarps::guns_flagTheIllegalValue_butNeverRefuseIt()
   QCOMPARE(f.value("value").toInt(), 200);
   QVERIFY2(!f.value("legal").toBool(), "an out-of-table Fly destination was not flagged");
 
-  // The panel can offer only the safe ones.
+  // The panel can offer only the safe ones. (+1 each for the "not falling" resting value, which is
+  // what the game itself writes when you are not standing on a hole -- see below.)
   QCOMPARE(r->map->flyWarpMapList().size(), 13);
-  QCOMPARE(r->map->dungeonWarpMapList().size(), 7);
+  QCOMPARE(r->map->dungeonWarpMapList().size(), 8);       // 7 maps + "Nowhere"
 
-  // Per-map hole lists -- and Victory Road's has exactly one entry, and it is not "1".
+  // Per-map hole lists -- and Victory Road's has exactly one real hole, and it is not "1".
   const QVariantList vr = r->map->dungeonHoleList(194);
-  QCOMPARE(vr.size(), 1);
-  QCOMPARE(vr.first().toMap().value("value").toInt(), 2);
+  QCOMPARE(vr.size(), 2);                                 // "Not falling" + hole 2
+  QCOMPARE(vr.at(1).toMap().value("value").toInt(), 2);
 
-  QCOMPARE(r->map->dungeonHoleList(159).size(), 2);   // Seafoam B1F
-  QVERIFY(r->map->dungeonHoleList(0).isEmpty());      // Pallet Town has no holes
+  QCOMPARE(r->map->dungeonHoleList(159).size(), 3);       // Seafoam B1F: "Not falling" + holes 1, 2
+  QCOMPARE(r->map->dungeonHoleList(0).size(), 1);         // Pallet Town: only "Not falling"
+
+  delete r;
+}
+
+/**
+ * @brief 🔫 The red "!" fires only when the value is out of the table **AND the game will read it**.
+ *
+ * ⚠️ **THE SCREENSHOT REVIEW CAUGHT THIS ONE, and it would have shipped.**
+ *
+ * The fixture save -- an entirely ordinary one -- holds `dungeonWarpDestMap = 194` (Victory Road 2F)
+ * and `whichDungeonWarp = 0`. That pair is not in `DungeonWarpList`, so the first cut screamed at it.
+ *
+ * But **0 is the resting value**: `IsPlayerOnDungeonWarp` writes 0 there as its very first
+ * instruction whenever you are *not* standing on a hole. So essentially **every save anybody has ever
+ * made carries one**, `BIT_DUNGEON_WARP` is off, and the console will never look at either byte.
+ *
+ * Flagging that is crying wolf on every file ever opened -- exactly the mistake the sprite "your cast
+ * has changed" notice made in its first cut. Noise is a bug.
+ */
+void TestWarps::guns_dontCryWolfOnAnOrdinarySave()
+{
+  Rig* r = makeRig();
+  auto* warps = r->sf.dataExpanded->area->warps;
+
+  // The fixture really is like this. If it ever isn't, this test is testing nothing.
+  QVERIFY2(warps->whichDungeonWarp == 0,
+           "the fixture no longer rests at hole 0 -- this test's whole premise is gone");
+  QVERIFY2(!warps->dungeonWarp, "the fixture is mid-fall, which no ordinary save is");
+
+  QVariantList fields = r->map->warpStateFields();
+
+  for (const QString& key : { "dungeonWarpDestMap", "whichDungeonWarp" }) {
+    const QVariantMap f = fieldNamed(fields, key);
+    QVERIFY(f.value("gun").toBool());
+
+    // Nothing is going to read it, so it is NOT armed -- and the panel therefore keeps quiet.
+    QVERIFY2(!f.value("armed").toBool(),
+             qPrintable(QStringLiteral("'%1' claims the game will read it, on a save that isn't "
+                                       "falling down anything").arg(key)));
+  }
+
+  // The resting hole (0) is a LEGAL, NAMED value -- not a hack. The game writes it itself.
+  QVERIFY2(fieldNamed(fields, QStringLiteral("whichDungeonWarp")).value("legal").toBool(),
+           "hole 0 was flagged illegal -- it is what the game writes when you are not falling");
+
+  // ── Now ARM it, and the same value becomes a real hazard. ──────────────────────────────────
+  r->map->setWarpStateField(QStringLiteral("flyOrDungeonWarp"), 1);
+  r->map->setWarpStateField(QStringLiteral("dungeonWarp"), 1);
+
+  fields = r->map->warpStateFields();
+  QVERIFY2(fieldNamed(fields, QStringLiteral("whichDungeonWarp")).value("armed").toBool(),
+           "the game IS about to read the hole number and the panel does not know it");
+
+  // Victory Road 2F + hole 1 is a pair the table does not have. Armed, that is a hazard.
+  r->map->setWarpStateField(QStringLiteral("dungeonWarpDestMap"), 194);
+  r->map->setWarpStateField(QStringLiteral("whichDungeonWarp"), 1);
+
+  fields = r->map->warpStateFields();
+  const QVariantMap hole = fieldNamed(fields, QStringLiteral("whichDungeonWarp"));
+  QVERIFY2(!hole.value("legal").toBool() && hole.value("armed").toBool(),
+           "Victory Road 2F has no hole 1, the game is about to read it, and nobody said anything");
+
+  // ⚠️ And the MAP beside it is judged on its OWN merits -- Victory Road 2F is a real hole map, and
+  // the first cut failed BOTH fields whenever the pair was wrong, so a perfectly good map came up
+  // flagged because of its neighbour. Two fields, two questions.
+  QVERIFY2(fieldNamed(fields, QStringLiteral("dungeonWarpDestMap")).value("legal").toBool(),
+           "Victory Road 2F is a map with holes and it was flagged because the HOLE was wrong");
 
   delete r;
 }

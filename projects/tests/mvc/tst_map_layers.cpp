@@ -40,6 +40,11 @@
 #include <pse-savefile/expanded/area/areatileset.h>
 
 #include <engine/mapengine.h>
+#include <pse-savefile/expanded/world/world.h>
+#include <pse-savefile/expanded/world/worldgeneral.h>
+#include <pse-savefile/expanded/area/areasprites.h>
+#include <pse-savefile/expanded/area/areawarps.h>
+#include <pse-savefile/expanded/area/arealoadedsprites.h>
 #include <mvc/mapmodel.h>
 #include <mvc/maplayersmodel.h>
 
@@ -64,7 +69,18 @@ class TestMapLayers : public QObject
     loadInto(r->sf, m_orig);
 
     auto* area = r->sf.dataExpanded->area;
-    r->map = new MapModel(area->map, area->player, area->tileset, area->general);
+
+    // ⚠️ The rig has to be the REAL thing. It used to build a MapModel with no sprites and no warps,
+    // and the moment the Doors layer landed (2026-07-14) `groupEye_isTriState` went red -- not
+    // because the tri-state broke, but because a layer for a thing the model had never been given
+    // could never "apply", so "turn the whole group on" could never turn it on, and the group could
+    // never reach "all".
+    //
+    // The bug was in the RIG, and it was the honest kind: a stripped-down fixture that quietly stops
+    // resembling the app. Hand it what the app hands it.
+    r->map = new MapModel(area->map, area->player, area->tileset, area->general,
+                          area->preloadedSprites, area->sprites, area->warps,
+                          r->sf.dataExpanded->world->general);
     r->layers = new MapLayersModel(r->map);
     return r;
   }

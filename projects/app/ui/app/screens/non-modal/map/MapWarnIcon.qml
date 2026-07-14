@@ -43,13 +43,23 @@ Rectangle {
   /// How wide the tooltip is allowed to get before it wraps.
   property int tipWidth: 220
 
+  /// ⚠️ **The red one.** Amber says *"the game will overwrite this"* — a fact, no harm done. This says
+  /// **"the console has no answer for this value"**: the warp destinations whose ROM lookup tables
+  /// have no bounds check, so an illegal value makes a real Game Boy read arbitrary cartridge bytes
+  /// as warp data. That is not a notice, it is a hazard, and red is what red is for.
+  ///
+  /// ⚠️ Use it sparingly. Twilight, 2026-07-13: *"you have red text everywhere, even to indicate
+  /// information, which is bad."* She is right — red means *something is broken*. Here, something is.
+  property bool warn: false
+
   implicitWidth: 14
   implicitHeight: 14
   radius: 7
 
-  color: hover.hovered ? "#c79100" : "#ffd54f"
+  color: warn.warn ? (hover.hovered ? "#a33f00" : "#d55e00")
+                   : (hover.hovered ? "#c79100" : "#ffd54f")
   border.width: 1
-  border.color: "#8a6d00"
+  border.color: warn.warn ? "#7a3600" : "#8a6d00"
 
   // ⚠️ Fill + align, never `anchors.centerIn` -- a "!" has no descender, so centring the Text's BOX
   // pushes the glyph into the bottom-left of the circle. (It shipped that way once; Twilight saw it.)
@@ -58,7 +68,7 @@ Rectangle {
     text: "!"
     font.pixelSize: 10
     font.bold: true
-    color: "#3a2e00"
+    color: warn.warn ? "#ffffff" : "#3a2e00"
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
   }

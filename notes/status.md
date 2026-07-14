@@ -14,12 +14,43 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
-### 🚪 WARPS — the research is done; the model has seven bugs (2026-07-14)
+### 🚪 WARPS — phase 5 is COMPLETE (2026-07-14, `0.36.0-alpha`)
 
-The next phase of the map screen is **warps**, and — as with sprites — the research pass found that our
-model is a straight port of v1's guesses. Nothing is built; **Phase 5a exists to fix this first.**
+| | | |
+|---|---|---|
+| **5a** | The model, made true | ✅ seven bugs fixed + **negative-controlled**; the legal-value tables modelled; `wLastMap`/`wLastBlackoutMap` surfaced |
+| **5b** | Doors on the canvas | ✅ select · drag (**exactly two bytes**) · ✕ · ✎; a live "→ where it goes" label; the Doors layer |
+| **5c** | The toolbar becomes TOOLS | ✅ `⇄+ Place warp`, `🧍+ Place sprite` (random, but **only from the map's own loaded pictures**), and `[ Outside is: … ]` |
+| **5d** | The Warp state panel (**right dock**) | ✅ every byte named in English; the guns offer legal values, full range one click away; the dead/wiped four behind the switch |
+| **5e** | The player | ✅ position, in the Details panel |
+
+New test: **`tst_warps`** (24 cases). Keystone: drag a door across town and byte-diff the whole 32 KB —
+**exactly `x` and `y` moved**. Full `ctest` **85/85**.
+
+⏳ **Owed: Twilight's live pass** — the drag, the drop, the delete, the maker tools and the pickers are
+all things a still PNG cannot review.
+
+### 🐺 …and the screenshot review caught a cry-wolf that would have shipped (2026-07-14)
+
+The fixture save — an **ordinary** one — holds `dungeonWarpDestMap = 194` and `whichDungeonWarp = 0`.
+That pair is not in `DungeonWarpList`, so the first cut lit a **red !** on it.
+
+But **0 is the resting value**: `IsPlayerOnDungeonWarp` writes it as its *first instruction* whenever
+you are not standing on a hole. **Every save ever made carries one**, `BIT_DUNGEON_WARP` is off, and the
+console never looks. The warning was true and **useless** — it would have fired on every file anybody
+ever opened. Exactly the mistake the sprite *"your cast has changed"* notice made in its first cut.
+
+> **The rule now:** `legal` (is it in the table?) and **`armed`** (will the console read it?) are **two
+> different questions**, and the red **!** fires only on **both**. Out-of-table-but-inert gets a quiet
+> grey line. And the map and the hole are judged **separately** — the first cut failed both whenever the
+> *pair* was wrong, so a perfectly good hole map came up flagged because of the 0 beside it.
+
+Pinned by `tst_warps::guns_dontCryWolfOnAnOrdinarySave`.
+
+### 🚪 WARPS — what the research found (2026-07-14)
+
 Everything: [`reference/warps.md`](reference/warps.md). Design:
-[`plans/map-screen.md`](plans/map-screen.md) → **Phase 5** (5a–5e).
+[`plans/map-screen.md`](plans/map-screen.md) → **Phase 5**.
 
 **The linchpin (and it is why a warp editor is possible at all).** `LoadMapHeader` rebuilds the warp
 list from ROM on every map load, with **no escape-hatch bit** — but `LoadMainData` **sets

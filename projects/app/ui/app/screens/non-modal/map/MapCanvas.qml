@@ -53,12 +53,43 @@ Item {
   /// The active tool, from the rail: "select" | "pan" | "zoom".
   property string tool: "select"
 
-  /// The sprite SLOT currently selected (1-15), or -1 for nothing. Sprites are the only
-  /// selectable object on the map right now -- the ground is deliberately not clickable.
+  /// The sprite SLOT currently selected (1-15), or -1 for nothing. The ground is deliberately not
+  /// clickable -- blocks and tiles are edited in their own panels.
   property int selectedNpc: -1
+
+  /// The DOOR currently selected (0-31), or -1 for nothing. @see MapWarp.qml
+  ///
+  /// ⚠️ **One selection at a time.** Selecting a door clears the sprite and vice versa: there is one
+  /// Details panel, it edits one thing, and a UI that claims two things are selected while only
+  /// editing one of them is lying.
+  property int selectedWarp: -1
+
+  onSelectedNpcChanged: if (canvasRoot.selectedNpc >= 0) canvasRoot.selectedWarp = -1;
+  onSelectedWarpChanged: if (canvasRoot.selectedWarp >= 0) canvasRoot.selectedNpc = -1;
 
   /// The ✎ button on a selected sprite -- the Map screen opens the Details panel on it.
   signal editRequested(int slot)
+
+  // ── The MAKER TOOLS ───────────────────────────────────────────────────────────────────────
+  //
+  // Twilight, 2026-07-14: *"we would need the top toolbar to ironically contain actual tools and
+  // this is one of them, a create random sprite here tool, and a create warp here tool."*
+  //
+  // A tool that MAKES something is a different animal from one that selects: it needs a cursor that
+  // says so, a click that lands on the ground rather than on whatever is under it, and a cap stated
+  // BEFORE you hit it rather than a click that silently does nothing.
+
+  /// True while a maker tool is in hand ("placeWarp" | "placeSprite").
+  readonly property bool placing: canvasRoot.tool === "placeWarp" || canvasRoot.tool === "placeSprite"
+
+  /// How many more of the thing the tool makes this map can hold. 0 -> the tool is dead, and the
+  /// context bar says so instead of letting you click into nothing.
+  readonly property int placeRoomLeft: canvasRoot.tool === "placeWarp"   ? brg.map.warpRoomLeft()
+                                     : canvasRoot.tool === "placeSprite" ? brg.map.npcRoomLeft()
+                                     : 0
+
+  /// A new thing landed. The status bar says what and where.
+  signal placed(string kind, int index)
 
   /// A line for the status bar (a drop, a delete, a cap hit). Never a modal.
   property string status: ""
@@ -203,11 +234,20 @@ Item {
     // sprite, and the frame rate collapsed. `castChanged()` bumps the sprite list and nothing else.
     // (@see MapModel::castChanged)
     function onCastChanged() { canvasRoot.revision++; }
+
+    // The DOORS get their own signal for exactly the same reason -- dragging a door must not
+    // re-render the whole map image. (@see MapModel::warpsChanged)
+    function onWarpsChanged() { canvasRoot.revision++; }
   }
 
   readonly property var npcs: {
     canvasRoot.revision;   // a dependency, deliberately
     return brg.mapLayers.showNpcs ? brg.map.npcList() : [];
+  }
+
+  readonly property var warps: {
+    canvasRoot.revision;   // the same missing dependency, and it bites the same way
+    return brg.mapLayers.showWarps ? brg.map.warpList() : [];
   }
 
   // ── The two boxes follow the player LIVE ───────────────────────────────────────────────────
@@ -633,6 +673,34 @@ Item {
         }
       }
 
+      // ── The DOORS ─────────────────────────────────────────────────────────────────────────
+      //
+      // The map's warp points, as objects you can pick up. Same machinery as the sprites -- select,
+      // drag, ✕, ✎ -- and the same one Details panel.
+      //
+      // ⚠️ An edited door is GENUINELY LIVE: `LoadMainData` sets BIT_NO_PREVIOUS_MAP on the saved
+      // tileset byte, so the next `LoadMapHeader` bails out before it can rebuild the warp list from
+      // ROM. Verified on the cartridge. The game DOES put the map's original doors back the moment
+      // the player leaves and walks in again -- which the Details panel says, in words.
+      // See notes/reference/warps.md.
+      Repeater {
+        model: canvasRoot.warps   // @see canvasRoot.revision -- a plain warpList() never re-asks
+
+        delegate: MapWarp {
+          required property var modelData
+
+          canvas: canvasRoot
+          ind: modelData.ind
+          tileX: modelData.x
+          tileY: modelData.y
+          destName: modelData.destName
+          destValid: modelData.destValid
+          isReturn: modelData.isReturn
+
+          onEditRequested: canvasRoot.editRequested(-1)   // -1 = "a door, not a sprite"
+        }
+      }
+
       // The visible screen: the 20x18 tiles actually on the Game Boy's screen.
       Rectangle {
         visible: brg.mapLayers.showScreenBox
@@ -662,6 +730,10 @@ Item {
         id: hover
         cursorShape: canvasRoot.panning ? Qt.OpenHandCursor
                    : canvasRoot.tool === "zoom" ? Qt.CrossCursor
+                     // A maker tool says so with the cursor. A crosshair over a full map would be a
+                     // lie -- with no room left, the tool is dead, and it looks it.
+                   : (canvasRoot.placing && canvasRoot.placeRoomLeft > 0) ? Qt.CrossCursor
+                   : canvasRoot.placing ? Qt.ForbiddenCursor
                    : Qt.ArrowCursor
 
         onPointChanged: {
@@ -716,9 +788,58 @@ Item {
           if (canvasRoot.popupsOpen > 0)
             return;
 
-          // Clicking the ground clears the sprite selection -- and does nothing else. The block
-          // under the cursor is NOT selected any more; see the note above.
+          // ── A MAKER TOOL IS IN HAND: the click puts something there ────────────────────────
+          //
+          // The cap is stated on the context bar *before* you get here, and the cursor has already
+          // gone to a "no" -- so a click with no room left is not a silent no-op, it is a click on
+          // something that has been visibly dead for a while. We still say why.
+          if (canvasRoot.placing) {
+            if (canvasRoot.placeRoomLeft <= 0) {
+              canvasRoot.status = canvasRoot.tool === "placeWarp"
+                ? qsTr("This map already has all 32 doors the game can hold.")
+                : qsTr("This map already has all 15 characters the game can hold.");
+              return;
+            }
+
+            const tx = Math.floor(px / 16);
+            const ty = Math.floor(py / 16);
+
+            if (canvasRoot.tool === "placeWarp") {
+              const ind = brg.map.addWarp(tx, ty);
+              if (ind < 0)
+                return;
+
+              // A tool that makes a thing you then cannot see is a bug. Light its layer.
+              if (!brg.mapLayers.showWarps)
+                brg.mapLayers.setKeyVisible("warps", true);
+
+              canvasRoot.selectedWarp = ind;
+              canvasRoot.placed("warp", ind);
+              return;
+            }
+
+            // A RANDOM character -- but only ever one of the eleven pictures **this map has actually
+            // loaded**, so the tool can never conjure one of the amber "the console would draw
+            // garbage here" sprites. That is the whole difference between a quick tool and a trap.
+            // (The Characters bar remains the precise path: drag exactly who you want.)
+            const slot = brg.map.addRandomLoadedNpc(tx, ty);
+            if (slot < 0) {
+              canvasRoot.status = qsTr("This map has no character pictures loaded to pick from.");
+              return;
+            }
+
+            if (!brg.mapLayers.showNpcs)
+              brg.mapLayers.setKeyVisible("npcs", true);
+
+            canvasRoot.selectedNpc = slot;
+            canvasRoot.placed("sprite", slot);
+            return;
+          }
+
+          // Clicking the ground clears the selection -- and does nothing else. The block under the
+          // cursor is NOT selected any more; see the note above.
           canvasRoot.selectedNpc = -1;
+          canvasRoot.selectedWarp = -1;
         }
       }
 

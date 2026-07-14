@@ -143,6 +143,14 @@ void MapLayersModel::buildAll()
           "artwork, where the console puts them. A character the console couldn't draw properly "
           "here is marked."),
        ViewNpcs);
+  // ⚠️ NOT the "Warp tiles" overlay down in Components. That one colours in tiles that have the warp
+  // TRAIT -- a fact about the tileset. This is the map's actual warp LIST: 32 slots in the save, each
+  // a tile and a destination, each one a thing you can pick up and move. See reference/warps.md.
+  view(GameViewGroup, "warps", tr("Doors"),
+       tr("The map's warp points — the doors. Click one to see where it goes; drag it to move it.\n\n"
+          "A door marked \"back outside\" doesn't name a map: it sends you to whatever map you last "
+          "stood on outdoors, which is the \"Outside is…\" chip in the toolbar."),
+       ViewWarps);
   view(GameViewGroup, "screenBox", tr("Screen box"),
        tr("The 20×18 tiles the Game Boy is actually showing — the screen, sliding around inside "
           "the draw area in half-block steps. Move the player and it follows him."), ViewScreenBox);
@@ -216,6 +224,11 @@ bool MapLayersModel::rowApplies(const Row& r) const
   // (An indoor map is the common case -- most of the game's maps connect to nobody.)
   if (r.viewBit == ViewConnections)
     return map != nullptr && map->valid() && !map->connectionList().isEmpty();
+
+  // A map with no doors says so, rather than lighting an empty layer and leaving you to wonder
+  // whether the feature is broken. (Plenty of maps genuinely have none.)
+  if (r.viewBit == ViewWarps)
+    return map != nullptr && map->valid() && !map->warpList().isEmpty();
 
   // Any other guide always applies -- there is always a grid to draw. A semantic overlay might have
   // nothing to show on THIS map, and if so the row says so rather than switching on an empty
@@ -320,6 +333,7 @@ QVariant MapLayersModel::data(const QModelIndex& index, int role) const
     if (r.viewBit == ViewConnections) return QColor(QStringLiteral("#d55e00")); // vermillion -- the neighbours
     if (r.viewBit == ViewPlayer)      return QColor(QStringLiteral("#6b6b6b")); // him
     if (r.viewBit == ViewNpcs)        return QColor(QStringLiteral("#cc79a7")); // everyone else
+    if (r.viewBit == ViewWarps)       return QColor(QStringLiteral("#f0e442")); // yellow -- the doors
 
     // The grids. ⚠️ OPAQUE here, even though the canvas draws them at low alpha: this colour is what
     // the layer PANEL paints its swatch with, and a translucent swatch on a white row looked
@@ -486,6 +500,21 @@ void MapLayersModel::clearGroup(int row)
   refreshAll();
 }
 
+void MapLayersModel::setKeyVisible(const QString& key, bool on)
+{
+  // ⚠️ Search `allRows`, not `rows` -- `rows` is only what is currently SHOWN, and a folded group's
+  // children are not in it. A maker tool must be able to light its layer even if the Layers panel is
+  // shut, which it usually is.
+  for (const Row& r : std::as_const(allRows)) {
+    if (r.key != key || r.isGroup)
+      continue;
+
+    setRowVisible(r, on);
+    rebuild();
+    return;
+  }
+}
+
 bool MapLayersModel::anyOn() const
 {
   return bits != ViewNone || (map != nullptr && map->layers() != 0);
@@ -525,6 +554,7 @@ bool MapLayersModel::showScreenBox() const { return (bits & ViewScreenBox) != 0;
 bool MapLayersModel::showDrawArea() const  { return (bits & ViewDrawArea) != 0; }
 bool MapLayersModel::showConnections() const { return (bits & ViewConnections) != 0; }
 bool MapLayersModel::showNpcs() const       { return (bits & ViewNpcs) != 0; }
+bool MapLayersModel::showWarps() const      { return (bits & ViewWarps) != 0; }
 
 qreal MapLayersModel::overlayOpacity() const { return opacity; }
 

@@ -91,6 +91,18 @@ Page {
   property alias contrastPickerOpen: identityBar.contrastPickerOpen
   property alias contrastShowGlitch: identityBar.contrastShowGlitch
 
+  /// "Outside is…" — the wLastMap chip. Drivable, so the screenshot review can actually open it.
+  property alias outsideOpen: identityBar.outsideOpen
+
+  /// The "Reloaded values" switch, mirrored. `brg.map` is a C++ model, so automation cannot set it
+  /// directly — and without this the review could never SEE the four fields that do nothing, which
+  /// is precisely the thing that needs reviewing.
+  property bool showScratchNow: brg.map.showScratch
+  onShowScratchNowChanged: if (brg.map.showScratch !== showScratchNow) brg.map.showScratch = showScratchNow
+
+  /// The door currently selected, mirrored out of the canvas for the harness.
+  property alias selectedWarp: canvas.selectedWarp
+
   /// The animation, mirrored for the harness: does this map animate, is it running, which step.
   /// (`brg.mapClock` is a C++ object, not a QML item, so automation cannot reach it directly.)
   readonly property bool animates: brg.mapClock.animates
@@ -107,9 +119,25 @@ Page {
     case Qt.Key_V:     identityBar.tool = "select"; event.accepted = true; break;
     case Qt.Key_H:     identityBar.tool = "pan";    event.accepted = true; break;
     case Qt.Key_Z:     identityBar.tool = "zoom";   event.accepted = true; break;
+
+    // The makers. "A tool is not done until it has a cursor, a context bar, an empty state and a
+    // keyboard path" (map-screen.md §9) -- this is the keyboard path.
+    case Qt.Key_W:     identityBar.tool = "placeWarp";   event.accepted = true; break;
+    case Qt.Key_N:     identityBar.tool = "placeSprite"; event.accepted = true; break;
+
     case Qt.Key_Space: canvas.spaceHeld = true;  event.accepted = true; break;
     case Qt.Key_Escape:
-      if (rightDock.open !== "" || leftDock.open !== "") {
+      // Esc walks OUT, one step at a time, in the order a person expects: put a maker tool down,
+      // then drop the selection, then close the panels. Slamming all three shut at once is the kind
+      // of "helpful" that loses you your place.
+      if (canvas.placing) {
+        identityBar.tool = "select";
+        event.accepted = true;
+      } else if (canvas.selectedNpc >= 0 || canvas.selectedWarp >= 0) {
+        canvas.selectedNpc = -1;
+        canvas.selectedWarp = -1;
+        event.accepted = true;
+      } else if (rightDock.open !== "" || leftDock.open !== "") {
         rightDock.open = "";
         leftDock.open = "";
         event.accepted = true;
@@ -199,8 +227,20 @@ Page {
         // @see MapCanvas.overPanel
         overlays: [leftDock, rightDock]
 
-        // The ✎ button on a sprite opens the Details panel ON it -- no hunting for the panel.
+        // The ✎ button on a sprite OR a door opens the Details panel ON it -- no hunting for the
+        // panel. (The door passes -1: the panel reads `selectedWarp`, not the slot.)
         onEditRequested: (slot) => { leftDock.open = "details"; }
+
+        // A maker tool put something down. The status bar says what and where -- never a modal, and
+        // never nothing at all.
+        onPlaced: (kind, index) => {
+          canvas.status = kind === "warp"
+            ? qsTr("Door %1 placed. It leads back outside — pick where it really goes in the panel.")
+                .arg(index)
+            : qsTr("Character placed in slot %1.").arg(index);
+
+          leftDock.open = "details";   // you made it; here is what it is
+        }
       }
 
       // ── RIGHT: the things you edit ───────────────────────────────────────────────────────────
@@ -217,12 +257,19 @@ Page {
           { id: "tiles", glyph: "▦", title: qsTr("Blocks & Tiles"),
             tip: qsTr("Blocks & Tiles — the edge of the world, the grass, the counters, the boulder") },
           { id: "sprites", glyph: "☻", title: qsTr("Sprite set"),
-            tip: qsTr("Sprite set — the eleven sprite pictures the game had loaded for this map") }
+            tip: qsTr("Sprite set — the eleven sprite pictures the game had loaded for this map") },
+          // ⇄ The twelve bytes AROUND the doors -- fly, hole, Dig, scripted. They belong to the MAP,
+          // which is why they are here with the other things you edit about it, and not in the
+          // Details panel (which is for whatever is SELECTED). Twilight asked for exactly this:
+          // "I will place them in the right panel as warp state" (2026-07-14).
+          { id: "warps", glyph: "⇄", title: qsTr("Warp state"),
+            tip: qsTr("Warp state — where FLY goes, where falling drops you, where DIG puts you") }
         ]
         // ⚠️ MUSIC IS NOT HERE ANY MORE. It is a chip in the toolbar (MusicPicker.qml) -- a whole
         // dock panel for one combo, two checkboxes and a ▶ was a panel too many (Twilight).
         sources: ({ "tiles": "TilesetPanel.qml",
-                    "sprites": "SpriteSetPanel.qml" })
+                    "sprites": "SpriteSetPanel.qml",
+                    "warps": "WarpStatePanel.qml" })
 
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth   // the RAIL, and only the rail. The panel floats.

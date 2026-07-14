@@ -66,6 +66,7 @@ class MapLayersModel : public QAbstractListModel
   Q_PROPERTY(bool showDrawArea READ showDrawArea NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showConnections READ showConnections NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showNpcs READ showNpcs NOTIFY viewBitsChanged)
+  Q_PROPERTY(bool showWarps READ showWarps NOTIFY viewBitsChanged)
 
   /// How strongly the meaning overlay is drawn (0..1). The one dial the Meaning group carries:
   /// stacked annotation over four shades of grey genuinely needs it.
@@ -90,6 +91,14 @@ public:
     /// put here. Drawn from the game's own artwork, where the console's OAM puts them (4 px
     /// above their tile row). See notes/reference/sprites.md.
     ViewNpcs = 1 << 7,
+
+    /// **The DOORS** -- the map's warp points, as objects you can pick up.
+    ///
+    /// ⚠️ Not to be confused with the *Warp tiles* and *Doors* **overlay** layers in Components:
+    /// those colour in tiles that have the warp/door TRAIT (a fact about the tileset). This is the
+    /// map's actual warp LIST -- 32 slots in the save, each one a tile and a destination.
+    /// See notes/reference/warps.md.
+    ViewWarps = 1 << 8,
   };
   Q_ENUM(ViewLayer)
 
@@ -120,6 +129,7 @@ public:
   bool showDrawArea() const;
   bool showConnections() const;
   bool showNpcs() const;
+  bool showWarps() const;
 
   qreal overlayOpacity() const;
   void setOverlayOpacity(qreal opacity);
@@ -147,6 +157,12 @@ public:
   Q_INVOKABLE void clearGroup(int row);
 
   /// Is anything at all switched on? (Drives the "Clear" affordance.)
+  /// Turn a layer on or off **by key** ("warps", "npcs", …), without knowing its row.
+  ///
+  /// Exists for the maker tools: placing a door when the Doors layer is off would create a thing you
+  /// cannot see, which is a bug rather than a feature. The tool lights its own layer.
+  Q_INVOKABLE void setKeyVisible(const QString& key, bool on);
+
   Q_INVOKABLE bool anyOn() const;
 
   /// Is anything on in @p row's group? (Drives that group's own Clear.)
@@ -206,6 +222,6 @@ private:
   // ⚠️ Doors and Warps are **overlay** bits, not view bits -- they live in `MapModel::layers`, not
   // here. The constructor switches them on there. Do not add them to this mask; it will not work and
   // it will look like it does.
-  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewScreenBox;
+  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewWarps | ViewScreenBox;
   qreal opacity = 1.0;
 };

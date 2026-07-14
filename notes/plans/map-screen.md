@@ -683,7 +683,27 @@ with its range, and change.
 
 ---
 
-### Phase 5 — WARPS: the doors  *(designed 2026-07-14; research done, nothing built)*
+### Phase 5 — WARPS: the doors ✅ **BUILT (2026-07-14, `0.36.0-alpha`)**
+
+> **All of 5a–5e are in.** `tst_warps` (24 cases) pins them; both keystones are negative-controlled.
+> Full `ctest` **85/85**.
+>
+> **What the screenshot review caught, and it would have shipped:** the fixture save — an entirely
+> ordinary one — holds `dungeonWarpDestMap = 194` and `whichDungeonWarp = 0`, a pair that is not in
+> `DungeonWarpList`. The first cut screamed at it in red. But **0 is the resting value** —
+> `IsPlayerOnDungeonWarp` writes it as its first instruction whenever you are *not* on a hole — so
+> **every save ever made carries one**, and `BIT_DUNGEON_WARP` is off, so the console never looks.
+> Flagging it is crying wolf on every file anybody opens: exactly the mistake the sprite
+> "your cast has changed" notice made first time round. The red **!** now fires only on
+> `illegal && armed` — out of the table **and** something is going to read it. Pinned by
+> `guns_dontCryWolfOnAnOrdinarySave`.
+>
+> ⏳ **Owed: Twilight's live pass** — the drag, the drop, the delete, the maker tools and the pickers
+> are all things a still PNG cannot review.
+
+---
+
+#### The design of record *(as built)*
 
 > **Read [`../reference/warps.md`](../reference/warps.md) before touching any of this.** It is
 > verified against the cartridge, and it changes what several of these fields *are*. The headlines:

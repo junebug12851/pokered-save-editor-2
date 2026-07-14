@@ -47,15 +47,33 @@ Rectangle {
   /// The canvas -- the zoom menu drives it, and zoom has exactly one home.
   required property var canvas
 
-  /// The two drop-downs, drivable by name for the DEBUG harness / the screenshot review.
+  /// The drop-downs, drivable by name for the DEBUG harness / the screenshot review.
   property alias mapPickerOpen: mapPicker.openState
   property alias contrastPickerOpen: contrastPicker.openState
   property alias contrastShowGlitch: contrastPicker.showGlitch
+  property alias outsideOpen: outsidePicker.openState
 
   readonly property var tools: [
     { id: "select", glyph: "↖", key: "V", tip: qsTr("Select & Move — click to select, drag to move") },
     { id: "pan",    glyph: "✥", key: "H", tip: qsTr("Pan — drag the map (or hold Space with any tool)") },
     { id: "zoom",   glyph: "⌕", key: "Z", tip: qsTr("Zoom — click to zoom in, Alt-click to zoom out") }
+  ]
+
+  // ── THE MAKERS ─────────────────────────────────────────────────────────────────────────────
+  //
+  // Twilight, 2026-07-14: *"we would need the top toolbar to ironically contain actual tools and this
+  // is one of them, a create random sprite here tool, and a create warp here tool. I guess they can
+  // be next to the cursor and stuff."*
+  //
+  // ⚠️ EXACTLY THE TWO SHE NAMED, and no others. There is no sign tool, because signs have not been
+  // briefed -- and "it's the same shape as a warp" is not a brief. This group is designed to GROW one
+  // slot at a time, as each object type gets its own conversation.
+  // (notes/plans/map-screen.md §12b.)
+  readonly property var makers: [
+    { id: "placeWarp", glyph: "⇄", key: "W",
+      tip: qsTr("Place a door — click a tile. It starts as a way back outside, which is what a door usually is.") },
+    { id: "placeSprite", glyph: "☻", key: "N",
+      tip: qsTr("Place a character — click a tile. A random one, but only ever a picture THIS map has loaded, so it can never be one the console would draw as garbage.") }
   ]
 
   implicitHeight: 36
@@ -112,8 +130,73 @@ Rectangle {
       Layout.rightMargin: 2
     }
 
+    // ── The MAKERS: the tools that put something on the map ───────────────────────────────────
+    //
+    // Separated from the three above by a divider, because they are a different kind of thing: those
+    // three change how you LOOK at the map, these two CHANGE it.
+    RowLayout {
+      spacing: 2
+
+      Repeater {
+        model: bar.makers
+
+        MapRailButton {
+          id: makerBtn
+          required property var modelData
+
+          objectName: "toolBtn_" + modelData.id
+          size: 26
+          glyph: modelData.glyph
+          shortcut: modelData.key
+          active: bar.tool === modelData.id
+
+          // ⚠️ THE CAP IS STATED BEFORE YOU HIT IT, NOT AFTER. A dead tool looks dead -- and the
+          // tooltip says why, so it is never a mystery. (map-screen.md §9: "the caps are stated
+          // before you hit them, not after".)
+          readonly property int roomLeft: modelData.id === "placeWarp" ? brg.map.warpRoomLeft()
+                                                                       : brg.map.npcRoomLeft()
+          readonly property int cap: modelData.id === "placeWarp" ? 32 : 15
+
+          enabled: makerBtn.roomLeft > 0
+          opacity: enabled ? 1.0 : 0.35
+
+          tip: makerBtn.roomLeft > 0
+               ? modelData.tip + "\n\n" + qsTr("%1 of %2 used.").arg(makerBtn.cap - makerBtn.roomLeft)
+                                                                .arg(makerBtn.cap)
+               : (modelData.id === "placeWarp"
+                  ? qsTr("This map already has all 32 doors the game can hold.")
+                  : qsTr("This map already has all 15 characters the game can hold."))
+
+          onClicked: bar.tool = modelData.id
+        }
+      }
+    }
+
+    Rectangle {
+      implicitWidth: 1
+      implicitHeight: 18
+      color: brg.settings.dividerColor
+      Layout.leftMargin: 2
+      Layout.rightMargin: 2
+    }
+
     // ── What is loaded, and what it is drawn out of ───────────────────────────────────────────
     MapPicker { id: mapPicker }
+
+    // ── ⭐ "Outside is…" — the map a `back outside` door returns you to (wLastMap) ─────────────
+    //
+    // It sits in the TOOLBAR, with what is loaded, and not in a panel — and that is a deliberate
+    // call, not a convenience.
+    //
+    // Every building's exit warp is `$FF`, which does NOT name a map: it means "put me back on
+    // whatever map I last stood on outdoors", and THIS byte is that map. So changing it re-labels
+    // every "back outside" door on the canvas AT ONCE — and watching that happen is the entire point.
+    // A control that changes what a dozen other things MEAN does not belong three clicks deep.
+    //
+    // ⚠️ Twilight reached for this as "From map". The byte actually called that
+    // (`wWarpedFromWhichMap`) is DEAD — the game writes it on every warp and nothing anywhere reads
+    // it. This is the one she meant. See notes/reference/warps.md §4.
+    OutsideIsPicker { id: outsidePicker }
 
     // ── Contrast ─────────────────────────────────────────────────────────────────────────────
     ContrastPicker { id: contrastPicker }

@@ -59,6 +59,23 @@ Item {
   readonly property int slot: canvas ? canvas.selectedNpc : -1
   readonly property bool hasSprite: slot > 0
 
+  /// The selected DOOR, or -1. One selection at a time -- the canvas enforces it, so `hasDoor` and
+  /// `hasSprite` can never both be true.
+  readonly property int door: canvas ? canvas.selectedWarp : -1
+  readonly property bool hasDoor: door >= 0
+
+  readonly property var doorData: {
+    details.revision;
+    return details.hasDoor ? brg.map.warpAt(details.door) : ({});
+  }
+
+  readonly property var doorFields: {
+    details.revision;
+    return details.hasDoor ? brg.map.warpFields(details.door) : [];
+  }
+
+  // (The map's warp STATE lives in its own right-dock panel -- @see WarpStatePanel.qml.)
+
   /// The player is slot 0. He is selectable and draggable like anybody else (Twilight, 2026-07-13),
   /// but he has no NPC record -- his bytes live in the save's player block, not the sprite table --
   /// so he gets his own short list rather than an empty one.
@@ -88,6 +105,10 @@ Item {
   Connections {
     target: brg.map
     function onChanged() { details.revision++; }
+
+    // A door moving / being re-aimed does NOT emit changed() (that would re-render the whole map
+    // image). It gets its own signal, and the panel has to listen to it or it goes stale mid-drag.
+    function onWarpsChanged() { details.revision++; }
   }
 
   readonly property var sprite: {
@@ -127,7 +148,7 @@ Item {
         Layout.fillWidth: true
         Layout.margins: 10
         spacing: 6
-        visible: !details.hasSprite && !details.hasPlayer
+        visible: !details.hasSprite && !details.hasPlayer && !details.hasDoor
 
         Label {
           text: brg.map.mapName
@@ -139,7 +160,7 @@ Item {
 
         Label {
           Layout.fillWidth: true
-          text: qsTr("Nothing selected — click somebody on the map to edit them.")
+          text: qsTr("Nothing selected — click somebody, or a door, to edit them.")
           wrapMode: Text.Wrap
           opacity: 0.6
           font.pixelSize: 11
@@ -151,6 +172,7 @@ Item {
         MapDetailRow { label: qsTr("Palette");    value: brg.map.contrastName }
         MapDetailRow { label: qsTr("Player at");  value: qsTr("%1, %2").arg(brg.map.playerX).arg(brg.map.playerY) }
         MapDetailRow { label: qsTr("People");     value: qsTr("%1 of 15").arg(15 - brg.map.npcRoomLeft()) }
+        MapDetailRow { label: qsTr("Doors");      value: qsTr("%1 of 32").arg(32 - brg.map.warpRoomLeft()) }
 
         // The view pointer the GAME itself computed and left in the save. If an edit has made it
         // stale we say so plainly and offer the one-click fix -- we never quietly rewrite it.
@@ -181,6 +203,181 @@ Item {
               text: qsTr("Fix it")
               onClicked: brg.map.fixMapHeader()
             }
+          }
+        }
+
+        // (⇄ WARP STATE used to be appended here, at the bottom of the map's own details. It is now
+        //  its OWN PANEL, in the RIGHT dock -- which is where Twilight asked for it (2026-07-14: "I
+        //  will place them in the right panel as warp state") and which is simply better: down here
+        //  it sat below the fold, behind a scroll past six rows of map facts. The right dock is
+        //  where the things you edit ABOUT THE MAP live; the Details panel is for what is SELECTED.
+        //  @see WarpStatePanel.qml)
+      }
+
+      // ══ ⇄ A DOOR SELECTED ══════════════════════════════════════════════════════════════════
+      //
+      // ⚠️ **An edited door is genuinely LIVE.** `LoadMainData` sets BIT_NO_PREVIOUS_MAP on the saved
+      // tileset byte, so the next `LoadMapHeader` bails out before it rebuilds the warp list from
+      // ROM. Verified on the cartridge -- including a 4th door invented in a 3-door town.
+      //
+      // And the game puts the map's original doors back the moment the player leaves and walks in
+      // again. That is the cartridge's behaviour, not our gap, and the panel SAYS it -- once the user
+      // has actually made an edit it applies to. (Same rule as the cast: we track the EDIT, never a
+      // diff against the ROM.) See notes/reference/warps.md §1.
+      ColumnLayout {
+        Layout.fillWidth: true
+        Layout.margins: 10
+        spacing: 8
+        visible: details.hasDoor
+
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 8
+
+          Rectangle {
+            Layout.preferredWidth: 30
+            Layout.preferredHeight: 30
+            radius: 4
+            color: "#66f0e442"
+            border.width: 1
+            border.color: "#f0e442"
+
+            Text {
+              anchors.centerIn: parent
+              text: "⇄"
+              font.pixelSize: 15
+              color: "#212121"
+            }
+          }
+
+          ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("Door %1").arg(details.door)
+              font.bold: true
+              font.pixelSize: 14
+              elide: Text.ElideRight
+            }
+
+            Label {
+              Layout.fillWidth: true
+              text: details.doorData.destName || ""
+              font.pixelSize: 10
+              opacity: 0.6
+              elide: Text.ElideRight
+            }
+          }
+        }
+
+        // Where it goes, resolved — the one thing about a door that matters, said in full.
+        Label {
+          Layout.fillWidth: true
+          visible: (details.doorData.destLabel || "") !== ""
+          text: details.doorData.destLabel || ""
+          wrapMode: Text.Wrap
+          font.pixelSize: 11
+          color: brg.settings.textColorMid
+        }
+
+        // 🔫 It points at an arrival point the target map does not have. The console would copy four
+        // arbitrary ROM bytes into the view pointer and the player's coordinates. Shown, explained,
+        // never refused.
+        Rectangle {
+          Layout.fillWidth: true
+          visible: details.hasDoor && !details.doorData.destValid
+          radius: 6
+          color: Qt.rgba(0.84, 0.37, 0, 0.12)
+          border.width: 1
+          border.color: "#d55e00"
+          implicitHeight: badDest.implicitHeight + 14
+
+          Label {
+            id: badDest
+            anchors.fill: parent
+            anchors.margins: 7
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            text: qsTr("This door leads to arrival point %1 of %2 — but that map only has %3.\n\n"
+                       + "The game doesn't check. It will read whatever cartridge bytes happen to "
+                       + "come after the list and drop the player somewhere undefined.")
+                  .arg(details.doorData.destWarp || 0)
+                  .arg(details.doorData.destName || "")
+                  .arg(details.doorData.arrivalCount || 0)
+          }
+        }
+
+        Button {
+          Layout.fillWidth: true
+          Layout.topMargin: 2
+          Layout.preferredHeight: 28
+          font.pixelSize: 11
+
+          text: qsTr("Delete this door")
+
+          contentItem: Label {
+            text: parent.text
+            font: parent.font
+            color: parent.hovered ? "#ffffff" : "#d55e00"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+          }
+
+          background: Rectangle {
+            radius: 4
+            color: parent.hovered ? "#d55e00" : "transparent"
+            border.width: 1
+            border.color: "#d55e00"
+
+            Behavior on color { ColorAnimation { duration: 90 } }
+          }
+
+          onClicked: {
+            brg.map.removeWarp(details.door);
+            if (details.canvas)
+              details.canvas.selectedWarp = -1;
+          }
+        }
+
+        Repeater {
+          model: details.doorFields
+
+          delegate: WarpField {
+            required property var modelData
+            Layout.fillWidth: true
+
+            fieldData: modelData
+            ind: details.door
+          }
+        }
+
+        // ── The honest note ────────────────────────────────────────────────────────────────
+        //
+        // It appears ONLY once the user has actually changed a door -- the same rule as the cast, and
+        // for the same reason: a notice that fires on every save anybody ever opens is noise, and
+        // noise is a bug.
+        Rectangle {
+          Layout.fillWidth: true
+          Layout.topMargin: 8
+          visible: brg.map.warpsEdited()
+          radius: 6
+          color: Qt.rgba(1, 0.84, 0.31, 0.15)
+          border.width: 1
+          border.color: "#ffd54f"
+          implicitHeight: liveNote.implicitHeight + 14
+
+          Label {
+            id: liveNote
+            anchors.fill: parent
+            anchors.margins: 7
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            text: qsTr("These doors are live — the game will use them when this save loads.\n\n"
+                       + "It puts the map's original doors back as soon as the player walks out of "
+                       + "this map and back in again. That's the game's own behaviour, not a limit "
+                       + "of the editor.")
           }
         }
       }

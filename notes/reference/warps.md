@@ -389,6 +389,50 @@ Exactly the shape of the sprite pass: the model is a straight port of v1, and it
 
 ---
 
+## 7b. 🐺 The cry-wolf trap — and it nearly shipped
+
+The gun's warning has **two** conditions, not one, and the screenshot review is what found it.
+
+The fixture save — an entirely ordinary file — holds `dungeonWarpDestMap = 194` (Victory Road 2F) and
+`whichDungeonWarp = 0`. That **pair is not in `DungeonWarpList`**, so the first cut lit a red `!` on
+both fields.
+
+But look at what the game does:
+
+```asm
+IsPlayerOnDungeonWarp::
+	xor a
+	ld [wWhichDungeonWarp], a   ; <- ZERO. The very first instruction.
+	...
+```
+
+**0 is the resting value.** The game writes it every time you are *not* standing on a hole — which is
+almost always — so **essentially every save anybody has ever made carries one**. And `BIT_DUNGEON_WARP`
+is off, so `PrepareForSpecialWarp` never reaches the table at all: the console will never look at
+either byte.
+
+So the warning is **true and useless**: it fires on every file ever opened, and it is exactly the
+mistake the sprite *"your cast has changed"* notice made in its first cut (see
+[`sprites.md`](sprites.md) → Part 6). **Noise is a bug.**
+
+> ### The rule
+>
+> **`legal`** — is the value in the table? *(a fact)*
+> **`armed`** — will the console actually read it, as things stand? *(a different fact)*
+>
+> The **red `!`** fires only on **`!legal && armed`**. An out-of-table value nothing is going to read
+> gets a **quiet grey line**, not an alarm.
+>
+> `armed` for the fly destination is `BIT_FLY_OR_DUNGEON_WARP`; for the hole pair it is that **and**
+> `BIT_DUNGEON_WARP` — because that is precisely which branch of `PrepareForSpecialWarp` reaches which
+> table.
+
+And the **map and the hole are judged separately** — the first cut failed *both* whenever the pair was
+wrong, so Victory Road 2F (a perfectly good hole map) came up flagged because of the 0 beside it. Two
+fields, two questions.
+
+Pinned by `tst_warps::guns_dontCryWolfOnAnOrdinarySave`.
+
 ## 8. Tools
 
 - **`scripts/emu/probe_warp_persistence.py`** — boots the real cartridge with three tampered saves

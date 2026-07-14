@@ -1143,6 +1143,29 @@ void MapModel::removeNpc(int slot)
   changed();
 }
 
+int MapModel::addRandomLoadedNpc(int x, int y)
+{
+  if (npcs == nullptr || npcRoomLeft() <= 0)
+    return -1;
+
+  // ⚠️ Only what the console would actually have in video memory here. Picking out of all 72 would
+  // land you on an amber "this map hasn't loaded that picture" sprite roughly five times in six --
+  // i.e. the one-click tool would mostly produce the broken case. @see vramPictures.
+  QVector<int> loaded = vramPictures();
+
+  // The player's own picture is loaded on every map, ahead of the set -- but a second Red walking
+  // about is not what anybody means by "a random character".
+  loaded.removeAll(SpritePlayerPicture);
+  loaded.removeAll(0);
+
+  if (loaded.isEmpty())
+    return -1;
+
+  const int picture = loaded.at(Random::inst()->rangeExclusive(0, loaded.size()));
+
+  return addNpc(picture, x, y);
+}
+
 void MapModel::movePlayer(int x, int y)
 {
   if (player == nullptr)
@@ -1545,6 +1568,9 @@ QVariantList MapModel::dungeonWarpMapList() const
   QVariantList out;
   QVector<int> seen;
 
+  // Same as the hole list: 0 is the ordinary "nothing to fall onto" resting value, not a hack.
+  out.append(option(0, tr("Nowhere — not falling")));
+
   for (const auto& pair : AreaWarps::legalDungeonWarps()) {
     if (seen.contains(pair.first))
       continue;
@@ -1556,9 +1582,21 @@ QVariantList MapModel::dungeonWarpMapList() const
   return out;
 }
 
+int MapModel::warpDungeonMap() const
+{
+  return (warps == nullptr) ? 0 : warps->dungeonWarpDestMap;
+}
+
 QVariantList MapModel::dungeonHoleList(int map) const
 {
   QVariantList out;
+
+  // ⚠️ **0 IS NOT A HACK VALUE. It is the resting state of the world.**
+  //
+  // `IsPlayerOnDungeonWarp` writes 0 here as its *first instruction*, every time you are not standing
+  // on a hole -- so essentially every save ever made carries a 0, and offering only 1..3 would leave
+  // the picker showing nothing on a perfectly ordinary file. It gets a name, like everything else.
+  out.append(option(0, tr("Not falling")));
 
   for (const auto& pair : AreaWarps::legalDungeonWarps()) {
     if (pair.first != map)
@@ -1566,7 +1604,7 @@ QVariantList MapModel::dungeonHoleList(int map) const
 
     // ⚠️ 1-BASED. `IsPlayerOnDungeonWarp` writes `wCoordIndex`, which starts at 1 -- and Victory
     // Road 2F has a hole **2** and no hole 1, which is why this is a per-map question and not a
-    // range. A 0 never matches anything in `DungeonWarpList`.
+    // range.
     out.append(option(pair.second, tr("Hole %1").arg(pair.second)));
   }
 
@@ -1678,12 +1716,37 @@ QVariantList MapModel::warpStateFields() const
     return f;
   };
 
-  /// Mark a field as 🔫 a value the console can be hurt by. @see AreaWarps::isLegalFlyMap.
-  auto gun = [](QVariantMap f, bool legal) {
+  /**
+   * Mark a field as 🔫 a value the console can be hurt by.
+   *
+   * ⚠️ **`legal` is a fact; `armed` is whether anything will READ it.** The red "!" fires only on
+   * `!legal && armed`, and that distinction is not pedantry -- it is the difference between a useful
+   * warning and noise, and noise is a bug.
+   *
+   * Here is the trap it exists to avoid, and the screenshot review walked straight into it: the
+   * fixture save holds `dungeonWarpDestMap = 194` (Victory Road 2F) and `whichDungeonWarp = 0`. That
+   * pair is not in `DungeonWarpList`, so a naive check screams. But **0 is the resting value** --
+   * `IsPlayerOnDungeonWarp` writes 0 there as its very first instruction whenever you are *not*
+   * standing on a hole -- so essentially **every save anyone has ever made** carries it, and
+   * `BIT_DUNGEON_WARP` is off, so the console will never look at either byte.
+   *
+   * Flagging that is crying wolf on every save ever opened. It is exactly the mistake the sprite
+   * "your cast has changed" warning made in its first cut (reference/sprites.md), and it gets the
+   * same answer: **say the true thing, not the alarming one.**
+   */
+  auto gun = [](QVariantMap f, bool legal, bool armed) {
     f["gun"]   = true;
     f["legal"] = legal;
+    f["armed"] = armed;
     return f;
   };
+
+  // Will the console actually READ these bytes as things stand?
+  //
+  //   `PrepareForSpecialWarp` only runs at all when BIT_FLY_OR_DUNGEON_WARP is set -- and only then
+  //   does it reach either lookup table. Which of the two it reaches is BIT_DUNGEON_WARP.
+  const bool specialArmed = warps->flyOrDungeonWarp;
+  const bool dungeonArmed = warps->flyOrDungeonWarp && warps->dungeonWarp;
 
   // ── Where the special warps go ─────────────────────────────────────────────────────────────
   const QString goes = tr("Where the special warps go");
@@ -1699,23 +1762,44 @@ QVariantList MapModel::warpStateFields() const
                           "and no bounds check. Any other map and the console reads whatever ROM "
                           "bytes follow the table and drops you somewhere undefined."),
                        warps->specialWarpDestMap, 0, 255, "flyMap"),
-                 AreaWarps::isLegalFlyMap(warps->specialWarpDestMap)));
+                 AreaWarps::isLegalFlyMap(warps->specialWarpDestMap),
+                 specialArmed));
 
-  const bool holeLegal = AreaWarps::isLegalDungeonWarp(warps->dungeonWarpDestMap,
-                                                       warps->whichDungeonWarp);
+  // ⚠️ The MAP and the HOLE are judged SEPARATELY, and the first cut got this wrong too: it failed
+  // both fields whenever the *pair* was wrong, so a perfectly good map (Victory Road 2F) came up
+  // flagged because the hole beside it was 0. Two fields, two questions.
+  //
+  //   the map  -> is it a map that has holes at all?
+  //   the hole -> is (this map, this hole) actually in the table?
+  //
+  // And **0 means "not falling"** on both. It is the value the game itself writes when you are not
+  // standing on a hole, so it is not a hack value -- it is the ordinary state of the world.
+  const bool mapResting  = (warps->dungeonWarpDestMap == 0);
+  const bool holeResting = (warps->whichDungeonWarp == 0);
+
+  bool mapHasHoles = false;
+  for (const auto& p : AreaWarps::legalDungeonWarps())
+    if (p.first == warps->dungeonWarpDestMap)
+      mapHasHoles = true;
 
   ret.append(gun(field(goes, "dungeonWarpDestMap", tr("Falling drops you onto"),
-                       tr("The floor below, when you fall down a hole.\n\n⚠️ Only 7 maps have holes, "
-                          "and the map and the hole number have to MATCH — the game looks the pair up "
-                          "in a table it never bounds-checks."),
+                       tr("The floor below, when you fall down a hole.\n\nOnly 7 maps in the game "
+                          "have holes. ⚠️ Name any other and the console reads whatever cartridge "
+                          "bytes follow its table — it never checks."),
                        warps->dungeonWarpDestMap, 0, 255, "dungeonMap"),
-                 holeLegal));
+                 mapResting || mapHasHoles,
+                 dungeonArmed));
 
   ret.append(gun(field(goes, "whichDungeonWarp", tr("…through hole #"),
-                       tr("Which hole on the floor above you fell through. The game counts these "
-                          "from 1, not 0 — and Victory Road 2F has a hole 2 and no hole 1."),
+                       tr("Which hole on the floor above you fell through.\n\nThe game counts these "
+                          "from 1, not 0 — and they have to MATCH the floor: Seafoam B1F has holes 1 "
+                          "and 2, but Victory Road 2F has a hole 2 and no hole 1.\n\n0 means “not "
+                          "falling”, which is what it says on almost every save."),
                        warps->whichDungeonWarp, 0, 255, "dungeonHole"),
-                 holeLegal));
+                 holeResting
+                   || AreaWarps::isLegalDungeonWarp(warps->dungeonWarpDestMap,
+                                                    warps->whichDungeonWarp),
+                 dungeonArmed));
 
   ret.append(field(goes, "warpDest", tr("Arriving at door #"),
                    tr("Which arrival point of the map you are entering you will land on.\n\n255 "

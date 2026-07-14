@@ -323,6 +323,12 @@ public:
   /// Road 2F has a hole **2** and no hole 1, which is exactly why this is a per-map question.
   Q_INVOKABLE QVariantList dungeonHoleList(int map) const;
 
+  /// The dungeon map currently named in the save (`wDungeonWarpDestinationMap`). The hole picker
+  /// binds to it: which holes are legal depends on which floor you fell from, so the two controls
+  /// are not independent and pretending they are is how you get an illegal pair.
+  Q_PROPERTY(int warpDungeonMap READ warpDungeonMap NOTIFY warpsChanged)
+  int warpDungeonMap() const;
+
   /// "→ Viridian City, arrival point 2 (11, 5)" -- resolved, in words. Empty when it resolves to
   /// nothing, so the caller can say *that* instead.
   Q_INVOKABLE QString warpDestLabel(int destMap, int destWarp) const;
@@ -468,6 +474,21 @@ public:
 
   /// Delete sprite @p slot. **The rest slide up** -- the game packs its sprite slots and so do we.
   Q_INVOKABLE void removeNpc(int slot);
+
+  /**
+   * @brief Put a **random** character at map (@p x, @p y) -- the toolbar's 🧍+ tool.
+   *
+   * ⚠️ **Random out of the pictures THIS MAP HAS LOADED**, never out of all 72. A picture the map
+   * has not loaded is one the console draws as garbage (the VRAM slot lookup has no bounds check --
+   * see notes/reference/sprite-sets.md), and a one-click tool that lands you in that state one time
+   * in six is a trap, not a shortcut. @see vramPictures.
+   *
+   * The Characters bar stays the *precise* path -- drag exactly who you want, and be told when the
+   * one you want isn't loaded. This is the *fast* path, and it is safe by construction.
+   *
+   * @return the new slot, or -1 if the map is full or has no pictures loaded at all.
+   */
+  Q_INVOKABLE int addRandomLoadedNpc(int x, int y);
 
   /// Move the PLAYER to map (@p x, @p y). He is slot 0 and he is draggable like anybody else --
   /// but his position lives in his OWN two bytes (`wXCoord`/`wYCoord`), not in the sprite table.
