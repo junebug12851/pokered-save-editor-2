@@ -19,7 +19,7 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 
 ## AI Assistance
 
-- **[Claude (Anthropic)](https://claude.ai)** -- Helped revive and modernize the project in 2026 -- debugging, testing, and the living project notes
+- **[Claude (Anthropic)](https://claude.ai)** -- Helped revive and modernize the project in 2026 -- debugging, testing, the living project notes, and the map screen's footprints icon
 - **[ChatGPT (OpenAI)](https://chatgpt.com)** -- Development and design help, including the in-app status symbol icons, the gym-badge images, the gym leader portraits, and the rival artwork
 
 ## Tools Used

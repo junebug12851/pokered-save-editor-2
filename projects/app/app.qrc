@@ -637,6 +637,10 @@
         <file>ui/app/screens/non-modal/map/SpriteField.qml</file>
         <file>ui/app/screens/non-modal/map/LayersPanel.qml</file>
         <file>ui/app/screens/non-modal/map/MapBarButton.qml</file>
+        <file>ui/app/screens/non-modal/map/MapRailGroup.qml</file>
+        <file>ui/app/screens/non-modal/map/MapSimButton.qml</file>
+        <file>assets/icons/footprints.svg</file>
+        <file>assets/icons/footprints-light.svg</file>
         <file>ui/app/screens/non-modal/map/MapWarp.qml</file>
         <file>ui/app/screens/non-modal/map/WarpField.qml</file>
         <file>ui/app/screens/non-modal/map/WarpStatePanel.qml</file>

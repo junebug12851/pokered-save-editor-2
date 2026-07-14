@@ -15,41 +15,25 @@
 */
 
 /**
- * MUSIC, in the top toolbar -- a chip that drops a picker, in exactly the same language as the
- * map/tileset/blockset one next to it (Twilight, 2026-07-13). The Music DOCK PANEL is gone.
+ * MUSIC, in the top bar's SIMULATION group -- a play/pause button with a ♪ and a ▾ that drops the
+ * track / volume / flags (Twilight, 2026-07-14). It sits with the tile-animation and walk buttons,
+ * because all three are things you PLAY.
  *
- *   [ ▶ ] [ ♪ Pallet Town ⌄ ]
+ * ⚠️ **HOVER NEVER AUDITIONS.** Selecting a track plays it (if the player is running) *and* writes the
+ * save; hovering does nothing. One gesture, one effect.
  *
- * Inside the drop-down, top to bottom:
- *
- *   * a **real grouped ComboBox** of all 151 pieces -- the 46 real tracks and the 105 inner voices,
- *     which are real music too;
- *   * a **volume slider**, directly under it;
- *   * the **sub-tracks** toggle;
- *   * the two **save flags**.
- *
- * ⚠️ **REBUILT 2026-07-13.** The first cut was a hand-rolled ListView of 151 rows in a popup, which
- * Twilight had already told me not to build: *"The map dropdown has actual group real combo boxes,
- * the music dropdown does not — it's way too big and it's a manual list when I stated combo box
- * earlier. It's also missing the volume slider, which should be below the combo box."* It is now the
- * same `ComboBox` + grouped `ItemDelegate` as MapPicker's 248-map list, and for the same reason: one
- * control, one language, no wall.
- *
- * ⚠️ **HOVER NO LONGER AUDITIONS.** It did, and it was wrong -- sweeping the list to read it meant
- * the music kept changing under you. Twilight: *"Stop music change on hover change. Just only when
- * it's selected."* Selecting a track plays it (if the player is running) **and** writes the save.
- * There is one gesture and it does the one thing.
- *
- * ⚠️ Nothing plays on its own. The ▶ is a thing you press.
+ * ⚠️ Nothing plays on its own. ▶ is a thing you press.
  */
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-RowLayout {
+Item {
   id: music
-  objectName: "musicPicker"   // the DEBUG harness opens the drop-down through this
-  spacing: 4
+  objectName: "musicPicker"
+
+  implicitWidth: musicSim.implicitWidth
+  implicitHeight: 26
 
   property bool openState: false
 
@@ -82,296 +66,252 @@ RowLayout {
   // ⚠️ Leaving the Map screen must not leave a tune humming behind it.
   Component.onDestruction: brg.music.stop()
 
-  // ── ▶ ─────────────────────────────────────────────────────────────────────────────────────
-  MapRailButton {
-    objectName: "musicPlay"
-    size: 26
-    glyph: brg.music.isPlaying ? "■" : "▶"
-    enabledBtn: music.playable
-    tip: !music.playable
-           ? qsTr("This save's music bank isn't one a console can play (2, 8 or 31)")
-           : brg.music.isPlaying ? qsTr("Stop") : qsTr("Play this map's music")
+  // ── The button: ▶/⏸ + ♪ + ▾ ────────────────────────────────────────────────────────────────
+  MapSimButton {
+    id: musicSim
+    objectName: "musicChip"   // the DEBUG harness opens the drop-down through this (its ▾)
 
-    onClicked: brg.music.isPlaying ? brg.music.stop() : brg.music.play()
+    glyph: "♪"
+
+    playing: brg.music.isPlaying
+    playEnabled: music.playable
+    playTip: !music.playable
+               ? qsTr("This save's music bank isn't one a console can play (2, 8 or 31)")
+               : brg.music.isPlaying ? qsTr("Stop") : qsTr("Play this map's music")
+    onToggled: brg.music.isPlaying ? brg.music.stop() : brg.music.play()
+
+    hasMenu: true
+    menuOpen: music.openState
+    menuTip: qsTr("Music — %1").arg(music.hasAudio
+               ? brg.music.describe(music.audio.musicBank, music.audio.musicID)
+               : "—")
+    onMenuToggled: music.openState = !music.openState
   }
 
-  // ── The button ────────────────────────────────────────────────────────────────────────────
-  //
-  // The wordy "♪ Pallet Town ⌄" chip is gone -- that was the THIRD "Pallet Town" on the bar
-  // (Twilight, 2026-07-14). The music button is a ♪ icon; what is playing is in its tooltip and its
-  // dropdown. The ♪ goes accent WHILE IT PLAYS -- the one bit of reactivity that is genuinely useful
-  // on a music button. The ▶ stays right beside it, as she asked.
-  Item {
-    id: musicBtnWrap
-    objectName: "musicChip"   // the DEBUG harness opens the drop-down through this
+  // ── The drop-down ──────────────────────────────────────────────────────────────────────────
+  Popup {
+    id: panel
 
-    implicitWidth: musicBtn.implicitWidth
-    implicitHeight: 26
+    visible: music.openState
+    onClosed: music.openState = false
 
-    MapBarButton {
-      id: musicBtn
-      anchors.fill: parent
+    y: musicSim.height + 5
+    x: -40
 
-      glyph: "♪"
-      glyphColor: brg.music.isPlaying ? brg.settings.accentColor : brg.settings.textColorDark
-      open: music.openState
-      onToggle: music.openState = !music.openState
+    width: 250
+    padding: 8
 
-      tip: qsTr("Music — %1").arg(music.hasAudio
-             ? brg.music.describe(music.audio.musicBank, music.audio.musicID)
-             : "—")
+    background: Rectangle {
+      color: "#ffffff"
+      radius: 8
+      border.width: 1
+      border.color: brg.settings.dividerColor
     }
 
-    Popup {
-      id: panel
+    ColumnLayout {
+      width: parent.width
+      spacing: 8
 
-      visible: music.openState
-      onClosed: music.openState = false
+      // ── The track: a REAL grouped ComboBox ─────────────────────────────────────────────────
+      ComboBox {
+        id: trackCombo
 
-      y: musicBtnWrap.height + 5
-      x: -30
+        Layout.fillWidth: true
+        Layout.preferredHeight: 32
+        font.pixelSize: 12
 
-      width: 250
-      padding: 8
+        model: showInner.checked
+               ? brg.music.tracks
+               : brg.music.tracks.filter(function(t) { return !t.inner; })
 
-      background: Rectangle {
-        color: "#ffffff"
-        radius: 8
-        border.width: 1
-        border.color: brg.settings.dividerColor
-      }
+        textRole: "name"
 
-      ColumnLayout {
-        width: parent.width
-        spacing: 8
+        currentIndex: {
+          if (!music.hasAudio)
+            return -1;
 
-        // ── The track: a REAL grouped ComboBox ─────────────────────────────────────────────
-        //
-        // The same control, and the same grouped delegate, as MapPicker's 248-map list. The group
-        // heading rides on the FIRST entry of its group (MusicPlayer::tracks puts it there), so
-        // there is one model and one list rather than two that can drift apart.
-        ComboBox {
-          id: trackCombo
+          const list = trackCombo.model;
+          for (let i = 0; i < list.length; i++)
+            if (list[i].bank === music.audio.musicBank && list[i].id === music.audio.musicID)
+              return i;
 
-          Layout.fillWidth: true
-          Layout.preferredHeight: 32
-          font.pixelSize: 12
+          return -1;   // a bank/id pair no track has -- shown as it is, never corrected
+        }
 
-          model: showInner.checked
-                 ? brg.music.tracks
-                 : brg.music.tracks.filter(function(t) { return !t.inner; })
+        displayText: currentIndex >= 0
+                       ? currentText
+                       : (music.hasAudio
+                            ? brg.music.describe(music.audio.musicBank, music.audio.musicID)
+                            : "—")
 
-          textRole: "name"
+        // ⚠️ SELECTING is the ONLY thing that changes the music, and the only thing that writes the
+        // save. Hovering a row does not audition.
+        onActivated: {
+          if (!music.hasAudio)
+            return;
 
-          currentIndex: {
-            if (!music.hasAudio)
-              return -1;
+          const t = trackCombo.model[trackCombo.currentIndex];
+          if (!t)
+            return;
 
-            const list = trackCombo.model;
-            for (let i = 0; i < list.length; i++)
-              if (list[i].bank === music.audio.musicBank && list[i].id === music.audio.musicID)
-                return i;
+          music.audio.musicBank = t.bank;
+          music.audio.musicID = t.id;
 
-            return -1;   // a bank/id pair no track has -- shown as it is, never corrected
-          }
+          brg.music.select(t.bank, t.id);
+        }
 
-          // A save can hold a bank/id the game never wrote. Say what it is rather than snapping the
-          // combo to the nearest thing it likes.
-          displayText: currentIndex >= 0
-                         ? currentText
-                         : (music.hasAudio
-                              ? brg.music.describe(music.audio.musicBank, music.audio.musicID)
-                              : "—")
+        delegate: ItemDelegate {
+          id: row
+          required property var modelData
+          required property int index
 
-          // ⚠️ SELECTING is the ONLY thing that changes the music, and it is also the only thing
-          // that writes the save. Hovering a row used to audition it -- so reading the list changed
-          // what you were hearing, which Twilight (rightly) asked me to stop.
-          onActivated: {
-            if (!music.hasAudio)
-              return;
+          width: trackCombo.width
+          height: (row.heading !== "" ? 20 : 0) + 28
+          highlighted: trackCombo.highlightedIndex === row.index
 
-            const t = trackCombo.model[trackCombo.currentIndex];
-            if (!t)
-              return;
+          readonly property bool isSaved: music.hasAudio
+                                       && music.audio.musicBank === row.modelData.bank
+                                       && music.audio.musicID === row.modelData.id
 
-            music.audio.musicBank = t.bank;
-            music.audio.musicID = t.id;
+          readonly property string heading: row.modelData.header || ""
 
-            brg.music.select(t.bank, t.id);
-          }
+          contentItem: ColumnLayout {
+            spacing: 0
 
-          // ⚠️ NO `popup.height` BINDING. Sizing the popup from its own contentItem is a binding loop
-          // -- Qt breaks it, and the rows come out too short to read AND unclickable. @see SpriteField.
-          delegate: ItemDelegate {
-            id: row
-            required property var modelData
-            required property int index
+            Text {
+              visible: row.heading !== ""
+              Layout.fillWidth: true
+              text: row.heading
+              font.pixelSize: 10
+              font.bold: true
+              color: brg.settings.textColorMid
+            }
 
-            width: trackCombo.width
-            height: (row.heading !== "" ? 20 : 0) + 28
-            highlighted: trackCombo.highlightedIndex === row.index
-
-            readonly property bool isSaved: music.hasAudio
-                                         && music.audio.musicBank === row.modelData.bank
-                                         && music.audio.musicID === row.modelData.id
-
-            // ⚠️ `header`, NOT `group`. The model puts the group's name on the FIRST row of that
-            // group and leaves it empty on the rest -- that is what makes it a heading. Reading
-            // `group` (which every row carries) drew a heading above every single track, 151 times.
-            readonly property string heading: row.modelData.header || ""
-
-            contentItem: ColumnLayout {
-              spacing: 0
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: 6
 
               Text {
-                visible: row.heading !== ""
                 Layout.fillWidth: true
-                text: row.heading
-                font.pixelSize: 10
-                font.bold: true
-                color: brg.settings.textColorMid
+                text: row.modelData.name
+                font.pixelSize: 12
+                font.italic: row.modelData.inner
+                color: brg.settings.textColorDark
+                opacity: row.modelData.inner ? 0.8 : 1.0
+                elide: Text.ElideRight
               }
 
-              RowLayout {
-                Layout.fillWidth: true
-                spacing: 6
-
-                Text {
-                  Layout.fillWidth: true
-                  text: row.modelData.name
-                  font.pixelSize: 12
-                  // An inner voice is one channel of a song, alone. Real music -- and worth saying
-                  // it is a part rather than a whole.
-                  font.italic: row.modelData.inner
-                  color: brg.settings.textColorDark
-                  opacity: row.modelData.inner ? 0.8 : 1.0
-                  elide: Text.ElideRight
-                }
-
-                Text {
-                  visible: row.isSaved
-                  text: qsTr("in the save")
-                  font.pixelSize: 9
-                  color: "#0072b2"
-                }
+              Text {
+                visible: row.isSaved
+                text: qsTr("in the save")
+                font.pixelSize: 9
+                color: "#0072b2"
               }
             }
           }
         }
+      }
 
-        // ── Volume, DIRECTLY under the combo ───────────────────────────────────────────────
-        RowLayout {
-          Layout.fillWidth: true
-          spacing: 6
+      // ── Volume, DIRECTLY under the combo ─────────────────────────────────────────────────────
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: 6
 
-          Label {
-            text: "🔉"
-            font.pixelSize: 12
-            opacity: 0.6
-          }
-
-          Slider {
-            id: vol
-            Layout.fillWidth: true
-            Layout.preferredHeight: 22
-
-            from: 0.0
-            to: 1.0
-            value: brg.music.volume
-            onMoved: brg.music.volume = value
-
-            // MapToolTip, not the stock one -- dark text on translucent is unreadable and it is the
-            // recurring complaint on this screen. `followGlobalSetting: false`: a % readout while you
-            // are dragging a slider is not a HINT, it is the control's own value.
-            MapToolTip {
-              parent: vol.handle
-              shown: vol.pressed || vol.hovered
-              followGlobalSetting: false
-              delay: 0
-              text: Math.round(vol.value * 100) + "%"
-            }
-          }
+        Label {
+          text: "🔉"
+          font.pixelSize: 12
+          opacity: 0.6
         }
 
-        // ── Sub-tracks ─────────────────────────────────────────────────────────────────────
-        //
-        // The 105 "inner voices" are real music: one channel of a song, played alone, exactly as the
-        // console plays it. But **OFF by default** (Twilight, 2026-07-13) -- 151 rows is a wall when
-        // all you wanted was Pallet Town, and 46 is a list. They are here when you want them.
-        RowLayout {
+        Slider {
+          id: vol
           Layout.fillWidth: true
-          spacing: 6
+          Layout.preferredHeight: 22
 
-          Label {
-            Layout.fillWidth: true
-            text: qsTr("Sub-tracks")
+          from: 0.0
+          to: 1.0
+          value: brg.music.volume
+          onMoved: brg.music.volume = value
+
+          MapToolTip {
+            parent: vol.handle
+            shown: vol.pressed || vol.hovered
+            followGlobalSetting: false
+            delay: 0
+            text: Math.round(vol.value * 100) + "%"
+          }
+        }
+      }
+
+      // ── Sub-tracks ───────────────────────────────────────────────────────────────────────────
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: 6
+
+        Label {
+          Layout.fillWidth: true
+          text: qsTr("Sub-tracks")
+          font.pixelSize: 11
+          color: "#424242"
+        }
+
+        Switch {
+          id: showInner
+          checked: false
+          implicitHeight: 22
+          scale: 0.8
+        }
+      }
+
+      Rectangle {
+        Layout.fillWidth: true
+        implicitHeight: 1
+        color: brg.settings.dividerColor
+      }
+
+      // ── The two save flags ───────────────────────────────────────────────────────────────────
+      ColumnLayout {
+        Layout.fillWidth: true
+        spacing: 0
+
+        CheckBox {
+          Layout.fillWidth: true
+          implicitHeight: 26
+          topPadding: 0
+          bottomPadding: 0
+
+          text: qsTr("No audio fade-out")
+          checked: music.hasAudio ? music.audio.noAudioFadeout : false
+          enabled: music.hasAudio
+          onToggled: if (music.hasAudio) music.audio.noAudioFadeout = checked
+
+          contentItem: Label {
+            text: parent.text
             font.pixelSize: 11
             color: "#424242"
-          }
-
-          Switch {
-            id: showInner
-            checked: false
-            implicitHeight: 22
-            scale: 0.8
+            leftPadding: parent.indicator.width + 5
+            verticalAlignment: Text.AlignVCenter
           }
         }
 
-        Rectangle {
+        CheckBox {
           Layout.fillWidth: true
-          implicitHeight: 1
-          color: brg.settings.dividerColor
-        }
+          implicitHeight: 26
+          topPadding: 0
+          bottomPadding: 0
 
-        // ── The two save flags, below the list ──────────────────────────────────────────────
-        //
-        // ⚠️ A stock CheckBox is ~40px tall by default, so two of them stacked leave a canyon between
-        // the labels. Twilight: *"checkboxes are too far apart."* They are a pair of related flags,
-        // so they read as a pair: tight, in their own column, with the spacing set here and not
-        // inherited from whatever the style felt like.
-        ColumnLayout {
-          Layout.fillWidth: true
-          spacing: 0
+          text: qsTr("Don't change music on map entry")
+          checked: music.hasAudio ? music.audio.preventMusicChange : false
+          enabled: music.hasAudio
+          onToggled: if (music.hasAudio) music.audio.preventMusicChange = checked
 
-          CheckBox {
-            Layout.fillWidth: true
-            implicitHeight: 26
-            topPadding: 0
-            bottomPadding: 0
-
-            text: qsTr("No audio fade-out")
-            checked: music.hasAudio ? music.audio.noAudioFadeout : false
-            enabled: music.hasAudio
-            onToggled: if (music.hasAudio) music.audio.noAudioFadeout = checked
-
-            contentItem: Label {
-              text: parent.text
-              font.pixelSize: 11
-              color: "#424242"
-              leftPadding: parent.indicator.width + 5
-              verticalAlignment: Text.AlignVCenter
-            }
-          }
-
-          CheckBox {
-            Layout.fillWidth: true
-            implicitHeight: 26
-            topPadding: 0
-            bottomPadding: 0
-
-            text: qsTr("Don't change music on map entry")
-            checked: music.hasAudio ? music.audio.preventMusicChange : false
-            enabled: music.hasAudio
-            onToggled: if (music.hasAudio) music.audio.preventMusicChange = checked
-
-            contentItem: Label {
-              text: parent.text
-              font.pixelSize: 11
-              color: "#424242"
-              leftPadding: parent.indicator.width + 5
-              verticalAlignment: Text.AlignVCenter
-              elide: Text.ElideRight
-            }
+          contentItem: Label {
+            text: parent.text
+            font.pixelSize: 11
+            color: "#424242"
+            leftPadding: parent.indicator.width + 5
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
           }
         }
       }

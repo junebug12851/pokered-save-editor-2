@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#303030">
+  <!-- Two footprints, mid-stride. A representation of WALKING that is not a human figure, so it
+       cannot read as an accessibility symbol (Twilight, 2026-07-14). Monochrome dark, for the button
+       at rest; footprints-light.svg is the white one for the playing (orange) state. -->
+  <g transform="rotate(-13 195 300)">
+    <rect x="145" y="250" width="100" height="150" rx="50"/>
+    <circle cx="153" cy="236" r="20"/>
+    <circle cx="189" cy="223" r="22"/>
+    <circle cx="226" cy="233" r="19"/>
+    <circle cx="256" cy="256" r="15"/>
+  </g>
+  <g transform="rotate(13 325 225)">
+    <rect x="278" y="175" width="100" height="150" rx="50"/>
+    <circle cx="286" cy="161" r="20"/>
+    <circle cx="322" cy="148" r="22"/>
+    <circle cx="359" cy="158" r="19"/>
+    <circle cx="389" cy="181" r="15"/>
+  </g>
+</svg>

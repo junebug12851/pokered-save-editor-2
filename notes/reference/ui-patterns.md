@@ -63,6 +63,30 @@ active contrast over a generic contrast button."*
 - The picker's root `implicitWidth`/`implicitHeight` must follow the **button** (`trigger.implicitWidth`,
   26), not the old chip.
 
+## Collapsing button groups + the simulation group (2026-07-14)
+
+**`MapRailGroup`** — a group of rail buttons collapsed to ONE. The left rail's three groups (tools /
+makers / panels) are each a `MapRailGroup`: the face shows the group's **active** member (or the last
+picked), wears a small corner ◢, and clicking flies the members out to the right in a `Popup`. The
+caller binds `activeId` (e.g. `mapScreen.tool` for tools, `dock.open` for panels) and handles
+`chosen(id)`. The tools group hands the group its **zoom ▾** (ZoomMenu) via the flyout's default slot,
+so zoom still lives in exactly one place. `MapDock` grew a `collapse` bool — the LEFT dock collapses
+its panels to a group; the right dock keeps separate icons.
+
+**`MapSimButton`** — the top bar's *simulation* controls (music, tile-animation, walk) are a family:
+a play/pause button (▶/⏸ + a subject symbol) with an optional ▾ that drops a menu the caller owns.
+Running = filled orange, at rest = an outlined button. They sit together, right of the config buttons.
+
+> ⚠️ **Icon tinting: two pre-coloured SVGs, NOT a shader recolour.** The walk icon is footprints
+> (`footprints.svg` dark + `footprints-light.svg` white), swapped by play state on a plain `Image`.
+> `MultiEffect` / any GPU recolour **draws nothing on Qt's software backend** — which is what the
+> headless screenshooter, the screenshot review and CI all run on — so a shader-tinted icon comes up
+> **blank** there and can't be reviewed. The screenshot review caught exactly this. Same lesson as
+> `PixelImage`'s shader falling back to nearest.
+>
+> ⚠️ **Walk = footprints, not a walking figure** (Twilight): a pedestrian silhouette can read as an
+> accessibility symbol. Footprints say "walking" with no human figure at all.
+
 ## The map's LEFT RAIL — tools + makers above the panels (2026-07-14)
 
 The map screen's left dock rail carries three groups, top to bottom, each divided from the next:

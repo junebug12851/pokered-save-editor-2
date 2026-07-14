@@ -109,13 +109,13 @@ Rectangle {
       Layout.rightMargin: 2
     }
 
-    // ── The four icon buttons: Map · Warp · Contrast · Music ──────────────────────────────────
+    // ── The CONFIG buttons: Map · Warp · Contrast ────────────────────────────────────────────
     //
-    // Compact icon tool-buttons, each with a ▾ that says "I drop a menu" (Twilight). The wordy chips
-    // are gone; each button is an icon — and where a reactive icon is natural it is one: Contrast IS
-    // its live four-shade swatch, Music's ♪ lights up while it plays, the Map icon carries an amber
-    // dot when the map's blocks/size don't match. All four share MapBarButton, so they read as one
-    // family. See each picker file for the icon it hands the button.
+    // Compact icon tool-buttons, each with a ▾ that says "I drop a menu" (Twilight). Where a reactive
+    // icon is natural it is one: Contrast IS its live four-shade swatch, the Map icon carries an amber
+    // dot when the map's blocks/size don't match. They share MapBarButton, so they read as a family.
+    // (Music used to be here too; it moved to the SIMULATION group below, with the other things you
+    // play.)
 
     // ── Map (⊞): which map, its tileset, its blockset ────────────────────────────────────────
     MapPicker { id: mapPicker }
@@ -144,132 +144,181 @@ Rectangle {
     // chips for one idea was a chip too many.
     ContrastPicker { id: contrastPicker }
 
-    // ── Music ────────────────────────────────────────────────────────────────────────────────
+    // ══ THE SIMULATION GROUP — the three things you PLAY ══════════════════════════════════════
     //
-    // In the toolbar, in the same language as the map picker beside it -- a chip that drops a
-    // picker (Twilight, 2026-07-13). The Music DOCK PANEL is gone: a whole panel for one combo box,
-    // two checkboxes and a ▶ was a panel too many.
-    MusicPicker { id: musicPicker }
-
+    // Twilight, 2026-07-14: *"the music button, the tile-animation button and the walk button need to
+    // all be icon buttons with an optional dropdown — a play/pause button next to a symbol, with a
+    // little dropdown arrow. Those three are all SIMULATION and go in the group to the RIGHT of the
+    // config buttons."* So they sit together, past a divider, each a MapSimButton (▶/⏸ + a symbol +
+    // an optional ▾).
     Rectangle {
-      visible: brg.mapClock.animates
       implicitWidth: 1
       implicitHeight: 18
       color: brg.settings.dividerColor
       Layout.leftMargin: 2
+      Layout.rightMargin: 2
     }
 
-    // ── The animation: ONE button that is either ▶ or ⏸ ──────────────────────────────────────
-    //
-    // The console rewrites the water tile every 20 frames (21 with flowers) -- about three times a
-    // second -- so the map MOVES. This is the switch for it, and it is a thing you DO, which is why
-    // it is up here and the frame counter is down in the status bar with the other facts.
-    MapRailButton {
-      objectName: "animToggle"
+    // Music — ▶/⏸ ♪ ▾ (the ▾ drops the track / volume / flags).
+    MusicPicker { id: musicPicker }
+
+    // Tile animation — ▶/⏸ ✿ ▾. The console rewrites the water tile ~3×/second (water + flowers);
+    // this plays it. The FLOWER is the symbol (that is the half of it people notice), and the ▾ holds
+    // the speed and a single-frame step.
+    Item {
+      id: tileWrap
+      objectName: "tileAnimWrap"   // the screenshot review drives the dropdown through this
       visible: brg.mapClock.animates
-      size: 26
-      glyph: brg.mapClock.playing ? "⏸" : "▶"
-      tip: brg.mapClock.playing
-           ? qsTr("Pause the animation")
-           : qsTr("Animate the map — the water and the flowers, at the console's own pace")
-      onClicked: brg.mapClock.playing = !brg.mapClock.playing
-    }
-
-    // ── The town comes to life ───────────────────────────────────────────────────────────────
-    //
-    // The SECOND ▶. The one above animates the water; this one makes the PEOPLE walk.
-    //
-    // ⚠️ It is DESTRUCTIVE and it says so, once, with a "don't show me this again" that starts
-    // UNTICKED -- because a warning you have to opt back into is not a warning.
-    // ⚠️ A LABELLED chip, not a second ▶.
-    //
-    // The first version was a bare glyph sitting next to the animation's ▶, and two play buttons side
-    // by side is a puzzle, not a toolbar (caught on the screenshot review). The word costs 30px and
-    // buys "I know exactly what this does" -- which is the trade this whole screen is supposed to
-    // make. The app's language is chips, and this is one.
-    Rectangle {
-      objectName: "simToggle"
-
-      implicitWidth: simRow.implicitWidth + 14
+      implicitWidth: tileSim.implicitWidth
       implicitHeight: 26
-      radius: 13
 
-      enabled: brg.mapSim.canSimulate
-      opacity: enabled ? 1.0 : 0.4
+      property bool menuOpen: false
 
-      // ⚠️ CONTRAST. At rest this was a 4%-black chip -- so pale it was barely a chip at all -- with
-      // its text on `palette.text`, which the theme resolves LIGHT. Pale text on a near-white chip:
-      // Twilight, twice, and the screenshot review walked straight past it both times.
-      //
-      // Both states are now spelled out, not inherited. At rest: a real outline, and text dark enough
-      // to read. Running: solid orange, white on it. Nothing here depends on what the palette feels
-      // like doing.
-      color: brg.mapSim.playing ? "#d55e00"
-           : simHover.hovered   ? Qt.rgba(0, 0, 0, 0.10)
-           : Qt.rgba(0, 0, 0, 0.05)
+      MapSimButton {
+        id: tileSim
+        objectName: "tileAnimToggle"
 
-      border.width: 1
-      border.color: brg.mapSim.playing ? "#d55e00" : brg.settings.dividerColor
+        glyph: "✿"
+        playing: brg.mapClock.playing
+        playTip: brg.mapClock.playing
+                   ? qsTr("Pause the animation")
+                   : qsTr("Animate the map — the water and the flowers, at the console's own pace")
+        onToggled: brg.mapClock.playing = !brg.mapClock.playing
 
-      Behavior on color { ColorAnimation { duration: 90 } }
-
-      readonly property color ink: brg.mapSim.playing ? "#ffffff" : brg.settings.textColorDark
-
-      RowLayout {
-        id: simRow
-        anchors.centerIn: parent
-        spacing: 4
-
-        Label {
-          text: brg.mapSim.playing ? "⏸" : "▶"
-          font.pixelSize: 10
-          color: parent.parent.ink
-        }
-
-        Label {
-          text: brg.mapSim.playing ? qsTr("Walking") : qsTr("Walk")
-          font.pixelSize: 11
-          font.bold: true
-          color: parent.parent.ink
-        }
+        hasMenu: true
+        menuOpen: tileWrap.menuOpen
+        menuTip: qsTr("Animation speed & step")
+        onMenuToggled: tileWrap.menuOpen = !tileWrap.menuOpen
       }
 
-      HoverHandler {
-        id: simHover
-        enabled: brg.mapSim.canSimulate
-        cursorShape: Qt.PointingHandCursor
-      }
+      Popup {
+        visible: tileWrap.menuOpen
+        onClosed: tileWrap.menuOpen = false
 
-      TapHandler {
-        enabled: brg.mapSim.canSimulate
-        onTapped: {
-          if (brg.mapSim.playing) {
-            brg.mapSim.playing = false;
-            return;
+        y: tileSim.height + 5
+        x: -30
+        width: 180
+        padding: 10
+
+        background: Rectangle {
+          color: "#ffffff"; radius: 8
+          border.width: 1; border.color: brg.settings.dividerColor
+        }
+
+        ColumnLayout {
+          width: parent.width
+          spacing: 8
+
+          Label {
+            text: qsTr("Speed")
+            font.pixelSize: 11; font.bold: true
+            color: brg.settings.textColorMid
           }
 
-          if (brg.settings.mapSimWarned)
-            brg.mapSim.playing = true;
-          else
-            simWarning.open();
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 4
+
+            Repeater {
+              model: [ { s: 0.5, label: "½×" }, { s: 1.0, label: "1×" }, { s: 2.0, label: "2×" } ]
+
+              delegate: Rectangle {
+                required property var modelData
+                Layout.fillWidth: true
+                implicitHeight: 26
+                radius: 5
+
+                readonly property bool on: Math.abs(brg.mapClock.speed - modelData.s) < 0.01
+
+                color: on ? brg.settings.accentColor
+                     : spdHover.hovered ? "#f0f0f0" : "#ffffff"
+                border.width: 1; border.color: brg.settings.dividerColor
+
+                Label {
+                  anchors.centerIn: parent
+                  text: modelData.label
+                  font.pixelSize: 11; font.bold: parent.on
+                  color: parent.on ? brg.settings.textColorLight : brg.settings.textColorDark
+                }
+
+                HoverHandler { id: spdHover; cursorShape: Qt.PointingHandCursor }
+                TapHandler { onTapped: brg.mapClock.speed = modelData.s }
+              }
+            }
+          }
+
+          Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: brg.settings.dividerColor }
+
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("One frame at a time")
+              font.pixelSize: 11
+              color: "#424242"
+            }
+
+            Rectangle {
+              implicitWidth: stepRow.implicitWidth + 12
+              implicitHeight: 24
+              radius: 5
+              color: stepHover.hovered ? "#f0f0f0" : "#ffffff"
+              border.width: 1; border.color: brg.settings.dividerColor
+
+              RowLayout {
+                id: stepRow
+                anchors.centerIn: parent
+                spacing: 3
+                Label { text: "⏭"; font.pixelSize: 11 }
+                Label { text: qsTr("Step"); font.pixelSize: 11 }
+              }
+
+              HoverHandler { id: stepHover; cursorShape: Qt.PointingHandCursor }
+              TapHandler { onTapped: brg.mapClock.step() }
+            }
+          }
         }
       }
+    }
 
-      // ⚠️ MapToolTip, NOT the stock `ToolTip.text` attached property. The stock one is DARK TEXT on
-      // a translucent background, and over this pale toolbar it is genuinely hard to read -- Twilight
-      // has said so more times than I want to count. MapToolTip is white-on-opaque-dark and it is the
-      // ONLY tooltip anything on this screen may use. If you are typing `ToolTip.text`, stop.
-      MapToolTip {
-        shown: simHover.hovered || (!brg.mapSim.canSimulate && simDeadHover.hovered)
-        text: !brg.mapSim.canSimulate
-                ? qsTr("Nobody on this map can walk — they are all set to Stay")
-                : brg.mapSim.playing
-                  ? qsTr("Stop them")
-                  : qsTr("Let the people wander — ⚠️ this MOVES the real sprite data")
+    // Walk — ▶/⏸ + footprints. The one above animates the water; this makes the PEOPLE walk.
+    //
+    // ⚠️ It is DESTRUCTIVE and says so once, with a "don't show me this again" that starts UNTICKED
+    // (a warning you have to opt back into is not a warning). No ▾ — there is nothing to configure,
+    // it is just a thing you start and stop.
+    //
+    // ⚠️ The symbol is FOOTPRINTS, not a walking figure — Twilight, 2026-07-14: *"let's not have a
+    // handicap-accessibility-style icon representing people walking."* Footprints say "walking"
+    // without any human figure at all. See footprints.svg.
+    MapSimButton {
+      objectName: "simToggle"
+
+      iconSource: "qrc:/assets/icons/footprints.svg"
+      iconSourcePlaying: "qrc:/assets/icons/footprints-light.svg"
+
+      playing: brg.mapSim.playing
+      playEnabled: brg.mapSim.canSimulate
+      playTip: !brg.mapSim.canSimulate
+                 ? qsTr("Nobody on this map can walk — they are all set to Stay")
+                 : brg.mapSim.playing
+                   ? qsTr("Stop them")
+                   : qsTr("Let the people wander — ⚠️ this MOVES the real sprite data")
+
+      onToggled: {
+        if (brg.mapSim.playing) {
+          brg.mapSim.playing = false;
+          return;
+        }
+
+        if (brg.settings.mapSimWarned)
+          brg.mapSim.playing = true;
+        else
+          simWarning.open();
       }
 
-      // A disabled chip still has to be able to SAY why it is disabled.
-      HoverHandler { id: simDeadHover }
+      hasMenu: false
     }
 
     SimWarningDialog {

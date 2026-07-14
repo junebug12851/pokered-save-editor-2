@@ -192,6 +192,10 @@ Page {
 
         side: "left"
 
+        // The three panel icons collapse into ONE flyout group (Twilight, 2026-07-14) — so the left
+        // rail is three buttons: tools, makers, panels.
+        collapse: true
+
         // Nothing open (Twilight). You open the Map screen and you see THE MAP.
         open: ""
 
@@ -209,50 +213,47 @@ Page {
 
         panelContext: canvas
 
-        // ── The tools + the makers, above the panel icons ─────────────────────────────────────
+        // ── The tools + the makers, above the panel icons — each group COLLAPSED to one button ──
         //
-        // Declared HERE (in the screen), so the buttons can see `mapScreen`, `canvas` and the
-        // keyboard — a Component resolves ids from where it is written, not from the Loader that
-        // instantiates it. See MapDock.railHeader.
+        // Twilight, 2026-07-14: *"collapse the left toolbar button groups into a single button each,
+        // reduce it down to three buttons."* So the rail is three flyout groups now: Tools, Makers,
+        // and (below, in the dock) Panels. Each face shows its ACTIVE member and flies the rest out.
+        //
+        // Declared HERE (in the screen), so the buttons can see `mapScreen`, `canvas` and the keyboard
+        // — a Component resolves ids from where it is written, not from the Loader that instantiates
+        // it. See MapDock.railHeader.
         railHeader: Component {
           Column {
             spacing: 4
 
-            // Select · Pan · Zoom — the three that change how you LOOK at the map.
-            Repeater {
-              model: [
-                { id: "select", glyph: "↖", key: "V",
+            // ── Tools: Select · Pan · Zoom — how you LOOK at the map ──────────────────────────
+            MapRailGroup {
+              objectName: "toolsGroup"
+              anchors.horizontalCenter: parent.horizontalCenter
+
+              members: [
+                { id: "select", glyph: "↖", shortcut: "V",
                   tip: qsTr("Select & Move — click to select, drag to move") },
-                { id: "pan", glyph: "✥", key: "H",
+                { id: "pan", glyph: "✥", shortcut: "H",
                   tip: qsTr("Pan — drag the map (or hold Space with any tool)") },
-                { id: "zoom", glyph: "⌕", key: "Z",
+                { id: "zoom", glyph: "⌕", shortcut: "Z",
                   tip: qsTr("Zoom — click to zoom in, Alt-click to zoom out") }
               ]
 
-              MapRailButton {
-                required property var modelData
-                objectName: "toolBtn_" + modelData.id   // the DEBUG harness picks tools through these
-                anchors.horizontalCenter: parent.horizontalCenter
-                glyph: modelData.glyph
-                tip: modelData.tip
-                shortcut: modelData.key
-                active: mapScreen.tool === modelData.id
-                onClicked: mapScreen.tool = modelData.id
-              }
-            }
+              activeId: (mapScreen.tool === "select" || mapScreen.tool === "pan"
+                         || mapScreen.tool === "zoom") ? mapScreen.tool : ""
+              tip: qsTr("Tools — select, pan, zoom")
 
-            // The ▾ that owns the zoom slider + "Go to…". It belongs to the zoom tool, so it sits
-            // right under it. ZOOM LIVES IN EXACTLY ONE PLACE and this is it.
-            //
-            // ⚠️ `canvas: leftDock.panelContext`, NOT `canvas: canvas`. This header is loaded inside
-            // the dock, which is built BEFORE the MapCanvas exists — so a raw `canvas` id reference
-            // here resolves to undefined at construction and never updates (it is not a notifiable
-            // property). `panelContext` is a real property already bound to the canvas (the Details
-            // panel rides on it), so it is the one reference in scope that updates when the canvas
-            // arrives. `tst_qml_screens` caught the raw-id version.
-            ZoomMenu {
-              anchors.horizontalCenter: parent.horizontalCenter
-              canvas: leftDock.panelContext
+              onChosen: (id) => mapScreen.tool = id
+
+              // The zoom ▾ (slider + "Go to…") rides inside the flyout, right after the zoom tool, so
+              // ZOOM STILL LIVES IN EXACTLY ONE PLACE.
+              //
+              // ⚠️ `canvas: leftDock.panelContext`, NOT `canvas: canvas`. This header is built inside
+              // the dock, BEFORE the MapCanvas exists, so a raw `canvas` id resolves to undefined and
+              // never updates (an id is not notifiable). `panelContext` is a real property already
+              // bound to the canvas. `tst_qml_screens` caught the raw-id version.
+              ZoomMenu { canvas: leftDock.panelContext }
             }
 
             Rectangle {
@@ -261,37 +262,23 @@ Page {
               color: brg.settings.dividerColor
             }
 
-            // ⇄ Place a door · ☻ Place a person — the two that CHANGE the map. Same list, same caps,
-            // same "stated before you hit it" as before; only the address changed.
-            Repeater {
-              model: [
-                { id: "placeWarp", glyph: "⇄", key: "W", cap: 32,
-                  tip: qsTr("Place a door — click a tile. It starts as a way back outside, which is what a door usually is."),
-                  full: qsTr("This map already has all 32 doors the game can hold.") },
-                { id: "placeSprite", glyph: "☻", key: "N", cap: 15,
-                  tip: qsTr("Place a character — click a tile. A random one, but only ever a picture THIS map has loaded, so it can never be one the console would draw as garbage."),
-                  full: qsTr("This map already has all 15 characters the game can hold.") }
+            // ── Makers: ⇄ place a door · ☻ place a person — how you CHANGE the map ────────────
+            MapRailGroup {
+              objectName: "makersGroup"
+              anchors.horizontalCenter: parent.horizontalCenter
+
+              members: [
+                { id: "placeWarp", glyph: "⇄", shortcut: "W",
+                  tip: qsTr("Place a door — click a tile. It starts as a way back outside, which is what a door usually is. (Up to 32.)") },
+                { id: "placeSprite", glyph: "☻", shortcut: "N",
+                  tip: qsTr("Place a character — click a tile. A random one, but only ever a picture THIS map has loaded, so it can never be one the console would draw as garbage. (Up to 15.)") }
               ]
 
-              MapRailButton {
-                required property var modelData
-                objectName: "toolBtn_" + modelData.id
-                anchors.horizontalCenter: parent.horizontalCenter
-                glyph: modelData.glyph
-                shortcut: modelData.key
-                active: mapScreen.tool === modelData.id
+              activeId: (mapScreen.tool === "placeWarp"
+                         || mapScreen.tool === "placeSprite") ? mapScreen.tool : ""
+              tip: qsTr("Make — place a door or a character")
 
-                readonly property int roomLeft: modelData.id === "placeWarp" ? brg.map.warpRoomLeft()
-                                                                             : brg.map.npcRoomLeft()
-                enabledBtn: roomLeft > 0
-
-                tip: roomLeft > 0
-                     ? modelData.tip + "\n\n" + qsTr("%1 of %2 used.")
-                         .arg(modelData.cap - roomLeft).arg(modelData.cap)
-                     : modelData.full
-
-                onClicked: mapScreen.tool = modelData.id
-              }
+              onChosen: (id) => mapScreen.tool = id
             }
           }
         }
