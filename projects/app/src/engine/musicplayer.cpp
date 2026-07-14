@@ -29,6 +29,7 @@
 #include <QMediaDevices>
 #include <QMutexLocker>
 
+#include <pse-audio/gen1musicasm.h>
 #include <pse-db/music.h>
 
 using namespace pse::audio;
@@ -163,29 +164,74 @@ private:
 
 MusicPlayer::MusicPlayer(QObject* parent) : QObject(parent)
 {
-  // The three audio banks, exactly as the cartridge lays them out (the header table at $4000 and
-  // every stream it can reach). maxSfxId comes from the importer -- PlaySound branches on it.
-  const QByteArray idxRaw = readRes(":/assets/data/music/index.json");
-  int max2 = 185, max8 = 233, max31 = 194;   // the values the importer computed
-  if (!idxRaw.isEmpty()) {
-    const QJsonObject banks = QJsonDocument::fromJson(idxRaw).object().value("banks").toObject();
-    max2 = banks.value("2").toObject().value("maxSfxId").toInt(max2);
-    max8 = banks.value("8").toObject().value("maxSfxId").toInt(max8);
-    max31 = banks.value("31").toObject().value("maxSfxId").toInt(max31);
+  // ⚠️ NOTHING IS PARSED HERE. @see ensureLoaded.
+}
+
+void MusicPlayer::ensureLoaded()
+{
+  if (loaded)
+    return;
+
+  loaded = true;
+
+  // 🔴 THE GAME'S OWN SHEET MUSIC, READ AS TEXT.
+  //
+  // We ship `pret/pokered`'s **`.asm`** -- their files, their macros, their words -- and assemble it
+  // here. We used to ship three `.bin` blobs in a container **we invented**, built by a script from
+  // a clone that wasn't even in the repository. You could not read them, you could not review them,
+  // and you could not regenerate them. (The standing rule, and Twilight's, 2026-07-13: *"where
+  // pret/pokered has a format, WE USE THAT FORMAT."*)
+  //
+  // ⚠️ It still comes out as BYTES, and that is not laziness -- **the byte layout IS the feature.**
+  // A track's id is *computed from its header's address*, so 105 of our 151 tracks (the inner voices)
+  // exist only because a misaligned id lands mid-header. A tidy list of "commands" has nothing to
+  // misalign, and would silently delete two thirds of the music. @see Gen1MusicAsm.
+  //
+  // ⚠️ And it is done HERE, on first use -- not in the constructor. It costs ~85 ms, and the ▶ is a
+  // thing you press: nobody who never touches the music should pay for it at boot.
+  const Gen1MusicAsm::Result m = Gen1MusicAsm::parse(QStringLiteral(":/assets/data/music/pokered"));
+
+  // ⚠️ THE NOTIFY IS QUEUED, AND IT HAS TO BE.
+  //
+  // `tracks` and `dataReady` are Q_PROPERTYs that NOTIFY on `dataReadyChanged` -- and **reading them
+  // is what triggers this load**. So emitting the signal synchronously, from inside the getter, tells
+  // QML "the value you are in the middle of reading has changed", and QML calls it what it is: a
+  // **binding loop**. Queued, it lands after the current evaluation finishes, and the binding simply
+  // re-runs once with the loaded data.
+  auto notifyReady = [this] {
+    QMetaObject::invokeMethod(this, [this] { emit dataReadyChanged(); }, Qt::QueuedConnection);
+  };
+
+  if (!m.ok) {
+    qWarning().noquote() << "[music] the sheet music did not assemble:" << m.error;
+    ready = false;
+    notifyReady();
+    return;
   }
 
-  const QByteArray w = readRes(":/assets/data/music/waves.bin");
-  Gen1SoundEngine::Bank b2 = loadBank(":/assets/data/music/bank02.bin", max2);
-  Gen1SoundEngine::Bank b8 = loadBank(":/assets/data/music/bank08.bin", max8);
-  Gen1SoundEngine::Bank b31 = loadBank(":/assets/data/music/bank1f.bin", max31);
+  Gen1SoundEngine::Bank b2;
+  b2.data = m.bank2.data;
+  b2.maxSfxId = m.bank2.maxSfxId;
 
-  ready = !b2.data.empty() && !b8.data.empty() && !b31.data.empty() && !w.isEmpty();
+  Gen1SoundEngine::Bank b8;
+  b8.data = m.bank8.data;
+  b8.maxSfxId = m.bank8.maxSfxId;
+
+  Gen1SoundEngine::Bank b31;
+  b31.data = m.bank31.data;
+  b31.maxSfxId = m.bank31.maxSfxId;
+
+  ready = !b2.data.empty() && !b8.data.empty() && !b31.data.empty() && !m.waves.empty();
+
   banks[0] = b2;
   banks[1] = b8;
   banks[2] = b31;
-  engine.setData(b2, b8, b31, std::vector<uint8_t>(w.begin(), w.end()));
+
+  engine.setData(b2, b8, b31, m.waves);
 
   buildTrackList();
+
+  notifyReady();
 }
 
 MusicPlayer::~MusicPlayer()
@@ -193,8 +239,10 @@ MusicPlayer::~MusicPlayer()
   closeSink();
 }
 
-QString MusicPlayer::describe(int bank, int id) const
+QString MusicPlayer::describe(int bank, int id)
 {
+  ensureLoaded();
+
   // One source of truth: the same list the panel shows, so a name can never disagree with itself.
   for (const QVariant& v : entries) {
     const QVariantMap m = v.toMap();
@@ -355,6 +403,8 @@ void MusicPlayer::startTrack(int bank, int id)
 
 void MusicPlayer::play()
 {
+  ensureLoaded();   // the ▶ is the LAST moment we could still get away with not having the music
+
   if (!ready || !isPlayableBank(selBank))
     return;
   startTrack(selBank, selId);
@@ -390,6 +440,8 @@ void MusicPlayer::unpreview()
 
 void MusicPlayer::select(int bank, int id)
 {
+  ensureLoaded();
+
   selBank = bank;
   selId = id;
   emit selectedChanged();

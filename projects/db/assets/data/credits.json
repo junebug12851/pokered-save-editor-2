@@ -15,7 +15,7 @@
         {
           "name": "The Pokered Team",
           "url": "github.com/pret/pokered",
-          "note": "None of this would have been possible without them"
+          "note": "None of this would have been possible without them. This editor ships their work directly: the map blocks as raw .blk, and the game's music as their own .asm sheet music, read line by line"
         },
         {
           "name": "Pan Docs (gbdev)",

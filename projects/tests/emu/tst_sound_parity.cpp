@@ -53,6 +53,7 @@
 #include <QProcess>
 
 #include <pse-audio/gbapu.h>
+#include <pse-audio/gen1musicasm.h>
 #include <pse-audio/gen1soundengine.h>
 #include <pse-db/db.h>
 #include <pse-db/music.h>
@@ -72,12 +73,27 @@ QByteArray res(const QString& p)
   return f.open(QIODevice::ReadOnly) ? f.readAll() : QByteArray();
 }
 
-Gen1SoundEngine::Bank loadBank(const QString& p, int maxSfxId)
+/// ⚠️ THE SHIPPED SHEET MUSIC, assembled exactly the way the app assembles it.
+///
+/// This test used to read three `.bin` blobs from the qrc. Those are gone: we ship **pret/pokered's
+/// `.asm`** now (@see Gen1MusicAsm). And it matters *here* more than anywhere, because this is the
+/// test that puts our engine next to a **real cartridge**, frame by frame. If it fed itself from a
+/// different source than the app does, it would be proving the wrong thing.
+///
+/// So the chain is: the `.asm` we ship -> this parser -> our engine -> compared against the console.
+const Gen1MusicAsm::Result& sheet()
+{
+  static const Gen1MusicAsm::Result r =
+    Gen1MusicAsm::parse(QStringLiteral(":/assets/data/music/pokered"));
+
+  return r;
+}
+
+Gen1SoundEngine::Bank toBank(const Gen1MusicAsm::Bank& src)
 {
   Gen1SoundEngine::Bank b;
-  const QByteArray d = res(p);
-  b.data.assign(d.begin(), d.end());
-  b.maxSfxId = maxSfxId;
+  b.data = src.data;
+  b.maxSfxId = src.maxSfxId;
   return b;
 }
 
@@ -202,11 +218,12 @@ private slots:
     // ---- 2. seed our engine with the console's state, translating the command pointers
     GbApu apu;
     Gen1SoundEngine eng(&apu);
-    const QByteArray w = res(":/assets/data/music/waves.bin");
-    eng.setData(loadBank(":/assets/data/music/bank02.bin", 185),
-                loadBank(":/assets/data/music/bank08.bin", 233),
-                loadBank(":/assets/data/music/bank1f.bin", 194),
-                std::vector<uint8_t>(w.begin(), w.end()));
+    QVERIFY2(sheet().ok, qPrintable(sheet().error));
+
+    eng.setData(toBank(sheet().bank2),
+                toBank(sheet().bank8),
+                toBank(sheet().bank31),
+                sheet().waves);
     eng.playMusic(static_cast<uint8_t>(bank), static_cast<uint8_t>(id));  // selects the bank
 
     const QHash<quint16, quint16>& m = ptrMap[bank];

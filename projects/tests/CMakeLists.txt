@@ -58,6 +58,20 @@ pse_add_test(tst_map_fragments savefile savefile/tst_map_fragments.cpp)
 # The sound chip + the sound engine. Links `db` too: the imported music data is baked into db.qrc.
 pse_add_test(tst_audio audio audio/tst_audio.cpp)
 target_link_libraries(tst_audio PRIVATE db)
+
+# 🔴 THE SHIPPED SHEET MUSIC MUST ASSEMBLE TO THE CARTRIDGE'S OWN BYTES.
+#
+# We ship pret/pokered's `.asm` and read it at runtime (Gen1MusicAsm). This proves the parser against
+# the byte images `scripts/import_music.py` produces -- and that script, with `--check`, byte-diffs
+# itself against a real cartridge. So: cartridge -> importer -> these fixtures -> our parser.
+#
+# ⚠️ The .bin here are FIXTURES, not assets. They are not shipped and the app never reads them; the
+# app reads the .asm. They exist so the parser can be proved. (notes/plans/music.md, phase 8)
+pse_add_test(tst_music_asm audio audio/tst_music_asm.cpp)
+target_compile_definitions(tst_music_asm PRIVATE
+    PSE_MUSIC_ASM="${CMAKE_CURRENT_SOURCE_DIR}/../db/assets/data/music/pokered"
+    PSE_MUSIC_FIXTURES="${CMAKE_CURRENT_SOURCE_DIR}/fixtures/music"
+)
 pse_add_test(tst_iterator     savefile savefile/tst_iterator.cpp)
 pse_add_test(tst_item         savefile savefile/tst_item.cpp)
 pse_add_test(tst_player_basics savefile savefile/tst_player_basics.cpp)

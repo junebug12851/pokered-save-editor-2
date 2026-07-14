@@ -57,12 +57,26 @@ class MusicPlayer : public QObject
   Q_PROPERTY(int selectedId READ selectedId WRITE setSelectedId NOTIFY selectedChanged)       ///< Id in the save.
   Q_PROPERTY(QString playingName READ playingName NOTIFY playingChanged) ///< Human name of what's heard.
   Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged) ///< 0..1.
-  Q_PROPERTY(bool dataReady READ dataReady CONSTANT)                  ///< Did the music data load?
-  Q_PROPERTY(QVariantList tracks READ tracks CONSTANT)                ///< All 151 pieces of music.
+  /// Did the sheet music assemble? ⚠️ **Reading this is what LOADS it** -- @see ensureLoaded.
+  Q_PROPERTY(bool dataReady READ dataReady NOTIFY dataReadyChanged)
+  Q_PROPERTY(QVariantList tracks READ tracks NOTIFY dataReadyChanged) ///< All 151 pieces of music.
 
 public:
   explicit MusicPlayer(QObject* parent = nullptr);
   ~MusicPlayer() override;
+
+  /**
+   * @brief Assemble the game's sheet music -- **on first use, not at boot**.
+   *
+   * We ship `pret/pokered`'s `.asm` (their files, their macros) and turn it into the bytes the engine
+   * plays. It costs ~85 ms, and **the ▶ is a thing you press**: somebody who never opens the Map
+   * screen should not pay for it. So nothing happens until something asks.
+   *
+   * Every public entry point calls this. It is idempotent.
+   *
+   * @see Gen1MusicAsm -- and, in particular, why it must still produce BYTES.
+   */
+  void ensureLoaded();
 
   /// A bank the real game can actually play. Anything else executes cartridge bytes as CODE and
   /// hangs the console (verified -- notes/reference/glitch-music.md), so the UI must never offer it.
@@ -72,7 +86,7 @@ public:
   }
 
   /// The name of a track id, including the "inner voices" -- e.g. 187 -> "Pallet Town — channel 2".
-  Q_INVOKABLE QString describe(int bank, int id) const;
+  Q_INVOKABLE QString describe(int bank, int id);
 
   /// **Every piece of music in the game**: the 46 real tracks AND their 105 inner voices.
   ///
@@ -87,7 +101,7 @@ public:
   /// Each entry: { name, group, header, bank, id, inner, channel }.
   /// (MusicDBEntry is a plain struct, not a QObject/gadget, so QML cannot walk it -- we hand the
   /// list over as plain values rather than QObject-ifying the database.)
-  [[nodiscard]] QVariantList tracks() const { return entries; }
+  QVariantList tracks() { ensureLoaded(); return entries; }
 
   Q_INVOKABLE void play();                       ///< Start, on the SELECTED track. A deliberate act.
   Q_INVOKABLE void stop();                       ///< Silence. Nothing keeps humming behind a screen.
@@ -101,9 +115,10 @@ public:
   [[nodiscard]] int playingId() const { return curId; }
   [[nodiscard]] int selectedBank() const { return selBank; }
   [[nodiscard]] int selectedId() const { return selId; }
-  [[nodiscard]] QString playingName() const { return describe(curBank, curId); }
+  // Not const: `describe` reads the track list, and reading the track list is what LOADS it.
+  QString playingName() { return describe(curBank, curId); }
   [[nodiscard]] qreal volume() const { return vol; }
-  [[nodiscard]] bool dataReady() const { return ready; }
+  bool dataReady() { ensureLoaded(); return ready; }
 
   void setSelectedBank(int b);
   void setSelectedId(int i);
@@ -113,6 +128,9 @@ signals:
   void playingChanged();
   void selectedChanged();
   void volumeChanged();
+
+  /// The sheet music finished assembling (or failed to). @see ensureLoaded
+  void dataReadyChanged();
   /// Emitted when select() commits -- the save layer listens and writes the bytes.
   void trackSelected(int bank, int id);
 
@@ -140,6 +158,9 @@ private:
   pse::audio::Gen1SoundEngine::Bank banks[3]; ///< A copy, so we can read the header table.
 
   bool ready = false;
+
+  /// Has @ref ensureLoaded run? (It is idempotent, and this is how.)
+  bool loaded = false;
   bool playing = false;
   int curBank = 0, curId = 0;
   int selBank = 0, selId = 0;

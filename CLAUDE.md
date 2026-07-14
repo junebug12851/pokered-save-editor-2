@@ -64,7 +64,7 @@ an hour spent building a thing that can only talk to itself.
 | Data | The format | Why |
 |---|---|---|
 | Map blocks | `.blk` — **raw block bytes, exactly as `pret/pokered` stores them** | Already done. Byte-identical; anyone's `.blk` drops straight in. |
-| Music | **the game's own `.asm` sheet music**, parsed **line by line** | ⚠️ We do **not** need a byte compiler. The sound engine's data is *line-based assembly* — `note C_, 8`, `octave 4`, `dutycycle 2` — so a **line parser** turns it straight into engine commands. Their macro names *are* the command names; leverage them. |
+| Music | **the game's own `.asm` sheet music**, parsed **line by line** | ✅ Done (0.34.0-alpha). We ship their `audio/**.asm` **verbatim** (376 files, in the qrc) and `Gen1MusicAsm` reads it — a **line parser**, because their macro names *are* the command names (`note C_, 8`, `octave 4`). It assembles to the game's own bytes, and `tst_music_asm` proves that **byte-identical to a real cartridge**. The `.bin` blobs we used to ship are gone. |
 | Sprites | one loose `.png` per sprite | Not an atlas. You can open one and look at it. |
 | Everything else | **whatever `pret/pokered` uses** | The default. If you are about to invent a format, stop and go and look at what they do first. |
 

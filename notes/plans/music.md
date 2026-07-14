@@ -1,5 +1,91 @@
 # Music — the plan
 
+## 🔎 Phase 8 — "ship the `.asm`, not a `.bin`" — FEASIBILITY (2026-07-13)
+
+Twilight asked for the music data to be pret/pokered's **assembly sheet music**, parsed line by line,
+rather than a compiled blob — under the standing *use-the-game's-own-file-formats* rule. Checked it
+before starting. **Three findings, and the second one changes what the job is.**
+
+### 1. The SOURCE is already their `.asm`. It has been all along.
+
+`scripts/import_music.py` **is** the line parser she described. It reads `audio/headers/*.asm` and the
+music `.asm` **line by line**, uses their macro names (`note`, `octave`, `dutycycle`…), and never
+touches a ROM — the cartridge is only an *optional* `--check` oracle. So the "we need a line parser,
+not a byte compiler" insight was right, and it is already how the data gets in.
+
+### 2. But what we SHIP is a format **we invented**. That's the actual violation.
+
+```
+projects/db/assets/data/music/bank02.bin   ← a relocated ROM-bank image with rewritten pointers
+```
+
+pret has nothing like that. It is our own container, it is opaque, it cannot be reviewed, and — the
+part that matters — **the `.asm` it was built from is not in our repository at all.** It lives in a
+`.gitignore`d reference clone (`assets/references/pokered/`). Clone this repo and you *cannot
+regenerate the music*. That is exactly what the rule exists to prevent, and it is worth fixing.
+
+Contrast the map blocks: those we ship as **`.blk`, byte-identical to pret's own files**. That is the
+bar. Music does not meet it.
+
+### 3. Why it still comes out as BYTES — and the version of this I got wrong
+
+I first wrote that we *could not* parse to "commands" because it would destroy the glitch music.
+**Twilight pushed back, and she was right to.** Her exact objection is the one worth recording:
+
+> *"You sometimes make it sound like it reads an address offset to jump to — and if that's the case it
+> wouldn't just play on one channel, it would read a whack jump address and jump to a weird location
+> and start playing whack music."*
+
+**Exactly.** And it doesn't, and *why* it doesn't is the whole trick:
+
+A header entry is **3 bytes — one flag byte plus a 2-byte pointer — and there is one entry PER
+CHANNEL.** Pallet Town has 3 channels, so its header is 3 entries = 9 bytes. And the id maths is
+`addr = table + id × 3`.
+
+**So a misaligned id is never off by 1 or 2 bytes. It is always off by a whole entry.** id 187 lands
+cleanly on Pallet Town's *second* entry — a **perfectly well-formed header**: its count bits are 0
+(only the *first* entry of a song carries the count), so it reads as "1 channel", and its pointer is a
+real, valid pointer to Pallet Town's channel-2 stream.
+
+That is why it plays the bassline cleanly rather than noise. It is not a wild jump. It is a legitimate
+one-channel song that happens to share a stream.
+
+**Which means bytes are not strictly required.** A structured table indexed the same way would
+reproduce the inner voices perfectly. My original claim was **overstated** and is corrected here.
+
+The real reason we still emit the game's byte encoding is narrower, and honest:
+
+> **`Gen1SoundEngine` is already verified frame-by-frame against a real cartridge** (`tst_sound_parity`
+> seeds it from the console's own 243 bytes of state and demands it evolve identically for 240
+> frames). It speaks bytes. Rewriting it to consume structured commands means **re-verifying a
+> component we have already proven correct**, for no user-visible gain.
+
+So: parse their `.asm` line by line, emit the game's own encoding, feed the engine unchanged. The
+parser is the only new thing, and it is proven **byte-identical to the cartridge**.
+
+## ✅ Phase 8 — DONE (2026-07-13, `0.34.0-alpha`)
+
+| | |
+|---|---|
+| **Ship** | `pret/pokered`'s `audio/**.asm`, **vendored into our repo verbatim** — 376 files, ~405 KB of their text, their macros, their layout. In `projects/db/assets/data/music/pokered/`, in the qrc. **No submodule.** Clone us and you have the music. |
+| **Parse** | `Gen1MusicAsm` (`pse-audio`) — a **line parser**, ~400 lines, because *their macro names ARE the command names*. It runs on **first use, not at boot** (~85 ms): the ▶ is a thing you press, and nobody who never opens the Map screen should pay for it. |
+| **Prove** | the old `.bin` are now **test fixtures, not assets** (`projects/tests/fixtures/music/`). `tst_music_asm` demands the parser's output be **byte-identical** to them — and they, via `import_music.py --check`, are byte-diffed against a real cartridge. Chain of custody: **cartridge → importer → fixture → parser.** |
+
+**The `.bin` blobs are gone from the app.** We no longer ship a container we invented.
+
+⚠️ **Two traps, both hit, both worth knowing:**
+
+* **`popup.height` bound to `popup.contentItem.implicitHeight` is a binding loop** — unrelated, found
+  the same day, see qt-patterns.md.
+* **Emitting `dataReadyChanged()` from inside the `tracks` getter is a binding loop** — reading the
+  property is what *triggers* the load, so notifying synchronously tells QML "the value you are
+  reading has changed". Queue it (`Qt::QueuedConnection`) and it lands after the evaluation.
+* **A regex per line is 40,000 regex compilations.** The first cut took **1 second** to parse; a
+  hand-rolled `firstSpace()` took it to **85 ms**.
+
+---
+
+
 _Making the editor **play the game's music**, accurately, and putting the music controls where they
 belong: on the **Map screen**._
 

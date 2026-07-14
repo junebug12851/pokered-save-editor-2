@@ -28,6 +28,7 @@
 #include <QFile>
 
 #include <pse-audio/gbapu.h>
+#include <pse-audio/gen1musicasm.h>
 #include <pse-audio/gen1soundengine.h>
 #include <pse-db/db.h>
 #include <pse-db/music.h>
@@ -44,12 +45,25 @@ QByteArray res(const QString& path)
   return f.readAll();
 }
 
-Gen1SoundEngine::Bank makeBank(const QString& path, int maxSfxId)
+/// ⚠️ THE SHEET MUSIC, assembled once -- exactly the way the app does it.
+///
+/// This test used to read three `.bin` blobs straight out of the qrc. Those are gone: we ship
+/// **`pret/pokered`'s `.asm`** now, and `Gen1MusicAsm` turns it into the game's own bytes at first
+/// use. A test that loads its data differently from the app is a test that can pass while the app is
+/// broken, so it doesn't. (notes/plans/music.md, phase 8)
+const Gen1MusicAsm::Result& sheet()
+{
+  static const Gen1MusicAsm::Result r =
+    Gen1MusicAsm::parse(QStringLiteral(":/assets/data/music/pokered"));
+
+  return r;
+}
+
+Gen1SoundEngine::Bank makeBank(const Gen1MusicAsm::Bank& src)
 {
   Gen1SoundEngine::Bank b;
-  const QByteArray d = res(path);
-  b.data.assign(d.begin(), d.end());
-  b.maxSfxId = maxSfxId;
+  b.data = src.data;
+  b.maxSfxId = src.maxSfxId;
   return b;
 }
 
@@ -64,13 +78,10 @@ Result play(uint8_t bank, uint8_t id, int frames = 240)
 {
   GbApu apu;
   Gen1SoundEngine eng(&apu);
-  eng.setData(makeBank(":/assets/data/music/bank02.bin", 185),
-              makeBank(":/assets/data/music/bank08.bin", 233),
-              makeBank(":/assets/data/music/bank1f.bin", 194),
-              [] {
-                const QByteArray w = res(":/assets/data/music/waves.bin");
-                return std::vector<uint8_t>(w.begin(), w.end());
-              }());
+  eng.setData(makeBank(sheet().bank2),
+              makeBank(sheet().bank8),
+              makeBank(sheet().bank31),
+              sheet().waves);
 
   eng.playMusic(bank, id);
 
@@ -177,12 +188,17 @@ private slots:
 
   // ---- the engine ----------------------------------------------------------------------
 
-  void engine_theImportedDataIsThere()
+  /// The **shipped sheet music** is in the qrc and it assembles. (It used to be three `.bin` blobs;
+  /// it is `pret/pokered`'s own `.asm` now. @see Gen1MusicAsm)
+  void engine_theShippedSheetMusicAssembles()
   {
-    QVERIFY2(!res(":/assets/data/music/bank02.bin").isEmpty(), "bank 2 music data missing from qrc");
-    QVERIFY2(!res(":/assets/data/music/bank08.bin").isEmpty(), "bank 8 music data missing from qrc");
-    QVERIFY2(!res(":/assets/data/music/bank1f.bin").isEmpty(), "bank 31 music data missing from qrc");
-    QCOMPARE(res(":/assets/data/music/waves.bin").size(), 128);
+    QVERIFY2(sheet().ok, qPrintable(sheet().error));
+
+    QVERIFY2(!sheet().bank2.data.empty(),  "bank 2 did not assemble");
+    QVERIFY2(!sheet().bank8.data.empty(),  "bank 8 did not assemble");
+    QVERIFY2(!sheet().bank31.data.empty(), "bank 31 did not assemble");
+
+    QCOMPARE(int(sheet().waves.size()), 128);
   }
 
   void engine_palletTownPlaysOnThreeChannels()
@@ -218,9 +234,9 @@ private slots:
     // And the engine must agree with the console's own audio RAM, byte for byte.
     GbApu apu;
     Gen1SoundEngine eng(&apu);
-    eng.setData(makeBank(":/assets/data/music/bank02.bin", 185),
-                makeBank(":/assets/data/music/bank08.bin", 233),
-                makeBank(":/assets/data/music/bank1f.bin", 194), {});
+    eng.setData(makeBank(sheet().bank2),
+                makeBank(sheet().bank8),
+                makeBank(sheet().bank31), {});
     eng.playMusic(2, 187);
     QCOMPARE(eng.ram[Gen1SoundEngine::W_SOUND_IDS + 0], static_cast<uint8_t>(0));
     QCOMPARE(eng.ram[Gen1SoundEngine::W_SOUND_IDS + 1], static_cast<uint8_t>(187));
