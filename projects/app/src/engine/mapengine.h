@@ -18,6 +18,7 @@
 #include <QByteArray>
 #include <QColor>
 #include <QImage>
+#include <QVariantList>
 #include <QPoint>
 #include <QRect>
 #include <QString>
@@ -234,7 +235,41 @@ public:
   ///        another tileset's tiles, and a real console will happily do it. Pass **-1** for "the same
   ///        as @p tilesetInd". (2026-07-13)
   static QImage render(const Buffer& buffer, int tilesetInd, int frame = 0, int contrast = 0,
-                       int tileAnim = -1, int blocksetInd = -1);
+                       int tileAnim = -1, int blocksetInd = -1, const QRgb* outputPalette = nullptr);
+
+  // ── The OUTPUT palette — a Game Boy Color / custom colour filter ─────────────────────────────
+  //
+  // ⚠️ **THIS IS A VIEW SETTING. IT TOUCHES NO SAVE BYTE.** It is orthogonal to the save's `contrast`
+  // (`wMapPalOffset`), which is a real value and stays exactly as it is: contrast decides *which of
+  // the four shades* each pixel becomes, and this decides *what colour each of those four shades is
+  // painted*. The map's four greys go in; four chosen colours come out. (Twilight, 2026-07-13.)
+  //
+  // The art is captured under the identity palette, so a pixel's grey is its colour index; contrast's
+  // `rBGP` maps index -> shade; and THIS maps shade -> a real colour. @see render.
+
+  /// How the four shades are coloured. `Grey` is the neutral default; `SuperGameBoy` colours each map
+  /// in the game's OWN Super Game Boy palette (Pallet green, Vermilion orange...) -- their data.
+  enum ColourMode { Grey = 0, GameBoy = 1, SuperGameBoy = 2, Custom = 3 };
+
+  static int  colourMode();
+  static void setColourMode(int mode);
+
+  /// The custom colour for a @p shade (0 lightest .. 3 darkest). Only used in `Custom` mode.
+  static QRgb customColour(int shade);
+  static void setCustomColour(int shade, QRgb colour);
+
+  /// Bumped on ANY output-palette change. It rides in the map's source URL so the image re-renders
+  /// (the render is cached by URL, and the palette is not otherwise in it). @see MapModel::source
+  static int paletteGeneration();
+
+  /// The four output colours for the current mode **on this map**, lightest shade first. Only
+  /// `SuperGameBoy` depends on the map; the others ignore @p mapInd / @p tilesetInd. The provider
+  /// resolves this and hands it to @ref render.
+  static void outputPaletteFor(int mapInd, int tilesetInd, QRgb out[4]);
+
+  /// The named presets the UI offers: `{ mode, name, swatch }`, `swatch` being the four colours the
+  /// preset paints (SuperGameBoy's swatch is Pallet Town's, as a representative).
+  static QVariantList colourPresets();
 
   /// "Indoor" / "Cave" / "Outdoor" for a `sTileAnimations` value; empty if it isn't 0-2.
   static QString tileAnimName(int tileAnim);

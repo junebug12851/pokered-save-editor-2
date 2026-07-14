@@ -118,6 +118,12 @@ Rectangle {
     // ── Contrast ─────────────────────────────────────────────────────────────────────────────
     ContrastPicker { id: contrastPicker }
 
+    // ── Colour (a Game Boy Color / SGB / custom filter) ───────────────────────────────────────
+    //
+    // Next to Contrast, because they are the palette pair: contrast picks which shade, this picks
+    // what colour that shade is. A VIEW setting -- it never touches the save. (Twilight, 2026-07-13.)
+    ColourPicker { id: colourPicker }
+
     // ── Music ────────────────────────────────────────────────────────────────────────────────
     //
     // In the toolbar, in the same language as the map picker beside it -- a chip that drops a

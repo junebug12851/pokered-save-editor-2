@@ -69,8 +69,15 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
   // one. Edit it and the edge of the world changes, which is what a console would do.
   const int borderBlock = (parts.size() > 6) ? parts.at(6).toInt() : -1;
 
+  // The GBC / SGB / custom colour filter, resolved for THIS map (the SGB mode colours each map in
+  // its own palette). It rides in the URL as a generation counter, so the cached image refreshes
+  // when the palette changes. @see MapEngine::outputPaletteFor
+  QRgb outPal[4];
+  MapEngine::outputPaletteFor(mapInd, tilesetInd, outPal);
+
   const auto buffer = MapEngine::buildOverworldMap(mapInd, borderBlock);
-  const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast, tileAnim, blocksetInd);
+  const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast, tileAnim, blocksetInd,
+                                       outPal);
 
   // No block data (a glitch map id) -- there is nothing in ROM to draw.
   if (img.isNull())

@@ -99,6 +99,9 @@ private slots:
   void aLayerWithNothingToShow_saysSo();
   void foldingAGroup_hidesItsChildrenNotItsState();
   void everyToggle_writesNotOneByte();
+
+  void colourFilter_isTheGamesOwnSgbPalettePerMap();
+  void colourFilter_writesNotOneByte();
 };
 
 void TestMapLayers::initTestCase()
@@ -334,6 +337,71 @@ void TestMapLayers::everyToggle_writesNotOneByte()
         .arg(static_cast<quint8>(after.at(i)))));
     }
   }
+}
+
+/// The Super Game Boy mode paints each map in the game's OWN palette -- Pallet green, a route's
+/// green, a cave's brown -- straight from `data/sgb/sgb_palettes.asm`. Not a generic filter.
+void TestMapLayers::colourFilter_isTheGamesOwnSgbPalettePerMap()
+{
+  MapEngine::setColourMode(MapEngine::SuperGameBoy);
+
+  auto colour2 = [](int mapInd, int tilesetInd) {
+    QRgb p[4];
+    MapEngine::outputPaletteFor(mapInd, tilesetInd, p);
+    return p[1];   // colour 1 is the one that carries a palette's character; 0 and 3 are near white/black
+  };
+
+  // Pallet Town (map 0, Overworld tileset 0) is PAL_PALLET: 25,28,27 -> a pale green-white.
+  const QRgb pallet = colour2(0, 0);
+  QVERIFY2(qGreen(pallet) > qBlue(pallet) && qGreen(pallet) > 180,
+           "Pallet Town's SGB colour 1 should be its pale green");
+
+  // Vermilion (city map 5) is PAL_VERMILION: 30,18,0 -> a strong orange. It must DIFFER from Pallet:
+  // the whole point is that each map gets its own.
+  const QRgb verm = colour2(5, 0);
+  QVERIFY2(verm != pallet, "each city must get its OWN palette -- Vermilion != Pallet");
+  QVERIFY2(qRed(verm) > qBlue(verm) && qRed(verm) > 200, "Vermilion's SGB colour 1 should be orange");
+
+  // A cave (tileset 17 = CAVERN) is PAL_CAVE whatever its map id -- the tileset wins.
+  const QRgb cave = colour2(0x40, 17);
+  QVERIFY2(qRed(cave) > qBlue(cave), "a cave should read warm/brown (PAL_CAVE), by tileset");
+
+  // Back to the default so we leave no state behind for the next test.
+  MapEngine::setColourMode(MapEngine::Grey);
+}
+
+/// ⚠️ THE PROMISE. The colour filter is a VIEW setting -- every mode, and a custom colour, must leave
+/// the save byte-for-byte identical. Same guarantee the layers make, for the same reason.
+void TestMapLayers::colourFilter_writesNotOneByte()
+{
+  QScopedPointer<Rig> r(makeRig());
+
+  r->sf.dataExpanded->save(&r->sf);
+  const QByteArray before = snapshot(r->sf);
+
+  for (int mode : { MapEngine::GameBoy, MapEngine::SuperGameBoy, MapEngine::Custom, MapEngine::Grey })
+    r->map->setColourMode(mode);
+
+  r->map->setCustomColour(0, QColor(Qt::red));
+  r->map->setCustomColour(3, QColor(Qt::blue));
+
+  r->sf.dataExpanded->save(&r->sf);
+  const QByteArray after = snapshot(r->sf);
+
+  QCOMPARE(after.size(), before.size());
+
+  for (int i = 0; i < before.size(); i++) {
+    if (before.at(i) != after.at(i)) {
+      QFAIL(qPrintable(QStringLiteral(
+        "the COLOUR FILTER changed the save at 0x%1: %2 -> %3. It is a way of looking at the map, "
+        "not a way of editing it.")
+        .arg(i, 4, 16, QLatin1Char('0'))
+        .arg(static_cast<quint8>(before.at(i)))
+        .arg(static_cast<quint8>(after.at(i)))));
+    }
+  }
+
+  MapEngine::setColourMode(MapEngine::Grey);
 }
 
 QTEST_MAIN(TestMapLayers)

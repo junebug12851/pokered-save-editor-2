@@ -464,6 +464,154 @@ int shadeOf(int grey)
 
 } // namespace
 
+// ── The output palette (a Game Boy Color / custom colour filter) ─────────────────────────────────
+//
+// ⚠️ Embedded constants with a citation, NOT a vendored + parsed file -- exactly like `fadeTable`
+// and `shadeGrey` two functions up, which are the ROM's own palette tables written down here. The
+// SGB palettes are the game's own colourisation (data/sgb/sgb_palettes.asm), and they are a fixed
+// hardware fact, not an asset the user edits. See notes/reference/palettes.md.
+namespace {
+
+/// RGB555 (0-31 per channel, as the SGB/GBC store it) -> QRgb. The standard hardware-faithful
+/// expansion: replicate the top bits into the low ones.
+constexpr QRgb rgb5(int r, int g, int b)
+{
+  auto e = [](int c) { return (c << 3) | (c >> 2); };
+  return qRgb(e(r), e(g), e(b));
+}
+
+/// ⚠️ Every SGB palette below is **verbatim from `data/sgb/sgb_palettes.asm`**, lightest colour
+/// first -- which is also shade order (shade 0 is the lightest), so entry i paints shade i directly.
+/// (US English RED: the `IF DEF(_RED)` branch. These town/route/cave/tower ones are identical in
+/// both versions anyway.)
+
+/// The ten CITY palettes, indexed by CITY MAP ID (0 = Pallet ... 9 = Indigo Plateau). The game's
+/// `SetPal_Overworld`: a town's palette id is its map id + 1, i.e. PAL_PALLET + mapId.
+constexpr QRgb SgbCity[10][4] = {
+  { rgb5(31,29,31), rgb5(25,28,27), rgb5(20,26,31), rgb5(3,2,2) },  // 0  Pallet     (PAL_PALLET)
+  { rgb5(31,29,31), rgb5(17,26, 3), rgb5(20,26,31), rgb5(3,2,2) },  // 1  Viridian   (PAL_VIRIDIAN)
+  { rgb5(31,29,31), rgb5(23,25,16), rgb5(20,26,31), rgb5(3,2,2) },  // 2  Pewter     (PAL_PEWTER)
+  { rgb5(31,29,31), rgb5(17,20,30), rgb5(20,26,31), rgb5(3,2,2) },  // 3  Cerulean   (PAL_CERULEAN)
+  { rgb5(31,29,31), rgb5(27,20,27), rgb5(20,26,31), rgb5(3,2,2) },  // 4  Lavender   (PAL_LAVENDER)
+  { rgb5(31,29,31), rgb5(30,18, 0), rgb5(20,26,31), rgb5(3,2,2) },  // 5  Vermilion  (PAL_VERMILION)
+  { rgb5(31,29,31), rgb5(16,30,22), rgb5(20,26,31), rgb5(3,2,2) },  // 6  Celadon    (PAL_CELADON)
+  { rgb5(31,29,31), rgb5(31,15,22), rgb5(20,26,31), rgb5(3,2,2) },  // 7  Fuchsia    (PAL_FUCHSIA)
+  { rgb5(31,29,31), rgb5(26,10, 6), rgb5(20,26,31), rgb5(3,2,2) },  // 8  Cinnabar   (PAL_CINNABAR)
+  { rgb5(31,29,31), rgb5(22,14,24), rgb5(20,26,31), rgb5(3,2,2) },  // 9  Indigo     (PAL_INDIGO)
+};
+
+constexpr QRgb SgbRoute[4] = { rgb5(31,29,31), rgb5(21,28,11), rgb5(20,26,31), rgb5(3,2,2) };  // PAL_ROUTE
+constexpr QRgb SgbCave [4] = { rgb5(31,29,31), rgb5(21,14, 9), rgb5(18,24,22), rgb5(3,2,2) };  // PAL_CAVE
+constexpr QRgb SgbTower[4] = { rgb5(31,29,31), rgb5(26,21,22), rgb5(15,15,18), rgb5(3,2,2) };  // PAL_GRAYMON
+
+/// The iconic Dot-Matrix (original Game Boy) green, lightest first.
+constexpr QRgb DmgGreen[4] = {
+  qRgb(0x9B, 0xBC, 0x0F), qRgb(0x8B, 0xAC, 0x0F), qRgb(0x30, 0x62, 0x30), qRgb(0x0F, 0x38, 0x0F) };
+
+/// The neutral grey the art already is -- the default, and what "no filter" means.
+constexpr QRgb Neutral[4] = { qRgb(255,255,255), qRgb(170,170,170), qRgb(85,85,85), qRgb(0,0,0) };
+
+// The tileset ids the game special-cases in SetPal_Overworld (constants/tileset_constants.asm).
+constexpr int TilesetCemetery = 15;   // Pokémon Tower -> PAL_GRAYMON
+constexpr int TilesetCavern   = 17;   // caves          -> PAL_CAVE
+constexpr int FirstIndoorMapId = 0x25;
+constexpr int NumCityMaps      = 10;
+
+// The live view setting. A global, because it is one setting for the whole screen and the renderer
+// is static. Guarded by nothing: it is touched only from the GUI thread.
+int  g_mode = MapEngine::Grey;
+QRgb g_custom[4] = { Neutral[0], Neutral[1], Neutral[2], Neutral[3] };
+int  g_generation = 0;
+
+} // namespace
+
+int MapEngine::colourMode() { return g_mode; }
+
+void MapEngine::setColourMode(int mode)
+{
+  if (mode < Grey || mode > Custom || mode == g_mode)
+    return;
+
+  g_mode = mode;
+  g_generation++;
+}
+
+QRgb MapEngine::customColour(int shade)
+{
+  return (shade >= 0 && shade < 4) ? g_custom[shade] : qRgb(0, 0, 0);
+}
+
+void MapEngine::setCustomColour(int shade, QRgb colour)
+{
+  if (shade < 0 || shade >= 4 || g_custom[shade] == colour)
+    return;
+
+  g_custom[shade] = colour;
+  g_generation++;
+}
+
+int MapEngine::paletteGeneration() { return g_generation; }
+
+void MapEngine::outputPaletteFor(int mapInd, int tilesetInd, QRgb out[4])
+{
+  const QRgb* src = Neutral;
+
+  switch (g_mode) {
+  case GameBoy:
+    src = DmgGreen;
+    break;
+
+  case Custom:
+    src = g_custom;
+    break;
+
+  case SuperGameBoy:
+    // ⚠️ SetPal_Overworld, transliterated (engine/gfx/palettes.asm). The tileset wins first: caves
+    // and the Pokémon Tower have their own palette whatever map they are. Then a town gets its own
+    // (map id + 1 -> PAL_PALLET + id), and everything else -- routes, and any INDOOR building, whose
+    // real palette is its enclosing town's and we cannot know statically -- takes the route palette.
+    if (tilesetInd == TilesetCemetery)
+      src = SgbTower;
+    else if (tilesetInd == TilesetCavern)
+      src = SgbCave;
+    else if (mapInd < FirstIndoorMapId && mapInd < NumCityMaps)
+      src = SgbCity[mapInd];
+    else
+      src = SgbRoute;
+    break;
+
+  case Grey:
+  default:
+    src = Neutral;
+    break;
+  }
+
+  for (int i = 0; i < 4; i++)
+    out[i] = src[i];
+}
+
+QVariantList MapEngine::colourPresets()
+{
+  auto preset = [](int mode, const QString& name, const QRgb sw[4]) {
+    QVariantList swatch;
+    for (int i = 0; i < 4; i++)
+      swatch.append(QColor(sw[i]));
+
+    QVariantMap m;
+    m["mode"]   = mode;
+    m["name"]   = name;
+    m["swatch"] = swatch;
+    return QVariant(m);
+  };
+
+  QVariantList out;
+  out.append(preset(Grey,         QObject::tr("Grey"),             Neutral));
+  out.append(preset(GameBoy,      QObject::tr("Game Boy"),         DmgGreen));
+  out.append(preset(SuperGameBoy, QObject::tr("Super Game Boy"),   SgbCity[0]));   // Pallet, as a sample
+  out.append(preset(Custom,       QObject::tr("Custom"),           g_custom));
+  return out;
+}
+
 int MapEngine::backgroundPalette(int contrast)
 {
   // hl = FadePal4 - contrast, then read three bytes. rBGP is the first of them.
@@ -519,7 +667,7 @@ QString MapEngine::contrastName(int contrast)
 }
 
 QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame, int contrast,
-                         int tileAnim, int blocksetInd)
+                         int tileAnim, int blocksetInd, const QRgb* outputPalette)
 {
   if (!buffer.valid)
     return QImage();
@@ -580,15 +728,30 @@ QImage MapEngine::render(const Buffer& buffer, int tilesetInd, int frame, int co
   // This is what makes contrast real rather than a filter -- and it is why the glitch
   // palettes render *correctly as glitches*: we aren't simulating "broken", we are applying
   // the byte the console would genuinely be holding.
-  const int bgp = backgroundPalette(contrast);
+  const int rawBgp = backgroundPalette(contrast);
 
-  if (bgp >= 0 && bgp != dc(3, 2, 1, 0)) {  // 0xE4 is identity -- nothing to do
+  // ⚠️ An OUT-OF-RANGE contrast (a glitch value past the fade table) has no known colour->shade
+  // map, so we cannot render it faithfully -- but we can still honour the output palette. Treat it
+  // as identity: colour index == shade. This only touches the already-"unknown" cases.
+  const int bgp = (rawBgp >= 0) ? rawBgp : dc(3, 2, 1, 0);
+
+  // ── The output palette: what colour each of the four shades is painted ─────────────────────
+  //
+  // The four shades a pixel can end up as (via `bgp`) map to four OUTPUT colours. `outputPalette`
+  // is those four, lightest shade first -- the Game Boy Color / SGB / custom filter (@see
+  // outputPaletteFor). Null means the neutral greys the art already is.
+  const QRgb neutral[4] = { qRgb(255,255,255), qRgb(170,170,170), qRgb(85,85,85), qRgb(0,0,0) };
+  const QRgb* out = (outputPalette != nullptr) ? outputPalette : neutral;
+
+  const bool paletteIsNeutral =
+    out[0] == neutral[0] && out[1] == neutral[1] && out[2] == neutral[2] && out[3] == neutral[3];
+
+  // The identity fast-path survives ONLY when the output palette is also neutral -- otherwise there
+  // is a recolour to do even at contrast 0.
+  if (bgp != dc(3, 2, 1, 0) || !paletteIsNeutral) {
     QRgb lut[4];
-    for (int i = 0; i < 4; i++) {
-      const int shade = (bgp >> (2 * i)) & 3;
-      const int grey = shadeGrey[shade];
-      lut[i] = qRgb(grey, grey, grey);
-    }
+    for (int i = 0; i < 4; i++)
+      lut[i] = out[(bgp >> (2 * i)) & 3];   // colour index i -> its shade -> that shade's colour
 
     for (int y = 0; y < img.height(); y++) {
       QRgb* row = reinterpret_cast<QRgb*>(img.scanLine(y));

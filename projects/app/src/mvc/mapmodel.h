@@ -419,6 +419,25 @@ public:
   /// you a value was unusual and nothing at all about what it would do.)
   Q_INVOKABLE QVariantList contrastShades(int contrast) const;
 
+  // ── The output palette (Game Boy Color / custom colour filter) ───────────────────────────────
+  //
+  // ⚠️ A VIEW SETTING. Not one save byte is touched. Orthogonal to `contrast`. @see MapEngine.
+
+  /// How the map's four shades are coloured: 0 Grey · 1 Game Boy · 2 Super Game Boy · 3 Custom.
+  Q_PROPERTY(int colourMode READ colourMode WRITE setColourMode NOTIFY colourModeChanged)
+
+  int colourMode() const;
+  void setColourMode(int mode);
+
+  /// The named presets for the picker: `{ mode, name, swatch:[4 colours] }`.
+  Q_INVOKABLE QVariantList colourPresets() const;
+
+  /// The four current custom colours, lightest first -- what the Custom swatches edit.
+  Q_INVOKABLE QVariantList customColours() const;
+
+  /// Set one custom colour (@p shade 0 lightest .. 3 darkest). Switches to Custom mode.
+  Q_INVOKABLE void setCustomColour(int shade, const QColor& colour);
+
   Q_INVOKABLE QVariantMap viewBoxesAt(int x, int y) const;
 
   bool showScratch() const;              ///< @see showScratch property.
@@ -635,6 +654,9 @@ signals:
 
   /// The "Reloaded values" switch moved -- the Details panel has a different set of fields now.
   void showScratchChanged();
+
+  /// The output colour palette changed (a view setting; the save is untouched).
+  void colourModeChanged();
 
   /// The shown layers changed (a view setting, not save data).
   void overlayChanged();

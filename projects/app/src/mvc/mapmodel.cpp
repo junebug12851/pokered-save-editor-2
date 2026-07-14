@@ -143,13 +143,19 @@ QString MapModel::source() const
   // whenever any of them changes -- no invalidation logic to get wrong. Frame 0 is the still map
   // (what every screenshot and every test renders); MapClock advances it at the console's own
   // cadence. See notes/reference/map-animation.md.
+  //
+  // ⚠️ The colour-palette GENERATION rides here too. The GBC/SGB/custom filter is a global on
+  // MapEngine, NOT in this URL's other fields -- so without a generation counter the provider would
+  // serve a stale cached image after a palette change. Bump-on-change, ride-in-URL: the same trick
+  // the frame uses.
   return "image://map/" + QString::number(mapInd())
        + "/" + QString::number(tilesetInd())
        + "/" + QString::number(frame())
        + "/" + QString::number(contrast())
        + "/" + QString::number(tileAnim())
        + "/" + QString::number(blocksetInd())    // whose BLOCKS -- the save's own second pointer
-       + "/" + QString::number(borderBlock());   // what fills the ring -- the save's own byte
+       + "/" + QString::number(borderBlock())     // what fills the ring -- the save's own byte
+       + "/" + QString::number(MapEngine::paletteGeneration());   // the colour filter
 }
 
 QVariantList MapModel::connectionList() const
@@ -894,6 +900,46 @@ QVariantList MapModel::contrastShades(int contrast) const
   }
 
   return out;
+}
+
+// ── The output palette (Game Boy Color / custom colour filter) ───────────────────────────────────
+//
+// ⚠️ Every one of these is a VIEW setting. Not a byte of the save moves. They live on MapEngine as a
+// global; MapModel is the QML face and the thing that re-renders the map when they change.
+
+int MapModel::colourMode() const { return MapEngine::colourMode(); }
+
+void MapModel::setColourMode(int mode)
+{
+  if (mode == MapEngine::colourMode())
+    return;
+
+  MapEngine::setColourMode(mode);
+  emit colourModeChanged();
+  emit sourceChanged();   // the palette generation is in the URL; a new one re-renders the map
+}
+
+QVariantList MapModel::colourPresets() const { return MapEngine::colourPresets(); }
+
+QVariantList MapModel::customColours() const
+{
+  QVariantList out;
+  for (int i = 0; i < 4; i++)
+    out.append(QColor(MapEngine::customColour(i)));
+
+  return out;
+}
+
+void MapModel::setCustomColour(int shade, const QColor& colour)
+{
+  MapEngine::setCustomColour(shade, colour.rgb());
+
+  // Editing a swatch means you want to SEE it -- so it also switches into Custom mode.
+  if (MapEngine::colourMode() != MapEngine::Custom)
+    MapEngine::setColourMode(MapEngine::Custom);
+
+  emit colourModeChanged();
+  emit sourceChanged();
 }
 
 QVariantMap MapModel::viewBoxesAt(int x, int y) const

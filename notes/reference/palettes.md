@@ -85,9 +85,46 @@ register, recomputed live by `LoadGBPal` on every map load — it isn't restored
 Pinned in C++ by `tst_map::palettes_matchTheConsoleForEveryContrastValue` — with the console's own bytes
 written into the test, not the disassembly's.
 
-## Where this goes next
+## The OUTPUT palette — the Game Boy Color / SGB / custom colour filter (2026-07-13, `0.35.0-alpha`)
 
-- **Sprites.** `rOBP0`/`rOBP1` are already computed and unused. The moment the player and NPCs are drawn,
-  contrast 1 and 2 will start showing their real damage.
-- **The SGB / colour palettes** (`PAL_ROUTE`, `PAL_PALLET`, … in `constants/palette_constants.asm`) are a
-  *different* system — per-town colour on a Super Game Boy. Not this. Not done.
+⚠️ **Two different things, and keeping them straight is the whole point:**
+
+| | the SAVE's `contrast` | the OUTPUT palette |
+|---|---|---|
+| what it is | `wMapPalOffset`, a **real save byte** | a **view setting** — touches no byte |
+| what it decides | *which of the four shades* each pixel becomes (`rBGP`) | *what colour each of those four shades is painted* |
+| where it lives | the save; the Contrast chip | `MapEngine` global; the Colour chip |
+
+The map's four greys go in; `contrast` shuffles them (that is the glitch-palette machinery above);
+then the output palette paints them. Grey in, four chosen colours out. `render()` builds one 4-entry
+LUT that does both: `lut[colourIndex] = outputPalette[ (rBGP >> 2·i) & 3 ]`.
+
+**The modes** (`MapEngine::ColourMode`):
+
+- **Grey** — the neutral default (`255/170/85/0`). The identity fast-path still applies here.
+- **Game Boy** — the iconic DMG green (`#9BBC0F … #0F380F`).
+- **Super Game Boy** — 🔴 **the game's OWN colourisation, per map.** `SetPal_Overworld`
+  (`engine/gfx/palettes.asm`) transliterated: a cave's tileset → `PAL_CAVE`, the Pokémon Tower's →
+  `PAL_GRAYMON`, a town → its own (`PAL_PALLET + mapId`), a route → `PAL_ROUTE`. So Pallet is pale
+  green, Vermilion orange, Cinnabar red — straight from `data/sgb/sgb_palettes.asm`. (An **indoor**
+  building's real palette is its enclosing town's `wLastMap`, which we cannot know statically, so it
+  falls back to the route palette.)
+- **Custom** — the user picks all four shades.
+
+The SGB tables are **embedded constexpr with a citation**, exactly like `fadeTable` and `shadeGrey`
+above — not a vendored/parsed file, because they are a fixed hardware fact, not an editable asset.
+RGB555 → RGB888 by bit-replication (`(c<<3)|(c>>2)`).
+
+**Cache invalidation:** the palette is a global, not in the render URL's other fields, so
+`MapEngine::paletteGeneration()` (bumped on every change) rides in `MapModel::source` — a new
+generation → a new URL → the provider re-renders. Same trick the animation frame uses.
+
+**Proof:** `tst_map_layers::colourFilter_writesNotOneByte` byte-diffs the whole save across every mode
+and a custom colour (it stays identical), and `colourFilter_isTheGamesOwnSgbPalettePerMap` pins that
+Pallet ≠ Vermilion and a cave reads warm.
+
+### Still ahead
+
+- **Sprites.** `rOBP0`/`rOBP1` are computed and unused. The moment contrast 1 and 2 meet the player,
+  they show their real damage. (The output palette recolours the map image, which does not yet
+  include the sprite layer — the sprites are drawn as QML items over it.)
