@@ -43,15 +43,15 @@ import QtQuick.Layouts
 Item {
   id: root
 
-  implicitWidth: chip.implicitWidth
-  implicitHeight: 24
+  implicitWidth: trigger.implicitWidth
+  implicitHeight: 26
 
   /// Drivable by name, for the DEBUG harness and the screenshot review. (reference/dev-harness.md)
   property bool openState: false
   onOpenStateChanged: openState ? pop.open() : pop.close()
 
-  /// How many doors on this map actually say "back outside" -- i.e. how many this chip governs.
-  /// Bound through the canvas's revision so it re-asks; a bare warpList() call would answer once.
+  /// How many doors on this map actually say "back outside" -- i.e. how many this button governs.
+  /// Bound through the map id so it re-asks; a bare warpList() call would answer once.
   readonly property int returnDoors: {
     brg.map.mapInd;   // a dependency, deliberately -- re-ask when the map changes
     const list = brg.map.warpList();
@@ -62,62 +62,22 @@ Item {
     return n;
   }
 
-  // ── The chip ────────────────────────────────────────────────────────────────────────────────
-  Rectangle {
-    id: chip
-
+  // The wordy "Outside is Pallet Town ×3" chip is gone (Twilight: "Pallet Town littered all over the
+  // bar"). The WARP button is a ⇄ icon; the destination and the door count live in its tooltip and
+  // its dropdown, where "Pallet Town" is said once instead of a third time.
+  MapBarButton {
+    id: trigger
     anchors.fill: parent
-    implicitWidth: chipRow.implicitWidth + 18
-    radius: 12
 
-    color: pop.opened ? "#e8e8e8" : (chipHover.hovered ? "#f0f0f0" : "#ffffff")
-    border.width: 1
-    border.color: brg.settings.dividerColor
+    glyph: "⇄"
+    open: root.openState
+    onToggle: root.openState = !root.openState
 
-    Behavior on color { ColorAnimation { duration: 90 } }
-
-    HoverHandler { id: chipHover; cursorShape: Qt.PointingHandCursor }
-    TapHandler { onTapped: pop.opened ? pop.close() : pop.open() }
-
-    RowLayout {
-      id: chipRow
-      anchors.centerIn: parent
-      spacing: 6
-
-      Text {
-        text: qsTr("Outside is")
-        font.pixelSize: 11
-        color: brg.settings.textColorMid
-      }
-
-      Text {
-        text: brg.map.lastMapName
-        font.pixelSize: 12
-        font.bold: true
-        color: brg.settings.textColorDark
-      }
-
-      // How many doors this actually governs. Not decoration -- it is the answer to "does changing
-      // this do anything on the map I'm looking at?", which is the first thing anybody wonders.
-      Text {
-        visible: root.returnDoors > 0
-        text: "×" + root.returnDoors
-        font.pixelSize: 10
-        color: brg.settings.textColorMid
-      }
-
-      Text {
-        text: "⌄"
-        font.pixelSize: 11
-        color: brg.settings.textColorMid
-      }
-    }
-
-    MapToolTip {
-      visible: chipHover.hovered && !pop.opened
-      text: qsTr("Where a “back outside” door puts you.\n\nEvery building's exit is a door with no "
-                 + "map named on it — it just means “outdoors”. This is which outdoors.")
-    }
+    tip: qsTr("Outside is: %1").arg(brg.map.lastMapName)
+         + (root.returnDoors > 0
+              ? "\n\n" + qsTr("%n “back outside” door(s) on this map lead here.", "", root.returnDoors)
+              : "\n\n" + qsTr("No door here leads back outside — but it still sets where you come out "
+                              + "of the next building."))
   }
 
   // ── The drop-down ───────────────────────────────────────────────────────────────────────────

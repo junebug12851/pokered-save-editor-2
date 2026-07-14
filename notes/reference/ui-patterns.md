@@ -43,6 +43,26 @@ On a panel with its own margins, the 16px is **on top of** them (`panel.width - 
 panel keeps eliding words, the panel is **too narrow** — widen it. Shrinking the content to make room
 for the furniture is the wrong way round, every time.
 
+## The map's TOP BAR — a name + icon buttons (`MapBarButton`) (2026-07-14)
+
+The top bar is `[ bold map-name label ] │ [Map ⊞▾] [Warp ⇄▾] [Contrast ▮▮▮▮▾] [Music ♪▾] [▶] │ …`. The
+map name is a **plain bold `Label`, not a button** — it was appearing in three separate chips
+("Pallet Town" in the map chip, in "Outside is …", in "♪ …"), which is what made the bar feel littered
+and cramped. It is said once now; everything else is a compact icon.
+
+**`MapBarButton`** is the shared trigger the four pickers use: a rounded frame + a **▾** (the "I drop a
+menu" affordance) + either a `glyph` (Map ⊞, Warp ⇄) or a nested **reactive icon** (Contrast's live
+four-shade swatch; Music's ♪ tinted accent while playing). The button owns only the chrome and the
+▾; the popup still belongs to the picker, which positions it (`y: root.height + 4`). Prefer a reactive
+icon over a static one where it's natural — Twilight's rule: *"prefer a contrast icon showing the
+active contrast over a generic contrast button."*
+
+- ⚠️ A `color` property can't hold `""` as a sentinel — `Invalid property assignment: color expected`,
+  and `tst_qml_screens` catches it. Default it to a real colour (`brg.settings.dividerColor`) and let
+  callers override, rather than empty-string-means-default.
+- The picker's root `implicitWidth`/`implicitHeight` must follow the **button** (`trigger.implicitWidth`,
+  26), not the old chip.
+
 ## The map's LEFT RAIL — tools + makers above the panels (2026-07-14)
 
 The map screen's left dock rail carries three groups, top to bottom, each divided from the next:

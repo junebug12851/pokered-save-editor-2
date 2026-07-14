@@ -95,57 +95,32 @@ RowLayout {
     onClicked: brg.music.isPlaying ? brg.music.stop() : brg.music.play()
   }
 
-  // ── The chip ──────────────────────────────────────────────────────────────────────────────
-  Rectangle {
-    id: chip
-    objectName: "musicChip"
+  // ── The button ────────────────────────────────────────────────────────────────────────────
+  //
+  // The wordy "♪ Pallet Town ⌄" chip is gone -- that was the THIRD "Pallet Town" on the bar
+  // (Twilight, 2026-07-14). The music button is a ♪ icon; what is playing is in its tooltip and its
+  // dropdown. The ♪ goes accent WHILE IT PLAYS -- the one bit of reactivity that is genuinely useful
+  // on a music button. The ▶ stays right beside it, as she asked.
+  Item {
+    id: musicBtnWrap
+    objectName: "musicChip"   // the DEBUG harness opens the drop-down through this
 
-    implicitWidth: Math.min(chipRow.implicitWidth + 18, 190)
+    implicitWidth: musicBtn.implicitWidth
     implicitHeight: 26
-    radius: 13
 
-    color: music.openState ? Qt.rgba(0, 0, 0, 0.10)
-         : chipHover.hovered ? Qt.rgba(0, 0, 0, 0.06)
-         : Qt.rgba(0, 0, 0, 0.03)
-
-    border.width: 1
-    border.color: brg.settings.dividerColor
-
-    RowLayout {
-      id: chipRow
+    MapBarButton {
+      id: musicBtn
       anchors.fill: parent
-      anchors.leftMargin: 9
-      anchors.rightMargin: 7
-      spacing: 5
 
-      Label {
-        text: "♪"
-        font.pixelSize: 12
-        opacity: 0.75
-      }
+      glyph: "♪"
+      glyphColor: brg.music.isPlaying ? brg.settings.accentColor : brg.settings.textColorDark
+      open: music.openState
+      onToggle: music.openState = !music.openState
 
-      // The chip always says what is IN THE SAVE. (It used to go italic while a hover-audition was
-      // playing something else -- there are no auditions any more, so there is nothing to disclaim:
-      // what you hear IS what is saved.)
-      Label {
-        Layout.fillWidth: true
-        text: !music.hasAudio
-                ? qsTr("—")
-                : brg.music.describe(music.audio.musicBank, music.audio.musicID)
-        font.pixelSize: 11
-        font.bold: true
-        elide: Text.ElideRight
-      }
-
-      Label {
-        text: "⌄"
-        font.pixelSize: 10
-        opacity: 0.6
-      }
+      tip: qsTr("Music — %1").arg(music.hasAudio
+             ? brg.music.describe(music.audio.musicBank, music.audio.musicID)
+             : "—")
     }
-
-    HoverHandler { id: chipHover; cursorShape: Qt.PointingHandCursor }
-    TapHandler { onTapped: music.openState = !music.openState }
 
     Popup {
       id: panel
@@ -153,8 +128,8 @@ RowLayout {
       visible: music.openState
       onClosed: music.openState = false
 
-      y: chip.height + 5
-      x: -60
+      y: musicBtnWrap.height + 5
+      x: -30
 
       width: 250
       padding: 8

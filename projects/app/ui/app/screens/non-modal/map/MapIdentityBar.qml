@@ -66,11 +66,58 @@ Rectangle {
 
   RowLayout {
     anchors.fill: parent
-    anchors.leftMargin: 8
+    anchors.leftMargin: 10
     anchors.rightMargin: 10
-    spacing: 8
+    spacing: 7
 
-    // ── What is loaded, and what it is drawn out of ───────────────────────────────────────────
+    // ── The map's NAME, in bold — a LABEL, not a button ───────────────────────────────────────
+    //
+    // Twilight, 2026-07-14: *"'Pallet Town' is littered all over the toolbar and we're cramped. Have
+    // the map name in bold like it is now on the left, but not in a button — as a label."*
+    //
+    // It used to appear THREE times (the map chip, "Outside is Pallet Town", "♪ Pallet Town"). Now
+    // it is said once, here, and everything else is a compact icon.
+    RowLayout {
+      spacing: 6
+
+      Label {
+        text: brg.map.valid ? brg.map.mapName : qsTr("No map")
+        font.pixelSize: 14
+        font.bold: true
+        color: brg.settings.textColorDark
+        elide: Text.ElideRight
+        Layout.maximumWidth: 190
+      }
+
+      // A fact, not an alarm: this id has no map of its own, so the game draws the one it copies.
+      Label {
+        visible: brg.map.isCopy
+        text: qsTr("· copy of %1").arg(brg.map.copyOfName)
+        font.pixelSize: 10
+        font.italic: true
+        color: brg.settings.textColorMid
+        elide: Text.ElideRight
+        Layout.maximumWidth: 130
+      }
+    }
+
+    Rectangle {
+      implicitWidth: 1
+      implicitHeight: 18
+      color: brg.settings.dividerColor
+      Layout.leftMargin: 2
+      Layout.rightMargin: 2
+    }
+
+    // ── The four icon buttons: Map · Warp · Contrast · Music ──────────────────────────────────
+    //
+    // Compact icon tool-buttons, each with a ▾ that says "I drop a menu" (Twilight). The wordy chips
+    // are gone; each button is an icon — and where a reactive icon is natural it is one: Contrast IS
+    // its live four-shade swatch, Music's ♪ lights up while it plays, the Map icon carries an amber
+    // dot when the map's blocks/size don't match. All four share MapBarButton, so they read as one
+    // family. See each picker file for the icon it hands the button.
+
+    // ── Map (⊞): which map, its tileset, its blockset ────────────────────────────────────────
     MapPicker { id: mapPicker }
 
     // ── ⭐ "Outside is…" — the map a `back outside` door returns you to (wLastMap) ─────────────

@@ -636,6 +636,7 @@
         <file>ui/app/screens/non-modal/map/MapDetailRow.qml</file>
         <file>ui/app/screens/non-modal/map/SpriteField.qml</file>
         <file>ui/app/screens/non-modal/map/LayersPanel.qml</file>
+        <file>ui/app/screens/non-modal/map/MapBarButton.qml</file>
         <file>ui/app/screens/non-modal/map/MapWarp.qml</file>
         <file>ui/app/screens/non-modal/map/WarpField.qml</file>
         <file>ui/app/screens/non-modal/map/WarpStatePanel.qml</file>

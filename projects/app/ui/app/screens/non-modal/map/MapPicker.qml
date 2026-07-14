@@ -40,8 +40,8 @@ import QtQuick.Layouts
 Item {
   id: root
 
-  implicitWidth: chip.implicitWidth
-  implicitHeight: 24
+  implicitWidth: trigger.implicitWidth
+  implicitHeight: 26
 
   /// Drive the drop-down open/shut by name -- the DEBUG harness can only set properties on items,
   /// and the mandatory screenshot review has to be able to REACH the thing it is reviewing.
@@ -49,60 +49,33 @@ Item {
   property bool openState: false
   onOpenStateChanged: openState ? pop.open() : pop.close()
 
-  // ── The chip ────────────────────────────────────────────────────────────────────────────────
-  Rectangle {
-    id: chip
-
+  // The map NAME moved out to a bold label on the far left of the bar (Twilight, 2026-07-14: it was
+  // "littered all over the top bar"). This button is now just the ICON that opens the map / tileset /
+  // blocks picker. Its glyph is a grid-in-a-frame -- a map is a grid of blocks.
+  MapBarButton {
+    id: trigger
     anchors.fill: parent
-    implicitWidth: chipRow.implicitWidth + 18
-    radius: 12
 
-    color: pop.opened ? "#e8e8e8" : (chipHover.hovered ? "#f0f0f0" : "#ffffff")
-    border.width: 1
-    border.color: brg.settings.dividerColor
+    glyph: "⊞"
+    open: root.openState
+    onToggle: root.openState = !root.openState
 
-    Behavior on color { ColorAnimation { duration: 90 } }
+    tip: brg.map.valid
+           ? qsTr("Map, tileset & blocks — %1 · %2").arg(brg.map.mapName).arg(brg.map.tilesetName)
+           : qsTr("Pick a map")
 
-    HoverHandler { id: chipHover; cursorShape: Qt.PointingHandCursor }
-    TapHandler { onTapped: pop.opened ? pop.close() : pop.open() }
-
-    RowLayout {
-      id: chipRow
-      anchors.centerIn: parent
-      spacing: 6
-
-      Text {
-        text: brg.map.valid ? brg.map.mapName : qsTr("No map")
-        font.pixelSize: 12
-        font.bold: true
-        color: brg.settings.textColorDark
-      }
-
-      Text {
-        text: "·"
-        font.pixelSize: 12
-        color: brg.settings.textColorMid
-      }
-
-      Text {
-        text: brg.map.tilesetName
-        font.pixelSize: 11
-        color: brg.settings.textColorMid
-      }
-
-      // The blocks come from somewhere else than the tiles -- rare, legal, and worth saying out loud.
-      Text {
-        visible: !brg.map.blocksetIsTileset
-        text: qsTr("blocks: %1").arg(brg.map.blocksetName)
-        font.pixelSize: 11
-        color: brg.settings.errorColor
-      }
-
-      Text {
-        text: "⌄"
-        font.pixelSize: 11
-        color: brg.settings.textColorMid
-      }
+    // Reactive state: the map's blocks come from a different tileset than its graphics (rare, legal,
+    // and worth flagging), or its stored size no longer matches the map. A little amber dot, so the
+    // icon SAYS something is off without a wall of text on the bar.
+    Rectangle {
+      parent: trigger
+      visible: !brg.map.blocksetIsTileset || !brg.map.headerMatches
+      width: 7; height: 7; radius: 3.5
+      color: "#e69f00"
+      border.width: 1
+      border.color: "#8a6d00"
+      x: 3; y: 3
+      z: 5
     }
   }
 

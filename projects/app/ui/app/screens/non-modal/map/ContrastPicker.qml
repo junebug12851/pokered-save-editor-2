@@ -41,8 +41,8 @@ Item {
   id: root
   objectName: "contrastPicker"   // the DEBUG harness opens the strip through this
 
-  implicitWidth: chip.implicitWidth
-  implicitHeight: 24
+  implicitWidth: trigger.implicitWidth
+  implicitHeight: 26
 
   /// The glitch ink. YELLOW, not red (Twilight, 2026-07-13): a glitch palette is not an ERROR --
   /// the console renders it perfectly happily, and half the reason to have this control is to go
@@ -71,58 +71,41 @@ Item {
     return qsTr("Glitch %1").arg(v);
   }
 
-  Rectangle {
-    id: chip
-
+  // ⚠️ THE REACTIVE ICON Twilight named as the example: *"prefer a contrast icon showing the active
+  // contrast over a generic contrast button."* The icon IS the four shades this palette actually
+  // produces (the real rBGP byte, glitch reads included) — so the button shows the answer, live, and
+  // the "%" text is gone with the wordiness. The frame goes yellow on a glitch value.
+  MapBarButton {
+    id: trigger
     anchors.fill: parent
-    implicitWidth: chipRow.implicitWidth + 18
-    radius: 12
 
-    color: pop.opened ? "#e8e8e8" : (chipHover.hovered ? "#f0f0f0" : "#ffffff")
-    border.width: 1
-    border.color: brg.map.contrastIsGlitch ? root.glitchColor : brg.settings.dividerColor
+    open: root.openState
+    accent: brg.map.contrastIsGlitch ? root.glitchColor : brg.settings.dividerColor
+    onToggle: root.openState = !root.openState
 
-    Behavior on color { ColorAnimation { duration: 90 } }
+    tip: qsTr("Contrast & colour — %1 (%2%)").arg(root.nameOf(brg.map.contrast))
+                                              .arg(brg.map.contrastPercent)
 
-    HoverHandler { id: chipHover; cursorShape: Qt.PointingHandCursor }
-    TapHandler { onTapped: pop.opened ? pop.close() : pop.open() }
+    // The live swatch. Four narrow bands, exactly the ink the map is drawn through.
+    Row {
+      anchors.verticalCenter: parent.verticalCenter
+      spacing: 0
 
-    RowLayout {
-      id: chipRow
-      anchors.centerIn: parent
-      spacing: 6
+      readonly property var shades: brg.map.contrastShades(brg.map.contrast)
 
-      // A swatch of the four shades this palette REALLY produces -- the same rBGP byte the map is
-      // drawn through, not a tint of the identity palette that only approximated it. The control
-      // shows you the answer, not just the number.
-      Row {
-        spacing: 0
+      Repeater {
+        model: 4
 
-        readonly property var shades: brg.map.contrastShades(brg.map.contrast)
-
-        Repeater {
-          model: 4
-
-          Rectangle {
-            required property int index
-            width: 4
-            height: 12
-            color: (parent.shades && parent.shades.length === 4) ? parent.shades[index] : "#f2f2f2"
-          }
+        Rectangle {
+          required property int index
+          width: 5
+          height: 13
+          color: (parent.shades && parent.shades.length === 4) ? parent.shades[index] : "#f2f2f2"
+          topLeftRadius: index === 0 ? 2 : 0
+          bottomLeftRadius: index === 0 ? 2 : 0
+          topRightRadius: index === 3 ? 2 : 0
+          bottomRightRadius: index === 3 ? 2 : 0
         }
-      }
-
-      Text {
-        text: qsTr("%1%").arg(brg.map.contrastPercent)
-        font.pixelSize: 12
-        font.bold: true
-        color: brg.map.contrastIsGlitch ? root.glitchColor : brg.settings.textColorDark
-      }
-
-      Text {
-        text: "⌄"
-        font.pixelSize: 11
-        color: brg.settings.textColorMid
       }
     }
   }
@@ -132,7 +115,7 @@ Item {
     id: pop
 
     y: root.height + 4
-    x: -100
+    x: -20
     width: 300
     padding: 10
 
