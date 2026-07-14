@@ -65,13 +65,17 @@ Item {
 
   /// How wide the panel column is when open (drag its inner edge; remembered for the session).
   ///
-  /// 170 was too tight -- text clipped, and a combo box had ~90px left for its label (Twilight,
-  /// 2026-07-13). 200 is the width the content actually needs; it is still a third narrower than the
-  /// 300 it started at.
-  property int panelWidth: 200
+  /// ⚠️ It has been too narrow **twice**. 170 clipped text outright; 200 still left a group row
+  /// (chevron + eye + name + a per-group Clear) fighting for space, so "Components" came back cut
+  /// off -- and the 16px scrollbar lane, which content must now reserve, takes another bite.
+  ///
+  /// 240. The map does not get squeezed for it (the panel floats over the canvas), so the only thing
+  /// a wider panel costs is a little of the map you are looking *past*, and the only thing a narrow
+  /// one buys is elided words. That is not a trade worth making.
+  property int panelWidth: 240
   readonly property int railWidth: 40
-  readonly property int minPanelWidth: 170
-  readonly property int maxPanelWidth: 340
+  readonly property int minPanelWidth: 190
+  readonly property int maxPanelWidth: 380
 
   /// ⚠️ ALWAYS. The panel is never seated in the row -- see the note at the top of this file. Opening
   /// one must not move the map.

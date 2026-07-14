@@ -137,7 +137,8 @@ Rectangle {
     clip: true
 
     ColumnLayout {
-      width: panel.width - 24
+      // 12px of margin each side, PLUS the 16px overlay-scrollbar lane. @see ui-patterns.md
+      width: panel.width - 24 - 16
       spacing: 10
 
       // ── The edge of the world ───────────────────────────────────────────────

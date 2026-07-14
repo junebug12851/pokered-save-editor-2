@@ -1,5 +1,48 @@
 # UI Patterns
 
+## 🔴 The two that keep coming back (read these first) — 2026-07-13
+
+Twilight has reported both of these on **three separate passes**. Each time I fixed the one instance
+she pointed at and left the rest. So they are now rules, at the top of the page.
+
+### 1. NEVER use the stock `ToolTip`. Use `MapToolTip`.
+
+> *"The tooltip text is constantly too dark to read. I keep saying it."*
+
+Qt's stock tooltip is **dark text on a translucent background**. Over this app's pale panels it is
+genuinely hard to read. `MapToolTip.qml` is white-on-opaque-dark, sits 6px under the control it
+explains, and is gated on the header's **?** toggle.
+
+* If you are typing `ToolTip.text` or `ToolTip { }` — **stop**. You want `MapToolTip`.
+* For a control's own live value (a slider's `60%`), set `followGlobalSetting: false` and `delay: 0`.
+  That is not a hint you opt into; it is the control saying what it is doing.
+* The only tooltips exempt from the **?** gate are the two **icons you point at deliberately**:
+  `MapInfoIcon` (**?** — "what is this?") and `MapWarnIcon` (**!** — "careful"). One **?** per panel.
+  *Don't litter them; the mark only means something while it is rare.*
+
+### 2. RESERVE THE SCROLLBAR'S LANE. **16px. Always.**
+
+> *"Yellow exclamation points are behind the scrollbar again, character text still cut off."*
+
+A `ScrollView`'s bar is an **overlay** — it is drawn *on top of* whatever is beneath it. So content
+laid out to the full `availableWidth` ends up **underneath** it: right-anchored badges disappear, and
+trailing text is clipped.
+
+```qml
+ScrollView {
+  id: scroller
+  contentWidth: availableWidth
+
+  ColumnLayout {
+    width: scroller.availableWidth - 16   // ← the lane. Not optional.
+  }
+}
+```
+
+On a panel with its own margins, the 16px is **on top of** them (`panel.width - 24 - 16`). And when a
+panel keeps eliding words, the panel is **too narrow** — widen it. Shrinking the content to make room
+for the furniture is the wrong way round, every time.
+
 ## Smooth zoom on pixel art (the map) — 2026-07-13
 
 A Game Boy map is 8×8 pixel art, and for a long time the map screen's zoom **snapped to whole numbers**

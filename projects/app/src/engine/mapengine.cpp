@@ -1126,7 +1126,7 @@ QVector<QPoint> MapEngine::tilesInLayer(const Buffer& buffer, int tilesetInd, La
   return out;
 }
 
-QImage MapEngine::npcSprite(int pictureID, int facing, int contrast)
+QImage MapEngine::npcSprite(int pictureID, int facing, int contrast, int animFrame)
 {
   // Picture id 0 means "this slot is unused" (ram/wram.asm). Draw nothing -- do not guess.
   if (pictureID < 1 || pictureID > spriteArtCount)
@@ -1152,22 +1152,65 @@ QImage MapEngine::npcSprite(int pictureID, int facing, int contrast)
     cache.insert(pictureID, sheet);
   }
 
-  // Which of the three standing frames, and whether to mirror. Right is LEFT, X-FLIPPED --
-  // there is no right-facing art in the game, for anybody. (SpriteFacingAndAnimationTable
-  // -> .FlippedOAM; see reference/sprites.md.)
+  // ── SpriteFacingAndAnimationTable, verbatim (data/sprites/facings.asm) ─────────────────────
+  //
+  // `UpdateSpriteImage` (engine/overworld/movement.asm) is one line of arithmetic:
+  //
+  //     imageIndex = animFrameCounter + facingDirection   (+ the sprite's VRAM base)
+  //
+  // ...and that index walks a **16-row table** of (which quad, flipped?). Here it is, all of it:
+  //
+  //   | facing     | frame 0        | frame 1          | frame 2        | frame 3           |
+  //   |------------|----------------|------------------|----------------|-------------------|
+  //   | Down  ($0) | StandingDown   | WalkingDown      | StandingDown   | WalkingDown  FLIP |
+  //   | Up    ($4) | StandingUp     | WalkingUp        | StandingUp     | WalkingUp    FLIP |
+  //   | Left  ($8) | StandingLeft   | WalkingLeft      | StandingLeft   | WalkingLeft       |
+  //   | Right ($C) | StandingLeft F | WalkingLeft FLIP | StandingLeft F | WalkingLeft  FLIP |
+  //
+  // Two things fall straight out of it, and both surprise people:
+  //
+  //   * **THERE IS NO SECOND WALKING FRAME.** Frames 1 and 3 are the *same picture*, and 3 is
+  //     mirrored -- that mirror is the other leg. (Not for LEFT: mirroring a left-facing sprite
+  //     would turn it round, so left just uses the one frame twice.)
+  //   * **THERE IS NO RIGHT-FACING ART, for anybody.** Right is Left, X-flipped, whole row.
+  //
+  // Our sheet stacks the six quads in the game's own order: 0-2 stand down/up/left, 3-5 walk
+  // down/up/left (scripts/import_sprites.py, from SpriteSheetPointerTable).
+  const int step = animFrame & 3;
+
   int frame = 0;
   bool mirror = false;
 
   switch (facing) {
-    case FacingDown:  frame = 0; break;
-    case FacingUp:    frame = 1; break;
-    case FacingLeft:  frame = 2; break;
-    case FacingRight: frame = 2; mirror = true; break;
-    default: break;
+    case FacingDown:
+      frame  = (step == 1 || step == 3) ? 3 : 0;      // walk down : stand down
+      mirror = (step == 3);
+      break;
+
+    case FacingUp:
+      frame  = (step == 1 || step == 3) ? 4 : 1;      // walk up : stand up
+      mirror = (step == 3);
+      break;
+
+    case FacingLeft:
+      frame  = (step == 1 || step == 3) ? 5 : 2;      // walk left : stand left. Never mirrored.
+      break;
+
+    case FacingRight:
+      frame  = (step == 1 || step == 3) ? 5 : 2;      // ...the LEFT art, and always mirrored.
+      mirror = true;
+      break;
+
+    default:
+      break;
   }
 
-  // A one-frame sprite (a ball, a boulder, a fossil) has ONE quad and the game's facing table
-  // sends every facing to it. Clamp rather than read past the art we have.
+  // A still person has three quads and no walk cycle was ever drawn for them; a ball / boulder /
+  // fossil has ONE, and the game's table sends every facing and every frame to it. Fall back to the
+  // standing pose rather than reading past the art we actually have.
+  if (frame >= frames)
+    frame = (frame >= 3 && frame - 3 < frames) ? frame - 3 : 0;
+
   if (frame >= frames)
     frame = 0;
 

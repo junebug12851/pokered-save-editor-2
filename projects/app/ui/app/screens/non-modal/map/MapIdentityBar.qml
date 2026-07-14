@@ -171,9 +171,23 @@ Rectangle {
       enabled: brg.mapSim.canSimulate
       opacity: enabled ? 1.0 : 0.4
 
+      // ⚠️ CONTRAST. At rest this was a 4%-black chip -- so pale it was barely a chip at all -- with
+      // its text on `palette.text`, which the theme resolves LIGHT. Pale text on a near-white chip:
+      // Twilight, twice, and the screenshot review walked straight past it both times.
+      //
+      // Both states are now spelled out, not inherited. At rest: a real outline, and text dark enough
+      // to read. Running: solid orange, white on it. Nothing here depends on what the palette feels
+      // like doing.
       color: brg.mapSim.playing ? "#d55e00"
-           : simHover.hovered ? Qt.rgba(0, 0, 0, 0.07)
-           : Qt.rgba(0, 0, 0, 0.04)
+           : simHover.hovered   ? Qt.rgba(0, 0, 0, 0.10)
+           : Qt.rgba(0, 0, 0, 0.05)
+
+      border.width: 1
+      border.color: brg.mapSim.playing ? "#d55e00" : brg.settings.dividerColor
+
+      Behavior on color { ColorAnimation { duration: 90 } }
+
+      readonly property color ink: brg.mapSim.playing ? "#ffffff" : brg.settings.textColorDark
 
       RowLayout {
         id: simRow
@@ -183,13 +197,14 @@ Rectangle {
         Label {
           text: brg.mapSim.playing ? "⏸" : "▶"
           font.pixelSize: 10
-          color: brg.mapSim.playing ? "white" : palette.text
+          color: parent.parent.ink
         }
 
         Label {
           text: brg.mapSim.playing ? qsTr("Walking") : qsTr("Walk")
           font.pixelSize: 11
-          color: brg.mapSim.playing ? "white" : palette.text
+          font.bold: true
+          color: parent.parent.ink
         }
       }
 
@@ -214,13 +229,18 @@ Rectangle {
         }
       }
 
-      ToolTip.visible: brg.settings.infoBtnPressed && (simHover.hovered || (!brg.mapSim.canSimulate && simDeadHover.hovered))
-      ToolTip.delay: 400
-      ToolTip.text: !brg.mapSim.canSimulate
-                      ? qsTr("Nobody on this map can walk — they are all set to Stay")
-                      : brg.mapSim.playing
-                        ? qsTr("Stop them")
-                        : qsTr("Let the people wander — ⚠️ this MOVES the real sprite data")
+      // ⚠️ MapToolTip, NOT the stock `ToolTip.text` attached property. The stock one is DARK TEXT on
+      // a translucent background, and over this pale toolbar it is genuinely hard to read -- Twilight
+      // has said so more times than I want to count. MapToolTip is white-on-opaque-dark and it is the
+      // ONLY tooltip anything on this screen may use. If you are typing `ToolTip.text`, stop.
+      MapToolTip {
+        shown: simHover.hovered || (!brg.mapSim.canSimulate && simDeadHover.hovered)
+        text: !brg.mapSim.canSimulate
+                ? qsTr("Nobody on this map can walk — they are all set to Stay")
+                : brg.mapSim.playing
+                  ? qsTr("Stop them")
+                  : qsTr("Let the people wander — ⚠️ this MOVES the real sprite data")
+      }
 
       // A disabled chip still has to be able to SAY why it is disabled.
       HoverHandler { id: simDeadHover }
@@ -232,5 +252,47 @@ Rectangle {
     }
 
     Item { Layout.fillWidth: true }
+
+    // ── The clutter switch, hard right ────────────────────────────────────────────────────────
+    //
+    // ⚠️ Twilight, 2026-07-13, and it is a good idea: *"Have a switch right-aligned on the top
+    // toolbar that toggles on values that will be overwritten as options to change. Have it OFF by
+    // default, give it a good label. When it's off, the fields that relate to things there's no
+    // point in changing will not be present and add clutter."*
+    //
+    // Roughly a THIRD of a sprite's bytes are scratch the console works out again the moment it
+    // loads the save -- the walk state, the on-screen pixels, the VRAM slot. They are real, they are
+    // hers, and she can edit every one of them. But they are not what anybody came for, and having
+    // them stacked under the fields that DO matter is the difference between a panel and a hex dump.
+    //
+    // Off: they simply are not there. On: they are, each wearing its yellow "!".
+    RowLayout {
+      spacing: 6
+
+      Label {
+        text: qsTr("Reloaded values")
+        font.pixelSize: 11
+        color: brg.settings.textColorMid
+
+        HoverHandler { id: scratchHover }
+
+        MapToolTip {
+          shown: scratchHover.hovered
+          text: qsTr("Show the fields the game works out again every time it loads your save — the "
+                     + "walk state, the on-screen pixels, the sprite cache. You can edit them; they "
+                     + "just won't survive Continue.")
+        }
+      }
+
+      Switch {
+        objectName: "showScratchToggle"   // the DEBUG harness drives the panel through this
+
+        implicitHeight: 22
+        scale: 0.8
+
+        checked: brg.map.showScratch
+        onToggled: brg.map.showScratch = checked
+      }
+    }
   }
 }

@@ -113,8 +113,11 @@ Item {
     contentWidth: availableWidth          // never scroll sideways; the rows wrap instead
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
+    // ⚠️ RESERVE THE SCROLLBAR'S LANE -- 16px. The bar is an overlay, so full-width content ends up
+    // underneath it. Here that put the yellow "!" icons (right-anchored on each field's label row)
+    // behind the scrollbar. See ui-patterns.md; it is a recurring gotcha and this is the fix.
     ColumnLayout {
-      width: scroller.availableWidth
+      width: scroller.availableWidth - 16
       spacing: 8
 
       // ── Nothing selected: the MAP's own details ───────────────────────────────────────────
@@ -449,6 +452,7 @@ Item {
 
                 fieldData: modelData
                 slot: details.slot
+                canvas: details.canvas   // so the picture picker can mute the ground while it is up
               }
             }
           }

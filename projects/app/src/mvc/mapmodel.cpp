@@ -35,6 +35,7 @@
 #include <pse-db/spriteSet.h>
 #include <pse-db/sprites.h>
 #include <pse-db/trainers.h>
+#include <QColor>
 #include <QMap>
 #include <pse-savefile/expanded/area/areageneral.h>
 #include <pse-savefile/expanded/area/arealoadedsprites.h>
@@ -69,9 +70,20 @@ MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaG
   : sprites(sprites), npcs(npcs), warps(warps),
     map(map), player(player), tileset(tileset), general(general)
 {
-  // The map's cast changed -- somebody was placed, moved or deleted. Redraw.
+  // ⚠️ THE CAST GETS ITS OWN SIGNAL, AND THIS IS THE WHOLE REASON THE WALK RAN AT 4 FPS.
+  //
+  // This used to be `connect(..., &MapModel::changed)`. But `changed()` is wired to `sourceChanged()`
+  // (see the constructor's tail), and `source` carries the map's render URL -- so every emission
+  // **re-renders the entire map image**: expand every block into tiles, every tile into pixels, for
+  // the whole of Route 17 if that is where you are.
+  //
+  // The walk simulation moves somebody **~60 times a second**. It was therefore re-rendering the
+  // whole map ~60 times a second, to move one 16x16 sprite. Twilight: *"the framerate plummets."*
+  //
+  // A sprite moving does not change one pixel of the MAP. It gets `castChanged()` -- which the
+  // canvas's sprite layer listens to and nothing else does.
   if (npcs != nullptr)
-    connect(npcs, &AreaSprites::spritesChanged, this, &MapModel::changed);
+    connect(npcs, &AreaSprites::spritesChanged, this, &MapModel::castChanged);
 
   // The sprite-set cache is part of "where you are", so a change to it redraws the panel that shows
   // it. (It changes nothing about the map itself -- see notes/reference/sprite-sets.md.)
@@ -260,6 +272,184 @@ bool MapModel::spriteSetMatchesMap() const
   // Only meaningful where the game HAS a set for this map. Inside a building the cache is simply the
   // last outdoor set you were in, and that is not a mismatch -- it is what a console holds too.
   return !mapHasSpriteSet() || spriteSetId() == mapSpriteSetId();
+}
+
+// ── WHAT THE CONSOLE WOULD ACTUALLY DRAW ─────────────────────────────────────────────────────────
+//
+// ⚠️ This is the routine the whole "will my sprite render?" question turns on, and until 2026-07-13
+// we answered it WRONG -- we asked the save's cached sprite set, which the game **throws away**.
+//
+// Twilight: *"No matter what sprite set is set to, the map should render exactly and completely
+// accurately, like the game would after loading a modified save file."* So we do what the game does.
+// The whole of `engine/overworld/map_sprites.asm`, in two halves:
+//
+// ── OUTDOOR (`wCurMap < FIRST_INDOOR_MAP`, i.e. map id < $25) ────────────────────────────────────
+//
+//   `InitOutsideMapSprites` reads the set id out of a **ROM table** -- `MapSpriteSets[wCurMap]`,
+//   splits resolved against the player's position -- loads *that* set's 11 pictures into VRAM, and
+//   then maps each NPC to a VRAM slot by SEARCHING the set for its picture:
+//
+//       .getPictureIndexLoop
+//           inc c
+//           ld a, [de]
+//           inc de
+//           cp b                        ; does the picture ID match?
+//           jr nz, .getPictureIndexLoop ; ⚠️ NO BOUNDS CHECK. NO TERMINATION.
+//
+//   **There is no bounds check.** A picture that is not in the set runs the loop off the end of
+//   `wSpriteSet` and on through WRAM until some byte happens to equal it. The VRAM slot it lands on
+//   is arbitrary, and the sprite draws whatever tiles are sitting there. That is what "the game
+//   would draw it as garbage" actually means, and it is why the warning is worth having.
+//
+//   The save's cached set is irrelevant: `LoadMapData` zeroes the id and this recomputes the lot.
+//
+// ── INDOOR (map id >= $25) ───────────────────────────────────────────────────────────────────────
+//
+//   `InitOutsideMapSprites` returns immediately. `InitMapSprites` then copies **each sprite's OWN
+//   picture** into StateData2 and calls `LoadMapSpriteTilePatterns`, which allocates VRAM slots by
+//   **first appearance**, deduplicating identical pictures.
+//
+//   **THERE IS NO SPRITE SET INDOORS.** Every NPC's own artwork is loaded, so *any* picture draws
+//   correctly -- right up until you run out of video memory. The capacity is real and it is small:
+//
+//     * **10** slots for walking sprites (picture < `FIRST_STILL_SPRITE` = $3D), and
+//     * **2**  four-tile slots for still ones (Pokéballs, boulders, the fossil: picture >= $3D).
+//
+//   So indoors the question is not "is it in the set" -- it is "did the map run out of room".
+namespace {
+
+constexpr int FirstIndoorMap   = 0x25;  ///< constants/map_constants.asm
+constexpr int FirstStillSprite = 0x3D;  ///< constants/sprite_constants.asm -- SPRITE_POKE_BALL up
+constexpr int WalkingVramSlots = 10;    ///< map_sprites.asm: `cp 11 ; is it one of the first 10 slots?`
+constexpr int StillVramSlots   = 2;     ///< the two 4-tile slots at vSprites tile $78 / $7c
+
+} // namespace
+
+bool MapModel::showScratch() const { return showScratchFields; }
+
+void MapModel::setShowScratch(bool show)
+{
+  if (showScratchFields == show)
+    return;
+
+  showScratchFields = show;
+
+  emit showScratchChanged();
+  emit changed();   // the Details panel's field list is a different list now
+}
+
+bool MapModel::mapIsIndoors() const
+{
+  return mapInd() >= FirstIndoorMap;
+}
+
+QVector<int> MapModel::vramPictures() const
+{
+  QVector<int> out;
+
+  // ── Outdoor: the ROM's sprite set. Not the save's copy of it. ──────────────────────────────
+  if (!mapIsIndoors()) {
+    MapDBEntry* entry = MapEngine::sourceMap(mapInd());
+    if (entry == nullptr)
+      return out;
+
+    SpriteSetDBEntry* set = entry->getToSpriteSet();
+    if (set == nullptr)
+      return out;
+
+    const SpriteSetDBEntry* resolved = set->getResolvedSet(static_cast<var8>(playerX()),
+                                                           static_cast<var8>(playerY()));
+    if (resolved == nullptr)
+      return out;
+
+    for (SpriteDBEntry* s : resolved->getSprites(static_cast<var8>(playerX()),
+                                                 static_cast<var8>(playerY()))) {
+      if (s != nullptr)
+        out.append(int(s->ind));
+    }
+
+    return out;
+  }
+
+  // ── Indoor: the cast IS the set. First appearance, deduplicated, until the VRAM runs out. ──
+  if (npcs == nullptr)
+    return out;
+
+  int walking = 0;
+  int still = 0;
+
+  for (int slot = 1; slot < npcs->spriteCount(); slot++) {
+    SpriteData* s = npcs->spriteAt(slot);
+    if (s == nullptr || s->pictureID == 0)
+      continue;
+
+    const int pic = s->pictureID;
+
+    if (out.contains(pic))
+      continue;   // .checkIfAlreadyLoadedLoop -- it shares the earlier slot's tiles
+
+    // Out of room. The console does not refuse; it just has nowhere to put the tiles, and what the
+    // sprite draws is whatever is already in that slot. Either way: not this character.
+    if (pic >= FirstStillSprite) {
+      if (still >= StillVramSlots)
+        continue;
+      still++;
+    }
+    else {
+      if (walking >= WalkingVramSlots)
+        continue;
+      walking++;
+    }
+
+    out.append(pic);
+  }
+
+  return out;
+}
+
+bool MapModel::pictureWouldRender(int picture) const
+{
+  if (picture <= 0)
+    return false;
+
+  // SPRITE_RED is always in VRAM -- LoadSpriteSetData writes it into the player's own slot before
+  // the set goes in, and indoors the player's picture is copied in with everybody else's.
+  if (picture == SpritePlayerPicture)
+    return true;
+
+  return vramPictures().contains(picture);
+}
+
+bool MapModel::pictureWouldRenderIfAdded(int picture) const
+{
+  if (picture <= 0)
+    return false;
+
+  if (pictureWouldRender(picture))
+    return true;   // already in video memory -- a second copy costs nothing (.alreadyLoaded)
+
+  // Outdoors, that is the end of it: the VRAM is the map's ROM sprite set and nothing you put on the
+  // map can change what is in it.
+  if (!mapIsIndoors())
+    return false;
+
+  // Indoors, the cast IS the set -- so the only question is whether there is a slot left of the
+  // right KIND. A Pokéball cannot borrow a walking sprite's slot: the still sprites live in their
+  // own two four-tile slots.
+  const QVector<int> vram = vramPictures();
+
+  int walking = 0;
+  int still = 0;
+
+  for (int p : vram) {
+    if (p >= FirstStillSprite)
+      still++;
+    else
+      walking++;
+  }
+
+  return (picture >= FirstStillSprite) ? (still < StillVramSlots)
+                                       : (walking < WalkingVramSlots);
 }
 
 QVariantList MapModel::spriteList() const
@@ -677,6 +867,58 @@ int MapModel::screenY() const { return MapEngine::screenRect(playerX(), playerY(
 int MapModel::screenW() const { return MapEngine::screenRect(playerX(), playerY()).width(); }
 int MapModel::screenH() const { return MapEngine::screenRect(playerX(), playerY()).height(); }
 
+QVariantList MapModel::contrastShades(int contrast) const
+{
+  QVariantList out;
+
+  // ⚠️ THE REAL PALETTE, not a decoration. The contrast segments used to be painted in the app's
+  // accent blue (and the glitch ones in yellow) -- which told you *that* a value was unusual and
+  // nothing whatever about what it would do to the map. Twilight: *"coloured segments matching the
+  // current colours."* So each segment now wears the four shades that value actually renders in, and
+  // sliding along the strip shows you the map going dark before the map does.
+  //
+  // `backgroundPalette` is the genuine rBGP byte the console would be holding -- glitch reads across
+  // the fade table's seam included. We are not approximating; we are asking the engine.
+  const int bgp = MapEngine::backgroundPalette(contrast);
+
+  if (bgp < 0)
+    return out;   // a value we have no palette for. The caller draws nothing rather than inventing.
+
+  // Bits 1-0 are colour 0, bits 7-6 are colour 3 -- the hardware's own layout.
+  static const int grey[4] = { 255, 170, 85, 0 };
+
+  for (int i = 0; i < 4; i++) {
+    const int shade = (bgp >> (2 * i)) & 3;
+    const int g = grey[shade];
+    out.append(QColor(g, g, g));
+  }
+
+  return out;
+}
+
+QVariantMap MapModel::viewBoxesAt(int x, int y) const
+{
+  // ⚠️ The same MapEngine routines the bound properties use, just asked about a position that is not
+  // (yet) the player's. That is what lets the two boxes follow him **while you are dragging him**
+  // rather than snapping into place on release (Twilight, 2026-07-13: "Can the camera box and draw
+  // area box update live as player is moved around" -- they can, and now they do).
+  //
+  // One source of truth: if these boxes are ever wrong, they are wrong in MapEngine, together.
+  const QRect screen = MapEngine::screenRect(x, y);
+  const QRect draw   = MapEngine::scratchRect(x, y);
+
+  QVariantMap m;
+  m["screenX"] = screen.x();
+  m["screenY"] = screen.y();
+  m["screenW"] = screen.width();
+  m["screenH"] = screen.height();
+  m["drawX"]   = draw.x();
+  m["drawY"]   = draw.y();
+  m["drawW"]   = draw.width();
+  m["drawH"]   = draw.height();
+  return m;
+}
+
 // ── The player ────────────────────────────────────────────────────────────────
 
 int MapModel::playerFacing() const
@@ -706,14 +948,15 @@ QVariantList MapModel::npcList() const
   if (npcs == nullptr)
     return ret;
 
-  // Which eleven pictures this map has actually LOADED into the Game Boy's sprite memory. A
-  // sprite whose picture is not among them is what the console draws as garbage -- so we say
-  // so rather than quietly drawing it correctly and letting the user find out in-game.
-  QVector<int> loaded;
-  if (sprites != nullptr) {
-    for (int slot = 0; slot < 11; slot++)
-      loaded.append(sprites->lSpriteAt(slot));
-  }
+  // ⚠️ What the CONSOLE would have in video memory after it loaded this save -- computed the way
+  // the console computes it (@ref vramPictures), NOT read out of the save's cached sprite set,
+  // which the game overwrites before it ever looks at it. Outdoors that is the map's ROM sprite
+  // set; **indoors there is no sprite set at all** and the cast IS the set.
+  //
+  // A sprite whose picture is not in there is what the console draws as garbage -- the lookup runs
+  // off the end of `wSpriteSet` with no bounds check and lands on an arbitrary VRAM slot. So we say
+  // so, rather than drawing it correctly here and letting the user find out on a cartridge.
+  const QVector<int> loaded = vramPictures();
 
   // Slot 0 is the player and has his own layer. Everyone else is here.
   for (int i = 1; i < npcs->spriteCount(); i++) {
@@ -744,12 +987,34 @@ QVariantList MapModel::npcList() const
     m["rectY"]   = r.y();
     m["rectW"]   = r.width();
     m["rectH"]   = r.height();
+    // ── THE WALK, as the console draws it ──────────────────────────────────────────────────
+    //
+    // ⚠️ Sprites TELEPORTED between tiles, and this is why. `TryWalking` moves mapX/mapY to the
+    // DESTINATION immediately and then slides the sprite 1 pixel a frame for 16 frames -- so the
+    // tile coordinate is where it is GOING, not where it IS. Drawing straight from mapX/mapY
+    // skipped the entire step. (Twilight: "when they walk they don't slide or move or animate
+    // properly, it still looks bad.")
+    //
+    // The offset is exact, and it needs no reconstruction of the console's screen-pixel fields:
+    //
+    //     offset = −walkAnimationCounter × stepVector      (16 -> the source tile, 0 -> arrived)
+    //
+    const int step = (s->movementStatus == 3) ? s->walkAnimationCounter : 0;
+    const int sx = (s->getXStepVector() & 0x80) ? (s->getXStepVector() - 256) : s->getXStepVector();
+    const int sy = (s->getYStepVector() & 0x80) ? (s->getYStepVector() - 256) : s->getYStepVector();
+
+    m["offX"] = -step * sx;
+    m["offY"] = -step * sy;
+
+    // animFrameCounter (0-3) + facing walks SpriteFacingAndAnimationTable. Frames 1 and 3 are the
+    // SAME picture -- 3 is mirrored, and that mirror is the other leg. @see MapEngine::npcSprite
     m["source"]  = "image://player/npc/" + QString::number(s->pictureID)
                  + "/" + QString::number(s->faceDir)
-                 + "/" + QString::number(contrast());
+                 + "/" + QString::number(contrast())
+                 + "/" + QString::number(s->animFrameCounter & 3);
 
     // The two things about a sprite that a person cannot see by looking at it.
-    m["inSpriteSet"] = loaded.isEmpty() || loaded.contains(s->pictureID);
+    m["inSpriteSet"] = (s->pictureID == SpritePlayerPicture) || loaded.contains(s->pictureID);
     m["missable"]    = s->getMissableIndex();
 
     ret.append(m);
@@ -839,26 +1104,6 @@ QVariantList MapModel::spriteCatalog() const
 {
   QVariantList ret;
 
-  // The eleven pictures this map has actually loaded -- so the bar can say, before you drag
-  // anything, which characters this map can draw properly and which it cannot.
-  QVector<int> loaded;
-  if (sprites != nullptr) {
-    for (int slot = 0; slot < 11; slot++)
-      loaded.append(sprites->lSpriteAt(slot));
-
-    // ⚠️ SPRITE_RED (picture 1) is ALWAYS loaded, on every map, and is NOT part of the sprite set.
-    //
-    //     ld hl, wSpritePlayerStateData2PictureID
-    //     ld a, SPRITE_RED
-    //     ld [hl], a                  ; ...and only THEN does the sprite set go in
-    //                                   -- engine/overworld/map_sprites.asm
-    //
-    // Its tile patterns reach VRAM before the set's do, so an NPC given this picture draws as a
-    // second, perfectly correct Red. Marking it "not loaded" would be a lie -- and, as Twilight put
-    // it, saying the player's own picture isn't loaded is a nonsense sentence.
-    loaded.append(SpritePlayerPicture);
-  }
-
   // The shelves, in the order they read.
   const QStringList order = { "Story", "Trainers", "Townsfolk", "Pokemon", "Objects" };
 
@@ -878,7 +1123,24 @@ QVariantList MapModel::spriteCatalog() const
                   + "/" + QString::number(MapEngine::FacingDown)
                   + "/" + QString::number(contrast());
 
-      m["inSpriteSet"] = loaded.isEmpty() || loaded.contains(int(e->ind));
+      // ⚠️ "Would the CONSOLE draw this, if I dropped it here?" -- asked of the machine, not of the
+      // save's cached sprite set (which the game overwrites before it ever reads it).
+      //
+      // Outdoors that means "is it in the map's ROM sprite set". **Indoors it means "is there a
+      // video-memory slot left"** -- because indoors there IS no sprite set: the game loads each
+      // NPC's own artwork. Which is why the marks move around as you fill a building up.
+      const bool ok = pictureWouldRenderIfAdded(int(e->ind));
+      m["inSpriteSet"] = ok;
+
+      if (!ok) {
+        m["why"] = mapIsIndoors()
+          ? tr("This map has run out of video memory — it can hold %1 walking characters and %2 "
+               "still ones, and it is full. Delete somebody and this frees up.")
+              .arg(WalkingVramSlots).arg(StillVramSlots)
+          : tr("This is an outdoor map, so the game loads a fixed set of 11 pictures from the "
+               "cartridge and this isn't one of them. The console would draw it as garbage. You can "
+               "still place it.");
+      }
 
       // The one character that needs a word of its own: dropping this out gives you a SECOND Red
       // standing on the map. Perfectly legal, perfectly drawable -- just worth saying out loud.
@@ -1136,6 +1398,43 @@ QVariantMap option(int value, const QString& name, bool hack = false)
   return m;
 }
 
+/// Sort an option list into TWO SECTIONS -- the clean values first, the flagged ones after -- and put
+/// a heading on the first row of each.
+///
+/// ⚠️ Twilight, 2026-07-13: *"If it has an exclamation on it, it probably needs a group above it that
+/// has those without. I don't want duplicates above — I think there's so many of them they get lost.
+/// This needs to be organised better."*
+///
+/// She is right: the item list is 100+ entries with the glitch items scattered through it, and a "!"
+/// on row 84 is a "!" nobody sees. Two sections and the mark means something again. **Order is
+/// otherwise preserved** -- these lists are in the game's own order and that is worth keeping.
+QVariantList sectioned(const QVariantList& options,
+                       const QString& cleanHeading, const QString& flaggedHeading)
+{
+  QVariantList clean;
+  QVariantList flagged;
+
+  for (const QVariant& v : options) {
+    const QVariantMap m = v.toMap();
+    (m.value("hack").toBool() ? flagged : clean).append(m);
+  }
+
+  // The heading rides on the FIRST row of its section -- one model, one list, nothing to drift.
+  if (!clean.isEmpty()) {
+    QVariantMap first = clean.first().toMap();
+    first["header"] = cleanHeading;
+    clean[0] = first;
+  }
+
+  if (!flagged.isEmpty()) {
+    QVariantMap first = flagged.first().toMap();
+    first["header"] = flaggedHeading;
+    flagged[0] = first;
+  }
+
+  return clean + flagged;
+}
+
 // ── The text byte: three facts in one byte ───────────────────────────────────────────────────────
 //
 //     const_def 6
@@ -1215,18 +1514,16 @@ QVariantList MapModel::mapTextList() const
     named[id] = named.contains(id) ? tr("%1, a sign").arg(named[id]) : tr("a sign");
   }
 
-  // Six bits. Every one of them is reachable, so every one of them is offered -- the ones the map
-  // actually uses carry the name of what uses them, and the rest are honestly labelled as unused.
-  for (int id = 0; id <= 0x3F; id++) {
-    if (id == 0) {
-      ret.append(option(0, tr("0 — nothing to say")));
-      continue;
-    }
+  // ⚠️ ONLY THE SCRIPTS THIS MAP REALLY HAS.
+  //
+  // It used to offer all 64 ids, with the 50-odd unused ones listed as "this map has no script 37".
+  // That is fifty rows of nothing, and they buried the handful that mean something. Twilight:
+  // *"Empty sign script slots need to rely on Something else."* -- and they do: the raw box is one
+  // click away and reaches every one of the 64, so nothing is lost except the noise.
+  ret.append(option(0, tr("Nothing to say")));
 
-    ret.append(named.contains(id)
-                 ? option(id, tr("%1 — %2").arg(id).arg(named[id]))
-                 : option(id, tr("%1 — this map has no script %1").arg(id), true));
-  }
+  for (auto it = named.constBegin(); it != named.constEnd(); ++it)
+    ret.append(option(it.key(), tr("%1 — %2").arg(it.key()).arg(it.value())));
 
   return ret;
 }
@@ -1273,6 +1570,24 @@ QVariantList MapModel::npcFields(int slot) const
   if (s == nullptr)
     return ret;
 
+  // ⚠️ THE SCRATCH FIELDS ARE **ABSENT**, NOT GREYED, WHEN THE SWITCH IS OFF.
+  //
+  // Roughly a third of a sprite is bytes the console works out again the moment it loads the save --
+  // the walk state, the on-screen pixels, the VRAM slot. Every one is real and every one is editable,
+  // and the toolbar's "Reloaded values" switch turns them on. It is **off by default** (Twilight):
+  //
+  //   *"When it's off, the fields that relate to things there's no point in changing will not be
+  //    present and add clutter."*
+  //
+  // So they do not get built at all. It is filtered HERE, in the model, and not in the panel -- so
+  // no view can accidentally leak one, and a test can prove they are gone.
+  auto add = [&](const QVariantMap& f) {
+    if (!showScratchFields && f.value("scratch").toBool())
+      return;
+
+    ret.append(f);
+  };
+
   // ── Character ──────────────────────────────────────────────────────────────────────────────
   //
   // A PICKER, with the artwork in it. You choose a character by looking at them, not by knowing
@@ -1280,14 +1595,14 @@ QVariantList MapModel::npcFields(int slot) const
   // from pictures.")
   const QString character = tr("Character");
 
-  ret.append(field(character, "pictureID", tr("Picture"), QString(),
+  add(field(character, "pictureID", tr("Picture"), QString(),
                    s->pictureID, 0, 255, "picture"));
 
   // ── Where ──────────────────────────────────────────────────────────────────────────────────
   //
   // X and Y are ONE fact, so they are one control (Twilight: "x and y can probably be grouped into
   // 1 box"). The +4 bias comes off here and goes back on in setNpcField -- one conversion, one place.
-  ret.append(field(tr("Where"), "mapXY", tr("Standing at"),
+  add(field(tr("Where"), "mapXY", tr("Standing at"),
                    tr("Where on the map, in tiles, counting from the top-left. (The save keeps "
                       "these with the game's +4 bias on them; we take it off, so this is what a "
                       "player would count.)"),
@@ -1300,30 +1615,30 @@ QVariantList MapModel::npcFields(int slot) const
   const QString movement = tr("Movement");
 
   const QVariantList mobility = {
-    option(0xFF, tr("Stands still")),
-    option(0xFE, tr("Wanders")),
-    option(0x00, tr("Walks through walls"), true),
+    option(0xFF, tr("Stand still")),
+    option(0xFE, tr("Wander")),
+    option(0x00, tr("Walk through walls"), true),
   };
-  ret.append(field(movement, "movementByte", tr("What it does"),
-                   tr("The game has exactly two words for this: WALK and STAY. A sprite that STAYS "
-                      "is not frozen, though — it still TURNS to face you. Any other value lets it "
-                      "move with no collision detection at all."),
+  add(field(movement, "movementByte", tr("What they do"),
+                   tr("The game has exactly two words for this: WALK and STAY. Somebody who STAYS "
+                      "is not frozen, though — they still TURN to face you. Any other value lets "
+                      "them move with no collision detection at all."),
                    s->movementByte, 0, 255, "enum", mobility));
 
   const QVariantList movement2 = {
     option(0x00, tr("Anywhere")),
     option(0x01, tr("Up and down only")),
     option(0x02, tr("Left and right only")),
-    option(0x10, tr("A boulder — Strength pushes it")),
-    option(0xD0, tr("Faces down")),
-    option(0xD1, tr("Faces up")),
-    option(0xD2, tr("Faces left")),
-    option(0xD3, tr("Faces right")),
-    option(0xFF, tr("Nothing at all")),
+    option(0x10, tr("A boulder — Strength pushes them")),
+    option(0xD0, tr("Facing down")),
+    option(0xD1, tr("Facing up")),
+    option(0xD2, tr("Facing left")),
+    option(0xD3, tr("Facing right")),
+    option(0xFF, tr("Nowhere at all")),
   };
-  ret.append(field(movement, "rangeDirByte", tr("Where it may go"),
-                   tr("ONE byte doing two jobs: a wander range for a sprite that walks, a fixed "
-                      "facing for one that doesn't. It is NOT the facing below — that is a "
+  add(field(movement, "rangeDirByte", tr("Where they may go"),
+                   tr("ONE byte doing two jobs: a wander range for somebody who walks, a fixed "
+                      "facing for somebody who doesn't. It is NOT the facing below — that is a "
                       "different byte in a different table, and it is the one you see."),
                    s->getRangeDirByte(), 0, 255, "enum", movement2));
 
@@ -1333,13 +1648,13 @@ QVariantList MapModel::npcFields(int slot) const
     option(0x8, tr("Left")),
     option(0xC, tr("Right")),
   };
-  ret.append(field(movement, "faceDir", tr("Facing"),
-                   tr("Which way it is drawn right now. There is no right-facing artwork in the "
+  add(field(movement, "faceDir", tr("Facing"),
+                   tr("Which way they are drawn right now. There is no right-facing artwork in the "
                       "game for anybody — facing right is facing LEFT, mirrored."),
                    s->faceDir, 0, 255, "enum", facings));
 
-  ret.append(field(movement, "origFacingDir", tr("Was facing, before it turned to you"),
-                   tr("The game backs the facing up here when a sprite turns to talk, and puts it "
+  add(field(movement, "origFacingDir", tr("Were facing, before they turned to you"),
+                   tr("The game backs the facing up here when somebody turns to talk, and puts it "
                       "back when the text box closes."),
                    s->origFacingDir, 0, 255, "enum", facings, true));
 
@@ -1347,9 +1662,9 @@ QVariantList MapModel::npcFields(int slot) const
     option(0x00, tr("On open ground")),
     option(0x80, tr("In tall grass — it draws over their legs")),
   };
-  ret.append(field(movement, "grassPriority", tr("Standing in"),
-                   tr("Makes the game draw the grass OVER the sprite's lower half, so they look "
-                      "like they are standing in it rather than on it."),
+  add(field(movement, "grassPriority", tr("Standing in"),
+                   tr("Makes the game draw the grass OVER their lower half, so they look like they "
+                      "are standing in it rather than on it."),
                    s->grassPriority, 0, 255, "enum", grass));
 
   // ── Talking to it ──────────────────────────────────────────────────────────────────────────
@@ -1368,29 +1683,32 @@ QVariantList MapModel::npcFields(int slot) const
     option(KindItem,    tr("An item ball — pick it up")),
     option(KindBoth,    tr("Both at once"), true),
   };
-  ret.append(field(talk, "spriteKind", tr("What it is"),
+  add(field(talk, "spriteKind", tr("What they are"),
                    tr("The top two bits of the script byte. The game reads them to decide whether "
-                      "walking into this sprite starts a battle, hands you an item, or just talks."),
+                      "walking into them starts a battle, hands you an item, or just talks."),
                    kind, 0, 3, "enum", kinds));
 
-  ret.append(field(talk, "textID", tr("Its script"),
-                   tr("Which of THIS MAP's scripts runs. The names come from the cartridge — they "
-                      "are what the map really uses each script for."),
+  add(field(talk, "textID", tr("Their script"),
+                   tr("Which of THIS MAP's scripts runs when you talk to them. The names come from "
+                      "the cartridge — they are what the map really uses each script for. A script "
+                      "this map doesn't have is still reachable, under \"Something else\"."),
                    textByte & 0x3F, 0, 0x3F, "enum", mapTextList()));
 
   // The two that only exist for the kinds that have them.
   if (kind == KindItem || kind == KindBoth) {
-    ret.append(field(talk, "trainerClassOrItemID", tr("The item"),
+    add(field(talk, "trainerClassOrItemID", tr("The item"),
                      tr("What is in the ball."),
-                     s->getTrainerClassOrItemID(), 0, 255, "enum", itemList()));
+                     s->getTrainerClassOrItemID(), 0, 255, "enum",
+                     sectioned(itemList(), tr("Items"), tr("Glitch items"))));
   }
 
   if (kind == KindTrainer || kind == KindBoth) {
-    ret.append(field(talk, "trainerClassOrItemID", tr("Their class"),
+    add(field(talk, "trainerClassOrItemID", tr("Their class"),
                      tr("Which kind of trainer — a Bug Catcher, a Lass, a Gym Leader."),
-                     s->getTrainerClassOrItemID(), 0, 255, "enum", trainerClassList()));
+                     s->getTrainerClassOrItemID(), 0, 255, "enum",
+                     sectioned(trainerClassList(), tr("Trainer classes"), tr("Never used in-game"))));
 
-    ret.append(field(talk, "trainerSetID", tr("Which of their teams"),
+    add(field(talk, "trainerSetID", tr("Which of their teams"),
                      tr("A trainer class has several rosters — Bug Catcher #3 brings a different "
                         "team from Bug Catcher #1. This picks which one."),
                      s->getTrainerSetID(), 0, 255, "team"));
@@ -1408,7 +1726,7 @@ QVariantList MapModel::npcFields(int slot) const
     option(2, tr("Waiting out a delay")),
     option(3, tr("Mid-step")),
   };
-  ret.append(field(live, "movementStatus", tr("Doing"),
+  add(field(live, "movementStatus", tr("Doing"),
                    tr("Where this sprite is in its walk cycle. A save at rest is almost always "
                       "\"ready to move\"."),
                    s->movementStatus, 0, 255, "enum", statuses, true));
@@ -1416,19 +1734,19 @@ QVariantList MapModel::npcFields(int slot) const
   // Not a number and not a sentence explaining what a number means. A DURATION, drawn as one.
   // (Twilight: "What is 'delay until next move'? What does that mean, how is it measured? Don't
   // tell them with text — tell them with a beautiful, polished, clean UI/UX.")
-  ret.append(field(live, "movementDelay", tr("Then waits"),
+  add(field(live, "movementDelay", tr("Then waits"),
                    tr("How long before it may move again. The game counts this down one per frame, "
                       "at just under 60 frames a second, and sets a fresh random one every time a "
                       "sprite finishes a step."),
                    s->movementDelay, 0, 255, "frames", {}, true));
 
-  ret.append(field(live, "yDisp", tr("How far it has wandered, up/down"),
+  add(field(live, "yDisp", tr("How far it has wandered, up/down"),
                    tr("Meant to stop a sprite drifting away from where it started. It doesn't: the "
                       "game only ever checks one end of the range, so a sprite can walk off in the "
                       "other direction forever. The bug is in the cartridge and we keep it."),
                    s->yDisp, 0, 255, "byte", {}, true));
 
-  ret.append(field(live, "xDisp", tr("How far it has wandered, left/right"),
+  add(field(live, "xDisp", tr("How far it has wandered, left/right"),
                    tr("As above, and just as bugged."),
                    s->xDisp, 0, 255, "byte", {}, true));
 
@@ -1453,32 +1771,32 @@ QVariantList MapModel::npcFields(int slot) const
   // It is a SCRATCH byte the game borrows while it is loading tile patterns and then **wipes**. At
   // rest it is 0 for all sixteen slots, in every save ever written by a console. So it lives here,
   // with the rest of the scratch, wearing the "!" -- not up in Character pretending to be a fact.
-  ret.append(field(draw, "pictureIDCopy", tr("Picture, mid-load"),
+  add(field(draw, "pictureIDCopy", tr("Picture, mid-load"),
                    tr("A scratch byte the game borrows while it loads this map's artwork into video "
                       "memory, and then wipes. In a real save it is always zero — including this "
                       "one, probably."),
                    s->pictureIDCopy, 0, 255, "byte", {}, true));
 
-  ret.append(field(draw, "imageIndex", tr("Which frame is showing"),
+  add(field(draw, "imageIndex", tr("Which frame is showing"),
                    tr("Which picture of this character the console is drawing. $FF means \"off "
                       "screen — don't draw at all\"."),
                    s->imageIndex, 0, 255, "byte", {}, true));
 
-  ret.append(field(draw, "imageBaseOffset", tr("Where its pictures live"),
+  add(field(draw, "imageBaseOffset", tr("Where its pictures live"),
                    tr("Which of the eleven sprite-picture slots in the Game Boy's video memory this "
                       "character's artwork was loaded into. The player is always slot 1."),
                    s->imageBaseOffset, 0, 255, "byte", {}, true));
 
-  ret.append(field(draw, "walkAnimationCounter", tr("Frames left in this step"),
+  add(field(draw, "walkAnimationCounter", tr("Frames left in this step"),
                    tr("A step takes 16 frames. This counts them down."),
                    s->walkAnimationCounter, 0, 255, "frames", {}, true));
 
-  ret.append(field(draw, "animFrameCounter", tr("Where in the walk cycle"),
+  add(field(draw, "animFrameCounter", tr("Where in the walk cycle"),
                    tr("Four states, which is what makes the four-frame walk. (The game only has "
                       "TWO walking pictures — it mirrors one of them to fake the other leg.)"),
                    s->animFrameCounter, 0, 255, "byte", {}, true));
 
-  ret.append(field(draw, "intraAnimationFrameCounter", tr("Frames until the next one"),
+  add(field(draw, "intraAnimationFrameCounter", tr("Frames until the next one"),
                    tr("Counts to 4 between animation frames, so the legs don't flicker."),
                    s->intraAnimationFrameCounter, 0, 255, "frames", {}, true));
 
@@ -1487,26 +1805,26 @@ QVariantList MapModel::npcFields(int slot) const
     option(0x01, tr("+1 pixel")),
     option(0xFF, tr("−1 pixel")),
   };
-  ret.append(field(draw, "yStepVector", tr("Moving, up/down"),
+  add(field(draw, "yStepVector", tr("Moving, up/down"),
                    tr("How far it slides each frame while it is mid-step."),
                    s->getYStepVector(), 0, 255, "enum", steps, true));
 
-  ret.append(field(draw, "xStepVector", tr("Moving, left/right"),
+  add(field(draw, "xStepVector", tr("Moving, left/right"),
                    tr("As above."),
                    s->getXStepVector(), 0, 255, "enum", steps, true));
 
-  ret.append(field(draw, "screenXY", tr("On screen, in pixels"),
+  add(field(draw, "screenXY", tr("On screen, in pixels"),
                    tr("Where the console is actually drawing this sprite, in screen pixels. It "
                       "works this out from the map coordinates and the player's, every single time "
                       "it loads a map — so it is a read-out, not a setting."),
                    (s->xPixels & 0xFF) | ((s->yPixels & 0xFF) << 8), 0, 0, "pixels", {}, true));
 
-  ret.append(field(draw, "gridXY", tr("Snapped to the grid"),
+  add(field(draw, "gridXY", tr("Snapped to the grid"),
                    tr("The same position, rounded to whole tiles. It is what the collision code "
                       "reads, and the game recomputes it."),
                    (s->xAdjusted & 0xFF) | ((s->yAdjusted & 0xFF) << 8), 0, 0, "pixels", {}, true));
 
-  ret.append(field(draw, "collisionData", tr("What it last bumped into"),
+  add(field(draw, "collisionData", tr("What it last bumped into"),
                    tr("A bit per direction: which ways this sprite found blocked the last time it "
                       "tried to walk."),
                    s->collisionData, 0, 255, "byte", {}, true));

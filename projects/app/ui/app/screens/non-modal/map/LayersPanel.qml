@@ -283,12 +283,14 @@ Rectangle {
         value: brg.mapLayers.overlayOpacity
         onMoved: brg.mapLayers.overlayOpacity = value
 
-        ToolTip {
+        // MapToolTip, not the stock one. @see MapToolTip -- the stock ToolTip is dark-on-translucent
+        // and unreadable, and it is the complaint that keeps coming back.
+        MapToolTip {
           parent: opacitySlider.handle
-          visible: opacitySlider.pressed || opacitySlider.hovered
+          shown: opacitySlider.pressed || opacitySlider.hovered
+          followGlobalSetting: false
+          delay: 0
           text: Math.round(opacitySlider.value * 100) + "%"
-          enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 70 } }
-          exit:  Transition { NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 70 } }
         }
       }
     }

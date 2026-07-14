@@ -58,10 +58,15 @@ private slots:
   void moveNpc_clampsToTheMap();
   void addNpc_thenRemove_slidesTheRestUp();
   void npcFields_coverEveryByteAndAreGrouped();
+  void scratchFieldsAreAbsentUntilYouAskForThem();
   void npcFields_showOnlyTheFieldsTheSpritesKindHas();
   void setNpcField_writesTheByteAndTakesHackValues();
   void detailLists_comeFromTheRealGameData();
+  void enumOptions_putTheFlaggedOnesInTheirOwnSection();
   void spriteCatalog_isAllSeventyTwoInGroupOrder();
+  void vram_outdoorsIsTheRomSpriteSetNotTheSavesCopyOfIt();
+  void vram_indoorsThereIsNoSpriteSetAtAll();
+  void vram_indoorsRunsOutOfVideoMemory();
   void sim_actuallyMovesTheWalkersAndLeavesTheRest();
 
 private:
@@ -252,6 +257,10 @@ void TestMapSprites::npcFields_coverEveryByteAndAreGrouped()
 {
   Rig* r = makeRig();
 
+  // ⚠️ EVERY byte -- so the scratch has to be switched on. It is OFF by default (it is a third of the
+  // panel and it is clutter), and `scratchFieldsAreAbsentUntilYouAskForThem` pins that separately.
+  r->map->setShowScratch(true);
+
   const int slot = r->map->npcList().first().toMap().value("slot").toInt();
   const QVariantList fields = r->map->npcFields(slot);
 
@@ -304,6 +313,38 @@ void TestMapSprites::npcFields_coverEveryByteAndAreGrouped()
                            "yStepVector", "xStepVector", "screenXY", "gridXY", "collisionData" })
     QVERIFY2(seenKeys.contains(QString::fromLatin1(key)),
              qPrintable(QStringLiteral("the panel has no row for '%1'").arg(key)));
+
+  delete r;
+}
+
+/// The bytes the console recomputes on load are **ABSENT** until you ask for them -- not greyed, not
+/// collapsed: not there. (Twilight: "when it's off, the fields ... will not be present and add
+/// clutter.") The filtering is in the MODEL, so no view can leak one, and this proves it.
+void TestMapSprites::scratchFieldsAreAbsentUntilYouAskForThem()
+{
+  Rig* r = makeRig();
+  const int slot = r->map->npcList().first().toMap().value("slot").toInt();
+
+  QVERIFY2(!r->map->showScratch(), "the reloaded values are OFF by default");
+
+  auto scratchCount = [&]() {
+    int n = 0;
+    for (const QVariant& v : r->map->npcFields(slot))
+      if (v.toMap().value("scratch").toBool())
+        n++;
+    return n;
+  };
+
+  QCOMPARE(scratchCount(), 0);
+  const int lean = r->map->npcFields(slot).size();
+
+  r->map->setShowScratch(true);
+
+  QVERIFY2(scratchCount() > 0, "switching them on has to actually bring them back");
+  QVERIFY2(r->map->npcFields(slot).size() > lean, "...and the panel has to grow");
+
+  // They are a THIRD of a sprite, which is exactly why hiding them is worth doing.
+  QVERIFY(scratchCount() >= 6);
 
   delete r;
 }
@@ -400,19 +441,20 @@ void TestMapSprites::detailLists_comeFromTheRealGameData()
 {
   Rig* r = makeRig();
 
-  // The map's scripts. All 64 reachable ids are offered; the ones this map REALLY uses carry the
-  // name of who uses them, and the rest are honestly flagged as unused.
+  // ⚠️ ONLY the scripts this map REALLY has, plus "nothing to say". It used to offer all 64 ids,
+  // with the ~50 unused ones listed as "this map has no script 37" -- fifty rows of nothing, burying
+  // the seven that mean something. Twilight: "empty sign script slots need to rely on Something
+  // else." They do: the raw box reaches all 64 and is one click away.
   const QVariantList texts = r->map->mapTextList();
-  QCOMPARE(texts.size(), 64);
 
-  int named = 0;
+  QVERIFY2(texts.size() < 20, "the script picker is listing ids this map does not have");
+  QVERIFY2(texts.size() > 4, "...but it should have Pallet Town's real ones");
+
   for (const QVariant& v : texts)
-    if (!v.toMap().value("hack").toBool())
-      named++;
+    QVERIFY2(!v.toMap().value("hack").toBool(),
+             "no row here should be flagged -- the unused ones are simply not offered");
 
-  QVERIFY2(named > 1, "this map's real scripts are not named -- the picker is a list of numbers");
-
-  // Pallet Town's script 1 is Prof. Oak's, out of the cartridge.
+  // Pallet Town's script 1 is Prof. Oak's, out of the cartridge. (Row 0 is "Nothing to say".)
   QVERIFY2(texts.at(1).toMap().value("name").toString().contains("Oak"),
            qPrintable("script 1 should be Oak's, got: "
                       + texts.at(1).toMap().value("name").toString()));
@@ -420,6 +462,135 @@ void TestMapSprites::detailLists_comeFromTheRealGameData()
   QVERIFY2(r->map->itemList().size() > 100, "the item picker is not the real item list");
   QVERIFY2(r->map->trainerClassList().size() > 20,
            "the trainer-class picker is not the real class list");
+
+  delete r;
+}
+
+/// The flagged values get a SECTION of their own, under a heading -- a "!" on row 84 of a flat list
+/// of 140 is a "!" nobody ever sees. (Twilight: "there's so many of them they get lost.")
+void TestMapSprites::enumOptions_putTheFlaggedOnesInTheirOwnSection()
+{
+  Rig* r = makeRig();
+  const int slot = r->map->npcList().first().toMap().value("slot").toInt();
+
+  // Make it an item ball, so the panel offers the item list.
+  r->map->setNpcField(slot, "spriteKind", 2);
+
+  QVariantList items;
+  for (const QVariant& v : r->map->npcFields(slot)) {
+    const QVariantMap f = v.toMap();
+    if (f.value("key").toString() == "trainerClassOrItemID")
+      items = f.value("options").toList();
+  }
+
+  QVERIFY(items.size() > 100);
+
+  // Every clean option comes BEFORE every flagged one -- that is what makes it two sections.
+  bool seenFlagged = false;
+  int headings = 0;
+
+  for (const QVariant& v : items) {
+    const QVariantMap o = v.toMap();
+    const bool hack = o.value("hack").toBool();
+
+    if (!o.value("header").toString().isEmpty())
+      headings++;
+
+    if (hack)
+      seenFlagged = true;
+    else
+      QVERIFY2(!seenFlagged, "a clean item turned up AFTER a flagged one -- the sections are mixed");
+  }
+
+  QVERIFY2(seenFlagged, "the glitch items are missing -- they are real bytes and must be offered");
+  QCOMPARE(headings, 2);   // one heading per section, on its first row
+
+  delete r;
+}
+
+// ── What the console would actually have in video memory ─────────────────────────────────────────
+//
+// The whole "will my sprite render?" question, and until 2026-07-13 we answered it by reading the
+// save's cached sprite set -- which the game throws away. These three pin the real behaviour, out of
+// engine/overworld/map_sprites.asm. @see MapModel::vramPictures.
+
+/// OUTDOORS the artwork comes from the CARTRIDGE, and the save's cached copy of it is irrelevant.
+void TestMapSprites::vram_outdoorsIsTheRomSpriteSetNotTheSavesCopyOfIt()
+{
+  Rig* r = makeRig();
+
+  QVERIFY(!r->map->mapIsIndoors());              // the fixture is Pallet Town, map 0
+  QCOMPARE(r->map->vramPictures().size(), 11);   // SPRITE_SET_LENGTH
+
+  const QVector<int> before = r->map->vramPictures();
+
+  // Scribble all over the save's cached sprite set. The console recomputes the lot from
+  // MapSpriteSets[wCurMap] on every single load, so NOTHING here may move.
+  for (int slot = 0; slot < 11; slot++)
+    r->map->setCachedSprite(slot, 0x2A);
+
+  r->map->applySpriteSet(7);   // and give it a different set id entirely, for good measure
+
+  QCOMPARE(r->map->vramPictures(), before);
+
+  delete r;
+}
+
+/// INDOORS THERE IS NO SPRITE SET. `InitOutsideMapSprites` returns immediately and the game loads
+/// each NPC's OWN artwork -- so the cast IS the set, and anybody can go anywhere in a building.
+void TestMapSprites::vram_indoorsThereIsNoSpriteSetAtAll()
+{
+  Rig* r = makeRig();
+
+  r->map->setMapInd(0x25);   // FIRST_INDOOR_MAP -- Red's house, 1F
+  QVERIFY(r->map->mapIsIndoors());
+
+  // A Gambler is not in Pallet Town's sprite set, and outdoors that is the end of it. Indoors the
+  // game simply loads him.
+  const int gambler = 0x1B;
+
+  const int slot = r->map->addNpc(gambler, 3, 3);
+  QVERIFY(slot > 0);
+
+  QVERIFY2(r->map->vramPictures().contains(gambler),
+           "indoors the game loads the NPC's own picture -- there is no set to be absent from");
+  QVERIFY(r->map->pictureWouldRender(gambler));
+
+  // And anybody else you fancy dropping in, too -- there is room.
+  QVERIFY(r->map->pictureWouldRenderIfAdded(0x2A));
+
+  delete r;
+}
+
+/// ...but the video memory is REAL and it is SMALL: 10 walking slots, 2 four-tile still slots.
+/// Fill a building up and the eleventh character is the one the console cannot draw.
+void TestMapSprites::vram_indoorsRunsOutOfVideoMemory()
+{
+  Rig* r = makeRig();
+
+  r->map->setMapInd(0x25);
+
+  // Clear the cast, then pack it with TEN DISTINCT walking pictures.
+  while (r->map->npcList().size() > 0)
+    r->map->removeNpc(r->map->npcList().first().toMap().value("slot").toInt());
+
+  for (int i = 0; i < 10; i++)
+    QVERIFY(r->map->addNpc(0x04 + i, 1 + i, 1) > 0);   // ten different walking sprites
+
+  QCOMPARE(r->map->vramPictures().size(), 10);
+
+  // The eleventh DISTINCT walking picture has nowhere to go.
+  QVERIFY2(!r->map->pictureWouldRenderIfAdded(0x20),
+           "an 11th distinct walking picture cannot fit -- there are only 10 VRAM slots");
+
+  // But a picture already loaded costs nothing -- .alreadyLoaded reuses its slot.
+  QVERIFY2(r->map->pictureWouldRenderIfAdded(0x04),
+           "a SECOND copy of a picture already in VRAM shares its slot and is free");
+
+  // And a STILL sprite has its own two four-tile slots, which are still empty. A Pokéball cannot
+  // borrow a walking sprite's slot, and it does not need to.
+  QVERIFY2(r->map->pictureWouldRenderIfAdded(0x3D),
+           "a still sprite (>= FIRST_STILL_SPRITE) has its own two slots and they are free");
 
   delete r;
 }

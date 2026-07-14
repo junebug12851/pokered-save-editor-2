@@ -192,9 +192,20 @@ private:
   int savedView = 0;
   int savedOverlay = 0;
 
-  // What is on when the screen opens. The DRAW AREA and the CONNECTIONS are both OFF (Twilight,
-  // 2026-07-13): they are things you go looking for, not things that should be sitting on top of the
-  // map before you have asked for them. The map is the point.
+  // ⚠️ WHAT IS ON WHEN THE SCREEN OPENS -- and it is a list Twilight gave, verbatim (2026-07-13):
+  //
+  //     "Have block grid layer, map bounds layer, door layer, warp layer, player,
+  //      people and objects, screen box on by default only for layers."
+  //
+  // So: the two guides that tell you the map's *shape*, the two Components that tell you where the
+  // map's *exits* are (doors and warps are the only overlays anybody wants standing by default --
+  // they are how a map connects to the rest of the world), and the whole Game View bar the draw
+  // area. The tile grid, the connections, the draw area and the other seven overlays are things you
+  // go LOOKING for, not things that sit on top of the map before you have asked.
+  //
+  // ⚠️ Doors and Warps are **overlay** bits, not view bits -- they live in `MapModel::layers`, not
+  // here. The constructor switches them on there. Do not add them to this mask; it will not work and
+  // it will look like it does.
   int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewScreenBox;
   qreal opacity = 1.0;
 };

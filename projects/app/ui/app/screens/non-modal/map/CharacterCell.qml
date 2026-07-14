@@ -97,6 +97,9 @@ Item {
     // loaded the player's picture", and Twilight (rightly) called that weird: the player's picture
     // is loaded on every map in the game. It is loaded, it draws perfectly, and dropping one out
     // gives you a second Red. That is a **?**, not a **!**.
+    // ⚠️ The REASON comes from the model, because the reason DEPENDS ON THE MAP: outdoors it is "not
+    // in the cartridge's sprite set for this map"; indoors it is "this building is out of video
+    // memory" -- indoor maps have no sprite set at all. @see MapModel::vramPictures.
     MapWarnIcon {
       visible: !cell.character.inSpriteSet
 
@@ -104,9 +107,8 @@ Item {
       anchors.right: parent.right
       anchors.margins: 2
 
-      text: qsTr("This map hasn't loaded this picture — the game would draw it as garbage. You can "
-                 + "still place it.")
-      tipWidth: 180
+      text: cell.character.why || ""
+      tipWidth: 200
     }
 
     MapInfoIcon {

@@ -265,6 +265,40 @@ character's real picture. It is now modelled that way.
 > fires on every save is not a warning, it is noise — and noise is a bug.** Before shipping a "these two
 > disagree" notice, load a *clean* save and check it stays quiet. Both times, it didn't.
 
+## Part 5b — the walk cycle: **there is no second walking frame** (2026-07-13)
+
+`UpdateSpriteImage` (`engine/overworld/movement.asm`) is one line of arithmetic:
+
+```
+imageIndex = animFrameCounter + facingDirection   (+ the sprite's VRAM base)
+```
+
+…and that index walks a **16-row table**, `SpriteFacingAndAnimationTable` (`data/sprites/facings.asm`).
+Here it is, in full:
+
+| facing | frame 0 | frame 1 | frame 2 | frame 3 |
+|---|---|---|---|---|
+| **Down** (`$0`) | StandingDown | WalkingDown | StandingDown | WalkingDown **flipped** |
+| **Up** (`$4`) | StandingUp | WalkingUp | StandingUp | WalkingUp **flipped** |
+| **Left** (`$8`) | StandingLeft | WalkingLeft | StandingLeft | WalkingLeft |
+| **Right** (`$C`) | StandingLeft **flip** | WalkingLeft **flip** | StandingLeft **flip** | WalkingLeft **flip** |
+
+Two things fall straight out of it, and both surprise people:
+
+* **There is no second walking frame.** Frames 1 and 3 are the *same picture* — and 3 is **mirrored**.
+  That mirror is the other leg. (Not for LEFT: mirroring a left-facing sprite would turn it round, so
+  left simply uses its one walk frame twice.)
+* **There is no right-facing art for anybody.** The whole Right row is the Left art, X-flipped.
+
+So a "walking person" sheet is **six** quads — stand down/up/left, walk down/up/left — and that is
+exactly what `scripts/import_sprites.py` writes out (one loose PNG per sprite; **not** an atlas).
+`MapEngine::npcSprite(picture, facing, contrast, animFrame)` implements the table verbatim.
+
+⚠️ And the *movement* half: `TryWalking` moves `mapX`/`mapY` to the **destination** immediately, then
+slides the sprite **1 px per frame for 16 frames**. So the tile coordinate is where somebody is
+*going*, not where they *are* — draw straight from it and they teleport. The canvas gets the sub-tile
+offset (`−walkAnimationCounter × stepVector`) from `MapModel::npcList`.
+
 ## Part 6 — the console settled the big one: **sprite edits DO survive**
 
 Reading `LoadMapHeader` (`home/overworld.asm`, `.loadSpriteData`) is genuinely alarming. On a map load it

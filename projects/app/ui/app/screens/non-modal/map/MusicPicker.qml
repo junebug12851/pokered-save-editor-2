@@ -233,20 +233,25 @@ RowLayout {
             required property int index
 
             width: trackCombo.width
-            height: (modelData.group !== "" ? 20 : 0) + 24
+            height: (row.heading !== "" ? 20 : 0) + 24
             highlighted: trackCombo.highlightedIndex === row.index
 
             readonly property bool isSaved: music.hasAudio
                                          && music.audio.musicBank === row.modelData.bank
                                          && music.audio.musicID === row.modelData.id
 
+            // ⚠️ `header`, NOT `group`. The model puts the group's name on the FIRST row of that
+            // group and leaves it empty on the rest -- that is what makes it a heading. Reading
+            // `group` (which every row carries) drew a heading above every single track, 151 times.
+            readonly property string heading: row.modelData.header || ""
+
             contentItem: ColumnLayout {
               spacing: 0
 
               Text {
-                visible: row.modelData.group !== ""
+                visible: row.heading !== ""
                 Layout.fillWidth: true
-                text: row.modelData.group
+                text: row.heading
                 font.pixelSize: 10
                 font.bold: true
                 color: brg.settings.textColorMid
@@ -300,21 +305,24 @@ RowLayout {
             value: brg.music.volume
             onMoved: brg.music.volume = value
 
-            ToolTip {
+            // MapToolTip, not the stock one -- dark text on translucent is unreadable and it is the
+            // recurring complaint on this screen. `followGlobalSetting: false`: a % readout while you
+            // are dragging a slider is not a HINT, it is the control's own value.
+            MapToolTip {
               parent: vol.handle
-              visible: vol.pressed || vol.hovered
+              shown: vol.pressed || vol.hovered
+              followGlobalSetting: false
+              delay: 0
               text: Math.round(vol.value * 100) + "%"
-              enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 70 } }
-              exit:  Transition { NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 70 } }
             }
           }
         }
 
         // ── Sub-tracks ─────────────────────────────────────────────────────────────────────
         //
-        // The 105 "inner voices" are real music: one channel of a song, played alone, exactly as
-        // the console plays it. On by default, because they are the point -- but 151 rows is a lot
-        // when all you want is Pallet Town.
+        // The 105 "inner voices" are real music: one channel of a song, played alone, exactly as the
+        // console plays it. But **OFF by default** (Twilight, 2026-07-13) -- 151 rows is a wall when
+        // all you wanted was Pallet Town, and 46 is a list. They are here when you want them.
         RowLayout {
           Layout.fillWidth: true
           spacing: 6
@@ -328,7 +336,7 @@ RowLayout {
 
           Switch {
             id: showInner
-            checked: true
+            checked: false
             implicitHeight: 22
             scale: 0.8
           }
@@ -341,34 +349,54 @@ RowLayout {
         }
 
         // ── The two save flags, below the list ──────────────────────────────────────────────
-        CheckBox {
-          text: qsTr("No audio fade-out")
-          checked: music.hasAudio ? music.audio.noAudioFadeout : false
-          enabled: music.hasAudio
-          onToggled: if (music.hasAudio) music.audio.noAudioFadeout = checked
+        //
+        // ⚠️ A stock CheckBox is ~40px tall by default, so two of them stacked leave a canyon between
+        // the labels. Twilight: *"checkboxes are too far apart."* They are a pair of related flags,
+        // so they read as a pair: tight, in their own column, with the spacing set here and not
+        // inherited from whatever the style felt like.
+        ColumnLayout {
+          Layout.fillWidth: true
+          spacing: 0
 
-          contentItem: Label {
-            text: parent.text
-            font.pixelSize: 11
-            color: "#424242"
-            leftPadding: parent.indicator.width + 5
-            verticalAlignment: Text.AlignVCenter
+          CheckBox {
+            Layout.fillWidth: true
+            implicitHeight: 26
+            topPadding: 0
+            bottomPadding: 0
+
+            text: qsTr("No audio fade-out")
+            checked: music.hasAudio ? music.audio.noAudioFadeout : false
+            enabled: music.hasAudio
+            onToggled: if (music.hasAudio) music.audio.noAudioFadeout = checked
+
+            contentItem: Label {
+              text: parent.text
+              font.pixelSize: 11
+              color: "#424242"
+              leftPadding: parent.indicator.width + 5
+              verticalAlignment: Text.AlignVCenter
+            }
           }
-        }
 
-        CheckBox {
-          text: qsTr("Don't change music on map entry")
-          checked: music.hasAudio ? music.audio.preventMusicChange : false
-          enabled: music.hasAudio
-          onToggled: if (music.hasAudio) music.audio.preventMusicChange = checked
+          CheckBox {
+            Layout.fillWidth: true
+            implicitHeight: 26
+            topPadding: 0
+            bottomPadding: 0
 
-          contentItem: Label {
-            text: parent.text
-            font.pixelSize: 11
-            color: "#424242"
-            leftPadding: parent.indicator.width + 5
-            verticalAlignment: Text.AlignVCenter
-            wrapMode: Text.Wrap
+            text: qsTr("Don't change music on map entry")
+            checked: music.hasAudio ? music.audio.preventMusicChange : false
+            enabled: music.hasAudio
+            onToggled: if (music.hasAudio) music.audio.preventMusicChange = checked
+
+            contentItem: Label {
+              text: parent.text
+              font.pixelSize: 11
+              color: "#424242"
+              leftPadding: parent.indicator.width + 5
+              verticalAlignment: Text.AlignVCenter
+              elide: Text.ElideRight
+            }
           }
         }
       }

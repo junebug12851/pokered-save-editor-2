@@ -28,10 +28,21 @@
   character the map has not loaded (CharacterCell.qml). That is not a hint about a button -- it is a
   notice about something that will go wrong, and it has to be readable the moment you point at it.
 
-  What was genuinely wrong with the stock tooltip, and is fixed here: it sat too far from the control
-  (so it read as a floating label rather than an explanation of the thing under the cursor), and its
-  contrast was poor. This one sits 6px under the control, centred on it -- dark, rounded, 11px, wide
-  enough for a real sentence.
+  ⚠️ **NOTHING ON THIS SCREEN MAY USE THE STOCK `ToolTip`.** Not `ToolTip.text`, not `ToolTip { }`.
+  Ever.
+
+  The stock tooltip is **dark text on a translucent background**, and over this app's pale panels it
+  is genuinely, repeatedly, hard to read. Twilight has told me so on three separate passes -- *"the
+  tooltip text is constantly too dark to read, I keep saying it"* -- and each time I fixed the one she
+  pointed at and left the others. So the rule is now absolute and it is written here, at the thing
+  that fixes it: **if you are typing `ToolTip`, you want `MapToolTip`.**
+
+  This one sits 6px under the control, centred on it: **white on opaque dark**, rounded, 11px, wide
+  enough for a real sentence -- and near enough to the control that it reads as an explanation of the
+  thing under the cursor rather than a label floating in the corner.
+
+  For a control's own live value (a slider's "60%"), set `followGlobalSetting: false` and `delay: 0`:
+  that is not a hint you have to opt into, it is the control telling you what it is doing.
 */
 import QtQuick
 import QtQuick.Controls

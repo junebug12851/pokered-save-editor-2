@@ -58,11 +58,19 @@ Rectangle {
   color: "transparent"
 
   /// The panel's "?" — everything this panel used to print at you. (MapDock puts it in the title.)
-  readonly property string panelInfo: qsTr(
-    "The eleven sprite pictures the game had loaded for this map — nine that walk, two that don't. "
-    + "Every character on the map has to come out of this set.\n\n"
-    + "It's a cache: the game rebuilds it from the map you're standing on every time it loads a "
-    + "save, so editing it here won't change what you see in-game.")
+  ///
+  /// ⚠️ It says something DIFFERENT indoors, because indoors the truth is different: there is no
+  /// sprite set at all. (2026-07-13; the disassembly is in MapModel::vramPictures.)
+  readonly property string panelInfo: brg.map.mapIsIndoors()
+    ? qsTr("⚠️ This is an INDOOR map, and indoor maps don't use a sprite set.\n\n"
+           + "The game loads each character's own artwork instead — so anybody can go anywhere in "
+           + "here, until the video memory runs out (10 walking characters, 2 still ones).\n\n"
+           + "These eleven bytes are just what was cached from the last outdoor map you were on. "
+           + "The game ignores them completely in here.")
+    : qsTr("The eleven sprite pictures the game loads for this map — nine that walk, two that don't. "
+           + "Outdoors, every character on the map has to come out of this set.\n\n"
+           + "It's a cache: the game rebuilds it from the cartridge every time it loads a save, so "
+           + "editing it here won't change what you see in-game.")
 
   /// A group box. A title, and whatever you put in it — the per-group paragraph is GONE (it is what
   /// made this panel a wall of text). If a group needs a caveat, it gets a `hint` or a MapWarnIcon.
@@ -135,7 +143,8 @@ Rectangle {
     clip: true
 
     ColumnLayout {
-      width: panel.width - 24
+      // 12px of margin each side, PLUS the 16px overlay-scrollbar lane. @see ui-patterns.md
+      width: panel.width - 24 - 16
       spacing: 10
 
       // (Two paragraphs of explanation opened this panel. They are the "?" in the title now --
@@ -186,7 +195,7 @@ Rectangle {
         title: qsTr("This map's set")
         hint: brg.map.mapHasSpriteSet
               ? ""
-              : qsTr("Indoors — there isn't one. This is the last outdoor map's.")
+              : qsTr("Indoors — the game doesn't use one. Anybody can go here.")
 
         RowLayout {
           Layout.fillWidth: true

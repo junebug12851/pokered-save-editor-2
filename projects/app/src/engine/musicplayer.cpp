@@ -226,6 +226,28 @@ void MusicPlayer::buildTrackList()
 
   QString lastGroup;
 
+  // ── SILENCE, FIRST ────────────────────────────────────────────────────────────────────────
+  //
+  // "No music" is a real value a map can hold and it is the one you reach for most often -- so it
+  // goes at the TOP, not buried at the bottom of "Special" where it was (Twilight, 2026-07-13). It
+  // has no group heading: it is not part of a group, it is the absence of one.
+  for (int i = 0; i < db->getStoreSize(); ++i) {
+    MusicDBEntry* e = db->getStoreAt(i);
+    if (e == nullptr || e->name != QLatin1String("None"))
+      continue;
+
+    QVariantMap none;
+    none["name"]    = QCoreApplication::translate("MusicPlayer", "No music");
+    none["group"]   = QString();
+    none["header"]  = QString();
+    none["bank"]    = e->bank;
+    none["id"]      = e->id;
+    none["inner"]   = false;
+    none["channel"] = 0;
+    entries.append(none);
+    break;
+  }
+
   // Walk the groups in display order, and inside each, the tracks in the order they're listed.
   const QStringList order = {QStringLiteral("Towns & Cities"), QStringLiteral("Routes"),
                              QStringLiteral("Places"), QStringLiteral("Battle"),
@@ -234,6 +256,10 @@ void MusicPlayer::buildTrackList()
   for (const QString& group : order) {
     for (const TrackInfo& t : TRACKS) {
       if (group != QLatin1String(t.group))
+        continue;
+
+      // ...and NOT a second time, down in "Special". @see above.
+      if (QLatin1String(t.key) == QLatin1String("None"))
         continue;
 
       // Find it in the DB (which owns the real bank/id).

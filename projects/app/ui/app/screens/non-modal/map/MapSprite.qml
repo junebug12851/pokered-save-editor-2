@@ -53,6 +53,14 @@ Item {
   required property string art
   required property bool inSet
 
+  /// The sub-tile SLIDE, in buffer pixels, while a step is in progress.
+  ///
+  /// ⚠️ Not decoration -- without it sprites TELEPORT. `TryWalking` moves the tile coordinate to the
+  /// destination immediately and then slides the sprite one pixel a frame for sixteen frames, so the
+  /// tile is where they are *going*. This is the difference. (@see MapModel::npcList)
+  property int offX: 0
+  property int offY: 0
+
   readonly property bool isPlayer: sprite.slot === 0
 
   signal editRequested()
@@ -68,11 +76,30 @@ Item {
   readonly property int liveX: sprite.dragging ? sprite.dragX : sprite.tileX
   readonly property int liveY: sprite.dragging ? sprite.dragY : sprite.tileY
 
+  // Dragging the PLAYER moves the screen box and the draw area with him -- both are computed FROM
+  // his position, and watching them snap into place only on release was the tell that they weren't
+  // really his. (Twilight, 2026-07-13.) -1 hands them back to where he actually is.
+  onLiveXChanged: if (sprite.isPlayer) sprite.canvas.livePlayerX = sprite.dragging ? sprite.liveX : -1
+  onLiveYChanged: if (sprite.isPlayer) sprite.canvas.livePlayerY = sprite.dragging ? sprite.liveY : -1
+
+  onDraggingChanged: {
+    if (!sprite.isPlayer || sprite.dragging)
+      return;
+
+    sprite.canvas.livePlayerX = -1;
+    sprite.canvas.livePlayerY = -1;
+  }
+
   readonly property bool selected: sprite.canvas.selectedNpc === sprite.slot
 
-  // The 4-pixel lift -- where the console's own OAM puts a sprite.
-  x: (sprite.canvas.mapBorderPx + sprite.liveX * 16) * sprite.canvas.zoom
-  y: (sprite.canvas.mapBorderPx + sprite.liveY * 16 - 4) * sprite.canvas.zoom
+  // The 4-pixel lift -- where the console's own OAM puts a sprite -- plus the sub-tile slide, which
+  // is what makes a step a step instead of a jump. (While you are DRAGGING there is no slide: the
+  // preview belongs under your cursor, not sixteen pixels behind it.)
+  readonly property int slideX: sprite.dragging ? 0 : sprite.offX
+  readonly property int slideY: sprite.dragging ? 0 : sprite.offY
+
+  x: (sprite.canvas.mapBorderPx + sprite.liveX * 16 + sprite.slideX) * sprite.canvas.zoom
+  y: (sprite.canvas.mapBorderPx + sprite.liveY * 16 + sprite.slideY - 4) * sprite.canvas.zoom
   width: 16 * sprite.canvas.zoom
   height: 16 * sprite.canvas.zoom
 

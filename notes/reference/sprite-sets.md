@@ -86,13 +86,80 @@ save are **recomputed from the map you are standing on before the game ever read
 they are hers, and they are editable — but nothing you put there changes a thing in-game. The panel
 says exactly that, at the top, rather than implying an edit that does nothing.
 
-### The one interesting consequence
+## 🔴 INDOORS THERE IS NO SPRITE SET (2026-07-13)
 
-`InitOutsideMapSprites` returns immediately for an **indoor** map (`cp FIRST_INDOOR_MAP; ret nc`), so
-indoors the eleven pictures are simply **left alone** — a save made in a building carries the sprite
-set of the last *outdoor* map you were on, with a set id of 0 (because `LoadMapData` zeroed it and
-nothing wrote it back). That is not save corruption; it is what a console holds too, and the panel
-says so instead of calling it a mismatch.
+This is the biggest thing on the page and I missed it for a day. `InitOutsideMapSprites` returns
+immediately for an **indoor** map (`cp FIRST_INDOOR_MAP; ret nc` — `FIRST_INDOOR_MAP` = **`$25`**),
+and then `InitMapSprites` does something completely different:
+
+```asm
+InitMapSprites::
+    call InitOutsideMapSprites
+    ret c                              ; outdoor maps are already done
+; if the map is an inside map (i.e. mapID >= FIRST_INDOOR_MAP)
+    ld hl, wSpritePlayerStateData1PictureID
+    ld de, wSpritePlayerStateData2PictureID
+.copyPictureIDLoop
+    ld a, [hl]                         ; ⚠️ the NPC's OWN picture
+    ld [de], a
+    ...
+; falls straight into LoadMapSpriteTilePatterns
+```
+
+**Indoors, the game loads each character's own artwork.** The cast *is* the set. There is no lookup,
+nothing to be absent from, and **any picture draws correctly in a building** — Gamblers in Red's
+house, Lorelei behind the Pokémart counter, whatever you like.
+
+What there *is*, instead, is a hard **capacity**. `LoadMapSpriteTilePatterns` allocates VRAM slots by
+**first appearance**, deduplicating repeats (`.alreadyLoaded` reuses the earlier slot), and there are:
+
+| | slots | which pictures |
+|---|---|---|
+| walking sprites | **10** | picture `< FIRST_STILL_SPRITE` (`$3D`) |
+| still, 4-tile sprites | **2** | picture `>= $3D` — Pokéballs, boulders, the fossil, the paper |
+
+The eleventh *distinct* walking picture in a building is the one the console cannot draw. A **second
+copy** of a picture already loaded is free.
+
+The save's eleven cached bytes are simply the last *outdoor* map's, carried in, with a set id of 0
+(`LoadMapData` zeroed it and nothing wrote it back). **The game ignores them completely indoors.**
+That is not save corruption; it is what a console holds too.
+
+## 🔴 …and outdoors, an out-of-set picture is UNDEFINED, not merely wrong
+
+The other half nobody writes down. `.storeVRAMSlotsLoop` finds an NPC's VRAM slot by searching the
+sprite set for its picture id:
+
+```asm
+.getPictureIndexLoop
+    inc c
+    ld a, [de]
+    inc de
+    cp b                          ; does the picture ID match?
+    jr nz, .getPictureIndexLoop   ; ⚠️ NO BOUNDS CHECK. NO TERMINATION.
+    inc c
+```
+
+**There is no bounds check and no loop counter.** A picture that isn't in the set walks off the end of
+`wSpriteSet` and keeps reading WRAM until some byte happens to equal it. Whatever `c` is by then
+becomes the VRAM slot, and the sprite draws whatever tiles are sitting at that address.
+
+So "the game would draw it as garbage" is *literally* true, and the garbage depends on the contents of
+RAM. It is not a thing we can render faithfully, and we should not try — we mark it and draw the
+artwork the user chose.
+
+## What the editor does with all this
+
+`MapModel::vramPictures()` **is the console's routine**, and everything that asks "will this render?"
+goes through it — the Characters panel's marks, the canvas's `!`, the picture picker:
+
+* **outdoor** → the map's **ROM** sprite set (`MapSpriteSets[wCurMap]`, splits resolved against the
+  player's position). *Not* the save's cached copy, which the game overwrites.
+* **indoor** → the cast itself, deduped, first-appearance, capped at 10 walking + 2 still.
+
+⚠️ Before this, we tested membership of the **save's cached set** — a set the console throws away. On
+an indoor map that meant we flagged characters that would have drawn perfectly, and on any map an
+edit to the cache silently changed our answer. `tst_map_sprites` now pins all three cases.
 
 ## Where it lives in the editor
 

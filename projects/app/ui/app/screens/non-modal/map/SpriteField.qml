@@ -50,6 +50,10 @@ ColumnLayout {
   required property var fieldData
   required property int slot
 
+  /// The map canvas -- handed down so the picture picker can stop the ground taking clicks while it
+  /// is open. @see MapCanvas.popupsOpen
+  property var canvas: null
+
   spacing: 2
 
   readonly property string kind: fieldData.kind || "byte"
@@ -78,12 +82,22 @@ ColumnLayout {
     return false;
   }
 
-  /// The user has asked for the raw box on a value the combo COULD have said. Sticky, so it does not
-  /// vanish under them mid-edit.
+  /// The user asked for the raw box.
+  ///
+  /// ⚠️ **STICKY. It stays open until they close it**, even if they happen to type a value the combo
+  /// has a name for. Twilight: *"it's bad UX for [the raw box] to close just because a legitimate
+  /// value was entered."* -- and she is right: typing a number and having the box you were typing in
+  /// disappear from under you is the control fighting you.
   property bool rawOpen: false
 
-  /// The raw box is up when the value needs it, or when it was asked for.
-  readonly property bool rawShown: field.kind === "enum" && (!field.known || field.rawOpen)
+  /// The raw box is up when it has been opened -- by the user, or by a value that needs it.
+  readonly property bool rawShown: field.kind === "enum" && field.rawOpen
+
+  // It OPENS itself for a value the combo cannot say (you need it, so it is there). But it never
+  // CLOSES itself: dismissing it is always the user's move. That is the difference between a control
+  // that helps and a control that fights you.
+  Component.onCompleted: if (!field.known) field.rawOpen = true;
+  onKnownChanged: if (!field.known) field.rawOpen = true;
 
   function commit(v) { brg.map.setNpcField(field.slot, field.fieldData.key, v); }
 
@@ -124,6 +138,7 @@ ColumnLayout {
     Layout.bottomMargin: 6
     visible: field.kind === "picture"
 
+    canvas: field.canvas
     picture: field.value
     onPicked: (p) => field.commit(p)
   }
@@ -184,12 +199,17 @@ ColumnLayout {
 
   // ── enum: the combo IS the control ─────────────────────────────────────────────────────────
   //
-  // Full width. No number box beside it stealing 74px and cutting its text off.
+  // Full width, and the popup is WIDER THAN THE COMBO where it has to be -- a 190px dock cannot show
+  // "Jr. Trainer♀ — never used in-game" in 190px, and shrinking the text to fit is shrinking the
+  // content to make room for the furniture. (Twilight, twice: "combo box text still cut off.")
+  //
+  // The options come SECTIONED: the ordinary values first, the flagged ones under their own heading.
+  // A "!" on row 84 of a flat list of 140 items is a "!" nobody ever sees. (@see MapModel::sectioned)
   ComboBox {
     id: combo
     visible: field.kind === "enum"
     Layout.fillWidth: true
-    Layout.bottomMargin: field.rawShown || field.pickedHack ? 0 : 6
+    Layout.bottomMargin: field.rawShown ? 0 : 6
     Layout.preferredHeight: 30
     font.pixelSize: 11
 
@@ -209,6 +229,60 @@ ColumnLayout {
     Connections {
       target: field
       function onFieldDataChanged() { combo.currentIndex = combo.indexOfValue(field.value); }
+    }
+
+    // Let the LIST be as wide as its longest name, even though the closed combo is only as wide as
+    // the panel. This is the fix for "text still cut off" -- the popup escapes the dock.
+    popup.width: Math.max(combo.width, 260)
+    popup.height: Math.min(300, popup.contentItem.implicitHeight + 2)
+
+    delegate: ItemDelegate {
+      id: opt
+      required property var modelData
+      required property int index
+
+      width: combo.popup.width
+      height: (opt.heading !== "" ? 20 : 0) + 26
+      highlighted: combo.highlightedIndex === opt.index
+
+      /// The section heading rides on the FIRST row of its section, and is empty on the rest.
+      readonly property string heading: modelData.header || ""
+
+      contentItem: ColumnLayout {
+        spacing: 0
+
+        Text {
+          visible: opt.heading !== ""
+          Layout.fillWidth: true
+          text: opt.heading
+          font.pixelSize: 10
+          font.bold: true
+          color: brg.settings.textColorMid
+        }
+
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 5
+
+          Text {
+            Layout.fillWidth: true
+            text: opt.modelData.name
+            font.pixelSize: 12
+            color: brg.settings.textColorDark
+            elide: Text.ElideRight
+          }
+
+          // The mark, on the row it belongs to -- and now it is in a SECTION of marked rows, so it
+          // reads as "these ones", not as a needle in a haystack.
+          Text {
+            visible: opt.modelData.hack === true
+            text: "!"
+            font.pixelSize: 11
+            font.bold: true
+            color: "#c79100"
+          }
+        }
+      }
     }
   }
 
@@ -250,10 +324,9 @@ ColumnLayout {
       onValueModified: field.commit(value)
     }
 
-    // Only offered when the value is one the combo COULD have said -- otherwise there is nothing to
-    // fold back into.
+    // Closing it is ALWAYS the user's move, never the control's -- so this is always here. (Even on
+    // a value the combo has no name for: fold it away and the combo still says what the value is.)
     MapRailButton {
-      visible: field.known
       size: 22
       glyph: "⌃"
       tip: qsTr("Put the raw box away")
@@ -342,19 +415,9 @@ ColumnLayout {
     onValueModified: field.commit(value)
   }
 
-  // ── The hack flag, in words ────────────────────────────────────────────────────────────────
-  //
-  // Not a refusal, not a correction. A sentence.
-  Label {
-    Layout.fillWidth: true
-    Layout.bottomMargin: 6
-    visible: field.kind === "enum" && (!field.known || field.pickedHack)
-
-    text: field.known
-            ? qsTr("No real game uses this one.")
-            : qsTr("No real game holds this value here.")
-    font.pixelSize: 10
-    color: "#c79100"
-    wrapMode: Text.Wrap
-  }
+  // (A "No real game holds this value here." line lived down here, under every flagged field.
+  //  REMOVED 2026-07-13 -- Twilight: *"Don't have a 'no real game holds this value'; this is implied
+  //  when using Something else."* And it is: the combo already reads "Something else — $37", and the
+  //  flagged options already sit under their own heading with a "!" on them. Saying it a third time
+  //  in a full sentence, under every one of them, is the panel talking to itself.)
 }

@@ -146,8 +146,13 @@ Item {
       contentWidth: availableWidth
       ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
+      // ⚠️ RESERVE THE SCROLLBAR'S LANE. 16px, always. The bar is an OVERLAY -- it is drawn on top of
+      // whatever is under it -- so content that runs to the full width ends up UNDERNEATH it. On this
+      // panel that meant the yellow "!" badges (anchored to each cell's right edge) sat behind the
+      // scrollbar and the names were clipped. Twilight has now reported this twice, and it is written
+      // down in ui-patterns.md as a recurring gotcha, which is exactly what it is.
       ColumnLayout {
-        width: scroller.availableWidth
+        width: scroller.availableWidth - 16
         spacing: 2
 
         // ── 1. SAFE HERE ─────────────────────────────────────────────────────────────────────

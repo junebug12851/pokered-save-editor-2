@@ -326,21 +326,30 @@ public:
   /**
    * @brief ANY overworld sprite's 16x16 picture -- @p pictureID 1..72, facing @p facing.
    *
-   * The artwork is one atlas (`:/assets/sprites/overworld.png`, imported from `pret/pokered`
-   * by `scripts/import_sprites.py`): 72 cells of 16x96, cell `pictureID - 1`. How many frames
-   * a cell really holds is in the generated `spriteart.h`:
+   * ⚠️ The artwork is **72 LOOSE PNGs, one per sprite** -- deliberately, and NOT an atlas (Twilight:
+   * *"I hate atlases... I like loose files, they're way better to work with"*). They are imported
+   * from `pret/pokered` by `scripts/import_sprites.py`, and the generated `spriteart.h` maps each
+   * picture id to its file and its frame count. Each file is a vertical strip of 16x16 quads:
    *
-   *   - **6** a walking person -- stand down/up/LEFT, then three walking frames.
+   *   - **6** a walking person -- stand down/up/LEFT, then walk down/up/left.
    *   - **3** a still person -- stand down/up/left. No walk cycle was ever drawn for them.
    *   - **1** a ball / boulder / fossil -- every facing resolves to the same quad.
    *
-   * There is **no right-facing art for anybody**: right is left, X-flipped, on the console and
-   * here. Colour 0 comes back transparent. A @p pictureID of 0 (an unused slot) or one we have
-   * no art for returns a null image -- the caller draws nothing rather than inventing something.
+   * @p animFrame is the console's `animFrameCounter` (**0-3**), and together with @p facing it walks
+   * `SpriteFacingAndAnimationTable` (`data/sprites/facings.asm`) exactly as `UpdateSpriteImage`
+   * does. Two consequences, and both surprise people:
+   *
+   *   - **there is no second walking frame** -- frames 1 and 3 are the *same* picture, and 3 is
+   *     **mirrored**; that mirror is the other leg;
+   *   - **there is no right-facing art for anybody** -- right is left, X-flipped, on the console and
+   *     here.
+   *
+   * Colour 0 comes back transparent. A @p pictureID of 0 (an unused slot) or one we have no art for
+   * returns a null image -- the caller draws nothing rather than inventing something.
    *
    * @see notes/reference/sprites.md
    */
-  static QImage npcSprite(int pictureID, int facing, int contrast = 0);
+  static QImage npcSprite(int pictureID, int facing, int contrast = 0, int animFrame = 0);
 
   /**
    * @brief The 6x5-block scratch area as TILE ids -- the game's `wSurroundingTiles`.

@@ -38,6 +38,7 @@ import QtQuick.Layouts
 
 Item {
   id: root
+  objectName: "contrastPicker"   // the DEBUG harness opens the strip through this
 
   implicitWidth: chip.implicitWidth
   implicitHeight: 24
@@ -90,23 +91,22 @@ Item {
       anchors.centerIn: parent
       spacing: 6
 
-      // A little swatch of the four greys this palette actually produces. The control shows you the
-      // answer, not just the number.
+      // A swatch of the four shades this palette REALLY produces -- the same rBGP byte the map is
+      // drawn through, not a tint of the identity palette that only approximated it. The control
+      // shows you the answer, not just the number.
       Row {
         spacing: 0
+
+        readonly property var shades: brg.map.contrastShades(brg.map.contrast)
+
         Repeater {
           model: 4
+
           Rectangle {
             required property int index
             width: 4
             height: 12
-            color: {
-              // The identity palette's four shades, dimmed by the level. Indicative -- the map
-              // itself is drawn through the REAL rBGP byte in C++.
-              const shades = ["#ffffff", "#a8a8a8", "#545454", "#000000"];
-              const dim = brg.map.contrast / 9.0;
-              return Qt.tint(shades[index], Qt.rgba(0, 0, 0, dim * 0.9));
-            }
+            color: (parent.shades && parent.shades.length === 4) ? parent.shades[index] : "#f2f2f2"
           }
         }
       }
@@ -192,7 +192,19 @@ Item {
           Repeater {
             model: root.values
 
+            // ⚠️ EACH SEGMENT IS PAINTED IN THE PALETTE IT PRODUCES.
+            //
+            // They used to be accent-blue (real levels) and yellow (glitch ones) -- which told you
+            // *that* a value was unusual and nothing whatever about what it would DO. Twilight:
+            // *"coloured segments matching the current colours."*
+            //
+            // So a segment now shows the four real shades that value renders the map in (the genuine
+            // rBGP byte, out of MapEngine, glitch reads across the fade table's seam included). Slide
+            // along the strip and you watch the map go dark before the map does. The yellow survives
+            // as a BORDER on the glitch values -- it still says "unusual, look here", it just no
+            // longer stands in for the thing it is describing.
             Rectangle {
+              id: seg
               required property var modelData
               required property int index
 
@@ -202,36 +214,73 @@ Item {
               readonly property bool glitch: (modelData % 3) !== 0
               readonly property bool active: brg.map.contrast === modelData
 
-              color: active
-                     ? (glitch ? root.glitchFill : brg.settings.accentColor)
-                     : (glitch ? Qt.rgba(root.glitchColor.r, root.glitchColor.g,
-                                         root.glitchColor.b, 0.16)
-                               : "#f2f2f2")
+              readonly property var shades: brg.map.contrastShades(seg.modelData)
 
-              border.width: 1
-              border.color: glitch
-                            ? Qt.rgba(root.glitchColor.r, root.glitchColor.g,
-                                      root.glitchColor.b, 0.55)
-                            : brg.settings.dividerColor
+              color: "transparent"
+
+              // The palette itself, as four stacked bands. Real colour, real byte, no interpretation.
+              Column {
+                anchors.fill: parent
+                spacing: 0
+
+                Repeater {
+                  model: 4
+
+                  Rectangle {
+                    required property int index
+                    width: seg.width
+                    height: seg.height / 4
+                    color: (seg.shades && seg.shades.length === 4)
+                             ? seg.shades[index]
+                             : "#f2f2f2"
+                  }
+                }
+              }
+
+              // Dim the ones you are NOT on, so the chosen palette is the one that reads.
+              Rectangle {
+                anchors.fill: parent
+                color: "#ffffff"
+                opacity: seg.active ? 0.0 : 0.42
+                Behavior on opacity { NumberAnimation { duration: 80 } }
+              }
+
+              // The border says which is selected, and (in yellow) which are glitch values.
+              Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+                border.width: seg.active ? 2 : 1
+                border.color: seg.active
+                                ? (seg.glitch ? root.glitchColor : brg.settings.accentColor)
+                                : (seg.glitch
+                                     ? Qt.rgba(root.glitchColor.r, root.glitchColor.g,
+                                               root.glitchColor.b, 0.65)
+                                     : brg.settings.dividerColor)
+              }
 
               topLeftRadius: index === 0 ? 4 : 0
               bottomLeftRadius: index === 0 ? 4 : 0
               topRightRadius: index === track.count - 1 ? 4 : 0
               bottomRightRadius: index === track.count - 1 ? 4 : 0
 
-              Behavior on color { ColorAnimation { duration: 80 } }
-
-              Text {
+              // The number, in a pill -- because it has to stay readable over BLACK and over WHITE,
+              // and no single ink does that. This is the only honest way to label a swatch.
+              Rectangle {
                 anchors.centerIn: parent
-                text: modelData
-                font.pixelSize: 10
-                font.family: "monospace"
-                font.bold: parent.active
-                // On the yellow fill, dark text -- white on yellow is unreadable, and this control
-                // exists to be read.
-                color: parent.active
-                       ? (parent.glitch ? brg.settings.textColorDark : brg.settings.textColorLight)
-                       : brg.settings.textColorMid
+                width: num.implicitWidth + 8
+                height: 14
+                radius: 7
+                color: "#cc212121"
+
+                Text {
+                  id: num
+                  anchors.centerIn: parent
+                  text: seg.modelData
+                  font.pixelSize: 10
+                  font.family: "monospace"
+                  font.bold: seg.active
+                  color: "#ffffff"
+                }
               }
             }
           }

@@ -63,6 +63,14 @@ Item {
   /// A line for the status bar (a drop, a delete, a cap hit). Never a modal.
   property string status: ""
 
+  /// How many popups are currently open over the canvas.
+  ///
+  /// ⚠️ While this is > 0 the ground does not take clicks -- because a "click on the ground" arriving
+  /// while a picker is open is not a click on the ground: it is the press that dismissed the picker,
+  /// leaking through. That leak is what dropped you out of a sprite's Details panel the moment you
+  /// opened its picture picker. Any popup drawn over this canvas must raise and lower this.
+  property int popupsOpen: 0
+
   /// The 3-block border ring, in buffer pixels. A sprite at map (0,0) starts here.
   readonly property int mapBorderPx: 3 * 32
 
@@ -153,11 +161,38 @@ Item {
   Connections {
     target: brg.map
     function onChanged() { canvasRoot.revision++; }
+
+    // ⚠️ The CAST moving gets its own signal, and it must NOT be `changed()`.
+    //
+    // `changed()` re-emits `sourceChanged()`, and `source` is the map's render URL -- so it
+    // re-renders the entire map image. The walk simulation moves somebody ~60 times a second, so
+    // routing it through `changed()` re-rendered the whole map 60 times a second to shift one 16x16
+    // sprite, and the frame rate collapsed. `castChanged()` bumps the sprite list and nothing else.
+    // (@see MapModel::castChanged)
+    function onCastChanged() { canvasRoot.revision++; }
   }
 
   readonly property var npcs: {
     canvasRoot.revision;   // a dependency, deliberately
     return brg.mapLayers.showNpcs ? brg.map.npcList() : [];
+  }
+
+  // ── The two boxes follow the player LIVE ───────────────────────────────────────────────────
+  //
+  // The screen box and the draw area are both computed FROM the player's position -- so while you
+  // are dragging him they should move with him, not snap into place when you let go (Twilight,
+  // 2026-07-13). The player's MapSprite publishes the tile under the cursor here; -1 means "not
+  // being dragged", and the boxes fall back to where he actually is.
+  property int livePlayerX: -1
+  property int livePlayerY: -1
+
+  readonly property var boxes: {
+    canvasRoot.revision;   // ...and re-ask when he actually moves, too
+
+    const x = canvasRoot.livePlayerX >= 0 ? canvasRoot.livePlayerX : brg.map.playerX;
+    const y = canvasRoot.livePlayerY >= 0 ? canvasRoot.livePlayerY : brg.map.playerY;
+
+    return brg.map.viewBoxesAt(x, y);
   }
 
   // ── Zoom ────────────────────────────────────────────────────────────────────────────────────
@@ -500,10 +535,10 @@ Item {
       // The draw area: the 6x5 blocks LoadCurrentMapView redraws. Always block-aligned.
       Rectangle {
         visible: brg.mapLayers.showDrawArea
-        x: brg.map.scratchX * canvasRoot.zoom
-        y: brg.map.scratchY * canvasRoot.zoom
-        width: brg.map.scratchW * canvasRoot.zoom
-        height: brg.map.scratchH * canvasRoot.zoom
+        x: canvasRoot.boxes.drawX * canvasRoot.zoom
+        y: canvasRoot.boxes.drawY * canvasRoot.zoom
+        width: canvasRoot.boxes.drawW * canvasRoot.zoom
+        height: canvasRoot.boxes.drawH * canvasRoot.zoom
         color: "transparent"
         border.width: 2
         border.color: canvas.drawColor
@@ -554,6 +589,13 @@ Item {
           art: modelData.source
           inSet: modelData.inSpriteSet
 
+          // ⚠️ THE SLIDE. `TryWalking` moves the sprite's TILE to the destination at once and then
+          // slides it a pixel a frame for 16 frames -- so the tile is where they are GOING, and
+          // drawing straight from it skipped the whole step and they teleported. The model hands us
+          // the exact sub-tile offset. (@see MapModel::npcList)
+          offX: modelData.offX
+          offY: modelData.offY
+
           onEditRequested: canvasRoot.editRequested(modelData.slot)
         }
       }
@@ -561,10 +603,10 @@ Item {
       // The visible screen: the 20x18 tiles actually on the Game Boy's screen.
       Rectangle {
         visible: brg.mapLayers.showScreenBox
-        x: brg.map.screenX * canvasRoot.zoom
-        y: brg.map.screenY * canvasRoot.zoom
-        width: brg.map.screenW * canvasRoot.zoom
-        height: brg.map.screenH * canvasRoot.zoom
+        x: canvasRoot.boxes.screenX * canvasRoot.zoom
+        y: canvasRoot.boxes.screenY * canvasRoot.zoom
+        width: canvasRoot.boxes.screenW * canvasRoot.zoom
+        height: canvasRoot.boxes.screenH * canvasRoot.zoom
         color: "transparent"
         border.width: 2
         border.color: canvas.screenColor
@@ -613,6 +655,18 @@ Item {
 
           if (canvasRoot.panning)
             return;   // the hand does not select
+
+          // ⚠️ A POPUP IS OPEN OVER US -- so this tap is not somebody clicking the ground, it is the
+          // press that dismissed the popup, arriving here afterwards.
+          //
+          // That is the bug Twilight hit: open the picture picker from the Details panel and you were
+          // dropped straight back to the map's details, because the picker's overlay leaked its
+          // dismiss-press down onto this handler, which cleared the selection the panel was editing.
+          //
+          // Making the picker non-modal fixes the leak; this makes it *impossible*. Any popup over
+          // the canvas raises this count, and while it is up the ground does not take clicks.
+          if (canvasRoot.popupsOpen > 0)
+            return;
 
           // Clicking the ground clears the sprite selection -- and does nothing else. The block
           // under the cursor is NOT selected any more; see the note above.

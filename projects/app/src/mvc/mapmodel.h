@@ -62,6 +62,23 @@ class MapModel : public QObject
   Q_OBJECT
 
   Q_PROPERTY(bool valid READ valid NOTIFY changed)          ///< Is there anything to draw for this map?
+
+  /**
+   * @brief Show the sprite fields the console **works out again every time it loads the save**.
+   *
+   * The walk state, the on-screen pixels, the VRAM slot. Roughly a **third** of a sprite is made of
+   * them. Every one is real and every one is editable -- they simply are not what anybody opened the
+   * panel for, and stacking them under the fields that DO matter is the difference between a panel
+   * and a hex dump.
+   *
+   * **OFF by default** (Twilight, 2026-07-13). Off, @ref npcFields does not emit them **at all** --
+   * not greyed, not collapsed: absent. On, they appear, each wearing its yellow "!". The switch is
+   * hard right on the map's toolbar.
+   *
+   * ⚠️ The filtering lives in the MODEL, on purpose: no view can leak one by accident, and a test can
+   * prove they are gone.
+   */
+  Q_PROPERTY(bool showScratch READ showScratch WRITE setShowScratch NOTIFY showScratchChanged)
   /// `image://map/...` URL for the whole map. Its OWN notify: the URL carries the animation frame,
   /// which moves ~3 times a second, and re-emitting the map-wide `changed()` at that rate would make
   /// every listener (the layer tree's "does this layer apply here?" pass, for one) recompute the
@@ -388,6 +405,61 @@ public:
   /// only its own bits, leaving the other's exactly as they were.
   Q_INVOKABLE void setNpcField(int slot, const QString& key, int value);
 
+  /// The screen box and the draw area **for an arbitrary player position**, in buffer pixels:
+  /// `{ screenX, screenY, screenW, screenH, drawX, drawY, drawW, drawH }`.
+  ///
+  /// The bound `screenX`/`scratchX`/… properties answer for where the player *is*. This answers for
+  /// where he is *being dragged to*, so the two boxes track him live instead of snapping into place
+  /// when you let go. Same MapEngine routines, so they can never disagree.
+  /// **The four shades a contrast value really renders the map in** -- the genuine `rBGP` byte the
+  /// console would be holding, glitch reads across the fade table's seam included.
+  ///
+  /// The contrast strip wears these, so the segments *are* the palette: slide along it and you watch
+  /// the map go dark before the map does. (It used to paint them in the app's accent blue, which told
+  /// you a value was unusual and nothing at all about what it would do.)
+  Q_INVOKABLE QVariantList contrastShades(int contrast) const;
+
+  Q_INVOKABLE QVariantMap viewBoxesAt(int x, int y) const;
+
+  bool showScratch() const;              ///< @see showScratch property.
+  void setShowScratch(bool show);        ///< @see showScratch property.
+
+  /**
+   * @brief Is this an INDOOR map? (`wCurMap >= FIRST_INDOOR_MAP`, i.e. id >= `$25`.)
+   *
+   * It is not decoration -- it decides the whole sprite-artwork question. @see vramPictures.
+   */
+  Q_INVOKABLE bool mapIsIndoors() const;
+
+  /**
+   * @brief **The pictures the console would actually have in video memory** after loading this save.
+   *
+   * ⚠️ This is the routine "will my sprite render?" turns on, and until 2026-07-13 we answered it by
+   * reading the save's cached sprite set -- **which the game throws away**. It now does what
+   * `engine/overworld/map_sprites.asm` does:
+   *
+   * **Outdoors** (`InitOutsideMapSprites`): the set comes from the **ROM table** `MapSpriteSets[map]`
+   * (splits resolved against the player's position), its 11 pictures go into VRAM, and each NPC's
+   * slot is found by *searching that set for its picture id* — a loop with **no bounds check**, so a
+   * picture that isn't in the set runs off the end of `wSpriteSet` into WRAM and lands on an
+   * arbitrary VRAM slot. That is the garbage. Nothing in the save can change what is loaded.
+   *
+   * **Indoors** (`InitMapSprites`): `InitOutsideMapSprites` returns immediately and the game copies
+   * **each sprite's own picture** into VRAM, deduplicated, by first appearance. **There is no sprite
+   * set indoors** — the cast *is* the set, and any picture draws correctly until the video memory
+   * runs out: **10** walking slots and **2** four-tile still slots (picture >= `$3D`).
+   *
+   * @see pictureWouldRender, pictureWouldRenderIfAdded, notes/reference/sprite-sets.md
+   */
+  QVector<int> vramPictures() const;
+
+  /// Would the console draw sprite picture @p picture correctly on this map, as things stand?
+  Q_INVOKABLE bool pictureWouldRender(int picture) const;
+
+  /// Would it draw correctly if you dropped one **here, now**? Outdoors that is the same question.
+  /// **Indoors it is not**: the cast is the set, so the answer is "yes, if there is a slot left".
+  Q_INVOKABLE bool pictureWouldRenderIfAdded(int picture) const;
+
   /// **This map's own scripts**, out of the cartridge: `{ value, name, hack }`, where the name says
   /// who the script belongs to ("3 — Fisher 2"). A text id is an index into *this map's* text table,
   /// so a bare number is meaningless and a name is not.
@@ -547,6 +619,23 @@ signals:
   void frameChanged();
   /// The rendered image's URL changed -- a new frame, or a new map/tileset/palette.
   void sourceChanged();
+  /**
+   * @brief Somebody on the map MOVED -- and **nothing else did**.
+   *
+   * ⚠️ Deliberately NOT `changed()`. `changed()` is wired to `sourceChanged()`, and `source` is the
+   * map's render URL -- so emitting it **re-renders the whole map image**. The walk simulation moves
+   * somebody ~60 times a second; routing that through `changed()` re-rendered the entire map ~60
+   * times a second to shift one 16x16 sprite, and the frame rate collapsed (Twilight, 2026-07-13).
+   *
+   * A sprite moving does not change one pixel of the map. Only the canvas's sprite layer listens
+   * here. An *edit* (add / move / delete / a field write) emits `changed()` **as well**, because
+   * that really can change everything else -- the room left, which layers apply, the video memory.
+   */
+  void castChanged();
+
+  /// The "Reloaded values" switch moved -- the Details panel has a different set of fields now.
+  void showScratchChanged();
+
   /// The shown layers changed (a view setting, not save data).
   void overlayChanged();
   /// The selected block changed.
@@ -568,6 +657,9 @@ private:
 
   /// @see npcsEdited. Set by any edit to the cast; never by loading one.
   bool castEdited = false;
+
+  /// @see showScratch. OFF -- it is clutter, and it is a third of the panel.
+  bool showScratchFields = false;
   AreaMap* map = nullptr;         ///< The save's live map.
   AreaPlayer* player = nullptr;   ///< The save's live player position.
   AreaTileset* tileset = nullptr; ///< The save's live tileset.

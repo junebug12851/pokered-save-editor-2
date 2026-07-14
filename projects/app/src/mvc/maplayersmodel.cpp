@@ -20,9 +20,13 @@
 
 namespace {
 
-/// The three groups, in the order they read: what helps you SEE (guides), what the map MEANS
-/// (the semantic overlays), and what the GAME is doing right now (the player and his two boxes).
-enum Group { GuidesGroup = 0, ComponentsGroup = 1, GameViewGroup = 2, GroupCount = 3 };
+/// The three groups, in the order they read.
+///
+/// ⚠️ **GAME VIEW IS FIRST** (Twilight, 2026-07-13). It is the group you actually use -- the player,
+/// everybody else, and the box showing what the Game Boy can see. The lines that help you read the
+/// map's shape come next, and the semantic overlays -- which you switch on to answer a question and
+/// then switch off again -- come last.
+enum Group { GameViewGroup = 0, GuidesGroup = 1, ComponentsGroup = 2, GroupCount = 3 };
 
 const char* groupKey(int g)
 {
@@ -74,6 +78,13 @@ MapLayersModel::MapLayersModel(MapModel* map, QObject* parent)
   buildAll();
   rebuild();
 
+  // The two OVERLAY layers that are on by default. They are the map's exits -- how it joins the rest
+  // of the world -- and they are the only two of the nine anybody wants standing there unasked
+  // (Twilight, 2026-07-13). They live in MapModel::layers, not in our own `bits`. @see the note on
+  // `bits` in the header.
+  if (map != nullptr)
+    map->setLayers(MapEngine::LayerDoors | MapEngine::LayerWarps);
+
   // The map changed: which layers even APPLY changes with it (a map with no grass should say so
   // rather than switch on an empty overlay), so every row's "applies" is stale.
   if (map != nullptr) {
@@ -118,6 +129,27 @@ void MapLayersModel::buildAll()
     allRows.append(r);
   };
 
+  // ⚠️ The BUILD order is the DISPLAY order. Game View goes first (Twilight, 2026-07-13) -- it is
+  // the group you actually use.
+
+  // ── Game View ───────────────────────────────────────────────────────────────
+  group(GameViewGroup);
+  view(GameViewGroup, "player", tr("Player"),
+       tr("Him, drawn where the console's own OAM puts him — 4 pixels above his tile row, and "
+          "facing right means facing LEFT, mirrored: the game has no right-facing art."),
+       ViewPlayer);
+  view(GameViewGroup, "npcs", tr("People & objects"),
+       tr("Everyone else on this map — the other fifteen sprite slots. Drawn from the game's own "
+          "artwork, where the console puts them. A character the console couldn't draw properly "
+          "here is marked."),
+       ViewNpcs);
+  view(GameViewGroup, "screenBox", tr("Screen box"),
+       tr("The 20×18 tiles the Game Boy is actually showing — the screen, sliding around inside "
+          "the draw area in half-block steps. Move the player and it follows him."), ViewScreenBox);
+  view(GameViewGroup, "drawArea", tr("Draw area"),
+       tr("The 6×5 blocks the game redraws around the player (LoadCurrentMapView). Always "
+          "block-aligned, and it follows him too."), ViewDrawArea);
+
   // ── Guides ──────────────────────────────────────────────────────────────────
   group(GuidesGroup);
   view(GuidesGroup, "blockGrid", tr("Block grid"),
@@ -148,24 +180,6 @@ void MapLayersModel::buildAll()
   overlay(ComponentsGroup, MapEngine::LayerCounters);
   overlay(ComponentsGroup, MapEngine::LayerCutTrees);
   overlay(ComponentsGroup, MapEngine::LayerElevation);
-
-  // ── Game View ───────────────────────────────────────────────────────────────
-  group(GameViewGroup);
-  view(GameViewGroup, "player", tr("Player"),
-       tr("Him, drawn where the console's own OAM puts him — 4 pixels above his tile row, and "
-          "facing right means facing LEFT, mirrored: the game has no right-facing art."),
-       ViewPlayer);
-  view(GameViewGroup, "npcs", tr("People & objects"),
-       tr("Everyone else on this map — the other fifteen sprite slots. Drawn from the game's own "
-          "artwork, where the console puts them. A sprite whose picture this map hasn't loaded is "
-          "marked: that is the one the game would draw as garbage."),
-       ViewNpcs);
-  view(GameViewGroup, "screenBox", tr("Screen box"),
-       tr("The 20×18 tiles the Game Boy is actually showing — the screen, sliding around inside "
-          "the draw area in half-block steps."), ViewScreenBox);
-  view(GameViewGroup, "drawArea", tr("Draw area"),
-       tr("The 6×5 blocks the game redraws around the player (LoadCurrentMapView). Always "
-          "block-aligned."), ViewDrawArea);
 }
 
 void MapLayersModel::rebuild()

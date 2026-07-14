@@ -36,14 +36,19 @@ QPixmap PlayerProvider::requestPixmap(const QString& id, QSize* size, const QSiz
   QImage sprite;
 
   // Two forms, told apart by the first word:
-  //   <facing>/<contrast>                 -- the player (slot 0)
-  //   npc/<pictureID>/<facing>/<contrast> -- anybody else, from the imported atlas
+  //   <facing>/<contrast>                            -- the player (slot 0)
+  //   npc/<pictureID>/<facing>/<contrast>[/<frame>]  -- anybody else (one loose PNG per sprite)
+  //
+  // `frame` is the console's animFrameCounter (0-3) and is OPTIONAL: leave it off and you get the
+  // standing pose, which is what every picker and every still map wants. The walk simulation passes
+  // it, and that is how the legs move. @see MapEngine::npcSprite
   if (!parts.isEmpty() && parts.at(0) == "npc") {
     const int picture  = (parts.size() > 1) ? parts.at(1).toInt() : 0;
     const int facing   = (parts.size() > 2) ? parts.at(2).toInt() : MapEngine::FacingDown;
     const int contrast = (parts.size() > 3) ? parts.at(3).toInt() : 0;
+    const int frame    = (parts.size() > 4) ? parts.at(4).toInt() : 0;
 
-    sprite = MapEngine::npcSprite(picture, facing, contrast);
+    sprite = MapEngine::npcSprite(picture, facing, contrast, frame);
   }
   else {
     const int facing   = (parts.size() > 0) ? parts.at(0).toInt() : MapEngine::FacingDown;

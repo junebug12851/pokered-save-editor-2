@@ -37,6 +37,10 @@ Item {
   /// The sprite picture id currently held (0-255).
   property int picture: 0
 
+  /// The map canvas. Only so the open sheet can tell it to stop taking ground clicks -- see
+  /// MapCanvas.popupsOpen. May be null; the picker works either way.
+  property var canvas: null
+
   signal picked(int picture)
 
   implicitHeight: 34
@@ -101,8 +105,7 @@ Item {
       // This map hasn't loaded this one's artwork. Same mark, same meaning, as the Characters panel.
       MapWarnIcon {
         visible: pick.current !== null && pick.current.inSpriteSet === false
-        text: qsTr("This map hasn't loaded this picture — the game would draw it as garbage. You "
-                   + "can still choose it.")
+        text: pick.current ? (pick.current.why || "") : ""
       }
 
       Label {
@@ -119,6 +122,7 @@ Item {
   // ── Open: the whole cast ───────────────────────────────────────────────────────────────────
   Popup {
     id: sheet
+    objectName: "picturePickSheet"   // the DEBUG harness opens it through this
 
     // Hang off the panel and over the map -- the dock is 200px and a grid of faces is not.
     parent: Overlay.overlay
@@ -127,8 +131,23 @@ Item {
 
     width: 380
     height: 440
-    modal: true
+
+    // ⚠️ NOT MODAL, and `closePolicy` says exactly what closes it.
+    //
+    // A modal Popup installs a dimming overlay across the whole window and takes an exclusive grab.
+    // On this screen that means: open the picker, and the press that dismisses it is delivered to
+    // whatever is underneath -- which is the MAP, whose ground tap CLEARS THE SPRITE SELECTION. So
+    // opening the picture picker dropped you straight back to the map's details, which is exactly
+    // what Twilight saw ("clicking the combo box in details, the picture one, it immediately goes
+    // back to map details").
+    //
+    // It does not need to be modal. It needs to close when you press outside it or hit Escape, and
+    // `closePolicy` says so in one line -- without a grab that leaks presses onto the canvas.
+    modal: false
+    dim: true
     focus: true
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
     padding: 0
 
     background: Rectangle {
@@ -138,8 +157,20 @@ Item {
       border.color: brg.settings.dividerColor
     }
 
-    onOpened: filterField.forceActiveFocus()
-    onClosed: filterField.text = ""
+    // While the sheet is up, the map's ground does not take clicks. @see MapCanvas.popupsOpen
+    onOpened: {
+      if (pick.canvas)
+        pick.canvas.popupsOpen++;
+
+      filterField.forceActiveFocus();
+    }
+
+    onClosed: {
+      if (pick.canvas)
+        pick.canvas.popupsOpen = Math.max(0, pick.canvas.popupsOpen - 1);
+
+      filterField.text = "";
+    }
 
     property string filter: ""
 
@@ -284,14 +315,15 @@ Item {
                       }
                     }
 
-                    // The same "!" as everywhere else: this map hasn't loaded that picture.
+                    // The same "!" as everywhere else, and the same reason -- straight from the
+                    // model, because outdoors and indoors it is a different reason.
                     MapWarnIcon {
                       visible: cell.modelData.inSpriteSet === false
                       anchors.top: parent.top
                       anchors.right: parent.right
                       anchors.margins: 2
-                      text: qsTr("This map hasn't loaded this picture — the game would draw it as "
-                                 + "garbage. You can still choose it.")
+                      text: cell.modelData.why || ""
+                      tipWidth: 200
                     }
 
                     HoverHandler { id: cellHover; cursorShape: Qt.PointingHandCursor }
