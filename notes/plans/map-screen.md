@@ -695,6 +695,9 @@ with its range, and change.
 > Warps ride on the machinery Phase 4 already built (`MapObjectsModel`, canvas selection, tile-snapped
 > drag, the Details panel, the field kit). This phase is mostly **honesty and naming** — plus the one
 > piece of new chrome the screen has been missing: **tools that make things.**
+>
+> ⛔ **SCOPE: warps and nothing else.** Not signs, not connections, not encounters — see **§12b**. They
+> are un-briefed, and "it's the same shape" / "it's in the same ROM block" is not a reason to build one.
 
 ---
 
@@ -735,8 +738,9 @@ The doors join the NPCs as first-class objects, on 4b's machinery. Nothing new i
 
 - **Draw them** — a warp chip on its tile (⇄ glyph, its own layer colour), on the **Warps** layer.
 - **Select · drag · ✕ delete · ✎ edit** — identical to sprites. A drag commits **exactly two bytes**.
-- **Signs come with them** (they are the same shape, and the same ROM block loads them): the **Signs**
-  layer, 16 max, `x`/`y`/`txtId`.
+- ⛔ **Signs are NOT in this phase.** They load out of the same ROM block and they are the same shape, and
+  that is exactly why they nearly got dragged in here. **Twilight has not briefed signs.** They get their
+  own phase, after their own conversation. See "Not yet briefed" below.
 - **The pairing line.** Selecting a warp draws, in the status bar, **where it goes** — resolved through
   `MapDBEntryWarpIn`: *"→ Viridian City, arrival point 2 (11, 5)"*. If the destination map has no such
   arrival point, it says **that**, in red, with how many it does have.
@@ -756,9 +760,13 @@ a generic **Place** tool; this supersedes it with something better, because a *s
 a context bar is a worse affordance than **a tool per thing you make**:
 
 ```
- [ ↖  ✥  ⌕ ] │ [ ⇄+  🧍+  🪧+ ] │ [ Pallet Town · Overworld ⌄ ] [ Outside is: Pallet Town ⌄ ] [ 100% ⌄ ] …
-   select    │   the makers     │        what is loaded
+ [ ↖  ✥  ⌕ ] │ [ ⇄+  🧍+ ] │ [ Pallet Town · Overworld ⌄ ] [ Outside is: Pallet Town ⌄ ] [ 100% ⌄ ] …
+   select    │  the makers  │        what is loaded
 ```
+
+**Exactly the two makers Twilight named, and no others.** The rail is designed to *grow* one slot at a
+time as each object type gets its own conversation — it is not a place to pre-emptively park a tool for
+something nobody has specced.
 
 - **⇄+ Place warp** — click a tile, a door appears there. Defaults to `$FF` ("back outside") because
   that is what a door usually is. The **32-cap is stated before you hit it** ("3 of 32"), never after.
@@ -766,7 +774,6 @@ a context bar is a worse affordance than **a tool per thing you make**:
   map's own loaded sprite set** (so it can never be one of the amber "this map hasn't loaded that
   picture" sprites). This is the "create random sprite here" tool, and it is the fast path that the
   Characters bar's drag-and-drop is the *precise* path for. 15-cap stated up front.
-- **🪧+ Place sign** — same, 16-cap.
 - Each is a real tool: **a cursor, a context bar, an empty state, a keyboard path** (§9's rule), and
   each **respects the active layer** (placing a warp switches the Warps layer on if it was off — a tool
   that makes a thing you then can't see is a bug).
@@ -844,16 +851,49 @@ range, its legal values, whether the game will keep it, and whether anything rea
 
 ---
 
-### Phase 5e — Connections & the Player *(the rest of the Inspector)*
+#### Phase 5e — The Player *(the last piece the warp work leans on)*
 
-- **Connection** properties — the eight fields against **what the game's macro computes**, with
-  Recompute. (Compute from the macro, never from the broken `stripSize()`.)
-- **Player** properties — position, facing, movement, standing-on (`BIT_STANDING_ON_DOOR` /
-  `BIT_EXITING_DOOR` / `BIT_STANDING_ON_WARP` — the warp-adjacent trio), what he may do here, battle
-  state, scratch.
+**Player** properties — position, facing, movement, standing-on (`BIT_STANDING_ON_DOOR` /
+`BIT_EXITING_DOOR` / `BIT_STANDING_ON_WARP` — the warp-adjacent trio), what he may do here, battle state,
+scratch. This one stays in Phase 5 because the warp panel keeps pointing at it: a door only means
+anything relative to where the player is standing.
 
-**Exit:** there is no byte in the Area block that a person can see in a hex editor and cannot see here,
-in words, with its range, and change.
+**Exit of Phase 5:** there is no *warp* byte a person can see in a hex editor and cannot see here, in
+words, with its range, its legal values, whether the game will keep it, and whether anything reads it.
+
+---
+
+## 12b. ⛔ NOT YET BRIEFED — do not design these, do not build them  *(2026-07-14, Twilight)*
+
+> *"Let's not get too far ahead of ourselves. Signs and stuff, connecting routes, wild Pokémon — these are
+> examples of things I haven't gotten to yet. I'd hate to have to undo a lot of work because it was done
+> before I explained anything."*
+
+The phases below are **placeholders, not designs.** They were sketched early, from the *save layout* —
+which is a map of what bytes exist, not of what Twilight wants a person to be able to *do*. Every screen
+in this project that got designed from the bytes had to be built twice.
+
+**The rule:** a phase in this list gets **its own conversation with Twilight first**, then a research pass
+(`CLAUDE.md` → *RESEARCH LANDS IN THE NOTES*), then a design written *here*, and only then code. **A
+neighbouring phase does not get to absorb one of these because the data happens to sit next to it.**
+Signs nearly rode into Phase 5b on exactly that logic — they load out of the same ROM block as warps —
+and that is precisely the mistake this section exists to prevent.
+
+| Phase | Un-briefed | The temptation to resist |
+|---|---|---|
+| **Signs** | 🪧 the sign objects (16 max, `x`/`y`/`txtId`) | They are the same shape as warps and load in the same block. **Cut out of Phase 5b on 2026-07-14.** |
+| **Connections** | 🔗 the four edge connections (N/S/E/W) — "connecting routes" | The strips are already *rendered* and fully understood ([`../reference/map-connections.md`](../reference/map-connections.md)), so *editing* them looks like a small step. It isn't — nobody has said what editing a connection should mean. |
+| **Phase 6 — Encounters** | 🌿 wild Pokémon (`grassRate`, 10 grass slots, `waterRate`, 10 water slots, `pauseMons3Steps`) | The Grass/Water meaning layers already exist, so it looks like the panel is half-built. It isn't. |
+| **Phase 7 — Area State** | the `AreaNPC` flags, the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | It is "the leftovers", which is not a design. |
+| **Phase 8 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |
+
+**What the earlier text in this file says about these is a sketch and carries no authority.** Read it as
+"here is what the bytes are", never as "here is what we agreed."
+
+**What IS briefed and safe to build:** Phase 5 (warps) exactly as scoped in 5a–5e above, and nothing that
+touches signs, connections, encounters or area state. Where a warp genuinely *needs* one of them — the
+`$FF` door needs `wLastMap`, the destination resolver needs the map DB — it **reads** it; it does not
+build a UI for it.
 
 ---
 

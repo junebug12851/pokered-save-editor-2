@@ -54,6 +54,22 @@ out-of-table values that make a real console read arbitrary ROM as warp data. **
 
 Tool: `scripts/emu/probe_warp_persistence.py` (local-only, ROM-gated).
 
+### ⛔ NOT YET BRIEFED — don't design or build these (2026-07-14, Twilight)
+
+> *"Signs and stuff, connecting routes, wild Pokémon — these are examples of things I haven't gotten to
+> yet. I'd hate to have to undo a lot of work because it was done before I explained anything."*
+
+**Signs · connections ("connecting routes") · wild Pokémon/encounters · area state · the tileset deep
+pass** are **un-briefed**. The sketches for them in `plans/map-screen.md` were written from the *save
+layout* — a map of what bytes exist, not of what Twilight wants a person to be able to *do* — and they
+**carry no authority**. Each gets its own conversation, then research, then a design, then code.
+
+⚠️ **Adjacency is not a brief.** Signs load out of the *same ROM block* as warps and are the *same shape*
+— and on exactly that logic they nearly rode into the warps phase. They were **cut** (2026-07-12 sketch →
+removed 2026-07-14). A briefed feature that needs an un-briefed one **reads** it; it does not build a UI
+for it. Full list + the rule: [`plans/map-screen.md`](plans/map-screen.md) → **§12b**, and `CLAUDE.md` →
+*Critical Things Not to Get Wrong*.
+
 ### 🚶 The NPCs walk the way the GAME walks (2026-07-13, `0.30.0-alpha`)
 
 `MapSim` is now **`UpdateNPCSprite`, transliterated** — the console's per-frame state machine out of
