@@ -988,9 +988,14 @@ private:
 
   /// The block filling the 3-block ring -- the SAVE's `wMapBackgroundTile`, which is what the
   /// console reads. Edit it and the edge of the world changes.
-  /// The overworld buffer as it is ACTUALLY DRAWN (the save's border block included). Every question
-  /// about the map's blocks goes through here, so nothing can disagree with what is on screen.
+  /// The overworld buffer as it is ACTUALLY DRAWN (the save's border block AND the save's connections
+  /// included, so the ring is a Continue-load). Every question about the map's blocks goes through
+  /// here, so nothing can disagree with what is on screen.
   MapEngine::Buffer mapBuffer() const;
+
+  /// The SAVE's live edge connections, as raw structs for the renderer -- so the ring bleeds what a
+  /// Continue-load would, not the ROM defaults. Empty when the map has none. @see MapEngine::SaveConn.
+  QVector<MapEngine::SaveConn> saveConnections() const;
 
   AreaLoadedSprites* sprites = nullptr; ///< The save's live sprite-set cache (may be null in tests).
   AreaSprites* npcs = nullptr;    ///< The save's live map cast -- the 16 sprite slots (may be null).

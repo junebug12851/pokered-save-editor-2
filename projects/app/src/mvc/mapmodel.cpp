@@ -184,6 +184,20 @@ QString MapModel::source() const
   // MapEngine, NOT in this URL's other fields -- so without a generation counter the provider would
   // serve a stale cached image after a palette change. Bump-on-change, ride-in-URL: the same trick
   // the frame uses.
+  // The SAVE's connections ride in the URL too, so the rendered ring is a **Continue-load** (the
+  // edited/added connections), not the ROM defaults. Encoded `dir.toInd.src.dst.width.stride` per
+  // connection, joined by `_`; "-" for a map with none. @see MapProvider, MapEngine::SaveConn.
+  QString conns;
+  for (const MapEngine::SaveConn& sc : saveConnections()) {
+    if (!conns.isEmpty())
+      conns += "_";
+    conns += QStringLiteral("%1.%2.%3.%4.%5.%6")
+               .arg(sc.dir).arg(sc.toInd).arg(sc.stripSrc)
+               .arg(sc.stripDst).arg(sc.stripWidth).arg(sc.width);
+  }
+  if (conns.isEmpty())
+    conns = QStringLiteral("-");
+
   return "image://map/" + QString::number(mapInd())
        + "/" + QString::number(tilesetInd())
        + "/" + QString::number(frame())
@@ -191,7 +205,8 @@ QString MapModel::source() const
        + "/" + QString::number(tileAnim())
        + "/" + QString::number(blocksetInd())    // whose BLOCKS -- the save's own second pointer
        + "/" + QString::number(borderBlock())     // what fills the ring -- the save's own byte
-       + "/" + QString::number(MapEngine::paletteGeneration());   // the colour filter
+       + "/" + QString::number(MapEngine::paletteGeneration())    // the colour filter
+       + "/" + conns;                             // the SAVE's connections -- a Continue-load ring
 }
 
 QVariantList MapModel::connectionList() const
@@ -457,14 +472,16 @@ QVariantList MapModel::connectionEditList() const
       }
       m["snaps"] = snaps;
 
-      // The interactive strip rect, in buffer px, from the SAVE's own map + offset (via the macro).
-      const MapEngine::Connection strip =
-          MapEngine::connectionOf(from, dir, to, connectionOffsetOf(dir));
-      if (strip.valid && strip.length > 0 && stride > 0) {
-        const int bx = strip.destIndex % stride;
-        const int by = strip.destIndex / stride;
-        const int cols = ns ? strip.length : MapEngine::mapBorder;
-        const int rows = ns ? MapEngine::mapBorder : strip.length;
+      // The interactive strip rect, in buffer px, from the SAVE's OWN RAW bytes (stripDst/stripWidth),
+      // so the box lands exactly where the ring bleeds it — synced OR hand-edited (desynced). Same
+      // source the renderer now uses (a Continue-load).
+      const int destIndex = c->stripDst - MapEngine::overworldMapAddr;
+      const int length = c->stripWidth;
+      if (length > 0 && stride > 0 && destIndex >= 0) {
+        const int bx = destIndex % stride;
+        const int by = destIndex / stride;
+        const int cols = ns ? length : MapEngine::mapBorder;
+        const int rows = ns ? MapEngine::mapBorder : length;
         m["stripX"] = bx * MapEngine::blockPx;
         m["stripY"] = by * MapEngine::blockPx;
         m["stripW"] = cols * MapEngine::blockPx;
@@ -1003,11 +1020,35 @@ int MapModel::borderBlock() const
   return map->outOfBoundsBlock;
 }
 
+QVector<MapEngine::SaveConn> MapModel::saveConnections() const
+{
+  QVector<MapEngine::SaveConn> out;
+  if (map == nullptr)
+    return out;
+
+  for (auto it = map->connections.constBegin(); it != map->connections.constEnd(); ++it) {
+    MapConnData* c = it.value();
+    if (c == nullptr)
+      continue;
+    MapEngine::SaveConn sc;
+    sc.dir = it.key();
+    sc.toInd = c->mapPtr;
+    sc.stripSrc = c->stripSrc;
+    sc.stripDst = c->stripDst;
+    sc.stripWidth = c->stripWidth;
+    sc.width = c->width;
+    out.append(sc);
+  }
+  return out;
+}
+
 MapEngine::Buffer MapModel::mapBuffer() const
 {
   // Every question about the map's blocks -- what is at this pixel, does this layer apply, is the
-  // selection still inside -- goes through here, so they all agree with what is DRAWN.
-  return MapEngine::buildOverworldMap(mapInd(), borderBlock());
+  // selection still inside -- goes through here, so they all agree with what is DRAWN. The SAVE's
+  // connections are passed so the ring is a Continue-load, exactly as the rendered image is.
+  const QVector<MapEngine::SaveConn> conns = saveConnections();
+  return MapEngine::buildOverworldMap(mapInd(), borderBlock(), &conns);
 }
 
 // ── The map, the tileset, the blockset ────────────────────────────────────────

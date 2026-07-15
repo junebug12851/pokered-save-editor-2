@@ -213,13 +213,36 @@ public:
   /// Recover the header's raw signed offset from what maps.json kept (see the .cpp).
   static int connectionOffset(const MapDBEntryConnect* connect);
 
+  /**
+   * @brief ONE connection **as the save holds it** -- its raw struct bytes, for rendering the ring.
+   *
+   * ⚠️ This is what makes the rendered map show a **Continue-load**, not the ROM defaults. On Continue
+   * the console keeps the save's connection structs (see reference/map-connections.md), so the ring
+   * bleeds whatever the SAVE says -- an edited/added/desynced connection included. The bleed uses the
+   * raw bytes directly (not a re-derived offset), so a hand-edited `stripSrc`/`stripWidth` renders
+   * exactly as the console would draw it. Only the neighbour's ROM **bank** comes from the DB (the
+   * game switches to the connected map's bank; the save doesn't store it).
+   */
+  struct SaveConn {
+    int dir = -1;        ///< MapDBEntryConnect::ConnectDir.
+    int toInd = -1;      ///< `ConnectedMap` -- the neighbour id (for its bank).
+    int stripSrc = 0;    ///< `ConnectionStripSrc`.
+    int stripDst = 0;    ///< `ConnectionStripDest` (absolute pointer into wOverworldMap).
+    int stripWidth = 0;  ///< `ConnectionStripLength`.
+    int width = 0;       ///< `ConnectedMapWidth` (source row stride).
+  };
+
   /// Build @p mapInd's overworld buffer -- the map placed inside its 3-block border ring.
   /// @param borderBlock the block the 3-block ring is filled with. This is `wMapBackgroundTile`
   ///        (`AreaMap::outOfBoundsBlock`) -- **the SAVE's byte**, which is what a console reads, and
   ///        which is allowed to disagree with the map's shipped border. Pass **-1** to fall back to
   ///        the map's own (what the game would put there on a fresh load). (2026-07-13: it used to
   ///        always use the map's, so editing the save's byte changed nothing on screen.)
-  static Buffer buildOverworldMap(int mapInd, int borderBlock = -1);
+  /// @param saveConns the SAVE's own connections (@ref SaveConn). Pass **nullptr** to bleed the map's
+  ///        shipped ROM connections (what a fresh, first-ever load would show, and what a neighbour
+  ///        map wants); pass the save's list to render a **Continue-load** -- the edited ring.
+  static Buffer buildOverworldMap(int mapInd, int borderBlock = -1,
+                                  const QVector<SaveConn>* saveConns = nullptr);
 
   // ── Palettes, and the "contrast" byte (home/fade.asm) ────────────────────────
   //
@@ -473,6 +496,9 @@ private:
   /// @param tileAnim the save's animation byte; -1 = use the tileset's own.
   static QString tilesetId(int tilesetInd, int frame, int tileAnim = -1);
 
-  /// Bleed every connected map's edge strip into @p out's border ring (LoadTileBlockMap).
-  static void applyConnections(Buffer& out, const MapDBEntry* map);
+  /// Bleed every connected map's edge strip into @p out's border ring (LoadTileBlockMap). With
+  /// @p saveConns non-null, bleeds the SAVE's connections (a Continue-load); otherwise the map's ROM
+  /// connections. @see SaveConn.
+  static void applyConnections(Buffer& out, const MapDBEntry* map,
+                               const QVector<SaveConn>* saveConns = nullptr);
 };

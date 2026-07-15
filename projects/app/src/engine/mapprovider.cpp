@@ -69,13 +69,39 @@ QPixmap MapProvider::requestPixmap(const QString& id, QSize* size, const QSize& 
   // one. Edit it and the edge of the world changes, which is what a console would do.
   const int borderBlock = (parts.size() > 6) ? parts.at(6).toInt() : -1;
 
+  // parts[7] is the palette generation (a cache-buster; the filter is a global on MapEngine).
+  //
+  // parts[8] is the SAVE's connections -- so the ring is a **Continue-load**, not the ROM defaults.
+  // Encoded `dir.toInd.src.dst.width.stride` per connection, joined by `_`; "-" (or absent) means
+  // "use the map's shipped ROM connections", which is what a neighbour-map render passes. @see
+  // MapModel::source, MapEngine::SaveConn.
+  QVector<MapEngine::SaveConn> saveConns;
+  const bool haveConns = (parts.size() > 8) && parts.at(8) != QStringLiteral("-");
+  if (haveConns) {
+    const QStringList encoded = parts.at(8).split('_', Qt::SkipEmptyParts);
+    for (const QString& e : encoded) {
+      const QStringList f = e.split('.');
+      if (f.size() != 6)
+        continue;
+      MapEngine::SaveConn sc;
+      sc.dir = f.at(0).toInt();
+      sc.toInd = f.at(1).toInt();
+      sc.stripSrc = f.at(2).toInt();
+      sc.stripDst = f.at(3).toInt();
+      sc.stripWidth = f.at(4).toInt();
+      sc.width = f.at(5).toInt();
+      saveConns.append(sc);
+    }
+  }
+
   // The GBC / SGB / custom colour filter, resolved for THIS map (the SGB mode colours each map in
   // its own palette). It rides in the URL as a generation counter, so the cached image refreshes
   // when the palette changes. @see MapEngine::outputPaletteFor
   QRgb outPal[4];
   MapEngine::outputPaletteFor(mapInd, tilesetInd, outPal);
 
-  const auto buffer = MapEngine::buildOverworldMap(mapInd, borderBlock);
+  const auto buffer = MapEngine::buildOverworldMap(mapInd, borderBlock,
+                                                   haveConns ? &saveConns : nullptr);
   const QImage img = MapEngine::render(buffer, tilesetInd, frame, contrast, tileAnim, blocksetInd,
                                        outPal);
 

@@ -106,7 +106,8 @@ TilesetDBEntry* tilesetAt(int tilesetInd)
 
 } // namespace
 
-MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd, int borderBlock)
+MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd, int borderBlock,
+                                               const QVector<SaveConn>* saveConns)
 {
   Buffer out;
   out.mapInd = mapInd;
@@ -160,7 +161,7 @@ MapEngine::Buffer MapEngine::buildOverworldMap(int mapInd, int borderBlock)
       out.blocks[dst + x] = blocks[src + x];
   }
 
-  applyConnections(out, map);
+  applyConnections(out, map, saveConns);
 
   out.valid = true;
   return out;
@@ -370,12 +371,17 @@ QVector<MapEngine::Strip> MapEngine::connectionStrips(int mapInd)
   return out;
 }
 
-void MapEngine::applyConnections(Buffer& out, const MapDBEntry* map)
+void MapEngine::applyConnections(Buffer& out, const MapDBEntry* map,
+                                 const QVector<SaveConn>* saveConns)
 {
   // LoadTileBlockMap fills the ring with the border block and THEN bleeds the connected
   // maps' edges over the top of it. Pallet Town's ring is not a wall of trees -- it is the
   // bottom of Route 1 and the top of Route 21, which is why you can see into the next route
   // before you walk there, and why the walk across is seamless.
+  //
+  // ⚠️ TWO SOURCES: with `saveConns` we bleed the SAVE's own connections (a Continue-load -- edited,
+  // added, or desynced included), reading its raw struct bytes directly; without, the map's shipped
+  // ROM connections (a fresh first load, and what a neighbour map render wants).
   const int dirs[] = {
     MapDBEntryConnect::ConnectDir::NORTH,
     MapDBEntryConnect::ConnectDir::SOUTH,
@@ -383,18 +389,41 @@ void MapEngine::applyConnections(Buffer& out, const MapDBEntry* map)
     MapDBEntryConnect::ConnectDir::EAST
   };
 
-  for (int dir : dirs) {
-    const auto* connect = map->getConnectAt(dir);
-    if (connect == nullptr)
-      continue;
+  // Build the per-direction Connection to bleed. From the SAVE it is the raw struct bytes; from the
+  // ROM it is the macro recomputed. `dirsToDo` is whichever set applies.
+  QVector<Connection> toBleed;
 
-    auto* to = MapsDB::inst()->getIndAt(connect->getMap());
-    if (to == nullptr)
-      continue;
+  if (saveConns != nullptr) {
+    for (const SaveConn& sc : *saveConns) {
+      auto* to = MapsDB::inst()->getIndAt(QString::number(sc.toInd));
+      Connection c;
+      c.dir = sc.dir;
+      c.toInd = sc.toInd;
+      c.toBank = (to != nullptr) ? to->getBank() : -1;   // the game switches to the CONNECTED map's bank
+      c.toWidth = sc.width;
+      c.srcAddr = sc.stripSrc;
+      c.destIndex = sc.stripDst - overworldMapAddr;       // absolute pointer -> buffer index
+      c.length = sc.stripWidth;
+      c.valid = (c.toBank >= 0 && c.length > 0);
+      if (c.valid)
+        toBleed.append(c);
+    }
+  } else {
+    for (int dir : dirs) {
+      const auto* connect = map->getConnectAt(dir);
+      if (connect == nullptr)
+        continue;
+      auto* to = MapsDB::inst()->getIndAt(connect->getMap());
+      if (to == nullptr)
+        continue;
+      const Connection c = connectionOf(map, dir, to, connectionOffset(connect));
+      if (c.valid && c.length > 0)
+        toBleed.append(c);
+    }
+  }
 
-    const Connection c = connectionOf(map, dir, to, connectionOffset(connect));
-    if (!c.valid || c.length <= 0)
-      continue;
+  for (const Connection& c : toBleed) {
+    const int dir = c.dir;
 
     // The two loop shapes are NOT the same, and the length means different things in them:
     //   N/S -- 3 rows (MAP_BORDER), each `length` blocks wide
