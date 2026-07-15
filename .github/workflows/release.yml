@@ -111,7 +111,7 @@ jobs:
           host: windows
           target: desktop
           arch: win64_llvm_mingw
-          modules: qtcharts qtmultimedia
+          modules: qtcharts qtmultimedia qtshadertools
           tools: "tools_llvm_mingw1706"
           cache: true
 
@@ -243,7 +243,7 @@ jobs:
           host: linux
           target: desktop
           arch: linux_gcc_64
-          modules: qtcharts qtmultimedia
+          modules: qtcharts qtmultimedia qtshadertools
           cache: true
 
       - name: Configure (Release, tests ON so the screenshooter target exists)

@@ -29,6 +29,9 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wno-ignored-attributes)
 endif()
 
+# ShaderTools IS required: app/CMakeLists.txt calls qt_add_shaders (that command lives in the
+# ShaderTools package). It must therefore be installed in CI too — see the `qtshadertools`
+# module in .github/workflows/{tests,lint,release}.yml. A full local Qt already includes it.
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick QuickControls2 QuickWidgets Svg Qml Charts Network Test Multimedia ShaderTools LinguistTools)
 qt_standard_project_setup()
 

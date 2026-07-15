@@ -36,7 +36,7 @@ jobs:
           # with the Qt 6 base package, NOT aqtinstall add-on modules -- listing
           # them here makes aqt fail ("packages ... not found while parsing XML").
           # Only genuine add-ons (qtcharts) belong in `modules`.
-          modules: qtcharts qtmultimedia
+          modules: qtcharts qtmultimedia qtshadertools
           # Cache the installed Qt so a successful download is reused on later runs.
           # aqtinstall download.qt.io / mirror flakiness (e.g. a fallback mirror with
           # a bad SSL cert) only bites on a cache MISS; with the cache, almost every
@@ -78,7 +78,7 @@ jobs:
           target: desktop
           arch: win64_llvm_mingw
           # See linux-asan note: qtdeclarative/qtsvg are base components, not modules.
-          modules: qtcharts qtmultimedia
+          modules: qtcharts qtmultimedia qtshadertools
           tools: "tools_llvm_mingw1706"
           cache: true               # reuse a successful download; see linux-asan note
 
