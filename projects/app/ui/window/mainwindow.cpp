@@ -178,11 +178,27 @@ MainWindow *MainWindow::getInstance()
 // file. Works regardless of window focus/occlusion, so an automation harness can grab
 // the current screen without raising or activating the window. See --shot in
 // src/boot/debuglaunch.cpp.
-bool MainWindow::saveShot(const QString& path)
+bool MainWindow::saveShot(const QString& path, QObject* item)
 {
-  const QImage img = ui.app->grabFramebuffer();
+  QImage img = ui.app->grabFramebuffer();
   if(img.isNull())
     return false;
+
+  // Crop to a component's bounds, if one was named. The item's rect maps to SCENE coords, which are
+  // the QQuickWidget's LOGICAL coords; the grabbed framebuffer is PHYSICAL pixels, so scale by the
+  // framebuffer/widget ratio (the device pixel ratio) before cropping. This is the "screenshot from
+  // any component down" -- grab one panel with no manual cropping (Twilight, 2026-07-15).
+  if(auto* qi = qobject_cast<QQuickItem*>(item)) {
+    const QRectF scene = qi->mapRectToScene(QRectF(0, 0, qi->width(), qi->height()));
+    const qreal sx = ui.app->width()  > 0 ? qreal(img.width())  / ui.app->width()  : 1.0;
+    const qreal sy = ui.app->height() > 0 ? qreal(img.height()) / ui.app->height() : 1.0;
+    QRect px(qRound(scene.x() * sx), qRound(scene.y() * sy),
+             qRound(scene.width() * sx), qRound(scene.height() * sy));
+    px = px.intersected(img.rect());
+    if(px.isValid() && !px.isEmpty())
+      img = img.copy(px);
+  }
+
   return img.save(path);
 }
 
@@ -197,7 +213,7 @@ bool MainWindow::saveShot(const QString& path)
 // and clicked the screen by hand instead of fixing the tool. Twilight asked why, and she was right
 // to. This is the fix: a genuine QMouseEvent, posted at the QQuickWidget, through grabs, handlers,
 // propagation and all.
-bool MainWindow::debugTap(const QPointF& at)
+bool MainWindow::debugTap(const QPointF& at, int clicks, Qt::MouseButton button)
 {
   if(ui.app == nullptr)
     return false;
@@ -205,13 +221,18 @@ bool MainWindow::debugTap(const QPointF& at)
   const QPoint local = at.toPoint();
   const QPointF global = ui.app->mapToGlobal(local);
 
-  QMouseEvent press(QEvent::MouseButtonPress, at, global,
-                    Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-  QMouseEvent release(QEvent::MouseButtonRelease, at, global,
-                      Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+  auto send = [&](QEvent::Type type, Qt::MouseButtons buttons) {
+    QMouseEvent ev(type, at, global, button, buttons, Qt::NoModifier);
+    QCoreApplication::sendEvent(ui.app, &ev);
+  };
 
-  QCoreApplication::sendEvent(ui.app, &press);
-  QCoreApplication::sendEvent(ui.app, &release);
+  send(QEvent::MouseButtonPress, button);
+  send(QEvent::MouseButtonRelease, Qt::NoButton);
+  if(clicks >= 2) {
+    // A real double-click: Qt delivers Press, Release, DblClick, Release for the second tap.
+    send(QEvent::MouseButtonDblClick, button);
+    send(QEvent::MouseButtonRelease, Qt::NoButton);
+  }
 
   return true;
 }

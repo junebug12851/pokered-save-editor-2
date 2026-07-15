@@ -63,8 +63,10 @@ public:
   static QQmlEngine* engine;        ///< The QML engine behind the hosted QQuickWidget.
 
   /// DEBUG: render the live QML view to an image file (focus/occlusion-independent).
-  /// Backs the --shot debug launch flag. @return false on failure.
-  bool saveShot(const QString& path);
+  /// Backs the --shot debug launch flag. If @p item is non-null, the image is CROPPED to that
+  /// item's bounds (its subtree, as drawn) -- so you can grab just one panel/control with no manual
+  /// cropping. @return false on failure.
+  bool saveShot(const QString& path, QObject* item = nullptr);
 
   /// DEBUG: a **real** mouse press+release at @p at (view coordinates), through Qt's real delivery
   /// path -- grabs, pointer handlers, propagation and all.
@@ -73,7 +75,10 @@ public:
   /// therefore exercises **none** of the delivery machinery. If a bug is about *which item gets the
   /// event* -- who grabs it, who consumes it, what it falls through to -- `click` cannot see it and
   /// this can. @see debugserver.cpp -> "tap"
-  bool debugTap(const QPointF& at);
+  ///
+  /// @p clicks 1 = a single click, 2 = a real double-click (adds the DblClick event Qt expects).
+  /// @p button which mouse button (Left/Right/Middle) -- so right-click menus can be driven too.
+  bool debugTap(const QPointF& at, int clicks = 1, Qt::MouseButton button = Qt::LeftButton);
 
   /// DEBUG: open the details editor for party mon @p index (drives the QML
   /// AppWindow.debugOpenPartyDetails). Backs --screen pokemonDetails. @return false

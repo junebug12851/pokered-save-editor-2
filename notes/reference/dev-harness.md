@@ -69,6 +69,39 @@ object per line, get one reply per line. Verbs:
   "what happens when the user actually clicks *there*".**
 - `{"cmd":"reload"}` — force a QML reload. `{"cmd":"list","arg":"<substr>"}` — matching `objectName`s.
 
+> 🟢 **Everything named is reachable — including `Repeater`/model-built controls (fixed 2026-07-15).**
+> `list`/`get`/`set`/`click`/`tap`-by-object resolve names over the **full** tree: the QObject
+> parent-child tree **and** the Qt Quick visual tree (`QQuickItem::childItems()`). This matters because
+> a `Repeater` or model delegate — every **dock rail button** (`dockBtn_<id>`), every list row, anything
+> built from an array — lives in the *visual* tree but is often **not** returned by
+> `QObject::findChildren`. Before the fix, hand-declared items (`mapRightPanel`) were reachable while
+> model-built ones (`dockBtn_charstate`) silently were not, so you couldn't `click` a rail button by
+> name and fell back to guessing `tap` coordinates. The promise is universal: **if it has an
+> `objectName`, you can target it.** Name convention: give the control a stable name from its id/key or
+> array index (the rail does `objectName: "dockBtn_" + modelData.id`) so the handle is predictable.
+> (`debugserver.cpp` → `collectTree`/`reachableObjects`.)
+
+**Navigate by PATH, and reach even UNNAMED nodes (2026-07-15).** Any `obj` field (in `get`/`set`/
+`click`/`tap`/`invoke`/`shot`) accepts a **`/`-separated path**: the first segment is a named node
+(any `objectName`, or `root`), each following segment steps **down one level** — a **number** is an
+index into that node's direct children (visual order first, so it matches what you see), a **word** is
+a child's `objectName`. So you can start at a named ancestor and walk to anything, named or not:
+`get obj=mapCharacterState/0 prop=width` → the panel's ScrollView. To see what's under a node,
+`list` it: `{"cmd":"list","obj":"mapRightPanel"}` → `["[0] Type name", "[1] …", …]` — pick an index,
+append it to the path.
+
+**Trigger anything (2026-07-15).**
+- `{"cmd":"invoke","obj":…,"method":"toggle","args":[…]}` — emit **any signal** or call **any**
+  slot/`Q_INVOKABLE` by name (no-arg is the always-works case: fire a signal/event; args are passed as
+  QVariant, so typed-param QML slots may not match — prefer `var`/no-arg).
+- `{"cmd":"tap",…,"double":true}` — a real **double-click**; `"button":"right"|"middle"` for the
+  other buttons (right-click menus drive too). `"clicks":2` is an alias for `double`.
+
+**Screenshot from any component down (2026-07-15).** `{"cmd":"shot","arg":"out.png","obj":"<name|path>"}`
+crops the grab to that component's bounds — grab one panel/control with **no manual cropping**. Omit
+`obj` for the whole view. (`mainwindow.cpp` → `saveShot` maps the item's scene rect to physical pixels
+via the framebuffer/widget ratio, so it's correct under a device-pixel-ratio.)
+
 Drive it from PowerShell with a `TcpClient` (write a line, read a line). Great for scripted checks:
 navigate, `set` a field, `shot`, then eyeball.
 
