@@ -201,15 +201,15 @@ void TestMapLayers::connectionsAreALayer()
                                        MapLayersModel::AppliesRole).toBool();
   QVERIFY2(applies, "Pallet Town has two connections -- the layer should apply");
 
-  // OFF by default (Twilight, 2026-07-13): it is something you go looking for, not something that
-  // should be sitting on the map before you asked for it.
-  QVERIFY2(!visible(r->layers, row), "the connections should be OFF by default");
-  QVERIFY(!r->layers->showConnections());
+  // ON by default (Twilight, 2026-07-15): you want to see how the map joins the world -- the
+  // connections (and the connecting maps that render off the edges) are the point, not clutter.
+  QVERIFY2(visible(r->layers, row), "the connections should be ON by default");
+  QVERIFY(r->layers->showConnections());
 
   QVERIFY(!r->map->connectionList().isEmpty());
 
   r->layers->toggle(row);
-  QVERIFY(r->layers->showConnections());
+  QVERIFY(!r->layers->showConnections());
 }
 
 /// One click on a group's eye always changes something: any child on -> all off; none on -> all on.
