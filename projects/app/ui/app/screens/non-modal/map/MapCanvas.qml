@@ -297,140 +297,10 @@ Item {
     return null;
   }
 
-  // ── UNIVERSAL OBJECT STACKING ───────────────────────────────────────────────────────────────
-  //
-  // Twilight, 2026-07-14: *"why don't we have this behaviour with anything. All objects dragged onto
-  // one another stack, tabbed like that easily accessible on the left, delete group on right, move
-  // group from center."*
-  //
-  // Every map object -- the player, the NPCs, the warps, the signs -- is reduced to one flat list and
-  // grouped by tile. Two or more on a tile become a MapObjectStack (the group box with tabs); a lone
-  // object is left to its own chip, which hides itself the moment it finds it is part of a stack (see
-  // each chip's `visible`). Only objects whose LAYER is on take part -- the three lists above already
-  // return [] when their layer is off, and the player has his own gate. Keyed off `revision`, the
-  // same missing dependency the lists have.
-  readonly property var stacks: {
-    canvasRoot.revision;
-
-    const by = ({});
-    function add(m) { (by[m.x + "," + m.y] || (by[m.x + "," + m.y] = [])).push(m); }
-
-    if (brg.mapLayers.showPlayer)
-      add({ kind: "player", ind: 0, x: brg.map.playerX, y: brg.map.playerY,
-            glyph: "", art: brg.map.playerSource,
-            fill: "#66cc79a7", border: "#cc79a7",
-            label: qsTr("The player"), deletable: false, valid: true });
-
-    const ns = canvasRoot.npcs;
-    for (let i = 0; i < ns.length; i++)
-      add({ kind: "npc", ind: ns[i].slot, x: ns[i].x, y: ns[i].y,
-            glyph: "", art: ns[i].source,
-            fill: "#66009e73", border: ns[i].inSpriteSet ? "#009e73" : "#ffd54f",
-            label: qsTr("A character"), deletable: true, valid: ns[i].inSpriteSet });
-
-    const ws = canvasRoot.warps;
-    for (let i = 0; i < ws.length; i++)
-      add({ kind: "warp", ind: ws[i].ind, x: ws[i].x, y: ws[i].y,
-            glyph: "⇄", art: "",
-            fill: ws[i].destValid ? "#66f0e442" : "#66d55e00",
-            border: ws[i].destValid ? "#f0e442" : "#d55e00",
-            label: ws[i].destValid ? qsTr("→ %1").arg(ws[i].destName)
-                                   : qsTr("→ %1 — no such warp there").arg(ws[i].destName),
-            deletable: true, valid: ws[i].destValid });
-
-    const ss = canvasRoot.signs;
-    for (let i = 0; i < ss.length; i++)
-      add({ kind: "sign", ind: ss[i].ind, x: ss[i].x, y: ss[i].y,
-            glyph: "▤", art: "",
-            fill: ss[i].textValid ? "#66e69f00" : "#66d55e00",
-            border: ss[i].textValid ? "#e69f00" : "#d55e00",
-            label: ss[i].textValid ? (ss[i].preview !== "" ? ss[i].preview : qsTr("(no text)"))
-                                   : qsTr("id points past this map's text"),
-            deletable: true, valid: ss[i].textValid });
-
-    const out = ({});
-    for (const k in by)
-      if (by[k].length >= 2)
-        out[k] = by[k];
-    return out;
-  }
-
-  /// The stacks as a Repeater model: [{ tileX, tileY, members }].
-  readonly property var stackList: {
-    canvasRoot.revision;
-    const s = canvasRoot.stacks;
-    const arr = [];
-    for (const k in s) {
-      const p = k.split(",");
-      arr.push({ tileX: parseInt(p[0]), tileY: parseInt(p[1]), members: s[k] });
-    }
-    return arr;
-  }
-
-  /// Is this map tile shared by two or more objects? The lone chips read this (with `revision` as the
-  /// binding's dependency) to hide themselves and hand the tile to the group box.
-  function isStacked(x, y) {
-    return canvasRoot.stacks[x + "," + y] !== undefined;
-  }
-
-  // ── The dispatch -- the ONE place a stack's edits touch the save ─────────────────────────────
-  //
-  // A stack does not know how to move an NPC vs a warp vs a sign; it just names a kind and an index
-  // and calls through here. Every write is exactly the same call a lone chip makes, so byte fidelity
-  // is identical: a move is two bytes, a delete compacts one list, nothing else stirs.
-
-  function selectObject(kind, ind) {
-    if (kind === "warp") canvasRoot.selectedWarp = ind;
-    else if (kind === "sign") canvasRoot.selectedSign = ind;
-    else canvasRoot.selectedNpc = ind;   // npc or player (slot 0)
-  }
-
-  function editObject(kind, ind) {
-    canvasRoot.selectObject(kind, ind);
-    // Open the Details panel. It reads the selection to know what to show; the arg only matters for
-    // the sprite path (the slot). Warps and signs pass -1.
-    canvasRoot.editRequested((kind === "npc" || kind === "player") ? ind : -1);
-  }
-
-  function moveObject(kind, ind, x, y) {
-    if (kind === "player") brg.map.movePlayer(x, y);
-    else if (kind === "npc") brg.map.moveNpc(ind, x, y);
-    else if (kind === "warp") brg.map.moveWarp(ind, x, y);
-    else if (kind === "sign") brg.map.moveSign(ind, x, y);
-  }
-
-  function removeObject(kind, ind) {
-    if (kind === "npc") brg.map.removeNpc(ind);
-    else if (kind === "warp") brg.map.removeWarp(ind);
-    else if (kind === "sign") brg.map.removeSign(ind);
-    // the player is never removed -- the game requires him
-  }
-
-  /// Move every member of a group to (x, y). They were on one tile; they stay stacked on the new one.
-  function moveGroup(members, x, y) {
-    for (let i = 0; i < members.length; i++)
-      canvasRoot.moveObject(members[i].kind, members[i].ind, x, y);
-  }
-
-  /// Delete every deletable member of a group. Removing by index compacts that type's list, so each
-  /// kind is removed HIGH-index-first -- otherwise the second removal of a kind would hit a slot that
-  /// has already slid up.
-  function removeGroup(members) {
-    const byKind = ({ npc: [], warp: [], sign: [] });
-    for (let i = 0; i < members.length; i++)
-      if (members[i].deletable && byKind[members[i].kind] !== undefined)
-        byKind[members[i].kind].push(members[i].ind);
-
-    ["npc", "warp", "sign"].forEach(function(kind) {
-      byKind[kind].sort(function(a, b) { return b - a; })
-                  .forEach(function(ind) { canvasRoot.removeObject(kind, ind); });
-    });
-
-    canvasRoot.selectedNpc = -1;
-    canvasRoot.selectedWarp = -1;
-    canvasRoot.selectedSign = -1;
-    canvasRoot.status = qsTr("Removed everything stacked on that tile.");
-  }
+  // (The "universal object stacking" feature — a group box for objects sharing a tile — was REMOVED
+  //  2026-07-15 at Twilight's request: *"it never worked well and there's no point fixing it because I
+  //  only added it from a misunderstanding."* Overlapping objects now simply draw over each other, each
+  //  its own selectable/draggable chip, which is the ordinary behaviour and the one that works.)
 
   // ── The two boxes follow the player LIVE ───────────────────────────────────────────────────
   //
@@ -877,10 +747,9 @@ Item {
       // He is slot 0, and he is a sprite like any other: click him, drag him. There was never a
       // reason he should be the one thing on the map you could not pick up (Twilight, 2026-07-13).
       MapSprite {
-        // Gated on his layer AND on not-being-stacked: if he shares a tile with a warp (you spawn on
-        // one all the time) the group box draws him instead. `revision` makes it re-ask.
-        visible: { canvasRoot.revision; return brg.mapLayers.showPlayer
-                                               && !canvasRoot.isStacked(brg.map.playerX, brg.map.playerY); }
+        // Gated on his layer only. (He used to also hide when stacked under another object; the
+        // stacking feature was removed 2026-07-15.)
+        visible: brg.mapLayers.showPlayer
 
         canvas: canvasRoot
         slot: 0
@@ -975,25 +844,9 @@ Item {
         }
       }
 
-      // ── The STACKS ─────────────────────────────────────────────────────────────────────────
-      //
-      // Any tile that carries two or more objects (a warp under the player, a sign on a door, two
-      // NPCs on one square). Each of the overlapping chips above has hidden itself; this one group
-      // box takes the tile, with the per-member tabs, the group move handle and the group delete.
-      // Drawn LAST of the objects so its selection ring and toolbar sit above the lone chips.
-      // (Twilight, 2026-07-14 — universal object stacking. @see canvasRoot.stackList, MapObjectStack.)
-      Repeater {
-        model: canvasRoot.stackList
-
-        delegate: MapObjectStack {
-          required property var modelData
-
-          canvas: canvasRoot
-          tileX: modelData.tileX
-          tileY: modelData.tileY
-          members: modelData.members
-        }
-      }
+      // (The MapObjectStack "group box" for overlapping objects was REMOVED 2026-07-15 — Twilight:
+      //  the feature never worked well and was added from a misunderstanding. Overlapping chips just
+      //  draw over each other now, each independently selectable.)
 
       // The visible screen: the 20x18 tiles actually on the Game Boy's screen.
       Rectangle {

@@ -72,9 +72,7 @@ Item {
 
   z: sign.dragging ? 30 : (sign.selected ? 25 : 1)
 
-  // When this sign shares its tile with anything else, it hands rendering to the MapObjectStack group
-  // box. `revision` is the notifiable dependency that makes this re-ask. @see MapCanvas.
-  visible: { sign.canvas.revision; return !sign.canvas.isStacked(sign.tileX, sign.tileY); }
+  // (Object stacking was removed 2026-07-15; a sign always draws, overlapping or not.)
 
   // ── The chip ─────────────────────────────────────────────────────────────────────────────
   //

@@ -231,6 +231,8 @@ private:
   // Signs join the default-on set with the doors and the people: they are the map's third kind of
   // object, and an object type that is off until you hunt for the toggle reads as a missing feature.
   // (Twilight's original 2026-07-13 list predates the signs brief; this is the consistent extension.)
-  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewWarps | ViewSigns | ViewScreenBox;
+  // Defaults (Twilight, 2026-07-15): Connections ON (you want to see how the map joins the world), Warps
+  // OFF (the doors are clutter unless you're editing them). Everything else as before.
+  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewSigns | ViewScreenBox | ViewConnections;
   qreal opacity = 1.0;
 };

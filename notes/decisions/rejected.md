@@ -7,6 +7,21 @@ commit log; see `version.md` and `context/origins.md`). The rest are from the 20
 
 ---
 
+## Universal object stacking on the map (2026-07-14 → removed 2026-07-15)
+
+**Tried:** a `MapObjectStack` "group box" that gathered every map object sharing a tile (player + NPCs +
+warps + signs) into one tabbed widget — pick a member on the left, move the group from the centre, delete
+the group on the right — and made each lone chip hide itself (`isStacked`) when it became part of a stack.
+Added at Twilight's request 2026-07-14.
+
+**Removed 2026-07-15, Twilight:** *"it never worked well and there's no point in fixing it because I only
+added it from a misunderstanding."* Overlapping objects now simply draw over each other, each an
+independent selectable/draggable chip (the ordinary behaviour, and the one that works). Do not
+reintroduce the group box. Deleted `MapObjectStack.qml` + the `stacks`/`stackList`/`isStacked`/dispatch
+machinery in `MapCanvas` and the `!isStacked` visibility gates in the chips.
+
+---
+
 ## Historical dead ends (2019–2020)
 
 These were each tried for real and abandoned. Hashes point at the commit in `version.md`.

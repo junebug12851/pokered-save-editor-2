@@ -85,10 +85,7 @@ Item {
 
   z: door.dragging ? 30 : (door.selected ? 25 : 1)
 
-  // When this door shares its tile with anything else, it hands rendering over to the MapObjectStack
-  // group box -- a stacked tile is drawn and driven by ONE thing, never by the overlapping chips
-  // underneath it. `revision` is the notifiable dependency that makes this re-ask. @see MapCanvas.
-  visible: { door.canvas.revision; return !door.canvas.isStacked(door.tileX, door.tileY); }
+  // (Object stacking was removed 2026-07-15; a door always draws, overlapping or not.)
 
   // ── The chip ─────────────────────────────────────────────────────────────────────────────
   //

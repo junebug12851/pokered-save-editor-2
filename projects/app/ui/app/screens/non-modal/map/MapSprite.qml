@@ -105,10 +105,9 @@ Item {
 
   z: sprite.dragging ? 30 : (sprite.selected ? 25 : 0)
 
-  // When this sprite shares its tile with anything else, it hands rendering to the MapObjectStack
-  // group box. The player instance overrides this at its use-site (it also gates on showPlayer).
-  // `revision` is the notifiable dependency that makes it re-ask. @see MapCanvas.
-  visible: { sprite.canvas.revision; return !sprite.canvas.isStacked(sprite.tileX, sprite.tileY); }
+  // (Object stacking was removed 2026-07-15; a sprite always draws, overlapping or not. The player
+  //  instance still overrides `visible` at its use-site to gate on showPlayer.)
+  visible: true
 
   PixelImage {
     anchors.fill: parent

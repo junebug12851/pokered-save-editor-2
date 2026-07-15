@@ -644,7 +644,6 @@
         <file>ui/app/screens/non-modal/map/MapWarp.qml</file>
         <file>ui/app/screens/non-modal/map/MapConnection.qml</file>
         <file>ui/app/screens/non-modal/map/ConnectionArrow.qml</file>
-        <file>ui/app/screens/non-modal/map/MapObjectStack.qml</file>
         <file>ui/app/screens/non-modal/map/WarpField.qml</file>
         <file>ui/app/screens/non-modal/map/MapSign.qml</file>
         <file>ui/app/screens/non-modal/map/SignField.qml</file>
