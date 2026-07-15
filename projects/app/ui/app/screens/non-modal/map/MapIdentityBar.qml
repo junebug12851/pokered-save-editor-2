@@ -169,43 +169,115 @@ Rectangle {
     // Music — ▶/⏸ ♪ ▾ (the ▾ drops the track / volume / flags).
     MusicPicker { id: musicPicker }
 
-    // Tile animation — ▶/⏸ ✿ ▾. The console rewrites the water tile ~3×/second (water + flowers);
-    // this plays it. The FLOWER is the symbol (that is the half of it people notice), and the ▾ holds
-    // the speed and a single-frame step.
+    // ── SIMULATION — one icon-text button, one panel ────────────────────────────────────────
+    //
+    // Twilight, 2026-07-14: *"move the walking button into the animation button, use the walking
+    // symbol not the flower, make it an icon-text button, name the panel Simulation and put the tile
+    // animation and the walking options together nicely in one panel."*
+    //
+    // So the two separate play buttons (tile animation ✿, walk 👣) become ONE `[👣 Simulate ⌄]`
+    // button, filled orange while EITHER is running. Everything — play/pause, speed, step, the walk —
+    // lives in the "Simulation" panel it drops.
     Item {
-      id: tileWrap
-      objectName: "tileAnimWrap"   // the screenshot review drives the dropdown through this
-      visible: brg.mapClock.animates
-      implicitWidth: tileSim.implicitWidth
+      id: simWrap
+      objectName: "simGroup"   // the screenshot review drives the panel through this
+      implicitWidth: simBtn.implicitWidth
       implicitHeight: 26
 
       property bool menuOpen: false
+      readonly property bool anyPlaying: brg.mapClock.playing || brg.mapSim.playing
 
-      MapSimButton {
-        id: tileSim
-        objectName: "tileAnimToggle"
+      // A little play/pause toggle, reused for both the tile animation and the walk, inside the panel.
+      component PlayToggle: Rectangle {
+        id: tog
+        property bool on: false
+        property bool en: true
+        signal toggled()
 
-        glyph: "✿"
-        playing: brg.mapClock.playing
-        playTip: brg.mapClock.playing
-                   ? qsTr("Pause the animation")
-                   : qsTr("Animate the map — the water and the flowers, at the console's own pace")
-        onToggled: brg.mapClock.playing = !brg.mapClock.playing
+        implicitWidth: 32
+        implicitHeight: 24
+        radius: 5
 
-        hasMenu: true
-        menuOpen: tileWrap.menuOpen
-        menuTip: qsTr("Animation speed & step")
-        onMenuToggled: tileWrap.menuOpen = !tileWrap.menuOpen
+        color: !tog.en ? "transparent"
+             : tog.on ? "#d55e00"
+             : togHover.hovered ? "#f0f0f0" : "#ffffff"
+        border.width: 1
+        border.color: tog.on ? "#d55e00" : brg.settings.dividerColor
+        opacity: tog.en ? 1.0 : 0.4
+
+        Behavior on color { ColorAnimation { duration: 90 } }
+
+        Text {
+          anchors.centerIn: parent
+          text: tog.on ? "⏸" : "▶"
+          font.pixelSize: 11
+          color: tog.on ? "#ffffff" : brg.settings.textColorDark
+        }
+
+        HoverHandler { id: togHover; enabled: tog.en; cursorShape: Qt.PointingHandCursor }
+        TapHandler { enabled: tog.en; onTapped: tog.toggled() }
       }
 
-      Popup {
-        visible: tileWrap.menuOpen
-        onClosed: tileWrap.menuOpen = false
+      // The button: footprints + "Simulate" + ⌄. Orange while anything is running.
+      Rectangle {
+        id: simBtn
+        anchors.fill: parent
+        radius: 6
+        implicitWidth: sbRow.implicitWidth + 16
 
-        y: tileSim.height + 5
-        x: -30
-        width: 180
-        padding: 10
+        color: simWrap.anyPlaying ? "#d55e00"
+             : (sbHover.hovered || simWrap.menuOpen) ? "#f0f0f0"
+             : "#ffffff"
+        border.width: 1
+        border.color: simWrap.anyPlaying ? "#d55e00" : brg.settings.dividerColor
+
+        Behavior on color { ColorAnimation { duration: 90 } }
+
+        readonly property color ink: simWrap.anyPlaying ? "#ffffff" : brg.settings.textColorDark
+
+        Row {
+          id: sbRow
+          anchors.centerIn: parent
+          spacing: 5
+
+          Image {
+            anchors.verticalCenter: parent.verticalCenter
+            width: 15; height: 15
+            source: simWrap.anyPlaying ? "qrc:/assets/icons/footprints-light.svg"
+                                       : "qrc:/assets/icons/footprints.svg"
+            sourceSize: Qt.size(30, 30)
+            fillMode: Image.PreserveAspectFit
+            smooth: true
+          }
+
+          // Icon only — no text (Twilight). Just the ▾ to say it drops a menu.
+          Text {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "⌄"
+            font.pixelSize: 10
+            color: simBtn.ink
+            opacity: 0.8
+          }
+        }
+
+        HoverHandler { id: sbHover; cursorShape: Qt.PointingHandCursor }
+        TapHandler { onTapped: simWrap.menuOpen = !simWrap.menuOpen }
+
+        MapToolTip {
+          shown: sbHover.hovered && !simWrap.menuOpen
+          text: qsTr("Simulation — animate the map and let the people walk")
+        }
+      }
+
+      // ── The Simulation panel ─────────────────────────────────────────────────────────────
+      Popup {
+        visible: simWrap.menuOpen
+        onClosed: simWrap.menuOpen = false
+
+        y: simWrap.height + 5
+        x: -40
+        width: 230
+        padding: 12
 
         background: Rectangle {
           color: "#ffffff"; radius: 8
@@ -217,14 +289,48 @@ Rectangle {
           spacing: 8
 
           Label {
-            text: qsTr("Speed")
-            font.pixelSize: 11; font.bold: true
+            text: qsTr("Simulation")
+            font.pixelSize: 12; font.bold: true
             color: brg.settings.textColorMid
+          }
+
+          Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: brg.settings.dividerColor }
+
+          // ── Tile animation ──────────────────────────────────────────────────────────────
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("Tile animation")
+              font.pixelSize: 12; font.bold: true
+              color: brg.settings.textColorDark
+            }
+
+            PlayToggle {
+              on: brg.mapClock.playing
+              en: brg.mapClock.animates
+              onToggled: brg.mapClock.playing = !brg.mapClock.playing
+            }
+          }
+
+          Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            text: brg.mapClock.animates
+                    ? qsTr("The water and the flowers, moving at the console's own pace.")
+                    : qsTr("This map has nothing that animates.")
+            font.pixelSize: 10
+            opacity: 0.6
           }
 
           RowLayout {
             Layout.fillWidth: true
+            visible: brg.mapClock.animates
             spacing: 4
+
+            Label { text: qsTr("Speed"); font.pixelSize: 11; color: brg.settings.textColorMid }
 
             Repeater {
               model: [ { s: 0.5, label: "½×" }, { s: 1.0, label: "1×" }, { s: 2.0, label: "2×" } ]
@@ -232,7 +338,7 @@ Rectangle {
               delegate: Rectangle {
                 required property var modelData
                 Layout.fillWidth: true
-                implicitHeight: 26
+                implicitHeight: 24
                 radius: 5
 
                 readonly property bool on: Math.abs(brg.mapClock.speed - modelData.s) < 0.01
@@ -252,23 +358,9 @@ Rectangle {
                 TapHandler { onTapped: brg.mapClock.speed = modelData.s }
               }
             }
-          }
-
-          Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: brg.settings.dividerColor }
-
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: 6
-
-            Label {
-              Layout.fillWidth: true
-              text: qsTr("One frame at a time")
-              font.pixelSize: 11
-              color: "#424242"
-            }
 
             Rectangle {
-              implicitWidth: stepRow.implicitWidth + 12
+              implicitWidth: stepRow.implicitWidth + 10
               implicitHeight: 24
               radius: 5
               color: stepHover.hovered ? "#f0f0f0" : "#ffffff"
@@ -277,55 +369,58 @@ Rectangle {
               RowLayout {
                 id: stepRow
                 anchors.centerIn: parent
-                spacing: 3
+                spacing: 2
                 Label { text: "⏭"; font.pixelSize: 11 }
-                Label { text: qsTr("Step"); font.pixelSize: 11 }
               }
 
               HoverHandler { id: stepHover; cursorShape: Qt.PointingHandCursor }
               TapHandler { onTapped: brg.mapClock.step() }
+
+              MapToolTip { shown: stepHover.hovered; text: qsTr("Step one frame") }
             }
+          }
+
+          Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: brg.settings.dividerColor }
+
+          // ── People walking ──────────────────────────────────────────────────────────────
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("People walking")
+              font.pixelSize: 12; font.bold: true
+              color: brg.settings.textColorDark
+            }
+
+            PlayToggle {
+              on: brg.mapSim.playing
+              en: brg.mapSim.canSimulate
+              onToggled: {
+                if (brg.mapSim.playing) {
+                  brg.mapSim.playing = false;
+                  return;
+                }
+                if (brg.settings.mapSimWarned)
+                  brg.mapSim.playing = true;
+                else
+                  simWarning.open();
+              }
+            }
+          }
+
+          Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            text: !brg.mapSim.canSimulate
+                    ? qsTr("Nobody on this map can walk — they are all set to Stay.")
+                    : qsTr("Lets the people wander. ⚠️ This MOVES the real sprite data.")
+            font.pixelSize: 10
+            opacity: 0.6
           }
         }
       }
-    }
-
-    // Walk — ▶/⏸ + footprints. The one above animates the water; this makes the PEOPLE walk.
-    //
-    // ⚠️ It is DESTRUCTIVE and says so once, with a "don't show me this again" that starts UNTICKED
-    // (a warning you have to opt back into is not a warning). No ▾ — there is nothing to configure,
-    // it is just a thing you start and stop.
-    //
-    // ⚠️ The symbol is FOOTPRINTS, not a walking figure — Twilight, 2026-07-14: *"let's not have a
-    // handicap-accessibility-style icon representing people walking."* Footprints say "walking"
-    // without any human figure at all. See footprints.svg.
-    MapSimButton {
-      objectName: "simToggle"
-
-      iconSource: "qrc:/assets/icons/footprints.svg"
-      iconSourcePlaying: "qrc:/assets/icons/footprints-light.svg"
-
-      playing: brg.mapSim.playing
-      playEnabled: brg.mapSim.canSimulate
-      playTip: !brg.mapSim.canSimulate
-                 ? qsTr("Nobody on this map can walk — they are all set to Stay")
-                 : brg.mapSim.playing
-                   ? qsTr("Stop them")
-                   : qsTr("Let the people wander — ⚠️ this MOVES the real sprite data")
-
-      onToggled: {
-        if (brg.mapSim.playing) {
-          brg.mapSim.playing = false;
-          return;
-        }
-
-        if (brg.settings.mapSimWarned)
-          brg.mapSim.playing = true;
-        else
-          simWarning.open();
-      }
-
-      hasMenu: false
     }
 
     }   // end of the simulation group's RowLayout
