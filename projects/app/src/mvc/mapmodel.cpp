@@ -30,6 +30,7 @@
 #include <pse-db/entries/itemdbentry.h>
 #include <pse-db/entries/mapdbentry.h>
 #include <pse-db/entries/mapdbentrysign.h>
+#include <pse-db/entries/mapdbentrytext.h>
 #include <pse-db/entries/mapdbentrysprite.h>
 #include <pse-db/itemsdb.h>
 #include <pse-db/spriteSet.h>
@@ -44,7 +45,9 @@
 #include <pse-savefile/expanded/area/areasprites.h>
 #include <pse-savefile/expanded/area/areatileset.h>
 #include <pse-savefile/expanded/area/areawarps.h>
+#include <pse-savefile/expanded/area/areasign.h>
 #include <pse-savefile/expanded/fragments/spritedata.h>
+#include <pse-savefile/expanded/fragments/signdata.h>
 #include <pse-savefile/expanded/fragments/warpdata.h>
 #include <pse-savefile/expanded/world/worldgeneral.h>
 #include <pse-db/entries/mapdbentrywarpin.h>
@@ -80,14 +83,19 @@ QVariantMap option(int value, const QString& name, bool hack = false);
 
 MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
                    AreaLoadedSprites* sprites, AreaSprites* npcs, AreaWarps* warps,
-                   WorldGeneral* world)
-  : sprites(sprites), npcs(npcs), warps(warps), world(world),
+                   WorldGeneral* world, AreaSign* signs)
+  : sprites(sprites), npcs(npcs), warps(warps), signsData(signs), world(world),
     map(map), player(player), tileset(tileset), general(general)
 {
   // The doors get their own signal for exactly the reason the cast does: `changed()` re-renders the
   // whole map image, and a warp chip sliding one tile does not change a pixel of the map.
   if (warps != nullptr)
     connect(warps, &AreaWarps::warpsChanged, this, &MapModel::warpsChanged);
+
+  // Signs, same story: a placard sliding one tile does not change a pixel of the map, so it rides its
+  // own signal instead of the map-wide `changed()`. See MapModel::signsChanged.
+  if (signsData != nullptr)
+    connect(signsData, &AreaSign::signsChanged, this, &MapModel::signsChanged);
 
   // `wLastMap` is what every `$FF` ("back outside") door resolves through, so moving it re-labels
   // a dozen chips at once -- which is the whole reason it sits in the toolbar and not in a panel.
@@ -1552,6 +1560,302 @@ int MapModel::warpRoomLeft() const
 bool MapModel::warpsEdited() const
 {
   return warpsWereEdited;
+}
+
+// ── The signs (placards) ─────────────────────────────────────────────────────────────────────────
+//
+// The doors' quieter sibling. Everything below is the warp implementation with `warp` swapped for
+// `sign` -- the same canvas machinery, the same field kit -- except the one thing that IS different:
+// a sign has WORDS, resolved from the map's text table (imported into maps.json by
+// scripts/import_sign_text.py, notes/reference/signs.md). See MapModel::signTextList.
+
+/// One line of a sign's text, for a chip or a combo row: the game prints it across several lines, and
+/// a placard on the map has room for one. Newlines/box-breaks become " / "; long text is elided.
+static QString signOneLine(const QString& text)
+{
+  QString s = text;
+  s.replace("\n", " / ");
+  s = s.simplified();
+  constexpr int kMax = 48;
+  if (s.size() > kMax)
+    s = s.left(kMax - 1).trimmed() + QStringLiteral("…");
+  return s;
+}
+
+/// The map's text-table entry for a 1-based @p textId, or nullptr if the id points past the table
+/// (or the map is unknown). The DB carries the words; the save carries only the id.
+static const MapDBEntryText* textEntryFor(int mapInd, int textId)
+{
+  MapDBEntry* m = MapsDB::inst()->getStoreAt(mapInd);
+  if (m == nullptr || textId < 1 || textId > m->getTextEntriesSize())
+    return nullptr;
+
+  return m->getTextEntriesAt(textId - 1);
+}
+
+QString MapModel::signTextPreview(int textId) const
+{
+  const MapDBEntryText* e = textEntryFor(mapInd(), textId);
+  if (e == nullptr)
+    return QString();                            // points past the table -- the caller says so
+
+  if (e->getScripted())
+    return tr("(scripted text)");
+
+  return signOneLine(e->getText());
+}
+
+QVariantList MapModel::signList() const
+{
+  QVariantList out;
+  if (signsData == nullptr)
+    return out;
+
+  for (int i = 0; i < signsData->signCount(); i++) {
+    SignData* s = signsData->signAt(i);
+    if (s == nullptr)
+      continue;
+
+    // A sign sits on a TILE -- a half-block, 16 buffer pixels. The ring is 3 blocks. (No 4-px lift:
+    // that is an OAM fact about sprites; a sign is a map coordinate and belongs on its tile.)
+    const int px = MapEngine::mapBorder * MapEngine::blockPx + s->x * 16;
+    const int py = MapEngine::mapBorder * MapEngine::blockPx + s->y * 16;
+
+    const MapDBEntryText* e = textEntryFor(mapInd(), s->txtId);
+
+    QVariantMap m;
+    m["ind"]    = i;
+    m["x"]      = s->x;
+    m["y"]      = s->y;
+    m["textId"] = s->txtId;
+
+    m["rectX"] = px;
+    m["rectY"] = py;
+    m["rectW"] = 16;
+    m["rectH"] = 16;
+
+    // What it SAYS, on the chip and in the status bar. Empty when the id points nowhere on this map.
+    m["preview"]   = signTextPreview(s->txtId);
+    m["category"]  = (e == nullptr) ? QStringLiteral("") : e->getCategory();
+    m["scripted"]  = (e != nullptr) && e->getScripted();
+    m["textValid"] = (e != nullptr);
+
+    out.append(m);
+  }
+
+  return out;
+}
+
+QVariantMap MapModel::signAt(int ind) const
+{
+  const QVariantList all = signList();
+  for (const QVariant& v : all) {
+    const QVariantMap m = v.toMap();
+    if (m.value("ind").toInt() == ind)
+      return m;
+  }
+  return QVariantMap();
+}
+
+void MapModel::moveSign(int ind, int x, int y)
+{
+  if (signsData == nullptr || ind < 0 || ind >= signsData->signCount())
+    return;
+
+  SignData* s = signsData->signAt(ind);
+  if (s == nullptr)
+    return;
+
+  // Clamp to the map -- a sign out in the border ring is one the player can never read.
+  const int mw = blocksWide() * 2;
+  const int mh = blocksHigh() * 2;
+
+  x = std::max(0, std::min(mw - 1, x));
+  y = std::max(0, std::min(mh - 1, y));
+
+  if (s->x == x && s->y == y)
+    return;
+
+  // ⚠️ EXACTLY TWO BYTES. tst_signs byte-diffs the whole 32 KB save across this and demands that the
+  // sign's Y and X (in the coord array) are the only things in it that moved.
+  s->x = x;
+  s->xChanged();
+
+  s->y = y;
+  s->yChanged();
+
+  signsWereEdited = true;
+  signsData->signsChanged();
+}
+
+int MapModel::addSign(int x, int y)
+{
+  if (signsData == nullptr || signRoomLeft() <= 0)
+    return -1;
+
+  const int mw = blocksWide() * 2;
+  const int mh = blocksHigh() * 2;
+
+  x = std::max(0, std::min(mw - 1, x));
+  y = std::max(0, std::min(mh - 1, y));
+
+  signsData->signNew();
+
+  const int ind = signsData->signCount() - 1;
+  SignData* s = signsData->signAt(ind);
+  if (s == nullptr)
+    return -1;
+
+  s->x = x;
+  s->xChanged();
+  s->y = y;
+  s->yChanged();
+
+  // A fresh placard should say something real. Default to this map's first SIGN-category text id, so
+  // a new sign reads like a sign; fall back to id 1 if the map has no sign text at all.
+  int defaultText = 1;
+  MapDBEntry* m = MapsDB::inst()->getStoreAt(mapInd());
+  if (m != nullptr) {
+    for (int i = 0; i < m->getTextEntriesSize(); i++) {
+      const MapDBEntryText* e = m->getTextEntriesAt(i);
+      if (e != nullptr && e->getCategory() == QStringLiteral("sign")) {
+        defaultText = e->getId();
+        break;
+      }
+    }
+  }
+
+  s->txtId = defaultText;
+  s->txtIdChanged();
+
+  signsWereEdited = true;
+  signsData->signsChanged();
+  changed();   // the room left moved, and the Signs layer may want lighting -- this really changes things
+
+  return ind;
+}
+
+void MapModel::removeSign(int ind)
+{
+  if (signsData == nullptr || ind < 0 || ind >= signsData->signCount())
+    return;
+
+  signsData->signRemove(ind);   // the rest slide up -- the game packs its sign list and so do we
+  signsWereEdited = true;
+  changed();
+}
+
+int MapModel::signRoomLeft() const
+{
+  if (signsData == nullptr)
+    return 0;
+
+  return std::max(0, signsData->signMax() - signsData->signCount());
+}
+
+QVariantList MapModel::signFields(int ind) const
+{
+  QVariantList ret;
+
+  if (signsData == nullptr || ind < 0 || ind >= signsData->signCount())
+    return ret;
+
+  SignData* s = signsData->signAt(ind);
+  if (s == nullptr)
+    return ret;
+
+  const QString where = tr("The sign");
+
+  // X and Y are one fact, so they are one control -- the same `coords` kind the door/sprite panels use.
+  ret.append(field(where, "xy", tr("Standing on"),
+                   tr("Which tile of this map the sign is on, counting from the top-left."),
+                   (s->x & 0xFF) | ((s->y & 0xFF) << 8), 0, 0, "coords"));
+
+  // The words: a grouped picker of the map's real text. `enum` draws the combo and drops to a raw box
+  // for any value no option names -- so a hack id past the map's table is reachable, and shown.
+  ret.append(field(tr("What it says"), "textId", tr("Says…"),
+                   tr("Which line of this map's text the sign prints when you read it.\n\n"
+                      "The list is every text this map has — its own signs first, then the people's "
+                      "dialogue, then the rest. A sign can point at any of them.\n\n"
+                      "⚠️ An id past this map's text simply reads whatever text comes next in the "
+                      "cartridge — shown, never refused."),
+                   s->txtId, 0, 255, "enum", signTextList()));
+
+  return ret;
+}
+
+void MapModel::setSignField(int ind, const QString& key, int value)
+{
+  if (signsData == nullptr || ind < 0 || ind >= signsData->signCount())
+    return;
+
+  SignData* s = signsData->signAt(ind);
+  if (s == nullptr)
+    return;
+
+  if (key == "xy") {
+    // Packed x | (y << 8), the same shape the door/sprite `coords` control speaks.
+    moveSign(ind, value & 0xFF, (value >> 8) & 0xFF);
+    return;
+  }
+
+  if (key == "textId") {
+    s->txtId = value & 0xFF;
+    s->txtIdChanged();
+  } else {
+    return;
+  }
+
+  signsWereEdited = true;
+  signsData->signsChanged();
+}
+
+QVariantList MapModel::signTextList() const
+{
+  MapDBEntry* m = MapsDB::inst()->getStoreAt(mapInd());
+  if (m == nullptr)
+    return {};
+
+  // Three sections, in the order Twilight asked for: the map's own SIGN text first, then the PEOPLE's
+  // dialogue, then everything else. Each row shows the real words. The header rides on the first row
+  // of its section (the same mechanism the item picker's `sectioned()` uses), so QML groups on it.
+  QVariantList signs, people, other;
+
+  for (int i = 0; i < m->getTextEntriesSize(); i++) {
+    const MapDBEntryText* e = m->getTextEntriesAt(i);
+    if (e == nullptr)
+      continue;
+
+    const QString words = e->getScripted() ? tr("(scripted text)") : signOneLine(e->getText());
+    QVariantMap row = option(e->getId(), tr("%1 — %2").arg(e->getId()).arg(words));
+    row["category"] = e->getCategory();
+
+    if (e->getCategory() == QStringLiteral("sign"))
+      signs.append(row);
+    else if (e->getCategory() == QStringLiteral("person"))
+      people.append(row);
+    else
+      other.append(row);
+  }
+
+  auto headed = [](QVariantList& list, const QString& heading) {
+    if (list.isEmpty())
+      return;
+    QVariantMap first = list.first().toMap();
+    first["header"] = heading;
+    list[0] = first;
+  };
+
+  headed(signs, tr("Signs"));
+  headed(people, tr("People"));
+  headed(other, tr("Other text"));
+
+  return signs + people + other;
+}
+
+bool MapModel::signsEdited() const
+{
+  return signsWereEdited;
 }
 
 QVariantList MapModel::flyWarpMapList() const

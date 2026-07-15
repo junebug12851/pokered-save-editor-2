@@ -424,7 +424,7 @@ screens/non-modal/map/
 
 ---
 
-## 12. The programme — thirteen phases, plus one optional
+## 12. The programme — fourteen phases, plus one optional
 
 > **The bar (Twilight, 2026-07-12, mandatory):** *"You absolutely have to put in the long work for each of
 > these components and pieces."* This is not a re-skin sprint. **Each phase is a full pass on one body of
@@ -883,6 +883,129 @@ words, with its range, its legal values, whether the game will keep it, and whet
 
 ---
 
+### Phase 6 — SIGNS: the placards ✅ **BUILT (2026-07-14, `0.38.0-alpha`)**
+
+> **All of 6a–6d are in.** `tst_signs` (15 cases) pins them; the keystone byte-diffs the whole 32 KB
+> across a drag. Full test set green. The importer (`scripts/import_sign_text.py`) is additive-only —
+> strip its `textEntries` back out and `maps.json` is byte-identical to before. ⏳ Owed: Twilight's
+> live pass on the drag, the delete, the tool and the grouped picker.
+
+> *"Let's add sign features to the map — an add-sign tool, and the details panel on the left needs
+> x,y coordinates and an actual combo box to select from the text on the map. The usual delete
+> options, much the same as warps and sprites."* — Twilight, 2026-07-14. Then, on the combo: *"all
+> entries that can be referenced on a sign no matter what the text is meant for — group them"*; and
+> on scope: *"break it into as many phases as you need to fully and comprehensively cover this."*
+
+Signs are the second briefed object type, and they ride on everything Phases 4–5 built: the
+`MapObjectsModel` machinery, canvas selection, tile-snapped drag, the Details panel, the field kit,
+the tool rail. The one genuinely new thing is **the text** — the save holds a text *id*, and to let a
+person *"select from the text on the map"* the app has to know the map's actual words, which are in
+`pret/pokered` and not yet in our data.
+
+> **Read [`../reference/signs.md`](../reference/signs.md) before touching any of this.** The
+> headlines: **our save model is already correct** (the rare pass with no bug to fix first); a sign
+> rides the **same persistence linchpin as a warp** (live on Continue, restored on re-entry — the
+> panel must say so); and the text id is a **1-based index into the map's `def_text_pointers`
+> table**, whose entries are shared by signs, people and script-only text — which is why the picker
+> **groups** them.
+
+> ⛔ **SCOPE: signs and nothing else.** Not connections, not encounters, not the NPC state — see
+> **§12b**. Reading the map's text table is fine (a sign *needs* it); building a UI for anything else
+> is not.
+
+---
+
+#### Phase 6a — The map's text, extracted from `pret/pokered`  *(the data; no UI)*
+
+The one piece of new ground. `maps.json` ships a sign's `text` **id** but not the words. This phase
+puts the words in, per the standing file-format rule (extend the map data we already ship; don't
+invent a parallel file).
+
+- **A new self-validating importer** — `scripts/import_sign_text.py` (precedent: `import_tile_traits.py`,
+  `import_sprites.py`). Per map it reads: `data/maps/objects/<Map>.asm` (the `bg_event` /
+  `object_event` lines → which text ids are **signs**, which are **people**), `scripts/<Map>.asm` (the
+  `def_text_pointers` list → id → label and the map's text **count**), and `text/<Map>.asm` + its
+  `text_far` targets (label → **the actual string**, decoded through the game's control codes —
+  reuse the app's existing font/text decode; `#` → POKé, `line`/`para`/`cont`/`@`).
+- **Output** rides in `maps.json` as a per-map **text table**: an ordered list, index `1..N`, each
+  entry `{ "string": "...", "category": "sign" | "person" | "other" }`. A `text_asm` entry with no
+  single literal gets `string: null` and is shown as `(scripted text)`.
+- **DB wiring** — `MapDBEntry` gains `getTextTable()` / a QML-reachable grouped accessor so the panel
+  can offer the map's text without the save model needing to know about strings at all.
+- **Self-validating** the way the tile importer is: assert every `maps.json` sign's `text` id lands
+  inside its map's table, and re-derive the count independently. If a map's numbers don't line up,
+  the importer fails by name.
+
+**Exit:** given a map id, the app can hand QML the map's whole text table, grouped, in real English.
+
+---
+
+#### Phase 6b — Signs on the canvas
+
+The placards join the doors and the NPCs as first-class objects, on 4b/5b's machinery. Nothing new is
+invented.
+
+- **Draw them** — a sign chip on its tile (🪧 glyph, its own layer colour), on a new **Signs** layer
+  in the **Objects** layer group (beside People & objects, Warps).
+- **Select · drag · ✕ delete · ✎ edit** — identical to warps and sprites. A drag commits **exactly two
+  bytes** (the sign's Y and X, in their own coord array). The keystone test byte-diffs the whole 32 KB
+  and proves only those two moved.
+- **The reading line.** Selecting a sign shows, in the status bar, **what it says** — the first line of
+  its text, resolved through 6a's table: *"🪧 (7, 9) — “PALLET TOWN / Shades of your…”."* If the id
+  points past the map's table, it says **that**, in `errorColor`, with how many entries the map has.
+
+---
+
+#### Phase 6c — The Place sign tool
+
+The tool rail (`[ ↖ ✥ ⌕ ] │ [ ⇄+ 🧍+ ]`) grows exactly **one** slot — the third maker Twilight has now
+briefed, and no others:
+
+```
+ [ ↖  ✥  ⌕ ] │ [ ⇄+  🧍+  🪧+ ] │ [ Pallet Town · Overworld ⌄ ] [ Outside is: … ⌄ ] [ 100% ⌄ ] …
+```
+
+- **🪧+ Place sign** — click a tile, a sign appears there, defaulting to the map's **first sign text**
+  (or text id 1 if the map has none), because a fresh placard should say *something* real. The
+  **16-cap is stated before you hit it** ("3 of 16"), never after.
+- A real tool by §9's rule: a cursor, a context bar, an empty state, a keyboard path; and it **respects
+  the active layer** — placing a sign switches the Signs layer on if it was off.
+
+---
+
+#### Phase 6d — The sign Details panel
+
+Left-hand Details panel, the same one warps/sprites use, showing the selected sign (and the map's own
+details when nothing is selected). A **titled group** (`🪧 Sign`) in the `FieldGroup` language, with one
+`?` in the title.
+
+**The group, top to bottom:**
+
+| Shown as | Real byte | Notes |
+|---|---|---|
+| **Position** *(one X + Y control)* | `wSignCoords[i]` (Y, X) | Grouped into a single control, per the sprite-panel lesson (2026-07-13) — not two loose number fields. Tile-range for the map; also drives the canvas drag. |
+| **Says…** *(grouped ComboBox)* | `wSignTextIDs[i]` | The map's whole text table from 6a, **grouped** — *Signs* first, then *People*, then *Other* — each row the id + its real words (scripted entries read `(scripted text)`). The `music`-picker pattern: a real grouped `ComboBox`, **selection commits, nothing on hover.** |
+
+- **Every value editable, hack included.** The combo lists what the map has, but the underlying id is a
+  full byte: a switch reveals the raw id spinner (0–255), and a save holding an id past the map's table
+  is **shown holding it**, in `errorColor`, with the plain-English consequence ("this map has 7 text
+  entries; id 9 points past them — the game reads past the table"). Never refused, never rewritten.
+- **A Delete button** (not a cryptic ✕) at the foot of the group, exactly as the sprite/warp panels do.
+- **The honest note**, in the panel and status bar, when the map's signs differ from the ROM's:
+  > *"These signs are live — the game will use them when this save loads. It restores the map's
+  > original signs when the player leaves the map and walks back in."*
+  The same mechanism the warp panel earned (§5's linchpin), reused verbatim.
+
+**Exit of Phase 6:** a person can place a sign, drag it, delete it, and choose what it says from the
+map's own words — and there is no sign byte visible in a hex editor that is not visible here, in
+English, with its range and whether the game keeps it.
+
+Pinned by a new **`tst_signs`**, negative-controlled like `tst_warps`/`tst_map_sprites`: a whole-save
+byte-diff proving load+resave of an untouched save changes **nothing**, that dragging a sign writes
+**exactly its two coord bytes**, and that every `maps.json` sign id resolves inside its map's 6a table.
+
+---
+
 ## 12b. ⛔ NOT YET BRIEFED — do not design these, do not build them  *(2026-07-14, Twilight)*
 
 > *"Let's not get too far ahead of ourselves. Signs and stuff, connecting routes, wild Pokémon — these are
@@ -901,23 +1024,22 @@ and that is precisely the mistake this section exists to prevent.
 
 | Phase | Un-briefed | The temptation to resist |
 |---|---|---|
-| **Signs** | 🪧 the sign objects (16 max, `x`/`y`/`txtId`) | They are the same shape as warps and load in the same block. **Cut out of Phase 5b on 2026-07-14.** |
+| ~~**Signs**~~ | ✅ **BRIEFED 2026-07-14 — graduated to Phase 6.** | Was cut out of Phase 5b, held here until Twilight briefed it. She now has: add-sign tool, X/Y, a grouped text picker of the map's real text. See **Phase 6** above and [`../reference/signs.md`](../reference/signs.md). |
 | **Connections** | 🔗 the four edge connections (N/S/E/W) — "connecting routes" | The strips are already *rendered* and fully understood ([`../reference/map-connections.md`](../reference/map-connections.md)), so *editing* them looks like a small step. It isn't — nobody has said what editing a connection should mean. |
-| **Phase 6 — Encounters** | 🌿 wild Pokémon (`grassRate`, 10 grass slots, `waterRate`, 10 water slots, `pauseMons3Steps`) | The Grass/Water meaning layers already exist, so it looks like the panel is half-built. It isn't. |
-| **Phase 7 — Area State** | the `AreaNPC` flags, the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | It is "the leftovers", which is not a design. |
-| **Phase 8 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |
+| **Phase 7 — Encounters** | 🌿 wild Pokémon (`grassRate`, 10 grass slots, `waterRate`, 10 water slots, `pauseMons3Steps`) | The Grass/Water meaning layers already exist, so it looks like the panel is half-built. It isn't. |
+| **Phase 8 — Area State** | the `AreaNPC` flags, the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | It is "the leftovers", which is not a design. |
+| **Phase 9 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |
 
 **What the earlier text in this file says about these is a sketch and carries no authority.** Read it as
 "here is what the bytes are", never as "here is what we agreed."
 
-**What IS briefed and safe to build:** Phase 5 (warps) exactly as scoped in 5a–5e above, and nothing that
-touches signs, connections, encounters or area state. Where a warp genuinely *needs* one of them — the
-`$FF` door needs `wLastMap`, the destination resolver needs the map DB — it **reads** it; it does not
-build a UI for it.
+**What IS briefed and safe to build:** Phase 5 (warps, 5a–5e) and **Phase 6 (signs, 6a–6d — briefed
+2026-07-14)**, and nothing that touches connections, encounters or area state. Where a briefed phase
+genuinely *needs* one of them, it **reads** it; it does not build a UI for it.
 
 ---
 
-### Phase 6 — Encounters
+### Phase 7 — Encounters
 
 `AreaPokemon` has **no UI at all** today. `grassRate` · 10 grass slots · `waterRate` · 10 water slots ·
 `pauseMons3Steps`. Species picker + level, drag-to-reorder (the Bag/Moves drag pattern), rate 0 said in
@@ -925,14 +1047,14 @@ words ("no wild Pokémon here"), and a link to the Grass/Water Meaning layers so
 
 ---
 
-### Phase 7 — Area State
+### Phase 8 — Area State
 
 `AreaNPC` (9 flags), the `AreaWarps` state fields (12), `AreaLoadedSprites` (`loadedSetId` + 11 slots) —
 none of which has a UI today. Three titled groups, every flag explained, the sprite-set slots reorderable.
 
 ---
 
-### Phase 8 — Tileset & Blocks, properly
+### Phase 9 — Tileset & Blocks, properly
 
 The two panels that already exist get the *deep* pass rather than the re-chrome they got in phase 1:
 the tri-state tile animation with its "what this actually does", the grass tile and the three counter slots
@@ -942,7 +1064,7 @@ gfxPtr / collPtr diffed against the cartridge, with Restore). Blocks keeps its c
 
 ---
 
-### Phase 9 — Tools & precision
+### Phase 10 — Tools & precision
 
 Place · Eyedropper · Measure · snap modes · nudge keys (1 tile / 1 block / 8 tiles) · align + distribute for
 a multi-selection · every action reachable from the keyboard · the shortcut map written down. **A tool is
@@ -950,7 +1072,7 @@ not done until it has a cursor, a context bar, an empty state and a keyboard pat
 
 ---
 
-### Phase 10 — Motion & polish
+### Phase 11 — Motion & polish
 
 Panel slide, chip hover, selection pulse, layer-toggle cross-fade (the overlay *arrives*, it doesn't slam
 on), empty states, tooltips on everything that has a name nobody should be expected to know. Then the full
@@ -959,7 +1081,7 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 
 ---
 
-### Phase 11 — The verification pass
+### Phase 12 — The verification pass
 
 - Full `ctest` (incl. `tst_emu_parity` against the real cartridge).
 - **A byte-diff harness run over every edit the screen can make**: load a save, perform the edit, diff the
@@ -969,7 +1091,7 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 
 ---
 
-### Phase 12 — The notes pass
+### Phase 13 — The notes pass
 
 `status.md`, `ui-patterns.md` (the new chassis, dock, layer-row and field-kit conventions),
 `qt-patterns.md` (whatever Qt tried to do to us), `decisions/architecture.md` (the layer/object models),
@@ -978,7 +1100,7 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 
 ---
 
-### Phase 13 — SIMULATE: walk the map  *(**OPTIONAL / stretch** — runs last, gates nothing)*
+### Phase 14 — SIMULATE: walk the map  *(**OPTIONAL / stretch** — runs last, gates nothing)*
 
 **Twilight, 2026-07-12: "an accurate simulation like a play/pause button on the map might be cool but it's
 not a high priority unless you think it's important."** Here is the honest split, because the two halves of

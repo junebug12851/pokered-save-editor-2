@@ -67,6 +67,7 @@ class MapLayersModel : public QAbstractListModel
   Q_PROPERTY(bool showConnections READ showConnections NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showNpcs READ showNpcs NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showWarps READ showWarps NOTIFY viewBitsChanged)
+  Q_PROPERTY(bool showSigns READ showSigns NOTIFY viewBitsChanged)
 
   /// How strongly the meaning overlay is drawn (0..1). The one dial the Meaning group carries:
   /// stacked annotation over four shades of grey genuinely needs it.
@@ -99,6 +100,10 @@ public:
     /// map's actual warp LIST -- 32 slots in the save, each one a tile and a destination.
     /// See notes/reference/warps.md.
     ViewWarps = 1 << 8,
+
+    /// **The SIGNS** -- the map's placards, as objects you can pick up, move and re-word.
+    /// 16 slots in the save, each a tile and a text id. See notes/reference/signs.md.
+    ViewSigns = 1 << 9,
   };
   Q_ENUM(ViewLayer)
 
@@ -130,6 +135,7 @@ public:
   bool showConnections() const;
   bool showNpcs() const;
   bool showWarps() const;
+  bool showSigns() const;
 
   qreal overlayOpacity() const;
   void setOverlayOpacity(qreal opacity);
@@ -222,6 +228,9 @@ private:
   // ⚠️ Doors and Warps are **overlay** bits, not view bits -- they live in `MapModel::layers`, not
   // here. The constructor switches them on there. Do not add them to this mask; it will not work and
   // it will look like it does.
-  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewWarps | ViewScreenBox;
+  // Signs join the default-on set with the doors and the people: they are the map's third kind of
+  // object, and an object type that is off until you hunt for the toggle reads as a missing feature.
+  // (Twilight's original 2026-07-13 list predates the signs brief; this is the consistent extension.)
+  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewWarps | ViewSigns | ViewScreenBox;
   qreal opacity = 1.0;
 };

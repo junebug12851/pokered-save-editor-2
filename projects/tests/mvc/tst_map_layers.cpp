@@ -80,7 +80,7 @@ class TestMapLayers : public QObject
     // resembling the app. Hand it what the app hands it.
     r->map = new MapModel(area->map, area->player, area->tileset, area->general,
                           area->preloadedSprites, area->sprites, area->warps,
-                          r->sf.dataExpanded->world->general);
+                          r->sf.dataExpanded->world->general, area->signs);
     r->layers = new MapLayersModel(r->map);
     return r;
   }

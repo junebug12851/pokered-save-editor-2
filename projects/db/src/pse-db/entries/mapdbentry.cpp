@@ -31,6 +31,7 @@
 #include "./mapdbentrywarpout.h"
 #include "./mapdbentrywarpin.h"
 #include "./mapdbentrysign.h"
+#include "./mapdbentrytext.h"
 #include "./mapdbentrysprite.h"
 #include "./mapdbentryconnect.h"
 #include "./mapdbentrywildmon.h"
@@ -122,6 +123,14 @@ MapDBEntry::MapDBEntry(const QJsonValue& data)
     for(QJsonValue signEntry : data["signs"].toArray()) {
       auto tmp = new MapDBEntrySign(signEntry, this);
       signs.append(tmp);
+    }
+  }
+
+  if(data["textEntries"].isArray())
+  {
+    for(QJsonValue textEntry : data["textEntries"].toArray()) {
+      auto tmp = new MapDBEntryText(textEntry, this);
+      textEntries.append(tmp);
     }
   }
 
@@ -300,6 +309,12 @@ ScriptDBEntry* MapDBEntry::getToScript() const
 void MapDBEntry::qmlProtect(const QQmlEngine* const engine) const
 {
   Utility::qmlProtectUtil(this, engine);
+
+  // The text entries are handed to QML by getTextEntriesAt() (the sign picker), so they must be
+  // pinned to C++ ownership or the engine will garbage-collect them mid-session. Cascaded here at
+  // boot, alongside the map itself.
+  for(auto textEntry : textEntries)
+    textEntry->qmlProtect(engine);
 }
 
 const QVector<HiddenItemDBEntry*> MapDBEntry::getToHiddenItems() const
@@ -531,6 +546,24 @@ const MapDBEntrySign* MapDBEntry::getSignsAt(const int ind) const
     return nullptr;
 
   return signs.at(ind);
+}
+
+const QVector<MapDBEntryText*> MapDBEntry::getTextEntries() const
+{
+  return textEntries;
+}
+
+int MapDBEntry::getTextEntriesSize() const
+{
+  return textEntries.size();
+}
+
+const MapDBEntryText* MapDBEntry::getTextEntriesAt(const int ind) const
+{
+  if(ind < 0 || ind >= textEntries.size())
+    return nullptr;
+
+  return textEntries.at(ind);
 }
 
 const QVector<MapDBEntryWarpIn*> MapDBEntry::getWarpIn() const

@@ -67,7 +67,8 @@ Bridge::Bridge(FileManagement* file)
                      // ⭐ `wLastMap` + `wLastBlackoutMap` -- the two most consequential warp bytes
                      // in the save -- live in WorldGeneral, not AreaWarps, which is exactly why
                      // nobody editing warps ever saw them. See notes/reference/warps.md §4.
-                     file->data->dataExpanded->world->general)),
+                     file->data->dataExpanded->world->general,
+                     file->data->dataExpanded->area->signs)),
     mapLayers(new MapLayersModel(map)),
     mapClock(new MapClock(map)),
     mapSim(new MapSim(map))

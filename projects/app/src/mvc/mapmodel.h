@@ -28,6 +28,7 @@ class AreaGeneral;
 class AreaLoadedSprites;
 class AreaSprites;
 class AreaWarps;
+class AreaSign;
 class AreaMap;
 class AreaPlayer;
 class AreaTileset;
@@ -338,10 +339,66 @@ public:
   /// the game restores the map's original doors when the player leaves and walks back in.
   Q_INVOKABLE bool warpsEdited() const;
 
+  // ── The signs (placards) ──────────────────────────────────────────────────────
+  //
+  // Signs are the doors' quieter sibling: a tile you can READ. They ride the SAME persistence
+  // linchpin as warps (`.loadSignData` sits inside `LoadMapHeader`, behind `BIT_NO_PREVIOUS_MAP`),
+  // so an edited sign is genuinely live on Continue and the game restores the map's originals when
+  // the player leaves and walks back in. The model was already correct -- the rare pass with no bug
+  // to fix first. See notes/reference/signs.md.
+
+  /// Every sign on this map: `{ ind, x, y, rectX/Y/W/H, textId, preview, category, scripted,
+  /// textValid }`. `x`/`y` are map TILES; the `rect*` are BUFFER pixels (ring included) so the
+  /// canvas can draw a chip straight on them. `preview` is the sign's real words (one line);
+  /// `textValid` is false when the id points past this map's text table.
+  Q_INVOKABLE QVariantList signList() const;
+
+  /// One sign, as @ref signList shapes it -- or an empty map. What the Details panel reads.
+  Q_INVOKABLE QVariantMap signAt(int ind) const;
+
+  /// Move sign @p ind to map tile (@p x, @p y). **Exactly two bytes** (its Y and X, in the sign
+  /// coord array). The drag-on-canvas path.
+  Q_INVOKABLE void moveSign(int ind, int x, int y);
+
+  /// Put a new sign at map tile (@p x, @p y). It defaults to the map's first sign text (or text id
+  /// 1), because a fresh placard should say something real. @return its index, or -1 if the map is
+  /// already at its @ref signRoomLeft of 0.
+  Q_INVOKABLE int addSign(int x, int y);
+
+  /// Delete sign @p ind. The rest slide up -- the game packs its sign list and so do we.
+  Q_INVOKABLE void removeSign(int ind);
+
+  /// How many more signs this map can hold (16 max). 0 means the tool is dead, and we say so
+  /// *before* the click rather than swallowing it.
+  Q_INVOKABLE int signRoomLeft() const;
+
+  /// Every editable byte of sign @p ind, named and explained -- the Details panel's content.
+  /// Same `{ group, key, label, blurb, value, min, max, kind, options, scratch }` shape as
+  /// @ref warpFields, so the field kit draws it with no new code.
+  Q_INVOKABLE QVariantList signFields(int ind) const;
+
+  /// Write one of @ref signFields' keys on sign @p ind. `xy` arrives packed as `x | (y << 8)`.
+  Q_INVOKABLE void setSignField(int ind, const QString& key, int value);
+
+  /// The map's whole text table, **grouped** (Signs / People / Other) with the real words, for the
+  /// sign's "Says…" picker: `{ value, name, header, hack, category }`. Selection commits; the raw
+  /// byte box (kind `enum`) reaches every id 0..255 for the hack values. @see mapTextList (the flat
+  /// NPC-panel variant).
+  Q_INVOKABLE QVariantList signTextList() const;
+
+  /// The one-line preview of what text id @p textId says on this map -- "(scripted text)" for a
+  /// script entry, empty when the id points past the table. What the canvas chip shows.
+  Q_INVOKABLE QString signTextPreview(int textId) const;
+
+  /// Has the user changed this map's signs in this session? @see warpsEdited -- same rule, same
+  /// reason, and the same sentence is owed (restored on re-entry).
+  Q_INVOKABLE bool signsEdited() const;
+
 public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
            AreaLoadedSprites* sprites = nullptr, AreaSprites* npcs = nullptr,
-           AreaWarps* warps = nullptr, WorldGeneral* world = nullptr);
+           AreaWarps* warps = nullptr, WorldGeneral* world = nullptr,
+           AreaSign* signs = nullptr);
 
   bool valid() const;
   QString source() const;
@@ -804,6 +861,16 @@ signals:
    */
   void warpsChanged();
 
+  /**
+   * @brief A SIGN moved, or was added, deleted or re-worded -- and nothing else did.
+   *
+   * The sign analogue of @ref warpsChanged / @ref castChanged, and for the same performance reason:
+   * `changed()` is wired to `sourceChanged()`, so emitting it re-renders the whole map image. A sign
+   * chip moving does not change one pixel of the map. (An edit that changes the room left -- adding a
+   * sign -- emits `changed()` as well.)
+   */
+  void signsChanged();
+
   /// The "Reloaded values" switch moved -- the Details panel has a different set of fields now.
   void showScratchChanged();
 
@@ -828,6 +895,8 @@ private:
   AreaLoadedSprites* sprites = nullptr; ///< The save's live sprite-set cache (may be null in tests).
   AreaSprites* npcs = nullptr;    ///< The save's live map cast -- the 16 sprite slots (may be null).
   AreaWarps* warps = nullptr;     ///< The map's doors (may be null in tests).
+  AreaSign* signsData = nullptr;  ///< The map's signs (may be null in tests). Named `signsData` to
+                                  ///  avoid colliding with the sprite-set `sprites` naming muddle.
   WorldGeneral* world = nullptr;  ///< Where `wLastMap` + `wLastBlackoutMap` actually live.
 
   /// @see npcsEdited. Set by any edit to the cast; never by loading one.
@@ -835,6 +904,9 @@ private:
 
   /// @see warpsEdited. Set by any edit to the doors; never by loading them.
   bool warpsWereEdited = false;
+
+  /// @see signsEdited. Set by any edit to the signs; never by loading them.
+  bool signsWereEdited = false;
 
   /// @see showScratch. OFF -- it is clutter, and it is a third of the panel.
   bool showScratchFields = false;

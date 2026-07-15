@@ -186,6 +186,19 @@ if(TARGET appcore)
     set_tests_properties(tst_warps PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_warps)
 
+    # THE SIGNS -- the placard list, and the map text behind each one. Keystones:
+    # `moveSign_writesExactlyTwoBytes` (byte-diff the whole 32 KB across a drag) and
+    # `everyShippedSignResolvesInItsMapsText` (every maps.json sign lands inside its map's imported
+    # text table -- the model twin of import_sign_text.py's own check). See notes/reference/signs.md.
+    qt_add_executable(tst_signs
+        mvc/tst_signs.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_signs PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_signs PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_signs COMMAND tst_signs)
+    set_tests_properties(tst_signs PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_signs)
+
     qt_add_executable(tst_map_layers
         mvc/tst_map_layers.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)

@@ -25,6 +25,7 @@ SOURCES += \
     src/pse-db/entries/mapdbentry.cpp \
     src/pse-db/entries/mapdbentryconnect.cpp \
     src/pse-db/entries/mapdbentrysign.cpp \
+    src/pse-db/entries/mapdbentrytext.cpp \
     src/pse-db/entries/mapdbentrysprite.cpp \
     src/pse-db/entries/mapdbentryspriteitem.cpp \
     src/pse-db/entries/mapdbentryspritenpc.cpp \
@@ -84,6 +85,7 @@ HEADERS += \
     src/pse-db/entries/mapdbentry.h \
     src/pse-db/entries/mapdbentryconnect.h \
     src/pse-db/entries/mapdbentrysign.h \
+    src/pse-db/entries/mapdbentrytext.h \
     src/pse-db/entries/mapdbentrysprite.h \
     src/pse-db/entries/mapdbentryspriteitem.h \
     src/pse-db/entries/mapdbentryspritenpc.h \

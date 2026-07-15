@@ -47,6 +47,31 @@ ever opened. Exactly the mistake the sprite *"your cast has changed"* notice mad
 
 Pinned by `tst_warps::guns_dontCryWolfOnAnOrdinarySave`.
 
+### 🪧 SIGNS — phase 6 is COMPLETE (2026-07-14, `0.38.0-alpha`)
+
+| | | |
+|---|---|---|
+| **6a** | The text, from the cartridge | ✅ `import_sign_text.py` pulls the real words out of `pret/pokered` into `maps.json` (**additive-only**); `MapDBEntryText` + `MapDBEntry::getTextEntries()` |
+| **6b** | Signs on the canvas | ✅ orange `▤` chips on a **Signs** layer; select · drag (**exactly two bytes**) · ✕ · ✎; the selected sign shows its words |
+| **6c** | The Place sign tool | ✅ `▤` in the makers rail (shortcut **S**), 16-cap up front, lights its layer |
+| **6d** | The Details panel | ✅ one X/Y control + the grouped **Says…** picker (Signs / People / Other, real words); hack ids shown-not-refused; Delete; the live-on-Continue note |
+
+New test: **`tst_signs`** (15 cases). Keystone: drag a sign and byte-diff the whole 32 KB —
+**exactly its Y and X moved**; plus `everyShippedSignResolvesInItsMapsText`. Research:
+[`reference/signs.md`](reference/signs.md); design: [`plans/map-screen.md`](plans/map-screen.md) → Phase 6.
+
+- ✅ **The save model was already correct** — the rare pass with no model bug to fix first (contrast
+  sprites: 4, warps: 7). `AreaSign` (`wNumSigns` `0x275C`, cap **16** = `MAX_BG_EVENTS`) + `SignData`
+  (`wSignCoords` Y,X `0x275D`; `wSignTextIDs` `0x277D`) match the cartridge byte-for-byte.
+- 🗣️ **The words came from `pret/pokered`.** A sign's `text` is a **1-based index into the map's
+  `def_text_pointers` table**; `maps.json` shipped only the id, so 6a extracted the strings and
+  **grouped** each id by whether it's a sign / a person / script-only.
+- A sign rides the **same persistence linchpin as a warp** (`.loadSignData` inside `LoadMapHeader`,
+  behind `BIT_NO_PREVIOUS_MAP`): live on Continue, restored on re-entry — the panel says so.
+
+⏳ **Owed: Twilight's live pass** — the drag, the delete, the tool and the grouped picker are things a
+still PNG can only partly review.
+
 ### 🚪 WARPS — what the research found (2026-07-14)
 
 Everything: [`reference/warps.md`](reference/warps.md). Design:

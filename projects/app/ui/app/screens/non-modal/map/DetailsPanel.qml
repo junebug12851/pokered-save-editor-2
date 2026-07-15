@@ -74,6 +74,21 @@ Item {
     return details.hasDoor ? brg.map.warpFields(details.door) : [];
   }
 
+  /// The selected SIGN, or -1. One selection at a time -- the canvas enforces it, so `hasSign` can
+  /// never be true alongside `hasDoor` or `hasSprite`.
+  readonly property int sign: canvas ? canvas.selectedSign : -1
+  readonly property bool hasSign: sign >= 0
+
+  readonly property var signData: {
+    details.revision;
+    return details.hasSign ? brg.map.signAt(details.sign) : ({});
+  }
+
+  readonly property var signFieldsData: {
+    details.revision;
+    return details.hasSign ? brg.map.signFields(details.sign) : [];
+  }
+
   // (The map's warp STATE lives in its own right-dock panel -- @see WarpStatePanel.qml.)
 
   /// The player is slot 0. He is selectable and draggable like anybody else (Twilight, 2026-07-13),
@@ -109,6 +124,9 @@ Item {
     // A door moving / being re-aimed does NOT emit changed() (that would re-render the whole map
     // image). It gets its own signal, and the panel has to listen to it or it goes stale mid-drag.
     function onWarpsChanged() { details.revision++; }
+
+    // Signs, same story -- their own signal, or the panel goes stale mid-drag.
+    function onSignsChanged() { details.revision++; }
   }
 
   readonly property var sprite: {
@@ -148,7 +166,7 @@ Item {
         Layout.fillWidth: true
         Layout.margins: 10
         spacing: 6
-        visible: !details.hasSprite && !details.hasPlayer && !details.hasDoor
+        visible: !details.hasSprite && !details.hasPlayer && !details.hasDoor && !details.hasSign
 
         Label {
           text: brg.map.mapName
@@ -160,7 +178,7 @@ Item {
 
         Label {
           Layout.fillWidth: true
-          text: qsTr("Nothing selected — click somebody, or a door, to edit them.")
+          text: qsTr("Nothing selected — click somebody, a door or a sign to edit them.")
           wrapMode: Text.Wrap
           opacity: 0.6
           font.pixelSize: 11
@@ -173,6 +191,7 @@ Item {
         MapDetailRow { label: qsTr("Player at");  value: qsTr("%1, %2").arg(brg.map.playerX).arg(brg.map.playerY) }
         MapDetailRow { label: qsTr("People");     value: qsTr("%1 of 15").arg(15 - brg.map.npcRoomLeft()) }
         MapDetailRow { label: qsTr("Doors");      value: qsTr("%1 of 32").arg(32 - brg.map.warpRoomLeft()) }
+        MapDetailRow { label: qsTr("Signs");      value: qsTr("%1 of 16").arg(16 - brg.map.signRoomLeft()) }
 
         // The view pointer the GAME itself computed and left in the save. If an edit has made it
         // stale we say so plainly and offer the one-click fix -- we never quietly rewrite it.
@@ -376,6 +395,162 @@ Item {
             font.pixelSize: 10
             text: qsTr("These doors are live — the game will use them when this save loads.\n\n"
                        + "It puts the map's original doors back as soon as the player walks out of "
+                       + "this map and back in again. That's the game's own behaviour, not a limit "
+                       + "of the editor.")
+          }
+        }
+      }
+
+      // ══ ▤ A SIGN SELECTED ══════════════════════════════════════════════════════════════════
+      //
+      // ⚠️ **An edited sign is genuinely LIVE**, on the same linchpin as a door (`.loadSignData` sits
+      // inside `LoadMapHeader`, behind BIT_NO_PREVIOUS_MAP). The game puts the map's original signs
+      // back the moment the player leaves and walks in again -- said in words below, once the user has
+      // actually made an edit. See notes/reference/signs.md.
+      ColumnLayout {
+        Layout.fillWidth: true
+        Layout.margins: 10
+        spacing: 8
+        visible: details.hasSign
+
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 8
+
+          Rectangle {
+            Layout.preferredWidth: 30
+            Layout.preferredHeight: 30
+            radius: 4
+            color: "#66e69f00"
+            border.width: 1
+            border.color: "#e69f00"
+
+            Text {
+              anchors.centerIn: parent
+              text: "▤"
+              font.pixelSize: 15
+              color: "#212121"
+            }
+          }
+
+          ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("Sign %1").arg(details.sign)
+              font.bold: true
+              font.pixelSize: 14
+              elide: Text.ElideRight
+            }
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("at %1, %2").arg(details.signData.x || 0).arg(details.signData.y || 0)
+              font.pixelSize: 10
+              opacity: 0.6
+              elide: Text.ElideRight
+            }
+          }
+        }
+
+        // What it says, resolved — the whole point of a sign, shown in full (several lines allowed).
+        Label {
+          Layout.fillWidth: true
+          visible: (details.signData.preview || "") !== "" && (details.signData.textValid === true)
+          text: qsTr("“%1”").arg(details.signData.preview || "")
+          wrapMode: Text.Wrap
+          font.pixelSize: 11
+          color: brg.settings.textColorMid
+        }
+
+        // 🔫 The text id points past this map's text table. The game reads whatever comes next.
+        // Shown, explained, never refused.
+        Rectangle {
+          Layout.fillWidth: true
+          visible: details.hasSign && (details.signData.textValid === false)
+          radius: 6
+          color: Qt.rgba(0.84, 0.37, 0, 0.12)
+          border.width: 1
+          border.color: "#d55e00"
+          implicitHeight: badText.implicitHeight + 14
+
+          Label {
+            id: badText
+            anchors.fill: parent
+            anchors.margins: 7
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            text: qsTr("This sign's text id isn't one this map has — the game will read whatever text "
+                       + "comes next in the cartridge.\n\nIt's still yours to set: pick from the map's "
+                       + "text below, or keep the raw id.")
+          }
+        }
+
+        Button {
+          Layout.fillWidth: true
+          Layout.topMargin: 2
+          Layout.preferredHeight: 28
+          font.pixelSize: 11
+
+          text: qsTr("Delete this sign")
+
+          contentItem: Label {
+            text: parent.text
+            font: parent.font
+            color: parent.hovered ? "#ffffff" : "#d55e00"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+          }
+
+          background: Rectangle {
+            radius: 4
+            color: parent.hovered ? "#d55e00" : "transparent"
+            border.width: 1
+            border.color: "#d55e00"
+
+            Behavior on color { ColorAnimation { duration: 90 } }
+          }
+
+          onClicked: {
+            brg.map.removeSign(details.sign);
+            if (details.canvas)
+              details.canvas.selectedSign = -1;
+          }
+        }
+
+        Repeater {
+          model: details.signFieldsData
+
+          delegate: SignField {
+            required property var modelData
+            Layout.fillWidth: true
+
+            fieldData: modelData
+            ind: details.sign
+          }
+        }
+
+        // ── The honest note (same rule, same words, as the doors) ─────────────────────────────
+        Rectangle {
+          Layout.fillWidth: true
+          Layout.topMargin: 8
+          visible: brg.map.signsEdited()
+          radius: 6
+          color: Qt.rgba(1, 0.84, 0.31, 0.15)
+          border.width: 1
+          border.color: "#ffd54f"
+          implicitHeight: signLiveNote.implicitHeight + 14
+
+          Label {
+            id: signLiveNote
+            anchors.fill: parent
+            anchors.margins: 7
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            text: qsTr("These signs are live — the game will use them when this save loads.\n\n"
+                       + "It puts the map's original signs back as soon as the player walks out of "
                        + "this map and back in again. That's the game's own behaviour, not a limit "
                        + "of the editor.")
           }

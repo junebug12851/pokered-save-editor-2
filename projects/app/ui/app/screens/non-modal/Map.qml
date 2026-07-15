@@ -107,6 +107,9 @@ Page {
   /// The door currently selected, mirrored out of the canvas for the harness.
   property alias selectedWarp: canvas.selectedWarp
 
+  /// The sign currently selected, mirrored out of the canvas for the harness.
+  property alias selectedSign: canvas.selectedSign
+
   /// The animation, mirrored for the harness: does this map animate, is it running, which step.
   /// (`brg.mapClock` is a C++ object, not a QML item, so automation cannot reach it directly.)
   readonly property bool animates: brg.mapClock.animates
@@ -128,6 +131,7 @@ Page {
     // keyboard path" (map-screen.md §9) -- this is the keyboard path.
     case Qt.Key_W:     mapScreen.tool = "placeWarp";   event.accepted = true; break;
     case Qt.Key_N:     mapScreen.tool = "placeSprite"; event.accepted = true; break;
+    case Qt.Key_S:     mapScreen.tool = "placeSign";   event.accepted = true; break;
 
     case Qt.Key_Space: canvas.spaceHeld = true;  event.accepted = true; break;
     case Qt.Key_Escape:
@@ -137,9 +141,10 @@ Page {
       if (canvas.placing) {
         mapScreen.tool = "select";
         event.accepted = true;
-      } else if (canvas.selectedNpc >= 0 || canvas.selectedWarp >= 0) {
+      } else if (canvas.selectedNpc >= 0 || canvas.selectedWarp >= 0 || canvas.selectedSign >= 0) {
         canvas.selectedNpc = -1;
         canvas.selectedWarp = -1;
+        canvas.selectedSign = -1;
         event.accepted = true;
       } else if (rightDock.open !== "" || leftDock.open !== "") {
         rightDock.open = "";
@@ -267,12 +272,15 @@ Page {
                 { id: "placeWarp", glyph: "⇄", shortcut: "W",
                   tip: qsTr("Place a door — click a tile. It starts as a way back outside, which is what a door usually is. (Up to 32.)") },
                 { id: "placeSprite", glyph: "☻", shortcut: "N",
-                  tip: qsTr("Place a character — click a tile. A random one, but only ever a picture THIS map has loaded, so it can never be one the console would draw as garbage. (Up to 15.)") }
+                  tip: qsTr("Place a character — click a tile. A random one, but only ever a picture THIS map has loaded, so it can never be one the console would draw as garbage. (Up to 15.)") },
+                { id: "placeSign", glyph: "▤", shortcut: "S",
+                  tip: qsTr("Place a sign — click a tile. It starts reading this map's first sign text; choose what it says in the panel. (Up to 16.)") }
               ]
 
               activeId: (mapScreen.tool === "placeWarp"
-                         || mapScreen.tool === "placeSprite") ? mapScreen.tool : ""
-              tip: qsTr("Make — place a door or a character")
+                         || mapScreen.tool === "placeSprite"
+                         || mapScreen.tool === "placeSign") ? mapScreen.tool : ""
+              tip: qsTr("Make — place a door, a character or a sign")
 
               onChosen: (id) => mapScreen.tool = id
             }
@@ -313,6 +321,8 @@ Page {
           canvas.status = kind === "warp"
             ? qsTr("Door %1 placed. It leads back outside — pick where it really goes in the panel.")
                 .arg(index)
+            : kind === "sign"
+            ? qsTr("Sign %1 placed. Choose what it says in the panel.").arg(index)
             : qsTr("Character placed in slot %1.").arg(index);
 
           leftDock.open = "details";   // you made it; here is what it is

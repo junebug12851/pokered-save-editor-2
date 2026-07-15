@@ -64,8 +64,13 @@ Item {
   /// editing one of them is lying.
   property int selectedWarp: -1
 
-  onSelectedNpcChanged: if (canvasRoot.selectedNpc >= 0) canvasRoot.selectedWarp = -1;
-  onSelectedWarpChanged: if (canvasRoot.selectedWarp >= 0) canvasRoot.selectedNpc = -1;
+  /// The SIGN currently selected (0-15), or -1 for nothing. @see MapSign.qml -- the doors' sibling,
+  /// on the same one-selection-at-a-time rule.
+  property int selectedSign: -1
+
+  onSelectedNpcChanged: if (canvasRoot.selectedNpc >= 0) { canvasRoot.selectedWarp = -1; canvasRoot.selectedSign = -1; }
+  onSelectedWarpChanged: if (canvasRoot.selectedWarp >= 0) { canvasRoot.selectedNpc = -1; canvasRoot.selectedSign = -1; }
+  onSelectedSignChanged: if (canvasRoot.selectedSign >= 0) { canvasRoot.selectedNpc = -1; canvasRoot.selectedWarp = -1; }
 
   /// The ✎ button on a selected sprite -- the Map screen opens the Details panel on it.
   signal editRequested(int slot)
@@ -79,13 +84,15 @@ Item {
   // says so, a click that lands on the ground rather than on whatever is under it, and a cap stated
   // BEFORE you hit it rather than a click that silently does nothing.
 
-  /// True while a maker tool is in hand ("placeWarp" | "placeSprite").
+  /// True while a maker tool is in hand ("placeWarp" | "placeSprite" | "placeSign").
   readonly property bool placing: canvasRoot.tool === "placeWarp" || canvasRoot.tool === "placeSprite"
+                               || canvasRoot.tool === "placeSign"
 
   /// How many more of the thing the tool makes this map can hold. 0 -> the tool is dead, and the
   /// context bar says so instead of letting you click into nothing.
   readonly property int placeRoomLeft: canvasRoot.tool === "placeWarp"   ? brg.map.warpRoomLeft()
                                      : canvasRoot.tool === "placeSprite" ? brg.map.npcRoomLeft()
+                                     : canvasRoot.tool === "placeSign"   ? brg.map.signRoomLeft()
                                      : 0
 
   /// A new thing landed. The status bar says what and where.
@@ -238,6 +245,9 @@ Item {
     // The DOORS get their own signal for exactly the same reason -- dragging a door must not
     // re-render the whole map image. (@see MapModel::warpsChanged)
     function onWarpsChanged() { canvasRoot.revision++; }
+
+    // The SIGNS, same story. (@see MapModel::signsChanged)
+    function onSignsChanged() { canvasRoot.revision++; }
   }
 
   readonly property var npcs: {
@@ -248,6 +258,11 @@ Item {
   readonly property var warps: {
     canvasRoot.revision;   // the same missing dependency, and it bites the same way
     return brg.mapLayers.showWarps ? brg.map.warpList() : [];
+  }
+
+  readonly property var signs: {
+    canvasRoot.revision;   // the same missing dependency, the same fix
+    return brg.mapLayers.showSigns ? brg.map.signList() : [];
   }
 
   // ── The two boxes follow the player LIVE ───────────────────────────────────────────────────
@@ -701,6 +716,29 @@ Item {
         }
       }
 
+      // ── The SIGNS ─────────────────────────────────────────────────────────────────────────
+      //
+      // ⚠️ An edited sign is GENUINELY LIVE, on the same linchpin as a door: `.loadSignData` sits
+      // inside `LoadMapHeader`, behind BIT_NO_PREVIOUS_MAP, so the next load bails before it rebuilds
+      // the sign list from ROM. The game restores the map's original signs when the player leaves and
+      // walks back in -- which the Details panel says, in words. See notes/reference/signs.md.
+      Repeater {
+        model: canvasRoot.signs   // @see canvasRoot.revision -- a plain signList() never re-asks
+
+        delegate: MapSign {
+          required property var modelData
+
+          canvas: canvasRoot
+          ind: modelData.ind
+          tileX: modelData.x
+          tileY: modelData.y
+          preview: modelData.preview
+          textValid: modelData.textValid
+
+          onEditRequested: canvasRoot.editRequested(-1)   // the panel reads selectedSign
+        }
+      }
+
       // The visible screen: the 20x18 tiles actually on the Game Boy's screen.
       Rectangle {
         visible: brg.mapLayers.showScreenBox
@@ -797,6 +835,8 @@ Item {
             if (canvasRoot.placeRoomLeft <= 0) {
               canvasRoot.status = canvasRoot.tool === "placeWarp"
                 ? qsTr("This map already has all 32 doors the game can hold.")
+                : canvasRoot.tool === "placeSign"
+                ? qsTr("This map already has all 16 signs the game can hold.")
                 : qsTr("This map already has all 15 characters the game can hold.");
               return;
             }
@@ -815,6 +855,19 @@ Item {
 
               canvasRoot.selectedWarp = ind;
               canvasRoot.placed("warp", ind);
+              return;
+            }
+
+            if (canvasRoot.tool === "placeSign") {
+              const sind = brg.map.addSign(tx, ty);
+              if (sind < 0)
+                return;
+
+              if (!brg.mapLayers.showSigns)
+                brg.mapLayers.setKeyVisible("signs", true);
+
+              canvasRoot.selectedSign = sind;
+              canvasRoot.placed("sign", sind);
               return;
             }
 
@@ -840,6 +893,7 @@ Item {
           // cursor is NOT selected any more; see the note above.
           canvasRoot.selectedNpc = -1;
           canvasRoot.selectedWarp = -1;
+          canvasRoot.selectedSign = -1;
         }
       }
 

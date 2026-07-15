@@ -25,6 +25,7 @@ class MapsDB;
 class MapDBEntryWarpOut;
 class MapDBEntryWarpIn;
 class MapDBEntrySign;
+class MapDBEntryText;
 class MapDBEntrySprite;
 class MapDBEntryConnect;
 class MapDBEntryWildMon;
@@ -65,6 +66,7 @@ struct DB_AUTOPORT MapDBEntry : public QObject {
   Q_PROPERTY(int getWarpOutSize READ getWarpOutSize CONSTANT)     ///< Number of outgoing warps.
   Q_PROPERTY(int getWarpInSize READ getWarpInSize CONSTANT)       ///< Number of incoming warps.
   Q_PROPERTY(int getSignsSize READ getSignsSize CONSTANT)         ///< Number of signs.
+  Q_PROPERTY(int getTextEntriesSize READ getTextEntriesSize CONSTANT) ///< Number of text-table entries.
   Q_PROPERTY(int getSpritesSize READ getSpritesSize CONSTANT)     ///< Number of sprites.
   Q_PROPERTY(int getMonRate READ getMonRate CONSTANT)             ///< Land encounter rate.
   Q_PROPERTY(int getMonRateWater READ getMonRateWater CONSTANT)   ///< Water encounter rate.
@@ -117,6 +119,10 @@ public:
   const QVector<MapDBEntrySign*> getSigns() const;      ///< Signs on the map.
   int getSignsSize() const;                             ///< @see getSignsSize property.
   Q_INVOKABLE const MapDBEntrySign* getSignsAt(const int ind) const; ///< Sign @p ind (for QML).
+
+  const QVector<MapDBEntryText*> getTextEntries() const; ///< The map's text-pointer table (id -> words + category).
+  int getTextEntriesSize() const;                        ///< @see getTextEntriesSize property.
+  Q_INVOKABLE const MapDBEntryText* getTextEntriesAt(const int ind) const; ///< Text entry @p ind, 0-based (for QML).
 
   const QVector<MapDBEntrySprite*> getSprites() const;  ///< Sprites on the map.
   int getSpritesSize() const;                           ///< @see getSpritesSize property.
@@ -195,6 +201,9 @@ protected:
 
   // Signs on map
   QVector<MapDBEntrySign*> signs;      ///< Signs.
+
+  // The map's text-pointer table (id -> words + category), imported from pret/pokered.
+  QVector<MapDBEntryText*> textEntries; ///< Text-pointer table entries (index 0 == text id 1).
 
   // Sprites on map
   QVector<MapDBEntrySprite*> sprites;  ///< Sprites.

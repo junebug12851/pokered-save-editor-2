@@ -151,6 +151,14 @@ void MapLayersModel::buildAll()
           "A door marked \"back outside\" doesn't name a map: it sends you to whatever map you last "
           "stood on outdoors, which is the \"Outside is…\" chip in the toolbar."),
        ViewWarps);
+  // ⚠️ NOT the "Signpost" tile trait either -- this is the map's actual sign LIST: 16 slots in the
+  // save, each a tile and a line of the map's text. See notes/reference/signs.md.
+  view(GameViewGroup, "signs", tr("Signs"),
+       tr("The map's signs — the placards you can read. Click one to see what it says and choose from "
+          "this map's text; drag it to move it.\n\n"
+          "Like the doors, an edited sign is live when the save loads, and the game puts the map's "
+          "original signs back when the player leaves and walks in again."),
+       ViewSigns);
   view(GameViewGroup, "screenBox", tr("Screen box"),
        tr("The 20×18 tiles the Game Boy is actually showing — the screen, sliding around inside "
           "the draw area in half-block steps. Move the player and it follows him."), ViewScreenBox);
@@ -229,6 +237,10 @@ bool MapLayersModel::rowApplies(const Row& r) const
   // whether the feature is broken. (Plenty of maps genuinely have none.)
   if (r.viewBit == ViewWarps)
     return map != nullptr && map->valid() && !map->warpList().isEmpty();
+
+  // A map with no signs says so, rather than lighting an empty layer.
+  if (r.viewBit == ViewSigns)
+    return map != nullptr && map->valid() && !map->signList().isEmpty();
 
   // Any other guide always applies -- there is always a grid to draw. A semantic overlay might have
   // nothing to show on THIS map, and if so the row says so rather than switching on an empty
@@ -334,6 +346,7 @@ QVariant MapLayersModel::data(const QModelIndex& index, int role) const
     if (r.viewBit == ViewPlayer)      return QColor(QStringLiteral("#6b6b6b")); // him
     if (r.viewBit == ViewNpcs)        return QColor(QStringLiteral("#cc79a7")); // everyone else
     if (r.viewBit == ViewWarps)       return QColor(QStringLiteral("#f0e442")); // yellow -- the doors
+    if (r.viewBit == ViewSigns)       return QColor(QStringLiteral("#e69f00")); // orange -- the signs
 
     // The grids. ⚠️ OPAQUE here, even though the canvas draws them at low alpha: this colour is what
     // the layer PANEL paints its swatch with, and a translucent swatch on a white row looked
@@ -555,6 +568,7 @@ bool MapLayersModel::showDrawArea() const  { return (bits & ViewDrawArea) != 0; 
 bool MapLayersModel::showConnections() const { return (bits & ViewConnections) != 0; }
 bool MapLayersModel::showNpcs() const       { return (bits & ViewNpcs) != 0; }
 bool MapLayersModel::showWarps() const      { return (bits & ViewWarps) != 0; }
+bool MapLayersModel::showSigns() const      { return (bits & ViewSigns) != 0; }
 
 qreal MapLayersModel::overlayOpacity() const { return opacity; }
 

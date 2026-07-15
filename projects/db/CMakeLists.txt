@@ -18,6 +18,7 @@ qt_add_library(db SHARED
     src/pse-db/entries/mapdbentry.cpp
     src/pse-db/entries/mapdbentryconnect.cpp
     src/pse-db/entries/mapdbentrysign.cpp
+    src/pse-db/entries/mapdbentrytext.cpp
     src/pse-db/entries/mapdbentrysprite.cpp
     src/pse-db/entries/mapdbentryspriteitem.cpp
     src/pse-db/entries/mapdbentryspritenpc.cpp
