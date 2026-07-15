@@ -39,7 +39,7 @@ right script runs). No mark = durable state a person can edit and keep.
 
 | | Save | Bit | Real WRAM name | v1 label / v2 field | Plain-English | On load (console-verified) |
 |---|---|---|---|---|---|---|
-| | `0x2CE5` | — | `wCurMapScript` | Current Script / `curMapScript` | **This map's story-script step** | **kept** |
+| | `0x2CE5` | — | `wCurMapScript` | Current Script / `curMapScript` | **Working script-step index** (pairs with the bit below) | **kept** |
 | ≈ | `0x260B` | — | `wCurrentTileBlockMapViewPointer` | UL Corner of Cur View in Tile Blocks / `currentTileBlockMapViewPointer` | **Camera: which block is top-left** (derived from coords) | **kept — but trusted blindly** |
 | **!** | `0x27D2` | — | `wMapViewVRAMPointer` | UL Corner visible BG Tilemap in VR / `mapViewVRAMPointer` | **Where the screen sits in VRAM** | **reset to `$9800`** |
 | ↔ | `0x29DF` | 4 | `BIT_USE_CUR_MAP_SCRIPT` (`wStatusFlags7`) | Run cur map script instead / `curMapNextFrame` | **"Resume at the saved script step"** | **kept on a quiet map; consumed on a scripted one** |
@@ -52,26 +52,44 @@ right script runs). No mark = durable state a person can edit and keep.
 
 ## 2. What each one actually is
 
-### `wCurMapScript` — "Current Script" — **durable, meaningful, editable** ✅
+### `wCurMapScript` — "Current Script" — **a working index, and half of a pair** ✅
 
 `wram.asm`: *"index of current map script, mostly used as index for function pointer array;
 mostly copied from map-specific map script pointer and written back later."* It is **which
-step of this map's scripted-event sequence you are on.** Pokémon Tower, the Rocket Hideout,
-every Gym, Silph Co — each carries a small numbered list of script steps
-(`SCRIPT_POKEMONTOWER6F_DEFAULT`, …), and this byte says which one runs. Quiet maps (Pallet
-Town) hold a resting index and never touch it. **Console: kept** — write a marker, Continue,
-read it back unchanged; Pallet's own script did not re-derive it on the first tick.
+step of a map's scripted-event sequence runs** — Pokémon Tower, the Rocket Hideout, every Gym,
+Silph Co each carry a small numbered list of steps
+(`SCRIPT_POKEMONTOWER6F_DEFAULT` / `_START_BATTLE` / `_END_BATTLE` / `_PLAYER_MOVING` /
+`_MAROWAK_BATTLE`, …). **Console: the byte at `0x2CE5` is kept** — write a marker, Continue,
+read it back unchanged.
 
-Caveat worth saying on the panel: a *story* map's own default script often re-derives this
-from event flags the moment that map's script next ticks (that is how a gym "knows" the leader
-is already beaten). So on those maps the value is real but self-correcting; on a plain map it
-just sits.
+**But mind the mechanism — it changes what editing it *does*.** `RunMapScript` jumps through
+`wCurMapScriptPtr` into the current map's `<Map>_Script` routine, and that routine reads its
+**own per-map variable** (`w<Map>CurScript` — `wPokemonTower6FCurScript`, `wOaksLabCurScript`,
+… **~90 of them**, one per scripted map, in the saved event-progress block ~`$D5F5`–`$D65C`),
+runs the indexed sub-script via `ExecuteCurMapScriptInTable`, and writes it **back to the
+per-map variable.** So:
+
+- **The durable "story progress" for a map is its `w<Map>CurScript`, not `wCurMapScript`.** That
+  ~90-byte per-map block is a **separate, un-briefed topic** (game-progress state) — see §12b of
+  the plan. This field (`0x2CE5`) is not that block; do not build the block's UI here.
+- **`wCurMapScript` (`0x2CE5`) is the shared *working* index** that `ExecuteCurMapScriptInTable`
+  writes each time a map script runs. Edited alone, a scripted map overwrites it on the next tick
+  from its per-map variable — so on its own it's near-scratch.
+
+> 🔗 **The pair.** `ExecuteCurMapScriptInTable` opens with `bit BIT_USE_CUR_MAP_SCRIPT / res …`,
+> and **if that bit is set it uses `wCurMapScript` as the index instead of the map's default.**
+> So **"Current Script" (`wCurMapScript`) and "Run cur map script instead"
+> (`BIT_USE_CUR_MAP_SCRIPT`, §"Run cur map script instead") are one feature in two bytes:** set
+> the bit **and** the index, and the map runs *that* script step next tick — the auto-trigger.
+> The panel should present them together: the step selector plus a "run this step on load" toggle.
 
 > **UI (Twilight, 2026-07-15):** a **ComboBox with an actually descriptive list** — the named
-> script steps for *the current map* — plus a **"Something else…" link** at the bottom for a raw
-> value (hack/glitch). This needs a per-map list of script-step names **extracted from
-> `pret/pokered`** (the `*_Script` pointer tables / `SCRIPT_*` constants), the same shape as the
-> sign-text extraction (Phase 6a). Owed as its own data pass before the combo can be descriptive.
+> steps for *the current map* — plus a **"Something else…" link** for a raw value. **The data:**
+> `pret/pokered` has **98 `_ScriptPointers` tables** (`def_script_pointers` + `dw_const <routine>,
+> SCRIPT_<MAP>_<NAME>`); parsing them yields the ordered, named step list per map — the same
+> extraction shape as the sign-text pass (Phase 6a), **additive to `maps.json`**. Owed as its own
+> data pass (ask before touching `maps.json`) before the combo can be truly descriptive; until
+> then it falls back to raw indices + "Something else…".
 
 ### `wCurrentTileBlockMapViewPointer` — "UL Corner of Cur View in Tile Blocks" — **derived** ≈
 
@@ -228,7 +246,8 @@ The `wCurrentTileBlockMapViewPointer` result is confirmed by the garbage framebu
 | | Item | Action |
 |---|---|---|
 | 1 | v2 field docs call `cardKeyDoorX/Y` *"Unknown ???"* and `curMapNextFrame`/`forceBikeRide` *"Flags that may not be used, unknown"* | **Rename + document** with the real names above (truth-in-labelling, like the player pass). No offset/bit is wrong — only the words. |
-| 2 | `wCurMapScript` needs a **descriptive per-map script-step list** for the ComboBox | Extract `SCRIPT_*` step names per map from `pret/pokered` — its own data pass (the sign-text precedent). Until then the combo falls back to raw indices + "Something else…". |
+| 2 | `wCurMapScript` needs a **descriptive per-map script-step list** for the ComboBox | Extract the `SCRIPT_<MAP>_<NAME>` step names from `pret/pokered`'s **98 `_ScriptPointers` tables** — its own data pass (the sign-text precedent), **additive to `maps.json`, ask before touching it**. Until then the combo falls back to raw indices + "Something else…". |
+| 2b | `wCurMapScript` (`0x2CE5`) is a **shared working index**, not the durable per-map progress | The per-map progress is the **~90 `w<Map>CurScript` bytes** (`$D5F5`–`$D65C`), a **separate, un-briefed** game-progress topic (plan §12b). Present `0x2CE5` as the *"run this step next tick"* index, paired with `BIT_USE_CUR_MAP_SCRIPT`; do **not** build the per-map block's UI here. |
 | 3 | `wCurrentTileBlockMapViewPointer` is derived and **trusted on load** | **Keep it synced to the coords by default** (auto-recompute via `coordsToPtr`); give power users a **break-sync** toggle + an alert on manual entry + **canvas dragging** of the view box. Raw address only behind "Something else…". |
 | 4 | `mapViewVRAMPointer`, `cardKeyDoorX/Y` are not real editable state | Collapse behind the disclosure with the amber **!** and a plain reason. (`curMapNextFrame` is **not** here — it's an editable auto-trigger lever, see §2.) |
 
@@ -248,7 +267,10 @@ It is a naming/organisation problem plus one derived-value discipline.
 | The load path (`EnterMap` → `LoadMapData` → `ClearVariablesOnEnterMap`) | `home/overworld.asm`, `engine/overworld/clear_variables.asm` |
 | VRAM pointer reset to `$9800` | `home/overworld.asm` → `LoadMapData` |
 | The view-pointer recompute lives off the Continue path | `home/overworld.asm` → `CheckMapConnections`; `LoadMapHeader` `ret nz` on `BIT_NO_PREVIOUS_MAP` |
-| `BIT_USE_CUR_MAP_SCRIPT` consumed | `home/trainers.asm` → `ExecuteCurMapScriptInTable` |
+| `BIT_USE_CUR_MAP_SCRIPT` read/consumed, and `wCurMapScript` used as the index when it's set | `home/trainers.asm` → `ExecuteCurMapScriptInTable` |
+| How a map's script runs (`wCurMapScriptPtr` → `<Map>_Script` → its own `w<Map>CurScript`) | `home/overworld.asm` → `RunMapScript`; `scripts/*.asm` (e.g. `PokemonTower6F.asm`) |
+| The ~90 per-map `w<Map>CurScript` durable-progress bytes | `ram/wram.asm` |
+| The 98 named per-map script-step tables (combo source) | `scripts/*.asm` → `def_script_pointers` / `dw_const …, SCRIPT_<MAP>_<NAME>`; `constants/script_constants.asm` |
 | `BIT_ALWAYS_ON_BIKE` persists into a new game (bug note) | `engine/movie/oak_speech/oak_speech.asm` |
 | Card-Key door coords set/read/cleared | `engine/events/card_key.asm`, `scripts/SilphCo*.asm`, `engine/overworld/clear_variables.asm` |
 | The whole thing, byte by byte | `scripts/emu/probe_area_map_state.py` (local-only, ROM-gated) |
