@@ -1215,6 +1215,14 @@ the offset; add/delete/select behave like warps and signs.
 
 #### Phase 7c — The Details panel (the Connection inspector)
 
+> **BUILT (2026-07-15, `0.39.3-alpha`).** The DetailsPanel gains a connection section: neighbour
+> picker (`setConnectionMap`), offset spinner + one-tap **snap buttons** (corner-aligned / centred /
+> flush), **re-home** direction buttons (free edges only), a **Break sync** switch that unlocks the raw
+> nine (`connectionFields` / `setConnectionField` — a raw write moves exactly its own byte(s) and
+> desyncs), Delete, and the live/restored-on-re-entry honest note. `tst_connections` 16/16,
+> `tst_qml_screens` 16/16. ⏳ Owed: the on-canvas **resize nodes** for a desynced strip (7d) and
+> Twilight's live pass.
+
 Nothing selected → the map (as always). A connection selected → its inspector, on the field kit.
 
 - **The two real inputs, up top:** **Neighbour map** (a real map picker) and **Offset** (a slider + numeric

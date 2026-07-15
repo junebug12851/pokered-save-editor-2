@@ -89,6 +89,33 @@ Item {
     return details.hasSign ? brg.map.signFields(details.sign) : [];
   }
 
+  /// The selected edge CONNECTION's direction (0-3), or -1. One selection at a time, canvas-enforced.
+  readonly property int connection: canvas ? canvas.selectedConnection : -1
+  readonly property bool hasConnection: connection >= 0
+
+  readonly property var connEdge: {
+    details.revision;
+    if (!details.hasConnection) return ({});
+    const l = brg.map.connectionEditList();
+    for (let i = 0; i < l.length; i++)
+      if (l[i].dir === details.connection) return l[i];
+    return ({});
+  }
+
+  readonly property var connFieldsData: {
+    details.revision;
+    return details.hasConnection ? brg.map.connectionFields(details.connection) : [];
+  }
+
+  /// The break-sync switch (the power path). Reset whenever the selection changes -- a fresh connection
+  /// starts synced (its raw fields read-only) until you deliberately break it. A connection that is
+  /// ALREADY desynced (raw-edited) shows its fields editable regardless.
+  property bool connBreakSync: false
+  onConnectionChanged: details.connBreakSync = false
+
+  readonly property bool connRawEditable: details.connBreakSync
+                                        || (details.hasConnection && details.connEdge.synced === false)
+
   // (The map's warp STATE lives in its own right-dock panel -- @see WarpStatePanel.qml.)
 
   /// The player is slot 0. He is selectable and draggable like anybody else (Twilight, 2026-07-13),
@@ -181,6 +208,7 @@ Item {
         Layout.margins: 10
         spacing: 6
         visible: !details.hasSprite && !details.hasPlayer && !details.hasDoor && !details.hasSign
+                 && !details.hasConnection
 
         Label {
           text: brg.map.mapName
@@ -566,6 +594,251 @@ Item {
             text: qsTr("These signs are live — the game will use them when this save loads.\n\n"
                        + "It puts the map's original signs back as soon as the player walks out of "
                        + "this map and back in again. That's the game's own behaviour, not a limit "
+                       + "of the editor.")
+          }
+        }
+      }
+
+      // ══ 🔗 A CONNECTION SELECTED ═══════════════════════════════════════════════════════════
+      //
+      // A connection is neighbour + one signed OFFSET; the other nine bytes are macro-derived. So the
+      // top of the panel is those two real inputs, and the raw nine live below, read-only while synced
+      // and unlocked by the break-sync switch (the power path). See notes/reference/map-connections.md.
+      ColumnLayout {
+        Layout.fillWidth: true
+        Layout.margins: 10
+        spacing: 8
+        visible: details.hasConnection
+
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 8
+
+          Rectangle {
+            Layout.preferredWidth: 30
+            Layout.preferredHeight: 30
+            radius: 4
+            color: "#66d55e00"
+            border.width: 1
+            border.color: "#d55e00"
+            Text { anchors.centerIn: parent; text: "🔗"; font.pixelSize: 14 }
+          }
+
+          ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("%1 connection").arg(details.connEdge.dirName || "")
+              font.bold: true
+              font.pixelSize: 14
+              elide: Text.ElideRight
+            }
+            Label {
+              Layout.fillWidth: true
+              text: (details.connEdge.synced === false)
+                    ? qsTr("Raw-edited — the offset no longer describes it")
+                    : qsTr("to %1 · offset %2").arg(details.connEdge.toName || "").arg(details.connEdge.offset || 0)
+              font.pixelSize: 10
+              opacity: 0.6
+              elide: Text.ElideRight
+            }
+          }
+        }
+
+        // ── Neighbour ──────────────────────────────────────────────────────────────────────
+        Label { text: qsTr("Connects to"); font.pixelSize: 11; color: brg.settings.textColorMid }
+        ComboBox {
+          id: connMap
+          Layout.fillWidth: true
+          Layout.preferredHeight: 30
+          font.pixelSize: 12
+          model: brg.map.mapList()
+          textRole: "name"
+          valueRole: "ind"
+          currentIndex: {
+            details.revision;
+            const list = model;
+            for (let i = 0; i < list.length; i++)
+              if (list[i].ind === details.connEdge.toMap) return i;
+            return -1;
+          }
+          onActivated: brg.map.setConnectionMap(details.connection, currentValue)
+        }
+
+        // ── Offset (the one real knob) ───────────────────────────────────────────────────────
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 6
+          Label { text: qsTr("Offset"); font.pixelSize: 11; color: brg.settings.textColorMid }
+          SpinBox {
+            id: offsetSpin
+            Layout.fillWidth: true
+            Layout.preferredHeight: 28
+            font.pixelSize: 11
+            editable: true
+            from: details.connEdge.offsetMin !== undefined ? details.connEdge.offsetMin : -32
+            to: details.connEdge.offsetMax !== undefined ? details.connEdge.offsetMax : 32
+            value: details.connEdge.offset || 0
+            onValueModified: brg.map.setConnectionOffset(details.connection, value)
+          }
+        }
+
+        // The snap landmarks, as one-tap buttons.
+        Flow {
+          Layout.fillWidth: true
+          spacing: 6
+          Repeater {
+            model: details.connEdge.snaps || []
+            delegate: Button {
+              required property var modelData
+              height: 24
+              font.pixelSize: 10
+              text: modelData.name + " (" + modelData.offset + ")"
+              onClicked: brg.map.setConnectionOffset(details.connection, modelData.offset)
+            }
+          }
+        }
+
+        // ── Attach to another edge (re-home; never a rotation) ───────────────────────────────
+        Label {
+          Layout.fillWidth: true
+          Layout.topMargin: 4
+          text: qsTr("Attached edge")
+          font.pixelSize: 11
+          color: brg.settings.textColorMid
+        }
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 4
+          Repeater {
+            model: [{ d: 0, n: qsTr("North") }, { d: 1, n: qsTr("South") },
+                    { d: 2, n: qsTr("East") },  { d: 3, n: qsTr("West") }]
+            delegate: Button {
+              required property var modelData
+              Layout.fillWidth: true
+              Layout.preferredHeight: 26
+              font.pixelSize: 10
+              text: modelData.n
+              // The current edge is highlighted; a free edge is a re-home target; an occupied one is off.
+              enabled: modelData.d === details.connection
+                       || !brg.map.connectionExists(modelData.d)
+              highlighted: modelData.d === details.connection
+              onClicked: {
+                if (modelData.d === details.connection) return;
+                brg.map.rehomeConnection(details.connection, modelData.d);
+                if (details.canvas) details.canvas.selectedConnection = modelData.d;
+              }
+            }
+          }
+        }
+
+        // ── The raw nine (read-only while synced; break sync to edit) ────────────────────────
+        RowLayout {
+          Layout.fillWidth: true
+          Layout.topMargin: 6
+          spacing: 6
+          Label {
+            Layout.fillWidth: true
+            text: qsTr("Raw bytes")
+            font.pixelSize: 11
+            font.bold: true
+            opacity: 0.55
+          }
+          Switch {
+            text: qsTr("Break sync")
+            font.pixelSize: 10
+            checked: details.connRawEditable
+            enabled: details.connEdge.synced !== false   // already desynced: always editable, switch moot
+            onToggled: details.connBreakSync = checked
+          }
+        }
+
+        Label {
+          Layout.fillWidth: true
+          text: details.connRawEditable
+                ? qsTr("Editing these sets bytes directly — the offset above no longer describes the "
+                       + "connection until you pick a neighbour or offset again.")
+                : qsTr("These follow the offset above. Turn on “Break sync” to set them by hand.")
+          wrapMode: Text.Wrap
+          font.pixelSize: 10
+          opacity: 0.55
+        }
+
+        Repeater {
+          model: details.connFieldsData
+          delegate: RowLayout {
+            required property var modelData
+            Layout.fillWidth: true
+            spacing: 6
+
+            Label {
+              Layout.preferredWidth: 92
+              text: modelData.label
+              font.pixelSize: 10
+              opacity: 0.7
+              elide: Text.ElideRight
+            }
+            SpinBox {
+              Layout.fillWidth: true
+              Layout.preferredHeight: 26
+              font.pixelSize: 10
+              editable: true
+              enabled: details.connRawEditable
+              from: modelData.min
+              to: modelData.max
+              value: modelData.value
+              onValueModified: brg.map.setConnectionField(details.connection, modelData.key, value)
+            }
+          }
+        }
+
+        // ── Delete ───────────────────────────────────────────────────────────────────────────
+        Button {
+          Layout.fillWidth: true
+          Layout.topMargin: 6
+          Layout.preferredHeight: 28
+          font.pixelSize: 11
+          text: qsTr("Delete this connection")
+          contentItem: Label {
+            text: parent.text
+            font: parent.font
+            color: parent.hovered ? "#ffffff" : "#d55e00"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+          }
+          background: Rectangle {
+            radius: 4
+            color: parent.hovered ? "#d55e00" : "transparent"
+            border.width: 1
+            border.color: "#d55e00"
+            Behavior on color { ColorAnimation { duration: 90 } }
+          }
+          onClicked: {
+            brg.map.removeConnection(details.connection);
+            if (details.canvas) details.canvas.selectedConnection = -1;
+          }
+        }
+
+        // ── The honest note (same rule as doors/signs) ──────────────────────────────────────
+        Rectangle {
+          Layout.fillWidth: true
+          Layout.topMargin: 8
+          visible: brg.map.connectionsEdited()
+          radius: 6
+          color: Qt.rgba(1, 0.84, 0.31, 0.15)
+          border.width: 1
+          border.color: "#ffd54f"
+          implicitHeight: connLiveNote.implicitHeight + 14
+          Label {
+            id: connLiveNote
+            anchors.fill: parent
+            anchors.margins: 7
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            text: qsTr("These connections are live — the game will use them when this save loads.\n\n"
+                       + "It puts the map's original connections back as soon as the player walks out "
+                       + "of this map and back in again. That's the game's own behaviour, not a limit "
                        + "of the editor.")
           }
         }

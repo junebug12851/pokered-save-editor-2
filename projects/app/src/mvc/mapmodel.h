@@ -524,6 +524,18 @@ public:
   /// the game restores the map's original connections when the player leaves and walks back in.
   Q_INVOKABLE bool connectionsEdited() const;
 
+  /// The raw eleven-byte connection struct of @p dir, named and explained -- the inspector's advanced
+  /// section: `{ key, label, blurb, value, min, max, kind }` for `mapPtr` · `stripSrc` · `stripDst` ·
+  /// `stripWidth` · `width` · `yAlign` · `xAlign` · `viewPtr`. While the connection is @ref
+  /// connectionSynced these track the offset (the panel shows them read-only); break sync and they
+  /// become independently editable via @ref setConnectionField. Empty if @p dir has no connection.
+  Q_INVOKABLE QVariantList connectionFields(int dir) const;
+
+  /// Write one raw @ref connectionFields key on @p dir's connection -- a **break-sync** edit: it sets
+  /// exactly that one field (one or two bytes) and leaves the others where they lie, so the stored
+  /// struct diverges from what the offset would derive (@ref connectionSynced then returns false).
+  Q_INVOKABLE void setConnectionField(int dir, const QString& key, int value);
+
   // ── The sprite set ────────────────────────────────────────────────────────────
   int spriteSetId() const;
   QString spriteSetName() const;

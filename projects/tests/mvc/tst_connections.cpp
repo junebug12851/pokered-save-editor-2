@@ -84,6 +84,14 @@ QVariantMap edge(const QVariantList& list, int dir)
   return QVariantMap();
 }
 
+QVariantMap fieldNamed(const QVariantList& fields, const QString& key)
+{
+  for (const QVariant& v : fields)
+    if (v.toMap().value("key").toString() == key)
+      return v.toMap();
+  return QVariantMap();
+}
+
 } // namespace
 
 class TestConnections : public QObject
@@ -105,6 +113,10 @@ private slots:
   void rehomeConnection_movesToAnotherEdge();
   void connectionRoomLeft_countsDownFromFour();
   void connectionsEdited_isQuietUntilYouChangeSomething();
+
+  // ── The inspector's raw nine (Phase 7c) ─────────────────────────────────────
+  void connectionFields_nameEveryByteInEnglish();
+  void setConnectionField_writesRawByte_andBreaksSync();
 
   void loadingAndResavingAnUntouchedSave_changesNothing();
 
@@ -448,6 +460,68 @@ void TestConnections::connectionsEdited_isQuietUntilYouChangeSomething()
   const int dir = existingDirs(r->map).first();
   r->map->setConnectionOffset(dir, r->map->connectionOffsetOf(dir) + 1);
   QVERIFY2(r->map->connectionsEdited(), "an offset change did not trip the warning");
+
+  delete r;
+}
+
+/// The inspector's advanced section names all eight struct fields, in English, with their values.
+void TestConnections::connectionFields_nameEveryByteInEnglish()
+{
+  Rig* r = makeRig();
+  const int dir = existingDirs(r->map).first();
+
+  const QVariantList f = r->map->connectionFields(dir);
+  QCOMPARE(f.size(), 8);
+
+  const QStringList keys = { "mapPtr", "stripSrc", "stripDst", "stripWidth",
+                             "width", "yAlign", "xAlign", "viewPtr" };
+  for (const QString& key : keys) {
+    const QVariantMap m = fieldNamed(f, key);
+    QVERIFY2(!m.isEmpty(), qPrintable(QStringLiteral("no field for '%1'").arg(key)));
+    QVERIFY2(!m.value("label").toString().isEmpty(),
+             qPrintable(QStringLiteral("'%1' has no human name").arg(key)));
+    QVERIFY2(!m.value("blurb").toString().isEmpty(),
+             qPrintable(QStringLiteral("'%1' has no explanation").arg(key)));
+  }
+
+  // The values are the bytes actually stored.
+  MapConnData* c = r->area->connections.value((var8)dir);
+  QCOMPARE(fieldNamed(f, "stripSrc").value("value").toInt(), c->stripSrc);
+  QCOMPARE(fieldNamed(f, "viewPtr").value("value").toInt(), c->viewPtr);
+  QCOMPARE(fieldNamed(f, "mapPtr").value("value").toInt(), c->mapPtr);
+
+  delete r;
+}
+
+/// A raw-field write is a BREAK-SYNC edit: exactly its own byte(s) move, and the connection is no
+/// longer in sync (the offset no longer describes it).
+void TestConnections::setConnectionField_writesRawByte_andBreaksSync()
+{
+  Rig* r = makeRig();
+  const int dir = existingDirs(r->map).first();
+
+  QVERIFY2(r->map->connectionSynced(dir), "the fixture connection did not start in sync");
+
+  MapConnData* c = r->area->connections.value((var8)dir);
+  const int want = (c->stripWidth + 5) & 0xFF;
+
+  r->sf.flattenData();
+  const QByteArray before = snapshot(r->sf);
+
+  r->map->setConnectionField(dir, QStringLiteral("stripWidth"), want);
+
+  r->sf.flattenData();
+  const QByteArray after = snapshot(r->sf);
+
+  // stripWidth sits at slot + 5 (mapPtr 1 + stripSrc 2 + stripDst 2).
+  const int at = slotOf(dir) + 5;
+  const QVector<int> moved = diffOffsets(before, after);
+  QVERIFY2(moved == QVector<int>{ at },
+           qPrintable(QStringLiteral("a raw stripWidth write moved: %1").arg(describeDiff(moved))));
+  QCOMPARE(static_cast<int>(static_cast<quint8>(after.at(at))), want);
+
+  QVERIFY2(!r->map->connectionSynced(dir),
+           "a raw byte edit did not break sync -- the offset should no longer describe it");
 
   delete r;
 }

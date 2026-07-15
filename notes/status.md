@@ -37,9 +37,16 @@ each writing only the flag bit + its one slot. **`tst_connections` 14/14** — k
 `MapConnection.qml` (a selectable/deletable strip you drag along the edge to set the offset, snapping to
 corner-aligned / centred / flush). `connectionEditList` gained neighbour size + `snaps`.
 **`tst_qml_screens` 16/16**, tst_connections 14/14. ⏳ **Owed:** the full draggable neighbour-map render,
-the drag-a-map-onto-arrow gesture, the details inspector (7c), the sync-aware raw handles (7d), and
+the drag-a-map-onto-arrow gesture, the sync-aware raw handles (7d), and
 **Twilight's live pass** (drag/select/snap can't be still-reviewed). Turn on the **Connections** layer
 to see arrows + strips.
+
+**Phase 7c BUILT (2026-07-15, `0.39.3-alpha`) — the connection inspector.** Selecting a connection
+shows: neighbour picker, offset spinner + snap buttons (corner/centred/flush), re-home buttons, a
+**Break sync** switch unlocking the raw nine (`connectionFields`/`setConnectionField`), Delete, and the
+live/restored honest note. `tst_connections` **16/16** (two new for the fields + break-sync write),
+`tst_qml_screens` 16/16. ⏳ Still owed in Phase 7: the full neighbour-map render + drag-map-onto-arrow
+(7b pt 2), the on-canvas resize nodes (7d), and Twilight's live pass.
 
 ### 🧍 THE PLAYER details panel — BUILT (2026-07-14, `0.39.0-alpha`)
 

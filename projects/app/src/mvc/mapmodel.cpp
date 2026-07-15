@@ -463,6 +463,73 @@ QVariantList MapModel::connectionEditList() const
   return out;
 }
 
+QVariantList MapModel::connectionFields(int dir) const
+{
+  QVariantList out;
+  if (!connectionExists(dir))
+    return out;
+
+  MapConnData* c = map->connections.value((var8)dir);
+
+  auto f = [](const QString& key, const QString& label, const QString& blurb,
+              int value, int min, int max, const QString& kind) {
+    QVariantMap m;
+    m["key"] = key; m["label"] = label; m["blurb"] = blurb;
+    m["value"] = value; m["min"] = min; m["max"] = max; m["kind"] = kind;
+    return m;
+  };
+
+  // The v1 field names, in the game's own terms. `stripWidth` is ConnectionStripLength (N/S a width,
+  // E/W a row count); `width` is ConnectedMapWidth (the source row stride) -- two different things.
+  out << f("mapPtr",   QObject::tr("Neighbour map id"),
+           QObject::tr("The connected map (ConnectedMap)."), c->mapPtr, 0, 255, "byte");
+  out << f("stripSrc", QObject::tr("Strip source"),
+           QObject::tr("ROM pointer into the neighbour's block data (ConnectionStripSrc)."),
+           c->stripSrc, 0, 0xFFFF, "word");
+  out << f("stripDst", QObject::tr("Strip destination"),
+           QObject::tr("Where the strip lands in our ring (ConnectionStripDest)."),
+           c->stripDst, 0, 0xFFFF, "word");
+  out << f("stripWidth", QObject::tr("Strip length"),
+           QObject::tr("Blocks per row (N/S) or number of rows (E/W) — ConnectionStripLength."),
+           c->stripWidth, 0, 255, "byte");
+  out << f("width",    QObject::tr("Neighbour width"),
+           QObject::tr("The source row stride: the neighbour's width in blocks (ConnectedMapWidth)."),
+           c->width, 0, 255, "byte");
+  out << f("yAlign",   QObject::tr("Y alignment"),
+           QObject::tr("The player's Y when he crosses (ConnectedMapYAlignment)."),
+           c->yAlign, -128, 255, "byte");
+  out << f("xAlign",   QObject::tr("X alignment"),
+           QObject::tr("The player's X when he crosses (ConnectedMapXAlignment)."),
+           c->xAlign, -128, 255, "byte");
+  out << f("viewPtr",  QObject::tr("View pointer"),
+           QObject::tr("The neighbour's upper-left-corner view pointer (ConnectedMapViewPointer)."),
+           c->viewPtr, 0, 0xFFFF, "word");
+
+  return out;
+}
+
+void MapModel::setConnectionField(int dir, const QString& key, int value)
+{
+  if (!connectionExists(dir))
+    return;
+
+  MapConnData* c = map->connections.value((var8)dir);
+
+  if (key == "mapPtr")          { c->mapPtr = value;     c->mapPtrChanged(); }
+  else if (key == "stripSrc")   { c->stripSrc = value;   c->stripSrcChanged(); }
+  else if (key == "stripDst")   { c->stripDst = value;   c->stripDstChanged(); }
+  else if (key == "stripWidth") { c->stripWidth = value; c->stripWidthChanged(); }
+  else if (key == "width")      { c->width = value;      c->widthChanged(); }
+  else if (key == "yAlign")     { c->yAlign = value;     c->yAlignChanged(); }
+  else if (key == "xAlign")     { c->xAlign = value;     c->xAlignChanged(); }
+  else if (key == "viewPtr")    { c->viewPtr = value;    c->viewPtrChanged(); }
+  else return;
+
+  connectionsWereEdited = true;
+  map->connectionsChanged();
+  changed();
+}
+
 // ── The sprite set ("the cached sprites") ─────────────────────────────────────
 //
 // 12 bytes: eleven sprite pictures and the id of the set they came from. Everything about what they

@@ -773,6 +773,7 @@ Item {
           required property int index
           canvas: canvasRoot
           dir: index
+          onEditRequested: canvasRoot.editRequested(-1)   // -1 = "not a sprite"; panel reads selectedConnection
         }
       }
 
