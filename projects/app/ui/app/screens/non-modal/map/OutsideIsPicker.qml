@@ -75,8 +75,8 @@ Item {
 
     tip: qsTr("Outside is: %1").arg(brg.map.lastMapName)
          + (root.returnDoors > 0
-              ? "\n\n" + qsTr("%n “back outside” door(s) on this map lead here.", "", root.returnDoors)
-              : "\n\n" + qsTr("No door here leads back outside — but it still sets where you come out "
+              ? "\n\n" + qsTr("%n “back outside” warp(s) on this map lead here.", "", root.returnDoors)
+              : "\n\n" + qsTr("No warp here leads back outside — but it still sets where you come out "
                               + "of the next building."))
   }
 
@@ -119,10 +119,10 @@ Item {
         // The screen's ONE allowed "?" -- the panel-title info icon. Don't litter these; the mark
         // only means anything while it is rare. (reference/ui-patterns.md)
         MapInfoIcon {
-          text: qsTr("A door that says “back outside” doesn't name a map — it means “put me back on "
+          text: qsTr("A warp that says “back outside” doesn't name a map — it means “put me back on "
                      + "whatever map I was last standing on outdoors”. This is that map.\n\n"
                      + "It's why walking out of Red's house puts you in Pallet Town. Change it and "
-                     + "every “back outside” door on this map now leads somewhere else.")
+                     + "every “back outside” warp on this map now leads somewhere else.")
         }
       }
 
@@ -198,8 +198,8 @@ Item {
         Layout.fillWidth: true
         wrapMode: Text.WordWrap
         text: root.returnDoors > 0
-              ? qsTr("%n door(s) on this map lead back outside — they all go here.", "", root.returnDoors)
-              : qsTr("No door on this map leads back outside, so changing this won't alter anything "
+              ? qsTr("%n warp(s) on this map lead back outside — they all go here.", "", root.returnDoors)
+              : qsTr("No warp on this map leads back outside, so changing this won't alter anything "
                      + "you can see from here. It still matters: it's where the game will put you "
                      + "when you next leave a building.")
         font.pixelSize: 11

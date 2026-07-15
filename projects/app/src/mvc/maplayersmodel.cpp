@@ -146,9 +146,9 @@ void MapLayersModel::buildAll()
   // ⚠️ NOT the "Warp tiles" overlay down in Components. That one colours in tiles that have the warp
   // TRAIT -- a fact about the tileset. This is the map's actual warp LIST: 32 slots in the save, each
   // a tile and a destination, each one a thing you can pick up and move. See reference/warps.md.
-  view(GameViewGroup, "warps", tr("Doors"),
-       tr("The map's warp points — the doors. Click one to see where it goes; drag it to move it.\n\n"
-          "A door marked \"back outside\" doesn't name a map: it sends you to whatever map you last "
+  view(GameViewGroup, "warps", tr("Warps"),
+       tr("The map's warp points. Click one to see where it goes; drag it to move it.\n\n"
+          "A warp marked \"back outside\" doesn't name a map: it sends you to whatever map you last "
           "stood on outdoors, which is the \"Outside is…\" chip in the toolbar."),
        ViewWarps);
   // ⚠️ NOT the "Signpost" tile trait either -- this is the map's actual sign LIST: 16 slots in the
@@ -156,7 +156,7 @@ void MapLayersModel::buildAll()
   view(GameViewGroup, "signs", tr("Signs"),
        tr("The map's signs — the placards you can read. Click one to see what it says and choose from "
           "this map's text; drag it to move it.\n\n"
-          "Like the doors, an edited sign is live when the save loads, and the game puts the map's "
+          "Like the warps, an edited sign is live when the save loads, and the game puts the map's "
           "original signs back when the player leaves and walks in again."),
        ViewSigns);
   view(GameViewGroup, "screenBox", tr("Screen box"),

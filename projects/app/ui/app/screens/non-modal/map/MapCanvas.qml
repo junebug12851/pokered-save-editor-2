@@ -265,6 +265,141 @@ Item {
     return brg.mapLayers.showSigns ? brg.map.signList() : [];
   }
 
+  // ── UNIVERSAL OBJECT STACKING ───────────────────────────────────────────────────────────────
+  //
+  // Twilight, 2026-07-14: *"why don't we have this behaviour with anything. All objects dragged onto
+  // one another stack, tabbed like that easily accessible on the left, delete group on right, move
+  // group from center."*
+  //
+  // Every map object -- the player, the NPCs, the warps, the signs -- is reduced to one flat list and
+  // grouped by tile. Two or more on a tile become a MapObjectStack (the group box with tabs); a lone
+  // object is left to its own chip, which hides itself the moment it finds it is part of a stack (see
+  // each chip's `visible`). Only objects whose LAYER is on take part -- the three lists above already
+  // return [] when their layer is off, and the player has his own gate. Keyed off `revision`, the
+  // same missing dependency the lists have.
+  readonly property var stacks: {
+    canvasRoot.revision;
+
+    const by = ({});
+    function add(m) { (by[m.x + "," + m.y] || (by[m.x + "," + m.y] = [])).push(m); }
+
+    if (brg.mapLayers.showPlayer)
+      add({ kind: "player", ind: 0, x: brg.map.playerX, y: brg.map.playerY,
+            glyph: "", art: brg.map.playerSource,
+            fill: "#66cc79a7", border: "#cc79a7",
+            label: qsTr("The player"), deletable: false, valid: true });
+
+    const ns = canvasRoot.npcs;
+    for (let i = 0; i < ns.length; i++)
+      add({ kind: "npc", ind: ns[i].slot, x: ns[i].x, y: ns[i].y,
+            glyph: "", art: ns[i].source,
+            fill: "#66009e73", border: ns[i].inSpriteSet ? "#009e73" : "#ffd54f",
+            label: qsTr("A character"), deletable: true, valid: ns[i].inSpriteSet });
+
+    const ws = canvasRoot.warps;
+    for (let i = 0; i < ws.length; i++)
+      add({ kind: "warp", ind: ws[i].ind, x: ws[i].x, y: ws[i].y,
+            glyph: "⇄", art: "",
+            fill: ws[i].destValid ? "#66f0e442" : "#66d55e00",
+            border: ws[i].destValid ? "#f0e442" : "#d55e00",
+            label: ws[i].destValid ? qsTr("→ %1").arg(ws[i].destName)
+                                   : qsTr("→ %1 — no such warp there").arg(ws[i].destName),
+            deletable: true, valid: ws[i].destValid });
+
+    const ss = canvasRoot.signs;
+    for (let i = 0; i < ss.length; i++)
+      add({ kind: "sign", ind: ss[i].ind, x: ss[i].x, y: ss[i].y,
+            glyph: "▤", art: "",
+            fill: ss[i].textValid ? "#66e69f00" : "#66d55e00",
+            border: ss[i].textValid ? "#e69f00" : "#d55e00",
+            label: ss[i].textValid ? (ss[i].preview !== "" ? ss[i].preview : qsTr("(no text)"))
+                                   : qsTr("id points past this map's text"),
+            deletable: true, valid: ss[i].textValid });
+
+    const out = ({});
+    for (const k in by)
+      if (by[k].length >= 2)
+        out[k] = by[k];
+    return out;
+  }
+
+  /// The stacks as a Repeater model: [{ tileX, tileY, members }].
+  readonly property var stackList: {
+    canvasRoot.revision;
+    const s = canvasRoot.stacks;
+    const arr = [];
+    for (const k in s) {
+      const p = k.split(",");
+      arr.push({ tileX: parseInt(p[0]), tileY: parseInt(p[1]), members: s[k] });
+    }
+    return arr;
+  }
+
+  /// Is this map tile shared by two or more objects? The lone chips read this (with `revision` as the
+  /// binding's dependency) to hide themselves and hand the tile to the group box.
+  function isStacked(x, y) {
+    return canvasRoot.stacks[x + "," + y] !== undefined;
+  }
+
+  // ── The dispatch -- the ONE place a stack's edits touch the save ─────────────────────────────
+  //
+  // A stack does not know how to move an NPC vs a warp vs a sign; it just names a kind and an index
+  // and calls through here. Every write is exactly the same call a lone chip makes, so byte fidelity
+  // is identical: a move is two bytes, a delete compacts one list, nothing else stirs.
+
+  function selectObject(kind, ind) {
+    if (kind === "warp") canvasRoot.selectedWarp = ind;
+    else if (kind === "sign") canvasRoot.selectedSign = ind;
+    else canvasRoot.selectedNpc = ind;   // npc or player (slot 0)
+  }
+
+  function editObject(kind, ind) {
+    canvasRoot.selectObject(kind, ind);
+    // Open the Details panel. It reads the selection to know what to show; the arg only matters for
+    // the sprite path (the slot). Warps and signs pass -1.
+    canvasRoot.editRequested((kind === "npc" || kind === "player") ? ind : -1);
+  }
+
+  function moveObject(kind, ind, x, y) {
+    if (kind === "player") brg.map.movePlayer(x, y);
+    else if (kind === "npc") brg.map.moveNpc(ind, x, y);
+    else if (kind === "warp") brg.map.moveWarp(ind, x, y);
+    else if (kind === "sign") brg.map.moveSign(ind, x, y);
+  }
+
+  function removeObject(kind, ind) {
+    if (kind === "npc") brg.map.removeNpc(ind);
+    else if (kind === "warp") brg.map.removeWarp(ind);
+    else if (kind === "sign") brg.map.removeSign(ind);
+    // the player is never removed -- the game requires him
+  }
+
+  /// Move every member of a group to (x, y). They were on one tile; they stay stacked on the new one.
+  function moveGroup(members, x, y) {
+    for (let i = 0; i < members.length; i++)
+      canvasRoot.moveObject(members[i].kind, members[i].ind, x, y);
+  }
+
+  /// Delete every deletable member of a group. Removing by index compacts that type's list, so each
+  /// kind is removed HIGH-index-first -- otherwise the second removal of a kind would hit a slot that
+  /// has already slid up.
+  function removeGroup(members) {
+    const byKind = ({ npc: [], warp: [], sign: [] });
+    for (let i = 0; i < members.length; i++)
+      if (members[i].deletable && byKind[members[i].kind] !== undefined)
+        byKind[members[i].kind].push(members[i].ind);
+
+    ["npc", "warp", "sign"].forEach(function(kind) {
+      byKind[kind].sort(function(a, b) { return b - a; })
+                  .forEach(function(ind) { canvasRoot.removeObject(kind, ind); });
+    });
+
+    canvasRoot.selectedNpc = -1;
+    canvasRoot.selectedWarp = -1;
+    canvasRoot.selectedSign = -1;
+    canvasRoot.status = qsTr("Removed everything stacked on that tile.");
+  }
+
   // ── The two boxes follow the player LIVE ───────────────────────────────────────────────────
   //
   // The screen box and the draw area are both computed FROM the player's position -- so while you
@@ -293,8 +428,19 @@ Item {
   // point sampling, flat inside a pixel and one screen pixel of blend across the seam. Crisp like
   // nearest, smooth like bilinear, and pixel-identical to the old behaviour at whole zooms. So the
   // zoom can be any real number, and it is.
-  readonly property real minZoom: 0.5
-  readonly property real maxZoom: 12
+  // ── The range ────────────────────────────────────────────────────────────────────────────────
+  //
+  // Effectively "infinite" both ways (Twilight, 2026-07-14), but deliberately BOUNDED, because the
+  // brief in the same breath was *"there doesn't need to be any lag or crashing or fragility... at
+  // all on the infinite zoom — prioritise the UX."* A hard, generous clamp is the stable choice:
+  //   * `minZoom` 0.05 -- the map shrinks into the well until a 78-block route is a thumbnail;
+  //   * `maxZoom` 64   -- a single Game Boy pixel fills a large block of screen.
+  // Wider than this buys nothing a person actually does and only invites the ripple/precision
+  // problems she told us to avoid. The FEEL stays gentle everywhere because every step is a constant
+  // RATIO (see the wheel/click handlers), never a fixed pixel jump -- so it is never twitchy zoomed
+  // in nor sluggish zoomed out.
+  readonly property real minZoom: 0.05
+  readonly property real maxZoom: 64
 
   // ⚠️ TRUE SUB-PIXEL ZOOM -- and only ONE input needs any interpolation at all.
   //
@@ -378,6 +524,22 @@ Item {
   readonly property real scaledWidth: brg.map.imageWidth * zoom
   readonly property real scaledHeight: brg.map.imageHeight * zoom
 
+  // ── The infinite well (camera-only) ────────────────────────────────────────────────────────
+  //
+  // Twilight, 2026-07-14: *"the map should have infinite scroll — just infinite invalid area. Things
+  // can't be dragged there, this is just for the camera, and it fixes the problem of panels covering
+  // things up and not wanting to reflow or resize anything because of panels."*
+  //
+  // So we pad the Flickable's content by one viewport of empty dark well on every side. That lets you
+  // scroll the map far enough that ANY part of it clears a floating panel — the camera has somewhere
+  // to go, and the map itself never has to shrink when a panel opens. It is CAMERA-ONLY: the padded
+  // area holds no map, and nothing can be dropped or dragged out there — every drop (`dropCharacter`)
+  // and every object drag clamps to the map's own tile range (0..blocks*2-1). One viewport each side
+  // is enough to pull any edge past any panel, and being a plain bounded number it adds no lag and
+  // cannot destabilise the Flickable.
+  readonly property real wellPadX: Math.max(0, view.width)
+  readonly property real wellPadY: Math.max(0, view.height)
+
   /// What is under the cursor (brg.map.describeAt()), or null when it is off the map. The status
   /// bar reads this; nothing else does.
   property var at: null
@@ -411,8 +573,11 @@ Item {
     anchors.fill: parent
     clip: true
 
-    contentWidth: Math.max(width, canvasRoot.scaledWidth)
-    contentHeight: Math.max(height, canvasRoot.scaledHeight)
+    // The map, PLUS one viewport of empty well on every side (canvasRoot.wellPad*). @see the note on
+    // wellPadX -- this is the "infinite scroll" that lets the camera pull any part of the map out
+    // from under a floating panel without the map ever resizing.
+    contentWidth: canvasRoot.scaledWidth + 2 * canvasRoot.wellPadX
+    contentHeight: canvasRoot.scaledHeight + 2 * canvasRoot.wellPadY
     boundsBehavior: Flickable.StopAtBounds
 
     // Both axes, and a drag anywhere pans -- the map is the thing, not the scrollbars.
@@ -644,7 +809,10 @@ Item {
       // He is slot 0, and he is a sprite like any other: click him, drag him. There was never a
       // reason he should be the one thing on the map you could not pick up (Twilight, 2026-07-13).
       MapSprite {
-        visible: brg.mapLayers.showPlayer
+        // Gated on his layer AND on not-being-stacked: if he shares a tile with a warp (you spawn on
+        // one all the time) the group box draws him instead. `revision` makes it re-ask.
+        visible: { canvasRoot.revision; return brg.mapLayers.showPlayer
+                                               && !canvasRoot.isStacked(brg.map.playerX, brg.map.playerY); }
 
         canvas: canvasRoot
         slot: 0
@@ -736,6 +904,26 @@ Item {
           textValid: modelData.textValid
 
           onEditRequested: canvasRoot.editRequested(-1)   // the panel reads selectedSign
+        }
+      }
+
+      // ── The STACKS ─────────────────────────────────────────────────────────────────────────
+      //
+      // Any tile that carries two or more objects (a warp under the player, a sign on a door, two
+      // NPCs on one square). Each of the overlapping chips above has hidden itself; this one group
+      // box takes the tile, with the per-member tabs, the group move handle and the group delete.
+      // Drawn LAST of the objects so its selection ring and toolbar sit above the lone chips.
+      // (Twilight, 2026-07-14 — universal object stacking. @see canvasRoot.stackList, MapObjectStack.)
+      Repeater {
+        model: canvasRoot.stackList
+
+        delegate: MapObjectStack {
+          required property var modelData
+
+          canvas: canvasRoot
+          tileX: modelData.tileX
+          tileY: modelData.tileY
+          members: modelData.members
         }
       }
 
@@ -834,7 +1022,7 @@ Item {
           if (canvasRoot.placing) {
             if (canvasRoot.placeRoomLeft <= 0) {
               canvasRoot.status = canvasRoot.tool === "placeWarp"
-                ? qsTr("This map already has all 32 doors the game can hold.")
+                ? qsTr("This map already has all 32 warps the game can hold.")
                 : canvasRoot.tool === "placeSign"
                 ? qsTr("This map already has all 16 signs the game can hold.")
                 : qsTr("This map already has all 15 characters the game can hold.");

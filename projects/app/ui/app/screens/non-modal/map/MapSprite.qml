@@ -105,6 +105,11 @@ Item {
 
   z: sprite.dragging ? 30 : (sprite.selected ? 25 : 0)
 
+  // When this sprite shares its tile with anything else, it hands rendering to the MapObjectStack
+  // group box. The player instance overrides this at its use-site (it also gates on showPlayer).
+  // `revision` is the notifiable dependency that makes it re-ask. @see MapCanvas.
+  visible: { sprite.canvas.revision; return !sprite.canvas.isStacked(sprite.tileX, sprite.tileY); }
+
   PixelImage {
     anchors.fill: parent
     source: sprite.art
@@ -141,41 +146,18 @@ Item {
     }
   }
 
-  // ── The buttons ──────────────────────────────────────────────────────────────────────────
+  // ── The delete button ────────────────────────────────────────────────────────────────────
   //
   // On the selected sprite, ABOVE it -- a delete button drawn over the character you are trying to
-  // look at is worse than no button. The player has no ✕: the game requires him.
+  // look at is worse than no button. The player has no ✕: the game requires him. No ✎ any more --
+  // a plain CLICK opens the Details panel (see onReleased).
   Row {
-    visible: sprite.selected && !sprite.dragging
+    visible: sprite.selected && !sprite.dragging && !sprite.isPlayer
     z: 40
     anchors.bottom: parent.top
     anchors.bottomMargin: 3
     anchors.horizontalCenter: parent.horizontalCenter
     spacing: 3
-
-    Rectangle {
-      width: 20; height: 20; radius: 10
-      color: editArea.containsMouse ? "#56b4e9" : "#212121"
-      border.width: 1
-      border.color: "#ffffff"
-
-      Text {
-        anchors.centerIn: parent
-        text: "✎"
-        font.pixelSize: 11
-        color: "white"
-      }
-
-      MouseArea {
-        id: editArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        // ⚠️ Consumes the click. The canvas used to get it too and clear the selection, so the panel
-        // opened on "the map" instead of on the sprite you had just asked to edit.
-        onClicked: (m) => { m.accepted = true; sprite.editRequested(); }
-      }
-    }
 
     Rectangle {
       visible: !sprite.isPlayer
@@ -290,8 +272,12 @@ Item {
     }
 
     onReleased: (m) => {
-      if (!sprite.dragging && !area.moved)
-        return;      // it was a click, and the click already selected
+      if (!sprite.dragging && !area.moved) {
+        // A plain CLICK opens the Details panel on this sprite (the player included); a drag does
+        // not. (Twilight: "details should only open on a click not click and drag".)
+        sprite.editRequested();
+        return;
+      }
 
       const nx = sprite.dragX;
       const ny = sprite.dragY;

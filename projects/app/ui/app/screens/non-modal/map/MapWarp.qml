@@ -85,6 +85,11 @@ Item {
 
   z: door.dragging ? 30 : (door.selected ? 25 : 1)
 
+  // When this door shares its tile with anything else, it hands rendering over to the MapObjectStack
+  // group box -- a stacked tile is drawn and driven by ONE thing, never by the overlapping chips
+  // underneath it. `revision` is the notifiable dependency that makes this re-ask. @see MapCanvas.
+  visible: { door.canvas.revision; return !door.canvas.isStacked(door.tileX, door.tileY); }
+
   // ── The chip ─────────────────────────────────────────────────────────────────────────────
   //
   // The Doors layer's own yellow (#f0e442, Okabe-Ito) -- the same ink the Layers panel paints its
@@ -178,16 +183,17 @@ Item {
       anchors.centerIn: parent
       text: door.destValid
             ? qsTr("→ %1").arg(door.destName)
-            : qsTr("→ %1 — no such door there").arg(door.destName)
+            : qsTr("→ %1 — no such warp there").arg(door.destName)
       font.pixelSize: 11
       color: door.destValid ? "white" : "#ffb74d"
     }
   }
 
-  // ── The buttons ──────────────────────────────────────────────────────────────────────────
+  // ── The delete button ────────────────────────────────────────────────────────────────────
   //
   // ABOVE the door, never over it: a delete button drawn on top of the thing you are trying to look
-  // at is worse than no button. (Same rule, same reason, as MapSprite.)
+  // at is worse than no button. There is no ✎ any more -- a plain CLICK opens the Details panel now
+  // (see onReleased), so an edit button would be a second way to do the thing a click already does.
   Row {
     visible: door.selected && !door.dragging
     z: 45
@@ -195,30 +201,6 @@ Item {
     anchors.bottomMargin: 3
     anchors.horizontalCenter: parent.horizontalCenter
     spacing: 3
-
-    Rectangle {
-      width: 20; height: 20; radius: 10
-      color: editArea.containsMouse ? "#56b4e9" : "#212121"
-      border.width: 1
-      border.color: "#ffffff"
-
-      Text {
-        anchors.centerIn: parent
-        text: "✎"
-        font.pixelSize: 11
-        color: "white"
-      }
-
-      MouseArea {
-        id: editArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        // ⚠️ Consumes the click, or the canvas gets it too and clears the selection -- so the panel
-        // would open on "the map" instead of on the door you just asked to edit. (MapSprite's bug.)
-        onClicked: (m) => { m.accepted = true; door.editRequested(); }
-      }
-    }
 
     Rectangle {
       width: 20; height: 20; radius: 10
@@ -242,7 +224,7 @@ Item {
           m.accepted = true;
           brg.map.removeWarp(door.ind);
           door.canvas.selectedWarp = -1;
-          door.canvas.status = qsTr("Door removed. The doors after it slid up a slot.");
+          door.canvas.status = qsTr("Warp removed. The warps after it slid up a slot.");
         }
       }
     }
@@ -335,8 +317,12 @@ Item {
     }
 
     onReleased: (m) => {
-      if (!door.dragging && !area.moved)
-        return;      // it was a click, and the click already selected
+      if (!door.dragging && !area.moved) {
+        // A plain CLICK -- no drag -- opens the Details panel on this door (Twilight: "details
+        // should only open on a click not click and drag"). The press already selected it.
+        door.editRequested();
+        return;
+      }
 
       const nx = door.dragX;
       const ny = door.dragY;
@@ -351,7 +337,7 @@ Item {
       if (bin) {
         brg.map.removeWarp(door.ind);
         door.canvas.selectedWarp = -1;
-        door.canvas.status = qsTr("Door removed. The doors after it slid up a slot.");
+        door.canvas.status = qsTr("Warp removed. The warps after it slid up a slot.");
         return;
       }
 

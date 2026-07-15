@@ -72,6 +72,10 @@ Item {
 
   z: sign.dragging ? 30 : (sign.selected ? 25 : 1)
 
+  // When this sign shares its tile with anything else, it hands rendering to the MapObjectStack group
+  // box. `revision` is the notifiable dependency that makes this re-ask. @see MapCanvas.
+  visible: { sign.canvas.revision; return !sign.canvas.isStacked(sign.tileX, sign.tileY); }
+
   // ── The chip ─────────────────────────────────────────────────────────────────────────────
   //
   // The Signs layer's own orange (#e69f00, Okabe-Ito) -- the same ink the Layers panel paints its
@@ -154,9 +158,10 @@ Item {
     }
   }
 
-  // ── The buttons ──────────────────────────────────────────────────────────────────────────
+  // ── The delete button ────────────────────────────────────────────────────────────────────
   //
-  // ABOVE the sign, never over it.
+  // ABOVE the sign, never over it. No ✎ any more -- a plain CLICK opens the Details panel (see
+  // onReleased), so an edit button would just be a second way to do what a click already does.
   Row {
     visible: sign.selected && !sign.dragging
     z: 45
@@ -164,29 +169,6 @@ Item {
     anchors.bottomMargin: 3
     anchors.horizontalCenter: parent.horizontalCenter
     spacing: 3
-
-    Rectangle {
-      width: 20; height: 20; radius: 10
-      color: editArea.containsMouse ? "#56b4e9" : "#212121"
-      border.width: 1
-      border.color: "#ffffff"
-
-      Text {
-        anchors.centerIn: parent
-        text: "✎"
-        font.pixelSize: 11
-        color: "white"
-      }
-
-      MouseArea {
-        id: editArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        // Consumes the click, or the canvas gets it too and clears the selection.
-        onClicked: (m) => { m.accepted = true; sign.editRequested(); }
-      }
-    }
 
     Rectangle {
       width: 20; height: 20; radius: 10
@@ -296,8 +278,11 @@ Item {
     }
 
     onReleased: (m) => {
-      if (!sign.dragging && !area.moved)
+      if (!sign.dragging && !area.moved) {
+        // A plain CLICK opens the Details panel on this sign; a drag does not.
+        sign.editRequested();
         return;
+      }
 
       const nx = sign.dragX;
       const ny = sign.dragY;

@@ -150,7 +150,7 @@ ColumnLayout {
       MapToolTip {
         shown: deadHover.hovered
         followGlobalSetting: false
-        text: qsTr("The game writes this every time you use a door — and then never reads it again.\n\n"
+        text: qsTr("The game writes this every time you use a warp — and then never reads it again.\n\n"
                    + "Nothing anywhere in the game looks at it. It survives being saved perfectly; it "
                    + "simply doesn't do anything. Change it freely, and change nothing.")
       }

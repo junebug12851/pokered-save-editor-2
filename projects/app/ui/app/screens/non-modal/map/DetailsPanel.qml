@@ -192,7 +192,7 @@ Item {
 
         Label {
           Layout.fillWidth: true
-          text: qsTr("Nothing selected — click somebody, a door or a sign to edit them.")
+          text: qsTr("Nothing selected — click somebody, a warp or a sign to edit them.")
           wrapMode: Text.Wrap
           opacity: 0.6
           font.pixelSize: 11
@@ -204,7 +204,7 @@ Item {
         MapDetailRow { label: qsTr("Palette");    value: brg.map.contrastName }
         MapDetailRow { label: qsTr("Player at");  value: qsTr("%1, %2").arg(brg.map.playerX).arg(brg.map.playerY) }
         MapDetailRow { label: qsTr("People");     value: qsTr("%1 of 15").arg(15 - brg.map.npcRoomLeft()) }
-        MapDetailRow { label: qsTr("Doors");      value: qsTr("%1 of 32").arg(32 - brg.map.warpRoomLeft()) }
+        MapDetailRow { label: qsTr("Warps");      value: qsTr("%1 of 32").arg(32 - brg.map.warpRoomLeft()) }
         MapDetailRow { label: qsTr("Signs");      value: qsTr("%1 of 16").arg(16 - brg.map.signRoomLeft()) }
 
         // The view pointer the GAME itself computed and left in the save. If an edit has made it
@@ -289,7 +289,7 @@ Item {
 
             Label {
               Layout.fillWidth: true
-              text: qsTr("Door %1").arg(details.door)
+              text: qsTr("Warp %1").arg(details.door)
               font.bold: true
               font.pixelSize: 14
               elide: Text.ElideRight
@@ -333,7 +333,7 @@ Item {
             anchors.margins: 7
             wrapMode: Text.Wrap
             font.pixelSize: 10
-            text: qsTr("This door leads to arrival point %1 of %2 — but that map only has %3.\n\n"
+            text: qsTr("This warp leads to arrival point %1 of %2 — but that map only has %3.\n\n"
                        + "The game doesn't check. It will read whatever cartridge bytes happen to "
                        + "come after the list and drop the player somewhere undefined.")
                   .arg(details.doorData.destWarp || 0)
@@ -348,7 +348,7 @@ Item {
           Layout.preferredHeight: 28
           font.pixelSize: 11
 
-          text: qsTr("Delete this door")
+          text: qsTr("Delete this warp")
 
           contentItem: Label {
             text: parent.text
@@ -407,8 +407,8 @@ Item {
             anchors.margins: 7
             wrapMode: Text.Wrap
             font.pixelSize: 10
-            text: qsTr("These doors are live — the game will use them when this save loads.\n\n"
-                       + "It puts the map's original doors back as soon as the player walks out of "
+            text: qsTr("These warps are live — the game will use them when this save loads.\n\n"
+                       + "It puts the map's original warps back as soon as the player walks out of "
                        + "this map and back in again. That's the game's own behaviour, not a limit "
                        + "of the editor.")
           }

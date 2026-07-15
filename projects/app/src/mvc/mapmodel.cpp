@@ -1926,11 +1926,11 @@ QVariantList MapModel::warpFields(int ind) const
   if (w == nullptr)
     return ret;
 
-  const QString where = tr("The door");
+  const QString where = tr("The warp");
 
   // X and Y are one fact, so they are one control -- the same `coords` kind the sprite panel uses.
   ret.append(field(where, "xy", tr("Standing on"),
-                   tr("Which tile of this map is the door, counting from the top-left."),
+                   tr("Which tile of this map is the warp, counting from the top-left."),
                    (w->x & 0xFF) | ((w->y & 0xFF) << 8), 0, 0, "coords"));
 
   const QString leads = tr("Where it leads");
@@ -1938,14 +1938,14 @@ QVariantList MapModel::warpFields(int ind) const
   // The destination map is a REAL map picker, all 248, glitch ids labelled -- plus the one value
   // that is not a map at all.
   ret.append(field(leads, "destMap", tr("Takes you to"),
-                   tr("Which map the door opens onto.\n\n\"Back outside\" (255) is how every "
+                   tr("Which map the warp opens onto.\n\n\"Back outside\" (255) is how every "
                       "building's exit works: it doesn't name a map, it sends you to whatever map "
                       "you last stood on outdoors — which you can see and change in the toolbar."),
                    w->destMap, 0, 255, "map"));
 
-  ret.append(field(leads, "destWarp", tr("Arriving at door #"),
+  ret.append(field(leads, "destWarp", tr("Arriving at warp #"),
                    tr("Which arrival point of that map you land on.\n\n⚠️ These are NOT the other "
-                      "map's doors — the game keeps a separate list of landing spots, and this "
+                      "map's warps — the game keeps a separate list of landing spots, and this "
                       "counts into that. The console does not check it: point it past the end and "
                       "it reads whatever cartridge bytes come next and drops you somewhere undefined."),
                    w->destWarp, 0, 255, "byte"));
@@ -2105,7 +2105,7 @@ QVariantList MapModel::warpStateFields() const
                                                     warps->whichDungeonWarp),
                  dungeonArmed));
 
-  ret.append(field(goes, "warpDest", tr("Arriving at door #"),
+  ret.append(field(goes, "warpDest", tr("Arriving at warp #"),
                    tr("Which arrival point of the map you are entering you will land on.\n\n255 "
                       "means \"don't move me\" — every special warp sets that, because it has "
                       "already placed you itself."),
@@ -2134,8 +2134,8 @@ QVariantList MapModel::warpStateFields() const
                       "destination nor a mystery.)"),
                    warps->escapeWarp ? 1 : 0, 0, 1, "flag"));
 
-  ret.append(field(kind, "forcedWarp", tr("Doors fire without walking into them"),
-                   tr("Normally, stepping onto a door does nothing unless you are actually holding "
+  ret.append(field(kind, "forcedWarp", tr("Warps fire without walking into them"),
+                   tr("Normally, stepping onto a warp does nothing unless you are actually holding "
                       "a direction — you have to walk INTO it. This removes that check, so touching "
                       "the tile is enough.\n\nIt is how the Seafoam Islands current sweeps you along."),
                    warps->forcedWarp ? 1 : 0, 0, 1, "flag"));
@@ -2146,7 +2146,7 @@ QVariantList MapModel::warpStateFields() const
   const QString nothing = tr("Fields that do nothing");
 
   add(wiped(field(nothing, "scriptedWarp", tr("A script is warping you right now"),
-                  tr("Tells the game to warp you immediately, with no door needed. Exactly one "
+                  tr("Tells the game to warp you immediately, with no warp tile needed. Exactly one "
                      "script in the whole game uses it (Mr. Fuji carrying you out of Pokémon "
                      "Tower).\n\n⚠️ The console ZEROES this byte every single time it loads a save "
                      "— it shares an address with a cable-club field that gets cleared on the way "
@@ -2158,15 +2158,15 @@ QVariantList MapModel::warpStateFields() const
                      "the same fate: zeroed on every save load."),
                   warps->isDungeonWarp ? 1 : 0, 0, 1, "flag")));
 
-  add(dead(field(nothing, "warpedFromWarp", tr("Came in through door #"),
-                 tr("The game writes this every time you use a door — and then never reads it "
+  add(dead(field(nothing, "warpedFromWarp", tr("Came in through warp #"),
+                 tr("The game writes this every time you use a warp — and then never reads it "
                     "again.\n\n💀 Nothing anywhere in the game looks at it. It survives being saved "
                     "perfectly; it simply does not do anything. Change it freely, and change nothing."),
                  warps->warpedFromWarp, 0, 255, "byte")));
 
   add(dead(field(nothing, "warpedfromMap", tr("Came from map"),
                  tr("Same story: written on every warp, read by nothing.\n\n💀 If you are looking "
-                    "for the map a door sends you back to, that is \"Outside is…\" in the toolbar "
+                    "for the map a warp sends you back to, that is \"Outside is…\" in the toolbar "
                     "— a different byte entirely, and a real one."),
                  warps->warpedfromMap, 0, 255, "map")));
 

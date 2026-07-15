@@ -270,7 +270,7 @@ Page {
 
               members: [
                 { id: "placeWarp", glyph: "⇄", shortcut: "W",
-                  tip: qsTr("Place a door — click a tile. It starts as a way back outside, which is what a door usually is. (Up to 32.)") },
+                  tip: qsTr("Place a warp — click a tile. It starts as a way back outside, which is what a warp usually is. (Up to 32.)") },
                 { id: "placeSprite", glyph: "☻", shortcut: "N",
                   tip: qsTr("Place a character — click a tile. A random one, but only ever a picture THIS map has loaded, so it can never be one the console would draw as garbage. (Up to 15.)") },
                 { id: "placeSign", glyph: "▤", shortcut: "S",
@@ -280,7 +280,7 @@ Page {
               activeId: (mapScreen.tool === "placeWarp"
                          || mapScreen.tool === "placeSprite"
                          || mapScreen.tool === "placeSign") ? mapScreen.tool : ""
-              tip: qsTr("Make — place a door, a character or a sign")
+              tip: qsTr("Make — place a warp, a character or a sign")
 
               onChosen: (id) => mapScreen.tool = id
             }
@@ -311,15 +311,16 @@ Page {
         // @see MapCanvas.overPanel
         overlays: [leftDock, rightDock]
 
-        // The ✎ button on a sprite OR a door opens the Details panel ON it -- no hunting for the
-        // panel. (The door passes -1: the panel reads `selectedWarp`, not the slot.)
+        // A plain CLICK on any object (sprite, warp, sign, a stack member's tab) opens the Details
+        // panel ON it -- no hunting for the panel. (A warp or sign passes -1: the panel reads
+        // `selectedWarp`/`selectedSign`, not the slot.)
         onEditRequested: (slot) => { leftDock.open = "details"; }
 
         // A maker tool put something down. The status bar says what and where -- never a modal, and
         // never nothing at all.
         onPlaced: (kind, index) => {
           canvas.status = kind === "warp"
-            ? qsTr("Door %1 placed. It leads back outside — pick where it really goes in the panel.")
+            ? qsTr("Warp %1 placed. It leads back outside — pick where it really goes in the panel.")
                 .arg(index)
             : kind === "sign"
             ? qsTr("Sign %1 placed. Choose what it says in the panel.").arg(index)

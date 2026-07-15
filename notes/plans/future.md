@@ -41,6 +41,13 @@ Imagined UX:
 - ...while **still exposing full power** to anyone who wants to go all the way. Smart defaults,
   not locked doors. The intent is to *encourage* the user to go out and have fun with the map.
 
+## Parked idea — map commit / history / diff system (Twilight, 2026-07-14)
+
+Reminder only, so it isn't forgotten — **not briefed, not planned, not designed.** The map system
+wants a **commit + history + diff** system (revision snapshots of the map edits, a browsable history,
+and a diff view between states). Un-briefed per the "adjacency is not a brief" rule — it gets its own
+conversation, then research, then a design in the plan, before any code. Nothing here authorizes work.
+
 ## Full Screen Coverage
 
 Snapshot as of session 13j (see `status.md` for the live, authoritative list):
