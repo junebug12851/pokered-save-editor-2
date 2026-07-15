@@ -99,7 +99,7 @@ class SAVEFILE_AUTOPORT AreaPokemon : public QObject
 
   Q_PROPERTY(int grassRate MEMBER grassRate NOTIFY grassRateChanged)             ///< Grass encounter rate (0 = none).
   Q_PROPERTY(int waterRate MEMBER waterRate NOTIFY waterRateChanged)             ///< Water encounter rate (0 = none).
-  Q_PROPERTY(bool pauseMons3Steps MEMBER pauseMons3Steps NOTIFY pauseMons3StepsChanged) ///< Suppress encounters for 3 steps.
+  Q_PROPERTY(bool wildEncounterCooldown MEMBER wildEncounterCooldown NOTIFY wildEncounterCooldownChanged) ///< Post-battle wild-encounter cooldown: 3 encounter-free steps on load.
 
   // C++ Arrays can't be Q_PROPERTY and don't need a signal because they are
   // pre-created with only their contents changing and have no properties of
@@ -123,7 +123,7 @@ public:
 signals:
   void grassRateChanged();
   void waterRateChanged();
-  void pauseMons3StepsChanged();
+  void wildEncounterCooldownChanged();
   void grassMonsChanged();
   void waterMonsChanged();
 
@@ -141,5 +141,10 @@ public:
   int waterRate;                          ///< @see waterRate property.
   AreaPokemonWild* waterMons[wildMonsCount]; ///< The 10 water-encounter slots.
 
-  bool pauseMons3Steps;                   ///< @see pauseMons3Steps property.
+  /// Post-battle wild-encounter cooldown -- `wStatusFlags2` bit 0 = `BIT_WILD_ENCOUNTER_COOLDOWN`.
+  /// The console SETS it after every battle; on the next map load, if set, it grants 3 encounter-free
+  /// steps (`wNumberOfNoRandomBattleStepsLeft = 3`) and then clears itself as they are walked off.
+  /// DURABLE -- kept across a Continue (verified: scripts/emu/probe_wild_encounter_cooldown.py).
+  /// See notes/reference/wild-encounter-cooldown.md. (Was `pauseMons3Steps`; renamed 2026-07-15.)
+  bool wildEncounterCooldown;             ///< @see wildEncounterCooldown property.
 };

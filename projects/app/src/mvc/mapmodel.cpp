@@ -46,6 +46,7 @@
 #include <pse-savefile/expanded/area/areatileset.h>
 #include <pse-savefile/expanded/area/areawarps.h>
 #include <pse-savefile/expanded/area/areasign.h>
+#include <pse-savefile/expanded/area/areapokemon.h>
 #include <pse-savefile/expanded/fragments/spritedata.h>
 #include <pse-savefile/expanded/fragments/signdata.h>
 #include <pse-savefile/expanded/fragments/warpdata.h>
@@ -85,9 +86,9 @@ QVariantMap option(int value, const QString& name, bool hack = false);
 
 MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
                    AreaLoadedSprites* sprites, AreaSprites* npcs, AreaWarps* warps,
-                   WorldGeneral* world, AreaSign* signs)
+                   WorldGeneral* world, AreaSign* signs, AreaPokemon* pokemon)
   : sprites(sprites), npcs(npcs), warps(warps), signsData(signs), world(world),
-    map(map), player(player), tileset(tileset), general(general)
+    map(map), player(player), tileset(tileset), general(general), pokemon(pokemon)
 {
   // The doors get their own signal for exactly the reason the cast does: `changed()` re-renders the
   // whole map image, and a warp chip sliding one tile does not change a pixel of the map.
@@ -3716,6 +3717,29 @@ bool MapModel::tileAnimIsDefault() const
 {
   const int def = tileAnimDefault();
   return def < 0 || def == tileAnim();
+}
+
+// ── The post-battle wild-encounter cooldown (wStatusFlags2 bit 0) ──────────────
+//
+// The one encounter-related flag briefed for the map details page (2026-07-15). It is DURABLE --
+// the console keeps it across a Continue -- so it wears no yellow "!"; an edit sticks, and the game
+// grants 3 encounter-free steps on the very next load. See notes/reference/wild-encounter-cooldown.md.
+
+bool MapModel::wildEncounterCooldown() const
+{
+  return pokemon != nullptr && pokemon->wildEncounterCooldown;
+}
+
+void MapModel::setWildEncounterCooldown(bool on)
+{
+  if (pokemon == nullptr || pokemon->wildEncounterCooldown == on)
+    return;
+
+  // AreaPokemon::save() writes this back through setBit(0x29D8, 1, 0, ...), so exactly bit 0 of that
+  // byte moves -- the audio-fade flag (bit 1) is left untouched. tst_area_pokemon round-trips it.
+  pokemon->wildEncounterCooldown = on;
+  pokemon->wildEncounterCooldownChanged();
+  emit changed();
 }
 
 // ── The semantic overlay ──────────────────────────────────────────────────────

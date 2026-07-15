@@ -32,6 +32,7 @@ class AreaSign;
 class AreaMap;
 class AreaPlayer;
 class AreaTileset;
+class AreaPokemon;
 class WorldGeneral;
 
 /**
@@ -176,6 +177,13 @@ class MapModel : public QObject
   /// The value this tileset would have in an unedited game -- so the UI can say when the save differs.
   Q_PROPERTY(int tileAnimDefault READ tileAnimDefault NOTIFY changed)
   Q_PROPERTY(bool tileAnimIsDefault READ tileAnimIsDefault NOTIFY changed)
+
+  /// The map's post-battle **wild-encounter cooldown** (`wStatusFlags2` bit 0 =
+  /// `BIT_WILD_ENCOUNTER_COOLDOWN`). Set, it grants **3 encounter-free steps** on the next Continue
+  /// (`wNumberOfNoRandomBattleStepsLeft = 3`), then clears itself as they are walked off. DURABLE --
+  /// kept across a load (console-verified). Writing it touches **exactly that one bit** of `0x29D8`
+  /// (the audio-fade flag beside it is untouched). See notes/reference/wild-encounter-cooldown.md.
+  Q_PROPERTY(bool wildEncounterCooldown READ wildEncounterCooldown WRITE setWildEncounterCooldown NOTIFY changed)
 
   // ── The semantic overlay ──────────────────────────────────────────────────────
   /// `image://map/overlay/...` for @ref layers. Empty when no layer is on.
@@ -428,7 +436,7 @@ public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
            AreaLoadedSprites* sprites = nullptr, AreaSprites* npcs = nullptr,
            AreaWarps* warps = nullptr, WorldGeneral* world = nullptr,
-           AreaSign* signs = nullptr);
+           AreaSign* signs = nullptr, AreaPokemon* pokemon = nullptr);
 
   bool valid() const;
   QString source() const;
@@ -848,6 +856,9 @@ public:
   int tileAnimDefault() const;
   bool tileAnimIsDefault() const;
 
+  bool wildEncounterCooldown() const;
+  void setWildEncounterCooldown(bool on);  ///< Writes `wStatusFlags2` bit 0 -- and only that bit.
+
   QString overlaySource() const;
   int layers() const;
   void setLayers(int layers);   ///< Purely a view setting. Touches nothing in the save.
@@ -1029,6 +1040,7 @@ private:
   AreaPlayer* player = nullptr;   ///< The save's live player position.
   AreaTileset* tileset = nullptr; ///< The save's live tileset.
   AreaGeneral* general = nullptr; ///< The save's live "contrast" (wMapPalOffset).
+  AreaPokemon* pokemon = nullptr; ///< The save's live encounter block -- for the cooldown flag (may be null).
 
   int shownLayers = 0;            ///< A VIEW setting. Off by default: the map is the point.
   int animFrame = 0;              ///< The animation step. A VIEW setting; 0 is the still map.

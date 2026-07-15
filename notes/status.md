@@ -20,6 +20,19 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🌿 "3-step wild encounter cooldown" checkbox — BUILT (2026-07-15)
+
+Twilight briefed one checkbox for the **map details page**. Research: v2's `AreaPokemon::pauseMons3Steps`
+(`0x29D8` bit 0) is `wStatusFlags2` bit 0 = **`BIT_WILD_ENCOUNTER_COOLDOWN`** — the console's **post-battle
+cooldown**; set after every battle, and on the next `EnterMap` a set bit loads
+`wNumberOfNoRandomBattleStepsLeft = 3`, decremented per step until it self-clears. **Console-verified
+DURABLE** (kept on load → no `!`) via `scripts/emu/probe_wild_encounter_cooldown.py` (bit kept + steps-left
+3; cleared control → 0). ⚠️ **BaseSAV already carries it set.** Renamed the model property →
+**`wildEncounterCooldown`** (+ doc), exposed on `MapModel` (new `AreaPokemon*` ctor arg), placed as a
+`MapSwitch` on `DetailsPanel.qml`'s nothing-selected section. Note:
+[`reference/wild-encounter-cooldown.md`](reference/wild-encounter-cooldown.md). Green: `tst_area_pokemon`
+5/5, `tst_qml_screens` 16/16, `tst_map` 27/27. ⏳ **Owed: Twilight's live pass** (toggling it).
+
 ### 🧍 CHARACTER PANEL (`AreaNPC` flags) — BRIEFED + RESEARCHED (2026-07-15, not built)
 
 Twilight briefed the right-hand **Character panel** (the nine map-global NPC/control/battle flags from

@@ -169,8 +169,10 @@ void AreaPokemon::load(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
   auto it = saveFile->iterator();
 
-  pauseMons3Steps = toolset->getBit(0x29D8, 1, 0);
-  pauseMons3StepsChanged();
+  // wStatusFlags2 bit 0 = BIT_WILD_ENCOUNTER_COOLDOWN (0x29D8 -> $D72C). Same byte as the audio-fade
+  // flag (bit 1, AreaAudio); this touches only bit 0. See notes/reference/wild-encounter-cooldown.md.
+  wildEncounterCooldown = toolset->getBit(0x29D8, 1, 0);
+  wildEncounterCooldownChanged();
 
   grassRate = toolset->getByte(0x2B33);
   grassRateChanged();
@@ -202,7 +204,7 @@ void AreaPokemon::save(SaveFile* saveFile)
   auto toolset = saveFile->toolset;
   auto it = saveFile->iterator();
 
-  toolset->setBit(0x29D8, 1, 0, pauseMons3Steps);
+  toolset->setBit(0x29D8, 1, 0, wildEncounterCooldown);
   toolset->setByte(0x2B33, grassRate);
   toolset->setByte(0x2B50, waterRate);
 
@@ -231,8 +233,8 @@ void AreaPokemon::reset()
   waterRate = 0;
   waterRateChanged();
 
-  pauseMons3Steps = false;
-  pauseMons3StepsChanged();
+  wildEncounterCooldown = false;
+  wildEncounterCooldownChanged();
 
   for(var8 i = 0; i < wildMonsCount; i++) {
     grassMons[i]->reset();

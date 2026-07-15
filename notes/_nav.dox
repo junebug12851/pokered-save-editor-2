@@ -154,6 +154,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \subpage md_notes_2reference_2player-state <br>
 \subpage md_notes_2reference_2area-map-state <br>
 \subpage md_notes_2reference_2npc-character-state <br>
+\subpage md_notes_2reference_2wild-encounter-cooldown <br>
 \subpage md_notes_2reference_2gameboy-apu <br>
 \subpage md_notes_2reference_2gen1-sound-engine <br>
 \subpage md_notes_2reference_2glitch-music <br>

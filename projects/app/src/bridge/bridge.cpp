@@ -68,7 +68,9 @@ Bridge::Bridge(FileManagement* file)
                      // in the save -- live in WorldGeneral, not AreaWarps, which is exactly why
                      // nobody editing warps ever saw them. See notes/reference/warps.md §4.
                      file->data->dataExpanded->world->general,
-                     file->data->dataExpanded->area->signs)),
+                     file->data->dataExpanded->area->signs,
+                     // The wild-encounter cooldown flag lives in the encounter block.
+                     file->data->dataExpanded->area->pokemon)),
     mapLayers(new MapLayersModel(map)),
     mapClock(new MapClock(map)),
     mapSim(new MapSim(map))

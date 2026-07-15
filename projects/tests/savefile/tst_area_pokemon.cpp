@@ -63,7 +63,7 @@ void TestAreaPokemon::wildTables_roundTrip()
   QCOMPARE(p->grassMonsCount(), 10);
   QCOMPARE(p->waterMonsCount(), 10);
 
-  p->grassRate = 25; p->waterRate = 10; p->pauseMons3Steps = true;
+  p->grassRate = 25; p->waterRate = 10; p->wildEncounterCooldown = true;
   for(int i = 0; i < p->grassMonsCount(); i++) {
     p->grassMonsAt(i)->index = i + 1;        p->grassMonsAt(i)->level = (i + 1) * 3;
     p->waterMonsAt(i)->index = (i + 1) + 50; p->waterMonsAt(i)->level = (i + 1) * 2;
@@ -74,7 +74,7 @@ void TestAreaPokemon::wildTables_roundTrip()
   auto* p2 = sf.dataExpanded->area->pokemon;
   QCOMPARE(p2->grassRate, 25);
   QCOMPARE(p2->waterRate, 10);
-  QCOMPARE(p2->pauseMons3Steps, true);
+  QCOMPARE(p2->wildEncounterCooldown, true);
   for(int i = 0; i < p2->grassMonsCount(); i++) {
     QCOMPARE(p2->grassMonsAt(i)->index, i + 1);
     QCOMPARE(p2->grassMonsAt(i)->level, (i + 1) * 3);

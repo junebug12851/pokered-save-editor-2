@@ -235,6 +235,45 @@ Item {
         MapDetailRow { label: qsTr("Warps");      value: qsTr("%1 of 32").arg(32 - brg.map.warpRoomLeft()) }
         MapDetailRow { label: qsTr("Signs");      value: qsTr("%1 of 16").arg(16 - brg.map.signRoomLeft()) }
 
+        // ── The post-battle wild-encounter cooldown (wStatusFlags2 bit 0) ─────────────────────
+        //
+        // The one encounter flag briefed for this page (2026-07-15). It is DURABLE -- the console
+        // keeps it across a Continue (verified: scripts/emu/probe_wild_encounter_cooldown.py), so it
+        // wears no yellow "!": an edit sticks, and the game acts on it the moment the save loads.
+        // See notes/reference/wild-encounter-cooldown.md.
+        ColumnLayout {
+          Layout.fillWidth: true
+          Layout.topMargin: 8
+          spacing: 4
+
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("3-step wild encounter cooldown")
+              font.pixelSize: 12
+              wrapMode: Text.Wrap
+            }
+
+            MapSwitch {
+              checked: brg.map.wildEncounterCooldown
+              onToggled: brg.map.wildEncounterCooldown = !brg.map.wildEncounterCooldown
+            }
+          }
+
+          Label {
+            Layout.fillWidth: true
+            text: qsTr("Gives 3 encounter-free steps when the save loads — the game's post-battle "
+                       + "cooldown. Normally set automatically right after a battle, and it clears "
+                       + "itself once you've walked those steps off.")
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+          }
+        }
+
         // The view pointer the GAME itself computed and left in the save. If an edit has made it
         // stale we say so plainly and offer the one-click fix -- we never quietly rewrite it.
         Rectangle {
