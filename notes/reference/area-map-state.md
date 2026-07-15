@@ -1,9 +1,19 @@
 # The "Map" page — the seven leftover AreaMap state bytes
 
 **Status:** researched 2026-07-15, **verified against the cartridge**
-(`scripts/emu/probe_area_map_state.py`). Read this before adding the extra fields to the
-map-details panel (the panel shown when nothing is selected). The design that consumes it
+(`scripts/emu/probe_area_map_state.py`), and the **panel is BUILT (2026-07-15)** — the "Map state"
+section of the map-details panel (`DetailsPanel.qml`, nothing selected). The design that consumes it
 is [`../plans/map-screen.md`](../plans/map-screen.md) → **Phase 8 (Area State)**.
+
+> **Built (2026-07-15):** `MapModel` exposes `alwaysOnBike`, `runScriptOnLoad`, `mapScript`
+> (+ `mapScriptList` from `MapDBEntry::getScriptSteps`, parsed from `maps.json`'s `scriptEntries`),
+> the derived `viewPtr`/`viewPtrComputed`/`viewSynced` (+ `setViewBreakSync`/`setViewPtr`, and
+> `movePlayer` now keeps the camera synced by default), and the reset-on-load `vramViewPtr`/
+> `cardKeyDoorX/Y` (behind the "Reloaded values" switch, amber `!`). Each setter writes exactly its
+> byte(s); `areamap.{h,cpp}` docs corrected (truth-in-labelling — the member names were kept). Pinned
+> by **`tst_area_state`** (keystone `setAreaField_writesExactlyItsBytes` + the view-box sync doctrine).
+> ⏳ Owed: on-canvas **dragging** of a broken-loose view box (the panel-side break-sync + raw entry are
+> done; the drag is a canvas interaction, Phase 8 continuation).
 
 > **Read first:** [`gen1-knowledge.md`](gen1-knowledge.md) (the save format),
 > [`warps.md`](warps.md) (the `BIT_NO_PREVIOUS_MAP` linchpin — it decides the view pointer too),

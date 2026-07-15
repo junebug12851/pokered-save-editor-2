@@ -124,12 +124,29 @@ The headline, and the answer to *"which are rewritten on startup"*: **ten of the
 0/1/6 are cleared on load while 2/7 are kept. A read of the asm alone gets this wrong (the sprite-pass
 mistake). Tool: `scripts/emu/probe_player_state.py` (local-only, ROM-gated).
 
-### 🗺️ The "Map" page fields — RESEARCHED, not yet built (2026-07-15)
+### 🗺️ The "Map" page fields (Area State) — BUILT (2026-07-15, Phase 8)
 
-Twilight is bringing v1's "Map" page (under "Area") into the map-details panel (shown when
-nothing is selected) and asked what the seven leftover fields do and **which are rewritten at
-boot**. Researched + **console-verified**: [`reference/area-map-state.md`](reference/area-map-state.md)
-(`scripts/emu/probe_area_map_state.py`). No build yet — awaiting design go-ahead.
+v1's "Map" page fields now live in the **"Map state"** section of the map-details panel (shown when
+nothing is selected). Research + **console-verified**:
+[`reference/area-map-state.md`](reference/area-map-state.md) (`scripts/emu/probe_area_map_state.py`).
+
+**Built:** `MapModel` gained the area-state API and `DetailsPanel.qml` the section: **Current script
+step** (descriptive ComboBox from `MapDBEntry::getScriptSteps`, parsed from `maps.json`'s
+`scriptEntries`, + "Something else…" raw), **Run this script step on load** (`BIT_USE_CUR_MAP_SCRIPT`),
+**Always on bike** (`BIT_ALWAYS_ON_BIKE`), the **Camera / view box** (`wCurrentTileBlockMapViewPointer`
+— derived, **synced to the player by default**; `movePlayer` keeps it synced; a **break-loose** switch
++ raw-address entry for the power path), and the **reset-on-load** scratch (`vramViewPtr`→$9800,
+`cardKeyDoorX/Y`→0) behind the "Reloaded values" switch with an amber `!`. Every setter writes exactly
+its byte(s); `areamap.{h,cpp}` docs corrected (names kept). New DB parse: `MapScriptStep` +
+`getScriptSteps`. Pinned by **`tst_area_state`** (6 cases; keystone byte-diffs every setter + the
+view-box sync doctrine). `tst_qml_screens` 16/16, `tst_map` 27/27, `tst_player` 7/7. ⏳ **Owed:** the
+on-canvas **drag** of a broken-loose view box (canvas interaction), and Twilight's live pass.
+
+### 🌿 The "Map" page — the earlier research state (kept for context)
+
+Twilight brought v1's "Map" page (under "Area") into the map-details panel and asked what the seven
+leftover fields do and **which are rewritten at boot**. Console-verified in
+[`reference/area-map-state.md`](reference/area-map-state.md).
 
 The answer to *"which are rewritten at boot"*:
 

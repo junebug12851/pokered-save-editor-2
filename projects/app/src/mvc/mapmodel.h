@@ -185,6 +185,38 @@ class MapModel : public QObject
   /// (the audio-fade flag beside it is untouched). See notes/reference/wild-encounter-cooldown.md.
   Q_PROPERTY(bool wildEncounterCooldown READ wildEncounterCooldown WRITE setWildEncounterCooldown NOTIFY changed)
 
+  // ── Area state (v1's "Map" page — the AreaMap leftover bytes) ──────────────────
+  //
+  // ⚠️ Read notes/reference/area-map-state.md. Console-verified: two durable levers
+  // (curMapScript step + BIT_USE_CUR_MAP_SCRIPT, BIT_ALWAYS_ON_BIKE), one derived value kept in sync
+  // by default (the view pointer), and two reset-on-load scratch fields (VRAM ptr → $9800, card-key
+  // door X/Y → 0). Each setter writes exactly its own byte(s); no save-corruption bug, no gun.
+
+  /// Locked on the bike — `BIT_ALWAYS_ON_BIKE` (`0x29DE` b5). Durable (kept on load). The Cycling-Road lock.
+  Q_PROPERTY(bool alwaysOnBike READ alwaysOnBike WRITE setAlwaysOnBike NOTIFY changed)
+  /// Run the saved script step on load — `BIT_USE_CUR_MAP_SCRIPT` (`0x29DF` b4). Paired with @ref mapScript;
+  /// set both and the map runs that step next tick. Kept on a quiet map (consumed on a scripted one).
+  Q_PROPERTY(bool runScriptOnLoad READ runScriptOnLoad WRITE setRunScriptOnLoad NOTIFY changed)
+  /// The working map-script step index — `wCurMapScript` (`0x2CE5`). Full byte range; the picker names
+  /// the steps this map has (@ref mapScriptList), raw for the rest. Kept on load.
+  Q_PROPERTY(int mapScript READ mapScript WRITE setMapScript NOTIFY changed)
+  /// Does this map have a named script-step list (so the picker is descriptive rather than a raw number)?
+  Q_PROPERTY(bool mapHasScriptList READ mapHasScriptList NOTIFY changed)
+
+  /// The camera / view pointer — `wCurrentTileBlockMapViewPointer` (`0x260B`). DERIVED from the player's
+  /// coordinates and kept in sync by default (moving him moves it); the console trusts it as-is on load.
+  Q_PROPERTY(int viewPtr READ viewPtr NOTIFY changed)
+  /// What the pointer WOULD be for the player's current position — what "synced" tracks.
+  Q_PROPERTY(int viewPtrComputed READ viewPtrComputed NOTIFY changed)
+  /// Is the stored pointer following the player (synced), or has it been broken loose (power path)?
+  Q_PROPERTY(bool viewSynced READ viewSynced NOTIFY changed)
+
+  /// VRAM view pointer — `wMapViewVRAMPointer` (`0x27D2`). ⚠️ **reset to `$9800` every load**; scratch.
+  Q_PROPERTY(int vramViewPtr READ vramViewPtr WRITE setVramViewPtr NOTIFY changed)
+  /// Card-Key door tile X/Y — `wCardKeyDoorX/Y` (`0x29EC`/`0x29EB`). ⚠️ **zeroed every load**; scratch.
+  Q_PROPERTY(int cardKeyDoorX READ cardKeyDoorX WRITE setCardKeyDoorX NOTIFY changed)
+  Q_PROPERTY(int cardKeyDoorY READ cardKeyDoorY WRITE setCardKeyDoorY NOTIFY changed)
+
   // ── The semantic overlay ──────────────────────────────────────────────────────
   /// `image://map/overlay/...` for @ref layers. Empty when no layer is on.
   Q_PROPERTY(QString overlaySource READ overlaySource NOTIFY overlayChanged)
@@ -859,6 +891,37 @@ public:
   bool wildEncounterCooldown() const;
   void setWildEncounterCooldown(bool on);  ///< Writes `wStatusFlags2` bit 0 -- and only that bit.
 
+  // ── Area state (v1's "Map" page) ──────────────────────────────
+  bool alwaysOnBike() const;
+  void setAlwaysOnBike(bool on);            ///< Writes `BIT_ALWAYS_ON_BIKE` -- and only that bit.
+  bool runScriptOnLoad() const;
+  void setRunScriptOnLoad(bool on);         ///< Writes `BIT_USE_CUR_MAP_SCRIPT` -- and only that bit.
+
+  int mapScript() const;
+  void setMapScript(int step);              ///< Writes `wCurMapScript` (0x2CE5) -- one byte.
+  bool mapHasScriptList() const;
+  /// The named script steps for the current map: `{ value, name, hack }`. Empty for unscripted maps
+  /// (the panel then shows a raw index + "Something else…"). `hack` marks the stored value when it is
+  /// not one of the named steps -- shown, never refused.
+  Q_INVOKABLE QVariantList mapScriptList() const;
+
+  int viewPtr() const;                      ///< The stored camera pointer (`0x260B`).
+  int viewPtrComputed() const;              ///< The pointer for the player's current position.
+  bool viewSynced() const;                  ///< Is the stored pointer following the player?
+  /// Break the camera loose from the player (true) or re-attach it (false). Re-attaching snaps the
+  /// stored pointer back to the player's position (writes `0x260B`). The break-sync power path.
+  Q_INVOKABLE void setViewBreakSync(bool broken);
+  /// Set the raw camera pointer directly (the "Something else…" path). If it differs from the synced
+  /// value this breaks sync automatically -- the box then stands alone and can be dragged on the canvas.
+  Q_INVOKABLE void setViewPtr(int raw);
+
+  int vramViewPtr() const;
+  void setVramViewPtr(int ptr);             ///< Writes `wMapViewVRAMPointer` (0x27D2). (Game resets it to $9800.)
+  int cardKeyDoorX() const;
+  void setCardKeyDoorX(int v);              ///< Writes `wCardKeyDoorX` (0x29EC). (Game zeroes it on load.)
+  int cardKeyDoorY() const;
+  void setCardKeyDoorY(int v);              ///< Writes `wCardKeyDoorY` (0x29EB). (Game zeroes it on load.)
+
   QString overlaySource() const;
   int layers() const;
   void setLayers(int layers);   ///< Purely a view setting. Touches nothing in the save.
@@ -1036,6 +1099,11 @@ private:
 
   /// @see showScratch. OFF -- it is clutter, and it is a third of the panel.
   bool showScratchFields = false;
+
+  /// @see viewSynced. The user deliberately broke the camera loose from the player this session. A
+  /// desynced value can also arise from a save whose stored pointer already differs from the player's
+  /// position (viewSynced() checks the value too), which is respected without setting this.
+  bool viewBrokenSession = false;
   AreaMap* map = nullptr;         ///< The save's live map.
   AreaPlayer* player = nullptr;   ///< The save's live player position.
   AreaTileset* tileset = nullptr; ///< The save's live tileset.

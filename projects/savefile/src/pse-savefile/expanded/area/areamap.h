@@ -55,11 +55,11 @@ class SAVEFILE_AUTOPORT AreaMap : public QObject
   Q_PROPERTY(int scriptPtr MEMBER scriptPtr NOTIFY scriptPtrChanged)              ///< Map script pointer.
   Q_PROPERTY(int currentTileBlockMapViewPointer MEMBER currentTileBlockMapViewPointer NOTIFY currentTileBlockMapViewPointerChanged) ///< Player coords as a pointer.
   Q_PROPERTY(int mapViewVRAMPointer MEMBER mapViewVRAMPointer NOTIFY mapViewVRAMPointerChanged) ///< Unused; reset at gameplay start.
-  Q_PROPERTY(int curMapScript MEMBER curMapScript NOTIFY curMapScriptChanged)      ///< Current map script index.
-  Q_PROPERTY(int cardKeyDoorX MEMBER cardKeyDoorX NOTIFY cardKeyDoorXChanged)      ///< Card-key door X (purpose unclear).
-  Q_PROPERTY(int cardKeyDoorY MEMBER cardKeyDoorY NOTIFY cardKeyDoorYChanged)      ///< Card-key door Y (purpose unclear).
-  Q_PROPERTY(bool forceBikeRide MEMBER forceBikeRide NOTIFY forceBikeRideChanged)  ///< `BIT_ALWAYS_ON_BIKE` (wStatusFlags6 bit 5).
-  Q_PROPERTY(bool curMapNextFrame MEMBER curMapNextFrame NOTIFY curMapNextFrameChanged) ///< `BIT_USE_CUR_MAP_SCRIPT` (wStatusFlags7 bit 4).
+  Q_PROPERTY(int curMapScript MEMBER curMapScript NOTIFY curMapScriptChanged)      ///< `wCurMapScript` (0x2CE5): working script-step index; kept on load.
+  Q_PROPERTY(int cardKeyDoorX MEMBER cardKeyDoorX NOTIFY cardKeyDoorXChanged)      ///< `wCardKeyDoorX` (0x29EC): Card-Key door tile X; **zeroed every load** (scratch).
+  Q_PROPERTY(int cardKeyDoorY MEMBER cardKeyDoorY NOTIFY cardKeyDoorYChanged)      ///< `wCardKeyDoorY` (0x29EB): Card-Key door tile Y; **zeroed every load** (scratch).
+  Q_PROPERTY(bool forceBikeRide MEMBER forceBikeRide NOTIFY forceBikeRideChanged)  ///< `BIT_ALWAYS_ON_BIKE` (wStatusFlags6 b5): locked on the bike (Cycling Road); kept.
+  Q_PROPERTY(bool curMapNextFrame MEMBER curMapNextFrame NOTIFY curMapNextFrameChanged) ///< `BIT_USE_CUR_MAP_SCRIPT` (wStatusFlags7 b4): run `curMapScript` next tick; kept on a quiet map.
 
   // ⚠️ `blackoutDest` USED TO LIVE HERE, as a bool doc'd "Flag (may be unused)". It was neither a
   // destination nor unused: it is **`BIT_ESCAPE_WARP`** (wStatusFlags6 bit 6) -- Dig, Escape Rope and
@@ -132,15 +132,25 @@ public:
   int currentTileBlockMapViewPointer; ///< <- Player coords converted to a ptr
   int mapViewVRAMPointer; ///< <- Unused, reset at start of gameplay
 
-  /// Current map script index
+  /// `wCurMapScript` (0x2CE5) -- the working script-step index `ExecuteCurMapScriptInTable` uses when
+  /// `curMapNextFrame`/`BIT_USE_CUR_MAP_SCRIPT` is set. Kept across a load. (The durable per-map story
+  /// progress is a different, ~90-byte block -- `w<Map>CurScript` -- not this.)
   int curMapScript;
 
-  /// Unknown ???
+  /// Card-Key door tile coordinates (`wCardKeyDoorX/Y`, 0x29EC/0x29EB) -- where a Silph Co. Card-Key
+  /// door is. **`ClearVariablesOnEnterMap` zeroes both on every map entry**, so they are momentary
+  /// scratch, not durable state (console-verified). See notes/reference/area-map-state.md.
   int cardKeyDoorX;
   int cardKeyDoorY;
 
-  /// Flags that may not be used, unknown
+  /// `BIT_ALWAYS_ON_BIKE` (wStatusFlags6 b5) -- locked on the bike (Cycling Road). Durable; kept on
+  /// load. Genuinely editable state.
   bool forceBikeRide;
+
+  /// `BIT_USE_CUR_MAP_SCRIPT` (wStatusFlags7 b4) -- "next map-script tick, use `curMapScript` as the
+  /// index instead of the default." A one-shot handoff the trainer engine sets; consumed on a scripted
+  /// map's first tick, but **kept on a quiet map**, so a save can carry it set to auto-run a chosen
+  /// script step on load. See notes/reference/area-map-state.md.
   bool curMapNextFrame;
 
   // Map Connections

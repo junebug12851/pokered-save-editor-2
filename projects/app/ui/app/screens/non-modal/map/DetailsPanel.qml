@@ -274,6 +274,302 @@ Item {
           }
         }
 
+        // ══ MAP STATE — v1's "Map" page (the AreaMap leftover bytes) ═══════════════════════════
+        //
+        // ⚠️ notes/reference/area-map-state.md. Two durable levers (script step + run-on-load, always
+        // on bike), one derived value kept in sync by default (the camera), and two reset-on-load
+        // scratch fields behind the "Reloaded values" switch. Every value full-range, hack included.
+        Rectangle { Layout.fillWidth: true; Layout.topMargin: 6; height: 1; color: brg.settings.dividerColor }
+
+        ColumnLayout {
+          id: areaState
+          Layout.fillWidth: true
+          Layout.topMargin: 4
+          spacing: 6
+
+          property bool rawScript: false   // the script "Something else…" disclosure
+
+          Label {
+            text: qsTr("Map state")
+            font.bold: true
+            font.pixelSize: 12
+            Layout.fillWidth: true
+          }
+
+          // ── Current script step (+ run-on-load), a two-byte feature ──────────────────────────
+          Label {
+            Layout.fillWidth: true
+            Layout.topMargin: 2
+            text: qsTr("Current script step")
+            font.pixelSize: 11
+            color: brg.settings.textColorMid
+          }
+
+          // Descriptive picker when this map has named steps…
+          ComboBox {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            font.pixelSize: 12
+            visible: brg.map.mapHasScriptList && !areaState.rawScript
+            model: { details.revision; return brg.map.mapScriptList(); }
+            textRole: "name"
+            valueRole: "value"
+            currentIndex: {
+              details.revision;
+              const l = model;
+              for (let i = 0; i < l.length; i++)
+                if (l[i].value === brg.map.mapScript) return i;
+              return -1;
+            }
+            onActivated: brg.map.mapScript = currentValue
+
+            delegate: ItemDelegate {
+              required property var modelData
+              width: parent ? parent.width : 0
+              contentItem: RowLayout {
+                spacing: 6
+                Text {
+                  Layout.fillWidth: true
+                  text: modelData.name
+                  font.pixelSize: 12
+                  color: brg.settings.textColorDark
+                  elide: Text.ElideRight
+                }
+                Text {
+                  visible: modelData.hack === true
+                  text: qsTr("raw")
+                  font.pixelSize: 9
+                  color: "#d55e00"
+                }
+              }
+            }
+          }
+
+          // …a raw index otherwise, or behind "Something else…".
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+            visible: !brg.map.mapHasScriptList || areaState.rawScript
+            Label { text: qsTr("Step"); font.pixelSize: 10; opacity: 0.6 }
+            SpinBox {
+              Layout.fillWidth: true
+              Layout.preferredHeight: 28
+              font.pixelSize: 11
+              editable: true
+              from: 0
+              to: 255
+              value: brg.map.mapScript
+              onValueModified: brg.map.mapScript = value
+            }
+          }
+
+          // The "Something else…" link only when there IS a named list to step out of.
+          Label {
+            visible: brg.map.mapHasScriptList
+            text: areaState.rawScript ? qsTr("Pick from the list") : qsTr("Something else…")
+            font.pixelSize: 10
+            color: brg.settings.accentColor
+            MouseArea {
+              anchors.fill: parent
+              cursorShape: Qt.PointingHandCursor
+              onClicked: areaState.rawScript = !areaState.rawScript
+            }
+          }
+
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("Run this script step on load")
+              font.pixelSize: 12
+              wrapMode: Text.Wrap
+            }
+            MapSwitch {
+              checked: brg.map.runScriptOnLoad
+              onToggled: brg.map.runScriptOnLoad = !brg.map.runScriptOnLoad
+            }
+          }
+          Label {
+            Layout.fillWidth: true
+            text: qsTr("Runs the step above on the next map load instead of the map's default. On a "
+                       + "scripted map the game consumes it on the first tick; on a quiet map it sticks.")
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+          }
+
+          // ── Always on bike ───────────────────────────────────────────────────────────────────
+          RowLayout {
+            Layout.fillWidth: true
+            Layout.topMargin: 4
+            spacing: 8
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("Always on bike (Cycling Road)")
+              font.pixelSize: 12
+              wrapMode: Text.Wrap
+            }
+            MapSwitch {
+              checked: brg.map.alwaysOnBike
+              onToggled: brg.map.alwaysOnBike = !brg.map.alwaysOnBike
+            }
+          }
+
+          // ── Camera / view box (derived, synced by default) ───────────────────────────────────
+          RowLayout {
+            Layout.fillWidth: true
+            Layout.topMargin: 4
+            spacing: 8
+            Label {
+              Layout.fillWidth: true
+              text: brg.map.viewSynced ? qsTr("Camera — follows the player")
+                                       : qsTr("Camera — set loose")
+              font.pixelSize: 12
+              wrapMode: Text.Wrap
+            }
+            MapSwitch {
+              // On = broken loose. Flipping it toggles sync; re-attaching snaps the box to the player.
+              checked: !brg.map.viewSynced
+              onToggled: brg.map.setViewBreakSync(brg.map.viewSynced)
+            }
+          }
+          // The raw pointer, only on the power path.
+          ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 3
+            visible: !brg.map.viewSynced
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: 6
+              Label { text: qsTr("Address"); font.pixelSize: 10; opacity: 0.6 }
+              SpinBox {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 28
+                font.pixelSize: 11
+                editable: true
+                from: 0
+                to: 65535
+                value: brg.map.viewPtr
+                onValueModified: brg.map.setViewPtr(value)
+              }
+            }
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("The game trusts this pointer and draws the screen from it — an off-map value "
+                         + "shows garbage. You can also drag the view box around on the canvas.")
+              wrapMode: Text.Wrap
+              font.pixelSize: 10
+              opacity: 0.55
+            }
+          }
+          Label {
+            Layout.fillWidth: true
+            visible: brg.map.viewSynced
+            text: qsTr("The view box tracks the player automatically. Break it loose to place it by "
+                       + "hand.")
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+          }
+
+          // ── Reset-on-load scratch, behind the "Reloaded values" switch ───────────────────────
+          ColumnLayout {
+            Layout.fillWidth: true
+            Layout.topMargin: 6
+            spacing: 4
+            visible: brg.map.showScratch
+
+            Rectangle {
+              Layout.fillWidth: true
+              radius: 6
+              color: Qt.rgba(0, 0, 0, 0.03)
+              border.width: 1
+              border.color: brg.settings.dividerColor
+              implicitHeight: asHdr.implicitHeight + 14
+              RowLayout {
+                id: asHdr
+                anchors.fill: parent
+                anchors.margins: 8
+                spacing: 6
+                MapWarnIcon {
+                  text: qsTr("The game works this value out again — or clears it — the moment it loads "
+                             + "your save. Verified on a real cartridge.")
+                }
+                Label {
+                  Layout.fillWidth: true
+                  text: qsTr("Rewritten on load — the game resets these every time")
+                  wrapMode: Text.Wrap
+                  font.pixelSize: 10
+                  opacity: 0.7
+                }
+              }
+            }
+
+            // Screen VRAM pointer → $9800
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: 6
+              Label { Layout.preferredWidth: 110; text: qsTr("Screen VRAM ptr"); font.pixelSize: 10; opacity: 0.7; elide: Text.ElideRight }
+              SpinBox {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 26
+                font.pixelSize: 10
+                editable: true
+                from: 0
+                to: 65535
+                value: brg.map.vramViewPtr
+                onValueModified: brg.map.vramViewPtr = value
+              }
+            }
+            Label { Layout.fillWidth: true; text: qsTr("Reset to $9800 on load."); font.pixelSize: 9; opacity: 0.5 }
+
+            // Card-Key door X / Y → 0
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: 6
+              Label { Layout.preferredWidth: 110; text: qsTr("Card-Key door X"); font.pixelSize: 10; opacity: 0.7; elide: Text.ElideRight }
+              SpinBox {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 26
+                font.pixelSize: 10
+                editable: true
+                from: 0
+                to: 255
+                value: brg.map.cardKeyDoorX
+                onValueModified: brg.map.cardKeyDoorX = value
+              }
+            }
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: 6
+              Label { Layout.preferredWidth: 110; text: qsTr("Card-Key door Y"); font.pixelSize: 10; opacity: 0.7; elide: Text.ElideRight }
+              SpinBox {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 26
+                font.pixelSize: 10
+                editable: true
+                from: 0
+                to: 255
+                value: brg.map.cardKeyDoorY
+                onValueModified: brg.map.cardKeyDoorY = value
+              }
+            }
+            Label { Layout.fillWidth: true; text: qsTr("Zeroed on load (Silph Co. door scratch)."); font.pixelSize: 9; opacity: 0.5 }
+          }
+
+          Label {
+            Layout.fillWidth: true
+            Layout.topMargin: 2
+            visible: !brg.map.showScratch
+            text: qsTr("Three more bytes here do nothing you can keep — the game resets them on load. "
+                       + "Turn on “Reloaded values” in the toolbar to see them.")
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+          }
+        }
+
         // The view pointer the GAME itself computed and left in the save. If an edit has made it
         // stale we say so plainly and offer the one-click fix -- we never quietly rewrite it.
         Rectangle {

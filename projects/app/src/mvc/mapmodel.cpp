@@ -1651,8 +1651,13 @@ void MapModel::movePlayer(int x, int y)
     return;
 
   // ⚠️ His coordinates are NOT in the sprite table -- they are his own two bytes, and the game's
-  // view pointer is computed from them. Moving him therefore invalidates the pointer the save is
-  // carrying, which the Details panel notices and offers to fix. (We never rewrite it behind you.)
+  // camera pointer (`wCurrentTileBlockMapViewPointer`) is derived from them.
+  //
+  // Derived-value doctrine (notes/reference/area-map-state.md): the camera FOLLOWS him by default, so
+  // moving him moves the view box too -- **unless** the box has been broken loose (a power user set
+  // its own pointer / is dragging it on the canvas), in which case it is left exactly where it is.
+  const bool keepView = (map != nullptr) && viewSynced();
+
   x = std::max(0, std::min(blocksWide() * 2 - 1, x));
   y = std::max(0, std::min(blocksHigh() * 2 - 1, y));
 
@@ -1661,6 +1666,14 @@ void MapModel::movePlayer(int x, int y)
 
   player->yCoord = y;
   player->yCoordChanged();
+
+  if (keepView) {
+    const int p = viewPtrComputed();   // recomputed from the NEW coords
+    if (map->currentTileBlockMapViewPointer != p) {
+      map->currentTileBlockMapViewPointer = p;
+      map->currentTileBlockMapViewPointerChanged();
+    }
+  }
 
   changed();
 }
@@ -3739,6 +3752,190 @@ void MapModel::setWildEncounterCooldown(bool on)
   // byte moves -- the audio-fade flag (bit 1) is left untouched. tst_area_pokemon round-trips it.
   pokemon->wildEncounterCooldown = on;
   pokemon->wildEncounterCooldownChanged();
+  emit changed();
+}
+
+// ── Area state (v1's "Map" page — the AreaMap leftover bytes) ──────────────────
+//
+// See notes/reference/area-map-state.md. Each setter writes exactly one member (one byte, or one bit
+// via AreaMap::save's bit-preserving setBit) and nothing else. No save-corruption bug, no loaded gun.
+
+bool MapModel::alwaysOnBike() const
+{
+  return map != nullptr && map->forceBikeRide;
+}
+
+void MapModel::setAlwaysOnBike(bool on)
+{
+  if (map == nullptr || map->forceBikeRide == on)
+    return;
+  map->forceBikeRide = on;
+  map->forceBikeRideChanged();
+  emit changed();
+}
+
+bool MapModel::runScriptOnLoad() const
+{
+  return map != nullptr && map->curMapNextFrame;
+}
+
+void MapModel::setRunScriptOnLoad(bool on)
+{
+  if (map == nullptr || map->curMapNextFrame == on)
+    return;
+  map->curMapNextFrame = on;
+  map->curMapNextFrameChanged();
+  emit changed();
+}
+
+int MapModel::mapScript() const
+{
+  return map != nullptr ? map->curMapScript : 0;
+}
+
+void MapModel::setMapScript(int step)
+{
+  if (map == nullptr)
+    return;
+  step = std::max(0, std::min(255, step));
+  if (map->curMapScript == step)
+    return;
+  map->curMapScript = step;
+  map->curMapScriptChanged();
+  emit changed();
+}
+
+bool MapModel::mapHasScriptList() const
+{
+  auto* entry = MapEngine::sourceMap(mapInd());
+  return entry != nullptr && !entry->getScriptSteps().isEmpty();
+}
+
+QVariantList MapModel::mapScriptList() const
+{
+  QVariantList out;
+  auto* entry = MapEngine::sourceMap(mapInd());
+  if (entry == nullptr)
+    return out;
+
+  const int stored = mapScript();
+  bool storedSeen = false;
+  for (const auto& s : entry->getScriptSteps()) {
+    out.append(option(s.id, s.label));   // { value, name, hack:false }
+    if (s.id == stored)
+      storedSeen = true;
+  }
+  // The stored value is not one of the map's named steps -- offer it, flagged, never refused.
+  if (!storedSeen && !out.isEmpty())
+    out.append(option(stored, QStringLiteral("Step %1").arg(stored), true));
+  return out;
+}
+
+int MapModel::viewPtr() const
+{
+  return map != nullptr ? map->currentTileBlockMapViewPointer : 0;
+}
+
+int MapModel::viewPtrComputed() const
+{
+  if (map == nullptr || player == nullptr)
+    return 0;
+  return MapEngine::viewPointer(playerX(), playerY(), blocksWide());
+}
+
+bool MapModel::viewSynced() const
+{
+  // Synced = the user hasn't broken it loose AND the stored value still equals what the player's
+  // position derives. A save whose pointer already differs (a prior edit / a power user) reads as
+  // desynced by value, without needing the session flag.
+  return !viewBrokenSession && viewPtr() == viewPtrComputed();
+}
+
+void MapModel::setViewBreakSync(bool broken)
+{
+  if (map == nullptr)
+    return;
+
+  viewBrokenSession = broken;
+
+  // Re-attaching snaps the camera back onto the player (the one deliberate write when re-syncing).
+  if (!broken) {
+    const int p = viewPtrComputed();
+    if (map->currentTileBlockMapViewPointer != p) {
+      map->currentTileBlockMapViewPointer = p;
+      map->currentTileBlockMapViewPointerChanged();
+    }
+  }
+  emit changed();
+}
+
+void MapModel::setViewPtr(int raw)
+{
+  if (map == nullptr)
+    return;
+
+  raw = std::max(0, std::min(0xFFFF, raw));
+
+  // A value that no longer describes the player breaks sync -- the box then stands alone (and can be
+  // dragged on the canvas). This is the "alert offering to break sync" outcome; the panel asks first.
+  if (raw != viewPtrComputed())
+    viewBrokenSession = true;
+
+  if (map->currentTileBlockMapViewPointer != raw) {
+    map->currentTileBlockMapViewPointer = raw;
+    map->currentTileBlockMapViewPointerChanged();
+  }
+  emit changed();
+}
+
+int MapModel::vramViewPtr() const
+{
+  return map != nullptr ? map->mapViewVRAMPointer : 0;
+}
+
+void MapModel::setVramViewPtr(int ptr)
+{
+  if (map == nullptr)
+    return;
+  ptr = std::max(0, std::min(0xFFFF, ptr));
+  if (map->mapViewVRAMPointer == ptr)
+    return;
+  map->mapViewVRAMPointer = ptr;
+  map->mapViewVRAMPointerChanged();
+  emit changed();
+}
+
+int MapModel::cardKeyDoorX() const
+{
+  return map != nullptr ? map->cardKeyDoorX : 0;
+}
+
+void MapModel::setCardKeyDoorX(int v)
+{
+  if (map == nullptr)
+    return;
+  v = std::max(0, std::min(255, v));
+  if (map->cardKeyDoorX == v)
+    return;
+  map->cardKeyDoorX = v;
+  map->cardKeyDoorXChanged();
+  emit changed();
+}
+
+int MapModel::cardKeyDoorY() const
+{
+  return map != nullptr ? map->cardKeyDoorY : 0;
+}
+
+void MapModel::setCardKeyDoorY(int v)
+{
+  if (map == nullptr)
+    return;
+  v = std::max(0, std::min(255, v));
+  if (map->cardKeyDoorY == v)
+    return;
+  map->cardKeyDoorY = v;
+  map->cardKeyDoorYChanged();
   emit changed();
 }
 

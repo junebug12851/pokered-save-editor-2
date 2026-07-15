@@ -134,6 +134,15 @@ MapDBEntry::MapDBEntry(const QJsonValue& data)
     }
   }
 
+  // The named script steps for the "Current script" picker (plain structs; see MapScriptStep).
+  if(data["scriptEntries"].isArray())
+  {
+    for(QJsonValue s : data["scriptEntries"].toArray()) {
+      auto o = s.toObject();
+      scriptSteps.append({ o["id"].toInt(), o["name"].toString(), o["label"].toString() });
+    }
+  }
+
   if(data["redMons"].isArray())
   {
     for(QJsonValue monEntry : data["redMons"].toArray()) {
@@ -564,6 +573,11 @@ const MapDBEntryText* MapDBEntry::getTextEntriesAt(const int ind) const
     return nullptr;
 
   return textEntries.at(ind);
+}
+
+const QVector<MapScriptStep>& MapDBEntry::getScriptSteps() const
+{
+  return scriptSteps;
 }
 
 const QVector<MapDBEntryWarpIn*> MapDBEntry::getWarpIn() const

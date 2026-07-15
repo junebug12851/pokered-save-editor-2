@@ -38,6 +38,21 @@ class HiddenItemDBEntry;
 class ScriptDBEntry;
 
 /**
+ * @brief One named step of a map's scripted-event sequence -- a row of its `_ScriptPointers`
+ *        table, imported from pret/pokered by scripts/import_map_scripts.py into maps.json.
+ *
+ * `id` is the 0-based index the save's `wCurMapScript` (0x2CE5) holds; `label` is the friendly
+ * name for the "Current script" ComboBox. A plain struct (no QObject) -- MapModel turns the list
+ * into a QVariantList for the picker, so QML never touches it directly.
+ * See notes/reference/area-map-state.md.
+ */
+struct MapScriptStep {
+  int id = 0;    ///< 0-based step index == the wCurMapScript value.
+  QString name;  ///< The SCRIPT_<MAP>_<NAME> constant tail.
+  QString label; ///< Friendly label for the picker.
+};
+
+/**
  * @brief One map's complete static definition -- the root of the MapDBEntry family.
  *
  * The DB counterpart to the save's Area: everything canonical about a map. It owns
@@ -124,6 +139,9 @@ public:
   int getTextEntriesSize() const;                        ///< @see getTextEntriesSize property.
   Q_INVOKABLE const MapDBEntryText* getTextEntriesAt(const int ind) const; ///< Text entry @p ind, 0-based (for QML).
 
+  /// The map's named script steps (the "Current script" picker source). Empty for unscripted maps.
+  const QVector<MapScriptStep>& getScriptSteps() const;
+
   const QVector<MapDBEntrySprite*> getSprites() const;  ///< Sprites on the map.
   int getSpritesSize() const;                           ///< @see getSpritesSize property.
   Q_INVOKABLE const MapDBEntrySprite* getSpritesAt(const int ind) const; ///< Sprite @p ind (for QML).
@@ -204,6 +222,9 @@ protected:
 
   // The map's text-pointer table (id -> words + category), imported from pret/pokered.
   QVector<MapDBEntryText*> textEntries; ///< Text-pointer table entries (index 0 == text id 1).
+
+  // The map's named script steps (Current-script picker), imported by scripts/import_map_scripts.py.
+  QVector<MapScriptStep> scriptSteps; ///< Named script-step list; empty for unscripted maps.
 
   // Sprites on map
   QVector<MapDBEntrySprite*> sprites;  ///< Sprites.
