@@ -141,9 +141,9 @@ Item {
         Layout.preferredHeight: 32
         font.pixelSize: 12
 
-        model: brg.map.mapList()
+        model: brg.map.connectionMapList(arrow.dir)
         textRole: "name"
-        valueRole: "ind"
+        valueRole: "value"
         currentIndex: -1
         displayText: currentIndex < 0 ? qsTr("Pick a neighbouring map…") : currentText
 
@@ -160,7 +160,8 @@ Item {
           pop.close();
         }
 
-        // The same grouped delegate the other map pickers use -- 248 names flat is a wall.
+        // Grouped: Default first, then the maps that fit this edge, then the rest. Each row shows the
+        // map's SIZE (grey, right), and the default wears a ★.
         delegate: ItemDelegate {
           required property var modelData
           required property int index
@@ -181,17 +182,23 @@ Item {
               Layout.fillWidth: true
               spacing: 6
               Text {
-                text: modelData.ind
-                font.pixelSize: 10; font.family: "monospace"
-                color: brg.settings.textColorMid
-                Layout.minimumWidth: 22
+                visible: modelData.isDefault === true
+                text: "★"
+                font.pixelSize: 11
+                color: "#e69f00"
               }
               Text {
                 Layout.fillWidth: true
                 text: modelData.name
                 font.pixelSize: 12
+                font.bold: modelData.isDefault === true
                 color: brg.settings.textColorDark
                 elide: Text.ElideRight
+              }
+              Text {
+                text: modelData.size
+                font.pixelSize: 10; font.family: "monospace"
+                color: brg.settings.textColorMid
               }
             }
           }

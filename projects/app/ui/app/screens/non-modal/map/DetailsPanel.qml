@@ -653,17 +653,58 @@ Item {
           Layout.fillWidth: true
           Layout.preferredHeight: 30
           font.pixelSize: 12
-          model: brg.map.mapList()
+          model: details.hasConnection ? brg.map.connectionMapList(details.connection) : []
           textRole: "name"
-          valueRole: "ind"
+          valueRole: "value"
           currentIndex: {
             details.revision;
             const list = model;
             for (let i = 0; i < list.length; i++)
-              if (list[i].ind === details.connEdge.toMap) return i;
+              if (list[i].value === details.connEdge.toMap) return i;
             return -1;
           }
           onActivated: brg.map.setConnectionMap(details.connection, currentValue)
+
+          // Default ★ first, then the maps that fit this edge, then the rest; size grey on the right.
+          delegate: ItemDelegate {
+            required property var modelData
+            required property int index
+            width: connMap.width
+            height: (modelData.group !== "" ? 20 : 0) + 26
+            highlighted: connMap.highlightedIndex === index
+
+            contentItem: ColumnLayout {
+              spacing: 0
+              Text {
+                visible: modelData.group !== ""
+                Layout.fillWidth: true
+                text: modelData.group
+                font.pixelSize: 10; font.bold: true
+                color: brg.settings.textColorMid
+              }
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: 6
+                Text {
+                  visible: modelData.isDefault === true
+                  text: "★"; font.pixelSize: 11; color: "#e69f00"
+                }
+                Text {
+                  Layout.fillWidth: true
+                  text: modelData.name
+                  font.pixelSize: 12
+                  font.bold: modelData.isDefault === true
+                  color: brg.settings.textColorDark
+                  elide: Text.ElideRight
+                }
+                Text {
+                  text: modelData.size
+                  font.pixelSize: 10; font.family: "monospace"
+                  color: brg.settings.textColorMid
+                }
+              }
+            }
+          }
         }
 
         // ── Offset (the one real knob) ───────────────────────────────────────────────────────

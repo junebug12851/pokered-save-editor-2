@@ -403,6 +403,14 @@ QVariantList MapModel::connectionEditList() const
   // save's flag byte and connectionList() use. Getting it wrong mislabels every edge.
   static const char* dirName[] = { "North", "South", "East", "West" };
 
+  // ⚠️ The interactive strip must come from the SAVE's live connection, NOT the DB
+  // (connectionStrips() walks the map's *shipped* connections, so an ADDED connection had no strip
+  // and nothing to grab — the "weird broken state"). We recompute the strip's landing here, from the
+  // save's own map + offset, via the same verified macro.
+  MapDBEntry* from = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  const int stride = (from != nullptr && from->getWidth() > 0)
+                     ? from->getWidth() + 2 * MapEngine::mapBorder : 0;
+
   for (int dir = 0; dir < 4; ++dir) {
     QVariantMap m;
     m["dir"] = dir;
@@ -448,6 +456,24 @@ QVariantList MapModel::connectionEditList() const
         addSnap(cur - nb, QObject::tr("Flush"));
       }
       m["snaps"] = snaps;
+
+      // The interactive strip rect, in buffer px, from the SAVE's own map + offset (via the macro).
+      const MapEngine::Connection strip =
+          MapEngine::connectionOf(from, dir, to, connectionOffsetOf(dir));
+      if (strip.valid && strip.length > 0 && stride > 0) {
+        const int bx = strip.destIndex % stride;
+        const int by = strip.destIndex / stride;
+        const int cols = ns ? strip.length : MapEngine::mapBorder;
+        const int rows = ns ? MapEngine::mapBorder : strip.length;
+        m["stripX"] = bx * MapEngine::blockPx;
+        m["stripY"] = by * MapEngine::blockPx;
+        m["stripW"] = cols * MapEngine::blockPx;
+        m["stripH"] = rows * MapEngine::blockPx;
+        m["hasStrip"] = true;
+      } else {
+        m["stripX"] = 0; m["stripY"] = 0; m["stripW"] = 0; m["stripH"] = 0;
+        m["hasStrip"] = false;
+      }
     } else {
       m["toMap"] = -1;
       m["toName"] = QString();
@@ -457,9 +483,71 @@ QVariantList MapModel::connectionEditList() const
       m["toH"] = 0;
       m["toTileset"] = -1;
       m["snaps"] = QVariantList();
+      m["stripX"] = 0; m["stripY"] = 0; m["stripW"] = 0; m["stripH"] = 0;
+      m["hasStrip"] = false;
     }
 
     out.append(m);
+  }
+
+  return out;
+}
+
+QVariantList MapModel::connectionMapList(int dir) const
+{
+  QVariantList out;
+  if (dir < 0 || dir > 3)
+    return out;
+
+  static const int oppOf[4] = { 1, 0, 3, 2 };   // N<->S, E<->W
+  static const char* dirWord[4] = { "North", "South", "East", "West" };
+  const int opp = oppOf[dir];
+
+  // The map ROM actually connects to THIS map's <dir> edge -- the "supposed to be there" default.
+  int defaultInd = -1;
+  MapDBEntry* from = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  if (from != nullptr) {
+    auto* dc = from->getConnectAt(dir);
+    if (dc != nullptr && dc->getToMap() != nullptr)
+      defaultInd = dc->getToMap()->getInd();
+  }
+
+  // Partition every map: the default, then maps that connect on their OPPOSITE edge (so their edge
+  // meets ours cleanly), then the rest.
+  MapDBEntry* def = nullptr;
+  QVector<MapDBEntry*> fits, others;
+  for (auto* el : MapsDB::inst()->getStore()) {
+    if (el->getInd() == defaultInd) { def = el; continue; }
+    if (el->getConnectAt(opp) != nullptr) fits.append(el);
+    else others.append(el);
+  }
+  auto byInd = [](MapDBEntry* a, MapDBEntry* b) { return a->getInd() < b->getInd(); };
+  std::stable_sort(fits.begin(), fits.end(), byInd);
+  std::stable_sort(others.begin(), others.end(), byInd);
+
+  auto entry = [](MapDBEntry* el, const QString& group, bool isDefault) {
+    QVariantMap m;
+    m["value"] = el->getInd();
+    m["name"] = el->getName();
+    const int w = el->getWidth(), h = el->getHeight();
+    m["size"] = (w > 0 && h > 0) ? QStringLiteral("%1×%2").arg(w).arg(h) : QString();
+    m["group"] = group;
+    m["isDefault"] = isDefault;
+    return m;
+  };
+
+  if (def != nullptr)
+    out.append(entry(def, QObject::tr("Default — the map that connects here"), true));
+
+  const QString fitGroup = QObject::tr("%1-connecting maps (fit this edge)")
+                             .arg(QObject::tr(dirWord[opp]));
+  bool first = true;
+  for (auto* el : fits) { out.append(entry(el, first ? fitGroup : QString(), false)); first = false; }
+
+  first = true;
+  for (auto* el : others) {
+    out.append(entry(el, first ? QObject::tr("All other maps") : QString(), false));
+    first = false;
   }
 
   return out;

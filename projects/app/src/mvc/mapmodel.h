@@ -483,8 +483,15 @@ public:
   // in the save; the meaningful equivalent is re-homing to another edge (@ref rehomeConnection).
 
   /// The four edges, existing or not: `{ dir, dirName, exists, toMap, toName, offset, synced,
-  /// offsetMin, offsetMax }`. What the canvas arrows and the inspector both read.
+  /// offsetMin, offsetMax, snaps, toW, toH, toTileset, stripX/Y/W/H, hasStrip }`. What the canvas
+  /// arrows, the neighbour render, the interactive strip and the inspector all read.
   Q_INVOKABLE QVariantList connectionEditList() const;
+
+  /// The neighbour-map picker for edge @p dir, ordered for the job (Twilight, 2026-07-15):
+  /// `{ value, name, size, group, isDefault }`. The map ROM actually connects here is the **Default**,
+  /// on top; then the maps that have a connection on their **opposite** edge (they abut cleanly),
+  /// under a heading naming that edge; then everything else. `size` is "W×H" in blocks (grey, right).
+  Q_INVOKABLE QVariantList connectionMapList(int dir) const;
 
   /// Is there a connection on @p dir? (@p dir is MapDBEntryConnect::ConnectDir: N 0, S 1, E 2, W 3.)
   Q_INVOKABLE bool connectionExists(int dir) const;

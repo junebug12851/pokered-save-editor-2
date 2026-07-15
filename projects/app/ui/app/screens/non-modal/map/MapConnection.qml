@@ -38,13 +38,15 @@ Item {
   /// Which edge this is -- MapDBEntryConnect::ConnectDir (N 0, S 1, E 2, W 3).
   required property int dir
 
-  /// The strip geometry ({ x, y, w, h, dirName, name } in buffer px) and the edit info
-  /// ({ offset, synced, offsetMin, offsetMax, snaps }) -- looked up from the canvas by direction, both
-  /// bound to `canvas.revision` so they update in place when the offset changes.
-  readonly property var strip: { conn.canvas.revision; return conn.canvas.connStripFor(conn.dir); }
+  /// The edit info AND the strip geometry, both from the SAVE's live connection (connectionEditList
+  /// now carries `stripX/Y/W/H` + `hasStrip`, computed from the save's map + offset via the macro).
+  /// ⚠️ NOT connectionList() / connStripFor — that walks the map's *shipped* DB connections, so an
+  /// ADDED connection had no strip and nothing to grab (the "weird broken state"). Bound to
+  /// `canvas.revision` so it updates in place when the offset changes.
   readonly property var edge:  { conn.canvas.revision; return conn.canvas.connEdgeFor(conn.dir); }
 
-  readonly property bool present: conn.strip !== null && conn.edge !== null && conn.edge.exists === true
+  readonly property bool present: conn.edge !== null && conn.edge.exists === true
+                                  && conn.edge.hasStrip === true
 
   readonly property bool horizontal: conn.dir === 0 || conn.dir === 1   // N / S slide along X; E / W along Y
   readonly property bool selected: conn.canvas.selectedConnection === conn.dir
@@ -54,10 +56,10 @@ Item {
   visible: present && brg.mapLayers.showConnections
 
   // Geometry straight from the model, in buffer px * zoom -- QML does no arithmetic of its own.
-  x: present ? conn.strip.x * conn.canvas.zoom : 0
-  y: present ? conn.strip.y * conn.canvas.zoom : 0
-  width: present ? conn.strip.w * conn.canvas.zoom : 0
-  height: present ? conn.strip.h * conn.canvas.zoom : 0
+  x: present ? conn.edge.stripX * conn.canvas.zoom : 0
+  y: present ? conn.edge.stripY * conn.canvas.zoom : 0
+  width: present ? conn.edge.stripW * conn.canvas.zoom : 0
+  height: present ? conn.edge.stripH * conn.canvas.zoom : 0
 
   z: conn.dragging ? 30 : (conn.selected ? 25 : 2)
 

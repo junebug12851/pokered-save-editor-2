@@ -677,7 +677,9 @@ Item {
           z: -0.5
           opacity: 0.45
 
-          source: present ? ("image://map/" + e.toMap + "/" + e.toTileset + "/0/"
+          // The live frame, so the neighbour's water and flowers animate in step with our map
+          // (Twilight, 2026-07-15). Cached per frame; re-renders ~3x a second like the main map.
+          source: present ? ("image://map/" + e.toMap + "/" + e.toTileset + "/" + brg.map.frame + "/"
                              + brg.map.contrast + "/-1/-1/-1") : ""
 
           readonly property real ring: 96

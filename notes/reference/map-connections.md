@@ -143,6 +143,15 @@ connections: the user sets **map id + offset**, and we recompute the nine — ex
 does, and exactly the invert-then-recompute round-trip proven in "What `maps.json` kept" above. Raw-byte
 editing stays available (break-sync), for power users and for reproducing glitch connections.
 
+**Is a connection rewritten on startup, or kept from the save? — KEPT (Twilight asked, 2026-07-15).**
+On **Continue** the game restores the four connection structs from the save's WRAM snapshot and does
+**not** re-read them from ROM — the same `BIT_NO_PREVIOUS_MAP` linchpin as warps/signs (see "one dead
+end" below: the emulator-verification approach failed *because* the save restores the structs). So an
+edited connection **is live the instant the save loads**. It is rebuilt from ROM **only** when the
+player leaves the map and walks back onto it during play. That is why a connection is **not** a
+"rewritten on load" field, and why the editor's honest note warns only about the re-entry case — the
+same treatment warps and signs get.
+
 **There is no rotation in the save, and there cannot be.** A north connection *always* reads the
 neighbour's bottom 3 rows, a west connection its right 3 columns, etc. — the neighbour's block data is
 read in its natural orientation; no byte anywhere expresses a rotated map. The meaningful equivalent a

@@ -1185,6 +1185,13 @@ The four edges become live, on 4b's object machinery + the neighbour-map rendere
 - **Ghost arrows.** A faint, **lightweight** white arrow (~1 block) centred on each of the four edges,
   drawn only where **no** connection exists — an invitation, never chrome. It sits on the **Connections**
   layer (§4). Gone the instant a connection is added; back when it's removed.
+- **⏳ FOLLOW-UP (from the live pass, 2026-07-15): the map's own RING must render the SAVE's connections.**
+  Today `buildOverworldMap`/`applyConnections`/`connectionStrips` read the map's **shipped DB**
+  connections, so the 3-block ring bleeds the *original* neighbours, not the save's edits. The
+  neighbour-map render and the interactive strip are now save-based (fixed 2026-07-15), but the ring
+  itself isn't — so an edited/added connection doesn't change the ring bleed. Fixing it means threading
+  the save's live connections through the render pipeline (and the `image://map` provider, which only
+  carries `mapInd` + a few bytes today). Its own change; scoped as a Phase 7 follow-up.
 - **The live connection = the full neighbour map.** When a connection exists, render the neighbour map
   (via `MapEngine`) as an image bleeding off that edge, clipped to a comfortable margin, dimmed slightly so
   *our* map stays the subject. It aligns to the offset — what you'd see if you could peer past the seam.
@@ -1306,6 +1313,7 @@ and that is precisely the mistake this section exists to prevent.
 |---|---|---|
 | ~~**Signs**~~ | ✅ **BRIEFED 2026-07-14 — graduated to Phase 6.** | Was cut out of Phase 5b, held here until Twilight briefed it. She now has: add-sign tool, X/Y, a grouped text picker of the map's real text. See **Phase 6** above and [`../reference/signs.md`](../reference/signs.md). |
 | ~~**Connections**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 7.** | Was held here until Twilight briefed it. She now has: offset-driven editing with auto-derive, the full neighbour map draggable on the canvas, both add-gestures, explicit re-home (no rotation), delete + inspector. See **Phase 7** above and [`../reference/map-connections.md`](../reference/map-connections.md). |
+| **Living / wandering NPCs** | 🚶 NPCs that WANDER for a "living" feel — on the main map AND the connecting maps — and **collide with the player** like the real game (Twilight, 2026-07-15, from the connections live pass) | The map already draws NPCs and (Phase 3) animates tiles, so wandering looks like a small step. It isn't: it is **NPC movement AI**, which the plan explicitly scoped OUT (see Phase 15's scope guard), and it runs into the **determinism rule** (screenshots/tests render frame 0 — a wandering cast can't flap them). Needs its own conversation: what "wander" means (random-walk vs. the ROM's movement bytes), how it stays deterministic, and how it reconciles with "the main-map sprites don't move by default." **Do not build until briefed + designed.** |
 | **Phase 8 — Encounters** | 🌿 wild Pokémon (`grassRate`, 10 grass slots, `waterRate`, 10 water slots, `pauseMons3Steps`) | The Grass/Water meaning layers already exist, so it looks like the panel is half-built. It isn't. |
 | **Phase 9 — Area State** | the `AreaNPC` flags, the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | It is "the leftovers", which is not a design. |
 | **Phase 10 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |

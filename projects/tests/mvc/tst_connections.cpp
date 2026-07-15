@@ -108,6 +108,7 @@ private slots:
 
   void addConnection_writesFlagBitAndItsSlotOnly();  // KEYSTONE
   void addConnection_refusesADuplicateEdge();
+  void everyConnectionHasAnInteractiveStrip();   // the live-review bug: added ones had none
   void removeConnection_clearsOnlyTheFlagBit();      // KEYSTONE
   void setConnectionOffset_movesOnlyItsSlot();       // KEYSTONE
   void rehomeConnection_movesToAnotherEdge();
@@ -323,6 +324,40 @@ void TestConnections::addConnection_refusesADuplicateEdge()
 
   QVERIFY2(!r->map->addConnection(have.first(), 1),
            "a second connection was allowed on an edge that already has one");
+
+  delete r;
+}
+
+/**
+ * @brief The live-review bug: a connection you ADD must have an interactive strip.
+ *
+ * `connectionList()` walks the map's *shipped* DB connections, so an added save connection had no
+ * strip and nothing to grab (the "weird broken state"). The strip rect now comes from the SAVE's own
+ * connection (connectionEditList's `hasStrip` + `stripX/Y/W/H`), so both the fixture's real
+ * connections AND a freshly-added one report a grabbable box.
+ */
+void TestConnections::everyConnectionHasAnInteractiveStrip()
+{
+  Rig* r = makeRig();
+
+  // The fixture's real connections have strips.
+  for (int dir : existingDirs(r->map)) {
+    const QVariantMap e = edge(r->map->connectionEditList(), dir);
+    QVERIFY2(e.value("hasStrip").toBool(), "a shipped connection lost its interactive strip");
+    QVERIFY(e.value("stripW").toInt() > 0 && e.value("stripH").toInt() > 0);
+  }
+
+  // An ADDED one does too -- this is the bug.
+  const int free = aFreeDir(r->map);
+  QVERIFY(free >= 0);
+  auto* to = MapsDB::inst()->getIndAt(QStringLiteral("1"));   // Viridian City, a real sized map
+  QVERIFY(to != nullptr);
+  QVERIFY(r->map->addConnection(free, to->getInd()));
+
+  const QVariantMap e = edge(r->map->connectionEditList(), free);
+  QVERIFY2(e.value("hasStrip").toBool(),
+           "an ADDED connection has no interactive strip -- the review bug is back");
+  QVERIFY(e.value("stripW").toInt() > 0 && e.value("stripH").toInt() > 0);
 
   delete r;
 }
