@@ -140,6 +140,56 @@ panel, not the on-canvas per-NPC inspector (Phase 4b) — the plan keeps the two
 
 ---
 
+## 4a. The trainer pointer — researched; why it stays raw (2026-07-15)
+
+The pointer doctrine wants a pointer *resolved to the named thing it points at*, raw hex only as a last
+resort. This one was chased to the primary source, and the last resort is the honest answer. Here is why.
+
+**What it points at.** `wTrainerHeaderPtr` (`home/trainers.asm`) holds the ROM address of one **trainer
+header** — a small struct the game reads via `ReadTrainerHeaderInfo` at offsets 0/2/4/6/8: the event
+*flag bit*, the *flag byte* pointer, and the *before* / *after* / *end* battle-text pointers. Headers
+are defined **per map**, systematically, in the map's script: a `<Map>TrainerHeaders:` label followed by
+one `trainer` macro per trainer, e.g. from `scripts/CeladonGym.asm`:
+
+```
+CeladonGymTrainerHeaders:
+	def_trainers 2
+CeladonGymTrainerHeader0:
+	trainer EVENT_BEAT_CELADON_GYM_TRAINER_0, 2, CeladonGymBattleText2, CeladonGymEndBattleText2, CeladonGymAfterBattleText2
+	...
+	db -1 ; end
+```
+
+So the value *means* "trainer N on the current map", and `TalkToTrainer`/`ExecuteCurMapScriptInTable`
+set it from `hl` when that trainer's script runs.
+
+**Why it is NOT resolved to a picker.** Three facts, each verified, stack up:
+
+1. **It is transient scratch the game never reads from a save.** It is set only *during* a trainer
+   engagement and read only within that same script run. Nothing on the load path consumes it — the
+   probe (§5) confirms the raw word merely *survives* (it is "kept"), inert. A real save's value is
+   leftover: the clean `BaseSAV` holds **`0x9763`**, which is in the **WRAM** range — not even a valid
+   ROM header address. It is garbage, and harmless.
+2. **Resolving a value → a name needs per-map ROM addresses we don't have.** The header labels
+   (`<Map>TrainerHeaderN`) resolve to bank-relative ROM addresses fixed at *assembly* time, different
+   per map and bank. Mapping the stored word back to "trainer N of map X" would require extracting every
+   map's header addresses from a built `pokered` (the `.sym`) or the cartridge — a large, brittle
+   pipeline **our DB doesn't carry** — to name a field that does nothing in a save.
+3. **A picker here would be false precision.** Offering "pick a trainer" implies the choice writes a
+   meaningful pointer; without the addresses it cannot, and *with* them it would still only be writing a
+   value the game ignores until a battle it itself re-sets. That is exactly the kind of dishonest,
+   build-it-because-we-can UI the project rejects.
+
+**The honest treatment (what the panel does).** Show the value, explain plainly what it is (a transient
+ROM pointer set only during a trainer battle; a leftover in a normal save), keep the **full-range hex**
+editor (nothing refused), and give a one-click **Clear to 0** for tidying the leftover. The *real*
+trainer editing a person wants — which trainer stands where, its class and roster — lives on the map's
+**trainer sprites** (the object layer / sprite data), not in this scratch word. If a resolved picker is
+ever wanted, it is its own briefed feature gated on a per-map trainer-header extraction; it is **not**
+owed here.
+
+---
+
 ## 5. The console's testimony
 
 `scripts/emu/probe_npc_character_state.py` stamps **all nine** values to 1 (and the pointer to a

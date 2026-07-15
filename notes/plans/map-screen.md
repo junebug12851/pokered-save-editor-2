@@ -1402,9 +1402,12 @@ a reason to hide):
 - **Controls** — *Scripted movement — starting* / *— running* (kept), *Ignore player input* /
   *Scripted-movement active* (⚠ cleared on load).
 - **Battle** — *Trainer battle queued* (kept), *Test battle (debug)* (kept), and **Trainer pointer**
-  (`wTrainerHeaderPtr`, kept) as a hex field. ⚠️ **Open follow-up:** the pointer is shown *raw* (hex) —
-  the `area-map-state` doctrine wants it resolved to the named trainer-header entry, but that table
-  isn't imported yet. Flagged for Twilight; a resolved picker is a future refinement.
+  (`wTrainerHeaderPtr`, kept). **Researched + resolved by design** (reference/npc-character-state.md
+  §4a): the pointer is transient scratch the game never reads from a save (the clean `BaseSAV` holds a
+  WRAM-range *leftover*), and a "named trainer" picker would be false precision needing per-map ROM
+  header addresses we don't carry. Honest treatment shipped: explained plainly, **full-range hex** kept
+  (nothing refused), plus a one-click **Clear** for the leftover. A resolved picker is *not* owed here;
+  if ever wanted it's its own briefed feature gated on a trainer-header extraction.
 
 `tst_qml_screens` green (16/16). Screenshot-reviewed; then opened in the foreground for Twilight's live
 UI/UX pass (she owns the layout/wording/glyph decisions).

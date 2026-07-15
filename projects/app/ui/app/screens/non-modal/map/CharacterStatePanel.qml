@@ -226,23 +226,46 @@ Item {
           onToggle: panel.npc.testBattle = !panel.npc.testBattle
         }
 
-        // The trainer-header pointer. A raw address is the last resort (a friendlier, resolved
-        // picker is a future refinement — the trainer-header table isn't imported yet), but the
-        // value is never hidden: full 16-bit range, shown as hex.
+        // The trainer-header pointer. Researched (reference/npc-character-state.md §4a): it is
+        // TRANSIENT scratch the game sets only during a trainer engagement and never reads back from a
+        // save, so a "resolve to a named trainer" picker would be false precision over a leftover value
+        // (and would need per-map ROM header addresses we don't carry). The honest treatment: explain
+        // it, keep the full-range hex (nothing refused), and offer a one-click Clear for the leftover.
         ColumnLayout {
           Layout.fillWidth: true
           Layout.topMargin: 6
           spacing: 2
 
-          Label {
-            text: qsTr("Trainer pointer")
-            font.pixelSize: 12
-            color: brg.settings.textColorDark
+          RowLayout {
+            Layout.fillWidth: true
+            Label {
+              text: qsTr("Trainer pointer")
+              font.pixelSize: 12
+              color: brg.settings.textColorDark
+              Layout.fillWidth: true
+            }
+            // Tidy the leftover -- only offered when there's something to clear.
+            Text {
+              visible: panel.npc.trainerHeaderPtr !== 0
+              text: qsTr("Clear")
+              font.pixelSize: 10
+              font.underline: clearArea.containsMouse
+              color: brg.settings.accentColor
+              MouseArea {
+                id: clearArea
+                anchors.fill: parent
+                anchors.margins: -4
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: panel.npc.trainerHeaderPtr = 0
+              }
+            }
           }
           Label {
             Layout.fillWidth: true
-            text: qsTr("Points into this map's trainer data for the trainer being fought. Scratch — "
-                       + "0 in any normal save.")
+            text: qsTr("A ROM pointer the game sets only while a trainer battle starts, and never reads "
+                       + "back from a save — so it's a harmless leftover here, not a setting. Editable "
+                       + "anyway (full range). Real trainer editing lives on the map's trainer sprites.")
             wrapMode: Text.Wrap
             font.pixelSize: 10
             opacity: 0.55
