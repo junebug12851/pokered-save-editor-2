@@ -473,6 +473,57 @@ public:
    */
   Q_INVOKABLE QVariantList connectionList() const;
 
+  // ── The connecting routes (edge connections) — EDITING ────────────────────────
+  //
+  // ⚠️ Read notes/reference/map-connections.md, the "Editing a connection — the human model" section.
+  // A connection has only TWO human inputs — the neighbour map and one signed offset (−27…+27) — and
+  // the other nine bytes are MACRO-DERIVED (MapEngine::connectionBytes, the cartridge-verified path,
+  // never MapDBEntryConnect::stripSize()). So editing is offset-driven with auto-derive by default;
+  // raw-byte editing (break-sync) arrives with the inspector (Phase 7c). Rotation is NOT representable
+  // in the save; the meaningful equivalent is re-homing to another edge (@ref rehomeConnection).
+
+  /// The four edges, existing or not: `{ dir, dirName, exists, toMap, toName, offset, synced,
+  /// offsetMin, offsetMax }`. What the canvas arrows and the inspector both read.
+  Q_INVOKABLE QVariantList connectionEditList() const;
+
+  /// Is there a connection on @p dir? (@p dir is MapDBEntryConnect::ConnectDir: N 0, S 1, E 2, W 3.)
+  Q_INVOKABLE bool connectionExists(int dir) const;
+
+  /// The signed offset a saved connection was built with, recovered from its stored bytes. 0 if none.
+  Q_INVOKABLE int connectionOffsetOf(int dir) const;
+
+  /// Do @p dir's stored bytes equal what the macro derives for (its neighbour, its recovered offset)?
+  /// A raw-edited (desynced) connection returns false — the canvas then offers the richer handles and
+  /// the inspector unlocks the raw fields.
+  Q_INVOKABLE bool connectionSynced(int dir) const;
+
+  /// Add a connection on @p dir to map @p toMapInd, centred (offset 0). Writes the flag bit and the
+  /// derived 11-byte slot, and nothing else. @return true, or false if @p dir already has one.
+  Q_INVOKABLE bool addConnection(int dir, int toMapInd);
+
+  /// Remove @p dir's connection. Clears the flag bit only (byte fidelity: the stale slot is left as
+  /// it lies, exactly as delete-a-warp leaves the packed tail).
+  Q_INVOKABLE void removeConnection(int dir);
+
+  /// Point @p dir's connection at a different neighbour @p toMapInd, keeping its offset; re-derives.
+  Q_INVOKABLE void setConnectionMap(int dir, int toMapInd);
+
+  /// Slide @p dir's connection to signed @p offset and re-derive the strip. The drag-on-canvas path;
+  /// writes only the slot's bytes.
+  Q_INVOKABLE void setConnectionOffset(int dir, int offset);
+
+  /// Re-home @p fromDir's connection onto @p toDir (same neighbour + offset, recomputed for the new
+  /// edge) — the explicit "attach to another side" option, never automatic. No-op if @p fromDir has
+  /// none or @p toDir already has one.
+  Q_INVOKABLE void rehomeConnection(int fromDir, int toDir);
+
+  /// How many more connections this map can hold (4 − current).
+  Q_INVOKABLE int connectionRoomLeft() const;
+
+  /// Has the user changed this map's connections this session? Same honesty rule as @ref warpsEdited —
+  /// the game restores the map's original connections when the player leaves and walks back in.
+  Q_INVOKABLE bool connectionsEdited() const;
+
   // ── The sprite set ────────────────────────────────────────────────────────────
   int spriteSetId() const;
   QString spriteSetName() const;
@@ -937,6 +988,9 @@ private:
 
   /// @see signsEdited. Set by any edit to the signs; never by loading them.
   bool signsWereEdited = false;
+
+  /// @see connectionsEdited. Set by any edit to the edge connections; never by loading them.
+  bool connectionsWereEdited = false;
 
   /// @see showScratch. OFF -- it is clutter, and it is a third of the panel.
   bool showScratchFields = false;

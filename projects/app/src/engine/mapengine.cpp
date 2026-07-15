@@ -260,6 +260,62 @@ int MapEngine::connectionOffset(const MapDBEntryConnect* connect)
   return (stripOffset != 0) ? (-stripOffset - 3) : stripMove;
 }
 
+MapEngine::ConnBytes MapEngine::connectionBytes(const MapDBEntry* from, int dir,
+                                                const MapDBEntry* to, int offset)
+{
+  // The whole 11-byte struct, from the ONE verified macro. connectionOf gives src/dest/length
+  // (and validates the sizes); the view pointer and the two alignment bytes come from the same
+  // table in reference/map-connections.md -- checked consistent with the 78/78-verified DB math
+  // (window()/xAlign()/yAlign()) in tst_connections.
+  ConnBytes b;
+  if (from == nullptr || to == nullptr)
+    return b;
+
+  const Connection c = connectionOf(from, dir, to, offset);
+  if (!c.valid)
+    return b;   // a sizeless (glitch) neighbour: caller keeps mapPtr, leaves the rest to break-sync
+
+  const int toW = to->getWidth();
+  const int toH = to->getHeight();
+
+  int win = 0, x = 0, y = 0;
+  switch (dir) {
+    case MapDBEntryConnect::ConnectDir::NORTH:
+      win = (toW + 6) * toH + 1;  y = toH * 2 - 1;  x = -2 * offset;  break;
+    case MapDBEntryConnect::ConnectDir::SOUTH:
+      win = toW + 7;              y = 0;            x = -2 * offset;  break;
+    case MapDBEntryConnect::ConnectDir::WEST:
+      win = 2 * toW + 6;          y = -2 * offset;  x = 2 * toW - 1;  break;
+    case MapDBEntryConnect::ConnectDir::EAST:
+      win = toW + 7;              y = -2 * offset;  x = 0;            break;
+    default:
+      return b;
+  }
+
+  b.mapPtr    = c.toInd;
+  b.stripSrc  = c.srcAddr;
+  b.stripDst  = overworldMapAddr + c.destIndex;
+  b.stripWidth = c.length;
+  b.width     = c.toWidth;   // == toW
+  b.yAlign    = y;
+  b.xAlign    = x;
+  b.viewPtr   = overworldMapAddr + win;
+  b.valid     = true;
+  return b;
+}
+
+int MapEngine::connectionOffsetFrom(int dir, int xAlign, int yAlign)
+{
+  // N/S store -2*offset in xAlign; E/W store it in yAlign. Sign-extend the byte, then invert.
+  const bool ns = (dir == MapDBEntryConnect::ConnectDir::NORTH ||
+                   dir == MapDBEntryConnect::ConnectDir::SOUTH);
+  int a = ns ? xAlign : yAlign;
+  a &= 0xFF;
+  if (a > 127)
+    a -= 256;
+  return -a / 2;
+}
+
 QVector<MapEngine::Strip> MapEngine::connectionStrips(int mapInd)
 {
   // The same walk applyConnections() does, recording WHERE each strip lands instead of copying it.

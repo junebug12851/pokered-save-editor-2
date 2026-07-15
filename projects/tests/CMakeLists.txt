@@ -212,6 +212,20 @@ if(TARGET appcore)
     set_tests_properties(tst_player PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_player)
 
+    # THE CONNECTIONS -- the four edge connections and the offset-driven edit model (Phase 7a).
+    # Keystone `savedConnectionsAreInSync`: the fixture is a real console save, so its connection
+    # bytes ARE the cartridge's, and the derive (map + offset -> the 11 bytes) reproducing them proves
+    # MapEngine::connectionBytes against the console for free. Plus the byte-diff keystones on
+    # add/remove/offset. See notes/reference/map-connections.md -- verified against the cartridge.
+    qt_add_executable(tst_connections
+        mvc/tst_connections.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_connections PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_connections PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_connections COMMAND tst_connections)
+    set_tests_properties(tst_connections PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_connections)
+
     qt_add_executable(tst_map_layers
         mvc/tst_map_layers.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)

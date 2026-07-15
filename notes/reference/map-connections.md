@@ -124,6 +124,56 @@ Checked against the real headers:
 
 So everything the macro needs is recoverable from data we already ship. **Nothing has to be invented.**
 
+## Editing a connection — the human model (2026-07-15, briefed by Twilight)
+
+Everything above is what the *game* reads. This is what a **person** should be handed, and it is the
+whole reason v1's Map page was error-prone: it exposed the 11-byte struct raw (Map ID, UL Corner,
+Strip Src, Strip Dest, Strip Width, X/Y Align) and asked a human to keep nine derived numbers
+self-consistent by hand.
+
+**A connection has exactly TWO human-meaningful inputs:**
+
+1. **Which map** is the neighbour (`ConnectedMap` / our `mapPtr`).
+2. **The offset** — one signed number (**−27…+27**), how far the neighbour slides along the shared edge.
+
+**The other nine bytes are all derived** by the compile-time `connection` macro from (direction, both
+maps' sizes, offset): `stripSrc`, `stripDst`, `stripWidth`, `width`, `xAlign`, `yAlign`, `viewPtr`, and
+the post-clamp `_src`/`_tgt` pair. So the editor's job is the **derived-byte doctrine** applied to
+connections: the user sets **map id + offset**, and we recompute the nine — exactly as `MapEngine` already
+does, and exactly the invert-then-recompute round-trip proven in "What `maps.json` kept" above. Raw-byte
+editing stays available (break-sync), for power users and for reproducing glitch connections.
+
+**There is no rotation in the save, and there cannot be.** A north connection *always* reads the
+neighbour's bottom 3 rows, a west connection its right 3 columns, etc. — the neighbour's block data is
+read in its natural orientation; no byte anywhere expresses a rotated map. The meaningful equivalent a
+person might want is **re-homing a connection to a different edge** (change the direction N↔S↔E↔W), which
+just moves which flag bit is set + which 11-byte slot is written and recomputes the block for the new
+direction. So "attach this neighbour to another side" is a real, representable action; "rotate the
+neighbour" is not. The neighbour must always render in its natural orientation.
+
+### The save footprint of an edit (what bytes a connection edit touches)
+
+Verified against `AreaMap::load`/`save` (`expanded/area/areamap.cpp`):
+
+| what | bytes |
+|---|---|
+| **Enable flags** | one byte at **`0x261C`**, bits **0=East, 1=West, 2=South, 3=North** |
+| **North block** | 11 bytes at **`0x261D`** |
+| **South block** | 11 bytes at **`0x2628`** |
+| **West block** | 11 bytes at **`0x2633`** |
+| **East block** | 11 bytes at **`0x263E`** |
+
+Each 11-byte block is `mapPtr(1) · stripSrc(2, LE) · stripDst(2, LE) · stripWidth(1) · width(1) ·
+yAlign(1) · xAlign(1) · viewPtr(2, LE)` (`MapConnData::save`). **Add** = set the flag bit + write the 11
+bytes of that slot. **Delete** = clear the flag bit (byte fidelity: leave the stale 11 bytes as they lie
+unless a value is deliberately written). **Move/offset** = rewrite (a subset of) the 11 bytes of the one
+slot. Nothing outside the touched slot + the flags byte moves — the same fidelity rule as every other
+object edit.
+
+> ⚠️ Field-name gotcha carried from v1's struct: our `MapConnData::stripWidth` is the game's
+> `ConnectionStripLength` (blocks-per-row for N/S, **rows** for E/W), and our `width` is the game's
+> `ConnectedMapWidth` (the source row stride). Two different fields; do not conflate them in the UI.
+
 ## The copy itself (`LoadTileBlockMap`, `home/overworld.asm`)
 
 The ring is filled with the border block **first**, then each present connection is copied over it:

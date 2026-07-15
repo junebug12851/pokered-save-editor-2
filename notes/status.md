@@ -14,6 +14,25 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🔗 CONNECTIONS (connecting routes) — BRIEFED + DESIGNED (2026-07-15, not built)
+
+Twilight briefed the four edge connections and answered the design questions; written up as
+**Phase 7** in [`plans/map-screen.md`](plans/map-screen.md), graduated out of §12b. The key idea:
+a connection has only **two human inputs** (neighbour map + a signed offset −27…+27); the other nine
+bytes are **macro-derived** — so editing is offset-driven with auto-derive, raw values shown (editable
+on break-sync). Full neighbour map draggable on the canvas; both add-gestures; explicit re-home to
+another edge (no rotation — it isn't representable). Human model + save footprint (flags `0x261C` +
+four 11-byte blocks) now in [`reference/map-connections.md`](reference/map-connections.md).
+
+**Phase 7a BUILT (2026-07-15, `0.39.1-alpha`) — the model, made true, no UI yet.**
+`MapEngine::connectionBytes()` derives the whole 11-byte struct from map + offset via the
+cartridge-verified macro; `MapModel` gains the edit API (`addConnection`/`removeConnection`/
+`setConnectionOffset`/`setConnectionMap`/`rehomeConnection`/`connectionSynced`/`connectionEditList`),
+each writing only the flag bit + its one slot. **`tst_connections` 14/14** — keystone
+`savedConnectionsAreInSync` proves the derive reproduces the fixture's real console bytes; siblings
+(tst_warps 24, tst_map 27, tst_map_sprites 18) still green. **Next: Phase 7b (canvas — ghost arrows +
+draggable full neighbour map), 7c (inspector), 7d (sync-aware handles), 7e (verify + live review).**
+
 ### 🧍 THE PLAYER details panel — BUILT (2026-07-14, `0.39.0-alpha`)
 
 Twilight briefed **fleshing out the full player details panel** — all 26 `AreaPlayer` map-state bytes

@@ -49,6 +49,8 @@
 #include <pse-savefile/expanded/fragments/spritedata.h>
 #include <pse-savefile/expanded/fragments/signdata.h>
 #include <pse-savefile/expanded/fragments/warpdata.h>
+#include <pse-savefile/expanded/fragments/mapconndata.h>
+#include <pse-db/entries/mapdbentryconnect.h>
 #include <pse-savefile/expanded/world/worldgeneral.h>
 #include <pse-db/entries/mapdbentrywarpin.h>
 #include <pse-db/entries/mapdbentrywarpout.h>
@@ -216,6 +218,215 @@ QVariantList MapModel::connectionList() const
     m["h"] = s.rows * MapEngine::blockPx;
 
     m["blocks"] = QStringLiteral("%1 × %2").arg(s.cols).arg(s.rows);
+
+    out.append(m);
+  }
+
+  return out;
+}
+
+// ── The connecting routes (edge connections) — EDITING ────────────────────────────────────────────
+//
+// A connection is neighbour + one signed offset; the other nine bytes are MapEngine::connectionBytes.
+// Read notes/reference/map-connections.md. Every write here touches only the flag bit + the one 11-byte
+// slot (tst_connections byte-diffs the whole 32 KB save and demands exactly that).
+
+namespace {
+
+/// Write the eight derived save bytes onto a live connection (each with its Changed()). Sets the
+/// neighbour id too when the derive is valid; on an invalid (sizeless/glitch) derive it leaves the
+/// strip fields alone — the caller has already set mapPtr, and the raw path (break-sync) does the rest.
+void applyConnBytes(MapConnData* c, const MapEngine::ConnBytes& b)
+{
+  if (c == nullptr || !b.valid)
+    return;
+
+  c->mapPtr = b.mapPtr;         c->mapPtrChanged();
+  c->stripSrc = b.stripSrc;     c->stripSrcChanged();
+  c->stripDst = b.stripDst;     c->stripDstChanged();
+  c->stripWidth = b.stripWidth; c->stripWidthChanged();
+  c->width = b.width;           c->widthChanged();
+  c->yAlign = b.yAlign;         c->yAlignChanged();
+  c->xAlign = b.xAlign;         c->xAlignChanged();
+  c->viewPtr = b.viewPtr;       c->viewPtrChanged();
+}
+
+} // namespace
+
+bool MapModel::connectionExists(int dir) const
+{
+  return map != nullptr && map->connections.contains((var8)dir);
+}
+
+int MapModel::connectionRoomLeft() const
+{
+  return (map == nullptr) ? 0 : std::max(0, 4 - static_cast<int>(map->connections.size()));
+}
+
+bool MapModel::connectionsEdited() const
+{
+  return connectionsWereEdited;
+}
+
+int MapModel::connectionOffsetOf(int dir) const
+{
+  if (!connectionExists(dir))
+    return 0;
+
+  MapConnData* c = map->connections.value((var8)dir);
+  return MapEngine::connectionOffsetFrom(dir, c->xAlign, c->yAlign);
+}
+
+bool MapModel::connectionSynced(int dir) const
+{
+  if (!connectionExists(dir))
+    return false;
+
+  MapConnData* c = map->connections.value((var8)dir);
+  MapDBEntry* from = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  MapDBEntry* to   = MapsDB::inst()->getIndAt(QString::number(c->mapPtr));
+
+  const MapEngine::ConnBytes b =
+      MapEngine::connectionBytes(from, dir, to, connectionOffsetOf(dir));
+  if (!b.valid)
+    return false;   // can't derive a sizeless neighbour, so it can't be "in sync"
+
+  // Compare at the width the SAVE actually stores each field in: words for the pointers, bytes for
+  // the rest (the derive's alignment values can be negative; the save masks them).
+  auto w  = [](int v) { return v & 0xFFFF; };
+  auto by = [](int v) { return v & 0xFF; };
+
+  return by(c->mapPtr)   == by(b.mapPtr)
+      && w(c->stripSrc)  == w(b.stripSrc)
+      && w(c->stripDst)  == w(b.stripDst)
+      && by(c->stripWidth) == by(b.stripWidth)
+      && by(c->width)    == by(b.width)
+      && by(c->yAlign)   == by(b.yAlign)
+      && by(c->xAlign)   == by(b.xAlign)
+      && w(c->viewPtr)   == w(b.viewPtr);
+}
+
+bool MapModel::addConnection(int dir, int toMapInd)
+{
+  if (map == nullptr || dir < 0 || dir > 3 || map->connections.contains((var8)dir))
+    return false;
+
+  map->connNew(dir);   // inserts a blank slot + sets the flag bit on save
+  MapConnData* c = map->connections.value((var8)dir);
+  if (c == nullptr)
+    return false;
+
+  // The neighbour first, so an un-derivable (glitch) map still records who it points at.
+  c->mapPtr = toMapInd;
+  c->mapPtrChanged();
+
+  MapDBEntry* from = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  MapDBEntry* to   = MapsDB::inst()->getIndAt(QString::number(toMapInd));
+  applyConnBytes(c, MapEngine::connectionBytes(from, dir, to, 0));
+
+  connectionsWereEdited = true;
+  map->connectionsChanged();
+  changed();   // the ring bleeds a new map's edge — the map image really does change
+  return true;
+}
+
+void MapModel::removeConnection(int dir)
+{
+  if (!connectionExists(dir))
+    return;
+
+  map->connRemove(dir);   // clears the flag bit; the stale 11 bytes are left as they lie
+  connectionsWereEdited = true;
+  changed();
+}
+
+void MapModel::setConnectionMap(int dir, int toMapInd)
+{
+  if (!connectionExists(dir))
+    return;
+
+  const int off = connectionOffsetOf(dir);
+  MapConnData* c = map->connections.value((var8)dir);
+  c->mapPtr = toMapInd;
+  c->mapPtrChanged();
+
+  MapDBEntry* from = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  MapDBEntry* to   = MapsDB::inst()->getIndAt(QString::number(toMapInd));
+  applyConnBytes(c, MapEngine::connectionBytes(from, dir, to, off));
+
+  connectionsWereEdited = true;
+  map->connectionsChanged();
+  changed();
+}
+
+void MapModel::setConnectionOffset(int dir, int offset)
+{
+  if (!connectionExists(dir))
+    return;
+
+  MapConnData* c = map->connections.value((var8)dir);
+  MapDBEntry* from = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  MapDBEntry* to   = MapsDB::inst()->getIndAt(QString::number(c->mapPtr));
+
+  const MapEngine::ConnBytes b = MapEngine::connectionBytes(from, dir, to, offset);
+  if (!b.valid)
+    return;   // sizeless neighbour: the offset knob doesn't apply, only the raw path does
+
+  applyConnBytes(c, b);
+  connectionsWereEdited = true;
+  map->connectionsChanged();
+  changed();
+}
+
+void MapModel::rehomeConnection(int fromDir, int toDir)
+{
+  if (fromDir == toDir || !connectionExists(fromDir) || connectionExists(toDir)
+      || toDir < 0 || toDir > 3)
+    return;
+
+  MapConnData* c = map->connections.value((var8)fromDir);
+  const int toMap = c->mapPtr;
+  const int off   = connectionOffsetOf(fromDir);
+
+  map->connRemove(fromDir);
+  addConnection(toDir, toMap);        // derives for the new edge; sets edited + emits
+  setConnectionOffset(toDir, off);    // re-applies the offset on the new edge
+}
+
+QVariantList MapModel::connectionEditList() const
+{
+  QVariantList out;
+  if (map == nullptr)
+    return out;
+
+  // MapDBEntryConnect::ConnectDir order: NORTH 0, SOUTH 1, EAST 2, WEST 3 — the same order the
+  // save's flag byte and connectionList() use. Getting it wrong mislabels every edge.
+  static const char* dirName[] = { "North", "South", "East", "West" };
+
+  for (int dir = 0; dir < 4; ++dir) {
+    QVariantMap m;
+    m["dir"] = dir;
+    m["dirName"] = QObject::tr(dirName[dir]);
+    // Real headers run −27…+27; a little headroom for the slider, hack values go via break-sync.
+    m["offsetMin"] = -32;
+    m["offsetMax"] = 32;
+
+    const bool ex = connectionExists(dir);
+    m["exists"] = ex;
+
+    if (ex) {
+      MapConnData* c = map->connections.value((var8)dir);
+      MapDBEntry* to = MapsDB::inst()->getIndAt(QString::number(c->mapPtr));
+      m["toMap"] = c->mapPtr;
+      m["toName"] = (to == nullptr) ? QObject::tr("Map %1").arg(c->mapPtr) : to->bestName();
+      m["offset"] = connectionOffsetOf(dir);
+      m["synced"] = connectionSynced(dir);
+    } else {
+      m["toMap"] = -1;
+      m["toName"] = QString();
+      m["offset"] = 0;
+      m["synced"] = false;
+    }
 
     out.append(m);
   }

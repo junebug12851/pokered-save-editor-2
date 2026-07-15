@@ -156,6 +156,40 @@ public:
                                  const MapDBEntry* to, int offset);
 
   /**
+   * @brief The **eleven save bytes** of one connection, derived from map + offset (the macro).
+   *
+   * @ref connectionOf gives where a strip reads/lands/how much; this gives the whole
+   * `map_connection_struct` the SAVE stores -- the eight editable fields of MapConnData
+   * (`mapPtr`, `stripSrc`, `stripDst`, `stripWidth`, `width`, `yAlign`, `xAlign`, `viewPtr`).
+   * It reuses @ref connectionOf for src/dest/length and adds the view pointer and the two
+   * alignment bytes from the same macro table, so there is ONE source of derivation and it is
+   * the cartridge-verified one -- never `MapDBEntryConnect::stripSize()`.
+   *
+   * This is the derived-byte doctrine's engine: a person sets **neighbour + offset**, and the
+   * editor writes these. See notes/reference/map-connections.md.
+   */
+  struct ConnBytes {
+    int mapPtr = 0;      ///< `ConnectedMap` -- the neighbour's id (one byte).
+    int stripSrc = 0;    ///< `ConnectionStripSrc` -- ROM pointer into the neighbour's blocks.
+    int stripDst = 0;    ///< `ConnectionStripDest` -- pointer into `wOverworldMap`.
+    int stripWidth = 0;  ///< `ConnectionStripLength` -- N/S blocks-per-row, E/W row count.
+    int width = 0;       ///< `ConnectedMapWidth` -- the source row stride.
+    int yAlign = 0;      ///< `ConnectedMapYAlignment` (may be negative; the save masks to a byte).
+    int xAlign = 0;      ///< `ConnectedMapXAlignment` (may be negative; the save masks to a byte).
+    int viewPtr = 0;     ///< `ConnectedMapViewPointer` -- the neighbour's UL-corner view pointer.
+    bool valid = false;  ///< False when either map has no size (a glitch id): caller writes mapPtr only.
+  };
+
+  /// The eleven bytes of @p from's connection in @p dir to @p to at signed @p offset. @see ConnBytes.
+  static ConnBytes connectionBytes(const MapDBEntry* from, int dir,
+                                   const MapDBEntry* to, int offset);
+
+  /// Recover the signed offset a saved connection was built with, from its stored alignment byte.
+  /// N/S carry it in `xAlign`, E/W in `yAlign`, as `-2 * offset` -- so this inverts that. @p xAlign /
+  /// @p yAlign are the raw stored bytes (0..255); they are sign-extended here. See map-connections.md.
+  static int connectionOffsetFrom(int dir, int xAlign, int yAlign);
+
+  /**
    * @brief Where each connected map's strip LANDS in the ring -- in buffer BLOCK coordinates.
    *
    * The border ring is not a wall of trees: the game bleeds the neighbouring maps' edges into it, so

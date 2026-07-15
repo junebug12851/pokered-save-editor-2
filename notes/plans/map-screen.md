@@ -353,7 +353,7 @@ What gets built:
 ROM's list of *passable* tiles), the ledges known, and the warps in hand, the editor can let you **drive
 the player around the map with the arrow keys** — real collision, real ledge jumps, the screen box and the
 draw area following him exactly as `LoadCurrentMapView` moves them, and a warp tile offering to take you to
-where it goes. That is the map emulator finally *being* one. It is scoped as its own phase (**Phase 10**) with
+where it goes. That is the map emulator finally *being* one. It is scoped as its own phase (**Phase 15**) with
 its own question in §14, because it is the one feature here that is a small game engine rather than a
 screen.
 
@@ -416,7 +416,7 @@ The QML cannot do this alone, and two of these are blockers:
    and visual-regression suites deterministic, and what lets `tst_emu_parity` compare us to the console
    frame by frame. The clock itself is ~30 lines of QML-facing C++ (`brg.mapClock`: `playing`, `speed`,
    `frame`, `step()`), and it **writes nothing to the save**.
-8. **`MapWalker`** (Phase 10) — the walk simulation: the passable-tile list, the elevation pairs, the ledge
+8. **`MapWalker`** (Phase 15) — the walk simulation: the passable-tile list, the elevation pairs, the ledge
    directions, the step cadence, and the camera geometry we already reproduce. Preview-only until committed.
 
 Everything else is QML.
@@ -441,7 +441,7 @@ screens/non-modal/map/
 
 ---
 
-## 12. The programme — fourteen phases, plus one optional
+## 12. The programme — fifteen phases, plus one optional
 
 > **The bar (Twilight, 2026-07-12, mandatory):** *"You absolutely have to put in the long work for each of
 > these components and pieces."* This is not a re-skin sprint. **Each phase is a full pass on one body of
@@ -1106,6 +1106,160 @@ byte-diff proving load+resave of an untouched save changes **nothing**, that dra
 
 ---
 
+### Phase 7 — CONNECTIONS: the connecting routes  *(BRIEFED 2026-07-15, Twilight)*
+
+> **Read [`../reference/map-connections.md`](../reference/map-connections.md) before touching any of this
+> — all of it, and especially the new "Editing a connection — the human model" section.** The strips are
+> already *rendered* and **cartridge-verified 78/78**; this phase is about *editing* them, and the whole
+> design turns on one fact: **a connection has only two human inputs — the neighbour map and one signed
+> offset (−27…+27) — and the other nine bytes are derived by the game's macro.** v1 exposed the nine raw
+> and asked a person to keep them consistent by hand; that is exactly why it was error-prone.
+>
+> Connections ride the machinery Phases 4–6 built (`MapObjectsModel`, canvas selection, the Details
+> panel, the field kit) and the renderer that already reproduces the macro (`MapEngine::connectionOf`).
+> This is the derived-byte doctrine (§9.2) applied to its hardest case.
+>
+> **The four design decisions (Twilight, 2026-07-15):**
+> 1. **Offset-driven, auto-derive** — pick the neighbour + slide one offset; the editor recomputes the
+>    nine derived bytes via the macro. **The Details panel always shows the raw values too** (read-only
+>    while synced, editable once desynced).
+> 2. **The live connection is drawn as the FULL neighbour map**, bleeding off the edge, **draggable**
+>    along the shared edge — sliding it *is* setting the offset. `MapEngine` can already render any map to
+>    an image.
+> 3. **Both add-gestures** — a ghost edge-arrow you *click* to add (then pick a map), **and** a map you
+>    *drag* onto the arrow from a picker/rail.
+> 4. **Never auto-rotate.** The neighbour always renders in its natural orientation (rotation is not
+>    representable in the save — see the reference note). But **"attach to another edge" IS offered** as an
+>    explicit option (a Details-panel direction change and/or a deliberate drag to another edge), because
+>    re-homing N↔S↔E↔W *is* representable: it moves one flag bit + one 11-byte slot and recomputes.
+>
+> ⛔ **SCOPE: connections and nothing else.** Not encounters, not area state — see **§12b**.
+
+---
+
+#### Phase 7a — The model, made TRUE  *(no new UI; nothing gets built on a lie)*
+
+Same shape as 4a/5a/6a. The connection struct is sound (`MapConnData`, cartridge-verified), so this is
+lighter than sprites/warps were — but two things must be right first.
+
+- **Add/delete write exactly their bytes.** `AreaMap::connNew`/`connRemove` already set/clear the
+  `0x261C` flag bit and (on save) the one 11-byte slot. Pin it with a whole-save byte-diff: **add** touches
+  only the flag byte + that slot; **delete** clears only the flag bit; load+resave of an untouched save
+  changes **nothing**. (Byte fidelity: delete does **not** scribble the stale slot unless a value is
+  written.)
+- **A macro helper as the single source of derivation.** `MapEngine::connectionOf` already computes the
+  eleven bytes from (direction, both sizes, offset) exactly as the ASM macro does. Expose it to the model
+  (`MapModel`/`MapObjectsModel`) as the one function that turns **map id + offset** into the nine derived
+  bytes, and the **offset ↔ (`stripMove`,`stripOffset`) inversion** (reference note) so an existing
+  connection's offset can be *recovered* for the slider. ⚠️ **Never** derive via
+  `MapDBEntryConnect::stripSize()` — it is wrong and `maps.json`'s `flag` only patches it (Open question 4,
+  §14; reference note). The panel and the canvas both compute from the macro.
+- **`MapConnData` naming honesty.** Keep the fields, but the UI must not conflate `stripWidth`
+  (`ConnectionStripLength`: blocks-per-row N/S, **rows** E/W) with `width` (`ConnectedMapWidth`, the source
+  row stride). A comment/`regenerated`-style hint in the panel, not a rename of the save struct.
+- **Model the legal offset range** (−27…+27 is what ships; the arithmetic permits `_src = −1` at
+  `offset = −2`) so the panel can *say* what is ordinary vs. what is a hack value — never refuse it.
+
+Pinned by a new **`tst_connections`**, negative-controlled like `tst_warps`/`tst_signs`.
+
+**Exit:** map id + offset → the nine bytes the cartridge means, and a test says so.
+
+---
+
+#### Phase 7b — Connections on the canvas
+
+The four edges become live, on 4b's object machinery + the neighbour-map renderer.
+
+- **Ghost arrows.** A faint, **lightweight** white arrow (~1 block) centred on each of the four edges,
+  drawn only where **no** connection exists — an invitation, never chrome. It sits on the **Connections**
+  layer (§4). Gone the instant a connection is added; back when it's removed.
+- **The live connection = the full neighbour map.** When a connection exists, render the neighbour map
+  (via `MapEngine`) as an image bleeding off that edge, clipped to a comfortable margin, dimmed slightly so
+  *our* map stays the subject. It aligns to the offset — what you'd see if you could peer past the seam.
+- **Drag = offset.** Grab the neighbour map and slide it **along the shared edge only** (constrained to the
+  one axis); the offset snaps to whole blocks; the nine derived bytes recompute live; the border-ring strip
+  re-renders as you drag. Live offset + Δ in the context bar, exactly like a warp drag. `Esc` cancels with
+  nothing written; release commits only the touched slot's bytes.
+- **Snap to the landmarks (Twilight, 2026-07-15).** A raw block slide is fiddly; the drag should **snap to
+  the positions a person actually wants**, with a light magnetism (and a modifier — `Alt` — to escape it for
+  a free slide). The landmarks, all computable from the two maps' sizes: **offset 0** (the default a fresh
+  connection lands on — the game's own resting value, the two maps corner-aligned), **flush edges** (the
+  neighbour's far edge lined up with ours — the `_len` clamp's boundary, `offset = curW − toW` and the
+  mirror), and **centred** (the neighbour centred on our edge, `offset = (curW − toW) / 2`). Each snap point
+  shows a tick on the edge and names itself in the context bar ("Aligned", "Centred", "Flush right") so the
+  slide is legible, not magic. A new connection **defaults to the sensible one** (centred if the neighbour is
+  narrower, else 0), never a jarring corner overhang.
+- **Both add-gestures.** Click a ghost arrow → a **map picker** (all 248, glitch ids named) → the
+  connection is created at that edge with offset 0 (or a sane centred default). *And* a **maps rail/picker**
+  (the Characters-bar pattern from 4c) whose entries can be **dragged onto an edge arrow** to create the
+  connection there.
+- **Select / delete / edit** like every other object: click the neighbour (or a small handle chip) to
+  select; a **✕ delete** and **✎ edit** (opens the Details panel on this connection).
+
+**Exit:** all four edges show an add-arrow; a connection renders as its real neighbour and slides to set
+the offset; add/delete/select behave like warps and signs.
+
+---
+
+#### Phase 7c — The Details panel (the Connection inspector)
+
+Nothing selected → the map (as always). A connection selected → its inspector, on the field kit.
+
+- **The two real inputs, up top:** **Neighbour map** (a real map picker) and **Offset** (a slider + numeric
+  field over the legal range, hack values flagged in words, never refused). These drive everything.
+- **Direction / re-home.** A N/S/E/W control that **re-homes** the connection to another edge (moves the
+  flag bit + slot, recomputes for the new direction). This is the "attach to another side" option — explicit,
+  never automatic, and only ever what the bytes can express (no rotation).
+- **The raw nine, always shown.** `mapPtr`, `stripSrc`, `stripDst`, `stripWidth`, `width`, `yAlign`,
+  `xAlign`, `viewPtr` (the v1 fields — Map ID · UL Corner=`viewPtr` · Strip Src/Dest/Width · X/Y Align),
+  each **against what the macro computes**. **Read-only while synced** (they track the offset); a
+  **break-sync** toggle (or entering a different value → an *alert offering to break sync*, §9.2) makes them
+  independently editable for power users and glitch connections. A **Recompute** action re-syncs.
+- **Delete** button at the foot, as the sprite/warp/sign panels have.
+
+**Exit:** every connection byte a hex editor shows is here, in English, with its range — set the easy way
+(offset) or the raw way (break-sync), and the panel says which.
+
+---
+
+#### Phase 7d — Handles that match the sync state  *(Twilight's "simpler nodes when synced")*
+
+- **Synced (the default): one simple handle** — the neighbour map slides along the edge (7b). That is the
+  *only* gesture, because width/src/dst are derived; offering to resize a value the offset controls would be
+  a lie about what you're editing.
+- **Desynced (break-sync): the richer nodes appear** — an edge handle to resize the **strip width**
+  independently, and (advanced) handles to nudge **src/dst**. These write the raw bytes directly and the
+  panel shows them diverging from the macro's value, flagged. This is the power path; it never appears
+  until the user deliberately breaks sync.
+
+**Exit:** the canvas offers exactly the handles the current sync state can honestly honour — simple when
+synced, more when the user has opted into raw editing.
+
+---
+
+#### Phase 7e — Honesty, tests, review
+
+- **The linchpin note, reused.** An edited connection is **live on Continue** (same persistence linchpin as
+  warps/signs — `LoadMapHeader` bails on the saved header, so the save's own connection blocks are what the
+  console runs), and the game **restores the map's original connections when the player leaves and
+  re-enters**. Say it in the panel and status bar, verbatim in spirit to the warp/sign note.
+- **`tst_connections`** — negative-controlled: add writes only the flag bit + slot; delete clears only the
+  bit; a drag writes only the offset-affected bytes of the one slot; load+resave of an untouched save
+  changes nothing; and **map id + offset → the macro's eleven bytes for a sample of real headers**
+  (Route 4→S→Route 3 `−25`, Route 11→E→Route 12 `−27`, Viridian→N→Route 2 `+5` — from the reference note).
+- **Render parity.** `tst_emu_parity` already proves the *ring* the strips produce matches the console
+  byte-for-byte; a drag must leave that oracle green for the new offset.
+- **The mandatory screenshot review** at the ghost-arrow state, a live full-neighbour connection, and mid-
+  drag; then the live pass with Twilight (`--sav … --screen map`), since the drag/rotate/handles are things
+  a still PNG cannot review.
+
+**Exit of Phase 7:** a person can add a connecting route by clicking an edge and picking a map, slide the
+neighbour to set the offset without ever knowing what a strip is, re-home it to another side, delete it,
+and — if they want — break sync and edit all nine raw bytes; and the save changes by exactly the bytes each
+action names.
+
+---
+
 ## 12b. ⛔ NOT YET BRIEFED — do not design these, do not build them  *(2026-07-14, Twilight)*
 
 > *"Let's not get too far ahead of ourselves. Signs and stuff, connecting routes, wild Pokémon — these are
@@ -1125,21 +1279,21 @@ and that is precisely the mistake this section exists to prevent.
 | Phase | Un-briefed | The temptation to resist |
 |---|---|---|
 | ~~**Signs**~~ | ✅ **BRIEFED 2026-07-14 — graduated to Phase 6.** | Was cut out of Phase 5b, held here until Twilight briefed it. She now has: add-sign tool, X/Y, a grouped text picker of the map's real text. See **Phase 6** above and [`../reference/signs.md`](../reference/signs.md). |
-| **Connections** | 🔗 the four edge connections (N/S/E/W) — "connecting routes" | The strips are already *rendered* and fully understood ([`../reference/map-connections.md`](../reference/map-connections.md)), so *editing* them looks like a small step. It isn't — nobody has said what editing a connection should mean. |
-| **Phase 7 — Encounters** | 🌿 wild Pokémon (`grassRate`, 10 grass slots, `waterRate`, 10 water slots, `pauseMons3Steps`) | The Grass/Water meaning layers already exist, so it looks like the panel is half-built. It isn't. |
-| **Phase 8 — Area State** | the `AreaNPC` flags, the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | It is "the leftovers", which is not a design. |
-| **Phase 9 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |
+| ~~**Connections**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 7.** | Was held here until Twilight briefed it. She now has: offset-driven editing with auto-derive, the full neighbour map draggable on the canvas, both add-gestures, explicit re-home (no rotation), delete + inspector. See **Phase 7** above and [`../reference/map-connections.md`](../reference/map-connections.md). |
+| **Phase 8 — Encounters** | 🌿 wild Pokémon (`grassRate`, 10 grass slots, `waterRate`, 10 water slots, `pauseMons3Steps`) | The Grass/Water meaning layers already exist, so it looks like the panel is half-built. It isn't. |
+| **Phase 9 — Area State** | the `AreaNPC` flags, the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | It is "the leftovers", which is not a design. |
+| **Phase 10 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |
 
 **What the earlier text in this file says about these is a sketch and carries no authority.** Read it as
 "here is what the bytes are", never as "here is what we agreed."
 
-**What IS briefed and safe to build:** Phase 5 (warps, 5a–5e) and **Phase 6 (signs, 6a–6d — briefed
-2026-07-14)**, and nothing that touches connections, encounters or area state. Where a briefed phase
-genuinely *needs* one of them, it **reads** it; it does not build a UI for it.
+**What IS briefed and safe to build:** Phase 5 (warps), Phase 6 (signs) and **Phase 7 (connections —
+briefed 2026-07-15)**, and nothing that touches encounters or area state. Where a briefed phase genuinely
+*needs* one of them, it **reads** it; it does not build a UI for it.
 
 ---
 
-### Phase 7 — Encounters
+### Phase 8 — Encounters
 
 `AreaPokemon` has **no UI at all** today. `grassRate` · 10 grass slots · `waterRate` · 10 water slots ·
 `pauseMons3Steps`. Species picker + level, drag-to-reorder (the Bag/Moves drag pattern), rate 0 said in
@@ -1147,14 +1301,14 @@ words ("no wild Pokémon here"), and a link to the Grass/Water Meaning layers so
 
 ---
 
-### Phase 8 — Area State
+### Phase 9 — Area State
 
 `AreaNPC` (9 flags), the `AreaWarps` state fields (12), `AreaLoadedSprites` (`loadedSetId` + 11 slots) —
 none of which has a UI today. Three titled groups, every flag explained, the sprite-set slots reorderable.
 
 ---
 
-### Phase 9 — Tileset & Blocks, properly
+### Phase 10 — Tileset & Blocks, properly
 
 The two panels that already exist get the *deep* pass rather than the re-chrome they got in phase 1:
 the tri-state tile animation with its "what this actually does", the grass tile and the three counter slots
@@ -1164,7 +1318,7 @@ gfxPtr / collPtr diffed against the cartridge, with Restore). Blocks keeps its c
 
 ---
 
-### Phase 10 — Tools & precision
+### Phase 11 — Tools & precision
 
 Place · Eyedropper · Measure · snap modes · nudge keys (1 tile / 1 block / 8 tiles) · align + distribute for
 a multi-selection · every action reachable from the keyboard · the shortcut map written down. **A tool is
@@ -1172,7 +1326,7 @@ not done until it has a cursor, a context bar, an empty state and a keyboard pat
 
 ---
 
-### Phase 11 — Motion & polish
+### Phase 12 — Motion & polish
 
 Panel slide, chip hover, selection pulse, layer-toggle cross-fade (the overlay *arrives*, it doesn't slam
 on), empty states, tooltips on everything that has a name nobody should be expected to know. Then the full
@@ -1181,7 +1335,7 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 
 ---
 
-### Phase 12 — The verification pass
+### Phase 13 — The verification pass
 
 - Full `ctest` (incl. `tst_emu_parity` against the real cartridge).
 - **A byte-diff harness run over every edit the screen can make**: load a save, perform the edit, diff the
@@ -1191,7 +1345,7 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 
 ---
 
-### Phase 13 — The notes pass
+### Phase 14 — The notes pass
 
 `status.md`, `ui-patterns.md` (the new chassis, dock, layer-row and field-kit conventions),
 `qt-patterns.md` (whatever Qt tried to do to us), `decisions/architecture.md` (the layer/object models),
@@ -1200,7 +1354,7 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 
 ---
 
-### Phase 14 — SIMULATE: walk the map  *(**OPTIONAL / stretch** — runs last, gates nothing)*
+### Phase 15 — SIMULATE: walk the map  *(**OPTIONAL / stretch** — runs last, gates nothing)*
 
 **Twilight, 2026-07-12: "an accurate simulation like a play/pause button on the map might be cool but it's
 not a high priority unless you think it's important."** Here is the honest split, because the two halves of
@@ -1218,18 +1372,18 @@ not a high priority unless you think it's important."** Here is the honest split
 
 If/when it is built:
 
-- **13a — Collision, for real.** The passable-tile list is already derived from the tileset's `collPtr`
+- **15a — Collision, for real.** The passable-tile list is already derived from the tileset's `collPtr`
   (the ROM holds a list of what you *can* walk on — "wall" is what's left; see
   [`../reference/tiles.md`](../reference/tiles.md)), plus the elevation-edge pairs.
-- **13b — The step.** Arrow keys move him a tile at a time, at the game's own cadence, and he **turns
+- **15b — The step.** Arrow keys move him a tile at a time, at the game's own cadence, and he **turns
   before he steps** (the game turns first — get that wrong and it feels wrong immediately).
-- **13c — The camera IS the console's.** The screen box and the draw area follow him exactly the way
+- **15c — The camera IS the console's.** The screen box and the draw area follow him exactly the way
   `LoadCurrentMapView` slides them — half-block steps, block-aligned scratch. We already reproduce that
   geometry byte-for-byte; now it *moves*.
-- **13d — Ledges, water, doors.** A ledge jumps the way its arrow points; water needs Surf; a warp tile
+- **15d — Ledges, water, doors.** A ledge jumps the way its arrow points; water needs Surf; a warp tile
   lights up and **offers** to take you where it goes — it never warps you unasked, because that changes
   `curMap`, and that is a real edit.
-- **13e — The save, honestly.** Walking is a **preview** — it moves the player in the model, and the status
+- **15e — The save, honestly.** Walking is a **preview** — it moves the player in the model, and the status
   bar says plainly whether what you're looking at is what's stored. Committing writes `xCoord`/`yCoord`
   (and offers the view-pointer Sync, §9.2) and **nothing else**. `Esc` puts him back.
 
@@ -1274,5 +1428,5 @@ priority rendering** on the map.
 6. **How far does "simulate" go?** Answered 2026-07-12: **the animation is mandatory** (it is a correctness
    bug today — the water is dead and the console's water is not), **the ▶/⏸ transport is nearly free** (the
    screenshot/regression suites need a frozen frame 0 regardless), and **walking the map is an optional
-   stretch** — Phase 13, last, gating nothing. It is deliberately **not** an emulator: no NPC AI, no
+   stretch** — Phase 15, last, gating nothing. It is deliberately **not** an emulator: no NPC AI, no
    scripts, no battles, no text.
