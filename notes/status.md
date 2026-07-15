@@ -52,6 +52,34 @@ The headline, and the answer to *"which are rewritten on startup"*: **ten of the
 0/1/6 are cleared on load while 2/7 are kept. A read of the asm alone gets this wrong (the sprite-pass
 mistake). Tool: `scripts/emu/probe_player_state.py` (local-only, ROM-gated).
 
+### 🗺️ The "Map" page fields — RESEARCHED, not yet built (2026-07-15)
+
+Twilight is bringing v1's "Map" page (under "Area") into the map-details panel (shown when
+nothing is selected) and asked what the seven leftover fields do and **which are rewritten at
+boot**. Researched + **console-verified**: [`reference/area-map-state.md`](reference/area-map-state.md)
+(`scripts/emu/probe_area_map_state.py`). No build yet — awaiting design go-ahead.
+
+The answer to *"which are rewritten at boot"*:
+
+- **Durable, editable (2):** `wCurMapScript` (Current Script — this map's story-script step) and
+  `BIT_ALWAYS_ON_BIKE` (force bike ride — the Cycling-Road lock). Both **kept**.
+- **Derived, TRUSTED on load (1):** `wCurrentTileBlockMapViewPointer` (the camera / view box).
+  ⚠️ Predicted "recomputed"; **wrong** — its recompute is off the Continue path, so the save's
+  value is trusted: writing `0xFFFF` made the cartridge **draw garbage** (`tmp/emu-areamap/areamap.png`).
+  Doctrine (clarified by Twilight): **synced to the coords by default**, with a **break-sync**
+  toggle + alert-on-manual-entry + **canvas dragging** of the view box for power users.
+- **Rewritten/reset every load (2):** `wMapViewVRAMPointer` (→ `$9800`) and `wCardKeyDoorX/Y` (→ 0).
+- **Auto-trigger lever (1):** `BIT_USE_CUR_MAP_SCRIPT` — ⚠️ predicted "cleared"; **survives on a
+  quiet map**, so a save can carry it set to **auto-run a chosen map script on load** (a feature,
+  not plumbing). Consumed on the first tick of a scripted/trainer map.
+- **Ghost (1):** "to blackout dest" = `BIT_ESCAPE_WARP`, **already moved to `AreaWarps::escapeWarp`
+  (2026-07-14)** — do not re-add it here.
+
+No save-corruption bug and no loaded gun; it's a naming/organisation fix plus the derived-value
+sync discipline. **Design direction (Twilight):** derived values (the view box) **kept in sync by
+default** with a power-user break-sync path; scripts = descriptive ComboBox + "Something else…";
+pointer fields intuitively selectable, **never an address** except behind "Something else…".
+
 ### 🚪 WARPS — phase 5 is COMPLETE (2026-07-14, `0.36.0-alpha`)
 
 | | | |

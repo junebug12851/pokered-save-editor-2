@@ -259,6 +259,17 @@ layers: turning the panel on offers to light them up.
 Exists; keeps its content.
 
 ### Area State panel *(the flags with no other home — no UI today)*
+
+> **The `AreaMap` "Map page" slice is now researched + console-verified**
+> ([`../reference/area-map-state.md`](../reference/area-map-state.md), 2026-07-15): the seven
+> leftover fields Twilight is bringing to the map-details panel — `wCurMapScript` (Current Script),
+> `wCurrentTileBlockMapViewPointer` + `wMapViewVRAMPointer` (the two UL-corner pointers),
+> `BIT_USE_CUR_MAP_SCRIPT` (Run cur map script instead), `BIT_ALWAYS_ON_BIKE` (force bike ride),
+> and `wCardKeyDoorX/Y`. Verdicts + the two probe surprises are in that note. Design direction
+> (Twilight, 2026-07-15): script = descriptive ComboBox + "Something else…"; the pointer fields
+> intuitively selectable, never a raw address except behind "Something else…". Awaiting the design
+> pass before any build.
+
 - **NPC state** *(AreaNPC)*: `npcsFaceAway`, `scriptedNPCMovement`, `npcSpriteMovement`,
   `tradeCenterSpritesFaced`, `ignoreJoypad`, `joypadSimulation`, `runningTestBattle`, `trainerWantsBattle`,
   `trainerHeaderPtr`.
@@ -351,11 +362,17 @@ screen.
 1. **Byte fidelity.** An edit writes *only* the bytes it names. Dragging a warp writes `x` and `y`.
    Nothing else in the save moves — not a checksum region we weren't told to touch, not a "normalised"
    neighbouring field, not an unused bit. See `../context/principles.md` → *Save File Integrity Is Sacred*.
-2. **Derived bytes are SHOWN, never silently synced.** `currentTileBlockMapViewPointer` is a function of
-   the player's coords and the map width — the game recomputes it, and `tst_map` proves we can too. If the
-   user moves the player, the stored pointer no longer matches. We **show the mismatch** ("the save's view
-   pointer is for 5,7 — the player is at 12,9") and offer a **one-click Sync**. We do *not* quietly rewrite
-   it, and we do *not* leave the user to discover it. Same rule as the tileset pointers and the music bank.
+2. **Derived bytes are kept IN SYNC by default — power users can break sync (clarified 2026-07-15,
+   Twilight).** A value the game *computes* from another (`currentTileBlockMapViewPointer` from the player's
+   coords + the map width; the tileset pointers; the music bank) is, **by default, kept correct
+   automatically** — most people editing the Map want that, and it is *bad UX* to let a novice break their
+   map because they didn't also hand-edit a derived field they had no reason to touch. The balance:
+   **raw-byte editing is always available** (the power path), and a derived value **may be deliberately
+   desynced** — via a *break-sync* toggle, by entering a different value (which raises an **alert offering to
+   break sync**), or, for the view box, by **dragging it on the canvas**. Once desynced it lives
+   independently and the source stops driving it. This is *not* silent corruption — byte fidelity still holds
+   (an edit writes only the bytes its action implies) — it is the *opposite* of leaving a novice to discover
+   a broken map. Same balance for the tileset pointers and the music bank.
 3. **Hack values are first-class.** Every field accepts its full byte range. Out-of-range/glitch values are
    flagged (`errorColor` + a plain-English "what a real console does with this"), and the *dangerous* ones
    (the music bank; a tileset `collPtr` that isn't the cartridge's) are called out — but the editor never
@@ -662,9 +679,10 @@ future inspector copies.
   range**), `HexField`, `FlagRow`, `EnumField` (every value **named**, hack values included and labelled),
   `FieldGroup` (titled, collapsible — the trainer-card `PlaytimeGroup` language).
 - **4d-ii — Nothing selected → the MAP's details.** The Area block: identity, size, the world's edge, the
-  tileset, the palette/contrast, the music, the player. Plus **the view-pointer truth-teller** — live
-  mismatch detection and a one-click **Sync**. This is the keystone: it is the pattern for every derived
-  byte in the app.
+  tileset, the palette/contrast, the music, the player. Plus **the view box, synced by default** — the
+  camera pointer tracks the player automatically, with a *break-sync* toggle (and an alert if a different
+  pointer value is entered) so power users can desync it; once desynced the view box is even **draggable on
+  the canvas**. This is the keystone: the sync-by-default + break-sync pattern for every derived byte in the app.
 - **4d-iii — A sprite selected → the sprite's details.** Every field, grouped and explained:
   **Who** (picture, with the artwork drawn) · **Where** (map X/Y, the +4 bias shown honestly; screen
   pixels) · **Movement** (movement byte 1 `WALK`/`STAY`; movement byte 2 — `ANY_DIR` / `UP_DOWN` /
