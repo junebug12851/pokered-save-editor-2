@@ -14,6 +14,33 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🧍 THE PLAYER — the research (2026-07-14, briefed by Twilight)
+
+Twilight briefed **fleshing out the full player details panel** — all 26 `AreaPlayer` map-state bytes
+(the v1 `area-player` field set: Moving, Last Stop, Current direction, X/Y + block coords, Jumping Y,
+Strength, Fly, Surf, the battle four, the special-warp offsets, the standing-on trio, Walk/Bike/Surf,
+End-edge jump, Spin, Card Key, Link Cable). Research pass done and **console-verified byte-by-byte**:
+[`reference/player-state.md`](reference/player-state.md). Design: [`plans/map-screen.md`](plans/map-screen.md)
+→ **Phase 5f**. Nothing built yet — this is research + design (the model rename is 5f-0, before UI).
+
+The headline, and the answer to *"which are rewritten on startup"*: **ten of the 26 are.**
+
+- ⚠️ **`wPlayerDirection` (Current direction) is FORCED to DOWN on every Continue** — `MainMenu`
+  `.pressedA` writes `PLAYER_DIR_DOWN` before entering the map. You always wake up facing down.
+- ⚠️ **`wStatusFlags3` is zeroed whole** — so `isBattle`/`isTrainerBattle` (really
+  `BIT_TALKED_TO_TRAINER` / `BIT_PRINT_END_BATTLE_TEXT`) die on load, same wipe as the warp/NPC bits.
+- ⚠️ **`strengthOutsideBattle` is reset** on an ordinary Continue — **but survives if the battle-over
+  bit is set** (a real `EnterMap` interaction the probe caught with a two-save test).
+- ⚠️ **`battleEndedOrBlackout`, `usingLinkCable`, `standingOnDoor`, `movingThroughDoor`,
+  `finalLedgeJumping`, and `Jumping Y`** are cleared/zeroed on entry too.
+- 💀 **Three are dead:** `x/yOffsetSinceLastSpecialWarp` (`; they don't seem to be used`) and
+  `usedCardKey` = `BIT_UNUSED_CARD_KEY` (setter is `; never checked`).
+- The offsets/bits in the v2 model are **all correct**; five fields are **misnamed** (fixed in 5f-0).
+
+⚠️ **The probe earned its keep:** `wMovementFlags` clears bits **per-routine, not whole-byte** — bits
+0/1/6 are cleared on load while 2/7 are kept. A read of the asm alone gets this wrong (the sprite-pass
+mistake). Tool: `scripts/emu/probe_player_state.py` (local-only, ROM-gated).
+
 ### 🚪 WARPS — phase 5 is COMPLETE (2026-07-14, `0.36.0-alpha`)
 
 | | | |

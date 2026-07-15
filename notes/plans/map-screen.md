@@ -883,6 +883,81 @@ words, with its range, its legal values, whether the game will keep it, and whet
 
 ---
 
+#### Phase 5f — The Player details panel, in FULL *(briefed 2026-07-14, Twilight)*
+
+> *"Let's flesh out more character details — the player detail panel should have Moving, Last Stop,
+> Current direction, X/Y Coords, X/Y Block Coords, Jumping Y, Using strength, Using Fly, Surfing
+> Allowed, Battle Ongoing, Trainer Battle, Prevent Battles, Battle Ended, X/Y Offset Special Warp,
+> Standing on Door, Moving through door, Standing on warp, Walk/Bike/Surf status, End Edge jump, Spin
+> Player, Used Card Key, Using Link Cable. These are related to map state so they should be on the
+> player box. Figure out what all those options are, figure out which ones are rewritten on startup,
+> organize structure, follow the ui/ux."* — Twilight
+
+5e shipped **just the player's position** in the Details panel. This phase puts **all 26 bytes of
+`AreaPlayer`** there — the full v1 `area-player` field set (Direction / Coordinates / HMs / Battle /
+Warps / Other), rebuilt to our doctrine. **Read [`../reference/player-state.md`](../reference/player-state.md)
+before touching any of it** — it is researched and **console-verified byte-by-byte**
+(`scripts/emu/probe_player_state.py`), and it settles the "which are rewritten on startup" question the
+brief asks.
+
+> ⛔ **SCOPE: the player box and nothing else.** These bytes describe *the player on the map* and belong
+> on the player object's panel. Not area state, not encounters, not the tileset deep pass — see **§12b**.
+
+**5f-0 — Make the model honest first (no UI).** Same precedent as 5a / sprites 4a: the byte offsets and
+bit numbers in `AreaPlayer` are **all correct**, but five fields are **misnamed** and the "rewritten on
+load" facts are undocumented. Before the panel is built on them, rename + document (there is **no loaded
+gun** here — `setTo()` only touches coords/dirs — so this is a truth-in-labelling pass, not a
+save-safety one):
+
+| v2 field | → rename toward | because |
+|---|---|---|
+| `isBattle` | `talkedToTrainer` | `BIT_TALKED_TO_TRAINER`; **zeroed on load** |
+| `isTrainerBattle` | `printEndBattleText` | `BIT_PRINT_END_BATTLE_TEXT`; **zeroed on load** |
+| `flyOutofBattle` | `arrivedByFly` | `BIT_USED_FLY` — the drop-in animation, not "Fly usable" |
+| `finalLedgeJumping` | `ledgeHopOrFishing` | `BIT_LEDGE_OR_FISHING` — cleared at load by `HandleMidJump` |
+| `usedCardKey` | `unusedCardKey` (dead) | `BIT_UNUSED_CARD_KEY`, setter is `; never checked` |
+
+**5f-1 — The panel, organised into four honest buckets + the collapsed rewrite group** (mirrors the
+warp panel's `[ ⚠ Show N fields the game rewrites on load ]`):
+
+- **Position** *(the durable core)* — Tile **X/Y** and half-block **X/Y** grouped into coordinate
+  controls (the pattern the sprite/sign panels use: one X+Y control, not four loose fields);
+  **Current direction** *(⚠ forced DOWN on Continue)*, **Last stop**, **Moving** *(0 in any real save)*;
+  and the **Walk / Bike / Surf** segmented control (`SegSel`, 3 options).
+- **Here he may…** — **Surfing allowed** *(`~` recomputed near water)*, **Arrived by Fly** *(`~`)*,
+  **Using Strength** *(⚠ reset on an ordinary Continue; survives only if Battle ended is set)*.
+- **Battle** — **Prevent battles** *(durable)*, **Battle ongoing** *(⚠)*, **Trainer battle** *(⚠)*,
+  **Battle ended / blackout** *(⚠ always cleared on entry)*.
+- **Warp-adjacent trio** — **Standing on warp** *(`~`)*, **Standing on door** *(⚠)*, **Walking through
+  door** *(⚠)*. These are the same three the door panel points at (`warps.md` §6), shown here where the
+  player lives.
+
+**5f-2 — The `[ ⚠ Show N fields the game rewrites on load ]` switch** (off by default). Flipping it
+reveals the **ten `!` fields** each with a yellow `!` (`MapWarnIcon`) explaining *what* the console does
+(forces / zeroes / clears), and the **three `💀` dead fields** (`x/yOffsetSinceLastSpecialWarp`,
+`usedCardKey`) each with the grey "the game writes this and never reads it" line. **Jumping Y** and the
+ledge/spin scratch bits live here too. A wiped byte and an unread byte are **different facts** — say
+which, exactly as the warp panel does.
+
+**The doctrine holds:** every value stays **full-range and editable, hack values included**; the panel
+**never refuses and never silently rewrites** — it only tells the truth about the next load. And the
+**view-pointer truth-teller** (§13-style, already designed) still applies: editing the player's coords
+invalidates the stored view pointer, so the panel *shows* the mismatch and offers one-click **Sync** —
+never a quiet rewrite.
+
+**5f-3 — Tests.** `tst_area` (or a new `tst_player`) gets a keystone in the sprite/warp mould: set each
+player field, `save()`, and **byte-diff the whole 32 KB** — exactly the intended bytes/bits moved,
+nothing else. Plus a round-trip `load()`→`save()` identity on `BaseSAV`.
+
+**Exit of 5f:** there is no player byte a person can see in a hex editor and cannot see here, in words,
+with its range, whether the game keeps it on load, and whether anything reads it at all.
+
+**Exit of Phase 5:** there is no *warp or player* byte a person can see in a hex editor and cannot see
+here, in words, with its range, its legal values, whether the game will keep it, and whether anything
+reads it.
+
+---
+
 ### Phase 6 — SIGNS: the placards ✅ **BUILT (2026-07-14, `0.38.0-alpha`)**
 
 > **All of 6a–6d are in.** `tst_signs` (15 cases) pins them; the keystone byte-diffs the whole 32 KB
