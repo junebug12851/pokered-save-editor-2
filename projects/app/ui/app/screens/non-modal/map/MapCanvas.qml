@@ -68,9 +68,14 @@ Item {
   /// on the same one-selection-at-a-time rule.
   property int selectedSign: -1
 
-  onSelectedNpcChanged: if (canvasRoot.selectedNpc >= 0) { canvasRoot.selectedWarp = -1; canvasRoot.selectedSign = -1; }
-  onSelectedWarpChanged: if (canvasRoot.selectedWarp >= 0) { canvasRoot.selectedNpc = -1; canvasRoot.selectedSign = -1; }
-  onSelectedSignChanged: if (canvasRoot.selectedSign >= 0) { canvasRoot.selectedNpc = -1; canvasRoot.selectedWarp = -1; }
+  /// The edge CONNECTION currently selected -- its direction (0-3), or -1 for nothing. @see
+  /// MapConnection.qml. Same one-selection-at-a-time rule as the doors and signs.
+  property int selectedConnection: -1
+
+  onSelectedNpcChanged: if (canvasRoot.selectedNpc >= 0) { canvasRoot.selectedWarp = -1; canvasRoot.selectedSign = -1; canvasRoot.selectedConnection = -1; }
+  onSelectedWarpChanged: if (canvasRoot.selectedWarp >= 0) { canvasRoot.selectedNpc = -1; canvasRoot.selectedSign = -1; canvasRoot.selectedConnection = -1; }
+  onSelectedSignChanged: if (canvasRoot.selectedSign >= 0) { canvasRoot.selectedNpc = -1; canvasRoot.selectedWarp = -1; canvasRoot.selectedConnection = -1; }
+  onSelectedConnectionChanged: if (canvasRoot.selectedConnection >= 0) { canvasRoot.selectedNpc = -1; canvasRoot.selectedWarp = -1; canvasRoot.selectedSign = -1; }
 
   /// The ✎ button on a selected sprite -- the Map screen opens the Details panel on it.
   signal editRequested(int slot)
@@ -263,6 +268,33 @@ Item {
   readonly property var signs: {
     canvasRoot.revision;   // the same missing dependency, the same fix
     return brg.mapLayers.showSigns ? brg.map.signList() : [];
+  }
+
+  // The four edge connections, in two views: the STRIP geometry (where each lands in the ring) and the
+  // EDIT info (offset, sync, the snap landmarks). Both keyed off `revision` so an offset edit updates
+  // the strip in place. @see MapConnection.qml (which is NOT a Repeater delegate, on purpose).
+  readonly property var connStrips: {
+    canvasRoot.revision;
+    return brg.mapLayers.showConnections ? brg.map.connectionList() : [];
+  }
+  readonly property var connEdges: {
+    canvasRoot.revision;
+    return brg.map.connectionEditList();
+  }
+
+  /// The strip geometry for direction @p dir, or null. @see connStrips.
+  function connStripFor(dir) {
+    const l = canvasRoot.connStrips;
+    for (let i = 0; i < l.length; i++)
+      if (l[i].dir === dir) return l[i];
+    return null;
+  }
+  /// The edit info for direction @p dir, or null. @see connEdges.
+  function connEdgeFor(dir) {
+    const l = canvasRoot.connEdges;
+    for (let i = 0; i < l.length; i++)
+      if (l[i].dir === dir) return l[i];
+    return null;
   }
 
   // ── UNIVERSAL OBJECT STACKING ───────────────────────────────────────────────────────────────
@@ -558,6 +590,7 @@ Item {
     onActivated: {
       canvasRoot.cancelDrag++;
       canvasRoot.selectedNpc = -1;
+      canvasRoot.selectedConnection = -1;
     }
   }
 
@@ -729,47 +762,26 @@ Item {
       // reference/map-connections.md). It is worth being able to look at it, so here it is: the
       // strip, its neighbour's name, and its size in blocks.
       //
-      // Every number comes from brg.map.connectionList() in buffer pixels. QML multiplies by zoom.
+      // Every number comes from brg.map (connectionList / connectionEditList) in buffer pixels; QML
+      // multiplies by zoom. Phase 7b: the strips are now EDITABLE -- each is a selectable, draggable
+      // MapConnection (slide it along the edge to set the offset, ✕ to delete), and every edge with no
+      // connection carries a ghostly ConnectionArrow to add one. Four fixed items each, NOT Repeater
+      // delegates, so an offset edit (which bumps `revision`) never rebuilds one mid-drag.
       Repeater {
-        model: brg.mapLayers.showConnections ? brg.map.connectionList() : []
+        model: 4
+        delegate: MapConnection {
+          required property int index
+          canvas: canvasRoot
+          dir: index
+        }
+      }
 
-        Rectangle {
-          required property var modelData
-
-          x: modelData.x * canvasRoot.zoom
-          y: modelData.y * canvasRoot.zoom
-          width: modelData.w * canvasRoot.zoom
-          height: modelData.h * canvasRoot.zoom
-
-          // No FILL (Twilight, 2026-07-13). An outline shows you the strip; a wash over it hides the
-          // map you are trying to look at -- which is the one thing every layer here must not do.
-          color: "transparent"
-          border.width: 2
-          border.color: canvas.connectColor
-
-          // Which neighbour, and which way. The strip's SIZE is not on the label: it is on the
-          // rectangle, which you can see, and a label that recites what the outline already shows is
-          // just noise.
-          Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 2
-
-            width: label.implicitWidth + 8
-            height: label.implicitHeight + 4
-            radius: 3
-            color: "#e6212121"
-
-            visible: parent.width > width + 4 && parent.height > height + 4
-
-            Text {
-              id: label
-              anchors.centerIn: parent
-              text: modelData.dirName + " · " + modelData.name
-              font.pixelSize: 10
-              color: "#ffffff"
-            }
-          }
+      Repeater {
+        model: 4
+        delegate: ConnectionArrow {
+          required property int index
+          canvas: canvasRoot
+          dir: index
         }
       }
 
@@ -1082,6 +1094,7 @@ Item {
           canvasRoot.selectedNpc = -1;
           canvasRoot.selectedWarp = -1;
           canvasRoot.selectedSign = -1;
+          canvasRoot.selectedConnection = -1;
         }
       }
 

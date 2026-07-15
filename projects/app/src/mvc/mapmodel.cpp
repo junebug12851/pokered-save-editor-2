@@ -417,15 +417,44 @@ QVariantList MapModel::connectionEditList() const
     if (ex) {
       MapConnData* c = map->connections.value((var8)dir);
       MapDBEntry* to = MapsDB::inst()->getIndAt(QString::number(c->mapPtr));
+      const int toW = (to == nullptr) ? 0 : to->getWidth();
+      const int toH = (to == nullptr) ? 0 : to->getHeight();
       m["toMap"] = c->mapPtr;
       m["toName"] = (to == nullptr) ? QObject::tr("Map %1").arg(c->mapPtr) : to->bestName();
       m["offset"] = connectionOffsetOf(dir);
       m["synced"] = connectionSynced(dir);
+      m["toW"] = toW;
+      m["toH"] = toH;
+
+      // The landmark offsets a drag snaps to (Twilight, 2026-07-15): flush at 0, centred, and the
+      // far edges flush. N/S snap along width; E/W along height. Computed from the two maps' sizes,
+      // deduped, and named so the context bar can say which one you are on.
+      const bool ns = (dir == MapDBEntryConnect::ConnectDir::NORTH ||
+                       dir == MapDBEntryConnect::ConnectDir::SOUTH);
+      const int cur = ns ? map->width : map->height;
+      const int nb  = ns ? toW : toH;
+      QVariantList snaps;
+      auto addSnap = [&](int off, const QString& name) {
+        if (to == nullptr) return;
+        for (const QVariant& s : snaps)          // dedupe
+          if (s.toMap().value("offset").toInt() == off) return;
+        QVariantMap sm; sm["offset"] = off; sm["name"] = name;
+        snaps.append(sm);
+      };
+      addSnap(0, QObject::tr("Corner-aligned"));
+      if (nb > 0) {
+        addSnap((cur - nb) / 2, QObject::tr("Centred"));
+        addSnap(cur - nb, QObject::tr("Flush"));
+      }
+      m["snaps"] = snaps;
     } else {
       m["toMap"] = -1;
       m["toName"] = QString();
       m["offset"] = 0;
       m["synced"] = false;
+      m["toW"] = 0;
+      m["toH"] = 0;
+      m["snaps"] = QVariantList();
     }
 
     out.append(m);

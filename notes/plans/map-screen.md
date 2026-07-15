@@ -1168,6 +1168,18 @@ Pinned by a new **`tst_connections`**, negative-controlled like `tst_warps`/`tst
 
 #### Phase 7b — Connections on the canvas
 
+> **PART 1 BUILT (2026-07-15, `0.39.2-alpha`) — add / select / delete / slide-with-snap.**
+> `MapConnection.qml` (a selectable, deletable strip you **drag along the edge to set the offset**, with
+> magnetic **snapping to the landmarks** — corner-aligned / centred / flush — computed in
+> `connectionEditList`'s new `snaps`) and `ConnectionArrow.qml` (the **ghostly click-to-add** arrow on
+> each empty edge → a grouped map picker → `addConnection`). Four fixed items each (not Repeater
+> delegates, so an offset edit never rebuilds one mid-drag); `selectedConnection` joins the
+> one-selection-at-a-time model. `tst_qml_screens` 16/16, `tst_connections` 14/14.
+> **⏳ Remaining in 7b (owed):** the **full neighbour-map render** bleeding off the edge (Twilight's
+> chosen visual; today it's the faithful strip-outline proxy), the **drag-a-map-onto-the-arrow**
+> gesture (today: click-to-add only), and **Twilight's live pass** (drag/select/snap can't be reviewed
+> from a still PNG). Feature rides the **Connections** layer (turn it on to see arrows + strips).
+
 The four edges become live, on 4b's object machinery + the neighbour-map renderer.
 
 - **Ghost arrows.** A faint, **lightweight** white arrow (~1 block) centred on each of the four edges,

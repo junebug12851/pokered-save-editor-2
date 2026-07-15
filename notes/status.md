@@ -30,8 +30,16 @@ cartridge-verified macro; `MapModel` gains the edit API (`addConnection`/`remove
 `setConnectionOffset`/`setConnectionMap`/`rehomeConnection`/`connectionSynced`/`connectionEditList`),
 each writing only the flag bit + its one slot. **`tst_connections` 14/14** — keystone
 `savedConnectionsAreInSync` proves the derive reproduces the fixture's real console bytes; siblings
-(tst_warps 24, tst_map 27, tst_map_sprites 18) still green. **Next: Phase 7b (canvas — ghost arrows +
-draggable full neighbour map), 7c (inspector), 7d (sync-aware handles), 7e (verify + live review).**
+(tst_warps 24, tst_map 27, tst_map_sprites 18) still green.
+
+**Phase 7b PART 1 BUILT (2026-07-15, `0.39.2-alpha`) — add / select / delete / slide on the canvas.**
+`ConnectionArrow.qml` (ghostly click-to-add arrow on each empty edge → map picker → `addConnection`) and
+`MapConnection.qml` (a selectable/deletable strip you drag along the edge to set the offset, snapping to
+corner-aligned / centred / flush). `connectionEditList` gained neighbour size + `snaps`.
+**`tst_qml_screens` 16/16**, tst_connections 14/14. ⏳ **Owed:** the full draggable neighbour-map render,
+the drag-a-map-onto-arrow gesture, the details inspector (7c), the sync-aware raw handles (7d), and
+**Twilight's live pass** (drag/select/snap can't be still-reviewed). Turn on the **Connections** layer
+to see arrows + strips.
 
 ### 🧍 THE PLAYER details panel — BUILT (2026-07-14, `0.39.0-alpha`)
 
