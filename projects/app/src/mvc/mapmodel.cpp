@@ -510,6 +510,38 @@ QVariantList MapModel::connectionEditList() const
   return out;
 }
 
+QVariantList MapModel::neighbourSprites(int dir) const
+{
+  QVariantList out;
+  if (!connectionExists(dir))
+    return out;
+
+  MapConnData* c = map->connections.value((var8)dir);
+  MapDBEntry* to = MapsDB::inst()->getIndAt(QString::number(c->mapPtr));
+  if (to == nullptr)
+    return out;
+
+  // The neighbour's cast comes from the DB (ROM) — a neighbour isn't in the save, so this is exactly
+  // what the game would show over there. Static: we draw them where they stand, no movement.
+  for (auto* sp : to->getSprites()) {
+    if (sp == nullptr)
+      continue;
+    auto* art = sp->getToSprite();
+    const int pic = (art != nullptr) ? art->ind : 0;
+    if (pic <= 0)
+      continue;
+
+    QVariantMap m;
+    m["picture"] = pic;
+    m["x"] = sp->getX();
+    m["y"] = sp->getY();
+    // Facing Down (0) — a static context sprite; through the OBJECT palette, like every other sprite.
+    m["source"] = QStringLiteral("image://player/npc/%1/0/%2").arg(pic).arg(contrast());
+    out.append(m);
+  }
+  return out;
+}
+
 QVariantList MapModel::connectionMapList(int dir) const
 {
   QVariantList out;

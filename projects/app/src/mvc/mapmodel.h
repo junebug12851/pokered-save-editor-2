@@ -487,6 +487,13 @@ public:
   /// arrows, the neighbour render, the interactive strip and the inspector all read.
   Q_INVOKABLE QVariantList connectionEditList() const;
 
+  /// The connecting map's own sprites, STATIC — for drawing them on the neighbour render (Twilight,
+  /// 2026-07-15: *"I do want the sprites there just not moving"*). From the **DB/ROM** (we don't hold a
+  /// neighbour's save state), one entry per sprite: `{ picture, x, y, source }` — `x`/`y` in the
+  /// neighbour's own map steps, `source` the sprite art through the object palette. Empty if @p dir has
+  /// no connection.
+  Q_INVOKABLE QVariantList neighbourSprites(int dir) const;
+
   /// The neighbour-map picker for edge @p dir, ordered for the job (Twilight, 2026-07-15):
   /// `{ value, name, size, group, isDefault }`. The map ROM actually connects here is the **Default**,
   /// on top; then the maps that have a connection on their **opposite** edge (they abut cleanly),

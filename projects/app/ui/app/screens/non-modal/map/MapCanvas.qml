@@ -574,6 +574,25 @@ Item {
           y: imgY * canvasRoot.zoom
           width: present ? (nbTW + 2 * ring) * canvasRoot.zoom : 0
           height: present ? (nbTH + 2 * ring) * canvasRoot.zoom : 0
+
+          // The neighbour's own sprites, STATIC (Twilight: "sprites there, just not moving"). From the
+          // DB/ROM (a neighbour isn't in the save). Children of the dimmed neighbour image, so they
+          // inherit its 45% opacity and read as context. Positioned in the neighbour's own map: its map
+          // area starts at the 3-block ring (96 px), and a sprite step is 16 px (with the 4 px OAM lift).
+          Repeater {
+            model: { canvasRoot.revision;
+                     return nbr.present ? brg.map.neighbourSprites(nbr.index) : []; }
+            delegate: Image {
+              required property var modelData
+              source: modelData.source
+              smooth: false
+              fillMode: Image.PreserveAspectFit
+              width: 16 * canvasRoot.zoom
+              height: 16 * canvasRoot.zoom
+              x: (nbr.ring + modelData.x * 16) * canvasRoot.zoom
+              y: (nbr.ring + modelData.y * 16 - 4) * canvasRoot.zoom
+            }
+          }
         }
       }
 
