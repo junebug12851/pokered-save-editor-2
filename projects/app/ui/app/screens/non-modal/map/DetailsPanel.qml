@@ -145,6 +145,20 @@ Item {
   readonly property var groupOrder: ["Character", "Where", "Movement", "Talking to it",
                                      "Right now", "The drawing"]
 
+  // The PLAYER's 26-byte map-state block (@see MapModel::playerFields). Bound on `revision` so an
+  // edit re-asks -- the same reason the sprite fields are. The durable groups show always; the ten
+  // the game rewrites on load and the three it never reads are in the last group, filtered out by
+  // the model unless the toolbar's "Reloaded values" switch is on.
+  readonly property var playerFields: {
+    details.revision;
+    return details.hasPlayer ? brg.map.playerFields() : [];
+  }
+
+  // ⚠️ Must match MapModel::playerFields' group names EXACTLY.
+  readonly property var playerGroupOrder: ["Facing & movement", "Fine position",
+                                           "What he can do here", "Battle", "Standing on",
+                                           "Rewritten on load, or never read"]
+
   ScrollView {
     id: scroller
     anchors.fill: parent
@@ -674,9 +688,141 @@ Item {
           }
         }
 
+        // ── Every other byte of his map state, grouped ──────────────────────────────────────
+        //
+        // ⚠️ Read notes/reference/player-state.md. Ten of these the game rewrites the instant it
+        // loads the save, three it never reads -- all gathered in the last group, behind the
+        // toolbar's "Reloaded values" switch (filtered in the MODEL, so no view can leak one). The
+        // durable ones show here always. Everything full-range, hack values included, never refused.
+        Repeater {
+          model: details.playerGroupOrder
+
+          delegate: ColumnLayout {
+            id: playerGroup
+            required property string modelData
+
+            Layout.fillWidth: true
+            Layout.topMargin: 4
+            spacing: 3
+
+            readonly property var members: (details.playerFields || []).filter(function(f) {
+              return f.group === playerGroup.modelData;
+            })
+
+            readonly property bool isRewriteGroup:
+              playerGroup.modelData === "Rewritten on load, or never read"
+
+            visible: playerGroup.members.length > 0
+
+            // The durable groups get a plain heading.
+            Label {
+              visible: !playerGroup.isRewriteGroup
+              text: playerGroup.modelData
+              font.pixelSize: 11
+              font.bold: true
+              opacity: 0.55
+              Layout.fillWidth: true
+              Layout.topMargin: 4
+            }
+
+            // ⚠️ THE REWRITE GROUP IS A DIFFERENT KIND OF GROUP, so it says so rather than being a
+            // plain heading -- exactly like the warp panel's "Fields that do nothing". Twilight,
+            // 2026-07-14: *"which ones were regenerated or rewritten on save load with little
+            // exclamation points grouped below and hidden behind a switch."*
+            Rectangle {
+              visible: playerGroup.isRewriteGroup
+              Layout.fillWidth: true
+              Layout.topMargin: 10
+              radius: 6
+              color: Qt.rgba(0, 0, 0, 0.03)
+              border.width: 1
+              border.color: brg.settings.dividerColor
+              implicitHeight: rewriteHdr.implicitHeight + 16
+
+              ColumnLayout {
+                id: rewriteHdr
+                anchors.fill: parent
+                anchors.margins: 8
+                spacing: 4
+
+                Label {
+                  Layout.fillWidth: true
+                  text: qsTr("Rewritten on load, or never read")
+                  font.pixelSize: 11
+                  font.bold: true
+                  opacity: 0.75
+                }
+
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: 6
+
+                  MapWarnIcon {
+                    text: qsTr("The game works this value out again the moment it loads your save. "
+                               + "Verified on a real cartridge.")
+                  }
+
+                  Label {
+                    Layout.fillWidth: true
+                    text: qsTr("the game rewrites it every time it loads your save")
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 10
+                    opacity: 0.6
+                  }
+                }
+
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: 6
+
+                  Label {
+                    Layout.preferredWidth: 14
+                    text: "💀"
+                    font.pixelSize: 11
+                    horizontalAlignment: Text.AlignHCenter
+                  }
+
+                  Label {
+                    Layout.fillWidth: true
+                    text: qsTr("it survives perfectly — and nothing in the game ever reads it")
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 10
+                    opacity: 0.6
+                  }
+                }
+              }
+            }
+
+            Repeater {
+              model: playerGroup.members
+
+              delegate: PlayerField {
+                required property var modelData
+                Layout.fillWidth: true
+
+                fieldData: modelData
+              }
+            }
+          }
+        }
+
+        // The switch that reveals the rewrite/dead group lives in the TOOLBAR -- the same one the
+        // sprite and warp panels use. Point at it rather than growing a second one.
         Label {
           Layout.fillWidth: true
-          Layout.topMargin: 6
+          Layout.topMargin: 10
+          visible: !brg.map.showScratch
+          text: qsTr("Thirteen more of his bytes do nothing you can keep — the game either rewrites "
+                     + "them when it loads your save, or never reads them. Turn on “Reloaded values” "
+                     + "in the toolbar to see them.")
+          wrapMode: Text.Wrap
+          font.pixelSize: 10
+          opacity: 0.55
+        }
+
+        Label {
+          Layout.fillWidth: true
+          Layout.topMargin: 8
           text: qsTr("His name, his badges and everything else about him live on the Trainer Card.")
           wrapMode: Text.Wrap
           font.pixelSize: 10

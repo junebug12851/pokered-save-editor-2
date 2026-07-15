@@ -14,14 +14,25 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
-### 🧍 THE PLAYER — the research (2026-07-14, briefed by Twilight)
+### 🧍 THE PLAYER details panel — BUILT (2026-07-14, `0.39.0-alpha`)
 
 Twilight briefed **fleshing out the full player details panel** — all 26 `AreaPlayer` map-state bytes
 (the v1 `area-player` field set: Moving, Last Stop, Current direction, X/Y + block coords, Jumping Y,
 Strength, Fly, Surf, the battle four, the special-warp offsets, the standing-on trio, Walk/Bike/Surf,
-End-edge jump, Spin, Card Key, Link Cable). Research pass done and **console-verified byte-by-byte**:
-[`reference/player-state.md`](reference/player-state.md). Design: [`plans/map-screen.md`](plans/map-screen.md)
-→ **Phase 5f**. Nothing built yet — this is research + design (the model rename is 5f-0, before UI).
+End-edge jump, Spin, Card Key, Link Cable). Research **console-verified byte-by-byte**:
+[`reference/player-state.md`](reference/player-state.md). Design + build:
+[`plans/map-screen.md`](plans/map-screen.md) → **Phase 5f**.
+
+**Built, same session.** Select the player → the Details panel edits every one of his map-state bytes,
+grouped and named in English, full-range/hack-values-included. The ten rewritten-on-load + three dead
+are gathered in a **"Rewritten on load, or never read"** group behind the *Reloaded values* switch,
+each wearing an amber **!** (with its own reason) or a grey **💀**. New: `MapModel::playerFields()`/
+`setPlayerField()`, `PlayerField.qml`, and **`tst_player`** (7 cases; keystone byte-diffs the whole
+32 KB across every field → exactly one byte/bit moves). `tst_qml_screens` 16/16.
+
+⏳ **Owed: Twilight's live pass** — scrolling the panel, toggling *Reloaded values* to reveal the
+rewrite group, and the enum/flag controls are things the offscreen still-PNG review can only partly
+cover. (Screenshots captured: `tmp/player-panel-default.png`.)
 
 The headline, and the answer to *"which are rewritten on startup"*: **ten of the 26 are.**
 

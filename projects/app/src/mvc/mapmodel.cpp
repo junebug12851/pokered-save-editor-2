@@ -2231,6 +2231,249 @@ void MapModel::setWarpStateField(const QString& key, int value)
   emit warpsChanged();
 }
 
+// ── The player's 26-byte map-state block ─────────────────────────────────────────────────────────
+//
+// ⚠️ notes/reference/player-state.md, verified on the cartridge (scripts/emu/probe_player_state.py).
+// The durable fields show in named groups; the ten the game rewrites on load and the three it never
+// reads are gathered behind the same "Reloaded values" switch the sprite and warp panels use.
+QVariantList MapModel::playerFields() const
+{
+  QVariantList ret;
+
+  if (player == nullptr)
+    return ret;
+
+  // Same filter, same switch, same reason as the sprite and warp panels: a field the console
+  // rewrites on load is CLUTTER above the ones that do something. Filtered HERE, in the model, so no
+  // view can leak one and a test can prove they are gone.
+  auto add = [&](QVariantMap f) {
+    if (!showScratchFields && (f.value("scratch").toBool() || f.value("dead").toBool()))
+      return;
+    ret.append(f);
+  };
+
+  // ⚠️ REWRITTEN ON LOAD -- console-verified. Unlike the warp block (where one wipe of wStatusFlags3
+  // does them all), the player bytes are rewritten by DIFFERENT routines -- forced, zeroed, reset,
+  // cleared -- so each carries its OWN explanation rather than a shared one.
+  auto reload = [](QVariantMap f, const QString& note) {
+    f["scratch"] = true;
+    f["mark"]    = QStringLiteral("reload");
+    f["note"]    = note;
+    return f;
+  };
+
+  // 💀 DEAD -- survives a save perfectly, and nothing in the game ever reads it.
+  auto dead = [](QVariantMap f, const QString& note) {
+    f["dead"] = true;
+    f["mark"] = QStringLiteral("dead");
+    f["note"] = note;
+    return f;
+  };
+
+  // The facing directions store the game's RAW bit values (PLAYER_DIR_*), which is why they are not
+  // 0..4. A value that is none of these stays fully editable -- the combo just steps aside for a raw
+  // box (PlayerField.qml), the same doctrine as everywhere else.
+  const QVariantList dirs = {
+    option(0, tr("— not moving")),
+    option(1, tr("Right")),
+    option(2, tr("Left")),
+    option(4, tr("Down")),
+    option(8, tr("Up")),
+  };
+
+  // ── Facing & movement ──────────────────────────────────────────────────────────────────────
+  const QString move = tr("Facing & movement");
+
+  ret.append(field(move, "moveDir", tr("Moving"),
+                   tr("Which way he is stepping right now. It is 0 on any save you could really "
+                      "make — you can only save while standing still."),
+                   player->playerMoveDir, 0, 255, "enum", dirs));
+
+  ret.append(field(move, "lastStopDir", tr("Last stop"),
+                   tr("The way he was facing before he last stopped walking."),
+                   player->playerLastStopDir, 0, 255, "enum", dirs));
+
+  ret.append(field(move, "walkBikeSurf", tr("Getting around by"),
+                   tr("Walking, cycling or surfing. Some maps override it — the Cycling Road puts "
+                      "you on the bike, the Seafoam currents put you in the water."),
+                   player->walkBikeSurf, 0, 255, "enum",
+                   QVariantList{ option(0, tr("Walking")), option(1, tr("Biking")),
+                                 option(2, tr("Surfing")) }));
+
+  // ── Fine position (the half-block) ──────────────────────────────────────────────────────────
+  const QString fine = tr("Fine position");
+
+  ret.append(field(fine, "xBlockCoord", tr("Half-block across"),
+                   tr("Which half of the 2×2 block he stands in, left to right. 0 or 1."),
+                   player->xBlockCoord, 0, 255, "byte"));
+
+  ret.append(field(fine, "yBlockCoord", tr("Half-block down"),
+                   tr("Which half of the 2×2 block he stands in, top to bottom. 0 or 1."),
+                   player->yBlockCoord, 0, 255, "byte"));
+
+  // ── What he can do here ─────────────────────────────────────────────────────────────────────
+  const QString may = tr("What he can do here");
+
+  ret.append(field(may, "surfingAllowed", tr("Can surf from here"),
+                   tr("Set when the tile he faces is water he could surf onto. The game works it "
+                      "out again as he walks."),
+                   player->surfingAllowed ? 1 : 0, 0, 1, "flag"));
+
+  ret.append(field(may, "arrivedByFly", tr("Arrived by Fly"),
+                   tr("“He just landed by FLY — play the drop-in animation.”\n\n(v1 called this "
+                      "“Using Fly”. It isn't that — it does not mean FLY is usable here.)"),
+                   player->flyOutofBattle ? 1 : 0, 0, 1, "flag"));
+
+  // ── Battle ──────────────────────────────────────────────────────────────────────────────────
+  const QString battle = tr("Battle");
+
+  ret.append(field(battle, "noBattles", tr("No wild battles"),
+                   tr("Suppresses wild Pokémon entirely — a debug/script flag, and a real, durable "
+                      "one that survives the save."),
+                   player->noBattles ? 1 : 0, 0, 1, "flag"));
+
+  // ── Standing on ─────────────────────────────────────────────────────────────────────────────
+  const QString standing = tr("Standing on");
+
+  ret.append(field(standing, "standingOnWarp", tr("A warp tile"),
+                   tr("He is on a warp tile. The game recomputes this as he moves, so it survives "
+                      "the load but not the first step."),
+                   player->standingOnWarp ? 1 : 0, 0, 1, "flag"));
+
+  ret.append(field(standing, "spinPlayer", tr("A spin tile"),
+                   tr("The spinning-floor tiles in the Rocket hideout and the Viridian Gym."),
+                   player->spinPlayer ? 1 : 0, 0, 1, "flag"));
+
+  // ── ⚠️💀 Rewritten on load, or never read — behind the switch ────────────────────────────────
+  //
+  // Twilight, 2026-07-14: *"it would be wonderful to know which ones were regenerated or rewritten
+  // on save load with little exclamation points grouped below and hidden behind a switch."* This is
+  // that. Ten the game rewrites, three it never reads -- and they are DIFFERENT facts, said apart.
+  const QString nothing = tr("Rewritten on load, or never read");
+
+  add(reload(field(nothing, "curDir", tr("Current direction"),
+                   tr("Which way he is facing."),
+                   player->playerCurDir, 0, 255, "enum", dirs),
+             tr("The game FORCES this to DOWN every single time it loads your save — it is the first "
+                "thing Continue does. Set it, save, load: he faces down. Verified on a real "
+                "cartridge.")));
+
+  add(reload(field(nothing, "strengthOutsideBattle", tr("Using Strength"),
+                   tr("STRENGTH is active out in the overworld, so boulders can be pushed."),
+                   player->strengthOutsideBattle ? 1 : 0, 0, 1, "flag"),
+             tr("The game clears this on every ordinary map load — unless “Battle just ended” is "
+                "set, in which case it survives. Both paths verified on a real cartridge.")));
+
+  add(reload(field(nothing, "isBattle", tr("Battle ongoing"),
+                   tr("Its real name is “talked to a trainer” (BIT_TALKED_TO_TRAINER). v1 called it "
+                      "“battle ongoing”, which it isn't."),
+                   player->isBattle ? 1 : 0, 0, 1, "flag"),
+             tr("Zeroed on every save load — this byte is shared with a cable-club field the game "
+                "clears on the way in. Verified on a real cartridge (wrote 255, read back 0).")));
+
+  add(reload(field(nothing, "isTrainerBattle", tr("Trainer battle"),
+                   tr("Its real name is “print end-of-battle text” (BIT_PRINT_END_BATTLE_TEXT). "
+                      "Another v1 misnomer."),
+                   player->isTrainerBattle ? 1 : 0, 0, 1, "flag"),
+             tr("The same byte as “Battle ongoing”, so the same fate: zeroed on every save load.")));
+
+  add(reload(field(nothing, "battleEndedOrBlackout", tr("Battle just ended / blacked out"),
+                   tr("Set the instant a battle finishes or you black out. It is what decides "
+                      "whether STRENGTH survives the next map load."),
+                   player->battleEndedOrBlackout ? 1 : 0, 0, 1, "flag"),
+             tr("The game clears this every time it enters a map — including the one Continue loads. "
+                "Console-verified.")));
+
+  add(reload(field(nothing, "usingLinkCable", tr("Link cable connected"),
+                   tr("A trade or battle link is live."),
+                   player->usingLinkCable ? 1 : 0, 0, 1, "flag"),
+             tr("Cleared on load — you are never in a link when you press Continue. "
+                "Console-verified.")));
+
+  add(reload(field(nothing, "standingOnDoor", tr("Standing on a door"),
+                   tr("He is on a door tile."),
+                   player->standingOnDoor ? 1 : 0, 0, 1, "flag"),
+             tr("Cleared on load. Console-verified.")));
+
+  add(reload(field(nothing, "movingThroughDoor", tr("Walking through a door"),
+                   tr("He is mid door-transition."),
+                   player->movingThroughDoor ? 1 : 0, 0, 1, "flag"),
+             tr("Cleared on load. Console-verified.")));
+
+  add(reload(field(nothing, "finalLedgeJumping", tr("Hopping a ledge / fishing"),
+                   tr("Its real name is BIT_LEDGE_OR_FISHING — set during a ledge hop AND while "
+                      "fishing. v1 narrowed it to “final ledge jump”."),
+                   player->finalLedgeJumping ? 1 : 0, 0, 1, "flag"),
+             tr("Cleared on load — the game runs its mid-jump handler once and switches it off. "
+                "Console-verified.")));
+
+  add(reload(field(nothing, "jumpingY", tr("Ledge-hop height"),
+                   tr("How far into a ledge hop his sprite is — an animation index."),
+                   player->playerJumpingYScrnCoords, 0, 255, "byte"),
+             tr("Zeroed on load. Console-verified.")));
+
+  add(dead(field(nothing, "usedCardKey", tr("Used the Card Key"),
+                 tr("Its real name is BIT_UNUSED_CARD_KEY. The game sets it when you use a Card "
+                    "Key — and the source annotates that very write “; never checked”."),
+                 player->usedCardKey ? 1 : 0, 0, 1, "flag"),
+           tr("The game sets this and never once reads it. It survives being saved perfectly; it "
+              "simply does nothing.")));
+
+  add(dead(field(nothing, "xOffsetSpecialWarp", tr("X offset since special warp"),
+                 tr("Meant to track how far he has moved since the last special warp."),
+                 player->xOffsetSinceLastSpecialWarp, 0, 255, "byte"),
+           tr("The disassembly's own comment: “they don't seem to be used for anything.” Written "
+              "by the game, read by nothing.")));
+
+  add(dead(field(nothing, "yOffsetSpecialWarp", tr("Y offset since special warp"),
+                 tr("The Y half of the same unused pair."),
+                 player->yOffsetSinceLastSpecialWarp, 0, 255, "byte"),
+           tr("Same story: written, never read.")));
+
+  return ret;
+}
+
+void MapModel::setPlayerField(const QString& key, int value)
+{
+  if (player == nullptr)
+    return;
+
+  // ⚠️ Each key writes EXACTLY ONE member -- one byte, or (for the flags) one bool that
+  // AreaPlayer::save flattens with a bit-preserving setBit, so the other bits of a shared status
+  // byte are never touched. tst_player byte-diffs the whole 32 KB save across each of these.
+  const int b = value & 0xFF;
+  const bool on = (value != 0);
+
+  if      (key == "moveDir")              { player->playerMoveDir = b;            player->playerMoveDirChanged(); }
+  else if (key == "lastStopDir")          { player->playerLastStopDir = b;        player->playerLastStopDirChanged(); }
+  else if (key == "curDir")               { player->playerCurDir = b;             player->playerCurDirChanged(); }
+  else if (key == "walkBikeSurf")         { player->walkBikeSurf = b;             player->walkBikeSurfChanged(); }
+  else if (key == "xBlockCoord")          { player->xBlockCoord = b;              player->xBlockCoordChanged(); }
+  else if (key == "yBlockCoord")          { player->yBlockCoord = b;              player->yBlockCoordChanged(); }
+  else if (key == "jumpingY")             { player->playerJumpingYScrnCoords = b; player->playerJumpingYScrnCoordsChanged(); }
+  else if (key == "surfingAllowed")       { player->surfingAllowed = on;          player->surfingAllowedChanged(); }
+  else if (key == "arrivedByFly")         { player->flyOutofBattle = on;          player->flyOutofBattleChanged(); }
+  else if (key == "strengthOutsideBattle"){ player->strengthOutsideBattle = on;   player->strengthOutsideBattleChanged(); }
+  else if (key == "noBattles")            { player->noBattles = on;               player->noBattlesChanged(); }
+  else if (key == "isBattle")             { player->isBattle = on;                player->isBattleChanged(); }
+  else if (key == "isTrainerBattle")      { player->isTrainerBattle = on;         player->isTrainerBattleChanged(); }
+  else if (key == "battleEndedOrBlackout"){ player->battleEndedOrBlackout = on;   player->battleEndedOrBlackoutChanged(); }
+  else if (key == "usingLinkCable")       { player->usingLinkCable = on;          player->usingLinkCableChanged(); }
+  else if (key == "standingOnWarp")       { player->standingOnWarp = on;          player->standingOnWarpChanged(); }
+  else if (key == "standingOnDoor")       { player->standingOnDoor = on;          player->standingOnDoorChanged(); }
+  else if (key == "movingThroughDoor")    { player->movingThroughDoor = on;       player->movingThroughDoorChanged(); }
+  else if (key == "spinPlayer")           { player->spinPlayer = on;              player->spinPlayerChanged(); }
+  else if (key == "finalLedgeJumping")    { player->finalLedgeJumping = on;       player->finalLedgeJumpingChanged(); }
+  else if (key == "usedCardKey")          { player->usedCardKey = on;             player->usedCardKeyChanged(); }
+  else if (key == "xOffsetSpecialWarp")   { player->xOffsetSinceLastSpecialWarp = b; player->xOffsetSinceLastSpecialWarpChanged(); }
+  else if (key == "yOffsetSpecialWarp")   { player->yOffsetSinceLastSpecialWarp = b; player->yOffsetSinceLastSpecialWarpChanged(); }
+  else
+    return;
+
+  // He affects the render (his facing draws his sprite), and the Details panel refreshes off this.
+  emit changed();
+}
+
 QVariantMap MapModel::zoomTarget(const QString& kind)
 {
   const int border = MapEngine::mapBorder * MapEngine::blockPx;

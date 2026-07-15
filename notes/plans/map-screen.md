@@ -883,7 +883,14 @@ words, with its range, its legal values, whether the game will keep it, and whet
 
 ---
 
-#### Phase 5f — The Player details panel, in FULL *(briefed 2026-07-14, Twilight)*
+#### Phase 5f — The Player details panel, in FULL ✅ **BUILT (2026-07-14, `0.39.0-alpha`)**
+
+> **In.** `MapModel::playerFields()`/`setPlayerField()` + `PlayerField.qml` render all 26 bytes in the
+> Details panel, grouped, with the rewrite/dead thirteen behind the *Reloaded values* switch. Model
+> members kept their (now-documented) names — the rename in **5f-0** below is deferred as an optional
+> truth-in-labelling cleanup, since it is internal-only and carries breakage risk for no user-visible
+> gain; the panel already carries the correct English names and the load-behaviour notes. Pinned by
+> **`tst_player`** (7 cases). ⏳ Owed: Twilight's live pass on the scroll, the switch and the controls.
 
 > *"Let's flesh out more character details — the player detail panel should have Moving, Last Stop,
 > Current direction, X/Y Coords, X/Y Block Coords, Jumping Y, Using strength, Using Fly, Surfing

@@ -199,6 +199,19 @@ if(TARGET appcore)
     set_tests_properties(tst_signs PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_signs)
 
+    # THE PLAYER -- his 26-byte map-state block. Keystone `setPlayerField_writesExactlyOneByteOrBit`
+    # byte-diffs the whole 32 KB across every field and demands only the intended byte/bit moved.
+    # Plus the rewritten-on-load / dead fields are absent until the switch is on, and are marked as
+    # DIFFERENT facts. See notes/reference/player-state.md -- verified against the cartridge.
+    qt_add_executable(tst_player
+        mvc/tst_player.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_player PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_player PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_player COMMAND tst_player)
+    set_tests_properties(tst_player PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_player)
+
     qt_add_executable(tst_map_layers
         mvc/tst_map_layers.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)

@@ -394,6 +394,36 @@ public:
   /// reason, and the same sentence is owed (restored on re-entry).
   Q_INVOKABLE bool signsEdited() const;
 
+  // ── The player (his 26-byte map-state block) ──────────────────────────────────
+  //
+  // ⚠️ Read notes/reference/player-state.md. The v1 model's byte offsets and bit numbers are all
+  // correct, but the load story is the point: **ten of the 26 are rewritten the instant the save
+  // loads** (wPlayerDirection FORCED to DOWN, wStatusFlags3 zeroed, strength reset unless the
+  // battle-over bit is set, the door/ledge/link bits and Jumping Y cleared), **three are dead**
+  // (the two special-warp offsets and the "unused card key" bit), and several are misnamed.
+  // Console-verified byte-by-byte: scripts/emu/probe_player_state.py.
+
+  /**
+   * @brief Every editable byte of the player's map state, named and explained -- the Details panel's
+   *        content when the player (slot 0) is selected.
+   *
+   * Same `{ group, key, label, blurb, value, min, max, kind, options }` shape as @ref warpStateFields,
+   * plus the same two "this does nothing" markers -- but the player's are a **third fact** apart:
+   *
+   *  | marker | means |
+   *  |--------|-------|
+   *  | `scratch`/`mark:"reload"` | ⚠️ **Rewritten on load.** Unlike the warp block (one wipe does the lot), the player bytes are rewritten by DIFFERENT routines, so each carries its OWN `note`. |
+   *  | `dead`/`mark:"dead"`      | 💀 **Survives perfectly, nothing ever reads it.** |
+   *
+   * Both are filtered out unless @ref showScratch -- the same switch, and the same reason, as the
+   * sprite and warp panels'. @see PlayerField.qml
+   */
+  Q_INVOKABLE QVariantList playerFields() const;
+
+  /// Write one of @ref playerFields' keys. Each writes **exactly one member** (one byte, or one bit
+  /// via AreaPlayer::save's bit-preserving setBit) and nothing else. tst_player byte-diffs the save.
+  Q_INVOKABLE void setPlayerField(const QString& key, int value);
+
 public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
            AreaLoadedSprites* sprites = nullptr, AreaSprites* npcs = nullptr,
