@@ -144,6 +144,43 @@
         "string": "<RIVAL>'s house ",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "OAK_HEY_WAIT",
+        "label": "Oak Hey Wait"
+      },
+      {
+        "id": 2,
+        "name": "OAK_WALKS_TO_PLAYER",
+        "label": "Oak Walks To Player"
+      },
+      {
+        "id": 3,
+        "name": "OAK_NOT_SAFE_COME_WITH_ME",
+        "label": "Oak Not Safe Come With Me"
+      },
+      {
+        "id": 4,
+        "name": "PLAYER_FOLLOWS_OAK",
+        "label": "Player Follows Oak"
+      },
+      {
+        "id": 5,
+        "name": "DAISY",
+        "label": "Daisy"
+      },
+      {
+        "id": 6,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -399,6 +436,28 @@
         "string": "First, you need\nto weaken the\ntarget POKéMON.",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "OLD_MAN_START_CATCH_TRAINING",
+        "label": "Old Man Start Catch Training"
+      },
+      {
+        "id": 2,
+        "name": "OLD_MAN_END_CATCH_TRAINING",
+        "label": "Old Man End Catch Training"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_MOVING_DOWN",
+        "label": "Player Moving Down"
+      }
     ]
   },
   {
@@ -651,6 +710,43 @@
         "id": 14,
         "string": "If you have the\nright stuff, go\ntake on BROCK!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "SUPER_NERD1_SHOWS_PLAYER_MUSEUM",
+        "label": "Super Nerd1 Shows Player Museum"
+      },
+      {
+        "id": 2,
+        "name": "HIDE_SUPER_NERD1",
+        "label": "Hide Super Nerd1"
+      },
+      {
+        "id": 3,
+        "name": "RESET_SUPER_NERD1",
+        "label": "Reset Super Nerd1"
+      },
+      {
+        "id": 4,
+        "name": "YOUNGSTER_SHOWS_PLAYER_GYM",
+        "label": "Youngster Shows Player Gym"
+      },
+      {
+        "id": 5,
+        "name": "HIDE_YOUNGSTER",
+        "label": "Hide Youngster"
+      },
+      {
+        "id": 6,
+        "name": "RESET_YOUNGSTER",
+        "label": "Reset Youngster"
       }
     ]
   },
@@ -1008,6 +1104,33 @@
         "id": 17,
         "string": "CERULEAN CITY\nPOKéMON GYM\nLEADER: MISTY\n\nThe Tomboyish\nMermaid!",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "RIVAL_BATTLE",
+        "label": "Rival Battle"
+      },
+      {
+        "id": 2,
+        "name": "RIVAL_DEFEATED",
+        "label": "Rival Defeated"
+      },
+      {
+        "id": 3,
+        "name": "RIVAL_CLEANUP",
+        "label": "Rival Cleanup"
+      },
+      {
+        "id": 4,
+        "name": "ROCKET_DEFEATED",
+        "label": "Rocket Defeated"
       }
     ]
   },
@@ -1483,6 +1606,33 @@
         "id": 13,
         "string": "VERMILION HARBOR",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING_UP1",
+        "label": "Player Moving Up1"
+      },
+      {
+        "id": 2,
+        "name": "PLAYER_EXIT_SHIP",
+        "label": "Player Exit Ship"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_MOVING_UP2",
+        "label": "Player Moving Up2"
+      },
+      {
+        "id": 4,
+        "name": "PLAYER_ALLOWED_TO_PASS",
+        "label": "Player Allowed To Pass"
       }
     ]
   },
@@ -2426,6 +2576,18 @@
         "id": 8,
         "string": "The door is\nlocked...",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
       }
     ]
   },
@@ -3712,6 +3874,23 @@
         "string": "ROUTE 3\nMT.MOON AHEAD",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -3936,6 +4115,23 @@
         "id": 6,
         "string": "ROUTE 4\nMT.MOON -\nCERULEAN CITY",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -4378,6 +4574,23 @@
         "id": 7,
         "string": "UNDERGROUND PATH\nCERULEAN CITY -\nVERMILION CITY",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -4875,6 +5088,23 @@
         "string": "UNDERGROUND PATH\nCELADON CITY -\nLAVENDER TOWN",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -5152,6 +5382,23 @@
         "id": 11,
         "string": "ROUTE 9\nCERULEAN CITY-\nROCK TUNNEL",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -5443,6 +5690,23 @@
         "id": 10,
         "string": "POWER PLANT",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -5775,6 +6039,23 @@
         "id": 11,
         "string": "DIGLETT's CAVE",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -6121,6 +6402,28 @@
         "string": "SNORLAX calmed\ndown! With a big\nyawn, it returned\nto the mountains!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "SNORLAX_POST_BATTLE",
+        "label": "Snorlax Post Battle"
+      }
     ]
   },
   {
@@ -6418,6 +6721,23 @@
         "string": "ROUTE 13\nNorth to SILENCE\nBRIDGE",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -6694,6 +7014,23 @@
         "id": 11,
         "string": "ROUTE 14\nWest to FUCHSIA\nCITY",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -7030,6 +7367,23 @@
         "id": 12,
         "string": "ROUTE 15\nWest to FUCHSIA\nCITY",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -7377,6 +7731,28 @@
         "string": "With a big yawn,\nSNORLAX returned\nto the mountains!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "SNORLAX_POST_BATTLE",
+        "label": "Snorlax Post Battle"
+      }
     ]
   },
   {
@@ -7705,6 +8081,23 @@
         "string": "CYCLING ROAD\nSlope ends here!",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -7931,6 +8324,23 @@
         "id": 5,
         "string": "CYCLING ROAD\nNo pedestrians\npermitted!",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -8208,6 +8618,23 @@
         "id": 11,
         "string": "SEA ROUTE 19\nFUCHSIA CITY -\nSEAFOAM ISLANDS",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -8520,6 +8947,23 @@
         "string": "SEAFOAM ISLANDS",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -8814,6 +9258,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -8983,6 +9444,48 @@
         "id": 3,
         "string": "POKéMON LEAGUE\nFront Gate",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "RIVAL1_START_BATTLE",
+        "label": "Rival1 Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "RIVAL1_AFTER_BATTLE",
+        "label": "Rival1 After Battle"
+      },
+      {
+        "id": 3,
+        "name": "RIVAL1_EXIT",
+        "label": "Rival1 Exit"
+      },
+      {
+        "id": 4,
+        "name": "RIVAL2_START_BATTLE",
+        "label": "Rival2 Start Battle"
+      },
+      {
+        "id": 5,
+        "name": "RIVAL2_AFTER_BATTLE",
+        "label": "Rival2 After Battle"
+      },
+      {
+        "id": 6,
+        "name": "RIVAL2_EXIT",
+        "label": "Rival2 Exit"
+      },
+      {
+        "id": 7,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -9247,6 +9750,23 @@
         "string": "VICTORY ROAD GATE\n- POKéMON LEAGUE",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
+      },
+      {
+        "id": 2,
+        "name": "RESET_TO_DEFAULT",
+        "label": "Reset To Default"
+      }
     ]
   },
   {
@@ -9483,6 +10003,33 @@
         "id": 8,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "AFTER_ROCKET_BATTLE",
+        "label": "After Rocket Battle"
+      },
+      {
+        "id": 4,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
       }
     ]
   },
@@ -9770,6 +10317,23 @@
         "string": "SEA COTTAGE\nBILL lives here!",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -9873,6 +10437,18 @@
         "x": 7,
         "y": 1
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -9957,6 +10533,18 @@
         "id": 3,
         "string": "It's a big map!\nThis is useful!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -10232,6 +10820,103 @@
         "string": "<RIVAL>: Alright\nGramps! Leave it\nall to me!\n\n<PLAYER>, I hate to\nsay it, but I\ndon't need you!\n\nI know! I'll\nborrow a TOWN MAP\nfrom my sis!\n\nI'll tell her not\nto lend you one,\n<PLAYER>! Hahaha!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "OAK_ENTERS_LAB",
+        "label": "Oak Enters Lab"
+      },
+      {
+        "id": 2,
+        "name": "TOGGLE_OAKS",
+        "label": "Toggle Oaks"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_ENTERS_LAB",
+        "label": "Player Enters Lab"
+      },
+      {
+        "id": 4,
+        "name": "FOLLOWED_OAK",
+        "label": "Followed Oak"
+      },
+      {
+        "id": 5,
+        "name": "OAK_CHOOSE_MON_SPEECH",
+        "label": "Oak Choose Mon Speech"
+      },
+      {
+        "id": 6,
+        "name": "PLAYER_DONT_GO_AWAY_SCRIPT",
+        "label": "Player Dont Go Away Script"
+      },
+      {
+        "id": 7,
+        "name": "PLAYER_FORCED_TO_WALK_BACK_SCRIPT",
+        "label": "Player Forced To Walk Back Script"
+      },
+      {
+        "id": 8,
+        "name": "CHOSE_STARTER_SCRIPT",
+        "label": "Chose Starter Script"
+      },
+      {
+        "id": 9,
+        "name": "RIVAL_CHOOSES_STARTER",
+        "label": "Rival Chooses Starter"
+      },
+      {
+        "id": 10,
+        "name": "RIVAL_CHALLENGES_PLAYER",
+        "label": "Rival Challenges Player"
+      },
+      {
+        "id": 11,
+        "name": "RIVAL_START_BATTLE",
+        "label": "Rival Start Battle"
+      },
+      {
+        "id": 12,
+        "name": "RIVAL_END_BATTLE",
+        "label": "Rival End Battle"
+      },
+      {
+        "id": 13,
+        "name": "RIVAL_STARTS_EXIT",
+        "label": "Rival Starts Exit"
+      },
+      {
+        "id": 14,
+        "name": "PLAYER_WATCH_RIVAL_EXIT",
+        "label": "Player Watch Rival Exit"
+      },
+      {
+        "id": 15,
+        "name": "RIVAL_ARRIVES_AT_OAKS_REQUEST",
+        "label": "Rival Arrives At Oaks Request"
+      },
+      {
+        "id": 16,
+        "name": "OAK_GIVES_POKEDEX",
+        "label": "Oak Gives Pokedex"
+      },
+      {
+        "id": 17,
+        "name": "RIVAL_LEAVES_WITH_POKEDEX",
+        "label": "Rival Leaves With Pokedex"
+      },
+      {
+        "id": 18,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -10404,6 +11089,23 @@
         "id": 3,
         "string": "No! POTIONs are\nall sold out.",
         "category": "person"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "OAKS_PARCEL",
+        "label": "Oaks Parcel"
+      },
+      {
+        "id": 2,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -10786,6 +11488,33 @@
         "id": 14,
         "string": "You do not have\nspace for this!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "GIOVANNI_POST_BATTLE",
+        "label": "Giovanni Post Battle"
+      },
+      {
+        "id": 4,
+        "name": "PLAYER_SPINNING",
+        "label": "Player Spinning"
       }
     ]
   },
@@ -11527,6 +12256,23 @@
         "string": "LEAVING\nVIRIDIAN FOREST\nPEWTER CITY AHEAD",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -11663,6 +12409,18 @@
         "id": 5,
         "string": "The AMBER is\nclear and gold!",
         "category": "person"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -11880,6 +12638,28 @@
         "id": 6,
         "string": "You don't have\nroom for this!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "BROCK_POST_BATTLE",
+        "label": "Brock Post Battle"
       }
     ]
   },
@@ -12567,6 +13347,23 @@
         "string": "Beware! ZUBAT is\na blood sucker!",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -13042,6 +13839,38 @@
         "string": "All right. Then\nthis is mine!@",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "DEFEATED_SUPER_NERD",
+        "label": "Defeated Super Nerd"
+      },
+      {
+        "id": 4,
+        "name": "MOVE_SUPER_NERD",
+        "label": "Move Super Nerd"
+      },
+      {
+        "id": 5,
+        "name": "SUPER_NERD_TAKES_OTHER_FOSSIL",
+        "label": "Super Nerd Takes Other Fossil"
+      }
     ]
   },
   {
@@ -13406,6 +14235,28 @@
         "id": 7,
         "string": "You better make\nroom for this!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "MISTY_POST_BATTLE",
+        "label": "Misty Post Battle"
       }
     ]
   },
@@ -13801,6 +14652,18 @@
         "string": "Whoa, boy!\nI'm parched!\n...\nHuh? I can have\nthis drink?\nGee, thanks!@\n...\nGlug glug...\n...\nGulp...\nIf you want to go\nto SAFFRON CITY...\n...\nYou can go on\nthrough. I'll\nshare this with\nthe other guards!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
+      }
     ]
   },
   {
@@ -14004,6 +14867,18 @@
         "string": "Whoa, boy!\nI'm parched!\n...\nHuh? I can have\nthis drink?\nGee, thanks!@\n...\nGlug glug...\n...\nGulp...\nIf you want to go\nto SAFFRON CITY...\n...\nYou can go on\nthrough. I'll\nshare this with\nthe other guards!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
+      }
     ]
   },
   {
@@ -14173,6 +15048,18 @@
         "id": 3,
         "string": "Whoa, boy!\nI'm parched!\n...\nHuh? I can have\nthis drink?\nGee, thanks!@\n...\nGlug glug...\n...\nGulp...\nIf you want to go\nto SAFFRON CITY...\n...\nYou can go on\nthrough. I'll\nshare this with\nthe other guards!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
       }
     ]
   },
@@ -14402,6 +15289,18 @@
         "id": 3,
         "string": "Whoa, boy!\nI'm parched!\n...\nHuh? I can have\nthis drink?\nGee, thanks!@\n...\nGlug glug...\n...\nGulp...\nIf you want to go\nto SAFFRON CITY...\n...\nYou can go on\nthrough. I'll\nshare this with\nthe other guards!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
       }
     ]
   },
@@ -14865,6 +15764,23 @@
         "string": "ROCK TUNNEL\nCERULEAN CITY -\nLAVENDER TOWN",
         "category": "sign"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -15219,6 +16135,23 @@
         "id": 14,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -15620,6 +16553,38 @@
         "id": 4,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "POKEMON_WALK_TO_MACHINE",
+        "label": "Pokemon Walk To Machine"
+      },
+      {
+        "id": 2,
+        "name": "POKEMON_ENTERS_MACHINE",
+        "label": "Pokemon Enters Machine"
+      },
+      {
+        "id": 3,
+        "name": "BILL_EXITS_MACHINE",
+        "label": "Bill Exits Machine"
+      },
+      {
+        "id": 4,
+        "name": "CLEANUP",
+        "label": "Cleanup"
+      },
+      {
+        "id": 5,
+        "name": "PC",
+        "label": "Pc"
       }
     ]
   },
@@ -16064,6 +17029,28 @@
         "string": "Yo kid, make room\nin your pack!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "LT_SURGE_AFTER_BATTLE",
+        "label": "Lt Surge After Battle"
+      }
     ]
   },
   {
@@ -16493,6 +17480,33 @@
         "string": "<RIVAL>: I heard\nthere was a CUT\nmaster on board.\n\nBut, he was just a\nseasick, old man!\n\nBut, CUT itself is\nreally useful!\n\nYou should go see\nhim! Smell ya!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "RIVAL_START_BATTLE",
+        "label": "Rival Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "RIVAL_AFTER_BATTLE",
+        "label": "Rival After Battle"
+      },
+      {
+        "id": 3,
+        "name": "RIVAL_EXIT",
+        "label": "Rival Exit"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -16736,6 +17750,23 @@
         "id": 5,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -17162,6 +18193,23 @@
         "string": "Ssh! I'm a GLOBAL\nPOLICE agent!\n\nI'm on the trail\nof TEAM ROCKET!",
         "category": "person"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -17485,6 +18533,23 @@
         "string": "I hear many people\nget seasick!",
         "category": "person"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -17768,6 +18833,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -17781,6 +18863,33 @@
         "id": 1,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -17796,6 +18905,33 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -17809,6 +18945,33 @@
         "id": 1,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -18046,6 +19209,23 @@
         "string": "This requires\nSTRENGTH to move!",
         "category": "person"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -18059,6 +19239,33 @@
         "id": 1,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -18074,6 +19281,33 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -18088,6 +19322,33 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -18101,6 +19362,33 @@
         "id": 1,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -18168,6 +19456,33 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -18181,6 +19496,33 @@
         "id": 1,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -18196,6 +19538,33 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -18210,6 +19579,33 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -18223,6 +19619,33 @@
         "id": 1,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LANCE_START_BATTLE",
+        "label": "Lance Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LANCE_END_BATTLE",
+        "label": "Lance End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -18277,6 +19700,28 @@
         "id": 1,
         "string": "OAK: Er-hem!\nCongratulations\n<PLAYER>!\n\nThis floor is the\nPOKéMON HALL OF\nFAME!\n\nPOKéMON LEAGUE\nchampions are\nhonored for their\nexploits here!\n\nTheir POKéMON are\nalso recorded in\nthe HALL OF FAME!\n\n<PLAYER>! You have\nendeavored hard\nto become the new\nLEAGUE champion!\n\nCongratulations,\n<PLAYER>, you and\nyour POKéMON are\nHALL OF FAMERs!",
         "category": "person"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "OAK_CONGRATULATIONS",
+        "label": "Oak Congratulations"
+      },
+      {
+        "id": 2,
+        "name": "RESET_EVENTS_AND_SAVE",
+        "label": "Reset Events And Save"
+      },
+      {
+        "id": 3,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -18418,6 +19863,63 @@
         "id": 5,
         "string": "OAK: <PLAYER>!\n\nYou understand\nthat your victory\nwas not just your\nown doing!\n\nThe bond you share\nwith your POKéMON\nis marvelous!\n\n<PLAYER>!\nCome with me!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_ENTERS",
+        "label": "Player Enters"
+      },
+      {
+        "id": 2,
+        "name": "RIVAL_READY_TO_BATTLE",
+        "label": "Rival Ready To Battle"
+      },
+      {
+        "id": 3,
+        "name": "RIVAL_DEFEATED",
+        "label": "Rival Defeated"
+      },
+      {
+        "id": 4,
+        "name": "OAK_ARRIVES",
+        "label": "Oak Arrives"
+      },
+      {
+        "id": 5,
+        "name": "OAK_CONGRATULATES_PLAYER",
+        "label": "Oak Congratulates Player"
+      },
+      {
+        "id": 6,
+        "name": "OAK_DISAPPOINTED_WITH_RIVAL",
+        "label": "Oak Disappointed With Rival"
+      },
+      {
+        "id": 7,
+        "name": "OAK_COME_WITH_ME",
+        "label": "Oak Come With Me"
+      },
+      {
+        "id": 8,
+        "name": "OAK_EXITS",
+        "label": "Oak Exits"
+      },
+      {
+        "id": 9,
+        "name": "PLAYER_FOLLOWS_OAK",
+        "label": "Player Follows Oak"
+      },
+      {
+        "id": 10,
+        "name": "CLEANUP_SCRIPT",
+        "label": "Cleanup Script"
       }
     ]
   },
@@ -19946,6 +21448,28 @@
         "string": "You should make\nroom for this.",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "ERIKA_POST_BATTLE",
+        "label": "Erika Post Battle"
+      }
     ]
   },
   {
@@ -20159,6 +21683,23 @@
         "id": 13,
         "string": "Our hideout might\nbe discovered! I\nbetter tell BOSS!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "ROCKET_BATTLE",
+        "label": "Rocket Battle"
+      },
+      {
+        "id": 2,
+        "name": "ROCKET_EXIT",
+        "label": "Rocket Exit"
       }
     ]
   },
@@ -20922,6 +22463,23 @@
         "string": "Even we could not\nidentify the\nwayward GHOSTs!\n\nA SILPH SCOPE\nmight be able to\nunmask them.",
         "category": "person"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "DEFEATED_RIVAL",
+        "label": "Defeated Rival"
+      },
+      {
+        "id": 2,
+        "name": "RIVAL_EXITS",
+        "label": "Rival Exits"
+      }
     ]
   },
   {
@@ -21108,6 +22666,23 @@
         "id": 4,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -21325,6 +22900,23 @@
         "id": 6,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -21546,6 +23138,23 @@
         "string": "Entered purified,\nprotected zone!\n\n<PLAYER>'s POKéMON\nare fully healed!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -21758,6 +23367,33 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
+      },
+      {
+        "id": 4,
+        "name": "MAROWAK_BATTLE",
+        "label": "Marowak Battle"
+      }
     ]
   },
   {
@@ -21936,6 +23572,33 @@
         "id": 4,
         "string": "MR.FUJI: Heh? You\ncame to save me?\n\nThank you. But, I\ncame here of my\nown free will.\n\nI came to calm\nthe soul of\nCUBONE's mother.\n\nI think MAROWAK's\nspirit has gone\nto the afterlife.\n\nI must thank you\nfor your kind\nconcern!\n\nFollow me to my\nhome, POKéMON\nHOUSE at the foot\nof this tower.",
         "category": "person"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "HIDE_NPC",
+        "label": "Hide Npc"
+      },
+      {
+        "id": 4,
+        "name": "WARP_TO_MR_FUJI_HOUSE",
+        "label": "Warp To Mr Fuji House"
       }
     ]
   },
@@ -22673,6 +24336,43 @@
         "string": "Did you get a\ngood haul?\nCome again!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING_RIGHT",
+        "label": "Player Moving Right"
+      },
+      {
+        "id": 2,
+        "name": "WOULD_YOU_LIKE_TO_JOIN",
+        "label": "Would You Like To Join"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
+      },
+      {
+        "id": 4,
+        "name": "PLAYER_MOVING_DOWN",
+        "label": "Player Moving Down"
+      },
+      {
+        "id": 5,
+        "name": "LEAVING_SAFARI",
+        "label": "Leaving Safari"
+      },
+      {
+        "id": 6,
+        "name": "SET_SCRIPT_AFTER_MOVE",
+        "label": "Set Script After Move"
+      }
     ]
   },
   {
@@ -22846,6 +24546,28 @@
         "id": 11,
         "string": "Make space for\nthis, child!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "KOGA_POST_BATTLE",
+        "label": "Koga Post Battle"
       }
     ]
   },
@@ -23596,6 +25318,28 @@
         "string": "This requires\nSTRENGTH to move!",
         "category": "person"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "OBJECT_MOVING1",
+        "label": "Object Moving1"
+      },
+      {
+        "id": 2,
+        "name": "MOVE_OBJECT",
+        "label": "Move Object"
+      },
+      {
+        "id": 3,
+        "name": "OBJECT_MOVING2",
+        "label": "Object Moving2"
+      }
     ]
   },
   {
@@ -23808,6 +25552,33 @@
         "id": 5,
         "string": "DANGER\nFast current!",
         "category": "sign"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "OBJECT_MOVING1",
+        "label": "Object Moving1"
+      },
+      {
+        "id": 2,
+        "name": "MOVE_OBJECT",
+        "label": "Move Object"
+      },
+      {
+        "id": 3,
+        "name": "OBJECT_MOVING2",
+        "label": "Object Moving2"
+      },
+      {
+        "id": 4,
+        "name": "OBJECT_MOVING3",
+        "label": "Object Moving3"
       }
     ]
   },
@@ -24166,6 +25937,23 @@
         "string": "A secret switch!\n\nPress it?",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -24354,6 +26142,28 @@
         "id": 12,
         "string": "Make room for my\ngift!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "GET_OPPONENT_TEXT",
+        "label": "Get Opponent Text"
+      },
+      {
+        "id": 2,
+        "name": "OPEN_GATE",
+        "label": "Open Gate"
+      },
+      {
+        "id": 3,
+        "name": "BLAINE_POST_BATTLE",
+        "label": "Blaine Post Battle"
       }
     ]
   },
@@ -25402,6 +27212,28 @@
         "string": "You want the\npiston punching\nHITMONCHAN?",
         "category": "person"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "KARATE_MASTER_POST_BATTLE",
+        "label": "Karate Master Post Battle"
+      }
     ]
   },
   {
@@ -25890,6 +27722,28 @@
         "id": 12,
         "string": "Your pack is full\nof other items!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "SABRINA_POST_BATTLE",
+        "label": "Sabrina Post Battle"
       }
     ]
   },
@@ -26580,6 +28434,28 @@
         "string": "Excuse me! Wait\nup please!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING_UP",
+        "label": "Player Moving Up"
+      },
+      {
+        "id": 2,
+        "name": "GUARD",
+        "label": "Guard"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_MOVING_RIGHT",
+        "label": "Player Moving Right"
+      }
     ]
   },
   {
@@ -26870,6 +28746,28 @@
         "id": 2,
         "string": "Excuse me!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING_UP",
+        "label": "Player Moving Up"
+      },
+      {
+        "id": 2,
+        "name": "GUARD",
+        "label": "Guard"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_MOVING_RIGHT",
+        "label": "Player Moving Right"
       }
     ]
   },
@@ -27223,6 +29121,23 @@
         "id": 1,
         "string": null,
         "category": "person"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING",
+        "label": "Player Moving"
+      },
+      {
+        "id": 2,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },
@@ -27591,6 +29506,23 @@
         "id": 13,
         "string": "This requires\nSTRENGTH to move!",
         "category": "person"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -28125,6 +30057,23 @@
         "string": "This requires\nSTRENGTH to move!",
         "category": "person"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -28302,6 +30251,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -28449,6 +30415,28 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_SPINNING",
+        "label": "Player Spinning"
+      }
     ]
   },
   {
@@ -28550,6 +30538,28 @@
         "id": 4,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_SPINNING",
+        "label": "Player Spinning"
       }
     ]
   },
@@ -28743,6 +30753,28 @@
         "id": 10,
         "string": "I see that you\nraise POKéMON\nwith utmost care.\n\nA child like you\nwould never\nunderstand what I\nhope to achieve.\n\nI shall step\naside this time!\n\nI hope we meet\nagain...",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "BEAT_GIOVANNI",
+        "label": "Beat Giovanni"
       }
     ]
   },
@@ -29006,6 +31038,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -29186,6 +31235,23 @@
         "id": 4,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -29383,6 +31449,23 @@
         "id": 7,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -29636,6 +31719,23 @@
         "string": "It's a POKéMON\nREPORT!\n\n4 POKéMON evolve\nonly when traded\nby link-cable.",
         "category": "person"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -29849,6 +31949,23 @@
         "id": 10,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -30111,6 +32228,38 @@
         "string": "Well, <PLAYER>!\n\nI'm moving on up\nand ahead!\n\nBy checking my\nPOKéDEX, I'm\nstarting to see\nwhat's strong and\nhow they evolve!\n\nI'm going to the\nPOKéMON LEAGUE\nto boot out the\nELITE FOUR!\n\nI'll become the\nworld's most\npowerful trainer!\n\n<PLAYER>, well\ngood luck to you!\nDon't sweat it!\nSmell ya!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "RIVAL_START_BATTLE",
+        "label": "Rival Start Battle"
+      },
+      {
+        "id": 4,
+        "name": "RIVAL_AFTER_BATTLE",
+        "label": "Rival After Battle"
+      },
+      {
+        "id": 5,
+        "name": "RIVAL_EXIT",
+        "label": "Rival Exit"
+      }
     ]
   },
   {
@@ -30262,6 +32411,23 @@
         "id": 4,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -30470,6 +32636,23 @@
         "id": 5,
         "string": "A secret switch!\n\nPress it?",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -30685,6 +32868,23 @@
         "id": 6,
         "string": "A secret switch!\n\nPress it?",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -30925,6 +33125,23 @@
         "id": 9,
         "string": "A secret switch!\n\nPress it?",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -32713,6 +34930,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -33098,6 +35332,28 @@
         "string": "Excuse me! Wait\nup please!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "PLAYER_MOVING_UP",
+        "label": "Player Moving Up"
+      },
+      {
+        "id": 2,
+        "name": "GUARD",
+        "label": "Guard"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_MOVING_RIGHT",
+        "label": "Player Moving Right"
+      }
     ]
   },
   {
@@ -33365,6 +35621,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -33496,6 +35769,23 @@
         "id": 4,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -33669,6 +35959,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -33809,6 +36116,38 @@
         "string": "Blast it all!\nYou ruined our\nplans for SILPH!\n\nBut, TEAM ROCKET\nwill never fall!\n\n<PLAYER>! Never\nforget that all\nPOKéMON exist\nfor TEAM ROCKET!\n\nI must go, but I\nshall return!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      },
+      {
+        "id": 3,
+        "name": "GIOVANNI_FACING",
+        "label": "Giovanni Facing"
+      },
+      {
+        "id": 4,
+        "name": "GIOVANNI_START_BATTLE",
+        "label": "Giovanni Start Battle"
+      },
+      {
+        "id": 5,
+        "name": "GIOVANNI_AFTER_BATTLE",
+        "label": "Giovanni After Battle"
+      }
     ]
   },
   {
@@ -33894,6 +36233,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -33927,6 +36283,23 @@
         "id": 5,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -34022,6 +36395,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -34055,6 +36445,23 @@
         "id": 5,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -34090,6 +36497,23 @@
         "string": null,
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
+      }
     ]
   },
   {
@@ -34123,6 +36547,23 @@
         "id": 5,
         "string": null,
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "START_BATTLE",
+        "label": "Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "END_BATTLE",
+        "label": "End Battle"
       }
     ]
   },
@@ -34205,6 +36646,33 @@
         "string": "Someone's voice:\nDon't run away!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "LORELEI_START_BATTLE",
+        "label": "Lorelei Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "LORELEI_END_BATTLE",
+        "label": "Lorelei End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -34286,6 +36754,33 @@
         "string": "Someone's voice:\nDon't run away!",
         "category": "other"
       }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "BRUNO_START_BATTLE",
+        "label": "Bruno Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "BRUNO_END_BATTLE",
+        "label": "Bruno End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
+      }
     ]
   },
   {
@@ -34366,6 +36861,33 @@
         "id": 2,
         "string": "Someone's voice:\nDon't run away!",
         "category": "other"
+      }
+    ],
+    "scriptEntries": [
+      {
+        "id": 0,
+        "name": "DEFAULT",
+        "label": "Default"
+      },
+      {
+        "id": 1,
+        "name": "AGATHA_START_BATTLE",
+        "label": "Agatha Start Battle"
+      },
+      {
+        "id": 2,
+        "name": "AGATHA_END_BATTLE",
+        "label": "Agatha End Battle"
+      },
+      {
+        "id": 3,
+        "name": "PLAYER_IS_MOVING",
+        "label": "Player Is Moving"
+      },
+      {
+        "id": 4,
+        "name": "NOOP",
+        "label": "Noop"
       }
     ]
   },

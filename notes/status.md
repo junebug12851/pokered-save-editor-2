@@ -80,6 +80,17 @@ sync discipline. **Design direction (Twilight):** derived values (the view box) 
 default** with a power-user break-sync path; scripts = descriptive ComboBox + "Something else…";
 pointer fields intuitively selectable, **never an address** except behind "Something else…".
 
+**Data landed for the script combo (2026-07-15):** `scripts/import_map_scripts.py` imported each
+map's `SCRIPT_<MAP>_<NAME>` steps into a new **`scriptEntries`** field in `maps.json` (additive,
+116 maps / 458 steps, `--check`-idempotent) — the descriptive list the "Current Script" ComboBox
+will read. Per-map progress (`w<Map>CurScript`) is out of scope (Twilight: current scripts only).
+
+**CI fix (2026-07-15):** `dev` was red on a missing CI Qt module, not a test failure —
+`projects/CMakeLists.txt` requires Qt `ShaderTools` (genuinely: `app/CMakeLists.txt` `qt_add_shaders`
+compiles `shaders/pixelart.frag`), but the CI's Qt install lacked it, so `find_package` failed at
+configure. Fix: added `qtshadertools` to the CI Qt modules in `{tests,lint,release}.yml`.
+`release.yml`/`pages.yml` are already `main`-only, so the release/deploy pipeline never ran on `dev`.
+
 ### 🚪 WARPS — phase 5 is COMPLETE (2026-07-14, `0.36.0-alpha`)
 
 | | | |
