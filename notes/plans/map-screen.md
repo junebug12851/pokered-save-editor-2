@@ -1317,7 +1317,7 @@ and that is precisely the mistake this section exists to prevent.
 | ~~**Signs**~~ | ✅ **BRIEFED 2026-07-14 — graduated to Phase 6.** | Was cut out of Phase 5b, held here until Twilight briefed it. She now has: add-sign tool, X/Y, a grouped text picker of the map's real text. See **Phase 6** above and [`../reference/signs.md`](../reference/signs.md). |
 | ~~**Connections**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 7.** | Was held here until Twilight briefed it. She now has: offset-driven editing with auto-derive, the full neighbour map draggable on the canvas, both add-gestures, explicit re-home (no rotation), delete + inspector. See **Phase 7** above and [`../reference/map-connections.md`](../reference/map-connections.md). |
 | ~~**Living / wandering NPCs**~~ | ❌ **DECLINED 2026-07-15** — Twilight: *"don't bother with the living wandering NPCs, it wouldn't be good for different reasons."* No wandering / NPC-AI. **But she does want the connecting maps' sprites SHOWN, static** (see the "neighbour sprites" item under Phase 7b). | — |
-| **Phase 8 — Encounters** | 🌿 wild Pokémon (`grassRate`, 10 grass slots, `waterRate`, 10 water slots, `pauseMons3Steps`) | The Grass/Water meaning layers already exist, so it looks like the panel is half-built. It isn't. |
+| ~~**Phase 8 — Encounters**~~ | ✅ **BRIEFED + BUILT 2026-07-15 — the Wild Pokémon panel.** | Twilight briefed it: a left-dock panel, grass + water, enable + encounter-chance slider, the ten slots drawn like the Pokémon box (percent, editable level, species picker, drag-to-reorder), random-seed on enable, never-clear on disable. The research caught a real model bug (species/level byte order). See **Phase 8** below and [`../reference/wild-encounters.md`](../reference/wild-encounters.md). |
 | ~~**Character state (`AreaNPC`)**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 9.** | Twilight briefed the right-hand Character panel (the 9 map-global NPC/control/battle flags). Researched: [`../reference/npc-character-state.md`](../reference/npc-character-state.md). See **Phase 9** below. |
 | **Area-State leftovers** | the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | Still "the leftovers", which is not a design. Un-briefed (was bundled into the old "Phase 9 — Area State"). |
 | **Phase 10 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |
@@ -1328,16 +1328,37 @@ and that is precisely the mistake this section exists to prevent.
 **What IS briefed and safe to build:** Phase 5 (warps), Phase 6 (signs), **Phase 7 (connections —
 briefed 2026-07-15)**, and **Phase 9 (Character State — briefed 2026-07-15)** — but Phase 9's *UI* is
 **gated** on its research phases finishing first (the model-fix and the emulator probe; see Phase 9
-below). Encounters and the Area-state *leftovers* (9b) remain un-briefed. Where a briefed phase
-genuinely *needs* one of them, it **reads** it; it does not build a UI for it.
+below), and **Phase 8 (Encounters — briefed + built 2026-07-15)**. The Area-state *leftovers* (9b)
+remain un-briefed. Where a briefed phase genuinely *needs* one of them, it **reads** it; it does not
+build a UI for it.
 
 ---
 
-### Phase 8 — Encounters
+### Phase 8 — Encounters  *(the Wild Pokémon panel — briefed + BUILT 2026-07-15, Twilight)*
 
-`AreaPokemon` has **no UI at all** today. `grassRate` · 10 grass slots · `waterRate` · 10 water slots ·
-`pauseMons3Steps`. Species picker + level, drag-to-reorder (the Bag/Moves drag pattern), rate 0 said in
-words ("no wild Pokémon here"), and a link to the Grass/Water Meaning layers so the panel and the map agree.
+> **BUILT.** `WildPokemonPanel.qml` (left dock) → two `WildMonList.qml` sections (grass, water). Each:
+> an **Enable** switch (`rate > 0`), an **encounter-chance** slider (Low↔High), and the ten slots drawn
+> like the Pokémon box — the slot's fixed **percent** upper-left (pokered's own
+> `WildMonEncounterSlotChances`), an **editable level** upper-right, the mon's artwork centre, its name
+> below. **Click** a slot → the species picker (the Pokémon-details `SelectSpecies` list); **drag** a
+> slot → reorder, which re-weights rarity. **Enabling a blank table seeds ten random mons** (the box's
+> new-random); **unchecking only disables — it never clears** (Twilight, 2026-07-15). `MapModel` gained
+> rates/enable, `grassMons()`/`waterMons()`, per-slot species+level setters and `moveGrassMon`/
+> `moveWaterMon`, each writing only the byte(s) it names.
+>
+> ⚠️ **The research caught a real save-model bug.** The save stores each slot as **`level, species`**
+> and the model read species-first — inverting every real save. Fixed (a phase of its own, before the
+> UI), pinned by `tst_area_pokemon::wildTables_byteOrderIsLevelThenSpecies`. Full write-up + the
+> Continue-persistence finding: [`../reference/wild-encounters.md`](../reference/wild-encounters.md).
+>
+> ⏳ **Owed: Twilight's live pass** — the drag-to-reorder, the click-to-pick species, and the inline
+> level edit are things a still PNG can only partly review. (Screenshot: `tmp/screenshots/wild-panel2.png`.)
+
+The original sketch (kept for the record): species picker + level, drag-to-reorder, rate 0 said in
+words ("no wild Pokémon here"), and a link to the Grass/Water Meaning layers so the panel and the map
+agree. The **post-battle cooldown flag** (`wildEncounterCooldown`, once wrongly bundled here as
+`pauseMons3Steps`) is a *different* byte and lives on the map-details page — see
+[`../reference/wild-encounter-cooldown.md`](../reference/wild-encounter-cooldown.md).
 
 ---
 

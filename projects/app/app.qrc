@@ -649,6 +649,8 @@
         <file>ui/app/screens/non-modal/map/SignField.qml</file>
         <file>ui/app/screens/non-modal/map/WarpStatePanel.qml</file>
         <file>ui/app/screens/non-modal/map/CharacterStatePanel.qml</file>
+        <file>ui/app/screens/non-modal/map/WildPokemonPanel.qml</file>
+        <file>ui/app/screens/non-modal/map/WildMonList.qml</file>
         <file>ui/app/screens/non-modal/map/PlayerField.qml</file>
         <file>ui/app/screens/non-modal/map/OutsideIsPicker.qml</file>
         <file>assets/icons/fontawesome/map.svg</file>

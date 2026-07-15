@@ -32,6 +32,12 @@ constexpr var8 wildMonsCount = 10; ///< Wild-encounter slots per list (grass or 
  * encounter lists can be ordered. Loaded/saved through an iterator since it's part
  * of a packed list.
  *
+ * ⚠️ On disk each slot is two bytes in the order **LEVEL, then SPECIES** -- the
+ * cartridge's own `db level, species` layout (pokered data/wild/maps; the
+ * WRAM buffer is a verbatim copy). `index` is the **internal** species index
+ * (== PokemonDBEntry::ind), e.g. 165 = RATTATA, NOT the Pokédex number. See
+ * notes/reference/wild-encounters.md.
+ *
  * @see AreaPokemon (the encounter tables).
  */
 class SAVEFILE_AUTOPORT AreaPokemonWild : public QObject {

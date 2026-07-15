@@ -25,6 +25,7 @@
 
 #include <pse-db/blocksdb.h>
 #include <pse-db/mapsdb.h>
+#include <pse-db/pokemon.h>
 #include <pse-db/tileset.h>
 #include <pse-db/tiletraitsdb.h>
 #include <pse-db/entries/itemdbentry.h>
@@ -3753,6 +3754,202 @@ void MapModel::setWildEncounterCooldown(bool on)
   pokemon->wildEncounterCooldown = on;
   pokemon->wildEncounterCooldownChanged();
   emit changed();
+}
+
+// ── Wild Pokémon: the grass + water encounter tables (AreaPokemon) ─────────────
+//
+// See notes/reference/wild-encounters.md. A rate byte (0 = none) gates each 10-slot table; a slot
+// is (level, internal-species-index) on disk. A slot's rarity is its POSITION -- pokered's own
+// WildMonEncounterSlotChances (51,51,39,25,25,25,13,13,11,3 / 256), console-verified -- so
+// reordering the list re-weights it. Each setter writes only the byte(s) it names (byte fidelity).
+
+namespace {
+// Slot rarity as a percentage (one decimal), indexed by slot 0..9. From pokered
+// data/wild/probabilities.asm: x/256 × 100.
+constexpr double kWildSlotPercent[wildMonsCount] = {
+  19.9, 19.9, 15.2, 9.8, 9.8, 9.8, 5.1, 5.1, 4.3, 1.2
+};
+
+// Internal species index -> its DB entry (nullptr if no species carries that index).
+PokemonDBEntry* speciesByInd(int ind)
+{
+  static QHash<int, PokemonDBEntry*> byInd;
+  if (byInd.isEmpty())
+    for (auto* el : PokemonDB::inst()->getStore())
+      byInd.insert(el->ind, el);
+  return byInd.value(ind, nullptr);
+}
+
+// One wild slot rendered as the map the panel draws (like a Pokémon-box cell).
+QVariantMap wildSlotMap(AreaPokemonWild* w, int slot)
+{
+  QVariantMap m;
+  auto* e = speciesByInd(w->index);
+  m["slot"]    = slot;
+  m["index"]   = w->index;                                   // internal species index
+  m["level"]   = w->level;
+  m["name"]    = e ? e->readable : QObject::tr("Glitch %1").arg(w->index);
+  m["dex"]     = (e && e->pokedex.has_value()) ? int(e->pokedex.value()) : -1; // −1 → "?"
+  m["glitch"]  = (e == nullptr) || e->glitch;
+  m["percent"] = kWildSlotPercent[slot];
+  return m;
+}
+} // namespace
+
+int MapModel::grassRate() const { return pokemon ? pokemon->grassRate : 0; }
+int MapModel::waterRate() const { return pokemon ? pokemon->waterRate : 0; }
+
+void MapModel::setGrassRate(int rate)
+{
+  if (pokemon == nullptr) return;
+  const int r = rate & 0xFF;
+  if (pokemon->grassRate == r) return;
+  pokemon->grassRate = r;           // writes exactly wGrassRate (0x2B33)
+  pokemon->grassRateChanged();
+  changed();
+}
+
+void MapModel::setWaterRate(int rate)
+{
+  if (pokemon == nullptr) return;
+  const int r = rate & 0xFF;
+  if (pokemon->waterRate == r) return;
+  pokemon->waterRate = r;           // writes exactly wWaterRate (0x2B50)
+  pokemon->waterRateChanged();
+  changed();
+}
+
+bool MapModel::grassEnabled() const { return pokemon != nullptr && pokemon->grassRate > 0; }
+bool MapModel::waterEnabled() const { return pokemon != nullptr && pokemon->waterRate > 0; }
+
+namespace {
+// A table is "blank" when no slot names a species -- i.e. it was never filled (rate 0 at load leaves
+// every slot reset to 0). A disabled-then-re-enabled table keeps its species, so it is NOT blank.
+bool wildTableBlank(AreaPokemonWild** arr)
+{
+  for (int i = 0; i < wildMonsCount; i++)
+    if (arr[i]->index != 0) return false;
+  return true;
+}
+// Fill every slot with a random species + level -- the same "give me a random mon" the Pokémon box
+// screen does. Only used when enabling a previously-blank table, so no real data is ever overwritten.
+void seedWildRandom(AreaPokemonWild** arr)
+{
+  for (int i = 0; i < wildMonsCount; i++)
+    arr[i]->randomize();
+}
+} // namespace
+
+void MapModel::setGrassEnabled(bool on)
+{
+  if (pokemon == nullptr || on == (pokemon->grassRate > 0)) return;
+  // Enabling a blank table fills its ten slots with random mons (like the box's "new random" mon),
+  // because the game reads all ten and an all-zero table would be ten glitch encounters.
+  if (on && wildTableBlank(pokemon->grassMons)) {
+    seedWildRandom(pokemon->grassMons);
+    pokemon->grassMonsChanged();
+  }
+  // Off → 0 (no wild grass) — and NOTHING ELSE. Disabling never clears a slot: the ten stay in
+  // memory (and, since save() skips the list when the rate is 0, the disk bytes are left untouched),
+  // so re-enabling brings the exact same table back. On → keep a positive rate, defaulting to 25
+  // (Route 1's) if it was 0. (Twilight, 2026-07-15: "unchecking just disables, never removes data.")
+  setGrassRate(on ? (pokemon->grassRate > 0 ? pokemon->grassRate : 25) : 0);
+}
+
+void MapModel::setWaterEnabled(bool on)
+{
+  if (pokemon == nullptr || on == (pokemon->waterRate > 0)) return;
+  if (on && wildTableBlank(pokemon->waterMons)) {
+    seedWildRandom(pokemon->waterMons);
+    pokemon->waterMonsChanged();
+  }
+  setWaterRate(on ? (pokemon->waterRate > 0 ? pokemon->waterRate : 25) : 0);
+}
+
+QVariantList MapModel::grassMons() const
+{
+  QVariantList out;
+  if (pokemon == nullptr) return out;
+  for (int i = 0; i < wildMonsCount; i++)
+    out.append(wildSlotMap(pokemon->grassMons[i], i));
+  return out;
+}
+
+QVariantList MapModel::waterMons() const
+{
+  QVariantList out;
+  if (pokemon == nullptr) return out;
+  for (int i = 0; i < wildMonsCount; i++)
+    out.append(wildSlotMap(pokemon->waterMons[i], i));
+  return out;
+}
+
+void MapModel::setGrassMonSpecies(int slot, int ind)
+{
+  if (pokemon == nullptr || slot < 0 || slot >= wildMonsCount) return;
+  auto* w = pokemon->grassMons[slot];
+  const int b = ind & 0xFF;
+  if (w->index == b) return;
+  w->index = b; w->indexChanged();
+  pokemon->grassMonsChanged();
+  changed();
+}
+
+void MapModel::setWaterMonSpecies(int slot, int ind)
+{
+  if (pokemon == nullptr || slot < 0 || slot >= wildMonsCount) return;
+  auto* w = pokemon->waterMons[slot];
+  const int b = ind & 0xFF;
+  if (w->index == b) return;
+  w->index = b; w->indexChanged();
+  pokemon->waterMonsChanged();
+  changed();
+}
+
+void MapModel::setGrassMonLevel(int slot, int level)
+{
+  if (pokemon == nullptr || slot < 0 || slot >= wildMonsCount) return;
+  auto* w = pokemon->grassMons[slot];
+  const int b = level & 0xFF;
+  if (w->level == b) return;
+  w->level = b; w->levelChanged();
+  pokemon->grassMonsChanged();
+  changed();
+}
+
+void MapModel::setWaterMonLevel(int slot, int level)
+{
+  if (pokemon == nullptr || slot < 0 || slot >= wildMonsCount) return;
+  auto* w = pokemon->waterMons[slot];
+  const int b = level & 0xFF;
+  if (w->level == b) return;
+  w->level = b; w->levelChanged();
+  pokemon->waterMonsChanged();
+  changed();
+}
+
+void MapModel::moveGrassMon(int from, int to)
+{
+  if (pokemon == nullptr) return;
+  if (from < 0 || from >= wildMonsCount || to < 0 || to >= wildMonsCount || from == to) return;
+  AreaPokemonWild* moved = pokemon->grassMons[from];
+  if (from < to) for (int i = from; i < to; i++) pokemon->grassMons[i] = pokemon->grassMons[i + 1];
+  else           for (int i = from; i > to; i--) pokemon->grassMons[i] = pokemon->grassMons[i - 1];
+  pokemon->grassMons[to] = moved;
+  pokemon->grassMonsChanged();
+  changed();
+}
+
+void MapModel::moveWaterMon(int from, int to)
+{
+  if (pokemon == nullptr) return;
+  if (from < 0 || from >= wildMonsCount || to < 0 || to >= wildMonsCount || from == to) return;
+  AreaPokemonWild* moved = pokemon->waterMons[from];
+  if (from < to) for (int i = from; i < to; i++) pokemon->waterMons[i] = pokemon->waterMons[i + 1];
+  else           for (int i = from; i > to; i--) pokemon->waterMons[i] = pokemon->waterMons[i - 1];
+  pokemon->waterMons[to] = moved;
+  pokemon->waterMonsChanged();
+  changed();
 }
 
 // ── Area state (v1's "Map" page — the AreaMap leftover bytes) ──────────────────

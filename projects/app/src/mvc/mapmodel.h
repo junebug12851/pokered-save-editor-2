@@ -185,6 +185,23 @@ class MapModel : public QObject
   /// (the audio-fade flag beside it is untouched). See notes/reference/wild-encounter-cooldown.md.
   Q_PROPERTY(bool wildEncounterCooldown READ wildEncounterCooldown WRITE setWildEncounterCooldown NOTIFY changed)
 
+  // ── Wild Pokémon (the map's grass + water encounter tables — AreaPokemon) ───────
+  //
+  // Two 10-slot tables (grass, water), each gated by a RATE byte (0 = no wild Pokémon of that kind
+  // here). A slot is (level, species-internal-index); the game reads all ten when the rate is > 0.
+  // The slot's rarity is its POSITION (slot 0 ≈ 19.9% … slot 9 ≈ 1.2%, from pokered's
+  // WildMonEncounterSlotChances), so reordering the list re-weights it. See
+  // notes/reference/wild-encounters.md. Each setter writes only the byte(s) it names.
+
+  /// Grass encounter rate — `wGrassRate` (`0x2B33`). 0 = no wild grass Pokémon. Higher = more often.
+  Q_PROPERTY(int grassRate READ grassRate WRITE setGrassRate NOTIFY changed)
+  /// Whether grass has wild Pokémon at all (== grassRate > 0). The panel's "Enable" toggle.
+  Q_PROPERTY(bool grassEnabled READ grassEnabled WRITE setGrassEnabled NOTIFY changed)
+  /// Water (surf/fish) encounter rate — `wWaterRate` (`0x2B50`). 0 = no wild water Pokémon.
+  Q_PROPERTY(int waterRate READ waterRate WRITE setWaterRate NOTIFY changed)
+  /// Whether water has wild Pokémon at all (== waterRate > 0).
+  Q_PROPERTY(bool waterEnabled READ waterEnabled WRITE setWaterEnabled NOTIFY changed)
+
   // ── Area state (v1's "Map" page — the AreaMap leftover bytes) ──────────────────
   //
   // ⚠️ Read notes/reference/area-map-state.md. Console-verified: two durable levers
@@ -463,6 +480,26 @@ public:
   /// Write one of @ref playerFields' keys. Each writes **exactly one member** (one byte, or one bit
   /// via AreaPlayer::save's bit-preserving setBit) and nothing else. tst_player byte-diffs the save.
   Q_INVOKABLE void setPlayerField(const QString& key, int value);
+
+  // ── Wild Pokémon tables (grass + water) ────────────────────────────────────────
+  //
+  // Each returns the ten slots as maps the panel draws like the Pokémon box:
+  //   { slot, index, level, name, dex, glitch, percent }
+  // where `index` is the internal species index (== PokemonDBEntry::ind), `dex` is the Pokédex
+  // number (−1 for a glitch species, so the delegate shows a "?"), and `percent` is the slot's
+  // fixed rarity (pokered WildMonEncounterSlotChances). @see WildPokemonPanel.qml.
+  Q_INVOKABLE QVariantList grassMons() const;
+  Q_INVOKABLE QVariantList waterMons() const;
+
+  /// Set slot @p slot's species to internal index @p ind. Full byte range (glitch species allowed).
+  Q_INVOKABLE void setGrassMonSpecies(int slot, int ind);
+  Q_INVOKABLE void setWaterMonSpecies(int slot, int ind);
+  /// Set slot @p slot's level. Full byte range.
+  Q_INVOKABLE void setGrassMonLevel(int slot, int level);
+  Q_INVOKABLE void setWaterMonLevel(int slot, int level);
+  /// Move a slot from @p from to @p to, shifting the rest (drag-to-reorder — it re-weights rarity).
+  Q_INVOKABLE void moveGrassMon(int from, int to);
+  Q_INVOKABLE void moveWaterMon(int from, int to);
 
 public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
@@ -890,6 +927,15 @@ public:
 
   bool wildEncounterCooldown() const;
   void setWildEncounterCooldown(bool on);  ///< Writes `wStatusFlags2` bit 0 -- and only that bit.
+
+  int  grassRate() const;                  ///< @see grassRate property.
+  void setGrassRate(int rate);             ///< Writes `wGrassRate` (0x2B33). Full byte range.
+  bool grassEnabled() const;               ///< grassRate > 0.
+  void setGrassEnabled(bool on);           ///< off → rate 0; on → rate defaults to 25 if it was 0.
+  int  waterRate() const;                  ///< @see waterRate property.
+  void setWaterRate(int rate);             ///< Writes `wWaterRate` (0x2B50). Full byte range.
+  bool waterEnabled() const;               ///< waterRate > 0.
+  void setWaterEnabled(bool on);           ///< off → rate 0; on → rate defaults to 25 if it was 0.
 
   // ── Area state (v1's "Map" page) ──────────────────────────────
   bool alwaysOnBike() const;

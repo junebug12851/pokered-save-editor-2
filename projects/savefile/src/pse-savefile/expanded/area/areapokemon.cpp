@@ -85,17 +85,22 @@ void AreaPokemonWild::load(int index, int level)
 
 void AreaPokemonWild::load(SaveFileIterator* it)
 {
-  index = it->getByte();
-  indexChanged();
-
+  // ⚠️ Byte order is LEVEL then SPECIES -- the cartridge stores each slot as `db level, species`
+  // (pokered data/wild/maps; the WRAM wGrassMons buffer is a verbatim copy, per the MissingNo
+  // note in engine/battle/core.asm). Verified against BaseSAV: 0x2B35 = 165 = RATTATA (a species),
+  // 0x2B34 = a small level. Reading species-first (as this did through 0.39.x) inverted every real
+  // save. See notes/reference/wild-encounters.md. (index == PokemonDBEntry::ind, the internal index.)
   level = it->getByte();
   levelChanged();
+
+  index = it->getByte();
+  indexChanged();
 }
 
 void AreaPokemonWild::save(SaveFileIterator* it)
 {
-  it->setByte(index);
-  it->setByte(level);
+  it->setByte(level); // level first -- see load()
+  it->setByte(index); // then species (internal index)
 }
 
 AreaPokemon::AreaPokemon(SaveFile* saveFile)

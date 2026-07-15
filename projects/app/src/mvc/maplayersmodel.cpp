@@ -78,12 +78,14 @@ MapLayersModel::MapLayersModel(MapModel* map, QObject* parent)
   buildAll();
   rebuild();
 
-  // The two OVERLAY layers that are on by default. They are the map's exits -- how it joins the rest
-  // of the world -- and they are the only two of the nine anybody wants standing there unasked
-  // (Twilight, 2026-07-13). They live in MapModel::layers, not in our own `bits`. @see the note on
-  // `bits` in the header.
+  // The OVERLAY layer on by default: Warps -- the map's exits, how it joins the rest of the world,
+  // the one of the nine anybody wants standing there unasked. The Doors overlay is OFF by default
+  // (Twilight, 2026-07-15: "disable the door layer by default"). ⚠️ Backend mapping verified NOT
+  // swapped: LayerWarps (1<<3) paints Warp/WarpPad/Hole tiles (purple); LayerDoors (1<<4) paints
+  // Door tiles (orange) -- see MapEngine::layerApplies/layerColour. They live in MapModel::layers,
+  // not in our own `bits`. @see the note on `bits` in the header.
   if (map != nullptr)
-    map->setLayers(MapEngine::LayerDoors | MapEngine::LayerWarps);
+    map->setLayers(MapEngine::LayerWarps);
 
   // The map changed: which layers even APPLY changes with it (a map with no grass should say so
   // rather than switch on an empty overlay), so every row's "applies" is stale.

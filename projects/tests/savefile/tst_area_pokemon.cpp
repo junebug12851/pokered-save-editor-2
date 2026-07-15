@@ -44,6 +44,7 @@ private:
 private slots:
   void initTestCase();
   void wildTables_roundTrip();
+  void wildTables_byteOrderIsLevelThenSpecies();
   void wildTables_swap();
   void loadedSprites_roundTripAndSwap();
 };
@@ -81,6 +82,29 @@ void TestAreaPokemon::wildTables_roundTrip()
     QCOMPARE(p2->waterMonsAt(i)->index, (i + 1) + 50);
     QCOMPARE(p2->waterMonsAt(i)->level, (i + 1) * 2);
   }
+}
+
+// The cartridge stores each wild slot as `db level, species` (pokered
+// data/wild/maps/*.asm; BaseSAV 0x2B35 = 165 = RATTATA). This pins that byte order
+// so a re-inversion (species-first, as the model did through 0.39.x) fails here.
+// See notes/reference/wild-encounters.md.
+void TestAreaPokemon::wildTables_byteOrderIsLevelThenSpecies()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* p = sf.dataExpanded->area->pokemon;
+
+  // Enable grass (rate > 0) so the 20 slot bytes are actually written, then set
+  // slot 0 to a recognisable pair: level 7, species 165 (RATTATA internal index).
+  p->grassRate = 25;
+  p->grassMonsAt(0)->index = 165; // species
+  p->grassMonsAt(0)->level = 7;   // level
+
+  sf.flattenData();
+  const QByteArray out = snapshot(sf);
+
+  QCOMPARE(int(static_cast<unsigned char>(out.at(0x2B33))), 25);  // grass rate
+  QCOMPARE(int(static_cast<unsigned char>(out.at(0x2B34))), 7);   // LEVEL first
+  QCOMPARE(int(static_cast<unsigned char>(out.at(0x2B35))), 165); // SPECIES second
 }
 
 void TestAreaPokemon::wildTables_swap()

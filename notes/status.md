@@ -5,7 +5,7 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.39.8-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
+**Version:** `0.40.1-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**88/88**, 2026-07-15);
 `tst_connections` now 17.
@@ -19,6 +19,25 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 > **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
 
 ## Current state (read this first)
+
+### 🌿 WILD POKÉMON panel — BUILT (2026-07-15, Phase 8, `0.40.1-alpha`)
+
+Twilight briefed the **Wild Pokémon** panel; it's in the map screen's left dock. Two sections (grass,
+water), each an **Enable** switch + an **encounter-chance** slider (Low↔High) + the ten slots drawn like
+the Pokémon box: fixed **percent** upper-left, **editable level** upper-right, artwork centre, name
+below. **Click** a slot → the species picker (Pokémon-details `SelectSpecies`); **drag** → reorder
+(re-weights rarity, since a slot's chance is its position). **Enabling a blank table seeds ten random
+mons**; **unchecking only disables — it never clears** (re-enabling brings the same ten back).
+
+⚠️ **The research caught a real save-model bug.** The save stores each slot as **`level, species`** but
+`AreaPokemonWild` read species-first — inverting every real save's wild table. **Fixed** (level first),
+pinned by `tst_area_pokemon::wildTables_byteOrderIsLevelThenSpecies`. Species is the **internal index**
+(165 = RATTATA). And it's **live on Continue** — `LoadWildData` rides the same `LoadMapHeader` linchpin
+as warps/signs (verified from the disassembly). New: [`reference/wild-encounters.md`](reference/wild-encounters.md),
+`WildPokemonPanel.qml` + `WildMonList.qml`, and the `MapModel` encounter surface. Green:
+`tst_area_pokemon` 6/6, `tst_map` 27/27, `tst_qml_screens` 16/16. Also this session: the **Door
+meaning-layer is off by default** now (Twilight asked; only Warps on) — backend mapping verified **not**
+swapped. ⏳ **Owed: Twilight's live pass** (drag-reorder / click-to-pick / inline level edit).
 
 ### 🌿 "3-step wild encounter cooldown" checkbox — BUILT (2026-07-15)
 
@@ -281,8 +300,8 @@ Tool: `scripts/emu/probe_warp_persistence.py` (local-only, ROM-gated).
 > *"Signs and stuff, connecting routes, wild Pokémon — these are examples of things I haven't gotten to
 > yet. I'd hate to have to undo a lot of work because it was done before I explained anything."*
 
-**Signs · connections ("connecting routes") · wild Pokémon/encounters · area state · the tileset deep
-pass** are **un-briefed**. The sketches for them in `plans/map-screen.md` were written from the *save
+**Area state (the AreaWarps/AreaLoadedSprites leftovers) · the tileset deep pass** are **un-briefed**.
+(Signs, connections, wild Pokémon/encounters and character state have since been briefed + built.) The sketches for them in `plans/map-screen.md` were written from the *save
 layout* — a map of what bytes exist, not of what Twilight wants a person to be able to *do* — and they
 **carry no authority**. Each gets its own conversation, then research, then a design, then code.
 

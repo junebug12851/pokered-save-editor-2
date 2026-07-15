@@ -206,11 +206,14 @@ Page {
           { id: "characters", glyph: "☻", title: qsTr("Characters"),
             tip: qsTr("Characters — the people and objects you can put on the map. Drag one out.") },
           { id: "details", glyph: "✎", title: qsTr("Details"),
-            tip: qsTr("Details — edit whatever is selected. Nothing selected? The map itself.") }
+            tip: qsTr("Details — edit whatever is selected. Nothing selected? The map itself.") },
+          { id: "wild", glyph: "✿", title: qsTr("Wild Pokémon"),
+            tip: qsTr("Wild Pokémon — the grass and water encounters on this map") }
         ]
         sources: ({ "layers": "LayersPanel.qml",
                     "characters": "CharactersBar.qml",
-                    "details": "DetailsPanel.qml" })
+                    "details": "DetailsPanel.qml",
+                    "wild": "WildPokemonPanel.qml" })
 
         panelContext: canvas
 
