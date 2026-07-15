@@ -45,8 +45,14 @@ to see arrows + strips.
 shows: neighbour picker, offset spinner + snap buttons (corner/centred/flush), re-home buttons, a
 **Break sync** switch unlocking the raw nine (`connectionFields`/`setConnectionField`), Delete, and the
 live/restored honest note. `tst_connections` **16/16** (two new for the fields + break-sync write),
-`tst_qml_screens` 16/16. ⏳ Still owed in Phase 7: the full neighbour-map render + drag-map-onto-arrow
-(7b pt 2), the on-canvas resize nodes (7d), and Twilight's live pass.
+`tst_qml_screens` 16/16.
+
+**Phase 7b PART 2 BUILT (2026-07-15, `0.39.4-alpha`) — the full neighbour map on the canvas.** Each
+connection renders its actual neighbour map (its own tileset) bleeding off the edge, aligned to the
+offset, drawn behind our opaque buffer so only the off-edge part shows, dimmed 45%, re-positioned live on
+a drag. `connectionEditList` gained `toTileset`. ⏳ Still owed in Phase 7: the drag-map-onto-arrow
+gesture, the on-canvas resize nodes (7d), and **Twilight's live pass** (the alignment + all the drag
+interactions can't be still-captured — layer-gated, edge-located, zoom-dependent).
 
 ### 🧍 THE PLAYER details panel — BUILT (2026-07-14, `0.39.0-alpha`)
 

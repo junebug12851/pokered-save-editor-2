@@ -1188,6 +1188,12 @@ The four edges become live, on 4b's object machinery + the neighbour-map rendere
 - **The live connection = the full neighbour map.** When a connection exists, render the neighbour map
   (via `MapEngine`) as an image bleeding off that edge, clipped to a comfortable margin, dimmed slightly so
   *our* map stays the subject. It aligns to the offset — what you'd see if you could peer past the seam.
+  > **BUILT (2026-07-15, `0.39.4-alpha`).** Four fixed `PixelImage` items, one per edge, rendering the
+  > neighbour's own map (`image://map/<toMap>/<toTileset>/…`, `toTileset` added to `connectionEditList`),
+  > positioned so the neighbour's shared map edge meets ours + the offset, drawn **behind** our opaque
+  > buffer (z −0.5) so only the off-edge part shows, dimmed 45%, re-positioned live on an offset drag.
+  > ⏳ Owed: Twilight's live pass on the alignment (layer-gated + edge-located + zoom-dependent, so it
+  > can't be still-captured).
 - **Drag = offset.** Grab the neighbour map and slide it **along the shared edge only** (constrained to the
   one axis); the offset snaps to whole blocks; the nine derived bytes recompute live; the border-ring strip
   re-renders as you drag. Live offset + Δ in the context bar, exactly like a warp drag. `Esc` cancels with

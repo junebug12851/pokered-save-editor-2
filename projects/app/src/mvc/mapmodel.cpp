@@ -425,6 +425,7 @@ QVariantList MapModel::connectionEditList() const
       m["synced"] = connectionSynced(dir);
       m["toW"] = toW;
       m["toH"] = toH;
+      m["toTileset"] = MapEngine::tilesetOf(c->mapPtr);   // for the full-neighbour render on the canvas
 
       // The landmark offsets a drag snaps to (Twilight, 2026-07-15): flush at 0, centred, and the
       // far edges flush. N/S snap along width; E/W along height. Computed from the two maps' sizes,
@@ -454,6 +455,7 @@ QVariantList MapModel::connectionEditList() const
       m["synced"] = false;
       m["toW"] = 0;
       m["toH"] = 0;
+      m["toTileset"] = -1;
       m["snaps"] = QVariantList();
     }
 

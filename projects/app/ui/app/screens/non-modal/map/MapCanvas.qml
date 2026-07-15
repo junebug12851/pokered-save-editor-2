@@ -652,6 +652,59 @@ Item {
         z: -1
       }
 
+      // ── The full NEIGHBOUR maps (Phase 7b part 2) ────────────────────────────────────────────
+      //
+      // Twilight: *"I think it might be better to have the full connecting map on there to make it
+      // easier to slide around."* So each connection renders its neighbour map, bleeding off the edge,
+      // aligned so the neighbour's shared edge meets ours (shifted by the offset). It sits BEHIND our
+      // own map image (z −0.5), which is opaque, so our buffer (ring + bled strip) covers the overlap
+      // and only the part beyond our edge shows in the well. Dimmed, so our map stays the subject.
+      //
+      // Alignment, in buffer px (ring = 3 blocks = 96): the neighbour image has its own 3-block ring,
+      // so its map area starts at (96,96). We place the image so that map area's shared edge lands on
+      // ours. Four fixed items, bound to `revision`, so an offset drag re-positions them live.
+      Repeater {
+        model: 4
+        delegate: PixelImage {
+          id: nbr
+          required property int index
+
+          readonly property var e: { canvasRoot.revision; return canvasRoot.connEdgeFor(index); }
+          readonly property bool present: e && e.exists === true && e.toTileset >= 0
+                                          && brg.mapLayers.showConnections && brg.map.valid
+
+          visible: present
+          z: -0.5
+          opacity: 0.45
+
+          source: present ? ("image://map/" + e.toMap + "/" + e.toTileset + "/0/"
+                             + brg.map.contrast + "/-1/-1/-1") : ""
+
+          readonly property real ring: 96
+          readonly property real off: (present ? e.offset : 0) * 32
+          readonly property real nbTW: present ? e.toW * 32 : 0   // neighbour map area, buffer px
+          readonly property real nbTH: present ? e.toH * 32 : 0
+
+          readonly property real mX: brg.map.mapX
+          readonly property real mY: brg.map.mapY
+          readonly property real mW: brg.map.mapW
+          readonly property real mH: brg.map.mapH
+
+          // Image top-left in buffer px, so the neighbour's map edge meets ours.
+          readonly property real imgX: index === 2 ? (mX + mW - ring)          // East
+                                     : index === 3 ? (mX - ring - nbTW)        // West
+                                     : (mX + off - ring)                       // North / South
+          readonly property real imgY: index === 0 ? (mY - ring - nbTH)        // North
+                                     : index === 1 ? (mY + mH - ring)          // South
+                                     : (mY + off - ring)                       // East / West
+
+          x: imgX * canvasRoot.zoom
+          y: imgY * canvasRoot.zoom
+          width: present ? (nbTW + 2 * ring) * canvasRoot.zoom : 0
+          height: present ? (nbTH + 2 * ring) * canvasRoot.zoom : 0
+        }
+      }
+
       // The whole overworld buffer: the map inside its border ring.
       //
       // A PixelImage, not an Image: it samples through the pixel-art shader, which is what lets the
