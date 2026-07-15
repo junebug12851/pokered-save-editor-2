@@ -110,7 +110,7 @@ TestCase {
         compare(area.pokemon.grassRate, 25, "area.pokemon.grassRate did not write back")
 
         // AreaNPC / AreaWarps state flags
-        verify(typeof area.npc.npcsFaceAway === "boolean", "area.npc.npcsFaceAway is not a boolean")
+        verify(typeof area.npc.npcsDoNotFacePlayer === "boolean", "area.npc.npcsDoNotFacePlayer is not a boolean")
         verify(typeof area.warps.warpDest === "number", "area.warps.warpDest is not a number")
 
         // AreaLoadedSprites

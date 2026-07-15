@@ -350,13 +350,20 @@ Page {
           // Details panel (which is for whatever is SELECTED). Twilight asked for exactly this:
           // "I will place them in the right panel as warp state" (2026-07-14).
           { id: "warps", glyph: "⇄", title: qsTr("Warp state"),
-            tip: qsTr("Warp state — where FLY goes, where falling drops you, where DIG puts you") }
+            tip: qsTr("Warp state — where FLY goes, where falling drops you, where DIG puts you") },
+          // ☺ The nine map-global character flags (v1's "NPC" page): whether NPCs face you, whether a
+          // scripted cutscene has the controls, whether a trainer battle is queued. They belong to the
+          // MAP, so they live here with the other things you edit about it -- not in the Details panel
+          // (that is for whatever is SELECTED). Briefed + researched 2026-07-15; reference/npc-character-state.md.
+          { id: "charstate", glyph: "☺", title: qsTr("Character state"),
+            tip: qsTr("Character state — how the characters on this map behave: facing, scripted control, trainer battle") }
         ]
         // ⚠️ MUSIC IS NOT HERE ANY MORE. It is a chip in the toolbar (MusicPicker.qml) -- a whole
         // dock panel for one combo, two checkboxes and a ▶ was a panel too many (Twilight).
         sources: ({ "tiles": "TilesetPanel.qml",
                     "sprites": "SpriteSetPanel.qml",
-                    "warps": "WarpStatePanel.qml" })
+                    "warps": "WarpStatePanel.qml",
+                    "charstate": "CharacterStatePanel.qml" })
 
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth   // the RAIL, and only the rail. The panel floats.

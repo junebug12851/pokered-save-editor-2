@@ -270,9 +270,13 @@ Exists; keeps its content.
 > intuitively selectable, never a raw address except behind "Something else…". Awaiting the design
 > pass before any build.
 
-- **NPC state** *(AreaNPC)*: `npcsFaceAway`, `scriptedNPCMovement`, `npcSpriteMovement`,
-  `tradeCenterSpritesFaced`, `ignoreJoypad`, `joypadSimulation`, `runningTestBattle`, `trainerWantsBattle`,
-  `trainerHeaderPtr`.
+- **Character state** *(AreaNPC)* — **now researched + briefed** as its own right-hand panel
+  ([`../reference/npc-character-state.md`](../reference/npc-character-state.md), 2026-07-15). The nine
+  map-global flags (`npcsFaceAway`, `scriptedNPCMovement`, `npcSpriteMovement`, `tradeCenterSpritesFaced`,
+  `ignoreJoypad`, `joypadSimulation`, `runningTestBattle`, `trainerWantsBattle`, `trainerHeaderPtr`) all
+  turned out to be transient script/battle/link scratch, three of v1's labels are wrong, two are zeroed
+  on load, and the rest owe an emulator probe. Design + phased build are **Phase 9 (Character State)**
+  below — this sketch is superseded by it.
 - **Warp state** *(AreaWarps' non-list fields)*: `scriptedWarp`, `isDungeonWarp`, `skipJoypadCheckWarps`,
   `warpDest`, `dungeonWarpDestMap`, `specialWarpDestMap`, `flyOrDungeonWarp`, `flyWarp`, `dungeonWarp`,
   `whichDungeonWarp`, `warpedFromWarp`, `warpedfromMap`.
@@ -1314,15 +1318,18 @@ and that is precisely the mistake this section exists to prevent.
 | ~~**Connections**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 7.** | Was held here until Twilight briefed it. She now has: offset-driven editing with auto-derive, the full neighbour map draggable on the canvas, both add-gestures, explicit re-home (no rotation), delete + inspector. See **Phase 7** above and [`../reference/map-connections.md`](../reference/map-connections.md). |
 | ~~**Living / wandering NPCs**~~ | ❌ **DECLINED 2026-07-15** — Twilight: *"don't bother with the living wandering NPCs, it wouldn't be good for different reasons."* No wandering / NPC-AI. **But she does want the connecting maps' sprites SHOWN, static** (see the "neighbour sprites" item under Phase 7b). | — |
 | **Phase 8 — Encounters** | 🌿 wild Pokémon (`grassRate`, 10 grass slots, `waterRate`, 10 water slots, `pauseMons3Steps`) | The Grass/Water meaning layers already exist, so it looks like the panel is half-built. It isn't. |
-| **Phase 9 — Area State** | the `AreaNPC` flags, the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | It is "the leftovers", which is not a design. |
+| ~~**Character state (`AreaNPC`)**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 9.** | Twilight briefed the right-hand Character panel (the 9 map-global NPC/control/battle flags). Researched: [`../reference/npc-character-state.md`](../reference/npc-character-state.md). See **Phase 9** below. |
+| **Area-State leftovers** | the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | Still "the leftovers", which is not a design. Un-briefed (was bundled into the old "Phase 9 — Area State"). |
 | **Phase 10 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |
 
 **What the earlier text in this file says about these is a sketch and carries no authority.** Read it as
 "here is what the bytes are", never as "here is what we agreed."
 
-**What IS briefed and safe to build:** Phase 5 (warps), Phase 6 (signs) and **Phase 7 (connections —
-briefed 2026-07-15)**, and nothing that touches encounters or area state. Where a briefed phase genuinely
-*needs* one of them, it **reads** it; it does not build a UI for it.
+**What IS briefed and safe to build:** Phase 5 (warps), Phase 6 (signs), **Phase 7 (connections —
+briefed 2026-07-15)**, and **Phase 9 (Character State — briefed 2026-07-15)** — but Phase 9's *UI* is
+**gated** on its research phases finishing first (the model-fix and the emulator probe; see Phase 9
+below). Encounters and the Area-state *leftovers* (9b) remain un-briefed. Where a briefed phase
+genuinely *needs* one of them, it **reads** it; it does not build a UI for it.
 
 ---
 
@@ -1334,10 +1341,77 @@ words ("no wild Pokémon here"), and a link to the Grass/Water Meaning layers so
 
 ---
 
-### Phase 9 — Area State
+### Phase 9 — Character State  *(the right-hand Character panel — briefed 2026-07-15, Twilight)*
 
-`AreaNPC` (9 flags), the `AreaWarps` state fields (12), `AreaLoadedSprites` (`loadedSetId` + 11 slots) —
-none of which has a UI today. Three titled groups, every flag explained, the sprite-set slots reorderable.
+> Twilight: *"There needs to be a panel on the right of the map screen that houses character options
+> for all characters."* — the nine map-global `AreaNPC` flags: Face-away-on-interaction, scripted
+> movement init/running, ignore controls, scripted controls, scripted battle, trainer battle, and the
+> trainer pointer (plus the hidden trade-center bit). **Research done this session** and written up in
+> [`../reference/npc-character-state.md`](../reference/npc-character-state.md).
+
+**What these are — the one line that changes the design:** they are **not per-NPC**. Every one is a
+single **map-global** bit (or a 2-byte word) that governs how *all* the map's characters behave. So
+this is a **map-wide state panel**, a sibling of the other Area-state panels — **distinct** from the
+per-object NPC editing in Phase 4b (select/drag/add/delete a sprite on the canvas). The two never
+merge: 4b edits *a character*; Phase 9 edits *the map's character rules*. It lives as a **dock panel
+opened from the right** (one panel at a time — the chassis doctrine; it does not become a second
+permanent rail beside the Characters bar).
+
+**The research already overturned the sketch** ([`npc-character-state.md`](../reference/npc-character-state.md)):
+every field is transient script/battle/link scratch; **three v1 labels are wrong** ("Scripted Battle"
+is really the **debug** test-battle flag; "Scripted Controls" is the scripted-movement *state* bit;
+"Face Away" is really *don't-turn-to-face*); the two "Sprites" bits are **zeroed on every load**
+(console-verified); and v2's `areanpc.{h,cpp}` carries all of v1's wrong names. So this is another
+**truth-in-labelling + persistence** feature in the warp/sprite/player mould, and it is built in
+**four ordered sub-phases — the UI is the last one, and it is gated on the two research phases.**
+
+#### Phase 9a — Research  ✅ *(done 2026-07-15)*
+
+The reference note exists, the real names/bytes/bits are pinned against the disassembly, the model
+bugs are listed, and the persistence questions are framed. Nothing to build here — it is the gate the
+rest pass through.
+
+#### Phase 9b — Model fix (rename + persistence doc)  ✅ *(done 2026-07-15, `areanpc.{h,cpp}`)*
+
+Renamed `AreaNPC`'s nine fields to the truth (`npcsFaceAway`→`npcsDoNotFacePlayer`, `runningTestBattle`
+→`testBattle`, `joypadSimulation`→`scriptedMovementActive`, etc.) and documented the console-verified
+persistence in the header — the `AreaPlayer`/`AreaWarps`/sprites pass. Byte offsets and bits unchanged,
+so save output is **byte-identical** (proven). `setTo()`/`randomize()` are no-ops (no loaded gun). New
+`tst_area_npc` pins each field's offset+bit and proves byte-exact fidelity; the one QML consumer
+(`tst_brg_chain.qml`) updated. **All affected tests green** (tst_area_npc 5, tst_area 12,
+tst_area_fragments 6, tst_area_pokemon 5, tst_qml_brg 11).
+
+#### Phase 9c — Emulator probe  ✅ *(done 2026-07-15, `scripts/emu/probe_npc_character_state.py`)*
+
+Stamped all nine, booted the real ROM, read back. The result **overturned the source-read**: it is not
+"all transient bits vanish". **Four are rewritten on load** — the two Sprites bits (whole-byte wipe) and
+*Ignore player input* / *Scripted-movement active* (cleared to return the controls); **five keep the raw
+value** (*Scripted movement init/running*, *Trainer battle*, *Test battle*, *Trainer pointer*). Output
+quoted verbatim in [`npc-character-state.md`](../reference/npc-character-state.md) §5; the `⚠`/`kept`
+marks are now `✅`. (This is exactly why the probe is a gate — the guess was wrong.)
+
+#### Phase 9d — The Character panel  ✅ *(built 2026-07-15, `CharacterStatePanel.qml`; awaiting Twilight's live pass)*
+
+A right-dock panel (`id: "charstate"`, glyph ☺, wired in `Map.qml` + `app.qrc`), three titled groups
+(v1's own split), each flag a `MapSwitch` with a one-line plain-English blurb and, where the game
+rewrites it, an inline `MapWarnIcon` (**no hidden fields** — Twilight 2026-07-15; the ⚠ is a label, not
+a reason to hide):
+
+- **Sprites** — *Don't face the player when talked to* (⚠ zeroed on load), *Trade-center sprites have
+  faced* (⚠ zeroed; link-trade only). *(The v1-hidden trade-center bit is now a first-class row.)*
+- **Controls** — *Scripted movement — starting* / *— running* (kept), *Ignore player input* /
+  *Scripted-movement active* (⚠ cleared on load).
+- **Battle** — *Trainer battle queued* (kept), *Test battle (debug)* (kept), and **Trainer pointer**
+  (`wTrainerHeaderPtr`, kept) as a hex field. ⚠️ **Open follow-up:** the pointer is shown *raw* (hex) —
+  the `area-map-state` doctrine wants it resolved to the named trainer-header entry, but that table
+  isn't imported yet. Flagged for Twilight; a resolved picker is a future refinement.
+
+`tst_qml_screens` green (16/16). Screenshot-reviewed; then opened in the foreground for Twilight's live
+UI/UX pass (she owns the layout/wording/glyph decisions).
+
+> **Area-State leftovers** — the non-warp-flow `AreaWarps` state fields and `AreaLoadedSprites`
+> (`loadedSetId` + 11 slots) that used to share the old "Phase 9 — Area State" heading are **still
+> un-briefed** and live in §12b. They are **not** part of this Character-state work.
 
 ---
 

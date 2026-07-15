@@ -16,8 +16,12 @@
 
 /**
  * @file areanpc.cpp
- * @brief Implementation of AreaNPC -- transient NPC/control/battle flags.
- *        See areanpc.h for the documented API.
+ * @brief Implementation of AreaNPC -- the map-global character-state flags.
+ *        See areanpc.h for the documented API and
+ *        notes/reference/npc-character-state.md for the console-verified persistence.
+ *
+ * The offsets/bits below are unchanged from v1; only the names were corrected (2026-07-15),
+ * so save output stays byte-identical.
  */
 #include "./areanpc.h"
 #include "../../savefile.h"
@@ -41,31 +45,34 @@ void AreaNPC::load(SaveFile* saveFile)
 
   auto toolset = saveFile->toolset;
 
-  tradeCenterSpritesFaced = toolset->getBit(0x29D9, 1, 0);
-  tradeCenterSpritesFacedChanged();
+  // Sprites -- wStatusFlags3 (0x29D9)
+  initTradeCenterFacing = toolset->getBit(0x29D9, 1, 0);  // BIT_INIT_TRADE_CENTER_FACING
+  initTradeCenterFacingChanged();
 
-  npcsFaceAway = toolset->getBit(0x29D9, 1, 5);
-  npcsFaceAwayChanged();
+  npcsDoNotFacePlayer = toolset->getBit(0x29D9, 1, 5);    // BIT_NO_NPC_FACE_PLAYER
+  npcsDoNotFacePlayerChanged();
 
-  scriptedNPCMovement = toolset->getBit(0x29DA, 1, 7);
-  scriptedNPCMovementChanged();
+  // Controls -- wStatusFlags4 b7 + wStatusFlags5 b0/b5/b7
+  initScriptedMovement = toolset->getBit(0x29DA, 1, 7);   // BIT_INIT_SCRIPTED_MOVEMENT (wStatusFlags4)
+  initScriptedMovementChanged();
 
-  npcSpriteMovement = toolset->getBit(0x29DC, 1, 0);
-  npcSpriteMovementChanged();
+  scriptedNpcMoving = toolset->getBit(0x29DC, 1, 0);      // BIT_SCRIPTED_NPC_MOVEMENT (wStatusFlags5)
+  scriptedNpcMovingChanged();
 
-  ignoreJoypad = toolset->getBit(0x29DC, 1, 5);
-  ignoreJoypadChanged();
+  disableJoypad = toolset->getBit(0x29DC, 1, 5);          // BIT_DISABLE_JOYPAD (wStatusFlags5)
+  disableJoypadChanged();
 
-  joypadSimulation = toolset->getBit(0x29DC, 1, 7);
-  joypadSimulationChanged();
+  scriptedMovementActive = toolset->getBit(0x29DC, 1, 7); // BIT_SCRIPTED_MOVEMENT_STATE (wStatusFlags5)
+  scriptedMovementActiveChanged();
 
-  runningTestBattle = toolset->getBit(0x29DF, 1, 0);
-  runningTestBattleChanged();
+  // Battle -- wStatusFlags7 b0/b3 + wTrainerHeaderPtr
+  testBattle = toolset->getBit(0x29DF, 1, 0);             // BIT_TEST_BATTLE (wStatusFlags7)
+  testBattleChanged();
 
-  trainerWantsBattle = toolset->getBit(0x29DF, 1, 3);
-  trainerWantsBattleChanged();
+  trainerBattle = toolset->getBit(0x29DF, 1, 3);          // BIT_TRAINER_BATTLE (wStatusFlags7)
+  trainerBattleChanged();
 
-  trainerHeaderPtr = toolset->getWord(0x2CDC, true);
+  trainerHeaderPtr = toolset->getWord(0x2CDC, true);      // wTrainerHeaderPtr
   trainerHeaderPtrChanged();
 }
 
@@ -73,45 +80,45 @@ void AreaNPC::save(SaveFile* saveFile)
 {
   auto toolset = saveFile->toolset;
 
-  toolset->setBit(0x29D9, 1, 0, tradeCenterSpritesFaced);
-  toolset->setBit(0x29D9, 1, 5, npcsFaceAway);
-  toolset->setBit(0x29DA, 1, 7, scriptedNPCMovement);
-  toolset->setBit(0x29DC, 1, 0, npcSpriteMovement);
-  toolset->setBit(0x29DC, 1, 5, ignoreJoypad);
-  toolset->setBit(0x29DC, 1, 7, joypadSimulation);
-  toolset->setBit(0x29DF, 1, 0, runningTestBattle);
-  toolset->setBit(0x29DF, 1, 3, trainerWantsBattle);
+  toolset->setBit(0x29D9, 1, 0, initTradeCenterFacing);
+  toolset->setBit(0x29D9, 1, 5, npcsDoNotFacePlayer);
+  toolset->setBit(0x29DA, 1, 7, initScriptedMovement);
+  toolset->setBit(0x29DC, 1, 0, scriptedNpcMoving);
+  toolset->setBit(0x29DC, 1, 5, disableJoypad);
+  toolset->setBit(0x29DC, 1, 7, scriptedMovementActive);
+  toolset->setBit(0x29DF, 1, 0, testBattle);
+  toolset->setBit(0x29DF, 1, 3, trainerBattle);
   toolset->setWord(0x2CDC, trainerHeaderPtr, true);
 }
 
 void AreaNPC::reset()
 {
   // Sprites
-  npcsFaceAway = false;
-  npcsFaceAwayChanged();
+  npcsDoNotFacePlayer = false;
+  npcsDoNotFacePlayerChanged();
 
-  scriptedNPCMovement = false;
-  scriptedNPCMovementChanged();
-
-  npcSpriteMovement = false;
-  npcSpriteMovementChanged();
-
-  tradeCenterSpritesFaced = false;
-  tradeCenterSpritesFacedChanged();
+  initTradeCenterFacing = false;
+  initTradeCenterFacingChanged();
 
   // Controls
-  ignoreJoypad = false;
-  ignoreJoypadChanged();
+  initScriptedMovement = false;
+  initScriptedMovementChanged();
 
-  joypadSimulation = false;
-  joypadSimulationChanged();
+  scriptedNpcMoving = false;
+  scriptedNpcMovingChanged();
+
+  disableJoypad = false;
+  disableJoypadChanged();
+
+  scriptedMovementActive = false;
+  scriptedMovementActiveChanged();
 
   // Battle
-  runningTestBattle = false;
-  runningTestBattleChanged();
+  testBattle = false;
+  testBattleChanged();
 
-  trainerWantsBattle = false;
-  trainerWantsBattleChanged();
+  trainerBattle = false;
+  trainerBattleChanged();
 
   trainerHeaderPtr = 0;
   trainerHeaderPtrChanged();

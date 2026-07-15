@@ -20,6 +20,19 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🧍 CHARACTER PANEL (`AreaNPC` flags) — BRIEFED + RESEARCHED (2026-07-15, not built)
+
+Twilight briefed the right-hand **Character panel** (the nine map-global NPC/control/battle flags from
+v1's "NPC" page). Researched + written up in
+[`reference/npc-character-state.md`](reference/npc-character-state.md): all nine are transient
+script/battle/link scratch, **three v1 labels are wrong** (the "Scripted Battle" flag is really the
+**debug** `BIT_TEST_BATTLE`), the two Sprites bits are **zeroed on load** (console-verified), and v2's
+`areanpc.{h,cpp}` carries every wrong name. Design is **Phase 9 (Character State)** in
+[`plans/map-screen.md`](plans/map-screen.md), graduated out of §12b, built **9a research ✅ → 9b
+model-fix → 9c emulator probe (gates the UI) → 9d panel**. Owed: `scripts/emu/probe_npc_character_state.py`
+(not yet written) before any UI ships. Enforcement pinned in
+[`context/collaboration.md`](context/collaboration.md).
+
 ### 🔗 CONNECTIONS (connecting routes) — BRIEFED + DESIGNED (2026-07-15, not built)
 
 Twilight briefed the four edge connections and answered the design questions; written up as

@@ -62,6 +62,27 @@ has a deeper home, it's cross-referenced.
   The escape hatch is what makes the two halves compatible: the *intuitive* choice is the default and
   the *arbitrary* value is always still reachable, with a warning when it disagrees with the cartridge.
   See `principles.md` → "Every byte, none of them raw" and `reference/ui-patterns.md`.
+- **NO HIDDEN FIELDS (2026-07-15, Twilight).** *"There shouldn't be hidden fields."* Every field the
+  save holds is **shown in place** — including the ones a real game rewrites on load, and the ones v1
+  never drew (the Character panel's trade-center bit was hidden in v1; it is now a first-class row).
+  The ⚠ "the game rewrites this on load" mark is a **label on a visible row**, never a reason to tuck a
+  field away. (This sharpens the warp/player panels' `[ ⚠ Show N fields the game rewrites ]` disclosure:
+  a *collapsible grouping opened by one click* is fine, but a field that a view can never surface is
+  not. When in doubt, show it.) Pairs with "every byte editable" above.
+- **A briefed save-panel is built research → model-fix → probe → UI, across as many sessions as it
+  takes — the UI is LAST and it is GATED (2026-07-15, standing; restating the doctrine at her explicit
+  request).** When she briefs a new panel over a slab of save bytes (the Character panel — the nine
+  map-global `AreaNPC` flags — was the occasion), do **not** rush to QML. The order is fixed and each
+  step is its own phase, potentially its own session: **(1) research** to the primary source
+  (`pret/pokered`) and write the `notes/reference/` note — real names, bytes, bits, who writes/reads,
+  hack-value behaviour, and every place v1/v2's model is wrong; **(2) model-fix** — rename + persistence
+  doc the ported class before any screen leans on it (the warp/sprite/player precedent); **(3) emulator
+  probe** (`scripts/emu/`) for any load-bearing persistence claim a source-read alone can't settle —
+  *the console is the oracle, a careful asm read has been wrong before*; **(4) the UI**, and only after
+  the probe is green. "Break it into as many phases/sessions as needed" is the default, not a fallback:
+  a 90%-done phase is not done. This is already CLAUDE.md doctrine (RESEARCH LANDS IN THE NOTES · DON'T
+  BUILD WHAT TWILIGHT HASN'T BRIEFED · do the LONG WORK); she asked it be pinned here too and enforced.
+  The worked example lives in `reference/npc-character-state.md` + `plans/map-screen.md` → Phase 9.
 
 ## Content & spelling rules
 
