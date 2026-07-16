@@ -60,9 +60,14 @@ seven gym-trainer sweeps. Range groups are preferred (evidence-based) and give t
 real group identity + a natural group-toggle. Still to do: shared-flag detection, the missable/gift/
 static-Pokémon gates from v1's `eventPokemon.json`, and editorial group names.
 
-**Phase 4 — Crash / instability analysis.** Identify individual flags and combinations that crash,
-softlock, or glitch. Console-probe (`scripts/emu/`) the load-bearing cases. Produce the per-flag and
-per-combo notices (panel-level + on-toggle).
+**Phase 4 — Crash / instability analysis.** 🟡 Research done (correction landed). **Finding:** flag bits
+aren't executed, but event flags drive `wCur<Map>Script` (set from `CheckEvent` chains) which dispatch
+via script-pointer tables ending in `jp hl` — so **impossible combinations, above all *all flags on*,
+crash the game** (`jp hl` into garbage). **Leadership-confirmed empirically.** Individual sensible edits
+are safe; **bulk/mass-set is the danger**. So the UI must **warn before any bulk/all/large-group set**
+and not offer a naive global "set everything". Softlock/progression categories (key-item gots, missable
+objects, one-way blockers, range sequences) layer on top. Full writeup + the categories in the reference
+note. ⏳ Owed: console-probe specific softlock cases (needs ROM); the no-single-flag-gun part is solid.
 
 **Phase 5 — Author dossiers for ALL 2,560.** 🟡 First complete pass done. The generator emits
 `tmp/event-flags/events_dossiers.json` — **every** bit with friendly name, description, map, group,
@@ -81,10 +86,15 @@ documented. Pin with a test.
 pret + our curation), else standalone + linked. Baked into `db.qrc`; edits go through project leadership. Write
 the importer + self-validation.
 
-**Phase 8 — UI design, then build.** Design the Events panel **in this doc first** (per-map grouping,
-flag groups + group toggles, search/filter, classification badges — including a **Placeholder Flags**
-group at the bottom of each map — crash notices at panel + toggle level; themed map-screen chassis). No
-build until the design is written and approved.
+**Phase 8 — UI design, then build.** Events are **NOT a separate panel** (correction, leadership
+2026-07-15) — they **expand the existing persistent-storage panel** (`MapStoragePanel.qml`, the right
+dock ▣, built Phase 15 of the map screen), **alongside** its current sections (Vermilion Gym · Cinnabar
+Gym · Safari Zone). So the design is an **expansion of persistent storage**: add the event-flag content
+(per-map grouping, flag groups + group toggles, search/filter, classification badges — with a
+**Placeholder Flags** group at the bottom of each map — and the softlock cautions). **Crash safety
+(mandatory):** because *all flags on* (and other impossible bulk combinations) **crash the game**, the
+panel must **warn prominently before any bulk/all/large-group set** and must not offer a naive global
+"set everything" (see Phase 4). Design in this doc first; no build until approved.
 
 **Phase 9 — Flag ↔ map location research (new, briefed 2026-07-15).** 🟡 In progress.
 `scripts/extract_flag_locations.py` → `tmp/event-flags/flag_locations.json`.

@@ -144,6 +144,27 @@ def neighbors_phrase(cx):
     return f"It sits between {a} and {b} in flag order"
 
 
+PROGRESSION_RE = re.compile(
+    r"EVENT_GOT_(POKEDEX|OAKS_PARCEL|HM0\d|MASTER_BALL|BIKE_VOUCHER|TOWN_MAP|"
+    r"ITEMFINDER|SILPH_SCOPE|CARD_KEY|LIFT_KEY|SS_TICKET|GOLD_TEETH|SECRET_KEY|"
+    r"POKE_FLUTE|COIN_CASE)")
+
+
+def caution(r, cls):
+    """Per-flag caution note (Phase 4). Bulk 'all on' crash is a panel-level
+    warning, not per-flag."""
+    name = r.get("name") or ""
+    if PROGRESSION_RE.match(name):
+        return ("progression: clearing this after the item/gate was used can strand "
+                "progress (may be un-re-obtainable).")
+    if "block-swept" in cls:
+        return ("part of a range set/clear sequence (e.g. Elite-Four reset) — "
+                "editing one bit mid-sequence can desync it.")
+    if "temporary" in cls or "vestigial" in cls:
+        return "temporary/scratch — the game rewrites it during play, so an edit may not stick."
+    return None
+
+
 def describe(r, fname, mapname, cls, cx):
     idx = r["index_hex"]
     loc = f"byte {r['byte_file']} bit {r['bit']} (index {idx})"
@@ -265,7 +286,8 @@ def main() -> int:
             "prev_named": ctx[r["index"]]["prev"][1] if ctx[r["index"]]["prev"] else None,
             "next_named": ctx[r["index"]]["next"][1] if ctx[r["index"]]["next"] else None,
             "block_role": ctx[r["index"]]["role"],
-            "crash": None,                 # Phase 4 (console-probed) fills this
+            "crash": None,                 # no single-flag crash gun (Phase 4)
+            "caution": caution(r, cls),    # softlock/progression note, else null
             "description": describe(r, fname, mapname, cls, ctx[r["index"]]),
             "evidence": {
                 "used": r["used"], "n_set": r["n_set"], "n_check": r["n_check"],

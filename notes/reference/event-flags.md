@@ -197,6 +197,67 @@ The finalized breakdown of all 2,560: **507 named** (incl. 4 hand-researched fro
 **Owed:** Phase 4 (crash/instability — console-probed; `crash` field is null until then), editorial
 polish of the 507 named descriptions, Phase 6 (model verification), Phase 7 (DB data home), Phase 8 (UI).
 
+## Crash / instability / softlock analysis (Phase 4 — research 2026-07-15)
+
+> ⚠️ **Correction (leadership, 2026-07-15):** an earlier draft here claimed "an event flag cannot crash
+> the console." **That was wrong.** Leadership confirmed empirically that **turning all flags on crashes
+> the game**, and the disassembly explains why — see below. The corrected mechanism is now the finding.
+
+**A flag *bit* is never executed as code** (every reference is a `bit n,[hl]` test or a `res`/`set`;
+there is no `jp [wEventFlags]`). **But event flags DRIVE executed pointers.** Each map advances its
+story by setting `wCur<Map>Script` from a **`CheckEvent` chain**, then **dispatches through a
+script-pointer table that ends in `jp hl`** (e.g. `PalletTown.asm` sets `wPalletTownCurScript` off a
+stack of `CheckEvent`s; `jp hl` on the resolved pointer is pervasive). So an **impossible flag
+combination — above all, *all flags on* — pushes scripts into states and indices that can never occur
+in normal play**, resolving a script pointer the game never validates and **`jp hl`-ing into garbage →
+crash.** Verified real (leadership) + mechanism grounded in the disassembly.
+
+**Consequences for the editor (this is a real risk, not just softlocks):**
+
+- **Bulk / mass-set is dangerous.** "Set all", or a group-toggle that turns on a large arbitrary swath,
+  can drive a map into a crashing script state. The persistent-storage UI must **warn prominently**
+  before any bulk/all operation, and probably not offer a naive global "set everything".
+- **Impossible combinations** (mutually-exclusive story flags both on) are the crash trigger — not any
+  single well-formed edit. Individual, sensible edits are almost always safe.
+- The **softlock / progression** categories below still apply on top of the crash risk.
+
+**The (non-crash) softlock / progression-break / cosmetic categories:**
+
+- **Progression gates — got-key-item / HM flags** (`GOT_POKEDEX`, `GOT_OAKS_PARCEL`, `GOT_HM01`–`HM05`,
+  `GOT_MASTER_BALL`, `GOT_BIKE_VOUCHER`, badges-adjacent): clearing one for something already consumed
+  can **strand progress** (the item can't be re-obtained; a gate won't re-open). **Caution.**
+- **Missable objects** (the 226 conditional objects, Phase 9): setting a "got/beat" flag **permanently
+  hides** its object (you lose that item/battle); clearing re-shows it (can duplicate). Editing these
+  changes what's on the map. **Caution.**
+- **One-way NPC blockers** (guards, the S.S. Anne/Bill/rival gates): setting/clearing out of order can
+  **trap or free** the player unexpectedly. **Caution.**
+- **Range-reset sequences** (Elite-Four / Hall-of-Fame clear, Safari): editing individual bits **mid
+  sequence** can desync it (block-swept flags). **Caution.**
+- **Temporary flags** (70): rewritten during play — an edit **won't stick** as expected. Info, not risk.
+- **Everything else** — most flags just change what appears / what an NPC says. **No risk.**
+
+Encoded as a `caution` field on each dossier (`generate_event_dossiers.py`; 127 flags).
+
+**Console test (real cartridge, PyBoy — `scripts/emu/probe_event_flag_crashes.py`, 2026-07-15).** Booted
+BaseSAV on Continue with (A) baseline, (B) **all 2,560 flags on**, (C) the Route 22 rival 1ST+2ND+WANTS
+set. Result: **all three reach a healthy Pallet Town overworld** and stay healthy 900 frames. So — refining
+the finding — **the crash is NOT on the load path**: mass-set flags load fine; the bad `jp hl` only fires
+**when the player is on the offending map / triggers the battle** (BaseSAV starts in Pallet, away from the
+break). This is consistent with the mechanism and with leadership's report (the crash is seen *in play*).
+⏳ **Owed:** an input-driven probe that walks the player onto Route 22 and triggers the rival to capture
+the crash live (a bigger automation task).
+
+**Contradiction candidates (`scripts/analyze_flag_contradictions.py` → `contradictions.json`).** The
+flag *sets* that must not be on together:
+- **Same-subject multi-state:** `ROUTE22_RIVAL` = {`BEAT_ROUTE22_RIVAL_1ST_BATTLE`,
+  `BEAT_ROUTE22_RIVAL_2ND_BATTLE`, `ROUTE22_RIVAL_WANTS_BATTLE`} — **exactly leadership's example**: two
+  rival battles on one NPC/script; both on collides on battle.
+- **Same-object governors (one object, >1 flag):** Route 12 & 16 **Snorlax** (`FIGHT_*` + `BEAT_*` — the
+  fight-vs-beaten interplay), Cerulean rival, Viridian Giovanni (`BEAT` + `GOT_TM27`), Blue's House Town
+  Map (`GOT_POKEDEX` + `GOT_TOWN_MAP`).
+These drive the UI's per-combo warnings; the subject-matcher can be broadened (other rival battles) as a
+polish pass.
+
 ## Flag ↔ map location & object association (briefed 2026-07-15)
 
 Project leadership briefed an on-canvas feature: draw a **clickable box on the map** at the location
