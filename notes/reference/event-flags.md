@@ -141,6 +141,52 @@ group to fold in. This section fills during Phase 3.
    probe the load-bearing ones (`scripts/emu/`).
 5. **Author** — write name + description + map + group + class for **all 2,560**, chunked by region.
 
+## Results so far — Phases 2, 3, 5 (2026-07-15)
+
+**Phase 2 — usage cross-reference (DONE).** `scripts/analyze_event_usage.py` scans the **whole**
+`pret/pokered` tree (every `.asm`) for each flag by `EVENT_*` name, by **range macro**
+(`SetEventRange`/`ResetEventRange`, resolving `EVENT_*` and boundary constants like
+`INDIGO_PLATEAU_EVENTS_START/END`), and by raw `wEventFlags + N`. Findings:
+
+| Fact | Count |
+|---|--:|
+| **Used** (has real set/check/reset refs) | **531** |
+| **Unused** (no reference anywhere) | **2,029** |
+| named-but-**defined-unused** (pret names it, game never touches it) | 6 |
+| **temporary** (the game `ResetEvent`s it — scratch, not durable) | 70 |
+| **multi-map** (referenced from >1 area) | 86 |
+| range ops (`Set/ResetEventRange`) | 9, sweeping **83 bits** |
+| **gap** bits revealed as **block-swept** (not truly unused) | **30** |
+
+⚠️ **The range macros were the trap.** `SetEventRange A, B` / `ResetEventRange A, B` **byte-fill the
+whole span**, so they sweep **every** bit between the endpoints — including unnamed gaps. The big one:
+`HallOfFame.asm` does `ResetEventRange INDIGO_PLATEAU_EVENTS_START, ..._END` — it **clears the entire
+Indigo Plateau event block** so the Elite Four can be **re-challenged**, sweeping ~30 otherwise-"unused"
+gap bits. Gym `SetEventRange ..._TRAINER_0, ..._6` sweeps mark all a gym's trainers beaten when you beat
+the leader. These 30 gaps are classified **block-swept**, not unused.
+
+**Phase 3 — flag groups (first pass).** `scripts/generate_event_dossiers.py` derives **106 groups**
+from name patterns (gym trainers, route trainers, items/hidden, boulder/switch puzzles, Team Rocket,
+rival, Snorlax, S.S. Anne, per-map story). Largest: Silph Co. trainers (30), Silph Co. story (21),
+Lavender/S.S. Anne trainers (16 each). Group toggles + shared-flag detection refine in the UI phase.
+
+**Phase 5 — dossiers for all 2,560 (first complete pass).** The generator emits
+`tmp/event-flags/events_dossiers.json` — **every** bit with friendly name, description, map, group,
+classification, and the evidence behind it. `0x1CC` (an original mystery) now reads: **"Unknown #1CC,
+Celadon City, unused, identity undiscoverable — pending sign-off,"** byte `0x2a1f` bit 4. Named flags
+read as full dossiers grounded in their usage.
+
+### ⚠️ The one gate: the 2,023 "Unknown #<hex>" candidates need leadership sign-off
+
+Per the naming rule, the exhaustive search **has now been done** (whole tree, by name + range + raw
+index). **2,023** gap bits have **no discoverable identity** — they are the legitimate
+**"Unknown #<hex>"** cases, provisionally named that in the dataset but **`name_provisional: true`**
+until project leadership signs off (the rule allows a **group** sign-off). `unknown_candidates.json`
+lists them. Everything else (537 = 507 named + 30 block-swept) is finalized.
+
+**Owed:** Phase 4 (crash/instability — console-probed; `crash` field is null until then), editorial
+polish of the 507 named descriptions, Phase 6 (model verification), Phase 7 (DB data home), Phase 8 (UI).
+
 ## Save-model + UI (Phases 6–8)
 
 - Phase 6: confirm v2 reads/writes the 320-byte field byte-exact (add the model if absent) and

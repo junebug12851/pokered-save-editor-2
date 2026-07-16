@@ -46,22 +46,34 @@ notes system.
 pret name, owning map-region), self-validating to exactly 2,560, every bit attributed to a region.
 Output: `tmp/event-flags/event_flags_canonical.{csv,json}`.
 
-**Phase 2 — Usage cross-reference (all 2,560).** For every bit, grep the whole `pret/pokered` tree for
-its `EVENT_*` name **and** raw-bit usage; record every set/check/reset site (map script + routine).
-Derives owning map, used/unused, temporary, multi-purpose, duplicate. This is the evidence base — and
-the exhaustive search the naming rule requires **before** any flag can be considered for "Unknown".
+**Phase 2 — Usage cross-reference (all 2,560).** ✅ DONE. `scripts/analyze_event_usage.py` scans the
+whole tree by `EVENT_*` name, by **range macro** (`Set/ResetEventRange`, resolving boundary constants),
+and by raw `wEventFlags + N`. Result: **531 used, 2,029 unused**, 6 defined-but-unused, 70 temporary,
+86 multi-map; 9 range ops sweeping 83 bits (**30 gaps revealed as block-swept**, not unused). This is
+the exhaustive negative search the naming rule requires before any "Unknown". Detail in the reference
+note.
 
-**Phase 3 — Flag groups.** Cluster co-toggled flags (gym trainer sets, hidden-item sets, cutscene
-gates, the missable/gift/static-Pokémon gates from v1's `eventPokemon.json`). Note shared toggles.
-Name each group; assign to its map; design the group toggle.
+**Phase 3 — Flag groups.** 🟡 First pass. `scripts/generate_event_dossiers.py` derives ~104 groups from
+name patterns, **plus 9 range-defined groups** — per leadership, an event **range is itself a flag
+group** (its bits are literally toggled together): the Indigo Plateau Elite-Four reset (40 bits) and the
+seven gym-trainer sweeps. Range groups are preferred (evidence-based) and give the block-swept gaps a
+real group identity + a natural group-toggle. Still to do: shared-flag detection, the missable/gift/
+static-Pokémon gates from v1's `eventPokemon.json`, and editorial group names.
 
 **Phase 4 — Crash / instability analysis.** Identify individual flags and combinations that crash,
 softlock, or glitch. Console-probe (`scripts/emu/`) the load-bearing cases. Produce the per-flag and
 per-combo notices (panel-level + on-toggle).
 
-**Phase 5 — Author dossiers for ALL 2,560.** name + description + map + group + classification for
-every bit, chunked by map-region. Exhaustive; no bulk "unknown". "Unknown #<hex>" only per the gated
-naming rule (surface + leadership sign-off). This is the large body of work — expect multiple sessions.
+**Phase 5 — Author dossiers for ALL 2,560.** 🟡 First complete pass done. The generator emits
+`tmp/event-flags/events_dossiers.json` — **every** bit with friendly name, description, map, group,
+classification, and evidence. 507 named + 30 block-swept are **finalized**; **2,023** undiscoverable
+gaps are provisional **"Unknown #<hex>"** (`name_provisional: true`) pending the group sign-off below.
+Owed: editorial polish of the 507 named descriptions; the Phase 4 crash field.
+
+> **⚠️ GATE — leadership sign-off needed:** the exhaustive search is done; **2,023 gap bits have no
+> discoverable identity** (`tmp/event-flags/unknown_candidates.json`). Per the naming rule they may be
+> named **"Unknown #<hex>"** only with explicit leadership sign-off — offered as a **single group**
+> approval. Until then their names stay provisional.
 
 **Phase 6 — Save-model + console verification.** Confirm v2 reads/writes the 320-byte field byte-exact
 (add the model if absent). Console-verify a sample of edits persist on Continue and behave as
