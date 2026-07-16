@@ -220,6 +220,21 @@ The association data (**flag → one or more (map, X, Y) + object/kind**) is a *
 research phase feeding the UI). Some flags have several boxes (one per Oak spot), some share a box
 (a group), some have none on the visible map (story/global). This is Phase 9 in the plan.
 
+**Object structure (per map `<Map>_Object:` block).** `def_warp_events` (doors), `def_bg_events`
+(signs), and `def_object_events` — each `object_event X, Y, SPRITE, movement, facing, <text|OPP_*|ITEM>`.
+Objects are indexed by `object_const_def` (e.g. `PALLETTOWN_OAK`), which is how the script references
+them: `predef ShowObject`/`HideObject <objconst>` guarded by `CheckEvent <flag>` is the **flag↔object**
+link. The object's 6th arg tells its **kind**: a plain **text id** (NPC/sign-like), `OPP_<class>`
+(**trainer** — has a battle script), or `ITEM` (**item ball** — tied to its got-item flag).
+
+**Event-flag attachment (drives the Phase 10 outline colour).** Every sprite/object/item gets its own
+outline; an object **tied to one or more event flags** gets a **different colour** to signal it is
+flag-governed (not a plain sprite/item). An object is flag-attached when a `CheckEvent <flag>`-guarded
+`ShowObject`/`HideObject <objconst>` governs its appearance, when it is an **item ball / hidden item**
+(its got-item flag), or when the map's script otherwise sets/checks a flag for that object. Phase 9
+records, per object, the **list of attached event flags** (and count) so Phase 10 can colour the outline
+and the click can open the panel at those flag(s).
+
 ## Save-model + UI (Phases 6–8)
 
 - Phase 6: confirm v2 reads/writes the 320-byte field byte-exact (add the model if absent) and

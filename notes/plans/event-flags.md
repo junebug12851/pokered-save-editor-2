@@ -99,6 +99,12 @@ shown **even when the sprite isn't currently present** (Oak's Lab: the three sta
 (5,2) and (5,10)). A **layer** in the map screen's layer tree, toggleable. Design in this doc first.
 This is where the Events feature meets the map-storage panel the leadership originally queued.
 
+- **Outline colour is event-flag-coded (leadership, 2026-07-15).** Each sprite / object / item gets its
+  **own outline**; an object **tied to 1+ event flags** gets a **different colour** to signal it is
+  flag-governed (not a plain sprite/item). So Phase 9's extraction must record, per object, the **list of
+  attached event flags** (and count), and Phase 10 renders the outline colour from that + focuses the
+  panel on those flag(s) on click.
+
 ## Open questions for project leadership (to settle before the phases that need them)
 
 - **Data home** (Phase 7): one combined events JSON vs. standalone-linked — your lean is "one file if
