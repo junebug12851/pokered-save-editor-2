@@ -86,27 +86,34 @@ void TestFlagScenarios::initTestCase()
   m_scenarios = QJsonDocument::fromJson(sf.readAll()).array();
   sf.close();
 
-  QProcess py;
-  py.setWorkingDirectory(repoRoot());
-  py.start(pythonPath(), { runnerPath() });
-
-  // Each scenario is its own boot; several boots take a few minutes. Be generous,
-  // and Qt kills the child if it ever overruns -- no leaks.
-  if (!py.waitForFinished(600000)) {
-    py.kill();
-    py.waitForFinished(5000);
-    QFAIL(qPrintable("flag-scenario runner timed out: "
-                     + QString::fromUtf8(py.readAllStandardError())));
+  // ONE SCENARIO PER PROCESS. PyBoy cannot be safely re-instantiated inside a
+  // single process (the 2nd/3rd instance hangs), so we launch the runner once per
+  // scenario with --only. Each is a fresh boot in a fresh process, and Qt owns
+  // every child's lifecycle (waitForFinished + kill) -- nothing leaks.
+  for (const QJsonValue& sv : m_scenarios) {
+    const QString name = sv.toObject().value("name").toString();
+    const QString outFile = repoRoot() + "/tmp/emu/scn_" + name + ".json";
+    QProcess py;
+    py.setWorkingDirectory(repoRoot());
+    py.start(pythonPath(), { runnerPath(), "--only", name, "--out", outFile });
+    if (!py.waitForFinished(180000)) {   // one boot+drive; generous
+      py.kill();
+      py.waitForFinished(5000);
+      QFAIL(qPrintable("scenario timed out: " + name));
+    }
+    if (py.exitCode() == 2)
+      QSKIP(qPrintable(QString::fromUtf8(py.readAllStandardError()).trimmed()));
+    QCOMPARE(py.exitCode(), 0);
+    QFile rf(outFile);
+    QVERIFY2(rf.open(QIODevice::ReadOnly),
+             qPrintable("no result file for " + name));
+    const QJsonArray one =
+        QJsonDocument::fromJson(rf.readAll()).object().value("results").toArray();
+    rf.close();
+    QVERIFY2(!one.isEmpty(), qPrintable("empty result for " + name));
+    m_results.append(one.first());
   }
-  if (py.exitCode() == 2)
-    QSKIP(qPrintable(QString::fromUtf8(py.readAllStandardError()).trimmed()));
-  QCOMPARE(py.exitCode(), 0);
-
-  QFile rf(resultPath());
-  QVERIFY2(rf.open(QIODevice::ReadOnly), "runner produced no result file");
-  m_results = QJsonDocument::fromJson(rf.readAll()).object().value("results").toArray();
-  rf.close();
-  QVERIFY2(!m_results.isEmpty(), "runner produced an empty result set");
+  QVERIFY2(!m_results.isEmpty(), "no scenario results");
   m_ok = true;
 }
 

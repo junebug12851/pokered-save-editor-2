@@ -72,6 +72,14 @@ session, no IPC, no interactive driving. So the flag testing framework follows t
   set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_flag_scenarios)
   ```
 
+⚠️ **PyBoy can't be re-instantiated in one process (found 2026-07-15).** Running several scenarios by
+constructing a new `PyBoy(...)` per scenario *in one process* hangs on the 2nd/3rd instance (the Pallet
+controls pass, then the first map-override scenario wedges). So the batch must be **one scenario per
+process**: the runner takes `--only <name>` (run just that scenario, exit), and the CTest wrapper launches
+it **once per scenario** via `QProcess` — fresh PyBoy, fresh process, Qt reaps each. This also means an
+interactive single-scenario run still exceeds the shell's ~44 s cap (one boot + drive ≈ 30–60 s under any
+load), which is *why* this belongs in CTest, not the interactive transport.
+
 **Rejected alternative:** switching emulators (mGBA / BizHawk / …). That adds a dependency and a new
 integration and would hit the *same* lifecycle issue through the same transport — **more** fragility, not
 less. PyBoy was never the problem.
