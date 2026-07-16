@@ -31,7 +31,40 @@ CANON = REPO / "tmp" / "event-flags" / "event_flags_canonical.json"
 
 EV_START, EV_LEN = 0x29F3, 0x140          # wEventFlags in the file (320 bytes)
 SAV_CUR_MAP, SAV_Y, SAV_X = 0x260A, 0x260D, 0x260E
+SAV_YBLK, SAV_XBLK = 0x260F, 0x2610       # wY/XBlockCoord -- coord & 1 (BaseSAV-verified)
+SAV_VIEW = 0x260B                          # wCurrentTileBlockMapViewPointer (LE)
+SAV_W, SAV_H = 0x2615, 0x2614             # wCurMapWidth/Height (blocks)
 CK, CK0, CKN = 0x3523, 0x2598, 0xF8B      # checksum byte; summed range
+
+OVERWORLD_MAP_ADDR = 0xC6E8               # wOverworldMap (MapEngine::overworldMapAddr)
+MAP_BORDER = 3                             # border blocks each side
+
+
+def view_pointer(x: int, y: int, map_width_blocks: int) -> int:
+    """The WRAM address the game stores in wCurrentTileBlockMapViewPointer, from
+    the player's square coords + the map width. MapEngine::viewPointer verbatim —
+    cartridge-verified byte-for-byte (tst_map viewPointer_matchesWhatTheGameStored,
+    re-confirmed against BaseSAV: (5,6) w=10 -> 0xC72B)."""
+    bx = MAP_BORDER + (x // 2) - 2
+    by = MAP_BORDER + (y // 2) - 2
+    return OVERWORLD_MAP_ADDR + by * (map_width_blocks + 2 * MAP_BORDER) + bx
+
+
+def relocate(sav: bytearray, x: int, y: int) -> None:
+    """Move the player WITHIN the save's current map, keeping every derived byte
+    in sync — the 'little calculations on the side': block coords (coord & 1) and
+    the view pointer (recomputed, little-endian). Bounds-checked against the
+    map's own dimensions (coords are in SQUARES = 2x the block dims); refusing an
+    out-of-range coord is a stability guarantee, not a limitation. Does NOT
+    reseal — callers compose further edits, then reseal()."""
+    w_blocks, h_blocks = sav[SAV_W], sav[SAV_H]
+    if not (0 <= x < 2 * w_blocks and 0 <= y < 2 * h_blocks):
+        raise ValueError(f"({x},{y}) is off the map ({2*w_blocks}x{2*h_blocks} squares)")
+    sav[SAV_Y], sav[SAV_X] = y, x
+    sav[SAV_YBLK], sav[SAV_XBLK] = y & 1, x & 1
+    vp = view_pointer(x, y, w_blocks)
+    sav[SAV_VIEW] = vp & 0xFF
+    sav[SAV_VIEW + 1] = (vp >> 8) & 0xFF
 
 
 def flag_name_index() -> dict:
@@ -59,7 +92,16 @@ def forge(base: bytes,
           flag_indices: list[int] | None = None,
           all_flags: bool = False,
           pokes: dict[int, int] | None = None) -> bytes:
-    """Return a resealed save forged from `base`. Only the requested bytes move."""
+    """Return a resealed save forged from `base`. Only the requested bytes move.
+
+    Coordinates go through relocate() — block coords and the view pointer stay in
+    sync (a bare y/x poke leaves a stale view pointer the console TRUSTS on load).
+
+    ⚠️ `map_id` must match the base save's own map (or be omitted). Writing a
+    DIFFERENT map id makes a CHIMERA — the Area block still belongs to the old
+    map and the console hard-wedges ~100 frames after Continue (verified
+    2026-07-16). For a real cross-map save use scripts/emu/forge_map_save.py,
+    which has the console author the whole state itself."""
     sav = bytearray(base)
     if all_flags:
         for i in range(EV_LEN):
@@ -76,12 +118,15 @@ def forge(base: bytes,
         if not 0 <= i < EV_LEN * 8:
             raise ValueError(f"flag index out of range: {i}")
         sav[EV_START + i // 8] |= (1 << (i % 8))
-    if map_id is not None:
-        sav[SAV_CUR_MAP] = map_id & 0xFF
-    if y is not None:
-        sav[SAV_Y] = y & 0xFF
-    if x is not None:
-        sav[SAV_X] = x & 0xFF
+    if map_id is not None and map_id != sav[SAV_CUR_MAP]:
+        raise ValueError(
+            f"map_id {map_id:#04x} != the base save's map {sav[SAV_CUR_MAP]:#04x} — "
+            f"a map-id-only forge is a chimera that wedges the console. Generate a "
+            f"real base with scripts/emu/forge_map_save.py first.")
+    if y is not None or x is not None:
+        relocate(sav,
+                 sav[SAV_X] if x is None else x,
+                 sav[SAV_Y] if y is None else y)
     for addr, val in (pokes or {}).items():
         if not 0 <= addr < len(sav):
             raise ValueError(f"poke address out of range: {addr:#x}")

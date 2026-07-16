@@ -57,7 +57,15 @@ on any overrun.
 | Shots | `capture_screenshots` | the headless screenshooter batch (`screenshots.md`) |
 | Jobs | `job_status` · `job_wait` · `job_log` · `job_kill` · `job_list` | logs under `tmp/mcp-jobs/` |
 | App | `app_launch` · `app_stop` · `app_foreground` · `app_background` · `app_cmd` · `app_screen` · `app_title` · `app_load_sav` · `app_get` · `app_set` · `app_click` · `app_tap` · `app_invoke` · `app_list` · `app_reload` · `app_shot` | the DEBUG TCP harness (`dev-harness.md`), traps encoded (below) |
-| Emu | `emu_status` · `emu_setup` · `emu_check_updates` · `emu_update` · `emu_run_script` · `emu_flag_scenarios` · `emu_forge_save` · `emu_boot` · `emu_button` · `emu_tick` · `emu_mem` · `emu_poke` · `emu_state` · `emu_screenshot` · `emu_stop` | ROM-gated, local-only; clean unavailability without it |
+| Emu | `emu_status` · `emu_setup` · `emu_check_updates` · `emu_update` · `emu_run_script` · `emu_flag_scenarios` · `emu_make_map_save` · `emu_forge_save` · `emu_boot` · `emu_button` · `emu_tick` · `emu_mem` · `emu_poke` · `emu_state` · `emu_screenshot` · `emu_stop` | ROM-gated, local-only; clean unavailability without it |
+
+**Total custom state resume (2026-07-16).** `emu_boot(map_id=…, x=…, y=…, flags=[EVENT_*…],
+pokes={…})` boots an interactive session at ANY map/position/flag/byte state: the map base is a
+**console-authored save** (`emu_make_map_save` → `scripts/emu/forge_map_save.py`: the game itself
+walks there through a hijacked door and the settled WRAM is dumped), coordinates relocate with the
+derived bytes kept in sync, flags/pokes layer on top, checksum resealed. First generation of a map
+takes ~30–60 s (then cached under `tmp/emu/map-saves/`). Full system + traps:
+[`forged-saves.md`](forged-saves.md).
 | Hygiene | `procs_cleanup` | strays list/kill; `include_app` for orphan editors |
 
 `app_shot` and `emu_screenshot` return the PNG **inline as an MCP image** (and save a

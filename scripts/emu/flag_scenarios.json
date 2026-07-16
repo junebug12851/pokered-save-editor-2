@@ -21,11 +21,9 @@
     "y": 8,
     "x": 25,
     "flags": [],
-    "drive": [
-      "up:8"
-    ],
-    "expect": "hang",
-    "note": "forged onto Route 22 with no rival flags; walk up past the rival tile -- CURRENTLY HANGS: a map-id-only forge is a chimera (Area block still the old map's); wedges ~100 frames after Continue. Needs the consistent whole-Area forge (see emulator-verification.md)."
+    "drive": ["up:8"],
+    "expect": "healthy",
+    "note": "console-authored Route 22 base (forge_map_save), player relocated below the rival tile, walked up past it — no rival flags set"
   },
   {
     "name": "route22-rival-conflict",
@@ -37,11 +35,9 @@
       "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
       "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"
     ],
-    "drive": [
-      "up:8"
-    ],
-    "expect": "hang",
-    "note": "both Route 22 rival battles' flags on — two SPRITE_BLUE at tile (25,5); walk into the trigger -- CURRENTLY HANGS: a map-id-only forge is a chimera (Area block still the old map's); wedges ~100 frames after Continue. Needs the consistent whole-Area forge (see emulator-verification.md)."
+    "drive": ["up:8"],
+    "expect": "unknown",
+    "note": "both Route 22 rival battles' flags on — the SUSPECTED conflicting pair (event-flags plan, Phase 11). First console run (2026-07-16): healthy but INCONCLUSIVE — the battle never triggered: the up-walk from (25,8) is blocked by terrain (ledge/hill nook, screenshot-verified), and with both battles 'done' the rival objects hide anyway. Reproducing the suspicion needs the map-SCRIPT state that spawns the rival (wCurMapScript / the scripts import, not yet done) plus a walkable approach"
   },
   {
     "name": "all-flags-on-route22",
@@ -49,10 +45,8 @@
     "y": 8,
     "x": 25,
     "flags": "ALL",
-    "drive": [
-      "up:8"
-    ],
-    "expect": "hang",
-    "note": "all flags on AND standing on Route 22 — drive into the rival trigger -- CURRENTLY HANGS: a map-id-only forge is a chimera (Area block still the old map's); wedges ~100 frames after Continue. Needs the consistent whole-Area forge (see emulator-verification.md)."
+    "drive": ["up:8"],
+    "expect": "unknown",
+    "note": "all flags on AND standing on Route 22 — drive into the rival trigger"
   }
 ]

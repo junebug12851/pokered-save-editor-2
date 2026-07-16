@@ -28,9 +28,14 @@ the game rejects the save. Boot via PyBoy (`window="null"`), mash start/A to Con
 `wCurMap`/map dims as a **crash/health signal** (`scripts/emu/probe_event_flag_crashes.py` is the
 template). Optionally drive a few `button` presses to cross a coord trigger. **Never commit the ROM.**
 
-**The shared implementation is `scripts/emu/forge_save.py`** (importable + CLI: map/coords/flag names/
-raw indices/arbitrary byte pokes, checksum resealed) — probes, `drive_session.py` and the dev MCP
-server's `emu_forge_save`/`emu_boot` all use it instead of carrying private copies.
+**The shared implementation is `scripts/emu/forge_save.py`** (importable + CLI: coords via
+`relocate()` with the derived bytes kept in sync, flag names/raw indices/arbitrary byte pokes,
+checksum resealed) — probes, `drive_session.py` and the dev MCP server's `emu_forge_save`/`emu_boot`
+all use it instead of carrying private copies. **Cross-map states use CONSOLE-AUTHORED base saves**
+— `scripts/emu/forge_map_save.py` has the game itself walk to any map through a hijacked door (or an
+edge hop for the 8 warpless routes) and dumps the settled WRAM in `SaveSAVtoSRAM`'s own layout. The
+full system, its traps (the same-tileset warp trap!) and its verification:
+[`forged-saves.md`](forged-saves.md).
 
 ### ⚠️ CORRECTION (2026-07-16): a map-id-only forge is a CHIMERA, and a wedged console WEDGES PyBOY
 

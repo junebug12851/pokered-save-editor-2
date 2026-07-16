@@ -21,6 +21,22 @@ SKIPs without it).
 
 ## Current state (read this first)
 
+### 🗺️ FORGED SAVES AT ANY MAP — console-authored, briefed + built + verified (2026-07-16)
+
+Twilight briefed the **total custom state resume**: the MCP server generates a proper save at any
+map/position/flags in one call. Design: **the game authors the state itself** —
+`scripts/emu/forge_map_save.py` walks the real console to the target through a hijacked door
+(edge-hop for the 8 warpless routes, columns pre-filtered by our own collision data) and dumps the
+settled WRAM in `SaveSAVtoSRAM`'s own layout. Found + encoded a real Gen 1 mechanism on the way: the
+**same-tileset warp trap** (`LoadTilesetHeader` skips arrival positioning — outdoor targets are
+reached from inside Red's house). `relocate()` keeps block coords + view pointer in sync;
+`forge()` refuses the chimera. **Console-verified across map classes** (Viridian, Pewter, Lavender,
+Rock Tunnel, Viridian Forest, Routes 22 + 3); `tst_flag_scenarios` **5/5 in 2.7 s** (was 542 s of
+hangs) — `route22-control` healthy on the real base; the suspected rival conflict is
+**inconclusive-unconfirmed** (terrain-blocked walk + hidden objects; needs the scripts import).
+Everything: [`reference/forged-saves.md`](reference/forged-saves.md). MCP: `emu_make_map_save`,
+`emu_boot(map_id=…)`. ⏳ Owed: the proper **default map library** once scripts are imported.
+
 ### 🔧 THE PYBOY HANG SOLVED + THE DEV MCP SERVER — the new standing dev transport (2026-07-16)
 
 The "spawning tons of processes and hanging" disaster is **root-caused, reproduced, and fixed at every
