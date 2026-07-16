@@ -1,0 +1,979 @@
+#!/usr/bin/env python3
+"""pokered-dev — the project's dev-workflow MCP server.
+
+One standardized, reliable transport for the whole rapid-dev loop, replacing the
+fragile interactive-shell orchestration that leaked PyBoy processes and hung (see
+notes/reference/emulator-verification.md -> "Flag-scenario test framework" and
+notes/reference/dev-mcp.md). The rules it encodes:
+
+  * EVERYTHING RUNS IN THE BACKGROUND. Builds, tests, emulator runs are hidden
+    console-less child processes logged to tmp/mcp-jobs/. The app launches
+    offscreen or minimized by default; app_foreground() is the explicit "bring
+    it to the user" moment (per the standing 2026-07-12 rule).
+  * NOTHING CAN LEAK. Every long operation is a JOB with a hard timeout whose
+    overrun kills the whole process tree (taskkill /T /F); the server kills all
+    live jobs and sessions at shutdown; procs_cleanup() sweeps strays.
+  * ONE PYBOY PER PROCESS. The emulator session is a child REPL
+    (scripts/emu/drive_session.py) that boots exactly once; a new boot means a
+    new process. Single-shot probes stay single-shot.
+  * THE EXACT TOOLCHAIN. The build env is the Qt Creator kit's, verbatim:
+    llvm-mingw + Qt 6.11 + CMake bins prepended to PATH, CC=clang CXX=clang++.
+    The kit dir (what the app runs from) and the test build dir are distinct
+    and never mixed up. Test/app children get QT_QPA_PLATFORM=offscreen +
+    QT_QPA_FONTDIR when headless. Crash-fast error mode is inherited by every
+    child, so a crashed exe fails fast instead of hanging on a debugger dialog.
+
+Run it under tmp/mcp-venv (scripts/mcp/setup.ps1 creates it): the launcher is
+scripts/mcp/run.cmd. Requires: mcp, psutil (dev-only; never shipped).
+"""
+from __future__ import annotations
+
+import ctypes
+import importlib.util
+import json
+import os
+import queue
+import socket
+import subprocess
+import sys
+import threading
+import time
+import uuid
+from pathlib import Path
+
+from mcp.server.fastmcp import FastMCP, Image
+
+# ---------------------------------------------------------------- paths & env
+
+REPO = Path(__file__).resolve().parents[2]
+KIT_DIR = REPO / "projects" / "build" / "Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug"
+TEST_BUILD = REPO / "build"
+APP_EXE = KIT_DIR / "PokeredSaveEditor.exe"
+DEFAULT_SAV = REPO / "assets" / "saves" / "natural-clean" / "BaseSAV.sav"
+EMU_PY = REPO / "tmp" / "emu-venv" / "Scripts" / "python.exe"
+ROM = REPO / "assets" / "references" / "backup.gb"
+JOB_DIR = REPO / "tmp" / "mcp-jobs"
+SHOT_DIR = REPO / "tmp" / "mcp-shots"
+
+TOOL_BIN = r"C:\Qt\Tools\llvm-mingw1706_64\bin"
+QT_BIN = r"C:\Qt\6.11.0\llvm-mingw_64\bin"
+CMAKE_BIN = r"C:\Qt\Tools\CMake_64\bin"
+FONT_DIR = r"C:\Windows\Fonts"
+
+APP_PORT = 8766
+CREATE_NO_WINDOW = 0x08000000
+CREATE_NEW_PROCESS_GROUP = 0x00000200
+HIDDEN = CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP
+
+# Crash-fast: children inherit the error mode, so a crashing test exe dies with an
+# exit code instead of hanging the run on the qtcdebugger/WER dialog.
+ctypes.windll.kernel32.SetErrorMode(0x0003)  # SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX
+
+
+def build_env(offscreen: bool = False) -> dict:
+    env = os.environ.copy()
+    env["PATH"] = ";".join([TOOL_BIN, QT_BIN, CMAKE_BIN]) + ";" + env.get("PATH", "")
+    env["CC"] = "clang"
+    env["CXX"] = "clang++"
+    if offscreen:
+        env["QT_QPA_PLATFORM"] = "offscreen"
+        env["QT_QPA_FONTDIR"] = FONT_DIR
+    return env
+
+
+def kill_tree(pid: int) -> str:
+    r = subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"],
+                       capture_output=True, text=True, creationflags=CREATE_NO_WINDOW)
+    return (r.stdout + r.stderr).strip()
+
+
+# ---------------------------------------------------------------- job manager
+
+class Job:
+    def __init__(self, desc: str, timeout_s: int):
+        self.id = uuid.uuid4().hex[:8]
+        self.desc = desc
+        self.timeout_s = timeout_s
+        self.started = time.time()
+        self.status = "running"        # running | done | failed | timeout | killed
+        self.exit_code: int | None = None
+        JOB_DIR.mkdir(parents=True, exist_ok=True)
+        self.log_path = JOB_DIR / f"{self.id}.log"
+        self.proc: subprocess.Popen | None = None
+
+    def summary(self) -> dict:
+        return {"job_id": self.id, "desc": self.desc, "status": self.status,
+                "exit_code": self.exit_code,
+                "elapsed_s": round(time.time() - self.started, 1),
+                "log": str(self.log_path)}
+
+
+JOBS: dict[str, Job] = {}
+_JOBS_LOCK = threading.Lock()
+
+
+def spawn_job(desc: str, argv: list[str], cwd: Path, env: dict,
+              timeout_s: int) -> dict:
+    """Start a hidden, logged, timeout-guarded subprocess job."""
+    job = Job(desc, timeout_s)
+    log = open(job.log_path, "w", encoding="utf-8", errors="replace")
+    log.write(f"$ {' '.join(argv)}\n(cwd {cwd})\n\n")
+    log.flush()
+    job.proc = subprocess.Popen(argv, cwd=str(cwd), env=env, stdout=log,
+                                stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
+                                creationflags=HIDDEN)
+
+    def monitor():
+        try:
+            job.exit_code = job.proc.wait(timeout=timeout_s)
+            job.status = "done" if job.exit_code == 0 else "failed"
+        except subprocess.TimeoutExpired:
+            kill_tree(job.proc.pid)
+            job.status = "timeout"
+            job.exit_code = job.proc.wait()
+        finally:
+            log.close()
+
+    threading.Thread(target=monitor, daemon=True).start()
+    with _JOBS_LOCK:
+        JOBS[job.id] = job
+    return job.summary()
+
+
+def spawn_fn_job(desc: str, fn, timeout_s: int) -> dict:
+    """A job whose body is a Python function `fn(job, log_write)` in a thread.
+    The function must launch only timeout-guarded subprocesses itself."""
+    job = Job(desc, timeout_s)
+
+    def runner():
+        with open(job.log_path, "w", encoding="utf-8", errors="replace") as log:
+            def w(text):
+                log.write(text)
+                log.flush()
+            try:
+                job.exit_code = fn(job, w)
+                job.status = "done" if job.exit_code == 0 else "failed"
+            except Exception as e:
+                w(f"\nEXCEPTION: {e!r}\n")
+                job.status = "failed"
+                job.exit_code = -1
+
+    threading.Thread(target=runner, daemon=True).start()
+    with _JOBS_LOCK:
+        JOBS[job.id] = job
+    return job.summary()
+
+
+def _tail(path: Path, lines: int) -> str:
+    if not path.exists():
+        return ""
+    text = path.read_text(encoding="utf-8", errors="replace")
+    return "\n".join(text.splitlines()[-lines:])
+
+
+# ---------------------------------------------------------------- MCP server
+
+mcp = FastMCP(
+    "pokered-dev",
+    instructions="Dev-workflow server for pokered-save-editor-2. Long operations "
+                 "return a job_id immediately — poll with job_status/job_wait/job_log. "
+                 "Everything runs hidden/background by default; use app_foreground "
+                 "only when the work is ready for the user to look at.")
+
+
+# ------------------------------------------------------------------- info
+
+@mcp.tool()
+def workspace_info() -> dict:
+    """Project + toolchain snapshot: paths, VERSION, git branch, what exists
+    (app exe, test build, emu venv, ROM, PyBoy version), and live jobs/sessions."""
+    def _git(*args):
+        r = subprocess.run(["git", *args], cwd=str(REPO), capture_output=True,
+                           text=True, creationflags=CREATE_NO_WINDOW)
+        return r.stdout.strip()
+    pyboy_ver = ""
+    if EMU_PY.exists():
+        r = subprocess.run([str(EMU_PY), "-c",
+                            "from importlib.metadata import version; print(version('pyboy'))"],
+                           capture_output=True, text=True, timeout=30,
+                           creationflags=CREATE_NO_WINDOW)
+        pyboy_ver = r.stdout.strip()
+    return {
+        "repo": str(REPO),
+        "version": next((ln.strip() for ln in (REPO / "VERSION").read_text().splitlines()
+                         if ln.strip() and not ln.strip().startswith("#")), "?")
+                   if (REPO / "VERSION").exists() else "?",
+        "git_branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
+        "git_head": _git("log", "--oneline", "-1"),
+        "kit_dir": str(KIT_DIR), "app_exe_present": APP_EXE.exists(),
+        "test_build_dir": str(TEST_BUILD), "test_build_configured": (TEST_BUILD / "CMakeCache.txt").exists(),
+        "emu_venv_present": EMU_PY.exists(), "pyboy_version": pyboy_ver,
+        "rom_present": ROM.exists(),
+        "jobs_running": [j.summary() for j in JOBS.values() if j.status == "running"],
+        "emu_session_live": _SESSION["proc"] is not None,
+        "app_running": _app_pid() is not None,
+    }
+
+
+# ------------------------------------------------------------------- build & test
+
+@mcp.tool()
+def build_app(clean: bool = False, timeout_s: int = 1800) -> dict:
+    """Build the APP (kit dir Makefiles build — the exe that actually runs:
+    projects/build/Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug). This is the build
+    for in-app testing; note editing a savefile .cpp rebuilds the DLL, not the exe
+    (verify by DLL timestamp). Returns a job — poll with job_wait/job_status."""
+    argv = [CMAKE_BIN + r"\cmake.exe", "--build", str(KIT_DIR),
+            "--target", "PokeredSaveEditor", "--parallel"]
+    if clean:
+        argv.insert(2, "--clean-first")
+    return spawn_job("build app (kit dir)", argv, REPO, build_env(), timeout_s)
+
+
+@mcp.tool()
+def build_tests(target: str = "", clean: bool = False, timeout_s: int = 2400) -> dict:
+    """Build the TEST build dir (repo-root build/, Ninja). target='' builds all;
+    or name one (e.g. 'tst_warps', 'tst_flag_scenarios'). Returns a job."""
+    argv = [CMAKE_BIN + r"\cmake.exe", "--build", str(TEST_BUILD), "--parallel"]
+    if target:
+        argv += ["--target", target]
+    if clean:
+        argv.insert(2, "--clean-first")
+    return spawn_job(f"build tests ({target or 'all'})", argv, REPO, build_env(), timeout_s)
+
+
+@mcp.tool()
+def configure_tests(fresh: bool = False, timeout_s: int = 900) -> dict:
+    """(Re)configure the test build dir: cmake -S projects -B build -G Ninja with the
+    kit toolchain env. fresh=True adds --fresh (wipe the cache). Returns a job."""
+    argv = [CMAKE_BIN + r"\cmake.exe", "-S", "projects", "-B", "build", "-G", "Ninja"]
+    if fresh:
+        argv.append("--fresh")
+    return spawn_job("configure tests", argv, REPO, build_env(), timeout_s)
+
+
+@mcp.tool()
+def run_ctest(filter_regex: str = "", timeout_s: int = 3600) -> dict:
+    """Run ctest in the test build dir (offscreen, crash-fast). filter_regex maps to
+    -R; empty = the FULL suite. Returns a job — read the verdict with job_log."""
+    argv = [CMAKE_BIN + r"\ctest.exe", "--output-on-failure"]
+    if filter_regex:
+        argv += ["-R", filter_regex]
+    return spawn_job(f"ctest {filter_regex or '(full)'}", argv, TEST_BUILD,
+                     build_env(offscreen=True), timeout_s)
+
+
+@mcp.tool()
+def run_test_exe(name: str, args: list[str] | None = None, timeout_s: int = 900) -> dict:
+    """Run one test executable from build/ directly (e.g. name='tst_qml_screens'),
+    offscreen with fonts + Qt DLLs on PATH. Returns a job."""
+    exe = TEST_BUILD / (name if name.endswith(".exe") else name + ".exe")
+    if not exe.exists():
+        return {"error": f"{exe} not found — build_tests(target='{name}') first"}
+    return spawn_job(f"run {name}", [str(exe), *(args or [])], TEST_BUILD,
+                     build_env(offscreen=True), timeout_s)
+
+
+@mcp.tool()
+def capture_screenshots(timeout_s: int = 1200) -> dict:
+    """Run the headless screenshooter batch (scripts/capture_screenshots.ps1) —
+    renders every screen to tmp/screenshots/ as still PNGs, never writes a save.
+    Returns a job."""
+    argv = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
+            "-File", str(REPO / "scripts" / "capture_screenshots.ps1")]
+    return spawn_job("capture screenshots", argv, REPO, build_env(), timeout_s)
+
+
+# ------------------------------------------------------------------- jobs
+
+@mcp.tool()
+def job_status(job_id: str, tail_lines: int = 40) -> dict:
+    """Status of a job + the tail of its log."""
+    job = JOBS.get(job_id)
+    if not job:
+        return {"error": f"no job {job_id}"}
+    return {**job.summary(), "log_tail": _tail(job.log_path, tail_lines)}
+
+
+@mcp.tool()
+def job_wait(job_id: str, timeout_s: int = 120, tail_lines: int = 60) -> dict:
+    """Block (bounded) until the job finishes; returns final status + log tail.
+    Re-call if it is still running after timeout_s."""
+    job = JOBS.get(job_id)
+    if not job:
+        return {"error": f"no job {job_id}"}
+    deadline = time.time() + min(timeout_s, 570)
+    while job.status == "running" and time.time() < deadline:
+        time.sleep(0.5)
+    return {**job.summary(), "log_tail": _tail(job.log_path, tail_lines)}
+
+
+@mcp.tool()
+def job_log(job_id: str, tail_lines: int = 300) -> str:
+    """The tail of a job's full log."""
+    job = JOBS.get(job_id)
+    if not job:
+        return f"no job {job_id}"
+    return _tail(job.log_path, tail_lines)
+
+
+@mcp.tool()
+def job_kill(job_id: str) -> dict:
+    """Kill a running job's whole process tree."""
+    job = JOBS.get(job_id)
+    if not job:
+        return {"error": f"no job {job_id}"}
+    if job.proc and job.status == "running":
+        kill_tree(job.proc.pid)
+        job.status = "killed"
+    return job.summary()
+
+
+@mcp.tool()
+def job_list() -> list[dict]:
+    """All jobs this server session (newest last)."""
+    return [j.summary() for j in JOBS.values()]
+
+
+# ------------------------------------------------------------------- the app
+
+_APP: dict = {"proc": None, "mode": ""}
+
+
+def _app_pid() -> int | None:
+    p = _APP.get("proc")
+    if p is not None and p.poll() is None:
+        return p.pid
+    try:
+        with socket.create_connection(("127.0.0.1", APP_PORT), timeout=0.6):
+            return -1     # running, but not launched by us
+    except OSError:
+        return None
+
+
+def _tcp(cmd: dict, timeout: float = 15.0) -> dict:
+    """One fresh connection per command — REQUIRED (a held-open socket returns
+    stale frames for `shot`; see reference/dev-harness.md trap #2)."""
+    try:
+        with socket.create_connection(("127.0.0.1", APP_PORT), timeout=timeout) as s:
+            s.sendall((json.dumps(cmd) + "\n").encode("utf-8"))
+            f = s.makefile("r", encoding="utf-8")
+            line = f.readline()
+        return json.loads(line) if line.strip() else {"error": "empty reply"}
+    except OSError as e:
+        return {"error": f"app control channel unreachable ({e}) — is the app "
+                         f"running (app_launch) and a DEBUG build?"}
+
+
+def _find_hwnds(pid: int) -> list[int]:
+    user32 = ctypes.windll.user32
+    hwnds: list[int] = []
+    proto = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_void_p, ctypes.c_void_p)
+
+    def cb(hwnd, _):
+        wpid = ctypes.c_ulong()
+        user32.GetWindowThreadProcessId(hwnd, ctypes.byref(wpid))
+        if wpid.value == pid and user32.IsWindowVisible(hwnd):
+            hwnds.append(hwnd)
+        return True
+
+    user32.EnumWindows(proto(cb), 0)
+    return hwnds
+
+
+@mcp.tool()
+def app_launch(sav: str = "", screen: str = "", select: str = "", hot: bool = True,
+               mode: str = "background", extra_args: list[str] | None = None) -> dict:
+    """Launch the editor via the DEBUG harness. mode:
+      'offscreen'  — headless (QT_QPA_PLATFORM=offscreen): no window at all; shots
+                     work; best for pure automation. (Pixel-art shader falls back.)
+      'background' — real window, started MINIMIZED, steals no focus (default).
+                     NOTE: a minimized window stops rendering, so app_shot returns
+                     stale frames until app_foreground() restores it.
+      'foreground' — normal window, for the user's live pass.
+    sav defaults to the BaseSAV fixture; screen ∈ registered names (trainerCard,
+    pokedex, bag, pokemart, pokemon, rival, maps, home, pokemonDetails, ...);
+    select e.g. 'party:0'. Uses the app's own --sav/--screen/--select/--hot/
+    --minimized flags. Waits for the 127.0.0.1:8766 control channel."""
+    if _app_pid() is not None:
+        return {"error": "app already running — app_stop() first (or drive it as-is)"}
+    if not APP_EXE.exists():
+        return {"error": f"{APP_EXE} missing — build_app() first"}
+    argv = [str(APP_EXE)]
+    sav_path = Path(sav) if sav else DEFAULT_SAV
+    if not sav_path.is_absolute():
+        sav_path = REPO / sav_path
+    argv += ["--sav", str(sav_path)]
+    if screen:
+        argv += ["--screen", screen]
+    if select:
+        argv += ["--select", select]
+    if hot:
+        argv.append("--hot")
+    if mode == "background":
+        argv.append("--minimized")
+    argv += (extra_args or [])
+    env = build_env(offscreen=(mode == "offscreen"))
+    _APP["proc"] = subprocess.Popen(argv, cwd=str(REPO), env=env,
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                    creationflags=CREATE_NEW_PROCESS_GROUP)
+    _APP["mode"] = mode
+    ok = False
+    for _ in range(60):                      # up to ~30 s for boot + DB load
+        time.sleep(0.5)
+        if _tcp({"cmd": "ping"}, timeout=1.0).get("error") is None:
+            ok = True
+            break
+        if _APP["proc"].poll() is not None:
+            return {"error": f"app exited immediately (code {_APP['proc'].poll()})"}
+    return {"pid": _APP["proc"].pid, "mode": mode, "control_channel": ok,
+            "argv": argv}
+
+
+@mcp.tool()
+def app_stop() -> dict:
+    """Stop the running editor (kills the process tree if needed)."""
+    p = _APP.get("proc")
+    if p is not None and p.poll() is None:
+        kill_tree(p.pid)
+        _APP["proc"] = None
+        return {"stopped": True}
+    if _app_pid() == -1:
+        return {"error": "an editor is running but was not launched by this server — "
+                         "close it manually or via procs_cleanup(include_app=True)"}
+    return {"stopped": False, "note": "not running"}
+
+
+@mcp.tool()
+def app_foreground() -> dict:
+    """Bring the editor window to the FRONT for the user to look at — the explicit
+    'it's ready for her' moment. Restores from minimized and activates."""
+    p = _APP.get("proc")
+    if p is None or p.poll() is not None:
+        return {"error": "no app launched by this server"}
+    user32 = ctypes.windll.user32
+    hwnds = _find_hwnds(p.pid)
+    if not hwnds:
+        return {"error": "no visible window (offscreen mode has none — relaunch "
+                         "with mode='foreground' or 'background')"}
+    for h in hwnds:
+        user32.ShowWindow(h, 9)              # SW_RESTORE
+        user32.SwitchToThisWindow(h, True)
+    return {"foregrounded": len(hwnds)}
+
+
+@mcp.tool()
+def app_background() -> dict:
+    """Minimize the editor window out of the way (no focus steal thereafter)."""
+    p = _APP.get("proc")
+    if p is None or p.poll() is not None:
+        return {"error": "no app launched by this server"}
+    user32 = ctypes.windll.user32
+    hwnds = _find_hwnds(p.pid)
+    for h in hwnds:
+        user32.ShowWindow(h, 6)              # SW_MINIMIZE
+    return {"minimized": len(hwnds)}
+
+
+@mcp.tool()
+def app_cmd(command_json: str, timeout_s: int = 15) -> dict:
+    """RAW passthrough to the app's TCP control channel (one JSON object).
+    Verbs: ping, screen, party, back, home, sav, shot, title, get, set, click,
+    tap, invoke, reload, list. See notes/reference/dev-harness.md."""
+    try:
+        cmd = json.loads(command_json)
+    except json.JSONDecodeError as e:
+        return {"error": f"bad JSON: {e}"}
+    return _tcp(cmd, timeout=timeout_s)
+
+
+@mcp.tool()
+def app_screen(name: str) -> dict:
+    """Navigate to a screen (waits for the transition to finish before replying).
+    Navigating to the screen you're already on is refused by the harness itself
+    (reply carries "already": true) — the duplicate-push trap cannot recur."""
+    return _tcp({"cmd": "screen", "arg": name}, timeout=20)
+
+
+@mcp.tool()
+def app_title() -> dict:
+    """Current screen: human title (result) + registered screen name (screen)."""
+    return _tcp({"cmd": "title"})
+
+
+@mcp.tool()
+def app_load_sav(path: str) -> dict:
+    """Load a .sav into the running app."""
+    p = Path(path)
+    if not p.is_absolute():
+        p = REPO / p
+    return _tcp({"cmd": "sav", "arg": str(p).replace("\\", "/")})
+
+
+@mcp.tool()
+def app_get(obj: str, prop: str) -> dict:
+    """Read a QML property. obj = objectName, or a '/'-separated path from a named
+    node ('mapRightPanel/0/2'); numbers index direct children in visual order."""
+    return _tcp({"cmd": "get", "obj": obj, "prop": prop})
+
+
+@mcp.tool()
+def app_set(obj: str, prop: str, value: str) -> dict:
+    """Write a QML property (value auto-converts)."""
+    return _tcp({"cmd": "set", "obj": obj, "prop": prop, "val": value})
+
+
+@mcp.tool()
+def app_click(obj: str) -> dict:
+    """Emit a control's clicked() SIGNAL directly. ⚠️ This exercises none of the
+    event-delivery machinery — for 'what happens when the user actually clicks
+    there' use app_tap instead."""
+    return _tcp({"cmd": "click", "obj": obj})
+
+
+@mcp.tool()
+def app_tap(obj: str = "", x: int = -1, y: int = -1, button: str = "left",
+            double: bool = False) -> dict:
+    """A REAL mouse press+release through Qt's delivery path (grabs, handlers,
+    propagation). Target by objectName/path OR by view coordinates."""
+    cmd: dict = {"cmd": "tap"}
+    if obj:
+        cmd["obj"] = obj
+    else:
+        if x < 0 or y < 0:
+            return {"error": "give obj or x+y"}
+        cmd["x"], cmd["y"] = x, y
+    if button != "left":
+        cmd["button"] = button
+    if double:
+        cmd["double"] = True
+    return _tcp(cmd)
+
+
+@mcp.tool()
+def app_invoke(obj: str, method: str, args: list[str] | None = None) -> dict:
+    """Emit any signal / call any slot or Q_INVOKABLE by name (no-arg is the
+    always-works case; args pass as QVariant)."""
+    cmd = {"cmd": "invoke", "obj": obj, "method": method}
+    if args:
+        cmd["args"] = args
+    return _tcp(cmd)
+
+
+@mcp.tool()
+def app_list(query: str = "", obj: str = "") -> dict:
+    """List reachable objectNames matching substring `query`, or (obj='name')
+    that node's direct children as '[index] TypeName' for path navigation.
+    Also THE duplicate-screen detector: the same name three times means dead
+    copies are stacked."""
+    cmd: dict = {"cmd": "list"}
+    if obj:
+        cmd["obj"] = obj
+    elif query:
+        cmd["arg"] = query
+    return _tcp(cmd)
+
+
+@mcp.tool()
+def app_reload() -> dict:
+    """Force a full QML hot-reload (stays on the current screen, save survives)."""
+    return _tcp({"cmd": "reload"}, timeout=30)
+
+
+@mcp.tool()
+def app_shot(obj: str = "", label: str = "shot", settle_ms: int = 250) -> Image:
+    """Screenshot the app view (or just one component by objectName/path) via the
+    harness's framebuffer grab and RETURN THE IMAGE inline. Saved under
+    tmp/mcp-shots/ too. The harness waits out any in-flight screen transition and
+    then settle_ms more (animations/fades), so mid-transition "distorted" grabs
+    can't happen. Works while backgrounded/offscreen — but NOT while minimized
+    (stale frames): app_foreground() or offscreen mode first."""
+    SHOT_DIR.mkdir(parents=True, exist_ok=True)
+    p = SHOT_DIR / f"{label}-{time.strftime('%H%M%S')}.png"
+    cmd: dict = {"cmd": "shot", "arg": str(p).replace("\\", "/"),
+                 "settle": settle_ms}
+    if obj:
+        cmd["obj"] = obj
+    r = _tcp(cmd, timeout=30)
+    if r.get("error") or not p.exists():
+        raise RuntimeError(f"shot failed: {r}")
+    return Image(path=str(p))
+
+
+# ------------------------------------------------------------------- emulator
+
+_SESSION: dict = {"proc": None, "q": None}
+_SESSION_LOCK = threading.Lock()
+
+
+def _session_kill(reason: str = "") -> None:
+    p = _SESSION.get("proc")
+    if p is not None and p.poll() is None:
+        kill_tree(p.pid)
+    _SESSION["proc"] = None
+    _SESSION["q"] = None
+
+
+def _session_send(obj: dict, timeout_s: float) -> dict:
+    with _SESSION_LOCK:
+        p = _SESSION.get("proc")
+        if p is None or p.poll() is not None:
+            return {"ok": False, "error": "no live emulator session — emu_boot first"}
+        try:
+            p.stdin.write(json.dumps(obj) + "\n")
+            p.stdin.flush()
+        except OSError as e:
+            _session_kill()
+            return {"ok": False, "error": f"session pipe broke ({e}); session killed"}
+        try:
+            return _SESSION["q"].get(timeout=timeout_s)
+        except queue.Empty:
+            _session_kill()
+            return {"ok": False, "error": f"session did not answer within {timeout_s}s — "
+                                          f"killed the whole tree (nothing leaks)"}
+
+
+def _emu_available() -> str:
+    if not ROM.exists():
+        return "no ROM at assets/references/backup.gb (local-only)"
+    if not EMU_PY.exists():
+        return "no emulator venv — run emu_setup()"
+    return ""
+
+
+@mcp.tool()
+def emu_status() -> dict:
+    """Emulator environment health: venv, PyBoy version, ROM presence + SHA-1
+    match, live session, and any stray emu-venv python processes."""
+    out: dict = {"venv_present": EMU_PY.exists(), "rom_present": ROM.exists(),
+                 "session_live": _SESSION["proc"] is not None and _SESSION["proc"].poll() is None}
+    if EMU_PY.exists():
+        r = subprocess.run([str(EMU_PY), "-c",
+                            "from importlib.metadata import version; print(version('pyboy'))"],
+                           capture_output=True, text=True, timeout=60,
+                           creationflags=CREATE_NO_WINDOW)
+        out["pyboy_version"] = r.stdout.strip() or r.stderr.strip()
+    if ROM.exists():
+        import hashlib
+        out["rom_sha1"] = hashlib.sha1(ROM.read_bytes()).hexdigest()
+        out["rom_sha1_expected"] = "ea9bcae617fdf159b045185467ae58b2e4a48b9a"
+        out["rom_ok"] = out["rom_sha1"] == out["rom_sha1_expected"]
+    out["stray_processes"] = _stray_procs()
+    return out
+
+
+@mcp.tool()
+def emu_setup(recreate: bool = False, timeout_s: int = 900) -> dict:
+    """Create (or -Recreate from scratch) the tmp/emu-venv PyBoy venv via
+    scripts/emu/setup.ps1. Returns a job."""
+    argv = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
+            "-File", str(REPO / "scripts" / "emu" / "setup.ps1")]
+    if recreate:
+        argv.append("-Recreate")
+    return spawn_job("emu venv setup", argv, REPO, os.environ.copy(), timeout_s)
+
+
+@mcp.tool()
+def emu_check_updates(timeout_s: int = 240) -> dict:
+    """Check whether PyBoy (or anything else in the emu venv) has an update
+    available (pip list --outdated). Returns a job (network-bound)."""
+    if not EMU_PY.exists():
+        return {"error": "no emu venv — emu_setup() first"}
+    argv = [str(EMU_PY), "-m", "pip", "list", "--outdated", "--format", "json"]
+    return spawn_job("emu pip outdated", argv, REPO, os.environ.copy(), timeout_s)
+
+
+@mcp.tool()
+def emu_update(package: str = "pyboy", timeout_s: int = 600) -> dict:
+    """Upgrade a package in the emu venv (default PyBoy). Returns a job.
+    Run the parity suite afterwards — a new PyBoy must still satisfy the oracle."""
+    if not EMU_PY.exists():
+        return {"error": "no emu venv — emu_setup() first"}
+    argv = [str(EMU_PY), "-m", "pip", "install", "--upgrade", package]
+    return spawn_job(f"emu pip upgrade {package}", argv, REPO, os.environ.copy(), timeout_s)
+
+
+@mcp.tool()
+def emu_run_script(script: str, args: list[str] | None = None,
+                   timeout_s: int = 300) -> dict:
+    """Run one scripts/emu/*.py probe SINGLE-SHOT under the emu venv (the sanctioned
+    shape: boots once, writes results, exits; killed as a tree on overrun).
+    script may be a bare name ('probe_warp_persistence.py'). Returns a job."""
+    why = _emu_available()
+    if why:
+        return {"error": why}
+    sp = Path(script)
+    if not sp.is_absolute():
+        sp = REPO / "scripts" / "emu" / sp.name if not script.startswith(("scripts", "tmp")) \
+            else REPO / script
+    if not sp.exists():
+        return {"error": f"{sp} not found"}
+    argv = [str(EMU_PY), str(sp), *(args or [])]
+    return spawn_job(f"emu {sp.name}", argv, REPO, os.environ.copy(), timeout_s)
+
+
+@mcp.tool()
+def emu_flag_scenarios(only: str = "", per_scenario_timeout_s: int = 180) -> dict:
+    """Run the event-flag scenario batch (scripts/emu/flag_scenarios.json) the safe
+    way: ONE SCENARIO PER PROCESS (PyBoy wedges if re-instantiated in-process),
+    each child timeout-guarded and reaped. only='name' runs one. Returns a job;
+    results also land in tmp/emu/scn_<name>.json."""
+    why = _emu_available()
+    if why:
+        return {"error": why}
+    scenarios = json.loads((REPO / "scripts" / "emu" / "flag_scenarios.json")
+                           .read_text(encoding="utf-8"))
+    names = [s["name"] for s in scenarios if not only or s["name"] == only]
+    if not names:
+        return {"error": f"no scenario named '{only}'"}
+
+    def body(job: Job, w) -> int:
+        rc_all = 0
+        for name in names:
+            out = REPO / "tmp" / "emu" / f"scn_{name}.json"
+            argv = [str(EMU_PY), str(REPO / "scripts" / "emu" / "run_flag_scenarios.py"),
+                    "--only", name, "--out", str(out)]
+            w(f"== {name}\n")
+            pr = subprocess.Popen(argv, cwd=str(REPO), stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT, text=True,
+                                  creationflags=HIDDEN)
+            try:
+                sout, _ = pr.communicate(timeout=per_scenario_timeout_s)
+                w(sout or "")
+                if pr.returncode != 0:
+                    rc_all = pr.returncode
+            except subprocess.TimeoutExpired:
+                # A wedge is a VERDICT: a hard-crashed console executes STOP, the
+                # frame never completes, PyBoy's tick() spins forever. Kill the
+                # whole tree (venv python is a launcher; a plain kill leaks the
+                # interpreter) and record "hang" as the scenario's result.
+                kill_tree(pr.pid)
+                pr.wait()
+                w(f"HANG after {per_scenario_timeout_s}s — console wedged; tree killed\n")
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_text(json.dumps({"results": [
+                    {"name": name, "result": "hang"}]}, indent=1))
+        return rc_all
+
+    return spawn_fn_job(f"flag scenarios ({only or 'all ' + str(len(names))})",
+                        body, per_scenario_timeout_s * (len(names) + 1))
+
+
+@mcp.tool()
+def emu_forge_save(out_path: str, map_id: int = -1, x: int = -1, y: int = -1,
+                   flags: list[str] | None = None, flag_indices: list[int] | None = None,
+                   all_flags: bool = False, pokes: dict[str, str] | None = None,
+                   base_sav: str = "") -> dict:
+    """Forge a synthetic save at ANY map/position/flag state (checksum resealed) —
+    instant, no emulator. pokes: {'0x260A': '0x21'} raw byte writes. The standing
+    method from reference/emulator-verification.md."""
+    spec = importlib.util.spec_from_file_location(
+        "forge_save", REPO / "scripts" / "emu" / "forge_save.py")
+    fs = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fs)
+    base = Path(base_sav) if base_sav else DEFAULT_SAV
+    if not base.is_absolute():
+        base = REPO / base
+    out = Path(out_path)
+    if not out.is_absolute():
+        out = REPO / out
+    data = fs.forge(base.read_bytes(),
+                    None if map_id < 0 else map_id,
+                    None if y < 0 else y, None if x < 0 else x,
+                    flags or None, flag_indices or None, all_flags,
+                    {int(k, 0): int(v, 0) for k, v in (pokes or {}).items()})
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(data)
+    return {"path": str(out), "bytes": len(data)}
+
+
+@mcp.tool()
+def emu_boot(sav: str = "", map_id: int = -1, x: int = -1, y: int = -1,
+             flags: list[str] | None = None, all_flags: bool = False,
+             pokes: dict[str, str] | None = None, mash: bool = True,
+             budget_frames: int = 4000, timeout_s: int = 150) -> dict:
+    """Start an INTERACTIVE emulator session: boots the real ROM once in a fresh
+    owned child process (scripts/emu/drive_session.py), optionally forging the
+    save first (any map/position/flags), and mashes Start/A to Continue until the
+    overworld. Then drive it with emu_button/emu_tick/emu_mem/emu_screenshot.
+    Only one session at a time; a re-boot means a fresh process (PyBoy rule)."""
+    why = _emu_available()
+    if why:
+        return {"error": why}
+    with _SESSION_LOCK:
+        _session_kill()
+        proc = subprocess.Popen([str(EMU_PY), str(REPO / "scripts" / "emu" / "drive_session.py")],
+                                cwd=str(REPO), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                stderr=subprocess.DEVNULL, text=True, encoding="utf-8",
+                                creationflags=HIDDEN)
+        q: queue.Queue = queue.Queue()
+
+        def reader():
+            for line in proc.stdout:
+                line = line.strip()
+                if line.startswith("{"):
+                    try:
+                        q.put(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+            q.put({"ok": False, "error": "session process ended"})
+
+        threading.Thread(target=reader, daemon=True).start()
+        _SESSION["proc"] = proc
+        _SESSION["q"] = q
+        try:
+            ready = q.get(timeout=60)
+        except queue.Empty:
+            _session_kill()
+            return {"error": "session child never came up (60s)"}
+        if not ready.get("ready"):
+            _session_kill()
+            return {"error": f"session child unavailable: {ready}"}
+    boot_cmd: dict = {"cmd": "boot", "budget": budget_frames, "mash": mash}
+    if sav:
+        p = Path(sav)
+        boot_cmd["sav"] = str(p if p.is_absolute() else REPO / p)
+    if map_id >= 0:
+        boot_cmd["map"] = map_id
+    if x >= 0:
+        boot_cmd["x"] = x
+    if y >= 0:
+        boot_cmd["y"] = y
+    if flags:
+        boot_cmd["flags"] = flags
+    if all_flags:
+        boot_cmd["all_flags"] = True
+    if pokes:
+        boot_cmd["pokes"] = pokes
+    return _session_send(boot_cmd, timeout_s)
+
+
+@mcp.tool()
+def emu_button(button: str, hold_frames: int = 4, after_frames: int = 30,
+               timeout_s: int = 60) -> dict:
+    """Press a button in the live session (a/b/start/select/up/down/left/right),
+    hold it hold_frames, then run after_frames. Returns the game state."""
+    return _session_send({"cmd": "button", "b": button, "hold": hold_frames,
+                          "after": after_frames}, timeout_s)
+
+
+@mcp.tool()
+def emu_tick(frames: int = 60, timeout_s: int = 120) -> dict:
+    """Advance the live session N frames (59.7275 Hz). Returns the game state."""
+    return _session_send({"cmd": "tick", "n": frames}, timeout_s)
+
+
+@mcp.tool()
+def emu_mem(addr: str, length: int = 1, timeout_s: int = 30) -> dict:
+    """Read emulator memory (hex string back). addr hex ok: '0xD35E'. Read ANY
+    console state — WRAM, the sound engine at 0xC000, OAM, whatever."""
+    return _session_send({"cmd": "mem", "addr": addr, "len": length}, timeout_s)
+
+
+@mcp.tool()
+def emu_poke(addr: str, hex_bytes: str, timeout_s: int = 30) -> dict:
+    """Write bytes into emulator memory (live), e.g. addr='0xD35E', hex_bytes='21'."""
+    return _session_send({"cmd": "poke", "addr": addr, "bytes": hex_bytes}, timeout_s)
+
+
+@mcp.tool()
+def emu_state(timeout_s: int = 30) -> dict:
+    """Current game state of the live session (map/dims/coords/battle/on_overworld)."""
+    return _session_send({"cmd": "state"}, timeout_s)
+
+
+@mcp.tool()
+def emu_screenshot(label: str = "emu", timeout_s: int = 30) -> Image:
+    """Screenshot the live session's 160x144 framebuffer and RETURN THE IMAGE
+    (also saved under tmp/mcp-shots/)."""
+    SHOT_DIR.mkdir(parents=True, exist_ok=True)
+    p = SHOT_DIR / f"{label}-{time.strftime('%H%M%S')}.png"
+    r = _session_send({"cmd": "shot", "path": str(p)}, timeout_s)
+    if not r.get("ok") or not p.exists():
+        raise RuntimeError(f"emu shot failed: {r}")
+    return Image(path=str(p))
+
+
+@mcp.tool()
+def emu_stop() -> dict:
+    """End the interactive emulator session (graceful quit, then tree-kill)."""
+    r = _session_send({"cmd": "quit"}, 10)
+    _session_kill()
+    return {"stopped": True, "last_reply": r}
+
+
+# ------------------------------------------------------------------- hygiene
+
+def _stray_procs() -> list[dict]:
+    import psutil
+    marker = str(REPO).lower()
+    me = os.getpid()
+    out = []
+    live = {j.proc.pid for j in JOBS.values() if j.proc and j.status == "running"}
+    sess = _SESSION.get("proc")
+    if sess and sess.poll() is None:
+        live.add(sess.pid)
+    for p in psutil.process_iter(["pid", "name", "cmdline", "create_time"]):
+        try:
+            if p.info["name"] not in ("python.exe", "pythonw.exe"):
+                continue
+            cl = " ".join(p.info["cmdline"] or []).lower()
+            if "emu-venv" not in cl and marker not in cl:
+                continue
+            if p.info["pid"] in live or p.info["pid"] == me or "mcp-venv" in cl:
+                continue
+            out.append({"pid": p.info["pid"],
+                        "age_s": round(time.time() - p.info["create_time"]),
+                        "cmdline": " ".join(p.info["cmdline"] or [])[:160]})
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    return out
+
+
+@mcp.tool()
+def procs_cleanup(dry_run: bool = False, include_app: bool = False) -> dict:
+    """Sweep LEAKED processes: emu-venv/repo python.exe strays not owned by a live
+    job or the session (the exact leak class that starved the machine on
+    2026-07-15). include_app=True also kills any running PokeredSaveEditor.
+    dry_run lists without killing. ⚠️ An emu test running OUTSIDE this server
+    (ctest tst_flag_scenarios / tst_emu_parity) looks like a stray to this sweep —
+    don't kill while one is running (dry_run first)."""
+    strays = _stray_procs()
+    killed = []
+    if not dry_run:
+        for s in strays:
+            kill_tree(s["pid"])
+            killed.append(s["pid"])
+    apps = []
+    if include_app:
+        import psutil
+        for p in psutil.process_iter(["pid", "name"]):
+            if p.info["name"] == "PokeredSaveEditor.exe":
+                apps.append(p.info["pid"])
+                if not dry_run:
+                    kill_tree(p.info["pid"])
+        if not dry_run:
+            _APP["proc"] = None
+    return {"strays": strays, "killed": killed, "app_pids": apps, "dry_run": dry_run}
+
+
+# ------------------------------------------------------------------- shutdown
+
+def _shutdown():
+    _session_kill()
+    for j in list(JOBS.values()):
+        if j.proc and j.status == "running":
+            kill_tree(j.proc.pid)
+            j.status = "killed"
+    p = _APP.get("proc")
+    if p is not None and p.poll() is None and _APP.get("mode") == "offscreen":
+        kill_tree(p.pid)     # headless app is invisible — never leave it behind;
+                             # a visible window is left for the user to see/close.
+
+
+import atexit  # noqa: E402
+atexit.register(_shutdown)
+
+
+if __name__ == "__main__":
+    mcp.run()

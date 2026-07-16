@@ -105,6 +105,18 @@
           "name": "linuxdeploy",
           "url": "github.com/linuxdeploy/linuxdeploy",
           "note": "Bundles the Linux AppImage (with its Qt plugin) in the release pipeline"
+        },
+        {
+          "name": "MCP Python SDK",
+          "url": "github.com/modelcontextprotocol/python-sdk",
+          "license": "MIT (dev tool, not distributed with this app)",
+          "note": "Powers the pokered-dev MCP server (scripts/mcp) -- the standardized way an AI session drives the whole dev loop: builds, tests, app driving, screenshots and the emulator. A developer tool only: it lives in a git-ignored venv, runs as its own process, and is never linked into or shipped with the editor"
+        },
+        {
+          "name": "psutil",
+          "url": "github.com/giampaolo/psutil",
+          "license": "BSD-3-Clause (dev tool, not distributed with this app)",
+          "note": "Process inspection for the dev MCP server's leaked-process sweeper -- the guard against the runaway-emulator pile-ups of 2026-07-15"
         }
       ]
     },

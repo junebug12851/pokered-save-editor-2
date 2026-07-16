@@ -34,6 +34,8 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 - **[Pillow](https://python-pillow.github.io)** -- Assembles UI screenshot frames into animated GIFs (scripts/make_gifs.py) -- used manually to add GIFs; the automated screenshot pipeline itself produces still PNGs only _(License: MIT-CMU)_
 - **[Inno Setup](https://jrsoftware.org/isinfo.php)** -- Builds the Windows installer in the release pipeline
 - **[linuxdeploy](https://github.com/linuxdeploy/linuxdeploy)** -- Bundles the Linux AppImage (with its Qt plugin) in the release pipeline
+- **[MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)** -- Powers the pokered-dev MCP server (scripts/mcp) -- the standardized way an AI session drives the whole dev loop: builds, tests, app driving, screenshots and the emulator. A developer tool only: it lives in a git-ignored venv, runs as its own process, and is never linked into or shipped with the editor _(License: MIT -- a dev tool, NOT distributed with this app)_
+- **[psutil](https://github.com/giampaolo/psutil)** -- Process inspection for the dev MCP server's leaked-process sweeper -- the guard against the runaway-emulator pile-ups of 2026-07-15 _(License: BSD-3-Clause -- a dev tool, NOT distributed with this app)_
 
 ## Services Used
 
