@@ -37,6 +37,7 @@ Page {
   StackView {
     anchors.fill: parent
     id: appBody
+    objectName: "appBody"  // the debug harness polls `busy` here to settle transitions
     initialItem: "qrc:/ui/app/screens/non-modal/Home.qml"  // first page shown
 
     // Mirror the C++ Router's non-modal navigation onto this inner stack

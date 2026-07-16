@@ -13,6 +13,7 @@ import QtQuick.Controls
 // This includes the app body itself
 StackView {
   id: appRoot
+  objectName: "appRoot"  // the debug harness polls `busy` here to settle transitions
   initialItem: "qrc:/ui/app/sections/AppWindow.qml"  // the always-present app body
 
   // Bridge the C++ Router's navigation signals to StackView operations

@@ -53,11 +53,14 @@
 #include <QMetaObject>
 #include <QByteArray>
 #include <QDebug>
+#include <QElapsedTimer>
+#include <QEventLoop>
 #include <QMouseEvent>
 #include <QPointF>
 #include <QQuickItem>
 #include <QSet>
 #include <QStringList>
+#include <QTimer>
 #include <QVariant>
 
 #include "../../ui/window/mainwindow.h"
@@ -162,6 +165,57 @@ QObject* findItem(const QString& spec)
   return node;
 }
 
+// The registered NAME of the screen currently on top of the Router's stack (the
+// reverse lookup reloadQml() uses). Empty if the stack is empty / unregistered.
+QString currentScreenName()
+{
+  if(Router::stack.isEmpty()) return {};
+  Screen* top = Router::stack.last();
+  for(auto it = Router::screens.constBegin(); it != Router::screens.constEnd(); ++it)
+    if(it.value() == top) return it.key();
+  return {};
+}
+
+// Is either StackView (the modal layer `appRoot` or the page layer `appBody`)
+// mid-transition right now?
+bool anyStackBusy()
+{
+  const char* names[] = { "appRoot", "appBody" };
+  for(const char* n : names)
+    if(QObject* o = findByName(QString::fromLatin1(n)))
+      if(o->property("busy").toBool()) return true;
+  return false;
+}
+
+// Wait -- WITHOUT freezing the GUI thread -- until the StackView transitions are
+// done (or the cap elapses). A local event loop keeps animations/timers running;
+// we reply to the client only once the view has actually settled. This is what
+// makes a `shot` taken right after a navigation clean instead of a half-faded
+// mid-transition frame (the "distorted screenshots" of 2026-07-16).
+void settleTransitions(int capMs = 1500)
+{
+  QElapsedTimer t;
+  t.start();
+  QEventLoop loop;
+  QTimer tick;
+  tick.setInterval(16);
+  int calm = 0;
+  QObject::connect(&tick, &QTimer::timeout, &loop, [&]() {
+    calm = anyStackBusy() ? 0 : calm + 1;
+    if(calm >= 3 || t.elapsed() >= capMs) loop.quit();
+  });
+  tick.start();
+  loop.exec();
+}
+
+// A plain bounded event-processing pause (for `shot`'s optional settle).
+void settleMs(int ms)
+{
+  QEventLoop loop;
+  QTimer::singleShot(ms, &loop, &QEventLoop::quit);
+  loop.exec();
+}
+
 QJsonObject execute(const QJsonObject& c)
 {
   const QString cmd = c.value(QStringLiteral("cmd")).toString();
@@ -173,34 +227,59 @@ QJsonObject execute(const QJsonObject& c)
   Bridge* brg = MainWindow::bridge;
   if(brg == nullptr) return err(QStringLiteral("bridge not ready"));
 
-  if(cmd == QStringLiteral("title"))
-    return ok(brg->router->title);
+  if(cmd == QStringLiteral("title")) {
+    // Reply carries BOTH the human title and the registered screen NAME, so a
+    // client can compare against what it navigates by (names, not titles).
+    QJsonObject o;
+    o[QStringLiteral("ok")] = true;
+    o[QStringLiteral("result")] = brg->router->title;
+    o[QStringLiteral("screen")] = currentScreenName();
+    return o;
+  }
 
   if(cmd == QStringLiteral("screen")) {
     const QString s = c.value(QStringLiteral("arg")).toString();
     if(!Router::screens.contains(s)) return err(QStringLiteral("unknown screen: ") + s);
+    // Refuse the duplicate push AT THE SOURCE (harness trap #1, dev-harness.md):
+    // the Router pushes without checking, so navigating to the screen you are
+    // already on stacks a dead copy behind the live one and every later
+    // get/set/shot silently hits the dead one. Every client is protected here.
+    // (pokemonDetails is exempt: re-navigating there switches the open mon.)
+    if(s != QStringLiteral("pokemonDetails") && s == currentScreenName()) {
+      QJsonObject o;
+      o[QStringLiteral("ok")] = true;
+      o[QStringLiteral("result")] = brg->router->title;
+      o[QStringLiteral("already")] = true;   // told apart from a real navigation
+      return o;
+    }
     if(s == QStringLiteral("pokemonDetails")) {
       if(auto* mw = MainWindow::getInstance())
         mw->debugOpenPartyDetails(c.value(QStringLiteral("index")).toInt(0));
     } else {
       brg->router->changeScreen(s);
     }
+    settleTransitions();   // reply only when the transition has finished
     return ok(brg->router->title);
   }
 
   if(cmd == QStringLiteral("party")) {
-    if(auto* mw = MainWindow::getInstance())
-      return ok(mw->debugOpenPartyDetails(c.value(QStringLiteral("arg")).toInt(0)));
+    if(auto* mw = MainWindow::getInstance()) {
+      const bool opened = mw->debugOpenPartyDetails(c.value(QStringLiteral("arg")).toInt(0));
+      settleTransitions();
+      return ok(opened);
+    }
     return err(QStringLiteral("no window"));
   }
 
   if(cmd == QStringLiteral("back")) {
     brg->router->closeScreen();
+    settleTransitions();
     return ok(brg->router->title);
   }
 
   if(cmd == QStringLiteral("home")) {
     brg->router->changeScreen(QStringLiteral("home"));
+    settleTransitions();
     return ok(QStringLiteral("home"));
   }
 
@@ -222,6 +301,12 @@ QJsonObject execute(const QJsonObject& c)
       item = findItem(c.value(QStringLiteral("obj")).toString());
       if(item == nullptr) return err(QStringLiteral("no object"));
     }
+    // Optional `settle` ms: let animations/fades finish (events keep running)
+    // before grabbing, and always wait out any in-flight stack transition --
+    // a grab mid-transition is the "distorted screenshot" (2026-07-16).
+    if(anyStackBusy()) settleTransitions();
+    const int settle = c.value(QStringLiteral("settle")).toInt(0);
+    if(settle > 0) settleMs(qMin(settle, 5000));
     return mw->saveShot(p, item) ? ok(p) : err(QStringLiteral("grab failed"));
   }
 

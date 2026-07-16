@@ -105,19 +105,24 @@ via the framebuffer/widget ratio, so it's correct under a device-pixel-ratio.)
 Drive it from PowerShell with a `TcpClient` (write a line, read a line). Great for scripted checks:
 navigate, `set` a field, `shot`, then eyeball.
 
+### 🤝 The dev MCP server drives all of this now (2026-07-16)
+
+For AI sessions, the standard way to drive the harness (and builds, tests, PyBoy) is the
+**dev MCP server** — [`dev-mcp.md`](dev-mcp.md). It encodes every trap below (fresh connection
+per command, settle-aware shots) so they can't recur, and returns screenshots inline as images.
+
 ### ⚠️ Two traps that will eat an hour each (found 2026-07-13, the hard way)
 
-**1. Do NOT `screen` to a screen you are already on.** The router *pushes* — it does not check. Launch
-with `--screen maps` and then send `{"cmd":"screen","arg":"maps"}` and there are now **two Map screens**
-on the stack, one dead behind the other. `findItem` walks the object tree and returns the **first**
-match, which is the dead one. So:
-
-* every `set` replies `{"ok":true}` — it really did set the property, on an invisible copy;
-* every `get` reads that copy's stale value;
-* every `shot` looks completely unchanged, no matter what you do.
-
-The tell is `{"cmd":"list","arg":"mapLeftPanel"}` coming back with the **same name three times**. If a
-`set` "works" and the screen doesn't move, `list` your object before you debug anything else.
+**1. ~~Do NOT `screen` to a screen you are already on~~ — FIXED AT THE SOURCE (2026-07-16).** The
+router *pushes* — it does not check — so navigating to the screen you were already on used to stack a
+**dead duplicate** behind the live one: every `set` replied `{"ok":true}` onto the invisible copy, every
+`get` read its stale value, every `shot` looked unchanged. **The `screen` verb now refuses the duplicate
+push itself** (reply carries `"already": true` and nothing moves; `pokemonDetails` is exempt — re-navigating
+there switches the open mon). Two related upgrades landed with it: **`title` now also returns the
+registered screen NAME** (`{"result":"Map","screen":"maps"}` — compare against what you navigate by), and
+**navigation verbs (`screen`/`party`/`back`/`home`) reply only after the stack transition has finished**
+(they poll the two StackViews' `busy` via their new `appRoot`/`appBody` objectNames, GUI kept running).
+The old tell — `list` returning the same name three times — still works if a stack ever gets dirty.
 
 **2. One connection per command.** Hold a single socket open for a whole scripted run and every `shot`
 comes back **byte-identical** — the grab returns the same frame no matter what changed in between.
@@ -139,6 +144,13 @@ window. A minimised window stops rendering, so `shot` hands back whatever was on
 down. (Offscreen loses the pixel-art shader — `PixelImage` falls back to nearest — which does not
 matter for a *layout* review, which is what the mandatory pass is.) Set `QT_QPA_FONTDIR=C:\Windows\Fonts`
 or every string renders as tofu boxes.
+
+**A fourth, fixed: "distorted" shots were MID-TRANSITION grabs (2026-07-16).** A `shot` fired right
+after a navigation caught the screen half-faded (the New File modal dissolving over the Map screen looks
+like a wrecked composite). Two-part fix in `debugserver.cpp`: `shot` always **waits out any in-flight
+stack transition** first, and takes an optional **`"settle"` ms** (bounded event-processing pause, capped
+5 s) for other animations — `{"cmd":"shot","arg":"x.png","settle":250}`. Navigation verbs settling before
+they reply (trap #1 box) closes the other half of the window.
 
 ## How hot-reload works (and its known limitation)
 
