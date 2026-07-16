@@ -20,6 +20,23 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
+### 🧭 MAPS panel (gym/safari minigame bytes) — RESEARCHED, not built (2026-07-15)
+
+Twilight briefed a **new Maps panel** (right dock) for six bytes — Vermilion trashcan switch 1/2,
+Cinnabar "next wrong answer", Safari game‑over, Safari balls, steps left — assuming per‑map map‑state
+scratch. **Research inverted the premise:** all six are **global Main‑Data** event bytes (one each
+save‑wide, genuinely persisted; **not** Area/map state, **not** per‑map, **not** scratch — v1 filed
+them under `AreaPlayer`/`AreaPuzzle` by theme, which is what suggested "map state"). Real names +
+verified offsets, the big‑endian `wSafariSteps` trap, the `wGymTrashCanIndex`‑is‑a‑decoy trap, and the
+armed‑vs‑inert behaviour in [`reference/gym-safari-state.md`](reference/gym-safari-state.md).
+✅ **Console‑verified** (`scripts/emu/probe_gym_safari_state.py`): **5 of 6 survive Continue** exactly
+(addresses + the big‑endian `wSafariSteps` pinned); **`wSafariZoneGameOver` is zeroed on load** —
+`OverworldLoop` `farcall`s `SafariZoneCheck` every frame, which zeroes it outside the zone — so it's
+**truly inert** (amber‑! group). Twilight's build direction: a **"Map Storage"** panel (right dock)
+with a **map dropdown** preselected to the current map, these shown as **persistent** (primary‑colour
+filled button + storage icon) not temporary. ⏳ **Owed before UI:** confirm the global model‑home +
+the panel's per‑map framing (global bytes surfaced under their maps). **No UI code written yet.**
+
 ### 🧱 LAYERS: "Components" → "Tiles"; the two "Warps" told apart, not merged (2026-07-15, `0.40.3-alpha`)
 
 Twilight caught the two-"Warps" confusion. There really are two different things: the tile-meaning
