@@ -66,14 +66,12 @@ per-combo notices (panel-level + on-toggle).
 
 **Phase 5 — Author dossiers for ALL 2,560.** 🟡 First complete pass done. The generator emits
 `tmp/event-flags/events_dossiers.json` — **every** bit with friendly name, description, map, group,
-classification, and evidence. 507 named + 30 block-swept are **finalized**; **2,023** undiscoverable
-gaps are provisional **"Unknown #<hex>"** (`name_provisional: true`) pending the group sign-off below.
-Owed: editorial polish of the 507 named descriptions; the Phase 4 crash field.
-
-> **⚠️ GATE — leadership sign-off needed:** the exhaustive search is done; **2,023 gap bits have no
-> discoverable identity** (`tmp/event-flags/unknown_candidates.json`). Per the naming rule they may be
-> named **"Unknown #<hex>"** only with explicit leadership sign-off — offered as a **single group**
-> approval. Until then their names stay provisional.
+classification, and evidence. Taxonomy (leadership-defined): **507 named** (incl. 4 hand-researched from
+pret's `; ???`) **+ 30 block-swept** range-group members **+ 2,023 "Placeholder Flag #<hex>"** (no code
+presence at all; tied to map, own "Placeholder Flags" group at the bottom — no sign-off needed). A
+`CURATED` overrides dict in the generator is the hand-authoring layer (seeded with the 4). Owed:
+editorial polish of the named descriptions; the Phase 4 `crash` field; extend `CURATED` as deeper
+authoring proceeds.
 
 **Phase 6 — Save-model + console verification.** Confirm v2 reads/writes the 320-byte field byte-exact
 (add the model if absent). Console-verify a sample of edits persist on Continue and behave as

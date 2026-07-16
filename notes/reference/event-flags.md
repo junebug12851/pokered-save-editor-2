@@ -91,22 +91,27 @@ group** (Phase 5 will carve those out and split any general group that grows too
 
 ## Naming rules (hard rule — project leadership, 2026-07-15)
 
-Every flag gets a **real, discerned name** wherever one can possibly be found. The fallback name
-**"Unknown #<hex id>"** (e.g. `Unknown #1CC`) is cleaner than a made-up guess — but it is **strictly
-gated**:
+Every flag gets a **real, discerned name** wherever one can possibly be found, by this precedence:
 
-1. Prefer pret's `EVENT_*` name, rendered friendly (e.g. `EVENT_BEAT_BROCK` → "Beat Brock").
-2. If unnamed by pret, **derive** the name/meaning from how scripts use the bit (set/check sites,
-   surrounding routine, the map it lives in).
-3. If no usage, still name it from **position and context** (which city block, adjacent events).
-4. **"Unknown #<hex id>" is a last resort.** To use it you must have **exhausted every avenue** — it
-   must not be findable in **any** file in the disassembly, and you must have **read the raw assembly**
-   as the final check. Only after that, and **only with explicit project-leadership sign-off**
-   — which may cover **one or a group** at a time — may a flag be marked Unknown. It is never a silent
-   default. Surface the exhausted candidates and ask.
+1. **pret's `EVENT_*` name**, rendered friendly (`EVENT_BEAT_BROCK` → "Beat Brock").
+2. **pret placeholder (`; ???`) but referenced in code** → **research it from its usage** (set/check/
+   reset sites, surrounding routine) and give it a real name. pret itself hex-names four such events
+   (`EVENT_1B8/1BF/67F` = Celadon's dead reset flags; `EVENT_2A7` = "on the Cinnabar Gym map"); all four
+   are discernible and named in `CURATED` in `generate_event_dossiers.py`.
+3. **No presence in code AT ALL** — not by name, not set/checked/reset, not swept by any range → this is
+   a **"Placeholder Flag #<hex>"** (e.g. `Placeholder Flag #1CC`). It is **tied to its map** and filed in
+   that map's own **"Placeholder Flags" group at the bottom**. These are the byte-alignment padding /
+   reserved bits (the game rounds each map's block to whole bytes and leaves headroom). Because leadership
+   defined this name directly, placeholders need **no sign-off** — but the "no code presence at all" test
+   is **strict**: any reference whatsoever (even a range sweep) disqualifies a flag from being a
+   placeholder.
+4. **"Unknown #<hex>" — the true last resort, and gated.** Reserved for a flag that IS referenced in
+   code but whose meaning cannot be discerned even after **exhausting every file including the raw
+   assembly**. Only then, and **only with explicit project-leadership sign-off** (per-flag or per-group),
+   may it be named Unknown. **Currently zero such cases** — every referenced flag has been identified.
 
-"Unknown" (undiscoverable identity) is **distinct from "unused"** (identity/position clear, but the
-shipped game never references it — that one still gets a real descriptive name).
+**placeholder ≠ used.** A Placeholder Flag has **zero** code presence; a flag that appears in code in any
+form is `used` (or block-swept) and gets a researched name, never the placeholder name.
 
 ## Classification taxonomy (Phases 2–4 assign these to every bit)
 
@@ -176,13 +181,18 @@ classification, and the evidence behind it. `0x1CC` (an original mystery) now re
 Celadon City, unused, identity undiscoverable — pending sign-off,"** byte `0x2a1f` bit 4. Named flags
 read as full dossiers grounded in their usage.
 
-### ⚠️ The one gate: the 2,023 "Unknown #<hex>" candidates need leadership sign-off
+### The 2,023 no-code-presence bits are Placeholder Flags (named, no sign-off needed)
 
-Per the naming rule, the exhaustive search **has now been done** (whole tree, by name + range + raw
-index). **2,023** gap bits have **no discoverable identity** — they are the legitimate
-**"Unknown #<hex>"** cases, provisionally named that in the dataset but **`name_provisional: true`**
-until project leadership signs off (the rule allows a **group** sign-off). `unknown_candidates.json`
-lists them. Everything else (537 = 507 named + 30 block-swept) is finalized.
+The exhaustive search **is done** (whole tree, by name + range + raw index). **2,023** gap bits have
+**no presence in code at all** → they are **"Placeholder Flag #<hex>"**, each tied to its map and filed
+in that map's **Placeholder Flags** group (list: `tmp/event-flags/placeholder_flags.json`). Leadership
+defined this name directly, so it is final — no sign-off gate. **Byte-alignment proof:** every per-map
+`const_next` base is a multiple of 8 (`$28`, `$68`, `$98`, `$F0`, `$150`, …), i.e. each map's event
+block starts on a whole byte, so the tail bits are structural padding — which is *why* they are
+unreferenced.
+
+The finalized breakdown of all 2,560: **507 named** (incl. 4 hand-researched from pret's `; ???`) **+
+30 block-swept** range-group members **+ 2,023 Placeholder Flags**.
 
 **Owed:** Phase 4 (crash/instability — console-probed; `crash` field is null until then), editorial
 polish of the 507 named descriptions, Phase 6 (model verification), Phase 7 (DB data home), Phase 8 (UI).
