@@ -97,9 +97,24 @@ void TestFlagScenarios::initTestCase()
     py.setWorkingDirectory(repoRoot());
     py.start(pythonPath(), { runnerPath(), "--only", name, "--out", outFile });
     if (!py.waitForFinished(180000)) {   // one boot+drive; generous
-      py.kill();
+      // Kill the WHOLE TREE: the venv python.exe is a LAUNCHER whose child
+      // interpreter (and its spinning PyBoy) can survive QProcess::kill(). And a
+      // wedge IS a verdict, not a harness failure: a hard-crashed Game Boy CPU
+      // executes STOP, the clocks halt, the frame never completes, and PyBoy's
+      // tick() spins forever (reproduced 2026-07-16 on a chimera forged save;
+      // the glitch-music bad-bank probe recorded the same console behaviour).
+      // Classify it as "hang" and carry on -- only the control gate hard-fails.
+      QProcess::execute(QStringLiteral("taskkill"),
+                        { QStringLiteral("/PID"), QString::number(py.processId()),
+                          QStringLiteral("/T"), QStringLiteral("/F") });
       py.waitForFinished(5000);
-      QFAIL(qPrintable("scenario timed out: " + name));
+      QJsonObject hung;
+      hung["name"] = name;
+      hung["result"] = QStringLiteral("hang");
+      hung["expect"] = sv.toObject().value("expect");
+      m_results.append(hung);
+      qInfo().noquote() << name << "-> hang (console wedged; tree killed)";
+      continue;
     }
     if (py.exitCode() == 2)
       QSKIP(qPrintable(QString::fromUtf8(py.readAllStandardError()).trimmed()));

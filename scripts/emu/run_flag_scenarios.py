@@ -13,6 +13,18 @@ Continue, optionally drives the player, and classifies the outcome:
     healthy  — reached & stayed on a sane overworld / battle
     crash    — went to garbage (insane map dims / dead tilemap) => a real crash
     no-boot  — never reached the overworld (crash on load, or bad forge)
+    hang     — assigned BY THE OWNER (tst_flag_scenarios / the dev MCP server)
+               when this process never returns: a hard-crashed console executes
+               STOP, the clocks halt, the frame never completes, and PyBoy's
+               tick() spins forever (reproduced 2026-07-16). This process cannot
+               classify its own wedge — the owner's timeout + TREE-kill is the
+               watchdog (the venv python.exe is a launcher; kill its tree, not it).
+
+⚠️ Forging ONLY wCurMap onto a different map makes a CHIMERA (the Area block —
+dims/tileset/scripts — still belongs to the old map): it Continues onto the new
+map id and wedges within ~100 frames. Cross-map scenarios therefore report
+"hang" until a consistent whole-Area forge exists. Same-map forges (flags,
+coords) are fully consistent. See notes/reference/emulator-verification.md.
 
 Exit codes: 0 ok · 2 unavailable (no ROM / not run under the emu venv).
 

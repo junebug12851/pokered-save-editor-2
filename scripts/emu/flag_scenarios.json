@@ -1,0 +1,58 @@
+[
+  {
+    "name": "control-pallet",
+    "map": null,
+    "flags": [],
+    "drive": [],
+    "expect": "healthy",
+    "note": "baseline BaseSAV (Pallet Town), untouched — proves the harness + control"
+  },
+  {
+    "name": "all-flags-on-pallet",
+    "map": null,
+    "flags": "ALL",
+    "drive": [],
+    "expect": "unknown",
+    "note": "every event flag set, loaded in Pallet — tests the LOAD path only"
+  },
+  {
+    "name": "route22-control",
+    "map": "0x21",
+    "y": 8,
+    "x": 25,
+    "flags": [],
+    "drive": [
+      "up:8"
+    ],
+    "expect": "hang",
+    "note": "forged onto Route 22 with no rival flags; walk up past the rival tile -- CURRENTLY HANGS: a map-id-only forge is a chimera (Area block still the old map's); wedges ~100 frames after Continue. Needs the consistent whole-Area forge (see emulator-verification.md)."
+  },
+  {
+    "name": "route22-rival-conflict",
+    "map": "0x21",
+    "y": 8,
+    "x": 25,
+    "flags": [
+      "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
+      "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+      "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"
+    ],
+    "drive": [
+      "up:8"
+    ],
+    "expect": "hang",
+    "note": "both Route 22 rival battles' flags on — two SPRITE_BLUE at tile (25,5); walk into the trigger -- CURRENTLY HANGS: a map-id-only forge is a chimera (Area block still the old map's); wedges ~100 frames after Continue. Needs the consistent whole-Area forge (see emulator-verification.md)."
+  },
+  {
+    "name": "all-flags-on-route22",
+    "map": "0x21",
+    "y": 8,
+    "x": 25,
+    "flags": "ALL",
+    "drive": [
+      "up:8"
+    ],
+    "expect": "hang",
+    "note": "all flags on AND standing on Route 22 — drive into the rival trigger -- CURRENTLY HANGS: a map-id-only forge is a chimera (Area block still the old map's); wedges ~100 frames after Continue. Needs the consistent whole-Area forge (see emulator-verification.md)."
+  }
+]

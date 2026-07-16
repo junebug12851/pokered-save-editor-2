@@ -278,6 +278,25 @@ if(TARGET appcore)
     set_tests_properties(tst_sound_parity PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
                                                      TIMEOUT 900)
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_sound_parity)
+
+    # EVENT-FLAG SCENARIOS, judged the same way. Forges a save per scenario (any map /
+    # position / flag combination), boots the real ROM on Continue, and classifies each
+    # as healthy / crash / no-boot. It does NOT drive PyBoy itself: it launches
+    # scripts/emu/run_flag_scenarios.py ONE SCENARIO PER PROCESS via QProcess (PyBoy
+    # cannot be re-instantiated in one process -- the 2nd instance hangs), so Qt owns
+    # every child's lifecycle and nothing leaks. Same ROM rules: local-only, SKIPs
+    # without the ROM or the tmp/emu-venv. Slow by nature (one boot per scenario).
+    qt_add_executable(tst_flag_scenarios emu/tst_flag_scenarios.cpp)
+    target_link_libraries(tst_flag_scenarios PRIVATE db Qt6::Test)
+    target_compile_definitions(tst_flag_scenarios PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_flag_scenarios COMMAND tst_flag_scenarios)
+    # QTEST_FUNCTION_TIMEOUT: initTestCase runs EVERY scenario (a wedged console is
+    # a 180 s "hang" verdict each), so QtTest's default 300 s function watchdog is
+    # too tight -- give the function 900 s, same as the CTest cap.
+    set_tests_properties(tst_flag_scenarios PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QTEST_FUNCTION_TIMEOUT=900000"
+        TIMEOUT 900)
+    set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_flag_scenarios)
 endif()
 
 # --- QML smoke test (Qt Quick Test, headless via offscreen) ---

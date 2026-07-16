@@ -28,6 +28,38 @@ the game rejects the save. Boot via PyBoy (`window="null"`), mash start/A to Con
 `wCurMap`/map dims as a **crash/health signal** (`scripts/emu/probe_event_flag_crashes.py` is the
 template). Optionally drive a few `button` presses to cross a coord trigger. **Never commit the ROM.**
 
+**The shared implementation is `scripts/emu/forge_save.py`** (importable + CLI: map/coords/flag names/
+raw indices/arbitrary byte pokes, checksum resealed) — probes, `drive_session.py` and the dev MCP
+server's `emu_forge_save`/`emu_boot` all use it instead of carrying private copies.
+
+### ⚠️ CORRECTION (2026-07-16): a map-id-only forge is a CHIMERA, and a wedged console WEDGES PyBOY
+
+Two hard-won facts that overturn earlier readings:
+
+1. **Forging ONLY `wCurMap` (+coords) onto a different map does NOT give you that map.** The save's
+   whole Area block — dimensions, tileset, script step, sprites, warps — still belongs to the *old*
+   map, and the `BIT_NO_PREVIOUS_MAP` linchpin means the console TRUSTS it on Continue. The result is a
+   chimera (Route 22's id wearing Pallet's body: the emulator really shows `map=0x21, w=10, h=9`), and
+   it **hard-crashes within ~100 frames of entering the overworld**. The 2026-07-15 "forge-onto-any-map
+   PROVEN (boots onto Route 22)" claim was a mirage: `on_overworld()` returns true for a moment — then
+   the crash lands. Isolated 2026-07-16 (`forge+mash` wedges; `forge` alone and `mash` alone both run
+   6,000 frames clean at ~10,000 fps). **Same-map forges (flags, coords, any Main-Data byte) are fully
+   consistent and safe.** A *consistent* cross-map forge means writing the whole Area block for the
+   target map (everything the editor's own model knows how to write) — a properly-briefed future phase.
+2. **A hard-crashed console wedges PyBoy itself.** The runaway CPU executes `STOP`, the clocks halt,
+   the frame never completes — and **`pb.tick()` never returns**, spinning a full core forever (the
+   glitch-music bad-bank probe recorded the same console behaviour). No in-process guard can help
+   (the wedge is inside the C extension); **the OWNER's timeout + process-TREE kill is the watchdog**,
+   and "hang" is recorded as a legitimate scenario verdict. ⚠️ When killing, kill the **tree**
+   (`taskkill /T /F`): the venv `python.exe` is a *launcher* whose child interpreter (and its spinning
+   PyBoy) can survive a plain kill — this launcher+interpreter pair was the second source of the
+   2026-07-15 leaks. `tst_flag_scenarios`, the runner, and the dev MCP server all encode this now.
+
+**The standing transport for all of this is the dev MCP server** ([`dev-mcp.md`](dev-mcp.md)): jobs
+with hard tree-kill timeouts, one PyBoy per process, an interactive owned session
+(`scripts/emu/drive_session.py`), and a stray-process sweeper. The interactive shell (with its ~44 s
+per-call cap and no process ownership) is not to be used for driving PyBoy again.
+
 ## Flag-scenario test framework — and the process-lifecycle lesson (2026-07-15)
 
 **What was going wrong (diagnosed, not guessed).** The emulator and the test logic are fine — a clean
@@ -58,19 +90,12 @@ session, no IPC, no interactive driving. So the flag testing framework follows t
   tests belong, with Qt owning the child's lifecycle — never through the interactive, time-capped
   transport.**
 
-  ⏳ **Not yet wired into CMake** — the emu tests sit under `if(TARGET appcore)`, which **is true on CI**,
-  so wiring an *unverified* `.cpp` in could break the green suite (I couldn't build-verify: the machine
-  was swamped by leaked PyBoy procs). Activate it in a clean session by adding this block inside that
-  `if(TARGET appcore)` block in `projects/tests/CMakeLists.txt` (beside `tst_sound_parity`), then build:
-
-  ```cmake
-  qt_add_executable(tst_flag_scenarios emu/tst_flag_scenarios.cpp)
-  target_link_libraries(tst_flag_scenarios PRIVATE db Qt6::Test)
-  target_compile_definitions(tst_flag_scenarios PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
-  add_test(NAME tst_flag_scenarios COMMAND tst_flag_scenarios)
-  set_tests_properties(tst_flag_scenarios PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 900)
-  set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_flag_scenarios)
-  ```
+  ✅ **Wired into CMake and build-verified (2026-07-16).** It runs inside the normal `ctest` pipeline
+  (SKIPs cleanly without the ROM/venv, so CI stays green). Two lessons from wiring it live:
+  `QTEST_FUNCTION_TIMEOUT=900000` rides in its test ENVIRONMENT (initTestCase runs every scenario, and
+  a wedged console is a 180 s "hang" verdict each — QtTest's default 300 s function watchdog aborts the
+  run otherwise), and a timed-out scenario is **recorded as `hang` and the batch carries on** (only the
+  control gate hard-fails) — see the CORRECTION above for why a hang is a verdict, not a harness bug.
 
 ⚠️ **PyBoy can't be re-instantiated in one process (found 2026-07-15).** Running several scenarios by
 constructing a new `PyBoy(...)` per scenario *in one process* hangs on the 2nd/3rd instance (the Pallet
