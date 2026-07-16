@@ -28,6 +28,58 @@ the game rejects the save. Boot via PyBoy (`window="null"`), mash start/A to Con
 `wCurMap`/map dims as a **crash/health signal** (`scripts/emu/probe_event_flag_crashes.py` is the
 template). Optionally drive a few `button` presses to cross a coord trigger. **Never commit the ROM.**
 
+## Flag-scenario test framework — and the process-lifecycle lesson (2026-07-15)
+
+**What was going wrong (diagnosed, not guessed).** The emulator and the test logic are fine — a clean
+single boot works, and the `control-pallet` + `all-flags-on-pallet` scenarios ran correctly. The failures
+were **100% process lifecycle**: driving PyBoy from an interactive shell with a **~44 s per-call timeout**.
+A boot+drive run exceeds that, so it gets backgrounded; but when a *management* command (kill/verify)
+times out mid-execution, the PyBoy process **leaks**. Leaks accumulate (we saw 6–10), starve the CPU, and
+slow everything — which causes *more* timeouts. A feedback loop. **Not an emulator problem, not a code
+problem — an orchestration problem.**
+
+**The right pattern (reliable, already proven here).** `tst_emu_parity` never has this problem because it
+is a **single-shot subprocess** managed by **`QProcess`** with `waitForFinished(180000)` + `kill()` on
+timeout — the child always boots once, writes files, and **exits**, and Qt reaps it. No persistent
+session, no IPC, no interactive driving. So the flag testing framework follows that exact shape:
+
+- `scripts/emu/run_flag_scenarios.py` — a **single-shot batch runner**. Reads `flag_scenarios.json`,
+  forges a save per scenario (any map/pos/flags), boots on Continue, optionally drives the player, and
+  classifies **healthy / crash / no-boot**. Every scenario gets its **own** PyBoy stopped in a `finally`;
+  every loop is **frame-bounded** (nothing can hang); results are written **incrementally**; exit code
+  **2** when unavailable (no ROM / not under the venv) — same contract as `dump_state.py`.
+- `scripts/emu/flag_scenarios.json` — the scenarios (controls + the Route 22 rival conflict + all-on).
+- **Wrap it as a CTest test** `tst_flag_scenarios` — **written** at `projects/tests/emu/tst_flag_scenarios.cpp`
+  (a `QProcess` wrapper cloned from `tst_emu_parity`: skip without the ROM, else launch the runner with
+  `waitForFinished(600000)` + `kill()` on overrun, read `tmp/emu/flag_scenarios_result.json`, assert
+  `control-pallet == healthy` and that every scenario produced a result; surface crash outcomes via
+  `qInfo`). Then it runs inside the normal `ctest` pipeline — which the project already launches
+  **detached-to-a-log-and-polled**, reliably, for the whole suite. **This is the fix: run it where long
+  tests belong, with Qt owning the child's lifecycle — never through the interactive, time-capped
+  transport.**
+
+  ⏳ **Not yet wired into CMake** — the emu tests sit under `if(TARGET appcore)`, which **is true on CI**,
+  so wiring an *unverified* `.cpp` in could break the green suite (I couldn't build-verify: the machine
+  was swamped by leaked PyBoy procs). Activate it in a clean session by adding this block inside that
+  `if(TARGET appcore)` block in `projects/tests/CMakeLists.txt` (beside `tst_sound_parity`), then build:
+
+  ```cmake
+  qt_add_executable(tst_flag_scenarios emu/tst_flag_scenarios.cpp)
+  target_link_libraries(tst_flag_scenarios PRIVATE db Qt6::Test)
+  target_compile_definitions(tst_flag_scenarios PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+  add_test(NAME tst_flag_scenarios COMMAND tst_flag_scenarios)
+  set_tests_properties(tst_flag_scenarios PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 900)
+  set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_flag_scenarios)
+  ```
+
+**Rejected alternative:** switching emulators (mGBA / BizHawk / …). That adds a dependency and a new
+integration and would hit the *same* lifecycle issue through the same transport — **more** fragility, not
+less. PyBoy was never the problem.
+
+**To get a clean live run:** on a machine with no leaked python/PyBoy processes, either run
+`scripts\emu\run_flag_scenarios.py` once under `tmp/emu-venv` (it self-terminates), or build + `ctest`
+`tst_flag_scenarios`. If runs are crawling, check for leaked `python.exe` first (`Get-Process python`).
+
 ## The ROM — read this first
 
 `assets/references/backup.gb` is a dump of a cartridge **Twilight owns**, kept locally for verification.
