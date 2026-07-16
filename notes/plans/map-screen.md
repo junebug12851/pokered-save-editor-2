@@ -1498,10 +1498,9 @@ Zone — the gate resets steps/balls to 502/30 on entry").
   combo (only‑maps‑with‑storage, current preselected), the per‑map pages, persistent vs temporary
   marking; screenshot‑reviewed then a live pass.
 
-**⚠️ One open detail before 15c/15d.** The Safari Zone is **several maps** (Center/East/North/West, the
-rest houses, the gate); the safari counters are global and shared across all of them. Which map id(s)
-the combo lists for "Safari Zone" — a single representative entry vs. the counters showing on every
-safari map — is Twilight's call (she owns which maps get storage). Everything else is locked.
+**✅ Safari Zone resolved (Twilight 2026‑07‑15): "combine Safari Zone".** The several safari maps
+(Center/East/North/West, rest houses, gate) collapse to **one combined "Safari Zone" entry** in the
+combo — the shared counters live on that single page, not repeated per safari map. Design fully locked.
 
 ---
 

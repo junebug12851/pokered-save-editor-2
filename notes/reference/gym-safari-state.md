@@ -1,35 +1,32 @@
 # Gym & Safari minigame state — six saved event bytes
 
 _The Vermilion Gym trash‑can switches, the Cinnabar Gym "wrong answer" opponent, and the Safari
-Zone run counters. Six bytes Twilight asked to put on a new **Maps** panel (2026‑07‑15). Verified
-against `pret/pokered` and cross‑checked against the v1 editor's own offsets; a console probe is
-**owed** (see the end) before the values' persistence/reset claims are called silicon‑true._
+Zone run counters. Six bytes Twilight asked to put on a new **Map Storage** panel (2026‑07‑15).
+Verified against `pret/pokered`, cross‑checked against the v1 editor's own offsets, and
+**console‑verified** (see below)._
 
-## The headline — Twilight's premise was upside‑down
+## The headline — global state variables that are clearly map‑specific
 
-> *"Because it's the map state I'm assuming they're all scratch … I'm assuming they're in every map
-> … I'm assuming they're only used in their respective places as a tmp scratch area. … I don't know
-> if the scratch tmp is saved somewhere persistently."*
+Twilight's mental model is the right one: these are **global state variables that are clearly
+map‑specific** — each byte is stored once, save‑wide, but belongs unambiguously to **one map**
+(Vermilion Gym, Cinnabar Gym, the Safari Zone). That "global storage, map‑specific meaning" split is
+exactly why they get a **Map Storage** panel keyed by map. Two refinements to the first‑pass wording,
+and only two:
 
-Every one of those assumptions is the **opposite** of the truth, and it's worth saying plainly:
+- **They're persistent save data, not RAM scratch.** They live in the game's global **Main Data**
+  block (the same saved region as the badges, event flags and the play‑time clock), and the byte you
+  see in the `.sav` **is** the durable copy — nothing is mirrored somewhere else. So "is the scratch
+  saved persistently?" — there's no separate scratch; this is the persistent place. Their *effect* is
+  scoped to one activity, but the storage itself endures.
+- **Stored as global singletons, not a per‑map array.** There's exactly one of each — not one copy
+  per map — so the panel is a **view** that files each global byte under its owning map, rather than a
+  per‑map Area field. (The bytes are **not** in the per‑map Area block `0x25Fx`–`0x3522`.) The
+  map‑specificity is real; it just isn't expressed by a per‑map slot in the save.
 
-- **They are NOT map state.** None of these live in the per‑map **Area** block (`0x25Fx`–`0x3522`).
-  They live in the game's global **Main Data** block — the same saved region as the badges, the
-  event flags and the play‑time clock.
-- **They are NOT per‑map.** There is exactly **one** of each in the whole save. Vermilion's trash
-  cans, Cinnabar's quiz opponent and the Safari counters are **single global variables**, present
-  no matter which map you're standing on.
-- **They ARE saved persistently — this IS the persistent place.** There's no "scratch that gets
-  copied somewhere durable"; the byte you see in the `.sav` is the durable copy. The game reads and
-  writes it in place.
-- So they are **not scratch** in the RAM‑only sense. They're **in‑progress minigame/puzzle state**:
-  durable save data that only *carries meaning* while you're mid‑activity in the one place that uses
-  it.
-
-Why Twilight's instinct pointed at "map state": the **v1 editor filed them under map‑ish classes** —
-`AreaPlayer` (safari steps/balls/game‑over) and `AreaPuzzle` (the two trash cans + the Cinnabar
-opponent). That's an organisational choice in v1, not where the game keeps them. In v1's own words
-they're just loose global bytes it chose to group by theme.
+v1 read this the same way — it filed them under `AreaPlayer` (safari steps/balls/game‑over) and
+`AreaPuzzle` (the two trash cans + the Cinnabar opponent), i.e. grouped by the map/activity they
+belong to. Same instinct; we just keep the model home **global** and let the panel do the per‑map
+grouping.
 
 ## The six bytes (all offsets **verified**; behaviour from the disassembly, probe owed)
 

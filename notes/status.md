@@ -22,12 +22,12 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ### 🧭 MAPS panel (gym/safari minigame bytes) — RESEARCHED, not built (2026-07-15)
 
-Twilight briefed a **new Maps panel** (right dock) for six bytes — Vermilion trashcan switch 1/2,
-Cinnabar "next wrong answer", Safari game‑over, Safari balls, steps left — assuming per‑map map‑state
-scratch. **Research inverted the premise:** all six are **global Main‑Data** event bytes (one each
-save‑wide, genuinely persisted; **not** Area/map state, **not** per‑map, **not** scratch — v1 filed
-them under `AreaPlayer`/`AreaPuzzle` by theme, which is what suggested "map state"). Real names +
-verified offsets, the big‑endian `wSafariSteps` trap, the `wGymTrashCanIndex`‑is‑a‑decoy trap, and the
+Twilight briefed a **Map Storage panel** (right dock) for six bytes — Vermilion trashcan switch 1/2,
+Cinnabar "next wrong answer", Safari game‑over, Safari balls, steps left. The accurate model (hers):
+**global state variables that are clearly map‑specific** — stored once save‑wide in the global
+**Main‑Data** block (persistent save data, not RAM scratch; not a per‑map Area slot), each belonging
+to one map, so the panel files each global byte under its owning map. Real names + verified offsets,
+the big‑endian `wSafariSteps` trap, the `wGymTrashCanIndex`‑is‑a‑decoy trap, and the
 armed‑vs‑inert behaviour in [`reference/gym-safari-state.md`](reference/gym-safari-state.md).
 ✅ **Console‑verified** (`scripts/emu/probe_gym_safari_state.py`): **5 of 6 survive Continue** exactly
 (addresses + the big‑endian `wSafariSteps` pinned); **`wSafariZoneGameOver` is zeroed on load** —
