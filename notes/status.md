@@ -51,6 +51,21 @@ model-reset binding trap (caught twice by the screenshot review). Everything:
 
 ## Current state (read this first)
 
+### 🧭 THE DEV AUTOPILOT — pathfinding + auto-navigation over MCP, briefed + built + 7/7 (2026-07-16)
+
+Twilight briefed "describe the destination and the server takes you there" — and the rest of
+comprehensive high-level control: find a battle, execute it a certain way, talk to a **moving** NPC,
+long hauls (Mt. Moon end-to-end, town-to-town), one-call multi-step runs for the game AND the app.
+Built: `scripts/emu/navigate.py` (A\* + Dijkstra-over-portals off our own shipped map data),
+`scripts/emu/autopilot.py` (the WRAM-verified executor in the session child), MCP verbs `emu_goto` /
+`emu_walk_to` / `emu_talk_to` / `emu_battle` / `emu_hunt_encounter` / `emu_dismiss` / `emu_play` +
+`app_flow`. **Console-verified 7/7** (`probe_autopilot.py`) incl. **Mt Moon 1F → B2F** and the long
+haul **Pallet → Pewter through Viridian Forest** + a hunt won with `move:1`. Four real traps found
+and fixed structurally (double-step holds; `wCurMap`-first transitions; solid warp squares;
+post-clamp connection offsets). Plan: [`plans/dev-autopilot.md`](plans/dev-autopilot.md); reference:
+[`reference/dev-mcp.md`](reference/dev-mcp.md). Also: "Filter Flags" casing fixed on the Map Storage
+panel. ⏳ Owed: Twilight's live pass; HM routing/bike/spinners/elevators are stated v1 limits.
+
 ### 🗺️ FORGED SAVES AT ANY MAP — console-authored, briefed + built + verified (2026-07-16)
 
 Twilight briefed the **total custom state resume**: the MCP server generates a proper save at any

@@ -28,6 +28,17 @@ Protocol: newline-delimited JSON. One object in => one object out (always with "
   {"cmd":"shot","path":"tmp/emu/x.png"}     -> save the 160x144 framebuffer PNG
   {"cmd":"quit"}                            -> stop + exit 0
 
+Autopilot commands (autopilot.py + navigate.py — pathfinding over our own shipped
+map data, every step verified against WRAM; see notes/plans/dev-autopilot.md):
+
+  {"cmd":"walk_to","x":10,"y":20,"on_battle":"run","on_trainer":"stop"}
+  {"cmd":"goto","map":"Mt Moon B1F"|60,"x":..?,"y":..?}   -> cross-map navigation
+  {"cmd":"battle","policy":"mash"|"run"|"move:2"}
+  {"cmd":"hunt","max_steps":240,"policy":"stop"}          -> find a wild battle
+  {"cmd":"talk","target":"Bug Catcher"|3,"dismiss":true}  -> talk to a (moving) NPC
+  {"cmd":"dismiss"}                                       -> clear text boxes
+  {"cmd":"script","steps":[{...},...],"stop_on_error":true} -> a whole run, one call
+
 Exit codes: 0 ok · 2 unavailable (no ROM / no PyBoy — same contract as dump_state.py).
 """
 from __future__ import annotations
@@ -43,6 +54,7 @@ BASE_SAV = REPO / "assets" / "saves" / "natural-clean" / "BaseSAV.sav"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from forge_save import forge  # noqa: E402  (shared forge + checksum reseal)
+import autopilot  # noqa: E402  (pathfinding walker/battler — dev-autopilot.md)
 
 W_MAP, W_W, W_H, W_Y, W_X, W_BATTLE = 0xD35E, 0xD369, 0xD368, 0xD361, 0xD362, 0xD057
 W_OVERWORLD, W_TILEMAP = 0xC6E8, 0xC3A0
@@ -65,7 +77,9 @@ def on_overworld(pb) -> bool:
 def state(pb) -> dict:
     m = pb.memory
     return {"map": m[W_MAP], "w": m[W_W], "h": m[W_H], "y": m[W_Y], "x": m[W_X],
-            "battle": m[W_BATTLE], "on_overworld": on_overworld(pb)}
+            "battle": m[W_BATTLE], "on_overworld": on_overworld(pb),
+            "facing": autopilot.facing(m), "last_map": m[autopilot.W_LASTMAP],
+            "text_box": autopilot.font_up(m)}
 
 
 def _int(v) -> int:
@@ -147,6 +161,49 @@ def handle(req: dict) -> dict:
         p.parent.mkdir(parents=True, exist_ok=True)
         pb.screen.image.save(str(p))
         return {"ok": True, "path": str(p)}
+    # ---- autopilot verbs (each internally frame-bounded; the parent's own
+    #      per-command timeout + tree-kill stays the outer safety net) ----
+    if cmd == "walk_to":
+        return {"ok": True, "result": autopilot.walk_to(
+            pb, int(req["x"]), int(req["y"]),
+            on_battle=req.get("on_battle", "run"),
+            on_trainer=req.get("on_trainer", "stop"),
+            max_steps=min(int(req.get("max_steps", 800)), 4000))}
+    if cmd == "goto":
+        return {"ok": True, "result": autopilot.goto(
+            pb, req["map"], int(req.get("x", -1)), int(req.get("y", -1)),
+            on_battle=req.get("on_battle", "run"),
+            on_trainer=req.get("on_trainer", "stop"))}
+    if cmd == "battle":
+        return {"ok": True, "result": autopilot.battle(
+            pb, req.get("policy", "mash"))}
+    if cmd == "hunt":
+        return {"ok": True, "result": autopilot.hunt(
+            pb, max_steps=min(int(req.get("max_steps", 240)), 2000),
+            policy=req.get("policy", "stop"))}
+    if cmd == "talk":
+        return {"ok": True, "result": autopilot.talk_to(
+            pb, req["target"], dismiss_text=bool(req.get("dismiss", True)))}
+    if cmd == "dismiss":
+        return {"ok": True, "result": autopilot.dismiss(pb)}
+    if cmd == "script":
+        results = []
+        stop_on_error = bool(req.get("stop_on_error", True))
+        for i, sub in enumerate(req.get("steps") or []):
+            if sub.get("cmd") in ("boot", "quit", "script"):
+                results.append({"ok": False, "error": f"step {i}: {sub.get('cmd')} "
+                                                      f"not allowed in a script"})
+                if stop_on_error:
+                    break
+                continue
+            r = handle(sub)
+            results.append(r)
+            failed = not r.get("ok") or (isinstance(r.get("result"), dict)
+                                         and r["result"].get("ok") is False)
+            if failed and stop_on_error:
+                break
+        return {"ok": all(r.get("ok") for r in results), "steps": results,
+                "state": state(pb)}
     return {"ok": False, "error": f"unknown cmd: {cmd}"}
 
 

@@ -58,6 +58,8 @@ on any overrun.
 | Jobs | `job_status` · `job_wait` · `job_log` · `job_kill` · `job_list` | logs under `tmp/mcp-jobs/` |
 | App | `app_launch` · `app_stop` · `app_foreground` · `app_background` · `app_cmd` · `app_screen` · `app_title` · `app_load_sav` · `app_get` · `app_set` · `app_click` · `app_tap` · `app_invoke` · `app_list` · `app_reload` · `app_shot` | the DEBUG TCP harness (`dev-harness.md`), traps encoded (below) |
 | Emu | `emu_status` · `emu_setup` · `emu_check_updates` · `emu_update` · `emu_run_script` · `emu_flag_scenarios` · `emu_make_map_save` · `emu_forge_save` · `emu_boot` · `emu_button` · `emu_tick` · `emu_mem` · `emu_poke` · `emu_state` · `emu_screenshot` · `emu_stop` | ROM-gated, local-only; clean unavailability without it |
+| **Autopilot** | `emu_goto` · `emu_walk_to` · `emu_talk_to` · `emu_battle` · `emu_hunt_encounter` · `emu_dismiss` · `emu_play` | pathfinding + auto-navigation, below |
+| App flows | `app_flow` | multi-step app driving (get/set/tap/wait-until/shot…) in ONE call |
 
 **Total custom state resume (2026-07-16).** `emu_boot(map_id=…, x=…, y=…, flags=[EVENT_*…],
 pokes={…})` boots an interactive session at ANY map/position/flag/byte state: the map base is a
@@ -85,6 +87,63 @@ mandatory screenshot-review pass without any focus juggling.
   difference documented on the tools (it's a whole class of bug).
 - **PyBoy reads battery RAM from `<rom>.gb.ram`** — `drive_session.py` copies the
   (optionally forged) sav there itself; callers never touch it.
+
+## The autopilot — pathfinding & auto-navigation (2026-07-16)
+
+Briefed by Twilight the same day: *describe the destination and the server takes you there* —
+plus find-a-battle, execute-a-battle-a-certain-way, talk to a (moving) NPC, and whole runs in
+one call. Design + verification battery: [`../plans/dev-autopilot.md`](../plans/dev-autopilot.md).
+
+- **`emu_goto(map, x?, y?)`** — map by name/modernName/id (`"Mt Moon B1F"`, `"Mt. Moon 2"`,
+  `60`, `"0x3C"`). No live session → boots one automatically (target map's console-authored
+  base, or `start_map=` for a real journey). Cross-map: warps + connections + doors + ladders,
+  planned by Dijkstra-over-portals with A\* legs (`scripts/emu/navigate.py`), walked
+  step-verified against WRAM (`scripts/emu/autopilot.py` inside the session child).
+- **`emu_walk_to(x, y)`** — in-map A\* (ledge hops included); live NPCs are moving collision
+  (bounded retries → re-plan); wild battles follow `on_battle` (`run`/`mash`/`stop`), trainers
+  `on_trainer` (`stop`/`mash`).
+- **`emu_talk_to(target)`** — chases the NPC's LIVE square (StateData2, re-read as it wanders),
+  stands adjacent, faces, presses A, confirms `wFontLoaded`. Trainer battles reported.
+- **`emu_hunt_encounter()`** — paces a grass shuttle (the map's own `wGrassTile`, read live;
+  relocates to the nearest grass patch if needed; caves pace anywhere) until `wIsInBattle`;
+  reports enemy species/level; `policy` can resolve it on the spot.
+- **`emu_battle(policy)`** — `mash` | `run` (wild only; retries "can't escape") | `move:N`
+  (B declines level-up move prompts — never silently overwrites a moveset).
+- **`emu_play(steps)`** — a whole run in one call, executed inside the child (goto/walk/hunt/
+  battle/talk/button/tick/poke/mem/shot/dismiss), per-step results back.
+- **`app_flow(steps)`** — the same idea for the APP: screen/get/set/tap/click/invoke/
+  **wait-until-property**/assert/shot/sav/reload as one batch over the DEBUG harness (the map
+  screen without twenty round-trips).
+
+**Console-verified 7/7** (`scripts/emu/probe_autopilot.py`; one session child per case):
+sub-save WRAM addresses validated live (`wFontLoaded 0xCFC4`, `wCurrentMenuItem 0xCC26`,
+`wGrassTile 0xD535` — grass came back 82 on Route 1) · Pallet A\* walk · door + "Last Map" mat ·
+connection crossings · **Mt Moon 1F → B2F** · Route 1 hunt + flee · moving-NPC talk. Plus the
+long haul: **Pallet → Pewter straight through Viridian Forest and back to a Route 1 hunt won
+with `move:1`** — every leg on the real console.
+
+**The traps it encodes (each found by the probe, each now structural):**
+
+- **A held direction is a DOUBLE step.** A square is 16 frames; holding longer starts a second
+  step before release — on a connection edge row that second step walks clean off the map. The
+  walker turns first (3-frame tap), then presses 12 frames, and verifies coords after every step.
+- **`wCurMap` updates FIRST in a transition** — dims/coords/blocks lag it. Reading position
+  right after the map byte flips hands back the old map's coordinates (an off-grid read).
+  `_settle_arrival` requires the destination's own dims in WRAM + in-bounds coords + free
+  controls, 20 stable frames.
+- **A warp square can be SOLID** (gate doorway halves, cave ladders): the console warps on the
+  walk ATTEMPT (`CheckWarpsNoCollision`) — so A\* treats a warp goal as enterable, the planner
+  disprefers solid squares when a passable twin exists, and a doorway that refuses to open after
+  3 bumps is blacklisted and re-planned around, honestly.
+- **maps.json's connection pair is POST-CLAMP** (`stripMove` == tgt−3, `stripOffset` == src) —
+  the real signed offset is `(-stripOffset − 3)` when stripOffset ≠ 0, else `stripMove` (the
+  cartridge-verified `MapEngine::connectionOffset()` rule). Crossing column p arrives at
+  p − 2·offset.
+- **Ledges are Overworld-tileset-only** (`HandleLedges` bails unless `wCurMapTileset == 0`) — a
+  "ledge tile id" in a cave is just a rock.
+
+Honest v1 limits (stated in the plan): no HM routing/bike/spinners/elevators; script-blocked
+guards (the thirsty Saffron guard) fail honestly at the gate rather than being modeled.
 
 ## Forging saves — shared, importable
 

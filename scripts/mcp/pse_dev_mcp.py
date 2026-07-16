@@ -581,6 +581,108 @@ def app_reload() -> dict:
 
 
 @mcp.tool()
+def app_flow(steps: list[dict], stop_on_error: bool = True) -> dict:
+    """MULTI-STEP app driving in ONE call (complex screens — the map screen —
+    without per-step round-trips). Each step is one op:
+      {"op":"screen","name":"maps"}          navigate (refuses duplicates)
+      {"op":"get","obj":o,"prop":p}          read a property
+      {"op":"set","obj":o,"prop":p,"val":v}  write a property
+      {"op":"tap","obj":o} / {"op":"tap","x":..,"y":..}   real mouse event
+      {"op":"click","obj":o}                 emit clicked() (signal only)
+      {"op":"invoke","obj":o,"method":m,"args":[..]}
+      {"op":"wait","obj":o,"prop":p,"equals":v,"timeout_s":5}   poll until true
+      {"op":"assert","obj":o,"prop":p,"equals":v}               fail if not
+      {"op":"sleep","ms":300}
+      {"op":"sav","path":"..."}              load a save
+      {"op":"shot","label":"x","obj":?}      screenshot -> file path in results
+      {"op":"list","query":?,"obj":?} · {"op":"back"} · {"op":"home"} ·
+      {"op":"reload"} · {"op":"raw","cmd":{...}}
+    Per-step results return in order; stop_on_error halts at the first failure.
+    Needs the app running (app_launch) — DEBUG harness on 127.0.0.1:8766."""
+    results = []
+    ok_all = True
+    for i, s in enumerate(steps):
+        op = s.get("op", "")
+        r: dict
+        if op == "screen":
+            r = _tcp({"cmd": "screen", "arg": s.get("name", "")}, timeout=20)
+        elif op == "get":
+            r = _tcp({"cmd": "get", "obj": s.get("obj", ""), "prop": s.get("prop", "")})
+        elif op == "set":
+            r = _tcp({"cmd": "set", "obj": s.get("obj", ""), "prop": s.get("prop", ""),
+                      "val": s.get("val", "")})
+        elif op == "tap":
+            cmd: dict = {"cmd": "tap"}
+            if s.get("obj"):
+                cmd["obj"] = s["obj"]
+            else:
+                cmd["x"], cmd["y"] = s.get("x", -1), s.get("y", -1)
+            if s.get("button", "left") != "left":
+                cmd["button"] = s["button"]
+            if s.get("double"):
+                cmd["double"] = True
+            r = _tcp(cmd)
+        elif op == "click":
+            r = _tcp({"cmd": "click", "obj": s.get("obj", "")})
+        elif op == "invoke":
+            cmd = {"cmd": "invoke", "obj": s.get("obj", ""), "method": s.get("method", "")}
+            if s.get("args"):
+                cmd["args"] = s["args"]
+            r = _tcp(cmd)
+        elif op in ("wait", "assert"):
+            want = str(s.get("equals", ""))
+            deadline = time.time() + (float(s.get("timeout_s", 5)) if op == "wait" else 0)
+            while True:
+                g = _tcp({"cmd": "get", "obj": s.get("obj", ""), "prop": s.get("prop", "")})
+                got = str(g.get("result", g.get("error", "")))
+                if got == want:
+                    r = {"result": got}
+                    break
+                if time.time() >= deadline:
+                    r = {"error": f"{op} failed: {s.get('obj')}.{s.get('prop')} "
+                                  f"= {got!r}, wanted {want!r}"}
+                    break
+                time.sleep(0.25)
+        elif op == "sleep":
+            time.sleep(min(int(s.get("ms", 250)), 30000) / 1000.0)
+            r = {"result": "slept"}
+        elif op == "sav":
+            p = Path(s.get("path", ""))
+            if not p.is_absolute():
+                p = REPO / p
+            r = _tcp({"cmd": "sav", "arg": str(p).replace("\\", "/")})
+        elif op == "shot":
+            SHOT_DIR.mkdir(parents=True, exist_ok=True)
+            p = SHOT_DIR / f"{s.get('label', 'flow')}-{time.strftime('%H%M%S')}-{i}.png"
+            cmd = {"cmd": "shot", "arg": str(p).replace("\\", "/"),
+                   "settle": s.get("settle_ms", 250)}
+            if s.get("obj"):
+                cmd["obj"] = s["obj"]
+            r = _tcp(cmd, timeout=30)
+            if not r.get("error"):
+                r["path"] = str(p)
+        elif op == "list":
+            cmd = {"cmd": "list"}
+            if s.get("obj"):
+                cmd["obj"] = s["obj"]
+            elif s.get("query"):
+                cmd["arg"] = s["query"]
+            r = _tcp(cmd)
+        elif op in ("back", "home", "reload"):
+            r = _tcp({"cmd": op}, timeout=30)
+        elif op == "raw":
+            r = _tcp(s.get("cmd") or {}, timeout=s.get("timeout_s", 15))
+        else:
+            r = {"error": f"unknown op {op!r}"}
+        results.append({"step": i, "op": op, **r})
+        if r.get("error") is not None:
+            ok_all = False
+            if stop_on_error:
+                break
+    return {"ok": ok_all, "results": results}
+
+
+@mcp.tool()
 def app_shot(obj: str = "", label: str = "shot", settle_ms: int = 250) -> Image:
     """Screenshot the app view (or just one component by objectName/path) via the
     harness's framebuffer grab and RETURN THE IMAGE inline. Saved under
@@ -986,6 +1088,130 @@ def emu_stop() -> dict:
     r = _session_send({"cmd": "quit"}, 10)
     _session_kill()
     return {"stopped": True, "last_reply": r}
+
+
+# ---------------------------------------------------------------- autopilot
+# Pathfinding + auto-navigation executed INSIDE the session child (one process
+# does the hundreds of steps; this layer plans, forwards, reports). Plans come
+# from our own shipped map data; every step is verified against the console's
+# WRAM. Design: notes/plans/dev-autopilot.md.
+
+_NAV_WORLD = {"w": None}
+
+
+def _nav_world():
+    if _NAV_WORLD["w"] is None:
+        sys.path.insert(0, str(REPO / "scripts" / "emu"))
+        import navigate
+        _NAV_WORLD["w"] = navigate.World()
+    return _NAV_WORLD["w"]
+
+
+def _resolve_map(ref) -> dict:
+    e = _nav_world().resolve(ref)
+    return e
+
+
+def _session_live() -> bool:
+    p = _SESSION.get("proc")
+    return p is not None and p.poll() is None
+
+
+@mcp.tool()
+def emu_walk_to(x: int, y: int, on_battle: str = "run", on_trainer: str = "stop",
+                max_steps: int = 800, timeout_s: int = 420) -> dict:
+    """Walk the player to (x, y) ON THE CURRENT MAP — A* over our own collision
+    data (ledge hops included), every step verified against WRAM, live NPCs
+    treated as moving collision (bounded retries, then re-plan around them).
+    Wild battles en route follow on_battle ('run'|'mash'|'stop'); trainer
+    battles follow on_trainer ('stop'|'mash'). Needs a live emu_boot session."""
+    return _session_send({"cmd": "walk_to", "x": x, "y": y,
+                          "on_battle": on_battle, "on_trainer": on_trainer,
+                          "max_steps": max_steps}, timeout_s)
+
+
+@mcp.tool()
+def emu_goto(map: str, x: int = -1, y: int = -1, on_battle: str = "run",
+             on_trainer: str = "stop", start_map: str = "",
+             flags: list[str] | None = None, timeout_s: int = 1200) -> dict:
+    """THE one-call 'take me there': navigate to a map (name, modernName, or id —
+    'Mt Moon B1F', 'Mt. Moon 2', '60', '0x3C'), optionally to exact (x, y),
+    CROSS-MAP (warps, connections, doors, ladders — planned, then walked for
+    real with per-step WRAM verification).
+
+    No live session? One is booted automatically: at start_map's console-authored
+    base if given (a REAL journey from there), else directly at the target map's
+    base (fast — then walks to x/y). `flags` = EVENT_* names for the boot forge.
+    With a live session it navigates from wherever the game currently stands."""
+    try:
+        dst = _resolve_map(map)
+    except KeyError as e:
+        return {"error": str(e)}
+    if not _session_live():
+        boot_map = dst["ind"]
+        if start_map:
+            try:
+                boot_map = _resolve_map(start_map)["ind"]
+            except KeyError as e:
+                return {"error": str(e)}
+        r = emu_boot(map_id=boot_map, flags=flags)
+        if r.get("error") or not r.get("ok", True):
+            return {"error": f"auto-boot failed: {r}"}
+    return _session_send({"cmd": "goto", "map": dst["ind"], "x": x, "y": y,
+                          "on_battle": on_battle, "on_trainer": on_trainer},
+                         timeout_s)
+
+
+@mcp.tool()
+def emu_talk_to(target: str, dismiss: bool = True, timeout_s: int = 300) -> dict:
+    """Talk to an NPC on the current map — a MOVING target: its live square is
+    chased (re-planned as it wanders), the player stands adjacent, faces it,
+    presses A, and the text box is confirmed open. target = sprite slot (1..15)
+    or the maps.json sprite name ('Bug Catcher'). dismiss=True reads the text to
+    the end (a trainer's line starting a battle is reported, never hidden)."""
+    return _session_send({"cmd": "talk", "target": target, "dismiss": dismiss},
+                         timeout_s)
+
+
+@mcp.tool()
+def emu_battle(policy: str = "mash", timeout_s: int = 600) -> dict:
+    """Execute the CURRENT battle a certain way: 'mash' (A to the end),
+    'run' (flee a wild battle; trainer battles refuse with the reason),
+    'move:N' (use move slot N every turn; B declines level-up move prompts)."""
+    return _session_send({"cmd": "battle", "policy": policy}, timeout_s)
+
+
+@mcp.tool()
+def emu_hunt_encounter(max_steps: int = 240, policy: str = "stop",
+                       timeout_s: int = 600) -> dict:
+    """FIND a wild battle here: pace a two-square shuttle (grass squares
+    preferred — the map's own wGrassTile, read live; caves encounter anywhere)
+    until wIsInBattle fires. Reports the enemy species/level. policy 'stop'
+    hands the live battle back for emu_battle; 'run'/'mash'/'move:N' resolve it."""
+    return _session_send({"cmd": "hunt", "max_steps": max_steps,
+                          "policy": policy}, timeout_s)
+
+
+@mcp.tool()
+def emu_dismiss(timeout_s: int = 60) -> dict:
+    """Clear any open text boxes (B-heavy mash — never buys/selects/learns)."""
+    return _session_send({"cmd": "dismiss"}, timeout_s)
+
+
+@mcp.tool()
+def emu_play(steps: list[dict], stop_on_error: bool = True,
+             timeout_s: int = 1800) -> dict:
+    """A WHOLE RUN in one call — the session child executes the step list
+    server-side (no per-step transport round-trips). Each step is any session
+    command: {"cmd":"goto","map":"Mt Moon 1F"} · {"cmd":"walk_to","x":5,"y":5} ·
+    {"cmd":"hunt","policy":"run"} · {"cmd":"battle","policy":"move:1"} ·
+    {"cmd":"talk","target":"Youngster"} · {"cmd":"button","b":"a"} ·
+    {"cmd":"tick","n":60} · {"cmd":"poke",...} · {"cmd":"mem",...} ·
+    {"cmd":"shot","path":"tmp/mcp-shots/x.png"} · {"cmd":"dismiss"}.
+    Short bursts or long hauls; per-step results come back; stop_on_error halts
+    at the first failure. (boot/quit are not allowed inside a script.)"""
+    return _session_send({"cmd": "script", "steps": steps,
+                          "stop_on_error": stop_on_error}, timeout_s)
 
 
 # ------------------------------------------------------------------- hygiene
