@@ -48,7 +48,7 @@ Item {
   readonly property string panelInfo: qsTr(
     "Everything the save stores about one specific place: the map's script progress (how far its "
     + "story events have advanced), its minigame values (trash cans, quiz, Safari counters), and "
-    + "its filter flags — which people, items and Pokémon are on the map at all.\n\n"
+    + "its Filter Flags — which people, items and Pokémon are on the map at all.\n\n"
     + "Pick a map; the one you're standing on is pre-selected when it has storage. Script steps "
     + "read like a story — each option says what's happening at that stage.\n\n"
     + "Custom values are always available and never refused; values the game can't handle are "
@@ -522,9 +522,10 @@ Item {
 
         // ── FILTER FLAGS — who's on this map at all ────────────────────────────────────────────
         // The map's hide/show object bits (wToggleableObjectFlags, save 0x2852; bit SET = HIDDEN,
-        // so the switch shows the intuitive direction: checked = on the map). "Filter flags" is
-        // Twilight's preferred term (2026-07-16) for what the game/pret calls missables — the
-        // model classes keep the pret name; the UI says filter flags. Sorted into its own group;
+        // so the switch shows the intuitive direction: checked = on the map). "Filter Flags" is
+        // Twilight's preferred term (2026-07-16, cased as a proper name) for what the game/pret
+        // calls missables — the model classes keep the pret name; the UI says Filter Flags.
+        // Sorted into its own group;
         // pret's known-issue oddballs wear an amber note; linked event flags surfaced live.
         ColumnLayout {
           id: missableSection
@@ -546,7 +547,7 @@ Item {
           }
 
           Label {
-            text: qsTr("Filter flags — who's on the map")
+            text: qsTr("Filter Flags — who's on the map")
             font.pixelSize: 12
             font.bold: true
             color: brg.settings.textColorDark
