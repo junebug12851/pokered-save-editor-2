@@ -5,10 +5,11 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.40.4-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
+**Version:** `0.40.5-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**88/88**, 2026-07-15);
-`tst_connections` now 17.
+`tst_connections` now 17. New local-only member: **`tst_flag_scenarios`** (5/5 with the ROM,
+SKIPs without it).
 
 > **Connections live-review fixes (0.39.5-alpha):** the added-connection dead-state bug (interactive
 > strip now save-based, not DB-based), neighbour maps animate, and the smart grouped picker (★ default +
@@ -19,6 +20,33 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 > **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
 
 ## Current state (read this first)
+
+### 🔧 THE PYBOY HANG SOLVED + THE DEV MCP SERVER — the new standing dev transport (2026-07-16)
+
+The "spawning tons of processes and hanging" disaster is **root-caused, reproduced, and fixed at every
+layer**. The chain: a **map-id-only forged save is a chimera** (new map's id, old map's Area block —
+the linchpin makes Continue trust it) that **hard-crashes ~100 frames in**; the crashed CPU executes
+`STOP`, the clocks halt, and **PyBoy's `tick()` never returns** (a core spins forever); killing the
+child leaked the interpreter (the venv `python.exe` is a **launcher** — kill the **tree**); and the
+time-capped interactive shell spiralled it. **2026-07-15's "forge-onto-any-map PROVEN" is overturned**
+— same-map forges (flags/coords/pokes) are safe; the consistent cross-map forge (write the target
+map's whole Area block) is a future briefed phase. Full correction:
+[`reference/emulator-verification.md`](reference/emulator-verification.md).
+
+**Built on it:** `tst_flag_scenarios` wired into CMake + **verified 5/5 on the real ROM** (one
+scenario per process; a wedge is recorded as a **"hang" verdict**, tree-killed, batch continues);
+`scripts/emu/forge_save.py` (the shared forge + reseal); `scripts/emu/drive_session.py` (interactive
+PyBoy as an owned child REPL); and **the dev MCP server** — `scripts/mcp/` — Twilight's brief: ONE
+standardized transport for the whole dev loop (build/test/app-drive/screenshots-returned-inline/
+PyBoy install-update-drive/process hygiene), everything a background job with hard tree-kill
+timeouts, background-by-default + explicit `app_foreground`. Self-tested end-to-end. Reference:
+[`reference/dev-mcp.md`](reference/dev-mcp.md). ⏳ Owed: registering it in Twilight's Claude config
+(`scripts/mcp/README.md`), her live pass, and the cross-map forge phase.
+
+**The debug harness got its screws tightened too (0.40.5-alpha):** the "distorted screenshots" were
+**mid-transition grabs** — navigation verbs now settle before replying, `shot` waits out transitions
+(+ optional `settle` ms); **trap #1 is fixed at the source** (`screen` refuses a duplicate push,
+`"already":true`; `title` also returns the screen NAME). `tst_qml_screens` 16/16.
 
 ### 🧭 MAP STORAGE panel (gym/safari minigame bytes) — BUILT (2026-07-15, `0.40.4-alpha`)
 
