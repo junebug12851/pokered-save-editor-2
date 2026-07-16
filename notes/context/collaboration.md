@@ -12,6 +12,12 @@ has a deeper home, it's cross-referenced.
 
 - **Goes by Twilight.** She formerly used "June" / "June Hanabi"; do **not** use those (removed from the
   project 2026-06-05). GitHub handle `junebug12851` stays (still her account).
+- **Address the ROLE, not the person — "project leadership" (updated 2026-07-15).** She is part of the
+  project leadership / owners, **not** the sole repository owner — just the only active contributor right
+  now. In notes, commits, and conversation, frame decisions and sign-offs as **"project leadership"** (act
+  as you would with a team of several owners), **not** "ask Twilight / Twilight's call". When you must
+  refer to her personally, call her **"Fairy Fox"** (not Twilight, not June). This is forward-looking:
+  talk and act the same whether there's one owner or several.
 - Solo developer, deep Qt C++/QML expertise, intimately familiar with her own codebase from years of
   solo work. This project is one of her proudest — written meticulously, line by line, and the 2026
   revival is a genuine second chance to finish something that matters to her personally. Treat it that way.
