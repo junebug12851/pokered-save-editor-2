@@ -260,13 +260,24 @@ polish pass.
 
 **Forge-onto-any-map PROVEN (2026-07-15).** `probe_route22_conflict.py` + a synthetic save that sets
 `wCurMap = ROUTE_22 (0x21)` + player coords + the rival flags, resealed, boots the real ROM **straight
-onto Route 22** (verified: `wCurMap 0x21`, on-overworld, 888 frames to load). This is the standing
-forge-a-save method working end-to-end. ⚠️ The rival trigger needs the *exact* tile: Route 22 runs
-**10 blocks wide (20 tiles)**, and our object inventory lists the rival at X=25 — off-map, so the
-inventory's object-coord units for this map need reconciling before the drive-into-trigger reliably fires
-(minor coord fix). Until then the **Route 22 rival conflict stays `suspected-strong`** — the static
-evidence (two `SPRITE_BLUE` at one tile, one per battle) is overwhelming; `confirmed` waits on the clean
-trigger repro.
+onto Route 22** (verified: `wCurMap 0x21`, on-overworld). The standing forge-a-save method works
+end-to-end.
+
+**Coordinate units — RESOLVED from `maps.json` (authoritative, no emulator):** `maps.json` map
+`width`/`height` are in **blocks**; object/sprite/sign/warp coords are in **tiles** (= blocks × 2). Proof:
+Route 22 is `height: 9` yet has a sign at `y: 11` — impossible unless coords are tiles (0–17). So Route
+22 is **40×18 tiles**, the rival at tile **(25, 5) is valid and on-map**, and our Phase 9 object coords
+(in tiles) are **correct**. (An emulator read of `wCurMapWidth`=10 mid-boot was stale — disregard it.)
+Bonus: `maps.json` already carries **`"missable": 34/35`** on the two Route 22 rivals — the toggle indices
+— confirming the missable-object finding and giving Phase 9 the flag↔object link for free.
+
+**Live crash confirmation — blocked by THIS environment, not the logic.** The forge is correct and boots
+onto Route 22; driving the player up into the rival should reproduce the crash. But sustained PyBoy runs
+here are unreliable (accumulating zombie processes, silent boot stalls, a ~44 s per-call cap), so a clean
+`confirmed` reading couldn't be captured in-session. Infra for it is committed: `scripts/emu/emu_server.py`
+is a **persistent PyBoy session with file IPC** (boot once, drive with cheap step/read commands) for an
+uninterrupted local run. Until then the **Route 22 rival conflict stays `suspected-strong`** — the static
+evidence (two `SPRITE_BLUE` at one tile, `missable` 34/35, one per battle) is overwhelming.
 
 ## Flag ↔ map location & object association (briefed 2026-07-15)
 

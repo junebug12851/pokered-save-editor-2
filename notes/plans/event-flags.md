@@ -84,7 +84,14 @@ documented. Pin with a test.
 
 **Phase 7 — Data home.** Finalize the curated data file — ideally one events JSON (names verbatim from
 pret + our curation), else standalone + linked. Baked into `db.qrc`; edits go through project leadership. Write
-the importer + self-validation.
+the importer + self-validation. ⚠️ **Reconcile with what the DB ALREADY has** (found 2026-07-15):
+`projects/db/assets/data/` already ships **`events.json`** (v1's 2,560-entry list — the cryptic one this
+feature enriches), **`eventPokemon.json`**, **`missables.json`**, **`hiddenItems.json`**,
+**`hiddenCoins.json`**, **`gameCorner.json`**; and **`maps.json`** carries a per-sprite **`missable`**
+index (the two Route 22 rivals = missable 34/35) + object coords (tiles). So the data home should
+**extend/replace `events.json`** and **read the object↔missable links straight from `maps.json`** rather
+than reinvent them (Phase 9 cross-checks against `missables.json`/`maps.json`). No edits to these JSONs
+without leadership sign-off.
 
 **Phase 8 — UI design, then build.** Events are **NOT a separate panel** (correction, leadership
 2026-07-15) — they **expand the existing persistent-storage panel** (`MapStoragePanel.qml`, the right
