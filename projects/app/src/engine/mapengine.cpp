@@ -988,7 +988,7 @@ QString MapEngine::layerName(Layer layer)
     case LayerWalls:     return QObject::tr("Walls");
     case LayerGrass:     return QObject::tr("Grass");
     case LayerWater:     return QObject::tr("Water");
-    case LayerWarps:     return QObject::tr("Warps");
+    case LayerWarps:     return QObject::tr("Warp tiles");
     case LayerDoors:     return QObject::tr("Doors");
     case LayerLedges:    return QObject::tr("Ledges");
     case LayerCounters:  return QObject::tr("Counters");
@@ -1013,9 +1013,11 @@ QString MapEngine::layerDescription(Layer layer)
     case LayerWater:
       return QObject::tr("Water. You need Surf.");
     case LayerWarps:
-      return QObject::tr("Step on it and you're somewhere else.");
+      return QObject::tr("Tiles that can act as a warp on this tileset — doors, stairs, cave mouths, "
+                         "warp pads. A tileset fact, not the map's warp list (those are the Warps in "
+                         "Game View); this is what the game checks to know a tile CAN warp.");
     case LayerDoors:
-      return QObject::tr("A door — a warp you walk into, with the door animation.");
+      return QObject::tr("A door — a passable tile you walk across to reach a warp (not the warp itself).");
     case LayerLedges:
       return QObject::tr("A ledge. The arrow is the only way you can jump it.");
     case LayerCounters:

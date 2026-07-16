@@ -143,21 +143,17 @@ void TestMapLayers::theThreeGroups_areAllThere()
   QVERIFY2(rowOf(r->layers, QStringLiteral("overlay%1").arg(MapEngine::LayerBorder)) >= 0,
            "the border ring should be a layer in Guides");
 
-  // Tiles (key still "meaning") -- the eight tile-meaning overlays. NO warp here: a warp is map
-  // state, so it's a Game View object layer, not a tile trait (Twilight, 2026-07-15). A DOOR stays --
-  // it's a passable tile type.
+  // Tiles (key still "meaning") -- the nine tile-meaning overlays. The WARP-TILE trait (which tile
+  // graphics are warp-capable on this tileset) belongs here: it's a tileset fact, distinct from the
+  // save's warp LIST (the draggable objects in Game View). A DOOR is likewise a passable tile type.
   const QVector<MapEngine::Layer> tiles = {
-    MapEngine::LayerWalls, MapEngine::LayerGrass, MapEngine::LayerWater,
+    MapEngine::LayerWalls, MapEngine::LayerGrass, MapEngine::LayerWater, MapEngine::LayerWarps,
     MapEngine::LayerDoors, MapEngine::LayerLedges, MapEngine::LayerCounters,
     MapEngine::LayerCutTrees, MapEngine::LayerElevation,
   };
   for (const MapEngine::Layer l : tiles)
     QVERIFY2(rowOf(r->layers, QStringLiteral("overlay%1").arg(static_cast<int>(l))) >= 0,
              qPrintable(QStringLiteral("tile-meaning layer %1 is missing").arg(static_cast<int>(l))));
-
-  // And the warp tile-trait is NOT a layer row anymore.
-  QVERIFY2(rowOf(r->layers, QStringLiteral("overlay%1").arg(static_cast<int>(MapEngine::LayerWarps))) < 0,
-           "the warp tile-trait must not be a Tiles-group layer (warps live in Game View)");
 }
 
 /**

@@ -192,10 +192,14 @@ void MapLayersModel::buildAll()
   overlay(ComponentsGroup, MapEngine::LayerWalls);
   overlay(ComponentsGroup, MapEngine::LayerGrass);
   overlay(ComponentsGroup, MapEngine::LayerWater);
-  // ⚠️ NO warp tile-trait here. A warp is map STATE (the save's warp list), not a tileset fact, so it
-  // lives in Game View as the object layer (Twilight, 2026-07-15: "leave the warp where it belongs
-  // and the door where it belongs"). A DOOR, by contrast, is a passable *tile type* you walk across
-  // to reach a warp — a real tileset trait — so it stays.
+  // The WARP-TILE trait — which tile GRAPHICS on this tileset are warp-capable (doors, stairs, cave
+  // mouths, warp pads). A real tileset fact (data/tilesets/warp_tile_ids.asm): IsWarpTileInFrontOfPlayer
+  // checks the tile you walk into against the tileset's warp-tile list to decide whether a warp fires.
+  // It is NOT the save's warp LIST (coords/destinations) — those are the draggable objects in Game
+  // View. Two different things, so this one is labelled "Warp tiles" (Twilight, 2026-07-15: bring it
+  // back — it was fine, it just needed telling apart from the object layer). A DOOR is likewise a
+  // passable tile TYPE you cross to reach a warp, so it stays too.
+  overlay(ComponentsGroup, MapEngine::LayerWarps);
   overlay(ComponentsGroup, MapEngine::LayerDoors);
   overlay(ComponentsGroup, MapEngine::LayerLedges);
   overlay(ComponentsGroup, MapEngine::LayerCounters);

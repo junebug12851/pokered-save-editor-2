@@ -5,7 +5,7 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.40.2-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
+**Version:** `0.40.3-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**88/88**, 2026-07-15);
 `tst_connections` now 17.
@@ -20,16 +20,25 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
-### 🧱 LAYERS: "Components" → "Tiles", and warps moved to Game View (2026-07-15, `0.40.2-alpha`)
+### 🧱 LAYERS: "Components" → "Tiles"; the two "Warps" told apart, not merged (2026-07-15, `0.40.3-alpha`)
 
-Twilight caught the two-"Warps" confusion. The tile-meaning group had a warp *tile-trait* row and Game
-View had the save's warp *object* row — same name, different things. A warp is **map state** (→ Game
-View object layer); a **door** is a passable **tile type** (→ stays a tile trait). So: the group is
-**renamed "Tiles"**, the **warp tile-trait is removed** from it, **doors stay**. New **defaults**
-(Twilight): **every Game View layer ON except Draw area** (player, people, warps, signs, screen box) and
-**every Tiles overlay OFF** — so warps now show by default as the Game View **object** layer (which is
-why it's on now; it replaced the removed trait). `tst_map_layers` 12/12 (warp-trait must-not-be-a-row +
-Game-View defaults pinned), `tst_map` 27/27. The layer-name mapping is verified **not** swapped.
+Twilight caught the two-"Warps" confusion. There really are two different things: the tile-meaning
+group's **warp tile-trait** (which tile *graphics* are warp-capable on this tileset — doors, stairs,
+cave mouths, warp pads; from `warp_tile_ids.asm`, read by `IsWarpTileInFrontOfPlayer` to know a tile
+CAN warp) and Game View's **Warps** (the save's warp *list* — coords/destinations, the draggable
+objects). So the fix is **disambiguation, not deletion**:
+
+- The group is **renamed "Tiles"** (it's the tileset's tile meanings).
+- The warp tile-trait **stays**, relabelled **"Warp tiles"** so it reads apart from the object "Warps".
+- **Doors stay** — a door is a passable tile you cross to reach a warp, a real tileset trait.
+- **Defaults (Twilight):** every **Game View** layer ON except **Draw area** (player, people, warps,
+  signs, screen box); every **Tiles** overlay OFF. Warps show by default as the Game View **object**
+  layer (now ON by default — it used to be off only because the warp tile-trait was standing in for it).
+
+⚠️ **History note:** an intermediate commit (`0.40.2`) briefly *removed* the warp tile-trait; Twilight
+corrected that ("it has to come back") once the two-warps distinction was clear. It's back.
+`tst_map_layers` 12/12 (nine tile overlays incl. Warp tiles; Game-View defaults pinned), `tst_map`
+27/27. The layer-name mapping is verified **not** swapped.
 
 ### 🌿 WILD POKÉMON panel — BUILT (2026-07-15, Phase 8, `0.40.1-alpha`)
 

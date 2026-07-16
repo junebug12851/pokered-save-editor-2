@@ -151,10 +151,11 @@ save**).
 | | Tile grid | guide | 8px. New. Off by default. |
 | | Map bounds | guide | Where the map ends and the ring begins. |
 | | Border ring | overlay bit `1<<7` | The 3-block ring + the out-of-bounds block filling it. |
-| **Tiles** (was "Meaning"/"Components"; renamed 2026-07-15) | Walls | overlay bit `1<<0` | The tileset's own tile meanings MapEngine renders. Eight of them — **NOT warp**. |
+| **Tiles** (was "Meaning"/"Components"; renamed 2026-07-15) | Walls | overlay bit `1<<0` | The tileset's own tile meanings MapEngine renders. |
 | | Grass | `1<<1` | Each has its own hue **and** its own 8×8 pattern (they stack and still read). |
 | | Water | `1<<2` | |
-| | Doors | `1<<4` | ⚠️ A door is a passable **tile type** you walk across to reach a warp — a real tileset trait — so it belongs here. (The warp tile-trait `1<<3` exists in the ROM but is **not** a layer: a warp is map STATE, so it lives in Game View as the object layer below. Twilight, 2026-07-15.) |
+| | **Warp tiles** | `1<<3` | ⚠️ The *tile trait*, **not** the warp objects. Which tile graphics are warp-capable on this tileset (doors, stairs, cave mouths, warp pads) — a tileset fact (`warp_tile_ids.asm`; `IsWarpTileInFrontOfPlayer` checks it to decide a warp can fire). Distinct from the save's warp *list* (the objects in Game View), so it's labelled "Warp tiles". (Twilight, 2026-07-15: kept — it's a real, separate thing.) |
+| | Doors | `1<<4` | A door is a passable **tile type** you walk across to reach a warp (not the warp itself) — a real tileset trait, so it belongs here. |
 | | Ledges | `1<<5` | With the arrow you jump. |
 | | Counters | `1<<6` | |
 | | Cut trees | `1<<8` | |
