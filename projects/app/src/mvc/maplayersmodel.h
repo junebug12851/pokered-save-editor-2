@@ -225,14 +225,14 @@ private:
   // area. The tile grid, the connections, the draw area and the other seven overlays are things you
   // go LOOKING for, not things that sit on top of the map before you have asked.
   //
-  // ⚠️ Doors and Warps are **overlay** bits, not view bits -- they live in `MapModel::layers`, not
-  // here. The constructor switches them on there. Do not add them to this mask; it will not work and
-  // it will look like it does.
-  // Signs join the default-on set with the doors and the people: they are the map's third kind of
-  // object, and an object type that is off until you hunt for the toggle reads as a missing feature.
-  // (Twilight's original 2026-07-13 list predates the signs brief; this is the consistent extension.)
-  // Defaults (Twilight, 2026-07-15): Connections ON (you want to see how the map joins the world), Warps
-  // OFF (the doors are clutter unless you're editing them). Everything else as before.
-  int bits = ViewBlockGrid | ViewMapBounds | ViewPlayer | ViewNpcs | ViewSigns | ViewScreenBox | ViewConnections;
+  // ⚠️ The DOOR tile-trait is an **overlay** bit (a tileset fact), not a view bit -- it lives in
+  // `MapModel::layers`, and the whole Tiles group is OFF by default. Do not add it to this mask.
+  // Warps, by contrast, ARE a view/object layer here (`ViewWarps`) -- a warp is map state, not a tile.
+  //
+  // Defaults (Twilight, 2026-07-15): **every Game View layer ON except Draw area** (Player, People &
+  // objects, Warps, Signs, Screen box), and **every Tiles-group overlay OFF**. Guides keep the block
+  // grid, map bounds and connections on. So: add ViewWarps; Draw area and the tile grid stay off.
+  int bits = ViewBlockGrid | ViewMapBounds | ViewConnections
+           | ViewPlayer | ViewNpcs | ViewWarps | ViewSigns | ViewScreenBox;
   qreal opacity = 1.0;
 };

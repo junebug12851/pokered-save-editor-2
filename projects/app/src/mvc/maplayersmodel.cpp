@@ -33,7 +33,8 @@ const char* groupKey(int g)
   switch (g) {
   case GuidesGroup:   return "guides";
   // ⚠️ The KEY stays "meaning" -- it is a stable id the tests and the DEBUG harness address the
-  // group by. Only the NAME changed ("Meaning" -> "Components", Twilight 2026-07-13).
+  // group by. Only the NAME changed ("Meaning" -> "Components" 2026-07-13 -> "Tiles" 2026-07-15,
+  // Twilight): the group is the tileset's own tile meanings, so "Tiles" is what it is.
   case ComponentsGroup: return "meaning";
   case GameViewGroup: return "gameview";
   default:            break;
@@ -45,7 +46,7 @@ QString groupName(int g)
 {
   switch (g) {
   case GuidesGroup:   return QObject::tr("Guides");
-  case ComponentsGroup: return QObject::tr("Components");
+  case ComponentsGroup: return QObject::tr("Tiles");
   case GameViewGroup: return QObject::tr("Game View");
   default:            break;
   }
@@ -58,8 +59,9 @@ QString groupBlurb(int g)
   case GuidesGroup:
     return QObject::tr("Lines that help you see the map's shape. None of it is in the save.");
   case ComponentsGroup:
-    return QObject::tr("What the map MEANS — a wall and a floor are just two pictures until "
-                       "something says which is which.");
+    return QObject::tr("What each TILE means — wall, grass, water, door, ledge, counter. Read from "
+                       "the tileset, not the save. (Warps aren't here — a warp is map state, so it "
+                       "lives in Game View.)");
   case GameViewGroup:
     return QObject::tr("What the Game Boy is drawing right now: the player, everyone else on the "
                        "map, the screen he sees, and the patch of map it redraws around him.");
@@ -78,14 +80,12 @@ MapLayersModel::MapLayersModel(MapModel* map, QObject* parent)
   buildAll();
   rebuild();
 
-  // The OVERLAY layer on by default: Warps -- the map's exits, how it joins the rest of the world,
-  // the one of the nine anybody wants standing there unasked. The Doors overlay is OFF by default
-  // (Twilight, 2026-07-15: "disable the door layer by default"). ⚠️ Backend mapping verified NOT
-  // swapped: LayerWarps (1<<3) paints Warp/WarpPad/Hole tiles (purple); LayerDoors (1<<4) paints
-  // Door tiles (orange) -- see MapEngine::layerApplies/layerColour. They live in MapModel::layers,
-  // not in our own `bits`. @see the note on `bits` in the header.
+  // No tile-trait overlay on by default -- the whole Tiles group starts OFF (Twilight, 2026-07-15:
+  // "all of Tiles layer disabled by default"). The map is the point; the tile meanings are things you
+  // go looking for. Warps are shown by default too, but as the Game View OBJECT layer (ViewWarps in
+  // `bits`), not as a tile-trait overlay -- see the header's `bits` default.
   if (map != nullptr)
-    map->setLayers(MapEngine::LayerWarps);
+    map->setLayers(0);
 
   // The map changed: which layers even APPLY changes with it (a map with no grass should say so
   // rather than switch on an empty overlay), so every row's "applies" is stale.
@@ -192,7 +192,10 @@ void MapLayersModel::buildAll()
   overlay(ComponentsGroup, MapEngine::LayerWalls);
   overlay(ComponentsGroup, MapEngine::LayerGrass);
   overlay(ComponentsGroup, MapEngine::LayerWater);
-  overlay(ComponentsGroup, MapEngine::LayerWarps);
+  // ⚠️ NO warp tile-trait here. A warp is map STATE (the save's warp list), not a tileset fact, so it
+  // lives in Game View as the object layer (Twilight, 2026-07-15: "leave the warp where it belongs
+  // and the door where it belongs"). A DOOR, by contrast, is a passable *tile type* you walk across
+  // to reach a warp — a real tileset trait — so it stays.
   overlay(ComponentsGroup, MapEngine::LayerDoors);
   overlay(ComponentsGroup, MapEngine::LayerLedges);
   overlay(ComponentsGroup, MapEngine::LayerCounters);

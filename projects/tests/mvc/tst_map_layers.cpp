@@ -143,15 +143,21 @@ void TestMapLayers::theThreeGroups_areAllThere()
   QVERIFY2(rowOf(r->layers, QStringLiteral("overlay%1").arg(MapEngine::LayerBorder)) >= 0,
            "the border ring should be a layer in Guides");
 
-  // Meaning -- all nine semantic overlays
-  const QVector<MapEngine::Layer> meaning = {
-    MapEngine::LayerWalls, MapEngine::LayerGrass, MapEngine::LayerWater, MapEngine::LayerWarps,
+  // Tiles (key still "meaning") -- the eight tile-meaning overlays. NO warp here: a warp is map
+  // state, so it's a Game View object layer, not a tile trait (Twilight, 2026-07-15). A DOOR stays --
+  // it's a passable tile type.
+  const QVector<MapEngine::Layer> tiles = {
+    MapEngine::LayerWalls, MapEngine::LayerGrass, MapEngine::LayerWater,
     MapEngine::LayerDoors, MapEngine::LayerLedges, MapEngine::LayerCounters,
     MapEngine::LayerCutTrees, MapEngine::LayerElevation,
   };
-  for (const MapEngine::Layer l : meaning)
+  for (const MapEngine::Layer l : tiles)
     QVERIFY2(rowOf(r->layers, QStringLiteral("overlay%1").arg(static_cast<int>(l))) >= 0,
-             qPrintable(QStringLiteral("meaning layer %1 is missing").arg(static_cast<int>(l))));
+             qPrintable(QStringLiteral("tile-meaning layer %1 is missing").arg(static_cast<int>(l))));
+
+  // And the warp tile-trait is NOT a layer row anymore.
+  QVERIFY2(rowOf(r->layers, QStringLiteral("overlay%1").arg(static_cast<int>(MapEngine::LayerWarps))) < 0,
+           "the warp tile-trait must not be a Tiles-group layer (warps live in Game View)");
 }
 
 /**
@@ -181,11 +187,17 @@ void TestMapLayers::gameViewLayers_existAndToggle()
     QCOMPARE(visible(r->layers, row), was);
   }
 
-  // The DEFAULTS (2026-07-13, Twilight): the player and the screen box are on; the DRAW AREA is off
-  // -- it is the engine's scratch, useful when you want it and clutter when you don't.
+  // The DEFAULTS (Twilight, 2026-07-15): EVERY Game View layer on EXCEPT the draw area -- the player,
+  // the people, the WARPS, the signs and the screen box are on; the draw area (engine scratch) is off.
   QVERIFY2(r->layers->showPlayer(), "the player should be on by default");
+  QVERIFY2(r->layers->showNpcs(), "the people should be on by default");
+  QVERIFY2(r->layers->showWarps(), "the warps (Game View object layer) should be on by default");
+  QVERIFY2(r->layers->showSigns(), "the signs should be on by default");
   QVERIFY2(r->layers->showScreenBox(), "the screen box should be on by default");
   QVERIFY2(!r->layers->showDrawArea(), "the draw area should be OFF by default");
+
+  // And the whole Tiles group is OFF by default -- no tile-meaning overlay stands unasked.
+  QCOMPARE(r->map->layers(), 0);
 }
 
 /// The neighbours' strips in the ring are a layer -- and on a map with no neighbours it says so.
