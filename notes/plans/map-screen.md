@@ -449,7 +449,7 @@ screens/non-modal/map/
 
 ---
 
-## 12. The programme — fifteen phases, plus one optional
+## 12. The programme — the phases, plus one optional  *(Phase 15 "Map Storage" added 2026-07-15)*
 
 > **The bar (Twilight, 2026-07-12, mandatory):** *"You absolutely have to put in the long work for each of
 > these components and pieces."* This is not a re-skin sprint. **Each phase is a full pass on one body of
@@ -1440,6 +1440,68 @@ UI/UX pass (she owns the layout/wording/glyph decisions).
 > **Area-State leftovers** — the non-warp-flow `AreaWarps` state fields and `AreaLoadedSprites`
 > (`loadedSetId` + 11 slots) that used to share the old "Phase 9 — Area State" heading are **still
 > un-briefed** and live in §12b. They are **not** part of this Character-state work.
+
+---
+
+### Phase 15 — Map Storage  *(the right-dock per-map persistent-state panel — briefed 2026-07-15, Twilight)*
+
+> A content phase, numbered after the tail; it sits beside Phase 9 (a map-wide state panel), not with
+> the polish phases. Briefed this session and researched: [`../reference/gym-safari-state.md`](../reference/gym-safari-state.md).
+
+> Twilight: *"a new maps panel that will be expanded later on the right toolbar … the panel needs a
+> map dropdown pre-selected to the current map … have the panel titled **Map Storage** … the [dock]
+> button needs to be a primary‑colour, filled‑in storage icon."*
+
+**What it is.** A right‑dock panel (chassis doctrine: one panel at a time, opened from the right rail)
+titled **Map Storage**, whose **dock/tool‑rail icon is the primary colour, filled, with a storage
+glyph** — signalling it holds *persistent* save storage. A **map combo box** at the top, **pre‑selected
+to the save's current map**, lists **only maps that actually have stored bytes**; selecting a map shows
+**that map's storage page**. Twilight will *add more maps' storage over time* — the panel is the
+container, seeded now with the three locations we have.
+
+**The bytes are GLOBAL, not Area** — the one thing the research changed. These six do **not** live in
+the per‑map Area block; they're single global Main‑Data event bytes the game associates with one
+location each. So the panel is a **view** that groups global bytes under their owning map — **model home
+is a new global class** (e.g. `WorldMinigames`/`AreaMinigameState`), surfaced on `MapModel`; it is
+**not** `Area*`. (v1 filed them under `AreaPlayer`/`AreaPuzzle`, which is what made them *look* like map
+state.)
+
+**The three seed pages** (addresses + full write‑ups in the reference note; all offsets verified, five
+console‑verified durable):
+
+| Map page | Field | byte | notes |
+|---|---|---|---|
+| **Vermilion Gym** | Trash‑can switch 1 | `wFirstLockTrashCanIndex` `0x29EF` | persistent; sensible range 0–14 (even) |
+| | Trash‑can switch 2 | `wSecondLockTrashCanIndex` `0x29F0` | persistent |
+| **Cinnabar Gym** | Next wrong‑answer opponent | `wOpponentAfterWrongAnswer` `0x2CE4` | persistent |
+| **Safari Zone** | Steps left | `wSafariSteps` `0x29B9` | persistent; **2‑byte BIG‑endian**, fresh 502, range 0–502 |
+| | Safari balls | `wNumSafariBalls` `0x2CF3` | persistent; range 0–30 |
+| | Game‑over flag | `wSafariZoneGameOver` `0x2CF2` | **shown, marked TEMPORARY** — console‑verified inert (zeroed every frame by `OverworldLoop`→`SafariZoneCheck`) |
+
+**Persistent vs temporary (Twilight's two‑zone idea, now with a real split).** Five bytes are durable
+and wear the **persistent** styling (primary‑filled storage marker). `wSafariZoneGameOver` is **shown,
+marked temporary** — it stays on the Safari Zone page but visibly flagged inert (editing does nothing;
+the probe proved it). This is the amber‑`!`/"reloaded" idiom, applied to exactly one byte.
+
+**Doctrine, as everywhere:** full byte range, **hack/glitch values shown never refused**; every setter
+writes **only** its own byte(s) (the steps word touches exactly `0x29B9`+`0x29BA`, high byte first); the
+page states the **armed window** plainly (e.g. "only takes effect while your save is inside the Safari
+Zone — the gate resets steps/balls to 502/30 on entry").
+
+**Sub‑phases (the Phase 9 mould — UI last, gated on research+probe):**
+- **15a — Research** ✅ *(2026‑07‑15)* — [`../reference/gym-safari-state.md`](../reference/gym-safari-state.md).
+- **15b — Console probe** ✅ *(2026‑07‑15, `scripts/emu/probe_gym_safari_state.py`)* — 5/6 durable;
+  addresses + big‑endian pinned; `wSafariZoneGameOver` inert.
+- **15c — Model** ⏳ — a global class holding the six with byte‑exact accessors (big‑endian word for
+  steps), surfaced on `MapModel`; `tst_map_storage` byte‑diffs each setter over the whole 32 KB.
+- **15d — The panel** ⏳ — `MapStoragePanel.qml`, right dock, primary‑filled storage dock icon, the map
+  combo (only‑maps‑with‑storage, current preselected), the per‑map pages, persistent vs temporary
+  marking; screenshot‑reviewed then a live pass.
+
+**⚠️ One open detail before 15c/15d.** The Safari Zone is **several maps** (Center/East/North/West, the
+rest houses, the gate); the safari counters are global and shared across all of them. Which map id(s)
+the combo lists for "Safari Zone" — a single representative entry vs. the counters showing on every
+safari map — is Twilight's call (she owns which maps get storage). Everything else is locked.
 
 ---
 
