@@ -819,13 +819,20 @@ def emu_make_map_save(map_id: int, warp: int = 0, force: bool = False,
 def emu_forge_save(out_path: str, map_id: int = -1, x: int = -1, y: int = -1,
                    flags: list[str] | None = None, flag_indices: list[int] | None = None,
                    all_flags: bool = False, pokes: dict[str, str] | None = None,
+                   scripts: dict | None = None, filter_flags: dict | None = None,
                    base_sav: str = "") -> dict:
     """Forge a save at ANY map / position / flag state (checksum resealed).
     map_id >= 0 uses the CONSOLE-AUTHORED base for that map (generated on the fly
     if not cached — the game walks there itself; see emu_make_map_save), so the
     whole Area block is genuinely that map's. Coordinates go through relocate():
-    block coords + view pointer stay in sync. flags = pret EVENT_* names;
-    pokes = raw byte writes {'0x29B9': '0x01'} for everything else."""
+    block coords + view pointer stay in sync.
+      flags        = pret EVENT_* names to set
+      scripts      = per-map script step, e.g. {"Route 22": 0}  (w<Map>CurScript)
+      filter_flags = missable visibility, e.g. {"Route 22/Rival 1": "show"}  (or a
+                     bit index -> "show"/"hide")
+      pokes        = raw byte writes {'0x29B9': '0x01'} for anything else
+    Together these give TOTAL trigger control — enough to arm and reproduce a
+    scripted cutscene (see probe_route22_conflict.py)."""
     fs = _forge_module()
     if map_id >= 0:
         base = _ensure_map_base(map_id)
@@ -840,7 +847,8 @@ def emu_forge_save(out_path: str, map_id: int = -1, x: int = -1, y: int = -1,
                     None,                                   # base already IS the map
                     None if y < 0 else y, None if x < 0 else x,
                     flags or None, flag_indices or None, all_flags,
-                    {int(k, 0): int(v, 0) for k, v in (pokes or {}).items()})
+                    {int(k, 0): int(v, 0) for k, v in (pokes or {}).items()},
+                    scripts=scripts, filter_flags=filter_flags)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(data)
     return {"path": str(out), "bytes": len(data),
@@ -850,15 +858,20 @@ def emu_forge_save(out_path: str, map_id: int = -1, x: int = -1, y: int = -1,
 @mcp.tool()
 def emu_boot(sav: str = "", map_id: int = -1, x: int = -1, y: int = -1,
              flags: list[str] | None = None, all_flags: bool = False,
-             pokes: dict[str, str] | None = None, mash: bool = True,
+             pokes: dict[str, str] | None = None,
+             scripts: dict | None = None, filter_flags: dict | None = None,
+             mash: bool = True,
              budget_frames: int = 4000, timeout_s: int = 150) -> dict:
     """Start an INTERACTIVE emulator session at ANY custom state: map_id >= 0
     boots the CONSOLE-AUTHORED save for that map (generated on the fly if not
     cached — allow ~60s extra the first time; see emu_make_map_save), with
-    optional x/y relocation (derived bytes kept in sync), EVENT_* flags, and raw
-    pokes — the total-custom-state resume. The child is a fresh owned process
-    (scripts/emu/drive_session.py); drive it with emu_button/emu_tick/emu_mem/
-    emu_poke/emu_screenshot. One session at a time; a re-boot = a fresh process."""
+    optional x/y relocation (derived bytes kept in sync), EVENT_* flags, per-map
+    script steps (scripts={"Route 22": 0}), missable visibility
+    (filter_flags={"Route 22/Rival 1": "show"}), and raw pokes — the
+    total-custom-state resume, enough to ARM a scripted cutscene. The child is a
+    fresh owned process (scripts/emu/drive_session.py); drive it with
+    emu_button/emu_tick/emu_mem/emu_poke/emu_screenshot. One session at a time;
+    a re-boot = a fresh process."""
     why = _emu_available()
     if why:
         return {"error": why}
@@ -914,6 +927,10 @@ def emu_boot(sav: str = "", map_id: int = -1, x: int = -1, y: int = -1,
         boot_cmd["all_flags"] = True
     if pokes:
         boot_cmd["pokes"] = pokes
+    if scripts:
+        boot_cmd["scripts"] = scripts          # {"Route 22": 0} — per-map script step
+    if filter_flags:
+        boot_cmd["filter_flags"] = filter_flags  # {"Route 22/Rival 1": "show"}
     return _session_send(boot_cmd, timeout_s)
 
 

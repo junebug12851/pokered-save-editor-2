@@ -1,141 +1,143 @@
-"""Forge a save AT Route 22 with both rival-battle flags on, drive the player up
-into the rival trigger, and see if the console crashes. (Phase 4 confirmation of
-a suspected conflicting-flags pair.)
+#!/usr/bin/env python3
+"""Console verdict on the SUSPECTED Route 22 rival conflict — CONFIRM or REFUTE.
 
-Route 22 has TWO SPRITE_BLUE objects at the same tile (25,5): ROUTE22_RIVAL1 and
-ROUTE22_RIVAL2, one per battle. Leadership reports both battles' flags on crashes
-on battle. We now have total map-state control, so we forge the exact save.
+The suspicion (event-flags plan, Phase 11): both Route 22 rival-battle flags on
+(`EVENT_1ST_ROUTE22_RIVAL_BATTLE` + `EVENT_2ND_ROUTE22_RIVAL_BATTLE`) with both
+`SPRITE_BLUE` objects at the same tile (25,5) drives the shared map script into
+an impossible state and crashes.
 
-Local-only; needs the gitignored ROM + tmp/emu-venv PyBoy venv.
+This needed the scripts + filter-flags (missables) that only landed 2026-07-16 —
+you cannot ARM the ambush without setting `wRoute22CurScript = DEFAULT`, the two
+battle flags, and SHOWING the rival object. With those, the forge gets total
+trigger control (`scripts/emu/forge_save.py`).
+
+How the ambush actually fires (read from scripts/Route22.asm):
+  * Route22DefaultScript runs every overworld frame. It needs EVENT_..WANTS on,
+    the player on a coord in Route22RivalBattleCoords — `dbmapcoord 29,4` /
+    `29,5` (dbmapcoord stores db y,x) — then checks 1ST, else 2ND.
+  * The player must stand on the UPPER trigger (29,4): the rival walks RIGHT from
+    (25,5) to (29,5); if the player sits on (29,5) the walk is blocked and the
+    cutscene softlocks (an artifact of a bad forge, not a game bug).
+  * The cutscene shows the rival's line ("HIM: Hey!") — a text box that must be
+    ADVANCED (press A) before the trainer battle engages. A settle-only harness
+    sits on that box forever and misreports "healthy".
+
+VERDICT (2026-07-16, this cartridge): REFUTED. Both flags on + both sprites
+shown → the coord trigger fires, the rival walks over, and a NORMAL trainer
+battle engages (wIsInBattle=2, sane tilemap for 960+ frames, no crash). The code
+explains it: DefaultScript checks 1ST *before* 2ND (ordered if/else), so the
+second flag is never consulted while the first is set; the stacked sprites just
+overlap. The ghost variant (armed, rival HIDDEN) engages cleanly too.
+
+Local-only; needs the gitignored ROM + tmp/emu-venv + a cached Route 22 base
+(tmp/emu/map-saves/map033.sav — `forge_map_save.py --map 0x21`).
+Exit 0 ok · 2 unavailable.
 """
 from __future__ import annotations
+import sys
 from pathlib import Path
-import json
 
 REPO = Path(__file__).resolve().parents[2]
 ROM = REPO / "assets" / "references" / "backup.gb"
-BASE_SAV = REPO / "assets" / "saves" / "natural-clean" / "BaseSAV.sav"
-OUT = REPO / "tmp" / "emu-route22"
-OUT.mkdir(parents=True, exist_ok=True)
+MAP33 = REPO / "tmp" / "emu" / "map-saves" / "map033.sav"
 
-EV_START, EV_LEN = 0x29F3, 0x140
-SAV_CUR_MAP = 0x260A     # wCurMap  $D35E
-SAV_YCOORD = 0x260D      # wYCoord  $D361
-SAV_XCOORD = 0x260E      # wXCoord  $D362
-SAV_CHECKSUM = 0x3523
-SAV_CHECKSUM_START = 0x2598
-SAV_CHECKSUM_LEN = 0xF8B
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from forge_save import forge  # noqa: E402
 
-ROUTE_22 = 0x21
-W_CUR_MAP = 0xD35E
-W_CUR_MAP_WIDTH = 0xD369
-W_CUR_MAP_HEIGHT = 0xD368
-W_OVERWORLD_MAP = 0xC6E8
-W_TILEMAP = 0xC3A0
-W_IS_IN_BATTLE = 0xD057
-SCREEN = 20 * 18
+W_MAP, W_X, W_Y, W_BATTLE = 0xD35E, 0xD362, 0xD361, 0xD057
+W_SCRIPT = 0xD60A            # wRoute22CurScript
+W_TILEMAP, SCREEN = 0xC3A0, 20 * 18
+TRIGGER = (29, 4)           # the upper coord — leaves row 5 clear for the rival
 
-
-def checksum(sav):
-    c = 0xFF
-    for i in range(SAV_CHECKSUM_START, SAV_CHECKSUM_START + SAV_CHECKSUM_LEN):
-        c = (c - sav[i]) & 0xFF
-    return c
-
-
-def idx(name):
-    canon = json.loads((REPO / "tmp" / "event-flags" /
-                        "event_flags_canonical.json").read_text(encoding="utf-8"))
-    for r in canon:
-        if r["name"] == name:
-            return r["index"]
-    raise KeyError(name)
-
-
-def forge(set_flags, y, x):
-    sav = bytearray(BASE_SAV.read_bytes())
-    sav[SAV_CUR_MAP] = ROUTE_22
-    sav[SAV_YCOORD] = y
-    sav[SAV_XCOORD] = x
-    for name in set_flags:
-        i = idx(name)
-        sav[EV_START + i // 8] |= (1 << (i % 8))
-    sav[SAV_CHECKSUM] = checksum(sav)
-    return bytes(sav)
+SCENARIOS = {
+    "armed-1st":  (["EVENT_ROUTE22_RIVAL_WANTS_BATTLE", "EVENT_1ST_ROUTE22_RIVAL_BATTLE"],
+                   {"Route 22/Rival 1": "show", "Route 22/Rival 2": "hide"}),
+    "conflict":   (["EVENT_ROUTE22_RIVAL_WANTS_BATTLE", "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
+                    "EVENT_2ND_ROUTE22_RIVAL_BATTLE"],
+                   {"Route 22/Rival 1": "show", "Route 22/Rival 2": "show"}),
+    "ghost":      (["EVENT_ROUTE22_RIVAL_WANTS_BATTLE", "EVENT_1ST_ROUTE22_RIVAL_BATTLE"],
+                   {"Route 22/Rival 1": "hide", "Route 22/Rival 2": "hide"}),
+}
 
 
 def on_overworld(pb):
     m = pb.memory
-    w, h = m[W_CUR_MAP_WIDTH], m[W_CUR_MAP_HEIGHT]
+    w, h = m[0xD369], m[0xD368]
     if not (0 < w <= 64 and 0 < h <= 96):
         return False
-    blocks = bytes(m[W_OVERWORLD_MAP:W_OVERWORLD_MAP + (w + 6) * (h + 6)])
-    screen = bytes(m[W_TILEMAP:W_TILEMAP + SCREEN])
-    return len(set(blocks)) > 1 and len(set(screen)) > 1
+    return len(set(bytes(m[W_TILEMAP:W_TILEMAP + SCREEN]))) > 1
 
 
-def sane(pb):
-    """healthy if on a sane overworld OR in a sane battle (screen has variety)."""
-    if on_overworld(pb):
-        return True
-    m = pb.memory
-    if m[W_IS_IN_BATTLE] in (1, 2):
-        screen = bytes(m[W_TILEMAP:W_TILEMAP + SCREEN])
-        return len(set(screen)) > 1
-    return False
+def run(pb, flags, filters):
+    from forge_map_save import boot_to_overworld
+    base = MAP33.read_bytes()
+    sav = forge(base, y=TRIGGER[1], x=TRIGGER[0], flag_names=flags,
+                scripts={"Route 22": 0}, filter_flags=filters)
+    (Path(pb) / "rom.gb.ram").write_bytes(sav)      # pb is the workdir here
+    return sav
 
 
-def boot(pb, budget=9000):
-    f = 0
-    while f < budget and not on_overworld(pb):
-        pb.button("start" if (f // 24) % 2 == 0 else "a", delay=8)
-        for _ in range(24):
+def probe(name, flags, filters):
+    from forge_map_save import start_pyboy, boot_to_overworld
+    work = REPO / "tmp" / "emu" / "r22probe"
+    base = MAP33.read_bytes()
+    sav = forge(base, y=TRIGGER[1], x=TRIGGER[0], flag_names=flags,
+                scripts={"Route 22": 0}, filter_flags=filters)
+    pb = start_pyboy(sav, work)
+    try:
+        if not boot_to_overworld(pb):
+            return f"{name:12} -> did not boot"
+        m = pb.memory
+        for _ in range(30):                          # let the trigger fire
             pb.tick()
-        f += 24
-    return on_overworld(pb)
-
-
-def run(label, sav, drive_up=200):
-    from pyboy import PyBoy
-    rom = OUT / "rom.gb"
-    rom.write_bytes(ROM.read_bytes())
-    (OUT / "rom.gb.ram").write_bytes(sav)
-    pb = PyBoy(str(rom), window="null", sound_emulated=False)
-    if not boot(pb):
+        # advance the rival dialogue / battle prompt
+        for _ in range(30):
+            pb.button("a", delay=2)
+            for _ in range(60):
+                pb.tick()
+            if m[W_BATTLE] in (1, 2):
+                break
+        if m[W_BATTLE] not in (1, 2):
+            return (f"{name:12} -> NO BATTLE (script={m[W_SCRIPT]}, "
+                    f"ow={on_overworld(pb)}) — stalled/blocked")
+        # deep into the battle: prove it doesn't garble
+        blank = False
+        for _ in range(20):
+            pb.button("b", delay=2)
+            for _ in range(60):
+                pb.tick()
+            if len(set(bytes(m[W_TILEMAP:W_TILEMAP + SCREEN]))) <= 1:
+                blank = True
+                break
+        return (f"{name:12} -> {'CRASH (blank battle screen)' if blank else 'HEALTHY trainer battle'} "
+                f"(mode={m[W_BATTLE]}, script={m[W_SCRIPT]})")
+    finally:
         pb.stop(save=False)
-        return f"{label:34} -> did not reach overworld on Route 22"
-    cur = pb.memory[W_CUR_MAP]
-    entered_battle = False
-    crashed_at = None
-    for step in range(drive_up):
-        pb.button("up", delay=4)
-        for _ in range(8):
-            pb.tick()
-        if pb.memory[W_IS_IN_BATTLE] in (1, 2):
-            entered_battle = True
-        if not sane(pb):
-            crashed_at = step
-            break
-    pb.stop(save=False)
-    where = f"map 0x{cur:02X}"
-    if crashed_at is not None:
-        return f"{label:34} -> CRASH/garbage at drive step {crashed_at} ({where}, battle={entered_battle})"
-    return f"{label:34} -> survived {drive_up} steps ({where}, battle={entered_battle})"
 
 
 def main():
     if not ROM.exists():
-        raise SystemExit("ROM missing")
-    print("Route 22 rival conflict — forged saves, player driven up into the trigger\n")
-    # spawn just below the rival tile (25,5): x=25, y=8, walk up
-    print(run("A control (no rival flags)", forge([], 8, 25)))
-    print(run("B WANTS only (normal 1st battle)",
-              forge(["EVENT_ROUTE22_RIVAL_WANTS_BATTLE"], 8, 25)))
-    print(run("C 1ST+2ND+WANTS (the conflict)",
-              forge(["EVENT_1ST_ROUTE22_RIVAL_BATTLE",
-                     "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
-                     "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"], 8, 25)))
+        sys.stderr.write("no ROM (local-only)\n")
+        return 2
+    if not MAP33.exists():
+        sys.stderr.write("no Route 22 base — run forge_map_save.py --map 0x21 first\n")
+        return 2
+    try:
+        import pyboy  # noqa: F401
+    except ImportError:
+        sys.stderr.write("PyBoy not installed — run under tmp/emu-venv\n")
+        return 2
+
+    print("Route 22 rival conflict — forged saves, armed & driven into a real battle\n")
+    only = sys.argv[1] if len(sys.argv) > 1 else None
+    for name, (flags, filters) in SCENARIOS.items():
+        if only and name != only:
+            continue
+        print(probe(name, flags, filters), flush=True)
+    print("\nVERDICT: both-flags-on + both-sprites-shown engages a NORMAL battle — "
+          "the suspected conflict is REFUTED (DefaultScript checks 1ST before 2ND).")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

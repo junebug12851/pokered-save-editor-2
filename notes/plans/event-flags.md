@@ -160,6 +160,29 @@ save), and (2) **on the flags themselves** — each flag in an active conflict w
 indicator/badge (colour by severity; suspected vs confirmed distinguished). Toggling a flag re-evaluates
 conflicts live. This is separate from, and on top of, the **bulk-set crash guard** (Phase 4).
 
+### ✅ The founding case — Route 22 rival — is CONSOLE-ADJUDICATED: REFUTED (2026-07-16)
+
+The archetype that *started* this whole system was tested on the cartridge the moment the forge could
+arm it (scripts + missable filter flags, 2026-07-16), and it came back **not a conflict**. Armed with
+both battle flags on and both `SPRITE_BLUE` shown, standing on the (29,4) coord trigger, the ambush
+fires and a **normal trainer battle engages** — no crash, no softlock, sane through 960+ frames
+(`scripts/emu/probe_route22_conflict.py`; the full mechanics + the forge-vs-cutscene boundary are in
+[`../reference/forged-saves.md`](../reference/forged-saves.md)). The reason is in the script itself:
+`Route22DefaultScript` checks `EVENT_1ST` **before** `EVENT_2ND` — an ordered if/else, so the second
+flag is simply never consulted while the first is set; the stacked sprites only overlap visually.
+`tmp/event-flags/conflicts.json` marks it `refuted / severity none` with the evidence.
+
+**Two things this settles for the system:**
+
+1. The **suspected → confirmed/refuted** pipeline works end-to-end, and **`refuted` is a real status**
+   the schema must carry (not every static suspicion survives the console). The seed heuristic
+   (same-object/same-tile 1ST/2ND ⇒ suspected-crash) **over-fires** on ordered if/else dispatch —
+   worth a note in `analyze_flag_contradictions.py` so the panel doesn't cry wolf on every rival.
+2. Reproducing it defined **what a forge can drive** (coord triggers, from a booted save) and **what it
+   can't** (multi-frame cutscenes need A-mashing + correct spawn geometry, or they stall and a
+   settle-only harness misreads "healthy"). Confirming a *crash* conflict will need the same armed-and-
+   driven probe shape, not the batch runner.
+
 ## Open questions for project leadership (to settle before the phases that need them)
 
 - **Data home** (Phase 7): one combined events JSON vs. standalone-linked — your lean is "one file if

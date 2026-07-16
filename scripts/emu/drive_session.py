@@ -86,12 +86,13 @@ def do_boot(req: dict) -> dict:
     sav_path = Path(req["sav"]) if req.get("sav") else BASE_SAV
     base = sav_path.read_bytes()
     needs_forge = any(k in req for k in ("map", "x", "y", "flags", "flag_indices",
-                                         "all_flags", "pokes"))
+                                         "all_flags", "pokes", "scripts", "filter_flags"))
     if needs_forge:
         pokes = {_int(k): _int(v) for k, v in (req.get("pokes") or {}).items()}
         base = forge(base, req.get("map"), req.get("y"), req.get("x"),
                      req.get("flags"), req.get("flag_indices"),
-                     bool(req.get("all_flags")), pokes)
+                     bool(req.get("all_flags")), pokes,
+                     scripts=req.get("scripts"), filter_flags=req.get("filter_flags"))
     (work / "rom.gb.ram").write_bytes(base)
 
     pb = PyBoy(str(rom), window="null", sound_emulated=False)

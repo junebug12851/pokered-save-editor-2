@@ -11,6 +11,20 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 `tst_world` now 19. New local-only member: **`tst_flag_scenarios`** (5/5 with the ROM,
 SKIPs without it).
 
+### ⚔️ ROUTE 22 RIVAL CONFLICT — console-adjudicated REFUTED (2026-07-16)
+
+The founding case of the Phase 11 conflict system, settled on the cartridge — the "hard thing" the
+scripts + missables were needed for. The forge gained **total trigger control** (`scripts` +
+`filter_flags` in `forge_save.forge()`, wired through `emu_boot`/`emu_forge_save`), which let
+`scripts/emu/probe_route22_conflict.py` **arm the ambush and drive it into the battle**: both battle
+flags on + both `SPRITE_BLUE` shown, player on the (29,4) trigger → coord trigger fires, rival walks
+over, **normal trainer battle engages, no crash** (sane 960+ frames). `Route22DefaultScript` checks
+1ST before 2ND (ordered if/else), so the second flag is never consulted. `conflicts.json`:
+`suspected → refuted`. Lessons (in [`reference/forged-saves.md`](reference/forged-saves.md)): a forge
+drives coord triggers but not cutscenes without correct geometry + A-mashing; a **settle-only harness
+misreads the rival's text box as "healthy"** (why 2026-07-15 was inconclusive). Plan verdict:
+[`plans/event-flags.md`](plans/event-flags.md) → Phase 11.
+
 ### 🗺️📜 MAP SCRIPTS + MISSABLES on the Map Storage panel — BUILT (2026-07-16, `0.41.0-alpha`)
 
 Twilight's brief, delivered: every map with storage is a page (~100). Top of each page: **the map's

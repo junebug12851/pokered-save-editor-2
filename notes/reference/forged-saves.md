@@ -94,6 +94,46 @@ Flags go by pret `EVENT_*` name (the canonical import), anything else by raw pok
 at least generally right"** is inherited from BaseSAV's genuine progression, with the scenario's
 specific flags layered on top.
 
+## Total trigger control — scripts + filter flags (2026-07-16)
+
+`forge()` also takes **`scripts`** (per-map script step, keyed by map name or entry ind:
+`{"Route 22": 0}` → `wRoute22CurScript`) and **`filter_flags`** (missable visibility, keyed by
+`"Map/Name"` or bit index: `{"Route 22/Rival 1": "show"}` → `wToggleableObjectFlags`, bit set =
+hidden). Together with coords + event flags, that is enough to **arm a scripted cutscene** — the
+last piece that a bare map+flags forge was missing. Exposed on `emu_boot(scripts=…,
+filter_flags=…)` and `emu_forge_save(…)`.
+
+### What a forge CAN and CANNOT drive (learned reproducing the Route 22 ambush)
+
+A forge boots a *static* state; a scripted event is a *multi-frame cutscene*. Reproducing one taught
+the boundary, and it is worth knowing:
+
+- **Coord triggers fire from a booted save.** `Route22DefaultScript` runs every overworld frame and
+  checks the player's coords — so spawning on the trigger tile (with the script byte = DEFAULT and
+  the arming flags set) fires the cutscene; you do not have to walk in from the connecting map.
+- **Geometry matters — a bad spawn softlocks.** The Route 22 rival walks RIGHT from (25,5) to (29,5).
+  Spawn the player **on the upper trigger (29,4)** so row 5 is clear; spawn on (29,5) and the rival's
+  walk is blocked forever (a forge artifact, not a game bug). `dbmapcoord x,y` stores `db y,x`.
+- **Cutscenes have text boxes — you must press A.** The ambush shows *"HIM: Hey!"* and waits. A
+  settle-only harness sits on that box forever and **misreports "healthy"** — the exact trap that made
+  the 2026-07-15 run inconclusive. The interactive probes mash A/B; `run_flag_scenarios` (settle-only)
+  cannot, so cutscene battles are driven by a dedicated probe, not the batch runner.
+- **A hidden-sprite armed battle stalls.** Arming a battle whose rival object is filtered *hidden*
+  leaves the cutscene waiting on a walk that never happens (`ghost` variant) — an invalid combo you
+  could not reach in normal play, and a **stall, not a crash**.
+
+### The Route 22 rival conflict: REFUTED on the cartridge
+
+The long-suspected conflict (event-flags plan Phase 11 / `conflicts.json`) — both rival-battle flags
+on + both `SPRITE_BLUE` stacked at (25,5) crashes — is **refuted**. Armed and driven into the battle
+(`scripts/emu/probe_route22_conflict.py`): both flags on + both sprites shown → the coord trigger
+fires, the rival walks over, and a **normal trainer battle engages** (`wIsInBattle=2`, sane tilemap
+for 960+ frames, no crash/garble). The code says why: `DefaultScript` checks `EVENT_1ST` *before*
+`EVENT_2ND` (an ordered if/else, not a collision), so the second flag is never consulted while the
+first is set; the two sprites merely overlap. `conflicts.json` updated `suspected → refuted` with the
+console evidence. This is the whole point of the conflicts system working: a suspicion, armed with
+real state, adjudicated by the machine.
+
 ## Limits / future
 
 - **Entry scripts:** a map with an entry cutscene dumps whatever state the settle window reaches;

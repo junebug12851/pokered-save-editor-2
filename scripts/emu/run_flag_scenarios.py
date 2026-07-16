@@ -90,7 +90,9 @@ from forge_save import forge as fs_forge  # noqa: E402  (the ONE shared forge)
 
 def forge_for(sc, base_default: bytes) -> bytes:
     """Build the scenario's save: console-authored map base when 'map' is given,
-    coords through relocate() (derived bytes stay in sync), then the flags."""
+    coords through relocate() (derived bytes stay in sync), then the flags, the
+    per-map script steps ('scripts': {"Route 22": 0}) and the filter flags
+    ('filterFlags': {"Route 22/Rival 1": "show"})."""
     mid = sc.get("map")
     mid = int(mid, 16) if isinstance(mid, str) else mid
     base = map_base(mid) if mid is not None else base_default
@@ -98,7 +100,9 @@ def forge_for(sc, base_default: bytes) -> bytes:
     return fs_forge(base,
                     y=sc.get("y"), x=sc.get("x"),
                     flag_names=None if flags == "ALL" else (flags or None),
-                    all_flags=flags == "ALL")
+                    all_flags=flags == "ALL",
+                    scripts=sc.get("scripts"),
+                    filter_flags=sc.get("filterFlags"))
 
 
 def on_overworld(pb):

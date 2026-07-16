@@ -28,6 +28,35 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 BASE_SAV = REPO / "assets" / "saves" / "natural-clean" / "BaseSAV.sav"
 CANON = REPO / "tmp" / "event-flags" / "event_flags_canonical.json"
+SCRIPTS_JSON = REPO / "projects" / "db" / "assets" / "data" / "scripts.json"
+MISSABLES_JSON = REPO / "projects" / "db" / "assets" / "data" / "missables.json"
+
+SCRIPTS_START = 0x289C     # w<Map>CurScript block (97 values; layout = scripts.json)
+FILTER_START = 0x2852      # wToggleableObjectFlags (filter flags; bit SET = HIDDEN)
+
+
+def script_offsets() -> dict:
+    """Per-map script-progress save offsets, keyed by BOTH the entry ind and its
+    name(s) — the 0x289C layout walk (sizes + skips), pinned byte-exact by
+    tst_world::scripts_writeExactlyTheirByte."""
+    out = {}
+    off = SCRIPTS_START
+    for e in json.loads(SCRIPTS_JSON.read_text(encoding="utf-8")):
+        out[e["ind"]] = off
+        out[e["name"]] = off
+        for mn in e.get("maps") or []:
+            out[mn] = off
+        off += e.get("size", 1) + e.get("skip", 0)
+    return out
+
+
+def filter_flag_index() -> dict:
+    """Filter-flag ("missable") bit indexes keyed by ind and by 'Map/Name'."""
+    out = {}
+    for e in json.loads(MISSABLES_JSON.read_text(encoding="utf-8")):
+        out[e["ind"]] = e["ind"]
+        out[f"{e['map']}/{e['name']}"] = e["ind"]
+    return out
 
 EV_START, EV_LEN = 0x29F3, 0x140          # wEventFlags in the file (320 bytes)
 SAV_CUR_MAP, SAV_Y, SAV_X = 0x260A, 0x260D, 0x260E
@@ -91,7 +120,9 @@ def forge(base: bytes,
           flag_names: list[str] | None = None,
           flag_indices: list[int] | None = None,
           all_flags: bool = False,
-          pokes: dict[int, int] | None = None) -> bytes:
+          pokes: dict[int, int] | None = None,
+          scripts: dict | None = None,
+          filter_flags: dict | None = None) -> bytes:
     """Return a resealed save forged from `base`. Only the requested bytes move.
 
     Coordinates go through relocate() — block coords and the view pointer stay in
@@ -127,6 +158,27 @@ def forge(base: bytes,
         relocate(sav,
                  sav[SAV_X] if x is None else x,
                  sav[SAV_Y] if y is None else y)
+    # Per-map script progress: {"Route 22": 0} or {22: 0} — the map's story step.
+    if scripts:
+        offs = script_offsets()
+        for key, val in scripts.items():
+            if key not in offs:
+                raise KeyError(f"unknown map script: {key!r}")
+            sav[offs[key]] = int(val) & 0xFF
+    # Filter flags (missables): {"Route 22/Rival 1": "show"} or {34: "hide"} —
+    # bit SET = HIDDEN in wToggleableObjectFlags.
+    if filter_flags:
+        idx = filter_flag_index()
+        for key, state in filter_flags.items():
+            if key not in idx:
+                raise KeyError(f"unknown filter flag: {key!r}")
+            bit = idx[key]
+            hidden = state in (True, 1) or (isinstance(state, str)
+                                            and state.lower() in ("hide", "hidden"))
+            if hidden:
+                sav[FILTER_START + bit // 8] |= (1 << (bit % 8))
+            else:
+                sav[FILTER_START + bit // 8] &= ~(1 << (bit % 8))
     for addr, val in (pokes or {}).items():
         if not 0 <= addr < len(sav):
             raise ValueError(f"poke address out of range: {addr:#x}")

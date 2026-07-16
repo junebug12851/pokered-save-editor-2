@@ -16,37 +16,17 @@
     "note": "every event flag set, loaded in Pallet — tests the LOAD path only"
   },
   {
-    "name": "route22-control",
+    "name": "route22-armed-conflict",
     "map": "0x21",
-    "y": 8,
-    "x": 25,
-    "flags": [],
-    "drive": ["up:8"],
+    "y": 4,
+    "x": 29,
+    "flags": ["EVENT_ROUTE22_RIVAL_WANTS_BATTLE",
+              "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
+              "EVENT_2ND_ROUTE22_RIVAL_BATTLE"],
+    "scripts": { "Route 22": 0 },
+    "filterFlags": { "Route 22/Rival 1": "show", "Route 22/Rival 2": "show" },
+    "drive": [],
     "expect": "healthy",
-    "note": "console-authored Route 22 base (forge_map_save), player relocated below the rival tile, walked up past it — no rival flags set"
-  },
-  {
-    "name": "route22-rival-conflict",
-    "map": "0x21",
-    "y": 8,
-    "x": 25,
-    "flags": [
-      "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
-      "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
-      "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"
-    ],
-    "drive": ["up:8"],
-    "expect": "unknown",
-    "note": "both Route 22 rival battles' flags on — the SUSPECTED conflicting pair (event-flags plan, Phase 11). First console run (2026-07-16): healthy but INCONCLUSIVE — the battle never triggered: the up-walk from (25,8) is blocked by terrain (ledge/hill nook, screenshot-verified), and with both battles 'done' the rival objects hide anyway. Reproducing the suspicion needs the map-SCRIPT state that spawns the rival (wCurMapScript / the scripts import, not yet done) plus a walkable approach"
-  },
-  {
-    "name": "all-flags-on-route22",
-    "map": "0x21",
-    "y": 8,
-    "x": 25,
-    "flags": "ALL",
-    "drive": ["up:8"],
-    "expect": "unknown",
-    "note": "all flags on AND standing on Route 22 — drive into the rival trigger"
+    "note": "THE (former) SUSPECTED CONFLICT — CONSOLE-ADJUDICATED REFUTED 2026-07-16. Both battle flags on + both SPRITE_BLUE shown, player on the (29,4) coord trigger. NOTE: this settle-only runner sits on the rival's 'HIM: Hey!' text box (script advances to 1 and waits) and reports healthy — it does NOT reach the battle. The AUTHORITATIVE test is scripts/emu/probe_route22_conflict.py, which mashes A into the battle and confirms a normal trainer battle engages (no crash). Kept here as a load-path + no-crash regression only"
   }
 ]

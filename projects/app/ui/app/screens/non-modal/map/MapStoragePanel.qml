@@ -26,8 +26,9 @@
  *      table, so an out-of-range step is a real crash risk; shown, never refused).
  *   2. **The legacy minigame bytes** where the map has them (Vermilion trash cans, Cinnabar quiz,
  *      Safari counters -- `world.local`; notes/reference/gym-safari-state.md).
- *   3. **The map's MISSABLES** -- its hide/show object bits (`wToggleableObjectFlags`, 32 bytes at
- *      save 0x2852, `world.missables`; bit SET = HIDDEN). Each a Shown switch with a description,
+ *   3. **The map's FILTER FLAGS** (Twilight's term; pret/the game call them "missables") -- its
+ *      hide/show object bits (`wToggleableObjectFlags`, 32 bytes at save 0x2852, `world.missables`;
+ *      bit SET = HIDDEN). Each a Shown switch with a description,
  *      pret's known-issue oddities flagged amber, and the linked event flags surfaced live (the
  *      conflict hooks: a flag that says "done" beside an object that says otherwise is exactly the
  *      kind of combination the conflicts system watches).
@@ -47,7 +48,7 @@ Item {
   readonly property string panelInfo: qsTr(
     "Everything the save stores about one specific place: the map's script progress (how far its "
     + "story events have advanced), its minigame values (trash cans, quiz, Safari counters), and "
-    + "its missables — which people, items and Pokémon are on the map at all.\n\n"
+    + "its filter flags — which people, items and Pokémon are on the map at all.\n\n"
     + "Pick a map; the one you're standing on is pre-selected when it has storage. Script steps "
     + "read like a story — each option says what's happening at that stage.\n\n"
     + "Custom values are always available and never refused; values the game can't handle are "
@@ -519,11 +520,12 @@ Item {
           }
         }
 
-        // ── MISSABLES — who's on this map at all ───────────────────────────────────────────────
+        // ── FILTER FLAGS — who's on this map at all ────────────────────────────────────────────
         // The map's hide/show object bits (wToggleableObjectFlags, save 0x2852; bit SET = HIDDEN,
-        // so the switch shows the intuitive direction: checked = on the map). Sorted into its own
-        // group per Twilight's 2026-07-16 brief. pret's known-issue oddballs wear an amber note;
-        // linked event flags are surfaced live (the missable<->flag conflict hooks).
+        // so the switch shows the intuitive direction: checked = on the map). "Filter flags" is
+        // Twilight's preferred term (2026-07-16) for what the game/pret calls missables — the
+        // model classes keep the pret name; the UI says filter flags. Sorted into its own group;
+        // pret's known-issue oddballs wear an amber note; linked event flags surfaced live.
         ColumnLayout {
           id: missableSection
           Layout.fillWidth: true
@@ -544,7 +546,7 @@ Item {
           }
 
           Label {
-            text: qsTr("Missables — who's on the map")
+            text: qsTr("Filter flags — who's on the map")
             font.pixelSize: 12
             font.bold: true
             color: brg.settings.textColorDark
