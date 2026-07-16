@@ -38,6 +38,7 @@
 #include <pse-savefile/expanded/world/worldmissables.h>
 #include <pse-savefile/expanded/world/worldgeneral.h>
 #include <pse-savefile/expanded/world/worldscripts.h>
+#include <pse-savefile/expanded/world/worldlocal.h>
 
 using namespace pse_test;
 
@@ -62,6 +63,17 @@ private slots:
   void missables_roundTrip();
   void general_roundTrip();
   void scripts_roundTrip();
+  void local_roundTrip();
+  void local_writesExactlyItsBytes();
+
+private:
+  /// "0xNNNN, 0xNNNN" for an offset list, for readable failure messages.
+  static QString describeDiff(const QVector<int>& offs)
+  {
+    QStringList s;
+    for(int i : offs) s << QStringLiteral("0x%1").arg(i, 4, 16, QChar('0'));
+    return s.join(QStringLiteral(", "));
+  }
 };
 
 void TestWorld::initTestCase()
@@ -254,6 +266,74 @@ void TestWorld::scripts_roundTrip()
   auto* s2 = sf.dataExpanded->world->scripts;
   for(int i = 0; i < n; i++)
     QVERIFY2(s2->scriptsAt(i) == (i % 100), qPrintable(QStringLiteral("script %1").arg(i)));
+}
+
+// WorldLocal -- the six map-specific minigame bytes (Vermilion locks, Cinnabar quiz opponent, Safari
+// steps/balls/game-over). Domain + console verification: notes/reference/gym-safari-state.md.
+void TestWorld::local_roundTrip()
+{
+  SaveFile sf; loadInto(sf, m_orig);
+  auto* wl = sf.dataExpanded->world->local;
+  wl->lock1 = 10;
+  wl->lock2 = 12;
+  wl->quizOpp = 7;
+  wl->safariSteps = 758;      // 0x02F6 -- exercises the BIG-endian word
+  wl->safariGameOver = true;
+  wl->safariBallCount = 5;
+
+  sf.flattenData(); sf.expandData();
+
+  auto* wl2 = sf.dataExpanded->world->local;
+  QCOMPARE(wl2->lock1, 10);
+  QCOMPARE(wl2->lock2, 12);
+  QCOMPARE(wl2->quizOpp, 7);
+  QCOMPARE(wl2->safariSteps, 758);
+  QCOMPARE(wl2->safariGameOver, true);
+  QCOMPARE(wl2->safariBallCount, 5);
+
+  // wSafariSteps is stored HIGH byte first (pret/pokered `dw` written HIGH then LOW; console-verified):
+  // 758 == 0x02F6 -> 0x29B9 = 0x02, 0x29BA = 0xF6.
+  QCOMPARE(int(sf.data[0x29B9]), 0x02);
+  QCOMPARE(int(sf.data[0x29BA]), 0xF6);
+}
+
+/// Keystone: change ONE field, flatten, and diff the whole 32 KB against an untouched resave --
+/// exactly the field's own byte(s) move, nothing else. (The safari word moves two; a flag moves its
+/// one byte.) Offsets are WRAM - 0xAD54; all six verified in notes/reference/gym-safari-state.md.
+void TestWorld::local_writesExactlyItsBytes()
+{
+  SaveFile base; loadInto(base, m_orig);
+  base.flattenData();
+  const QByteArray baseline = snapshot(base);
+
+  struct Case { QString key; QVector<int> offs; };
+  const QVector<Case> cases = {
+    { QStringLiteral("lock1"),           { 0x29EF } },
+    { QStringLiteral("lock2"),           { 0x29F0 } },
+    { QStringLiteral("quizOpp"),         { 0x2CE4 } },
+    { QStringLiteral("safariSteps"),     { 0x29B9, 0x29BA } },
+    { QStringLiteral("safariGameOver"),  { 0x2CF2 } },
+    { QStringLiteral("safariBallCount"), { 0x2CF3 } },
+  };
+
+  for(const Case& c : cases)
+  {
+    SaveFile sf; loadInto(sf, m_orig);
+    auto* wl = sf.dataExpanded->world->local;
+    if(c.key == QStringLiteral("lock1"))                wl->lock1 = 10;          // baseline 4
+    else if(c.key == QStringLiteral("lock2"))           wl->lock2 = 12;          // baseline 7
+    else if(c.key == QStringLiteral("quizOpp"))         wl->quizOpp = 7;         // baseline 0
+    else if(c.key == QStringLiteral("safariSteps"))     wl->safariSteps = 758;   // baseline 468; both bytes move
+    else if(c.key == QStringLiteral("safariGameOver"))  wl->safariGameOver = true; // baseline false
+    else if(c.key == QStringLiteral("safariBallCount")) wl->safariBallCount = 5; // baseline 30
+
+    sf.flattenData();
+    const QVector<int> moved = diffOffsets(baseline, snapshot(sf));
+
+    QVERIFY2(moved == c.offs,
+             qPrintable(QStringLiteral("%1: moved {%2}, expected {%3}")
+                        .arg(c.key, describeDiff(moved), describeDiff(c.offs))));
+  }
 }
 
 QTEST_GUILESS_MAIN(TestWorld)
