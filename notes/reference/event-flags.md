@@ -227,6 +227,20 @@ them: `predef ShowObject`/`HideObject <objconst>` guarded by `CheckEvent <flag>`
 link. The object's 6th arg tells its **kind**: a plain **text id** (NPC/sign-like), `OPP_<class>`
 (**trainer** — has a battle script), or `ITEM` (**item ball** — tied to its got-item flag).
 
+**Object show/hide runs through the missable-object toggle system — a distinct bitfield (verified
+2026-07-15).** A map object that appears/disappears is not toggled by `wEventFlags` directly. The chain
+is: `constants/toggle_constants.asm` (a **global** `TOGGLE_*` index list — `TOGGLE_PALLET_TOWN_OAK` = 0,
+…) → `data/maps/toggleable_objects.asm` (`toggleable_objects_for <MAP>` blocks of
+`toggle_object_state <object_id>, ON/OFF`, in the same global order) → the runtime bit lives in
+**`wMissableObjectFlags`**, which is **NOT** `wEventFlags`. The map script does `CheckEvent <flag> …
+ld a, TOGGLE_… ; ld [wToggleableObjectIndex], a ; predef ShowObject/HideObject` — so an **event flag
+gates** the missable toggle, but the visible/hidden state itself is a *missable-object* bit. 33 of the 34
+scripts that toggle objects use `TOGGLE_*`. **Consequence for the hotspot:** an object is "conditional"
+(appears/disappears) iff it is in the toggle table; the *event flag* that governs it comes from the
+script's `CheckEvent`-before-toggle. Resolving `TOGGLE_ → (map, object)` from `toggleable_objects.asm`
+(parallel to `toggle_constants.asm`) is the clean way to mark conditional objects — the next Phase 9 step.
+(`wMissableObjectFlags` is itself a separate save field worth its own note if it ever gets an editor.)
+
 **Event-flag attachment (drives the Phase 10 outline colour).** Every sprite/object/item gets its own
 outline; an object **tied to one or more event flags** gets a **different colour** to signal it is
 flag-governed (not a plain sprite/item). An object is flag-attached when a `CheckEvent <flag>`-guarded

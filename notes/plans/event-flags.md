@@ -86,12 +86,17 @@ flag groups + group toggles, search/filter, classification badges — including 
 group at the bottom of each map — crash notices at panel + toggle level; themed map-screen chassis). No
 build until the design is written and approved.
 
-**Phase 9 — Flag ↔ map location research (new, briefed 2026-07-15).** Extract, per flag, its associated
-**(map, X, Y) + object/kind** from pret: pair each map's `def_object_events` (object coordinates) with
-the script's `ShowObject`/`HideObject`-on-`CheckEvent` logic, plus item-ball/hidden-item events and
-trigger-tile/grass events. Handle **one flag → several boxes** (Oak's multiple spots), **several flags →
-one box** (a group), and **no box** (story/global). Research + a `maps.json`-style association dataset,
-grounded in the reference note's "Flag ↔ map location & object" section.
+**Phase 9 — Flag ↔ map location research (new, briefed 2026-07-15).** 🟡 In progress.
+`scripts/extract_flag_locations.py` → `tmp/event-flags/flag_locations.json`.
+- ✅ **Object inventory DONE (exact):** all **223 maps, 918 objects** — each with tile (X, Y), sprite,
+  movement, and kind (**334 trainers, 106 item balls, 478 NPCs**). Oak's Lab confirmed: the 3 starter
+  Poké Balls + **Oak at (5,2) and (5,10)**. This is the coordinate foundation the hotspots need.
+- 🔜 **Conditional-object + flag-gating (next):** object show/hide runs through the **missable-object
+  toggle system** (`toggle_constants.asm` → `toggleable_objects.asm` → `wMissableObjectFlags`, a
+  *separate* bitfield), event-flag-**gated** via script `CheckEvent`. Resolve `TOGGLE_ → (map, object)`
+  from `toggleable_objects.asm` to mark conditional objects, then read the gating `CheckEvent` for the
+  governing flag. Item balls attach to their got-item flag. See the reference note's toggle-system
+  finding. Handle one-flag→many-boxes, many-flags→one-box, no-box.
 
 **Phase 10 — On-canvas flag hotspots (UI, needs Phase 9).** Draw a **clickable box on the map** at each
 flag's location; clicking opens the persistent-storage / events panel focused on that flag. The box is
