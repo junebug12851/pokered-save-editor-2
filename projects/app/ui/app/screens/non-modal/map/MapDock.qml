@@ -381,6 +381,8 @@ Item {
           objectName: "dockBtn_" + modelData.id   // the DEBUG harness drives the dock through these
           glyph: modelData.glyph
           tip: modelData.tip
+          // A panel may ask its rail icon to read as PRIMARY (filled at rest) -- Map Storage does.
+          primary: modelData.primary === true
           active: dock.open === modelData.id
 
           onClicked: dock.toggle(modelData.id)

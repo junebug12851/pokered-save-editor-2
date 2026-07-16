@@ -5,7 +5,7 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.40.3-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
+**Version:** `0.40.4-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**88/88**, 2026-07-15);
 `tst_connections` now 17.
@@ -20,22 +20,28 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 
 ## Current state (read this first)
 
-### 🧭 MAPS panel (gym/safari minigame bytes) — RESEARCHED, not built (2026-07-15)
+### 🧭 MAP STORAGE panel (gym/safari minigame bytes) — BUILT (2026-07-15, `0.40.4-alpha`)
 
-Twilight briefed a **Map Storage panel** (right dock) for six bytes — Vermilion trashcan switch 1/2,
-Cinnabar "next wrong answer", Safari game‑over, Safari balls, steps left. The accurate model (hers):
-**global state variables that are clearly map‑specific** — stored once save‑wide in the global
-**Main‑Data** block (persistent save data, not RAM scratch; not a per‑map Area slot), each belonging
-to one map, so the panel files each global byte under its owning map. Real names + verified offsets,
-the big‑endian `wSafariSteps` trap, the `wGymTrashCanIndex`‑is‑a‑decoy trap, and the
-armed‑vs‑inert behaviour in [`reference/gym-safari-state.md`](reference/gym-safari-state.md).
-✅ **Console‑verified** (`scripts/emu/probe_gym_safari_state.py`): **5 of 6 survive Continue** exactly
-(addresses + the big‑endian `wSafariSteps` pinned); **`wSafariZoneGameOver` is zeroed on load** —
-`OverworldLoop` `farcall`s `SafariZoneCheck` every frame, which zeroes it outside the zone — so it's
-**truly inert** (amber‑! group). Twilight's build direction: a **"Map Storage"** panel (right dock)
-with a **map dropdown** preselected to the current map, these shown as **persistent** (primary‑colour
-filled button + storage icon) not temporary. ⏳ **Owed before UI:** confirm the global model‑home +
-the panel's per‑map framing (global bytes surfaced under their maps). **No UI code written yet.**
+Twilight briefed a **Map Storage panel** (right dock) for six global-but-map-specific save bytes —
+Vermilion trashcan switch 1/2, Cinnabar "next wrong answer", Safari game‑over, Safari balls, steps
+left. The accurate model (hers): **global state variables that are clearly map‑specific** — stored once
+save‑wide in the global **Main‑Data** block (persistent, not RAM scratch; not a per‑map Area slot),
+each belonging to one map, so the panel files each global byte under its owning map. Research + verified
+offsets + the big‑endian `wSafariSteps` trap + the `wGymTrashCanIndex`‑is‑a‑decoy trap:
+[`reference/gym-safari-state.md`](reference/gym-safari-state.md). ✅ **Console‑verified**
+(`scripts/emu/probe_gym_safari_state.py`): **5 of 6 survive Continue** (addresses + big‑endian pinned);
+**`wSafariZoneGameOver` zeroed on load** (OverworldLoop → SafariZoneCheck every frame) → shown but
+**marked temporary**.
+
+**Built:** `MapStoragePanel.qml` (right dock, ▣ **primary‑filled** rail icon), a map combo listing only
+maps with storage (current pre‑selected), three per‑map pages (Vermilion Gym · Cinnabar Gym · combined
+Safari Zone), full byte range / hack values shown, each page stating its armed window. Model was already
+correct (`WorldLocal`); pinned byte‑exact by **`tst_world`** (`local_writesExactlyItsBytes`,
+`local_roundTrip` — 17/17). `world.h` now fully includes `worldlocal.h` (de‑opaque, so QML traverses
+`world.local`). `MapRailButton` gained a `primary` (filled‑at‑rest) style. Design: Phase 15 in
+[`plans/map-screen.md`](plans/map-screen.md). Green: `tst_qml_screens` 16/16, `tst_world` 17/17.
+Panel reviewed live (Vermilion page: values 4/7 = BaseSAV baseline, clean layout). ⏳ **Owed:
+Twilight's live pass** (drag/scroll/combo/temp‑flag can't be still‑reviewed).
 
 ### 🧱 LAYERS: "Components" → "Tiles"; the two "Warps" told apart, not merged (2026-07-15, `0.40.3-alpha`)
 

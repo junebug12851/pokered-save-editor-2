@@ -18,6 +18,10 @@
 #include "../../savefile_autoport.h"
 
 #include "./worldother.h"
+// Fully included (not just forward-declared) so QML can traverse `world.local.*` -- the same
+// de-opaque fix area.h uses for its children (see CLAUDE.md -> the "undefined chain" bug). The Map
+// Storage panel binds brg.file.data.dataExpanded.world.local directly.
+#include "./worldlocal.h"
 
 class SaveFile;
 

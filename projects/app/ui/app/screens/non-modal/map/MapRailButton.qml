@@ -35,6 +35,10 @@ Rectangle {
   property string tip: ""
   property bool active: false
   property bool enabledBtn: true
+  /// A PRIMARY button stays accent-filled at rest (not just outline-on-hover) -- used for the Map
+  /// Storage panel's icon, which Twilight asked to read as "filled, a storage button" so the rail
+  /// says this one holds persistent save storage. (Twilight, 2026-07-15.)
+  property bool primary: false
   property int size: 32
   /// A one-key shortcut, shown in the tooltip. The keys themselves are bound by the screen.
   property string shortcut: ""
@@ -47,6 +51,8 @@ Rectangle {
 
   color: !enabledBtn ? "transparent"
        : active      ? brg.settings.accentColor
+       : primary     ? (ma.containsPress ? Qt.darker(brg.settings.accentColor, 1.2)
+                                          : brg.settings.accentColor)
        : ma.containsPress ? "#22000000"
        : ma.containsMouse ? "#14000000"
        : "transparent"
@@ -59,7 +65,7 @@ Rectangle {
     anchors.centerIn: parent
     text: btn.glyph
     font.pixelSize: Math.round(btn.size * 0.5)
-    color: btn.active ? brg.settings.textColorLight : brg.settings.textColorDark
+    color: (btn.active || btn.primary) ? brg.settings.textColorLight : brg.settings.textColorDark
   }
 
   MouseArea {

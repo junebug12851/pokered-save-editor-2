@@ -359,14 +359,21 @@ Page {
           // MAP, so they live here with the other things you edit about it -- not in the Details panel
           // (that is for whatever is SELECTED). Briefed + researched 2026-07-15; reference/npc-character-state.md.
           { id: "charstate", glyph: "☺", title: qsTr("Character state"),
-            tip: qsTr("Character state — how the characters on this map behave: facing, scripted control, trainer battle") }
+            tip: qsTr("Character state — how the characters on this map behave: facing, scripted control, trainer battle") },
+          // ▣ MAP STORAGE — global save bytes that each belong to one map (Vermilion Gym trash-can
+          // switches, Cinnabar Gym quiz opponent, Safari Zone run counters). `primary: true` gives its
+          // rail icon the filled, accent-coloured "this holds persistent storage" look Twilight asked
+          // for (2026-07-15). Briefed + researched this session; reference/gym-safari-state.md.
+          { id: "storage", glyph: "▣", primary: true, title: qsTr("Map Storage"),
+            tip: qsTr("Map Storage — persistent values that belong to specific maps: gym puzzle state, Safari Zone counters") }
         ]
         // ⚠️ MUSIC IS NOT HERE ANY MORE. It is a chip in the toolbar (MusicPicker.qml) -- a whole
         // dock panel for one combo, two checkboxes and a ▶ was a panel too many (Twilight).
         sources: ({ "tiles": "TilesetPanel.qml",
                     "sprites": "SpriteSetPanel.qml",
                     "warps": "WarpStatePanel.qml",
-                    "charstate": "CharacterStatePanel.qml" })
+                    "charstate": "CharacterStatePanel.qml",
+                    "storage": "MapStoragePanel.qml" })
 
         Layout.fillHeight: true
         Layout.preferredWidth: inlineWidth   // the RAIL, and only the rail. The panel floats.
