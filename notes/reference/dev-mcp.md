@@ -97,6 +97,14 @@ protocol. Licensing footing is identical to the emu venv
 ([`emulator-verification.md`](emulator-verification.md) → Licensing): dev-only,
 never linked into or shipped with the editor.
 
+✅ **Registered on this machine (2026-07-16):** `mcpServers.pokered-dev` added to the
+Claude desktop config (the physical file lives at
+`C:\Users\juneh\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json`
+— the `%APPDATA%\Claude` path is the same file through MSIX virtualization; a
+`.bak-2026-07-16` sits beside it), pointing at the venv python + `pse_dev_mcp.py`
+directly. **Restart the Claude desktop app to load it.** Launch smoke-tested: the
+registered command comes up and stays alive on stdio.
+
 ## Limits / honesty
 
 - The server assumes this machine's kit paths (they are constants at the top of
