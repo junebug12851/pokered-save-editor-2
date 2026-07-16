@@ -258,6 +258,16 @@ flag *sets* that must not be on together:
 These drive the UI's per-combo warnings; the subject-matcher can be broadened (other rival battles) as a
 polish pass.
 
+**Forge-onto-any-map PROVEN (2026-07-15).** `probe_route22_conflict.py` + a synthetic save that sets
+`wCurMap = ROUTE_22 (0x21)` + player coords + the rival flags, resealed, boots the real ROM **straight
+onto Route 22** (verified: `wCurMap 0x21`, on-overworld, 888 frames to load). This is the standing
+forge-a-save method working end-to-end. ⚠️ The rival trigger needs the *exact* tile: Route 22 runs
+**10 blocks wide (20 tiles)**, and our object inventory lists the rival at X=25 — off-map, so the
+inventory's object-coord units for this map need reconciling before the drive-into-trigger reliably fires
+(minor coord fix). Until then the **Route 22 rival conflict stays `suspected-strong`** — the static
+evidence (two `SPRITE_BLUE` at one tile, one per battle) is overwhelming; `confirmed` waits on the clean
+trigger repro.
+
 ## Flag ↔ map location & object association (briefed 2026-07-15)
 
 Project leadership briefed an on-canvas feature: draw a **clickable box on the map** at the location
