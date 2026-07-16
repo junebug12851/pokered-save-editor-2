@@ -91,12 +91,18 @@ build until the design is written and approved.
 - ✅ **Object inventory DONE (exact):** all **223 maps, 918 objects** — each with tile (X, Y), sprite,
   movement, and kind (**334 trainers, 106 item balls, 478 NPCs**). Oak's Lab confirmed: the 3 starter
   Poké Balls + **Oak at (5,2) and (5,10)**. This is the coordinate foundation the hotspots need.
-- 🔜 **Conditional-object + flag-gating (next):** object show/hide runs through the **missable-object
-  toggle system** (`toggle_constants.asm` → `toggleable_objects.asm` → `wMissableObjectFlags`, a
-  *separate* bitfield), event-flag-**gated** via script `CheckEvent`. Resolve `TOGGLE_ → (map, object)`
-  from `toggleable_objects.asm` to mark conditional objects, then read the gating `CheckEvent` for the
-  governing flag. Item balls attach to their got-item flag. See the reference note's toggle-system
-  finding. Handle one-flag→many-boxes, many-flags→one-box, no-box.
+- ✅ **Conditional-object + flag-gating DONE.** Resolved the **missable-object toggle system**
+  (`toggle_constants.asm` ‖ `toggleable_objects.asm`, keyed by object const): **226 conditional/missable
+  objects** marked with their `TOGGLE_*` + default ON/OFF. The gating flag is read from the script's
+  `CheckEvent`-before-toggle: **14 high-confidence flag↔object links**, all verified — Oak's Lab OAK2 ⇒
+  `EVENT_OAK_APPEARED_IN_PALLET`, Museum Old Amber ⇒ `GOT_OLD_AMBER`, Mt. Moon Dome Fossil ⇒
+  `GOT_DOME_FOSSIL`, Route 12/16 Snorlax, Viridian Giovanni, Blue's House Town Map. Item balls attach to
+  their got-item flag. **Oak's Lab fully correct:** 3 starter balls + Oak at (5,2)/(5,10) (the second
+  carrying its flag), aides non-conditional.
+- 🔜 Remaining Phase-9 polish: extend gating-flag capture beyond the direct `CheckEvent`-before-toggle
+  cases (some toggles are script-state driven), hidden-items and trigger-tile/grass events, and the
+  final `maps.json`-style shape for the app. The **inventory + conditional + core linkage** are done and
+  correct — enough to build the Phase 10 hotspots on.
 
 **Phase 10 — On-canvas flag hotspots (UI, needs Phase 9).** Draw a **clickable box on the map** at each
 flag's location; clicking opens the persistent-storage / events panel focused on that flag. The box is

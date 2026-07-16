@@ -84,6 +84,39 @@ def parse_object_file(path):
     return consts, objects
 
 
+def parse_toggle_table(pk):
+    """Resolve the missable-object toggle system.
+    Returns const_to_toggle: object_const -> {toggle, map_id, default}."""
+    tc = os.path.join(pk, "constants", "toggle_constants.asm")
+    names = []
+    if os.path.exists(tc):
+        for l in open(tc, encoding="utf-8"):
+            m = re.match(r"\s*const\s+(TOGGLE_\w+)", l)
+            if m:
+                names.append(m.group(1))
+    to = os.path.join(pk, "data", "maps", "toggleable_objects.asm")
+    entries = []          # ordered (map_id, object_const, default)
+    cur_map = None
+    if os.path.exists(to):
+        for l in open(to, encoding="utf-8"):
+            s = l.split(";", 1)[0].strip()
+            m = re.match(r"toggleable_objects_for\s+(\w+)", s)
+            if m:
+                cur_map = m.group(1)
+                continue
+            m = re.match(r"toggle_object_state\s+(\w+)\s*,\s*(\w+)", s)
+            if m:
+                entries.append((cur_map, m.group(1), m.group(2)))
+    const_to_toggle = {}
+    toggle_to_const = {}
+    for i, (mp, const, default) in enumerate(entries):
+        tname = names[i] if i < len(names) else None
+        const_to_toggle[const] = {"toggle": tname, "map_id": mp, "default": default}
+        if tname:
+            toggle_to_const[tname] = const
+    return const_to_toggle, toggle_to_const
+
+
 def _num(t):
     t = t.strip()
     try:
@@ -95,7 +128,7 @@ def _num(t):
 TOGGLEIDX_RE = re.compile(r"ld\s+\[wToggleableObjectIndex\],\s*a")
 
 
-def parse_script_links(path, const_to_obj):
+def parse_script_links(path, const_to_obj, toggle_to_const):
     """Best-effort flag<->object links + the set of ever-toggled (conditional)
     object consts. Pattern:
         [CheckEvent <flag> ...] ld a, <CONST> ; ld [wToggleableObjectIndex], a
@@ -120,7 +153,8 @@ def parse_script_links(path, const_to_obj):
             if lm:
                 pending_lda = lm.group(1)
             if TOGGLEIDX_RE.search(line):
-                cur_obj = pending_lda
+                # the token may be an object const OR a TOGGLE_* (resolve it)
+                cur_obj = toggle_to_const.get(pending_lda, pending_lda)
             sm = SHOWHIDE_RE.search(line)
             if sm and cur_obj and cur_obj in const_to_obj:
                 toggled.add(cur_obj)
@@ -141,6 +175,8 @@ def main() -> int:
     if not os.path.isdir(obj_dir):
         sys.exit(f"objects dir not found: {obj_dir}")
 
+    const_to_toggle, toggle_to_const = parse_toggle_table(pk)
+
     maps = {}
     n_obj = n_item = n_trainer = n_link = 0
     for fn in sorted(os.listdir(obj_dir)):
@@ -154,15 +190,20 @@ def main() -> int:
             o["const"] = consts[i] if i < len(consts) else None
             if o["const"]:
                 const_to_obj[o["const"]] = o
-        links, toggled = parse_script_links(os.path.join(scr_dir, fn), const_to_obj)
-        # attach flags to objects
+        links, toggled = parse_script_links(os.path.join(scr_dir, fn),
+                                            const_to_obj, toggle_to_const)
+        # attach flags + conditional/missable state to objects
         for o in objects:
             o["flags"] = sorted({l["flag"] for l in links
                                  if l["object_const"] == o.get("const")})
-            o["conditional"] = o.get("const") in toggled   # appears/disappears
+            tog = const_to_toggle.get(o.get("const"))
+            o["conditional"] = bool(tog) or (o.get("const") in toggled)
+            if tog:
+                o["toggle"] = tog["toggle"]
+                o["default_visible"] = (tog["default"] == "ON")
             if o["kind"] == "item":
                 o["flags"] = o["flags"] or ["<got-item event (map-specific)>"]
-            # flag-governed = has a flag, OR is toggled (missable), OR item/trainer
+            # flag-governed = has a flag, OR is conditional/missable, OR item/trainer
             o["flag_attached"] = bool(o["flags"]) or o["conditional"] \
                 or o["kind"] in ("item", "trainer")
         n_obj += len(objects)
@@ -176,14 +217,18 @@ def main() -> int:
         json.dump(maps, fh, indent=1)
 
     linked_objs = sum(1 for m in maps.values() for o in m["objects"] if o["flag_attached"])
+    conditional = sum(1 for m in maps.values() for o in m["objects"] if o["conditional"])
+    with_flag = sum(1 for m in maps.values() for o in m["objects"] if o["flags"])
     summary = [
         f"maps parsed:            {len(maps)}",
         f"objects (total):        {n_obj}",
         f"  trainers:             {n_trainer}",
         f"  item balls:           {n_item}",
         f"  npc/other:            {n_obj - n_trainer - n_item}",
-        f"flag<->object links:    {n_link} (best-effort)",
-        f"objects flag-attached:  {linked_objs}",
+        f"conditional (missable): {conditional}  (in the toggle table)",
+        f"flag<->object links:    {n_link} (best-effort, via CheckEvent-before-toggle)",
+        f"objects with a flag:    {with_flag}",
+        f"objects flag-attached:  {linked_objs}  (flag OR conditional OR item/trainer)",
     ]
     with open(os.path.join(OUT_DIR, "flag_locations_summary.txt"), "w", encoding="utf-8") as fh:
         fh.write("\n".join(summary) + "\n")

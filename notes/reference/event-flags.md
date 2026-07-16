@@ -238,8 +238,10 @@ gates** the missable toggle, but the visible/hidden state itself is a *missable-
 scripts that toggle objects use `TOGGLE_*`. **Consequence for the hotspot:** an object is "conditional"
 (appears/disappears) iff it is in the toggle table; the *event flag* that governs it comes from the
 script's `CheckEvent`-before-toggle. Resolving `TOGGLE_ → (map, object)` from `toggleable_objects.asm`
-(parallel to `toggle_constants.asm`) is the clean way to mark conditional objects — the next Phase 9 step.
-(`wMissableObjectFlags` is itself a separate save field worth its own note if it ever gets an editor.)
+(`toggle_object_state <OBJECT_CONST>, ON/OFF`, keyed by the object const) marks conditional objects —
+**done** (226 objects). The gating event flag is read from the script's `CheckEvent`-before-toggle
+(`extract_flag_locations.py`). (`wMissableObjectFlags` is itself a separate save field worth its own
+note if it ever gets an editor.)
 
 **Event-flag attachment (drives the Phase 10 outline colour).** Every sprite/object/item gets its own
 outline; an object **tied to one or more event flags** gets a **different colour** to signal it is
