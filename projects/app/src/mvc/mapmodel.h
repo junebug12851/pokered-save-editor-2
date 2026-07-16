@@ -951,6 +951,21 @@ public:
   /// not one of the named steps -- shown, never refused.
   Q_INVOKABLE QVariantList mapScriptList() const;
 
+  // ── The Map Storage panel's data (per-map script progress + missables) ─────────────────────────
+  // The panel is a per-map VIEW over global save state (WorldScripts 0x289C, WorldMissables 0x2852);
+  // these feed its combo and sections. See notes/reference/map-scripts-missables.md.
+
+  /// One page per per-map script-progress value (97), plus map-only pages for maps that
+  /// have missables but no script, with the legacy trio (Vermilion/Cinnabar/Safari) merged in.
+  /// Each: {title, ids[], scriptInd (-1 none), steps, desc, legacy (-1/0/1/2)} sorted by map id.
+  Q_INVOKABLE QVariantList storagePages() const;
+  /// The named steps for script-progress entry @p scriptInd: [{value,name,desc}] —
+  /// the dropdown options. Values beyond them are the jp-hl gun (warned, never refused).
+  Q_INVOKABLE QVariantList storageScriptSteps(int scriptInd) const;
+  /// The missables on the given maps: [{ind,name,desc,defShow,scriptToggled,oddity,
+  /// linked:[{flag,eventIndex}]}] — `ind` is the WorldMissables bit (true = HIDDEN).
+  Q_INVOKABLE QVariantList storageMissables(const QVariantList& mapIds) const;
+
   int viewPtr() const;                      ///< The stored camera pointer (`0x260B`).
   int viewPtrComputed() const;              ///< The pointer for the player's current position.
   bool viewSynced() const;                  ///< Is the stored pointer following the player?

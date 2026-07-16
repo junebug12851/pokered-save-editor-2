@@ -139,7 +139,8 @@ MapDBEntry::MapDBEntry(const QJsonValue& data)
   {
     for(QJsonValue s : data["scriptEntries"].toArray()) {
       auto o = s.toObject();
-      scriptSteps.append({ o["id"].toInt(), o["name"].toString(), o["label"].toString() });
+      scriptSteps.append({ o["id"].toInt(), o["name"].toString(), o["label"].toString(),
+                           o["desc"].toString() });
     }
   }
 

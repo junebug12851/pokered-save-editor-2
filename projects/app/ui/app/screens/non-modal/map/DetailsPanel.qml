@@ -307,6 +307,7 @@ Item {
 
           // Descriptive picker when this map has named steps…
           ComboBox {
+            id: curScriptCombo
             Layout.fillWidth: true
             Layout.preferredHeight: 30
             font.pixelSize: 12
@@ -342,6 +343,24 @@ Item {
                   color: "#d55e00"
                 }
               }
+            }
+          }
+
+          // What the selected step MEANS -- the progression description (same words as the
+          // Map Storage panel's per-map script dropdown; from maps.json scriptEntries desc).
+          Label {
+            Layout.fillWidth: true
+            visible: curScriptCombo.visible && text !== ""
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+            text: {
+              details.revision;
+              const l = brg.map.mapScriptList();
+              for (let i = 0; i < l.length; i++)
+                if (l[i].value === brg.map.mapScript)
+                  return l[i].desc !== undefined ? l[i].desc : "";
+              return "";
             }
           }
 

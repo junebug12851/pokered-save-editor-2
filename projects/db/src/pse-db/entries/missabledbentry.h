@@ -18,6 +18,8 @@
 #include <QJsonValue>
 #include <QString>
 #include <QHash>
+#include <QPair>
+#include <QVector>
 
 #include "../db_autoport.h"
 
@@ -57,6 +59,10 @@ struct DB_AUTOPORT MissableDBEntry : public QObject {
   Q_PROPERTY(bool getDefShow READ getDefShow CONSTANT)      ///< Default visibility.
   Q_PROPERTY(MapDBEntry* getToMap READ getToMap CONSTANT)   ///< Resolved map.
   Q_PROPERTY(MapDBEntrySprite* getToMapSprite READ getToMapSprite CONSTANT) ///< Resolved map sprite.
+  Q_PROPERTY(QString getDesc READ getDesc CONSTANT)         ///< Plain-English description.
+  Q_PROPERTY(bool getScriptToggled READ getScriptToggled CONSTANT) ///< Any script toggles it? (pret X-marks = false)
+  Q_PROPERTY(QString getOddity READ getOddity CONSTANT)     ///< pret's known-issue note ('' = none).
+  Q_PROPERTY(QString getToggleConst READ getToggleConst CONSTANT) ///< The pret TOGGLE_* constant name.
 
 public:
   const QString getName() const;       ///< @see getName property.
@@ -66,6 +72,14 @@ public:
   bool getDefShow() const;             ///< @see getDefShow property.
   MapDBEntry* getToMap() const;        ///< @see getToMap property.
   MapDBEntrySprite* getToMapSprite() const; ///< @see getToMapSprite property.
+  const QString getDesc() const;       ///< @see getDesc property.
+  bool getScriptToggled() const;       ///< @see getScriptToggled property.
+  const QString getOddity() const;     ///< @see getOddity property.
+  const QString getToggleConst() const; ///< @see getToggleConst property.
+  /// Event flags the game checks around this object's toggling — the CONFLICT
+  /// hooks. Each: {"flag": EVENT_* name, "eventIndex": canonical bit index (-1
+  /// if beyond the modelled 508)}. Empty for most.
+  const QVector<QPair<QString, int>>& getLinkedEvents() const;
 
 public slots:
   void qmlProtect(const QQmlEngine* const engine) const; ///< Pin to C++ ownership.
@@ -86,6 +100,14 @@ protected:
 
   // Is this missable shown or hidden by default
   bool defShow = false; ///< Backing field (read via getDefShow()).
+
+  // Enrichment (import_storage_meta.py; sources: pret toggle_constants.asm +
+  // the flag<->object extraction)
+  QString desc = "";          ///< Backing field (read via getDesc()).
+  bool scriptToggled = true;  ///< Backing field (read via getScriptToggled()).
+  QString oddity = "";        ///< Backing field (read via getOddity()).
+  QString toggleConst = "";   ///< Backing field (read via getToggleConst()).
+  QVector<QPair<QString, int>> linkedEvents; ///< Backing field (read via getLinkedEvents()).
 
   // Deep link to associated map and sprite on map
   // There are 2 exceptions to this

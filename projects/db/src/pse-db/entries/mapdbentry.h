@@ -50,6 +50,7 @@ struct MapScriptStep {
   int id = 0;    ///< 0-based step index == the wCurMapScript value.
   QString name;  ///< The SCRIPT_<MAP>_<NAME> constant tail.
   QString label; ///< Friendly label for the picker.
+  QString desc;  ///< Plain-English progression description (what this step means).
 };
 
 /**

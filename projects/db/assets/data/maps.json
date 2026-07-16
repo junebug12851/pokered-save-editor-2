@@ -149,37 +149,44 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — Oak's intro is done (or not yet triggered)."
       },
       {
         "id": 1,
         "name": "OAK_HEY_WAIT",
-        "label": "Oak Hey Wait"
+        "label": "Oak Hey Wait",
+        "desc": "You just stepped toward the grass — Oak shouts \"Hey! Wait!\"."
       },
       {
         "id": 2,
         "name": "OAK_WALKS_TO_PLAYER",
-        "label": "Oak Walks To Player"
+        "label": "Oak Walks To Player",
+        "desc": "Oak is walking over to stop you."
       },
       {
         "id": 3,
         "name": "OAK_NOT_SAFE_COME_WITH_ME",
-        "label": "Oak Not Safe Come With Me"
+        "label": "Oak Not Safe Come With Me",
+        "desc": "Oak explains the tall grass is unsafe and turns for the lab."
       },
       {
         "id": 4,
         "name": "PLAYER_FOLLOWS_OAK",
-        "label": "Player Follows Oak"
+        "label": "Player Follows Oak",
+        "desc": "You're being escorted to the lab behind Oak."
       },
       {
         "id": 5,
         "name": "DAISY",
-        "label": "Daisy"
+        "label": "Daisy",
+        "desc": "The Daisy interlude step of the intro sequence."
       },
       {
         "id": 6,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 6 of 0–6)"
       }
     ]
   },
@@ -441,22 +448,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "OLD_MAN_START_CATCH_TRAINING",
-        "label": "Old Man Start Catch Training"
+        "label": "Old Man Start Catch Training",
+        "desc": "Stage 1 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 2,
         "name": "OLD_MAN_END_CATCH_TRAINING",
-        "label": "Old Man End Catch Training"
+        "label": "Old Man End Catch Training",
+        "desc": "Stage 2 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "PLAYER_MOVING_DOWN",
-        "label": "Player Moving Down"
+        "label": "Player Moving Down",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–3)"
       }
     ]
   },
@@ -716,37 +727,44 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–6)"
       },
       {
         "id": 1,
         "name": "SUPER_NERD1_SHOWS_PLAYER_MUSEUM",
-        "label": "Super Nerd1 Shows Player Museum"
+        "label": "Super Nerd1 Shows Player Museum",
+        "desc": "Stage 1 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 2,
         "name": "HIDE_SUPER_NERD1",
-        "label": "Hide Super Nerd1"
+        "label": "Hide Super Nerd1",
+        "desc": "Stage 2 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "RESET_SUPER_NERD1",
-        "label": "Reset Super Nerd1"
+        "label": "Reset Super Nerd1",
+        "desc": "Stage 3 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 4,
         "name": "YOUNGSTER_SHOWS_PLAYER_GYM",
-        "label": "Youngster Shows Player Gym"
+        "label": "Youngster Shows Player Gym",
+        "desc": "Stage 4 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 5,
         "name": "HIDE_YOUNGSTER",
-        "label": "Hide Youngster"
+        "label": "Hide Youngster",
+        "desc": "Stage 5 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 6,
         "name": "RESET_YOUNGSTER",
-        "label": "Reset Youngster"
+        "label": "Reset Youngster",
+        "desc": "Stage 6 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -1110,27 +1128,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest."
       },
       {
         "id": 1,
         "name": "RIVAL_BATTLE",
-        "label": "Rival Battle"
+        "label": "Rival Battle",
+        "desc": "The rival blocks the way north — the bridge battle is armed."
       },
       {
         "id": 2,
         "name": "RIVAL_DEFEATED",
-        "label": "Rival Defeated"
+        "label": "Rival Defeated",
+        "desc": "Rival beaten — his goodbye dialogue plays."
       },
       {
         "id": 3,
         "name": "RIVAL_CLEANUP",
-        "label": "Rival Cleanup"
+        "label": "Rival Cleanup",
+        "desc": "The rival walks off; the city resets to normal."
       },
       {
         "id": 4,
         "name": "ROCKET_DEFEATED",
-        "label": "Rocket Defeated"
+        "label": "Rocket Defeated",
+        "desc": "The dig-house Rocket has been dealt with."
       }
     ]
   },
@@ -1612,27 +1635,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — the dock guard checks for the S.S. Ticket."
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING_UP1",
-        "label": "Player Moving Up1"
+        "label": "Player Moving Up1",
+        "desc": "Dock scene: you're being stepped up the pier."
       },
       {
         "id": 2,
         "name": "PLAYER_EXIT_SHIP",
-        "label": "Player Exit Ship"
+        "label": "Player Exit Ship",
+        "desc": "The ship has sailed — you're being walked off the dock."
       },
       {
         "id": 3,
         "name": "PLAYER_MOVING_UP2",
-        "label": "Player Moving Up2"
+        "label": "Player Moving Up2",
+        "desc": "Dock scene: the second forced step."
       },
       {
         "id": 4,
         "name": "PLAYER_ALLOWED_TO_PASS",
-        "label": "Player Allowed To Pass"
+        "label": "Player Allowed To Pass",
+        "desc": "The guard has taken your ticket — the dock is open."
       }
     ]
   },
@@ -2582,12 +2610,14 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–1)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
       }
     ]
   },
@@ -3879,17 +3909,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -4121,17 +4154,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -4580,17 +4616,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -5093,17 +5132,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -5388,17 +5430,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -5696,17 +5741,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -6045,17 +6093,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -6407,22 +6458,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "SNORLAX_POST_BATTLE",
-        "label": "Snorlax Post Battle"
+        "label": "Snorlax Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -6726,17 +6781,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -7020,17 +7078,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -7373,17 +7434,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -7736,22 +7800,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "SNORLAX_POST_BATTLE",
-        "label": "Snorlax Post Battle"
+        "label": "Snorlax Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -8086,17 +8154,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -8330,17 +8401,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -8624,17 +8698,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -8952,17 +9029,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -9263,17 +9343,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -9450,42 +9533,50 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — no ambush armed."
       },
       {
         "id": 1,
         "name": "RIVAL1_START_BATTLE",
-        "label": "Rival1 Start Battle"
+        "label": "Rival1 Start Battle",
+        "desc": "The FIRST rival ambush (early game) is armed — crossing the trigger starts it."
       },
       {
         "id": 2,
         "name": "RIVAL1_AFTER_BATTLE",
-        "label": "Rival1 After Battle"
+        "label": "Rival1 After Battle",
+        "desc": "First ambush fought — the after-battle talk plays."
       },
       {
         "id": 3,
         "name": "RIVAL1_EXIT",
-        "label": "Rival1 Exit"
+        "label": "Rival1 Exit",
+        "desc": "The rival walks off after the first ambush."
       },
       {
         "id": 4,
         "name": "RIVAL2_START_BATTLE",
-        "label": "Rival2 Start Battle"
+        "label": "Rival2 Start Battle",
+        "desc": "The SECOND rival ambush (before Victory Road) is armed."
       },
       {
         "id": 5,
         "name": "RIVAL2_AFTER_BATTLE",
-        "label": "Rival2 After Battle"
+        "label": "Rival2 After Battle",
+        "desc": "Second ambush fought — the send-off dialogue runs."
       },
       {
         "id": 6,
         "name": "RIVAL2_EXIT",
-        "label": "Rival2 Exit"
+        "label": "Rival2 Exit",
+        "desc": "The rival leaves for good; the route goes quiet."
       },
       {
         "id": 7,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 7 of 0–7)"
       }
     ]
   },
@@ -9755,17 +9846,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — the badge-check guards are on duty."
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A guard scene is stepping you through a checkpoint."
       },
       {
         "id": 2,
         "name": "RESET_TO_DEFAULT",
-        "label": "Reset To Default"
+        "label": "Reset To Default",
+        "desc": "Checkpoint scene finished — resetting to rest."
       }
     ]
   },
@@ -10009,27 +10103,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "AFTER_ROCKET_BATTLE",
-        "label": "After Rocket Battle"
+        "label": "After Rocket Battle",
+        "desc": "A scripted battle stage of this map's story. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 4 of 0–4)"
       }
     ]
   },
@@ -10322,17 +10421,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -10442,12 +10544,14 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–1)"
       },
       {
         "id": 1,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 1 of 0–1)"
       }
     ]
   },
@@ -10539,12 +10643,14 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–1)"
       },
       {
         "id": 1,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 1 of 0–1)"
       }
     ]
   },
@@ -10825,97 +10931,116 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — the lab runs no scene right now."
       },
       {
         "id": 1,
         "name": "OAK_ENTERS_LAB",
-        "label": "Oak Enters Lab"
+        "label": "Oak Enters Lab",
+        "desc": "Oak is walking into the lab ahead of you (the intro escort)."
       },
       {
         "id": 2,
         "name": "TOGGLE_OAKS",
-        "label": "Toggle Oaks"
+        "label": "Toggle Oaks",
+        "desc": "Housekeeping beat: the outdoor Oak is swapped for the lab Oak."
       },
       {
         "id": 3,
         "name": "PLAYER_ENTERS_LAB",
-        "label": "Player Enters Lab"
+        "label": "Player Enters Lab",
+        "desc": "You're walking up the lab to the back row."
       },
       {
         "id": 4,
         "name": "FOLLOWED_OAK",
-        "label": "Followed Oak"
+        "label": "Followed Oak",
+        "desc": "You've arrived at the back of the lab; the rival complains about waiting."
       },
       {
         "id": 5,
         "name": "OAK_CHOOSE_MON_SPEECH",
-        "label": "Oak Choose Mon Speech"
+        "label": "Oak Choose Mon Speech",
+        "desc": "Oak is giving the pick-a-Pokémon speech — the three balls are live."
       },
       {
         "id": 6,
         "name": "PLAYER_DONT_GO_AWAY_SCRIPT",
-        "label": "Player Dont Go Away Script"
+        "label": "Player Dont Go Away Script",
+        "desc": "Guard beat: you tried to leave before choosing — Oak calls you back."
       },
       {
         "id": 7,
         "name": "PLAYER_FORCED_TO_WALK_BACK_SCRIPT",
-        "label": "Player Forced To Walk Back Script"
+        "label": "Player Forced To Walk Back Script",
+        "desc": "You're being walked back to the starter table."
       },
       {
         "id": 8,
         "name": "CHOSE_STARTER_SCRIPT",
-        "label": "Chose Starter Script"
+        "label": "Chose Starter Script",
+        "desc": "You've picked your starter; the choice is being confirmed."
       },
       {
         "id": 9,
         "name": "RIVAL_CHOOSES_STARTER",
-        "label": "Rival Chooses Starter"
+        "label": "Rival Chooses Starter",
+        "desc": "The rival grabs the counter-pick starter."
       },
       {
         "id": 10,
         "name": "RIVAL_CHALLENGES_PLAYER",
-        "label": "Rival Challenges Player"
+        "label": "Rival Challenges Player",
+        "desc": "The rival spins around and challenges you."
       },
       {
         "id": 11,
         "name": "RIVAL_START_BATTLE",
-        "label": "Rival Start Battle"
+        "label": "Rival Start Battle",
+        "desc": "The very first rival battle is starting."
       },
       {
         "id": 12,
         "name": "RIVAL_END_BATTLE",
-        "label": "Rival End Battle"
+        "label": "Rival End Battle",
+        "desc": "The first battle just ended — win-or-lose dialogue runs."
       },
       {
         "id": 13,
         "name": "RIVAL_STARTS_EXIT",
-        "label": "Rival Starts Exit"
+        "label": "Rival Starts Exit",
+        "desc": "The rival begins to storm out."
       },
       {
         "id": 14,
         "name": "PLAYER_WATCH_RIVAL_EXIT",
-        "label": "Player Watch Rival Exit"
+        "label": "Player Watch Rival Exit",
+        "desc": "You watch the rival leave; the scene winds down."
       },
       {
         "id": 15,
         "name": "RIVAL_ARRIVES_AT_OAKS_REQUEST",
-        "label": "Rival Arrives At Oaks Request"
+        "label": "Rival Arrives At Oaks Request",
+        "desc": "Later visit: Oak has called you both back — the rival arrives."
       },
       {
         "id": 16,
         "name": "OAK_GIVES_POKEDEX",
-        "label": "Oak Gives Pokedex"
+        "label": "Oak Gives Pokedex",
+        "desc": "Oak hands over the Pokédex and the errand speech."
       },
       {
         "id": 17,
         "name": "RIVAL_LEAVES_WITH_POKEDEX",
-        "label": "Rival Leaves With Pokedex"
+        "label": "Rival Leaves With Pokedex",
+        "desc": "The rival takes his Pokédex and leaves — the lab story is done."
       },
       {
         "id": 18,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 18 of 0–18)"
       }
     ]
   },
@@ -11095,17 +11220,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "OAKS_PARCEL",
-        "label": "Oaks Parcel"
+        "label": "Oaks Parcel",
+        "desc": "Stage 1 of this map's scripted events (0–2). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 2,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 2 of 0–2)"
       }
     ]
   },
@@ -11494,27 +11622,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "GIOVANNI_POST_BATTLE",
-        "label": "Giovanni Post Battle"
+        "label": "Giovanni Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "PLAYER_SPINNING",
-        "label": "Player Spinning"
+        "label": "Player Spinning",
+        "desc": "Stage 4 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -12261,17 +12394,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -12415,12 +12551,14 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–1)"
       },
       {
         "id": 1,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 1 of 0–1)"
       }
     ]
   },
@@ -12644,22 +12782,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "BROCK_POST_BATTLE",
-        "label": "Brock Post Battle"
+        "label": "Brock Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -13352,17 +13494,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -13844,32 +13989,38 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–5)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–5)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–5)"
       },
       {
         "id": 3,
         "name": "DEFEATED_SUPER_NERD",
-        "label": "Defeated Super Nerd"
+        "label": "Defeated Super Nerd",
+        "desc": "The scripted battle just ended — the aftermath dialogue runs. (step 3 of 0–5)"
       },
       {
         "id": 4,
         "name": "MOVE_SUPER_NERD",
-        "label": "Move Super Nerd"
+        "label": "Move Super Nerd",
+        "desc": "Stage 4 of this map's scripted events (0–5). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 5,
         "name": "SUPER_NERD_TAKES_OTHER_FOSSIL",
-        "label": "Super Nerd Takes Other Fossil"
+        "label": "Super Nerd Takes Other Fossil",
+        "desc": "Stage 5 of this map's scripted events (0–5). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -14241,22 +14392,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "MISTY_POST_BATTLE",
-        "label": "Misty Post Battle"
+        "label": "Misty Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -14657,12 +14812,14 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–1)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
       }
     ]
   },
@@ -14872,12 +15029,14 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–1)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
       }
     ]
   },
@@ -15054,12 +15213,14 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–1)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
       }
     ]
   },
@@ -15295,12 +15456,14 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–1)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
       }
     ]
   },
@@ -15769,17 +15932,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -16141,17 +16307,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -16559,32 +16728,38 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–5)"
       },
       {
         "id": 1,
         "name": "POKEMON_WALK_TO_MACHINE",
-        "label": "Pokemon Walk To Machine"
+        "label": "Pokemon Walk To Machine",
+        "desc": "Stage 1 of this map's scripted events (0–5). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 2,
         "name": "POKEMON_ENTERS_MACHINE",
-        "label": "Pokemon Enters Machine"
+        "label": "Pokemon Enters Machine",
+        "desc": "A cutscene is in progress on this map. (step 2 of 0–5)"
       },
       {
         "id": 3,
         "name": "BILL_EXITS_MACHINE",
-        "label": "Bill Exits Machine"
+        "label": "Bill Exits Machine",
+        "desc": "A scripted character is walking off the map. (step 3 of 0–5)"
       },
       {
         "id": 4,
         "name": "CLEANUP",
-        "label": "Cleanup"
+        "label": "Cleanup",
+        "desc": "Stage 4 of this map's scripted events (0–5). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 5,
         "name": "PC",
-        "label": "Pc"
+        "label": "Pc",
+        "desc": "Stage 5 of this map's scripted events (0–5). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -17034,22 +17209,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "LT_SURGE_AFTER_BATTLE",
-        "label": "Lt Surge After Battle"
+        "label": "Lt Surge After Battle",
+        "desc": "The scripted battle just ended — the aftermath dialogue runs. (step 3 of 0–3)"
       }
     ]
   },
@@ -17485,27 +17664,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "RIVAL_START_BATTLE",
-        "label": "Rival Start Battle"
+        "label": "Rival Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "RIVAL_AFTER_BATTLE",
-        "label": "Rival After Battle"
+        "label": "Rival After Battle",
+        "desc": "The scripted battle just ended — the aftermath dialogue runs. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "RIVAL_EXIT",
-        "label": "Rival Exit"
+        "label": "Rival Exit",
+        "desc": "A scripted character is walking off the map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -17756,17 +17940,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -18198,17 +18385,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -18538,17 +18728,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -18838,17 +19031,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -18869,27 +19065,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -18910,27 +19111,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -18951,27 +19157,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19214,17 +19425,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -19245,27 +19459,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19286,27 +19505,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19327,27 +19551,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19368,27 +19597,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19461,27 +19695,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — Lance waits."
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "Lance's battle is armed."
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "Lance is beaten — his concession speech runs."
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "The room walks you toward the Champion's door."
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19502,27 +19741,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19543,27 +19787,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19584,27 +19833,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19625,27 +19879,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LANCE_START_BATTLE",
-        "label": "Lance Start Battle"
+        "label": "Lance Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LANCE_END_BATTLE",
-        "label": "Lance End Battle"
+        "label": "Lance End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -19706,22 +19965,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "The induction — your team is being recorded for the Hall of Fame."
       },
       {
         "id": 1,
         "name": "OAK_CONGRATULATIONS",
-        "label": "Oak Congratulations"
+        "label": "Oak Congratulations",
+        "desc": "Stage 1 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 2,
         "name": "RESET_EVENTS_AND_SAVE",
-        "label": "Reset Events And Save"
+        "label": "Reset Events And Save",
+        "desc": "Stage 2 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 3 of 0–3)"
       }
     ]
   },
@@ -19869,57 +20132,68 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest."
       },
       {
         "id": 1,
         "name": "PLAYER_ENTERS",
-        "label": "Player Enters"
+        "label": "Player Enters",
+        "desc": "You're walking in for the final battle."
       },
       {
         "id": 2,
         "name": "RIVAL_READY_TO_BATTLE",
-        "label": "Rival Ready To Battle"
+        "label": "Rival Ready To Battle",
+        "desc": "The Champion — your rival — issues the final challenge."
       },
       {
         "id": 3,
         "name": "RIVAL_DEFEATED",
-        "label": "Rival Defeated"
+        "label": "Rival Defeated",
+        "desc": "The Champion falls — his disbelief speech plays."
       },
       {
         "id": 4,
         "name": "OAK_ARRIVES",
-        "label": "Oak Arrives"
+        "label": "Oak Arrives",
+        "desc": "Oak walks in on the scene."
       },
       {
         "id": 5,
         "name": "OAK_CONGRATULATES_PLAYER",
-        "label": "Oak Congratulates Player"
+        "label": "Oak Congratulates Player",
+        "desc": "Oak congratulates you."
       },
       {
         "id": 6,
         "name": "OAK_DISAPPOINTED_WITH_RIVAL",
-        "label": "Oak Disappointed With Rival"
+        "label": "Oak Disappointed With Rival",
+        "desc": "Oak scolds the rival about trust and love."
       },
       {
         "id": 7,
         "name": "OAK_COME_WITH_ME",
-        "label": "Oak Come With Me"
+        "label": "Oak Come With Me",
+        "desc": "Oak beckons you to the Hall of Fame."
       },
       {
         "id": 8,
         "name": "OAK_EXITS",
-        "label": "Oak Exits"
+        "label": "Oak Exits",
+        "desc": "Oak leads the way out."
       },
       {
         "id": 9,
         "name": "PLAYER_FOLLOWS_OAK",
-        "label": "Player Follows Oak"
+        "label": "Player Follows Oak",
+        "desc": "You follow Oak to the Hall of Fame."
       },
       {
         "id": 10,
         "name": "CLEANUP_SCRIPT",
-        "label": "Cleanup Script"
+        "label": "Cleanup Script",
+        "desc": "The scene tears down — the game is won."
       }
     ]
   },
@@ -21453,22 +21727,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "ERIKA_POST_BATTLE",
-        "label": "Erika Post Battle"
+        "label": "Erika Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -21689,17 +21967,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "ROCKET_BATTLE",
-        "label": "Rocket Battle"
+        "label": "Rocket Battle",
+        "desc": "A scripted battle stage of this map's story. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "ROCKET_EXIT",
-        "label": "Rocket Exit"
+        "label": "Rocket Exit",
+        "desc": "A scripted character is walking off the map. (step 2 of 0–2)"
       }
     ]
   },
@@ -22468,17 +22749,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — the rival waits by the stairs (battle armed on approach)."
       },
       {
         "id": 1,
         "name": "DEFEATED_RIVAL",
-        "label": "Defeated Rival"
+        "label": "Defeated Rival",
+        "desc": "Tower rival beaten — his parting words play."
       },
       {
         "id": 2,
         "name": "RIVAL_EXITS",
-        "label": "Rival Exits"
+        "label": "Rival Exits",
+        "desc": "The rival leaves the Tower."
       }
     ]
   },
@@ -22672,17 +22956,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -22906,17 +23193,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -23143,17 +23433,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -23372,27 +23665,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "MAROWAK_BATTLE",
-        "label": "Marowak Battle"
+        "label": "Marowak Battle",
+        "desc": "A scripted battle stage of this map's story. (step 4 of 0–4)"
       }
     ]
   },
@@ -23578,27 +23876,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "HIDE_NPC",
-        "label": "Hide Npc"
+        "label": "Hide Npc",
+        "desc": "Stage 3 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 4,
         "name": "WARP_TO_MR_FUJI_HOUSE",
-        "label": "Warp To Mr Fuji House"
+        "label": "Warp To Mr Fuji House",
+        "desc": "Stage 4 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -24341,37 +24644,44 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–6)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING_RIGHT",
-        "label": "Player Moving Right"
+        "label": "Player Moving Right",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–6)"
       },
       {
         "id": 2,
         "name": "WOULD_YOU_LIKE_TO_JOIN",
-        "label": "Would You Like To Join"
+        "label": "Would You Like To Join",
+        "desc": "Stage 2 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–6)"
       },
       {
         "id": 4,
         "name": "PLAYER_MOVING_DOWN",
-        "label": "Player Moving Down"
+        "label": "Player Moving Down",
+        "desc": "A cutscene is stepping the player around this map. (step 4 of 0–6)"
       },
       {
         "id": 5,
         "name": "LEAVING_SAFARI",
-        "label": "Leaving Safari"
+        "label": "Leaving Safari",
+        "desc": "Stage 5 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 6,
         "name": "SET_SCRIPT_AFTER_MOVE",
-        "label": "Set Script After Move"
+        "label": "Set Script After Move",
+        "desc": "Stage 6 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -24552,22 +24862,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "KOGA_POST_BATTLE",
-        "label": "Koga Post Battle"
+        "label": "Koga Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -25323,22 +25637,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "OBJECT_MOVING1",
-        "label": "Object Moving1"
+        "label": "Object Moving1",
+        "desc": "Stage 1 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 2,
         "name": "MOVE_OBJECT",
-        "label": "Move Object"
+        "label": "Move Object",
+        "desc": "Stage 2 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "OBJECT_MOVING2",
-        "label": "Object Moving2"
+        "label": "Object Moving2",
+        "desc": "Stage 3 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -25558,27 +25876,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "OBJECT_MOVING1",
-        "label": "Object Moving1"
+        "label": "Object Moving1",
+        "desc": "Stage 1 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 2,
         "name": "MOVE_OBJECT",
-        "label": "Move Object"
+        "label": "Move Object",
+        "desc": "Stage 2 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "OBJECT_MOVING2",
-        "label": "Object Moving2"
+        "label": "Object Moving2",
+        "desc": "Stage 3 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 4,
         "name": "OBJECT_MOVING3",
-        "label": "Object Moving3"
+        "label": "Object Moving3",
+        "desc": "Stage 4 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -25942,17 +26265,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -26148,22 +26474,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "GET_OPPONENT_TEXT",
-        "label": "Get Opponent Text"
+        "label": "Get Opponent Text",
+        "desc": "Stage 1 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 2,
         "name": "OPEN_GATE",
-        "label": "Open Gate"
+        "label": "Open Gate",
+        "desc": "Stage 2 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "BLAINE_POST_BATTLE",
-        "label": "Blaine Post Battle"
+        "label": "Blaine Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -27217,22 +27547,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "KARATE_MASTER_POST_BATTLE",
-        "label": "Karate Master Post Battle"
+        "label": "Karate Master Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -27728,22 +28062,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "SABRINA_POST_BATTLE",
-        "label": "Sabrina Post Battle"
+        "label": "Sabrina Post Battle",
+        "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
     ]
   },
@@ -28439,22 +28777,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING_UP",
-        "label": "Player Moving Up"
+        "label": "Player Moving Up",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "GUARD",
-        "label": "Guard"
+        "label": "Guard",
+        "desc": "Stage 2 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "PLAYER_MOVING_RIGHT",
-        "label": "Player Moving Right"
+        "label": "Player Moving Right",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–3)"
       }
     ]
   },
@@ -28752,22 +29094,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING_UP",
-        "label": "Player Moving Up"
+        "label": "Player Moving Up",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "GUARD",
-        "label": "Guard"
+        "label": "Guard",
+        "desc": "Stage 2 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "PLAYER_MOVING_RIGHT",
-        "label": "Player Moving Right"
+        "label": "Player Moving Right",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–3)"
       }
     ]
   },
@@ -29127,17 +29473,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING",
-        "label": "Player Moving"
+        "label": "Player Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 2 of 0–2)"
       }
     ]
   },
@@ -29512,17 +29861,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -30062,17 +30414,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -30256,17 +30611,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -30420,22 +30778,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "PLAYER_SPINNING",
-        "label": "Player Spinning"
+        "label": "Player Spinning",
+        "desc": "Stage 3 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -30544,22 +30906,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "PLAYER_SPINNING",
-        "label": "Player Spinning"
+        "label": "Player Spinning",
+        "desc": "Stage 3 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -30759,22 +31125,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–3)"
       },
       {
         "id": 3,
         "name": "BEAT_GIOVANNI",
-        "label": "Beat Giovanni"
+        "label": "Beat Giovanni",
+        "desc": "Stage 3 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       }
     ]
   },
@@ -31043,17 +31413,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -31241,17 +31614,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -31455,17 +31831,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -31724,17 +32103,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -31955,17 +32337,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -32233,32 +32618,38 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–5)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–5)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–5)"
       },
       {
         "id": 3,
         "name": "RIVAL_START_BATTLE",
-        "label": "Rival Start Battle"
+        "label": "Rival Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 3 of 0–5)"
       },
       {
         "id": 4,
         "name": "RIVAL_AFTER_BATTLE",
-        "label": "Rival After Battle"
+        "label": "Rival After Battle",
+        "desc": "The scripted battle just ended — the aftermath dialogue runs. (step 4 of 0–5)"
       },
       {
         "id": 5,
         "name": "RIVAL_EXIT",
-        "label": "Rival Exit"
+        "label": "Rival Exit",
+        "desc": "A scripted character is walking off the map. (step 5 of 0–5)"
       }
     ]
   },
@@ -32417,17 +32808,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -32642,17 +33036,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -32874,17 +33271,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -33131,17 +33531,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -34935,17 +35338,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -35337,22 +35743,26 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–3)"
       },
       {
         "id": 1,
         "name": "PLAYER_MOVING_UP",
-        "label": "Player Moving Up"
+        "label": "Player Moving Up",
+        "desc": "A cutscene is stepping the player around this map. (step 1 of 0–3)"
       },
       {
         "id": 2,
         "name": "GUARD",
-        "label": "Guard"
+        "label": "Guard",
+        "desc": "Stage 2 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 3,
         "name": "PLAYER_MOVING_RIGHT",
-        "label": "Player Moving Right"
+        "label": "Player Moving Right",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–3)"
       }
     ]
   },
@@ -35626,17 +36036,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -35775,17 +36188,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -35964,17 +36380,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -36121,32 +36540,38 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–5)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–5)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–5)"
       },
       {
         "id": 3,
         "name": "GIOVANNI_FACING",
-        "label": "Giovanni Facing"
+        "label": "Giovanni Facing",
+        "desc": "Stage 3 of this map's scripted events (0–5). The game walks these steps in order as the map's story plays out."
       },
       {
         "id": 4,
         "name": "GIOVANNI_START_BATTLE",
-        "label": "Giovanni Start Battle"
+        "label": "Giovanni Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 4 of 0–5)"
       },
       {
         "id": 5,
         "name": "GIOVANNI_AFTER_BATTLE",
-        "label": "Giovanni After Battle"
+        "label": "Giovanni After Battle",
+        "desc": "The scripted battle just ended — the aftermath dialogue runs. (step 5 of 0–5)"
       }
     ]
   },
@@ -36238,17 +36663,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -36289,17 +36717,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -36400,17 +36831,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -36451,17 +36885,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -36502,17 +36939,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -36553,17 +36993,20 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–2)"
       },
       {
         "id": 1,
         "name": "START_BATTLE",
-        "label": "Start Battle"
+        "label": "Start Battle",
+        "desc": "The leader/boss battle on this map is armed — talking to them starts it. (step 1 of 0–2)"
       },
       {
         "id": 2,
         "name": "END_BATTLE",
-        "label": "End Battle"
+        "label": "End Battle",
+        "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
     ]
   },
@@ -36651,27 +37094,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "LORELEI_START_BATTLE",
-        "label": "Lorelei Start Battle"
+        "label": "Lorelei Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "LORELEI_END_BATTLE",
-        "label": "Lorelei End Battle"
+        "label": "Lorelei End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -36759,27 +37207,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "BRUNO_START_BATTLE",
-        "label": "Bruno Start Battle"
+        "label": "Bruno Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "BRUNO_END_BATTLE",
-        "label": "Bruno End Battle"
+        "label": "Bruno End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },
@@ -36867,27 +37320,32 @@
       {
         "id": 0,
         "name": "DEFAULT",
-        "label": "Default"
+        "label": "Default",
+        "desc": "At rest — nothing staged on this map right now. (step 0 of 0–4)"
       },
       {
         "id": 1,
         "name": "AGATHA_START_BATTLE",
-        "label": "Agatha Start Battle"
+        "label": "Agatha Start Battle",
+        "desc": "A scripted battle is armed — crossing its trigger starts it. (step 1 of 0–4)"
       },
       {
         "id": 2,
         "name": "AGATHA_END_BATTLE",
-        "label": "Agatha End Battle"
+        "label": "Agatha End Battle",
+        "desc": "A scripted battle stage of this map's story. (step 2 of 0–4)"
       },
       {
         "id": 3,
         "name": "PLAYER_IS_MOVING",
-        "label": "Player Is Moving"
+        "label": "Player Is Moving",
+        "desc": "A cutscene is stepping the player around this map. (step 3 of 0–4)"
       },
       {
         "id": 4,
         "name": "NOOP",
-        "label": "Noop"
+        "label": "Noop",
+        "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
     ]
   },

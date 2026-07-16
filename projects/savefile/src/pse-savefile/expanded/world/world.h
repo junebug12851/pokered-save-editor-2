@@ -22,19 +22,21 @@
 // de-opaque fix area.h uses for its children (see CLAUDE.md -> the "undefined chain" bug). The Map
 // Storage panel binds brg.file.data.dataExpanded.world.local directly.
 #include "./worldlocal.h"
+// Same fix for the panel's per-map script progress (world.scripts.scriptsAt/Set), missable
+// visibility bits (world.missables.missablesAt/Set) and the event flags its conflict badges
+// compare against (world.events.eventsAt) -- all traversed by MapStoragePanel since 2026-07-16.
+#include "./worldscripts.h"
+#include "./worldmissables.h"
+#include "./worldevents.h"
 
 class SaveFile;
 
 class WorldCompleted;
-class WorldEvents;
 class WorldGeneral;
 class WorldHidden;
-class WorldMissables;
 class WorldOther;
-class WorldScripts;
 class WorldTowns;
 class WorldTrades;
-class WorldLocal;
 
 /**
  * @brief Global, map-independent game state -- "the state of the world".

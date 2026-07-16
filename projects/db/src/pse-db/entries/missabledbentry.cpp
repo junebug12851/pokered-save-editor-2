@@ -22,6 +22,7 @@
 
 #include <QVector>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QQmlEngine>
 #include <pse-common/utility.h>
 
@@ -45,6 +46,20 @@ MissableDBEntry::MissableDBEntry(QJsonValue& data)
   map = data["map"].toString();
   sprite = data["sprite"].toDouble();
   defShow = data["defVal"].toString() == "Show";
+
+  // Enrichment (import_storage_meta.py): description, the pret TOGGLE_* name,
+  // whether any script toggles it (X-marks = no), pret's oddity note, and the
+  // linked event flags (the conflict hooks).
+  desc = data["desc"].toString();
+  toggleConst = data["toggleConst"].toString();
+  scriptToggled = data["scriptToggled"].toBool(true);
+  oddity = data["oddity"].toString();
+  if(data["linkedEvents"].isArray()) {
+    for(QJsonValue v : data["linkedEvents"].toArray()) {
+      auto o = v.toObject();
+      linkedEvents.append({ o["flag"].toString(), o["eventIndex"].toInt(-1) });
+    }
+  }
 }
 
 void MissableDBEntry::deepLink()
@@ -128,4 +143,29 @@ int MissableDBEntry::getInd() const
 const QString MissableDBEntry::getName() const
 {
     return name;
+}
+
+const QString MissableDBEntry::getDesc() const
+{
+    return desc;
+}
+
+bool MissableDBEntry::getScriptToggled() const
+{
+    return scriptToggled;
+}
+
+const QString MissableDBEntry::getOddity() const
+{
+    return oddity;
+}
+
+const QString MissableDBEntry::getToggleConst() const
+{
+    return toggleConst;
+}
+
+const QVector<QPair<QString, int>>& MissableDBEntry::getLinkedEvents() const
+{
+    return linkedEvents;
 }

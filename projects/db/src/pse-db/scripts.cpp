@@ -38,6 +38,8 @@ ScriptDBEntry::ScriptDBEntry(QJsonValue& data)
   name = data["name"].toString();
   ind  = static_cast<var8>(data["ind"].toDouble());
   size = static_cast<var8>(data["size"].toDouble());
+  desc = data["desc"].toString();
+  steps = data["steps"].toInt(0);
 
   if (data["skip"].isDouble())
     skip = static_cast<var8>(data["skip"].toDouble());

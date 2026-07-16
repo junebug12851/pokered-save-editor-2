@@ -4,1595 +4,2357 @@
     "ind": 0,
     "map": "Pallet Town",
     "sprite": 0,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_PALLET_TOWN_OAK",
+    "scriptToggled": true,
+    "desc": "Prof. Oak on Pallet Town. Hidden = not on the map."
   },
   {
     "name": "Lying Old Man",
     "ind": 1,
     "map": "Viridian City",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_LYING_OLD_MAN",
+    "scriptToggled": true,
+    "desc": "Lying Old Man on Viridian City. Hidden = not on the map."
   },
   {
     "name": "Standing Old Man",
     "ind": 2,
     "map": "Viridian City",
     "sprite": 6,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_OLD_MAN",
+    "scriptToggled": true,
+    "desc": "Standing Old Man on Viridian City. Hidden = not on the map."
   },
   {
     "name": "Museum Guy",
     "ind": 3,
     "map": "Pewter City",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MUSEUM_GUY",
+    "scriptToggled": true,
+    "desc": "Museum Guy on Pewter City. Hidden = not on the map."
   },
   {
     "name": "Gym Guy",
     "ind": 4,
     "map": "Pewter City",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_GYM_GUY",
+    "scriptToggled": true,
+    "desc": "Gym Guy on Pewter City. Hidden = not on the map."
   },
   {
     "name": "Rival",
     "ind": 5,
     "map": "Cerulean City",
     "sprite": 0,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_CERULEAN_RIVAL",
+    "scriptToggled": true,
+    "desc": "Rival on Cerulean City. Hidden = not on the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_BEAT_CERULEAN_RIVAL",
+        "eventIndex": 152
+      },
+      {
+        "flag": "EVENT_BEAT_CERULEAN_ROCKET_THIEF",
+        "eventIndex": 167
+      }
+    ]
   },
   {
     "name": "Rocket",
     "ind": 6,
     "map": "Cerulean City",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_ROCKET",
+    "scriptToggled": true,
+    "desc": "Rocket on Cerulean City. Hidden = gone from the map."
   },
   {
     "name": "Guard 1",
     "ind": 7,
     "map": "Cerulean City",
     "sprite": 5,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_CERULEAN_GUARD_1",
+    "scriptToggled": true,
+    "desc": "Guard 1 on Cerulean City. Hidden = not on the map."
   },
   {
     "name": "Cave Guy",
     "ind": 8,
     "map": "Cerulean City",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_GUY",
+    "scriptToggled": true,
+    "desc": "Cave Guy on Cerulean City. Hidden = not on the map."
   },
   {
     "name": "Guard 2",
     "ind": 9,
     "map": "Cerulean City",
     "sprite": 10,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_GUARD_2",
+    "scriptToggled": true,
+    "desc": "Guard 2 on Cerulean City. Hidden = not on the map."
   },
   {
     "name": "1",
     "ind": 10,
     "map": "Saffron City",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_1",
+    "scriptToggled": true,
+    "desc": "1 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "2",
     "ind": 11,
     "map": "Saffron City",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_2",
+    "scriptToggled": true,
+    "desc": "2 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "3",
     "ind": 12,
     "map": "Saffron City",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_3",
+    "scriptToggled": true,
+    "desc": "3 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "4",
     "ind": 13,
     "map": "Saffron City",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_4",
+    "scriptToggled": true,
+    "desc": "4 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "5",
     "ind": 14,
     "map": "Saffron City",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_5",
+    "scriptToggled": true,
+    "desc": "5 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "6",
     "ind": 15,
     "map": "Saffron City",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_6",
+    "scriptToggled": true,
+    "desc": "6 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "7",
     "ind": 16,
     "map": "Saffron City",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_7",
+    "scriptToggled": true,
+    "desc": "7 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "8",
     "ind": 17,
     "map": "Saffron City",
     "sprite": 7,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_8",
+    "scriptToggled": true,
+    "desc": "8 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "9",
     "ind": 18,
     "map": "Saffron City",
     "sprite": 8,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_9",
+    "scriptToggled": true,
+    "desc": "9 on Saffron City. Hidden = not on the map."
   },
   {
     "name": "A",
     "ind": 19,
     "map": "Saffron City",
     "sprite": 9,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_A",
+    "scriptToggled": true,
+    "desc": "A on Saffron City. Hidden = not on the map."
   },
   {
     "name": "B",
     "ind": 20,
     "map": "Saffron City",
     "sprite": 10,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_B",
+    "scriptToggled": true,
+    "desc": "B on Saffron City. Hidden = not on the map."
   },
   {
     "name": "C",
     "ind": 21,
     "map": "Saffron City",
     "sprite": 11,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_C",
+    "scriptToggled": true,
+    "desc": "C on Saffron City. Hidden = not on the map."
   },
   {
     "name": "D",
     "ind": 22,
     "map": "Saffron City",
     "sprite": 12,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_D",
+    "scriptToggled": true,
+    "desc": "D on Saffron City. Hidden = not on the map."
   },
   {
     "name": "E",
     "ind": 23,
     "map": "Saffron City",
     "sprite": 13,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_E",
+    "scriptToggled": true,
+    "desc": "E on Saffron City. Hidden = not on the map."
   },
   {
     "name": "F",
     "ind": 24,
     "map": "Saffron City",
     "sprite": 14,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SAFFRON_CITY_F",
+    "scriptToggled": true,
+    "desc": "F on Saffron City. Hidden = not on the map."
   },
   {
     "name": "Route 2 Item 1",
     "ind": 25,
     "map": "Route 2",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_2_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 2. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 26,
     "map": "Route 2",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_2_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 2. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item",
     "ind": 27,
     "map": "Route 4",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_4_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 4. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item",
     "ind": 28,
     "map": "Route 9",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_9_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 9. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Snorlax",
     "ind": 29,
     "map": "Route 12",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_12_SNORLAX",
+    "scriptToggled": true,
+    "desc": "Snorlax on Route 12. Hidden = not on the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_BEAT_ROUTE12_SNORLAX",
+        "eventIndex": 1167
+      },
+      {
+        "flag": "EVENT_FIGHT_ROUTE12_SNORLAX",
+        "eventIndex": 1166
+      }
+    ]
   },
   {
     "name": "Item 1",
     "ind": 30,
     "map": "Route 12",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_12_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 12. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 31,
     "map": "Route 12",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_12_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 12. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item",
     "ind": 32,
     "map": "Route 15",
     "sprite": 10,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_15_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 15. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Snorlax",
     "ind": 33,
     "map": "Route 16",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_16_SNORLAX",
+    "scriptToggled": true,
+    "desc": "Snorlax on Route 16. Hidden = not on the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_BEAT_ROUTE16_SNORLAX",
+        "eventIndex": 1225
+      },
+      {
+        "flag": "EVENT_FIGHT_ROUTE16_SNORLAX",
+        "eventIndex": 1224
+      }
+    ]
   },
   {
     "name": "Rival 1",
     "ind": 34,
     "map": "Route 22",
     "sprite": 0,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_ROUTE_22_RIVAL_1",
+    "scriptToggled": true,
+    "desc": "Rival 1 on Route 22. Hidden = not on the map."
   },
   {
     "name": "Rival 2",
     "ind": 35,
     "map": "Route 22",
     "sprite": 1,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_ROUTE_22_RIVAL_2",
+    "scriptToggled": true,
+    "desc": "Rival 2 on Route 22. Hidden = not on the map."
   },
   {
     "name": "Nugget Bridge Guy",
     "ind": 36,
     "map": "Route 24",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_NUGGET_BRIDGE_GUY",
+    "scriptToggled": true,
+    "desc": "Nugget Bridge Guy on Route 24. Hidden = gone from the map."
   },
   {
     "name": "Item",
     "ind": 37,
     "map": "Route 24",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_24_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 24. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item",
     "ind": 38,
     "map": "Route 25",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROUTE_25_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Route 25. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Daisy Sitting",
     "ind": 39,
     "map": "Blues House",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_DAISY_SITTING",
+    "scriptToggled": true,
+    "desc": "Daisy Sitting on Blues House. Hidden = not on the map."
   },
   {
     "name": "Daisy Walking",
     "ind": 40,
     "map": "Blues House",
     "sprite": 1,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_DAISY_WALKING",
+    "scriptToggled": true,
+    "desc": "Daisy Walking on Blues House. Hidden = not on the map."
   },
   {
     "name": "Town Map",
     "ind": 41,
     "map": "Blues House",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_TOWN_MAP",
+    "scriptToggled": true,
+    "desc": "Town Map on Blues House. Hidden = not on the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_GOT_POKEDEX",
+        "eventIndex": 37
+      },
+      {
+        "flag": "EVENT_GOT_TOWN_MAP",
+        "eventIndex": 24
+      }
+    ]
   },
   {
     "name": "Rival",
     "ind": 42,
     "map": "Oaks Lab",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_OAKS_LAB_RIVAL",
+    "scriptToggled": true,
+    "desc": "Rival on Oaks Lab. Hidden = gone from the map."
   },
   {
     "name": "Pokeball 1",
     "ind": 43,
     "map": "Oaks Lab",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_STARTER_BALL_1",
+    "scriptToggled": true,
+    "desc": "An item ball on Oaks Lab. Hidden = already picked up."
   },
   {
     "name": "Pokeball 2",
     "ind": 44,
     "map": "Oaks Lab",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_STARTER_BALL_2",
+    "scriptToggled": true,
+    "desc": "An item ball on Oaks Lab. Hidden = already picked up."
   },
   {
     "name": "Pokeball 3",
     "ind": 45,
     "map": "Oaks Lab",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_STARTER_BALL_3",
+    "scriptToggled": true,
+    "desc": "An item ball on Oaks Lab. Hidden = already picked up."
   },
   {
     "name": "Prof. Oak 1",
     "ind": 46,
     "map": "Oaks Lab",
     "sprite": 4,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_OAKS_LAB_OAK_1",
+    "scriptToggled": true,
+    "desc": "Prof. Oak 1 on Oaks Lab. Hidden = not on the map."
   },
   {
     "name": "Pokedex 1",
     "ind": 47,
     "map": "Oaks Lab",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEDEX_1",
+    "scriptToggled": true,
+    "desc": "Pokedex 1 on Oaks Lab. Hidden = not on the map."
   },
   {
     "name": "Pokedex 2",
     "ind": 48,
     "map": "Oaks Lab",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEDEX_2",
+    "scriptToggled": true,
+    "desc": "Pokedex 2 on Oaks Lab. Hidden = not on the map."
   },
   {
     "name": "Prof. Oak 2",
     "ind": 49,
     "map": "Oaks Lab",
     "sprite": 7,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_OAKS_LAB_OAK_2",
+    "scriptToggled": true,
+    "desc": "Prof. Oak 2 on Oaks Lab. Hidden = not on the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_OAK_APPEARED_IN_PALLET",
+        "eventIndex": 39
+      }
+    ]
   },
   {
     "name": "Giovanni",
     "ind": 50,
     "map": "Viridian Gym",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VIRIDIAN_GYM_GIOVANNI",
+    "scriptToggled": true,
+    "desc": "Giovanni on Viridian Gym. Hidden = gone from the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_BEAT_VIRIDIAN_GYM_GIOVANNI",
+        "eventIndex": 81
+      },
+      {
+        "flag": "EVENT_GOT_TM27",
+        "eventIndex": 80
+      }
+    ]
   },
   {
     "name": "Item",
     "ind": 51,
     "map": "Viridian Gym",
     "sprite": 10,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VIRIDIAN_GYM_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Viridian Gym. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Old Amber",
     "ind": 52,
     "map": "Museum 1F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_OLD_AMBER",
+    "scriptToggled": true,
+    "desc": "Old Amber on Museum 1F. Hidden = not on the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_GOT_OLD_AMBER",
+        "eventIndex": 105
+      }
+    ]
   },
   {
     "name": "Item 1",
     "ind": 53,
     "map": "Cerulean Cave 1F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_1F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Cerulean Cave 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 54,
     "map": "Cerulean Cave 1F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_1F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Cerulean Cave 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 55,
     "map": "Cerulean Cave 1F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_1F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Cerulean Cave 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rival",
     "ind": 56,
     "map": "Pokemon Tower 2F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_2F_RIVAL",
+    "scriptToggled": true,
+    "desc": "Rival on Pokemon Tower 2F. Hidden = not on the map."
   },
   {
     "name": "Item",
     "ind": 57,
     "map": "Pokemon Tower 3F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_3F_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Tower 3F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 58,
     "map": "Pokemon Tower 4F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_4F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Tower 4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 59,
     "map": "Pokemon Tower 4F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_4F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Tower 4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 60,
     "map": "Pokemon Tower 4F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_4F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Tower 4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item",
     "ind": 61,
     "map": "Pokemon Tower 5F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_5F_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Tower 5F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 62,
     "map": "Pokemon Tower 6F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_6F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Tower 6F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 63,
     "map": "Pokemon Tower 6F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_6F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Tower 6F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rocket 1",
     "ind": 64,
     "map": "Pokemon Tower 7F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_1",
+    "scriptToggled": false,
+    "desc": "Rocket 1 on Pokemon Tower 7F. Hidden = gone from the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rocket 2",
     "ind": 65,
     "map": "Pokemon Tower 7F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_2",
+    "scriptToggled": false,
+    "desc": "Rocket 2 on Pokemon Tower 7F. Hidden = gone from the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rocket 3",
     "ind": 66,
     "map": "Pokemon Tower 7F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_3",
+    "scriptToggled": false,
+    "desc": "Rocket 3 on Pokemon Tower 7F. Hidden = gone from the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Mr Fuji",
     "ind": 67,
     "map": "Pokemon Tower 7F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_TOWER_7F_MR_FUJI",
+    "scriptToggled": true,
+    "desc": "Mr Fuji on Pokemon Tower 7F. Hidden = not on the map."
   },
   {
     "name": "Mr Fuji",
     "ind": 68,
     "map": "Mr Fujis House",
     "sprite": 4,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_MR_FUJIS_HOUSE_MR_FUJI",
+    "scriptToggled": true,
+    "desc": "Mr Fuji on Mr Fujis House. Hidden = not on the map."
   },
   {
     "name": "Eevee Gift",
     "ind": 69,
     "map": "Celadon Mansion Roof House",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CELADON_MANSION_EEVEE_GIFT",
+    "scriptToggled": true,
+    "desc": "An item ball on Celadon Mansion Roof House. Hidden = already picked up."
   },
   {
     "name": "Rocket",
     "ind": 70,
     "map": "Game Corner",
     "sprite": 10,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_GAME_CORNER_ROCKET",
+    "scriptToggled": true,
+    "desc": "Rocket on Game Corner. Hidden = gone from the map."
   },
   {
     "name": "Item",
     "ind": 71,
     "map": "Wardens House",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_WARDENS_HOUSE_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Wardens House. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 72,
     "map": "Pokemon Mansion 1F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_1F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 73,
     "map": "Pokemon Mansion 1F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_1F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Gift 1",
     "ind": 74,
     "map": "Fighting Dojo",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_FIGHTING_DOJO_GIFT_1",
+    "scriptToggled": true,
+    "desc": "An item ball on Fighting Dojo. Hidden = already picked up."
   },
   {
     "name": "Gift 2",
     "ind": 75,
     "map": "Fighting Dojo",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_FIGHTING_DOJO_GIFT_2",
+    "scriptToggled": true,
+    "desc": "An item ball on Fighting Dojo. Hidden = already picked up."
   },
   {
     "name": "Receptionist",
     "ind": 76,
     "map": "Silph Co 1F",
     "sprite": 0,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SILPH_CO_1F_RECEPTIONIST",
+    "scriptToggled": true,
+    "desc": "Receptionist on Silph Co 1F. Hidden = not on the map."
   },
   {
     "name": "Voltorb 1",
     "ind": 77,
     "map": "Power Plant",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VOLTORB_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Voltorb 2",
     "ind": 78,
     "map": "Power Plant",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VOLTORB_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Voltorb 3",
     "ind": 79,
     "map": "Power Plant",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VOLTORB_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Electrode 1",
     "ind": 80,
     "map": "Power Plant",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ELECTRODE_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Voltorb 4",
     "ind": 81,
     "map": "Power Plant",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VOLTORB_4",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Voltorb 5",
     "ind": 82,
     "map": "Power Plant",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VOLTORB_5",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Electrode 2",
     "ind": 83,
     "map": "Power Plant",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ELECTRODE_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Voltorb 6",
     "ind": 84,
     "map": "Power Plant",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VOLTORB_6",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Zapdos",
     "ind": 85,
     "map": "Power Plant",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ZAPDOS",
+    "scriptToggled": false,
+    "desc": "Zapdos on Power Plant. Hidden = not on the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 86,
     "map": "Power Plant",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POWER_PLANT_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 87,
     "map": "Power Plant",
     "sprite": 10,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POWER_PLANT_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 88,
     "map": "Power Plant",
     "sprite": 11,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POWER_PLANT_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 4",
     "ind": 89,
     "map": "Power Plant",
     "sprite": 12,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POWER_PLANT_ITEM_4",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 5",
     "ind": 90,
     "map": "Power Plant",
     "sprite": 13,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POWER_PLANT_ITEM_5",
+    "scriptToggled": false,
+    "desc": "An item ball on Power Plant. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Moltres",
     "ind": 91,
     "map": "Victory Road 2F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MOLTRES",
+    "scriptToggled": false,
+    "desc": "Moltres on Victory Road 2F. Hidden = not on the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 92,
     "map": "Victory Road 2F",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_2F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Victory Road 2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 93,
     "map": "Victory Road 2F",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_2F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Victory Road 2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 94,
     "map": "Victory Road 2F",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_2F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Victory Road 2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 4",
     "ind": 95,
     "map": "Victory Road 2F",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_2F_ITEM_4",
+    "scriptToggled": false,
+    "desc": "An item ball on Victory Road 2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Boulder",
     "ind": 96,
     "map": "Victory Road 2F",
     "sprite": 12,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_2F_BOULDER",
+    "scriptToggled": true,
+    "desc": "Boulder on Victory Road 2F. Hidden = not on the map."
   },
   {
     "name": "Bill as Pokemon",
     "ind": 97,
     "map": "Bills House",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_BILL_POKEMON",
+    "scriptToggled": true,
+    "desc": "Bill as Pokemon on Bills House. Hidden = not on the map."
   },
   {
     "name": "Bill 1",
     "ind": 98,
     "map": "Bills House",
     "sprite": 1,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_BILL_1",
+    "scriptToggled": true,
+    "desc": "Bill 1 on Bills House. Hidden = not on the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_USED_CELL_SEPARATOR_ON_BILL",
+        "eventIndex": 1371
+      }
+    ]
   },
   {
     "name": "Bill 2",
     "ind": 99,
     "map": "Bills House",
     "sprite": 2,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_BILL_2",
+    "scriptToggled": true,
+    "desc": "Bill 2 on Bills House. Hidden = not on the map."
   },
   {
     "name": "Item 1",
     "ind": 100,
     "map": "Viridian Forest",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VIRIDIAN_FOREST_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Viridian Forest. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 101,
     "map": "Viridian Forest",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VIRIDIAN_FOREST_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Viridian Forest. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 102,
     "map": "Viridian Forest",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VIRIDIAN_FOREST_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Viridian Forest. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 103,
     "map": "Mt Moon 1F",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_1F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Mt Moon 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 104,
     "map": "Mt Moon 1F",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_1F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Mt Moon 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 105,
     "map": "Mt Moon 1F",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_1F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Mt Moon 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 4",
     "ind": 106,
     "map": "Mt Moon 1F",
     "sprite": 10,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_1F_ITEM_4",
+    "scriptToggled": false,
+    "desc": "An item ball on Mt Moon 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 5",
     "ind": 107,
     "map": "Mt Moon 1F",
     "sprite": 11,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_1F_ITEM_5",
+    "scriptToggled": false,
+    "desc": "An item ball on Mt Moon 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 6",
     "ind": 108,
     "map": "Mt Moon 1F",
     "sprite": 12,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_1F_ITEM_6",
+    "scriptToggled": false,
+    "desc": "An item ball on Mt Moon 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Fossil 1",
     "ind": 109,
     "map": "Mt Moon B2F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_B2F_FOSSIL_1",
+    "scriptToggled": true,
+    "desc": "Fossil 1 on Mt Moon B2F. Hidden = not on the map.",
+    "linkedEvents": [
+      {
+        "flag": "EVENT_GOT_DOME_FOSSIL",
+        "eventIndex": 1406
+      }
+    ]
   },
   {
     "name": "Fossil 2",
     "ind": 110,
     "map": "Mt Moon B2F",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_B2F_FOSSIL_2",
+    "scriptToggled": true,
+    "desc": "Fossil 2 on Mt Moon B2F. Hidden = not on the map."
   },
   {
     "name": "Item 1",
     "ind": 111,
     "map": "Mt Moon B2F",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_B2F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Mt Moon B2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 112,
     "map": "Mt Moon B2F",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MT_MOON_B2F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Mt Moon B2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rival",
     "ind": 113,
     "map": "SS Anne 2F",
     "sprite": 1,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SS_ANNE_2F_RIVAL",
+    "scriptToggled": true,
+    "desc": "Rival on SS Anne 2F. Hidden = gone from the map."
   },
   {
     "name": "Rooms Item",
     "ind": 114,
     "map": "SS Anne 1F Rooms",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SS_ANNE_1F_ROOMS_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on SS Anne 1F Rooms. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rooms Item 1",
     "ind": 115,
     "map": "SS Anne 2F Rooms",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SS_ANNE_2F_ROOMS_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on SS Anne 2F Rooms. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rooms Item 2",
     "ind": 116,
     "map": "SS Anne 2F Rooms",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SS_ANNE_2F_ROOMS_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on SS Anne 2F Rooms. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rooms Item 1",
     "ind": 117,
     "map": "SS Anne B1F Rooms",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SS_ANNE_B1F_ROOMS_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on SS Anne B1F Rooms. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rooms Item 2",
     "ind": 118,
     "map": "SS Anne B1F Rooms",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SS_ANNE_B1F_ROOMS_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on SS Anne B1F Rooms. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Rooms Item 3",
     "ind": 119,
     "map": "SS Anne B1F Rooms",
     "sprite": 10,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SS_ANNE_B1F_ROOMS_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on SS Anne B1F Rooms. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 120,
     "map": "Victory Road 3F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_3F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Victory Road 3F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 121,
     "map": "Victory Road 3F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_3F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Victory Road 3F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Boulder",
     "ind": 122,
     "map": "Victory Road 3F",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_3F_BOULDER",
+    "scriptToggled": true,
+    "desc": "Boulder on Victory Road 3F. Hidden = not on the map."
   },
   {
     "name": "Item 1",
     "ind": 123,
     "map": "Rocket Hideout B1F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B1F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 124,
     "map": "Rocket Hideout B1F",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B1F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 125,
     "map": "Rocket Hideout B2F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 126,
     "map": "Rocket Hideout B2F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 127,
     "map": "Rocket Hideout B2F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 4",
     "ind": 128,
     "map": "Rocket Hideout B2F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_4",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 129,
     "map": "Rocket Hideout B3F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B3F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B3F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 130,
     "map": "Rocket Hideout B3F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B3F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B3F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Giovanni",
     "ind": 131,
     "map": "Rocket Hideout B4F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B4F_GIOVANNI",
+    "scriptToggled": true,
+    "desc": "Giovanni on Rocket Hideout B4F. Hidden = gone from the map."
   },
   {
     "name": "Item 1",
     "ind": 132,
     "map": "Rocket Hideout B4F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B4F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 133,
     "map": "Rocket Hideout B4F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B4F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 134,
     "map": "Rocket Hideout B4F",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B4F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Rocket Hideout B4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 4",
     "ind": 135,
     "map": "Rocket Hideout B4F",
     "sprite": 7,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B4F_ITEM_4",
+    "scriptToggled": true,
+    "desc": "An item ball on Rocket Hideout B4F. Hidden = already picked up."
   },
   {
     "name": "Item 5",
     "ind": 136,
     "map": "Rocket Hideout B4F",
     "sprite": 8,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B4F_ITEM_5",
+    "scriptToggled": true,
+    "desc": "An item ball on Rocket Hideout B4F. Hidden = already picked up."
   },
   {
     "name": "1",
     "ind": 137,
     "map": "Silph Co 2F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_2F_1",
+    "scriptToggled": false,
+    "oddity": "never (de)activated?",
+    "desc": "1 on Silph Co 2F. Hidden = not on the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts). ⚠ pret flags this one: never (de)activated? — toggling it does nothing visible."
   },
   {
     "name": "2",
     "ind": 138,
     "map": "Silph Co 2F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_2F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 2F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 139,
     "map": "Silph Co 2F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_2F_3",
+    "scriptToggled": true,
+    "desc": "3 on Silph Co 2F. Hidden = gone from the map."
   },
   {
     "name": "4",
     "ind": 140,
     "map": "Silph Co 2F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_2F_4",
+    "scriptToggled": true,
+    "desc": "4 on Silph Co 2F. Hidden = gone from the map."
   },
   {
     "name": "5",
     "ind": 141,
     "map": "Silph Co 2F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_2F_5",
+    "scriptToggled": true,
+    "desc": "5 on Silph Co 2F. Hidden = gone from the map."
   },
   {
     "name": "1",
     "ind": 142,
     "map": "Silph Co 3F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_3F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 3F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 143,
     "map": "Silph Co 3F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_3F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 3F. Hidden = gone from the map."
   },
   {
     "name": "Item",
     "ind": 144,
     "map": "Silph Co 3F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_3F_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 3F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "1",
     "ind": 145,
     "map": "Silph Co 4F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_4F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 4F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 146,
     "map": "Silph Co 4F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_4F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 4F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 147,
     "map": "Silph Co 4F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_4F_3",
+    "scriptToggled": true,
+    "desc": "3 on Silph Co 4F. Hidden = gone from the map."
   },
   {
     "name": "Item 1",
     "ind": 148,
     "map": "Silph Co 4F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_4F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 149,
     "map": "Silph Co 4F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_4F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 150,
     "map": "Silph Co 4F",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_4F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 4F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "1",
     "ind": 151,
     "map": "Silph Co 5F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_5F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 5F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 152,
     "map": "Silph Co 5F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_5F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 5F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 153,
     "map": "Silph Co 5F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_5F_3",
+    "scriptToggled": true,
+    "desc": "3 on Silph Co 5F. Hidden = gone from the map."
   },
   {
     "name": "4",
     "ind": 154,
     "map": "Silph Co 5F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_5F_4",
+    "scriptToggled": true,
+    "desc": "4 on Silph Co 5F. Hidden = gone from the map."
   },
   {
     "name": "Item 1",
     "ind": 155,
     "map": "Silph Co 5F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 5F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 156,
     "map": "Silph Co 5F",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 5F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 157,
     "map": "Silph Co 5F",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 5F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "1",
     "ind": 158,
     "map": "Silph Co 6F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_6F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 6F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 159,
     "map": "Silph Co 6F",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_6F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 6F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 160,
     "map": "Silph Co 6F",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_6F_3",
+    "scriptToggled": true,
+    "desc": "3 on Silph Co 6F. Hidden = gone from the map."
   },
   {
     "name": "Item 1",
     "ind": 161,
     "map": "Silph Co 6F",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_6F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 6F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 162,
     "map": "Silph Co 6F",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_6F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 6F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "1",
     "ind": 163,
     "map": "Silph Co 7F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_7F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 7F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 164,
     "map": "Silph Co 7F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_7F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 7F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 165,
     "map": "Silph Co 7F",
     "sprite": 6,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_7F_3",
+    "scriptToggled": true,
+    "desc": "3 on Silph Co 7F. Hidden = gone from the map."
   },
   {
     "name": "4",
     "ind": 166,
     "map": "Silph Co 7F",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_7F_4",
+    "scriptToggled": true,
+    "desc": "4 on Silph Co 7F. Hidden = gone from the map."
   },
   {
     "name": "Rival",
     "ind": 167,
     "map": "Silph Co 7F",
     "sprite": 8,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_7F_RIVAL",
+    "scriptToggled": true,
+    "desc": "Rival on Silph Co 7F. Hidden = not on the map."
   },
   {
     "name": "Item 1",
     "ind": 168,
     "map": "Silph Co 7F",
     "sprite": 9,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_7F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 7F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 169,
     "map": "Silph Co 7F",
     "sprite": 10,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_7F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 7F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "8",
     "ind": 170,
     "map": "Silph Co 7F",
     "sprite": 11,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_7F_8",
+    "scriptToggled": false,
+    "oddity": "sprite doesn't exist",
+    "desc": "8 on Silph Co 7F. Hidden = not on the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts). ⚠ pret flags this one: sprite doesn't exist — toggling it does nothing visible."
   },
   {
     "name": "1",
     "ind": 171,
     "map": "Silph Co 8F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_8F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 8F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 172,
     "map": "Silph Co 8F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_8F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 8F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 173,
     "map": "Silph Co 8F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_8F_3",
+    "scriptToggled": true,
+    "desc": "3 on Silph Co 8F. Hidden = gone from the map."
   },
   {
     "name": "1",
     "ind": 174,
     "map": "Silph Co 9F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_9F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 9F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 175,
     "map": "Silph Co 9F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_9F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 9F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 176,
     "map": "Silph Co 9F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_9F_3",
+    "scriptToggled": true,
+    "desc": "3 on Silph Co 9F. Hidden = gone from the map."
   },
   {
     "name": "1",
     "ind": 177,
     "map": "Silph Co 10F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_10F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 10F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 178,
     "map": "Silph Co 10F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_10F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 10F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 179,
     "map": "Silph Co 10F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_10F_3",
+    "scriptToggled": false,
+    "oddity": "never (de)activated?",
+    "desc": "3 on Silph Co 10F. Hidden = not on the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts). ⚠ pret flags this one: never (de)activated? — toggling it does nothing visible."
   },
   {
     "name": "Item 1",
     "ind": 180,
     "map": "Silph Co 10F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_10F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 10F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 181,
     "map": "Silph Co 10F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_10F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 10F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 182,
     "map": "Silph Co 10F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_10F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Silph Co 10F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "1",
     "ind": 183,
     "map": "Silph Co 11F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_11F_1",
+    "scriptToggled": true,
+    "desc": "1 on Silph Co 11F. Hidden = gone from the map."
   },
   {
     "name": "2",
     "ind": 184,
     "map": "Silph Co 11F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_11F_2",
+    "scriptToggled": true,
+    "desc": "2 on Silph Co 11F. Hidden = gone from the map."
   },
   {
     "name": "3",
     "ind": 185,
     "map": "Silph Co 11F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SILPH_CO_11F_3",
+    "scriptToggled": true,
+    "desc": "3 on Silph Co 11F. Hidden = gone from the map."
   },
   {
     "name": "1",
     "ind": 186,
     "map": "Unused Map F4",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_UNUSED_MAP_F4_1",
+    "scriptToggled": false,
+    "oddity": "sprite doesn't exist",
+    "desc": "An item ball on Unused Map F4. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts). ⚠ pret flags this one: sprite doesn't exist — toggling it does nothing visible."
   },
   {
     "name": "Item",
     "ind": 187,
     "map": "Pokemon Mansion 2F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_2F_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion 2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 188,
     "map": "Pokemon Mansion 3F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_3F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion 3F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 189,
     "map": "Pokemon Mansion 3F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_3F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion 3F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 190,
     "map": "Pokemon Mansion B1F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 191,
     "map": "Pokemon Mansion B1F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 192,
     "map": "Pokemon Mansion B1F",
     "sprite": 4,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 4",
     "ind": 193,
     "map": "Pokemon Mansion B1F",
     "sprite": 5,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_4",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 5",
     "ind": 194,
     "map": "Pokemon Mansion B1F",
     "sprite": 7,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_5",
+    "scriptToggled": false,
+    "desc": "An item ball on Pokemon Mansion B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 195,
     "map": "Safari Zone East",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_EAST_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone East. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 196,
     "map": "Safari Zone East",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_EAST_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone East. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 197,
     "map": "Safari Zone East",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_EAST_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone East. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 4",
     "ind": 198,
     "map": "Safari Zone East",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_EAST_ITEM_4",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone East. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 199,
     "map": "Safari Zone North",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_NORTH_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone North. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 200,
     "map": "Safari Zone North",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_NORTH_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone North. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 201,
     "map": "Safari Zone West",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_WEST_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone West. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 202,
     "map": "Safari Zone West",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_WEST_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone West. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 203,
     "map": "Safari Zone West",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_WEST_ITEM_3",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone West. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 4",
     "ind": 204,
     "map": "Safari Zone West",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_WEST_ITEM_4",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone West. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item",
     "ind": 205,
     "map": "Safari Zone Center",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SAFARI_ZONE_CENTER_ITEM",
+    "scriptToggled": false,
+    "desc": "An item ball on Safari Zone Center. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 206,
     "map": "Cerulean Cave 2F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_2F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Cerulean Cave 2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 207,
     "map": "Cerulean Cave 2F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_2F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Cerulean Cave 2F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 3",
     "ind": 208,
     "map": "Cerulean Cave 2F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_2F_ITEM_3",
+    "scriptToggled": false,
+    "desc": "Item 3 on Cerulean Cave 2F. Hidden = not on the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Mewtwo",
     "ind": 209,
     "map": "Cerulean Cave B1F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_MEWTWO",
+    "scriptToggled": false,
+    "desc": "An item ball on Cerulean Cave B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 210,
     "map": "Cerulean Cave B1F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_B1F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Cerulean Cave B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 211,
     "map": "Cerulean Cave B1F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_CERULEAN_CAVE_B1F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "An item ball on Cerulean Cave B1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 1",
     "ind": 212,
     "map": "Victory Road 1F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_1F_ITEM_1",
+    "scriptToggled": false,
+    "desc": "An item ball on Victory Road 1F. Hidden = already picked up. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Item 2",
     "ind": 213,
     "map": "Victory Road 1F",
     "sprite": 3,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_VICTORY_ROAD_1F_ITEM_2",
+    "scriptToggled": false,
+    "desc": "Item 2 on Victory Road 1F. Hidden = not on the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   },
   {
     "name": "Champions Room Oak",
     "ind": 214,
     "map": "Champions Room",
     "sprite": 1,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_CHAMPIONS_ROOM_OAK",
+    "scriptToggled": true,
+    "desc": "Champions Room Oak on Champions Room. Hidden = not on the map."
   },
   {
     "name": "Boulder 1",
     "ind": 215,
     "map": "Seafoam Islands 1F",
     "sprite": 0,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_1F_BOULDER_1",
+    "scriptToggled": true,
+    "desc": "Boulder 1 on Seafoam Islands 1F. Hidden = not on the map."
   },
   {
     "name": "Boulder 2",
     "ind": 216,
     "map": "Seafoam Islands 1F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_1F_BOULDER_2",
+    "scriptToggled": true,
+    "desc": "Boulder 2 on Seafoam Islands 1F. Hidden = not on the map."
   },
   {
     "name": "Boulder 1",
     "ind": 217,
     "map": "Seafoam Islands B1F",
     "sprite": 0,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B1F_BOULDER_1",
+    "scriptToggled": true,
+    "desc": "Boulder 1 on Seafoam Islands B1F. Hidden = not on the map."
   },
   {
     "name": "Boulder 2",
     "ind": 218,
     "map": "Seafoam Islands B1F",
     "sprite": 1,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B1F_BOULDER_2",
+    "scriptToggled": true,
+    "desc": "Boulder 2 on Seafoam Islands B1F. Hidden = not on the map."
   },
   {
     "name": "Boulder 1",
     "ind": 219,
     "map": "Seafoam Islands B2F",
     "sprite": 0,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B2F_BOULDER_1",
+    "scriptToggled": true,
+    "desc": "Boulder 1 on Seafoam Islands B2F. Hidden = not on the map."
   },
   {
     "name": "Boulder 2",
     "ind": 220,
     "map": "Seafoam Islands B2F",
     "sprite": 1,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B2F_BOULDER_2",
+    "scriptToggled": true,
+    "desc": "Boulder 2 on Seafoam Islands B2F. Hidden = not on the map."
   },
   {
     "name": "Boulder 1",
     "ind": 221,
     "map": "Seafoam Islands B3F",
     "sprite": 1,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B3F_BOULDER_1",
+    "scriptToggled": true,
+    "desc": "Boulder 1 on Seafoam Islands B3F. Hidden = not on the map."
   },
   {
     "name": "Boulder 2",
     "ind": 222,
     "map": "Seafoam Islands B3F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B3F_BOULDER_2",
+    "scriptToggled": true,
+    "desc": "Boulder 2 on Seafoam Islands B3F. Hidden = not on the map."
   },
   {
     "name": "Boulder 3",
     "ind": 223,
     "map": "Seafoam Islands B3F",
     "sprite": 4,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B3F_BOULDER_3",
+    "scriptToggled": true,
+    "desc": "Boulder 3 on Seafoam Islands B3F. Hidden = not on the map."
   },
   {
     "name": "Boulder 4",
     "ind": 224,
     "map": "Seafoam Islands B3F",
     "sprite": 5,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B3F_BOULDER_4",
+    "scriptToggled": true,
+    "desc": "Boulder 4 on Seafoam Islands B3F. Hidden = not on the map."
   },
   {
     "name": "Boulder 1",
     "ind": 225,
     "map": "Seafoam Islands B4F",
     "sprite": 0,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B4F_BOULDER_1",
+    "scriptToggled": true,
+    "desc": "Boulder 1 on Seafoam Islands B4F. Hidden = not on the map."
   },
   {
     "name": "Boulder 2",
     "ind": 226,
     "map": "Seafoam Islands B4F",
     "sprite": 1,
-    "defVal": "Hide"
+    "defVal": "Hide",
+    "toggleConst": "TOGGLE_SEAFOAM_ISLANDS_B4F_BOULDER_2",
+    "scriptToggled": true,
+    "desc": "Boulder 2 on Seafoam Islands B4F. Hidden = not on the map."
   },
   {
     "name": "Articuno",
     "ind": 227,
     "map": "Seafoam Islands B4F",
     "sprite": 2,
-    "defVal": "Show"
+    "defVal": "Show",
+    "toggleConst": "TOGGLE_ARTICUNO",
+    "scriptToggled": false,
+    "desc": "Articuno on Seafoam Islands B4F. Hidden = not on the map. No map script ever toggles this one — the game flips it through the object list itself (pret marks it unused by scripts)."
   }
 ]

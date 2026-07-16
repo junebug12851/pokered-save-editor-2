@@ -45,6 +45,8 @@ struct DB_AUTOPORT ScriptDBEntry {
   QString name;  ///< Script name (key).
   var8 ind  = 0; ///< Script index.
   var8 size = 0; ///< Script size.
+  QString desc;  ///< What this map's script progression tracks (import_storage_meta.py).
+  int steps = 0; ///< Named step count — the legal dropdown range; beyond it is the jp-hl gun.
 
   QVector<QString> maps;     ///< Map names using this script.
   std::optional<var8> skip;  ///< Optional skip value.

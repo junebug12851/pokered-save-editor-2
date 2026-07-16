@@ -2,452 +2,628 @@
   {
     "name": "Oaks Lab",
     "size": 1,
-    "ind": 0
+    "ind": 0,
+    "steps": 19,
+    "desc": "How far Oaks Lab's scripted events have progressed. 19 named steps."
   },
   {
     "name": "Pallet Town",
     "size": 1,
     "skip": 1,
-    "ind": 1
+    "ind": 1,
+    "steps": 7,
+    "desc": "How far Pallet Town's scripted events have progressed. 7 named steps."
   },
   {
     "name": "Blues House",
     "size": 1,
-    "ind": 2
+    "ind": 2,
+    "steps": 2,
+    "desc": "How far Blues House's scripted events have progressed. 2 named steps."
   },
   {
     "name": "Viridian City",
     "size": 1,
     "skip": 2,
-    "ind": 3
+    "ind": 3,
+    "steps": 4,
+    "desc": "How far Viridian City's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Pewter City",
     "size": 1,
-    "ind": 4
+    "ind": 4,
+    "steps": 7,
+    "desc": "How far Pewter City's scripted events have progressed. 7 named steps."
   },
   {
     "name": "Route 3",
     "size": 1,
-    "ind": 5
+    "ind": 5,
+    "steps": 3,
+    "desc": "How far Route 3's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 4",
     "size": 1,
     "skip": 1,
-    "ind": 6
+    "ind": 6,
+    "steps": 3,
+    "desc": "How far Route 4's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Viridian Gym",
     "size": 1,
-    "ind": 7
+    "ind": 7,
+    "steps": 5,
+    "desc": "How far Viridian Gym's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Pewter Gym",
     "size": 1,
-    "ind": 8
+    "ind": 8,
+    "steps": 4,
+    "desc": "How far Pewter Gym's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Cerulean Gym",
     "size": 1,
-    "ind": 9
+    "ind": 9,
+    "steps": 4,
+    "desc": "How far Cerulean Gym's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Vermilion Gym",
     "size": 1,
-    "ind": 10
+    "ind": 10,
+    "steps": 4,
+    "desc": "How far Vermilion Gym's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Celadon Gym",
     "size": 1,
-    "ind": 11
+    "ind": 11,
+    "steps": 4,
+    "desc": "How far Celadon Gym's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Route 6",
     "size": 1,
-    "ind": 12
+    "ind": 12,
+    "steps": 3,
+    "desc": "How far Route 6's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 8",
     "size": 1,
-    "ind": 13
+    "ind": 13,
+    "steps": 3,
+    "desc": "How far Route 8's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 24",
     "size": 1,
-    "ind": 14
+    "ind": 14,
+    "steps": 5,
+    "desc": "How far Route 24's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Route 25",
     "size": 1,
-    "ind": 15
+    "ind": 15,
+    "steps": 3,
+    "desc": "How far Route 25's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 9",
     "size": 1,
-    "ind": 16
+    "ind": 16,
+    "steps": 3,
+    "desc": "How far Route 9's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 10",
     "size": 1,
-    "ind": 17
+    "ind": 17,
+    "steps": 3,
+    "desc": "How far Route 10's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Mt. Moon 1",
     "size": 1,
-    "ind": 18
+    "ind": 18,
+    "steps": 3,
+    "desc": "How far Mt. Moon 1's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Mt. Moon 3",
     "size": 1,
-    "ind": 19
+    "ind": 19,
+    "steps": 6,
+    "desc": "How far Mt. Moon 3's scripted events have progressed. 6 named steps."
   },
   {
     "name": "S.S. Anne 8",
     "size": 1,
-    "ind": 20
+    "ind": 20,
+    "steps": 3,
+    "desc": "How far S.S. Anne 8's scripted events have progressed. 3 named steps."
   },
   {
     "name": "S.S. Anne 9",
     "size": 1,
-    "ind": 21
+    "ind": 21,
+    "steps": 3,
+    "desc": "How far S.S. Anne 9's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 22",
     "size": 1,
     "skip": 1,
-    "ind": 22
+    "ind": 22,
+    "steps": 8,
+    "desc": "How far Route 22's scripted events have progressed. 8 named steps."
   },
   {
     "name": "Reds House 2F",
     "size": 1,
-    "ind": 23
+    "ind": 23,
+    "steps": 2,
+    "desc": "How far Reds House 2F's scripted events have progressed. 2 named steps."
   },
   {
     "name": "Viridian Mart",
     "size": 1,
-    "ind": 24
+    "ind": 24,
+    "steps": 3,
+    "desc": "How far Viridian Mart's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 22 Gate",
     "size": 1,
-    "ind": 25
+    "ind": 25,
+    "steps": 3,
+    "desc": "How far Route 22 Gate's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Cerulean City",
     "size": 1,
     "skip": 7,
-    "ind": 26
+    "ind": 26,
+    "steps": 5,
+    "desc": "How far Cerulean City's scripted events have progressed. 5 named steps."
   },
   {
     "name": "S.S. Anne 5",
     "size": 1,
-    "ind": 27
+    "ind": 27,
+    "steps": 3,
+    "desc": "How far S.S. Anne 5's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Viridian Forest",
     "size": 1,
-    "ind": 28
+    "ind": 28,
+    "steps": 3,
+    "desc": "How far Viridian Forest's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Museum 1F",
     "size": 1,
-    "ind": 29
+    "ind": 29,
+    "steps": 2,
+    "desc": "How far Museum 1F's scripted events have progressed. 2 named steps."
   },
   {
     "name": "Route 13",
     "size": 1,
-    "ind": 30
+    "ind": 30,
+    "steps": 3,
+    "desc": "How far Route 13's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 14",
     "size": 1,
-    "ind": 31
+    "ind": 31,
+    "steps": 3,
+    "desc": "How far Route 14's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 17",
     "size": 1,
-    "ind": 32
+    "ind": 32,
+    "steps": 3,
+    "desc": "How far Route 17's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 19",
     "size": 1,
-    "ind": 33
+    "ind": 33,
+    "steps": 3,
+    "desc": "How far Route 19's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 21",
     "size": 1,
-    "ind": 34
+    "ind": 34,
+    "steps": 3,
+    "desc": "How far Route 21's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Safari Zone Entrance",
     "size": 1,
-    "ind": 35
+    "ind": 35,
+    "steps": 7,
+    "desc": "How far Safari Zone Entrance's scripted events have progressed. 7 named steps."
   },
   {
     "name": "Rock Tunnel 2",
     "size": 1,
-    "ind": 36
+    "ind": 36,
+    "steps": 3,
+    "desc": "How far Rock Tunnel 2's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Rock Tunnel 1",
     "size": 1,
     "skip": 1,
-    "ind": 37
+    "ind": 37,
+    "steps": 3,
+    "desc": "How far Rock Tunnel 1's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 11",
     "size": 1,
-    "ind": 38
+    "ind": 38,
+    "steps": 3,
+    "desc": "How far Route 11's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 12",
     "size": 1,
-    "ind": 39
+    "ind": 39,
+    "steps": 4,
+    "desc": "How far Route 12's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Route 15",
     "size": 1,
-    "ind": 40
+    "ind": 40,
+    "steps": 3,
+    "desc": "How far Route 15's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 16",
     "size": 1,
-    "ind": 41
+    "ind": 41,
+    "steps": 4,
+    "desc": "How far Route 16's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Route 18",
     "size": 1,
-    "ind": 42
+    "ind": 42,
+    "steps": 3,
+    "desc": "How far Route 18's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 20",
     "size": 1,
-    "ind": 43
+    "ind": 43,
+    "steps": 3,
+    "desc": "How far Route 20's scripted events have progressed. 3 named steps."
   },
   {
     "name": "S.S. Anne 10",
     "size": 1,
-    "ind": 44
+    "ind": 44,
+    "steps": 3,
+    "desc": "How far S.S. Anne 10's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Vermilion City",
     "size": 1,
-    "ind": 45
+    "ind": 45,
+    "steps": 5,
+    "desc": "How far Vermilion City's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Pokemon Tower 2",
     "size": 1,
-    "ind": 46
+    "ind": 46,
+    "steps": 3,
+    "desc": "How far Pokemon Tower 2's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Pokemon Tower 3",
     "size": 1,
-    "ind": 47
+    "ind": 47,
+    "steps": 3,
+    "desc": "How far Pokemon Tower 3's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Pokemon Tower 4",
     "size": 1,
-    "ind": 48
+    "ind": 48,
+    "steps": 3,
+    "desc": "How far Pokemon Tower 4's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Pokemon Tower 5",
     "size": 1,
-    "ind": 49
+    "ind": 49,
+    "steps": 3,
+    "desc": "How far Pokemon Tower 5's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Pokemon Tower 6",
     "size": 1,
-    "ind": 50
+    "ind": 50,
+    "steps": 5,
+    "desc": "How far Pokemon Tower 6's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Pokemon Tower 7",
     "size": 1,
-    "ind": 51
+    "ind": 51,
+    "steps": 5,
+    "desc": "How far Pokemon Tower 7's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Rocket Hideout 1",
     "size": 1,
-    "ind": 52
+    "ind": 52,
+    "steps": 3,
+    "desc": "How far Rocket Hideout 1's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Rocket Hideout 2",
     "size": 1,
-    "ind": 53
+    "ind": 53,
+    "steps": 4,
+    "desc": "How far Rocket Hideout 2's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Rocket Hideout 3",
     "size": 1,
-    "ind": 54
+    "ind": 54,
+    "steps": 4,
+    "desc": "How far Rocket Hideout 3's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Rocket Hideout 4",
     "size": 2,
-    "ind": 55
+    "ind": 55,
+    "steps": 4,
+    "desc": "How far Rocket Hideout 4's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Route 6 Gate",
     "size": 1,
-    "ind": 56
+    "ind": 56,
+    "steps": 2,
+    "desc": "How far Route 6 Gate's scripted events have progressed. 2 named steps."
   },
   {
     "name": "Route 8 Gate",
     "size": 2,
-    "ind": 57
+    "ind": 57,
+    "steps": 2,
+    "desc": "How far Route 8 Gate's scripted events have progressed. 2 named steps."
   },
   {
     "name": "Cinnabar Island",
     "size": 1,
-    "ind": 58
+    "ind": 58,
+    "steps": 2,
+    "desc": "How far Cinnabar Island's scripted events have progressed. 2 named steps."
   },
   {
     "name": "Mansion 1",
     "size": 2,
-    "ind": 59
+    "ind": 59,
+    "steps": 3,
+    "desc": "How far Mansion 1's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Mansion 2",
     "size": 1,
-    "ind": 60
+    "ind": 60,
+    "steps": 3,
+    "desc": "How far Mansion 2's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Mansion 3",
     "size": 1,
-    "ind": 61
+    "ind": 61,
+    "steps": 3,
+    "desc": "How far Mansion 3's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Mansion 4",
     "size": 1,
-    "ind": 62
+    "ind": 62,
+    "steps": 3,
+    "desc": "How far Mansion 4's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Victory Road 2",
     "size": 1,
-    "ind": 63
+    "ind": 63,
+    "steps": 3,
+    "desc": "How far Victory Road 2's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Victory Road 3",
     "size": 2,
-    "ind": 64
+    "ind": 64,
+    "steps": 3,
+    "desc": "How far Victory Road 3's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Fighting Dojo",
     "size": 1,
-    "ind": 65
+    "ind": 65,
+    "steps": 4,
+    "desc": "How far Fighting Dojo's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Silph Co 2F",
     "size": 1,
-    "ind": 66
+    "ind": 66,
+    "steps": 3,
+    "desc": "How far Silph Co 2F's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Silph Co 3F",
     "size": 1,
-    "ind": 67
+    "ind": 67,
+    "steps": 3,
+    "desc": "How far Silph Co 3F's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Silph Co 4F",
     "size": 1,
-    "ind": 68
+    "ind": 68,
+    "steps": 3,
+    "desc": "How far Silph Co 4F's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Silph Co 5F",
     "size": 1,
-    "ind": 69
+    "ind": 69,
+    "steps": 3,
+    "desc": "How far Silph Co 5F's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Silph Co 6F",
     "size": 1,
-    "ind": 70
+    "ind": 70,
+    "steps": 3,
+    "desc": "How far Silph Co 6F's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Silph Co 7F",
     "size": 1,
-    "ind": 71
+    "ind": 71,
+    "steps": 6,
+    "desc": "How far Silph Co 7F's scripted events have progressed. 6 named steps."
   },
   {
     "name": "Silph Co 8F",
     "size": 1,
-    "ind": 72
+    "ind": 72,
+    "steps": 3,
+    "desc": "How far Silph Co 8F's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Silph Co 9F",
     "size": 1,
-    "ind": 73
+    "ind": 73,
+    "steps": 3,
+    "desc": "How far Silph Co 9F's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Hall of Fame",
     "size": 1,
-    "ind": 74
+    "ind": 74,
+    "steps": 4,
+    "desc": "How far Hall of Fame's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Champions Room",
     "size": 1,
-    "ind": 75
+    "ind": 75,
+    "steps": 11,
+    "desc": "How far Champions Room's scripted events have progressed. 11 named steps."
   },
   {
     "name": "Loreleis Room",
     "size": 1,
-    "ind": 76
+    "ind": 76,
+    "steps": 5,
+    "desc": "How far Loreleis Room's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Brunos Room",
     "size": 1,
-    "ind": 77
+    "ind": 77,
+    "steps": 5,
+    "desc": "How far Brunos Room's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Agathas Room",
     "size": 1,
-    "ind": 78
+    "ind": 78,
+    "steps": 5,
+    "desc": "How far Agathas Room's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Unknown Dungeon 3",
     "size": 1,
-    "ind": 79
+    "ind": 79,
+    "steps": 3,
+    "desc": "How far Unknown Dungeon 3's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Victory Road 1",
     "size": 1,
     "skip": 1,
-    "ind": 80
+    "ind": 80,
+    "steps": 3,
+    "desc": "How far Victory Road 1's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Lances Room",
     "size": 1,
     "skip": 4,
-    "ind": 81
+    "ind": 81,
+    "steps": 5,
+    "desc": "How far Lances Room's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Silph Co 10F",
     "size": 1,
-    "ind": 82
+    "ind": 82,
+    "steps": 3,
+    "desc": "How far Silph Co 10F's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Silph Co 11F",
     "size": 1,
     "skip": 1,
-    "ind": 83
+    "ind": 83,
+    "steps": 6,
+    "desc": "How far Silph Co 11F's scripted events have progressed. 6 named steps."
   },
   {
     "name": "Fuchsia Gym",
     "size": 1,
-    "ind": 84
+    "ind": 84,
+    "steps": 4,
+    "desc": "How far Fuchsia Gym's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Saffron Gym",
     "size": 1,
     "skip": 1,
-    "ind": 85
+    "ind": 85,
+    "steps": 4,
+    "desc": "How far Saffron Gym's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Cinnabar Gym",
     "size": 1,
-    "ind": 86
+    "ind": 86,
+    "steps": 4,
+    "desc": "How far Cinnabar Gym's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Game Corner",
     "size": 1,
-    "ind": 87
+    "ind": 87,
+    "steps": 3,
+    "desc": "How far Game Corner's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Route 16 Gate",
@@ -456,17 +632,23 @@
     "maps": [
       "Route 16 Gate 1F",
       "Route 16 Gate 2F"
-    ]
+    ],
+    "steps": 4,
+    "desc": "How far Route 16 Gate's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Bills House",
     "size": 1,
-    "ind": 89
+    "ind": 89,
+    "steps": 6,
+    "desc": "How far Bills House's scripted events have progressed. 6 named steps."
   },
   {
     "name": "Route 5 Gate",
     "size": 1,
-    "ind": 90
+    "ind": 90,
+    "steps": 2,
+    "desc": "How far Route 5 Gate's scripted events have progressed. 2 named steps."
   },
   {
     "name": "Power Plant / Route 7 Gate",
@@ -476,27 +658,37 @@
     "maps": [
       "Power Plant",
       "Route 7 Gate"
-    ]
+    ],
+    "steps": 3,
+    "desc": "How far Power Plant / Route 7 Gate's scripted events have progressed. 3 named steps."
   },
   {
     "name": "S.S. Anne 2",
     "size": 1,
-    "ind": 92
+    "ind": 92,
+    "steps": 5,
+    "desc": "How far S.S. Anne 2's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Seafoam Islands 4",
     "size": 1,
-    "ind": 93
+    "ind": 93,
+    "steps": 4,
+    "desc": "How far Seafoam Islands 4's scripted events have progressed. 4 named steps."
   },
   {
     "name": "Route 23",
     "size": 1,
-    "ind": 94
+    "ind": 94,
+    "steps": 3,
+    "desc": "How far Route 23's scripted events have progressed. 3 named steps."
   },
   {
     "name": "Seafoam Islands 5",
     "size": 1,
-    "ind": 95
+    "ind": 95,
+    "steps": 5,
+    "desc": "How far Seafoam Islands 5's scripted events have progressed. 5 named steps."
   },
   {
     "name": "Route 18 Gate",
@@ -505,6 +697,8 @@
     "maps": [
       "Route 18 Gate 1F",
       "Route 18 Gate 2F"
-    ]
+    ],
+    "steps": 4,
+    "desc": "How far Route 18 Gate's scripted events have progressed. 4 named steps."
   }
 ]

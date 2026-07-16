@@ -197,6 +197,11 @@ void DB::deepLinkAll() const
   // is called first) and after the other links. Confirmed safe: tst_sprite_data resolves all 918
   // sprites. See notes/plans/map-screen.md -> Phase 0.
   MapsDB::inst()->deepLink();           lap("MapsDB");
+
+  // Missables resolve INTO maps (toMap/toMapSprite), so they link after MapsDB.
+  // This call was missing entirely until 2026-07-16 — every missable's map link
+  // was silently null (the Map Storage panel's missables section needs them).
+  MissablesDB::inst()->deepLink();      lap("MissablesDB");
 }
 
 // ── QML ownership / context ──────────────────────────────────────────────────

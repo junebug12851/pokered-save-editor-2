@@ -5,11 +5,27 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.40.5-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
+**Version:** `0.41.0-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**88/88**, 2026-07-15);
-`tst_connections` now 17. New local-only member: **`tst_flag_scenarios`** (5/5 with the ROM,
+`tst_world` now 19. New local-only member: **`tst_flag_scenarios`** (5/5 with the ROM,
 SKIPs without it).
+
+### 🗺️📜 MAP SCRIPTS + MISSABLES on the Map Storage panel — BUILT (2026-07-16, `0.41.0-alpha`)
+
+Twilight's brief, delivered: every map with storage is a page (~100). Top of each page: **the map's
+script** (the 97 `w<Map>CurScript` bytes at `0x289C`, `WorldScripts`) as a dropdown whose steps read
+like a story (458 descriptions — curated beats for the story maps), custom values via "Something
+else…" with the **out-of-range jp-hl crash warning** (stored, never refused). Below: the legacy
+gym/Safari bytes, then **the missables group** (228 bits at `0x2852`, bit set = HIDDEN;
+`WorldMissables`) — "on the map" switches with descriptions, pret's 4 oddities amber-flagged, 121
+never-script-toggled marked, and the **14 verified flag↔object links shown with live flag state**
+(the suspected-tier conflict surface; predicates await event-flags Phase 11). Details panel's
+curMapScript combo shares the descriptions. Fixed en route: `MissablesDB` never deep-linked at boot;
+the old `0x28A0` missables-offset claim corrected (that's Viridian's script byte); a ComboBox
+model-reset binding trap (caught twice by the screenshot review). Everything:
+[`reference/map-scripts-missables.md`](reference/map-scripts-missables.md). Green: `tst_world` 19/19
+(two new byte-exact keystones), `tst_qml_screens` 16/16. ⏳ **Owed: Twilight's live pass.**
 
 > **Connections live-review fixes (0.39.5-alpha):** the added-connection dead-state bug (interactive
 > strip now save-based, not DB-based), neighbour maps animate, and the smart grouped picker (★ default +

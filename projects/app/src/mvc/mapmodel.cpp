@@ -36,6 +36,9 @@
 #include <pse-db/itemsdb.h>
 #include <pse-db/spriteSet.h>
 #include <pse-db/sprites.h>
+#include <pse-db/scripts.h>
+#include <pse-db/missablesdb.h>
+#include <pse-db/entries/missabledbentry.h>
 #include <pse-db/trainers.h>
 #include <QColor>
 #include <QMap>
@@ -4018,13 +4021,145 @@ QVariantList MapModel::mapScriptList() const
   const int stored = mapScript();
   bool storedSeen = false;
   for (const auto& s : entry->getScriptSteps()) {
-    out.append(option(s.id, s.label));   // { value, name, hack:false }
+    QVariantMap o = option(s.id, s.label);   // { value, name, hack:false }
+    o[QStringLiteral("desc")] = s.desc;      // the progression description
+    out.append(o);
     if (s.id == stored)
       storedSeen = true;
   }
   // The stored value is not one of the map's named steps -- offer it, flagged, never refused.
   if (!storedSeen && !out.isEmpty())
     out.append(option(stored, QStringLiteral("Step %1").arg(stored), true));
+  return out;
+}
+
+// ── The Map Storage panel's data (per-map script progress + missables) ──────────────────────────
+
+QVariantList MapModel::storagePages() const
+{
+  // The Safari Zone is COMBINED (Twilight, 2026-07-15): its sub-maps share one counter set.
+  static const QVector<int> safariIds{ 0x9C, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF, 0xE0, 0xE1 };
+
+  QVector<QVariantMap> pages;
+  QSet<int> covered;
+
+  // One page per per-map script-progress entry (WorldScripts holds 97 of them).
+  for (auto* s : ScriptsDB::inst()->getStore()) {
+    QVariantMap p;
+    QVariantList ids;
+    int sortKey = 255;
+    for (auto* m : s->toMaps) {
+      if (m == nullptr)
+        continue;
+      ids.append(int(m->getInd()));
+      covered.insert(int(m->getInd()));
+      sortKey = qMin(sortKey, int(m->getInd()));
+    }
+    p[QStringLiteral("title")] = s->name;
+    p[QStringLiteral("scriptInd")] = int(s->ind);
+    p[QStringLiteral("steps")] = s->steps;
+    p[QStringLiteral("desc")] = s->desc;
+    p[QStringLiteral("legacy")] = -1;
+    p[QStringLiteral("sort")] = sortKey;
+
+    // Merge the legacy trio into the pages that own their maps.
+    if (ids.contains(0x5C))
+      p[QStringLiteral("legacy")] = 0;                 // Vermilion Gym trash cans
+    if (ids.contains(0xA6))
+      p[QStringLiteral("legacy")] = 1;                 // Cinnabar Gym quiz opponent
+    if (ids.contains(0x9C)) {                          // Safari entrance -> the combined page
+      p[QStringLiteral("title")] = QStringLiteral("Safari Zone");
+      p[QStringLiteral("legacy")] = 2;
+      for (int id : safariIds)
+        if (!ids.contains(id)) { ids.append(id); covered.insert(id); }
+    }
+    p[QStringLiteral("ids")] = ids;
+    pages.append(p);
+  }
+
+  // Maps that have missables but no script get a page of their own.
+  QHash<int, QString> extra;
+  for (auto* e : MissablesDB::inst()->getStore()) {
+    auto* m = e->getToMap();
+    if (m != nullptr && !covered.contains(int(m->getInd())))
+      extra.insert(int(m->getInd()), m->getName());
+  }
+  for (auto it = extra.constBegin(); it != extra.constEnd(); ++it) {
+    QVariantMap p;
+    p[QStringLiteral("title")] = it.value();
+    p[QStringLiteral("ids")] = QVariantList{ it.key() };
+    p[QStringLiteral("scriptInd")] = -1;
+    p[QStringLiteral("steps")] = 0;
+    p[QStringLiteral("desc")] = QString();
+    p[QStringLiteral("legacy")] = -1;
+    p[QStringLiteral("sort")] = it.key();
+    pages.append(p);
+  }
+
+  std::sort(pages.begin(), pages.end(), [](const QVariantMap& a, const QVariantMap& b) {
+    const int sa = a.value(QStringLiteral("sort")).toInt();
+    const int sb = b.value(QStringLiteral("sort")).toInt();
+    return sa != sb ? sa < sb
+                    : a.value(QStringLiteral("title")).toString()
+                        < b.value(QStringLiteral("title")).toString();
+  });
+
+  QVariantList out;
+  for (const auto& p : pages)
+    out.append(p);
+  return out;
+}
+
+QVariantList MapModel::storageScriptSteps(int scriptInd) const
+{
+  QVariantList out;
+  for (auto* s : ScriptsDB::inst()->getStore()) {
+    if (int(s->ind) != scriptInd)
+      continue;
+    for (auto* m : s->toMaps) {
+      if (m == nullptr || m->getScriptSteps().isEmpty())
+        continue;
+      for (const auto& st : m->getScriptSteps()) {
+        QVariantMap o;
+        o[QStringLiteral("value")] = st.id;
+        o[QStringLiteral("name")] = st.label;
+        o[QStringLiteral("desc")] = st.desc;
+        out.append(o);
+      }
+      return out;                                     // first map with named steps wins
+    }
+  }
+  return out;
+}
+
+QVariantList MapModel::storageMissables(const QVariantList& mapIds) const
+{
+  QSet<int> ids;
+  for (const auto& v : mapIds)
+    ids.insert(v.toInt());
+
+  QVariantList out;
+  for (auto* e : MissablesDB::inst()->getStore()) {
+    auto* m = e->getToMap();
+    if (m == nullptr || !ids.contains(int(m->getInd())))
+      continue;
+    QVariantMap o;
+    o[QStringLiteral("ind")] = e->getInd();
+    o[QStringLiteral("name")] = e->getName();
+    o[QStringLiteral("desc")] = e->getDesc();
+    o[QStringLiteral("defShow")] = e->getDefShow();
+    o[QStringLiteral("scriptToggled")] = e->getScriptToggled();
+    o[QStringLiteral("oddity")] = e->getOddity();
+    QVariantList linked;
+    for (const auto& le : e->getLinkedEvents()) {
+      QVariantMap lo;
+      lo[QStringLiteral("flag")] = le.first;
+      lo[QStringLiteral("eventIndex")] = le.second;
+      linked.append(lo);
+    }
+    o[QStringLiteral("linked")] = linked;
+    out.append(o);
+  }
   return out;
 }
 

@@ -63,6 +63,8 @@ private slots:
   void missables_roundTrip();
   void general_roundTrip();
   void scripts_roundTrip();
+  void scripts_writeExactlyTheirByte();
+  void missables_writeExactlyTheirBit();
   void local_roundTrip();
   void local_writesExactlyItsBytes();
 
@@ -266,6 +268,68 @@ void TestWorld::scripts_roundTrip()
   auto* s2 = sf.dataExpanded->world->scripts;
   for(int i = 0; i < n; i++)
     QVERIFY2(s2->scriptsAt(i) == (i % 100), qPrintable(QStringLiteral("script %1").arg(i)));
+}
+
+/// Keystone: one per-map script-progress value moves EXACTLY its own byte in the 0x289C block
+/// (wOaksLabCurScript..; the layout — sizes + skips — is scripts.json's; offsets hardcoded here
+/// INDEPENDENTLY from the json walk so a layout regression cannot hide itself).
+void TestWorld::scripts_writeExactlyTheirByte()
+{
+  SaveFile base; loadInto(base, m_orig);
+  base.flattenData();
+  const QByteArray baseline = snapshot(base);
+
+  struct Case { int ind; int off; int value; };     // values differ from BaseSAV's
+  const QVector<Case> cases = {
+    { 0,  0x289C, 3 },   // Oaks Lab       (baseline 18)
+    { 1,  0x289D, 2 },   // Pallet Town    (baseline 5; a skip byte follows -- must NOT move)
+    { 3,  0x28A0, 1 },   // Viridian City  (baseline 0; skip 2 follows)
+    { 96, 0x2915, 1 },   // Route 18 Gate  (the last byte of the block)
+  };
+
+  for(const Case& c : cases)
+  {
+    SaveFile sf; loadInto(sf, m_orig);
+    sf.dataExpanded->world->scripts->scriptsSet(c.ind, c.value);
+    sf.flattenData();
+    const QVector<int> moved = diffOffsets(baseline, snapshot(sf));
+    QVERIFY2(moved == QVector<int>{ c.off },
+             qPrintable(QStringLiteral("script %1: moved {%2}, expected {0x%3}")
+                        .arg(c.ind).arg(describeDiff(moved)).arg(c.off, 4, 16, QChar('0'))));
+  }
+}
+
+/// Keystone: one missable-visibility bit moves EXACTLY its own byte (and only its bit) in the
+/// wToggleableObjectFlags block at 0x2852. set = HIDDEN (the polarity documented in
+/// worldmissables.h). Ends at bit 227 -- the last real missable.
+void TestWorld::missables_writeExactlyTheirBit()
+{
+  SaveFile base; loadInto(base, m_orig);
+  base.flattenData();
+  const QByteArray baseline = snapshot(base);
+
+  struct Case { int ind; int off; int bit; bool baselineSet; };
+  const QVector<Case> cases = {
+    { 0,   0x2852, 0, true  },   // Prof. Oak (Pallet) -- hidden in BaseSAV
+    { 7,   0x2852, 7, false },   // same byte, top bit
+    { 227, 0x286E, 3, false },   // the very last missable
+  };
+
+  for(const Case& c : cases)
+  {
+    SaveFile sf; loadInto(sf, m_orig);
+    sf.dataExpanded->world->missables->missablesSet(c.ind, !c.baselineSet);
+    sf.flattenData();
+    const QByteArray after = snapshot(sf);
+    const QVector<int> moved = diffOffsets(baseline, after);
+    QVERIFY2(moved == QVector<int>{ c.off },
+             qPrintable(QStringLiteral("missable %1: moved {%2}, expected {0x%3}")
+                        .arg(c.ind).arg(describeDiff(moved)).arg(c.off, 4, 16, QChar('0'))));
+    const int delta = quint8(baseline[c.off]) ^ quint8(after[c.off]);
+    QVERIFY2(delta == (1 << c.bit),
+             qPrintable(QStringLiteral("missable %1 flipped 0x%2, expected bit %3")
+                        .arg(c.ind).arg(delta, 2, 16, QChar('0')).arg(c.bit)));
+  }
 }
 
 // WorldLocal -- the six map-specific minigame bytes (Vermilion locks, Cinnabar quiz opponent, Safari
