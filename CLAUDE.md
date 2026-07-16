@@ -131,6 +131,25 @@ that will have to be built twice.
 - **DON'T BUILD WHAT TWILIGHT HASN'T BRIEFED — adjacency is not a brief (2026-07-14, Twilight).** *"I'd hate to have to undo a lot of work because it was done before I explained anything."* A feature gets **its own conversation first**, then research, then a design written into the plan, then code. **A phase does NOT get to absorb a neighbouring feature because the data happens to sit next to it in the save.** Signs nearly rode into the warps phase on exactly that logic (same ROM block, same shape) — they were cut. The same guard applies to **connections/"connecting routes", wild Pokémon/encounters, area state, and the tileset deep pass**: all un-briefed, all listed in `notes/plans/map-screen.md` → **§12b "NOT YET BRIEFED"**. Sketches written from the *save layout* are a map of what bytes exist, not of what she wants a person to be able to *do* — they carry **no authority**. When a briefed feature genuinely needs an un-briefed one, it **reads** it; it does not build a UI for it. If in doubt, **ask before building, not after**.
 - **A derived byte is kept IN SYNC by default; power users can break sync (clarified 2026-07-15, Twilight).** When the save holds a value the game *computes* from another (the map view pointer from the player's coords; the tileset pointers; the music bank), the editor **keeps it correct automatically by default** — most people editing that area want that, and it is bad UX to let a novice break their map by not hand-editing a derived field they had no reason to touch. But **raw-byte editing is always available**, and a derived value **may be deliberately desynced** — via a *break-sync* toggle, by entering a different value (which raises an **alert offering to break sync**), or (the view box) by **dragging it on the canvas**. Byte fidelity still holds — an edit writes only the bytes its action implies — so this is the *opposite* of silent corruption, not an exception to it. See `notes/plans/map-screen.md` → "The doctrine".
 
+## Forge-a-save console testing + the conflicting-flags system (standing rules, 2026-07-15)
+
+- **Forge synthetic saves at ANY map state to test on the real console — by default.** We hold the full
+  map data (ids, tilesets/blocksets, dimensions, objects, warps, connections, wild tables, all 2,560
+  event flags), so a probe can write a save that starts the player **at any map, any position, with any
+  flag/state combination**, re-seal the checksum, and boot the genuine ROM straight into that situation.
+  Use it whenever a behaviour only manifests in play. Recipe + offsets:
+  [`notes/reference/emulator-verification.md`](notes/reference/emulator-verification.md) → "STANDING
+  METHOD — forge a synthetic save". Template: `scripts/emu/probe_event_flag_crashes.py` /
+  `probe_route22_conflict.py`. **Never commit the ROM.**
+- **The conflicting-flags system.** Flag *combinations* can conflict (crash/softlock) — the archetype is
+  Route 22's two rival objects at the same tile (both battles' flags on). A conflict is a **logical
+  predicate** over a flag set (**both-on / both-off / not-both-on / not-both-off / exactly-one / …**),
+  each **suspected** (static) or **confirmed** (reproduced on the cartridge via a forged save), with a
+  severity. When you spot or confirm such a condition, **add it to the conflicts dataset**. It is shown
+  in the UI **in two places — a panel at the top listing active conflicts, and a badge on each
+  conflicting flag** — re-evaluated live on every toggle. Design: [`notes/plans/event-flags.md`](notes/plans/event-flags.md)
+  → Phase 11; seed tool `scripts/analyze_flag_contradictions.py`.
+
 ## Build System
 
 > **YOU CAN ACTUALLY BUILD/TEST/RUN/GIT — you are NOT limited to a sandbox.** The PowerShell

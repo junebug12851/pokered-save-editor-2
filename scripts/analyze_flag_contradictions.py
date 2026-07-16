@@ -72,6 +72,54 @@ def main():
     json.dump(out, open(os.path.join(OUT, "contradictions.json"), "w",
                         encoding="utf-8"), indent=1)
 
+    # --- the conflicting-flags dataset (Phase 11 schema) ----------------
+    # condition: not-both-on | not-both-off | at-most-one | exactly-one | ...
+    # status:    suspected (static) | confirmed (console-reproduced)
+    conflicts = []
+    for subj, flags in subject_sets.items():
+        conflicts.append({
+            "id": f"subject:{subj}",
+            "flags": flags,
+            "condition": "at-most-one-on",
+            "status": "suspected",
+            "severity": "crash",
+            "map": None,
+            "reason": (f"{subj}: multiple mutually-exclusive battle/state flags for one "
+                       f"subject; more than one on drives the shared script into an "
+                       f"impossible state."),
+            "evidence": None,
+        })
+    for e in object_sets:
+        conflicts.append({
+            "id": f"object:{e['map']}:{e['object']}",
+            "flags": e["flags"],
+            "condition": "not-both-on",
+            "status": "suspected",
+            "severity": "softlock",
+            "map": e["map"],
+            "reason": (f"one object ({e['object']} @ {e['coord']}) is governed by "
+                       f"multiple flags; both on can show/hide it inconsistently."),
+            "evidence": None,
+        })
+    # The Route 22 rival: two SPRITE_BLUE objects at the SAME tile (25,5), one per
+    # battle — the archetype. Strong static evidence; forge-probe confirms.
+    conflicts.append({
+        "id": "route22-rival-overlap",
+        "flags": ["EVENT_1ST_ROUTE22_RIVAL_BATTLE", "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+                  "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"],
+        "condition": "at-most-one-on",
+        "status": "suspected-strong",
+        "severity": "crash",
+        "map": "Route22",
+        "reason": ("Route 22 has TWO SPRITE_BLUE objects at the same tile (25,5), "
+                   "ROUTE22_RIVAL1/RIVAL2, one per rival battle; both battles' flags on "
+                   "shows/triggers both at once and collides on battle."),
+        "evidence": "scripts/emu/probe_route22_conflict.py (forge + drive into trigger)",
+    })
+    json.dump({"conflicts": conflicts}, open(os.path.join(OUT, "conflicts.json"), "w",
+              encoding="utf-8"), indent=1)
+    print(f"\nconflicts dataset: {len(conflicts)} rules -> conflicts.json")
+
     print(f"same-subject multi-state contradiction sets: {len(subject_sets)}")
     for s, v in sorted(subject_sets.items())[:12]:
         print(f"  {s:34} {v}")

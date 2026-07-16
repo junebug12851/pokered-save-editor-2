@@ -10,6 +10,24 @@ and then reads the **console's own RAM** back out — and demands that what `Map
 > **It found a real gap the first time it was pointed at us.** Our border ring was the map's border block;
 > the game's was Route 1 and Route 21 bleeding in over it. See "What it caught immediately" below.
 
+## STANDING METHOD — forge a synthetic save at ANY map state to test (2026-07-15, leadership)
+
+**We can, and should, generate a fake save file placed at any state we want and boot it on the console.**
+We now hold the full map data — every map's id, tileset/blockset, dimensions, objects (coords/kind),
+warps, connections, wild tables, and all 2,560 event flags — so a probe can **forge a save that starts
+the player at any map, any position, with any flag/state combination**, seal its checksum, and boot the
+real ROM straight into that situation. No walking a fresh game to the spot, no save-scumming — total
+control over the starting state.
+
+**Use it for testing by default** whenever a behaviour only manifests in play (a flag combo that crashes
+on a specific map, a warp, an encounter): forge the exact save and let the console adjudicate. The forge
+recipe (verified): write the save bytes, set `wCurMap` (file `0x260A`), `wYCoord`/`wXCoord`
+(`0x260D`/`0x260E`), the event-flag bytes (`0x29F3`+, 320 bytes) and any other Main-Data byte, then
+**re-seal the checksum** (`0xFF`-running-subtract over `0x2598`..`0x2598+0xF8B`, stored at `0x3523`) or
+the game rejects the save. Boot via PyBoy (`window="null"`), mash start/A to Continue, and read
+`wCurMap`/map dims as a **crash/health signal** (`scripts/emu/probe_event_flag_crashes.py` is the
+template). Optionally drive a few `button` presses to cross a coord trigger. **Never commit the ROM.**
+
 ## The ROM — read this first
 
 `assets/references/backup.gb` is a dump of a cartridge **Twilight owns**, kept locally for verification.

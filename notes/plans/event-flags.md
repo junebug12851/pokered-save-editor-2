@@ -126,6 +126,33 @@ This is where the Events feature meets the map-storage panel the leadership orig
   attached event flags** (and count), and Phase 10 renders the outline colour from that + focuses the
   panel on those flag(s) on click.
 
+## Phase 11 — The conflicting-flags system (briefed 2026-07-15, leadership)
+
+A first-class system that flags **combinations** of event flags as conflicting, shows them in the UI, and
+grows as conflicts are found/confirmed. Born from the Route 22 rival case (two `SPRITE_BLUE` objects at
+the **same tile (25,5)**, `ROUTE22_RIVAL1`/`RIVAL2`, one per battle — both battles' flags on collides).
+
+**A conflict is a logical predicate over a flag set, not just "these two conflict."** Each conflict rule:
+
+- `flags`: the flags involved (2+).
+- `condition`: the predicate that *is* the conflict — one of **both-on**, **both-off**, **not-both-on**,
+  **not-both-off**, **exactly-one**, **at-most-one**, etc. (so a conflict can be "these must not both be
+  on", or "these must not both be off", or "exactly one must be on", …).
+- `status`: **suspected** (from static analysis — same object/tile/script, 1ST/2ND, FIGHT/BEAT) or
+  **confirmed** (reproduced on the real cartridge via a forged save — see the emulator-verification
+  standing method).
+- `severity`: crash / softlock / cosmetic.
+- `reason`, `map`, and `evidence` (the probe + result when confirmed).
+
+**Data:** a curated `conflicts` dataset (seeded by `analyze_flag_contradictions.py`, promoted to
+confirmed by forge-probes). Lives with the events data home (Phase 7).
+
+**UI (mandatory, leadership):** conflicts are shown **in two places** — (1) a **panel at the top** of the
+persistent-storage/events UI listing every **active** conflict (its condition currently violated by the
+save), and (2) **on the flags themselves** — each flag in an active conflict wears an inline
+indicator/badge (colour by severity; suspected vs confirmed distinguished). Toggling a flag re-evaluates
+conflicts live. This is separate from, and on top of, the **bulk-set crash guard** (Phase 4).
+
 ## Open questions for project leadership (to settle before the phases that need them)
 
 - **Data home** (Phase 7): one combined events JSON vs. standalone-linked — your lean is "one file if
