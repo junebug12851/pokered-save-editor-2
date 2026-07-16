@@ -197,6 +197,29 @@ The finalized breakdown of all 2,560: **507 named** (incl. 4 hand-researched fro
 **Owed:** Phase 4 (crash/instability — console-probed; `crash` field is null until then), editorial
 polish of the 507 named descriptions, Phase 6 (model verification), Phase 7 (DB data home), Phase 8 (UI).
 
+## Flag ↔ map location & object association (briefed 2026-07-15)
+
+Project leadership briefed an on-canvas feature: draw a **clickable box on the map** at the location
+tied to each flag; clicking it opens the persistent-storage / events panel focused on that flag. The box
+shows **even when the sprite isn't currently there** (many objects appear/disappear or move by story
+state — e.g. **Oak stands in several different spots**). Worked example, Oak's Lab (`data/maps/objects/
+OaksLab.asm` + `scripts/OaksLab.asm`):
+
+- Each map's `def_object_events` gives every object an **(X, Y) tile coordinate** + sprite + its text.
+  Oak's Lab: the three **starter Poké Balls** at **(6,3) (7,3) (8,3)** (all tied to the starter-choice
+  flags), **Oak at two positions** — **(5,2) DOWN** `TEXT_OAKSLAB_OAK1` and **(5,10) UP**
+  `TEXT_OAKSLAB_OAK2` — plus the Pokédex objects, the rival, the aides.
+- Objects are shown/hidden by the map script via `predef ShowObject` / `HideObject`, **gated on
+  `CheckEvent`** — that is the flag↔object link. So the association is derivable per map by pairing the
+  object list (coords) with the script's show/hide-on-event logic.
+- **Item balls / hidden items** tie to their "picked up" event; **trigger-tile / grass events** (e.g.
+  the offscreen Oak when you first step into the Route 1 grass) have **no clean object coordinate** — they
+  attach to the map (or a trigger tile) rather than a sprite, and the box for those is map-level.
+
+The association data (**flag → one or more (map, X, Y) + object/kind**) is a **new extraction** (its own
+research phase feeding the UI). Some flags have several boxes (one per Oak spot), some share a box
+(a group), some have none on the visible map (story/global). This is Phase 9 in the plan.
+
 ## Save-model + UI (Phases 6–8)
 
 - Phase 6: confirm v2 reads/writes the 320-byte field byte-exact (add the model if absent) and

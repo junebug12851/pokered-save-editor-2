@@ -82,8 +82,22 @@ pret + our curation), else standalone + linked. Baked into `db.qrc`; edits go th
 the importer + self-validation.
 
 **Phase 8 — UI design, then build.** Design the Events panel **in this doc first** (per-map grouping,
-flag groups + group toggles, search/filter, classification badges, crash notices at panel + toggle
-level; themed map-screen chassis). No build until the design is written and approved.
+flag groups + group toggles, search/filter, classification badges — including a **Placeholder Flags**
+group at the bottom of each map — crash notices at panel + toggle level; themed map-screen chassis). No
+build until the design is written and approved.
+
+**Phase 9 — Flag ↔ map location research (new, briefed 2026-07-15).** Extract, per flag, its associated
+**(map, X, Y) + object/kind** from pret: pair each map's `def_object_events` (object coordinates) with
+the script's `ShowObject`/`HideObject`-on-`CheckEvent` logic, plus item-ball/hidden-item events and
+trigger-tile/grass events. Handle **one flag → several boxes** (Oak's multiple spots), **several flags →
+one box** (a group), and **no box** (story/global). Research + a `maps.json`-style association dataset,
+grounded in the reference note's "Flag ↔ map location & object" section.
+
+**Phase 10 — On-canvas flag hotspots (UI, needs Phase 9).** Draw a **clickable box on the map** at each
+flag's location; clicking opens the persistent-storage / events panel focused on that flag. The box is
+shown **even when the sprite isn't currently present** (Oak's Lab: the three starter Poké Balls; Oak at
+(5,2) and (5,10)). A **layer** in the map screen's layer tree, toggleable. Design in this doc first.
+This is where the Events feature meets the map-storage panel the leadership originally queued.
 
 ## Open questions for project leadership (to settle before the phases that need them)
 
