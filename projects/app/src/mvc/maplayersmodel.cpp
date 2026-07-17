@@ -161,6 +161,17 @@ void MapLayersModel::buildAll()
           "Like the warps, an edited sign is live when the save loads, and the game puts the map's "
           "original signs back when the player leaves and walks in again."),
        ViewSigns);
+  // The canvas as an index into Map Storage. ⚠️ NOT the "People & objects" layer above: that one draws
+  // the SAVE's sprite slots, the characters actually loaded. This draws a box around every object the
+  // ROM puts on this map that the save keeps a flag for -- which is why a box can sit where there is no
+  // sprite at all. See notes/plans/map-screen.md -> Phase 16.
+  view(GameViewGroup, "flagBoxes", tr("Flag boxes"),
+       tr("A box around everything on this map the game remembers something about — the Poké Balls in "
+          "Oak's Lab, a trainer you've beaten, an item you've picked up. Click one to jump straight to "
+          "its switch in Map Storage.\n\n"
+          "A box is drawn even when the thing isn't here: that's the point. A dashed box means your "
+          "save is currently hiding it, so you can see what belongs here and what's been switched off."),
+       ViewFlagBoxes);
   view(GameViewGroup, "screenBox", tr("Screen box"),
        tr("The 20×18 tiles the Game Boy is actually showing — the screen, sliding around inside "
           "the draw area in half-block steps. Move the player and it follows him."), ViewScreenBox);
@@ -578,6 +589,7 @@ bool MapLayersModel::showConnections() const { return (bits & ViewConnections) !
 bool MapLayersModel::showNpcs() const       { return (bits & ViewNpcs) != 0; }
 bool MapLayersModel::showWarps() const      { return (bits & ViewWarps) != 0; }
 bool MapLayersModel::showSigns() const      { return (bits & ViewSigns) != 0; }
+bool MapLayersModel::showFlagBoxes() const  { return (bits & ViewFlagBoxes) != 0; }
 
 qreal MapLayersModel::overlayOpacity() const { return opacity; }
 

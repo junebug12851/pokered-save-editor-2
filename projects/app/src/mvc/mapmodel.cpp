@@ -33,6 +33,7 @@
 #include <pse-db/entries/mapdbentrysign.h>
 #include <pse-db/entries/mapdbentrytext.h>
 #include <pse-db/entries/mapdbentrysprite.h>
+#include <pse-db/entries/missabledbentry.h>
 #include <pse-db/itemsdb.h>
 #include <pse-db/spriteSet.h>
 #include <pse-db/sprites.h>
@@ -4191,6 +4192,62 @@ QVariantList MapModel::storageMissables(const QVariantList& mapIds) const
 /// the UI can label the shared group and let you jump between them. We never build a page
 /// out of pret's `region`: that is a ROM ALLOCATION BLOCK, and we care about the save file,
 /// not the ROM's storage layout (leadership, 2026-07-16).
+QVariantList MapModel::flagHotspots() const
+{
+  QVariantList out;
+  if (!valid())
+    return out;
+
+  MapDBEntry* map = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  if (map == nullptr)
+    return out;
+
+  // The ROM's cast, not the save's sprite slots. That distinction IS the feature: the save loads 16
+  // sprites, but the cartridge's list is what says a thing BELONGS here -- so an object whose flag is
+  // currently hiding it has no sprite to draw and still gets its box, on the tile it would stand on.
+  for (MapDBEntrySprite* s : map->getSprites()) {
+    if (s == nullptr)
+      continue;
+
+    // No flag, no box. The Girl and the two Aides in Oak's Lab are just people; boxing them would be
+    // clutter, and clutter is a bug.
+    const int missable = s->getMissable();
+    if (missable < 0)
+      continue;
+
+    // A tile is a half-block: 16 buffer pixels, past the 3-block ring. Same arithmetic as the signs
+    // and the player -- and the reason the reference note keeps shouting it: `maps.json`'s width and
+    // height are in BLOCKS, but an object's x/y are in TILES.
+    const int px = MapEngine::mapBorder * MapEngine::blockPx + s->getX() * 16;
+    const int py = MapEngine::mapBorder * MapEngine::blockPx + s->getY() * 16;
+
+    const MissableDBEntry* m = s->getToMissable();
+
+    QVariantMap v;
+    v["missable"] = missable;
+    v["x"]        = s->getX();
+    v["y"]        = s->getY();
+    v["rectX"]    = px;
+    v["rectY"]    = py;
+    v["rectW"]    = 16;
+    v["rectH"]    = 16;
+    v["sprite"]   = s->getSprite();
+    v["name"]     = (m != nullptr) ? m->getName() : s->getSprite();
+    v["desc"]     = (m != nullptr) ? m->getDesc() : QString();
+    v["defShow"]  = (m != nullptr) ? m->getDefShow() : true;
+    v["oddity"]   = (m != nullptr) ? m->getOddity() : QString();
+    // pret's X-marks: nothing in the game's own scripts ever toggles this bit. Worth saying, because
+    // it means the switch is yours alone -- the story will never move it back.
+    v["scriptToggled"] = (m != nullptr) ? m->getScriptToggled() : false;
+    // The live "is it hidden?" bit is deliberately NOT read here: the panel reads WorldMissables
+    // straight from the bridge and so does the canvas, which keeps the box's dashes reactive to an
+    // edit without this list being rebuilt. @see MapCanvas.qml
+    out.append(v);
+  }
+
+  return out;
+}
+
 QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
 {
   QSet<int> ids;

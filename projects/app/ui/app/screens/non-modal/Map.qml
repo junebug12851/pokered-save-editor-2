@@ -319,6 +319,17 @@ Page {
         // `selectedWarp`/`selectedSign`, not the slot.)
         onEditRequested: (slot) => { leftDock.open = "details"; }
 
+        // A flag box was clicked. The canvas is an index into Map Storage: open the panel and land ON
+        // that switch -- scrolled to and lit up -- rather than dropping her at the top of a page that
+        // can run to 227 rows. The dock's Loader is synchronous, so the panel exists by the time the
+        // next line runs; the guard is for the panel that hasn't grown a revealMissable().
+        onFlagRequested: (missable) => {
+          rightDock.open = "storage";
+          const p = rightDock.panelItem;
+          if (p && p.revealMissable)
+            p.revealMissable(missable);
+        }
+
         // A maker tool put something down. The status bar says what and where -- never a modal, and
         // never nothing at all.
         onPlaced: (kind, index) => {

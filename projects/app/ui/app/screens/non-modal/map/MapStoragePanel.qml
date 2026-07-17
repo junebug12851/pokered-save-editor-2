@@ -116,6 +116,63 @@ Item {
   }
   Component.onCompleted: syncToCurrentMap()
 
+  // ── Opened AT something: the canvas clicked a flag box ────────────────────────────────────────
+  //
+  // "have a box around it on the map that you can click which opens the persistent storage panel at
+  // the thing clicked" (Fairy Fox). Landing on the page is not enough -- a busy map's page is long
+  // (Silph Co 7F runs to 227 rows), so arriving at the top and leaving her to hunt for the row would
+  // miss the point of the gesture entirely. So: switch to the map, then scroll to the row and light
+  // it up.
+
+  /// The missable bit to highlight, or -1. @see revealMissable
+  property int highlightMissable: -1
+
+  /// Open this panel ON missable @p ind. Called by Map.qml when a flag box is clicked.
+  function revealMissable(ind) {
+    // The box is on the map you are looking at, and the combo may have been moved elsewhere.
+    syncToCurrentMap();
+    panel.highlightMissable = ind;
+    highlightFade.restart();
+    // ⚠️ NOT Qt.callLater: on the FIRST open the panel is being loaded and built in this same tick,
+    // and a callLater still runs before the ColumnLayout has given its children their heights --
+    // so mapToItem() answers with a stale y and the scroll lands at the top. Measured: it opened on
+    // the Event flags section instead of the switch, every time. A short timer lets the layout
+    // settle first, and `settle` fires again if the content grows underneath us.
+    revealScroll.restart();
+  }
+
+  /// The layout has to exist before we can scroll to a piece of it. @see revealMissable
+  Timer {
+    id: revealScroll
+    interval: 60
+    onTriggered: panel.scrollToHighlight()
+  }
+
+  function scrollToHighlight() {
+    if (panel.highlightMissable < 0 || !missableSection.visible)
+      return;
+
+    // ⚠️ THE FLICKABLE TRAP. `scroller.contentItem` is the Flickable, and mapToItem() to a Flickable
+    // answers in its VIEWPORT's coordinates -- which already have contentY taken off. So the number
+    // that comes back is where the section is on SCREEN right now, not where it sits in the layout.
+    // Assigning that straight to contentY "scrolls" to wherever you already are: on a fresh open
+    // contentY is 0, the section reads as ~0, and the panel sits at the top looking like the scroll
+    // never ran. Adding the current contentY back converts viewport -> content space.
+    const rel = missableSection.mapToItem(scroller.contentItem, 0, 0).y;
+    // No manual clamp against contentHeight: the Flickable already refuses to scroll past its own
+    // end, and a hand-rolled `Math.min(target, contentHeight - height)` silently pins the panel to
+    // the TOP any time contentHeight has not been computed yet -- which, on a freshly loaded panel,
+    // is exactly when this runs. Let the Flickable do its own job.
+    scroller.contentItem.contentY = Math.max(0, scroller.contentItem.contentY + rel - 8);
+  }
+
+  /// The highlight is a pointer, not a state -- it says "here", then gets out of the way.
+  Timer {
+    id: highlightFade
+    interval: 2600
+    onTriggered: panel.highlightMissable = -1
+  }
+
   readonly property var curPage: storageMaps[panel.page]
 
   /// Is the shown map the one you're actually on? (Drives the "you're here" / "not here" note.)
@@ -829,6 +886,24 @@ Item {
               readonly property bool hidden: {
                 panel.revision; panel.editTick;
                 return panel.wMissables ? panel.wMissables.missablesAt(modelData.ind) : false;
+              }
+
+              /// Arrived here by clicking this thing's box on the map. @see panel.revealMissable
+              readonly property bool highlighted: panel.highlightMissable === mrow.modelData.ind
+
+              // The "here it is" wash. The Flag boxes layer's own bluish green (#009e73), so the box
+              // you clicked and the row you land on are visibly the same colour -- the canvas and the
+              // panel saying the same thing. It fades itself out; a highlight that stayed would just
+              // become another thing to dismiss.
+              Rectangle {
+                z: -1
+                anchors.fill: parent
+                anchors.margins: -3
+                radius: 3
+                visible: mrow.highlighted
+                color: "#26009e73"
+                border.width: 1
+                border.color: "#009e73"
               }
 
               RowLayout {

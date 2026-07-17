@@ -68,6 +68,7 @@ class MapLayersModel : public QAbstractListModel
   Q_PROPERTY(bool showNpcs READ showNpcs NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showWarps READ showWarps NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showSigns READ showSigns NOTIFY viewBitsChanged)
+  Q_PROPERTY(bool showFlagBoxes READ showFlagBoxes NOTIFY viewBitsChanged)
 
   /// How strongly the meaning overlay is drawn (0..1). The one dial the Meaning group carries:
   /// stacked annotation over four shades of grey genuinely needs it.
@@ -104,6 +105,16 @@ public:
     /// **The SIGNS** -- the map's placards, as objects you can pick up, move and re-word.
     /// 16 slots in the save, each a tile and a text id. See notes/reference/signs.md.
     ViewSigns = 1 << 9,
+
+    /// **The FLAG BOXES** -- an outline around every object on this map whose presence the save has a
+    /// flag for, and a way into the Map Storage panel at that exact flag.
+    ///
+    /// ⚠️ These are drawn from the **ROM's** cast (`MapDBEntry::sprites`), NOT the save's 16 sprite
+    /// slots -- which is the whole point: an object its flag currently HIDES has no sprite on screen,
+    /// but it still has coordinates, so its box is still drawn (dashed). That is what makes "the
+    /// outline is there even when the sprite isn't" possible at all. See notes/plans/map-screen.md
+    /// -> Phase 16.
+    ViewFlagBoxes = 1 << 10,
   };
   Q_ENUM(ViewLayer)
 
@@ -136,6 +147,7 @@ public:
   bool showNpcs() const;
   bool showWarps() const;
   bool showSigns() const;
+  bool showFlagBoxes() const;
 
   qreal overlayOpacity() const;
   void setOverlayOpacity(qreal opacity);

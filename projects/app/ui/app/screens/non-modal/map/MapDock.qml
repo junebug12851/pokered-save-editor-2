@@ -73,6 +73,10 @@ Item {
   /// whatever is selected on the canvas, and a Loader cannot see the ids around it.
   property var panelContext: null
 
+  /// The panel currently loaded, or null. For the caller that needs to open a dock AT something --
+  /// clicking a flag box on the canvas opens Map Storage on that flag. @see Map.qml
+  readonly property alias panelItem: body.item
+
   /// How wide the panel column is when open (drag its inner edge; remembered for the session).
   ///
   /// ⚠️ It has been too narrow **twice**. 170 clipped text outright; 200 still left a group row

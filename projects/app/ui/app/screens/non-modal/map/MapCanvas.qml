@@ -80,6 +80,9 @@ Item {
   /// The ✎ button on a selected sprite -- the Map screen opens the Details panel on it.
   signal editRequested(int slot)
 
+  /// A flag box was clicked: open Map Storage ON missable @p missable. @see MapFlagBox.qml
+  signal flagRequested(int missable)
+
   // ── The MAKER TOOLS ───────────────────────────────────────────────────────────────────────
   //
   // Twilight, 2026-07-14: *"we would need the top toolbar to ironically contain actual tools and
@@ -268,6 +271,21 @@ Item {
   readonly property var signs: {
     canvasRoot.revision;   // the same missing dependency, the same fix
     return brg.mapLayers.showSigns ? brg.map.signList() : [];
+  }
+
+  /// The FLAG BOXES — the ROM's cast, filtered to the objects the save keeps a flag for.
+  ///
+  /// ⚠️ Unlike its neighbours above, this list does NOT depend on `revision`, and must not: it is
+  /// derived from the cartridge, so nothing the user edits can change it. What DOES change is each
+  /// box's `hidden` — a live WorldMissables bit, read per-delegate below so flipping a switch redraws
+  /// one box instead of rebuilding the list. @see notes/plans/map-screen.md -> Phase 16
+  readonly property var flagBoxes: brg.mapLayers.showFlagBoxes ? brg.map.flagHotspots() : []
+
+  /// The save's missable bits, for the boxes' dashes. Null until a file is open.
+  readonly property var wMissables: {
+    if (!brg.file || !brg.file.data || !brg.file.data.dataExpanded || !brg.file.data.dataExpanded.world)
+      return null;
+    return brg.file.data.dataExpanded.world.missables;
   }
 
   // The four edge connections, in two views: the STRIP geometry (where each lands in the ring) and the
@@ -860,6 +878,37 @@ Item {
           textValid: modelData.textValid
 
           onEditRequested: canvasRoot.editRequested(-1)   // the panel reads selectedSign
+        }
+      }
+
+      // The FLAG BOXES -- one per object on this map the save keeps a flag for. Each carries `z: 0`,
+      // so they sit UNDER the real objects: a box annotates a thing, it must never cover it. A box
+      // with nothing on top of it is not a gap -- it is the save hiding that object, which is what
+      // the dashes say. @see notes/plans/map-screen.md -> Phase 16
+      Repeater {
+        model: canvasRoot.flagBoxes   // ROM-derived: no `revision` dependency, and it must not have one
+
+        delegate: MapFlagBox {
+          required property var modelData
+
+          canvas: canvasRoot
+          missable: modelData.missable
+          tileX: modelData.x
+          tileY: modelData.y
+          name: modelData.name
+          desc: modelData.desc
+          oddity: modelData.oddity
+          scriptToggled: modelData.scriptToggled
+
+          // Read live, PER BOX: flipping one switch in Map Storage re-dashes this one box without
+          // rebuilding the whole list. WorldMissables: **bit set = HIDDEN**.
+          hidden: {
+            canvasRoot.revision;
+            return canvasRoot.wMissables ? canvasRoot.wMissables.missablesAt(modelData.missable)
+                                         : false;
+          }
+
+          onFlagClicked: (m) => canvasRoot.flagRequested(m)
         }
       }
 

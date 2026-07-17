@@ -33,6 +33,7 @@
 #include <QtTest>
 #include <QImage>
 #include <QPixmap>
+#include <QMap>
 #include <QPair>
 #include <QSet>
 #include <QSize>
@@ -54,6 +55,8 @@
 #include <pse-savefile/expanded/area/areaplayer.h>
 #include <pse-savefile/expanded/area/areageneral.h>
 #include <pse-savefile/expanded/area/areatileset.h>
+#include <pse-savefile/expanded/world/world.h>
+#include <pse-savefile/expanded/world/worldmissables.h>
 
 #include <engine/mapengine.h>
 #include <engine/mapprovider.h>
@@ -143,6 +146,9 @@ private slots:
 
   // The QML face
   void model_publishesTheLoadedMap();
+
+  void hotspots_boxOnlyTheThingsTheSaveKeepsAFlagFor();
+  void hotspots_comeFromTheRomSoAHiddenObjectStillHasABox();
 };
 
 void TestMap::initTestCase()
@@ -789,6 +795,104 @@ void TestMap::model_publishesTheLoadedMap()
 
   QCOMPARE(spy.count(), 1);
   QCOMPARE(model.scratchX(), scratch.x() + MapEngine::blockPx);
+}
+
+// ── Flag hotspots (map-screen Phase 16) ─────────────────────────────────────────────────────────
+//
+// Oak's Lab is the brief's own example -- "in oaks lab the pokeballs should have boxes around them
+// because there all tied to flags" -- so it is what the test pins. Its numbers come from the
+// cartridge via maps.json, not from us: 11 objects, 8 of them flag-governed.
+
+void TestMap::hotspots_boxOnlyTheThingsTheSaveKeepsAFlagFor()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  sf.dataExpanded->area->map->curMap = 40;   // Oak's Lab
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  const QVariantList boxes = model.flagHotspots();
+
+  // 11 objects on the map; the Girl and the two Oak Aides carry no missable and so get NO box.
+  // Boxing them would be clutter, and clutter is a bug.
+  QCOMPARE(boxes.size(), 8);
+  QCOMPARE(MapsDB::inst()->getIndAt(QStringLiteral("40"))->getSpritesSize(), 11);
+
+  // The three starter Poké Balls: the exact thing she pointed at.
+  QMap<int, QPair<int, int>> ballAt;   // missable -> (x, y)
+  for (const QVariant& v : boxes) {
+    const QVariantMap m = v.toMap();
+    const int ind = m["missable"].toInt();
+    if (ind >= 43 && ind <= 45)
+      ballAt.insert(ind, qMakePair(m["x"].toInt(), m["y"].toInt()));
+  }
+  QCOMPARE(ballAt.size(), 3);
+  QCOMPARE(ballAt.value(43), qMakePair(6, 3));
+  QCOMPARE(ballAt.value(44), qMakePair(7, 3));
+  QCOMPARE(ballAt.value(45), qMakePair(8, 3));
+
+  // Every box carries the missable's real name and lands on its own tile. The geometry is the same
+  // arithmetic the signs and the player use -- and x/y are TILES, though maps.json's width/height
+  // are BLOCKS. Getting that wrong is what put a Route 22 sign off the map once.
+  for (const QVariant& v : boxes) {
+    const QVariantMap m = v.toMap();
+    QVERIFY(m["missable"].toInt() >= 0);
+    QVERIFY(!m["name"].toString().isEmpty());
+    QCOMPARE(m["rectX"].toInt(),
+             MapEngine::mapBorder * MapEngine::blockPx + m["x"].toInt() * 16);
+    QCOMPARE(m["rectY"].toInt(),
+             MapEngine::mapBorder * MapEngine::blockPx + m["y"].toInt() * 16);
+    QCOMPARE(m["rectW"].toInt(), 16);
+    QCOMPARE(m["rectH"].toInt(), 16);
+  }
+
+  // Oak stands in TWO places on this map (missables 46 and 49) -- the other thing she named. Both
+  // get a box, at different tiles.
+  int oaks = 0;
+  QSet<QPair<int, int>> oakTiles;
+  for (const QVariant& v : boxes) {
+    const QVariantMap m = v.toMap();
+    if (m["sprite"].toString().contains(QStringLiteral("Oak"))) {
+      oaks++;
+      oakTiles.insert(qMakePair(m["x"].toInt(), m["y"].toInt()));
+    }
+  }
+  QCOMPARE(oaks, 2);
+  QCOMPARE(oakTiles.size(), 2);
+}
+
+void TestMap::hotspots_comeFromTheRomSoAHiddenObjectStillHasABox()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  sf.dataExpanded->area->map->curMap = 40;   // Oak's Lab
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  const int before = model.flagHotspots().size();
+
+  // THE KEYSTONE. Hide every one of them -- the whole point of the feature is that the boxes come
+  // from the cartridge's cast, not from the save's sprite slots, so hiding an object must NOT take
+  // its box away. (WorldMissables: bit set = HIDDEN.)
+  for (int i = 42; i <= 49; i++)
+    sf.dataExpanded->world->missables->missablesSet(i, true);
+
+  QCOMPARE(model.flagHotspots().size(), before);
+  QCOMPARE(before, 8);
+
+  // And the save agrees they are hidden -- which is what dashes the box in the canvas.
+  for (int i = 42; i <= 49; i++)
+    QVERIFY(sf.dataExpanded->world->missables->missablesAt(i));
 }
 
 QTEST_MAIN(TestMap)

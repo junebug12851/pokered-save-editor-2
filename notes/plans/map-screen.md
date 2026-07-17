@@ -1550,6 +1550,168 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 
 ---
 
+### Phase 16 — FLAG HOTSPOTS: the boxes that link the canvas to the storage  *(BRIEFED 2026-07-16, Fairy Fox)*
+
+> ⚠️ **Doc defect noted, not silently renumbered:** **"Phase 15" is used twice** in this file — *Map
+> Storage* (above) and *SIMULATE* (below). They were briefed a session apart and collided. This new phase
+> takes **16** to avoid making it worse; which of the two 15s gets renumbered is a call for leadership,
+> not a thing to fix by fiat in a plan they own.
+
+> **The brief, verbatim:** *"you will also have to associate sprites and objects and stuff with the flags
+> and have a box around it on the map that you can click which opens the persistent storage panel at the
+> thing clicked. so like in oaks lab the pokeballs should have boxes around them because there all tied to
+> flags"* … *"Have the outline there even if the sprite isnt there"* … *"sprites and objects and stuff
+> should have there own outline, if its tied to [event flags] it should have a different color"*
+> (she corrected *scripts* → **event flags** herself).
+
+**What it is.** Every object on the map that the save has a flag for wears an **outline box**. Clicking
+the box opens **Map Storage** at *that exact flag* — the canvas becomes an index into the panel. It is a
+**layer** (Objects group), toggleable like everything else, per the layer doctrine.
+
+#### The data is ALREADY SHIPPED — this phase adds no JSON and no importer
+
+The research (`scripts/extract_flag_locations.py`: 223 maps, **918 objects**, 226 conditional) went
+looking for something `maps.json` **already carries**. Every `MapDBEntry::sprites` entry is a ROM object
+with `x`/`y` and, when its visibility is flag-governed, a **`missable`** index — and the whole chain to
+the save already exists:
+
+`MapDBEntrySprite::getMissable()` → `getToMissable()` → `MissableDBEntry` → `WorldMissables` (228 bits,
+`0x2852`, **bit SET = HIDDEN**).
+
+**Oak's Lab is the brief's own example, and it falls straight out of the shipped data:**
+
+```
+(4, 3) Rival        missable 42        (2, 1) Book Map Dex  missable 47
+(6, 3) Pokeball     missable 43   <-.  (3, 1) Book Map Dex  missable 48
+(7, 3) Pokeball     missable 44     |- the three starters
+(8, 3) Pokeball     missable 45   <-'  (5,10) Prof. Oak     missable 49   <- Oak's SECOND spot
+(5, 2) Prof. Oak    missable 46        (1, 9) Girl          -- no missable, no box
+```
+
+Both things she named — *"the pokeballs should have boxes"* and Oak standing in **two** places — are
+already in the data. 8 of Oak's Lab's 11 objects are flag-governed; the Girl and the two Aides are not,
+and correctly get **no box**.
+
+#### The thing that makes "even if the sprite isn't there" work
+
+The boxes are drawn from the **ROM cast** (`MapDBEntry::sprites`), **not** from the save's 16 sprite
+slots. That is the whole trick: a missable whose bit says *hidden* has no sprite on screen, but its ROM
+object still has coordinates — so **the box is still there, exactly where the thing would stand.** This
+is what she asked for, and it is only possible because the outline's source is the cartridge's list, not
+the save's.
+
+#### Colour + state — attachment is the colour, visibility is the line
+
+**Colour = what it is attached to** (her rule):
+
+| Attachment | Meaning | Box |
+|---|---|---|
+| **Missable** (`missable` index → `WorldMissables`) | the save decides whether it is here at all | the flag-attached colour |
+| **Event flag** (a verified link, `EventsDB`) | tied to a story bit | a **different** colour, per the brief |
+| **Neither** | plain scenery — the Girl, the Aides | **no box** (clutter is a bug) |
+
+**Line = the flag's current state**, drawn honestly rather than hidden:
+
+- **Solid** — the flag currently **shows** it.
+- **Dashed** — the flag currently **hides** it (missable bit set). The box is still drawn; that *is* the
+  brief. A dashed box says "this belongs here and your save has it switched off", which is precisely the
+  thing a save editor exists to tell you.
+
+#### Click → the panel, at the thing you clicked
+
+`MapStoragePanel` already has the three sections a click can land in — `scriptSection`, `eventSection`,
+`missableSection`. Clicking a box opens the panel (right dock, one-panel-at-a-time chassis rules), scrolls
+to the row and **highlights** it. Missable-attached → `missableSection`; event-flag-attached →
+`eventSection`. No new panel, no second home for the same truth.
+
+#### The traps, written down before anyone hits them
+
+- **Coordinates are in TILES; `maps.json`'s `width`/`height` are in BLOCKS.** One block = 2×2 tiles. This
+  already bit the Phase 6 signs work (a Route 22 sign at `y=11` on a `height=9` map). The box geometry is
+  `mapBorder * blockPx + x * 16`, the same arithmetic `MapEngine::playerRect` uses.
+- **Bit SET = HIDDEN** (`WorldMissables`), not shown. Getting this backwards inverts every box on screen.
+- **The ROM cast and the save's sprite slots are different lists** and are *allowed* to disagree — the
+  boxes come from the ROM, the sprites from the save. When they disagree, that is information, not a bug.
+- **`missable` is `-1` for non-conditional objects** — that is the "no box" signal, not an error.
+
+#### 16f — MANY STORAGE SPOTS ON ONE LOCATION: the tabbed squares  *(BRIEFED 2026-07-17, Fairy Fox — NOT BUILT)*
+
+> *"keep in mind an item or sprite or whatever may have event flags and/or filter flags both on it. If
+> a map tile/block whatever has multiple persistent map storage spots for it they need to show as
+> tabbed little squares at the top left that can be clicked on and theyll take you to the different
+> spots"*
+>
+> …clarified immediately after, and the clarification is the important half:
+>
+> *"multiple persistent map storage spots is what i meant to say, like there's a lot of pieces to the
+> game and im talking when multiple persistent storage things not just filter flags and event flags
+> land on the same location of the map type thing"*
+
+**So this is NOT "flags on an object".** It is **any persistent storage that lands on the same location
+of the map** — filter flags and event flags are just the two we happen to have built. The game has many
+pieces, and more storage kinds are coming (she has said repeatedly that Map Storage is a container she
+will keep adding to). The rule is about a **place**, not about a sprite.
+
+The design above assumes **one spot, one box**, and that assumption is wrong. A single tile can carry a
+filter flag deciding whether something is there at all, an event flag recording what happened there,
+a script-progress step, a minigame byte — any mix. A box that links to only one of them is telling part
+of the truth.
+
+**The shape.** When a location has **more than one** storage spot, the box grows **little tabbed squares
+in its top-left corner**, one per spot, each clickable, each jumping to *its own* row in Map Storage.
+One spot = no tabs (a plain box, as built).
+
+**What this means for the architecture — and it is worth getting right now, before more is built on
+it:** a box must not be modelled as *"a missable with a rectangle"*, which is what 16c/16d currently
+are. It has to become **a LOCATION that owns a list of storage spots**, each spot carrying its kind
+(filter flag / event flag / script step / …), its label, and where in the panel it lives. The kinds are
+open-ended by design: adding the next kind of storage should mean adding a spot type, not rewriting the
+box. `MapModel::flagHotspots()` should therefore grow toward
+`{x, y, spots:[{kind, ind, name, desc, section}]}` rather than a flat missable — and the sooner that
+happens, the less there is to unpick.
+
+**⚠️ The blocker, stated plainly: the event-flag half of this data DOES NOT EXIST yet.**
+
+- **Filter flags** are solid: `maps.json`'s `missable` field links object → bit, verified, shipped.
+  That is what 16c/16d are built on.
+- **Event flags → objects** is **not shipped at all**. `scripts/extract_flag_locations.py` found only
+  **14** best-effort links across all 223 maps (via CheckEvent-before-toggle), and 14 guesses is not a
+  foundation for a UI. Nothing in `maps.json` carries an event-flag id for an object.
+
+So 16f cannot be built on what we have, and **must not** be faked: a tab that points at a flag we
+merely *suspect* belongs to an object is exactly the "UI built on a guess" the project forbids — and
+the conflicts post-mortem already recorded the lesson (*static co-location is a LEAD, never evidence*).
+
+**Therefore 16f gets its own research phase first:**
+
+- **16f-a — Research: object → event flag.** Go to `pret/pokered` and establish, per object, which
+  event flags name it. The honest sources: an item ball's `EVENT_GOT_<ITEM>`, a trainer's
+  `EVENT_BEAT_<TRAINER>` (the `trainer` macro's flag argument is *explicit* in the data — this is the
+  promising one), and script-level `CheckEvent`/`SetEvent` near an object's own text/script label.
+  Where it cannot be established, the object gets **no event tab** — never a guessed one.
+- **16f-b — Data.** Whatever comes out lands in the DB the same way everything else does: read out of
+  pret by an importer, not hand-written. (⚠️ `maps.json` is data — adding a field to it needs
+  leadership's OK, per the standing "don't edit the JSON" rule.)
+- **16f-c — The tabs.** Only then: the top-left squares, one per spot, on boxes with >1.
+
+Until 16f-a exists, boxes link to the filter flag only, which is **verified** and covers the brief's
+own example (Oak's Lab's Poké Balls are filter-flag objects).
+
+#### Sub-phases (the Phase 9 mould — UI last)
+
+- **16a — Research** ✅ *(2026-07-16)* — `extract_flag_locations.py`; the finding that the data was
+  already in `maps.json` is the reason 16b is empty.
+- **16b — Model** — *nothing to build.* `getMissable`/`getToMissable`/`WorldMissables` already exist and
+  are already pinned by tests. Recorded so no one "adds" it.
+- **16c — The layer** — the boxes on the canvas: `MapModel::flagHotspots()` (ROM cast → x/y, attachment,
+  current state), a QML layer in the **Objects** group, colour by attachment, solid/dashed by state.
+- **16d — The link** — click → Map Storage → section → scroll + highlight.
+- **16e — Verification** — `tst_map_hotspots`: Oak's Lab yields **8** boxes and not 11; the three balls
+  sit at (6,3)/(7,3)/(8,3) with missables 43/44/45; flipping a missable bit flips solid↔dashed and
+  **writes only that bit** (the byte-diff keystone); mandatory screenshot review; then her live pass.
+
+---
+
 ### Phase 15 — SIMULATE: walk the map  *(**OPTIONAL / stretch** — runs last, gates nothing)*
 
 **Twilight, 2026-07-12: "an accurate simulation like a play/pause button on the map might be cool but it's

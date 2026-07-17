@@ -970,6 +970,16 @@ public:
   /// maps. @see notes/reference/event-flags.md
   Q_INVOKABLE QVariantList storageEvents(const QVariantList& mapIds) const;
 
+  /// The FLAG BOXES for the current map -- one per ROM object whose presence the save keeps a flag
+  /// for: `{rectX,rectY,rectW,rectH, x,y, name,desc, kind, missable, hidden, defShow}`.
+  ///
+  /// Drawn from the **ROM's** cast (`MapDBEntry::sprites`), NOT the save's sprite slots -- so an
+  /// object its flag currently hides still has a box, at the coordinates it would stand on. That is
+  /// the whole feature. `hidden` is the live `WorldMissables` bit (**set = HIDDEN**), and it is what
+  /// makes a box dashed. `missable` is the bit index -- what a click hands to Map Storage.
+  /// @see notes/plans/map-screen.md -> Phase 16
+  Q_INVOKABLE QVariantList flagHotspots() const;
+
   int viewPtr() const;                      ///< The stored camera pointer (`0x260B`).
   int viewPtrComputed() const;              ///< The pointer for the player's current position.
   bool viewSynced() const;                  ///< Is the stored pointer following the player?
