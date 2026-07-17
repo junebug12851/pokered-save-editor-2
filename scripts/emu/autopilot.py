@@ -42,8 +42,17 @@ W_ENEMY_LEVEL = 0xCFF3       # wEnemyMonLevel
 W_STATUS1 = 0xD728           # wStatusFlags1; bit 6 = BIT_GAVE_SAFFRON_GUARDS_DRINK
 BIT_GUARD_DRINK = 6          # (pret scripts/Route5Gate.asm)
 W_EVENT_FLAGS = 0xD747       # wEventFlags (2560 bits; save 0x29F3 + 0xAD54)
-W_BAG_COUNT = 0xD31C         # wNumBagItems; entries follow, 0xFF-terminated
-W_BAG_ITEMS = 0xD31D
+W_BAG_COUNT = 0xD31D         # wNumBagItems (save 0x25C9 + 0xAD54); pairs follow,
+W_BAG_ITEMS = 0xD31E         #   0xFF-terminated — validated live by the probe
+W_PARTY_COUNT = 0xD163       # wPartyCount; species list follows at 0xD164
+W_PARTY_SPECIES = 0xD164
+W_PARTY_MON = 0xD16B         # wPartyMon1 (44 bytes each): hp+1 BE, level +0x21,
+MON_SIZE = 44                #   max hp +0x22 BE
+W_MONEY = 0xD347             # wPlayerMoney, 3 bytes BCD
+W_OPTIONS = 0xD355           # wOptions: b0-3 text speed, b6 battle style, b7 anim off
+W_SHOP_LIST = 0xCF7B         # wItemList — the mart's for-sale ids, 0xFF-terminated
+W_BOX_COUNT = 0xDA80         # wBoxCount (current box)
+W_D74B = 0xD74B              # bit 5 = got the Pokédex (start-menu layout depends on it)
 W_BIKESURF = 0xD700          # wWalkBikeSurfState: 0 walk, 1 bike, 2 surf
 W_NUM_WARPS = 0xD3AF - 1     # wNumberOfWarps 0xD3AE
 W_WARP_ENTRIES = 0xD3AF      # y, x, destWarpID, destMap per entry
@@ -912,6 +921,474 @@ def hunt(pb, max_steps: int = 240, policy: str = "stop") -> dict:
             return {"ok": False, "reason": "walked off the map", **snapshot(pb)}
     return {"ok": False, "reason": "no encounter in budget", "steps": steps,
             **snapshot(pb)}
+
+
+# ------------------------------------------------------------------ talk to NPC
+
+# ------------------------------------------------------------------ menus
+# Everything below drives REAL menus with the cursor read back from
+# wCurrentMenuItem after every tap — never a blind button script.
+
+def _tap(pb, b: str, wait: int = 16) -> None:
+    pb.button(b, delay=5)
+    _tick(pb, wait)
+
+
+def party_level(m, slot: int = 1) -> int:
+    return m[W_PARTY_MON + (slot - 1) * MON_SIZE + 0x21]
+
+
+def party_hp(m, slot: int = 1) -> tuple[int, int]:
+    b = W_PARTY_MON + (slot - 1) * MON_SIZE
+    return ((m[b + 1] << 8) | m[b + 2], (m[b + 0x22] << 8) | m[b + 0x23])
+
+
+def party_species(m) -> list[int]:
+    return [m[W_PARTY_SPECIES + i] for i in range(m[W_PARTY_COUNT])]
+
+
+def money(m) -> int:
+    v = 0
+    for i in range(3):
+        b = m[W_MONEY + i]
+        v = v * 100 + (b >> 4) * 10 + (b & 0xF)
+    return v
+
+
+def bag_qty(m, item_id: int) -> int:
+    for i in range(min(m[W_BAG_COUNT], 20)):
+        if m[W_BAG_ITEMS + 2 * i] == item_id:
+            return m[W_BAG_ITEMS + 2 * i + 1]
+    return 0
+
+
+def _cursor_to(pb, idx: int, tries: int = 24) -> bool:
+    """Move wCurrentMenuItem to idx, verified after every tap."""
+    m = pb.memory
+    for _ in range(tries):
+        cur = m[W_MENU]
+        if cur == idx:
+            return True
+        _tap(pb, "down" if cur < idx else "up", 14)
+    return m[W_MENU] == idx
+
+
+def _menu_live(pb) -> bool:
+    """Is a MENU actually taking input right now? Probe-tap: a live menu moves
+    wCurrentMenuItem on a down/up tap (restored); printing text does not.
+    The one signal that cannot go stale."""
+    m = pb.memory
+    cur = m[W_MENU]
+    _tap(pb, "down", 14)
+    if m[W_MENU] != cur:
+        _tap(pb, "up", 14)
+        return True
+    if cur > 0:                                 # maybe parked at the bottom
+        _tap(pb, "up", 14)
+        if m[W_MENU] != cur:
+            _tap(pb, "down", 14)
+            return True
+    return False
+
+
+def _await_menu(pb, max_a: int = 6) -> bool:
+    """Advance intermediate text ('Accessed BILL's PC.' …) with A until a live
+    menu answers the probe-tap."""
+    for _ in range(max_a):
+        if _menu_live(pb):
+            return True
+        _tap(pb, "a", 50)
+    return _menu_live(pb)
+
+
+# ⚠️ REJECTED: a wMaxMenuItem (0xCC28) "sentinel poke" as a fresh-menu
+# detector. The byte is READ while a menu is active — poking it unclamps the
+# cursor (down moves past the last entry into garbage rows) and an A there
+# dispatches wild (it zeroed a party once). Menus are synchronized by the
+# probe-tap (_menu_live) only; commits are verified by their outcome.
+
+
+def start_menu_items(m) -> list[str]:
+    """The start menu's layout depends on progress (pret DisplayStartMenu):
+    POKéDEX only once obtained (wd74b bit 5), POKéMON only with a party."""
+    items = []
+    if m[W_D74B] & (1 << 5):
+        items.append("POKEDEX")
+    if m[W_PARTY_COUNT]:
+        items.append("POKEMON")
+    items += ["ITEM", "TRAINER", "SAVE", "OPTION", "EXIT"]
+    return items
+
+
+def start_select(pb, item: str) -> dict:
+    """Open the start menu and select an entry by NAME. The menu must answer
+    the probe-tap (LIVE, not just 'a text box is up') before the cursor moves
+    — a stale wCurrentMenuItem happily 'verifies' against no menu at all."""
+    m = pb.memory
+    close_menus(pb, 10)                         # a clean overworld first
+    for _ in range(20):
+        if not font_up(m):
+            break
+        _tap(pb, "b", 20)
+    items = start_menu_items(m)
+    if item not in items:
+        return {"ok": False, "reason": f"{item} not in start menu {items}"}
+    opened = False
+    for _ in range(5):
+        _tap(pb, "start", 30)
+        if font_up(m) and _menu_live(pb):
+            opened = True
+            break
+    if not opened:
+        return {"ok": False, "reason": "start menu never went live"}
+    if not _cursor_to(pb, items.index(item)):
+        return {"ok": False, "reason": "cursor would not settle"}
+    _tap(pb, "a", 30)
+    return {"ok": True, "items": items}
+
+
+def close_menus(pb, presses: int = 6) -> None:
+    m = pb.memory
+    for _ in range(presses):
+        if not font_up(m):
+            break
+        _tap(pb, "b", 20)
+
+
+def save_game(pb) -> dict:
+    """Start → SAVE → YES; waits out the 'SAVING...' write. Verified by the
+    flow completing back to a free overworld (the battery file itself is only
+    flushed by PyBoy at stop)."""
+    r = start_select(pb, "SAVE")
+    if not r["ok"]:
+        return r
+    _tap(pb, "a", 40)                           # YES (default) on the confirm
+    m = pb.memory
+    for _ in range(900):                        # the save text + write
+        pb.tick()
+        if not font_up(m) and not m[W_JOY_IGNORE]:
+            break
+    close_menus(pb)
+    return {"ok": on_overworld(pb) and not font_up(m), **snapshot(pb)}
+
+
+def set_options(pb, text_fast: bool = True, anim_off: bool = True,
+                style_set: bool = True) -> dict:
+    """Start → OPTION and set the three rows with real taps (left/right),
+    verified against the wOptions byte afterwards."""
+    r = start_select(pb, "OPTION")
+    if not r["ok"]:
+        return r
+    m = pb.memory
+    _tick(pb, 40)
+    # The options screen keeps its own cursor variables (wCurrentMenuItem is
+    # NOT the row) — walk the three rows top-down from the known opening state
+    # (TEXT SPEED first), verifying each against the wOptions byte itself.
+    def _want(o):
+        return bool((not text_fast or (o & 0xF) == 1)
+                    and (not anim_off or o & 0x80)
+                    and (not style_set or o & 0x40))
+    for _ in range(2):                          # two full top-down passes
+        if text_fast:
+            for _ in range(3):
+                if (m[W_OPTIONS] & 0xF) == 1:
+                    break
+                _tap(pb, "left", 16)
+        _tap(pb, "down", 16)
+        if anim_off:
+            for _ in range(3):
+                if m[W_OPTIONS] & 0x80:
+                    break
+                _tap(pb, "right", 16)
+        _tap(pb, "down", 16)
+        if style_set:
+            for _ in range(3):
+                if m[W_OPTIONS] & 0x40:
+                    break
+                _tap(pb, "right", 16)
+        if _want(m[W_OPTIONS]):
+            break
+        _tap(pb, "down", 16)                    # wrap past CANCEL back to row 0
+    poked = False
+    if not _want(m[W_OPTIONS]):                 # the screen misbehaved — poke
+        o = m[W_OPTIONS]                        # the remainder, SAY SO
+        if text_fast:
+            o = (o & 0xF0) | 1
+        if anim_off:
+            o |= 0x80
+        if style_set:
+            o |= 0x40
+        m[W_OPTIONS] = o
+        poked = True
+    _tap(pb, "b", 30)
+    close_menus(pb)
+    o = m[W_OPTIONS]
+    return {"ok": _want(o), "wOptions": o, "poked": poked, **snapshot(pb)}
+
+
+def party_swap(pb, a: int, b: int, retries: int = 2) -> dict:
+    """Start → POKéMON → mon a → SWITCH → mon b (all cursor-verified);
+    proven by the species order actually changing (retried whole if not)."""
+    m = pb.memory
+    before = party_species(m)
+    if not (1 <= a <= len(before) and 1 <= b <= len(before)) or a == b:
+        return {"ok": False, "reason": f"bad slots for party of {len(before)}"}
+    want = list(before)
+    want[a - 1], want[b - 1] = want[b - 1], want[a - 1]
+    last = ""
+    for _ in range(retries):
+        close_menus(pb, 8)
+        _tick(pb, 30)
+        r = start_select(pb, "POKEMON")
+        if not r["ok"]:
+            last = str(r.get("reason"))
+            continue
+        if not _await_menu(pb):
+            last = "party list never went live"
+            continue
+        if not _cursor_to(pb, a - 1):
+            last = "party cursor stuck"
+            continue
+        _tap(pb, "a", 60)
+        if not _await_menu(pb):
+            last = "submenu never went live"
+            continue
+        if not _cursor_to(pb, 1):               # SWITCH
+            last = "submenu cursor stuck"
+            continue
+        _tap(pb, "a", 60)
+        if not _await_menu(pb):
+            last = "switch list never went live"
+            continue
+        if not _cursor_to(pb, b - 1):
+            last = "second cursor stuck"
+            continue
+        _tap(pb, "a", 50)
+        close_menus(pb)
+        _tick(pb, 20)
+        if party_species(m) == want:
+            return {"ok": True, "before": before, "after": party_species(m)}
+        last = "order unchanged"
+    return {"ok": party_species(m) == want, "before": before,
+            "after": party_species(m), "why": last}
+
+
+# ------------------------------------------- Pokémon Center / Mart / PC
+
+def _interact_over_counter(pb, npc_sq, prefer=("up", "left", "right", "down")):
+    """Stand across the counter from an NPC (2 squares away — counters relay
+    the A press) or adjacent, face them, press A. True once text opens."""
+    m = pb.memory
+    w = world()
+    grid = w.grid(m[W_MAP])
+    nx, ny = npc_sq
+    spots = []
+    for d in prefer:
+        dx, dy = DIRS[d]
+        for dist in (2, 1):
+            sx, sy = nx + dx * dist, ny + dy * dist
+            if grid.ok(sx, sy):
+                spots.append(((sx, sy), OPPOSITE[d]))
+    for spot, face_dir in spots[:6]:
+        r = walk_to(pb, *spot, max_steps=120)
+        if not r["ok"]:
+            continue
+        pb.button(face_dir, delay=8)
+        _tick(pb, 16)
+        _tap(pb, "a", 40)
+        if font_up(m):
+            return True
+    return False
+
+
+def heal_at_center(pb) -> dict:
+    """Talk to the nurse over the counter, A through the heal (YES is the
+    default), verified by every party mon reading HP == max HP."""
+    m = pb.memory
+    w = world()
+    entry = w.by_ind.get(m[W_MAP])
+    slot = next((i + 1 for i, sp in enumerate(entry.get("sprites") or [])
+                 if "nurse" in sp.get("sprite", "").lower()), 1)
+    npc = npc_square(m, slot)
+    if npc is None:
+        return {"ok": False, "reason": "no nurse here — is this a Pokémon Center?"}
+    if not _interact_over_counter(pb, npc):
+        return {"ok": False, "reason": "couldn't reach the counter"}
+    for _ in range(80):                         # the heal jingle + text
+        if not font_up(m) and not m[W_JOY_IGNORE]:
+            break
+        _tap(pb, "a", 24)
+    healed = all(party_hp(m, s + 1)[0] == party_hp(m, s + 1)[1]
+                 for s in range(m[W_PARTY_COUNT]))
+    return {"ok": healed and on_overworld(pb), "party": m[W_PARTY_COUNT],
+            **snapshot(pb)}
+
+
+def mart_buy(pb, item_id: int, qty: int = 1) -> dict:
+    """Talk to the clerk, BUY, pick the item out of the LIVE shop list
+    (wItemList), set the quantity, confirm — verified by the bag gaining
+    exactly qty and the money going down."""
+    m = pb.memory
+    w = world()
+    entry = w.by_ind.get(m[W_MAP])
+    slot = next((i + 1 for i, sp in enumerate(entry.get("sprites") or [])
+                 if sp.get("sprite", "").lower() in ("clerk", "mart guy",
+                                                     "cashier")), 1)
+    npc = npc_square(m, slot)
+    if npc is None:
+        return {"ok": False, "reason": "no clerk here — is this a mart?"}
+    qty_before, money_before = bag_qty(m, item_id), money(m)
+    if not _interact_over_counter(pb, npc, prefer=("right", "up", "left", "down")):
+        return {"ok": False, "reason": "couldn't reach the counter"}
+    if not _await_menu(pb):                     # BUY / SELL / QUIT
+        return {"ok": False, "reason": "shop menu never went live"}
+    if not _cursor_to(pb, 0):
+        return {"ok": False, "reason": "shop menu cursor stuck"}
+    _tap(pb, "a", 70)
+    # reach the item LIST; if a stray A armed the qty prompt (wMaxItemQuantity
+    # 0xCF97 == 99 — write-only for the list, so pre-cleared as a SAFE
+    # sentinel), back out with B before probing (a probe DOWN in the prompt
+    # wraps 1 -> x99; it bought 99 Poké Balls once)
+    m[0xCF97] = 0
+    for _ in range(6):
+        if m[0xCF97] == 0x63:
+            _tap(pb, "b", 30)
+            m[0xCF97] = 0
+            continue
+        if _menu_live(pb):
+            break
+        _tap(pb, "a", 50)
+    # wItemList is COUNT-PREFIXED: [n, id, id, ..., 0xFF]
+    n_stock = m[W_SHOP_LIST]
+    stock = [m[W_SHOP_LIST + 1 + i] for i in range(min(n_stock, 10))
+             if m[W_SHOP_LIST + 1 + i] != 0xFF]
+    if item_id not in stock:
+        close_menus(pb, 8)
+        return {"ok": False, "reason": f"item {item_id} not in stock {stock}"}
+    # a long list SCROLLS: the absolute selection is cursor + scroll offset
+    target = stock.index(item_id)
+    for _ in range(24):
+        absolute = m[W_MENU] + m[0xCC36]        # wCurrentMenuItem + wListScrollOffset
+        if absolute == target:
+            break
+        _tap(pb, "down" if absolute < target else "up", 14)
+    m[0xCF97] = 0                               # sentinel the qty prompt too
+    _tap(pb, "a", 40)
+    for _ in range(300):                        # the quantity prompt arms
+        if m[0xCF97] == 0x63:                   # wMaxItemQuantity = 99, FRESH
+            break
+        pb.tick()
+    want_q = min(qty, 99)
+    for _ in range(want_q * 2 + 4):             # wItemQuantity (0xCF96),
+        cur_q = m[0xCF96]                       # verified per tap, both ways
+        if cur_q == want_q:
+            break
+        _tap(pb, "up" if cur_q < want_q else "down", 24)
+    _tap(pb, "a", 30)                           # ask the price
+    for _ in range(14):                         # the quote prints, then YES —
+        if money(m) < money_before:             # the MONEY dropping is the
+            break                               # only honest confirmation
+        _tap(pb, "a", 30)
+    close_menus(pb, 10)
+    gained = bag_qty(m, item_id) - qty_before
+    return {"ok": gained == qty and money(m) < money_before,
+            "gained": gained, "spent": money_before - money(m), **snapshot(pb)}
+
+
+def _pc_open(pb) -> bool:
+    """The Center PC is a HIDDEN EVENT, not a tile: pret data/events/
+    hidden_events.asm gives every Pokécenter `hidden_event 13, 3,
+    OpenPokemonCenterPC, SPRITE_FACING_UP` — stand at (13,4), face up, A.
+    Success = a text box WITH a menu (wMaxMenuItem ≥ 2), not mere dialog."""
+    m = pb.memory
+    close_menus(pb, 6)                          # a fresh start (post-heal text)
+    _tick(pb, 30)
+    for sq in ((13, 4), (13, 4), (12, 4)):      # first spot gets two tries
+        r = walk_to(pb, *sq, max_steps=120)
+        if not r["ok"]:
+            continue
+        pb.button("up", delay=8)
+        _tick(pb, 20)
+        _tap(pb, "a", 60)
+        if font_up(m) and m[0xCC28] >= 2:       # wMaxMenuItem: it's a MENU
+            return True
+        close_menus(pb, 4)
+        _tick(pb, 20)
+    return False
+
+
+def pc_box(pb, action: str, slot: int = 1) -> dict:
+    """Bill's PC: action 'deposit' (party slot -> box) or 'withdraw' (box slot
+    -> party) — verified by the party AND box counts moving.
+
+    The flow the console demands (learned from screenshots): the PC and every
+    submenu each print an 'Accessed …' TEXT that wants its own A before the
+    next menu appears — top menu (BILL's PC first), then Bill's menu
+    (WITHDRAW / DEPOSIT / RELEASE / CHANGE BOX / SEE YA), then the mon list."""
+    m = pb.memory
+    party0, box0 = m[W_PARTY_COUNT], m[W_BOX_COUNT]
+    if action == "deposit" and party0 <= 1:
+        return {"ok": False, "reason": "won't deposit the last party member"}
+    if action == "withdraw" and box0 == 0:
+        return {"ok": False, "reason": "the box is empty"}
+    want = 0 if action == "withdraw" else 1     # index in Bill's menu
+    for _ in range(2):                          # whole flow, retried once
+        if not _pc_open(pb):
+            return {"ok": False, "reason": "couldn't switch the PC on"}
+        # each stage: advance text until the MENU answers the probe-tap,
+        # then park the cursor (verified) and commit with A
+        if not _await_menu(pb):
+            close_menus(pb, 10)
+            continue
+        _cursor_to(pb, 0)                       # top menu: BILL's PC
+        _tap(pb, "a", 70)
+        if not _await_menu(pb):
+            close_menus(pb, 10)
+            continue
+        _cursor_to(pb, want)                    # WITHDRAW(0) / DEPOSIT(1)
+        _tap(pb, "a", 70)
+        if not _await_menu(pb):
+            close_menus(pb, 10)
+            continue
+        _cursor_to(pb, slot - 1)                # the mon list
+        _tap(pb, "a", 100)                      # do it — 'stored'/'taken' text
+        # ⚠️ dismiss with B ONLY: the mon list re-shows after the commit and
+        # an A here would deposit/withdraw ANOTHER one (it emptied the whole
+        # box once) — B never re-selects
+        close_menus(pb, 12)
+        _tick(pb, 30)
+        party1, box1 = m[W_PARTY_COUNT], m[W_BOX_COUNT]
+        if (party1, box1) == ((party0 - 1, box0 + 1) if action == "deposit"
+                              else (party0 + 1, box0 - 1)):
+            return {"ok": True, "party": [party0, party1],
+                    "box": [box0, box1]}
+    return {"ok": False, "party": [party0, m[W_PARTY_COUNT]],
+            "box": [box0, m[W_BOX_COUNT]]}
+
+
+# ------------------------------------------------------------------ training
+
+def train_to(pb, level: int, slot: int = 1, policy: str = "sweep",
+             max_battles: int = 60) -> dict:
+    """LEVEL UP: hunt + win (sweep by default — real XP, certain wins) until
+    the party mon reaches the target level. Evolution prompts are declined by
+    the B-heavy dismissal (the moveset and the mon stay what they were)."""
+    m = pb.memory
+    if not 1 <= slot <= m[W_PARTY_COUNT]:
+        return {"ok": False, "reason": f"no party slot {slot}"}
+    start_lv = party_level(m, slot)
+    battles = 0
+    while party_level(m, slot) < level and battles < max_battles:
+        r = hunt(pb, max_steps=400, policy=policy)
+        if not r.get("ok"):
+            return {"ok": False, "reason": f"hunt failed: {r.get('reason')}",
+                    "battles": battles, "level": party_level(m, slot),
+                    **snapshot(pb)}
+        battles += 1
+        dismiss(pb)                             # level-up / evolution boxes (B)
+    lv = party_level(m, slot)
+    return {"ok": lv >= level, "level": lv, "from": start_lv,
+            "battles": battles, **snapshot(pb)}
 
 
 # ------------------------------------------------------------------ talk to NPC

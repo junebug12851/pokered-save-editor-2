@@ -430,12 +430,105 @@ def case_gym(w: World) -> dict:
         c.close()
 
 
+def case_menus(w: World) -> dict:
+    """The start-menu family in one sitting: OPTIONS set through the real menu
+    (verified against wOptions), the party reordered through the POKéMON menu
+    (verified by species order), and the game SAVED (flow to completion)."""
+    c = Child()
+    try:
+        boot(c, sav=None)
+        o = c.send({"cmd": "set_options"}, 240)["result"]
+        s = c.send({"cmd": "party_swap", "a": 1, "b": 2}, 240)["result"]
+        s2 = c.send({"cmd": "party_swap", "a": 1, "b": 2}, 240)["result"]
+        sv = c.send({"cmd": "save_game"}, 240)["result"]
+        ok = o.get("ok") and s.get("ok") and s2.get("ok") and sv.get("ok")
+        return {"ok": bool(ok), "options": o.get("wOptions"),
+                "swap": [s.get("ok"), s2.get("ok")], "save": sv.get("ok"),
+                "detail": {"o": o, "s": s, "s2": s2, "sv": sv}}
+    finally:
+        c.close()
+
+
+def case_center(w: World) -> dict:
+    """A full Pokémon Center visit: walk in (natural warp), get HURT (HP poked
+    down — a full-HP heal proves nothing), heal at the nurse (HP==max after),
+    then Bill's PC: deposit party mon 2, withdraw it back (counts verified)."""
+    pc = w.resolve("Viridian Pokecenter")
+    c = Child()
+    try:
+        boot(c, sav=None)
+        g = c.send({"cmd": "goto", "map": pc["ind"]}, 900)["result"]
+        if not g.get("ok"):
+            return {"ok": False, "reason": "never reached the Center", "goto": g}
+        c.send({"cmd": "poke", "addr": "0xD16C", "bytes": "0005"})  # mon 1 at 5 HP
+        h = c.send({"cmd": "heal"}, 300)["result"]
+        d = c.send({"cmd": "pc_box", "action": "deposit", "slot": 2},
+                   300)["result"]
+        wd = c.send({"cmd": "pc_box", "action": "withdraw", "slot": 1},
+                    300)["result"]
+        ok = h.get("ok") and d.get("ok") and wd.get("ok")
+        return {"ok": bool(ok), "heal": h.get("ok"), "deposit": d,
+                "withdraw": wd}
+    finally:
+        c.close()
+
+
+def case_mart(w: World) -> dict:
+    """Buy 3 Poké Balls (item 4) at Viridian Mart — bag +3, money down."""
+    mart = w.resolve("Viridian Mart")
+    c = Child()
+    try:
+        boot(c, sav=None)
+        g = c.send({"cmd": "goto", "map": mart["ind"]}, 900)["result"]
+        if not g.get("ok"):
+            return {"ok": False, "reason": "never reached the mart", "goto": g}
+        resp = c.send({"cmd": "buy", "item": 4, "qty": 3}, 300)
+        r = resp.get("result") or resp
+        return {"ok": bool(r.get("ok")), "detail": r}
+    finally:
+        c.close()
+
+
+def case_train(w: World) -> dict:
+    """Train party mon 1 up one level on Route 1 (hunt + sweep = real XP)."""
+    c = Child()
+    try:
+        boot(c, sav=None)
+        g = c.send({"cmd": "goto", "map": w.resolve("Route 1")["ind"]},
+                   600)["result"]
+        if not g.get("ok"):
+            return {"ok": False, "reason": "never reached Route 1"}
+        lv = int(c.send({"cmd": "mem", "addr": "0xD18C"})["hex"], 16)
+        r = c.send({"cmd": "train", "level": lv + 1, "slot": 1,
+                    "max_battles": 40}, 1800)["result"]
+        return {"ok": bool(r.get("ok")), "from": lv, "result": r}
+    finally:
+        c.close()
+
+
+def case_newgame(w: World) -> dict:
+    """A fresh game from NOTHING: no battery file, mashed through the title,
+    Oak's intro and the naming screens to the bedroom overworld (no party)."""
+    c = Child()
+    try:
+        r = c.send({"cmd": "boot", "new_game": True}, 600)
+        st = r.get("state") or {}
+        beds = {w.resolve("Reds House 2F")["ind"]}
+        party = int(c.send({"cmd": "mem", "addr": "0xD163"})["hex"], 16)
+        ok = r.get("booted") and st.get("map") in beds and party == 0
+        return {"ok": bool(ok), "map": st.get("map"), "party": party,
+                "frames": r.get("frames")}
+    finally:
+        c.close()
+
+
 CASES = {"addrs": case_addrs, "walk": case_walk, "warp": case_warp,
          "cross": case_cross, "mtmoon": case_mtmoon, "hunt": case_hunt,
          "talk": case_talk, "natural": case_natural, "guard": case_guard,
          "elevator": case_elevator, "sweep": case_sweep, "surf": case_surf,
          "cut": case_cut, "spin": case_spin, "bike": case_bike,
-         "gym": case_gym}
+         "gym": case_gym, "menus": case_menus, "center": case_center,
+         "mart": case_mart, "train": case_train, "newgame": case_newgame}
 
 
 def main() -> int:
@@ -468,6 +561,11 @@ def main() -> int:
               f"{json.dumps({k: v[k] for k in v if k != 'result'}, default=str)[:300]}",
               flush=True)
     OUT.parent.mkdir(parents=True, exist_ok=True)
+    if OUT.exists():                            # merge — --only runs shouldn't
+        try:                                    # clobber earlier verdicts
+            verdicts = {**json.loads(OUT.read_text()), **verdicts}
+        except json.JSONDecodeError:
+            pass
     OUT.write_text(json.dumps(verdicts, indent=1, default=str))
     n_ok = sum(1 for v in verdicts.values() if v.get("ok"))
     print(f"\n{n_ok}/{len(verdicts)} passed in {time.time() - t0:.0f}s -> {OUT}")

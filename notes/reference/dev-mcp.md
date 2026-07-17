@@ -59,6 +59,7 @@ on any overrun.
 | App | `app_launch` · `app_stop` · `app_foreground` · `app_background` · `app_cmd` · `app_screen` · `app_title` · `app_load_sav` · `app_get` · `app_set` · `app_click` · `app_tap` · `app_invoke` · `app_list` · `app_reload` · `app_shot` | the DEBUG TCP harness (`dev-harness.md`), traps encoded (below) |
 | Emu | `emu_status` · `emu_setup` · `emu_check_updates` · `emu_update` · `emu_run_script` · `emu_flag_scenarios` · `emu_make_map_save` · `emu_forge_save` · `emu_boot` · `emu_button` · `emu_tick` · `emu_mem` · `emu_poke` · `emu_state` · `emu_screenshot` · `emu_stop` | ROM-gated, local-only; clean unavailability without it |
 | **Autopilot** | `emu_goto` · `emu_walk_to` · `emu_talk_to` · `emu_battle` · `emu_hunt_encounter` · `emu_dismiss` · `emu_play` · `emu_set_flag` · `emu_give_item` · `emu_move_sprite` | pathfinding + auto-navigation + progression levers, below |
+| Game life | `emu_train` · `emu_new_game` · `emu_save_game` · `emu_heal` · `emu_set_options` · `emu_party_swap` · `emu_start_select` · `emu_mart_buy`⚠️ · `emu_pc_box`⚠️ | training, menus, fresh games — "The game-life layer" below |
 | App flows | `app_flow` | multi-step app driving (get/set/tap/wait-until/shot…) in ONE call |
 
 **Total custom state resume (2026-07-16).** `emu_boot(map_id=…, x=…, y=…, flags=[EVENT_*…],
@@ -191,6 +192,39 @@ The v1 limits fell the same day. All of it **console-verified** (the probe batte
 Still honest limits: Strength boulder puzzles aren't auto-solved (use `emu_move_sprite`
 deliberately); spinner mazes are avoided, not ridden (per-square arrow directions = a future
 import); Flash is cosmetic (WRAM navigation doesn't need light).
+
+### The game-life layer (2026-07-16, third same-day brief — train, menus, new game)
+
+- **`emu_train(level, slot)`** ✅ — hunt + win on repeat (sweep = certain wins, REAL XP;
+  evolution prompts declined) until the party mon reaches the level. Console-verified
+  (83 → 84 on Route 1).
+- **`emu_new_game()`** ✅ — a fresh game from NOTHING: no battery file, the boot mash
+  (start/a) carries the title, Oak's intro and both naming screens (names arbitrary — START
+  jumps a keyboard to END) to the bedroom overworld. Verified (map 38, party 0, ~4.2 k frames).
+  From there `emu_set_flag`/`emu_give_item` fast-forward story state; the full parcel-quest
+  walkthrough is an `emu_play` recipe for a future pass.
+- **`emu_set_options`** ✅ — the real OPTIONS screen, rows tapped and verified against the
+  `wOptions` byte (0xC1 = fast text + anim off + SET, by menu, no poke). `emu_save_game` ✅
+  (start → SAVE → YES, waited out). `emu_heal` ✅ (nurse over the counter; verified every
+  party mon HP == max — the probe damages a mon first, a full-HP heal proves nothing).
+  `emu_party_swap` ✅ (species order verified; an immediate repeat can need its retry).
+  `emu_start_select` — the generic door into any start-menu flow.
+- **`emu_mart_buy` / `emu_pc_box`** ⚠️ EXPERIMENTAL — the flows are built (live shop list
+  read out of count-prefixed `wItemList` 0xCF7B; Bill's PC withdraw/deposit) and their
+  results are HONEST (bag+money / party+box counts verified — they never claim what didn't
+  happen), but the multi-stage text→menu cadence is not yet deterministic. **The named next
+  research pass:** pret's list-menu engine (`DisplayListMenuID`/`HandleMenuInput`) for the
+  true "menu awaiting input" signal. Traps already banked: `wCurrentMenuItem` goes STALE
+  between menus (verify liveness by probe-tap, never trust a matching value); a
+  `wMaxMenuItem` sentinel poke is a LOADED GUN (read while active — unclamps the cursor into
+  garbage dispatch); the mon list RE-SHOWS after a PC commit (dismiss with B only — an A
+  withdrew a whole box once); the qty prompt wraps 1 → ×99 on a DOWN.
+- Menu WRAM banked: `wCurrentMenuItem 0xCC26`, `wMaxMenuItem 0xCC28`, `wListScrollOffset
+  0xCC36`, `wItemQuantity 0xCF96` / max `0xCF97`, shop `wItemList 0xCF7B` (count-prefixed),
+  bag `wNumBagItems 0xD31D` (NOT 0xD31C — off-by-one caught by the probe), party
+  `0xD163/0xD164/0xD16B`+44·slot (level +0x21), money BCD `0xD347`, `wOptions 0xD355`,
+  box `wBoxCount 0xDA80`, dex-owned bit `0xD74B` b5, Center PC = hidden event `(13,3)`
+  facing up (pret `hidden_events.asm`).
 
 ## Forging saves — shared, importable
 

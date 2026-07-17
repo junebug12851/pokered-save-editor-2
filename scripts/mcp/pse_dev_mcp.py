@@ -1262,6 +1262,123 @@ def emu_dismiss(timeout_s: int = 60) -> dict:
 
 
 @mcp.tool()
+def emu_train(level: int, slot: int = 1, policy: str = "sweep",
+              max_battles: int = 60, timeout_s: int = 1800) -> dict:
+    """TRAIN a party mon to a level: hunt + win on repeat (policy 'sweep' by
+    default — certain wins, real XP; 'mash'/'move:N' for legit fights).
+    Evolution prompts are declined (the mon stays itself). Stand somewhere
+    with encounters (grass/cave) — emu_goto there first."""
+    return _session_send({"cmd": "train", "level": level, "slot": slot,
+                          "policy": policy, "max_battles": max_battles},
+                         timeout_s)
+
+
+@mcp.tool()
+def emu_save_game(timeout_s: int = 120) -> dict:
+    """Save IN-GAME the player's way: start menu → SAVE → YES, waited to
+    completion. (PyBoy flushes the battery file at session stop.)"""
+    return _session_send({"cmd": "save_game"}, timeout_s)
+
+
+@mcp.tool()
+def emu_heal(timeout_s: int = 180) -> dict:
+    """Heal at the Pokémon Center you're standing in: talks to the nurse over
+    the counter, verified by every party mon reading HP == max."""
+    return _session_send({"cmd": "heal"}, timeout_s)
+
+
+@mcp.tool()
+def emu_mart_buy(item: int, qty: int = 1, timeout_s: int = 240) -> dict:
+    """⚠️ EXPERIMENTAL — buy from the mart you're standing in: clerk → BUY →
+    the item out of the LIVE shop list → quantity → confirm. The result is
+    HONEST (verified by the bag gaining exactly qty + money moving; ok:false
+    with the real deltas otherwise), but the multi-stage menu timing is not
+    yet deterministic — check the reply, and prefer emu_give_item when the
+    item just needs to EXIST. item = pret item id (4 = Poké Ball)."""
+    return _session_send({"cmd": "buy", "item": item, "qty": qty}, timeout_s)
+
+
+@mcp.tool()
+def emu_pc_box(action: str = "deposit", slot: int = 1,
+               timeout_s: int = 240) -> dict:
+    """⚠️ EXPERIMENTAL — Bill's PC in the Center you're standing in:
+    'deposit' (party slot → box) or 'withdraw' (box → party). The result is
+    HONEST (verified by BOTH counts moving; ok:false with the real counts
+    otherwise), but the PC's text→menu cadence is not yet deterministic —
+    check the reply and retry, or poke party/box state directly for setup."""
+    return _session_send({"cmd": "pc_box", "action": action, "slot": slot},
+                         timeout_s)
+
+
+@mcp.tool()
+def emu_party_swap(a: int, b: int, timeout_s: int = 120) -> dict:
+    """Reorder the party through the real POKéMON menu (mon a ⇄ mon b,
+    1-based) — verified by the species order changing (honest ok:false with
+    before/after otherwise; an immediate repeat swap can need a retry)."""
+    return _session_send({"cmd": "party_swap", "a": a, "b": b}, timeout_s)
+
+
+@mcp.tool()
+def emu_set_options(text_fast: bool = True, anim_off: bool = True,
+                    style_set: bool = True, timeout_s: int = 120) -> dict:
+    """Set the in-game OPTIONS through the real menu (text speed / battle
+    animation / battle style) — verified against the wOptions byte."""
+    return _session_send({"cmd": "set_options", "text_fast": text_fast,
+                          "anim_off": anim_off, "style_set": style_set},
+                         timeout_s)
+
+
+@mcp.tool()
+def emu_start_select(item: str, timeout_s: int = 60) -> dict:
+    """Open the start menu and select an entry by name (POKEDEX/POKEMON/ITEM/
+    TRAINER/SAVE/OPTION/EXIT — layout adapts to game progress). The generic
+    door into any menu flow; follow with emu_button/emu_play steps."""
+    return _session_send({"cmd": "start_select", "item": item}, timeout_s)
+
+
+@mcp.tool()
+def emu_new_game(timeout_s: int = 600) -> dict:
+    """Start a FRESH GAME from nothing: boots with no battery save and mashes
+    through the title, Oak's intro and both naming screens (names end up
+    arbitrary — irrelevant for testing) to the bedroom overworld. From there
+    the world is a blank slate (no party — hunt/battle need the starter;
+    emu_set_flag/emu_give_item can fast-forward story state)."""
+    why = _emu_available()
+    if why:
+        return {"error": why}
+    with _SESSION_LOCK:
+        _session_kill()
+        proc = subprocess.Popen([str(EMU_PY), str(REPO / "scripts" / "emu" / "drive_session.py")],
+                                cwd=str(REPO), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                stderr=subprocess.DEVNULL, text=True, encoding="utf-8",
+                                creationflags=HIDDEN)
+        q: queue.Queue = queue.Queue()
+
+        def reader():
+            for line in proc.stdout:
+                line = line.strip()
+                if line.startswith("{"):
+                    try:
+                        q.put(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+            q.put({"ok": False, "error": "session process ended"})
+
+        threading.Thread(target=reader, daemon=True).start()
+        _SESSION["proc"] = proc
+        _SESSION["q"] = q
+        try:
+            ready = q.get(timeout=60)
+        except queue.Empty:
+            _session_kill()
+            return {"error": "session child never came up (60s)"}
+        if not ready.get("ready"):
+            _session_kill()
+            return {"error": f"session child unavailable: {ready}"}
+    return _session_send({"cmd": "boot", "new_game": True}, timeout_s)
+
+
+@mcp.tool()
 def emu_play(steps: list[dict], stop_on_error: bool = True,
              timeout_s: int = 1800) -> dict:
     """A WHOLE RUN in one call — the session child executes the step list

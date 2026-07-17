@@ -97,22 +97,28 @@ def do_boot(req: dict) -> dict:
     rom = work / "rom.gb"
     shutil.copyfile(ROM, rom)
 
-    sav_path = Path(req["sav"]) if req.get("sav") else BASE_SAV
-    base = sav_path.read_bytes()
-    needs_forge = any(k in req for k in ("map", "x", "y", "flags", "flag_indices",
-                                         "all_flags", "pokes", "scripts", "filter_flags"))
-    if needs_forge:
-        pokes = {_int(k): _int(v) for k, v in (req.get("pokes") or {}).items()}
-        base = forge(base, req.get("map"), req.get("y"), req.get("x"),
-                     req.get("flags"), req.get("flag_indices"),
-                     bool(req.get("all_flags")), pokes,
-                     scripts=req.get("scripts"), filter_flags=req.get("filter_flags"))
-    (work / "rom.gb.ram").write_bytes(base)
+    if req.get("new_game"):
+        # NO battery at all — the title menu offers NEW GAME and the boot mash
+        # (start/a alternation) carries through Oak's intro and both naming
+        # screens (START jumps a keyboard to END, A confirms) to the bedroom.
+        (work / "rom.gb.ram").unlink(missing_ok=True)
+    else:
+        sav_path = Path(req["sav"]) if req.get("sav") else BASE_SAV
+        base = sav_path.read_bytes()
+        needs_forge = any(k in req for k in ("map", "x", "y", "flags", "flag_indices",
+                                             "all_flags", "pokes", "scripts", "filter_flags"))
+        if needs_forge:
+            pokes = {_int(k): _int(v) for k, v in (req.get("pokes") or {}).items()}
+            base = forge(base, req.get("map"), req.get("y"), req.get("x"),
+                         req.get("flags"), req.get("flag_indices"),
+                         bool(req.get("all_flags")), pokes,
+                         scripts=req.get("scripts"), filter_flags=req.get("filter_flags"))
+        (work / "rom.gb.ram").write_bytes(base)
 
     pb = PyBoy(str(rom), window="null", sound_emulated=False)
     _pb["pb"] = pb
 
-    budget = int(req.get("budget", 4000))
+    budget = int(req.get("budget", 24000 if req.get("new_game") else 4000))
     f = 0
     if req.get("mash", True):
         while f < budget and not on_overworld(pb):
@@ -187,6 +193,30 @@ def handle(req: dict) -> dict:
     if cmd == "move_sprite":
         return {"ok": True, "result": autopilot.move_sprite(
             pb, int(req["slot"]), int(req["x"]), int(req["y"]))}
+    if cmd == "train":
+        return {"ok": True, "result": autopilot.train_to(
+            pb, int(req["level"]), int(req.get("slot", 1)),
+            policy=req.get("policy", "sweep"),
+            max_battles=min(int(req.get("max_battles", 60)), 300))}
+    if cmd == "save_game":
+        return {"ok": True, "result": autopilot.save_game(pb)}
+    if cmd == "heal":
+        return {"ok": True, "result": autopilot.heal_at_center(pb)}
+    if cmd == "buy":
+        return {"ok": True, "result": autopilot.mart_buy(
+            pb, int(req["item"]), int(req.get("qty", 1)))}
+    if cmd == "pc_box":
+        return {"ok": True, "result": autopilot.pc_box(
+            pb, req.get("action", "deposit"), int(req.get("slot", 1)))}
+    if cmd == "party_swap":
+        return {"ok": True, "result": autopilot.party_swap(
+            pb, int(req["a"]), int(req["b"]))}
+    if cmd == "set_options":
+        return {"ok": True, "result": autopilot.set_options(
+            pb, bool(req.get("text_fast", True)),
+            bool(req.get("anim_off", True)), bool(req.get("style_set", True)))}
+    if cmd == "start_select":
+        return {"ok": True, "result": autopilot.start_select(pb, req["item"])}
     if cmd == "battle":
         return {"ok": True, "result": autopilot.battle(
             pb, req.get("policy", "mash"))}
