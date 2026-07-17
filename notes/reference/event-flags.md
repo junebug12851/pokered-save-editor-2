@@ -9,6 +9,144 @@ one of the 2,560** a proper name, description, owning map, flag-group membership
 Plan of record: [`../plans/event-flags.md`](../plans/event-flags.md). This is a **living** note —
 it fills in as Phases 2–5 author the dossiers.
 
+## 🧭 WHAT AN EVENT FLAG *IS* — and why it has no place on the map (Fairy Fox's model, source-verified 2026-07-17)
+
+> *"i think event flags are by scripts for scripts, i think filter flags are different. Filter flags are
+> meant for maps, event flags are for the code and maps use them in general i think mainly around
+> scripts so perhaps an x/y location for event flags is unnecessary but for scripts in an x/y location
+> that change event flags, those flags should be tabs on the script box"*
+>
+> *"i think filter flags also point to scripts which change event flags"*
+
+**She is right, and this settles a question the flag-box work had been circling.** Checked against
+`pret/pokered`; the numbers below are counted, not estimated.
+
+**The taxonomy, as the cartridge actually has it:**
+
+| | **Filter flags** (`wMissableObjectFlags`, `0x2852`) | **Event flags** (`wEventFlags`, `0x29F3`) |
+|---|---|---|
+| Belong to | **a MAP** — one object on one map | **the CODE** — scripts |
+| Have an x/y? | **YES**, inherently: `maps.json` gives every object a tile, and `missable` names its bit | **NO.** A flag is a bit the story reads; nothing about it names a tile |
+| Reached from the map by | the object standing there | a **script**, which *may* have a location |
+
+**So "an x/y location for event flags is unnecessary" is correct** — and it explains why
+`extract_flag_locations.py` only ever found **14** object↔event links across 223 maps. It was looking
+for something that does not exist. There is no flag→tile relation to find; there is a flag→**script**
+relation, and only *some* scripts have tiles.
+
+**The worked example she gave — Oak pulling you out of the grass — and what it proves.**
+
+> *"if you walk in the grass and prof oak comes out and pulls you into his lab, im pretty sure what you
+> stepped on was a script allowed there by a filter flag and the script likely set a lot of stuff
+> including more event flags and filter flags"*
+
+`scripts/PalletTown.asm`, verbatim:
+
+```asm
+PalletTownDefaultScript:
+    CheckEvent EVENT_FOLLOWED_OAK_INTO_LAB   ; <- an EVENT flag gates the whole thing
+    ret nz
+    ld a, [wYCoord]
+    cp 1 ; is player near north exit?        ; <- the LOCATION test
+    ret nz
+    ...
+    SetEvent EVENT_OAK_APPEARED_IN_PALLET    ; <- writes an EVENT flag
+    ld a, SCRIPT_PALLETTOWN_OAK_HEY_WAIT
+    ld [wPalletTownCurScript], a             ; <- advances the SCRIPT STEP
+
+PalletTownOakHeyWaitScript:
+    ...
+    ld a, TOGGLE_PALLET_TOWN_OAK
+    ld [wToggleableObjectIndex], a
+    predef ShowObject                        ; <- writes a FILTER flag (Oak appears)
+```
+
+**She is right about the substance:** you step somewhere, a script fires, and it writes *"a lot of
+stuff"* — an event flag, a script step, and a filter flag. All three kinds of storage, from one tile.
+That is the case for the tabs, made by the cartridge itself.
+
+**One correction, and it matters for the design:** the script is *not* "allowed there by a filter
+flag". It is gated by an **event flag** (`EVENT_FOLLOWED_OAK_INTO_LAB`) plus the coordinate test. The
+filter flag is what the script **changes**, not what permits it. Direction reversed — the rest holds.
+
+**🚩 And it breaks an assumption this plan was about to bake in: a script's location is not always a
+TILE.** `cp 1` on `wYCoord` is not a square — it is **the entire north row of Pallet Town**. So a
+"script box" cannot be assumed to be one 16×16 outline; some are lines, regions, or conditions that no
+extractor can reduce to a coordinate at all. Counted:
+
+| How a script finds out where you are | Files | Shape |
+|---|---|---|
+| `dbmapcoord` table + `ArePlayerCoordsInArray` | **41** | real **tiles** — a box works |
+| **raw** `ld a, [wYCoord]` / `[wXCoord]` + `cp` | **17** (incl. **PalletTown**, **OaksLab**) | a **row/column/region** — a box does **not** work |
+| both | 5 | — |
+
+**53 distinct script files have a location of some kind.**
+
+**✅ RESOLVED — leadership, 2026-07-17: _"if its a coord range test then put a box around the whole
+range"._** So a script box is **the extent of its trigger**, not a tile:
+
+- a `dbmapcoord` tile → a 1×1 box (as today);
+- **`wYCoord == 1` → a box around the WHOLE ROW** — Pallet Town's north edge, all of it;
+- a range (`cp` low / `cp` high, or several coords) → a box around the range.
+
+Which is not a compromise — it is more truthful than a tile would be. The trigger *is* the whole row;
+drawing one square on it would misrepresent where the game is actually watching. It also means the box
+geometry must carry **width/height in tiles**, not the fixed 16×16 the filter-flag boxes use.
+
+⚠️ Still true, and the honest floor: some of the 17 test coords in ways no extractor can reduce to a
+range (nested conditions, computed values, checks split across routines). Where the extent cannot be
+established **from the source**, the script gets **no box** — never a guessed one.
+
+**The two ways a script gets a location — both real, both counted:**
+
+1. **A script triggered by standing somewhere.** `ArePlayerCoordsInArray` against a `dbmapcoord` table —
+   the trigger tiles. **41 script files** have them. e.g. `scripts/AgathasRoom.asm`:
+   ```asm
+   AgathasRoomDefaultScript:
+       ld hl, AgathaEntranceCoords
+       call ArePlayerCoordsInArray     ; <- triggers when the player stands on it
+   ...
+   AgathaEntranceCoords:
+       dbmapcoord  4, 10               ; <- the x/y. THIS is a script's location.
+   ```
+   These are the "script boxes" she means: a tile that runs code, and the event flags that code writes
+   are what belongs on its tabs.
+
+2. **A script reached through a filter-flag object** — her second point, and the mechanism is exact.
+   A script toggles an object's filter flag *and* writes event flags in the same breath.
+   `scripts/BillsHouse.asm`:
+   ```asm
+       ld a, TOGGLE_BILL_POKEMON        ; the FILTER flag (an object with a tile)
+       ld [wToggleableObjectIndex], a
+       predef HideObject
+       SetEvent EVENT_BILL_SAID_USE_CELL_SEPARATOR   ; the EVENT flag, next line
+   ```
+   So an object's tile → its filter flag → the script that toggles it → **that script's event flags**.
+   That is a real chain from a map tile to an event flag, and it is the only honest one we have.
+
+**Counted, so nobody plans against a fantasy:**
+
+| Thing | Count |
+|---|---|
+| `predef Show/HideObject` sites (filter-flag writes) in scripts | **71** |
+| `SetEvent`/`ResetEvent` sites in scripts | **117** |
+| Script files carrying **both** a toggle and an event write | **22** of 224 |
+| Script files with coord-triggered scripts (`ArePlayerCoordsInArray`/`dbmapcoord`) | **41** |
+
+**What this means for the UI** (feeds `../plans/map-screen.md` → Phase 16):
+
+- The **flag box** on an object is a **filter-flag** thing, and that is complete and correct as built.
+- **Event flags do NOT get boxes of their own.** They are not on the map; giving them a tile would be
+  inventing a fact.
+- A **script at a tile** (the 41) can have a box, and *its* event flags are its tabs.
+- An object whose script also writes event flags (the 22) can carry those flags as **tabs** — reached
+  through the script, not asserted as the flag's own location.
+
+⚠️ **The trap this kills:** "the flag is near the object in the source, so it belongs to the object" is
+the same static-co-location reasoning that produced the Route 22 false positive and got the conflicts
+system shelved. The chain above is *mechanical* (a toggle and a SetEvent in one routine), not
+proximity — but the routine boundary still has to be respected, and anything ambiguous gets **no tab**.
+
 ## The anchor facts (verified against `pret/pokered`, 2026-07-15)
 
 | Fact | Value | How verified |

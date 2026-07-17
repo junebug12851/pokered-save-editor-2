@@ -1670,32 +1670,51 @@ box. `MapModel::flagHotspots()` should therefore grow toward
 `{x, y, spots:[{kind, ind, name, desc, section}]}` rather than a flat missable — and the sooner that
 happens, the less there is to unpick.
 
-**⚠️ The blocker, stated plainly: the event-flag half of this data DOES NOT EXIST yet.**
+**✅ The route in — Fairy Fox's model, and it is source-verified (2026-07-17).** Full write-up +
+counts: [`../reference/event-flags.md`](../reference/event-flags.md) → "WHAT AN EVENT FLAG *IS*".
 
-- **Filter flags** are solid: `maps.json`'s `missable` field links object → bit, verified, shipped.
-  That is what 16c/16d are built on.
-- **Event flags → objects** is **not shipped at all**. `scripts/extract_flag_locations.py` found only
-  **14** best-effort links across all 223 maps (via CheckEvent-before-toggle), and 14 guesses is not a
-  foundation for a UI. Nothing in `maps.json` carries an event-flag id for an object.
+> *"event flags are by scripts for scripts … filter flags are meant for maps … perhaps an x/y location
+> for event flags is unnecessary but for scripts in an x/y location that change event flags, those
+> flags should be tabs on the script box"* + *"filter flags also point to scripts which change event
+> flags"*
 
-So 16f cannot be built on what we have, and **must not** be faked: a tab that points at a flag we
-merely *suspect* belongs to an object is exactly the "UI built on a guess" the project forbids — and
-the conflicts post-mortem already recorded the lesson (*static co-location is a LEAD, never evidence*).
+This corrects the assumption the section above was drifting toward, and it explains the thing that had
+looked like a dead end:
 
-**Therefore 16f gets its own research phase first:**
+- **Event flags have NO map location, and never did.** They belong to the code. That is *why*
+  `extract_flag_locations.py` found only **14** object↔event links across 223 maps — it was hunting a
+  relation that does not exist. **So no event-flag boxes, and no x/y for a flag.** Inventing one would
+  be inventing a fact.
+- **A SCRIPT can have a location**, and that is the real hook. Two kinds, both counted:
+  - **Trigger tiles** — `ArePlayerCoordsInArray` + a `dbmapcoord` table: **41** script files. *These*
+    get a script box, and the event flags that script writes are its **tabs**.
+  - **Through a filter flag** — a script toggles an object's missable *and* writes event flags in the
+    same routine (`ld a, TOGGLE_x` / `predef HideObject` / `SetEvent EVENT_y` — `BillsHouse.asm`):
+    **22** of 224 script files do both. So an object's tile → filter flag → script → **its** event
+    flags, as tabs on that object's box.
 
-- **16f-a — Research: object → event flag.** Go to `pret/pokered` and establish, per object, which
-  event flags name it. The honest sources: an item ball's `EVENT_GOT_<ITEM>`, a trainer's
-  `EVENT_BEAT_<TRAINER>` (the `trainer` macro's flag argument is *explicit* in the data — this is the
-  promising one), and script-level `CheckEvent`/`SetEvent` near an object's own text/script label.
-  Where it cannot be established, the object gets **no event tab** — never a guessed one.
-- **16f-b — Data.** Whatever comes out lands in the DB the same way everything else does: read out of
-  pret by an importer, not hand-written. (⚠️ `maps.json` is data — adding a field to it needs
-  leadership's OK, per the standing "don't edit the JSON" rule.)
-- **16f-c — The tabs.** Only then: the top-left squares, one per spot, on boxes with >1.
+**Counts, so this is planned against reality:** 71 `Show/HideObject` sites · 117 `SetEvent`/`ResetEvent`
+sites · **22** files with both · **41** files with coord triggers.
 
-Until 16f-a exists, boxes link to the filter flag only, which is **verified** and covers the brief's
-own example (Oak's Lab's Poké Balls are filter-flag objects).
+**Therefore:**
+
+- **16f-a — Research: script → event flags, and script → location.** Extract per *routine*: the
+  `dbmapcoord` tables (script's tile) and the `SetEvent`/`ResetEvent` it writes; plus the
+  toggle→event pairing for the 22. Routine boundaries are the unit — ⚠️ **not** proximity: "the flag
+  is near the object" is the same static-co-location reasoning that produced the Route 22 false
+  positive and shelved the conflicts system. Anything ambiguous gets **no tab**.
+  - **A script box is the EXTENT of its trigger, not a tile** (leadership, 2026-07-17: *"if its a
+    coord range test then put a box around the whole range"*). A `dbmapcoord` tile → 1×1; Pallet
+    Town's `wYCoord == 1` → **a box around the whole north row**; a range → a box around the range.
+    So the box geometry needs **w/h in tiles**, unlike the fixed 16×16 filter-flag boxes — worth
+    knowing before 16f-c starts. The worked example + the 41/17/5 split:
+    [`../reference/event-flags.md`](../reference/event-flags.md).
+- **16f-b — Data.** Out of pret via an importer, never hand-written. (⚠️ `maps.json` is data — a new
+  field needs leadership's OK, per the standing "don't edit the JSON" rule.)
+- **16f-c — The tabs**, on boxes with >1 spot.
+
+Until then, boxes link to the filter flag only — **verified**, and it covers the brief's own example
+(Oak's Lab's Poké Balls are filter-flag objects).
 
 #### Sub-phases (the Phase 9 mould — UI last)
 
