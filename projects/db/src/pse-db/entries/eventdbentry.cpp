@@ -49,6 +49,18 @@ EventDBEntry::EventDBEntry(QJsonValue& data)
 
   for(auto eventMap : data["maps"].toArray())
     maps.append(eventMap.toString());
+
+  // The research payload (events.json is generated from pret by
+  // scripts/import_events_db.py). Every field is OPTIONAL -- a missing one just
+  // leaves the default -- so the DB still loads if the file is ever trimmed.
+  desc = data["description"].toString();
+  group = data["group"].toString();
+  region = data["region"].toString();
+  caution = data["caution"].toString();
+  placeholder = data["placeholder"].toBool(false);
+  shared = data["shared"].toBool(false);
+  for(auto c : data["classification"].toArray())
+    classification.append(c.toString());
 }
 
 void EventDBEntry::deepLink()
@@ -137,5 +149,40 @@ int EventDBEntry::getInd() const
 const QString EventDBEntry::getName() const
 {
     return name;
+}
+
+const QString EventDBEntry::getDesc() const
+{
+    return desc;
+}
+
+const QString EventDBEntry::getGroup() const
+{
+    return group;
+}
+
+const QString EventDBEntry::getRegion() const
+{
+    return region;
+}
+
+const QString EventDBEntry::getCaution() const
+{
+    return caution;
+}
+
+bool EventDBEntry::getPlaceholder() const
+{
+    return placeholder;
+}
+
+bool EventDBEntry::getShared() const
+{
+    return shared;
+}
+
+const QVector<QString> EventDBEntry::getClassification() const
+{
+    return classification;
 }
 

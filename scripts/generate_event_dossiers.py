@@ -165,43 +165,97 @@ def caution(r, cls):
     return None
 
 
+def _place(path):
+    """'scripts/OaksLab.asm' -> "Oak's Lab". Engine/home code isn't a place -> None."""
+    p = path.replace("\\", "/")
+    base = os.path.basename(p)
+    if not base.endswith(".asm"):
+        return None
+    if not (p.startswith("scripts/") or "/maps/" in p):
+        return None                       # engine/home: a system, not a place
+    s = base[:-4]
+    s = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", s)
+    s = re.sub(r"(?<=[A-Za-z])(?=\d)", " ", s)
+    return (s.replace("Oaks", "Oak's").replace("Blues", "Blue's")
+             .replace("Reds", "Red's").replace("Bills", "Bill's")
+             .replace("Mr Fujis", "Mr Fuji's").replace("Daisys", "Daisy's"))
+
+
+def _places(refs, kind):
+    out = []
+    for x in refs:
+        if x.get("kind") != kind:
+            continue
+        pl = _place(x.get("file", ""))
+        if pl and pl not in out:
+            out.append(pl)
+    return out
+
+
+def _join(xs):
+    if not xs:
+        return ""
+    if len(xs) == 1:
+        return xs[0]
+    if len(xs) == 2:
+        return f"{xs[0]} and {xs[1]}"
+    return ", ".join(xs[:-1]) + f" and {xs[-1]}"
+
+
 def describe(r, fname, mapname, cls, cx):
     idx = r["index_hex"]
     loc = f"byte {r['byte_file']} bit {r['bit']} (index {idx})"
+    refs = r.get("refs", [])
+    set_in, chk_in, clr_in = (_places(refs, "set"), _places(refs, "check"),
+                              _places(refs, "reset"))
+    # USER-FACING PROSE. The row already shows the flag's name and the group already
+    # says whether it is shared, so the description must ADD something, never restate.
+    # No research telemetry ("set 1x, checked 1x"), no byte/bit dev-detail, no
+    # "referenced from more than one area" under a group literally titled Shared.
+    # (The first cut leaked all three into the panel; the screenshot review caught it.)
     if r["name"]:
         if r["used"]:
-            bits = []
-            if r["n_set"]:
-                bits.append(f"set {r['n_set']}x")
-            if r["n_check"]:
-                bits.append(f"checked {r['n_check']}x")
-            if r["n_reset"]:
-                bits.append(f"cleared {r['n_reset']}x")
-            ev = ", ".join(bits) if bits else "referenced in data"
-            desc = (f"{fname}. Progress/story flag for {mapname}; the game {ev}. "
-                    f"Save {loc}.")
-            if r["temporary"]:
-                desc += " Temporary — the game clears it again during play."
-            if r["multi_map"]:
-                desc += " Referenced from more than one area."
+            # NAME THE PLACES. "set 1x, checked 1x" is telemetry and "story progress
+            # in X" says nothing -- both were rejected. What earns its space is WHERE
+            # it is turned on and WHO reads it back, which the usage sites give us
+            # exactly. (Engine/home code isn't a place, so it is omitted rather than
+            # dressed up as one.)
+            parts = []
+            if set_in:
+                parts.append(f"Turned on in {_join(set_in)}")
+            elif r["n_set"]:
+                parts.append("Turned on by the game's own code (not a map script)")
+            if chk_in:
+                lead = ", and read back by " if parts else "Read by "
+                same = set_in and chk_in == set_in
+                parts.append((lead + ("the same place" if same else _join(chk_in))))
+            elif r["n_check"]:
+                parts.append((", and read back by the game's own code" if parts
+                              else "Read by the game's own code"))
+            if clr_in:
+                parts.append(f", and cleared again in {_join(clr_in)}")
+
+            if not parts:
+                return ("Stored and referenced only in the game's data tables — nothing "
+                        "in the scripts turns it on or reads it.")
+            desc = "".join(parts) + "."
+            if not chk_in and not r["n_check"]:
+                desc += " Nothing ever reads it back — a leftover."
+            if r["temporary"] and clr_in:
+                desc += " It doesn't stick: the game clears it again as you play."
             return desc
         # named but never referenced
-        return (f"{fname}. Named in pret/pokered but the shipped game never sets "
-                f"or checks it — a defined-but-unused flag. Save {loc}.")
+        return ("Named in the game's own source, but nothing in the shipped game sets or "
+                "checks it — toggling it has no effect.")
     # unnamed gap
-    nb = neighbors_phrase(cx)
     if r["block_swept"]:
-        rg = (r.get("range_groups") or ["a block operation"])[0]
-        return (f"Unnamed bit in the {mapname} event block that has no individual "
-                f"name, but is swept as a member of the range group \"{rg}\": a "
-                f"Set/ResetEventRange byte-fills the whole span, toggling this bit "
-                f"together with the group. {nb}. Save {loc}.")
-    return (f"Placeholder flag in the {mapname} event block — {cx['role']}. "
-            f"{nb}. It has no reference anywhere in the disassembly (verified by "
-            f"name, by range macro, and by raw index); the game rounds each map's "
-            f"event block up to whole bytes and leaves headroom, so this bit is "
-            f"unallocated space. Named 'Placeholder Flag #{idx[2:].upper()}' and "
-            f"filed in this map's Placeholder Flags group. Save {loc}.")
+        prev = cx["prev"][1] if cx["prev"] else None
+        after = f" It sits just after '{prev}'." if prev else ""
+        return (f"The game has no name for this bit, but it flips together with the "
+                f"rest of its group — one sweep sets or clears them all.{after}")
+    # placeholder: the row is deliberately terse. The group header already explains
+    # what placeholders are, so repeating it on all 2,023 rows would be noise.
+    return ""
 
 
 def build_context(usage):

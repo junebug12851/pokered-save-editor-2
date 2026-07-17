@@ -38,6 +38,8 @@
 #include <pse-db/sprites.h>
 #include <pse-db/scripts.h>
 #include <pse-db/missablesdb.h>
+#include <pse-db/eventsdb.h>
+#include <pse-db/entries/eventdbentry.h>
 #include <pse-db/entries/missabledbentry.h>
 #include <pse-db/trainers.h>
 #include <QColor>
@@ -4158,6 +4160,61 @@ QVariantList MapModel::storageMissables(const QVariantList& mapIds) const
       linked.append(lo);
     }
     o[QStringLiteral("linked")] = linked;
+    out.append(o);
+  }
+  return out;
+}
+
+/// The EVENT FLAGS that belong to the page's map(s) -- the story bits `wEventFlags`
+/// keeps for this place (one contiguous 320-byte field at save 0x29F3; bit `ind` lives
+/// at byte 0x29F3 + ind/8, bit ind%8). @see notes/reference/event-flags.md
+///
+/// Every flag is filed on its OWN map: `EventDBEntry::deepLink()` already back-links each
+/// event into `MapDBEntry::toEvents`, so we just read that. A flag that spans several maps
+/// (Silph Co's bits across its 12 floors; "Followed Oak Into Lab" on Oak's Lab AND Pallet
+/// Town) is `shared` and appears on EACH of their pages -- `sharedWith` names the others so
+/// the UI can label the shared group and let you jump between them. We never build a page
+/// out of pret's `region`: that is a ROM ALLOCATION BLOCK, and we care about the save file,
+/// not the ROM's storage layout (leadership, 2026-07-16).
+QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
+{
+  QSet<int> ids;
+  for (const auto& v : mapIds)
+    ids.insert(v.toInt());
+
+  QVariantList out;
+  for (auto* e : EventsDB::inst()->getStore()) {
+    // does this flag live on any map this page covers?
+    const auto toMaps = e->getToMaps();
+    bool here = false;
+    for (const auto* m : toMaps) {
+      if (m != nullptr && ids.contains(int(m->getInd()))) { here = true; break; }
+    }
+    if (!here)
+      continue;
+
+    // the OTHER maps it is shared with (never this page's own)
+    QVariantList sharedWith;
+    for (const auto* m : toMaps) {
+      if (m != nullptr && !ids.contains(int(m->getInd())))
+        sharedWith.append(m->getName());
+    }
+
+    QVariantMap o;
+    o[QStringLiteral("ind")] = e->getInd();
+    o[QStringLiteral("name")] = e->getName();
+    o[QStringLiteral("desc")] = e->getDesc();
+    o[QStringLiteral("group")] = e->getGroup();
+    o[QStringLiteral("caution")] = e->getCaution();
+    o[QStringLiteral("placeholder")] = e->getPlaceholder();
+    o[QStringLiteral("classification")] = e->getClassification();
+    o[QStringLiteral("shared")] = !sharedWith.isEmpty();
+    o[QStringLiteral("sharedWith")] = sharedWith;
+    // Where the bit physically lives, so the raw path is never hidden from a power
+    // user (this editor shows raw/hack values everywhere else too). wEventFlags is one
+    // contiguous field: byte 0x29F3 + ind/8, bit ind%8.
+    o[QStringLiteral("byte")] = e->getByte();
+    o[QStringLiteral("bit")] = e->getBit();
     out.append(o);
   }
   return out;

@@ -26,7 +26,16 @@
  *      table, so an out-of-range step is a real crash risk; shown, never refused).
  *   2. **The legacy minigame bytes** where the map has them (Vermilion trash cans, Cinnabar quiz,
  *      Safari counters -- `world.local`; notes/reference/gym-safari-state.md).
- *   3. **The map's FILTER FLAGS** (Twilight's term; pret/the game call them "missables") -- its
+ *   3. **The map's EVENT FLAGS** -- what has HAPPENED here (`wEventFlags`, ONE contiguous 320-byte
+ *      field at save 0x29F3; bit `i` = byte 0x29F3 + i/8, bit i%8; `world.events`). Grouped, every
+ *      group open (it is a page you scroll), each row a switch + description + a caution where one
+ *      applies, with a **group toggle** per group. Every flag is filed on its OWN map; one that
+ *      spans several is **SHARED** and appears on each of their pages in a labelled shared group
+ *      naming the others -- shared groups are a panel-level idea and can be of several TYPES (event
+ *      flags here; storage bytes elsewhere). **Placeholder Flags** (spare bits the game never reads)
+ *      come last. Nothing about conflicts is shown -- that system is shelved.
+ *      See notes/reference/event-flags.md.
+ *   4. **The map's FILTER FLAGS** (Twilight's term; pret/the game call them "missables") -- its
  *      hide/show object bits (`wToggleableObjectFlags`, 32 bytes at save 0x2852, `world.missables`;
  *      bit SET = HIDDEN). Each a Shown switch with a description,
  *      pret's known-issue oddities flagged amber, and the linked event flags surfaced live -- read-only
@@ -519,6 +528,251 @@ Item {
           ArmedNote {
             text: qsTr("Steps and balls take effect only while your save is inside the Safari Zone; "
                        + "the gate resets them to 502 / 30 on entry.")
+          }
+        }
+
+        // ── EVENT FLAGS — what has HAPPENED here ───────────────────────────────────────────────
+        // The story bits wEventFlags keeps for this place: ONE contiguous 320-byte field at save
+        // 0x29F3 (bit `ind` = byte 0x29F3 + ind/8, bit ind%8), console-verified live on Continue.
+        // Every flag is filed on its OWN map; one that spans several (Silph Co's bits across its
+        // 12 floors) is SHARED and shows on each of their pages in a labelled shared group naming
+        // the others. Groups are open -- this is a page you scroll (leadership 2026-07-16).
+        // Reference: notes/reference/event-flags.md.
+        ColumnLayout {
+          id: eventSection
+          Layout.fillWidth: true
+          spacing: 6
+
+          readonly property var list: {
+            panel.revision;
+            return panel.curPage !== undefined ? brg.map.storageEvents(panel.curPage.ids) : [];
+          }
+          visible: list.length > 0
+
+          /// Group name -> its rows, real groups first, SHARED next, Placeholder Flags LAST.
+          readonly property var groups: {
+            const l = eventSection.list;
+            let byName = ({});
+            for (let i = 0; i < l.length; i++) {
+              const e = l[i];
+              const key = e.placeholder ? qsTr("Placeholder Flags")
+                        : (e.shared ? qsTr("Shared · Event flags · %1").arg(e.sharedWith.join(", "))
+                                    : (e.group !== "" ? e.group : qsTr("Story")));
+              if (byName[key] === undefined) byName[key] = [];
+              byName[key].push(e);
+            }
+            let keys = Object.keys(byName);
+            keys.sort(function(a, b) {
+              const rank = function(k) {
+                if (k === qsTr("Placeholder Flags")) return 2;
+                if (k.indexOf(qsTr("Shared ·")) === 0) return 1;
+                return 0;
+              };
+              const ra = rank(a), rb = rank(b);
+              return ra !== rb ? ra - rb : a.localeCompare(b);
+            });
+            return keys.map(function(k) { return { title: k, rows: byName[k] }; });
+          }
+
+          Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: brg.settings.dividerColor
+            visible: panel.curPage !== undefined
+                     && (panel.curPage.scriptInd >= 0 || panel.curPage.legacy >= 0)
+          }
+
+          Label {
+            text: qsTr("Event flags — what's happened here")
+            font.pixelSize: 12
+            font.bold: true
+            color: brg.settings.textColorDark
+          }
+          Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+            text: qsTr("Each switch is one thing the game remembers about this place — a trainer "
+                       + "beaten, an item taken, a scene watched. ON = it has happened.")
+          }
+
+          Repeater {
+            model: eventSection.groups
+
+            delegate: ColumnLayout {
+              id: grp
+              required property var modelData
+              Layout.fillWidth: true
+              spacing: 3
+
+              readonly property bool isShared: modelData.title.indexOf(qsTr("Shared ·")) === 0
+              readonly property bool isPlaceholder: modelData.title === qsTr("Placeholder Flags")
+
+              Item { Layout.preferredHeight: 4 }
+
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: 6
+
+                Label {
+                  text: grp.modelData.title
+                  font.pixelSize: 11
+                  font.bold: true
+                  color: grp.isShared ? "#3b6ea5" : brg.settings.textColorDark
+                  opacity: grp.isPlaceholder ? 0.6 : 1.0
+                  Layout.fillWidth: true
+                  wrapMode: Text.Wrap
+                }
+
+                // The group toggle: sets/clears every flag in the group at once.
+                MapSwitch {
+                  checked: {
+                    panel.revision; panel.editTick;
+                    if (!panel.wEvents) return false;
+                    for (let i = 0; i < grp.modelData.rows.length; i++)
+                      if (!panel.wEvents.eventsAt(grp.modelData.rows[i].ind)) return false;
+                    return true;
+                  }
+                  onToggled: {
+                    if (!panel.wEvents) return;
+                    let all = true;
+                    for (let i = 0; i < grp.modelData.rows.length; i++)
+                      if (!panel.wEvents.eventsAt(grp.modelData.rows[i].ind)) { all = false; break; }
+                    for (let j = 0; j < grp.modelData.rows.length; j++)
+                      panel.wEvents.eventsSet(grp.modelData.rows[j].ind, !all);
+                    panel.editTick++;
+                  }
+                }
+              }
+
+              // Shared groups say plainly what they are and where else they live.
+              Label {
+                visible: grp.isShared
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+                font.pixelSize: 10
+                color: "#3b6ea5"
+                text: qsTr("Shared with other maps — the same save bits appear on those pages too, "
+                           + "so a change here shows up there.")
+              }
+              Label {
+                visible: grp.isPlaceholder
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+                font.pixelSize: 10
+                opacity: 0.55
+                text: qsTr("Spare bits the game never reads. Editable like anything else — but "
+                           + "nothing in the game looks at them.")
+              }
+
+              Repeater {
+                model: grp.modelData.rows
+
+                delegate: ColumnLayout {
+                  id: erow
+                  required property var modelData
+                  Layout.fillWidth: true
+                  spacing: 1
+
+                  /// The research classification, in words a person can act on. "used"
+                  /// is the default (500+ rows) and "placeholder" is the group's whole
+                  /// title, so neither earns a chip.
+                  readonly property var badges: {
+                    let out = [];
+                    const c = erow.modelData.classification;
+                    for (let i = 0; i < c.length; i++) {
+                      if (c[i] === "temporary")    out.push(qsTr("temporary"));
+                      else if (c[i] === "vestigial")   out.push(qsTr("does nothing"));
+                      else if (c[i] === "defined-unused") out.push(qsTr("never used"));
+                      else if (c[i] === "block-swept") out.push(qsTr("swept in a group"));
+                    }
+                    return out;
+                  }
+
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 6
+
+                    MapWarnIcon {
+                      visible: erow.modelData.caution !== ""
+                      text: erow.modelData.caution
+                    }
+
+                    Label {
+                      text: erow.modelData.name
+                      font.pixelSize: 12
+                      color: brg.settings.textColorDark
+                      opacity: erow.modelData.placeholder ? 0.7 : 1.0
+                      Layout.fillWidth: true
+                      wrapMode: Text.Wrap
+                    }
+
+                    MapSwitch {
+                      checked: {
+                        panel.revision; panel.editTick;
+                        return panel.wEvents ? panel.wEvents.eventsAt(erow.modelData.ind) : false;
+                      }
+                      onToggled: {
+                        if (panel.wEvents) {
+                          panel.wEvents.eventsSet(erow.modelData.ind,
+                                                  !panel.wEvents.eventsAt(erow.modelData.ind));
+                          panel.editTick++;
+                        }
+                      }
+                    }
+                  }
+
+                  Label {
+                    text: erow.modelData.desc
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 10
+                    opacity: 0.55
+                    visible: text !== "" && !erow.modelData.placeholder
+                  }
+
+                  // What the research found this flag IS, plus where the bit lives.
+                  // Only the classifications a person can act on are shown -- "used"
+                  // is the default and saying it on 500 rows would be noise.
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 4
+                    visible: erow.badges.length > 0 || !erow.modelData.placeholder
+
+                    Repeater {
+                      model: erow.badges
+                      delegate: Rectangle {
+                        required property string modelData
+                        radius: 3
+                        color: modelData === qsTr("temporary") ? "#b07d10" : "#6b7280"
+                        opacity: 0.85
+                        implicitWidth: bl.implicitWidth + 8
+                        implicitHeight: bl.implicitHeight + 3
+                        Label {
+                          id: bl
+                          anchors.centerIn: parent
+                          text: parent.modelData
+                          font.pixelSize: 8
+                          color: "#ffffff"
+                        }
+                      }
+                    }
+
+                    Item { Layout.fillWidth: true }
+
+                    Label {   // the raw path -- never hidden from a power user
+                      text: qsTr("byte 0x%1 · bit %2")
+                              .arg(erow.modelData.byte.toString(16).toUpperCase())
+                              .arg(erow.modelData.bit)
+                      font.pixelSize: 8
+                      font.family: "monospace"
+                      opacity: 0.35
+                    }
+                  }
+                }
+              }
+            }
           }
         }
 

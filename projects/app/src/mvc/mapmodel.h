@@ -965,6 +965,10 @@ public:
   /// The missables on the given maps: [{ind,name,desc,defShow,scriptToggled,oddity,
   /// linked:[{flag,eventIndex}]}] — `ind` is the WorldMissables bit (true = HIDDEN).
   Q_INVOKABLE QVariantList storageMissables(const QVariantList& mapIds) const;
+  /// The EVENT FLAGS belonging to the page's map(s) -- name/desc/group/caution/
+  /// classification, plus `shared` + `sharedWith` for a flag that lives on several
+  /// maps. @see notes/reference/event-flags.md
+  Q_INVOKABLE QVariantList storageEvents(const QVariantList& mapIds) const;
 
   int viewPtr() const;                      ///< The stored camera pointer (`0x260B`).
   int viewPtrComputed() const;              ///< The pointer for the player's current position.

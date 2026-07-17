@@ -47,12 +47,29 @@ struct DB_AUTOPORT EventDBEntry : public QObject {
   Q_PROPERTY(int getBit READ getBit CONSTANT)               ///< Bit within that byte.
   Q_PROPERTY(int getMapsSize READ getMapsSize CONSTANT)     ///< Count of associated map names.
   Q_PROPERTY(int getToMapsSize READ getToMapsSize CONSTANT) ///< Count of resolved maps.
+  // ── the research payload (events.json is generated from pret; see
+  //    notes/reference/event-flags.md + scripts/import_events_db.py) ──────────────
+  Q_PROPERTY(QString getDesc READ getDesc CONSTANT)         ///< Plain-English description.
+  Q_PROPERTY(QString getGroup READ getGroup CONSTANT)       ///< Flag group ("Cerulean Gym — trainers").
+  Q_PROPERTY(QString getRegion READ getRegion CONSTANT)     ///< pret's allocation block (ROM detail).
+  Q_PROPERTY(QString getCaution READ getCaution CONSTANT)   ///< Softlock/progression note, or "".
+  Q_PROPERTY(bool getPlaceholder READ getPlaceholder CONSTANT) ///< Unused padding bit.
+  Q_PROPERTY(bool getShared READ getShared CONSTANT)        ///< Lives on more than one map.
 
 public:
   const QString getName() const; ///< @see getName property.
   int getInd() const;            ///< @see getInd property.
   int getByte() const;           ///< @see getByte property.
   int getBit() const;            ///< @see getBit property.
+
+  const QString getDesc() const;    ///< @see getDesc property.
+  const QString getGroup() const;   ///< @see getGroup property.
+  const QString getRegion() const;  ///< @see getRegion property.
+  const QString getCaution() const; ///< @see getCaution property.
+  bool getPlaceholder() const;      ///< @see getPlaceholder property.
+  bool getShared() const;           ///< @see getShared property.
+  /// What this flag IS: used / unused / temporary / placeholder / block-swept / ...
+  const QVector<QString> getClassification() const;
 
   const QVector<QString> getMaps() const;        ///< Associated map names.
   int getMapsSize() const;                       ///< @see getMapsSize property.
@@ -78,6 +95,16 @@ protected:
   int bit = 0; // Bit in byte
   QVector<QString> maps; // Associated Maps
   QVector<MapDBEntry*> toMaps; // To Associated Maps
+
+  // The research payload, generated from pret. All OPTIONAL: absent -> empty/false,
+  // so an older/hand-trimmed events.json still loads.
+  QString desc = "";      // plain-English description
+  QString group = "";     // flag group, e.g. "Cerulean Gym — trainers"
+  QString region = "";    // pret's allocation block (a ROM detail, never a page)
+  QString caution = "";   // softlock/progression note
+  bool placeholder = false; // unused padding bit (no code presence at all)
+  bool shared = false;      // lives on more than one map
+  QVector<QString> classification; // used / unused / temporary / block-swept / ...
 
   friend class EventsDB; ///< Owning DB constructs/populates entries.
 };
