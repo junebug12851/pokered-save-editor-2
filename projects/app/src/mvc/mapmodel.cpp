@@ -165,7 +165,11 @@ MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaG
   connect(this, &MapModel::changed, this, &MapModel::sourceChanged);
 }
 
-int MapModel::mapInd() const     { return map->curMap; }
+// `map` is nullable -- this class says so itself: the constructor null-checks every pointer it
+// connects to, and connectionRoomLeft()/saveConns() both guard `map` before touching it. This one
+// getter dereferenced it bare. 0 (Pallet Town) is the fallback its guarded siblings already use, and
+// unlike -1 it is safe for the callers that use the result to index a table.
+int MapModel::mapInd() const     { return (map == nullptr) ? 0 : map->curMap; }
 int MapModel::tilesetInd() const { return tileset->current; }
 int MapModel::playerX() const    { return player->xCoord; }
 int MapModel::playerY() const    { return player->yCoord; }
@@ -3025,7 +3029,7 @@ QVariantMap MapModel::zoomTarget(const QString& kind)
     if (strips.isEmpty())
       return target(false);
 
-    const MapEngine::Strip s = strips.at(Random::inst()->rangeExclusive(0, strips.size()));
+    const MapEngine::Strip& s = strips.at(Random::inst()->rangeExclusive(0, strips.size()));
     return target(true,
                   (s.bx + s.cols / 2.0) * MapEngine::blockPx,
                   (s.by + s.rows / 2.0) * MapEngine::blockPx,

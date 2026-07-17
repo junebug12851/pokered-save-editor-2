@@ -659,7 +659,12 @@ void MapEngine::outputPaletteFor(int mapInd, int tilesetInd, QRgb out[4])
       src = SgbTower;
     else if (tilesetInd == TilesetCavern)
       src = SgbCave;
-    else if (mapInd < FirstIndoorMapId && mapInd < NumCityMaps)
+    // `mapInd < FirstIndoorMapId` used to lead this test and did nothing: NumCityMaps (10) is well
+    // below FirstIndoorMapId (0x25), so the second check already implied the first -- an indoor map
+    // can never be < 10. What was missing is the one that matters, `>= 0`: this indexes SgbCity, and
+    // MapModel::mapInd() returns a plain int whose own callers treat negatives as "no map" (see the
+    // `ind < 0` guard in mapmodel). A negative here would have read off the front of the array.
+    else if (mapInd >= 0 && mapInd < NumCityMaps)
       src = SgbCity[mapInd];
     else
       src = SgbRoute;

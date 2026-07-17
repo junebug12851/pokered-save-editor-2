@@ -542,7 +542,15 @@ Gen1MusicAsm::Result Gen1MusicAsm::parse(const QString& root)
         pending.append({ placed[file] - Base + f.first, f.second });
     };
 
-    auto addrOf = [&](const QString& label) -> int {
+    // `label` is taken BY VALUE, and it must be. The caller passes a reference straight INTO
+    // `pending` (`addrOf(pending.at(i).second)`), and the `place()` below appends to `pending` --
+    // which reallocates it and frees the very buffer that reference points into. Everything after
+    // that call then reads freed memory. A copy costs nothing here (this runs once, at parse) and
+    // makes the lambda safe no matter what the caller hands it.
+    // Found by AddressSanitizer on CI, 2026-07-16: heap-use-after-free at the `labels.value(label)`
+    // below. It could never fail locally -- ASan does not work on the llvm-mingw kit, and CI had not
+    // compiled since 0.29.0-alpha, so nothing had run this under a sanitizer in a very long time.
+    auto addrOf = [&](QString label) -> int {
       const QString file = ownerOf.value(label);
       if (file.isEmpty())
         return stub;
