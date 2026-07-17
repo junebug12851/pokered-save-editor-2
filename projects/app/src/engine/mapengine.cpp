@@ -1265,6 +1265,26 @@ QRect MapEngine::playerRect(int x, int y)
                16, 16);
 }
 
+namespace {
+/// Mirror a sprite left-to-right -- the game has no right-facing art, so both sprite paths need it.
+///
+/// This exists only to bridge a Qt version gap, and it is worth knowing why. QImage::flipped()
+/// arrived in Qt 6.9. The dev kit is 6.11, so a plain flipped() compiles here and looks fine --
+/// but CI, Pages and the RELEASE pipeline all build against 6.8.3, where it does not exist at all.
+/// A local build can never catch that; only CI can. mirrored() is the identical operation (it is
+/// what tst_map pins the flipped sprite against) and it goes back well before 6.8 -- but it is
+/// deprecated from 6.9 on, so using it unguarded would trade a hard error on CI for a warning
+/// here. Hence the guard: each Qt gets the call it actually wants.
+QImage mirroredH(const QImage& img)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+  return img.flipped(Qt::Horizontal);
+#else
+  return img.mirrored(true, false);
+#endif
+}
+} // namespace
+
 QImage MapEngine::playerSprite(int facing, int contrast)
 {
   // gfx/sprites/red.png: six 16x16 frames -- stand down, stand up, stand LEFT, then the
@@ -1289,7 +1309,7 @@ QImage MapEngine::playerSprite(int facing, int contrast)
   QImage sprite = sheet.copy(0, frame * 16, 16, 16);
 
   if (mirror)
-    sprite = sprite.flipped(Qt::Horizontal);
+    sprite = mirroredH(sprite);
 
   // The OBJECT palette. Two things the hardware does that a naive tint would not:
   //   * colour 0 is ALWAYS transparent for an object -- that is the sprite's cut-out;
@@ -1467,7 +1487,7 @@ QImage MapEngine::npcSprite(int pictureID, int facing, int contrast, int animFra
   QImage sprite = sheet.copy(0, frame * 16, 16, 16);
 
   if (mirror)
-    sprite = sprite.flipped(Qt::Horizontal);
+    sprite = mirroredH(sprite);
 
   // Exactly as playerSprite does: colour 0 is ALWAYS transparent for an object (the sprite's
   // cut-out), and the other three go through rOBP0 -- which is where the "harmless" glitch

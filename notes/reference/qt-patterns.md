@@ -1,5 +1,62 @@
 # Qt / QML Patterns
 
+## 🔴 THE LOCAL KIT IS Qt 6.11. **EVERYTHING THAT BUILDS FOR REAL IS Qt 6.8.3.** — 2026-07-16
+
+**Read this before using any Qt API you are not sure of the age of.** It is the only landmine in this
+file that a local build *cannot* catch, by construction.
+
+**The bug:** `mapengine.cpp` drew the player facing right by X-flipping the left-facing sprite with
+`QImage::flipped(Qt::Horizontal)`. That call arrived in **Qt 6.9**. The kit here is **6.11**, so it
+compiled, ran, rendered correctly, and passed the suite. Meanwhile every remote build — `tests.yml`,
+`lint.yml`, `pages.yml` and **`release.yml`** — pins **Qt 6.8.3**, where the call does not exist:
+
+```
+error: no member named 'flipped' in 'QImage'
+    sprite = sprite.flipped(Qt::Horizontal);
+```
+
+**It sat there from 0.29.0-alpha to 0.41.8-alpha, red the entire time**, and nobody's local run could
+see it. Worse: `release.yml` builds the same `appcore`, and it had not run since **v0.16.6-alpha** —
+which *predates* the break. So the failure was invisible *and* the next `ship` would have died at the
+release build, after the merge to `main`.
+
+**The fix** — give each Qt the call it actually wants, decided at compile time:
+
+```cpp
+QImage mirroredH(const QImage& img)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+  return img.flipped(Qt::Horizontal);
+#else
+  return img.mirrored(true, false);   // identical result; not deprecated until 6.13
+#endif
+}
+```
+
+Don't just use `mirrored()` unguarded to "support both": it is marked deprecated from **6.13**, so
+that trades a hard error on CI for a warning here. The guard costs four lines and is honest on both.
+
+**The trap inside the trap:** the `#else` branch **never compiles locally** — 6.11 always takes the
+`#if`. A typo in the fallback is invisible until CI. When you write one, *force* the other branch once
+(temporarily set the guard to `QT_VERSION_CHECK(99, 9, 0)`), build **and run the affected tests**, then
+revert. Done here: `tst_map` gave `27 passed, 0 failed` on **both** paths, so the fallback is proven
+compilable *and* pixel-identical before the push.
+
+**Why there is no local escape hatch:** the only Qt on this machine is 6.11, and the Docker image is
+**also** 6.11 (its own Dockerfile says so: *"Mirrors Twilight's local kit: Qt 6.11 + clang. (CI uses
+gcc/6.8.3…)"*). ASan, coverage, the whole container suite — all 6.11. **The remote is the only 6.8
+compiler this project has.** Note also that a failed CI build stops after a handful of files, so one
+6.9-ism can mask others behind it; expect to iterate.
+
+**The standing lesson:** *green locally proves nothing about the API floor.* Any Qt call newer than
+**6.8.3** is undetectable here and will only ever be caught by CI. If you reach for a modern-looking Qt
+API, check the docs' "since" line first, or guard it.
+
+**⚠️ Open question for project leadership (not an AI decision):** the dev kit and the shipping
+toolchain are three minor versions apart, which is the root cause and will recur. Either (a) bring
+CI + `release.yml` up to 6.11 — but that changes the Qt bundled into the installer/AppImage, a
+deployment call — or (b) hold 6.8.3 as the floor and keep guarding. Flagged, not decided.
+
 ## 🔴 A `TapHandler` does NOT stop the event. It fires *through* your floating panel. — 2026-07-13
 
 **The bug:** open the picture picker in the Details panel and the map underneath *also* got the

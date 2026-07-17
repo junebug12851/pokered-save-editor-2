@@ -6,6 +6,7 @@ When you see a compiler or runtime error, find it here.
 
 | Error | Fix |
 |-------|-----|
+| `no member named 'flipped' in 'QImage'` (CI only — builds fine here) | Qt **6.9+** API; CI/release pin **6.8.3**. Guard it: `#if QT_VERSION >= QT_VERSION_CHECK(6,9,0)` → `flipped(Qt::Horizontal)`, `#else` → `mirrored(true, false)`. **Any** "no member named X" that only fails on CI is this class — see `qt-patterns.md` → "THE LOCAL KIT IS Qt 6.11" |
 | `XxxDB::store` private | `XxxDB::inst()->getStore()` |
 | `XxxDB::store.size()` | `XxxDB::inst()->getStoreSize()` |
 | `XxxDB::ind.value(k, nullptr)` | `XxxDB::inst()->getIndAt(k)` |
