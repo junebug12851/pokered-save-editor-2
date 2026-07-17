@@ -104,10 +104,12 @@ without leadership sign-off.
 dock ▣, built Phase 15 of the map screen), **alongside** its current sections (Vermilion Gym · Cinnabar
 Gym · Safari Zone). So the design is an **expansion of persistent storage**: add the event-flag content
 (per-map grouping, flag groups + group toggles, search/filter, classification badges — with a
-**Placeholder Flags** group at the bottom of each map — and the softlock cautions). **Crash safety
-(mandatory):** because *all flags on* (and other impossible bulk combinations) **crash the game**, the
-panel must **warn prominently before any bulk/all/large-group set** and must not offer a naive global
-"set everything" (see Phase 4). Design in this doc first; no build until approved.
+**Placeholder Flags** group at the bottom of each map — and the per-flag softlock cautions).
+**No conflict UI** — the conflicting-flags system is **shelved** (Phase 11); nothing about conflicts
+renders here. **Bulk-set caution:** an all-on/large-group set puts the save in a state no playthrough can
+reach, so warn before it and don't offer a naive global "set everything" — but word it *"unpredictable and
+unverified"*, **never "this crashes"** (the console did not reproduce a crash; see Phase 4).
+Design in this doc first; no build until approved.
 
 **Phase 9 — Flag ↔ map location research (new, briefed 2026-07-15).** 🟡 In progress.
 `scripts/extract_flag_locations.py` → `tmp/event-flags/flag_locations.json`.
@@ -139,7 +141,36 @@ This is where the Events feature meets the map-storage panel the leadership orig
   attached event flags** (and count), and Phase 10 renders the outline colour from that + focuses the
   panel on those flag(s) on click.
 
-## Phase 11 — The conflicting-flags system (briefed 2026-07-15, leadership)
+## Phase 11 — The conflicting-flags system — 🛑 SHELVED (leadership, 2026-07-16)
+
+> **DECISION: do not build it.** Leadership: *"maybe we should forgo a conflict system… it's too expensive
+> to figure out. It was a nice QoL perk — users not interested in advanced things could do something more
+> advanced but still quickly and simply — but it honestly may be too expensive."* Call delegated; **agreed
+> and shelved.** The evidence backs it:
+>
+> - **The founding case was a FALSE POSITIVE.** Route 22 — the most "obvious" conflict in the game (two
+>   `SPRITE_BLUE` on one tile, one per battle) — is **refuted**. If the flagship is wrong, the static
+>   heuristic's hit-rate is unknown and probably poor.
+> - **Only `confirmed` may warn** (the rule the refutation forced). So an unadjudicated system shows the
+>   user **nothing** — all cost, no visible value.
+> - **Adjudication is expensive per conflict**, and does not amortise. Arming *one* cutscene needed the
+>   right script step (`wRoute22CurScript`), missable visibility, and the exact trigger coords
+>   (`dbmapcoord 29,4`, y,x) — bespoke research per case, over a 2,560-flag space.
+> - The remaining 6 rules are all `suspected`; adjudicating each is a fresh bespoke probe.
+>
+> **KEPT (cheap, and valuable) — this is knowledge, not a feature:**
+> `scripts/analyze_flag_contradictions.py` + `tmp/event-flags/conflicts.json` stay as **research output**;
+> the **refutation** and its lesson stay in the reference note; `probe_route22_conflict.py` stays as a
+> **no-crash regression**; `route22-rival-armed-but-hidden` stays recorded as an unadjudicated lead. None
+> of it ships in the UI. **Nothing about conflicts renders in the panel.**
+>
+> **If it is ever revived,** the spine is already written below — and rule #1 is the one that matters:
+> *suspicion is a lead, never a warning.*
+>
+> ⚠️ Leadership was explicit that **the sorting, research and grouping remain important for everything
+> else** — those are NOT shelved. Only the conflict *feature* is.
+
+### (Design retained for reference — not being built)
 
 A first-class system that flags **combinations** of event flags as conflicting, shows them in the UI, and
 grows as conflicts are found/confirmed. Born from the Route 22 rival case (two `SPRITE_BLUE` objects at

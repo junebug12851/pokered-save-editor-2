@@ -7,6 +7,42 @@ commit log; see `version.md` and `context/origins.md`). The rest are from the 20
 
 ---
 
+## The conflicting-flags system (briefed 2026-07-15 → shelved 2026-07-16)
+
+**Tried:** a system to flag *combinations* of event flags as conflicting — a logical predicate over a flag
+set (both-on / both-off / not-both-on / at-most-one / …), each **suspected** or **confirmed**, with a
+severity, surfaced in the UI in two places (a panel at the top listing active conflicts + a badge on each
+conflicting flag), re-evaluated live on every toggle. Briefed as a QoL perk: let a non-advanced user do
+something advanced quickly and safely.
+
+**Shelved 2026-07-16, leadership** (*"too expensive to figure out… it honestly may be too expensive"*);
+call delegated and **agreed**. Why it doesn't pay:
+
+- **The founding case was a false positive.** Route 22's two rivals on one tile — the most obvious
+  "conflict" in the game — is **REFUTED**: `Route22DefaultScript` is an ordered if/else, so with the 1st
+  flag set the 2nd is **never read** (masked, not conflicting); the console engages a normal battle. If the
+  flagship is wrong, the static heuristic's hit-rate is unknown and likely poor.
+- **Only `confirmed` may warn** (the rule that refutation forced — suspicion must never render as a risk).
+  So an unadjudicated system shows the user **nothing**: all cost, no visible value.
+- **Adjudication is bespoke and doesn't amortise.** Arming *one* cutscene needed the exact script step
+  (`wRoute22CurScript`), missable visibility, and the true trigger coords (`dbmapcoord 29,4`, y,x) — fresh
+  research per case, across a 2,560-flag space.
+
+**Do not rebuild it on static co-location.** "Two flags for one subject / two objects on one tile" is a
+**lead, not evidence** — dispatch order can mask a flag entirely. Any revival must adjudicate on the
+console *first* and show only confirmed results.
+
+**Kept as knowledge (not shipped):** `scripts/analyze_flag_contradictions.py` + `tmp/event-flags/conflicts.json`
+(research output), the refutation + its lesson in [`reference/event-flags.md`](../reference/event-flags.md),
+`scripts/emu/probe_route22_conflict.py` (now a no-crash regression), and the one real lead the probe found —
+`route22-rival-armed-but-hidden` (flags arm the ambush while the rival object is hidden → trigger fires,
+script advances, no battle engages). **Nothing about conflicts renders in the UI.**
+
+⚠️ The event-flag **research, sorting and grouping are NOT rejected** — leadership was explicit they
+"remain very important for everything else". Only the conflict *feature* is shelved.
+
+---
+
 ## Universal object stacking on the map (2026-07-14 → removed 2026-07-15)
 
 **Tried:** a `MapObjectStack` "group box" that gathered every map object sharing a tile (player + NPCs +

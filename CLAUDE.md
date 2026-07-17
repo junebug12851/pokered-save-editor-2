@@ -144,14 +144,18 @@ that will have to be built twice.
   [`notes/reference/emulator-verification.md`](notes/reference/emulator-verification.md) → "STANDING
   METHOD — forge a synthetic save". Template: `scripts/emu/probe_event_flag_crashes.py` /
   `probe_route22_conflict.py`. **Never commit the ROM.**
-- **The conflicting-flags system.** Flag *combinations* can conflict (crash/softlock) — the archetype is
-  Route 22's two rival objects at the same tile (both battles' flags on). A conflict is a **logical
-  predicate** over a flag set (**both-on / both-off / not-both-on / not-both-off / exactly-one / …**),
-  each **suspected** (static) or **confirmed** (reproduced on the cartridge via a forged save), with a
-  severity. When you spot or confirm such a condition, **add it to the conflicts dataset**. It is shown
-  in the UI **in two places — a panel at the top listing active conflicts, and a badge on each
-  conflicting flag** — re-evaluated live on every toggle. Design: [`notes/plans/event-flags.md`](notes/plans/event-flags.md)
-  → Phase 11; seed tool `scripts/analyze_flag_contradictions.py`.
+- **The conflicting-flags system is 🛑 SHELVED (2026-07-16) — do NOT build it, do NOT show conflicts in
+  any UI.** It was briefed as a QoL perk (flag *combinations* that conflict, shown in a panel + per-flag
+  badges), and it is **not worth the cost**: its founding case — Route 22's two rival objects on one tile —
+  turned out to be a **FALSE POSITIVE** (`Route22DefaultScript` is an ordered if/else: with the 1st flag
+  set the 2nd is **never read** — masked, not conflicting; the console engages a normal battle). Since
+  suspicion may never be shown as a risk, an unadjudicated system displays nothing, and adjudicating each
+  case is bespoke (exact script step + missable visibility + true trigger coords) across 2,560 flags.
+  Rationale + what's kept: [`notes/decisions/rejected.md`](notes/decisions/rejected.md).
+  **The standing lesson (applies far beyond conflicts):** *static co-location is a LEAD, never evidence* —
+  two flags for one subject, or two objects on one tile, proves nothing, because **dispatch order can mask
+  a flag entirely**. Adjudicate on the console before asserting anything. The event-flag **research,
+  sorting and grouping remain important and are NOT shelved.**
 
 ## Build System
 
