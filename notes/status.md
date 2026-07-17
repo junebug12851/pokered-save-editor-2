@@ -5,11 +5,46 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.41.0-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
+**Version:** `0.41.6-alpha` — on `dev`, **awaiting Twilight's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
-[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**88/88**, 2026-07-15);
-`tst_world` now 19. New local-only member: **`tst_flag_scenarios`** (5/5 with the ROM,
+[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**, 2026-07-16);
+`tst_world` now 21 (two new event pins). New local-only member: **`tst_flag_scenarios`** (with the ROM,
 SKIPs without it).
+
+### 🎫 EVENT FLAGS — all 2,560 researched, data regenerated, model fixed (2026-07-16, `0.41.6-alpha`)
+
+The **Events** feature (v1's cryptic `1cc`/`1cd` page) is researched end-to-end and the data + model are
+**fixed and pinned**. Research: [`reference/event-flags.md`](reference/event-flags.md); plan:
+[`plans/event-flags.md`](plans/event-flags.md).
+
+- **The field:** `wEventFlags` = **ONE contiguous 320-byte bitfield**, save `0x29F3`–`0x2B32` (WRAM
+  `0xD747`–`0xD886`), ending exactly where `wGrassRate` begins. `NUM_EVENTS = $A00 = 2560`, fixed by ROM
+  — so there are **not** more. Bit `i` = byte `0x29F3 + i/8`, bit `i%8`. **Console-verified live.**
+- **All 2,560 have a dossier** — name, description, map, group, classification — generated from pret
+  (`import_event_flags.py` → `analyze_event_usage.py` → `generate_event_dossiers.py`). **537 named**
+  (incl. 4 researched out of pret's `; ???`) + **30 block-swept** + **2,023 "Placeholder Flag #<hex>"**
+  (zero code presence; byte-alignment padding — every per-map block base is ÷8).
+- 🐞 **The editor was writing the WRONG FLAG, now fixed.** `events.json` is **regenerated from pret**
+  (508 → **2,560**; `import_events_db.py`, self-validating): **14 mislabels** in the Pokémon Tower block
+  (shifted ~2 bits — *"Beat Pokemontower 7 Trainer 0"* actually set **`EVENT_BEAT_GHOST_MAROWAK`*) and
+  **14 phantoms** (pointing at bits the game never uses) are gone. `eventCount` 508 → **2560** in
+  `worldevents.h` (it MUST match the DB store size or `load()` overruns the array).
+  ✅ The byte/bit maths was **always flawless** (0 mismatches) — a labelling fault, never corruption. ✅
+  All **529 curated map lists preserved verbatim** (they only *looked* invalid: they use `modernName`,
+  which `MapsDB` indexes — no bug).
+- **Pinned:** `tst_world::events_everyEntryIsAtItsCanonicalBit` (coverage 2560 + every entry at
+  `0x29F3+ind/8`) and `::events_writeExactlyTheirBit` (one toggle → **exactly one byte** moves).
+  ⚠️ Neither catches the *mislabel* class (names, not offsets) — that is guarded by **generation**
+  (`import_events_db.py --check`).
+- 🛑 **The conflicting-flags system is SHELVED** (leadership 2026-07-16, agreed) — its founding case was
+  a **false positive**, only `confirmed` may warn, and adjudication is bespoke per case. Knowledge kept,
+  **no conflict UI ships**. [`decisions/rejected.md`](decisions/rejected.md).
+- ❌ **"All flags on crashes" — UNREPRODUCED** on the cartridge (all 2,560 set: healthy boot → Oak's Lab
+  → ~12 map transitions). The *mechanism* is real; the claim is not proven. Bulk-set warning stays but
+  must read *"unpredictable and unverified"*, **never "this crashes"**.
+- ⏳ **Next: the UI.** Events are the **4th section of each map page** in `MapStoragePanel` (script →
+  minigame bytes → filter flags → **events**); `map.toEvents` is already the model. **Design written,
+  awaiting leadership review + 3 open questions** — no QML until then. See Phase 8.
 
 ### ⚔️ ROUTE 22 RIVAL CONFLICT — console-adjudicated REFUTED (2026-07-16)
 
