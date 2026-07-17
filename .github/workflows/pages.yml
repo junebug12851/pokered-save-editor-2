@@ -27,7 +27,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  QT_VERSION: "6.8.3"
+  # MUST match the kit / docker/Dockerfile / tests.yml / lint.yml / release.yml.
+  # One Qt everywhere -- see the ⚠️ block atop tests.yml for what the split cost.
+  QT_VERSION: "6.11.0"
 
 jobs:
   deploy:

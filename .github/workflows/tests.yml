@@ -13,6 +13,19 @@ name: tests
 # tweak on the very first CI run. The CMake root is `projects/`. Tests don't need
 # the `app` target, but the root find_package pulls in Quick/Charts/etc., so those
 # Qt modules are installed here.
+#
+# ⚠️ THE QT VERSION HERE MUST MATCH THE KIT. Do not "helpfully" pin it back.
+#
+# It used to be 6.8.3 while the dev kit was 6.11, and that gap made the remote red
+# from 0.29.0-alpha to 0.41.7-alpha WITHOUT ANYTHING LOCAL BEING ABLE TO SEE IT:
+# mapengine.cpp used QImage::flipped() (Qt 6.9+), which compiled and passed on 6.11
+# and does not exist on 6.8.3. Worse, release.yml builds the same code and had not
+# run since v0.16.6-alpha -- so the next "ship" would have died AFTER the merge to
+# main. A dev toolchain newer than the shipping one is a class of bug that no test
+# can catch, because the broken code never reaches a compiler that rejects it.
+# Fixed by converging on ONE Qt (leadership, 2026-07-17): kit == container == CI.
+# If you bump the kit, bump this, docker/Dockerfile, lint.yml, pages.yml and
+# release.yml in the same commit. See notes/reference/qt-patterns.md (top).
 
 on:
   push:
@@ -28,7 +41,9 @@ jobs:
       - name: Install Qt (Linux gcc_64)
         uses: jurplel/install-qt-action@v4
         with:
-          version: "6.8.3"          # pinned exact so the Qt cache key is stable
+          # KEEP THIS == the kit (C:\Qt) and docker/Dockerfile's QT_VERSION. One Qt
+          # everywhere is the whole point -- see the header comment above.
+          version: "6.11.0"         # pinned exact so the Qt cache key is stable
           host: linux
           target: desktop
           arch: linux_gcc_64
@@ -73,7 +88,10 @@ jobs:
       - name: Install Qt (Windows llvm-mingw)
         uses: jurplel/install-qt-action@v4
         with:
-          version: "6.8.3"          # pinned exact so the Qt cache key is stable
+          # 6.11.0 + tools_llvm_mingw1706 makes this job an EXACT mirror of the kit
+          # (C:\Qt\6.11.0\llvm-mingw_64 + C:\Qt\Tools\llvm-mingw1706_64), which is
+          # what makes a red here mean something. See the header comment above.
+          version: "6.11.0"         # pinned exact so the Qt cache key is stable
           host: windows
           target: desktop
           arch: win64_llvm_mingw

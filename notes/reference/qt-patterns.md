@@ -1,6 +1,33 @@
 # Qt / QML Patterns
 
-## 🔴 THE LOCAL KIT IS Qt 6.11. **EVERYTHING THAT BUILDS FOR REAL IS Qt 6.8.3.** — 2026-07-16
+## ✅ RESOLVED 2026-07-17 — **there is ONE Qt now: `6.11.0`, everywhere.**
+
+The section below is the landmine as it stood, and it is **kept in full** because the *mechanism* is
+worth knowing and the class can come back the moment the versions drift apart again. But the standing
+situation it describes is over: **leadership chose to bring the shipping toolchain UP to the kit**
+rather than hold the app back on 6.8.3. `tests.yml` (both jobs), `lint.yml`, `pages.yml`,
+`release.yml` and `docker/Dockerfile` now all say `6.11.0`, each with a pointer to the ⚠️ block atop
+`tests.yml` explaining why they must move together.
+
+**So the rule changed shape.** It is no longer *"any Qt call newer than 6.8.3 is undetectable here"* —
+the API floor is now the kit's own, and local green means what it looks like it means. What replaces it:
+
+> **If you bump the kit, bump all five files in the same commit.** The danger was never the version
+> number; it was the *gap*. A dev toolchain newer than the shipping one is a bug class no test can
+> catch, because the offending code never reaches a compiler that would reject it.
+
+The `QT_VERSION_CHECK(6, 9, 0)` guard in `mapengine.cpp` **stays** — it costs four lines, it is proven
+on both paths, and it keeps 6.8 buildable from source for anyone who wants that. Don't tidy it away.
+
+⏳ **One thing still owed:** the branch CI run proving aqt serves `6.11.0` for `win64_llvm_mingw`.
+Linux `6.11.0` is proven (the container installs exactly that via aqt and passes 91/91) and
+`tools_llvm_mingw1706` is confirmed present; the Windows arch query flaked on a `download.qt.io`
+mirror checksum, which is **inconclusive, not a "no"** — and the local `C:\Qt\6.11.0\llvm-mingw_64`
+proves Qt ships the arch. If aqt turns out not to serve it, that — and only that — reopens the choice.
+
+---
+
+## 🔴 THE LOCAL KIT IS Qt 6.11. **EVERYTHING THAT BUILDS FOR REAL IS Qt 6.8.3.** — 2026-07-16 *(historical — resolved above)*
 
 **Read this before using any Qt API you are not sure of the age of.** It is the only landmine in this
 file that a local build *cannot* catch, by construction.
@@ -52,10 +79,10 @@ compiler this project has.** Note also that a failed CI build stops after a hand
 **6.8.3** is undetectable here and will only ever be caught by CI. If you reach for a modern-looking Qt
 API, check the docs' "since" line first, or guard it.
 
-**⚠️ Open question for project leadership (not an AI decision):** the dev kit and the shipping
-toolchain are three minor versions apart, which is the root cause and will recur. Either (a) bring
-CI + `release.yml` up to 6.11 — but that changes the Qt bundled into the installer/AppImage, a
-deployment call — or (b) hold 6.8.3 as the floor and keep guarding. Flagged, not decided.
+**✅ ANSWERED 2026-07-17 (leadership): option (a) — CI + `release.yml` came up to 6.11.** *"I hate the
+idea of holding my program back because online is doing it."* The installer/AppImage now bundle 6.11;
+the app bundles its own Qt on both platforms, so no user is forced onto a version by this. See the
+RESOLVED block at the top of this file.
 
 ## 🔴 A `TapHandler` does NOT stop the event. It fires *through* your floating panel. — 2026-07-13
 

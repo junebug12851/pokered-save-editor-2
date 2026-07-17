@@ -42,16 +42,35 @@ couldn't compile. Container fixed: `qtmultimedia qtshadertools` (matching `tests
 (`libQt6Multimedia.so` has a hard `DT_NEEDED` on `libpulse.so.0`; GitHub's runner ships it, a clean
 container doesn't).
 
-- **⚠️ Known, not from this work:** **13/91 fail *inside the container*** on environment — 24 ×
-  `Fontconfig error: No writable cache directories` (the GUI tests), and `tst_emu_parity` /
-  `tst_sound_parity` / `tst_flag_scenarios` need the ROM **+ PyBoy**, which the container lacks. CI is
-  green and local `ctest` is 91/91 on the same commit, so this is drift from the months the image was
-  broken (it was **66/66** on 2026-06-13). Worth its own pass.
-- **⚠️ For leadership:** dev kit `6.11` vs shipping toolchain `6.8.3` is the root cause and will recur.
-  Bring CI/release up to 6.11 (changes the Qt bundled in the installer/AppImage — a deployment call), or
-  hold 6.8.3 as the floor and keep guarding. Guard pattern + the full landmine writeup:
+- ✅ **The container is FIXED — 91/91 standard, 91/91 asan, 0 sanitizer findings, 0 fontconfig errors**
+  (2026-07-17). ⚠️ **And the diagnosis above it was backwards** — kept here as the correction:
+  - It was **3 failures, not 13**, and the **fontconfig class was already gone** (0 occurrences; the
+    24× count was stale from the months the image was broken).
+  - The three were **not** "the container lacks the ROM + PyBoy". **The exact opposite**:
+    `run-tests.sh` rsynced the host's `tmp/` — **Windows `emu-venv` and all** — *into* the container,
+    and the skip-gate only checked `QFile::exists("tmp/emu-venv/Scripts/python.exe")`. On Linux that
+    answered **true**, so the gate never fired and the test tried to exec a **Windows PE binary**;
+    WSL's binfmt interop caught it and failed sideways (`<3>WSL ERROR: UtilGetPpid:1330 ...`),
+    which read like a code fault. CI was green precisely *because* a fresh checkout has no `tmp/`.
+  - Fixed **twice, deliberately**: the gate is now **runnability-based, not existence-based**
+    (`tests/helpers/emuvenv.h` — shared by all three; *"does this interpreter run?"* is the only
+    question that matters, and it's platform-correct: `Scripts/python.exe` vs `bin/python3`), **and**
+    `run-tests.sh` excludes `tmp/` (host scratch has no business in the container). Proven
+    independently: re-inject the Windows venv and the test now **SKIPs with a message that explains
+    itself** instead of going red.
+  - **The lesson, and it generalises:** *a file existing is not a capability being available.* An
+    availability gate must test the capability, or it will pass in exactly the environment it was
+    written to protect.
+- ✅ **DECIDED (leadership, 2026-07-17): ONE Qt everywhere — CI/release/lint/pages bumped to `6.11.0`
+  to match the kit and the container.** The dev-newer-than-ship gap was the root cause of the 12
+  invisible-red releases and would have recurred on the next 6.9+ API; rather than hold the app back
+  on 6.8.3, the shipping toolchain moved up. Convergence is now pinned by a ⚠️ block atop
+  `tests.yml` + a cross-reference in each of the five files. ⏳ **Owed: the branch CI run that proves
+  aqt serves 6.11.0 for `win64_llvm_mingw`** (Linux 6.11.0 is already proven by the container;
+  `tools_llvm_mingw1706` confirmed present; the aqt Windows arch query flaked on a `download.qt.io`
+  mirror checksum, which is inconclusive, not a "no"). Landmine writeup:
   [`reference/qt-patterns.md`](reference/qt-patterns.md) (top); lookup row in
-  [`reference/fix-patterns.md`](reference/fix-patterns.md). **Flagged, not decided.**
+  [`reference/fix-patterns.md`](reference/fix-patterns.md).
 
 ### 🎫 EVENT FLAGS — all 2,560 researched, data regenerated, model fixed (2026-07-16, `0.41.6-alpha`)
 

@@ -1703,12 +1703,34 @@ sites · **22** files with both · **41** files with coord triggers.
   toggle→event pairing for the 22. Routine boundaries are the unit — ⚠️ **not** proximity: "the flag
   is near the object" is the same static-co-location reasoning that produced the Route 22 false
   positive and shelved the conflicts system. Anything ambiguous gets **no tab**.
-  - **A script box is the EXTENT of its trigger, not a tile** (leadership, 2026-07-17: *"if its a
-    coord range test then put a box around the whole range"*). A `dbmapcoord` tile → 1×1; Pallet
-    Town's `wYCoord == 1` → **a box around the whole north row**; a range → a box around the range.
-    So the box geometry needs **w/h in tiles**, unlike the fixed 16×16 filter-flag boxes — worth
-    knowing before 16f-c starts. The worked example + the 41/17/5 split:
-    [`../reference/event-flags.md`](../reference/event-flags.md).
+  - ⚠️ **A RANGE FANS OUT INTO BOXES — it is never drawn as one box.** *(leadership, 2026-07-17.
+    This **supersedes** her earlier same-day instruction — ~~"if its a coord range test then put a
+    box around the whole range"~~ → **a box around the range is wrong**; do not build it.)*
+
+    > *"The range may span multiple blocks, its important to highlight the blocks separately not the
+    > range of blocks. So its still important to have only per-block or per-tile boxes depending on
+    > what it is it just adds the ranged tab onto other tabs the block or tile depending on what it
+    > is may have."*
+
+    So a coord **range** is not a rectangle primitive. It is **a spot that lands on many locations**:
+    the extractor expands the range into the list of units it covers, and each of those units gets
+    **its own ordinary box**, with the ranged script arriving as **one more tab** alongside whatever
+    tabs that unit already had. Pallet Town's `cp 1` → **one box per unit across the north row**,
+    each tabbed — **not** one wide rectangle.
+
+    Three consequences, and they all make 16f *smaller*:
+
+    - **Box geometry stays fixed-size. There is no `w`/`h`.** The earlier "the box geometry needs
+      w/h in tiles" note is **dead** — delete it on sight, don't build it.
+    - **It is the same shape the LOCATION model already wanted.** A location owns spots; a ranged
+      script is simply a spot that appears on N locations — exactly like a shared event flag showing
+      on every map it spans (the Events section already does this). The fan-out is extractor-side,
+      so the UI never learns what a range is.
+    - **The unit (block vs tile) is a property of the STORAGE KIND, not of the box.** Both kinds we
+      ship today are per-tile (the 16×16 filter-flag boxes; coord tests read `wYCoord`/`wXCoord`,
+      which are walk-grid tiles). Don't hardcode the unit — a future block-scoped kind must be able
+      to say so. ❓ **Open for leadership:** which kinds she means as *block*-scoped; nothing being
+      built now needs the answer.
 - **16f-b — Data.** Out of pret via an importer, never hand-written. (⚠️ `maps.json` is data — a new
   field needs leadership's OK, per the standing "don't edit the JSON" rule.)
 - **16f-c — The tabs**, on boxes with >1 spot.

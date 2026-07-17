@@ -6,7 +6,8 @@ When you see a compiler or runtime error, find it here.
 
 | Error | Fix |
 |-------|-----|
-| `no member named 'flipped' in 'QImage'` (CI only — builds fine here) | Qt **6.9+** API; CI/release pin **6.8.3**. Guard it: `#if QT_VERSION >= QT_VERSION_CHECK(6,9,0)` → `flipped(Qt::Horizontal)`, `#else` → `mirrored(true, false)`. **Any** "no member named X" that only fails on CI is this class — see `qt-patterns.md` → "THE LOCAL KIT IS Qt 6.11" |
+| `no member named 'X' in 'QImage'` etc. — **builds here, fails only on CI** | The dev/ship Qt gap. **Should no longer happen: all five build files are `6.11.0` since 2026-07-17.** If it does, the versions have drifted — check `tests.yml`/`lint.yml`/`pages.yml`/`release.yml`/`docker/Dockerfile` all agree with the kit *before* reaching for a guard. (The original: `QImage::flipped()` is 6.9+, CI pinned 6.8.3 → red for 12 releases, invisibly.) See `qt-patterns.md` (top) |
+| CI/container test **fails** where it should have **skipped** (e.g. `<3>WSL ERROR: UtilGetPpid` from an emu test) | An availability gate tested a **file's existence** instead of the **capability**. The container rsyncs the host's `tmp/` in, so a *Windows* `emu-venv/Scripts/python.exe` exists on Linux and the "no venv → SKIP" gate never fires. Gates must ask *"does it run?"* — `tests/helpers/emuvenv.h::pythonRuns()`. See `status.md` → the container correction |
 | `XxxDB::store` private | `XxxDB::inst()->getStore()` |
 | `XxxDB::store.size()` | `XxxDB::inst()->getStoreSize()` |
 | `XxxDB::ind.value(k, nullptr)` | `XxxDB::inst()->getIndAt(k)` |

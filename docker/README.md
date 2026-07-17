@@ -49,9 +49,10 @@ docker run --rm -v pse-build:/build -v "${PWD}:/out" alpine `
 
 ## Notes / caveats
 
-- **Qt version vs CI.** This container is **6.11** (the kit). The GitHub
-  `linux-asan` CI job uses **6.8.3 + gcc**; this is the closer-to-runtime local
-  reproduction, and the place ASan/UBSan actually run.
+- **Qt version.** **6.11 — the same as the kit and the same as CI** (converged
+  2026-07-17; CI used to be pinned to 6.8.3, and the gap made the remote red for
+  12 releases invisibly). If you bump one, bump all of them: `docker/Dockerfile`,
+  `tests.yml`, `lint.yml`, `pages.yml`, `release.yml`.
 - **Per-test offscreen override.** Several GUI tests pin
   `QT_QPA_PLATFORM=offscreen` in CMake; that per-test env wins over the `xvfb`
   variant's `xcb` request. The `xvfb` path still gives a live display to any
