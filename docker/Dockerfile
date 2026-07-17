@@ -21,12 +21,21 @@ ENV DEBIAN_FRONTEND=noninteractive
 # xvfb: virtual X server for the real-X GUI test path (complements offscreen).
 # The libxcb-*/libgl/libxkbcommon/fontconfig set is what Qt's xcb + offscreen
 # platform plugins need to load headless.
+#
+# libpulse0 is for Qt Multimedia: libQt6Multimedia.so has a hard DT_NEEDED on
+# libpulse.so.0, so without it EVERY test that links audio fails at the link step
+# ("undefined reference to pa_threaded_mainloop_start@PULSE_0") -- even though
+# nothing here ever plays a sound. GitHub's Ubuntu runner ships PulseAudio
+# already, which is why the CI workflows install no apt deps and never hit this;
+# a clean container has to ask for it. (Needed once qtmultimedia joined the Qt
+# install below -- see that comment.)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         clang lld llvm \
         cmake ninja-build git ccache rsync \
         python3 python3-pip \
         xvfb \
         ca-certificates \
+        libpulse0 libpulse-mainloop-glib0 \
         libgl1 libegl1 libglx-mesa0 libopengl0 \
         mesa-common-dev libgl-dev libegl-dev libgles-dev libglx-dev libopengl-dev \
         libxkbcommon0 libxkbcommon-x11-0 libxkbcommon-dev \

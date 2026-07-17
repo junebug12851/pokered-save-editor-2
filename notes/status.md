@@ -5,32 +5,53 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.41.8-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
+**Version:** `0.41.9-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
-[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**, 2026-07-16);
+[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**);
 `tst_world` now 21 (two new event pins). New local-only member: **`tst_flag_scenarios`** (with the ROM,
 SKIPs without it).
 
-### 🔴→🟢 The REMOTE build was red from 0.29.0 to 0.41.7 — and local green never saw it (2026-07-16)
+### 🟢 CI IS GREEN — first time since 0.29.0-alpha (2026-07-17, `0.41.9-alpha`)
 
-Fixed in `0.41.8-alpha`. `mapengine.cpp` used **`QImage::flipped()`** (a **Qt 6.9+** call) to draw the
-player facing right. The kit here is **6.11** → compiled, rendered, passed. **Every remote build pins Qt
-6.8.3** (`tests`, `lint`, `pages`, **`release`**) → `error: no member named 'flipped' in 'QImage'`. So
-`tests` + `lint` had been **failing on every `dev` push since `0.29.0-alpha`**, and — the sharp end —
-**`release.yml` builds the same `appcore` and hadn't run since `v0.16.6-alpha`, which predates the
-break: the next "ship" would have died at the release build, after the merge to `main`.**
+`tests` **success** (linux-asan + windows) · `lint` **success** (0 gated findings / 150 TUs) · local
+`ctest` **91/91** · local `dtest.ps1 asan` **0 ASan/UBSan findings**. Story:
+[`sessions/2026-07/2026-07-17.md`](sessions/2026-07/2026-07-17.md).
 
-- **Fixed** by a `QT_VERSION_CHECK(6,9,0)` guard (`flipped()` new / `mirrored()` old — not deprecated
-  until 6.13). `tst_map`: **27 passed on BOTH paths**, the fallback force-compiled deliberately, since
-  it is the branch the release pipeline actually builds and the one 6.11 never compiles.
-- **There is no local defence against this class:** the only Qt here is 6.11, and **Docker is 6.11 too**
-  (its Dockerfile says so). **The remote is this project's only 6.8 compiler.** Any Qt API newer than
-  6.8.3 is invisible until CI. Full write-up + the guard pattern:
-  [`reference/qt-patterns.md`](reference/qt-patterns.md) (top section);
-  lookup row in [`reference/fix-patterns.md`](reference/fix-patterns.md).
+**The remote had been red from 0.29.0-alpha to 0.41.7-alpha and local green never saw it.**
+`mapengine.cpp` used **`QImage::flipped()`** (**Qt 6.9+**) to draw the player facing right; the kit here
+is **6.11** → compiled, rendered, passed. **Every remote build pins Qt 6.8.3** (`tests`, `lint`, `pages`,
+**`release`**) → `no member named 'flipped' in 'QImage'`. The sharp end: **`release.yml` builds the same
+`appcore` and hadn't run since `v0.16.6-alpha`, which predates the break — the next "ship" would have
+died at the release build, after the merge to `main`.** Fixed (`0.41.8-alpha`) with a
+`QT_VERSION_CHECK(6,9,0)` guard; `tst_map` **27 passed on BOTH paths** (fallback force-compiled, since
+6.11 never compiles it).
+
+**Then the unblocked gates found 4 real, pre-existing bugs** (all fixed, `0.41.9-alpha`):
+
+- **heap-use-after-free** in the music parser — `addrOf()` held a `const QString&` **into `pending`**
+  while `place()` appended to `pending` and reallocated it. 7 ASan reports from 5 tests, **one** cause.
+- **null deref** — `MapModel::mapInd()`'s bare `map->curMap` (the class null-checks `map` everywhere
+  else, which is *why* the analyzer could prove it).
+- **OOB read** — the `SgbCity` index was missing its `>= 0`, behind a redundant test that hid the gap.
+- an unnecessary copy.
+
+**Why nothing local caught them: BOTH safety nets were down.** ASan doesn't run on the llvm-mingw kit,
+so the container is its only home — **and the container had been unbuildable since `pse-audio` landed**
+(image had `-m qtcharts`, so configure died on *"Could NOT find Qt6Multimedia"*). Meanwhile the remote
+couldn't compile. Container fixed: `qtmultimedia qtshadertools` (matching `tests.yml`) + **`libpulse0`**
+(`libQt6Multimedia.so` has a hard `DT_NEEDED` on `libpulse.so.0`; GitHub's runner ships it, a clean
+container doesn't).
+
+- **⚠️ Known, not from this work:** **13/91 fail *inside the container*** on environment — 24 ×
+  `Fontconfig error: No writable cache directories` (the GUI tests), and `tst_emu_parity` /
+  `tst_sound_parity` / `tst_flag_scenarios` need the ROM **+ PyBoy**, which the container lacks. CI is
+  green and local `ctest` is 91/91 on the same commit, so this is drift from the months the image was
+  broken (it was **66/66** on 2026-06-13). Worth its own pass.
 - **⚠️ For leadership:** dev kit `6.11` vs shipping toolchain `6.8.3` is the root cause and will recur.
   Bring CI/release up to 6.11 (changes the Qt bundled in the installer/AppImage — a deployment call), or
-  hold 6.8.3 as the floor and keep guarding. **Flagged, not decided.**
+  hold 6.8.3 as the floor and keep guarding. Guard pattern + the full landmine writeup:
+  [`reference/qt-patterns.md`](reference/qt-patterns.md) (top); lookup row in
+  [`reference/fix-patterns.md`](reference/fix-patterns.md). **Flagged, not decided.**
 
 ### 🎫 EVENT FLAGS — all 2,560 researched, data regenerated, model fixed (2026-07-16, `0.41.6-alpha`)
 
