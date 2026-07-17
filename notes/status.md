@@ -11,6 +11,41 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 `tst_world` now 21 (two new event pins). New local-only member: **`tst_flag_scenarios`** (with the ROM,
 SKIPs without it).
 
+### 💎 HIDDEN ITEMS (16f-b) — the data landed, and the DB that never loaded it (2026-07-17, `0.42.2-alpha`)
+
+Phase 1 of Fairy Fox's hidden-items brief. Research + traps + lessons:
+[`reference/map-storage-locations.md`](reference/map-storage-locations.md) → §2a/2b/2c.
+
+- **The counts are final: 54 items, 12 coins.** Answering *"unless there's more"* — there are not.
+  `MAX_HIDDEN_ITEMS` is 112 but only 54 rows exist; both counts match `WorldHidden` exactly.
+- **What's buried is now imported** (leadership-approved): `import_hidden_items.py` joins pret's
+  `hidden_events.asm` onto `hidden_item_coords.asm` → **21 distinct items**, and for coins **how many
+  you're picking up** (10/20/40, **260 total**). Additive-only — **0 existing fields changed** across
+  all 66 rows, proven semantically, not eyeballed.
+- 🐞 **…and `HiddenItemsDB` had NEVER loaded a single row.** `AbstractHiddenItemDB::load()` used
+  `static bool once` — and **a static local in a base-class method is ONE static for the whole
+  hierarchy**, not one per subclass. `db.cpp` builds **HiddenCoinsDB first**, so it tripped the guard
+  and the items DB returned early. All 54 hidden items were an empty store for as long as the code has
+  existed. Same in `deepLink()`. **Negative-controlled:** restore the old semantics and the count drops
+  to **0 of 54** on demand. Second bug: **`HiddenCoinsDB` was missing `DB_AUTOPORT`** → never exported.
+- **Items and coins are now separate per-map lists.** They are different save arrays (`0x299C` /
+  `0x29AA`) with **independent numbering**, so one shared list made an entry's bit ambiguous. Each
+  entry carries its own `ind` (**== its save bit**) and `isCoin`.
+- **Pinned:** `tst_db_integrity` **13/13**; full `ctest` **91/91**.
+
+> ⚠️ **The lesson that outlives this DB: a test that loops over everything passes VACUOUSLY on
+> nothing.** `allSubDbsLoadAndCount` asserted `>= 0` and went green on an empty store for years — and
+> the first cut of the new resolve test **also passed while the bug was live**, because it iterated
+> zero entries. It now asserts non-empty *first*. Same shape as the `emu-venv` gate: **a check must be
+> able to fail.** And `tst_db_coverage_fill.cpp` had *written the symptom down* — *"the HiddenItems
+> store is empty"* — and filed it as a quirk of the fixtures. It was the bug, in writing, unread.
+
+⏳ **Owed (the rest of her brief, phased — restructure first, her call):** the script coord-trigger +
+event-flag extraction (16f-b part 2) · `flagHotspots()` → **`blockHotspots()`** (locations owning spot
+lists; must admit **tile traits**) · hidden items/coins **in the Map Storage panel** under their maps ·
+the **tab strip** + interaction model (hover-reaches-all · click-priority-is-layer-order ·
+click-**and-drag** from a tab).
+
 ### 🟢 CI IS GREEN — first time since 0.29.0-alpha (2026-07-17, `0.41.9-alpha`)
 
 `tests` **success** (linux-asan + windows) · `lint` **success** (0 gated findings / 150 TUs) · local
