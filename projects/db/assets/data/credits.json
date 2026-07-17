@@ -91,6 +91,18 @@
           "note": "Containerized Linux build/test environment -- runs the full test suite plus AddressSanitizer/UBSan and coverage, which can't run on the Windows kit"
         },
         {
+          "name": "aqtinstall",
+          "url": "github.com/miurahr/aqtinstall",
+          "license": "MIT",
+          "note": "Installs Qt itself for every automated build -- the checks online and the Linux container both. Qt's own installer needs an account, so without this there is no unattended Qt anywhere, and this project's entire safety net runs on it. They had also already fixed Qt 6.11's changed Windows layout months before we hit it"
+        },
+        {
+          "name": "install-qt-action",
+          "url": "github.com/jurplel/install-qt-action",
+          "license": "MIT",
+          "note": "Wires aqtinstall into the automated checks online, and caches Qt between runs"
+        },
+        {
           "name": "Pillow",
           "url": "python-pillow.github.io",
           "license": "MIT-CMU",

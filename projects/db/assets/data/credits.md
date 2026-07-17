@@ -31,6 +31,8 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 - **[Quicktype](https://app.quicktype.io)** -- They helped breakdown JSON structure into C++ so much easier!!!
 - **[Git](https://git-scm.com)** -- Powers the projects VCS
 - **[Docker](https://docker.com)** -- Containerized Linux build/test environment -- runs the full test suite plus AddressSanitizer/UBSan and coverage, which can't run on the Windows kit
+- **[aqtinstall](https://github.com/miurahr/aqtinstall)** -- Installs Qt itself for every automated build -- the checks online and the Linux container both. Qt's own installer needs an account, so without this there is no unattended Qt anywhere, and this project's entire safety net runs on it. They had also already fixed Qt 6.11's changed Windows layout months before we hit it _(License: MIT)_
+- **[install-qt-action](https://github.com/jurplel/install-qt-action)** -- Wires aqtinstall into the automated checks online, and caches Qt between runs _(License: MIT)_
 - **[Pillow](https://python-pillow.github.io)** -- Assembles UI screenshot frames into animated GIFs (scripts/make_gifs.py) -- used manually to add GIFs; the automated screenshot pipeline itself produces still PNGs only _(License: MIT-CMU)_
 - **[Inno Setup](https://jrsoftware.org/isinfo.php)** -- Builds the Windows installer in the release pipeline
 - **[linuxdeploy](https://github.com/linuxdeploy/linuxdeploy)** -- Bundles the Linux AppImage (with its Qt plugin) in the release pipeline
