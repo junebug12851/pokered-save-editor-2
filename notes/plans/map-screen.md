@@ -1703,35 +1703,74 @@ sites · **22** files with both · **41** files with coord triggers.
   toggle→event pairing for the 22. Routine boundaries are the unit — ⚠️ **not** proximity: "the flag
   is near the object" is the same static-co-location reasoning that produced the Route 22 false
   positive and shelved the conflicts system. Anything ambiguous gets **no tab**.
-  - ⚠️ **A RANGE FANS OUT INTO BOXES — it is never drawn as one box.** *(leadership, 2026-07-17.
-    This **supersedes** her earlier same-day instruction — ~~"if its a coord range test then put a
-    box around the whole range"~~ → **a box around the range is wrong**; do not build it.)*
+  - ⭐ **THE DESIGN OF RECORD: truthful HIGHLIGHT, block-granular HIT TARGET.** *(leadership,
+    2026-07-17 — her third and settled statement on it. This **supersedes both** earlier same-day
+    calls: ~~"put a box around the whole range"~~ **and** ~~"highlight the blocks separately, per-block
+    or per-tile boxes"~~.)*
 
-    > *"The range may span multiple blocks, its important to highlight the blocks separately not the
-    > range of blocks. So its still important to have only per-block or per-tile boxes depending on
-    > what it is it just adds the ranged tab onto other tabs the block or tile depending on what it
-    > is may have."*
+    > *"literally 2x2, 4x4, 8x8, 16x16, 32x32 are all fine for measurements for the box you mouseover
+    > or click on. So, why dont we highlight truthfully the ranges and have clicks and mouse overs be
+    > on the blocks to keep things simple so tabs can be there for ranges affected over block
+    > including tiles like 8x8 ranges or 4x4 or 2x2"*
 
-    So a coord **range** is not a rectangle primitive. It is **a spot that lands on many locations**:
-    the extractor expands the range into the list of units it covers, and each of those units gets
-    **its own ordinary box**, with the ranged script arriving as **one more tab** alongside whatever
-    tabs that unit already had. Pallet Town's `cp 1` → **one box per unit across the north row**,
-    each tabbed — **not** one wide rectangle.
+    **The insight is to split one thing into two**, which the whole design had been conflating:
 
-    Three consequences, and they all make 16f *smaller*:
+    | | Granularity | Job |
+    |---|---|---|
+    | **Highlight** | **the data's own** — *"use the measurement its suppose to be"* | Tell the truth about what is affected. A tile attribute lights its **8×8**. An object/warp/sign lights its **16×16 half-block**. A coord range lights **exactly the cells it really covers** — including half a block, if that is the truth. |
+    | **Hit target** *(hover + click)* | **the block, 32×32, uniform** | Be easy to hit and simple to reason about. One block = one cursor cell = one tab strip. |
 
-    - **Box geometry stays fixed-size. There is no `w`/`h`.** The earlier "the box geometry needs
-      w/h in tiles" note is **dead** — delete it on sight, don't build it.
-    - **It is the same shape the LOCATION model already wanted.** A location owns spots; a ranged
-      script is simply a spot that appears on N locations — exactly like a shared event flag showing
-      on every map it spans (the Events section already does this). The fan-out is extractor-side,
-      so the UI never learns what a range is.
-    - **The unit is a property of the STORAGE KIND, not of the box** — *"use the measurement its
-      suppose to be"* (leadership, 2026-07-17). So don't hardcode one; let each kind declare it.
-      ⚠️ **And there are THREE units, not two** — the middle one is where nearly everything
-      positional actually lives, and it has been getting mis-called a "tile" in these notes. All
-      verified against `pret/pokered`; the table and the proofs are in
+    **This dissolves the "a block box would be a lie" objection** (raised against the unit research
+    above, and it was right *on its own terms*): a block box is only a lie if it is **claiming to be
+    the thing**. Here it claims nothing — it is the **cursor cell**. The highlight carries the truth;
+    the tabs carry the disambiguation. Two warps in one block → **two tabs**. That is what tabs are
+    *for*, and it is the same job they already do for an object with both a filter flag and event
+    flags.
+
+    **The aggregation rule, and it is the whole model:**
+
+    > **A block's tab strip = every storage spot whose true extent intersects that block** — whatever
+    > unit that spot is measured in, finer or coarser.
+
+    So a block can carry, at once: an 8×8 tile attribute, a 16×16 object's filter flag, and a coord
+    range that only clips its lower half. All three are tabs; all three highlight at their own real
+    size. Pallet Town's `cp 1` (the north row = half-block row 1 = the *bottom half* of block row 0)
+    highlights truthfully as that bottom half, while the whole block row is hoverable.
+
+    **Consequences:**
+
+    - **A range is a real extent again — but it is NOT a box.** It is highlight geometry. The earlier
+      "fan out into one box per unit" is dead *as a box rule*, and so is "there is no w/h": a spot
+      carries its true extent for the highlight. What it does **not** get is its own hit target.
+    - **The LOCATION model survives, re-homed onto the block.** `flagHotspots()` →
+      `blockHotspots()`: `{blockX, blockY, spots:[{kind, ind, name, section, extent}]}`, where
+      `extent` is the spot's truthful geometry in its own unit. Kinds stay open-ended.
+    - **The unit stays a property of the STORAGE KIND** — for the *highlight*. It no longer has any
+      say over interaction, which is always the block. ⚠️ **There are THREE units, not two** — the
+      middle one is where nearly everything positional lives, and it had been mis-called a "tile" in
+      these notes. Verified against `pret/pokered`; table + proofs in
       [`../reference/map-storage-locations.md`](../reference/map-storage-locations.md) → "The units".
+
+    ❓ **OPEN — the one thing this collides with, and it needs leadership before 16f-c is built.**
+    A **uniform block hit-grid lies on top of the canvas**, and the canvas already has its own
+    click/hover contract: sprites, warps, signs and the player are **selectable and draggable**, and
+    the shipped Flag boxes layer deliberately puts its click on the **ring only** — precisely so that
+    *"clicking the sprite itself still opens its details as before"* (0.42.0-alpha changelog). A
+    block cell covering that same sprite has to answer: **who wins the click?** Candidates, not a
+    decision:
+
+    - **Layer-gated** — the block grid is only live while the *Flag boxes* layer is on; with it off,
+      the canvas behaves exactly as today. (Cheapest, and consistent with how the layer tree already
+      gates behaviour.)
+    - **Object first, block underneath** — a click on a real object does what it always did; a click
+      on the block's *empty* remainder opens the tab strip. (Preserves drag/select, but the hit
+      target stops being uniform — which is the simplicity being bought.)
+    - **Block always wins while the layer is on**, and the object's own details become **one of the
+      tabs**. (Most uniform, and arguably the truest to *"tabs so multiple storage spots on one
+      location"* — but it changes how drag-to-move is reached.)
+
+    ⚠️ **Do not pick one in code.** Dragging is the interaction most at risk, and the sprite-drag +
+    TapHandler-through-panel bugs are both already in the notes as things that bit us. Ask.
 
       | Unit | Size | What is measured in it |
       |---|---|---|

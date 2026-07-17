@@ -183,13 +183,18 @@ void TestMapLayers::gameViewLayers_existAndToggle()
     QCOMPARE(visible(r->layers, row), was);
   }
 
-  // The DEFAULTS (Twilight, 2026-07-15): EVERY Game View layer on EXCEPT the draw area -- the player,
-  // the people, the WARPS, the signs and the screen box are on; the draw area (engine scratch) is off.
+  // The DEFAULTS (Twilight, 2026-07-15, amended 2026-07-17): every Game View layer on EXCEPT the two
+  // camera boxes that ride the player. The player, the people, the WARPS and the signs are on.
+  //
+  // ⚠️ The SCREEN BOX is OFF as of 2026-07-17 ("disable camera view box by default ... the outline
+  // around the player that would be exactly the gameboy screen view"). It used to be ON, and this
+  // line used to assert exactly that -- so if you are reading this because the assert flipped, it
+  // flipped ON PURPOSE. The draw area (engine scratch) has always been off.
   QVERIFY2(r->layers->showPlayer(), "the player should be on by default");
   QVERIFY2(r->layers->showNpcs(), "the people should be on by default");
   QVERIFY2(r->layers->showWarps(), "the warps (Game View object layer) should be on by default");
   QVERIFY2(r->layers->showSigns(), "the signs should be on by default");
-  QVERIFY2(r->layers->showScreenBox(), "the screen box should be on by default");
+  QVERIFY2(!r->layers->showScreenBox(), "the screen box should be OFF by default");
   QVERIFY2(!r->layers->showDrawArea(), "the draw area should be OFF by default");
 
   // And the whole Tiles group is OFF by default -- no tile-meaning overlay stands unasked.
@@ -257,10 +262,18 @@ void TestMapLayers::solo_isALookNotAnEdit()
   const int screen = rowOf(r->layers, "screenBox");
   const int draw   = rowOf(r->layers, "drawArea");
 
-  // A deliberately lopsided setup, so "restore" has something real to restore. (The draw area is
-  // already off by default -- make sure of it rather than assuming either way.)
+  // A deliberately lopsided setup, so "restore" has something real to restore. ARRANGE it, don't
+  // inherit it: this test is about solo/un-solo, and what the defaults happen to be is
+  // gameViewLayers_defaultToTheOnesYouWant's business, not ours. (It used to just assert the screen
+  // box was on -- true until Twilight turned it off by default on 2026-07-17, at which point this
+  // failed for a reason that had nothing to do with solo. A test that leans on a default it doesn't
+  // own breaks when someone changes their mind about the UI, which they are entitled to do.)
   if (visible(r->layers, draw))
     r->layers->toggle(draw);
+  if (!visible(r->layers, screen))
+    r->layers->toggle(screen);
+  if (!visible(r->layers, player))
+    r->layers->toggle(player);
 
   QVERIFY(visible(r->layers, player));
   QVERIFY(visible(r->layers, screen));
