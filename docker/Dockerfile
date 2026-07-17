@@ -41,11 +41,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # --- Qt via aqtinstall -----------------------------------------------------
 # linux_gcc_64 is the only desktop Qt arch shipped for Linux; its prebuilt libs
 # are gcc-built but link cleanly against clang-compiled app code (both use
-# libstdc++, matching ABI). qtdeclarative (Qt Quick) + qtsvg are base
-# components; only the genuine add-on qtcharts goes in -m.
+# libstdc++, matching ABI). qtdeclarative (Qt Quick) + qtsvg are base components;
+# the genuine add-ons go in -m.
+#
+# KEEP THIS LIST == the `modules:` line in .github/workflows/tests.yml. It was
+# `-m qtcharts` alone, which was right until pse-audio arrived and pulled in Qt
+# Multimedia: every build in this image then died at configure with "Could NOT
+# find Qt6Multimedia", so `dtest.ps1 asan` -- the ONLY place AddressSanitizer
+# runs locally, since it does not work on the llvm-mingw kit -- silently stopped
+# working. That is how a heap-use-after-free in the music parser survived to CI
+# (2026-07-16). If you add a Qt module to the build, add it here too.
 ARG QT_VERSION=6.11.0
 RUN python3 -m pip install --no-cache-dir --break-system-packages aqtinstall \
-    && aqt install-qt linux desktop ${QT_VERSION} linux_gcc_64 -m qtcharts -O /opt/Qt
+    && aqt install-qt linux desktop ${QT_VERSION} linux_gcc_64 \
+       -m qtcharts qtmultimedia qtshadertools -O /opt/Qt
 
 ENV QT_ROOT=/opt/Qt/${QT_VERSION}/gcc_64
 ENV CMAKE_PREFIX_PATH=${QT_ROOT}
