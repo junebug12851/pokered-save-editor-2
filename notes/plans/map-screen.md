@@ -1726,11 +1726,24 @@ sites · **22** files with both · **41** files with coord triggers.
       script is simply a spot that appears on N locations — exactly like a shared event flag showing
       on every map it spans (the Events section already does this). The fan-out is extractor-side,
       so the UI never learns what a range is.
-    - **The unit (block vs tile) is a property of the STORAGE KIND, not of the box.** Both kinds we
-      ship today are per-tile (the 16×16 filter-flag boxes; coord tests read `wYCoord`/`wXCoord`,
-      which are walk-grid tiles). Don't hardcode the unit — a future block-scoped kind must be able
-      to say so. ❓ **Open for leadership:** which kinds she means as *block*-scoped; nothing being
-      built now needs the answer.
+    - **The unit is a property of the STORAGE KIND, not of the box** — *"use the measurement its
+      suppose to be"* (leadership, 2026-07-17). So don't hardcode one; let each kind declare it.
+      ⚠️ **And there are THREE units, not two** — the middle one is where nearly everything
+      positional actually lives, and it has been getting mis-called a "tile" in these notes. All
+      verified against `pret/pokered`; the table and the proofs are in
+      [`../reference/map-storage-locations.md`](../reference/map-storage-locations.md) → "The units".
+
+      | Unit | Size | What is measured in it |
+      |---|---|---|
+      | **Tile** | 8×8 | **tile attributes** — collision, ledges, water, counters, bookshelves, warp tiles |
+      | **Half-block** *(the walk grid)* | **16×16 = 2×2 tiles** | **`wYCoord`/`wXCoord`, and therefore: objects → their filter flags · warps · signs · hidden items/coins · script coord triggers** |
+      | **Block** | 32×32 = 4×4 tiles | the `.blk` map data, map width/height, the border block, connections |
+
+      **Consequence: nothing we box today is block-scoped, and a block-sized box would be a LIE** —
+      it is 2×2 walk squares, so it cannot tell two adjacent warps apart. The boxes already ship at
+      16×16, which is **correct**; what is wrong is only the *word* — 16×16 is a **half-block**, not
+      a tile. Rename, don't resize. Leadership's *"tile attributes would be examples of tile
+      measurements"* is **exactly right** and is the one genuinely 8×8 layer.
 - **16f-b — Data.** Out of pret via an importer, never hand-written. (⚠️ `maps.json` is data — a new
   field needs leadership's OK, per the standing "don't edit the JSON" rule.)
 - **16f-c — The tabs**, on boxes with >1 spot.

@@ -16,12 +16,24 @@ Read [`gen1-knowledge.md`](gen1-knowledge.md) first for the save offsets; this f
 | Layer | Size | What it is | Where it lives |
 |-------|------|-----------|----------------|
 | **Tile** | 8×8 px | One graphic. 96 of them (`MAP_TILESET_SIZE` = `$60`) per tileset. | The tileset's GFX |
+| **Half-block** | 2×2 tiles = 16×16 px | **The walk grid.** Not a layer of the *artwork* — a layer of the *game*. See below. | `wYCoord`/`wXCoord` |
 | **Block** | 4×4 tiles = 32×32 px | A pre-made arrangement of 16 tiles. **A map is a grid of blocks, never of tiles.** | The tileset's blockset |
 | **Tileset** | — | One GFX + one blockset + one collision list + a handful of tile ids | `data/tilesets/tileset_headers.asm` |
 
-Gameplay happens at the **tile** level (you walk in half-blocks = 2×2 tiles), but the map is *stored*
-at the **block** level. Every field below belongs to exactly one of these layers, and getting that
-wrong is what made the old Maps screen unreadable.
+The map is *stored* at the **block** level, its meanings are *attached* at the **tile** level, and
+**everything with an x/y — the player, objects, warps, signs, hidden items, script coord triggers —
+is positioned at the HALF-BLOCK level**, which is neither of the other two. Every field below belongs
+to exactly one of these, and getting that wrong is what made the old Maps screen unreadable.
+
+> ⚠️ **"Gameplay happens at the tile level" — this file used to say that, and it was sloppy.** You do
+> not walk on 8×8 tiles; you walk on **16×16 half-blocks**, and the game proves it itself:
+> `wYBlockCoord = wYCoord & 1` (`engine/gfx/tilesets.asm`) — the coord's **low bit** is *which half of
+> the block you are in*, consumed by a routine called `.adjustForYCoordWithinTileBlock`. That maths is
+> nonsense unless `wYCoord` counts half-blocks.
+>
+> **So "16×16" is a half-block, not a tile.** The map-screen boxes are 16×16 and always were correct;
+> only the vocabulary was wrong. Full unit table + proofs:
+> [`map-storage-locations.md`](map-storage-locations.md) → "The units".
 
 > ⚠️ **`wMapBackgroundTile` is a BLOCK.** The game's own name for it is a lie — pokered calls it a
 > "tile", the save editor inherited that, and it is the **block** the 3-block border ring is filled

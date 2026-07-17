@@ -79,10 +79,45 @@ each tabbed* — not one wide rectangle. **There is no `w`/`h`** (an earlier dra
 there had to be; it was wrong). A range is therefore not a new geometry at all — it is a **spot that
 lands on many locations**, the same shape as a shared event flag showing on every map it spans.
 
-⚠️ **The unit belongs to the storage KIND, not the box.** Everything we ship today is per-tile (the
-filter-flag boxes are 16×16; coord tests read `wYCoord`/`wXCoord`, which are walk-grid tiles). The
-model must let a kind declare its unit rather than assuming one. Which kinds she means as
-*block*-scoped is **open** — nothing being built now depends on it.
+⚠️ **The unit belongs to the storage KIND, not the box** — *"use the measurement its suppose to be"*
+(leadership, 2026-07-17). The model must let a kind declare its unit rather than assuming one. Which
+unit each kind actually uses is settled below, against the cartridge.
+
+## 3a. The units — there are THREE, and the middle one is where everything lives
+
+Prompted by leadership: *"arent some filter flags or coords or whatever for things in meansurement of
+blocks … things like tile attributes would be examples of tile measurements"*. Half right, and the
+half that's wrong matters — **so this got checked rather than agreed with.**
+
+| Unit | Size | What is measured in it |
+|---|---|---|
+| **Tile** | 8×8 px | **tile attributes** — collision, ledges, water, counters, bookshelves, warp tiles. ✅ leadership's instinct, exactly right |
+| **Half-block** *(the walk grid)* | **16×16 px = 2×2 tiles** | **`wYCoord`/`wXCoord` — and therefore objects (→ filter flags), warps, signs, hidden items + coins, script coord triggers** |
+| **Block** | 32×32 px = 4×4 tiles | the `.blk` map data, `wCurMapWidth`/`Height`, the border block (`wMapBackgroundTile`), connections |
+
+**The proofs, all from `pret/pokered`:**
+
+- **`wYCoord` counts HALF-blocks, and the game says so itself** — `engine/gfx/tilesets.asm`:
+  ```asm
+  ld a, [wYCoord]
+  and $1                  ; <- the LOW BIT of the coord ...
+  ld [wYBlockCoord], a    ; <- ... IS "which half of the block am I in"
+  ```
+  and the consumer is literally named **`.adjustForYCoordWithinTileBlock`** (`home/overworld.asm`).
+  If `wYCoord` were a block coord, `& 1` would be meaningless. A block is **2×2** of these.
+- **Warps ride the player's grid** — `CheckWarpsNoCollision` does `ld a, [wYCoord]` → `ld d, a`, and
+  `CheckWarpsNoCollisionLoop` compares the warp's stored Y directly against `d`. Same unit, no
+  conversion.
+- **Objects and signs, same grid** — `macros/maps.asm`: `object_event` emits `db \2 + 4` / `db \1 + 4`
+  (the +4 sprite bias, same grid), `bg_event` emits `db \2, \1, \3`, `warp_event` emits
+  `db \2, \1, \4 - 1, \3`.
+
+⭐ **So NOTHING we box is block-scoped, and a block-sized box would be a lie:** it spans 2×2 walk
+squares and therefore cannot tell two adjacent warps apart. **The 16×16 boxes already shipping are
+correct — the word was wrong, not the size.** 16×16 is a **half-block**; it is not a tile (8×8) and
+not a block (32×32). ⚠️ This file and `tiles.md` have both been calling the walk grid "tile level"
+(`tiles.md`: *"Gameplay happens at the tile level (you walk in half-blocks = 2×2 tiles)"* — the
+parenthesis contradicts the sentence). **Rename, don't resize.**
 
 **The worked example** (`scripts/PalletTown.asm`) — Oak pulling you out of the grass, and the best
 single argument for the tabs, because one step writes **three kinds** of storage:
