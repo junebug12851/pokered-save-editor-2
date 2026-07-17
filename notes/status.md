@@ -289,10 +289,16 @@ objects). So the fix is **disambiguation, not deletion**:
 - **Defaults (Twilight):** every **Game View** layer ON except **Draw area** (player, people, warps,
   signs, screen box); every **Tiles** overlay OFF. Warps show by default as the Game View **object**
   layer (now ON by default — it used to be off only because the warp tile-trait was standing in for it).
-  - ⚠️ **AMENDED 2026-07-17 (`0.42.1-alpha`): the Screen box is OFF by default too** — *"disable
-    camera view box by default … the outline around the player that would be exactly the gameboy
-    screen view"*. So **both** player-riding boxes (Screen box + Draw area) now start off; the map
-    opens on the map and its cast, not two rectangles trailing him. Pinned by `tst_map_layers` 12/12.
+  - ⚠️ **AMENDED 2026-07-17 (`0.42.1-alpha`): the Screen box is OFF by default** — *"disable camera
+    view box by default … the outline around the player that would be exactly the gameboy screen
+    view"*. The map now opens without an outline trailing the player. **Exactly one bit changed
+    (`ViewScreenBox`)** — the **Draw area was already off and was NOT touched** (Twilight's own
+    earlier call, `3a22f84`; it has never been in the default mask). Pinned by `tst_map_layers` 12/12.
+    - 🐺 **A wording bug worth remembering:** the first cut of this said *"both player-riding boxes
+      now start off"* — true about the **state**, false about the **change**, and it read as though a
+      second layer had been disabled unasked. Twilight caught it. **When describing an edit, describe
+      what the edit DID, not what the world now looks like** — the two diverge exactly when something
+      was already in the desired state, which is precisely when a false claim is most alarming.
 
 ⚠️ **History note:** an intermediate commit (`0.40.2`) briefly *removed* the warp tile-trait; Twilight
 corrected that ("it has to come back") once the two-warps distinction was clear. It's back.

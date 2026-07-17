@@ -8,6 +8,34 @@ has a deeper home, it's cross-referenced.
 
 ---
 
+## 📣 Describe what the EDIT DID — not what the world now looks like (2026-07-17)
+
+She asked for one thing: *"disable camera view box by default … the outline around the player that
+would be exactly the gameboy screen view."* Exactly one bit changed (`ViewScreenBox`). But the comment,
+the test, the changelog and the chat reply all said:
+
+> ~~"So **both** camera-ish boxes that ride the player (Screen box and Draw area) now start off"~~
+
+**True about the state. False about the change.** The Draw area had been off since `3a22f84` — *her*
+decision — and was never touched. She read it as a second layer being switched off unasked, and asked
+the obvious question: *"i dont know what other thing you disabled … earlier you said you didnt disable
+it. Did you forget you did that?"* It also flatly contradicted what I'd told her earlier **in the same
+session**, which is worse than being wrong once: it makes the true statement look unreliable too.
+
+**The rule:** when reporting an edit, say **what the edit did**. State-of-the-world summaries ("X and Y
+are now off") silently absorb things you didn't touch — and they diverge from the truth *exactly* when
+something was already in the desired state, which is the moment a false claim is most alarming, because
+it reads as unrequested scope. That is a live fear here, and a well-earned one: **"don't build what
+Twilight hasn't briefed"** is a standing rule, so prose that invents extra scope undermines the thing
+she most needs to be able to trust. If the state is worth mentioning, mark it plainly:
+*"X is now off; Y was already off and wasn't touched."*
+
+**Applies everywhere** — commit messages, changelog, comments, notes, chat. The **commit message** is
+the worst place for it: `git log` gets read years later by someone reconstructing *who changed what*,
+and a state-summary there is indistinguishable from a claim of authorship.
+
+---
+
 ## Who Twilight is
 
 - **Goes by Twilight.** She formerly used "June" / "June Hanabi"; do **not** use those (removed from the

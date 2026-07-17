@@ -245,11 +245,15 @@ private:
   // objects, Warps, Signs, Screen box), and **every Tiles-group overlay OFF**. Guides keep the block
   // grid, map bounds and connections on. So: add ViewWarps; Draw area and the tile grid stay off.
   //
-  // UPDATED (Twilight, 2026-07-17): **Screen box is OFF by default too** -- "disable camera view box
+  // UPDATED (Twilight, 2026-07-17): **the Screen box is OFF by default** -- "disable camera view box
   // by default", clarified as "the outline around the player that would be exactly the gameboy screen
-  // view". So BOTH camera-ish boxes that ride the player (Screen box and Draw area) now start off,
-  // and the map opens showing the map and its cast instead of two rectangles trailing him around.
-  // Still one click away in the Layers panel when you want to see what the console is displaying.
+  // view". So the map opens on the map and its cast, without an outline trailing the player. Still one
+  // click away in the Layers panel when you want to see what the console is actually displaying.
+  //
+  // ⚠️ ONE bit changed here: ViewScreenBox. The **Draw area was already off** and was NOT touched --
+  // it has never been in this mask (Twilight turned it off in 3a22f84, "draw area off by default").
+  // Saying "both boxes are now off" would be true about the STATE and a lie about the CHANGE; that
+  // wording shipped in the first cut of this comment and had to be corrected. State != action.
   int bits = ViewBlockGrid | ViewMapBounds | ViewConnections
            | ViewPlayer | ViewNpcs | ViewWarps | ViewSigns;
   qreal opacity = 1.0;
