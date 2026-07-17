@@ -113,10 +113,53 @@ index (the two Route 22 rivals = missable 34/35) + object coords (tiles). So the
 than reinvent them (Phase 9 cross-checks against `missables.json`/`maps.json`). No edits to these JSONs
 without leadership sign-off.
 
-**Phase 8 — UI design, then build.** Events are **NOT a separate panel** (correction, leadership
-2026-07-15) — they **expand the existing persistent-storage panel** (`MapStoragePanel.qml`, the right
-dock ▣, built Phase 15 of the map screen), **alongside** its current sections (Vermilion Gym · Cinnabar
-Gym · Safari Zone). So the design is an **expansion of persistent storage**: add the event-flag content
+### Phase 8 — THE DESIGN (for leadership review; no QML until approved)
+
+Events are **NOT a separate panel** — they are the **4th section of each map page** in the existing
+persistent-storage panel (`MapStoragePanel.qml`, right dock ▣). That panel is already a **per-map view
+over global save state**, and every page reads top-to-bottom:
+
+1. the map's **Script** (`world.scripts`) → 2. its **minigame bytes** (`world.local`) → 3. its **Filter
+Flags** (`world.missables`) → **4. its EVENT FLAGS (`world.events`) — NEW.**
+
+It fits the panel's existing logic exactly: "everything the save stores about one specific place."
+`world.events` is **already resolved** in the panel (line ~84) but today is only *read* to show a linked
+flag's ON/off beside a Filter Flag — there is no events section yet.
+
+**Where each flag goes.** `EventDBEntry::deepLink()` already back-links every event into
+`MapDBEntry::toEvents`, so **`map.toEvents` is the section's model** — no new plumbing. Flags with a
+curated map land on that map's page (529 associations, preserved verbatim).
+
+**Structure of the section** (one map page):
+
+- **Search/filter** field — a map can carry dozens; the whole space is 2,560.
+- **Groups**, from the dossier `group` (e.g. *"Cerulean Gym — trainers"*, *"Celadon City — items"*,
+  *"<Map> — story"*), each a collapsible titled group with a **group toggle** (tri-state: all on / all
+  off / mixed). This is leadership's "toggled in groups… have group toggles".
+- **A flag row** = a `MapSwitch` + friendly **name** + its researched **description** + **badges** for
+  classification (*temporary · unused · block-swept · multi-map · vestigial*), and the per-flag
+  **caution** line where the dossier has one (progression / range-sequence / temporary).
+- **Placeholder Flags group at the BOTTOM, collapsed by default** — the map's reserved/unused bits
+  (`Placeholder Flag #<hex>`). Noise for normal use, but still **fully editable**: every value the save
+  can hold stays reachable (hack values included, shown never rewritten).
+- **NO conflict UI** — Phase 11 is shelved; nothing about conflicts renders.
+- **Bulk caution** on a group toggle that sets a large swath: *"puts the save in a state no real
+  playthrough can reach — unpredictable and unverified."* **Never "this crashes"** (the console did not
+  reproduce it; Phase 4).
+
+**The un-mapped 2,031** (empty `maps[]`, overwhelmingly placeholders) get a **General** page in the map
+combo — and since leadership said *"if the general group gets too big, break it into multiple non-map
+groups"*, **it is too big**, so General is **split by the flag's pret region** (Silph Co., Mt. Moon,
+S.S. Anne, …) as its groups. Those regions are allocation blocks, not maps — which is exactly why they
+belong here rather than being forced onto a map page.
+
+**Open for leadership:** (a) does the events section sit *below* Filter Flags, or above? (b) should the
+General page be one page with region groups, or one page per region? (c) default state of the groups —
+all collapsed, or story-groups open and Placeholders collapsed (my lean)?
+
+### (Superseded wording, kept for context)
+
+The design is an **expansion of persistent storage**: add the event-flag content
 (per-map grouping, flag groups + group toggles, search/filter, classification badges — with a
 **Placeholder Flags** group at the bottom of each map — and the per-flag softlock cautions).
 **No conflict UI** — the conflicting-flags system is **shelved** (Phase 11); nothing about conflicts

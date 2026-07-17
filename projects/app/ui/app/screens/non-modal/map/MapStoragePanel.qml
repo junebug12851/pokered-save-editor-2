@@ -29,9 +29,11 @@
  *   3. **The map's FILTER FLAGS** (Twilight's term; pret/the game call them "missables") -- its
  *      hide/show object bits (`wToggleableObjectFlags`, 32 bytes at save 0x2852, `world.missables`;
  *      bit SET = HIDDEN). Each a Shown switch with a description,
- *      pret's known-issue oddities flagged amber, and the linked event flags surfaced live (the
- *      conflict hooks: a flag that says "done" beside an object that says otherwise is exactly the
- *      kind of combination the conflicts system watches).
+ *      pret's known-issue oddities flagged amber, and the linked event flags surfaced live -- read-only
+ *      context, so you can see at a glance when a flag says "done" beside an object that says otherwise.
+ *      (That pairing was once meant to feed a conflicting-flags system; that system is SHELVED --
+ *      2026-07-16, see notes/decisions/rejected.md -- so this is informational only and nothing here
+ *      judges a combination as a conflict.)
  *
  * Everything full-range, hack values shown and never silently rewritten.
  * Reference: notes/reference/map-scripts-missables.md.
