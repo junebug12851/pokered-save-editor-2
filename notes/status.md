@@ -51,6 +51,23 @@ model-reset binding trap (caught twice by the screenshot review). Everything:
 
 ## Current state (read this first)
 
+### 🧭 THE AUTOPILOT'S PROGRESSION LAYER — "progress normally when asked", 16/16 (2026-07-16)
+
+Same-day follow-on brief, delivered in full: **natural drop-in is the default** (`emu_goto` boots
+ONE MAP OUT and walks in for real — `wLastMap` and the entry state authored by the walk; verified:
+Mt Moon entered from Route 4), the **Saffron guards** are handled (`wStatusFlags1` bit 6, set +
+reported when a gate is on the route), **elevators are ridden** (car door warps re-aimed live —
+the floor menu's own technique; Celadon Mart 1F→5F), **Surf works by poke** (⭐ research finding:
+`wWalkBikeSurfState`=2 before stepping onto water — Pallet→Route 21 crossed), **cut trees are
+cleared** (our own `cutTreeBlocks` block+screen poke; Vermilion Gym's mandatory tree), **spinner
+mazes avoided + slides settled** (coords imported from pret's scripts; across Rocket Hideout B2F),
+**bike auto-provisioned** (Route 16→17), and **`emu_battle('sweep')` wins on request** — Brock
+beaten on demand (flag cleared live, talked, swept). New levers: `emu_set_flag` / `emu_give_item` /
+`emu_move_sprite`. Every intervention reported (`prep`/events), every one opt-out. Two more traps
+now structural: **coords update at step START** (`wWalkCounter`==0 is the real step-over signal)
+and **BaseSAV's progression hides mechanisms** (reset what you test). `probe_autopilot.py` **16/16**.
+Docs: [`reference/dev-mcp.md`](reference/dev-mcp.md) → "The progression layer".
+
 ### 🧭 THE DEV AUTOPILOT — pathfinding + auto-navigation over MCP, briefed + built + 7/7 (2026-07-16)
 
 Twilight briefed "describe the destination and the server takes you there" — and the rest of

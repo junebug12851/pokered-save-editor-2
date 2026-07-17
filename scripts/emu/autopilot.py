@@ -13,7 +13,14 @@ probe) are validated live by probe_autopilot.py before anything relies on them.
 """
 from __future__ import annotations
 
-from navigate import DIRS, World, astar, route
+import json
+from pathlib import Path
+
+from navigate import (DIRS, ELEVATORS, SAFFRON_GATES, World, astar, distances,
+                      route)
+
+REPO = Path(__file__).resolve().parents[2]
+CANON_FLAGS = REPO / "tmp" / "event-flags" / "event_flags_canonical.json"
 
 # ------------------------------------------------------------------ WRAM map
 W_MAP, W_H, W_W = 0xD35E, 0xD368, 0xD369
@@ -21,11 +28,26 @@ W_Y, W_X = 0xD361, 0xD362
 W_BATTLE = 0xD057            # wIsInBattle: 0 no, 1 wild, 2 trainer
 W_LASTMAP = 0xD365           # wLastMap (save 0x2611 + 0xAD54)
 W_FONT = 0xCFC4              # wFontLoaded bit 0 = a text box is up
+W_WALK_COUNTER = 0xCFC5      # wWalkCounter — nonzero while a step is IN FLIGHT
+#   ⚠️ wXCoord/wYCoord update at step START (AdvancePlayerSprite), not at
+#   completion — reading coords alone says "arrived" while the glide is still
+#   running, and a button down at the glide boundary CHAINS a second step.
+#   wWalkCounter == 0 is the console's own "the step is over".
 W_MENU = 0xCC26              # wCurrentMenuItem
 W_JOY_IGNORE = 0xCD6B        # nonzero = the game holds the controls (cutscene)
 W_GRASS_TILE = 0xD535        # wGrassTile (validated live by the probe)
 W_ENEMY_SPECIES = 0xCFE5     # wEnemyMonSpecies (internal index)
+W_ENEMY_HP = 0xCFE6          # wEnemyMonHP (2 bytes, BIG-endian)
 W_ENEMY_LEVEL = 0xCFF3       # wEnemyMonLevel
+W_STATUS1 = 0xD728           # wStatusFlags1; bit 6 = BIT_GAVE_SAFFRON_GUARDS_DRINK
+BIT_GUARD_DRINK = 6          # (pret scripts/Route5Gate.asm)
+W_EVENT_FLAGS = 0xD747       # wEventFlags (2560 bits; save 0x29F3 + 0xAD54)
+W_BAG_COUNT = 0xD31C         # wNumBagItems; entries follow, 0xFF-terminated
+W_BAG_ITEMS = 0xD31D
+W_BIKESURF = 0xD700          # wWalkBikeSurfState: 0 walk, 1 bike, 2 surf
+W_NUM_WARPS = 0xD3AF - 1     # wNumberOfWarps 0xD3AE
+W_WARP_ENTRIES = 0xD3AF      # y, x, destWarpID, destMap per entry
+ITEM_BICYCLE = 0x06          # pret constants/item_constants.asm
 SPR1, SPR2 = 0xC100, 0xC200  # wSpriteStateData1/2 (16 slots x 16 bytes)
 FACING_NAME = {0x0: "down", 0x4: "up", 0x8: "left", 0xC: "right"}
 FACE_VAL = {v: k for k, v in FACING_NAME.items()}
@@ -96,6 +118,127 @@ def snapshot(pb) -> dict:
             "text_box": font_up(m), "on_overworld": on_overworld(pb)}
 
 
+_FLAG_INDEX: dict | None = None
+
+
+def flag_index(name_or_idx) -> int:
+    """pret EVENT_* name -> bit index (the canonical import), or a raw index."""
+    global _FLAG_INDEX
+    if isinstance(name_or_idx, int) or str(name_or_idx).isdigit():
+        return int(name_or_idx)
+    if _FLAG_INDEX is None:
+        _FLAG_INDEX = {r["name"]: r["index"]
+                       for r in json.loads(CANON_FLAGS.read_text(encoding="utf-8"))
+                       if r.get("name")} if CANON_FLAGS.exists() else {}
+    if name_or_idx not in _FLAG_INDEX:
+        raise KeyError(f"unknown event flag {name_or_idx!r}")
+    return _FLAG_INDEX[name_or_idx]
+
+
+def set_event_flag(pb, name_or_idx, on: bool = True) -> dict:
+    """Set/clear one wEventFlags bit in LIVE WRAM (dev tooling — reported,
+    never silent)."""
+    idx = flag_index(name_or_idx)
+    addr = W_EVENT_FLAGS + idx // 8
+    m = pb.memory
+    before = m[addr]
+    m[addr] = (before | (1 << (idx % 8))) if on \
+        else (before & ~(1 << (idx % 8)) & 0xFF)
+    return {"flag": str(name_or_idx), "index": idx, "on": on,
+            "byte_before": before, "byte_after": m[addr]}
+
+
+def set_guard_drink(pb) -> dict:
+    """wStatusFlags1 bit 6 = BIT_GAVE_SAFFRON_GUARDS_DRINK — the thirsty
+    Saffron gate guards step aside."""
+    m = pb.memory
+    before = m[W_STATUS1]
+    m[W_STATUS1] = before | (1 << BIT_GUARD_DRINK)
+    return {"guard_drink": True, "was_set": bool(before & (1 << BIT_GUARD_DRINK))}
+
+
+def give_item(pb, item_id: int, qty: int = 1) -> dict:
+    """Put an item in the LIVE bag (bump qty if present; append + re-terminate
+    if not; 20-slot cap honored)."""
+    m = pb.memory
+    n = m[W_BAG_COUNT]
+    for i in range(min(n, 20)):
+        if m[W_BAG_ITEMS + 2 * i] == item_id:
+            m[W_BAG_ITEMS + 2 * i + 1] = min(99, m[W_BAG_ITEMS + 2 * i + 1] + qty)
+            return {"item": item_id, "qty": m[W_BAG_ITEMS + 2 * i + 1],
+                    "slot": i, "added": False}
+    if n >= 20:
+        return {"error": "bag full"}
+    m[W_BAG_ITEMS + 2 * n] = item_id
+    m[W_BAG_ITEMS + 2 * n + 1] = min(99, qty)
+    m[W_BAG_ITEMS + 2 * n + 2] = 0xFF
+    m[W_BAG_COUNT] = n + 1
+    return {"item": item_id, "qty": qty, "slot": n, "added": True}
+
+
+def move_sprite(pb, slot: int, x: int, y: int) -> dict:
+    """Relocate an NPC/boulder sprite in LIVE WRAM (StateData2 map coords,
+    stored +4). The Strength-boulder lever: put a rock where it's needed —
+    reported, never silent."""
+    m = pb.memory
+    if not 1 <= slot <= 15 or m[SPR1 + slot * 16] == 0:
+        return {"error": f"sprite slot {slot} is empty"}
+    before = npc_square(m, slot)
+    m[SPR2 + slot * 16 + 4] = (y + 4) & 0xFF
+    m[SPR2 + slot * 16 + 5] = (x + 4) & 0xFF
+    return {"slot": slot, "from": list(before), "to": [x, y]}
+
+
+def _screen_anchor_ok(pb, grid) -> bool:
+    """The player's square renders at screen tiles (8..9, 8..9); his FEET tile
+    is wTileMap[9*20+8]. Verified against our own grid before any tile poke."""
+    m = pb.memory
+    px, py = pos(m)
+    if not (px < grid.w2 and py < grid.h2):
+        return False
+    return m[0xC3A0 + 9 * 20 + 8] == grid.feet[py][px]
+
+
+def clear_tree(pb, grid, sq) -> dict:
+    """CUT, without the ceremony: replace the tree's whole block with its cutTo
+    block (our own imported cutTreeBlocks data) in the live block buffer, and
+    re-tile the on-screen part of that block so collision (which reads the
+    screen buffer) agrees. Reported, never silent."""
+    tx, ty = sq
+    cut_to = grid.cuttable.get((tx, ty))
+    if cut_to is None:
+        return {"error": f"square {sq} is not a cuttable tree"}
+    m = pb.memory
+    w_blocks = grid.entry["width"]
+    bx, by = tx // 2, ty // 2
+    m[0xC6E8 + (by + 3) * (w_blocks + 6) + (bx + 3)] = cut_to
+    tiles_poked = 0
+    if _screen_anchor_ok(pb, grid):
+        px, py = pos(m)
+        for qy in (by * 2, by * 2 + 1):          # the block's four squares
+            for qx in (bx * 2, bx * 2 + 1):
+                sx, sy = 8 + 2 * (qx - px), 8 + 2 * (qy - py)
+                if not (0 <= sx <= 18 and 0 <= sy <= 16):
+                    continue
+                r, c = (qy % 2) * 2, (qx % 2) * 2
+                for i in (0, 1):
+                    for j in (0, 1):
+                        m[0xC3A0 + (sy + i) * 20 + (sx + j)] = \
+                            grid.bst[cut_to * 16 + (r + i) * 4 + (c + j)]
+                        tiles_poked += 1
+    # our own grid must agree with what the console now holds
+    for qy in (by * 2, by * 2 + 1):
+        for qx in (bx * 2, bx * 2 + 1):
+            if 0 <= qx < grid.w2 and 0 <= qy < grid.h2:
+                tile = grid.bst[cut_to * 16
+                                + ((qy % 2) * 2 + 1) * 4 + (qx % 2) * 2]
+                grid.feet[qy][qx] = tile
+                grid.block[qy][qx] = cut_to
+                grid.passable[qy][qx] = True
+                grid.cuttable.pop((qx, qy), None)
+    return {"cut": [tx, ty], "block_to": cut_to, "screen_tiles": tiles_poked}
+
+
 def dismiss(pb, max_presses: int = 40) -> dict:
     """Clear text boxes: B (never selects / never buys / declines learning a
     move), with an A every 4th press for boxes that only advance on A. Stops
@@ -120,19 +263,31 @@ def step(pb, d: str, jump: bool = False) -> dict:
     m = pb.memory
     map0, p0 = m[W_MAP], pos(m)
     if m[W_JOY_IGNORE]:
-        for _ in range(240):                       # bounded wait for release
+        # a spinner slide chains arrows for a long time — wait it out as long
+        # as the player keeps MOVING; only a frozen hold is a real cutscene
+        frozen, last = 0, pos(m)
+        for _ in range(2400):
             pb.tick()
             if not m[W_JOY_IGNORE]:
                 break
+            if pos(m) != last:
+                last, frozen = pos(m), 0
+            else:
+                frozen += 1
+                if frozen >= 600:
+                    return {"event": "held"}
         if m[W_JOY_IGNORE]:
             return {"event": "held"}
-    # Turn first, then a SHORT press. A square is 16 frames; a hold longer than
-    # that starts a SECOND step before release — on a connection edge row that
-    # second step walks clean off the map (found by the hunt probe, 2026-07-16).
+        p0 = pos(m)
+    # Turn first, then a SHORT press. A square glides 16 frames and a button
+    # still down at the glide boundary CHAINS a second step (found twice: the
+    # hunt probe walked off a connection edge; the Route 4 cave approach
+    # coasted past its goal AFTER walk_to returned) — so the press is 8 frames
+    # and the settle below waits out wWalkCounter, the console's own signal.
     if facing(m) != d:
         pb.button(d, delay=3)
         _tick(pb, 10)
-    pb.button(d, delay=12)
+    pb.button(d, delay=8)
     budget = 110 if jump else 70
     moved = None
     for _ in range(budget):
@@ -148,17 +303,20 @@ def step(pb, d: str, jump: bool = False) -> dict:
         if font_up(m):
             return {"event": "text"}
         return {"event": "blocked"}
-    # settle: coords stable 10 frames (a ledge hop lands 2 squares out)
+    # settle: the step is over when the console says so — wWalkCounter == 0
+    # (coords flip at step START; see the constant's warning) — and coords hold
+    # still with the controls free. The long budget is for FORCED MOVEMENT —
+    # a spinner/arrow tile slides the player many squares; follow it to rest.
     stable = 0
-    for _ in range(60):
+    for _ in range(900):
         pb.tick()
         if m[W_BATTLE] != 0:
             return {"event": "battle", "battle": m[W_BATTLE]}
         if m[W_MAP] != map0:
             return {"event": "map", "map": m[W_MAP]}
-        if pos(m) == moved:
+        if pos(m) == moved and m[W_WALK_COUNTER] == 0:
             stable += 1
-            if stable >= 10:
+            if stable >= 8 and not m[W_JOY_IGNORE]:
                 break
         else:
             moved = pos(m)
@@ -174,12 +332,13 @@ def _handle_battle(pb, kind: int, on_battle: str, on_trainer: str) -> dict:
     if policy == "run" and kind != 2:
         r = battle_run(pb)
         return {"resume": r.get("ok", False), "battle_result": r}
-    r = battle_mash(pb)
+    r = battle_sweep(pb) if policy == "sweep" else battle_mash(pb)
     return {"resume": r.get("ok", False), "battle_result": r}
 
 
 def walk_to(pb, x: int, y: int, on_battle: str = "run", on_trainer: str = "stop",
-            max_steps: int = 800, stop_at_warp: bool = False) -> dict:
+            max_steps: int = 800, stop_at_warp: bool = False,
+            surf: bool = False, cut: bool = False) -> dict:
     """In-map A* walk with live re-planning. Warp squares are BLOCKED unless they
     are the goal (walking over a door/ladder would teleport you); wandering NPCs
     are soft collision — bounded retries, then re-plan around their live squares.
@@ -219,18 +378,32 @@ def walk_to(pb, x: int, y: int, on_battle: str = "run", on_trainer: str = "stop"
         warp_sqs = {(wp["x"], wp["y"]) for wp in entry.get("warpOut") or []}
         blocked = frozenset(set(npc_squares(m)) | temp_blocked
                             | (warp_sqs - {goal}))
-        plan = astar(grid, cur, goal, blocked)
+        plan = astar(grid, cur, goal, blocked, surf=surf, cut=cut)
         if plan is None and temp_blocked:
             temp_blocked.clear()                    # a stale block may be the wall
             plan = astar(grid, cur, goal,
-                         frozenset(set(npc_squares(m)) | (warp_sqs - {goal})))
+                         frozenset(set(npc_squares(m)) | (warp_sqs - {goal})),
+                         surf=surf, cut=cut)
         if plan is None:
             return {"ok": False, "reason": "no path", **snapshot(pb),
                     "events": events}
         replan = False
         for st in plan:
+            tgt = tuple(st["to"])
+            if cut and tgt in grid.cuttable:
+                events.append(clear_tree(pb, grid, tgt))     # CUT, reported
+            ty_, tx_ = tgt[1], tgt[0]
+            if surf and tx_ < grid.w2 and ty_ < grid.h2 \
+                    and grid.water[ty_][tx_] and m[W_BIKESURF] != 2:
+                m[W_BIKESURF] = 2                            # mount, reported
+                events.append({"surfed": True, "at": list(pos(m))})
             r = step(pb, st["dir"], st.get("jump", False))
             steps_done += 1
+            if m[W_BIKESURF] == 2 and r.get("event") == "moved":
+                lx, ly = r["pos"]
+                if lx < grid.w2 and ly < grid.h2 and not grid.water[ly][lx]:
+                    m[W_BIKESURF] = 0                        # ashore — dismount
+                    events.append({"dismounted": True, "at": [lx, ly]})
             ev = r["event"]
             if ev == "moved":
                 if tuple(r["pos"]) != tuple(st["to"]):
@@ -330,40 +503,133 @@ def _fire_warp(pb, at: tuple[int, int], to_map: int) -> bool:
     return m[W_MAP] == to_map
 
 
+_CYCLING: set | None = None
+
+
+def _cycling_maps(w: World) -> set:
+    """Routes 16-18 + their gates — the maps whose guard wants a BICYCLE."""
+    global _CYCLING
+    if _CYCLING is None:
+        _CYCLING = set()
+        for name in ("Route 16", "Route 17", "Route 18",
+                     "Route 16 Gate 1F", "Route 16 Gate 2F",
+                     "Route 18 Gate 1F", "Route 18 Gate 2F",
+                     "Route 16 Gate", "Route 18 Gate"):
+            try:
+                _CYCLING.add(w.resolve(name)["ind"])
+            except KeyError:
+                continue
+    return _CYCLING
+
+
+def _ride_elevator(pb, leg) -> bool:
+    """Ride: re-aim the car's own door-warp entries at the chosen floor in live
+    WRAM (what the floor-menu script itself does), then step out the door."""
+    m = pb.memory
+    doors = {(dq[0], dq[1]) for dq in leg["doors"]}
+    hit = False
+    for i in range(m[W_NUM_WARPS]):
+        ey = m[W_WARP_ENTRIES + 4 * i]
+        ex = m[W_WARP_ENTRIES + 4 * i + 1]
+        if (ex, ey) in doors:
+            m[W_WARP_ENTRIES + 4 * i + 2] = leg["dest_warp"]
+            m[W_WARP_ENTRIES + 4 * i + 3] = leg["to_map"]
+            hit = True
+    if not hit:
+        return False
+    door = min(doors, key=lambda dq: abs(dq[0] - pos(m)[0])
+               + abs(dq[1] - pos(m)[1]))
+    r = walk_to(pb, *door, stop_at_warp=True, max_steps=60)
+    if m[W_MAP] == leg["map"]:
+        if not r["ok"] and r.get("reason") != "map transition":
+            return False
+        _fire_warp(pb, door, leg["to_map"])
+    return m[W_MAP] == leg["to_map"]
+
+
 def goto(pb, dst, dst_x: int = -1, dst_y: int = -1, on_battle: str = "run",
-         on_trainer: str = "stop", max_replans: int = 4) -> dict:
-    """CROSS-MAP navigation: plan (warps + connections + walks), execute leg by
-    leg, verify every transition against wCurMap, re-plan on surprises."""
+         on_trainer: str = "stop", max_replans: int = 4,
+         unblock: bool = True, bike: bool = True,
+         surf: str = "auto", cut: str = "auto") -> dict:
+    """CROSS-MAP navigation: plan (warps + connections + elevators + walks),
+    execute leg by leg, verify every transition against wCurMap, re-plan on
+    surprises. Progression aids, all REPORTED in `prep`, all opt-out:
+      unblock  — Saffron gate on the route -> set the guard-drink bit
+      bike     — Cycling Road on the route -> a BICYCLE appears in the bag
+      surf/cut — 'auto' plans dry first and only opens water / cuttable trees
+                 when no dry route exists ('always' / 'never' to force)."""
     m = pb.memory
     w = world()
     entry = w.resolve(dst)
     dst_ind = entry["ind"]
     dst_pos = (dst_x, dst_y) if dst_x >= 0 and dst_y >= 0 else None
     trail = []
+    prep = []
     bad_warps: set = set()                  # (map, (x,y)) that refused to open
+    use_surf = surf == "always"
+    use_cut = cut == "always"
     for _ in range(max_replans):
         if m[W_MAP] == dst_ind and (dst_pos is None or pos(m) == dst_pos):
-            return {"ok": True, "trail": trail, **snapshot(pb)}
+            return {"ok": True, "trail": trail, "prep": prep, **snapshot(pb)}
         legs = route(w, m[W_MAP], pos(m), dst_ind, dst_pos,
-                     last_map=m[W_LASTMAP], avoid_warps=bad_warps)
+                     last_map=m[W_LASTMAP], avoid_warps=bad_warps,
+                     surf=use_surf, cut=use_cut)
+        if legs is None and cut == "auto" and not use_cut:
+            use_cut = True                  # no dry route — try the smaller
+            legs = route(w, m[W_MAP], pos(m), dst_ind, dst_pos,   # intervention
+                         last_map=m[W_LASTMAP], avoid_warps=bad_warps,
+                         surf=use_surf, cut=True)                 # (cut) first
+            if legs is not None:
+                prep.append({"cut": "trees on the only route — will clear them"})
+        if legs is None and surf == "auto" and not use_surf:
+            use_surf = True                 # still nothing — open the water
+            legs = route(w, m[W_MAP], pos(m), dst_ind, dst_pos,
+                         last_map=m[W_LASTMAP], avoid_warps=bad_warps,
+                         surf=True, cut=use_cut)
+            if legs is not None:
+                prep.append({"surf": "no dry route — water opened"})
         if legs is None:
             return {"ok": False, "reason": "no route", "trail": trail,
-                    **snapshot(pb)}
+                    "prep": prep, **snapshot(pb)}
+        touched = {leg["map"] for leg in legs} \
+            | {leg.get("to_map") for leg in legs if leg.get("to_map") is not None}
+        if unblock and touched & SAFFRON_GATES \
+                and not (m[W_STATUS1] & (1 << BIT_GUARD_DRINK)):
+            set_guard_drink(pb)
+            prep.append({"guard_drink": "Saffron gate on the route — "
+                                        "the guard steps aside"})
+        if bike and touched & _cycling_maps(w):
+            r = give_item(pb, ITEM_BICYCLE)
+            if r.get("added"):
+                prep.append({"bicycle": "Cycling Road on the route — "
+                                        "a BICYCLE is in the bag"})
         ok = True
         for leg in legs:
             if m[W_MAP] != leg["map"]:
                 ok = False                          # world moved under us — replan
                 break
+            if leg["type"] == "elevator":
+                rode = _ride_elevator(pb, leg)
+                if rode:
+                    _settle_arrival(pb, leg["to_map"])
+                trail.append({"leg": "elevator", "to_map": leg["to_map"],
+                              "ok": rode})
+                if not rode:
+                    ok = False
+                    break
+                continue
             if leg["type"] == "walk":
                 r = walk_to(pb, *leg["to"], on_battle=on_battle,
-                            on_trainer=on_trainer)
-                trail.append({"leg": "walk", "to": leg["to"], "ok": r["ok"]})
+                            on_trainer=on_trainer, surf=use_surf, cut=use_cut)
+                trail.append({"leg": "walk", "to": leg["to"], "ok": r["ok"],
+                              **({"events": r["events"]} if r.get("events") else {})})
                 if not r["ok"]:
                     return {"ok": False, "reason": r.get("reason"),
-                            "trail": trail, **snapshot(pb)}
+                            "trail": trail, "prep": prep, **snapshot(pb)}
             elif leg["type"] == "warp":
                 r = walk_to(pb, *leg["at"], on_battle=on_battle,
-                            on_trainer=on_trainer, stop_at_warp=True)
+                            on_trainer=on_trainer, stop_at_warp=True,
+                            surf=use_surf, cut=use_cut)
                 if not r["ok"] and r.get("reason") != "map transition":
                     trail.append({"leg": "warp", "at": leg["at"], "ok": False,
                                   "why": r.get("reason")})
@@ -372,7 +638,7 @@ def goto(pb, dst, dst_x: int = -1, dst_y: int = -1, on_battle: str = "run",
                         ok = False          # re-plan around this doorway
                         break
                     return {"ok": False, "reason": r.get("reason"),
-                            "trail": trail, **snapshot(pb)}
+                            "trail": trail, "prep": prep, **snapshot(pb)}
                 if m[W_MAP] == leg["map"]:          # on the mat, not yet warped
                     if not _fire_warp(pb, tuple(leg["at"]), leg["to_map"]):
                         trail.append({"leg": "warp", "at": leg["at"],
@@ -393,7 +659,8 @@ def goto(pb, dst, dst_x: int = -1, dst_y: int = -1, on_battle: str = "run",
                 crossed = False
                 for col in cols[:3]:
                     r = walk_to(pb, *col, on_battle=on_battle,
-                                on_trainer=on_trainer)
+                                on_trainer=on_trainer,
+                                surf=use_surf, cut=use_cut)
                     if not r["ok"]:
                         continue
                     for _ in range(3):
@@ -416,13 +683,13 @@ def goto(pb, dst, dst_x: int = -1, dst_y: int = -1, on_battle: str = "run",
         if ok and m[W_MAP] == dst_ind:
             if dst_pos is not None and pos(m) != dst_pos:
                 r = walk_to(pb, *dst_pos, on_battle=on_battle,
-                            on_trainer=on_trainer)
+                            on_trainer=on_trainer, surf=use_surf, cut=use_cut)
                 if not r["ok"]:
                     return {"ok": False, "reason": r.get("reason"),
-                            "trail": trail, **snapshot(pb)}
-            return {"ok": True, "trail": trail, **snapshot(pb)}
+                            "trail": trail, "prep": prep, **snapshot(pb)}
+            return {"ok": True, "trail": trail, "prep": prep, **snapshot(pb)}
     return {"ok": False, "reason": "replans exhausted", "trail": trail,
-            **snapshot(pb)}
+            "prep": prep, **snapshot(pb)}
 
 
 # ------------------------------------------------------------------ battles
@@ -501,13 +768,39 @@ def battle_move(pb, slot: int = 1, max_turns: int = 40) -> dict:
     return {"ok": m[W_BATTLE] == 0, "turns": turns, **snapshot(pb)}
 
 
+def battle_sweep(pb, max_frames: int = 24000) -> dict:
+    """WIN, when asked: hold the enemy's HP at 1 in live WRAM and attack —
+    every enemy mon (a trainer's whole team) falls to the next hit. B every
+    third press declines move-learning prompts. The poke is the point (dev
+    tooling for 'progress the story now'), and it is reported, never hidden."""
+    m = pb.memory
+    f = 0
+    pokes = 0
+    n = 0
+    while m[W_BATTLE] != 0 and f < max_frames:
+        hp = (m[W_ENEMY_HP] << 8) | m[W_ENEMY_HP + 1]
+        if hp > 1:
+            m[W_ENEMY_HP] = 0
+            m[W_ENEMY_HP + 1] = 1
+            pokes += 1
+        pb.button("b" if n % 3 == 2 else "a", delay=6)
+        _tick(pb, 22)
+        f += 28
+        n += 1
+    return {"ok": m[W_BATTLE] == 0, "frames": f, "hp_pokes": pokes,
+            **snapshot(pb)}
+
+
 def battle(pb, policy: str = "mash") -> dict:
-    """Dispatch on policy: 'mash' | 'run' | 'move:N'."""
+    """Dispatch on policy: 'mash' | 'run' | 'move:N' | 'sweep' (a certain win —
+    enemy HP held at 1 in WRAM; reported)."""
     m = pb.memory
     if m[W_BATTLE] == 0:
         return {"ok": False, "reason": "not in a battle"}
     if policy == "run":
         return battle_run(pb)
+    if policy == "sweep":
+        return battle_sweep(pb)
     if policy.startswith("move:"):
         return battle_move(pb, int(policy.split(":", 1)[1]))
     return battle_mash(pb)

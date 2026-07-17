@@ -135,12 +135,12 @@ def _far_walkable(w: World, ind: int, sx: int, sy: int) -> tuple[int, int]:
     best, best_d = (sx, sy), -1
     for y in range(g.h2):
         for x in range(g.w2):
-            if not g.passable[y][x] or (x, y) in warps:
+            if not g.passable[y][x] or (x, y) in warps or (x, y) in g.hazards:
                 continue
             d = abs(x - sx) + abs(y - sy)
             if d > best_d and astar(g, (sx, sy), (x, y),
-                                    frozenset(warps)) is not None:
-                best, best_d = (x, y), d
+                                    frozenset(warps | g.hazards)) is not None:
+                best, best_d = (x, y), d          # reachable WITHOUT spinners
     return best
 
 
@@ -232,9 +232,210 @@ def case_talk(w: World) -> dict:
         c.close()
 
 
+def case_natural(w: World) -> dict:
+    """The doorstep drop-in: boot ONE MAP OUT (Route 4) and walk into Mt Moon
+    for real — wLastMap must come out as Route 4, authored by the walk."""
+    r4 = w.resolve("Route 4")
+    m1f = w.resolve("Mt Moon 1F")
+    assert r4["ind"] in w.approaches_of(m1f["ind"]), "Route 4 must approach Mt Moon"
+    ensure_map_base(r4["ind"])
+    c = Child()
+    try:
+        boot(c, sav=str(REPO / "tmp" / "emu" / "map-saves" / f"map{r4['ind']:03d}.sav"))
+        r = c.send({"cmd": "goto", "map": m1f["ind"]}, 900)["result"]
+        ok = r.get("ok") and r["map"] == m1f["ind"] and r["last_map"] == r4["ind"]
+        return {"ok": bool(ok), "last_map": r.get("last_map"),
+                "expect_last": r4["ind"], "result": r}
+    finally:
+        c.close()
+
+
+def case_guard(w: World) -> dict:
+    """Cerulean -> INSIDE Saffron through the Route 5 gate corridor. BaseSAV
+    already gave the guards their drink, so the bit is CLEARED first — the
+    autopilot must set it back (prep reports it) and the walk must arrive at a
+    real interior square (not just any edge pocket of the map)."""
+    cer = w.resolve("Cerulean City")
+    saf = w.resolve("Saffron City")
+    # a proper interior target: one square below Saffron's first warp door
+    door = saf["warpOut"][0]
+    tx, ty = door["x"], door["y"] + 1
+    ensure_map_base(cer["ind"])
+    c = Child()
+    try:
+        boot(c, sav=str(REPO / "tmp" / "emu" / "map-saves" / f"map{cer['ind']:03d}.sav"))
+        b = int(c.send({"cmd": "mem", "addr": "0xD728"})["hex"], 16)
+        c.send({"cmd": "poke", "addr": "0xD728",
+                "bytes": f"{b & ~0x40 & 0xFF:02x}"})     # guard thirsty again
+        r = c.send({"cmd": "goto", "map": saf["ind"], "x": tx, "y": ty},
+                   1500)["result"]
+        prepped = any("guard_drink" in p for p in r.get("prep") or [])
+        ok = r.get("ok") and r["map"] == saf["ind"] and prepped
+        return {"ok": bool(ok), "prep": r.get("prep"), "target": [tx, ty],
+                "result": r}
+    finally:
+        c.close()
+
+
+def case_elevator(w: World) -> dict:
+    """Ride the Celadon Mart elevator: enter the car, then goto 5F — the
+    planner must take the elevator edge (car door warps re-aimed live)."""
+    m1 = w.resolve("Celadon Mart 1F")
+    car = w.resolve("Celadon Mart Elevator")
+    m5 = w.resolve("Celadon Mart 5F")
+    ensure_map_base(m1["ind"])
+    c = Child()
+    try:
+        boot(c, sav=str(REPO / "tmp" / "emu" / "map-saves" / f"map{m1['ind']:03d}.sav"))
+        r1 = c.send({"cmd": "goto", "map": car["ind"]}, 600)["result"]
+        if not r1.get("ok"):
+            return {"ok": False, "reason": "never entered the car", "into": r1}
+        r2 = c.send({"cmd": "goto", "map": m5["ind"]}, 600)["result"]
+        rode = any(t.get("leg") == "elevator" for t in r2.get("trail") or [])
+        ok = r2.get("ok") and r2["map"] == m5["ind"] and rode
+        return {"ok": bool(ok), "rode_elevator": rode, "result": r2}
+    finally:
+        c.close()
+
+
+def case_sweep(w: World) -> dict:
+    """policy 'sweep' = win on request: enemy HP held at 1, next hit ends it."""
+    c = Child()
+    try:
+        boot(c, sav=None)
+        g = c.send({"cmd": "goto", "map": w.resolve("Route 1")["ind"]},
+                   600)["result"]
+        if not g.get("ok"):
+            return {"ok": False, "reason": "never reached Route 1"}
+        r = c.send({"cmd": "hunt", "max_steps": 400, "policy": "sweep"},
+                   900)["result"]
+        br = r.get("battle_result") or {}
+        ok = r.get("ok") and r.get("battle") == 0 and br.get("hp_pokes", 0) >= 1
+        return {"ok": bool(ok), "enemy": r.get("enemy"),
+                "hp_pokes": br.get("hp_pokes"), "result": r}
+    finally:
+        c.close()
+
+
+def case_surf(w: World) -> dict:
+    """THE SURF RESEARCH PROBE: Pallet -> Route 21 exists only across water.
+    surf='auto' must find no dry route, open the water, poke the surf state,
+    and the console must actually carry the player onto Route 21."""
+    r21 = w.resolve("Route 21")
+    c = Child()
+    try:
+        boot(c, sav=None)
+        r = c.send({"cmd": "goto", "map": r21["ind"]}, 900)["result"]
+        surfed = any("surf" in p for p in r.get("prep") or [])
+        ok = r.get("ok") and r["map"] == r21["ind"] and surfed
+        return {"ok": bool(ok), "prep": r.get("prep"), "result": r}
+    finally:
+        c.close()
+
+
+def case_cut(w: World) -> dict:
+    """The MANDATORY cut tree: Vermilion Gym's door is fenced behind one.
+    cut='auto' must find no dry route, clear the tree (block + on-screen tiles
+    poked, our own cutTreeBlocks data), and walk through the doorway."""
+    ver = w.resolve("Vermilion City")
+    gym = w.resolve("Vermilion Gym")
+    ensure_map_base(ver["ind"])
+    c = Child()
+    try:
+        boot(c, sav=str(REPO / "tmp" / "emu" / "map-saves" / f"map{ver['ind']:03d}.sav"))
+        r = c.send({"cmd": "goto", "map": gym["ind"]}, 900)["result"]
+        cut_used = any("cut" in p for p in r.get("prep") or [])
+        ok = r.get("ok") and r["map"] == gym["ind"] and cut_used
+        return {"ok": bool(ok), "cut_prep": cut_used, "prep": r.get("prep"),
+                "result": r}
+    finally:
+        c.close()
+
+
+def case_spin(w: World) -> dict:
+    """Walk across Rocket Hideout B2F's spinner maze: hazards are priced (not
+    forbidden) and a slide is settled and re-planned from wherever it lands."""
+    b2 = w.resolve("Rocket Hideout B2F")
+    ensure_map_base(b2["ind"])
+    c = Child()
+    try:
+        r0 = boot(c, sav=str(REPO / "tmp" / "emu" / "map-saves" / f"map{b2['ind']:03d}.sav"))
+        st = r0["state"]
+        tx, ty = _far_walkable(w, st["map"], st["x"], st["y"])
+        r = c.send({"cmd": "walk_to", "x": tx, "y": ty, "max_steps": 1500,
+                    "on_trainer": "mash"}, 900)["result"]
+        ok = r.get("ok") and r["x"] == tx and r["y"] == ty
+        return {"ok": bool(ok), "target": [tx, ty], "result": r}
+    finally:
+        c.close()
+
+
+def case_bike(w: World) -> dict:
+    """Cycling Road: Route 16 -> Route 17 needs a BICYCLE past the gate guard —
+    goto must put one in the bag (prep reports it) and arrive."""
+    r16 = w.resolve("Route 16")
+    r17 = w.resolve("Route 17")
+    ensure_map_base(r16["ind"])
+    c = Child()
+    try:
+        boot(c, sav=str(REPO / "tmp" / "emu" / "map-saves" / f"map{r16['ind']:03d}.sav"))
+        r = c.send({"cmd": "goto", "map": r17["ind"]}, 1500)["result"]
+        biked = any("bicycle" in p for p in r.get("prep") or [])
+        ok = r.get("ok") and r["map"] == r17["ind"]
+        return {"ok": bool(ok), "bike_prep": biked, "prep": r.get("prep"),
+                "result": r}
+    finally:
+        c.close()
+
+
+def case_gym(w: World) -> dict:
+    """WIN A GYM BATTLE on request: walk up to Brock, talk (his line starts a
+    trainer battle), policy 'sweep' ends it — the whole team falls."""
+    gym = w.resolve("Pewter Gym")
+    ensure_map_base(gym["ind"])
+    # the leader is the top-most STAY sprite
+    sprites = gym.get("sprites") or []
+    leader = min((i for i in range(len(sprites))
+                  if sprites[i].get("move") == "Stay"),
+                 key=lambda i: sprites[i]["y"]) + 1
+    c = Child()
+    try:
+        boot(c, sav=str(REPO / "tmp" / "emu" / "map-saves" / f"map{gym['ind']:03d}.sav"))
+        # BaseSAV beat Brock long ago — make him willing to fight again
+        c.send({"cmd": "set_flag", "flag": "EVENT_BEAT_BROCK", "on": False})
+        c.send({"cmd": "set_flag", "flag": "EVENT_BEAT_PEWTER_GYM_TRAINER_0",
+                "on": False})
+        for _ in range(3):                       # a floor trainer may cut in
+            st = c.send({"cmd": "state"})["state"]
+            if st["battle"] != 0:
+                b = c.send({"cmd": "battle", "policy": "sweep"}, 900)["result"]
+                if not b.get("ok"):
+                    return {"ok": False, "reason": "sweep failed", "battle": b}
+                c.send({"cmd": "dismiss"})
+                continue
+            t = c.send({"cmd": "talk", "target": leader, "dismiss": True},
+                       600)["result"]
+            if t.get("battle_started") or t.get("battle"):
+                b = c.send({"cmd": "battle", "policy": "sweep"}, 900)["result"]
+                c.send({"cmd": "dismiss"})
+                st = c.send({"cmd": "state"})["state"]
+                ok = b.get("ok") and st["battle"] == 0
+                return {"ok": bool(ok), "leader_slot": leader,
+                        "hp_pokes": b.get("hp_pokes"), "after": st}
+            if t.get("ok"):                      # talked but no battle?
+                return {"ok": False, "reason": "leader gave no battle",
+                        "talk": t}
+        return {"ok": False, "reason": "never reached the leader"}
+    finally:
+        c.close()
+
+
 CASES = {"addrs": case_addrs, "walk": case_walk, "warp": case_warp,
          "cross": case_cross, "mtmoon": case_mtmoon, "hunt": case_hunt,
-         "talk": case_talk}
+         "talk": case_talk, "natural": case_natural, "guard": case_guard,
+         "elevator": case_elevator, "sweep": case_sweep, "surf": case_surf,
+         "cut": case_cut, "spin": case_spin, "bike": case_bike,
+         "gym": case_gym}
 
 
 def main() -> int:

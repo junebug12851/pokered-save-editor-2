@@ -1133,32 +1133,92 @@ def emu_walk_to(x: int, y: int, on_battle: str = "run", on_trainer: str = "stop"
 @mcp.tool()
 def emu_goto(map: str, x: int = -1, y: int = -1, on_battle: str = "run",
              on_trainer: str = "stop", start_map: str = "",
-             flags: list[str] | None = None, timeout_s: int = 1200) -> dict:
+             approach: str = "natural", flags: list[str] | None = None,
+             unblock: bool = True, bike: bool = True,
+             surf: str = "auto", cut: str = "auto",
+             timeout_s: int = 1200) -> dict:
     """THE one-call 'take me there': navigate to a map (name, modernName, or id —
     'Mt Moon B1F', 'Mt. Moon 2', '60', '0x3C'), optionally to exact (x, y),
-    CROSS-MAP (warps, connections, doors, ladders — planned, then walked for
-    real with per-step WRAM verification).
+    CROSS-MAP (warps, connections, doors, ladders, ELEVATORS — planned, then
+    walked for real with per-step WRAM verification).
 
-    No live session? One is booted automatically: at start_map's console-authored
-    base if given (a REAL journey from there), else directly at the target map's
-    base (fast — then walks to x/y). `flags` = EVENT_* names for the boot forge.
-    With a live session it navigates from wherever the game currently stands."""
+    No live session? One is booted automatically. approach='natural' (default)
+    boots ONE MAP OUT — a map that warps/connects into the target — and WALKS IN
+    for real, so wLastMap and the whole entry state are authored by the walk
+    (dropping in at the Pokécenter doorstep, arriving in the cave from the route
+    outside). approach='direct' boots the target map's base straight away.
+    start_map='...' overrides both (a real journey from there).
+    `flags` = EVENT_* names for the boot forge.
+
+    Progression aids (all reported in `prep`, all opt-out): unblock=True sets
+    the Saffron guard-drink bit when a gate is on the route; bike=True puts a
+    BICYCLE in the bag when Cycling Road is; surf/cut='auto' plan dry first and
+    open water / cuttable trees only when no dry route exists ('always'/'never'
+    to force). With a live session it navigates from wherever the game stands."""
     try:
         dst = _resolve_map(map)
     except KeyError as e:
         return {"error": str(e)}
+    booted_at = None
     if not _session_live():
-        boot_map = dst["ind"]
+        w = _nav_world()
+        candidates: list[int] = []
         if start_map:
             try:
-                boot_map = _resolve_map(start_map)["ind"]
+                candidates = [_resolve_map(start_map)["ind"]]
             except KeyError as e:
                 return {"error": str(e)}
-        r = emu_boot(map_id=boot_map, flags=flags)
-        if r.get("error") or not r.get("ok", True):
-            return {"error": f"auto-boot failed: {r}"}
-    return _session_send({"cmd": "goto", "map": dst["ind"], "x": x, "y": y,
-                          "on_battle": on_battle, "on_trainer": on_trainer},
+        elif approach == "natural":
+            # one map out, cached bases first (a miss costs a ~60s generation)
+            apps = w.approaches_of(dst["ind"])
+            cached = [a for a in apps
+                      if (MAP_SAVES / f"map{a:03d}.sav").exists()]
+            candidates = (cached + [a for a in apps if a not in cached])[:3] \
+                + [dst["ind"]]
+        else:
+            candidates = [dst["ind"]]
+        r = None
+        for boot_map in candidates:
+            r = emu_boot(map_id=boot_map, flags=flags)
+            if not r.get("error") and r.get("ok", True):
+                booted_at = boot_map
+                break
+        if booted_at is None:
+            return {"error": f"auto-boot failed everywhere: {r}"}
+    out = _session_send({"cmd": "goto", "map": dst["ind"], "x": x, "y": y,
+                         "on_battle": on_battle, "on_trainer": on_trainer,
+                         "unblock": unblock, "bike": bike,
+                         "surf": surf, "cut": cut}, timeout_s)
+    if booted_at is not None and isinstance(out, dict):
+        out["booted_at"] = {"map": booted_at,
+                            "name": _nav_world().by_ind[booted_at]["name"],
+                            "approach": "natural" if booted_at != dst["ind"]
+                            else "direct"}
+    return out
+
+
+@mcp.tool()
+def emu_set_flag(flag: str, on: bool = True, timeout_s: int = 30) -> dict:
+    """Set/clear one event flag in the LIVE session's WRAM — by pret EVENT_*
+    name or raw bit index. The story lever: arm/disarm world state mid-run
+    (reported, never silent)."""
+    return _session_send({"cmd": "set_flag", "flag": flag, "on": on}, timeout_s)
+
+
+@mcp.tool()
+def emu_give_item(item: int, qty: int = 1, timeout_s: int = 30) -> dict:
+    """Put an item in the LIVE bag (pret item id, e.g. 6 = BICYCLE). Bumps the
+    quantity when already carried; honors the 20-slot cap."""
+    return _session_send({"cmd": "give_item", "item": item, "qty": qty},
+                         timeout_s)
+
+
+@mcp.tool()
+def emu_move_sprite(slot: int, x: int, y: int, timeout_s: int = 30) -> dict:
+    """Relocate an NPC/boulder sprite in LIVE WRAM (slot 1..15). The Strength-
+    boulder lever — put the rock on the switch — and the unblock-a-doorway
+    lever. Reported, never silent."""
+    return _session_send({"cmd": "move_sprite", "slot": slot, "x": x, "y": y},
                          timeout_s)
 
 
@@ -1177,7 +1237,10 @@ def emu_talk_to(target: str, dismiss: bool = True, timeout_s: int = 300) -> dict
 def emu_battle(policy: str = "mash", timeout_s: int = 600) -> dict:
     """Execute the CURRENT battle a certain way: 'mash' (A to the end),
     'run' (flee a wild battle; trainer battles refuse with the reason),
-    'move:N' (use move slot N every turn; B declines level-up move prompts)."""
+    'move:N' (use move slot N every turn; B declines level-up move prompts),
+    'sweep' (WIN on request — enemy HP held at 1 in WRAM, every mon of a
+    trainer's team falls to the next hit; the poke is reported). 'sweep' +
+    emu_talk_to(leader) is the win-a-gym-battle recipe."""
     return _session_send({"cmd": "battle", "policy": policy}, timeout_s)
 
 

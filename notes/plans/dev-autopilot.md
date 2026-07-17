@@ -61,13 +61,18 @@ a 4-adjacent square, turn to face it, press A, and confirm the text box actually
 (`wFontLoaded`), retrying as it moves. Options: dismiss the text to the end, or leave it
 open (cutscene handoff).
 
-## Honest v1 limits (stated, not hidden)
+## Honest v1 limits — SINCE DELIVERED (2026-07-16, same-day follow-on brief)
 
-No HM routing (Surf/Cut/Strength/Flash — Rock Tunnel still walks fine: WRAM doesn't need
-light), no bike, no spinner tiles / forced-slide maps (best effort + honest failure), no
-elevators (menu-driven maps), Fly/Dig/Escape Rope not used. Trainer line-of-sight can start
-a battle mid-walk — that is handled (policy), not avoided. Warpless-route legs cross real
-connections; refused destinations stay refused (link rooms, glitch copies).
+The original v1 limits (no surf/cut/bike/spinners/elevators/guards) were briefed away the
+same day and are BUILT + console-verified — plus the **natural drop-in** (boot one map out
+and walk in, wLastMap authored by the walk, the default), `emu_battle('sweep')` (win on
+request — the Brock case), and the levers `emu_set_flag` / `emu_give_item` /
+`emu_move_sprite`. Everything an intervention is reported (`prep`/events) and opt-out.
+Details + traps: [`../reference/dev-mcp.md`](../reference/dev-mcp.md) → "The progression
+layer". Remaining honest limits: boulder puzzles aren't auto-solved (the lever is manual),
+spinner mazes are avoided rather than ridden (arrow directions = a future import), Fly/Dig/
+Escape Rope unused, Flash cosmetic. Trainer line-of-sight can start a battle mid-walk —
+handled (policy), not avoided. Refused destinations stay refused (link rooms, glitch copies).
 
 ## Verification (the console is the oracle)
 

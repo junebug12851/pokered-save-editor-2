@@ -58,7 +58,7 @@ on any overrun.
 | Jobs | `job_status` · `job_wait` · `job_log` · `job_kill` · `job_list` | logs under `tmp/mcp-jobs/` |
 | App | `app_launch` · `app_stop` · `app_foreground` · `app_background` · `app_cmd` · `app_screen` · `app_title` · `app_load_sav` · `app_get` · `app_set` · `app_click` · `app_tap` · `app_invoke` · `app_list` · `app_reload` · `app_shot` | the DEBUG TCP harness (`dev-harness.md`), traps encoded (below) |
 | Emu | `emu_status` · `emu_setup` · `emu_check_updates` · `emu_update` · `emu_run_script` · `emu_flag_scenarios` · `emu_make_map_save` · `emu_forge_save` · `emu_boot` · `emu_button` · `emu_tick` · `emu_mem` · `emu_poke` · `emu_state` · `emu_screenshot` · `emu_stop` | ROM-gated, local-only; clean unavailability without it |
-| **Autopilot** | `emu_goto` · `emu_walk_to` · `emu_talk_to` · `emu_battle` · `emu_hunt_encounter` · `emu_dismiss` · `emu_play` | pathfinding + auto-navigation, below |
+| **Autopilot** | `emu_goto` · `emu_walk_to` · `emu_talk_to` · `emu_battle` · `emu_hunt_encounter` · `emu_dismiss` · `emu_play` · `emu_set_flag` · `emu_give_item` · `emu_move_sprite` | pathfinding + auto-navigation + progression levers, below |
 | App flows | `app_flow` | multi-step app driving (get/set/tap/wait-until/shot…) in ONE call |
 
 **Total custom state resume (2026-07-16).** `emu_boot(map_id=…, x=…, y=…, flags=[EVENT_*…],
@@ -142,8 +142,55 @@ with `move:1`** — every leg on the real console.
 - **Ledges are Overworld-tileset-only** (`HandleLedges` bails unless `wCurMapTileset == 0`) — a
   "ledge tile id" in a cave is just a rock.
 
-Honest v1 limits (stated in the plan): no HM routing/bike/spinners/elevators; script-blocked
-guards (the thirsty Saffron guard) fail honestly at the gate rather than being modeled.
+### The progression layer (2026-07-16, same-day follow-on brief — "progress normally when asked")
+
+The v1 limits fell the same day. All of it **console-verified** (the probe battery is 16/16):
+
+- **Natural drop-in (the default).** `emu_goto` with no session boots ONE MAP OUT — a map that
+  warps/connects into the target (`World.approaches_of`) — and **walks in for real**, so
+  `wLastMap` and the entire entry state are **authored by the walk** (arrive in Mt Moon *from
+  Route 4*; the Pokécenter doorstep, not a teleport). `approach='direct'` for the old boot-at-
+  target; `start_map=` for a full journey. Verified: entering Mt Moon left `wLastMap = Route 4`.
+- **Saffron gate guards** — the block is `wStatusFlags1` (`0xD728`) **bit 6**
+  `BIT_GAVE_SAFFRON_GUARDS_DRINK` (pret `scripts/Route5Gate.asm`), NOT an event flag. A gate on
+  the route → the bit is set, reported in `prep`. (BaseSAV already carries it — the probe clears
+  it first to prove the mechanism.)
+- **Elevators** — planner edges car → every floor with a warp into it; ridden by re-aiming the
+  car's own door warps in live WRAM (the floor menu's own technique) and stepping out. Verified:
+  Celadon Mart 1F → car → 5F.
+- **Surf** — ⭐ research finding: **poking `wWalkBikeSurfState` (`0xD700`) = 2 right before
+  stepping onto water WORKS** — the console walks onto the water surfing, keeps state 2, and the
+  autopilot dismounts ashore. `surf='auto'` plans dry first and opens water only when no dry
+  route exists (reported). Verified: Pallet → Route 21, a water-only connection crossing.
+- **Cut trees** — our own `cutTreeBlocks` data carries the replacement block: `clear_tree()`
+  pokes the live block buffer + the on-screen tiles (collision reads the screen buffer; the
+  player screen anchor (8,8) is verified against our grid before any tile poke). `cut='auto'`
+  (tried BEFORE surf — the smaller intervention). Verified: Vermilion Gym's mandatory tree.
+- **Spinner mazes** — the forced-movement coords are imported from pret's own scripts
+  (`map_coord_movement`; Viridian Gym, Rocket Hideout B2F/B3F, Pokémon Tower 7F), priced at
+  SPIN_COST 400 (avoid, never refuse), and a slide is followed to rest (the joy-ignore wait
+  tolerates motion) then re-planned. Verified: across Rocket Hideout B2F.
+- **Bike** — Cycling Road on the route → a BICYCLE lands in the bag (reported; BaseSAV already
+  carries one). Verified: Route 16 → Route 17.
+- **Win on request** — `emu_battle('sweep')` holds the enemy's HP at 1 in WRAM and attacks; a
+  trainer's whole team falls hit by hit (B declines move-learning). Verified: **Brock, beaten on
+  request** (`EVENT_BEAT_BROCK` cleared live, talked to, swept — 2 HP pokes, both mons).
+- **New levers**: `emu_set_flag` (EVENT_* by name, live), `emu_give_item`, `emu_move_sprite`
+  (the Strength-boulder lever — put the rock where it's needed). Every intervention is
+  **reported in `prep`/events, never silent**, and every one is opt-out.
+
+**Two more traps the probes caught (now structural):**
+
+- ⚠️ **`wXCoord`/`wYCoord` update at step START, not completion** — coords said "arrived" while
+  the glide was still running, and a button down at the glide boundary chained a second step
+  (the Route 4 cave approach coasted PAST its goal after `walk_to` returned). The step is over
+  when **`wWalkCounter` (`0xCFC5`) == 0** — the console's own signal; the settle waits for it.
+- ⚠️ **BaseSAV's real progression hides mechanisms**: the guard already had his drink, Brock was
+  already beaten — a probe that doesn't RESET the state it tests proves nothing.
+
+Still honest limits: Strength boulder puzzles aren't auto-solved (use `emu_move_sprite`
+deliberately); spinner mazes are avoided, not ridden (per-square arrow directions = a future
+import); Flash is cosmetic (WRAM navigation doesn't need light).
 
 ## Forging saves — shared, importable
 

@@ -168,12 +168,25 @@ def handle(req: dict) -> dict:
             pb, int(req["x"]), int(req["y"]),
             on_battle=req.get("on_battle", "run"),
             on_trainer=req.get("on_trainer", "stop"),
-            max_steps=min(int(req.get("max_steps", 800)), 4000))}
+            max_steps=min(int(req.get("max_steps", 800)), 4000),
+            surf=bool(req.get("surf", False)), cut=bool(req.get("cut", False)))}
     if cmd == "goto":
         return {"ok": True, "result": autopilot.goto(
             pb, req["map"], int(req.get("x", -1)), int(req.get("y", -1)),
             on_battle=req.get("on_battle", "run"),
-            on_trainer=req.get("on_trainer", "stop"))}
+            on_trainer=req.get("on_trainer", "stop"),
+            unblock=bool(req.get("unblock", True)),
+            bike=bool(req.get("bike", True)),
+            surf=req.get("surf", "auto"), cut=req.get("cut", "auto"))}
+    if cmd == "set_flag":
+        return {"ok": True, "result": autopilot.set_event_flag(
+            pb, req["flag"], bool(req.get("on", True)))}
+    if cmd == "give_item":
+        return {"ok": True, "result": autopilot.give_item(
+            pb, int(req["item"]), int(req.get("qty", 1)))}
+    if cmd == "move_sprite":
+        return {"ok": True, "result": autopilot.move_sprite(
+            pb, int(req["slot"]), int(req["x"]), int(req["y"]))}
     if cmd == "battle":
         return {"ok": True, "result": autopilot.battle(
             pb, req.get("policy", "mash"))}
