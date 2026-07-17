@@ -137,7 +137,25 @@ This is where the Events feature meets the map-storage panel the leadership orig
 
 A first-class system that flags **combinations** of event flags as conflicting, shows them in the UI, and
 grows as conflicts are found/confirmed. Born from the Route 22 rival case (two `SPRITE_BLUE` objects at
-the **same tile (25,5)**, `ROUTE22_RIVAL1`/`RIVAL2`, one per battle — both battles' flags on collides).
+the **same tile (25,5)**, `ROUTE22_RIVAL1`/`RIVAL2`, one per battle).
+
+> ❌ **…and that founding case is REFUTED (console + source, 2026-07-16) — which is the best thing that
+> could have happened to this system.** `Route22DefaultScript` is an **ordered if/else**: with
+> `EVENT_1ST_ROUTE22_RIVAL_BATTLE` set it jumps to the first battle and **never consults the 2ND flag** —
+> masked, not conflicting. The cartridge agrees: both flags on + both sprites shown → a **normal trainer
+> battle** (`probe_route22_conflict.py`, ~5 s). Full write-up: the reference note.
+>
+> **Three rules fall out of it, and they are the system's spine:**
+> 1. **`suspected` is a LEAD, not a risk.** A same-subject cluster / two objects on one tile is a reason
+>    to *look*, never a reason to *warn*. **Only `confirmed` renders as a crash warning in the UI.**
+> 2. **`refuted` is kept, not deleted** — negative knowledge, so nobody re-raises a settled question.
+>    The static generator now *defers* to verdicts (`REFUTED_SUBJECTS`).
+> 3. **Adjudicate on the console.** Every suspicion goes to a forge-probe before it is shown to a user.
+>
+> 🔎 The probe also surfaced a **real** candidate the static pass never would have: **armed-but-hidden**
+> (`route22-rival-armed-but-hidden`, suspected/softlock) — flags arm the ambush while the rival object is
+> hidden, so the trigger fires, the script advances to 1, and **no battle engages**. A flag ↔ missable
+> inconsistency; owed its own probe.
 
 **A conflict is a logical predicate over a flag set, not just "these two conflict."** Each conflict rule:
 
@@ -145,9 +163,11 @@ the **same tile (25,5)**, `ROUTE22_RIVAL1`/`RIVAL2`, one per battle — both bat
 - `condition`: the predicate that *is* the conflict — one of **both-on**, **both-off**, **not-both-on**,
   **not-both-off**, **exactly-one**, **at-most-one**, etc. (so a conflict can be "these must not both be
   on", or "these must not both be off", or "exactly one must be on", …).
-- `status`: **suspected** (from static analysis — same object/tile/script, 1ST/2ND, FIGHT/BEAT) or
-  **confirmed** (reproduced on the real cartridge via a forged save — see the emulator-verification
-  standing method).
+- `status`: **suspected** (a *lead* from static analysis — same object/tile/script, 1ST/2ND, FIGHT/BEAT;
+  **never rendered as a warning**), **confirmed** (reproduced on the real cartridge via a forged save —
+  see the emulator-verification standing method; **only this warns the user**), or **refuted** (the
+  console/source disproved it — **kept as negative knowledge** so it is never re-raised; the static
+  generator defers to it).
 - `severity`: crash / softlock / cosmetic.
 - `reason`, `map`, and `evidence` (the probe + result when confirmed).
 

@@ -75,18 +75,28 @@ def main():
     # --- the conflicting-flags dataset (Phase 11 schema) ----------------
     # condition: not-both-on | not-both-off | at-most-one | exactly-one | ...
     # status:    suspected (static) | confirmed (console-reproduced)
+    # Subjects whose suspicion has been ADJUDICATED and REFUTED — the static
+    # heuristic keeps re-raising them, so it must defer to the verdict. (Negative
+    # knowledge is knowledge: never re-suspect a settled question.)
+    REFUTED_SUBJECTS = {"ROUTE22_RIVAL"}
+
     conflicts = []
     for subj, flags in subject_sets.items():
+        if subj in REFUTED_SUBJECTS:
+            continue   # settled below as an explicit 'refuted' entry
         conflicts.append({
             "id": f"subject:{subj}",
             "flags": flags,
             "condition": "at-most-one-on",
+            # SUSPECTED ONLY — a same-subject cluster is a lead, NOT evidence. The
+            # Route 22 case proved script dispatch order can mask one flag entirely,
+            # so this never renders as a crash warning until console-confirmed.
             "status": "suspected",
-            "severity": "crash",
+            "severity": "unknown-pending-adjudication",
             "map": None,
             "reason": (f"{subj}: multiple mutually-exclusive battle/state flags for one "
-                       f"subject; more than one on drives the shared script into an "
-                       f"impossible state."),
+                       f"subject. LEAD ONLY — must be adjudicated on the console before "
+                       f"being shown as a risk (cf. ROUTE22_RIVAL, refuted)."),
             "evidence": None,
         })
     for e in object_sets:
@@ -101,20 +111,43 @@ def main():
                        f"multiple flags; both on can show/hide it inconsistently."),
             "evidence": None,
         })
-    # The Route 22 rival: two SPRITE_BLUE objects at the SAME tile (25,5), one per
-    # battle — the archetype. Strong static evidence; forge-probe confirms.
+    # The Route 22 rival — the archetype, and the system's first REFUTATION.
+    # Suspicion: two SPRITE_BLUE at the same tile (25,5), one per battle, so both
+    # battle flags on "must" collide. WRONG. Route22DefaultScript is an ordered
+    # if/else: `CheckEvent 1ST; jr nz -> FirstRivalBattle` — with 1ST set the 2ND
+    # is NEVER consulted, so it is masked, not conflicting. Console agrees: both
+    # flags + both sprites shown -> a normal trainer battle (mode=2), no crash.
+    # Kept as NEGATIVE KNOWLEDGE so it is never re-raised.
     conflicts.append({
         "id": "route22-rival-overlap",
         "flags": ["EVENT_1ST_ROUTE22_RIVAL_BATTLE", "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
                   "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"],
         "condition": "at-most-one-on",
-        "status": "suspected-strong",
-        "severity": "crash",
+        "status": "refuted",
+        "severity": "none",
         "map": "Route22",
-        "reason": ("Route 22 has TWO SPRITE_BLUE objects at the same tile (25,5), "
-                   "ROUTE22_RIVAL1/RIVAL2, one per rival battle; both battles' flags on "
-                   "shows/triggers both at once and collides on battle."),
-        "evidence": "scripts/emu/probe_route22_conflict.py (forge + drive into trigger)",
+        "reason": ("REFUTED 2026-07-16 (console + source). Route22DefaultScript checks "
+                   "1ST before 2ND in an ordered if/else, so with 1ST set the 2ND flag is "
+                   "never read — masked, not conflicting. The two stacked SPRITE_BLUE "
+                   "objects merely overlap; only one is ever driven. Both flags on + both "
+                   "sprites shown engages a NORMAL trainer battle."),
+        "evidence": ("scripts/emu/probe_route22_conflict.py -> 'conflict -> HEALTHY trainer "
+                     "battle (mode=2, script=2)'; source: scripts/Route22.asm"),
+    })
+    # …but the probe surfaced a REAL candidate: armed WITHOUT the rival sprite.
+    conflicts.append({
+        "id": "route22-rival-armed-but-hidden",
+        "flags": ["EVENT_ROUTE22_RIVAL_WANTS_BATTLE", "EVENT_1ST_ROUTE22_RIVAL_BATTLE"],
+        "condition": "flags-armed-while-object-hidden",
+        "status": "suspected",
+        "severity": "softlock",
+        "map": "Route22",
+        "reason": ("Flag ↔ missable inconsistency: the flags arm the ambush but the rival "
+                   "object is hidden, so the coord trigger fires and the script advances to "
+                   "1 yet no battle ever engages (observed: 'ghost -> NO BATTLE (script=1)' "
+                   "— stalled). Needs its own probe to confirm whether the player is truly "
+                   "stuck."),
+        "evidence": "scripts/emu/probe_route22_conflict.py (ghost scenario)",
     })
     json.dump({"conflicts": conflicts}, open(os.path.join(OUT, "conflicts.json"), "w",
               encoding="utf-8"), indent=1)

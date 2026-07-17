@@ -249,9 +249,9 @@ the crash live (a bigger automation task).
 
 **Contradiction candidates (`scripts/analyze_flag_contradictions.py` → `contradictions.json`).** The
 flag *sets* that must not be on together:
-- **Same-subject multi-state:** `ROUTE22_RIVAL` = {`BEAT_ROUTE22_RIVAL_1ST_BATTLE`,
-  `BEAT_ROUTE22_RIVAL_2ND_BATTLE`, `ROUTE22_RIVAL_WANTS_BATTLE`} — **exactly leadership's example**: two
-  rival battles on one NPC/script; both on collides on battle.
+- ~~**Same-subject multi-state:** `ROUTE22_RIVAL`~~ — ❌ **REFUTED 2026-07-16 (console + source).** See
+  "The Route 22 rival conflict is REFUTED" below. The static heuristic cried wolf; this entry is a
+  **false positive** and must not be shown as a crash risk.
 - **Same-object governors (one object, >1 flag):** Route 12 & 16 **Snorlax** (`FIGHT_*` + `BEAT_*` — the
   fight-vs-beaten interplay), Cerulean rival, Viridian Giovanni (`BEAT` + `GOT_TM27`), Blue's House Town
   Map (`GOT_POKEDEX` + `GOT_TOWN_MAP`).
@@ -273,11 +273,58 @@ Bonus: `maps.json` already carries **`"missable": 34/35`** on the two Route 22 r
 
 **Live crash confirmation — blocked by THIS environment, not the logic.** The forge is correct and boots
 onto Route 22; driving the player up into the rival should reproduce the crash. But sustained PyBoy runs
-here are unreliable (accumulating zombie processes, silent boot stalls, a ~44 s per-call cap), so a clean
-`confirmed` reading couldn't be captured in-session. Infra for it is committed: `scripts/emu/emu_server.py`
-is a **persistent PyBoy session with file IPC** (boot once, drive with cheap step/read commands) for an
-uninterrupted local run. Until then the **Route 22 rival conflict stays `suspected-strong`** — the static
-evidence (two `SPRITE_BLUE` at one tile, `missable` 34/35, one per battle) is overwhelming.
+here are unreliable (accumulating zombie processes, silent boot stalls, a ~44 s per-call cap). **Resolved
+2026-07-16** by the `pokered-dev` MCP server (single-shot, tree-killed, job-based) — the probe now runs in
+**~5 seconds**.
+
+### ❌ The Route 22 rival conflict is REFUTED (console + source, 2026-07-16)
+
+The headline suspicion — *both Route 22 rival-battle flags on crashes the battle* — is **wrong**, and this
+is the most valuable thing the conflict system has produced so far, because it proves **why suspicion must
+be adjudicated before it is shown to a user**.
+
+**The source settles it** (`scripts/Route22.asm`, `Route22DefaultScript`):
+
+```
+	CheckEvent EVENT_ROUTE22_RIVAL_WANTS_BATTLE
+	ret z                                    ; not armed -> return
+	ld hl, .Route22RivalBattleCoords
+	call ArePlayerCoordsInArray
+	ret nc                                   ; not on a trigger coord -> return
+	CheckEvent EVENT_1ST_ROUTE22_RIVAL_BATTLE
+	jr nz, Route22FirstRivalBattleScript     ; 1ST set -> FIRST battle, and DONE
+	CheckEventReuseA EVENT_2ND_ROUTE22_RIVAL_BATTLE   ; only reached if 1ST is CLEAR
+	jp nz, Route22SecondRivalBattleScript
+```
+
+It is an **ordered if/else**: with 1ST set the script jumps to the first battle and **never consults 2ND**.
+Both flags on cannot collide — the second is simply **masked**. The two stacked `SPRITE_BLUE` objects just
+overlap; only one is ever driven.
+
+**The cartridge agrees** (`scripts/emu/probe_route22_conflict.py`, ~5 s):
+
+```
+armed-1st    -> HEALTHY trainer battle (mode=2, script=2)
+conflict     -> HEALTHY trainer battle (mode=2, script=2)   <- both flags + both sprites shown
+ghost        -> NO BATTLE (script=1, ow=True) - stalled/blocked
+```
+
+⚠️ **Trigger coords corrected:** the ambush fires from `.Route22RivalBattleCoords` = `dbmapcoord 29,4` /
+`29,5` (**`dbmapcoord` stores db y,x**) — **not** the rival's own tile (25,5). The player must stand on the
+**upper** trigger (29,4); on (29,5) the rival's rightward walk is blocked and the cutscene softlocks (a bad
+forge, not a game bug). Arming it also needs `wRoute22CurScript = DEFAULT` **and** the rival object shown
+(missable) — flags alone are not enough.
+
+**🔎 A real candidate did fall out of it — `ghost`:** armed (WANTS + 1ST) but the rival object **hidden**
+→ the coord trigger fires, the script advances to 1, and **no battle ever engages** (stalled). That is a
+genuine **flag ↔ missable inconsistency** (the flags say "ambush armed", the sprite says "nobody here"),
+and it is a **suspected softlock** worth its own probe. (It also contradicts the probe docstring's claim
+that ghost "engages cleanly" — the run says otherwise; trust the run.)
+
+**The lesson, and it is the point of the whole system:** "two flags for one subject / two objects on one
+tile" is **suspicion, not evidence**. Script **dispatch order** can make one flag mask another entirely.
+So: `suspected` never renders as a crash warning; only `confirmed` does — and `refuted` entries stay in
+the dataset as *negative knowledge* so nobody re-raises them.
 
 ## Flag ↔ map location & object association (briefed 2026-07-15)
 
