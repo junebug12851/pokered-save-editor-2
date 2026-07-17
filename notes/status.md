@@ -42,9 +42,24 @@ The **Events** feature (v1's cryptic `1cc`/`1cd` page) is researched end-to-end 
 - ❌ **"All flags on crashes" — UNREPRODUCED** on the cartridge (all 2,560 set: healthy boot → Oak's Lab
   → ~12 map transitions). The *mechanism* is real; the claim is not proven. Bulk-set warning stays but
   must read *"unpredictable and unverified"*, **never "this crashes"**.
-- ⏳ **Next: the UI.** Events are the **4th section of each map page** in `MapStoragePanel` (script →
-  minigame bytes → filter flags → **events**); `map.toEvents` is already the model. **Design written,
-  awaiting leadership review + 3 open questions** — no QML until then. See Phase 8.
+- ✅ **The UI is BUILT** (`0.41.7-alpha`). The **Event flags** section is the 4th section of every map
+  page in `MapStoragePanel` — **above** Filter Flags, **nothing collapsed** (a page you scroll), a
+  **group toggle** per group, and rows that say what a flag *does*: *"Turned on in Oak's Lab, and read
+  back by Pallet Town"* (named from the usage cross-reference — not "story flag"), plus classification
+  chips (**temporary · does nothing · never used · swept in a group**), cautions, and the raw
+  `byte 0x29F3 · bit 0` kept quiet but visible. **Shared groups** show a multi-map flag on **every** map
+  it spans, labelled and naming the others (Silph Co's bits on all 12 floors). **Placeholder Flags**
+  last. **No conflict UI** (shelved). `MapModel::storageEvents()` reads `MapDBEntry::toEvents`.
+- 🐞 **…and a third of the game was unreachable.** `storagePages()` only made a page for maps with a
+  script entry or missables, so **Celadon City, Lavender Town, Route 1, Indigo Plateau, Fuchsia City,
+  Mt. Moon B1F, five S.S. Anne decks + ~20 more had NO page** — their flags could not be edited at all.
+  Fixed: every map an event is filed on is selectable (**108 → 141 pages**).
+- **Heavy-page check:** worst is **Silph Co 7F, 227 rows** (median 16) — renders fine fully expanded
+  (6055 px scroll, no hang). **No virtualisation needed.**
+- ⏳ **Owed:** Twilight's **live pass** (scroll/toggle feel — a still PNG can't judge it). And the
+  **on-canvas hotspot layer** (Phase 10 — a clickable box on the map opening the panel at that flag;
+  Oak's two spots) is **NOT built**: the research is done (918 objects, 226 conditional, the flag↔object
+  links) but it needs its own brief/design pass first.
 
 ### ⚔️ ROUTE 22 RIVAL CONFLICT — console-adjudicated REFUTED (2026-07-16)
 
