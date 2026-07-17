@@ -156,25 +156,39 @@ curated map land on that map's page (529 associations, preserved verbatim).
    (Silph Co. / Mt. Moon / S.S. Anne as pages): **pret's `region` is a ROM ALLOCATION BLOCK — a storage
    detail, not a save concept.** *"We care about the save file, not the ROM; we just like referencing
    the ROM."* Never build a page out of the ROM's storage layout.
-4. **Shared groups** — when something genuinely spans several maps it appears on **each** map's page in a
-   clearly-labelled **shared group**, which also lets you **see/select the other maps it is in**. (The
-   curated `maps[]` is already multi-map for many flags, so the data supports this today.)
+4. **Shared groups — a PANEL-LEVEL mechanism, not an events one.** When something spans several maps it
+   appears on **each** map's page in a clearly-labelled **shared group** that lets you **see/select the
+   other maps it is in**. ⚠️ **A map page can carry SEVERAL shared groups, of DIFFERENT TYPES** — *"there
+   could be multiple shared fields of different types, not all of them will be event flags"*: shared
+   **event flags** (Silph Co's bits across its 12 floors), shared **storage bytes** (the Safari
+   counters), and whatever later sections bring. So the shared group is a reusable pattern owned by
+   `MapStoragePanel` — *"Shared · &lt;type&gt; · with &lt;maps…&gt;"* — and each section supplies its own.
+   This is what lets the **combined Safari Zone page be ungrouped**: the counters stop being a page and
+   become a shared *field* on each Safari map.
 5. **Do NOT group by ROM-shared data** — e.g. the **Safari counters are one shared byte in the ROM/save;
    that is backend trivia, so ungroup them.** Referencing the ROM is fine; mirroring its storage in the
    UI is not.
 6. **General is RETAINED** (*"general may still be needed, there's more stuff I have to add in"*).
 
-**Where every flag actually lands (measured, not assumed):**
+**Where every flag lands — BUILT (measured, `import_events_db.py`):**
 
-| home | count | why |
+| home | count | how |
 |---|--:|---|
-| its **own map page** | **1,743** | curated `maps[]` (551) + derived from usage (27) + region-that-IS-a-map (1,214, mostly that map's own placeholder bits) |
-| **General** | **816** | **placeholder padding only** — unused bits the ROM reserves inside a *multi-floor* block (Silph Co. 218, S.S. Anne 138, Pokémon Mansion 123, Rocket Hideout 112, Mt. Moon 66, Safari 63, Seafoam 57, Cerulean Cave 31, Rock Tunnel 8). They are on **no map** — nothing uses them — so assigning one would be inventing a fact. |
-| ⚠️ **1 to fix** | **1** | `Entered Rocket Hideout` (`0x677`) is a **real named flag with no map** — it must get its own map. |
+| its **own map page** | **all 2,560** | curated `maps[]` (552) + derived from usage (27) + region-that-IS-a-map (1,214) + **location members (816, shared)** |
+| **shared across >1 map** | **849** | 816 location-spanning + 33 genuinely multi-map curated (e.g. *Followed Oak Into Lab* → Oak's Lab **+** Pallet Town) |
+| **General** | **0** | retained as a supported page for what leadership adds later — **no event flag needs it** |
 
-So **536 of the 537 real flags already sit on their own map**, and General holds **nothing but unused
-padding** — which is exactly the intent: no real flag is ever homeless, and no page is invented out of
-ROM storage.
+**Nothing is homeless and no page is invented out of ROM storage.** A flag spanning a multi-floor
+location is assigned to **every map in that location** and marked `"shared": true`; e.g.
+`Placeholder Flag #6F0` → all **12** Silph Co maps (1F–11F + lift). The UI renders it on **each** of those
+pages in a **labelled shared group** listing/selecting the other maps it is in.
+
+⚠️ **Precision:** prefix matching over-reaches — *Mt. Moon Pokecenter* is a separate building on Route 4,
+not part of the cave whose block those bits sit in, so `LOCATION_EXCLUDE` drops Pokécenters/Marts. Mt. Moon
+resolves to its three cave floors only.
+
+⚠️ **Also fixed:** my own derivation bug — the digit-spacing regex mangled floor suffixes (`B1F` → `B 1F`),
+which is why `EVENT_ENTERED_ROCKET_HIDEOUT` had no map. **All 537 real flags now sit on their own map(s).**
 
 ### (Superseded wording, kept for context)
 

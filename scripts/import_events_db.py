@@ -83,6 +83,48 @@ def valid_map_names():
     return ok
 
 
+# The 9 pret regions that are NOT a single map but a multi-floor LOCATION. A flag
+# living in one of these spans the whole location, so per leadership it is assigned
+# to EVERY map in it and marked `shared` -- the UI shows it on each map's page in a
+# labelled shared group that lets you see/select the other maps it is in. We do NOT
+# invent a merged "Silph Co." page: pret's region is a ROM allocation block, and we
+# care about the save file, not the ROM's storage layout.
+LOCATION_PREFIXES = {
+    "Silph Co.":        ["Silph Co"],
+    "S.S. Anne":        ["S.S. Anne", "SS Anne"],
+    "Pokémon Mansion":  ["Mansion", "Pokemon Mansion"],
+    "Rocket Hideout":   ["Rocket Hideout"],
+    "Mt. Moon":         ["Mt. Moon", "Mt Moon"],
+    "Safari Zone":      ["Safari Zone"],
+    "Seafoam Islands":  ["Seafoam Islands"],
+    "Cerulean Cave":    ["Cerulean Cave"],
+    "Rock Tunnel":      ["Rock Tunnel"],
+}
+
+
+# Prefix matching over-reaches: "Mt. Moon Pokecenter" is a separate building out on
+# Route 4, NOT part of the Mt. Moon cave whose block these bits sit in -- filing the
+# cave's padding there would be plainly wrong. Excluded by name.
+LOCATION_EXCLUDE = ("pokecenter", "pokémon center", "pokemon center", "mart")
+
+
+def location_members(region, map_rows):
+    """Every real map making up a multi-floor location (Silph Co. -> 1F..11F + lift)."""
+    prefixes = LOCATION_PREFIXES.get(region)
+    if not prefixes:
+        return []
+    out = []
+    for name, mod in map_rows:
+        for cand in (name, mod):
+            if not cand:
+                continue
+            if any(cand.lower().startswith(p.lower()) for p in prefixes):
+                if not any(x in cand.lower() for x in LOCATION_EXCLUDE) and name not in out:
+                    out.append(name)
+                break
+    return out
+
+
 def script_file_to_map(fname, valid):
     """'scripts/OaksLab.asm' -> 'Oaks Lab' if that is a real map name."""
     base = os.path.basename(fname)
@@ -108,6 +150,10 @@ def main():
     a = ap.parse_args()
 
     valid = valid_map_names()
+    _m = load(MAPS_JSON)
+    _items = _m if isinstance(_m, list) else (_m.get("maps") or list(_m.values())[0])
+    map_rows = [(x.get("name"), x.get("modernName")) for x in _items
+                if isinstance(x, dict) and x.get("name")]
     canon = load(CANON)
     dossiers = {d["index"]: d for d in load(DOSSIERS)}
     old = load(EVENTS_JSON)
@@ -115,7 +161,7 @@ def main():
 
     rows, stats = [], {"named": 0, "placeholder": 0, "maps_kept": 0,
                        "maps_derived": 0, "maps_dropped": 0, "no_map": 0,
-                       "maps_from_region": 0, "location_page": 0, "general": 0}
+                       "maps_from_region": 0, "maps_from_location": 0, "general": 0}
 
     for r in canon:
         ind = r["index"]
@@ -151,12 +197,20 @@ def main():
         if not maps and region in valid:
             maps.append(region)
             stats["maps_from_region"] += 1
+        if not maps and region:
+            # A multi-floor LOCATION: assign the flag to EVERY map in it and mark it
+            # shared (leadership 2026-07-16) -- "if something spans multiple maps I
+            # like to keep everything on its own map, so introduce shared groups
+            # between maps... it's labelled as such and lets you select the other
+            # maps it's in." No merged location page.
+            members = location_members(region, map_rows)
+            if members:
+                maps.extend(members)
+                stats["maps_from_location"] += 1
         if not maps:
-            # a multi-floor location page (Silph Co., Mt. Moon, ...) -- or, if a flag
-            # ever has no region at all, the GENERAL page. General is retained as a
-            # supported home (leadership: "more stuff I have to add in") even though
-            # today NO event flag needs it: all 2,560 carry a region.
-            stats["location_page" if region else "general"] += 1
+            # GENERAL: retained (leadership: "more stuff I have to add in"), though
+            # today nothing lands here -- every flag has a region that resolves.
+            stats["general"] += 1
 
         row = {
             "name": d.get("name") or (pret or f"Placeholder Flag #{ind:03X}"),
@@ -170,6 +224,9 @@ def main():
             # also in maps[] above; when it is a multi-floor location it is the
             # location page's key.
             "region": region or None,
+            # SHARED: this flag lives on more than one map, so it renders on EACH of
+            # their pages inside a labelled shared group that lists/selects the others.
+            "shared": len(maps) > 1,
             "pretName": pret or None,
             "description": d.get("description"),
             "group": d.get("group"),
@@ -196,10 +253,13 @@ def main():
 
     print(f"entries: {len(rows)}  (was {len(old)})   named={stats['named']} "
           f"placeholder={stats['placeholder']}")
+    shared = sum(1 for r in rows if r["shared"])
+    homeless = sum(1 for r in rows if not r["maps"])
     print(f"maps: kept={stats['maps_kept']} derived={stats['maps_derived']} "
-          f"from-region={stats['maps_from_region']} DROPPED-as-invalid={stats['maps_dropped']}")
-    print(f"pages: location-page (multi-floor region)={stats['location_page']}  "
-          f"GENERAL={stats['general']}  <- 0 expected: every flag has a region")
+          f"from-region={stats['maps_from_region']} "
+          f"from-location(shared)={stats['maps_from_location']} "
+          f"DROPPED-as-invalid={stats['maps_dropped']}")
+    print(f"SHARED across >1 map: {shared}    on NO map (General): {homeless}")
     print(f"MISLABELS corrected: {len(fixed)}   phantom entries removed: {len(phantom)}")
     for r in fixed[:12]:
         print(f"   {r['ind']:#05x}  '{old_by_ind[r['ind']]['name']}' -> '{r['name']}'")
