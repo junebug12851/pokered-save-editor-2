@@ -26,6 +26,8 @@
 #include "../helpers/savefilefixture.h"
 
 #include <pse-db/db.h>
+#include <pse-db/eventsdb.h>
+#include <pse-db/entries/eventdbentry.h>
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/expanded/savefileexpanded.h>
 #include <pse-savefile/expanded/world/world.h>
@@ -56,6 +58,8 @@ private slots:
   void playtime_roundTrip();
   void worldOther_roundTrip();
   void events_roundTrip();
+  void events_everyEntryIsAtItsCanonicalBit();
+  void events_writeExactlyTheirBit();
   void towns_roundTrip();
   void trades_roundTrip();
   void completed_roundTrip();
@@ -149,6 +153,70 @@ void TestWorld::events_roundTrip()
   for(int i = 0; i < n; i++)
     QVERIFY2(e2->eventsAt(i) == ((i % 3) == 0),
              qPrintable(QStringLiteral("event %1 did not round-trip").arg(i)));
+}
+
+/// wEventFlags is ONE CONTIGUOUS 320-byte bitfield at 0x29F3 (verified against pret:
+/// `wEventFlags: flag_array NUM_EVENTS`, NUM_EVENTS = $A00 = 2560, ending exactly where
+/// wGrassRate begins at 0x2B33). So EVERY DB entry must sit at byte 0x29F3 + ind/8, bit
+/// ind%8 -- computed here INDEPENDENTLY of the json so a data regression cannot hide.
+///
+/// What this pins (and what it does NOT): it pins COVERAGE (2560, not v1's 508 -- this
+/// case fails outright on the old data) and ALIGNMENT (byte/bit vs ind, so a future hand
+/// edit to events.json cannot slide a flag onto the wrong byte).
+///
+/// It does NOT catch the 2026-07-16 MISLABEL bug, and honesty about that matters: v1's 508
+/// entries all had byte/bit *correct* (0 mismatches) -- the fault was in the NAMES (the
+/// Pokemon Tower block was shifted ~2, so "Beat Pokemontower 7 Trainer 0" really set
+/// EVENT_BEAT_GHOST_MAROWAK). Names are guarded instead by generation:
+/// scripts/import_events_db.py emits events.json from pret and `--check` reports any drift.
+/// @see notes/reference/event-flags.md
+void TestWorld::events_everyEntryIsAtItsCanonicalBit()
+{
+  const auto& store = EventsDB::inst()->getStore();
+  QCOMPARE(store.size(), static_cast<int>(eventCount));   // all 2560, not v1's 508
+
+  for(const auto* e : store)
+  {
+    const int ind = e->getInd();
+    QVERIFY2(ind >= 0 && ind < static_cast<int>(eventCount),
+             qPrintable(QStringLiteral("event ind %1 out of range").arg(ind)));
+    QVERIFY2(e->getByte() == 0x29F3 + ind / 8,
+             qPrintable(QStringLiteral("event %1 (%2): byte 0x%3, expected 0x%4")
+                          .arg(ind).arg(e->getName())
+                          .arg(e->getByte(), 4, 16, QChar('0'))
+                          .arg(0x29F3 + ind / 8, 4, 16, QChar('0'))));
+    QVERIFY2(e->getBit() == ind % 8,
+             qPrintable(QStringLiteral("event %1 (%2): bit %3, expected %4")
+                          .arg(ind).arg(e->getName()).arg(e->getBit()).arg(ind % 8)));
+  }
+}
+
+/// Keystone: toggling ONE event flag moves EXACTLY its own byte in the whole 32 KB save --
+/// nothing else. Save-file fidelity is sacred: an event edit must touch only its bit's byte.
+void TestWorld::events_writeExactlyTheirBit()
+{
+  SaveFile base; loadInto(base, m_orig);
+  base.flattenData();
+  const QByteArray baseline = snapshot(base);
+
+  // incl. 0x111 -- the bit v1 called "Beat Pokemontower 7 Trainer 0" but which really is
+  // EVENT_BEAT_GHOST_MAROWAK -- and 2522 (Beat Articuno), the last named flag.
+  const QVector<int> inds = { 0, 3, 0x111, 1000, 2522 };
+
+  for(int ind : inds)
+  {
+    SaveFile sf; loadInto(sf, m_orig);
+    auto* e = sf.dataExpanded->world->events;
+    e->eventsSet(ind, !e->eventsAt(ind));          // flip it, whatever BaseSAV holds
+    sf.flattenData();
+
+    const QVector<int> moved = diffOffsets(baseline, snapshot(sf));
+    const int expect = 0x29F3 + ind / 8;
+    QVERIFY2(moved == QVector<int>{ expect },
+             qPrintable(QStringLiteral("event %1: moved {%2}, expected {0x%3}")
+                          .arg(ind).arg(describeDiff(moved))
+                          .arg(expect, 4, 16, QChar('0'))));
+  }
 }
 
 void TestWorld::towns_roundTrip()

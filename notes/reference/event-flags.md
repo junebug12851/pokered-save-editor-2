@@ -443,6 +443,28 @@ Marowak ghost). And the **14 phantom** entries (`0x0EE`, `0x0EF`, `0x0F2`, `0x0F
 (4 of the 14 "mislabels" are benign style only — `Unnamed 1BF` vs `EVENT_1BF`, same bit; `0x677` is simply
 unnamed in v1 but is really `EVENT_ENTERED_ROCKET_HIDEOUT`.)
 
+### ✅ Console-verified: event edits are LIVE on Continue (2026-07-16)
+
+Forged a save with three flags set, booted the real ROM, and read the console's **own WRAM** — all three
+survive the load, at exactly the byte/bit the model computes (`wram = 0xD747 + ind/8`, `bit = ind%8`):
+
+| flag | ind | WRAM | console byte | bit | |
+|---|--:|---|---|--:|---|
+| `EVENT_GOT_TOWN_MAP` | 24 | `0xD74A` | `0x07` = `0000 0111` | 0 | ✅ set |
+| `EVENT_BEAT_BROCK` | 119 | `0xD755` | `0xC4` = `1100 0100` | 7 | ✅ set |
+| `EVENT_BEAT_GHOST_MAROWAK` | 273 | `0xD769` | `0x8E` = `1000 1110` | 1 | ✅ set |
+
+So the **file `0x29F3` ↔ WRAM `0xD747`** mapping (`wram = file + 0xAD54`) is right on real hardware, and
+event flags are **durable** — no `EnterMap` rewrite, unlike the transient `wStatusFlags*` bytes. Note
+ind **273 = `0x111`** is the very bit v1 called "Beat Pokemontower 7 Trainer 0": the console confirms it
+is `EVENT_BEAT_GHOST_MAROWAK`.
+
+**Pinned by tests** (`tst_world`): `events_everyEntryIsAtItsCanonicalBit` (coverage **2560** + every
+entry at `0x29F3 + ind/8`, bit `ind%8`, computed independently of the json) and
+`events_writeExactlyTheirBit` (flip one flag → byte-diff the whole 32 KB → **exactly one byte moves**).
+⚠️ Neither catches the *mislabel* class (v1's byte/bit were already correct — the NAMES were wrong); that
+is guarded by **generation**: `import_events_db.py --check` reports any drift from pret.
+
 **The fix is Phase 7, not a hand-patch:** `ind` is pret's index and `import_event_flags.py` already emits
 the canonical, self-validating 2,560-row truth — so **regenerate `events.json` from pret** rather than
 nudge v1's hand-made list. That also lifts coverage from **508 → 2,560** (the other 2,052 are unreachable

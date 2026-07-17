@@ -59,10 +59,16 @@ def valid_map_names():
     ⚠️ v1's events.json uses the MODERN names ('Mt Moon 1F', 'Pokemon Tower 2F')
     while maps.json's `name` is the old short form ('Mt. Moon 1', 'Celadon Mart 3').
     Checked against `name` alone, 42 of its 119 look invalid — against
-    name+modernName, ZERO are. So the curated map lists are 100% GOOD and must be
-    preserved verbatim; the real fault is that EventDBEntry::deepLink() resolves
-    only by `name`, which is why those 42 qCritical today. Fix the CODE, not the
-    data (leadership: "fix code that uses the data").
+    name+modernName, ZERO are. So the curated map lists are 100% GOOD and are
+    preserved verbatim.
+
+    And there is NO bug here: `MapsDB` indexes `name`, the id, AND `modernName`
+    (`ind.insert(entry->modernName, entry)`), so `getIndAt()` — which
+    EventDBEntry::deepLink() uses — resolves all 119 today. This validator simply
+    mirrors that same index, so it must accept modernName too or it would throw
+    away good data. (An earlier draft of this file claimed deepLink resolved by
+    `name` only and that those 42 qCritical — that was WRONG, asserted without
+    reading MapsDB. Verify before asserting.)
     """
     m = load(MAPS_JSON)
     items = m if isinstance(m, list) else (m.get("maps") or list(m.values())[0])
