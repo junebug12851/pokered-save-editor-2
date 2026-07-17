@@ -32,28 +32,23 @@
 #include <QJsonObject>
 #include <QProcess>
 
+#include "../helpers/emuvenv.h"
+
 namespace {
 
-QString repoRoot()
-{
-  return QFileInfo(QString::fromUtf8(PSE_ASSETS_DIR)).absolutePath();
-}
+// The ROM + venv gate is shared (tests/helpers/emuvenv.h) and is runnability-based,
+// not existence-based -- see that header for the Windows-venv-on-Linux trap it closes.
+using pse_test::emu::pythonPath;
+using pse_test::emu::repoRoot;
+using pse_test::emu::romPath;
 
-QString romPath()       { return repoRoot() + "/assets/references/backup.gb"; }
-QString pythonPath()    { return repoRoot() + "/tmp/emu-venv/Scripts/python.exe"; }
 QString runnerPath()    { return repoRoot() + "/scripts/emu/run_flag_scenarios.py"; }
 QString scenariosPath() { return repoRoot() + "/scripts/emu/flag_scenarios.json"; }
 QString resultPath()    { return repoRoot() + "/tmp/emu/flag_scenarios_result.json"; }
 
 QString unavailableReason()
 {
-  if (!QFile::exists(romPath()))
-    return "no ROM at assets/references/backup.gb (local-only verification)";
-  if (!QFile::exists(pythonPath()))
-    return "no emulator venv -- run scripts/emu/setup.ps1";
-  if (!QFile::exists(runnerPath()))
-    return "scripts/emu/run_flag_scenarios.py is missing";
-  return QString();
+  return pse_test::emu::unavailableReason({QStringLiteral("scripts/emu/run_flag_scenarios.py")});
 }
 
 } // namespace

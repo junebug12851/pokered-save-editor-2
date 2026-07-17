@@ -13,6 +13,19 @@ name: tests
 # tweak on the very first CI run. The CMake root is `projects/`. Tests don't need
 # the `app` target, but the root find_package pulls in Quick/Charts/etc., so those
 # Qt modules are installed here.
+#
+# ⚠️ THE QT VERSION HERE MUST MATCH THE KIT. Do not "helpfully" pin it back.
+#
+# It used to be 6.8.3 while the dev kit was 6.11, and that gap made the remote red
+# from 0.29.0-alpha to 0.41.7-alpha WITHOUT ANYTHING LOCAL BEING ABLE TO SEE IT:
+# mapengine.cpp used QImage::flipped() (Qt 6.9+), which compiled and passed on 6.11
+# and does not exist on 6.8.3. Worse, release.yml builds the same code and had not
+# run since v0.16.6-alpha -- so the next "ship" would have died AFTER the merge to
+# main. A dev toolchain newer than the shipping one is a class of bug that no test
+# can catch, because the broken code never reaches a compiler that rejects it.
+# Fixed by converging on ONE Qt (leadership, 2026-07-17): kit == container == CI.
+# If you bump the kit, bump this, docker/Dockerfile, lint.yml, pages.yml and
+# release.yml in the same commit. See notes/reference/qt-patterns.md (top).
 
 on:
   push:
@@ -28,7 +41,9 @@ jobs:
       - name: Install Qt (Linux gcc_64)
         uses: jurplel/install-qt-action@v4
         with:
-          version: "6.8.3"          # pinned exact so the Qt cache key is stable
+          # KEEP THIS == the kit (C:\Qt) and docker/Dockerfile's QT_VERSION. One Qt
+          # everywhere is the whole point -- see the header comment above.
+          version: "6.11.0"         # pinned exact so the Qt cache key is stable
           host: linux
           target: desktop
           arch: linux_gcc_64
@@ -73,7 +88,30 @@ jobs:
       - name: Install Qt (Windows llvm-mingw)
         uses: jurplel/install-qt-action@v4
         with:
-          version: "6.8.3"          # pinned exact so the Qt cache key is stable
+          # 6.11.0 + tools_llvm_mingw1706 makes this job an EXACT mirror of the kit
+          # (C:\Qt\6.11.0\llvm-mingw_64 + C:\Qt\Tools\llvm-mingw1706_64), which is
+          # what makes a red here mean something. See the header comment above.
+          version: "6.11.0"         # pinned exact so the Qt cache key is stable
+          # ⚠️ WHY THIS ONE JOB SOURCES aqtinstall FROM GIT -- do not "tidy" it back.
+          #
+          # Qt reorganised the WINDOWS repo at 6.11: qt6_6110/ no longer contains a
+          # second qt6_6110/, it contains one folder PER ARCH (qt6_6110_llvm_mingw/,
+          # qt6_6110_msvc2022_64/, ...), each with its own Updates.xml. Released
+          # aqtinstall (3.3.0, and it IS the newest on PyPI -- June 2025) still nests
+          # the version folder once, so it fetches qt6_6110/qt6_6110/Updates.xml, 404s,
+          # and the job dies in 35s at this step having compiled nothing:
+          #     ERROR : Failed to download checksum for the file 'Updates.xml'
+          # 6.9 and 6.10 install fine; 6.11.0, 6.11.1 and 6.12.0 all fail identically.
+          # LINUX IS UNAFFECTED (different repo layout), which is why only this job
+          # needs it -- upstream's fix is even titled "for Windows x64".
+          #
+          # Fixed upstream by miurahr/aqtinstall#1000 ("Support Qt 6.11+ for Windows
+          # x64", issue #959), MERGED 2026-03-24 -- but unreleased, hence git. Pinned
+          # to the merge commit, not a branch: a moving master would make this job
+          # non-reproducible, which is the exact disease we are curing.
+          # ✅ REMOVE THIS the day aqtinstall cuts a release containing #1000 (> 3.3.0):
+          #    just delete the two lines and let the action use its default.
+          aqtsource: "git+https://github.com/miurahr/aqtinstall.git@8c3695d4a4e1ceabf6a74dc6c79681656dc6b74b"
           host: windows
           target: desktop
           arch: win64_llvm_mingw

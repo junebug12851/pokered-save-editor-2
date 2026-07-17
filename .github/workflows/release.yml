@@ -27,9 +27,16 @@ name: release
 # artifacts but (with dry_run = true, the default) does NOT create the Release.
 #
 # Toolchain mirrors .github/workflows/tests.yml (the proven-locally Qt setup):
-# Qt 6.8.3 via install-qt-action; Windows = win64_llvm_mingw + tools_llvm_mingw1706
+# Qt 6.11.0 via install-qt-action; Windows = win64_llvm_mingw + tools_llvm_mingw1706
 # + "MinGW Makefiles"; Linux = linux_gcc_64 + Ninja. Just Release instead of Debug,
 # and the app target instead of tests.
+#
+# ⚠️ THIS IS THE JOB THE QT SPLIT NEARLY KILLED. It builds the same appcore the test
+# jobs do, but only runs on a main push that bumped VERSION -- so between v0.16.6-alpha
+# and 0.41.8-alpha it never ran, and never noticed that appcore had stopped compiling
+# on the pinned Qt. The next "ship" would have failed HERE, after the merge to main.
+# The Qt version is now the kit's, everywhere. Keep it that way; see tests.yml's
+# ⚠️ block and notes/reference/qt-patterns.md (top).
 #
 # NOTE: like tests.yml, the very first run may need a small shakeout (windeployqt
 # runtime DLLs, linuxdeploy-qt QML discovery, Inno path). Shakeout points are
@@ -53,7 +60,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  QT_VERSION: "6.8.3"
+  # MUST match the kit / docker/Dockerfile / tests.yml / lint.yml / pages.yml.
+  QT_VERSION: "6.11.0"
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -114,6 +122,12 @@ jobs:
           modules: qtcharts qtmultimedia qtshadertools
           tools: "tools_llvm_mingw1706"
           cache: true
+          # Released aqtinstall (3.3.0) cannot fetch Qt >= 6.11 for WINDOWS -- Qt
+          # re-laid-out that repo per-arch and aqt hasn't shipped the fix yet. Git-pinned
+          # to the merged upstream fix (miurahr/aqtinstall#1000). Windows-only; Linux is
+          # unaffected. KEEP IN SYNC with tests.yml's windows job, where the full
+          # explanation lives. Remove when aqtinstall releases > 3.3.0.
+          aqtsource: "git+https://github.com/miurahr/aqtinstall.git@8c3695d4a4e1ceabf6a74dc6c79681656dc6b74b"
 
       - name: Configure (Release)
         shell: bash

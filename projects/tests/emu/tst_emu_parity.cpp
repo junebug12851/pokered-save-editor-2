@@ -52,6 +52,7 @@
 #include <QProcess>
 #include <QStandardPaths>
 
+#include "../helpers/emuvenv.h"
 #include "../helpers/savefilefixture.h"
 
 #include <pse-db/db.h>
@@ -61,30 +62,20 @@ using namespace pse_test;
 
 namespace {
 
-/// <repo>, derived from the assets dir the build points us at.
-QString repoRoot()
-{
-  return QFileInfo(QString::fromUtf8(PSE_ASSETS_DIR)).absolutePath();
-}
+// The ROM + venv gate is shared (tests/helpers/emuvenv.h) and is runnability-based,
+// not existence-based -- see that header for the Windows-venv-on-Linux trap it exists
+// to close.
+using pse_test::emu::pythonPath;
+using pse_test::emu::repoRoot;
+using pse_test::emu::romPath;
 
-QString romPath()     { return repoRoot() + "/assets/references/backup.gb"; }
 QString dumperPath()  { return repoRoot() + "/scripts/emu/dump_state.py"; }
 QString outDir()      { return repoRoot() + "/tmp/emu"; }
-
-/// The venv scripts/emu/setup.ps1 builds. No venv -> we skip, we never guess an interpreter.
-QString pythonPath()  { return repoRoot() + "/tmp/emu-venv/Scripts/python.exe"; }
 
 /// Why we'd skip -- or empty if the emulator harness is actually available.
 QString unavailableReason()
 {
-  if (!QFile::exists(romPath()))
-    return "no ROM at assets/references/backup.gb (local-only verification)";
-  if (!QFile::exists(pythonPath()))
-    return "no emulator venv -- run scripts/emu/setup.ps1";
-  if (!QFile::exists(dumperPath()))
-    return "scripts/emu/dump_state.py is missing";
-
-  return QString();
+  return pse_test::emu::unavailableReason({QStringLiteral("scripts/emu/dump_state.py")});
 }
 
 } // namespace

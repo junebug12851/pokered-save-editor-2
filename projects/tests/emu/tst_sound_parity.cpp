@@ -52,6 +52,8 @@
 #include <QJsonObject>
 #include <QProcess>
 
+#include "../helpers/emuvenv.h"
+
 #include <pse-audio/gbapu.h>
 #include <pse-audio/gen1musicasm.h>
 #include <pse-audio/gen1soundengine.h>
@@ -97,16 +99,19 @@ Gen1SoundEngine::Bank toBank(const Gen1MusicAsm::Bank& src)
   return b;
 }
 
-/// Run a python script from the repo's PyBoy venv. Returns its exit code (2 == "no ROM, skip").
+/// Run a python script from the repo's PyBoy venv. Returns its exit code (2 == "unavailable, skip").
+///
+/// ⚠️ The venv gate is **runnability**-based, not existence-based (@see tests/helpers/emuvenv.h):
+/// a venv directory can exist and still be unusable — a Windows `Scripts/python.exe` rsynced into
+/// the Linux container is the case that caught us (2026-07-17). "It's on disk" is not "it runs".
 int runPy(const QStringList& args, QString* err = nullptr)
 {
-  const QString py = QDir(repoRoot()).absoluteFilePath("tmp/emu-venv/Scripts/python.exe");
-  if (!QFile::exists(py))
+  if (!pse_test::emu::pythonRuns())
     return 2;
 
   QProcess p;
   p.setWorkingDirectory(repoRoot());
-  p.start(py, args);
+  p.start(pse_test::emu::pythonPath(), args);
   if (!p.waitForFinished(180000))
     return 1;
   if (err)
@@ -135,11 +140,13 @@ private slots:
 
     // The importer emits the ROM->our address map from the very same lockstep walk that proves our
     // imported bytes match the cartridge. Regenerate it so it can never be stale.
-    const QString py = QDir(repoRoot()).absoluteFilePath("tmp/emu-venv/Scripts/python.exe");
+    // The venv when it RUNS here, else whatever python is on PATH (this one is a plain
+    // importer -- it doesn't need PyBoy -- so a system python is a fine second choice).
+    const QString py = pse_test::emu::pythonRuns() ? pse_test::emu::pythonPath()
+                                                   : QStringLiteral("python3");
     QProcess p;
     p.setWorkingDirectory(repoRoot());
-    p.start(QFile::exists(py) ? py : QStringLiteral("python"),
-            {QStringLiteral("scripts/import_music.py"), QStringLiteral("--check")});
+    p.start(py, {QStringLiteral("scripts/import_music.py"), QStringLiteral("--check")});
     p.waitForFinished(120000);
 
     const QByteArray raw = res(QDir(repoRoot()).absoluteFilePath("tmp/music_ptrmap.json"));

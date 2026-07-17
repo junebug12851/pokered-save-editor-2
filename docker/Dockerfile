@@ -8,10 +8,12 @@
 # run-tests.sh, so builds happen on the container's own fast filesystem rather
 # than over the slow Windows/WSL bind mount. See docker/README.md.
 #
-# Mirrors Twilight's local kit: Qt 6.11 + clang. (CI uses gcc/6.8.3; this is
-# deliberately the kit toolchain so it reproduces the runtime the app ships on,
-# AND it is where ASan/UBSan actually work — they are broken on the Windows
-# llvm-mingw kit.)
+# Mirrors Twilight's local kit: Qt 6.11 + clang — and as of 2026-07-17 so does CI,
+# so kit == container == CI is now ONE Qt version. (It used to be the odd one out:
+# CI pinned 6.8.3 while the kit was 6.11, and that gap made the remote red for 12
+# releases without anything local being able to see it. See the ⚠️ block atop
+# .github/workflows/tests.yml.) This is also where ASan/UBSan actually work — they
+# are broken on the Windows llvm-mingw kit.
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive

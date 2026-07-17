@@ -24,9 +24,19 @@ mkdir -p "$WORK" "$OUT" "$CCACHE_DIR"
 # --- 1. Copy the repo onto the container's own fast filesystem -------------
 # Incremental (rsync --delete) so repeat runs only re-copy changed files.
 # Build dirs and .git are excluded — we configure fresh build trees in /build.
+#
+# tmp/ is excluded because it is the HOST's scratch dir, and dragging a Windows
+# machine's scratch into a Linux container is how the container told three lies
+# (2026-07-17). tmp/emu-venv is a *Windows* virtualenv: copied in, its
+# Scripts/python.exe existed, so the emu tests' "no venv -> SKIP" gate never
+# fired and Linux tried to exec a PE binary ("<3>WSL ERROR: UtilGetPpid ...").
+# The gate itself is now runnability-based (tests/helpers/emuvenv.h), so this
+# exclusion is belt-and-braces — but tmp/ is host scratch either way (screenshots,
+# emu output, venv) and the container has no business reading it.
 echo "==> Syncing source  $HOST_SRC  ->  $WORK"
 rsync -a --delete \
     --exclude '.git/' \
+    --exclude 'tmp/' \
     --exclude 'build/' --exclude 'build-*/' \
     --exclude 'projects/build/' --exclude 'projects/build-*/' \
     "$HOST_SRC/" "$WORK/"

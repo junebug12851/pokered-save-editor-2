@@ -1,6 +1,100 @@
 # Qt / QML Patterns
 
-## 🔴 THE LOCAL KIT IS Qt 6.11. **EVERYTHING THAT BUILDS FOR REAL IS Qt 6.8.3.** — 2026-07-16
+## 🪟 WINDOWS + Qt ≥ 6.11: aqtinstall needs a git pin (and there IS one) — 2026-07-17
+
+**Read this before proposing any Qt version bump.** ⚠️ **An earlier draft of this section called it a
+hard ceiling — "Windows CI can have at most 6.10.x". That was WRONG**, and it is kept as a heading
+scar because of *how* it was wrong: the released tool couldn't do it, so it was written up as
+impossible. Twilight didn't buy it — *"i find it hard to believe the community has no solution for
+this moving forward"* — and she was right. The fix was merged upstream **four months ago**. The lesson
+is in [`../decisions/rejected.md`](../decisions/rejected.md): **"latest release can't" is not "can't",
+and an ecosystem this size having no answer should read as a smell, not a finding.**
+
+**What happened:** the branch `feature/qt-6.11-alignment` bumped every workflow to `6.11.0`. The
+Windows job died in **35 s**, at `Install Qt`, before a single file compiled:
+
+```
+ERROR : Failed to download checksum for the file 'Updates.xml' from mirrors '['https://download.qt.io']
+```
+
+**It is not a mirror flake, and it is not our config.** Probed directly:
+
+| `aqt list-qt windows desktop --arch …` | |
+|---|---|
+| `6.9.0`, `6.10.0` | ✅ `win64_llvm_mingw win64_mingw win64_msvc2022_64 …` |
+| `6.11.0`, `6.11.1`, `6.12.0` | ❌ all fail, identically |
+
+Same connection, same minute. **Qt reorganised the Windows repo at 6.11.** The old layout had one
+`Updates.xml` per version folder; the new one is split **per architecture**:
+
+```
+qt6_6100/  ->  qt6_6100/                      <- one child; aqt copes
+qt6_6110/  ->  qt6_6110_llvm_mingw/           <- FOUR children, and NO Updates.xml
+               qt6_6110_mingw/                   at the qt6_6110/ level -- so aqt's
+               qt6_6110_msvc2022_64/             fetch of qt6_6110/Updates.xml 404s
+               qt6_6110_msvc2022_arm64_cross_compiled/
+```
+
+**Linux is unaffected** — `6.11.0` installs fine there (the container has done it all along and passes
+91/91; the CI `lint` job **succeeded** at 6.11 on the same commit that killed Windows). Upstream's fix
+is literally titled *"for Windows x64"*.
+
+### ✅ THE FIX — `aqtsource`, git-pinned
+
+`aqtinstall` **3.3.0 is the newest release** (PyPI; a fresh venv installs the same). But **releases are
+not the project**: 3.3.0 is from **June 2025**, and the repo fixed this in
+**[miurahr/aqtinstall#1000](https://github.com/miurahr/aqtinstall/pull/1000)** — *"Support Qt 6.11+ for
+Windows x64"*, **merged 2026-03-24** (issue
+[#959](https://github.com/miurahr/aqtinstall/issues/959), which describes the per-arch split exactly).
+It is merged and **unreleased**, so take it from git.
+
+`jurplel/install-qt-action` exposes **`aqtsource`** — *"Location to source aqtinstall from in case of
+issues"* — which exists for precisely this:
+
+```yaml
+- uses: jurplel/install-qt-action@v4
+  with:
+    version: "6.11.0"
+    arch: win64_llvm_mingw
+    aqtsource: "git+https://github.com/miurahr/aqtinstall.git@8c3695d4a4e1ceabf6a74dc6c79681656dc6b74b"
+```
+
+**Pin the merge commit, not `@master`** — a moving master would make the job non-reproducible, which is
+the exact disease being cured. **Verified before use** (patched aqt in a throwaway venv):
+`win64_llvm_mingw` listed for 6.11.0, and `qtcharts` / `qtmultimedia` / `qtshadertools` all present.
+**Windows jobs only** (`tests.yml` → `windows`, `release.yml` → the Windows build); Linux keeps the
+default. **Remove both lines when aqtinstall cuts a release past 3.3.0.**
+
+---
+
+## ✅ RESOLVED 2026-07-17 — **there is ONE Qt now: `6.11.0`, everywhere.**
+
+The section below is the landmine as it stood, and it is **kept in full** because the *mechanism* is
+worth knowing and the class can come back the moment the versions drift apart again. But the standing
+situation it describes is over: **leadership chose to bring the shipping toolchain UP to the kit**
+rather than hold the app back on 6.8.3. `tests.yml` (both jobs), `lint.yml`, `pages.yml`,
+`release.yml` and `docker/Dockerfile` now all say `6.11.0`, each with a pointer to the ⚠️ block atop
+`tests.yml` explaining why they must move together.
+
+**So the rule changed shape.** It is no longer *"any Qt call newer than 6.8.3 is undetectable here"* —
+the API floor is now the kit's own, and local green means what it looks like it means. What replaces it:
+
+> **If you bump the kit, bump all five files in the same commit.** The danger was never the version
+> number; it was the *gap*. A dev toolchain newer than the shipping one is a bug class no test can
+> catch, because the offending code never reaches a compiler that would reject it.
+
+The `QT_VERSION_CHECK(6, 9, 0)` guard in `mapengine.cpp` **stays** — it costs four lines, it is proven
+on both paths, and it keeps 6.8 buildable from source for anyone who wants that. Don't tidy it away.
+
+⏳ **One thing still owed:** the branch CI run proving aqt serves `6.11.0` for `win64_llvm_mingw`.
+Linux `6.11.0` is proven (the container installs exactly that via aqt and passes 91/91) and
+`tools_llvm_mingw1706` is confirmed present; the Windows arch query flaked on a `download.qt.io`
+mirror checksum, which is **inconclusive, not a "no"** — and the local `C:\Qt\6.11.0\llvm-mingw_64`
+proves Qt ships the arch. If aqt turns out not to serve it, that — and only that — reopens the choice.
+
+---
+
+## 🔴 THE LOCAL KIT IS Qt 6.11. **EVERYTHING THAT BUILDS FOR REAL IS Qt 6.8.3.** — 2026-07-16 *(historical — resolved above)*
 
 **Read this before using any Qt API you are not sure of the age of.** It is the only landmine in this
 file that a local build *cannot* catch, by construction.
@@ -52,10 +146,10 @@ compiler this project has.** Note also that a failed CI build stops after a hand
 **6.8.3** is undetectable here and will only ever be caught by CI. If you reach for a modern-looking Qt
 API, check the docs' "since" line first, or guard it.
 
-**⚠️ Open question for project leadership (not an AI decision):** the dev kit and the shipping
-toolchain are three minor versions apart, which is the root cause and will recur. Either (a) bring
-CI + `release.yml` up to 6.11 — but that changes the Qt bundled into the installer/AppImage, a
-deployment call — or (b) hold 6.8.3 as the floor and keep guarding. Flagged, not decided.
+**✅ ANSWERED 2026-07-17 (leadership): option (a) — CI + `release.yml` came up to 6.11.** *"I hate the
+idea of holding my program back because online is doing it."* The installer/AppImage now bundle 6.11;
+the app bundles its own Qt on both platforms, so no user is forced onto a version by this. See the
+RESOLVED block at the top of this file.
 
 ## 🔴 A `TapHandler` does NOT stop the event. It fires *through* your floating panel. — 2026-07-13
 

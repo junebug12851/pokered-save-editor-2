@@ -42,16 +42,50 @@ couldn't compile. Container fixed: `qtmultimedia qtshadertools` (matching `tests
 (`libQt6Multimedia.so` has a hard `DT_NEEDED` on `libpulse.so.0`; GitHub's runner ships it, a clean
 container doesn't).
 
-- **⚠️ Known, not from this work:** **13/91 fail *inside the container*** on environment — 24 ×
-  `Fontconfig error: No writable cache directories` (the GUI tests), and `tst_emu_parity` /
-  `tst_sound_parity` / `tst_flag_scenarios` need the ROM **+ PyBoy**, which the container lacks. CI is
-  green and local `ctest` is 91/91 on the same commit, so this is drift from the months the image was
-  broken (it was **66/66** on 2026-06-13). Worth its own pass.
-- **⚠️ For leadership:** dev kit `6.11` vs shipping toolchain `6.8.3` is the root cause and will recur.
-  Bring CI/release up to 6.11 (changes the Qt bundled in the installer/AppImage — a deployment call), or
-  hold 6.8.3 as the floor and keep guarding. Guard pattern + the full landmine writeup:
-  [`reference/qt-patterns.md`](reference/qt-patterns.md) (top); lookup row in
-  [`reference/fix-patterns.md`](reference/fix-patterns.md). **Flagged, not decided.**
+- ✅ **The container is FIXED — 91/91 standard, 91/91 asan, 0 sanitizer findings, 0 fontconfig errors**
+  (2026-07-17). ⚠️ **And the diagnosis above it was backwards** — kept here as the correction:
+  - It was **3 failures, not 13**, and the **fontconfig class was already gone** (0 occurrences; the
+    24× count was stale from the months the image was broken).
+  - The three were **not** "the container lacks the ROM + PyBoy". **The exact opposite**:
+    `run-tests.sh` rsynced the host's `tmp/` — **Windows `emu-venv` and all** — *into* the container,
+    and the skip-gate only checked `QFile::exists("tmp/emu-venv/Scripts/python.exe")`. On Linux that
+    answered **true**, so the gate never fired and the test tried to exec a **Windows PE binary**;
+    WSL's binfmt interop caught it and failed sideways (`<3>WSL ERROR: UtilGetPpid:1330 ...`),
+    which read like a code fault. CI was green precisely *because* a fresh checkout has no `tmp/`.
+  - Fixed **twice, deliberately**: the gate is now **runnability-based, not existence-based**
+    (`tests/helpers/emuvenv.h` — shared by all three; *"does this interpreter run?"* is the only
+    question that matters, and it's platform-correct: `Scripts/python.exe` vs `bin/python3`), **and**
+    `run-tests.sh` excludes `tmp/` (host scratch has no business in the container). Proven
+    independently: re-inject the Windows venv and the test now **SKIPs with a message that explains
+    itself** instead of going red.
+  - **The lesson, and it generalises:** *a file existing is not a capability being available.* An
+    availability gate must test the capability, or it will pass in exactly the environment it was
+    written to protect.
+- ✅ **DECIDED (leadership, 2026-07-17): ONE Qt everywhere — `6.11.0` in all five build files**
+  (`tests.yml` ×2, `lint.yml`, `pages.yml`, `release.yml`, `docker/Dockerfile`), matching the kit.
+  The dev-newer-than-ship gap caused the 12 invisible-red releases and would have recurred on the next
+  6.9+ API; rather than hold the app back on 6.8.3, the shipping toolchain moved **up**. Pinned by a
+  ⚠️ block atop `tests.yml` + a cross-reference in each file.
+  - ⚠️ **The Windows jobs need a git-pinned aqtinstall, and must keep it.** Qt re-laid-out the
+    **Windows** repo per-arch at 6.11 (`qt6_6110/qt6_6110_llvm_mingw/`, no parent `Updates.xml`);
+    released aqt (3.3.0) still nests once → 404 → the job dies in 35 s. Fixed upstream by
+    **[aqtinstall#1000](https://github.com/miurahr/aqtinstall/pull/1000)** (merged 2026-03-24,
+    **unreleased** — 3.3.0 is from *June 2025*), sourced via the action's `aqtsource` input, **pinned
+    to the merge commit** for reproducibility. Linux unaffected. **Delete those two lines when
+    aqtinstall releases past 3.3.0.**
+  - 🐺 **A wrong conclusion was caught by leadership, not by me.** I wrote this up as a hard *ceiling*
+    ("Windows can have at most 6.10.x") off one lazy step — *PyPI's newest is 3.3.0, therefore no fix
+    exists* — and put three options on top of it. Twilight: *"i find it hard to believe the community
+    has no solution for this moving forward."* The fix had been merged **four months** earlier.
+    Lessons (**"latest release can't" ≠ "can't"** · an ecosystem with no answer is a **smell** · don't
+    promote an unchecked constraint into someone else's decision):
+    [`decisions/rejected.md`](decisions/rejected.md).
+  - ⏳ **Owed: the branch CI run on the patched config** — `feature/qt-6.11-alignment`. Verified
+    locally (patched aqt in a throwaway venv lists `win64_llvm_mingw` @ 6.11.0 + all three modules),
+    but *local proof of a remote claim* is the exact blind spot that started this, so it is **not
+    green until the remote says so.**
+  - Writeup: [`reference/qt-patterns.md`](reference/qt-patterns.md) (top); lookup rows in
+    [`reference/fix-patterns.md`](reference/fix-patterns.md).
 
 ### 🎫 EVENT FLAGS — all 2,560 researched, data regenerated, model fixed (2026-07-16, `0.41.6-alpha`)
 

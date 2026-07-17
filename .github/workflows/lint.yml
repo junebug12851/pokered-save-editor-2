@@ -18,7 +18,9 @@ jobs:
       - name: Install Qt (Linux gcc_64)
         uses: jurplel/install-qt-action@v4
         with:
-          version: "6.8.3"          # pinned exact so the Qt cache key is stable
+          # MUST match the kit / docker/Dockerfile / tests.yml / pages.yml / release.yml.
+          # One Qt everywhere -- see the ⚠️ block atop tests.yml for what the split cost.
+          version: "6.11.0"         # pinned exact so the Qt cache key is stable
           host: linux
           target: desktop
           arch: linux_gcc_64

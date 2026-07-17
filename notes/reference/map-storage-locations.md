@@ -61,10 +61,28 @@ Two mechanisms, and they produce **different shapes**:
 | `dbmapcoord` table + `ArePlayerCoordsInArray` | most | a **tile** | **99** |
 | raw `ld a, [wYCoord]` / `[wXCoord]` + `cp N` | 17 | a **row / column** | **37** |
 
-**A script box is the EXTENT of its trigger, not a tile** — leadership, 2026-07-17: *"if its a coord
-range test then put a box around the whole range."* Pallet Town's `cp 1` on `wYCoord` is not a square;
-it is **the entire north row**. So box geometry needs **w/h in tiles**, unlike the fixed 16×16 the
-filter-flag boxes use. This is more truthful than a tile would be: the trigger *is* the whole row.
+**A script's trigger has an EXTENT — but the extent is NOT a box.** A `cp 1` on `wYCoord` in Pallet
+Town is not a square; the trigger really is **the entire north row**, and the extractor must record
+that. What we *draw* is the second question, and leadership answered it twice on 2026-07-17 — the
+second answer is the one that stands:
+
+> ~~*"if its a coord range test then put a box around the whole range"*~~ — **superseded, same day:**
+>
+> *"The range may span multiple blocks, its important to highlight the blocks separately not the
+> range of blocks. So its still important to have only per-block or per-tile boxes depending on what
+> it is it just adds the ranged tab onto other tabs the block or tile depending on what it is may
+> have."*
+
+So: **the extractor expands a range into the units it covers, and each unit gets an ordinary
+fixed-size box** with the ranged script as **one more tab**. Pallet Town's north row is *N boxes,
+each tabbed* — not one wide rectangle. **There is no `w`/`h`** (an earlier draft of this file said
+there had to be; it was wrong). A range is therefore not a new geometry at all — it is a **spot that
+lands on many locations**, the same shape as a shared event flag showing on every map it spans.
+
+⚠️ **The unit belongs to the storage KIND, not the box.** Everything we ship today is per-tile (the
+filter-flag boxes are 16×16; coord tests read `wYCoord`/`wXCoord`, which are walk-grid tiles). The
+model must let a kind declare its unit rather than assuming one. Which kinds she means as
+*block*-scoped is **open** — nothing being built now depends on it.
 
 **The worked example** (`scripts/PalletTown.asm`) — Oak pulling you out of the grass, and the best
 single argument for the tabs, because one step writes **three kinds** of storage:
