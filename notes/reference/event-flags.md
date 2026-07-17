@@ -200,8 +200,23 @@ polish of the 507 named descriptions, Phase 6 (model verification), Phase 7 (DB 
 ## Crash / instability / softlock analysis (Phase 4 — research 2026-07-15)
 
 > ⚠️ **Correction (leadership, 2026-07-15):** an earlier draft here claimed "an event flag cannot crash
-> the console." **That was wrong.** Leadership confirmed empirically that **turning all flags on crashes
-> the game**, and the disassembly explains why — see below. The corrected mechanism is now the finding.
+> the console." **That was too strong** — flags don't execute, but they *drive* executed script pointers
+> (mechanism below), so a crash is possible in principle.
+>
+> 🔬 **…but the ALL-FLAGS-ON claim did NOT reproduce (console, 2026-07-16). Status: UNREPRODUCED.**
+> Leadership reported "turning all flags on crashes the game", and it was recorded here as established.
+> The cartridge says otherwise so far. With **every one of the 2,560 flags set** (`emu_boot all_flags`),
+> the console: booted healthy in Pallet (888 frames) → walked into **Oak's Lab** (the densest
+> `CheckEvent` chain in the game) → then the autopilot walked **~12 map transitions** (Pallet → Route 1
+> → Viridian → Route 2 → Pewter → … → the Saffron area) — **healthy overworld throughout, no garbage,
+> no hang** (screenshots: `tmp/mcp-shots/`). It only stopped on a *routing* limit ("no path" into Silph),
+> not a crash.
+>
+> **This is not a proof of "never crashes"** — it is a slice: no battle was fought under all-on, and
+> ~200 maps and every cutscene remain untested. But the specific, headline claim is **not reproduced**,
+> so nothing here may assert it as fact. **Owed:** find the real repro — was it **v1**'s editor? a
+> **specific map/cutscene**? a **battle**? Once named, it is a 5-second forge-probe on the new MCP.
+> Until then, treat the *mechanism* as real and the *all-on crash* as **unverified**.
 
 **A flag *bit* is never executed as code** (every reference is a `bit n,[hl]` test or a `res`/`set`;
 there is no `jp [wEventFlags]`). **But event flags DRIVE executed pointers.** Each map advances its
@@ -212,11 +227,15 @@ combination — above all, *all flags on* — pushes scripts into states and ind
 in normal play**, resolving a script pointer the game never validates and **`jp hl`-ing into garbage →
 crash.** Verified real (leadership) + mechanism grounded in the disassembly.
 
-**Consequences for the editor (this is a real risk, not just softlocks):**
+**Consequences for the editor:**
 
-- **Bulk / mass-set is dangerous.** "Set all", or a group-toggle that turns on a large arbitrary swath,
-  can drive a map into a crashing script state. The persistent-storage UI must **warn prominently**
-  before any bulk/all operation, and probably not offer a naive global "set everything".
+- **Bulk / mass-set: caution, honestly grounded.** The *mechanism* (an impossible combination driving a
+  map script to an unhandled index → executed pointer) is real, so a bulk set is still the riskiest thing
+  the panel can offer, and a **warning before any bulk/all/large-group set is retained**. But the warning
+  must **not claim "this crashes"** — the console did **not** reproduce it (above). Word it as *"this puts
+  the save in a state no real playthrough can reach; behaviour is unpredictable and unverified"* — true,
+  and it survives contact with a user who tries it and sees nothing happen. A naive global "set
+  everything" still shouldn't be offered.
 - **Impossible combinations** (mutually-exclusive story flags both on) are the crash trigger — not any
   single well-formed edit. Individual, sensible edits are almost always safe.
 - The **softlock / progression** categories below still apply on top of the crash risk.

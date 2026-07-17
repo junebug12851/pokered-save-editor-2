@@ -60,14 +60,20 @@ seven gym-trainer sweeps. Range groups are preferred (evidence-based) and give t
 real group identity + a natural group-toggle. Still to do: shared-flag detection, the missable/gift/
 static-Pokémon gates from v1's `eventPokemon.json`, and editorial group names.
 
-**Phase 4 — Crash / instability analysis.** 🟡 Research done (correction landed). **Finding:** flag bits
-aren't executed, but event flags drive `wCur<Map>Script` (set from `CheckEvent` chains) which dispatch
-via script-pointer tables ending in `jp hl` — so **impossible combinations, above all *all flags on*,
-crash the game** (`jp hl` into garbage). **Leadership-confirmed empirically.** Individual sensible edits
-are safe; **bulk/mass-set is the danger**. So the UI must **warn before any bulk/all/large-group set**
-and not offer a naive global "set everything". Softlock/progression categories (key-item gots, missable
-objects, one-way blockers, range sequences) layer on top. Full writeup + the categories in the reference
-note. ⏳ Owed: console-probe specific softlock cases (needs ROM); the no-single-flag-gun part is solid.
+**Phase 4 — Crash / instability analysis.** 🟡 Research done; **two claims corrected by the console
+(2026-07-16)**. **Mechanism (stands):** flag bits aren't executed, but event flags drive `wCur<Map>Script`
+(set from `CheckEvent` chains) dispatched via script-pointer tables ending in `jp hl`, so an impossible
+combination *could* resolve a bad pointer. **But:**
+- ❌ **"All flags on crashes the game" — UNREPRODUCED.** All 2,560 set: booted healthy, walked into Oak's
+  Lab, then **~12 map transitions**, healthy throughout. Not a proof of "never", but it may **not** be
+  asserted as fact. **Owed:** the real repro (v1? a specific map/cutscene? a battle?) — now a ~5 s probe.
+- ❌ **The Route 22 rival conflict — REFUTED** (ordered if/else masks the 2nd flag). See Phase 11.
+
+So: keep a **bulk-set warning** (the mechanism is real and it's an unreachable state), but word it as
+*"unpredictable and unverified"*, **never "this crashes"**. Individual sensible edits are safe. The
+softlock/progression categories (key-item gots, missable objects, one-way blockers, range sequences) stand
+as **suspected** until adjudicated. Full writeup in the reference note. ⏳ Owed: adjudicate the remaining
+5 same-object governors + `route22-rival-armed-but-hidden` on the console.
 
 **Phase 5 — Author dossiers for ALL 2,560.** 🟡 First complete pass done. The generator emits
 `tmp/event-flags/events_dossiers.json` — **every** bit with friendly name, description, map, group,
