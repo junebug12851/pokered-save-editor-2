@@ -84,9 +84,23 @@ presence at all; tied to map, own "Placeholder Flags" group at the bottom — no
 editorial polish of the named descriptions; the Phase 4 `crash` field; extend `CURATED` as deeper
 authoring proceeds.
 
-**Phase 6 — Save-model + console verification.** Confirm v2 reads/writes the 320-byte field byte-exact
-(add the model if absent). Console-verify a sample of edits persist on Continue and behave as
-documented. Pin with a test.
+**Phase 6 — Save-model verification.** ✅ DONE (2026-07-16) — **and it found a real bug.** The model
+exists (`WorldEvents` + `EventsDB`/`events.json`, data-driven per-event `byte`+`bit`).
+- ✅ **Byte/bit maths flawless:** all 508 satisfy `byte == 0x29F3 + ind/8`, `bit == ind%8` — **0
+  mismatches**, in range, no dupes. `ind` **is** pret's index. **No corruption bug.**
+- 🐞 **14 MISLABELLED + 14 phantom entries, all in the Pokémon Tower block** (`0x0EE`–`0x113`, shifted
+  ~2 bits): the editor **writes the wrong flag** — *"In Purified Zone"* → `EVENT_BEAT_POKEMONTOWER_5_TRAINER_3`;
+  *"Beat Pokemontower 7 Trainer 0"* → **`EVENT_BEAT_GHOST_MAROWAK`**. The phantoms point at placeholder
+  bits pret never names, so they do **nothing**. Table + detail in the reference note.
+- 📝 The `worldevents.h` comment (*"scattered all over the save"*) is misleading — it is one contiguous
+  320-byte array. Truth-in-labelling fix.
+- ⏳ Owed: console-verify an event edit persists on Continue (a ~5 s MCP probe); pin with a test
+  (`byte==0x29F3+ind/8` for every entry + a byte-diff proving one toggle moves exactly one bit).
+
+**Phase 6b — fix the model (BEFORE any UI).** Per the sprite/tileset/warp precedent the data is fixed
+first: **regenerate `events.json` from pret** (`import_event_flags.py` already emits the canonical,
+self-validating 2,560 rows) rather than hand-patch v1's list — which also lifts coverage **508 → 2,560**.
+⚠️ Needs leadership sign-off (no `.json` edits without it).
 
 **Phase 7 — Data home.** Finalize the curated data file — ideally one events JSON (names verbatim from
 pret + our curation), else standalone + linked. Baked into `db.qrc`; edits go through project leadership. Write

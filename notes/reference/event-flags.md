@@ -399,6 +399,55 @@ flag-governed (not a plain sprite/item). An object is flag-attached when a `Chec
 records, per object, the **list of attached event flags** (and count) so Phase 10 can colour the outline
 and the click can open the panel at those flag(s).
 
+## The v2 save model — verified, and it has a REAL bug (Phase 6, 2026-07-16)
+
+**The model exists** (it is *not* missing): `WorldEvents` (`expanded/world/worldevents.{h,cpp}`) +
+`EventsDB` (`projects/db/assets/data/events.json`). It is **data-driven**: `load()`/`save()` walk the DB and
+read/write each event at its own **absolute `byte` + `bit`** (`toolset->getBit(event->getByte(), 1,
+event->getBit())`).
+
+**✅ The byte/bit maths is FLAWLESS — no corruption.** Every one of the 508 entries satisfies
+`byte == 0x29F3 + ind/8` and `bit == ind % 8` — **0 mismatches**, all in range, no duplicates. `ind` **is**
+pret's event index, and the offsets agree exactly with the cartridge-verified anchor (`Followed Oak Into
+Lab` ind 0 → byte 10739 = `0x29F3` bit 0; `Beat Articuno` ind 2522 → byte 11054 = `0x2B2E` bit 2). Contrast
+the tileset `collPtr` disaster: **there is no wrong-byte bug here.**
+
+📝 The header comment (*"these bits have to be gotten all over the place"* / *"scattered all over the
+save"*) is **misleading legacy wording** — they are one **contiguous 320-byte array**; the DB merely stores
+each bit's absolute address. (Leadership 2026-07-16: the v1 event data *"was always a mess to me… but I
+never disputed it was contiguous bytes"* — so this is confused wording, not a disputed model.) Fix the
+comment.
+
+### 🐞 The bug: 14 mislabelled + 14 phantom entries, all in the POKÉMON TOWER block
+
+Comparing all 508 v1 names against pret's names **at the same index**: **480 match, 14 are MISLABELLED,
+and 14 more sit on indices pret does not name at all.** They cluster in one place — Pokémon Tower
+(`0x0EE`–`0x113`) — where v1's list is **shifted ~2 bits** against the truth:
+
+| index | v2/v1 calls it | the bit REALLY is |
+|---|---|---|
+| `0x0F1` | Beat Pokemontower 3 Trainer 0 | **`EVENT_BEAT_POKEMON_TOWER_RIVAL`** |
+| `0x0F3` | Beat Pokemontower 3 Trainer 2 | `EVENT_BEAT_POKEMONTOWER_3_TRAINER_0` |
+| `0x0FB` | Beat Pokemontower 4 Trainer 2 | `EVENT_BEAT_POKEMONTOWER_4_TRAINER_0` |
+| `0x104` / `0x105` | Beat Pokemontower 5 Trainer 2 / 3 | `..._5_TRAINER_0` / `..._5_TRAINER_1` |
+| `0x107` | **In Purified Zone** | **`EVENT_BEAT_POKEMONTOWER_5_TRAINER_3`** |
+| `0x109` | Beat Pokemontower 6 Trainer 0 | **`EVENT_IN_PURIFIED_ZONE`** |
+| `0x10B` | Beat Pokemontower 6 Trainer 2 | `EVENT_BEAT_POKEMONTOWER_6_TRAINER_0` |
+| `0x111` | Beat Pokemontower 7 Trainer 0 | **`EVENT_BEAT_GHOST_MAROWAK`** |
+| `0x113` | Beat Pokemontower 7 Trainer 2 | `EVENT_BEAT_POKEMONTOWER_7_TRAINER_0` |
+
+**Consequence: the editor writes the WRONG FLAG.** Ticking *"In Purified Zone"* marks a Tower trainer
+beaten; ticking *"Beat Pokemontower 7 Trainer 0"* sets **`EVENT_BEAT_GHOST_MAROWAK`** (story-critical — the
+Marowak ghost). And the **14 phantom** entries (`0x0EE`, `0x0EF`, `0x0F2`, `0x0F9`, `0x0FA`, `0x102`,
+`0x103`, `0x10A`, …) point at **placeholder bits pret never names**, so toggling them does **nothing**.
+(4 of the 14 "mislabels" are benign style only — `Unnamed 1BF` vs `EVENT_1BF`, same bit; `0x677` is simply
+unnamed in v1 but is really `EVENT_ENTERED_ROCKET_HIDEOUT`.)
+
+**The fix is Phase 7, not a hand-patch:** `ind` is pret's index and `import_event_flags.py` already emits
+the canonical, self-validating 2,560-row truth — so **regenerate `events.json` from pret** rather than
+nudge v1's hand-made list. That also lifts coverage from **508 → 2,560** (the other 2,052 are unreachable
+today). ⚠️ Data change — needs leadership sign-off before writing any `.json`.
+
 ## Save-model + UI (Phases 6–8)
 
 - Phase 6: confirm v2 reads/writes the 320-byte field byte-exact (add the model if absent) and
