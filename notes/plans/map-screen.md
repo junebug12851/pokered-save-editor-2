@@ -1751,26 +1751,53 @@ sites · **22** files with both · **41** files with coord triggers.
       these notes. Verified against `pret/pokered`; table + proofs in
       [`../reference/map-storage-locations.md`](../reference/map-storage-locations.md) → "The units".
 
-    ❓ **OPEN — the one thing this collides with, and it needs leadership before 16f-c is built.**
-    A **uniform block hit-grid lies on top of the canvas**, and the canvas already has its own
-    click/hover contract: sprites, warps, signs and the player are **selectable and draggable**, and
-    the shipped Flag boxes layer deliberately puts its click on the **ring only** — precisely so that
-    *"clicking the sprite itself still opens its details as before"* (0.42.0-alpha changelog). A
-    block cell covering that same sprite has to answer: **who wins the click?** Candidates, not a
-    decision:
+    ✅ **ANSWERED — who wins the click** *(leadership, 2026-07-17)*. The collision was real: a
+    uniform block hit-grid lies over a canvas where sprites, warps, signs and the player are already
+    **selectable and draggable**, and the shipped Flag boxes layer deliberately clicks the **ring
+    only** so *"clicking the sprite itself still opens its details as before"* (0.42.0-alpha). Three
+    candidates went up (layer-gated · object-first · block-always-wins). **She picked none of them:**
 
-    - **Layer-gated** — the block grid is only live while the *Flag boxes* layer is on; with it off,
-      the canvas behaves exactly as today. (Cheapest, and consistent with how the layer tree already
-      gates behaviour.)
-    - **Object first, block underneath** — a click on a real object does what it always did; a click
-      on the block's *empty* remainder opens the tab strip. (Preserves drag/select, but the hit
-      target stops being uniform — which is the simplicity being bought.)
-    - **Block always wins while the layer is on**, and the object's own details become **one of the
-      tabs**. (Most uniform, and arguably the truest to *"tabs so multiple storage spots on one
-      location"* — but it changes how drag-to-move is reached.)
+    > *"any overlap with selections need to be accessible under mouseover, click order is based on
+    > layer order in the panel shown to users. So the first click is highest layer however the square
+    > color tabs on top allow directly clicking or dragging and accessing."*
 
-    ⚠️ **Do not pick one in code.** Dragging is the interaction most at risk, and the sprite-drag +
-    TapHandler-through-panel bugs are both already in the notes as things that bit us. Ask.
+    **The rule, in three parts:**
+
+    | | |
+    |---|---|
+    | **Hover** | **Everything overlapping is accessible under mouseover.** Nothing is unreachable because something sits on top of it. |
+    | **Click** | **Priority IS the layer order the user already sees in the Layers panel** — first click goes to the **highest layer**. Not a new hidden precedence: the panel *is* the z-order, it is on screen, and it is already re-orderable and toggleable by the person clicking. |
+    | **Tabs** | **The escape hatch, and they are not just labels — you can click AND DRAG them.** A tab reaches its spot **directly**, whatever is stacked above it. |
+
+    ⭐ **This is better than all three candidates, and worth understanding rather than just
+    implementing.** The problem was "an invisible precedence rule fights the canvas". The answer
+    doesn't invent a rule — it **reuses one already on screen and already under the user's control**,
+    so precedence is inspectable and fixable by the person hitting it. And it retires the
+    drag-is-at-risk worry outright: **drag is available on the tab**, so a buried object is never
+    undraggable — no need to gate, re-order, or special-case the grid at all.
+
+    **The tab strip's own layout** *(leadership, same message)*:
+
+    > *"there is a gap in the tabs to seperate the tile-based tabs and non-tile-based tabs. door and
+    > warp tile traits would be an example of tile tabs seperated from non-tile tabs like filter flags
+    > or script locations or coord ranges these would be the tab tags on the left"*
+
+    - **Square colour tabs, tagged on the LEFT** of the block's box.
+    - **A GAP splits them into two families**, and the split is the **unit** — which is exactly the
+      three-units research made legible:
+      - **Tile-based tabs** (8×8 tile *traits*, from the tileset's meaning layer) — e.g. **Door**,
+        **Warp tiles**.
+      - **Non-tile tabs** (the walk-grid/half-block storage) — **filter flags**, **script
+        locations**, **coord ranges**.
+    - ⚠️ **So tile traits get tabs too** — which means the tab strip spans the **Tiles** group *and*
+      the storage kinds, not just Map Storage. `blockHotspots()`'s `spots[]` must therefore admit
+      **tile traits** as a kind, and each spot needs its **unit** so the gap can be placed. This is a
+      widening of 16f's scope and it lands *before* 16f-c is built, not after.
+
+    ❓ **Still unstated, and small enough to settle at build time with her in the room:** what the
+    square's *colour* means (the layer's own colour is the obvious read — the layer tree already
+    assigns one per layer), and the hover affordance's exact shape ("accessible under mouseover" —
+    peek, or a strip that lists them). Neither blocks 16f-a/16f-b.
 
       | Unit | Size | What is measured in it |
       |---|---|---|
@@ -1785,7 +1812,12 @@ sites · **22** files with both · **41** files with coord triggers.
       measurements"* is **exactly right** and is the one genuinely 8×8 layer.
 - **16f-b — Data.** Out of pret via an importer, never hand-written. (⚠️ `maps.json` is data — a new
   field needs leadership's OK, per the standing "don't edit the JSON" rule.)
-- **16f-c — The tabs**, on boxes with >1 spot.
+- **16f-c — The tabs**, on boxes with >1 spot. Now carries the whole interaction model
+  (hover-reaches-everything · click-priority-is-layer-order · click-**and-drag**-from-the-tab) and the
+  two-family tab strip split by a gap. ⚠️ **Its model work is bigger than "add tabs":**
+  `flagHotspots()` → `blockHotspots()` with `spots:[{kind, ind, name, section, extent, unit}]`, and
+  **`kind` must admit tile traits**, because the tile-based tabs come from the **Tiles** group, not
+  from Map Storage. Do that restructure first.
 
 Until then, boxes link to the filter flag only — **verified**, and it covers the brief's own example
 (Oak's Lab's Poké Balls are filter-flag objects).
