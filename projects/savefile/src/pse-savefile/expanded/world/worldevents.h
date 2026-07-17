@@ -20,20 +20,29 @@
 
 class SaveFile;
 
-// Total number of known events
-// We can't break this down into a byte count because these bits
-// have to be gotten all over the place
-constexpr var16 eventCount = 508; ///< Number of known story-event flags (scattered across the save).
+/// Every event flag the game has: `wEventFlags` is `flag_array NUM_EVENTS`, and
+/// pret's `event_constants.asm` ends at `const_next $A00` -- so NUM_EVENTS is
+/// **0xA00 = 2560**, fixed by the ROM. Raised from 508 (v1 only listed the flags
+/// it had names for) on 2026-07-16; `EventsDB` now carries all 2560, and this
+/// array is indexed by the DB's store size, so the two MUST stay in step.
+/// @see notes/reference/event-flags.md
+constexpr var16 eventCount = 2560; ///< Number of story-event flags (= pret NUM_EVENTS, $A00).
 
 /**
- * @brief The game's story-event flags -- a flat array of 508 booleans.
+ * @brief The game's story-event flags -- a flat array of @ref eventCount booleans.
  *
- * Gen 1 tracks story progress as individual event bits scattered all over the
- * save, so this object presents them as one flat @ref completedEvents array of
- * @ref eventCount flags, with QML count/at/set access. Toggling these is how
- * story flags are edited. Standard expanded-node convention (see SaveFileExpanded).
+ * Gen 1 keeps story progress in **`wEventFlags`: ONE CONTIGUOUS 320-byte bitfield**
+ * at save offset **0x29F3--0x2B32** (WRAM 0xD747--0xD886), ending exactly where
+ * `wGrassRate` begins -- bit `i` lives at byte `0x29F3 + i/8`, bit `i%8`. (The old
+ * comment here said the bits were "scattered all over the save"; they are not --
+ * that was legacy confusion. `EventsDB` merely stores each bit's absolute
+ * byte+bit, which is why it *looks* scattered.)
  *
- * @see World.
+ * This object presents them as one flat @ref completedEvents array with QML
+ * count/at/set access; toggling these is how story flags are edited. Standard
+ * expanded-node convention (see SaveFileExpanded).
+ *
+ * @see World, notes/reference/event-flags.md
  */
 class SAVEFILE_AUTOPORT WorldEvents : public QObject
 {
