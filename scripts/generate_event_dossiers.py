@@ -35,36 +35,37 @@ USAGE = os.path.join(OUT_DIR, "event_usage.json")
 # Extend this as authoring proceeds (Phase 5); every entry is source-grounded.
 # ---------------------------------------------------------------------------
 CURATED = {
+    # The game's own source gives these four no name (it literally marks them "???").
+    # Their meaning was recovered by reading what the scripts DO with them; the prose
+    # below is written for a person looking at the panel, not for the research log.
     "EVENT_1B8": {
-        "name": "Celadon unused reset flag (1B8)",
-        "description": "Cleared at the top of CeladonCity_Script every time you "
-        "enter Celadon City (ResetEvents EVENT_1B8, EVENT_1BF), but the shipped "
-        "game never sets or checks it anywhere. A vestigial / dead flag — pret "
-        "marks it '; ???'. Harmless dev leftover.",
+        "name": "Celadon leftover flag (1B8)",
+        "description": "Celadon City wipes this clean every time you walk in — but "
+        "nothing in the whole game ever turns it on or looks at it. A leftover the "
+        "developers never removed; switching it on changes nothing.",
         "classification_add": ["vestigial", "temporary"],
     },
     "EVENT_1BF": {
-        "name": "Celadon unused reset flag (1BF)",
-        "description": "Cleared with EVENT_1B8 at the top of CeladonCity_Script on "
-        "every Celadon entry, but never set or checked anywhere. Vestigial / dead "
-        "flag (pret '; ???').",
+        "name": "Celadon leftover flag (1BF)",
+        "description": "Wiped clean alongside 1B8 every time you enter Celadon City, "
+        "and — like it — never set or read anywhere else. A leftover; switching it on "
+        "changes nothing.",
         "classification_add": ["vestigial", "temporary"],
     },
     "EVENT_67F": {
-        "name": "Celadon unused reset flag (67F)",
-        "description": "ResetEvent'd at the top of CeladonCity_Script on every "
-        "Celadon entry, but never set or checked. Vestigial / dead flag (pret "
-        "'; ???'); note it lives in the Rocket Hideout allocation block yet is "
-        "reset by Celadon's script.",
+        "name": "Celadon leftover flag (67F)",
+        "description": "The third bit Celadon City wipes on entry, and the oddest: it "
+        "is stored over with the Rocket Hideout's flags, yet Celadon is the only place "
+        "that touches it — and nothing ever reads it. A leftover; switching it on "
+        "changes nothing.",
         "classification_add": ["vestigial", "temporary"],
     },
     "EVENT_2A7": {
-        "name": "On Cinnabar Gym map (gate-tile refresh)",
-        "description": "Set by the overworld loop (home/overworld.asm) while the "
-        "current map is the Cinnabar Gym, and cleared by CinnabarGym_Script. A "
-        "transient marker that drives UpdateCinnabarGymGateTileBlocks (the "
-        "quiz-gate tiles). pret marks it '; ???'; its usage discloses the meaning. "
-        "Temporary — not durable story state.",
+        "name": "Standing in the Cinnabar Gym",
+        "description": "The game raises this the moment you're on the Cinnabar Gym "
+        "floor and drops it again as you leave — it's how the gym knows to redraw its "
+        "quiz gates. It marks where you are right now, not anything you've done, so "
+        "setting it by hand doesn't stick.",
         "classification_add": ["temporary"],
     },
 }

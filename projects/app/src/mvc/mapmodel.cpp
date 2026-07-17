@@ -4086,6 +4086,17 @@ QVariantList MapModel::storagePages() const
     if (m != nullptr && !covered.contains(int(m->getInd())))
       extra.insert(int(m->getInd()), m->getName());
   }
+
+  // ...and so do maps whose only storage is EVENT FLAGS (2026-07-16). Without this a
+  // place like Celadon City -- 21 named flags + its placeholder bits, but no script
+  // entry and no missables -- would have NO page, and its flags would be unreachable
+  // in the editor. Every map an event is filed on must be selectable.
+  for (auto* e : EventsDB::inst()->getStore()) {
+    for (const auto* m : e->getToMaps()) {
+      if (m != nullptr && !covered.contains(int(m->getInd())))
+        extra.insert(int(m->getInd()), m->getName());
+    }
+  }
   for (auto it = extra.constBegin(); it != extra.constEnd(); ++it) {
     QVariantMap p;
     p[QStringLiteral("title")] = it.value();

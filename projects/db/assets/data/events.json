@@ -8003,7 +8003,7 @@
   "placeholder": true
  },
  {
-  "name": "Celadon unused reset flag (1B8)",
+  "name": "Celadon leftover flag (1B8)",
   "ind": 440,
   "byte": 10794,
   "bit": 0,
@@ -8013,7 +8013,7 @@
   "region": "Celadon City",
   "shared": false,
   "pretName": "EVENT_1B8",
-  "description": "Cleared at the top of CeladonCity_Script every time you enter Celadon City (ResetEvents EVENT_1B8, EVENT_1BF), but the shipped game never sets or checks it anywhere. A vestigial / dead flag — pret marks it '; ???'. Harmless dev leftover.",
+  "description": "Celadon City wipes this clean every time you walk in — but nothing in the whole game ever turns it on or looks at it. A leftover the developers never removed; switching it on changes nothing.",
   "group": "Celadon City — story",
   "classification": [
    "used",
@@ -8132,7 +8132,7 @@
   "placeholder": true
  },
  {
-  "name": "Celadon unused reset flag (1BF)",
+  "name": "Celadon leftover flag (1BF)",
   "ind": 447,
   "byte": 10794,
   "bit": 7,
@@ -8142,7 +8142,7 @@
   "region": "Celadon City",
   "shared": false,
   "pretName": "EVENT_1BF",
-  "description": "Cleared with EVENT_1B8 at the top of CeladonCity_Script on every Celadon entry, but never set or checked anywhere. Vestigial / dead flag (pret '; ???').",
+  "description": "Wiped clean alongside 1B8 every time you enter Celadon City, and — like it — never set or read anywhere else. A leftover; switching it on changes nothing.",
   "group": "Celadon City — story",
   "classification": [
    "used",
@@ -12353,7 +12353,7 @@
   "placeholder": true
  },
  {
-  "name": "On Cinnabar Gym map (gate-tile refresh)",
+  "name": "Standing in the Cinnabar Gym",
   "ind": 679,
   "byte": 10823,
   "bit": 7,
@@ -12363,7 +12363,7 @@
   "region": "Cinnabar Island",
   "shared": false,
   "pretName": "EVENT_2A7",
-  "description": "Set by the overworld loop (home/overworld.asm) while the current map is the Cinnabar Gym, and cleared by CinnabarGym_Script. A transient marker that drives UpdateCinnabarGymGateTileBlocks (the quiz-gate tiles). pret marks it '; ???'; its usage discloses the meaning. Temporary — not durable story state.",
+  "description": "The game raises this the moment you're on the Cinnabar Gym floor and drops it again as you leave — it's how the gym knows to redraw its quiz gates. It marks where you are right now, not anything you've done, so setting it by hand doesn't stick.",
   "group": "Cinnabar Island — story",
   "classification": [
    "used",
@@ -31589,7 +31589,7 @@
   "placeholder": true
  },
  {
-  "name": "Celadon unused reset flag (67F)",
+  "name": "Celadon leftover flag (67F)",
   "ind": 1663,
   "byte": 10946,
   "bit": 7,
@@ -31599,7 +31599,7 @@
   "region": "Rocket Hideout",
   "shared": false,
   "pretName": "EVENT_67F",
-  "description": "ResetEvent'd at the top of CeladonCity_Script on every Celadon entry, but never set or checked. Vestigial / dead flag (pret '; ???'); note it lives in the Rocket Hideout allocation block yet is reset by Celadon's script.",
+  "description": "The third bit Celadon City wipes on entry, and the oddest: it is stored over with the Rocket Hideout's flags, yet Celadon is the only place that touches it — and nothing ever reads it. A leftover; switching it on changes nothing.",
   "group": "Rocket Hideout — story",
   "classification": [
    "used",
