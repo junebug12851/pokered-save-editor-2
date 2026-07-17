@@ -175,6 +175,26 @@ model-reset binding trap (caught twice by the screenshot review). Everything:
 > **Releases are MANUAL.** Commit and push to `dev` freely, but `main` only moves when Twilight says
 > **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
 
+### 🐛 KNOWN, UNFIXED — the wallpaper attribution overlaps the Credits cards (found 2026-07-17)
+
+Caught by the mandated screenshot review while adding the aqtinstall credit. **Pre-existing, not from
+that change**, and **not fixed** — flagged for Twilight because the fix is hers to choose.
+
+**What:** on the **About / Credits** modal, `CreditWork` — the faint wallpaper attribution (*"Basic
+Pokemons Colors" by yoshiyaki (CC-BY-NC-ND 3.0)* + URL) — is `anchors.bottom`/`.right` on the Page and
+declared **after** the `ListView`, so it floats on top while the cards scroll **underneath it**. Card
+text runs straight through it (clearly visible over the *Data Sources* note and the `aqtinstall` link +
+MIT line). On **Home** the same component is fine — it floats over artwork, not over live text.
+
+**Why it wasn't just fixed:** two standing rules point away from a unilateral change. *"UI/UX decisions
+are a design decision — do not independently change QML appearance"*, and this text is
+**licence-mandated** (CC-BY-NC-ND requires visible attribution), so where it goes and how legible it is
+has legal weight, not just aesthetic. An overlap is a bug; **the remedy is a design + licensing call.**
+
+**Options, for her:** give the ListView a bottom margin/footer inset so content can never reach it ·
+move the attribution into the *Wallpapers* card it describes · give it a solid backing plate · pin it
+to the scrolling footer rather than the Page. **Not started.**
+
 ## Current state (read this first)
 
 ### 🧭 THE AUTOPILOT'S PROGRESSION LAYER — "progress normally when asked", 16/16 (2026-07-16)

@@ -97,6 +97,24 @@ The tool **only ever reads** the save in memory to render the UI. It never calls
   does NOT override the screen DPR, so don't rely on it — downscale the grab instead.
 > ## ⚠️ READ THIS BEFORE YOU REVIEW A SCREENSHOT
 >
+> **A BLANK CREDITS SCREEN IS A RENDERER ARTIFACT, NOT AN EMPTY MODEL** (learned the slow way,
+> 2026-07-17). Shot offscreen, the About/Credits modal renders its **title and wallpaper and nothing
+> else** — every card gone. The cards are fine. `QT_QPA_PLATFORM=offscreen` has no GPU, so Qt's RHI
+> falls back to **software**, which **silently drops `MultiEffect`/layered items** — and the Credits
+> cards, the Home screen's disabled tiles and every drop shadow are exactly that.
+> `screenshooter.cpp:409` says so in as many words, and it is *why* the tool deliberately does not
+> force `QT_QUICK_BACKEND=software`.
+>
+> **So: anything built out of MultiEffect/layers/shadows can only be reviewed on the REAL GPU** —
+> launch a real window (`app_launch mode=foreground|background`, no `QT_QPA_PLATFORM`) and grab that.
+> An hour went into "is the credits model empty?" before this was remembered; the string-search of the
+> built `db.dll` was a dead end too (the qrc is **compressed**, so grepping it finds nothing — even
+> entries that are definitely there, which is what made it look like confirmation).
+>
+> **The general rule:** when a screenshot shows *nothing where something should be*, suspect the
+> **backend** before the **data** — and confirm with a control (does a thing you did NOT touch also
+> vanish? here, "Docker" was missing from the same searches, which was the tell).
+>
 > **`QT_QPA_FONTDIR` must be set, or every word in the picture is a tofu box.** The `screenshooter`
 > tool sets it for you. **The app's own `--shot` flag does NOT** — so if you are grabbing a screen by
 > launching `PokeredSaveEditor.exe --shot` (which is the fast way, and the right way, for reviewing
