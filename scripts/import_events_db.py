@@ -89,10 +89,13 @@ def script_file_to_map(fname, valid):
     if not base.endswith(".asm"):
         return None
     stem = base[:-4]
-    # CamelCase / digits -> spaced: OaksLab -> Oaks Lab, Route22 -> Route 22
-    s = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", stem)
-    s = re.sub(r"(?<=[A-Za-z])(?=\d)", " ", s)
-    for cand in (s, stem):
+    # CamelCase -> spaced: OaksLab -> 'Oaks Lab', RocketHideoutB1F -> 'Rocket Hideout B1F'.
+    camel = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", stem)
+    # Only SOME maps want a space before digits (Route22 -> 'Route 22'); it MUST be tried
+    # after `camel`, because it mangles floor suffixes ('B1F' -> 'B 1F') -- which is why
+    # EVENT_ENTERED_ROCKET_HIDEOUT lost its map until 2026-07-16.
+    digits = re.sub(r"(?<=[A-Za-z])(?=\d)", " ", camel)
+    for cand in (camel, digits, stem):
         if cand in valid:
             return cand
     return None
@@ -111,7 +114,8 @@ def main():
     old_by_ind = {e["ind"]: e for e in old}
 
     rows, stats = [], {"named": 0, "placeholder": 0, "maps_kept": 0,
-                       "maps_derived": 0, "maps_dropped": 0, "no_map": 0}
+                       "maps_derived": 0, "maps_dropped": 0, "no_map": 0,
+                       "maps_from_region": 0, "location_page": 0, "general": 0}
 
     for r in canon:
         ind = r["index"]
@@ -136,8 +140,23 @@ def main():
                 if mn and mn not in maps:
                     maps.append(mn)
                     stats["maps_derived"] += 1
+        # REGION FALLBACK (leadership 2026-07-16: "if anything can be mapped to a
+        # region do that, prefer to not use General when possible"). Every flag has
+        # a region (pret's allocation block) -- and 37 of the 46 regions ARE real map
+        # names, so file those on that map's page: putting the region into maps[]
+        # makes EventDBEntry::deepLink() -> MapDBEntry::toEvents carry them for free.
+        # The other 9 are multi-floor LOCATIONS (Silph Co., Mt. Moon, S.S. Anne...) --
+        # still real places, so they get a location page off `region`, never General.
+        region = d.get("map") or ""
+        if not maps and region in valid:
+            maps.append(region)
+            stats["maps_from_region"] += 1
         if not maps:
-            stats["no_map"] += 1
+            # a multi-floor location page (Silph Co., Mt. Moon, ...) -- or, if a flag
+            # ever has no region at all, the GENERAL page. General is retained as a
+            # supported home (leadership: "more stuff I have to add in") even though
+            # today NO event flag needs it: all 2,560 carry a region.
+            stats["location_page" if region else "general"] += 1
 
         row = {
             "name": d.get("name") or (pret or f"Placeholder Flag #{ind:03X}"),
@@ -146,6 +165,11 @@ def main():
             "bit": bit,
             "maps": maps,
             # --- additive: the research payload -----------------------------
+            # `region` is pret's allocation block and EVERY flag has one (0 without),
+            # so there is no General bucket at all. When it names a real map it is
+            # also in maps[] above; when it is a multi-floor location it is the
+            # location page's key.
+            "region": region or None,
             "pretName": pret or None,
             "description": d.get("description"),
             "group": d.get("group"),
@@ -173,7 +197,9 @@ def main():
     print(f"entries: {len(rows)}  (was {len(old)})   named={stats['named']} "
           f"placeholder={stats['placeholder']}")
     print(f"maps: kept={stats['maps_kept']} derived={stats['maps_derived']} "
-          f"DROPPED-as-invalid={stats['maps_dropped']}  entries-with-no-map={stats['no_map']}")
+          f"from-region={stats['maps_from_region']} DROPPED-as-invalid={stats['maps_dropped']}")
+    print(f"pages: location-page (multi-floor region)={stats['location_page']}  "
+          f"GENERAL={stats['general']}  <- 0 expected: every flag has a region")
     print(f"MISLABELS corrected: {len(fixed)}   phantom entries removed: {len(phantom)}")
     for r in fixed[:12]:
         print(f"   {r['ind']:#05x}  '{old_by_ind[r['ind']]['name']}' -> '{r['name']}'")

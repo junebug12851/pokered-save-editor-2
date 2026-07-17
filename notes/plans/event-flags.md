@@ -147,15 +147,34 @@ curated map land on that map's page (529 associations, preserved verbatim).
   playthrough can reach — unpredictable and unverified."* **Never "this crashes"** (the console did not
   reproduce it; Phase 4).
 
-**The un-mapped 2,031** (empty `maps[]`, overwhelmingly placeholders) get a **General** page in the map
-combo — and since leadership said *"if the general group gets too big, break it into multiple non-map
-groups"*, **it is too big**, so General is **split by the flag's pret region** (Silph Co., Mt. Moon,
-S.S. Anne, …) as its groups. Those regions are allocation blocks, not maps — which is exactly why they
-belong here rather than being forced onto a map page.
+**ANSWERED by leadership (2026-07-16) — this is the shape:**
 
-**Open for leadership:** (a) does the events section sit *below* Filter Flags, or above? (b) should the
-General page be one page with region groups, or one page per region? (c) default state of the groups —
-all collapsed, or story-groups open and Placeholders collapsed (my lean)?
+1. **Events sit ABOVE Filter Flags.** Page order: Script → minigame bytes → **EVENTS** → Filter Flags.
+2. **Nothing is collapsed.** It is a page you scroll. Groups are titled sections, all open. (So the row
+   delegate must be cheap and the list **virtualised** — 2,560 switches cannot all be live.)
+3. **Everything on its OWN map. No merged multi-map pages.** ⚠️ This kills the "location page" idea
+   (Silph Co. / Mt. Moon / S.S. Anne as pages): **pret's `region` is a ROM ALLOCATION BLOCK — a storage
+   detail, not a save concept.** *"We care about the save file, not the ROM; we just like referencing
+   the ROM."* Never build a page out of the ROM's storage layout.
+4. **Shared groups** — when something genuinely spans several maps it appears on **each** map's page in a
+   clearly-labelled **shared group**, which also lets you **see/select the other maps it is in**. (The
+   curated `maps[]` is already multi-map for many flags, so the data supports this today.)
+5. **Do NOT group by ROM-shared data** — e.g. the **Safari counters are one shared byte in the ROM/save;
+   that is backend trivia, so ungroup them.** Referencing the ROM is fine; mirroring its storage in the
+   UI is not.
+6. **General is RETAINED** (*"general may still be needed, there's more stuff I have to add in"*).
+
+**Where every flag actually lands (measured, not assumed):**
+
+| home | count | why |
+|---|--:|---|
+| its **own map page** | **1,743** | curated `maps[]` (551) + derived from usage (27) + region-that-IS-a-map (1,214, mostly that map's own placeholder bits) |
+| **General** | **816** | **placeholder padding only** — unused bits the ROM reserves inside a *multi-floor* block (Silph Co. 218, S.S. Anne 138, Pokémon Mansion 123, Rocket Hideout 112, Mt. Moon 66, Safari 63, Seafoam 57, Cerulean Cave 31, Rock Tunnel 8). They are on **no map** — nothing uses them — so assigning one would be inventing a fact. |
+| ⚠️ **1 to fix** | **1** | `Entered Rocket Hideout` (`0x677`) is a **real named flag with no map** — it must get its own map. |
+
+So **536 of the 537 real flags already sit on their own map**, and General holds **nothing but unused
+padding** — which is exactly the intent: no real flag is ever homeless, and no page is invented out of
+ROM storage.
 
 ### (Superseded wording, kept for context)
 
