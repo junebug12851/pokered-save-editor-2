@@ -10,7 +10,7 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 
 ## Data Sources
 
-- **[The Pokered Team](https://github.com/pret/pokered)** -- None of this would have been possible without them. This editor ships their work directly: the map blocks as raw `.blk`, and the game's music as their own `.asm` sheet music, read line by line
+- **[The Pokered Team](https://github.com/pret/pokered)** -- None of this would have been possible without them. This editor ships their work directly: the map blocks as raw `.blk`, the game's music as their own `.asm` sheet music read line by line, and every one of the 2,560 story-event flags -- names, positions and all -- read straight out of their event constants and map scripts
 - **[Pan Docs (gbdev)](https://gbdev.io/pandocs)** -- The definitive Game Boy hardware reference -- the sound chip documentation the editor's audio engine is built from _(License: CC0 1.0 (public domain))_
 
 ## Framework
