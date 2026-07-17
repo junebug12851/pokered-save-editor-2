@@ -122,6 +122,12 @@ jobs:
           modules: qtcharts qtmultimedia qtshadertools
           tools: "tools_llvm_mingw1706"
           cache: true
+          # Released aqtinstall (3.3.0) cannot fetch Qt >= 6.11 for WINDOWS -- Qt
+          # re-laid-out that repo per-arch and aqt hasn't shipped the fix yet. Git-pinned
+          # to the merged upstream fix (miurahr/aqtinstall#1000). Windows-only; Linux is
+          # unaffected. KEEP IN SYNC with tests.yml's windows job, where the full
+          # explanation lives. Remove when aqtinstall releases > 3.3.0.
+          aqtsource: "git+https://github.com/miurahr/aqtinstall.git@8c3695d4a4e1ceabf6a74dc6c79681656dc6b74b"
 
       - name: Configure (Release)
         shell: bash

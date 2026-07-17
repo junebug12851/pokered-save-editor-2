@@ -61,16 +61,31 @@ container doesn't).
   - **The lesson, and it generalises:** *a file existing is not a capability being available.* An
     availability gate must test the capability, or it will pass in exactly the environment it was
     written to protect.
-- ✅ **DECIDED (leadership, 2026-07-17): ONE Qt everywhere — CI/release/lint/pages bumped to `6.11.0`
-  to match the kit and the container.** The dev-newer-than-ship gap was the root cause of the 12
-  invisible-red releases and would have recurred on the next 6.9+ API; rather than hold the app back
-  on 6.8.3, the shipping toolchain moved up. Convergence is now pinned by a ⚠️ block atop
-  `tests.yml` + a cross-reference in each of the five files. ⏳ **Owed: the branch CI run that proves
-  aqt serves 6.11.0 for `win64_llvm_mingw`** (Linux 6.11.0 is already proven by the container;
-  `tools_llvm_mingw1706` confirmed present; the aqt Windows arch query flaked on a `download.qt.io`
-  mirror checksum, which is inconclusive, not a "no"). Landmine writeup:
-  [`reference/qt-patterns.md`](reference/qt-patterns.md) (top); lookup row in
-  [`reference/fix-patterns.md`](reference/fix-patterns.md).
+- ✅ **DECIDED (leadership, 2026-07-17): ONE Qt everywhere — `6.11.0` in all five build files**
+  (`tests.yml` ×2, `lint.yml`, `pages.yml`, `release.yml`, `docker/Dockerfile`), matching the kit.
+  The dev-newer-than-ship gap caused the 12 invisible-red releases and would have recurred on the next
+  6.9+ API; rather than hold the app back on 6.8.3, the shipping toolchain moved **up**. Pinned by a
+  ⚠️ block atop `tests.yml` + a cross-reference in each file.
+  - ⚠️ **The Windows jobs need a git-pinned aqtinstall, and must keep it.** Qt re-laid-out the
+    **Windows** repo per-arch at 6.11 (`qt6_6110/qt6_6110_llvm_mingw/`, no parent `Updates.xml`);
+    released aqt (3.3.0) still nests once → 404 → the job dies in 35 s. Fixed upstream by
+    **[aqtinstall#1000](https://github.com/miurahr/aqtinstall/pull/1000)** (merged 2026-03-24,
+    **unreleased** — 3.3.0 is from *June 2025*), sourced via the action's `aqtsource` input, **pinned
+    to the merge commit** for reproducibility. Linux unaffected. **Delete those two lines when
+    aqtinstall releases past 3.3.0.**
+  - 🐺 **A wrong conclusion was caught by leadership, not by me.** I wrote this up as a hard *ceiling*
+    ("Windows can have at most 6.10.x") off one lazy step — *PyPI's newest is 3.3.0, therefore no fix
+    exists* — and put three options on top of it. Twilight: *"i find it hard to believe the community
+    has no solution for this moving forward."* The fix had been merged **four months** earlier.
+    Lessons (**"latest release can't" ≠ "can't"** · an ecosystem with no answer is a **smell** · don't
+    promote an unchecked constraint into someone else's decision):
+    [`decisions/rejected.md`](decisions/rejected.md).
+  - ⏳ **Owed: the branch CI run on the patched config** — `feature/qt-6.11-alignment`. Verified
+    locally (patched aqt in a throwaway venv lists `win64_llvm_mingw` @ 6.11.0 + all three modules),
+    but *local proof of a remote claim* is the exact blind spot that started this, so it is **not
+    green until the remote says so.**
+  - Writeup: [`reference/qt-patterns.md`](reference/qt-patterns.md) (top); lookup rows in
+    [`reference/fix-patterns.md`](reference/fix-patterns.md).
 
 ### 🎫 EVENT FLAGS — all 2,560 researched, data regenerated, model fixed (2026-07-16, `0.41.6-alpha`)
 

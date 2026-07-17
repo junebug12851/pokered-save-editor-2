@@ -7,6 +7,44 @@ commit log; see `version.md` and `context/origins.md`). The rest are from the 20
 
 ---
 
+## ❌ "Windows CI can't have Qt ≥ 6.11" — a WRONG conclusion, retracted the same hour (2026-07-17)
+
+**Concluded:** that Qt 6.11 was unreachable for the Windows CI/release jobs, and the choice was
+therefore between 6.10.3 everywhere, staying on 6.8.3, or putting Twilight's Qt account password into
+GitHub secrets. It was written up in `qt-patterns.md` as a *ceiling* and put to leadership as a
+settled constraint.
+
+**It was wrong.** The reasoning was sound as far as it went — the diagnosis was exact (Qt split the
+Windows repo per-arch at 6.11; aqt fetches `qt6_6110/qt6_6110/Updates.xml` and 404s; 6.9/6.10 work,
+6.11.0/6.11.1/6.12.0 all fail identically) — and then it took **one bad step**: PyPI says 3.3.0 is the
+newest aqtinstall, therefore no fix exists, therefore it's impossible.
+
+**Twilight refused it:** *"i find it hard to believe the community has no solution for this moving
+forward."* Ninety seconds of actually looking: issue
+[#959](https://github.com/miurahr/aqtinstall/issues/959) describes the exact folder split, and PR
+[#1000](https://github.com/miurahr/aqtinstall/pull/1000) *"Support Qt 6.11+ for Windows x64"* was
+**merged 2026-03-24 — four months earlier**. `install-qt-action` has an `aqtsource` input for exactly
+this case. Verified working in a throwaway venv, then shipped as a pinned `aqtsource`.
+
+**⭐ The standing lessons — three, and they generalise well past Qt:**
+
+1. **"The latest RELEASE can't" is not "it can't."** 3.3.0 is from **June 2025**; the project had
+   moved on a year without cutting a tag. A release number is a publishing decision, not a statement
+   about what the code does. **Check the repo — issues, PRs, master — before declaring a wall.**
+2. **A big ecosystem having no answer is a SMELL, not a finding.** Every Qt project on GitHub Actions
+   installs Qt this way. If the conclusion is "they're all stuck", the conclusion is wrong. That
+   incredulity is a load-bearing instinct and it should fire *before* the write-up, not after.
+3. **Don't promote a constraint to a decision for someone else.** The ceiling was handed up as fact
+   with options built on top of it — which would have converted one unchecked assumption into a
+   permanent, wrong architecture choice (6.10.3, or credentials in CI). **Findings that shape
+   leadership's options need the same standard of proof as findings that shape the save file.**
+
+*(Sibling of the same day's other lesson — this one's cousin is "a file existing is not a capability
+being available", which is why the container was lying about three tests. Both are: check the thing
+itself, not a proxy for it.)*
+
+---
+
 ## The conflicting-flags system (briefed 2026-07-15 → shelved 2026-07-16)
 
 **Tried:** a system to flag *combinations* of event flags as conflicting — a logical predicate over a flag
