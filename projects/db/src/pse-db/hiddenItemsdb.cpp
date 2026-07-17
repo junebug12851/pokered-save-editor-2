@@ -40,7 +40,7 @@ void HiddenItemsDB::qmlRegister() const
 }
 
 HiddenItemsDB::HiddenItemsDB()
-  : AbstractHiddenItemDB("hiddenItems")
+  : AbstractHiddenItemDB("hiddenItems", false)
 {
   qmlRegister();
 }

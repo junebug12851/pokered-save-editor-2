@@ -345,6 +345,24 @@ const HiddenItemDBEntry* MapDBEntry::getToHiddenItemsAt(const int ind) const
   return toHiddenItems.at(ind);
 }
 
+const QVector<HiddenItemDBEntry*> MapDBEntry::getToHiddenCoins() const
+{
+  return toHiddenCoins;
+}
+
+int MapDBEntry::getToHiddenCoinsSize() const
+{
+  return toHiddenCoins.size();
+}
+
+const HiddenItemDBEntry* MapDBEntry::getToHiddenCoinsAt(const int ind) const
+{
+  if(ind >= toHiddenCoins.size())
+    return nullptr;
+
+  return toHiddenCoins.at(ind);
+}
+
 FlyDBEntry* MapDBEntry::getToFlyDestination() const
 {
     return toFlyDestination;

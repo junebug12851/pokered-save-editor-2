@@ -52,6 +52,74 @@ own kind of storage, not an event. That is the *"more stuff"* she meant, and it 
 file's own comment says so), but the macro *stores* `db \1, \3, \2` = map, **y, x**. Read the ARGS.
 Read the storage order instead and every coordinate comes out transposed.
 
+✅ **The shipped coords are CORRECT — checked, not assumed** (2026-07-17). `import_hidden_items.py`
+asserts every ROM row's `(x, y)` against `hiddenItems.json`'s at the **same index**, and all 54 + 12
+agree. So the transposition trap above was *avoided* when this data was first brought over; the check
+is now permanent, which matters because the arg/storage disagreement makes this the single easiest
+thing in the file to get silently backwards.
+
+### 2a. What is BURIED there — imported 2026-07-17
+
+The coord table says *where*; it does not say *what*. The item comes from a **second table**:
+`data/events/hidden_events.asm`, a run of `hidden_events_for <MAP>` blocks —
+
+```asm
+    hidden_events_for VIRIDIAN_FOREST
+    hidden_event  1, 18, HiddenItems, POTION      ; <- (x, y, function, ARGUMENT)
+    hidden_event 16, 42, HiddenItems, ANTIDOTE
+```
+
+- The **argument is the item id** (`HiddenItems` reads `wHiddenEventFunctionArgument` into
+  `wNamedObjectIndex`). For coins the argument is `COIN + <n>` — **the offset IS the amount**
+  (10 / 20 / 40; **260 coins buried in total** across the 12).
+- ⚠️ **Same trap, second file:** `hidden_event` args are **(x, y, …)** but it stores `db \2` (y) then
+  `db \1` (x). Both files agree on *arg* order, which is what makes the join by **(map, x, y)** exact
+  — `(x, y)` alone collides across maps.
+- `HiddenItems`/`HiddenCoins` are only two of the hidden-event functions; the same table holds bench
+  guys, PCs and trash cans. Filter by function or you will import a Poké Center PC as an item.
+
+Importer: `scripts/import_hidden_items.py` (additive-only, `--check`-idempotent) → adds `item` to
+`hiddenItems.json` and `coins` to `hiddenCoins.json`. **21 distinct items.** `item` is spelled exactly
+as `items.json` spells it ("GREAT BALL"), so it is both readable and a valid ItemsDB key — the
+importer **fails** rather than inventing a name that does not resolve.
+
+### 2b. 🐞 …and the items DB had never loaded. Not once.
+
+**The reason this data looked "already brought over" but showed nothing.** Two real bugs, both found
+while wiring the import, both fixed + pinned (`tst_db_integrity`, 13/13):
+
+1. **`AbstractHiddenItemDB::load()` used `static bool once`.** A static local in a **base-class**
+   method is **one static for the whole hierarchy**, not one per subclass — and `HiddenItemsDB` and
+   `HiddenCoinsDB` share that exact method. `db.cpp` constructs **HiddenCoinsDB first**, so it tripped
+   the guard and **`HiddenItemsDB::load()` returned early and loaded nothing**. All **54 hidden items
+   were an empty store** for as long as the code has existed. Same bug in `deepLink()`.
+   **Console-free negative control:** restoring the `static` semantics drops
+   `HiddenItemsDB::getStoreSize()` to **0** against an expected 54 — reproduced deliberately, then
+   reverted. Fix: per-instance `loaded` / `deepLinked` members.
+2. **`HiddenCoinsDB` was missing `DB_AUTOPORT`** while its sibling had it → the db shared library
+   never exported `HiddenCoinsDB::inst()`, so nothing outside the dll could link it.
+
+⚠️ **Two lessons, and they generalise well past this DB:**
+
+- **A `static` local in a shared base method is a hierarchy-wide flag.** If two singletons inherit one
+  `load()`, only the first one runs. (`qmlRegister()` is *safe* from this only because each subclass
+  overrides it — different functions, different statics.)
+- **A loop-over-everything test passes vacuously on an empty store.** `allSubDbsLoadAndCount` asserted
+  `>= 0` and went green on zero for years; the first cut of
+  `everyHiddenPickupResolvesItsMapAndItem` **also passed while the bug was live**, because it iterated
+  nothing. It now asserts the store is non-empty *first*. This is the same shape as the
+  `emu-venv` gate lesson in [`../status.md`](../status.md): **the check must be able to fail.**
+- 📝 `tst_db_coverage_fill.cpp` had **recorded the symptom** — *"the HiddenItems store is empty in the
+  test data"* — and filed it as a quirk of the fixtures. It was the bug, in writing, unread.
+
+### 2c. Items and coins are SEPARATE arrays — don't merge the lists
+
+`MapDBEntry` now carries **`toHiddenItems` and `toHiddenCoins` apart**. They used to share one list
+(harmless only because the items DB was loading nothing). They must not: they are two different save
+bitfields (`0x299C` vs `0x29AA`) with **independent numbering from 0**, so a merged list makes an
+entry's `ind` ambiguous. Each `HiddenItemDBEntry` now carries its own `ind` (**== its save bit**) and
+`isCoin`.
+
 ## 3. Scripts — located only when they test the player's coords
 
 Two mechanisms, and they produce **different shapes**:

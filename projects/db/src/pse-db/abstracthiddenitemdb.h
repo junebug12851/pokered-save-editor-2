@@ -54,8 +54,20 @@ protected slots:
 
 protected:
   /// @param loadFile the JSON asset the concrete subclass loads from.
-  AbstractHiddenItemDB(const QString loadFile);
+  /// @param isCoin   true for HiddenCoinsDB, false for HiddenItemsDB. Stamped onto every entry
+  ///                 so a pickup knows which save array its index refers to (the two are
+  ///                 separate bitfields with independent numbering). Passed explicitly rather
+  ///                 than sniffed from @p loadFile -- a filename is not a type.
+  AbstractHiddenItemDB(const QString loadFile, bool isCoin);
 
   QVector<HiddenItemDBEntry*> store; ///< The loaded entries.
   const QString loadFile;            ///< JSON asset path (set by the subclass).
+  const bool isCoin;                 ///< Is this the coins DB? (set by the subclass).
+
+  /// ⚠️ These MUST stay per-instance members, never `static` locals inside load()/deepLink().
+  /// This base is shared by two singletons; a static local here is one flag for BOTH, so the
+  /// second DB constructed would skip its own load entirely. That was a real, long-lived bug --
+  /// it left HiddenItemsDB empty. See abstracthiddenitemdb.cpp.
+  bool loaded = false;     ///< Has this DB loaded its own file yet?
+  bool deepLinked = false; ///< Has this DB resolved its own entries' links yet?
 };

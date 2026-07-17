@@ -108,6 +108,7 @@ struct DB_AUTOPORT MapDBEntry : public QObject {
   Q_PROPERTY(int getToEventsSize READ getToEventsSize CONSTANT)         ///< Number of associated events.
   Q_PROPERTY(FlyDBEntry* getToFlyDestination READ getToFlyDestination CONSTANT) ///< Resolved fly destination.
   Q_PROPERTY(int getToHiddenItemsSize READ getToHiddenItemsSize CONSTANT) ///< Number of hidden items here.
+  Q_PROPERTY(int getToHiddenCoinsSize READ getToHiddenCoinsSize CONSTANT) ///< Number of hidden coins here.
   Q_PROPERTY(ScriptDBEntry* getToScript READ getToScript CONSTANT)     ///< Resolved script.
 
 public:
@@ -192,6 +193,12 @@ public:
   int getToHiddenItemsSize() const;                           ///< @see getToHiddenItemsSize property.
   Q_INVOKABLE const HiddenItemDBEntry* getToHiddenItemsAt(const int ind) const; ///< Hidden item @p ind (for QML).
 
+  /// The hidden COINS on this map -- a separate list from the items, because they are a separate
+  /// save array with its own bit numbering. @see toHiddenCoins
+  const QVector<HiddenItemDBEntry*> getToHiddenCoins() const;
+  int getToHiddenCoinsSize() const;                           ///< @see getToHiddenCoinsSize property.
+  Q_INVOKABLE const HiddenItemDBEntry* getToHiddenCoinsAt(const int ind) const; ///< Hidden coin @p ind (for QML).
+
   ScriptDBEntry* getToScript() const; ///< @see getToScript property.
 
 public slots:
@@ -269,13 +276,20 @@ protected:
   MapDBEntry* toComplete = nullptr; // To Complete Version of Map
   QVector<EventDBEntry*> toEvents; // To Associated Events
   FlyDBEntry* toFlyDestination = nullptr; // To Associated Fly Destination
-  QVector<HiddenItemDBEntry*> toHiddenItems; // To Associated Hidden Items
+  /// The hidden ITEMS buried on this map (HiddenItemsDB entries only).
+  /// ⚠️ Kept apart from @ref toHiddenCoins deliberately: the two are different save arrays
+  /// (`wObtainedHiddenItemsFlags` 0x299C vs `wObtainedHiddenCoinsFlags` 0x29AA) with their own
+  /// independent bit numbering, so mixing them into one list makes an entry's bit ambiguous.
+  /// They used to share this list -- harmless only because the items DB was silently loading
+  /// nothing (see AbstractHiddenItemDB::load).
+  QVector<HiddenItemDBEntry*> toHiddenItems;
+  QVector<HiddenItemDBEntry*> toHiddenCoins; ///< The hidden COINS buried on this map.
   ScriptDBEntry* toScript = nullptr; ///< Resolved script (deepLink).
 
   friend class MapsDB;
   friend class MapSearch;      // reads filter fields in filter methods
   friend struct EventDBEntry;  // writes toEvents in deepLink
   friend struct FlyDBEntry;    // writes toFlyDestination in deepLink
-  friend struct HiddenItemDBEntry; // writes toHiddenItems in deepLink
+  friend struct HiddenItemDBEntry; // writes toHiddenItems/toHiddenCoins in deepLink
   friend struct ScriptDBEntry; // writes toScript in deepLink
 };

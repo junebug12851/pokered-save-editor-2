@@ -31,7 +31,8 @@ HiddenItemDBEntry::HiddenItemDBEntry() {
   qmlRegister();
 }
 
-HiddenItemDBEntry::HiddenItemDBEntry(const QJsonValue& data)
+HiddenItemDBEntry::HiddenItemDBEntry(const QJsonValue& data, int ind, bool isCoin)
+  : ind(ind), isCoin(isCoin)
 {
   qmlRegister();
 
@@ -39,6 +40,10 @@ HiddenItemDBEntry::HiddenItemDBEntry(const QJsonValue& data)
   map = data["map"].toString();
   x = data["x"].toDouble();
   y = data["y"].toDouble();
+  // Only one of these is present per file -- hiddenItems.json carries "item", hiddenCoins.json
+  // carries "coins". The absent one stays at its default, which is the honest answer for it.
+  item = data["item"].toString();
+  coins = data["coins"].toDouble();
 }
 
 void HiddenItemDBEntry::deepLink()
@@ -47,11 +52,14 @@ void HiddenItemDBEntry::deepLink()
 
 #ifdef QT_DEBUG
   if(toMap == nullptr)
-    qCritical() << "Hidden Coins Map: " << map << ", could not be deep linked." ;
+    qCritical() << (isCoin ? "Hidden Coins Map: " : "Hidden Items Map: ")
+                << map << ", could not be deep linked.";
 #endif
 
+  // Route to the list that matches this entry's save array. Items and coins are separate
+  // bitfields with independent numbering, so a shared list would make `ind` ambiguous.
   if(toMap != nullptr)
-    toMap->toHiddenItems.append(this);
+    (isCoin ? toMap->toHiddenCoins : toMap->toHiddenItems).append(this);
 }
 
 void HiddenItemDBEntry::qmlRegister() const
@@ -63,6 +71,16 @@ void HiddenItemDBEntry::qmlRegister() const
   qmlRegisterUncreatableType<HiddenItemDBEntry>(
         "PSE.DB.HiddenItemDBEntry", 1, 0, "HiddenItemDBEntry", "Can't instantiate in QML");
   once = true;
+}
+
+int HiddenItemDBEntry::getInd() const
+{
+    return ind;
+}
+
+bool HiddenItemDBEntry::getIsCoin() const
+{
+    return isCoin;
 }
 
 QString HiddenItemDBEntry::getMap() const
@@ -78,6 +96,16 @@ int HiddenItemDBEntry::getX() const
 int HiddenItemDBEntry::getY() const
 {
     return y;
+}
+
+QString HiddenItemDBEntry::getItem() const
+{
+    return item;
+}
+
+int HiddenItemDBEntry::getCoins() const
+{
+    return coins;
 }
 
 MapDBEntry* HiddenItemDBEntry::getToMap() const

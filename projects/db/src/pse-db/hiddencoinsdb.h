@@ -15,6 +15,7 @@
 */
 #pragma once
 #include <QObject>
+#include "./db_autoport.h"
 #include "./abstracthiddenitemdb.h"
 
 /**
@@ -23,9 +24,13 @@
  * All behaviour is inherited; this subclass just provides the singleton and the
  * concrete QML registration. See AbstractHiddenItemDB.
  *
+ * (`DB_AUTOPORT` was missing here while its sibling HiddenItemsDB had it, so the db shared
+ * library never exported HiddenCoinsDB::inst() and nothing outside the dll could link it --
+ * which is why tst_db_coverage_fill had to skip this DB. Added 2026-07-17.)
+ *
  * @see AbstractHiddenItemDB, WorldHidden (the save-side hidden-coin flags).
  */
-class HiddenCoinsDB : public AbstractHiddenItemDB
+class DB_AUTOPORT HiddenCoinsDB : public AbstractHiddenItemDB
 {
   Q_OBJECT
 

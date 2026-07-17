@@ -30,6 +30,10 @@
 #include <pse-db/types.h>
 #include <pse-db/mapsdb.h>
 #include <pse-db/sprites.h>
+#include <pse-db/hiddenItemsdb.h>
+#include <pse-db/hiddencoinsdb.h>
+#include <pse-db/entries/hiddenitemdbentry.h>
+#include <pse-db/entries/mapdbentry.h>
 #include <pse-db/util/mapsearch.h>
 
 class TestDbIntegrity : public QObject
@@ -46,6 +50,8 @@ private slots:
   void mapsSearchChainWorks();
   void allSubDbsLoadAndCount();
   void everySpriteHasAKnownGroup();
+  void bothHiddenDbsLoadTheirOwnData();
+  void everyHiddenPickupResolvesItsMapAndItem();
 };
 
 void TestDbIntegrity::boots()
@@ -205,6 +211,93 @@ void TestDbIntegrity::everySpriteHasAKnownGroup()
 
   for(const QString& g : known)
     QVERIFY2(tally.value(g) > 0, qPrintable(QString("group '%1' is empty").arg(g)));
+}
+
+/// Both hidden DBs must carry their OWN data -- the counts the cartridge fixes: 54 items, 12
+/// coins (54 `hidden_item` + 12 `hidden_coin` rows in pret; `MAX_HIDDEN_ITEMS` caps items at
+/// 112, of which only 54 are used).
+///
+/// This is a REGRESSION PIN, not a formality. HiddenItemsDB and HiddenCoinsDB share their
+/// load() implementation in AbstractHiddenItemDB, and a `static bool once` inside a base-class
+/// method is ONE static for the whole hierarchy -- so whichever DB was constructed second used
+/// to hit an already-tripped guard and load NOTHING. `allSubDbsLoadAndCount` could not catch it:
+/// it only asserts `>= 0`, and an empty store passes that happily. The counts are asserted
+/// exactly, because these two numbers are fixed by the ROM and any drift is a real fault.
+///
+/// @see WorldHidden (hiddenItemCount / hiddenCoinCount are sized to exactly these).
+void TestDbIntegrity::bothHiddenDbsLoadTheirOwnData()
+{
+  (void)DB::inst();
+
+  // Literals, not the WorldHidden constants: this test links `db` only, and `hiddenItemCount` /
+  // `hiddenCoinCount` live in pse-savefile. They MUST stay equal to those two -- the save model's
+  // arrays are sized to exactly these, so a drift here is a load() overrun there.
+  QCOMPARE(HiddenItemsDB::inst()->getStoreSize(), 54);
+  QCOMPARE(HiddenCoinsDB::inst()->getStoreSize(), 12);
+
+  // The two stores are genuinely different data, not the same file loaded twice -- the coins
+  // all live in the Game Corner, the items do not.
+  QVERIFY(HiddenItemsDB::inst()->getStoreAt(0) != HiddenCoinsDB::inst()->getStoreAt(0));
+
+  // Each entry knows its own bit, and the bit IS the store position. This is the property the
+  // whole feature stands on: save bit i == store index i == a real (map, x, y).
+  for(int i = 0; i < HiddenItemsDB::inst()->getStoreSize(); i++) {
+    QCOMPARE(HiddenItemsDB::inst()->getStoreAt(i)->getInd(), i);
+    QCOMPARE(HiddenItemsDB::inst()->getStoreAt(i)->getIsCoin(), false);
+  }
+  for(int i = 0; i < HiddenCoinsDB::inst()->getStoreSize(); i++) {
+    QCOMPARE(HiddenCoinsDB::inst()->getStoreAt(i)->getInd(), i);
+    QCOMPARE(HiddenCoinsDB::inst()->getStoreAt(i)->getIsCoin(), true);
+  }
+
+  // Items and coins deep-link to SEPARATE per-map lists. If they shared one, an entry's `ind`
+  // would be ambiguous -- two different save arrays, both numbered from 0.
+  MapDBEntry* gameCorner = HiddenCoinsDB::inst()->getStoreAt(0)->getToMap();
+  QVERIFY(gameCorner != nullptr);
+  QCOMPARE(gameCorner->getToHiddenCoins().size(), 12); // every coin is in the Game Corner
+  QCOMPARE(gameCorner->getToHiddenItems().size(), 0);  // and no hidden ITEM is
+}
+
+/// Every shipped hidden pickup deep-links to a real map and names a real item. Same spirit as
+/// `everyShippedSignResolvesInItsMapsText`: the save's bit `i` IS row `i` of the ROM's coord
+/// table, so a row that cannot find its map is a box we would draw in the wrong place -- or not
+/// at all. The item name comes from `import_hidden_items.py` and must resolve against items.json.
+void TestDbIntegrity::everyHiddenPickupResolvesItsMapAndItem()
+{
+  (void)DB::inst();
+
+  // ⚠️ Guard against passing VACUOUSLY. Both loops below iterate the store, so an EMPTY store
+  // satisfies them without checking anything -- and that is not hypothetical: while the
+  // AbstractHiddenItemDB once-guard bug was live, this test passed green on zero entries. A
+  // loop-over-everything test must first insist there is something to loop over.
+  QVERIFY(HiddenItemsDB::inst()->getStoreSize() > 0);
+  QVERIFY(HiddenCoinsDB::inst()->getStoreSize() > 0);
+
+  for(int i = 0; i < HiddenItemsDB::inst()->getStoreSize(); i++) {
+    HiddenItemDBEntry* e = HiddenItemsDB::inst()->getStoreAt(i);
+    QVERIFY(e != nullptr);
+    QVERIFY2(e->getToMap() != nullptr,
+             qPrintable(QString("hidden item bit %1 ('%2') did not deep-link its map")
+                          .arg(i).arg(e->getMap())));
+    QVERIFY2(!e->getItem().isEmpty(),
+             qPrintable(QString("hidden item bit %1 on '%2' has no item name")
+                          .arg(i).arg(e->getMap())));
+    QVERIFY2(ItemsDB::inst()->getIndAt(e->getItem()) != nullptr,
+             qPrintable(QString("hidden item bit %1: '%2' is not a real item")
+                          .arg(i).arg(e->getItem())));
+  }
+
+  for(int i = 0; i < HiddenCoinsDB::inst()->getStoreSize(); i++) {
+    HiddenItemDBEntry* e = HiddenCoinsDB::inst()->getStoreAt(i);
+    QVERIFY(e != nullptr);
+    QVERIFY2(e->getToMap() != nullptr,
+             qPrintable(QString("hidden coin bit %1 ('%2') did not deep-link its map")
+                          .arg(i).arg(e->getMap())));
+    // A coin pile with no coins in it would be a parse failure, not a real ROM value.
+    QVERIFY2(e->getCoins() > 0,
+             qPrintable(QString("hidden coin bit %1 on '%2' has %3 coins")
+                          .arg(i).arg(e->getMap()).arg(e->getCoins())));
+  }
 }
 QTEST_GUILESS_MAIN(TestDbIntegrity)
 #include "tst_db_integrity.moc"

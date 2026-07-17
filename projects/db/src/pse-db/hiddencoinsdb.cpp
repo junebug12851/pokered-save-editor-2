@@ -40,7 +40,7 @@ void HiddenCoinsDB::qmlRegister() const
 }
 
 HiddenCoinsDB::HiddenCoinsDB()
-  : AbstractHiddenItemDB("hiddenCoins")
+  : AbstractHiddenItemDB("hiddenCoins", true)
 {
   qmlRegister();
 }
