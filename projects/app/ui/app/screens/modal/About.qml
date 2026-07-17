@@ -4,8 +4,12 @@
 // soft translucent card over the wallpaper. Each card shows a section icon +
 // heading, then a Repeater over that section's entries (name, note, mandated
 // attribution, clickable URL, license). A header gives the screen a title +
-// warm intro; a footer shows the app version + copyright. ModalClose dismisses
-// via the router; CreditWork keeps the wallpaper's mandated art attribution.
+// warm intro; a footer shows the app version + copyright + the wallpaper's
+// mandated art attribution. ModalClose dismisses via the router.
+//
+// ⚠️ Unlike other modals this does NOT use a page-pinned CreditWork -- the
+// attribution is in the scrolling FOOTER instead, because a floating one gets
+// scrolled under (see the note on it).
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -287,6 +291,31 @@ Page {
           font.pixelSize: 12
           color: brg.settings.textColorMid
         }
+
+        Item { width: 1; height: 10 }
+
+        // The wallpaper's mandated attribution (CC-BY-NC-ND requires it visible).
+        //
+        // It lives HERE, at the end of the scroll, and NOT pinned to the page as a
+        // floating CreditWork like every other modal (Twilight, 2026-07-17: "just have
+        // the credits at the bottom of the page, not underneath it ... only on the
+        // bottom of the scroll past the page so it can be seen"). Pinned to the Page it
+        // was declared after the ListView, so the cards scrolled UNDERNEATH it and their
+        // text ran straight through it -- fine on Home, where it floats over artwork, but
+        // this screen is a scrolling wall of words. Here it can never collide, and you
+        // reach it by scrolling past everything, which is where an attribution belongs.
+        //
+        // ⚠️ Do not "restore consistency" by putting CreditWork back on the Page.
+        Text {
+          width: parent.width
+          horizontalAlignment: Text.AlignHCenter
+          wrapMode: Text.WordWrap
+          text: "\"Basic Pokemons Colors\" by yoshiyaki (CC-BY-NC-ND 3.0)\n" +
+                "https://www.deviantart.com/yoshiyaki/art/Basic-Pokemons-Colors-574585879"
+          font.pixelSize: 11
+          color: brg.settings.textColorMid
+          opacity: 0.65
+        }
       }
     }
   }
@@ -297,8 +326,6 @@ Page {
     anchors.rightMargin: 12
   }
 
-  CreditWork {
-    text: "\"Basic Pokemons Colors\" by yoshiyaki (CC-BY-NC-ND 3.0)\n" +
-          "https://www.deviantart.com/yoshiyaki/art/Basic-Pokemons-Colors-574585879"
-  }
+  // NO CreditWork here on purpose -- this modal's wallpaper attribution lives at the
+  // END OF THE SCROLL, in the ListView's footer. See the note beside it.
 }
