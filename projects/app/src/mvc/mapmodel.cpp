@@ -1590,6 +1590,16 @@ QVariantList MapModel::npcList() const
     m["inSpriteSet"] = (s->pictureID == SpritePlayerPicture) || loaded.contains(s->pictureID);
     m["missable"]    = s->getMissableIndex();
 
+    // ⭐ Is the save's filter flag currently switching this sprite OFF? The canvas draws the
+    // Continue-load view (leadership, 2026-07-18: *"the map should show the rendered view on
+    // continue load so filter flags need to have effect"*) -- a hidden missable's ARTWORK is not
+    // drawn, exactly as the console would not draw it; its flag box stays, because the box is
+    // about what BELONGS there. (WorldMissables: bit set = HIDDEN.)
+    const int mi = s->getMissableIndex();
+    m["hidden"] = (mi >= 0 && worldAll != nullptr && worldAll->missables != nullptr
+                   && mi < worldAll->missables->missablesCount())
+                    ? worldAll->missables->missablesAt(mi) : false;
+
     ret.append(m);
   }
 
@@ -4385,6 +4395,17 @@ QVariantList MapModel::blockHotspots(quint32 tileLayers) const
   /// File one spot onto every block its true extent intersects.
   /// @param ext the spot's HIGHLIGHT geometry, in map pixels, at its own real size.
   const auto file = [&](QVariantMap spot, const QRect& ext) {
+    // ⭐ Every spot carries its INK, from the canonical table -- so the QML never maps a kind to a
+    // colour on its own (that private mapping is how the canvas and the Layers panel came to
+    // disagree; leadership, 2026-07-18). A tile trait wears its own overlay layer's swatch.
+    if (!spot.contains(QStringLiteral("ink"))) {
+      const QString kind = spot.value(QStringLiteral("kind")).toString();
+      spot[QStringLiteral("ink")] =
+          (kind == QLatin1String("tileTrait"))
+            ? MapEngine::layerColor(
+                static_cast<MapEngine::Layer>(spot.value(QStringLiteral("ind")).toInt())).name()
+            : MapEngine::ink(kind).name();
+    }
     spot["extX"] = ext.x();
     spot["extY"] = ext.y();
     spot["extW"] = ext.width();
@@ -5201,6 +5222,11 @@ QString MapModel::overlaySource() const
   id += "/" + QString::number(borderBlock());
 
   return id;
+}
+
+QColor MapModel::ink(const QString& key) const
+{
+  return MapEngine::ink(key);
 }
 
 QVariantList MapModel::layerList() const

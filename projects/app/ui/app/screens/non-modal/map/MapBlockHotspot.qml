@@ -169,30 +169,20 @@ Item {
   width: hot.block.rectW * hot.canvas.zoom
   height: hot.block.rectH * hot.canvas.zoom
 
-  // Under the real objects: this annotates them, it must never cover them.
-  z: 0
+  // ⭐ AT REST, UNDER the real objects (a box annotates a thing, it must never cover it --
+  // leadership, 2026-07-18: *"these boxes often render in front of the sprites looking bad"*).
+  // ON HOVER, above them: the tab strip is the way IN to a crowded cell, and a handle you cannot
+  // reach is no handle. The objects sit at z 1; this flips past them only for the block the
+  // cursor is actually in.
+  z: hot.showTabs ? 3 : 0
 
-  /// The layer's ink, by what the spot is attached to -- her rule: a thing tied to a flag does not
-  /// look like a thing that isn't. Okabe-Ito throughout, and each one is the swatch its own Layers
-  /// row paints, so the row IS the legend.
-  function inkOf(kind) {
-    switch (kind) {
-      case "filterFlag":  return "#009e73";  // Flag boxes -- bluish green
-      case "eventFlag":   return "#56b4e9";  // Event flags -- sky blue
-      case "script":      return "#e69f00";  // Script triggers -- orange
-      case "cardKeyDoor": return "#d55e00";  // Card Key doors -- vermillion
-      case "hiddenItem":  return "#cc79a7";  // Hidden items -- reddish purple
-      case "hiddenCoin":  return "#f0e442";  // Hidden coins -- yellow
-      case "tileTrait":   return "#999999";  // Tile traits -- the quiet family
-      // The movable objects wear their own LAYER's colour, so a tab is visibly the same thing as
-      // the chip it points at and the Layers panel row IS the legend (rule 3). People & objects
-      // pink, Warps yellow, Signs orange, the Player his own grey-blue row.
-      case "sprite":      return "#cc79a7";
-      case "warp":        return "#f0e442";
-      case "sign":        return "#e69f00";
-      case "player":      return "#0072b2";
-    }
-    return "#009e73";
+  /// The spot's ink -- carried BY the spot, from the model, out of the ONE canonical table
+  /// (MapEngine::ink; tile traits wear their own overlay layer's swatch). This component used to
+  /// keep a private kind→colour map here, which is exactly how the canvas and the Layers panel
+  /// came to disagree (leadership, 2026-07-18: colours on the map that were in no panel row).
+  /// Nothing in this file states a colour of its own now.
+  function inkOf(spot) {
+    return spot.ink !== undefined ? spot.ink : brg.map.ink(spot.kind);
   }
 
   /// Is this spot's object currently switched OFF by the save? Only a filter flag can be, and it is
@@ -362,7 +352,7 @@ Item {
         visible: hot.anyMovable
         color: "transparent"
         border.width: hot.lineWidth
-        border.color: hot.inkOf(modelData.kind)
+        border.color: hot.inkOf(modelData)
         radius: 2
       }
 
@@ -376,7 +366,7 @@ Item {
                               : (spotItem.dashed ? 0.5
                                  : (modelData.kind === "script" && modelData.shape !== "scriptTile"
                                       ? 0.55 : 1.0))
-        Behavior on opacity { NumberAnimation { duration: 90 } }
+        Behavior on opacity { NumberAnimation { duration: 60 } }
         // The dashes are painted, not bound, so a size change has to ask for a repaint by hand --
         // otherwise zooming leaves the old rectangle stretched.
         onWidthChanged: requestPaint()
@@ -386,7 +376,7 @@ Item {
           ctx.reset();
           const w = hot.lineWidth;   // the same weight as the solid box, so only the DASH differs
           ctx.lineWidth = w;
-          ctx.strokeStyle = hot.inkOf(modelData.kind);
+          ctx.strokeStyle = hot.inkOf(modelData);
           ctx.setLineDash([Math.max(3, 3 * hot.canvas.zoom), Math.max(3, 3 * hot.canvas.zoom)]);
           ctx.strokeRect(w / 2, w / 2, width - w, height - w);
         }
@@ -414,7 +404,7 @@ Item {
         visible: spotItem.dashed && hot.canvas.zoom >= 1.5
         text: "⚑"
         font.pixelSize: Math.max(8, Math.round(9 * hot.canvas.zoom))
-        color: hot.inkOf(modelData.kind)
+        color: hot.inkOf(modelData)
       }
     }
   }
@@ -451,7 +441,7 @@ Item {
 
     // Fade rather than blink: the strip is following the cursor, and a hard cut reads as a glitch.
     opacity: hot.showTabs ? 1 : 0
-    Behavior on opacity { NumberAnimation { duration: 80 } }
+    Behavior on opacity { NumberAnimation { duration: 60 } }
 
     // NON-TILE first: the walk grid (16x16) -- people, doors, signs, filter flags, scripts,
     // buried items, event flags.
@@ -482,13 +472,13 @@ Item {
       width: Math.max(7, Math.round(6 * hot.canvas.zoom))
       height: width
       radius: 1
-      color: hot.inkOf(modelData.kind)
+      color: hot.inkOf(modelData)
       border.width: 1
       // Hovering lifts the tab out of the strip: a white ring, so it reads on every one of the
       // seven inks and on all four shades of Game Boy grey underneath.
       border.color: tab.hovered ? "#ffffff" : Qt.darker(color, 1.6)
       scale: tab.hovered ? 1.35 : 1.0
-      Behavior on scale { NumberAnimation { duration: 90 } }
+      Behavior on scale { NumberAnimation { duration: 60 } }
       // A tab for a switched-off object is hollow -- the same language the box itself speaks.
       opacity: hot.isHidden(modelData) ? 0.45 : 1.0
 
@@ -498,7 +488,9 @@ Item {
         id: tabHit
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
+        cursorShape: tabHit.tabDragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+        // Keep the drag: without this the Flickable steals it and pans the map instead.
+        preventStealing: true
         // Tell the block which spot is under the cursor, so ITS box lights up on the map. Hovering
         // a dot must point at something, or the strip is just decoration.
         onEntered: {
@@ -513,11 +505,62 @@ Item {
             hot.hoveredSpot = -1;
           hot.canvas.overTab = false;
         }
+
+        // ── ⭐ A MOVABLE spot's tab is a DRAG HANDLE, not just a button ──────────────────────
+        //
+        // Leadership, 2026-07-18: *"dragging a tab doesnt work either you have to drag the sprite
+        // itself which isnt what i wanted"* -- and the interaction model always said the tabs can
+        // be clicked AND dragged. Pull a movable spot's tab and the OBJECT moves, previewing live
+        // through the canvas's proxy-drag state, committing through the same byte-exact move the
+        // object's own drag uses. A buried object is therefore never undraggable: its tab is
+        // always on top. Fixed spots (scripts, flags, pickups) have nowhere to be dragged to, so
+        // their tabs stay click-only.
+        property point press
+        property bool tabDragging: false
+
+        onPressed: (m) => { tabHit.press = Qt.point(m.x, m.y); }
+
+        onPositionChanged: (m) => {
+          if (!tabHit.pressed || !hot.isMovable(tab.modelData.kind))
+            return;
+          if (!tabHit.tabDragging
+              && Math.abs(m.x - tabHit.press.x) < 4 && Math.abs(m.y - tabHit.press.y) < 4)
+            return;   // a tiny wobble on a click is not a drag
+          tabHit.tabDragging = true;
+          const g = tabHit.mapToGlobal(m.x, m.y);
+          const p = hot.canvas.tileAtGlobal(g.x, g.y);
+          hot.canvas.proxyUpdate(tab.modelData.kind, tab.modelData.ind, p.x, p.y);
+        }
+
+        // A drag is not a click: clicked() still fires after our hand-rolled drag (MouseArea only
+        // suppresses it for ITS OWN drag machinery), so the release notes it and clicked() skips.
+        property bool didDrag: false
+
+        onReleased: {
+          if (tabHit.tabDragging) {
+            tabHit.tabDragging = false;
+            tabHit.didDrag = true;
+            hot.canvas.proxyCommit();
+          }
+        }
+        onCanceled: {
+          tabHit.tabDragging = false;
+          tabHit.didDrag = false;
+          hot.canvas.proxyCancel();
+          hot.canvas.overTab = false;
+        }
+
         // ⚠️ NEVER disabled. This used to read `enabled: modelData.section !== ""` -- and since tile
         // traits carried section "", that single line switched OFF hover, tooltip AND click for
         // water and grass, i.e. most of a water route. A disabled MouseArea is not a quiet tab; it
         // is a hole in the map. Every kind now has a real destination, so every tab is live.
-        onClicked: hot.spotClicked(modelData.kind, modelData.section, modelData.ind)
+        onClicked: {
+          if (tabHit.didDrag) {   // that was a drag ending, not a click
+            tabHit.didDrag = false;
+            return;
+          }
+          hot.spotClicked(modelData.kind, modelData.section, modelData.ind);
+        }
 
         // ⚠️ ONE SHORT LINE. A tab is a 5-pixel square, and the first cut hung a paragraph off it --
         // the name, the state, the whole description, a caution, and an instruction. Twilight:
@@ -529,7 +572,7 @@ Item {
         // No "Click to open in Map Storage" either: the cursor is already a pointing hand, so the
         // line spent saying it is a line that tells you what you can already see.
         ToolTip.visible: containsMouse
-        ToolTip.delay: 300
+        ToolTip.delay: 200
         ToolTip.text: hot.labelOf(modelData)
       }
     }

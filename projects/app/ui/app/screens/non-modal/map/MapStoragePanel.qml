@@ -129,6 +129,10 @@ Item {
 
   property int page: 0   // index into storageMaps -- which map's storage is shown
 
+  // Switching pages starts at the TOP -- a page opened at wherever the last one was scrolled reads
+  // as broken ("opens scrolled down way too low"). A reveal mid-flight owns the scroll instead.
+  onPageChanged: if (!panel.revealSettling) scroller.contentItem.contentY = 0
+
   function pageForMap(mapInd) {
     for (let i = 0; i < storageMaps.length; i++)
       if (storageMaps[i].ids.indexOf(mapInd) !== -1)
@@ -172,20 +176,40 @@ Item {
     highlightFade.restart();
     // ⚠️ NOT Qt.callLater: on the FIRST open the panel is being loaded and built in this same tick,
     // and a callLater still runs before the ColumnLayout has given its children their heights --
-    // so mapToItem() answers with a stale y and the scroll lands at the top. Measured: it opened on
-    // the Event flags section instead of the switch, every time. A short timer lets the layout
-    // settle first, and `settle` fires again if the content grows underneath us.
+    // so mapToItem() answers with a stale y and the scroll lands at the top. The settle window
+    // below re-applies the scroll while the layout is still growing, then stands down.
+    panel.revealSettling = true;
     revealScroll.restart();
+    revealSettle.restart();
   }
 
   /// @deprecated Use reveal("missable", ind). Kept so an older caller cannot silently do nothing.
   function revealMissable(ind) { panel.reveal("missable", ind); }
 
-  /// The layout has to exist before we can scroll to a piece of it. @see reveal
+  /// ⭐ THE SETTLE WINDOW. A freshly opened page builds in stages (Loaders, Repeaters, images), so
+  /// any single one-shot scroll races the layout -- which is exactly the *"opens with the content
+  /// scrolled weird, significant white space, then it appears properly after some time"* and the
+  /// *"scrolls up too high, sits for a while, then scrolls back down"* leadership hit (2026-07-18).
+  /// The fix is not a longer wait (that IS the visible sitting): apply the scroll immediately,
+  /// then RE-apply it whenever the content's height moves during a short window, and stop. The
+  /// panel therefore tracks its target while the page grows underneath it, instead of jumping to
+  /// a stale position and correcting later.
+  property bool revealSettling: false
+
   Timer {
     id: revealScroll
-    interval: 60
+    interval: 16               // one frame -- just enough for the synchronous build to land
     onTriggered: panel.scrollToHighlight()
+  }
+  Timer {
+    id: revealSettle
+    interval: 450              // the settle window's end
+    onTriggered: panel.revealSettling = false
+  }
+  Connections {
+    target: scroller.contentItem
+    enabled: panel.revealSettling
+    function onContentHeightChanged() { panel.scrollToHighlight(); }
   }
 
   /// The section item a reveal should scroll to. Unknown section -> null, and the scroll is skipped
@@ -208,15 +232,21 @@ Item {
     // ⚠️ THE FLICKABLE TRAP. `scroller.contentItem` is the Flickable, and mapToItem() to a Flickable
     // answers in its VIEWPORT's coordinates -- which already have contentY taken off. So the number
     // that comes back is where the section is on SCREEN right now, not where it sits in the layout.
-    // Assigning that straight to contentY "scrolls" to wherever you already are: on a fresh open
-    // contentY is 0, the section reads as ~0, and the panel sits at the top looking like the scroll
-    // never ran. Adding the current contentY back converts viewport -> content space.
-    const rel = missableSection.mapToItem(scroller.contentItem, 0, 0).y;
-    // No manual clamp against contentHeight: the Flickable already refuses to scroll past its own
-    // end, and a hand-rolled `Math.min(target, contentHeight - height)` silently pins the panel to
-    // the TOP any time contentHeight has not been computed yet -- which, on a freshly loaded panel,
-    // is exactly when this runs. Let the Flickable do its own job.
-    scroller.contentItem.contentY = Math.max(0, scroller.contentItem.contentY + rel - 8);
+    // Adding the current contentY back converts viewport -> content space.
+    //
+    // ⚠️ And it maps THE SECTION ASKED FOR. This line read `missableSection.mapToItem(...)` --
+    // hardcoded -- so revealing a script, an event flag or a hidden pickup scrolled to wherever the
+    // MISSABLES happened to sit: sometimes way past the target, into white space the layout hadn't
+    // filled yet. That one word was most of the "glitched" open. (Leadership, 2026-07-18.)
+    const rel = target.mapToItem(scroller.contentItem, 0, 0).y;
+    let want = scroller.contentItem.contentY + rel - 8;
+    // Clamp to the real content ONLY when the layout has one -- a clamp against an uncomputed
+    // contentHeight pins the panel to the top, which is the other half of the old bug. The settle
+    // window re-applies as the height grows, so an early over-scroll self-corrects immediately.
+    const ch = scroller.contentItem.contentHeight;
+    if (ch > scroller.height)
+      want = Math.min(want, ch - scroller.height);
+    scroller.contentItem.contentY = Math.max(0, want);
   }
 
   /// The highlight is a pointer, not a state -- it says "here", then gets out of the way.

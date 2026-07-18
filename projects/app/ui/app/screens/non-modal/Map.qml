@@ -353,6 +353,17 @@ Page {
             p.reveal(section, ind);
         }
 
+        // ⭐ A genuine click on the bare GROUND closes the open panels — *"if a click opens a panel
+        // clicking off should close it"* (leadership, 2026-07-18). The refinement she asked for is
+        // structural, not special-cased: this signal only fires when the tap was NOT on a panel,
+        // NOT on the rail, NOT on a tab and NOT a popup's dismiss-press (the canvas returns early
+        // for every one of those) — so switching panels, re-clicking the tab that opened one, or
+        // working the rail can never accidentally close anything. Only the map itself does.
+        onGroundClicked: {
+          leftDock.open = "";
+          rightDock.open = "";
+        }
+
         // A maker tool put something down. The status bar says what and where -- never a modal, and
         // never nothing at all.
         onPlaced: (kind, index) => {

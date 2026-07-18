@@ -57,6 +57,14 @@ Item {
   required property string art
   required property bool inSet
 
+  /// ⭐ The save's filter flag is currently switching this sprite OFF. The canvas shows the
+  /// CONTINUE-LOAD view (leadership, 2026-07-18: *"the map should show the rendered view on
+  /// continue load so filter flags need to have effect ... in oaks lab the pokedex shouldnt be
+  /// shown"*) -- so a hidden sprite's artwork is not drawn, exactly as the console would not draw
+  /// it. Its flag BOX stays on the map (that layer says what belongs here), and selecting it
+  /// through its tab shows the artwork as a ghost so it can still be worked on.
+  property bool hiddenByFlag: false
+
   /// The sub-tile SLIDE, in buffer pixels, while a step is in progress.
   ///
   /// ⚠️ Not decoration -- without it sprites TELEPORT. `TryWalking` moves the tile coordinate to the
@@ -75,10 +83,12 @@ Item {
   // puts it back and writes NOTHING.
   property int dragX: -1
   property int dragY: -1
-  readonly property bool dragging: sprite.dragX >= 0
+  readonly property bool dragging: sprite.dragX >= 0 || sprite.proxied
 
-  readonly property int liveX: sprite.dragging ? sprite.dragX : sprite.tileX
-  readonly property int liveY: sprite.dragging ? sprite.dragY : sprite.tileY
+  readonly property int liveX: sprite.proxied ? sprite.canvas.proxyX
+                             : sprite.dragX >= 0 ? sprite.dragX : sprite.tileX
+  readonly property int liveY: sprite.proxied ? sprite.canvas.proxyY
+                             : sprite.dragX >= 0 ? sprite.dragY : sprite.tileY
 
   // Dragging the PLAYER moves the screen box and the draw area with him -- both are computed FROM
   // his position, and watching them snap into place only on release was the tell that they weren't
@@ -96,6 +106,12 @@ Item {
 
   readonly property bool selected: sprite.canvas.selectedNpc === sprite.slot
 
+  /// ⭐ Is this sprite being dragged BY ITS TAB? (The canvas's proxy-drag: pulling a movable
+  /// spot's tab moves the object itself. @see MapCanvas.proxyKind)
+  readonly property bool proxied: sprite.canvas.proxyKind === (sprite.isPlayer ? "player" : "sprite")
+                                  && sprite.canvas.proxyInd === sprite.slot
+                                  && sprite.canvas.proxyX >= 0
+
   // The 4-pixel lift -- where the console's own OAM puts a sprite -- plus the sub-tile slide, which
   // is what makes a step a step instead of a jump. (While you are DRAGGING there is no slide: the
   // preview belongs under your cursor, not sixteen pixels behind it.)
@@ -107,22 +123,27 @@ Item {
   width: 16 * sprite.canvas.zoom
   height: 16 * sprite.canvas.zoom
 
-  z: sprite.dragging ? 30 : (sprite.selected ? 25 : 0)
+  // ⭐ Baseline z is 1, not 0: the storage boxes annotate at z 0 and must sit UNDER the artwork
+  // (leadership, 2026-07-18: *"these boxes often render in front of the sprites looking bad"*).
+  z: sprite.dragging ? 30 : (sprite.selected ? 25 : 1)
 
-  // (Object stacking was removed 2026-07-15; a sprite always draws, overlapping or not. The player
-  //  instance still overrides `visible` at its use-site to gate on showPlayer.)
-  visible: true
+  // The CONTINUE-LOAD view: a sprite the save's filter flag hides is not drawn -- unless you have
+  // deliberately selected it (via its tab), in which case it appears as a ghost to be edited.
+  visible: !sprite.hiddenByFlag || sprite.selected || sprite.dragging
+  opacity: sprite.hiddenByFlag ? 0.45 : 1.0
 
-  /// The silhouette's ink -- the layer's own colour, so the outline, its tab and the Layers panel
-  /// row are visibly one thing: the Player his own blue, everybody else People & objects pink.
-  /// SELECTION lightens it rather than adding a second box round the first.
-  /// AMBER overrides both when the map has not loaded this sprite's picture -- the one thing you
-  /// cannot see by looking, because the console would draw garbage there.
+  /// The silhouette's ink -- out of the CANONICAL table (brg.map.ink), so the outline, its tab and
+  /// the Layers panel row are literally the same value: the Player his blue row, everybody else
+  /// the People & objects row. SELECTION turns it white; HOVER lifts it (the "this is draggable"
+  /// answer -- leadership, 2026-07-18: *"if the mouse moves over a draggable item it needs to
+  /// highlight"*). AMBER overrides all of it when the map has not loaded this sprite's picture --
+  /// the one thing you cannot see by looking, because the console would draw garbage there.
+  readonly property color layerInk: sprite.isPlayer ? brg.map.ink("player") : brg.map.ink("npcs")
   readonly property color outlineColor:
       sprite.selected                     ? "#ffffff"
-    : (!sprite.inSet && !sprite.isPlayer) ? "#ffd54f"
-    : sprite.isPlayer                     ? "#0072b2"
-                                          : "#cc79a7"
+    : (!sprite.inSet && !sprite.isPlayer) ? brg.map.ink("notLoaded")
+    : area.containsMouse                  ? Qt.lighter(sprite.layerInk, 1.45)
+                                          : sprite.layerInk
 
   // ⭐ THE OUTLINE HUGS THE CHARACTER, not the tile he stands on.
   //
@@ -166,13 +187,19 @@ Item {
     }
   }
 
-  /// The artwork the outline is stamped from. Invisible itself -- it exists to be sampled by the
-  /// four copies above. (`layer.enabled` makes it a texture they can source.)
+  /// The artwork the outline is stamped from -- it exists to be sampled by the four copies above
+  /// (`layer.enabled` makes it a texture they can source).
+  ///
+  /// ⚠️ VISIBLE, deliberately. It was `visible: false`, and **an invisible item's layer texture is
+  /// never rendered** -- so MultiEffect sampled an empty texture and the silhouette silently drew
+  /// NOTHING. Every sprite showed only its artwork's own black linework, which is exactly
+  /// leadership's *"people and objects layer are like purple but they outline black"*
+  /// (2026-07-18): the purple was never on screen. It sits behind the real PixelImage (declared
+  /// first, same geometry), so being visible costs nothing to the look.
   Image {
     id: outlineArt
     anchors.fill: parent
     source: sprite.art
-    visible: false
     layer.enabled: true
     smooth: false
     mipmap: false

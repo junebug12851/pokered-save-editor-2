@@ -178,9 +178,23 @@ void MapLayersModel::buildAll()
        tr("A box around everything on this map the game remembers something about — the Poké Balls in "
           "Oak's Lab, a trainer you've beaten, an item you've picked up. Click one to jump straight to "
           "its switch in Map Storage.\n\n"
-          "A box is drawn even when the thing isn't here: that's the point. A dashed box means your "
+          "A box is drawn even when the thing isn't here: that's the point. The ⚑ means your "
           "save is currently hiding it, so you can see what belongs here and what's been switched off."),
        ViewFlagBoxes);
+  view(GameViewGroup, "hiddenPickups", tr("Hidden pickups"),
+       tr("The items and coins buried on this map — the ones Itemfinder points at. Each box is a "
+          "spot the save keeps a collected-or-not bit for; click it to flip that bit in Map "
+          "Storage."),
+       ViewHiddenPickups);
+  view(GameViewGroup, "scripts", tr("Script triggers"),
+       tr("Where this map's scripts fire from — the tiles, rows and columns the cartridge tests "
+          "the player's position against, plus the Card Key doors. They live where the game put "
+          "them: you can change what they do, never where they are."),
+       ViewScripts);
+  view(GameViewGroup, "eventFlags", tr("Event flags"),
+       tr("Where this map's story flags get written — each box is a place a located script turns "
+          "an event flag on or off. Click one to jump to that flag in Map Storage."),
+       ViewEventFlags);
   view(GameViewGroup, "screenBox", tr("Screen box"),
        tr("The 20×18 tiles the Game Boy is actually showing — the screen, sliding around inside "
           "the draw area in half-block steps. Move the player and it follows him."), ViewScreenBox);
@@ -358,30 +372,18 @@ QVariant MapLayersModel::data(const QModelIndex& index, int role) const
     if (r.overlayBit != 0)
       return MapEngine::layerColor(static_cast<MapEngine::Layer>(r.overlayBit));
 
-    // ── The view layers' ink ────────────────────────────────────────────────────────────────
+    // ── The view layers' ink: the CANONICAL TABLE, by this row's own key ────────────────────
     //
-    // These are the EXACT colours MapCanvas draws them in, so the row IS the legend and there is no
-    // second source of truth to drift from.
+    // ⚠️ MapEngine::ink() is the ONE source (leadership, 2026-07-18: *"these colors need to be
+    // completely re-thought and standardized"*). This model used to keep its own list here, the
+    // hotspot component kept a third, and they disagreed -- the panel's legend showed colours the
+    // canvas never used and the canvas used colours the panel never listed. The row's key IS the
+    // ink key, so panel swatch, canvas drawing and tab square can never drift again.
     //
-    // Re-picked 2026-07-13 (Twilight: "lots of red outlines, it looks confusing"). The old set was
-    // the app's theme colours -- error red, primary pink, accent blue -- which put three warm,
-    // similar lines over a grey map and made none of them mean anything. These are Okabe-Ito, the
-    // standard colour-blind-safe set: they stay distinct to every kind of colour vision, and they
-    // are muted enough to sit over four shades of grey without shouting.
-    if (r.viewBit == ViewScreenBox)   return QColor(QStringLiteral("#e69f00")); // orange -- what he SEES
-    if (r.viewBit == ViewDrawArea)    return QColor(QStringLiteral("#009e73")); // green  -- what the game REDRAWS
-    if (r.viewBit == ViewMapBounds)   return QColor(QStringLiteral("#0072b2")); // blue   -- where the map ENDS
-    if (r.viewBit == ViewConnections) return QColor(QStringLiteral("#d55e00")); // vermillion -- the neighbours
-    if (r.viewBit == ViewPlayer)      return QColor(QStringLiteral("#6b6b6b")); // him
-    if (r.viewBit == ViewNpcs)        return QColor(QStringLiteral("#cc79a7")); // everyone else
-    if (r.viewBit == ViewWarps)       return QColor(QStringLiteral("#f0e442")); // yellow -- the doors
-    if (r.viewBit == ViewSigns)       return QColor(QStringLiteral("#e69f00")); // orange -- the signs
-
-    // The grids. ⚠️ OPAQUE here, even though the canvas draws them at low alpha: this colour is what
-    // the layer PANEL paints its swatch with, and a translucent swatch on a white row looked
-    // greyed-OUT -- i.e. like a layer that was disabled (Twilight, 2026-07-13). The swatch says
-    // *which* ink; the canvas decides how strongly to use it.
-    return QColor(QStringLiteral("#56b4e9"));                                   // sky blue -- the grids
+    // (The swatch stays OPAQUE even where the canvas draws at low alpha -- a translucent swatch on
+    // a white row reads as a DISABLED layer. The swatch says *which* ink; the canvas decides how
+    // strongly to use it.)
+    return MapEngine::ink(r.key);
 
   default:
     break;
@@ -599,6 +601,9 @@ bool MapLayersModel::showNpcs() const       { return (bits & ViewNpcs) != 0; }
 bool MapLayersModel::showWarps() const      { return (bits & ViewWarps) != 0; }
 bool MapLayersModel::showSigns() const      { return (bits & ViewSigns) != 0; }
 bool MapLayersModel::showFlagBoxes() const  { return (bits & ViewFlagBoxes) != 0; }
+bool MapLayersModel::showHiddenPickups() const { return (bits & ViewHiddenPickups) != 0; }
+bool MapLayersModel::showScripts() const    { return (bits & ViewScripts) != 0; }
+bool MapLayersModel::showEventFlags() const { return (bits & ViewEventFlags) != 0; }
 
 qreal MapLayersModel::overlayOpacity() const { return opacity; }
 

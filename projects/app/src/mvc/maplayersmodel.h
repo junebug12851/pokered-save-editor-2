@@ -69,6 +69,9 @@ class MapLayersModel : public QAbstractListModel
   Q_PROPERTY(bool showWarps READ showWarps NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showSigns READ showSigns NOTIFY viewBitsChanged)
   Q_PROPERTY(bool showFlagBoxes READ showFlagBoxes NOTIFY viewBitsChanged)
+  Q_PROPERTY(bool showHiddenPickups READ showHiddenPickups NOTIFY viewBitsChanged)
+  Q_PROPERTY(bool showScripts READ showScripts NOTIFY viewBitsChanged)
+  Q_PROPERTY(bool showEventFlags READ showEventFlags NOTIFY viewBitsChanged)
 
   /// How strongly the meaning overlay is drawn (0..1). The one dial the Meaning group carries:
   /// stacked annotation over four shades of grey genuinely needs it.
@@ -115,6 +118,20 @@ public:
     /// outline is there even when the sprite isn't" possible at all. See notes/plans/map-screen.md
     /// -> Phase 16.
     ViewFlagBoxes = 1 << 10,
+
+    // ── The other storage families, each with its OWN row (leadership, 2026-07-18) ──
+    //
+    // All four storage kinds used to ride the one Flag-boxes row, which meant three of the
+    // canvas's inks appeared on the map without appearing in the panel -- *"there are colors not
+    // in the layer panel like i see a green box"*. Each family is its own layer now, so the
+    // panel lists every ink the canvas uses and each can be shown or hidden apart.
+
+    /// Buried items & coins (WorldHidden) -- the pink dashed boxes.
+    ViewHiddenPickups = 1 << 11,
+    /// Script triggers + Card Key doors -- where the cartridge tests the player's coords.
+    ViewScripts = 1 << 12,
+    /// Event-flag writing sites -- where a located script sets/clears a story flag.
+    ViewEventFlags = 1 << 13,
   };
   Q_ENUM(ViewLayer)
 
@@ -148,6 +165,9 @@ public:
   bool showWarps() const;
   bool showSigns() const;
   bool showFlagBoxes() const;
+  bool showHiddenPickups() const;
+  bool showScripts() const;
+  bool showEventFlags() const;
 
   qreal overlayOpacity() const;
   void setOverlayOpacity(qreal opacity);
@@ -265,7 +285,12 @@ private:
   // should be visible without asking.
   //
   // ⚠️ ONE bit changed here: ViewFlagBoxes. Nothing else was touched.
+  //
+  // UPDATED (2026-07-18): the three storage families that used to ride the Flag-boxes row are
+  // their own rows now, and they follow the SAME save-data rule that put Flag boxes on --
+  // hidden pickups, script triggers and event flags are all persistent storage.
   int bits = ViewBlockGrid | ViewMapBounds | ViewConnections
-           | ViewPlayer | ViewNpcs | ViewWarps | ViewSigns | ViewFlagBoxes;
+           | ViewPlayer | ViewNpcs | ViewWarps | ViewSigns | ViewFlagBoxes
+           | ViewHiddenPickups | ViewScripts | ViewEventFlags;
   qreal opacity = 1.0;
 };

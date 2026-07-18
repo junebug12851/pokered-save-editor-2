@@ -987,6 +987,60 @@ QColor MapEngine::layerColor(Layer layer)
   }
 }
 
+QColor MapEngine::ink(const QString& key)
+{
+  // ══ THE CANONICAL INK TABLE — the ONE place a map-screen colour is allowed to come from ══════
+  //
+  // Leadership, 2026-07-18: *"these colors need to be completely re-thought and standardized"* —
+  // the canvas had grown THREE palettes (this file's Material 800s for the tile overlays, an
+  // Okabe-Ito set hardcoded in MapBlockHotspot.qml, and a third set in MapLayersModel for the
+  // panel rows), and they disagreed: the panel said Flag boxes were sky blue while the canvas
+  // drew them green; the Screen box shared the Signs' orange; the Draw area shared the flag
+  // boxes' green; hidden pickups shared the People's pink; the panel's Player was grey while his
+  // canvas outline was blue. Every one of those was a real mismatch a person hit.
+  //
+  // The rule now: **the Layers panel is the legend**, so the panel row, the canvas drawing, the
+  // tab square and the hotspot outline all read THIS table by the row's own key. Nothing on the
+  // map screen states a colour of its own. (The tile overlays keep layerColor() above — their
+  // rows already read it — so the two tables together cover everything, with no key in both.)
+  //
+  // Distinctness: no two keys share a value. The two "attention" reds stay tellable apart by
+  // shape (the Screen box is one big 2px rectangle; Script triggers are small dashed boxes).
+  static const QHash<QString, QColor> table = {
+    // The save's movable objects (solid outlines -- you can pick these up).
+    { QStringLiteral("player"),        QColor("#0072b2") },  // strong blue
+    { QStringLiteral("npcs"),         QColor("#8e24aa") },  // purple -- People & objects
+    { QStringLiteral("sprite"),       QColor("#8e24aa") },  //   (a sprite spot = the npcs layer)
+    { QStringLiteral("warps"),        QColor("#f0e442") },  // yellow -- the door objects
+    { QStringLiteral("warp"),         QColor("#f0e442") },
+    { QStringLiteral("signs"),        QColor("#e69f00") },  // orange -- the placards
+    { QStringLiteral("sign"),         QColor("#e69f00") },
+    // The fixed storage families (dashed outlines -- they live where the cartridge put them).
+    { QStringLiteral("flagBoxes"),    QColor("#009e73") },  // green -- filter-flag boxes
+    { QStringLiteral("filterFlag"),   QColor("#009e73") },
+    { QStringLiteral("eventFlags"),   QColor("#56b4e9") },  // sky blue -- event flags
+    { QStringLiteral("eventFlag"),    QColor("#56b4e9") },
+    { QStringLiteral("scripts"),      QColor("#d55e00") },  // vermillion -- script triggers
+    { QStringLiteral("script"),       QColor("#d55e00") },
+    { QStringLiteral("cardKeyDoor"),  QColor("#d55e00") },  //   (a Card Key door is a script fact)
+    { QStringLiteral("hiddenPickups"), QColor("#cc79a7") }, // pink -- buried items & coins
+    { QStringLiteral("hiddenItem"),   QColor("#cc79a7") },
+    { QStringLiteral("hiddenCoin"),   QColor("#cc79a7") },
+    // The console's own furniture.
+    { QStringLiteral("screenBox"),    QColor("#d32f2f") },  // RED -- the design's own word for it
+    { QStringLiteral("drawArea"),     QColor("#3949ab") },  // indigo -- what the game redraws
+    // The guides -- our graph paper, quiet greys and earth.
+    { QStringLiteral("blockGrid"),    QColor("#9e9e9e") },
+    { QStringLiteral("tileGrid"),     QColor("#bdbdbd") },
+    { QStringLiteral("mapBounds"),    QColor("#455a64") },
+    { QStringLiteral("connections"),  QColor("#795548") },  // brown -- the neighbours in the ring
+    // States that override a layer's ink.
+    { QStringLiteral("notLoaded"),    QColor("#ffd54f") },  // amber -- console would draw garbage
+    { QStringLiteral("invalid"),      QColor("#d55e00") },  // the app-wide danger accent
+  };
+  return table.value(key, QColor("#9e9e9e"));
+}
+
 QString MapEngine::layerName(Layer layer)
 {
   switch (layer) {
@@ -998,7 +1052,9 @@ QString MapEngine::layerName(Layer layer)
     case LayerLedges:    return QObject::tr("Ledges");
     case LayerCounters:  return QObject::tr("Counters");
     case LayerBorder:    return QObject::tr("Border");
-    case LayerCutTrees:  return QObject::tr("Cut trees");
+    // "Cut trees" read as a verb phrase ("go cut trees?") -- leadership, 2026-07-17: "I dont know
+    // what Cut trees layer is it needs to be named better."
+    case LayerCutTrees:  return QObject::tr("Cuttable trees");
     case LayerElevation: return QObject::tr("Elevation");
     default:             return QString();
   }
@@ -1032,7 +1088,8 @@ QString MapEngine::layerDescription(Layer layer)
       return QObject::tr("The 3-block ring around every map, filled with its out-of-bounds block. "
                 "Connected maps bleed their edges into it.");
     case LayerCutTrees:
-      return QObject::tr("A tree Cut turns into something else. This one is a whole BLOCK, not a tile.");
+      return QObject::tr("A tree the HM move Cut can clear away — walk up, use Cut, and the path "
+                "opens. This one is a whole BLOCK, not a tile.");
     case LayerElevation:
       return QObject::tr("An edge you can't cross — the game fakes a difference in height by simply "
                 "forbidding the step between two particular tiles.");

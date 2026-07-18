@@ -54,10 +54,18 @@ Item {
   // ── Drag state ────────────────────────────────────────────────────────────────────────────
   property int dragX: -1
   property int dragY: -1
-  readonly property bool dragging: sign.dragX >= 0
 
-  readonly property int liveX: sign.dragging ? sign.dragX : sign.tileX
-  readonly property int liveY: sign.dragging ? sign.dragY : sign.tileY
+  /// Being dragged by its TAB (the canvas proxy-drag). @see MapCanvas.proxyKind
+  readonly property bool proxied: sign.canvas.proxyKind === "sign"
+                                  && sign.canvas.proxyInd === sign.ind
+                                  && sign.canvas.proxyX >= 0
+
+  readonly property bool dragging: sign.dragX >= 0 || sign.proxied
+
+  readonly property int liveX: sign.proxied ? sign.canvas.proxyX
+                             : sign.dragX >= 0 ? sign.dragX : sign.tileX
+  readonly property int liveY: sign.proxied ? sign.canvas.proxyY
+                             : sign.dragX >= 0 ? sign.dragY : sign.tileY
 
   readonly property bool selected: sign.canvas.selectedSign === sign.ind
 
@@ -78,13 +86,14 @@ Item {
   //
   // The Signs layer's own orange (#e69f00, Okabe-Ito) -- the same ink the Layers panel paints its
   // swatch with, so the row IS the legend and the two can never drift apart.
+  readonly property color layerInk: sign.textValid ? brg.map.ink("signs") : brg.map.ink("invalid")
   Rectangle {
     id: chip
     anchors.fill: parent
 
-    color: sign.textValid ? "#66e69f00" : "#66d55e00"   // vermillion when it points at no real text
+    color: Qt.alpha(sign.layerInk, 0.4)
     border.width: Math.max(1, Math.round(sign.canvas.zoom))
-    border.color: sign.textValid ? "#e69f00" : "#d55e00"
+    border.color: area.containsMouse && !sign.selected ? "#ffffff" : sign.layerInk
     opacity: sign.dragging ? 0.65 : 1.0
 
     // ▤. It vanishes when the map is zoomed too far out to draw it legibly.
@@ -116,14 +125,14 @@ Item {
     anchors.margins: -2
     color: "transparent"
     border.width: 2
-    border.color: "#cc79a7"
+    border.color: "#ffffff"
 
     Rectangle {
       anchors.fill: parent
       anchors.margins: 2
       color: "transparent"
       border.width: 1
-      border.color: "#ccffffff"
+      border.color: "#cc212121"
     }
   }
 
@@ -227,6 +236,19 @@ Item {
     enabled: !sign.canvas.panning && sign.canvas.tool !== "zoom" && !sign.canvas.placing
     hoverEnabled: true
     cursorShape: sign.dragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+
+    // A movable thing under the pointer: the cell hands its highlight over and the tabs
+    // withdraw -- the same contract the sprites and doors keep. @see MapCanvas.hoverMovable
+    onContainsMouseChanged: {
+      const key = Math.floor((sign.canvas.mapBorderPx + sign.liveX * 16) / 32) + ","
+                + Math.floor((sign.canvas.mapBorderPx + sign.liveY * 16) / 32);
+      if (area.containsMouse) {
+        sign.canvas.hoverMovable = key;
+        sign.canvas.hoverMovableFullCell = false;
+      } else if (sign.canvas.hoverMovable === key) {
+        sign.canvas.hoverMovable = "";
+      }
+    }
 
     preventStealing: true
 

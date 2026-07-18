@@ -380,6 +380,12 @@ public:
   /// The colour a layer is drawn in, so the chip that toggles it can BE its own legend.
   static QColor layerColor(Layer layer);
 
+  /// ⭐ THE CANONICAL INK TABLE for everything on the map screen that is not a tile overlay --
+  /// keyed by the Layers panel's own row keys ("player", "npcs", "warps", "screenBox",
+  /// "filterFlag"...). The panel row, the canvas drawing, the tab square and the hotspot outline
+  /// all read THIS, so the panel is the legend and nothing can drift. Unknown key -> quiet grey.
+  static QColor ink(const QString& key);
+
   /// The layer's name, and the one-line explanation of what it actually is.
   static QString layerName(Layer layer);
   static QString layerDescription(Layer layer);

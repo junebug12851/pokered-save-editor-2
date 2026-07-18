@@ -66,10 +66,18 @@ Item {
   // it back and writes NOTHING.
   property int dragX: -1
   property int dragY: -1
-  readonly property bool dragging: door.dragX >= 0
 
-  readonly property int liveX: door.dragging ? door.dragX : door.tileX
-  readonly property int liveY: door.dragging ? door.dragY : door.tileY
+  /// Being dragged by its TAB (the canvas proxy-drag). @see MapCanvas.proxyKind
+  readonly property bool proxied: door.canvas.proxyKind === "warp"
+                                  && door.canvas.proxyInd === door.ind
+                                  && door.canvas.proxyX >= 0
+
+  readonly property bool dragging: door.dragX >= 0 || door.proxied
+
+  readonly property int liveX: door.proxied ? door.canvas.proxyX
+                             : door.dragX >= 0 ? door.dragX : door.tileX
+  readonly property int liveY: door.proxied ? door.canvas.proxyY
+                             : door.dragX >= 0 ? door.dragY : door.tileY
 
   readonly property bool selected: door.canvas.selectedWarp === door.ind
 
@@ -89,15 +97,18 @@ Item {
 
   // ── The chip ─────────────────────────────────────────────────────────────────────────────
   //
-  // The Doors layer's own yellow (#f0e442, Okabe-Ito) -- the same ink the Layers panel paints its
-  // swatch with, so the row IS the legend and the two can never drift apart.
+  // The Warps layer's own ink, out of the CANONICAL table (brg.map.ink) -- the same value the
+  // Layers panel paints its swatch with, so the row IS the legend and the two can never drift.
+  // HOVER brightens the border: the "this is draggable" answer (leadership, 2026-07-18).
+  readonly property color layerInk: door.destValid ? brg.map.ink("warps") : brg.map.ink("invalid")
   Rectangle {
     id: chip
     anchors.fill: parent
 
-    color: door.destValid ? "#66f0e442" : "#66d55e00"   // vermillion when it points nowhere real
+    color: Qt.alpha(door.layerInk, 0.4)
     border.width: Math.max(1, Math.round(door.canvas.zoom))
-    border.color: door.destValid ? "#f0e442" : "#d55e00"
+    border.color: area.containsMouse && !door.selected
+                    ? "#ffffff" : door.layerInk
     opacity: door.dragging ? 0.65 : 1.0
 
     // A "back outside" door is the ordinary kind, and it gets the plain fill. A door that names a
@@ -132,10 +143,12 @@ Item {
     text: "!"
     font.bold: true
     font.pixelSize: Math.max(9, Math.round(10 * door.canvas.zoom))
-    color: "#d55e00"
+    color: brg.map.ink("invalid")
   }
 
   // A selection you can lose under a layer is not a selection: it draws above everything.
+  // ⭐ WHITE, the one selection colour everywhere on the canvas (a sprite's silhouette turns
+  // white too) -- it used to be the People-layer pink, which said "sprite" on a door.
   Rectangle {
     visible: door.selected
     z: 20
@@ -143,14 +156,14 @@ Item {
     anchors.margins: -2
     color: "transparent"
     border.width: 2
-    border.color: "#cc79a7"
+    border.color: "#ffffff"
 
     Rectangle {
       anchors.fill: parent
       anchors.margins: 2
       color: "transparent"
       border.width: 1
-      border.color: "#ccffffff"
+      border.color: "#cc212121"
     }
   }
 
@@ -241,9 +254,9 @@ Item {
     width: 26
     height: 26
     radius: 3
-    color: "#ccf0e442"
+    color: Qt.alpha(door.layerInk, 0.8)
     border.width: 1
-    border.color: "#f0e442"
+    border.color: door.layerInk
 
     Text {
       anchors.centerIn: parent
@@ -261,6 +274,19 @@ Item {
     enabled: !door.canvas.panning && door.canvas.tool !== "zoom" && !door.canvas.placing
     hoverEnabled: true
     cursorShape: door.dragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+
+    // ⭐ A movable thing under the pointer: the cell hands its highlight over and the tabs
+    // withdraw -- the same contract the sprites keep. @see MapCanvas.hoverMovable
+    onContainsMouseChanged: {
+      const key = Math.floor((door.canvas.mapBorderPx + door.liveX * 16) / 32) + ","
+                + Math.floor((door.canvas.mapBorderPx + door.liveY * 16) / 32);
+      if (area.containsMouse) {
+        door.canvas.hoverMovable = key;
+        door.canvas.hoverMovableFullCell = false;
+      } else if (door.canvas.hoverMovable === key) {
+        door.canvas.hoverMovable = "";
+      }
+    }
 
     // Do not let the Flickable steal the drag and pan the map out from under us.
     preventStealing: true

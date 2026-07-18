@@ -5,11 +5,36 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.43.0-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
+**Version:** `0.43.1-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**);
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
+
+### 🎨 THE LAYERS REWORK — one ink table, the Continue view, tab-drag, storage scroll (2026-07-18, `0.43.1-alpha`)
+
+Twilight's live pass (*"buggy… highly inconsistent… pieces feel like there shoved in half baked"*)
+plus her mid-session follow-up (tab-drag, snappier, click-off closes panels), delivered as one
+rework. Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md).
+
+- ⭐ **`MapEngine::ink(key)` is the ONE colour table** — panel swatches, canvas properties, every
+  spot (model-attached ink; tile traits wear their overlay's swatch) and the object components all
+  read it. Three disagreeing palettes retired; People purple, Screen box red, selection white
+  everywhere. **Three new Layers rows** (Hidden pickups / Script triggers / Event flags, default
+  ON) so every canvas ink is IN the panel.
+- ⭐ **The Continue-load view:** a filter-flag-hidden sprite's artwork is not drawn (its box stays;
+  tab-select shows a ghost). 🐞 **Silhouettes had NEVER rendered** (`visible: false` source → empty
+  layer texture → MultiEffect drew nothing — her "they outline black"); fixed, verifiable only on
+  hardware (shaders don't run offscreen).
+- **Z-order:** boxes (z 0) under objects (z 1); the hovered block's strip flips above (z 3).
+  **Hover highlights** on all draggables + they hand the cell's tabs the withdraw signal.
+  **Tab-drag** moves the thing itself (canvas proxy-drag; byte-exact commits). **Click-off closes
+  panels** structurally (groundClicked fires only past every panel/tab/popup early-return).
+- 🐞 **Map Storage scroll root cause:** `scrollToHighlight` mapped the MISSABLE section regardless
+  of target (one hardcoded id) + a one-shot timer racing the layout. Fixed (target + a 450 ms
+  settle window re-applying on content growth); pages open at the top. "Cut trees" → **"Cuttable
+  trees"**. Snappier tab animations (60 ms).
+- ⏳ **Owed: Twilight's live pass** — silhouette colours, hover/drag feel, click-off behaviour.
 
 ### 🗺️🧭 MAP STATES — BUILT: model + rename + UI, on the blueprints (2026-07-17, `0.43.0-alpha`)
 

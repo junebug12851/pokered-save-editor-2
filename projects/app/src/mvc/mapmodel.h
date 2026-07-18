@@ -1234,6 +1234,11 @@ public:
   /// Exposed so QML never has to re-write that mapping (and get it wrong).
   Q_INVOKABLE QString tileAnimStrFor(int anim) const;
 
+  /// ⭐ The canonical map-screen ink for @p key ("player", "npcs", "warps", "screenBox",
+  /// "filterFlag"...) -- MapEngine::ink, the ONE colour table the Layers panel, the canvas and
+  /// the tabs all share. QML asks THIS instead of stating colours of its own.
+  Q_INVOKABLE QColor ink(const QString& key) const;
+
   /// How many blocks the current tileset actually has. A block id past this is not "some
   /// other graphic" -- it is nothing, and the game can't draw it either.
   Q_PROPERTY(int blockCount READ blockCount NOTIFY changed)

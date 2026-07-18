@@ -110,6 +110,55 @@ Item {
   /// A new thing landed. The status bar says what and where.
   signal placed(string kind, int index)
 
+  /// A genuine click on the GROUND — not a tab, not a panel, not a popup's dismiss-press, not a
+  /// maker tool placing something. Map.qml listens and closes the open dock panel: *"if a click
+  /// opens a panel clicking off should close it"* (leadership, 2026-07-18) — and because every
+  /// panel-adjacent gesture returns before this fires, switching panels, re-clicking the same tab
+  /// or working the rail can never accidentally close anything.
+  signal groundClicked()
+
+  // ── PROXY DRAG — dragging a TAB drags the THING it points at ─────────────────────────────
+  //
+  // Leadership, 2026-07-18: *"dragging a tab doesnt work either you have to drag the sprite
+  // itself which isnt what i wanted"* — and the 16f interaction model always said the square
+  // colour tabs can be clicked *and dragged*. A movable spot's tab is a drag HANDLE: press it and
+  // pull, and the object itself moves, exactly as if you had grabbed the object — which is what
+  // makes a buried object draggable at all.
+  //
+  // The tab's MouseArea drives these; the object components (MapSprite/MapWarp/MapSign) read them
+  // as one more source of "I am being dragged" and preview live; release commits through the same
+  // byte-exact move calls their own drags use.
+  property string proxyKind: ""   ///< "player" | "sprite" | "warp" | "sign", or "".
+  property int proxyInd: -1
+  property int proxyX: -1
+  property int proxyY: -1
+
+  function proxyUpdate(kind, ind, tx, ty) {
+    canvasRoot.proxyKind = kind;
+    canvasRoot.proxyInd = ind;
+    canvasRoot.proxyX = Math.max(0, Math.min(brg.map.blocksWide * 2 - 1, tx));
+    canvasRoot.proxyY = Math.max(0, Math.min(brg.map.blocksHigh * 2 - 1, ty));
+  }
+
+  function proxyCommit() {
+    const k = canvasRoot.proxyKind, i = canvasRoot.proxyInd;
+    const x = canvasRoot.proxyX, y = canvasRoot.proxyY;
+    canvasRoot.proxyCancel();
+    if (x < 0 || k === "")
+      return;
+    if (k === "player")      brg.map.movePlayer(x, y);
+    else if (k === "sprite") brg.map.moveNpc(i, x, y);
+    else if (k === "warp")   brg.map.moveWarp(i, x, y);
+    else if (k === "sign")   brg.map.moveSign(i, x, y);
+  }
+
+  function proxyCancel() {
+    canvasRoot.proxyKind = "";
+    canvasRoot.proxyInd = -1;
+    canvasRoot.proxyX = -1;
+    canvasRoot.proxyY = -1;
+  }
+
   /// A line for the status bar (a drop, a delete, a cap hit). Never a modal.
   property string status: ""
 
@@ -312,8 +361,10 @@ Item {
   /// moment the save's own objects joined it: drag a door and its tab has to come along.
   readonly property var storageBlocks: {
     canvasRoot.revision;
-    if (!brg.mapLayers.showFlagBoxes)
-      return [];
+    // ⚠️ NOT gated on any one layer. This list carries EVERY family — the four storage kinds
+    // (each its own Layers row now), the tile traits (their overlays) and the movable objects
+    // (their own layers) — and each is filtered by ITS layer via activeStorageKinds / upstream.
+    // The old `showFlagBoxes` early-return killed every other family's tabs with one switch.
 
     const blocks = {};   // "bx,by" -> the block entry
     const px = 32;       // MapEngine::blockPx
@@ -460,9 +511,18 @@ Item {
   /// list changes. `tileTrait` is already properly gated: its own Tiles overlays decide it, via
   /// `blockHotspots(brg.map.layers)`.
   readonly property var activeStorageKinds: {
+    // Each storage family rides its OWN Layers row now (leadership, 2026-07-18: the canvas showed
+    // colours the panel never listed, because four families hid behind one row). The panel lists
+    // every ink; each row gates exactly its family.
     const k = [];
     if (brg.mapLayers.showFlagBoxes)
-      k.push("filterFlag", "hiddenItem", "hiddenCoin", "script", "cardKeyDoor", "eventFlag");
+      k.push("filterFlag");
+    if (brg.mapLayers.showHiddenPickups)
+      k.push("hiddenItem", "hiddenCoin");
+    if (brg.mapLayers.showScripts)
+      k.push("script", "cardKeyDoor");
+    if (brg.mapLayers.showEventFlags)
+      k.push("eventFlag");
     // The tile family is filtered in the model by the Tiles overlays, and the movable objects are
     // filtered by their own layers upstream (`npcs`/`warps`/`signs` return [] when theirs is off).
     // So anything that reached this list is on by definition -- the layer rule holding, once, in
@@ -835,23 +895,20 @@ Item {
       // disappears into it (over the black trees or over the white paths, depending which grey you
       // pick). A low-alpha colour has nothing to hide against and reads everywhere without
       // shouting over the three boxes.
-      // ── The ink ──────────────────────────────────────────────────────────────────────────────
+      // ── The ink: THE CANONICAL TABLE, and nothing local ─────────────────────────────────────
       //
-      // Okabe-Ito, the colour-blind-safe set, re-picked 2026-07-13 (Twilight: "lots of red outlines
-      // and it looks confusing"). Three warm theme colours -- error red, primary pink, accent blue --
-      // over a grey map read as one alarming mess and told you nothing. These stay distinct to every
-      // kind of colour vision and sit quietly over four shades of grey.
-      //
-      // The SAME values are in MapLayersModel, which is what the Layers panel's swatches show -- so
-      // the panel is the legend, and it cannot drift.
-      readonly property color boundsColor: "#0072b2"   // blue   -- where the map ENDS
-      readonly property color drawColor:   "#009e73"   // green  -- what the game REDRAWS
-      readonly property color screenColor: "#e69f00"   // orange -- what the player SEES
-      readonly property color selectColor: "#cc79a7"   // purple     -- what YOU picked
-      readonly property color connectColor: "#d55e00"  // vermillion -- the NEIGHBOURS in the ring
+      // ⚠️ Every colour here comes from MapEngine::ink() via brg.map.ink(key) — the SAME table the
+      // Layers panel paints its swatches from, keyed by the panel's own row keys. Leadership,
+      // 2026-07-18: *"these colors need to be completely re-thought and standardized"* — the canvas
+      // had grown a private palette that disagreed with the panel's, and a legend that disagrees
+      // with the map is worse than no legend. Nothing on this canvas states a hex of its own now.
+      readonly property color boundsColor: brg.map.ink("mapBounds")
+      readonly property color drawColor:   brg.map.ink("drawArea")
+      readonly property color screenColor: brg.map.ink("screenBox")   // RED -- "the red screen box"
+      readonly property color connectColor: brg.map.ink("connections")
 
-      readonly property color gridColor: Qt.rgba(0.34, 0.71, 0.91, 0.42)
-      readonly property color tileGridColor: Qt.rgba(0.34, 0.71, 0.91, 0.18)
+      readonly property color gridColor:     Qt.alpha(brg.map.ink("blockGrid"), 0.55)
+      readonly property color tileGridColor: Qt.alpha(brg.map.ink("tileGrid"), 0.35)
       readonly property real tileStep: brg.map.blockSize / 4 * canvasRoot.zoom
 
       // The TILE grid (8px). Off by default -- it is four times as many lines, and at 1x they would
@@ -1008,6 +1065,10 @@ Item {
           tileY: modelData.y
           art: modelData.source
           inSet: modelData.inSpriteSet
+          // The Continue-load view: a sprite the save's filter flag hides is NOT drawn -- exactly
+          // as the console would not draw it. Its flag box stays (that layer is about what
+          // BELONGS here). Leadership, 2026-07-18.
+          hiddenByFlag: modelData.hidden === true
 
           // ⚠️ THE SLIDE. `TryWalking` moves the sprite's TILE to the destination at once and then
           // slides it a pixel a frame for 16 frames -- so the tile is where they are GOING, and
@@ -1309,12 +1370,14 @@ Item {
             return;
           }
 
-          // Clicking the ground clears the selection -- and does nothing else. The block under the
-          // cursor is NOT selected any more; see the note above.
+          // Clicking the ground clears the selection -- and tells Map.qml, which closes the open
+          // dock panel (*"if a click opens a panel clicking off should close it"*). Every
+          // panel-adjacent gesture returned above, so this only ever fires on the bare map.
           canvasRoot.selectedNpc = -1;
           canvasRoot.selectedWarp = -1;
           canvasRoot.selectedSign = -1;
           canvasRoot.selectedConnection = -1;
+          canvasRoot.groundClicked();
         }
       }
 
