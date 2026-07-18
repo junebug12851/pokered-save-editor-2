@@ -11,6 +11,28 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 `tst_world` now 21 (two new event pins). New local-only member: **`tst_flag_scenarios`** (with the ROM,
 SKIPs without it).
 
+### 📷 THE CAMERA JUMP — her description WAS the diagnosis (2026-07-17, `0.42.9-alpha`)
+
+> *"The camera seem to mess around anytime something is committed to the data … other times the
+> camera seems to reset to the default position when you first open it."*
+
+Both halves exact, and together they name the bug precisely. `frameOnPlayer()` set `framed = true`
+but **never set `framedMap`** — so the opening frame left the canvas at `framed: true,
+framedMap: -1`, **confirmed by reading both off the running app**. `changed()` fires on *every* data
+commit, and the first one compared `mapInd (23) !== framedMap (-1)`, concluded *"a different map"*,
+and re-framed to the opening shot. Hence **"sometimes"**: only the FIRST commit throws the camera,
+because it sets `framedMap` on its way past. Fixed; `framedMap` now reads **23** on open.
+
+> ⭐ **Two lessons, and the second is the one that keeps costing:**
+> - **"Sometimes" is a clue, not noise.** It meant *once per map load*, which is exactly what a
+>   one-shot guard initialised too late produces. Taking the word literally found it in minutes.
+> - 🐺 **Use the app's own truth, not arithmetic.** Twilight: *"why dont you use the actual
+>   screenshotting tools of the mcp server instead of calculating your own"*. I had "found" a
+>   cell-outline bug by computing where a block should be on screen and cropping there. There was no
+>   bug: `app_get` shows `hoverBlockX = 8` and `at.blockX = 8` **agree** — the status bar reports MAP
+>   coords (5,7), the hover BUFFER coords (8,10), and 5+3=8 is the 3-block border ring. My converter
+>   was the defect. Ask the app; it knows.
+
 ### 🧭 ONE SYSTEM FOR THE MAP — the standardization (2026-07-17, `0.42.6-alpha`)
 
 Second live pass: *"still buggy and glitchy… some sprites have no box, some do… mousing over things

@@ -37,6 +37,10 @@
  */
 import QtQuick
 import QtQuick.Controls
+// MultiEffect -- for the silhouette outline (colorization flattens a copy of the artwork to one
+// colour while keeping its alpha, which is what lets the outline hug the character's real shape
+// without us ever knowing it). @see the outline Repeater.
+import QtQuick.Effects
 
 Item {
   id: sprite
@@ -109,6 +113,72 @@ Item {
   //  instance still overrides `visible` at its use-site to gate on showPlayer.)
   visible: true
 
+  /// The silhouette's ink -- the layer's own colour, so the outline, its tab and the Layers panel
+  /// row are visibly one thing: the Player his own blue, everybody else People & objects pink.
+  /// SELECTION lightens it rather than adding a second box round the first.
+  /// AMBER overrides both when the map has not loaded this sprite's picture -- the one thing you
+  /// cannot see by looking, because the console would draw garbage there.
+  readonly property color outlineColor:
+      sprite.selected                     ? "#ffffff"
+    : (!sprite.inSet && !sprite.isPlayer) ? "#ffd54f"
+    : sprite.isPlayer                     ? "#0072b2"
+                                          : "#cc79a7"
+
+  // ⭐ THE OUTLINE HUGS THE CHARACTER, not the tile he stands on.
+  //
+  // > *"dont put a box around and highlight the transparent areas of sprites and only sprites
+  // >  because they are the only ones to have transparent areas"* … *"it would tremendously add to
+  // >  the ui/ux"* -- Fairy Fox, 2026-07-17
+  //
+  // And she is right that sprites are the ONLY case: a warp, a sign, a script trigger, a buried item
+  // are all abstract 16x16 cells with nothing to see through, so a rectangle IS their shape. A
+  // sprite is artwork on a transparent field -- the console's OAM makes colour 0 transparent
+  // always (reference/sprites.md) -- so a box round a person is mostly a box round nothing, and it
+  // reads as "this square" instead of "this fellow".
+  //
+  // HOW: the classic sticker trick, and it needs no shader and no alpha mask of our own. Draw the
+  // sprite's own artwork four times, one pixel out in each direction, flattened to the outline
+  // colour, BEHIND the real one. Every opaque pixel paints its neighbours; every transparent pixel
+  // paints nothing. What is left showing round the edges is exactly the silhouette.
+  //
+  // `MultiEffect.colorization: 1` flattens each copy to a single colour while KEEPING its alpha --
+  // which is the whole reason this works on artwork whose shape we never have to know.
+  Repeater {
+    model: [Qt.point(-1, 0), Qt.point(1, 0), Qt.point(0, -1), Qt.point(0, 1)]
+
+    delegate: MultiEffect {
+      required property var modelData
+
+      // 2px at 1x, and it scales with the zoom so the line does not thin out as you zoom in --
+      // matching MapBlockHotspot.lineWidth's weight, since it is the same language.
+      readonly property real w: Math.max(1.5, 1.5 * sprite.canvas.zoom)
+
+      x: modelData.x * w
+      y: modelData.y * w
+      width: sprite.width
+      height: sprite.height
+      z: -1                       // behind the character
+
+      source: outlineArt
+      colorization: 1.0
+      colorizationColor: sprite.outlineColor
+      opacity: sprite.dragging ? 0.6 : 0.95
+    }
+  }
+
+  /// The artwork the outline is stamped from. Invisible itself -- it exists to be sampled by the
+  /// four copies above. (`layer.enabled` makes it a texture they can source.)
+  Image {
+    id: outlineArt
+    anchors.fill: parent
+    source: sprite.art
+    visible: false
+    layer.enabled: true
+    smooth: false
+    mipmap: false
+    fillMode: Image.PreserveAspectFit
+  }
+
   PixelImage {
     anchors.fill: parent
     source: sprite.art
@@ -118,75 +188,20 @@ Item {
   // ⭐ EVERY SPRITE WEARS ITS BOX, ALWAYS -- solid outline + a fill.
   //
   // > *"some sprites have no box, some do"* … *"the player doesnt have a box yet its editable too"*
-  // > … *"the sprites are not filled in like i asked they do not follow the visual language"*
   // > -- Fairy Fox, twice.
   //
-  // She is right on all three, and they are one fault: the box used to appear only when a sprite was
-  // SELECTED (or when its picture wasn't loaded), so the map showed boxes on an apparently arbitrary
-  // subset and none at all on the player. A person, an item ball and the player are all things you
-  // can drag, delete and place -- rule 2 of the standard says that reads **solid + filled**, and
-  // "only once you've already found it" is not a rule, it is the absence of one.
+  // Both were one fault: the box appeared only when a sprite was SELECTED, so the map showed
+  // outlines on an apparently arbitrary subset and none at all on the player. A person, an item ball
+  // and the player are all things you can drag, delete and place; **every one of them is outlined,
+  // always**, and "only once you've already found it" is not a rule, it is the absence of one.
   //
-  // The fill is light (#26 ~ 15%): a sprite is the only movable object with ARTWORK of its own, and
-  // the wash has to say "you can pick this up" without repainting the character. A heavy wash is
-  // what tinted every Poké Ball in Oak's Lab green and got caught in review.
-  // ⚠️ NO FILL -- borders only, and SOLID because a sprite is movable.
-  //
-  // Twilight's settled call, 2026-07-17: *"Yea i guess dont fill in the boxes but youll have to do
-  // that for all boxes on the map keep and maintain standardization. I still want dashed and solid
-  // lines for visual language since we're only using borders youll have to make them a teensy bit
-  // thicker."* So the whole language rides on the LINE: solid = you can pick this up, dashed = it
-  // lives where the cartridge put it. A wash over a sprite repaints the character it is describing.
-  //
-  // ⚠️ And it is ALWAYS on: it used to appear only when SELECTED, so the map showed outlines on an
-  // apparently arbitrary subset -- *"some sprites have no box, some do"* -- and the player, the one
-  // thing you can drag anywhere, had none at all.
-  Rectangle {
-    visible: !sprite.selected
-    anchors.fill: parent
-    color: "transparent"
-    // 2px, matching MapBlockHotspot.lineWidth: with no fill, one pixel cannot carry the difference
-    // between a stroke and a dash over four shades of grey.
-    border.width: 2
-    // The layer's own colour, so the box, its tab and the Layers panel row are visibly one thing:
-    // the Player his own blue, everybody else People & objects pink. AMBER overrides both when the
-    // map has not loaded this sprite's picture -- the one thing you cannot see by looking, because
-    // the console would draw garbage there.
-    border.color: !sprite.inSet && !sprite.isPlayer ? "#ffd54f"
-                                                    : (sprite.isPlayer ? "#0072b2" : "#cc79a7")
-    opacity: 0.9
-    radius: 2
-  }
+  // ⚠️ NO FILL, and no rectangle either -- the outline IS the silhouette (@see the Repeater above).
+  // The language rides entirely on the LINE: **solid = you can pick this up**, dashed = it lives
+  // where the cartridge put it. A wash over a sprite repaints the character it is describing.
 
-  // A selection you can lose under a layer is not a selection: it draws above everything.
-  //
-  // SOLID BORDER + A FILL, because a sprite is a thing you can drag, delete and place -- Twilight,
-  // 2026-07-17: *"stuff draggable, deletable, insertable, etc.... should have a solid fill and box"*,
-  // noting that *"sprites are entities that can be edited and dragged around they dont have a solid
-  // fill"*. Warps and signs already spoke this language (their chips are washed #66-alpha); the
-  // sprite was the one draggable thing that didn't.
-  //
-  // The wash is kept light (#26 ~ 15%) for one reason: a sprite is the only movable object with
-  // ARTWORK of its own, and the fill has to say "you can pick this up" without repainting the
-  // character. A heavy wash over a sprite is the mistake that tinted every Poké Ball in Oak's Lab
-  // green and got caught in review.
-  Rectangle {
-    visible: sprite.selected
-    z: 20
-    anchors.fill: parent
-    anchors.margins: -2
-    color: "transparent"   // borders only -- @see the always-on box above
-    border.width: 2
-    border.color: "#cc79a7"
-
-    Rectangle {
-      anchors.fill: parent
-      anchors.margins: 2
-      color: "transparent"
-      border.width: 1
-      border.color: "#ccffffff"
-    }
-  }
+  // (No selection RECTANGLE either. Selecting a sprite turns its own silhouette WHITE -- @see
+  //  outlineColor. A second box drawn round the first would be two marks for one state, and would
+  //  put back the very rectangle-round-transparent-air this outline exists to remove.)
 
   // ── The delete button ────────────────────────────────────────────────────────────────────
   //

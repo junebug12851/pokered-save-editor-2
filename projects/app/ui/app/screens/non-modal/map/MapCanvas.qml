@@ -1145,15 +1145,22 @@ Item {
       /// exactly like the block with the Snorlax on it. Borders only, no fill: it must never tint the
       /// artwork underneath (rule 2 -- the visual language is carried by lines).
       Rectangle {
-        visible: canvasRoot.hoverBlockX >= 0 && brg.mapLayers.showFlagBoxes
+        // ⚠️ NOT gated on a layer. A cell cursor is POINTER FEEDBACK, not a thing on the map: it
+        // says "this is the cell you are in", which is true whether or not any layer is showing.
+        // Gating it on `showFlagBoxes` made it vanish exactly when the map had nothing else on it --
+        // i.e. when it was the only thing telling you the grid was live.
+        visible: canvasRoot.hoverBlockX >= 0 && brg.map.valid
         x: canvasRoot.hoverBlockX * brg.map.blockSize * canvasRoot.zoom
         y: canvasRoot.hoverBlockY * brg.map.blockSize * canvasRoot.zoom
         width: brg.map.blockSize * canvasRoot.zoom
         height: brg.map.blockSize * canvasRoot.zoom
         color: "transparent"
-        border.width: 1
-        border.color: "#66ffffff"
-        z: 1
+        // Bright and 2px, matching the boxes' weight: a 1px 40%-white line disappears into four
+        // shades of Game Boy grey -- it was drawing correctly and simply could not be seen.
+        border.width: 2
+        border.color: "#ccffffff"
+        // Above the map, the overlay and the grid; below the objects and their tabs.
+        z: 2
       }
 
       // ── Pointing at things ──────────────────────────────────────────────────────────────────
@@ -1440,6 +1447,9 @@ Item {
       return;
 
     canvasRoot.framed = true;
+    // ⚠️ RECORD WHICH MAP WE JUST FRAMED. Forgetting this line is what threw the camera across the
+    // room. @see framedMap
+    canvasRoot.framedMap = brg.map.mapInd;
     canvasRoot.userZoom = 0;   // = defaultZoom
     view.centreOn(brg.map.playerRectX + 8, brg.map.playerRectY + 8);
   }
@@ -1449,12 +1459,29 @@ Item {
 
   /// The map we last framed. MapModel publishes one `changed()` for everything, so we watch the id
   /// ourselves rather than re-framing the view on every animation frame.
+  ///
+  /// 🐞 **THE CAMERA JUMP.** Twilight: *"anytime something is committed to the data … the camera
+  /// seems to reset to the default position when you first open it"*, and *"sometimes"*.
+  ///
+  /// Both halves were exact, and the mechanism is this pair of variables disagreeing:
+  /// `frameOnPlayer()` set `framed = true` but **never set `framedMap`**, so the opening frame left
+  /// the canvas in the state `framed: true, framedMap: -1` — confirmed live on Route 12 by reading
+  /// them straight off the running app. `changed()` fires on **every data commit**, and the very
+  /// first one after opening compared `mapInd (23) !== framedMap (-1)`, concluded *"a different
+  /// map"*, and re-framed the view to the opening shot. Hence *"sometimes"*: it is the FIRST commit
+  /// that throws the camera, because that one sets `framedMap` on its way past and every commit
+  /// after it is correctly guarded.
+  ///
+  /// Now `frameOnPlayer()` records what it framed, so `framedMap` is only ever -1 before anything
+  /// has been framed at all, and a data commit can never be mistaken for a change of map.
   property int framedMap: -1
 
   Connections {
     target: brg.map
 
-    // A different map is a different place -- frame it the same way.
+    // A different map is a different place -- frame it the same way. Anything else the save commits
+    // (a dragged sprite, a moved door, a toggled flag) also arrives here, and must NOT move the
+    // camera: once you have framed a map, the view is yours.
     function onChanged() {
       if (brg.map.mapInd === canvasRoot.framedMap)
         return;
