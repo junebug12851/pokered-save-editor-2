@@ -129,6 +129,9 @@ Item {
 
   property int page: 0   // index into storageMaps -- which map's storage is shown
 
+  /// The USELESS-EDITS gate (default hidden). @see the switch in the header.
+  property bool showUseless: false
+
   // Switching pages starts at the TOP -- a page opened at wherever the last one was scrolled reads
   // as broken ("opens scrolled down way too low"). A reveal mid-flight owns the scroll instead.
   onPageChanged: if (!panel.revealSettling) scroller.contentItem.contentY = 0
@@ -426,14 +429,6 @@ Item {
         Layout.margins: 10
         spacing: 6
 
-        Label {
-          Layout.fillWidth: true
-          text: qsTr("Stored values that belong to a specific map")
-          wrapMode: Text.Wrap
-          opacity: 0.6
-          font.pixelSize: 11
-        }
-
         // The map picker -- only maps that HAVE storage. Pre-selected to the current map when it has any.
         ComboBox {
           id: mapCombo
@@ -444,16 +439,47 @@ Item {
           onActivated: function(i) { panel.page = i; }
         }
 
-        // "You're here" / "you're elsewhere" -- so it's clear when an edit is live vs. dormant.
+        // "You're here" / "you're elsewhere" -- ONE short line each way.
         Label {
           Layout.fillWidth: true
           wrapMode: Text.Wrap
           font.pixelSize: 10
           opacity: 0.55
           text: panel.onShownMap
-                ? qsTr("You're on this map — edits here are live.")
-                : qsTr("You're not on this map right now. The values are stored, but they only take "
-                       + "effect once your save is here, mid-activity.")
+                ? qsTr("You're on this map — edits are live.")
+                : qsTr("Not your current map — stored, applies when you're there.")
+        }
+
+        // ── USELESS EDITS (leadership's word, 2026-07-18) ─────────────────────────────────────
+        //
+        // *"overwritten on continue button should be referred to as useless edits and placeholder
+        // flags and other stuff that just has no bearing on the game can be put behind that
+        // option. This does not include control simplified down … this is literally only for the
+        // actually useless controls/fields/settings."*
+        //
+        // So this gates exactly ONE class: values whose edit the game will overwrite or never
+        // read -- placeholder padding bits, writes-nothing-reads flags, the current town's
+        // self-re-marking Visited bit, the reset-on-load Safari scratch. Real-but-advanced
+        // controls are NOT allowed to hide here.
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: 6
+
+          Label {
+            text: qsTr("Show useless edits")
+            font.pixelSize: 11
+            color: brg.settings.textColorMid
+            Layout.fillWidth: true
+          }
+          MapInfoIcon {
+            text: qsTr("Values you CAN set but the game overwrites on load or never reads at all — "
+                       + "spare placeholder bits, dead flags, per-visit scratch. Editing them "
+                       + "changes nothing you can keep.")
+          }
+          MapSwitch {
+            checked: panel.showUseless
+            onToggled: panel.showUseless = !panel.showUseless
+          }
         }
 
         Rectangle {
@@ -484,34 +510,39 @@ Item {
 
           property bool showAll: false
 
-          Label {
-            text: qsTr("Town — visited")
-            font.pixelSize: 12
-            font.bold: true
-            color: brg.settings.textColorDark
-          }
-          Label {
+          RowLayout {
             Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            font.pixelSize: 10
-            opacity: 0.55
-            text: qsTr("Whether you've set foot here — the only thing that unlocks it as a Fly "
-                       + "destination. It unlocks nothing else.")
+            spacing: 6
+            Label {
+              text: qsTr("Town — visited")
+              font.pixelSize: 12
+              font.bold: true
+              color: brg.settings.textColorDark
+              Layout.fillWidth: true
+            }
+            MapInfoIcon {
+              text: qsTr("Whether you've set foot here — it unlocks the town as a Fly destination, "
+                         + "and nothing else.")
+            }
           }
 
           // This map's own Visited switch.
+          //
+          // ⚠️ USELESS-GATED for the town you're standing in (leadership, 2026-07-18: *"If its
+          // actually a useless value to set the current town as visited or not then it needs to be
+          // useless gated but the town group should still be interactable for the other towns"*):
+          // the game re-marks the current town on Continue, so editing THIS one changes nothing
+          // you can keep. Every other town's switch stays live below.
           RowLayout {
             Layout.fillWidth: true
             spacing: 6
             visible: townsSection.mine !== undefined
+                     && (!townsSection.mine.isCurrentMap || panel.showUseless)
 
-            // The one dynamic amber-! in the panel: the town you're SAVED IN re-marks itself on
-            // Continue (outdoors), so clearing it here won't stick. Only this row, only this map.
             MapWarnIcon {
               visible: townsSection.mine !== undefined && townsSection.mine.isCurrentMap
-              text: qsTr("You're standing in this town, so the game re-marks it visited the moment "
-                         + "you Continue (it happens before the save's map protection). Clearing it "
-                         + "sticks only if you save indoors or elsewhere. Verified on a cartridge.")
+              text: qsTr("You're standing here, so the game re-marks it visited on Continue — "
+                         + "clearing it sticks only if you save elsewhere.")
             }
             Label {
               text: townsSection.mine ? townsSection.mine.name : ""
@@ -633,87 +664,102 @@ Item {
           }
           property bool customMode: false
 
-          Label {
-            // "Map STATE", not "map script" (leadership, 2026-07-17): the byte is one field of
-            // the map's progression state, and the state is what a person is editing here.
-            text: qsTr("Map state")
-            font.pixelSize: 12
-            font.bold: true
-            color: brg.settings.textColorDark
-          }
-          Label {
+          RowLayout {
             Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            font.pixelSize: 10
-            opacity: 0.55
-            text: panel.curPage !== undefined && panel.curPage.desc ? panel.curPage.desc : ""
-            visible: text !== ""
+            spacing: 6
+            Label {
+              // "Map STATE", not "map script" (leadership, 2026-07-17): the byte is one field of
+              // the map's progression state, and the state is what a person is editing here.
+              text: qsTr("Map state")
+              font.pixelSize: 12
+              font.bold: true
+              color: brg.settings.textColorDark
+              Layout.fillWidth: true
+            }
+            MapInfoIcon {
+              text: qsTr("How far this map's story has progressed, as researched stages in order — "
+                         + "picking one writes that stage's save values (the same picker as the "
+                         + "Details panel). Mid-cutscene values are real but resume inside a "
+                         + "cutscene. \"Something else…\" sets the raw step byte.")
+            }
           }
 
-          // Which option matches the stored value ("Something else…" = the last slot).
-          readonly property int comboIndex: {
-            panel.revision; panel.editTick;
-            if (customMode || !valueIsNamed)
-              return steps.length;
-            for (let i = 0; i < steps.length; i++)
-              if (steps[i].value === value) return i;
-            return steps.length;
+          // ── The PROGRESSION picker — the SAME states as the Details panel ────────────────────
+          //
+          // ⭐ ONE state menu everywhere (leadership, 2026-07-18: *"is this an inconsistency isnt
+          // there a better map state menu … get rid of inconsistencies"*). This used to list the
+          // raw SCRIPT_* step names ("Noop" -- her exact exhibit) while the Details panel listed
+          // the researched stages. Both read the blueprints now: numbered stages in story order
+          // with plain names, branches lettered, transients flagged.
+          readonly property int stateMapId: panel.curPage !== undefined && panel.curPage.ids.length > 0
+                                            ? panel.curPage.ids[0] : -1
+          readonly property bool hasStates: {
+            panel.revision;
+            return scriptSection.stateMapId >= 0 && brg.map.hasStateBlueprint(scriptSection.stateMapId);
           }
 
-          // The dropdown: the named steps + "Something else…" for a custom value.
           ComboBox {
-            id: stepCombo
+            id: stateCombo
             Layout.fillWidth: true
             Layout.preferredHeight: 30
             font.pixelSize: 12
-            visible: scriptSection.steps.length > 0
-            textRole: "name"
+            visible: scriptSection.hasStates && !scriptSection.customMode
+            textRole: "label"
+            valueRole: "id"
             model: {
-              const l = scriptSection.steps.slice();
-              l.push({ value: -1, name: qsTr("Something else…"), desc: "" });
-              return l;
-            }
-            onActivated: function(i) {
-              if (i === model.length - 1) {           // "Something else…"
-                scriptSection.customMode = true;
-                return;
+              panel.revision; panel.editTick;
+              if (!scriptSection.hasStates) return [];
+              const states = brg.map.stateList(scriptSection.stateMapId);
+              const cur = brg.map.currentStateId(scriptSection.stateMapId);
+              let out = [];
+              if (cur === "")
+                out.push({ id: "", label: qsTr("Custom (matches no stage)"), desc: "" });
+              for (let i = 0; i < states.length; i++) {
+                const s = states[i];
+                const tag = s.kind === "transient" ? qsTr(" (mid-cutscene)") : "";
+                out.push({ id: s.id, label: s.id + ". " + s.name + tag, desc: s.desc, kind: s.kind });
               }
-              scriptSection.customMode = false;
-              if (panel.wScripts) {
-                panel.wScripts.scriptsSet(scriptSection.scriptInd, scriptSection.steps[i].value);
+              out.push({ id: "__raw", label: qsTr("Something else…"), desc: "" });
+              return out;
+            }
+            onActivated: {
+              if (currentValue === "__raw") { scriptSection.customMode = true; return; }
+              if (currentValue !== "" && currentValue !== undefined) {
+                brg.map.applyState(currentValue, scriptSection.stateMapId);
                 panel.editTick++;
               }
             }
-            // A model change (page switch) makes the ComboBox clamp currentIndex
-            // itself — re-assert the stored step's index AFTER the new model lands.
-            onModelChanged: currentIndex = scriptSection.comboIndex
+            onModelChanged: currentIndex = scriptSection.stateComboIndex
           }
-          // A Binding element, NOT a plain currentIndex binding: the combo's own
-          // internal writes would sever a plain binding. `delayed` coalesces to the
-          // end of the event loop, after the model rebuild — otherwise the index can
-          // be applied to the OLD model and clamped (the Oak's-Lab-shows-"Default"
-          // bug the screenshot review caught, twice).
+          readonly property int stateComboIndex: {
+            panel.revision; panel.editTick;
+            if (!scriptSection.hasStates) return -1;
+            const cur = brg.map.currentStateId(scriptSection.stateMapId);
+            const l = stateCombo.model;
+            for (let i = 0; i < l.length; i++)
+              if (l[i].id === cur) return i;
+            return 0;
+          }
           Binding {
-            target: stepCombo
+            // A model change (page switch) makes the ComboBox clamp currentIndex itself,
+            // severing a plain binding; `delayed` re-asserts after the rebuild (the
+            // Oak's-Lab-shows-"Default" trap, pinned in qt-patterns.md).
+            target: stateCombo
             property: "currentIndex"
-            value: scriptSection.comboIndex
+            value: scriptSection.stateComboIndex
             delayed: true
           }
 
-          // The selected step's progression description — the sense of WHERE the story is.
+          // The current stage's story line — ONE line, the sense of where you are.
           Label {
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             font.pixelSize: 10
             opacity: 0.55
-            visible: stepCombo.visible && !scriptSection.customMode && text !== ""
-            text: {
-              panel.revision; panel.editTick;
-              for (let i = 0; i < scriptSection.steps.length; i++)
-                if (scriptSection.steps[i].value === scriptSection.value)
-                  return scriptSection.steps[i].desc !== undefined ? scriptSection.steps[i].desc : "";
-              return "";
-            }
+            visible: stateCombo.visible && text !== ""
+            text: stateCombo.currentIndex >= 0 && stateCombo.model[stateCombo.currentIndex] !== undefined
+                  && stateCombo.model[stateCombo.currentIndex].desc !== undefined
+                  ? stateCombo.model[stateCombo.currentIndex].desc : ""
           }
 
           // The custom path: full byte range, never refused — warned when it's past the map's
@@ -760,11 +806,8 @@ Item {
                        + "rewritten.")
                   .arg(scriptSection.value).arg(scriptSection.stepCount - 1)
           }
-          ArmedNote {
-            visible: scriptSection.visible
-            text: qsTr("Durable in the save. It steers this map's state and scripted events the "
-                       + "moment your save is there.")
-          }
+          // (No ArmedNote here any more -- its sentence lives in the section's "?". Words are
+          //  clutter; the picker itself says where the story is.)
 
           Rectangle {
             Layout.fillWidth: true
@@ -841,6 +884,8 @@ Item {
           }
 
           TempFlagRow {
+            // Overwritten every frame by the game -> a USELESS edit; behind the gate.
+            visible: panel.showUseless
             title: qsTr("Game over")
             blurb: qsTr("Marks the current Safari run as ended.")
             tempWhy: panel.tempWhy
@@ -872,29 +917,33 @@ Item {
           }
           visible: list.length > 0
 
-          /// Group name -> its rows, real groups first, SHARED next, Placeholder Flags LAST.
+          /// ⭐ Grouped BY PROGRESSION STAGE first (leadership, 2026-07-18: *"Event flags need
+          /// grouping in some way … map state would be a good grouping"*): a flag a blueprint
+          /// stage sets files under that stage, in story order — so the flags read as the map's
+          /// story. Then the leftover named groups, then SHARED, and the useless ones LAST
+          /// (behind the Useless-edits switch).
           readonly property var groups: {
+            panel.revision;
             const l = eventSection.list;
             let byName = ({});
+            let rankOf = ({});
             for (let i = 0; i < l.length; i++) {
               const e = l[i];
-              const key = e.placeholder ? qsTr("Placeholder Flags")
-                        : (e.shared ? qsTr("Shared · Event flags · %1").arg(e.sharedWith.join(", "))
-                                    : (e.group !== "" ? e.group : qsTr("Story")));
-              if (byName[key] === undefined) byName[key] = [];
+              let key, rank;
+              if (e.useless)      { key = qsTr("Useless flags");  rank = 300; }
+              else if (e.shared)  { key = qsTr("Shared with %1").arg(e.sharedWith.join(", ")); rank = 200; }
+              else if (e.stage !== "") { key = qsTr("Stage %1").arg(e.stage); rank = 10 + i / 10000; }
+              else                { key = (e.group !== "" ? e.group : qsTr("Other")); rank = 100; }
+              if (byName[key] === undefined) { byName[key] = []; rankOf[key] = rank; }
               byName[key].push(e);
             }
             let keys = Object.keys(byName);
             keys.sort(function(a, b) {
-              const rank = function(k) {
-                if (k === qsTr("Placeholder Flags")) return 2;
-                if (k.indexOf(qsTr("Shared ·")) === 0) return 1;
-                return 0;
-              };
-              const ra = rank(a), rb = rank(b);
-              return ra !== rb ? ra - rb : a.localeCompare(b);
+              return rankOf[a] !== rankOf[b] ? rankOf[a] - rankOf[b] : a.localeCompare(b);
             });
-            return keys.map(function(k) { return { title: k, rows: byName[k] }; });
+            return keys.map(function(k) {
+              return { title: k, rows: byName[k], useless: rankOf[k] === 300 };
+            });
           }
 
           Rectangle {
@@ -905,19 +954,21 @@ Item {
                      && (panel.curPage.scriptInd >= 0 || panel.curPage.legacy >= 0)
           }
 
-          Label {
-            text: qsTr("Event flags — what's happened here")
-            font.pixelSize: 12
-            font.bold: true
-            color: brg.settings.textColorDark
-          }
-          Label {
+          RowLayout {
             Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            font.pixelSize: 10
-            opacity: 0.55
-            text: qsTr("Each switch is one thing the game remembers about this place — a trainer "
-                       + "beaten, an item taken, a scene watched. ON = it has happened.")
+            spacing: 6
+            Label {
+              text: qsTr("Event flags")
+              font.pixelSize: 12
+              font.bold: true
+              color: brg.settings.textColorDark
+              Layout.fillWidth: true
+            }
+            MapInfoIcon {
+              text: qsTr("One switch per thing the game remembers here — a trainer beaten, an item "
+                         + "taken, a scene watched. ON = it has happened. Grouped by the map's "
+                         + "progression stages where the research pins them.")
+            }
           }
 
           Repeater {
@@ -929,8 +980,11 @@ Item {
               Layout.fillWidth: true
               spacing: 3
 
-              readonly property bool isShared: modelData.title.indexOf(qsTr("Shared ·")) === 0
-              readonly property bool isPlaceholder: modelData.title === qsTr("Placeholder Flags")
+              readonly property bool isShared: modelData.title.indexOf(qsTr("Shared with")) === 0
+              readonly property bool isPlaceholder: grp.modelData.useless === true
+
+              // Useless flags live behind the panel's Useless-edits switch, whole group.
+              visible: !grp.isPlaceholder || panel.showUseless
 
               Item { Layout.preferredHeight: 4 }
 
@@ -969,128 +1023,59 @@ Item {
                 }
               }
 
-              // Shared groups say plainly what they are and where else they live.
-              Label {
-                visible: grp.isShared
-                Layout.fillWidth: true
-                wrapMode: Text.Wrap
-                font.pixelSize: 10
-                color: "#3b6ea5"
-                text: qsTr("Shared with other maps — the same save bits appear on those pages too, "
-                           + "so a change here shows up there.")
-              }
-              Label {
-                visible: grp.isPlaceholder
-                Layout.fillWidth: true
-                wrapMode: Text.Wrap
-                font.pixelSize: 10
-                opacity: 0.55
-                text: qsTr("Spare bits the game never reads. Editable like anything else — but "
-                           + "nothing in the game looks at them.")
-              }
+              // (No prose under the group titles any more -- "Shared with X" and "Useless flags"
+              //  say it; the section's "?" carries the long form. Words are clutter here.)
 
               Repeater {
                 model: grp.modelData.rows
 
-                delegate: ColumnLayout {
+                delegate: RowLayout {
+                  // ONE ROW: name + switch, a caution "!" where one exists, and the long form (the
+                  // description + the raw byte/bit path) behind a per-row "?" only when there IS a
+                  // long form. Leadership, 2026-07-18: *"Lose the descriptions on event flags"* +
+                  // *"way too many words"* -- the per-row paragraph, the classification chips and
+                  // the always-on byte path were most of the panel's noise.
                   id: erow
                   required property var modelData
                   Layout.fillWidth: true
-                  spacing: 1
+                  spacing: 6
 
-                  /// The research classification, in words a person can act on. "used"
-                  /// is the default (500+ rows) and "placeholder" is the group's whole
-                  /// title, so neither earns a chip.
-                  readonly property var badges: {
-                    let out = [];
-                    const c = erow.modelData.classification;
-                    for (let i = 0; i < c.length; i++) {
-                      if (c[i] === "temporary")    out.push(qsTr("temporary"));
-                      else if (c[i] === "vestigial")   out.push(qsTr("does nothing"));
-                      else if (c[i] === "defined-unused") out.push(qsTr("never used"));
-                      else if (c[i] === "block-swept") out.push(qsTr("swept in a group"));
-                    }
-                    return out;
-                  }
+                  // A useless row inside a real group (rare) still respects the gate.
+                  visible: !erow.modelData.useless || panel.showUseless
 
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 6
-
-                    MapWarnIcon {
-                      visible: erow.modelData.caution !== ""
-                      text: erow.modelData.caution
-                    }
-
-                    Label {
-                      text: erow.modelData.name
-                      font.pixelSize: 12
-                      color: brg.settings.textColorDark
-                      opacity: erow.modelData.placeholder ? 0.7 : 1.0
-                      Layout.fillWidth: true
-                      wrapMode: Text.Wrap
-                    }
-
-                    MapSwitch {
-                      checked: {
-                        panel.revision; panel.editTick;
-                        return panel.wEvents ? panel.wEvents.eventsAt(erow.modelData.ind) : false;
-                      }
-                      onToggled: {
-                        if (panel.wEvents) {
-                          panel.wEvents.eventsSet(erow.modelData.ind,
-                                                  !panel.wEvents.eventsAt(erow.modelData.ind));
-                          panel.editTick++;
-                        }
-                      }
-                    }
+                  MapWarnIcon {
+                    visible: erow.modelData.caution !== ""
+                    text: erow.modelData.caution
                   }
 
                   Label {
-                    text: erow.modelData.desc
+                    text: erow.modelData.name
+                    font.pixelSize: 12
+                    color: brg.settings.textColorDark
+                    opacity: erow.modelData.useless ? 0.7 : 1.0
                     Layout.fillWidth: true
-                    wrapMode: Text.Wrap
-                    font.pixelSize: 10
-                    opacity: 0.55
-                    visible: text !== "" && !erow.modelData.placeholder
+                    elide: Text.ElideRight
                   }
 
-                  // What the research found this flag IS, plus where the bit lives.
-                  // Only the classifications a person can act on are shown -- "used"
-                  // is the default and saying it on 500 rows would be noise.
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 4
-                    visible: erow.badges.length > 0 || !erow.modelData.placeholder
-
-                    Repeater {
-                      model: erow.badges
-                      delegate: Rectangle {
-                        required property string modelData
-                        radius: 3
-                        color: modelData === qsTr("temporary") ? "#b07d10" : "#6b7280"
-                        opacity: 0.85
-                        implicitWidth: bl.implicitWidth + 8
-                        implicitHeight: bl.implicitHeight + 3
-                        Label {
-                          id: bl
-                          anchors.centerIn: parent
-                          text: parent.modelData
-                          font.pixelSize: 8
-                          color: "#ffffff"
-                        }
-                      }
-                    }
-
-                    Item { Layout.fillWidth: true }
-
-                    Label {   // the raw path -- never hidden from a power user
-                      text: qsTr("byte 0x%1 · bit %2")
+                  MapInfoIcon {
+                    visible: erow.modelData.desc !== "" && !erow.modelData.placeholder
+                    text: erow.modelData.desc
+                          + qsTr("\n\nbyte 0x%1 · bit %2")
                               .arg(erow.modelData.byte.toString(16).toUpperCase())
                               .arg(erow.modelData.bit)
-                      font.pixelSize: 8
-                      font.family: "monospace"
-                      opacity: 0.35
+                  }
+
+                  MapSwitch {
+                    checked: {
+                      panel.revision; panel.editTick;
+                      return panel.wEvents ? panel.wEvents.eventsAt(erow.modelData.ind) : false;
+                    }
+                    onToggled: {
+                      if (panel.wEvents) {
+                        panel.wEvents.eventsSet(erow.modelData.ind,
+                                                !panel.wEvents.eventsAt(erow.modelData.ind));
+                        panel.editTick++;
+                      }
                     }
                   }
                 }
@@ -1126,19 +1111,20 @@ Item {
             color: brg.settings.dividerColor
           }
 
-          Label {
-            text: qsTr("Hidden Items & Coins — what's buried here")
-            font.pixelSize: 12
-            font.bold: true
-            color: brg.settings.textColorDark
-          }
-          Label {
+          RowLayout {
             Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            font.pixelSize: 10
-            opacity: 0.55
-            text: qsTr("Nothing marks these on the map — you find them with the Itemfinder, or by "
-                       + "chance. ON = you've already picked it up, so the spot is now empty.")
+            spacing: 6
+            Label {
+              text: qsTr("Hidden Items & Coins")
+              font.pixelSize: 12
+              font.bold: true
+              color: brg.settings.textColorDark
+              Layout.fillWidth: true
+            }
+            MapInfoIcon {
+              text: qsTr("The Itemfinder finds these — nothing marks them on screen. ON = already "
+                         + "picked up, so the spot is empty.")
+            }
           }
 
           // Two ALIKE groups, kept separate (leadership, 2026-07-17: "hidden items and coins another
@@ -1310,19 +1296,21 @@ Item {
                      && (panel.curPage.scriptInd >= 0 || panel.curPage.legacy >= 0)
           }
 
-          Label {
-            text: qsTr("Filter Flags — who's on the map")
-            font.pixelSize: 12
-            font.bold: true
-            color: brg.settings.textColorDark
-          }
-          Label {
+          RowLayout {
             Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            font.pixelSize: 10
-            opacity: 0.55
-            text: qsTr("Each switch is one person, item ball or Pokémon this map can hide or show. "
-                       + "ON = it's there. The game flips these as the story advances.")
+            spacing: 6
+            Label {
+              text: qsTr("Filter Flags")
+              font.pixelSize: 12
+              font.bold: true
+              color: brg.settings.textColorDark
+              Layout.fillWidth: true
+            }
+            MapInfoIcon {
+              text: qsTr("One switch per person, item ball or Pokémon this map can hide or show. "
+                         + "ON = on the map — and the map view draws it accordingly (a switched-off "
+                         + "one ghosts). The game flips these as the story advances.")
+            }
           }
 
           Repeater {
@@ -1357,14 +1345,19 @@ Item {
                 border.color: "#009e73"
               }
 
+              // ONE ROW: name + switch; the oddity "!" where pret noted one; the long form (what
+              // the thing is + its linked event flags with live state) behind a per-row "?".
               RowLayout {
                 Layout.fillWidth: true
                 spacing: 6
 
                 MapWarnIcon {
+                  // A pret-noted oddball stores but shows nothing -- a USELESS edit by
+                  // leadership's definition, so the whole row rides the gate (see `visible`
+                  // on the delegate).
                   visible: mrow.modelData.oddity !== ""
-                  text: qsTr("pret's own note on this one: %1. The bit exists and is stored, but "
-                             + "toggling it does nothing visible.").arg(mrow.modelData.oddity)
+                  text: qsTr("pret's note: %1 — the bit stores, but toggling it shows nothing.")
+                          .arg(mrow.modelData.oddity)
                 }
 
                 Label {
@@ -1372,7 +1365,28 @@ Item {
                   font.pixelSize: 12
                   color: brg.settings.textColorDark
                   Layout.fillWidth: true
-                  wrapMode: Text.Wrap
+                  elide: Text.ElideRight
+                }
+
+                MapInfoIcon {
+                  visible: mrow.modelData.desc !== "" || mrow.modelData.linked.length > 0
+                  text: {
+                    panel.revision; panel.editTick;
+                    let t = mrow.modelData.desc;
+                    if (mrow.modelData.linked.length > 0) {
+                      let parts = [];
+                      for (let i = 0; i < mrow.modelData.linked.length; i++) {
+                        const l = mrow.modelData.linked[i];
+                        let state = qsTr("not modelled");
+                        if (l.eventIndex >= 0 && panel.wEvents)
+                          state = panel.wEvents.eventsAt(l.eventIndex) ? qsTr("ON") : qsTr("off");
+                        parts.push(l.flag + " (" + state + ")");
+                      }
+                      t += qsTr("\n\nTied to %1 — the game toggles this object around that flag.")
+                             .arg(parts.join(", "));
+                    }
+                    return t;
+                  }
                 }
 
                 MapSwitch {
@@ -1383,38 +1397,6 @@ Item {
                       panel.editTick++;
                     }
                   }
-                }
-              }
-
-              Label {
-                text: mrow.modelData.desc
-                Layout.fillWidth: true
-                wrapMode: Text.Wrap
-                font.pixelSize: 10
-                opacity: 0.55
-                visible: text !== ""
-              }
-
-              // The conflict hooks: the event flags the game consults around this object,
-              // with their LIVE state — so a contradiction is visible at a glance.
-              Label {
-                Layout.fillWidth: true
-                wrapMode: Text.Wrap
-                font.pixelSize: 10
-                color: "#b07d10"
-                visible: mrow.modelData.linked.length > 0
-                text: {
-                  panel.revision; panel.editTick;
-                  let parts = [];
-                  for (let i = 0; i < mrow.modelData.linked.length; i++) {
-                    const l = mrow.modelData.linked[i];
-                    let state = qsTr("not modelled");
-                    if (l.eventIndex >= 0 && panel.wEvents)
-                      state = panel.wEvents.eventsAt(l.eventIndex) ? qsTr("ON") : qsTr("off");
-                    parts.push(l.flag + " (" + state + ")");
-                  }
-                  return qsTr("Tied to %1 — the game toggles this object around that flag. A flag "
-                              + "and a switch that disagree is untested territory.").arg(parts.join(", "));
                 }
               }
             }
@@ -1446,19 +1428,21 @@ Item {
             color: brg.settings.dividerColor
           }
 
-          Label {
-            text: qsTr("In-game Trades — the NPC swaps here")
-            font.pixelSize: 12
-            font.bold: true
-            color: brg.settings.textColorDark
-          }
-          Label {
+          RowLayout {
             Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            font.pixelSize: 10
-            opacity: 0.55
-            text: qsTr("ON = you've already done this trade, so the trader won't deal again. "
-                       + "Clearing it re-arms the swap.")
+            spacing: 6
+            Label {
+              text: qsTr("In-game Trades")
+              font.pixelSize: 12
+              font.bold: true
+              color: brg.settings.textColorDark
+              Layout.fillWidth: true
+            }
+            MapInfoIcon {
+              text: qsTr("ON = you've already done this trade, so the trader won't deal again. "
+                         + "Clearing it re-arms the swap. The name shown is the received Pokémon's "
+                         + "nickname — traders only have class names.")
+            }
           }
 
           // Alike-group toolbar: the whole set of ten, check or clear together.

@@ -123,10 +123,13 @@ Item {
   // (leadership, 2026-07-18: *"these boxes often render in front of the sprites looking bad"*).
   z: sprite.dragging ? 30 : (sprite.selected ? 25 : 1)
 
-  // The CONTINUE-LOAD view: a sprite the save's filter flag hides is not drawn -- unless you have
-  // deliberately selected it (via its tab), in which case it appears as a ghost to be edited.
-  visible: !sprite.hiddenByFlag || sprite.selected || sprite.dragging
-  opacity: sprite.hiddenByFlag ? 0.45 : 1.0
+  // ⭐ A SPRITE IS NEVER HIDDEN (leadership, 2026-07-18: *"i said earlier a sprite should never
+  // ever be hidden figure another solution out"* -- overruling the first Continue-view cut, which
+  // made a filter-flagged sprite vanish entirely). The solution: a sprite the save's filter flag
+  // has switched off renders as a GHOST, always -- dimmed artwork, silhouette intact -- so the
+  // Continue-load truth is readable at a glance ("this one won't be there") while the sprite
+  // stays visible, hoverable, clickable and draggable like everything else on the map.
+  visible: true
 
   /// The silhouette's ink -- out of the CANONICAL table (brg.map.ink), so the outline, its tab and
   /// the Layers panel row are literally the same value: the Player his blue row, everybody else
@@ -190,7 +193,9 @@ Item {
   PixelImage {
     anchors.fill: parent
     source: sprite.art
-    opacity: sprite.dragging ? 0.6 : 1.0
+    // A filter-flagged sprite's ART ghosts (the save says the game won't draw it on Continue);
+    // the silhouette around it stays strong so it still reads as a real, grabbable thing.
+    opacity: sprite.hiddenByFlag ? 0.4 : (sprite.dragging ? 0.6 : 1.0)
   }
 
   // ⭐ EVERY SPRITE WEARS ITS BOX, ALWAYS -- solid outline + a fill.

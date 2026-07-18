@@ -4868,6 +4868,25 @@ QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
   for (const auto& v : mapIds)
     ids.insert(v.toInt());
 
+  // ⭐ THE STAGE BUCKETS (leadership, 2026-07-18: *"Event flags need grouping in some way it feels
+  // like a disorganized mess … map state would be a good grouping"*). Each page map's progression
+  // blueprint says which STAGE of the map's story sets which flags -- so a flag can be filed under
+  // "2 · Oak has led you to the lab" instead of a flat pile. Flags no stage owns stay ungrouped.
+  QHash<int, QString> stageOf;   // event ind -> "id · stage name"
+  for (const auto& v : mapIds) {
+    const auto* bp = MapStatesDB::inst()->at(v.toInt());
+    if (bp == nullptr)
+      continue;
+    for (const QString& stId : bp->getOrder()) {
+      const auto* st = bp->stage(stId);
+      if (st == nullptr)
+        continue;
+      for (const auto& ev : st->set)
+        if (!stageOf.contains(ev.ind))
+          stageOf.insert(ev.ind, QStringLiteral("%1 · %2").arg(st->id, st->name));
+    }
+  }
+
   QVariantList out;
   for (auto* e : EventsDB::inst()->getStore()) {
     // does this flag live on any map this page covers?
@@ -4896,6 +4915,16 @@ QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
     o[QStringLiteral("classification")] = e->getClassification();
     o[QStringLiteral("shared")] = !sharedWith.isEmpty();
     o[QStringLiteral("sharedWith")] = sharedWith;
+    // Which progression stage of this map's story sets it (blueprint-derived), or "".
+    o[QStringLiteral("stage")] = stageOf.value(e->getInd(), QString());
+    // ⭐ USELESS (leadership's word, 2026-07-18): editing it changes nothing the game will keep or
+    // ever read -- placeholder padding bits, vestigial writes-never-reads, defined-but-unused.
+    // These hide behind the panel's "Useless edits" switch. NOT for merely-advanced controls.
+    const auto cls = e->getClassification();
+    o[QStringLiteral("useless")] = e->getPlaceholder()
+        || cls.contains(QStringLiteral("vestigial"))
+        || cls.contains(QStringLiteral("defined-unused"))
+        || cls.contains(QStringLiteral("temporary"));   // rewritten on load = nothing you can keep
     // Where the bit physically lives, so the raw path is never hidden from a power
     // user (this editor shows raw/hack values everywhere else too). wEventFlags is one
     // contiguous field: byte 0x29F3 + ind/8, bit ind%8.

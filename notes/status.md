@@ -5,11 +5,28 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.43.2-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
+**Version:** `0.43.3-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**);
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
+
+### 🧹 ROUND 3 — the PANEL OVERHAUL: useless edits, stage-grouped flags, one state menu (2026-07-18, `0.43.3-alpha`)
+
+Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md). The standing calls:
+
+- ⭐ **"Useless edits"** (her word) is the gate for ONLY overwritten-or-never-read values —
+  placeholders, vestigial/temporary flags, the current town's Visited bit, Safari scratch,
+  do-nothing oddities. Never merely-advanced controls. Panel switch, default hidden.
+- ⭐ **A sprite is NEVER hidden** (overrules round 2): filter-flagged = always-visible GHOST
+  (art 40%, silhouette strong), hoverable and draggable.
+- ⭐ **One state menu everywhere**: Map Storage now uses the same blueprint progression picker as
+  Details ("Noop" retired). **Event flags grouped by stage** ("Stage 3 · The journey underway"),
+  one-line rows, long form behind per-row "?" (MapInfoIcon rule amended for section/row use).
+- Rail: the storage button's rest look no longer equals the open-panel fill (wash+outline);
+  "▧" Sprite set / "⚙" Character state icons; MapToolTip capped at 200 px.
+- Green: `ctest` **92/92**. ⏳ Owed: her live pass; deeper sweep of the remaining panels' field
+  blurbs if wanted.
 
 ### 🖌️ ROUND 2 — silhouettes REAL (provider-served), strip above the world, harness hands (2026-07-18, `0.43.2-alpha`)
 

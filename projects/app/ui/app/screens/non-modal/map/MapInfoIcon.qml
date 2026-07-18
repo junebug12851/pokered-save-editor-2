@@ -24,7 +24,13 @@
  *   > guess since its an icon its an exception to the tooltip button rule — just one of these in the
  *   > title. **Don't litter them.** The tooltip icon is important."*
  *
- * So: **ONE per panel, in the title bar, and nowhere else.** It exists because the alternative is
+ * ⚠️ AMENDED (leadership, 2026-07-18): *"dont be afraid to use tooltip icons for longer
+ * descriptions just dont confuse that with tooltips being allowed to be long"* — so a "?" may now
+ * sit on a SECTION header (and, sparingly, on a row that genuinely has a long form), replacing the
+ * inline paragraphs that made the storage panel "way too many words". The original spirit stands:
+ * don't litter them, and the TOOLTIP itself stays as short as it can be.
+ *
+ * The original rule: **ONE per panel, in the title bar.** It exists because the alternative is
  * what these panels used to do — three paragraphs of explanation stacked above the controls, which
  * is a wall of text you have to read past every single time to reach the thing you came for. The
  * words are still there. They are just behind a mark you can choose to hover.

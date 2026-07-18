@@ -391,7 +391,7 @@ Page {
         panels: [
           { id: "tiles", glyph: "▦", title: qsTr("Blocks & Tiles"),
             tip: qsTr("Blocks & Tiles — the edge of the world, the grass, the counters, the boulder") },
-          { id: "sprites", glyph: "☻", title: qsTr("Sprite set"),
+          { id: "sprites", glyph: "▧", title: qsTr("Sprite set"),
             tip: qsTr("Sprite set — the eleven sprite pictures the game had loaded for this map") },
           // ⇄ The twelve bytes AROUND the doors -- fly, hole, Dig, scripted. They belong to the MAP,
           // which is why they are here with the other things you edit about it, and not in the
@@ -403,7 +403,7 @@ Page {
           // scripted cutscene has the controls, whether a trainer battle is queued. They belong to the
           // MAP, so they live here with the other things you edit about it -- not in the Details panel
           // (that is for whatever is SELECTED). Briefed + researched 2026-07-15; reference/npc-character-state.md.
-          { id: "charstate", glyph: "☺", title: qsTr("Character state"),
+          { id: "charstate", glyph: "⚙", title: qsTr("Character state"),
             tip: qsTr("Character state — how the characters on this map behave: facing, scripted control, trainer battle") },
           // ▣ MAP STORAGE — global save bytes that each belong to one map (Vermilion Gym trash-can
           // switches, Cinnabar Gym quiz opponent, Safari Zone run counters). `primary: true` gives its

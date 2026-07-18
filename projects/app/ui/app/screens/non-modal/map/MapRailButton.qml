@@ -35,9 +35,12 @@ Rectangle {
   property string tip: ""
   property bool active: false
   property bool enabledBtn: true
-  /// A PRIMARY button stays accent-filled at rest (not just outline-on-hover) -- used for the Map
-  /// Storage panel's icon, which Twilight asked to read as "filled, a storage button" so the rail
-  /// says this one holds persistent save storage. (Twilight, 2026-07-15.)
+  /// A PRIMARY button is marked as special at rest -- the Map Storage (persistent storage /
+  /// "World") icon. ⚠️ RESTYLED 2026-07-18 (leadership: *"needs to be a different background
+  /// color than the one used to determine which menu or panel is selected/open"*): the old
+  /// treatment filled it with the ACCENT at rest, which is exactly the open-panel look -- it
+  /// permanently read as "this panel is open". Now: a light accent WASH + accent outline at
+  /// rest, and only a genuinely open panel gets the solid accent fill.
   property bool primary: false
   property int size: 32
   /// A one-key shortcut, shown in the tooltip. The keys themselves are bound by the screen.
@@ -51,11 +54,14 @@ Rectangle {
 
   color: !enabledBtn ? "transparent"
        : active      ? brg.settings.accentColor
-       : primary     ? (ma.containsPress ? Qt.darker(brg.settings.accentColor, 1.2)
-                                          : brg.settings.accentColor)
        : ma.containsPress ? "#22000000"
+       : primary     ? Qt.alpha(brg.settings.accentColor, ma.containsMouse ? 0.28 : 0.16)
        : ma.containsMouse ? "#14000000"
        : "transparent"
+
+  // The primary mark: a quiet accent OUTLINE, never the open-panel fill.
+  border.width: primary && !active ? 1 : 0
+  border.color: Qt.alpha(brg.settings.accentColor, 0.55)
 
   opacity: enabledBtn ? 1.0 : 0.35
 
@@ -65,7 +71,7 @@ Rectangle {
     anchors.centerIn: parent
     text: btn.glyph
     font.pixelSize: Math.round(btn.size * 0.5)
-    color: (btn.active || btn.primary) ? brg.settings.textColorLight : brg.settings.textColorDark
+    color: btn.active ? brg.settings.textColorLight : brg.settings.textColorDark
   }
 
   MouseArea {

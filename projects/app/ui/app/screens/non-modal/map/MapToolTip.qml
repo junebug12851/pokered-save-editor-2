@@ -51,7 +51,7 @@ ToolTip {
   id: tip
 
   /// How wide the text may run before it wraps. A sentence, not a novel.
-  property int maxWidth: 240
+  property int maxWidth: 200
 
   /// Set false ONLY for a notice the user must see whether or not they asked for hints. There is one
   /// of those in the whole screen, and it is the character-not-loaded "!".
