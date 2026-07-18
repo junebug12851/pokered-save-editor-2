@@ -4125,6 +4125,33 @@ QVariantList MapModel::storagePages() const
         extra.insert(int(m->getInd()), m->getName());
     }
   }
+
+  // ...and Phase 17's new storage kinds each make their own maps selectable (2026-07-17). Without
+  // this a trade house / town / rod house with no script, missable or event would have NO page, so
+  // its Trades / Town-visited / Milestone / Fossil section would be unreachable -- exactly the hole
+  // the event-flags pass had to close. Every map any of these is filed on must be selectable.
+  const auto includeMap = [&](int id) {
+    if (id < 0 || covered.contains(id))
+      return;
+    MapDBEntry* m = MapsDB::inst()->getIndAt(QString::number(id));
+    if (m != nullptr)
+      extra.insert(id, m->getName());
+  };
+  for (auto* t : TradesDB::inst()->getStore())
+    if (t != nullptr && t->mapId >= 0)
+      includeMap(t->mapId);           // the 9 located trades' maps
+  for (int town = 0; town < 11; town++)
+    includeMap(town);                 // the 11 city maps (town "visited")
+  // The completed one-shots' maps + the fossil room. Kept in step with storageCompleted()/
+  // storageFossil() -- if either gains a map, add it here or its page won't exist.
+  for (int id : { 163, 164, 189,        // rod houses
+                  212,                   // Silph 7F (Lapras)
+                  40, 37,                // Oak's Lab + Red's House (starter)
+                  70, 73, 76, 79,        // Saffron gate guards
+                  245, 174,              // Lorelei's Room + Indigo lobby (startedElite4)
+                  170,                   // Cinnabar Lab Fossil Room (fossil)
+                  41, 58, 64, 68, 81, 89, 133, 140, 141, 154, 171, 182 }) // Poké Centers (nurse)
+    includeMap(id);
   for (auto it = extra.constBegin(); it != extra.constEnd(); ++it) {
     QVariantMap p;
     p[QStringLiteral("title")] = it.value();
@@ -4887,7 +4914,11 @@ QVariantList MapModel::storageTrades(const QVariantList& mapIds) const
 QVariantList MapModel::storageTowns(const QVariantList& mapIds) const
 {
   // bit i == map id i, for the 11 city maps (NUM_CITY_MAPS). A non-city page contributes nothing.
-  const QSet<int> ids = idSet(mapIds);
+  // ⚠️ Sort: a QSet iterates in HASH order, which the screenshot review caught rendering the
+  // "view all towns" list as Pallet, Celadon, Pewter, Vermilion... Town order is meaningful (it is
+  // map id / progression order), so emit ascending.
+  QList<int> ids = idSet(mapIds).values();
+  std::sort(ids.begin(), ids.end());
 
   QVariantList out;
   for (int id : ids) {

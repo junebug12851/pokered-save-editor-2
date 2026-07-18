@@ -34,15 +34,18 @@
 // with no warning, which is the single most expensive bug this project has had.
 // @see notes/reference/qt-patterns.md
 #include "./worldhidden.h"
+// ...and the Phase 17 trio the Map Storage panel binds directly (2026-07-17): the town "visited"
+// bits (world.towns.townsAt/Set), the in-game trade "done" bits (world.trades.tradesAt/Set), and
+// the "completed" one-shots (world.completed[key], keyed Q_PROPERTY bools). Forward declarations
+// left these as opaque QObject pointers, so the WHOLE chain read `undefined` in QML -- exactly the
+// bug the note above describes. `worldother.h` (the fossil bytes) was already included below.
+#include "./worldcompleted.h"
+#include "./worldtowns.h"
+#include "./worldtrades.h"
 
 class SaveFile;
 
-class WorldCompleted;
 class WorldGeneral;
-class WorldHidden;
-class WorldOther;
-class WorldTowns;
-class WorldTrades;
 
 /**
  * @brief Global, map-independent game state -- "the state of the world".

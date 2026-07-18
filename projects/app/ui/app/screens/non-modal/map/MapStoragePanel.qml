@@ -100,6 +100,27 @@ Item {
     panel.revision;
     return brg.file.data.dataExpanded.world.events;
   }
+  /// The in-game trade "done" bits (0x29E3). tradesAt/tradesSet(ind). @see WorldTrades
+  readonly property var wTrades: {
+    panel.revision;
+    return brg.file.data.dataExpanded.world.trades;
+  }
+  /// The town "visited" (Fly-unlock) bits (0x29B7). townsAt/townsSet(ind); bit == map id. @see WorldTowns
+  readonly property var wTowns: {
+    panel.revision;
+    return brg.file.data.dataExpanded.world.towns;
+  }
+  /// The "completed" one-shots (rods/Lapras/starter/nurse/guards/elite4). Keyed Q_PROPERTY bools:
+  /// wCompleted[key] reads/writes. @see WorldCompleted
+  readonly property var wCompleted: {
+    panel.revision;
+    return brg.file.data.dataExpanded.world.completed;
+  }
+  /// Odds & ends incl. the two fossil bytes (0x29BB/0x29BC). Keyed int Q_PROPERTYs. @see WorldOther
+  readonly property var wOther: {
+    panel.revision;
+    return brg.file.data.dataExpanded.world.other;
+  }
 
   // ── The pages: every map with storage (script progress, minigame bytes, or missables) ─────────
   // Built by MapModel::storagePages(): one page per script-progress entry (97), plus missable-only
@@ -316,6 +337,42 @@ Item {
     opacity: 0.5
   }
 
+  // A small flat text pill -- the alike-group toolbar's verbs (View all / Check all / Uncheck all).
+  // Same chassis idiom as MapClearButton: no 3-D bevel, accent-on-hover, pointing cursor.
+  component MapTextButton: Item {
+    id: tbtn
+    property string text: ""
+    signal clicked()
+
+    implicitWidth: tpill.implicitWidth
+    implicitHeight: 20
+
+    Rectangle {
+      id: tpill
+      anchors.fill: parent
+      implicitWidth: tlabel.implicitWidth + 14
+      radius: height / 2
+      color: thover.hovered ? "#2d79a7" : "transparent"
+      border.width: 1
+      border.color: thover.hovered ? "#2d79a7" : brg.settings.dividerColor
+      Behavior on color { ColorAnimation { duration: 90 } }
+
+      Label {
+        id: tlabel
+        anchors.centerIn: parent
+        text: tbtn.text
+        font.pixelSize: 10
+        color: thover.hovered ? "#ffffff" : brg.settings.textColorMid
+      }
+
+      HoverHandler { id: thover; cursorShape: Qt.PointingHandCursor }
+      TapHandler {
+        gesturePolicy: TapHandler.ReleaseWithinBounds
+        onTapped: tbtn.clicked()
+      }
+    }
+  }
+
   readonly property string tempWhy: qsTr("The game rewrites this every frame — it's forced back to "
     + "\"not over\" the instant you're not in the Safari Zone, so editing it here has no lasting "
     + "effect. Verified on a real cartridge. Shown because nothing is hidden.")
@@ -374,6 +431,150 @@ Item {
           Layout.topMargin: 2
           implicitHeight: 1
           color: brg.settings.dividerColor
+        }
+
+        // ── TOWN VISITED (top — Fairy Fox, 2026-07-17) ────────────────────────────────────────
+        //
+        // "have a visited checkbox near the top of persistent storage for places that take a visited
+        // one." Only the 11 city maps take one (bit == map id; read only by Fly). It's an ALIKE
+        // group: different bits, same kind of thing, one per place — so the header offers view-all
+        // and check/uncheck-all across all eleven. @see notes/reference/town-visited.md
+        ColumnLayout {
+          id: townsSection
+          Layout.fillWidth: true
+          spacing: 6
+
+          readonly property var list: {
+            panel.revision;
+            return panel.curPage !== undefined ? brg.map.storageTowns(panel.curPage.ids) : [];
+          }
+          // This page's own town (0 or 1 of them) leads; "view all" reveals the whole group.
+          readonly property var mine: list.length > 0 ? list[0] : undefined
+          visible: mine !== undefined
+
+          property bool showAll: false
+
+          Label {
+            text: qsTr("Town — visited")
+            font.pixelSize: 12
+            font.bold: true
+            color: brg.settings.textColorDark
+          }
+          Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+            text: qsTr("Whether you've set foot here — the only thing that unlocks it as a Fly "
+                       + "destination. It unlocks nothing else.")
+          }
+
+          // This map's own Visited switch.
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+            visible: townsSection.mine !== undefined
+
+            // The one dynamic amber-! in the panel: the town you're SAVED IN re-marks itself on
+            // Continue (outdoors), so clearing it here won't stick. Only this row, only this map.
+            MapWarnIcon {
+              visible: townsSection.mine !== undefined && townsSection.mine.isCurrentMap
+              text: qsTr("You're standing in this town, so the game re-marks it visited the moment "
+                         + "you Continue (it happens before the save's map protection). Clearing it "
+                         + "sticks only if you save indoors or elsewhere. Verified on a cartridge.")
+            }
+            Label {
+              text: townsSection.mine ? townsSection.mine.name : ""
+              font.pixelSize: 12
+              color: brg.settings.textColorDark
+              Layout.fillWidth: true
+              wrapMode: Text.Wrap
+            }
+            MapSwitch {
+              checked: {
+                panel.revision; panel.editTick;
+                return (panel.wTowns && townsSection.mine)
+                       ? panel.wTowns.townsAt(townsSection.mine.ind) : false;
+              }
+              onToggled: {
+                if (panel.wTowns && townsSection.mine) {
+                  panel.wTowns.townsSet(townsSection.mine.ind, checked);
+                  panel.editTick++;
+                }
+              }
+            }
+          }
+
+          // The ALIKE-group toolbar: view all eleven together, and check / uncheck the whole group.
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+
+            MapTextButton {
+              text: townsSection.showAll ? qsTr("Hide the other towns")
+                                         : qsTr("View all 11 towns")
+              onClicked: townsSection.showAll = !townsSection.showAll
+            }
+            Item { Layout.fillWidth: true }
+            MapTextButton {
+              text: qsTr("Check all")
+              onClicked: {
+                if (!panel.wTowns) return;
+                for (var i = 0; i < 11; i++) panel.wTowns.townsSet(i, true);
+                panel.editTick++;
+              }
+            }
+            MapTextButton {
+              text: qsTr("Uncheck all")
+              onClicked: {
+                if (!panel.wTowns) return;
+                for (var i = 0; i < 11; i++) panel.wTowns.townsSet(i, false);
+                panel.editTick++;
+              }
+            }
+          }
+
+          // View-all: every town, wherever you are — the "see the whole alike group at once"
+          // affordance. Names come from storageTowns over all 11 ids (0..10 == the city map ids).
+          readonly property var allTowns: {
+            panel.revision;
+            return townsSection.showAll
+                   ? brg.map.storageTowns([0,1,2,3,4,5,6,7,8,9,10]) : [];
+          }
+          Repeater {
+            model: townsSection.allTowns
+            delegate: RowLayout {
+              id: townAll
+              required property var modelData
+              Layout.fillWidth: true
+              Layout.leftMargin: 8
+              spacing: 6
+
+              Label {
+                text: townAll.modelData.name
+                font.pixelSize: 11
+                opacity: 0.85
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+              }
+              MapSwitch {
+                checked: {
+                  panel.revision; panel.editTick;
+                  return panel.wTowns ? panel.wTowns.townsAt(townAll.modelData.ind) : false;
+                }
+                onToggled: {
+                  if (panel.wTowns) { panel.wTowns.townsSet(townAll.modelData.ind, checked); panel.editTick++; }
+                }
+              }
+            }
+          }
+
+          Rectangle {
+            Layout.fillWidth: true
+            Layout.topMargin: 2
+            implicitHeight: 1
+            color: brg.settings.dividerColor
+          }
         }
 
         // ── THE MAP'S SCRIPT (top — Twilight, 2026-07-16) ─────────────────────────────────────
@@ -1125,6 +1326,294 @@ Item {
                   return qsTr("Tied to %1 — the game toggles this object around that flag. A flag "
                               + "and a switch that disagree is untested territory.").arg(parts.join(", "));
                 }
+              }
+            }
+          }
+        }
+
+        // ── IN-GAME TRADES — the NPC swaps here (Fairy Fox, 2026-07-17) ────────────────────────
+        //
+        // The ten NPC trades, on their trader's tile. An ALIKE group (different bits, same kind) —
+        // so the header offers check/uncheck-all across all ten. The unused CHIKUCHIKU trade lands
+        // on the General page (no map). ⚠️ The name shown is the RECEIVED mon's nickname, and the
+        // trader has only a class name. @see notes/reference/in-game-trades.md
+        ColumnLayout {
+          id: tradesSection
+          Layout.fillWidth: true
+          spacing: 6
+
+          readonly property var list: {
+            panel.revision;
+            return panel.curPage !== undefined ? brg.map.storageTrades(panel.curPage.ids) : [];
+          }
+          visible: list.length > 0
+
+          readonly property var dialogsetNames: [qsTr("casual"), qsTr("evolution"), qsTr("happy")]
+
+          Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: brg.settings.dividerColor
+          }
+
+          Label {
+            text: qsTr("In-game Trades — the NPC swaps here")
+            font.pixelSize: 12
+            font.bold: true
+            color: brg.settings.textColorDark
+          }
+          Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+            text: qsTr("ON = you've already done this trade, so the trader won't deal again. "
+                       + "Clearing it re-arms the swap.")
+          }
+
+          // Alike-group toolbar: the whole set of ten, check or clear together.
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+            Label {
+              text: qsTr("All 10 trades:")
+              font.pixelSize: 10
+              opacity: 0.6
+              Layout.fillWidth: true
+            }
+            MapTextButton {
+              text: qsTr("Check all")
+              onClicked: {
+                if (!panel.wTrades) return;
+                for (var i = 0; i < 10; i++) panel.wTrades.tradesSet(i, true);
+                panel.editTick++;
+              }
+            }
+            MapTextButton {
+              text: qsTr("Uncheck all")
+              onClicked: {
+                if (!panel.wTrades) return;
+                for (var i = 0; i < 10; i++) panel.wTrades.tradesSet(i, false);
+                panel.editTick++;
+              }
+            }
+          }
+
+          Repeater {
+            model: tradesSection.list
+            delegate: RowLayout {
+              id: trd
+              required property var modelData
+              Layout.fillWidth: true
+              spacing: 6
+
+              MapSwitch {
+                checked: {
+                  panel.revision; panel.editTick;
+                  return panel.wTrades ? panel.wTrades.tradesAt(trd.modelData.ind) : false;
+                }
+                onToggled: {
+                  if (panel.wTrades) { panel.wTrades.tradesSet(trd.modelData.ind, checked); panel.editTick++; }
+                }
+              }
+
+              ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 0
+
+                Label {
+                  Layout.fillWidth: true
+                  // The received mon's nickname is the memorable handle; the swap follows.
+                  text: qsTr("%1 — %2 → %3")
+                          .arg(trd.modelData.nickname).arg(trd.modelData.give).arg(trd.modelData.get)
+                  font.pixelSize: 11
+                  color: brg.settings.textColorDark
+                  elide: Text.ElideRight
+                }
+                Label {
+                  Layout.fillWidth: true
+                  text: {
+                    // Trader class + coords (or "unused" on the General page). The dialog-set tag
+                    // rides along; "evolution" is the localisation scar, not a real evolution.
+                    const d = tradesSection.dialogsetNames[trd.modelData.dialogset] || "";
+                    if (trd.modelData.unused)
+                      return qsTr("unused — never reachable in-game · %1").arg(d);
+                    return qsTr("%1 at (%2, %3)%4 · %5")
+                             .arg(trd.modelData.trader).arg(trd.modelData.x).arg(trd.modelData.y)
+                             .arg(trd.modelData.walks ? qsTr(" (wanders)") : "").arg(d);
+                  }
+                  font.pixelSize: 9
+                  opacity: 0.5
+                  elide: Text.ElideRight
+                }
+              }
+            }
+          }
+        }
+
+        // ── COMPLETED ONE-SHOTS — rods, Lapras, starter, nurse, guards, Elite 4 ────────────────
+        //
+        // @see notes/reference/world-completed.md. Rods are an ALIKE group; guards/starter/nurse are
+        // SHARED (one bit, several maps). startedElite4 is the loaded gun — its caution says so.
+        ColumnLayout {
+          id: completedSection
+          Layout.fillWidth: true
+          spacing: 6
+
+          readonly property var list: {
+            panel.revision;
+            return panel.curPage !== undefined ? brg.map.storageCompleted(panel.curPage.ids) : [];
+          }
+          visible: list.length > 0
+
+          readonly property bool hasRods: {
+            for (var i = 0; i < list.length; i++) if (list[i].group === "rods") return true;
+            return false;
+          }
+
+          Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: brg.settings.dividerColor
+          }
+
+          Label {
+            text: qsTr("Milestones — one-time events here")
+            font.pixelSize: 12
+            font.bold: true
+            color: brg.settings.textColorDark
+          }
+
+          // The rods are an alike group of three: check/clear together.
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+            visible: completedSection.hasRods
+            Label {
+              text: qsTr("All 3 rods:")
+              font.pixelSize: 10
+              opacity: 0.6
+              Layout.fillWidth: true
+            }
+            MapTextButton {
+              text: qsTr("Check all")
+              onClicked: {
+                if (!panel.wCompleted) return;
+                panel.wCompleted.obtainedOldRod = true;
+                panel.wCompleted.obtainedGoodRod = true;
+                panel.wCompleted.obtainedSuperRod = true;
+                panel.editTick++;
+              }
+            }
+            MapTextButton {
+              text: qsTr("Uncheck all")
+              onClicked: {
+                if (!panel.wCompleted) return;
+                panel.wCompleted.obtainedOldRod = false;
+                panel.wCompleted.obtainedGoodRod = false;
+                panel.wCompleted.obtainedSuperRod = false;
+                panel.editTick++;
+              }
+            }
+          }
+
+          Repeater {
+            model: completedSection.list
+            delegate: ColumnLayout {
+              id: cmp
+              required property var modelData
+              Layout.fillWidth: true
+              spacing: 1
+
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: 6
+
+                MapWarnIcon {
+                  visible: cmp.modelData.caution !== ""
+                  text: cmp.modelData.caution
+                }
+                Label {
+                  text: cmp.modelData.name
+                  font.pixelSize: 12
+                  color: brg.settings.textColorDark
+                  Layout.fillWidth: true
+                  wrapMode: Text.Wrap
+                }
+                MapSwitch {
+                  checked: {
+                    panel.revision; panel.editTick;
+                    return panel.wCompleted ? panel.wCompleted[cmp.modelData.key] === true : false;
+                  }
+                  onToggled: {
+                    if (panel.wCompleted) { panel.wCompleted[cmp.modelData.key] = checked; panel.editTick++; }
+                  }
+                }
+              }
+              Label {
+                Layout.fillWidth: true
+                text: cmp.modelData.desc
+                wrapMode: Text.Wrap
+                font.pixelSize: 10
+                opacity: 0.55
+              }
+              // A shared flag: one bit, several maps — name the others so it's clear editing here
+              // changes them all.
+              Label {
+                Layout.fillWidth: true
+                visible: cmp.modelData.groupKind === "shared" && cmp.modelData.mapIds.length > 1
+                text: qsTr("Shared — one flag across %1 places.").arg(cmp.modelData.mapIds.length)
+                wrapMode: Text.Wrap
+                font.pixelSize: 9
+                opacity: 0.45
+              }
+            }
+          }
+        }
+
+        // ── FOSSIL — what you gave the lab, and what it becomes ────────────────────────────────
+        //
+        // Cinnabar Lab Fossil Room only. ⚠️ The two bytes are INDEPENDENT (console-proven): the
+        // resulting Pokémon is what the machine hands over, the fossil item only names the line.
+        // We show both and sync NEITHER, and never warn on a mismatched pair (resting state).
+        // @see notes/reference/fossil-revival.md
+        ColumnLayout {
+          id: fossilSection
+          Layout.fillWidth: true
+          spacing: 6
+
+          readonly property var list: {
+            panel.revision;
+            return panel.curPage !== undefined ? brg.map.storageFossil(panel.curPage.ids) : [];
+          }
+          visible: list.length > 0
+
+          Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: brg.settings.dividerColor
+          }
+
+          Label {
+            text: qsTr("Fossil — given & revived")
+            font.pixelSize: 12
+            font.bold: true
+            color: brg.settings.textColorDark
+          }
+
+          Repeater {
+            model: fossilSection.list
+            delegate: NumRow {
+              required property var modelData
+              title: modelData.name
+              blurb: modelData.desc
+              value: {
+                panel.revision; panel.editTick;
+                return panel.wOther ? panel.wOther[modelData.key] : 0;
+              }
+              maxStorable: 255
+              onSetValue: function(v) {
+                if (panel.wOther) { panel.wOther[modelData.key] = v; panel.editTick++; }
               }
             }
           }
