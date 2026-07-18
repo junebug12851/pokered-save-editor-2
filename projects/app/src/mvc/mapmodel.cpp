@@ -25,6 +25,7 @@
 
 #include <pse-db/blocksdb.h>
 #include <pse-db/mapsdb.h>
+#include <pse-db/trades.h>
 #include <pse-db/pokemon.h>
 #include <pse-db/tileset.h>
 #include <pse-db/tiletraitsdb.h>
@@ -4042,6 +4043,27 @@ QVariantList MapModel::mapScriptList() const
 }
 
 // ── The Map Storage panel's data (per-map script progress + missables) ──────────────────────────
+//
+// Phase 17 (trades/towns/completed/fossil, + the General page) reads the DB for DEFINITIONS and
+// hands the panel a QVariantList; the panel reads the LIVE bit/byte from the save's world node so a
+// toggle redraws one row without rebuilding the list -- the same split missables/hidden use. The
+// map-id associations for the completed one-shots are hardcoded with their provenance, exactly as
+// storagePages() hardcodes the legacy gym/Safari trio: facts about the ROM, not data the save holds.
+
+namespace {
+// -1 is the General page's marker: save data that belongs to NO map (the unused trade, and future
+// placeless storage). storagePages() emits a page whose ids == [-1]; every storageX() treats
+// "contains -1" as "the General page is asking".
+constexpr int kGeneralPageId = -1;
+
+QSet<int> idSet(const QVariantList& mapIds)
+{
+  QSet<int> s;
+  for (const auto& v : mapIds)
+    s.insert(v.toInt());
+  return s;
+}
+} // namespace
 
 QVariantList MapModel::storagePages() const
 {
@@ -4123,7 +4145,26 @@ QVariantList MapModel::storagePages() const
                         < b.value(QStringLiteral("title")).toString();
   });
 
+  // The GENERAL page -- the home for save data that belongs to no map (leadership, 2026-07-17:
+  // "there was supposed to be a general page left in for exactly this reason please re-create it").
+  // Its id marker is -1; storageTrades()/etc. answer to it. It leads the combo (sorted first here,
+  // after the map pages are ordered) so placeless storage is always the first thing offered. Only
+  // emitted when there is actually something placeless to show -- today, the one unused trade.
+  const bool hasPlaceless = !storageTrades(QVariantList{ kGeneralPageId }).isEmpty();
+
   QVariantList out;
+  if (hasPlaceless) {
+    QVariantMap g;
+    g[QStringLiteral("title")] = tr("General");
+    g[QStringLiteral("ids")] = QVariantList{ kGeneralPageId };
+    g[QStringLiteral("scriptInd")] = -1;
+    g[QStringLiteral("steps")] = 0;
+    g[QStringLiteral("desc")] = QString();
+    g[QStringLiteral("legacy")] = -1;
+    g[QStringLiteral("sort")] = -1;
+    g[QStringLiteral("general")] = true;   // the panel keys its "no map" copy off this
+    out.append(g);
+  }
   for (const auto& p : pages)
     out.append(p);
   return out;
@@ -4391,6 +4432,30 @@ QVariantList MapModel::blockHotspots(quint32 tileLayers) const
   };
   fileHidden(map->getToHiddenItems(), false);
   fileHidden(map->getToHiddenCoins(), true);
+
+  // ── 2b. IN-GAME TRADES -- the trader's tile ───────────────────────────────────────────────
+  //
+  // A trade is reached by talking to an NPC, so it sits on that NPC's half-block. Dashed-family
+  // (you change whether the trade is done, never where it is), though the cell usually renders solid
+  // because the trader is a movable sprite in the same cell -- rule 4 of the standard. Cinnabar Lab
+  // Trade Room files TWO (DORIS + CRINKLES); the unused trade is on no map and files nothing.
+  // ⚠️ Coords are the ROM's (the trade's spawn tile), same as filter flags -- x/y is the spawn tile
+  // for the two walking traders. @see notes/reference/in-game-trades.md
+  for (const TradeDBEntry* t : map->getToTrades()) {
+    if (t == nullptr)
+      continue;
+    QVariantMap v;
+    v["kind"]    = "trade";
+    v["ind"]     = t->ind;              // == its bit in wCompletedInGameTradeFlags
+    v["unit"]    = "halfBlock";
+    v["section"] = "trade";
+    v["name"]    = t->nickname;         // the received mon's nickname -- the memorable handle
+    v["desc"]    = tr("Trade %1 for %2 with the %3.")
+                     .arg(t->give, t->get, t->trader);
+    v["x"] = t->x;
+    v["y"] = t->y;
+    file(v, halfBlockRect(t->x, t->y));
+  }
 
   // ── 3. SCRIPT COORD TRIGGERS, and the EVENT FLAGS THEY WRITE ──────────────────────────────
   //
@@ -4773,6 +4838,161 @@ QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
     o[QStringLiteral("bit")] = e->getBit();
     out.append(o);
   }
+  return out;
+}
+
+bool MapModel::isGeneralPage(const QVariantList& mapIds) const
+{
+  return idSet(mapIds).contains(kGeneralPageId);
+}
+
+QVariantList MapModel::storageTrades(const QVariantList& mapIds) const
+{
+  const QSet<int> ids = idSet(mapIds);
+  const bool general = ids.contains(kGeneralPageId);
+
+  QVariantList out;
+  for (auto* t : TradesDB::inst()->getStore()) {
+    if (t == nullptr)
+      continue;
+
+    // The General page hosts the unused, placeless trade; every other page hosts the trades on its
+    // own maps. A located trade never appears on General, and the unused one never appears on a map.
+    const bool onGeneral = t->mapId < 0;
+    const bool matches = general ? onGeneral : (t->mapId >= 0 && ids.contains(t->mapId));
+    if (!matches)
+      continue;
+
+    const auto* give = PokemonDB::inst()->getIndAt(t->give);
+    const auto* get  = PokemonDB::inst()->getIndAt(t->get);
+
+    QVariantMap o;
+    o[QStringLiteral("ind")]       = t->ind;              // bit in wCompletedInGameTradeFlags
+    o[QStringLiteral("nickname")]  = t->nickname;         // the RECEIVED mon's nickname
+    o[QStringLiteral("give")]      = give ? give->readable : t->give;
+    o[QStringLiteral("get")]       = get ? get->readable : t->get;
+    o[QStringLiteral("dialogset")] = int(t->textId);      // 0 casual / 1 evolution / 2 happy
+    o[QStringLiteral("trader")]    = t->trader;           // class name (no personal name exists)
+    o[QStringLiteral("walks")]     = t->walks;
+    o[QStringLiteral("unused")]    = t->unused;
+    o[QStringLiteral("mapId")]     = t->mapId;
+    o[QStringLiteral("x")]         = t->x;
+    o[QStringLiteral("y")]         = t->y;
+    o[QStringLiteral("group")]     = QStringLiteral("trades");   // the alike group
+    out.append(o);
+  }
+  return out;
+}
+
+QVariantList MapModel::storageTowns(const QVariantList& mapIds) const
+{
+  // bit i == map id i, for the 11 city maps (NUM_CITY_MAPS). A non-city page contributes nothing.
+  const QSet<int> ids = idSet(mapIds);
+
+  QVariantList out;
+  for (int id : ids) {
+    if (id < 0 || id >= 11)   // 0..10 are the towns; -1 (General) and routes/buildings have none
+      continue;
+    MapDBEntry* m = MapsDB::inst()->getIndAt(QString::number(id));
+    QVariantMap o;
+    o[QStringLiteral("ind")]  = id;                       // == the bit in wTownVisitedFlag
+    o[QStringLiteral("name")] = m ? m->getName() : QStringLiteral("Town %1").arg(id);
+    // The ONE row that re-marks itself on Continue: the map the save is parked on, and only when
+    // saved outdoors in it. The panel wears the amber-! here alone. See town-visited.md §3.
+    o[QStringLiteral("isCurrentMap")] = (id == mapInd());
+    o[QStringLiteral("group")] = QStringLiteral("towns");
+    out.append(o);
+  }
+  return out;
+}
+
+QVariantList MapModel::storageCompleted(const QVariantList& mapIds) const
+{
+  const QSet<int> ids = idSet(mapIds);
+
+  // The eight one-shots, each with the map(s) it belongs to and its group. Provenance:
+  // notes/reference/world-completed.md (every map id console-checked against maps.json).
+  struct Row {
+    const char* key; const char* name; const char* desc; const char* caution;
+    QVector<int> maps; const char* group; const char* groupKind; bool noBox;
+  };
+  static const QVector<Row> table = {
+    { "obtainedOldRod",  "Old Rod obtained",  "The Fishing Guru has given you the Old Rod. Clearing "
+      "this re-arms him; it does NOT add a rod to your bag.", "",
+      {163}, "rods", "alike", false },
+    { "obtainedGoodRod", "Good Rod obtained", "The Fishing Guru has given you the Good Rod. Clearing "
+      "this re-arms him; it does NOT add a rod to your bag.", "",
+      {164}, "rods", "alike", false },
+    { "obtainedSuperRod","Super Rod obtained","The Fishing Guru has given you the Super Rod. Clearing "
+      "this re-arms him; it does NOT add a rod to your bag.", "",
+      {189}, "rods", "alike", false },
+    { "obtainedLapras",  "Lapras received",   "The Silph Co. worker has given you Lapras.", "",
+      {212}, "", "", false },
+    { "obtainedStarterPokemon", "Starter chosen", "You have taken a starter from Oak's Lab. Read by "
+      "Red's House too (Mum's reminder to see Prof. Oak).", "",
+      {40, 37}, "starter", "shared", false },
+    { "everHealedPokemon", "Ever met a Poké Center nurse", "Set the first time you talk to any nurse "
+      "(even if you decline healing). It only hides her extra “Shall we heal your POKéMON?” "
+      "line — it gates nothing.", "",
+      {41, 58, 64, 68, 81, 89, 133, 140, 141, 154, 171, 182}, "nurse", "shared", false },
+    { "satisfiedSaffronGuards", "Saffron guards given a drink", "You gave a gate guard a drink; one "
+      "satisfies all four gates.", "",
+      {70, 73, 76, 79}, "guards", "shared", false },
+    { "startedElite4", "Started the Elite Four", "Set just for entering Lorelei's room.",
+      "⚠ NOT a victory. Returning to the Indigo Plateau lobby with this set WIPES your whole "
+      "Elite Four run. The real “defeated Lorelei” is an event flag.",
+      {245, 174}, "", "", true },
+  };
+
+  QVariantList out;
+  for (const Row& r : table) {
+    QVariantList rowMaps;
+    bool here = false;
+    for (int id : r.maps) {
+      rowMaps.append(id);
+      if (ids.contains(id))
+        here = true;
+    }
+    if (!here)
+      continue;
+
+    QVariantMap o;
+    o[QStringLiteral("key")]       = QString::fromLatin1(r.key);
+    o[QStringLiteral("name")]      = QString::fromUtf8(r.name);
+    o[QStringLiteral("desc")]      = QString::fromUtf8(r.desc);
+    o[QStringLiteral("caution")]   = QString::fromUtf8(r.caution);
+    o[QStringLiteral("mapIds")]    = rowMaps;
+    o[QStringLiteral("group")]     = QString::fromLatin1(r.group);
+    o[QStringLiteral("groupKind")] = QString::fromLatin1(r.groupKind);
+    o[QStringLiteral("noBox")]     = r.noBox;
+    out.append(o);
+  }
+  return out;
+}
+
+QVariantList MapModel::storageFossil(const QVariantList& mapIds) const
+{
+  // Cinnabar Lab Fossil Room (170) only. Two independent bytes -- the panel shows both, syncs
+  // neither, and never warns on a mismatched pair (console-proven; see fossil-revival.md).
+  QVariantList out;
+  if (!idSet(mapIds).contains(170))
+    return out;
+
+  QVariantMap item;
+  item[QStringLiteral("key")]  = QStringLiteral("fossilItemGiven");
+  item[QStringLiteral("name")] = tr("Fossil given to the lab");
+  item[QStringLiteral("desc")] = tr("The fossil item handed over. After the trade this only names "
+                                    "the scientist's line — the Pokémon you get is decided "
+                                    "by the field below, not by this.");
+  out.append(item);
+
+  QVariantMap mon;
+  mon[QStringLiteral("key")]  = QStringLiteral("fossilPkmnResult");
+  mon[QStringLiteral("name")] = tr("Resulting Pokémon");
+  mon[QStringLiteral("desc")] = tr("The species the machine revives, at level 30. This byte alone "
+                                   "decides what you receive — set it freely; it need not match "
+                                   "the fossil above.");
+  out.append(mon);
   return out;
 }
 

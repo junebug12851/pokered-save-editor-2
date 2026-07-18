@@ -1504,6 +1504,76 @@ combo — the shared counters live on that single page, not repeated per safari 
 
 ---
 
+### Phase 17 — TRADES, TOWNS, the "completed" one‑shots, the FOSSIL + the two GROUP kinds  *(briefed 2026‑07‑17, Fairy Fox)*
+
+The design of record for the batch of persistent‑storage features briefed across 2026‑07‑17. All the
+research + console verification is done and lives in the reference notes; this is the UI/model design
+that sits on top. **Content phase; sits beside Phase 15 (Map Storage), not the polish tail.**
+
+**Research + probes (all ✅, all this session):**
+
+| Feature | Reference note | Probe | Model status |
+|---|---|---|---|
+| In‑game trades (10) | [`in-game-trades.md`](../reference/in-game-trades.md) | `probe_in_game_trades.py` — durable, spare bits preserved | `WorldTrades` correct; `TradesDB`+`trades.json` extended additively (map/coords/bit) |
+| Town visited (11) | [`town-visited.md`](../reference/town-visited.md) | `probe_town_visited.py` — durable **except current town re‑marks** | `WorldTowns` correct; `fly.json` ind **fixed** |
+| Rods/Lapras/starter/nurse/guards/elite4 (8) | [`world-completed.md`](../reference/world-completed.md) | `probe_world_completed.py` — 8/8 durable, clears surgical | `WorldCompleted` correct; `defeatedLorelei`→`startedElite4` **renamed** |
+| Fossil item + result | [`fossil-revival.md`](../reference/fossil-revival.md) | `probe_fossil.py` — durable, the two bytes **independent** | `WorldOther` correct |
+
+**Where each lands (leadership's own placement calls):**
+
+- **Trades** → the map page of their trader's tile, as a **canvas tab** (kind `trade`, half‑block,
+  dashed‑family) + a **Trades section** in the Map Storage panel. 9 located; **CHIKUCHIKU (unused, no
+  coords) → the General page**. Cinnabar Lab Trade Room carries **two** (DORIS + CRINKLES).
+- **Town "visited"** → a **checkbox near the TOP** of that town's page, on the **11 city maps only**
+  ("for places that take a visited one"). ⚠️ The current‑town re‑mark trap wears the amber‑`!`
+  *dynamically* — only on the row for the map the save is parked on, and only when saved outdoors.
+- **Rods** → the three rod houses (Guru tile). **Lapras** → Silph 7F (1,5). **Starter** → Oak's Lab
+  (+read on Red's House). **Nurse (ever‑met)** → **shared across every Poké Center**. **Saffron guards**
+  → shared across the 4 gates. **startedElite4** → Lorelei's Room + Lobby, **no x/y, no box** (a page
+  entry only) with a caution that it *arms an Elite‑4 wipe*.
+- **Fossil** → Cinnabar Lab Fossil Room. Show **both** bytes; ⚠️ **sync neither** (console‑proven
+  independent) and **do not warn on a mismatched pair** (BaseSAV ships one — resting state).
+
+**🔑 THE TWO GROUP KINDS (leadership, 2026‑07‑17) — the reusable mechanism this phase introduces:**
+
+| Kind | Means | Affords | Members |
+|---|---|---|---|
+| **Shared** *(exists)* | ONE save bit on several map pages | the same switch, wherever relevant | Silph Co · Saffron guards · starter · the nurse flag |
+| **Alike** *(NEW)* | DIFFERENT bits, same *kind* of thing, one per place | **view the whole group at once** (one click) · **check / uncheck all** | Towns (11) · Trades (10) · **Hidden items (54)** · **Hidden coins (12)** · Rods (3) |
+
+> *"group alike things … a click can allow you to view all of the towns together which also allows you
+> to do another thing groups can do check and uncheck all … We should do this for other data but i
+> cant think of any now."*
+
+- **Alike is a general mechanism, not a towns feature.** It ships with **five** members from the start
+  (above). ⚠️ **Hidden items and coins are TWO separate alike groups, never one** (leadership) — same
+  ruling as the separate‑arrays rule in [`map-storage-locations.md`](../reference/map-storage-locations.md) §2c.
+- **A group header** offers: expand‑to‑view‑all (renders every member together, cross‑map), and a
+  **check‑all / uncheck‑all** control.
+
+**Sub‑phases (the Phase 9/15 mould — UI last, gated on research+probe, screenshot‑reviewed, live pass):**
+
+- **17a — Research + probes** ✅ *(2026‑07‑17)* — the four notes + four probes above.
+- **17b — Data + DB** ✅ *(2026‑07‑17, `0.42.x`)* — `fly.json` fixed & pinned; `startedElite4` renamed
+  (byte‑identical); `trades.json` extended **additively** (0 existing fields changed) + `TradesDB`
+  gains map/coords/bit + `MapDBEntry::toTrades`; pinned by `tst_db_integrity` (15/15).
+- **17c — MapModel surface** ⏳ — `storageTrades` / `storageTowns` / `storageCompleted` / `storageFossil`,
+  the **General page** in `storagePages()`, the `trade` kind in `blockHotspots()`, and the group model
+  (each row carrying its `group` id + kind). `tst_map`/`tst_world` byte‑exact keystones.
+- **17d — The panel** ⏳ — the new sections in `MapStoragePanel.qml`, the General page, the town Visited
+  checkbox, and the **alike‑group header** (view‑all + check/uncheck‑all). `MapSwitch`, never
+  `FlatToggle` (the blank‑panel trap). Screenshot‑reviewed.
+- **17e — Canvas** ⏳ — trade tabs on the trader tiles (dashed‑family; Cinnabar Trade Room shows two).
+- **17f — Live pass** ⏳ — Fairy Fox drives it: the group view‑all/check‑all, the dynamic town `!`, the
+  fossil independence, drag/scroll/feel a still PNG cannot judge.
+
+⚠️ **Doctrine, as everywhere:** full byte range, hack/glitch shown never refused; every setter writes
+**only** its own bit(s); a derived value is synced by default **except the fossil, which is not derived
+and must not be synced**; `legal` ≠ `armed`, so no cry‑wolf warnings (the mismatched‑fossil‑pair and
+`dungeonWarpDestMap` lessons).
+
+---
+
 ### Phase 10 — Tileset & Blocks, properly
 
 The two panels that already exist get the *deep* pass rather than the re-chrome they got in phase 1:

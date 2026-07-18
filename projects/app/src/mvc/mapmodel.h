@@ -981,6 +981,38 @@ public:
   /// maps. @see notes/reference/event-flags.md
   Q_INVOKABLE QVariantList storageEvents(const QVariantList& mapIds) const;
 
+  /// The in-game (NPC) TRADES on the given maps, or -- when @p mapIds contains -1 (the General
+  /// page's marker) -- the unused trade that has no map. Each: `{ind, nickname, give, get,
+  /// dialogset, trader, mapId, x, y, walks, unused, group}`. `ind` is the bit in
+  /// `wCompletedInGameTradeFlags` (the panel reads the live flag from world.trades). `group` is the
+  /// alike-group id ("trades") -- @see storageGroups. @see notes/reference/in-game-trades.md
+  Q_INVOKABLE QVariantList storageTrades(const QVariantList& mapIds) const;
+
+  /// The TOWN "visited" flag(s) for the given maps -- present only for the 11 city maps. Each:
+  /// `{ind, name, isCurrentMap, group}`. `ind` is the bit in `wTownVisitedFlag` and **equals the
+  /// map id** (the panel reads the live flag from world.towns). `isCurrentMap` is true for the map
+  /// the save is parked on -- the ONE row whose bit re-marks itself on Continue (outdoors), so the
+  /// UI can wear the amber-! there and nowhere else. @see notes/reference/town-visited.md
+  Q_INVOKABLE QVariantList storageTowns(const QVariantList& mapIds) const;
+
+  /// The "completed" one-shots on the given maps: rods, Lapras, starter, the nurse flag, the
+  /// Saffron guards, and startedElite4. Each: `{key, name, desc, caution, mapIds, group, groupKind,
+  /// noBox}`. `key` is the `WorldCompleted` property the panel reads/writes; `groupKind` is
+  /// "alike" (the rods) or "shared" (guards/starter/nurse) or "" (solo). `noBox` marks
+  /// startedElite4, which has no coordinates. @see notes/reference/world-completed.md
+  Q_INVOKABLE QVariantList storageCompleted(const QVariantList& mapIds) const;
+
+  /// The FOSSIL bytes, present only when @p mapIds contains Cinnabar Lab Fossil Room (170):
+  /// `[{key, name, desc}]` for the item given and the resulting Pokemon. ⚠️ The two are
+  /// INDEPENDENT (console-proven) -- the panel shows both and syncs neither, and never warns on a
+  /// mismatched pair. The live bytes come from world.other. @see notes/reference/fossil-revival.md
+  Q_INVOKABLE QVariantList storageFossil(const QVariantList& mapIds) const;
+
+  /// Whether a Map Storage page is the synthetic **General** page -- the home for save data that
+  /// belongs to no map (the unused CHIKUCHIKU trade, and future placeless storage). Its id marker
+  /// is -1. @see notes/reference/in-game-trades.md §7
+  Q_INVOKABLE bool isGeneralPage(const QVariantList& mapIds) const;
+
   /// The FLAG BOXES for the current map -- one per ROM object whose presence the save keeps a flag
   /// for: `{rectX,rectY,rectW,rectH, x,y, name,desc, kind, missable, hidden, defShow}`.
   ///
