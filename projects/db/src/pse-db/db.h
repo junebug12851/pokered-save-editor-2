@@ -36,6 +36,7 @@
 #include "./hiddenItemsdb.h"
 #include "./itemsdb.h"
 #include "./mapsdb.h"
+#include "./mapstatesdb.h"
 #include "./missablesdb.h"
 #include "./moves.h"
 #include "./music.h"

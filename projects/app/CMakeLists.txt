@@ -42,6 +42,7 @@ qt_add_library(appcore ${PSE_APPCORE_TYPE}
     src/mvc/fontkeyboard.cpp
     src/mvc/fontkeyboard.h
     src/mvc/mapmodel.cpp
+    src/mvc/mapmodel_states.cpp
     src/mvc/mapmodel.h
     src/mvc/maplayersmodel.cpp
     src/mvc/maplayersmodel.h

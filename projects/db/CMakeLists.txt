@@ -40,6 +40,7 @@ qt_add_library(db SHARED
     src/pse-db/hiddencoinsdb.cpp
     src/pse-db/itemsdb.cpp
     src/pse-db/mapsdb.cpp
+    src/pse-db/mapstatesdb.cpp
     src/pse-db/missablesdb.cpp
     src/pse-db/moves.cpp
     src/pse-db/music.cpp

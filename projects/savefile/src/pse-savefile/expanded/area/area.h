@@ -108,7 +108,8 @@ signals:
 public slots:
   void reset();              ///< Blank the whole area.
   void randomize();          ///< Randomize the area (constrained, playable).
-  void setTo(MapDBEntry* map); ///< Reconfigure the area to @p map (the "place on any map" feature).
+  void setTo(MapDBEntry* map); ///< Reconfigure the area to @p map (the "place on any map" feature; random arrival point).
+  void setTo(MapDBEntry* map, int x, int y); ///< Same, landing the player at (@p x, @p y) — the deterministic map-states path.
 
 public:
   AreaAudio* audio = nullptr;                  ///< @see audio property.

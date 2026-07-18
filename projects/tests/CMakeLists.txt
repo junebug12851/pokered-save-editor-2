@@ -211,6 +211,19 @@ if(TARGET appcore)
     target_compile_definitions(tst_player PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
     add_test(NAME tst_player COMMAND tst_player)
     set_tests_properties(tst_player PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+
+    # The map-state progression blueprints (MapStatesDB + MapModel's states surface): the DB
+    # loads all 98 with every reference in range, applying a stage moves ONLY state-region
+    # bytes (byte-diffed across the whole 32 KB), rolling walks the researched progression
+    # exactly, a gym stage moves its badge pair and nothing else's, and the seamless map
+    # change constructs the destination. See notes/reference/map-states.md.
+    qt_add_executable(tst_map_states
+        mvc/tst_map_states.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../app/app.qrc)
+    target_link_libraries(tst_map_states PRIVATE appcore Qt6::Test)
+    target_compile_definitions(tst_map_states PRIVATE PSE_ASSETS_DIR="${PSE_ASSETS_DIR}")
+    add_test(NAME tst_map_states COMMAND tst_map_states)
+    set_tests_properties(tst_map_states PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
     set_property(GLOBAL APPEND PROPERTY PSE_TEST_TARGETS tst_player)
 
     # THE AREA STATE -- v1's "Map" page fields (Phase 8). Keystone `setAreaField_writesExactlyItsBytes`

@@ -118,7 +118,7 @@ Rectangle {
     // play.)
 
     // ── Map (⊞): which map, its tileset, its blockset ────────────────────────────────────────
-    MapPicker { id: mapPicker }
+    MapPicker { id: mapPicker; objectName: "mapPickerControl" }
 
     // ── ⭐ "Outside is…" — the map a `back outside` door returns you to (wLastMap) ─────────────
     //

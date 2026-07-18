@@ -296,11 +296,121 @@ Item {
             Layout.fillWidth: true
           }
 
-          // ── Current script step (+ run-on-load), a two-byte feature ──────────────────────────
+          // ── The PROGRESSION STATE — the researched stages of this map's story ────────────────
+          //
+          // Fed by the map-state blueprints (notes/reference/map-states.md): resting stages read
+          // "1. First ambush armed", genuine branches "2a."/"2b.", and the transient cutscene
+          // values are SHOWN too (leadership: "if it's a valid option it needs to be shown"),
+          // flagged as mid-cutscene. Picking one applies the stage's WHOLE save block (script
+          // byte + events + this map's missables + badges); ◀ ▶ roll one stage at a time.
           Label {
             Layout.fillWidth: true
             Layout.topMargin: 2
-            text: qsTr("Current script step")
+            visible: brg.map.hasStateBlueprint(-1)
+            text: qsTr("Progression state")
+            font.pixelSize: 11
+            color: brg.settings.textColorMid
+          }
+
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+            visible: brg.map.hasStateBlueprint(-1)
+
+            ComboBox {
+              id: stateCombo
+              Layout.fillWidth: true
+              Layout.preferredHeight: 30
+              font.pixelSize: 12
+              textRole: "label"
+              valueRole: "id"
+              model: {
+                details.revision;
+                const states = brg.map.stateList(-1);
+                const cur = brg.map.currentStateId(-1);
+                let out = [];
+                if (cur === "")
+                  out.push({ id: "", label: qsTr("Custom (matches no researched state)"),
+                             desc: qsTr("The save's flags and script byte don't line up with "
+                                        + "any researched stage of this map — every byte is "
+                                        + "yours to keep. Picking a state below writes that "
+                                        + "stage's full save block."), kind: "custom" });
+                for (let i = 0; i < states.length; i++) {
+                  const s = states[i];
+                  const tag = s.kind === "transient" ? qsTr(" (mid-cutscene)")
+                            : s.derived ? qsTr(" (derived)") : "";
+                  out.push({ id: s.id, label: s.id + ". " + s.name + tag,
+                             desc: s.desc, kind: s.kind });
+                }
+                return out;
+              }
+              currentIndex: {
+                details.revision;
+                const cur = brg.map.currentStateId(-1);
+                const l = model;
+                for (let i = 0; i < l.length; i++)
+                  if (l[i].id === cur) return i;
+                return -1;
+              }
+              onActivated: {
+                if (currentValue !== "" && currentValue !== undefined)
+                  brg.map.applyState(currentValue, -1);
+              }
+              delegate: ItemDelegate {
+                required property var modelData
+                width: parent ? parent.width : 0
+                contentItem: RowLayout {
+                  spacing: 6
+                  Text {
+                    Layout.fillWidth: true
+                    text: modelData.label
+                    font.pixelSize: 12
+                    font.italic: modelData.kind === "transient"
+                    color: brg.settings.textColorDark
+                    elide: Text.ElideRight
+                  }
+                }
+              }
+            }
+
+            Button {
+              Layout.preferredWidth: 30
+              Layout.preferredHeight: 30
+              text: "◀"
+              font.pixelSize: 10
+              onClicked: brg.map.rollBack(-1)
+              ToolTip.visible: hovered
+              ToolTip.delay: 400
+              ToolTip.text: qsTr("Roll this map back one progression stage")
+            }
+            Button {
+              Layout.preferredWidth: 30
+              Layout.preferredHeight: 30
+              text: "▶"
+              font.pixelSize: 10
+              onClicked: brg.map.rollForward(-1)
+              ToolTip.visible: hovered
+              ToolTip.delay: 400
+              ToolTip.text: qsTr("Roll this map forward one progression stage")
+            }
+          }
+
+          // What the selected state MEANS — the stage's own story description.
+          Label {
+            Layout.fillWidth: true
+            visible: brg.map.hasStateBlueprint(-1) && text !== ""
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+            text: stateCombo.currentIndex >= 0 && stateCombo.model[stateCombo.currentIndex] !== undefined
+                  ? stateCombo.model[stateCombo.currentIndex].desc : ""
+          }
+
+          // ── Current state step (the raw script byte) + run-on-load ───────────────────────────
+          Label {
+            Layout.fillWidth: true
+            Layout.topMargin: 2
+            text: qsTr("Current state step")
             font.pixelSize: 11
             color: brg.settings.textColorMid
           }
@@ -400,7 +510,7 @@ Item {
             spacing: 8
             Label {
               Layout.fillWidth: true
-              text: qsTr("Run this script step on load")
+              text: qsTr("Run this state step on load")
               font.pixelSize: 12
               wrapMode: Text.Wrap
             }

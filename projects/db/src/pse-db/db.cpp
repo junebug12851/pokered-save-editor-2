@@ -128,6 +128,7 @@ void DB::loadAll() const
   HiddenCoinsDB::inst()->load();  lap("HiddenCoinsDB");
   HiddenItemsDB::inst()->load();  lap("HiddenItemsDB");
   MapsDB::inst()->load();         lap("MapsDB");
+  MapStatesDB::inst()->load();    lap("MapStatesDB");
   MissablesDB::inst()->load();    lap("MissablesDB");
   BlocksDB::inst()->load();       lap("BlocksDB");
 

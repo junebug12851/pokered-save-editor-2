@@ -62,6 +62,13 @@
 #include <pse-savefile/expanded/fragments/mapconndata.h>
 #include <pse-db/entries/mapdbentryconnect.h>
 #include <pse-savefile/expanded/world/worldgeneral.h>
+#include <pse-savefile/expanded/world/world.h>
+#include <pse-savefile/expanded/world/worldscripts.h>
+#include <pse-savefile/expanded/world/worldevents.h>
+#include <pse-savefile/expanded/world/worldmissables.h>
+#include <pse-savefile/expanded/area/area.h>
+#include <pse-savefile/expanded/player/playerbasics.h>
+#include <pse-db/mapstatesdb.h>
 #include <pse-db/entries/mapdbentrywarpin.h>
 #include <pse-db/entries/mapdbentrywarpout.h>
 #include <pse-common/random.h>
@@ -95,8 +102,10 @@ QVariantMap option(int value, const QString& name, bool hack = false);
 
 MapModel::MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
                    AreaLoadedSprites* sprites, AreaSprites* npcs, AreaWarps* warps,
-                   WorldGeneral* world, AreaSign* signs, AreaPokemon* pokemon)
+                   WorldGeneral* world, AreaSign* signs, AreaPokemon* pokemon,
+                   World* worldAll, Area* area, PlayerBasics* basics)
   : sprites(sprites), npcs(npcs), warps(warps), signsData(signs), world(world),
+    worldAll(worldAll), area(area), basics(basics),
     map(map), player(player), tileset(tileset), general(general), pokemon(pokemon)
 {
   // The doors get their own signal for exactly the reason the cast does: `changed()` re-renders the

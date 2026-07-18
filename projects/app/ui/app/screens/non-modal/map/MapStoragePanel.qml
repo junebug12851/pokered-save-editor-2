@@ -604,7 +604,9 @@ Item {
           property bool customMode: false
 
           Label {
-            text: qsTr("Map script")
+            // "Map STATE", not "map script" (leadership, 2026-07-17): the byte is one field of
+            // the map's progression state, and the state is what a person is editing here.
+            text: qsTr("Map state")
             font.pixelSize: 12
             font.bold: true
             color: brg.settings.textColorDark
@@ -722,15 +724,16 @@ Item {
             font.pixelSize: 10
             color: "#d55e00"
             visible: scriptSection.stepCount > 0 && scriptSection.value >= scriptSection.stepCount
-            text: qsTr("⚠ Step %1 is beyond this map's script table (0–%2). The game dispatches "
-                       + "steps through an unbounded pointer table — an out-of-range step makes it "
-                       + "jump to garbage, a real crash risk. Stored as asked, never rewritten.")
+            text: qsTr("⚠ Step %1 is beyond this map's state table (0–%2). The game dispatches "
+                       + "state steps through an unbounded pointer table — an out-of-range step "
+                       + "makes it jump to garbage, a real crash risk. Stored as asked, never "
+                       + "rewritten.")
                   .arg(scriptSection.value).arg(scriptSection.stepCount - 1)
           }
           ArmedNote {
             visible: scriptSection.visible
-            text: qsTr("Durable in the save. It steers this map's scripted events the moment your "
-                       + "save is there.")
+            text: qsTr("Durable in the save. It steers this map's state and scripted events the "
+                       + "moment your save is there.")
           }
 
           Rectangle {

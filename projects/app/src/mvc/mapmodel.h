@@ -34,6 +34,9 @@ class AreaPlayer;
 class AreaTileset;
 class AreaPokemon;
 class WorldGeneral;
+class World;
+class Area;
+class PlayerBasics;
 
 /**
  * @brief The loaded map, ready to draw: one image URL and four rectangles.
@@ -505,7 +508,68 @@ public:
   MapModel(AreaMap* map, AreaPlayer* player, AreaTileset* tileset, AreaGeneral* general,
            AreaLoadedSprites* sprites = nullptr, AreaSprites* npcs = nullptr,
            AreaWarps* warps = nullptr, WorldGeneral* world = nullptr,
-           AreaSign* signs = nullptr, AreaPokemon* pokemon = nullptr);
+           AreaSign* signs = nullptr, AreaPokemon* pokemon = nullptr,
+           World* worldAll = nullptr, Area* area = nullptr, PlayerBasics* basics = nullptr);
+
+  // ── MAP STATES — the per-map progression blueprints ───────────────────────────
+  //
+  // ⚠️ Read notes/reference/map-states.md + notes/plans/map-states.md. A map STATE is a
+  // researched stage of the map's story: script byte + ABSOLUTE event flags + missable
+  // visibility + badges. Ids read "1", "2", "2a"… (letters = genuine branches); transient
+  // cutscene values ride as "N.k" and are SHOWN (leadership: "if it's a valid option it
+  // needs to be shown") but carry only the script byte. Ground rules (leadership,
+  // 2026-07-17): applying/rolling writes cross-map context flags naturally ("the game is
+  // setup to work on global variables that can be shared"), and a map CHANGE is seamless —
+  // "as though the map has always been loaded", no prompts unless the user goes looking.
+
+  /// Does map @p mapInd have a progression blueprint? (-1 = the current map.)
+  Q_INVOKABLE bool hasStateBlueprint(int mapInd = -1) const;
+
+  /// The blueprint's states for @p mapInd (-1 = current map), UI-ready:
+  /// `{ id, kind, name, desc, timeline, trigger, script, scriptName, derived, isCurrent }`
+  /// — resting stages in story order, then the transients, exactly as the data orders them.
+  /// Empty when the map has no blueprint.
+  Q_INVOKABLE QVariantList stateList(int mapInd = -1) const;
+
+  /// Which state the live save matches for @p mapInd (-1 = current map): a resting stage's
+  /// id when its whole save block matches (script byte + owned events + the map's own
+  /// missables), else a transient's id when only the byte matches one, else "" (custom —
+  /// shown honestly, never guessed).
+  Q_INVOKABLE QString currentStateId(int mapInd = -1) const;
+
+  /// One state's full record (as @ref stateList shapes it, plus `notes` and the absolute
+  /// save block summary) — the panel's description text. Empty map when unknown.
+  Q_INVOKABLE QVariantMap stateAt(const QString& id, int mapInd = -1) const;
+
+  /// Apply state @p id of map @p mapInd (-1 = current map): writes EXACTLY the blueprint's
+  /// facts — the map's script byte (WorldScripts slot + `wCurMapScript` when it is the
+  /// current map), each listed event bit, each of the map's own missable bits, and the
+  /// map's badge universe. A transient id writes only the script byte(s). Nothing else in
+  /// the save is touched.
+  Q_INVOKABLE void applyState(const QString& id, int mapInd = -1);
+
+  /// Roll the map one stage forward/backward along the progression (branches: forward
+  /// takes the first branch; backward returns to the fork). Applies the target stage's
+  /// absolute save block. @return false at the line's end (nothing written).
+  Q_INVOKABLE bool rollForward(int mapInd = -1);
+  Q_INVOKABLE bool rollBack(int mapInd = -1);
+
+  /**
+   * @brief Change the current map AND construct it — seamless, "as though the map has
+   *        always been loaded" (leadership's call, 2026-07-17).
+   *
+   * Rebuilds the whole Area block from the destination's ROM data (`Area::setTo`: header,
+   * tileset + pointers, cast, warps, signs, wild tables, connections, sprite set), lands
+   * the player on the blueprint's entry spot (the first warp), sets the live
+   * `wCurMapScript` to the map's own stored progression byte, and aims `wLastMap` so the
+   * `$FF` "back outside" doors resolve sensibly. The world's global state (events,
+   * missables, script bytes) is already global and is NOT rewritten — which is exactly why
+   * the result reads as the map at its current story position.
+   *
+   * This is the map picker's default path. The old one-byte write (`mapInd = …`) remains
+   * for the power path — both are deliberate acts, and each says what it does.
+   */
+  Q_INVOKABLE void changeMapConstructed(int mapInd);
 
   bool valid() const;
   QString source() const;
@@ -1292,6 +1356,9 @@ private:
   /// desynced value can also arise from a save whose stored pointer already differs from the player's
   /// position (viewSynced() checks the value too), which is respected without setting this.
   bool viewBrokenSession = false;
+  World* worldAll = nullptr;      ///< The whole World node -- scripts/events/missables (may be null in tests).
+  Area* area = nullptr;           ///< The whole Area node -- for map-change construction (may be null in tests).
+  PlayerBasics* basics = nullptr; ///< The trainer's basics -- the badge bits (may be null in tests).
   AreaMap* map = nullptr;         ///< The save's live map.
   AreaPlayer* player = nullptr;   ///< The save's live player position.
   AreaTileset* tileset = nullptr; ///< The save's live tileset.

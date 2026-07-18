@@ -106,30 +106,45 @@ Semantics that keep it honest:
 
 ## Phases
 
-- **Phase MS-1 — Research + extractor + blueprints (THIS SESSION, 2026-07-17).** The deep dive,
+- ✅ **Phase MS-1 — Research + extractor + blueprints (2026-07-17).** The deep dive,
   `extract_map_states.py`, curated overlay for the story maps, generated `map-states/*.json`,
-  reference note, this plan. Data only — no model/UI.
-- **Phase MS-2 — Model.** A `MapStatesDB` (qrc wiring, `db.qrc` gains the folder), deep-linked to
-  MapsDB; `MapModel` surface: `stateList()`, `currentStateId()` (match the live save against
-  blueprints), `applyState(id)`, `rollForward()`, `rollBack()` — each writing exactly the bytes the
-  blueprint names. Byte-exact tests in the `tst_world`/`tst_area_state` idiom.
-- **Phase MS-3 — Rename "map script" → "map state"** everywhere on the map screen (Map Storage
-  panel section title, Details panel combo labels, docs). Wording only; the underlying
-  `w<Map>CurScript` reference notes keep the game's own names.
-- **Phase MS-4 — UI.** The state picker fed by blueprints (per the map-screen design language),
-  roll ◀ ▶ controls, and the change-map flow: pick destination map → pick state (default: the
-  stage matching global story position) → construct (copy blueprint save state + land on `entry`).
-  Needs Twilight's design pass before build (standing rule).
-- **Phase MS-5 — Randomizer hook.** State-aware map randomization: pick a random resting stage
-  per map from the blueprints instead of raw bytes.
-- **Phase MS-6 — Console verification.** Forge saves at constructed states (`emu_make_map_save` +
-  blueprint) and prove on the cartridge that each story-map stage boots healthy and behaves as the
-  stage says (the probe idiom). Gate MS-4's ship on the story maps passing.
+  reference note, this plan.
+- ✅ **Phase MS-2 — Model (2026-07-17).** `MapStatesDB` (98 blueprints in `db.qrc`, typed stages,
+  loaded from `DB::load()`); `MapModel` surface in `mapmodel_states.cpp`: `stateList()`,
+  `currentStateId()` (exact-match against the live save — a played save between stages honestly
+  reads "" / custom), `stateAt()`, `applyState(id)` (script byte + events + own missables + the
+  map's badge universe, nothing else), `rollForward()`/`rollBack()` (branch-aware), and
+  `changeMapConstructed()` — `Area::setTo(map, x, y)` (new deterministic overload) + the live step
+  byte resuming the map's stored progression + `wLastMap` aimed for the `$FF` doors. Pinned by
+  **`tst_map_states` (8/8)**: DB refs in range, apply moves ONLY state-region bytes (whole-save
+  byte-diff), roll round-trips, a gym's badge pair moves and nothing else's, construction lands on
+  the blueprint entry with a coherent header. Suite **92/92**.
+- ✅ **Phase MS-3 — Rename (2026-07-17).** "Map script" → **"Map state"** (Map Storage heading +
+  texts), "Current script step" → **"Current state step"**, "Run this script step on load" →
+  "Run this state step on load". Internal `w<Map>CurScript` names stay (truth-in-labelling).
+- ✅ **Phase MS-4 — UI (2026-07-17).** Details panel: the **Progression state** picker (stages as
+  "1. Name", branches "2a.", transients italic "(mid-cutscene)", derived flagged, a "Custom"
+  row when nothing matches) + **◀ ▶ roll buttons** + the stage's story description. MapPicker:
+  **"Construct the map on change"** switch, ON by default (seamless — leadership's call); OFF =
+  the old one-byte power path with the stale-header notice. Screenshot-reviewed (panel, picker
+  popup, storage heading). ⏳ Twilight's live pass owed.
+- **Phase MS-5 — Randomizer hook (NOT BUILT).** State-aware map randomization: pick a random
+  resting stage per map from the blueprints instead of raw bytes (wire into the world/area
+  randomize paths).
+- **Phase MS-6 — Console verification (NOT RUN).** Forge saves at constructed states
+  (`emu_make_map_save` + blueprint) and prove on the cartridge that each story-map stage boots
+  healthy and behaves as the stage says (the probe idiom).
 
-## Open questions for Twilight
+## Twilight's answers (2026-07-17) — the build's ground rules
 
-- Blueprint-driven **map change** default: when switching the current map, silently apply the
-  destination's stage that matches global story progress, or always ask which state?
-- Should rolling a map forward also advance **cross-map context flags** (the `owned: false` set)
-  by default, or only with a confirmation?
-- The transient steps: show them in the state dropdown (flagged), or behind "Something else…"?
+- **Map change is SEAMLESS by default** — *"as though the map has always been loaded."* The app
+  silently applies the destination stage that matches global story progress; **no prompts** unless
+  the user goes looking to change the map state deliberately.
+- **Cross-map / shared globals are written naturally.** *"The game is setup to work on global
+  variables that can be shared; map progressions do naturally affect other shared variables."*
+  Applying or rolling a state writes its context flags (`owned: false`) as part of the state —
+  that is the game's own model, not a side effect to warn about.
+- **Transients are SHOWN.** *"If it's a valid option it needs to be shown even if it's
+  glitch/temporary."* Every script value appears in the state list — resting stages first-class,
+  transients flagged in words (mid-cutscene), custom/hack values still available and never
+  refused.

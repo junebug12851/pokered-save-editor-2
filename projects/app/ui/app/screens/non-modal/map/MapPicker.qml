@@ -29,9 +29,12 @@
   and a console draws exactly what they say -- so they get two separate controls, and a save that
   disagrees with itself is SHOWN doing so, never quietly tidied up.
 
-  ⚠️ Picking a map writes ONE byte (`wCurMap`). The map's stored size lives in other bytes, and this
-  control does not touch them -- it says so, and offers to fix them, which is the difference between
-  an editor you can trust and one that "helpfully" rewrites your save.
+  ⚠️ Picking a map CONSTRUCTS it by default (leadership, 2026-07-17: seamless, "as though the map
+  has always been loaded") -- the whole Area block is rebuilt from the destination's own ROM data,
+  the player lands on the first warp, and the map resumes its own stored progression. That is a
+  deliberate, labelled act, and the switch right under the combo turns it off -- OFF, picking a map
+  writes ONE byte (`wCurMap`), says the stored size is stale, and offers the fix: the power path,
+  exactly as before. Neither mode rewrites anything quietly.
 */
 import QtQuick
 import QtQuick.Controls
@@ -128,7 +131,12 @@ Item {
           return -1;
         }
 
-        onActivated: brg.map.mapInd = currentValue
+        onActivated: {
+          if (constructSwitch.checked)
+            brg.map.changeMapConstructed(currentValue);   // seamless: build the whole Area
+          else
+            brg.map.mapInd = currentValue;                // the power path: ONE byte
+        }
 
         // Every one of the 248 ids, glitch and half-baked included -- GROUPED, like the music list
         // (Twilight, 2026-07-13). The group is the map's own tileset, which is real data out of
@@ -190,8 +198,43 @@ Item {
         }
       }
 
+      // ── Construct on change — the seamless default (leadership, 2026-07-17) ─────────────────
+      //
+      // ON (the default): picking a map rebuilds the whole Area block from the destination's ROM
+      // data — header, tileset, cast, warps, signs, wild tables — lands the player on the first
+      // warp, and resumes the map's own stored progression. "As though the map has always been
+      // loaded." OFF: the old one-byte write, for power users assembling something deliberate.
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: 6
+
+        Text {
+          Layout.fillWidth: true
+          text: qsTr("Construct the map on change")
+          font.pixelSize: 11
+          color: brg.settings.textColorDark
+        }
+
+        MapSwitch {
+          id: constructSwitch
+          checked: true
+          onToggled: checked = !checked
+        }
+      }
+      Text {
+        Layout.fillWidth: true
+        text: constructSwitch.checked
+              ? qsTr("The whole map is built properly — sprites, doors, signs, wild Pokémon — and "
+                     + "you land on its first warp, at the map's current story state.")
+              : qsTr("Only the map id byte changes. Everything else stays as it lies.")
+        font.pixelSize: 10
+        color: brg.settings.textColorMid
+        wrapMode: Text.WordWrap
+      }
+
       // The size the save stores is a DIFFERENT set of bytes from the map id, and picking a map
-      // leaves them stale. The doctrine says SHOW it and offer the fix -- never rewrite it quietly.
+      // with construction OFF leaves them stale. The doctrine says SHOW it and offer the fix --
+      // never rewrite it quietly.
       //
       // But it is not an ERROR, so it is not red (Twilight, 2026-07-13: "you have red text everywhere,
       // even to indicate information, which is bad"). Red means *something is broken*. This is a

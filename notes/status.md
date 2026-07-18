@@ -5,11 +5,39 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.42.13-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
+**Version:** `0.43.0-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**);
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
+
+### 🗺️🧭 MAP STATES — BUILT: model + rename + UI, on the blueprints (2026-07-17, `0.43.0-alpha`)
+
+The second half of Fairy Fox's brief, delivered same-day on her go-ahead (ground rules: map change
+**seamless** — *"as though the map has always been loaded"*, no prompts; cross-map shared globals
+written **naturally**; transients **shown**). On top of the 98 blueprints:
+
+- **Model:** `MapStatesDB` (blueprints in `db.qrc`, typed stages) + `mapmodel_states.cpp` —
+  `stateList` / `currentStateId` (exact match or an honest "custom") / `applyState` (script byte +
+  events + own missables + badge universe, nothing else) / branch-aware `rollForward`/`rollBack` /
+  `changeMapConstructed` (`Area::setTo(map,x,y)` new deterministic overload — the whole Area block
+  from ROM, player on the blueprint's first-warp entry, live step resuming the map's stored
+  progression, `wLastMap` aimed for the `$FF` doors, edited-warnings reset).
+- **Rename (leadership's call):** "Map script" → **"Map state"** on the Map Storage panel;
+  "Current script step" → **"Current state step"**; run-on-load wording matched.
+- **UI:** the Details panel's **Progression state** picker ("1. Name" / "2a." branches / italic
+  mid-cutscene transients / flagged derived / a Custom row) + **◀ ▶ roll buttons** + stage story
+  text; MapPicker's **"Construct the map on change"** switch (ON by default; OFF = the old
+  one-byte power path, notice intact). Screenshot-reviewed: panel, picker popup, storage heading.
+- **Pinned:** new **`tst_map_states` 8/8** — every DB reference in range (98 blueprints / 34
+  curated), apply moves ONLY state-region bytes (whole-32KB byte-diff), rolls round-trip
+  1→2→3→2→1, a gym stage moves its badge PAIR (0x2602+0x29D6) and no other badge, construction
+  lands on the entry spot with a coherent header. Full suite **92/92**; `tst_qml_screens` 28/28.
+- ⭐ **A finding the tests forced:** BaseSAV's Pallet Town sits genuinely BETWEEN stages 2 and 3
+  (Daisy walks, Town Map given, Poké Balls never collected) — the matcher answers **"" (custom)**
+  for it, which is the honesty doctrine working, not a gap.
+- ⏳ **Owed:** Twilight's live pass (the picker feel, a seamless map change, a roll on a gym);
+  MS-5 (randomizer hook) and MS-6 (console probes of constructed states) are the open phases.
 
 ### 🗺️🧭 MAP STATES — per-map progression blueprints, researched + shipped as data (2026-07-17, `0.42.13-alpha`)
 

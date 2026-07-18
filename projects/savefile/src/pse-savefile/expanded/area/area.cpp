@@ -169,7 +169,14 @@ void Area::setTo(MapDBEntry* map)
       ? 0
       : warpIn->getY();
 
-  // Do the individual area randomizations and pass along map data where needed
+  setTo(map, x, y);
+}
+
+void Area::setTo(MapDBEntry* map, int x, int y)
+{
+  // The deterministic form: the caller names the landing spot. The map-states flow uses
+  // this with the blueprint's entry (the FIRST warp -- leadership's call), so a map
+  // change is repeatable rather than landing on a random arrival point.
   audio->setTo(map);
   general->setTo(map);
   npc->setTo(map);

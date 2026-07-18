@@ -70,7 +70,13 @@ Bridge::Bridge(FileManagement* file)
                      file->data->dataExpanded->world->general,
                      file->data->dataExpanded->area->signs,
                      // The wild-encounter cooldown flag lives in the encounter block.
-                     file->data->dataExpanded->area->pokemon)),
+                     file->data->dataExpanded->area->pokemon,
+                     // The map-states surface: the whole World (scripts/events/missables),
+                     // the whole Area (seamless map-change construction) and the trainer's
+                     // basics (the badge bits). See notes/plans/map-states.md.
+                     file->data->dataExpanded->world,
+                     file->data->dataExpanded->area,
+                     file->data->dataExpanded->player->basics)),
     mapLayers(new MapLayersModel(map)),
     mapClock(new MapClock(map)),
     mapSim(new MapSim(map))
