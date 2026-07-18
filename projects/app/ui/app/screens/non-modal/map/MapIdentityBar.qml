@@ -494,9 +494,11 @@ Rectangle {
 
       MapToolTip {
         shown: scratchHover.hovered
-        text: qsTr("Show cleared values — the ones the game works out again every time it loads your "
-                   + "save (the walk state, the on-screen pixels, the sprite cache).\n\nThey're real "
-                   + "bytes and you can edit every one of them. They just won't survive Continue.")
+        // "USELESS EDITS" -- leadership's name for this whole class (2026-07-18): everything the
+        // game overwrites on load OR never reads at all. One toggle, the whole map screen.
+        text: qsTr("Show useless edits — values the game overwrites when it loads your save, or "
+                   + "never reads at all (reset scratch, the sprite cache, placeholder and dead "
+                   + "flags).\n\nReal bytes, all editable — they just have no effect you can keep.")
       }
     }
   }

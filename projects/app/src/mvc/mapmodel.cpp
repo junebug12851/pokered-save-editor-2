@@ -4872,7 +4872,8 @@ QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
   // like a disorganized mess … map state would be a good grouping"*). Each page map's progression
   // blueprint says which STAGE of the map's story sets which flags -- so a flag can be filed under
   // "2 · Oak has led you to the lab" instead of a flat pile. Flags no stage owns stay ungrouped.
-  QHash<int, QString> stageOf;   // event ind -> "id · stage name"
+  QHash<int, QString> stageOf;    // event ind -> "id · stage name" (the group key)
+  QHash<int, QString> stageWhen;  // event ind -> the fuller when/why sentence for the row's "?"
   for (const auto& v : mapIds) {
     const auto* bp = MapStatesDB::inst()->at(v.toInt());
     if (bp == nullptr)
@@ -4882,8 +4883,14 @@ QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
       if (st == nullptr)
         continue;
       for (const auto& ev : st->set)
-        if (!stageOf.contains(ev.ind))
+        if (!stageOf.contains(ev.ind)) {
           stageOf.insert(ev.ind, QStringLiteral("%1 · %2").arg(st->id, st->name));
+          // The answer to "when is this set, and what for" -- the stage's own story.
+          QString when = tr("Turns ON at stage %1 (%2)").arg(st->id, st->name);
+          if (!st->triggerText.isEmpty())
+            when += tr(" — %1").arg(st->triggerText);
+          stageWhen.insert(ev.ind, when + QStringLiteral(". "));
+        }
     }
   }
 
@@ -4908,7 +4915,10 @@ QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
     QVariantMap o;
     o[QStringLiteral("ind")] = e->getInd();
     o[QStringLiteral("name")] = e->getName();
-    o[QStringLiteral("desc")] = e->getDesc();
+    // "What does this DO, and when?" -- the stage's own story first (when it turns on and why),
+    // then the usage sentence (who writes it, who reads it back). Leadership, 2026-07-18: *"im
+    // told when its enabled and read but not what it does or when its set"*.
+    o[QStringLiteral("desc")] = stageWhen.value(e->getInd(), QString()) + e->getDesc();
     o[QStringLiteral("group")] = e->getGroup();
     o[QStringLiteral("caution")] = e->getCaution();
     o[QStringLiteral("placeholder")] = e->getPlaceholder();
@@ -4918,13 +4928,23 @@ QVariantList MapModel::storageEvents(const QVariantList& mapIds) const
     // Which progression stage of this map's story sets it (blueprint-derived), or "".
     o[QStringLiteral("stage")] = stageOf.value(e->getInd(), QString());
     // ⭐ USELESS (leadership's word, 2026-07-18): editing it changes nothing the game will keep or
-    // ever read -- placeholder padding bits, vestigial writes-never-reads, defined-but-unused.
-    // These hide behind the panel's "Useless edits" switch. NOT for merely-advanced controls.
+    // ever read. Placeholder padding bits; vestigial / defined-unused / plain unused; `temporary`
+    // (rewritten on load); and ⭐ WRITE-ONLY -- *"if something is write once never read again its
+    // useless because it has no impact on game code"*. The dossiers' usage sentences carry the
+    // read side ("read back by X" / "X reads" / "checked"); a described flag with none of those
+    // is a write nobody consumes. NOT for merely-advanced controls.
     const auto cls = e->getClassification();
+    const QString d = e->getDesc();
+    const bool neverRead = !d.isEmpty()
+        && !d.contains(QStringLiteral("read back"))
+        && !d.contains(QStringLiteral("reads"))
+        && !d.contains(QStringLiteral("checked"));
     o[QStringLiteral("useless")] = e->getPlaceholder()
         || cls.contains(QStringLiteral("vestigial"))
         || cls.contains(QStringLiteral("defined-unused"))
-        || cls.contains(QStringLiteral("temporary"));   // rewritten on load = nothing you can keep
+        || cls.contains(QStringLiteral("unused"))
+        || cls.contains(QStringLiteral("temporary"))    // rewritten on load = nothing you can keep
+        || neverRead;
     // Where the bit physically lives, so the raw path is never hidden from a power
     // user (this editor shows raw/hack values everywhere else too). wEventFlags is one
     // contiguous field: byte 0x29F3 + ind/8, bit ind%8.

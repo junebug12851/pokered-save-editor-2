@@ -22,11 +22,12 @@
  * v1 shipped them as its "NPC" page with three wrong labels; every field here carries the name of what
  * it actually does and a sentence saying what that means.
  *
- * ## No hidden fields (Twilight, 2026-07-15)
+ * ## Useless edits hide behind the toolbar "!" (Twilight, 2026-07-18 -- supersedes 2026-07-15)
  *
- * Every one of the nine is shown -- including the two the warp panel's doctrine would tuck behind the
- * "reloaded values" switch. Twilight: *"there shouldn't be hidden fields."* So the ⚠ mark is a LABEL
- * here, never a reason to hide a row: four of these the game rewrites on load, and they say so in place.
+ * The four flags the game rewrites on load are USELESS EDITS (*"character state is still littered
+ * with useless fields"*): they hide unless the toolbar's "!" gate is on, and when shown they wear
+ * the ⚠ mark saying why. The five durable flags show always. (The earlier "no hidden fields, mark
+ * them instead" ruling of 2026-07-15 is superseded by the one-gate-for-the-whole-screen standard.)
  *
  * ## Persistence, verified on a real cartridge
  *
@@ -68,8 +69,14 @@ Item {
     return brg.file.data.dataExpanded.area.npc;
   }
 
-  // ── one toggle row: name, its ⚠ (if the game rewrites it), the switch, and a plain-English line ──
-  component FlagRow: ColumnLayout {
+  // ── one toggle row: name, its ⚠ (if the game rewrites it), the switch, the "?" for the words ──
+  //
+  // ⚠️ A REWRITTEN-ON-LOAD row is a USELESS EDIT (leadership's word, 2026-07-18: *"character
+  // state is still littered with useless fields"*) and hides behind the toolbar's "!" — the one
+  // gate for the whole screen. This SUPERSEDES the earlier "no hidden fields, mark them instead"
+  // ruling (2026-07-15): the mark stays, and the row only appears when the gate is on.
+  // The per-row blurb moved behind a "?" -- one-line rows, panel-wide standard.
+  component FlagRow: RowLayout {
     id: row
     property string title: ""
     property string blurb: ""
@@ -79,37 +86,30 @@ Item {
     signal toggle()
 
     Layout.fillWidth: true
-    spacing: 1
+    spacing: 6
+    visible: !row.rewritten || brg.map.showScratch
 
-    RowLayout {
-      Layout.fillWidth: true
-      spacing: 6
-
-      MapWarnIcon {
-        visible: row.rewritten
-        text: row.rewrittenWhy
-      }
-
-      Label {
-        text: row.title
-        font.pixelSize: 12
-        color: brg.settings.textColorDark
-        Layout.fillWidth: true
-        wrapMode: Text.Wrap
-      }
-
-      MapSwitch {
-        checked: row.value
-        onToggled: row.toggle()
-      }
+    MapWarnIcon {
+      visible: row.rewritten
+      text: row.rewrittenWhy
     }
 
     Label {
-      text: row.blurb
+      text: row.title
+      font.pixelSize: 12
+      color: brg.settings.textColorDark
       Layout.fillWidth: true
-      wrapMode: Text.Wrap
-      font.pixelSize: 10
-      opacity: 0.55
+      elide: Text.ElideRight
+    }
+
+    MapInfoIcon {
+      visible: row.blurb !== ""
+      text: row.blurb
+    }
+
+    MapSwitch {
+      checked: row.value
+      onToggled: row.toggle()
     }
   }
 
@@ -153,7 +153,10 @@ Item {
         }
 
         // ── Sprites — both zeroed on load ──────────────────────────────────────────────────────
-        GroupHeading { text: qsTr("Sprites") }
+        GroupHeading {
+          text: qsTr("Sprites")
+          visible: brg.map.showScratch   // both of its rows are useless edits
+        }
 
         FlagRow {
           title: qsTr("Don't face the player when talked to")
@@ -177,7 +180,7 @@ Item {
         GroupHeading { text: qsTr("Controls") }
 
         FlagRow {
-          title: qsTr("Scripted movement — starting")
+          title: qsTr("Scripted walk — starting")
           blurb: qsTr("A scripted walk is about to begin this frame. Cutscene machinery — 0 in any "
                       + "normal save.")
           value: panel.npc.initScriptedMovement
@@ -185,7 +188,7 @@ Item {
         }
 
         FlagRow {
-          title: qsTr("Scripted movement — running")
+          title: qsTr("Scripted walk — running")
           blurb: qsTr("A sprite is currently being walked by a script. Cutscene machinery — 0 in any "
                       + "normal save.")
           value: panel.npc.scriptedNpcMoving
@@ -201,7 +204,7 @@ Item {
         }
 
         FlagRow {
-          title: qsTr("Scripted-movement active")
+          title: qsTr("Scripted walk — active")
           blurb: qsTr("The game is in the middle of running a scripted-movement sequence.")
           rewritten: true; rewrittenWhy: panel.clearedWhy
           value: panel.npc.scriptedMovementActive

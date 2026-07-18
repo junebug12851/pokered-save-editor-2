@@ -96,17 +96,9 @@ Item {
     border.color: area.containsMouse && !sign.selected ? "#ffffff" : sign.layerInk
     opacity: sign.dragging ? 0.65 : 1.0
 
-    // ▤. It vanishes when the map is zoomed too far out to draw it legibly.
-    Text {
-      anchors.centerIn: parent
-      visible: sign.canvas.zoom >= 1.5
-      text: "▤"
-      font.bold: true
-      font.pixelSize: Math.max(8, Math.round(9 * sign.canvas.zoom))
-      color: sign.layerInk
-      style: Text.Outline
-      styleColor: "#99212121"
-    }
+    // (No centre glyph. The ▤ was dropped -- leadership, 2026-07-18: *"remove the square dot/icon
+    //  from the middle of sign boxes just have the outline"*. The outline's ink says "sign" -- the
+    //  Layers panel is the legend -- and the tile art underneath stays readable.)
   }
 
   // 🔫 The id points past this map's text. The game reads whatever text comes next. Drawn, editable,

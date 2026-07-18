@@ -5,11 +5,28 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.43.3-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
+**Version:** `0.43.4-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
-[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**);
+[`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**92/92**);
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
+
+### 🧹 ROUND 4 — the CONSISTENCY round: World, ONE gate, the ghost fixed (2026-07-18, `0.43.4-alpha`)
+
+Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md). The standing calls:
+
+- ⭐ **ONE useless-edits gate — the toolbar "!"**: the World panel's local switch is gone; every
+  user-facing "Reloaded values" string now says "Useless edits (the ! button)".
+- ⭐ **"World"** is the persistent-storage panel's name. **Details sits above Layers** (left dock).
+- ⭐ **Useless widened**: write-once-never-read flags; the Character panel's 4 rewritten-on-load
+  rows (⚠ kept when shown — supersedes the 2026-07-15 "never hide, mark instead" ruling); the
+  ENTIRE Sprite set panel (one-line notice; the game rebuilds that cache on every load).
+- ⭐ **Ghost fix**: art + silhouette flatten into one `layer` and fade together (no more
+  purple-wash Oak / grey drag-blur). **Doors & signs are pure outlines** — centre glyphs and the
+  door's always-on corner tick removed; the hover tab is the one tab language.
+- Event-flag "?"s carry "Turns ON at stage N (name) — trigger."; missables lost self-evident
+  blurbs; state matching provably ignores NPC wandering (script byte + own events + own missables
+  only). Green: `ctest` **92/92**. ⏳ Owed: her live pass.
 
 ### 🧹 ROUND 3 — the PANEL OVERHAUL: useless edits, stage-grouped flags, one state menu (2026-07-18, `0.43.3-alpha`)
 

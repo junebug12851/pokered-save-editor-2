@@ -137,10 +137,28 @@ Rectangle {
     }
   }
 
+  // ⭐ THE WHOLE PANEL IS A USELESS EDIT (leadership, 2026-07-18: *"the whole sprite set panel can
+  // be hidden behind useless"*): the sprite cache is the one block the game THROWS AWAY on every
+  // load (`LoadMapData` zeroes the id, `InitOutsideMapSprites` recomputes the lot -- see
+  // reference/sprite-sets.md). Behind the toolbar's "!", with one line saying why.
+  Label {
+    anchors.centerIn: parent
+    width: parent.width - 40
+    visible: !brg.map.showScratch
+    wrapMode: Text.Wrap
+    horizontalAlignment: Text.AlignHCenter
+    font.pixelSize: 11
+    opacity: 0.55
+    text: qsTr("The game rebuilds this whole cache every time it loads your save — nothing here "
+               + "survives a Continue.\n\nTurn on “Useless edits” (the ! button in the toolbar) "
+               + "to edit it anyway.")
+  }
+
   ScrollView {
     anchors.fill: parent
     anchors.margins: 12
     clip: true
+    visible: brg.map.showScratch
 
     ColumnLayout {
       // 12px of margin each side, PLUS the 16px overlay-scrollbar lane. @see ui-patterns.md

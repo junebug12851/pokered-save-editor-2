@@ -41,7 +41,7 @@
  *   illegal value makes a real console read arbitrary cartridge bytes as warp data. The pickers offer
  *   the legal values; the full range is one click away, and **never refused**.
  * - ⚠️ **wiped on load** and 💀 **never read** -- **two different facts**, gathered at the bottom
- *   behind the toolbar's "Reloaded values" switch, each wearing its own mark.
+ *   behind the toolbar's "Useless edits" toggle (the "!"), each wearing its own mark.
  *
  * Everything here is verified against the cartridge. @see notes/reference/warps.md
  */
@@ -158,7 +158,7 @@ Item {
             // Twilight, 2026-07-14: *"it would also be wonderful to know which ones were regenerated
             // or rewritten on save load with little exclamation points grouped below and hidden
             // behind a switch."* That is exactly this. The MODEL filters them out unless the
-            // toolbar's "Reloaded values" switch is on -- so no view can leak one, and a test proves
+            // toolbar's "Useless edits" toggle is on -- so no view can leak one, and a test proves
             // they are gone (tst_warps: deadAndWipedFields_areAbsentUntilYouAskForThem).
             //
             // And ⚠️ WIPED and 💀 DEAD are **two different facts** -- one the console erases on every
@@ -258,7 +258,7 @@ Item {
           Layout.topMargin: 10
           visible: !brg.map.showScratch
           text: qsTr("Four more fields here do nothing at all — the game either wipes them when it "
-                     + "loads your save, or never reads them. Turn on “Reloaded values” in the "
+                     + "loads your save, or never reads them. Turn on “Useless edits” (the ! button) in the "
                      + "toolbar to see them.")
           wrapMode: Text.Wrap
           font.pixelSize: 10

@@ -129,8 +129,11 @@ Item {
 
   property int page: 0   // index into storageMaps -- which map's storage is shown
 
-  /// The USELESS-EDITS gate (default hidden). @see the switch in the header.
-  property bool showUseless: false
+  /// The USELESS-EDITS gate -- ⭐ THE TOOLBAR'S OWN "!" TOGGLE, not a switch of this panel's
+  /// (leadership, 2026-07-18: *"use the already existing button in the top toolbar on right the
+  /// exclamation on it"*). One gate for the whole screen: the same "!" that reveals the
+  /// reset-on-load scratch everywhere reveals the useless flags and rows here.
+  readonly property bool showUseless: brg.map.showScratch
 
   // Switching pages starts at the TOP -- a page opened at wherever the last one was scrolled reads
   // as broken ("opens scrolled down way too low"). A reveal mid-flight owns the scroll instead.
@@ -450,37 +453,9 @@ Item {
                 : qsTr("Not your current map — stored, applies when you're there.")
         }
 
-        // ── USELESS EDITS (leadership's word, 2026-07-18) ─────────────────────────────────────
-        //
-        // *"overwritten on continue button should be referred to as useless edits and placeholder
-        // flags and other stuff that just has no bearing on the game can be put behind that
-        // option. This does not include control simplified down … this is literally only for the
-        // actually useless controls/fields/settings."*
-        //
-        // So this gates exactly ONE class: values whose edit the game will overwrite or never
-        // read -- placeholder padding bits, writes-nothing-reads flags, the current town's
-        // self-re-marking Visited bit, the reset-on-load Safari scratch. Real-but-advanced
-        // controls are NOT allowed to hide here.
-        RowLayout {
-          Layout.fillWidth: true
-          spacing: 6
-
-          Label {
-            text: qsTr("Show useless edits")
-            font.pixelSize: 11
-            color: brg.settings.textColorMid
-            Layout.fillWidth: true
-          }
-          MapInfoIcon {
-            text: qsTr("Values you CAN set but the game overwrites on load or never reads at all — "
-                       + "spare placeholder bits, dead flags, per-visit scratch. Editing them "
-                       + "changes nothing you can keep.")
-          }
-          MapSwitch {
-            checked: panel.showUseless
-            onToggled: panel.showUseless = !panel.showUseless
-          }
-        }
+        // (No useless-edits switch HERE: the toolbar's "!" is the one gate for the whole map
+        //  screen -- leadership, 2026-07-18. The gated rows below read `panel.showUseless`,
+        //  which mirrors it.)
 
         Rectangle {
           Layout.fillWidth: true
@@ -1369,10 +1344,13 @@ Item {
                 }
 
                 MapInfoIcon {
-                  visible: mrow.modelData.desc !== "" || mrow.modelData.linked.length > 0
+                  // ⚠️ NO generic description ("Hidden = not on the map" is self-explanatory --
+                  // leadership, 2026-07-18). The "?" exists only where there is something real to
+                  // say: the linked event flags with their live state.
+                  visible: mrow.modelData.linked.length > 0
                   text: {
                     panel.revision; panel.editTick;
-                    let t = mrow.modelData.desc;
+                    let t = "";
                     if (mrow.modelData.linked.length > 0) {
                       let parts = [];
                       for (let i = 0; i < mrow.modelData.linked.length; i++) {

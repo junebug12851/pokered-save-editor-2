@@ -169,33 +169,57 @@ Item {
       sprite.art.replace("image://player/",
                          "image://player/sil/" + sprite.outlineColor.toString().substring(1) + "/")
 
-  Repeater {
-    model: [Qt.point(-1, 0), Qt.point(1, 0), Qt.point(0, -1), Qt.point(0, 1)]
+  // ⭐ ART + OUTLINE FADE AS ONE. A ghost first faded its two halves separately, and the art's own
+  // semi-transparency let the four purple silhouette copies UNDERNEATH bleed through every opaque
+  // pixel -- Oak read as "totally the purple color", then a grey blur mid-drag (leadership,
+  // 2026-07-18, twice). The fix is a GROUP fade: while ghosting/dragging the subtree is flattened
+  // into one layer (the opaque art fully masks the copies beneath, exactly as it does at rest) and
+  // THEN the flattened whole is faded -- so a ghost is the same recognisable character, outline and
+  // all, just dimmer. The layer only exists while fading; at rest this renders as plain items.
+  Item {
+    id: body
 
-    delegate: PixelImage {
-      required property var modelData
+    // The copies stick out one outline-width past the sprite on every side; the layer clips to the
+    // item's bounds, so the body extends by that much and the children sit inset by the same.
+    readonly property real edge: Math.max(1.5, 1.5 * sprite.canvas.zoom) + 1
 
-      // 1.5px at 1x, scaling with the zoom so the line does not thin out as you zoom in --
-      // matching MapBlockHotspot.lineWidth's weight, since it is the same language.
-      readonly property real w: Math.max(1.5, 1.5 * sprite.canvas.zoom)
+    x: -edge
+    y: -edge
+    width: sprite.width + 2 * edge
+    height: sprite.height + 2 * edge
 
-      x: modelData.x * w
-      y: modelData.y * w
+    opacity: sprite.hiddenByFlag ? 0.55 : (sprite.dragging ? 0.6 : 1.0)
+    layer.enabled: sprite.hiddenByFlag || sprite.dragging
+    layer.smooth: false           // pixel art stays pixel art through the flatten
+
+    Repeater {
+      model: [Qt.point(-1, 0), Qt.point(1, 0), Qt.point(0, -1), Qt.point(0, 1)]
+
+      delegate: PixelImage {
+        required property var modelData
+
+        // 1.5px at 1x, scaling with the zoom so the line does not thin out as you zoom in --
+        // matching MapBlockHotspot.lineWidth's weight, since it is the same language.
+        readonly property real w: Math.max(1.5, 1.5 * sprite.canvas.zoom)
+
+        x: body.edge + modelData.x * w
+        y: body.edge + modelData.y * w
+        width: sprite.width
+        height: sprite.height
+        z: -1                     // behind the character
+
+        source: sprite.silArt
+        opacity: 0.95
+      }
+    }
+
+    PixelImage {
+      x: body.edge
+      y: body.edge
       width: sprite.width
       height: sprite.height
-      z: -1                       // behind the character
-
-      source: sprite.silArt
-      opacity: sprite.dragging ? 0.6 : 0.95
+      source: sprite.art
     }
-  }
-
-  PixelImage {
-    anchors.fill: parent
-    source: sprite.art
-    // A filter-flagged sprite's ART ghosts (the save says the game won't draw it on Continue);
-    // the silhouette around it stays strong so it still reads as a real, grabbable thing.
-    opacity: sprite.hiddenByFlag ? 0.4 : (sprite.dragging ? 0.6 : 1.0)
   }
 
   // ⭐ EVERY SPRITE WEARS ITS BOX, ALWAYS -- solid outline + a fill.

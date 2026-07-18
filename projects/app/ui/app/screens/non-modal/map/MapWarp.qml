@@ -114,31 +114,11 @@ Item {
                     ? "#ffffff" : door.layerInk
     opacity: door.dragging ? 0.65 : 1.0
 
-    // A "back outside" door is the ordinary kind, and it gets the plain fill. A door that names a
-    // specific map is the unusual one, and it gets a corner tick so you can tell them apart at a
-    // glance without reading anything.
-    Rectangle {
-      visible: !door.isReturn && door.canvas.zoom >= 1
-      width: parent.width * 0.3
-      height: parent.height * 0.3
-      color: chip.border.color
-      anchors.top: parent.top
-      anchors.right: parent.right
-    }
-
-    // ⇄. It vanishes when the map is zoomed too far out to draw it legibly -- a glyph rendered at
-    // four pixels is not a glyph, it is noise. In the layer's own ink now that the chip has no
-    // fill to sit on (a dark glyph straight over dark artwork disappeared).
-    Text {
-      anchors.centerIn: parent
-      visible: door.canvas.zoom >= 1.5
-      text: "⇄"
-      font.bold: true
-      font.pixelSize: Math.max(8, Math.round(9 * door.canvas.zoom))
-      color: door.layerInk
-      style: Text.Outline
-      styleColor: "#99212121"
-    }
+    // (No centre glyph, and no corner tick. The ⇄ and the always-on upper-right square -- a
+    //  "names a specific map" tick that read as a stray, permanent tab -- were both dropped:
+    //  leadership, 2026-07-18, *"remove the square dot/icon ... same for doors just have the
+    //  outline"*. The outline's ink says "door", the hover tab (upper-left, from the canvas tab
+    //  strip) is the one tab language, and where it leads is on the hover label.)
   }
 
   // 🔫 The door points at an arrival point the target map does not have. The console would copy four

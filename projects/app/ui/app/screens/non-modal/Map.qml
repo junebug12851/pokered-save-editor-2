@@ -98,7 +98,7 @@ Page {
   /// "Outside is…" — the wLastMap chip. Drivable, so the screenshot review can actually open it.
   property alias outsideOpen: identityBar.outsideOpen
 
-  /// The "Reloaded values" switch, mirrored. `brg.map` is a C++ model, so automation cannot set it
+  /// The "Useless edits" toggle (the toolbar "!"), mirrored. `brg.map` is a C++ model, so automation cannot set it
   /// directly — and without this the review could never SEE the four fields that do nothing, which
   /// is precisely the thing that needs reviewing.
   property bool showScratchNow: brg.map.showScratch
@@ -200,13 +200,15 @@ Page {
         // Nothing open (Twilight). You open the Map screen and you see THE MAP.
         open: ""
 
+        // Details FIRST (leadership, 2026-07-18: "Details needs to be moved above layers") — it is
+        // the panel a click opens, so it owns the top slot.
         panels: [
+          { id: "details", glyph: "✎", title: qsTr("Details"),
+            tip: qsTr("Details — edit whatever is selected. Nothing selected? The map itself.") },
           { id: "layers", glyph: "◈", title: qsTr("Layers"),
             tip: qsTr("Layers — everything drawn over the map, in groups") },
           { id: "characters", glyph: "☻", title: qsTr("Characters"),
             tip: qsTr("Characters — the people and objects you can put on the map. Drag one out.") },
-          { id: "details", glyph: "✎", title: qsTr("Details"),
-            tip: qsTr("Details — edit whatever is selected. Nothing selected? The map itself.") },
           { id: "wild", glyph: "✿", title: qsTr("Wild Pokémon"),
             tip: qsTr("Wild Pokémon — the grass and water encounters on this map") }
         ]
@@ -409,8 +411,10 @@ Page {
           // switches, Cinnabar Gym quiz opponent, Safari Zone run counters). `primary: true` gives its
           // rail icon the filled, accent-coloured "this holds persistent storage" look Twilight asked
           // for (2026-07-15). Briefed + researched this session; reference/gym-safari-state.md.
-          { id: "storage", glyph: "▣", primary: true, title: qsTr("Map Storage"),
-            tip: qsTr("Map Storage — persistent values that belong to specific maps: gym puzzle state, Safari Zone counters") }
+          // ⭐ "WORLD" is its name (leadership, 2026-07-18: "Map Storage should still be called
+          // World") — the world's persistent storage, viewed one map at a time.
+          { id: "storage", glyph: "▣", primary: true, title: qsTr("World"),
+            tip: qsTr("World — the save's persistent storage, one map at a time: story flags, who's on the map, minigame state") }
         ]
         // ⚠️ MUSIC IS NOT HERE ANY MORE. It is a chip in the toolbar (MusicPicker.qml) -- a whole
         // dock panel for one combo, two checkboxes and a ▶ was a panel too many (Twilight).

@@ -175,7 +175,7 @@ Item {
   // The PLAYER's 26-byte map-state block (@see MapModel::playerFields). Bound on `revision` so an
   // edit re-asks -- the same reason the sprite fields are. The durable groups show always; the ten
   // the game rewrites on load and the three it never reads are in the last group, filtered out by
-  // the model unless the toolbar's "Reloaded values" switch is on.
+  // the model unless the toolbar's "Useless edits" toggle (the "!") is on.
   readonly property var playerFields: {
     details.revision;
     return details.hasPlayer ? brg.map.playerFields() : [];
@@ -278,7 +278,7 @@ Item {
         //
         // ⚠️ notes/reference/area-map-state.md. Two durable levers (script step + run-on-load, always
         // on bike), one derived value kept in sync by default (the camera), and two reset-on-load
-        // scratch fields behind the "Reloaded values" switch. Every value full-range, hack included.
+        // scratch fields behind the "Useless edits" toggle. Every value full-range, hack included.
         Rectangle { Layout.fillWidth: true; Layout.topMargin: 6; height: 1; color: brg.settings.dividerColor }
 
         ColumnLayout {
@@ -606,7 +606,7 @@ Item {
             opacity: 0.55
           }
 
-          // ── Reset-on-load scratch, behind the "Reloaded values" switch ───────────────────────
+          // ── Reset-on-load scratch, behind the "Useless edits" toggle ────────────────────────
           ColumnLayout {
             Layout.fillWidth: true
             Layout.topMargin: 6
@@ -696,7 +696,7 @@ Item {
             Layout.topMargin: 2
             visible: !brg.map.showScratch
             text: qsTr("Three more bytes here do nothing you can keep — the game resets them on load. "
-                       + "Turn on “Reloaded values” in the toolbar to see them.")
+                       + "Turn on “Useless edits” (the ! button) in the toolbar to see them.")
             wrapMode: Text.Wrap
             font.pixelSize: 10
             opacity: 0.55
@@ -1474,7 +1474,7 @@ Item {
         //
         // ⚠️ Read notes/reference/player-state.md. Ten of these the game rewrites the instant it
         // loads the save, three it never reads -- all gathered in the last group, behind the
-        // toolbar's "Reloaded values" switch (filtered in the MODEL, so no view can leak one). The
+        // toolbar's "Useless edits" toggle (filtered in the MODEL, so no view can leak one). The
         // durable ones show here always. Everything full-range, hack values included, never refused.
         Repeater {
           model: details.playerGroupOrder
@@ -1595,7 +1595,7 @@ Item {
           Layout.topMargin: 10
           visible: !brg.map.showScratch
           text: qsTr("Thirteen more of his bytes do nothing you can keep — the game either rewrites "
-                     + "them when it loads your save, or never reads them. Turn on “Reloaded values” "
+                     + "them when it loads your save, or never reads them. Turn on “Useless edits” (the ! button) "
                      + "in the toolbar to see them.")
           wrapMode: Text.Wrap
           font.pixelSize: 10
