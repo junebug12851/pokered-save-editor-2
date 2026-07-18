@@ -119,7 +119,7 @@ Rectangle {
         required property string layerKey
 
         // Reserve the scrollbar's lane (the recurring gotcha -- ui-patterns.md).
-        width: list.width - 16
+        width: list.width - 22
         implicitHeight: layerIsGroup ? 26 : 23
 
         color: layerIsGroup ? "#00000000"

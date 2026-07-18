@@ -58,7 +58,7 @@ Item {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
     ColumnLayout {
-      width: scroller.availableWidth - 16
+      width: scroller.availableWidth - 22
       spacing: 14
 
       Label {

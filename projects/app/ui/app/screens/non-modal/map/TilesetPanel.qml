@@ -37,6 +37,18 @@ import QtQuick.Layouts
 Rectangle {
   id: panel
 
+  // ⚠️ The re-read dependency. `talkingOverTilesAt(i)` and friends are INVOKABLE reads -- QML is
+  // never notified when their answer changes -- so without this the panel showed a counter slot
+  // as "empty" right after you picked a tile into it, while the map (which re-renders on
+  // changed()) showed it correctly (leadership, 2026-07-18). Every invokable read below carries
+  // `panel.revision` as a dependency; every write bumps `editTick`.
+  property int revision: 0
+  property int editTick: 0
+  Connections {
+    target: brg.map
+    function onChanged() { panel.revision++; }
+  }
+
   // May be null -- the QML smoke test loads every screen with no save.
   readonly property var ts: (brg.file.data.dataExpanded
                              && brg.file.data.dataExpanded.area)
@@ -138,7 +150,7 @@ Rectangle {
 
     ColumnLayout {
       // 12px of margin each side, PLUS the 16px overlay-scrollbar lane. @see ui-patterns.md
-      width: panel.width - 24 - 16
+      width: panel.width - 24 - 22
       spacing: 10
 
       // ── The edge of the world ───────────────────────────────────────────────
@@ -194,12 +206,19 @@ Rectangle {
             Layout.fillWidth: true
             visible: panel.hasTs
 
-            tile: panel.hasTs ? panel.ts.talkingOverTilesAt(index) : 255
+            // `revision`/`editTick` are the re-read dependencies -- an invokable read is never
+            // notified, and without them a freshly-picked slot went on reading "empty" here
+            // while the map already highlighted it. @see the property at the top.
+            tile: {
+              panel.revision; panel.editTick;
+              return panel.hasTs ? panel.ts.talkingOverTilesAt(index) : 255;
+            }
             noneLabel: qsTr("Slot %1 — empty").arg(index + 1)
 
             onPicked: (t) => {
               if (!panel.hasTs) return;
               panel.ts.talkingOverTilesSet(index, t);  // save 0x27DE + index
+              panel.editTick++;
             }
           }
         }

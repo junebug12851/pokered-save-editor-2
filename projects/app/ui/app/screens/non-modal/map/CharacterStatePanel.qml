@@ -136,7 +136,7 @@ Item {
     // Reserve the 16px scrollbar lane (ui-patterns.md rule 2) so the right-anchored switches and ⚠
     // marks never end up under the overlay bar.
     ColumnLayout {
-      width: scroller.availableWidth - 16
+      width: scroller.availableWidth - 22
       spacing: 6
 
       ColumnLayout {

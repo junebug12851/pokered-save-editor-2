@@ -31,9 +31,25 @@ PlayerProvider::PlayerProvider()
 
 QPixmap PlayerProvider::requestPixmap(const QString& id, QSize* size, const QSize& requestedSize)
 {
-  const auto parts = id.split("/", Qt::SkipEmptyParts);
+  auto parts = id.split("/", Qt::SkipEmptyParts);
 
   QImage sprite;
+
+  // ── The SILHOUETTE form: `sil/<rrggbb>/<...the ordinary id...>` ────────────────────────────
+  //
+  // The artwork flattened to ONE colour, alpha kept -- what the canvas stamps a sprite's outline
+  // from (four copies, one pixel out in each direction). Served by the PROVIDER, deliberately:
+  // the first outline used Qt Quick's MultiEffect and it never drew a pixel anywhere -- shader
+  // effects don't run on the offscreen platform, and on hardware the invisible source item's
+  // layer texture was never rendered either, so every sprite showed only its art's own black
+  // linework (leadership, twice: *"they outline black"*, *"sprites still have black outline"*).
+  // A provider image is plain pixels: it works on every backend, offscreen included, and Qt's
+  // pixmap cache keys it by URL so each colour is computed once.
+  QColor silColor;
+  if (!parts.isEmpty() && parts.at(0) == "sil" && parts.size() > 1) {
+    silColor = QColor("#" + parts.at(1));
+    parts.remove(0, 2);
+  }
 
   // Two forms, told apart by the first word:
   //   <facing>/<contrast>                            -- the player (slot 0)
@@ -65,6 +81,18 @@ QPixmap PlayerProvider::requestPixmap(const QString& id, QSize* size, const QSiz
       *size = blank.size();
 
     return QPixmap::fromImage(blank);
+  }
+
+  // Flatten to the silhouette colour: every pixel that has any ink at all becomes the colour,
+  // fully opaque. (Not alpha-scaled -- the outline is a mark, not a wash.)
+  if (silColor.isValid()) {
+    sprite = sprite.convertToFormat(QImage::Format_ARGB32);
+    const QRgb ink = silColor.rgb() | 0xFF000000;
+    for (int y = 0; y < sprite.height(); y++) {
+      QRgb* line = reinterpret_cast<QRgb*>(sprite.scanLine(y));
+      for (int x = 0; x < sprite.width(); x++)
+        line[x] = (qAlpha(line[x]) > 0) ? ink : 0;
+    }
   }
 
   if (size != nullptr)

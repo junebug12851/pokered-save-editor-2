@@ -91,8 +91,8 @@ Item {
     id: chip
     anchors.fill: parent
 
-    color: Qt.alpha(sign.layerInk, 0.4)
-    border.width: Math.max(1, Math.round(sign.canvas.zoom))
+    color: "transparent"   // NO FILL -- the line carries the language (leadership, 2026-07-18)
+    border.width: Math.max(2, Math.round(1.5 * sign.canvas.zoom))
     border.color: area.containsMouse && !sign.selected ? "#ffffff" : sign.layerInk
     opacity: sign.dragging ? 0.65 : 1.0
 
@@ -101,8 +101,11 @@ Item {
       anchors.centerIn: parent
       visible: sign.canvas.zoom >= 1.5
       text: "▤"
+      font.bold: true
       font.pixelSize: Math.max(8, Math.round(9 * sign.canvas.zoom))
-      color: "#212121"
+      color: sign.layerInk
+      style: Text.Outline
+      styleColor: "#99212121"
     }
   }
 

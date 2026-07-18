@@ -107,7 +107,7 @@ Item {
     // field's label row -- which is exactly the thing this panel exists to show you.
     // (ui-patterns.md, rule 2. It is the recurring gotcha on this project.)
     ColumnLayout {
-      width: scroller.availableWidth - 16
+      width: scroller.availableWidth - 22
       spacing: 6
 
       ColumnLayout {

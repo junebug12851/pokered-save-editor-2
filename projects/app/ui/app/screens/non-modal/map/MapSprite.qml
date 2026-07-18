@@ -37,10 +37,6 @@
  */
 import QtQuick
 import QtQuick.Controls
-// MultiEffect -- for the silhouette outline (colorization flattens a copy of the artwork to one
-// colour while keeping its alpha, which is what lets the outline hug the character's real shape
-// without us ever knowing it). @see the outline Repeater.
-import QtQuick.Effects
 
 Item {
   id: sprite
@@ -157,20 +153,26 @@ Item {
   // always (reference/sprites.md) -- so a box round a person is mostly a box round nothing, and it
   // reads as "this square" instead of "this fellow".
   //
-  // HOW: the classic sticker trick, and it needs no shader and no alpha mask of our own. Draw the
-  // sprite's own artwork four times, one pixel out in each direction, flattened to the outline
-  // colour, BEHIND the real one. Every opaque pixel paints its neighbours; every transparent pixel
-  // paints nothing. What is left showing round the edges is exactly the silhouette.
+  // HOW: the classic sticker trick -- the artwork drawn four times, one step out in each direction,
+  // flattened to the outline colour, BEHIND the real one. Every opaque pixel paints its neighbours;
+  // what is left showing round the edges is exactly the silhouette.
   //
-  // `MultiEffect.colorization: 1` flattens each copy to a single colour while KEEPING its alpha --
-  // which is the whole reason this works on artwork whose shape we never have to know.
+  // ⚠️ The flattening is done by the IMAGE PROVIDER (`image://player/sil/<colour>/…`), NOT a shader.
+  // Two shader attempts both drew nothing -- MultiEffect over an invisible source samples a texture
+  // that is never rendered, and shader effects don't run on the offscreen platform at all -- which
+  // is why "they outline black" survived a "fix". Plain provider pixels work on every backend, and
+  // Qt caches them by URL. @see PlayerProvider.
+  readonly property string silArt:
+      sprite.art.replace("image://player/",
+                         "image://player/sil/" + sprite.outlineColor.toString().substring(1) + "/")
+
   Repeater {
     model: [Qt.point(-1, 0), Qt.point(1, 0), Qt.point(0, -1), Qt.point(0, 1)]
 
-    delegate: MultiEffect {
+    delegate: PixelImage {
       required property var modelData
 
-      // 2px at 1x, and it scales with the zoom so the line does not thin out as you zoom in --
+      // 1.5px at 1x, scaling with the zoom so the line does not thin out as you zoom in --
       // matching MapBlockHotspot.lineWidth's weight, since it is the same language.
       readonly property real w: Math.max(1.5, 1.5 * sprite.canvas.zoom)
 
@@ -180,30 +182,9 @@ Item {
       height: sprite.height
       z: -1                       // behind the character
 
-      source: outlineArt
-      colorization: 1.0
-      colorizationColor: sprite.outlineColor
+      source: sprite.silArt
       opacity: sprite.dragging ? 0.6 : 0.95
     }
-  }
-
-  /// The artwork the outline is stamped from -- it exists to be sampled by the four copies above
-  /// (`layer.enabled` makes it a texture they can source).
-  ///
-  /// ⚠️ VISIBLE, deliberately. It was `visible: false`, and **an invisible item's layer texture is
-  /// never rendered** -- so MultiEffect sampled an empty texture and the silhouette silently drew
-  /// NOTHING. Every sprite showed only its artwork's own black linework, which is exactly
-  /// leadership's *"people and objects layer are like purple but they outline black"*
-  /// (2026-07-18): the purple was never on screen. It sits behind the real PixelImage (declared
-  /// first, same geometry), so being visible costs nothing to the look.
-  Image {
-    id: outlineArt
-    anchors.fill: parent
-    source: sprite.art
-    layer.enabled: true
-    smooth: false
-    mipmap: false
-    fillMode: Image.PreserveAspectFit
   }
 
   PixelImage {

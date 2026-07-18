@@ -152,7 +152,7 @@ Item {
       // scrollbar and the names were clipped. Twilight has now reported this twice, and it is written
       // down in ui-patterns.md as a recurring gotcha, which is exactly what it is.
       ColumnLayout {
-        width: scroller.availableWidth - 16
+        width: scroller.availableWidth - 22
         spacing: 2
 
         // ── 1. SAFE HERE ─────────────────────────────────────────────────────────────────────

@@ -551,6 +551,60 @@ def app_tap(obj: str = "", x: int = -1, y: int = -1, button: str = "left",
 
 
 @mcp.tool()
+def app_hover(obj: str = "", x: int = -1, y: int = -1) -> dict:
+    """Move the POINTER (no button) to an item's centre or a view coordinate --
+    a genuine MouseMove through Qt's delivery. Drives everything hover does:
+    containsMouse, HoverHandler, the map's cell cursor, tab strips appearing,
+    tooltips (hover, wait out the delay, then app_shot to capture one)."""
+    cmd: dict = {"cmd": "hover"}
+    if obj:
+        cmd["obj"] = obj
+    else:
+        if x < 0 or y < 0:
+            return {"error": "give obj or x+y"}
+        cmd["x"], cmd["y"] = x, y
+    return _tcp(cmd)
+
+
+@mcp.tool()
+def app_drag(obj: str = "", x: int = -1, y: int = -1,
+             tobj: str = "", tx: int = -1, ty: int = -1, steps: int = 12) -> dict:
+    """A REAL drag: press at the source (objectName/path or x+y), interpolated
+    moves with the button held, release at the target (tobj or tx+ty). Drives
+    sprite/warp/sign dragging and the tab proxy-drag exactly as a person would."""
+    cmd: dict = {"cmd": "drag", "steps": steps}
+    if obj:
+        cmd["obj"] = obj
+    elif x >= 0 and y >= 0:
+        cmd["x"], cmd["y"] = x, y
+    else:
+        return {"error": "give obj or x+y for the source"}
+    if tobj:
+        cmd["tobj"] = tobj
+    elif tx >= 0 and ty >= 0:
+        cmd["tx"], cmd["ty"] = tx, ty
+    else:
+        return {"error": "give tobj or tx+ty for the target"}
+    return _tcp(cmd)
+
+
+@mcp.tool()
+def app_scroll(obj: str, to: str = "", y: int = -1) -> dict:
+    """Scroll a panel to a NAMED position: to='top'/'start', 'bottom'/'end', or
+    any objectName inside the content (lands it near the viewport top). Or a raw
+    contentY via y. `obj` may be the ScrollView, the Flickable, or any container
+    -- the first scrollable descendant is used."""
+    cmd: dict = {"cmd": "scroll", "obj": obj}
+    if y >= 0:
+        cmd["y"] = y
+    elif to:
+        cmd["to"] = to
+    else:
+        return {"error": "give to= (top/bottom/objectName) or y="}
+    return _tcp(cmd)
+
+
+@mcp.tool()
 def app_invoke(obj: str, method: str, args: list[str] | None = None) -> dict:
     """Emit any signal / call any slot or Q_INVOKABLE by name (no-arg is the
     always-works case; args pass as QVariant)."""

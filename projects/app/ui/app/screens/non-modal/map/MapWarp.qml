@@ -105,8 +105,11 @@ Item {
     id: chip
     anchors.fill: parent
 
-    color: Qt.alpha(door.layerInk, 0.4)
-    border.width: Math.max(1, Math.round(door.canvas.zoom))
+    // ⚠️ NO FILL (leadership, 2026-07-18: *"Id like the warps and signs to not be filled in
+    // either keeping the solid and dashed color language"*). The line carries everything:
+    // SOLID = movable, and a touch thicker so it reads over four shades of grey.
+    color: "transparent"
+    border.width: Math.max(2, Math.round(1.5 * door.canvas.zoom))
     border.color: area.containsMouse && !door.selected
                     ? "#ffffff" : door.layerInk
     opacity: door.dragging ? 0.65 : 1.0
@@ -124,13 +127,17 @@ Item {
     }
 
     // ⇄. It vanishes when the map is zoomed too far out to draw it legibly -- a glyph rendered at
-    // four pixels is not a glyph, it is noise.
+    // four pixels is not a glyph, it is noise. In the layer's own ink now that the chip has no
+    // fill to sit on (a dark glyph straight over dark artwork disappeared).
     Text {
       anchors.centerIn: parent
       visible: door.canvas.zoom >= 1.5
       text: "⇄"
+      font.bold: true
       font.pixelSize: Math.max(8, Math.round(9 * door.canvas.zoom))
-      color: "#212121"
+      color: door.layerInk
+      style: Text.Outline
+      styleColor: "#99212121"
     }
   }
 

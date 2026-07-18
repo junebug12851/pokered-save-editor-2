@@ -5,11 +5,29 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.43.1-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
+**Version:** `0.43.2-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**);
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
+
+### 🖌️ ROUND 2 — silhouettes REAL (provider-served), strip above the world, harness hands (2026-07-18, `0.43.2-alpha`)
+
+Second live pass + a harness brief. Full story:
+[`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md).
+
+- 🐞 **Silhouettes finally render** — the IMAGE PROVIDER serves them
+  (`image://player/sil/<rrggbb>/…`, plain pixels, every backend) after two shader attempts drew
+  nothing. Verified in the offscreen shots at last: girl purple, player blue, hover-brightened.
+- ⭐ **`MapTabStrip.qml`** — ONE canvas-level strip (z 6) above the objects; boxes stay z 0 under
+  sprites ALWAYS; strip frozen while a tab-drag holds the grab. Tab-drag selects on press + drop
+  (a moved hidden sprite stays as the selected ghost). Warp/sign chips outline-only. Water untabbed.
+  Scrollbar margins (−22). TilesetPanel got revision/editTick (counter slots update). Stock
+  ToolTips purged for MapToolTip (tabs, roll buttons, ZoomMenu).
+- 🤖 **Harness:** `drag` (real press-move-release; `MainWindow::debugDrag`) + `scroll`
+  (top/bottom/named target) verbs; MCP tools `app_hover`/`app_drag`/`app_scroll`. All verified
+  end-to-end this session. Green: `ctest` 92/92. ⏳ Owed: her live pass; one eye on a small view
+  shift during tab-drags seen offscreen.
 
 ### 🎨 THE LAYERS REWORK — one ink table, the Continue view, tab-drag, storage scroll (2026-07-18, `0.43.1-alpha`)
 

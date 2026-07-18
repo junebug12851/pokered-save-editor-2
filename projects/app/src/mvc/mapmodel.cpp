@@ -4669,6 +4669,14 @@ QVariantList MapModel::blockHotspots(quint32 tileLayers) const
         const bool wild = wildLayer
                           && ((layer == MapEngine::LayerGrass) ? grassEnabled() : waterEnabled());
 
+        // ⚠️ WATER GETS NO TAB (leadership, 2026-07-18: *"Water doesnt need a tab on its own,
+        // theres no option to change water in the map like there is grass"*). Grass is a save
+        // fact (`wGrassTile` + the grass encounter table); water's tile identity is the ROM's,
+        // and its encounter table is reachable from the Wild Pokémon panel directly. The Water
+        // OVERLAY still paints (the layer exists); it just doesn't tab every river block.
+        if (layer == MapEngine::LayerWater)
+          continue;
+
         QVariantMap v;
         v["kind"]    = "tileTrait";
         v["ind"]     = int(layer);

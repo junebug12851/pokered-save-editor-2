@@ -197,7 +197,7 @@ Item {
     // underneath it. Here that put the yellow "!" icons (right-anchored on each field's label row)
     // behind the scrollbar. See ui-patterns.md; it is a recurring gotcha and this is the fix.
     ColumnLayout {
-      width: scroller.availableWidth - 16
+      width: scroller.availableWidth - 22
       spacing: 8
 
       // ── Nothing selected: the MAP's own details ───────────────────────────────────────────
@@ -374,24 +374,28 @@ Item {
             }
 
             Button {
+              id: rollBackBtn
               Layout.preferredWidth: 30
               Layout.preferredHeight: 30
               text: "◀"
               font.pixelSize: 10
               onClicked: brg.map.rollBack(-1)
-              ToolTip.visible: hovered
-              ToolTip.delay: 400
-              ToolTip.text: qsTr("Roll this map back one progression stage")
+              MapToolTip {
+                shown: rollBackBtn.hovered
+                text: qsTr("Roll this map back one progression stage")
+              }
             }
             Button {
+              id: rollFwdBtn
               Layout.preferredWidth: 30
               Layout.preferredHeight: 30
               text: "▶"
               font.pixelSize: 10
               onClicked: brg.map.rollForward(-1)
-              ToolTip.visible: hovered
-              ToolTip.delay: 400
-              ToolTip.text: qsTr("Roll this map forward one progression stage")
+              MapToolTip {
+                shown: rollFwdBtn.hovered
+                text: qsTr("Roll this map forward one progression stage")
+              }
             }
           }
 

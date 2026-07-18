@@ -62,6 +62,7 @@
 #include <QStringList>
 #include <QTimer>
 #include <QVariant>
+#include <functional>
 
 #include "../../ui/window/mainwindow.h"
 #include "../bridge/bridge.h"
@@ -431,6 +432,104 @@ QJsonObject execute(const QJsonObject& c)
     where[QStringLiteral("x")] = at.x();
     where[QStringLiteral("y")] = at.y();
     return ok(where);
+  }
+
+  // DRAG -- a genuine press-move-release path through Qt's real event delivery. Both ends accept a
+  // coordinate or a named item's centre:
+  //   {"cmd":"drag","x":100,"y":200,"tx":260,"ty":200}
+  //   {"cmd":"drag","obj":"someItem","tx":260,"ty":200}
+  //   {"cmd":"drag","obj":"a","tobj":"b","steps":16}
+  // What drives sprite/warp/sign drags and the tab proxy-drag from the MCP server (leadership,
+  // 2026-07-18: "Have proper drag and drop support easily by talking to the mcp server").
+  if(cmd == QStringLiteral("drag")) {
+    auto* mw = MainWindow::getInstance();
+    if(mw == nullptr) return err(QStringLiteral("no window"));
+
+    auto point = [&](const QString& objKey, const QString& xKey, const QString& yKey,
+                     bool& okOut) -> QPointF {
+      okOut = true;
+      if(c.contains(objKey)) {
+        auto* item = qobject_cast<QQuickItem*>(findItem(c.value(objKey).toString()));
+        if(item == nullptr) { okOut = false; return {}; }
+        return item->mapToScene(QPointF(item->width() / 2.0, item->height() / 2.0));
+      }
+      if(!c.contains(xKey) || !c.contains(yKey)) { okOut = false; return {}; }
+      return QPointF(c.value(xKey).toDouble(), c.value(yKey).toDouble());
+    };
+
+    bool okFrom = false, okTo = false;
+    const QPointF from = point(QStringLiteral("obj"), QStringLiteral("x"),
+                               QStringLiteral("y"), okFrom);
+    const QPointF to = point(QStringLiteral("tobj"), QStringLiteral("tx"),
+                             QStringLiteral("ty"), okTo);
+    if(!okFrom) return err(QStringLiteral("drag: no source (obj or x/y)"));
+    if(!okTo)   return err(QStringLiteral("drag: no target (tobj or tx/ty)"));
+
+    const int steps = c.contains(QStringLiteral("steps"))
+                        ? c.value(QStringLiteral("steps")).toInt() : 12;
+    if(!mw->debugDrag(from, to, steps))
+      return err(QStringLiteral("drag failed"));
+
+    QJsonObject r;
+    r[QStringLiteral("fromX")] = from.x(); r[QStringLiteral("fromY")] = from.y();
+    r[QStringLiteral("toX")] = to.x();     r[QStringLiteral("toY")] = to.y();
+    return ok(r);
+  }
+
+  // SCROLL -- put a Flickable/ScrollView at a NAMED position, robustly:
+  //   {"cmd":"scroll","obj":"mapStorage/0","to":"top"}       -- or "bottom"
+  //   {"cmd":"scroll","obj":"mapStorage/0","to":"someRow"}   -- an objectName inside the content
+  //   {"cmd":"scroll","obj":"...","y":420}                   -- a raw contentY
+  // `obj` may be the Flickable itself, a ScrollView, or any container -- the first descendant with
+  // a `contentY` is used. (Leadership, 2026-07-18: "properly be able to scroll to a named position
+  // including top and bottom".)
+  if(cmd == QStringLiteral("scroll")) {
+    QObject* node = findItem(c.value(QStringLiteral("obj")).toString());
+    if(node == nullptr) return err(QStringLiteral("no object"));
+
+    // Find the flickable: the node itself, or the first descendant carrying contentY.
+    QQuickItem* flick = nullptr;
+    std::function<void(QObject*)> hunt = [&](QObject* o) {
+      if(flick != nullptr || o == nullptr) return;
+      auto* it = qobject_cast<QQuickItem*>(o);
+      if(it != nullptr && it->property("contentY").isValid()
+         && it->property("contentHeight").isValid()) { flick = it; return; }
+      for(QObject* k : o->children()) hunt(k);
+      if(it != nullptr)
+        for(QQuickItem* k : it->childItems()) hunt(k);
+    };
+    hunt(node);
+    if(flick == nullptr) return err(QStringLiteral("nothing scrollable under that object"));
+
+    const qreal ch = flick->property("contentHeight").toReal();
+    const qreal vh = flick->height();
+    qreal want = 0;
+
+    if(c.contains(QStringLiteral("y"))) {
+      want = c.value(QStringLiteral("y")).toDouble();
+    } else {
+      const QString to = c.value(QStringLiteral("to")).toString();
+      if(to == QStringLiteral("top") || to == QStringLiteral("start")) {
+        want = 0;
+      } else if(to == QStringLiteral("bottom") || to == QStringLiteral("end")) {
+        want = ch - vh;
+      } else {
+        auto* target = qobject_cast<QQuickItem*>(findItem(to));
+        if(target == nullptr) return err(QStringLiteral("no such target: ") + to);
+        // Map the target into CONTENT coordinates: its scene position relative to the
+        // flickable's viewport, plus what is already scrolled off the top.
+        const QPointF inFlick = flick->mapFromItem(target, QPointF(0, 0));
+        want = flick->property("contentY").toReal() + inFlick.y() - 8;
+      }
+    }
+
+    want = qBound<qreal>(0, want, qMax<qreal>(0, ch - vh));
+    flick->setProperty("contentY", want);
+
+    QJsonObject r;
+    r[QStringLiteral("contentY")] = want;
+    r[QStringLiteral("contentHeight")] = ch;
+    return ok(r);
   }
 
   if(cmd == QStringLiteral("reload")) {

@@ -630,6 +630,7 @@
         <file>ui/app/screens/non-modal/map/CharacterCell.qml</file>
         <file>ui/app/screens/non-modal/map/PixelImage.qml</file>
         <file>ui/app/screens/non-modal/map/MapSprite.qml</file>
+        <file>ui/app/screens/non-modal/map/MapTabStrip.qml</file>
         <file>ui/app/screens/non-modal/map/ZoomMenu.qml</file>
         <file>ui/app/screens/non-modal/map/SimWarningDialog.qml</file>
         <file>ui/app/screens/non-modal/map/DetailsPanel.qml</file>

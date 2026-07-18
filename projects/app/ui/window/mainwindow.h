@@ -86,6 +86,11 @@ public:
   /// "hover can't be tested" was wrong.
   bool debugHover(const QPointF& at);
 
+  /// DEBUG harness: a genuine DRAG -- press at @p from, interpolated moves (button held), release
+  /// at @p to -- through Qt's real delivery path, exactly as debugTap/debugHover. What drives the
+  /// canvas's sprite/warp/sign drags and the tab proxy-drag from the MCP server.
+  bool debugDrag(const QPointF& from, const QPointF& to, int steps = 12);
+
   /// DEBUG: open the details editor for party mon @p index (drives the QML
   /// AppWindow.debugOpenPartyDetails). Backs --screen pokemonDetails. @return false
   /// if the item/mon can't be resolved.

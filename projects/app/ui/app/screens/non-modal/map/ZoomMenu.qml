@@ -102,9 +102,12 @@ Item {
     HoverHandler { id: chevHover; cursorShape: Qt.PointingHandCursor }
     TapHandler { onTapped: zoomMenu.openState = !zoomMenu.openState }
 
-    ToolTip.visible: brg.settings.infoBtnPressed && (chevHover.hovered && !zoomMenu.openState)
-    ToolTip.delay: 500
-    ToolTip.text: qsTr("Zoom — the slider, and somewhere to go")
+    // MapToolTip, never the stock ToolTip (the map screen's absolute rule -- MapToolTip.qml).
+    MapToolTip {
+      shown: chevHover.hovered && !zoomMenu.openState
+      delay: 500
+      text: qsTr("Zoom — the slider, and somewhere to go")
+    }
   }
 
   // ── The panel ─────────────────────────────────────────────────────────────────────────────

@@ -237,6 +237,36 @@ bool MainWindow::debugTap(const QPointF& at, int clicks, Qt::MouseButton button)
   return true;
 }
 
+bool MainWindow::debugDrag(const QPointF& from, const QPointF& to, int steps)
+{
+  if(ui.app == nullptr)
+    return false;
+
+  // A drag is press + moves-with-the-button-held + release, delivered through the same real event
+  // path as debugTap. The INTERPOLATED moves matter: every drag handler in the app has a small
+  // "a tiny wobble is not a drag" threshold, and the first move must cross it while later moves
+  // trace a believable path (a single teleporting move skips the preview states the drag exists
+  // to exercise). Events are processed between steps so bindings update as they would live.
+  auto send = [&](QEvent::Type type, const QPointF& at, Qt::MouseButtons buttons) {
+    const QPointF global = ui.app->mapToGlobal(at.toPoint());
+    QMouseEvent ev(type, at, global, Qt::LeftButton, buttons, Qt::NoModifier);
+    QCoreApplication::sendEvent(ui.app, &ev);
+    QCoreApplication::processEvents();
+  };
+
+  steps = qMax(2, steps);
+  send(QEvent::MouseButtonPress, from, Qt::LeftButton);
+  for(int i = 1; i <= steps; i++) {
+    const qreal t = qreal(i) / steps;
+    send(QEvent::MouseMove,
+         QPointF(from.x() + (to.x() - from.x()) * t,
+                 from.y() + (to.y() - from.y()) * t),
+         Qt::LeftButton);
+  }
+  send(QEvent::MouseButtonRelease, to, Qt::NoButton);
+  return true;
+}
+
 bool MainWindow::debugHover(const QPointF& at)
 {
   if(ui.app == nullptr)

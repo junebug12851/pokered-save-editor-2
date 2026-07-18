@@ -109,55 +109,9 @@ Item {
   /// target -- reads THIS, never the raw list, so a hidden layer can never be reached by accident.
   readonly property var spots: hot.block.spots.filter(s => hot.activeKinds.indexOf(s.kind) >= 0)
 
-  /// Is the cursor in this block? Read from the canvas's ONE HoverHandler, never from a MouseArea
-  /// of our own.
-  ///
-  /// ⚠️ This is the flicker fix. A per-block `MouseArea` cannot host this test, because the tab
-  /// strip is a CHILD of the block and **a child MouseArea steals hover from its parent**: strip
-  /// appears → takes the hover → parent goes false → strip hides → parent true → … at frame rate.
-  /// *"the tabs when moused over glitch on and off rapidly"*. The canvas's HoverHandler stays
-  /// hovered over children, so there is no loop to enter. @see MapCanvas.hoverBlockX
-  ///
-  /// ⭐ ...and the strip WITHDRAWS when the pointer is on a movable object in this very cell
-  /// (*"the cell tabs go away when mousing over a moveable item"*). Point at the thing and you get
-  /// the thing — its own outline, ready to drag. Point at the cell around it and you get the cell's
-  /// tabs. Your cursor says which you meant, so nothing has to guess.
-  /// Unless it fills the cell, in which case the tabs are the only way in and must stay.
-  /// @see MapCanvas.hoverMovable
-  readonly property bool showTabs: hot.canvas.hoverBlockX === hot.block.blockX
-                                   && hot.canvas.hoverBlockY === hot.block.blockY
-                                   && !(hot.canvas.hoverMovable === hot.blockKey
-                                        && !hot.canvas.hoverMovableFullCell)
-
-  readonly property string blockKey: hot.block.blockX + "," + hot.block.blockY
-
-  /// The tab the cursor is on, or -1. Hovering a tab LIGHTS ITS OWN SPOT on the map -- which is the
-  /// answer to *"nothing comes up when i mouse over a square"*: a strip of coloured dots means
-  /// nothing until you can see which one is which. This is also the "everything overlapping is
-  /// accessible under mouseover" rule made real: run the cursor down the strip and each thing in
-  /// the cell announces itself in turn, however buried it is.
-  property int hoveredSpot: -1
-
-  /// The tile-based family (8x8 tile TRAITS) and the walk-grid family, told apart by the spot's own
-  /// unit. The gap between them is the whole point of the split, and the unit is what defines it --
-  /// which is exactly why `blockHotspots` carries a unit per spot.
-  readonly property var tileSpots: hot.spots.filter(s => s.unit === "tile")
-  readonly property var gridSpots: hot.spots.filter(s => s.unit !== "tile")
-
-  /// ⭐ EVERY block with anything on it gets tabs. ALWAYS. No threshold, no exception.
-  ///
-  /// > *"Mousing over things nothing comes up no tabs on water or sprites or anything ... theres no
-  /// >  standardixation"* -- Fairy Fox, 2026-07-17
-  ///
-  /// The first cut only tabbed a block with **more than one** spot, reasoning that "a strip of one
-  /// disambiguates nothing". That rule was mine, not hers, and it was wrong for the reason she
-  /// gives: it makes the map answer *differently depending on what you point at*. A block with two
-  /// things was interactive; the water block beside it was dead. That is not a simplification, it
-  /// is an inconsistency — and an inconsistent map is unlearnable, however tidy each half looks.
-  ///
-  /// One tab per thing, everywhere, is the standard. It also costs nothing: a block with one thing
-  /// shows one small square, which is exactly as much furniture as that block's content deserves.
-  readonly property bool tabbed: hot.spots.length > 0
+  // (The hovered-tab state and THE TAB STRIP ITSELF live on the CANVAS now -- `canvas.litSpot` +
+  //  MapTabStrip.qml -- so the tabs can stack above the objects while these boxes stay under
+  //  them. A child cannot out-stack its parent's siblings; splitting them was the only shape.)
 
   // A block whose every spot belongs to a switched-off layer is not a block with nothing on it --
   // it is a block you asked not to see. Either way it draws nothing.
@@ -169,12 +123,14 @@ Item {
   width: hot.block.rectW * hot.canvas.zoom
   height: hot.block.rectH * hot.canvas.zoom
 
-  // ⭐ AT REST, UNDER the real objects (a box annotates a thing, it must never cover it --
-  // leadership, 2026-07-18: *"these boxes often render in front of the sprites looking bad"*).
-  // ON HOVER, above them: the tab strip is the way IN to a crowded cell, and a handle you cannot
-  // reach is no handle. The objects sit at z 1; this flips past them only for the block the
-  // cursor is actually in.
-  z: hot.showTabs ? 3 : 0
+  // ⭐ ALWAYS under the real objects (leadership, 2026-07-18: *"sprites should always be shown …
+  // Player and people objects are at the top"*). A box annotates a thing; it never covers it —
+  // and there is NO hover exception any more: the first cut raised the whole block (boxes and
+  // all) over the sprites while hovered, which put a box across a character's face at exactly
+  // the moment you were looking at him. The TABS still need to be above everything, and a child
+  // cannot out-stack its parent's siblings — so the strip lives at CANVAS level now, one for the
+  // whole map, following the hovered cell. @see MapTabStrip.qml
+  z: 0
 
   /// The spot's ink -- carried BY the spot, from the model, out of the ONE canonical table
   /// (MapEngine::ink; tile traits wear their own overlay layer's swatch). This component used to
@@ -308,9 +264,9 @@ Item {
       /// Is the save currently switching this object OFF? (Only a filter flag can be.)
       readonly property bool dashed: hot.isHidden(modelData)
 
-      /// Is the cursor on this spot's tab? Then say which one you mean.
-      readonly property bool lit: hot.hoveredSpot >= 0
-                                 && hot.spots[hot.hoveredSpot] === spotItem.modelData
+      /// Is the cursor on this spot's tab? Then say which one you mean. (The strip lives on the
+      /// canvas now, so the lit spot does too. Same JS object identity: both read storageBlocks.)
+      readonly property bool lit: hot.canvas.litSpot === spotItem.modelData
 
       x: (modelData.extX - hot.block.rectX) * hot.canvas.zoom
       y: (modelData.extY - hot.block.rectY) * hot.canvas.zoom
@@ -409,179 +365,17 @@ Item {
     }
   }
 
-  // ── The TAB STRIPS -- square colour tabs, and the two families sit on OPPOSITE SIDES ───────
+  // ── The TAB STRIP moved OUT (2026-07-18) ────────────────────────────────────────────────
   //
-  // > *"there is a gap in the tabs to seperate the tile-based tabs and non-tile-based tabs. door
-  // >  and warp tile traits would be an example of tile tabs seperated from non-tile tabs like
-  // >  filter flags or script locations or coord ranges these would be the tab tags on the left"*
-  // > ...and, when the first cut put both on the left with a gap between them:
-  // > *"i said the tile traits go right not left i said the non tile traits go left"*
-  //
-  // So the separation is a SIDE, not a gap in one column: **non-tile tabs LEFT, tile traits
-  // RIGHT**. Which reads well -- the two families can never be mistaken for one strip, and you
-  // always know which side to look at for which kind.
-
-  /// ONE strip, along the block's TOP edge. @see the standard at the top of this file (rule 4).
-  ///
-  /// ⚠️ ONLY ON MOUSEOVER. *"the tabs are supposed to be on the top and only on mouseover"*. A tab
-  /// per thing per block, shown always, dotted the whole map with furniture — every water block wore
-  /// a permanent square. Tabs are how you REACH a crowded spot, so they belong to the moment you are
-  /// pointing at one. The map is the point; the handles arrive when your hand does.
-  ///
-  /// It sits INSIDE the block's top edge, not above it. If it floated outside, moving the cursor
-  /// from the block to the strip would leave the block, the strip would vanish, and the tabs would
-  /// be permanently unreachable — a thing that hides exactly when you reach for it.
-  Row {
-    id: strip
-    visible: hot.tabbed && hot.showTabs
-    spacing: 1
-    x: 1
-    y: 1
-    z: 3   // above the outlines AND the objects: a tab must always be reachable
-
-    // Fade rather than blink: the strip is following the cursor, and a hard cut reads as a glitch.
-    opacity: hot.showTabs ? 1 : 0
-    Behavior on opacity { NumberAnimation { duration: 60 } }
-
-    // NON-TILE first: the walk grid (16x16) -- people, doors, signs, filter flags, scripts,
-    // buried items, event flags.
-    Repeater { model: hot.gridSpots; delegate: tabDelegate }
-
-    // THE GAP: it splits the two families, and the split is the UNIT. Only present when both
-    // families are here to be told apart.
-    Item {
-      visible: hot.tileSpots.length > 0 && hot.gridSpots.length > 0
-      height: 1
-      width: Math.max(4, Math.round(4 * hot.canvas.zoom))
-    }
-
-    // TILE TRAITS last, on the RIGHT: the 8x8 family -- grass, water, doors, warp tiles, counters.
-    Repeater { model: hot.tileSpots; delegate: tabDelegate }
-  }
-
-  Component {
-    id: tabDelegate
-
-    Rectangle {
-      id: tab
-      required property var modelData
-
-      readonly property bool hovered: tabHit.containsMouse
-
-      // Big enough to actually hit: a 5px square at 1x is a dare, not a target.
-      width: Math.max(7, Math.round(6 * hot.canvas.zoom))
-      height: width
-      radius: 1
-      color: hot.inkOf(modelData)
-      border.width: 1
-      // Hovering lifts the tab out of the strip: a white ring, so it reads on every one of the
-      // seven inks and on all four shades of Game Boy grey underneath.
-      border.color: tab.hovered ? "#ffffff" : Qt.darker(color, 1.6)
-      scale: tab.hovered ? 1.35 : 1.0
-      Behavior on scale { NumberAnimation { duration: 60 } }
-      // A tab for a switched-off object is hollow -- the same language the box itself speaks.
-      opacity: hot.isHidden(modelData) ? 0.45 : 1.0
-
-      // A MouseArea, never a PointerHandler -- a TapHandler fires THROUGH a floating panel, which
-      // cost a whole review round once. See notes/reference/qt-patterns.md (top of file).
-      MouseArea {
-        id: tabHit
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: tabHit.tabDragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor
-        // Keep the drag: without this the Flickable steals it and pans the map instead.
-        preventStealing: true
-        // Tell the block which spot is under the cursor, so ITS box lights up on the map. Hovering
-        // a dot must point at something, or the strip is just decoration.
-        onEntered: {
-          hot.hoveredSpot = hot.spots.indexOf(tab.modelData);
-          // Tell the GROUND to stand down: its TapHandler runs before this MouseArea ever sees a
-          // press, and takes no grab, so without this the ground eats every tab click.
-          // @see MapCanvas.overTab
-          hot.canvas.overTab = true;
-        }
-        onExited: {
-          if (hot.spots[hot.hoveredSpot] === tab.modelData)
-            hot.hoveredSpot = -1;
-          hot.canvas.overTab = false;
-        }
-
-        // ── ⭐ A MOVABLE spot's tab is a DRAG HANDLE, not just a button ──────────────────────
-        //
-        // Leadership, 2026-07-18: *"dragging a tab doesnt work either you have to drag the sprite
-        // itself which isnt what i wanted"* -- and the interaction model always said the tabs can
-        // be clicked AND dragged. Pull a movable spot's tab and the OBJECT moves, previewing live
-        // through the canvas's proxy-drag state, committing through the same byte-exact move the
-        // object's own drag uses. A buried object is therefore never undraggable: its tab is
-        // always on top. Fixed spots (scripts, flags, pickups) have nowhere to be dragged to, so
-        // their tabs stay click-only.
-        property point press
-        property bool tabDragging: false
-
-        onPressed: (m) => { tabHit.press = Qt.point(m.x, m.y); }
-
-        onPositionChanged: (m) => {
-          if (!tabHit.pressed || !hot.isMovable(tab.modelData.kind))
-            return;
-          if (!tabHit.tabDragging
-              && Math.abs(m.x - tabHit.press.x) < 4 && Math.abs(m.y - tabHit.press.y) < 4)
-            return;   // a tiny wobble on a click is not a drag
-          tabHit.tabDragging = true;
-          const g = tabHit.mapToGlobal(m.x, m.y);
-          const p = hot.canvas.tileAtGlobal(g.x, g.y);
-          hot.canvas.proxyUpdate(tab.modelData.kind, tab.modelData.ind, p.x, p.y);
-        }
-
-        // A drag is not a click: clicked() still fires after our hand-rolled drag (MouseArea only
-        // suppresses it for ITS OWN drag machinery), so the release notes it and clicked() skips.
-        property bool didDrag: false
-
-        onReleased: {
-          if (tabHit.tabDragging) {
-            tabHit.tabDragging = false;
-            tabHit.didDrag = true;
-            hot.canvas.proxyCommit();
-          }
-        }
-        onCanceled: {
-          tabHit.tabDragging = false;
-          tabHit.didDrag = false;
-          hot.canvas.proxyCancel();
-          hot.canvas.overTab = false;
-        }
-
-        // ⚠️ NEVER disabled. This used to read `enabled: modelData.section !== ""` -- and since tile
-        // traits carried section "", that single line switched OFF hover, tooltip AND click for
-        // water and grass, i.e. most of a water route. A disabled MouseArea is not a quiet tab; it
-        // is a hole in the map. Every kind now has a real destination, so every tab is live.
-        onClicked: {
-          if (tabHit.didDrag) {   // that was a drag ending, not a click
-            tabHit.didDrag = false;
-            return;
-          }
-          hot.spotClicked(modelData.kind, modelData.section, modelData.ind);
-        }
-
-        // ⚠️ ONE SHORT LINE. A tab is a 5-pixel square, and the first cut hung a paragraph off it --
-        // the name, the state, the whole description, a caution, and an instruction. Twilight:
-        // *"a very dark and extremely large tooltip filled with tons of text comes up ... the
-        // tooltips are awful cant read them and way too much reading"*. She was right: a tooltip on
-        // a dot is a LABEL, not a page. It answers "what is this?" in a glance and nothing else --
-        // the full story is one click away in the panel, which is where prose belongs.
-        //
-        // No "Click to open in Map Storage" either: the cursor is already a pointing hand, so the
-        // line spent saying it is a line that tells you what you can already see.
-        ToolTip.visible: containsMouse
-        ToolTip.delay: 200
-        ToolTip.text: hot.labelOf(modelData)
-      }
-    }
-  }
+  // It lives at CANVAS level now -- MapTabStrip.qml, one strip for the whole map, following
+  // the hovered cell -- so the tabs can stack ABOVE the objects while these boxes stay UNDER
+  // them (leadership: "sprites should always be shown ... Player and people objects are at the
+  // top"). A child cannot out-stack its parent's siblings, so the split is structural.
 
   // ⚠️ NO MouseArea here, and that is deliberate on two counts.
   //
   // 1. It cannot host the hover test -- the tab strip is its child, and a child MouseArea steals
-  //    hover from its parent, which is the flicker. @see showTabs.
+  //    hover from its parent, which is the flicker. @see MapTabStrip.qml.
   // 2. It must not accept presses: this item spans a whole block, and an invisible grid that
   //    swallowed clicks would break dragging everywhere on the canvas.
   //

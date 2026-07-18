@@ -239,7 +239,7 @@ Item {
 
         ColumnLayout {
           // Reserve the scrollbar's lane. (The recurring gotcha -- ui-patterns.md.)
-          width: scroller.availableWidth - 16
+          width: scroller.availableWidth - 22
           spacing: 2
 
           Repeater {

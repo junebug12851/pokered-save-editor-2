@@ -150,6 +150,10 @@ Item {
     else if (k === "sprite") brg.map.moveNpc(i, x, y);
     else if (k === "warp")   brg.map.moveWarp(i, x, y);
     else if (k === "sign")   brg.map.moveSign(i, x, y);
+    // The drop SELECTS what it moved -- so a filter-hidden sprite (Prof. Oak, dragged out by his
+    // tab) lands as the visible selected ghost instead of disappearing back into hiding, which is
+    // exactly what leadership hit on the first cut ("disapeared when dropped").
+    canvasRoot.selectSpot(k, i);
   }
 
   function proxyCancel() {
@@ -499,6 +503,22 @@ Item {
   /// overlaps.
   property string hoverMovable: ""
   property bool hoverMovableFullCell: false
+
+  /// The spot whose TAB the cursor is on (an entry of a storageBlocks `spots[]`), or null. Set by
+  /// MapTabStrip; the hotspot boxes read it to light exactly their own outline.
+  property var litSpot: null
+
+  /// Select the object a spot points at -- the shared half of "a tab is a handle": both a tab
+  /// CLICK and a tab DRAG's drop select, so a filter-hidden sprite stays visible (the selected
+  /// ghost) instead of vanishing the moment it lands. Fixed kinds have nothing to select.
+  function selectSpot(kind, ind) {
+    if (kind === "sprite" || kind === "player")
+      canvasRoot.selectedNpc = ind;
+    else if (kind === "warp")
+      canvasRoot.selectedWarp = ind;
+    else if (kind === "sign")
+      canvasRoot.selectedSign = ind;
+  }
 
   /// Which storage kinds the Layers panel is currently showing -- what the tab strip is allowed to
   /// tab. *"the tab strip only needs to have tabs based on the active layers"* (Fairy Fox).
@@ -1137,7 +1157,7 @@ Item {
       // never cover it. A box with nothing on top of it is not a gap -- it is the save hiding that
       // object, which is what the dashes say. @see notes/plans/map-screen.md -> Phase 16f
       Repeater {
-        model: canvasRoot.flagBoxes   // ROM-derived: no `revision` dependency, and it must not have one
+        model: canvasRoot.flagBoxes
 
         delegate: MapBlockHotspot {
           required property var modelData
@@ -1145,26 +1165,23 @@ Item {
           canvas: canvasRoot
           block: modelData
           activeKinds: canvasRoot.activeStorageKinds
+        }
+      }
 
-          // ⚠️ A tab must SELECT the thing it points at, not merely open a panel.
-          //
-          // THIS was the real fault behind *"other color tabs around sprites that are yellow looking
-          // and when clicking on them they take you to the sprite details page so why is it that
-          // color"*. The colour was right all along -- yellow IS the Warps layer -- but clicking the
-          // door's tab only *opened* the Details panel without selecting the door, so the panel went
-          // on showing whatever was selected before (the sprite). A yellow tab appeared to open a
-          // sprite's page. Not a colour bug at all: a selection bug wearing a colour's clothes.
-          onSpotClicked: (kind, section, ind) => {
-            // Select first, THEN open -- so the editor opens on the thing you actually clicked.
-            if (kind === "sprite" || kind === "player")
-              canvasRoot.selectedNpc = ind;
-            else if (kind === "warp")
-              canvasRoot.selectedWarp = ind;
-            else if (kind === "sign")
-              canvasRoot.selectedSign = ind;
+      // ⭐ THE tab strip -- ONE, at canvas level, above the objects (z 6), following the hovered
+      // cell. It moved out of MapBlockHotspot so the boxes can stay UNDER the sprites while the
+      // tabs stay reachable ABOVE them (leadership, 2026-07-18: sprites always on top; a child
+      // cannot out-stack its parent's siblings). @see MapTabStrip.qml
+      //
+      // ⚠️ A tab must SELECT the thing it points at, not merely open a panel -- clicking a door's
+      // tab used to open the Details panel still showing the previously-selected sprite, which
+      // read as "the yellow tab opens the sprite's page". Select first, THEN open.
+      MapTabStrip {
+        canvas: canvasRoot
 
-            canvasRoot.storageRequested(section, ind);
-          }
+        onSpotClicked: (kind, section, ind) => {
+          canvasRoot.selectSpot(kind, ind);
+          canvasRoot.storageRequested(section, ind);
         }
       }
 
