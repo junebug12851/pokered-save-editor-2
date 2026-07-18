@@ -21,7 +21,26 @@ Extractor: `scripts/extract_map_storage_locations.py` → `tmp/event-flags/stora
 | **Hidden coins** | `0x29AA` | **YES** — its own coord row | **Exact.** bit *i* == row *i*. **12** |
 | **Scripts** | `0x289C` (step) | **SOMETIMES** — when they test coords | **99 tiles / 37 ranges**, across **42** files |
 | **Event flags** | `0x29F3` | **NO — and this is the finding** | reachable only *through* a script |
+| **In-game trades** | `0x29E3` | **9 of 10** — the trader's own tile | **Exact.** (map id, text id) → trade. 1 unused, **no coords** → General. [`in-game-trades.md`](in-game-trades.md) |
+| **Town visited** | `0x29B7` | **YES** — the whole town | **Exact.** bit *i* == **map id** *i*. **11**. A map, not a tile. [`town-visited.md`](town-visited.md) |
+| **The rods** | `0x29D4` b3-5 | **YES** — the Fishing Guru's tile | **Exact.** 3 bits, 3 houses. [`world-completed.md`](world-completed.md) |
+| **Saffron guards** | `0x29D4` b6 | **YES** — each gate's guard | **Exact**, and **one bit on 4 maps** (shared) |
+| **Lapras / starter** | `0x29DA` b0/b3 | **YES** — the giver's tile | Lapras: Silph 7F (1,5). Starter: Oak's Lab **+ read on Red's House 1F** (shared) |
+| **Ever met a nurse** | `0x29DA` b2 | ⚠️ **every Poké Center's nurse** | written by the **engine**, not a map script — ~10+ maps, one bit. Placement **undecided** |
+| **Started the Elite 4** | `0x29E0` b1 | **NO** — set on **map load** | belongs to Lorelei's Room + the Lobby; **no x/y, no box** |
 | Boulder switches, spin tiles, … | various | **YES**, but their own readers | **11 files** — not yet extracted |
+
+**The two GROUP kinds, and they are orthogonal** (leadership, 2026-07-17). Getting these confused is
+how a group ends up lying about what it contains:
+
+| Kind | Means | Affords | Members so far |
+|---|---|---|---|
+| **Shared** *(shipped)* | **ONE bit**, on **several map pages** | the same switch, wherever it's relevant | Silph Co's flags (12 floors) · **Saffron guards** (4 gates) · **the starter** (2 maps) · **ever met a nurse** (every Poké Center) |
+| **Alike** *(new)* | **DIFFERENT bits**, the **same kind of thing**, one per place | **view the whole group at once** · **check / uncheck all** | **Towns** (11) · **Trades** (10) · **Hidden items** (54) · **Hidden coins** (12) · **Fishing rods** (3) |
+
+⚠️ **Hidden items and coins are TWO alike groups, never one** (leadership, 2026-07-17) — the same
+ruling as §2c, for the same reason: separate save arrays (`0x299C` / `0x29AA`), independent numbering
+from 0, so a merged group makes an entry's bit ambiguous.
 
 ## 1. Event flags have NO location — stop looking for one
 
