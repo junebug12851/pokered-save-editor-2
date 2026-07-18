@@ -255,7 +255,7 @@ void TestWorld::completed_roundTrip()
   auto* c = sf.dataExpanded->world->completed;
   c->obtainedOldRod = true;  c->obtainedGoodRod = false; c->obtainedSuperRod = true;
   c->obtainedLapras = true;  c->obtainedStarterPokemon = false;
-  c->everHealedPokemon = true; c->satisfiedSaffronGuards = false; c->defeatedLorelei = true;
+  c->everHealedPokemon = true; c->satisfiedSaffronGuards = false; c->startedElite4 = true;
 
   sf.flattenData(); sf.expandData();
 
@@ -267,7 +267,7 @@ void TestWorld::completed_roundTrip()
   QCOMPARE(c2->obtainedStarterPokemon, false);
   QCOMPARE(c2->everHealedPokemon, true);
   QCOMPARE(c2->satisfiedSaffronGuards, false);
-  QCOMPARE(c2->defeatedLorelei, true);
+  QCOMPARE(c2->startedElite4, true);
 }
 
 void TestWorld::hidden_roundTrip()

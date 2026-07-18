@@ -63,8 +63,8 @@ void WorldCompleted::load(SaveFile* saveFile)
   obtainedStarterPokemon = toolset->getBit(0x29DA, 1, 3);
   obtainedStarterPokemonChanged();
 
-  defeatedLorelei = toolset->getBit(0x29E0, 1, 1);
-  defeatedLoreleiChanged();
+  startedElite4 = toolset->getBit(0x29E0, 1, 1);
+  startedElite4Changed();
 }
 
 void WorldCompleted::save(SaveFile* saveFile)
@@ -78,7 +78,7 @@ void WorldCompleted::save(SaveFile* saveFile)
   toolset->setBit(0x29DA, 1, 0, obtainedLapras);
   toolset->setBit(0x29DA, 1, 2, everHealedPokemon);
   toolset->setBit(0x29DA, 1, 3, obtainedStarterPokemon);
-  toolset->setBit(0x29E0, 1, 1, defeatedLorelei);
+  toolset->setBit(0x29E0, 1, 1, startedElite4);
 }
 
 void WorldCompleted::reset()
@@ -104,8 +104,8 @@ void WorldCompleted::reset()
   obtainedStarterPokemon = false;
   obtainedStarterPokemonChanged();
 
-  defeatedLorelei = false;
-  defeatedLoreleiChanged();
+  startedElite4 = false;
+  startedElite4Changed();
 }
 
 // For now mark these as false, randomize wants you to play a random game
