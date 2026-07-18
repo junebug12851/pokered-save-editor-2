@@ -328,6 +328,25 @@ Page {
         // The dock's Loader is synchronous, so the panel exists by the time the next line runs; the
         // guard is for a panel that hasn't grown a reveal().
         onStorageRequested: (section, ind) => {
+          // ⭐ ONE gesture, routed by the spot's own declared destination -- so clicking anything on
+          // the canvas lands you where that thing actually lives, and the map answers the same way
+          // everywhere. Twilight: *"clicking water doesnt even bring up wild mons it should at least
+          // have that ... have proper standardization"*.
+          //
+          // The spot says where it belongs; this just obeys. Adding the next storage kind means
+          // giving its spot a section, not another branch here.
+          if (section === "wild") {
+            leftDock.open = "wild";       // grass/water -> the encounter tables they really are
+            return;
+          }
+          if (section === "tiles") {
+            rightDock.open = "tiles";     // a tile trait is a TILESET fact -- open the tileset
+            return;
+          }
+          if (section === "details") {
+            leftDock.open = "details";    // a person, a door, a sign -> its own editor
+            return;
+          }
           rightDock.open = "storage";
           const p = rightDock.panelItem;
           if (p && p.reveal)

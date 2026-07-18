@@ -88,8 +88,20 @@ Item {
   readonly property var tileSpots: hot.spots.filter(s => s.unit === "tile")
   readonly property var gridSpots: hot.spots.filter(s => s.unit !== "tile")
 
-  /// Tabs appear only when there is more than one thing here to tell apart.
-  readonly property bool tabbed: hot.spots.length > 1
+  /// ⭐ EVERY block with anything on it gets tabs. ALWAYS. No threshold, no exception.
+  ///
+  /// > *"Mousing over things nothing comes up no tabs on water or sprites or anything ... theres no
+  /// >  standardixation"* -- Fairy Fox, 2026-07-17
+  ///
+  /// The first cut only tabbed a block with **more than one** spot, reasoning that "a strip of one
+  /// disambiguates nothing". That rule was mine, not hers, and it was wrong for the reason she
+  /// gives: it makes the map answer *differently depending on what you point at*. A block with two
+  /// things was interactive; the water block beside it was dead. That is not a simplification, it
+  /// is an inconsistency — and an inconsistent map is unlearnable, however tidy each half looks.
+  ///
+  /// One tab per thing, everywhere, is the standard. It also costs nothing: a block with one thing
+  /// shows one small square, which is exactly as much furniture as that block's content deserves.
+  readonly property bool tabbed: hot.spots.length > 0
 
   // A block whose every spot belongs to a switched-off layer is not a block with nothing on it --
   // it is a block you asked not to see. Either way it draws nothing.
@@ -116,6 +128,11 @@ Item {
       case "hiddenItem":  return "#cc79a7";  // Hidden items -- reddish purple
       case "hiddenCoin":  return "#f0e442";  // Hidden coins -- yellow
       case "tileTrait":   return "#999999";  // Tile traits -- the quiet family
+      // The movable objects wear their OWN component's colour, so a tab is visibly the same thing
+      // as the chip it points at: People & objects pink, Warps yellow, Signs orange.
+      case "sprite":      return "#cc79a7";
+      case "warp":        return "#f0e442";
+      case "sign":        return "#e69f00";
     }
     return "#009e73";
   }
@@ -157,6 +174,12 @@ Item {
       case "cardKeyDoor":
         return qsTr("Card Key door");
       case "tileTrait":
+        // Grass and water are not scenery: they are WHERE THE WILD POKÉMON ARE, and that table is
+        // editable. Say so, because "Grass" alone reads like a label and this is a link.
+        return (spot.section === "wild") ? qsTr("%1 — wild Pokémon").arg(spot.name) : spot.name;
+      case "sprite":
+      case "warp":
+      case "sign":
         return spot.name;
     }
     return spot.name;
@@ -208,8 +231,14 @@ Item {
   // their tiles at its true 8x8, in the layer's own colour -- so a box here would be a second
   // answer to a question already answered, and one that has to agree with the first forever. Their
   // tab is a handle; the overlay is the highlight.
+  //
+  // ⚠️ `hilite: false` spots draw NOTHING here either -- the movable objects (people, doors, signs)
+  // have their own components, which already draw and drag them. A second outline from this layer
+  // would be two answers to one question, and they would have to agree forever. They are in the
+  // model to be REACHABLE (a tab), not to be redrawn.
   readonly property var ownSpots: hot.spots.filter(s =>
       s.kind !== "tileTrait"
+      && s.hilite !== false
       && Math.floor(s.extX / 32) === hot.block.blockX
       && Math.floor(s.extY / 32) === hot.block.blockY)
 
@@ -390,11 +419,22 @@ Item {
         cursorShape: Qt.PointingHandCursor
         // Tell the block which spot is under the cursor, so ITS box lights up on the map. Hovering
         // a dot must point at something, or the strip is just decoration.
-        onEntered: hot.hoveredSpot = hot.spots.indexOf(tab.modelData)
-        onExited: if (hot.spots[hot.hoveredSpot] === tab.modelData) hot.hoveredSpot = -1
-        // A tile trait is a TILESET fact with no Map Storage row to open; its tab is a label and a
-        // hover target, not a link. Saying so by not pretending to be clickable.
-        enabled: modelData.section !== ""
+        onEntered: {
+          hot.hoveredSpot = hot.spots.indexOf(tab.modelData);
+          // Tell the GROUND to stand down: its TapHandler runs before this MouseArea ever sees a
+          // press, and takes no grab, so without this the ground eats every tab click.
+          // @see MapCanvas.overTab
+          hot.canvas.overTab = true;
+        }
+        onExited: {
+          if (hot.spots[hot.hoveredSpot] === tab.modelData)
+            hot.hoveredSpot = -1;
+          hot.canvas.overTab = false;
+        }
+        // ⚠️ NEVER disabled. This used to read `enabled: modelData.section !== ""` -- and since tile
+        // traits carried section "", that single line switched OFF hover, tooltip AND click for
+        // water and grass, i.e. most of a water route. A disabled MouseArea is not a quiet tab; it
+        // is a hole in the map. Every kind now has a real destination, so every tab is live.
         onClicked: hot.spotClicked(modelData.section, modelData.ind)
 
         // ⚠️ ONE SHORT LINE. A tab is a 5-pixel square, and the first cut hung a paragraph off it --
@@ -413,22 +453,35 @@ Item {
     }
   }
 
-  // ── The block's own hit target ─────────────────────────────────────────────────────────────
+  // ── The block's own hover ──────────────────────────────────────────────────────────────────
   //
-  // Only when there is exactly ONE spot here: then the whole cell opens it, which is the plain-box
-  // behaviour from before. With several, the tabs are how you say WHICH -- a cell that guessed for
-  // you would be picking one of them behind your back.
+  // HOVER ONLY. It never clicks, and it never blocks: `acceptedButtons: Qt.NoButton` lets every
+  // press fall straight through to whatever is really under the cursor -- the sprite, the door, the
+  // canvas's own drag. That matters, because this area covers the WHOLE map now, and a hit target
+  // that swallowed clicks would have broken dragging everywhere. Twilight: *"Clicking on things too
+  // is often buggy or glitchy"* -- an invisible grid stealing presses is exactly how that feels.
+  //
+  // ⚠️ It also used to be `enabled:` only for a single-spot block with a section, which meant the
+  // block under your cursor usually wasn't listening at all. Now: if there is anything here, hover
+  // says so. CLICKING is the tabs' job, uniformly -- a cell that guessed which of several things
+  // you meant would be choosing behind your back.
   MouseArea {
     id: hit
     anchors.fill: parent
     hoverEnabled: true
-    enabled: !hot.tabbed && hot.spots.length === 1 && hot.spots[0].section !== ""
-    cursorShape: Qt.PointingHandCursor
-    onClicked: hot.spotClicked(hot.spots[0].section, hot.spots[0].ind)
+    enabled: hot.spots.length > 0
+    acceptedButtons: Qt.NoButton   // hover only -- never steal a press
+    z: -1                          // and never sit above the things it describes
+  }
 
-    // One short line, same rule as the tabs. @see labelOf
-    ToolTip.visible: hit.containsMouse && hit.enabled
-    ToolTip.delay: 400
-    ToolTip.text: hot.spots.length === 1 ? hot.labelOf(hot.spots[0]) : ""
+  /// The whole cell tints while the cursor is in it, so you can SEE which block's strip you are
+  /// reading. Without this a strip of dots floats next to nothing in particular.
+  Rectangle {
+    anchors.fill: parent
+    visible: hit.containsMouse
+    color: "#18ffffff"
+    border.width: 1
+    border.color: "#40ffffff"
+    z: -1
   }
 }

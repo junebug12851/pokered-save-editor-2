@@ -1089,9 +1089,32 @@ void TestMap::hotspots_tileTraitsOnlyWhenTheirLayerIsShown()
   for (const QVariant& v : doors) {
     const QVariantMap m = v.toMap();
     QCOMPARE(m["unit"].toString(), QStringLiteral("tile"));  // 8x8 -- the genuinely tile-sized one
-    // A tile trait is a TILESET fact, not save storage -- it has no Map Storage row to open.
-    QCOMPARE(m["section"].toString(), QString());
+    // A door TRAIT is a tileset fact -> it opens the Tileset panel.
+    QCOMPARE(m["section"].toString(), QStringLiteral("tiles"));
   }
+
+  // ⭐ EVERY SPOT HAS A REAL DESTINATION -- and this line used to assert the exact opposite
+  // (`section == ""` for a tile trait, "it has no Map Storage row to open"). That empty string was
+  // not a harmless label: the tab AND the block's hit area were `enabled:` only when a section
+  // existed, so it switched water and grass **completely off** -- no hover, no tooltip, no click --
+  // across most of a water route. Twilight: *"clicking water doesnt even bring up wild mons"*.
+  //
+  // Grass and water open the WILD POKÉMON panel, because that is what they are: where the wild
+  // Pokémon live, and that table is editable. Nothing on the canvas is a label you can only look at.
+  const QVariantList grassSpots =
+      filterSpots(model.blockHotspots(MapEngine::LayerGrass), QStringLiteral("tileTrait"));
+  QVERIFY(!grassSpots.isEmpty());
+  for (const QVariant& v : grassSpots)
+    QCOMPARE(v.toMap()["section"].toString(), QStringLiteral("wild"));
+
+  // The rule, over every kind at once: a spot with no destination is a hole in the map.
+  const QVariantList all = model.blockHotspots(MapEngine::LayerGrass | MapEngine::LayerWater
+                                               | MapEngine::LayerDoors | MapEngine::LayerCounters);
+  for (const QVariant& b : all)
+    for (const QVariant& s : b.toMap()["spots"].toList())
+      QVERIFY2(!s.toMap()["section"].toString().isEmpty(),
+               qPrintable(QString("spot '%1' (%2) has no destination -- it would be inert")
+                            .arg(s.toMap()["name"].toString(), s.toMap()["kind"].toString())));
 
   // ⚠️ ONE TAB PER TRAIT PER BLOCK. A block is 4x4 tiles, so a grassy block has SIXTEEN grass
   // tiles -- and sixteen identical "Grass" tabs, all going to the same place, disambiguate nothing

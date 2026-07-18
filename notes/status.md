@@ -11,6 +11,41 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 `tst_world` now 21 (two new event pins). New local-only member: **`tst_flag_scenarios`** (with the ROM,
 SKIPs without it).
 
+### 🧭 ONE SYSTEM FOR THE MAP — the standardization (2026-07-17, `0.42.6-alpha`)
+
+Second live pass: *"still buggy and glitchy… some sprites have no box, some do… mousing over things
+nothing comes up… clicking water doesnt even bring up wild mons… **theres no standardixation**"*.
+
+**The fault was structural, and three rounds of polish could never have reached it.** The canvas had
+**four** systems: `MapSprite`, `MapWarp` and `MapSign` each drew, hovered and selected themselves —
+and the tab layer was bolted on beside them. So the map answered *differently depending on what you
+pointed at*: a flag-governed sprite had a box and a tab, a plain one had neither, water had no tab,
+and hovering most of the map did nothing. **Four disagreeing systems cannot be polished into one.**
+
+- ⭐ **There is ONE list now.** `MapCanvas.storageBlocks` merges the ROM's spots (flags, scripts,
+  hidden pickups, tile traits) with the SAVE's objects (people, doors, signs) into one per-block
+  model. Every one is a spot with a **kind, a destination and a tab**. The object components still
+  draw + drag themselves (`hilite: false`); what they gain is **being reachable**.
+  ⚠️ This list **depends on `revision`** and must — the old "ROM-derived, nothing you edit changes
+  it" invariant died the moment the save's own objects joined it.
+- 🐞 **Water and grass were literally switched OFF.** Tile traits carried `section: ""`, and both the
+  tab and the block's hit area were `enabled:` **only when a section existed** — so one empty string
+  cost hover, tooltip *and* click across most of a water route. **Every kind now has a real
+  destination**: grass/water → the **Wild Pokémon** panel (that is what they *are*), traits → the
+  **Tileset** panel, objects → **Details**. Pinned: *no spot may be inert*.
+- 🐞 **"1 spot = no tabs" was MY rule, not hers**, and it is gone. It made the map inconsistent — a
+  two-thing block was interactive, the water block beside it was dead. **Every block with anything
+  gets tabs.**
+- 🐞 **Clicking a tab selected the block underneath it.** The ground's `TapHandler` acts *before* any
+  item's MouseArea (handlers all fire first, and `DragThreshold` takes no grab) — **the third time
+  this exact rule has cost a bug**. The ground now asks `overTab` and stands down. The block's own
+  area is `Qt.NoButton`, hover-only, `z: -1` — a full-map grid that ate presses would have broken
+  dragging everywhere. [`reference/qt-patterns.md`](reference/qt-patterns.md) (top).
+- ✅ **Hover does something**: hovering a tab **lights its own thing** on the map; the cell tints.
+
+⏳ **Owed:** her live pass. And an honest worry: with a tab per block, a water route is now **dotted
+with tabs** — uniform, as asked, but possibly too much furniture. That is a look-at-it call.
+
 ### 🐺 THE LIVE PASS FOUND WHAT 91 GREEN TESTS DIDN'T (2026-07-17, `0.42.5-alpha`)
 
 Twilight opened it and, in about two minutes: *"none of this works actually"*. She was right about

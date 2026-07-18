@@ -1,5 +1,31 @@
 # Qt / QML Patterns
 
+## 🖱️ A MouseArea CANNOT beat a TapHandler underneath it — 2026-07-17 (the third time)
+
+**Handlers all fire before any item sees a press.** Qt delivers a press to **every pointer handler
+on every item under the point, front to back, BEFORE any item gets a mouse event.** A `TapHandler`
+on the default `DragThreshold` policy takes **no exclusive grab**, so nothing stops that walk.
+
+So a `MouseArea` **on top** of the map still loses: the map's ground `TapHandler` has already acted
+by the time the item pass begins. This has now cost three rounds:
+
+1. The picture picker's chip (a panel floating over the map) — fixed with `overPanel(x, y)`, a plain
+   geometric containment test the ground consults before acting.
+2. The same, again, via the popup's dismiss-press leaking down.
+3. **The storage tabs** (2026-07-17): clicking a tab **selected the block underneath it instead**,
+   and the tab's own gesture arrived into an already-changed selection. Twilight: *"clicking on
+   things too is often buggy or glitchy"* — which is exactly what a lost race feels like.
+
+**The fix is always the same shape: the ground must ASK, and stand down.** No z-order, no
+`anchors`, and no amount of MouseArea will do it, because the question is *when*, not *where*.
+For tabs the test is **hover** (`MapCanvas.overTab`, set by the tab's own `onEntered`/`onExited`)
+rather than geometry — there can be hundreds of them and they already track hover. A plain boolean
+no grab policy can defeat.
+
+> ⚠️ **And an invisible full-map hit target must never swallow presses.** `MapBlockHotspot`'s block
+> area covers the whole map; it is `acceptedButtons: Qt.NoButton`, `z: -1`, **hover only**. A grid
+> that accepted clicks would have broken dragging everywhere on the canvas.
+
 ## 💥 "X is not a type" takes the WHOLE component down, silently — 2026-07-17
 
 **One unresolved type does not fail politely. It fails totally.**

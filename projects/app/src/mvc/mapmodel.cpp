@@ -4526,11 +4526,23 @@ QVariantList MapModel::blockHotspots(quint32 tileLayers) const
           continue;
         seen.insert(blk);
 
+        // ⚠️ EVERY SPOT GETS A REAL DESTINATION. An earlier cut gave tile traits `section: ""`
+        // meaning "no Map Storage row to open" -- and because both the tab and the block's hit area
+        // are enabled ONLY when a section exists, that one empty string made **water and grass
+        // completely inert**: no hover, no tooltip, no click, on the majority of a water route.
+        // Twilight: *"clicking water doesnt even bring up wild mons it should at least have that"*.
+        //
+        // She is right, and it is not a special case -- it is the standard. A trait is not a dead
+        // fact: GRASS and WATER are where the wild Pokémon are, and those tables are editable, so
+        // they open the **Wild Pokémon** panel. The rest open the **Tileset** panel, which is what
+        // a tile trait *is*. Nothing on the canvas is a label you can only look at.
+        const bool wild = (layer == MapEngine::LayerGrass || layer == MapEngine::LayerWater);
+
         QVariantMap v;
         v["kind"]    = "tileTrait";
         v["ind"]     = int(layer);
         v["unit"]    = "tile";              // 8x8 -- the one genuinely tile-sized family
-        v["section"] = "";                  // not Map Storage: a tile trait is a tileset fact
+        v["section"] = wild ? QStringLiteral("wild") : QStringLiteral("tiles");
         v["name"]    = MapEngine::layerName(layer);
         v["desc"]    = MapEngine::layerDescription(layer);
         // The extent is the BLOCK it is in: this spot means "this trait is somewhere in here", and

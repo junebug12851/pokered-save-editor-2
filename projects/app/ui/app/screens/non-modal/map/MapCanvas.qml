@@ -288,9 +288,93 @@ Item {
   /// The tile-trait family is passed the Tiles overlays that are actually SHOWN: they are the 8x8
   /// tabs, and walls are on nearly every block, so an ungated strip would drown the storage tabs it
   /// exists for. @see MapModel::blockHotspots
-  readonly property var flagBoxes: brg.mapLayers.showFlagBoxes
-                                     ? brg.map.blockHotspots(brg.map.layers)
-                                     : []
+  /// ⭐ THE ONE LIST: every block of this map, and EVERYTHING that lands on it.
+  ///
+  /// > *"none of this works actually ... theres no standardixation"* -- Fairy Fox, 2026-07-17
+  ///
+  /// She was right, and the fault was structural rather than cosmetic. The tabs were built as a
+  /// PARALLEL layer over a canvas that already had three independent object systems (MapSprite,
+  /// MapWarp, MapSign, each with its own box, hover and selection). So the map answered differently
+  /// depending on what you happened to point at: a flag-governed sprite had a box and a tab, a
+  /// plain one had neither, water had no tab at all, and hovering most of the map did nothing.
+  /// Three systems and a bolt-on cannot be made consistent by polishing any one of them.
+  ///
+  /// So there is now ONE list. The ROM's spots (flags, scripts, hidden pickups, tile traits) and
+  /// the SAVE's objects (people, doors, signs) are merged into the same per-block model, and every
+  /// one of them is a spot with a kind, a destination and a tab. Uniform in, uniform out.
+  ///
+  /// The object components still DRAW and DRAG themselves -- this does not take that over. What it
+  /// takes over is *being reachable*: one tab strip per block, listing everything there, however
+  /// buried.
+  ///
+  /// ⚠️ Unlike the old `flagHotspots()` list, this one DOES depend on `revision` -- and must. The
+  /// old invariant ("ROM-derived, so nothing the user edits can change it") stopped being true the
+  /// moment the save's own objects joined it: drag a door and its tab has to come along.
+  readonly property var storageBlocks: {
+    canvasRoot.revision;
+    if (!brg.mapLayers.showFlagBoxes)
+      return [];
+
+    const blocks = {};   // "bx,by" -> the block entry
+    const px = 32;       // MapEngine::blockPx
+
+    function cell(bx, by) {
+      const k = bx + "," + by;
+      if (blocks[k] === undefined)
+        blocks[k] = { blockX: bx, blockY: by, rectX: bx * px, rectY: by * px,
+                      rectW: px, rectH: px, spots: [] };
+      return blocks[k];
+    }
+
+    // 1. The ROM's spots, already grouped and already carrying their true extents.
+    const rom = brg.map.blockHotspots(brg.map.layers);
+    for (let i = 0; i < rom.length; i++)
+      for (let j = 0; j < rom[i].spots.length; j++)
+        cell(rom[i].blockX, rom[i].blockY).spots.push(rom[i].spots[j]);
+
+    // 2. The SAVE's movable objects. Each is layer-gated by its OWN layer already (the `npcs`,
+    //    `warps` and `signs` lists above return [] when their layer is off), so this needs no
+    //    second gate -- and that is the layer rule holding, not a shortcut.
+    //
+    //    `hilite: false` -- their own component draws the box; a second outline from the hotspot
+    //    layer would be two answers to one question. What they gain here is the TAB.
+    function object(list, kind, section, name) {
+      for (let i = 0; i < list.length; i++) {
+        const o = list[i];
+        const ext = { extX: o.rectX, extY: o.rectY, extW: 16, extH: 16 };
+        cell(Math.floor(o.rectX / px), Math.floor(o.rectY / px)).spots.push({
+          kind: kind, ind: o.ind, unit: "halfBlock", section: section,
+          name: name(o), desc: "", hilite: false,
+          extX: ext.extX, extY: ext.extY, extW: ext.extW, extH: ext.extH,
+        });
+      }
+    }
+    object(canvasRoot.npcs,  "sprite", "details", o => o.name !== undefined ? o.name : qsTr("Person"));
+    object(canvasRoot.warps, "warp",   "details", o => qsTr("Door → %1").arg(o.destName !== undefined ? o.destName : "?"));
+    object(canvasRoot.signs, "sign",   "details", o => qsTr("Sign"));
+
+    const out = [];
+    for (const k in blocks)
+      out.push(blocks[k]);
+    return out;
+  }
+
+  /// @deprecated the old name, kept only until nothing reads it. @see storageBlocks
+  readonly property var flagBoxes: canvasRoot.storageBlocks
+
+  /// ⚠️ IS THE CURSOR ON A TAB? The ground's TapHandler must stand down if so.
+  ///
+  /// This is the SAME trap as `overPanel`, and it is worth stating again because it looks like it
+  /// cannot be true: **Qt delivers a press to every pointer handler under the point, front to back,
+  /// BEFORE any item gets a mouse event.** The ground's `TapHandler` uses the default
+  /// `DragThreshold` policy, so it takes **no exclusive grab** and nothing stops that walk. A tab is
+  /// a MouseArea — an ITEM — and the item pass happens *after* the handler pass. So the ground won
+  /// every race: clicking a tab selected the block underneath it instead, which is precisely the
+  /// *"clicking on things too is often buggy or glitchy"* Twilight hit.
+  ///
+  /// Hover is the honest test here (rather than `overPanel`'s geometry): the tabs already track it,
+  /// there can be hundreds of them, and no grab policy can defeat a plain boolean.
+  property bool overTab: false
 
   /// Which storage kinds the Layers panel is currently showing -- what the tab strip is allowed to
   /// tab. *"the tab strip only needs to have tabs based on the active layers"* (Fairy Fox).
@@ -306,9 +390,11 @@ Item {
     const k = [];
     if (brg.mapLayers.showFlagBoxes)
       k.push("filterFlag", "hiddenItem", "hiddenCoin", "script", "cardKeyDoor", "eventFlag");
-    // The tile family is filtered in the model by the Tiles overlays, so anything that survived to
-    // here is on by definition.
-    k.push("tileTrait");
+    // The tile family is filtered in the model by the Tiles overlays, and the movable objects are
+    // filtered by their own layers upstream (`npcs`/`warps`/`signs` return [] when theirs is off).
+    // So anything that reached this list is on by definition -- the layer rule holding, once, in
+    // the place that owns it, instead of being re-checked in three dialects.
+    k.push("tileTrait", "sprite", "warp", "sign");
     return k;
   }
 
@@ -991,6 +1077,14 @@ Item {
           // it. @see overPanel.
           const g = canvas.mapToGlobal(eventPoint.position.x, eventPoint.position.y);
           if (canvasRoot.overPanel(g.x, g.y))
+            return;
+
+          // ⚠️ THE TAP LANDED ON A TAB, NOT ON THE GROUND -- the same mechanism as the panel case
+          // above, one layer in. This handler runs BEFORE the tab's MouseArea ever sees the press
+          // (handlers all fire before items), and it takes no grab, so without this line the ground
+          // reacted to every tab click and the tab's own gesture arrived into an already-changed
+          // selection. @see canvasRoot.overTab
+          if (canvasRoot.overTab)
             return;
 
           const px = Math.floor(eventPoint.position.x / canvasRoot.zoom);
