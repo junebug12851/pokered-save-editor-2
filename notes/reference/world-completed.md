@@ -208,14 +208,32 @@ whole** on load.
 (`0x29DA` b5/b6) as *cleared on entry* — **the same two bytes these eight flags live in**. So a
 loader that clears a whole byte would take the rods and Lapras with it.
 
-🚩 **Therefore: PROBE BEFORE UI.** The prediction is that all eight survive (the rewrites above are
-per-bit, not whole-byte — the `wMovementFlags` lesson from 2026-07-14, where reading the asm alone
-got exactly this wrong). `scripts/emu/probe_world_completed.py` is **owed**, with the questions:
+✅ **CONSOLE-VERIFIED — all eight are durable** (`scripts/emu/probe_world_completed.py`, 2026-07-17).
+The prediction held: the rewrites are **per-bit, not whole-byte**.
 
-1. Do all eight survive a Continue?
-2. Specifically: does anything clear `wStatusFlags1`/`wStatusFlags4` **whole**, taking the rods with
-   the strength bit?
-3. Does `BIT_STARTED_ELITE_4` really survive to reach the lobby's reset?
+| Scenario | Result |
+|---|---|
+| **B** all eight set → Continue | **8/8 survive** |
+| **C** all eight cleared → Continue | **stay clear** — the loader sets none of them (the control) |
+| **D** the three bytes handed `0xFF` | `wStatusFlags1` → **`0xFF` unchanged** · `wStatusFlags4` → **`0x9F`** · `wElite4Flags` → **`0xFF` unchanged** |
+
+⭐ **D is the one that earned the probe**, and it reported two things nobody had to take on trust:
+
+1. **Only bits 5 and 6 of `wStatusFlags4` were cleared** — `BIT_BATTLE_OVER_OR_BLACKOUT` and
+   `BIT_LINK_CONNECTED`, i.e. **exactly the two bits `AreaPlayer` already documents as cleared on
+   entry**, reproduced independently from the opposite direction. The clears are surgical. Nothing
+   in these three bytes is zeroed whole, so the rods, the guards, Lapras, the starter, the nurse
+   flag and the Elite 4 flag are never collateral.
+2. **`strengthOutsideBattle` (`0x29D4` b0) SURVIVED** — and that is not a contradiction of
+   [`player-state.md`](player-state.md), it is **that note's own finding, reproduced by accident**:
+   strength is reset on an ordinary Continue *but survives when the battle-over bit is set*. D sets
+   every bit, including battle-over — so `EnterMap` kept strength, then cleared battle-over on its
+   way past. Two probes, written months apart for different features, agreeing on a subtle
+   interaction. That is what a verified note is worth.
+
+So: **durable, all eight, no `!` marks owed, no conditional exception** — unlike
+[`town-visited.md`](town-visited.md), whose current-town bit is re-marked. The UI can treat these as
+ordinary persistent switches.
 
 ## 7. Traps, collected
 
