@@ -46,6 +46,7 @@
 #include "./flydbentry.h"
 #include "./hiddenitemdbentry.h"
 #include "../scripts.h"
+#include "../trades.h"
 #include "../mapsdb.h"
 
 MapDBEntry::MapDBEntry()
@@ -424,6 +425,16 @@ const HiddenItemDBEntry* MapDBEntry::getToHiddenCoinsAt(const int ind) const
     return nullptr;
 
   return toHiddenCoins.at(ind);
+}
+
+const QVector<TradeDBEntry*> MapDBEntry::getToTrades() const
+{
+  return toTrades;
+}
+
+int MapDBEntry::getToTradesSize() const
+{
+  return toTrades.size();
 }
 
 FlyDBEntry* MapDBEntry::getToFlyDestination() const

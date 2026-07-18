@@ -30,6 +30,8 @@
 #include "./trades.h"
 #include "./util/gamedata.h"
 #include "./pokemon.h"
+#include "./mapsdb.h"
+#include "./entries/mapdbentry.h"
 
 TradeDBEntry::TradeDBEntry() {}
 TradeDBEntry::TradeDBEntry(QJsonValue& data)
@@ -39,6 +41,16 @@ TradeDBEntry::TradeDBEntry(QJsonValue& data)
   textId   = static_cast<var8>(data["textId"].toDouble());
   nickname = data["nickname"].toString();
   if (data["unused"].isBool()) unused = data["unused"].toBool();
+
+  // Location, appended by import_trades.py (additive). Absent on nothing today, but the unused
+  // trade legitimately omits mapId/x/y/trader/walks -- it has no NPC -- so each defaults honestly.
+  ind        = data["ind"].toInt(-1);
+  tradeConst = data["const"].toString();
+  mapId      = data["mapId"].toInt(-1);
+  x          = data["x"].toInt(0);
+  y          = data["y"].toInt(0);
+  trader     = data["trader"].toString();
+  walks      = data["walks"].toBool(false);
 }
 
 void TradeDBEntry::deepLink()
@@ -51,6 +63,18 @@ void TradeDBEntry::deepLink()
 #endif
   if (toGive) toGive->toTrades.append(this);
   if (toGet)  toGet->toTrades.append(this);
+
+  // Resolve the map by ID (the game's own number, what import_trades.py validated against
+  // maps.json) -- NOT by name: maps.json's `name` is not pret's map constant. -1 is the unused
+  // trade, which has no map and correctly links nowhere.
+  if (mapId >= 0) {
+    toMap = MapsDB::inst()->getIndAt(QString::number(mapId));
+#ifdef QT_DEBUG
+    if (!toMap) qCritical() << "Trade:" << tradeConst << "map id" << mapId
+                            << "could not be deep linked.";
+#endif
+    if (toMap) toMap->toTrades.append(this);
+  }
 }
 
 TradesDB* TradesDB::inst()

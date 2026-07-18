@@ -24,29 +24,60 @@
 #include "./db_autoport.h"
 
 struct PokemonDBEntry;
+struct MapDBEntry;
 class QQmlEngine;
 
 /**
- * @brief One in-game (NPC) trade definition: what you give and get.
+ * @brief One in-game (NPC) trade definition: what you give and get, and where.
  *
- * Plain-struct DB entry. @ref toGive / @ref toGet resolve the species in
- * deepLink(). See db.md for the entry convention.
+ * Plain-struct DB entry. @ref toGive / @ref toGet / @ref toMap resolve in deepLink(). See db.md for
+ * the entry convention. Loaded from trades.json, whose location fields (@ref ind .. @ref walks) are
+ * generated from pret by scripts/import_trades.py; the give/get/textId/nickname/unused half predates
+ * that and is kept verbatim.
  *
- * @see TradesDB.
+ * **Store index == save bit == @ref ind.** `DoInGameTradeDialogue` FLAG_TESTs bit `wWhichTrade` of
+ * `wCompletedInGameTradeFlags` (file 0x29E3), and the store is loaded in bit order, so entry `i` is
+ * trade `i`. The flag is the ONLY gate: set, the trader only speaks their after-trade line; clear,
+ * the trade is genuinely re-armed.
+ *
+ * ⚠️ @ref textId is an INT and is really the DIALOG SET (0 casual / 1 evolution / 2 happy), NOT a
+ * text id -- an inherited misnomer, kept because renaming a shipped field is a separate decision.
+ * `"evolution"` does not mean the mon evolves (a Japanese Blue leftover; LOLA's and DORIS's traders
+ * claim your Poliwhirl/Raichu "evolved" about species that cannot).
+ *
+ * ⚠️ @ref nickname is the RECEIVED mon's nickname -- NOT the trader's name. TERRY is the Nidorina.
+ * Traders have no personal name at all; @ref trader is their sprite CLASS, which repeats across
+ * trades (two Youngsters, two Little Girls, two Scientists).
+ *
+ * ⚠️ The unused trade (CHIKUCHIKU) has no script, so no NPC, so no map: @ref mapId is -1, @ref toMap
+ * is null, and it belongs on the General page. @ref x / @ref y are the walk grid (16x16), and are
+ * the trader's SPAWN tile when @ref walks is true.
+ *
+ * @see TradesDB, WorldTrades (the save-side flags), notes/reference/in-game-trades.md.
  */
 struct DB_AUTOPORT TradeDBEntry {
   TradeDBEntry();                ///< Empty entry.
   TradeDBEntry(QJsonValue& data); ///< Build from a JSON value.
-  void deepLink();              ///< Resolve the give/get species links.
+  void deepLink();              ///< Resolve the give/get species + map links.
 
   QString give;        ///< Species name you give (resolved to @ref toGive).
   QString get;         ///< Species name you get (resolved to @ref toGet).
-  var8    textId   = 0; ///< Trade dialogue text id.
-  QString nickname;    ///< Nickname the received mon comes with.
-  bool    unused   = false; ///< Whether this trade slot is unused.
+  var8    textId   = 0; ///< ⚠️ The DIALOG SET (0/1/2), not a text id -- see the class note.
+  QString nickname;    ///< Nickname the RECEIVED mon comes with (not the trader's name).
+  bool    unused   = false; ///< Whether this trade slot is unused (CHIKUCHIKU only).
+
+  // --- location, appended by import_trades.py (additive; the above predate it) ---
+  int     ind      = -1; ///< Save bit in wCompletedInGameTradeFlags (== store index).
+  QString tradeConst;    ///< pret's TRADE_FOR_* constant.
+  int     mapId    = -1; ///< Map id the trader stands on; -1 for the unused trade.
+  int     x        = 0;  ///< Walk-grid X (spawn tile if @ref walks).
+  int     y        = 0;  ///< Walk-grid Y (spawn tile if @ref walks).
+  QString trader;        ///< The trader's sprite CLASS name (they have no personal name).
+  bool    walks    = false; ///< Trader wanders -> x/y is the spawn tile only.
 
   PokemonDBEntry* toGive = nullptr; ///< Resolved species you give (deepLink).
   PokemonDBEntry* toGet  = nullptr; ///< Resolved species you get (deepLink).
+  MapDBEntry*     toMap  = nullptr; ///< Resolved map (deepLink); null for the unused trade.
 };
 
 /**

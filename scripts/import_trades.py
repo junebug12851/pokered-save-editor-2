@@ -1,30 +1,34 @@
-r"""Import the ten in-game NPC trades from `pret/pokered` -> projects/db/assets/data/trades.json.
+r"""ADD map + coordinates to the ten in-game trades in projects/db/assets/data/trades.json.
 
-The standing rule: where pret has the data, we read THEIRS. Three of their files, joined:
+⚠️ **ADDITIVE ONLY (leadership, 2026-07-17).** trades.json already exists and already ships five
+fields per row -- `give`, `get`, `textId` (an INT: the dialog set, 0=casual/1=evolution/2=happy),
+`nickname`, and `unused` (only where true). This importer **keeps every one of them byte-for-byte**
+and only APPENDS the location data the map screen needs:
 
-  1. data/events/trades.asm          -- TradeMons: give, get, dialogset, nickname (10 rows)
-  2. constants/script_constants.asm  -- TRADE_FOR_* : the bit index (and which is `; unused`)
-  3. scripts/*.asm                   -- `ld a, TRADE_FOR_X` / `ld [wWhichTrade], a` : WHICH MAP
-  4. data/maps/objects/<Map>.asm     -- the object_event carrying that map's text id : the x/y
+    ind     -- the save bit in wCompletedInGameTradeFlags (== store index)
+    const   -- pret's TRADE_FOR_* constant
+    mapId   -- the map the trader stands on (omitted for the unused trade -- it has none)
+    x, y    -- walk-grid coords (spawn tile if the trader walks)
+    trader  -- the trader's CLASS name (they have no personal name; see the note)
+    walks   -- whether the trader wanders (so x/y is a spawn tile only)
 
-⭐ **The join is (map id, text id) -> trade, and it is mechanical, not proximity.** A trade is
-reached by talking to an NPC; the script that fires is that NPC's text entry; the text entry's id is
-the object's `text` field. So we walk: trade -> the script file that names it -> the TEXT_<MAP>_<WHO>
-constant on the same `text_asm` block -> the object with that text id -> its x/y.
+It refuses to write unless it can prove **0 existing fields changed** across all 10 rows,
+semantically -- the import_hidden_items.py standard.
 
-Nine of the ten resolve. The tenth (TRADE_FOR_CHIKUCHIKU) is `; unused` in both the table and the
-constants, no script names it, so it has NO map and NO coordinates -- it is emitted with map=null,
-which is what puts it on the General page. Per the standing rule: a spot whose location cannot be
-established gets NO box, never a guessed one.
+⚠️ It does NOT touch `textId`. That field is the dialog set and its name is arguably wrong (it is
+not a text id), but renaming it is a data+code change trades.cpp depends on, and that is leadership's
+call, not this importer's.
 
-⚠️ The 4th npctrade field is the RECEIVED POKEMON'S NICKNAME, not the trader's name (the macro's own
-comment says `; give mon, get mon, dialog id, nickname`, and the code copies it to wPartyMonNicks).
-TERRY is the Nidorina. Traders have no names -- only sprite classes, which repeat. See
-notes/reference/in-game-trades.md section 2a.
+Source of the location data (the standing file-format rule -- read pret's, join it):
+  1. data/events/trades.asm          -- the 10 rows, in bit order (give/get/dialogset/nickname)
+  2. constants/script_constants.asm  -- TRADE_FOR_* : the bit index, and which is `; unused`
+  3. scripts/*.asm                   -- `ld a, TRADE_FOR_X` : which map's text names it
+  4. data/maps/objects/<Map>.asm     -- the object_event with that text id : its x/y + sprite class
 
-Self-validating: refuses to write unless all 10 rows parse, exactly 9 resolve a map+coords, exactly
-1 is unused, every species resolves against pokemon.json, and every map id resolves against
-maps.json. `--check` verifies the shipped file matches without writing (for CI / idempotence).
+The join is (map id, text id) -> trade, mechanical. Nine resolve; TRADE_FOR_CHIKUCHIKU is `; unused`,
+no script names it, so it gets NO map and NO coords -> the General page.
+
+Self-validating; --check verifies the shipped file matches without writing.
 
     python scripts/import_trades.py [--check]
 """
@@ -41,32 +45,13 @@ REPO = Path(__file__).resolve().parents[1]
 PRET = Path.home() / "Documents" / "projects" / "pokered"
 OUT = REPO / "projects" / "db" / "assets" / "data" / "trades.json"
 MAPS_JSON = REPO / "projects" / "db" / "assets" / "data" / "maps.json"
-POKEMON_JSON = REPO / "projects" / "db" / "assets" / "data" / "pokemon.json"
 
 NUM_NPC_TRADES = 10
 UNUSED_TRADE_NICK = "CHIKUCHIKU"
 
-# The save field these bits live in -- carried into the JSON so the DB never has to guess.
-TRADE_FLAGS_OFFSET = 0x29E3  # wCompletedInGameTradeFlags, $D737, 2 bytes, 10 bits used
-
-# pret spells species as constants (NIDORAN_M, MR_MIME); pokemon.json keys them by the GAME's own
-# caps spelling (NIDORAN<m>, MR.MIME). We emit pokemon.json's `name`, because that is a valid
-# PokemonDB key -- exactly as import_hidden_items.py emits items.json's own spelling. The readable
-# form ("Mr. Mime") is pokemon.json's `readable` and is the UI's business, not ours: a second
-# opinion about how a species is written is a second source of truth.
-#
-# Only the constants that are NOT already identical to the json name need a row here. The importer
-# validates every species against pokemon.json and FAILS rather than shipping a name that will not
-# resolve -- which is the whole point (see notes/reference/map-storage-locations.md section 2a).
-SPECIES_FIXUPS = {
-    "NIDORAN_M": "NIDORAN<m>",
-    "NIDORAN_F": "NIDORAN<f>",
-    "MR_MIME": "MR.MIME",
-}
-
-# A trader has no name -- only a class. The sprite constant is the class, and it is the "species"
-# half of leadership's rule: "if the trader doesnt have a nickname then use there class name same
-# logic as pokemon for species name and nickname".
+# The trader's CLASS name (the sprite constant). Traders have no personal name; leadership's rule is
+# "class name = the species, nickname if they had one" -- and they haven't. So the class is the whole
+# identity, the same way a wild Pokemon has only a species.
 SPRITE_CLASS = {
     "SPRITE_YOUNGSTER": "Youngster",
     "SPRITE_GAMEBOY_KID": "Gameboy Kid",
@@ -77,45 +62,10 @@ SPRITE_CLASS = {
     "SPRITE_BEAUTY": "Beauty",
 }
 
-DIALOGSET = {
-    "TRADE_DIALOGSET_CASUAL": "casual",
-    "TRADE_DIALOGSET_EVOLUTION": "evolution",
-    "TRADE_DIALOGSET_HAPPY": "happy",
-}
-
 
 def die(msg: str) -> "NoReturn":  # type: ignore[valid-type]
     print(f"FAIL: {msg}", file=sys.stderr)
     sys.exit(1)
-
-
-def species_name(const: str) -> str:
-    """A pret species constant -> pokemon.json's own `name` (a valid PokemonDB key)."""
-    return SPECIES_FIXUPS.get(const, const)
-
-
-def parse_trade_mons() -> list[dict]:
-    """data/events/trades.asm -> the ten rows, in bit order."""
-    src = (PRET / "data" / "events" / "trades.asm").read_text(encoding="utf-8")
-    rows = []
-    # npctrade NIDORINO,   NIDORINA,  TRADE_DIALOGSET_CASUAL,    "TERRY"
-    pat = re.compile(
-        r'^\s*npctrade\s+(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*,\s*"([^"]+)"\s*(;.*)?$', re.M)
-    for m in pat.finditer(src):
-        give, get, dialog, nick, comment = m.groups()
-        if dialog not in DIALOGSET:
-            die(f"unknown dialogset {dialog!r} -- pret added one?")
-        rows.append({
-            "ind": len(rows),
-            "give": species_name(give),
-            "get": species_name(get),
-            "dialogset": DIALOGSET[dialog],
-            "nickname": nick,
-            "unused": bool(comment and "unused" in comment),
-        })
-    if len(rows) != NUM_NPC_TRADES:
-        die(f"parsed {len(rows)} npctrade rows, expected NUM_NPC_TRADES={NUM_NPC_TRADES}")
-    return rows
 
 
 def parse_trade_constants() -> list[str]:
@@ -133,37 +83,28 @@ def parse_trade_constants() -> list[str]:
 def find_trade_sites() -> dict[str, tuple[str, str]]:
     r"""scripts/*.asm -> {TRADE_FOR_X: (ScriptFileStem, TEXT_<MAP>_<WHO>)}.
 
-    Two parser traps here, and BOTH fail silently -- the parse succeeds and the data is merely
-    wrong, which is the worst failure mode this project has:
+    Two silent-failure traps, both live-caught:
 
-    1. ⚠️ **Route11Gate2F writes `xor a ; TRADE_FOR_TERRY`, not `ld a, TRADE_FOR_TERRY`.** Trade 0 is
-       zero, so the assembler-friendly idiom hides the constant in a COMMENT. A regex that only
-       accepts `ld a, TRADE_FOR_` loses exactly one trade and the count still looks plausible at
-       9/10. Both forms are matched.
+    1. Route11Gate2F writes `xor a ; TRADE_FOR_TERRY`, not `ld a, TRADE_FOR_TERRY` -- trade 0 is
+       zero, so the constant hides in a COMMENT. Both forms are matched.
 
-    2. ⚠️ **The gap between a label and its trade must NOT cross another label.** The first cut used
-       `(?:.*\n)*?` between `text_asm` and the trade -- lazy, but perfectly happy to scan PAST the
-       next label. In CinnabarLabFossilRoom (two Scientists, only the second trades) it matched
-       Scientist**1**'s label and then found Scientist2's `TRADE_FOR_SAILOR` further down, filing
-       SAILOR at (5,2) instead of (7,6). **Nine trades still resolved and the totals still looked
-       right** -- caught only by diffing against a hand-read of the source. The gap is now
-       `(?!^\w+:)`-guarded, so a block cannot borrow the next block's contents.
+    2. The gap between a label and its trade must NOT cross another label. `(?:.*\n)*?` will happily
+       scan past the next label; in Cinnabar Lab Fossil Room (two Scientists, only the 2nd trades)
+       that filed SAILOR at (5,2) instead of (7,6), and nine trades STILL resolved with every total
+       looking right. The `(?!^\w+:)` guard makes a block unable to borrow the next block's body.
     """
     sites: dict[str, tuple[str, str]] = {}
     for f in sorted((PRET / "scripts").glob("*.asm")):
         src = f.read_text(encoding="utf-8")
-        # Find each `text_asm` block that names a trade, and the label above it. The
-        # `(?!^\w+:)` in the gap is load-bearing -- see trap 2 above.
         for m in re.finditer(
                 r"^(\w+):[ \t]*\n[ \t]*text_asm[ \t]*\n(?:(?!^\w+:)[^\n]*\n)*?"
                 r"[ \t]*(?:ld[ \t]+a[ \t]*,[ \t]*(TRADE_FOR_\w+)"
                 r"|xor[ \t]+a[ \t]*;[ \t]*(TRADE_FOR_\w+))", src, re.M):
             label, viaLd, viaXor = m.groups()
             trade = viaLd or viaXor
-            # The label -> its TEXT_* constant, via the map's def_text_pointers table.
             tm = re.search(rf"dw_const\s+{re.escape(label)}\s*,\s*(TEXT_\w+)", src)
             if not tm:
-                die(f"{f.name}: {label} names {trade} but has no dw_const row -- cannot find its text id")
+                die(f"{f.name}: {label} names {trade} but has no dw_const row")
             if trade in sites:
                 die(f"{trade} is named by two scripts: {sites[trade][0]} and {f.stem}")
             sites[trade] = (f.stem, tm.group(1))
@@ -171,14 +112,13 @@ def find_trade_sites() -> dict[str, tuple[str, str]]:
 
 
 def parse_objects(stem: str) -> tuple[list[dict], str]:
-    """data/maps/objects/<stem>.asm -> its object_events (1-based index) + the map's const name."""
+    """data/maps/objects/<stem>.asm -> its object_events + the map's const name."""
     f = PRET / "data" / "maps" / "objects" / f"{stem}.asm"
     src = f.read_text(encoding="utf-8")
     mapConst = re.search(r"def_warps_to\s+(\w+)", src)
     if not mapConst:
         die(f"{f.name}: no def_warps_to -- cannot identify the map")
     objs = []
-    # object_event  4,  2, SPRITE_YOUNGSTER, WALK, LEFT_RIGHT, TEXT_ROUTE11GATE2F_YOUNGSTER
     for m in re.finditer(
             r"^\s*object_event\s+(\d+)\s*,\s*(\d+)\s*,\s*(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*,\s*(TEXT_\w+)",
             src, re.M):
@@ -189,7 +129,7 @@ def parse_objects(stem: str) -> tuple[list[dict], str]:
 
 
 def map_ids() -> dict[str, int]:
-    """constants/map_constants.asm -> {MAP_CONST: id}. The ids are positional (const_def order)."""
+    """constants/map_constants.asm -> {MAP_CONST: id}, positional in const_def order."""
     src = (PRET / "constants" / "map_constants.asm").read_text(encoding="utf-8")
     block = re.search(r"^\tconst_def\n(.*?)^\tconst_def", src, re.S | re.M)
     body = block.group(1) if block else src
@@ -203,138 +143,122 @@ def map_ids() -> dict[str, int]:
     return ids
 
 
-def build() -> list[dict]:
-    rows = parse_trade_mons()
-    consts = parse_trade_constants()
-    sites = find_trade_sites()
+def location_for(bit: int, const: str) -> dict:
+    """The ADDED fields for one trade -- ind/const always; map/x/y/trader/walks when located."""
+    add = {"ind": bit, "const": const}
+    site = find_trade_sites().get(const)
+    if site is None:
+        return add  # unused: no map, no coords -> General page
+
+    stem, textConst = site
+    objs, mapConst = parse_objects(stem)
+    match = [o for o in objs if o["text"] == textConst]
+    if len(match) != 1:
+        die(f"{const}: {len(match)} objects carry {textConst} in {stem} -- expected exactly 1")
+    obj = match[0]
+
     ids = map_ids()
+    if mapConst not in ids:
+        die(f"{const}: map const {mapConst} is not in map_constants.asm")
+    if obj["sprite"] not in SPRITE_CLASS:
+        die(f"{const}: sprite {obj['sprite']} has no class name -- add it to SPRITE_CLASS")
 
-    for i, row in enumerate(rows):
-        row["const"] = consts[i]
-        # The constant's own suffix must agree with the table's nickname -- pret names the constant
-        # after the nickname (TRADE_FOR_TERRY <-> "TERRY"). If those ever diverge, the two files
-        # have drifted and the bit order is no longer trustworthy.
-        suffix = consts[i][len("TRADE_FOR_"):]
-        if suffix != row["nickname"]:
-            die(f"bit {i}: constant {consts[i]} disagrees with nickname {row['nickname']!r} -- "
-                f"trades.asm and script_constants.asm have drifted")
-
-        site = sites.get(row["const"])
-        if site is None:
-            row.update(map=None, mapId=None, x=None, y=None, trader=None,
-                       traderSprite=None, walks=False, textId=None)
-            continue
-
-        stem, textConst = site
-        objs, mapConst = parse_objects(stem)
-        match = [(n, o) for n, o in enumerate(objs, start=1) if o["text"] == textConst]
-        if len(match) != 1:
-            die(f"{row['const']}: {len(match)} objects carry {textConst} in {stem} -- expected exactly 1")
-        n, obj = match[0]
-
-        if mapConst not in ids:
-            die(f"{row['const']}: map const {mapConst} is not in map_constants.asm")
-        if obj["sprite"] not in SPRITE_CLASS:
-            die(f"{row['const']}: sprite {obj['sprite']} has no class name -- add it to SPRITE_CLASS")
-
-        row.update(
-            map=mapConst,
-            mapId=ids[mapConst],
-            x=obj["x"],
-            y=obj["y"],
-            # The trader's CLASS is the "species" half of leadership's rule; they have no nickname.
-            trader=SPRITE_CLASS[obj["sprite"]],
-            traderSprite=obj["sprite"],
-            # ⚠️ A walking trader's x/y is the SPAWN tile, not where the man is standing now.
-            walks=obj["move"] == "WALK",
-            textId=textConst,
-        )
-    return rows
+    add.update(mapId=ids[mapConst], x=obj["x"], y=obj["y"],
+               trader=SPRITE_CLASS[obj["sprite"]], walks=obj["move"] == "WALK")
+    return add
 
 
-def validate(rows: list[dict]) -> None:
-    located = [r for r in rows if r["mapId"] is not None]
-    unused = [r for r in rows if r["unused"]]
+def build() -> list[dict]:
+    """The existing rows, each with the location fields appended and NOTHING existing touched."""
+    existing = json.loads(OUT.read_text(encoding="utf-8"))
+    if len(existing) != NUM_NPC_TRADES:
+        die(f"trades.json has {len(existing)} rows, expected {NUM_NPC_TRADES}")
 
+    consts = parse_trade_constants()
+
+    out = []
+    for bit, row in enumerate(existing):
+        # pret names the constant after the nickname (TRADE_FOR_TERRY <-> "TERRY"). If the shipped
+        # file's row order ever disagreed with pret's bit order, the join would be silently wrong --
+        # so it is asserted, not assumed.
+        nick = row.get("nickname", "")
+        suffix = consts[bit][len("TRADE_FOR_"):]
+        if suffix != nick:
+            die(f"bit {bit}: pret constant {consts[bit]} != trades.json nickname {nick!r} -- "
+                f"the shipped row order does not match the save's bit order")
+
+        # Start from the EXISTING dict (verbatim), then append. dict insertion order is preserved,
+        # so every original key keeps its place and value; new keys land after them.
+        merged = dict(row)
+        add = location_for(bit, consts[bit])
+
+        # The unused-trade check, from the data itself.
+        if row.get("unused", False):
+            if nick != UNUSED_TRADE_NICK:
+                die(f"row marked unused is {nick!r}, expected {UNUSED_TRADE_NICK}")
+            if "mapId" in add:
+                die(f"{nick} is marked unused but resolved a map -- the script scan is confused")
+        else:
+            if "mapId" not in add:
+                die(f"{nick} is a USED trade but resolved no map -- the script scan is incomplete")
+
+        merged.update(add)
+        out.append(merged)
+    return out, existing
+
+
+def validate(rows: list[dict], existing: list[dict]) -> None:
+    # THE additive guarantee: every original key/value is byte-identical in the output.
+    for i, (old, new) in enumerate(zip(existing, rows)):
+        for k, v in old.items():
+            if k not in new:
+                die(f"row {i}: existing field {k!r} was DROPPED")
+            if new[k] != v:
+                die(f"row {i}: existing field {k!r} CHANGED {v!r} -> {new[k]!r}")
+
+    located = [r for r in rows if "mapId" in r]
+    unused = [r for r in rows if r.get("unused", False)]
     if len(located) != 9:
-        die(f"{len(located)} trades resolved a map, expected 9 "
-            f"(unresolved: {[r['const'] for r in rows if r['mapId'] is None]})")
-    if len(unused) != 1 or unused[0]["nickname"] != UNUSED_TRADE_NICK:
-        die(f"expected exactly one `; unused` trade ({UNUSED_TRADE_NICK}), got "
-            f"{[r['nickname'] for r in unused]}")
-    # The unused one must be the unlocated one -- if a USED trade lost its map, the script scan broke.
-    if unused[0]["mapId"] is not None:
-        die(f"{unused[0]['const']} is marked unused but resolved a map?")
-    if any(r["mapId"] is None and not r["unused"] for r in rows):
-        die("a USED trade failed to resolve its map -- the script scan is incomplete")
+        die(f"{len(located)} located, expected 9")
+    if len(unused) != 1:
+        die(f"{len(unused)} unused, expected 1")
 
-    # Every species must be a real one.
-    mons = {m["name"] for m in json.loads(POKEMON_JSON.read_text(encoding="utf-8"))}
-    for r in rows:
-        for key in ("give", "get"):
-            if r[key] not in mons:
-                die(f"{r['const']}: species {r[key]!r} does not resolve against pokemon.json")
-
-    # Every map id must be a real map, and its name must match what maps.json calls that id.
-    maps = {m["ind"]: m for m in json.loads(MAPS_JSON.read_text(encoding="utf-8"))}
+    maps = {m["ind"] for m in json.loads(MAPS_JSON.read_text(encoding="utf-8"))}
     for r in located:
         if r["mapId"] not in maps:
             die(f"{r['const']}: map id {r['mapId']} is not in maps.json")
 
-    # Bit order must be dense 0..9 -- the save's bit IS the index.
     if [r["ind"] for r in rows] != list(range(NUM_NPC_TRADES)):
-        die("trade inds are not a dense 0..9 -- the save bit is the index, so this must hold")
+        die("trade inds are not a dense 0..9 -- the save bit is the index")
 
-    print(f"  OK  {len(rows)} trades: {len(located)} located, {len(unused)} unused (no coords)")
+    print(f"  OK  {len(rows)} trades: {len(located)} located, {len(unused)} unused; "
+          f"0 existing fields changed")
     for r in rows:
-        where = (f"{r['map']} ({r['mapId']}) at ({r['x']},{r['y']}) -- {r['trader']}"
-                 + ("  [WALKS: spawn tile]" if r["walks"] else "")
-                 ) if r["mapId"] is not None else "-- unused, no map, no coords -> General"
-        print(f"      bit {r['ind']}  {r['nickname']:<11} {r['give']:>10} -> {r['get']:<11} {where}")
+        where = (f"{r['mapId']} at ({r['x']},{r['y']}) -- {r['trader']}"
+                 + ("  [WALKS]" if r.get("walks") else "")) if "mapId" in r else "unused -> General"
+        print(f"      bit {r['ind']}  {r['nickname']:<11} textId={r['textId']}  {where}")
 
 
 def emit(rows: list[dict]) -> str:
-    out = []
-    for r in rows:
-        e = {
-            "ind": r["ind"],                    # == its bit in wCompletedInGameTradeFlags
-            "const": r["const"],
-            "nickname": r["nickname"],          # the RECEIVED mon's nickname -- NOT the trader
-            "give": r["give"],
-            "get": r["get"],
-            "dialogset": r["dialogset"],
-            "unused": r["unused"],
-        }
-        if r["mapId"] is not None:
-            e.update({
-                "map": r["map"],
-                "mapId": r["mapId"],
-                "x": r["x"],
-                "y": r["y"],
-                "trader": r["trader"],          # the class name -- traders have no personal name
-                "walks": r["walks"],
-                "textId": r["textId"],
-            })
-        out.append(e)
-    return json.dumps(out, indent=4, ensure_ascii=False) + "\n"
+    # Match the shipped file's 2-space indent so the diff is purely additive lines.
+    return json.dumps(rows, indent=2, ensure_ascii=False) + "\n"
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--check", action="store_true",
-                    help="verify the shipped trades.json matches, without writing")
+    ap.add_argument("--check", action="store_true")
     args = ap.parse_args()
 
     if not PRET.exists():
         die(f"pret/pokered clone not found at {PRET}")
+    if not OUT.exists():
+        die(f"{OUT.name} does not exist -- this importer EXTENDS it, it does not create it")
 
-    rows = build()
-    validate(rows)
+    rows, existing = build()
+    validate(rows, existing)
     text = emit(rows)
 
     if args.check:
-        if not OUT.exists():
-            die(f"{OUT.name} does not exist")
         if OUT.read_text(encoding="utf-8") != text:
             die(f"{OUT.name} is STALE -- re-run without --check")
         print(f"  OK  {OUT.name} is up to date")

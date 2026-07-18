@@ -34,6 +34,7 @@
 #include <pse-db/hiddencoinsdb.h>
 #include <pse-db/flydb.h>
 #include <pse-db/entries/flydbentry.h>
+#include <pse-db/trades.h>
 #include <pse-db/entries/hiddenitemdbentry.h>
 #include <pse-db/entries/mapdbentry.h>
 #include <pse-db/util/mapsearch.h>
@@ -55,6 +56,7 @@ private slots:
   void bothHiddenDbsLoadTheirOwnData();
   void everyHiddenPickupResolvesItsMapAndItem();
   void everyFlyDestinationSitsAtItsMapId();
+  void everyTradeResolvesAndSitsAtItsBit();
 };
 
 void TestDbIntegrity::boots()
@@ -345,6 +347,70 @@ void TestDbIntegrity::everyFlyDestinationSitsAtItsMapId()
                                 "a positional reader (v1's towns screen was one) would mislabel it")
                           .arg(e->getName()).arg(i).arg(e->getInd())));
   }
+}
+
+/// All ten in-game trades load, resolve their species, and sit at their own save bit -- and the
+/// nine located ones resolve a map while the one unused one resolves none.
+///
+/// `DoInGameTradeDialogue` FLAG_TESTs bit `wWhichTrade` of `wCompletedInGameTradeFlags`, and the
+/// store is loaded in bit order, so store index i must BE trade i. The map/coords were appended to
+/// trades.json by import_trades.py (additive), and the whole point of the map screen is putting the
+/// nine located trades on their trader's tile -- a trade that cannot find its map is a box drawn in
+/// the wrong place, or not at all.
+///
+/// @see notes/reference/in-game-trades.md
+void TestDbIntegrity::everyTradeResolvesAndSitsAtItsBit()
+{
+  (void)DB::inst();
+
+  // Must be able to fail: a loop over an empty store proves nothing (the AbstractHiddenItemDB
+  // lesson). NUM_NPC_TRADES is 10, fixed by ROM.
+  QCOMPARE(TradesDB::inst()->getStoreSize(), 10);
+
+  int located = 0, unused = 0;
+  for(int i = 0; i < TradesDB::inst()->getStoreSize(); i++) {
+    TradeDBEntry* t = TradesDB::inst()->getStoreAt(i);
+    QVERIFY(t != nullptr);
+
+    // Store index IS the save bit.
+    QVERIFY2(t->ind == i,
+             qPrintable(QString("trade at store index %1 carries ind %2 -- the save bit must equal "
+                                "the store position").arg(i).arg(t->ind)));
+
+    // Both species must resolve -- import_trades.py validated the names against pokemon.json, so a
+    // null here means the DB and the data have genuinely drifted.
+    QVERIFY2(t->toGive != nullptr,
+             qPrintable(QString("trade %1 (%2): give species '%3' did not resolve")
+                          .arg(i).arg(t->nickname).arg(t->give)));
+    QVERIFY2(t->toGet != nullptr,
+             qPrintable(QString("trade %1 (%2): get species '%3' did not resolve")
+                          .arg(i).arg(t->nickname).arg(t->get)));
+
+    if(t->unused) {
+      unused++;
+      // The unused trade has no NPC, so no map -- and must claim none.
+      QVERIFY2(t->mapId < 0 && t->toMap == nullptr,
+               qPrintable(QString("trade %1 (%2) is unused but resolved a map")
+                            .arg(i).arg(t->nickname)));
+    } else {
+      located++;
+      QVERIFY2(t->mapId >= 0,
+               qPrintable(QString("trade %1 (%2) is used but has no map id")
+                            .arg(i).arg(t->nickname)));
+      QVERIFY2(t->toMap != nullptr,
+               qPrintable(QString("trade %1 (%2): map id %3 did not deep-link")
+                            .arg(i).arg(t->nickname).arg(t->mapId)));
+    }
+  }
+
+  QCOMPARE(located, 9);
+  QCOMPARE(unused, 1);
+
+  // Cinnabar Lab Trade Room (168) is the one map with TWO trades -- the case that earns the
+  // per-map list. If the (map id, text id) join ever collapses them, this drops to 1.
+  MapDBEntry* cinnabar = MapsDB::inst()->getIndAt(QStringLiteral("168"));
+  QVERIFY(cinnabar != nullptr);
+  QCOMPARE(cinnabar->getToTradesSize(), 2);
 }
 QTEST_GUILESS_MAIN(TestDbIntegrity)
 #include "tst_db_integrity.moc"

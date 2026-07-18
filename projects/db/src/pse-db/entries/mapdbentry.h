@@ -36,6 +36,7 @@ class EventDBEntry;
 class FlyDBEntry;
 class HiddenItemDBEntry;
 class ScriptDBEntry;
+struct TradeDBEntry;
 
 /**
  * @brief One named step of a map's scripted-event sequence -- a row of its `_ScriptPointers`
@@ -294,6 +295,11 @@ public:
   int getToHiddenCoinsSize() const;                           ///< @see getToHiddenCoinsSize property.
   Q_INVOKABLE const HiddenItemDBEntry* getToHiddenCoinsAt(const int ind) const; ///< Hidden coin @p ind (for QML).
 
+  /// The in-game (NPC) trades reachable on this map. Usually 0 or 1; Cinnabar Lab Trade Room has
+  /// TWO (DORIS + CRINKLES). The unused trade is on NO map and appears in no list. @see toTrades
+  const QVector<TradeDBEntry*> getToTrades() const;
+  int getToTradesSize() const;                           ///< Number of trades here.
+
   ScriptDBEntry* getToScript() const; ///< @see getToScript property.
 
 public slots:
@@ -384,6 +390,11 @@ protected:
   /// nothing (see AbstractHiddenItemDB::load).
   QVector<HiddenItemDBEntry*> toHiddenItems;
   QVector<HiddenItemDBEntry*> toHiddenCoins; ///< The hidden COINS buried on this map.
+
+  /// The in-game (NPC) trades reachable on this map, filed by TradeDBEntry::deepLink() via the
+  /// mechanical (map id, text id) join. Cinnabar Lab Trade Room carries two; the unused trade,
+  /// having no NPC, is filed on no map at all.
+  QVector<TradeDBEntry*> toTrades;
   ScriptDBEntry* toScript = nullptr; ///< Resolved script (deepLink).
 
   friend class MapsDB;
@@ -391,5 +402,6 @@ protected:
   friend struct EventDBEntry;  // writes toEvents in deepLink
   friend struct FlyDBEntry;    // writes toFlyDestination in deepLink
   friend struct HiddenItemDBEntry; // writes toHiddenItems/toHiddenCoins in deepLink
+  friend struct TradeDBEntry;      // writes toTrades in deepLink
   friend struct ScriptDBEntry; // writes toScript in deepLink
 };
