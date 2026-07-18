@@ -15,12 +15,44 @@
 */
 
 /**
- * ONE BLOCK of the map that has persistent storage on it -- and the tabbed squares that reach
- * everything landing there.
+ * ONE BLOCK of the map, and the tabbed squares that reach everything on it.
  *
- * > *"If a map tile/block whatever has multiple persistent map storage spots for it they need to
- * >  show as tabbed little squares at the top left that can be clicked on and theyll take you to
- * >  the different spots"* -- Fairy Fox, 2026-07-17
+ * ══ THE STANDARD ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * Fairy Fox has had to say *"there needs to be proper standardization"* three times, because three
+ * cuts of this file each invented a local rule. So the whole of it is written here, once, and
+ * nothing below is allowed to disagree with it.
+ *
+ * **1. EVERYTHING on a map is the same kind of thing.** A person, the player, a door, a sign, a
+ * filter flag, a script trigger, a buried item, an event flag, grass, water — each is a **spot**,
+ * on a **block**, with an **outline** and a **tab**. *"Like anything else they need to be rendered
+ * and have a tab."* There is no category that is merely scenery and no category you cannot reach.
+ *
+ * **2. The OUTLINE says what you can DO** (and nothing else):
+ * | | |
+ * |---|---|
+ * | **solid + filled** | you can move it: drag, delete, insert. The player, people, doors, signs. |
+ * | **dashed + hollow** | it lives where the cartridge put it: scripts, filter flags, buried items, event flags, tile traits. You can change what it *does*, never where it *is*. |
+ * A block containing anything movable reads solid — the box is the handle for the **cell**.
+ *
+ * **3. The COLOUR says WHICH LAYER it belongs to** — the same swatch the Layers panel paints on
+ * that row, so **the panel is the legend**. It is never a code you have to learn from the map:
+ * hover any tab and it tells you in words, and lights its own outline in that same colour so the
+ * link is visible rather than remembered.
+ *
+ * **4. The TABS live at the TOP of the block, and only on mouseover.**
+ * *"the tabs are supposed to be on the top and only on mouseover"* + *"tabbed little squares at the
+ * top left"*. One horizontal strip along the block's top edge:
+ * **non-tile tabs first (left), then a GAP, then the tile traits (right)** — *"i said the tile
+ * traits go right not left i said the non tile traits go left"*. Two families, one strip, split by
+ * the **unit**: the walk grid (16×16) vs the tile traits (8×8).
+ *
+ * **5. A tab is a HANDLE, not a label.** Hover → it lights its own thing. Click → it **selects**
+ * that thing and opens its editor. (Clicking used to open a panel *without* selecting, so a door's
+ * tab appeared to open the sprite's page — which is what *"why is it that color"* was really
+ * reporting: not a colour bug, a selection bug.)
+ *
+ * @see notes/plans/map-screen.md -> Phase 16f
  *
  * ── The two granularities, and keeping them apart IS the design ──────────────────────────────
  *
@@ -59,8 +91,10 @@ Item {
   /// One entry of MapModel::blockHotspots: `{blockX, blockY, rectX/Y/W/H, spots:[...]}`.
   required property var block
 
-  /// A spot was reached -- open Map Storage at @p section, on row @p ind.
-  signal spotClicked(string section, int ind)
+  /// A spot was reached. @p kind so the canvas can SELECT the thing (rule 5: a tab is a handle, not
+  /// a label -- clicking one must select what it points at, or the editor opens on whatever was
+  /// selected before), @p section so it knows which editor, @p ind which row/slot.
+  signal spotClicked(string kind, string section, int ind)
 
   /// The spot kinds whose LAYER is currently on. A tab exists only for a layer that is showing --
   /// leadership, 2026-07-17: *"the tab strip only needs to have tabs based on the active layers"*.
@@ -74,6 +108,14 @@ Item {
   /// Only what the active layers admit. Everything below -- the tabs, the gap, the single-spot hit
   /// target -- reads THIS, never the raw list, so a hidden layer can never be reached by accident.
   readonly property var spots: hot.block.spots.filter(s => hot.activeKinds.indexOf(s.kind) >= 0)
+
+  /// Is the cursor on this block (or on its own strip)? The strip only exists while it is.
+  ///
+  /// ⚠️ `|| hot.hoveredSpot >= 0` is load-bearing, not belt-and-braces: the tabs sit inside the
+  /// block, but a tab is BIGGER than the cell it lives in when it scales up under the cursor, and
+  /// the moment the pointer is over the tab rather than the block, `hit.containsMouse` can go false.
+  /// Without this the strip vanishes exactly as you reach for it, and nothing is ever clickable.
+  readonly property bool showTabs: hit.containsMouse || hot.hoveredSpot >= 0
 
   /// The tab the cursor is on, or -1. Hovering a tab LIGHTS ITS OWN SPOT on the map -- which is the
   /// answer to *"nothing comes up when i mouse over a square"*: a strip of coloured dots means
@@ -128,11 +170,13 @@ Item {
       case "hiddenItem":  return "#cc79a7";  // Hidden items -- reddish purple
       case "hiddenCoin":  return "#f0e442";  // Hidden coins -- yellow
       case "tileTrait":   return "#999999";  // Tile traits -- the quiet family
-      // The movable objects wear their OWN component's colour, so a tab is visibly the same thing
-      // as the chip it points at: People & objects pink, Warps yellow, Signs orange.
+      // The movable objects wear their own LAYER's colour, so a tab is visibly the same thing as
+      // the chip it points at and the Layers panel row IS the legend (rule 3). People & objects
+      // pink, Warps yellow, Signs orange, the Player his own grey-blue row.
       case "sprite":      return "#cc79a7";
       case "warp":        return "#f0e442";
       case "sign":        return "#e69f00";
+      case "player":      return "#0072b2";
     }
     return "#009e73";
   }
@@ -180,6 +224,7 @@ Item {
       case "sprite":
       case "warp":
       case "sign":
+      case "player":
         return spot.name;
     }
     return spot.name;
@@ -200,7 +245,7 @@ Item {
   /// signs, people -- are persistent storage with locations too, and when they join `spots[]` this
   /// is the one line that has to know. @see MapWarp, MapSign, MapSprite
   function isMovable(kind) {
-    return kind === "warp" || kind === "sign" || kind === "sprite";
+    return kind === "warp" || kind === "sign" || kind === "sprite" || kind === "player";
   }
 
   /// ⭐ The BLOCK's outline style, decided by the block and not by each spot:
@@ -362,28 +407,41 @@ Item {
   // RIGHT**. Which reads well -- the two families can never be mistaken for one strip, and you
   // always know which side to look at for which kind.
 
-  /// NON-TILE (the walk grid): filter flags, script locations, coord ranges, hidden items, events.
-  Column {
-    id: gridStrip
-    visible: hot.tabbed && hot.gridSpots.length > 0
+  /// ONE strip, along the block's TOP edge. @see the standard at the top of this file (rule 4).
+  ///
+  /// ⚠️ ONLY ON MOUSEOVER. *"the tabs are supposed to be on the top and only on mouseover"*. A tab
+  /// per thing per block, shown always, dotted the whole map with furniture — every water block wore
+  /// a permanent square. Tabs are how you REACH a crowded spot, so they belong to the moment you are
+  /// pointing at one. The map is the point; the handles arrive when your hand does.
+  ///
+  /// It sits INSIDE the block's top edge, not above it. If it floated outside, moving the cursor
+  /// from the block to the strip would leave the block, the strip would vanish, and the tabs would
+  /// be permanently unreachable — a thing that hides exactly when you reach for it.
+  Row {
+    id: strip
+    visible: hot.tabbed && hot.showTabs
     spacing: 1
-    // Outside the cell, so a tab never covers the thing it points at.
-    x: -width - 2
-    y: 0
-    z: 2   // above the highlights AND the objects: a tab must always be reachable
+    x: 1
+    y: 1
+    z: 3   // above the outlines AND the objects: a tab must always be reachable
 
+    // Fade rather than blink: the strip is following the cursor, and a hard cut reads as a glitch.
+    opacity: hot.showTabs ? 1 : 0
+    Behavior on opacity { NumberAnimation { duration: 80 } }
+
+    // NON-TILE first: the walk grid (16x16) -- people, doors, signs, filter flags, scripts,
+    // buried items, event flags.
     Repeater { model: hot.gridSpots; delegate: tabDelegate }
-  }
 
-  /// TILE-BASED (8x8 traits): Door, Warp tiles, grass, water, counters.
-  Column {
-    id: tileStrip
-    visible: hot.tabbed && hot.tileSpots.length > 0
-    spacing: 1
-    x: hot.width + 2
-    y: 0
-    z: 2
+    // THE GAP: it splits the two families, and the split is the UNIT. Only present when both
+    // families are here to be told apart.
+    Item {
+      visible: hot.tileSpots.length > 0 && hot.gridSpots.length > 0
+      height: 1
+      width: Math.max(4, Math.round(4 * hot.canvas.zoom))
+    }
 
+    // TILE TRAITS last, on the RIGHT: the 8x8 family -- grass, water, doors, warp tiles, counters.
     Repeater { model: hot.tileSpots; delegate: tabDelegate }
   }
 
@@ -435,7 +493,7 @@ Item {
         // traits carried section "", that single line switched OFF hover, tooltip AND click for
         // water and grass, i.e. most of a water route. A disabled MouseArea is not a quiet tab; it
         // is a hole in the map. Every kind now has a real destination, so every tab is live.
-        onClicked: hot.spotClicked(modelData.section, modelData.ind)
+        onClicked: hot.spotClicked(modelData.kind, modelData.section, modelData.ind)
 
         // ⚠️ ONE SHORT LINE. A tab is a 5-pixel square, and the first cut hung a paragraph off it --
         // the name, the state, the whole description, a caution, and an instruction. Twilight:

@@ -207,6 +207,40 @@ phase 5  SCRIPT_PALLETTOWN_DAISY          turns ON  Daisy Walking
 - ⚠️ **This awareness is for the PANEL LIST, not the tabs** (leadership, 2026-07-17: *"we dont need
   too much ui clutter just have the tabs as i describe them"*). The canvas stays quiet.
 
+## 2g. THE STANDARD — the whole canvas, in one place (leadership, 2026-07-17)
+
+Fairy Fox had to say *"there needs to be proper standardization"* **three times**, and each time a
+new cut of `MapBlockHotspot.qml` invented a local rule instead. The standard is written once, here
+and at the top of that file, and nothing is allowed to disagree with it.
+
+**Why it kept failing, and it was never the individual bugs:** the canvas had **four** systems —
+`MapSprite`, `MapWarp` and `MapSign` each drew, hovered and selected *themselves*, and the tab layer
+was bolted on beside them. So the map **answered differently depending on what you pointed at**. You
+cannot polish four disagreeing systems into one; every fix moved the inconsistency somewhere else.
+
+| # | The rule | Her words |
+|---|---|---|
+| **1** | **Everything on a map is the same kind of thing** — a person, the player, a door, a sign, a filter flag, a script trigger, a buried item, an event flag, grass, water. Each is a **spot**, on a **block**, with an **outline** and a **tab**. No category is scenery; none is unreachable. | *"Like anything else they need to be rendered and have a tab"* · *"the npcs scriptable stuff other things they need an outline too"* |
+| **2** | **The OUTLINE says what you can DO.** solid+filled = movable (player, people, doors, signs). dashed+hollow = fixed (scripts, filter flags, buried items, event flags, tile traits) — you change what it *does*, never where it *is*. One movable makes the whole **cell** solid. | *"stuff draggable, deletable, insertable… should have a solid fill and box, stuff that allows editing things from fixed locations like scripts and stuff should have a dashed outline and not be filled"* |
+| **3** | **The COLOUR says which LAYER it belongs to** — the same swatch the Layers panel paints, so **the panel is the legend**. Never a code to learn off the map: hovering says it in words. | *"im seeing some kind of pink tab it says fisher 2, but why is it pink"* |
+| **4** | **Tabs live at the TOP of the block, and ONLY on mouseover.** One horizontal strip: **non-tile first (left) · GAP · tile traits (right)**. The split is the **unit** (walk grid 16×16 vs tile 8×8). | *"the tabs are supposed to be on the top and only on mouseover"* · *"i said the tile traits go right not left i said the non tile traits go left"* |
+| **5** | **A tab is a HANDLE, not a label.** Hover → lights its own thing. Click → **selects** it *and* opens its editor. | *"mouse over is important"* |
+
+⚠️ **The "why is it that colour" bug was NOT a colour bug.** *"there seems to be other color tabs
+around sprites that are yellow looking and when clicking on them they take you to the sprite details
+page"* — yellow **is** the Warps layer, correctly. The fault was that clicking a tab **opened** the
+Details panel **without selecting** the thing, so the panel went on showing the previous selection
+(the sprite). A door's tab appeared to open a sprite's page. **A selection bug wearing a colour's
+clothes** — and worth remembering as a diagnostic shape: when a colour "means the wrong thing",
+check what the click actually did before touching the palette.
+
+⚠️ **Three defaults that were never rules, only my inventions**, each of which she had to catch:
+*"1 spot = no tabs"* (made the map inconsistent — a two-thing block was live, the water block beside
+it dead), *tabs shown permanently* (dotted the whole map with furniture), and *tile traits with
+`section: ""`* (which, because the hit areas were `enabled:` only when a section existed, switched
+**water and grass completely off** — no hover, no tooltip, no click, on a route that is mostly
+water). **If a rule isn't in the table above, it isn't a rule.**
+
 ## 2f. The canvas's visual language, and the tab strip (leadership, 2026-07-17)
 
 Five rulings, in the order she gave them. Together they are a **language**, not a set of looks —

@@ -353,6 +353,24 @@ Item {
     object(canvasRoot.warps, "warp",   "details", o => qsTr("Door → %1").arg(o.destName !== undefined ? o.destName : "?"));
     object(canvasRoot.signs, "sign",   "details", o => qsTr("Sign"));
 
+    // 3. THE PLAYER. *"the player doesnt have a box yet its editable too"* -- and he is: you can
+    //    drag him anywhere on the map. He is drawn by his own MapSprite (slot 0) rather than being
+    //    in `npcs`, and being drawn separately is exactly how he ended up being the one thing on the
+    //    map with no way in. He is a spot like everything else.
+    if (brg.mapLayers.showPlayer && brg.map.valid) {
+      // ⚠️ His WALK-GRID coords, never `playerRectX/Y`. Those are his SPRITE's position, which the
+      // console draws **4 px above** his tile row (the OAM bias, notes/reference/sprites.md) -- so
+      // near a block's top edge the lifted rect files him on the block ABOVE the one he stands on,
+      // and his tab appears on the wrong cell. Same arithmetic as every other spot.
+      const pxx = canvasRoot.mapBorderPx + brg.map.playerX * 16;
+      const pyy = canvasRoot.mapBorderPx + brg.map.playerY * 16;
+      cell(Math.floor(pxx / px), Math.floor(pyy / px)).spots.push({
+        kind: "player", ind: 0, unit: "halfBlock", section: "details",
+        name: qsTr("Player"), desc: "", hilite: false,
+        extX: pxx, extY: pyy, extW: 16, extH: 16,
+      });
+    }
+
     const out = [];
     for (const k in blocks)
       out.push(blocks[k]);
@@ -394,7 +412,7 @@ Item {
     // filtered by their own layers upstream (`npcs`/`warps`/`signs` return [] when theirs is off).
     // So anything that reached this list is on by definition -- the layer rule holding, once, in
     // the place that owns it, instead of being re-checked in three dialects.
-    k.push("tileTrait", "sprite", "warp", "sign");
+    k.push("tileTrait", "sprite", "warp", "sign", "player");
     return k;
   }
 
@@ -1012,7 +1030,25 @@ Item {
           block: modelData
           activeKinds: canvasRoot.activeStorageKinds
 
-          onSpotClicked: (section, ind) => canvasRoot.storageRequested(section, ind)
+          // ⚠️ A tab must SELECT the thing it points at, not merely open a panel.
+          //
+          // THIS was the real fault behind *"other color tabs around sprites that are yellow looking
+          // and when clicking on them they take you to the sprite details page so why is it that
+          // color"*. The colour was right all along -- yellow IS the Warps layer -- but clicking the
+          // door's tab only *opened* the Details panel without selecting the door, so the panel went
+          // on showing whatever was selected before (the sprite). A yellow tab appeared to open a
+          // sprite's page. Not a colour bug at all: a selection bug wearing a colour's clothes.
+          onSpotClicked: (kind, section, ind) => {
+            // Select first, THEN open -- so the editor opens on the thing you actually clicked.
+            if (kind === "sprite" || kind === "player")
+              canvasRoot.selectedNpc = ind;
+            else if (kind === "warp")
+              canvasRoot.selectedWarp = ind;
+            else if (kind === "sign")
+              canvasRoot.selectedSign = ind;
+
+            canvasRoot.storageRequested(section, ind);
+          }
         }
       }
 

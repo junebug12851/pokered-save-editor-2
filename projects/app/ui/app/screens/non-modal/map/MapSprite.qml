@@ -115,15 +115,34 @@ Item {
     opacity: sprite.dragging ? 0.6 : 1.0
   }
 
-  // The one thing you cannot see by looking at a sprite: whether this map has actually LOADED its
-  // picture. If it hasn't, the console draws garbage there. (The player is always loaded.)
+  // ⭐ EVERY SPRITE WEARS ITS BOX, ALWAYS -- solid outline + a fill.
+  //
+  // > *"some sprites have no box, some do"* … *"the player doesnt have a box yet its editable too"*
+  // > … *"the sprites are not filled in like i asked they do not follow the visual language"*
+  // > -- Fairy Fox, twice.
+  //
+  // She is right on all three, and they are one fault: the box used to appear only when a sprite was
+  // SELECTED (or when its picture wasn't loaded), so the map showed boxes on an apparently arbitrary
+  // subset and none at all on the player. A person, an item ball and the player are all things you
+  // can drag, delete and place -- rule 2 of the standard says that reads **solid + filled**, and
+  // "only once you've already found it" is not a rule, it is the absence of one.
+  //
+  // The fill is light (#26 ~ 15%): a sprite is the only movable object with ARTWORK of its own, and
+  // the wash has to say "you can pick this up" without repainting the character. A heavy wash is
+  // what tinted every Poké Ball in Oak's Lab green and got caught in review.
   Rectangle {
-    visible: !sprite.inSet && !sprite.selected && !sprite.isPlayer
+    visible: !sprite.selected
     anchors.fill: parent
-    color: "transparent"
+    color: sprite.isPlayer ? "#260072b2" : "#26cc79a7"
     border.width: 1
-    border.color: "#ffd54f"
+    // The layer's own colour, so the box, its tab and the Layers panel row are visibly one thing:
+    // the Player his own blue, everybody else People & objects pink. AMBER overrides both when the
+    // map has not loaded this sprite's picture -- the one thing you cannot see by looking, because
+    // the console would draw garbage there.
+    border.color: !sprite.inSet && !sprite.isPlayer ? "#ffd54f"
+                                                    : (sprite.isPlayer ? "#0072b2" : "#cc79a7")
     opacity: 0.9
+    radius: 2
   }
 
   // A selection you can lose under a layer is not a selection: it draws above everything.
