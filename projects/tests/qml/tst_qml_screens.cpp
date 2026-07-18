@@ -154,6 +154,8 @@ private slots:
   void cleanupTestCase();
   void screenLoadsClean_data();
   void screenLoadsClean();
+  void everyMapPanelCompiles_data();
+  void everyMapPanelCompiles();
 };
 
 void TestQmlScreens::initTestCase()
@@ -294,6 +296,65 @@ void TestQmlScreens::screenLoadsClean()
   if (!captured.isEmpty())
     QFAIL(qPrintable(QStringLiteral("%1 produced %2 QML warning(s)/error(s):\n%3")
                        .arg(url).arg(captured.size()).arg(captured.join(QLatin1Char('\n')))));
+}
+
+/// ⚠️ THE HOLE THIS CLOSES, and it cost a live review to find.
+///
+/// `screenLoadsClean` loads every SCREEN -- but the Map screen's dock panels live behind
+/// **Loaders that only build when you open the dock**. So a panel could be broken beyond repair and
+/// every test in the suite stayed green: the QML for it was never compiled.
+///
+/// It shipped exactly that way. `MapStoragePanel.qml` referenced `FlatToggle`, which is not a type
+/// it can see, and an unresolved type does not fail politely -- **the whole panel body silently
+/// refuses to instantiate**, so Map Storage opened COMPLETELY BLANK on every map. 91/91 green,
+/// obvious in two seconds of actually clicking the dock button.
+///
+/// The lesson is the same one the `emu-venv` gate taught: **a check must be able to fail.** A test
+/// that loads a screen does not test what the screen refuses to load. Every dock panel is now
+/// compiled and instantiated on its own, so "is not a type" can never reach her again.
+void TestQmlScreens::everyMapPanelCompiles_data()
+{
+  QTest::addColumn<QString>("url");
+
+  // EVERY dock panel on the Map screen -- all Loader-gated in the running app -- plus the canvas
+  // items the panels' siblings instantiate. Listed explicitly rather than globbed: a test that
+  // discovers its own subjects can quietly discover none.
+  const QStringList panels = {
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/MapStoragePanel.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/DetailsPanel.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/WildPokemonPanel.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/CharacterStatePanel.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/LayersPanel.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/SpriteSetPanel.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/TilesetPanel.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/WarpStatePanel.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/MapBlockHotspot.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/MapSprite.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/MapWarp.qml"),
+    QStringLiteral("qrc:/ui/app/screens/non-modal/map/MapSign.qml"),
+  };
+  for (const QString& u : panels)
+    QTest::newRow(u.section(QLatin1Char('/'), -1).toUtf8().constData()) << u;
+}
+
+void TestQmlScreens::everyMapPanelCompiles()
+{
+  QFETCH(QString, url);
+
+  QQmlComponent component(m_engine, QUrl(url));
+
+  // COMPILE is the whole point: "FlatToggle is not a type" is a load error, and a load error on a
+  // panel means the panel does not exist at all. Runtime binding warnings are NOT asserted here --
+  // these components legitimately need a live selection/dock context to bind against, and demanding
+  // silence from a cold instantiation would be a test that lies. The bar is: it must be a TYPE.
+  if (component.isError()) {
+    QStringList errs;
+    const auto list = component.errors();
+    for (const auto& e : list)
+      errs << e.toString();
+    QFAIL(qPrintable(QStringLiteral("%1 failed to COMPILE -- it would open blank:\n%2")
+                       .arg(url, errs.join(QLatin1Char('\n')))));
+  }
 }
 
 QTEST_MAIN(TestQmlScreens)

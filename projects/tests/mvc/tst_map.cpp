@@ -158,6 +158,7 @@ private slots:
   void phases_tellTheMapsStoryInOrder();
   void flagHistory_saysWhoTurnedItOnAndWhere();
   void hotspots_aBlockOnlyCarriesWhatOverlapsIt();
+  void storageHidden_listsThePickupsUnderTheirOwnMap();
 };
 
 void TestMap::initTestCase()
@@ -1271,6 +1272,48 @@ void TestMap::hotspots_aBlockOnlyCarriesWhatOverlapsIt()
                             .arg(v["name"].toString())));
     }
   }
+}
+
+/// The Map Storage panel's hidden-pickup rows: filed under the map they're actually on
+/// ("all the spots there in means there listed under that map"), each naming what's buried.
+void TestMap::storageHidden_listsThePickupsUnderTheirOwnMap()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  // Route 12 -- the forged fixture's map (assets/saves/forged-maps/Route12.sav). It buries one
+  // item, and the panel must list it under Route 12 and nowhere else.
+  const QVariantList r12 = model.storageHidden(QVariantList{ 23 });
+  QCOMPARE(r12.size(), 1);
+  QCOMPARE(r12.first().toMap()["mapName"].toString(), QStringLiteral("Route 12"));
+  QCOMPARE(r12.first().toMap()["isCoin"].toBool(), false);
+  QVERIFY(!r12.first().toMap()["name"].toString().isEmpty());
+  // The coords are the point: this is the one storage kind whose bit IS a place, exactly.
+  QCOMPARE(r12.first().toMap()["x"].toInt(), 2);
+  QCOMPARE(r12.first().toMap()["y"].toInt(), 63);
+
+  // Viridian Forest buries two, and they are ITEMS, never coins.
+  const QVariantList vf = model.storageHidden(QVariantList{ 51 });
+  QCOMPARE(vf.size(), 2);
+  for (const QVariant& v : vf)
+    QCOMPARE(v.toMap()["isCoin"].toBool(), false);
+
+  // The Game Corner buries all twelve coin piles, and no items.
+  const QVariantList gc = model.storageHidden(QVariantList{ 135 });
+  QCOMPARE(gc.size(), 12);
+  for (const QVariant& v : gc) {
+    QCOMPARE(v.toMap()["isCoin"].toBool(), true);
+    QVERIFY(v.toMap()["coins"].toInt() > 0);
+  }
+
+  // A map with nothing buried says so with an empty list -- not a row saying "none".
+  QVERIFY(model.storageHidden(QVariantList{ 0 }).isEmpty());   // Pallet Town
 }
 
 QTEST_MAIN(TestMap)

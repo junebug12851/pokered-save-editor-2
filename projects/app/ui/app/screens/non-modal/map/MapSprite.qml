@@ -127,12 +127,23 @@ Item {
   }
 
   // A selection you can lose under a layer is not a selection: it draws above everything.
+  //
+  // SOLID BORDER + A FILL, because a sprite is a thing you can drag, delete and place -- Twilight,
+  // 2026-07-17: *"stuff draggable, deletable, insertable, etc.... should have a solid fill and box"*,
+  // noting that *"sprites are entities that can be edited and dragged around they dont have a solid
+  // fill"*. Warps and signs already spoke this language (their chips are washed #66-alpha); the
+  // sprite was the one draggable thing that didn't.
+  //
+  // The wash is kept light (#26 ~ 15%) for one reason: a sprite is the only movable object with
+  // ARTWORK of its own, and the fill has to say "you can pick this up" without repainting the
+  // character. A heavy wash over a sprite is the mistake that tinted every Poké Ball in Oak's Lab
+  // green and got caught in review.
   Rectangle {
     visible: sprite.selected
     z: 20
     anchors.fill: parent
     anchors.margins: -2
-    color: "transparent"
+    color: "#26cc79a7"
     border.width: 2
     border.color: "#cc79a7"
 

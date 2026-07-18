@@ -75,6 +75,13 @@ Item {
   /// target -- reads THIS, never the raw list, so a hidden layer can never be reached by accident.
   readonly property var spots: hot.block.spots.filter(s => hot.activeKinds.indexOf(s.kind) >= 0)
 
+  /// The tab the cursor is on, or -1. Hovering a tab LIGHTS ITS OWN SPOT on the map -- which is the
+  /// answer to *"nothing comes up when i mouse over a square"*: a strip of coloured dots means
+  /// nothing until you can see which one is which. This is also the "everything overlapping is
+  /// accessible under mouseover" rule made real: run the cursor down the strip and each thing in
+  /// the cell announces itself in turn, however buried it is.
+  property int hoveredSpot: -1
+
   /// The tile-based family (8x8 tile TRAITS) and the walk-grid family, told apart by the spot's own
   /// unit. The gap between them is the whole point of the split, and the unit is what defines it --
   /// which is exactly why `blockHotspots` carries a unit per spot.
@@ -121,6 +128,38 @@ Item {
       return false;
     hot.canvas.revision;
     return hot.canvas.wMissables ? hot.canvas.wMissables.missablesAt(spot.ind) : false;
+  }
+
+  /// A spot's tooltip: ONE short line, and never more.
+  ///
+  /// > *"the tooltips are awful cant read them and way too much reading"* -- Fairy Fox, on the first
+  /// > cut, which hung the name + state + full description + caution + an instruction off a
+  /// > five-pixel square.
+  ///
+  /// A tooltip on a dot is a **label**, not a page: it answers *"what is this?"* at a glance. The
+  /// state rides along only where it is the whole point (a flag that is off; a flag turned OFF
+  /// rather than on). Everything else -- the description, the caution, the raw byte -- is one click
+  /// away in the panel, which is where prose belongs.
+  function labelOf(spot) {
+    switch (spot.kind) {
+      case "filterFlag":
+        return hot.isHidden(spot) ? qsTr("%1 — hidden").arg(spot.name) : spot.name;
+      case "eventFlag":
+        // "Turns off" is the surprising one and earns its word; "turns on" is the default reading.
+        return spot.action === "reset" ? qsTr("%1 — turned off here").arg(spot.name) : spot.name;
+      case "hiddenItem":
+      case "hiddenCoin":
+        return qsTr("%1 — hidden pickup").arg(spot.name);
+      case "script":
+        return spot.shape === "scriptRow" ? qsTr("Script — this whole row")
+             : spot.shape === "scriptCol" ? qsTr("Script — this whole column")
+             : qsTr("Script trigger");
+      case "cardKeyDoor":
+        return qsTr("Card Key door");
+      case "tileTrait":
+        return spot.name;
+    }
+    return spot.name;
   }
 
   /// Can you MOVE this thing -- drag it, delete it, put a new one down?
@@ -180,9 +219,14 @@ Item {
     delegate: Item {
       id: spotItem
       required property var modelData
+      required property int index
 
       /// Is the save currently switching this object OFF? (Only a filter flag can be.)
       readonly property bool dashed: hot.isHidden(modelData)
+
+      /// Is the cursor on this spot's tab? Then say which one you mean.
+      readonly property bool lit: hot.hoveredSpot >= 0
+                                 && hot.spots[hot.hoveredSpot] === spotItem.modelData
 
       x: (modelData.extX - hot.block.rectX) * hot.canvas.zoom
       y: (modelData.extY - hot.block.rectY) * hot.canvas.zoom
@@ -229,9 +273,12 @@ Item {
         anchors.fill: parent
         visible: !hot.anyMovable
         // A switched-off object is fainter; a range is a broad claim and says so quietly.
-        opacity: spotItem.dashed ? 0.5
+        // Hovering its tab brings it fully forward -- that IS the "which one is this?" answer.
+        opacity: spotItem.lit ? 1.0
+                              : (spotItem.dashed ? 0.5
                                  : (modelData.kind === "script" && modelData.shape !== "scriptTile"
-                                      ? 0.55 : 1.0)
+                                      ? 0.55 : 1.0))
+        Behavior on opacity { NumberAnimation { duration: 90 } }
         // The dashes are painted, not bound, so a size change has to ask for a repaint by hand --
         // otherwise zooming leaves the old rectangle stretched.
         onWidthChanged: requestPaint()
@@ -318,44 +365,50 @@ Item {
       id: tab
       required property var modelData
 
-      width: Math.max(4, Math.round(5 * hot.canvas.zoom))
+      readonly property bool hovered: tabHit.containsMouse
+
+      // Big enough to actually hit: a 5px square at 1x is a dare, not a target.
+      width: Math.max(7, Math.round(6 * hot.canvas.zoom))
       height: width
       radius: 1
       color: hot.inkOf(modelData.kind)
       border.width: 1
-      border.color: Qt.darker(color, 1.6)
+      // Hovering lifts the tab out of the strip: a white ring, so it reads on every one of the
+      // seven inks and on all four shades of Game Boy grey underneath.
+      border.color: tab.hovered ? "#ffffff" : Qt.darker(color, 1.6)
+      scale: tab.hovered ? 1.35 : 1.0
+      Behavior on scale { NumberAnimation { duration: 90 } }
       // A tab for a switched-off object is hollow -- the same language the box itself speaks.
       opacity: hot.isHidden(modelData) ? 0.45 : 1.0
 
       // A MouseArea, never a PointerHandler -- a TapHandler fires THROUGH a floating panel, which
       // cost a whole review round once. See notes/reference/qt-patterns.md (top of file).
       MouseArea {
+        id: tabHit
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        // Tell the block which spot is under the cursor, so ITS box lights up on the map. Hovering
+        // a dot must point at something, or the strip is just decoration.
+        onEntered: hot.hoveredSpot = hot.spots.indexOf(tab.modelData)
+        onExited: if (hot.spots[hot.hoveredSpot] === tab.modelData) hot.hoveredSpot = -1
         // A tile trait is a TILESET fact with no Map Storage row to open; its tab is a label and a
         // hover target, not a link. Saying so by not pretending to be clickable.
         enabled: modelData.section !== ""
         onClicked: hot.spotClicked(modelData.section, modelData.ind)
 
+        // ⚠️ ONE SHORT LINE. A tab is a 5-pixel square, and the first cut hung a paragraph off it --
+        // the name, the state, the whole description, a caution, and an instruction. Twilight:
+        // *"a very dark and extremely large tooltip filled with tons of text comes up ... the
+        // tooltips are awful cant read them and way too much reading"*. She was right: a tooltip on
+        // a dot is a LABEL, not a page. It answers "what is this?" in a glance and nothing else --
+        // the full story is one click away in the panel, which is where prose belongs.
+        //
+        // No "Click to open in Map Storage" either: the cursor is already a pointing hand, so the
+        // line spent saying it is a line that tells you what you can already see.
         ToolTip.visible: containsMouse
         ToolTip.delay: 300
-        ToolTip.text: {
-          let t = modelData.name;
-          if (modelData.kind === "eventFlag") {
-            t += modelData.action === "reset" ? qsTr("\nTurned OFF here.") : qsTr("\nTurned ON here.");
-            if (modelData.viaChain)
-              t += qsTr("\n(Later in the sequence this spot starts.)");
-          } else if (modelData.kind === "filterFlag") {
-            t += hot.isHidden(modelData) ? qsTr("\nYour save is hiding this.")
-                                         : qsTr("\nYour save is showing this.");
-          }
-          if (modelData.desc && modelData.desc.length > 0)
-            t += "\n\n" + modelData.desc;
-          if (modelData.section !== "")
-            t += qsTr("\n\nClick to open it in Map Storage.");
-          return t;
-        }
+        ToolTip.text: hot.labelOf(modelData)
       }
     }
   }
@@ -373,19 +426,9 @@ Item {
     cursorShape: Qt.PointingHandCursor
     onClicked: hot.spotClicked(hot.spots[0].section, hot.spots[0].ind)
 
+    // One short line, same rule as the tabs. @see labelOf
     ToolTip.visible: hit.containsMouse && hit.enabled
     ToolTip.delay: 400
-    ToolTip.text: {
-      if (hot.spots.length !== 1)
-        return "";
-      const s = hot.spots[0];
-      let t = s.name;
-      if (s.kind === "filterFlag")
-        t += hot.isHidden(s) ? qsTr("\nYour save is hiding this.") : qsTr("\nYour save is showing this.");
-      if (s.desc && s.desc.length > 0)
-        t += "\n\n" + s.desc;
-      t += qsTr("\n\nClick to open it in Map Storage.");
-      return t;
-    }
+    ToolTip.text: hot.spots.length === 1 ? hot.labelOf(hot.spots[0]) : ""
   }
 }

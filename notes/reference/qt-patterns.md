@@ -1,5 +1,54 @@
 # Qt / QML Patterns
 
+## 💥 "X is not a type" takes the WHOLE component down, silently — 2026-07-17
+
+**One unresolved type does not fail politely. It fails totally.**
+
+`MapStoragePanel.qml` used `FlatToggle`, which is not a type that file can see. The result was not a
+broken switch — **the entire panel body refused to instantiate and Map Storage opened COMPLETELY
+BLANK, on every map**. The only trace is a single `qWarning` on stderr that nobody reads:
+
+```
+qrc:/ui/app/screens/non-modal/map/MapStoragePanel.qml:948:19: FlatToggle is not a type
+```
+
+⚠️ **And the whole suite was green (91/91).** `tst_qml_screens` loads every *screen* — but a dock
+panel lives behind a **Loader that only builds when the dock is opened**, so its QML was never
+compiled by anything. Twilight found it in about two seconds by clicking the dock button.
+
+**The fix, and it generalises:** `tst_qml_screens::everyMapPanelCompiles` now compiles **every** Map
+dock panel + canvas item on its own. Negative-controlled — put `FlatToggle` back and it says
+*"failed to COMPILE -- it would open blank"*. Deliberately asserts **compile only**, not runtime
+silence: these need a live dock/selection context to bind against, and demanding silence from a cold
+instantiation would be a test that lies.
+
+> **The lesson, and it is the same one the `emu-venv` gate taught:** *a check must be able to fail.*
+> A test that loads a screen does not test what the screen **refuses** to load. If a thing is built
+> lazily, something has to build it eagerly, or "green" only means "never asked".
+
+**Before reaching for a control in a QML file, check what that file's neighbours actually use.**
+`MapStoragePanel` speaks `MapSwitch`; `FlatToggle` lives elsewhere in the tree and is not in scope.
+
+## 🖱️ `parent` inside a Repeater delegate is NOT the enclosing item — 2026-07-17
+
+```qml
+Repeater { delegate: Item {
+  Canvas {
+    id: dashes
+    Connections {
+      target: hot.canvas
+      function onZoomChanged() { parent.requestPaint(); }   // ❌ TypeError, every zoom
+      function onZoomChanged() { dashes.requestPaint(); }   // ✅
+    }
+  }
+}}
+```
+
+Inside a delegate, `parent` walks out to the **delegate's root**, not to the `Canvas` the
+`Connections` is nested in — so `requestPaint` is *"not a function"* on every zoom. The identical
+line worked verbatim in `MapFlagBox.qml`, which was **not** inside a Repeater. **Use an explicit
+`id`.** Caught by `tst_qml_screens` — the only test in the suite that instantiates QML at all.
+
 ## 🪟 WINDOWS + Qt ≥ 6.11: aqtinstall needs a git pin (and there IS one) — 2026-07-17
 
 **Read this before proposing any Qt version bump.** ⚠️ **An earlier draft of this section called it a

@@ -945,7 +945,13 @@ Item {
                   anchors.margins: 3
                   spacing: 6
 
-                  FlatToggle {
+                  // ⚠️ MapSwitch, NOT FlatToggle. FlatToggle is not a type this file can see, and an
+                  // unresolved type does not fail politely: the WHOLE panel body silently refuses to
+                  // instantiate and Map Storage opens completely BLANK -- on every map, not just the
+                  // one with the mistake. It shipped past tst_qml_screens because the panel lives in
+                  // a dock Loader that only builds when the dock is opened, and the smoke test never
+                  // opens it. Found by Twilight in seconds. See notes/reference/qt-patterns.md.
+                  MapSwitch {
                     checked: hrow.collected
                     onToggled: {
                       if (!panel.wHidden)

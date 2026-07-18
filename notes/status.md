@@ -11,6 +11,38 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 `tst_world` now 21 (two new event pins). New local-only member: **`tst_flag_scenarios`** (with the ROM,
 SKIPs without it).
 
+### 🐺 THE LIVE PASS FOUND WHAT 91 GREEN TESTS DIDN'T (2026-07-17, `0.42.5-alpha`)
+
+Twilight opened it and, in about two minutes: *"none of this works actually"*. She was right about
+every item. Kept in full, because the **shape** of the miss matters more than the fixes.
+
+- 🐞 **Map Storage opened COMPLETELY BLANK, on every map.** `MapStoragePanel.qml` used `FlatToggle`
+  — not a type that file can see — and **an unresolved type takes the whole component down
+  silently**. The suite was **91/91 green** because a dock panel lives behind a **Loader that only
+  builds when the dock is opened**, so its QML was never compiled by anything.
+  **Fixed** (`MapSwitch`, the panel's own idiom) **and the hole is closed**:
+  `tst_qml_screens::everyMapPanelCompiles` now compiles every Map panel + canvas item on its own —
+  **negative-controlled** (put `FlatToggle` back → *"failed to COMPILE -- it would open blank"*).
+- 🐞 **The tooltips were unreadable.** *"a very dark and extremely large tooltip filled with tons of
+  text… way too much reading"* — a 5 px square was hanging the name + state + full description +
+  caution + an instruction off itself. Now **one short line** ("Potion — hidden pickup"). A tooltip
+  on a dot is a **label, not a page**.
+- 🐞 **Hover did nothing.** A strip of coloured dots means nothing until you can tell which is
+  which. Hovering a tab now **lights its own box on the map** and the tab lifts — which is also the
+  *"everything overlapping is accessible under mouseover"* rule made real.
+- 🐞 **Sprites didn't read as movable.** Warps + signs already ship the solid+filled language
+  (`#66`-alpha chips); the sprite — the *most* draggable thing — didn't. Now washed `#26` when
+  selected (light, because it is the one movable object with **artwork** worth seeing through).
+- ⭐ **A proper bench exists now:** `assets/saves/forged-maps/Route12.sav` — **console-authored**,
+  walked to through a hijacked door by the real ROM, so every byte of the Area block is the
+  engine's own. **10 sprites · 2 signs · 4 warps · a hidden item at (2,63) · the Snorlax**, and a
+  10×54 water route. Pallet Town was too quiet to review on. See that folder's README.
+
+> **The lesson, and it is the `emu-venv` lesson again in a new costume: a check must be able to
+> fail.** A test that loads a *screen* does not test what the screen **refuses** to load. If a thing
+> is built lazily, something must build it eagerly, or "green" only ever meant "never asked".
+> Full write-up: [`reference/qt-patterns.md`](reference/qt-patterns.md) (top).
+
 ### 💎 HIDDEN ITEMS (16f-b) — the data landed, and the DB that never loaded it (2026-07-17, `0.42.2-alpha`)
 
 Phase 1 of Fairy Fox's hidden-items brief. Research + traps + lessons:
