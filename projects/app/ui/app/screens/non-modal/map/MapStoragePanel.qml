@@ -1108,6 +1108,63 @@ Item {
                        + "chance. ON = you've already picked it up, so the spot is now empty.")
           }
 
+          // Two ALIKE groups, kept separate (leadership, 2026-07-17: "hidden items and coins another
+          // group id keep them 2 separate groups") — items and coins are different save arrays with
+          // independent numbering. Check/uncheck acts on the WHOLE group (all 54 / all 12, every
+          // map), so the labels name the full counts to make that scope plain.
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+            Label {
+              text: qsTr("All 54 items:")
+              font.pixelSize: 10
+              opacity: 0.6
+              Layout.fillWidth: true
+            }
+            MapTextButton {
+              text: qsTr("Check all")
+              onClicked: {
+                if (!panel.wHidden) return;
+                for (var i = 0; i < panel.wHidden.hItemsCount(); i++) panel.wHidden.hItemsSet(i, true);
+                panel.editTick++;
+              }
+            }
+            MapTextButton {
+              text: qsTr("Uncheck all")
+              onClicked: {
+                if (!panel.wHidden) return;
+                for (var i = 0; i < panel.wHidden.hItemsCount(); i++) panel.wHidden.hItemsSet(i, false);
+                panel.editTick++;
+              }
+            }
+          }
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+            Label {
+              text: qsTr("All 12 coin piles:")
+              font.pixelSize: 10
+              opacity: 0.6
+              Layout.fillWidth: true
+            }
+            MapTextButton {
+              text: qsTr("Check all")
+              onClicked: {
+                if (!panel.wHidden) return;
+                for (var i = 0; i < panel.wHidden.hCoinsCount(); i++) panel.wHidden.hCoinsSet(i, true);
+                panel.editTick++;
+              }
+            }
+            MapTextButton {
+              text: qsTr("Uncheck all")
+              onClicked: {
+                if (!panel.wHidden) return;
+                for (var i = 0; i < panel.wHidden.hCoinsCount(); i++) panel.wHidden.hCoinsSet(i, false);
+                panel.editTick++;
+              }
+            }
+          }
+
           Repeater {
             model: hiddenSection.list
 
