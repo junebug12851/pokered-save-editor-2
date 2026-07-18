@@ -32,6 +32,8 @@
 #include <pse-db/sprites.h>
 #include <pse-db/hiddenItemsdb.h>
 #include <pse-db/hiddencoinsdb.h>
+#include <pse-db/flydb.h>
+#include <pse-db/entries/flydbentry.h>
 #include <pse-db/entries/hiddenitemdbentry.h>
 #include <pse-db/entries/mapdbentry.h>
 #include <pse-db/util/mapsearch.h>
@@ -52,6 +54,7 @@ private slots:
   void everySpriteHasAKnownGroup();
   void bothHiddenDbsLoadTheirOwnData();
   void everyHiddenPickupResolvesItsMapAndItem();
+  void everyFlyDestinationSitsAtItsMapId();
 };
 
 void TestDbIntegrity::boots()
@@ -297,6 +300,50 @@ void TestDbIntegrity::everyHiddenPickupResolvesItsMapAndItem()
     QVERIFY2(e->getCoins() > 0,
              qPrintable(QString("hidden coin bit %1 on '%2' has %3 coins")
                           .arg(i).arg(e->getMap()).arg(e->getCoins())));
+  }
+}
+
+/// Every fly destination's `ind` IS its map id -- because the cartridge says so twice.
+///
+/// `MarkTownVisitedAndLoadToggleableObjects` marks a town visited with
+/// `ld a, [wCurMap]` / `ld c, a` / `FLAG_SET` on `wTownVisitedFlag`: **the flag index is the map
+/// id, with no translation**. `ExternalMapEntries` (the town map's own name table) lists the same
+/// eleven in the same order. So `fly.json`'s `ind` is not a list position anybody chose -- it is a
+/// fact about the save, and it is checkable.
+///
+/// ⚠️ **This test exists because it was WRONG, for years, and shipped.** `fly.json` had Lavender
+/// and Vermilion swapped and Saffron/Fuchsia/Cinnabar/Indigo rotated -- 6 of 11 -- and v1's towns
+/// screen walked the list positionally, so ticking "Vermilion City" set Lavender Town's bit.
+/// Nothing caught it because nothing ever asserted the list against the game: every name was real,
+/// every name was a town, and the count was exact. **A plausible list is not a correct one.**
+///
+/// @see notes/reference/town-visited.md
+void TestDbIntegrity::everyFlyDestinationSitsAtItsMapId()
+{
+  (void)DB::inst();
+
+  // Must be able to fail: a loop over an empty store proves nothing (the AbstractHiddenItemDB
+  // lesson, two tests up).
+  QCOMPARE(FlyDB::inst()->getStoreSize(), 11); // NUM_CITY_MAPS -- fixed by ROM
+
+  for(int i = 0; i < FlyDB::inst()->getStoreSize(); i++) {
+    FlyDBEntry* e = FlyDB::inst()->getStoreAt(i);
+    QVERIFY(e != nullptr);
+
+    MapDBEntry* map = e->getToMap();
+    QVERIFY2(map != nullptr,
+             qPrintable(QString("fly destination '%1' did not deep-link its map").arg(e->getName())));
+
+    // The keystone: the entry's ind, its store position, and its map's id are ONE number. If any
+    // two disagree, a "visited" checkbox somewhere is about to tick the wrong town.
+    QVERIFY2(e->getInd() == map->getInd(),
+             qPrintable(QString("fly destination '%1' has ind %2 but its map's id is %3 -- the "
+                                "save's bit for it is the MAP ID (MarkTownVisited: ld c, [wCurMap])")
+                          .arg(e->getName()).arg(e->getInd()).arg(map->getInd())));
+    QVERIFY2(e->getInd() == i,
+             qPrintable(QString("fly destination '%1' is at store position %2 but carries ind %3 -- "
+                                "a positional reader (v1's towns screen was one) would mislabel it")
+                          .arg(e->getName()).arg(i).arg(e->getInd())));
   }
 }
 QTEST_GUILESS_MAIN(TestDbIntegrity)

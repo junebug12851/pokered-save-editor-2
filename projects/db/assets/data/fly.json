@@ -16,11 +16,11 @@
         "ind": 3
     },
     {
-        "name": "Vermilion City",
+        "name": "Lavender Town",
         "ind": 4
     },
     {
-        "name": "Lavender Town",
+        "name": "Vermilion City",
         "ind": 5
     },
     {
@@ -28,19 +28,19 @@
         "ind": 6
     },
     {
-        "name": "Saffron City",
+        "name": "Fuchsia City",
         "ind": 7
     },
     {
-        "name": "Fuchsia City",
+        "name": "Cinnabar Island",
         "ind": 8
     },
     {
-        "name": "Cinnabar Island",
+        "name": "Indigo Plateau",
         "ind": 9
     },
     {
-        "name": "Indigo Plateau",
+        "name": "Saffron City",
         "ind": 10
     }
 ]
