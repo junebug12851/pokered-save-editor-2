@@ -1,0 +1,291 @@
+{
+  "map": "Silph Co 5F",
+  "mapInd": 210,
+  "scriptSlot": 69,
+  "source": "scripts/SilphCo5F.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 24,
+    "y": 0
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_SILPHCO5F_DEFAULT",
+      "routine": "CheckFightingMapTrainers",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_SILPHCO5F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_SILPHCO5F_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_SILPHCO5F_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 1826,
+              "name": "EVENT_BEAT_SILPH_CO_5F_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1827,
+              "name": "EVENT_BEAT_SILPH_CO_5F_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1828,
+              "name": "EVENT_BEAT_SILPH_CO_5F_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1829,
+              "name": "EVENT_BEAT_SILPH_CO_5F_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1832,
+              "name": "EVENT_SILPH_CO_5_UNLOCKED_DOOR1",
+              "owned": true
+            },
+            {
+              "ind": 1833,
+              "name": "EVENT_SILPH_CO_5_UNLOCKED_DOOR2",
+              "owned": true
+            },
+            {
+              "ind": 1834,
+              "name": "EVENT_SILPH_CO_5_UNLOCKED_DOOR3",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 151,
+            "name": "1",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_1",
+            "state": "show"
+          },
+          {
+            "ind": 152,
+            "name": "2",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_2",
+            "state": "show"
+          },
+          {
+            "ind": 153,
+            "name": "3",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_3",
+            "state": "show"
+          },
+          {
+            "ind": 154,
+            "name": "4",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_4",
+            "state": "show"
+          },
+          {
+            "ind": 155,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 156,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 157,
+            "name": "Item 3",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_3",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_SILPHCO5F_DEFAULT",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 1826,
+              "name": "EVENT_BEAT_SILPH_CO_5F_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1827,
+              "name": "EVENT_BEAT_SILPH_CO_5F_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1828,
+              "name": "EVENT_BEAT_SILPH_CO_5F_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1829,
+              "name": "EVENT_BEAT_SILPH_CO_5F_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1832,
+              "name": "EVENT_SILPH_CO_5_UNLOCKED_DOOR1",
+              "owned": true
+            },
+            {
+              "ind": 1833,
+              "name": "EVENT_SILPH_CO_5_UNLOCKED_DOOR2",
+              "owned": true
+            },
+            {
+              "ind": 1834,
+              "name": "EVENT_SILPH_CO_5_UNLOCKED_DOOR3",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 151,
+            "name": "1",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_1",
+            "state": "show"
+          },
+          {
+            "ind": 152,
+            "name": "2",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_2",
+            "state": "show"
+          },
+          {
+            "ind": 153,
+            "name": "3",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_3",
+            "state": "show"
+          },
+          {
+            "ind": 154,
+            "name": "4",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_4",
+            "state": "show"
+          },
+          {
+            "ind": 155,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 156,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 157,
+            "name": "Item 3",
+            "toggleConst": "TOGGLE_SILPH_CO_5F_ITEM_3",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            1826,
+            1827,
+            1828,
+            1829,
+            1832,
+            1833,
+            1834
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

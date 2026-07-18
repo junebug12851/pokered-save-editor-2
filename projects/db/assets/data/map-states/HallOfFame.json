@@ -1,0 +1,270 @@
+{
+  "map": "Hall of Fame",
+  "mapInd": 118,
+  "scriptSlot": 74,
+  "source": "scripts/HallOfFame.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 4,
+    "y": 7
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "The induction machine. Value 1 runs Oak's congratulations and hides Cerulean City's cave guard (cross-map); value 2 RESETS the whole Elite-Four run (all ten flags -- door one-shots, beat flags, the champion flag) so the gauntlet re-arms, then saves the game. That wipe is why a post-game save shows the E4 'unbeaten': the run flags are cleared BY DESIGN, and only the Hall of Fame records remain."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_HALLOFFAME_DEFAULT",
+      "routine": "HallOfFameDefaultScript",
+      "kind": "resting",
+      "next": [
+        1
+      ],
+      "autoRunsOnEntry": true
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_HALLOFFAME_OAK_CONGRATULATIONS",
+      "routine": "HallOfFameOakCongratulationsScript",
+      "kind": "transient",
+      "next": [
+        2
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_HALLOFFAME_RESET_EVENTS_AND_SAVE",
+      "routine": "HallOfFameResetEventsAndSaveScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_HALLOFFAME_NOOP",
+      "routine": "HallOfFameNoopScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_HALLOFFAME_DEFAULT",
+      "name": "Awaiting an inductee",
+      "desc": "The recording room, idle.",
+      "timeline": "Reached only at the story's end.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Arrive with Oak after beating the Champion: induction, flag wipe, save (values 1-2).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 2273,
+              "name": "EVENT_BEAT_LORELEIS_ROOM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2278,
+              "name": "EVENT_AUTOWALKED_INTO_LORELEIS_ROOM",
+              "owned": true
+            },
+            {
+              "ind": 2281,
+              "name": "EVENT_BEAT_BRUNOS_ROOM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2286,
+              "name": "EVENT_AUTOWALKED_INTO_BRUNOS_ROOM",
+              "owned": true
+            },
+            {
+              "ind": 2289,
+              "name": "EVENT_BEAT_AGATHAS_ROOM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2294,
+              "name": "EVENT_AUTOWALKED_INTO_AGATHAS_ROOM",
+              "owned": true
+            },
+            {
+              "ind": 2297,
+              "name": "EVENT_BEAT_LANCES_ROOM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2302,
+              "name": "EVENT_BEAT_LANCE",
+              "owned": true
+            },
+            {
+              "ind": 2303,
+              "name": "EVENT_LANCES_ROOM_LOCK_DOOR",
+              "owned": true
+            },
+            {
+              "ind": 2305,
+              "name": "EVENT_BEAT_CHAMPION_RIVAL",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_HALLOFFAME_OAK_CONGRATULATIONS",
+      "name": "Cutscene step: SCRIPT_HALLOFFAME_OAK_CONGRATULATIONS",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "2",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_HALLOFFAME_RESET_EVENTS_AND_SAVE",
+      "name": "Cutscene step: SCRIPT_HALLOFFAME_RESET_EVENTS_AND_SAVE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 3,
+      "scriptName": "SCRIPT_HALLOFFAME_NOOP",
+      "name": "Inducted -- the gauntlet re-armed",
+      "desc": "Your team is in the Hall of Fame and the byte rests on NOOP (3). Every Elite-Four run flag has been deliberately cleared so the four rooms and the Champion are fightable again.",
+      "timeline": "Post-game.",
+      "trigger": {
+        "type": "cutscene",
+        "text": "The induction ran to completion (it saves the game itself)."
+      },
+      "advance": [],
+      "save": {
+        "script": 3,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 2273,
+              "name": "EVENT_BEAT_LORELEIS_ROOM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2278,
+              "name": "EVENT_AUTOWALKED_INTO_LORELEIS_ROOM",
+              "owned": true
+            },
+            {
+              "ind": 2281,
+              "name": "EVENT_BEAT_BRUNOS_ROOM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2286,
+              "name": "EVENT_AUTOWALKED_INTO_BRUNOS_ROOM",
+              "owned": true
+            },
+            {
+              "ind": 2289,
+              "name": "EVENT_BEAT_AGATHAS_ROOM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2294,
+              "name": "EVENT_AUTOWALKED_INTO_AGATHAS_ROOM",
+              "owned": true
+            },
+            {
+              "ind": 2297,
+              "name": "EVENT_BEAT_LANCES_ROOM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2302,
+              "name": "EVENT_BEAT_LANCE",
+              "owned": true
+            },
+            {
+              "ind": 2303,
+              "name": "EVENT_LANCES_ROOM_LOCK_DOOR",
+              "owned": true
+            },
+            {
+              "ind": 2305,
+              "name": "EVENT_BEAT_CHAMPION_RIVAL",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [],
+        "badges": [],
+        "notes": [
+          "Cross-map: hides Cerulean City's TOGGLE_CERULEAN_CAVE_GUY -- Cerulean Cave opens.",
+          "The ten E4 run flags (EVENT_AUTOWALKED_INTO_*, EVENT_BEAT_*S_ROOM_TRAINER_0, EVENT_BEAT_LANCE, EVENT_BEAT_CHAMPION_RIVAL, EVENT_LANCES_ROOM_LOCK_DOOR) read CLEARED here on purpose -- that is the machine working, not a missing record."
+        ]
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 3
+        },
+        "events": {
+          "set": [],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

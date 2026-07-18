@@ -1,0 +1,272 @@
+{
+  "map": "Route 24",
+  "mapInd": 35,
+  "scriptSlot": 14,
+  "source": "scripts/Route24.asm",
+  "curated": false,
+  "entry": {
+    "kind": "center",
+    "x": 10,
+    "y": 18
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_ROUTE24_DEFAULT",
+      "routine": "Route24DefaultScript",
+      "kind": "resting",
+      "next": [
+        4
+      ]
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_ROUTE24_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_ROUTE24_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_ROUTE24_AFTER_ROCKET_BATTLE",
+      "routine": "Route24AfterRocketBattleScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_ROUTE24_PLAYER_MOVING",
+      "routine": "Route24PlayerMovingScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROUTE24_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 1344,
+              "name": "EVENT_GOT_NUGGET",
+              "owned": true
+            },
+            {
+              "ind": 1345,
+              "name": "EVENT_BEAT_ROUTE24_ROCKET",
+              "owned": true
+            },
+            {
+              "ind": 1346,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1347,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1348,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1349,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1350,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_4",
+              "owned": true
+            },
+            {
+              "ind": 1351,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_5",
+              "owned": true
+            },
+            {
+              "ind": 1353,
+              "name": "EVENT_NUGGET_REWARD_AVAILABLE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 36,
+            "name": "Nugget Bridge Guy",
+            "toggleConst": "TOGGLE_NUGGET_BRIDGE_GUY",
+            "state": "show"
+          },
+          {
+            "ind": 37,
+            "name": "Item",
+            "toggleConst": "TOGGLE_ROUTE_24_ITEM",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROUTE24_DEFAULT",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 1345,
+              "name": "EVENT_BEAT_ROUTE24_ROCKET",
+              "owned": true
+            },
+            {
+              "ind": 1346,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1347,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1348,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1349,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1350,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_4",
+              "owned": true
+            },
+            {
+              "ind": 1351,
+              "name": "EVENT_BEAT_ROUTE_24_TRAINER_5",
+              "owned": true
+            },
+            {
+              "ind": 1344,
+              "name": "EVENT_GOT_NUGGET",
+              "owned": true
+            },
+            {
+              "ind": 1353,
+              "name": "EVENT_NUGGET_REWARD_AVAILABLE",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 36,
+            "name": "Nugget Bridge Guy",
+            "toggleConst": "TOGGLE_NUGGET_BRIDGE_GUY",
+            "state": "show"
+          },
+          {
+            "ind": 37,
+            "name": "Item",
+            "toggleConst": "TOGGLE_ROUTE_24_ITEM",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            1344,
+            1345,
+            1346,
+            1347,
+            1348,
+            1349,
+            1350,
+            1351,
+            1353
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

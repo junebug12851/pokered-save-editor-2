@@ -1,0 +1,183 @@
+{
+  "map": "Rocket Hideout 3",
+  "mapInd": 201,
+  "scriptSlot": 54,
+  "source": "scripts/RocketHideoutB3F.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 25,
+    "y": 6
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_ROCKETHIDEOUTB3F_DEFAULT",
+      "routine": "RocketHideoutB3FDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_ROCKETHIDEOUTB3F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_ROCKETHIDEOUTB3F_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_ROCKETHIDEOUTB3F_PLAYER_SPINNING",
+      "routine": "RocketHideoutB3FPlayerSpinningScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROCKETHIDEOUTB3F_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 1681,
+              "name": "EVENT_BEAT_ROCKET_HIDEOUT_3_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1682,
+              "name": "EVENT_BEAT_ROCKET_HIDEOUT_3_TRAINER_1",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 129,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B3F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 130,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B3F_ITEM_2",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 3,
+      "scriptName": "SCRIPT_ROCKETHIDEOUTB3F_PLAYER_SPINNING",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 3,
+        "events": {
+          "set": [
+            {
+              "ind": 1681,
+              "name": "EVENT_BEAT_ROCKET_HIDEOUT_3_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1682,
+              "name": "EVENT_BEAT_ROCKET_HIDEOUT_3_TRAINER_1",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 129,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B3F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 130,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B3F_ITEM_2",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 3
+        },
+        "events": {
+          "set": [
+            1681,
+            1682
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

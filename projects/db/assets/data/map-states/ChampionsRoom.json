@@ -1,0 +1,385 @@
+{
+  "map": "Champions Room",
+  "mapInd": 120,
+  "scriptSlot": 75,
+  "source": "scripts/ChampionsRoom.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 3,
+    "y": 7
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "The final battle. Value 0 launches the confrontation cutscene the moment you walk in; everything through value 10 is that one scene (battle, Oak's arrival, the walk to the Hall of Fame). The single durable fact here is EVENT_BEAT_CHAMPION_RIVAL; the Hall of Fame map handles the induction and the E4-flag wipe."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_CHAMPIONSROOM_DEFAULT",
+      "routine": "ChampionsRoomDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_CHAMPIONSROOM_PLAYER_ENTERS",
+      "routine": "ChampionsRoomPlayerEntersScript",
+      "kind": "transient",
+      "next": [
+        2
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_CHAMPIONSROOM_RIVAL_READY_TO_BATTLE",
+      "routine": "ChampionsRoomRivalReadyToBattleScript",
+      "kind": "transient",
+      "next": [
+        3
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_CHAMPIONSROOM_RIVAL_DEFEATED",
+      "routine": "ChampionsRoomRivalDefeatedScript",
+      "kind": "transient",
+      "next": [
+        4
+      ]
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_CHAMPIONSROOM_OAK_ARRIVES",
+      "routine": "ChampionsRoomOakArrivesScript",
+      "kind": "transient",
+      "next": [
+        5
+      ]
+    },
+    {
+      "value": 5,
+      "name": "SCRIPT_CHAMPIONSROOM_OAK_CONGRATULATES_PLAYER",
+      "routine": "ChampionsRoomOakCongratulatesPlayerScript",
+      "kind": "transient",
+      "next": [
+        6
+      ]
+    },
+    {
+      "value": 6,
+      "name": "SCRIPT_CHAMPIONSROOM_OAK_DISAPPOINTED_WITH_RIVAL",
+      "routine": "ChampionsRoomOakDisappointedWithRivalScript",
+      "kind": "transient",
+      "next": [
+        7
+      ]
+    },
+    {
+      "value": 7,
+      "name": "SCRIPT_CHAMPIONSROOM_OAK_COME_WITH_ME",
+      "routine": "ChampionsRoomOakComeWithMeScript",
+      "kind": "transient",
+      "next": [
+        8
+      ]
+    },
+    {
+      "value": 8,
+      "name": "SCRIPT_CHAMPIONSROOM_OAK_EXITS",
+      "routine": "ChampionsRoomOakExitsScript",
+      "kind": "transient",
+      "next": [
+        9
+      ]
+    },
+    {
+      "value": 9,
+      "name": "SCRIPT_CHAMPIONSROOM_PLAYER_FOLLOWS_OAK",
+      "routine": "ChampionsRoomPlayerFollowsOakScript",
+      "kind": "transient",
+      "next": [
+        10
+      ]
+    },
+    {
+      "value": 10,
+      "name": "SCRIPT_CHAMPIONSROOM_CLEANUP_SCRIPT",
+      "routine": "ChampionsRoomCleanupScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_DEFAULT",
+      "name": "The Champion is... Blue",
+      "desc": "Your rival took the throne minutes ago. Walking in starts the final battle sequence; Oak's congratulation sprite is hidden until his entrance.",
+      "timeline": "The last door of the game.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Beat the Champion; Oak arrives, and you are walked to the Hall of Fame (values 1-10).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 2305,
+              "name": "EVENT_BEAT_CHAMPION_RIVAL",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 214,
+            "name": "Champions Room Oak",
+            "toggleConst": "TOGGLE_CHAMPIONS_ROOM_OAK",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_PLAYER_ENTERS",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_PLAYER_ENTERS",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "2",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_RIVAL_READY_TO_BATTLE",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_RIVAL_READY_TO_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "3",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.3",
+      "kind": "transient",
+      "script": 3,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_RIVAL_DEFEATED",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_RIVAL_DEFEATED",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "4",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.4",
+      "kind": "transient",
+      "script": 4,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_OAK_ARRIVES",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_OAK_ARRIVES",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "5",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.5",
+      "kind": "transient",
+      "script": 5,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_OAK_CONGRATULATES_PLAYER",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_OAK_CONGRATULATES_PLAYER",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "6",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.6",
+      "kind": "transient",
+      "script": 6,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_OAK_DISAPPOINTED_WITH_RIVAL",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_OAK_DISAPPOINTED_WITH_RIVAL",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "7",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.7",
+      "kind": "transient",
+      "script": 7,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_OAK_COME_WITH_ME",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_OAK_COME_WITH_ME",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "8",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.8",
+      "kind": "transient",
+      "script": 8,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_OAK_EXITS",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_OAK_EXITS",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "9",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.9",
+      "kind": "transient",
+      "script": 9,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_PLAYER_FOLLOWS_OAK",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_PLAYER_FOLLOWS_OAK",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "10",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.10",
+      "kind": "transient",
+      "script": 10,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_CLEANUP_SCRIPT",
+      "name": "Cutscene step: SCRIPT_CHAMPIONSROOM_CLEANUP_SCRIPT",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CHAMPIONSROOM_DEFAULT",
+      "name": "Champion dethroned",
+      "desc": "Blue's reign is over. The full ending cutscene has played and Oak has come and gone (his sprite hidden again).",
+      "timeline": "The credits' doorstep.",
+      "trigger": {
+        "type": "battle",
+        "text": "Beat the Champion."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 2305,
+              "name": "EVENT_BEAT_CHAMPION_RIVAL",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 214,
+            "name": "Champions Room Oak",
+            "toggleConst": "TOGGLE_CHAMPIONS_ROOM_OAK",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": [
+          "The Hall of Fame's own script performs the induction, hides Cerulean's cave guard, and RESETS the ten Elite-Four run flags -- see the Hall of Fame page."
+        ]
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            2305
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

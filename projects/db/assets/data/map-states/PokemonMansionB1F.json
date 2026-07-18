@@ -1,0 +1,212 @@
+{
+  "map": "Mansion 4",
+  "mapInd": 216,
+  "scriptSlot": 62,
+  "source": "scripts/PokemonMansionB1F.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 23,
+    "y": 22
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_POKEMONMANSIONB1F_DEFAULT",
+      "routine": "CheckFightingMapTrainers",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_POKEMONMANSIONB1F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_POKEMONMANSIONB1F_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONMANSIONB1F_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 2081,
+              "name": "EVENT_BEAT_MANSION_4_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2082,
+              "name": "EVENT_BEAT_MANSION_4_TRAINER_1",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 190,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 191,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 192,
+            "name": "Item 3",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_3",
+            "state": "show"
+          },
+          {
+            "ind": 193,
+            "name": "Item 4",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_4",
+            "state": "show"
+          },
+          {
+            "ind": 194,
+            "name": "Item 5",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_5",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONMANSIONB1F_DEFAULT",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 2081,
+              "name": "EVENT_BEAT_MANSION_4_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 2082,
+              "name": "EVENT_BEAT_MANSION_4_TRAINER_1",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 190,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 191,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 192,
+            "name": "Item 3",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_3",
+            "state": "show"
+          },
+          {
+            "ind": 193,
+            "name": "Item 4",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_4",
+            "state": "show"
+          },
+          {
+            "ind": 194,
+            "name": "Item 5",
+            "toggleConst": "TOGGLE_POKEMON_MANSION_B1F_ITEM_5",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            2081,
+            2082
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

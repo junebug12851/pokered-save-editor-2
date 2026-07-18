@@ -1,0 +1,397 @@
+{
+  "map": "Power Plant",
+  "mapInd": 83,
+  "scriptSlot": 91,
+  "source": "scripts/PowerPlant.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 4,
+    "y": 35
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_POWERPLANT_DEFAULT",
+      "routine": "CheckFightingMapTrainers",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_POWERPLANT_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_POWERPLANT_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POWERPLANT_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 1121,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_0",
+              "owned": true
+            },
+            {
+              "ind": 1122,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_1",
+              "owned": true
+            },
+            {
+              "ind": 1123,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_2",
+              "owned": true
+            },
+            {
+              "ind": 1124,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_3",
+              "owned": true
+            },
+            {
+              "ind": 1125,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_4",
+              "owned": true
+            },
+            {
+              "ind": 1126,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_5",
+              "owned": true
+            },
+            {
+              "ind": 1127,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_6",
+              "owned": true
+            },
+            {
+              "ind": 1128,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_7",
+              "owned": true
+            },
+            {
+              "ind": 1129,
+              "name": "EVENT_BEAT_ZAPDOS",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 77,
+            "name": "Voltorb 1",
+            "toggleConst": "TOGGLE_VOLTORB_1",
+            "state": "show"
+          },
+          {
+            "ind": 78,
+            "name": "Voltorb 2",
+            "toggleConst": "TOGGLE_VOLTORB_2",
+            "state": "show"
+          },
+          {
+            "ind": 79,
+            "name": "Voltorb 3",
+            "toggleConst": "TOGGLE_VOLTORB_3",
+            "state": "show"
+          },
+          {
+            "ind": 80,
+            "name": "Electrode 1",
+            "toggleConst": "TOGGLE_ELECTRODE_1",
+            "state": "show"
+          },
+          {
+            "ind": 81,
+            "name": "Voltorb 4",
+            "toggleConst": "TOGGLE_VOLTORB_4",
+            "state": "show"
+          },
+          {
+            "ind": 82,
+            "name": "Voltorb 5",
+            "toggleConst": "TOGGLE_VOLTORB_5",
+            "state": "show"
+          },
+          {
+            "ind": 83,
+            "name": "Electrode 2",
+            "toggleConst": "TOGGLE_ELECTRODE_2",
+            "state": "show"
+          },
+          {
+            "ind": 84,
+            "name": "Voltorb 6",
+            "toggleConst": "TOGGLE_VOLTORB_6",
+            "state": "show"
+          },
+          {
+            "ind": 85,
+            "name": "Zapdos",
+            "toggleConst": "TOGGLE_ZAPDOS",
+            "state": "show"
+          },
+          {
+            "ind": 86,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 87,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 88,
+            "name": "Item 3",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_3",
+            "state": "show"
+          },
+          {
+            "ind": 89,
+            "name": "Item 4",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_4",
+            "state": "show"
+          },
+          {
+            "ind": 90,
+            "name": "Item 5",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_5",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POWERPLANT_DEFAULT",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 1121,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_0",
+              "owned": true
+            },
+            {
+              "ind": 1122,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_1",
+              "owned": true
+            },
+            {
+              "ind": 1123,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_2",
+              "owned": true
+            },
+            {
+              "ind": 1124,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_3",
+              "owned": true
+            },
+            {
+              "ind": 1125,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_4",
+              "owned": true
+            },
+            {
+              "ind": 1126,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_5",
+              "owned": true
+            },
+            {
+              "ind": 1127,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_6",
+              "owned": true
+            },
+            {
+              "ind": 1128,
+              "name": "EVENT_BEAT_POWER_PLANT_VOLTORB_7",
+              "owned": true
+            },
+            {
+              "ind": 1129,
+              "name": "EVENT_BEAT_ZAPDOS",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 77,
+            "name": "Voltorb 1",
+            "toggleConst": "TOGGLE_VOLTORB_1",
+            "state": "show"
+          },
+          {
+            "ind": 78,
+            "name": "Voltorb 2",
+            "toggleConst": "TOGGLE_VOLTORB_2",
+            "state": "show"
+          },
+          {
+            "ind": 79,
+            "name": "Voltorb 3",
+            "toggleConst": "TOGGLE_VOLTORB_3",
+            "state": "show"
+          },
+          {
+            "ind": 80,
+            "name": "Electrode 1",
+            "toggleConst": "TOGGLE_ELECTRODE_1",
+            "state": "show"
+          },
+          {
+            "ind": 81,
+            "name": "Voltorb 4",
+            "toggleConst": "TOGGLE_VOLTORB_4",
+            "state": "show"
+          },
+          {
+            "ind": 82,
+            "name": "Voltorb 5",
+            "toggleConst": "TOGGLE_VOLTORB_5",
+            "state": "show"
+          },
+          {
+            "ind": 83,
+            "name": "Electrode 2",
+            "toggleConst": "TOGGLE_ELECTRODE_2",
+            "state": "show"
+          },
+          {
+            "ind": 84,
+            "name": "Voltorb 6",
+            "toggleConst": "TOGGLE_VOLTORB_6",
+            "state": "show"
+          },
+          {
+            "ind": 85,
+            "name": "Zapdos",
+            "toggleConst": "TOGGLE_ZAPDOS",
+            "state": "show"
+          },
+          {
+            "ind": 86,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 87,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 88,
+            "name": "Item 3",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_3",
+            "state": "show"
+          },
+          {
+            "ind": 89,
+            "name": "Item 4",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_4",
+            "state": "show"
+          },
+          {
+            "ind": 90,
+            "name": "Item 5",
+            "toggleConst": "TOGGLE_POWER_PLANT_ITEM_5",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            1121,
+            1122,
+            1123,
+            1124,
+            1125,
+            1126,
+            1127,
+            1128,
+            1129
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

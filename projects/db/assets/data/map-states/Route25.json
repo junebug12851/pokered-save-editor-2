@@ -1,0 +1,263 @@
+{
+  "map": "Route 25",
+  "mapInd": 36,
+  "scriptSlot": 15,
+  "source": "scripts/Route25.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 45,
+    "y": 3
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_ROUTE25_DEFAULT",
+      "routine": "CheckFightingMapTrainers",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_ROUTE25_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_ROUTE25_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROUTE25_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 1361,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1362,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1363,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1364,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1365,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_4",
+              "owned": true
+            },
+            {
+              "ind": 1366,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_5",
+              "owned": true
+            },
+            {
+              "ind": 1367,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_6",
+              "owned": true
+            },
+            {
+              "ind": 1368,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_7",
+              "owned": true
+            },
+            {
+              "ind": 1369,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_8",
+              "owned": true
+            },
+            {
+              "ind": 1374,
+              "name": "EVENT_BILL_SAID_USE_CELL_SEPARATOR",
+              "owned": true
+            },
+            {
+              "ind": 1375,
+              "name": "EVENT_LEFT_BILLS_HOUSE_AFTER_HELPING",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 38,
+            "name": "Item",
+            "toggleConst": "TOGGLE_ROUTE_25_ITEM",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROUTE25_DEFAULT",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 1361,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1362,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1363,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1364,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1365,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_4",
+              "owned": true
+            },
+            {
+              "ind": 1366,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_5",
+              "owned": true
+            },
+            {
+              "ind": 1367,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_6",
+              "owned": true
+            },
+            {
+              "ind": 1368,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_7",
+              "owned": true
+            },
+            {
+              "ind": 1369,
+              "name": "EVENT_BEAT_ROUTE_25_TRAINER_8",
+              "owned": true
+            },
+            {
+              "ind": 1375,
+              "name": "EVENT_LEFT_BILLS_HOUSE_AFTER_HELPING",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 1374,
+              "name": "EVENT_BILL_SAID_USE_CELL_SEPARATOR",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 38,
+            "name": "Item",
+            "toggleConst": "TOGGLE_ROUTE_25_ITEM",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            1361,
+            1362,
+            1363,
+            1364,
+            1365,
+            1366,
+            1367,
+            1368,
+            1369,
+            1375
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

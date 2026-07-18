@@ -1,0 +1,200 @@
+{
+  "map": "Safari Zone Entrance",
+  "mapInd": 156,
+  "scriptSlot": 35,
+  "source": "scripts/SafariZoneGate.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 3,
+    "y": 5
+  },
+  "progression": {
+    "start": "1",
+    "end": "1",
+    "order": [
+      "1"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Per-visit machinery, deliberately ONE stage: the byte's values are the join/leave conversation and walk nudges, EVENT_IN_SAFARI_ZONE flips per visit, and the step/ball counters are the global Safari bytes (0x29B9/0x2CF3, re-seeded at the gate each game). Nothing here is a story progression."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_SAFARIZONEGATE_DEFAULT",
+      "routine": "SafariZoneGateDefaultScript",
+      "kind": "resting",
+      "next": [
+        1,
+        2
+      ]
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_SAFARIZONEGATE_PLAYER_MOVING_RIGHT",
+      "routine": "SafariZoneGatePlayerMovingRightScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_SAFARIZONEGATE_WOULD_YOU_LIKE_TO_JOIN",
+      "routine": "SafariZoneGateWouldYouLikeToJoinScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_SAFARIZONEGATE_PLAYER_MOVING",
+      "routine": "SafariZoneGatePlayerMovingUpScript",
+      "kind": "transient",
+      "next": [
+        5
+      ]
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_SAFARIZONEGATE_PLAYER_MOVING_DOWN",
+      "routine": "SafariZoneGatePlayerMovingDownScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 5,
+      "name": "SCRIPT_SAFARIZONEGATE_LEAVING_SAFARI",
+      "routine": "SafariZoneGateLeavingSafariScript",
+      "kind": "transient",
+      "next": [
+        4
+      ]
+    },
+    {
+      "value": 6,
+      "name": "SCRIPT_SAFARIZONEGATE_SET_SCRIPT_AFTER_MOVE",
+      "routine": "SafariZoneGateSetScriptAfterMoveScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_SAFARIZONEGATE_DEFAULT",
+      "name": "The gate, between games",
+      "desc": "The reception desk in its resting shape. Everything this map writes (the in-Safari flag, the walk nudges, the counters) is per-visit machinery re-armed each time -- there is no later stage to roll to.",
+      "timeline": "Any time.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 590,
+              "name": "EVENT_SAFARI_GAME_OVER",
+              "owned": true
+            },
+            {
+              "ind": 591,
+              "name": "EVENT_IN_SAFARI_ZONE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [],
+        "badges": [],
+        "notes": [
+          "Safari steps-left (0x29B9, big-endian) and balls (0x2CF3) live on the Map Storage panel's Safari Zone page."
+        ]
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_SAFARIZONEGATE_PLAYER_MOVING_RIGHT",
+      "name": "Cutscene step: SCRIPT_SAFARIZONEGATE_PLAYER_MOVING_RIGHT",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": []
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_SAFARIZONEGATE_WOULD_YOU_LIKE_TO_JOIN",
+      "name": "Cutscene step: SCRIPT_SAFARIZONEGATE_WOULD_YOU_LIKE_TO_JOIN",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": []
+    },
+    {
+      "id": "1.3",
+      "kind": "transient",
+      "script": 3,
+      "scriptName": "SCRIPT_SAFARIZONEGATE_PLAYER_MOVING",
+      "name": "Cutscene step: SCRIPT_SAFARIZONEGATE_PLAYER_MOVING",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "5",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.4",
+      "kind": "transient",
+      "script": 4,
+      "scriptName": "SCRIPT_SAFARIZONEGATE_PLAYER_MOVING_DOWN",
+      "name": "Cutscene step: SCRIPT_SAFARIZONEGATE_PLAYER_MOVING_DOWN",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.5",
+      "kind": "transient",
+      "script": 5,
+      "scriptName": "SCRIPT_SAFARIZONEGATE_LEAVING_SAFARI",
+      "name": "Cutscene step: SCRIPT_SAFARIZONEGATE_LEAVING_SAFARI",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "4",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.6",
+      "kind": "transient",
+      "script": 6,
+      "scriptName": "SCRIPT_SAFARIZONEGATE_SET_SCRIPT_AFTER_MOVE",
+      "name": "Cutscene step: SCRIPT_SAFARIZONEGATE_SET_SCRIPT_AFTER_MOVE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": []
+    }
+  ]
+}

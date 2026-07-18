@@ -1,0 +1,607 @@
+{
+  "_comment": [
+    "map_states_curated.json -- the hand-researched story layer for extract_map_states.py.",
+    "Keyed by pret script-file base name. Each stage: id (progression number; letters = branch),",
+    "script (the byte value the map RESTS at in this stage), events (ABSOLUTE list of pret flag",
+    "names SET in this stage -- everything owned-but-unlisted is CLEARED), context (subset of",
+    "flags that belong to OTHER maps' stories -- marked owned:false in the output; a context",
+    "name absent from `events` is recorded as explicitly cleared), missables (ABSOLUTE overrides",
+    "of this map's own missables -- unlisted ones sit at their defVal), badges (absolute),",
+    "transients (script values that are the cutscene LEAVING this stage, emitted as id N.k),",
+    "saveNotes (facts that cannot be expressed as bits -- cross-map toggles, derived tiles).",
+    "Every name is validated against events.json / missables.json / the map's own script table;",
+    "generation FAILS on anything unresolvable. Facts verified against pret/pokered 2026-07-17."
+  ],
+
+  "PalletTown": {
+    "notes": "The opening map. Its script byte rests at 0 only before Oak appears; the whole intro cutscene (values 1-4) runs once, and the byte then sits on 5 (the Daisy/Poke-Ball watcher) for the rest of the game. Value 6 (NOOP) is a fallthrough label the byte never actually holds. Daisy's sitting/walking swap writes Blues House's missables, not this map's.",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "A quiet beginning",
+        "desc": "Fresh game. Oak has not appeared; stepping onto the tall grass row at the town's north edge is being watched for. Oak's street sprite is hidden.",
+        "timeline": "Game opening, before your first Pokemon.",
+        "trigger": {"type": "start", "text": "New game -- every map script byte initialises to 0."},
+        "advance": [{"to": "2", "text": "Walk onto the north row (Y=1) toward Route 1: Oak shouts 'Hey! Wait!', walks to you, and leads you into his lab (cutscene values 1-4).", "auto": false}],
+        "transients": [1, 2, 3, 4],
+        "events": [],
+        "missables": {"hide": ["TOGGLE_PALLET_TOWN_OAK"]}
+      },
+      {
+        "id": "2", "script": 5,
+        "name": "Oak has led you to the lab",
+        "desc": "The intro cutscene has run: the byte now rests on the Daisy watcher (5) permanently. Oak's street sprite was shown for the cutscene and re-hidden by the follow-into-lab engine movement script (engine/overworld/auto_movement.asm).",
+        "timeline": "During/after the trip to Oak's Lab.",
+        "trigger": {"type": "coord", "text": "Stepped onto the north row without having followed Oak into the lab; the Oak cutscene ran to completion."},
+        "advance": [{"to": "3", "text": "Finish Oak's Lab: starter chosen, rival beaten, parcel delivered, Pokedex granted, and finally the Poke Balls received from Oak.", "auto": false}],
+        "events": ["EVENT_OAK_APPEARED_IN_PALLET", "EVENT_FOLLOWED_OAK_INTO_LAB"],
+        "context": ["EVENT_FOLLOWED_OAK_INTO_LAB"],
+        "missables": {"hide": ["TOGGLE_PALLET_TOWN_OAK"]},
+        "saveNotes": ["Oak's street sprite is re-hidden by the engine, not by this map's script -- its bit must be back to hidden in this stage."]
+      },
+      {
+        "id": "3", "script": 5,
+        "name": "The journey underway",
+        "desc": "Oak's Lab story is complete and the Poke Balls are in hand. The watcher on value 5 has fired its two one-shots: the after-Poke-Balls flags are set and Daisy has left her chair to stroll (her sitting/walking sprites are Blues House objects).",
+        "timeline": "After Oak's Lab wraps up -- the open game begins.",
+        "trigger": {"type": "event", "text": "EVENT_GOT_POKEBALLS_FROM_OAK set (Oak's Lab) plus, for Daisy, Town Map received after entering Blue's house."},
+        "advance": [],
+        "events": ["EVENT_OAK_APPEARED_IN_PALLET", "EVENT_PALLET_AFTER_GETTING_POKEBALLS", "EVENT_PALLET_AFTER_GETTING_POKEBALLS_2", "EVENT_DAISY_WALKING", "EVENT_FOLLOWED_OAK_INTO_LAB", "EVENT_GOT_POKEBALLS_FROM_OAK", "EVENT_GOT_TOWN_MAP", "EVENT_ENTERED_BLUES_HOUSE"],
+        "context": ["EVENT_FOLLOWED_OAK_INTO_LAB", "EVENT_GOT_POKEBALLS_FROM_OAK", "EVENT_GOT_TOWN_MAP", "EVENT_ENTERED_BLUES_HOUSE"],
+        "missables": {"hide": ["TOGGLE_PALLET_TOWN_OAK"]},
+        "saveNotes": ["EVENT_DAISY_WALKING also swaps Blues House's TOGGLE_DAISY_SITTING (hide) for TOGGLE_DAISY_WALKING (show) -- those bits live on Blues House's page."]
+      }
+    ]
+  },
+
+  "OaksLab": {
+    "notes": "The richest script table in the game: 19 values, of which only 0, 6, 10 and 18 are stages a save meaningfully rests in. The story is one long line -- follow Oak in, choose, be challenged, battle, then (after the parcel run) the Pokedex. Which starter balls vanish depends on the player's and rival's choices; the script computes the indices at runtime, so this blueprint flags them in words rather than guessing bits.",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "The lab, waiting",
+        "desc": "Blue paces the lab, the three starter balls sit on the table, Oak is absent (both his lab sprites hidden). Value 0 watches for EVENT_OAK_APPEARED_IN_PALLET to start the entrance cutscene.",
+        "timeline": "Game opening.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [{"to": "2", "text": "Enter the lab after Oak collars you in Pallet Town -- Oak walks in behind you (values 1-5) and asks you to choose a Pokemon.", "auto": false}],
+        "transients": [1, 2, 3, 4, 5],
+        "events": [],
+        "missables": {"show": ["TOGGLE_OAKS_LAB_RIVAL", "TOGGLE_STARTER_BALL_1", "TOGGLE_STARTER_BALL_2", "TOGGLE_STARTER_BALL_3", "TOGGLE_POKEDEX_1", "TOGGLE_POKEDEX_2"], "hide": ["TOGGLE_OAKS_LAB_OAK_1", "TOGGLE_OAKS_LAB_OAK_2"]}
+      },
+      {
+        "id": "2", "script": 6,
+        "name": "Choose your partner",
+        "desc": "Oak stands at his desk (OAK_1 shown), Blue waits, three balls on the table. Value 6 is the 'don't go away' watcher -- trying to leave walks you back (value 7). This is the stage a save sits in while the player dithers over the choice.",
+        "timeline": "The starter choice.",
+        "trigger": {"type": "cutscene", "text": "The follow-Oak entrance cutscene finished; Oak has asked you to pick."},
+        "advance": [{"to": "3", "text": "Take a ball from the table; Blue takes the counter-pick (values 8-9).", "auto": false}],
+        "transients": [7, 8, 9],
+        "events": ["EVENT_FOLLOWED_OAK_INTO_LAB", "EVENT_FOLLOWED_OAK_INTO_LAB_2", "EVENT_OAK_ASKED_TO_CHOOSE_MON", "EVENT_OAK_APPEARED_IN_PALLET"],
+        "context": ["EVENT_OAK_APPEARED_IN_PALLET"],
+        "missables": {"show": ["TOGGLE_OAKS_LAB_RIVAL", "TOGGLE_STARTER_BALL_1", "TOGGLE_STARTER_BALL_2", "TOGGLE_STARTER_BALL_3", "TOGGLE_POKEDEX_1", "TOGGLE_POKEDEX_2", "TOGGLE_OAKS_LAB_OAK_1"], "hide": ["TOGGLE_OAKS_LAB_OAK_2"]}
+      },
+      {
+        "id": "3", "script": 10,
+        "name": "Starters chosen -- the rival wants a word",
+        "desc": "Both starters are picked (EVENT_GOT_STARTER). Value 10 waits for you to head for the door, at which point Blue challenges you to the first battle of the game (values 11-12).",
+        "timeline": "Immediately after the starter choice.",
+        "trigger": {"type": "talk", "text": "You took a ball and confirmed; Blue grabbed his."},
+        "advance": [{"to": "4", "text": "Walk toward the exit -- Blue stops you and the first rival battle begins.", "auto": false}],
+        "transients": [11, 12],
+        "events": ["EVENT_FOLLOWED_OAK_INTO_LAB", "EVENT_FOLLOWED_OAK_INTO_LAB_2", "EVENT_OAK_ASKED_TO_CHOOSE_MON", "EVENT_OAK_APPEARED_IN_PALLET", "EVENT_GOT_STARTER"],
+        "context": ["EVENT_OAK_APPEARED_IN_PALLET"],
+        "missables": {"show": ["TOGGLE_OAKS_LAB_RIVAL", "TOGGLE_POKEDEX_1", "TOGGLE_POKEDEX_2", "TOGGLE_OAKS_LAB_OAK_1"], "hide": ["TOGGLE_OAKS_LAB_OAK_2", "TOGGLE_STARTER_BALL_3"]},
+        "saveNotes": ["WHICH two starter balls are gone depends on the choices made -- the script computes the object indices at runtime. TOGGLE_STARTER_BALL_3 hidden here is the statically-written case; set the pair that matches the party you are building."]
+      },
+      {
+        "id": "4", "script": 18,
+        "name": "First rivalry settled",
+        "desc": "The lab battle is done (win or lose -- the flag records that it happened) and Blue has stormed out. The byte rests on NOOP (18) until the Pokedex cutscene re-arms it from outside.",
+        "timeline": "After the first rival battle, before the parcel run.",
+        "trigger": {"type": "battle", "text": "The first rival battle resolved; Blue walked out (values 13-14)."},
+        "advance": [{"to": "5", "text": "Fetch Oak's Parcel from Viridian's mart and bring it back -- Blue is summoned and Oak hands out the Pokedexes (values 15-17).", "auto": false}],
+        "transients": [13, 14, 15, 16, 17],
+        "events": ["EVENT_FOLLOWED_OAK_INTO_LAB", "EVENT_FOLLOWED_OAK_INTO_LAB_2", "EVENT_OAK_ASKED_TO_CHOOSE_MON", "EVENT_OAK_APPEARED_IN_PALLET", "EVENT_GOT_STARTER", "EVENT_BATTLED_RIVAL_IN_OAKS_LAB"],
+        "context": ["EVENT_OAK_APPEARED_IN_PALLET"],
+        "missables": {"show": ["TOGGLE_POKEDEX_1", "TOGGLE_POKEDEX_2", "TOGGLE_OAKS_LAB_OAK_1"], "hide": ["TOGGLE_OAKS_LAB_OAK_2", "TOGGLE_OAKS_LAB_RIVAL", "TOGGLE_STARTER_BALL_3"]}
+      },
+      {
+        "id": "5", "script": 18,
+        "name": "The Pokedex handed down",
+        "desc": "Parcel delivered, Pokedexes off the side table and in two trainers' pockets, and Blue gone for good. This also ARMS Route 22's first ambush (the rival-wants-battle pair set, his sprite shown there) and swaps Viridian City's grumpy old man for the caffeinated one.",
+        "timeline": "The end of the tutorial -- the world opens.",
+        "trigger": {"type": "talk", "text": "Returned to Oak carrying Oak's Parcel."},
+        "advance": [],
+        "events": ["EVENT_FOLLOWED_OAK_INTO_LAB", "EVENT_FOLLOWED_OAK_INTO_LAB_2", "EVENT_OAK_ASKED_TO_CHOOSE_MON", "EVENT_OAK_APPEARED_IN_PALLET", "EVENT_GOT_STARTER", "EVENT_BATTLED_RIVAL_IN_OAKS_LAB", "EVENT_GOT_POKEDEX", "EVENT_OAK_GOT_PARCEL", "EVENT_GOT_OAKS_PARCEL", "EVENT_1ST_ROUTE22_RIVAL_BATTLE", "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"],
+        "context": ["EVENT_OAK_APPEARED_IN_PALLET", "EVENT_GOT_OAKS_PARCEL"],
+        "missables": {"show": ["TOGGLE_OAKS_LAB_OAK_1"], "hide": ["TOGGLE_OAKS_LAB_OAK_2", "TOGGLE_OAKS_LAB_RIVAL", "TOGGLE_STARTER_BALL_3", "TOGGLE_POKEDEX_1", "TOGGLE_POKEDEX_2"]},
+        "saveNotes": [
+          "Cross-map: shows Route 22's TOGGLE_ROUTE_22_RIVAL_1 (his page), and swaps Viridian City's TOGGLE_LYING_OLD_MAN (hide) for TOGGLE_OLD_MAN (show).",
+          "EVENT_GOT_POKEBALLS_FROM_OAK (the five Poke Balls, later) is a separate talk once you have caught nothing extra -- Pallet Town's stage 3 carries it."
+        ]
+      }
+    ]
+  },
+
+  "BluesHouse": {
+    "notes": "Two script values, both resting: 0 flips to 1 on first entry (EVENT_ENTERED_BLUES_HOUSE). The Town Map is a text handler on Daisy; her sitting/walking swap is driven by Pallet Town's watcher once the map is given AND the house has been entered.",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "Never visited",
+        "desc": "Daisy sits at the table; the first entry has not been recorded.",
+        "timeline": "Game opening.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [{"to": "2", "text": "Walk in -- value 0 sets the entered flag and steps to 1 immediately.", "auto": false}],
+        "events": [],
+        "missables": {"show": ["TOGGLE_DAISY_SITTING"], "hide": ["TOGGLE_DAISY_WALKING"]}
+      },
+      {
+        "id": "2", "script": 1,
+        "name": "Visited -- Town Map still on offer",
+        "desc": "You have been inside; Daisy still has the Town Map to give.",
+        "timeline": "Early Pallet errands.",
+        "trigger": {"type": "event", "text": "First entry to the house."},
+        "advance": [{"to": "3", "text": "Talk to Daisy: she hands over the Town Map.", "auto": false}],
+        "events": ["EVENT_ENTERED_BLUES_HOUSE"],
+        "missables": {"show": ["TOGGLE_DAISY_SITTING"], "hide": ["TOGGLE_DAISY_WALKING"]}
+      },
+      {
+        "id": "3", "script": 1,
+        "name": "Town Map given -- Daisy stretches her legs",
+        "desc": "Map handed over. With both the map given and the house entered, Pallet Town's watcher sets EVENT_DAISY_WALKING and swaps her sprites: sitting hidden, walking shown.",
+        "timeline": "Early game onward.",
+        "trigger": {"type": "talk", "text": "Received the Town Map from Daisy."},
+        "advance": [],
+        "events": ["EVENT_ENTERED_BLUES_HOUSE", "EVENT_GOT_TOWN_MAP", "EVENT_DAISY_WALKING"],
+        "context": ["EVENT_DAISY_WALKING"],
+        "missables": {"show": ["TOGGLE_DAISY_WALKING"], "hide": ["TOGGLE_DAISY_SITTING"]}
+      }
+    ]
+  },
+
+  "ViridianCity": {
+    "notes": "The script byte always rests at 0 -- values 1-3 are the old man's catching-demonstration cutscene and the walk-down nudge, all per-visit. The durable state is the old man himself: lying across the path until Oak has his parcel, then standing and demonstrating. (The gym-open rumors change by badge count in dialog only.)",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "The road north is blocked",
+        "desc": "The old man ('I've had no coffee') lies across the northern path; the demonstrating old man is hidden.",
+        "timeline": "Before delivering Oak's Parcel.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [{"to": "2", "text": "Deliver Oak's Parcel: the Oak's Lab Pokedex scene swaps the two old-man sprites.", "auto": false}],
+        "transients": [1, 2, 3],
+        "events": [],
+        "missables": {"show": ["TOGGLE_LYING_OLD_MAN"], "hide": ["TOGGLE_OLD_MAN"]}
+      },
+      {
+        "id": "2", "script": 0,
+        "name": "Coffee acquired",
+        "desc": "The old man is up, and will demonstrate catching a Pokemon (the per-visit cutscene on values 1-2). The path north is clear.",
+        "timeline": "After the Pokedex scene.",
+        "trigger": {"type": "event", "text": "EVENT_OAK_GOT_PARCEL set by Oak's Lab."},
+        "advance": [],
+        "transients": [1, 2, 3],
+        "events": ["EVENT_OAK_GOT_PARCEL"],
+        "context": ["EVENT_OAK_GOT_PARCEL"],
+        "missables": {"show": ["TOGGLE_OLD_MAN"], "hide": ["TOGGLE_LYING_OLD_MAN"]}
+      }
+    ]
+  },
+
+  "PewterCity": {
+    "notes": "The byte always rests at 0 -- values 1-3 and 4-6 are the two per-visit escort cutscenes (the Super Nerd who marches you to the museum, the youngster who marches you to the gym), each hiding its guide for the walk and restoring him after. The durable change belongs to Pewter Gym: beating Brock hides the gym guide for good. EVENT_BOUGHT_MUSEUM_TICKET is per-visit scratch value 0 clears on leaving the museum row.",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "Guides on duty",
+        "desc": "Both escorts stand in the streets, ready to drag an unbadged trainer where they think he should go.",
+        "timeline": "Arrival under Mt. Moon's shadow.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [{"to": "2", "text": "Beat Brock next door -- his post-battle script hides the gym guide.", "auto": false}],
+        "transients": [1, 2, 3, 4, 5, 6],
+        "events": [],
+        "missables": {"show": ["TOGGLE_MUSEUM_GUY", "TOGGLE_GYM_GUY"]}
+      },
+      {
+        "id": "2", "script": 0,
+        "name": "The Boulder Badge earned",
+        "desc": "The gym guide has stood down (hidden by Pewter Gym's victory script); the museum guide keeps his post.",
+        "timeline": "First badge held.",
+        "trigger": {"type": "event", "text": "EVENT_BEAT_BROCK set by Pewter Gym."},
+        "advance": [],
+        "events": ["EVENT_BEAT_BROCK"],
+        "context": ["EVENT_BEAT_BROCK"],
+        "missables": {"show": ["TOGGLE_MUSEUM_GUY"], "hide": ["TOGGLE_GYM_GUY"]}
+      }
+    ]
+  },
+
+  "PewterGym": {
+    "notes": "The standard gym shape: DEFAULT(0) / START_BATTLE(1) / END_BATTLE(2) are the shared trainer-engine trio, and the byte rests at 0 both before and after Brock -- the STAGE lives in the flags and the badge, not the byte. Beating Brock also DISARMS Route 22's first rival ambush if it is still pending (clears the pair, hides his sprite there).",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "Brock waiting",
+        "desc": "Brock and his Jr. Trainer hold the gym; the Gym Guide stands by the door.",
+        "timeline": "First badge ahead.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [{"to": "2", "text": "Beat Brock (post-battle value 3 hands out TM34, the Boulder Badge, and the cleanup).", "auto": false}],
+        "transients": [1, 2, 3],
+        "events": [],
+        "missables": {}
+      },
+      {
+        "id": "2", "script": 0,
+        "name": "Boulder Badge won",
+        "desc": "Brock beaten, TM34 (Bide) given, his trainer deactivated, the Gym Guide gone from the door. If Route 22's first ambush was still armed, it is disarmed here.",
+        "timeline": "First badge held.",
+        "trigger": {"type": "battle", "text": "Brock defeated."},
+        "advance": [],
+        "events": ["EVENT_BEAT_BROCK", "EVENT_GOT_TM34", "EVENT_BEAT_PEWTER_GYM_TRAINER_0"],
+        "missables": {},
+        "badges": ["BOULDERBADGE"],
+        "saveNotes": ["Cross-map: also hides Pewter City's TOGGLE_GYM_GUY (the youngster who walks you to the gym) and Route 22's TOGGLE_ROUTE_22_RIVAL_1, and clears EVENT_1ST_ROUTE22_RIVAL_BATTLE + EVENT_ROUTE22_RIVAL_WANTS_BATTLE (recorded as cleared here because this gym's own script resets them)."]
+      }
+    ]
+  },
+
+  "CeruleanGym": {
+    "notes": "Standard gym shape; rests at 0 on both sides of Misty.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Misty waiting", "desc": "Misty and her two trainers hold the gym.", "timeline": "Second badge ahead.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Misty (value 3 gives TM11 and the Cascade Badge).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Cascade Badge won", "desc": "Misty beaten, TM11 (BubbleBeam) given, her trainers deactivated.", "timeline": "Second badge held.", "trigger": {"type": "battle", "text": "Misty defeated."}, "advance": [], "events": ["EVENT_BEAT_MISTY", "EVENT_GOT_TM11", "EVENT_BEAT_CERULEAN_GYM_TRAINER_0", "EVENT_BEAT_CERULEAN_GYM_TRAINER_1"], "missables": {}, "badges": ["CASCADEBADGE"]}
+    ]
+  },
+
+  "VermilionGym": {
+    "notes": "Standard gym shape. The trash-can lock puzzle is NOT event flags: the two switch positions are the global Main-Data bytes 0x29EF/0x29F0 (see reference/gym-safari-state.md), and the door state is derived from them on entry.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Lt. Surge waiting", "desc": "The electric locks are engaged (trash-can switches, stored as two global bytes) and Lt. Surge holds the gym with three trainers.", "timeline": "Third badge ahead.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Open the locks and beat Lt. Surge (value 3 gives TM24 and the Thunder Badge).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}, "saveNotes": ["The lock puzzle lives at 0x29EF/0x29F0 (wFirstLockTrashCanIndex / wSecondLockTrashCanIndex), edited on the Map Storage panel's Vermilion Gym page."]},
+      {"id": "2", "script": 0, "name": "Thunder Badge won", "desc": "Lt. Surge beaten, TM24 (Thunderbolt) given, his trainers deactivated.", "timeline": "Third badge held.", "trigger": {"type": "battle", "text": "Lt. Surge defeated."}, "advance": [], "events": ["EVENT_BEAT_LT_SURGE", "EVENT_GOT_TM24", "EVENT_BEAT_VERMILION_GYM_TRAINER_0", "EVENT_BEAT_VERMILION_GYM_TRAINER_1", "EVENT_BEAT_VERMILION_GYM_TRAINER_2"], "missables": {}, "badges": ["THUNDERBADGE"]}
+    ]
+  },
+
+  "CeladonGym": {
+    "notes": "Standard gym shape.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Erika waiting", "desc": "Erika and her seven trainers hold the gym.", "timeline": "Fourth badge ahead.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Erika (value 3 gives TM21 and the Rainbow Badge).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Rainbow Badge won", "desc": "Erika beaten, TM21 (Mega Drain) given, her trainers deactivated.", "timeline": "Fourth badge held.", "trigger": {"type": "battle", "text": "Erika defeated."}, "advance": [], "events": ["EVENT_BEAT_ERIKA", "EVENT_GOT_TM21", "EVENT_BEAT_CELADON_GYM_TRAINER_0", "EVENT_BEAT_CELADON_GYM_TRAINER_1", "EVENT_BEAT_CELADON_GYM_TRAINER_2", "EVENT_BEAT_CELADON_GYM_TRAINER_3", "EVENT_BEAT_CELADON_GYM_TRAINER_4", "EVENT_BEAT_CELADON_GYM_TRAINER_5", "EVENT_BEAT_CELADON_GYM_TRAINER_6"], "missables": {}, "badges": ["RAINBOWBADGE"]}
+    ]
+  },
+
+  "FuchsiaGym": {
+    "notes": "Standard gym shape (the invisible walls are map geometry, not state).",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Koga waiting", "desc": "Koga and his six trainers hold the gym behind the invisible-wall maze.", "timeline": "Fifth badge ahead.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Koga (value 3 gives TM06 and the Soul Badge).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Soul Badge won", "desc": "Koga beaten, TM06 (Toxic) given, his trainers deactivated.", "timeline": "Fifth badge held.", "trigger": {"type": "battle", "text": "Koga defeated."}, "advance": [], "events": ["EVENT_BEAT_KOGA", "EVENT_GOT_TM06", "EVENT_BEAT_FUCHSIA_GYM_TRAINER_0", "EVENT_BEAT_FUCHSIA_GYM_TRAINER_1", "EVENT_BEAT_FUCHSIA_GYM_TRAINER_2", "EVENT_BEAT_FUCHSIA_GYM_TRAINER_3", "EVENT_BEAT_FUCHSIA_GYM_TRAINER_4", "EVENT_BEAT_FUCHSIA_GYM_TRAINER_5"], "missables": {}, "badges": ["SOULBADGE"]}
+    ]
+  },
+
+  "SaffronGym": {
+    "notes": "Standard gym shape (the teleporter maze is map geometry). Reaching Sabrina at all presumes Silph Co is liberated only in story terms, not in code.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Sabrina waiting", "desc": "Sabrina and her seven trainers hold the gym behind the warp-tile maze.", "timeline": "Sixth badge ahead (usually).", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Sabrina (value 3 gives TM46 and the Marsh Badge).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Marsh Badge won", "desc": "Sabrina beaten, TM46 (Psywave) given, her trainers deactivated.", "timeline": "Marsh Badge held.", "trigger": {"type": "battle", "text": "Sabrina defeated."}, "advance": [], "events": ["EVENT_BEAT_SABRINA", "EVENT_GOT_TM46", "EVENT_BEAT_SAFFRON_GYM_TRAINER_0", "EVENT_BEAT_SAFFRON_GYM_TRAINER_1", "EVENT_BEAT_SAFFRON_GYM_TRAINER_2", "EVENT_BEAT_SAFFRON_GYM_TRAINER_3", "EVENT_BEAT_SAFFRON_GYM_TRAINER_4", "EVENT_BEAT_SAFFRON_GYM_TRAINER_5", "EVENT_BEAT_SAFFRON_GYM_TRAINER_6"], "missables": {}, "badges": ["MARSHBADGE"]}
+    ]
+  },
+
+  "CinnabarGym": {
+    "notes": "Standard gym shape with one addition: the quiz-machine gate doors are their own event flags (EVENT_CINNABAR_GYM_GATE0..6, in the event-flags section), and the 'next wrong answer' opponent is the global byte 0x2CE4 (reference/gym-safari-state.md). Value 1 (GET_OPPONENT_TEXT) is the quiz plumbing.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Blaine waiting", "desc": "Blaine and his seven trainers hold the gym behind the quiz doors (door state = the EVENT_CINNABAR_GYM_GATE flags).", "timeline": "Seventh badge ahead (usually).", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Blaine (value 3 gives TM38 and the Volcano Badge).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}, "saveNotes": ["The open/closed quiz doors are EVENT_CINNABAR_GYM_GATE0..6 -- edit them in the Event flags section; the 'wrong answer opponent' byte is 0x2CE4."]},
+      {"id": "2", "script": 0, "name": "Volcano Badge won", "desc": "Blaine beaten, TM38 (Fire Blast) given, his trainers deactivated.", "timeline": "Volcano Badge held.", "trigger": {"type": "battle", "text": "Blaine defeated."}, "advance": [], "events": ["EVENT_BEAT_BLAINE", "EVENT_GOT_TM38", "EVENT_BEAT_CINNABAR_GYM_TRAINER_0", "EVENT_BEAT_CINNABAR_GYM_TRAINER_1", "EVENT_BEAT_CINNABAR_GYM_TRAINER_2", "EVENT_BEAT_CINNABAR_GYM_TRAINER_3", "EVENT_BEAT_CINNABAR_GYM_TRAINER_4", "EVENT_BEAT_CINNABAR_GYM_TRAINER_5", "EVENT_BEAT_CINNABAR_GYM_TRAINER_6"], "missables": {}, "badges": ["VOLCANOBADGE"]}
+    ]
+  },
+
+  "ViridianGym": {
+    "notes": "The last gym, and the one whose victory writes far beyond its walls: beating Giovanni gives TM27 + the Earth Badge AND arms Route 22's SECOND rival ambush (sets the pair, shows his sprite there).",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Giovanni waiting", "desc": "Giovanni, eight trainers and the spinner maze hold the late-game gym.", "timeline": "Eighth badge ahead.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Giovanni (value 3 gives TM27, the Earth Badge, and arms Route 22's second ambush).", "auto": false}], "transients": [1, 2], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Earth Badge won -- the rival stirs", "desc": "Giovanni beaten and gone from gym leadership, TM27 (Fissure) given, all eight trainers deactivated -- and the rival now waits on Route 22 for the pre-Victory-Road rematch.", "timeline": "Eighth badge held; Victory Road next.", "trigger": {"type": "battle", "text": "Giovanni defeated."}, "advance": [], "events": ["EVENT_BEAT_VIRIDIAN_GYM_GIOVANNI", "EVENT_GOT_TM27", "EVENT_2ND_ROUTE22_RIVAL_BATTLE", "EVENT_ROUTE22_RIVAL_WANTS_BATTLE", "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_0", "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_1", "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_2", "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_3", "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_4", "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_5", "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_6", "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_7"], "missables": {}, "badges": ["EARTHBADGE"], "saveNotes": ["Cross-map: shows Route 22's TOGGLE_ROUTE_22_RIVAL_2 (his page carries the bit)."]}
+    ]
+  },
+
+  "CeruleanCity": {
+    "notes": "Two independent troubles share the byte's watcher: the bridge-side rival ambush (until EVENT_BEAT_CERULEAN_RIVAL) and the backyard burglar (until EVENT_BEAT_CERULEAN_ROCKET_THIEF). Both are coord-triggered from value 0; the progression order below is the usual play order, but the two are mechanically independent -- either can be toggled alone.",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "A city with troubles",
+        "desc": "Blue lurks near the Nugget Bridge exit (his sprite hidden until the trigger fires) and the Rocket burglar stands in the robbed house's yard. Both encounters are armed.",
+        "timeline": "Arrival in Cerulean.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [{"to": "2", "text": "Walk the trigger row north of the city: Blue appears, battles you, and leaves (values 1-3).", "auto": false}],
+        "transients": [1, 2, 3],
+        "events": [],
+        "missables": {"hide": ["TOGGLE_CERULEAN_RIVAL"], "show": ["TOGGLE_CERULEAN_ROCKET"]}
+      },
+      {
+        "id": "2", "script": 0,
+        "name": "Rival seen off",
+        "desc": "The bridge battle is done and Blue is gone; the burglar still holds the yard.",
+        "timeline": "After the Nugget Bridge approach.",
+        "trigger": {"type": "battle", "text": "Beat Blue at the bridge trigger."},
+        "advance": [{"to": "3", "text": "Confront the burglar in the backyard (coord-triggered talk, value 4 after the battle): he hands over TM28 and flees.", "auto": false}],
+        "transients": [4],
+        "events": ["EVENT_BEAT_CERULEAN_RIVAL"],
+        "missables": {"hide": ["TOGGLE_CERULEAN_RIVAL"], "show": ["TOGGLE_CERULEAN_ROCKET"]}
+      },
+      {
+        "id": "3", "script": 0,
+        "name": "Burglar chased off",
+        "desc": "Both troubles resolved: TM28 (Dig) surrendered, the yard empty.",
+        "timeline": "Cerulean at peace.",
+        "trigger": {"type": "battle", "text": "Beat the Rocket burglar."},
+        "advance": [],
+        "events": ["EVENT_BEAT_CERULEAN_RIVAL", "EVENT_BEAT_CERULEAN_ROCKET_THIEF"],
+        "missables": {"hide": ["TOGGLE_CERULEAN_RIVAL", "TOGGLE_CERULEAN_ROCKET"]},
+        "saveNotes": ["The two troubles are independent axes -- a save with only the burglar beaten is legal; this order is the usual play order, not a mechanical requirement."]
+      }
+    ]
+  },
+
+  "Route22": {
+    "notes": "The double-ambush road. BOTH ambushes are armed from outside (first: Oak's Lab Pokedex scene; second: beating Giovanni in Viridian Gym) and DISARMED here when fought -- and the first can also be disarmed by Pewter Gym if skipped. The byte rests at 0 through four of the five stages; only after the SECOND battle does it move to 7 (NOOP), which is why the byte alone cannot tell the road's story.",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "A quiet road",
+        "desc": "No rival anywhere; both ambush sprites hidden, no arming flags set. The road is just a road with a gate at the end.",
+        "timeline": "Before the Pokedex.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [{"to": "2", "text": "Oak's Lab Pokedex scene arms the first ambush.", "auto": false}],
+        "events": [],
+        "missables": {"hide": ["TOGGLE_ROUTE_22_RIVAL_1", "TOGGLE_ROUTE_22_RIVAL_2"]}
+      },
+      {
+        "id": "2", "script": 0,
+        "name": "First ambush armed",
+        "desc": "Blue waits near the gate for anyone chasing the badge rumor. Stepping onto the trigger tiles springs the first battle (values 1-3).",
+        "timeline": "Between the Pokedex and Pewter Gym.",
+        "trigger": {"type": "event", "text": "EVENT_1ST_ROUTE22_RIVAL_BATTLE + EVENT_ROUTE22_RIVAL_WANTS_BATTLE set by Oak's Lab; his sprite shown."},
+        "advance": [{"to": "3", "text": "Fight him on the trigger tiles -- or beat Brock first, which quietly disarms this ambush.", "auto": false}],
+        "transients": [1, 2, 3],
+        "events": ["EVENT_1ST_ROUTE22_RIVAL_BATTLE", "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"],
+        "missables": {"show": ["TOGGLE_ROUTE_22_RIVAL_1"], "hide": ["TOGGLE_ROUTE_22_RIVAL_2"]}
+      },
+      {
+        "id": "3", "script": 0,
+        "name": "First ambush sprung",
+        "desc": "The gate-road battle happened (win or lose -- the beat flag records the encounter resolving); the arming pair is cleared and Blue is gone.",
+        "timeline": "Early game, badge one era.",
+        "trigger": {"type": "battle", "text": "The first Route 22 rival battle resolved (value 3 cleans up)."},
+        "advance": [{"to": "4", "text": "Beat Giovanni in Viridian Gym -- the second ambush arms.", "auto": false}],
+        "events": ["EVENT_BEAT_ROUTE22_RIVAL_1ST_BATTLE"],
+        "missables": {"hide": ["TOGGLE_ROUTE_22_RIVAL_1", "TOGGLE_ROUTE_22_RIVAL_2"]}
+      },
+      {
+        "id": "4", "script": 0,
+        "name": "Second ambush armed",
+        "desc": "With all eight badges, Blue stakes out the road one last time before Victory Road. The same trigger tiles now spring the rematch (values 4-6).",
+        "timeline": "After the Earth Badge.",
+        "trigger": {"type": "event", "text": "EVENT_2ND_ROUTE22_RIVAL_BATTLE + EVENT_ROUTE22_RIVAL_WANTS_BATTLE set by Viridian Gym; his sprite shown."},
+        "advance": [{"to": "5", "text": "Fight the rematch on the trigger tiles.", "auto": false}],
+        "transients": [4, 5, 6],
+        "events": ["EVENT_BEAT_ROUTE22_RIVAL_1ST_BATTLE", "EVENT_2ND_ROUTE22_RIVAL_BATTLE", "EVENT_ROUTE22_RIVAL_WANTS_BATTLE"],
+        "missables": {"show": ["TOGGLE_ROUTE_22_RIVAL_2"], "hide": ["TOGGLE_ROUTE_22_RIVAL_1"]}
+      },
+      {
+        "id": "5", "script": 7,
+        "name": "Both rivalries settled",
+        "desc": "The rematch resolved; value 6 cleans up and parks the byte on NOOP (7) -- the only stage where the byte itself moves.",
+        "timeline": "Victory Road beckons.",
+        "trigger": {"type": "battle", "text": "The second Route 22 rival battle resolved."},
+        "advance": [],
+        "events": ["EVENT_BEAT_ROUTE22_RIVAL_1ST_BATTLE", "EVENT_BEAT_ROUTE22_RIVAL_2ND_BATTLE"],
+        "missables": {"hide": ["TOGGLE_ROUTE_22_RIVAL_1", "TOGGLE_ROUTE_22_RIVAL_2"]}
+      }
+    ]
+  },
+
+  "MtMoonB2F": {
+    "end": "2a",
+    "branches": {"1": ["2a", "2b"]},
+    "notes": "The fossil choice -- the game's first true branch. Taking either fossil sets its GOT flag and hides its ball; the Super Nerd then battles you (EVENT_BEAT_MT_MOON_EXIT_SUPER_NERD) and takes the OTHER fossil (value 5 hides the remaining ball). FOSSIL_1 is the Dome ball, FOSSIL_2 the Helix ball. Either branch ends with both balls gone. The four floor trainers are independent beat-bits.",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "Fossils untouched",
+        "desc": "Both fossil balls sit on the plateau with the Super Nerd guarding his find.",
+        "timeline": "First dungeon.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [
+          {"to": "2a", "text": "Take the Dome Fossil (FOSSIL_1): the nerd battles you and claims the Helix.", "auto": false},
+          {"to": "2b", "text": "Take the Helix Fossil (FOSSIL_2): the nerd battles you and claims the Dome.", "auto": false}
+        ],
+        "transients": [1, 2, 3],
+        "events": [],
+        "missables": {"show": ["TOGGLE_MT_MOON_B2F_FOSSIL_1", "TOGGLE_MT_MOON_B2F_FOSSIL_2"]}
+      },
+      {
+        "id": "2a", "script": 0,
+        "name": "Took the Dome Fossil",
+        "desc": "Dome Fossil in the bag, the Super Nerd beaten and away with the Helix; the plateau is bare.",
+        "timeline": "Leaving Mt. Moon.",
+        "trigger": {"type": "talk", "text": "Picked up the Dome Fossil, then resolved the Super Nerd battle (values 3-5 run the handover)."},
+        "advance": [],
+        "transients": [4, 5],
+        "events": ["EVENT_GOT_DOME_FOSSIL", "EVENT_BEAT_MT_MOON_EXIT_SUPER_NERD"],
+        "missables": {"hide": ["TOGGLE_MT_MOON_B2F_FOSSIL_1", "TOGGLE_MT_MOON_B2F_FOSSIL_2"]}
+      },
+      {
+        "id": "2b", "script": 0,
+        "name": "Took the Helix Fossil",
+        "desc": "Helix Fossil in the bag, the Super Nerd beaten and away with the Dome; the plateau is bare.",
+        "timeline": "Leaving Mt. Moon.",
+        "trigger": {"type": "talk", "text": "Picked up the Helix Fossil, then resolved the Super Nerd battle."},
+        "advance": [],
+        "transients": [4, 5],
+        "events": ["EVENT_GOT_HELIX_FOSSIL", "EVENT_BEAT_MT_MOON_EXIT_SUPER_NERD"],
+        "missables": {"hide": ["TOGGLE_MT_MOON_B2F_FOSSIL_1", "TOGGLE_MT_MOON_B2F_FOSSIL_2"]}
+      }
+    ]
+  },
+
+  "BillsHouse": {
+    "notes": "Bill's teleporter accident. The byte rests at 0 in both stages -- values 1-2 are the walk-to-machine cutscene, 3 the Bill-pops-out watcher, 4-5 cleanup/PC plumbing. The S.S. Ticket is handed over in the thank-you conversation right after the separation.",
+    "stages": [
+      {
+        "id": "1", "script": 0,
+        "name": "A Pokemon answers the door",
+        "desc": "A small Pokemon paces the floor claiming to be Bill; human Bill is nowhere to be seen. He asks you to run the Cell Separator while he climbs into the machine.",
+        "timeline": "After Nugget Bridge and Route 25.",
+        "trigger": {"type": "start", "text": "New game."},
+        "advance": [{"to": "2", "text": "Agree to help: the machine cutscene runs (values 1-3) and Bill is restored; talk to him for the S.S. Ticket.", "auto": false}],
+        "transients": [1, 2, 3],
+        "events": [],
+        "missables": {"show": ["TOGGLE_BILL_POKEMON"], "hide": ["TOGGLE_BILL_1", "TOGGLE_BILL_2"]}
+      },
+      {
+        "id": "2", "script": 0,
+        "name": "Bill restored -- ticket in hand",
+        "desc": "The separation worked: human Bill is at home (his Pokemon shape gone) and the S.S. Anne ticket is yours.",
+        "timeline": "The errand that opens Vermilion's dock.",
+        "trigger": {"type": "cutscene", "text": "Ran the Cell Separator; took the thank-you conversation."},
+        "advance": [],
+        "events": ["EVENT_MET_BILL", "EVENT_MET_BILL_2", "EVENT_BILL_SAID_USE_CELL_SEPARATOR", "EVENT_GOT_SS_TICKET"],
+        "missables": {"hide": ["TOGGLE_BILL_POKEMON", "TOGGLE_BILL_2"], "show": ["TOGGLE_BILL_1"]}
+      }
+    ]
+  },
+
+  "VermilionCity": {
+    "notes": "The byte's own values are per-visit walk nudges (dock gate checks); the durable state of the city is whether the S.S. Anne is still in port -- a flag owned by the ship's departure cutscene, read by the dock guard here.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The S.S. Anne in port", "desc": "The liner is docked; with the S.S. Ticket the guard lets you down to the harbor.", "timeline": "Between Cerulean and the Thunder Badge.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Get HM01 from the captain and leave the ship -- it departs.", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "The ship has sailed", "desc": "The S.S. Anne has left; the dock guard turns everyone away for good.", "timeline": "After the Cut errand.", "trigger": {"type": "event", "text": "EVENT_SS_ANNE_LEFT set by the departure cutscene at the dock."}, "advance": [], "events": ["EVENT_SS_ANNE_LEFT"], "context": ["EVENT_SS_ANNE_LEFT"], "missables": {}}
+    ]
+  },
+
+  "SSAnne2F": {
+    "notes": "The rival corridor. There is NO beat-event for this battle -- the script byte itself is the record: it parks on NOOP (4) once the encounter has resolved, which is exactly why blueprints must carry the byte and not just flags.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Rival aboard", "desc": "Blue is somewhere on the ship; crossing the corridor trigger makes him appear (his sprite is shown by the trigger itself) and battle you.", "timeline": "The S.S. Anne visit.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Cross the corridor trigger and resolve the battle (values 1-3).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {"hide": ["TOGGLE_SS_ANNE_2F_RIVAL"]}},
+      {"id": "2", "script": 4, "name": "Rival dispatched", "desc": "The corridor fight is over and Blue is gone; the byte rests on NOOP (4) -- the only durable record this encounter leaves.", "timeline": "The S.S. Anne visit, second half.", "trigger": {"type": "battle", "text": "The corridor battle resolved."}, "advance": [], "events": [], "missables": {"hide": ["TOGGLE_SS_ANNE_2F_RIVAL"]}}
+    ]
+  },
+
+  "PokemonTower2F": {
+    "notes": "The possessed-era rival. EVENT_POKEMON_TOWER_RIVAL_ON_LEFT is positional scratch value 0 flips per approach side; the durable facts are the beat flag and his sprite bit.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The rival mourns", "desc": "Blue stands on 2F and challenges you on approach -- the one battle where his team has no starter evolution question: he fights to test what the tower has done to you.", "timeline": "Lavender, before the Silph Scope.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Resolve the battle (value 1 sets the beat flag; value 2 walks him out).", "auto": false}], "transients": [1, 2], "events": [], "missables": {"show": ["TOGGLE_POKEMON_TOWER_2F_RIVAL"]}},
+      {"id": "2", "script": 0, "name": "Rival beaten", "desc": "The 2F battle is done and Blue has left the tower.", "timeline": "Climbing the tower.", "trigger": {"type": "battle", "text": "Beat Blue on 2F."}, "advance": [], "events": ["EVENT_BEAT_POKEMON_TOWER_RIVAL"], "missables": {"hide": ["TOGGLE_POKEMON_TOWER_2F_RIVAL"]}}
+    ]
+  },
+
+  "PokemonTower6F": {
+    "notes": "The ghost Marowak blocks the stairs until beaten. Seeing it as a Marowak (rather than an unfightable GHOST) needs the Silph Scope -- an inventory fact, not a flag. The three floor channelers are independent beat-bits.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The ghost bars the way", "desc": "The restless Marowak haunts the stairwell; without the Silph Scope it cannot even be fought.", "timeline": "The tower climb.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "With the Silph Scope, beat the Marowak (value 4 resolves it).", "auto": false}], "transients": [3, 4], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Marowak laid to rest", "desc": "The mother Marowak is at peace; the stairs to 7F are open.", "timeline": "The tower's turning point.", "trigger": {"type": "battle", "text": "Beat the ghost Marowak."}, "advance": [], "events": ["EVENT_BEAT_GHOST_MAROWAK"], "missables": {}, "saveNotes": ["The three channeler trainers are independent EVENT_BEAT_POKEMONTOWER_6_TRAINER_* bits, not part of this stage's story line."]}
+    ]
+  },
+
+  "PokemonTower7F": {
+    "notes": "The rescue. Beating the three Rockets and talking to Mr. Fuji warps you to his house; the same script hides his tower sprite, shows him at home (TOGGLE_MR_FUJIS_HOUSE_MR_FUJI) and toggles two Saffron City townsfolk (TOGGLE_SAFFRON_CITY_E/F) -- all cross-map bits carried on their own pages.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Rockets hold Mr. Fuji", "desc": "Three Rocket guards and, behind them, Mr. Fuji kneeling at the top of the tower.", "timeline": "Top of the tower.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat the three Rockets and speak to Mr. Fuji -- he takes you home (value 4).", "auto": false}], "transients": [4], "events": [], "missables": {"show": ["TOGGLE_POKEMON_TOWER_7F_ROCKET_1", "TOGGLE_POKEMON_TOWER_7F_ROCKET_2", "TOGGLE_POKEMON_TOWER_7F_ROCKET_3", "TOGGLE_POKEMON_TOWER_7F_MR_FUJI"]}},
+      {"id": "2", "script": 0, "name": "Mr. Fuji rescued", "desc": "The Rockets beaten and Mr. Fuji home in his volunteer house (where the Poke Flute waits). His tower sprite is gone; the guards' sprites remain, defeated.", "timeline": "Tower resolved; the Poke Flute next.", "trigger": {"type": "talk", "text": "Spoke to Mr. Fuji after clearing his guards."}, "advance": [], "events": ["EVENT_RESCUED_MR_FUJI", "EVENT_RESCUED_MR_FUJI_2", "EVENT_BEAT_POKEMONTOWER_7_TRAINER_0", "EVENT_BEAT_POKEMONTOWER_7_TRAINER_1", "EVENT_BEAT_POKEMONTOWER_7_TRAINER_2"], "missables": {"hide": ["TOGGLE_POKEMON_TOWER_7F_MR_FUJI"], "show": ["TOGGLE_POKEMON_TOWER_7F_ROCKET_1", "TOGGLE_POKEMON_TOWER_7F_ROCKET_2", "TOGGLE_POKEMON_TOWER_7F_ROCKET_3"]}, "saveNotes": ["Cross-map: shows TOGGLE_MR_FUJIS_HOUSE_MR_FUJI and toggles TOGGLE_SAFFRON_CITY_E/F -- their bits live on those maps' pages. EVENT_GOT_POKE_FLUTE is Mr. Fuji's House's story."]}
+    ]
+  },
+
+  "RocketHideoutB4F": {
+    "notes": "Giovanni's first defeat. The elevator's Lift Key and the item balls are separate concerns; this page is the boss floor.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Giovanni in his den", "desc": "Giovanni waits behind two guards at the bottom of the hideout.", "timeline": "The Game Corner arc.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Giovanni (value 3): he vanishes, leaving the Silph Scope behind.", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {"show": ["TOGGLE_ROCKET_HIDEOUT_B4F_GIOVANNI"], "hide": ["TOGGLE_ROCKET_HIDEOUT_B4F_ITEM_4"]}},
+      {"id": "2", "script": 0, "name": "Giovanni fled -- the Silph Scope left behind", "desc": "Giovanni beaten and gone; where he stood, the Silph Scope ball has appeared.", "timeline": "Hideout cleared; Lavender's tower can now be understood.", "trigger": {"type": "battle", "text": "Beat Giovanni."}, "advance": [], "events": ["EVENT_BEAT_ROCKET_HIDEOUT_GIOVANNI", "EVENT_BEAT_ROCKET_HIDEOUT_4_TRAINER_0", "EVENT_BEAT_ROCKET_HIDEOUT_4_TRAINER_1", "EVENT_BEAT_ROCKET_HIDEOUT_4_TRAINER_2"], "missables": {"hide": ["TOGGLE_ROCKET_HIDEOUT_B4F_GIOVANNI"], "show": ["TOGGLE_ROCKET_HIDEOUT_B4F_ITEM_4"]}}
+    ]
+  },
+
+  "SilphCo7F": {
+    "notes": "The occupied tower's rival floor. Blue ambushes from the stairwell (coord-triggered from value 0). His beat flag and sprite bit are the durable pair; the four floor Rockets/scientists are independent beat-bits.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The rival lurks by the stairs", "desc": "Blue waits at the 7F stairwell to test you mid-liberation.", "timeline": "The Silph Co raid.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Cross the stairwell trigger and resolve the battle (values 3-5).", "auto": false}], "transients": [3, 4, 5], "events": [], "missables": {"show": ["TOGGLE_SILPH_CO_7F_RIVAL"]}},
+      {"id": "2", "script": 0, "name": "Rival beaten", "desc": "The stairwell fight is over and Blue has left the building.", "timeline": "Mid-raid.", "trigger": {"type": "battle", "text": "Beat Blue on 7F."}, "advance": [], "events": ["EVENT_BEAT_SILPH_CO_RIVAL"], "missables": {"hide": ["TOGGLE_SILPH_CO_7F_RIVAL"]}}
+    ]
+  },
+
+  "SilphCo11F": {
+    "notes": "The president's floor and Giovanni's second defeat -- the flag that liberates the whole building (dozens of guard/employee objects across all 11 floors read EVENT_BEAT_SILPH_CO_GIOVANNI through their filter flags).",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Giovanni holds the president", "desc": "Giovanni stands over Silph's president with two guards on the floor.", "timeline": "The raid's summit.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Giovanni (values 3-5): Team Rocket abandons the building.", "auto": false}], "transients": [3, 4, 5], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Silph Co liberated", "desc": "Giovanni beaten a second time; the occupation collapses (every floor's Rocket-vs-employee objects read this flag), and the grateful president will hand over the Master Ball.", "timeline": "Saffron freed.", "trigger": {"type": "battle", "text": "Beat Giovanni on 11F."}, "advance": [], "events": ["EVENT_BEAT_SILPH_CO_GIOVANNI", "EVENT_BEAT_SILPH_CO_11F_TRAINER_0", "EVENT_BEAT_SILPH_CO_11F_TRAINER_1"], "missables": {}, "saveNotes": ["Giovanni's own sprite visibility on this floor follows the beat flag through the engine's toggleable-object machinery rather than an explicit Show/Hide in this script."]}
+    ]
+  },
+
+  "Route12": {
+    "notes": "The sleeping Snorlax (south one). EVENT_FIGHT_ROUTE12_SNORLAX is battle-arming scratch value 0 clears; the durable pair is the beat flag + the sprite bit. Waking it needs the Poke Flute -- an inventory fact.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Snorlax blocks the road", "desc": "A Snorlax sleeps across the route; only the Poke Flute will rouse it.", "timeline": "Until the flute.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Play the Poke Flute beside it and resolve the battle (catch, beat, or flee -- value 3 cleans up).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {"show": ["TOGGLE_ROUTE_12_SNORLAX"]}},
+      {"id": "2", "script": 0, "name": "The road is clear", "desc": "The Snorlax is gone (caught or fled); the route runs unbroken.", "timeline": "After the flute.", "trigger": {"type": "battle", "text": "The Snorlax encounter resolved."}, "advance": [], "events": ["EVENT_BEAT_ROUTE12_SNORLAX"], "missables": {"hide": ["TOGGLE_ROUTE_12_SNORLAX"]}}
+    ]
+  },
+
+  "Route16": {
+    "notes": "The sleeping Snorlax (west one) -- Route 12's twin in every mechanical respect.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Snorlax blocks Cycling Road", "desc": "A Snorlax sleeps in front of the Cycling Road gate; only the Poke Flute will rouse it.", "timeline": "Until the flute.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Play the Poke Flute beside it and resolve the battle (value 3 cleans up).", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {"show": ["TOGGLE_ROUTE_16_SNORLAX"]}},
+      {"id": "2", "script": 0, "name": "The way west is clear", "desc": "The Snorlax is gone; Cycling Road is reachable.", "timeline": "After the flute.", "trigger": {"type": "battle", "text": "The Snorlax encounter resolved."}, "advance": [], "events": ["EVENT_BEAT_ROUTE16_SNORLAX"], "missables": {"hide": ["TOGGLE_ROUTE_16_SNORLAX"]}}
+    ]
+  },
+
+  "LoreleisRoom": {
+    "notes": "Elite Four room one. The byte rests at 0 on both sides of the fight; the durable facts are the autowalk one-shot and the beat flag. The corridor block behind Lorelei is a DERIVED tile: recomputed on every entry from the beat flag (0x24 blocked / 0x05 clear). Entering also sets BIT_STARTED_ELITE_4 (0x29E0 bit 1) -- the flag Indigo Plateau's lobby reads to WIPE an unfinished run (see reference/world-completed.md).",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The challenge begins", "desc": "Lorelei waits; the door behind her is sealed until she falls. On first entry the game autowalks you six steps in and won't let you back out.", "timeline": "Elite Four, room one.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Lorelei.", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}, "saveNotes": ["Entering sets the startedElite4 bit (0x29E0 b1); Indigo Plateau Lobby reads it to reset an abandoned run's E4 flags."]},
+      {"id": "2", "script": 0, "name": "Lorelei defeated", "desc": "The ice specialist is beaten; the corridor to Bruno stands open (the exit block is re-derived from this flag on every entry).", "timeline": "One of four.", "trigger": {"type": "battle", "text": "Beat Lorelei."}, "advance": [], "events": ["EVENT_BEAT_LORELEIS_ROOM_TRAINER_0", "EVENT_AUTOWALKED_INTO_LORELEIS_ROOM"], "missables": {}}
+    ]
+  },
+
+  "BrunosRoom": {
+    "notes": "Elite Four room two -- Lorelei's shape exactly.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The challenge continues", "desc": "Bruno waits; the door behind him is sealed until he falls.", "timeline": "Elite Four, room two.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Bruno.", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Bruno defeated", "desc": "The fighting master is beaten; the corridor to Agatha stands open (derived from this flag on entry).", "timeline": "Two of four.", "trigger": {"type": "battle", "text": "Beat Bruno."}, "advance": [], "events": ["EVENT_BEAT_BRUNOS_ROOM_TRAINER_0", "EVENT_AUTOWALKED_INTO_BRUNOS_ROOM"], "missables": {}}
+    ]
+  },
+
+  "AgathasRoom": {
+    "notes": "Elite Four room three -- the same shape again.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The challenge deepens", "desc": "Agatha waits; the door behind her is sealed until she falls.", "timeline": "Elite Four, room three.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Agatha.", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Agatha defeated", "desc": "The ghost veteran is beaten; the corridor to Lance stands open (derived from this flag on entry).", "timeline": "Three of four.", "trigger": {"type": "battle", "text": "Beat Agatha."}, "advance": [], "events": ["EVENT_BEAT_AGATHAS_ROOM_TRAINER_0", "EVENT_AUTOWALKED_INTO_AGATHAS_ROOM"], "missables": {}}
+    ]
+  },
+
+  "LancesRoom": {
+    "notes": "Elite Four room four. Beating Lance sets EVENT_BEAT_LANCE (his talk handler) alongside the trainer beat-bit; EVENT_LANCES_ROOM_LOCK_DOOR is the door-seal one-shot behind you.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The dragon master waits", "desc": "Lance, last of the four. The door seals behind you as you approach him.", "timeline": "Elite Four, room four.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat Lance.", "auto": false}], "transients": [1, 2, 3], "events": [], "missables": {}},
+      {"id": "2", "script": 0, "name": "Lance defeated", "desc": "The Elite Four are beaten -- and Lance reveals someone got here first. The way to the Champion's room is open.", "timeline": "Four of four; one battle left.", "trigger": {"type": "battle", "text": "Beat Lance."}, "advance": [], "events": ["EVENT_BEAT_LANCE", "EVENT_BEAT_LANCES_ROOM_TRAINER_0", "EVENT_LANCES_ROOM_LOCK_DOOR"], "missables": {}}
+    ]
+  },
+
+  "ChampionsRoom": {
+    "notes": "The final battle. Value 0 launches the confrontation cutscene the moment you walk in; everything through value 10 is that one scene (battle, Oak's arrival, the walk to the Hall of Fame). The single durable fact here is EVENT_BEAT_CHAMPION_RIVAL; the Hall of Fame map handles the induction and the E4-flag wipe.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The Champion is... Blue", "desc": "Your rival took the throne minutes ago. Walking in starts the final battle sequence; Oak's congratulation sprite is hidden until his entrance.", "timeline": "The last door of the game.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Beat the Champion; Oak arrives, and you are walked to the Hall of Fame (values 1-10).", "auto": false}], "transients": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "events": [], "missables": {"hide": ["TOGGLE_CHAMPIONS_ROOM_OAK"]}},
+      {"id": "2", "script": 0, "name": "Champion dethroned", "desc": "Blue's reign is over. The full ending cutscene has played and Oak has come and gone (his sprite hidden again).", "timeline": "The credits' doorstep.", "trigger": {"type": "battle", "text": "Beat the Champion."}, "advance": [], "events": ["EVENT_BEAT_CHAMPION_RIVAL"], "missables": {"hide": ["TOGGLE_CHAMPIONS_ROOM_OAK"]}, "saveNotes": ["The Hall of Fame's own script performs the induction, hides Cerulean's cave guard, and RESETS the ten Elite-Four run flags -- see the Hall of Fame page."]}
+    ]
+  },
+
+  "HallOfFame": {
+    "notes": "The induction machine. Value 1 runs Oak's congratulations and hides Cerulean City's cave guard (cross-map); value 2 RESETS the whole Elite-Four run (all ten flags -- door one-shots, beat flags, the champion flag) so the gauntlet re-arms, then saves the game. That wipe is why a post-game save shows the E4 'unbeaten': the run flags are cleared BY DESIGN, and only the Hall of Fame records remain.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "Awaiting an inductee", "desc": "The recording room, idle.", "timeline": "Reached only at the story's end.", "trigger": {"type": "start", "text": "New game."}, "advance": [{"to": "2", "text": "Arrive with Oak after beating the Champion: induction, flag wipe, save (values 1-2).", "auto": false}], "transients": [1, 2], "events": [], "missables": {}},
+      {"id": "2", "script": 3, "name": "Inducted -- the gauntlet re-armed", "desc": "Your team is in the Hall of Fame and the byte rests on NOOP (3). Every Elite-Four run flag has been deliberately cleared so the four rooms and the Champion are fightable again.", "timeline": "Post-game.", "trigger": {"type": "cutscene", "text": "The induction ran to completion (it saves the game itself)."}, "advance": [], "events": [], "missables": {}, "saveNotes": ["Cross-map: hides Cerulean City's TOGGLE_CERULEAN_CAVE_GUY -- Cerulean Cave opens.", "The ten E4 run flags (EVENT_AUTOWALKED_INTO_*, EVENT_BEAT_*S_ROOM_TRAINER_0, EVENT_BEAT_LANCE, EVENT_BEAT_CHAMPION_RIVAL, EVENT_LANCES_ROOM_LOCK_DOOR) read CLEARED here on purpose -- that is the machine working, not a missing record."]}
+    ]
+  },
+
+  "SafariZoneGate": {
+    "notes": "Per-visit machinery, deliberately ONE stage: the byte's values are the join/leave conversation and walk nudges, EVENT_IN_SAFARI_ZONE flips per visit, and the step/ball counters are the global Safari bytes (0x29B9/0x2CF3, re-seeded at the gate each game). Nothing here is a story progression.",
+    "stages": [
+      {"id": "1", "script": 0, "name": "The gate, between games", "desc": "The reception desk in its resting shape. Everything this map writes (the in-Safari flag, the walk nudges, the counters) is per-visit machinery re-armed each time -- there is no later stage to roll to.", "timeline": "Any time.", "trigger": {"type": "start", "text": "New game."}, "advance": [], "transients": [1, 2, 3, 4, 5, 6], "events": [], "missables": {}, "saveNotes": ["Safari steps-left (0x29B9, big-endian) and balls (0x2CF3) live on the Map Storage panel's Safari Zone page."]}
+    ]
+  }
+}

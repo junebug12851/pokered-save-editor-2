@@ -1,0 +1,336 @@
+{
+  "map": "Viridian Gym",
+  "mapInd": 45,
+  "scriptSlot": 7,
+  "source": "scripts/ViridianGym.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 16,
+    "y": 17
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "The last gym, and the one whose victory writes far beyond its walls: beating Giovanni gives TM27 + the Earth Badge AND arms Route 22's SECOND rival ambush (sets the pair, shows his sprite there)."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_VIRIDIANGYM_DEFAULT",
+      "routine": "ViridianGymDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_VIRIDIANGYM_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_VIRIDIANGYM_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_VIRIDIANGYM_GIOVANNI_POST_BATTLE",
+      "routine": "ViridianGymGiovanniPostBattle",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_VIRIDIANGYM_PLAYER_SPINNING",
+      "routine": "ViridianGymPlayerSpinningScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_VIRIDIANGYM_DEFAULT",
+      "name": "Giovanni waiting",
+      "desc": "Giovanni, eight trainers and the spinner maze hold the late-game gym.",
+      "timeline": "Eighth badge ahead.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Beat Giovanni (value 3 gives TM27, the Earth Badge, and arms Route 22's second ambush).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 80,
+              "name": "EVENT_GOT_TM27",
+              "owned": true
+            },
+            {
+              "ind": 81,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_GIOVANNI",
+              "owned": true
+            },
+            {
+              "ind": 82,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 83,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 84,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 85,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 86,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_4",
+              "owned": true
+            },
+            {
+              "ind": 87,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_5",
+              "owned": true
+            },
+            {
+              "ind": 88,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_6",
+              "owned": true
+            },
+            {
+              "ind": 89,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_7",
+              "owned": true
+            },
+            {
+              "ind": 1313,
+              "name": "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1319,
+              "name": "EVENT_ROUTE22_RIVAL_WANTS_BATTLE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 50,
+            "name": "Giovanni",
+            "toggleConst": "TOGGLE_VIRIDIAN_GYM_GIOVANNI",
+            "state": "show"
+          },
+          {
+            "ind": 51,
+            "name": "Item",
+            "toggleConst": "TOGGLE_VIRIDIAN_GYM_ITEM",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_VIRIDIANGYM_START_BATTLE",
+      "name": "Cutscene step: SCRIPT_VIRIDIANGYM_START_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_VIRIDIANGYM_END_BATTLE",
+      "name": "Cutscene step: SCRIPT_VIRIDIANGYM_END_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_VIRIDIANGYM_DEFAULT",
+      "name": "Earth Badge won -- the rival stirs",
+      "desc": "Giovanni beaten and gone from gym leadership, TM27 (Fissure) given, all eight trainers deactivated -- and the rival now waits on Route 22 for the pre-Victory-Road rematch.",
+      "timeline": "Eighth badge held; Victory Road next.",
+      "trigger": {
+        "type": "battle",
+        "text": "Giovanni defeated."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 81,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_GIOVANNI",
+              "owned": true
+            },
+            {
+              "ind": 80,
+              "name": "EVENT_GOT_TM27",
+              "owned": true
+            },
+            {
+              "ind": 1313,
+              "name": "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1319,
+              "name": "EVENT_ROUTE22_RIVAL_WANTS_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 82,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 83,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 84,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 85,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 86,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_4",
+              "owned": true
+            },
+            {
+              "ind": 87,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_5",
+              "owned": true
+            },
+            {
+              "ind": 88,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_6",
+              "owned": true
+            },
+            {
+              "ind": 89,
+              "name": "EVENT_BEAT_VIRIDIAN_GYM_TRAINER_7",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 50,
+            "name": "Giovanni",
+            "toggleConst": "TOGGLE_VIRIDIAN_GYM_GIOVANNI",
+            "state": "show"
+          },
+          {
+            "ind": 51,
+            "name": "Item",
+            "toggleConst": "TOGGLE_VIRIDIAN_GYM_ITEM",
+            "state": "show"
+          }
+        ],
+        "badges": [
+          "EARTHBADGE"
+        ],
+        "notes": [
+          "Cross-map: shows Route 22's TOGGLE_ROUTE_22_RIVAL_2 (his page carries the bit)."
+        ]
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            1313,
+            1319
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": [
+          "EARTHBADGE"
+        ]
+      }
+    }
+  ]
+}

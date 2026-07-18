@@ -1,0 +1,1212 @@
+{
+  "map": "Oaks Lab",
+  "mapInd": 40,
+  "scriptSlot": 0,
+  "source": "scripts/OaksLab.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 4,
+    "y": 11
+  },
+  "progression": {
+    "start": "1",
+    "end": "5",
+    "order": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "The richest script table in the game: 19 values, of which only 0, 6, 10 and 18 are stages a save meaningfully rests in. The story is one long line -- follow Oak in, choose, be challenged, battle, then (after the parcel run) the Pokedex. Which starter balls vanish depends on the player's and rival's choices; the script computes the indices at runtime, so this blueprint flags them in words rather than guessing bits."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_OAKSLAB_DEFAULT",
+      "routine": "OaksLabDefaultScript",
+      "kind": "resting",
+      "next": [
+        1
+      ]
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_OAKSLAB_OAK_ENTERS_LAB",
+      "routine": "OaksLabOakEntersLabScript",
+      "kind": "transient",
+      "next": [
+        2
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_OAKSLAB_TOGGLE_OAKS",
+      "routine": "OaksLabToggleOaksScript",
+      "kind": "transient",
+      "next": [
+        3
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_OAKSLAB_PLAYER_ENTERS_LAB",
+      "routine": "OaksLabPlayerEntersLabScript",
+      "kind": "transient",
+      "next": [
+        4
+      ]
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_OAKSLAB_FOLLOWED_OAK",
+      "routine": "OaksLabFollowedOakScript",
+      "kind": "transient",
+      "next": [
+        5
+      ]
+    },
+    {
+      "value": 5,
+      "name": "SCRIPT_OAKSLAB_OAK_CHOOSE_MON_SPEECH",
+      "routine": "OaksLabOakChooseMonSpeechScript",
+      "kind": "transient",
+      "next": [
+        6
+      ]
+    },
+    {
+      "value": 6,
+      "name": "SCRIPT_OAKSLAB_PLAYER_DONT_GO_AWAY_SCRIPT",
+      "routine": "OaksLabPlayerDontGoAwayScript",
+      "kind": "resting",
+      "next": [
+        7
+      ]
+    },
+    {
+      "value": 7,
+      "name": "SCRIPT_OAKSLAB_PLAYER_FORCED_TO_WALK_BACK_SCRIPT",
+      "routine": "OaksLabPlayerForcedToWalkBackScript",
+      "kind": "transient",
+      "next": [
+        6
+      ]
+    },
+    {
+      "value": 8,
+      "name": "SCRIPT_OAKSLAB_CHOSE_STARTER_SCRIPT",
+      "routine": "OaksLabChoseStarterScript",
+      "kind": "resting",
+      "next": [
+        9
+      ]
+    },
+    {
+      "value": 9,
+      "name": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+      "routine": "OaksLabRivalChoosesStarterScript",
+      "kind": "transient",
+      "next": [
+        10
+      ]
+    },
+    {
+      "value": 10,
+      "name": "SCRIPT_OAKSLAB_RIVAL_CHALLENGES_PLAYER",
+      "routine": "OaksLabRivalChallengesPlayerScript",
+      "kind": "resting",
+      "next": [
+        11
+      ]
+    },
+    {
+      "value": 11,
+      "name": "SCRIPT_OAKSLAB_RIVAL_START_BATTLE",
+      "routine": "OaksLabRivalStartBattleScript",
+      "kind": "transient",
+      "next": [
+        12
+      ]
+    },
+    {
+      "value": 12,
+      "name": "SCRIPT_OAKSLAB_RIVAL_END_BATTLE",
+      "routine": "OaksLabRivalEndBattleScript",
+      "kind": "transient",
+      "next": [
+        13
+      ]
+    },
+    {
+      "value": 13,
+      "name": "SCRIPT_OAKSLAB_RIVAL_STARTS_EXIT",
+      "routine": "OaksLabRivalStartsExitScript",
+      "kind": "resting",
+      "next": [
+        14,
+        18
+      ]
+    },
+    {
+      "value": 14,
+      "name": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+      "routine": "OaksLabPlayerWatchRivalExitScript",
+      "kind": "resting",
+      "next": [
+        18
+      ]
+    },
+    {
+      "value": 15,
+      "name": "SCRIPT_OAKSLAB_RIVAL_ARRIVES_AT_OAKS_REQUEST",
+      "routine": "OaksLabRivalArrivesAtOaksRequestScript",
+      "kind": "transient",
+      "next": [
+        16
+      ]
+    },
+    {
+      "value": 16,
+      "name": "SCRIPT_OAKSLAB_OAK_GIVES_POKEDEX",
+      "routine": "OaksLabOakGivesPokedexScript",
+      "kind": "transient",
+      "next": [
+        17
+      ]
+    },
+    {
+      "value": 17,
+      "name": "SCRIPT_OAKSLAB_RIVAL_LEAVES_WITH_POKEDEX",
+      "routine": "OaksLabRivalLeavesWithPokedexScript",
+      "kind": "transient",
+      "next": [
+        18
+      ]
+    },
+    {
+      "value": 18,
+      "name": "SCRIPT_OAKSLAB_NOOP",
+      "routine": "OaksLabNoopScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_OAKSLAB_DEFAULT",
+      "name": "The lab, waiting",
+      "desc": "Blue paces the lab, the three starter balls sit on the table, Oak is absent (both his lab sprites hidden). Value 0 watches for EVENT_OAK_APPEARED_IN_PALLET to start the entrance cutscene.",
+      "timeline": "Game opening.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Enter the lab after Oak collars you in Pallet Town -- Oak walks in behind you (values 1-5) and asks you to choose a Pokemon.",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 0,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB",
+              "owned": true
+            },
+            {
+              "ind": 32,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB_2",
+              "owned": true
+            },
+            {
+              "ind": 33,
+              "name": "EVENT_OAK_ASKED_TO_CHOOSE_MON",
+              "owned": true
+            },
+            {
+              "ind": 34,
+              "name": "EVENT_GOT_STARTER",
+              "owned": true
+            },
+            {
+              "ind": 35,
+              "name": "EVENT_BATTLED_RIVAL_IN_OAKS_LAB",
+              "owned": true
+            },
+            {
+              "ind": 37,
+              "name": "EVENT_GOT_POKEDEX",
+              "owned": true
+            },
+            {
+              "ind": 56,
+              "name": "EVENT_OAK_GOT_PARCEL",
+              "owned": true
+            },
+            {
+              "ind": 1312,
+              "name": "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1313,
+              "name": "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1319,
+              "name": "EVENT_ROUTE22_RIVAL_WANTS_BATTLE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 42,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_OAKS_LAB_RIVAL",
+            "state": "show"
+          },
+          {
+            "ind": 43,
+            "name": "Pokeball 1",
+            "toggleConst": "TOGGLE_STARTER_BALL_1",
+            "state": "show"
+          },
+          {
+            "ind": 44,
+            "name": "Pokeball 2",
+            "toggleConst": "TOGGLE_STARTER_BALL_2",
+            "state": "show"
+          },
+          {
+            "ind": 45,
+            "name": "Pokeball 3",
+            "toggleConst": "TOGGLE_STARTER_BALL_3",
+            "state": "show"
+          },
+          {
+            "ind": 46,
+            "name": "Prof. Oak 1",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_1",
+            "state": "hide"
+          },
+          {
+            "ind": 47,
+            "name": "Pokedex 1",
+            "toggleConst": "TOGGLE_POKEDEX_1",
+            "state": "show"
+          },
+          {
+            "ind": 48,
+            "name": "Pokedex 2",
+            "toggleConst": "TOGGLE_POKEDEX_2",
+            "state": "show"
+          },
+          {
+            "ind": 49,
+            "name": "Prof. Oak 2",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_2",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_OAKSLAB_OAK_ENTERS_LAB",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_OAK_ENTERS_LAB",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "2",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_OAKSLAB_TOGGLE_OAKS",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_TOGGLE_OAKS",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "3",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.3",
+      "kind": "transient",
+      "script": 3,
+      "scriptName": "SCRIPT_OAKSLAB_PLAYER_ENTERS_LAB",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_PLAYER_ENTERS_LAB",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "4",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.4",
+      "kind": "transient",
+      "script": 4,
+      "scriptName": "SCRIPT_OAKSLAB_FOLLOWED_OAK",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_FOLLOWED_OAK",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "5",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.5",
+      "kind": "transient",
+      "script": 5,
+      "scriptName": "SCRIPT_OAKSLAB_OAK_CHOOSE_MON_SPEECH",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_OAK_CHOOSE_MON_SPEECH",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "6",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 6,
+      "scriptName": "SCRIPT_OAKSLAB_PLAYER_DONT_GO_AWAY_SCRIPT",
+      "name": "Choose your partner",
+      "desc": "Oak stands at his desk (OAK_1 shown), Blue waits, three balls on the table. Value 6 is the 'don't go away' watcher -- trying to leave walks you back (value 7). This is the stage a save sits in while the player dithers over the choice.",
+      "timeline": "The starter choice.",
+      "trigger": {
+        "type": "cutscene",
+        "text": "The follow-Oak entrance cutscene finished; Oak has asked you to pick."
+      },
+      "advance": [
+        {
+          "to": "3",
+          "text": "Take a ball from the table; Blue takes the counter-pick (values 8-9).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 6,
+        "events": {
+          "set": [
+            {
+              "ind": 0,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB",
+              "owned": true
+            },
+            {
+              "ind": 32,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB_2",
+              "owned": true
+            },
+            {
+              "ind": 33,
+              "name": "EVENT_OAK_ASKED_TO_CHOOSE_MON",
+              "owned": true
+            },
+            {
+              "ind": 39,
+              "name": "EVENT_OAK_APPEARED_IN_PALLET",
+              "owned": false
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 34,
+              "name": "EVENT_GOT_STARTER",
+              "owned": true
+            },
+            {
+              "ind": 35,
+              "name": "EVENT_BATTLED_RIVAL_IN_OAKS_LAB",
+              "owned": true
+            },
+            {
+              "ind": 37,
+              "name": "EVENT_GOT_POKEDEX",
+              "owned": true
+            },
+            {
+              "ind": 56,
+              "name": "EVENT_OAK_GOT_PARCEL",
+              "owned": true
+            },
+            {
+              "ind": 1312,
+              "name": "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1313,
+              "name": "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1319,
+              "name": "EVENT_ROUTE22_RIVAL_WANTS_BATTLE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 42,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_OAKS_LAB_RIVAL",
+            "state": "show"
+          },
+          {
+            "ind": 43,
+            "name": "Pokeball 1",
+            "toggleConst": "TOGGLE_STARTER_BALL_1",
+            "state": "show"
+          },
+          {
+            "ind": 44,
+            "name": "Pokeball 2",
+            "toggleConst": "TOGGLE_STARTER_BALL_2",
+            "state": "show"
+          },
+          {
+            "ind": 45,
+            "name": "Pokeball 3",
+            "toggleConst": "TOGGLE_STARTER_BALL_3",
+            "state": "show"
+          },
+          {
+            "ind": 46,
+            "name": "Prof. Oak 1",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_1",
+            "state": "show"
+          },
+          {
+            "ind": 47,
+            "name": "Pokedex 1",
+            "toggleConst": "TOGGLE_POKEDEX_1",
+            "state": "show"
+          },
+          {
+            "ind": 48,
+            "name": "Pokedex 2",
+            "toggleConst": "TOGGLE_POKEDEX_2",
+            "state": "show"
+          },
+          {
+            "ind": 49,
+            "name": "Prof. Oak 2",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_2",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 6
+        },
+        "events": {
+          "set": [
+            0,
+            32,
+            33,
+            39
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [
+            46
+          ],
+          "hide": []
+        },
+        "badges": []
+      }
+    },
+    {
+      "id": "2.1",
+      "kind": "transient",
+      "script": 7,
+      "scriptName": "SCRIPT_OAKSLAB_PLAYER_FORCED_TO_WALK_BACK_SCRIPT",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_PLAYER_FORCED_TO_WALK_BACK_SCRIPT",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "6",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2.2",
+      "kind": "transient",
+      "script": 8,
+      "scriptName": "SCRIPT_OAKSLAB_CHOSE_STARTER_SCRIPT",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_CHOSE_STARTER_SCRIPT",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "9",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2.3",
+      "kind": "transient",
+      "script": 9,
+      "scriptName": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "10",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "kind": "resting",
+      "script": 10,
+      "scriptName": "SCRIPT_OAKSLAB_RIVAL_CHALLENGES_PLAYER",
+      "name": "Starters chosen -- the rival wants a word",
+      "desc": "Both starters are picked (EVENT_GOT_STARTER). Value 10 waits for you to head for the door, at which point Blue challenges you to the first battle of the game (values 11-12).",
+      "timeline": "Immediately after the starter choice.",
+      "trigger": {
+        "type": "talk",
+        "text": "You took a ball and confirmed; Blue grabbed his."
+      },
+      "advance": [
+        {
+          "to": "4",
+          "text": "Walk toward the exit -- Blue stops you and the first rival battle begins.",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 10,
+        "events": {
+          "set": [
+            {
+              "ind": 0,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB",
+              "owned": true
+            },
+            {
+              "ind": 32,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB_2",
+              "owned": true
+            },
+            {
+              "ind": 33,
+              "name": "EVENT_OAK_ASKED_TO_CHOOSE_MON",
+              "owned": true
+            },
+            {
+              "ind": 39,
+              "name": "EVENT_OAK_APPEARED_IN_PALLET",
+              "owned": false
+            },
+            {
+              "ind": 34,
+              "name": "EVENT_GOT_STARTER",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 35,
+              "name": "EVENT_BATTLED_RIVAL_IN_OAKS_LAB",
+              "owned": true
+            },
+            {
+              "ind": 37,
+              "name": "EVENT_GOT_POKEDEX",
+              "owned": true
+            },
+            {
+              "ind": 56,
+              "name": "EVENT_OAK_GOT_PARCEL",
+              "owned": true
+            },
+            {
+              "ind": 1312,
+              "name": "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1313,
+              "name": "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1319,
+              "name": "EVENT_ROUTE22_RIVAL_WANTS_BATTLE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 42,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_OAKS_LAB_RIVAL",
+            "state": "show"
+          },
+          {
+            "ind": 43,
+            "name": "Pokeball 1",
+            "toggleConst": "TOGGLE_STARTER_BALL_1",
+            "state": "show"
+          },
+          {
+            "ind": 44,
+            "name": "Pokeball 2",
+            "toggleConst": "TOGGLE_STARTER_BALL_2",
+            "state": "show"
+          },
+          {
+            "ind": 45,
+            "name": "Pokeball 3",
+            "toggleConst": "TOGGLE_STARTER_BALL_3",
+            "state": "hide"
+          },
+          {
+            "ind": 46,
+            "name": "Prof. Oak 1",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_1",
+            "state": "show"
+          },
+          {
+            "ind": 47,
+            "name": "Pokedex 1",
+            "toggleConst": "TOGGLE_POKEDEX_1",
+            "state": "show"
+          },
+          {
+            "ind": 48,
+            "name": "Pokedex 2",
+            "toggleConst": "TOGGLE_POKEDEX_2",
+            "state": "show"
+          },
+          {
+            "ind": 49,
+            "name": "Prof. Oak 2",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_2",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": [
+          "WHICH two starter balls are gone depends on the choices made -- the script computes the object indices at runtime. TOGGLE_STARTER_BALL_3 hidden here is the statically-written case; set the pair that matches the party you are building."
+        ]
+      },
+      "delta": {
+        "from": "2",
+        "script": {
+          "from": 6,
+          "to": 10
+        },
+        "events": {
+          "set": [
+            34
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            45
+          ]
+        },
+        "badges": []
+      }
+    },
+    {
+      "id": "3.1",
+      "kind": "transient",
+      "script": 11,
+      "scriptName": "SCRIPT_OAKSLAB_RIVAL_START_BATTLE",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_RIVAL_START_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "12",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "3.2",
+      "kind": "transient",
+      "script": 12,
+      "scriptName": "SCRIPT_OAKSLAB_RIVAL_END_BATTLE",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_RIVAL_END_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "13",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "kind": "resting",
+      "script": 18,
+      "scriptName": "SCRIPT_OAKSLAB_NOOP",
+      "name": "First rivalry settled",
+      "desc": "The lab battle is done (win or lose -- the flag records that it happened) and Blue has stormed out. The byte rests on NOOP (18) until the Pokedex cutscene re-arms it from outside.",
+      "timeline": "After the first rival battle, before the parcel run.",
+      "trigger": {
+        "type": "battle",
+        "text": "The first rival battle resolved; Blue walked out (values 13-14)."
+      },
+      "advance": [
+        {
+          "to": "5",
+          "text": "Fetch Oak's Parcel from Viridian's mart and bring it back -- Blue is summoned and Oak hands out the Pokedexes (values 15-17).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 18,
+        "events": {
+          "set": [
+            {
+              "ind": 0,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB",
+              "owned": true
+            },
+            {
+              "ind": 32,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB_2",
+              "owned": true
+            },
+            {
+              "ind": 33,
+              "name": "EVENT_OAK_ASKED_TO_CHOOSE_MON",
+              "owned": true
+            },
+            {
+              "ind": 39,
+              "name": "EVENT_OAK_APPEARED_IN_PALLET",
+              "owned": false
+            },
+            {
+              "ind": 34,
+              "name": "EVENT_GOT_STARTER",
+              "owned": true
+            },
+            {
+              "ind": 35,
+              "name": "EVENT_BATTLED_RIVAL_IN_OAKS_LAB",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 37,
+              "name": "EVENT_GOT_POKEDEX",
+              "owned": true
+            },
+            {
+              "ind": 56,
+              "name": "EVENT_OAK_GOT_PARCEL",
+              "owned": true
+            },
+            {
+              "ind": 1312,
+              "name": "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1313,
+              "name": "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1319,
+              "name": "EVENT_ROUTE22_RIVAL_WANTS_BATTLE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 42,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_OAKS_LAB_RIVAL",
+            "state": "hide"
+          },
+          {
+            "ind": 43,
+            "name": "Pokeball 1",
+            "toggleConst": "TOGGLE_STARTER_BALL_1",
+            "state": "show"
+          },
+          {
+            "ind": 44,
+            "name": "Pokeball 2",
+            "toggleConst": "TOGGLE_STARTER_BALL_2",
+            "state": "show"
+          },
+          {
+            "ind": 45,
+            "name": "Pokeball 3",
+            "toggleConst": "TOGGLE_STARTER_BALL_3",
+            "state": "hide"
+          },
+          {
+            "ind": 46,
+            "name": "Prof. Oak 1",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_1",
+            "state": "show"
+          },
+          {
+            "ind": 47,
+            "name": "Pokedex 1",
+            "toggleConst": "TOGGLE_POKEDEX_1",
+            "state": "show"
+          },
+          {
+            "ind": 48,
+            "name": "Pokedex 2",
+            "toggleConst": "TOGGLE_POKEDEX_2",
+            "state": "show"
+          },
+          {
+            "ind": 49,
+            "name": "Prof. Oak 2",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_2",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "3",
+        "script": {
+          "from": 10,
+          "to": 18
+        },
+        "events": {
+          "set": [
+            35
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            42
+          ]
+        },
+        "badges": []
+      }
+    },
+    {
+      "id": "4.1",
+      "kind": "transient",
+      "script": 13,
+      "scriptName": "SCRIPT_OAKSLAB_RIVAL_STARTS_EXIT",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_RIVAL_STARTS_EXIT",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "14",
+          "text": "automatic",
+          "auto": true
+        },
+        {
+          "to": "18",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "4.2",
+      "kind": "transient",
+      "script": 14,
+      "scriptName": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "18",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "4.3",
+      "kind": "transient",
+      "script": 15,
+      "scriptName": "SCRIPT_OAKSLAB_RIVAL_ARRIVES_AT_OAKS_REQUEST",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_RIVAL_ARRIVES_AT_OAKS_REQUEST",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "16",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "4.4",
+      "kind": "transient",
+      "script": 16,
+      "scriptName": "SCRIPT_OAKSLAB_OAK_GIVES_POKEDEX",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_OAK_GIVES_POKEDEX",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "17",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "4.5",
+      "kind": "transient",
+      "script": 17,
+      "scriptName": "SCRIPT_OAKSLAB_RIVAL_LEAVES_WITH_POKEDEX",
+      "name": "Cutscene step: SCRIPT_OAKSLAB_RIVAL_LEAVES_WITH_POKEDEX",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "18",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "kind": "resting",
+      "script": 18,
+      "scriptName": "SCRIPT_OAKSLAB_NOOP",
+      "name": "The Pokedex handed down",
+      "desc": "Parcel delivered, Pokedexes off the side table and in two trainers' pockets, and Blue gone for good. This also ARMS Route 22's first ambush (the rival-wants-battle pair set, his sprite shown there) and swaps Viridian City's grumpy old man for the caffeinated one.",
+      "timeline": "The end of the tutorial -- the world opens.",
+      "trigger": {
+        "type": "talk",
+        "text": "Returned to Oak carrying Oak's Parcel."
+      },
+      "advance": [],
+      "save": {
+        "script": 18,
+        "events": {
+          "set": [
+            {
+              "ind": 0,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB",
+              "owned": true
+            },
+            {
+              "ind": 32,
+              "name": "EVENT_FOLLOWED_OAK_INTO_LAB_2",
+              "owned": true
+            },
+            {
+              "ind": 33,
+              "name": "EVENT_OAK_ASKED_TO_CHOOSE_MON",
+              "owned": true
+            },
+            {
+              "ind": 39,
+              "name": "EVENT_OAK_APPEARED_IN_PALLET",
+              "owned": false
+            },
+            {
+              "ind": 34,
+              "name": "EVENT_GOT_STARTER",
+              "owned": true
+            },
+            {
+              "ind": 35,
+              "name": "EVENT_BATTLED_RIVAL_IN_OAKS_LAB",
+              "owned": true
+            },
+            {
+              "ind": 37,
+              "name": "EVENT_GOT_POKEDEX",
+              "owned": true
+            },
+            {
+              "ind": 56,
+              "name": "EVENT_OAK_GOT_PARCEL",
+              "owned": true
+            },
+            {
+              "ind": 57,
+              "name": "EVENT_GOT_OAKS_PARCEL",
+              "owned": false
+            },
+            {
+              "ind": 1312,
+              "name": "EVENT_1ST_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            },
+            {
+              "ind": 1319,
+              "name": "EVENT_ROUTE22_RIVAL_WANTS_BATTLE",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 1313,
+              "name": "EVENT_2ND_ROUTE22_RIVAL_BATTLE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 42,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_OAKS_LAB_RIVAL",
+            "state": "hide"
+          },
+          {
+            "ind": 43,
+            "name": "Pokeball 1",
+            "toggleConst": "TOGGLE_STARTER_BALL_1",
+            "state": "show"
+          },
+          {
+            "ind": 44,
+            "name": "Pokeball 2",
+            "toggleConst": "TOGGLE_STARTER_BALL_2",
+            "state": "show"
+          },
+          {
+            "ind": 45,
+            "name": "Pokeball 3",
+            "toggleConst": "TOGGLE_STARTER_BALL_3",
+            "state": "hide"
+          },
+          {
+            "ind": 46,
+            "name": "Prof. Oak 1",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_1",
+            "state": "show"
+          },
+          {
+            "ind": 47,
+            "name": "Pokedex 1",
+            "toggleConst": "TOGGLE_POKEDEX_1",
+            "state": "hide"
+          },
+          {
+            "ind": 48,
+            "name": "Pokedex 2",
+            "toggleConst": "TOGGLE_POKEDEX_2",
+            "state": "hide"
+          },
+          {
+            "ind": 49,
+            "name": "Prof. Oak 2",
+            "toggleConst": "TOGGLE_OAKS_LAB_OAK_2",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": [
+          "Cross-map: shows Route 22's TOGGLE_ROUTE_22_RIVAL_1 (his page), and swaps Viridian City's TOGGLE_LYING_OLD_MAN (hide) for TOGGLE_OLD_MAN (show).",
+          "EVENT_GOT_POKEBALLS_FROM_OAK (the five Poke Balls, later) is a separate talk once you have caught nothing extra -- Pallet Town's stage 3 carries it."
+        ]
+      },
+      "delta": {
+        "from": "4",
+        "script": {
+          "from": 18,
+          "to": 18
+        },
+        "events": {
+          "set": [
+            37,
+            56,
+            57,
+            1312,
+            1319
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            47,
+            48
+          ]
+        },
+        "badges": []
+      }
+    }
+  ]
+}

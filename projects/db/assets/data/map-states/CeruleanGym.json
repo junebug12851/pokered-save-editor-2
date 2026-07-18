@@ -1,0 +1,223 @@
+{
+  "map": "Cerulean Gym",
+  "mapInd": 65,
+  "scriptSlot": 9,
+  "source": "scripts/CeruleanGym.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 4,
+    "y": 13
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Standard gym shape; rests at 0 on both sides of Misty."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_CERULEANGYM_DEFAULT",
+      "routine": "CheckFightingMapTrainers",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_CERULEANGYM_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_CERULEANGYM_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_CERULEANGYM_MISTY_POST_BATTLE",
+      "routine": "CeruleanGymMistyPostBattleScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CERULEANGYM_DEFAULT",
+      "name": "Misty waiting",
+      "desc": "Misty and her two trainers hold the gym.",
+      "timeline": "Second badge ahead.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Beat Misty (value 3 gives TM11 and the Cascade Badge).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 186,
+              "name": "EVENT_BEAT_CERULEAN_GYM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 187,
+              "name": "EVENT_BEAT_CERULEAN_GYM_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 190,
+              "name": "EVENT_GOT_TM11",
+              "owned": true
+            },
+            {
+              "ind": 191,
+              "name": "EVENT_BEAT_MISTY",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_CERULEANGYM_START_BATTLE",
+      "name": "Cutscene step: SCRIPT_CERULEANGYM_START_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_CERULEANGYM_END_BATTLE",
+      "name": "Cutscene step: SCRIPT_CERULEANGYM_END_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.3",
+      "kind": "transient",
+      "script": 3,
+      "scriptName": "SCRIPT_CERULEANGYM_MISTY_POST_BATTLE",
+      "name": "Cutscene step: SCRIPT_CERULEANGYM_MISTY_POST_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": []
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CERULEANGYM_DEFAULT",
+      "name": "Cascade Badge won",
+      "desc": "Misty beaten, TM11 (BubbleBeam) given, her trainers deactivated.",
+      "timeline": "Second badge held.",
+      "trigger": {
+        "type": "battle",
+        "text": "Misty defeated."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 191,
+              "name": "EVENT_BEAT_MISTY",
+              "owned": true
+            },
+            {
+              "ind": 190,
+              "name": "EVENT_GOT_TM11",
+              "owned": true
+            },
+            {
+              "ind": 186,
+              "name": "EVENT_BEAT_CERULEAN_GYM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 187,
+              "name": "EVENT_BEAT_CERULEAN_GYM_TRAINER_1",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [],
+        "badges": [
+          "CASCADEBADGE"
+        ],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            186,
+            187,
+            190,
+            191
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": [
+          "CASCADEBADGE"
+        ]
+      }
+    }
+  ]
+}

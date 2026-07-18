@@ -1,0 +1,286 @@
+{
+  "map": "Cinnabar Gym",
+  "mapInd": 166,
+  "scriptSlot": 86,
+  "source": "scripts/CinnabarGym.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 16,
+    "y": 17
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Standard gym shape with one addition: the quiz-machine gate doors are their own event flags (EVENT_CINNABAR_GYM_GATE0..6, in the event-flags section), and the 'next wrong answer' opponent is the global byte 0x2CE4 (reference/gym-safari-state.md). Value 1 (GET_OPPONENT_TEXT) is the quiz plumbing."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_CINNABARGYM_DEFAULT",
+      "routine": "CinnabarGymDefaultScript",
+      "kind": "resting",
+      "next": [
+        1
+      ],
+      "autoRunsOnEntry": true
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_CINNABARGYM_GET_OPPONENT_TEXT",
+      "routine": "CinnabarGymGetOpponentTextScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_CINNABARGYM_OPEN_GATE",
+      "routine": "CinnabarGymOpenGateScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_CINNABARGYM_BLAINE_POST_BATTLE",
+      "routine": "CinnabarGymBlainePostBattleScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CINNABARGYM_DEFAULT",
+      "name": "Blaine waiting",
+      "desc": "Blaine and his seven trainers hold the gym behind the quiz doors (door state = the EVENT_CINNABAR_GYM_GATE flags).",
+      "timeline": "Seventh badge ahead (usually).",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Beat Blaine (value 3 gives TM38 and the Volcano Badge).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 664,
+              "name": "EVENT_GOT_TM38",
+              "owned": true
+            },
+            {
+              "ind": 665,
+              "name": "EVENT_BEAT_BLAINE",
+              "owned": true
+            },
+            {
+              "ind": 666,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 667,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 668,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 669,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 670,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_4",
+              "owned": true
+            },
+            {
+              "ind": 671,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_5",
+              "owned": true
+            },
+            {
+              "ind": 672,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_6",
+              "owned": true
+            },
+            {
+              "ind": 679,
+              "name": "EVENT_2A7",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [],
+        "badges": [],
+        "notes": [
+          "The open/closed quiz doors are EVENT_CINNABAR_GYM_GATE0..6 -- edit them in the Event flags section; the 'wrong answer opponent' byte is 0x2CE4."
+        ]
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_CINNABARGYM_GET_OPPONENT_TEXT",
+      "name": "Cutscene step: SCRIPT_CINNABARGYM_GET_OPPONENT_TEXT",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": []
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_CINNABARGYM_OPEN_GATE",
+      "name": "Cutscene step: SCRIPT_CINNABARGYM_OPEN_GATE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.3",
+      "kind": "transient",
+      "script": 3,
+      "scriptName": "SCRIPT_CINNABARGYM_BLAINE_POST_BATTLE",
+      "name": "Cutscene step: SCRIPT_CINNABARGYM_BLAINE_POST_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": []
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CINNABARGYM_DEFAULT",
+      "name": "Volcano Badge won",
+      "desc": "Blaine beaten, TM38 (Fire Blast) given, his trainers deactivated.",
+      "timeline": "Volcano Badge held.",
+      "trigger": {
+        "type": "battle",
+        "text": "Blaine defeated."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 665,
+              "name": "EVENT_BEAT_BLAINE",
+              "owned": true
+            },
+            {
+              "ind": 664,
+              "name": "EVENT_GOT_TM38",
+              "owned": true
+            },
+            {
+              "ind": 666,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 667,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 668,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 669,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 670,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_4",
+              "owned": true
+            },
+            {
+              "ind": 671,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_5",
+              "owned": true
+            },
+            {
+              "ind": 672,
+              "name": "EVENT_BEAT_CINNABAR_GYM_TRAINER_6",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 679,
+              "name": "EVENT_2A7",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [],
+        "badges": [
+          "VOLCANOBADGE"
+        ],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            664,
+            665,
+            666,
+            667,
+            668,
+            669,
+            670,
+            671,
+            672
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": [
+          "VOLCANOBADGE"
+        ]
+      }
+    }
+  ]
+}

@@ -5,11 +5,42 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.42.12-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
+**Version:** `0.42.13-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**);
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
+
+### 🗺️🧭 MAP STATES — per-map progression blueprints, researched + shipped as data (2026-07-17, `0.42.13-alpha`)
+
+Fairy Fox's brief, the research half delivered end-to-end: every scripted map now has a
+**progression blueprint** — the researched default states (script byte + event flags + missables +
+badges, ABSOLUTE per stage), the triggers between them, start/end/branches, and a designated entry
+spot (first warp) — so the app can roll a map back/forth one stage at a time, construct a proper
+destination map on map-change, and feed the randomizer legal whole-states.
+
+- **Data:** `projects/db/assets/data/map-states/` — **98 blueprints + `_index.json`** (98 = every
+  real `def_script_pointers` file; the other 18 of the old "116" were unused-map aliases).
+  **196 resting stages**; **34 story maps hand-curated** (Pallet/Oak's Lab arc, all 8 gyms, Route
+  22's double ambush, Mt. Moon's fossil **branch** (`2a`/`2b` — the id scheme's reason), Tower,
+  Silph, Snorlaxes, the E4 chain, Champion, **Hall of Fame's deliberate E4 wipe**, Safari gate).
+- **The model** (the headline finding): `SCRIPT_*` values split **resting (147) vs transient
+  (234)** — and a stage is MORE than the byte (gyms rest at 0 on both sides of the leader;
+  S.S. Anne 2F's rival leaves *only* the byte as its record). Stage naming: `1, 2, 2a, 2b, 3`;
+  cutscene steps ride as `N.k`.
+- **Tooling:** `scripts/extract_map_states.py` (register-`a` simulation for helper-setter script
+  writes, fallthrough closure — Pewter's whole victory lives in a fallthrough body — engine-owned
+  table routines, file-wide owned-flag universe, `--check` idempotent, every curated name
+  validated against events/missables/scripts vocabularies) + the story layer
+  `scripts/data/map_states_curated.json`. Digest for future curation: `--digest`.
+- **Docs:** [`reference/map-states.md`](reference/map-states.md) (the traps, each load-bearing),
+  [`plans/map-states.md`](plans/map-states.md) (phases MS-2..6: `MapStatesDB` + model surface,
+  the **"map script" → "map state" rename**, the state-picker UI, randomizer hook, console
+  verification via the forge), decision entry in `decisions/architecture.md` (a NEW format,
+  argued for — pret has no data format for this; it exists only as executable asm).
+- ⏳ **Owed:** Twilight's pass on the plan's open questions (map-change default state, cross-map
+  context flags on roll, transients in the dropdown), then MS-2 onward. MS-6 console probes gate
+  any UI. Data-only change — no app code touched; suite untouched (91/91 stands).
 
 ### 🤝🏙️ MAP STORAGE grows: trades, town-visited, milestones, fossil + a General page (2026-07-17, `0.42.12-alpha`)
 

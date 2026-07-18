@@ -1,0 +1,69 @@
+{
+  "map": "Reds House 2F",
+  "mapInd": 38,
+  "scriptSlot": 23,
+  "source": "scripts/RedsHouse2F.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 7,
+    "y": 1
+  },
+  "progression": {
+    "start": "1",
+    "end": "1",
+    "order": [
+      "1"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_REDSHOUSE2F_DEFAULT",
+      "routine": "RedsHouse2FDefaultScript",
+      "kind": "resting",
+      "next": [
+        1
+      ],
+      "autoRunsOnEntry": true
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_REDSHOUSE2F_NOOP",
+      "routine": "RedsHouse2FNoopScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_REDSHOUSE2F_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": []
+        },
+        "missables": [],
+        "badges": [],
+        "notes": []
+      }
+    }
+  ]
+}

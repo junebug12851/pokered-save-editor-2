@@ -1,0 +1,90 @@
+{
+  "map": "Route 18 Gate 1F",
+  "mapInd": 190,
+  "scriptSlot": 96,
+  "source": "scripts/Route18Gate1F.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 0,
+    "y": 4
+  },
+  "progression": {
+    "start": "1",
+    "end": "1",
+    "order": [
+      "1"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_ROUTE18GATE1F_DEFAULT",
+      "routine": "Route18Gate1FDefaultScript",
+      "kind": "resting",
+      "next": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_ROUTE18GATE1F_PLAYER_MOVING_UP",
+      "routine": "Route18Gate1FPlayerMovingUpScript",
+      "kind": "transient",
+      "next": [
+        3
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_ROUTE18GATE1F_GUARD",
+      "routine": "Route18Gate1FGuardScript",
+      "kind": "transient",
+      "next": [
+        3
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_ROUTE18GATE1F_PLAYER_MOVING_RIGHT",
+      "routine": "Route18Gate1FPlayerMovingRightScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROUTE18GATE1F_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": []
+        },
+        "missables": [],
+        "badges": [],
+        "notes": []
+      }
+    }
+  ]
+}

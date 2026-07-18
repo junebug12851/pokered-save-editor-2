@@ -1,0 +1,267 @@
+{
+  "map": "Blues House",
+  "mapInd": 39,
+  "scriptSlot": 2,
+  "source": "scripts/BluesHouse.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 2,
+    "y": 7
+  },
+  "progression": {
+    "start": "1",
+    "end": "3",
+    "order": [
+      "1",
+      "2",
+      "3"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Two script values, both resting: 0 flips to 1 on first entry (EVENT_ENTERED_BLUES_HOUSE). The Town Map is a text handler on Daisy; her sitting/walking swap is driven by Pallet Town's watcher once the map is given AND the house has been entered."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_BLUESHOUSE_DEFAULT",
+      "routine": "BluesHouseDefaultScript",
+      "kind": "resting",
+      "next": [
+        1
+      ],
+      "autoRunsOnEntry": true
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_BLUESHOUSE_NOOP",
+      "routine": "BluesHouseNoopScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_BLUESHOUSE_DEFAULT",
+      "name": "Never visited",
+      "desc": "Daisy sits at the table; the first entry has not been recorded.",
+      "timeline": "Game opening.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Walk in -- value 0 sets the entered flag and steps to 1 immediately.",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 24,
+              "name": "EVENT_GOT_TOWN_MAP",
+              "owned": true
+            },
+            {
+              "ind": 25,
+              "name": "EVENT_ENTERED_BLUES_HOUSE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 39,
+            "name": "Daisy Sitting",
+            "toggleConst": "TOGGLE_DAISY_SITTING",
+            "state": "show"
+          },
+          {
+            "ind": 40,
+            "name": "Daisy Walking",
+            "toggleConst": "TOGGLE_DAISY_WALKING",
+            "state": "hide"
+          },
+          {
+            "ind": 41,
+            "name": "Town Map",
+            "toggleConst": "TOGGLE_TOWN_MAP",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 1,
+      "scriptName": "SCRIPT_BLUESHOUSE_NOOP",
+      "name": "Visited -- Town Map still on offer",
+      "desc": "You have been inside; Daisy still has the Town Map to give.",
+      "timeline": "Early Pallet errands.",
+      "trigger": {
+        "type": "event",
+        "text": "First entry to the house."
+      },
+      "advance": [
+        {
+          "to": "3",
+          "text": "Talk to Daisy: she hands over the Town Map.",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 1,
+        "events": {
+          "set": [
+            {
+              "ind": 25,
+              "name": "EVENT_ENTERED_BLUES_HOUSE",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 24,
+              "name": "EVENT_GOT_TOWN_MAP",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 39,
+            "name": "Daisy Sitting",
+            "toggleConst": "TOGGLE_DAISY_SITTING",
+            "state": "show"
+          },
+          {
+            "ind": 40,
+            "name": "Daisy Walking",
+            "toggleConst": "TOGGLE_DAISY_WALKING",
+            "state": "hide"
+          },
+          {
+            "ind": 41,
+            "name": "Town Map",
+            "toggleConst": "TOGGLE_TOWN_MAP",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 1
+        },
+        "events": {
+          "set": [
+            25
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    },
+    {
+      "id": "3",
+      "kind": "resting",
+      "script": 1,
+      "scriptName": "SCRIPT_BLUESHOUSE_NOOP",
+      "name": "Town Map given -- Daisy stretches her legs",
+      "desc": "Map handed over. With both the map given and the house entered, Pallet Town's watcher sets EVENT_DAISY_WALKING and swaps her sprites: sitting hidden, walking shown.",
+      "timeline": "Early game onward.",
+      "trigger": {
+        "type": "talk",
+        "text": "Received the Town Map from Daisy."
+      },
+      "advance": [],
+      "save": {
+        "script": 1,
+        "events": {
+          "set": [
+            {
+              "ind": 25,
+              "name": "EVENT_ENTERED_BLUES_HOUSE",
+              "owned": true
+            },
+            {
+              "ind": 24,
+              "name": "EVENT_GOT_TOWN_MAP",
+              "owned": true
+            },
+            {
+              "ind": 26,
+              "name": "EVENT_DAISY_WALKING",
+              "owned": false
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 39,
+            "name": "Daisy Sitting",
+            "toggleConst": "TOGGLE_DAISY_SITTING",
+            "state": "hide"
+          },
+          {
+            "ind": 40,
+            "name": "Daisy Walking",
+            "toggleConst": "TOGGLE_DAISY_WALKING",
+            "state": "show"
+          },
+          {
+            "ind": 41,
+            "name": "Town Map",
+            "toggleConst": "TOGGLE_TOWN_MAP",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "2",
+        "script": {
+          "from": 1,
+          "to": 1
+        },
+        "events": {
+          "set": [
+            24,
+            26
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [
+            40
+          ],
+          "hide": [
+            39
+          ]
+        },
+        "badges": []
+      }
+    }
+  ]
+}

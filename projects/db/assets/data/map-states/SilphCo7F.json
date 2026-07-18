@@ -1,0 +1,392 @@
+{
+  "map": "Silph Co 7F",
+  "mapInd": 212,
+  "scriptSlot": 71,
+  "source": "scripts/SilphCo7F.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 16,
+    "y": 0
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "The occupied tower's rival floor. Blue ambushes from the stairwell (coord-triggered from value 0). His beat flag and sprite bit are the durable pair; the four floor Rockets/scientists are independent beat-bits."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_SILPHCO7F_DEFAULT",
+      "routine": "SilphCo7FDefaultScript",
+      "kind": "resting",
+      "next": [
+        3,
+        4
+      ]
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_SILPHCO7F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_SILPHCO7F_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_SILPHCO7F_RIVAL_START_BATTLE",
+      "routine": "SilphCo7FRivalStartBattleScript",
+      "kind": "transient",
+      "next": [
+        4
+      ]
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_SILPHCO7F_RIVAL_AFTER_BATTLE",
+      "routine": "SilphCo7FRivalAfterBattleScript",
+      "kind": "transient",
+      "next": [
+        0,
+        5
+      ]
+    },
+    {
+      "value": 5,
+      "name": "SCRIPT_SILPHCO7F_RIVAL_EXIT",
+      "routine": "SilphCo7FRivalExitScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_SILPHCO7F_DEFAULT",
+      "name": "The rival lurks by the stairs",
+      "desc": "Blue waits at the 7F stairwell to test you mid-liberation.",
+      "timeline": "The Silph Co raid.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Cross the stairwell trigger and resolve the battle (values 3-5).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 1856,
+              "name": "EVENT_BEAT_SILPH_CO_RIVAL",
+              "owned": true
+            },
+            {
+              "ind": 1861,
+              "name": "EVENT_BEAT_SILPH_CO_7F_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1862,
+              "name": "EVENT_BEAT_SILPH_CO_7F_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1863,
+              "name": "EVENT_BEAT_SILPH_CO_7F_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1864,
+              "name": "EVENT_BEAT_SILPH_CO_7F_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1868,
+              "name": "EVENT_SILPH_CO_7_UNLOCKED_DOOR1",
+              "owned": true
+            },
+            {
+              "ind": 1869,
+              "name": "EVENT_SILPH_CO_7_UNLOCKED_DOOR2",
+              "owned": true
+            },
+            {
+              "ind": 1870,
+              "name": "EVENT_SILPH_CO_7_UNLOCKED_DOOR3",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 163,
+            "name": "1",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_1",
+            "state": "show"
+          },
+          {
+            "ind": 164,
+            "name": "2",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_2",
+            "state": "show"
+          },
+          {
+            "ind": 165,
+            "name": "3",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_3",
+            "state": "show"
+          },
+          {
+            "ind": 166,
+            "name": "4",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_4",
+            "state": "show"
+          },
+          {
+            "ind": 167,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_RIVAL",
+            "state": "show"
+          },
+          {
+            "ind": 168,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 169,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 170,
+            "name": "8",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_8",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 3,
+      "scriptName": "SCRIPT_SILPHCO7F_RIVAL_START_BATTLE",
+      "name": "Cutscene step: SCRIPT_SILPHCO7F_RIVAL_START_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "4",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 4,
+      "scriptName": "SCRIPT_SILPHCO7F_RIVAL_AFTER_BATTLE",
+      "name": "Cutscene step: SCRIPT_SILPHCO7F_RIVAL_AFTER_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        },
+        {
+          "to": "5",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.3",
+      "kind": "transient",
+      "script": 5,
+      "scriptName": "SCRIPT_SILPHCO7F_RIVAL_EXIT",
+      "name": "Cutscene step: SCRIPT_SILPHCO7F_RIVAL_EXIT",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_SILPHCO7F_DEFAULT",
+      "name": "Rival beaten",
+      "desc": "The stairwell fight is over and Blue has left the building.",
+      "timeline": "Mid-raid.",
+      "trigger": {
+        "type": "battle",
+        "text": "Beat Blue on 7F."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 1856,
+              "name": "EVENT_BEAT_SILPH_CO_RIVAL",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 1861,
+              "name": "EVENT_BEAT_SILPH_CO_7F_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1862,
+              "name": "EVENT_BEAT_SILPH_CO_7F_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1863,
+              "name": "EVENT_BEAT_SILPH_CO_7F_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1864,
+              "name": "EVENT_BEAT_SILPH_CO_7F_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1868,
+              "name": "EVENT_SILPH_CO_7_UNLOCKED_DOOR1",
+              "owned": true
+            },
+            {
+              "ind": 1869,
+              "name": "EVENT_SILPH_CO_7_UNLOCKED_DOOR2",
+              "owned": true
+            },
+            {
+              "ind": 1870,
+              "name": "EVENT_SILPH_CO_7_UNLOCKED_DOOR3",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 163,
+            "name": "1",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_1",
+            "state": "show"
+          },
+          {
+            "ind": 164,
+            "name": "2",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_2",
+            "state": "show"
+          },
+          {
+            "ind": 165,
+            "name": "3",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_3",
+            "state": "show"
+          },
+          {
+            "ind": 166,
+            "name": "4",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_4",
+            "state": "show"
+          },
+          {
+            "ind": 167,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_RIVAL",
+            "state": "hide"
+          },
+          {
+            "ind": 168,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 169,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 170,
+            "name": "8",
+            "toggleConst": "TOGGLE_SILPH_CO_7F_8",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            1856
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            167
+          ]
+        },
+        "badges": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "map": "Viridian Mart",
+  "mapInd": 42,
+  "scriptSlot": 24,
+  "source": "scripts/ViridianMart.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 3,
+    "y": 7
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_VIRIDIANMART_DEFAULT",
+      "routine": "ViridianMartDefaultScript",
+      "kind": "resting",
+      "next": [
+        1,
+        2
+      ],
+      "autoRunsOnEntry": true
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_VIRIDIANMART_OAKS_PARCEL",
+      "routine": "ViridianMartOaksParcelScript",
+      "kind": "transient",
+      "next": [
+        2
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_VIRIDIANMART_NOOP",
+      "routine": "ViridianMartNoopScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_VIRIDIANMART_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 57,
+              "name": "EVENT_GOT_OAKS_PARCEL",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 2,
+      "scriptName": "SCRIPT_VIRIDIANMART_NOOP",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 2,
+        "events": {
+          "set": [
+            {
+              "ind": 57,
+              "name": "EVENT_GOT_OAKS_PARCEL",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 2
+        },
+        "events": {
+          "set": [
+            57
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

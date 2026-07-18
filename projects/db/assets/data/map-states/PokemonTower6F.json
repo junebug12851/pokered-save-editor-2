@@ -1,0 +1,254 @@
+{
+  "map": "Pokemon Tower 6",
+  "mapInd": 147,
+  "scriptSlot": 50,
+  "source": "scripts/PokemonTower6F.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 18,
+    "y": 9
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "The ghost Marowak blocks the stairs until beaten. Seeing it as a Marowak (rather than an unfightable GHOST) needs the Silph Scope -- an inventory fact, not a flag. The three floor channelers are independent beat-bits."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_POKEMONTOWER6F_DEFAULT",
+      "routine": "PokemonTower6FDefaultScript",
+      "kind": "resting",
+      "next": [
+        4
+      ]
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_POKEMONTOWER6F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_POKEMONTOWER6F_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_POKEMONTOWER6F_PLAYER_MOVING",
+      "routine": "PokemonTower6FPlayerMovingScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_POKEMONTOWER6F_MAROWAK_BATTLE",
+      "routine": "PokemonTower6FMarowakBattleScript",
+      "kind": "transient",
+      "next": [
+        0,
+        3
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONTOWER6F_DEFAULT",
+      "name": "The ghost bars the way",
+      "desc": "The restless Marowak haunts the stairwell; without the Silph Scope it cannot even be fought.",
+      "timeline": "The tower climb.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "With the Silph Scope, beat the Marowak (value 4 resolves it).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 267,
+              "name": "EVENT_BEAT_POKEMONTOWER_6_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 268,
+              "name": "EVENT_BEAT_POKEMONTOWER_6_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 269,
+              "name": "EVENT_BEAT_POKEMONTOWER_6_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 273,
+              "name": "EVENT_BEAT_GHOST_MAROWAK",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 62,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_6F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 63,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_6F_ITEM_2",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 3,
+      "scriptName": "SCRIPT_POKEMONTOWER6F_PLAYER_MOVING",
+      "name": "Cutscene step: SCRIPT_POKEMONTOWER6F_PLAYER_MOVING",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 4,
+      "scriptName": "SCRIPT_POKEMONTOWER6F_MAROWAK_BATTLE",
+      "name": "Cutscene step: SCRIPT_POKEMONTOWER6F_MAROWAK_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        },
+        {
+          "to": "3",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONTOWER6F_DEFAULT",
+      "name": "Marowak laid to rest",
+      "desc": "The mother Marowak is at peace; the stairs to 7F are open.",
+      "timeline": "The tower's turning point.",
+      "trigger": {
+        "type": "battle",
+        "text": "Beat the ghost Marowak."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 273,
+              "name": "EVENT_BEAT_GHOST_MAROWAK",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 267,
+              "name": "EVENT_BEAT_POKEMONTOWER_6_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 268,
+              "name": "EVENT_BEAT_POKEMONTOWER_6_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 269,
+              "name": "EVENT_BEAT_POKEMONTOWER_6_TRAINER_2",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 62,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_6F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 63,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_6F_ITEM_2",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": [
+          "The three channeler trainers are independent EVENT_BEAT_POKEMONTOWER_6_TRAINER_* bits, not part of this stage's story line."
+        ]
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            273
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

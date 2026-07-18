@@ -1,0 +1,389 @@
+{
+  "map": "Cerulean City",
+  "mapInd": 3,
+  "scriptSlot": 26,
+  "source": "scripts/CeruleanCity.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 27,
+    "y": 11
+  },
+  "progression": {
+    "start": "1",
+    "end": "3",
+    "order": [
+      "1",
+      "2",
+      "3"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Two independent troubles share the byte's watcher: the bridge-side rival ambush (until EVENT_BEAT_CERULEAN_RIVAL) and the backyard burglar (until EVENT_BEAT_CERULEAN_ROCKET_THIEF). Both are coord-triggered from value 0; the progression order below is the usual play order, but the two are mechanically independent -- either can be toggled alone."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_CERULEANCITY_DEFAULT",
+      "routine": "CeruleanCityDefaultScript",
+      "kind": "resting",
+      "next": [
+        1
+      ]
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_CERULEANCITY_RIVAL_BATTLE",
+      "routine": "CeruleanCityRivalBattleScript",
+      "kind": "transient",
+      "next": [
+        2
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+      "routine": "CeruleanCityRivalDefeatedScript",
+      "kind": "resting",
+      "next": [
+        3
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+      "routine": "CeruleanCityRivalCleanupScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_CERULEANCITY_ROCKET_DEFEATED",
+      "routine": "CeruleanCityRocketDefeatedScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CERULEANCITY_DEFAULT",
+      "name": "A city with troubles",
+      "desc": "Blue lurks near the Nugget Bridge exit (his sprite hidden until the trigger fires) and the Rocket burglar stands in the robbed house's yard. Both encounters are armed.",
+      "timeline": "Arrival in Cerulean.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Walk the trigger row north of the city: Blue appears, battles you, and leaves (values 1-3).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 152,
+              "name": "EVENT_BEAT_CERULEAN_RIVAL",
+              "owned": true
+            },
+            {
+              "ind": 167,
+              "name": "EVENT_BEAT_CERULEAN_ROCKET_THIEF",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 5,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_CERULEAN_RIVAL",
+            "state": "hide"
+          },
+          {
+            "ind": 6,
+            "name": "Rocket",
+            "toggleConst": "TOGGLE_CERULEAN_ROCKET",
+            "state": "show"
+          },
+          {
+            "ind": 7,
+            "name": "Guard 1",
+            "toggleConst": "TOGGLE_CERULEAN_GUARD_1",
+            "state": "hide"
+          },
+          {
+            "ind": 8,
+            "name": "Cave Guy",
+            "toggleConst": "TOGGLE_CERULEAN_CAVE_GUY",
+            "state": "show"
+          },
+          {
+            "ind": 9,
+            "name": "Guard 2",
+            "toggleConst": "TOGGLE_CERULEAN_GUARD_2",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_CERULEANCITY_RIVAL_BATTLE",
+      "name": "Cutscene step: SCRIPT_CERULEANCITY_RIVAL_BATTLE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "2",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+      "name": "Cutscene step: SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "3",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.3",
+      "kind": "transient",
+      "script": 3,
+      "scriptName": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+      "name": "Cutscene step: SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CERULEANCITY_DEFAULT",
+      "name": "Rival seen off",
+      "desc": "The bridge battle is done and Blue is gone; the burglar still holds the yard.",
+      "timeline": "After the Nugget Bridge approach.",
+      "trigger": {
+        "type": "battle",
+        "text": "Beat Blue at the bridge trigger."
+      },
+      "advance": [
+        {
+          "to": "3",
+          "text": "Confront the burglar in the backyard (coord-triggered talk, value 4 after the battle): he hands over TM28 and flees.",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 152,
+              "name": "EVENT_BEAT_CERULEAN_RIVAL",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 167,
+              "name": "EVENT_BEAT_CERULEAN_ROCKET_THIEF",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 5,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_CERULEAN_RIVAL",
+            "state": "hide"
+          },
+          {
+            "ind": 6,
+            "name": "Rocket",
+            "toggleConst": "TOGGLE_CERULEAN_ROCKET",
+            "state": "show"
+          },
+          {
+            "ind": 7,
+            "name": "Guard 1",
+            "toggleConst": "TOGGLE_CERULEAN_GUARD_1",
+            "state": "hide"
+          },
+          {
+            "ind": 8,
+            "name": "Cave Guy",
+            "toggleConst": "TOGGLE_CERULEAN_CAVE_GUY",
+            "state": "show"
+          },
+          {
+            "ind": 9,
+            "name": "Guard 2",
+            "toggleConst": "TOGGLE_CERULEAN_GUARD_2",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            152
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    },
+    {
+      "id": "2.1",
+      "kind": "transient",
+      "script": 4,
+      "scriptName": "SCRIPT_CERULEANCITY_ROCKET_DEFEATED",
+      "name": "Cutscene step: SCRIPT_CERULEANCITY_ROCKET_DEFEATED",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_CERULEANCITY_DEFAULT",
+      "name": "Burglar chased off",
+      "desc": "Both troubles resolved: TM28 (Dig) surrendered, the yard empty.",
+      "timeline": "Cerulean at peace.",
+      "trigger": {
+        "type": "battle",
+        "text": "Beat the Rocket burglar."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 152,
+              "name": "EVENT_BEAT_CERULEAN_RIVAL",
+              "owned": true
+            },
+            {
+              "ind": 167,
+              "name": "EVENT_BEAT_CERULEAN_ROCKET_THIEF",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 5,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_CERULEAN_RIVAL",
+            "state": "hide"
+          },
+          {
+            "ind": 6,
+            "name": "Rocket",
+            "toggleConst": "TOGGLE_CERULEAN_ROCKET",
+            "state": "hide"
+          },
+          {
+            "ind": 7,
+            "name": "Guard 1",
+            "toggleConst": "TOGGLE_CERULEAN_GUARD_1",
+            "state": "hide"
+          },
+          {
+            "ind": 8,
+            "name": "Cave Guy",
+            "toggleConst": "TOGGLE_CERULEAN_CAVE_GUY",
+            "state": "show"
+          },
+          {
+            "ind": 9,
+            "name": "Guard 2",
+            "toggleConst": "TOGGLE_CERULEAN_GUARD_2",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": [
+          "The two troubles are independent axes -- a save with only the burglar beaten is legal; this order is the usual play order, not a mechanical requirement."
+        ]
+      },
+      "delta": {
+        "from": "2",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            167
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            6
+          ]
+        },
+        "badges": []
+      }
+    }
+  ]
+}

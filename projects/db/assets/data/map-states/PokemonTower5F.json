@@ -1,0 +1,197 @@
+{
+  "map": "Pokemon Tower 5",
+  "mapInd": 146,
+  "scriptSlot": 49,
+  "source": "scripts/PokemonTower5F.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 3,
+    "y": 9
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_POKEMONTOWER5F_DEFAULT",
+      "routine": "PokemonTower5FDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_POKEMONTOWER5F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_POKEMONTOWER5F_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONTOWER5F_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 260,
+              "name": "EVENT_BEAT_POKEMONTOWER_5_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 261,
+              "name": "EVENT_BEAT_POKEMONTOWER_5_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 262,
+              "name": "EVENT_BEAT_POKEMONTOWER_5_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 263,
+              "name": "EVENT_BEAT_POKEMONTOWER_5_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 265,
+              "name": "EVENT_IN_PURIFIED_ZONE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 61,
+            "name": "Item",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_5F_ITEM",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONTOWER5F_DEFAULT",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 260,
+              "name": "EVENT_BEAT_POKEMONTOWER_5_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 261,
+              "name": "EVENT_BEAT_POKEMONTOWER_5_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 262,
+              "name": "EVENT_BEAT_POKEMONTOWER_5_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 263,
+              "name": "EVENT_BEAT_POKEMONTOWER_5_TRAINER_3",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 265,
+              "name": "EVENT_IN_PURIFIED_ZONE",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 61,
+            "name": "Item",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_5F_ITEM",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            260,
+            261,
+            262,
+            263
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

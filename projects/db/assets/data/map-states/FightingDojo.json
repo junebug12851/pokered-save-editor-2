@@ -1,0 +1,254 @@
+{
+  "map": "Fighting Dojo",
+  "mapInd": 177,
+  "scriptSlot": 65,
+  "source": "scripts/FightingDojo.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 4,
+    "y": 11
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_FIGHTINGDOJO_DEFAULT",
+      "routine": "FightingDojoDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_FIGHTINGDOJO_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_FIGHTINGDOJO_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_FIGHTINGDOJO_KARATE_MASTER_POST_BATTLE",
+      "routine": "FightingDojoKarateMasterPostBattleScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_FIGHTINGDOJO_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 848,
+              "name": "EVENT_DEFEATED_FIGHTING_DOJO",
+              "owned": true
+            },
+            {
+              "ind": 849,
+              "name": "EVENT_BEAT_KARATE_MASTER",
+              "owned": true
+            },
+            {
+              "ind": 850,
+              "name": "EVENT_BEAT_FIGHTING_DOJO_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 851,
+              "name": "EVENT_BEAT_FIGHTING_DOJO_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 852,
+              "name": "EVENT_BEAT_FIGHTING_DOJO_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 853,
+              "name": "EVENT_BEAT_FIGHTING_DOJO_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 854,
+              "name": "EVENT_GOT_HITMONLEE",
+              "owned": true
+            },
+            {
+              "ind": 855,
+              "name": "EVENT_GOT_HITMONCHAN",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 74,
+            "name": "Gift 1",
+            "toggleConst": "TOGGLE_FIGHTING_DOJO_GIFT_1",
+            "state": "show"
+          },
+          {
+            "ind": 75,
+            "name": "Gift 2",
+            "toggleConst": "TOGGLE_FIGHTING_DOJO_GIFT_2",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_FIGHTINGDOJO_DEFAULT",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 850,
+              "name": "EVENT_BEAT_FIGHTING_DOJO_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 851,
+              "name": "EVENT_BEAT_FIGHTING_DOJO_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 852,
+              "name": "EVENT_BEAT_FIGHTING_DOJO_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 853,
+              "name": "EVENT_BEAT_FIGHTING_DOJO_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 849,
+              "name": "EVENT_BEAT_KARATE_MASTER",
+              "owned": true
+            },
+            {
+              "ind": 848,
+              "name": "EVENT_DEFEATED_FIGHTING_DOJO",
+              "owned": true
+            },
+            {
+              "ind": 855,
+              "name": "EVENT_GOT_HITMONCHAN",
+              "owned": true
+            },
+            {
+              "ind": 854,
+              "name": "EVENT_GOT_HITMONLEE",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 74,
+            "name": "Gift 1",
+            "toggleConst": "TOGGLE_FIGHTING_DOJO_GIFT_1",
+            "state": "hide"
+          },
+          {
+            "ind": 75,
+            "name": "Gift 2",
+            "toggleConst": "TOGGLE_FIGHTING_DOJO_GIFT_2",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            848,
+            849,
+            850,
+            851,
+            852,
+            853,
+            854,
+            855
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            74,
+            75
+          ]
+        },
+        "badges": []
+      }
+    }
+  ]
+}

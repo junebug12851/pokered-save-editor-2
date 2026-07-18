@@ -1,0 +1,196 @@
+{
+  "map": "Rocket Hideout 2",
+  "mapInd": 200,
+  "scriptSlot": 53,
+  "source": "scripts/RocketHideoutB2F.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 27,
+    "y": 8
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_ROCKETHIDEOUTB2F_DEFAULT",
+      "routine": "RocketHideoutB2FDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_ROCKETHIDEOUTB2F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_ROCKETHIDEOUTB2F_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_ROCKETHIDEOUTB2F_PLAYER_SPINNING",
+      "routine": "RocketHideoutB2FPlayerSpinningScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROCKETHIDEOUTB2F_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 1665,
+              "name": "EVENT_BEAT_ROCKET_HIDEOUT_2_TRAINER_0",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 125,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 126,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 127,
+            "name": "Item 3",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_3",
+            "state": "show"
+          },
+          {
+            "ind": 128,
+            "name": "Item 4",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_4",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 3,
+      "scriptName": "SCRIPT_ROCKETHIDEOUTB2F_PLAYER_SPINNING",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 3,
+        "events": {
+          "set": [
+            {
+              "ind": 1665,
+              "name": "EVENT_BEAT_ROCKET_HIDEOUT_2_TRAINER_0",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 125,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 126,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 127,
+            "name": "Item 3",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_3",
+            "state": "show"
+          },
+          {
+            "ind": 128,
+            "name": "Item 4",
+            "toggleConst": "TOGGLE_ROCKET_HIDEOUT_B2F_ITEM_4",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 3
+        },
+        "events": {
+          "set": [
+            1665
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": []
+        },
+        "badges": []
+      }
+    }
+  ]
+}

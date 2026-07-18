@@ -1,0 +1,196 @@
+{
+  "map": "Pokemon Tower 2",
+  "mapInd": 143,
+  "scriptSlot": 46,
+  "source": "scripts/PokemonTower2F.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 3,
+    "y": 9
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "The possessed-era rival. EVENT_POKEMON_TOWER_RIVAL_ON_LEFT is positional scratch value 0 flips per approach side; the durable facts are the beat flag and his sprite bit."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_POKEMONTOWER2F_DEFAULT",
+      "routine": "PokemonTower2FDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_POKEMONTOWER2F_DEFEATED_RIVAL",
+      "routine": "PokemonTower2FDefeatedRivalScript",
+      "kind": "resting",
+      "next": [
+        2
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_POKEMONTOWER2F_RIVAL_EXITS",
+      "routine": "PokemonTower2FRivalExitsScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONTOWER2F_DEFAULT",
+      "name": "The rival mourns",
+      "desc": "Blue stands on 2F and challenges you on approach -- the one battle where his team has no starter evolution question: he fights to test what the tower has done to you.",
+      "timeline": "Lavender, before the Silph Scope.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Resolve the battle (value 1 sets the beat flag; value 2 walks him out).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 240,
+              "name": "EVENT_POKEMON_TOWER_RIVAL_ON_LEFT",
+              "owned": true
+            },
+            {
+              "ind": 241,
+              "name": "EVENT_BEAT_POKEMON_TOWER_RIVAL",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 56,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_2F_RIVAL",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 1,
+      "scriptName": "SCRIPT_POKEMONTOWER2F_DEFEATED_RIVAL",
+      "name": "Cutscene step: SCRIPT_POKEMONTOWER2F_DEFEATED_RIVAL",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "2",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "kind": "transient",
+      "script": 2,
+      "scriptName": "SCRIPT_POKEMONTOWER2F_RIVAL_EXITS",
+      "name": "Cutscene step: SCRIPT_POKEMONTOWER2F_RIVAL_EXITS",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONTOWER2F_DEFAULT",
+      "name": "Rival beaten",
+      "desc": "The 2F battle is done and Blue has left the tower.",
+      "timeline": "Climbing the tower.",
+      "trigger": {
+        "type": "battle",
+        "text": "Beat Blue on 2F."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 241,
+              "name": "EVENT_BEAT_POKEMON_TOWER_RIVAL",
+              "owned": true
+            }
+          ],
+          "cleared": [
+            {
+              "ind": 240,
+              "name": "EVENT_POKEMON_TOWER_RIVAL_ON_LEFT",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 56,
+            "name": "Rival",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_2F_RIVAL",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            241
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            56
+          ]
+        },
+        "badges": []
+      }
+    }
+  ]
+}

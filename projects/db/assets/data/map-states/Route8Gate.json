@@ -1,0 +1,70 @@
+{
+  "map": "Route 8 Gate",
+  "mapInd": 79,
+  "scriptSlot": 57,
+  "source": "scripts/Route8Gate.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 0,
+    "y": 3
+  },
+  "progression": {
+    "start": "1",
+    "end": "1",
+    "order": [
+      "1"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_ROUTE8GATE_DEFAULT",
+      "routine": "Route8GateDefaultScript",
+      "kind": "resting",
+      "next": [
+        1
+      ]
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_ROUTE8GATE_PLAYER_MOVING",
+      "routine": "Route8GatePlayerMovingScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROUTE8GATE_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": []
+        },
+        "missables": [],
+        "badges": [],
+        "notes": []
+      }
+    }
+  ]
+}

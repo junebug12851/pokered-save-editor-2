@@ -1,0 +1,75 @@
+{
+  "map": "Route 22 Gate",
+  "mapInd": 193,
+  "scriptSlot": 25,
+  "source": "scripts/Route22Gate.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 4,
+    "y": 7
+  },
+  "progression": {
+    "start": "1",
+    "end": "1",
+    "order": [
+      "1"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_ROUTE22GATE_DEFAULT",
+      "routine": "Route22GateDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_ROUTE22GATE_PLAYER_MOVING",
+      "routine": "Route22GatePlayerMovingScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_ROUTE22GATE_NOOP",
+      "routine": "Route22GateNoopScript",
+      "kind": "resting",
+      "next": []
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_ROUTE22GATE_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": []
+        },
+        "missables": [],
+        "badges": [],
+        "notes": []
+      }
+    }
+  ]
+}

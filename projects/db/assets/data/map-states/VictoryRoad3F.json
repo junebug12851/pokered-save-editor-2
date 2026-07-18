@@ -1,0 +1,223 @@
+{
+  "map": "Victory Road 3",
+  "mapInd": 198,
+  "scriptSlot": 64,
+  "source": "scripts/VictoryRoad3F.asm",
+  "curated": false,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 23,
+    "y": 7
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "Auto-derived skeleton (not hand-curated): the initial state and, where the map's scripts write durable facts, a completed state."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_VICTORYROAD3F_DEFAULT",
+      "routine": "VictoryRoad3FDefaultScript",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_VICTORYROAD3F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_VICTORYROAD3F_END_BATTLE",
+      "routine": "EndTrainerBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_VICTORYROAD3F_DEFAULT",
+      "name": "Initial state",
+      "desc": "The map as a fresh save finds it: script byte 0, none of this map's own story flags set, missables at their defaults.",
+      "timeline": "",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "This map's scripted events all run to completion (derived summary).",
+          "auto": false
+        }
+      ],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 1632,
+              "name": "EVENT_VICTORY_ROAD_3_BOULDER_ON_SWITCH1",
+              "owned": true
+            },
+            {
+              "ind": 1633,
+              "name": "EVENT_BEAT_VICTORY_ROAD_3_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1634,
+              "name": "EVENT_BEAT_VICTORY_ROAD_3_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1635,
+              "name": "EVENT_BEAT_VICTORY_ROAD_3_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1636,
+              "name": "EVENT_BEAT_VICTORY_ROAD_3_TRAINER_3",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 120,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_VICTORY_ROAD_3F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 121,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_VICTORY_ROAD_3F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 122,
+            "name": "Boulder",
+            "toggleConst": "TOGGLE_VICTORY_ROAD_3F_BOULDER",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_VICTORYROAD3F_DEFAULT",
+      "name": "Scripted events completed (derived)",
+      "desc": "Every event flag this map's own scripts set is on, every missable they toggle is toggled, badges they award are held. Derived mechanically from the script source, not yet hand-curated.",
+      "timeline": "",
+      "trigger": {
+        "type": "event",
+        "text": "The map's scripted story has fully played out."
+      },
+      "advance": [],
+      "derived": true,
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 1633,
+              "name": "EVENT_BEAT_VICTORY_ROAD_3_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 1634,
+              "name": "EVENT_BEAT_VICTORY_ROAD_3_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 1635,
+              "name": "EVENT_BEAT_VICTORY_ROAD_3_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 1636,
+              "name": "EVENT_BEAT_VICTORY_ROAD_3_TRAINER_3",
+              "owned": true
+            },
+            {
+              "ind": 1632,
+              "name": "EVENT_VICTORY_ROAD_3_BOULDER_ON_SWITCH1",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 120,
+            "name": "Item 1",
+            "toggleConst": "TOGGLE_VICTORY_ROAD_3F_ITEM_1",
+            "state": "show"
+          },
+          {
+            "ind": 121,
+            "name": "Item 2",
+            "toggleConst": "TOGGLE_VICTORY_ROAD_3F_ITEM_2",
+            "state": "show"
+          },
+          {
+            "ind": 122,
+            "name": "Boulder",
+            "toggleConst": "TOGGLE_VICTORY_ROAD_3F_BOULDER",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            1632,
+            1633,
+            1634,
+            1635,
+            1636
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            122
+          ]
+        },
+        "badges": []
+      }
+    }
+  ]
+}

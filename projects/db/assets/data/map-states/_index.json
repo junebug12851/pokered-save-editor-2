@@ -1,0 +1,884 @@
+[
+  {
+    "file": "PalletTown.json",
+    "map": "Pallet Town",
+    "mapInd": 0,
+    "scriptSlot": 1,
+    "curated": true,
+    "stages": 3,
+    "messy": false
+  },
+  {
+    "file": "ViridianCity.json",
+    "map": "Viridian City",
+    "mapInd": 1,
+    "scriptSlot": 3,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PewterCity.json",
+    "map": "Pewter City",
+    "mapInd": 2,
+    "scriptSlot": 4,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "CeruleanCity.json",
+    "map": "Cerulean City",
+    "mapInd": 3,
+    "scriptSlot": 26,
+    "curated": true,
+    "stages": 3,
+    "messy": false
+  },
+  {
+    "file": "VermilionCity.json",
+    "map": "Vermilion City",
+    "mapInd": 5,
+    "scriptSlot": 45,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "CinnabarIsland.json",
+    "map": "Cinnabar Island",
+    "mapInd": 8,
+    "scriptSlot": 58,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "Route3.json",
+    "map": "Route 3",
+    "mapInd": 14,
+    "scriptSlot": 5,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route4.json",
+    "map": "Route 4",
+    "mapInd": 15,
+    "scriptSlot": 6,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route6.json",
+    "map": "Route 6",
+    "mapInd": 17,
+    "scriptSlot": 12,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route8.json",
+    "map": "Route 8",
+    "mapInd": 19,
+    "scriptSlot": 13,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route9.json",
+    "map": "Route 9",
+    "mapInd": 20,
+    "scriptSlot": 16,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route10.json",
+    "map": "Route 10",
+    "mapInd": 21,
+    "scriptSlot": 17,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route11.json",
+    "map": "Route 11",
+    "mapInd": 22,
+    "scriptSlot": 38,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route12.json",
+    "map": "Route 12",
+    "mapInd": 23,
+    "scriptSlot": 39,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route13.json",
+    "map": "Route 13",
+    "mapInd": 24,
+    "scriptSlot": 30,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route14.json",
+    "map": "Route 14",
+    "mapInd": 25,
+    "scriptSlot": 31,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route15.json",
+    "map": "Route 15",
+    "mapInd": 26,
+    "scriptSlot": 40,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route16.json",
+    "map": "Route 16",
+    "mapInd": 27,
+    "scriptSlot": 41,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route17.json",
+    "map": "Route 17",
+    "mapInd": 28,
+    "scriptSlot": 32,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route18.json",
+    "map": "Route 18",
+    "mapInd": 29,
+    "scriptSlot": 42,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route19.json",
+    "map": "Route 19",
+    "mapInd": 30,
+    "scriptSlot": 33,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route20.json",
+    "map": "Route 20",
+    "mapInd": 31,
+    "scriptSlot": 43,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route21.json",
+    "map": "Route 21",
+    "mapInd": 32,
+    "scriptSlot": 34,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route22.json",
+    "map": "Route 22",
+    "mapInd": 33,
+    "scriptSlot": 22,
+    "curated": true,
+    "stages": 5,
+    "messy": false
+  },
+  {
+    "file": "Route23.json",
+    "map": "Route 23",
+    "mapInd": 34,
+    "scriptSlot": 94,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route24.json",
+    "map": "Route 24",
+    "mapInd": 35,
+    "scriptSlot": 14,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route25.json",
+    "map": "Route 25",
+    "mapInd": 36,
+    "scriptSlot": 15,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "RedsHouse2F.json",
+    "map": "Reds House 2F",
+    "mapInd": 38,
+    "scriptSlot": 23,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "BluesHouse.json",
+    "map": "Blues House",
+    "mapInd": 39,
+    "scriptSlot": 2,
+    "curated": true,
+    "stages": 3,
+    "messy": false
+  },
+  {
+    "file": "OaksLab.json",
+    "map": "Oaks Lab",
+    "mapInd": 40,
+    "scriptSlot": 0,
+    "curated": true,
+    "stages": 5,
+    "messy": false
+  },
+  {
+    "file": "ViridianMart.json",
+    "map": "Viridian Mart",
+    "mapInd": 42,
+    "scriptSlot": 24,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "ViridianGym.json",
+    "map": "Viridian Gym",
+    "mapInd": 45,
+    "scriptSlot": 7,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "ViridianForest.json",
+    "map": "Viridian Forest",
+    "mapInd": 51,
+    "scriptSlot": 28,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Museum1F.json",
+    "map": "Museum 1F",
+    "mapInd": 52,
+    "scriptSlot": 29,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PewterGym.json",
+    "map": "Pewter Gym",
+    "mapInd": 54,
+    "scriptSlot": 8,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "MtMoon1F.json",
+    "map": "Mt. Moon 1",
+    "mapInd": 59,
+    "scriptSlot": 18,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "MtMoonB2F.json",
+    "map": "Mt. Moon 3",
+    "mapInd": 61,
+    "scriptSlot": 19,
+    "curated": true,
+    "stages": 3,
+    "messy": false
+  },
+  {
+    "file": "CeruleanGym.json",
+    "map": "Cerulean Gym",
+    "mapInd": 65,
+    "scriptSlot": 9,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route5Gate.json",
+    "map": "Route 5 Gate",
+    "mapInd": 70,
+    "scriptSlot": 90,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "Route6Gate.json",
+    "map": "Route 6 Gate",
+    "mapInd": 73,
+    "scriptSlot": 56,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "Route7Gate.json",
+    "map": "Route 7 Gate",
+    "mapInd": 76,
+    "scriptSlot": 91,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "Route8Gate.json",
+    "map": "Route 8 Gate",
+    "mapInd": 79,
+    "scriptSlot": 57,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "RockTunnel1F.json",
+    "map": "Rock Tunnel 1",
+    "mapInd": 82,
+    "scriptSlot": 37,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PowerPlant.json",
+    "map": "Power Plant",
+    "mapInd": 83,
+    "scriptSlot": 91,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "BillsHouse.json",
+    "map": "Bills House",
+    "mapInd": 88,
+    "scriptSlot": 89,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "VermilionGym.json",
+    "map": "Vermilion Gym",
+    "mapInd": 92,
+    "scriptSlot": 10,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SSAnne2F.json",
+    "map": "S.S. Anne 2",
+    "mapInd": 96,
+    "scriptSlot": 92,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SSAnneBow.json",
+    "map": "S.S. Anne 5",
+    "mapInd": 99,
+    "scriptSlot": 27,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SSAnne1FRooms.json",
+    "map": "S.S. Anne 8",
+    "mapInd": 102,
+    "scriptSlot": 20,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SSAnne2FRooms.json",
+    "map": "S.S. Anne 9",
+    "mapInd": 103,
+    "scriptSlot": 21,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SSAnneB1FRooms.json",
+    "map": "S.S. Anne 10",
+    "mapInd": 104,
+    "scriptSlot": 44,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "VictoryRoad1F.json",
+    "map": "Victory Road 1",
+    "mapInd": 108,
+    "scriptSlot": 80,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "LancesRoom.json",
+    "map": "Lances Room",
+    "mapInd": 113,
+    "scriptSlot": 81,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "HallOfFame.json",
+    "map": "Hall of Fame",
+    "mapInd": 118,
+    "scriptSlot": 74,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "ChampionsRoom.json",
+    "map": "Champions Room",
+    "mapInd": 120,
+    "scriptSlot": 75,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "CeladonGym.json",
+    "map": "Celadon Gym",
+    "mapInd": 134,
+    "scriptSlot": 11,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "GameCorner.json",
+    "map": "Game Corner",
+    "mapInd": 135,
+    "scriptSlot": 87,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonTower2F.json",
+    "map": "Pokemon Tower 2",
+    "mapInd": 143,
+    "scriptSlot": 46,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonTower3F.json",
+    "map": "Pokemon Tower 3",
+    "mapInd": 144,
+    "scriptSlot": 47,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonTower4F.json",
+    "map": "Pokemon Tower 4",
+    "mapInd": 145,
+    "scriptSlot": 48,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonTower5F.json",
+    "map": "Pokemon Tower 5",
+    "mapInd": 146,
+    "scriptSlot": 49,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonTower6F.json",
+    "map": "Pokemon Tower 6",
+    "mapInd": 147,
+    "scriptSlot": 50,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonTower7F.json",
+    "map": "Pokemon Tower 7",
+    "mapInd": 148,
+    "scriptSlot": 51,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SafariZoneGate.json",
+    "map": "Safari Zone Entrance",
+    "mapInd": 156,
+    "scriptSlot": 35,
+    "curated": true,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "FuchsiaGym.json",
+    "map": "Fuchsia Gym",
+    "mapInd": 157,
+    "scriptSlot": 84,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SeafoamIslandsB3F.json",
+    "map": "Seafoam Islands 4",
+    "mapInd": 161,
+    "scriptSlot": 93,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SeafoamIslandsB4F.json",
+    "map": "Seafoam Islands 5",
+    "mapInd": 162,
+    "scriptSlot": 95,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonMansion1F.json",
+    "map": "Mansion 1",
+    "mapInd": 165,
+    "scriptSlot": 59,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "CinnabarGym.json",
+    "map": "Cinnabar Gym",
+    "mapInd": 166,
+    "scriptSlot": 86,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "FightingDojo.json",
+    "map": "Fighting Dojo",
+    "mapInd": 177,
+    "scriptSlot": 65,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SaffronGym.json",
+    "map": "Saffron Gym",
+    "mapInd": 178,
+    "scriptSlot": 85,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "Route16Gate1F.json",
+    "map": "Route 16 Gate 1F",
+    "mapInd": 186,
+    "scriptSlot": 88,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "Route18Gate1F.json",
+    "map": "Route 18 Gate 1F",
+    "mapInd": 190,
+    "scriptSlot": 96,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "Route22Gate.json",
+    "map": "Route 22 Gate",
+    "mapInd": 193,
+    "scriptSlot": 25,
+    "curated": false,
+    "stages": 1,
+    "messy": false
+  },
+  {
+    "file": "VictoryRoad2F.json",
+    "map": "Victory Road 2",
+    "mapInd": 194,
+    "scriptSlot": 63,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "VictoryRoad3F.json",
+    "map": "Victory Road 3",
+    "mapInd": 198,
+    "scriptSlot": 64,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "RocketHideoutB1F.json",
+    "map": "Rocket Hideout 1",
+    "mapInd": 199,
+    "scriptSlot": 52,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "RocketHideoutB2F.json",
+    "map": "Rocket Hideout 2",
+    "mapInd": 200,
+    "scriptSlot": 53,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "RocketHideoutB3F.json",
+    "map": "Rocket Hideout 3",
+    "mapInd": 201,
+    "scriptSlot": 54,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "RocketHideoutB4F.json",
+    "map": "Rocket Hideout 4",
+    "mapInd": 202,
+    "scriptSlot": 55,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo2F.json",
+    "map": "Silph Co 2F",
+    "mapInd": 207,
+    "scriptSlot": 66,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo3F.json",
+    "map": "Silph Co 3F",
+    "mapInd": 208,
+    "scriptSlot": 67,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo4F.json",
+    "map": "Silph Co 4F",
+    "mapInd": 209,
+    "scriptSlot": 68,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo5F.json",
+    "map": "Silph Co 5F",
+    "mapInd": 210,
+    "scriptSlot": 69,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo6F.json",
+    "map": "Silph Co 6F",
+    "mapInd": 211,
+    "scriptSlot": 70,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo7F.json",
+    "map": "Silph Co 7F",
+    "mapInd": 212,
+    "scriptSlot": 71,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo8F.json",
+    "map": "Silph Co 8F",
+    "mapInd": 213,
+    "scriptSlot": 72,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonMansion2F.json",
+    "map": "Mansion 2",
+    "mapInd": 214,
+    "scriptSlot": 60,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonMansion3F.json",
+    "map": "Mansion 3",
+    "mapInd": 215,
+    "scriptSlot": 61,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "PokemonMansionB1F.json",
+    "map": "Mansion 4",
+    "mapInd": 216,
+    "scriptSlot": 62,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "CeruleanCaveB1F.json",
+    "map": "Unknown Dungeon 3",
+    "mapInd": 227,
+    "scriptSlot": 79,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "RockTunnelB1F.json",
+    "map": "Rock Tunnel 2",
+    "mapInd": 232,
+    "scriptSlot": 36,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo9F.json",
+    "map": "Silph Co 9F",
+    "mapInd": 233,
+    "scriptSlot": 73,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo10F.json",
+    "map": "Silph Co 10F",
+    "mapInd": 234,
+    "scriptSlot": 82,
+    "curated": false,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "SilphCo11F.json",
+    "map": "Silph Co 11F",
+    "mapInd": 235,
+    "scriptSlot": 83,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "LoreleisRoom.json",
+    "map": "Loreleis Room",
+    "mapInd": 245,
+    "scriptSlot": 76,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "BrunosRoom.json",
+    "map": "Brunos Room",
+    "mapInd": 246,
+    "scriptSlot": 77,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  },
+  {
+    "file": "AgathasRoom.json",
+    "map": "Agathas Room",
+    "mapInd": 247,
+    "scriptSlot": 78,
+    "curated": true,
+    "stages": 2,
+    "messy": false
+  }
+]

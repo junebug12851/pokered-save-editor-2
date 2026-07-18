@@ -1,0 +1,269 @@
+{
+  "map": "Pokemon Tower 7",
+  "mapInd": 148,
+  "scriptSlot": 51,
+  "source": "scripts/PokemonTower7F.asm",
+  "curated": true,
+  "entry": {
+    "kind": "warp",
+    "warp": 0,
+    "x": 9,
+    "y": 16
+  },
+  "progression": {
+    "start": "1",
+    "end": "2",
+    "order": [
+      "1",
+      "2"
+    ],
+    "branches": {},
+    "messy": false,
+    "notes": "The rescue. Beating the three Rockets and talking to Mr. Fuji warps you to his house; the same script hides his tower sprite, shows him at home (TOGGLE_MR_FUJIS_HOUSE_MR_FUJI) and toggles two Saffron City townsfolk (TOGGLE_SAFFRON_CITY_E/F) -- all cross-map bits carried on their own pages."
+  },
+  "scriptValues": [
+    {
+      "value": 0,
+      "name": "SCRIPT_POKEMONTOWER7F_DEFAULT",
+      "routine": "CheckFightingMapTrainers",
+      "kind": "resting",
+      "next": []
+    },
+    {
+      "value": 1,
+      "name": "SCRIPT_POKEMONTOWER7F_START_BATTLE",
+      "routine": "DisplayEnemyTrainerTextAndStartBattle",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 2,
+      "name": "SCRIPT_POKEMONTOWER7F_END_BATTLE",
+      "routine": "PokemonTower7FEndBattleScript",
+      "kind": "transient",
+      "next": [
+        3
+      ]
+    },
+    {
+      "value": 3,
+      "name": "SCRIPT_POKEMONTOWER7F_HIDE_NPC",
+      "routine": "PokemonTower7FHideNPCScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    },
+    {
+      "value": 4,
+      "name": "SCRIPT_POKEMONTOWER7F_WARP_TO_MR_FUJI_HOUSE",
+      "routine": "PokemonTower7FWarpToMrFujiHouseScript",
+      "kind": "transient",
+      "next": [
+        0
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "1",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONTOWER7F_DEFAULT",
+      "name": "Rockets hold Mr. Fuji",
+      "desc": "Three Rocket guards and, behind them, Mr. Fuji kneeling at the top of the tower.",
+      "timeline": "Top of the tower.",
+      "trigger": {
+        "type": "start",
+        "text": "New game."
+      },
+      "advance": [
+        {
+          "to": "2",
+          "text": "Beat the three Rockets and speak to Mr. Fuji -- he takes you home (value 4).",
+          "auto": false
+        }
+      ],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [],
+          "cleared": [
+            {
+              "ind": 275,
+              "name": "EVENT_BEAT_POKEMONTOWER_7_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 276,
+              "name": "EVENT_BEAT_POKEMONTOWER_7_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 277,
+              "name": "EVENT_BEAT_POKEMONTOWER_7_TRAINER_2",
+              "owned": true
+            },
+            {
+              "ind": 281,
+              "name": "EVENT_RESCUED_MR_FUJI_2",
+              "owned": true
+            },
+            {
+              "ind": 1231,
+              "name": "EVENT_RESCUED_MR_FUJI",
+              "owned": true
+            }
+          ]
+        },
+        "missables": [
+          {
+            "ind": 64,
+            "name": "Rocket 1",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_1",
+            "state": "show"
+          },
+          {
+            "ind": 65,
+            "name": "Rocket 2",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_2",
+            "state": "show"
+          },
+          {
+            "ind": 66,
+            "name": "Rocket 3",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_3",
+            "state": "show"
+          },
+          {
+            "ind": 67,
+            "name": "Mr Fuji",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_7F_MR_FUJI",
+            "state": "show"
+          }
+        ],
+        "badges": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "1.1",
+      "kind": "transient",
+      "script": 4,
+      "scriptName": "SCRIPT_POKEMONTOWER7F_WARP_TO_MR_FUJI_HOUSE",
+      "name": "Cutscene step: SCRIPT_POKEMONTOWER7F_WARP_TO_MR_FUJI_HOUSE",
+      "desc": "Mid-cutscene machinery between stages; a save loaded here resumes inside the cutscene.",
+      "trigger": {},
+      "advance": [
+        {
+          "to": "0",
+          "text": "automatic",
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "kind": "resting",
+      "script": 0,
+      "scriptName": "SCRIPT_POKEMONTOWER7F_DEFAULT",
+      "name": "Mr. Fuji rescued",
+      "desc": "The Rockets beaten and Mr. Fuji home in his volunteer house (where the Poke Flute waits). His tower sprite is gone; the guards' sprites remain, defeated.",
+      "timeline": "Tower resolved; the Poke Flute next.",
+      "trigger": {
+        "type": "talk",
+        "text": "Spoke to Mr. Fuji after clearing his guards."
+      },
+      "advance": [],
+      "save": {
+        "script": 0,
+        "events": {
+          "set": [
+            {
+              "ind": 1231,
+              "name": "EVENT_RESCUED_MR_FUJI",
+              "owned": true
+            },
+            {
+              "ind": 281,
+              "name": "EVENT_RESCUED_MR_FUJI_2",
+              "owned": true
+            },
+            {
+              "ind": 275,
+              "name": "EVENT_BEAT_POKEMONTOWER_7_TRAINER_0",
+              "owned": true
+            },
+            {
+              "ind": 276,
+              "name": "EVENT_BEAT_POKEMONTOWER_7_TRAINER_1",
+              "owned": true
+            },
+            {
+              "ind": 277,
+              "name": "EVENT_BEAT_POKEMONTOWER_7_TRAINER_2",
+              "owned": true
+            }
+          ],
+          "cleared": []
+        },
+        "missables": [
+          {
+            "ind": 64,
+            "name": "Rocket 1",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_1",
+            "state": "show"
+          },
+          {
+            "ind": 65,
+            "name": "Rocket 2",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_2",
+            "state": "show"
+          },
+          {
+            "ind": 66,
+            "name": "Rocket 3",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_7F_ROCKET_3",
+            "state": "show"
+          },
+          {
+            "ind": 67,
+            "name": "Mr Fuji",
+            "toggleConst": "TOGGLE_POKEMON_TOWER_7F_MR_FUJI",
+            "state": "hide"
+          }
+        ],
+        "badges": [],
+        "notes": [
+          "Cross-map: shows TOGGLE_MR_FUJIS_HOUSE_MR_FUJI and toggles TOGGLE_SAFFRON_CITY_E/F -- their bits live on those maps' pages. EVENT_GOT_POKE_FLUTE is Mr. Fuji's House's story."
+        ]
+      },
+      "delta": {
+        "from": "1",
+        "script": {
+          "from": 0,
+          "to": 0
+        },
+        "events": {
+          "set": [
+            275,
+            276,
+            277,
+            281,
+            1231
+          ],
+          "cleared": []
+        },
+        "missables": {
+          "show": [],
+          "hide": [
+            67
+          ]
+        },
+        "badges": []
+      }
+    }
+  ]
+}
