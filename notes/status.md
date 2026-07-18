@@ -5,11 +5,44 @@ _Current state only._ For the chronological history of what changed each session
 [`reference/qt-patterns.md`](reference/qt-patterns.md) and [`decisions/`](decisions/architecture.md). For the
 commit-by-commit changelog see [`version.md`](version.md).
 
-**Version:** `0.41.9-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
+**Version:** `0.42.12-alpha` — on `dev`, **awaiting leadership's in-app review, then "ship"**. (Previous
 release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root `VERSION`; see
 [`reference/versioning.md`](reference/versioning.md). Full `ctest` green (**91/91**);
-`tst_world` now 21 (two new event pins). New local-only member: **`tst_flag_scenarios`** (with the ROM,
-SKIPs without it).
+`tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
+`everyTradeResolvesAndSitsAtItsBit`).
+
+### 🤝🏙️ MAP STORAGE grows: trades, town-visited, milestones, fossil + a General page (2026-07-17, `0.42.12-alpha`)
+
+Fairy Fox's day-long brief, delivered end-to-end (Phase 17 in [`plans/map-screen.md`](plans/map-screen.md)).
+Research → 4 console probes → data/model → MapModel surface → panel + canvas, all committed and green.
+
+- **Four new Map Storage sections + a General page.** In-game trades (all 10, on the trader's tile;
+  Cinnabar Lab Trade Room shows both; the unused CHIKUCHIKU → **General**), the town **Visited** checkbox
+  (11 city maps; the current town wears a *dynamic* amber-! because it re-marks itself on Continue),
+  the **Milestones** (rods/Lapras/starter/nurse/guards/`startedElite4`), and the **Fossil** (two bytes,
+  shown but **not** synced). Trade tabs on the canvas too.
+- **⭐ The two GROUP kinds** (leadership): **shared** (one bit, many maps — Saffron guards, starter,
+  nurse) vs **alike** (different bits, same kind — towns, trades, rods, **and hidden items + coins as
+  TWO separate groups**). Alike groups afford **view-all** + **check/uncheck-all**.
+- 🐞 **Four v1-carryover / data bugs fixed, all the same shape** (right bits, wrong words, never
+  asked the game): **`fly.json` was wrong for 6 of 11 towns** (v1 shipped mislabelled Fly checkboxes
+  since 2018 — fixed + pinned, negative-controlled); **`defeatedLorelei` is `BIT_STARTED_ELITE_4`**
+  (arms an Elite-4 *wipe*, not a victory — renamed, byte-identical); `wElite4Flags` b0 is dead
+  (`BIT_UNUSED_BEAT_ELITE_4`); the fossil's two bytes are **independent** (console-proven).
+- 🐞 **Two bugs the mandatory screenshot review caught before ship:** the "view all towns" list
+  rendered in hash order (QSet → now sorted), and trade houses / towns / the fossil room had **no
+  selectable page at all** until added to the picker (same hole the event-flags pass closed).
+- 🐺 **A mistake, owned:** the first cut of the trades DB **duplicated an existing `TradesDB` and
+  overwrote the shipped `trades.json`** (reusing `textId` for a different type — would have silently
+  zeroed every dialog set). Reverted, then redone **additively** on the existing DB (0 existing fields
+  changed, proven). The lesson — *search the concept, not the upstream spelling* — is the one I'd just
+  written into `in-game-trades.md` §6 and failed to apply to the DB.
+- **New research notes:** [`in-game-trades.md`](reference/in-game-trades.md),
+  [`town-visited.md`](reference/town-visited.md), [`world-completed.md`](reference/world-completed.md),
+  [`fossil-revival.md`](reference/fossil-revival.md) — the last completes v1→v2 map-page transference.
+  Probes: `probe_in_game_trades.py`, `probe_town_visited.py`, `probe_world_completed.py`, `probe_fossil.py`.
+- ⏳ **Owed: Twilight's live pass** — the group check-all/view-all in motion, the Milestones/Fossil
+  sections' scroll-feel (offscreen automation can't scroll to them), and the fossil independence.
 
 ### 📷 THE CAMERA JUMP — her description WAS the diagnosis (2026-07-17, `0.42.9-alpha`)
 
